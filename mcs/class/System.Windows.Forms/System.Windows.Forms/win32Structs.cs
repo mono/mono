@@ -96,6 +96,18 @@ namespace System.Windows.Forms
 	}
 	#endregion
 
+	#region MINMAXINFO
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct MINMAXINFO
+	{
+		internal POINT ptReserved; 
+		internal POINT ptMaxSize; 
+		internal POINT ptMaxPosition; 
+		internal POINT ptMinTrackSize; 
+		internal POINT ptMaxTrackSize; 
+	}
+	#endregion
+
 	#region NMHDR
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct NMHDR

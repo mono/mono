@@ -14,7 +14,8 @@
     using System.Drawing;
     using System.ComponentModel;
     using System.Collections;
-    
+    using System.Runtime.InteropServices;
+
     namespace System.Windows.Forms {
     
     	public class Form : ContainerControl  {
@@ -92,6 +93,8 @@
 			controlBox  = true;
 			keyPreview  = false;
 			showInTaskbar = true;
+			helpButton = false;
+			maximumSize = Size.Empty;
     		}
     		
     		static Form ()
@@ -182,22 +185,15 @@
 			}
     		}
     
-  			//Compact Framework
-			//FIXME:
-			// In .NET this can be changed at any time.
-			// In WIN32 this is fixed when the window is created.
-			// In WIN32 to change this after the window is created,
-			// like in .NET, we must draw the caption bar our self.
-			// In the mean time, just set/return a bool.
-			// This might be the start of the drawing
-    		[MonoTODO]
     		public bool ControlBox {
-    			get {
-    				return controlBox;
-    			}
+    			get { return controlBox; }
     			set {
+				int oldStyle = controlBox ? (int) WindowStyles.WS_SYSMENU : 0;
     				controlBox = value;
-					//force paint
+				if ( IsHandleCreated ) {
+					int newStyle = controlBox ? (int) WindowStyles.WS_SYSMENU : 0;
+					Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+				}
     			}
     		}
     
@@ -270,13 +266,19 @@
     			}
     		}
     
-    		[MonoTODO]
+
     		public bool HelpButton {
-    			get {
-    				return helpButton;
-    			}
+    			get { return helpButton; }
     			set {
-    				helpButton = value;
+				int oldExStyle = helpButton ? (int) WindowExStyles.WS_EX_CONTEXTHELP : 0;
+				helpButton = value;
+				if ( IsHandleCreated ) {
+					int newExStyle = 0;
+					if ( helpButton && !MinimizeBox && !MaximizeBox )
+						newExStyle = (int) WindowExStyles.WS_EX_CONTEXTHELP;
+					Win32.UpdateWindowExStyle ( Handle, oldExStyle, newExStyle );
+				}
+
     			}
     		}
     
@@ -300,14 +302,17 @@
     			set { keyPreview = value; }
     		}
     
-	  		//Compact Framework
-    		[MonoTODO]
     		public bool MaximizeBox {
-    			get {
-    				return maximizeBox;
-    			}
+    			get { return maximizeBox; }
     			set {
-    				maximizeBox = value;
+				int oldStyle = maximizeBox ? (int) WindowStyles.WS_MAXIMIZEBOX : 0;
+				maximizeBox = value;
+				if ( IsHandleCreated ) {
+					int newStyle = maximizeBox ? (int) WindowStyles.WS_MAXIMIZEBOX : 0;
+					Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					// changing this property may affect the visibility of help button
+					HelpButton = HelpButton;
+				}
     			}
     		}
     
@@ -317,7 +322,14 @@
     				return maximumSize;
     			}
     			set {
-    				maximumSize = value;
+				if ( value.Width < 0 || value.Height < 0 )
+					throw new ArgumentOutOfRangeException( "value" );
+
+    				if ( maximumSize != value ) {
+					maximumSize = value;
+					Size = Size;
+					OnMaximumSizeChanged ( EventArgs.Empty );
+				}
     			}
     		}
     
@@ -391,14 +403,17 @@
     		//	}
     		//}
     
-  			//Compact Framework
-    		[MonoTODO]
     		public bool MinimizeBox {
-    			get {
-    				return minimizeBox;
-    			}
+    			get { return minimizeBox; }
     			set {
-    				minimizeBox = value;
+				int oldStyle = minimizeBox ? (int) WindowStyles.WS_MINIMIZEBOX : 0;
+				minimizeBox = value;
+				if ( IsHandleCreated ) {
+					int newStyle = minimizeBox ? (int) WindowStyles.WS_MINIMIZEBOX : 0;
+					Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					// changing this property may affect the visibility of help button
+					HelpButton = HelpButton;
+				}
     			}
     		}
     
@@ -720,7 +735,27 @@
 					// should be child of the hidden window
 					pars.Parent = Control.ParkingWindowHandle;
 				}
-				
+			
+				if ( ControlBox )	
+					pars.Style |= (int) WindowStyles.WS_SYSMENU;
+				else
+					pars.Style &= ~(int) WindowStyles.WS_SYSMENU;
+
+				if ( MaximizeBox )	
+					pars.Style |= (int) WindowStyles.WS_MAXIMIZEBOX;
+				else
+					pars.Style &= ~(int) WindowStyles.WS_MAXIMIZEBOX;
+
+				if ( MinimizeBox )	
+					pars.Style |= (int) WindowStyles.WS_MINIMIZEBOX;
+				else
+					pars.Style &= ~(int) WindowStyles.WS_MINIMIZEBOX;
+
+				if ( HelpButton && !MinimizeBox && !MaximizeBox )	
+					pars.ExStyle |= (int) WindowExStyles.WS_EX_CONTEXTHELP;
+				else
+					pars.ExStyle &= ~(int) WindowExStyles.WS_EX_CONTEXTHELP;
+
 				// this property is used for modal dialogs
 				if ( dlgOwner != null )
 					pars.Parent = dlgOwner.Handle;
@@ -1011,6 +1046,13 @@
     			int x, int y,  int width, int height,  
     			BoundsSpecified specified)
     		{
+			if ( MaximumSize != Size.Empty ) {
+				if ( width > MaximumSize.Width )
+					width = MaximumSize.Width;
+				if ( height > MaximumSize.Height )
+					height = MaximumSize.Height;
+			}
+
     			base.SetBoundsCore (x, y, width, height, specified);
     		}
     
@@ -1085,6 +1127,14 @@
     				EventArgs enterMenuLoopArgs = new EventArgs();
     				OnMenuStart (enterMenuLoopArgs);
     				break;
+			case Msg.WM_GETMINMAXINFO:
+				MINMAXINFO minmax = (MINMAXINFO) Marshal.PtrToStructure ( m.LParam, typeof ( MINMAXINFO ) );
+				if ( MaximumSize != Size.Empty ) {
+					minmax.ptMaxTrackSize.x = MaximumSize.Width;
+					minmax.ptMaxTrackSize.y = MaximumSize.Height;
+				}
+				Marshal.StructureToPtr ( minmax, m.LParam, false );
+			break;
     				// case ?:
     				// OnMinimumSizeChanged(EventArgs e)
     				// break;
