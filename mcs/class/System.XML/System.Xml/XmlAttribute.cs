@@ -22,6 +22,7 @@ namespace System.Xml
 		private string namespaceURI;
 		private string prefix;
 		internal bool isDefault;
+		private XmlElement ownerElement;
 
 		#endregion
 
@@ -123,7 +124,7 @@ namespace System.Xml
 
 		public virtual XmlElement OwnerElement {
 			get {
-				return base.ParentNode as XmlElement;
+				return ownerElement;
 			}
 		}
 
@@ -188,6 +189,11 @@ namespace System.Xml
 			}
 
 			return node;
+		}
+
+		// Parent of XmlAttribute must be null
+		internal void SetOwnerElement(XmlElement el) {
+			ownerElement = el;
 		}
 
 		public override void WriteContentTo (XmlWriter w)
