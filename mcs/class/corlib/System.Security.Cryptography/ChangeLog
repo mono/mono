@@ -1,3 +1,9 @@
+2005-03-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RNGCryptoServiceProvider.cs: Added a new call in the static ctor
+	to check if we're using a global handle. In that case we lock before
+	calling the RNG.
+
 2005-02-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DSA.cs: Weekly fix to case where DSAParameters.Counter is 0 :-(
