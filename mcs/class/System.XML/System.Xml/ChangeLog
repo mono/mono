@@ -1,3 +1,12 @@
+2002-06-08  Duncan Mak  <duncan@ximian.com>	
+
+	* XmlDocument.cs (Load):
+	Added bits to Load (string) for BaseURI support.
+
+	* XmlAttribute.cs (BaseURI): 
+	* XmlDocument.cs (BaseURI): 
+	* XmlEntity.cs (BaseURI): Implemented.
+
 2002-05-27  Jason Diamond  <jason@injektilo.org>
 
 	* XmlDocumentNavigator.cs: Added file to directory.

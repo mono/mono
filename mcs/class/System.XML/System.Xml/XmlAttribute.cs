@@ -41,10 +41,9 @@ namespace System.Xml
 
 		#region Properties
 
-		[MonoTODO]
 		public override string BaseURI {
 			get {
-				throw new NotImplementedException ();
+				return ownerElement.BaseURI;
 			}
 		}
 

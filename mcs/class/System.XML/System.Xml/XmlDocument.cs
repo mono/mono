@@ -6,9 +6,10 @@
 //   Kral Ferch <kral_ferch@hotmail.com>
 //   Jason Diamond <jason@injektilo.org>
 //   Miguel de Icaza (miguel@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Daniel Weber
-// (C) 2002 Kral Ferch, Jason Diamond, Miguel de Icaza
+// (C) 2002 Kral Ferch, Jason Diamond, Miguel de Icaza, Duncan Mak
 //
 
 using System;
@@ -25,6 +26,7 @@ namespace System.Xml
 
 		XmlLinkedNode lastLinkedChild;
 		XmlNameTable nameTable;
+		string baseURI = String.Empty;
 
 		#endregion
 
@@ -63,9 +65,10 @@ namespace System.Xml
 
 		#region Properties
 
-		[MonoTODO]
 		public override string BaseURI {
-			get { throw new NotImplementedException(); }
+			get {
+				return baseURI;
+			}
 		}
 
 		public XmlElement DocumentElement {
@@ -382,6 +385,7 @@ namespace System.Xml
 
 		public virtual void Load (string filename)
 		{
+			baseURI = filename;
 			XmlReader xmlReader = new XmlTextReader (new StreamReader (filename));
 			Load (xmlReader);
 		}

@@ -21,6 +21,7 @@ namespace System.Xml
 			this.NDATA = NDATA;
 			this.publicId = publicId;
 			this.systemId = systemId;
+			this.baseUri = doc.BaseURI;
 		}
 
 		#endregion
@@ -31,14 +32,14 @@ namespace System.Xml
 		string NDATA;
 		string publicId;
 		string systemId;
+		string baseUri;
 
 		#endregion
 
 		#region Properties
 
-		[MonoTODO]
 		public override string BaseURI {
-			get { throw new NotImplementedException (); }
+			get {  return baseUri; }
 		}
 
 		[MonoTODO]

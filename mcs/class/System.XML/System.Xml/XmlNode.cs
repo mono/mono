@@ -40,10 +40,9 @@ namespace System.Xml
 			get { return null; }
 		}
 
-		[MonoTODO]
 		public virtual string BaseURI
 		{
-			get { throw new NotImplementedException (); }
+			get { return ParentNode.BaseURI; }
 		}
 
 		public virtual XmlNodeList ChildNodes {
