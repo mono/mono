@@ -1,5 +1,10 @@
 2005-03-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mini_jit_thread_attach): New jit icall.
+
+	* mini-x86.c (mono_arch_emit_prolog): Attach to the VM in 
+	native->managed wrappers.
+
 	* exceptions.cs: Add new regression test.
 
 	* mini.c (optimize_branches): Check regions in the cbranch to throw
