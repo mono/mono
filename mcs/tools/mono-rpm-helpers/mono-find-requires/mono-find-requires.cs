@@ -33,8 +33,8 @@ class FindRequires {
                 try {
                         Assembly a = Assembly.LoadFrom (s);
                 
-                        foreach (AssemblyName an in a.GetReferencedAssemblies ())
-                                Console.WriteLine ("mono({0}) >= {1}", an.Name, an.Version);
+			foreach (AssemblyName an in a.GetReferencedAssemblies ())
+				Console.WriteLine ("mono({0}) = {1}", an.Name, an.Version);
 
                 } catch {}
         }
