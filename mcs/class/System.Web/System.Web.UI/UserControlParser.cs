@@ -22,6 +22,7 @@ namespace System.Web.UI
 			Context = context;
 			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
 			InputFile = inputFile;
+			SetBaseType (PagesConfig.UserControlBaseType);
 			AddApplicationAssembly ();
 		}
 		
@@ -39,7 +40,6 @@ namespace System.Web.UI
 
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
-			SetBaseType (PagesConfig.UserControlBaseType);
 			base.ProcessMainAttributes (atts);
 		}
 		

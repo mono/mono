@@ -46,6 +46,7 @@ namespace System.Web.UI
 			Context = context;
 			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
 			InputFile = inputFile;
+			SetBaseType (PagesConfig.PageBaseType);
 			AddApplicationAssembly ();
 		}
 
@@ -60,7 +61,6 @@ namespace System.Web.UI
 
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
-			SetBaseType (PagesConfig.PageBaseType);
 			string enabless = GetString (atts, "EnableSessionState", PagesConfig.EnableSessionState);
 			if (enabless != null) {
 				readonlySessionState = (String.Compare (enabless, "readonly", true) == 0);

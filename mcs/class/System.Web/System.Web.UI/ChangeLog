@@ -1,5 +1,11 @@
 2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* PageParser.cs:
+	* UserControlParser.cs: set the page/user control base type even when no
+	default directive provided. Fixes bug #60572.
+
+2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* PageParser.cs: use default trace settings from web.config and check
 	if trace is only requested for local connections. Fixes bug #60180.
 
