@@ -1,5 +1,7 @@
 2004-10-20    <vargaz@freemail.hu>
 
+	* tramp-amd64.c (amd64_magic_trampoline): Patch trampoline code as well.
+
 	* mini.c (mono_method_to_ir): Mark the domainvar as volatile when it is implicitly
 	used by CEE_NEWARR.
 
