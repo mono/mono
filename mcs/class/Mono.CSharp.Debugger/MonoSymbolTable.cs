@@ -679,6 +679,8 @@ namespace Mono.CSharp.Debugger
 
 			ClassTypeIndex = file.DefineType (method.ReflectedType);
 		}
+		
+		static LineNumberEntry [] tmp_buff = new LineNumberEntry [20];
 
 		// BuildLineNumberTable() eliminates duplicate line numbers and ensures
 		// we aren't going "backwards" since this would counfuse the runtime's
@@ -695,16 +697,19 @@ namespace Mono.CSharp.Debugger
 		// simply be discarded).
 		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
 		{
-			ArrayList list = new ArrayList ();
+			int pos = 0;
 			int last_offset = -1;
 			int last_row = -1;
+			
+			if (tmp_buff.Length < (line_numbers.Length + 1))
+				tmp_buff = new LineNumberEntry [(line_numbers.Length + 1) * 2];
 
 			for (int i = 0; i < line_numbers.Length; i++) {
-				LineNumberEntry line = (LineNumberEntry) line_numbers [i];
+				LineNumberEntry line = line_numbers [i];
 
 				if (line.Offset > last_offset) {
 					if (last_row >= 0)
-						list.Add (new LineNumberEntry (last_row, last_offset));
+						tmp_buff [pos ++] = new LineNumberEntry (last_row, last_offset);
 					last_row = line.Row;
 					last_offset = line.Offset;
 				} else if (line.Row > last_row) {
@@ -713,10 +718,10 @@ namespace Mono.CSharp.Debugger
 			}
 
 			if (last_row >= 0)
-				list.Add (new LineNumberEntry (last_row, last_offset));
+				tmp_buff [pos ++] = new LineNumberEntry (last_row, last_offset);
 
-			LineNumberEntry[] retval = new LineNumberEntry [list.Count];
-			list.CopyTo (retval, 0);
+			LineNumberEntry [] retval = new LineNumberEntry [pos];
+			Array.Copy (tmp_buff, retval, pos);
 			return retval;
 		}
 
