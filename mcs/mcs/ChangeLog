@@ -1,3 +1,8 @@
+2003-02-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* attribute.cs (ApplyAttributes): apply all MethodImplAttributes, not
+	just InternalCall.
+
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
 	* namespace.cs (Namespace..ctor): Added SourceFile argument.
