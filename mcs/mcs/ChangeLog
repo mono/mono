@@ -1,5 +1,10 @@
 2004-09-12  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs (TypeContainer.DoDefineMembers): Do not call
+	DefineDefaultConstructor for static classes.
+
+2004-09-12  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs (Attribute.Resolve): Add error 653 report.
 
 	* class.cs (Class.ApplyAttributeBuilder): Add error 641

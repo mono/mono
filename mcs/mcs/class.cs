@@ -1331,7 +1331,7 @@ namespace Mono.CSharp {
 			DefineContainerMembers (constants);
 			DefineContainerMembers (fields);
 
-			if ((Kind == Kind.Class) && !(this is ClassPart)){
+			if ((Kind == Kind.Class) && !(this is ClassPart) && !(this is StaticClass)){
 				if ((instance_constructors == null) &&
 				    !(this is StaticClass)) {
 					if (default_constructor == null)
