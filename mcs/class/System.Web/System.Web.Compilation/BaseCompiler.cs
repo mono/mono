@@ -4,123 +4,180 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections;
-using System.IO;
+using System.Reflection;
 using System.Text;
+using System.Web.UI;
+//temp:
+using Microsoft.CSharp;
+using System.IO;
 
 namespace System.Web.Compilation
 {
 	abstract class BaseCompiler
 	{
-		//FIXME: configurable?
-		static string default_assemblies = "System.Web.dll, System.Data.dll, System.Drawing.dll";
-		static Random rnd = new Random ((int) DateTime.Now.Ticks);
-		string randomName;
-		protected Hashtable options;
-		protected ArrayList dependencies;
+		TemplateParser parser;
+		CodeDomProvider provider;
+		ICodeCompiler compiler;
+		CodeCompileUnit unit;
+		CodeNamespace mainNS;
+		CompilerParameters compilerParameters;
+		protected CodeTypeDeclaration mainClass;
+		protected CodeTypeReferenceExpression mainClassExpr;
+		protected static CodeThisReferenceExpression thisRef = new CodeThisReferenceExpression ();
 
-		protected BaseCompiler ()
+		protected BaseCompiler (TemplateParser parser)
 		{
+			compilerParameters = new CompilerParameters ();
+			this.parser = parser;
 		}
 
-		public virtual Type GetCompiledType ()
+		void Init ()
 		{
-			return null;
-		}
-
-		public virtual string Key {
-			get {
-				return null;
+			unit = new CodeCompileUnit ();
+			mainNS = new CodeNamespace ("ASP");
+			unit.Namespaces.Add (mainNS);
+			mainClass = new CodeTypeDeclaration (parser.ClassName);
+			mainClass.TypeAttributes = TypeAttributes.Public;
+			mainNS.Types.Add (mainClass);
+			mainClass.BaseTypes.Add (new CodeTypeReference (parser.BaseType.FullName));
+			mainClassExpr = new CodeTypeReferenceExpression ("ASP." + parser.ClassName);
+			foreach (object o in parser.Imports) {
+				if (o is string)
+					mainNS.Imports.Add (new CodeNamespaceImport ((string) o));
 			}
-		}
 
-		public virtual string SourceFile {
-			get {
-				return null;
+			if (parser.Assemblies != null) {
+				foreach (object o in parser.Assemblies) {
+					if (o is string)
+						unit.ReferencedAssemblies.Add ((string) o);
+				}
 			}
+
+			AddInterfaces ();
+			CreateStaticFields ();
+			AddScripts ();
+			CreateConstructor (null, null);
 		}
 
-		public virtual string [] Dependencies {
-			get {
-				if (dependencies == null)
-					return new string [0];
-
-				return (string []) dependencies.ToArray (typeof (string));
-			}
-		}
-
-		public virtual void AddDependency (string filename)
+		void BuildTree ()
 		{
-			if (dependencies == null)
-				dependencies = new ArrayList ();
+			Init ();
+			CreateMethods ();
+		}
 
-			dependencies.Add (filename);
+		protected virtual void CreateStaticFields ()
+		{
+			CodeMemberField fld = new CodeMemberField (typeof (bool), "__intialized");
+			fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
+			fld.InitExpression = new CodePrimitiveExpression (false);
+			mainClass.Members.Add (fld);
+		}
+
+		protected virtual void CreateConstructor (CodeStatementCollection localVars, CodeStatementCollection trueStmt)
+		{
+			CodeConstructor ctor = new CodeConstructor ();
+			ctor.Attributes = MemberAttributes.Public;
+			mainClass.Members.Add (ctor);
+
+			if (localVars != null)
+				ctor.Statements.AddRange (localVars);
+
+			CodeTypeReferenceExpression r = new CodeTypeReferenceExpression (mainNS.Name + "." + mainClass.Name);
+			CodeFieldReferenceExpression intialized = new CodeFieldReferenceExpression (r, "__intialized");
+			
+			CodeBinaryOperatorExpression bin = new CodeBinaryOperatorExpression (intialized,
+											     CodeBinaryOperatorType.ValueEquality,
+											     new CodePrimitiveExpression (false));
+
+			CodeAssignStatement assign = new CodeAssignStatement (intialized,
+									      new CodePrimitiveExpression (true));
+
+			CodeConditionStatement cond = new CodeConditionStatement (bin, assign);
+			if (trueStmt != null)
+				cond.TrueStatements.AddRange (trueStmt);
+			
+			ctor.Statements.Add (cond);
 		}
 		
-		public virtual string CompilerOptions {
-			get {
-				string assemblies = default_assemblies;
-				string privatePath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
-				string appBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-				//HACK: we should use Uri (appBase).LocalPath once Uri works fine.
-				if (appBase.StartsWith ("file://")) {
-					appBase = appBase.Substring (7);
-					if (Path.DirectorySeparatorChar == '\\')
-						appBase = appBase.Replace ('/', '\\');
-				}
+		void AddScripts ()
+		{
+			if (parser.Scripts == null || parser.Scripts.Count == 0)
+				return;
 
-				privatePath = Path.Combine (appBase, privatePath);
+			foreach (object o in parser.Scripts) {
+				if (o is string)
+					mainClass.Members.Add (new CodeSnippetTypeMember ((string) o));
+			}
+		}
+		
+		protected virtual void CreateMethods ()
+		{
+		}
 
-				if (privatePath != null && Directory.Exists (privatePath)) {
-					StringBuilder sb = new StringBuilder (assemblies);
-					foreach (string fileName in Directory.GetFiles (privatePath, "*.dll"))
-						sb.AppendFormat (", {0}", fileName);
-					assemblies = sb.ToString ();
-					sb = null;
-				}
+		protected virtual void AddInterfaces ()
+		{
+			if (parser.Interfaces == null)
+				return;
 
-				string [] split = assemblies.Split (',');
-				StringBuilder result = new StringBuilder ();
-				foreach (string assembly in split)
-					result.AppendFormat ("/r:\"{0}\" ", assembly.TrimStart ());
-				
-				if (options == null)
-					return result.ToString ();
-
-				string compilerOptions = options ["CompilerOptions"] as string;
-				if (compilerOptions != null) {
-					result.Append (' ');
-					result.Append (compilerOptions);
-				}
-
-				string references = options ["References"] as string;
-				if (references == null)
-					return result.ToString ();
-
-				split = references.Split ('|');
-				foreach (string s in split)
-					result.AppendFormat (" /r:\"{0}\"", s);
-
-				return result.ToString ();
+			foreach (object o in parser.Interfaces) {
+				if (o is string)
+					mainClass.BaseTypes.Add (new CodeTypeReference ((string) o));
 			}
 		}
 
-		public virtual string TargetFile {
-			get {
-				if (randomName == null) {
-					randomName = Path.GetTempFileName ();
-					try {
-						File.Delete (randomName);
-					} catch {}
-					randomName += ".dll";
-				}
+		protected virtual void ProcessObjectTag (ObjectTagBuilder tag)
+		{
+		}
 
-				return randomName;
+		void CheckCompilerErrors (CompilerResults results)
+		{
+			if (results.NativeCompilerReturnValue == 0)
+				return;
+			StringWriter writer = new StringWriter();
+			provider.CreateGenerator().GenerateCodeFromCompileUnit (unit, writer, null);
+			StringBuilder sb = new StringBuilder ();
+			foreach (CompilerError error in results.Errors) {
+				sb.Append (error);
+				sb.Append ('\n');
 			}
+
+			throw new CompilationException (parser.InputFile, sb.ToString (), writer.ToString ());
+		}
+
+		public virtual Type GetCompiledType () 
+		{
+			//TODO: get the compiler and default options from system.web/compileroptions
+			provider = new CSharpCodeProvider ();
+			compiler = provider.CreateCompiler ();
+
+			BuildTree ();
+			CompilerResults results = CachingCompiler.Compile (this);
+			CheckCompilerErrors (results);
+
+			return results.CompiledAssembly.GetType (mainClassExpr.Type.BaseType, true);
+		}
+
+		internal CompilerParameters CompilerParameters {
+			get { return compilerParameters; }
+		}
+
+		internal CodeCompileUnit Unit {
+			get { return unit; }
+		}
+
+		internal ICodeCompiler Compiler {
+			get { return compiler; }
+		}
+
+		internal TemplateParser Parser {
+			get { return parser; }
 		}
 	}
 }

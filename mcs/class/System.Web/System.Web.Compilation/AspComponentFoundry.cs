@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
 using System.Collections;
@@ -22,18 +22,9 @@ namespace System.Web.Compilation
 			foundries = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
 						   CaseInsensitiveComparer.Default);
 
-			RegisterFoundry ("asp", "System.Web", "System.Web.UI.WebControls");
-			RegisterFoundry ("", "object", "System.Web", "System.Web.UI", "ObjectTag");
-		}
-
-		// TODO: don't forget to remove this method...
-		public AspComponent MakeAspComponent (string foundryName, string componentName, Tag tag)
-		{
-			Foundry foundry = foundries [foundryName] as Foundry;
-			if (foundry == null)
-				throw new ApplicationException ("Foundry not found: " + foundryName);
-
-			return new AspComponent (tag, foundry.GetType (componentName));
+			Assembly sw = typeof (AspComponentFoundry).Assembly;
+			RegisterFoundry ("asp", sw, "System.Web.UI.WebControls");
+			RegisterFoundry ("", "object", typeof (System.Web.UI.ObjectTag));
 		}
 
 		public Type GetComponentType (string foundryName, string tag)
@@ -46,20 +37,18 @@ namespace System.Web.Compilation
 		}
 
 		public void RegisterFoundry (string foundryName,
-						string assemblyName,
+						Assembly assembly,
 						string nameSpace)
 		{
-			AssemblyFoundry foundry = new AssemblyFoundry (assemblyName, nameSpace);
+			AssemblyFoundry foundry = new AssemblyFoundry (assembly, nameSpace);
 			InternalRegister (foundryName, foundry);
 		}
 
 		public void RegisterFoundry (string foundryName,
 						string tagName,
-						string assemblyName,
-						string nameSpace,
-						string typeName)
+						Type type)
 		{
-			TagNameFoundry foundry = new TagNameFoundry (assemblyName, tagName, nameSpace, typeName);
+			TagNameFoundry foundry = new TagNameFoundry (tagName, type);
 			InternalRegister (foundryName, foundry);
 		}
 
@@ -87,54 +76,25 @@ namespace System.Web.Compilation
 		abstract class Foundry
 		{
 			public abstract Type GetType (string componentName);
-
-			public Assembly LoadAssembly (string assemblyName)
-			{
-				Assembly assembly = null;
-				try {
-					assembly = Assembly.LoadFrom (Path.GetFullPath (assemblyName));
-				} catch {
-					string partialName = assemblyName;
-					if (String.Compare (Path.GetExtension (partialName), ".dll", true) == 0)
-						partialName = Path.GetFileNameWithoutExtension (assemblyName);
-
-					assembly = Assembly.LoadWithPartialName (partialName);
-				}
-
-				if (assembly == null)
-					throw new ApplicationException ("Assembly not found:" + assemblyName);
-
-				return assembly;
-			}
 		}
 		
 
 		class TagNameFoundry : Foundry
 		{
-			string assemblyName;
 			string tagName;
-			string nameSpace;
-			string typeName;
 			Type type;
 
-			public TagNameFoundry (string assemblyName, string tagName, string nameSpace, string typeName)
+			public TagNameFoundry (string tagName, Type type)
 			{
-				this.assemblyName = assemblyName;
 				this.tagName = tagName;
-				this.nameSpace = nameSpace;
-				this.typeName = typeName;
+				this.type = type;
 			}
 
 			public override Type GetType (string componentName)
 			{
 				if (0 != String.Compare (componentName, tagName, true))
-					throw new ArgumentException (componentName + " != " + tagName);
+					return null;
 				
-				if (type != null)
-					return type;
-					
-				Assembly assembly = LoadAssembly (assemblyName);
-				type =  assembly.GetType (nameSpace + "." + typeName, true, true);
 				return type;
 			}
 
@@ -146,30 +106,17 @@ namespace System.Web.Compilation
 		class AssemblyFoundry : Foundry
 		{
 			string nameSpace;
-			string assemblyName;
 			Assembly assembly;
 
-			public AssemblyFoundry (string assemblyName, string nameSpace)
+			public AssemblyFoundry (Assembly assembly, string nameSpace)
 			{
-				this.assemblyName = assemblyName;
+				this.assembly = assembly;
 				this.nameSpace = nameSpace;
-				assembly = null;
 			}
 
 			public override Type GetType (string componentName)
 			{
-				Assembly ass = EnsureAssembly (componentName);
-
-				return ass.GetType (nameSpace + "." + componentName, true, true);
-			}
-			
-			Assembly EnsureAssembly (string componentName)
-			{
-				if (assembly != null)
-					return assembly;
-
-				assembly = LoadAssembly (assemblyName);
-				return assembly;
+				return assembly.GetType (nameSpace + "." + componentName, true, true);
 			}
 		}
 

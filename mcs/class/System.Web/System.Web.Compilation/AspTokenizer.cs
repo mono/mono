@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 
 using System;
@@ -12,36 +12,36 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-namespace System.Web.Compilation {
-	
+namespace System.Web.Compilation
+{
 	class Token
 	{
 		public const int EOF 		= 0;
 		public const int IDENTIFIER 	= 1000;
-		public const int DIRECTIVE  	= 1001;
+		public const int DIRECTIVE 	= 1001;
 		public const int ATTVALUE   	= 1002;
 		public const int TEXT	    	= 1003;
 		public const int DOUBLEDASH 	= 1004;
 		public const int CLOSING 	= 1005;
 	}
 
-	class AspTokenizer {
-		private StreamReader sr;
-		private int current_token;
-		private StringBuilder sb;
-		private int col, line;
-		private bool inTag;
-		private bool hasPutBack;
-		private bool verbatim;
-		private string filename;
+	class AspTokenizer
+	{
+		TextReader sr;
+		int current_token;
+		StringBuilder sb;
+		int col, line;
+		int begcol, begline;
+		int position;
+		bool inTag;
+		bool hasPutBack;
+		bool verbatim;
+		bool have_value;
+		string val;
 		
-		public AspTokenizer (string filename, Stream stream)
+		public AspTokenizer (TextReader reader)
 		{
-			if (filename == null || stream == null)
-				throw new ArgumentNullException ();
-
-			this.sr = new StreamReader (stream);
-			this.filename = filename;
+			this.sr = reader;
 			sb = new StringBuilder ();
 			col = line = 1;
 			hasPutBack = inTag = false;
@@ -56,18 +56,23 @@ namespace System.Web.Compilation {
 		public void put_back ()
 		{
 			if (hasPutBack)
-				throw new ApplicationException ("put_back called twice!");
-				
+				throw new HttpException ("put_back called twice!");
+			
 			hasPutBack = true;
+			position -= Value.Length;
 		}
 		
 		public int get_token ()
 		{
 			if (hasPutBack){
 				hasPutBack = false;
+				position += Value.Length;
 				return current_token;
 			}
 
+			begline = line;
+			begcol = col;
+			have_value = false;
 			current_token = NextToken ();
 			return current_token;
 		}
@@ -82,24 +87,29 @@ namespace System.Web.Compilation {
 			return (Char.IsLetterOrDigit (c) || c == '_' || c == '-');
 		}
 
-		private int read_char ()
+		int read_char ()
 		{
 			int c = sr.Read ();
 
-			if (c == '\r' && sr.Peek () == '\n')
+			if (c == '\r' && sr.Peek () == '\n') {
 				c = sr.Read ();
+				position++;
+			}
 
 			if (c == '\n'){
-				col = 0;
+				col = -1;
 				line++;
 			}
-			else if (c != -1)
+
+			if (c != -1) {
 				col++;
+				position++;
+			}
 
 			return c;
 		}
 
-		private int ReadAttValue (int start)
+		int ReadAttValue (int start)
 		{
 			int quoteChar = 0;
 			bool quoted = false;
@@ -137,7 +147,7 @@ namespace System.Web.Compilation {
 			return Token.ATTVALUE;
 		}
 
-		private int NextToken ()
+		int NextToken ()
 		{
 			int c;
 			
@@ -199,9 +209,9 @@ namespace System.Web.Compilation {
 						sb.Append ((char) read_char ());
 					}
 
-					if (current_token == '@' && Directive.IsDirectiveID (sb.ToString ()))
+					if (current_token == '@' && Directive.IsDirective (sb.ToString ()))
 						return Token.DIRECTIVE;
-
+					
 					return Token.IDENTIFIER;
 				}
 
@@ -212,30 +222,36 @@ namespace System.Web.Compilation {
 			return Token.EOF;
 		}
 
-		public string value {
-			get { return sb.ToString (); }
-		}
-
-		public int Line {
+		public string Value {
 			get {
-				return line;
+				if (have_value)
+					return val;
+
+				have_value = true;
+				val = sb.ToString ();
+				return val;
 			}
 		}
 
-		public int Column {
-			get {
-				return col;
-			}
+		public int BeginLine {
+			get { return begline; }
 		}
 
-		public string Location {
-			get { 
-				string msg = filename;
-				msg += " (" + line + ", " + col + "): " + sb.ToString ();
-				return msg;
-			}
+		public int BeginColumn {
+			get { return begcol; }
 		}
 
+		public int EndLine {
+			get { return line; }
+		}
+
+		public int EndColumn {
+			get { return col; }
+		}
+
+		public int Position {
+			get { return position; }
+		}
 	}
 }
 

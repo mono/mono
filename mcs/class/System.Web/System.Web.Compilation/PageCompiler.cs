@@ -7,97 +7,59 @@
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.CodeDom;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web.UI;
+using System.Web.SessionState;
 using System.Web.Util;
 
 namespace System.Web.Compilation
 {
-	class PageCompiler : BaseCompiler
+	class PageCompiler : TemplateControlCompiler
 	{
 		PageParser pageParser;
-		string sourceFile;
+		static CodeTypeReference intRef = new CodeTypeReference (typeof (int));
 
-		private PageCompiler (PageParser pageParser)
+		public PageCompiler (PageParser pageParser)
+			: base (pageParser)
 		{
 			this.pageParser = pageParser;
 		}
 
-		public override Type GetCompiledType ()
+		protected override void AddInterfaces () 
 		{
-			string inputFile = pageParser.InputFile;
-			sourceFile = GenerateSourceFile ();
+			base.AddInterfaces ();
+			if (pageParser.EnableSessionState)
+				mainClass.BaseTypes.Add (new CodeTypeReference (typeof(IRequiresSessionState)));
 
-			CachingCompiler compiler = new CachingCompiler (this);
-			CompilationResult result = new CompilationResult (sourceFile);
-			result.Options = options;
-			if (compiler.Compile (result) == false)
-				throw new CompilationException (result);
-			
-			result.Dependencies = dependencies;
-			if (result.Data is Type)
-				return (Type) result.Data;
-
-			Assembly assembly = Assembly.LoadFrom (result.OutputFile);
-			Type [] types = assembly.GetTypes ();
-			foreach (Type t in types) {
-				if (t.IsSubclassOf (typeof (Page))) {
-					if (result.Data != null)
-						throw new CompilationException ("More that 1 page!!!", result);
-					result.Data = t;
-				}
-			}
-
-			return result.Data as Type;
+			if (pageParser.ReadOnlySessionState)
+				mainClass.BaseTypes.Add (new CodeTypeReference (typeof (IReadOnlySessionState)));
 		}
 
-		public override string Key {
-			get {
-				return pageParser.InputFile;
-			}
+		void CreateGetTypeHashCode () 
+		{
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.ReturnType = intRef;
+			method.Name = "GetTypeHashCode";
+			method.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+			Random rnd = new Random (pageParser.InputFile.GetHashCode ());
+			method.Statements.Add (new CodeMethodReturnStatement (new CodePrimitiveExpression (rnd.Next ())));
+			mainClass.Members.Add (method);
 		}
 
-		public override string SourceFile {
-			get {
-				return sourceFile;
-			}
+		protected override void CreateMethods ()
+		{
+			base.CreateMethods ();
+
+			CreateGetTypeHashCode ();
 		}
 
 		public static Type CompilePageType (PageParser pageParser)
 		{
-			CompilationCacheItem item = CachingCompiler.GetCached (pageParser.InputFile);
-			if (item != null && item.Result != null) {
-				if (item.Result != null) {
-					pageParser.Options = item.Result.Options;
-					return item.Result.Data as Type;
-				}
-
-				throw new CompilationException (item.Result);
-			}
-
-			PageCompiler pc = new PageCompiler (pageParser);
-			return pc.GetCompiledType ();
-		}
-
-		string GenerateSourceFile ()
-		{
-			AspGenerator generator = new AspGenerator (pageParser.InputFile);
-			generator.Context = pageParser.Context;
-			generator.BaseType = pageParser.BaseType.ToString ();
-			generator.ProcessElements ();
-			pageParser.Text = generator.GetCode ().ReadToEnd ();
-			dependencies = generator.Dependencies;
-			options = generator.Options;
-
-			//FIXME: should get Tmp dir for this application
-			string csName = Path.GetTempFileName () + ".cs";
-			WebTrace.WriteLine ("Writing {0}", csName);
-			StreamWriter output = new StreamWriter (File.OpenWrite (csName));
-			output.Write (pageParser.Text);
-			output.Close ();
-			return csName;
+			PageCompiler compiler = new PageCompiler (pageParser);
+			return compiler.GetCompiledType ();
 		}
 	}
 }

@@ -8,34 +8,26 @@
 //
 
 using System;
+using System.CodeDom.Compiler;
 using System.Web;
-using System.IO;
 
 namespace System.Web.Compilation
 {
 	internal class CompilationException : HtmlizedException
 	{
-		CompilationResult result;
+		string filename;
+		string errors;
+		string file;
 
-		public CompilationException (CompilationResult result)
-			: base ("Compilation Error")
+		public CompilationException (string filename, string errors, string file)
 		{
-			this.result = result;
-		}
-
-		public CompilationException (string msg, CompilationResult result)
-			: base (msg)
-		{
-			this.result = result;
-		}
-
-		public CompilationException (CompilationCacheItem item)
-		{
-			this.result = item.Result;
+			this.filename = filename;
+			this.errors = errors;
+			this.file = file;
 		}
 
 		public override string FileName {
-			get { return result.FileName; }
+			get { return filename; }
 		}
 		
 		public override string Title {
@@ -50,25 +42,11 @@ namespace System.Web.Compilation
 		}
 
 		public override string ErrorMessage {
-			get {
-				//FIXME: it should be a one line message.
-				return result.CompilerOutput;
-			}
+			get { return errors; }
 		}
 
-		//TODO: get lines from compiler output.
-		public override StringReader SourceError { get {return null;}}
-		public override int SourceErrorLine { get { return -1; } }
-
-		public override TextReader SourceFile {
-			get {
-				StreamReader input = new StreamReader (File.OpenRead (FileName));
-				int sourceErrorLine;
-				string result = GetErrorLines (input, 0, out sourceErrorLine);
-				input.Close ();
-				input = null;
-				return new StringReader (result);
-			}
+		public string File {
+			get { return file; }
 		}
 	}
 }

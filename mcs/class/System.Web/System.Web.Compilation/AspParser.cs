@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
 using System.Collections;
@@ -13,109 +13,166 @@ using System.Text;
 
 namespace System.Web.Compilation
 {
-	delegate void ParseErrorHandler (string msg, int line, int col);
-	delegate void TagParsedHandler (Tag tag, int line, int col);
-	delegate void TextParsedHandler (string text, int line, int col);
+	delegate void ParseErrorHandler (ILocation location, string message);
+	delegate void TextParsedHandler (ILocation location, string text);
+	delegate void TagParsedHandler (ILocation location, TagType tagtype, string id, TagAttributes attributes);
 
-	class AspParser {
-		private AspTokenizer tokenizer;
+	class AspParser : ILocation
+	{
+		AspTokenizer tokenizer;
+		int beginLine, endLine;
+		int beginColumn, endColumn;
+		int beginPosition, endPosition;
+		string filename;
+		string fileText;
+		string verbatimID;
 
-		public AspParser (AspTokenizer tokenizer)
+		public AspParser (string filename, StreamReader input)
 		{
-			this.tokenizer = tokenizer;
+			this.filename = filename;
+			fileText = input.ReadToEnd ();
+			StringReader reader = new StringReader (fileText);
+			tokenizer = new AspTokenizer (reader);
 		}
 
-		public AspParser (string filename, Stream input) : 
-			this (new AspTokenizer (filename, input))
-		{
+		public int BeginLine {
+			get { return beginLine; }
 		}
 
-		public int Line {
-			get {return tokenizer.Line; }
+		public int BeginColumn {
+			get { return beginColumn; }
 		}
 
-		public int Column {
-			get {return tokenizer.Column; }
+		public int EndLine {
+			get { return endLine; }
 		}
 
-		private bool Eat (int expected_token)
+		public int EndColumn {
+			get { return endColumn; }
+		}
+
+		public string PlainText {
+			get {
+				if (beginPosition >= endPosition)
+					return null;
+
+				return fileText.Substring (beginPosition, endPosition - beginPosition);
+			}
+		}
+
+		public string Filename {
+			get { return filename; }
+		}
+
+		public string VerbatimID {
+			set {
+				tokenizer.Verbatim = true;
+				verbatimID = value.ToUpper ();
+			}
+		}
+		
+		bool Eat (int expected_token)
 		{
 			if (tokenizer.get_token () != expected_token) {
 				tokenizer.put_back ();
 				return false;
 			}
+
+			endLine = tokenizer.EndLine;
+			endColumn = tokenizer.EndColumn;
 			return true;
+		}
+
+		void BeginElement ()
+		{
+			beginLine = tokenizer.BeginLine;
+			beginColumn = tokenizer.BeginColumn;
+			beginPosition = tokenizer.Position - 1;
+		}
+
+		void EndElement ()
+		{
+			endLine = tokenizer.EndLine;
+			endColumn = tokenizer.EndColumn;
+			endPosition = tokenizer.Position;
 		}
 
 		public void Parse ()
 		{
 			int token;
-			Element element;
-			Tag tag_element;
-			string tag = "";
+			string id;
+			TagAttributes attributes;
+			TagType tagtype;
+			StringBuilder text =  new StringBuilder ();
 
-			while ((token = tokenizer.get_token ()) != Token.EOF){
+			while ((token = tokenizer.get_token ()) != Token.EOF) {
+				BeginElement ();
+
 				if (tokenizer.Verbatim){
-					string end_verbatim = "</" + tag + ">";
+					string end_verbatim = "</" + verbatimID + ">";
 					string verbatim_text = GetVerbatim (token, end_verbatim);
 
 					if (verbatim_text == null)
-						OnError ("Unexpected EOF processing " + tag);
+						OnError ("Unexpected EOF processing " + verbatimID);
 
-					OnTextParsed (verbatim_text);
-					OnTagParsed (new CloseTag (tag));
 					tokenizer.Verbatim = false;
-				}
-				else if (token == '<') {
-					element = GetTag ();
-					if (element == null)
-						OnError ("");
 
-					if (element is ServerComment)
+					EndElement ();
+					endPosition -= end_verbatim.Length;
+					OnTextParsed (verbatim_text);
+					beginPosition = endPosition;
+					endPosition += end_verbatim.Length;
+					OnTagParsed (TagType.Close, verbatimID, null);
+					continue;
+				}
+				
+				if (token == '<') {
+					GetTag (out tagtype, out id, out attributes);
+					EndElement ();
+					if (tagtype == TagType.ServerComment)
 						continue;
 
-					if (!(element is Tag)){
-						OnTextParsed (((PlainText) element).Text);
-						continue;
-					}
+					if (tagtype == TagType.Text)
+						OnTextParsed (id);
+					else
+						OnTagParsed (tagtype, id, attributes);
 
-					OnTagParsed ((Tag) element);
+					continue;
+				}
 
-					tag_element = (Tag) element;
-					//FIXME: move this to the TagParsed handler.
-					tag = tag_element.TagID.ToUpper ();
-					if (!tag_element.SelfClosing && (tag == "SCRIPT" || tag == "PRE"))
-						tokenizer.Verbatim = true;
-				}
-				else {
-					StringBuilder text =  new StringBuilder ();
-					do {
-						text.Append (tokenizer.value);
-						token = tokenizer.get_token ();
-					} while (token != '<' && token != Token.EOF);
-					tokenizer.put_back ();
-					OnTextParsed (text.ToString ());
-				}
+				text.Length = 0;
+				do {
+					text.Append (tokenizer.Value);
+					token = tokenizer.get_token ();
+				} while (token != '<' && token != Token.EOF);
+
+				tokenizer.put_back ();
+				EndElement ();
+				OnTextParsed (text.ToString ());
 			}
 		}
 
-		private Element GetTag ()
+		void GetTag (out TagType tagtype, out string id, out TagAttributes attributes)
 		{
 			int token = tokenizer.get_token ();
-			string id;
 
+			tagtype = TagType.ServerComment;
+			id = null;
+			attributes = null;
 			switch (token){
 			case '%':
-				return GetServerTag ();
+				GetServerTag (out tagtype, out id, out attributes);
+				break;
 			case '/':
 				if (!Eat (Token.IDENTIFIER))
 					OnError ("expecting TAGNAME");
 
-				id = tokenizer.value;
+				id = tokenizer.Value;
 				if (!Eat ('>'))
 					OnError ("expecting '>'");
 
-				return new CloseTag (id);
+				tagtype = TagType.Close;
+				break;
 			case '!':
 				bool double_dash = Eat (Token.DOUBLEDASH);
 				if (double_dash)
@@ -128,19 +185,27 @@ namespace System.Web.Compilation
 				if (comment == null)
 					OnError ("Unfinished HTML comment/DTD");
 
-				return new PlainText ("<!" + comment + end);
+				tagtype = TagType.Text;
+				id = "<!" + comment + end;
+				break;
 			case Token.IDENTIFIER:
-				id = tokenizer.value;
-				Tag tag = new Tag (id, GetAttributes (), Eat ('/'));
-				if (!Eat ('>'))
+				id = tokenizer.Value;
+				attributes = GetAttributes ();
+				tagtype = TagType.Tag;
+				if (Eat ('/') && Eat ('>'))
+					tagtype = TagType.SelfClosing;
+				else if (!Eat ('>'))
 					OnError ("expecting '>'");
-				return tag;
+
+				break;
 			default:
-				return new PlainText ("<" + tokenizer.value);
+				tagtype = TagType.Text;
+				id = "<" + tokenizer.Value;
+				break;
 			}
 		}
 
-		private TagAttributes GetAttributes ()
+		TagAttributes GetAttributes ()
 		{
 			int token;
 			TagAttributes attributes;
@@ -150,10 +215,10 @@ namespace System.Web.Compilation
 			while ((token = tokenizer.get_token ())  != Token.EOF){
 				if (token != Token.IDENTIFIER)
 					break;
-				id = tokenizer.value;
+				id = tokenizer.Value;
 				if (Eat ('=')){
 					if (Eat (Token.ATTVALUE)){
-						attributes.Add (id, tokenizer.value);
+						attributes.Add (id, tokenizer.Value);
 					} else {
 						//TODO: support data binding syntax without quotes
 						OnError ("expected ATTVALUE");
@@ -172,14 +237,14 @@ namespace System.Web.Compilation
 			return attributes;
 		}
 
-		private string GetVerbatim (int token, string end)
+		string GetVerbatim (int token, string end)
 		{
 			StringBuilder vb_text = new StringBuilder ();
 			int i = 0;
 
-			if (tokenizer.value.Length > 1){
+			if (tokenizer.Value.Length > 1){
 				// May be we have a put_back token that is not a single character
-				vb_text.Append (tokenizer.value);
+				vb_text.Append (tokenizer.Value);
 				token = tokenizer.get_token ();
 			}
 
@@ -189,24 +254,20 @@ namespace System.Web.Compilation
 						break;
 					token = tokenizer.get_token ();
 					continue;
-				}
-				else {
+				} else if (i > 0) {
 					for (int j = 0; j < i; j++)
 						vb_text.Append (end [j]);
+					i = 0;
 				}
 
-				i = 0;
 				vb_text.Append ((char) token);
 				token = tokenizer.get_token ();
 			} 
 
-			if (token == Token.EOF)
-				return null;
-
 			return RemoveComments (vb_text.ToString ());
 		}
 
-		private string RemoveComments (string text)
+		string RemoveComments (string text)
 		{
 			int end;
 			int start = text.IndexOf ("<%--");
@@ -223,24 +284,31 @@ namespace System.Web.Compilation
 			return text;
 		}
 
-		private Element GetServerTag ()
+		void GetServerTag (out TagType tagtype, out string id, out TagAttributes attributes)
 		{
-			string id;
 			string inside_tags;
-			TagAttributes attributes;
 
 			if (Eat ('@')){
-				id = (Eat (Token.DIRECTIVE) ? tokenizer.value : "Page");
+				tagtype = TagType.Directive;
+				id = "";
+				if (Eat (Token.DIRECTIVE))
+					id = tokenizer.Value;
+
 				attributes = GetAttributes ();
 				if (!Eat ('%') || !Eat ('>'))
 					OnError ("expecting '%>'");
 
-				return new Directive (id, attributes);
-			} else if (Eat (Token.DOUBLEDASH)) {
+				return;
+			}
+			
+			if (Eat (Token.DOUBLEDASH)) {
 				tokenizer.Verbatim = true;
 				inside_tags = GetVerbatim (tokenizer.get_token (), "--%>");
 				tokenizer.Verbatim = false;
-				return new ServerComment ("<%--" + inside_tags + "--%>");
+				id = null;
+				attributes = null;
+				tagtype = TagType.ServerComment;
+				return;
 			}
 
 			bool varname;
@@ -251,10 +319,10 @@ namespace System.Web.Compilation
 			tokenizer.Verbatim = true;
 			inside_tags = GetVerbatim (tokenizer.get_token (), "%>");
 			tokenizer.Verbatim = false;
-			if (databinding)
-				return new DataBindingTag (inside_tags);
-
-			return new CodeRenderTag (varname, inside_tags);
+			id = inside_tags;
+			attributes = null;
+			tagtype = (databinding ? TagType.DataBinding :
+				  (varname ? TagType.CodeRenderExpression : TagType.CodeRender));
 		}
 
 		public event ParseErrorHandler Error;
@@ -264,19 +332,19 @@ namespace System.Web.Compilation
 		void OnError (string msg)
 		{
 			if (Error != null)
-				Error (msg, tokenizer.Line, tokenizer.Column);
+				Error (this, msg);
 		}
 
-		void OnTagParsed (Tag tag)
+		void OnTagParsed (TagType tagtype, string id, TagAttributes attributes)
 		{
 			if (TagParsed != null)
-				TagParsed (tag, tokenizer.Line, tokenizer.Column);
+				TagParsed (this, tagtype, id, attributes);
 		}
 
 		void OnTextParsed (string text)
 		{
 			if (TextParsed != null)
-				TextParsed (text, tokenizer.Line, tokenizer.Column);
+				TextParsed (this, text);
 		}
 	}
 

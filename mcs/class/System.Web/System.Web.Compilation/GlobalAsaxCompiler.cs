@@ -4,96 +4,33 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Web;
-using System.Web.Util;
+using System.Web.UI;
 
 namespace System.Web.Compilation
 {
 	class GlobalAsaxCompiler : BaseCompiler
 	{
-		string filename;
-		string sourceFile;
-		HttpContext context;
+		ApplicationFileParser parser;
 
-		private GlobalAsaxCompiler (string filename)
+		public GlobalAsaxCompiler (ApplicationFileParser parser)
+			: base (parser)
 		{
-			this.filename = filename;
+			this.parser = parser;
 		}
 
-		public override Type GetCompiledType ()
+		public static Type CompileApplicationType (ApplicationFileParser parser)
 		{
-			sourceFile = GenerateSourceFile ();
-
-			CachingCompiler compiler = new CachingCompiler (this);
-			CompilationResult result = new CompilationResult (sourceFile);
-			result.Options = options;
-			if (compiler.Compile (result) == false)
-				throw new CompilationException (result);
-			
-			result.Dependencies = dependencies;
-			Assembly assembly = Assembly.LoadFrom (result.OutputFile);
-			Type [] types = assembly.GetTypes ();
-			foreach (Type t in types) {
-				if (t.IsSubclassOf (typeof (HttpApplication))) {
-					if (result.Data != null)
-						throw new CompilationException ("More that 1 app!!!", result);
-					result.Data = t;
-				}
-			}
-
-			return result.Data as Type;
+			GlobalAsaxCompiler compiler = new GlobalAsaxCompiler (parser);
+			return compiler.GetCompiledType ();
 		}
 
-		public override string Key {
-			get {
-				return filename;
-			}
-		}
-
-		public override string SourceFile {
-			get {
-				return sourceFile;
-			}
-		}
-
-		public static Type CompileApplicationType (string filename, HttpContext context)
+		[MonoTODO("Process application scope for object tags")]
+		protected override void ProcessObjectTag (ObjectTagBuilder tag)
 		{
-			CompilationCacheItem item = CachingCompiler.GetCached (filename);
-			if (item != null && item.Result != null) {
-				if (item.Result != null)
-					return item.Result.Data as Type;
-
-				throw new CompilationException (item.Result);
-			}
-
-			GlobalAsaxCompiler gac = new GlobalAsaxCompiler (filename);
-			gac.context = context;
-			return gac.GetCompiledType ();
-		}
-
-		string GenerateSourceFile ()
-		{
-			AspGenerator generator = new AspGenerator (filename);
-			generator.Context = context;
-			generator.BaseType = typeof (HttpApplication).ToString ();
-			generator.ProcessElements ();
-			string generated = generator.GetCode ().ReadToEnd ();
-			options = generator.Options;
-			dependencies = generator.Dependencies;
-
-			//FIXME: should get Tmp dir for this application
-			string csName = Path.GetTempFileName () + ".cs";
-			WebTrace.WriteLine ("Writing {0}", csName);
-			StreamWriter output = new StreamWriter (File.OpenWrite (csName));
-			output.Write (generated);
-			output.Close ();
-			return csName;
+			//TODO
 		}
 	}
 }

@@ -1,3 +1,59 @@
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspComponentFoundry.cs: simplified it a lot by using Type and Assembly
+	instead of their names.
+
+	* AspElements.cs: removed. No longer needed.
+
+	* AspGenerator.cs: this file is now in charge of interfacing between
+	the parser and the compiler. It manages the creation of the
+	ControlBuilder tree and the compilation of the CodeDOM tree.
+
+	* AspParser.cs: tag handling is simpler now.  Instead of a whole bunch
+	of different Types, tags are just and id and a set of attributes.
+	Implement ILocation interface.
+	
+	* AspTokenizer.cs: added a few methods to help the parser implementing
+	ILocation.
+
+	* BaseCompiler.cs: handles the portions of the CodeDOM tree that are
+	common to appliaction, page and user control, including the actual
+	compilation and error handling.
+
+	* CSCompiler.cs: compiles C# files using CodeDOM interfaces.
+
+	* CachingCompiler.cs: simplified to use the new interfaces.
+
+	* CompilationException.cs: it's now using CompilationResult to report
+	errors.
+
+	* CompilationResult.cs: Removed file.
+
+	* Directive.cs: to check for the validity of a directive.
+
+	* GlobalAsaxCompiler.cs: simplified a lot, as most of the work is done
+	in BaseCompiler.
+
+	* ILocation.cs: interface used to now the exact place where a parse
+	error happens.
+
+	* PageCompiler.cs: generates a couple of methods that are only used in
+	pages.
+
+	* ParseException.cs: use the ILocation interface.
+
+	* TagAttributes.cs: handles the attributes of the tags parsed.
+
+	* TagType.cs: an enum for the different kinds of tags.
+
+	* TemplateControlCompiler.cs: this is the one that does most of the
+	conversion from teh ControlBuilder tree into a CodeDOM tree.
+
+	* UserControlCompiler.cs: simplified as most of the work is done in
+	its base classes.
+
+	* WebServiceCompiler.cs: dummy.
+
 2003-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspComponentFoundry.cs: added GetComponentType method.
