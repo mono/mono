@@ -1,3 +1,12 @@
+2001-07-12  Joe Shaw  <joe@ximian.com>
+
+	* Array.cs: Fix backwards parameters to Array.SetValue() throughout.
+	(BinarySearch): Fix backward logic surrounding whether to
+	call value.CompareTo or comparer.Compare.
+	(LastIndexOf): Stop being stupid. I am so not used to strongly
+	bounded arrays...
+	(Sort): Implement a quicksort.
+
 2001-07-11  Joe Shaw  <joe@ximian.com>
 
 	* Array.cs: Change all instances of trying to access an array with

@@ -7,22 +7,28 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System {
+namespace System
+{
 
-	public abstract class Array : ICloneable {
+	public abstract class Array : ICloneable 
+	{
 		public int lower_bound = 0;
 		private int length;
 		private int rank;
 
 		// Properties
-		public int Length {
-			get {
+		public int Length 
+		{
+			get 
+			{
 				return length;
 			}
 		}
 
-		public int Rank {
-			get {
+		public int Rank 
+		{
+			get 
+			{
 				return rank;
 			}
 		}
@@ -64,16 +70,17 @@ namespace System {
 			// is null and value is not of the same type as the
 			// elements of array.
 
-			for (int i = 0; i < length; i++) {
+			for (int i = 0; i < length; i++) 
+			{
 				int result;
 
 				if (comparer == null && !(array.GetValue(index + i) is IComparable))
 					throw new ArgumentException ();
 
 				if (comparer == null)
-					result = comparer.Compare(value, array.GetValue(index + i));
-				else
 					result = value.CompareTo(array.GetValue(index + i));
+				else
+					result = comparer.Compare(value, array.GetValue(index + i));
 
 				if (result == 0)
 					return index + i;
@@ -90,27 +97,29 @@ namespace System {
 				throw new ArgumentNullException ();
 
 			if (index < this.lower_bound || length < 0 ||
-			    index + length > this.lower_bound + this.length)
+				index + length > this.lower_bound + this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = 0; i < length; i++) {
+			for (int i = 0; i < length; i++) 
+			{
 				if (array.GetValue(index + i) is bool)
-					array.SetValue(index + i, false);
+					array.SetValue(false, index + i);
 				else if (array.GetValue(index + i) is ValueType)
-					array.SetValue(index + i, 0);
+					array.SetValue(0, index + i);
 				else
-					array.SetValue(index + i, null);
+					array.SetValue(null, index + i);
 			}
 		}
 
 		public virtual object Clone ()
 		{
-			Array a = new Array;
+			Array a = new Array();
 
-			for (int i = 0; i < this.length; i++) {
+			for (int i = 0; i < this.length; i++) 
+			{
 				int index = this.lower_bound + i;
 
-				a.SetValue(index, this.GetValue(index));
+				a.SetValue(this.GetValue(index), index);
 			}
 
 			return a;
@@ -135,10 +144,11 @@ namespace System {
 			if (source.Rank != dest.Rank)
 				throw new RankException ();
 
-			for (int i = 0; i < length; i++) {
+			for (int i = 0; i < length; i++) 
+			{
 				int index = source.lower_bound + i;
 
-				dest.SetValue(index, source.GetValue(index));
+				dest.SetValue(source.GetValue(index), index);
 			}
 		}
 
@@ -151,25 +161,25 @@ namespace System {
 				throw new ArgumentException ();
 
 			if (index < this.lower_bound ||
-			    index > this.lower_bound + this.length)
+				index > this.lower_bound + this.length)
 				throw new ArgumentOutOfRangeException ();
 			
 			return InternalGetValue (index);
 		}
 
 		[MethodImplAttribute(InternalCall)]
-		private void InternalSetValue (int index, object value);
+		private void InternalSetValue (object value, int index);
 
-		public void SetValue (int index, object value)
+		public void SetValue (object value, int index)
 		{
 			if (this.rank > 1)
 				throw new ArgumentException ();
 
 			if (index < this.lower_bound ||
-			    index > this.lower_bound + this.length)
+				index > this.lower_bound + this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			InternalSetValue (index, value);
+			InternalSetValue (value);
 		}
 
 		public static int IndexOf (Array array, object value)
@@ -190,7 +200,8 @@ namespace System {
 			if (length < 0 || index < array.lower_bound || index > array.lower_bound + length)
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = 0; i < length; i++) {
+			for (int i = 0; i < length; i++) 
+			{
 				if (array.GetValue(index + i) == value)
 					return index + i;
 			}
@@ -210,20 +221,19 @@ namespace System {
 
 		public static int LastIndexOf (Array array, object value, int index, int length)
 		{
-			int occurrance = array.lower_bound - 1;
-
 			if (array == null)
 				throw new ArgumentNullException ();
 	
 			if (length < 0 || index < array.lower_bound || index > array.lower_bound + length)
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = 0; i < length; i++) {
+			for (int i = length - 1; i >= 0; i--) 
+			{
 				if (array.GetValue(index + i) == value)
-					occurrance = index + i;
+					return index + i;
 			}
 
-			return occurrance;
+			return array.lower_bound - 1;
 		}
 	
 		public static void Reverse (Array array)
@@ -245,12 +255,13 @@ namespace System {
 			if (index + length > array.lower_bound + array.Length)
 				throw new ArgumentException ();
 
-			for (int i = 0; i < length/2; i++) {
+			for (int i = 0; i < length/2; i++) 
+			{
 				object tmp;
 
 				tmp = array.GetValue(index + i);
-				array.SetValue(index + i, array.GetValue(index + length - i - 1));
-				array.SetValue(index + length - i - 1, tmp);
+				array.SetValue(array.GetValue(index + length - i - 1), index + i);
+				array.SetValue(tmp, index + length - i - 1);
 			}
 		}
 
@@ -291,5 +302,71 @@ namespace System {
 
 		public static void Sort (Array keys, Array items, int index, int length, IComparer comparer)
 		{
-			// TODO
+			int low0 = index;
+			int high0 = index + length - 1;
+
+			qsort (keys, items, index, index + length - 1, comparer);
 		}
+
+		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
+		{
+			int pivot;
+			int low = low0;
+			int high = high0;
+
+			if (low >= high)
+				return;
+
+			pivot = (low + high) / 2;
+
+			if (compare(keys.GetValue(low), keys.GetValue(pivot), comparer) > 0)
+				swap(keys, items, low, pivot);
+
+			if (compare(keys.GetValue(pivot), keys.GetValue(high), comparer) > 0)
+				swap(keys, items, pivot, high);
+
+			while (low < high) 
+			{
+				// Move the walls in
+				while (low < high && compare(keys.GetValue(low), keys.GetValue(pivot), comparer) < 0)
+					low++;
+				while (low < high && compare(keys.GetValue(pivot), keys.GetValue(high), comparer) < 0)
+					high--;
+
+				if (low < high) 
+				{
+					swap(keys, items, low, high);
+					low++;
+					high--;
+				}
+			}
+
+			qsort (keys, items, low0, low - 1);
+			qsort (keys, items, high + 1, high0);
+		}
+
+		private static void swap (Array keys, Array items, int i, int j)
+		{
+			object tmp;
+
+			tmp = keys.GetValue(i);
+			keys.SetValue(keys.GetValue(j), i);
+			keys.SetValue(tmp, j);
+
+			if (items != null) 
+			{
+				tmp = items.GetValue(i);
+				items.SetValue(items.GetValue(j), i);
+				items.SetValue(tmp, j);
+			}
+		}
+
+		private static int compare (object value1, object value2, IComparer comparer)
+		{
+			if (comparer == null)
+				return ((IComparable) value1).CompareTo(value2);
+			else
+				return comparer.Compare(value1, value2);
+		}
+	}
+}
