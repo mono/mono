@@ -17,7 +17,7 @@ all: run-test-local
 
 run-test-local: 
 	@ rm -f *.exe *.log *.results; 
-	@ ../test-mbas.pl --compiler=$(COMPILER) --compilerflags=$(COMPILER_FLAGS) --pattern=$(PATTERN)
+	@ ../test-mbas.pl --compiler=$(COMPILER) --compilerflags=$(COMPILER_FLAGS) --pattern=$(PATTERN) --runtime=$(RUNTIME)
 
 all-local install-local test-local:
 	@:

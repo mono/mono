@@ -233,14 +233,22 @@ if(!$result || $PrintHelp) {
 
 
 if(!$Runtime) {
-    if($Compiler eq "mbas") {
+    if($Compiler =~ /mbas/) {
 	$Runtime = "mono";
     }
-    elsif($Compiler eq "vbc") {
+    elsif($Compiler =~ /vbc/) {
 	$Runtime = "";
     }
 }
-
+elsif($Runtime =~ /dotnet/) {
+    $Runtime = "";
+}
+elsif($Runtime =~ /mono/) {
+    $Runtime = "mono";
+}
+else {
+    $Runtime = "mono";
+}
 # Build the list of tests to run
 
 open(TEST_RESULTS_FILE, ">$TestResultsFile");

@@ -1,3 +1,11 @@
+2004-11-02  Jambunathan K  <kjambunathan@novell.com>
+	* test-mbas.pl:
+	* test-mbas.make: Added support for --runtime option in
+	test-mbas.pl. When working with mbas within the cygwin
+	environment, this option permits executing of compiled test cases
+	either within the Microsoft's .NET runtime environment or the
+	mono's runtime environment.
+
 2004-10-29  Jambunathan K  <kjambunathan@novell.com>
 	* errors/AttributesC8.vb: 
 	* errors/AttributesC7.vb: 
