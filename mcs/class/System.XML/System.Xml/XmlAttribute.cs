@@ -59,10 +59,11 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Setter.")]
 		public override string InnerXml {
 			get {
-				throw new NotImplementedException ();
+				// Not sure why this is an override.  Passing through for now.
+				return base.InnerXml;
 			}
 
 			set {
@@ -166,16 +167,14 @@ namespace System.Xml
 			this.ownerElement = ownerElement;
 		}
 
-		[MonoTODO]
 		public override void WriteContentTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			w.WriteString (Value);
 		}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			w.WriteAttributeString (prefix, localName, namespaceURI, Value);
 		}
 
 		#endregion

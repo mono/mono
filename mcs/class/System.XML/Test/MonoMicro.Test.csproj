@@ -68,9 +68,14 @@
                     HintPath = "..\..\..\nunit\NUnitCore.dll"
                 />
                 <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
+                />
+                <Reference
                     Name = "System.XML"
                     AssemblyName = "System.XML"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
+                    HintPath = "..\obj\Debug\System.XML.dll"
                 />
             </References>
         </Build>
@@ -136,12 +141,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "XmlProcessingInstructionTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "XmlSignificantWhitespaceTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "XmlTextReaderTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "XmlTextTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

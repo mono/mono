@@ -19,6 +19,8 @@ namespace Ximian.Mono.Tests
 		public static ITest Suite {
 			get {
 				TestSuite suite =  new TestSuite ();
+				suite.AddTest (new TestSuite (typeof (XmlProcessingInstructionTests)));
+				suite.AddTest (new TestSuite (typeof (XmlTextTests)));
 				suite.AddTest (new TestSuite (typeof (XmlTextReaderTests)));
 				suite.AddTest (new TestSuite (typeof (XmlTextWriterTests)));
 				suite.AddTest (new TestSuite (typeof (XmlNamespaceManagerTests)));

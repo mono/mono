@@ -20,21 +20,34 @@ namespace Ximian.Mono.Tests
 		XmlDocument document;
 		XmlDeclaration declaration;
 		
-		public XmlDeclarationTests ()
-			: base ("Ximian.Mono.Tests.XmlDeclarationTests testsuite")
-		{
-		}
+		public XmlDeclarationTests () : base ("Ximian.Mono.Tests.XmlDeclarationTests testsuite") {}
 		
-		public XmlDeclarationTests (string name)
-			: base (name)
-		{
-		}
+		public XmlDeclarationTests (string name) : base (name) {}
 
 		protected override void SetUp ()
 		{
 			document = new XmlDocument ();
 			document.LoadXml ("<foo><bar></bar></foo>");
 			declaration = document.CreateXmlDeclaration ("1.0", null, null);
+		}
+
+		public void TestInnerAndOuterXml ()
+		{
+			declaration = document.CreateXmlDeclaration ("1.0", null, null);
+			AssertEquals (String.Empty, declaration.InnerXml);
+			AssertEquals ("<?xml version=\"1.0\"?>", declaration.OuterXml);
+
+			declaration = document.CreateXmlDeclaration ("1.0", "doesn't check", null);
+			AssertEquals (String.Empty, declaration.InnerXml);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"doesn't check\"?>", declaration.OuterXml);
+
+			declaration = document.CreateXmlDeclaration ("1.0", null, "yes");
+			AssertEquals (String.Empty, declaration.InnerXml);
+			AssertEquals ("<?xml version=\"1.0\" standalone=\"yes\"?>", declaration.OuterXml);
+
+			declaration = document.CreateXmlDeclaration ("1.0", "foo", "no");
+			AssertEquals (String.Empty, declaration.InnerXml);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"foo\" standalone=\"no\"?>", declaration.OuterXml);
 		}
 
 		internal void TestXmlNodeBaseProperties (XmlNode original, XmlNode cloned)

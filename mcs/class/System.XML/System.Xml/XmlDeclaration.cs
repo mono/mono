@@ -89,16 +89,13 @@ namespace System.Xml
 			return new XmlDeclaration (Version, Encoding, standalone, OwnerDocument);
 		}
 
-		public override void WriteContentTo (XmlWriter w)
-		{
-			// Nothing to do - no children.
-		}
+		public override void WriteContentTo (XmlWriter w) {}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
-			if ((Standalone == String.Empty) || (Encoding == String.Empty))
-				return;
+			// This doesn't seem to match up very well with w.WriteStartDocument()
+			// so writing out custom here.
+			w.WriteRaw (String.Format ("<?xml {0}?>", Value));
 		}
 
 		void ParseInput (string input)

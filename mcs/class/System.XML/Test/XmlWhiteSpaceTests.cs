@@ -17,21 +17,15 @@ namespace Ximian.Mono.Tests
 	public class XmlWhitespaceTests : TestCase
 	{
 		XmlDocument document;
+		XmlDocument doc2;
 		XmlWhitespace whitespace;
 		XmlWhitespace broken;
-                XmlNode original;
-                XmlNode deep;
-                XmlNode shallow;
+        XmlNode original;
+        XmlNode deep;
+        XmlNode shallow;
 		
-		public XmlWhitespaceTests ()
-			: base ("Ximian.Mono.Tests.XmlWhitespaceTests testsuite")
-		{
-		}
-
-		public XmlWhitespaceTests (string name)
-			: base (name)
-		{
-		}
+		public XmlWhitespaceTests () : base ("Ximian.Mono.Tests.XmlWhitespaceTests testsuite") {}
+		public XmlWhitespaceTests (string name) : base (name) {}
 
 		protected override void SetUp ()
 		{
@@ -40,8 +34,17 @@ namespace Ximian.Mono.Tests
 			XmlElement element = document.CreateElement ("foo");
 			whitespace = document.CreateWhitespace ("\r\n");
 			element.AppendChild (whitespace);
+
+			doc2 = new XmlDocument ();
 		}
 
+		public void TestInnerAndOuterXml ()
+		{
+			whitespace = doc2.CreateWhitespace ("\r\n\t ");
+			AssertEquals (String.Empty, whitespace.InnerXml);
+			AssertEquals ("\r\n\t ", whitespace.OuterXml);
+		}
+			
 		internal void TestXmlNodeBaseProperties (XmlNode original, XmlNode cloned)
 		{
 //			assertequals (original.nodetype + " was incorrectly cloned.",

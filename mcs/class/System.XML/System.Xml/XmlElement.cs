@@ -57,10 +57,12 @@ namespace System.Xml
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Setter.")]
 		public override string InnerXml {
-			get { throw new NotImplementedException (); }
-
+			get {
+				// Not sure why this is an override.  Passing through for now.
+				return base.InnerXml;
+			}
 			set { throw new NotImplementedException (); }
 		}
 

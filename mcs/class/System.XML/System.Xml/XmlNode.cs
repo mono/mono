@@ -143,7 +143,6 @@ namespace System.Xml
 
 		public abstract XmlNodeType NodeType { get;	}
 
-		[MonoTODO]
 		public virtual string OuterXml {
 			get {
 				StringWriter sw = new StringWriter ();

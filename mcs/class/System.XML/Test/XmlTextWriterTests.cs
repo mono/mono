@@ -697,6 +697,28 @@ namespace Ximian.Mono.Tests
 			AssertEquals ("<foo></foo><bar foo='bar'></bar><baz bar=''></baz>", StringWriterText);
 		}
 
+		public void TestWriteRaw ()
+		{
+			xtw.WriteRaw("&<>\"'");
+			AssertEquals ("&<>\"'", StringWriterText);
+
+			xtw.WriteRaw(null);
+			AssertEquals ("&<>\"'", StringWriterText);
+
+			xtw.WriteRaw("");
+			AssertEquals ("&<>\"'", StringWriterText);
+		}
+
+		public void TestWriteRawInvalidInAttribute ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteStartAttribute ("bar", null);
+			xtw.WriteRaw ("&<>\"'");
+			xtw.WriteEndAttribute ();
+			xtw.WriteEndElement ();
+			AssertEquals ("<foo bar='&<>\"'' />", StringWriterText);
+		}
+
 		public void TestWriteState ()
 		{
 			AssertEquals (WriteState.Start, xtw.WriteState);
@@ -820,7 +842,6 @@ namespace Ximian.Mono.Tests
 			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
 			AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'", StringWriterText);
 
-
 			xtw.WriteStartElement ("quux");
 			xtw.WriteStartAttribute ("xml", "space", null);
 			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
@@ -861,6 +882,22 @@ namespace Ximian.Mono.Tests
 			try {
 				xtw.WriteWhitespace ("x");
 			} catch (ArgumentException) { }
+		}
+
+		public void TestXmlSpaceRaw ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteStartAttribute ("xml", "space", null);
+			AssertEquals (XmlSpace.None, xtw.XmlSpace);
+			AssertEquals ("<foo xml:space='", StringWriterText);
+
+			xtw.WriteString ("default");
+			AssertEquals (XmlSpace.None, xtw.XmlSpace);
+			AssertEquals ("<foo xml:space='", StringWriterText);
+
+			xtw.WriteEndAttribute ();
+			AssertEquals (XmlSpace.Default, xtw.XmlSpace);
+			AssertEquals ("<foo xml:space='default'", StringWriterText);
 		}
 	}
 }

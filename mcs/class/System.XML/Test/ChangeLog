@@ -1,3 +1,33 @@
+2002-04-08  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* AllTests.cs: added XmlProcessingInstructionTests and XmlTextTests.
+	
+	* MonoMicro.Test.csproj: Added XmlProcessingInstructionTests.cs and
+	XmlTextTests.cs.
+	
+	* XmlAttributeTests.cs: Added TestAttributeInnerAndOuterXml.
+	
+	* XmlCDataSectionTests.cs: Added TestXmlCDataSectionInnerAndOuterXml.
+	
+	* XmlCommentTests.cs: Added TestXmlCommentInnerAndOuterXml.
+	
+	* XmlDeclarationTests.cs: Added TestInnerAndOuterXml.
+	
+	* XmlDocumentTests.cs: Added TestInnerAndOuterXml.
+	
+	* XmlElementTests.cs: Added TestInnerAndOuterXml.
+	
+	* XmlProcessingInstructionTests.cs: Initial check-in.
+	
+	* XmlSignificantWhitespaceTests.cs: Added TestInnerAndOuterXml.
+	
+	* XmlTextTests.cs: Initial check-in.
+	
+	* XmlTextWriterTests.cs: Added TestWriteRaw, TestWriteRawInvalidInAttribute,
+	and TestXmlSpaceRaw.
+	
+	* XmlWhiteSpacesTests.cs: Added TestInnerAndOuterXml.
+
 2002-04-05  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlDocumentTests.cs: CreateNode tests.

@@ -86,9 +86,12 @@ namespace System.Xml
 			get { throw new NotImplementedException(); }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Setter.")]
 		public override string InnerXml {
-			get { throw new NotImplementedException(); }
+			get {
+				// Not sure why this is an override.  Passing through for now.
+				return base.InnerXml;
+			}
 			set { throw new NotImplementedException(); }
 		}
 
@@ -147,13 +150,11 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlAttribute CreateAttribute (string name)
 		{
 			return CreateAttribute (name, String.Empty);
 		}
 
-		[MonoTODO]
 		public XmlAttribute CreateAttribute (string qualifiedName, string namespaceURI)
 		{
 			string prefix;

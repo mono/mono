@@ -43,14 +43,11 @@ namespace System.Xml
 			return new XmlSignificantWhitespace (Data, OwnerDocument);
 		}
 
-		[MonoTODO]
-		public override void WriteContentTo (XmlWriter w)
-		{			
-		}
+		public override void WriteContentTo (XmlWriter w) {}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
-		{			
+		{
+			w.WriteWhitespace (Data);
 		}
 	}
 }

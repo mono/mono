@@ -1,3 +1,24 @@
+2002-04-08  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlAttributes.cs: InnerXml getter, WriteContentTo, and WriteTo
+	implementations.
+	
+	* XmlDeclaration.cs: WriteTo implementation.
+	
+	* XmlDocument.cs: InnerXml getter implementation.
+	
+	* XmlElement.cs: InnerXml getter implementation.
+
+	* XmlNode.cs: Removed MonoTODO attrib on OuterXml.
+	
+	* XmlSignificantWhitespace.cs: WriteTo implementation.
+	
+	* XmlText.cs: WriteContentTo and WriteTo implementation.
+	
+	* XmlTextWriter.cs: WriteRaw implementation.
+	
+	* XmlWhitespace.cs: WriteContentTo and WriteTo implementations.
+
 2002-04-05  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlAttributes.cs: Added reminder MonoTODO to set NamespaceURI

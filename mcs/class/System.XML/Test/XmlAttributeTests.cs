@@ -31,6 +31,14 @@ namespace Ximian.Mono.Tests
 			AssertNull(attr.Attributes);
 		}
 
+		public void TestAttributeInnerAndOuterXml ()
+		{
+			attr = doc.CreateAttribute ("foo", "bar", "http://abc.def");
+			attr.Value = "baz";
+			AssertEquals ("baz", attr.InnerXml);
+			AssertEquals ("foo:bar=\"baz\"", attr.OuterXml);
+		}
+
 		public void TestAttributeWithNoValue ()
 		{
 			XmlAttribute attribute = doc.CreateAttribute ("name");

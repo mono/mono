@@ -47,6 +47,13 @@ namespace Ximian.Mono.Tests
                         Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
 	       
+		public void TestXmlCDataSectionInnerAndOuterXml ()
+		{
+			section = document.CreateCDataSection ("foo");
+			AssertEquals (String.Empty, section.InnerXml);
+			AssertEquals ("<![CDATA[foo]]>", section.OuterXml);
+		}
+
 		public void TestXmlCDataSectionName ()
 		{
 			AssertEquals (section.NodeType + " Name property broken",

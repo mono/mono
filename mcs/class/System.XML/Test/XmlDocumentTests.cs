@@ -193,6 +193,38 @@ namespace Ximian.Mono.Tests
 			AssertEquals ("Incorrect output for empty document.", "", document.OuterXml);
 		}
 
+		public void TestInnerAndOuterXml ()
+		{
+			AssertEquals (String.Empty, document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
+
+			XmlDeclaration declaration = document.CreateXmlDeclaration ("1.0", null, null);
+			document.AppendChild (declaration);
+			AssertEquals ("<?xml version=\"1.0\"?>", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
+
+			XmlElement element = document.CreateElement ("foo");
+			document.AppendChild (element);
+			AssertEquals ("<?xml version=\"1.0\"?><foo />", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
+
+			XmlComment comment = document.CreateComment ("bar");
+			document.DocumentElement.AppendChild (comment);
+			AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar--></foo>", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
+
+			XmlText text = document.CreateTextNode ("baz");
+			document.DocumentElement.AppendChild (text);
+			AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar-->baz</foo>", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
+
+			element = document.CreateElement ("quux");
+			element.SetAttribute ("quuux", "squonk");
+			document.DocumentElement.AppendChild (element);
+			AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar-->baz<quux quuux=\"squonk\" /></foo>", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
+		}
+
 		public void TestLoadXmlCDATA ()
 		{
 			document.LoadXml ("<foo><![CDATA[bar]]></foo>");

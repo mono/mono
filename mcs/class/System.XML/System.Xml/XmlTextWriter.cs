@@ -412,10 +412,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteRaw (string data)
 		{
-			throw new NotImplementedException ();
+			WriteStringInternal (data, false);
 		}
 
 		[MonoTODO]
@@ -568,21 +567,31 @@ namespace System.Xml
 			if (ws == WriteState.Prolog)
 				throw new InvalidOperationException ("Token content in state Prolog would result in an invalid XML document.");
 
+			WriteStringInternal (text, true);
+		}
+
+		public void WriteStringInternal (string text, bool entitize)
+		{
 			if (text == null)
 				text = String.Empty;
 
-			if (text != String.Empty) {
+			if (text != String.Empty) 
+			{
 				CheckState ();
 
-				text = text.Replace ("&", "&amp;");
-				text = text.Replace ("<", "&lt;");
-				text = text.Replace (">", "&gt;");
-				
-				if (openAttribute) {
-					if (quoteChar == '"')
-						text = text.Replace ("\"", "&quot;");
-					else
-						text = text.Replace ("'", "&apos;");
+				if (entitize)
+				{
+					text = text.Replace ("&", "&amp;");
+					text = text.Replace ("<", "&lt;");
+					text = text.Replace (">", "&gt;");
+					
+					if (openAttribute) 
+					{
+						if (quoteChar == '"')
+							text = text.Replace ("\"", "&quot;");
+						else
+							text = text.Replace ("'", "&apos;");
+					}
 				}
 
 				if (!openAttribute)
@@ -590,11 +599,14 @@ namespace System.Xml
 
 				if (!openXmlLang && !openXmlSpace)
 					w.Write (text);
-				else {
+				else 
+				{
 					if (openXmlLang)
 						xmlLang = text;
-					else {
-						switch (text) {
+					else 
+					{
+						switch (text) 
+						{
 							case "default":
 								xmlSpace = XmlSpace.Default;
 								break;
