@@ -1,4 +1,8 @@
 
+2003-02-23	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* MobileCapabilities.cs    : Initial implementation.
+
 2003-01-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* TODOAttribute.cs         : Added MonoTODO Attribute
