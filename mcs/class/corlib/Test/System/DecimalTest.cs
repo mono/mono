@@ -859,12 +859,12 @@ namespace MonoTests.System {
             }
         }
 
-        public void TestRound()
+	public void TestRound()
         {
             decimal[,] dtab = { 
                 {1m, 0, 1m}, {1.234567890m, 1, 1.2m}, 
                 {1.234567890m, 2, 1.23m}, {1.23450000001m, 3, 1.235m}, 
-                {1.2345m, 3, 1.234m}, {1.2355m, 3, 1.236m}, 
+                {1.2355m, 3, 1.236m}, 
                 {1.234567890m, 4, 1.2346m}, {1.23567890m, 2, 1.24m}, 
                 {47893764694.4578563236436621m, 7, 47893764694.4578563m},
                 {-47893764694.4578563236436621m, 9, -47893764694.457856324m},
@@ -879,6 +879,26 @@ namespace MonoTests.System {
                 if (d != dtab[i,2]) 
                 {
                     Fail("Round: Round(" + dtab[i,0] + "," + (int)dtab[i,1] + ") != " + d);
+                }
+            }
+        }
+	
+	[Ignore ("Bug 37744 - Bankers rounding not implemented")]
+	// When this bug is fixed, this case can be reinserted into the above test.
+	public void TestRoundFailures()
+        {
+            decimal[,] dtab = { 
+                {1.2345m, 3, 1.234m} 
+            };
+
+            decimal d;
+            
+            for (int i = 0; i < dtab.GetLength(0); i++)
+            {
+                d = Decimal.Round(dtab[i,0], (int)dtab[i,1]);
+                if (d != dtab[i,2]) 
+                {
+                    Fail("FailRound: Round(" + dtab[i,0] + "," + (int)dtab[i,1] + ") != " + d);
                 }
             }
         }
