@@ -577,9 +577,12 @@ class_decl		: method_all
 			| customattr_decl
 			| D_SIZE int32
                           {
-                                
+                                codegen.CurrentTypeDef.SetSize ((int) $2);
                           }
 			| D_PACK int32
+                          {
+                                codegen.CurrentTypeDef.SetPack ((int) $2);
+                          }
 			| D_OVERRIDE type_spec DOUBLE_COLON method_name
 			  K_WITH call_conv type type_spec DOUBLE_COLON method_name
 			  OPEN_PARENS sig_args CLOSE_PARENS
