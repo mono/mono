@@ -159,7 +159,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(Names!=null)
+				if(Names!=null && Names.Length > 0)
 					return Names[0];
 				return String.Empty;
 			}

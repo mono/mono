@@ -1,3 +1,8 @@
+2003-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+                                                                                
+        * FontInfo.cs: fixed Name property as suggested by Rich Alimi
+	<rich@velvetsea.net>.
+
 2003-09-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RegularExpressionValidator.cs: fix for EvaluateIsValid by Juraj
