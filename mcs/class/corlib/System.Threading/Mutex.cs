@@ -25,25 +25,25 @@ namespace System.Threading
 		private static extern void ReleaseMutex_internal(IntPtr handle);
 
 		public Mutex() {
-			os_handle=CreateMutex_internal(false,null);
+			Handle=CreateMutex_internal(false,null);
 		}
 		
 		public Mutex(bool initiallyOwned) {
-			os_handle=CreateMutex_internal(initiallyOwned,null);
+			Handle=CreateMutex_internal(initiallyOwned,null);
 		}
 
 		public Mutex(bool initiallyOwned, string name) {				
-			os_handle=CreateMutex_internal(initiallyOwned,name);	
+			Handle=CreateMutex_internal(initiallyOwned,name);	
 		}
 	
 
 		public Mutex(bool initiallyOwned, string name, out bool gotOwnership) {
-			os_handle=CreateMutex_internal(initiallyOwned,name);
+			Handle=CreateMutex_internal(initiallyOwned,name);
 			gotOwnership=false;
 		}
 	
 		public void ReleaseMutex() {
-			ReleaseMutex_internal(os_handle);
+			ReleaseMutex_internal(Handle);
 		}
 	}
 }

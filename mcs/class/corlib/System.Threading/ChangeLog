@@ -1,3 +1,13 @@
+2002-09-11  Dick Porter  <dick@ximian.com>
+
+	* Mutex.cs: 
+	* ManualResetEvent.cs: 
+	* AutoResetEvent.cs: Use the WaitHandle.Handle property instead of
+	the private field
+
+	* WaitHandle.cs: Hide the os_handle field and the WaitOne_internal
+	method
+
 2002-09-03  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Added thread ID field

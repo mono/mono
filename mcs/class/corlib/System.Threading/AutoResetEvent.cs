@@ -18,17 +18,17 @@ namespace System.Threading
 	{
 		// Constructor
 		public AutoResetEvent(bool initialState) {
-			os_handle = NativeEventCalls.CreateEvent_internal(false,initialState,null);
+			Handle = NativeEventCalls.CreateEvent_internal(false,initialState,null);
 		}
 
 		// Methods
 
 		public bool Set() {
-			return(NativeEventCalls.SetEvent_internal(os_handle));
+			return(NativeEventCalls.SetEvent_internal(Handle));
 		}
 
 		public bool Reset() {
-			return(NativeEventCalls.ResetEvent_internal(os_handle));
+			return(NativeEventCalls.ResetEvent_internal(Handle));
 		}
 
 	}

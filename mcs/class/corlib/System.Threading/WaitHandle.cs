@@ -128,7 +128,7 @@ namespace System.Threading
 
 		public const int WaitTimeout = 258;
 
-		protected IntPtr os_handle = IntPtr.Zero;
+		private IntPtr os_handle = IntPtr.Zero;
 		
 		public virtual IntPtr Handle {
 			get {
@@ -146,7 +146,7 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected virtual extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
+		private extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
 
 		public virtual bool WaitOne() {
 			return(WaitOne_internal(os_handle, Timeout.Infinite,

@@ -19,19 +19,19 @@ namespace System.Threading
 		// Constructor
 		public ManualResetEvent (bool initialState)
 		{
-			os_handle = NativeEventCalls.CreateEvent_internal (true, initialState, null);
+			Handle = NativeEventCalls.CreateEvent_internal (true, initialState, null);
 		}
 
 		// Methods
 
 		public bool Set()
 		{
-			return (NativeEventCalls.SetEvent_internal (os_handle));
+			return (NativeEventCalls.SetEvent_internal (Handle));
 		}
 
 		public bool Reset()
 		{
-			return(NativeEventCalls.ResetEvent_internal (os_handle));
+			return(NativeEventCalls.ResetEvent_internal (Handle));
 		}
 
 	}
