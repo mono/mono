@@ -7,7 +7,8 @@ DIRS=\
 	System.Diagnostics		\
 	System.Net			\
 	System.Net.Sockets		\
-	System.Collections.Specialized 
+	System.Collections.Specialized 	\
+	System.Threading
 
 all:
 	@echo "You must use 'make windows' or 'make unix'."
