@@ -2762,9 +2762,21 @@ namespace Mono.CSharp {
 			// Handle initonly fields specially: make a copy and then
 			// get the address of the copy.
 			//
-			if (FieldInfo.IsInitOnly && !ec.IsConstructor){
+			bool need_copy;
+			if (FieldInfo.IsInitOnly){
+				need_copy = true;
+				if (ec.IsConstructor){
+					if (FieldInfo.IsStatic){
+						if (ec.IsStatic)
+							need_copy = false;
+					} else
+						need_copy = false;
+				}
+			} else
+				need_copy = false;
+			
+			if (need_copy){
 				LocalBuilder local;
-				
 				Emit (ec);
 				local = ig.DeclareLocal (type);
 				ig.Emit (OpCodes.Stloc, local);
@@ -2772,17 +2784,10 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (FieldInfo.IsStatic) {
-				if (ec.IsConstructor && !ec.IsStatic) {
-					LocalBuilder local;
 
-					Emit (ec);
-					local = ig.DeclareLocal (type);
-					ig.Emit (OpCodes.Stloc, local);
-					ig.Emit (OpCodes.Ldloca, local);
-				} else {
-					ig.Emit (OpCodes.Ldsflda, FieldInfo);
-				}
+			if (FieldInfo.IsStatic){
+				Console.WriteLine (Environment.StackTrace, ec.loc);
+				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			} else {
 				//
 				// In the case of `This', we call the AddressOf method, which will

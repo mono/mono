@@ -1,3 +1,10 @@
+2004-01-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FieldInfo.AddressOf): Revert patch from previous
+	#52730 bug, and instead compute correctly the need to use a
+	temporary variable when requesting an address based on the
+	static/instace modified of the field and the constructor.
+ 
 2004-01-21  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (SimpleName.ResolveAsTypeStep): Lookup in the current

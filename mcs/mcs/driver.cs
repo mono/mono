@@ -1472,7 +1472,7 @@ namespace Mono.CSharp
 							      " does not have an entry point defined");
 					return false;
 				}
-				
+
 				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
 			} else if (RootContext.MainClass != null) {
 				Report.Error (2017, "Can not specify -main: when building module or library");
