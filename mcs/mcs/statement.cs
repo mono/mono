@@ -1642,6 +1642,27 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class Unsafe : Statement {
+		public readonly Block Block;
+
+		public Unsafe (Block b)
+		{
+			Block = b;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			bool previous_state = ec.InUnsafe;
+			bool val;
+			
+			ec.InUnsafe = true;
+			val = Block.Emit (ec);
+			ec.InUnsafe = previous_state;
+
+			return val;
+		}
+	}
+
 	public class Catch {
 		public readonly string Type;
 		public readonly string Name;

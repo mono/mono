@@ -1671,24 +1671,6 @@ type
 	  }
 	| builtin_types
 	| array_type
-	| pointer_type	  
-	;
-
-
-pointer_type
-	: type STAR
-	  {
-		//
-		// Note that here only unmanaged types are allowed but we
-		// can't perform checks during this phase - we do it during
-		// semantic analysis.
-		//
-		$$ = (string) $1 + "*";
-	  }
-	| VOID STAR
-	  {
-		$$ = "System.Void*";
-	  }
 	;
 
 non_expression_type
@@ -2598,7 +2580,6 @@ embedded_statement
 	| unchecked_statement
 	| lock_statement
 	| using_statement
-	| unsafe_statement
 	;
 
 empty_statement
@@ -2682,42 +2663,21 @@ local_variable_type
 	  }
         ;
 
-local_variable_pointer_type
-	: primary_expression STAR
-	  {
-		Expression expr = (Expression) $1;  
-		if (!(expr is SimpleName || expr is MemberAccess)) {
-			Location l = lexer.Location;
-			Report.Error (-1, l, "Invalid Type definition");
-			$$ = "System.Object";
-		}
-		
-		$$ = GetQualifiedIdentifier (expr) + "*";
-	  }
-        | builtin_types STAR
-	  {
-		$$ = (string) $1 + "*";
-	  }
-        | VOID STAR
-	  {
-		$$ = "System.Void*";
-	  }
-	| local_variable_pointer_type STAR
-          {
-		$$ = (string) $1 + "*";
-	  }
-        ;
+// FIXME : How can the type of a local variable be void ? I don't quite see ;-)
+//          | VOID 
+//  	  {
+//  		// FIXME: this is a string that represents the type
+//  		// Figure out something to make this work.
+//  		$$ = "void";
+//  	  }
+//  	;
 
 local_variable_declaration
 	: local_variable_type variable_declarators
 	  {
 		$$ = new DictionaryEntry ($1, $2);
 	  }
-        | local_variable_pointer_type opt_rank_specifier variable_declarators
-	{
-		$$ = new DictionaryEntry ((string) $1 + (string) $2, $3);
-	}
- 	;
+	;
 
 local_constant_declaration
 	: CONST local_variable_type constant_declarator
@@ -3194,13 +3154,6 @@ unchecked_statement
 		$$ = new Unchecked ((Block) $2);
 	  }
 	;
-
-unsafe_statement
-	: UNSAFE block
-	{
-		$$ = new Unsafe ((Block) $2);
-	}
-
 
 lock_statement
 	: LOCK OPEN_PARENS expression CLOSE_PARENS 

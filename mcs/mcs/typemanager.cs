@@ -57,7 +57,6 @@ public class TypeManager {
 	static public Type dllimport_type;
 	static public Type methodimpl_attr_type;
 	static public Type param_array_type;
-	static public Type void_ptr_type;
 	
 	//
 	// Internal, not really used outside
@@ -328,8 +327,6 @@ public class TypeManager {
 			return "string";
 		else if (t == object_type)
 			return "object";
-		else if (t == void_type)
-			return "void";
 		else
 			return t.FullName;
 	}
@@ -422,8 +419,6 @@ public class TypeManager {
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
-
-		void_ptr_type        = CoreLookupType ("System.Void*");
 		
 		//
 		// Now load the default methods that we use.
@@ -593,15 +588,6 @@ public class TypeManager {
 			return true;
 		else
 			return false;
-	}
-
-	public static bool IsPointerType (Type t)
-	{
-		if (t.FullName.IndexOf ("*") != -1)
-			return true;
-		else
-			return false;
-			       
 	}
 
 	/// <summary>

@@ -515,13 +515,6 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 
 			if (target_type == TypeManager.object_type) {
-
-				//
-				// A pointer type cannot be converted to object
-				// 
-				if (TypeManager.IsPointerType (expr_type))
-					return null;
-				
 				if (expr_type.IsClass)
 					return new EmptyCast (expr, target_type);
 				if (expr_type.IsValueType)
@@ -1182,13 +1175,24 @@ namespace Mono.CSharp {
 			if (target_type == null)
 				throw new Exception ("Target type is null");
 
-			e = ConvertImplicitStandard (ec, expr, target_type, loc);
+			e = ImplicitNumericConversion (ec, expr, target_type, loc);
+			if (e != null)
+				return e;
+
+			e = ImplicitReferenceConversion (expr, target_type);
 			if (e != null)
 				return e;
 
 			e = ImplicitUserConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
+
+			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
+				IntLiteral i = (IntLiteral) expr;
+
+				if (i.Value == 0)
+					return new EmptyCast (expr, target_type);
+			}
 
 			return null;
 		}
@@ -1227,17 +1231,6 @@ namespace Mono.CSharp {
 				if (i.Value == 0)
 					return new EmptyCast (expr, target_type);
 			}
-
-			if (ec.InUnsafe) {
-				if (TypeManager.IsPointerType (expr_type))
-					if (target_type == TypeManager.void_ptr_type)
-						return new EmptyCast (expr, target_type);
-				
-				if (TypeManager.IsPointerType (target_type))
-					if (expr is NullLiteral)
-						return new EmptyCast (expr, target_type);
-			}
-
 			return null;
 		}
 
