@@ -1119,14 +1119,12 @@ namespace System.Windows.Forms
 		// Drawing
 		public override void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control)
 		{
-			Rectangle control_area = control.ClientRectangle;
 			bool details = (control.View == View.Details);
 
 			// Clear the graphics context
 			dc.Clear (control.BackColor);
 
-			// Draw the border of the list view with a background
-			this.CPDrawBorderStyle (dc, control_area, control.BorderStyle);
+			// border is drawn directly in the Paint method
 			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {
 				dc.FillRectangle (ResPool.GetSolidBrush (SystemColors.Control),
 						  0, 0, control.TotalWidth, control.Font.Height);
@@ -1156,8 +1154,11 @@ namespace System.Windows.Forms
 				}
 			}
 
-			foreach (ListViewItem item in control.Items)
-				this.DrawListViewItem (dc, control, item);
+			// In case of details view draw the items only if
+			// columns are non-zero
+			if (!details || control.Columns.Count > 0)
+				foreach (ListViewItem item in control.Items)
+					this.DrawListViewItem (dc, control, item);
 
 			// draw the gridlines
 			if (details && control.GridLines) {
@@ -1198,6 +1199,9 @@ namespace System.Windows.Forms
 					int check_wd = Math.Max (3, item.CheckRect.Width / 6);
 					int scale = Math.Max (1, item.CheckRect.Width / 12);
 
+					// set the checkbox background
+					dc.FillRectangle (this.ResPool.GetSolidBrush (SystemColors.Window),
+							  item.CheckRect);
 					// define a rectangle inside the border area
 					Rectangle rect = new Rectangle (item.CheckRect.X + 2,
 									item.CheckRect.Y + 2,

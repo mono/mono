@@ -268,8 +268,13 @@ namespace System.Windows.Forms
 		}
 
 		public override Color BackColor {
-			get { return base.BackColor; }
-			set { base.BackColor = value; }
+			get {
+				if (background_color.IsEmpty)
+					return ThemeEngine.Current.ColorWindow;
+				else
+					return background_color;
+			}
+			set { background_color = value; }
 		}
 
 		[Browsable (false)]
@@ -335,8 +340,13 @@ namespace System.Windows.Forms
 		}
 
 		public override Color ForeColor {
-			get { return base.ForeColor; }
-			set { base.ForeColor = value; }
+			get {
+				if (foreground_color.IsEmpty)
+					return ThemeEngine.Current.ColorWindowText;
+				else
+					return foreground_color;
+			}
+			set { foreground_color = value; }
 		}
 
 		[DefaultValue (false)]
@@ -528,11 +538,11 @@ namespace System.Windows.Forms
 
 		#region Internal Methods Properties
 		internal int TotalWidth {
-			get { return this.layout_wd; }
+			get { return Math.Max (this.Width, this.layout_wd); }
 		}
 
 		internal int TotalHeight {
-			get { return this.layout_ht; }
+			get { return Math.Max (this.Height, this.layout_ht); }
 		}
 
 		internal void Redraw (bool recalculate)
@@ -615,7 +625,7 @@ namespace System.Windows.Forms
 			text_size = Size.Empty;
 
 			if (items.Count == 0)
-				text_size = Size.Empty;
+				return;
 
 			text_size = BiggestItem (0);
 
@@ -663,7 +673,7 @@ namespace System.Windows.Forms
 			int current_pos_y = 0; // our y-position marker
 			int item_ht;
 			int item_wd;
-			int max; 	 // max rows or columns depending on the alignment
+			int max; 	 // max x_pos or y_pos depending on the alignment
 			int current = 0; // current row or column
 			int vertical_spacing = ThemeEngine.Current.ListViewVerticalSpacing;
 			int horizontal_spacing = ThemeEngine.Current.ListViewHorizontalSpacing;
@@ -684,10 +694,11 @@ namespace System.Windows.Forms
 						current_pos_x += col.Wd;
 					}
 					this.layout_wd = current_pos_x;
-					// set the position marker for placing items
-					// vertically down
-					current_pos_y = ht;
 				}
+				// set the position marker for placing items
+				// vertically down
+				current_pos_y = ht;
+
 				if (items.Count > 0) {
 					foreach (ListViewItem item in items) {
 						item.location.X = 0;
@@ -712,66 +723,81 @@ namespace System.Windows.Forms
 
 					// top (default) and snaptogrid alignments are handled same way
 					if (align == ListViewAlignment.Left) {
-						max = this.Height / item_ht;
-						if (max == 0)
-							max = 1; // we draw at least one row
-
+						max = this.Height;
 						foreach (ListViewItem item in items) {
 							item.location.X = current_pos_x +
 								horizontal_spacing;
-
 							item.location.Y = current_pos_y;
 							item.CalcListViewItem ();
-							current ++;
-							if (current == max) {
-								current_pos_x += item_wd;
-								current_pos_y = 0;
-								current = 0;
+							current_pos_y += item_ht;
+
+							current ++; // just to know about the last element
+							// we just did the last item
+							if (current == items.Count) {
+								if (max < current_pos_y)
+									max = current_pos_y;
+								current_pos_x = item.EntireRect.Right;
+								break;
 							}
-							else
-								current_pos_y += (item_ht +
-										  vertical_spacing);
+							else {
+								// is there enough space for another row ?
+								if ((current_pos_y + vertical_spacing
+								     + item_ht) <= this.Height)
+									current_pos_y += vertical_spacing;
+								else {
+									// start another column
+									// make current_pos_y as the
+									// max value and reset
+									// current_pos_y value.
+									max = current_pos_y;
+									current_pos_x += item_wd;
+									current_pos_y = 0;
+								}
+							}
 						}
-						
 						// adjust the layout dimensions
-						this.layout_ht = Math.Max (max * item_ht, this.Height);
-						if (current == 0) // we have fully filled layout
-							this.layout_wd = Math.Max (current_pos_x,
-										   this.Width);
-						else
-							this.layout_wd = Math.Max (current_pos_x +
-										   item_wd, this.Width);
+						this.layout_ht = Math.Max (max, this.Height);
+						this.layout_wd = Math.Max (current_pos_x,
+									   this.Width);
 					}
 					else { // other default/top alignment
-						max = this.Height / item_wd;
-						if (max == 0)
-							max = 1; // we draw at least one column
-
+						max = this.Width;
 						foreach (ListViewItem item in items) {
 							item.location.X = current_pos_x +
 								horizontal_spacing;
 
 							item.location.Y = current_pos_y;
 							item.CalcListViewItem ();
-							current ++;
-							if (current == max) {
-								current_pos_y += (item_ht +
-										  vertical_spacing);
-								current_pos_x = 0;
-								current = 0;
-							}
-							else
-								current_pos_x += item_wd;
-						}
+							current_pos_x += item_wd;
 
+							current ++; // just to know about the last element
+							// we just did the last item
+							if (current == items.Count) {
+								if (max < current_pos_x)
+									max = current_pos_x;
+								current_pos_y = item.EntireRect.Bottom;
+								break;
+							}
+							else {
+								// is there enough space for another column?
+								if ((current_pos_x + horizontal_spacing
+								     + item_wd) <= this.Width)
+									continue;
+								else {
+									// start another row
+									// make current_pos_x as the
+									// max value and reset
+									// current_pos_x value.
+									max = current_pos_x;
+									current_pos_y += (item_ht +
+											  vertical_spacing);
+									current_pos_x = 0;
+								}
+							}
+						}
 						// adjust the layout dimensions
-						this.layout_wd = Math.Max (max * item_wd, this.Width);
-						if (current == 0) // we have fully filled layout
-							this.layout_ht = Math.Max (current_pos_y,
-										   this.Height);
-						else
-							this.layout_ht = Math.Max (current_pos_y +
-										   item_ht, this.Height);
+						this.layout_wd = Math.Max (max, this.Width);
+						this.layout_ht = Math.Max (current_pos_y, this.Height);
 					}
 				}
 				break;
@@ -811,7 +837,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
-			if (this.scrollable) {
+			if (this.scrollable && this.items.Count > 0) {
 				// making a scroll bar visible might make
 				// other scroll bar visible
 				if (this.layout_wd > this.Width) {
@@ -832,7 +858,7 @@ namespace System.Windows.Forms
 				}
 
 				// create big enough buffers
-				this.CreateBuffers (this.layout_wd, this.layout_ht);
+				this.CreateBuffers (this.TotalWidth, this.TotalHeight);
 
 				if (this.h_scroll.Visible) {
 					this.h_scroll.Location = new Point (0, this.Height 
@@ -921,22 +947,26 @@ namespace System.Windows.Forms
 			if (items.Count == 0)
 				return;
 
-			Point hit = new Point (me.X, me.Y);
+			Point hit = Point.Empty;
+			if (this.HeaderStyle != ColumnHeaderStyle.None) {
+				// take horizontal scrolling into account
+				hit = new Point (me.X + h_marker, me.Y);
 
-			// hit test on columns
-			if (this.view == View.Details && this.columns.Count > 0) {
-				foreach (ColumnHeader col in this.columns) {
-					if (col.Rect.Contains (hit)) {
-						this.clicked_column = col;
-						this.Capture = true;
-						break;
+				// hit test on columns
+				if (this.view == View.Details && this.columns.Count > 0) {
+					foreach (ColumnHeader col in this.columns) {
+						if (col.Rect.Contains (hit)) {
+							this.clicked_column = col;
+							this.Capture = true;
+							break;
+						}
 					}
-				}
 
-				if (this.clicked_column != null) {
-					this.clicked_column.pressed = true;
-					this.Redraw (false);
-					return;
+					if (this.clicked_column != null) {
+						this.clicked_column.pressed = true;
+						this.Redraw (false);
+						return;
+					}
 				}
 			}
 
@@ -980,16 +1010,10 @@ namespace System.Windows.Forms
 			}
 
 			if (this.clicked_item != null) {
-				if (this.CanMultiselect == false && this.selected_items.Count > 0) {
-					this.selected_items.Clear ();
-					this.selected_indices.list.Clear ();
-				}
-
 				this.clicked_item.Selected = true;
-				this.selected_items.list.Add (this.clicked_item);
-				this.selected_indices.list.Add (this.clicked_item.Index);
 
-				if (this.CanMultiselect)
+				// Raise the event if it is a new selection
+				if (this.clicked_item != this.last_clicked_item)
 					this.OnSelectedIndexChanged (new EventArgs ());
 
 				this.Redraw (false);
@@ -1109,11 +1133,14 @@ namespace System.Windows.Forms
 				redraw = false;
 			}
 
+			// Clip to be used for drawing on screen.
+			Rectangle clip = this.ClientRectangle;
+
 			// We paint on the screen as per the location set
 			// by the two scrollbars. In case of details view
 			// since column headers can scroll only horizontally
 			// and items can scroll in both directions, paiting is
-			// done separtely for the column header and the items. 
+			// done separtely for the column header and the items.
 
 			Rectangle srcRect = pe.ClipRectangle;
 			Rectangle dstRect = pe.ClipRectangle;
@@ -1123,22 +1150,24 @@ namespace System.Windows.Forms
 				srcRect.X += h_marker;
 				srcRect.Y += v_marker;
 
-				// FIXME: exclude the area covered by scrollbars
-				// Bottom right corner needs to get the same color
-				// as used by scrollbars
-				if (h_scroll.Visible) {
-					//srcRect.Height -= h_scroll.Height;
-					//dstRect.Height -= h_scroll.Height;
-				}
-				if (v_scroll.Visible) {
-					//srcRect.Width -= v_scroll.Width;
-					//dstRect.Width -= v_scroll.Width;
-				}
+				if (h_scroll.Visible)
+					clip.Width -= this.v_scroll.Width;
+
+				if (v_scroll.Visible)
+					clip.Height -= this.h_scroll.Height;
 			}
 
-			// paint the items
+			// Set the clip and paint the items
+			pe.Graphics.SetClip (clip);
 			pe.Graphics.DrawImage (this.ImageBuffer, dstRect,
 					       srcRect, GraphicsUnit.Pixel);
+
+			// Draw the border of the list view
+			// The border is painted here separately, because
+			// our imagebuffer might be scrollable
+			ThemeEngine.Current.CPDrawBorderStyle (pe.Graphics,
+							       this.ClientRectangle,
+							       this.BorderStyle);
 
 			// paint the column headers at the top
 			if (this.view == View.Details &&
@@ -1149,7 +1178,8 @@ namespace System.Windows.Forms
 				int col_ht = this.Columns [0].Ht;
 				// move the source rect by the amount of horizontal scrolling
 				// done so far.
-				Rectangle headerSrc = new Rectangle (h_marker, 0, this.Width, col_ht);
+				Rectangle headerSrc = new Rectangle (h_marker, 0,
+								     this.Width, col_ht);
 				// dest rect is always stable at 0,0
 				Rectangle headerDst = new Rectangle (0, 0, this.Width, col_ht);
 

@@ -22,6 +22,9 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //
+// Todo:
+//     - Drawing of focus rectangle
+//
 // $Revision: 1.8 $
 // $Modtime: $
 // $Log: ListViewItem.cs,v $
@@ -70,9 +73,9 @@ namespace System.Windows.Forms
 	public class ListViewItem : ICloneable, ISerializable
 	{
 		#region Instance Variables
-		private Color back_color = ThemeEngine.Current.ColorWindow;
-		private Font font = ThemeEngine.Current.DefaultFont;
-		private Color fore_color = ThemeEngine.Current.ColorWindowText;
+		private Color back_color = Color.Empty;
+		private Font font = null;
+		private Color fore_color = Color.Empty;
 		private int image_index = -1;
 		private bool is_checked = false;
 		private bool is_focused = false;
@@ -80,7 +83,6 @@ namespace System.Windows.Forms
 		private int state_image_index = -1;
 		private ListViewSubItemCollection sub_items;
 		private object tag;
-		private string text;
 		private bool use_item_style = true;
 
 		// internal variables
@@ -98,6 +100,7 @@ namespace System.Windows.Forms
 		public ListViewItem ()
 		{
 			this.sub_items = new ListViewSubItemCollection (this);
+			this.sub_items.Add ("");
 		}
 
 		public ListViewItem (string text) : this (text, -1)
@@ -117,9 +120,9 @@ namespace System.Windows.Forms
 
 		public ListViewItem (string text, int imageIndex)
 		{
-			this.text = text;
 			this.image_index = imageIndex;
 			this.sub_items = new ListViewSubItemCollection (this);
+			this.sub_items.Add (text);
 		}
 
 		public ListViewItem (string [] items, int imageIndex)
@@ -144,7 +147,14 @@ namespace System.Windows.Forms
 		#region Public Instance Properties
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color BackColor {
-			get { return back_color; }
+			get {
+				if (! back_color.IsEmpty)
+					return back_color;
+				else if (owner != null)
+					return owner.BackColor;
+				else
+					return ThemeEngine.Current.ColorWindow;
+			}
 			set { this.back_color = value; }
 		}
 
@@ -172,13 +182,27 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Font Font {
-			get { return font; }
+			get {
+				if (font != null)
+					return font;
+				else if (owner != null)
+					return owner.Font;
+				else
+					return ThemeEngine.Current.DefaultFont;
+			}
 			set { font = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color ForeColor {
-			get { return fore_color; }
+			get {
+				if (! fore_color.IsEmpty)
+					return fore_color;
+				else if (owner != null)
+					return owner.ForeColor;
+				else
+					return ThemeEngine.Current.ColorWindowText;
+			}
 			set { fore_color = value; }
 		}
 
@@ -231,12 +255,22 @@ namespace System.Windows.Forms
 			set {
 				if (value != selected) {
 					selected = value;
-					if (owner != null && owner.MultiSelect) {
-						if (selected)
+
+					if (owner != null) {
+						if (owner.CanMultiselect == false &&
+						    owner.SelectedItems.Count > 0) {
+							owner.SelectedItems.Clear ();
+							owner.SelectedIndices.list.Clear ();
+						}
+						if (selected) {
 							//do we need !owner.SelectedItems.Contains (this))
 							owner.SelectedItems.list.Add (this);
-						else
+							owner.SelectedIndices.list.Add (this.Index);
+						}
+						else {
 							owner.SelectedItems.list.Remove (this);
+							owner.SelectedIndices.list.Remove (this.Index);
+						}
 					}
 				}
 			}
@@ -274,8 +308,13 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Text {
-			get { return text; }
-			set { text = value; }
+			get {
+				if (this.sub_items.Count > 0)
+					return this.sub_items [0].Text;
+				else
+					return "";
+			}
+			set { this.sub_items [0].Text = value; }
 		}
 
 		[DefaultValue (true)]
@@ -299,9 +338,9 @@ namespace System.Windows.Forms
 		public virtual object Clone ()
 		{
 			ListViewItem clone = new ListViewItem ();
-			clone.back_color = this.back_color;
-			clone.font = this.font;
-			clone.fore_color = this.fore_color;
+			clone.back_color = this.BackColor;
+			clone.font = this.Font;
+			clone.fore_color = this.ForeColor;
 			clone.image_index = this.image_index;
 			clone.is_checked = this.is_checked;
 			clone.is_focused = this.is_focused;
@@ -309,9 +348,8 @@ namespace System.Windows.Forms
 			clone.state_image_index = this.state_image_index;
 			clone.sub_items = this.sub_items;
 			clone.tag = this.tag;
-			clone.text = this.text;
 			clone.use_item_style = this.use_item_style;
-			clone.owner = this.owner;
+			clone.owner = null;
 
 			return clone;
 		}
@@ -364,7 +402,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return string.Format ("ListViewItem: {{0}}", text);
+			return string.Format ("ListViewItem: {{0}}", this.Text);
 		}
 		#endregion	// Public Instance Methods
 
@@ -401,12 +439,13 @@ namespace System.Windows.Forms
 		{
 			int item_ht;
 			Size text_size = owner.text_size;
-			checkbox_rect.Location = this.location;
-
+			
 			if (owner.CheckBoxes)
 				checkbox_rect.Size = owner.CheckBoxSize;
 			else
 				checkbox_rect = Rectangle.Empty;
+
+			checkbox_rect.Location = this.location;
 
 			switch (owner.View) {
 
@@ -435,7 +474,11 @@ namespace System.Windows.Forms
 
 				label_rect.X = icon_rect.X + icon_rect.Width;
 				label_rect.Y = icon_rect.Y;
-				label_rect.Width = text_size.Width;
+
+				if (owner.Columns.Count > 0)
+					label_rect.Width = Math.Max (text_size.Width, owner.Columns[0].Wd);
+				else
+					label_rect.Width = text_size.Width;
 
 				item_rect = entire_rect = Rectangle.Union
 					(Rectangle.Union (checkbox_rect, icon_rect), label_rect);
@@ -609,12 +652,7 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				this.list = new ArrayList ();
-				ListViewSubItem item = new ListViewSubItem (owner, owner.Text,
-									    owner.ForeColor,
-									    owner.BackColor,
-									    owner.Font);
-				this.list.Add (item);
-			}
+ 			}
 			#endregion // Public Constructors
 
 			#region Public Properties
@@ -705,13 +743,7 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
-				// don't clear if there is only one item i.e. owner
-				if (list.Count > 1) {
-					ListViewSubItem item = (ListViewSubItem) list [0];
-					list.Clear ();
-					// keep the owner
-					list.Add (item);
-				}
+				list.Clear ();
 			}
 
 			public bool Contains (ListViewSubItem item)

@@ -1,3 +1,13 @@
+2004-11-24  Ravindra <rkumar@novell.com>
+
+	* ThemeWin32Classic.cs: Fixed ListView border and checkbox
+	background drawing.
+	* ListViewItem.cs: Fixed various properties, calculations
+	and Clone() method. Fixed ListViewSubItemCollection.Clear() method.
+	* ListView.cs: Fixed calculations, BackColor, ForeColor properties
+	and some internal properties. Fixed MouseDown handler and Paint
+	method.
+
 2004-11-24  John BouAntoun <jba-mono@optusnet.com.au>
 
 	* MonthCalendar.cs: Add TitleMonth ContextMenu handling
