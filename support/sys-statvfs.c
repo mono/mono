@@ -121,7 +121,7 @@ copy_statfs (struct Mono_Posix_Statvfs *to, struct statfs *from)
   to->f_flag    = from->f_flags;
 	// from->f_fsid is an int32[2], to->f_fsid is a uint64, 
 	// so this shouldn't lose anything.
-	memcpy (&to->f_fsid, from->f_fsid, sizeof(to->f_fsid));
+	memcpy (&to->f_fsid, &from->f_fsid, sizeof(to->f_fsid));
 }
 
 static void

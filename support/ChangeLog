@@ -1,5 +1,10 @@
 2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* sys-statvfs.c: Further proving that changing code without compiling is
+	  dangerous business...  Compiler fix for OS X.
+
+2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* signal.c: Mac OS X portability fixes -- it doesn't provide sighandler_t!
 
 2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
