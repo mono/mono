@@ -1,3 +1,8 @@
+2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConfigurationSettings.cs: also cache parents when building the
+	hierarchy up. Fixes bug #51818.
+
 2003-12-09  Jackson Harper <jackson@ximian.com>
 
 	* GlobalizationConfigurationHander.cs: Make unicode encodings case

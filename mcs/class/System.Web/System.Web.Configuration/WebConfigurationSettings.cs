@@ -70,6 +70,9 @@ namespace System.Web.Configuration
 					if (machineConfigPath != null)
 						return machineConfigPath;
 
+					if (config == null)
+						Init ();
+
 					Type t = oldConfig.GetType ();
 					MethodInfo getMC = t.GetMethod ("GetMachineConfigPath",
 									privStatic);
@@ -156,8 +159,10 @@ namespace System.Web.Configuration
 
 			string wcfile = (isUpper) ? upper : (isLower) ? lower : null;
 			ConfigurationData parent = GetConfigFromFileName (dir, context);
-			if (wcfile == null)
+			if (wcfile == null || parent.FileName == wcfile) {
+				fileToConfig [dir] = parent;
 				return parent;
+			}
 
 			ConfigurationData child = new ConfigurationData (parent);
 			child.DirName = dir;
