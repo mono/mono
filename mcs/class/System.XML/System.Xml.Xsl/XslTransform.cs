@@ -176,10 +176,10 @@ namespace System.Xml.Xsl
 				writer.Write (GetStringFromDocument (resultDocument));
 				writer.Close ();
 			} finally {
-				if (xmlDocument != IntPtr.Zero);
+				if (xmlDocument != IntPtr.Zero)
 					xmlFreeDoc (xmlDocument);
 
-				if (resultDocument != IntPtr.Zero);
+				if (resultDocument != IntPtr.Zero)
 					xmlFreeDoc (resultDocument);
 
 				Cleanup ();
