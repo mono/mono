@@ -457,6 +457,15 @@ namespace System.Windows.Forms {
 			return;
 		}
 
+		internal override void EnableWindow(IntPtr handle, bool Enable) {
+			// We do nothing; On X11 SetModal is used to create modal dialogs, on Win32 this function is used (see comment there)
+		}
+
+		internal override void SetModal(IntPtr handle, bool Modal) {
+			// We need to use the Motif window manager hints to build modal stuff; see freedesktop.org
+			throw new NotImplementedException("Finish me");
+		}
+
 		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
 			// FIXME - we're not properly interpreting the clear flag, we're assuming it's always true
 			lock (xlib_lock) {
@@ -683,6 +692,8 @@ namespace System.Windows.Forms {
 				case XEventName.LeaveNotify:
 				case XEventName.ConfigureNotify:
 				case XEventName.DestroyNotify:
+				case XEventName.FocusIn:
+				case XEventName.FocusOut:
 				case XEventName.ClientMessage:
 					lock (message_queue) {
 						message_queue.Enqueue (xevent);
@@ -845,6 +856,20 @@ namespace System.Windows.Forms {
 					break;
 				}
 
+				case XEventName.FocusIn: {
+					msg.message=Msg.WM_ACTIVATE;
+					msg.wParam=(IntPtr)WindowActiveFlags.WA_ACTIVE;
+					msg.lParam=IntPtr.Zero;
+					break;
+				}
+
+				case XEventName.FocusOut: {
+					msg.message=Msg.WM_ACTIVATE;
+					msg.wParam=(IntPtr)WindowActiveFlags.WA_INACTIVE;
+					msg.lParam=IntPtr.Zero;
+					break;
+				}
+
 				case XEventName.Expose: {
 					msg.message=Msg.WM_PAINT;
 					msg.wParam=IntPtr.Zero;
@@ -918,6 +943,9 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		internal override bool SetTopmost(IntPtr hWnd, bool Enabled) {
+			return false;
+		}
 
 		internal override bool Text(IntPtr handle, string text) {
 #if notdef
@@ -1147,10 +1175,10 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Methods
 
 		internal struct X11ToWin32KeyMapping {
-			internal XKeySym			X11Key;
-			internal XplatUIWin32.VirtualKeys	Win32Key;	
+			internal XKeySym	X11Key;
+			internal VirtualKeys	Win32Key;	
 
-			internal X11ToWin32KeyMapping (XKeySym x11, XplatUIWin32.VirtualKeys win32)
+			internal X11ToWin32KeyMapping (XKeySym x11, VirtualKeys win32)
 			{
 				X11Key = x11;
 				Win32Key = win32;
@@ -1161,28 +1189,28 @@ namespace System.Windows.Forms {
 		static readonly X11ToWin32KeyMapping[] KeyMapping = new X11ToWin32KeyMapping[] 
 		{
 			/* Cursor navigation*/
-			new X11ToWin32KeyMapping (XKeySym.XK_Left, XplatUIWin32.VirtualKeys.VK_LEFT),
-			new X11ToWin32KeyMapping (XKeySym.XK_Right, XplatUIWin32.VirtualKeys.VK_RIGHT),
-			new X11ToWin32KeyMapping (XKeySym.XK_Up, XplatUIWin32.VirtualKeys.VK_UP),
-			new X11ToWin32KeyMapping (XKeySym.XK_Down, XplatUIWin32.VirtualKeys.VK_DOWN),
+			new X11ToWin32KeyMapping (XKeySym.XK_Left, VirtualKeys.VK_LEFT),
+			new X11ToWin32KeyMapping (XKeySym.XK_Right, VirtualKeys.VK_RIGHT),
+			new X11ToWin32KeyMapping (XKeySym.XK_Up, VirtualKeys.VK_UP),
+			new X11ToWin32KeyMapping (XKeySym.XK_Down, VirtualKeys.VK_DOWN),
 
-			new X11ToWin32KeyMapping (XKeySym.XK_Page_Up, XplatUIWin32.VirtualKeys.VK_PRIOR),
-			new X11ToWin32KeyMapping (XKeySym.XK_Page_Down, XplatUIWin32.VirtualKeys.VK_NEXT),
-			new X11ToWin32KeyMapping (XKeySym.XK_End, XplatUIWin32.VirtualKeys.VK_END),
-			new X11ToWin32KeyMapping (XKeySym.XK_Home, XplatUIWin32.VirtualKeys.VK_HOME),
+			new X11ToWin32KeyMapping (XKeySym.XK_Page_Up, VirtualKeys.VK_PRIOR),
+			new X11ToWin32KeyMapping (XKeySym.XK_Page_Down, VirtualKeys.VK_NEXT),
+			new X11ToWin32KeyMapping (XKeySym.XK_End, VirtualKeys.VK_END),
+			new X11ToWin32KeyMapping (XKeySym.XK_Home, VirtualKeys.VK_HOME),
 
 			/* Modifiers*/
-			new X11ToWin32KeyMapping (XKeySym.XK_Shift_R, XplatUIWin32.VirtualKeys.VK_SHIFT),
-			new X11ToWin32KeyMapping (XKeySym.XK_Shift_L, XplatUIWin32.VirtualKeys.VK_SHIFT),
-			new X11ToWin32KeyMapping (XKeySym.XK_Control_R, XplatUIWin32.VirtualKeys.VK_CONTROL),
-			new X11ToWin32KeyMapping (XKeySym.XK_Control_L, XplatUIWin32.VirtualKeys.VK_CONTROL),			
+			new X11ToWin32KeyMapping (XKeySym.XK_Shift_R, VirtualKeys.VK_SHIFT),
+			new X11ToWin32KeyMapping (XKeySym.XK_Shift_L, VirtualKeys.VK_SHIFT),
+			new X11ToWin32KeyMapping (XKeySym.XK_Control_R, VirtualKeys.VK_CONTROL),
+			new X11ToWin32KeyMapping (XKeySym.XK_Control_L, VirtualKeys.VK_CONTROL),			
 
 			/* Others */
-			new X11ToWin32KeyMapping (XKeySym.XK_Return, XplatUIWin32.VirtualKeys.VK_RETURN),
-			new X11ToWin32KeyMapping (XKeySym.XK_Tab, XplatUIWin32.VirtualKeys.VK_TAB),
-			new X11ToWin32KeyMapping (XKeySym.XK_Menu, XplatUIWin32.VirtualKeys.VK_MENU),
-			new X11ToWin32KeyMapping (XKeySym.XK_BackSpace, XplatUIWin32.VirtualKeys.VK_BACK),
-			new X11ToWin32KeyMapping (XKeySym.XK_Clear, XplatUIWin32.VirtualKeys.VK_CLEAR),
+			new X11ToWin32KeyMapping (XKeySym.XK_Return, VirtualKeys.VK_RETURN),
+			new X11ToWin32KeyMapping (XKeySym.XK_Tab, VirtualKeys.VK_TAB),
+			new X11ToWin32KeyMapping (XKeySym.XK_Menu, VirtualKeys.VK_MENU),
+			new X11ToWin32KeyMapping (XKeySym.XK_BackSpace, VirtualKeys.VK_BACK),
+			new X11ToWin32KeyMapping (XKeySym.XK_Clear, VirtualKeys.VK_CLEAR),
 			
 		};
 
