@@ -1,3 +1,10 @@
+2003-07-17  Peter Williams  <peter@newton.cx>
+
+	* build/profiles/default.make: Try to make this smarter so
+	that we can build on Windows. Specifically, don't require
+	the mono runtime. Combined with the corlib $(BOOT_COMPILE) change,
+	this should make corlib build out of the box, I think.
+
 2003-07-16  Peter Williams  <peter@newton.cx>
 
 	A whole passel of build system changes. Doc updates:

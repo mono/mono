@@ -9,7 +9,10 @@ PLATFORM_RUNTIME =
 
 BOOTSTRAP_MCS = csc.exe
 MCS = $(BOOTSTRAP_MCS)
-corlib = mscorlib.dll
+
+# Never mind -- link our libraries against our corlib
+# corlib = mscorlib.dll
+corlib = corlib.dll
 
 PLATFORM_MAKE_CORLIB_CMP = yes
 PLATFORM_TWEAK_CORLIB_SOURCES=cat - corlib.dll.win32-excludes |sort |uniq -u

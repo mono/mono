@@ -34,8 +34,6 @@ cmp_flags = /r:$(real_corlib) $(corlib_flags)
 
 all-local: $(corlib)
 
-# should we install cmplib? sure!
-
 install-local: $(corlib)
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib
@@ -72,7 +70,7 @@ dist-local: dist-default $(test_response)
 # plain ol corlib
 
 $(corlib): $(makefrag) $(response) $(stampfile)
-	$(CSCOMPILE) $(LIBRARY_FLAGS) $(corlib_flags) /target:library /out:$@ @$(response)
+	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(corlib_flags) /target:library /out:$@ @$(response)
 
 $(response): $(sourcefile)
 	@echo Creating $@ ...
@@ -101,7 +99,7 @@ endif
 # corlib_cmp
 
 $(cmplib): $(cmp_makefrag) $(cmp_response) $(cmp_stampfile)
-	$(CSCOMPILE) $(LIBRARY_FLAGS) $(cmp_flags) /target:library /out:$@ @$(cmp_response)
+	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(cmp_flags) /target:library /out:$@ @$(cmp_response)
 
 $(cmp_response): $(response) corlib_cmp.dll.excludes
 	@echo Creating $@ ...
@@ -120,7 +118,12 @@ $(cmp_makefrag): $(cmp_response)
 	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
 	@rm -rf $@.new
 
--include $(cmp_makefrag)
+# Since we make corlib_cmp on demand, there isn't a real need
+# to have full dep tracking for it. Also, the generation of this
+# file is busted on Win32 ('sort' seems to mess up line endings),
+# leading to a broken build.
+#
+# -include $(cmp_makefrag)
 
 ifndef HAVE_CMP_MAKEFRAG
 $(cmp_stampfile):
