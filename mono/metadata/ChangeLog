@@ -1,3 +1,8 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* tabledefs.h: Added new security actions defined in 2.0:
+	LinkDemandChoice, InheritanceDemandChoice and DemandChoice.
+
 2004-09-16  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* threads.c: Fixed SET_CURRENT_OBJECT macros, they were ignoring the
