@@ -599,8 +599,8 @@ namespace System.Drawing {
 		
 		public override string ToString ()
 		{
-			return String.Format ("[{0},{1},{2},{3}]", 
-					      x, y, width, height);
+			return String.Format ("{{X={0},Y={1},Width={2},Height={3}}}",
+						 x, y, width, height);
 		}
 
 	}

@@ -1,16 +1,18 @@
 //
 // System.Drawing.RectangleConverter.cs
 //
-// Author:
+// Authors:
 //   	Dennis Hayes (dennish@Raytek.com)
-//	Jordi Mas (jordi@ximian.com)	
+//	Jordi Mas (jordi@ximian.com)
+//	Ravindra (rkumar@novell.com)
 //	
-// (C) 2002 Ximian, Inc
+// Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
+
 using System;
 using System.ComponentModel;
 using System.Collections;
-using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 
 namespace System.Drawing
@@ -20,60 +22,86 @@ namespace System.Drawing
 	/// </summary>
 	public class RectangleConverter : TypeConverter
 	{
-		[MonoTODO]	
 		public RectangleConverter ()
 		{
-						
 		}
 		
-		[MonoTODO]	
-		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom (ITypeDescriptorContext context,
+						     Type sourceType)
 		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]	
-		public override bool CanConvertTo (ITypeDescriptorContext context,  Type destinationType)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]	
-		public override object ConvertFrom(ITypeDescriptorContext context,  CultureInfo culture,  object value)
-		{
-			throw new NotImplementedException ();
+			if (sourceType == typeof (string))
+				return true;
+
+			return base.CanConvertFrom (context, sourceType);
 		}
 
-		[MonoTODO]	
-		public override object ConvertTo(ITypeDescriptorContext context,  CultureInfo culture,  object value,   Type destinationType)
+		public override bool CanConvertTo (ITypeDescriptorContext context,
+						   Type destinationType)
 		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]	
-		public override object CreateInstance (ITypeDescriptorContext context, IDictionary propertyValues)
-		{
-			throw new NotImplementedException ();
+			if (destinationType == typeof (string))
+				return true;
+
+			return base.CanConvertTo (context, destinationType);
 		}
 
-		[MonoTODO]	
+		public override object ConvertFrom (ITypeDescriptorContext context,
+						    CultureInfo culture,
+						    object value)
+		{
+			string s = value as string;
+			if (s == null)
+				return base.ConvertFrom (context, culture, value);
+
+			string [] subs = s.Split (',');
+			if (subs.Length != 4)
+				throw new ArgumentException ("Failed to parse Text(" + s + ") expected text in the format \"x,y,Width,Height.\"");
+
+			int x = Int32.Parse (subs [0]);
+			int y = Int32.Parse (subs [1]);
+			int width = Int32.Parse (subs [2]);
+			int height = Int32.Parse (subs [3]);
+
+			return new Rectangle (x, y, width, height);
+		}
+
+		public override object ConvertTo (ITypeDescriptorContext context,
+						  CultureInfo culture,
+						  object value,
+						  Type destinationType)
+		{
+			if ((destinationType == typeof (string)) && (value is Rectangle))
+				return value.ToString ();
+			
+			return base.ConvertTo (context, culture, value, destinationType);
+		}
+
+		public override object CreateInstance (ITypeDescriptorContext context,
+						       IDictionary propertyValues)
+		{
+			int x = (int) propertyValues ["X"];
+			int y = (int) propertyValues ["Y"];
+			int width = (int) propertyValues ["Width"];
+			int height = (int) propertyValues ["Height"];
+
+			return new Rectangle (x, y, width, height);
+		}
+
 		public override bool GetCreateInstanceSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
-		
-		[MonoTODO]	
-		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,  object value, Attribute[] attributes)
+		[MonoTODO]
+		public override PropertyDescriptorCollection GetProperties (
+							ITypeDescriptorContext context,
+							object value, Attribute[] attributes)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]	
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
-
 	}
 }

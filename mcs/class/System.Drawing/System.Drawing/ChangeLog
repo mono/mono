@@ -1,5 +1,12 @@
 2004-04-22  Ravindra <rkumar@novell.com>
 
+	* RectangleConverter.cs: Implemented. Also changed file format
+	dos2unix.
+	* Rectangle.cs: Fixed ToString method.
+	* RectangleF.cs: Fixed ToString method.
+
+2004-04-22  Ravindra <rkumar@novell.com>
+
 	* SizeConverter.cs: Implemented some of the functions.
 	* PointConveter.cs: Implemented.
 	* gdipFunctions.cs: Corrected one typo.
@@ -10,7 +17,7 @@
 	* gdipFunctions.cs: Fix StreamGetBytesImpl to handle
 	returning portions of the peek buffer back.  Fixes #57379.
 
-2004-04-41 Peter Bartok <pbartok@novell.com>
+2004-04-21 Peter Bartok <pbartok@novell.com>
    * Font.cs: Implemented Font.FromHfont method
    * gdipStructs.cs: fixed sign for LOGFONTA lfHeight member
    * gdipFunctions.cs: Added imports for functions required to support
