@@ -340,6 +340,11 @@ namespace Mono.CSharp {
 
 			ParameterData pd = Invocation.GetParameterData (constructor);
 
+			int group_in_params_array = Int32.MaxValue;
+			if (pd.ParameterModifier (pd.Count-1) == Parameter.Modifier.PARAMS){
+				group_in_params_array = pd.Count-1;
+			}
+			
 			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) pos_args [j];
 				
@@ -347,8 +352,37 @@ namespace Mono.CSharp {
 					Error_AttributeArgumentNotValid (Location);
 					return null;
 				}
+
+				if (j < group_in_params_array)
+					continue;
+				
+				if (j == group_in_params_array){
+					object v = pos_values [j];
+					int count = pos_arg_count - j;
+
+					object [] array = new object [count];
+					pos_values [j] = array;
+					array [0] = v;
+				} else {
+					object [] array = (object []) pos_values [group_in_params_array];
+
+					array [j - group_in_params_array] = pos_values [j];
+				}
 			}
-			
+
+			//
+			// Adjust the size of the pos_values if it had params
+			//
+			if (group_in_params_array != Int32.MaxValue){
+				int argc = group_in_params_array+1;
+				object [] new_pos_values = new object [argc];
+
+				for (int p = 0; p < argc; p++)
+					new_pos_values [p] = pos_values [p];
+				pos_values = new_pos_values;
+			}
+
+			try {
 				if (named_args.Count > 0) {
 					PropertyInfo [] prop_info_arr = new PropertyInfo [prop_infos.Count];
 					FieldInfo [] field_info_arr = new FieldInfo [field_infos.Count];
@@ -369,7 +403,6 @@ namespace Mono.CSharp {
 				else
 					cb = new CustomAttributeBuilder (
 						(ConstructorInfo) constructor, pos_values);
-			try {
 			} catch (NullReferenceException) {
 				// 
 				// Don't know what to do here

@@ -1,3 +1,10 @@
+2003-05-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs (Attribute.Resolve): Params attributes are encoded
+	by creating an array at the point where the params starts and
+	putting all those arguments there, then adjusting the size of the
+	array.
+
 2003-05-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (New.AddressOf): Implement interface
