@@ -332,9 +332,10 @@ namespace MonoTests.System.IO
 		
 		public void TestGetPathRoot ()
 		{
-			string current = Directory.GetCurrentDirectory ();
+			//string current = Directory.GetCurrentDirectory ();
+			string current = @"J:\Some\Strange Directory\Name";
 			string pathRoot = Path.GetPathRoot (current);
-			AssertEquals ("GetPathRoot #01", "C:\\", pathRoot);
+			AssertEquals ("GetPathRoot #01", "J:\\", pathRoot);
 
 			pathRoot = Path.GetPathRoot ("hola");
 			AssertEquals ("GetPathRoot #02", String.Empty, pathRoot);
