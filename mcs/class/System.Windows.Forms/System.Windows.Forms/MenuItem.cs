@@ -25,27 +25,36 @@ namespace System.Windows.Forms {
 	/// </summary>
 
 	public class MenuItem : Menu {
+		int mergeOrder;
+		MenuMerge mergeType;
+		Shortcut  shortcut;
+		bool      mdiList;
 		//
 		// - Constructor
 		//
 		public MenuItem() : base(null) {
+			shortcut = Shortcut.None;
+			mergeType = MenuMerge.Add; // FIXME: what is default
+			mdiList = false;
 		}
 
 		public MenuItem(string s) : this(){
 			Text = s;
 		}
 
-		public MenuItem(string s, EventHandler e) : this() {
-			Text = s;
+		public MenuItem(string s, EventHandler e) : this( s ) {
 			Click += e;
 		}
 
 		public MenuItem(string s, MenuItem[] items) : base(items) {
 			Text = s;
+			shortcut = Shortcut.None;
+			mergeType = MenuMerge.Add; // FIXME: what is default
+			mdiList = false;
 		}
 
-		public MenuItem(string s, EventHandler e, Shortcut sc) : this() {
-			throw new NotImplementedException ();
+		public MenuItem(string s, EventHandler e, Shortcut sc) : this(s, e) {
+			shortcut = sc;
 		}
 
 		public MenuItem(MenuMerge mm, int i, Shortcut sc, string s, EventHandler e, EventHandler e1, EventHandler e2, MenuItem[] items)  : base(items){
@@ -276,32 +285,35 @@ namespace System.Windows.Forms {
 		}
 
 		public bool MdiList {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return mdiList;	}
 			set {
-				throw new NotImplementedException ();
+				if ( mdiList != value ) {
+					MainMenu mainMenu = GetMainMenu();
+					if ( mainMenu != null ) {
+						Form form = mainMenu.GetForm ( );
+						if ( form != null )
+							form.replaceMdiWindowMenu ( value ? Handle : IntPtr.Zero );
+					}
+					mdiList = value;
+				}
 			}
 		}
 
 		public int MergeOrder {
-
 			get {
-				throw new NotImplementedException ();
+				return mergeOrder;
 			}
 			set {
-				throw new NotImplementedException ();
+				mergeOrder = value;;
 			}
 		}
 
 		public MenuMerge MergeType {
-
 			get {
-				throw new NotImplementedException ();
+				return mergeType;
 			}
 			set {
-				throw new NotImplementedException ();
+				mergeType = value;
 			}
 		}
 

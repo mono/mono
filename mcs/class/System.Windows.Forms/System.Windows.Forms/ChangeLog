@@ -1,4 +1,13 @@
 2003-04-11 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs
+	* Form.cs
+	* MainMenu.cs
+	* Menu.cs
+	* MenuItem.cs
+	* NativeWindow.cs
+	* win32functions.cs : some changes related to implementation of MDI interface
+
+2003-04-11 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : init bounds in ctor, invisible parking window
 	* TrackBar.cs 
 	* ProgressBar.cs.cs 

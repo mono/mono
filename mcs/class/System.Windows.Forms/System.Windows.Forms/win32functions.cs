@@ -652,7 +652,7 @@ namespace System.Windows.Forms{
 
 		internal static int LOW_ORDER(int param) 
 		{
-			return (param & 0xffff);
+			return (ushort)param /*(param & 0xffff)*/;
 		}
 
 		internal static int HIGH_ORDER(int param) 
@@ -741,7 +741,8 @@ namespace System.Windows.Forms{
 			string lpWindowName, uint dwStyle, 
 			int x, int y, int nWidth, int nHeight,
 			IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance,
-			ref object lpParam);
+			[ MarshalAs( UnmanagedType.AsAny )]
+			object lpParam);
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 

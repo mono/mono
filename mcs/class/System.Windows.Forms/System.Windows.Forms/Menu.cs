@@ -36,7 +36,19 @@ namespace System.Windows.Forms  {
 
 		[MonoTODO]
 		public MainMenu GetMainMenu() {
-			throw new NotImplementedException();
+			if ( parent_ == null )
+				return this as MainMenu;
+
+			Menu parent = parent_;
+
+			while ( parent != null ) {
+				if ( parent.parent_ != null )
+					parent = parent.parent_;
+				else
+					break;
+			}
+
+			return parent as MainMenu;
 		}
 
 		[MonoTODO]
@@ -125,9 +137,16 @@ namespace System.Windows.Forms  {
 		}
 
 		public MenuItem MdiListItem {
-
 			get {
-				throw new NotImplementedException();
+				MenuItem mdiListItem = null;
+				foreach( MenuItem mi in MenuItems) {
+					if ( mi.MdiList )
+						return mi;
+
+					mdiListItem = mi.MdiListItem;
+					if ( mdiListItem != null ) break;
+				}
+				return mdiListItem;
 			}
 		}
 

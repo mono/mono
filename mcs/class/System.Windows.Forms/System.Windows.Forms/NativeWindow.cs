@@ -97,19 +97,18 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				System.Console.WriteLine("Creating window {0}", cp.ClassName);
-				object lParam = cp.Param;
 				windowHandle = Win32.CreateWindowEx (
 					(uint) cp.ExStyle, cp.ClassName,
 					cp.Caption,(uint) cp.Style,
 					cp.X, cp.Y, cp.Width, cp.Height,
 					(IntPtr) cp.Parent, (IntPtr) 0,
-					(IntPtr) 0, ref lParam);
+					(IntPtr) 0, cp.Param);
 
 				if (windowHandle != (IntPtr) 0) {
 					windowCollection.Add (windowHandle, this);
 					if( (cp.Style & (int)WindowStyles.WS_CHILD) != 0) {
-						Win32.SetWindowLong(windowHandle, GetWindowLongFlag.GWL_ID, (int)windowHandle);
+						//Win32.SetWindowLong(windowHandle, GetWindowLongFlag.GWL_ID, (int)windowHandle);
+						// it was breaking working of MDI interface
 					}
 				}
 				//debug

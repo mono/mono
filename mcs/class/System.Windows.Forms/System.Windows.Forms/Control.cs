@@ -2581,7 +2581,7 @@
 					CallControlWndProc(ref m);
 					break;
     			case Msg.WM_WINDOWPOSCHANGED:
-    				OnResize (eventArgs);
+    				//OnResize (eventArgs);
     				CallControlWndProc(ref m);
     			break;
     			case Msg.WM_STYLECHANGED:

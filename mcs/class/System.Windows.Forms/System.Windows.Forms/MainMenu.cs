@@ -23,7 +23,7 @@ namespace System.Windows.Forms {
 	/// </summary>
 
 	public class MainMenu : Menu  {
-
+		Form form_;
 		//
 		//  --- Constructors
 		//
@@ -51,13 +51,18 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Form GetForm()
 		{
-			throw new NotImplementedException();
+			return form_;
 		}
+
 		[MonoTODO]
 		public override string ToString() 
 		{
 			//FIXME: Replace with real to string.
 			return base.ToString();
+		}
+
+		internal void setForm ( Form form ) {
+			form_ = form;
 		}
 
 		//

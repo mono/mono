@@ -320,7 +320,10 @@
 
 				private void assignMenu()
 				{
-					if( Handle != IntPtr.Zero ) {
+					if ( mainMenu_ != null )
+						mainMenu_.setForm ( this );
+
+					if( IsHandleCreated ) {
 					// FIXME: If Form's window has no style for menu,  probably, better to add it
 					// if menu have to be removed, remove the style.
 					// Attention to the repainting.
@@ -343,7 +346,7 @@
     			}
     			set {
     				mainMenu_ = value;
-						assignMenu();
+				assignMenu();
     			}
     		}
 
@@ -530,7 +533,9 @@
 	  		//Compact Framework
     		public void Close ()
     		{
-    			Win32.DestroyWindow (Handle);
+    			//Win32.DestroyWindow (Handle);
+			if ( IsHandleCreated )
+				Win32.SendMessage ( Handle, Msg.WM_CLOSE, 0, 0 );
     		}
     
     		public void LayoutMdi (MdiLayout value)
@@ -843,15 +848,20 @@
 
  			protected override void OnWmCommand (ref Message m)
 			{
-				uint wNotifyCode = (uint) ( ((uint)m.WParam.ToInt32() & 0xFFFF0000) >> 16);
-				uint wID = (uint)(m.WParam.ToInt32() & 0x0000FFFFL);
+				int wNotifyCode = (int)m.HiWordWParam;
+				int wID = (int)m.LoWordWParam;
+
 				if( m.LParam.ToInt32() == 0) {
 					if( wNotifyCode == 0) {
 						// Menu
-						m.Result = OnMenuCommand(wID);
+						m.Result = OnMenuCommand( (uint)wID);
 					}
 					else if( wNotifyCode == 1) {
 						// Accelerator
+						m.Result = (IntPtr)1;
+					}
+					else {
+						// just pass it to DefWindowProc
 						m.Result = (IntPtr)1;
 					}
 				}
@@ -1032,8 +1042,14 @@
 				mdiClientWnd = new MdiClient ( this );
 				Controls.Add ( mdiClientWnd );
 				mdiClientWnd.Dock = DockStyle.Fill;
-				if ( IsHandleCreated )
+				if ( IsHandleCreated ) {
 					mdiClientWnd.CreateControl ( );
+					if ( Menu != null ) {
+						MenuItem mdiListItem = Menu.MdiListItem;
+						if ( mdiListItem != null ) 
+							replaceMdiWindowMenu ( mdiListItem.Handle );
+					} 
+				}
 			}
 		}
 
@@ -1061,6 +1077,20 @@
 			get { return this.mdiClientWnd; }
 		}
 
+		internal void replaceMdiWindowMenu ( IntPtr hMenu ) {
+			Control mdiClient = MdiClientControl;
+			if ( mdiClient != null && mdiClient.Handle != IntPtr.Zero )
+				if ( hMenu != IntPtr.Zero )
+					Win32.SendMessage ( mdiClient.Handle, Msg.WM_MDISETMENU, 0, hMenu.ToInt32 ( ) );
+				else
+					Win32.SendMessage ( mdiClient.Handle, Msg.WM_MDISETMENU, 1, 0 );
+					// this probably won't work on Wine anyway
+					// because such behaviour is not impl. there
+
+			if ( IsHandleCreated )
+				Win32.DrawMenuBar ( Handle );
+				
+		}
     		//sub class
     		//System.Windows.Forms.Form.ControlCollection.cs
     		//
