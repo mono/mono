@@ -21,7 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//      Jackson Harper  jackson@ximian.com
+//	Jackson Harper	jackson@ximian.com
 //
 
 
@@ -78,7 +78,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-                [MonoTODO]
+		[MonoTODO]
 		public bool IsBinding {
 			get {
 				return false;
@@ -148,6 +148,11 @@ namespace System.Windows.Forms {
 		{
 			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, false);
 			data = pd.GetValue (manager.Current);
+		}
+
+		internal void UpdateIsBinding ()
+		{
+			PushData ();
 		}
 
 		#region Events

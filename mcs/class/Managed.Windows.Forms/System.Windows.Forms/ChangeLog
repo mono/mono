@@ -1,3 +1,11 @@
+2005-02-25  Jackson Harper  <jackson@ximian.com>
+
+	* PropertyManager.cs: Implement editing features
+	* CurrencyManager.cs: 
+	* Binding.cs: First attempt at UpdateIsBinding
+	* BindingManagerBase.cs: Call UpdateIsBinding before
+	pushing/pulling data.
+
 2005-02-25  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* MenuAPI.cs: Respect disabled items

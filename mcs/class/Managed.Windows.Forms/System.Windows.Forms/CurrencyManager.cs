@@ -120,6 +120,7 @@ namespace System.Windows.Forms {
 			if (editable == null)
 				return;
 			editable.CancelEdit ();
+			OnItemChanged (new ItemChangedEventArgs (Position));
 		}
 		
 		public override void EndCurrentEdit ()
@@ -140,6 +141,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		protected virtual void OnItemChanged (ItemChangedEventArgs e)
+		{
+			PushData ();
+
+			if (ItemChanged != null)
+				ItemChanged (this, e);
+		}
+
 		protected internal override string GetListName (ArrayList accessors)
 		{
 			if (list is ITypedList) {
@@ -154,7 +163,19 @@ namespace System.Windows.Forms {
 		[MonoTODO ("Not totally sure how this works, its doesn't seemt to do a pull/push like i originally assumed")]
 		protected override void UpdateIsBinding ()
 		{
+			UpdateItem ();
+
+			foreach (Binding binding in Bindings)
+				binding.UpdateIsBinding ();
 		}
+
+		private void UpdateItem ()
+		{
+			// Probably should be validating or something here
+			EndCurrentEdit ();
+		}
+
+		public event ItemChangedEventHandler ItemChanged;
 	}
 }
 

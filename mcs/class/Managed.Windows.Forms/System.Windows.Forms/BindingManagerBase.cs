@@ -21,7 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//      Jackson Harper  jackson@ximian.com
+//	Jackson Harper	jackson@ximian.com
 //
 
 
@@ -106,6 +106,7 @@ namespace System.Windows.Forms {
 		{
 			pulling_data = true;
 			try {
+				UpdateIsBinding ();
 				foreach (Binding binding in Bindings)
 					binding.PullData ();
 			} finally {
@@ -118,6 +119,7 @@ namespace System.Windows.Forms {
 			if (pulling_data)
 				return;
 
+			UpdateIsBinding ();
 			foreach (Binding binding in Bindings)
 				binding.PushData ();
 		}

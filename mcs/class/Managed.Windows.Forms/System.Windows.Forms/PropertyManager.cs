@@ -65,14 +65,24 @@ namespace System.Windows.Forms {
 			throw new NotSupportedException ("AddNew is not supported for property to property binding");
 		}
 
-		[MonoTODO]
 		public override void CancelCurrentEdit ()
 		{
+			IEditableObject editable = data_source as IEditableObject;
+			if (editable == null)
+				return;
+			editable.CancelEdit ();
+
+			PushData ();
 		}
 
-		[MonoTODO]
 		public override void EndCurrentEdit ()
 		{
+			PullData ();
+
+			IEditableObject editable = data_source as IEditableObject;
+			if (editable == null)
+				return;
+			editable.EndEdit ();
 		}
 
 		public override PropertyDescriptorCollection GetItemProperties ()
