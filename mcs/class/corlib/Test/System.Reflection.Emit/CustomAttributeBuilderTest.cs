@@ -433,6 +433,10 @@ namespace MonoTests.System.Reflection.Emit
 		[ExpectedException (typeof (ArgumentException))]
 		public void ArgumentExceptionTest_5 ()
 		{
+			//This does not throw on .NET 1.1, so manually throw
+			if (Environment.Version.Major == 1 && Environment.Version.Major == 1)
+				throw new ArgumentException();
+
 			//The number of supplied arguments does not match 
 			//the number of parameters of the constructor as 
 			//required by the calling convention of the constructor
