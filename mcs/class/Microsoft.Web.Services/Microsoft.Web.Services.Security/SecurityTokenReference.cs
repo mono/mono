@@ -6,14 +6,6 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
-//
 
 using System;
 using System.Security.Cryptography.Xml;
@@ -26,16 +18,16 @@ using Microsoft.Web.Services.Xml;
 namespace Microsoft.Web.Services.Security {
 
 	public class SecurityTokenReference : KeyInfoClause, IXmlElement {
+// TODO WSE2 public class SecurityTokenReference : SecurityTokenReferenceType
 
 		private KeyIdentifier kid;
 		private string reference;
 
-		public SecurityTokenReference () 
-		{
-		}
+		public SecurityTokenReference () : base () {}
 
-		public SecurityTokenReference (XmlElement element) 
+		public SecurityTokenReference (XmlElement element) : base ()
 		{
+			LoadXml (element);
 		}
 
 		public KeyIdentifier KeyIdentifier {
@@ -48,25 +40,51 @@ namespace Microsoft.Web.Services.Security {
 			set { reference = value; }
 		}
 
-		public override XmlElement GetXml() 
+		// note: old format used by S.S.C.Xml
+		public override XmlElement GetXml () 
 		{
-			// TODO
-			return null;
+			return GetXml (new XmlDocument ());
 		}
 
 		public XmlElement GetXml (XmlDocument document) 
 		{
 			if (document == null)
 				throw new ArgumentNullException ("document");
-			// TODO
-			return null;
+
+			XmlElement str = document.CreateElement (WSSecurity.Prefix, WSSecurity.ElementNames.SecurityTokenReference, WSSecurity.NamespaceURI);
+			if (kid != null)
+				str.AppendChild (kid.GetXml (document));
+			if (reference != null) {
+				XmlAttribute uri = document.CreateAttribute (WSSecurity.AttributeNames.Uri);
+				uri.InnerText = "#" + reference;
+				XmlElement r = document.CreateElement (WSSecurity.Prefix, WSSecurity.ElementNames.Reference, WSSecurity.NamespaceURI);
+				r.Attributes.Append (uri);
+				str.AppendChild (r);
+			}
+			return str;
 		}
 
 		public override void LoadXml (XmlElement element) 
 		{
-			if ((element.LocalName != "") || (element.NamespaceURI != ""))
+			if (element == null)
+				throw new ArgumentNullException ("element");
+			if ((element.LocalName != WSSecurity.ElementNames.SecurityTokenReference) || (element.NamespaceURI != WSSecurity.NamespaceURI))
 				throw new System.ArgumentException ("invalid LocalName or NamespaceURI");
-			// TODO
+
+			XmlNodeList xnl = element.GetElementsByTagName (WSSecurity.ElementNames.KeyIdentifier, WSSecurity.NamespaceURI);
+			if ((xnl != null) && (xnl.Count == 1)) {
+				kid = new KeyIdentifier ((xnl [0] as XmlElement));
+			}
+
+			xnl = element.GetElementsByTagName (WSSecurity.ElementNames.Reference, WSSecurity.NamespaceURI);
+			if ((xnl != null) && (xnl.Count == 1)) {
+				XmlAttribute uri = xnl [0].Attributes [WSSecurity.AttributeNames.Uri];
+				if (uri != null) {
+					reference = uri.InnerText;
+					if (reference [0] == '#')
+						reference = reference.Substring (1);
+				}
+			}
 		}
 	}
 }
