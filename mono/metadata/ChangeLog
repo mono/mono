@@ -1,3 +1,11 @@
+2004-12-01  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h (MonoGenericInst): New structure.
+	(MonoGenericClass): Replaced `type_argc', `type_argv' and
+	`is_open' with `MonoGenericInst *inst'.
+	(MonoGenericMethod): Replaced `mtype_argc', `mtype_argv' and
+	`is_open' with `MonoGenericInst *inst'.
+
 2004-11-30  Martin Baulig  <martin@ximian.com>
 
 	Generics API cleanup: renamed MonoGenericInst -> MonoGenericClass.
