@@ -17,6 +17,7 @@ using System.Collections;
 using System.Security;
 using System.Security.Permissions;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace System
 {
@@ -251,13 +252,55 @@ namespace System
 		/// </summary>
 		public static string ExpandEnvironmentVariables (string name)
 		{
-			IDictionary dict = Environment.GetEnvironmentVariables ();
-			foreach (DictionaryEntry de in dict) {
-				string var = String.Concat ("%", de.Key, "%");
-				string val = (string) de.Value;
-				name = name.Replace (var, val);
-			}
-			return name;
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			int off1 = name.IndexOf ('%');
+			if (off1 == -1)
+				return name;
+
+			int len = name.Length;
+			int off2 = 0;
+			if (off1 == len - 1 || (off2 = name.IndexOf ('%', off1 + 1)) == -1)
+				return name;
+
+			PlatformID platform = Platform;
+			StringBuilder result = new StringBuilder ();
+			result.Append (name, 0, off1);
+			do {
+				Hashtable tbl = null;
+				string var = name.Substring (off1 + 1, off2 - off1 - 1);
+				string value = GetEnvironmentVariable (var);
+				if (value == null && (int) platform != 128) {
+					// On windows, env. vars. are case insensitive
+					if (tbl == null)
+						tbl = GetEnvironmentVariablesNoCase ();
+
+					value = tbl [var] as string;
+				}
+				
+				if (value == null) {
+					result.Append ('%');
+					result.Append (var);
+					result.Append ('%');
+				} else {
+					result.Append (value);
+				}
+
+				if (off2 + 1 == len) {
+					off1 = off2;
+					off2 = -1;
+				} else {
+					off1 = off2 + 1;
+					off2 = (off1 + 1 == len) ? -1 : name.IndexOf ('%', off1 + 1);
+				}
+
+			} while (off2 != -1);
+
+			if (off1 + 1 < len)
+				result.Append (name.Substring (off1));
+
+			return result.ToString ();
 		}
 
 		/// <summary>
@@ -272,6 +315,18 @@ namespace System
 		/// </summary>
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static string GetEnvironmentVariable (string name);
+
+		static Hashtable GetEnvironmentVariablesNoCase ()
+		{
+			Hashtable vars = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+							CaseInsensitiveComparer.Default);
+
+			foreach (string name in GetEnvironmentVariableNames ()) {
+				vars [name] = GetEnvironmentVariable (name);
+			}
+
+			return vars;
+		}
 
 		/// <summary>
 		/// Return a set of all environment variables and their values

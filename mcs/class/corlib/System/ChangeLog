@@ -1,3 +1,9 @@
+2004-04-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Environment.cs:
+	(ExpandEnvironmentVariables): on windows, env. vars. are case
+	insensitive.
+
 2004-04-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Added static to [ThreadStatic] _principal field. 

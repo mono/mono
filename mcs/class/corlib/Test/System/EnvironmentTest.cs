@@ -43,7 +43,7 @@ namespace MonoTests.System {
 		[Test]
 		public void ExpandEnvironmentVariables_KnownVariable () 
 		{
-			ExpandStartsEnds ("Path %Path% :-)", "Path ", " :-)");
+			ExpandStartsEnds ("Path %PATH% :-)", "Path ", " :-)");
 		}
 
 		[Test]
@@ -55,13 +55,13 @@ namespace MonoTests.System {
 		[Test]
 		public void ExpandEnvironmentVariables_Alone () 
 		{
-			ExpandDifferent ("%Path%");
+			ExpandDifferent ("%PATH%");
 		}
 
 		[Test]
 		public void ExpandEnvironmentVariables_End () 
 		{
-			ExpandStartsEnds ("Hello %Path%", "Hello ", "");
+			ExpandStartsEnds ("Hello %PATH%", "Hello ", "");
 		}
 
 		[Test]
@@ -79,19 +79,24 @@ namespace MonoTests.System {
 		[Test]
 		public void ExpandEnvironmentVariables_Double () 
 		{
-			ExpandDifferent ("%Path%%Path%");
+			ExpandDifferent ("%PATH%%PATH%");
+			string path = Environment.GetEnvironmentVariable ("PATH");
+			if (path != null) {
+				string expanded = Environment.ExpandEnvironmentVariables ("%PATH%%PATH%");
+				AssertEquals ("#01", path + path, expanded);
+			}
 		}
 		
 		[Test]
 		public void ExpandEnvironmentVariables_ComplexExpandable () 
 		{
-			ExpandStartsEnds ("Hello %%%Path%%%", "Hello %%", "%%");
+			ExpandStartsEnds ("Hello %%%PATH%%%", "Hello %%", "%%");
 		}
 
 		[Test]
 		public void ExpandEnvironmentVariables_ComplexExpandable2 () 
 		{
-			ExpandStartsEnds ("Hello %%Path%%%", "Hello %", "%%");
+			ExpandStartsEnds ("Hello %%PATH%%%", "Hello %", "%%");
 		}
 	}
 }
