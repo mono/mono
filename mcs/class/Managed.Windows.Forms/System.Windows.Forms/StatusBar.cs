@@ -77,6 +77,22 @@ namespace System.Windows.Forms {
 			get { return new Size (100, 22); }
 		}
 
+		protected override void WndProc(ref Message m)
+		{
+			switch ((Msg) m.Msg) {
+			case Msg.WM_PAINT: {
+				Rectangle	rect;
+				PaintEventArgs	paint_event;
+
+				paint_event = XplatUI.PaintEventStart (Handle);
+				Paint (paint_event);
+				XplatUI.PaintEventEnd (Handle);
+				return;
+			}
+			}
+			base.WndProc (ref m);
+		}
+
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
@@ -99,15 +115,15 @@ namespace System.Windows.Forms {
 			Draw();
 		}
 
-		protected override void OnPaint (PaintEventArgs pevent)
+		private void Paint (PaintEventArgs pevent)
 		{
-			if (Width <= 0 || Height <=  0 || Visible == false)
-				return;
+		       if (Width <= 0 || Height <=  0 || Visible == false)
+			       return;
 
-			UpdateArea ();
-			CalcPanelSizes ();
-			Draw();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+		       UpdateArea ();
+		       CalcPanelSizes ();
+		       Draw();
+		       pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
 		}
 
 		private void CalcPanelSizes ()
@@ -229,7 +245,7 @@ namespace System.Windows.Forms {
 				return res;
 			}
 
-			public int AddInternal (StatusBarPanel p, bool refresh)
+			private int AddInternal (StatusBarPanel p, bool refresh)
 			{
 				if (p == null)
 					throw new ArgumentNullException ("value");
