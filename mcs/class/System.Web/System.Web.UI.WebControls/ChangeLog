@@ -1,5 +1,9 @@
 2003-09-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ListControl.cs: fixed bug #48668. Thanks to Yaron Shkop.
+
+2003-09-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ListBox.cs: patch by yaronsh@mainsoft.com (Yaron Shkop) that fixes
 	bug #48671.
 

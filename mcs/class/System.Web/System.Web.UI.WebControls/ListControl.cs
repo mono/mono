@@ -325,7 +325,7 @@ namespace System.Web.UI.WebControls
 
 					object o;
 					if (dtf.Length > 0) {
-						o = DataBinder.GetPropertyValue (current, dtf, null);
+						o = DataBinder.GetPropertyValue (current, dtf, dtfs);
 						li.Text = o.ToString ();
 					}
 
