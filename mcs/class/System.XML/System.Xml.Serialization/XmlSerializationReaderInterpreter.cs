@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace System.Xml.Serialization
 {
-	public class XmlSerializationReaderInterpreter: XmlSerializationReader
+	internal class XmlSerializationReaderInterpreter: XmlSerializationReader
 	{
 		XmlMapping _typeMap;
 		SerializationFormat _format;
@@ -42,6 +42,17 @@ namespace System.Xml.Serialization
 
 		protected override void InitIDs ()
 		{
+		}
+
+		protected XmlTypeMapping GetTypeMap (Type type)
+		{
+			ArrayList maps = _typeMap.RelatedMaps;
+			if (maps != null)
+			{
+				foreach (XmlTypeMapping map in maps)
+					if (map.TypeData.Type == type) return map;
+			}
+			throw new InvalidOperationException ("Type " + type + " not mapped");
 		}
 
 		public object ReadObject ()
@@ -76,7 +87,7 @@ namespace System.Xml.Serialization
 			return ob;
 		}
 
-		object ReadMessage (XmlMembersMapping typeMap)
+		protected virtual object ReadMessage (XmlMembersMapping typeMap)
 		{
 			object[] parameters = new object[typeMap.Count];
 
@@ -107,7 +118,7 @@ namespace System.Xml.Serialization
 			return parameters;
 		}
 
-		object ReadObject (XmlTypeMapping typeMap, bool isNullable, bool checkType)
+		protected virtual object ReadObject (XmlTypeMapping typeMap, bool isNullable, bool checkType)
 		{
 			switch (typeMap.TypeData.SchemaType)
 			{
@@ -121,7 +132,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		object ReadClassInstance (XmlTypeMapping typeMap, bool isNullable, bool checkType)
+		protected virtual object ReadClassInstance (XmlTypeMapping typeMap, bool isNullable, bool checkType)
 		{
 			if (isNullable && ReadNull()) return null;
 
@@ -146,12 +157,17 @@ namespace System.Xml.Serialization
 
 			Reader.MoveToElement();
 			bool isEmpty = Reader.IsEmptyElement;
-			ReadMembers ((ClassMap) typeMap.ObjectMap, ob, false);
+			ReadClassInstanceMembers (typeMap, ob);
 
 			if (isEmpty) Reader.Skip();
 			else ReadEndElement();
 
 			return ob;
+		}
+
+		protected virtual void ReadClassInstanceMembers (XmlTypeMapping typeMap, object ob)
+		{
+			ReadMembers ((ClassMap) typeMap.ObjectMap, ob, false);
 		}
 
 		void ReadMembers (ClassMap map, object ob, bool isValueList)
@@ -196,7 +212,7 @@ namespace System.Xml.Serialization
 						AddListValue (anyAttrMember.TypeData, ref anyAttributeArray, anyAttributeIndex++, Document.ReadNode(Reader), true);
 					}
 					else
-						UnknownNode(ob);
+						ProcessUnknownAttribute(ob);
 				}
 
 				if (anyAttrMember != null)
@@ -307,7 +323,7 @@ namespace System.Xml.Serialization
 						else SetMemberValue (mem, ob, ReadXmlNode (false), isValueList);
 					}
 					else 
-						UnknownNode(ob);
+						ProcessUnknownElement(ob);
 				}
 				else if (Reader.NodeType == System.Xml.XmlNodeType.Text && map.XmlTextCollector != null)
 				{
@@ -356,6 +372,16 @@ namespace System.Xml.Serialization
 				if (ids[member.Index] != null)
 					SetMemberValue (member, fixup.Source, GetTarget(ids[member.Index]), isValueList);
 			}
+		}
+		
+		protected virtual void ProcessUnknownAttribute (object target)
+		{
+			UnknownNode (target);
+		}
+		
+		protected virtual void ProcessUnknownElement (object target)
+		{
+			UnknownNode (target);
 		}
 
 		bool IsReadOnly (XmlTypeMapMember member, object ob, bool isValueList)

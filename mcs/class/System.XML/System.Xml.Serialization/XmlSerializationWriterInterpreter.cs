@@ -15,7 +15,7 @@ using System.Xml.Schema;
 
 namespace System.Xml.Serialization
 {
-	public class XmlSerializationWriterInterpreter: XmlSerializationWriter
+	internal class XmlSerializationWriterInterpreter: XmlSerializationWriter
 	{
 		XmlMapping _typeMap;
 		SerializationFormat _format;

@@ -18,10 +18,10 @@ namespace System.Xml.Serialization
 		string _namespace;
 		string _typeNamespace;
 
-		internal XmlMemberMapping (XmlReflectionMember rmember, XmlTypeMapMember mapMem)
+		internal XmlMemberMapping (string memberName, XmlTypeMapMember mapMem)
 		{
 			_mapMember = mapMem;
-			_memberName = rmember.MemberName;
+			_memberName = memberName;
 
 			if (mapMem is XmlTypeMapMemberElement)
 			{

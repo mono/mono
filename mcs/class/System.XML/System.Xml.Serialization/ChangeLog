@@ -1,3 +1,12 @@
+2003-08-29  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs: Fixed construcion of XmlMemberMapping.
+	* XmlMemberMapping.cs: Changed constructor.
+	* XmlReflectionImporter.cs: Fixed construcion of XmlMemberMapping.
+	* XmlSchemaImporter.cs: Implemented ImportMembersMapping().
+	* XmlSerializationReaderInterpreter.cs: Added some helper methods. Changed visibility.
+	* XmlSerializationWriterInterpreter.cs: Changed visibility.
+
 2003-08-28  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializer.cs: Fix in Deserialize() method.
