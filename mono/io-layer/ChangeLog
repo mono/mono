@@ -1,3 +1,9 @@
+2003-03-03  Dick Porter  <dick@ximian.com>
+
+	* io.c (CreateFile): Try opening directories readonly, so that
+	timestamps can be adjusted.  Patch by Elan Feingold
+	<efeingold@mn.rr.com>.
+
 2003-02-25  Dick Porter  <dick@ximian.com>
 
 	* shared.c (_wapi_shm_attach): Return a failure code on system
