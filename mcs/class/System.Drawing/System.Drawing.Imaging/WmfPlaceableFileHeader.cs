@@ -71,13 +71,7 @@ namespace System.Drawing.Imaging {
 		public int Reserved {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public int Id {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		}				
 		
 	}
 
