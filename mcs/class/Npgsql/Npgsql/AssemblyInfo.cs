@@ -60,5 +60,5 @@ using System.Runtime.CompilerServices;
 // and in general always linking against the mono corlib seems like the right thing
 // to do.
 //
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("Npgsql.snk")]
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("Npgsql.pub")]
