@@ -958,7 +958,7 @@ namespace System.Web.UI.WebControls
 				if (headerStyle != null)
 					item.MergeStyle (headerStyle);
 
-				goto case ListItemType.Separator;
+				break;
 			case ListItemType.Footer:
 				if (!ShowFooter) {
 					item.Visible = false;
@@ -968,7 +968,7 @@ namespace System.Web.UI.WebControls
 				if (footerStyle != null)
 					item.MergeStyle (footerStyle);
 
-				goto case ListItemType.Separator;
+				break;
 			case ListItemType.Item  :
 				item.MergeStyle (itemStyle);
 				goto case ListItemType.Separator;

@@ -1,4 +1,8 @@
 2004-1-1 Alon Gazit <along@mainsoft.com>
+	* DataGrid.cs: Fixed PrepareControlHierarchyForItem().
+	The Header or Footer Style shouldn't merge with the cells Style.	  	 
+	
+2004-1-1 Alon Gazit <along@mainsoft.com>
 	* DataGridColumn.cs: Headers and Footers are initialized  
 	with the relevant Style object.	 
 
