@@ -26,9 +26,17 @@
 //
 //
 //
-// $Revision: 1.46 $
+// $Revision: 1.47 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.47  2004/10/13 15:06:37  pbartok
+// - Path from John BouAntoun:
+//   * Fix check rendering (centre correctly for normal style, offset
+//     correctly for FlatStyle).
+//   * Fix border color usage (use backcolor) for FlatStyle.Popup
+//   * Use checkbox.Capture instead of checkbox.is_pressed when rendering
+//     flatstyle states.
+//
 // Revision 1.46  2004/10/13 03:48:15  pbartok
 // - Removed all occurences of SystemColors and replaced them with the
 //   matching theme color
@@ -639,26 +647,32 @@ namespace System.Windows.Forms
 		// renders a checkBox with the Flat and Popup FlatStyle
 		private void DrawFlatStyleCheckBox (Graphics graphics, Rectangle rectangle, CheckBox checkbox)
 		{
-			Pen			pen;
-			int			lineWidth;
+			Pen			pen;			
 			Rectangle	rect;
 			Rectangle	checkbox_rectangle;
 			Rectangle	fill_rectangle;
+			int			lineWidth;
 			int			Scale;
-		
-			// first clip the last pixel of the height and width (windows compat)
-			checkbox_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max(rectangle.Width-1, 0), Math.Max(rectangle.Height-1,0));
-			// clip the fill rectangle
-			fill_rectangle = new Rectangle(rectangle.X+1, rectangle.Y+1, Math.Max(rectangle.Width-2, 0), Math.Max(rectangle.Height-2,0));
 			
+			// set up our rectangles first
+			if (checkbox.FlatStyle == FlatStyle.Popup && checkbox.is_entered) {
+				// clip one pixel from bottom right for non popup rendered checkboxes
+				checkbox_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max(rectangle.Width-1, 0), Math.Max(rectangle.Height-1,0));
+				fill_rectangle = new Rectangle(checkbox_rectangle.X+1, checkbox_rectangle.Y+1, Math.Max(checkbox_rectangle.Width-3, 0), Math.Max(checkbox_rectangle.Height-3,0));
+			} else {
+				// clip two pixels from bottom right for non popup rendered checkboxes
+				checkbox_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max(rectangle.Width-2, 0), Math.Max(rectangle.Height-2,0));
+				fill_rectangle = new Rectangle(checkbox_rectangle.X+1, checkbox_rectangle.Y+1, Math.Max(checkbox_rectangle.Width-2, 0), Math.Max(checkbox_rectangle.Height-2,0));
+			}	
+				
 			// if disabled render in disabled state
 			if (checkbox.Enabled) {
 				// process the state of the checkbox
-				if (checkbox.is_entered || checkbox.is_pressed) {
+				if (checkbox.is_entered || checkbox.Capture) {
 					// decide on which background color to use
-					if (checkbox.FlatStyle == FlatStyle.Popup && checkbox.is_entered && checkbox.is_pressed) {
+					if (checkbox.FlatStyle == FlatStyle.Popup && checkbox.is_entered && checkbox.Capture) {
 						graphics.FillRectangle(ResPool.GetSolidBrush (checkbox.BackColor), fill_rectangle);
-					} else if (checkbox.FlatStyle == FlatStyle.Flat && !(checkbox.is_entered && checkbox.is_pressed)) {
+					} else if (checkbox.FlatStyle == FlatStyle.Flat && !(checkbox.is_entered && checkbox.Capture)) {
 						graphics.FillRectangle(ResPool.GetSolidBrush (ControlPaint.Light(checkbox.BackColor)), fill_rectangle);
 					} else {
 						// use regular window background color
@@ -670,7 +684,7 @@ namespace System.Windows.Forms
 						ControlPaint.DrawBorder(graphics, checkbox_rectangle, checkbox.ForeColor, ButtonBorderStyle.Solid);
 					} else {
 						// draw sunken effect
-						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right, ColorButtonFace);
+						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right, checkbox.BackColor);
 						// draw top left
 						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, checkbox_rectangle.X, checkbox_rectangle.Y+checkbox_rectangle.Height);
 						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, Math.Max(checkbox_rectangle.X + checkbox_rectangle.Width - 1, 0), checkbox_rectangle.Y);
@@ -695,10 +709,11 @@ namespace System.Windows.Forms
 			}		
 			
 			/* Make sure we've got at least a line width of 1 */
-			lineWidth=Math.Max(3, rectangle.Width/6);
-			Scale=Math.Max(1, rectangle.Width/12);
-
-			rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+			lineWidth = Math.Max(3, fill_rectangle.Width/3);
+			Scale=Math.Max(1, fill_rectangle.Width/9);
+			
+			// flat style check box is rendered inside a rectangle shifted down by one
+			rect=new Rectangle(fill_rectangle.X, fill_rectangle.Y+1, fill_rectangle.Width, fill_rectangle.Height);
 			if (checkbox.Enabled) {
 				pen=ResPool.GetPen(checkbox.ForeColor);
 			} else {
@@ -711,7 +726,6 @@ namespace System.Windows.Forms
 					graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
 					graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
 				}
-
 			}					
 		}
 
@@ -3207,7 +3221,8 @@ namespace System.Windows.Forms
 					lineWidth=Math.Max(3, rectangle.Width/6);
 					Scale=Math.Max(1, rectangle.Width/12);
 
-					rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+					// define a rectangle inside the border area
+					rect=new Rectangle(rectangle.X+2, rectangle.Y+2, rectangle.Width-4, rectangle.Height-4);
 					if ((State & DrawFrameControlStates.Inactive)!=0) {
 						pen=SystemPens.ControlDark;
 					} else {
