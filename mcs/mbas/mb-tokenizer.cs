@@ -159,7 +159,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("friend", Token.FRIEND);
 			keywords.Add ("function", Token.FUNCTION);
 			keywords.Add ("get", Token.GET);
-			keywords.Add ("gettype", Token.GETTYPE);
+			//keywords.Add ("gettype", Token.GETTYPE);
 			keywords.Add ("goto", Token.GOTO);
 			keywords.Add ("handles", Token.HANDLES);
 			keywords.Add ("if", Token.IF);
@@ -303,18 +303,22 @@ namespace Mono.MonoBASIC
 			doread = false;
 
 			switch (c){
-//			case '[':
-//				return Token.OPEN_BRACKET;
-//			case ']':
-//				return Token.CLOSE_BRACKET;
+			case '[':
+				return Token.OPEN_BRACKET;
+			case ']':
+				return Token.CLOSE_BRACKET;
+			case '{':
+				return Token.OPEN_BRACE;
+			case '}':
+				return Token.CLOSE_BRACE;				
 			case '(':
 				return Token.OPEN_PARENS;
 			case ')':
 				return Token.CLOSE_PARENS;
 			case ',':
 				return Token.COMMA;
-			case ':':
-				return Token.COLON;
+			//case ':':
+			//	return Token.COLON;
 			case '?':
 				return Token.INTERR;
 			case '&':
@@ -402,6 +406,13 @@ namespace Mono.MonoBASIC
 				}
 				return Token.OP_GT;
 			}
+			if (c == ':'){
+				if (d == '='){
+					doread = true;
+					return Token.ATTR_ASSIGN;
+				}
+				return Token.COLON;
+			}			
 			return Token.ERROR;
 		}
 
@@ -744,7 +755,12 @@ namespace Mono.MonoBASIC
 				// Handle line comments.
 				if (c == '\'')
 					return Token.REM;
-
+					
+				// Handle line continuation character
+				if (c == '_') {
+					while ((c = getChar ()) != -1 && (c != '\n')){}
+					c = getChar ();					
+				}
 				// Handle EOL.
 				if (IsEOL(c))
 				{

@@ -834,6 +834,21 @@ namespace Mono.CSharp {
 			else
 				a.AddAttribute (attr);
 		}
+		
+		//
+		// Adds a global attribute that was declared in `container', 
+		// the attribute is in `attr', and it was defined at `loc'
+		//
+		static public void AddGlobalAttributeSection (TypeContainer container, AttributeSection attr)
+		{
+			Namespace ns = container.Namespace;
+			Attributes a = (Attributes) global_attributes [ns];
+
+			if (a == null)
+				global_attributes [ns] = new Attributes (attr, Location.Null);
+			else
+				a.AddAttributeSection (attr);
+		}		
 	}
 }
 	      

@@ -2158,7 +2158,7 @@ public class TypeManager {
 			
 			if (list.Count == 0)
 				continue;
-			
+				
 			//
 			// Events and types are returned by both `static' and `instance'
 			// searches, which means that our above FindMembers will

@@ -4130,7 +4130,14 @@ namespace Mono.CSharp {
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
-
+				
+			Console.WriteLine(expr);
+			if (expr is Invocation) {
+				Console.WriteLine("-->must first resolve a call");
+				expr = expr.Resolve(ec);
+				Console.WriteLine ("-->expr resolved: " + (expr == null ? "NULL" : "OK"));
+			}
+			
 			if (!(expr is MethodGroupExpr)) 
 			{
 				Type expr_type = expr.Type;
@@ -4149,6 +4156,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			*/
+
 			//
 			// Next, evaluate all the expressions in the argument list
 			//
@@ -4158,9 +4166,9 @@ namespace Mono.CSharp {
 				{
 					if ((a.ArgType == Argument.AType.NoArg) && (!(expr is MethodGroupExpr)))
 						Report.Error (999, "This item cannot have empty arguments");
-
+					
 					if (!a.Resolve (ec, loc))
-						return null;
+						return null;				
 				}
 			}
 
@@ -4213,9 +4221,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (expr is FieldExpr) {
+			if (expr is FieldExpr || expr is LocalVariableReference) {
 				// If we are here, expr must be an ArrayAccess
 				// FIXME: we should check dimensions, etc.
+				Console.WriteLine ("I am an array access");
 				ArrayList idxs = new ArrayList();
 				foreach (Argument a in Arguments) 
 				{
@@ -6786,11 +6795,10 @@ namespace Mono.CSharp {
 			Expression e;
 
 			if (ec.IsStatic){
-				Error (1511,
-					      "Keyword base is not allowed in static method");
+				Error (1511, "Keyword base is not allowed in static method");
 				return null;
 			}
-			
+				
 			member_lookup = MemberLookup (ec, base_type, base_type, member,
 						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {

@@ -196,7 +196,7 @@ namespace Mono.MonoBASIC
 %token FRIEND
 %token FUNCTION
 %token GET
-%token GETTYPE
+//%token GETTYPE
 %token GOTO	
 %token HANDLES
 %token IF	
@@ -281,9 +281,12 @@ namespace Mono.MonoBASIC
 %token XOR
 
 /* MonoBASIC single character operators/punctuation. */
+
 %token OPEN_BRACKET  "["
 %token CLOSE_BRACKET "]"
 %token OPEN_PARENS   "("
+%token OPEN_BRACE    "{"
+%token CLOSE_BRACE   "}"
 %token CLOSE_PARENS  ")"
 %token DOT           "."
 %token COMMA         ","
@@ -301,11 +304,12 @@ namespace Mono.MonoBASIC
 %token INTERR         "?"
 %token OP_IDIV        "\\"
 %token OP_CONCAT      "&"
+%token ATTR_ASSIGN ":="
 
 /* MonoBASIC multi-character operators. */
 %token OP_LE                  "<="
 %token OP_GE                  ">="
-%token OP_EQ                  "=="
+//%token OP_EQ                  "=="
 %token OP_NE                  "<>"
 %token OP_AND                 //"and"
 %token OP_OR                  //"or"
@@ -432,23 +436,208 @@ imports_namespace_directive
 	;
 
 opt_attributes
-	: /* empty */
+	: /* empty */		
+	| attribute_sections 	{ $$ = $1; }
+	;
+
+attribute_sections
+	: attribute_section
+          { 
+		AttributeSection sect = (AttributeSection) $1;
+
+		if (sect.Target == "assembly") 
+			RootContext.AddGlobalAttributeSection (current_container, sect);
+		
+		$$ = new Attributes ((AttributeSection) $1, lexer.Location);
+		
+          }	
+          /* 
+             FIXME: we should check if extended syntax is enabled;
+                    otherwise an exception should be thrown since VB.NET 
+                    only allows one attribute section 
+          */  
+	| attribute_sections attribute_section
+	  {
+		Attributes attrs = null;
+		AttributeSection sect = (AttributeSection) $2;
+
+		if (sect.Target == "assembly")
+			RootContext.AddGlobalAttributeSection (current_container, sect);
+
+		if ($1 != null) {
+			attrs = (Attributes) $1;
+			attrs.AddAttributeSection (sect);
+		}
+		
+		$$ = attrs;
+	  }	
+	;
+	
+attribute_section
+	: OP_LT attribute_target_specifier attribute_list OP_GT
+	  { 
+		string target = null;
+		
+		if ($2 != null)
+			target = (string) $2;
+		
+		$$ = new AttributeSection (target, (ArrayList) $3);
+ 	  }	
 	| OP_LT attribute_list OP_GT
+	  {
+		$$ = new AttributeSection (null, (ArrayList) $2);
+	  }	
 	; 
 
+attribute_target_specifier
+	: attribute_target COLON
+	  {
+		$$ = $1;
+	  }
+	;
+
+attribute_target
+	: IDENTIFIER
+	  {
+		CheckAttributeTarget ((string) $1);
+		$$ = $1;
+	  }
+        | EVENT  { $$ = "event"; }	  
+        | RETURN { $$ = "return"; }
+	;
+	
 attribute_list
 	: attribute 
+	  {
+		ArrayList attrs = new ArrayList ();
+		attrs.Add ($1);
+
+		$$ = attrs;
+	       
+	  }	
 	| attribute_list COMMA attribute
+	  {
+		ArrayList attrs = (ArrayList) $1;
+		attrs.Add ($3);
+
+		$$ = attrs;
+	  }	
 	;
 	
 attribute 
-	: IDENTIFIER
-	;
-		
-namespace_declaration
-	: NAMESPACE qualified_identifier EOL
+	: attribute_name
 	  {
-		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$2);
+		$$ = lexer.Location;
+	  }
+	  opt_attribute_arguments
+	  {
+		$$ = new Mono.CSharp.Attribute ((string) $1, (ArrayList) $3, (Location) $2);
+	  }	  
+	;
+	
+attribute_name
+	: type_name 
+	;
+			
+opt_attribute_arguments
+	: /* empty */ 	{ $$ = null; }
+	| OPEN_PARENS attribute_arguments CLOSE_PARENS
+	  {
+		$$ = $2;
+	  }	
+	;
+	
+attribute_arguments
+	: opt_positional_argument_list
+	  {
+		if ($1 == null)
+			$$ = null;
+		else {
+			ArrayList args = new ArrayList ();
+			args.Add ($1);
+		
+			$$ = args;
+		}
+	  }
+        | positional_argument_list COMMA named_argument_list
+	  {
+		ArrayList args = new ArrayList ();
+		args.Add ($1);
+		args.Add ($3);
+
+		$$ = args;
+	  }
+        | named_argument_list
+	  {
+		ArrayList args = new ArrayList ();
+		args.Add (null);
+		args.Add ($1);
+		
+		$$ = args;
+	  }
+        ;
+
+
+opt_positional_argument_list
+	: /* empty */ 		{ $$ = null; } 
+	| positional_argument_list
+	;
+
+positional_argument_list
+	: expression
+	  {
+		ArrayList args = new ArrayList ();
+		args.Add (new Argument ((Expression) $1, Argument.AType.Expression));
+
+		$$ = args;
+	  }
+        | positional_argument_list COMMA expression
+	 {
+		ArrayList args = (ArrayList) $1;
+		args.Add (new Argument ((Expression) $3, Argument.AType.Expression));
+
+		$$ = args;
+	 }
+        ;
+
+named_argument_list
+	: named_argument
+	  {
+		ArrayList args = new ArrayList ();
+		args.Add ($1);
+
+		$$ = args;
+	  }
+        | named_argument_list COMMA named_argument
+	  {	  
+		ArrayList args = (ArrayList) $1;
+		args.Add ($3);
+
+		$$ = args;
+	  }
+        ;
+
+named_argument
+	: IDENTIFIER ATTR_ASSIGN expression
+	  {
+		$$ = new DictionaryEntry (
+			(string) $1, 
+			new Argument ((Expression) $3, Argument.AType.Expression));
+	  }
+	;
+				
+namespace_declaration
+	: opt_attributes NAMESPACE qualified_identifier EOL
+	  {
+		Attributes attrs = (Attributes) $1;
+
+		if (attrs != null) {
+			foreach (AttributeSection asec in attrs.AttributeSections)
+				if (asec.Target == "assembly")
+					RootContext.AddGlobalAttributeSection (current_container, asec);
+		}
+			  Console.WriteLine ("NS = " + (string)$3);
+		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$3);
 	  } 
 	  opt_imports_directives
 	  opt_declarations
@@ -459,12 +648,15 @@ namespace_declaration
 	;
 
 type_declaration
-	: opt_attributes
-	  opt_modifiers
-	   { 
-	   	current_attributes = (Attributes) $1;
-	   	current_modifiers = (int) $2; 
-	   }	  
+	: opt_attributes 
+	  opt_modifiers 
+	  { 
+		current_attributes = (Attributes) $1; 
+	  	current_modifiers = (int) $2; 
+	   
+	   	Console.WriteLine ("Declaring type with attr = " + ((current_attributes == null) ? "(null)" : "Attr"));
+	   	Console.WriteLine ("Declaring type with mod  = " + ((current_modifiers == 0) ? "0\n" : current_modifiers.ToString()));
+	  }	  
 	  type_spec_declaration
 	;
 
@@ -487,7 +679,7 @@ class_declaration
 
 		new_class = new Class (current_container, name, current_modifiers, 
 				       (Attributes) current_attributes, lexer.Location);
-
+Console.WriteLine ("Declaring class '" + name + "' with attributes '" + current_attributes + "'");
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (name, new_class);
@@ -1334,9 +1526,12 @@ fixed_parameter
 	  	if (opt_parm && ($5 == null))
 	  		Report.Error (999, "Optional parameters must have a default value");
 	  	
-	  	if (opt_parm)
-	  		pm = Parameter.Modifier.NONE;	//FIXME: should take into account BYREF
-	  		
+	  	if (opt_parm) {
+	  		if ((pm & Parameter.Modifier.REF) !=0)
+	  			pm = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF;
+	  		else
+	  			pm = Parameter.Modifier.NONE;	//FIXME: should take into account BYREF
+		}	  		
 		$$ = new Parameter ((Expression) $4, (string) $3, 
 					pm, (Attributes) $1, (Expression) $5, opt_parm);
 	  }
@@ -1354,11 +1549,6 @@ opt_parens
 	: /* empty */
 	| OPEN_PARENS CLOSE_PARENS
 	;
-			
-opt_type_spec
-	: /* empty */	{ $$ = (Expression) TypeManager.system_object_expr; }
-	| AS type 	{ $$ = (Expression) $2; };
-	;
 	
 opt_parameter_modifier
 	: /* empty */		{ $$ = Parameter.Modifier.VAL; 	}
@@ -1375,12 +1565,6 @@ parameter_modifier
 	| BYVAL			{ $$ = Parameter.Modifier.VAL; }
 	| OPTIONAL		{ $$ = Parameter.Modifier.OPTIONAL; } 
 	;	
-
-opt_actual_parameters 
-	: /* empty */
-	| qualified_identifier
-	| LITERAL_STRING
-	;
 
 opt_statement_list
 	: /* empty */
@@ -1880,10 +2064,9 @@ opt_is
 comparison_operator
 	: OP_LT
 	| OP_GT
-	| OP_LT
 	| OP_LE
 	| OP_NE
-	| OP_EQ
+	/*| OP_EQ */
 	;
 
 opt_case
@@ -1905,29 +2088,15 @@ statement_expression
 	;
 
 object_creation_expression
-	: NEW type opt_oce_args
+	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new New ((Expression) $2, (ArrayList) $3, lexer.Location);
+		$$ = new New ((Expression) $2, (ArrayList) $4, lexer.Location);
 	  }
-	;
-
-opt_oce_args
-	: /* empty */
-	  { $$ = null; }
-	| OPEN_PARENS opt_argument_list CLOSE_PARENS
-	  { $$ = $2; }
 	;
 
 new_expression
 	: object_creation_expression
 	/* | array_creation_expression */
-	;
-
-assignment_expression
-	: prefixed_unary_expression ASSIGN expression
-	  {
-		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location); 
-	  }
 	;
 
 opt_local_declarations
@@ -1974,14 +2143,14 @@ local_variable_declaration
 	  {
 		$$ = new DictionaryEntry (TypeManager.system_object_expr, $2);
 	  }
-	/*| DIM variable_declarators AS object_creation_expression
+	| DIM variable_declarators AS object_creation_expression
 	  {
 		if ($4 != null)
 			$$ = new DictionaryEntry ($4, $2);
 		else
 			$$ = null;
 						
-	  } */
+	  } 
  	;
 
 	
@@ -2050,17 +2219,22 @@ variable_identifier
 	  		$$ = (string)$$ + (string)$2;
 	  }
 	;		
-	
+		
+opt_type_spec
+	: /* empty */	{ $$ = (Expression) TypeManager.system_object_expr; }
+	| AS type 	{ $$ = (Expression) $2; };
+	;
+			
 opt_type_decl
-	: /* empty */	
+	: opt_type_spec
 	  {
-	  	$$ =  null;
+	  	$$ = $1;
 	  }
-	| AS type opt_argument_list /* FIXME must handle argument list*/
+	| AS type OPEN_PARENS opt_argument_list CLOSE_PARENS /* FIXME must handle argument list*/
 	  {
 	  	$$ = $2;
 	  }
-	| AS NEW type opt_argument_list /* FIXME must handle NEW clause + argument list */
+	| AS NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS /* FIXME must handle NEW clause + argument list */
 	  {
 	  	$$ = $3;
 	  }
@@ -2076,28 +2250,6 @@ array_type_modifier
 	: rank_specifiers  { $$ = $1; }
 	;
 	
-opt_dim_separators
-	: /* empty */
-	  {
-		$$ = "";
-	  }
-	| dim_separators
-	  {
-		  $$ = $1;
-	  }		  
-	;
-	
-dim_separators
-	: COMMA
-	  {
-		$$ = ",";
-	  }
-	| dim_separators COMMA
-	  {
-		$$ = (string) $1 + ",";
-	  }
-	;	
-		
 opt_variable_initializer
 	: /* empty */ 			{ $$ = null; }
 	| ASSIGN variable_initializer  	{ $$ = $2; }
@@ -2105,6 +2257,7 @@ opt_variable_initializer
 	
 array_initialization_modifier
 	: /* empty */ { $$ = null; }
+	| OPEN_BRACE CLOSE_BRACE
 	;	
 		
 variable_initializer
@@ -2239,7 +2392,6 @@ primary_expression
 	  {
 		string name = (string) $1;
 
-		$$ = null;
 		$$ = DecomposeQI (name, lexer.Location);
 	  }
 	| parenthesized_expression
@@ -2247,7 +2399,7 @@ primary_expression
 	| invocation_expression
 	| element_access
 	| this_access
-	| base_access
+	//| base_access
 	| new_expression
 	;
 
@@ -2318,6 +2470,16 @@ invocation_expression
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
+	| MYBASE DOT IDENTIFIER OPEN_PARENS opt_expression_list CLOSE_PARENS
+	  {
+		BaseAccess ba = new BaseAccess ((string) $3, lexer.Location);
+		$$ = new Invocation ((Expression) ba, (ArrayList) $5, lexer.Location);
+	  }  
+	| MYBASE DOT NEW OPEN_PARENS opt_expression_list CLOSE_PARENS
+	  {
+		BaseAccess ba = new BaseAccess ("New", lexer.Location);
+		$$ = new Invocation ((Expression) ba, (ArrayList) $5, lexer.Location);
+	  }  	  
 	;
 
 opt_argument_list
@@ -2362,9 +2524,10 @@ variable_reference
 element_access
 	: primary_expression OPEN_PARENS expression_list CLOSE_PARENS
 	  {
+	  Console.WriteLine ("------------------> This is an element access to " + $$);
 		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
-	/*| primary_expression rank_specifiers
+/*	| primary_expression rank_specifiers
 	  {
 		// So the super-trick is that primary_expression
 		// can only be either a SimpleName or a MemberAccess.
@@ -2414,25 +2577,12 @@ this_access
 	  }
 	;
 
-base_access
-	: MYBASE DOT IDENTIFIER
-	  {
-		$$ = new BaseAccess ((string) $3, lexer.Location);
-	  }
-	| MYBASE OPEN_BRACKET expression_list CLOSE_BRACKET
-	  {
-		$$ = new BaseIndexerAccess ((ArrayList) $3, lexer.Location);
-	  }
+opt_expression_list
+	: /*empty */ { $$ = null; }
+	| expression_list COMMA expression
+	| expression
 	;
-
-post_increment_expression
-	: primary_expression OP_INC
-	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PostIncrement,
-				       (Expression) $1, lexer.Location);
-	  }
-	;
-
+	
 unary_expression
 	: primary_expression
 	| NOT prefixed_unary_expression
@@ -2446,7 +2596,11 @@ cast_expression
         : cast_operator OPEN_PARENS expression CLOSE_PARENS
 	  {
 		  $$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
-	  }  	  	  	  
+	  }  	
+	| CTYPE OPEN_PARENS expression COMMA expression CLOSE_PARENS
+	  {
+		  $$ = new Cast ((Expression) $5, (Expression) $3, lexer.Location);
+	  } 	  	  	  
 	;
 	
 cast_operator
@@ -2548,11 +2702,11 @@ relational_expression
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| relational_expression IS type
+	| relational_expression IS type_name
 	  {
 		$$ = new Is ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| relational_expression AS type
+	| relational_expression AS type_name
 	  {
 		$$ = new As ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
@@ -2560,14 +2714,9 @@ relational_expression
 
 equality_expression
 	: relational_expression
-	| equality_expression OP_EQ relational_expression
-	  {
+	| equality_expression ASSIGN relational_expression
+	  {Console.WriteLine ("EQ");
 		$$ = new Binary (Binary.Operator.Equality,
-			         (Expression) $1, (Expression) $3, lexer.Location);
-	  }
-	| equality_expression OP_NE relational_expression
-	  {
-		$$ = new Binary (Binary.Operator.Inequality,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
@@ -2614,14 +2763,14 @@ conditional_expression
 
 assignment_expression
 	: prefixed_unary_expression ASSIGN expression
-	  {
+	  { Console.WriteLine ("ASSI");
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
 expression
-	: conditional_expression
-	| assignment_expression
+	: conditional_expression { Console.WriteLine ("COND"); $$ = $1; }
+	/*| assignment_expression*/
 	;
 
 constant_expression
@@ -2691,27 +2840,6 @@ rank_specifier
 	  }
 	;
 
-opt_dim_separators
-	: /* empty */
-	  {
-		$$ = "";
-	  }
-	| dim_separators
-	  {
-		  $$ = $1;
-	  }		  
-	;
-
-dim_separators
-	: COMMA
-	  {
-		$$ = ",";
-	  }
-	| dim_separators COMMA
-	  {
-		$$ = (string) $1 + ",";
-	  }
-	;	
 /* Built-in / Integral types */
 builtin_types
 	: OBJECT	{ $$ = TypeManager.system_object_expr; }
@@ -3041,6 +3169,20 @@ Block end_block ()
 private void AddHandler (Expression evt_definition, string handler_name)
 {
 	AddHandler (current_block, evt_definition, handler_name);
+}
+
+void CheckAttributeTarget (string a)
+{
+	switch (a) {
+
+	case "assembly" : case "field" : case "method" : case "param" : case "property" : case "type" :
+		return;
+		
+	default :
+		Location l = lexer.Location;
+		Report.Error (658, l, "`" + a + "' is an invalid attribute target");
+		break;
+	}
 }
 
 private void AddHandler (Block b, Expression evt_definition, string handler_name)

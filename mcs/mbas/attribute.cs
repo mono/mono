@@ -873,8 +873,7 @@ namespace Mono.CSharp {
 				mb.SetImplementationFlags (MethodImplAttributes.PreserveSig);
 			
 			return mb;
-		}
-		
+		}			
 	}
 	
 	public class AttributeSection {
@@ -906,5 +905,22 @@ namespace Mono.CSharp {
 			if (a != null)
 				AttributeSections.Add (a);
 		}
+		
+		public void AddAttributeSection (AttributeSection a)
+		{
+			if (a != null && !AttributeSections.Contains (a))
+				AttributeSections.Add (a);
+		}
+		
+		public bool Contains (Type t)
+		{
+			foreach (AttributeSection attr_section in AttributeSections){
+				foreach (Attribute a in attr_section.Attributes){
+					if (a.Type == t)
+						return true;
+				}
+			}
+			return false;
+		}			
 	}
 }
