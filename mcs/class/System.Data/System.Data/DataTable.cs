@@ -634,10 +634,11 @@ namespace System.Data {
 			//       have enforced child relations 
 			//       that would result in child rows being orphaned
 			// now we check if any ForeignKeyConstraint is referncing 'table'.
-			if (DataSet._xmlDataDocument != null) 
-				throw new NotSupportedException ("Clear function on dataset and datatable is not supported on XmlDataDocument.");
 			if (DataSet != null)
 			{
+				if (DataSet._xmlDataDocument != null) 
+					throw new NotSupportedException ("Clear function on dataset and datatable is not supported on XmlDataDocument.");
+
 				IEnumerator tableEnumerator = DataSet.Tables.GetEnumerator();
 			
 				// loop on all tables in dataset
