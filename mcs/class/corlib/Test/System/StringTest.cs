@@ -83,6 +83,7 @@ public class StringTest : TestCase
 		Assert ("Formatted argument.", String.Format ("###{0:x8}#", 0xc0ffee) == "###00c0ffee#");
 		Assert ("Formatted argument, right justified.", String.Format ("#{0,5:x3}#", 0x33) == "#  033#");
 		Assert ("Formatted argument, left justified.", String.Format ("#{0,-5:x3}#", 0x33) == "#033  #");
+		Assert ("Escaped bracket", String.Format ("struct _{0} {{ ... }", "MonoObject") == "struct _MonoObject { ... }");
 
 		// TODO test failure modes
 	}
