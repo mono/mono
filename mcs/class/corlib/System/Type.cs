@@ -33,6 +33,8 @@ namespace System {
 		public static readonly MemberFilter FilterNameIgnoreCase = new MemberFilter (FilterNameIgnoreCase_impl);
 		public static readonly object Missing;
 
+		private const BindingFlags DefaultBindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
+
 		/* implementation of the delegates for MemberFilter */
 		static bool FilterName_impl (MemberInfo m, object filterCriteria) {
 			string name = (string) filterCriteria;
@@ -86,10 +88,9 @@ namespace System {
 		/// <summary>
 		///   Returns the class that declares the member.
 		/// </summary>
-		[MonoTODO]
 		public override Type DeclaringType {
 			get {
-				throw new NotImplementedException ();
+				return this;
 			}
 		}
 
@@ -99,7 +100,7 @@ namespace System {
 		[MonoTODO]
 		public static Binder DefaultBinder {
 			get {
-				throw new NotImplementedException ();
+				return null;
 			}
 		}
 		
@@ -114,9 +115,8 @@ namespace System {
 			get;
 		}
 
-		[MonoTODO]
 		public bool HasElementType {
-			get {return false;} // FIXME
+			get {return HasElementTypeImpl ();}
 		}
 
 		public bool IsAbstract {
@@ -268,10 +268,8 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		public bool IsPublic {
 			get {
-				// FIXME: handle nestedpublic, too?
 				return (Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public;
 			}
 		}
@@ -306,28 +304,30 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		public override MemberTypes MemberType {
-			get {return MemberTypes.TypeInfo;} // FIXME
+			get {return MemberTypes.TypeInfo;}
 		}
 
 		public abstract Module Module {get;}
 	
 		public abstract string Namespace {get;}
 
-		[MonoTODO]
 		public override Type ReflectedType {
 			get {
-				throw new NotImplementedException ();
+				return this;
 			}
 		}
 
 		public abstract RuntimeTypeHandle TypeHandle {get;}
 
-		[MonoTODO]
 		public ConstructorInfo TypeInitializer {
 			get {
-				throw new NotImplementedException ();
+				return GetConstructorImpl (
+					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
+					null,
+					CallingConventions.Any,
+					EmptyTypes,
+					null);
 			}
 		}
 
@@ -336,6 +336,7 @@ namespace System {
 		public override bool Equals (object o) {
 			if (o == null)
 				return false;
+			// TODO: return UnderlyingSystemType == o.UnderlyingSystemType;
 			Type cmp = o as Type;
 			if (cmp == null)
 				return false;
@@ -368,8 +369,10 @@ namespace System {
 		}
 
 		public static Type[] GetTypeArray (object[] args) {
-			Type[] ret;
+			if (args == null)
+				throw new ArgumentNullException ("args");
 
+			Type[] ret;
 			ret = new Type [args.Length];
 			for (int i = 0; i < args.Length; ++i)
 				ret [i] = args[i].GetType ();
@@ -510,37 +513,34 @@ namespace System {
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual int GetArrayRank ()
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();	// according to MSDN
 		}
 
 		public abstract Type GetElementType ();
 
-		[MonoTODO]
 		public EventInfo GetEvent (string name) {
-			throw new NotImplementedException ();
+			return GetEvent (name, DefaultBindingFlags);
 		}
 
 		public abstract EventInfo GetEvent (string name, BindingFlags bindingAttr);
 
 		public virtual EventInfo[] GetEvents () {
-			return GetEvents (BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
+			return GetEvents (DefaultBindingFlags);
 		}
 
 		public abstract EventInfo[] GetEvents (BindingFlags bindingAttr);
 
 		public FieldInfo GetField( string name) {
-			return GetField (name, BindingFlags.Public);
+			return GetField (name, DefaultBindingFlags);
 		}
 
 		public abstract FieldInfo GetField( string name, BindingFlags bindingAttr);
 
 		public FieldInfo[] GetFields ()
 		{
-			return GetFields (BindingFlags.Public|BindingFlags.Instance|BindingFlags.Static);
+			return GetFields (DefaultBindingFlags);
 		}
 
 		public abstract FieldInfo[] GetFields (BindingFlags bindingAttr);
@@ -550,23 +550,19 @@ namespace System {
 		}
 
 		public MemberInfo[] GetMember( string name) {
-			return GetMember (name, BindingFlags.Public);
+			return GetMember (name, DefaultBindingFlags);
 		}
 		
-		[MonoTODO]
 		public virtual MemberInfo[] GetMember( string name, BindingFlags bindingAttr) {
-			// FIXME
-			throw new NotImplementedException ();
+			return GetMember (name, MemberTypes.All, bindingAttr);
 		}
 
-		[MonoTODO]
 		public virtual MemberInfo[] GetMember( string name, MemberTypes type, BindingFlags bindingAttr) {
-			// FIXME
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();	// according to MSDN
 		}
 
 		public MemberInfo[] GetMembers() {
-			return GetMembers (BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
+			return GetMembers (DefaultBindingFlags);
 		}
 
 		public abstract MemberInfo[] GetMembers( BindingFlags bindingAttr);
@@ -575,62 +571,65 @@ namespace System {
 		private static extern MethodInfo get_method (Type type, string name, Type[] types);
 
 		public MethodInfo GetMethod( string name) {
-			return GetMethod (name, BindingFlags.Public);
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			return GetMethodImpl (name, DefaultBindingFlags, null, CallingConventions.Any, null, null);
 		}
 
-		[MonoTODO]
 		public MethodInfo GetMethod( string name, BindingFlags bindingAttr) {
-			// FIXME
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			return GetMethodImpl (name, bindingAttr, null, CallingConventions.Any, null, null);
 		}
 		
+		[MonoTODO]
 		public MethodInfo GetMethod (string name, Type[] types)
 		{
+			//TODO: return GetMethod (name, DefaultBindingFlags, null, CallingConventions.Any, types, null);
 			return get_method (this, name, types);
 		}
 
-		[MonoTODO]
 		public MethodInfo GetMethod( string name, Type[] types, ParameterModifier[] modifiers) {
-			// FIXME
-			throw new NotImplementedException ();
+			return GetMethod (name, DefaultBindingFlags, null, CallingConventions.Any, types, modifiers);
 		}
 
-		[MonoTODO]
 		public MethodInfo GetMethod( string name, BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers) {
-			// FIXME
-			throw new NotImplementedException ();
+			return GetMethod (name, bindingAttr, binder, CallingConventions.Any, types, modifiers);
 		}
 
-		[MonoTODO]
 		public MethodInfo GetMethod( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
-			// FIXME
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (types == null)
+				throw new ArgumentNullException ("types");
+			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
 		protected abstract MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers);
 
 		public MethodInfo[] GetMethods ()
 		{
-			return GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.Static);
+			return GetMethods (DefaultBindingFlags);
 		}
 
 		public abstract MethodInfo[] GetMethods (BindingFlags bindingAttr);
 
 		public Type GetNestedType( string name) {
-			return GetNestedType (name, BindingFlags.Public);
+			return GetNestedType (name, DefaultBindingFlags);
 		}
 
 		public abstract Type GetNestedType( string name, BindingFlags bindingAttr);
 
 		public Type[] GetNestedTypes () {
-			return GetNestedTypes (BindingFlags.Public);
+			return GetNestedTypes (DefaultBindingFlags);
 		}
 
 		public abstract Type[] GetNestedTypes (BindingFlags bindingAttr);
 
+
 		public PropertyInfo[] GetProperties ()
 		{
-			return GetProperties (BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
+			return GetProperties (DefaultBindingFlags);
 		}
 
 		public abstract PropertyInfo[] GetProperties( BindingFlags bindingAttr);
@@ -638,45 +637,48 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern PropertyInfo get_property (Type type, string name, Type[] types);
 		
+
 		public PropertyInfo GetProperty (string name)
 		{
-			return GetProperty (name, BindingFlags.Public);
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			return GetPropertyImpl (name, DefaultBindingFlags, null, null, null, null);
 		}
 
-		[MonoTODO]
 		public PropertyInfo GetProperty( string name, BindingFlags bindingAttr) {
-			// FIXME
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			return GetPropertyImpl (name, bindingAttr, null, null, null, null);
+		}
+
+		public PropertyInfo GetProperty( string name, Type returnType) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			return GetPropertyImpl (name, DefaultBindingFlags, null, returnType, null, null);
 		}
 
 		[MonoTODO]
-		public PropertyInfo GetProperty( string name, Type returnType) {
-			// FIXME
-			throw new NotImplementedException ();
-		}
-
 		public PropertyInfo GetProperty (string name, Type[] types)
 		{
+			// TODO: return GetProperty (name, DefaultBindingFlags, null, null, types, null);
 			return get_property (this, name, types);
 		}
 
-		[MonoTODO]
 		public PropertyInfo GetProperty (string name, Type returnType, Type[] types)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			return GetProperty (name, DefaultBindingFlags, null, returnType, types, null);
 		}
 
-		[MonoTODO]
 		public PropertyInfo GetProperty( string name, Type returnType, Type[] types, ParameterModifier[] modifiers) {
-			// FIXME
-			throw new NotImplementedException ();
+			return GetProperty (name, DefaultBindingFlags, null, returnType, types, modifiers);
 		}
 
-		[MonoTODO]
 		public PropertyInfo GetProperty( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
-			// FIXME
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (types == null)
+				throw new ArgumentNullException ("types");
+			return GetPropertyImpl (name, bindingAttr, binder, returnType, types, modifiers);
 		}
 
 		protected abstract PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers);
@@ -694,32 +696,32 @@ namespace System {
 		protected virtual bool IsContextfulImpl () {
 			return typeof (ContextBoundObject).IsAssignableFrom (this);
 		}
-		[MonoTODO]
 		protected virtual bool IsMarshalByRefImpl () {
-			// FIXME
-			return false;
+			return typeof (MarshalByRefObject).IsAssignableFrom (this);
 		}
 		protected abstract bool IsPointerImpl ();
 		protected abstract bool IsPrimitiveImpl ();
 		protected abstract bool IsValueTypeImpl ();
 		
+		[MonoTODO]
 		public ConstructorInfo GetConstructor (Type[] types)
 		{
+			// TODO: return GetConstructor (BindingFlags.Public | BindingFlags.NonPublic, null, types, null);
 			return get_constructor (this, types);
 		}
 
-		[MonoTODO]
 		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers) {
-			throw new NotImplementedException ();
+			return GetConstructor (bindingAttr, binder, CallingConventions.Any, types, modifiers);
 		}
 
-		[MonoTODO]
 		public ConstructorInfo GetConstructor( BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
-			throw new NotImplementedException ();
+			if (types == null)
+				throw new ArgumentNullException ("types");
+			return GetConstructorImpl (bindingAttr, binder, callConvention, types, modifiers);
 		}
 
 		public ConstructorInfo[] GetConstructors () {
-			return GetConstructors (BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
+			return GetConstructors (BindingFlags.Public | BindingFlags.NonPublic);
 		}
 		
 		public abstract ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
