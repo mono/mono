@@ -242,4 +242,40 @@ public class X
                                 return;
                 }
 	}
+
+	// `continue' in a nested if.
+	public static void test17 ()
+	{
+		 int value;
+		 long charCount = 9;
+		 long testit = 5;
+
+		 while (charCount > 0) {
+			 --charCount;
+
+			 if (testit == 8) {
+				 if (testit == 9)
+					 throw new Exception ();
+
+				 continue;
+			 } else {
+				 value = 0;
+			 }
+
+			 Console.WriteLine (value);
+		 }
+	}
+
+	// `out' parameter assigned after conditional exception.
+	static void test18 (int a, out int f)
+	{
+		try {
+			if (a == 5)
+				throw new Exception ();
+
+			f = 9;
+		} catch (IndexOutOfRangeException) {
+			throw new FormatException ();
+		}
+	}
 }
