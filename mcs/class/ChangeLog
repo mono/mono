@@ -1,3 +1,9 @@
+2003-02-05  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* library.build: added Mono.Security.Win32 to build, test and 
+	clean. There's no makefile.gnu for this assembly as it is 
+	specific to Win32.
+
 2003-01-23  Nick Drochak <ndrochak@gol.com>
 
 	* makefile: install the .dbg files too so the debugger can use them.
