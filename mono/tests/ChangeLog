@@ -1,5 +1,7 @@
 2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* pinvoke13.cs: Fix test.
+
 	* libtest.c pinvoke13.cs: Fix test on big-endian machines.
 
 	* pinvoke3.cs: Remove an error handling test which no longer fails in
