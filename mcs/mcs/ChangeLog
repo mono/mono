@@ -1,5 +1,7 @@
 2001-11-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* enum.cs: More cleanup.
+
 	* ecore.cs: Remove dead code.
 
 	* class.cs (Property.Emit): More simplification.
