@@ -14,7 +14,7 @@ using System.Globalization;
 namespace System.Resources {
 	   public class ResourceManager {
 			 public static readonly int HeaderVersionNumber;
-			 public static readonly int MagicNumber;
+			 public static readonly int MagicNumber = 0xBEEFCACE;
 
 			 protected string BaseNameField;
 			 protected Assembly MainAssembly;
@@ -26,33 +26,49 @@ namespace System.Resources {
 			 // constructors
 			 public ResourceManager () {}
 
-		         [MonoTODO]
 			 public ResourceManager (Type resourceSource) {
 				    if (resourceSource == null)
 						  throw new ArgumentNullException ("resourceSource is null.");
-				    resourceSetType = resourceSource; // TODO Incomplete
+
+				    BaseNameField = resourceSource.FullName;
+				    MainAssembly = resourceSource.Assembly;
+
+				    ignoreCase = false;
+				    resourceSetType = typeof (resourceSource);
 			 }
 
-		         [MonoTODO]
 			 public ResourceManager (string baseName, Assembly assembly) {
 				    if (baseName == null || assembly == null)
 						  throw new ArgumentNullException ("The arguments are null.");
-				    // TODO
+
+				    BaseNameField = baseName;
+				    MainAssembly = assembly;
+				    ignoreCase = false;
+				    resourceSetType = typeof (ResourceSet);
 			 }
+			 
 			 public ResourceManager (string baseName, Assembly assembly, Type usingResourceSet) {
 				    if (baseName == null || assembly == null)
 						  throw new ArgumentNullException ("The arguments are null.");
 
-				    if (usingResourceSet != null)
-						  if (!usingResourceSet.IsSubclassOf (typeof(ResourceSet)))
-							 throw new ArgumentException ("Type must be derived from ResourceSet.");
+				    BaseNameField = baseName;
+				    Assembly = assembly;
+
+				    if (usingResourceSet == null) // defaults resourceSet type.
+						  resourceSetType = typeof (ResourceSet);
+				    else {
+						  if (!usingResourceSet.IsSubclassOf (typeof (ResourceSet)))
+								throw new ArgumentException ("Type must be from ResourceSet.");
+						  
+						  resourceSetType = typeof (usingResourceSet); // must be a subclass of ResourceSet
+				    }
 			 }
 
 			 [MonoTODO]
 			 public static ResourceManager CreateFileBasedResourceManager (string baseName,
 															   string resourceDir,
 															   Type usingResourceSet) {
-				return null;
+				    return null;
 			 }
 
 			 public virtual string BaseName { get { return BaseNameField; }}
@@ -75,6 +91,7 @@ namespace System.Resources {
 				return null;
 			 }
 
+			 [MonoTODO]
 			 public virtual string GetString (string name) {
 				    if (name == null)
 						  throw new ArgumentNullException ("Name is null.");
@@ -94,7 +111,7 @@ namespace System.Resources {
 				    return null;
 			 }
 
-		         [MonoTODO]
+			 [MonoTODO]
 			 protected virtual string GetResourceFileName (CultureInfo culture) {
 				    return culture.Name + ".resources"; // TODO check for correctness.
 			 }
@@ -127,7 +144,6 @@ namespace System.Resources {
 			 }
 
 			 public static Version GetSatelliteContractVersion (Assembly a) {
-
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is SatelliteContractVersionAttribute)
 								return new Version ((attribute as SatelliteContractVersionAttribute).Version);

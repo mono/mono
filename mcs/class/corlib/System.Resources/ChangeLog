@@ -1,3 +1,19 @@
+2002-01-16  Duncan Mak  <duncan@ximian.com>
+
+	* ResourceManager.cs: After reading the tutorial from the SDK,
+	finished all the ResourceManager constructors and removed those
+	MonoTODO tags.
+
+	Updated fields after reading the new docs from the final SDK.
+
+	* ResXFileRef.cs, ResXResourceReader.cs: Removed. They are part of
+	Windows.Forms and require System.Xml, which we don't have access to.
+
+2002-01-13  Duncan Mak  <duncan@ximian.com>
+
+	* ResourceManager.cs: Added more MonoTODOs and cleaned up some 
+	indenting.
+
 2002-01-09  Duncan Mak  <duncan@ximian.com>
 
 	* ResourceManager.cs: Fixed the GetSatelliteContractVersion()
