@@ -5,9 +5,6 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -118,9 +115,10 @@ namespace System.Security.Permissions {
 		public override SecurityElement ToXml ()
 		{
 			SecurityElement se = new SecurityElement ("IPermission");
-			se.AddAttribute ("version", "1");
 			Type t = GetType ();
-			se.AddAttribute("class", t.FullName + ", " + t.Module.Assembly.FullName);
+			se.AddAttribute ("class", t.FullName + ", " + t.Module.Assembly.FullName);
+			se.AddAttribute ("version", "1");
+			se.AddAttribute ("Zone", zone.ToString ());
 
 			return se;
 		}
