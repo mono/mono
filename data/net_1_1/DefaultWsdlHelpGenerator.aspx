@@ -1586,7 +1586,7 @@ function clearForm ()
 			<span class="bindingLabel"><%#FormatBindingName(DataBinder.Eval(Container.DataItem, "Name").ToString())%></span>
 			<asp:repeater id="OperationsRepeater" runat=server datasource='<%# ((Binding)Container.DataItem).Operations %>'>
 				<itemtemplate>
-					<a class="method" href="<%#PageName%>?<%#GetTabContext("op",null)%>op=<%#GetOpName(Container.DataItem)%>&bnd=<%#DataBinder.Eval(Container.DataItem, "Binding.Name")%>"><%#GetOpName(Container.DataItem)%></a>
+					<a class="method" href="<%=PageName%>?<%=GetTabContext("op",null)%>op=<%#GetOpName(Container.DataItem)%>&bnd=<%#DataBinder.Eval(Container.DataItem, "Binding.Name")%>"><%#GetOpName(Container.DataItem)%></a>
 					<div class="smallSeparator"></div>
 				</itemtemplate>
 			</asp:repeater>
@@ -1604,7 +1604,7 @@ function clearForm ()
 -->
 
 	<p class="label">Web Service Overview</p>
-	<%#WebServiceDescription%>
+	<%=WebServiceDescription%>
 	
 <%} if (DefaultBinding == null) {%>
 This service does not contain any public web method.
@@ -1615,7 +1615,7 @@ This service does not contain any public web method.
 	Operation description
 -->
 
-	<span class="operationTitle"><%#CurrentOperationName%></span>
+	<span class="operationTitle"><%=CurrentOperationName%></span>
 	<br><br>
 	<% WriteTabs (); %>
 	<br><br><br>
@@ -1657,12 +1657,12 @@ This service does not contain any public web method.
 		
 		<span class="label">Remarks</span>
 		<div class="smallSeparator"></div>
-		<%#OperationDocumentation%>
+		<%=OperationDocumentation%>
 		<br><br>
 		<span class="label">Technical information</span>
 		<div class="smallSeparator"></div>
-		Format: <%#CurrentOperationFormat%>
-		<br>Supported protocols: <%#CurrentOperationProtocols%>
+		Format: <%=CurrentOperationFormat%>
+		<br>Supported protocols: <%=CurrentOperationProtocols%>
 	<% } %>
 	
 <!--
@@ -1673,11 +1673,11 @@ This service does not contain any public web method.
 	<% if (CurrentTab == "test") { 
 		if (CurrentOperationSupportsTest) {%>
 			Enter values for the parameters and click the 'Invoke' button to test this method:<br><br>
-			<form action="<%#PageName%>" method="GET">
-			<input type="hidden" name="page" value="<%#CurrentPage%>">
-			<input type="hidden" name="tab" value="<%#CurrentTab%>">
-			<input type="hidden" name="op" value="<%#CurrentOperationName%>">
-			<input type="hidden" name="bnd" value="<%#CurrentOperationBinding%>">
+			<form action="<%=PageName%>" method="GET">
+			<input type="hidden" name="page" value="<%=CurrentPage%>">
+			<input type="hidden" name="tab" value="<%=CurrentTab%>">
+			<input type="hidden" name="op" value="<%=CurrentOperationName%>">
+			<input type="hidden" name="bnd" value="<%=CurrentOperationBinding%>">
 			<input type="hidden" name="ext" value="testform">
 			<table class="paramFormTable" cellspacing="0" cellpadding="3">
 			<asp:repeater id="InputFormParamsRepeater" runat=server>
@@ -1691,9 +1691,9 @@ This service does not contain any public web method.
 			<tr><td></td><td><input class="button" type="submit" value="Invoke">&nbsp;<input class="button" type="button" onclick="clearForm()" value="Clear"></td></tr>
 			</table>
 			</form>
-			<div id="testFormResult" style="display:<%# (HasFormResult?"block":"none") %>">
+			<div id="testFormResult" style="display:<%= (HasFormResult?"block":"none") %>">
 			The web service returned the following result:<br/><br/>
-			<div class="codePanel"><%#GetTestResult()%></div>
+			<div class="codePanel"><%=GetTestResult()%></div>
 			</div>
 		<% } else {%>
 		The test form is not available for this operation because it has parameters with a complex structure.
@@ -1713,25 +1713,25 @@ This service does not contain any public web method.
 		<% if (IsOperationSupported ("Soap")) { %>
 			<span class="label">Soap</span>
 			<br/><br/>
-			<div class="codePanel"><div class="code-xml"><%#GenerateOperationMessages ("Soap", true)%></div></div>
+			<div class="codePanel"><div class="code-xml"><%=GenerateOperationMessages ("Soap", true)%></div></div>
 			<br/>
-			<div class="codePanel"><div class="code-xml"><%#GenerateOperationMessages ("Soap", false)%></div></div>
+			<div class="codePanel"><div class="code-xml"><%=GenerateOperationMessages ("Soap", false)%></div></div>
 			<br/>
 		<% } %>
 		<% if (IsOperationSupported ("HttpGet")) { %>
 			<span class="label">HTTP Get</span>
 			<br/><br/>
-			<div class="codePanel"><div class="code-xml"><%#GenerateOperationMessages ("HttpGet", true)%></div></div>
+			<div class="codePanel"><div class="code-xml"><%=GenerateOperationMessages ("HttpGet", true)%></div></div>
 			<br/>
-			<div class="codePanel"><div class="code-xml"><%#GenerateOperationMessages ("HttpGet", false)%></div></div>
+			<div class="codePanel"><div class="code-xml"><%=GenerateOperationMessages ("HttpGet", false)%></div></div>
 			<br/>
 		<% } %>
 		<% if (IsOperationSupported ("HttpPost")) { %>
 			<span class="label">HTTP Post</span>
 			<br/><br/>
-			<div class="codePanel"><div class="code-xml"><%#GenerateOperationMessages ("HttpPost", true)%></div></div>
+			<div class="codePanel"><div class="code-xml"><%=GenerateOperationMessages ("HttpPost", true)%></div></div>
 			<br/>
-			<div class="codePanel"><div class="code-xml"><%#GenerateOperationMessages ("HttpPost", false)%></div></div>
+			<div class="codePanel"><div class="code-xml"><%=GenerateOperationMessages ("HttpPost", false)%></div></div>
 			<br/>
 		<% } %>
 		
@@ -1741,21 +1741,21 @@ This service does not contain any public web method.
 	**********************************************************
 	Client Proxy
 -->
-	<form action="<%#PageName%>" name="langForm" method="GET">
+	<form action="<%=PageName%>" name="langForm" method="GET">
 		Select the language for which you want to generate a proxy 
-		<input type="hidden" name="page" value="<%#CurrentPage%>">&nbsp;
+		<input type="hidden" name="page" value="<%=CurrentPage%>">&nbsp;
 		<SELECT name="lang" onchange="langForm.submit()">
-			<%#GetOptionSel("cs",CurrentLanguage)%>C#</option>
-			<%#GetOptionSel("vb",CurrentLanguage)%>Visual Basic</option>
+			<%=GetOptionSel("cs",CurrentLanguage)%>C#</option>
+			<%=GetOptionSel("vb",CurrentLanguage)%>Visual Basic</option>
 		</SELECT>
 		&nbsp;&nbsp;
 	</form>
 	<br>
-	<span class="label"><%#CurrentProxytName%></span>&nbsp;&nbsp;&nbsp;
-	<a href="<%#PageName + "?code=" + CurrentLanguage%>">Download</a>
+	<span class="label"><%=CurrentProxytName%></span>&nbsp;&nbsp;&nbsp;
+	<a href="<%=PageName + "?code=" + CurrentLanguage%>">Download</a>
 	<br><br>
 	<div class="codePanel">
-	<div class="code-<%#CurrentLanguage%>"><%#GetProxyCode ()%></div>
+	<div class="code-<%=CurrentLanguage%>"><%=GetProxyCode ()%></div>
 	</div>
 <%} else if (CurrentPage == "wsdl") {%>
 <!--
@@ -1777,11 +1777,11 @@ This service does not contain any public web method.
 	<%} else {%>
 	<%}%>
 	<br>
-	<span class="label"><%#CurrentDocumentName%></span>&nbsp;&nbsp;&nbsp;
+	<span class="label"><%=CurrentDocumentName%></span>&nbsp;&nbsp;&nbsp;
 	<a href="<%=PageName + "?" + CurrentDocType + "=" + CurrentDocInd %>">Download</a>
 	<br><br>
 	<div class="codePanel">
-	<div class="code-xml"><%#GenerateDocument ()%></div>
+	<div class="code-xml"><%=GenerateDocument ()%></div>
 	</div>
 
 <%}%>
