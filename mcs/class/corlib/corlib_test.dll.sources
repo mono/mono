@@ -1,3 +1,4 @@
+Microsoft.Win32/RegistryKeyTest.cs
 System/AppDomainSetupTest.cs
 System/AppDomainTest.cs
 System/ApplicationIdentityTest.cs
@@ -72,6 +73,7 @@ System.IO/StringWriterTest.cs
 System.IO/TextWriterTest.cs
 System/MathTest.cs
 System/MulticastDelegate.cs
+System/NumberFormatterTest.cs
 System/ObjectTest.cs
 System/RandomTest.cs
 System.Reflection/AssemblyAlgorithmIdAttributeTest.cs
