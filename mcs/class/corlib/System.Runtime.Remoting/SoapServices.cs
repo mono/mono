@@ -98,6 +98,12 @@ namespace System.Runtime.Remoting {
 				typeNamespace = inNamespace.Substring (typePos);
 				return true;
 			}
+			else if (inNamespace.StartsWith(XmlNsForClrTypeWithAssembly))
+			{
+				int typePos = XmlNsForClrTypeWithAssembly.Length;
+				assemblyName = inNamespace.Substring (typePos);
+				return true;
+			}
 			else
 				return false;
 		}

@@ -1,3 +1,8 @@
+2004-05-07  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapServices.cs: Support encoded namespace names in 
+	  DecodeXmlNamespaceForClrTypeNamespace. Thanks to George Kodinov.
+
 2004-04-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* RemotingServices.cs: When create a ReturnMessage, provide an array with
