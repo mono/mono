@@ -694,20 +694,20 @@ namespace System.Windows.Forms
 		internal uint  time; 
 		internal POINT  pt;
 	}
-//
-//	[StructLayout(LayoutKind.Sequential)]
-//	internal struct WNDCLASS {
-//		internal int style;
-//		internal WndProc lpfnWndProc;
-//		internal int cbClsExtra;
-//		internal int cbWndExtra;
-//		internal IntPtr hInstance;
-//		internal IntPtr hIcon;
-//		internal IntPtr hCursor;
-//		internal IntPtr hbrBackground;
-//		internal string lpszMenuName;
-//		internal string lpszClassName;
-//	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct WNDCLASS {
+		internal int style;
+		internal Win32.WndProc lpfnWndProc;
+		internal int cbClsExtra;
+		internal int cbWndExtra;
+		internal IntPtr hInstance;
+		internal IntPtr hIcon;
+		internal IntPtr hCursor;
+		internal IntPtr hbrBackground;
+		internal string lpszMenuName;
+		internal string lpszClassName;
+	}
 
 
 	//

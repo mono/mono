@@ -118,12 +118,12 @@ namespace System.Windows.Forms  {
 
 		internal const uint INVALID_MENU_ID = 0xffffffff;
 		// Variables are stored here to provide access for the base functions
-		protected uint MenuID_ = INVALID_MENU_ID;
+		protected internal uint MenuID_ = INVALID_MENU_ID;
 
 		// Provides unique id to all items in all menus, hopefully space is enougth.
 		// Possible to use array to keep ids from deleted menu items
 		// and reuse them.
-		protected static uint MenuIDs_ = 1;
+		protected static int MenuIDs_ = 1;
 
 		// Library interface
 
@@ -132,7 +132,7 @@ namespace System.Windows.Forms  {
 		internal virtual MenuItem GetMenuItemByID( uint id)
 		{
 			foreach( MenuItem mi in MenuItems) {
-				if( mi.IsParent_) {
+				if( mi.IsParent) {
 					MenuItem submi = mi.GetMenuItemByID(id);
 					if( submi != null) return submi;
 				}
@@ -149,14 +149,14 @@ namespace System.Windows.Forms  {
 		// Btw, this function is funky, it is being used by routines that are supposed
 		// to be passing an IntPtr to the AppendMenu function
 		//
-		internal virtual uint GetIDByMenuItem( MenuItem mi)
+		internal virtual uint GetIDByMenuItem(MenuItem mi)
 		{
 			// FIXME: Pay attention, do not assign an id to a "stranger"
 			// If reusing IDs, get one from array first
 			if ( mi.MenuID_ == INVALID_MENU_ID) {
 				mi.MenuID_ = MenuIDs_++;
 			}
-			return  mi.MenuID_;
+			return  (uint)mi.MenuID;
 		}
 
 		//inherited

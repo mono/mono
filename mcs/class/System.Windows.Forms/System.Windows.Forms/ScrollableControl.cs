@@ -18,6 +18,8 @@ namespace System.Windows.Forms {
 
 	public class ScrollableControl : Control {
 
+		private static bool classRegistered = false;
+		
 		private ScrollableControl.DockPaddingEdges dockPadding;
 
 		//
@@ -89,6 +91,25 @@ namespace System.Windows.Forms {
 
 		protected override CreateParams CreateParams {
 			get {
+				if (!classRegistered) {
+	                                Win32.WndProc wp = new Win32.WndProc (WndProc);
+        	                        WNDCLASS wndClass = new WNDCLASS();
+ 
+					wndClass.style = (int) (CS_.CS_OWNDC | CS_.CS_VREDRAW | CS_.CS_HREDRAW);
+					wndClass.lpfnWndProc = wp;
+					wndClass.cbClsExtra = 0;
+					wndClass.cbWndExtra = 0;
+					wndClass.hInstance = (IntPtr)0;
+					wndClass.hIcon = (IntPtr)0;
+					wndClass.hCursor = (IntPtr)0;
+					wndClass.hbrBackground = (IntPtr)6;  // ???
+					wndClass.lpszMenuName = "";
+					wndClass.lpszClassName = "mono_scrollable_control";
+    
+					if (Win32.RegisterClassA(ref wndClass) != 0) 
+						classRegistered = true; 
+				}		
+
 				CreateParams createParams = new CreateParams ();
 				createParams.Caption = "";
 				createParams.ClassName = "mono_scrollable_control";
@@ -103,11 +124,11 @@ namespace System.Windows.Forms {
 				//if (parent != null)
 				//	createParams.Parent = parent.Handle;
 				//else 
-					createParams.Parent = (IntPtr) 0;
+				createParams.Parent = (IntPtr) 0;
 	  
 				createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
 	  
-				return createParams;
+				return createParams;			
 			}
 		}
 
@@ -134,6 +155,18 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
+		static private IntPtr WndProc (IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) {
+			Message message = new Message();
+
+			message.HWnd = hWnd;
+			message.Msg = msg;
+			message.WParam = wParam;
+			message.LParam = lParam;
+			message.Result = (IntPtr)0;
+
+			return (IntPtr)0;
+		}
+		
 		[MonoTODO]
 		protected virtual void AdjustFormScrollbars (
 			bool displayScrollbars)

@@ -1,3 +1,16 @@
+  2002-11-23  DennisHayes <dennish@raytek.com>	
+	 checked in for 	Francois-Denis Gonthier
+
+	* win32functions.cs
+	* win32Structs.cs
+	* Menu.cs
+	* ScrollableControl.cs
+	* MenuItem.cs
+	* NativeWindow.cs
+	* Form.cs
+	* move some more stuff from monostub to c#
+	* converted a couple of files to unix style line end
+	* some implmementation
 	
   2002-11-17  DennisHayes <dennish@raytek.com>	
 

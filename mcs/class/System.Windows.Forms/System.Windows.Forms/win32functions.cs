@@ -547,30 +547,13 @@ namespace System.Windows.Forms{
 
 
 		#region Mono win32 Fuinctions
-		// helper function for calling RegisterClass
-		internal delegate IntPtr WndProc (IntPtr hwnd, int msg,
-			IntPtr wParam, IntPtr lParam);
 
-		//
-
-		[DllImport ("monostub.exe", 
+		internal delegate IntPtr WndProc (IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam);
+		
+		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
 			 CharSet = CharSet.Auto)]
-		internal static extern int MonoRegisterClass (
-			int style, WndProc lpfnWndProc, int cbClsExtra,
-			int cbWndExtra, IntPtr hInstance, IntPtr hIcon,
-			IntPtr hCursor,	IntPtr hbrBackground,
-			string lpszMenuName, string lpszClassName);
-		//
-		//		[DllImport ("user32.DLL", 
-		//			 CallingConvention = CallingConvention.StdCall,
-		//			 CharSet = CharSet.Auto)]
-		//		public static extern int RegisterClass (
-		//			int style, WndProc lpfnWndProc, int cbClsExtra,
-		//			int cbWndExtra, IntPtr hInstance, IntPtr hIcon,
-		//			IntPtr hCursor,	IntPtr hbrBackground,
-		//			string lpszMenuName, string lpszClassName);
-
+		internal static extern uint RegisterClassA(ref WNDCLASS wndClass);
 		
 		#region Added by Dennis hayes 10-20-2002
 		//correct?
