@@ -1,5 +1,28 @@
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs :
+	  - Existing GetLabels() was insufficient to support attribute labels
+	    by design (since those state object always reflects the status
+	    after Read() and inside Read() attributes are checked and attribute
+	    derivatives are consumed). So just made existing stuff as obsolete.
+	  - Added object GetCurrentState() that returns RdpPattern wrapper.
+	  - Added Emptiable(object state) that returns whether the 
+	    specified state is emptiable.
+	  - Added GetElementLabels(object state) and GetAttributeLabels(object
+	    state) that returns the collection of XmlQualifiedName that 
+	    represents possible element names or attribute names from the
+	    argument state.
+	  - Added AfterOpenStartTag(state,name,ns), OpenStartTag(state,name,
+	    ns), AfterAttribute(state, name, ns), Attribute(state,name,ns),
+	    AfterCloseStartTag(state), CloseStartTag(state),
+	    AfterEndTag(state) and EndTag(state) to simulate state transition.
+	    AfterXXX() returns another state instance if the transition was
+	    successful or null. XXX() returns bool that indicates if the 
+	    transition was successful or not and proceeds the state in case
+	    of success.
+
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngException.cs : Added new .ctor() that takes RelaxngElementBase
 	  to provide target grammar component location.
 

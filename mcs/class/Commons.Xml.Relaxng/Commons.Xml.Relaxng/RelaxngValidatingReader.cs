@@ -86,6 +86,8 @@ namespace Commons.Xml.Relaxng
 			set { roughLabelCheck = value; }
 		}
 
+		#region These members will be removed soon!
+		[Obsolete ("Use GetElementLabels(object) instead.")]
 		public ICollection ExpectedElements {
 			get {
 				if (!labelsComputed)
@@ -94,6 +96,7 @@ namespace Commons.Xml.Relaxng
 			}
 		}
 
+		[Obsolete ("Use GetAttributeLabels(object) instead.")]
 		public ICollection ExpectedAttributes {
 			get {
 				if (!labelsComputed)
@@ -102,7 +105,7 @@ namespace Commons.Xml.Relaxng
 			}
 		}
 
-		[Obsolete ("Use ExpectedElements and ExpectedAttributs instead.")]
+		[Obsolete ("Use GetElementLabels(object) and GetAttributeLabels(object) instead.")]
 		public void GetLabels (Hashtable elements, Hashtable attributes)
 		{
 			if (elements == null)
@@ -134,6 +137,7 @@ namespace Commons.Xml.Relaxng
 				elements.Remove (qname);
 		}
 
+		[Obsolete ("Use Emptiable(object) instead.")]
 		public bool Emptiable ()
 		{
 			if (!labelsComputed) {
@@ -142,6 +146,228 @@ namespace Commons.Xml.Relaxng
 			}
 			return isEmptiable;
 		}
+		#endregion
+
+		#region Validation State support
+
+
+		// It is used to disclose its validation feature to public
+		class ValidationState
+		{
+			RdpPattern state;
+
+			internal ValidationState (RdpPattern startState)
+			{
+				this.state = startState;
+			}
+
+			public RdpPattern Pattern {
+				get { return state; }
+			}
+
+			public ValidationState AfterOpenStartTag (
+				string localName, string ns)
+			{
+				RdpPattern p = state.StartTagOpenDeriv (
+					localName, ns);
+				return p is RdpNotAllowed ?
+					null : new ValidationState (p);
+			}
+
+			public bool OpenStartTag (string localName, string ns)
+			{
+				RdpPattern p = state.StartTagOpenDeriv (
+					localName, ns);
+				if (p is RdpNotAllowed)
+					return false;
+				state = p;
+				return true;
+			}
+
+			public ValidationState AfterCloseStartTag ()
+			{
+				RdpPattern p = state.StartTagCloseDeriv ();
+				return p is RdpNotAllowed ?
+					null : new ValidationState (p);
+			}
+
+			public bool CloseStartTag ()
+			{
+				RdpPattern p = state.StartTagCloseDeriv ();
+				if (p is RdpNotAllowed)
+					return false;
+				state = p;
+				return true;
+			}
+
+			public ValidationState AfterEndTag ()
+			{
+				RdpPattern p = state.EndTagDeriv ();
+				if (p is RdpNotAllowed)
+					return null;
+				return new ValidationState (p);
+			}
+
+			public bool EndTag ()
+			{
+				RdpPattern p = state.EndTagDeriv ();
+				if (p is RdpNotAllowed)
+					return false;
+				state = p;
+				return true;
+			}
+
+			public ValidationState AfterAttribute (
+				string localName, string ns, XmlReader reader)
+			{
+				RdpPattern p = state.AttDeriv (
+					localName, ns, null, reader);
+				if (p is RdpNotAllowed)
+					return null;
+				return new ValidationState (p);
+			}
+
+			public bool Attribute (
+				string localName, string ns, XmlReader reader)
+			{
+				RdpPattern p = state.AttDeriv (
+					localName, ns, null, reader);
+				if (p is RdpNotAllowed)
+					return false;
+				state = p;
+				return true;
+			}
+		}
+
+		public object GetCurrentState ()
+		{
+			PrepareState ();
+			return new ValidationState (vState);
+		}
+
+		private ValidationState ToState (object stateObject)
+		{
+			if (stateObject == null)
+				throw new ArgumentNullException ("stateObject");
+			ValidationState state = stateObject as ValidationState;
+			if (state == null)
+				throw new ArgumentException ("Argument stateObject is not of expected type.");
+			return state;
+		}
+
+		public object AfterOpenStartTag (object stateObject,
+			string localName, string ns)
+		{
+			ValidationState state = ToState (stateObject);
+			return state.AfterOpenStartTag (localName, ns);
+		}
+
+		public bool OpenStartTag (object stateObject,
+			string localName, string ns)
+		{
+			ValidationState state = ToState (stateObject);
+			return state.OpenStartTag (localName, ns);
+		}
+
+		public object AfterAttribute (object stateObject,
+			string localName, string ns)
+		{
+			ValidationState state = ToState (stateObject);
+			return state.AfterAttribute (localName, ns, this);
+		}
+
+		public bool Attribute (object stateObject,
+			string localName, string ns)
+		{
+			ValidationState state = ToState (stateObject);
+			return state.Attribute (localName, ns, this);
+		}
+
+		public object AfterCloseStartTag (object stateObject)
+		{
+			ValidationState state = ToState (stateObject);
+			return state.AfterCloseStartTag ();
+		}
+
+		public bool CloseStartTag (object stateObject)
+		{
+			ValidationState state = ToState (stateObject);
+			return state.CloseStartTag ();
+		}
+
+		public object AfterEndTag (object stateObject)
+		{
+			ValidationState state = ToState (stateObject);
+			return state.AfterEndTag ();
+		}
+
+		public bool EndTag (object stateObject)
+		{
+			ValidationState state = ToState (stateObject);
+			return state.EndTag ();
+		}
+
+		public ICollection GetElementLabels (object stateObject)
+		{
+			ValidationState state = ToState (stateObject);
+			RdpPattern p = state.Pattern;
+			Hashtable elements = new Hashtable ();
+			Hashtable attributes = new Hashtable ();
+			p.GetLabels (elements, attributes);
+
+			if (roughLabelCheck)
+				return elements.Values;
+
+			// Strict check that tries actual validation that will
+			// cover rejection by notAllowed.
+			if (strictCheckCache == null)
+				strictCheckCache = new ArrayList ();
+			else
+				strictCheckCache.Clear ();
+			foreach (XmlQualifiedName qname in elements.Values)
+				if (p.StartTagOpenDeriv (qname.Name, qname.Namespace) is RdpNotAllowed)
+					strictCheckCache.Add (qname);
+			foreach (XmlQualifiedName qname in strictCheckCache)
+				elements.Remove (qname);
+			strictCheckCache.Clear ();
+
+			return elements.Values;
+		}
+
+		public ICollection GetAttributeLabels (object stateObject)
+		{
+			ValidationState state = ToState (stateObject);
+			RdpPattern p = state.Pattern;
+			Hashtable elements = new Hashtable ();
+			Hashtable attributes = new Hashtable ();
+			p.GetLabels (elements, attributes);
+
+			if (roughLabelCheck)
+				return attributes.Values;
+
+			// Strict check that tries actual validation that will
+			// cover rejection by notAllowed.
+			if (strictCheckCache == null)
+				strictCheckCache = new ArrayList ();
+			else
+				strictCheckCache.Clear ();
+			foreach (XmlQualifiedName qname in attributes.Values)
+				if (p.AttDeriv (qname.Name, qname.Namespace,null, this) is RdpNotAllowed)
+					strictCheckCache.Add (qname);
+			foreach (XmlQualifiedName qname in strictCheckCache)
+				attributes.Remove (qname);
+			strictCheckCache.Clear ();
+
+			return attributes.Values;
+		}
+
+		public bool Emptiable (object stateObject)
+		{
+			ValidationState state = ToState (stateObject);
+			RdpPattern p = state.Pattern;
+			return !(p.EndTagDeriv () is RdpNotAllowed);
+		}
+		#endregion
 
 		private RelaxngException createValidationError (string message)
 		{
