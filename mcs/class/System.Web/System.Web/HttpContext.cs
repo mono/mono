@@ -227,9 +227,20 @@ namespace System.Web
 			}
 		}
 
+		//FIXME: We should remove this hack
+		void CreateDefaultUser ()
+		{
+			IIdentity identity = new GenericIdentity ("");
+			IPrincipal user = new GenericPrincipal (identity, new string [0]);
+			_User = user;
+		}
+		
 		public IPrincipal User
 		{
 			get {
+				if (_User == null)
+					CreateDefaultUser ();
+
 				return _User;
 			}
 			set {
@@ -259,13 +270,11 @@ namespace System.Web
 			_arrExceptions = null;
 		}
 
-		[MonoTODO("GetConfig(string name)")]
 		public object GetConfig (string name)
 		{
-			throw new NotImplementedException();
+			return ConfigurationSettings.GetConfig (name);
 		}
 
-		[MonoTODO("We gotta deal with web.config files too")]
 		public static object GetAppConfig (string name)
 		{
 			return ConfigurationSettings.GetConfig (name);

@@ -1,3 +1,10 @@
+2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs: hack to create a default user when there's no one.
+	Implemented GetConfig (string).
+
+	* HttpRequest.cs: fixes to MapPath (string).
+
 2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntime.cs: avoid nulls and exception when getting resource

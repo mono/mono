@@ -929,6 +929,14 @@ namespace System.Web {
 
 		public string MapPath(string VirtualPath)
 		{
+			if (_sRequestRootVirtualDir == null) {
+				_sRequestRootVirtualDir = FilePath;
+				int pos = _sRequestRootVirtualDir.LastIndexOf ('/');
+				if (pos == -1 || pos == 0)
+					_sRequestRootVirtualDir = "/";
+				else
+					_sRequestRootVirtualDir = _sRequestRootVirtualDir.Substring (0, pos);
+			}
 			return MapPath (VirtualPath, _sRequestRootVirtualDir, true);
 		}
 
