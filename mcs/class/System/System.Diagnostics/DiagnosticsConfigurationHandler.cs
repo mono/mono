@@ -34,6 +34,7 @@
 using System;
 using System.Collections;
 using System.Configuration;
+using System.Threading;
 #if (XML_DEP)
 using System.Xml;
 #endif
@@ -41,16 +42,29 @@ namespace System.Diagnostics
 {
 	internal sealed class DiagnosticsConfiguration
 	{
+#if NO_LOCK_FREE
 		private static object lock_ = new object();
-		private static IDictionary settings;
+#endif
+		private static object settings;
 
 		public static IDictionary Settings {
 			get {
+#if !NO_LOCK_FREE
+				if (settings == null) {
+					object s = ConfigurationSettings.GetConfig ("system.diagnostics");
+					Thread.MemoryBarrier ();
+					while (Interlocked.CompareExchange (ref settings, s, null) == null) {
+						// do nothing; we're just setting settings.
+					}
+					Thread.MemoryBarrier ();
+				}
+#else
 				lock (lock_) {
 					if (settings == null)
-						settings = (IDictionary) ConfigurationSettings.GetConfig ("system.diagnostics");
+						settings = ConfigurationSettings.GetConfig ("system.diagnostics");
 				}
-				return settings;
+#endif
+				return (IDictionary) settings;
 			}
 		}
 	}

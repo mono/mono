@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2002 Jonathan Pryor
+// (C) 2002, 2005 Jonathan Pryor
 //
 
 //
@@ -32,6 +32,7 @@
 using System;
 using System.Diagnostics;
 using System.Configuration;
+using System.Threading;
 
 namespace System.Diagnostics {
 
@@ -90,13 +91,13 @@ namespace System.Diagnostics {
 			}
 		}
 
-		private static TraceListenerCollection listeners;
+		private static object listeners;
 
 		public static TraceListenerCollection Listeners {
 			get {
 				InitOnce ();
 
-				return listeners;
+				return (TraceListenerCollection) listeners;
 			}
 		}
 
@@ -118,6 +119,22 @@ namespace System.Diagnostics {
 		// add/remove existing listeners).
 		private static void InitOnce ()
 		{
+#if !NO_LOCK_FREE
+			// The lock-free version
+			if (listeners == null) {
+				TraceListenerCollection c = new TraceListenerCollection ();
+				Thread.MemoryBarrier ();
+				while (Interlocked.CompareExchange (ref listeners, c, null) == null) {
+					// Read in the .config file and get the ball rolling...
+					System.Collections.IDictionary d = DiagnosticsConfiguration.Settings;
+
+					// remove warning about unused temporary
+					d = d;
+				}
+				Thread.MemoryBarrier ();
+			}
+#else
+			// The lock version (saved for posterity and potential debugging)
 			lock (lock_) {
 				if (listeners == null) {
 					listeners = new TraceListenerCollection ();
@@ -129,6 +146,7 @@ namespace System.Diagnostics {
 					d = d;
 				}
 			}
+#endif
 		}
 
 		// FIXME: According to MSDN, this method should display a dialog box

@@ -1,5 +1,12 @@
 2005-01-18 Jonathan Pryor  <jonpryor@vt.edu>
 
+	* DiagnosticsConfigurationHandler.cs (DiagnosticsConfiguration): 
+	  Use a lock-free algorithm for creating the settings information.
+	* TraceImpl.cs (InitOnce): Use a lock-free algorithm for creating the
+	  listeners collection and initializing the world.
+
+2005-01-18 Jonathan Pryor  <jonpryor@vt.edu>
+
 	* DiagnosticsConfigurationHandler.cs (DiagnosticsConfiguration): Don't 
 	  read the .config file from the static ctor (again), as if it fails we'll 
 	  get a TypeLoadException -- bad!  Instead, lazy-read the .config file.
