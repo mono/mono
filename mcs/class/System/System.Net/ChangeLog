@@ -1,3 +1,8 @@
+2003-12-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NtlmClient.cs: new class that actually uses one from Mono.Http to do
+	the authentication.
+
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: when building the redirect URI, use the previous
