@@ -1,3 +1,10 @@
+2003-07-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseStreamProxy.cs: reformatted. Fixed infinite recursion in
+	Write method.
+
+	* HttpWriter.cs: flush the filter after writing.
+
 2003-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWriter.cs: avoid duplicating the MemoryStream byte buffer.

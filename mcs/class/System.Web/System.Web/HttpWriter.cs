@@ -84,6 +84,7 @@ namespace System.Web
 			try {
 				// Call the filter (it does a callback into our HttpWriter again)
 				_OutputFilter.Write (arrData, 0, size);
+				_OutputFilter.Flush ();
 
 				if (CloseStream)
 					_OutputFilter.Close ();
