@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for Microsoft.VisualC.dll -->
+
+<project name="System" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<mkdir dir="../lib"/>
+		<csc target="library" output="../lib/Microsoft.VisualC.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
+			
+			<!-- cor compare dies with these currently -->
+			<!--<arg value="/nostdlib"/>--> 	<!-- don't reference mscorlib -->
+			<!--<arg value="/lib:../lib/"/>-->
+			<!--<arg value="/r:..\lib\corlib.dll"/>-->
+			<!--<arg value="/r:..\lib\System.dll"/>-->
+			<arg value="/r:System.dll"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+			</sources>
+			<references>
+				<!--<includes name="../lib/corlib.dll"/>-->
+				<!--<includes name="../lib/System.dll"/>-->
+			</references>
+		</csc>
+		<copy file="../lib/Microsoft.VisualC.dll" tofile="Test/Microsoft.VisualC.dll"/>
+	</target>
+
+	<target name="test" depends="build">
+		<nant basedir="Test" target="test"/>
+	</target>
+
+	<target name="clean">
+		<nant basedir="Test" target="clean"/>
+		<delete file="../lib/Microsoft.VisualC.dll" failonerror="false"/>
+	</target>
+</project>
