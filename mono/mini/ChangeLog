@@ -1,3 +1,8 @@
+2004-10-21    <vargaz@freemail.hu>
+
+	* tramp-amd64.c (amd64_magic_trampoline): Disable patching of trampolines for 
+	valuetype methods.
+
 2004-10-20    <vargaz@freemail.hu>
 
 	* driver.c: Add SHARED to the set of optimizations tested.
