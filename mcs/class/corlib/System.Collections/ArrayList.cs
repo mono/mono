@@ -4,6 +4,7 @@
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)
 //    Duncan Mak (duncan@ximian.com)
+//		Patrik Torstensson (totte@crepundia.net)
 //
 // (C) 2001 Vladimir Vukicevic
 // (C) 2002 Ximian, Inc.
@@ -55,8 +56,7 @@ namespace System.Collections {
 		}
 
 		private ArrayList (object[] dataArray, int count, int capacity,
-				   bool fixedSize, bool readOnly, bool synchronized)
-		{
+			bool fixedSize, bool readOnly, bool synchronized) {
 			this.dataArray = new object [capacity];
 			dataArray.CopyTo (this.dataArray, 0);
 			this.count = count;
@@ -66,16 +66,17 @@ namespace System.Collections {
 			this.synchronized = synchronized;
 		}
 
-		public static ArrayList ReadOnly (ArrayList list)
-		{
+		public static ArrayList ReadOnly (ArrayList list) {
 			if (list == null)
 				throw new ArgumentNullException ();
-			return new ArrayList (list.ToArray (), list.Count, list.Capacity,
-					      list.IsFixedSize, true, list.IsSynchronized);
+
+			if (list.IsSynchronized) 
+				return ArrayList.Synchronized (list);
+			else
+				return new ArrayList (list.ToArray (), list.Count, list.Capacity, list.IsFixedSize, true, list.IsSynchronized);
 		}
 
-		public static IList ReadOnly (IList list)
-		{
+		public static IList ReadOnly (IList list) {
 			if (list == null)
 				throw new ArgumentNullException ();
 
@@ -87,17 +88,14 @@ namespace System.Collections {
 			return (IList) ArrayList.ReadOnly (al);
 		}
 
-		public static ArrayList Synchronized (ArrayList list)
-		{
+		public static ArrayList Synchronized (ArrayList list) {
 			if (list == null)
 				throw new ArgumentNullException ();
 
-			return new ArrayList (list.ToArray (), list.Count, list.Capacity,
-					      list.IsFixedSize, list.IsReadOnly, true);
+			return new SyncArrayList(new ArrayList (list.ToArray (), list.Count, list.Capacity, list.IsFixedSize, list.IsReadOnly, true));
 		}
 
-		public static IList Synchronized (IList list)
-		{
+		public static IList Synchronized (IList list) {
 			if (list == null)
 				throw new ArgumentNullException ();
 
@@ -109,19 +107,22 @@ namespace System.Collections {
 			return (IList) ArrayList.Synchronized (al);
 		}
 
-		public static ArrayList FixedSize (ArrayList list)
-		{
+		public static ArrayList FixedSize (ArrayList list) {
 			if (list == null)
 				throw new ArgumentNullException ();
 
-			return new ArrayList (list.ToArray (), list.Count, list.Capacity,
-					      true, list.IsReadOnly, list.IsSynchronized);
+			if (list.IsSynchronized) 
+				return Synchronized(list);
+			
+			return new ArrayList (list.ToArray (), list.Count, list.Capacity, true, list.IsReadOnly, list.IsSynchronized);
 		}
 
-		public static IList FixedSize (IList list)
-		{
+		public static IList FixedSize (IList list) {
 			if (list == null)
 				throw new ArgumentNullException ();
+
+			if (list.IsSynchronized) 
+				return Synchronized(list);
 
 			ArrayList al = new ArrayList ();
 
@@ -131,8 +132,7 @@ namespace System.Collections {
 			return (IList) ArrayList.FixedSize (al);			
 		}
 
-		public static ArrayList Repeat (object value, int count)
-		{
+		public static ArrayList Repeat (object value, int count) {
 			ArrayList al = new ArrayList (count);
 			for (int i = 0; i < count; i++) {
 				al.dataArray[i] = value;
@@ -143,12 +143,10 @@ namespace System.Collections {
 		}
 
 		[Serializable]
-		private class ListWrapper : ArrayList
-		{
+		private class ListWrapper : ArrayList {
 			IList list;
 
-			public ListWrapper (IList list)
-			{
+			public ListWrapper (IList list) {
 				if (null == list)
 					throw new ArgumentNullException();
 
@@ -164,8 +162,7 @@ namespace System.Collections {
 			}
 
 			[MonoTODO]
-			public override void AddRange (ICollection collection)
-			{
+			public override void AddRange (ICollection collection) {
 				if (collection == null)
 					throw new ArgumentNullException ("colllection");
 				if (IsFixedSize || IsReadOnly)
@@ -173,26 +170,22 @@ namespace System.Collections {
 			}
 
 			[MonoTODO]
-			public override int BinarySearch (object value)
-			{
+			public override int BinarySearch (object value) {
 				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			public override int BinarySearch (object value, IComparer comparer)
-			{
+			public override int BinarySearch (object value, IComparer comparer) {
 				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
 			public override int BinarySearch (int index, int count, object value,
-							  IComparer comparer)
-			{
+				IComparer comparer) {
 				throw new NotImplementedException ();
 			}
 
-			public override void CopyTo (Array array)
-			{
+			public override void CopyTo (Array array) {
 				if (null == array)
 					throw new ArgumentNullException("array");
 				if (array.Rank > 1)
@@ -203,8 +196,7 @@ namespace System.Collections {
 
 			[MonoTODO]
 			public override void CopyTo (int index, Array array,
-						     int arrayIndex, int count)
-			{
+				int arrayIndex, int count) {
 				if (array == null)
 					throw new ArgumentNullException ();
 				if (index < 0 || arrayIndex < 0 || count < 0)
@@ -214,8 +206,7 @@ namespace System.Collections {
 				// FIXME: handle casting error here
 			}
 
-			public override ArrayList GetRange (int index, int count)
-			{
+			public override ArrayList GetRange (int index, int count) {
 				if (index < 0 || count < 0)
 					throw new ArgumentOutOfRangeException ();
 				if (Count < (index + count))
@@ -230,8 +221,7 @@ namespace System.Collections {
 			}
 
 			[MonoTODO]
-			public override void InsertRange (int index, ICollection col)
-			{
+			public override void InsertRange (int index, ICollection col) {
 				if (col == null)
 					throw new ArgumentNullException ();
 				if (index < 0 || index > Count)
@@ -244,30 +234,27 @@ namespace System.Collections {
 						list.Add (element);
 
 				} //else if ((index + count) < Count) {
-// 					for (int i = index; i < (index + count); i++)
-// 						list [i] = col [i];
+				// 					for (int i = index; i < (index + count); i++)
+				// 						list [i] = col [i];
 
-// 				} else {
-// 					int added = Count - (index + count);
-// 					for (int i = index; i < Count; i++)
-// 						list [i] = col [i];
-// 					for (int i = 0; i < added; i++)
-// 						list.Add (col [Count +i]);
-// 				}
+				// 				} else {
+				// 					int added = Count - (index + count);
+				// 					for (int i = index; i < Count; i++)
+				// 						list [i] = col [i];
+				// 					for (int i = 0; i < added; i++)
+				// 						list.Add (col [Count +i]);
+				// 				}
 			}
 
-			public override int LastIndexOf (object value)
-			{
+			public override int LastIndexOf (object value) {
 				return LastIndexOf (value, Count, 0);
 			}
 
-			public override int LastIndexOf (object value, int startIndex)
-			{
+			public override int LastIndexOf (object value, int startIndex) {
 				return LastIndexOf (value, startIndex, 0);
 			}
 
-			public override int LastIndexOf (object value, int startIndex, int count)
-			{
+			public override int LastIndexOf (object value, int startIndex, int count) {
 				if (null == value){
 					return -1;
 				}
@@ -283,8 +270,7 @@ namespace System.Collections {
 				return -1;
 			}
 
-			public override void RemoveRange (int index, int count)
-			{
+			public override void RemoveRange (int index, int count) {
 				if ((index < 0) || (count < 0))
 					throw new ArgumentOutOfRangeException ();
 				if ((index > Count) || (index + count) > Count)
@@ -296,13 +282,11 @@ namespace System.Collections {
 					list.RemoveAt (index);
 			}
 
-			public override void Reverse ()
-			{
+			public override void Reverse () {
 				Reverse (0, Count);
 			}
 
-			public override void Reverse (int index, int count)
-			{
+			public override void Reverse (int index, int count) {
 				if ((index < 0) || (count < 0))
 					throw new ArgumentOutOfRangeException ();
 				if ((index > Count) || (index + count) > Count)
@@ -319,8 +303,7 @@ namespace System.Collections {
 				}
 			}
 
-			public override void SetRange (int index, ICollection col)
-			{
+			public override void SetRange (int index, ICollection col) {
 				if (index < 0 || (index + col.Count) > Count)
 					throw new ArgumentOutOfRangeException ();
 				if (col == null)
@@ -334,27 +317,22 @@ namespace System.Collections {
 			}
 
 			[MonoTODO]
-			public override void Sort ()
-			{
+			public override void Sort () {
 			}
 
 			[MonoTODO]
-			public override void Sort (IComparer comparer)
-			{
+			public override void Sort (IComparer comparer) {
 			}
 
 			[MonoTODO]
-			public override void Sort (int index, int count, IComparer comparer)
-			{
+			public override void Sort (int index, int count, IComparer comparer) {
 			}
 
-			public override object [] ToArray ()
-			{
+			public override object [] ToArray () {
 				return (object []) ToArray (typeof (object));
 			}
 
-			public override Array ToArray (Type type)
-			{
+			public override Array ToArray (Type type) {
 				int count = Count;
 				Array result = Array.CreateInstance (type, count);
 
@@ -365,8 +343,7 @@ namespace System.Collections {
 			}
 
 			[MonoTODO]
-			public override void TrimToSize ()
-			{
+			public override void TrimToSize () {
 			}
 
 			// IList
@@ -383,38 +360,31 @@ namespace System.Collections {
 				set { list [index] = value; }
 			}
 
-			public override int Add (object value)
-			{
+			public override int Add (object value) {
 				return list.Add (value);
 			}
 
-			public override void Clear ()
-			{
+			public override void Clear () {
 				list.Clear ();
 			}
 
-			public override bool Contains (object value)
-			{
+			public override bool Contains (object value) {
 				return list.Contains (value);
 			}
 
-			public override int IndexOf (object value)
-			{
+			public override int IndexOf (object value) {
 				return list.IndexOf (value);
 			}
 
-			public override void Insert (int index, object value)
-			{
+			public override void Insert (int index, object value) {
 				list.Insert (index, value);
 			}
 
-			public override void Remove (object value)
-			{
+			public override void Remove (object value) {
 				list.Remove (value);
 			}
 
-			public override void RemoveAt (int index)
-			{
+			public override void RemoveAt (int index) {
 				list.RemoveAt (index);
 			}
 
@@ -431,27 +401,23 @@ namespace System.Collections {
 				get { return ((ICollection) list).SyncRoot; }
 			}
 
-			public override void CopyTo (Array array, int index)
-			{
+			public override void CopyTo (Array array, int index) {
 				((ICollection) list).CopyTo (array, index);
 			}
 
 			// ICloneable
-			public override object Clone ()
-			{
+			public override object Clone () {
 				return new ListWrapper (list);
 			}
 
 			// IEnumerable
-			public override IEnumerator GetEnumerator ()
-			{
+			public override IEnumerator GetEnumerator () {
 				return ((IEnumerable) list).GetEnumerator ();
 			}
 		}
 
 		[MonoTODO]
-		public static ArrayList Adapter (IList list)
-		{
+		public static ArrayList Adapter (IList list) {
 			return new ListWrapper (list);
 		}
 
@@ -604,16 +570,13 @@ namespace System.Collections {
 			}
 		}
 
-		[MonoTODO]
 		public virtual object SyncRoot {
 			get {
-				throw new NotImplementedException ("System.Collections.ArrayList.SyncRoot.get");
+				return this;
 			}
 		}
 
-
 		// methods
-
 		public virtual int Add (object value) {
 			if (readOnly)
 				throw new NotSupportedException ("ArrayList is read-only.");
@@ -651,7 +614,7 @@ namespace System.Collections {
 		}
 
 		public virtual int BinarySearch (int index, int count,
-						 object value, IComparer comparer) {
+			object value, IComparer comparer) {
 			return Array.BinarySearch (dataArray, index, count, value, comparer);
 		}
 
@@ -665,7 +628,7 @@ namespace System.Collections {
 
 		public virtual object Clone () {
 			return new ArrayList (dataArray, count, capacity,
-					      fixedSize, readOnly, synchronized);
+				fixedSize, readOnly, synchronized);
 		}
 
 		public virtual bool Contains (object item) {
@@ -701,7 +664,7 @@ namespace System.Collections {
 		}
 
 		public virtual void CopyTo (int index, Array array,
-					    int arrayIndex, int count) {
+			int arrayIndex, int count) {
 			if (null == array)
 				throw new ArgumentNullException("array");
 			if (arrayIndex < 0)
@@ -740,8 +703,7 @@ namespace System.Collections {
 				version = ver;
 			}
 
-			public object Clone ()
-			{
+			public object Clone () {
 				return new ArrayListEnumerator (start, num, data, enumeratee, version);
 			}
 
@@ -877,8 +839,7 @@ namespace System.Collections {
 		}
 
 		public virtual int LastIndexOf (object value, int startIndex,
-						int count)
-		{
+			int count) {
 			if (null == value){
 				return -1;
 			}
@@ -960,8 +921,7 @@ namespace System.Collections {
 			version++;
 		}
 
-		public virtual void SetRange (int index, ICollection c)
-		{
+		public virtual void SetRange (int index, ICollection c) {
 			if (c == null)
 				throw new ArgumentNullException ();
 			if (readOnly)
@@ -1015,6 +975,225 @@ namespace System.Collections {
 			setSize(count);
 
 			version++;
+		}
+
+		private class SyncArrayList : ArrayList {
+			private ArrayList	_list;
+
+			// constructors
+			public SyncArrayList(ArrayList list) {
+				_list = list;
+			}
+
+			// properties
+			public override int Capacity {
+				get {
+					lock (_list.SyncRoot) {
+						return _list.Capacity;
+					}
+				}
+				set {
+					lock (_list.SyncRoot) {
+						_list.Capacity = value;
+					}
+				}
+			}
+
+			public override int Count {
+				get {
+					lock (_list.SyncRoot) {
+						return _list.Count;
+					}
+				}
+			}
+
+			public override bool IsFixedSize {
+				get {
+					lock (_list.SyncRoot) {
+						return _list.IsFixedSize;
+					}
+				}
+			}
+
+			public override bool IsReadOnly {
+				get {
+					lock (_list.SyncRoot) {
+						return _list.IsReadOnly;
+					}
+				}
+			}
+
+			public override bool IsSynchronized {
+				get {
+					lock (_list.SyncRoot) {
+						return _list.IsSynchronized;
+					}
+				}
+			}
+
+			public override object this[int index] {
+				get {
+					lock (_list.SyncRoot) {
+						return _list[index];
+					}
+				}
+				set {
+					lock (_list.SyncRoot) {
+						_list[index] = value;
+					}
+				}
+			}
+
+			// methods
+			public override int Add (object value) {
+				lock (_list.SyncRoot) {
+					return _list.Add(value);
+				}
+			}
+
+			public override void AddRange (ICollection c) {
+				lock (_list.SyncRoot) {
+					_list.AddRange(c);
+				}
+			}
+
+			public override int BinarySearch (int index, int count, object value, IComparer comparer) {
+				lock (_list.SyncRoot) {
+					return Array.BinarySearch (dataArray, index, count, value, comparer);
+				}
+			}
+
+			public override void Clear () {
+				lock (_list.SyncRoot) {
+					_list.Clear();
+				}
+			}
+
+			public override object Clone () {
+				lock (_list.SyncRoot) {
+					return new SyncArrayList((ArrayList) _list.Clone());
+				}
+			}
+
+			public override bool Contains (object item) {
+				lock (_list.SyncRoot) {
+					return _list.Contains(item);
+				}
+			}
+
+			public override void CopyTo (Array array) {
+				lock (_list.SyncRoot) {
+					_list.CopyTo(array);
+				}
+			}
+
+			public override void CopyTo (Array array, int arrayIndex) {
+				lock (_list.SyncRoot) {
+					_list.CopyTo(array, arrayIndex);
+				}
+			}
+
+			public override void CopyTo (int index, Array array, int arrayIndex, int count) {
+				lock (_list.SyncRoot) {
+					_list.CopyTo(index, array, arrayIndex, count);
+				}
+			}
+
+			public override IEnumerator GetEnumerator () {
+				lock (_list.SyncRoot) {
+					return _list.GetEnumerator();
+				}
+			}
+
+			public override IEnumerator GetEnumerator (int index, int count) {
+				lock (_list.SyncRoot) {
+					return _list.GetEnumerator(index, count);
+				}
+			}
+
+			public override ArrayList GetRange (int index, int count) {
+				lock (_list.SyncRoot) {
+					return new SyncArrayList(_list.GetRange(index, count));
+				}
+			}
+
+			public override int IndexOf (object value, int startIndex, int count) {
+				lock (_list.SyncRoot) {
+					return _list.IndexOf(value, startIndex, count);
+				}
+			}
+
+			public override void Insert (int index, object value) {
+				lock (_list.SyncRoot) {
+					_list.Insert(index, value);
+				}
+			}
+
+			public override void InsertRange (int index, ICollection c) {
+				lock (_list.SyncRoot) {
+					_list.InsertRange(index, c);
+				}
+			}
+
+			public override int LastIndexOf (object value, int startIndex) {
+				lock (_list.SyncRoot) {
+					return _list.LastIndexOf(value, startIndex);
+				}
+			}
+
+			public override int LastIndexOf (object value, int startIndex, int count) {
+				lock (_list.SyncRoot) {
+					return _list.LastIndexOf(value, startIndex, count);
+				}
+			}
+
+			public override void Remove (object obj) {
+				lock (_list.SyncRoot) {
+					_list.Remove(obj);
+				}
+			}
+
+			public override void RemoveRange (int index, int count) {
+				lock (_list.SyncRoot) {
+					_list.RemoveRange(index, count);
+				}
+			}
+
+			public override void Reverse (int index, int count) {
+				lock (_list.SyncRoot) {
+					_list.Reverse(index, count);
+				}
+			}
+
+			public override void SetRange (int index, ICollection c) {
+				lock (_list.SyncRoot) {
+					_list.SetRange(index, c);
+				}
+			}
+
+			public override void Sort (int index, int count, IComparer comparer) {
+				lock (_list.SyncRoot) {
+					_list.Sort(index, count, comparer);
+				}
+			}
+
+			public override object[] ToArray() {
+				lock (_list.SyncRoot) {
+					return _list.ToArray();
+				}
+			}
+
+			public override Array ToArray (Type type) {
+				lock (_list.SyncRoot) {
+					return _list.ToArray(type);
+				}
+			}
+
+			public override void TrimToSize () {
+				lock (_list.SyncRoot) {
+					_list.TrimToSize();
+				}
+			}
 		}
 	}
 }

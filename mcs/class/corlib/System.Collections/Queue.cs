@@ -218,9 +218,7 @@ namespace System.Collections {
 
 			public override bool IsSynchronized {
 				get { 
-					lock (queue) {
-						return queue.IsSynchronized;
-					}
+					return true;
 				}
 			}
 
