@@ -1,3 +1,7 @@
+2003-10-08  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* AppDomainLevelActivator.cs: little fix.
+
 2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* AppDomainLevelActivator.cs, ConstructionLevelActivator.cs,

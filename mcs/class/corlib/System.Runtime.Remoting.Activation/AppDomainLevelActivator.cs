@@ -50,7 +50,11 @@ namespace System.Runtime.Remoting.Activation
 			if (RemotingServices.GetIdentityForUri (objRef.URI) != null)
 				throw new RemotingException("Inconsistent state during activation; there may be two proxies for the same object");
 
-			Identity identity = RemotingServices.GetOrCreateClientIdentity (objRef, ctorCall.ActivationType);
+			object proxy;
+			
+			// We pass null for proxyType because we don't really to attach the identity
+			// to a proxy, we already have one.
+			Identity identity = RemotingServices.GetOrCreateClientIdentity (objRef, null, out proxy);
 			RemotingServices.SetMessageTargetIdentity (ctorCall, identity);
 			return response;
 		}
