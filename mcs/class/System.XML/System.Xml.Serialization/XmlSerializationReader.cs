@@ -606,9 +606,13 @@ namespace System.Xml.Serialization {
 		protected IXmlSerializable ReadSerializable (IXmlSerializable serializable)
 		{
 			if (ReadNull ()) return null;
+			int depth = reader.Depth;
 			serializable.ReadXml (reader);
 			Reader.MoveToContent ();
-			Reader.ReadEndElement ();
+			while (reader.Depth > depth)
+				reader.Skip ();
+			if (reader.Depth == depth && reader.NodeType == XmlNodeType.EndElement)
+				reader.ReadEndElement ();
 			return serializable;
 		}
 
