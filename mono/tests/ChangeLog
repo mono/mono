@@ -1,5 +1,8 @@
 2004-12-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* pinvoke3.cs libtest.c: Add test for marshalling blittable structs
+	with delegates.
+
 	* pinvoke3.cs libtest.c: Add test for marshalling of enums with delegates.
 
 2004-12-26  Patrik Torstensson  <patrik.torstensson@gmail.com>
