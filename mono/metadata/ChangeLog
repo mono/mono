@@ -1,3 +1,11 @@
+2003-09-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* profiler.c (mono_profiler_coverage_alloc): Use NULL instead of
+	g_direct_equal.
+
+	* debug-helpers.c (mono_method_full_name): Print the wrapper type
+	in human readable form.
+
 2003-09-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c icall.c: Fixed warnings.
