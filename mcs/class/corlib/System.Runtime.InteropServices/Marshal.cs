@@ -38,13 +38,21 @@ using System.Threading;
 namespace System.Runtime.InteropServices
 {
 	[SuppressUnmanagedCodeSecurity ()]
-	public sealed class Marshal
+	public
+#if NET_2_0
+	static
+#else
+	sealed
+#endif
+	class Marshal
 	{
 		/* fields */
 		public static readonly int SystemMaxDBCSCharSize = 2; // don't know what this is
 		public static readonly int SystemDefaultCharSize = 2;
-		
+
+#if !NET_2_0
 		private Marshal () {}
+#endif
 
 		[MonoTODO]
 		public static int AddRef (IntPtr pUnk) {
