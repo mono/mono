@@ -25,9 +25,14 @@ public class Blah {
 		set {
 			i = value;
 		}
-
 	}
 
+	[Simple ((string) null)]
+	int Another ()
+	{
+		return 1;
+	}
+	
 	public static int Main ()
 	{
 		//

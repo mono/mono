@@ -1,3 +1,7 @@
+2003-02-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-128.cs: Improved testl, reflects bug #37363 problems
+
 2003-02-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* makefile (TEST_SOURCES): Added test-181.
