@@ -1,3 +1,7 @@
+2002-05-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ValidationPropertyAttribute.cs: a couple of fixes to make it compile.
+
 2002-05-14  Duncan Mak  <duncan@ximian.com>
 
 	* ValidationPropertyAttribute.cs: Added to CVS.

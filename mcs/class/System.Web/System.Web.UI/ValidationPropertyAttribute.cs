@@ -9,7 +9,7 @@
 using System;
 
 namespace System.Web.UI {
-	[AttributeUsage (AttributeTarget.Class)]
+	[AttributeUsage (AttributeTargets.Class)]
 	public sealed class ValidationPropertyAttribute : Attribute
 	{
 		string name;
@@ -19,7 +19,7 @@ namespace System.Web.UI {
 			this.name = name;
 		}
 
-		public override string Name {
+		public string Name {
 			get { return name; }
 		}
 	}
