@@ -56,11 +56,11 @@ namespace System.Security
 		//	}		
 		// note: this is actually an incorrect implementation of MS, as for example the &
 		// character is not a valid character in tag names.
-		private static char [] invalid_tag_chars = new char [] { ' ', '<', '>' };
-		private static char [] invalid_text_chars = new char [] { '<', '>' };
-		private static char [] invalid_attr_name_chars = new char [] { ' ', '<', '>' };
-		private static char [] invalid_attr_value_chars = new char [] { '"', '<', '>' };
-		private static char [] invalid_chars = new char [] { '<', '>', '"', '\'', '&' };
+		private static readonly char [] invalid_tag_chars = new char [] { ' ', '<', '>' };
+		private static readonly char [] invalid_text_chars = new char [] { '<', '>' };
+		private static readonly char [] invalid_attr_name_chars = new char [] { ' ', '<', '>' };
+		private static readonly char [] invalid_attr_value_chars = new char [] { '"', '<', '>' };
+		private static readonly char [] invalid_chars = new char [] { '<', '>', '"', '\'', '&' };
 		
 		public SecurityElement (string tag) : this (tag, null)
 		{
