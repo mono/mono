@@ -1,5 +1,18 @@
 2004-12-14  Marek Safar  <marek.safar@seznam.cz>
 
+	* cs-parser.jay: Changed warning level for 642 to 4 until Miguel
+	find a conclusion.
+	
+	* class.cs: Changed warning level for 169 to avoid developer
+	displeasure from warning flooding. It will be changed back when they
+	fix most of current BCL warnings.
+	
+	* RootContext.cs: Pushed default WarningLevel to 3.
+	
+	* statement.cs: Removed unused variable.
+
+2004-12-14  Marek Safar  <marek.safar@seznam.cz>
+
 	* class.cs (TypeContainer.GetClassBases): Add error 1521 report.
 	(TypeContainer.MethodModifiersValid): Refactored to use MemberCore.
 	Add error 502 report.

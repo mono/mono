@@ -3659,7 +3659,7 @@ if_statement_rest
 
 		$$ = new If ((Expression) $1, (Statement) $3, l);
 
-		if (RootContext.WarningLevel >= 3){
+		if (RootContext.WarningLevel >= 4){
 			if ($3 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
@@ -3781,7 +3781,7 @@ while_statement
 		Location l = (Location) oob_stack.Pop ();
 		$$ = new While ((Expression) $4, (Statement) $6, l);
 	
-		if (RootContext.WarningLevel >= 3){
+		if (RootContext.WarningLevel >= 4){
 			if ($6 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
@@ -3856,7 +3856,7 @@ for_statement
 
 		For f = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10, l);
 
-		if (RootContext.WarningLevel >= 3){
+		if (RootContext.WarningLevel >= 4){
 			if ($10 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
@@ -4249,7 +4249,7 @@ fixed_statement
 
 		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
 
-		if (RootContext.WarningLevel >= 3){
+		if (RootContext.WarningLevel >= 4){
 			if ($7 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}

@@ -820,7 +820,6 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			bool in_catch = ec.CurrentBranching.InCatch ();
 			ec.CurrentBranching.CurrentUsageVector.Throw ();
 
 			if (expr != null){

@@ -1997,7 +1997,7 @@ namespace Mono.CSharp {
 			//
 			// Check for internal or private fields that were never assigned
 			//
-			if (RootContext.WarningLevel >= 3) {
+			if (RootContext.WarningLevel >= 4) {
 				if (fields != null){
 					foreach (Field f in fields) {
 						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
