@@ -1,5 +1,9 @@
 2004-11-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : Search xml:* attributes more efficiently.
+
+2004-11-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : Reduced NameTable.Add() for prefixed names. First,
 	  ReadName() now returns atomized LocalName and Prefix. Second, to
 	  avoid extraneous split, SetProperties() now takes prefix and

@@ -1465,25 +1465,6 @@ namespace System.Xml
 							"Attribute name and qualified name must be identical.");
 			}
 
-			string baseUri = GetAttribute ("xml:base");
-			if (baseUri != null) {
-				if (this.resolver != null)
-					parserContext.BaseURI = resolver.ResolveUri (new Uri (BaseURI), baseUri).ToString ();
-				else
-					parserContext.BaseURI = baseUri;
-			}
-			string xmlLang = GetAttribute ("xml:lang");
-			if (xmlLang != null)
-				parserContext.XmlLang = xmlLang;
-			string xmlSpaceAttr = GetAttribute ("xml:space");
-			if (xmlSpaceAttr != null) {
-				if (xmlSpaceAttr == "preserve")
-					parserContext.XmlSpace = XmlSpace.Preserve;
-				else if (xmlSpaceAttr == "default")
-					parserContext.XmlSpace = XmlSpace.Default;
-				else
-					throw new XmlException (this as IXmlLineInfo,String.Format ("Invalid xml:space value: {0}", xmlSpaceAttr));
-			}
 			if (PeekChar () == '/') {
 				ReadChar ();
 				isEmptyElement = true;
@@ -1521,6 +1502,36 @@ namespace System.Xml
 					}
 				} finally {
 					MoveToElement ();
+				}
+			}
+
+			for (int i = 0; i < attributeCount; i++) {
+				if (Object.ReferenceEquals (attributeTokens [i].Prefix, XmlNamespaceManager.PrefixXml)) {
+					string aname = attributeTokens [i].LocalName;
+					string value = attributeTokens [i].Value;
+					switch (aname) {
+					case "base":
+						if (this.resolver != null)
+							parserContext.BaseURI = resolver.ResolveUri (new Uri (BaseURI), value).ToString ();
+						else
+							parserContext.BaseURI = value;
+						break;
+					case "lang":
+						parserContext.XmlLang = value;
+						break;
+					case "space":
+						switch (value) {
+						case "preserve":
+							parserContext.XmlSpace = XmlSpace.Preserve;
+							break;
+						case "default":
+							parserContext.XmlSpace = XmlSpace.Default;
+							break;
+						default:
+							throw new XmlException (this as IXmlLineInfo, String.Format ("Invalid xml:space value: {0}", value));
+						}
+						break;
+					}
 				}
 			}
 
