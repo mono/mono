@@ -1,5 +1,7 @@
 2002-05-15  Dietmar Maurer  <dietmar@ximian.com>
 
+	* delegate.c (arch_end_invoke): fix bug #24653
+
 	* jit.c (mono_analyze_flow): try blocks are followed by handler
 	blocks, so we need to add all handler blocks as succesors.
 	(mono_thread_start_cb): set end_of_stack
