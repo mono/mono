@@ -1,3 +1,11 @@
+2003-05-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs: 
+	- Implement DefineInitializedData in terms of DefineUninitializedData
+	- Name the types of global fields $ArrayType$<len> to cut back on the
+	number of types created
+	- Add argument checking
+
 2003-05-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs: Implement GetDynamicModule. "Implement" various
