@@ -1,3 +1,11 @@
+2002-09-19  Mark Crichton  <crichton@gimp.org>
+
+	* atomic.h: Added SPARC atomic asm code.
+	* daemon.c, handles-private.h, handles.c, wapi-private.h:
+	undefined _POSIX_THREAD_PROCESS_SHARED.  This actually exists on
+	Solaris 9, however, the code paths don't seem to work.  More testing
+	on the shared case is *really* needed.
+
 2002-09-03  Dick Porter  <dick@ximian.com>
 
 	* threads.h: 

@@ -1,3 +1,10 @@
+2002-09-19  Mark Crichton  <crichton@gimp.org>
+
+	* gc.c: ves_icall_System_GCHandle_FreeHandle made a call to libgc
+	even if support for it isn't present.  Added an #ifdef to fix this.
+
+	* socket-io.c: Added checks back for Solaris support.
+
 2002-09-19  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.c (read_string, write_string): Reflect latest
