@@ -53,38 +53,38 @@ namespace System.DirectoryServices
 		}
 
 		[MonoTODO]
-		int Add (string value)
+		public int Add (string value)
 		{
 			throw new NotImplementedException();
 		}
 		
 		[MonoTODO]
-		void IList.Clear()
+		public void Clear()
 		{
-				throw new NotImplementedException();
+			throw new NotImplementedException();
 		}
 		[MonoTODO]
 		bool IList.Contains(object cvalue)
 		{
-				throw new NotImplementedException();
+			throw new NotImplementedException();
 		}
 		[MonoTODO]
 		int IList.IndexOf(object ivalue)
 		{
-				throw new NotImplementedException();
+			throw new NotImplementedException();
 		}
 		[MonoTODO]
 		void IList.Insert(int index,object ivalue)
 		{
-				throw new NotImplementedException();
+			throw new NotImplementedException();
 		}
 		[MonoTODO]
 		void IList.Remove(object rvalue)
 		{
-				throw new NotImplementedException();
+			throw new NotImplementedException();
 		}
 		[MonoTODO]
-		void IList.RemoveAt(int index)
+		public void RemoveAt(int index)
 		{
 			throw new NotImplementedException();
 		}
@@ -118,7 +118,7 @@ namespace System.DirectoryServices
 			}
 		}
 
-		string this[int index]
+		public string this[int index]
 		{
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
@@ -127,13 +127,7 @@ namespace System.DirectoryServices
 
 		}
 
-		[MonoTODO]
-		public void CopyTo(Array array,int index)
-		{
-			throw new NotImplementedException();
-		}
-
-		int ICollection.Count 
+		public int Count
 		{
 			get
 			{
@@ -158,7 +152,7 @@ namespace System.DirectoryServices
 		}
 
 		[MonoTODO]
-		IEnumerator IEnumerable.GetEnumerator() 
+		public IEnumerator GetEnumerator() 
 		{
 			throw new NotImplementedException();
 		}
@@ -179,6 +173,12 @@ namespace System.DirectoryServices
 		public bool Contains (string s)
 		{
 			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		void ICollection.CopyTo (Array arr, int pos)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

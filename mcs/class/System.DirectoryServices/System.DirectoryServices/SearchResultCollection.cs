@@ -69,19 +69,14 @@ namespace System.DirectoryServices
 			get{return sValues.SyncRoot;}
 		}
         
-		public void CopyTo(System.Array oArray, int iArrayIndex)
-		{
-			sValues.CopyTo(oArray, iArrayIndex);
-		}
-
 		void ICollection.CopyTo(System.Array oArray, int iArrayIndex)
 		{
 			sValues.CopyTo(oArray, iArrayIndex);
 		}
 
-		public void CopyTo(	SearchResult[] results,	int index)
+		public void CopyTo(SearchResult[] results, int index)
 		{
-			CopyTo( (System.Array)results,index);
+			((ICollection) this).CopyTo((System.Array)results,index);
 		}
 
 		internal void Add(object oValue)
@@ -162,15 +157,26 @@ namespace System.DirectoryServices
 			return sValues.IndexOf(result);
 		}
 
-		IEnumerator IEnumerable.GetEnumerator()
+		public IEnumerator GetEnumerator()
 		{
 			return sValues.GetEnumerator();
 		}
 
-		void IDisposable.Dispose ()
+		public void Dispose ()
 		{
 		}
 
+		public string[] PropertiesLoaded
+		{
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+		}
+
+		IntPtr Handle
+		{
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+		}
 	}
 }
 
