@@ -1,5 +1,10 @@
 2002-03-07  Martin Baulig  <martin@gnome.org>
 
+	* StringTest.cs: Added a few more tests for the bug fixes I just
+	committed to String.cs.
+
+2002-03-07  Martin Baulig  <martin@gnome.org>
+
 	* ArrayTest.cs: Fixed the FIXME in test #E05.
 
 2002-03-06  Duco Fijma  <duco@lorentz.xs4all.nl>

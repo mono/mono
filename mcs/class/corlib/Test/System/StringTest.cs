@@ -620,6 +620,8 @@ public class StringTest : TestCase
 		AssertEquals("basic string index - no", -1, 
 			     s1.LastIndexOf("rag"));
 
+
+
 		AssertEquals("stepped char index", 1, 
 			     s1.LastIndexOf('r', s1.Length-1));
 		AssertEquals("stepped char index", 4, 
@@ -647,6 +649,8 @@ public class StringTest : TestCase
 			     0, s1.LastIndexOf("original", s1.Length-2));
 		AssertEquals("stepped string index", 
 			     -1, s1.LastIndexOf("original", s1.Length-11));
+		AssertEquals("stepped string index",
+			     -1, s1.LastIndexOf("translator", 2));
 		AssertEquals("stepped limited string index",
 			     10, s1.LastIndexOf("rig", s1.Length-1, 10));
 		AssertEquals("stepped limited string index",
@@ -809,9 +813,27 @@ public class StringTest : TestCase
 		AssertEquals("Third chunk", "fgh", chunks[2]);
 		AssertEquals("Fourth chunk", "jklm", chunks[3]);
 
+		{
+			bool errorThrown = false;
+			try {
+				chunks = s1.Split(c2, -1);
+			} catch (ArgumentOutOfRangeException) {
+				errorThrown = true;
+			}
+			Assert("Split out of range", errorThrown);
+		}
+
 		chunks = s1.Split(c2, 2);
+		AssertEquals("Limited chunk", 2, chunks.Length);
 		AssertEquals("First limited chunk", "", chunks[0]);
 		AssertEquals("Second limited chunk", "bcdefghijklm", chunks[1]);
+
+		chunks = s1.Split(c2, 1);
+		AssertEquals("Single split", 1, chunks.Length);
+		AssertEquals("Single chunk", s1, chunks[0]);
+
+		chunks = s1.Split(c2, 0);
+		AssertEquals("Zero split", 0, chunks.Length);
 	}
 
 	public void TestStartsWith() {
