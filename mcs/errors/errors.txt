@@ -127,3 +127,7 @@ the Microsoft C# compiler:
 -219	Type argument doesn't meet constraints.
 
 -220	Cannot resolve constructed type
+
+-221    params modifier present in anonymous method declaration
+
+-222    yield statement only available in C# 2.0 mode
