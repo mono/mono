@@ -21,11 +21,12 @@ namespace N1 {
 		[Mine ("hello")]
 		void Hello ();
 	}	
+
 	public class Foo {	
 		
 		int i;
 		
-		[return : Mine ("Foo")]	
+		[Mine ("Foo")]	
 		public static int Main ()
 		{
 			return 0;
