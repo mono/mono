@@ -1,10 +1,10 @@
 //
-// System.Windows.Forms.DragAction
+// System.Windows.Forms.DragAction.cs
 //
 // Author:
 //   Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@raytek.com)
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
@@ -16,7 +16,7 @@ namespace System.Windows.Forms
   /// Specifies how and if a drag-and-drop operation should continue.
 	/// </summary>
 	[Serializable]
-//	[ComVisible(true)]
+	[ComVisible(true)]
 	public enum DragAction
 	{
 		Continue = 0,

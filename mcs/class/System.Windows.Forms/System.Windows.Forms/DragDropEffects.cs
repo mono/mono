@@ -1,10 +1,10 @@
 //
-// System.Windows.Forms.DragDropEffects
+// System.Windows.Forms.DragDropEffects.cs
 //
 // Author:
 //   Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@raytek.com)
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
@@ -16,7 +16,6 @@ namespace System.Windows.Forms
 	/// Specifies the effects of a drag-and-drop operation.
 	/// This enumeration has a FlagsAttribute attribute that allows a bitwise combination of its member values.
 	/// </summary>
-	[Flags]
 	[Serializable]
 	public enum DragDropEffects
 	{
