@@ -58,13 +58,18 @@ namespace System.Runtime.Remoting.Proxies
 			this.class_to_proxy = classToProxy;
 
 			// TODO: Fix stub
-			_objTP = InternalGetTransparentProxy();
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static Type InternalGetProxyType (object transparentProxy);
+		
 		public Type GetProxiedType() 
 		{
-			if (class_to_proxy.IsInterface) return typeof (MarshalByRefObject);
-			else return class_to_proxy;
+			if (_objTP == null) {
+				if (class_to_proxy.IsInterface) return typeof(MarshalByRefObject);
+				else return class_to_proxy;
+			}
+			return InternalGetProxyType (_objTP);
 		}
 
 		public virtual ObjRef CreateObjRef (Type requestedType)
@@ -124,8 +129,9 @@ namespace System.Runtime.Remoting.Proxies
 			if (mMsg.CallType == CallType.BeginInvoke) 
 				mMsg.AsyncResult.CallMessage = mMsg;	// TODO: do this in the runtime
 
-			IMethodReturnMessage res_msg = (IMethodReturnMessage)rp.Invoke (msg);
-
+			IMethodReturnMessage res_msg = null;
+			res_msg = (IMethodReturnMessage)rp.Invoke (msg);
+			
 			if (res_msg.LogicalCallContext != null && res_msg.LogicalCallContext.HasInfo)
 				CallContext.UpdateCurrentCallContext (res_msg.LogicalCallContext);
 
@@ -153,10 +159,25 @@ namespace System.Runtime.Remoting.Proxies
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern virtual object InternalGetTransparentProxy ();
+		internal extern virtual object InternalGetTransparentProxy (string className);
 
 		public virtual object GetTransparentProxy () 
 		{
+			if (_objTP == null) 
+			{
+				string name;
+				IRemotingTypeInfo rti = this as IRemotingTypeInfo;
+				
+				if (rti != null) {
+					name = rti.TypeName;
+					if (name == typeof(MarshalByRefObject).AssemblyQualifiedName)
+						name = class_to_proxy.AssemblyQualifiedName;
+				}
+				else
+					name = class_to_proxy.AssemblyQualifiedName;
+					
+				_objTP = InternalGetTransparentProxy (name);
+			}
 			return _objTP;
 		}
 

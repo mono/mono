@@ -1,3 +1,12 @@
+2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RealProxy.cs: Added new internal method for getting the proxy type. It
+	  gets the proxy type from the MonoRemoteClass (it can change if the
+	  vtable is upgraded).
+	  Modified GetTransparentProxy(). Now it takes the name of the type.
+	  The name is taken from the IRemotingTypeInfo object.
+	* RemotingProxy.cs: The class must implement IRemotingTypeInfo.
+
 2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* RealProxy.cs: Added setter for ObjectIdentity.

@@ -21,7 +21,7 @@ using System.Threading;
 namespace System.Runtime.Remoting.Proxies
 {
 
-	internal class RemotingProxy : RealProxy 
+	internal class RemotingProxy : RealProxy, IRemotingTypeInfo
 	{
 		static MethodInfo _cache_GetTypeMethod = typeof(System.Object).GetMethod("GetType");
 		static MethodInfo _cache_GetHashCodeMethod = typeof(System.Object).GetMethod("GetHashCode");
@@ -126,6 +126,32 @@ namespace System.Runtime.Remoting.Proxies
 
 			_ctorCall.CopyFrom (request);
 			return ActivationServices.Activate (this, _ctorCall);
+		}
+
+		public string TypeName 
+		{ 
+			get
+			{
+				if (_objectIdentity is ClientIdentity) {
+					ObjRef oref = _objectIdentity.CreateObjRef (null);
+					if (oref.TypeInfo != null) return oref.TypeInfo.TypeName;
+				}
+				return GetProxiedType().AssemblyQualifiedName;
+			}
+			
+			set
+			{
+				throw new NotSupportedException ();
+			}
+		}
+		
+		public bool CanCastTo (Type fromType, object o)
+		{
+			if (_objectIdentity is ClientIdentity) {
+				ObjRef oref = _objectIdentity.CreateObjRef (null);
+				if (oref.TypeInfo != null) return oref.TypeInfo.CanCastTo (fromType, o);
+			}
+			return fromType.IsAssignableFrom (GetProxiedType());
 		}
 		
 		~RemotingProxy()
