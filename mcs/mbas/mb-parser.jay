@@ -486,18 +486,10 @@ declaration
 		string name = "";
 		int mod_flags;
 
-		if ($1 is Class){
-			Class c = (Class) $1;
+		if ($1 is Class || $1 is Struct || $1 is Module ){
+			TypeContainer c = (TypeContainer) $1;
 			mod_flags = c.ModFlags;
 			name = c.Name;
-		} else if ($1 is Struct){
-			Struct s = (Struct) $1;
-			mod_flags = s.ModFlags;
-			name = s.Name;
-		} else if ($1 is Module){
-			Module m = (Module) $1;
-			mod_flags = m.ModFlags;
-			name = m.Name;			
 		} else
 			break;
 
