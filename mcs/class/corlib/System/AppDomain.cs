@@ -173,13 +173,12 @@ namespace System
 			}
 		}
 
-		// Get an AppDomain by it's ID (required to find the "default" app domain)
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern AppDomain getDomainByID (int domain_id);
+		private static extern AppDomain getRootDomain ();
 
 		internal static AppDomain DefaultDomain {
 			get {
-				return getDomainByID (0);
+				return getRootDomain ();
 			}
 		}
 
@@ -974,7 +973,7 @@ namespace System
 
 		public bool IsDefaultAppDomain ()
 		{
-			return (Id == 0);
+			return (Id == DefaultDomain.Id);
 		}
 
 		[MonoTODO ("see Assembly.ReflectionOnlyLoad")]
