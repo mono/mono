@@ -1,3 +1,8 @@
+2002-05-23  Duncan Mak  <duncan@ximian.com>
+
+	* ArrayList.cs (Wrapper): Preliminary implementation of
+	ArrayList.Wrapper (IList).
+
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
 	* ArrayList.cs: Made count, capacity and dataArray the first three

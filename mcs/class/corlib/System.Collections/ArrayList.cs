@@ -3,8 +3,10 @@
 //
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)
+//    Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Vladimir Vukicevic
+// (C) 2002 Ximian, Inc.
 //
 
 using System;
@@ -139,10 +141,310 @@ namespace System.Collections {
 			return al;
 		}
 
+		[Serializable]
+		private class ListWrapper : ArrayList
+		{
+			IList list;
+
+			public ListWrapper (IList list)
+			{
+				this.list = list;
+				count = ((ICollection) list).Count;
+			}
+			
+			// ArrayList
+			[MonoTODO]
+			public override int Capacity {
+				get { return list.Count; }
+				set { throw new NotSupportedException (); }
+			}
+
+			[MonoTODO]
+			public override void AddRange (ICollection collection)
+			{
+				if (collection == null)
+					throw new ArgumentNullException ("colllection");
+				if (IsFixedSize || IsReadOnly)
+					throw new NotSupportedException ();
+			}
+
+			[MonoTODO]
+			public override int BinarySearch (object value)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override int BinarySearch (object value, IComparer comparer)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override int BinarySearch (int index, int count, object value,
+							  IComparer comparer)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void CopyTo (Array array)
+			{
+				if (null == array)
+					throw new ArgumentNullException("array");
+				if (array.Rank > 1)
+					throw new ArgumentException("array cannot be multidimensional");
+
+				CopyTo (array, 0);
+			}
+
+			[MonoTODO]
+			public override void CopyTo (int index, Array array,
+						     int arrayIndex, int count)
+			{
+				if (array == null)
+					throw new ArgumentNullException ();
+				if (index < 0 || arrayIndex < 0 || count < 0)
+					throw new ArgumentOutOfRangeException ();
+				if (array.Rank > 1 || index >= Count || Count > (array.Length - arrayIndex))
+					throw new ArgumentException ();
+				// FIXME: handle casting error here
+			}
+
+			public override ArrayList GetRange (int index, int count)
+			{
+				if (index < 0 || count < 0)
+					throw new ArgumentOutOfRangeException ();
+				if (Count < (index + count))
+					throw new ArgumentException ();
+				
+				ArrayList result = new ArrayList (count);
+
+				for (int i = 0; i < count; i++)
+					result.Add (list [i]);
+
+				return result;
+			}
+
+			[MonoTODO]
+			public override void InsertRange (int index, ICollection col)
+			{
+				if (col == null)
+					throw new ArgumentNullException ();
+				if (index < 0 || index > Count)
+					throw new ArgumentOutOfRangeException ();
+				if (IsReadOnly || IsFixedSize)
+					throw new NotSupportedException ();
+
+				if (index == Count) {
+					foreach (object element in col)
+						list.Add (element);
+
+				} //else if ((index + count) < Count) {
+// 					for (int i = index; i < (index + count); i++)
+// 						list [i] = col [i];
+
+// 				} else {
+// 					int added = Count - (index + count);
+// 					for (int i = index; i < Count; i++)
+// 						list [i] = col [i];
+// 					for (int i = 0; i < added; i++)
+// 						list.Add (col [Count +i]);
+// 				}
+			}
+
+			public override int LastIndexOf (object value)
+			{
+				return LastIndexOf (value, Count, 0);
+			}
+
+			public override int LastIndexOf (object value, int startIndex)
+			{
+				return LastIndexOf (value, startIndex, 0);
+			}
+
+			public override int LastIndexOf (object value, int startIndex, int count)
+			{
+				if (startIndex > Count || count < 0 || (startIndex + count > Count))
+					throw new ArgumentOutOfRangeException ();
+				
+				int length = startIndex - count + 1;
+
+				for (int i = startIndex; i >= length; i--)
+					if (list [i] == value)
+						return i;
+				return -1;
+			}
+
+			public override void RemoveRange (int index, int count)
+			{
+				if ((index < 0) || (count < 0))
+					throw new ArgumentOutOfRangeException ();
+				if ((index > Count) || (index + count) > Count)
+					throw new ArgumentException ();
+				if (IsReadOnly || IsFixedSize)
+					throw new NotSupportedException ();
+
+				for (int i  = index; i < count; i++)
+					list.RemoveAt (i);
+			}
+
+			public override void Reverse ()
+			{
+				Reverse (0, Count);
+			}
+
+			public override void Reverse (int index, int count)
+			{
+				if ((index < 0) || (count < 0))
+					throw new ArgumentOutOfRangeException ();
+				if ((index > Count) || (index + count) > Count)
+					throw new ArgumentException ();
+				if (IsReadOnly)
+					throw new NotSupportedException ();
+
+				object tmp = null;
+
+				for (int i = index; i < count; i++) {
+					tmp = list [i];
+					list [i] = list [count - i];
+					list [count - i] = tmp;
+				}
+			}
+
+			public override void SetRange (int index, ICollection col)
+			{
+				if (index < 0 || (index + col.Count) > Count)
+					throw new ArgumentOutOfRangeException ();
+				if (col == null)
+					throw new ArgumentNullException ();
+				if (IsReadOnly)
+					throw new NotSupportedException ();
+
+				for (int i = index; i < col.Count; i++)
+					foreach (object o in col)
+						list [i] = o;
+			}
+
+			[MonoTODO]
+			public override void Sort ()
+			{
+			}
+
+			[MonoTODO]
+			public override void Sort (IComparer comparer)
+			{
+			}
+
+			[MonoTODO]
+			public override void Sort (int index, int count, IComparer comparer)
+			{
+			}
+
+			public override object [] ToArray ()
+			{
+				return (object []) ToArray (typeof (object));
+			}
+
+			public override Array ToArray (Type type)
+			{
+				int count = Count;
+				Array result = Array.CreateInstance (type, count);
+
+				for (int i = 0; i < count; i++)
+					result.SetValue (list [i], i);
+
+				return result;
+			}
+
+			[MonoTODO]
+			public override void TrimToSize ()
+			{
+			}
+
+			// IList
+			public override bool IsFixedSize {
+				get { return list.IsFixedSize; }
+			}
+
+			public override bool IsReadOnly {
+				get { return list.IsReadOnly; }
+			}
+
+			public override object this [int index] {
+				get { return list [index]; }
+				set { list [index] = value; }
+			}
+
+			public override int Add (object value)
+			{
+				return list.Add (value);
+			}
+
+			public override void Clear ()
+			{
+				list.Clear ();
+			}
+
+			public override bool Contains (object value)
+			{
+				return list.Contains (value);
+			}
+
+			public override int IndexOf (object value)
+			{
+				return list.IndexOf (value);
+			}
+
+			public override void Insert (int index, object value)
+			{
+				list.Insert (index, value);
+			}
+
+			public override void Remove (object value)
+			{
+				list.Remove (value);
+			}
+
+			public override void RemoveAt (int index)
+			{
+				list.RemoveAt (index);
+			}
+
+			// ICollection			
+			public override int Count {
+				get { return count; }
+			}
+
+			public override bool IsSynchronized {
+				get { return ((ICollection) list).IsSynchronized; }
+			}
+
+			public override object SyncRoot {
+				get { return ((ICollection) list).SyncRoot; }
+			}
+
+			public override void CopyTo (Array array, int index)
+			{
+				((ICollection) list).CopyTo (array, index);
+			}
+
+			// ICloneable
+			public override object Clone ()
+			{
+				return new ListWrapper (list);
+			}
+
+			// IEnumerable
+			public override IEnumerator GetEnumerator ()
+			{
+				return ((IEnumerable) list).GetEnumerator ();
+			}
+		}
+
 		[MonoTODO]
 		public static ArrayList Adapter (IList list)
 		{
-			throw new NotImplementedException ("System.Collections.ArrayList.Adapter");
+			return new ListWrapper (list);
 		}
 
 		// properties
@@ -556,18 +858,21 @@ namespace System.Collections {
 			return LastIndexOf (value, startIndex, startIndex + 1);
 		}
 
-		public virtual int LastIndexOf (object value, int StartIndex,
+		public virtual int LastIndexOf (object value, int startIndex,
 						int count)
-			{
-				int EndIndex = StartIndex - count + 1;
-				for (int i = StartIndex; i >= EndIndex; i--) {
-					if (Object.Equals (dataArray[i], value)) {
-						return i;
-					}
+		{
+			if (startIndex > Count || count < 0 || (startIndex + count > Count))
+				throw new ArgumentOutOfRangeException ();
+			
+			int EndIndex = startIndex - count + 1;
+			for (int i = startIndex; i >= EndIndex; i--) {
+				if (Object.Equals (dataArray[i], value)) {
+					return i;
 				}
-
-				return -1;
 			}
+
+			return -1;
+		}
 
 		public virtual void Remove (object obj) {
 
