@@ -1,5 +1,9 @@
 2002-07-20  Martin Baulig  <martin@gnome.org>
 
+	* class/makefile.gnu: Added System.Data.
+
+2002-07-20  Martin Baulig  <martin@gnome.org>
+
 	* class/library.make: Put $(MONO_PATH_PREFIX) in front of the MONO_PATH.
 
 	* class/*/makefile.gnu: Set MONO_PATH_PREFIX=../lib:
