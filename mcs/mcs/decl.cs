@@ -467,7 +467,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!CheckAccessLevel (d.Type)) {
-				Report.	Error (122, "`" + d.Type + "' " +
+				Report.	Error (122, loc,  "`" + d.Type + "' " +
 				       "is inaccessible because of its protection level");
 				return null;
 			}
@@ -498,31 +498,50 @@ namespace Mono.CSharp {
 		
 		bool CheckAccessLevel (Type check_type) 
 		{
+			if (check_type == TypeBuilder)
+				return true;
+			
+			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
+			
 			//
 			// Broken Microsoft runtime, return public for arrays, no matter what 
-			// the accessibility is for their underlying class
+			// the accessibility is for their underlying class, and they return 
+			// NonPublic visibility for pointers
 			//
-			if (check_type.IsPublic){
-				if (check_type.IsArray)
-				 	return CheckAccessLevel (check_type.GetElementType ());
-				
-				return true;
-			}
-			
-			if (check_type.IsNestedPublic)
+			if (check_type.IsArray || check_type.IsPointer)
+				return CheckAccessLevel (check_type.GetElementType ());
+
+			if (check_attr == TypeAttributes.Public)
 				return true;
 			
-			if (check_type.Assembly == TypeBuilder.Assembly)
+			if (check_attr == TypeAttributes.NestedPublic)
 				return true;
 
-			//
-			// Broken Microsoft runtime: They set the accessibility of
-			// pointers to NonPublic, even if their ElementType is accessible
-			// in some form.
-			//
-			if (check_type.IsPointer)
-				return CheckAccessLevel (check_type.GetElementType ());
+			if (check_attr == TypeAttributes.NestedPrivate){
+				string check_type_name = check_type.FullName;
+				string type_name = TypeBuilder.FullName;
+				
+				int cio = check_type_name.LastIndexOf ("+");
+				string container = check_type_name.Substring (0, cio);
+
+				//
+				// Check if the check_type is a nested class of the current type
+				//
+				if (check_type_name.StartsWith (type_name + "+")){
+					return true;
+				}
+				
+				if (type_name.StartsWith (container)){
+					return true;
+				}
+
+				return false;
+			}
 			
+			if (check_type.Assembly == TypeBuilder.Assembly){
+				return true;
+			}
+
 			return false;
 
 		}

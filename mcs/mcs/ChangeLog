@@ -1,5 +1,8 @@
 2003-04-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* decl.cs (CheckAccessLevel): Implement the NestedPrivate rules
+	for the access level checking.
+
 	* class.cs: Cosmetic changes.  Renamed `TypeContainer parent' to
 	`TypeContainer container', because I kept getting confused when I
 	was debugging this code.
