@@ -1,4 +1,8 @@
 
+Sat Jul 13 15:59:47 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.cs: allow calling this (but not base) initializers in structs.
+
 Sat Jul 13 15:12:06 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ecore.cs: make sure we compare against the building base types

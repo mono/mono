@@ -2268,6 +2268,11 @@ namespace Mono.CSharp {
 					return true;
 
 				t = ec.ContainerType.BaseType;
+				if (ec.ContainerType.IsValueType) {
+					Report.Error (522, location,
+						"structs cannot call base class constructors");
+					return false;
+				}
 			} else
 				t = ec.ContainerType;
 			
@@ -2418,8 +2423,8 @@ namespace Mono.CSharp {
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, Location, ig, null, ModFlags, true);
 
-			if (parent is Class && ((ModFlags & Modifiers.STATIC) == 0)){
-				if (Initializer == null)
+			if ((ModFlags & Modifiers.STATIC) == 0){
+				if (parent is Class && Initializer == null)
 					Initializer = new ConstructorBaseInitializer (null, parent.Location);
 
 
@@ -2428,7 +2433,7 @@ namespace Mono.CSharp {
 				// `this' access
 				//
 				ec.IsStatic = true;
-				if (!Initializer.Resolve (ec))
+				if (Initializer != null && !Initializer.Resolve (ec))
 					return;
 				ec.IsStatic = false;
 			}
@@ -2439,12 +2444,11 @@ namespace Mono.CSharp {
 			// Classes can have base initializers and instance field initializers.
 			//
 			if (parent is Class){
-				if ((ModFlags & Modifiers.STATIC) == 0){
+				if ((ModFlags & Modifiers.STATIC) == 0)
 					parent.EmitFieldInitializers (ec);
-
-					Initializer.Emit (ec);
-				}
 			}
+			if (Initializer != null)
+				Initializer.Emit (ec);
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				parent.EmitFieldInitializers (ec);
