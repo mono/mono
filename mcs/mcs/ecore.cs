@@ -1698,10 +1698,24 @@ namespace Mono.CSharp {
 			//
 			// Enum types
 			//
-			if (expr is EnumConstant) {
-				Expression e = ((EnumConstant) expr).Child;
+			if (expr_type.IsSubclassOf (TypeManager.enum_type)) {
+				Expression e;
+
+				//
+				// FIXME: Is there any reason we should have EnumConstant
+				// dealt with here instead of just using always the
+				// UnderlyingSystemType to wrap the type?
+				//
+				if (expr is EnumConstant)
+					e = ((EnumConstant) expr).Child;
+				else
+					e = new EmptyCast (expr, expr_type.UnderlyingSystemType);
 				
-				return ConvertImplicit (ec, e, target_type, loc);
+				e = ConvertImplicit (ec, e, target_type, loc);
+				if (e != null)
+					return e;
+				
+				return ConvertNumericExplicit (ec, e, target_type);
 			}
 			
 			ne = ConvertReferenceExplicit (expr, target_type);

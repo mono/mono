@@ -373,7 +373,8 @@ namespace Mono.CSharp {
 		//
 		// Hack around System.Reflection as found everywhere else
 		//
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
+						  MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 

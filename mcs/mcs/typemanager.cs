@@ -483,6 +483,8 @@ public class TypeManager {
 			param_array_type, void_arg);
 		
 	}
+
+	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 					  MemberFilter filter, object criteria)
@@ -495,9 +497,37 @@ public class TypeManager {
 		if (t.IsSubclassOf (TypeManager.array_type))
 			return TypeManager.array_type.FindMembers (mt, bf, filter, criteria);
 		
-		if (!(t is TypeBuilder))
-		        return t.FindMembers (mt, bf, filter, criteria);
+		if (!(t is TypeBuilder)){
+			//
+			// Since FindMembers will not lookup both static and instance
+			// members, we emulate this behaviour here.
+			//
+			if ((bf & instance_and_static) == instance_and_static){
+				MemberInfo [] i_members = t.FindMembers (
+					mt, bf & ~BindingFlags.Static, filter, criteria);
+				MemberInfo [] s_members = t.FindMembers (
+					mt, bf & ~BindingFlags.Instance, filter, criteria);
 
+				int i_len = i_members.Length;
+				int s_len = s_members.Length;
+				if (i_len > 0 || s_len > 0){
+					MemberInfo [] both = new MemberInfo [i_len + s_len];
+
+					i_members.CopyTo (both, 0);
+					s_members.CopyTo (both, i_len);
+
+					return both;
+				} else
+					return i_members;
+			}
+		        return t.FindMembers (mt, bf, filter, criteria);
+		}
+
+		//
+		// FIXME: We should not have builder_to_blah everywhere,
+		// we should just have a builder_to_findmemberizable
+		// and have them implement a new ICanFindMembers interface
+		//
 		Enum e = (Enum) builder_to_enum [t];
 
 		if (e != null)

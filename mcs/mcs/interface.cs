@@ -362,7 +362,7 @@ namespace Mono.CSharp {
 
 				set = TypeBuilder.DefineMethod (
 					"set_" + ip.Name, property_attributes,
-					null, setter_args);
+					TypeManager.void_type, setter_args);
 
 				set.DefineParameter (1, ParameterAttributes.None, "value");
 				pb.SetSetMethod (set);
@@ -460,7 +460,8 @@ namespace Mono.CSharp {
 				int i = 0;
 				
 				set_item = TypeBuilder.DefineMethod (
-					"set_Item", property_attributes, null, value_arg_types);
+					"set_Item", property_attributes,
+					TypeManager.void_type, value_arg_types);
 				pb.SetSetMethod (set_item);
 				//
 				// HACK because System.Reflection.Emit is lame
@@ -634,7 +635,7 @@ namespace Mono.CSharp {
 								  null,   // Parent Type
 								  ifaces);
 			} else {
-				TypeBuilder builder = (TypeBuilder) parent_builder;
+				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
 
 				TypeBuilder = builder.DefineNestedType (Basename,
 									TypeAttributes.Interface |

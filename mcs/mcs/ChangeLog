@@ -1,3 +1,23 @@
+2001-12-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Invocation.EmitCall): Handle the special case of
+	calling methods declared on a reference type from a ValueType
+	(Base classes System.Object and System.Enum)
+
+	(MemberAccess.Resolve): Only perform lookups on Enumerations if
+	the left hand side is a TypeExpr, not on every enumeration. 
+
+	(Binary.Resolve): If types are reference types, then do a cast to
+	object on operators != and == of both arguments.
+	
+	* typemanager.cs (FindMembers): Extract instance and static
+	members if requested.
+
+	* interface.cs (PopulateProperty): Use void_type instead of null
+	as the return type for the setter method.
+
+	(PopulateIndexer): ditto.
+
 2001-12-27  Ravi Pratap  <ravi@ximian.com>
 
 	* support.cs (ReflectionParameters): Fix minor bug where we

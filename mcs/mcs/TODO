@@ -268,6 +268,12 @@ OPTIMIZATIONS
 	and then "copy" it out to arrays.  Then reuse the existing
 	Statement structures.
 
+* TypeManager.FindMembers:
+
+	Instead of having hundreds of builder_to_blah hash table, have
+	a single one that maps a TypeBuilder `t' to a set of classes
+	that implement an interface that supports FindMembers.
+
 RECOMMENDATIONS
 ---------------
 

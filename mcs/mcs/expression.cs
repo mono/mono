@@ -331,15 +331,11 @@ namespace Mono.CSharp {
 			// decimal operator- (decimal d)
 			//
 			if (oper == Operator.UnaryNegation){
-				//
-				// Fold a "- Constant" into a negative constant
-				//
-			
 				Expression e = null;
 
 				//
-				// Not a constant we can optimize, perform numeric 
-				// promotions to int, long, double.
+				// perform numeric promotions to int,
+				// long, double.
 				//
 				//
 				// The following is inneficient, because we call
@@ -369,6 +365,11 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				if (expr_type == TypeManager.float_type){
+					type = expr_type;
+					return this;
+				}
+				
 				e = ConvertImplicit (ec, expr, TypeManager.int32_type, loc);
 				if (e != null){
 					expr = e;
@@ -1585,6 +1586,16 @@ namespace Mono.CSharp {
 					
 					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
 						return this;
+
+					//
+					// We are going to have to convert to an object to compare
+					//
+					if (l != TypeManager.object_type)
+						left = new EmptyCast (left, TypeManager.object_type);
+					if (r != TypeManager.object_type)
+						right = new EmptyCast (right, TypeManager.object_type);
+
+					return this;
 				}
 			}
 
@@ -3070,23 +3081,22 @@ namespace Mono.CSharp {
 			// should be better than all the others
 			//
 
-// 			for (int i = 0; i < candidates.Count; ++i) {
-// 				MethodBase candidate = (MethodBase) candidates [i];
-
-// 				if (candidate == method)
-// 					continue;
+#if NOPE
+ 			for (int i = 0; i < candidates.Count; ++i) {
+ 				MethodBase candidate = (MethodBase) candidates [i];
+				x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
+ 				if (candidate == method)
+ 					continue;
+ 				int x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
+ 				if (x != 1) {
+ 					Console.WriteLine (candidate + "  " + method);
+ 					Report.Error (
+ 						121, loc,
+ 						"Ambiguous call when selecting function due to implicit casts");
+ 					return null;
+ 				}
+#endif
 				
-// 				int x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
-
-// 				if (x != 1) {
-// 					Console.WriteLine (candidate + "  " + method);
-// 					Report.Error (
-// 						121, loc,
-// 						"Ambiguous call when selecting function due to implicit casts");
-// 					return null;
-// 				}
-// 			}
-
 			
 			// And now convert implicitly, each argument to the required type
 			
@@ -3299,27 +3309,38 @@ namespace Mono.CSharp {
 					// Push the instance expression
 					//
 					if (instance_expr.Type.IsSubclassOf (TypeManager.value_type)){
-
-						struct_call = true;
-
 						//
-						// If the expression implements IMemoryLocation, then
-						// we can optimize and use AddressOf on the
-						// return.
-						//
-						// If not we have to use some temporary storage for
-						// it.
-						if (instance_expr is IMemoryLocation)
-							((IMemoryLocation) instance_expr).AddressOf (ec);
-						else {
-							Type t = instance_expr.Type;
-							
+						// Special case: calls to a function declared in a 
+						// reference-type with a value-type argument need
+						// to have their value boxed.  
+
+						if (method.DeclaringType.IsValueType){
+							struct_call = true;
+
+							//
+							// If the expression implements IMemoryLocation, then
+							// we can optimize and use AddressOf on the
+							// return.
+							//
+							// If not we have to use some temporary storage for
+							// it.
+							if (instance_expr is IMemoryLocation){
+								((IMemoryLocation)instance_expr).
+									AddressOf (ec);
+							}
+							else {
+								Type t = instance_expr.Type;
+								
+								instance_expr.Emit (ec);
+								LocalBuilder temp = ig.DeclareLocal (t);
+								ig.Emit (OpCodes.Stloc, temp);
+								ig.Emit (OpCodes.Ldloca, temp);
+							}
+						} else {
 							instance_expr.Emit (ec);
-							LocalBuilder temp = ig.DeclareLocal (t);
-							ig.Emit (OpCodes.Stloc, temp);
-							ig.Emit (OpCodes.Ldloca, temp);
-						}
-					} else 
+							ig.Emit (OpCodes.Box, instance_expr.Type);
+						} 
+					} else
 						instance_expr.Emit (ec);
 				}
 			}
@@ -4490,18 +4511,17 @@ namespace Mono.CSharp {
 			//
 
 			Type expr_type = expr.Type;
-			if (expr_type.IsSubclassOf (TypeManager.enum_type)) {
+			if ((expr is TypeExpr) && (expr_type.IsSubclassOf (TypeManager.enum_type))){
 				
 				Enum en = TypeManager.LookupEnum (expr_type);
 				
 				if (en != null) {
 					object value = en.LookupEnumValue (ec, Identifier, loc);
 
-					if (value == null)
-						return null;
-					
-					Constant c = Constantify (value, en.UnderlyingType);
-					return new EnumConstant (c, expr_type);
+					if (value != null){
+						Constant c = Constantify (value, en.UnderlyingType);
+						return new EnumConstant (c, expr_type);
+					}
 				}
 			}
 
@@ -4732,7 +4752,7 @@ namespace Mono.CSharp {
 #endif
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Should not happen I think");
+			throw new Exception ("Should not happen");
 		}
 	}
 
