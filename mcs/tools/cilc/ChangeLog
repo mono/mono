@@ -1,3 +1,7 @@
+2004-12-06  Alp Toker  <alp@atoker.com>
+
+	* cilc.cs: Update to new embedding API: use mono_class_from_name()
+
 2004-06-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (HAS_TEST): Remove.

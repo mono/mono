@@ -144,7 +144,7 @@ class cilc
 		C.WriteLine ("if (class != NULL) return class;");
 
 		C.WriteLine ("assembly = (MonoAssembly*) " + CamelToC (ns) + "_get_mono_assembly ();");
-		C.WriteLine ("class = (MonoClass*) mono_class_from_name (assembly->image" + ", \"" + ns + "\", \"" + t.Name + "\");");
+		C.WriteLine ("class = (MonoClass*) mono_class_from_name (mono_assembly_get_image (assembly)" + ", \"" + ns + "\", \"" + t.Name + "\");");
 
 		C.WriteLine ("mono_class_init (class);");
 		C.LineBreak ();
