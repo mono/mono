@@ -115,15 +115,17 @@ namespace System
 
 			Type[] interfaces = GetInterfaces();
 
-			foreach (Type type in interfaces)
+			foreach (Type type in interfaces) {
 				if (String.Compare (type.Name, name, ignoreCase) == 0)
 					return type;
+				if (String.Compare (type.FullName, name, ignoreCase) == 0)
+					return type;
+			}
 
 			return null;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		[MonoTODO]
 		public extern override Type[] GetInterfaces();
 		
 		public override MemberInfo[] GetMembers( BindingFlags bindingAttr)

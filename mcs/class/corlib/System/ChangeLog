@@ -1,4 +1,8 @@
 
+Fri Sep 6 12:20:06 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: consider also the full name in GetInterface.
+
 Fri Sep 6 12:11:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoType.cs: implemented GetMembers, GetConstructorImpl and
