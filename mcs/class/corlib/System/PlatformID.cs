@@ -41,10 +41,11 @@ namespace System
 		Win32S = 0,
 		Win32Windows = 1,
 		Win32NT = 2,
-#if NET_1_1
-		WinCE = 3
+#if NET_1_1 || NET_2_0
+		WinCE = 3,
 #endif
-		// We can not expose this to userland, since it would break bin compat
-		// Unix = 128
+#if NET_2_0
+		Unix = 3
+#endif
 	}
 }
