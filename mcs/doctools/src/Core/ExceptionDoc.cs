@@ -25,29 +25,31 @@ namespace Mono.Doc.Core
 {
 	public class ExceptionDoc
 	{
-		private string cref = null;
-		private string description = null;
+		private string cref;
+		private string description;
 
 		public ExceptionDoc()
 		{
+			this.cref        = string.Empty;
+			this.description = string.Empty;
 		}
 
-		public ExceptionDoc(string pCref, string pDescription)
+		public ExceptionDoc(string cref, string description)
 		{
-			cref = pCref;
-			description = pDescription;
+			this.cref        = cref;
+			this.description = description;
 		}
 
 		public string Cref
 		{
-			get { return cref;  }
-			set { cref = value; }
+			get { return this.cref;  }
+			set { this.cref = value; }
 		}
 
 		public string Description
 		{
-			get { return description;  }
-			set { description = value; }
+			get { return this.description;  }
+			set { this.description = value; }
 		}
 	}
 }

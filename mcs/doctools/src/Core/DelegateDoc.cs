@@ -20,21 +20,22 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Collections.Specialized;
 
 namespace Mono.Doc.Core
 {
 	public class DelegateDoc : AbstractTypeDoc
 	{
-		private ParameterDoc[] parameters = null;
+		private StringDictionary parameters;
 
 		public DelegateDoc() : base()
 		{
+			this.parameters = new StringDictionary();
 		}
 
-		public ParameterDoc[] Parameters
+		public StringDictionary Parameters
 		{
-			get { return parameters;  }
-			set { parameters = value; }
+			get { return this.parameters; }
 		}
 	}
 }

@@ -26,44 +26,48 @@ namespace Mono.Doc.Core
 {
 	public abstract class AbstractDoc
 	{
-		protected string           name    = null;
-		protected string           summary = null;
-		protected string           remarks = null;
-		protected string          language = null;
-		protected StringCollection seeAlso = null;
+		protected string           name;
+		protected string           summary;
+		protected string           remarks;
+		protected string           language;
+		protected StringCollection seeAlso;
 
 		protected AbstractDoc()
 		{
-			seeAlso = new StringCollection();
+			this.name     = string.Empty;
+			this.summary  = string.Empty;
+			this.remarks  = string.Empty;
+			this.language = string.Empty;
+			this.seeAlso  = new StringCollection();
 		}
 
 		public string Summary
 		{
-			get { return summary;  }
-			set { summary = value; }
+			get { return this.summary;  }
+			set { this.summary = value; }
 		}
 
 		public string Remarks
 		{
-			get { return remarks;  }
-			set { remarks = value; }
+			get { return this.remarks;  }
+			set { this.remarks = value; }
 		}
 
 		public string Name
 		{
-			get { return name;  }
-			set { name = value; }
+			get { return this.name;  }
+			set { this.name = value; }
 		}
 
 		public StringCollection SeeAlso
 		{
-			get { return seeAlso; }
+			get { return this.seeAlso; }
 		}
 
 		public string Language
 		{
-			get { return language;  }
-			set { language = value; }
+			get { return this.language;  }
+			set { this.language = value; }
 		}
 	}
 }

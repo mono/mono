@@ -25,16 +25,16 @@ namespace Mono.Doc.Core
 {
 	public class EnumDoc : AbstractTypeDoc
 	{
-		private EnumMember[] members = null;
+		private ValueConstrainedArrayList members;
 		
 		public EnumDoc() : base()
 		{
+			this.members = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.EnumMember", true));
 		}
 
-		public EnumMember[] Members
+		public ValueConstrainedArrayList Members
 		{
-			get { return members;  }
-			set { members = value; }
+			get { return this.members; }
 		}
 	}
 }

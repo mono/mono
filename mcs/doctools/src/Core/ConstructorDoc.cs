@@ -20,28 +20,29 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Collections.Specialized;
 
 namespace Mono.Doc.Core
 {
 	public class ConstructorDoc : AbstractDoc
 	{
-		public ExceptionDoc[] exceptions = null;
-		public ParameterDoc[] parameters = null;
+		public ValueConstrainedArrayList exceptions;
+		public StringDictionary parameters;
 
 		public ConstructorDoc() : base()
 		{
+			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
+			this.parameters = new StringDictionary();
 		}
 
-		public ExceptionDoc[] Exceptions
+		public ValueConstrainedArrayList Exceptions
 		{
-			get { return exceptions;  }
-			set { exceptions = value; }
+			get { return this.exceptions; }
 		}
 
-		public ParameterDoc[] Parameters
+		public StringDictionary Parameters
 		{
-			get { return parameters;  }
-			set { parameters = value; }
+			get { return this.parameters; }
 		}
 	}
 }

@@ -25,16 +25,17 @@ namespace Mono.Doc.Core
 {
 	public abstract class AbstractTypeDoc : AbstractDoc
 	{
-		protected string assembly = null;
+		protected string assembly;
 
 		public AbstractTypeDoc() : base()
 		{
+			this.assembly = string.Empty;
 		}
 
 		public string Assembly
 		{
-			get { return assembly;  }
-			set { assembly = value; }
+			get { return this.assembly;  }
+			set { this.assembly = value; }
 		}
 	}
 }

@@ -20,35 +20,36 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Collections.Specialized;
 
 namespace Mono.Doc.Core
 {
 	public abstract class AbstractMethodOperatorDoc : AbstractDoc
 	{
-		protected ExceptionDoc[] exceptions = null;
-		protected ParameterDoc[] parameters = null;
-		protected string         returns    = null;
+		protected ValueConstrainedArrayList   exceptions;
+		protected StringDictionary            parameters;
+		protected string                      returns;
 
 		public AbstractMethodOperatorDoc() : base()
 		{
+			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
+			this.parameters = new StringDictionary();
 		}
 
-		public ExceptionDoc[] Exceptions
+		public ValueConstrainedArrayList Exceptions
 		{
-			get { return exceptions;  }
-			set { exceptions = value; }
+			get { return this.exceptions; }
 		}
 
-		public ParameterDoc[] Parameters
+		public StringDictionary Parameters
 		{
-			get { return parameters;  }
-			set { parameters = value; }
+			get { return this.parameters; }
 		}
 
 		public string Returns
 		{
-			get { return returns;  }
-			set { returns = value; }
+			get { return this.returns;  }
+			set { this.returns = value; }
 		}
 	}
 }

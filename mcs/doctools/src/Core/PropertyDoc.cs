@@ -25,23 +25,24 @@ namespace Mono.Doc.Core
 {
 	public class PropertyDoc : AbstractDoc
 	{
-		private string         propertyValue = null;
-		private ExceptionDoc[] exceptions    = null;
+		private string                    value;
+		private ValueConstrainedArrayList exceptions;
 
 		public PropertyDoc() : base()
 		{
+			this.value      = string.Empty;
+			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
 		}
 
 		public string Value
 		{
-			get { return propertyValue;  }
-			set { propertyValue = value; }
+			get { return this.value;  }
+			set { this.value = value; }
 		}
 
-		public ExceptionDoc[] Exceptions
+		public ValueConstrainedArrayList Exceptions
 		{
-			get { return exceptions;  }
-			set { exceptions = value; }
+			get { return this.exceptions;  }
 		}
 	}
 }

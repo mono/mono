@@ -26,88 +26,87 @@ namespace Mono.Doc.Core
 	public abstract class AbstractClassStructDoc : AbstractTypeDoc
 	{
 		// constructor | event | field | method | operator | property
-		protected ConstructorDoc[] constructors = null;
-		protected EventDoc[]       events       = null;
-		protected FieldDoc[]       fields       = null;
-		protected MethodDoc[]      methods      = null;
-		protected OperatorDoc[]    operators    = null;
-		protected PropertyDoc[]    properties   = null;
+		protected ValueConstrainedArrayList constructors;
+		protected ValueConstrainedArrayList       events;
+		protected ValueConstrainedArrayList       fields;
+		protected ValueConstrainedArrayList      methods;
+		protected ValueConstrainedArrayList    operators;
+		protected ValueConstrainedArrayList    properties;
 
 		// nested items
-		protected ClassDoc[]       classes      = null;
-		protected DelegateDoc[]    delegates    = null;
-		protected EnumDoc[]        enums        = null;
-		protected InterfaceDoc[]   interfaces   = null;
-		protected StructDoc[]      structs      = null;
+		protected ValueConstrainedArrayList       classes;
+		protected ValueConstrainedArrayList    delegates;
+		protected ValueConstrainedArrayList        enums;
+		protected ValueConstrainedArrayList   interfaces;
+		protected ValueConstrainedArrayList      structs;
 
 		public AbstractClassStructDoc() : base()
 		{
+			this.constructors = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ConstructorDoc", true));
+			this.events       = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.EventDoc", true));
+			this.fields       = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.FieldDoc", true));
+			this.methods      = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.MethodDoc", true));
+			this.operators    = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.OperatorDoc", true));
+			this.properties   = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.PropertyDoc", true));
+			this.classes      = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ClassDoc", true));
+			this.enums        = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.EnumDoc", true));
+			this.interfaces   = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.InterfaceDoc", true));
+			this.structs      = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.StructDoc", true));
 		}
 
-		public ConstructorDoc[] Constructors
+		public ValueConstrainedArrayList Constructors
 		{
-			get { return constructors;  }
-			set { constructors = value; }
+			get { return this.constructors;  }
 		}
 
-		public EventDoc[] Events
+		public ValueConstrainedArrayList Events
 		{
-			get { return events;  }
-			set { events = value; }
+			get { return this.events;  }
 		}
 
-		public FieldDoc[] Fields
+		public ValueConstrainedArrayList Fields
 		{
-			get { return fields;  }
-			set { fields = value; }
+			get { return this.fields;  }
 		}
 
-		public MethodDoc[] Methods
+		public ValueConstrainedArrayList Methods
 		{
-			get { return methods;  }
-			set { methods = value; }
+			get { return this.methods;  }
 		}
 
-		public OperatorDoc[] Operators
+		public ValueConstrainedArrayList Operators
 		{
-			get { return operators;  }
-			set { operators = value; }
+			get { return this.operators;  }
 		}
 
-		public PropertyDoc[] Properties
+		public ValueConstrainedArrayList Properties
 		{
-			get { return properties;  }
-			set { properties = value; }
+			get { return this.properties;  }
 		}
 
-		public ClassDoc[] NestedClasses
+		public ValueConstrainedArrayList NestedClasses
 		{
-			get { return classes;  }
-			set { classes = value; }
+			get { return this.classes;  }
 		}
 
-		public DelegateDoc[] NestedDelegates
+		public ValueConstrainedArrayList NestedDelegates
 		{
-			get { return delegates;  }
-			set { delegates = value; }
+			get { return this.delegates;  }
 		}
 
-		public EnumDoc[] NestedEnums
+		public ValueConstrainedArrayList NestedEnums
 		{
-			get { return enums;  }
-			set { enums = value; }
+			get { return this.enums;  }
 		}
 
-		public InterfaceDoc[] NestedInterfaces
+		public ValueConstrainedArrayList NestedInterfaces
 		{
-			get { return interfaces;  }
-			set { interfaces = value; }
+			get { return this.interfaces;  }
 		}
 
-		public StructDoc[] NestedStructs
+		public ValueConstrainedArrayList NestedStructs
 		{
-			get { return structs;  }
-			set { structs = value; }
+			get { return this.structs;  }
 		}
 	}
 }

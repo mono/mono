@@ -27,16 +27,17 @@ namespace Mono.Doc.Core
 {
 	public class EventDoc : AbstractDoc
 	{
-		private string data = null;
+		private string data;
 
 		public EventDoc() : base()
 		{
+			this.data = string.Empty;
 		}
 
 		public string Data
 		{
-			get { return data;  }
-			set { data = value; }
+			get { return this.data;  }
+			set { this.data = value; }
 		}
 	}
 }
