@@ -10,5 +10,9 @@
 namespace System.Threading
 {
 	public class CompressedStack {
+
+		internal CompressedStack ()
+		{
+		}
 	}
 }		
