@@ -1,3 +1,6 @@
+2004-08-11 Anirban Bhattachartjee <banirban@novell.com>
+	* Interaction.cs: Bug fix (#62234) - by Pedro Cardoso<smeegoan@yahoo.com.br>
+
 2004-07-31  Jambunathan K  <kjambunathan@novell.com>
 	* Strings.cs: Fixed a bug in Format()
 	* DateAndTime.cs: Added support for setting Today and

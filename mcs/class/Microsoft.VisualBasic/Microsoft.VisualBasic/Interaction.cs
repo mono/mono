@@ -262,6 +262,8 @@ namespace Microsoft.VisualBasic {
 				for(int i = 0; i < args.Length; i++) 
 					argsType[i] = args[i].GetType();
 			}
+			/*else
+				argsType = new Type[0];*/
 
 			Type objType = objRef.GetType();
         
@@ -355,7 +357,7 @@ namespace Microsoft.VisualBasic {
 			string [] args = Environment.GetCommandLineArgs ();
 
 			if (args != null && args.Length > 1) {
-				return string.Join (" ", args, 2, args.Length - 1);
+				return string.Join (" ", args, 1, args.Length - 1);
 			} else {
 				return "";
 			}
