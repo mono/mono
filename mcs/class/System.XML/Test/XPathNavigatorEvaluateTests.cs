@@ -45,7 +45,7 @@ namespace MonoTests.System.Xml
 		}
 
 		// Testing Core Function Library functions defined at: http://www.w3.org/TR/xpath#corelib
-		public void saveTestCoreFunctionNodeSetLast ()
+		public void TestCoreFunctionNodeSetLast ()
 		{
 			expression = navigator.Compile("last()");
 			iterator = navigator.Select("/foo");
@@ -75,7 +75,7 @@ namespace MonoTests.System.Xml
 			AssertEquals ("3", navigator.Evaluate (expression, iterator).ToString ());
 		}
 
-		public void saveTestCoreFunctionNodeSetCount ()
+		public void TestCoreFunctionNodeSetCount ()
 		{
 			AssertEquals ("5", navigator.Evaluate ("count(//*)").ToString ());
 			AssertEquals ("1", navigator.Evaluate ("count(//foo)").ToString ());
