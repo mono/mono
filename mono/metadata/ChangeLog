@@ -1,3 +1,9 @@
+2004-01-20  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): 
+	mono_marshal_alloc takes native int so CONV_I
+	the arg for 64bits.
+
 2004-01-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (fixup_cattrs): New function to fixup the methoddef
