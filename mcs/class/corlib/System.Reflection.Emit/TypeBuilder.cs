@@ -1285,12 +1285,6 @@ namespace System.Reflection.Emit {
 		}
 
 		[MonoTODO]
-		public override bool IsInstanceOfType (object o)
-		{
-			return base.IsInstanceOfType (o);
-		}
-
-		[MonoTODO]
 		public override bool IsSubclassOf (Type c)
 		{
 			return base.IsSubclassOf (c);

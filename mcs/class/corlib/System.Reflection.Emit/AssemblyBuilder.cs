@@ -475,10 +475,6 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
-		public override FileStream[] GetFiles() {
-			throw not_supported ();
-		}
-		
 		public override FileStream[] GetFiles(bool getResourceModules) {
 			throw not_supported ();
 		}
