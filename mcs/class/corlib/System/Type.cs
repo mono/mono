@@ -719,7 +719,7 @@ namespace System {
 			if (this == typeof (Enum) || this == typeof (ValueType))
 				return false;
 
-			return IsSubclassOf (typeof (Enum));
+			return IsSubclassOf (typeof (ValueType));
 		}
 		
 		protected virtual bool IsContextfulImpl ()
