@@ -52,7 +52,7 @@ namespace System.Windows.Forms {
 
 				active_control = value;
 
-				if (!Contains(value)) {
+				if (!Contains(value) && this != value) {
 					throw new ArgumentException("Not a child control");
 				}
 
