@@ -1,3 +1,9 @@
+
+Tue Feb 15 18:03:41 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, appdomain.c, appdomain.h, object-internals.h, object.h:
+	changes to make the current context a field in MonoThread.
+
 2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Fix a crash caused by
