@@ -82,7 +82,22 @@ namespace System.Windows.Forms
 
 		public virtual void CreateHandle(CreateParams create_params) {
 			if (create_params != null) {
-				window_handle=XplatUI.CreateWindow(create_params);
+				Control	control;
+
+				control = ((Control.ControlNativeWindow)this).Owner;
+
+				if ( !(control is Form) && !(control is Form.FormParentWindow)) {
+					window_handle=XplatUI.CreateWindow(create_params);
+				} else {
+					CreateParams	cp;
+
+					if (control is Form.FormParentWindow) {
+						cp = ((Form.FormParentWindow)control).owner.CreateFormParams;
+					} else {
+						cp = ((Form)control).CreateClientAreaParams;
+					}
+					window_handle=XplatUI.CreateWindow(cp);
+				}
 
 				if (window_handle != IntPtr.Zero) {
 					window_collection.Add(window_handle, this);

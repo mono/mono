@@ -33,32 +33,6 @@ namespace System.Windows.Forms {
 	public abstract class CommonDialog : System.ComponentModel.Component {
 		#region DialogForm
 		internal class DialogForm : Form {
-			#region FormParentWindow Override
-			internal new class FormParentWindow : Form.FormParentWindow {
-				internal FormParentWindow(Form owner) : base(owner) {
-				}
-
-				protected override CreateParams CreateParams {
-					get {
-						CreateParams	cp;
-
-						if (owner != null) {
-							owner.ControlBox = true;
-							owner.MinimizeBox = false;
-							owner.MaximizeBox = false;
-						}
-
-						cp = base.CreateParams;
-
-						// FIXME - I need to rethink this a bit, we're loosing any cp.Style set in base; might not matter though
-						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
-						return cp;
-					}
-				}
-
-			}
-			#endregion
-
 			#region DialogForm Local Variables
 			protected CommonDialog	owner;
 			#endregion DialogForm Local Variables
@@ -72,11 +46,18 @@ namespace System.Windows.Forms {
 			#region Protected Instance Properties
 			protected override CreateParams CreateParams {
 				get {
-					if (this.form_parent_window == null) {
-						form_parent_window = new FormParentWindow(this);
-					}
+					CreateParams	cp;
 
-					return base.CreateParams;
+					ControlBox = true;
+					MinimizeBox = false;
+					MaximizeBox = false;
+
+					cp = base.CreateParams;
+
+					// FIXME - I need to rethink this a bit, we're loosing any cp.Style set in base; might not matter though
+					cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
+
+					return cp;
 				}
 			}
 

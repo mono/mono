@@ -28,15 +28,18 @@
 //	- remove comments around the "if (this.Capture) {" in the TimerHandler method
 
 using System;
-using System.Drawing;
 using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace System.Windows.Forms {
+	[DefaultProperty("SelectionRange")]
+	[DefaultEvent("DateChanged")]
+	[Designer ("System.Windows.Forms.Design.MonthCalendarDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class MonthCalendar : Control {
-
 		#region Local variables
-
 		DateTime []		annually_bolded_dates;
 		Color 			back_color;
 		DateTime []		bolded_dates;
@@ -176,6 +179,7 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 
 		// dates to make bold on calendar annually (recurring)
+		[Localizable (true)]
 		public DateTime[] AnnuallyBoldedDates {
 			set {
 				if (annually_bolded_dates == null || annually_bolded_dates != value) {
@@ -204,6 +208,7 @@ namespace System.Windows.Forms {
 		}
 
 		// specific dates to make bold on calendar (non-recurring)
+		[Localizable (true)]
 		public DateTime[] BoldedDates {
 			set {
 				if (bolded_dates == null || bolded_dates != value) {
@@ -219,6 +224,7 @@ namespace System.Windows.Forms {
 
 		// the configuration of the monthly grid display - only allowed to display at most,
 		// 1 calendar year at a time, will be trimmed to fit it properly
+		[Localizable (true)]
 		public Size CalendarDimensions {
 			set {
 				if (value.Width < 0 || value.Height < 0) {
@@ -258,6 +264,8 @@ namespace System.Windows.Forms {
 		}
 
 		// the first day of the week to display
+		[Localizable (true)]
+		[DefaultValue (Day.Default)]
 		public Day FirstDayOfWeek {
 			set {
 				if (first_day_of_week != value) {
@@ -301,6 +309,7 @@ namespace System.Windows.Forms {
 		}
 
 		// the maximum number of selectable days
+		[DefaultValue (7)]
 		public int MaxSelectionCount {
 			set {
 				if (value < 0) {
@@ -342,6 +351,7 @@ namespace System.Windows.Forms {
 		}
 
 		// dates to make bold on calendar monthly (recurring)
+		[Localizable (true)]
 		public DateTime[] MonthlyBoldedDates {
 			set {
 				if (monthly_bolded_dates == null || monthly_bolded_dates != value) {
@@ -356,6 +366,7 @@ namespace System.Windows.Forms {
 		}
 
 		// the ammount by which to scroll this calendar by
+		[DefaultValue (0)]
 		public int ScrollChange {
 			set {
 				if (value < 0 || value > 20000) {
@@ -377,6 +388,8 @@ namespace System.Windows.Forms {
 
 
 		// the last selected date
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DateTime SelectionEnd {
 			set {
 				if (value < MinDate || value > MaxDate) {
@@ -459,6 +472,8 @@ namespace System.Windows.Forms {
 		}
 
 		// the first selected date
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DateTime SelectionStart {
 			set {
 				if (value < MinDate || value > MaxDate) {
@@ -490,6 +505,7 @@ namespace System.Windows.Forms {
 		}
 
 		// whether or not to show todays date
+		[DefaultValue (true)]
 		public bool ShowToday {
 			set {
 				if (show_today != value) {
@@ -503,6 +519,7 @@ namespace System.Windows.Forms {
 		}
 
 		// whether or not to show a circle around todays date
+		[DefaultValue (true)]
 		public bool ShowTodayCircle {
 			set {
 				if (show_today_circle != value) {
@@ -516,6 +533,8 @@ namespace System.Windows.Forms {
 		}
 
 		// whether or not to show numbers beside each row of weeks
+		[Localizable (true)]
+		[DefaultValue (false)]
 		public bool ShowWeekNumbers {
 			set {
 				if (show_week_numbers != value) {
@@ -529,6 +548,8 @@ namespace System.Windows.Forms {
 		}
 
 		// the rectangle size required to render one month based on current font
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Size SingleMonthSize {
 			get {
 				if (this.Font == null) {
@@ -592,6 +613,8 @@ namespace System.Windows.Forms {
 		}
 
 		// tells if user specifically set today_date for this control		
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool TodayDateSet {
 			get {
 				return today_date_set;
@@ -999,6 +1022,35 @@ namespace System.Windows.Forms {
 		// fired when the user explicitely clicks on date to select it
 		public event DateRangeEventHandler DateSelected;
 
+		[MonoTODO("Fire BackgroundImageChanged event")]
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public event EventHandler BackgroundImageChanged;
+
+		[MonoTODO("Fire Click event")]
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public event EventHandler Click;
+
+		[MonoTODO("Fire DoubleClick event")]
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public event EventHandler DoubleClick;
+
+		[MonoTODO("Fire ImeModeChanged event")]
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public event EventHandler ImeModeChanged;
+
+		[MonoTODO("Fire Paint event")]
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public event PaintEventHandler Paint;
+
+		[MonoTODO("Fire TextChanged event")]
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public event EventHandler TextChanged;
 		#endregion	// public events
 
 		#region internal properties
@@ -1792,7 +1844,5 @@ namespace System.Windows.Forms {
 		}
 
 		#endregion 	// inner classes
-
-
 	}
 }

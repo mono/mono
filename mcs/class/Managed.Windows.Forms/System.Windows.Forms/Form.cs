@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 		private bool			key_preview;
 		private MainMenu		menu;
 		internal FormParentWindow	form_parent_window;
+		private bool			created_form_parent;
 		private	Icon			icon;
 		private Size			maximum_size;
 		private Size			minimum_size;
@@ -89,53 +90,11 @@ namespace System.Windows.Forms {
 				MouseDown += new MouseEventHandler (OnMouseDownForm); 
 				MouseMove += new MouseEventHandler (OnMouseMoveForm); 
 				owner.TextChanged += new EventHandler(OnFormTextChanged);
+				CreateControl();		// Create us right away, we have code referencing this.window
 			}
 			#endregion	// FormParentWindow Class Constructor
 
 			#region FormParentWindow Class Protected Instance Methods
-			protected override CreateParams CreateParams {
-				get {
-					CreateParams cp;
-
-					cp = base.CreateParams;
-
-					cp.Style = (int)(WindowStyles.WS_OVERLAPPEDWINDOW | 
-						WindowStyles.WS_CLIPSIBLINGS | 
-						WindowStyles.WS_CLIPCHILDREN);
-
-					cp.Width = 250;
-					cp.Height = 250;
-
-					if (owner != null) {
-						if (owner.ShowInTaskbar) {
-							cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
-						}
-
-						if (owner.MaximizeBox) {
-							cp.Style |= (int)WindowStyles.WS_MAXIMIZEBOX;
-						}
-
-						if (owner.MinimizeBox) {
-							cp.Style |= (int)WindowStyles.WS_MINIMIZEBOX;
-						}
-
-						if (owner.ControlBox) {
-							cp.Style |= (int)WindowStyles.WS_SYSMENU;
-						}
-
-						if (owner.HelpButton) {
-							cp.ExStyle |= (int)WindowStyles.WS_EX_CONTEXTHELP;
-						}
-					} else {
-						// Defaults
-						cp.Style |= (int)(WindowStyles.WS_SYSMENU | WindowStyles.WS_MINIMIZEBOX | WindowStyles.WS_MAXIMIZEBOX);
-						cp.ExStyle |=  (int)WindowStyles.WS_EX_APPWINDOW;
-					}
-
-					return cp;
-				}
-			}
-
 			protected override void OnResize(EventArgs e) {
 				base.OnResize(e);
 
@@ -157,7 +116,6 @@ namespace System.Windows.Forms {
 			protected override void Select(bool directed, bool forward) {
 				base.Select (directed, forward);
 			}
-
 
 			protected override void WndProc(ref Message m) {
 				switch((Msg)m.Msg) {
@@ -384,6 +342,7 @@ Console.WriteLine("ParentForm got focus");
 			set {
 				if (control_box != value) {
 					control_box = value;
+					UpdateStyles();
 				}
 			}
 		}
@@ -440,6 +399,7 @@ Console.WriteLine("ParentForm got focus");
 			set {
 				if (help_button != value) {
 					help_button = value;
+					UpdateStyles();
 				}
 			}
 		}
@@ -479,6 +439,7 @@ Console.WriteLine("ParentForm got focus");
 			set {
 				if (maximize_box != value) {
 					maximize_box = value;
+					UpdateStyles();
 				}
 			}
 		}
@@ -524,6 +485,7 @@ Console.WriteLine("ParentForm got focus");
 			set {
 				if (minimize_box != value) {
 					minimize_box = value;
+					UpdateStyles();
 				}
 			}
 		}
@@ -588,6 +550,7 @@ Console.WriteLine("ParentForm got focus");
 			set {
 				if (show_in_taskbar != value) {
 					show_in_taskbar = value;
+					UpdateStyles();
 				}
 			}
 		}
@@ -673,9 +636,8 @@ Console.WriteLine("ParentForm got focus");
 
 		#endregion	// Public Instance Properties
 
-		#region Protected Instance Properties
-		[MonoTODO("Need to add MDI support")]
-		protected override CreateParams CreateParams {
+
+		internal CreateParams CreateClientAreaParams {
 			get {
 				CreateParams cp = new CreateParams();
 
@@ -688,7 +650,7 @@ Console.WriteLine("ParentForm got focus");
 				cp.ClassStyle = 0;
 				cp.ExStyle=0;
 				cp.Param=0;
-				cp.Parent = this.form_parent_window.window.Handle;
+				cp.Parent = form_parent_window.window.Handle;
 				cp.X = Left;
 				cp.Y = Top;
 				cp.Width = Width;
@@ -699,6 +661,63 @@ Console.WriteLine("ParentForm got focus");
 				cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
 				cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
 
+				return cp;
+			}
+		}
+
+		internal CreateParams CreateFormParams {
+			get {
+				return CreateParams;
+			}
+		}
+
+		#region Protected Instance Properties
+		[MonoTODO("Need to add MDI support")]
+		protected override CreateParams CreateParams {
+			get {
+				CreateParams cp;
+
+				if (!created_form_parent) {
+					created_form_parent = true;
+					form_parent_window = new FormParentWindow(this);
+				}
+
+				cp = new CreateParams();
+
+				cp.Caption = "FormWindow";
+				cp.ClassName=XplatUI.DefaultClassName;
+				cp.ClassStyle = 0;
+				cp.ExStyle=0;
+				cp.Param=0;
+				cp.Parent = IntPtr.Zero;
+				cp.X = Left;
+				cp.Y = Top;
+				cp.Width = Width;
+				cp.Height = Height;
+				
+				cp.Style = (int)(WindowStyles.WS_OVERLAPPEDWINDOW | 
+					WindowStyles.WS_CLIPSIBLINGS | 
+					WindowStyles.WS_CLIPCHILDREN);
+
+				if (ShowInTaskbar) {
+					cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
+				}
+
+				if (MaximizeBox) {
+					cp.Style |= (int)WindowStyles.WS_MAXIMIZEBOX;
+				}
+
+				if (MinimizeBox) {
+					cp.Style |= (int)WindowStyles.WS_MINIMIZEBOX;
+				}
+
+				if (ControlBox) {
+					cp.Style |= (int)WindowStyles.WS_SYSMENU;
+				}
+
+				if (HelpButton) {
+					cp.ExStyle |= (int)WindowStyles.WS_EX_CONTEXTHELP;
+				}
 				return cp;
 			}
 		}

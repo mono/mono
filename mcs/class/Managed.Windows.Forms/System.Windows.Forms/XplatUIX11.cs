@@ -788,35 +788,6 @@ namespace System.Windows.Forms {
 			XSelectInput(DisplayHandle, handle, SelectInputMask);
 		}
 
-		internal override void RefreshWindow(IntPtr handle) {
-			XEvent	xevent = new XEvent();
-			IntPtr	root;
-			int	border_width;
-			int	depth;
-			int	x;
-			int	y;
-			int	width;
-			int	height;
-
-			lock (xlib_lock) {
-
-				// We need info about our window to generate the expose 
-				XGetGeometry(DisplayHandle, handle, out root, out x, out y,
-						out width, out height, out border_width, out depth);
-
-				xevent.type=XEventName.Expose;
-				xevent.ExposeEvent.display=DisplayHandle;
-				xevent.ExposeEvent.window=handle;
-				xevent.ExposeEvent.x=0;
-				xevent.ExposeEvent.y=0;
-				xevent.ExposeEvent.width=width;
-				xevent.ExposeEvent.height=height;
-
-				XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
-				XFlush(DisplayHandle);
-			}
-		}
-
 		internal override void UpdateWindow(IntPtr handle) {
 			// Nothing to do, happens automatically
 			return;

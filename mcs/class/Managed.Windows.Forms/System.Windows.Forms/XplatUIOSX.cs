@@ -354,15 +354,19 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+#if obsolete
 		internal override void RefreshWindow(IntPtr handle) {
 			HIRect r = new HIRect ();
 			CheckError (HIViewGetFrame (handle, ref r), "HIViewGetFrame ()");
 			Invalidate (handle, new Rectangle (0, 0, (int)r.size.width, (int)r.size.height), true);
 		}
+#endif
 
 		internal override void UpdateWindow(IntPtr handle) {
 			// Force a redraw of previously invalidated areas (ie send a WM_PAINT)
-			throw new NotImplementedException();
+			HIRect r = new HIRect ();
+			CheckError (HIViewGetFrame (handle, ref r), "HIViewGetFrame ()");
+			Invalidate (handle, new Rectangle (0, 0, (int)r.size.width, (int)r.size.height), true);
 		}
 
 

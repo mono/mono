@@ -182,10 +182,6 @@ namespace System.Windows.Forms {
 			driver.SetWindowStyle(handle, cp);
 		}
 
-		internal static void RefreshWindow(IntPtr handle) {
-			driver.RefreshWindow(handle);
-		}
-
 		internal static void UpdateWindow(IntPtr handle) {
 			driver.UpdateWindow(handle);
 		}

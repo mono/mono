@@ -43,31 +43,6 @@ namespace System.Windows.Forms
 		#region Private MessageBoxForm class
 		private class MessageBoxForm : Form
 		{
-			#region FormParentWindow Override
-			internal new class FormParentWindow : Form.FormParentWindow {
-				internal FormParentWindow(Form owner) : base(owner) {
-				}
-
-				protected override CreateParams CreateParams {
-					get {
-						CreateParams	cp;
-
-						if (owner != null) {
-							owner.ControlBox = true;
-							owner.MinimizeBox = false;
-							owner.MaximizeBox = false;
-						}
-
-						cp = base.CreateParams;
-
-						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
-						return cp;
-					}
-				}
-
-			}
-			#endregion
-
 			#region MessageBoxFrom Local Variables
 			string			msgbox_text;
 			bool			size_known	=false;
@@ -125,11 +100,17 @@ namespace System.Windows.Forms
 			#region Protected Instance Properties
 			protected override CreateParams CreateParams {
 				get {
-					if (this.form_parent_window == null) {
-						form_parent_window = new FormParentWindow(this);
-					}
+					CreateParams	cp;
 
-					return base.CreateParams;
+					ControlBox = true;
+					MinimizeBox = false;
+					MaximizeBox = false;
+
+					cp = base.CreateParams;
+
+					cp.Style = (int)(WindowStyles.WS_DLGFRAME | WindowStyles.WS_POPUP | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CAPTION);
+
+					return cp;
 				}
 			}
 			#endregion	// Protected Instance Properties

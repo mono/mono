@@ -672,11 +672,6 @@ namespace System.Windows.Forms {
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (IntPtr)cp.ExStyle);
 		}
 
-		internal override void RefreshWindow(IntPtr handle) {			
-			Win32InvalidateRect(handle, IntPtr.Zero, true);
-			Win32UpdateWindow(handle);
-		}
-
 		internal override void UpdateWindow(IntPtr handle) {
 			Win32UpdateWindow(handle);
 		}

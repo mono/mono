@@ -332,12 +332,10 @@ namespace System.Windows.Forms {
 			return owner.AccessibilityObject;
 		}
 
-		[MonoTODO("Finish Select when Control.Select is complete")]
 		public virtual void Select(AccessibleSelection flags) {
 			if ((flags & AccessibleSelection.TakeFocus) != 0){
-				owner.has_focus = true;
+				owner.Select(owner);
 			}
-
 			return;
 		}
 		#endregion	// Public Instance Methods

@@ -115,10 +115,17 @@ namespace System.Windows.Forms
 		#region Private Classes
 		// This helper class allows us to dispatch messages to Control.WndProc
 		internal class ControlNativeWindow : NativeWindow {
-			private Control control;
+			private Control owner;
 
 			public ControlNativeWindow(Control control) : base() {
-				this.control=control;
+				this.owner=control;
+			}
+
+
+			public Control Owner {
+				get {
+					return owner;
+				}
 			}
 
 			static internal Control ControlFromHandle(IntPtr hWnd) {
@@ -126,11 +133,11 @@ namespace System.Windows.Forms
 
 				window = (ControlNativeWindow)window_collection[hWnd];
 
-				return window.control;
+				return window.owner;
 			}
 
 			protected override void WndProc(ref Message m) {
-				control.WndProc(ref m);
+				owner.WndProc(ref m);
 			}
 		}
 		#endregion
@@ -1019,7 +1026,7 @@ namespace System.Windows.Forms
 				}
 				SetChildColor(this);
 				OnBackColorChanged(EventArgs.Empty);
-				Refresh();
+				Invalidate();
 			}
 		}
 
@@ -1388,7 +1395,7 @@ namespace System.Windows.Forms
 				}
 
 				font = value;	
-				Refresh();
+				Invalidate();
 				OnFontChanged (EventArgs.Empty);				
 			}
 		}
@@ -1408,7 +1415,7 @@ namespace System.Windows.Forms
 			set {
 				if (foreground_color != value) {
 					foreground_color=value;
-					Refresh();
+					Invalidate();
 					OnForeColorChanged(EventArgs.Empty);
 				}
 			}
@@ -2408,7 +2415,8 @@ namespace System.Windows.Forms
 
 		public virtual void Refresh() {			
 			if (IsHandleCreated == true) {
-				XplatUI.RefreshWindow(window.Handle);
+				Invalidate();
+				XplatUI.UpdateWindow(window.Handle);
 			}
 		}
 
@@ -2573,6 +2581,7 @@ namespace System.Windows.Forms
 			if (window==null) {
 				window = new ControlNativeWindow(this);
 				window.CreateHandle(CreateParams);
+				UpdateStyles();
 			}
 
 			if (window.Handle!=IntPtr.Zero) {
@@ -3111,7 +3120,15 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			XplatUI.SetWindowStyle(window.Handle, CreateParams);
+			if ( !(this is Form) && !(this is Form.FormParentWindow)) {
+				XplatUI.SetWindowStyle(window.Handle, CreateParams);
+			} else {
+				if (this is Form) {
+					XplatUI.SetWindowStyle(((Form)this).form_parent_window.window.Handle, ((Form)this).CreateFormParams);
+				} else {
+					XplatUI.SetWindowStyle(((Form.FormParentWindow)this).window.Handle, ((Form.FormParentWindow)this).owner.CreateFormParams);
+				}
+			}
 		}
 
 		protected void UpdateZOrder() {
