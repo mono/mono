@@ -39,7 +39,6 @@ namespace System.Windows.Forms {
 		private const int	caption_height = 0;			// FIXME - Read this value from somewhere
 		private const int	tool_caption_height = 0;		// FIXME - Read this value from somewhere
 
-		//private GCHandle	gc_handle;
 		private IntPtr		handle;
 		internal IntPtr		client_window;
 		internal IntPtr		whole_window;
@@ -57,12 +56,11 @@ namespace System.Windows.Forms {
 		internal bool		expose_pending;
 		internal bool		nc_expose_pending;
 		internal Graphics	client_dc;
+		internal object		user_data;
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
 		public Hwnd() {
-			//gc_handle = GCHandle.Alloc(this);
-
 			x = 0;
 			y = 0;
 			width = 0;
@@ -81,7 +79,8 @@ namespace System.Windows.Forms {
 		}
 
 		public void Dispose() {
-			//gc_handle.Free();
+			windows[client_window] = null;
+			windows[whole_window] = null;
 		}
 		#endregion
 
@@ -100,7 +99,6 @@ namespace System.Windows.Forms {
 		}
 
 		public static IntPtr HandleFromObject(Hwnd obj) {
-			//return (IntPtr)obj.gc_handle;
 			return obj.handle;
 		}
 
@@ -113,7 +111,6 @@ namespace System.Windows.Forms {
 
 			hwnd = (Hwnd)windows[window];
 			if (hwnd != null) {
-				//return (IntPtr)hwnd.gc_handle;
 				return hwnd.handle;
 			} else {
 				return IntPtr.Zero;
@@ -283,7 +280,6 @@ namespace System.Windows.Forms {
 				if (handle == IntPtr.Zero) {
 					throw new ArgumentNullException("Handle", "Handle is not yet assigned, need a ClientWindow");
 				}
-				//return (IntPtr)gc_handle;
 				return handle;
 			}
 		}
@@ -345,6 +341,16 @@ namespace System.Windows.Forms {
 
 			set {
 				title_style = value;
+			}
+		}
+
+		public object UserData {
+			get {
+				return user_data;
+			}
+
+			set {
+				user_data = value;
 			}
 		}
 

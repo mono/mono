@@ -54,6 +54,7 @@ namespace System.Windows.Forms {
 
 		internal static bool		themes_enabled;
 		private Hashtable		timer_list;
+		private static Queue		message_queue;
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -485,6 +486,8 @@ namespace System.Windows.Forms {
 			mouse_state = MouseButtons.None;
 			mouse_position = Point.Empty;
 
+			message_queue = new Queue();
+
 			themes_enabled = false;
 
 			// Prepare 'our' window class
@@ -541,6 +544,36 @@ namespace System.Windows.Forms {
 			Win32DeleteObject(hbr);
 		}
 
+		private static bool MessageWaiting {
+			get {
+				if (message_queue.Count == 0) {
+					return false;
+				}
+				return true;
+			}
+		}
+
+		private static bool RetrieveMessage(ref MSG msg) {
+			MSG	message;
+
+			if (message_queue.Count == 0) {
+				return false;
+			}
+
+			message = (MSG)message_queue.Dequeue();
+			msg = message;
+
+			return true;
+		}
+
+		private static bool StoreMessage(ref MSG msg) {
+			MSG message = new MSG();
+
+			message = msg;
+			message_queue.Enqueue(message);
+
+			return true;
+		}
 		#endregion	// Private Support Methods
 
 		#region Static Properties
@@ -739,6 +772,9 @@ namespace System.Windows.Forms {
 		internal override IntPtr CreateWindow(CreateParams cp) {
 			IntPtr	WindowHandle;
 			IntPtr	ParentHandle;
+			Hwnd	hwnd;
+
+			hwnd = new Hwnd();
 
 			ParentHandle=cp.Parent;
 
@@ -753,6 +789,8 @@ namespace System.Windows.Forms {
 
 				Win32MessageBox(IntPtr.Zero, "Error : " + error.ToString(), "Failed to create window, class '"+cp.ClassName+"'", 0);
 			}
+
+			hwnd.ClientWindow = WindowHandle;
 
 			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (IntPtr)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
 
@@ -778,7 +816,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void DestroyWindow(IntPtr handle) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
 			Win32DestroyWindow(handle);
+			hwnd.Dispose();
 			return;
 		}
 
@@ -833,19 +875,18 @@ namespace System.Windows.Forms {
 			PaintEventArgs	paint_event;
 			RECT		rect;
 			Rectangle	clip_rect;
+			Hwnd		hwnd;
 
 			clip_rect = new Rectangle();
 			rect = new RECT();
 			ps = new PAINTSTRUCT();
 
-			if (Win32GetUpdateRect(handle, ref rect, false)) {
-				HandleData	data;
+			hwnd = Hwnd.ObjectFromHandle(handle);
 
+			if (Win32GetUpdateRect(handle, ref rect, false)) {
 				hdc = Win32BeginPaint(handle, ref ps);
 
-				data = HandleData.Handle(IntPtr.Zero);
-
-				data.DeviceContext=(Object)ps;
+				hwnd.user_data = (object)ps;
 
 				// FIXME: Figure out why the rectangle is always 0 size
 				clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
@@ -860,20 +901,21 @@ namespace System.Windows.Forms {
 				clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
 			}
 
-			paint_event = new PaintEventArgs(Graphics.FromHdc(hdc), clip_rect);
+			hwnd.client_dc = Graphics.FromHdc(hdc);
+			paint_event = new PaintEventArgs(hwnd.client_dc, clip_rect);
 
 			return paint_event;
 		}
 
 		internal override void PaintEventEnd(IntPtr handle) {
-			HandleData	data;
-			PAINTSTRUCT	ps;			
+			Hwnd		hwnd;
+			PAINTSTRUCT	ps;
 
-			data = HandleData.Handle(IntPtr.Zero);
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			hwnd.client_dc.Dispose();
 
-			//paint_event.Graphics.Dispose();
-			if (data.DeviceContext != null) {
-				ps = (PAINTSTRUCT)data.DeviceContext;
+			if (hwnd.user_data != null) {
+				ps = (PAINTSTRUCT)hwnd.user_data;
 				Win32EndPaint(handle, ref ps);
 			}
 		}
@@ -947,7 +989,7 @@ namespace System.Windows.Forms {
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			bool		result;
 
-			if (HandleData.Handle(IntPtr.Zero).GetMessage(ref msg)) {
+			if (RetrieveMessage(ref msg)) {
 				return true;
 			}
 
@@ -1007,7 +1049,7 @@ namespace System.Windows.Forms {
 						TRACKMOUSEEVENT	tme;
 
 						// The current message will be sent out next time around
-						HandleData.Handle(IntPtr.Zero).StoreMessage(ref msg);
+						StoreMessage(ref msg);
 
 						// This is the message we want to send at this point
 						msg.message = Msg.WM_MOUSE_ENTER;

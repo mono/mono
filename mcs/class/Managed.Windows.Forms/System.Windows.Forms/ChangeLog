@@ -1,3 +1,14 @@
+2005-02-24  Peter Bartok  <pbartok@novell.com>
+
+	* Hwnd.cs:
+	  - Added UserData property to allow associating arbitrary objects
+	    with the handle
+	  - Fixed leak; now removing Hwnd references from static windows array
+	* XplatUIWin32.cs:
+	  - Fixed Graphics leak in PaintEventEnd
+	  - Removed usage of HandleData, switched over to Hwnd class
+	* HandleData.cs: Removed, obsoleted by Hwnd.cs
+
 2005-02-24  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ThemeWin32Classic.cs: Adds Cliping to TrackBar drawing
