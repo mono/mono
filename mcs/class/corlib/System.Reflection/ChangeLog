@@ -1,3 +1,8 @@
+2004-09-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBody.cs LocalVariableInfo.cs ExceptionHandlingClause.cs
+	ExceptionHandlingClauseFlags.cs: New files.
+
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FieldInfo.cs: Add support for returning MarshalAsAttribute.
