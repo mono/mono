@@ -248,3 +248,7 @@
 
 	We are catching this now.  But it does not work.
 
+* local_variable_declaration
+
+	Not sure that this grammar is correct, we might have to
+	resolve this during semantic analysis.

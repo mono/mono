@@ -18,4 +18,6 @@ Layout:
 
 	tests/
 		Sample tests 
-		
+
+Thanks a lot to Sergey Chaban for his help during the development of
+the C# compiler.

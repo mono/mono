@@ -12,7 +12,6 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.Xml;
 using System.Xml.XPath;
-using System.Windows.Forms;
 
 namespace System.Configuration
 {
@@ -54,7 +53,7 @@ namespace System.Configuration
 			 * however, I'm not sure how this would work under other platforms.
 			*/
 			//Get the full path to the Applicaton Configuration File.
-			applicationConfigFileName = Application.ExecutablePath + ".config";
+			applicationConfigFileName =  "FIXME:ConfigurationSettings" + ".config";
 
 			//Try to load the XML Document.
 			try
