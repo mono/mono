@@ -1,3 +1,8 @@
+2003-07-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StackFrame.cs: Obtain frame info for 'fake' frames too, since this is
+	what MS does.
+
 2003-01-01  Jaime Anguiano Olarra <jaime@gnome.org>
 
 	* Process.cs: skeleton for use in Remoting.

@@ -125,8 +125,16 @@ namespace System.Diagnostics {
                 /// <param name="lineNumber">
                 ///   The line number in the specified file.
                 /// </param>
-                public StackFrame(string fileName, int lineNumber)
-                : this (fileName, lineNumber, 0) {}
+				// LAMESPEC: According to the MSDN docs, this creates a
+				// fake stack frame. But MS fills out the frame info as well
+                public StackFrame(string fileName, int lineNumber) {
+					get_frame_info (2, false, out methodBase, out ilOffset,
+									out nativeOffset, out fileName, out lineNumber,
+									out columnNumber);
+					this.fileName = fileName;
+					this.lineNumber = lineNumber;
+					this.columnNumber = 0;
+				}
                 
                 /// <summary>
                 ///   Constructs a fake stack frame that just contains the
@@ -143,13 +151,17 @@ namespace System.Diagnostics {
                 /// <param name="colNumber">
                 ///   The column number in the specified file.
                 /// </param>
+				// LAMESPEC: According to the MSDN docs, this creates a
+				// fake stack frame. But MS fills out the frame info as well
                 public StackFrame(string fileName,
                                   int lineNumber,
                                   int colNumber) {
-                        this.methodBase = null;
-                        this.fileName = fileName;
-                        this.lineNumber = lineNumber;
-                        this.columnNumber = colNumber;
+					get_frame_info (2, false, out methodBase, out ilOffset,
+									out nativeOffset, out fileName, out lineNumber,
+									out columnNumber);
+					this.fileName = fileName;
+					this.lineNumber = lineNumber;
+					this.columnNumber = colNumber;
                 }
                                   
                               
