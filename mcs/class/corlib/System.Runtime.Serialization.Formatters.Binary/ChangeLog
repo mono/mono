@@ -1,3 +1,9 @@
+2003-01-24  Martin Baulig  <martin@ximian.com>
+
+	* ObjectReader.cs (ReadNextObject): Call
+	RaiseDeserializationEvent() on the ObjectManager when we're done
+	reading the whole graph.
+
 2003-01-24  Lluis Sanchez Gual <lluis@ideary.com>
 
     * ObjectWriter.cs, ObjectReader.cs: Added suport for headers. 

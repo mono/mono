@@ -77,6 +77,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (element == BinaryElement.End)
 			{
 				_manager.DoFixups();
+				_manager.RaiseDeserializationEvent();
 				return false;
 			}
 
