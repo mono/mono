@@ -1,5 +1,8 @@
 2004-12-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.h mini-amd64.c exceptions-amd64.c: Port exception handling
+	changes from the x86 code.
+
 	* mini.h: Add prototype for mono_arch_get_throw_corlib_exception ().
 
 2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
