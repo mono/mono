@@ -1994,6 +1994,12 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
+		public Expression Child {
+			get {
+				return child;
+			}
+		}
+
 	}
 
 	/// <summary>

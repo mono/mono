@@ -3574,7 +3574,7 @@ namespace Mono.CSharp {
 
 					if (conv is StringConstant)
 						ArrayData.Add (conv);
-					else if (tmp is Constant)
+					else if (conv is Constant)
 						ArrayData.Add (((Constant) conv).GetValue ());
 					else
 						ArrayData.Add (conv);
@@ -3778,7 +3778,7 @@ namespace Mono.CSharp {
 				 underlying_type == TypeManager.char_type ||
 				 underlying_type == TypeManager.ushort_type)
 				factor = 2;
-			else {	
+			else {
 				Report.Error (-100, loc, "Unhandled type in MakeByteBlob!!");
 				return null;
 			}
@@ -3840,6 +3840,7 @@ namespace Mono.CSharp {
 					
 					data [idx] = (byte) (val & 0xff);
 					data [idx+1] = (byte) (val >> 8);
+
 				} else if (underlying_type == TypeManager.int32_type) {
 					int val = 0;
 					
@@ -3850,9 +3851,8 @@ namespace Mono.CSharp {
 					data [idx+1] = (byte) ((val >> 8) & 0xff);
 					data [idx+2] = (byte) ((val >> 16) & 0xff);
 					data [idx+3] = (byte) (val >> 24);
-				} else {
-					throw new Exception ("Underlying type not recognized");
-				}
+				} else
+					throw new Exception ("Unrecognized type in MakeByteBlob");
 
                                 idx += factor;
 			}
@@ -3926,16 +3926,16 @@ namespace Mono.CSharp {
 
 				if (ArrayData [i] is Expression)
 					e = (Expression) ArrayData [i];
-				
+
 				if (e != null) {
 					//
 					// Basically we do this for string literals and
 					// other non-literal expressions
 					//
 					if (e is StringConstant || !(e is Constant)) {
-						
+
 						ig.Emit (OpCodes.Ldloc, temp);
-						
+
 						for (int idx = dims; idx > 0; ) {
 							idx--;
 							IntConstant.EmitInt (ig, current_pos [idx]);
@@ -3989,7 +3989,8 @@ namespace Mono.CSharp {
 				// 
 				bool dynamic_initializers = true;
 
-				if (underlying_type != TypeManager.string_type)
+				if (underlying_type != TypeManager.string_type &&
+				    underlying_type != TypeManager.object_type)
 					EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
 				
 				if (dynamic_initializers)
