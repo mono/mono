@@ -1,5 +1,14 @@
 2004-05-15  Jackson Harper  <jackson@ximian.com>
 
+	* assembly.c: Remove user gac and implement MONO_GAC_PATH, this
+	path is essentially the same as MONO_PATH except that it points to
+	GACs instead of lib directories.
+	* loader.h: The user gac is gone so we dont need function to
+	enable/disable it.
+	* mono-config.c: user gac option is now gone.
+	
+2004-05-15  Jackson Harper  <jackson@ximian.com>
+
 	* culture-info.h: Make defines more consistent, add calendar data
 	to the culture info table.
 	* culture-info-tables.h: Add basic calendar data. Basically
