@@ -1,3 +1,8 @@
+2003-07-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Added CmdLineError.cs and JSError.cs, last night I forgot to
+	commit them.
+
 2003-07-21 Cesar Lopez Nataren <cesar@ciencias.unam.mx>
 	* Added files:
 	ArrayPrototype.cs, ArrayWrapper.cs, BitwiseBinary.cs, 
