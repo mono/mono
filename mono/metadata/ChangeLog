@@ -1,5 +1,7 @@
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* string-icalls.c: Return String.Empty where needed. Fixes #73310.
+
 	* object-internals.h (MonoStackFrame): Sync with managed object layout.
 
 	* appdomain.c: Bump corlib version.
