@@ -8,6 +8,8 @@
 //
 
 using System.Collections;
+using System.Runtime.Serialization.Formatters;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.Remoting.Channels
 {
@@ -18,9 +20,9 @@ namespace System.Runtime.Remoting.Channels
 		SoapCore _soapCore;
 
 #if NET_1_0
-		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding" };
+		internal static string[] AllowedProperties = new string [] { "includeVersions", "strictBinding" };
 #else
-		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
+		internal static string[] AllowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
 #endif
 
 		public SoapServerFormatterSinkProvider ()
@@ -31,7 +33,7 @@ namespace System.Runtime.Remoting.Channels
 		public SoapServerFormatterSinkProvider (IDictionary properties,
 							ICollection providerData)
 		{
-			_soapCore = new SoapCore (this, properties, allowedProperties);
+			_soapCore = new SoapCore (this, properties, AllowedProperties);
 		}
 
 		public IServerChannelSinkProvider Next
@@ -40,6 +42,20 @@ namespace System.Runtime.Remoting.Channels
 
 			set { _next = value; }
 		}
+
+#if NET_1_1
+		[ComVisible(false)]
+		public TypeFilterLevel TypeFilterLevel
+		{
+			get { return _soapCore.TypeFilterLevel; }
+			set 
+			{
+				IDictionary props = (IDictionary) ((ICloneable)_soapCore.Properties).Clone ();
+				props ["typeFilterLevel"] = value;
+				_soapCore = new SoapCore (this, props, AllowedProperties);
+			}
+		}
+#endif
 
 		public IServerChannelSink CreateSink (IChannelReceiver channel)
 		{

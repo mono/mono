@@ -14,6 +14,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Soap;
+using System.Runtime.InteropServices;
 
 
 namespace System.Runtime.Remoting.Channels {
@@ -63,6 +64,20 @@ namespace System.Runtime.Remoting.Channels {
 				return null;
 			}
 		}
+
+#if NET_1_1
+		[ComVisible(false)]
+		public TypeFilterLevel TypeFilterLevel
+		{
+			get { return _soapCore.TypeFilterLevel; }
+			set 
+			{
+				IDictionary props = (IDictionary) ((ICloneable)_soapCore.Properties).Clone ();
+				props ["typeFilterLevel"] = value;
+				_soapCore = new SoapCore (this, props, SoapServerFormatterSinkProvider.AllowedProperties);
+			}
+		}
+#endif
 
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
 						  IMessage msg, ITransportHeaders headers, Stream stream)

@@ -20,6 +20,7 @@ namespace System.Runtime.Remoting.Channels
 		SoapFormatter _deserializationFormatter;
 		bool _includeVersions = true;
 		bool _strictBinding = false;
+		IDictionary _properties;
 		
 #if NET_1_1
 		TypeFilterLevel _filterLevel = TypeFilterLevel.Low;
@@ -29,6 +30,8 @@ namespace System.Runtime.Remoting.Channels
 		
 		public SoapCore (object owner, IDictionary properties, string[] allowedProperties)
 		{
+			_properties = properties;
+
 			foreach(DictionaryEntry property in properties)
 			{
 				string key = (string) property.Key;
@@ -107,6 +110,18 @@ namespace System.Runtime.Remoting.Channels
 		{
 			get { return _deserializationFormatter; }
 		}
+		
+		public IDictionary Properties
+		{
+			get { return _properties; }
+		}
+		
+#if NET_1_1
+		public TypeFilterLevel TypeFilterLevel
+		{
+			get { return _filterLevel; }
+		}
+#endif
 	}
 }
 

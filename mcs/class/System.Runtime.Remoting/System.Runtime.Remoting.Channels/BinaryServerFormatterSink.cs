@@ -11,7 +11,9 @@ using System.Collections;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.Remoting.Channels {
 
@@ -56,6 +58,20 @@ namespace System.Runtime.Remoting.Channels {
 				return null;
 			}
 		}
+
+#if NET_1_1
+		[ComVisible(false)]
+		public TypeFilterLevel TypeFilterLevel
+		{
+			get { return _binaryCore.TypeFilterLevel; }
+			set 
+			{
+				IDictionary props = (IDictionary) ((ICloneable)_binaryCore.Properties).Clone ();
+				props ["typeFilterLevel"] = value;
+				_binaryCore = new BinaryCore (this, props, BinaryServerFormatterSinkProvider.AllowedProperties);
+			}
+		}
+#endif
 
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
 						  IMessage message, ITransportHeaders headers, Stream stream)

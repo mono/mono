@@ -9,6 +9,7 @@
 
 using System.Collections;
 using System.Runtime.Serialization.Formatters;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.Remoting.Channels
 {
@@ -17,12 +18,11 @@ namespace System.Runtime.Remoting.Channels
 	{
 		IServerChannelSinkProvider next = null;
 		BinaryCore _binaryCore;
-		IDictionary _properties;
 		
 #if NET_1_0
-		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding" };
+		internal static string[] AllowedProperties = new string [] { "includeVersions", "strictBinding" };
 #else
-		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
+		internal static string[] AllowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
 #endif
 
 		public BinaryServerFormatterSinkProvider ()
@@ -33,8 +33,7 @@ namespace System.Runtime.Remoting.Channels
 		public BinaryServerFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
 		{
-			_properties = properties;
-			_binaryCore = new BinaryCore (this, properties, allowedProperties);
+			_binaryCore = new BinaryCore (this, properties, AllowedProperties);
 		}
 
 		public IServerChannelSinkProvider Next
@@ -49,14 +48,15 @@ namespace System.Runtime.Remoting.Channels
 		}
 
 #if NET_1_1
+		[ComVisible(false)]
 		public TypeFilterLevel TypeFilterLevel
 		{
 			get { return _binaryCore.TypeFilterLevel; }
 			set 
 			{
-				if (_properties == null) _properties = new Hashtable ();
-				_properties ["typeFilterLevel"] = value;
-				_binaryCore = new BinaryCore (this, _properties, allowedProperties);
+				IDictionary props = (IDictionary) ((ICloneable)_binaryCore.Properties).Clone ();
+				props ["typeFilterLevel"] = value;
+				_binaryCore = new BinaryCore (this, props, AllowedProperties);
 			}
 		}
 #endif

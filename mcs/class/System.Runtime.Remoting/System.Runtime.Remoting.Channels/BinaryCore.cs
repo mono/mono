@@ -20,6 +20,7 @@ namespace System.Runtime.Remoting.Channels
 		BinaryFormatter _deserializationFormatter;
 		bool _includeVersions = true;
 		bool _strictBinding = false;
+		IDictionary _properties;
 		
 #if NET_1_1
 		TypeFilterLevel _filterLevel = TypeFilterLevel.Low;
@@ -29,6 +30,8 @@ namespace System.Runtime.Remoting.Channels
 		
 		public BinaryCore (object owner, IDictionary properties, string[] allowedProperties)
 		{
+			_properties = properties;
+			
 			foreach(DictionaryEntry property in properties)
 			{
 				string key = (string) property.Key;
@@ -64,6 +67,7 @@ namespace System.Runtime.Remoting.Channels
 		
 		public BinaryCore ()
 		{
+			_properties = new Hashtable ();
 			Init ();
 		}
 		
@@ -101,6 +105,11 @@ namespace System.Runtime.Remoting.Channels
 		public BinaryFormatter Deserializer
 		{
 			get { return _deserializationFormatter; }
+		}
+		
+		public IDictionary Properties
+		{
+			get { return _properties; }
 		}
 		
 #if NET_1_1

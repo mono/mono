@@ -1,3 +1,12 @@
+2004-05-13  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryCore.cs, SoapCore.cs: Added Properties property.
+	* BinaryServerFormatterSink.cs, SoapServerFormatterSink.cs: Added missing
+	  TypeFilterLevel property.
+	* BinaryServerFormatterSinkProvider.cs: Fixed setter for TypeFilterLevel.
+	* SoapServerFormatterSinkProvider.cs: Added missing TypeFilterLevel
+	  property.
+	
 2004-05-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ChannelCore.cs: Use LoadWithPartialName when configuration information
