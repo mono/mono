@@ -10,8 +10,5 @@ using System;
 namespace System.Runtime.CompilerServices {
 	public sealed class IsVolatile
 	{
-		public IsVolatile ()
-		{
-		}
 	}
 }
