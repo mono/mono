@@ -1,3 +1,7 @@
+2005-01-04  Peter Bartok <pbartok@novell.com>
+
+	* AccessibleObject: Added ComVisible attribute
+
 2005-01-04  Jackson Harper  <jackson@ximian.com>
 
 	* X11Keyboard.cs: Remove unneeded var.

@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+	[ComVisible(true)]
 	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible {
 		#region Private Variables
 		private string		name;
