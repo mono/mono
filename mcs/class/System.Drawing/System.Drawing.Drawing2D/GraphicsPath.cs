@@ -580,8 +580,8 @@ namespace System.Drawing.Drawing2D
                 public RectangleF GetBounds (Matrix matrix, Pen pen)
                 {
                         RectangleF retval;
-                        IntPtr m = (matrix == null) ? null : matrix.nativeMatrix;
-                        IntPtr p = (pen == null) ? null : pen.nativeObject;
+                        IntPtr m = (matrix == null) ? (IntPtr) null : matrix.nativeMatrix;
+                        IntPtr p = (pen == null) ? (IntPtr) null : pen.nativeObject;
                         
                         Status s = GDIPlus.GdipGetPathWorldBounds (nativePath, out retval, m, p);
 
@@ -624,7 +624,7 @@ namespace System.Drawing.Drawing2D
 		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
 		{
                         bool result;
-                        IntPtr g = (graphics == null) ? null : graphics.nativeObject;
+                        IntPtr g = (graphics == null) ? (IntPtr) null : graphics.nativeObject;
                         
                 	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, g, out result);
                         GDIPlus.CheckStatus (s);
@@ -636,7 +636,7 @@ namespace System.Drawing.Drawing2D
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{
                         bool result;
-                        IntPtr g = (graphics == null) ? null : graphics.nativeObject;
+                        IntPtr g = (graphics == null) ? (IntPtr) null : graphics.nativeObject;
                         
                 	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, g, out result);
                         GDIPlus.CheckStatus (s);
@@ -679,7 +679,7 @@ namespace System.Drawing.Drawing2D
                 {
                         bool retval;
 
-                	IntPtr g = (graphics == null) ? null : graphics.nativeObject;
+                	IntPtr g = (graphics == null) ? (IntPtr) null : graphics.nativeObject;
 
                         Status s = GDIPlus.GdipIsVisiblePathPointI (nativePath, x, y, g, out retval);
 
@@ -693,7 +693,7 @@ namespace System.Drawing.Drawing2D
                 {
                         bool retval;
 
-                	IntPtr g = (graphics == null) ? null : graphics.nativeObject;
+                	IntPtr g = (graphics == null) ? (IntPtr) null : graphics.nativeObject;
 
                         Status s = GDIPlus.GdipIsVisiblePathPoint (nativePath, x, y, g, out retval);
 
@@ -734,7 +734,7 @@ namespace System.Drawing.Drawing2D
 		[MonoTODO]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix,  WarpMode warpMode, float flatness)
 		{
-                	IntPtr m = (matrix == null) ? null : matrix.nativeMatrix;
+                	IntPtr m = (matrix == null) ? (IntPtr) null : matrix.nativeMatrix;
 
                         Status s = GDIPlus.GdipWarpPath (nativePath, m, destPoints, destPoints.Length,
                                         srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, warpMode, flatness);
@@ -755,8 +755,8 @@ namespace System.Drawing.Drawing2D
 		[MonoTODO]
 		public void Widen (Pen pen, Matrix matrix, float flatness)
                 {
-                        IntPtr p = (pen == null) ? null : pen.nativeObject;
-                	IntPtr m = (matrix == null) ? null : matrix.nativeMatrix;
+                        IntPtr p = (pen == null) ? (IntPtr) null : pen.nativeObject;
+                	IntPtr m = (matrix == null) ? (IntPtr) null : matrix.nativeMatrix;
 
                         Status s = GDIPlus.GdipWidenPath (nativePath, p, m, flatness);
 
