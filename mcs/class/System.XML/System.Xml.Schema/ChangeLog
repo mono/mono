@@ -1,3 +1,7 @@
+2002-07-22  Tim Coleman  <tim@timcoleman.com>
+	* XmlSchema.cs: Removed isCompiled which is defined as internal
+		in XmlSchemaObject.
+
 2002-06-18  Dwivedi, Ajay kumar <adwiv@yahoo.com>
 	
 	* XmlSchema: Started work on Validate methods

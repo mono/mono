@@ -30,7 +30,6 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectTable groups ;
 		private string id ;
 		private XmlSchemaObjectCollection includes ;
-		private bool isCompiled ;
 		private XmlSchemaObjectCollection items ;
 		private XmlSchemaObjectTable notations ;
 		private XmlSchemaObjectTable schemaTypes ;
