@@ -506,27 +506,29 @@ namespace System.Data {
 		/// <summary>
 		/// Begins an edit operation on a DataRow object.
 		/// </summary>
-		[MonoTODO]
 		public void BeginEdit () 
 		{
+			
+			if (_inChangingEvent)
+                                throw new InRowChangingEventException("Cannot call BeginEdit inside an OnRowChanging event.");
 			if (rowState == DataRowState.Deleted)
 				throw new DeletedRowInaccessibleException ();
 			if (!HasVersion (DataRowVersion.Proposed)) {
 				proposed = new object[_table.Columns.Count];
 				Array.Copy (current, proposed, current.Length);
 			}
-			//TODO: Suspend validation
+			// setting editing to true stops validations on the row
 			editing = true;
 		}
 
 		/// <summary>
 		/// Cancels the current edit on the row.
 		/// </summary>
-		[MonoTODO]
 		public void CancelEdit () 
 		{
+			 if (_inChangingEvent)
+                                throw new InRowChangingEventException("Cannot call CancelEdit inside an OnRowChanging event.");
 			editing = false;
-			//TODO: Events
 			if (HasVersion (DataRowVersion.Proposed)) {
 				proposed = null;
 				if (rowState == DataRowState.Modified)
@@ -547,7 +549,6 @@ namespace System.Data {
 		/// <summary>
 		/// Deletes the DataRow.
 		/// </summary>
-		[MonoTODO]
 		public void Delete () 
 		{
 			_table.DeletingDataRow(this, DataRowAction.Delete);
@@ -562,7 +563,7 @@ namespace System.Data {
 				DetachRow();
 				break;
 			case DataRowState.Deleted:
-				break;
+				throw new DeletedRowInaccessibleException ();			
 			default:
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
@@ -685,7 +686,6 @@ namespace System.Data {
 		/// <summary>
 		/// Ends the edit occurring on the row.
 		/// </summary>
-		[MonoTODO]
 		public void EndEdit () 
 		{
 			if (_inChangingEvent)
@@ -695,7 +695,8 @@ namespace System.Data {
 				editing = false;
 				return;
 			}
-
+			
+			CheckReadOnlyStatus();
 			if (HasVersion (DataRowVersion.Proposed))
 			{
 				_inChangingEvent = true;
@@ -1397,7 +1398,17 @@ namespace System.Data {
 				_nullConstraintViolation = false;
 			}
 		}
-
+		
+		internal void CheckReadOnlyStatus()
+                {
+                        for (int i = 0; i < proposed.Length; i++)
+                        {
+	                        if (this[i] != proposed[i] && _table.Columns[i].ReadOnly)
+        	                        throw new ReadOnlyException();
+                        }
+                           
+                }
+	
 		#endregion // Methods
 	}
 
