@@ -1,3 +1,7 @@
+2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NtlmFlags.cs: Changed enum to int for CLS compliance.
+
 2003-12-17  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ChallengeResponse.cs: Sorry I must have a profesionnal problem with

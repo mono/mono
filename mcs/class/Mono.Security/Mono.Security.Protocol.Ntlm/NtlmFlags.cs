@@ -18,7 +18,7 @@ using System;
 namespace Mono.Security.Protocol.Ntlm {
 
 	[Flags]
-	public enum NtlmFlags : uint {
+	public enum NtlmFlags : int {
 		// The client sets this flag to indicate that it supports Unicode strings.
 		NegotiateUnicode = 0x00000001,
 		// This is set to indicate that the client supports OEM strings.
@@ -38,6 +38,6 @@ namespace Mono.Security.Protocol.Ntlm {
 		// Indicates that this client supports strong (128-bit) encryption.
 		Negotiate128 = 0x20000000,
 		// Indicates that this client supports medium (56-bit) encryption.
-		Negotiate56 = 0x80000000
+		Negotiate56 = (unchecked ((int) 0x80000000))
 	}
 }
