@@ -17,22 +17,16 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
-	// Maybe can be usefull to derive from MemberCore
-	class EnumMember: Attributable {
-		string name;
-		Enum parent;
-		Location loc;
-
+	class EnumMember: MemberCore {
 		static string[] attribute_targets = new string [] { "field" };
 
+		Enum parent_enum;
 		public FieldBuilder builder;
 
-		public EnumMember (string name, Enum parent, Location loc, Attributes attrs):
-			base (attrs)
+		public EnumMember (Enum parent_enum, string name, Location loc, Attributes attrs):
+			base (null, name, attrs, loc)
 		{
-			this.name = name;
-			this.parent = parent;
-			this.loc = loc;
+			this.parent_enum = parent_enum;
 		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
@@ -56,9 +50,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		public override bool IsClsCompliaceRequired (DeclSpace ds)
 		{
-			return parent.IsClsCompliaceRequired (ds);
+			return parent_enum.IsClsCompliaceRequired (ds);
 		}
 
 		public void DefineMember (TypeBuilder tb)
@@ -66,7 +60,12 @@ namespace Mono.CSharp {
 			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
 				| FieldAttributes.Literal;
 			
-			builder = tb.DefineField (name, tb, attr);
+			builder = tb.DefineField (Name, tb, attr);
+		}
+
+		public override bool Define ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		public void Emit (EmitContext ec)
@@ -97,6 +96,12 @@ namespace Mono.CSharp {
 				return attribute_targets;
 			}
 		}
+
+		protected override void VerifyObsoleteAttribute()
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 
 	/// <summary>
@@ -176,7 +181,7 @@ namespace Mono.CSharp {
 
 			member_to_attributes.Add (name, opt_attrs);
 
-			name_to_member.Add (name, new EnumMember (name, this, loc, opt_attrs));
+			name_to_member.Add (name, new EnumMember (this, name, loc, opt_attrs));
 			
 			return AdditionResult.Success;
 		}
@@ -705,32 +710,29 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 		
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
-		{
-			if (!base.IsIdentifierClsCompliant (ds))
-				return false;
-
-			for (int i = 1; i < ordered_enums.Count; ++i) {
-				string checked_name = ordered_enums [i] as string;
-				for (int ii = 0; ii < ordered_enums.Count; ++ii) {
-					if (ii == i)
-						continue;
-
-					string enumerator_name = ordered_enums [ii] as string;
-					if (String.Compare (checked_name, enumerator_name, true, CultureInfo.InvariantCulture) == 0) {
-						Report.SymbolRelatedToPreviousError ((Location)member_to_location [enumerator_name], enumerator_name);
-						Report.Error (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, (Location)member_to_location [checked_name], GetEnumeratorName (checked_name));
-						break;
-					}
-				}
-			}
-			return true;
-		}
+ 		void VerifyClsName ()
+  		{
+ 			Hashtable ht = new Hashtable ();
+ 			foreach (string name in ordered_enums) {
+ 				string locase = name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
+ 				if (!ht.Contains (locase)) {
+ 					ht.Add (locase, name_to_member [name]);
+ 					continue;
+ 				}
+ 
+ 				EnumMember conflict = (EnumMember)ht [locase];
+ 				Report.SymbolRelatedToPreviousError (conflict);
+ 				conflict = (EnumMember)name_to_member [name];
+ 				Report.Error (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, conflict.Location, conflict.GetSignatureForError ());
+  			}
+  		}
 
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!base.VerifyClsCompliance (ds))
 				return false;
+
+			VerifyClsName ();
 
 			if (!AttributeTester.IsClsCompliant (UnderlyingType)) {
 				Report.Error (Message.CS3009_base_type_is_not_CLS_compliant, Location, GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));

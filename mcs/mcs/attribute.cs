@@ -787,6 +787,9 @@ namespace Mono.CSharp {
 				emitted_targets.Add (Target);
 			}
 
+			if (!RootContext.VerifyClsCompliance)
+				return;
+
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
 				if (Arguments == null)
@@ -1073,7 +1076,7 @@ namespace Mono.CSharp {
 		private Attribute Search (Type t, EmitContext ec, bool complain)
 		{
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType (ec, false) == t)
+				if (a.ResolveType (ec, complain) == t)
 					return a;
 			}
 			return null;
@@ -1242,30 +1245,6 @@ namespace Mono.CSharp {
 		static object TRUE = new object ();
 		static object FALSE = new object ();
 
-		/// <summary>
-		/// Non-hierarchical CLS Compliance analyzer
-		/// </summary>
-		public static bool IsComplianceRequired (MemberInfo mi, DeclSpace ds)
-		{
-			DeclSpace temp_ds = TypeManager.LookupDeclSpace (mi.DeclaringType);
-
-			// Type is external, we can get attribute directly
-			if (temp_ds == null) {
-				object[] cls_attribute = mi.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
-				return (cls_attribute.Length == 1 && ((CLSCompliantAttribute)cls_attribute[0]).IsCompliant);
-			}
-
-			string tmp_name;
-			// Interface doesn't store full name
-			if (temp_ds is Interface)
-				tmp_name = mi.Name;
-			else
-				tmp_name = String.Concat (temp_ds.Name, ".", mi.Name);
-
-			MemberCore mc = temp_ds.GetDefinition (tmp_name) as MemberCore;
-			return mc.IsClsCompliaceRequired (ds);
-		}
-
 		public static void VerifyModulesClsCompliance ()
 		{
 			Module[] modules = TypeManager.Modules;
@@ -1279,6 +1258,43 @@ namespace Mono.CSharp {
 					Report.Error (Message.CS3013_Added_modules_must_be_marked_with_the_CLSCompliant_attribute_to_match_the_assembly, module.Name);
 					return;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Tests container name for CLS-Compliant name (differing only in case)
+		/// </summary>
+		public static void VerifyTopLevelNameClsCompliance ()
+		{
+			Hashtable locase_table = new Hashtable ();
+
+			// Convert imported type names to lower case and ignore not cls compliant
+			foreach (DictionaryEntry de in TypeManager.all_imported_types) {
+				Type t = (Type)de.Value;
+				if (!AttributeTester.IsClsCompliant (t))
+					continue;
+
+				locase_table.Add (((string)de.Key).ToLower (System.Globalization.CultureInfo.InvariantCulture), t);
+			}
+
+			foreach (DictionaryEntry de in RootContext.Tree.Decls) {
+				DeclSpace decl = (DeclSpace)de.Value;
+				if (!decl.IsClsCompliaceRequired (decl))
+					continue;
+
+				string lcase = decl.Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
+				if (!locase_table.Contains (lcase)) {
+					locase_table.Add (lcase, decl);
+					continue;
+				}
+
+				object conflict = locase_table [lcase];
+				if (conflict is Type)
+					Report.SymbolRelatedToPreviousError ((Type)conflict);
+				else
+					Report.SymbolRelatedToPreviousError ((MemberCore)conflict);
+
+				Report.Error (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, decl.Location, decl.GetSignatureForError ());
 			}
 		}
 
@@ -1346,7 +1362,7 @@ namespace Mono.CSharp {
 			if (mc != null) 
 				return mc.GetObsoleteAttribute ();
 
-			// TODO: remove after Constructor will be ready for IMethodData
+			// compiler generated methods are not registered by AddMethod
 			if (mb.DeclaringType is TypeBuilder)
 				return null;
 

@@ -220,73 +220,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// This method is used to testing error 3005 (Method or parameter name collision).
-		/// </summary>
-		protected abstract bool IsIdentifierClsCompliant (DeclSpace ds);
-
-		/// <summary>
-		/// Common helper method for identifier and parameters CLS-Compliant testing.
-		/// When return false error 3005 is reported. True means no violation.
-		/// And error 3006 tests are peformed here because of speed.
-		/// </summary>
-		protected bool IsIdentifierAndParamClsCompliant (DeclSpace ds, string name, MemberInfo methodBuilder, Type[] paramTypes)
-		{
-			MemberList ml = ds.FindMembers (MemberTypes.Event | MemberTypes.Field | MemberTypes.Method | MemberTypes.Property, 
-				BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance, System.Type.FilterNameIgnoreCase, name);
-		
-			if (ml.Count < 2)
-				return true;
-
-			bool error3006 = false;
-			for (int i = 0; i < ml.Count; ++i) {
-				MemberInfo mi = ml [i];
-				if (name == mi.Name) {
-					MethodBase method = mi as MethodBase;
-					if (method == null || method == methodBuilder || paramTypes == null || paramTypes.Length == 0)
-						continue;
-
-					if (AttributeTester.AreOverloadedMethodParamsClsCompliant (paramTypes, TypeManager.GetArgumentTypes (method))) {
-						error3006 = false;
-						continue;
-					}
-
-					error3006 = true;
-				}
-
-				// We need to test if member is not marked as CLSCompliant (false) and if type is not only internal
-				// because BindingFlags.Public returns internal types too
-				DeclSpace temp_ds = TypeManager.LookupDeclSpace (mi.DeclaringType);
-
-				// Type is external, we can get attribute directly
-				if (temp_ds == null) {
-					object[] cls_attribute = mi.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
-					if (cls_attribute.Length == 1 && (!((CLSCompliantAttribute)cls_attribute[0]).IsCompliant))
-						continue;
-				} else {
-					string tmp_name = String.Concat (temp_ds.Name, '.', mi.Name);
-
-					MemberCore mc = temp_ds.GetDefinition (tmp_name) as MemberCore;
-					if (!mc.IsClsCompliaceRequired (ds))
-						continue;
-				}
-
-				for (int ii = 0; ii < ml.Count; ++ii) {
-					mi = ml [ii];
-					if (name == mi.Name)
-						continue;
-					Report.SymbolRelatedToPreviousError (mi);
-				}
-
-				if (error3006)
-					Report.Error (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
-
-				return error3006;
-
-			}
-			return true;
-		}
-
-		/// <summary>
 		/// The main virtual method for CLS-Compliant verifications.
 		/// The method returns true if member is CLS-Compliant and false if member is not
 		/// CLS-Compliant which means that CLS-Compliant tests are not necessary. A descendants override it
@@ -311,11 +244,6 @@ namespace Mono.CSharp {
 			if (Name [index > 0 ? index + 1 : 0] == '_') {
 				Report.Error (Message.CS3008_Identifier_is_not_CLS_compliant, Location, GetSignatureForError () );
 			}
-
-			if (!IsIdentifierClsCompliant (ds)) {
-				Report.Error (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, Location, GetSignatureForError ());
-			}
-
 			return true;
 		}
 
@@ -1077,49 +1005,6 @@ namespace Mono.CSharp {
 				return true;
 			}
 			return false;
-		}
-
-
-		// Tests container name for CLS-Compliant name (differing only in case)
-		// Possible optimalization: search in same namespace only
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
-		{
-			int l = Name.Length;
-
-			if (Namespace.LookupNamespace (NamespaceEntry.FullName, false) != null) {
-				// Seek through all imported types
-				foreach (string type_name in TypeManager.all_imported_types.Keys) 
-				{
-					if (l != type_name.Length)
-						continue;
-
-					if (String.Compare (Name, type_name, true, CultureInfo.InvariantCulture) == 0 && 
-						AttributeTester.IsClsCompliant (TypeManager.all_imported_types [type_name] as Type)) {
-						Report.SymbolRelatedToPreviousError ((Type)TypeManager.all_imported_types [type_name]);
-						return false;
-				}
-			}
-			}
-
-			// Seek through generated types
-			foreach (string name in RootContext.Tree.Decls.Keys) {
-				if (l != name.Length)
-					continue;
-
-				if (String.Compare (Name, name, true, CultureInfo.InvariantCulture) == 0) { 
-
-					if (Name == name)
-						continue;
-					
-					DeclSpace found_ds = RootContext.Tree.Decls[name] as DeclSpace;
-					if (found_ds.IsClsCompliaceRequired (found_ds.Parent)) {
-						Report.SymbolRelatedToPreviousError (found_ds.Location, found_ds.GetSignatureForError ());
-						return false;
-					}
-				}
-			}
-
-			return true;
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -1987,6 +1872,100 @@ namespace Mono.CSharp {
  				}
  			}
   			return null;
+  		}
+
+ 		Hashtable locase_table;
+ 
+ 		/// <summary>
+ 		/// Builds low-case table for CLS Compliance test
+ 		/// </summary>
+ 		public Hashtable GetPublicMembers ()
+ 		{
+ 			if (locase_table != null)
+ 				return locase_table;
+ 
+ 			locase_table = new Hashtable ();
+ 			foreach (DictionaryEntry entry in member_hash) {
+ 				ArrayList members = (ArrayList)entry.Value;
+ 				for (int ii = 0; ii < members.Count; ++ii) {
+ 					CacheEntry member_entry = (CacheEntry) members [ii];
+ 
+ 					if ((member_entry.EntryType & EntryType.Public) == 0)
+ 						continue;
+ 
+ 					// TODO: Does anyone know easier way how to detect that member is internal ?
+ 					switch (member_entry.EntryType & EntryType.MaskType) {
+ 						case EntryType.Constructor:
+ 							continue;
+ 
+ 						case EntryType.Field:
+ 							if ((((FieldInfo)member_entry.Member).Attributes & (FieldAttributes.Assembly | FieldAttributes.Public)) == FieldAttributes.Assembly)
+ 								continue;
+ 							break;
+ 
+ 						case EntryType.Method:
+ 							if ((((MethodInfo)member_entry.Member).Attributes & (MethodAttributes.Assembly | MethodAttributes.Public)) == MethodAttributes.Assembly)
+ 								continue;
+ 							break;
+ 
+ 						case EntryType.Property:
+ 							PropertyInfo pi = (PropertyInfo)member_entry.Member;
+ 							if (pi.GetSetMethod () == null && pi.GetGetMethod () == null)
+ 								continue;
+ 							break;
+ 
+ 						case EntryType.Event:
+ 							EventInfo ei = (EventInfo)member_entry.Member;
+ 							MethodInfo mi = ei.GetAddMethod ();
+ 							if ((mi.Attributes & (MethodAttributes.Assembly | MethodAttributes.Public)) == MethodAttributes.Assembly)
+ 								continue;
+ 							break;
+ 					}
+ 					string lcase = ((string)entry.Key).ToLower (System.Globalization.CultureInfo.InvariantCulture);
+ 					locase_table [lcase] = member_entry.Member;
+ 					break;
+ 				}
+ 			}
+ 			return locase_table;
+ 		}
+ 
+ 		public Hashtable Members {
+ 			get {
+ 				return member_hash;
+ 			}
+ 		}
+ 
+ 		/// <summary>
+ 		/// Cls compliance check whether methods or constructors parameters differing only in ref or out, or in array rank
+ 		/// </summary>
+ 		public void VerifyClsParameterConflict (ArrayList al, MethodCore method, MemberInfo this_builder)
+ 		{
+ 			EntryType tested_type = (method is Constructor ? EntryType.Constructor : EntryType.Method) | EntryType.Public;
+ 
+ 			for (int i = 0; i < al.Count; ++i) {
+ 				MemberCache.CacheEntry entry = (MemberCache.CacheEntry) al [i];
+ 		
+ 				// skip itself
+ 				if (entry.Member == this_builder)
+ 					continue;
+ 		
+ 				if ((entry.EntryType & tested_type) != tested_type)
+ 					continue;
+ 		
+				MethodBase method_to_compare = (MethodBase)entry.Member;
+ 				if (AttributeTester.AreOverloadedMethodParamsClsCompliant (method.ParameterTypes, TypeManager.GetArgumentTypes (method_to_compare)))
+ 					continue;
+
+				IMethodData md = TypeManager.GetMethod (method_to_compare);
+
+				// TODO: now we are ignoring CLSCompliance(false) on method from other assembly which is buggy.
+				// However it is exactly what csc does.
+				if (md != null && !md.IsClsCompliaceRequired (method.Parent))
+					continue;
+ 		
+ 				Report.SymbolRelatedToPreviousError (entry.Member);
+ 				Report.Error (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, method.Location, method.GetSignatureForError ());
+ 			}
   		}
 	}
 }

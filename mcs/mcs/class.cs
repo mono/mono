@@ -2135,7 +2135,7 @@ namespace Mono.CSharp {
 			Emit ();
 
 			if (instance_constructors != null) {
-				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && IsClsCompliaceRequired (this)) {
+				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && RootContext.VerifyClsCompliance && IsClsCompliaceRequired (this)) {
 					bool has_compliant_args = false;
 
 					foreach (Constructor c in instance_constructors) {
@@ -2383,11 +2383,56 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance (ds))
 				return false;
 
+			VerifyClsName ();
+
 			// parent_container is null for System.Object
 			if (parent_container != null && !AttributeTester.IsClsCompliant (parent_container.Type)) {
 				Report.Error (Message.CS3009_base_type_is_not_CLS_compliant, Location, GetSignatureForError (), TypeManager.CSharpName (parent_container.Type));
 			}
 			return true;
+		}
+
+
+		/// <summary>
+		/// Checks whether container name is CLS Compliant
+		/// </summary>
+		void VerifyClsName ()
+		{
+			Hashtable parent_members = parent_container == null ? 
+				new Hashtable () :
+				parent_container.MemberCache.GetPublicMembers ();
+			Hashtable this_members = new Hashtable ();
+
+			foreach (DictionaryEntry entry in defined_names) {
+				MemberCore mc = (MemberCore)entry.Value;
+				if (!mc.IsClsCompliaceRequired (this))
+					continue;
+
+				string name = (string)entry.Key;
+				string basename = name.Substring (name.LastIndexOf ('.') + 1);
+
+				string lcase = basename.ToLower (System.Globalization.CultureInfo.InvariantCulture);
+				object found = parent_members [lcase];
+				if (found == null) {
+					found = this_members [lcase];
+					if (found == null) {
+						this_members.Add (lcase, mc);
+						continue;
+					}
+				}
+
+				if ((mc.ModFlags & Modifiers.OVERRIDE) != 0)
+					continue;					
+
+				if (found is MemberInfo) {
+					if (basename == ((MemberInfo)found).Name)
+						continue;
+					Report.SymbolRelatedToPreviousError ((MemberInfo)found);
+				} else {
+					Report.SymbolRelatedToPreviousError ((MemberCore) found);
+				}
+				Report.Error (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, mc.Location, mc.GetSignatureForError ());
+			}
 		}
 
 
@@ -3200,11 +3245,11 @@ namespace Mono.CSharp {
 				Report.Error (Message.CS3000_Methods_with_variable_arguments_are_not_CLS_compliant, Location);
 			}
 
-			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
-
 			if (!AttributeTester.IsClsCompliant (MemberType)) {
 				Report.Error (Message.CS3002_Return_type_of_is_not_CLS_compliant, Location, GetSignatureForError ());
 			}
+
+			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
 
 			return true;
 		}
@@ -3240,21 +3285,6 @@ namespace Mono.CSharp {
 			Report.SymbolRelatedToPreviousError (method);
 			Report.Error (Message.CS0111_Type_already_defines_member_with_the_same_parameter_types, Location, Parent.Name, Name);
 			return true;
-		}
-
-		public CallingConventions GetCallingConvention (bool is_class)
-		{
-			CallingConventions cc = 0;
-			
-			cc = Parameters.GetCallingConvention ();
-
-			if (is_class)
-				if ((ModFlags & Modifiers.STATIC) == 0)
-					cc |= CallingConventions.HasThis;
-
-			// FIXME: How is `ExplicitThis' used in C#?
-			
-			return cc;
 		}
 
 		protected override void VerifyObsoleteAttribute()
@@ -3591,16 +3621,26 @@ namespace Mono.CSharp {
 			return mi;
 		}
 
+		protected override bool VerifyClsCompliance(DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds))
+				return false;
+
+			if (parameter_types.Length > 0) {
+				ArrayList al = (ArrayList)ds.MemberCache.Members [Name];
+				if (al.Count > 1)
+					ds.MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
+			}
+
+			return true;
+		}
+
+
 		void IIteratorContainer.SetYields ()
 		{
 			ModFlags |= Modifiers.METHOD_YIELDS;
 		}
 	
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
-		{
-			return IsIdentifierAndParamClsCompliant (ds, Name, MethodBuilder, parameter_types);
-		}
-
 		#region IMethodData Members
 
 		public CallingConventions CallingConventions {
@@ -3888,7 +3928,7 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Constructor : MethodCore {
+	public class Constructor : MethodCore, IMethodData {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
 
@@ -4037,12 +4077,14 @@ namespace Mono.CSharp {
 				return false;
 
 			ConstructorBuilder = Parent.TypeBuilder.DefineConstructor (
-				ca, GetCallingConvention (Parent.Kind == Kind.Class),
+				ca, CallingConventions,
 				ParameterTypes);
 
 			if ((ModFlags & Modifiers.UNSAFE) != 0)
 				ConstructorBuilder.InitLocals = false;
 			
+			TypeManager.AddMethod (ConstructorBuilder, this);
+
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
@@ -4056,8 +4098,7 @@ namespace Mono.CSharp {
 		//
 		public override void Emit ()
 		{
-			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (Parent, Location, ig, null, ModFlags, true);
+			EmitContext ec = CreateEmitContext (null, null);
 
 			//
 			// extern methods have no bodies
@@ -4146,65 +4187,22 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		// For constructors is needed to test only parameters
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
-		{
-			if (parameter_types == null || parameter_types.Length == 0)
-				return true;
-
-			TypeContainer tc = ds as TypeContainer;
-
-			for (int i = 0; i < tc.InstanceConstructors.Count; i++) {
-				Constructor c = (Constructor) tc.InstanceConstructors [i];
-						
-				if (c == this || c.ParameterTypes.Length == 0)
-					continue;
-
-				if (!c.IsClsCompliaceRequired (ds))
-					continue;
-				
-				if (!AttributeTester.AreOverloadedMethodParamsClsCompliant (parameter_types, c.ParameterTypes)) {
-					Report.Error (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
-					return false;
-				}
-			}
-
-			if (tc.TypeBuilder.BaseType == null)
-				return true;
-
-			DeclSpace temp_ds = TypeManager.LookupDeclSpace (tc.TypeBuilder.BaseType);
-			if (temp_ds != null)
-				return IsIdentifierClsCompliant (temp_ds);
-
-			MemberInfo[] ml = tc.TypeBuilder.BaseType.FindMembers (MemberTypes.Constructor, BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance, null, null);
-			// Skip parameter-less ctor
-			if (ml.Length < 2)
-				return true;
-
-			foreach (ConstructorInfo ci in ml) {
-				object[] cls_attribute = ci.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
-				if (cls_attribute.Length == 1 && (!((CLSCompliantAttribute)cls_attribute[0]).IsCompliant))
-					continue;
-
-				if (!AttributeTester.AreOverloadedMethodParamsClsCompliant (parameter_types, TypeManager.GetArgumentTypes (ci))) {
-					Report.Error (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
-					return false;
-				}
-			}
-			
-			return true;
-		}
-
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!base.VerifyClsCompliance (ds) || !IsExposedFromAssembly (ds)) {
 				return false;
 			}
 			
-			if (ds.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
-				foreach (Type param in parameter_types) {
-					if (param.IsArray) {
-						return false;
+ 			if (parameter_types.Length > 0) {
+ 				ArrayList al = (ArrayList)ds.MemberCache.Members [".ctor"];
+ 				if (al.Count > 3)
+ 					ds.MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
+ 
+				if (ds.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
+					foreach (Type param in parameter_types) {
+						if (param.IsArray) {
+							return true;
+						}
 					}
 				}
 			}
@@ -4212,6 +4210,57 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		#region IMethodData Members
+
+		public System.Reflection.CallingConventions CallingConventions {
+			get {
+				CallingConventions cc = Parameters.GetCallingConvention ();
+
+				if (Parent.Kind == Kind.Class)
+					if ((ModFlags & Modifiers.STATIC) == 0)
+						cc |= CallingConventions.HasThis;
+
+				// FIXME: How is `ExplicitThis' used in C#?
+			
+				return cc;
+			}
+		}
+
+		public new Location Location {
+			get {
+				return base.Location;
+			}
+		}
+
+		public string MethodName {
+			get {
+				return ShortName;
+			}
+		}
+
+		public Type ReturnType {
+			get {
+				return MemberType;
+			}
+		}
+
+		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+		{
+			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
+			return new EmitContext (Parent, Location, ig_, null, ModFlags, true);
+		}
+
+		public ObsoleteAttribute GetObsoleteAttribute ()
+		{
+			return null;
+		}
+
+		public bool IsExcluded(EmitContext ec)
+		{
+			return false;
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -4232,6 +4281,7 @@ namespace Mono.CSharp {
 		ObsoleteAttribute GetObsoleteAttribute ();
 		string GetSignatureForError (TypeContainer tc);
 		bool IsExcluded (EmitContext ec);
+		bool IsClsCompliaceRequired (DeclSpace ds);
 	}
 
 	//
@@ -4815,11 +4865,6 @@ namespace Mono.CSharp {
 		public virtual string GetSignatureForError (TypeContainer tc)
 		{
 			return String.Concat (tc.Name, '.', Name);
-		}
-
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
-		{
-			return IsIdentifierAndParamClsCompliant (ds, Name, null, null);
 		}
 
 		protected override bool VerifyClsCompliance(DeclSpace ds)
@@ -5472,26 +5517,6 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError()
 		{
 			return TypeManager.CSharpSignature (PropertyBuilder, false);
-		}
-
-		protected virtual string RealMethodName {
-			get {
-				return Name;
-			}
-		}
-
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
-		{
-			if (!IsIdentifierAndParamClsCompliant (ds, RealMethodName, null, null))
-				return false;
-
-			if (Get != null && !IsIdentifierAndParamClsCompliant (ds, "get_" + RealMethodName, null, null))
-				return false;
-
-			if (Set != null && !IsIdentifierAndParamClsCompliant (ds, "set_" + RealMethodName, null, null))
-				return false;
-
-			return true;
 		}
 
 
@@ -6484,12 +6509,6 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError(TypeContainer tc)
 		{
 			return String.Concat (tc.Name, ".this[", TypeManager.CSharpName (ParameterTypes [0]), ']');
-		}
-
-		protected override string RealMethodName {
-			get {
-				return IndexerName;
-			}
 		}
 	}
 

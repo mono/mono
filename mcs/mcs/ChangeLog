@@ -1,3 +1,22 @@
+2004-08-22  Marek Safar  <marek.safar@seznam.cz>
+
+	CLS-Compliance speed up (~5% for corlib)
+
+	* attribute.cs (AttributeTester.VerifyTopLevelNameClsCompliance):
+	New method. Tests container for CLS-Compliant names
+
+	* class.cs (TypeContainer.VerifyClsName): New method.
+	Checks whether container name is CLS Compliant.
+	(Constructor): Implements IMethodData.
+
+	* decl.cs (MemberCache.GetPublicMembers ): New method. Builds
+	low-case table for CLS Compliance test.
+	(MemberCache.VerifyClsParameterConflict): New method.
+	Checks method parameters for CS3006 error.
+
+	* enum.cs (EnumMember): Is derived from MemberCore.
+	(Enum.VerifyClsName): Optimized for better performance.
+
 2004-08-06  Marek Safar  <marek.safar@seznam.cz>
 
 	* report.cs: Renamed Error_T to Error and changed all

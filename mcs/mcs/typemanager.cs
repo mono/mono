@@ -802,9 +802,6 @@ public class TypeManager {
 	/// </summary>
 	public static void LoadAllImportedTypes ()
 	{
-		if (!CodeGen.Assembly.IsClsCompliant)
-			return;
-
 		all_imported_types = new Hashtable ();
 		foreach (Assembly a in assemblies) {
 			foreach (Type t in a.GetExportedTypes ()) {
@@ -921,7 +918,7 @@ public class TypeManager {
 		sig.Append (")");
 
 		// Is indexer
-		if (mb.IsSpecialName && iparams.Count == 1) {
+		if (mb.IsSpecialName && iparams.Count == 1 && !mb.IsConstructor) {
 			sig.Replace ('(', '[');
 			sig.Replace (')', ']');
 		}

@@ -1549,8 +1549,11 @@ namespace Mono.CSharp
 			
 			if (RootContext.VerifyClsCompliance) { 
 				CodeGen.Assembly.ResolveClsCompliance ();
-				AttributeTester.VerifyModulesClsCompliance ();
-				TypeManager.LoadAllImportedTypes ();
+				if (CodeGen.Assembly.IsClsCompliant) {
+					AttributeTester.VerifyModulesClsCompliance ();
+					TypeManager.LoadAllImportedTypes ();
+					AttributeTester.VerifyTopLevelNameClsCompliance ();
+				}
 			}
 			
 			//

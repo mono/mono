@@ -320,7 +320,7 @@ namespace Mono.CSharp {
 				case 2002: return new WarningData (1, "Source file '{0}' specified multiple times");
 				case 3000: return new ErrorData ("Methods with variable arguments are not CLS-compliant");
 				case 3001: return new ErrorData ("Argument type '{0}' is not CLS-compliant");
-				case 3002: return new ErrorData ("return new ErrorData ( type of '{0}' is not CLS-compliant");
+				case 3002: return new ErrorData ("Return type of '{0}' is not CLS-compliant");
 				case 3003: return new ErrorData ("Type of '{0}' is not CLS-compliant");
 				case 3005: return new ErrorData ("Identifier '{0}' differing only in case is not CLS-compliant");
 				case 3006: return new ErrorData ("Overloaded method '{0}' differing only in ref or out, or in array rank, is not CLS-compliant");
@@ -405,10 +405,16 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (MemberInfo mi)
 		{
-			DeclSpace temp_ds = TypeManager.LookupDeclSpace (mi.DeclaringType);
+			TypeContainer temp_ds = TypeManager.LookupTypeContainer (mi.DeclaringType);
 			if (temp_ds == null) {
 				SymbolRelatedToPreviousError (mi.DeclaringType.Assembly.Location, TypeManager.GetFullNameSignature (mi));
 			} else {
+				if (mi is MethodBase) {
+					IMethodData md = TypeManager.GetMethod ((MethodBase)mi);
+					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError (temp_ds));
+					return;
+				}
+
 				string name = String.Concat (temp_ds.Name, ".", mi.Name);
 				MemberCore mc = temp_ds.GetDefinition (name) as MemberCore;
 				SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
@@ -417,7 +423,7 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (MemberCore mc)
 		{
-			Report.SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
+			SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
 		}
 
 		static public void SymbolRelatedToPreviousError (Type type)
@@ -463,7 +469,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// Reports error message. This is preferred method because it future localization
+		/// Reports error message. This is preferred method because it supports future localization
 		/// </summary>
 		static public void Error (Message msg, Location loc, params object[] args)
 		{
