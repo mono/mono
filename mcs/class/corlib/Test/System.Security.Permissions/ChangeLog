@@ -1,3 +1,12 @@
+2003-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IBuiltInPermissionTest.cs: New. Unit tests to check the result of 
+	the "somewhat undocumented" IBuiltInPermission.GetTokenIndex on all
+	permissions inside corlib.
+	* UIPermissionTest.cs: New. Unit tests for UIPermission.
+	* UIPermissionAttributeTest.cs: Added unit tests to check the behavior
+	of using invliad enums for properties (no checks).
+
 2003-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ZoneIdentityPermissionTest.cs: Added tests to check that NoZone is a
