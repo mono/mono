@@ -340,10 +340,8 @@ namespace System.Windows.Forms
 		
 		#region ListBox
 		// Drawing
-		public abstract void DrawListBox (Graphics dc, Rectangle clip_rectangle, ListBox control);
-		public abstract void DrawListBoxItem (Graphics dc, int elem, Rectangle rect, ListBox ctrl);		
+		public abstract void DrawListBoxDecorations (Graphics dc, ListBox ctrl);
 		
-
 		// Sizing
 		public abstract int DrawListBoxDecorationTop (BorderStyle border_style);
 		public abstract int DrawListBoxDecorationBottom (BorderStyle border_style);

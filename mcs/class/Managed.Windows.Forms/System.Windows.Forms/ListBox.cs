@@ -41,16 +41,21 @@ namespace System.Windows.Forms
 		{
 			internal int item_height; 		/* Item's height */
 			internal int top_item;			/* First item that we show the in the current page */
-			internal int page_size;			/* Number of listbox items per page */
+			internal int page_size;			/* Number of listbox items per page. In MultiColumn listbox indicates items per column */
 			internal Rectangle textdrawing_rect;	/* Displayable Client Rectangle minus the scrollbars and with IntegralHeight calculated*/
-			internal bool show_verticalsb;
+			internal bool show_verticalsb;		/* Is Vertical scrollbar show it? */
+			internal bool show_horizontalsb;	/* Is Horizontal scrollbar show it? */
+			internal Rectangle client_rect;		/* Client Rectangle. Usually = ClientRectangle except when IntegralHeight has been applied*/
+			internal int max_itemwidth;		/* Maxium item width within the listbox */
 
 			public ListBoxInfo ()
 			{
 				item_height = 0;
 				top_item = 0;
 				page_size = 0;
+				max_itemwidth = 0;
 				show_verticalsb = false;
+				show_horizontalsb = false;
 			}
 		}
 
@@ -91,14 +96,16 @@ namespace System.Windows.Forms
 		private bool use_tabstops;
 		private int preferred_height;
 		private int top_index;
+		private StringFormat string_format;
+		private int column_width_internal;
 
 		private ListBoxInfo listbox_info;
 		private VScrollBar vscrollbar_ctrl;
+		private HScrollBar hscrollbar_ctrl;
 
 		public ListBox ()
 		{
-			border_style = BorderStyle.Fixed3D;
-			column_width = 0;
+			border_style = BorderStyle.Fixed3D;			
 			draw_mode = DrawMode.Normal;
 			horizontal_extent = 0;
 			horizontal_scrollbar = false;
@@ -113,19 +120,32 @@ namespace System.Windows.Forms
 			top_index = 0;
 			use_tabstops = true;
 			BackColor = ThemeEngine.Current.ColorWindow;
+			ColumnWidth = 0;
 
 			items = new ObjectCollection (this);
 			selected_indices = new SelectedIndexCollection (this);
 			selected_items = new SelectedObjectCollection (this);
 			listbox_info = new ListBoxInfo ();
+			string_format = new StringFormat ();
 			listbox_info.item_height = FontHeight;
 
+			/* Vertical scrollbar */
 			vscrollbar_ctrl = new VScrollBar ();
 			vscrollbar_ctrl.Minimum = 0;
 			vscrollbar_ctrl.SmallChange = 1;
 			vscrollbar_ctrl.LargeChange = 1;
 			vscrollbar_ctrl.Maximum = 0;
 			vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
+			vscrollbar_ctrl.Visible = false;
+
+			/* Horizontal scrollbar */
+			hscrollbar_ctrl = new HScrollBar ();
+			hscrollbar_ctrl.Minimum = 0;
+			hscrollbar_ctrl.SmallChange = 1;
+			hscrollbar_ctrl.LargeChange = 1;
+			hscrollbar_ctrl.Maximum = 0;
+			hscrollbar_ctrl.Visible = false;
+			hscrollbar_ctrl.ValueChanged += new EventHandler (HorizontalScrollEvent);
 		}
 
 		#region Events
@@ -182,10 +202,13 @@ namespace System.Windows.Forms
 				if (column_width < 0)
 					throw new ArgumentException ("A value less than zero is assigned to the property.");
 
-				if (column_width == value)
-					return;
-
     				column_width = value;
+
+    				if (value == 0)
+    					ColumnWidthInternal = 120;
+    				else
+    					ColumnWidthInternal = value;
+
 				Refresh ();
 			}
 		}
@@ -243,6 +266,7 @@ namespace System.Windows.Forms
 					return;
 
     				horizontal_scrollbar = value;
+    				UpdateShowHorizontalScrollBar ();
 				Refresh ();
 			}
 		}
@@ -283,6 +307,8 @@ namespace System.Windows.Forms
 					throw new ArgumentException ("A multicolumn ListBox cannot have a variable-sized height.");
 
     				multicolumn = value;
+    				UpdateShowVerticalScrollBar (); /* the needs for scrollbars may change */
+				UpdateShowHorizontalScrollBar ();
 				Refresh ();
 			}
 		}
@@ -302,6 +328,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		// Only afects the Vertical ScrollBar
 		public bool ScrollAlwaysVisible {
 			get { return scroll_always_visible; }
 			set {
@@ -310,6 +337,7 @@ namespace System.Windows.Forms
 
     				scroll_always_visible = value;
 				UpdateShowVerticalScrollBar ();
+				UpdateShowHorizontalScrollBar ();
 			}
 		}
 
@@ -404,6 +432,11 @@ namespace System.Windows.Forms
 			get { return listbox_info; }
 		}
 
+		private int ColumnWidthInternal {
+			get { return column_width_internal; }
+			set { column_width_internal = value; }
+		}
+
 		#endregion Private Properties
 
 		#region Public Methods
@@ -448,22 +481,43 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
-		public int FindStringExact(string s,  int startIndex)
+		public int FindStringExact (string s,  int startIndex)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public int GetItemHeight (int index)
 		{
-			//if (index < 0 || index >= Count)
-			//	throw new ArgumentOutOfRangeException ("Index of out range");
+			if (index < 0 || index >= Items.Count)
+				throw new ArgumentOutOfRangeException ("Index of out range");
 
-			return 0;
+			return ItemHeight;
 		}
 
 		public Rectangle GetItemRectangle (int index)
 		{
-			throw new NotImplementedException ();
+			if (index < 0 || index >= Items.Count)
+				throw new  ArgumentOutOfRangeException ("GetItemRectangle index out of range.");
+
+			Rectangle rect = new Rectangle ();
+
+			if (MultiColumn == false) {
+
+				rect.X = 0;
+				rect.Y = ItemHeight * index;
+				rect.Height = ItemHeight;
+				rect.Width = listbox_info.textdrawing_rect.Width;
+			}
+			else {
+				int which_page = index / listbox_info.page_size;
+
+				rect.X = which_page * ColumnWidthInternal;
+				rect.Y = (index % listbox_info.page_size) * ItemHeight;
+				rect.Height = ItemHeight;
+				rect.Width = ColumnWidthInternal;
+			}
+
+			return rect;
 		}
 
 		public bool GetSelected (int index)
@@ -503,19 +557,27 @@ namespace System.Windows.Forms
 
 		protected override void OnFontChanged (EventArgs e)
 		{
-			listbox_info.item_height = FontHeight;
+			base.OnFontChanged (e);
+
+			UpdateShowHorizontalScrollBar ();
+			UpdateShowVerticalScrollBar ();
+			RellocateScrollBars ();
+			CalcClientArea ();
+			UpdateItemInfo (false, -1, -1);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
 		{
-			RellocateVerticalScroll ();
+			base.OnHandleCreated (e);
+
+			UpdateInternalClientRect (ClientRectangle);
 			Controls.Add (vscrollbar_ctrl);
-			UpdateItemInfo ();
+			Controls.Add (hscrollbar_ctrl);
 		}
 
-		protected override void OnHandleDestroyed( EventArgs e)
+		protected override void OnHandleDestroyed (EventArgs e)
 		{
-
+			base.OnHandleDestroyed (e);
 		}
 
 		protected virtual void OnMeasureItem (MeasureItemEventArgs e)
@@ -523,24 +585,26 @@ namespace System.Windows.Forms
 
 		}
 
-		protected override void OnParentChanged ( EventArgs e)
+		protected override void OnParentChanged (EventArgs e)
 		{
-
+			base.OnParentChanged (e);
 		}
 
 		protected override void OnResize (EventArgs e)
 		{
-			CalcClientArea ();
-			RellocateVerticalScroll ();
+			base.OnResize (e);
+			UpdateInternalClientRect (ClientRectangle);
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
 		{
+			base.OnSelectedIndexChanged (e);
 
 		}
 
 		protected override void OnSelectedValueChanged (EventArgs e)
 		{
+			base.OnSelectedValueChanged (e);
 
 		}
 
@@ -610,7 +674,6 @@ namespace System.Windows.Forms
 			}
 
 			base.WndProc (ref m);
-
 		}
 
 		#endregion Public Methods
@@ -619,75 +682,110 @@ namespace System.Windows.Forms
 
 		internal void CalcClientArea ()
 		{
-			listbox_info.page_size = (ClientRectangle.Height
-				- (ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle))) / listbox_info.item_height;
-
-			listbox_info.textdrawing_rect = ClientRectangle;
-			listbox_info.textdrawing_rect.Width -= vscrollbar_ctrl.Width;
+			listbox_info.textdrawing_rect = listbox_info.client_rect;
+			listbox_info.textdrawing_rect.Y += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
 			listbox_info.textdrawing_rect.X += ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
-			listbox_info.textdrawing_rect.Width -=  ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);
+			listbox_info.textdrawing_rect.Height -= ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle);
+			listbox_info.textdrawing_rect.Height -= ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
+			listbox_info.textdrawing_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);
+			listbox_info.textdrawing_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
+
+			if (listbox_info.show_verticalsb)
+				listbox_info.textdrawing_rect.Width -= vscrollbar_ctrl.Width;
+
+			if (listbox_info.show_horizontalsb)
+				listbox_info.textdrawing_rect.Height -= hscrollbar_ctrl.Height;
+
+			//listbox_info.page_size = listbox_info.client_rect.Height / listbox_info.item_height;
+			listbox_info.page_size = listbox_info.textdrawing_rect.Height / listbox_info.item_height;
 
 			/* Adjust size to visible the maxim number of displayable items */
 			if (IntegralHeight == true) {
-				listbox_info.textdrawing_rect.Height = (ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle)) + (listbox_info.page_size * listbox_info.item_height);
+
+				// From MS Docs: The integral height is based on the height of the ListBox, rather than
+				// the client area height. As a result, when the IntegralHeight property is set true,
+				// items can still be partially shown if scroll bars are displayed.
+
+				int remaining =  (listbox_info.client_rect.Height -
+					ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle) -
+					ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle)) %
+					listbox_info.item_height;
+
+				if (remaining > 0) {
+					listbox_info.client_rect.Height -= remaining;
+					CalcClientArea ();
+					RellocateScrollBars ();
+					Refresh ();
+				}
 			}
+
 		}
 
 		internal void Draw ()
 		{
-			ThemeEngine.Current.DrawListBox (DeviceContext, ClientRectangle, this);
-		}
+			// IntegralHeight has effect, we also have to paint the unused area
+			if (ClientRectangle.Height > listbox_info.client_rect.Height) {
+				Region area = new Region (ClientRectangle);
+				area.Exclude (listbox_info.client_rect);
 
-
-		internal void RellocateVerticalScroll ()
-		{
-
-			vscrollbar_ctrl.Location = new Point (ClientRectangle.Width - vscrollbar_ctrl.Width
-				- ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle), ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle));
-
-			vscrollbar_ctrl.Size = new Size (vscrollbar_ctrl.Width,
-				ClientRectangle.Height - (ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle)));
-
-		}
-
-		internal void UpdateShowVerticalScrollBar ()
-		{
-			bool show = false;
-
-			show = (Items.Count > listbox_info.page_size || /* Items do not fit in a single page*/
-				ScrollAlwaysVisible == true);
-
-			if (listbox_info.show_verticalsb == show)
-				return;
-
-			if (Items.Count > listbox_info.page_size)
-				vscrollbar_ctrl.Enabled = true;
-			else
-				vscrollbar_ctrl.Enabled = false;
-
-			CalcClientArea ();
-			RellocateVerticalScroll ();
-		}
-
-		// Updates the scrollbar's position with the new items and inside area
-		internal void UpdateItemInfo ()
-		{
-			if (!IsHandleCreated)
-				return;
-
-			UpdateShowVerticalScrollBar ();
-
-			if (Items.Count > listbox_info.page_size) {
-				vscrollbar_ctrl.Maximum = Items.Count - listbox_info.page_size;
+				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor),
+					area.GetBounds (DeviceContext));
 			}
 
-			Refresh ();
+			DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), LBoxInfo.textdrawing_rect);
+
+			// Draw items
+			int y = LBoxInfo.textdrawing_rect.Y;
+			int top_y = LBoxInfo.textdrawing_rect.Y + LBoxInfo.textdrawing_rect.Height;
+			Rectangle item_rect = new Rectangle ();
+			item_rect.X = LBoxInfo.textdrawing_rect.X;
+			item_rect.Height = LBoxInfo.item_height;
+
+			if (MultiColumn)
+				item_rect.Width = ColumnWidthInternal;
+			else
+				item_rect.Width = LBoxInfo.textdrawing_rect.Width;
+
+			for (int i = LBoxInfo.top_item; i < Items.Count; i++) {
+				item_rect.Y = y;
+				DrawListBoxItem (DeviceContext, i, item_rect);
+				y += LBoxInfo.item_height;
+
+				if (MultiColumn) {
+
+					if (y + LBoxInfo.item_height > top_y) {
+						if (item_rect.X + ColumnWidthInternal > LBoxInfo.textdrawing_rect.Width)
+							break;
+
+						item_rect.X += ColumnWidthInternal;
+						y = LBoxInfo.textdrawing_rect.Y;
+					}
+
+				}
+				else
+					if (IntegralHeight)
+						if (y > top_y)
+							break;
+					else
+						if (y + LBoxInfo.item_height> top_y)
+							break;
+
+			}
+
+			ThemeEngine.Current.DrawListBoxDecorations (DeviceContext, this);
+		}
+
+		private void DrawListBoxItem (Graphics dc, int elem, Rectangle rect)
+		{
+			dc.DrawString (Items[elem].ToString (), Font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor),
+					rect, string_format);
 		}
 
 		// Value Changed
-		private void VerticalScrollEvent (object sender, EventArgs e)
+		private void HorizontalScrollEvent (object sender, EventArgs e)
 		{
-			LBoxInfo.top_item = /*listbox_info.page_size + */ vscrollbar_ctrl.Value;
+			LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;				
 			Refresh ();
 		}
 
@@ -699,6 +797,171 @@ namespace System.Windows.Forms
 			/* Copies memory drawing buffer to screen*/
 			Draw ();
 			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+		}
+
+		internal void RellocateScrollBars ()
+		{
+
+			if (listbox_info.show_verticalsb) {
+
+				vscrollbar_ctrl.Size = new Size (vscrollbar_ctrl.Width,
+					listbox_info.client_rect.Height - ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle) -
+					ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle));
+
+				vscrollbar_ctrl.Location = new Point (listbox_info.client_rect.Width - vscrollbar_ctrl.Width
+					- ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle),
+					ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle));
+
+			}
+
+			if (listbox_info.show_horizontalsb) {
+
+				int width;
+
+				width = listbox_info.client_rect.Width - (ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle));
+
+				if (listbox_info.show_verticalsb)
+					width -= vscrollbar_ctrl.Width;
+
+				hscrollbar_ctrl.Size = new Size (width, hscrollbar_ctrl.Height);
+
+				hscrollbar_ctrl.Location = new Point (ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle),
+					listbox_info.client_rect.Height - hscrollbar_ctrl.Height
+					- ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle));
+			}
+
+			CalcClientArea ();
+		}
+
+		// Updates the scrollbar's position with the new items and inside area
+		internal void UpdateItemInfo (bool adding, int first, int last)
+		{
+			if (!IsHandleCreated)
+				return;
+
+			UpdateShowVerticalScrollBar ();
+
+			if (listbox_info.show_verticalsb && Items.Count > listbox_info.page_size)
+				if (vscrollbar_ctrl.Enabled)
+					vscrollbar_ctrl.Maximum = Items.Count - listbox_info.page_size;
+
+			if (listbox_info.show_horizontalsb) {
+				if (MultiColumn) {
+					int fullpage = (listbox_info.page_size * (listbox_info.client_rect.Width / ColumnWidthInternal));
+
+					if (hscrollbar_ctrl.Enabled && listbox_info.page_size > 0)
+						hscrollbar_ctrl.Maximum  = 1 + ((Items.Count - fullpage) / listbox_info.page_size);
+				}
+			}
+
+			if (adding) {
+
+			}
+			else { /* Removing */
+
+			}
+
+			Refresh ();
+		}
+
+		private void UpdateInternalClientRect (Rectangle client_rectangle)
+		{
+			listbox_info.client_rect = client_rectangle;
+			UpdateShowHorizontalScrollBar ();
+			UpdateShowVerticalScrollBar ();
+			RellocateScrollBars ();
+			UpdateItemInfo (false, -1, -1);
+		}
+
+		/* Determines if the horizontal scrollbar has to be displyed */
+		private void UpdateShowHorizontalScrollBar ()
+		{
+			bool show = false;
+			bool enabled = true;
+			bool large_item = false;
+
+			if (MultiColumn) {  /* Horizontal scrollbar is always shown in Multicolum mode */
+
+				/* Is it really need it */
+				int page_size = listbox_info.client_rect.Height / listbox_info.item_height;
+				int fullpage = (page_size * (listbox_info.client_rect.Width / ColumnWidthInternal));
+
+				if (Items.Count > fullpage) {
+					show = true;
+				}
+				else { /* Acording to MS Documentation ScrollAlwaysVisible only affects Horizontal scrollbars but
+					  this is not true for MultiColumn listboxes */
+					if (ScrollAlwaysVisible == true) {
+						enabled = false;
+						show = true;
+					}
+				}
+
+			} else { /* If large item*/
+
+				if (large_item && HorizontalScrollbar) {
+
+				}
+
+			}
+
+			if (hscrollbar_ctrl.Enabled != enabled)
+				hscrollbar_ctrl.Enabled = enabled;
+
+			if (listbox_info.show_horizontalsb == show)
+				return;
+
+			listbox_info.show_horizontalsb = show;
+			hscrollbar_ctrl.Visible = show;
+
+			if (show == true) {
+				RellocateScrollBars ();
+			}
+
+			CalcClientArea ();
+		}
+
+		/* Determines if the vertical scrollbar has to be displyed */
+		private void UpdateShowVerticalScrollBar ()
+		{
+			bool show = false;
+			bool enabled = true;
+
+			if (!MultiColumn) {  /* Vertical scrollbar is never shown in Multicolum mode */
+				if (Items.Count > listbox_info.page_size) {
+					show = true;
+				}
+				else
+					if (ScrollAlwaysVisible) {
+						show = true;
+						enabled = false;
+					}
+			}
+			
+			if (vscrollbar_ctrl.Enabled != enabled)
+				vscrollbar_ctrl.Enabled = enabled;
+
+			if (listbox_info.show_verticalsb == show)
+				return;
+
+			listbox_info.show_verticalsb = show;
+			vscrollbar_ctrl.Visible = show;
+
+			if (show == true) {
+				if (vscrollbar_ctrl.Enabled)
+					vscrollbar_ctrl.Maximum = Items.Count - listbox_info.page_size;
+
+				RellocateScrollBars ();
+			}
+
+			CalcClientArea ();
+		}
+
+		// Value Changed
+		private void VerticalScrollEvent (object sender, EventArgs e)
+		{			
+			LBoxInfo.top_item = /*listbox_info.page_size + */ vscrollbar_ctrl.Value;
+			Refresh ();
 		}
 
 		#endregion Private Methods
@@ -773,31 +1036,35 @@ namespace System.Windows.Forms
 				int idx;
 
 				idx = AddItem (item);
-				owner.UpdateItemInfo ();
+				owner.UpdateItemInfo (true, idx, idx);
 				return idx;
 			}
 
 			public void AddRange (object[] items)
 			{
+				int cnt = Count;
+
 				foreach (object mi in items)
 					AddItem (mi);
 
-				owner.UpdateItemInfo ();
+				owner.UpdateItemInfo (true, cnt, Count);
 			}
 
 			public void AddRange (ObjectCollection col)
 			{
+				int cnt = Count;
+
 				foreach (object mi in col)
 					AddItem (mi);
 
-				owner.UpdateItemInfo ();
+				owner.UpdateItemInfo (true, cnt, Count);
 			}
 
 			public virtual void Clear ()
 			{
 				object_items.Clear ();
 				listbox_items.Clear ();
-				owner.UpdateItemInfo ();
+				owner.UpdateItemInfo (false, -1, -1);
 			}
 			public virtual bool Contains (object obj)
 			{
@@ -837,7 +1104,7 @@ namespace System.Windows.Forms
 			public virtual void Remove (object value)
 			{
 				RemoveAt (IndexOf (value));
-				owner.UpdateItemInfo ();
+				owner.UpdateItemInfo (false, -1, -1);
 			}
 
 			public virtual void RemoveAt (int index)
@@ -847,7 +1114,7 @@ namespace System.Windows.Forms
 
 				object_items.RemoveAt (index);
 				listbox_items.RemoveAt (index);
-				owner.UpdateItemInfo ();
+				owner.UpdateItemInfo (false, -1, -1);
 			}
 			#endregion Public Methods
 

@@ -1036,29 +1036,9 @@ namespace System.Windows.Forms
 		
 		// Drawing
 		
-		public override void DrawListBox (Graphics dc, Rectangle clip_rectangle, ListBox ctrl)
+		public override void DrawListBoxDecorations (Graphics dc, ListBox ctrl)
 		{			
-			
-			clip_rectangle = ctrl.LBoxInfo.textdrawing_rect;
-			dc.FillRectangle (ResPool.GetSolidBrush (ctrl.BackColor), ctrl.LBoxInfo.textdrawing_rect);			
-			
-			clip_rectangle.Height -= (ThemeEngine.Current.DrawListBoxDecorationTop (ctrl.BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationBottom (ctrl.BorderStyle));
-			clip_rectangle.Width -= (ThemeEngine.Current.DrawListBoxDecorationLeft (ctrl.BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationRight (ctrl.BorderStyle));
-									
-			// Draw items
-			int y = ThemeEngine.Current.DrawListBoxDecorationTop (ctrl.BorderStyle);
-			Rectangle rect = new Rectangle ();
-			rect.X = ThemeEngine.Current.DrawListBoxDecorationLeft (ctrl.BorderStyle);
-			rect.Width = clip_rectangle.Width;
-			rect.Height = ctrl.LBoxInfo.item_height;			
-			
-			for (int i = ctrl.LBoxInfo.top_item; i < ctrl.Items.Count; i++) {				
-				rect.Y = y;				
-				DrawListBoxItem (dc, i, rect, ctrl);
-				y += ctrl.LBoxInfo.item_height;
-			}	
-			
-			Rectangle cl = ctrl.ClientRectangle;
+			Rectangle cl = ctrl.LBoxInfo.client_rect;
 			
 			// Draw decorations
 			switch (ctrl.BorderStyle) {
@@ -1080,17 +1060,7 @@ namespace System.Windows.Forms
 			default:
 				break;
 			}		
-		
-		}
-		
-		public override void DrawListBoxItem (Graphics dc, int elem, Rectangle rect, ListBox ctrl)
-		{
-			StringFormat string_format = new StringFormat ();
-
-			dc.DrawString (ctrl.Items[elem].ToString (), ctrl.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (ctrl.ForeColor),
-					rect, string_format);
-		}
+		}		
 		
 		private int DrawListBoxDecorationSize (BorderStyle border_style)
 		{
