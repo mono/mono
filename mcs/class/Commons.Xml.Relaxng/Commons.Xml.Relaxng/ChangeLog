@@ -1,5 +1,9 @@
 2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs : reverted IsEmptiable. It was not ready.
+
+2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngPattern.cs : added GetLabels() override to RdpUnresolvedRef.
 	* RelaxngValidatingReader.cs :
 	  Added GetLabels() that collects "allowed element names and

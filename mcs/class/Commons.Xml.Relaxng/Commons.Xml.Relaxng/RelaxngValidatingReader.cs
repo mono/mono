@@ -75,13 +75,6 @@ namespace Commons.Xml.Relaxng
 			get { return RdpUtil.DebugRdpPattern (prevState, new Hashtable ()); }
 		}
 
-		public bool IsEmptiable {
-			get {
-				PrepareState ();
-				return vState.Nullable;
-			}
-		}
-
 		public void GetLabels (Hashtable elements, Hashtable attributes)
 		{
 			if (elements == null)
