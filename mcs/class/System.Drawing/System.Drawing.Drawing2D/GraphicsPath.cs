@@ -28,40 +28,52 @@ namespace System.Drawing.Drawing2D
                 public GraphicsPath ()
                 {
                         Status status = GDIPlus.GdipCreatePath (FillMode.Alternate, out nativePath);
-                        GDIPlus.CheckStatus (status);                      	
+                        GDIPlus.CheckStatus (status);
                 }
                 
-                [MonoTODO]
                 public GraphicsPath (FillMode fillMode)
                 {
-                	throw new NotImplementedException ();
+                        Status status = GDIPlus.GdipCreatePath (fillMode, out nativePath);
+                        GDIPlus.CheckStatus (status);
                 }
                 
-                [MonoTODO]
                 public GraphicsPath (Point[] pts, byte[] types)
                 {
-                	throw new NotImplementedException ();
+                        Status status = GDIPlus.GdipCreatePath2 (
+                                ConvertPoints (pts), types, pts.Length, FillMode.Alternate, out nativePath);
+                        GDIPlus.CheckStatus (status);
                 }
                 
-                [MonoTODO]
                 public GraphicsPath (PointF[] pts, byte[] types)
                 {
-                	throw new NotImplementedException ();
+                        Status status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, FillMode.Alternate, out nativePath);
+                        GDIPlus.CheckStatus (status);
                 }
                 
-                [MonoTODO]
-		public GraphicsPath (Point[] pts,  byte[] types,  FillMode fillMode)
+		public GraphicsPath (Point[] pts, byte[] types, FillMode fillMode)
 		{
-                	throw new NotImplementedException ();	
+                        Status status = GDIPlus.GdipCreatePath2 (
+                                ConvertPoints (pts), types, pts.Length, fillMode, out nativePath);
+                        GDIPlus.CheckStatus (status);
                 }
 
-		[MonoTODO]
-		public GraphicsPath(PointF[] pts,  byte[] types,   FillMode fillMode)
+		public GraphicsPath(PointF[] pts, byte[] types, FillMode fillMode)
 		{
-                	throw new NotImplementedException ();
+                        Status status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, fillMode, out nativePath);
+                        GDIPlus.CheckStatus (status);
+                }
+
+                PointF [] ConvertPoints (Point [] pt)
+                {
+                        int length = pt.Length;                        
+                        PointF [] pf = new PointF [length];
+
+                        for (int i = 0; i < length; i++)
+                                pf [i] = pt [i];
+
+                        return pf;
                 }
 	
-		
                 public object Clone ()
                 {
                         IntPtr clone;
@@ -162,13 +174,13 @@ namespace System.Drawing.Drawing2D
                 
                 internal IntPtr NativeObject{
                 
-					get{
-							return nativePath;
-					}
-					set	{
-							nativePath = value;
-					}
-				}
+                        get {
+                                return nativePath;
+                        }
+                        set {
+                                nativePath = value;
+                        }
+                }
         
                 //
                 // AddArc
@@ -187,7 +199,7 @@ namespace System.Drawing.Drawing2D
 
                 public void AddArc (int x, int y, int width, int height, float start_angle, float sweep_angle)
                 {
-                        Status status = GDIPlus.GdipAddPathArcI (nativePath, x, y, width, height, start_angle, sweep_angle);                
+                        Status status = GDIPlus.GdipAddPathArcI (nativePath, x, y, width, height, start_angle, sweep_angle);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
@@ -311,7 +323,8 @@ namespace System.Drawing.Drawing2D
 
                         for (int i = 0; i < length - 2; i += 2) {
                                 int j = i + 1;
-                                Status status = GDIPlus.GdipAddPathLineI (nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
+                                Status status = GDIPlus.GdipAddPathLineI (
+                                        nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
                                 GDIPlus.CheckStatus (status);                      	
                         }
                 }
@@ -322,7 +335,8 @@ namespace System.Drawing.Drawing2D
 
                         for (int i = 0; i < length - 2; i += 2) {
                                 int j = i + 1;
-                                Status status = GDIPlus.GdipAddPathLine (nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
+                                Status status = GDIPlus.GdipAddPathLine (
+                                        nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
                                 GDIPlus.CheckStatus (status);                      	
                         }
                 }
@@ -332,7 +346,8 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddPie (Rectangle rect, float startAngle, float sweepAngle)
                 {
-                        Status status = GDIPlus.GdipAddPathPie (nativePath, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
+                        Status status = GDIPlus.GdipAddPathPie (
+                                nativePath, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
                         GDIPlus.CheckStatus (status);                      	
                 }
 

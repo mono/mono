@@ -1,3 +1,7 @@
+2004-04-06  Duncan Mak  <duncan@ximian.com>
+
+	* gdipFunctions.cs (GdipCreatePath2): Fixed signature.
+
 2004-04-06  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Region.cs: fixes GetRegionScans
 	* gdipFunctions.cs: fixes GetRegionScans

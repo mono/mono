@@ -1,3 +1,10 @@
+2004-04-06  Duncan Mak  <duncan@ximian.com>
+
+	* GraphicsPath.cs (GraphicsPath): Filled out the missing
+	constructors.
+	(ConvertPoints): New helper function. Converts a Point array to a
+	PointF array.
+	
 2004-04-05  Jordi Mas i Hernandez <jordi@ximian.com>
 	* GraphicsPath.cs: added missing methods
 	

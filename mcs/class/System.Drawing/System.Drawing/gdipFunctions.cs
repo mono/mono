@@ -985,7 +985,7 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipCreatePath (FillMode brushMode, out IntPtr path);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipCreatePath2 (PointF points, byte [] types, int count, FillMode brushMode, out IntPtr path);
+                internal static extern Status GdipCreatePath2 (PointF [] points, byte [] types, int count, FillMode brushMode, out IntPtr path);
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipClonePath (IntPtr path, out IntPtr clonePath);
                 [DllImport ("gdiplus.dll")]                

@@ -41,10 +41,10 @@ public class graphicsUI
 		Rectangle rect5 = new Rectangle (200, 0, 75, 75);		
 		dc.FillPie (yellowBrush, rect5, 190, 300);
 		
-		Rectangle rect6 = new Rectangle (200, 100, 75, 75);		
+		Rectangle rect6 = new Rectangle (200, 100, 75, 75);
 		dc.FillPie (whiteBrush, rect6, 200, 20);
 
-        	bmp.Save("fillpie.bmp", ImageFormat.Bmp);				
+        	bmp.Save("fillpie.png", ImageFormat.Png); 
 	}	
 
 }
