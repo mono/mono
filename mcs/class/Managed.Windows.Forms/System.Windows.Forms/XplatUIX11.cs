@@ -692,8 +692,17 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (len>0) /* String is not zero terminated*/
+			if ((keysym==XKeySym.XK_Alt_L) || (keysym==XKeySym.XK_Alt_R)) {
+				if (xevent.type==XEventName.KeyPress) {
+					key_state |= Keys.Alt;
+				} else {
+					key_state &= ~Keys.Alt;
+				}
+			}
+
+			if (len>0) { /* String is not zero terminated*/
 				Marshal.WriteByte (buffer, len, 0);
+			}
 
 			keys=Marshal.PtrToStringAuto(buffer);
 
@@ -767,7 +776,7 @@ namespace System.Windows.Forms {
 				int count = timer_list.Count;
 				if (count == 0)
 					return;
-				for (int i = 0; i < count; i++) {
+				for (int i = 0; i < timer_list.Count; i++) {
                                         Timer timer = (Timer) timer_list [i];
                                         if (timer.Enabled && timer.Expires <= now) {
                                                 timer.FireTick ();
@@ -1117,17 +1126,23 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
-
 			return true;
 		}
 
 		internal override bool TranslateMessage(ref MSG msg) {
+#if notyet
+			switch (msg.message) {
+				case Msg.WM_KEYDOWN: {
+					switch(msg.lParam) {
+					}
+				}
+			}
+#endif
 			return true;
 		}
 
-		internal override bool DispatchMessage(ref MSG msg) {
-			return true;
+		internal override IntPtr DispatchMessage(ref MSG msg) {
+			return NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 		}
 
 		internal override bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
