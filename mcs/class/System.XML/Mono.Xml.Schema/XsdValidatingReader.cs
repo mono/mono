@@ -1557,7 +1557,14 @@ namespace Mono.Xml.Schema
 			XmlSchema schema = null;
 			string schemaLocation = reader.GetAttribute ("schemaLocation", XmlSchema.InstanceNamespace);
 			if (schemaLocation != null) {
-				string [] tmp = XmlSchemaDatatype.FromName ("NMTOKENS").ParseValue (schemaLocation, NameTable, null) as string [];
+				string [] tmp = null;
+				try {
+					schemaLocation = XmlSchemaDatatype.FromName ("token").Normalize (schemaLocation);
+					tmp = schemaLocation.Split (XmlChar.WhitespaceChars);
+				} catch (Exception ex) {
+					HandleError ("Invalid schemaLocation attribute format.", ex, true);
+					tmp = new string [0];
+				}
 				if (tmp.Length % 2 != 0)
 					HandleError ("Invalid schemaLocation attribute format.");
 				for (int i = 0; i < tmp.Length; i += 2) {

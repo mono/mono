@@ -1,3 +1,8 @@
+2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : schemaLocation is not NMTOKENS. It is list
+	  of anyURI. Just split names and handle as anyURI.
+
 2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdParticleValidationState.cs :
