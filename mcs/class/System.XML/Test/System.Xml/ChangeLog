@@ -1,3 +1,9 @@
+2004-05-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReaderTests.cs : Ignore TestNamespaceFalse(). It is not
+	  kind of thing that should be supported.
+	* XmlValidatingReaderTests.cs : commented a bit.
+
 2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvertTests.cs : Commented out locale-dependent tests.

@@ -126,6 +126,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Ignore ("XML Schema validator should not be available for validating non namespace-aware XmlReader that handled colon as a name character")]
 		public void TestNamespacesFalse ()
 		{
 			// This tests if Namespaces=false is specified, then

@@ -301,7 +301,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// missing attributes
-				Fail ("should be failed.");
+				Fail ("should be failed."); // MS.NET fails to fail this test.
 			} catch (XmlSchemaException) {
 			}
 
