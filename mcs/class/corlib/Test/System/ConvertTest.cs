@@ -2614,9 +2614,9 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[ExpectedException (typeof (System.FormatException))]
+		[ExpectedException (typeof (FormatException))]
 		public void TestInvalidBase64() {
-		  string brokenB64 = "AB~£";
+		  string brokenB64 = "AB~";
 		  Convert.FromBase64String(brokenB64);
 		}
 
