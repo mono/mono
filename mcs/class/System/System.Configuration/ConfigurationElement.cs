@@ -45,10 +45,10 @@ namespace System.Configuration
 		string rawXml;
 		bool modified;
 		ElementMap map;
+		ConfigurationPropertyCollection keyProps;
 		
 		protected ConfigurationElement ()
 		{
-			map = GetMap (GetType());
 		}
 		
 		internal string RawXml {
@@ -58,8 +58,26 @@ namespace System.Configuration
 
 		protected internal virtual ConfigurationPropertyCollection CollectionKeyProperties {
 			get {
-				return map.KeyProperties;
+				return null;
 			}
+		}
+		
+		internal ConfigurationPropertyCollection GetKeyProperties ()
+		{
+			if (keyProps != null) return keyProps;
+			keyProps = CollectionKeyProperties;
+			if (keyProps != null) return keyProps;
+			
+			if (map.Properties == Properties)
+				keyProps = map.KeyProperties;
+			else {
+				keyProps = new ConfigurationPropertyCollection ();
+				foreach (ConfigurationProperty prop in Properties) {
+					if (prop.IsKey)
+						keyProps.Add (prop);
+				}
+			}
+			return keyProps;
 		}
 
 		protected internal object this [ConfigurationProperty property] {
@@ -92,13 +110,13 @@ namespace System.Configuration
 
 		protected internal object this [string property_name] {
 			get {
-				ConfigurationProperty prop = map.Properties [property_name];
+				ConfigurationProperty prop = Properties [property_name];
 				if (prop == null) throw new InvalidOperationException ("Property '" + property_name + "' not found in configuration section");
 				return this [prop];
 			}
 
 			set {
-				ConfigurationProperty prop = map.Properties [property_name];
+				ConfigurationProperty prop = Properties [property_name];
 				if (prop == null) throw new InvalidOperationException ("Property '" + property_name + "' not found in configuration section");
 				this [prop] = value;
 			}
@@ -106,31 +124,42 @@ namespace System.Configuration
 
 		protected internal virtual ConfigurationPropertyCollection Properties {
 			get {
+				if (map == null)
+					map = GetMap (GetType());
 				return map.Properties;
 			}
 		}
 
-		[MonoTODO]
 		public override bool Equals (object compareTo)
 		{
-			return base.Equals (compareTo);
+			ConfigurationElement other = compareTo as ConfigurationElement;
+			if (other == null) return false;
+			if (GetType() != other.GetType()) return false;
+			
+			foreach (ConfigurationProperty prop in Properties) {
+				if (!object.Equals (this [prop], other [prop]))
+					return false;
+			}
+			return true;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			int code = 0;
+			foreach (ConfigurationProperty prop in Properties)
+				code += this [prop].GetHashCode ();
+			return code;
 		}
 
 		public bool HasValue (string key)
 		{
 			if (values == null) return false;
-			ConfigurationProperty prop = map.Properties [key];
+			ConfigurationProperty prop = Properties [key];
 			if (prop == null) return false;
 			return values.ContainsKey (prop);
 		}
 		
-		internal bool HasValues ()
+		internal virtual bool HasValues ()
 		{
 			return values != null && values.Count > 0;
 		}
@@ -153,21 +182,16 @@ namespace System.Configuration
 			Hashtable readProps = new Hashtable ();
 			
 			reader.MoveToContent ();
-			if (!map.HasProperties) {
-				reader.Skip ();
-				return;
-			}
-			
 			while (reader.MoveToNextAttribute ())
 			{
-				ConfigurationProperty prop = map.Properties [reader.LocalName];
+				ConfigurationProperty prop = Properties [reader.LocalName];
 				if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
 					if (!HandleUnrecognizedAttribute (reader.LocalName, reader.Value))
 						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
 					continue;
 				}
 				
-				if (readProps.Contains (prop))
+				if (readProps.ContainsKey (prop))
 					throw new ConfigurationException ("The attribute '" + prop.Name + "' may only appear once in this element.");
 				
 				object val = prop.ConvertFromString (reader.Value);
@@ -191,7 +215,7 @@ namespace System.Configuration
 						continue;
 					}
 					
-					ConfigurationProperty prop = map.Properties [reader.LocalName];
+					ConfigurationProperty prop = Properties [reader.LocalName];
 					if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
 						if (!HandleUnrecognizedElement (reader.LocalName, reader))
 							throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
@@ -246,9 +270,8 @@ namespace System.Configuration
 		protected internal virtual void Reset (ConfigurationElement parentElement, object context)
 		{
 			if (parentElement != null) {
-				if (!map.HasProperties) return;
 				values = null;
-				foreach (ConfigurationProperty prop in map.Properties) {
+				foreach (ConfigurationProperty prop in Properties) {
 					if (parentElement.HasValue (prop.Name)) {
 						if (prop.IsElement) {
 							ConfigurationElement parentValue = parentElement [prop.Name] as ConfigurationElement;
@@ -273,19 +296,23 @@ namespace System.Configuration
 		[MonoTODO ("Return value?")]
 		protected internal virtual bool Serialize (XmlWriter writer, bool serializeCollectionKey)
 		{
-			if (values == null || !map.HasProperties) return true;
+			if (values == null) return true;
+			
+			if (serializeCollectionKey) {
+				foreach (ConfigurationProperty prop in GetKeyProperties ())
+					writer.WriteAttributeString (prop.Name, prop.ConvertToString (this[prop]));
+				return true;
+			}
 			
 			ArrayList elems = new ArrayList ();
 			foreach (DictionaryEntry entry in values)
 			{
 				ConfigurationProperty prop = (ConfigurationProperty) entry.Key;
-				if (serializeCollectionKey && !prop.IsKey) continue;
 				if (prop.IsElement) continue;
 				
 				if (!object.Equals (entry.Value, prop.DefaultValue))
 					writer.WriteAttributeString (prop.Name, prop.ConvertToString (entry.Value));
 			}
-			if (serializeCollectionKey) return true;
 			
 			foreach (DictionaryEntry entry in values)
 			{
@@ -320,18 +347,15 @@ namespace System.Configuration
 				bool serializeCollectionKey, object context,
 				ConfigurationUpdateMode updateMode)
 		{
-			if (source.map != parent.map)
+			if (source.GetType() != parent.GetType())
 				throw new ConfigurationException ("Can't unmerge two elements of different type");
 			
-			ElementMap map = source.map;
-			if (!map.HasProperties) return;
-			
-			foreach (ConfigurationProperty prop in map.Properties)
+			foreach (ConfigurationProperty prop in source.Properties)
 			{
 				if (!source.HasValue (prop.Name)) continue;
 				
 				object sourceValue = source [prop];
-				if 	(!parent.HasValue (prop.Name) || updateMode == ConfigurationUpdateMode.Full) {
+				if 	(!parent.HasValue (prop.Name)) {
 					this [prop] = sourceValue;
 					continue;
 				}
@@ -348,6 +372,7 @@ namespace System.Configuration
 					}
 					else {
 						if (!object.Equals (sourceValue, parentValue) || 
+							(updateMode == ConfigurationUpdateMode.Full) ||
 							(updateMode == ConfigurationUpdateMode.Modified && source.IsReadFromConfig (prop.Name)))
 							this [prop] = sourceValue;
 					}
@@ -394,11 +419,7 @@ namespace System.Configuration
 			lock (elementMaps) {
 				ElementMap map = elementMaps [t] as ElementMap;
 				if (map != null) return map;
-				
-				if (typeof(ConfigurationElementCollection).IsAssignableFrom (t))
-					map = new CollectionElementMap (t);
-				else
-					map = new ElementMap (t);
+				map = new ElementMap (t);
 				elementMaps [t] = map;
 				return map;
 			}
@@ -457,13 +478,6 @@ namespace System.Configuration
 				}
 				return keyProperties;
 			}
-		}
-	}
-	
-	internal class CollectionElementMap: ElementMap
-	{
-		public CollectionElementMap (Type t): base (t)
-		{
 		}
 	}
 }

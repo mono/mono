@@ -93,16 +93,16 @@ namespace System.Configuration
 
 		protected virtual void BaseAdd (ConfigurationElement element, bool throwIfExists)
 		{
-			if (throwIfExists && BaseIndexOf (element) != -1)
-				throw new ConfigurationException ("Duplicate element in collection");
+//			if (throwIfExists && BaseIndexOf (element) != -1)
+//				throw new ConfigurationException ("Duplicate element in collection");
 			list.Add (element);
 			modified = true;
 		}
 
 		protected virtual void BaseAdd (int index, ConfigurationElement element)
 		{
-			if (ThrowOnDuplicate && BaseIndexOf (element) != -1)
-				throw new ConfigurationException ("Duplicate element in collection");
+//			if (ThrowOnDuplicate && BaseIndexOf (element) != -1)
+//				throw new ConfigurationException ("Duplicate element in collection");
 			list.Insert (index, element);
 			modified = true;
 		}
@@ -193,19 +193,28 @@ namespace System.Configuration
 			return CreateNewElement ();
 		}
 		
-		[MonoTODO]
 		public override bool Equals (object compareTo)
 		{
-			return base.Equals (compareTo);
+			ConfigurationElementCollection other = compareTo as ConfigurationElementCollection;
+			if (other == null) return false;
+			if (GetType() != other.GetType()) return false;
+			if (Count != other.Count) return false;
+			
+			for (int n=0; n<Count; n++) {
+				if (!BaseGet (n).Equals (other.BaseGet (n)))
+					return false;
+			}
+			return true;
 		}
-		
 
 		protected abstract object GetElementKey (ConfigurationElement element);
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			int code = 0;
+			for (int n=0; n<Count; n++)
+				code += BaseGet (n).GetHashCode ();
+			return code;
 		}
 		
 		void ICollection.CopyTo (Array arr, int index)
@@ -234,6 +243,11 @@ namespace System.Configuration
 			return modified;
 		}
 
+		internal override bool HasValues ()
+		{
+			return list.Count > 0;
+		}
+
 		[MonoTODO ("parentItem.GetType().Name ??")]
 		protected internal override void Reset (ConfigurationElement parentElement, object context)
 		{
@@ -256,6 +270,10 @@ namespace System.Configuration
 		[MonoTODO ("Support for BasicMap. Return value.")]
 		protected internal override bool Serialize (XmlWriter writer, bool serializeCollectionKey)
 		{
+			if (serializeCollectionKey) {
+				return base.Serialize (writer, serializeCollectionKey);
+			}
+			
 			if (emitClear)
 				writer.WriteElementString ("clear","");
 			
@@ -277,6 +295,7 @@ namespace System.Configuration
 		{
 			if (elementName == "clear") {
 				BaseClear ();
+				emitClear = true;
 				modified = false;
 				return true;
 			}
@@ -320,6 +339,16 @@ namespace System.Configuration
 			
 			if (updateMode == ConfigurationUpdateMode.Full)
 				EmitClear = true;
+			else {
+				for (int n=0; n<parent.Count; n++) {
+					ConfigurationElement pitem = parent.BaseGet (n);
+					object key = parent.GetElementKey (pitem);
+					if (source.IndexOfKey (key) == -1) {
+						if (removed == null) removed = new ArrayList ();
+						removed.Add (pitem);
+					}
+				}
+			}
 		}
 
 		#endregion // Methods

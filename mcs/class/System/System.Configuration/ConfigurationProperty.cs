@@ -34,7 +34,7 @@ using System.ComponentModel;
 
 namespace System.Configuration
 {
-	public class ConfigurationProperty : ConfigurationElement
+	public class ConfigurationProperty
 	{
 		string name;
 		Type type;

@@ -1,5 +1,16 @@
 2004-11-09  Lluis Sanchez Gual <lluis@novell.com>
 
+	* ConfigurationElement.cs: Implemented Equals and GetHashCode.
+	Only reflect properties from type's members if the type does not
+	override Properties.
+	* ConfigurationElementCollection.cs: Implemented Equals and GetHashCode.
+	Other minor fixes.
+	* ConfigurationProperty.cs: It is not a subclass of ConfigurationElement.
+	* NonEmptyStringConfigurationProperty.cs, NonEmptyStringFlags.cs:
+	Implemented.
+	
+2004-11-09  Lluis Sanchez Gual <lluis@novell.com>
+
 	* AppSettingsSection.cs: Mostly implemented (missing support for
 	file attribute).
 	* ConfigHelper.cs: GetNameValueCollection now returns a 
