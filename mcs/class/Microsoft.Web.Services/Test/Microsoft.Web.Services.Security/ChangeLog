@@ -1,3 +1,9 @@
+2003-11-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* BinarySecurityTokenTest.cs: Fixed some tests and added one for RawData.
+	* DecryptionKeyProviderTest.cs: New. Unit tests for DecryptionKeyProvider.
+	* SignatureTest.cs: Updated for WSE2 compatibility (SignatureOptions).
+
 2003-10-31  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* OASISTest.cs: New. Unit test for WSE2 OASIS descriptions.

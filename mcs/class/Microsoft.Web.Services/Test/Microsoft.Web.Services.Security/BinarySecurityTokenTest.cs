@@ -13,14 +13,16 @@ using Microsoft.Web.Services.Security;
 using System;
 using System.Security.Cryptography;
 using System.Xml;
+using MWSS = Microsoft.Web.Services.Security;
 
 namespace MonoTests.MS.Web.Services.Security {
 
 	// non-abstract BinarySecurityToken for test uses only
-	public class BinarySecurityToken : Microsoft.Web.Services.Security.BinarySecurityToken {
+	public class BinarySecurityToken : MWSS.BinarySecurityToken {
 
+#if WSE1
 		public BinarySecurityToken (XmlElement element) : base (element) {}
-
+#endif
 		public BinarySecurityToken (XmlQualifiedName valueType) : base (valueType) {}
 
 		public override AuthenticationKey AuthenticationKey {
@@ -46,8 +48,23 @@ namespace MonoTests.MS.Web.Services.Security {
 		public override bool SupportsDigitalSignature {
 			get { return false; }
 		}
-
+#if WSE1
 		public override void Verify() {}
+#else
+		public override bool Equals (SecurityToken token) 
+		{
+			return false;
+		}
+
+		public override int GetHashCode () 
+		{
+			return 0;
+		}
+
+		public override bool IsCurrent {
+			get { return false; }
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -55,7 +72,7 @@ namespace MonoTests.MS.Web.Services.Security {
 
 		private static string name = "mono";
 		private static string ns = "http://www.go-mono.com/";
-
+#if WSE1
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorNullXmlElement () 
@@ -80,7 +97,7 @@ namespace MonoTests.MS.Web.Services.Security {
 			AssertNull ("RawData", bst.RawData);
 			Assert ("Id", bst.Id.StartsWith ("SecurityToken-"));
 		}
-
+#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorNullXmlQualifiedName () 
@@ -138,7 +155,15 @@ namespace MonoTests.MS.Web.Services.Security {
 			BinarySecurityToken bst = new BinarySecurityToken (xqn);
 			bst.Id = "staticIdUsedForNUnit";
 			XmlDocument doc = new XmlDocument ();
-			AssertEquals ("GetXml(doc)", "<wsse:BinarySecurityToken xmlns:vt=\"http://www.go-mono.com/\" ValueType=\"vt:mono\" EncodingType=\"wsse:Base64Binary\" xmlns:wsu=\"http://schemas.xmlsoap.org/ws/2002/07/utility\" wsu:Id=\"staticIdUsedForNUnit\" xmlns:wsse=\"http://schemas.xmlsoap.org/ws/2002/07/secext\" />", bst.GetXml (doc).OuterXml);
+			XmlElement xel = bst.GetXml (doc);
+			// this one I can't generate exactly like the original so I check each parts
+			Assert ("GetXml(doc)1", xel.OuterXml.StartsWith ("<wsse:BinarySecurityToken "));
+			Assert ("GetXml(doc)2", xel.OuterXml.IndexOf ("xmlns:vt=\"http://www.go-mono.com/\"") > 0);
+			Assert ("GetXml(doc)3", xel.OuterXml.IndexOf ("ValueType=\"vt:mono\"") > 0);
+			Assert ("GetXml(doc)4", xel.OuterXml.IndexOf ("EncodingType=\"wsse:Base64Binary\"") > 0);
+			Assert ("GetXml(doc)5", xel.OuterXml.IndexOf ("xmlns:wsu=\"http://schemas.xmlsoap.org/ws/2002/07/utility\"") > 0);
+			Assert ("GetXml(doc)6", xel.OuterXml.IndexOf ("wsu:Id=\"staticIdUsedForNUnit\"") > 0);
+			Assert ("GetXml(doc)7", xel.OuterXml.IndexOf ("xmlns:wsse=\"http://schemas.xmlsoap.org/ws/2002/07/secext\"") > 0);
 		}
 
 		[Test]
@@ -151,7 +176,6 @@ namespace MonoTests.MS.Web.Services.Security {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void LoadXml () 
 		{
 			XmlQualifiedName xqn = new XmlQualifiedName (name, ns);
@@ -165,6 +189,23 @@ namespace MonoTests.MS.Web.Services.Security {
 			AssertEquals ("ValueType.Namespace", ns, bst.ValueType.Namespace);
 			AssertNull ("RawData", bst.RawData);
 			AssertEquals ("Id", "staticIdUsedForNUnit", bst.Id);
+		}
+
+		[Test]
+		public void RawData () 
+		{
+			XmlQualifiedName xqn = new XmlQualifiedName (name, ns);
+			BinarySecurityToken bst = new BinarySecurityToken (xqn);
+			AssertNull ("RawData(empty)", bst.RawData);
+			byte[] raw = new byte [1];
+			bst.RawData = raw;
+			AssertNotNull ("RawData", bst.RawData);
+			AssertEquals ("RawData[0]=0", 0x00, bst.RawData [0]);
+			raw [0] = 1;
+			// same buffer or copy ?
+			AssertEquals ("RawData[0]=1", 0x01, bst.RawData [0]);
+			bst.RawData = null;
+			AssertNull ("RawData(null)", bst.RawData);
 		}
 	}
 }

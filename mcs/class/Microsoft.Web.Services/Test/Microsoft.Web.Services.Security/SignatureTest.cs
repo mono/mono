@@ -65,7 +65,7 @@ namespace MonoTests.MS.Web.Services.Security {
 		}
 
 		[Test]
-		public void SecurityOptions () 
+		public void SignatureOptionsAssign () 
 		{
 			UsernameToken ut = new UsernameToken ("me", "mono");
 			Signature s = new Signature (ut);
@@ -73,6 +73,7 @@ namespace MonoTests.MS.Web.Services.Security {
 			AssertEquals ("SignatureOptions.IncludeNone", SignatureOptions.IncludeNone, s.SignatureOptions);
 			s.SignatureOptions = SignatureOptions.IncludePath;
 			AssertEquals ("SignatureOptions.IncludePath", SignatureOptions.IncludePath, s.SignatureOptions);
+#if WSE1
 			s.SignatureOptions = SignatureOptions.IncludePathAction;
 			AssertEquals ("SignatureOptions.IncludePathAction", SignatureOptions.IncludePathAction, s.SignatureOptions);
 			s.SignatureOptions = SignatureOptions.IncludePathFrom;
@@ -81,6 +82,7 @@ namespace MonoTests.MS.Web.Services.Security {
 			AssertEquals ("SignatureOptions.IncludePathId", SignatureOptions.IncludePathId, s.SignatureOptions);
 			s.SignatureOptions = SignatureOptions.IncludePathTo;
 			AssertEquals ("SignatureOptions.IncludePathTo", SignatureOptions.IncludePathTo, s.SignatureOptions);
+#endif
 			s.SignatureOptions = SignatureOptions.IncludeSoapBody;
 			AssertEquals ("SignatureOptions.IncludeSoapBody", SignatureOptions.IncludeSoapBody, s.SignatureOptions);
 			s.SignatureOptions = SignatureOptions.IncludeTimestamp;
