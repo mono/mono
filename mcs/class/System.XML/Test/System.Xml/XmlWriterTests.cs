@@ -24,6 +24,71 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XmlWriterTests
 	{
+		StringWriter writer;
+		XmlTextWriter xtw;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			writer = new StringWriter ();
+			xtw = new XmlTextWriter (writer);
+		}
+
+		private void setupWriter ()
+		{
+			writer.GetStringBuilder ().Length = 0;
+		}
+
+		[Test]
+		public void WriteNodeFullDocument ()
+		{
+			setupWriter ();
+			string xml = "<?xml version='1.0'?><root />";
+			StringReader sr = new StringReader (xml);
+			XmlTextReader xtr = new XmlTextReader (sr);
+			xtw.WriteNode (xtr, false);
+			Assertion.AssertEquals (xml.Replace ("'", "\""),
+				writer.ToString ());
+		}
+
+		[Test]
+		public void WriteNodeXmlDecl ()
+		{
+			setupWriter ();
+			string xml = "<?xml version='1.0'?><root />";
+			StringReader sr = new StringReader (xml);
+			XmlTextReader xtr = new XmlTextReader (sr);
+			xtr.Read ();
+			xtw.WriteNode (xtr, false);
+			Assertion.AssertEquals ("<?xml version=\"1.0\"?>",
+				 writer.ToString ());
+		}
+
+		[Test]
+		public void WriteNodeEmptyElement ()
+		{
+			setupWriter ();
+			string xml = "<root attr='value' attr2='value' />";
+			StringReader sr = new StringReader (xml);
+			XmlTextReader xtr = new XmlTextReader (sr);
+			xtw.WriteNode (xtr, false);
+			Assertion.AssertEquals (xml.Replace ("'", "\""),
+				writer.ToString ());
+		}
+
+		[Test]
+		public void WriteNodeSingleContentElement ()
+		{
+			setupWriter ();
+			string xml = "<root attr='value' attr2='value'><foo /></root>";
+			StringReader sr = new StringReader (xml);
+			XmlTextReader xtr = new XmlTextReader (sr);
+			xtw.WriteNode (xtr, false);
+			Assertion.AssertEquals (xml.Replace ("'", "\""),
+				writer.ToString ());
+		}
+		
+
 		// MS.NET's not-overriden XmlWriter.WriteStartElement(name)
 		// invokes WriteStartElement(null, name, null). 
 		// WriteStartElement(name, ns) invokes (null, name, ns), too.
