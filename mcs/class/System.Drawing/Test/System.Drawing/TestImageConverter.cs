@@ -19,7 +19,7 @@ using System.IO;
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]	
-	public class ImageConverterTest : Assertion
+	public class ImageConverterTest 
 	{
 		Image image;		
 		ImageConverter imgConv;
@@ -45,9 +45,9 @@ namespace MonoTests.System.Drawing
  			
 			try {
 				if (stream.Read (imageBytes, 0, length) != length)
-					Fail ("SU#1: Read Failure"); 
+					Assert.Fail ("SU#1: Read Failure"); 
 			} catch (Exception e) {
-				Fail ("SU#2 Exception thrown while reading. Exception is: "+e.Message);
+				Assert.Fail ("SU#2 Exception thrown while reading. Exception is: "+e.Message);
 			} finally {
 				stream.Close ();
 			}
@@ -59,64 +59,64 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestCanConvertFrom ()
 		{
-			Assert ("CCF#1", imgConv.CanConvertFrom (typeof (byte [])));
-			Assert ("CCF#1a", imgConv.CanConvertFrom (null, typeof (byte [])));
-			Assert ("CCF#1b", imgConv.CanConvertFrom (null, imageBytes.GetType ()));
-			Assert ("CCF#2", ! imgConv.CanConvertFrom (null, typeof (String)));
-			Assert ("CCF#3", ! imgConv.CanConvertFrom (null, typeof (Rectangle)));
-			Assert ("CCF#4", ! imgConv.CanConvertFrom (null, typeof (Point)));
-			Assert ("CCF#5", ! imgConv.CanConvertFrom (null, typeof (PointF)));
-			Assert ("CCF#6", ! imgConv.CanConvertFrom (null, typeof (Size)));
-			Assert ("CCF#7", ! imgConv.CanConvertFrom (null, typeof (SizeF)));
-			Assert ("CCF#8", ! imgConv.CanConvertFrom (null, typeof (Object)));
-			Assert ("CCF#9", ! imgConv.CanConvertFrom (null, typeof (int)));
-			Assert ("CCF#9", ! imgConv.CanConvertFrom (null, typeof (Metafile)));
+			Assert.IsTrue (imgConv.CanConvertFrom (typeof (byte [])), "CCF#1");
+			Assert.IsTrue (imgConv.CanConvertFrom (null, typeof (byte [])), "CCF#1a");
+			Assert.IsTrue (imgConv.CanConvertFrom (null, imageBytes.GetType ()), "CCF#1b");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (String)), "CCF#2");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (Rectangle)), "CCF#3");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (Point)), "CCF#4");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (PointF)), "CCF#5");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (Size)), "CCF#6");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (SizeF)), "CCF#7");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (Object)), "CCF#8");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (int)), "CCF#9");
+			Assert.IsTrue (! imgConv.CanConvertFrom (null, typeof (Metafile)), "CCF#10");
 
-			Assert ("CCF#1A", imgConvFrmTD.CanConvertFrom (typeof (byte [])));
-			Assert ("CCF#1aA", imgConvFrmTD.CanConvertFrom (null, typeof (byte [])));
-			Assert ("CCF#1bA", imgConvFrmTD.CanConvertFrom (null, imageBytes.GetType ()));
-			Assert ("CCF#2A", ! imgConvFrmTD.CanConvertFrom (null, typeof (String)));
-			Assert ("CCF#3A", ! imgConvFrmTD.CanConvertFrom (null, typeof (Rectangle)));
-			Assert ("CCF#4A", ! imgConvFrmTD.CanConvertFrom (null, typeof (Point)));
-			Assert ("CCF#5A", ! imgConvFrmTD.CanConvertFrom (null, typeof (PointF)));
-			Assert ("CCF#6A", ! imgConvFrmTD.CanConvertFrom (null, typeof (Size)));
-			Assert ("CCF#7A", ! imgConvFrmTD.CanConvertFrom (null, typeof (SizeF)));
-			Assert ("CCF#8A", ! imgConvFrmTD.CanConvertFrom (null, typeof (Object)));
-			Assert ("CCF#9A", ! imgConvFrmTD.CanConvertFrom (null, typeof (int)));
-			Assert ("CCF#9A", ! imgConvFrmTD.CanConvertFrom (null, typeof (Metafile)));
+			Assert.IsTrue (imgConvFrmTD.CanConvertFrom (typeof (byte [])), "CCF#1A");
+			Assert.IsTrue (imgConvFrmTD.CanConvertFrom (null, typeof (byte [])), "CCF#1aA");
+			Assert.IsTrue (imgConvFrmTD.CanConvertFrom (null, imageBytes.GetType ()), "CCF#1bA");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (String)), "CCF#2A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (Rectangle)), "CCF#3A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (Point)), "CCF#4A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (PointF)), "CCF#5A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (Size)), "CCF#6A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (SizeF)), "CCF#7A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (Object)), "CCF#8A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (int)), "CCF#9A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertFrom (null, typeof (Metafile)), "CCF#10A");
 
 		}
 
 		[Test]
 		public void TestCanConvertTo ()
 		{
-			Assert ("CCT#1", imgConv.CanConvertTo (typeof (String)));
-			Assert ("CCT#1a", imgConv.CanConvertTo (null, typeof (String)));
-			Assert ("CCT#1b", imgConv.CanConvertTo (null, imageStr.GetType ()));
-			Assert ("CCT#2", imgConv.CanConvertTo (typeof (byte [])));
-			Assert ("CCT#2a", imgConv.CanConvertTo (null, typeof (byte [])));
-			Assert ("CCT#2b", imgConv.CanConvertTo (null, imageBytes.GetType ()));
-			Assert ("CCT#3", ! imgConv.CanConvertTo (null, typeof (Rectangle)));
-			Assert ("CCT#4", ! imgConv.CanConvertTo (null, typeof (Point)));
-			Assert ("CCT#5", ! imgConv.CanConvertTo (null, typeof (PointF)));
-			Assert ("CCT#6", ! imgConv.CanConvertTo (null, typeof (Size)));
-			Assert ("CCT#7", ! imgConv.CanConvertTo (null, typeof (SizeF)));
-			Assert ("CCT#8", ! imgConv.CanConvertTo (null, typeof (Object)));
-			Assert ("CCT#9", ! imgConv.CanConvertTo (null, typeof (int)));
+			Assert.IsTrue (imgConv.CanConvertTo (typeof (String)), "CCT#1");
+			Assert.IsTrue (imgConv.CanConvertTo (null, typeof (String)), "CCT#1a");
+			Assert.IsTrue (imgConv.CanConvertTo (null, imageStr.GetType ()), "CCT#1b");
+			Assert.IsTrue (imgConv.CanConvertTo (typeof (byte [])), "CCT#2");
+			Assert.IsTrue (imgConv.CanConvertTo (null, typeof (byte [])), "CCT#2a");
+			Assert.IsTrue (imgConv.CanConvertTo (null, imageBytes.GetType ()), "CCT#2b");
+			Assert.IsTrue (! imgConv.CanConvertTo (null, typeof (Rectangle)), "CCT#3");
+			Assert.IsTrue (! imgConv.CanConvertTo (null, typeof (Point)), "CCT#4");
+			Assert.IsTrue (! imgConv.CanConvertTo (null, typeof (PointF)), "CCT#5");
+			Assert.IsTrue (! imgConv.CanConvertTo (null, typeof (Size)), "CCT#6");
+			Assert.IsTrue (! imgConv.CanConvertTo (null, typeof (SizeF)), "CCT#7");
+			Assert.IsTrue (! imgConv.CanConvertTo (null, typeof (Object)), "CCT#8");
+			Assert.IsTrue (! imgConv.CanConvertTo (null, typeof (int)), "CCT#9");
 
-			Assert ("CCT#1A", imgConvFrmTD.CanConvertTo (typeof (String)));
-			Assert ("CCT#1aA", imgConvFrmTD.CanConvertTo (null, typeof (String)));
-			Assert ("CCT#1bA", imgConvFrmTD.CanConvertTo (null, imageStr.GetType ()));
-			Assert ("CCT#2A", imgConvFrmTD.CanConvertTo (typeof (byte [])));
-			Assert ("CCT#2aA", imgConvFrmTD.CanConvertTo (null, typeof (byte [])));
-			Assert ("CCT#2bA", imgConvFrmTD.CanConvertTo (null, imageBytes.GetType ()));
-			Assert ("CCT#3A", ! imgConvFrmTD.CanConvertTo (null, typeof (Rectangle)));
-			Assert ("CCT#4A", ! imgConvFrmTD.CanConvertTo (null, typeof (Point)));
-			Assert ("CCT#5A", ! imgConvFrmTD.CanConvertTo (null, typeof (PointF)));
-			Assert ("CCT#6A", ! imgConvFrmTD.CanConvertTo (null, typeof (Size)));
-			Assert ("CCT#7A", ! imgConvFrmTD.CanConvertTo (null, typeof (SizeF)));
-			Assert ("CCT#8A", ! imgConvFrmTD.CanConvertTo (null, typeof (Object)));
-			Assert ("CCT#9A", ! imgConvFrmTD.CanConvertTo (null, typeof (int)));
+			Assert.IsTrue (imgConvFrmTD.CanConvertTo (typeof (String)), "CCT#1A");
+			Assert.IsTrue (imgConvFrmTD.CanConvertTo (null, typeof (String)), "CCT#1aA");
+			Assert.IsTrue (imgConvFrmTD.CanConvertTo (null, imageStr.GetType ()), "CCT#1bA");
+			Assert.IsTrue (imgConvFrmTD.CanConvertTo (typeof (byte [])), "CCT#2A");
+			Assert.IsTrue (imgConvFrmTD.CanConvertTo (null, typeof (byte [])), "CCT#2aA");
+			Assert.IsTrue (imgConvFrmTD.CanConvertTo (null, imageBytes.GetType ()), "CCT#2bA");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertTo (null, typeof (Rectangle)), "CCT#3A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertTo (null, typeof (Point)), "CCT#4A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertTo (null, typeof (PointF)), "CCT#5A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertTo (null, typeof (Size)), "CCT#6A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertTo (null, typeof (SizeF)), "CCT#7A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertTo (null, typeof (Object)), "CCT#8A");
+			Assert.IsTrue (! imgConvFrmTD.CanConvertTo (null, typeof (int)), "CCT#9A");
 
 		}
 
@@ -125,108 +125,108 @@ namespace MonoTests.System.Drawing
 		{
 			Image newImage = (Image) imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, imageBytes);
 			
-			AssertEquals ("CF#1", image.Height, newImage.Height);
-			AssertEquals ("CF#1a", image.Width, newImage.Width);
+			Assert.AreEqual (image.Height, newImage.Height, "CF#1");
+			Assert.AreEqual (image.Width, newImage.Width, "CF#1a");
 			
 			try {
 				imgConv.ConvertFrom ("System.Drawing.String");
-				Fail ("CF#2: must throw NotSupportedException");
+				Assert.Fail ("CF#2: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#2", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#2");
 			}
 
 			try {
 				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   "System.Drawing.String");
-				Fail ("CF#2a: must throw NotSupportedException");
+				Assert.Fail ("CF#2a: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#2a", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#2a");
 			}
 
 			try {
 				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Bitmap (20, 20));
-				Fail ("CF#3: must throw NotSupportedException");
+				Assert.Fail ("CF#3: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#3", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#3");
 			}
 
 			try {
 				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Point (10, 10));
-				Fail ("CF#4: must throw NotSupportedException");
+				Assert.Fail ("CF#4: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#4", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#4");
 			}
 
 			try {
 				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new SizeF (10, 10));
-				Fail ("CF#5: must throw NotSupportedException");
+				Assert.Fail ("CF#5: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#5", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#5");
 			}
 
 			try {
 				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Object ());
-				Fail ("CF#6: must throw NotSupportedException");
+				Assert.Fail ("CF#6: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#6", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#6");
 			}
 
 
 			newImage = (Image) imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, imageBytes);
 
-			AssertEquals ("CF#1A", image.Height, newImage.Height);
-			AssertEquals ("CF#1aA", image.Width, newImage.Width);
+			Assert.AreEqual (image.Height, newImage.Height, "CF#1A");
+			Assert.AreEqual (image.Width, newImage.Width, "CF#1aA");
 			
 			
 			try {
 				imgConvFrmTD.ConvertFrom ("System.Drawing.String");
-				Fail ("CF#2A: must throw NotSupportedException");
+				Assert.Fail ("CF#2A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#2A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#2A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   "System.Drawing.String");
-				Fail ("CF#2aA: must throw NotSupportedException");
+				Assert.Fail ("CF#2aA: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#2aA", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#2aA");
 			}
 
 			try {
 				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Bitmap (20, 20));
-				Fail ("CF#3A: must throw NotSupportedException");
+				Assert.Fail ("CF#3A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#3A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#3A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Point (10, 10));
-				Fail ("CF#4A: must throw NotSupportedException");
+				Assert.Fail ("CF#4A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#4A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#4A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new SizeF (10, 10));
-				Fail ("CF#5A: must throw NotSupportedException");
+				Assert.Fail ("CF#5A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#5A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#5A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Object ());
-				Fail ("CF#6A: must throw NotSupportedException");
+				Assert.Fail ("CF#6A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#6A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#6A");
 			}
 
 		}
@@ -234,166 +234,166 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", imageStr, (String) imgConv.ConvertTo (null,
+			Assert.AreEqual (imageStr, (String) imgConv.ConvertTo (null,
 								CultureInfo.InvariantCulture,
-								image, typeof (String)));
+								image, typeof (String)), "CT#1");
 
-			AssertEquals ("CT#1a", imageStr, (String) imgConv.ConvertTo (image, 
-									typeof (String)));
+			Assert.AreEqual (imageStr, (String) imgConv.ConvertTo (image, 
+									typeof (String)), "CT#1a");
 				
 			byte [] newImageBytes = (byte []) imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
 											image, imageBytes.GetType ());
 
-			AssertEquals ("CT#2", imageBytes.Length, newImageBytes.Length);
+			Assert.AreEqual (imageBytes.Length, newImageBytes.Length, "CT#2");
 
 			newImageBytes = (byte []) imgConv.ConvertTo (image, imageBytes.GetType ());
 			
-			AssertEquals ("CT#2a", imageBytes.Length, newImageBytes.Length);
+			Assert.AreEqual (imageBytes.Length, newImageBytes.Length, "CT#2a");
 
 			
 			try {
 				imgConv.ConvertTo (null, CultureInfo.InvariantCulture, 
 						 image, typeof (Rectangle));
-				Fail ("CT#3: must throw NotSupportedException");
+				Assert.Fail ("CT#3: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#3", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#3");
 			}
 
 			try {
 				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, image.GetType ());
-				Fail ("CT#4: must throw NotSupportedException");
+				Assert.Fail ("CT#4: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#4", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#4");
 			}
 
 			try {
 				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Size));
-				Fail ("CT#5: must throw NotSupportedException");
+				Assert.Fail ("CT#5: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#5", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#5");
 			}
 
 			try {
 				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Bitmap));
-				Fail ("CT#6: must throw NotSupportedException");
+				Assert.Fail ("CT#6: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#6", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#6");
 			}
 
 			try {
 				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Point));
-				Fail ("CT#7: must throw NotSupportedException");
+				Assert.Fail ("CT#7: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#7", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#7");
 			}
 
 			try {
 				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Metafile));
-				Fail ("CT#8: must throw NotSupportedException");
+				Assert.Fail ("CT#8: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#8", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#8");
 			}
 
 			try {
 				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Object));
-				Fail ("CT#9: must throw NotSupportedException");
+				Assert.Fail ("CT#9: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#9", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#9");
 			}
 
 			try {
 				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (int));
-				Fail ("CT#10: must throw NotSupportedException");
+				Assert.Fail ("CT#10: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#10", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#10");
 			}
 
 
-			AssertEquals ("CT#1A", imageStr, (String) imgConvFrmTD.ConvertTo (null,
+			Assert.AreEqual (imageStr, (String) imgConvFrmTD.ConvertTo (null,
 								CultureInfo.InvariantCulture,
-								image, typeof (String)));
+								image, typeof (String)), "CT#1A");
 
-			AssertEquals ("CT#1aA", imageStr, (String) imgConvFrmTD.ConvertTo (image, 
-									typeof (String)));
+			Assert.AreEqual (imageStr, (String) imgConvFrmTD.ConvertTo (image, 
+									typeof (String)), "CT#1aA");
 				
 			newImageBytes = (byte []) imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 											image, imageBytes.GetType ());
 
-			AssertEquals ("CT#2A", imageBytes.Length, newImageBytes.Length);
+			Assert.AreEqual ( imageBytes.Length, newImageBytes.Length, "CT#2A");
 
 			newImageBytes = (byte []) imgConvFrmTD.ConvertTo (image, imageBytes.GetType ());
 			
-			AssertEquals ("CT#2aA", imageBytes.Length, newImageBytes.Length);
+			Assert.AreEqual (imageBytes.Length, newImageBytes.Length, "CT#2aA");
 			
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, 
 						 image, typeof (Rectangle));
-				Fail ("CT#3A: must throw NotSupportedException");
+				Assert.Fail ("CT#3A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#3A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#3A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, image.GetType ());
-				Fail ("CT#4A: must throw NotSupportedException");
+				Assert.Fail ("CT#4A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#4A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#4A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Size));
-				Fail ("CT#5A: must throw NotSupportedException");
+				Assert.Fail ("CT#5A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#5A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#5A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Bitmap));
-				Fail ("CT#6A: must throw NotSupportedException");
+				Assert.Fail ("CT#6A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#6A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#6A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Point));
-				Fail ("CT#7A: must throw NotSupportedException");
+				Assert.Fail ("CT#7A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#7A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#7A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Metafile));
-				Fail ("CT#8A: must throw NotSupportedException");
+				Assert.Fail ("CT#8A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#8A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#8A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (Object));
-				Fail ("CT#9A: must throw NotSupportedException");
+				Assert.Fail ("CT#9A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#9A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#9A");
 			}
 
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 						 image, typeof (int));
-				Fail ("CT#10A: must throw NotSupportedException");
+				Assert.Fail ("CT#10A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#10A", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#10A");
 			}
 		}
 
@@ -401,8 +401,8 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestGetPropertiesSupported ()
 		{
-			Assert ("GPS#1", imgConv.GetPropertiesSupported ());
-			Assert ("GPS#2", imgConv.GetPropertiesSupported (null));
+			Assert.IsTrue (imgConv.GetPropertiesSupported (), "GPS#1");
+			Assert.IsTrue (imgConv.GetPropertiesSupported (null), "GPS#2");
 		}
 
 		[Test]
@@ -412,25 +412,25 @@ namespace MonoTests.System.Drawing
 			PropertyDescriptorCollection propsColl;
 
 			propsColl = imgConv.GetProperties (null, image, null);
-			AssertEquals ("GP1#1", 13, propsColl.Count);
+			Assert.AreEqual (13, propsColl.Count, "GP1#1");
 			
 			propsColl = imgConv.GetProperties (null, image);
-			AssertEquals ("GP1#2", 6, propsColl.Count);
+			Assert.AreEqual (6, propsColl.Count, "GP1#2");
 
 			propsColl = imgConv.GetProperties (image);
-			AssertEquals ("GP1#3", 6, propsColl.Count);
+			Assert.AreEqual (6, propsColl.Count, "GP1#3");
 
 			propsColl = TypeDescriptor.GetProperties (typeof (Image));
-			AssertEquals ("GP1#4", 13, propsColl.Count);
+			Assert.AreEqual (13, propsColl.Count, "GP1#4");
 			
 			propsColl = imgConvFrmTD.GetProperties (null, image, null);
-			AssertEquals ("GP1#1A", 13, propsColl.Count);
+			Assert.AreEqual (13, propsColl.Count, "GP1#1A");
 			
 			propsColl = imgConvFrmTD.GetProperties (null, image);
-			AssertEquals ("GP1#2A", 6, propsColl.Count);
+			Assert.AreEqual (6, propsColl.Count, "GP1#2A");
 
 			propsColl = imgConvFrmTD.GetProperties (image);
-			AssertEquals ("GP1#3A", 6, propsColl.Count);
+			Assert.AreEqual (6, propsColl.Count, "GP1#3A");
 			
 		}
 	}
