@@ -48,6 +48,10 @@ namespace System.Net
 #else
 		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Default;
 #endif
+#if NET_1_1
+		static bool expectContinue = true;
+		static bool useNagle;
+#endif
 
 		// Fields
 		
@@ -129,7 +133,18 @@ namespace System.Net
 			get { return _securityProtocol; }
 			set { _securityProtocol = value; }
 		}
-		
+
+#if NET_1_1
+		public static bool Expect100Continue {
+			get { return expectContinue; }
+			set { expectContinue = value; }
+		}
+
+		public static bool UseNagleAlgorithm {
+			get { return useNagle; }
+			set { useNagle = value; }
+		}
+#endif
 		// Methods
 		
 		public static ServicePoint FindServicePoint (Uri address) 
@@ -171,6 +186,10 @@ namespace System.Net
 				string addr = address.ToString ();
 				int limit = (int) manager.GetMaxConnections (addr);
 				sp = new ServicePoint (address, limit, maxServicePointIdleTime);
+#if NET_1_1
+				sp.Expect100Continue = expectContinue;
+				sp.UseNagleAlgorithm = useNagle;
+#endif
 				sp.UsesProxy = usesProxy;
 				servicePoints.Add (address, sp);
 			}

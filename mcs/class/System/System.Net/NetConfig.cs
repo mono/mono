@@ -12,15 +12,16 @@ namespace System.Net
 	class NetConfig : ICloneable
 	{
 		internal bool ipv6Enabled = false;
+		internal int MaxResponseHeadersLength = 64;
 
 		internal NetConfig()
 		{
-			
 		}
 
-        object ICloneable.Clone()
+		object ICloneable.Clone()
 		{
 			return MemberwiseClone();
 		}
 	}
 }
+

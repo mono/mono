@@ -7,10 +7,12 @@
 //
 // (c) 2002 Lawrence Pit
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 using System;
 using System.Collections;
+using System.Configuration;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
@@ -66,8 +68,25 @@ namespace System.Net
 		bool authCompleted;
 		byte[] bodyBuffer;
 		int bodyBufferLength;
+#if NET_1_1
+		int maxResponseHeadersLength;
+		static int defaultMaxResponseHeadersLength;
+		int readWriteTimeout;
 		
 		// Constructors
+		static HttpWebRequest ()
+		{
+			NetConfig config = ConfigurationSettings.GetConfig ("system.net/settings") as NetConfig;
+			defaultMaxResponseHeadersLength = 64 * 1024;
+			if (config != null) {
+				int x = config.MaxResponseHeadersLength;
+				if (x != -1)
+					x *= 64;
+
+				defaultMaxResponseHeadersLength = x;
+			}
+		}
+#endif
 		
 		internal HttpWebRequest (Uri uri) 
 		{
@@ -285,6 +304,26 @@ namespace System.Net
 				maxAutoRedirect = value;
 			}			
 		}
+
+#if NET_1_1
+		[MonoTODO ("Use this")]
+		public int MaximumResponseHeadersLength {
+			get { return maxResponseHeadersLength; }
+			set { maxResponseHeadersLength = value; }
+		}
+
+		[MonoTODO ("Use this")]
+		public static int DefaultMaximumResponseHeadersLength {
+			get { return defaultMaxResponseHeadersLength; }
+			set { defaultMaxResponseHeadersLength = value; }
+		}
+
+		[MonoTODO ("Use this")]
+		public int ReadWriteTimeout {
+			get { return readWriteTimeout; }
+			set { readWriteTimeout = value; }
+		}
+#endif
 		
 		public string MediaType {
 			get { return mediaType; }

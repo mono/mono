@@ -31,6 +31,9 @@ namespace System.Net
 		bool usesProxy;
 		Hashtable groups;
 		bool sendContinue = true;
+#if NET_1_1
+		bool useNagle;
+#endif
 		
 		// Constructors
 
@@ -103,7 +106,20 @@ namespace System.Net
 		public bool SupportsPipelining {
 			get { return HttpVersion.Version11.Equals (protocolVersion); }
 		}
-		
+
+#if NET_1_1
+		public bool Expect100Continue {
+			get { return SendContinue; }
+			set { SendContinue = value; }
+		}
+
+		[MonoTODO ("Use me")]
+		public bool UseNagleAlgorithm {
+			get { return useNagle; }
+			set { useNagle = value; }
+		}
+#endif
+
 		internal bool SendContinue {
 			get { return sendContinue &&
 				     (protocolVersion == null || protocolVersion == HttpVersion.Version11); }
