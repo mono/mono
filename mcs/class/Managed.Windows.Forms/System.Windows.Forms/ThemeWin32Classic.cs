@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.35 $
+// $Revision: 1.36 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.36  2004/09/09 03:03:49  ravindra
+// PictureBox would not draw a null image to avoid crash.
+//
 // Revision 1.35  2004/09/07 17:12:26  jordi
 // GroupBox control
 //
@@ -1681,28 +1684,29 @@ namespace System.Windows.Forms
 			int x, y, width, height;
 
 			dc.FillRectangle (new SolidBrush (pb.BackColor), client);
-			DrawBorderStyle (dc, client, pb.BorderStyle);
 
 			x = y = 0;
-			switch (pb.SizeMode) {
-			case PictureBoxSizeMode.StretchImage:
-				width = client.Width;
-				height = client.Height;
-				break;
-			case PictureBoxSizeMode.CenterImage:
-				width = client.Width;
-				height = client.Height;
-				x = width / 2;
-				y = (height - pb.Image.Height) / 2;
-				break;
-			default:
-				// Normal, AutoSize
-				width = client.Width;
-				height = client.Height;
-				break;
+			if (pb.Image != null) {
+				switch (pb.SizeMode) {
+				case PictureBoxSizeMode.StretchImage:
+					width = client.Width;
+					height = client.Height;
+					break;
+				case PictureBoxSizeMode.CenterImage:
+					width = client.Width;
+					height = client.Height;
+					x = width / 2;
+					y = (height - pb.Image.Height) / 2;
+					break;
+				default:
+					// Normal, AutoSize
+					width = client.Width;
+					height = client.Height;
+					break;
+				}
+				dc.DrawImage (pb.Image, x, y, width, height);
 			}
-			dc.DrawImage (pb.Image, x, y, width, height);
-			
+			DrawBorderStyle (dc, client, pb.BorderStyle);
 		}
 
 		public  override void DrawOwnerDrawBackground (DrawItemEventArgs e)
@@ -1727,7 +1731,6 @@ namespace System.Windows.Forms
 			Rectangle paint_area = new Rectangle (0, ThemeEngine.Current.ToolBarGripWidth / 2, 
 							      control.Width, control.Height - ThemeEngine.Current.ToolBarGripWidth / 2);
 			bool flat = (control.Appearance == ToolBarAppearance.Flat);
-
 			dc.FillRectangle (SystemBrushes.Control, paint_area);
 			DrawBorderStyle (dc, paint_area, control.BorderStyle);
 
