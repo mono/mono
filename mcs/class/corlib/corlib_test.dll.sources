@@ -202,6 +202,7 @@ System.Text/UTF7EncodingTest.cs
 System.Text/UTF8EncodingTest.cs
 System.Threading/MutexTest.cs
 System.Threading/ThreadTest.cs
+System.Threading/ReaderWriterLockTest.cs
 System/TimeSpanTest.cs
 System/TimeZoneTest.cs
 System/TypeTest.cs
