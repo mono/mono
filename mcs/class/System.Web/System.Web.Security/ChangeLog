@@ -1,3 +1,9 @@
+2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthenticationModule.cs: fix for bug 73545, which caused
+	authentication not to work when the cookie was not persistent.
+	Patch by Ilya Kharmatsky (Mainsoft).
+
 2005-02-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: make the string to be stored in a config.
