@@ -1,4 +1,10 @@
 
+Thu Apr 22 16:10:31 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c, mini-ppc.h, mini.c: simplified some
+	code reducing duplication between the platforms and enabled
+	signal exception handling (on linux for now).
+
 Wed Apr 21 12:27:48 EDT 2004 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c: more macosx support.
