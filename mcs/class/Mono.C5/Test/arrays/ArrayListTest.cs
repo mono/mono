@@ -1030,7 +1030,6 @@ namespace nunit.arrays.list
 				Assert.IsTrue(IC.eq(lst, 7, 8, 9, 1, 2, 7, 8, 9, 3, 4, 7, 8, 9));
 			}
 
-#if FIXME
 			[Test]
 			public void Map()
 			{
@@ -1049,7 +1048,6 @@ namespace nunit.arrays.list
 				for (int i = 0; i < 4; i++)
 					Assert.AreEqual("<<" + (i + 1) + ">>", r[i]);
 			}
-#endif
 
 			[Test]
 			public void RemoveFirstLast()
