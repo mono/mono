@@ -1,3 +1,7 @@
+2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* cs-parser.jay: allow empty source files. Fixes bug #31781.
+
 2002-10-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ComposedCast.DoResolveType): A quick workaround

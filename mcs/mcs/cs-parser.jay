@@ -255,6 +255,7 @@ compilation_unit
         : outer_declarations opt_EOF
         | outer_declarations attribute_sections opt_EOF
         | attribute_sections opt_EOF
+	| opt_EOF /* allow empty files */
         ;
 	
 opt_EOF
