@@ -12,7 +12,6 @@ public sealed class MDDump {
 
 	public static uint Dump (string peFile)
 	{
-
 		using (Image pe = new Image (peFile)) {
 			pe.Open ();
 			pe.ReadHeaders ();
@@ -34,12 +33,17 @@ public sealed class MDDump {
 					t.Dump (Console.Out);
 				}
 
-				/*
+				/*		
 				MethodIL il = pe.MetaDataRoot.GetMethodBody(1);
 				Console.WriteLine(il);
 				il.DumpHexBytecode(Console.Out);
 				*/
 			}
+
+			FileStream out_file = new FileStream ("out.dll", FileMode.Create);
+			BinaryWriter binary_writer = new BinaryWriter (out_file);
+			pe.WriteHeaders (binary_writer);
+			out_file.Close ();
 		}
 
 		return 0;
