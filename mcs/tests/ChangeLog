@@ -1,3 +1,7 @@
+2001-10-17  Ravi Pratap  <ravi@ximian.com>
+
+	* test-26.cs : Added to demonstrate delegate support.
+
 2001-10-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-25.cs: Added new test to excercise break/continue on
