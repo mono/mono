@@ -438,7 +438,7 @@ namespace Mono.CSharp.Debugger
 	public class MethodEntry
 	{
 		#region This is actually written to the symbol file
-		public readonly int SourceFileIndex;
+		//public readonly int SourceFileIndex; (we take this from the SourceFile)
 		public readonly int Token;
 		public readonly int StartRow;
 		public readonly int EndRow;
@@ -493,7 +493,7 @@ namespace Mono.CSharp.Debugger
 		{
 			this.SymbolFile = file;
 			this.Index = index;
-			SourceFileIndex = reader.ReadInt32 ();
+			int SourceFileIndex = reader.ReadInt32 ();
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
 			EndRow = reader.ReadInt32 ();
@@ -582,7 +582,6 @@ namespace Mono.CSharp.Debugger
 			Index = file.GetNextMethodIndex ();
 
 			Token = token;
-			SourceFileIndex = source.Index;
 			SourceFile = source;
 			StartRow = start_row;
 			EndRow = end_row;
@@ -693,7 +692,7 @@ namespace Mono.CSharp.Debugger
 				LexicalBlocks [i].Write (bw);
 			file_offset = (int) bw.BaseStream.Position;
 
-			bw.Write (SourceFileIndex);
+			bw.Write (SourceFile.Index);
 			bw.Write (Token);
 			bw.Write (StartRow);
 			bw.Write (EndRow);
@@ -722,7 +721,7 @@ namespace Mono.CSharp.Debugger
 		public override string ToString ()
 		{
 			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {7}:{8}:{9}:{10} - {5} - {6}]",
-					      Index, Token, SourceFileIndex, StartRow, EndRow,
+					      Index, Token, SourceFile.Index, StartRow, EndRow,
 					      SourceFile, FullName, ClassTypeIndex, NumParameters,
 					      NumLocals, NumLineNumbers);
 		}
