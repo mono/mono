@@ -714,11 +714,13 @@ namespace System.Xml.XPath
 			return MoveToChild (localName, namespaceURI);
 		}
 
+		[Obsolete]
 		public virtual bool MoveToDescendant (XPathNodeType type)
 		{
 			return MoveTo (SelectDescendants (type, false));
 		}
 
+		[Obsolete]
 		public virtual bool MoveToDescendant (string localName, string namespaceURI)
 		{
 			return MoveTo (SelectDescendants (localName, namespaceURI, false));
@@ -758,6 +760,78 @@ namespace System.Xml.XPath
 					return true;
 				}
 			}
+			return false;
+		}
+
+		[MonoTODO]
+		public virtual bool MoveToFollowing (string localName,
+			string namespaceURI)
+		{
+			return MoveToFollowing (localName, namespaceURI, null);
+		}
+
+		[MonoTODO]
+		public virtual bool MoveToFollowing (string localName,
+			string namespaceURI, XPathNavigator end)
+		{
+			XPathNavigator nav = Clone ();
+			bool skip = false;
+			do {
+				if (!skip && nav.MoveToDescendant (localName,
+					namespaceURI)) {
+					if (end != null) {
+						switch (nav.ComparePosition (end)) {
+						case XmlNodeOrder.After:
+						case XmlNodeOrder.Unknown:
+							return false;
+						}
+					}
+					MoveTo (nav);
+					return true;
+				}
+				else
+					skip = false;
+				if (!nav.MoveToNext ()) {
+					if (!nav.MoveToParent ())
+						break;
+					skip = true;
+				}
+			} while (true);
+			return false;
+		}
+
+		[MonoTODO]
+		public virtual bool MoveToFollowing (XPathNodeType type)
+		{
+			return MoveToFollowing (type, null);
+		}
+
+		[MonoTODO]
+		public virtual bool MoveToFollowing (XPathNodeType type,
+			XPathNavigator end)
+		{
+			XPathNavigator nav = Clone ();
+			bool skip = false;
+			do {
+				if (!skip && nav.MoveToDescendant (type)) {
+					if (end != null) {
+						switch (nav.ComparePosition (end)) {
+						case XmlNodeOrder.After:
+						case XmlNodeOrder.Unknown:
+							return false;
+						}
+					}
+					MoveTo (nav);
+					return true;
+				}
+				else
+					skip = false;
+				if (!nav.MoveToNext ()) {
+					if (!nav.MoveToParent ())
+						break;
+					skip = true;
+				}
+			} while (true);
 			return false;
 		}
 
@@ -1022,15 +1096,6 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
-		// LAMESPEC: documented as public abstract, but it conflicts
-		// with XPathNavigator.CreateNavigator ().
-/*
-		[MonoTODO]
-		public override XPathNavigator CreateNavigator ()
-		{
-		}
-*/
-
 		public virtual bool DeleteSelf ()
 		{
 			throw new NotSupportedException ();
@@ -1147,6 +1212,25 @@ namespace System.Xml.XPath
 			using (XmlWriter w = PrependChild ()) {
 				w.WriteElementString (prefix, localName, namespaceURI, value);
 			}
+		}
+
+		[MonoTODO]
+		public virtual bool ReplaceSelf (string xmlFragment)
+		{
+			return ReplaceSelf (XmlReader.Create (new StringReader (xmlFragment)));
+		}
+
+		[MonoTODO]
+		public virtual bool ReplaceSelf (XmlReader reader)
+		{
+			InsertBefore (reader);
+			return DeleteSelf ();
+		}
+
+		[MonoTODO]
+		public virtual bool ReplaceSelf (XPathNavigator navigator)
+		{
+			return ReplaceSelf (new XPathNavigatorReader (navigator));
 		}
 
 		// Dunno the exact purpose, but maybe internal editor use
