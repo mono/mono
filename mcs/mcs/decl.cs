@@ -102,9 +102,9 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			throw new Exception ("This exception is thrown because someone is miss-using\n" +
-					     "MemberName.ToString in the compiler.  Please report this bug");
-			
+			Console.WriteLine ("INTERNAL-WARNING: someone is miss-using MemberName.ToString in the compiler.  Please report this bug");
+			Console.WriteLine ("From: " + Environment.StackTrace);
+			return Name;
 		}
 	}
 

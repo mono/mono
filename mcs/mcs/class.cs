@@ -2411,11 +2411,11 @@ namespace Mono.CSharp {
 		public readonly TypeAttributes DefaultTypeAttributes;
 
 		static PartialContainer Create (NamespaceEntry ns, TypeContainer parent,
-						MemberName name, int mod_flags, Kind kind,
+						MemberName member_name, int mod_flags, Kind kind,
 						Location loc)
 		{
 			PartialContainer pc;
-			string full_name = name.GetName (true);
+			string full_name = member_name.GetName (true);
 			DeclSpace ds = (DeclSpace) RootContext.Tree.Decls [full_name];
 			if (ds != null) {
 				pc = ds as PartialContainer;
@@ -2425,7 +2425,7 @@ namespace Mono.CSharp {
 						260, ds.Location, "Missing partial modifier " +
 						"on declaration of type `{0}'; another " +
 						"partial implementation of this type exists",
-						name);
+						member_name.GetPartialName());
 
 					Report.LocationOfPreviousError (loc);
 					return null;
@@ -2435,7 +2435,7 @@ namespace Mono.CSharp {
 					Report.Error (
 						261, loc, "Partial declarations of `{0}' " +
 						"must be all classes, all structs or " +
-						"all interfaces", name);
+						"all interfaces", member_name.GetPartialName ());
 					return null;
 				}
 
@@ -2443,14 +2443,14 @@ namespace Mono.CSharp {
 					Report.Error (
 						262, loc, "Partial declarations of `{0}' " +
 						"have conflicting accessibility modifiers",
-						name);
+						member_name.GetPartialName ());
 					return null;
 				}
 
 				return pc;
 			}
 
-			pc = new PartialContainer (ns, parent, name, mod_flags, kind, loc);
+			pc = new PartialContainer (ns, parent, member_name, mod_flags, kind, loc);
 			RootContext.Tree.RecordDecl (full_name, pc);
 			parent.AddType (pc);
 			pc.Register ();

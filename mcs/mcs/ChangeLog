@@ -1,3 +1,16 @@
+2004-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (PartialContainer.Create): rename `name' to
+	`member_name' for clarity.  Then replace the string calls with a
+	call to MemberName.GetPartialName, as now using
+	MemberName.ToString is an error (this is due to the side effects
+	it had, that were fixed in the past).
+
+	This will restore the error reporting on a number of partial class
+	errors that were missusing this (and getting an exception as a
+	results, which is now just a plain textual warning, because
+	yyparse debug output would crash otherwise).
+
 2004-11-26  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (PROGRAM_INSTALL_DIR): Remove.
