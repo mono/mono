@@ -1,3 +1,9 @@
+
+Mon Oct 7 12:25:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: added a --stats command line option to gather
+	statistics about the assembly code.
+
 2002-08-28  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am: Export HOST_CC for w32 builds
