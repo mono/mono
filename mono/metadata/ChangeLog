@@ -1,5 +1,8 @@
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_get_object_from_blob): Applied patch from
+	Ankit Jain (radical@gmail.com). Fix enum default values. Fixes #73457.
+
 	* class.c (mono_class_is_assignable_from): Another try at fixing 
 	#73469 without breaking anything.
 
