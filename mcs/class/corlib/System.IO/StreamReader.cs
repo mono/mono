@@ -178,6 +178,9 @@ namespace System.IO {
 
 		public override int Peek ()
 		{
+			if (!internalStream.CanSeek)
+				return -1;
+
 			if (pos >= cchDecoded && ReadBuffer () == 0)
 				return -1;
 
@@ -233,11 +236,9 @@ namespace System.IO {
 					break;
 				}
 
-				if (c == '\n')				// newline
-					break;
-
-				if (c == '\r' && Peek () == '\n') {	// cr, newline
-					Read ();
+				if (c == '\n') {			// newline
+					if (text [text.Length - 1] == '\r')
+						text.Length--;
 					break;
 				}
 

@@ -1,3 +1,8 @@
+2002-07-02  Mike Kestner  <mkestner@speakeasy.net>
+
+	* StreamReader.cs: Revert the last Peek change and fix the ReadLine
+	end of line detection code instead.
+
 2002-07-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StreamReader.cs:
