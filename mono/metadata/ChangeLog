@@ -1,3 +1,8 @@
+2001-10-17  Sean MacIsaac  <macisaac@ximian.com>
+
+	* class.c (mono_class_create_from_typeref): added debugging output
+	to print class name when MonoDummy is returned instead of real class
+
 2001-10-15  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_metadata_init): interface offset table now
