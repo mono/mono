@@ -150,7 +150,7 @@ namespace System.Web.Compilation
 			options.AppendFormat ("/out:{0} ", compiler.TargetFile);
 			options.Append (compiler.SourceFile);
 
-			/7Console.WriteLine ("mcs {0}", options);
+			//Console.WriteLine ("mcs {0}", options);
 			Process proc = new Process ();
 			if (Path.DirectorySeparatorChar == '\\')
 				proc.StartInfo.FileName = "mcs.bat";
