@@ -804,7 +804,7 @@ namespace System {
 
 		public static double ToDouble (float value) 
 		{ 
-			return (double) Math.Round (value);	  
+			return (double) value;
 		}
 
 		public static double ToDouble (int value) 
