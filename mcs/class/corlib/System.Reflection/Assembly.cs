@@ -14,6 +14,8 @@ using System.Reflection.Emit;
 using System.IO;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace System.Reflection {
 
@@ -148,12 +150,25 @@ namespace System.Reflection {
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			if (name == "")
+				throw new ArgumentException ("name cannot have zero length.");
+
+			ManifestResourceInfo info = GetManifestResourceInfo (name);
+			if (info == null)
+				return null;
+
+			if (info.ReferencedAssembly != null)
+				return info.ReferencedAssembly.GetManifestResourceStream (name);
+
 			object data = GetManifestResourceInternal (name);
 			string filename = data as string;
 			if (data == null)
 				return null;
 			if (filename != null) {
-				return new FileStream (filename, FileMode.Open, FileAccess.Read);
+				if ((info.ResourceLocation & ResourceLocation.Embedded) != 0)
+					throw new NotImplementedException ("Reading from modules is not implemented");
+				else
+					return new FileStream (filename, FileMode.Open, FileAccess.Read);
 			} else {
 				return new MemoryStream ((byte[])data, false);
 			}
@@ -161,10 +176,13 @@ namespace System.Reflection {
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			string ns = type.Namespace;
-			if (ns == null)
+			string ns;
+			if (type != null)
+				ns = type.Namespace;
+			else 
+				ns = null;
+
+			if ((ns == null) || (ns == ""))
 				return GetManifestResourceStream (name);
 			else
 				return GetManifestResourceStream (ns + "." + name);
@@ -354,34 +372,54 @@ namespace System.Reflection {
 			return Activator.CreateInstance (t, bindingAttr, binder, args, culture, activationAttributes);
 		}
 
-		[MonoTODO]
 		public Module[] GetLoadedModules ()
 		{
-			throw new NotImplementedException ();
+			return GetLoadedModules (false);
 		}
 
 		[MonoTODO]
 		public Module[] GetLoadedModules (bool getResourceModules)
 		{
-			throw new NotImplementedException ();
+			// Currently, the two sets of modules are equal
+			return GetModules (getResourceModules);
 		}
 
-		[MonoTODO]
 		public Module[] GetModules ()
 		{
-			throw new NotImplementedException ();
+			return GetModules (false);
 		}
 
-		[MonoTODO]
-		public Module[] GetModules (bool getResourceModules)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public Module GetModule (String name)
 		{
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name == "")
+				throw new ArgumentException ("Name can't be empty");
+
+			Module[] modules = GetModules (true);
+			foreach (Module module in GetModules (true)) {
+				if (module.ScopeName == name)
+					return module;
+			}
+
+			return null;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern Module[] GetModulesInternal ();
+
+		public Module[] GetModules (bool getResourceModules) {
+			Module[] modules = GetModulesInternal ();
+
+			if (!getResourceModules) {
+				ArrayList result = new ArrayList (modules.Length);
+				foreach (Module m in modules)
+					if (!m.IsResource ())
+						result.Add (m);
+				return (Module[])result.ToArray (typeof (Module));
+			}
+			else
+				return modules;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -399,10 +437,21 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern AssemblyName[] GetReferencedAssemblies ();
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern bool GetManifestResourceInfoInternal (String name, ManifestResourceInfo info);
+
 		public virtual ManifestResourceInfo GetManifestResourceInfo (String resourceName)
 		{
-			throw new NotImplementedException ();
+			if (resourceName == null)
+				throw new ArgumentNullException ("resourceName");
+			if (resourceName == "")
+				throw new ArgumentException ("String cannot have zero length.");
+			ManifestResourceInfo result = new ManifestResourceInfo ();
+			bool found = GetManifestResourceInfoInternal (resourceName, result);
+			if (found)
+				return result;
+			else
+				return null;
 		}
 
 		//

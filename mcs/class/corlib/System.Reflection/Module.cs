@@ -11,6 +11,7 @@ using System;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
@@ -25,6 +26,7 @@ namespace System.Reflection {
 		internal string fqname;
 		internal string name;
 		internal string scopename;
+		internal bool is_resource;
 	
 		internal Module () {}
 	
@@ -155,10 +157,9 @@ namespace System.Reflection {
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 	
-		[MonoTODO]
 		public bool IsResource() 
 		{
-			return false;
+			return is_resource;
 		}
 	
 		[MonoTODO]
