@@ -1491,7 +1491,7 @@ namespace System.Web.UI.WebControls
 						if(IsBindableType(prop_type))
 						{
 							b_col = new BoundColumn();
-							// b_col.TrackViewState();
+							((IStateManager)b_col).TrackViewState();
 							b_col.HeaderText = "Item";
 							b_col.SortExpression = "Item";
 							b_col.DataField  = BoundColumn.thisExpr;
@@ -1514,11 +1514,11 @@ namespace System.Web.UI.WebControls
 							if(IsBindableType(current.PropertyType))
 							{
 								b_col = new BoundColumn();
-								// b_col.TrackViewState();
+								((IStateManager)b_col).TrackViewState();
 								b_col.HeaderText     = current.Name;
 								b_col.SortExpression = current.Name;
 								b_col.DataField      = current.Name;
-								// b_col.IsReadOnly     = current.IsReadOnly;
+								b_col.ReadOnly     = current.IsReadOnly;
 								b_col.SetOwner(this);
 								retVal.Add(b_col);
 							}

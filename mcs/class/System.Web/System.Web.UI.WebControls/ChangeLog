@@ -1,3 +1,9 @@
+2003-11-29  Jackson Harper <jackson@ximian.com>
+
+	* DataGrid.cs: Call TrackViewState when loading bound columns view
+	state. So that their state is saved. This fixes bug #51424. Also
+	set ReadOnly.
+	
 2003-11-26  Jackson Harper <jackson@ximian.com>
 
 	* BaseDataList.cs: Change && to || We will call that a typo so no
