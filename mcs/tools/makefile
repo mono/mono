@@ -4,7 +4,7 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: verifier.exe EnumCheck.exe IFaceDisco.exe update ./corcompare/CorCompare.exe
+linux: verifier.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
 
 verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
@@ -17,7 +17,7 @@ CorCompare.exe:
 update: ../../mono/doc/pending-classes
 
 cormissing.xml: ./corcompare/CorCompare.exe ../class/lib/corlib_cmp.dll
-	./corcompare/CorCompare.exe -x cormissing.xml ../class/lib/corlib_cmp.dll
+	./corcompare/CorCompare.exe -x cormissing.xml -f corlib -ms mscorlib ../class/lib/corlib_cmp.dll
 
 ../../mono/doc/pending-classes: ./corcompare/cormissing.xsl cormissing.xml
 	$(CSCRIPT) /nologo ./corcompare/transform.js cormissing.xml ./corcompare/cormissing.xsl > ../../mono/doc/pending-classes
