@@ -1,5 +1,8 @@
 2004-04-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-long32.brg (CEE_CONV_OVF_I8): Sign extend the i4 value to i8.
+	Fixes #56317.
+
 	* iltests.il: Added new regression test for #56317.
 
 2004-04-05  Zoltan Varga  <vargaz@freemail.hu>
