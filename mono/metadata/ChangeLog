@@ -1,3 +1,8 @@
+2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_param_get_objects): Initialize the default value
+	with DBNull.Value, not null. Fixes #62123.
+
 2004-09-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): Remove FIXME and
