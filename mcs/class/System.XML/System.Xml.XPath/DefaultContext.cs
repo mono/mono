@@ -159,10 +159,19 @@ namespace System.Xml.XPath
 		{
 			if (arg == null)
 				throw new ArgumentNullException ();
+			if (arg is string)
+			{
+				try
+				{
+					return XmlConvert.ToDouble ((string) arg);	// TODO: spec? convert string to number
+				}
+				catch (System.FormatException)
+				{
+					return double.NaN;
+				}
+			}
 			if (arg is BaseIterator)
 				arg = ToString (arg);	// follow on
-			if (arg is string)
-				return XmlConvert.ToDouble ((string) arg);	// TODO: spec? convert string to number
 			if (arg is double)
 				return (double) arg;
 			if (arg is bool)

@@ -1,6 +1,12 @@
 2003-07-27  Piers Haken	<piersh@friskit.com>
 
 	* Expression.cs:
+	* DefaultContext.cs:
+		catch FormatExceptions while parsing numbers
+
+2003-07-27  Piers Haken	<piersh@friskit.com>
+
+	* Expression.cs:
 		fix case sorting order
 		allow EvaluateNumber to take XPathResultType.Any
 

@@ -331,9 +331,9 @@ namespace System.Xml.XPath
 				case XPathResultType.Boolean:
 					return Convert.ToDouble ((bool) result);
 				case XPathResultType.NodeSet:
-					return XmlConvert.ToDouble (EvaluateString (iter));
+					return XPathFunctions.ToNumber (EvaluateString (iter));
 				case XPathResultType.String:
-					return XmlConvert.ToDouble ((string) result);	// TODO: spec? convert string to number
+					return XPathFunctions.ToNumber ((string) result);	// TODO: spec? convert string to number
 				default:
 					throw new XPathException ("invalid node type"); // TODO: handle other types
 			}
