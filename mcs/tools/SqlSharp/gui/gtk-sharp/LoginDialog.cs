@@ -30,6 +30,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		Entry provider_entry;
 		SqlSharpGtk sqlSharp;
 		OptionMenu providerOptionMenu;
+		int providerSelected = 0;
 
 		public LoginDialog(SqlSharpGtk sqlSharpGtk) { 
 			sqlSharp = sqlSharpGtk;
@@ -93,33 +94,35 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			Menu providerMenu = new Menu ();
 			MenuItem menuItem;
 			
+			if (sqlSharp.dbProvider == null)
+				providerSelected = 0;
+
 			for(int i = 0; i < sqlSharp.providerList.Count; i++) {
 				DbProvider p = sqlSharp.providerList[i];
 				menuItem = new MenuItem(p.Name);
 				providerMenu.Append (menuItem);
+				if (sqlSharp.dbProvider != null)
+					if (sqlSharp.dbProvider.Name.Equals(p.Name))
+						providerSelected = i;
 			}	
 			
 			optionMenu.Menu = providerMenu;
 			optionMenu.Changed += new EventHandler (provider_changed_cb);
 
-			optionMenu.SetHistory(0);
-			SetProviderSelection(0);
+			optionMenu.SetHistory ((uint) providerSelected);
 
 			return optionMenu;
 		}
 
 		void provider_changed_cb (object o, EventArgs args) {
-			int selected = providerOptionMenu.History;
-			SetProviderSelection(selected);
-		}
-
-		void SetProviderSelection (int selected) {
-			sqlSharp.dbProvider = sqlSharp.providerList[selected];
-			SqlSharpGtk.DebugWriteLine ("provider: " + sqlSharp.dbProvider.Name);
+			if(providerOptionMenu != null)
+				providerSelected = providerOptionMenu.History;
 		}
 
 		void Connect_Action (object o, EventArgs args) {
 			try {
+				sqlSharp.dbProvider = null;
+				sqlSharp.dbProvider = sqlSharp.providerList[providerSelected];
 				string connection = "";
 
 				connection = connection_entry.Text;

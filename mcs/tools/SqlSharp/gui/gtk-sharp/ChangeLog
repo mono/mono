@@ -1,3 +1,13 @@
+2002-11-17  Daniel Morgan <danmorg@sc.rr.com>
+
+	* DataGrid.cs: Redid Clear(). Made GetResolvedDataSource() protected.  
+	
+	* LoginDialog.cs: if Cancel is clicked, don't set provider
+	
+	* sqlsharpgtk.cs: for bottom panel (Output Results) add tool bar button
+	to toggle between DataGrid and TextView
+	
+
 2002-11-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* DataGrid.cs: made this a GTK# widget and

@@ -33,22 +33,40 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System.Reflection;
 	using System.Runtime.Remoting;
 	using System.Diagnostics;
+
 	using Gtk.Controls;
+
+	public enum OutputResults {
+		TextView,
+		DataGrid
+	}
 
 	public class SqlSharpGtk {
 		// these will be moved once a SqlSharpWindow has been created
 		private IDbConnection conn = null;
+		public DbProvider dbProvider = null;
+		public Assembly providerAssembly = null;
+		public string connectionString = "";
+		
+		private SqlEditorSharp editor;	
+		private Statusbar statusBar;
+		private Toolbar toolbar;
+
+		// OutputResults
+		private VBox outbox;
+		// OutputResults.TextView
+		private ScrolledWindow swin;
 		public TextBuffer buf;
 		private TextView textView;
 		private TextTag textTag;
-		public DbProvider dbProvider;
-		public string connectionString;
-		private SqlEditorSharp editor;
-		private ScrolledWindow swin;
-		private Statusbar statusBar;
-		private Toolbar toolbar;
+		// OutputResults.DataGrid
 		private DataGrid grid;
+
 		private Window win;
+
+		public readonly string ApplicationName = "SQL# For GTK#";
+
+		private OutputResults outputResults;
 
 		public DbProviderCollection providerList;
 
@@ -60,7 +78,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 		public void CreateGui() {
 
-			win = new Window ("SQL# For GTK#");
+			win = new Window (ApplicationName);
 			win.DeleteEvent += new DeleteEventHandler (Window_Delete);
 			win.BorderWidth = 4;
 			win.DefaultSize = new Size (450, 300);
@@ -80,29 +98,39 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			VPaned paned = new VPaned ();
 			vbox.PackStart (paned, true, true, 0);
 
-			// SQL Editor (top TextView)
+			// SQL Editor (top TextView panel)
 			editor = new SqlEditorSharp ();
 			paned.Add1 (editor);
 
-			// Output Results (bottom TextView)
-			swin = CreateOutputResultsTextView ();
-			//paned.Add2 (swin);
-
-			grid = CreateOutputResultsDataGrid ();
-			paned.Add2 (grid);
+			// bottom panel
+			outbox = CreateOutputResultsGui ();
+			paned.Add2 (outbox);
 
 			statusBar = new Statusbar ();
 			vbox.PackEnd (statusBar, false, false, 0);
 
 			win.ShowAll ();
+			
+			outputResults = OutputResults.TextView;
+			ToggleResultsOutput ();
+		}
+
+		// bottom panel
+		VBox CreateOutputResultsGui () {
+			VBox outputVBox = new VBox (false, 4);	
+		
+			// Output Results (bottom TextView)
+			swin = CreateOutputResultsTextView ();
+			outputVBox.Add (swin);
+						
+			// Output Results (bottom DataGrid)
+			grid = CreateOutputResultsDataGrid ();
+						
+			return outputVBox;
 		}
 
 		DataGrid CreateOutputResultsDataGrid () {
-			DataGrid dataGrid = null;
-
-			dataGrid = new DataGrid ();
-
-			return dataGrid;
+			return new DataGrid ();
 		}
 
 		ScrolledWindow CreateOutputResultsTextView () {
@@ -135,8 +163,13 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 			toolbar.AppendItem ("Execute", 
 				"Execute SQL Commands.", String.Empty,
-				new Gtk.Image (Stock.Execute, IconSize.LargeToolbar),
+				new Gtk.Image (Stock.Execute, IconSize.SmallToolbar),
 				new SignalFunc (execute_func));	
+
+			toolbar.AppendItem ("Output", 
+				"Toggle Results to DataGrid or TextView", String.Empty,
+				new Gtk.Image (Stock.GoDown, IconSize.SmallToolbar),
+				new SignalFunc (toggle_results_output_func));	
 
 			toolbar.AppendSpace ();		
 
@@ -184,18 +217,18 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				"",
 				true ));
 			providerList.Add (new DbProvider (
+				"OLEDB",
+				"OLE DB",
+				"",
+				"",
+				"",
+				true ));
+			providerList.Add (new DbProvider (
 				"SQLITE",
 				"SQL Lite",
 				"Mono.Data.SqliteClient",
 				"Mono.Data.SqliteClient.SqliteConnection",
 				"Mono.Data.SqliteClient.SqliteAdapter",
-				false ));
-			providerList.Add (new DbProvider (
-				"ORACLE",
-				"Oracle 8i/9i",
-				"System.Data.OracleClient",
-				"System.Data.OracleClient.OracleConnection",
-				"System.Data.OracleClient.OracleAdapter",
 				false ));
 			providerList.Add (new DbProvider (
 				"SYBASE",
@@ -204,7 +237,6 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				"Mono.Data.SybaseClient.SybaseConnection",
 				"Mono.Data.SybaseClient.SybaseAdapter",
 				false ));
-
 		}
 
 		public MenuBar CreateMenuBar () {
@@ -269,14 +301,14 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			textView.ScrollMarkOnscreen (mark);
 		}
 
-		public bool LoadExternalProvider (string providerAssembly,
+		public bool LoadExternalProvider (string strProviderAssembly,
 			string providerConnectionClass) {
 			
 			try {
 				SqlSharpGtk.DebugWriteLine ("Loading external provider...");
-				
-				Assembly ps = Assembly.Load (providerAssembly);
-				Type typ = ps.GetType (providerConnectionClass);
+				providerAssembly = null;
+				providerAssembly = Assembly.Load (strProviderAssembly);
+				Type typ = providerAssembly.GetType (providerConnectionClass);
 				conn = (IDbConnection) Activator.CreateInstance (typ);
 								
 				SqlSharpGtk.DebugWriteLine ("External provider loaded.");
@@ -325,6 +357,25 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			AppendText (buf, "Disconnected.");
 		}
 
+		void toggle_results_output_func (Gtk.Object o) {
+			ToggleResultsOutput ();
+		}
+
+		void ToggleResultsOutput () {
+			if (outputResults == OutputResults.TextView) {
+				outputResults = OutputResults.DataGrid;
+				outbox.Remove (swin);		
+				outbox.Add (grid);
+			}
+			else if (outputResults == OutputResults.DataGrid) {
+				outputResults = OutputResults.TextView;
+				outbox.Remove (grid);
+				outbox.Add (swin);
+			}
+			outbox.ShowAll ();
+			outbox.ResizeChildren ();
+		}
+
 		void execute_func (Gtk.Object o) {
 			ExecuteSQL ();
 		}
@@ -340,6 +391,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			string sql = "";	
 
 			IDbCommand cmd;
+
 			try {
 				cmd = conn.CreateCommand ();
 			}
@@ -380,33 +432,34 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			
 			IDataReader reader = null;
 			SqlSharpGtk.DebugWriteLine ("Executing SQL: " + sql);
-
-			/*
-			try {
-				reader = cmd.ExecuteReader ();
-			}
-			catch (Exception e) {
-				msg = "SQL Execution Error: " + e.Message;
-				Error (msg);
-				return;
-			}
 			
-			if (reader == null) {
-				Error("Error: reader is null");
-				return;
+			if (outputResults == OutputResults.TextView) {
+				try {
+					reader = cmd.ExecuteReader ();
+				}
+				catch (Exception e) {
+					msg = "SQL Execution Error: " + e.Message;
+					Error (msg);
+					return;
+				}
+			
+				if (reader == null) {
+					Error("Error: reader is null");
+					return;
+				}
 			}
-			*/
-			Error("Display Data...");
-			try {
-				// DisplayData (reader);
 
-				DataTable dataTable = LoadDataTable (cmd);
-				grid.DataSource = dataTable;
-				grid.DataBind ();
-				grid.ResizeChildren ();
-				grid.Show ();
-				grid.ShowAll ();
-				win.ShowAll ();
+			try {
+				if (outputResults == OutputResults.TextView) {
+					DisplayData (reader);
+					reader.Close ();
+				}
+				else if(outputResults == OutputResults.DataGrid) {
+					DataTable dataTable = LoadDataTable (cmd);
+					grid.DataSource = dataTable;
+					grid.DataBind ();
+				}
+				cmd = null;
 			} 
 			catch (Exception e) {
 				msg = "Error Displaying Data: " + e.Message;
@@ -840,6 +893,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		}
 
 		public DbDataAdapter CreateDbDataAdapter () {
+
 			string msg = "";
 			DbDataAdapter adapter = null;
 			if (dbProvider.InternalProvider == true) {
@@ -856,9 +910,43 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 						return null;
 					}
 					break;
+				
+				case "OLEDB":
+					try {
+						adapter = new OleDbDataAdapter ();
+					}
+					catch (Exception e) {
+						msg = "Error: unable to create adapter: " +
+							e.Message;
+						Error (msg);
+						return null;
+					}
+					break;
+				// FIXME: need a OdbcDataAdapter
+				case "ODBC":
+					/*
+					try {
+						adapter = new OdbcDataAdapter ();
+					}
+					catch (Exception e) {
+						msg = "Error: unable to create adapter: " +
+							e.Message;
+						Error (msg);
+						return null;
+					}
+					*/
+					break;
 				}
 			}
+			else {
+				CreateExternalDataAdapter (dbProvider.AdapterClass);
+			}
 			return adapter;
+		}
+
+		public DbDataAdapter CreateExternalDataAdapter (string adapterClass) {
+			Type adapterType = providerAssembly.GetType (adapterClass);
+			return (DbDataAdapter) Activator.CreateInstance (adapterType);
 		}
 
 		public DataTable LoadDataTable (IDbCommand cmd) {
