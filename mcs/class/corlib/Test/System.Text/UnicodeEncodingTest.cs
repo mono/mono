@@ -12,16 +12,9 @@ using System.Text;
 
 namespace MonoTests.System.Text
 {
-
         [TestFixture]
         public class UnicodeEncodingTest 
         {
-                [SetUp]
-                public void GetReady() {}
-                
-                [TearDown]
-                public void Clean() {}
-                
                 [Test]
                 public void TestEncodingGetBytes1()
                 {

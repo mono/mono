@@ -1,3 +1,8 @@
+2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UTF7EncodingTest.cs, UnicodeEncodingTest.cs: Removed unused SetUp 
+	and TearDown to facilitate searches.
+
 2004-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UTF8EncodingTest.cs: Test both characters in test 2.1.4.

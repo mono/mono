@@ -10,16 +10,9 @@ using System.Text;
 
 namespace MonoTests.System.Text
 {
-
         [TestFixture]
         public class UTF7EncodingTest 
         {
-                [SetUp]
-                public void GetReady() {}
-                
-                [TearDown]
-                public void Clean() {}
-                
                 [Test]
                 public void TestDirectlyEncoded1() 
                 {
