@@ -1,4 +1,7 @@
 2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Trivial fix (#63213)
+
+2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs:
 	* typemanager.cs:
 		-Bug fixed to resolve the ReadOnly properties from base class

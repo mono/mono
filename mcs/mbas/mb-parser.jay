@@ -1310,7 +1310,7 @@ sub_declaration
 		if ($4 != null) { 
 			// we have an event handler to take care of 
 
-			string evt_def = ((MemberAccess)$6).ToString();
+			string evt_def = ((MemberAccess)$4).ToString();
 			int pos = evt_def.LastIndexOf (".");
 			string evt_target = evt_def.Substring (0, pos);
 			bool found = false;
@@ -2146,8 +2146,7 @@ delegate_declaration
 	;
 	
 opt_evt_handler
-	: /* empty */
-	  { 	$$ = null; }
+	: /* empty */	  {	$$ = null; }
 	| HANDLES qualified_identifier
 	  {
 		$$ = (Expression) DecomposeQI ((string)$2, lexer.Location);	
