@@ -1,5 +1,11 @@
 2002-05-27  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_cfg_new): reserve additional space to store ESP when
+	calling finally handlers.
+
+	* exception.c (arch_get_call_finally): save ESP before calling
+	finally handler.
+
 	* helpers.c (map_arg_type): move some generic helper function into
 	this file.
 
