@@ -510,12 +510,12 @@ namespace System
 				uri = new Uri (s);
 			}
 			
-			return ((this.scheme == uri.scheme) &&
-			        (this.userinfo == uri.userinfo) &&
-			        (this.host == uri.host) &&
-			        (this.port == uri.port) &&
-			        (this.path == uri.path) &&
-			        (this.query == uri.query));
+			return ((this.scheme.ToLower () == uri.scheme.ToLower ()) &&
+				(this.userinfo.ToLower () == uri.userinfo.ToLower ()) &&
+				(this.host.ToLower () == uri.host.ToLower ()) &&
+				(this.port == uri.port) &&
+				(this.path == uri.path) &&
+				(this.query.ToLower () == uri.query.ToLower ()));
 		}		
 		
 		public override int GetHashCode () 
