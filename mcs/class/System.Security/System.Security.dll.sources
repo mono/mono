@@ -7,9 +7,13 @@ System.Security.Cryptography/AsnEncodedDataEnumerator.cs
 System.Security.Cryptography/CryptographicAttribute.cs
 System.Security.Cryptography/CryptographicAttributeCollection.cs
 System.Security.Cryptography/CryptographicAttributeEnumerator.cs
+System.Security.Cryptography/DataProtectionScope.cs
+System.Security.Cryptography/MemoryProtectionScope.cs
 System.Security.Cryptography/Oid.cs
 System.Security.Cryptography/OidCollection.cs
 System.Security.Cryptography/OidEnumerator.cs
+System.Security.Cryptography/ProtectedData.cs
+System.Security.Cryptography/ProtectedMemory.cs
 System.Security.Cryptography.Pkcs/AlgorithmIdentifier.cs
 System.Security.Cryptography.Pkcs/ContentInfo.cs
 System.Security.Cryptography.Pkcs/EnvelopedCms.cs

@@ -3,6 +3,8 @@ System.Security.Cryptography/CryptographicAttributeTest.cs
 System.Security.Cryptography/OidCollectionTest.cs
 System.Security.Cryptography/OidEnumeratorTest.cs
 System.Security.Cryptography/OidTest.cs
+System.Security.Cryptography/ProtectedDataTest.cs
+System.Security.Cryptography/ProtectedMemoryTest.cs
 System.Security.Cryptography.Pkcs/AlgorithmIdentifierTest.cs
 System.Security.Cryptography.Pkcs/CmsRecipientTest.cs
 System.Security.Cryptography.Pkcs/CmsSignerTest.cs
