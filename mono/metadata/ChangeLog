@@ -1,3 +1,8 @@
+2004-09-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Remove FIXME and
+	throw an exception with a cute explanation.
+
 2004-09-06  Dick Porter  <dick@ximian.com>
 
 	* process.c (ves_icall_System_Diagnostics_Process_Start_internal):
