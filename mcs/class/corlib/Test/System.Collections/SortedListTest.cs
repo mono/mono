@@ -86,7 +86,7 @@ public class SortedListTest : TestCase {
 		} catch (InvalidCastException) { // IS NOT THROWN as stated in MSDN
 			//Console.WriteLine("InvalidCastException Handler: {0}", e.ToString());
 		} catch (InvalidOperationException e) { // instead it throws this
-			Console.WriteLine("sl.constructor-3: [undocumented] InvalidOperationException Handler: {0}", e.ToString());
+			Fail ("sl.constructor-3: [undocumented] InvalidOperationException Handler: e=" + e.ToString());
 		}
 	}
 	

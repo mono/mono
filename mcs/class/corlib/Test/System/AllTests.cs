@@ -31,6 +31,7 @@ namespace MonoTests.System {
 				suite.AddTest (ConvertTest.Suite);
 				suite.AddTest (DateTimeTest.Suite);
 				suite.AddTest (DecimalTest.Suite);
+				suite.AddTest (DecimalTest2.Suite);
 				suite.AddTest (DoubleTest.Suite);
 				suite.AddTest (EnumTest.Suite);
 				suite.AddTest (ExceptionTest.Suite);

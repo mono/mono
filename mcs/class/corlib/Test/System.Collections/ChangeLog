@@ -1,3 +1,8 @@
+2002-06-19  Nick Drochak  <ndrochak@gol.com>
+
+	* AllTests.cs: Sort names and include missing tests.
+	* SortedListTest.cs: Change Console.WriteLine() into Fail().
+
 2002-05-27  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayListTest.cs (TestLastIndexOf): Add try-catch block to report

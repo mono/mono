@@ -1,3 +1,8 @@
+2002-06-19  Nick Drochak  <ndrochak@gol.com>
+
+	* AllTests.cs: Add missing test: DecimalTest2
+	* DecimalTest2.cs: Convert Console.Writeline() into a Fail()
+
 2002/06/14  Nick Drochak <ndrochak@gol.com>
 
 	* Int64Test.cs: Make currency symbol test more culturally sensitive.

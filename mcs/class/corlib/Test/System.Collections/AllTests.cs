@@ -20,14 +20,16 @@ namespace MonoTests.System.Collections {
                         get 
                         {
                                 TestSuite suite =  new TestSuite();
-                                suite.AddTest(HashtableTest.Suite);
-                                suite.AddTest(CaseInsensitiveComparerTest.Suite);
-                                suite.AddTest(CaseInsensitiveHashCodeProviderTest.Suite);
                                 suite.AddTest(ArrayListTest.Suite);
                                 suite.AddTest(BitArrayTest.Suite);
+                                suite.AddTest(CaseInsensitiveComparerTest.Suite);
+                                suite.AddTest(CaseInsensitiveHashCodeProviderTest.Suite);
                                 suite.AddTest(CollectionBaseTest.Suite);
-                                suite.AddTest(ReadOnlyCollectionBaseTest.Suite);
                                 suite.AddTest(ComparerTest.Suite);
+                                suite.AddTest(HashtableTest.Suite);
+                                suite.AddTest(QueueTest.Suite);
+                                suite.AddTest(ReadOnlyCollectionBaseTest.Suite);
+                                suite.AddTest(SortedListTest.Suite);
                                 suite.AddTest(StackTest.Suite);
                                 return suite;
                         }

@@ -20,9 +20,10 @@ namespace MonoTests.System.Diagnostics {
                         get 
                         {
                                 TestSuite suite =  new TestSuite();
+                                suite.AddTest(DebugTest.Suite);
                                 suite.AddTest(StackTraceTest.Suite);
                                 suite.AddTest(StackFrameTest.Suite);
-                        		suite.AddTest(TextWriterTraceListenerTest.Suite);
+                        	suite.AddTest(TextWriterTraceListenerTest.Suite);
                                 return suite;
                         }
                 }
