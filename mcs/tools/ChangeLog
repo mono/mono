@@ -1,3 +1,11 @@
+2002-02-19  Nick Drochak  <ndrochak@gol.com>
+
+	* corcompare.cs: Reorganized into collaberating classes to analyze
+	and generate reports.  Still needs to find the MonoTODO's, and
+	has a little more prototype code in there, but it's almost done.
+
+	* makefile: output XML file in the tools directory for now.
+
 2002-02-15  Nick Drochak  <ndrochak@gol.com>
 
 	* corcompare.cs: Adding stuff to collect all the missing and todo

@@ -12,7 +12,7 @@ CorCompare.exe: CorCompare.cs
 	$(CSC) $(CSCFLAGS) CorCompare.cs XMLUtil.cs
 
 update: CorCompare.exe
-	./CorCompare.exe ../class/lib/corlib_cmp.dll > ../../mono/status/cormissing.xml
+	./CorCompare.exe -x cormissing.xml ../class/lib/corlib_cmp.dll
 	./CorCompare.exe -t ../class/lib/corlib_cmp.dll > ../../mono/doc/pending-classes.in
 
 EnumCheck: EnumCheck.exe
@@ -25,5 +25,5 @@ IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 
 clean:
 	rm -f *.exe *.pdb *.dll
-	rm -f ../../mono/status/cormissing.xml
+	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in
