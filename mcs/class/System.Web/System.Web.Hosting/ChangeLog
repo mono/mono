@@ -1,3 +1,8 @@
+2004-03-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWorkerRequest.cs: patch from Aleksey Demakov that fixes
+	MapPath when the virtual directory is the root virtual directory.
+
 2004-01-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* IISAPIRuntime.cs: Fixed wrong attribute

@@ -45,7 +45,7 @@ namespace System.Web.Hosting
 			o = current.GetData (".hostingVirtualPath");
 			if (o == null)
 				throw new HttpException ("Cannot get .hostingVirtualPath");
-			_AppVirtualPath = CheckAndAddVSlash (o.ToString ());
+			_AppVirtualPath = o.ToString ();
 
 			o = current.GetData (".hostingInstallDir");
 			if (o == null)
@@ -205,9 +205,9 @@ namespace System.Web.Hosting
 			char sep = Path.DirectorySeparatorChar;
 			if (path.StartsWith(_AppVirtualPath)) {
 				if (sep == '/')
-					return _AppPhysicalPath + path.Substring (_AppVirtualPath.Length);
+					return sPath + path.Substring (_AppVirtualPath.Length);
 				else
-					return _AppPhysicalPath + path.Substring (_AppVirtualPath.Length).Replace ('/', sep);
+					return sPath + path.Substring (_AppVirtualPath.Length).Replace ('/', sep);
 			}
 
 			return null;
@@ -246,18 +246,6 @@ namespace System.Web.Hosting
 
 			if (!sPath.EndsWith ("" + Path.DirectorySeparatorChar))
 				return sPath + Path.DirectorySeparatorChar;
-
-			return sPath;
-		}
-
-		// Creates a path string
-		private string CheckAndAddVSlash(string sPath)
-		{
-			if (null == sPath)
-				return null;
-
-			if (!sPath.EndsWith ("/"))
-				return sPath + "/";
 
 			return sPath;
 		}
