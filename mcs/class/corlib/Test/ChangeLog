@@ -1,3 +1,8 @@
+2002-03-01  Duncan Mak  <duncan@ximian.com>
+
+	* System.Runtime.Serialization/ObjectIDGeneratorTests.cs: Added
+	test for System.Runtime.Serialization.ObjectIDGenerator.
+
 2002-02-27  Martin Baulig  <martin@gnome.org>
 
 	* RunTests.cs: Removed. This is now in the nant directory.
