@@ -40,6 +40,7 @@ namespace System.Data {
 		private string _nullConstraintMessage;
 		private bool editing = false;
 		private bool _hasParentCollection;
+		private bool _inChangingEvent;
 
 		#endregion
 
@@ -185,8 +186,11 @@ namespace System.Data {
 				// Accessing deleted rows
 				if (rowState == DataRowState.Deleted && version != DataRowVersion.Original)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
+				// Row not in table
+				if (rowState == DataRowState.Detached && version == DataRowVersion.Default)
+					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				// Non-existent version
-				if (rowState == DataRowState.Detached && version == DataRowVersion.Current || !HasVersion (version))
+				if (!HasVersion (version))
 					throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
 				switch (version) {
 				case DataRowVersion.Default:
@@ -211,6 +215,9 @@ namespace System.Data {
 		[MonoTODO]
 		public object[] ItemArray {
 			get { 
+				// row not in table
+				if (rowState == DataRowState.Detached)
+					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				// Accessing deleted rows
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
@@ -369,7 +376,6 @@ namespace System.Data {
 			return newval;
 		}
 
-
 		/// <summary>
 		/// Gets or sets the custom error description for a row.
 		/// </summary>
@@ -436,6 +442,7 @@ namespace System.Data {
 				break;
 			case DataRowState.Deleted:
 				_table.Rows.RemoveInternal (this);
+				DetachRow();
 				break;
 			case DataRowState.Detached:
 				throw new RowNotInTableException("Cannot perform this operation on a row not in the table.");
@@ -499,14 +506,14 @@ namespace System.Data {
 				Table.Rows.RemoveInternal (this);
 				break;
 			case DataRowState.Deleted:
-				throw new DeletedRowInaccessibleException ();
+				break;
 			default:
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
 				rowState = DataRowState.Deleted;
 				break;
 			}
-			_table.DeletedDataRow(this, DataRowAction.Delete);
+				_table.DeletedDataRow(this, DataRowAction.Delete);
 		}
 
 		// check the child rows of this row before deleting the row.
@@ -633,6 +640,8 @@ namespace System.Data {
 		[MonoTODO]
 		public void EndEdit () 
 		{
+			if (_inChangingEvent)
+				throw new InRowChangingEventException("Cannot call EndEdit inside an OnRowChanging event.");
 			if (rowState == DataRowState.Detached)
 			{
 				editing = false;
@@ -641,7 +650,15 @@ namespace System.Data {
 
 			if (HasVersion (DataRowVersion.Proposed))
 			{
-				_table.ChangingDataRow(this, DataRowAction.Change);
+				_inChangingEvent = true;
+				try
+				{
+					_table.ChangingDataRow(this, DataRowAction.Change);
+				}
+				finally
+				{
+					_inChangingEvent = false;
+				}
 				if (rowState == DataRowState.Unchanged)
 					rowState = DataRowState.Modified;
 				
@@ -693,8 +710,8 @@ namespace System.Data {
 			if (relation == null)
 				return new DataRow[0];
 
-			if (this.Table == null)
-				throw new RowNotInTableException();
+			if (this.Table == null || RowState == DataRowState.Detached)
+				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
 			if (relation.DataSet != this.Table.DataSet)
 				throw new ArgumentException();
@@ -847,8 +864,8 @@ namespace System.Data {
 			if (relation == null)
 				return new DataRow[0];
 
-			if (this.Table == null)
-				throw new RowNotInTableException();
+			if (this.Table == null || RowState == DataRowState.Detached)
+				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
 			if (relation.DataSet != this.Table.DataSet)
 				throw new ArgumentException();
@@ -962,6 +979,8 @@ namespace System.Data {
 		/// </summary>
 		public void RejectChanges () 
 		{
+			if (RowState == DataRowState.Detached)
+				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 			// If original is null, then nothing has happened since AcceptChanges
 			// was last called.  We have no "original" to go back to.
 			if (original != null)
@@ -1045,8 +1064,8 @@ namespace System.Data {
 		[MonoTODO]
 		public void SetParentRow (DataRow parentRow, DataRelation relation) 
 		{
-			if (_table == null || parentRow.Table == null)
-				throw new RowNotInTableException();
+			if (_table == null || parentRow.Table == null || RowState == DataRowState.Detached)
+				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
 			if (parentRow != null && _table.DataSet != parentRow.Table.DataSet)
 				throw new ArgumentException();

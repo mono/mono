@@ -398,7 +398,7 @@ namespace System.Data {
 						}	
 					}
 					if (match)
-						throw new ConstraintException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));					
+						throw new ArgumentException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));					
 				}
 			}
 

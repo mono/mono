@@ -62,7 +62,7 @@ namespace System.Data
 			this.childColumns = childColumns;
 			this.createConstraints = createConstraints;
 			if (parentColumns.Length != childColumns.Length)
-				throw new InvalidConstraintException ();
+				throw new ArgumentException ("ParentColumns and ChildColumns should be the same length");
 			DataTable parentTable = parentColumns[0].Table;
 			DataTable childTable = childColumns[0].Table;
 			if (parentTable.DataSet != childTable.DataSet)
