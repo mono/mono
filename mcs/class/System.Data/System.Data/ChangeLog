@@ -1,3 +1,11 @@
+2004-03-29  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* ExpressionElements.cs : remove
+	* DataColumn.cs, DataRelationCollection.cs, DataTable.cs :
+	Integration of new Mono.Data.SqlExpressions classes used in
+	DataTable.{Select, Compute}.
+	Fixes bug #55503 and lots of failures in DataTableTest.cs.
+
 2004-03-28  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* Index.cs: Simple fix in ComparePartialRowNonUnique.

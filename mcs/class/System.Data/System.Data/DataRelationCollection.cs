@@ -57,7 +57,11 @@ namespace System.Data {
 			public override DataRelation this [int index]
 			{
 				get {
-					return List [index] as DataRelation;
+					try {
+						return List [index] as DataRelation;
+					} catch (ArgumentOutOfRangeException e) {
+						throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}.", index));
+					}
 				}
 			}
 
@@ -189,7 +193,11 @@ namespace System.Data {
 			public override DataRelation this [int index]
 			{
 				get {
-					return List [index] as DataRelation;
+					try {
+						return List [index] as DataRelation;
+					} catch (ArgumentOutOfRangeException e) {
+						throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}.", index));
+					}
 				}
 			}
 

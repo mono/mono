@@ -1,3 +1,8 @@
+2004-03-29  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* DataTableTest.cs : add test case for bug #55503,
+	comment out meaningless test cases.
+
 2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added TypedDataSetGeneratorTest.cs.

@@ -125,7 +125,6 @@ System.Data/XmlReadMode.cs
 System.Data/XmlWriteMode.cs
 System.Data/XmlConstants.cs
 System.Data/XmlDiffLoader.cs
-System.Data/ExpressionElement.cs
 System.Data.Common/CatalogLocation.cs
 System.Data.Common/ComparerFactory.cs
 System.Data.Common/DataAdapter.cs
@@ -301,3 +300,17 @@ System.Data.ProviderBase/DbMetaDataFactory.cs
 System.Data.ProviderBase/DbParameterBase.cs
 System.Data.ProviderBase/DbParameterCollectionBase.cs
 System.Data.ProviderBase/DbReferenceCollection.cs
+Mono.Data.SqlExpressions/Parser.cs
+Mono.Data.SqlExpressions/Tokenizer.cs
+Mono.Data.SqlExpressions/Numeric.cs
+Mono.Data.SqlExpressions/Expressions.cs
+Mono.Data.SqlExpressions/Literal.cs
+Mono.Data.SqlExpressions/ColumnReference.cs
+Mono.Data.SqlExpressions/ArithmeticExpressions.cs
+Mono.Data.SqlExpressions/BooleanExpressions.cs
+Mono.Data.SqlExpressions/Comparison.cs
+Mono.Data.SqlExpressions/StringFunctions.cs
+Mono.Data.SqlExpressions/Functions.cs
+Mono.Data.SqlExpressions/Like.cs
+Mono.Data.SqlExpressions/In.cs
+Mono.Data.SqlExpressions/Aggregation.cs

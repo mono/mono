@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Collections;
 using System.Data.Common;
+using Mono.Data.SqlExpressions;
 
 namespace System.Data {
 	internal delegate void DelegateColumnValueChange(DataColumn column, DataRow row, object proposedValue);
@@ -60,6 +61,7 @@ namespace System.Data {
 		private Type _dataType;
 		private object _defaultValue = DBNull.Value;
 		private string expression;
+		private IExpression compiledExpression;
 		private PropertyCollection _extendedProperties = new PropertyCollection ();
 		private int maxLength = -1; //-1 represents no length limit
 		private string nameSpace = "";
@@ -380,16 +382,16 @@ namespace System.Data {
 				return expression;
 			}
 			set {
-		 		if ( value != null ) {
+				if (value == null)
+					value = String.Empty;
 					
+		 		if (value != String.Empty) {
+					Parser parser = new Parser ();
+					compiledExpression = parser.Compile (value);
 					expression = value;  
 
-					//Check the validate expression of ExpressionElement with string
-					expression = System.Data.ExpressionElement.ValidateExpression(expression);
-				
-					if (expression != string.Empty)
-						ReadOnly = true;
-   				} 
+					ReadOnly = true;
+   			} 
 			}
 		}
 

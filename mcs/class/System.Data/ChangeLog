@@ -1,3 +1,8 @@
+2004-03-29  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* System.Data.dll.sources : added classes in Mono.Data.SqlExpressions
+	* Makefile : add jay-target for Mono.Data.SqlExpressions/Parser.cs
+
 2004-03-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Data.dll.sources : added classes

@@ -23,6 +23,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
+using Mono.Data.SqlExpressions;
 
 namespace System.Data {
 	//[Designer]
@@ -615,18 +616,14 @@ namespace System.Data {
 		[MonoTODO]
 		public object Compute (string expression, string filter) 
 		{
-			// TODO: implement this function based
-			//       on Select (expression)
-			//
 			// expression is an aggregate function
 			// filter is an expression used to limit rows
 
-			object obj = null;
-
 			DataRow[] rows = Select(filter);
 			
-			ExpressionAggregate Expression = new ExpressionAggregate (expression);
-			obj = Expression.Result(rows);
+			Parser parser = new Parser (rows);
+			IExpression expr = parser.Compile (expression);
+			object obj = expr.Eval (rows[0]);
 			
 			return obj;
 		}
@@ -1107,27 +1104,23 @@ namespace System.Data {
 		[MonoTODO]
 		public DataRow[] Select(string filterExpression, string sort, DataViewRowState recordStates) 
 		{
-			DataRow[] dataRows = null;
 			if (filterExpression == null)
 				filterExpression = String.Empty;
 
-			ExpressionElement Expression = null;
-			if (filterExpression != null && filterExpression.Length != 0)
-				Expression = new ExpressionMainElement(filterExpression);
-
-			ArrayList List = new ArrayList();
-			int recordStateFilter = GetRowStateFilter(recordStates);
-			foreach (DataRow Row in Rows) 
-			{
-				if (((int)Row.RowState & recordStateFilter) != 0)
-				{
-					if (Expression == null || Expression.Test(Row))
-						List.Add(Row);
-				}
+			IExpression filter = null;
+			if (filterExpression != String.Empty) {
+				Parser parser = new Parser ();
+				filter = parser.Compile (filterExpression);
 			}
 
-			dataRows = (DataRow[])List.ToArray(typeof(DataRow));
-			
+			ArrayList rowList = new ArrayList();
+			int recordStateFilter = GetRowStateFilter(recordStates);
+			foreach (DataRow row in Rows)
+				if (((int)row.RowState & recordStateFilter) != 0)
+					if (filter != null && (bool)filter.Eval (row))
+						rowList.Add (row);
+
+			DataRow[] dataRows = (DataRow[])rowList.ToArray(typeof(DataRow));
 
 			if (sort != null && !sort.Equals(String.Empty)) 
 			{
