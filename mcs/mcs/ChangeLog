@@ -1,3 +1,9 @@
+2003-05-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Update grammar to include anonymous methods.
+	
+	* anonymous.cs: new file.
+
 2003-05-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Field.Define): Add missing test for pointers and

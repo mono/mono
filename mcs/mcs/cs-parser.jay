@@ -1962,6 +1962,7 @@ primary_expression
 	| checked_expression
 	| unchecked_expression
 	| pointer_member_access
+	| anonymous_method_expression
 	;
 
 literal
@@ -2299,6 +2300,66 @@ pointer_member_access
 		deref = new Unary (Unary.Operator.Indirection, (Expression) $1, lexer.Location);
 		$$ = new MemberAccess (deref, (string) $3, lexer.Location);
 	  }
+	;
+
+anonymous_method_expression
+	: DELEGATE opt_anonymous_method_signature {
+		oob_stack.Push (current_local_parameters);
+		current_local_parameters = (Parameters)$2;
+	  } block {
+		if (!RootContext.V2){
+			Report.Error (-213, lexer.Location, "Anonymous methods are only supported in V2");
+			$$ = null;
+		} else 
+			$$ = new AnonymousMethod ((Parameters) $2, (Block) $3, lexer.Location);
+		current_local_parameters = (Parameters) oob_stack.Pop ();
+	  }
+	;
+
+opt_anonymous_method_signature
+	: /* empty */			{ $$ = Parameters.EmptyReadOnlyParameters; }
+	| anonymous_method_signature
+	;
+
+anonymous_method_signature
+	: OPEN_PARENS opt_anonymous_method_parameter_list CLOSE_PARENS 
+	  {
+		if ($2 == null)
+			$$ = Parameters.EmptyReadOnlyParameters;
+		else {
+			ArrayList par_list = (ArrayList) $2;
+			Parameter [] pars = new Parameter [par_list.Count];
+			par_list.CopyTo (pars);
+			$$ = new Parameters (pars, null, lexer.Location);
+		}
+	  }
+	;
+
+opt_anonymous_method_parameter_list
+	: /* empty */	{ $$ = null; } 
+	| anonymous_method_parameter_list  { $$ = $1; }
+	;
+
+anonymous_method_parameter_list
+	: anonymous_method_parameter 
+	  {
+		ArrayList a = new ArrayList ();
+		a.Add ($1);
+		$$ = a;
+	  }
+	| anonymous_method_parameter_list COMMA anonymous_method_parameter 
+	  {
+		ArrayList a = (ArrayList) $1;
+		a.Add ($3);
+		$$ = a;
+	  }
+	; 
+
+anonymous_method_parameter
+	: opt_parameter_modifier type IDENTIFIER {
+		$$ = new Parameter ((Expression) $2, (string) $2, (Parameter.Modifier) $1, null);
+	  }
+	;
 
 unary_expression
 	: primary_expression
