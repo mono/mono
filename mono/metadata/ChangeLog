@@ -1,3 +1,9 @@
+
+Mon Jun 23 15:29:06 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: handle field offset correctly when class size
+	is set (bug# 45182, partially from a patch by jlaban@wanadoo.Fr (Jerome Laban)).
+
 2003-06-20  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h (MonoDebuggerSymbolFile): Added `MonoImage
