@@ -1,5 +1,9 @@
 2003-03-10  Joel Basson  <jstrike@mweb.co.za>
 
+* Update Demo.cs to reflect current status, and got rid termination bug
+
+2003-03-10  Joel Basson  <jstrike@mweb.co.za>
+
 * PictureBox.cs
 
 2003-03-08  Joel Basson  <jstrike@mweb.co.za>
