@@ -332,7 +332,8 @@ namespace CIR {
 			ArrayList args = new ArrayList ();
 
 			args.Add (new Argument (expr, Argument.AType.Expression));
-			
+
+			Console.WriteLine ("The InternalTypeConstructor is: " + expr);
 			Expression ne = new New (target.FullName, args,
 						 new Location ("FIXME", 1, 1));
 
@@ -348,11 +349,9 @@ namespace CIR {
 		//   in a context that expects a `target_type'. 
 		// </summary>
 		static public Expression ConvertImplicit (TypeContainer tc, Expression expr,
-							  Type target_type)
+							  Type target_type, Location l)
 		{
 			Type expr_type = expr.Type;
-
-			Console.WriteLine ("ConvertImplicit " + expr_type + " => " + target_type);
 
 			if (expr_type == target_type)
 				return expr;
@@ -507,7 +506,7 @@ namespace CIR {
 			}
 
 			level++;
-			e = UserImplicitCast.CanConvert (tc, expr, target_type);
+			e = UserImplicitCast.CanConvert (tc, expr, target_type, l);
 			level--;
 
 			if (e != null) {
@@ -575,7 +574,7 @@ namespace CIR {
 		{
 			Expression e;
 			
-			e = ConvertImplicit (tc, target, type);
+			e = ConvertImplicit (tc, target, type, l);
 			if (e != null)
 				return e;
 			
@@ -779,6 +778,7 @@ namespace CIR {
 				// ushort, int, uint, long, ulong,
 				// char, float or decimal
 				//
+				Console.WriteLine ("Ok, I am a double " + target_type);
 				if (target_type == TypeManager.sbyte_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
 				if (target_type == TypeManager.byte_type)
@@ -807,6 +807,24 @@ namespace CIR {
 
 			return null;
 		}
+
+		// <summary>
+		//   Implements Explicit Reference conversions
+		// </summary>
+		static Expression ConvertReferenceExplicit (TypeContainer tc, Expression expr,
+							  Type target_type)
+		{
+			Type expr_type = expr.Type;
+			bool target_is_value_type = target_type.IsValueType;
+			
+			//
+			// From object to any reference type
+			//
+			if (expr_type == TypeManager.object_type && !target_is_value_type)
+				return new ClassCast (expr, expr_type);
+
+			return null;
+		}
 		
 		// <summary>
 		//   Performs an explicit conversion of the expression `expr' whose
@@ -815,7 +833,7 @@ namespace CIR {
 		static public Expression ConvertExplicit (TypeContainer tc, Expression expr,
 							  Type target_type)
 		{
-			Expression ne = ConvertImplicit (tc, expr, target_type);
+			Expression ne = ConvertImplicit (tc, expr, target_type, Location.Null);
 
 			if (ne != null)
 				return ne;
@@ -824,8 +842,11 @@ namespace CIR {
 			if (ne != null)
 				return ne;
 
+			ne = ConvertReferenceExplicit (tc, expr, target_type);
+			if (ne != null)
+				return ne;
 			
-			return expr;
+			return null;
 		}
 
 		static string ExprClassName (ExprClass c)
@@ -995,6 +1016,34 @@ namespace CIR {
 	}
 
 	// <summary>
+	//   This kind of cast is used to encapsulate a child and cast it
+	//   to the class requested
+	// </summary>
+	public class ClassCast : EmptyCast {
+		public ClassCast (Expression child, Type return_type)
+			: base (child, return_type)
+			
+		{
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+
+			ec.ig.Emit (OpCodes.Castclass, type);
+		}			
+		
+	}
+	
+	// <summary>
 	//   Unary expressions.  
 	// </summary>
 	//
@@ -1075,7 +1124,7 @@ namespace CIR {
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (tc, expr, target_type);
+			return ConvertImplicit (tc, expr, target_type, new Location ("FIXME", 1, 1));
 		}
 
 		void report23 (Report r, Type t)
@@ -1223,6 +1272,8 @@ namespace CIR {
 				// It is also not clear if we should convert to Float
 				// or Double initially.
 				//
+				Location l = new Location ("FIXME", 1, 1);
+				
 				if (expr_type == TypeManager.uint32_type){
 					//
 					// FIXME: handle exception to this rule that
@@ -1230,7 +1281,7 @@ namespace CIR {
 					// bt written as a decimal interger literal
 					//
 					type = TypeManager.int64_type;
-					expr = ConvertImplicit (tc, expr, type);
+					expr = ConvertImplicit (tc, expr, type, l);
 					return this;
 				}
 
@@ -1244,21 +1295,21 @@ namespace CIR {
 					return null;
 				}
 
-				e = ConvertImplicit (tc, expr, TypeManager.int32_type);
+				e = ConvertImplicit (tc, expr, TypeManager.int32_type, l);
 				if (e != null){
 					expr = e;
 					type = e.Type;
 					return this;
 				} 
 
-				e = ConvertImplicit (tc, expr, TypeManager.int64_type);
+				e = ConvertImplicit (tc, expr, TypeManager.int64_type, l);
 				if (e != null){
 					expr = e;
 					type = e.Type;
 					return this;
 				}
 
-				e = ConvertImplicit (tc, expr, TypeManager.double_type);
+				e = ConvertImplicit (tc, expr, TypeManager.double_type, l);
 				if (e != null){
 					expr = e;
 					type = e.Type;
@@ -1486,12 +1537,16 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+			
 			expr.Emit (ec);
 			
 			if (Oper == Operator.Is){
-				ec.ig.Emit (OpCodes.Isinst, probe_type);
+				ig.Emit (OpCodes.Isinst, probe_type);
+				ig.Emit (OpCodes.Ldnull);
+				ig.Emit (OpCodes.Cgt_Un);
 			} else {
-				throw new Exception ("Implement as");
+				ig.Emit (OpCodes.Isinst, probe_type);
 			}
 		}
 	}
@@ -1540,7 +1595,7 @@ namespace CIR {
 				return null;
 
 			expr = ConvertExplicit (tc, expr, type);
-			
+
 			return expr;
 		}
 
@@ -1662,7 +1717,7 @@ namespace CIR {
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (tc, expr, target_type);
+			return ConvertImplicit (tc, expr, target_type, new Location ("FIXME", 1, 1));
 		}
 		
 		//
@@ -1677,9 +1732,9 @@ namespace CIR {
 				// conveted to type double.
 				//
 				if (r != TypeManager.double_type)
-					right = ConvertImplicit (tc, right, TypeManager.double_type);
+					right = ConvertImplicit (tc, right, TypeManager.double_type, location);
 				if (l != TypeManager.double_type)
-					left = ConvertImplicit (tc, left, TypeManager.double_type);
+					left = ConvertImplicit (tc, left, TypeManager.double_type, location);
 				
 				type = TypeManager.double_type;
 			} else if (l == TypeManager.float_type || r == TypeManager.float_type){
@@ -1688,9 +1743,9 @@ namespace CIR {
 				// converd to type float.
 				//
 				if (r != TypeManager.double_type)
-					right = ConvertImplicit (tc, right, TypeManager.float_type);
+					right = ConvertImplicit (tc, right, TypeManager.float_type, location);
 				if (l != TypeManager.double_type)
-					left = ConvertImplicit (tc, left, TypeManager.float_type);
+					left = ConvertImplicit (tc, left, TypeManager.float_type, location);
 				type = TypeManager.float_type;
 			} else if (l == TypeManager.uint64_type || r == TypeManager.uint64_type){
 				//
@@ -1724,9 +1779,9 @@ namespace CIR {
 				// to type long.
 				//
 				if (l != TypeManager.int64_type)
-					left = ConvertImplicit (tc, left, TypeManager.int64_type);
+					left = ConvertImplicit (tc, left, TypeManager.int64_type, location);
 				if (r != TypeManager.int64_type)
-					right = ConvertImplicit (tc, right, TypeManager.int64_type);
+					right = ConvertImplicit (tc, right, TypeManager.int64_type, location);
 
 				type = TypeManager.int64_type;
 			} else if (l == TypeManager.uint32_type || r == TypeManager.uint32_type){
@@ -1759,9 +1814,9 @@ namespace CIR {
 				} 
 			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
 				if (l != TypeManager.decimal_type)
-					left = ConvertImplicit (tc, left, TypeManager.decimal_type);
+					left = ConvertImplicit (tc, left, TypeManager.decimal_type, location);
 				if (r != TypeManager.decimal_type)
-					right = ConvertImplicit (tc, right, TypeManager.decimal_type);
+					right = ConvertImplicit (tc, right, TypeManager.decimal_type, location);
 
 				type = TypeManager.decimal_type;
 			} else {
@@ -1793,10 +1848,12 @@ namespace CIR {
 			}
 			right = e;
 
-			if (((e = ConvertImplicit (tc, left, TypeManager.int32_type)) != null) ||
-			    ((e = ConvertImplicit (tc, left, TypeManager.uint32_type)) != null) ||
-			    ((e = ConvertImplicit (tc, left, TypeManager.int64_type)) != null) ||
-			    ((e = ConvertImplicit (tc, left, TypeManager.uint64_type)) != null)){
+			Location loc = location;
+			
+			if (((e = ConvertImplicit (tc, left, TypeManager.int32_type, loc)) != null) ||
+			    ((e = ConvertImplicit (tc, left, TypeManager.uint32_type, loc)) != null) ||
+			    ((e = ConvertImplicit (tc, left, TypeManager.int64_type, loc)) != null) ||
+			    ((e = ConvertImplicit (tc, left, TypeManager.uint64_type, loc)) != null)){
 				left = e;
 
 				return this;
@@ -1850,6 +1907,8 @@ namespace CIR {
 
 				if (l != TypeManager.bool_type || r != TypeManager.bool_type)
 					error19 (tc);
+
+				return this;
 			} else if (oper == Operator.Addition){
 				//
 				// If any of the arguments is a string, cast to string
@@ -1861,13 +1920,17 @@ namespace CIR {
 					} else {
 						// string + object
 						method = TypeManager.string_concat_object_object;
-						right = ConvertImplicit (tc, right, TypeManager.object_type);
+						right = ConvertImplicit (tc, right,
+									 TypeManager.object_type, location);
 					}
 					type = TypeManager.string_type;
 
 					Arguments = new ArrayList ();
 					Arguments.Add (new Argument (left, Argument.AType.Expression));
 					Arguments.Add (new Argument (right, Argument.AType.Expression));
+
+					return this;
+					
 				} else if (r == TypeManager.string_type){
 					// object + string
 					method = TypeManager.string_concat_object_object;
@@ -1875,8 +1938,10 @@ namespace CIR {
 					Arguments.Add (new Argument (left, Argument.AType.Expression));
 					Arguments.Add (new Argument (right, Argument.AType.Expression));
 
-					left = ConvertImplicit (tc, left, TypeManager.object_type);
+					left = ConvertImplicit (tc, left, TypeManager.object_type, location);
 					type = TypeManager.string_type;
+
+					return this;
 				}
 
 				//
@@ -1887,7 +1952,6 @@ namespace CIR {
 
 			if (left == null || right == null)
 				return null;
-
 
 			if (oper == Operator.BitwiseAnd ||
 			    oper == Operator.BitwiseOr ||
@@ -1921,6 +1985,11 @@ namespace CIR {
 			if (left == null || right == null)
 				return null;
 
+			if (left.Type == null)
+				throw new Exception ("Resolve returned non null, but did not set the type!");
+			if (right.Type == null)
+				throw new Exception ("Resolve returned non null, but did not set the type!");
+			
 			return ResolveOperator (tc);
 		}
 
@@ -2203,11 +2272,11 @@ namespace CIR {
 				// First, if an implicit conversion exists from trueExpr
 				// to falseExpr, then the result type is of type falseExpr.Type
 				//
-				conv = ConvertImplicit (tc, trueExpr, falseExpr.Type);
+				conv = ConvertImplicit (tc, trueExpr, falseExpr.Type, l);
 				if (conv != null){
 					type = falseExpr.Type;
 					trueExpr = conv;
-				} else if ((conv = ConvertImplicit (tc, falseExpr, trueExpr.Type)) != null){
+				} else if ((conv = ConvertImplicit (tc,falseExpr,trueExpr.Type,l)) != null){
 					type = trueExpr.Type;
 					falseExpr = conv;
 				} else {
@@ -2831,7 +2900,7 @@ namespace CIR {
 
 				Expression tmp;
 
-				tmp = ConvertImplicit (tc, argument_expr, p);
+				tmp = ConvertImplicit (tc, argument_expr, p, Location.Null);
 
 				if (tmp != null)
 					return 1;
@@ -2842,8 +2911,8 @@ namespace CIR {
 
 			Expression p_tmp, q_tmp;
 
-			p_tmp = ConvertImplicit (tc, argument_expr, p);
-			q_tmp = ConvertImplicit (tc, argument_expr, q);
+			p_tmp = ConvertImplicit (tc, argument_expr, p, Location.Null);
+			q_tmp = ConvertImplicit (tc, argument_expr, q, Location.Null);
 
 			if (p_tmp != null && q_tmp == null)
 				return 1;
@@ -3002,6 +3071,9 @@ namespace CIR {
 		//
 		//   Arguments: ArrayList containing resolved Argument objects.
 		//
+		//   loc: The location if we want an error to be reported, or a Null
+		//        location for "probing" purposes.
+		//
 		//   Returns: The MethodBase (either a ConstructorInfo or a MethodInfo)
 		//            that is the best match of me on Arguments.
 		//
@@ -3066,25 +3138,30 @@ namespace CIR {
 				j--;
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
+				Type parameter_type = pd.ParameterType (j);
 				
-				Expression conv = ConvertImplicit (tc, a_expr, pd.ParameterType (j));
+				if (a_expr.Type != parameter_type){
+					Expression conv = ConvertImplicit (tc, a_expr, parameter_type,
+									   Location.Null);
 
-				if (conv == null) {
-					Error (tc, 1502, loc,
-					       "The best overloaded match for method '" + FullMethodDesc (method) +
-					       "' has some invalid arguments");
-					Error (tc, 1503, loc,
-					       "Argument " + (j+1) +
-					       " : Cannot convert from '" + TypeManager.CSharpName (a_expr.Type)
-					       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
-					return null;
+					if (conv == null){
+						if (!Location.IsNull (loc)) {
+							Error (tc, 1502, loc,
+							       "The best overloaded match for method '" + FullMethodDesc (method) +
+							       "' has some invalid arguments");
+							Error (tc, 1503, loc,
+							       "Argument " + (j+1) +
+							       " : Cannot convert from '" + TypeManager.CSharpName (a_expr.Type)
+							       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
+						}
+						return null;
+					}
+					//
+					// Update the argument with the implicit conversion
+					//
+					if (a_expr != conv)
+						a.Expr = conv;
 				}
-
-				//
-				// Update the argument with the implicit conversion
-				//
-				if (a_expr != conv)
-					a.Expr = conv;
 			}
 			
 			return method;
@@ -3789,7 +3866,8 @@ namespace CIR {
 			return this;
 		}
 
-		public static Expression CanConvert (TypeContainer tc, Expression source, Type target)
+		public static Expression CanConvert (TypeContainer tc, Expression source, Type target,
+						     Location l)
 		{
 			Expression mg1, mg2;
 			MethodBase method;
@@ -3803,9 +3881,8 @@ namespace CIR {
 			if (union != null) {
 				arguments = new ArrayList ();
 				arguments.Add (new Argument (source, Argument.AType.Expression));
-				
-				method = Invocation.OverloadResolve (tc, union, arguments,
-								     new Location ("FIXME", 1, 1));
+
+				method = Invocation.OverloadResolve (tc, union, arguments, l);
 
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;

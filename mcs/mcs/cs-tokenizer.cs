@@ -897,6 +897,20 @@ namespace CIR
 			Col = col;
 			Row = row;
 		}
+
+		//
+		// Whether the Location is Null
+		//
+		static public bool IsNull (Location l)
+		{
+			return l == null;
+		}
+
+		static public Location Null {
+			get {
+				return null;
+			}
+		}
 	}
 	
 }

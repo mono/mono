@@ -1,3 +1,50 @@
+2001-09-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Probe::Emit): Is needs to do an isinst and then
+	compare against null.
+
+	(::CanConvert): Added Location argument.  If the Location argument
+	is null (Location.Null), then we do not report errors.  This is
+	used by the `probe' mechanism of the Explicit conversion.  We do
+	not want to generate an error for something that the user
+	explicitly requested to be casted.  But the pipeline for an
+	explicit cast first tests for potential implicit casts.
+
+	So for now, if the Location is null, it means `Probe only' to
+	avoid adding another argument.   Might have to revise this
+	strategy later.
+
+	(ClassCast): New class used to type cast objects into arbitrary
+	classes (used in Explicit Reference Conversions).
+
+	Implement `as' as well.
+
+	Reverted all the patches from Ravi below: they were broken:
+
+		* The use of `level' as a mechanism to stop recursive
+		  invocations is wrong.  That was there just to catch the
+		  bug with a strack trace but not as a way of addressing
+		  the problem.
+
+		  To fix the problem we have to *understand* what is going
+		  on and the interactions and come up with a plan, not
+		  just get things going.
+
+		* The use of the type conversion cache that I proposed
+		  last night had an open topic: How does this work across
+		  protection domains.  A user defined conversion might not
+		  be public in the location where we are applying the
+		  conversion, a different conversion might be selected
+		  (ie, private A->B (better) but public B->A (worse),
+		  inside A, A->B applies, but outside it, B->A will
+		  apply).
+
+		* On top of that (ie, even if the above is solved),
+		  conversions in a cache need to be abstract.  Ie, `To
+		  convert from an Int to a Short use an OpcodeCast', not
+		  `To convert from an Int to a Short use the OpcodeCast on
+		  the variable 5' (which is what this patch was doing).
+	
 2001-09-28  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation::ConversionExists): Re-write to use
