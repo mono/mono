@@ -1,3 +1,7 @@
+2003-09-16  Martin Baulig  <martin@ximian.com>
+
+	* cs8217.cs: New test.
+
 2003-09-06  Martin Baulig  <martin@ximian.com>
 
 	* errors.txt: Added -216.
