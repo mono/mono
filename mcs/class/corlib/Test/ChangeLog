@@ -1,3 +1,7 @@
+2002-11-16  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* corlib_test.build: removed DSATest from exclusions.
+
 2002-10-28  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 
 	* AllTests.cs: removed System.Threading.AllTests. It does not exist.

@@ -41,8 +41,6 @@
 		<csc target="library" output="corlib_reference.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
-				<!-- DSA only constructor is declared as internal -->
-				<excludes name="System.Security.Cryptography/DSATest.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
