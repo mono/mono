@@ -63,11 +63,6 @@
                     HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.dll"
                 />
                 <Reference
-                    Name = "NUnitCore"
-                    AssemblyName = "NUnitCore"
-                    HintPath = "..\..\..\nunit\NUnitCore.dll"
-                />
-                <Reference
                     Name = "System.Data"
                     AssemblyName = "System.Data"
                     HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
@@ -77,131 +72,171 @@
                     AssemblyName = "System.XML"
                     HintPath = "..\obj\Debug\System.XML.dll"
                 />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "..\..\..\nunit20\NUnit.Framework.dll"
+                />
             </References>
         </Build>
         <Files>
             <Include>
                 <File
-                    RelPath = "AllTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ChangeLog"
                     BuildAction = "None"
                 />
                 <File
-                    RelPath = "NameTableTests.cs"
+                    RelPath = "System.Xml\NameTableTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SelectNodesTests.cs"
+                    RelPath = "System.Xml\XmlAttributeCollectionTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlAttributeCollectionTests.cs"
+                    RelPath = "System.Xml\XmlAttributeTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlAttributeTests.cs"
+                    RelPath = "System.Xml\XmlCDataSectionTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlCDataSectionTests.cs"
+                    RelPath = "System.Xml\XmlCharacterDataTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlCharacterDataTests.cs"
+                    RelPath = "System.Xml\XmlCommentTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlCommentTests.cs"
+                    RelPath = "System.Xml\XmlDeclarationTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlDeclarationTests.cs"
+                    RelPath = "System.Xml\XmlDocumentFragmentTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlDocumentTests.cs"
+                    RelPath = "System.Xml\XmlDocumentTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlDocumentTypeTests.cs"
+                    RelPath = "System.Xml\XmlDocumentTypeTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlElementTests.cs"
+                    RelPath = "System.Xml\XmlElementTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlNamespaceManagerTests.cs"
+                    RelPath = "System.Xml\XmlEntityReferenceTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlNodeListTests.cs"
+                    RelPath = "System.Xml\XmlNamespaceManagerTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlNodeTests.cs"
+                    RelPath = "System.Xml\XmlNodeListTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlProcessingInstructionTests.cs"
+                    RelPath = "System.Xml\XmlNodeReaderTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlSignificantWhitespaceTests.cs"
+                    RelPath = "System.Xml\XmlNodeTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlTextReaderTests.cs"
+                    RelPath = "System.Xml\XmlProcessingInstructionTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlTextTests.cs"
+                    RelPath = "System.Xml\XmlSignificantWhitespaceTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlTextWriterTests.cs"
+                    RelPath = "System.Xml\XmlTextReaderTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XmlWhiteSpaceTests.cs"
+                    RelPath = "System.Xml\XmlTextTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XPathNavigatorEvaluateTests.cs"
+                    RelPath = "System.Xml\XmlTextWriterTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XPathNavigatorMatchesTests.cs"
+                    RelPath = "System.Xml\XmlWhiteSpaceTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "XPathNavigatorTests.cs"
+                    RelPath = "System.Xml\XmlWriterTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlSchemaTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\XmlSerializerTestClasses.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\XmlSerializerTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\SelectNodesTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathNavigatorEvaluateTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathNavigatorMatchesTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathNavigatorTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\XslTransformTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -1,3 +1,10 @@
+2003-04-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* moved testcases into each namespace-named directories.
+	  fixed System.XML_linux_test.args and MonoMicro.test.csproj
+	  along with it.
+	* added XmlFiles directory for test xml files.
+
 2003-03-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlReaderCommonTests.cs which is mostly copied from
