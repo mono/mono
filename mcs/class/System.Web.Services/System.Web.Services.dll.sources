@@ -164,6 +164,7 @@ System.Web.Services.Discovery/DiscoveryDocument.cs
 System.Web.Services.Discovery/DiscoveryDocumentLinksPattern.cs
 System.Web.Services.Discovery/DiscoveryDocumentReference.cs
 System.Web.Services.Discovery/DiscoveryDocumentSearchPattern.cs
+System.Web.Services.Discovery/DiscoveryDocumentSerializer.cs
 System.Web.Services.Discovery/DiscoveryExceptionDictionary.cs
 System.Web.Services.Discovery/DiscoveryReferenceCollection.cs
 System.Web.Services.Discovery/DiscoveryReference.cs

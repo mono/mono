@@ -1,3 +1,7 @@
+2003-10-10  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* DiscoveryDocumentSerializer.cs: New file.
+
 2003-10-06  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.Web.Services.dll.sources: Added 
