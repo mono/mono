@@ -11,8 +11,8 @@ namespace System.Web.Services.Protocols {
 	[Flags]
 	[Serializable]
 	public enum SoapHeaderDirection {
-		In,
-		InOut,
-		Out
+		In = 0x1,
+		InOut = 0x3,
+		Out = 0x2
 	}
 }

@@ -10,8 +10,8 @@
 namespace System.Web.Services.Protocols {
 	[Serializable]
 	public enum SoapParameterStyle {
-		Bare,
-		Default,
-		Wrapped
+		Default = 0x0,
+		Bare = 0x1,
+		Wrapped = 0x2
 	}
 }

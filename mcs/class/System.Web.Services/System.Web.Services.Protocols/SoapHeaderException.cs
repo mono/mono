@@ -17,22 +17,20 @@ namespace System.Web.Services.Protocols {
 		public SoapHeaderException (string message, XmlQualifiedName code)
 			: base (message, code)
 		{
-			this.code = code;
 		}
 
 		public SoapHeaderException (string message, XmlQualifiedName code, Exception innerException)
-			: this (message, code)
+			: base (message, code, innerException)
 		{
 		}
 
 		public SoapHeaderException (string message, XmlQualifiedName code, string actor)
-			: this (message, code)
+			: base (message, code, actor)
 		{
-			this.actor = actor;
 		}
 
 		public SoapHeaderException (string message, XmlQualifiedName code, string actor, Exception innerException)
-			: this (message, code, actor)
+			: base (message, code, actor, innerException)
 		{
 		}
 

@@ -1,3 +1,20 @@
+2002-07-23  Tim Coleman <tim@timcoleman.com>
+	* LogicalMethodTypes.cs:
+	* SoapHeaderDirection.cs:
+	* SoapMessageStage.cs:
+	* SoapParameterStyle.cs:
+	* SoapServiceRoutingStyle.cs:
+		Explicitly define values in enum to match
+		.NET.
+	* SoapMessage.cs: 
+		Removed constructor which should not be present.
+	* SoapException.cs:
+		Made protected fields private as they should
+		be.
+	* SoapHeaderException.cs:
+		Modifications to constructors to propertly
+		call base class constructor
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* SoapHeaderException.cs:
 		Fixed name error in constructor

@@ -15,21 +15,10 @@ namespace System.Web.Services.Protocols {
 
 		#region Fields
 
-		string contentType;
-		SoapException exception;
-		SoapHeaderCollection headers;
+		string contentType = "text/xml";
+		SoapException exception = null;
+		SoapHeaderCollection headers = null;
 		SoapMessageStage stage;
-
-		#endregion // Fields
-
-		#region Constructors
-
-		internal SoapMessage ()
-		{
-			contentType = "text/xml";
-			exception = null;
-			headers = null;
-		}
 
 		#endregion // Fields
 
