@@ -1229,16 +1229,39 @@ namespace Mono.CSharp {
 		///   otherwise.
 		/// </returns>
 		///
-		public bool AddLabel (string name, LabeledStatement target)
+		public bool AddLabel (string name, LabeledStatement target, Location loc)
 		{
 			if (switch_block != null)
-				return switch_block.AddLabel (name, target);
+				return switch_block.AddLabel (name, target, loc);
+
+			Block cur = this;
+			while (cur != null && cur.Implicit) {
+				if (cur.LookupLabel (name) != null) {
+					Report.Error (
+						140, loc, "The label '{0}' is a duplicate",
+						name);
+					return false;
+				}
+
+				cur = cur.Parent;
+			}
+
+			while (cur != null) {
+				if (cur.LookupLabel (name) != null) {
+					Report.Error (
+						158, loc,
+						"The label '{0}' shadows another label " +
+						"by the same name in a containing scope.",
+						name);
+					return false;
+				}
+
+				cur = cur.Parent;
+			}
 
 			if (labels == null)
 				labels = new Hashtable ();
-			if (labels.Contains (name))
-				return false;
-			
+
 			labels.Add (name, target);
 			return true;
 		}

@@ -3003,11 +3003,8 @@ labeled_statement
 	  {
 		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
-		if (!current_block.AddLabel ((string) $1, labeled)){
-			Location l = lexer.Location;
-			Report.Error (140, l, "The label '" + ((string) $1) + "' is a duplicate");
-		}	
-		current_block.AddStatement (labeled);
+		if (current_block.AddLabel ((string) $1, labeled, lexer.Location))
+			current_block.AddStatement (labeled);
 	  }
 	  statement
 	;
