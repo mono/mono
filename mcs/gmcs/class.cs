@@ -785,6 +785,9 @@ namespace Mono.CSharp {
 			for (int i = 0; i < ifaces.Length; i++) {
 				Type iface = ifaces [i];
 				foreach (Type t in already_checked) {
+					if (iface == t)
+						continue;
+
 					if (!TypeManager.MayBecomeEqualGenericInstances (iface, t))
 						continue;
 
