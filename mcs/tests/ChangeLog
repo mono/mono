@@ -2,6 +2,8 @@
 
 	* test-113.cs : Another test for overload resolution ;-)
 
+	* test-114.cs : Add.
+
 2002-04-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-108.cs: Improve test
