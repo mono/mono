@@ -103,14 +103,14 @@ namespace System.Data.Common {
 		#region // Methods
 #if NET_2_0
 		[MonoTODO ("configurable ? why is this in the attribute class ?")]
-		[EditorBrowsableAttribute (false)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public bool ShouldSerializeConnectionString ()
 		{
 			return false;
 		}
 
 		[MonoTODO ("configurable ? why is this in the attribute class ?")]
-		[EditorBrowsableAttribute (false)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public bool ShouldSerializeKeyRestrictions ()
 		{
 			return false;

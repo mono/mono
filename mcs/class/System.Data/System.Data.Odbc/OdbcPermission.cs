@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
@@ -55,8 +56,9 @@ namespace System.Data.Odbc {
 		[Obsolete ("use OdbcPermission(PermissionState.None)", true)]
 #endif
 		public OdbcPermission (PermissionState state, bool allowBlankPassword)
-			: base (state, allowBlankPassword)
+			: base (state)
 		{
+			AllowBlankPassword = allowBlankPassword;
 		}
 
 		// required for Copy method

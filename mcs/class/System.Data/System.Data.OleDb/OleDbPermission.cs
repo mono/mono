@@ -60,8 +60,9 @@ namespace System.Data.OleDb {
                 [Obsolete ("use OleDbPermission(PermissionState.None)", true)]
 #endif
 		public OleDbPermission (PermissionState state, bool allowBlankPassword)
-			: base (state, allowBlankPassword)
+			: base (state)
 		{
+			AllowBlankPassword = allowBlankPassword;
 		}
 
 		// required for Copy method

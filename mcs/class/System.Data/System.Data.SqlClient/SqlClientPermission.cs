@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
@@ -62,8 +63,9 @@ namespace System.Data.SqlClient {
 
 		[Obsolete ("Use SqlClientPermission(PermissionState.None)", true)]
 		public SqlClientPermission (PermissionState state, bool allowBlankPassword) 
-			: base (state, allowBlankPassword)
+			: base (state)
 		{
+			AllowBlankPassword = allowBlankPassword;
 		}
 
 		// required for Copy method
@@ -83,10 +85,10 @@ namespace System.Data.SqlClient {
 
 #if NET_2_0
 		[MonoTODO ("overridden for what ? additional validations ???")]
-		protected virtual void AddConnectionString (string connectionString, string restrictions, 
+		protected override void AddConnectionString (string connectionString, string restrictions, 
 			KeyRestrictionBehavior behavior, Hashtable synonyms, bool useFirstKeyValue)
 		{
-			base.Add (connectionString, restrictions, behavior, synonyms, useFirstKeyValue);
+			base.AddConnectionString (connectionString, restrictions, behavior, synonyms, useFirstKeyValue);
 		}
 #else
 		[MonoTODO ("overridden for what ? additional validations ???")]
