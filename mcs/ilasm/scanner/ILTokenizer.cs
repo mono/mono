@@ -169,7 +169,11 @@ namespace Mono.ILASM {
 									reader.Unread (opTail.ToCharArray ());
 									reader.RestoreLocation ();
 									reader.Unread (ch);
+								} else {
+									val = String.Format ("{0}.{1}", 
+										val, opTail);
 								}
+								
 							}
 						}
 						if (IsOpcode (val)) {
