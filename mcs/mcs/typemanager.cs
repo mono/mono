@@ -43,6 +43,10 @@ public class TypeManager {
 	static public Type type_type;
 	static public Type ienumerator_type;
 	static public Type idisposable_type;
+	static public Type iasyncresult_type;
+	static public Type asynccallback_type;
+
+	static public Type intptr_type;
 	
 	static public MethodInfo string_concat_string_string;
 	static public MethodInfo string_concat_object_object;
@@ -124,10 +128,10 @@ public class TypeManager {
 		typecontainers.Add (name, tc);
 	}
 
-	public void AddDelegateType (string name, TypeBuilder t)
+	public void AddDelegateType (string name, TypeBuilder t, Delegate del)
 	{
 		types.Add (name, t);
-		delegate_types.Add (t, name);
+		delegate_types.Add (t, del);
 	}
 
 	public void AddUserInterface (string name, TypeBuilder t, Interface i)
@@ -148,6 +152,11 @@ public class TypeManager {
 	public Interface LookupInterface (Type t)
 	{
 		return (Interface) builder_to_interface [t];
+	}
+
+	public static Delegate LookupDelegate (Type t)
+	{
+		return (Delegate) delegate_types [t];
 	}
 	
 	// <summary>
@@ -279,6 +288,10 @@ public class TypeManager {
 		ienumerator_type    = CoreLookupType ("System.Collections.IEnumerator");
 		icloneable_type     = CoreLookupType ("System.ICloneable");
 		idisposable_type    = CoreLookupType ("System.IDisposable");
+		iasyncresult_type   = CoreLookupType ("System.IAsyncResult");
+		asynccallback_type = CoreLookupType  ("System.AsyncCallback");
+		
+		intptr_type = CoreLookupType ("System.IntPtr");
 		
 		//
 		// Now load the default methods that we use.
@@ -317,9 +330,9 @@ public class TypeManager {
 
 	public static bool IsDelegateType (Type t)
 	{
-		string name = (string) delegate_types [t];
+		Delegate del = (Delegate) delegate_types [t];
 
-		if (name != null)
+		if (del != null)
 			return true;
 		else
 			return false;

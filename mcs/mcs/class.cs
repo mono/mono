@@ -994,7 +994,7 @@ namespace CIR {
 			}
 
 			if (Delegates != null) {
-				foreach (Delegate d in Delegates)
+				foreach (Delegate d in Delegates) 
 					d.Populate (this);
 			}
 			

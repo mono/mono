@@ -172,7 +172,7 @@ namespace CIR {
 		public Type LookupType (TypeContainer tc, string name, bool silent)
 		{
 			Type t;
-			
+
 			t = TypeManager.LookupType (MakeFQN (tc.Namespace.Name, name));
 			if (t != null)
 				return t;

@@ -1,3 +1,55 @@
+2001-10-17  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (New::DoResolve): Implement delegate creation fully
+	and according to the spec.
+
+	(New::DoEmit): Update to handle delegates differently.
+
+	(Invocation::FullMethodDesc): Fix major stupid bug thanks to me
+	because of which we were printing out arguments in reverse order !
+
+	* delegate.cs (VerifyMethod): Implement to check if the given method
+	matches the delegate.
+
+	(FullDelegateDesc): Implement.
+
+	(VerifyApplicability): Implement.
+
+	* expression.cs (Invocation::DoResolve): Update to accordingly handle
+	delegate invocations too.
+
+	(Invocation::Emit): Ditto.
+
+	* ../errors/cs1593.cs : Added.
+
+	* ../errors/cs1594.cs : Added.
+
+	* delegate.cs (InstanceExpression, TargetMethod): New properties.
+
+2001-10-16  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (intptr_type): Core type for System.IntPtr
+
+	(InitCoreTypes): Update for the same.
+
+	(iasyncresult_type, asynccallback_type): Ditto.
+
+	* delegate.cs (Populate): Fix to use System.Intptr as it is indeed
+	correct.
+
+	* typemanager.cs (AddDelegateType): Store a pointer to the Delegate class
+	too.
+
+	* delegate.cs (ConstructorBuilder, InvokeBuilder, ...): New members to hold
+	the builders for the 4 members of a delegate type :-)
+
+	(Populate): Define the BeginInvoke and EndInvoke methods on the delegate
+	type.
+
+	* expression.cs (New::DoResolve): Implement guts for delegate creation.
+
+	* ../errors/errors.txt : Update for an error (-11) which only we catch :-)
+
 2001-10-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Break::Emit): Implement.   

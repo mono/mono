@@ -3567,7 +3567,8 @@ namespace CIR {
 	public class Invocation : ExpressionStatement {
 		public readonly ArrayList Arguments;
 		public readonly Location Location;
-		
+
+		public bool IsDelegate;
 		Expression expr;
 		MethodBase method = null;
 			
@@ -3872,11 +3873,14 @@ namespace CIR {
 		{
 			StringBuilder sb = new StringBuilder (mb.Name);
 			ParameterData pd = GetParameterData (mb);
-			
+
+			int count = pd.Count;
 			sb.Append (" (");
-			for (int i = pd.Count; i > 0;) {
+			
+			for (int i = count; i > 0; ) {
 				i--;
-				sb.Append (TypeManager.CSharpName (pd.ParameterType (i)));
+				
+				sb.Append (TypeManager.CSharpName (pd.ParameterType (count - i - 1)));
 				if (i != 0)
 					sb.Append (", ");
 			}
@@ -4073,6 +4077,7 @@ namespace CIR {
 			
 		public override Expression DoResolve (EmitContext ec)
 		{
+			IsDelegate = false;
 			//
 			// First, resolve the expression that is used to
 			// trigger the invocation
@@ -4081,6 +4086,37 @@ namespace CIR {
 			if (this.expr == null)
 				return null;
 
+			Type expr_type = null;
+			if (!(this.expr is MethodGroupExpr)) {
+				expr_type = this.expr.Type;
+				IsDelegate = TypeManager.IsDelegateType (expr_type);
+			}
+			
+			if (IsDelegate) {
+				
+				Delegate del = TypeManager.LookupDelegate (expr_type);
+
+				if (Arguments != null){
+					for (int i = Arguments.Count; i > 0;){
+						--i;
+						Argument a = (Argument) Arguments [i];
+						
+						if (!a.Resolve (ec))
+							return null;
+					}
+				}
+				
+				if (!del.VerifyApplicability (ec, Arguments, Location))
+					return null;
+
+				method = del.InvokeBuilder;
+				type = ((MethodInfo) method).ReturnType;
+
+				eclass = ExprClass.Value;
+
+				return this;
+			}
+			
 			if (!(this.expr is MethodGroupExpr)){
 				report118 (Location, this.expr, "method group");
 				return null;
@@ -4192,11 +4228,16 @@ namespace CIR {
 		
 		public override void Emit (EmitContext ec)
 		{
-			MethodGroupExpr mg = (MethodGroupExpr) this.expr;
-			
-			EmitCall (ec, method.IsStatic, mg.InstanceExpression, method, Arguments);
-		}
+			if (IsDelegate) {
+				Delegate del = TypeManager.LookupDelegate (this.expr.Type);
+				EmitCall (ec, del.TargetMethod.IsStatic, this.expr, method, Arguments);
 
+			} else {
+				MethodGroupExpr mg = (MethodGroupExpr) this.expr;
+				EmitCall (ec, method.IsStatic, mg.InstanceExpression, method, Arguments);
+			}
+		}
+		
 		public override void EmitStatement (EmitContext ec)
 		{
 			Emit (ec);
@@ -4226,9 +4267,13 @@ namespace CIR {
 		public readonly string    Rank;
 		public readonly ArrayList Initializers;
 
+		public bool IsDelegate;
+		
+		Expression delegate_instance_expr = null;
+		MethodBase delegate_method = null;
+		
 		Location Location;
 		MethodBase method = null;
-
 
 		//
 		// If set, the new expression is for a value_target, and
@@ -4286,62 +4331,120 @@ namespace CIR {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (NewType == NType.Object) {
+
 				type = ec.TypeContainer.LookupType (RequestedType, false);
 				
 				if (type == null)
 					return null;
 
-				if (TypeManager.IsDelegateType (type)) {
-					Report.Error (-100, "No support for delegate instantiation yet !");
-					return null;
-				}
+				IsDelegate = TypeManager.IsDelegateType (type);
 				
-				Expression ml;
+				if (IsDelegate) {
+					// So we have a delegate creation expression
+					
+					Delegate del = TypeManager.LookupDelegate (type);
+					method = del.ConstructorBuilder;
 
-				ml = MemberLookup (ec, type, ".ctor", false,
-						   MemberTypes.Constructor, AllBindingsFlags, Location);
-
-				bool is_struct;
-				is_struct = type.IsSubclassOf (TypeManager.value_type);
-
-				if (! (ml is MethodGroupExpr)){
-					if (!is_struct){
-						report118 (Location, ml, "method group");
+					if (Arguments == null) {
+						Report.Error (-11, Location,
+							      "Delegate creation expression takes only one argument");
 						return null;
 					}
-				}
+					
+					if (Arguments.Count != 1) {
+						Report.Error (-11, Location,
+							      "Delegate creation expression takes only one argument");
+						return null;
+					}
+					
+					Argument a = (Argument) Arguments [0];
 
-				if (ml != null){
-					if (Arguments != null){
-						for (int i = Arguments.Count; i > 0;){
-							--i;
-							Argument a = (Argument) Arguments [i];
-							
-							if (!a.Resolve (ec))
-								return null;
+					if (!a.Resolve (ec))
+						return null;
+					
+					Expression e = a.Expr;
+					
+					if (e is MethodGroupExpr) {
+						MethodGroupExpr mg = (MethodGroupExpr) e;
+						
+						delegate_method  = del.VerifyMethod (mg.Methods [0], Location);
+
+						if (delegate_method == null)
+							return null;
+						
+						if (mg.InstanceExpression != null)
+							delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
+						else
+							delegate_instance_expr = null;
+						
+						if (delegate_instance_expr != null) {
+							if (delegate_instance_expr.Type.IsValueType)
+							      delegate_instance_expr = new BoxedCast
+								      (delegate_instance_expr);
+						}
+
+						del.InstanceExpression = delegate_instance_expr;
+						del.TargetMethod = delegate_method;
+
+						eclass = ExprClass.Value;
+						return this;
+						
+					} else {
+						Report.Error (-200, Location,
+							      "Cannot handle delegate creation from another delegate yet");
+						return null;
+					}
+					
+				} else {
+					
+					Expression ml;
+					
+					ml = MemberLookup (ec, type, ".ctor", false,
+							   MemberTypes.Constructor, AllBindingsFlags, Location);
+
+					bool is_struct = false;
+					is_struct = type.IsSubclassOf (TypeManager.value_type);
+					
+					if (! (ml is MethodGroupExpr)){
+						if (!is_struct){
+							report118 (Location, ml, "method group");
+							return null;
 						}
 					}
 					
-					method = Invocation.OverloadResolve (
-						ec, (MethodGroupExpr) ml,
-						Arguments, Location);
-				
+					if (ml != null) {
+						if (Arguments != null){
+							for (int i = Arguments.Count; i > 0;){
+								--i;
+								Argument a = (Argument) Arguments [i];
+								
+								if (!a.Resolve (ec))
+									return null;
+							}
+						}
+						
+						method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
+										     Arguments, Location);
+					}
+					
+					
 					if (method == null && !is_struct) {
 						Error (-6, Location,
 						       "New invocation: Can not find a constructor for " +
 						       "this argument list");
 						return null;
 					}
-				} 
-				
-				eclass = ExprClass.Value;
-				return this;
-			}
+					
+					eclass = ExprClass.Value;
+					return this;
+				}
 
+			}
+			
 			if (NewType == NType.Array) {
 				throw new Exception ("Finish array creation");
 			}
-
+			
 			return null;
 		}
 
@@ -4363,6 +4466,18 @@ namespace CIR {
 
 				ml.AddressOf (ec);
 			} else {
+
+				if (IsDelegate) {
+					if (delegate_instance_expr == null)
+						ec.ig.Emit (OpCodes.Ldnull);
+					else
+						delegate_instance_expr.Emit (ec);
+
+					ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
+					ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+					return true;
+				} 
+				
 				Invocation.EmitArguments (ec, method, Arguments);
 				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 				return true;
