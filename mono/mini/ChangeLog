@@ -1,3 +1,7 @@
+2004-11-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c: Fix up vararg corner cases. Fixes #70019.
+
 2004-11-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-sparc.md mini-sparc.c (long_conv_to_ovf_i): Fill missing delay slot.
