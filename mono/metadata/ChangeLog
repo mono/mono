@@ -1,3 +1,8 @@
+2004-07-24  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_get_type_info): Only write a class
+	layout entry if we actually have a size or a packing size.
+
 2004-07-13  Peter Williams  <peter@newton.cx>
  
  	* process.c (complete_path): Make sure we don't attempt to execute
