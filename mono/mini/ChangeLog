@@ -1,5 +1,13 @@
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.c mini.h aot.c: Allow additional options to be specified with
+	--aot and pass them to mono_compile_assembly.
+
+	* aot.c: Add experimental code to AOT compile all loaded assemblies
+	on demand and save the code into a cache in the filesystem.
+
+	* aot.c: Add support for more wrapper methods.
+	
 	* mini.c (handle_stack_args): Handle some corner cases. Fixes 
 	58863.
 
