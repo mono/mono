@@ -142,22 +142,6 @@ namespace MonoTests.System.IO
 					Fail ("#0E Unhandled Exception: "+ e.ToString ());
 				}
 			}
-			{
-				//TODO Know what is the exact result of closing 2 times a Stream.
-				bool errorThrown = false;
-				byte [] b = new byte [30];
-				MemoryStream m = new MemoryStream (b);
-				try {
-					BinaryReader r = new BinaryReader (m);
-					r.Close ();
-					r.Close ();
-				} catch (IOException) {
-					errorThrown = true;
-				} catch (Exception) {
-					Fail ("#0F-1 Unexpected Exception Thrown");
-				}
-				Assert ("#0F No Exception Trown", errorThrown);
-			}
 		}
 
 		//TODO: (TestRead*) Verify Read Method

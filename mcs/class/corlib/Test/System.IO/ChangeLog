@@ -1,3 +1,8 @@
+2002-08-26  Nick Drochak  <ndrochak@gol.com>
+
+	* BinaryReaderTest.cs: Closing the stream twice doesn not throw any
+	exceptions on .NET.
+
 2002-08-17  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* AllTests.cs: added BinaryReaderTest.Suite.
