@@ -480,7 +480,11 @@ namespace System.Data {
 					// rebuild indexes fo all foreign key constraints
 					if(value.Length > 0) {
 						foreach(ForeignKeyConstraint constraint in this.Constraints.ForeignKeyConstraints){
-							constraint.AssertConstraint();
+							try {
+								constraint.AssertConstraint();
+							} catch (ConstraintException ex) {
+								throw new ArgumentException (ex.Message, ex);
+							}
 						}
 					}
 				}

@@ -187,9 +187,12 @@ namespace System.Data {
                                         }
                                 }
                         }
- 	
-			//Allow constraint to run validation rules and setup 
-			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
+			try {
+				//Allow constraint to run validation rules and setup 
+				constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
+			} catch (ConstraintException ex) {
+				throw new ArgumentException (ex.Message, ex);
+			}
 
 			//Run Constraint to check existing data in table
 			// this is redundant, since AddToConstraintCollectionSetup 
