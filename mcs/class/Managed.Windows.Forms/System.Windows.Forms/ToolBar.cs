@@ -32,15 +32,17 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.3  2004/08/17 02:00:54  ravindra
+// Added attributes.
+//
 // Revision 1.2  2004/08/17 00:48:50  ravindra
 // Added attributes.
 //
 // Revision 1.1  2004/08/15 23:13:15  ravindra
 // First Implementation of ToolBar control.
-//
 //
 //
 
@@ -50,12 +52,14 @@ using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {	
 	[DefaultEvent ("ButtonClick")]
 	[DefaultProperty ("Buttons")]
+	[Designer ("System.Windows.Forms.Design.ToolBarDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class ToolBar : Control
 	{
 		#region Instance Variables
@@ -131,8 +135,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		[Localizable (true)]
 		[DefaultValue (ToolBarAppearance.Normal)]
+		[Localizable (true)]
 		public ToolBarAppearance Appearance {
 			get { return appearance; }
 			set {
@@ -144,8 +148,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[Localizable (true)]
 		[DefaultValue (true)]
+		[Localizable (true)]
 		public bool AutoSize {
 			get { return autosize; }
 			set {
@@ -200,9 +204,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
 		[MergableProperty (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolBarButtonCollection Buttons {
 			get { return buttons; }
 		}

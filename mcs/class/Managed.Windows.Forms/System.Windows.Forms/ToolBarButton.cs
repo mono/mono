@@ -29,23 +29,30 @@
 //	- DropDownMenu
 //      - Adding a button to two toolbars
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ToolBarButton.cs,v $
+// Revision 1.2  2004/08/17 02:00:54  ravindra
+// Added attributes.
+//
 // Revision 1.1  2004/08/15 23:13:15  ravindra
 // First Implementation of ToolBar control.
-//
 //
 //
 
 // NOT COMPLETE
 
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty ("Text")]
+	[Designer ("System.Windows.Forms.Design.ToolBarButtonDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[DesignTimeVisible (false)]
+	[ToolboxItem (false)]
 	public class ToolBarButton : Component
 	{
 		#region instance variable
@@ -98,6 +105,8 @@ namespace System.Windows.Forms
 
 		#region properties
 		/*
+		[DefaultValue (null)]
+		[TypeConverter (typeof (ReferenceConverter))]
 		public Menu DropDownMenu {
 			get { return menu; }
 
@@ -110,6 +119,8 @@ namespace System.Windows.Forms
 		}
 		*/
 
+		[DefaultValue (true)]
+		[Localizable (true)]
 		public bool Enabled {
 			get { return enabled; }
 			set {
@@ -120,6 +131,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (-1)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Localizable (true)]
+		//[TypeConverter (typeof (ImageIndexConverter)]
 		public int ImageIndex {
 			get { return imageIndex; }
 			set {
@@ -130,10 +145,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public ToolBar Parent {
 			get { return parent; }
 		}
 
+		[DefaultValue (false)]
 		public bool PartialPush {
 			get { return partialPush; }
 			set {
@@ -144,6 +161,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool Pushed {
 			get { return pushed; }
 			set {
@@ -166,6 +184,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (ToolBarButtonStyle.PushButton)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public ToolBarButtonStyle Style {
 			get { return style; }
 			set {
@@ -176,11 +196,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Bindable (true)]
+		[DefaultValue (null)]
+		[Localizable (false)]
+		[TypeConverter (typeof (StringConverter))]
 		public object Tag {
 			get { return tag; }
 			set { tag = value; }
 		}
 
+		[DefaultValue (null)]
+		[Localizable (true)]
 		public string Text {
 			get { return text; }
 			set {
@@ -191,11 +217,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (null)]
+		[Localizable (true)]
 		public string ToolTipText {
 			get { return toolTip; }
 			set { toolTip = value; }
 		}
 
+		[DefaultValue (true)]
+		[Localizable (true)]
 		public bool Visible {
 			get { return visible; }
 			set {
