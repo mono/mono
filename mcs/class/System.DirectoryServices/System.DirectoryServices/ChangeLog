@@ -1,3 +1,9 @@
+2005-03-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PropertyValueCollection.cs: the Value property for an empty collection
+	is now null and setting Value to null clears the collection. Patch by
+	Boris Kirzner (Mainsoft).
+
 2005-01-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DirectoryEntry.cs, DirectoryEntries.cs :
