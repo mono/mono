@@ -620,6 +620,7 @@ namespace Mono.Xml.Schema
 
 
 	// xs:positiveInteger
+	[CLSCompliant (false)]
 	public class XsdPositiveInteger : XsdNonNegativeInteger
 	{
 		// It returns decimal, instead of int or long.
