@@ -143,9 +143,8 @@ namespace System.Windows.Forms {
 			getmessage_ret = true;
 		}
 
-		[MonoTODO]
 		~XplatUIOSX() {
-			throw new NotImplementedException ();
+			// FIXME: Do we need to tear anything down here?
 		}
 
 		public static XplatUIOSX GetInstance() {
@@ -171,10 +170,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public int Reference {
 			get {
-				throw new NotImplementedException ();
+				return ref_count;
 			}
 		}
 
@@ -190,14 +188,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		internal override IntPtr InitializeDriver() {
-			throw new NotImplementedException ();
+			return IntPtr.Zero;
 		}
 
-		[MonoTODO]
 		internal override void ShutdownDriver(IntPtr token) {
-			throw new NotImplementedException ();
 		}
 
 		internal void Version() {
@@ -211,7 +206,6 @@ namespace System.Windows.Forms {
 		internal override void GetDisplaySize(out Size size) {
 			// FIXME:
 			size = new Size (1024, 768);
-//			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -882,9 +876,17 @@ namespace System.Windows.Forms {
 			return NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 		}
 
-		[MonoTODO]
 		internal override bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
-			throw new NotImplementedException ();
+			if (Top) {
+				HIViewSetZOrder (hWnd, 1, IntPtr.Zero);
+				return true;
+			} else if (!Bottom) {
+				HIViewSetZOrder (hWnd, 1, AfterhWnd);
+			} else {
+				HIViewSetZOrder (hWnd, 2, IntPtr.Zero);
+				return true;
+			}
+			return false;
 		}
 
 		[MonoTODO]
@@ -979,7 +981,6 @@ namespace System.Windows.Forms {
 			y = pt.y;
 		}
 
-		[MonoTODO]
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {
 			CGPoint pt = new CGPoint ();
 			Rect wBounds = new Rect ();
@@ -993,7 +994,6 @@ namespace System.Windows.Forms {
 			y = (int)pt.y;
 		}
 
-		[MonoTODO]
 		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y) {
 			CGPoint pt = new CGPoint ();
 			Rect wBounds = new Rect ();
@@ -1076,36 +1076,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal void DrawText () {
-			IntPtr cgContext = IntPtr.Zero;
-			IntPtr window = GetControlOwner (caret.hwnd);
-			// Get the port of the window
-			IntPtr port = GetWindowPort (window);
-			// Create a CGContext ref
-			CreateCGContextForPort (port, ref cgContext);
-
-			// Get the bounds of the window
-			Rect wBounds = new Rect ();
-			GetWindowBounds (window, 32, ref wBounds);
-
-			// Get the bounds of the view
-			HIRect vBounds = new HIRect ();
-			HIViewGetBounds (caret.hwnd, ref vBounds);
-
-			// Convert the view local bounds to window coordinates
-			HIViewConvertRect (ref vBounds, caret.hwnd, IntPtr.Zero);
-			CGContextTranslateCTM (cgContext, vBounds.origin.x, (wBounds.bottom-wBounds.top)-(vBounds.origin.y+vBounds.size.height));
-			CGContextSelectFont (cgContext, "Zapfino", 24, 1);
-			CGContextSetRGBFillColor (cgContext, (float)0.25, (float)0.25, (float)0.25, (float)0.5);
-			CGContextSetRGBStrokeColor (cgContext, (float)0.25, (float)0.25, (float)0.25, (float)0.5);
-			CGContextSetTextDrawingMode (cgContext, 0);
-			CGAffineTransform ctm = CGContextGetTextMatrix (cgContext);
-			ctm.a = 1.0f;
-			ctm.d = -1.0f;
-			CGContextSetTextMatrix (cgContext, ctm);
-			CGContextShowTextAtPoint (cgContext, 200, 200, "Quartz Text", 11);
-			CGContextFlush (cgContext);
-		}
 		internal void InvertCaret () {
 			IntPtr window = GetControlOwner (caret.hwnd);
 			SetPortWindowPort (window);

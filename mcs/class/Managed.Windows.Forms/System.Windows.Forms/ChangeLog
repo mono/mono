@@ -1,5 +1,9 @@
 2005-01-05  Geoff Norton  <gnorton@customerdna.com>
 
+	* XplatUIOSX.cs: Implement SetZOrder, minor cleanup
+
+2005-01-05  Geoff Norton  <gnorton@customerdna.com>
+
 	* XplatUIOSX.cs: Implement GetActive/SetFocus.
 
 2005-01-05  Peter Bartok <pbartok@novell.com>
