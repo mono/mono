@@ -2,7 +2,11 @@ thisdir = class
 include ../build/rules.make
 
 MONO_POSIX = Mono.Posix
+ifeq ($(PLATFORM),linux)
 MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
+else
+MONO_CSHARP_DEBUGGER =
+endif
 SUBDIRS = \
 	corlib				\
 	I18N				\
