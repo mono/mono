@@ -23,9 +23,20 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.18  2004/10/18 04:47:09  pbartok
+// - Fixed Form.ControlCollection to handle owner relations
+// - Added Owner/OwnedForms handling
+// - Implemented Z-Ordering for owned forms
+// - Removed unneeded private overload of ShowDialog
+// - Fixed ShowDialog, added the X11 incarnation of modal handling (or so I
+//   hope)
+// - Fixed Close(), had wrong default
+// - Added firing of OnLoad event
+// - Added some commented out debug code for Ownership handling
+//
 // Revision 1.17  2004/10/15 12:43:19  jordi
 // menu work, mainmenu, subitems, etc
 //
@@ -133,8 +144,14 @@ namespace System.Windows.Forms {
 			}
 
 			public override void Add(Control value) {
-				base.Add(value);
-				((Form)value).owner = form_owner;
+				for (int i=0; i<list.Count; i++) {
+					if (list[i]==value) {
+						// Do we need to do anything here?
+						return;
+					}
+				}
+				list.Add(value);
+				((Form)value).owner=(Form)owner;
 			}
 
 			public override void Remove(Control value) {
@@ -153,6 +170,8 @@ namespace System.Windows.Forms {
 			start_position = FormStartPosition.WindowsDefaultLocation;
 			key_preview = false;
 			menu = null;
+
+			owned_forms = new Form.ControlCollection(this);
 			
 			MouseDown += new MouseEventHandler (OnMouseDownForm); 
 			MouseMove += new MouseEventHandler (OnMouseMoveForm); 
@@ -161,7 +180,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructor & Destructor
 
 		#region Private and Internal Methods
-		
 		private void OnMouseDownForm (object sender, MouseEventArgs e)
 		{			
 			if (menu != null)
@@ -181,38 +199,6 @@ namespace System.Windows.Forms {
 				Rectangle rect = new Rectangle (0,0, Width, 0);			
 				MenuAPI.DrawMenuBar (dc, menu.Handle, rect);
 			}			
-		}
-		
-		private DialogResult ShowDialog(Control owner) {
-			if (is_modal) {
-				return DialogResult.None;
-			}
-
-			if (owner != null) {
-				//this.Parent = owner;
-//XplatUIWin32.EnableWindow(owner.window.Handle, false);
-			} else {
-				;; // get an owner
-			}
-
-			if (IsHandleCreated) {
-//				if (owner != this.owner) {
-//					this.RecreateHandle();
-//				}
-			} else {
-				CreateControl();
-			}
-
-			Show();
-
-			is_modal = true;
-			Application.ModalRun(this);
-			is_modal = false;
-
-			Hide();
-//XplatUIWin32.EnableWindow(owner.window.Handle, true);
-
-			return DialogResult;
 		}
 		#endregion	// Private and Internal Methods
 
@@ -327,9 +313,16 @@ namespace System.Windows.Forms {
 
 			set {
 				if (owner != value) {
-					owner.RemoveOwnedForm(this);
+					if (owner != null) {
+						owner.RemoveOwnedForm(this);
+					}
 					owner = value;
 					owner.AddOwnedForm(this);
+					if (owner != null) {
+						XplatUI.SetTopmost(this.window.Handle, true);
+					} else {
+						XplatUI.SetTopmost(this.window.Handle, false);
+					}
 				}
 			}
 		}
@@ -364,7 +357,10 @@ namespace System.Windows.Forms {
 				create_params.Height = Height;
 				
 				create_params.Style = (int)WindowStyles.WS_OVERLAPPEDWINDOW;
-				create_params.Style |= (int)WindowStyles.WS_VISIBLE;
+				create_params.Style |= (int)WindowStyles.WS_OVERLAPPED;
+				//create_params.Style |= (int)WindowStyles.WS_VISIBLE;
+				create_params.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
+				create_params.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
 
 				switch(start_position) {
 					case FormStartPosition.CenterParent: {
@@ -445,24 +441,58 @@ namespace System.Windows.Forms {
 			return ShowDialog(null);
 		}
 
-		public DialogResult ShowDialog(IWin32Window owner) {
-			return ShowDialog(Control.FromHandle(owner.Handle));
+		public DialogResult ShowDialog(IWin32Window ownerWin32) {
+			Control		owner = null;
+
+			if (ownerWin32 != null) {
+				owner = Control.FromHandle(ownerWin32.Handle);
+			}
+
+			if (is_modal) {
+				return DialogResult.None;
+			}
+
+			if (Visible) {
+				throw new InvalidOperationException("Already visible forms cannot be displayed as a modal dialog. Set the Visible property to 'false' prior to calling Form.ShowDialog.");
+			}
+
+			if (!IsHandleCreated) {
+				CreateControl();
+			}
+
+			XplatUI.SetModal(window.Handle, true);
+
+			Show();
+
+			is_modal = true;
+			Application.ModalRun(this);
+			is_modal = false;
+			Hide();
+
+			XplatUI.SetModal(window.Handle, false);
+
+			return DialogResult;
 		}
 
 		public void Close ()
 		{
-			CancelEventArgs args = new CancelEventArgs (true);
+			CancelEventArgs args = new CancelEventArgs ();
 			OnClosing (args);
 			if (!args.Cancel) {
 				OnClosed (EventArgs.Empty);
+				closing = true;
 				return;
 			}
-			closing = true;
 		}
 
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		protected override void OnCreateControl() {
+			base.OnCreateControl ();
+			OnLoad(EventArgs.Empty);
+		}
+
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			if (base.ProcessCmdKey (ref msg, keyData)) {
 				return true;
@@ -499,27 +529,33 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) {
 			switch((Msg)m.Msg) {
 				case Msg.WM_CLOSE: {
-					CancelEventArgs args = new CancelEventArgs(true);
+					CancelEventArgs args = new CancelEventArgs();
 
 					OnClosing(args);
 
 					if (!args.Cancel) {
 						OnClosed(EventArgs.Empty);
+						closing = true;
 						base.WndProc(ref m);
 						break;
 					}
-
-					closing = true;
 					break;
 				}
 
+#if topmost_workaround
+				case Msg.WM_ACTIVATE: {
+					if (this.OwnedForms.Length>0) {
+						XplatUI.SetZOrder(this.OwnedForms[0].window.Handle, this.window.Handle, false, false);
+					}
+					break;
+				}
+#endif
 				default: {
 					base.WndProc (ref m);
 					break;
 				}
 			}
 		}
-
 		#endregion	// Protected Instance Methods
 
 		#region Events
