@@ -1,3 +1,9 @@
+./Mono.Math/BigInteger.cs
+./Mono.Math.Prime/ConfidenceFactor.cs
+./Mono.Math.Prime/PrimalityTests.cs
+./Mono.Math.Prime.Generator/NextPrimeFinder.cs
+./Mono.Math.Prime.Generator/PrimeGeneratorBase.cs
+./Mono.Math.Prime.Generator/SequentialSearchPrimeGeneratorBase.cs
 ./Mono.Security/ASN1.cs
 ./Mono.Security/ASN1Convert.cs
 ./Mono.Security/PKCS7.cs
@@ -15,8 +21,10 @@
 ./Mono.Security.Cryptography/MD2Managed.cs
 ./Mono.Security.Cryptography/MD4.cs
 ./Mono.Security.Cryptography/MD4Managed.cs
+./Mono.Security.Cryptography/PKCS1.cs
 ./Mono.Security.Cryptography/PKCS8.cs
 ./Mono.Security.Cryptography/RC4.cs
+./Mono.Security.Cryptography/RSAManaged.cs
 ./Mono.Security.Cryptography/SymmetricTransform.cs
 ./Mono.Security.X509/ITrustAnchors.cs
 ./Mono.Security.X509/PKCS12.cs
