@@ -16,7 +16,7 @@ namespace System.Web.UI
 	{
 		internal object GetCompiledInstance (string virtualPath, string inputFile, HttpContext context)
 		{
-			InputFile = Path.Combine (MapPath (virtualPath, false), inputFile);
+			InputFile = inputFile;
 			Type type = CompileIntoType ();
 			if (type == null)
 				return null;

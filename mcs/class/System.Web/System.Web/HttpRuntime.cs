@@ -180,7 +180,11 @@ namespace System.Web {
 			} while (timeout > DateTime.Now);
 		}
 
-		internal void InternalExecuteRequest(HttpWorkerRequest request) {
+		internal void InternalExecuteRequest(HttpWorkerRequest request)
+		{
+			if (request == null)
+				throw new ArgumentNullException ("request");
+			
 			IHttpHandler handler;
 			IHttpAsyncHandler async_handler;
 

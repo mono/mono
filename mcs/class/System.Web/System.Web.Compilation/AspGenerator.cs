@@ -267,7 +267,7 @@ class ArrayListWrapper
 	}
 }
 
-public class AspGenerator
+class AspGenerator
 {
 	private object [] parts;
 	private ArrayListWrapper elements;

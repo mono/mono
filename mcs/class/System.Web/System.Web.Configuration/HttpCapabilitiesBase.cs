@@ -14,16 +14,16 @@ namespace System.Web.Configuration {
 	
 public class HttpCapabilitiesBase
 {
-	Hashtable _capabilities;
+	Hashtable capabilities;
 
 	public HttpCapabilitiesBase ()
 	{
-		_capabilities = new Hashtable ();
+		capabilities = new Hashtable ();
 	}
 
 	public virtual string this [string key]
 	{
-		get { return _capabilities [key] as string; }
+		get { return capabilities [key] as string; }
 	}
 
 	public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
@@ -31,6 +31,12 @@ public class HttpCapabilitiesBase
 		throw new NotImplementedException ();
 	}
 
+	internal void SetCapabilities (Hashtable tbl)
+	{
+		capabilities = tbl;
+		Init ();
+	}
+	
 	protected virtual void Init ()
 	{
 	}

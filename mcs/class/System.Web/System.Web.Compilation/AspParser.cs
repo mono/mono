@@ -19,14 +19,12 @@ namespace System.Web.Compilation
 
 		private void error ()
 		{
-			Console.WriteLine ("Error: " + tokenizer.location);
-			Environment.Exit (-1); //FIXME
+			throw new HttpException ("Error parsing: " + tokenizer.location);
 		}
 
 		private void error (string msg)
 		{
-			Console.WriteLine ("Error: "+ msg + "\n" + tokenizer.location);
-			Environment.Exit (-1); //FIXME
+			throw new Exception ("Error: "+ msg + "\n" + tokenizer.location);
 		}
 
 		public AspParser (AspTokenizer tokenizer)

@@ -21,7 +21,6 @@ namespace System.Web.Compilation
 		internal class PageBuilder
 		{
 			private StringBuilder cscOptions;
-			private string fileName;
 			private string csFileName;
 			private string className;
 			public static char dirSeparator = Path.DirectorySeparatorChar;
@@ -34,8 +33,7 @@ namespace System.Web.Compilation
 
 			internal PageBuilder (string fileName)
 			{
-				this.fileName = fileName;
-				csFileName = "xsp_" + Path.GetFileName (fileName).Replace (".aspx", ".cs");
+				csFileName = fileName;
 
 				cscOptions = new StringBuilder ();
 				cscOptions.Append ("--target library ");
@@ -50,23 +48,15 @@ namespace System.Web.Compilation
 			internal Type Build ()
 			{
 				string dll;
-				if (Xsp (fileName, csFileName) == false){
-					Console.WriteLine ("Error running xsp. " + 
-							   "Take a look at the output file.");
-					return null;
-				}
 
-				StreamReader st_file = new StreamReader (File.OpenRead ("output" +
-											dirSeparator +
-											csFileName));
+				StreamReader st_file = new StreamReader (File.OpenRead (csFileName));
 				
 				StringReader file_content = new StringReader (st_file.ReadToEnd ());
 				st_file.Close ();
 				if (GetBuildOptions (file_content) == false)
 					return null;
 
-				dll = "output" + dirSeparator;
-				dll += rnd_file.Next () + Path.GetFileName (fileName).Replace (".aspx", ".dll");
+				dll = rnd_file.Next () + Path.GetFileName (csFileName).Replace (".cs", ".dll");
 				if (Compile (csFileName, dll) == true){
 					Assembly assembly = Assembly.LoadFrom (dll);
 					Type type = assembly.GetType ("ASP." + className);
@@ -76,15 +66,6 @@ namespace System.Web.Compilation
 				return null;
 			}
 
-			private static bool Xsp (string fileName, string csFileName)
-			{
-				return RunProcess ("mono", 
-						   "xsp.exe " + fileName, 
-						   GeneratedXspFileName (fileName),
-						   "output" + dirSeparator + "xsp_" + Path.GetFileName (fileName) + 
-						   ".sh");
-			}
-
 			private static bool RunProcess (string exe, string arguments, string output_file, string script_file)
 			{
 				Console.WriteLine ("{0} {1}", exe, arguments);
@@ -92,19 +73,6 @@ namespace System.Web.Compilation
 				Console.WriteLine ("Script file is {0}", script_file);
 				Process proc = new Process ();
 
-				proc.StartInfo.FileName = "redirector.sh";
-				proc.StartInfo.Arguments = exe + " " + output_file + " " + arguments;
-				proc.Start ();
-				proc.WaitForExit ();
-				int result = proc.ExitCode;
-				proc.Close ();
-
-				StreamWriter bat_output = new StreamWriter (File.Create (script_file));
-				bat_output.Write ("redirector.sh" + " " + exe + " " + output_file + " " + arguments);
-				bat_output.Close ();
-/*
- * Use this code when redirection works properly
- *
 				proc.StartInfo.FileName = exe;
 				proc.StartInfo.Arguments = arguments;
 				proc.StartInfo.UseShellExecute = false;
@@ -121,7 +89,6 @@ namespace System.Web.Compilation
 				StreamWriter bat_output = new StreamWriter (File.Create (script_file));
 				bat_output.Write (exe + " " + arguments);
 				bat_output.Close ();
-*/
 
 				return (result == 0);
 			}
@@ -178,12 +145,12 @@ namespace System.Web.Compilation
 			private bool Compile (string csName, string dllName)
 			{
 				cscOptions.AppendFormat ("/out:{0} ", dllName);
-				cscOptions.Append ("output" + dirSeparator + csName);
+				cscOptions.Append (csName);
 
 				string cmdline = cscOptions.ToString ();
 				string noext = csName.Replace (".cs", "");
-				string output_file = "output" + dirSeparator + "output_from_compilation_" + noext + ".txt";
-				string bat_file = "output" + dirSeparator + "last_compilation_" + noext + ".bat";
+				string output_file = noext + "_compilation_output.txt";
+				string bat_file = noext + "_compile_command.bat";
 				return RunProcess ("mcs", cmdline, output_file, bat_file);
 			}
 		}

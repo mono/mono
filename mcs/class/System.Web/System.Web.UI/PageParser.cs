@@ -19,7 +19,8 @@ namespace System.Web.UI
 								    HttpContext context)
 		{
 			PageParser pp = new PageParser ();
-			return (IHttpHandler) pp.GetCompiledInstance (virtualPath, inputFile, context);
+			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance (virtualPath, inputFile, context);
+			return h;
 		}
 
 		protected override Type CompileIntoType ()

@@ -1,3 +1,10 @@
+2002-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.UI/PageHandlerFactory.cs: new file.
+	* System.Web.UI/PageParser.cs:
+	* System.Web.UI/TemplateControlParser.cs: we are now able to compile
+	pages and use HttpApplication, HttpRuntime and SimpleWorkerRequest.
+
 2002-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: implemented ObBubbleEvent.

@@ -17,13 +17,13 @@ using System.Web.UI.WebControls;
 namespace System.Web.Compilation
 {
 	
-	public enum ElementType
+	enum ElementType
 	{
 		TAG,
 		PLAINTEXT
 	}
 
-	public abstract class Element
+	abstract class Element
 	{
 		private ElementType elementType;
 
@@ -38,7 +38,7 @@ namespace System.Web.Compilation
 		}
 	} // class Element
 
-	public class PlainText : Element
+	class PlainText : Element
 	{
 		private StringBuilder text;
 
@@ -73,7 +73,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public enum TagType
+	enum TagType
 	{
 		DIRECTIVE,
 		HTML,
@@ -101,7 +101,7 @@ namespace System.Web.Compilation
 	 * marked runat=server and Hashtable requires the key to be unique.
 	 * 
 	 */
-	public class TagAttributes
+	class TagAttributes
 	{
 		private Hashtable atts_hash;
 		private ArrayList keys;
@@ -211,7 +211,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public class Tag : Element
+	class Tag : Element
 	{
 		protected string tag;
 		protected TagType tagType;
@@ -310,7 +310,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public class CloseTag : Tag
+	class CloseTag : Tag
 	{
 		public CloseTag (string tag) : base (tag, null, false)
 		{
@@ -318,7 +318,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public class Directive : Tag
+	class Directive : Tag
 	{
 		private static Hashtable directivesHash;
 		private static string [] page_atts = {  "AspCompat", "AutoEventWireup ", "Buffer",
@@ -430,7 +430,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public class ServerObjectTag : Tag
+	class ServerObjectTag : Tag
 	{
 		public ServerObjectTag (Tag tag) :
 			base (tag.TagID, tag.Attributes, tag.SelfClosing) 
@@ -455,7 +455,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public class HtmlControlTag : Tag
+	class HtmlControlTag : Tag
 	{
 		private Type control_type;
 		private bool is_container;
@@ -562,7 +562,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public enum ChildrenKind
+	enum ChildrenKind
 	{
 		NONE,
 		/* 
@@ -590,7 +590,7 @@ namespace System.Web.Compilation
 	}
 
 	// TODO: support for ControlBuilderAttribute that may be used in custom controls
-	public class AspComponent : Tag
+	class AspComponent : Tag
 	{
 		private Type type;
 		private string alias;
@@ -698,7 +698,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public class PropertyTag : Tag
+	class PropertyTag : Tag
 	{
 		private Type type;
 		private string name;
@@ -728,7 +728,7 @@ namespace System.Web.Compilation
 		}
 	}
 
-	public class CodeRenderTag : Tag
+	class CodeRenderTag : Tag
 	{
 		private string code;
 		private bool isVarName;
@@ -756,7 +756,7 @@ namespace System.Web.Compilation
 		}	
 	}
 
-	public class DataBindingTag : Tag
+	class DataBindingTag : Tag
 	{
 		private string data;
 

@@ -38,7 +38,7 @@ namespace System.Web.Hosting
 			object o = current.GetData (".appPath");
 			if (o == null)
 				throw new HttpException ("Cannot get .appPath");
-			_AppVirtualPath = o.ToString ();
+			_AppPhysicalPath = o.ToString ();
 
 			o = current.GetData (".hostingVirtualPath");
 			if (o == null)
@@ -48,7 +48,7 @@ namespace System.Web.Hosting
 			o = current.GetData (".hostingInstallDir");
 			if (o == null)
 				throw new HttpException ("Cannot get .hostingInstallDir");
-			_AppPhysicalPath = CheckAndAddSlash (o.ToString ());
+			_AppVirtualPath = CheckAndAddSlash (o.ToString ());
 			_Output = Output;
 
 			if (_AppPhysicalPath == null)
@@ -120,9 +120,9 @@ namespace System.Web.Hosting
 		public override string GetFilePathTranslated ()
 		{
 			if (Path.DirectorySeparatorChar != '/')
-				return _AppPhysicalPath.Replace ('/', Path.DirectorySeparatorChar);
+				return _AppPhysicalPath + _Page.Replace ('/', Path.DirectorySeparatorChar);
 
-			return _AppPhysicalPath;
+			return _AppPhysicalPath + _Page;
 		}
 
 		public override string GetHttpVerbName ()
@@ -248,11 +248,10 @@ namespace System.Web.Hosting
 		{
 			string sPath;
 
-			if ("/" == _AppVirtualPath) {
-				sPath = _AppVirtualPath + "/" + _Page;
-			} else {
+			if ("/" != _AppVirtualPath)
 				sPath = "/" + _Page;
-			}
+			else
+				sPath = String.Empty;
 
 			if (bIncludePathInfo && null != _PathInfo)
 				return sPath + _PathInfo;
@@ -260,14 +259,14 @@ namespace System.Web.Hosting
 			return sPath;
 		}
 
-		// Parses out the string after / know as the "path info"
+		// Parses out the string after / known as the "path info"
 		private void ParsePathInfo ()
 		{
-			int iPos = _Page.IndexOf("/");
+		/*	int iPos = _Page.LastIndexOf("/");
 			if (iPos >= 0) {
 				_PathInfo = _Page.Substring (iPos);
 				_Page = _Page.Substring (0, iPos);
-			}
+			}*/
 		}
 	}
 }

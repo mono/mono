@@ -163,7 +163,11 @@ namespace System.Web {
 			}
 		}
 
-		internal static IHttpHandler GetInstance(HttpContext context) {
+		internal static IHttpHandler GetInstance(HttpContext context)
+		{
+			if (custApplication != null)
+				return custApplication;
+
 			if (!s_Factory._appInitialized) {
 				lock (s_Factory) {
 					if (!s_Factory._appInitialized) {

@@ -818,28 +818,22 @@ namespace System.Web {
 			return arrRet;
 		}
 
-		public string MapPath(string VirtualPath) {
-			if (null == _sRequestRootVirtualDir) {
-				if (null == FilePath || FilePath.Length == 0) {
-					throw new ArgumentException("Filepath can't be empty");
-				}
-
-				if (FilePath[0] != '/') {
-					throw new ArgumentException("Filepath must be a root");
-				}
-
-				_sRequestRootVirtualDir = FilePath.Substring(0, FilePath.LastIndexOf('/'));
-				if (_sRequestRootVirtualDir.Length == 0) {
-					_sRequestRootVirtualDir = "/";
-				}
-			}
-
-			return MapPath(VirtualPath, _sRequestRootVirtualDir, true);
+		public string MapPath(string VirtualPath)
+		{
+			return MapPath (VirtualPath, _sRequestRootVirtualDir, true);
 		}
 
-		[MonoTODO("Build a path to send to MapPath in the workerrequest")]
-		public string MapPath(string virtualPath, string baseVirtualDir, bool allowCrossAppMapping) {
-			throw new NotImplementedException();
+		[MonoTODO]
+		public string MapPath(string virtualPath, string baseVirtualDir, bool allowCrossAppMapping)
+		{
+			if (_WorkerRequest == null)
+				throw new HttpException ("No HttpWorkerRequest!!!");
+
+			if (virtualPath == null || virtualPath.Length == 0)
+				virtualPath = ".";
+
+			virtualPath = System.IO.Path.Combine (baseVirtualDir, virtualPath);
+			return _WorkerRequest.MapPath (virtualPath);
 		}
 
 		public void SaveAs(string filename, bool includeHeaders) {

@@ -12,7 +12,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Security.Principal;
 using System.Runtime.Remoting.Messaging;
-using System.Web;
+using System.Web.UI;
 using System.Web.Configuration;
 using System.Web.SessionState;
 
@@ -352,6 +352,7 @@ namespace System.Web {
 					error = exc;
 				}
 
+				_handler = null;
 				_app._state.ExecuteNextAsync(error);
 			}
 
@@ -403,7 +404,10 @@ namespace System.Web {
 			}
 
 			public void Execute() {
-				_app.Context.Handler = _app.CreateHttpHandler(_app.Context, _app.Request.RequestType, _app.Request.FilePath, _app.Request.PhysicalPath);
+				_app.Context.Handler = _app.CreateHttpHandler ( _app.Context,
+										_app.Request.RequestType,
+										_app.Request.FilePath,
+										_app.Request.PhysicalPath);
 			}
 			
 			public bool CompletedSynchronously {
@@ -554,11 +558,12 @@ namespace System.Web {
 			}
 
 			internal void ExecuteNextAsync(Exception lasterror) {
-				if (!Thread.CurrentThread.IsThreadPoolThread) {
-					ThreadPool.QueueUserWorkItem(_asynchandler, lasterror);
-				} else {
+			//FIXME: something is wrong with this: the socket is closed before compilation finishes.
+			//	if (!Thread.CurrentThread.IsThreadPoolThread) {
+			//		ThreadPool.QueueUserWorkItem(_asynchandler, lasterror);
+			//	} else {
 					ExecuteNext(lasterror);
-				}
+			//	}
 			}
 
 			private void ExecuteNext(Exception lasterror) {
@@ -614,6 +619,7 @@ namespace System.Web {
 				Exception lasterror = null;
 				try {
 					try {
+
 						if (state.PossibleToTimeout) {
 							// TODO: Start timeout possible
 							try {
@@ -632,6 +638,7 @@ namespace System.Web {
 							readysync = true;
 						else 
 							readysync = false;
+
 					} 
 					catch (System.Exception obj) {
 						lasterror = obj;
@@ -675,10 +682,10 @@ namespace System.Web {
 		#endregion
 
 		#region Methods
-		[MonoTODO]
+		[MonoTODO("Deal with other handlers")]
 		private IHttpHandler CreateHttpHandler(HttpContext context, string type, string file, string path) {
-			// TODO: Cache factories
-			return (IHttpHandler) HandlerFactoryConfiguration.FindHandler(type, path).Create();
+			//return (IHttpHandler) HandlerFactoryConfiguration.FindHandler(type, path).Create();
+			return new PageHandlerFactory ().GetHandler (context, type, file, path);
 		}
 
 		[MonoTODO()]
@@ -771,7 +778,7 @@ namespace System.Web {
 			_appState = state;
 			_state = new StateMachine(this);
 
-			// Initialize alll IHttpModule(s)
+			// Initialize all IHttpModule(s)
 			InitModules();
 			
 			// Initialize custom application

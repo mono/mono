@@ -1,3 +1,7 @@
+2002-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: added PageHandlerFactory.
+
 2002-09-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added 2 new files (DataGrid*Internal.cs).
