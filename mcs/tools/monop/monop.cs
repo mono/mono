@@ -57,10 +57,17 @@ class MonoP {
 		return GetType (tname, false);
 	}
 	
+	static void PrintTypes (string assembly)
+	{
+		Assembly a = Assembly.Load (assembly);
+		foreach (Type t in a.GetExportedTypes ())
+			Console.WriteLine (t.FullName);
+	}
+	
 	static void Main (string [] args)
 	{
 		if (args.Length < 1) {
-			Console.WriteLine ("monop [-r:Assembly] class-name");
+			Console.WriteLine ("monop [-r:Assembly] [class-name]");
 			return;
 		}
 		
@@ -70,10 +77,15 @@ class MonoP {
 		if (args [0].StartsWith ("-r:")){
 			i++;
 			assembly = args [0].Substring (3);
+			
+			if (args.Length == 1) {
+				PrintTypes (assembly);
+				return;
+			}
 		}
 
 		if (args.Length < i+1){
-			Console.WriteLine ("Usage is: monop [-r:Assembly] class-name");
+			Console.WriteLine ("Usage is: monop [-r:Assembly] [class-name]");
 			return;
 		}
 
