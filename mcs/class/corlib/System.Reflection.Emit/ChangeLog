@@ -1,3 +1,8 @@
+2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs: Save the main module of the assembly even if it is 
+	transient.
+
 2004-08-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyBuilder.cs: (Partly) Fix delay-signing issue (#56621) when 
