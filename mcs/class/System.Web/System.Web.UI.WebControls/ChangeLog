@@ -1,3 +1,7 @@
+2004-08-18  Sanjay Gupta <gsanjay@novell.com>
+
+	* Literal.cs: Added new attributes and property for .Net 2.0
+
 2004-08-13  Sanjay Gupta <gsanjay@novell.com>
 
 	* GridViewDeleteEventArgs.cs: Removed extra code.

@@ -4,9 +4,12 @@
 // Authors:
 //   Gaurav Vaish (gvaish@iitk.ac.in)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) Gaurav Vaish (2002)
 // (C) 2003 Andreas Nahr
+// (C) 2004, Novell, Inc. (http://www.novell.com)
+//
 //
 
 //
@@ -40,7 +43,13 @@ namespace System.Web.UI.WebControls
 	[DefaultProperty("Text")]
 	[ControlBuilder(typeof(LiteralControlBuilder))]
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
+#if NET_2_0
+	[DesignerAttribute ("Value not found")]
+#endif
 	public class Literal : Control
+#if NET_2_0
+//	, IStaticTextControl
+#endif
 	{
 		public Literal () : base ()
 		{
@@ -48,6 +57,9 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[WebSysDescription ("The text for the literal WebControl.")]
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		public string Text
 		{
 			get {
@@ -78,6 +90,22 @@ namespace System.Web.UI.WebControls
 			if (Text.Length > 0)
 				writer.Write (Text);
 		}
+
+#if NET_2_0
+		private LiteralMode literalMode;
+		[DefaultValue (LiteralMode.Transform), WebCategory ("Behavior"), WebSysDescription ("Determines whether the text is transformed or encoded")]
+		public LiteralMode Mode {
+			get { return literalMode; }
+			set { literalMode = value; }
+		}
+
+		//No information as to which Focus() method is being overridden
+		/*[MonoTODO]
+		public override void Focus ()
+		{
+			throw new Exception ("No information provided"); 
+		}*/
+#endif
 	}
 }
 
