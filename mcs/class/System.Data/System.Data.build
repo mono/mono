@@ -20,6 +20,7 @@
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
+				<excludes name="System.Data.SqlClient/**"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>

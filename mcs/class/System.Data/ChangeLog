@@ -1,3 +1,9 @@
+2002-10-16  Tim Coleamn <tim@timcoleman.com>
+	* list:
+	* System.Data.build:
+		Exclude compiling of System.Data.SqlClient in
+		preparation for overhauls of that system.
+
 2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* ParmUtil.cs
