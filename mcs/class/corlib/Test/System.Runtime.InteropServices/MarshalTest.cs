@@ -91,10 +91,22 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public void PtrToStringWithNull ()
 		{
-			AssertEquals (Marshal.PtrToStringAnsi (IntPtr.Zero), String.Empty);
-			AssertEquals (Marshal.PtrToStringAnsi (IntPtr.Zero, 0), String.Empty);
-			AssertEquals (Marshal.PtrToStringUni (IntPtr.Zero), String.Empty);
-			AssertEquals (Marshal.PtrToStringUni (IntPtr.Zero, 0), String.Empty);
+			AssertNull ("A", Marshal.PtrToStringAnsi (IntPtr.Zero));
+			AssertNull ("C", Marshal.PtrToStringUni (IntPtr.Zero));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void PtrToStringWithNullThrow ()
+		{
+			AssertNull ("B", Marshal.PtrToStringAnsi (IntPtr.Zero, 0));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void PtrToStringWithNullThrow2 ()
+		{
+			AssertNull ("D", Marshal.PtrToStringUni (IntPtr.Zero, 0));
 		}
 
 		[Test]
