@@ -1,5 +1,10 @@
 2004-01-04  Jackson Harper <jackson@ximian.com>
 
+	* TraceContext.cs: Store and render trace info times. Also render
+	cookie sizes. Remove debug code.
+	
+2004-01-04  Jackson Harper <jackson@ximian.com>
+
 	* HttpResponse.cs: Set the cached response date header so it can
 	be updated.
 	* HttpResponseHeader.cs: Let values be set so we can update cached 

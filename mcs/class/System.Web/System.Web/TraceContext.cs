@@ -20,11 +20,15 @@ namespace System.Web {
       private bool _Enabled;
       private TraceMode _Mode;
       private DataTable info;
+      private bool is_first;
+      private DateTime first_time;
+      private double prev_time;
       private int control_pos;
 
       public TraceContext(HttpContext Context) {
 	 _Context = Context;
 	 _Enabled = false;
+         is_first = true;
       }
 
       public bool IsEnabled {
@@ -77,10 +81,20 @@ namespace System.Web {
       private void Write(string category, string msg, Exception error, bool Warning) {
 	      if (!_Enabled)
 		      return;
+	      	
+              double time;
+	      if (is_first) {
+		   time = 0;
+		   is_first = false;
+		   first_time = DateTime.Now;
+              } else
+	  	   time = (DateTime.Now - first_time).TotalSeconds;
+
 	      DataRow r = info.NewRow ();
 	      r ["Category"] = category;
 	      r ["Message"] = msg;
 	      r ["Exception"] = (error != null ? error.ToString () : null);
+	      r ["TimeSinceFirst"] = time;
 	      r ["IsWarning"] = Warning;
 
 	      info.Rows.Add (r);
@@ -92,6 +106,7 @@ namespace System.Web {
 		   info.Columns.Add (new DataColumn ("Category", typeof (string)));
 		   info.Columns.Add (new DataColumn ("Message", typeof (string)));
 		   info.Columns.Add (new DataColumn ("Exception", typeof (string)));
+		   info.Columns.Add (new DataColumn ("TimeSinceFirst", typeof (double)));
 		   info.Columns.Add (new DataColumn ("IsWarning", typeof (bool)));
 	   }
 
@@ -158,7 +173,7 @@ namespace System.Web {
 		   RenderControl (table, page, "__PAGE", "", control_pos);
 
 		   table.RenderControl (output);
-		   }
+	   }
 		   
 	   private void RenderCookies (HtmlTextWriter output)
 	   {
@@ -211,15 +226,15 @@ namespace System.Web {
 	   {
 		   RenderAltRow (table, pos, name, value);
 	   }
-	 
+	   
 	   private void RenderCookie (Table table, HttpCookie c, int pos)
 	   {
-		   RenderAltRow (table, pos, c.Name, c.Value, "&nbsp;");
+		   int length = c.Name.Length + (c.Value == null ? 0 : c.Value.Length);
+		   RenderAltRow (table, pos, c.Name, c.Value, length.ToString ());
 	   }
 	   
 	   private void RenderControl (Table table, Control c, string id, string p, int pos)
 	   {
-		   Console.WriteLine ("pos:  " + pos);
 		   RenderAltRow (table, pos, p + id, c.GetType ().FullName, "&nbsp;", "&nbsp;");
 		   
 		   foreach (Control child in c.Controls)
@@ -247,10 +262,20 @@ namespace System.Web {
 			   open = "<font color=\"Red\">";
 			   close = "</font>";
 		   }
-
+		   
+		   double t = (double) r ["TimeSinceFirst"];
+		   string t1, t2;
+		   if (t == 0) {
+			t1 = t2 = String.Empty;
+			prev_time = 0;
+		   } else {
+			t1 = t.ToString ("0.000000");
+		  	t2 = (t - prev_time).ToString ("0.000000");
+			prev_time = t;
+		   }
+ 
 		   return RenderAltRow (table, pos, open + (string) r ["Category"] + close,
-				   open + (string) r ["Message"] + close,
-				   "&nbsp;", "&nbsp;");
+				   open + (string) r ["Message"] + close, t1, t2);
 	   }
 	   
 	   private TableRow SubHeadRow (params string[] cells)
