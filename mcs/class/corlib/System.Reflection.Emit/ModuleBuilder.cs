@@ -581,9 +581,8 @@ namespace System.Reflection.Emit {
 
 		internal void Save ()
 		{
-			if (transient)
+			if (transient && !is_main)
 				return;
-
 			if ((global_type != null) && (global_type_created == null))
 				global_type_created = global_type.CreateType ();
 
