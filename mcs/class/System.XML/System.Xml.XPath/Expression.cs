@@ -1449,7 +1449,7 @@ namespace System.Xml.XPath
 				if (resolvedName)
 					var = context.ResolveVariable (_name);
 				else
-					var = context.ResolveVariable (_name.Namespace, _name.Name);
+					var = context.ResolveVariable (new XmlQualifiedName (_name.Name, _name.Namespace));
 			}
 			
 			if (var == null)
@@ -1457,7 +1457,7 @@ namespace System.Xml.XPath
 			object objResult = var.Evaluate (context);
 			XPathNodeIterator iterResult = objResult as XPathNodeIterator;
 			if (iterResult != null)
-				return iterResult.Clone ();
+				return new WrapperIterator (iterResult.Clone (), iter.NamespaceManager);
 			return objResult;
 		}
 	}

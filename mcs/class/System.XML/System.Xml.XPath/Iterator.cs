@@ -90,6 +90,39 @@ namespace System.Xml.XPath
 		}
 	}
 
+	internal class WrapperIterator : BaseIterator
+	{
+		XPathNodeIterator iter;
+
+		public WrapperIterator (XPathNodeIterator iter, NSResolver nsm)
+			: base (nsm)
+		{
+			this.iter = iter;
+		}
+
+		public override XPathNodeIterator Clone ()
+		{
+			return new WrapperIterator (iter.Clone (), NamespaceManager);
+		}
+
+		public override bool MoveNext ()
+		{
+			return iter.MoveNext ();
+		}
+
+		public override XPathNavigator Current {
+			get { return iter.Current; }
+		}
+
+		public override int CurrentPosition {
+			get { return iter.CurrentPosition; }
+		}
+
+		public override bool RequireSorting {
+			get { return true; }
+		}
+	}
+
 	internal abstract class SimpleIterator : BaseIterator
 	{
 		protected readonly BaseIterator _iter;
@@ -196,6 +229,8 @@ namespace System.Xml.XPath
 			}
 			return false;
 		}
+
+		public override bool ReverseAxis { get { return true; } }
 
 		public override bool RequireSorting { get { return true; } }
 	}
@@ -485,6 +520,7 @@ namespace System.Xml.XPath
 		protected DescendantIterator (DescendantIterator other) : base (other)
 		{
 			_depth = other._depth;
+			_finished = other._finished;
 			_current = other._current.Clone ();
 		}
 

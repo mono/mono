@@ -1,3 +1,15 @@
+2004-10-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Iterator.cs :
+	  - Added WrapperIterator to return BaseIterator in such case that 
+	    variable reference is resolved to XPathNodeIterator. This fixes
+	    bug #68267.
+	  - Path ".." is reverse axis (actually no effect).
+	  - Fixed DescendantIterator.Clone() that missed "_finished" field.
+	* Expression.cs :
+	  In ExprVariable.Evaluate(), use WrapperIterator() for custom
+	  XPathNodeIterator.
+
 2004-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathAtomicValue.cs : Init(string, XmlSchemaType) is private.
