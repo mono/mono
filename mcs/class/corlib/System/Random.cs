@@ -1,83 +1,112 @@
 //
 // System.Random.cs
 //
-// Author:
-//   Bob Smith (bob@thestuff.net)
+// Authors:
+//	Bob Smith (bob@thestuff.net)
+//	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2001 Bob Smith.  http://www.thestuff.net
+// (C) 2003 Ben Maurer
 //
 
 using System;
 using System.Globalization;
 
-namespace System
-{
-		[Serializable]
-        public class Random
-        {
-                private int S = 1;
-                private const int A = 16807;
-                private const int M = 2147483647;
-                private const int Q = 127773;
-                private const int R = 2836;
+namespace System {
 
-                public Random()
+	[Serializable]
+	public class Random {
+
+		const int MBIG = int.MaxValue;
+		const int MSEED = 161803398;
+		const int MZ = 0;
+
+		int inext, inextp;
+		int [] ma = new int [56];
+		
+		public Random () : this (Environment.TickCount) {}
+		
+		public Random (int Seed)
+		{
+			int ii;
+			int mj, mk;
+
+			// Numerical Recipes in C online @ http://www.library.cornell.edu/nr/bookcpdf/c7-1.pdf
+			mj = MSEED - Math.Abs (Seed);
+			ma [55] = mj;
+			mk = 1;
+			for (int i = 1; i < 55; i++) {  //  [1, 55] is special (Knuth)
+				ii = (21 * i) % 55;
+				ma [ii] = mk;
+				mk = mj - mk;
+				if (mk < 0)
+					mk += MBIG;
+				mj = ma[ii];
+			}
+			for (int k = 1; k < 5; k++) {
+				for (int i = 1; i < 56; i++) {
+					ma [i] -= ma [1 + (i + 30) % 55];
+					if (ma [i] < 0)
+						ma [i] += MBIG;
+				}
+			}
+			inext = 0;
+			inextp = 21;
+		}
+
+		protected virtual double Sample ()
+		{
+			int retVal;
+			
+			if (++inext  >= 56) inext  = 1;
+			if (++inextp >= 56) inextp = 1;
+			
+			retVal = ma [inext] - ma [inextp];
+			
+			if (retVal < 0)
+				retVal += MBIG;
+			
+			ma [inext] = retVal;
+
+			return retVal * (1.0 / MBIG);
+		}
+
+                public virtual int Next ()
                 {
-                        S = (int)(DateTime.Now.Ticks);
+                        return (int)(Sample () * int.MaxValue);
                 }
 
-                public Random(int Seed)
-                {
-                        S = Seed;
-                }
-
-                public virtual int Next()
-                {
-                        return (int)(this.Sample()*Int32.MaxValue);
-                }
-
-                public virtual int Next(int maxValue)
+                public virtual int Next (int maxValue)
                 {
                         if (maxValue < 0)
                                 throw new ArgumentOutOfRangeException(Locale.GetText (
-					"Max value is less then min value."));
+                                        "Max value is less then min value."));
                         else if (maxValue == 0)
                                 return 0;
-                        return (int)(this.Sample()*maxValue);
+                        return (int)(Sample () * maxValue);
                 }
 
-                public virtual int Next(int minValue, int maxValue)
+                public virtual int Next (int minValue, int maxValue)
                 {
                         if (minValue > maxValue)
-                                throw new ArgumentOutOfRangeException(Locale.GetText (
-					"Min value is greater then max value."));
+                                throw new ArgumentOutOfRangeException (Locale.GetText (
+                                        "Min value is greater then max value."));
                         else if (minValue == maxValue)
                                 return minValue;
-                        return (int)(this.Sample()*(maxValue - minValue))+minValue;
+                        return (int)(Sample () * (maxValue - minValue)) + minValue;
                 }
-                public virtual void NextBytes(byte[] buffer)
+
+                public virtual void NextBytes (byte [] buffer)
                 {
-                        int i, l;
-                        if (buffer == null)
-                                throw new ArgumentNullException();
-                        l = buffer.GetUpperBound(0);
-                        for (i = buffer.GetLowerBound(0); i < l; i++)
-                        {
-                                buffer[i] = (byte)(this.Sample()*Byte.MaxValue);
-                        }
+			if (buffer==null) throw new ArgumentNullException ("buffer");
+			for (int i = 0; i < buffer.Length; i++) {
+				buffer [i] = (byte)(Sample () * (byte.MaxValue + 1)); 
+			}
                 }
 
                 public virtual double NextDouble ()
                 {
-                        return this.Sample();
+                        return this.Sample ();
                 }
-
-                protected virtual double Sample ()
-		{
-                        S = A*(S%Q)-R*(S/Q);
-                        if (S < 0)
-				S+=M;
-                        return S/(double)Int32.MaxValue;
-                }
-        }
+	}
 }

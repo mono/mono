@@ -1,3 +1,9 @@
+2003-06-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Random.cs: New implementation based on Knuth ran3 to fix #43597.
+	See http://www.library.cornell.edu/nr/bookcpdf/c7-1.pdf. Commited
+	for Ben Maurer after review and testing.
+
 2003-05-28  Ben Maurer <bmaurer@users.sourceforge.net>
 	
 	* Array.cs: Added better argument checking to Array.Sort ()
