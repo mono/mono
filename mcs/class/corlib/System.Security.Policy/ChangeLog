@@ -1,3 +1,7 @@
+2004-01-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeGroup.cs: make it build with mcs. This is a BUG.
+
 2004-01-26  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllMembershipCondition.cs: Clean up. Removed FIXME.

@@ -127,7 +127,8 @@ namespace System.Security.Policy {
 
 // FIXME: this compiles with CSC. Didn't succeed at creating a smaller/different test case :(
 //			if (!cg.MembershipCondition.Equals (m_membershipCondition))
-			if (cg.MembershipCondition.ToString () != m_membershipCondition.ToString ())
+			if (((object) cg.MembershipCondition).ToString () !=
+			    ((object) m_membershipCondition).ToString ())
 				return false;
 
 			if (compareChildren) {
