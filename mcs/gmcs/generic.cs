@@ -1567,11 +1567,11 @@ namespace Mono.CSharp {
 		}
 
 		public override string Name {
-			get { return underlying.ToString (); }
+			get { return underlying.ToString () + "?"; }
 		}
 
 		public override string FullName {
-			get { return underlying.ToString (); }
+			get { return underlying.ToString () + "?"; }
 		}
 
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
@@ -2311,49 +2311,58 @@ namespace Mono.CSharp {
 		public class LiftedConversion : Expression
 		{
 			Expression source;
-			bool is_explicit;
 			NullableInfo source_info, target_info;
 			Expression conversion;
 
-			protected LiftedConversion (Expression source, Type target_type, bool is_explicit,
-						    Location loc)
+			protected LiftedConversion (Expression source, Type target_type,
+						    NullableInfo source_info, NullableInfo target_info,
+						    Expression conversion, Location loc)
 			{
 				this.source = source;
 				this.type = target_type;
-				this.is_explicit = is_explicit;
+				this.source_info = source_info;
+				this.target_info = target_info;
+				this.conversion = conversion;
 				this.loc = loc;
 
 				eclass = source.eclass;
 			}
 
 			public static Expression Create (EmitContext ec, Expression source, Type target_type,
-							 bool is_explicit, Location loc)
+							 bool is_user, bool is_explicit, Location loc)
 			{
-				Expression expr = new LiftedConversion (source, target_type, is_explicit, loc);
-				return expr.Resolve (ec);
-			}
-
-			public override Expression DoResolve (EmitContext ec)
-			{
-				source_info = new NullableInfo (source.Type);
-				target_info = new NullableInfo (type);
+				NullableInfo source_info = new NullableInfo (source.Type);
+				NullableInfo target_info = new NullableInfo (target_type);
 
 				source = source.Resolve (ec);
 				if (source == null)
 					return null;
 
-				if (is_explicit)
-					conversion = Convert.ExplicitConversionStandard (
+				Expression conversion;
+				if (is_user) {
+					conversion = Convert.UserDefinedConversion (
 						ec, new EmptyExpression (source_info.UnderlyingType),
-						target_info.UnderlyingType, loc);
-				else
-					conversion = Convert.ImplicitConversionStandard (
-						ec, new EmptyExpression (source_info.UnderlyingType),
-						target_info.UnderlyingType, loc);
+						target_info.UnderlyingType, loc, is_explicit);
+				} else {
+					if (is_explicit)
+						conversion = Convert.ExplicitConversion (
+							ec, new EmptyExpression (source_info.UnderlyingType),
+							target_info.UnderlyingType, loc);
+					else
+						conversion = Convert.ImplicitConversion (
+							ec, new EmptyExpression (source_info.UnderlyingType),
+							target_info.UnderlyingType, loc);
+				}
 
 				if (conversion == null)
 					return null;
 
+				return new LiftedConversion (
+					source, target_type, source_info, target_info, conversion, loc);
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
 				return this;
 			}
 

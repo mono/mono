@@ -1128,6 +1128,10 @@ namespace Mono.CSharp {
 			Type source_type = source.Type;
 			MethodBase method = null;
 
+			if (TypeManager.IsNullableType (source_type) && TypeManager.IsNullableType (target))
+				return Nullable.LiftedConversion.Create (
+					ec, source, target, true, look_for_explicit, loc);
+
 			union = GetConversionOperators (ec, source_type, target, loc, look_for_explicit);
 			if (union == null)
 				return null;
@@ -1236,7 +1240,7 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
-				return Nullable.LiftedConversion.Create (ec, expr, target_type, false, loc);
+				return Nullable.LiftedConversion.Create (ec, expr, target_type, false, false, loc);
 
 			if (expr.eclass == ExprClass.MethodGroup){
 				if (!TypeManager.IsDelegateType (target_type)){
@@ -1922,7 +1926,7 @@ namespace Mono.CSharp {
 				return ne;
 
 			if (TypeManager.IsNullableType (expr.Type) && TypeManager.IsNullableType (target_type))
-				return Nullable.LiftedConversion.Create (ec, expr, target_type, true, loc);
+				return Nullable.LiftedConversion.Create (ec, expr, target_type, false, true, loc);
 
 			ne = ExplicitNumericConversion (ec, expr, target_type, loc);
 			if (ne != null)
@@ -2032,7 +2036,7 @@ namespace Mono.CSharp {
 				return ne;
 
 			if (TypeManager.IsNullableType (expr.Type) && TypeManager.IsNullableType (target_type))
-				return Nullable.LiftedConversion.Create (ec, expr, target_type, true, l);
+				return Nullable.LiftedConversion.Create (ec, expr, target_type, false, true, l);
 
 			ne = ExplicitNumericConversion (ec, expr, target_type, l);
 			if (ne != null)

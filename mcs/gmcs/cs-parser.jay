@@ -2493,12 +2493,12 @@ type
 		$$ = ((MemberName) $1).GetTypeExpression (lexer.Location);
 
 		if ((bool) $2)
-			$$ = new NullableType ((Expression) $$, lexer.Location);
+			$$ = new ComposedCast ((Expression) $$, "?", lexer.Location);
 	  }
 	| builtin_types opt_nullable
 	  {
 		if ((bool) $2)
-			$$ = new NullableType ((Expression) $1, lexer.Location);
+			$$ = new ComposedCast ((Expression) $1, "?", lexer.Location);
 	  }
 	| array_type
 	| pointer_type
@@ -2524,7 +2524,7 @@ non_expression_type
 	: builtin_types opt_nullable
 	  {
 		if ((bool) $2)
-			$$ = new NullableType ((Expression) $1, lexer.Location);
+			$$ = new ComposedCast ((Expression) $1, "?", lexer.Location);
 	  }
 	| non_expression_type rank_specifier
 	  {
@@ -3441,6 +3441,12 @@ conditional_expression
 	| conditional_or_expression INTERR INTERR expression
 	  {
 		$$ = new NullCoalescingOperator ((Expression) $1, (Expression) $4, lexer.Location);
+	  }
+	// We'll be resolved into a `parenthesized_expression_0' later on.
+	| conditional_or_expression INTERR CLOSE_PARENS
+	  {
+		$$ = new ComposedCast ((Expression) $1, "?", lexer.Location);
+		lexer.PutbackCloseParens ();
 	  }
 	;
 

@@ -1,3 +1,22 @@
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(NullableType.Name, NullableType.FullName): Add a "?" to the name.
+	(Nullable.LiftedConversion): Added support for user-defined
+	conversions.
+
+	* cs-tokenizer.cs (Tokenizer.PutbackCloseParens): New public method.
+
+	* cs-parser.jay: Use ComposedCast everywhere instead of
+	NullableType, so we don't need to check for NullableType
+	everywhere.
+	(conditional_expression): Added `INTERR CLOSE_PARENS' rule for the
+	case where we'll be resolved into a `parenthesized_expression_0'
+	afterwards.
+
+	* convert.cs
+	(Convert.UserDefinedConversion): Added nullable conversions.
+
 2005-02-28  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.IsNullableType): New static method.

@@ -759,6 +759,11 @@ namespace Mono.CSharp
 			putback_char = '?';
 		}
 
+		public void PutbackCloseParens ()
+		{
+			putback_char = ')';
+		}
+
 		void Error_NumericConstantTooLong ()
 		{
 			Report.Error (1021, Location, "Numeric constant too long");			
