@@ -929,9 +929,14 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 			| INSTR_PHI int16s 
 			;
 
+full_type
+	: type
+	| assembly_name name1 { $$ = String.Format ("[{0}]{1}", $1, $2); }
+	;
+
 arg_list 
 	: /* EMPTY */
-	| type
+	| full_type
 	  {
 		ArrayList arg_list = new ArrayList ();
 		arg_list.Add ($1);
@@ -948,7 +953,7 @@ arg_list
 	;
 
 named_arg
-	: type ID
+	: full_type ID
 	  {
 		$$ = new DictionaryEntry ((string) $1, (string) $2);
 	  }
