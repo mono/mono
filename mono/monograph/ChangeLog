@@ -1,4 +1,8 @@
 
+Tue Jan 28 18:53:08 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: more stats added.
+
 Mon Oct 7 12:25:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monograph.c: added a --stats command line option to gather
