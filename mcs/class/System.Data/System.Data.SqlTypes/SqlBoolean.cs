@@ -161,6 +161,12 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean Parse(string s) 
 		{
+			switch (s) {
+			case "0":
+				return new SqlBoolean (false);
+			case "1":
+				return new SqlBoolean (true);
+			}
 			return new SqlBoolean (Boolean.Parse (s));
 		}
 
@@ -414,6 +420,8 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlString x) 
 		{
 			checked {
+				if (x.IsNull)
+					return Null;
 				return SqlBoolean.Parse (x.Value);
 			}
 		}

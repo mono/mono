@@ -41,9 +41,22 @@ namespace System.Data.SqlTypes
 		public static readonly int IgnoreWidth = 0x10;
 		public static readonly SqlString Null;
 
+		internal static readonly NumberFormatInfo MoneyFormat;
+		internal static NumberFormatInfo DecimalFormat;
 		#endregion // Fields
 
 		#region Constructors
+
+		static SqlString ()
+		{
+			MoneyFormat = (NumberFormatInfo) NumberFormatInfo.InvariantInfo.Clone ();
+			MoneyFormat.NumberDecimalDigits = 4;
+			MoneyFormat.NumberGroupSeparator = String.Empty;
+
+			DecimalFormat = (NumberFormatInfo) NumberFormatInfo.InvariantInfo.Clone ();
+			DecimalFormat.NumberDecimalDigits = 13;
+			DecimalFormat.NumberGroupSeparator = String.Empty;
+		}
 
 		// init with a string data
 		public SqlString (string data) 
@@ -51,7 +64,9 @@ namespace System.Data.SqlTypes
 			this.value = data;
 			lcid = CultureInfo.CurrentCulture.LCID;
 			notNull = true;
-			this.compareOptions = SqlCompareOptions.None;
+			this.compareOptions = SqlCompareOptions.IgnoreCase |
+				SqlCompareOptions.IgnoreKanaType |
+				SqlCompareOptions.IgnoreWidth;
 		}
 
 		// init with a string data and locale id values.
@@ -60,7 +75,9 @@ namespace System.Data.SqlTypes
 			this.value = data;
 			this.lcid = lcid;
 			notNull = true;
-			this.compareOptions = SqlCompareOptions.None;
+			this.compareOptions = SqlCompareOptions.IgnoreCase |
+				SqlCompareOptions.IgnoreKanaType |
+				SqlCompareOptions.IgnoreWidth;
 		}
 
 		// init with locale id, compare options, 
@@ -167,6 +184,17 @@ namespace System.Data.SqlTypes
 			}
 		}
 
+		public CompareOptions CompareOptions {
+			get {
+				return 
+					(this.compareOptions & SqlCompareOptions.BinarySort) != 0 ? 
+					CompareOptions.Ordinal :
+					// 27 == all SqlCompareOptions - BinarySort 
+					// (1,2,8,24 are common to CompareOptions)
+					(CompareOptions) ((int) this.compareOptions & 27);
+			}
+		}
+
 		public bool IsNull {
 			get { return !notNull; }
 		}
@@ -225,7 +253,7 @@ namespace System.Data.SqlTypes
 		// Comparison Methods
 		// **********************************
 
-		public int CompareTo(object value)
+		public int CompareTo (object value)
 		{
 			if (value == null)
 				return 1;
@@ -233,8 +261,9 @@ namespace System.Data.SqlTypes
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlString"));
 			else if (((SqlString)value).IsNull)
 				return 1;
-			else
-				return this.value.CompareTo (((SqlString)value).Value);
+//			else
+//				return String.Compare (this.value, ((SqlString)value).Value, (this.SqlCompareOptions & SqlCompareOptions.IgnoreCase) != 0, this.CultureInfo);
+			return CultureInfo.CompareInfo.Compare (this.value, ((SqlString)value).Value, this.CompareOptions);
 		}
 
 		public static SqlString Concat(SqlString x, SqlString y) 
@@ -478,12 +507,13 @@ namespace System.Data.SqlTypes
 				return new SqlString (x.Value.ToString ());
 		}
 
-		public static explicit operator SqlString (SqlDecimal x) 
+		public static explicit operator SqlString (SqlDecimal x)
 		{
 			if (x.IsNull)
 				return Null;
 			else
 				return new SqlString (x.Value.ToString ());
+				return new SqlString (x.Value.ToString ("N", DecimalFormat));
 		}
 
 		public static explicit operator SqlString (SqlDouble x) 
@@ -532,6 +562,7 @@ namespace System.Data.SqlTypes
 				return Null;
 			else
 				return new SqlString (x.Value.ToString ());
+				return new SqlString (x.Value.ToString ("N", MoneyFormat));
 		}
 
 		public static explicit operator SqlString (SqlSingle x) 

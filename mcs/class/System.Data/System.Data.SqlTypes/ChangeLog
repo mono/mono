@@ -1,3 +1,9 @@
+2004-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SqlBoolean.cs : Allow "0" and "1" on Parse(). Allow SqlString.Null
+	  in conversion.
+	* SqlString.cs : CompareOption should not be None.
+
 2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SqlNullValueException.cs: Use a more clarifying error message.
