@@ -1,3 +1,8 @@
+2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-sha1.c : close opened file in case of successful read. This
+	  saves a bunch of System.Reflection Emit failures under windows.
+
 2004-06-18  Jackson Harper  <jackson@ximian.com>
 
 	* mono-logger.c/h: Add a trace mask option for tracing loading
