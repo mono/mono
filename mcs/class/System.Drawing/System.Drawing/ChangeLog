@@ -1,3 +1,7 @@
+2004-04-29  Peter Bartok <pbartok@novell.com>
+   * Brushes.cs: Fixed bug #52695. No longer creates a new
+   brush for every request and behaves Microsoft compatible
+
 2004-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Image.cs: fixes Save method. It now retrieves the proper encoder and uses
