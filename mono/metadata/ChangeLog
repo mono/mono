@@ -1,3 +1,9 @@
+
+Thu Apr 25 16:38:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* rand.c, rand.h: instance method icalls need to have an explicit
+	this pointer as first argument in the C implementation.
+
 2002-04-25  Nick Drochak <ndrochak@gol.com>
 
 	* icall.c: Fix typo in map for GetNonZeroBytes
