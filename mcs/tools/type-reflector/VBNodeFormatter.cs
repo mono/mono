@@ -59,7 +59,7 @@ namespace Mono.TypeReflector
 		{
 			string type = "Function";
 
-			bool sub = method.ReturnType == typeof(System.Void);
+			bool sub = method.ReturnType == typeof (void);
 
 			if (sub) {
 				type = "Sub";

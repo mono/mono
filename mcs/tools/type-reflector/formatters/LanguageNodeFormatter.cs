@@ -262,11 +262,11 @@ namespace Mono.TypeReflector
 				}
 			}
 
-			string r = sb.ToString();
+			string str = sb.ToString();
 
 			if (method.IsSpecialName)
-				return r.Replace ("\n", "\n" + LineComment + "\t");
-			return r;
+				return str.Replace ("\n", "\n" + LineComment + "\t");
+			return str;
 		}
 
 		protected virtual void AddMethodDeclaration (StringBuilder sb, MethodInfo method)
