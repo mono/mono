@@ -1,3 +1,13 @@
+
+Sat Feb 16 16:27:42 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* emit-x86.c: handle unreachable code. Eliminate some unneeded
+	malloc() calls.
+	* jit.c: handle unreachable code. Move setting of mono_end_of_stack to
+	main(). Add --compile classname and --ncompile num command line
+	options to do performance evaluation of the jitter (and help
+	debugging).
+
 2002-02-15  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (arch_compile_method): bug fix in static delegate
