@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.52 $
+// $Revision: 1.53 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.53  2004/08/27 20:17:25  pbartok
+// - Removed unneeded stack vars
+// - First attempt to fix sizing issues when layout is suspended
+//
 // Revision 1.52  2004/08/25 19:20:47  pbartok
 // - Control now properly passes the ambient background color to child
 //   controls
@@ -764,13 +768,11 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				Control	child;
-
 				background_color=value;
 				if (this.IsHandleCreated) {
 					XplatUI.SetWindowBackground(this.window.Handle, value);
-					SetChildColor(this);
 				}
+				SetChildColor(this);
 
 				Refresh();
 			}
@@ -1421,8 +1423,11 @@ namespace System.Windows.Forms
 			bounds.Height=height;
 
 			// Update client rectangle as well
-			prev_size.Width=client_size.Width;
-			prev_size.Height=client_size.Height;
+			if (this.layout_suspended==0) {
+				prev_size.Width=client_size.Width;
+				prev_size.Height=client_size.Height;
+			}
+
 			client_size.Width=width-client_x_diff;
 			client_size.Height=height-client_y_diff;
 
@@ -1529,8 +1534,13 @@ namespace System.Windows.Forms
 				int		diff_height;
 
 				space=this.DisplayRectangle;
-				diff_width=space.Width-prev_size.Width;
-				diff_height=space.Height-prev_size.Height;
+				if (prev_size != Size.Empty) {
+					diff_width = space.Width - prev_size.Width;
+					diff_height = space.Height - prev_size.Height;
+				} else {
+					diff_width = 0;
+					diff_height = 0;
+				}
 
 				// Deal with docking
 				for (int i=0; i < child_controls.Count; i++) {
@@ -1990,7 +2000,6 @@ namespace System.Windows.Forms
 			if (IsHandleCreated) {
 				XplatUI.SetWindowPos(Handle, x, y, width, height);
 			}
-
 			UpdateBounds(x, y, width, height);
 		}
 
