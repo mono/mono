@@ -45,5 +45,3 @@ AC_DEFUN(GC_SET_VERSION, [
   AC_MSG_RESULT(major=$GC_VERSION_MAJOR minor=$GC_VERSION_MINOR \
 ${GC_ALPHA_VERSION:+alpha=}$GC_ALPHA_VERSION)
 ])
-
-sinclude(libtool.m4)
