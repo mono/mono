@@ -389,7 +389,7 @@ namespace System.Data.SqlClient {
 
 			tds.TdsErrorMessage += new TdsInternalErrorMessageEventHandler (ErrorHandler);
 			tds.TdsInfoMessage += new TdsInternalInfoMessageEventHandler (MessageHandler);
-				
+
 			if (!tds.IsConnected) {
 				try {
 					tds.Connect (parms);
@@ -400,7 +400,7 @@ namespace System.Data.SqlClient {
 					throw;
 				}
 			}
-						
+
 			/* Not sure ebout removing these 2 lines.
 			 * The command that gets to the sql server is just
 			 * 'sp_reset_connection' and it fails.
@@ -421,7 +421,7 @@ namespace System.Data.SqlClient {
 				
 			thePort = 1433; // default TCP port for SQL Server
 			bool success = true;
-                        			
+
 			int idx = 0;
 			if ((idx = theDataSource.IndexOf (",")) > -1) {
 				theServerName = theDataSource.Substring (0, idx);
@@ -455,8 +455,8 @@ namespace System.Data.SqlClient {
 			return SqlServerPort;
 		}
 
-                void SetConnectionString (string connectionString)
-                {
+		void SetConnectionString (string connectionString)
+		{
 			NameValueCollection parameters = new NameValueCollection ();
 
 			if (( connectionString == null)||( connectionString.Length == 0)) 
@@ -539,128 +539,128 @@ namespace System.Data.SqlClient {
 				}
 			}
 
-                        if (this.ConnectionString == null)
-                        {
-                                SetDefaultConnectionParameters (parameters);
-                        }
+			if (this.ConnectionString == null)
+			{
+				SetDefaultConnectionParameters (parameters);
+			}
 
-                        SetProperties (parameters);
+			SetProperties (parameters);
 
-                        this.connectionString = connectionString;
-                }
-	
-	        void SetDefaultConnectionParameters (NameValueCollection parameters)
-                {
-                        if (null == parameters.Get ("APPLICATION NAME"))
-                                parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
-                        if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
-                                parameters["CONNECT TIMEOUT"] = "15";
-                        if (null == parameters.Get ("CONNECTION LIFETIME"))
-                                parameters["CONNECTION LIFETIME"] = "0";
-                        if (null == parameters.Get ("CONNECTION RESET"))
-                                parameters["CONNECTION RESET"] = "true";
-                        if (null == parameters.Get ("ENLIST"))
-                                parameters["ENLIST"] = "true";
-                        if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
-                                parameters["INTEGRATED SECURITY"] = "false";
-                        if (null == parameters.Get ("MAX POOL SIZE"))
-                                parameters["MAX POOL SIZE"] = "100";
-                        if (null == parameters.Get ("MIN POOL SIZE"))
-                                parameters["MIN POOL SIZE"] = "0";
-                        if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
-                                parameters["NETWORK LIBRARY"] = "dbmssocn";
-                        if (null == parameters.Get ("PACKET SIZE"))
-                                parameters["PACKET SIZE"] = "512";
-                        if (null == parameters.Get ("PERSIST SECURITY INFO"))
-                                parameters["PERSIST SECURITY INFO"] = "false";
-                        if (null == parameters.Get ("POOLING"))
-                                parameters["POOLING"] = "true";
-                        if (null == parameters.Get ("WORKSTATION ID"))
-                                parameters["WORKSTATION ID"] = Dns.GetHostName();
-                }
+			this.connectionString = connectionString;
+		}
 
-                private void SetProperties (NameValueCollection parameters)
-                {
-                        string value;
+		void SetDefaultConnectionParameters (NameValueCollection parameters)
+		{
+			if (null == parameters.Get ("APPLICATION NAME"))
+				parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
+			if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
+				parameters["CONNECT TIMEOUT"] = "15";
+			if (null == parameters.Get ("CONNECTION LIFETIME"))
+				parameters["CONNECTION LIFETIME"] = "0";
+			if (null == parameters.Get ("CONNECTION RESET"))
+				parameters["CONNECTION RESET"] = "true";
+			if (null == parameters.Get ("ENLIST"))
+				parameters["ENLIST"] = "true";
+			if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
+				parameters["INTEGRATED SECURITY"] = "false";
+			if (null == parameters.Get ("MAX POOL SIZE"))
+				parameters["MAX POOL SIZE"] = "100";
+			if (null == parameters.Get ("MIN POOL SIZE"))
+				parameters["MIN POOL SIZE"] = "0";
+			if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
+				parameters["NETWORK LIBRARY"] = "dbmssocn";
+			if (null == parameters.Get ("PACKET SIZE"))
+				parameters["PACKET SIZE"] = "512";
+			if (null == parameters.Get ("PERSIST SECURITY INFO"))
+				parameters["PERSIST SECURITY INFO"] = "false";
+			if (null == parameters.Get ("POOLING"))
+				parameters["POOLING"] = "true";
+			if (null == parameters.Get ("WORKSTATION ID"))
+				parameters["WORKSTATION ID"] = Dns.GetHostName();
+		}
+
+		private void SetProperties (NameValueCollection parameters)
+		{
+			string value;
 			string upperValue;
-                        foreach (string name in parameters) {
-                                value = parameters[name];
+			foreach (string name in parameters) {
+				value = parameters[name];
 				upperValue = value.ToUpper ();
 
-                                switch (name) {
-                                case "APPLICATION NAME" :
-                                        parms.ApplicationName = value;
-                                        break;
-                                case "ATTACHDBFILENAME" :
-                                case "EXTENDED PROPERTIES" :
-                                case "INITIAL FILE NAME" :
-                                        break;
-                                case "CONNECT TIMEOUT" :
-                                case "CONNECTION TIMEOUT" :
-                                        connectionTimeout = Int32.Parse (value);
-                                        break;
-                                case "CONNECTION LIFETIME" :
-                                        break;
-                                case "CONNECTION RESET" :
-					connectionReset = !(upperValue.Equals ("FALSE") || upperValue.Equals ("NO"));
-                                        break;
-                                case "CURRENT LANGUAGE" :
-                                        parms.Language = value;
-                                        break;
-                                case "DATA SOURCE" :
-                                case "SERVER" :
-                                case "ADDRESS" :
-                                case "ADDR" :
-                                case "NETWORK ADDRESS" :
-                                        dataSource = value;
-                                        break;
-                                case "ENLIST" :
-                                        break;
-                                case "INITIAL CATALOG" :
-                                case "DATABASE" :
-                                        parms.Database = value;
-                                        break;
-                                case "INTEGRATED SECURITY" :
-                                case "TRUSTED_CONNECTION" :
-					parms.DomainLogin = upperValue.Equals ("TRUE") || upperValue.Equals ("YES") || upperValue.Equals ("SSPI");
-                                        break;
-                                case "MAX POOL SIZE" :
-                                        maxPoolSize = Int32.Parse (value);
-                                        break;
-                                case "MIN POOL SIZE" :
-                                        minPoolSize = Int32.Parse (value);
-                                        break;
+				switch (name) {
+					case "APPLICATION NAME" :
+						parms.ApplicationName = value;
+						break;
+					case "ATTACHDBFILENAME" :
+					case "EXTENDED PROPERTIES" :
+					case "INITIAL FILE NAME" :
+						break;
+					case "CONNECT TIMEOUT" :
+					case "CONNECTION TIMEOUT" :
+						connectionTimeout = Int32.Parse (value);
+						break;
+					case "CONNECTION LIFETIME" :
+						break;
+					case "CONNECTION RESET" :
+						connectionReset = !(upperValue.Equals ("FALSE") || upperValue.Equals ("NO"));
+						break;
+					case "CURRENT LANGUAGE" :
+						parms.Language = value;
+						break;
+					case "DATA SOURCE" :
+					case "SERVER" :
+					case "ADDRESS" :
+					case "ADDR" :
+					case "NETWORK ADDRESS" :
+						dataSource = value;
+						break;
+					case "ENLIST" :
+						break;
+					case "INITIAL CATALOG" :
+					case "DATABASE" :
+						parms.Database = value;
+						break;
+					case "INTEGRATED SECURITY" :
+					case "TRUSTED_CONNECTION" :
+						parms.DomainLogin = upperValue.Equals ("TRUE") || upperValue.Equals ("YES") || upperValue.Equals ("SSPI");
+						break;
+					case "MAX POOL SIZE" :
+						maxPoolSize = Int32.Parse (value);
+						break;
+					case "MIN POOL SIZE" :
+						minPoolSize = Int32.Parse (value);
+						break;
 #if NET_2_0
 				case "MULTIPLEACTIVERESULTSETS":
 					break;
 #endif
-                                case "NET" :
-                                case "NETWORK LIBRARY" :
-                                        if (!value.ToUpper ().Equals ("DBMSSOCN"))
-                                                throw new ArgumentException ("Unsupported network library.");
-                                        break;
-                                case "PACKET SIZE" :
-                                        packetSize = Int32.Parse (value);
-                                        break;
-                                case "PASSWORD" :
-                                case "PWD" :
-                                        parms.Password = value;
-                                        break;
-                                case "PERSIST SECURITY INFO" :
-                                        break;
-                                case "POOLING" :
-                                        pooling = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
-                                        break;
-				case "UID" :
-                                case "USER ID" :
-                                        parms.User = value;
-                                        break;
-                                case "WORKSTATION ID" :
-                                        parms.Hostname = value;
-                                        break;
-				default :
-					throw new ArgumentException("Keyword not supported :"+name);
-			          }
+					case "NET" :
+					case "NETWORK LIBRARY" :
+						if (!value.ToUpper ().Equals ("DBMSSOCN"))
+							throw new ArgumentException ("Unsupported network library.");
+						break;
+					case "PACKET SIZE" :
+						packetSize = Int32.Parse (value);
+						break;
+					case "PASSWORD" :
+					case "PWD" :
+						parms.Password = value;
+						break;
+					case "PERSIST SECURITY INFO" :
+						break;
+					case "POOLING" :
+						pooling = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
+						break;
+					case "UID" :
+					case "USER ID" :
+						parms.User = value;
+						break;
+					case "WORKSTATION ID" :
+						parms.Hostname = value;
+						break;
+					default :
+						throw new ArgumentException("Keyword not supported :"+name);
+				}
 			}
 		}
 
@@ -721,7 +721,7 @@ namespace System.Data.SqlClient {
 				Byte[] rawrq = new Byte [instance.Length + 1];
 				rawrq[0] = 4;
 				enc.GetBytes (instance, 0, instance.Length, rawrq, 1);
-				int bytes = Send (rawrq, rawrq.Length);		
+				int bytes = Send (rawrq, rawrq.Length);
 
 				if (!Active)
 					return -1; // Error
@@ -757,6 +757,5 @@ namespace System.Data.SqlClient {
 		}
 
 		#endregion // Methods
-
 	}
 }

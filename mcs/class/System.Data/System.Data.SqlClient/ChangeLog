@@ -1,3 +1,7 @@
+2004-08-16  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SqlConnection.cs - spaces to tabs
+
 2004-08-12  Sureshkumar T <tsureshkumar@novell.com>
 	* SqlDataReader.cs - In Close method, the remaining resultsets are drained
 			     out, to read output parameters & to avoid stream overlap
