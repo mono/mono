@@ -49,6 +49,7 @@ namespace System.Reflection {
 //	http://www.ietf.org/rfc/rfc2396.txt
 
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
 		string name;
 		string codebase;

@@ -49,7 +49,7 @@ namespace System.Reflection {
 		private Pointer () {
 		}
 		
-		public static Pointer Box (void *ptr, Type type) 
+		public static object Box (void *ptr, Type type) 
 		{
 
 			if (type == null)

@@ -1,3 +1,9 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AssemblyName.cs: added TODO for serialization
+	* Pointer.cs: fixed Box method to return object instead of 
+	Pointer
+
 2004-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MemberInfo.cs: Changed constructor from internal to protected.
