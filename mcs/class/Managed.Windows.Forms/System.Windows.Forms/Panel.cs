@@ -21,7 +21,9 @@
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
+//
 
+// NOT COMPLETE
 
 using System;
 using System.Drawing;
@@ -29,24 +31,15 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	public class Panel : ScrollableControl {
-
 		private BorderStyle border_style;
 
-		public Panel ()
-		{
+		#region	Constructors & Destructors
+		public Panel () {
 			base.TabStop = false;
 		}
+		#endregion	// Constructors & Destructors
 
-		public override string Text {
-			get { return base.Text; }
-			set {
-				if (value == Text)
-					return;
-				base.Text = value;
-				Refresh ();
-			}
-		}
-
+		#region Public Instance Properties
 		public BorderStyle BorderStyle {
 			get { return border_style; }
 			set {
@@ -66,25 +59,48 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override Size DefaultSize {
-			get { return new Size (200, 100); }
+		public override string Text {
+			get { return base.Text; }
+			set {
+				if (value == Text)
+					return;
+				base.Text = value;
+				Refresh ();
+			}
 		}
+		#endregion	// Public Instance Properties
 
+		#region Protected Instance Properties
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = base.CreateParams;
-				createParams.ClassName = String.Empty;
-				createParams.Style = (int) (WindowStyles.WS_CHILD |
-					WindowStyles.WS_VISIBLE);
-				return createParams;
+				return base.CreateParams;
 			}
 		}
 
+		protected override Size DefaultSize {
+			get { return new Size (200, 100); }
+		}
+		#endregion	// Proteced Instance Properties
+
+		#region Public Instance Methods
 		public override string ToString ()
 		{
 			return base.ToString () + ", BorderStyle: " + BorderStyle;
 		}
-		
+		#endregion	// Public Instance Methods
+
+		#region Protected Instance Methods
+		protected override void OnResize(EventArgs e) {
+			base.OnResize (e);
+		}
+
+		#endregion	// Protected Instance Methods
+
+		#region Events
+		public event KeyEventHandler		KeyDown;
+		public event KeyPressEventHandler	KeyPress;
+		public event KeyEventHandler		KeyUp;
+		#endregion
 	}
 }
 
