@@ -1,3 +1,15 @@
+2004-11-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.Configuration/AdapterDictionary.cs
+		System.Web.Configuration/AnonymousIdentificationSection.cs
+		System.Web.Configuration/AssemblyCollection.cs
+		System.Web.Configuration/AssemblyInfo.cs
+		System.Web.Configuration/AuthenticationSection.cs
+		System.Web.Configuration/FormsAuthenticationConfiguration.cs
+		System.Web.Configuration/InternalSection.cs
+		System.Web.Configuration/PassportAuthentication.cs
+
 2004-10-20  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Web.dll.sources: Added new class in System.Web.UI.

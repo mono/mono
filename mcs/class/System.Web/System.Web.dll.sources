@@ -33,6 +33,11 @@ System.Web.Compilation/TagType.cs
 System.Web.Compilation/TemplateControlCompiler.cs
 System.Web.Compilation/UserControlCompiler.cs
 System.Web.Compilation/WebServiceCompiler.cs
+System.Web.Configuration/AdapterDictionary.cs
+System.Web.Configuration/AnonymousIdentificationSection.cs
+System.Web.Configuration/AssemblyCollection.cs
+System.Web.Configuration/AssemblyInfo.cs
+System.Web.Configuration/AuthenticationSection.cs
 System.Web.Configuration/AuthConfig.cs
 System.Web.Configuration/AuthenticationConfigHandler.cs
 System.Web.Configuration/AuthenticationMode.cs
@@ -46,6 +51,7 @@ System.Web.Configuration/CompilationConfigurationHandler.cs
 System.Web.Configuration/CompilerCollection.cs
 System.Web.Configuration/CustomErrorsConfigHandler.cs
 System.Web.Configuration/CustomErrorsMode.cs
+System.Web.Configuration/FormsAuthenticationConfiguration.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
 System.Web.Configuration/GlobalizationConfiguration.cs
@@ -59,6 +65,7 @@ System.Web.Configuration/HttpHandlersSectionHandler.cs
 System.Web.Configuration/HttpModulesConfigurationHandler.cs
 System.Web.Configuration/HttpRuntimeConfig.cs
 System.Web.Configuration/HttpRuntimeConfigurationHandler.cs
+System.Web.Configuration/InternalSection.cs
 System.Web.Configuration/IRemoteWebConfigurationHostServer.cs
 System.Web.Configuration/MachineKeyConfig.cs
 System.Web.Configuration/MachineKeyConfigHandler.cs
@@ -69,6 +76,7 @@ System.Web.Configuration/PagesConfiguration.cs
 System.Web.Configuration/PagesConfigurationHandler.cs
 System.Web.Configuration/PagesEnableSessionState.cs
 System.Web.Configuration/PagesToCountAction.cs
+System.Web.Configuration/PassportAuthentication.cs
 System.Web.Configuration/ProcessModelComAuthenticationLevel.cs
 System.Web.Configuration/ProcessModelComImpersonationLevel.cs
 System.Web.Configuration/ProcessModelLogLevel.cs
