@@ -1,3 +1,10 @@
+2004-02-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_native_wrapper): Throw an exception on
+	AsAny marshalling conversion instead of crashing.
+
+	* marshal.c: Fix warnings.
+
 2004-02-09  Martin Baulig  <martin@ximian.com>
 
 	* class.h (MonoGenericMethod): Added `MonoMethod *declaring'.
