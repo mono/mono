@@ -132,14 +132,17 @@ namespace System.Data
 		public void Remove (DataRow row) 
 		{
 			list.Remove (row);
+			table.DeletedDataRow (row, DataRowAction.Delete);
 		}
 
 		/// <summary>
 		/// Removes the row at the specified index from the collection.
 		/// </summary>
 		public void RemoveAt (int index) 
-		{
-			list.RemoveAt (index);
+		{			
+			DataRow row = (DataRow)list [index];
+			list.RemoveAt (index);			
+			table.DeletedDataRow (row, DataRowAction.Delete);
 		}
 
 		///<summary>

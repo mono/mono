@@ -1,3 +1,9 @@
+2002-12-15  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataRow.cs:
+	* DataRowCollection.cs: Moved event triggering from DataRow to
+	DataRowCollection.
+	
 2002-12-09  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataSet.cs: Little fix to WriteTable () -method 

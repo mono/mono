@@ -198,7 +198,7 @@ namespace System.Data {
 					case DataRowVersion.Proposed:
 						return proposed[columnIndex];
 					case DataRowVersion.Current:
-						return current[columnIndex];
+					       	return current[columnIndex];
 					case DataRowVersion.Original:
 						return original[columnIndex];
 					default:
@@ -397,7 +397,6 @@ namespace System.Data {
 			switch (rowState) {
 			case DataRowState.Added:
 				Table.Rows.Remove (this);
-				_table.DeletedDataRow (this, DataRowAction.Delete);
 				break;
 			case DataRowState.Deleted:
 				throw new DeletedRowInaccessibleException ();
