@@ -1085,7 +1085,7 @@ public class StringTest : TestCase
 			s = "";
 			c = s[0];
 		}
-		catch (IndexOutOfRangeException ex) {
+		catch (IndexOutOfRangeException) {
 			ok = true;
 		}
 		Assert (ok);
@@ -1095,7 +1095,7 @@ public class StringTest : TestCase
 			s = "A";
 			c = s[-1];
 		}
-		catch (IndexOutOfRangeException ex) {
+		catch (IndexOutOfRangeException) {
 			ok = true;
 		}
 		Assert (ok);

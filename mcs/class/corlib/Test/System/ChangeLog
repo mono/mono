@@ -1,3 +1,7 @@
+2003-02-05  Nick Drochak  <ndrochak@gol.com>
+
+	* StringTest.cs: Remove compiler warnings.
+
 2003-01-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* TimeZoneTest.cs: Added "Eastern Standard Time" to the test.
