@@ -1,5 +1,9 @@
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* aot.c : I could just use PLATFORM_WIN32 flag.
+
+2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* aot.c : Reverting the previous fix. This time it broke linux build.
 
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
