@@ -128,6 +128,13 @@ behaviour.
 Update the *.il files if their assemblies have changed, but only if the
 file already exists.
 .PP
+.SH ENVIRONMENT VARIABLES
+.TP
+.I "MONO_PATH"
+Provides a search path to mono and mint where to look for library files.
+Directories are separated by the platform path separator (colons on unix). Example:
+.B /home/username/lib:/usr/local/mono/lib
+.PP
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
