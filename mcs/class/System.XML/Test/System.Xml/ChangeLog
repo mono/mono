@@ -1,3 +1,8 @@
+2005-02-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlElementTests.cs : assertion numbering on 
+	  RemoveDoesNotRemoveDefaultAttributes().
+
 2005-01-26  Nick Drochak  <ndrochak@ieee.org>
 
 	* XmlValidatingReaderTests.cs: Move MS.NET bug-exposing test to a new

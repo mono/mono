@@ -325,11 +325,12 @@ namespace MonoTests.System.Xml
 			document.Load (xvr);
 			// RemoveAll
 			AssertNotNull (document.DocumentElement);
-			AssertEquals (2, document.DocumentElement.Attributes.Count);
+			AssertEquals ("attrCount #01", 2, document.DocumentElement.Attributes.Count);
 			AssertEquals ("baz", document.DocumentElement.GetAttribute ("bar"));
 			AssertEquals ("def", document.DocumentElement.GetAttribute ("foo"));
+			AssertEquals (false, document.DocumentElement.GetAttributeNode ("foo").Specified);
 			document.DocumentElement.RemoveAll ();
-			AssertEquals (1, document.DocumentElement.Attributes.Count);
+			AssertEquals ("attrCount #02", 1, document.DocumentElement.Attributes.Count);
 			AssertEquals ("def", document.DocumentElement.GetAttribute ("foo"));
 			AssertEquals (String.Empty, document.DocumentElement.GetAttribute ("bar"));
 
@@ -337,37 +338,37 @@ namespace MonoTests.System.Xml
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAllAttributes ();
-			AssertEquals (1, document.DocumentElement.Attributes.Count);
+			AssertEquals ("attrCount #03", 1, document.DocumentElement.Attributes.Count);
 
 			// RemoveAttribute(name)
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttribute ("foo");
-			AssertEquals (2, document.DocumentElement.Attributes.Count);
+			AssertEquals ("attrCount #04", 2, document.DocumentElement.Attributes.Count);
 
 			// RemoveAttribute(name, ns)
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttribute ("foo", String.Empty);
-			AssertEquals (2, document.DocumentElement.Attributes.Count);
+			AssertEquals ("attrCount #05", 2, document.DocumentElement.Attributes.Count);
 
 			// RemoveAttributeAt
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttributeAt (1);
-			AssertEquals (2, document.DocumentElement.Attributes.Count);
+			AssertEquals ("attrCount #06", 2, document.DocumentElement.Attributes.Count);
 
 			// RemoveAttributeNode
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttributeNode (document.DocumentElement.Attributes [1]);
-			AssertEquals (2, document.DocumentElement.Attributes.Count);
+			AssertEquals ("attrCount #07", 2, document.DocumentElement.Attributes.Count);
 
 			// RemoveAttributeNode(name, ns)
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttributeNode ("foo", String.Empty);
-			AssertEquals (2, document.DocumentElement.Attributes.Count);
+			AssertEquals ("attrCount #08", 2, document.DocumentElement.Attributes.Count);
 		}
 
 		[Test]
