@@ -67,8 +67,9 @@ namespace System.Windows.Forms
 			public ArrayList	items;		// Array of menu items
 			public int		FocusedItem;	// Currently focused item
 			public IntPtr		hParent;			
-			public MENUITEM		SelectedItem;	// Currently focused item
+			public MENUITEM		SelectedItem;	// Currently selected item
 			public bool 		bMenubar;
+			public bool		bTracking;
 			public Menu		menu;		// SWF.Menu 
 
 			public MENU (Menu menu_obj)
@@ -79,6 +80,7 @@ namespace System.Windows.Forms
 				Flags = MF.MF_INSERT;
 				Width = Height = FocusedItem = 0;				
 				bMenubar = false;
+				bTracking = false;
 				menu = menu_obj;
 			}
 
@@ -236,8 +238,19 @@ namespace System.Windows.Forms
 		// The Point object contains screen coordinates
 		static public bool TrackPopupMenu (IntPtr hTopMenu, IntPtr hMenu, Point pnt, bool bMenubar, Control Wnd)
 		{
-			TRACKER	tracker = new TRACKER ();
-			MENU menu = GetMenuFromID (hMenu);
+			TRACKER	tracker = new TRACKER ();			
+			MENU top_menu = GetMenuFromID (hTopMenu);
+			MENU menu = null;
+
+			if (hMenu == IntPtr.Zero)	// No submenus to track
+				return true;				
+
+			menu = GetMenuFromID (hMenu);
+			
+			Console.WriteLine ("TrackPopupMenu hTopMenu: {0} hMenu:{1} bMenubar:{2} top_menu.bMenubar: {3} menu.bMenubar: {4}",hTopMenu,
+				hMenu, bMenubar, top_menu.bMenubar, menu.bMenubar);
+			
+			
 			menu.Wnd = new PopUpWindow (hMenu, tracker);
 			tracker.hCurrentMenu = hMenu;
 			tracker.hTopMenu = hTopMenu;
@@ -578,29 +591,47 @@ namespace System.Windows.Forms
 
 			return null;
 		}
+		
+		// Get the current selected item
+		static public MENUITEM GetSelected (IntPtr hMenu)
+		{
+			MENU menu = GetMenuFromID (hMenu);			
+			MENUITEM it;
+			
+			/* Loop all items */
+			for (int i = 0; i < menu.items.Count; i++) {
+				it = (MENUITEM) menu.items[i];
+				if ((it.fState & MF.MF_HILITE) == MF.MF_HILITE) {
+					return it;
+				}				
+			}
+			
+			return null;
+		}
+		
+		static public void UnSelectItem (IntPtr hMenu, MENUITEM item)
+		{			
+			MENU menu = GetMenuFromID (hMenu);
+			
+			if (item == null)
+				return;				
+			
+			item.fState = item.fState & ~MF.MF_HILITE;
+			menu.Wnd.Invalidate (item.rect);
+		}
 
 		// Select the item and unselect the previous selecte item
 		static public void SelectItem (IntPtr hMenu, MENUITEM item, bool execute, TRACKER tracker)
 		{
 			MENU menu = GetMenuFromID (hMenu);
-			MENUITEM previous_selitem = null;
+			MENUITEM previous_selitem = GetSelected (hMenu);
 			
 			/* Already selected */
-			for (int i = 0; i < menu.items.Count; i++) {
-				MENUITEM it = (MENUITEM) menu.items[i];
-
-				if ((it.fState & MF.MF_HILITE) == MF.MF_HILITE) {
-					if (item.rect == it.rect) {						
-						return;
-					}
-
-					/* Unselect previous item*/
-					previous_selitem = it;
-					it.fState = it.fState & ~MF.MF_HILITE;
-					menu.Wnd.Invalidate (previous_selitem.rect);					
-					break;
-				}
+			if (previous_selitem != null && item.rect == previous_selitem.rect) {
+				return;
 			}
+
+			UnSelectItem (hMenu, previous_selitem);
 			
 			// If the previous item had subitems, hide them
 			if (previous_selitem != null && previous_selitem.item.IsPopup)
@@ -779,15 +810,28 @@ namespace System.Windows.Forms
 
 					MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
 
-					if (item != null)
+					if (item != null) {
+						MENU top_menu = GetMenuFromID (tracker.hTopMenu);
+						
+						top_menu.bTracking = true;
 						MenuBarMove (hMenu, item, tracker);
+		
+						if (item != null) {
+							item.item.PerformClick ();			
+						}
+					}
 
 					break;
 				}
 
 				case MenuMouseEvent.Move: { /* Coordinates in screen position*/
 
-					if (tracker.hCurrentMenu != IntPtr.Zero) {
+					if (tracker.hTopMenu != IntPtr.Zero && tracker.hCurrentMenu != IntPtr.Zero) {
+						
+						MENU top_menu = GetMenuFromID (tracker.hTopMenu);
+						
+						if (top_menu.bTracking == false)
+							break;
 
 						Point pnt = new Point (e.X, e.Y);
 						pnt = menu.Wnd.PointToClient (pnt);
@@ -1072,25 +1116,44 @@ namespace System.Windows.Forms
 			Draw (pevent.ClipRectangle);
 			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 		}
+		
+		public void HideWindow ()
+		{
+			Capture = false;
+    			Hide ();
+    			MenuAPI.MENU top_menu = MenuAPI.GetMenuFromID (tracker.hTopMenu);
+			top_menu.bTracking = false;
+			
+			MenuAPI.HideSubPopups (tracker.hTopMenu);
+			
+			if (top_menu.bMenubar) {
+				MenuAPI.MENUITEM item = MenuAPI.GetSelected (tracker.hTopMenu);
+			
+				if (item != null) {
+					MenuAPI.UnSelectItem (tracker.hTopMenu, item);
+				}
+			} else { // Context Menu
+				Console.WriteLine ("HideWindow context menu {0} ", top_menu.hParent);
+				((PopUpWindow)top_menu.Wnd).Hide ();
+			}
+		}
 
 		private void OnMouseDownPUW (object sender, MouseEventArgs e)
     		{    			
     			/* Click outside the client area*/
     			if (ClientRectangle.Contains (e.X, e.Y) == false) {
-    				Capture = false;
-    				Hide ();
+    				HideWindow ();
     			}
 		}
 
 		private void OnMouseUpPUW (object sender, MouseEventArgs e)
     		{
-    			/* Click outside the client area*/
+    			/* Click in an item area*/
 			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
 
 			if (item != null) {
 				item.item.PerformClick ();
-				Hide ();
-				Capture = false;				
+				HideWindow ();				
 			}
 		}
 

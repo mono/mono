@@ -1,3 +1,11 @@
+2005-01-26  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* MenuAPI.cs: 
+		- MenuBar tracking only starts when item is first clicked 
+		- Fixes menu hidding for multiple subitems
+		- Unselect item in MenuBar when item Executed
+		- Fixes bug 71495
+
 2005-01-25  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListControl.cs: 
