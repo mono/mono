@@ -71,22 +71,16 @@ namespace Mono.Enumerations
 				try
 				{
 					Assembly assembly;
-					/*if(assemblyName == "mscorlib")
-					{
-						assembly = Assembly.LoadFrom(assemblyName);
-					} else
-					{*/
-						assembly = Assembly.LoadFrom(basePath + "\\" + assemblyName + ".dll");
-					//}
-					System.Console.WriteLine("\tSearching in: {0}", assembly.ToString());
+					assembly = Assembly.LoadFrom(basePath + "\\" + assemblyName + ".dll");
 					foreach(Type t in assembly.GetTypes())
 					{
 						if(!t.IsEnum)
 							continue;
-						string name = null;
-						if(Type.GetType(className + "," + assemblyName) != null)
-							name = Type.GetType(className + "," + assemblyName).ToString();
-						if(name == t.ToString())
+						//string name = "";
+						//if(Type.GetType(className + "," + assemblyName) != null)
+						//	name = Type.GetType(className + "," + assemblyName).ToString();
+						//System.Console.WriteLine("\tTName: {0}\tSName: {1}", name, t.ToString());
+						if(className == t.ToString())
 						{
 							type = t;
 							break;
