@@ -27,7 +27,13 @@ USE_MCS_FLAGS :=
 #
 NEW_TEST_SOURCES_common = \
 	test-297 test-287 test-294 test-299 test-300 \
-	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309 test-310
+	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309 test-310	\
+	a-call.cs	a-capture5.cs  a-instance.cs	  a-parameter2.cs			\
+	a-capture10.cs	a-capture6.cs  a-nested-anon2.cs  					\
+	a-capture1.cs	a-capture7.cs  a-nested-anon3.cs  a-parameter4.cs			\
+	a-capture2.cs	a-capture8.cs  a-nested-anon4.cs  a-parameter.cs			\
+	a-capture3.cs	a-capture9.cs  a-nested-anon.cs   a-simple2.cs				\
+	a-capture4.cs	a-event.cs     a-nested.cs	  a-simple.cs
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -105,7 +111,8 @@ TEST_SOURCES_win32 = test-50 test-67
 ## FIXME: Need to audit.  Maybe move to 'TEST_EXCLUDES_linux' and 'TEST_EXCLUDES_win32' as approprate
 # A test is a 'no pass' if it fails on either windows or linux
 # Test 120 does not pass because the MS.NET runtime is buggy.
-TEST_NOPASS = test-120 test-132 test-133
+
+TEST_NOPASS = test-120 test-132 test-133 a-parameter4.cs
 #	test-28 test-45 test-53 test-91 test-102 test-106 test-107 test-122 test-66 test-177
 
 all-local install-local uninstall-local:
