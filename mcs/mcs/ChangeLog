@@ -1,5 +1,10 @@
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (PropertyExpr.DoResolve/DoResolveLValue): Check whether
+	we're not attempting to use an indexer.  Fixes #52154.
+
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Return): Don't create a return label if we don't
 	need it; reverts my change from January 20th.  Thanks to Ben
 	Maurer for this.
