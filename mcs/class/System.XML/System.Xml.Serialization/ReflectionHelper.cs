@@ -82,12 +82,14 @@ namespace System.Xml.Serialization
 				throw new InvalidOperationException (type.FullName + " cannot be serialized because it is an interface");
 				
 			Type t = type;
+			Type oldt = null;
 			do {
 				if (!t.IsPublic && !t.IsNestedPublic)
 					throw new InvalidOperationException (type.FullName + " is inaccessible due to its protection level. Only public types can be processed");
+				oldt = t;
 				t = t.DeclaringType;
 			}
-			while (t != null);
+			while (t != null && t != oldt);
 		}
 		
 		public static string BuildMapKey (Type type)

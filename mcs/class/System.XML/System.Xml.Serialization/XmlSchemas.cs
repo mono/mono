@@ -172,7 +172,7 @@ namespace System.Xml.Serialization {
 		{
 			XmlSchemaElement el = schema.Items.Count == 1 ?
 				schema.Items [0] as XmlSchemaElement : null;
-			if (el != null && el.UnhandledAttributes.Length > 0) {
+			if (el != null && el.UnhandledAttributes != null && el.UnhandledAttributes.Length > 0) {
 				for (int i = 0; i < el.UnhandledAttributes.Length; i++) {
 					XmlAttribute attr = el.UnhandledAttributes [i];
 					if (attr.NamespaceURI == msdataNS && attr.LocalName == "IsDataSet")

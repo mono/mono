@@ -1,3 +1,8 @@
+2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ReflectionHelper.cs: Avoid endless loop.
+	* XmlSchemas.cs: Added null check. Patches from MainSoft.
+
 2005-02-07  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializationReader.cs: After reading an href element, skip the
