@@ -17,6 +17,8 @@ namespace System.Runtime.InteropServices {
 	/// </summary>
 	public enum CharSet {
 
+		None = 1,
+
 		/// <summary>
 		/// </summary>
 		Ansi = 2,
