@@ -134,14 +134,14 @@ namespace Mono.MonoBASIC {
 				foreach (Type t in ifaces){
 					MethodInfo [] mi;
 
-					if (t is TypeBuilder){
+					/*if (t is TypeBuilder){
 						Interface iface;
 
 						iface = TypeManager.LookupInterface (t);
 						
 						mi = iface.GetMethods (container);
-					} else
-						mi = t.GetMethods ();
+					} else*/
+					mi = t.GetMethods ();
 
 					int count = mi.Length;
 					pending_implementations [i].type = t;
@@ -311,7 +311,7 @@ namespace Mono.MonoBASIC {
 			foreach (TypeAndMethods tm in pending_implementations){
 				if (!(t == null || tm.type == t))
 					continue;
-
+				
 				int i = 0;
 				foreach (MethodInfo m in tm.methods){
 					if (m == null){

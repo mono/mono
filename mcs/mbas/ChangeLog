@@ -1,3 +1,12 @@
+2004-08-03 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Interface method and property grammar got changed
+			 Support for multiple implements in class 
+	* interface.cs: Interface class has got changed
+			All other interface types have been removed
+	* class.cs: Property's Define and CheckBase method changed significantly to be in sync with Interface
+	* pending.cs: few related changes 
+	* attribute.cs: few related changes
+
 2004/08/01  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay : Some correction as pointed by Jambunathan, 
 		to allow preprocessor directives after a label that may 

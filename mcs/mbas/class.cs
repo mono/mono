@@ -4,6 +4,7 @@
 //
 // Authors: Miguel de Icaza (miguel@gnu.org)
 //          Martin Baulig (martin@gnome.org)
+//			Anirban Bhattacharjee (banirban@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -811,6 +812,9 @@ namespace Mono.MonoBASIC {
 			if (error)
 				return null;
 
+			if (this is Interface)
+				parent = null;
+
 			if (is_class && parent != null){
 				if (parent == TypeManager.enum_type ||
 				    (parent == TypeManager.value_type && RootContext.StdLib) ||
@@ -826,7 +830,7 @@ namespace Mono.MonoBASIC {
 			if (!is_class && TypeManager.value_type == null)
 				throw new Exception ();
 
-			if (is_class  && Parent.Parent == null) 
+			if (is_class  && Parent.Parent == null && (!(this is Interface))) 
 			{
 				if ((ModFlags & Modifiers.PRIVATE) != 0)
 					Report.Error (31089, Location,
@@ -1104,7 +1108,7 @@ namespace Mono.MonoBASIC {
 			if (fields != null)
 				DefineMembers (fields, defined_names);
 
-			if (this is Class){
+			if (this is Class && (!(this is Interface))){
 				if (instance_constructors == null){
 					if (default_constructor == null) 
 						DefineDefaultConstructor (false);
@@ -1548,9 +1552,9 @@ namespace Mono.MonoBASIC {
 				foreach (Indexer ix in indexers)
 					ix.Emit (this);
 				
-				CustomAttributeBuilder cb = Interface.EmitDefaultMemberAttr (
+				/*CustomAttributeBuilder cb = Interface.EmitDefaultMemberAttr (
 					this, IndexerName, ModFlags, Location);
-				TypeBuilder.SetCustomAttribute (cb);
+				TypeBuilder.SetCustomAttribute (cb);*/
 			}
 			
 			if (fields != null)
@@ -1956,7 +1960,7 @@ namespace Mono.MonoBASIC {
 
 		bool IMemberContainer.IsInterface {
 			get {
-				return false;
+				return this is Interface;
 			}
 		}
 
@@ -2182,6 +2186,9 @@ namespace Mono.MonoBASIC {
 		//
 		protected InternalParameters parameter_info;
 		protected Type [] parameter_types;
+	
+		// Whether this is an operator
+		public bool IsOperator;
 
 		public MethodCore (Expression type, int mod, int allowed_mod, string name,
 				   Attributes attrs, Parameters parameters, Location loc)
@@ -2352,50 +2359,47 @@ namespace Mono.MonoBASIC {
 			return MemberType;
 		}
 
-		// Whether this is an operator method.
-		public bool IsOperator;
+		void DuplicateEntryPoint (MethodInfo b, Location location)
+		{
+				Report.Error (
+						30738, location,
+						"Program `" + CodeGen.FileName +
+						"'  has more than one entry point defined: `" +
+						TypeManager.MonoBASIC_Signature(b) + "'");
+		}
 
-                void DuplicateEntryPoint (MethodInfo b, Location location)
-                {
-                        Report.Error (
-                                30738, location,
-                                "Program `" + CodeGen.FileName +
-                                "'  has more than one entry point defined: `" +
-                                TypeManager.MonoBASIC_Signature(b) + "'");
-                }
-
-                void Report28 (MethodInfo b)
-                {
+		void Report28 (MethodInfo b)
+		{
 			if (RootContext.WarningLevel < 4) 
 				return;
 				
-                        Report.Warning (
-                                28, Location,
-                                "`" + TypeManager.MonoBASIC_Signature(b) +
-                                "' has the wrong signature to be an entry point");
-                }
+			Report.Warning (
+					28, Location,
+					"`" + TypeManager.MonoBASIC_Signature(b) +
+					"' has the wrong signature to be an entry point");
+		}
 
-                public bool IsEntryPoint (MethodBuilder b, InternalParameters pinfo)
-                {
-                        if (b.ReturnType != TypeManager.void_type &&
-                            b.ReturnType != TypeManager.int32_type)
-                                return false;
+		public bool IsEntryPoint (MethodBuilder b, InternalParameters pinfo)
+		{
+			if (b.ReturnType != TypeManager.void_type &&
+				b.ReturnType != TypeManager.int32_type)
+					return false;
 
-                        if (pinfo.Count == 0)
-                                return true;
+			if (pinfo.Count == 0)
+					return true;
 
-                        if (pinfo.Count > 1)
-                                return false;
+			if (pinfo.Count > 1)
+					return false;
 
-                        Type t = pinfo.ParameterType(0);
-                        if (t.IsArray &&
-                            (t.GetArrayRank() == 1) &&
-                            (t.GetElementType() == TypeManager.string_type) &&
-                            (pinfo.ParameterModifier(0) == Parameter.Modifier.NONE))
-                                return true;
-                        else
-                                return false;
-                }
+			Type t = pinfo.ParameterType(0);
+			if (t.IsArray &&
+				(t.GetArrayRank() == 1) &&
+				(t.GetElementType() == TypeManager.string_type) &&
+				(pinfo.ParameterModifier(0) == Parameter.Modifier.NONE))
+					return true;
+			else
+					return false;
+		}
 
 		//
 		// Checks our base implementation if any
@@ -3504,7 +3508,7 @@ namespace Mono.MonoBASIC {
 			//
 			// Check for explicit interface implementation
 			//
-			if ((ExplicitInterfaceName == null) && (Name.IndexOf (".") != -1)){
+			if ((ExplicitInterfaceName == null) && (Name.IndexOf (".") != -1)) {
 				int pos = Name.LastIndexOf (".");
 
 				ExplicitInterfaceName = Name.Substring (0, pos);
@@ -3771,126 +3775,147 @@ namespace Mono.MonoBASIC {
 		//
 		// Checks our base implementation if any
 		//
-		protected override bool CheckBase (TypeContainer parent)
+		protected override bool CheckBase (TypeContainer container)
 		{
+			base.CheckBase (container);
+			
 			// Check whether arguments were correct.
-			if (!DoDefineParameters (parent))
+			if (!DoDefineParameters (container))
 				return false;
 
 			if (IsExplicitImpl)
 				return true;
 
+			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
+			if (!IsOperator) 
+			{
+				MemberList mi_this;
+
+				mi_this = TypeContainer.FindMembers (
+					container.TypeBuilder, MemberTypes.Property,
+					BindingFlags.NonPublic | BindingFlags.Public |
+					BindingFlags.Static | BindingFlags.Instance |
+					BindingFlags.DeclaredOnly,
+					MethodSignature.method_signature_filter, ms);
+
+				if (mi_this.Count > 0) {
+					Report.Error (111, Location, "Class `" + container.Name + "' " +
+						"already defines a member called `" + Name + "' " +
+						"with the same parameter types");
+					return false;
+				}
+			}
+
+			if (container is Interface)
+				return true;
+			
 			string report_name;
-			MethodSignature ms, base_ms;
+			MethodSignature base_ms;
 			if (this is Indexer) {
 				string name, base_name;
 
 				report_name = "this";
-				name = TypeManager.IndexerPropertyName (parent.TypeBuilder);
+				name = TypeManager.IndexerPropertyName (container.TypeBuilder);
 				ms = new MethodSignature (name, null, ParameterTypes);
-				base_name = TypeManager.IndexerPropertyName (parent.TypeBuilder.BaseType);
+				base_name = TypeManager.IndexerPropertyName (container.TypeBuilder.BaseType);
 				base_ms = new MethodSignature (base_name, null, ParameterTypes);
 			} else {
 				report_name = Name;
 				ms = base_ms = new MethodSignature (Name, null, ParameterTypes);
 			}
 
-			MemberList props_this;
-
-			props_this = TypeContainer.FindMembers (
-				parent.TypeBuilder, MemberTypes.Property,
-				BindingFlags.NonPublic | BindingFlags.Public |
-				BindingFlags.Static | BindingFlags.Instance |
-				BindingFlags.DeclaredOnly,
-				MethodSignature.method_signature_filter, ms);
-
-			if (props_this.Count > 0) {
-				Report.Error (111, Location, "Class `" + parent.Name + "' " +
-					      "already defines a member called `" + report_name + "' " +
-					      "with the same parameter types");
-				return false;
-			}
-
 			//
-			// Find properties with the same name on the base class
+			// Verify if the parent has a type with the same name, and then
+			// check whether we have to create a new slot for it or not.
 			//
-			MemberList props;
-			MemberList props_static = TypeContainer.FindMembers (
-				parent.TypeBuilder.BaseType, MemberTypes.Property,
+			Type ptype = container.TypeBuilder.BaseType;
+
+			MemberInfo parent_member = null;
+			MemberList mi, mi_static, mi_instance;
+
+			mi_static = TypeContainer.FindMembers (
+				ptype, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
-				MethodSignature.inheritable_property_signature_filter, base_ms);
+				MethodSignature.inheritable_method_signature_filter, ms);
 
-			MemberList props_instance = TypeContainer.FindMembers (
-				parent.TypeBuilder.BaseType, MemberTypes.Property,
+			mi_instance = TypeContainer.FindMembers (
+				ptype, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-				MethodSignature.inheritable_property_signature_filter,
-				base_ms);
+				MethodSignature.inheritable_method_signature_filter,
+				ms);
 
-			//
-			// Find if we have anything
-			//
-			if (props_static.Count > 0)
-				props = props_static;
-			else if (props_instance.Count > 0)
-				props = props_instance;
+			if (mi_instance.Count > 0) {
+				mi = mi_instance;
+			} else if (mi_static.Count > 0)
+				mi = mi_static;
 			else
-				props = null;
+				mi = null;
 
+			if (mi != null && mi.Count > 0)
+				parent_member = (MethodInfo) mi [0];
 
-			//
-			// If we have something on the base.
-			if (props != null && props.Count > 0){
-				PropertyInfo pi = (PropertyInfo) props [0];
+			if (parent_member is PropertyInfo) {
+				PropertyInfo parent_property = (PropertyInfo)parent_member;
 
-				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
-				MethodInfo inherited_set = TypeManager.GetPropertySetter (pi);
+				string name = parent_property.DeclaringType.Name + "." +
+					parent_property.Name;
 
-				MethodInfo reference = inherited_get == null ?
-					inherited_set : inherited_get;
-				
-				if (reference != null) {
-					string name = reference.DeclaringType.Name + "." + report_name;
+				MethodInfo get, set, parent_method;
+				get = parent_property.GetGetMethod (true);
+				set = parent_property.GetSetMethod (true);
 
-					if (!CheckMethodAgainstBase (parent, flags, reference, name))
-						return false;
-				}
+				if (get != null)
+					parent_method = get;
+				else if (set != null)
+					parent_method = set;
+				else
+					throw new Exception ("Internal error!");
 
-				if (((ModFlags & Modifiers.NEW) == 0) && (pi.PropertyType != MemberType)) {
-					Report.Error (508, parent.MakeName (Name) + ": cannot " +
-						      "change return type when overriding inherited " +
-						      "member `" + pi.DeclaringType + "." + pi.Name + "'");
+				if (!CheckMethodAgainstBase (container, flags, parent_method, name))
 					return false;
+
+				if ((ModFlags & Modifiers.NEW) == 0) {
+					Type parent_type = TypeManager.TypeToCoreType (
+						parent_property.PropertyType);
+
+					if (parent_type != MemberType) {
+						Report.Error (
+							508, Location, container.MakeName (Name) + ": cannot " +
+							"change return type when overriding " +
+							"inherited member " + name);
+						return false;
+					}
 				}
-			} else {
+			} else if (parent_member == null) {
 				/*if ((ModFlags & Modifiers.NEW) != 0)
-					WarningNotHiding (parent);*/
-				
-				if ((ModFlags & Modifiers.OVERRIDE) != 0){
+					WarningNotHiding (container);
+				*/
+				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					if (this is Indexer)
 						Report.Error (115, Location,
-							      parent.MakeName (Name) +
-							      " no suitable indexers found to override");
+							container.MakeName (Name) +
+							" no suitable indexers found to override");
 					else
-						Report.Error (30284, Location,
-							      parent.MakeName (Name) +
-							      " no suitable properties found to override");
+						Report.Error (115, Location,
+							container.MakeName (Name) +
+							" no suitable properties found to override");
 					return false;
 				}
 
 				if ((ModFlags & ( Modifiers.NEW | Modifiers.SHADOWS | Modifiers.OVERRIDE )) == 0) {
-						if ((ModFlags & Modifiers.NONVIRTUAL) != 0) {
-							Report.Error (31088, Location,
-								parent.MakeName (Name) + " : Cannot " +
-								"be declared NotOverridable since this 'Property' does " +
-								"not 'Overrides' any other 'Property'");
-						}
+					if ((ModFlags & Modifiers.NONVIRTUAL) != 0)	{
+						Report.Error (31088, Location,
+							container.MakeName (Name) + " : Cannot " +
+							"be declared NotOverridable since this method is " +
+							"not maked as Overrides");
 					}
-					// if a member of module is not inherited from Object class
-					// can not be declared protected
-					if ((parent is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
-						Report.Error (30503, Location,
-								"'Property' inside a 'Module' can not be declared as " +
-								"'Protected' or 'Protected Friend'");
+				}
+				// if a member of module is not inherited from Object class
+				// can not be declared protected
+				if ((container is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
+					Report.Error (31066, Location,
+						"'Property' inside a 'Module' can not be declared as " +
+						"'Protected' or 'Protected Friend'");
 			}
 			return true;
 		}
@@ -3986,22 +4011,17 @@ namespace Mono.MonoBASIC {
 						"Property without 'Get' accessor must have a 'WriteOnly' modifier");
 			}
 			else {
-				if (get_params == Parameters.EmptyReadOnlyParameters) 
-				{
+				if (get_params == Parameters.EmptyReadOnlyParameters) {
 					g_parameters = TypeManager.NoTypes;
 					g_ip = new InternalParameters (
 							parent, Parameters.EmptyReadOnlyParameters);
-				}
-				else
-				{
+				} else	{
 					g_parameters = new Type [get_params.FixedParameters.Length];
-					for (int i = 0; i < get_params.FixedParameters.Length; i ++) 
-					{
+					for (int i = 0; i < get_params.FixedParameters.Length; i ++) {
 						g_parameters[i] = get_params.FixedParameters[i].ParameterType;
 					}
 					g_parms = new Parameter [get_params.FixedParameters.Length];
-					for (int i = 0; i < get_params.FixedParameters.Length; i ++) 
-					{
+					for (int i = 0; i < get_params.FixedParameters.Length; i ++) {
 						Parameter tp = get_params.FixedParameters[i];
 						g_parms[i] = new Parameter (tp.TypeName, tp.Name,
 							Parameter.Modifier.NONE, null);
@@ -4037,18 +4057,14 @@ namespace Mono.MonoBASIC {
 					s_parms = new Parameter [1];
 					s_parms [0] = new Parameter (Type, set_parameter_name, 
 						Parameter.Modifier.NONE, null);
-				}
-				else
-				{
+				} else {
 					s_parameters = new Type [set_params.FixedParameters.Length];
-					for (int i = 0; i < set_params.FixedParameters.Length; i ++) 
-					{
+					for (int i = 0; i < set_params.FixedParameters.Length; i ++) {
 						s_parameters[i] = set_params.FixedParameters[i].ParameterType;
 					}
 
 					s_parms = new Parameter [set_params.FixedParameters.Length];
-					for (int i = 0; i < set_params.FixedParameters.Length; i ++) 
-					{
+					for (int i = 0; i < set_params.FixedParameters.Length; i ++) {
 						Parameter tp = set_params.FixedParameters[i];
 						s_parms[i] = new Parameter (tp.TypeName, tp.Name,
 							Parameter.Modifier.NONE, null);

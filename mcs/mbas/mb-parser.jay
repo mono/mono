@@ -3,13 +3,12 @@
 // Mono.MonoBASIC.Parser.cs (from .jay): The Parser for the MonoBASIC compiler
 //
 // Author: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
+//		   Anirban Bhattacharjee (banirban@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
 // Copyright (C) 2001 A Rafael D Teixeira
 //
-// TODO:
-//	Nearly everything
 //
 
 namespace Mono.MonoBASIC
@@ -1060,7 +1059,17 @@ class_declaration
 	  END CLASS logical_end_of_line
 	  {
 		Class new_class = (Class) current_container;
-		new_class.Bases = (ArrayList) $4;	
+		
+		ArrayList bases = (ArrayList) $4;
+
+		ArrayList ifaces = (ArrayList) $5;
+		if (ifaces != null){
+			if (bases != null)	
+				bases.AddRange(ifaces);
+			else
+				bases = ifaces;
+		}
+		new_class.Bases = bases;
 	
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
@@ -1653,22 +1662,16 @@ interface_member_declarations
 interface_member_declaration
 	: interface_method_declaration		
 	  { 
-		InterfaceMethod m = (InterfaceMethod) $1;
-
+		Method m = (Method) $1;
 		CheckDef (current_interface.AddMethod (m), m.Name, m.Location);
 	  }
 	| interface_property_declaration	
-	  { 
-		InterfaceProperty p = (InterfaceProperty) $1;
-		
-		CheckDef (current_interface.AddProperty (p), p.Name, p.Location);
-          }
-	| interface_event_declaration 
-          { 
-		InterfaceEvent e = (InterfaceEvent) $1;
+	/*| interface_event_declaration 
+      { 
+		Event e = (Event) $1;
 
 		CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
-	  }
+	  }*/
 	;
 
 opt_new
@@ -1677,52 +1680,85 @@ opt_new
 	;
 	
 interface_method_declaration
-	: SUB identifier
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS logical_end_of_line
+	: SUB identifier opt_params logical_end_of_line
 	  {
-		$$ = new InterfaceMethod (TypeManager.system_void_expr, (string) $2, false,
-					  (Parameters) $4, current_attributes, lexer.Location);
-	  }
-	| FUNCTION identifier opt_type_character
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type
-	  {
-	  	if ($3 != null && $3 != $8)
-			Report.Error (-1, lexer.Location, "Type character conflicts with declared type."); // TODO: Correct error number and message text
+		current_modifiers |= Modifiers.ABSTRACT;
+	  			  	
+	  	Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
+					    (Parameters) $3, null, null, lexer.Location);
 		
-		$$ = new InterfaceMethod (
-		 			  (Expression) $8, (string) $2, false, (Parameters) $5,
-					  current_attributes, lexer.Location);
+		$$ = method;
 	  }
-	| FUNCTION identifier type_character
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	| FUNCTION identifier opt_type_character opt_params opt_type_with_ranks logical_end_of_line
 	  {
-		$$ = new InterfaceMethod (
-		 			  (Expression) $3, (string) $2, false, (Parameters) $5,
-					  current_attributes, lexer.Location);
+		Expression ftype = ($5 == null) ? (($3 == null) ? TypeManager.	
+			system_object_expr : (Expression) $3 ) : (Expression) $5;
+		
+		current_modifiers |= Modifiers.ABSTRACT;
+
+	  	Method method = new Method ((Expression) ftype, (int) current_modifiers, 
+						(string) $2,(Parameters) $4, null, null, 
+						lexer.Location);
+		
+		$$ = method;
 	  }
 	;
 
 interface_property_declaration
-	: opt_modifiers PROPERTY identifier
-	  OPEN_PARENS
-	  opt_formal_parameter_list
-	  CLOSE_PARENS opt_type_spec logical_end_of_line
+	: PROPERTY identifier opt_type_character opt_property_parameters AS type logical_end_of_line
 	  {
-		// FIXME we MUST pass property parameters
-		$$ = new InterfaceProperty ((Expression) $6, (string) $2, false,
-					    true, true, current_attributes,
-					    lexer.Location);
+		Expression ftype = ($6 == null) ? (($3 == null) ? 
+				TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $6;
+
+		current_modifiers |= Modifiers.ABSTRACT;
+		
+		current_local_parameters = (Parameters) $4;
+		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
+			get_parameters = current_local_parameters.Copy (lexer.Location);
+			set_parameters = current_local_parameters.Copy (lexer.Location);
+			
+			Parameter implicit_value_parameter = new Parameter (
+					ftype, "Value", Parameter.Modifier.NONE, null);
+			
+			set_parameters.AppendParameter (implicit_value_parameter);
+		}
+		else
+		{
+			get_parameters = Parameters.EmptyReadOnlyParameters;
+			set_parameters = new Parameters (null, null ,lexer.Location); 
+			
+			Parameter implicit_value_parameter = new Parameter (
+					ftype, "Value", Parameter.Modifier.NONE, null);
+			
+			set_parameters.AppendParameter (implicit_value_parameter);
+		}
+		lexer.PropertyParsing = true;
+		
+		Accessor get_block = new Accessor (null, null);	
+		Accessor set_block = new Accessor (null, null);	
+				
+		Property prop = new Property ((Expression) ftype, (string) $2, current_modifiers,
+					 get_block, set_block, current_attributes, lexer.Location,
+					 null, get_parameters, set_parameters, null);
+    
+		CheckDef (current_interface.AddProperty (prop), prop.Name, lexer.Location);
+		
+		get_implicit_value_parameter_type = null;
+		set_implicit_value_parameter_type = null;
+		get_parameters = null;
+		set_parameters = null;
+		current_local_parameters = null;			
 	  }
 	;
 	
-interface_event_declaration
-	: opt_attributes opt_new EVENT type identifier logical_end_of_line
+/*interface_event_declaration
+	: EVENT identifier AS type logical_end_of_line
 	  {
 		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
-					 lexer.Location);
+	 				 lexer.Location);
 	  }
 	;
-
+*/
  property_declaration
 	: abstruct_propery_declaration
 	| non_abstruct_propery_declaration 
@@ -1746,6 +1782,11 @@ abstruct_propery_declaration
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
 			get_parameters = current_local_parameters.Copy (lexer.Location);
 			set_parameters = current_local_parameters.Copy (lexer.Location);
+			
+			Parameter implicit_value_parameter = new Parameter (
+					ftype, "Value", Parameter.Modifier.NONE, null);
+			
+			set_parameters.AppendParameter (implicit_value_parameter);
 		}
 		else
 		{
@@ -1974,7 +2015,6 @@ field_declaration
 	  variable_declarators logical_end_of_line
 	  {   		  
 		int mod = (int) current_modifiers;
-		
 
 		VariableDeclaration.FixupTypes ((ArrayList) $2);
 		VariableDeclaration.FixupArrayTypes ((ArrayList) $2);
