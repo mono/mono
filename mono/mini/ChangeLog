@@ -1,3 +1,6 @@
+2003-07-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* mini.c: Removed definition of metadata_shared mutex here.
 
 Tue Jul 22 15:21:24 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

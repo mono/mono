@@ -1,3 +1,7 @@
+2003-07-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* jit.c: Remove definition of metadata_section mutex from here
+
 2003-05-19  Dick Porter  <dick@ximian.com>
 
 	* jit.c: Netbsd build fix by marc@informatik.uni-bremen.de.

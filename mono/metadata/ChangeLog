@@ -1,3 +1,12 @@
+2003-07-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* object.c (mono_runtime_class_init): Take the metadata_section
+	mutex before obtaining the domain mutex.
+
+	* appdomain.h: Added definition of metadata_section mutex here. 
+
+	* object.c: define metadata_mutex here.
+
 2003-07-24  Ravi Pratap  <ravi@ximian.com>
 
 	* icall.c: Remove the FIXED_MCS_45127 workarounds - this has been
