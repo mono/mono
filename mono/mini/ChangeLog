@@ -1,5 +1,10 @@
 2005-01-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_local_regalloc): Fix bug introduced by
+	previous patch.
+
+	* mini-amd64.c (mono_arch_local_regalloc): Ditto.	
+
 	* mini-amd64.c (mono_arch_local_regalloc): Revert last patch as it
 	breaks the amd64 build.
 
