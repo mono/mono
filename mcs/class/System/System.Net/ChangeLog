@@ -1,3 +1,12 @@
+2002-05-20  Lawrence Pit <loz@cable.a2000.nl>
+
+	* WebProxy.cs: added, implemented
+	* ServicePoint.cs: implemented most
+	* ServicePointManager.cs: implemented
+	* HttpWebRequest.cs: started implementation
+	* HttpWebResponse.cs: improved disposable routines
+	* FileWebRequest.cs: slight improvement of Close method
+	
 2002-05-19  Lawrence Pit <loz@cable.a2000.nl>
 
 	* FileWebRequest.cs: finished implementation of async methods.

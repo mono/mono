@@ -6,13 +6,14 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Security.Cryptography.X509Certificates;
 
 //
 // notes:
 // A service point manager manages service points (duh!).
-// A service point maintains a list of connections (per scheme + authority 
-// seems logical).
+// A service point maintains a list of connections (per scheme + authority).
 // According to HttpWebRequest.ConnectionGroupName each connection group
 // creates additional connections. therefor, a service point has a hashtable
 // of connection groups where each value is a list of connections.
@@ -31,6 +32,10 @@ namespace System.Net
 {
 	public class ServicePointManager
 	{
+		private static HybridDictionary servicePoints = new HybridDictionary ();
+		
+		// Static properties
+		
 		private static ICertificatePolicy policy = null;
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
 		private static int maxServicePointIdleTime = 900000; // 15 minutes
@@ -79,8 +84,9 @@ namespace System.Net
 			}
 			set {  
 				if (value < 0)
-					throw new ArgumentException ("value");
+					throw new ArgumentException ("value");				
 				maxServicePoints = value;
+				RecycleServicePoints ();
 			}
 		}
 		
@@ -98,12 +104,66 @@ namespace System.Net
 		
 		public static ServicePoint FindServicePoint (Uri address, IWebProxy proxy)
 		{
+			RecycleServicePoints ();
+			
 			if (address == null)
 				throw new ArgumentNullException ("address");
-			// if ()
-			//	throw new InvalidOperationException ("maximum number of service points reached");
+
+			if (proxy != null && !proxy.IsBypassed(address)) {
+				address = proxy.GetProxy (address);				
+			} 
+
+			address = new Uri (address.Scheme + "://" + address.Authority);
 			
-			throw new NotImplementedException ();
+			ServicePoint sp = null;
+			lock (servicePoints) {
+				sp = (ServicePoint) servicePoints [address];
+				if (sp != null)
+					return sp;
+				if (maxServicePoints > 0 && servicePoints.Count >= maxServicePoints)
+					throw new InvalidOperationException ("maximum number of service points reached");
+				sp = new ServicePoint (address, defaultConnectionLimit, maxServicePointIdleTime);
+				servicePoints.Add (address, sp);
+			}
+			
+			return sp;
+		}
+		
+		// Internal Methods
+
+		internal static void RecycleServicePoints ()
+		{
+			ArrayList toRemove = new ArrayList ();
+			lock (servicePoints) {
+				IDictionaryEnumerator e = servicePoints.GetEnumerator ();
+				while (e.MoveNext ()) {
+					ServicePoint sp = (ServicePoint) e.Value;
+					if (sp.AvailableForRecycling) {
+						toRemove.Add (e.Key);
+					}
+				}
+				
+				for (int i = 0; i < toRemove.Count; i++) 
+					servicePoints.Remove (toRemove [i]);
+
+				if (maxServicePoints == 0 || servicePoints.Count <= maxServicePoints)
+					return;
+
+				// get rid of the ones with the longest idle time
+				SortedList list = new SortedList (servicePoints.Count);
+				e = servicePoints.GetEnumerator ();
+				while (e.MoveNext ()) {
+					ServicePoint sp = (ServicePoint) e.Value;
+					if (sp.CurrentConnections == 0) {
+						while (list.ContainsKey (sp.IdleSince))
+							sp.IdleSince.AddMilliseconds (1);
+						list.Add (sp.IdleSince, sp.Address);
+					}
+				}
+				
+				for (int i = 0; i < list.Count && servicePoints.Count > maxServicePoints; i++)
+					servicePoints.Remove (list.GetByIndex (i));
+			}
 		}
 	}
 }

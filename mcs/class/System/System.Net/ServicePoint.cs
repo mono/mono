@@ -7,6 +7,7 @@
 
 using System;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 namespace System.Net 
 {
@@ -15,15 +16,20 @@ namespace System.Net
 		private Uri uri;
 		private int connectionLimit;
 		private int maxIdleTime;
+		private int currentConnections;
+		private DateTime idleSince;
+		private Version protocolVersion;
 		
 		// Constructors
+
 		internal ServicePoint (Uri uri, int connectionLimit, int maxIdleTime)
 		{
-			this.uri = uri;
+			this.uri = uri;  
 			this.connectionLimit = connectionLimit;
-			this.maxIdleTime = maxIdleTime;
+			this.maxIdleTime = maxIdleTime;			
+			this.currentConnections = 0;
+			this.idleSince = DateTime.Now;
 		}
-	
 		
 		// Properties
 		
@@ -41,7 +47,6 @@ namespace System.Net
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public int ConnectionLimit {
 			get { return connectionLimit; }
 			set {
@@ -51,43 +56,50 @@ namespace System.Net
 			}
 		}
 		
-		[MonoTODO]
 		public string ConnectionName {
-			get { throw new NotImplementedException (); }
+			get { return uri.Scheme; }
 		}
 
-		[MonoTODO]
 		public int CurrentConnections {
-			get { throw new NotImplementedException (); }
+			get { return currentConnections; }
 		}
 
-		[MonoTODO]		
 		public DateTime IdleSince {
-			get { throw new NotImplementedException (); }
+			get { return idleSince; }
 		}
-
-		[MonoTODO]
+		
 		public int MaxIdleTime {
 			get { return maxIdleTime; }
-			set { this.maxIdleTime = value; }
+			set { 
+				if (value < Timeout.Infinite || value > Int32.MaxValue)
+					throw new ArgumentOutOfRangeException ();
+				this.maxIdleTime = value; 
+			}
 		}
 		
-		[MonoTODO]
 		public virtual Version ProtocolVersion {
-			get { throw new NotImplementedException (); }
+			get { return protocolVersion; }
 		}
 		
-		[MonoTODO]
 		public bool SupportsPipelining {
-			get { throw new NotImplementedException (); }
+			get { return HttpVersion.Version11.Equals (protocolVersion); }
 		}
 		
 		// Methods
 		
-		[MonoTODO]
 		public override int GetHashCode() 
 		{
-			throw new NotImplementedException ();
+			return base.GetHashCode ();
+		}
+		
+		// Internal Methods
+
+		internal bool AvailableForRecycling {
+			get { 
+				return CurrentConnections == 0
+				    && maxIdleTime != Timeout.Infinite
+			            && DateTime.Now >= IdleSince.AddMilliseconds (maxIdleTime);
+			}
 		}
 	}
 }

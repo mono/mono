@@ -27,10 +27,15 @@ namespace System.Net
 		
 		// Constructors
 		
-		protected HttpWebResponse (Uri uri, Stream responseStream) 
+		internal HttpWebResponse (Uri uri, string method, Stream responseStream) 
 		{ 
 			this.uri = uri;
+			this.method = method;
 			this.responseStream = responseStream;
+			
+			// TODO: parse headers from responseStream
+			
+			this.statusCode = HttpStatusCode.OK;
 		}
 		
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -46,44 +51,48 @@ namespace System.Net
 			// parameter      = attribute "=" value
 			// 3.7.1. default is ISO-8859-1
 			get { 
-				CheckDisposed ();
-				string contentType = ContentType;
-				if (contentType == null)
-					return "ISO-8859-1";
-				string val = contentType.ToLower (); 					
-				int pos = val.IndexOf ("charset=");
-				if (pos == -1)
-					return "ISO-8859-1";
-				pos += 8;
-				int pos2 = val.IndexOf (';', pos);
-				return (pos2 == -1)
-				     ? contentType.Substring (pos) 
-				     : contentType.Substring (pos, pos2 - pos);
+				try {
+					string contentType = ContentType;
+					if (contentType == null)
+						return "ISO-8859-1";
+					string val = contentType.ToLower (); 					
+					int pos = val.IndexOf ("charset=");
+					if (pos == -1)
+						return "ISO-8859-1";
+					pos += 8;
+					int pos2 = val.IndexOf (';', pos);
+					return (pos2 == -1)
+					     ? contentType.Substring (pos) 
+					     : contentType.Substring (pos, pos2 - pos);
+				} finally {
+					CheckDisposed ();
+				}
 			}
 		}
 		
 		public string ContentEncoding {
 			get { 
-				CheckDisposed ();
-				return webHeaders ["Content-Encoding"]; 
+				try { return webHeaders ["Content-Encoding"]; }
+				finally { CheckDisposed (); }
 			}
 		}
 		
 		public override long ContentLength {		
 			get { 
-				CheckDisposed ();
 				try {
 					return Int64.Parse (webHeaders ["Content-Length"]); 
 				} catch (Exception) {
 					return -1;
+				} finally {
+					CheckDisposed ();
 				}
 			}
 		}
 		
 		public override string ContentType {		
 			get { 
-				CheckDisposed ();
-				return webHeaders ["Content-Type"]; 
+				try { return webHeaders ["Content-Type"]; }
+				finally { CheckDisposed (); }
 			}
 		}
 		
@@ -151,8 +160,11 @@ namespace System.Net
 		
 		public string Server {
 			get { 
-				CheckDisposed ();
-				return webHeaders ["Server"]; 
+				try {
+					return webHeaders ["Server"]; 
+				} finally {
+					CheckDisposed ();
+				}
 			}
 		}
 		
@@ -174,21 +186,31 @@ namespace System.Net
 		
 		public override int GetHashCode ()
 		{
-			CheckDisposed ();
-			return base.GetHashCode ();
+			try {
+				return base.GetHashCode ();
+			} finally {
+				CheckDisposed ();
+			}
 		}
 		
 		public string GetResponseHeader (string headerName)
 		{
-			CheckDisposed ();
-			return webHeaders [headerName];
+			try {
+				return webHeaders [headerName];
+			} finally {
+				CheckDisposed ();
+			}
 		}
 		
-		[MonoTODO]
 		public override Stream GetResponseStream ()
 		{
-			CheckDisposed ();
-			throw new NotImplementedException ();
+			try {
+				if (method.Equals ("HEAD")) // see par 4.3 & 9.4
+					return Stream.Null;  
+				return responseStream;
+			} finally {
+				CheckDisposed ();
+			}
 		}
 		
 		[MonoTODO]
@@ -215,8 +237,6 @@ namespace System.Net
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
-			
-			// see spec, suppress finalization of this object.
 			GC.SuppressFinalize (this);  
 		}
 		
@@ -241,13 +261,13 @@ namespace System.Net
 			Stream stream = responseStream;
 			responseStream = null;
 			if (stream != null)
-				stream.Close ();			
+				stream.Close ();  // also closes webRequest			
 		}
 		
 		private void CheckDisposed () 
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("HttpWebResponse");
+				throw new ObjectDisposedException (GetType ().FullName);
 		}
 	}	
 }

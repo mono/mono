@@ -8,8 +8,11 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Net.Sockets;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 namespace System.Net 
 {
@@ -40,7 +43,11 @@ namespace System.Net
 		private ServicePoint servicePoint = null;
 		private int timeout = System.Threading.Timeout.Infinite;
 		
-		private bool requestStarted = false;
+		private Stream requestStream = null;
+		private HttpWebResponse webResponse = null;
+		private AutoResetEvent requestEndEvent = null;
+		private bool requesting = false;
+		private bool asyncResponding = false;
 		
 		// Constructors
 		
@@ -245,10 +252,9 @@ namespace System.Net
 			set { 
 				CheckRequestStarted ();
 				
-				value = value.ToUpper ();
 				if (value == null ||
 				    (value != "GET" &&
-				     value != "HEADER" &&
+				     value != "HEAD" &&
 				     value != "POST" &&
 				     value != "PUT" &&
 				     value != "DELETE" &&
@@ -350,12 +356,6 @@ namespace System.Net
 		}
 				
 		// Methods
-
-		[MonoTODO]		
-		public override void Abort()
-		{
-			throw new NotImplementedException ();
-		}
 		
 		public void AddRange (int range)
 		{
@@ -378,7 +378,7 @@ namespace System.Net
 				value += ",";
 			else
 				throw new InvalidOperationException ("rangeSpecifier");
-			webHeaders.SetInternal ("Range", value + range);	
+			webHeaders.SetInternal ("Range", value + range + "-");	
 		}
 		
 		public void AddRange (string rangeSpecifier, int from, int to)
@@ -397,57 +397,137 @@ namespace System.Net
 			webHeaders.SetInternal ("Range", value + from + "-" + to);	
 		}
 		
-		[MonoTODO]
-		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
-		{
-			if (!method.Equals ("PUT") && !method.Equals ("POST"))
-				throw new ProtocolViolationException ("Invalid method");
-//			if (putting)
-//				throw new WebException ("Stream already open");
-/*				
-                        HttpWebRequestAsyncResult requestResult = new HttpWebRequestAsyncResult (stateObject);				
-                        Worker worker = new Worker (hostName, requestCallback, requestResult);
-                        Thread child = new Thread (new ThreadStart (worker.GetRequestStream));
-                        child.Start();
-                        return requestResult;				
-*/
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
-		{
-			throw new NotImplementedException ();
-		}
-		
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
 		}
 		
-		[MonoTODO]
-		public override Stream GetRequestStream()
+		private delegate Stream GetRequestStreamCallback ();
+		private delegate WebResponse GetResponseCallback ();
+		
+		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
-			throw new NotImplementedException ();
+			if (method == null || (!method.Equals ("PUT") && !method.Equals ("POST")))
+				throw new ProtocolViolationException ("Cannot send file when method is: " + this.method + ". Method must be PUT.");
+			// workaround for bug 24943
+			Exception e = null;
+			lock (this) {
+				if (asyncResponding || webResponse != null)
+					e = new InvalidOperationException ("This operation cannot be performed after the request has been submitted.");
+				else if (requesting)
+					e = new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
+				else
+					requesting = true;
+			}
+			if (e != null)
+				throw e;
+			/*
+			lock (this) {
+				if (asyncResponding || webResponse != null)
+					throw new InvalidOperationException ("This operation cannot be performed after the request has been submitted.");
+				if (requesting)
+					throw new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
+				requesting = true;
+			}
+			*/
+			GetRequestStreamCallback c = new GetRequestStreamCallback (this.GetRequestStreamInternal);
+			return c.BeginInvoke (callback, state);	
+		}
+
+		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
+		{
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+			if (!asyncResult.IsCompleted)
+				asyncResult.AsyncWaitHandle.WaitOne ();				
+			AsyncResult async = (AsyncResult) asyncResult;
+			GetRequestStreamCallback cb = (GetRequestStreamCallback) async.AsyncDelegate;
+			return cb.EndInvoke (asyncResult);
 		}
 		
-		[MonoTODO]
+		public override Stream GetRequestStream()
+		{
+			IAsyncResult asyncResult = BeginGetRequestStream (null, null);
+			if (!(asyncResult.AsyncWaitHandle.WaitOne (timeout, false))) {
+				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+			}
+			return EndGetRequestStream (asyncResult);
+		}
+		
+		internal Stream GetRequestStreamInternal ()
+		{
+			this.requestStream = null;   // TODO: new HttpWebStream (this);
+			return this.requestStream;
+		}
+		
+		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
+		{
+			// workaround for bug 24943
+			Exception e = null;
+			lock (this) {
+				if (asyncResponding)
+					e = new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
+				else 
+					asyncResponding = true;
+			}
+			if (e != null)
+				throw e;
+			/*
+			lock (this) {
+				if (asyncResponding)
+					throw new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
+				asyncResponding = true;
+			}
+			*/
+			GetResponseCallback c = new GetResponseCallback (this.GetResponseInternal);
+			return c.BeginInvoke (callback, state);
+		}
+		
+		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
+		{
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+			if (!asyncResult.IsCompleted)
+				asyncResult.AsyncWaitHandle.WaitOne ();			
+			AsyncResult async = (AsyncResult) asyncResult;
+			GetResponseCallback cb = (GetResponseCallback) async.AsyncDelegate;
+			WebResponse webResponse = cb.EndInvoke(asyncResult);
+			asyncResponding = false;
+			return webResponse;
+		}
+		
 		public override WebResponse GetResponse()
 		{
-			throw new NotImplementedException ();
+			IAsyncResult asyncResult = BeginGetResponse (null, null);
+			if (!(asyncResult.AsyncWaitHandle.WaitOne (timeout, false))) {
+				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+			}
+			return EndGetResponse (asyncResult);
 		}
+		
+		public WebResponse GetResponseInternal ()
+		{
+			if (webResponse != null)
+				return webResponse;			
+			lock (this) {
+				if (requesting) {
+					requestEndEvent = new AutoResetEvent (false);
+				}
+			}
+			if (requestEndEvent != null) {
+				requestEndEvent.WaitOne ();
+			}
+			Stream responseStream = null; // TODO: new HttpWebStream (this);
+ 			this.webResponse = new HttpWebResponse (this.actualUri, method, responseStream);
+ 			return (WebResponse) this.webResponse;
+		}
+
+		[MonoTODO]		
+		public override void Abort()
+		{
+			this.haveResponse = true;
+			throw new NotImplementedException ();
+		}		
 		
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
@@ -460,11 +540,45 @@ namespace System.Net
 		
 		private void CheckRequestStarted () 
 		{
-			if (requestStarted)
+			if (requesting)
 				throw new InvalidOperationException ("request started");
 		}
+		
+		internal void Close ()
+		{
+			// already done in class below
+			// if (requestStream != null) {
+			// 	requestStream.Close ();
+			// }
 
-
+			lock (this) {			
+				requesting = false;
+				if (requestEndEvent != null) 
+					requestEndEvent.Set ();
+				// requestEndEvent = null;
+			}
+		}
+		
 		// Private Classes
+		
+		// to catch the Close called on the NetworkStream
+		/*
+		internal class HttpWebStream : Stream
+		{
+			HttpWebRequest webRequest;
+			
+			internal HttpWebStream (HttpWebRequest webRequest)
+				: base (webRequest.RequestUri)
+			{
+				this.webRequest = webRequest;
+			}
+					   	
+			public override void Close() 
+			{
+				base.Close ();
+				webRequest.Close ();
+			}
+		}		
+		*/
 	}
 }

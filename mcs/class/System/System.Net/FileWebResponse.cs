@@ -133,7 +133,7 @@ namespace System.Net
 		private void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException (GetType().FullName);
+				throw new ObjectDisposedException (GetType ().FullName);
 		}		
 	}
 }

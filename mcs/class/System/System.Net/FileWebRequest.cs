@@ -138,7 +138,7 @@ namespace System.Net
 				throw e;
 			/*
 			lock (this) {
-				if (asyncResponding)
+				if (asyncResponding || webResponse != null)
 					throw new InvalidOperationException ("This operation cannot be performed after the request has been submitted.");
 				if (requesting)
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
@@ -285,7 +285,10 @@ namespace System.Net
 			public override void Close() 
 			{
 				base.Close ();
-				webRequest.Close ();
+				FileWebRequest req = webRequest;
+				webRequest = null;
+				if (req != null)
+					req.Close ();
 			}
 		}
 	}
