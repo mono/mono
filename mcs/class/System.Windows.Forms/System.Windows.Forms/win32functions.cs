@@ -515,6 +515,10 @@ namespace System.Windows.Forms{
 		internal static extern uint SetTimer (IntPtr hWnd, uint nIDEvent, uint uElapse, TimerProc lpTimerFunc);
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal static extern bool KillTimer (IntPtr hWnd, uint nIDEvent);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern IntPtr GetActiveWindow ( );
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern IntPtr GetForegroundWindow ( );
 		#endregion
 
 		#region Shell32.dll functions
@@ -980,12 +984,20 @@ namespace System.Windows.Forms{
 
 		#endregion
 
-		internal static void UpdateWindowStyle( IntPtr hwnd, int RemoveStyle, int AddStyle) {
-			if( Win32.IsWindow(hwnd)) {
-				int style = Win32.GetWindowLong(hwnd, GetWindowLongFlag.GWL_STYLE).ToInt32();
+		internal static void UpdateWindowStyle( IntPtr hwnd, int RemoveStyle, int AddStyle ) {
+			UpdateWindowStyleImpl ( hwnd, RemoveStyle, AddStyle, GetWindowLongFlag.GWL_STYLE );
+		}
+
+		internal static void UpdateWindowExStyle( IntPtr hwnd, int RemoveStyle, int AddStyle ) {
+			UpdateWindowStyleImpl ( hwnd, RemoveStyle, AddStyle, GetWindowLongFlag.GWL_EXSTYLE );
+		}
+
+		internal static void UpdateWindowStyleImpl( IntPtr hwnd, int RemoveStyle, int AddStyle, GetWindowLongFlag flag) {
+			if( Win32.IsWindow ( hwnd ) ) {
+				int style = Win32.GetWindowLong( hwnd, flag ).ToInt32();
 				style &= ~RemoveStyle;
 				style |= AddStyle;
-				Win32.SetWindowLong(hwnd, GetWindowLongFlag.GWL_STYLE, style);
+				Win32.SetWindowLong(hwnd, flag, style);
 				Win32.SetWindowPos(hwnd, 0, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE |
 					SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOSIZE |
 					SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_FRAMECHANGED);

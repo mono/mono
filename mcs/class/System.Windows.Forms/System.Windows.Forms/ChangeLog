@@ -1,4 +1,11 @@
 2003-05-27  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : helper method getParentForm
+	* Form.cs : ActiveForm , FormBorderStyle implemented
+	* GroupBox.cs : some chages in drawing code, don't register another window class
+	* FormBorderStyle.cs : fixed typo
+	* win32functions.cs : UpdateWindowExStyle added, new prototypes for GetActiveWindow, GetForegroundWindow
+
+2003-05-27  Aleksey Ryabchuk <ryabchuk@yahoo.com>
         * Button.cs
 	* CheckBox.cs
 	* CheckedListBox.cs

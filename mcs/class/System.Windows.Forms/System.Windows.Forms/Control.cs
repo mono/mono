@@ -2898,6 +2898,17 @@
 			}
 		}
 
+		internal Control getParentForm ( )
+		{
+			Control parent = this.Parent;
+			while ( parent != null ) {
+				if ( parent is Form ) 
+					return parent;
+				parent = parent.Parent;
+			}
+			return null;
+		}
+
     		/// --- Control: events ---
     		public event EventHandler BackColorChanged;
     		public event EventHandler BackgroundImageChanged;

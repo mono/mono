@@ -23,6 +23,7 @@
 			Size minimizeSize;
 			double opacity;
 			bool   topLevel;
+			bool   autoScale;
 			// Temperary varibles that may be replaced
 			// with win32 functions
 
@@ -74,6 +75,7 @@
 		Control   dialog_owner;
 		bool      modal;
 		bool      exitModalLoop;
+		Size	  autoScaleBaseSize;
 
 		public Form () : base ()
     		{
@@ -81,6 +83,11 @@
 			topLevel = true;
 			modal    = false;
 			dialogResult = DialogResult.None;
+			autoScale = true;
+			formBorderStyle = FormBorderStyle.Sizable;
+			maximizeBox = true;
+			minimizeBox = true;
+			controlBox  = true;
     		}
     		
     		static Form ()
@@ -103,7 +110,10 @@
     		[MonoTODO]
     		public static Form ActiveForm {
     			get {
-    				throw new NotImplementedException ();
+				Control control = Control.FromHandle ( Win32.GetActiveWindow ( ) );
+				if ( control != null && ! ( control is Form ) )
+					control = control.getParentForm ( );
+				return control as Form;
     			}
     		}
     
@@ -116,22 +126,17 @@
     
     		[MonoTODO]
     		public bool AutoScale {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-					//FIXME:
-				}
+    			get { return autoScale;  }
+    			set { autoScale = value; }
     		}
-			internal Size autoscalebasesize; //debug/test only
 
     		[MonoTODO]
     		public virtual Size AutoScaleBaseSize {
     			get {
-    				return autoscalebasesize;
+    				return autoScaleBaseSize;
     			}
     			set {
-    				autoscalebasesize = value;
+    				autoScaleBaseSize = value;
     			}
     		}
     
@@ -231,14 +236,33 @@
     			}
     		}
     
-  			//Compact Framework
-    		[MonoTODO]
     		public FormBorderStyle FormBorderStyle {
-    			get {
-    				return formBorderStyle;
-    			}
+    			get {	return formBorderStyle;	}
     			set {
+				if ( formBorderStyle == value )
+					return;
+
+				if ( !Enum.IsDefined ( typeof( FormBorderStyle ), value ) )
+					throw new InvalidEnumArgumentException( "FormBorderStyle",
+						( int )value,
+						typeof( FormBorderStyle ) );
+
+				int oldBaseStyle = 0;
+				int oldExStyle = 0;
+				getFrameStyle ( formBorderStyle, ref oldBaseStyle, ref oldExStyle );
+
     				formBorderStyle = value;
+
+				int newBaseStyle = 0;
+				int newExStyle = 0;
+				getFrameStyle ( formBorderStyle, ref newBaseStyle, ref newExStyle );
+				
+				ClientSize = ClientSize; // recalculate size of client area
+
+				if ( IsHandleCreated ) {
+					Win32.UpdateWindowStyle ( Handle, oldBaseStyle, newBaseStyle );
+					Win32.UpdateWindowExStyle ( Handle, oldExStyle, newExStyle );
+				}
     			}
     		}
     
@@ -662,6 +686,14 @@
     			get {
 				CreateParams pars = base.CreateParams;
 			
+				int baseStyle = 0;
+				int exStyle = 0;
+
+				getFrameStyle ( FormBorderStyle , ref baseStyle, ref exStyle );
+
+				pars.Style   = baseStyle;
+				pars.ExStyle = exStyle;
+
 				if ( IsMdiChild ) {
 					pars.Style |= (int)( WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE );
 					pars.ExStyle |= (int)WindowExStyles.WS_EX_MDICHILD;
@@ -670,10 +702,10 @@
 					pars.X = (int)CreateWindowCoordinates.CW_USEDEFAULT;
 					pars.Y = (int)CreateWindowCoordinates.CW_USEDEFAULT;
 
-					pars.Style = (int)( WindowStyles.WS_OVERLAPPEDWINDOW | 
-							WindowStyles.WS_CLIPSIBLINGS /* |
-							WindowStyles.WS_CLIPCHILDREN */);
+					pars.Style |= (int)( WindowStyles.WS_CLIPSIBLINGS  |
+							     WindowStyles.WS_CLIPCHILDREN );
 				}
+
 				if ( TopLevel && Parent == null ) 
 					pars.Parent = IntPtr.Zero;
 				
@@ -1159,6 +1191,53 @@
 		internal bool ExitModalLoop {
 			get { return exitModalLoop; }
 			set { exitModalLoop = value; }
+		}
+
+		private void getFrameStyle ( FormBorderStyle borderStyle, ref int baseStyle, ref int exStyle )
+		{
+			baseStyle = 0;
+			exStyle = 0;
+			
+			int sysStyles = getSysStyles ( );
+
+			switch ( borderStyle ) {
+			case FormBorderStyle.Fixed3D:
+				baseStyle = (int) ( WindowStyles.WS_CAPTION ) | sysStyles;
+				exStyle = (int) ( WindowExStyles.WS_EX_OVERLAPPEDWINDOW );
+			break;
+			case FormBorderStyle.FixedDialog:
+				baseStyle = (int) ( WindowStyles.WS_CAPTION ) | sysStyles;
+				exStyle = (int) ( WindowExStyles.WS_EX_DLGMODALFRAME |  WindowExStyles.WS_EX_WINDOWEDGE );
+			break;
+			case FormBorderStyle.FixedSingle:
+				baseStyle = (int) ( WindowStyles.WS_CAPTION ) | sysStyles;
+				exStyle = (int) ( WindowExStyles.WS_EX_WINDOWEDGE );
+			break;
+			case FormBorderStyle.FixedToolWindow:
+				baseStyle = (int) ( WindowStyles.WS_CAPTION ) ;
+				exStyle = (int) ( WindowExStyles.WS_EX_WINDOWEDGE | WindowExStyles.WS_EX_TOOLWINDOW );
+			break;
+			case FormBorderStyle.Sizable:
+				baseStyle = (int) ( WindowStyles.WS_OVERLAPPEDWINDOW ) | sysStyles;
+				exStyle = (int) ( WindowExStyles.WS_EX_WINDOWEDGE );
+			break;
+			case FormBorderStyle.SizableToolWindow:
+				baseStyle = (int) ( WindowStyles.WS_OVERLAPPEDWINDOW );
+				exStyle = (int) ( WindowExStyles.WS_EX_WINDOWEDGE | WindowExStyles.WS_EX_TOOLWINDOW );
+			break;
+			}
+		}
+
+		private int getSysStyles ( )
+		{
+			int sysStyles = 0;
+			if ( MinimizeBox )
+				sysStyles  |= (int)( WindowStyles.WS_MINIMIZEBOX );
+			if ( MaximizeBox )
+				sysStyles  |= (int)( WindowStyles.WS_MAXIMIZEBOX );
+			if ( ControlBox )
+				sysStyles  |= (int)( WindowStyles.WS_SYSMENU );
+			return sysStyles;
 		}
 
     		//sub class

@@ -4,42 +4,34 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
+//      Aleksey Ryabchuk (ryabchuk@yahoo.com)
+//
 // (C) 2002/3 Ximian, Inc
 //
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
 	// <summary>
+	// Represents a Windows group box.
 	// </summary>
 
 	public class GroupBox : Control {
 
-		//
-		//  --- Constructor
-		//
+		FlatStyle flatStyle;
 
 		[MonoTODO]
 		public GroupBox() {
-			//SubClassWndProc_ = true;
 			SetStyle ( ControlStyles.UserPaint, true);
 			TabStop = false;
+			flatStyle = FlatStyle.Standard;
 		}
 
-		//
-		//  --- Public Properties
-		//
-
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override bool AllowDrop {
-			get {
-				//FIXME:
-				return base.AllowDrop;
-			}
-			set {
-				//FIXME:
-				base.AllowDrop = value;
-			}
+			get { return base.AllowDrop;  }
+			set { base.AllowDrop = value; }
 		}
 
 		[MonoTODO]
@@ -52,57 +44,30 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public FlatStyle FlatStyle {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return flatStyle;	}
 			set {
-				//FIXME:
+				if ( !Enum.IsDefined ( typeof(FlatStyle), value ) )
+					throw new InvalidEnumArgumentException( "FlatStyle",
+						(int)value,
+						typeof(FlatStyle));
+				flatStyle = value;
 			}
 		}
 
-		//
-		//  --- Public Methods
-		//
-
-		[MonoTODO]
 		public override string ToString() {
-			//FIXME:
-			return base.ToString();
+			return GetType ( ).FullName.ToString ( ) + ", Text: " + Text;
 		}
 
-
-		static private bool classRegistered = false;
-		//
-		//  --- Protected Properties
-		//
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				if (!classRegistered) {
-					WNDCLASS wndClass = new WNDCLASS();
- 
-					wndClass.style = (int) (CS_.CS_DBLCLKS);
-					wndClass.lpfnWndProc = NativeWindow.GetWindowProc();
-					wndClass.cbClsExtra = 0;
-					wndClass.cbWndExtra = 0;
-					wndClass.hInstance = (IntPtr)0;
-					wndClass.hIcon = (IntPtr)0;
-					wndClass.hCursor = Win32.LoadCursor( (IntPtr)0, LC_.IDC_ARROW);
-					wndClass.hbrBackground = (IntPtr)((int)GetSysColorIndex.COLOR_BTNFACE + 1);
-					wndClass.lpszMenuName = "";
-					wndClass.lpszClassName = "mono_static_control";
-    
-					if (Win32.RegisterClass(ref wndClass) != 0) 
-						classRegistered = true; 
-				}		
+				RegisterDefaultWindowClass ( );
 
 				CreateParams createParams = base.CreateParams;
-	
-				createParams.ClassName = "mono_static_control";
+					createParams.ClassName = Win32.DEFAULT_WINDOW_CLASS;;
 
 				createParams.Style = (int) (
 					(int)WindowStyles.WS_CHILDWINDOW |
-					(int)SS_Static_Control_Types.SS_LEFT |
 					(int)WindowStyles.WS_CLIPCHILDREN |
 					(int)WindowStyles.WS_CLIPSIBLINGS |
 					(int)WindowStyles.WS_OVERLAPPED |
@@ -112,38 +77,45 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		protected override Size DefaultSize {
-			get {
-				return new Size(200,100);//correct value
-			}
+			get { return new Size(200,100);	}
 		}
-
-		//
-		//  --- Protected Methods
-		//
 
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) {
-			//FIXME:
 			base.OnFontChanged(e);
+			Invalidate ( );
 		}
 
 		protected virtual void OnPaintBackground (PaintEventArgs e)
 		{
 		}
 
+		public override string Text {
+			get { return base.Text; }
+			set { 
+				base.Text = value;
+				Invalidate ( );
+			}
+		}
+
 		[MonoTODO]
 		protected override void OnPaint(PaintEventArgs e) {
 			try {
 				//FIXME: use TextMetrics to calculate coordinates in the method
-				Rectangle bounds = new Rectangle(new Point(0,0), Size);
+				Rectangle bounds = DisplayRectangle;
 
 				Bitmap bmp = new Bitmap(bounds.Width, bounds.Height, e.Graphics);
 				Graphics paintOn = Graphics.FromImage(bmp);
 
 				Brush br = new SolidBrush(BackColor);
 				paintOn.FillRectangle(br, bounds);
+				
+				bounds.Y += 5;
+				bounds.Height -= 5;
+
+				ControlPaint.DrawBorder3D( paintOn, bounds, Border3DStyle.Etched, Border3DSide.All );
+				/*
 				bounds.Inflate(-4,-4);
 				bounds.Y += 2;
 				ControlPaint.DrawBorder(paintOn, bounds, SystemColors.ControlDark, 1, ButtonBorderStyle.Solid,
@@ -152,7 +124,7 @@ namespace System.Windows.Forms {
 				bounds.Inflate(-1,-1);
 				ControlPaint.DrawBorder(paintOn, bounds, SystemColors.ControlLightLight, 1, ButtonBorderStyle.Solid,
 					SystemColors.ControlLightLight, 1, ButtonBorderStyle.Solid, SystemColors.ControlDark, 1, ButtonBorderStyle.Solid,
-					SystemColors.ControlDark, 1, ButtonBorderStyle.Solid);
+					SystemColors.ControlDark, 1, ButtonBorderStyle.Solid);*/
 				SizeF sz = paintOn.MeasureString( Text, Font);
 				sz.Width += 2.0F;
 				paintOn.FillRectangle( br, new RectangleF(new PointF((float)bounds.Left + 3.0F, 0.0F), sz));
@@ -183,6 +155,5 @@ namespace System.Windows.Forms {
 					break;
 			}
 		}
-
 	}
 }

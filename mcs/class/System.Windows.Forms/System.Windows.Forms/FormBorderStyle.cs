@@ -24,7 +24,7 @@ namespace System.Windows.Forms {
 		Fixed3D = 2,
 		FixedDialog = 3,
 		Sizable = 4,
-		FixedToolWindows = 5,
+		FixedToolWindow = 5,
 		SizableToolWindow = 6
 	}
 }
