@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// </summary>
 	public enum TabDrawMode {
 		Normal = 0,
-		OwnerDrawfixed =1
+		OwnerDrawFixed =1
 	}
 }
