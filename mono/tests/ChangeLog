@@ -1,3 +1,8 @@
+2004-07-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal10.cs libtest.c: Remove incorrect time_t custom marshalling 
+	test.
+
 2004-07-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* reflection-const-field.cs: New test for reflection on
