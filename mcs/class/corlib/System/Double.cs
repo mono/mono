@@ -207,6 +207,10 @@ namespace System {
 			for (; sidx < len; sidx++){
 				c = s [sidx];
 
+				if (c == '\0') {
+					sidx = len;
+					continue;
+				}
 				switch (state){
 				case State_AllowSign:
 					if ((style & NumberStyles.AllowLeadingSign) != 0){

@@ -1,3 +1,7 @@
+2004-07-07  Geoff Norton <gnorton@customerdna.com>
+
+	* Patch to fix bug #58973
+
 2004-07-02  Jackson Harper  <jackson@ximian.com>
 
 	* PlatformID.cs: New 2.0 values.
