@@ -101,6 +101,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		internal static string ParseChannelUrl (string url, out string objectURI)
 		{
+			if (url == null) throw new ArgumentNullException ("url");
+			
 			int port;
 			
 			string host = ParseTcpURL (url, out objectURI, out port);

@@ -1,3 +1,7 @@
+2003-12-12  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TcpChannel.cs: Added null check.
+
 2003-11-16  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TcpClientChannel.cs: Added support for name and priority properties.
