@@ -156,7 +156,7 @@ namespace System.Data
 		public DataTable Table;
 		public Hashtable OrdinalColumns = new Hashtable ();
 		public ArrayList NonOrdinalColumns = new ArrayList ();
-		public bool HasPrimaryKey;
+		public DataColumn PrimaryKey;
 
 		public bool ContainsColumn (string name)
 		{
@@ -620,12 +620,13 @@ el.ElementType != schemaAnyType)
 				HandleAnnotations (el.Annotation, true);
 			else {
 				AddParentKeyColumn (parent, el, col);
+				DataColumn pkey = currentTable.PrimaryKey;
 
 				RelationStructure rel = new RelationStructure ();
 				rel.ParentTableName = parent.QualifiedName.Name;
 				rel.ChildTableName = el.QualifiedName.Name;
-				rel.ParentColumnName = col.ColumnName;
-				rel.ChildColumnName = col.ColumnName;
+				rel.ParentColumnName = pkey.ColumnName;
+				rel.ChildColumnName = pkey.ColumnName;
 				rel.CreateConstraint = true;
 				rel.IsNested = true;
 				relations.Add (rel);
@@ -640,7 +641,7 @@ el.ElementType != schemaAnyType)
 
 		private void AddParentKeyColumn (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
 		{
-			if (currentTable.HasPrimaryKey)
+			if (currentTable.PrimaryKey != null)
 				return;
 
 			// check name identity
@@ -661,7 +662,7 @@ el.ElementType != schemaAnyType)
 
 			ImportColumnMetaInfo (el, el.QualifiedName, col);
 			AddColumn (col);
-			currentTable.HasPrimaryKey = true;
+			currentTable.PrimaryKey = col;
 		}
 
 		private void FillDataColumnRepeatedSimpleElement (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
@@ -670,6 +671,7 @@ el.ElementType != schemaAnyType)
 				return; // do nothing
 
 			AddParentKeyColumn (parent, el, col);
+			DataColumn pkey = currentTable.PrimaryKey;
 
 			DataTable dt = new DataTable ();
 			dt.TableName = el.QualifiedName.Name;
@@ -695,7 +697,7 @@ el.ElementType != schemaAnyType)
 			RelationStructure rel = new RelationStructure ();
 			rel.ParentTableName = parent.QualifiedName.Name;
 			rel.ChildTableName = dt.TableName;
-			rel.ParentColumnName = col.ColumnName;
+			rel.ParentColumnName = pkey.ColumnName;
 			rel.ChildColumnName = cc.ColumnName;
 			rel.IsNested = true;
 			rel.CreateConstraint = true;

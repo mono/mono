@@ -1,5 +1,10 @@
 2004-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaDataImporter.cs : When primary key is used more than once,
+	  DataRelation borked because of empty parent column name.
+
+2004-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaDataImporter.cs : When Creating constraints with related
 	  to DataRelation creation, also set PrimaryKey to the parent table.
 
