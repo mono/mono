@@ -2,9 +2,10 @@
 // StrongNameKeyPairTest.cs - NUnit Test Cases for StrongNameKeyPair
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -14,7 +15,8 @@ using System.Reflection;
 
 namespace MonoTests.System.Reflection {
 
-public class StrongNameKeyPairTest : TestCase {
+[TestFixture]
+public class StrongNameKeyPairTest : Assertion {
 
 	// created with "sn -o test.snk test.txt"
 	static byte[] test = { 0x07, 0x02, 0x00, 0x00, 0x00, 0x24, 0x00, 0x00, 0x52, 0x53, 0x41, 0x32, 0x00, 0x04, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x3D, 0xBD, 0x72, 0x08, 0xC6, 0x2B, 0x0E, 0xA8, 0xC1, 0xC0, 0x58, 0x07, 0x2B, 0x63, 0x5F, 0x7C, 0x9A, 0xBD, 0xCB, 0x22, 0xDB, 0x20, 0xB2, 0xA9, 0xDA, 0xDA, 0xEF, 0xE8, 0x00, 0x64, 0x2F, 0x5D, 0x8D, 0xEB, 0x78, 0x02, 0xF7, 0xA5, 0x36, 0x77, 0x28, 0xD7, 0x55, 0x8D, 0x14, 0x68, 0xDB, 0xEB, 0x24, 0x09, 0xD0, 0x2B, 0x13, 0x1B, 0x92, 0x6E, 0x2E, 0x59, 0x54, 0x4A, 0xAC, 0x18, 0xCF, 0xC9, 0x09, 0x02, 0x3F, 0x4F, 0xA8, 0x3E, 0x94, 0x00, 0x1F, 0xC2, 0xF1, 0x1A, 0x27, 0x47, 0x7D, 0x10, 0x84, 0xF5, 0x14, 0xB8, 0x61, 0x62, 0x1A, 0x0C, 0x66, 0xAB, 0xD2, 0x4C, 0x4B, 0x9F, 0xC9, 0x0F, 0x3C, 0xD8, 0x92, 0x0F, 0xF5, 0xFF, 0xCE, 0xD7, 0x6E, 0x5C, 0x6F, 0xB1, 0xF5, 0x7D, 0xD3, 0x56, 0xF9, 0x67, 0x27, 0xA4, 0xA5, 0x48, 0x5B, 0x07, 0x93, 0x44, 0x00, 0x4A, 0xF8, 0xFF, 0xA4, 0xCB, 0x73, 0xC0, 0x6A, 0x62, 0xB4, 0xB7, 0xC8, 0x92, 0x58, 0x87, 0xCD, 0x07,
@@ -26,59 +28,45 @@ public class StrongNameKeyPairTest : TestCase {
 
 	private StrongNameKeyPair snpk;
 
-	protected override void TearDown () 
+	[TearDown]
+	void CleanUp () 
 	{
-		File.Delete ("test.snk");
-		File.Delete ("test.bad");
+		try {
+			if (File.Exists ("test.snk"))
+				File.Delete ("test.snk");
+			if (File.Exists ("test.bad"))
+				File.Delete ("test.bad");
+		}
+		catch {} // do no affect unit tests
 	}
 
-	public void TestConstructorByteArray () 
+	[Test]
+	public void ConstructorByteArray () 
 	{
 		snpk = new StrongNameKeyPair (test);
-		try {
-			AssemblyNameTest.AssertEqualsByteArrays ("PublicKey", pk, snpk.PublicKey);
-		}
-		catch (ArgumentException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentException but got " + e.ToString ());
-		}
+		AssertEquals ("PublicKey", BitConverter.ToString (pk), BitConverter.ToString (snpk.PublicKey));
 	}
 
-	public void TestConstructorInvalidByteArray () 
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void ConstructorInvalidByteArray () 
 	{
 		byte[] input = { 0x00, 0x01, 0x02, 0x03 };
 		snpk = new StrongNameKeyPair (input);
-		try {
-			AssemblyNameTest.AssertEqualsByteArrays ("PublicKey", pk, snpk.PublicKey);
-			Fail ("Expected ArgumentException but got none");
-		}
-		catch (ArgumentException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentException but got " + e.ToString ());
-		}
+		AssertEquals ("PublicKey", BitConverter.ToString (pk), BitConverter.ToString (snpk.PublicKey));
 	}
 
-	public void TestConstructorNullByteArray () 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void ConstructorNullByteArray () 
 	{
-		try {
-			// we don't want to confuse the compiler with the wrong null
-			byte[] input = null;
-			snpk = new StrongNameKeyPair (input);
-			Fail ("Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got " + e.ToString ());
-		}
+		// we don't want to confuse the compiler with the wrong null
+		byte[] input = null;
+		snpk = new StrongNameKeyPair (input);
 	}
 
-	public void TestConstructorFileStream () 
+	[Test]
+	public void ConstructorFileStream () 
 	{
 		FileStream testFile = new FileStream ("test.snk", FileMode.OpenOrCreate);
 		testFile.Write (test, 0, test.Length);
@@ -87,18 +75,13 @@ public class StrongNameKeyPairTest : TestCase {
 		FileStream fs = new FileStream ("test.snk", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		snpk = new StrongNameKeyPair (fs);
 		fs.Close ();
-		try {
-			AssemblyNameTest.AssertEqualsByteArrays ("PublicKey", pk, snpk.PublicKey);
-		}
-		catch (ArgumentException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentException but got " + e.ToString ());
-		}
+
+		AssertEquals ("PublicKey", BitConverter.ToString (pk), BitConverter.ToString (snpk.PublicKey));
 	}
 
-	public void TestConstructorInvalidFileStream () 
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void ConstructorInvalidFileStream () 
 	{
 		FileStream testFile = new FileStream ("test.bad", FileMode.OpenOrCreate);
 		byte[] badheader = { 0xB, 0xAD };
@@ -110,48 +93,26 @@ public class StrongNameKeyPairTest : TestCase {
 		FileStream fs = new FileStream ("test.bad", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		snpk = new StrongNameKeyPair (fs);
 		fs.Close ();
-		try {
-			AssemblyNameTest.AssertEqualsByteArrays ("PublicKey", pk, snpk.PublicKey);
-			Fail ("Expected ArgumentException but got none");
-		}
-		catch (ArgumentException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentException but got " + e.ToString ());
-		}
+
+		AssertEquals ("PublicKey", BitConverter.ToString (pk), BitConverter.ToString (snpk.PublicKey));
 	}
 
-	public void TestConstructorNullFileStream ()
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void ConstructorNullFileStream ()
 	{
-		try {
-			// we don't want to confuse the compiler with the wrong null
-			FileStream input = null;
-			snpk = new StrongNameKeyPair (input);
-			Fail ("Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got " + e.ToString ());
-		}
+		// we don't want to confuse the compiler with the wrong null
+		FileStream input = null;
+		snpk = new StrongNameKeyPair (input);
 	}
 
-	public void TestConstructorNullString () 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void ConstructorNullString () 
 	{
-		try {
-			// we don't want to confuse the compiler with the wrong null
-			string input = null;
-			snpk = new StrongNameKeyPair (input);
-			Fail ("Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got " + e.ToString ());
-		}
+		// we don't want to confuse the compiler with the wrong null
+		string input = null;
+		snpk = new StrongNameKeyPair (input);
 	}
 }
 
