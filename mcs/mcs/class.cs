@@ -457,6 +457,7 @@ namespace Mono.CSharp {
 
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
+		MemberCache parent_cache;
 		MemberCache member_cache;
 
 		public const string DefaultIndexerName = "Item";
@@ -1310,13 +1311,13 @@ namespace Mono.CSharp {
 			//
 			// We need to be able to use the member cache while we are checking/defining
 			//
-			if (TypeBuilder.BaseType != null)
+			if (TypeBuilder.BaseType != null) {
 				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
+				parent_cache = parent_container.MemberCache;
+			}
 
-			// TODO:
-			//if (TypeBuilder.IsInterface) {
-			//	parent_container = TypeManager.LookupInterfaceContainer (base_inteface_types);
-			//}
+			if (TypeBuilder.IsInterface)
+				parent_cache = TypeManager.LookupInterfaceCache (this, TypeBuilder);
 
  			if (IsTopLevel) {
  				if ((ModFlags & Modifiers.NEW) != 0)
@@ -1452,7 +1453,7 @@ namespace Mono.CSharp {
 
 		public MemberInfo FindMemberWithSameName (string name, bool ignore_methods)
 		{
-			return ParentContainer.MemberCache.FindMemberWithSameName (name, ignore_methods, null);
+			return ParentCache.FindMemberWithSameName (name, ignore_methods, null);
 		}
 
 		/// <summary>
@@ -2169,7 +2170,7 @@ namespace Mono.CSharp {
 			type_bases = null;
 			OptAttributes = null;
 			ifaces = null;
-			parent_container = null;
+			parent_cache = null;
 			member_cache = null;
 		}
 
@@ -2289,9 +2290,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		void VerifyClsName ()
 		{
-			Hashtable parent_members = parent_container == null ? 
+			Hashtable parent_members = parent_cache == null ? 
 				new Hashtable () :
-				parent_container.MemberCache.GetPublicMembers ();
+				parent_cache.GetPublicMembers ();
 			Hashtable this_members = new Hashtable ();
 
 			foreach (DictionaryEntry entry in defined_names) {
@@ -2400,9 +2401,9 @@ namespace Mono.CSharp {
 			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
 		}
 
-		public virtual IMemberContainer ParentContainer {
+		public virtual MemberCache ParentCache {
 			get {
-				return parent_container;
+				return parent_cache;
 			}
 		}
 	}
@@ -2580,9 +2581,9 @@ namespace Mono.CSharp {
 				interface_type, full, name, loc);
 		}
 
-		public override IMemberContainer ParentContainer {
+		public override MemberCache ParentCache {
 			get {
-				return PartialContainer.ParentContainer;
+				return PartialContainer.ParentCache;
 			}
 		}
 	}
@@ -2980,7 +2981,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// Is null for System.Object while compiling corlib and base interfaces
-			if (Parent.ParentContainer == null) {
+			if (Parent.ParentCache == null) {
 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
 					Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError (Parent));
 				}
@@ -3004,7 +3005,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 				} else {
-					if (parent_method.IsAbstract) {
+					if (parent_method.IsAbstract && !IsInterface) {
 						Report.SymbolRelatedToPreviousError (parent_method);
 						Report.Error (533, Location, "'{0}' hides inherited abstract member", GetSignatureForError (Parent));
 						return false;
@@ -3683,7 +3684,7 @@ namespace Mono.CSharp {
 
 		protected override MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type)
 		{
-			MethodInfo mi = (MethodInfo) container.ParentContainer.MemberCache.FindMemberToOverride (
+			MethodInfo mi = (MethodInfo) container.ParentCache.FindMemberToOverride (
 				container.TypeBuilder, Name, ParameterTypes, false);
 
 			if (mi == null)
@@ -5894,7 +5895,7 @@ namespace Mono.CSharp {
 		// TODO: rename to Resolve......
  		protected override MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type)
  		{
- 			PropertyInfo parent_property = container.ParentContainer.MemberCache.FindMemberToOverride (
+ 			PropertyInfo parent_property = container.ParentCache.FindMemberToOverride (
  				container.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
   
  			if (parent_property == null)
