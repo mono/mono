@@ -34,27 +34,27 @@ namespace System.Web.Services.Description {
 			return null; // per .NET documentation
 		}
 
-		[MonoTODO]
 		protected override void OnClear ()
 		{
+			Table.Clear ();
 		}
 
-		[MonoTODO]
 		protected override void OnInsertComplete (int index, object value)
 		{
+			Table [GetKey (value)] = value;
 		}
 
-		[MonoTODO]
 		protected override void OnRemove (int index, object value)
 		{
+			Table.Remove (GetKey (value));
 		}
 
-		[MonoTODO]
 		protected override void OnSet (int index, object oldValue, object newValue)
 		{
+			Table.Remove (GetKey (oldValue));
+			Table [GetKey (newValue)] = newValue;
 		}
 
-		[MonoTODO]
 		protected virtual void SetParent (object value, object parent)
 		{
 		}

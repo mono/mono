@@ -1,3 +1,25 @@
+2002-08-09  Tim Coleman <tim@timcoleman.com>
+	* BindingCollection.cs: 
+	* ServiceDescriptionCollection.cs: 
+		Implement Set indexer
+	* FaultBindingCollection.cs:
+	* MessageCollection.cs:
+	* MessagePartCollection.cs:
+	* OperationFaultCollection.cs:
+	* PortCollection.cs:
+	* PortTypeCollection.cs:
+	* ServiceCollection.cs:
+		Implement Set indexer, code cleanup
+	* Message.cs:
+		Implement FindPartByName ()
+	* OperationMessageCollection.cs:
+		Alter OnSet () method
+	* ServiceDescriptionBaseCollection.cs:
+		Implement some methods.
+	* ServiceDescriptionFormatExtensionCollection.cs:
+		Implement Find (), FindAll (), OnValidate () methods
+		
+
 2002-08-06  Tim Coleman <tim@timcoleman.com>
 	* ServiceDescription.cs:
 		Add namespace definitions when serializing.

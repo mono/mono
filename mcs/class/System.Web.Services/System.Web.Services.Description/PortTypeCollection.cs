@@ -34,12 +34,11 @@ namespace System.Web.Services.Description {
 
 				return (PortType) List[index]; 
 			}
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+                        set { List [index] = value; }
 		}
 
 		public PortType this [string name] {
-			get { return this[IndexOf ((PortType) Table[name])]; }
+			get { return this [IndexOf ((PortType) Table[name])]; }
 		}
 
 		#endregion // Properties
@@ -77,13 +76,11 @@ namespace System.Web.Services.Description {
 		public void Insert (int index, PortType portType)
 		{
 			SetParent (portType, serviceDescription);
-			Table [GetKey (portType)] = portType;
 			List.Insert (index, portType);
 		}
 	
 		public void Remove (PortType portType)
 		{
-			Table.Remove (GetKey (portType));
 			List.Remove (portType);
 		}
 			

@@ -33,12 +33,11 @@ namespace System.Web.Services.Description {
 					throw new ArgumentOutOfRangeException ();
 				return (OperationFault) List[index]; 
 			}
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+                        set { List [index] = value; }
 		}
 
 		public OperationFault this [string name] {
-			get { return this[IndexOf ((OperationFault) Table[name])]; }
+			get { return this [IndexOf ((OperationFault) Table[name])]; }
 		}
 
 		#endregion // Properties
@@ -77,13 +76,11 @@ namespace System.Web.Services.Description {
 		public void Insert (int index, OperationFault operationFaultMessage)
 		{
 			SetParent (operationFaultMessage, operation);
-			Table [GetKey (operationFaultMessage)] = operationFaultMessage;
 			List.Insert (index, operation);
 		}
 	
 		public void Remove (OperationFault operationFaultMessage)
 		{
-			Table.Remove (GetKey (operationFaultMessage));
 			List.Remove (operationFaultMessage);
 		}
 

@@ -36,12 +36,11 @@ namespace System.Web.Services.Description {
 
 				return (Service) List[index]; 
 			}
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { List [index] = value; }
 		}
 
 		public Service this [string name] {
-			get { return this[IndexOf ((Service) Table[name])]; }
+			get { return this [IndexOf ((Service) Table[name])]; }
 		}
 
 		#endregion // Properties
@@ -80,13 +79,11 @@ namespace System.Web.Services.Description {
 		public void Insert (int index, Service service)
 		{
 			SetParent (service, serviceDescription);
-			Table [GetKey (service)] = service;
 			List.Insert (index, service);
 		}
 	
 		public void Remove (Service service)
 		{
-			Table.Remove (GetKey (service));
 			List.Remove (service);
 		}
 			

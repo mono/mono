@@ -114,6 +114,7 @@ namespace System.Web.Services.Description {
 		{
 			if (oldValue.GetType () != newValue.GetType ())
 				throw new InvalidOperationException ("The message types of the old and new value are not the same.");
+			base.OnSet (index, oldValue, newValue);
 		}
 
 		protected override void OnValidate (object value)

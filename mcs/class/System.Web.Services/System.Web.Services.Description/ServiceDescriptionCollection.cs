@@ -30,8 +30,11 @@ namespace System.Web.Services.Description {
 
 				return (ServiceDescription) List[index]; 
 			}
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { 
+				Table.Remove (GetKey (List[index]));
+				Table [GetKey (value)] = value;
+				List [index] = value;
+			}
 		}
 
 		public ServiceDescription this [string ns] {

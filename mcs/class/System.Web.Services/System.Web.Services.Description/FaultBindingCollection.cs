@@ -7,8 +7,6 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using System.Web.Services;
-
 namespace System.Web.Services.Description {
 	public sealed class FaultBindingCollection : ServiceDescriptionBaseCollection {
 
@@ -35,12 +33,11 @@ namespace System.Web.Services.Description {
 					throw new ArgumentOutOfRangeException ();
 				return (FaultBinding) List[index]; 
 			}
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+                        set { List [index] = value; }
 		}
 
 		public FaultBinding this [string name] {
-			get { return this[IndexOf ((FaultBinding) Table[name])]; }
+			get { return this [IndexOf ((FaultBinding) Table[name])]; }
 		}
 
 		#endregion // Properties
@@ -79,13 +76,11 @@ namespace System.Web.Services.Description {
 		public void Insert (int index, FaultBinding bindingOperationFault)
 		{
 			SetParent (bindingOperationFault, operationBinding);
-			Table [GetKey (bindingOperationFault)] = bindingOperationFault;
 			List.Insert (index, bindingOperationFault);
 		}
 	
 		public void Remove (FaultBinding bindingOperationFault)
 		{
-			Table.Remove (GetKey (bindingOperationFault));
 			List.Remove (bindingOperationFault);
 		}
 			

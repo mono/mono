@@ -54,13 +54,11 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 
-		[MonoTODO]
 		public MessagePart FindPartByName (string partName)
 		{
-			throw new NotImplementedException ();
+			return parts [partName];
 		}
 
-		[MonoTODO]
 		public MessagePart[] FindPartsByName (string[] partNames) 
 		{
 			ArrayList searchResults = new ArrayList ();

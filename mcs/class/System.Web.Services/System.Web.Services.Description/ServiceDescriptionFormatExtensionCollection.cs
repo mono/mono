@@ -7,6 +7,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Collections;
 using System.Web.Services;
 using System.Xml;
 
@@ -60,28 +61,58 @@ namespace System.Web.Services.Description {
 			List.CopyTo (array, index);
 		}
 
-		[MonoTODO]
 		public object Find (Type type)
 		{
-			throw new NotImplementedException ();
+			foreach (object value in List)
+				if (value.GetType () == type)
+					return value;
+			return null;
 		}
 
-		[MonoTODO]
 		public XmlElement Find (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			XmlElement xmlElement;
+			foreach (object value in List) 
+				if (value is XmlElement) {
+					xmlElement = (value as XmlElement);
+					if (xmlElement.Name == name && xmlElement.NamespaceURI == ns)
+						return xmlElement;
+				}
+			return null;
 		}
 
-		[MonoTODO]
 		public object[] FindAll (Type type)
 		{
-			throw new NotImplementedException ();
+			ArrayList searchResults = new ArrayList ();
+			foreach (object value in List)
+				if (value.GetType () == type)
+					searchResults.Add (value);
+			object[] returnValue = new object [searchResults.Count];
+
+			if (searchResults.Count > 0)
+				searchResults.CopyTo (returnValue);
+
+			return returnValue;
 		}
 
-		[MonoTODO]
 		public XmlElement[] FindAll (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			ArrayList searchResults = new ArrayList ();
+			XmlElement xmlElement;
+
+			foreach (object value in List)
+				if (value is XmlElement) {
+					xmlElement = (value as XmlElement);
+					if (xmlElement.Name == name && xmlElement.NamespaceURI == ns)
+						searchResults.Add (xmlElement);
+				}
+
+			XmlElement[] returnValue = new XmlElement [searchResults.Count];
+
+			if (searchResults.Count > 0)
+				searchResults.CopyTo (returnValue);
+
+			return returnValue;
 		}
 
 		public int IndexOf (object extension)
@@ -107,10 +138,12 @@ namespace System.Web.Services.Description {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		protected override void OnValidate (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new ArgumentNullException ();
+			if (!(value is XmlElement || value is ServiceDescriptionFormatExtension))
+				throw new ArgumentException ();
 		}
 	
 		public void Remove (object extension)

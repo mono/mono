@@ -32,14 +32,13 @@ namespace System.Web.Services.Description {
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ();
 
-				return (Message) List[index]; 
+				return (Message) List [index]; 
 			}
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+                        set { List [index] = value; }
 		}
 
 		public Message this [string name] {
-			get { return this[IndexOf ((Message) Table[name])]; }
+			get { return this [IndexOf ((Message) Table [name])]; }
 		}
 
 		#endregion // Properties
@@ -78,13 +77,11 @@ namespace System.Web.Services.Description {
 		public void Insert (int index, Message message)
 		{
 			SetParent (message, serviceDescription);
-			Table [GetKey (message)] = message;
 			List.Insert (index, message);
 		}
 	
 		public void Remove (Message message)
 		{
-			Table.Remove (GetKey (message));
 			List.Remove (message);
 		}
 			
