@@ -493,7 +493,7 @@ namespace Mono.Data.Tds.Protocol {
 				break;
 			case TdsColumnType.UniqueIdentifier :
 				if (comm.Peek () != 16) { // If it's null, then what to do?
-					byte swallowed = comm.GetByte();	
+					/*byte swallowed =*/ comm.GetByte();	
 					element = DBNull.Value;
 					break;
 				}
@@ -1048,7 +1048,7 @@ namespace Mono.Data.Tds.Protocol {
 				cLen = comm.GetByte () & 0xff;
 				string newDB = comm.GetString (cLen);
 				cLen = comm.GetByte () & 0xff;
-				string oldDB = comm.GetString (cLen);
+				/*string oldDB = */ comm.GetString (cLen);
 				database = newDB;
 				break;
 			default:
@@ -1149,9 +1149,9 @@ namespace Mono.Data.Tds.Protocol {
 		protected void ProcessDynamic ()
 		{
 			Comm.Skip (2);
-			byte type = Comm.GetByte ();
-			byte status = Comm.GetByte ();
-			string id = Comm.GetString (Comm.GetByte ());
+			/*byte type =*/ Comm.GetByte ();
+			/*byte status =*/ Comm.GetByte ();
+			/*string id =*/ Comm.GetString (Comm.GetByte ());
 		}
 
 		protected virtual TdsPacketSubType ProcessSubPacket ()
