@@ -36,9 +36,6 @@
 
 2003-07-07  Miguel de Icaza  <miguel@ximian.com>
 
-	* decl.cs (DeclSpace.FindType): CheckAccessLevel on the type as
-	well.  Sorry, this fixes the bug Gonzalo tried to fix.
-
 	* rootcontext.cs (NamespaceLookup): Accept a DeclSpace, so we can
 	call the CheckAccessLevel routine.  Only use types that pass the
 	CheckAccessLevel 

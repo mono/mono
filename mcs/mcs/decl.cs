@@ -722,7 +722,7 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 
-					if (match != null && CheckAccessLevel (match)){
+					if (match != null){
 						if (t != null){
 							if (TypeManager.IsAccessibleFrom (t, match)) {
 								Error_AmbiguousTypeReference (loc, name, t, match);
