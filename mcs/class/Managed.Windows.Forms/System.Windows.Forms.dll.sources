@@ -32,6 +32,9 @@ System.Windows.Forms/CaptionButton.cs
 System.Windows.Forms/CheckBox.cs
 System.Windows.Forms/CheckState.cs
 System.Windows.Forms/ColorDepth.cs
+System.Windows.Forms/ColumnClickEventArgs.cs
+System.Windows.Forms/ColumnClickEventHandler.cs
+System.Windows.Forms/ColumnHeaderStyle.cs
 System.Windows.Forms/ContainerControl.cs
 System.Windows.Forms/Control.cs
 System.Windows.Forms/ControlEventArgs.cs
