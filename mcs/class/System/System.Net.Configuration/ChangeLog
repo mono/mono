@@ -1,3 +1,8 @@
+2003-06-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NetAuthenticationModuleHandler.cs: register the modules using
+	AuthenticationManager.
+
 2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebRequestModuleHandler.cs: handles system.net/webRequestModules

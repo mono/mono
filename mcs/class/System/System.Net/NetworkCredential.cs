@@ -54,10 +54,9 @@ namespace System.Net
 			set { password = value; }
 		}
 
-		[MonoTODO]
 		public NetworkCredential GetCredential (Uri uri, string authType)
 		{
-			return null;
+			return this;
 		}					
 	}
 }

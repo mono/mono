@@ -9,6 +9,7 @@
 //
 
 using System.Collections;
+using System.Configuration;
 
 namespace System.Net
 {
@@ -26,6 +27,7 @@ namespace System.Net
 					return;
 				
 				modules = new ArrayList ();
+				ConfigurationSettings.GetConfig ("system.net/authenticationModules");
 			}
 		}
 		
@@ -36,6 +38,13 @@ namespace System.Net
 			}
 		}
 
+		internal static void Clear ()
+		{
+			EnsureModules ();
+			lock (modules)
+				modules.Clear ();
+		}
+		
 		public static Authorization Authenticate (string challenge, WebRequest request, ICredentials credentials)
 		{
 			if (request == null)
@@ -93,13 +102,7 @@ namespace System.Net
 			if (authenticationModule == null)
 				throw new ArgumentNullException ("authenticationModule");
 
-			EnsureModules ();
-			lock (modules) {
-				if (modules.Contains (authenticationModule))
-					modules.Remove (authenticationModule);
-				else
-					throw new InvalidOperationException ("No such module registered.");
-			}
+			DoUnregister (authenticationModule.AuthenticationType, true);
 		}
 
 		public static void Unregister (string authenticationScheme)

@@ -17,8 +17,6 @@ namespace System.Net.Configuration
 	{
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
-			ArrayList result = new ArrayList (parent as ArrayList);
-			
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				HandlersUtil.ThrowException ("Unrecognized attribute", section);
 
@@ -36,32 +34,42 @@ namespace System.Net.Configuration
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
-					result.Clear ();
+					AuthenticationManager.Clear ();
 					continue;
 				}
 
-				if (name == "add") {
-					string type = HandlersUtil.ExtractAttributeValue ("type", child);
-					if (child.Attributes != null && child.Attributes.Count != 0)
-						HandlersUtil.ThrowException ("Unrecognized attribute", child);
+				string type = HandlersUtil.ExtractAttributeValue ("type", child);
+				if (child.Attributes != null && child.Attributes.Count != 0)
+					HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
-					result.Add (type);
+				if (name == "add") {
+					AuthenticationManager.Register (CreateInstance (type, child));
 					continue;
 				}
 
 				if (name == "remove") {
-					string mname = HandlersUtil.ExtractAttributeValue ("name", child);
-					if (child.Attributes != null && child.Attributes.Count != 0)
-						HandlersUtil.ThrowException ("Unrecognized attribute", child);
-
-					result.Remove (mname);
+					AuthenticationManager.Unregister (CreateInstance (type, child));
 					continue;
 				}
 
 				HandlersUtil.ThrowException ("Unexpected element", child);
 			}
 
-			return result;
+			return AuthenticationManager.RegisteredModules;
+		}
+
+		static IAuthenticationModule CreateInstance (string typeName, XmlNode node)
+		{
+			IAuthenticationModule module = null;
+			
+			try {
+				Type type = Type.GetType (typeName, true);
+				module = (IAuthenticationModule) Activator.CreateInstance (type);
+			} catch (Exception e) {
+				HandlersUtil.ThrowException (e.Message, node);
+			}
+
+			return module;
 		}
 	}
 }

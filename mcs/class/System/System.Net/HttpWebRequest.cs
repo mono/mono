@@ -61,6 +61,7 @@ namespace System.Net
 		bool gotRequestStream;
 		int redirects;
 		bool expectContinue;
+		bool triedAuth;
 		
 		// Constructors
 		
@@ -285,7 +286,7 @@ namespace System.Net
 		}		
 		
 		public override bool PreAuthenticate { 
-			get { return preAuthenticate; }
+			get { return preAuthenticate; } //TODO: support preauthentication
 			set { preAuthenticate = value; }
 		}
 		
@@ -382,6 +383,18 @@ namespace System.Net
 		internal bool ExpectContinue {
 			get { return expectContinue; }
 			set { expectContinue = value; }
+		}
+		
+		internal string AuthRequestHeader {
+			get { return "WWW-Authenticate"; }
+		}
+
+		internal string AuthResponseHeader {
+			get { return "Authorization"; }
+		}
+
+		internal Uri AuthUri {
+			get { return actualUri; }
 		}
 		
 		// Methods
@@ -799,6 +812,23 @@ namespace System.Net
 			}
 		}
 
+		bool CheckAuthorization (WebResponse response)
+		{
+			if (credentials == null)
+				return false;
+
+			string authHeader = response.Headers [AuthRequestHeader];
+			if (authHeader == null)
+				return false;
+
+			Authorization auth = AuthenticationManager.Authenticate (authHeader, this, credentials);
+			if (auth == null)
+				return false;
+
+			webHeaders [AuthResponseHeader] = auth.Message;
+			return true;
+		}
+
 		// Returns true if redirected
 		bool CheckFinalStatus (WebAsyncResult result)
 		{
@@ -809,7 +839,15 @@ namespace System.Net
 			HttpStatusCode code = 0;
 			if (throwMe == null && webResponse != null) {
 				code  = webResponse.StatusCode;
-				if ((int) code >= 400 ) {
+				if (!triedAuth && code == HttpStatusCode.Unauthorized && credentials != null) {
+					// TODO: Proxy not supported yet.
+					// || code == HttpStatuscode.ProxyAuthenticationRequired)
+					triedAuth = CheckAuthorization (webResponse);
+					if (triedAuth)
+						return true;
+				}
+
+				if ((int) code >= 400) {
 					string err = String.Format ("The remote server returned an error: ({0}) {1}.",
 								    (int) code, webResponse.StatusDescription);
 					throwMe = new WebException (err, null, protoError, webResponse);

@@ -7,30 +7,60 @@
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
 //
 
+using System.Text;
 namespace System.Net
 {
 	class BasicClient : IAuthenticationModule
 	{
-		[MonoTODO]
 		public Authorization Authenticate (string challenge, WebRequest webRequest, ICredentials credentials)
 		{
-			throw new NotImplementedException ();
+			if (credentials == null || challenge == null)
+				return null;
+
+			string header = challenge.Trim ();
+			if (!header.ToLower ().StartsWith ("basic "))
+				return null;
+
+			return InternalAuthenticate (webRequest, credentials);
 		}
 
-		[MonoTODO]
-		public virtual Authorization PreAuthenticate (WebRequest webRequest, ICredentials credentials)
+		static Authorization InternalAuthenticate (WebRequest webRequest, ICredentials credentials)
 		{
-			throw new NotImplementedException ();
+			HttpWebRequest request = webRequest as HttpWebRequest;
+			if (request == null)
+				return null;
+
+			NetworkCredential cred = credentials.GetCredential (request.AuthUri, "basic");
+			string userName = cred.UserName;
+			if (userName == null || userName == "")
+				return null;
+
+			string password = cred.Password;
+			string domain = cred.Domain;
+			byte [] bytes;
+
+			// If domain is set, MS sends "domain\user:password". 
+			if (domain == null || domain == "" || domain.Trim () == "")
+				bytes = Encoding.Default.GetBytes (userName + ":" + password);
+			else
+				bytes = Encoding.Default.GetBytes (domain + "\\" + userName + ":" + password);
+
+			string auth = "Basic " + Convert.ToBase64String (bytes);
+			return new Authorization (auth);
 		}
 
-		public virtual string AuthenticationType {
+		public Authorization PreAuthenticate (WebRequest webRequest, ICredentials credentials)
+		{
+			return InternalAuthenticate ( webRequest, credentials);
+		}
+
+		public string AuthenticationType {
 			get { return "Basic"; }
 		}
 
-		public virtual bool CanPreAuthenticate {
+		public bool CanPreAuthenticate {
 			get { return true; }
 		}
-
 	}
 }
 

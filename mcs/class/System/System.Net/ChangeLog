@@ -1,5 +1,17 @@
 2003-06-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AuthenticationManager.cs: get the list of authentication modules from
+	the configuration files. Added Clear and fixed Unregister.
+
+	* BasicClient.cs: fully implemented.
+
+	* HttpWebRequest.cs: added support for Basic authentication when
+	credentials are set.
+
+	* NetworkCredential.cs: fixed GetCredential.
+
+2003-06-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebRequest.cs: *really* take care of requestSent to prevent
 	sending the same request twice.
 	* WebAsyncResult.cs: don't close the handle. Just Reset.
