@@ -1,3 +1,13 @@
+2004-11-27  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_compile_generic_method): New public method.
+
+	* mini-x86.c (mono_arch_emit_generic_call): New public method.
+
+	* inssel.brg (mini_emit_virtual_call): When calling a generic
+	method, use mono_arch_emit_generic_call() to emit a call to
+	mini_compile_generic_call() which inflates and compiles the method.
+
 2004-11-26  Martin Baulig  <martin@ximian.com>
 
 	* mini.c
