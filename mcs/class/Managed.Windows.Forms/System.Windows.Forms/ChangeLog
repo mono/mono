@@ -1,8 +1,29 @@
 2004-12-16  Peter Bartok  <pbartok@novell.com>
 
+	* TextControl.cs:
+	  - InsertCharAtCaret(): Fixed start pos fixup
+	  - CaretLine_get: No longer derives the line from the tag, the tag
+	    could be stale if lines in the document have been added or deleted
+	  - RebalanceAfterDelete(): Fixed bug in balancing code
+	  - RebalanceAfterAdd(): Fixed really stupid bug in balancing code
+	  - Line.Streamline(): Now can also elminate leading empty tags
+	  - DumpTree(): Added a few more tests and prevented exception on
+	    uninitialized data
+	  - Added Debug section for Combining lines
+	  - Delete(): Now copies all remaining properties of a line
+	  
+	* TextBoxBase.cs: 
+	  - Left mousebutton now sets the caret (and middle button still acts 
+	    as formatting tester, which must go away soon)
+	  - Added Debug section for Deleting/Combining lines
+	  - Fixed calculations for UpdateView after Combining lines
+
+2004-12-16  Peter Bartok  <pbartok@novell.com>
+
 	* TextControl.cs: Now properly aligns text on a baseline, using the
 	  new XplatUI.GetFontMetrics() method. Simplified several calculations
-	* TextBoxBase.cs: Moved #endif to allow compiling if Debug is not defined
+	* TextBoxBase.cs: Moved #endif to allow compiling if Debug is not 
+	  defined
 
 2004-12-16  Peter Bartok  <pbartok@novell.com>
 

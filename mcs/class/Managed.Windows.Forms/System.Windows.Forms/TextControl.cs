@@ -26,6 +26,8 @@
 
 // NOT COMPLETE
 
+#undef Debug
+
 using System;
 using System.Collections;
 using System.Drawing;
@@ -189,6 +191,14 @@ namespace System.Windows.Forms {
 			current = this.tags;
 			next = current.next;
 
+			// Catch what the loop below wont; eliminate 0 length 
+			// tags, but only if there are other tags after us
+			while ((current.length == 0) && (next != null)) {
+				tags = next;
+				current = next;
+				next = current.next;
+			}
+			
 			if (next == null) {
 				return;
 			}
@@ -486,7 +496,7 @@ namespace System.Windows.Forms {
 
 		public Line CaretLine {
 			get {
-				return caret.tag.line;
+				return caret.line;
 			}
 		}
 
@@ -527,7 +537,7 @@ namespace System.Windows.Forms {
 		#region Private Methods
 		// For debugging
 		internal void DumpTree(Line line, bool with_tags) {
-			Console.Write("Line {0}, Y: {1} Text {2}", line.line_no, line.Y, line.text.ToString());
+			Console.Write("Line {0}, Y: {1} Text {2}", line.line_no, line.Y, line.text != null ? line.text.ToString() : "undefined");
 
 			if (line.left == sentinel) {
 				Console.Write(", left = sentinel");
@@ -567,11 +577,19 @@ namespace System.Windows.Forms {
 				if (line.left != sentinel) {
 					DumpTree(line.left, with_tags);
 				}
+			} else {
+				if (line != sentinel) {
+					throw new Exception("Left should not be NULL");
+				}
 			}
 
 			if (line.right != null) {
 				if (line.right != sentinel) {
 					DumpTree(line.right, with_tags);
+				}
+			} else {
+				if (line != sentinel) {
+					throw new Exception("Right should not be NULL");
 				}
 			}
 		}
@@ -605,7 +623,7 @@ namespace System.Windows.Forms {
 				if (line1.parent == line1.parent.parent.left) {
 					line2 = line1.parent.parent.right;
 
-					if ((line2 != null) && (line1.color == LineColor.Red)) {
+					if ((line2 != null) && (line2.color == LineColor.Red)) {
 						line1.parent.color = LineColor.Black;
 						line2.color = LineColor.Black;
 						line1.parent.parent.color = LineColor.Red;
@@ -660,7 +678,7 @@ namespace System.Windows.Forms {
 						line2.color = LineColor.Red;
 						line1 = line1.parent;
 					} else {
-						if (line2.right.color == LineColor.Red) {
+						if (line2.right.color == LineColor.Black) {
 							line2.left.color = LineColor.Black;
 							line2.color = LineColor.Red;
 							RotateRight(line2);
@@ -1114,10 +1132,17 @@ namespace System.Windows.Forms {
 
 		// Inserts a character at the given position
 		public void InsertCharAtCaret(char ch, bool move_caret) {
+			LineTag	tag;
+
 			caret.line.text.Insert(caret.pos, ch);
 			caret.tag.length++;
+			
 			if (caret.tag.next != null) {
-				caret.tag.next.start++;
+				tag = caret.tag.next;
+				while (tag != null) {
+					tag.start++;
+					tag = tag.next;
+				}
 			}
 			caret.line.Grow(1);
 			caret.line.recalc = true;
@@ -1221,7 +1246,24 @@ namespace System.Windows.Forms {
 			first.height = 0;	// This forces RecalcDocument/UpdateView to redraw from this line on
 			first.Streamline();
 
+			#if Debug
+				Line	check_first;
+				Line	check_second;
+
+				check_first = GetLine(first.line_no);
+				check_second = GetLine(check_first.line_no + 1);
+
+				Console.WriteLine("Pre-delete: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
+			#endif
+
 			this.Delete(second);
+
+			#if Debug
+				check_first = GetLine(first.line_no);
+				check_second = GetLine(check_first.line_no + 1);
+
+				Console.WriteLine("Post-delete Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
+			#endif
 
 		}
 
@@ -1419,12 +1461,13 @@ namespace System.Windows.Forms {
 			if (line3 != line1) {
 				LineTag	tag;
 
-				line1.line_no = line3.line_no;
-				line1.text = line3.text;
-				line1.tags = line3.tags;
+				line1.ascent = line3.ascent;
 				line1.height = line3.height;
+				line1.line_no = line3.line_no;
 				line1.recalc = line3.recalc;
 				line1.space = line3.space;
+				line1.tags = line3.tags;
+				line1.text = line3.text;
 				line1.widths = line3.widths;
 				line1.Y = line3.Y;
 
