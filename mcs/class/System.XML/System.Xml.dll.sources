@@ -158,6 +158,7 @@ System.Xml.XPath/XmlSortOrder.cs
 System.Xml.XPath/XmlCaseOrder.cs
 System.Xml.XPath/XPathDocument.cs
 System.Xml.XPath/XPathException.cs
+System.Xml.XPath/XPathComparer.cs
 System.Xml.XPath/DefaultContext.cs
 System.Xml.XPath/Expression.cs
 System.Xml.XPath/Iterator.cs
