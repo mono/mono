@@ -4,7 +4,7 @@
 // Author:
 //   Derek Holden (dholden@draper.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) Derek Holden
 //
 
 //
@@ -200,7 +200,7 @@ namespace System.Globalization {
 			}
 		}
 
-		public int CurrencyPostivePattern {
+		public int CurrencyPositivePattern {
 			get {
 				// See ECMA NumberFormatInfo page 11 
 				return currencyPositivePattern;
@@ -531,7 +531,7 @@ namespace System.Globalization {
 			}
 		}
 
-		public int PercentPostivePattern {
+		public int PercentPositivePattern {
 			get {
 				// See ECMA NumberFormatInfo page 11 
 				return percentPositivePattern;
