@@ -4,6 +4,10 @@ else
 lib_LTLIBRARIES= libMonoPosixHelper.la
 endif
 
+INCLUDES = \
+	$(GLIB_CFLAGS) \
+	-I$(top_srcdir)
+
 libMonoPosixHelper_la_SOURCES = \
 	map.c map.h macros.c
 
