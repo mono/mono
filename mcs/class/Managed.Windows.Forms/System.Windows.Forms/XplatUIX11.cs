@@ -27,6 +27,7 @@
 // NOT COMPLETE
 
 using System;
+using System.Threading;
 using System.Drawing;
 using System.ComponentModel;
 using System.Collections;
@@ -46,6 +47,7 @@ namespace System.Windows.Forms {
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static int		wm_protocols;		// X Atom
 		private static int		wm_delete_window;	// X Atom
+		private static IntPtr		async_method;
 		private static uint		default_colormap;	// X Colormap ID
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
@@ -88,7 +90,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 
-
+                // This is always called from a locked context
 		private XplatUIX11() {
 			// Handle singleton stuff first
 			ref_count=0;
@@ -98,19 +100,23 @@ namespace System.Windows.Forms {
 		}
 
 		~XplatUIX11() {
-			if (DisplayHandle!=IntPtr.Zero) {
-				XCloseDisplay(DisplayHandle);
-				DisplayHandle=IntPtr.Zero;
+			lock (this) {
+				if (DisplayHandle!=IntPtr.Zero) {
+					XCloseDisplay(DisplayHandle);
+					DisplayHandle=IntPtr.Zero;
+				}
 			}
 		}
 		#endregion	// Constructor & Destructor
 
 		#region Singleton Specific Code
 		public static XplatUIX11 GetInstance() {
-			if (instance==null) {
-				instance=new XplatUIX11();
+			lock (typeof (XplatUIX11)) {
+				if (instance==null) {
+					instance=new XplatUIX11();
+				}
+				ref_count++;
 			}
-			ref_count++;
 			return instance;
 		}
 
@@ -123,13 +129,14 @@ namespace System.Windows.Forms {
 
 		#region Public Static Methods
 		internal override IntPtr InitializeDriver() {
-			if (DisplayHandle==IntPtr.Zero) {
-				DisplayHandle=XOpenDisplay(IntPtr.Zero);
-				key_state=Keys.None;
-				mouse_state=MouseButtons.None;
-				mouse_position=Point.Empty;
+			lock (this) {
+				if (DisplayHandle==IntPtr.Zero) {
+					DisplayHandle=XOpenDisplay(IntPtr.Zero);
+					key_state=Keys.None;
+					mouse_state=MouseButtons.None;
+					mouse_position=Point.Empty;
+				}
 			}
-
 			return IntPtr.Zero;
 		}
 
@@ -166,9 +173,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ShutdownDriver(IntPtr token) {
-			if (DisplayHandle!=IntPtr.Zero) {
-				XCloseDisplay(DisplayHandle);
-				DisplayHandle=IntPtr.Zero;
+			lock (this) {
+				if (DisplayHandle!=IntPtr.Zero) {
+					XCloseDisplay(DisplayHandle);
+					DisplayHandle=IntPtr.Zero;
+				}
 			}
 		}
 
@@ -206,38 +215,40 @@ namespace System.Windows.Forms {
 			if (Width<1) Width=1;
 			if (Height<1) Height=1;
 
-			if (ParentHandle==IntPtr.Zero) {
-				if ((cp.Style & (int)WindowStyles.WS_CHILD)!=0) {
-					// We need to use our foster parent window until this poor child gets it's parent assigned
-					ParentHandle=FosterParent;
-				} else {
-					if (X<1) X=50;
-					if (Y<1) Y=50;
-					BorderWidth=4;
-					ParentHandle=XRootWindow(DisplayHandle, 0);
+
+			lock (this) {
+				if (ParentHandle==IntPtr.Zero) {
+					if ((cp.Style & (int)WindowStyles.WS_CHILD)!=0) {
+						// We need to use our foster parent window until
+						// this poor child gets it's parent assigned
+						ParentHandle=FosterParent;
+					} else {
+						if (X<1) X=50;
+						if (Y<1) Y=50;
+						BorderWidth=4;
+						ParentHandle=XRootWindow(DisplayHandle, 0);
+					}
 				}
+
+				WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, 0, 0);
+				XMapWindow(DisplayHandle, WindowHandle);
+
+				XSelectInput(DisplayHandle, WindowHandle, 
+						EventMask.ButtonPressMask | 
+						EventMask.ButtonReleaseMask | 
+						EventMask.KeyPressMask | 
+						EventMask.KeyReleaseMask | 
+						EventMask.EnterWindowMask | 
+						EventMask.LeaveWindowMask |
+						EventMask.ExposureMask |
+						EventMask.PointerMotionMask | 
+						EventMask.VisibilityChangeMask |
+						EventMask.StructureNotifyMask);
+				is_visible=true;
+
+				protocols=wm_delete_window;
+				XSetWMProtocols(DisplayHandle, WindowHandle, ref protocols, 1);
 			}
-
-			WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, 0, (this.BackColor.ToArgb() & 0x00ffffff));
-			XMapWindow(DisplayHandle, WindowHandle);
-
-			XSelectInput(DisplayHandle, WindowHandle, 
-				EventMask.ButtonPressMask | 
-				EventMask.ButtonReleaseMask | 
-				EventMask.KeyPressMask | 
-				EventMask.KeyReleaseMask | 
-				EventMask.EnterWindowMask | 
-				EventMask.LeaveWindowMask |
-				EventMask.ExposureMask |
-				EventMask.PointerMotionMask | 
-				EventMask.VisibilityChangeMask |
-				EventMask.StructureNotifyMask);
-
-			is_visible=true;
-
-			protocols=wm_delete_window;
-			XSetWMProtocols(DisplayHandle, WindowHandle, ref protocols, 1);
-
 			return(WindowHandle);
 		}
 
@@ -260,13 +271,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void DestroyWindow(IntPtr handle) {
-			XDestroyWindow(DisplayHandle, handle);
-			HandleData data = (HandleData) handle_data [handle];
-			if (data != null) {
-				data.Dispose ();
-				handle_data[handle] = null;
+			lock (this) {
+				XDestroyWindow(DisplayHandle, handle);
+				HandleData data = (HandleData) handle_data [handle];
+				if (data != null) {
+					data.Dispose ();
+					handle_data [handle] = null;
+				}
 			}
-			return;
 		}
 
 		internal override void RefreshWindow(IntPtr handle) {
@@ -279,19 +291,23 @@ namespace System.Windows.Forms {
 			int	width;
 			int	height;
 
-			// We need info about our window to generate the expose
-			XGetGeometry(DisplayHandle, handle, out root, out x, out y, out width, out height, out border_width, out depth);
+			lock (this) {
 
-			xevent.type=XEventName.Expose;
-			xevent.ExposeEvent.display=DisplayHandle;
-			xevent.ExposeEvent.window=handle;
-			xevent.ExposeEvent.x=0;
-			xevent.ExposeEvent.y=0;
-			xevent.ExposeEvent.width=width;
-			xevent.ExposeEvent.height=height;
+				// We need info about our window to generate the expose 
+				XGetGeometry(DisplayHandle, handle, out root, out x, out y,
+						out width, out height, out border_width, out depth);
 
-			XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
-			XFlush(DisplayHandle);
+				xevent.type=XEventName.Expose;
+				xevent.ExposeEvent.display=DisplayHandle;
+				xevent.ExposeEvent.window=handle;
+				xevent.ExposeEvent.x=0;
+				xevent.ExposeEvent.y=0;
+				xevent.ExposeEvent.width=width;
+				xevent.ExposeEvent.height=height;
+
+				XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
+				XFlush(DisplayHandle);
+			}
 		}
 
 		[MonoTODO("Add support for internal table of windows/DCs for looking up paint area and cleanup")]
@@ -335,7 +351,11 @@ namespace System.Windows.Forms {
 			int	border_width;
 			int	depth;
 
-			XGetGeometry(DisplayHandle, handle, out root, out x, out y, out width, out height, out border_width, out depth);
+			lock (this) {
+				
+				XGetGeometry(DisplayHandle, handle, out root, out x,
+						out y, out width, out height, out border_width, out depth);
+			}
 
 			client_width = width;
 			client_height = height;
@@ -343,8 +363,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Activate(IntPtr handle) {
-			// Not sure this is the right method, but we don't use ICs either...
-			XRaiseWindow(DisplayHandle, handle);
+
+			lock (this) {
+				// Not sure this is the right method, but we don't use ICs either...	
+				XRaiseWindow(DisplayHandle, handle);
+			}
 			return;
 		}
 
@@ -356,28 +379,29 @@ namespace System.Windows.Forms {
 			xevent.ExposeEvent.window=handle;
 			xevent.ExposeEvent.count=0;
 
-			if (clear) {
-				// Need to clear the whole window, so we force a redraw for the whole window
-				XWindowAttributes	attributes=new XWindowAttributes();
+			lock (this) {
 
-				// We need info about our window to generate the expose
-				XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+				if (clear) {
+					// Need to clear the whole window, so we force a redraw for the whole window
+					XWindowAttributes	attributes=new XWindowAttributes();
 
-				xevent.ExposeEvent.x=0;
-				xevent.ExposeEvent.y=0;
-				xevent.ExposeEvent.width=attributes.width;
-				xevent.ExposeEvent.height=attributes.height;
-			} else {
-				xevent.ExposeEvent.x=rc.Left;
-				xevent.ExposeEvent.y=rc.Top;
-				xevent.ExposeEvent.width=rc.Width;
-				xevent.ExposeEvent.height=rc.Height;
+					// We need info about our window to generate the expose 
+					XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+
+					xevent.ExposeEvent.x=0;
+					xevent.ExposeEvent.y=0;
+					xevent.ExposeEvent.width=attributes.width;
+					xevent.ExposeEvent.height=attributes.height;
+				} else {
+					xevent.ExposeEvent.x=rc.Left;
+					xevent.ExposeEvent.y=rc.Top;
+					xevent.ExposeEvent.width=rc.Width;
+					xevent.ExposeEvent.height=rc.Height;
+				}
+
+				XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
+				// Flush is not needed, invalidate does not guarantee an immediate effect
 			}
-
-			XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
-			// Flush is not needed, invalidate does not guarantee an immediate effect
-			//XFlush(DisplayHandle);
-			return;
 		}
 
 		internal override IntPtr DefWndProc(ref Message msg) {
@@ -425,7 +449,9 @@ namespace System.Windows.Forms {
 			int	len;
 			msg.wParam = IntPtr.Zero;
 
-			len = XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
+			lock (this) {
+				len = XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
+			}
 
 			if ((keysym==XKeySym.XK_Control_L) || (keysym==XKeySym.XK_Control_R)) {
 				if (xevent.type==XEventName.KeyPress) {
@@ -499,7 +525,9 @@ namespace System.Windows.Forms {
 			XEvent	xevent = new XEvent();
 
 		begin:
-			XNextEvent(DisplayHandle, ref xevent);
+			lock (this) {
+				XNextEvent(DisplayHandle, ref xevent);
+			}
 			msg.hwnd=xevent.AnyEvent.window;
 
 			switch(xevent.type) {
@@ -638,12 +666,14 @@ namespace System.Windows.Forms {
 						goto begin;
 					}
 
-					// Try combining expose events to reduce drawing
-					while (XCheckWindowEvent (DisplayHandle, xevent.AnyEvent.window,
-							    EventMask.ExposureMask, ref xevent)) {
-						data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-					}
+					lock (this) {
+						// Try combining expose events to reduce drawing	
+						while (XCheckWindowEvent (DisplayHandle, xevent.AnyEvent.window,
+								       EventMask.ExposureMask, ref xevent)) {
+							data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+									xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+						} 
+					}	
 
 					msg.message=Msg.WM_PAINT;
 					break;
@@ -657,13 +687,20 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ClientMessage: {
-					if (xevent.ClientMessageEvent.l0==wm_delete_window) {
+					if (xevent.ClientMessageEvent.message_type == async_method) {
+						GCHandle handle = (GCHandle)xevent.ClientMessageEvent.ptr1;
+						AsyncMethodData data = (AsyncMethodData) handle.Target;
+						AsyncMethodResult result = data.Result.Target as AsyncMethodResult;
+						object ret = data.Method.DynamicInvoke (data.Args);
+						if (result != null)
+							result.Complete (ret);
+						handle.Free ();
+					} else {
 						msg.message=Msg.WM_QUIT;
 						msg.wParam=IntPtr.Zero;
 						msg.lParam=IntPtr.Zero;
 						return false;
 					}
-					return true;
 					break;
 				}
 				default: {
@@ -692,18 +729,22 @@ namespace System.Windows.Forms {
 			property.encoding=
 			XSetWMName(DisplayHandle, handle, ref property);
 #else
-			XStoreName(DisplayHandle, handle, text);
+			lock (this) {
+				XStoreName(DisplayHandle, handle, text);
+			}
 #endif
 			return true;
 		}
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
-			if (visible) {
-				XMapWindow(DisplayHandle, handle);
-				is_visible=true;
-			} else {
-				XUnmapWindow(DisplayHandle, handle);
-				is_visible=false;
+			lock (this) {
+				if (visible) {
+					XMapWindow(DisplayHandle, handle);
+					is_visible=true;
+				} else {
+					XUnmapWindow(DisplayHandle, handle);
+					is_visible=false;
+				}
 			}
 			return true;
 		}
@@ -715,8 +756,10 @@ namespace System.Windows.Forms {
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
 			XWindowAttributes	attributes=new XWindowAttributes();
 
-			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
-			XReparentWindow(DisplayHandle, handle, parent, attributes.x, attributes.y);
+			lock (this) {
+				XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+				XReparentWindow(DisplayHandle, handle, parent, attributes.x, attributes.y);
+			}
 			return IntPtr.Zero;
 		}
 
@@ -731,20 +774,31 @@ namespace System.Windows.Forms {
 			Children=IntPtr.Zero;
 			ChildCount=0;
 
-			XQueryTree(DisplayHandle, handle, ref Root, ref Parent, ref Children, ref ChildCount);
+			lock (this) {
+				XQueryTree(DisplayHandle, handle, ref Root, ref Parent, ref Children, ref ChildCount);
+			}
 
 			if (Children!=IntPtr.Zero) {
-				XFree(Children);
+				lock (this) {
+					XFree(Children);
+				}
 			}
 			return Parent;
 		}
 
 		internal override void GrabWindow(IntPtr hWnd) {
-			XGrabPointer(DisplayHandle, hWnd, false, EventMask.ButtonPressMask | EventMask.ButtonMotionMask | EventMask.ButtonReleaseMask | EventMask.PointerMotionMask, GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, IntPtr.Zero, 0, 0);
+			lock (this) {
+				XGrabPointer(DisplayHandle, hWnd, false,
+						EventMask.ButtonPressMask | EventMask.ButtonMotionMask |
+						EventMask.ButtonReleaseMask | EventMask.PointerMotionMask,
+						GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, IntPtr.Zero, 0, 0);
+			}
 		}
 
 		internal override void ReleaseWindow(IntPtr hWnd) {
-			XUngrabPointer(DisplayHandle, 0);
+			lock (this) {
+				XUngrabPointer(DisplayHandle, 0);
+			}
 		}
 
 		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
@@ -761,7 +815,12 @@ namespace System.Windows.Forms {
 			int	win_y;
 			int	keys_buttons;
 
-			XQueryPointer(DisplayHandle, (handle!=IntPtr.Zero) ? handle : root_window, out root, out child, out root_x, out root_y, out win_x, out win_y, out keys_buttons);
+			lock (this) {
+				XQueryPointer(DisplayHandle, (handle!=IntPtr.Zero) ? handle : root_window,
+						out root, out child, out root_x, out root_y,
+						out win_x, out win_y, out keys_buttons);
+			}
+
 			if (handle != IntPtr.Zero) {
 				x = win_x;
 				y = win_y;
@@ -777,10 +836,28 @@ namespace System.Windows.Forms {
 			int	dest_y_return;
 			IntPtr	child;
 
-			XTranslateCoordinates (DisplayHandle, root_window, handle, x, y, out dest_x_return, out dest_y_return, out child);
+			lock (this) {
+				XTranslateCoordinates (DisplayHandle, root_window,
+						handle, x, y, out dest_x_return, out dest_y_return, out child);
+			}
 
 			x = dest_x_return;
 			y = dest_y_return;
+		}
+
+		internal override void SendAsyncMethod (AsyncMethodData method)
+		{
+			XEvent xevent = new XEvent ();
+			
+			xevent.type = XEventName.ClientMessage;
+			xevent.ClientMessageEvent.display = DisplayHandle;
+			xevent.ClientMessageEvent.window = IntPtr.Zero;
+			xevent.ClientMessageEvent.message_type = async_method;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
+
+			XSendEvent (DisplayHandle, IntPtr.Zero, false, EventMask.ExposureMask, ref xevent);
+			XFlush (DisplayHandle);
 		}
 
 		// Santa's little helper
@@ -908,7 +985,7 @@ namespace System.Windows.Forms {
 		internal extern static bool XQueryPointer(IntPtr display, IntPtr window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
 
 		[DllImport ("libX11.so", EntryPoint="XTranslateCoordinates")]
-		internal extern static bool XTranslateCoordinates (IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, out int intdest_x_return,  out int dest_y_return, out IntPtr child_return);
+		internal extern static bool XTranslateCoordinates (IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, out int intdest_x_return,	 out int dest_y_return, out IntPtr child_return);
 
 		[DllImport ("libX11.so", EntryPoint="XGetGeometry")]
 		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, out IntPtr root, out int x, out int y, out int width, out int height, out int border_width, out int depth);
