@@ -1,3 +1,8 @@
+2003-01-11  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlElement.cs : (by ville) XmlElement.set_InnerText event bugfix.
+	* XmlTextReader.cs : some fix for ReadOuterXml().
+
 2003-01-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReader.cs : bugfix for attributes related to creation of 

@@ -66,12 +66,17 @@ namespace System.Xml
 				return base.InnerText;
 			}
 			set {
-				foreach(XmlNode n in ChildNodes)
-				{
-					this.RemoveChild(n);
+				// Why its behavior (of MS FCL) is different from InnerXml...?
+				if (FirstChild != null && FirstChild.NodeType == XmlNodeType.Text)
+					FirstChild.Value = value;
+				else {
+					if(FirstChild != null) {
+						foreach (XmlNode n in ChildNodes)
+							this.RemoveChild (n);
+					}
+					// creates new Text node
+					AppendChild(OwnerDocument.CreateTextNode(value));
 				}
-				// creates new Text node
-				AppendChild(OwnerDocument.CreateTextNode(value));
 			}
 		}
 

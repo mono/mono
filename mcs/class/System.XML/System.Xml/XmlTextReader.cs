@@ -598,18 +598,17 @@ namespace System.Xml
 		public override string ReadOuterXml ()
 		{
 			if (NodeType == XmlNodeType.Attribute) {
-				return Name + "=\"" + Value.Replace ("\"", "'") + "\"";
+				return Name + "=\"" + Value.Replace ("\"", "&quot;") + "\"";
 			} else {
    				saveToXmlBuffer = true;
 				xmlBuffer.Append (currentTag.ToString ());
-				string startname = this.Name;
-				string endname = string.Empty;
+				int startDepth = depth;
 				readState = ReadState.Interactive;
 
-				while (startname != endname) {
+				do {
 					ReadContent ();
-					endname = this.Name;
-				}
+				} while (depth > startDepth);
+
 				saveToXmlBuffer = false;
 				string OuterXml = xmlBuffer.ToString ();
 				xmlBuffer.Length = 0;
