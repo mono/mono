@@ -1,5 +1,9 @@
 2003-07-01  Martin Willemoes Hansen <mwh@sysrq.dk>
 
+	* XmlTextWriterTests.cs: Made use of ExpectedException
+
+2003-07-01  Martin Willemoes Hansen <mwh@sysrq.dk>
+
 	* Made tests which expect an exception use the
 	  ExpectedException Attribute.
 
