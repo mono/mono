@@ -1450,7 +1450,6 @@ event_declaration
 				     current_attributes, lexer.Location);
 
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
-
 	  }
 	| EVENT identifier opt_params logical_end_of_line
 	  {
@@ -1460,10 +1459,10 @@ event_declaration
 						(current_container, TypeManager.system_void_expr, 
 					     (int) current_modifiers, MakeName(delName), (Parameters) $3, 
 					     (Attributes) current_attributes, lexer.Location);
-					     	  
+					     	
 		del.Namespace = current_namespace;
 		CheckDef (current_container.AddDelegate (del), del.Name, lexer.Location);
-	  
+	
 		Event e = new Event (DecomposeQI (delName, lexer.Location),
 					 (string) $2, 
 				     null, current_modifiers, null, null, 
@@ -1638,12 +1637,7 @@ interface_member_declarator
 		CheckDef (current_interface.AddMethod (m), m.Name, m.Location);
 	  }
 	| interface_property_declaration	
-	/*| interface_event_declaration 
-      { 
-		Event e = (Event) $1;
-
-		CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
-	  }*/
+	| interface_event_declaration 
 	;
 
 opt_new
@@ -1717,15 +1711,41 @@ interface_property_declaration
 	  }
 	;
 	
-/*interface_event_declaration
+interface_event_declaration
 	: EVENT identifier AS type logical_end_of_line
 	  {
-		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
-	 				 lexer.Location);
+	  	VariableDeclaration var = new VariableDeclaration ((string) $2, (Expression) $4, lexer.Location);
+
+		Event e = new Event ((Expression) $4, var.identifier, 
+				     null, current_modifiers, null, null, 
+				     current_attributes, lexer.Location);
+
+		CheckDef (current_interface.AddEvent (e), e.Name, e.Location);
+
+	  }
+	| EVENT identifier opt_params logical_end_of_line
+	  {
+		string delName = (string) $2;
+		delName = delName + "EventHandler";
+		int delModifiers = (current_modifiers & ~Modifiers.ABSTRACT);
+	    Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate 
+						(current_container, TypeManager.system_void_expr, 
+					     (int) delModifiers, MakeName(delName), (Parameters) $3, 
+					     (Attributes) current_attributes, lexer.Location);
+					     	  
+		del.Namespace = current_namespace;
+		CheckDef (current_interface.AddDelegate (del), del.Name, lexer.Location);
+	  
+		Event e = new Event (DecomposeQI (delName, lexer.Location),
+					 (string) $2, 
+				     null, current_modifiers, null, null, 
+				     current_attributes, lexer.Location);
+
+		CheckDef (current_interface.AddEvent (e), e.Name, e.Location);
 	  }
 	;
-*/
- property_declaration
+
+property_declaration
 	: abstract_propery_declaration
 	| non_abstract_propery_declaration 
 	;
