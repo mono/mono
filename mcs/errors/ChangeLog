@@ -1,5 +1,9 @@
 2004-12-06  Martin Baulig  <martin@ximian.com>
 
+	* cs8212.cs: Renamed to cs0182-3.cs.
+
+2004-12-06  Martin Baulig  <martin@ximian.com>
+
 	* cs8210.cs: Renamed to gcs0208.cs.
 
 2004-12-06  Martin Baulig  <martin@ximian.com>

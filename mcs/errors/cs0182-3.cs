@@ -1,4 +1,4 @@
-// cs8212.cs: Array creation present on attribute, but array is not initialized
+// CS0182: An attribute argument must be a constant expression, typeof expression or array creation expression
 // Line: 14
 using System;
 using System.Reflection;
