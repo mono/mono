@@ -1,3 +1,7 @@
+Wed Jan  9 13:54:28 MST 2002 Matt Kimball <matt@kimbal.net>
+
+	* BinaryReader.cs: Initial implementation.  I think it's complete.
+
 2002-01-04  Ravi Pratap  <ravi@ximian.com>
 
 	* CheckArgument.cs, CheckPermission.cs, Directory.cs: MonoTODO
