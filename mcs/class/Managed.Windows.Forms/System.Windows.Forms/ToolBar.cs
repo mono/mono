@@ -24,8 +24,6 @@
 //	Ravindra (rkumar@novell.com)
 //
 // TODO:
-//   - Drawing ellipsis when text is too big to draw on a button
-//   - RightToLeft
 //   - DropDown ContextMenu
 //   - Tooltip
 //
