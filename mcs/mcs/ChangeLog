@@ -1,3 +1,10 @@
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* convert.cs: correctly handle conversions from value types
+	to Enum and ValueType as unboxing conversions.
+
+	Fixes bug #52569. Patch by Benjamin Jemlich.
+
 2004-01-02  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (BetterConversion): Prefer int -> uint

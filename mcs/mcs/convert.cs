@@ -1492,6 +1492,13 @@ namespace Mono.CSharp {
 			if (source_type == TypeManager.object_type && !target_is_value_type)
 				return new ClassCast (source, target_type);
 
+			//
+			// Unboxing conversion.
+			//
+			if (((source_type == TypeManager.enum_type &&
+				!(source is EmptyCast)) ||
+				source_type == TypeManager.value_type) && target_is_value_type)
+				return new UnboxCast (source, target_type);
 
 			//
 			// From any class S to any class-type T, provided S is a base class of T
