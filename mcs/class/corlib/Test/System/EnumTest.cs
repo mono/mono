@@ -687,6 +687,12 @@ public class EnumTest : TestCase
 	[Flags]
 	enum SomeEnum {a,b,c};
 
+	[Flags]
+	enum SomeByteEnum : byte {a,b,c};
+
+	[Flags]
+	enum SomeInt64Enum : long {a,b,c};
+
 	public void TestToString() {
 		AssertEquals("invalid string", "This", 
 			     TestingEnum.This.ToString());
@@ -709,8 +715,12 @@ public class EnumTest : TestCase
 			     "Is", is1.ToString("f"));
 
 
-		AssertEquals("bitfield with flags format wrong", 
+		AssertEquals("bitfield with flags format wrong for Int32 enum", 
 			     "b, c", ((SomeEnum)3).ToString("f"));
+		AssertEquals("bitfield with flags format wrong for Byte enum", 
+			     "b, c", ((SomeByteEnum)3).ToString("f"));
+		AssertEquals("bitfield with flags format wrong for Int64 enum", 
+			     "b, c", ((SomeInt64Enum)3).ToString("f"));
 	}
 
 	// TODO - ToString with IFormatProviders
