@@ -2403,7 +2403,7 @@ public class TypeManager {
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!mb.IsStatic && (closure_invocation_type != closure_qualifier_type) &&
 				    (closure_qualifier_type != null) &&
-				    closure_invocation_type.IsSubclassOf (closure_qualifier_type))
+				    ! closure_qualifier_type.IsSubclassOf (closure_invocation_type))
 					return false;
 
 				return true;

@@ -1,3 +1,14 @@
+2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ecore.cs, typemanager.cs: Correct impl of cs1540 check.
+	As a regex:
+	s/
+	the invocation type may not be a subclass of the tye of the item/
+	The type of the item must be a subclass of the invocation item.
+	/g
+	
+	Fixes bug #50820.
+
 2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* attribute.cs: Added methods to get a string and a bool from an
