@@ -35,7 +35,7 @@ namespace System.IO {
 		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8, 0);
 
 		public StreamWriter (Stream stream)
-			: this (stream, Encoding.UTF8, DefaultBufferSize) {}
+			: this (stream, new UTF8Encoding (false, true), DefaultBufferSize) {}
 
 		public StreamWriter (Stream stream, Encoding encoding)
 			: this (stream, encoding, DefaultBufferSize) {}

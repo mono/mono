@@ -1,3 +1,8 @@
+2002-09-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* StreamWriter.cs: When no encoding is provided, create an
+	encoding without markers, this is what MS does.
+
 2002-09-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* StreamReader.cs: Implement detection of byte marks and skipping
