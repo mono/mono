@@ -319,13 +319,19 @@ namespace Mono.Tools
 			File.Copy (args[0], fullPath + an.Name + ".dll", force);
 			if (package_name != String.Empty) {
 				if (Path.DirectorySeparatorChar == '/') {
+					try {
+						Directory.CreateDirectory (libdir + package_name);
+					} catch {}
+					
 					Mono.Posix.Syscall.symlink (fullPath + an.Name + ".dll", libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
 				} else {
 					File.Copy (args[0], libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
 				}
+				Console.WriteLine ("Package exported to: " + libdir + package_name);
 			}
-			if (File.Exists (config_path))
+			if (File.Exists (config_path)){
 				File.Copy (config_path, fullPath + an.Name + ".dll" + ".config", force);
+			}
 
 			Hashtable info = new Hashtable ();
 
