@@ -34,10 +34,13 @@ SOURCES = \
 	MainMenu.cs	\
 	ScrollableControl.cs
 
-all: demo.exe 
+all: demo.exe Demo2.exe
 
 demo.exe: demo.cs System.Windows.Forms.dll
 	$(CSC) demo.cs -r System.Windows.Forms.dll -r System.Drawing 
+
+Demo2.exe: Demo2.cs System.Windows.Forms.dll
+	$(CSC) Demo2.cs -r System.Windows.Forms.dll -r System.Drawing 
 
 System.Windows.Forms.dll: $(SOURCES)
 	$(CSC) $(SWFF) --target library -o System.Windows.Forms.dll $(SOURCES)
