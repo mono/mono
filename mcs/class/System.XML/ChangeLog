@@ -1,3 +1,8 @@
+2003-09-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* System.Xml.dll.sources: added SerializationCodeGenerator.cs,
+	  SerializationCodeGeneratorConfiguration.cs.
+
 2003-08-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* System.Xml.dll.sources : added XsdParticleValidationState.cs
@@ -154,4 +159,3 @@
 	* ChangeLog: Add the change log to this directory
 
 	* System.XML.build: Add dependancy on linux target to test target. Need to have the dll before we can test it, right?  Plus is encourages other to try 'make test'.
-

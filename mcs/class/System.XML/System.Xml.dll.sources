@@ -228,6 +228,8 @@ System.Xml.Serialization/CodeIdentifiers.cs
 System.Xml.Serialization/IXmlSerializable.cs
 System.Xml.Serialization/ReflectionHelper.cs
 System.Xml.Serialization/SchemaTypes.cs
+System.Xml.Serialization/SerializationCodeGenerator.cs
+System.Xml.Serialization/SerializationCodeGeneratorConfiguration.cs
 System.Xml.Serialization/SoapAttributeAttribute.cs
 System.Xml.Serialization/SoapAttributeOverrides.cs
 System.Xml.Serialization/SoapAttributes.cs
