@@ -29,6 +29,12 @@
 //
 //
 // $Log: MessageBox.cs,v $
+// Revision 1.4  2004/10/15 06:30:56  ravindra
+// 	- MessageBox on windows does not have min/max buttons.
+// 	This change in CreateParams fixes this on Windows. We
+// 	still need to implement this windowstyle behavior in
+// 	our X11 driver.
+//
 // Revision 1.3  2004/10/14 06:14:03  ravindra
 // Moved InitFormSize () out of Paint method and removed unnecessary calls to Button.Show () method.
 //
@@ -106,7 +112,20 @@ namespace System.Windows.Forms
 			}
 			#endregion	// MessageBoxForm Constructors
 
-			
+			#region Protected Instance Properties
+			protected override CreateParams CreateParams {
+				get {
+					CreateParams create_params = base.CreateParams;
+					create_params.Style = (int)WindowStyles.WS_OVERLAPPED;
+					create_params.Style |= (int)WindowStyles.WS_CAPTION;
+					create_params.Style |= (int)WindowStyles.WS_SYSMENU;
+					create_params.Style |= (int)WindowStyles.WS_VISIBLE;
+
+					return create_params;
+				}
+			}
+			#endregion	// Protected Instance Properties
+
 			#region MessageBoxForm Methods
 			public DialogResult RunDialog ()
 			{
