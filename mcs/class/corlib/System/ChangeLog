@@ -1,7 +1,7 @@
 2004-02-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
-	* String.cs (Equals): Speed up this method by avoiding ABC
-	and by comparing by 32 bit words rather than 16 bit chars.
+	* String.cs (Equals): Speed up this method by avoiding Array
+	 Bounds Checks and by comparing by 32 bit words rather than 16 bit chars.
 
 	This gives between 0x (for 1 char) and >2x (for large strings)
 	factor of improvement.
