@@ -95,6 +95,40 @@ by MCS.  This extended debugging information will allow you to debug
 C# source code rather than IL code.  To use it, just run the JIT in
 your debugger and call "mono_debug_make_symbols" each time the program
 stops.
+.PP
+The "stabs" and "dwarf" formats support the following options:
+.TP
+.I "filename=FILENAME"
+Write debugging information into FILENAME.  This file must be run through
+the assembler to create an object file.
+.TP
+.I "objfile=FILENAME"
+When automatically assembling the symbol file, write the resulting object
+file into FILENAME.
+.TP
+.I "dont_assemble"
+Normally, the symbol file is automatically assembled to an object file
+when you call "mono_debug_make_symbols".  Use this option to disable this
+behaviour.
+.TP
+.I "install_il_files"
+Put the generated *.il files in the same directory than the assembly they
+came from.  The default is to put them into the current working directory.
+.TP
+.I "dont_update_il_files"
+Normally, the *.il files are recreated if their assemblies have changed
+when you call "mono_debug_make_symbols".  Use this option to disable this
+behaviour.
+.TP
+.I "dont_create_il_files"
+Update the *.il files if their assemblies have changed, but only if the
+file already exists.
+.PP
+The "dwarf-plus" format supports the following options:
+.TP
+.I "dont_fallback"
+Don't fallback to normal dwarf2 if the symbol file cannot be found.
+.PP
 .SH FILES
 Assemblies are lodaed from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.
