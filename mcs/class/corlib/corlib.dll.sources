@@ -257,8 +257,12 @@ System.Configuration.Assemblies/ProcessorID.cs
 System.Diagnostics/ConditionalAttribute.cs
 System.Diagnostics/DebuggableAttribute.cs
 System.Diagnostics/Debugger.cs
+System.Diagnostics/DebuggerBrowsableState.cs
+System.Diagnostics/DebuggerBrowsableAttribute.cs
+System.Diagnostics/DebuggerDisplayAttribute.cs
 System.Diagnostics/DebuggerHiddenAttribute.cs
 System.Diagnostics/DebuggerStepThroughAttribute.cs
+System.Diagnostics/DebuggerTypeProxyAttribute.cs
 System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs

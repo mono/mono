@@ -1,3 +1,9 @@
+2005-03-02  Chris Toshok  <toshok@ximian.com>
+
+	* corlib.dll.sources: add DebuggerBrowsableState,
+	DebuggerBrowsableAttribute, DebuggerDisplayAttribute, and
+	DebuggerTypeProxyAttribute.
+
 2005-02-26  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* corlib.dll.sources: Removed DoubleFormatter and SingleFormatter.
