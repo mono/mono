@@ -1,3 +1,8 @@
+2003-07-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthenticationModule.cs: really renew the ticket. Thanks to
+	Jens Thiel <Jens@Thiel.DE>.
+
 2003-02-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlAuthorizationModule.cs: tell the application not to run any other
