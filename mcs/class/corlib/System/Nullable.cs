@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-#if NET_1_2
+#if GENERICS
 namespace System
 {
 	[CLSCompliant(false)]
