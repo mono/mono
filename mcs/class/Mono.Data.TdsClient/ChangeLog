@@ -1,3 +1,18 @@
+2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.TdsClient.build: added build for windows
+	
+	* Test: added directory for tests
+		
+	* Mono.Data.TdsClient/TdsVersion.cs: added file for
+	enum TdsVersion
+	
+	* Mono.Data.TdsClient/TdsConnection.cs: added public 
+	property TdsVersion so it can be set to 
+	use TDS version 4.2, 5.0, 7.0, or 8.0.  Also, added
+	comments
+
+
 2002-10-16  Tim Coleman (tim@timcoleman.com)
 	* ChangeLog:
 	* list:

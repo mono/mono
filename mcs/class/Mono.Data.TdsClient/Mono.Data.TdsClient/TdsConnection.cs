@@ -16,6 +16,8 @@ namespace Mono.Data.TdsClient {
 		#region Fields
 
 		TdsServerType serverType;
+		TdsVersion tdsVersion = TdsVersion.tds42; 
+		// default to TDS version 4.2 which is used by both servers
 
 		#endregion // Fields
 
@@ -26,6 +28,19 @@ namespace Mono.Data.TdsClient {
 		}
 
 		#endregion // Constructors
+
+		#region Properties
+
+		public TdsVersion TdsVersion {
+			get {
+				return tdsVersion;
+			}
+			set {
+				tdsVersion = value;
+			}
+		}
+
+		#endregion // Properties
 
 		#region Methods
 
