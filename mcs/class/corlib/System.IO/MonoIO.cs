@@ -82,6 +82,10 @@ namespace System.IO
 				message = String.Format ("Path is too long. Path: {0}", path); 
 				return new PathTooLongException (message);
 
+			case MonoIOError.ERROR_INVALID_PARAMETER:
+				message = String.Format ("Invalid parameter");
+				return new IOException (message);
+
 			default:
 				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);
 				return new IOException (message);
@@ -305,7 +309,9 @@ namespace System.IO
 			result = SetFileTime (handle, creation_time,
 					      last_access_time,
 					      last_write_time, out error);
-			Close (handle, out error);
+
+			MonoIOError ignore_error;
+			Close (handle, out ignore_error);
 			
 			return result;
 		}
