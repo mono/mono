@@ -8,6 +8,7 @@
 //   (C) 2001 Marcel Narings
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -492,13 +493,7 @@ namespace System
 
 		public string[] GetDateTimeFormats() 
 		{
-			string[] result = new string[formats.Length];
-			int index=0;
-			foreach (string format in formats) {
-				result [index] = this.ToString(format);
-				index++;
-			}
-			return result;
+			return GetDateTimeFormats (CultureInfo.CurrentCulture);
 		}
 
 		public string[] GetDateTimeFormats(char format)
@@ -511,22 +506,39 @@ namespace System
 		public string[] GetDateTimeFormats(IFormatProvider provider)
 		{
 			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
-//			return info.GetAllDateTimePatterns ();
-			return GetDateTimeFormats (info.GetAllDateTimePatterns ());
+//			return GetDateTimeFormats (info.GetAllDateTimePatterns ());
+			ArrayList al = new ArrayList ();
+			foreach (char c in "dDgGfFmMrRstTuUyY")
+				al.AddRange (GetDateTimeFormats (c, info));
+			return al.ToArray (typeof (string)) as string [];
 		}
 
 		public string[] GetDateTimeFormats(char format,IFormatProvider provider	)
 		{
+			// LAMESPEC: There is NO assurance that 'U' ALWAYS
+			// euqals to 'F', but since we have to iterate all
+			// the pattern strings, we cannot just use 
+			// ToString("U", provider) here. I believe that the 
+			// method's behavior cannot be formalized.
+			bool adjustutc = false;
+			switch (format) {
+			case 'U':
+//			case 'r':
+//			case 'R':
+//			case 'u':
+				adjustutc = true;
+				break;
+			}
 			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
-//			return info.GetAllDateTimePatterns (format);
-			return GetDateTimeFormats (info.GetAllDateTimePatterns (format));
+			return GetDateTimeFormats (adjustutc, info.GetAllDateTimePatterns (format), info);
 		}
 
-		private string [] GetDateTimeFormats (string [] patterns)
+		private string [] GetDateTimeFormats (bool adjustutc, string [] patterns, DateTimeFormatInfo dfi)
 		{
 			string [] results = new string [patterns.Length];
+			DateTime val = adjustutc ? ToUniversalTime () : this;
 			for (int i = 0; i < results.Length; i++)
-				results [i] = ToString (patterns [i]);
+				results [i] = val._ToString (patterns [i], dfi);
 			return results;
 		}
 
@@ -1323,7 +1335,8 @@ namespace System
 				useutc = true;
 				break;
 			case 'U':
-				pattern = dfi.LongDatePattern + " " + dfi.LongTimePattern;
+//				pattern = dfi.LongDatePattern + " " + dfi.LongTimePattern;
+				pattern = dfi.FullDateTimePattern;
 				useutc = true;
 				break;
 			case 'y':
@@ -1344,6 +1357,13 @@ namespace System
 			// of chars in the result. Might save us a few bytes sometimes
 			// Add + 10 for cases like mmmm dddd
 			StringBuilder result = new StringBuilder (format.Length + 10);
+
+			// For some cases, the output should not use culture dependent calendar
+			DateTimeFormatInfo inv = DateTimeFormatInfo.InvariantInfo;
+			if (format == inv.RFC1123Pattern)
+				dfi = inv;
+			else if (format == inv.UniversalSortableDateTimePattern)
+				dfi = inv;
 
 			int i = 0;
 
@@ -1579,9 +1599,10 @@ namespace System
 				format = _GetStandardPattern (fchar, dfi, out useutc);
 			}
 
-			// Don't convert UTC value. It just adds 'Z' for 
-			// 'u' format, for the same ticks.
-			return this._ToString (format, dfi);
+			if (useutc)
+				return this.ToUniversalTime ()._ToString (format, dfi);
+			else
+				return this._ToString (format, dfi);
 		}
 
 		public DateTime ToLocalTime()

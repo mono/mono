@@ -1,5 +1,13 @@
 2004-05-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DateTime.cs :
+	  - In ToString(), Don't use culture-dependent daynames to format
+	    Universal/RFC1123 date/time. Also, use FullDateTimePattern for 'U'.
+	  - Fixed GetDateTimeFormats () that generated incorrect 'U' value 
+	    (since the format string is the same as 'F').
+
+2004-05-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DateTime.cs : don't adjust utc value in ToString(). It must output
 	  the same time value, just adding 'Z' for UTC.
 
