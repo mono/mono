@@ -13,7 +13,7 @@ namespace System
 	public sealed class Version : ICloneable, IComparable
 	{
 
-		int major, minor, build, revision;
+		int _Major, _Minor, _Build, _Revision;
 
 		private const int UNDEFINED = -1;
 
@@ -24,33 +24,33 @@ namespace System
 			if (major < 0) {
 				throw new ArgumentOutOfRangeException ("major");
 			}
-			this.major = major;
+			this._Major = major;
 
 			if (minor < 0) {
 				throw new ArgumentOutOfRangeException ("minor");
 			}
-			this.minor = minor;
+			this._Minor = minor;
 
 			if (defined == 2) {
-				this.build = UNDEFINED;
-				this.revision = UNDEFINED;
+				this._Build = UNDEFINED;
+				this._Revision = UNDEFINED;
 				return;
 			}
 
 			if (build < 0) {
 				throw new ArgumentOutOfRangeException ("build");
 			}
-			this.build = build;
+			this._Build = build;
 
 			if (defined == 3) {
-				this.revision = UNDEFINED;
+				this._Revision = UNDEFINED;
 				return;
 			}
 
 			if (revision < 0) {
 				throw new ArgumentOutOfRangeException ("revision");
 			}
-			this.revision = revision;
+			this._Revision = revision;
 		}
 
 		public Version ()
@@ -105,31 +105,31 @@ namespace System
 
 		public int Build {
 			get {
-				return build;
+				return _Build;
 			}
 		}
 
 		public int Major {
 			get {
-				return major;
+				return _Major;
 			}
 		}
 
 		public int Minor {
 			get {
-				return minor;
+				return _Minor;
 			}
 		}
 
 		public int Revision {
 			get {
-				return revision;
+				return _Revision;
 			}
 		}
 
 		public object Clone ()
 		{
-			return new Version (major, minor, build, revision);
+			return new Version (_Major, _Minor, _Build, _Revision);
 		}
 
 		public int CompareTo (object version)
@@ -144,24 +144,24 @@ namespace System
 
 			v = version as Version;
 
-			if (this.major > v.major)
+			if (this._Major > v._Major)
 				return 1;
-			else if (this.major < v.major)
+			else if (this._Major < v._Major)
 				return -1;
 
-			if (this.minor > v.minor)
+			if (this._Minor > v._Minor)
 				return 1;
-			else if (this.minor < v.minor)
+			else if (this._Minor < v._Minor)
 				return -1;
 
-			if (this.build > v.build)
+			if (this._Build > v._Build)
 				return 1;
-			else if (this.build < v.build)
+			else if (this._Build < v._Build)
 				return -1;
 
-			if (this.revision > v.revision)
+			if (this._Revision > v._Revision)
 				return 1;
-			else if (this.revision < v.revision)
+			else if (this._Revision < v._Revision)
 				return -1;
 
 			return 0;
@@ -176,17 +176,17 @@ namespace System
 
 			x = (Version) obj;
 			
-			if ((x.major == major) &&
-			    (x.minor == minor) &&
-			    (x.build == build) &&
-			    (x.revision == revision))
+			if ((x._Major == _Major) &&
+			    (x._Minor == _Minor) &&
+			    (x._Build == _Build) &&
+			    (x._Revision == _Revision))
 				return true;
 			return false;
 		}
 
 		public override int GetHashCode ()
 		{
-			return (revision << 24) | (build << 16) | (minor << 8) | major;
+			return (_Revision << 24) | (_Build << 16) | (_Minor << 8) | _Major;
 		}
 
 		// <summary>
@@ -195,12 +195,12 @@ namespace System
 		// </summary>
 		public override string ToString ()
 		{
-			string mm = major.ToString () + "." + minor.ToString ();
+			string mm = _Major.ToString () + "." + _Minor.ToString ();
 			
-			if (build != UNDEFINED)
-				mm = mm + "." + build.ToString ();
-			if (revision != UNDEFINED)
-				mm = mm + "." + revision.ToString ();
+			if (_Build != UNDEFINED)
+				mm = mm + "." + _Build.ToString ();
+			if (_Revision != UNDEFINED)
+				mm = mm + "." + _Revision.ToString ();
 
 			return mm;
 		}
@@ -218,22 +218,22 @@ namespace System
 			if (fields == 0)
 				return "";
 			if (fields == 1)
-				return major.ToString ();
+				return _Major.ToString ();
 			if (fields == 2)
-				return major.ToString () + "." + minor.ToString ();
+				return _Major.ToString () + "." + _Minor.ToString ();
 			if (fields == 3){
-				if (build == UNDEFINED)
+				if (_Build == UNDEFINED)
 					throw new ArgumentException (Locale.GetText
 					("fields is larger than the number of components defined in this instance."));
-				return major.ToString () + "." + minor.ToString () + "." +
-					build.ToString ();
+				return _Major.ToString () + "." + _Minor.ToString () + "." +
+					_Build.ToString ();
 			}
 			if (fields == 4){
-				if (build == UNDEFINED || revision == UNDEFINED)
+				if (_Build == UNDEFINED || _Revision == UNDEFINED)
 					throw new ArgumentException (Locale.GetText
 					("fields is larger than the number of components defined in this instance."));
-				return major.ToString () + "." + minor.ToString () + "." +
-					build.ToString () + "." + revision.ToString ();
+				return _Major.ToString () + "." + _Minor.ToString () + "." +
+					_Build.ToString () + "." + _Revision.ToString ();
 			}
 			throw new ArgumentException (Locale.GetText ("Invalid fields parameter: ") + fields.ToString());	
 		}
