@@ -1,3 +1,7 @@
+2002-09-12	Piers Haken <piersh@friksit.com>
+
+	* XmlDocumentNavigator.cs: implement MoveToId()
+
 2002-09-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextWriter.cs: fixed bug #29886.

@@ -244,10 +244,21 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override bool MoveToId (string id)
 		{
-			throw new NotImplementedException ();
+			XmlDocument doc;
+			
+			if (node.NodeType == XmlNodeType.Document)
+				doc = (XmlDocument) node;
+			else
+				doc = node.OwnerDocument;
+
+			XmlElement eltNew = doc.GetElementById (id);
+			if (eltNew == null)
+				return false;
+
+			node = eltNew;
+			return true;
 		}
 
 		[MonoTODO]
