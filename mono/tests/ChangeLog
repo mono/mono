@@ -1,5 +1,12 @@
 2003-12-13  Patrik Torstensson  <p@rxc.se>
 
+	* bug-42136.cs: invalid liveness analyse for locals
+	used in try and catch block. (exceptions not counted 
+	for in the liveness analyse)
+	* Makefile.am: added bug-42136.cs
+	
+2003-12-13  Patrik Torstensson  <p@rxc.se>
+
 	* bug-48015.cs: new test for obj.Equals on ContextBound objects
 	* Makefile.am: added bug-48015.cs.
 
