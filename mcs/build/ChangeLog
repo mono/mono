@@ -1,3 +1,9 @@
+2004-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* library.make,
+	  profiles/default.make,
+	  profiles/basic.make : use PLATFORM_PATH_SEPARATOR.
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (MCS): Run the INTERNAL_MCS.
