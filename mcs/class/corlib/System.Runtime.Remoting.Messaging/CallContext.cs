@@ -44,8 +44,8 @@ namespace System.Runtime.Remoting.Messaging
 	[Serializable]
 	public sealed class CallContext 
 	{
-		internal const string HeadersKey = "__Headers";
-		internal const string ContextKey = "__CallContext";
+		[ThreadStatic] static Header [] Headers;
+		[ThreadStatic] static Hashtable datastore;
 		
 		private CallContext ()
 		{
@@ -61,54 +61,42 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			return Datastore [name];
 		}
-
-		public static Header[] GetHeaders () 
-		{
-			return (Header[]) Datastore [HeadersKey];
-		}
-
+		
 		public static void SetData (string name, object data) 
 		{
 			Datastore [name] = data;
 		}
 
+		public static Header[] GetHeaders () 
+		{
+			return Headers;
+		}
+		
 		public static void SetHeaders (Header[] headers) 
 		{
-			Datastore [HeadersKey] = headers;
+			Headers = headers;
 		}
 
 		internal static LogicalCallContext CreateLogicalCallContext ()
 		{
-			LocalDataStoreSlot ds = Thread.GetNamedDataSlot (ContextKey);
-			Hashtable res = (Hashtable) Thread.GetData (ds);
-
-			LogicalCallContext ctx = new LogicalCallContext();
-			if (res == null) return ctx;
-
-			foreach (DictionaryEntry entry in res)
-				if (entry.Value is ILogicalThreadAffinative)
-					ctx.SetData ((string)entry.Key, entry.Value);
+			LogicalCallContext ctx = new LogicalCallContext ();
+			
+			if (datastore != null)
+				foreach (DictionaryEntry entry in datastore)
+					if (entry.Value is ILogicalThreadAffinative)
+						ctx.SetData ((string)entry.Key, entry.Value);
 
 			return ctx;
 		}
 
 		internal static object SetCurrentCallContext (LogicalCallContext ctx)
 		{
-			LocalDataStoreSlot ds = Thread.GetNamedDataSlot (ContextKey);
-			object oldData = Thread.GetData (ds);
+			object oldData = datastore;
 
 			if (ctx != null && ctx.HasInfo)
-			{
-				Hashtable newData = new Hashtable();
-				Hashtable data = ctx.Datastore;
-				
-				foreach (DictionaryEntry entry in data)
-					newData [(string)entry.Key] = entry.Value;
-	
-				Thread.SetData (ds, newData);
-			}
+				datastore = ctx.Datastore.Clone ();
 			else
-				Thread.SetData (ds, null);
+				datastore = null;
 				
 			return oldData;
 		}
@@ -122,21 +110,16 @@ namespace System.Runtime.Remoting.Messaging
 		
 		internal static void RestoreCallContext (object oldContext)
 		{
-			LocalDataStoreSlot ds = Thread.GetNamedDataSlot (ContextKey);
-			Thread.SetData (ds, oldContext);
+			datastore = (Hashtable) oldContext;
 		}
 
 		private static Hashtable Datastore
 		{
-			get 
-			{
-				LocalDataStoreSlot ds = Thread.GetNamedDataSlot (ContextKey);
-				Hashtable res = (Hashtable) Thread.GetData (ds);
-				if (res == null) {
-					res = new Hashtable ();
-					Thread.SetData (ds, res);
-				}
-				return res;
+			get {
+				Hashtable r = datastore;
+				if (r == null)
+					return datastore = new Hashtable ();
+				return r;
 			}
 		}
 	}

@@ -1,5 +1,10 @@
 2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* CallContext.cs: Use [ThreadStatic], it is much faster than the
+	Thread.[Get/Set]Data functions
+
+2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* CADMessages.cs: get rid of method / type name, it is not needed
 	* MethodCall.cs: lazily init method / type name.
 	* ReturnMessage.cs: lazily init method / type name, sig.
