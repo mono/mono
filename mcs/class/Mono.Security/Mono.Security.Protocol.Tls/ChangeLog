@@ -1,3 +1,7 @@
+2004-10-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslClientStream.cs: Changed InputBuffer to internal (was protected).
+
 2004-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpsClientStream.cs: the .ctor receives a pre-read buffer now.

@@ -104,7 +104,8 @@ namespace Mono.Security.Protocol.Tls
 			set { throw new NotSupportedException(); }
 		}
 
-		protected Stream InputBuffer {
+		// required by HttpsClientStream for proxy support
+		internal Stream InputBuffer {
 			get { return inputBuffer; }
 		}
 		#endregion
