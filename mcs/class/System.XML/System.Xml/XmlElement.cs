@@ -119,8 +119,11 @@ namespace System.Xml
 		}
 
 		public override string Name {
-			get { 
-				return prefix != String.Empty ? prefix + ":" + localName : localName; 
+			get {
+				if (prefix == String.Empty || prefix == null)
+					return localName;
+				else
+					return prefix + ":" + localName;
 			}
 		}
 

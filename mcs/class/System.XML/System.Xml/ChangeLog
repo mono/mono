@@ -1,3 +1,9 @@
+2003-03-15  Duncan Mak  <duncan@ximian.com>
+
+	* XmlElement.cs (Name): Only append prefix + ':' when prefix is
+	neither String.Empty nor null. Thanks to Simon Guindon for
+	reporting the bug and Jackson for fixing this bug with me.
+
 2003-03-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlConstructs.cs : fix "int IsXXX()" to reject negative value.
