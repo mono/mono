@@ -1106,7 +1106,7 @@ namespace Microsoft.VisualBasic
 						mySBuilder.Append ("\"");
 						inQuotes = false;
 					}
-					mySBuilder.Append ("&Microsoft.VisualBasic.Strings.ChrW("); //TODO: remove "String." when mbas supports it
+					mySBuilder.Append ("&Microsoft.VisualBasic.ChrW(");
 					mySBuilder.Append ((int)value[MyCounter]); 
 					mySBuilder.Append (")");
 				}			
