@@ -183,6 +183,7 @@ namespace System.Xml
 			set { validationType = value; }
 		}
 
+		[CLSCompliant(false)]
 		public XmlResolver XmlResolver {
 			internal get { return xmlResolver; }
 			set { xmlResolver = value; }

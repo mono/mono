@@ -1,3 +1,11 @@
+2005-01-25  Martin Baulig  <martin@ximian.com>
+
+	* XmlNode.cs (XmlNode.SchemaInfo): Mark this as not CLS-compliant
+	to avoid a CS3025.
+
+	* XmlReaderSettings.cs (XmlReaderSettings.XmlResolver): Mark this
+	as not CLS-compliant to avoid a CS3025.
+
 2005-01-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs,

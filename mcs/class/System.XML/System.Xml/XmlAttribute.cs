@@ -209,6 +209,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		[CLSCompliant(false)]
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return schemaInfo; }
 			internal set { schemaInfo = value; }

@@ -271,6 +271,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		[CLSCompliant(false)]
 		public virtual IXmlSchemaInfo SchemaInfo {
 			get { return null; }
 			internal set { }
