@@ -47,7 +47,7 @@ namespace System {
 		/// Internal bool value for for this instance
 		/// </value>
 
-		internal bool value;
+		internal bool m_value;
 	
 		static Boolean () 
 		{
@@ -83,11 +83,11 @@ namespace System {
 				(Locale.GetText ("Object is not a Boolean and is not a null reference"));
 			
 			// for case #3
-			if (obj == null || (value == true && (bool)obj == false))
+			if (obj == null || (m_value == true && (bool)obj == false))
 				return 1;
 	    
 			// for case #2, else it's #1
-			return (value == (bool)obj) ? 0 : -1;
+			return (m_value == (bool)obj) ? 0 : -1;
 		}
 	
 		/// <summary>
@@ -106,7 +106,7 @@ namespace System {
 			if (obj == null || !(obj is System.Boolean))
 				return false;
 
-			return ((bool)obj) == value;
+			return ((bool)obj) == m_value;
 		}
 	
 		/// <summary>
@@ -118,7 +118,7 @@ namespace System {
 		public override int GetHashCode () 
 		{
 			// Guess there's not too many ways to hash a Boolean
-			return value ? 1 : 0;
+			return m_value ? 1 : 0;
 		}
 
 		/// <summary>
@@ -167,7 +167,7 @@ namespace System {
 		/// </returns>
 		public override string ToString () 
 		{
-			return value ? TrueString : FalseString;
+			return m_value ? TrueString : FalseString;
 		}
 		
 		// =========== IConvertible Methods =========== //
@@ -179,17 +179,17 @@ namespace System {
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			return System.Convert.ToType(value, conversionType, provider);
+			return System.Convert.ToType(m_value, conversionType, provider);
 		}
 		
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			return value;
+			return m_value;
 		}
 		
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return System.Convert.ToByte(value);
+			return System.Convert.ToByte(m_value);
 		}
 		
 		char IConvertible.ToChar (IFormatProvider provider)
@@ -205,38 +205,38 @@ namespace System {
 		
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			return System.Convert.ToDecimal(value);
+			return System.Convert.ToDecimal(m_value);
 		}
 		
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			return System.Convert.ToDouble(value);
+			return System.Convert.ToDouble(m_value);
 		}
 		
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt16(value);
+			return System.Convert.ToInt16(m_value);
 		}
 		
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt32(value);
+			return System.Convert.ToInt32(m_value);
 		}
 		
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt64(value);
+			return System.Convert.ToInt64(m_value);
 		}
 		
 		[CLSCompliant(false)] 
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return System.Convert.ToSByte(value);
+			return System.Convert.ToSByte(m_value);
 		}
 		
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			return System.Convert.ToSingle(value);
+			return System.Convert.ToSingle(m_value);
 		}
 		
 		public string ToString (IFormatProvider provider)
@@ -247,19 +247,19 @@ namespace System {
 		[CLSCompliant(false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt16(value);
+			return System.Convert.ToUInt16(m_value);
 		}
 		
 		[CLSCompliant(false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt32(value);
+			return System.Convert.ToUInt32(m_value);
 		}
 		
 		[CLSCompliant(false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt64(value);
+			return System.Convert.ToUInt64(m_value);
 		}
 		
 	} // System.Boolean

@@ -29,7 +29,7 @@ namespace System
 		public const char MaxValue = (char) 0xffff;
 		public const char MinValue = (char) 0;
 
-		internal char value;
+		internal char m_value;
 
 		static Char () {
 			unsafe {
@@ -63,10 +63,10 @@ namespace System
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Char"));
 
 			char xv = (char) v;
-			if (value == xv)
+			if (m_value == xv)
 				return 0;
 
-			if (value > xv)
+			if (m_value > xv)
 				return 1;
 			else
 				return -1;
@@ -77,12 +77,12 @@ namespace System
 			if (!(o is Char))
 				return false;
 
-			return ((Char) o).value == value;
+			return ((Char) o).m_value == m_value;
 		}
 
 		public override int GetHashCode ()
 		{
-			return value;
+			return m_value;
 		}
 
 		public static double GetNumericValue (char c)
@@ -486,7 +486,7 @@ namespace System
 		{
 			// LAMESPEC: ECMA draft lists this as returning ToString (null), 
 			// However it doesn't list another ToString() method.
-			return new String (value, 1);
+			return new String (m_value, 1);
 		}
 
 		public static string ToString(char c)
@@ -497,7 +497,7 @@ namespace System
 		public string ToString (IFormatProvider fp)
 		{
 			// LAMESPEC: ECMA draft doesn't say Char implements IFormattable
-			return new String (value, 1);
+			return new String (m_value, 1);
 		}
 
 		// =========== IConvertible Methods =========== //
@@ -509,7 +509,7 @@ namespace System
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			return System.Convert.ToType(value, conversionType, provider);
+			return System.Convert.ToType(m_value, conversionType, provider);
 		}
 		
 		bool IConvertible.ToBoolean (IFormatProvider provider)
@@ -519,12 +519,12 @@ namespace System
 		
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return System.Convert.ToByte(value);
+			return System.Convert.ToByte(m_value);
 		}
 		
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			return value;
+			return m_value;
 		}
 		
 		[CLSCompliant(false)]
@@ -545,23 +545,23 @@ namespace System
 		
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt16(value);
+			return System.Convert.ToInt16(m_value);
 		}
 		
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt32(value);
+			return System.Convert.ToInt32(m_value);
 		}
 		
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt64(value);
+			return System.Convert.ToInt64(m_value);
 		}
 		
 		[CLSCompliant(false)] 
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return System.Convert.ToSByte(value);
+			return System.Convert.ToSByte(m_value);
 		}
 		
 		float IConvertible.ToSingle (IFormatProvider provider)
@@ -577,19 +577,19 @@ namespace System
 		[CLSCompliant(false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt16(value);
+			return System.Convert.ToUInt16(m_value);
 		}
 		
 		[CLSCompliant(false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt32(value);
+			return System.Convert.ToUInt32(m_value);
 		}
 		
 		[CLSCompliant(false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt64(value);
+			return System.Convert.ToUInt64(m_value);
 		}
 	}
 }

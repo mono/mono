@@ -23,7 +23,7 @@ namespace System {
 		public const double NegativeInfinity = -1.0d / 0.0d;
 		public const double PositiveInfinity = 1.0d / 0.0d;
 		
-		internal double value;
+		internal double m_value;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern internal static void AssertEndianity (out double value);
@@ -38,26 +38,26 @@ namespace System {
 
 			double dv = (double)v;
 
-			if (IsPositiveInfinity(value) && IsPositiveInfinity(dv))
+			if (IsPositiveInfinity(m_value) && IsPositiveInfinity(dv))
 				return 0;
 
-			if (IsNegativeInfinity(value) && IsNegativeInfinity(dv))
+			if (IsNegativeInfinity(m_value) && IsNegativeInfinity(dv))
 				return 0;
 
 			if (IsNaN(dv))
-				if (IsNaN(value))
+				if (IsNaN(m_value))
 					return 0;
 				else
 					return 1;
 
-			if (IsNaN(value))
+			if (IsNaN(m_value))
 				if (IsNaN(dv))
 					return 0;
 				else
 					return -1;
 
-			if (value > dv) return 1;
-			else if (value < dv) return -1;
+			if (m_value > dv) return 1;
+			else if (m_value < dv) return -1;
 			else return 0;
 		}
 
@@ -67,18 +67,18 @@ namespace System {
 				return false;
 
 			if (IsNaN ((double)o)) {
-				if (IsNaN(value))
+				if (IsNaN(m_value))
 					return true;
 				else
 					return false;
 			}
 
-			return ((double) o) == value;
+			return ((double) o) == m_value;
 		}
 
 		public override int GetHashCode ()
 		{
-			return (int) value;
+			return (int) m_value;
 		}
 
 		public static bool IsInfinity (double d)
@@ -347,10 +347,10 @@ namespace System {
 		{
 			if (fp is CultureInfo)
 				return DoubleFormatter.NumberToString(format,
-				((CultureInfo)fp).NumberFormat, value);
+				((CultureInfo)fp).NumberFormat, m_value);
 			else
 				return DoubleFormatter.NumberToString(format,
-				(NumberFormatInfo)fp, value);
+				(NumberFormatInfo)fp, m_value);
 		}
 
 		// =========== IConvertible Methods =========== //
@@ -362,17 +362,17 @@ namespace System {
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			return System.Convert.ToType(value, conversionType, provider);
+			return System.Convert.ToType(m_value, conversionType, provider);
 		}
 		
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			return System.Convert.ToBoolean(value);
+			return System.Convert.ToBoolean(m_value);
 		}
 		
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return System.Convert.ToByte(value);
+			return System.Convert.ToByte(m_value);
 		}
 		
 		char IConvertible.ToChar (IFormatProvider provider)
@@ -388,38 +388,38 @@ namespace System {
 		
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			return System.Convert.ToDecimal(value);
+			return System.Convert.ToDecimal(m_value);
 		}
 		
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			return System.Convert.ToDouble(value);
+			return System.Convert.ToDouble(m_value);
 		}
 		
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt16(value);
+			return System.Convert.ToInt16(m_value);
 		}
 		
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt32(value);
+			return System.Convert.ToInt32(m_value);
 		}
 		
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt64(value);
+			return System.Convert.ToInt64(m_value);
 		}
 		
 		[CLSCompliant(false)] 
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return System.Convert.ToSByte(value);
+			return System.Convert.ToSByte(m_value);
 		}
 		
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			return System.Convert.ToSingle(value);
+			return System.Convert.ToSingle(m_value);
 		}
 		
 /*
@@ -432,19 +432,19 @@ namespace System {
 		[CLSCompliant(false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt16(value);
+			return System.Convert.ToUInt16(m_value);
 		}
 		
 		[CLSCompliant(false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt32(value);
+			return System.Convert.ToUInt32(m_value);
 		}
 		
 		[CLSCompliant(false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt64(value);
+			return System.Convert.ToUInt64(m_value);
 		}
 	}
 }

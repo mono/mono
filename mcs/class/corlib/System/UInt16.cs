@@ -18,7 +18,7 @@ namespace System
 		public const ushort MaxValue = 0xffff;
 		public const ushort MinValue = 0;
 
-		internal ushort value;
+		internal ushort m_value;
 
 		public int CompareTo (object value)
 		{
@@ -28,7 +28,7 @@ namespace System
 			if(!(value is System.UInt16))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt16."));
 
-			return this.value - ((ushort) value);
+			return this.m_value - ((ushort) value);
 		}
 
 		public override bool Equals (object obj)
@@ -36,12 +36,12 @@ namespace System
 			if (!(obj is System.UInt16))
 				return false;
 
-			return ((ushort) obj) == value;
+			return ((ushort) obj) == m_value;
 		}
 
 		public override int GetHashCode ()
 		{
-			return value;
+			return m_value;
 		}
 
 		[CLSCompliant(false)]
@@ -150,7 +150,7 @@ namespace System
 			if (format == null)
 				format = "G";
 			
-			return IntegerFormatter.NumberToString (format, nfi, value);
+			return IntegerFormatter.NumberToString (format, nfi, m_value);
 		}
 
 		// =========== IConvertible Methods =========== //
@@ -161,81 +161,81 @@ namespace System
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			return System.Convert.ToBoolean (value);
+			return System.Convert.ToBoolean (m_value);
 		}
 
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return System.Convert.ToByte (value);
+			return System.Convert.ToByte (m_value);
 		}
 
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			return System.Convert.ToChar (value);
+			return System.Convert.ToChar (m_value);
 		}
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			return System.Convert.ToDateTime (value);
+			return System.Convert.ToDateTime (m_value);
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			return System.Convert.ToDecimal (value);
+			return System.Convert.ToDecimal (m_value);
 		}
 
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			return System.Convert.ToDouble (value);
+			return System.Convert.ToDouble (m_value);
 		}
 
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt16 (value);
+			return System.Convert.ToInt16 (m_value);
 		}
 
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt32 (value);
+			return System.Convert.ToInt32 (m_value);
 		}
 
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt64 (value);
+			return System.Convert.ToInt64 (m_value);
 		}
 
 		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return System.Convert.ToSByte (value);
+			return System.Convert.ToSByte (m_value);
 		}
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			return System.Convert.ToSingle (value);
+			return System.Convert.ToSingle (m_value);
 		}
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			return System.Convert.ToType (value, conversionType, provider);
+			return System.Convert.ToType (m_value, conversionType, provider);
 		}
 
 		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return value;
+			return m_value;
 		}
 
 		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt32 (value);
+			return System.Convert.ToUInt32 (m_value);
 		}
 
 		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt64 (value);
+			return System.Convert.ToUInt64 (m_value);
 		}
 	}
 }
