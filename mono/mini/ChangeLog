@@ -1,4 +1,9 @@
 
+Thu May 1 15:28:21 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: make sure leave calls all the needed finally blocks,
+	even when the target jumps out of multiple exception clauses.
+
 Thu May 1 15:18:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* ldscript, Makefile.am: add linker script to reduce the number of
