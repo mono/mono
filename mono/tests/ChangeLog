@@ -1,3 +1,8 @@
+2004-09-21    <vargaz@freemail.hu>
+
+	* libtest.c: Free memory using CoTaskMemFree on windows.
+	* libtest.c (mono_test_stdcall_name_mangling): Remove declspec(dllimport).
+
 2004-09-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c (mono_test_stdcall_name_mangling): Add test for stdcall 
