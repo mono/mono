@@ -65,6 +65,9 @@ namespace System.Windows.Forms {
 				} 
 				else if (value.GetType() == typeof(System.Windows.Forms.StatusBar))
 				{
+					// SWF on Windows adds above the last added StatusBar
+					// I think that this adds below the last one ..
+					// So a reorderchild operation might be required here..
 					this.owner.vbox.PackEnd(value.widget, false, false, 0);
 					// this.vbox.ReorderChild (value.widget, 0);
 					this.owner.vbox.ShowAll();
@@ -80,6 +83,7 @@ namespace System.Windows.Forms {
 					list.Add (value);
 				}
 				// TODO System.Windows.Forms.ToolBar
+				// But we don't have this type yet :-)
 				else {
 					list.Add (value);
 					owner.OnControlAdded (new ControlEventArgs (value));
