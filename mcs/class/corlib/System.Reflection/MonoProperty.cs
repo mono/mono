@@ -231,6 +231,22 @@ namespace System.Reflection {
 		public override string ToString () {
 			return PropertyType.ToString () + " " + Name;
 		}
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		[MonoTODO]
+		public override Type[] OptionalCustomModifiers {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override Type[] RequiredCustomModifiers {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 	}
 }
 

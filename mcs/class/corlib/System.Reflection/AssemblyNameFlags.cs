@@ -53,7 +53,17 @@ namespace System.Reflection {
 		PublicKey = 1,
 
 #if NET_1_1
-		Retargetable = 256
+		Retargetable = 256,
+#endif
+
+#if NET_2_0
+		Library = 0x2,
+		AppDomainPlatform = 0x4,
+		ProcessPlatform = 0x6,
+		SystemPlatform = 0x8,
+		LongevityMask = 0xe,
+		EnableJITcompileOptimizer = 0x4000,
+		EnableJITcompileTracking = 0x8000
 #endif
 	} // AssemblyNameFlags
 

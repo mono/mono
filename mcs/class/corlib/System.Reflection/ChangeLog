@@ -1,5 +1,14 @@
 2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyFlagsAttribute.cs: Add 2.0 stuff.
+
+	* Assembly.cs: Add stubs for ReflectionOnlyLoad methods. Add [Obsolete]
+	to LoadWithPartialName on 2.0.
+
+	* AssemblyNameFlags.cs: Add new 2.0 members.
+
+	* FieldInfo.cs MonoField.cs PropertyInfo.cs ParameterInfo.cs MonoProperty.cs: Add stubs for Optinal/RequiredCustomModifiers.
+
 	* ObfuscationAttribute.cs ObfuscateAssemblyAttribute.cs: New files.
 
 	* EventInfo.cs: Fix 2.0 build.

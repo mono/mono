@@ -38,6 +38,9 @@ namespace System.Reflection
 		private uint flags;
 		
 		// Constructor
+#if NET_2_0
+		[Obsolete("")]
+#endif
 		[CLSCompliant (false)]
 		public AssemblyFlagsAttribute (uint flags)
 		{
@@ -45,13 +48,26 @@ namespace System.Reflection
 		}
 
 #if NET_1_1
+#if NET_2_0
+		[Obsolete("")]
+#endif
 		public AssemblyFlagsAttribute (int flags)
 		{
 			this.flags = (uint)flags;
 		}
 #endif
 
+#if NET_2_0
+		public AssemblyFlagsAttribute (AssemblyNameFlags assemblyFlags)
+		{
+			this.flags = (uint)assemblyFlags;
+		}
+#endif
+
 		// Property
+#if NET_2_0
+		[Obsolete("")]
+#endif
  		[CLSCompliant (false)]
 		public uint Flags
 		{

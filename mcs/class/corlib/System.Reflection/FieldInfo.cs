@@ -167,6 +167,20 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
+		public virtual Type[] OptionalCustomModifiers {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public virtual Type[] RequiredCustomModifiers {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public abstract FieldInfo Mono_GetGenericFieldDefinition ();
 #endif
 	}

@@ -133,5 +133,21 @@ namespace System.Reflection
 		public virtual bool IsDefined( Type attributeType, bool inherit) {
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		[MonoTODO]
+		public virtual Type[] OptionalCustomModifiers {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public virtual Type[] RequiredCustomModifiers {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 	}
 }

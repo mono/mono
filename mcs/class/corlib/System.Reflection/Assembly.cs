@@ -440,6 +440,18 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0
+		[MonoTODO]
+		public static Assembly ReflectionOnlyLoad (byte[] rawAssembly)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static Assembly ReflectionOnlyLoad (string assemblyString) {
+			throw new NotImplementedException ();
+		}
+#endif
+
+#if NET_2_0
 		[Obsolete ("")]
 #endif
 		public static Assembly LoadWithPartialName (string partialName)
@@ -462,6 +474,14 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern Assembly load_with_partial_name (string name, Evidence e);
 
+#if NET_2_0
+		[Obsolete ("")]
+#endif
+		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
+		{
+			return LoadWithPartialName (partialName, securityEvidence, true);
+		}
+
 		/**
 		 * LAMESPEC: It is possible for this method to throw exceptions IF the name supplied
 		 * is a valid gac name and contains filesystem entry charachters at the end of the name
@@ -470,9 +490,16 @@ namespace System.Reflection {
 		 */
 #if NET_2_0
 		[Obsolete ("")]
+		[MonoTODO]
+		public
+#else
+		internal
 #endif
-		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
+		static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence, bool oldBehavior)
 		{
+			if (!oldBehavior)
+				throw new NotImplementedException ();
+
 			if (partialName == null)
 				throw new NullReferenceException ();
 
