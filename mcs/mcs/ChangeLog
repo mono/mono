@@ -1,5 +1,15 @@
 2003-04-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs: (TypeContainer.DefineDefaultConstructor): Use the
+	class/struct location definition Location for the implicit
+	constructor location.
+
+	(Operator.Define): Use the location of the operator for the
+	implicit Method definition.
+
+	(Constructor.Emit): use the constructor location for the implicit
+	base initializer constructor.
+
 	* ecore.cs: Remove ITypeExpression.  This interface is now gone,
 	and the Expression class now contains two new methods:
 

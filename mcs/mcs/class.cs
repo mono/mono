@@ -576,8 +576,8 @@ namespace Mono.CSharp {
 			c = new Constructor (Basename, Parameters.EmptyReadOnlyParameters,
 					     new ConstructorBaseInitializer (
 						     null, Parameters.EmptyReadOnlyParameters,
-						     Location.Null),
-					     Location.Null);
+						     Location),
+					     Location);
 			
 			if (is_static)
 				mods = Modifiers.STATIC;
@@ -2488,7 +2488,6 @@ namespace Mono.CSharp {
 						return false;
 				}
 			}
-
 			ec.CurrentBlock = null;
 
 			if (this is ConstructorBaseInitializer) {
@@ -2684,7 +2683,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (container is Class && Initializer == null)
 					Initializer = new ConstructorBaseInitializer (
-						null, Parameters.EmptyReadOnlyParameters, Location.Null);
+						null, Parameters.EmptyReadOnlyParameters, Location);
 
 
 				//
@@ -4467,7 +4466,7 @@ namespace Mono.CSharp {
 			
 			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
 						     new Parameters (param_list, null, Location),
-						     OptAttributes, Mono.CSharp.Location.Null);
+						     OptAttributes, Location);
 
 			OperatorMethod.IsOperator = true;			
 			OperatorMethod.Define (container);
