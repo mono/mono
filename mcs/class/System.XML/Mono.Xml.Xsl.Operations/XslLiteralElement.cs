@@ -133,7 +133,7 @@ namespace Mono.Xml.Xsl.Operations {
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
 
-			p.TryElementNamespacesOutput (nsDecls, null, null);
+			p.OutputLiteralNamespaceUriNodes (nsDecls, null, null);
 
 			if (children != null) children.Evaluate (p);
 

@@ -1,3 +1,11 @@
+2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslLiteralElement.cs : renamed TryElementNamespacesOutput() to
+	  OutputLiteralNamespaceUriNodes() so that everyone can understand
+	  what it means and when it should be invoked.
+	* XslCopy.cs : So for example literal namespace URIs should not be
+	  copied here ;-)
+
 2005-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTemplateContent.cs : inside template, fallback is ignored.

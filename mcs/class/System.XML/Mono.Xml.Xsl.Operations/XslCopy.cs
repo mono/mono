@@ -87,7 +87,6 @@ namespace Mono.Xml.Xsl.Operations {
 				p.PushElementState (prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, true);
 				p.Out.WriteStartElement (prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
 				
-				p.TryElementNamespacesOutput (nsDecls, null, prefix);
 				if (useAttributeSets != null)
 					foreach (XmlQualifiedName s in useAttributeSets)
 						p.ResolveAttributeSet (s).Evaluate (p);
@@ -100,7 +99,7 @@ namespace Mono.Xml.Xsl.Operations {
 					} while (p.CurrentNode.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 					p.CurrentNode.MoveToParent ();
 				}
-			
+
 				if (children != null) children.Evaluate (p);
 
 				p.Out.WriteFullEndElement ();

@@ -317,12 +317,8 @@ namespace Mono.Xml.Xsl {
 			currentTemplateStack.Pop ();
 		}
 
-		internal void TryElementNamespacesOutput (Hashtable nsDecls, ArrayList excludedPrefixes)
-		{
-			TryElementNamespacesOutput (nsDecls, excludedPrefixes, null);
-		}
-
-		internal void TryElementNamespacesOutput (Hashtable nsDecls, ArrayList excludedPrefixes, string localPrefixInCopy)
+		// Outputs Literal namespace nodes described in spec 7.7.1
+		internal void OutputLiteralNamespaceUriNodes (Hashtable nsDecls, ArrayList excludedPrefixes, string localPrefixInCopy)
 		{
 			if (nsDecls == null)
 				return;
