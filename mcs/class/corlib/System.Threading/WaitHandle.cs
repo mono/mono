@@ -97,7 +97,7 @@ namespace System.Threading
 
 		public const int WaitTimeout = 258;
 
-		private IntPtr os_handle = IntPtr.Zero;
+		private IntPtr os_handle = InvalidHandle;
 		
 		public virtual IntPtr Handle {
 			get {

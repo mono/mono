@@ -1,3 +1,8 @@
+2003-06-25  Dick Porter  <dick@ximian.com>
+
+	* WaitHandle.cs: Default handle value should be InvalidHandle, not
+	Zero.
+
 2003-06-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ThreadPool.cs: correctly create a TimeSpan with provided the number of
