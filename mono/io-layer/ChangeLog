@@ -1,8 +1,3 @@
-2004-08-14  Zoltan Varga  <vargaz@freemail.hu>
-
-	* io.c (GetFileType): Fix assertion if invalid handle is passed by the
-	caller.
-
 2004-08-11  Dick Porter  <dick@ximian.com>
 
 	* sockets.c: 
