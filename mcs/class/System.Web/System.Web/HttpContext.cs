@@ -289,10 +289,9 @@ namespace System.Web
 			return null;
 		}
 
-		[MonoTODO("void RewritePath(string path)")]
-		public void RewritePath (string Path)
+		public void RewritePath (string path)
 		{
-			throw new NotImplementedException ();
+			Request.SetPhysicalPath(path);
 		}
 	}
 }

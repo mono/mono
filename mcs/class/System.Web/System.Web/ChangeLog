@@ -1,3 +1,7 @@
+2003-03-16  Daniel Lopez Ridruejo <daniel @ rawbyte.com>
+	* HttpContext.cs : Implemented RewritePath
+	* HttpRequest.cs : Added internal function SetPhysicalPath
+
 2003-03-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpServerUtility.cs: implemented Transfer ().

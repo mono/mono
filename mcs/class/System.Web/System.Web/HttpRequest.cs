@@ -1050,5 +1050,10 @@ namespace System.Web {
 		{
 			_sFilePath = filePath;
 		}
+
+		internal void SetPhysicalPath (string filePath)
+		{
+			_sPathTranslated = filePath;
+		}
 	}
 }
