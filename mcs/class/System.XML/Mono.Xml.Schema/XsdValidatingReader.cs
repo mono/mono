@@ -42,7 +42,7 @@ using Mono.Xml;
 
 namespace Mono.Xml.Schema
 {
-	internal class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext
+	internal class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext, IXmlNamespaceResolver
 	{
 		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
@@ -184,6 +184,27 @@ namespace Mono.Xml.Schema
 				else
 					return ValidationType.Schema;
 			}
+		}
+
+		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			IXmlNamespaceResolver resolver = reader as IXmlNamespaceResolver;
+			if (resolver == null)
+				throw new NotSupportedException ("The input XmlReader does not implement IXmlNamespaceResolver and thus this validating reader cannot collect in-scope namespaces.");
+			return resolver.GetNamespacesInScope (scope);
+		}
+
+		string IXmlNamespaceResolver.LookupPrefix (string ns)
+		{
+			return ((IXmlNamespaceResolver) this).LookupPrefix (ns, false);
+		}
+
+		string IXmlNamespaceResolver.LookupPrefix (string ns, bool atomizedNames)
+		{
+			IXmlNamespaceResolver resolver = reader as IXmlNamespaceResolver;
+			if (resolver == null)
+				throw new NotSupportedException ("The input XmlReader does not implement IXmlNamespaceResolver and thus this validating reader cannot execute namespace prefix lookup.");
+			return resolver.LookupPrefix (ns, atomizedNames);
 		}
 
 		// It is used only for independent XmlReader use, not for XmlValidatingReader.
@@ -476,12 +497,15 @@ namespace Mono.Xml.Schema
 
 		private XmlQualifiedName QualifyName (string name)
 		{
+			/*
 			int colonAt = name.IndexOf (':');
 			if (colonAt < 0)
 				return new XmlQualifiedName (name, null);
 			else
 				return new XmlQualifiedName (name.Substring (colonAt + 1),
 					LookupNamespace (name.Substring (0, colonAt)));
+			*/
+			return XmlQualifiedName.Parse (name, this);
 		}
 
 		private void HandleError (string error)
@@ -1427,6 +1451,15 @@ namespace Mono.Xml.Schema
 		public override string LookupNamespace (string prefix)
 		{
 			return reader.LookupNamespace (prefix);
+		}
+
+		string IXmlNamespaceResolver.LookupNamespace (string prefix, bool atomizedNames)
+		{
+			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
+			if (res != null)
+				return res.LookupNamespace (prefix, atomizedNames);
+			else
+				return reader.LookupNamespace (prefix);
 		}
 
 		public override void MoveToAttribute (int i)
