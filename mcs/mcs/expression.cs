@@ -435,13 +435,34 @@ namespace CIR {
 	}
 
 	public class New : Expression {
+		public enum NType {
+			Object,
+			Array
+		};
+
+		public readonly NType     NewType;
 		public readonly ArrayList Arguments;
 		public readonly string    RequestedType;
+		// These are for the case when we have an array
+		public readonly string    Rank;
+		public readonly ArrayList Indices;
+		public readonly ArrayList Initializers;
+		
 
 		public New (string requested_type, ArrayList arguments)
 		{
 			RequestedType = requested_type;
 			Arguments = arguments;
+			NewType = NType.Object;
+		}
+
+		public New (string requested_type, ArrayList exprs, string rank, ArrayList initializers)
+		{
+			RequestedType = requested_type;
+			Indices       = exprs;
+			Rank          = rank;
+			Initializers  = initializers;
+			NewType       = NType.Array;
 		}
 		
 		public override void Resolve (TypeContainer tc)

@@ -629,7 +629,15 @@ variable_declarator
 
 variable_initializer
 	: expression
+	  {
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+		$$ = list;
+	  }
 	| array_initializer
+	{
+		$$ = $1;
+	}
 	;
 
 method_declaration
@@ -1337,7 +1345,7 @@ interface_type
 array_type
 	: type rank_specifiers
 	  {
-		$$ = $1;
+		  $$ = (string) $1 + " " + (string) $2;
 		// FIXME: We need to create a type for the nested thing.
 	  }
 	;
@@ -1496,7 +1504,17 @@ element_access
 
 expression_list
 	: expression
+	  {
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+		$$ = list;
+	  }
 	| expression_list COMMA expression
+	  {
+		ArrayList list = (ArrayList) $1;
+		list.Add ($3);
+		$$ = list;
+	  }
 	;
 
 this_access
@@ -1543,52 +1561,98 @@ array_creation_expression
 	: NEW type OPEN_BRACKET expression_list CLOSE_BRACKET 
 	  opt_rank_specifier
 	  opt_array_initializer
-	// finishme
+	  {
+		$$ = new New ((string) $2, (ArrayList) $4, (string) $6, (ArrayList) $7);
+	  }
 	;
 
 opt_rank_specifier
 	: /* empty */
+	  {
+		  $$ = "";
+	  }
 	| rank_specifiers
+	  {
+			$$ = $1;
+	  }
 	;
 
 rank_specifiers
 	: rank_specifier
+	  {
+		  $$ = $1;
+	  }
 	| rank_specifier rank_specifiers
-	// finishme
-	;
+	  {
+		  $$ = (string) $1 + (string) $2;
+	  }     	
+        ;
 
 rank_specifier
 	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET
-	// finishme
+	  {
+		$$ = "[" + (string) $2 + "]";
+	  }
 	;
 
 opt_dim_separators
 	: /* empty */
+	  {
+		$$ = "";
+	  }
 	| dim_separators
-	// finishme
+	  {
+		  $$ = $1;
+	  }		  
 	;
 
 dim_separators
 	: COMMA
+	  {
+		$$ = ",";
+	  }
 	| dim_separators COMMA
-	// finishme
+	  {
+		$$ =(string) $1 + ",";
+	  }
 	;
 
 opt_array_initializer
 	: /* empty */
-	| array_initializer
+	  {
+		$$ = null;
+	  }
+        | array_initializer
+	  {
+		$$ = $1;
+	  }
 	;
 
 array_initializer
 	: OPEN_BRACE CLOSE_BRACE
+	  {
+		ArrayList list = new ArrayList ();
+		$$ = list;
+	  }
 	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
-	// finishme
+	{
+		$$ = (ArrayList) $2;
+	}
 	;
 
 variable_initializer_list
 	: variable_initializer
+	{
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+		$$ = list;
+	}
 	| variable_initializer_list COMMA variable_initializer
-	// finishme
+	{
+		ArrayList list = (ArrayList) $1;
+		list.Add ($3);
+		$$ = list;
+	}
 	;
 
 typeof_expression

@@ -1,3 +1,37 @@
+2001-08-27  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* cs-parser.jay (dim_separators): Implement. Make it a string
+	concatenating all the commas together, just as they appear.
+	(opt_dim_separators): Modify accordingly
+	(rank_specifiers): Update accordingly. Basically do the same
+	thing - instead, collect the brackets here.
+	(opt_rank_sepcifiers): Modify accordingly.
+	(array_type): Modify to actually return the complete type string
+	instead of ignoring the rank_specifiers.
+	(expression_list): Implement to collect the expressions
+	(variable_initializer): Implement. We make it a list of expressions
+	essentially so that we can handle the array_initializer case neatly too.
+	(variable_initializer_list): Implement.
+	(array_initializer): Make it a list of variable_initializers
+	(opt_array_initializer): Modify accordingly.
+
+	* expression.cs (New::NType): Add enumeration to help us
+	keep track of whether we have an object/delegate creation
+	or an array creation.
+	(New:NewType, New::Rank, New::Indices, New::Initializers): New
+	members to hold data about array creation.
+	(New:New): Modify to update NewType
+	(New:New): New Overloaded contructor for the array creation
+	case.
+
+	* cs-parser.jay (array_creation_expression): Implement to call
+	the overloaded New constructor.
+	
+2001-08-26  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* class.cs (TypeContainer::Constructors): Return member
+	constructors instead of returning null.
+
 2001-08-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (InitCoreTypes): Initialize the various core

@@ -333,7 +333,7 @@ namespace CIR {
 
 		public ArrayList Constructors {
 			get {
-				return null; // constructors;
+				return constructors;
 			}
 		}
 
@@ -980,7 +980,7 @@ namespace CIR {
 				return name;
 			}
 		}
-
+		
 		public int ModFlags {
 			get {
 				return mod_flags;
