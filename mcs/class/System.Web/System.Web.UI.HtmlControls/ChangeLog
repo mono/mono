@@ -1,3 +1,7 @@
+2005-02-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HtmlHead.cs: Method name fix.
+
 2005-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlForm.cs: submitStatements holds Hashtables.
