@@ -755,6 +755,11 @@ namespace System.Windows.Forms {
 				vbar.Left = Right - vbar.Width;
 				vbar.Height = Height;
 			}
+
+			if (hbar != null) {
+				hbar.Top = Bottom - hbar.Height;
+				hbar.Width = Width;
+			}
 		}
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)
