@@ -74,7 +74,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.Xml"
+                    AssemblyName = "System.XML"
                     HintPath = "..\obj\Debug\System.XML.dll"
                 />
             </References>
@@ -187,6 +187,11 @@
                 />
                 <File
                     RelPath = "XmlWhiteSpaceTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "XPathNavigatorMatchesTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
