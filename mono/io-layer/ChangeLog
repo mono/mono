@@ -8,6 +8,53 @@
 	* daemon.c: When creating a new process's handles, check whether
 	the shared space needs to be increased
 
+2004-08-19  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_count_signalled_handles): Fix thinko
+	introduced with the fd offset stuff: unlock handles properly when
+	backing off.  Fixes the monologue hang at exit.
+
+2004-08-18  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: 
+	* io.c: Check that new fds fit in the table, return error if not
+
+	* daemon.c (_wapi_daemon_main): 
+	* handles.c (shared_init): Have all processes agree on a size for
+	the fd table.
+
+2004-08-17  Dick Porter  <dick@ximian.com>
+
+	* daemon.c (process_new): 
+	* handles.c (_wapi_handle_new_internal): Cope when the space
+	reserved for file descriptors is larger than the shared segment
+	size.  Fixes the crash reported when running mono under gdb on
+	macosx.
+
+2004-08-16  Dick Porter  <dick@ximian.com>
+
+	* sockets.c:
+	* io.c:
+	* handles-private.h (_wapi_handle_fd_offset_to_handle): Improve
+	error checking with passed-in file descriptors.
+
+2004-08-11  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: 
+	* io.c: Returned handle values are the file descriptor the handle
+	encapsulates
+
+	* handles.c: 
+	* handles-private.h: 
+	* daemon.c: Reserve the range of handles that can have the same
+	values as file descriptors.  These won't be used, but the values
+	will be used as file, console, pipe or socket handles.  The fd to
+	handle mapping is done internally and is invisible to users.
+	Fixes bug 61828.
+
+	* wapi-private.h (_WAPI_HANDLE_VERSION): Increment, because we now
+	reserve a chunk of handle space.
+
 2004-07-22  Dick Porter  <dick@ximian.com>
 
 	* timed-thread.c: 
