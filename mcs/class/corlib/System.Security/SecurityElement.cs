@@ -1,9 +1,10 @@
 //
 // System.Security.SecurityElement.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Sebastien Pouliot  <spouliot@videotron.ca>
 //
 // (C) Ximian, Inc. http://www.ximian.com
 
@@ -16,9 +17,35 @@ namespace System.Security
 	[Serializable]
 	public sealed class SecurityElement 
 	{
+		internal class SecurityAttribute {
+			
+			private string _name;
+			private string _value;
+
+			public SecurityAttribute (string name, string value) 
+			{
+				if (!IsValidAttributeName (name))
+					throw new ArgumentException (Locale.GetText ("Invalid XML attribute name") + ": " + name);
+
+				if (!IsValidAttributeValue (value))
+					throw new ArgumentException (Locale.GetText ("Invalid XML attribute value") + ": " + value);
+
+				_name = name;
+				_value = value;
+			}
+
+			public string Name {
+				get { return _name; }
+			}
+
+			public string Value {
+				get { return _value; }
+			}
+		}
+
 		string text;
 		string tag;
-		Hashtable attributes;
+		ArrayList attributes;
 		ArrayList children;
 		
 		// these values are determined by a simple test program against the MS.Net implementation:
@@ -50,33 +77,27 @@ namespace System.Security
 				if (attributes == null) 
 					return null;
 					
-				Hashtable result = new Hashtable ();
-				IDictionaryEnumerator e = attributes.GetEnumerator ();
-				while (e.MoveNext ())
-					result.Add (e.Key, e.Value);
+				Hashtable result = new Hashtable (attributes.Count);
+				foreach (SecurityAttribute sa in attributes) {
+					result.Add (sa.Name, sa.Value);
+				}
 				return result;
 			}
 
 			set {				
 				if (value == null || value.Count == 0) {
-					attributes = null;
+					attributes.Clear ();
 					return;
 				}
 				
-				Hashtable result = new Hashtable ();
+				if (attributes == null)
+					attributes = new ArrayList ();
+				else
+					attributes.Clear ();
 				IDictionaryEnumerator e = value.GetEnumerator ();
 				while (e.MoveNext ()) {
-					string key = (string) e.Key;
-					string val = (string) e.Value;
-					if (!IsValidAttributeName (key))
-						throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + key);
-
-					if (!IsValidAttributeValue (val))
-						throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + key);
-
-					result.Add (key, val);
+					attributes.Add (new SecurityAttribute ((string) e.Key, (string) e.Value));
 				}
-				attributes = result;
 			}
 		}
 
@@ -125,29 +146,22 @@ namespace System.Security
 
 		public void AddAttribute (string name, string value)
 		{
-			if (name == null || value == null)
-				throw new ArgumentNullException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (GetAttribute (name) != null)
+				throw new ArgumentException (Locale.GetText ("Duplicate attribute : " + name));
 
 			if (attributes == null)
-				attributes = new Hashtable ();
-
-			//
-			// The hashtable will throw ArgumentException if name is already there
-			//
-
-			if (!IsValidAttributeName (name))
-				throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + name);
-
-			if (!IsValidAttributeValue (value))
-				throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + value);
-			
-			attributes.Add (name, value);
+				attributes = new ArrayList ();
+			attributes.Add (new SecurityAttribute (name, value));
 		}
 
 		public void AddChild (SecurityElement child)
 		{
 			if (child == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("child");
 
 			if (children == null)
 				children = new ArrayList ();
@@ -158,12 +172,10 @@ namespace System.Security
 		public string Attribute (string name)
 		{
 			if (name == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("name");
 
-			if (attributes != null)
-				return (string) attributes [name];
-			else
-				return null;
+			SecurityAttribute sa = GetAttribute (name);
+			return ((sa == null) ? null : sa.Value);
 		}
 
 		public bool Equal (SecurityElement other)
@@ -189,10 +201,11 @@ namespace System.Security
 			if (this.attributes != null && other.attributes != null) {
 				if (this.attributes.Count != other.attributes.Count) 
 					return false;
-				IDictionaryEnumerator e = attributes.GetEnumerator ();
-				while (e.MoveNext ()) 
-					if (other.attributes [e.Key] != e.Value)
+				foreach (SecurityAttribute sa1 in attributes) {
+					SecurityAttribute sa2 = other.GetAttribute (sa1.Name);
+					if ((sa2 == null) || (sa1.Value != sa2.Value))
 						return false;
+				}
 			}
 			
 			if (this.children == null && other.children != null && other.children.Count != 0)
@@ -303,20 +316,25 @@ namespace System.Security
 			return s.ToString ();
 		}
 		
-		private void ToXml(ref StringBuilder s, int level)
+		private void ToXml (ref StringBuilder s, int level)
 		{
-			s.Append (' ', level * 3 );
+			s.Append (' ', level * 3);
 			s.Append ("<");
 			s.Append (tag);
 			
 			if (attributes != null) {
-				IDictionaryEnumerator e = attributes.GetEnumerator ();				
-				while (e.MoveNext ()) {
-					s.Append (" ")
-					 .Append (e.Key)
+				for (int i=0; i < attributes.Count; i++) {
+					SecurityAttribute sa = (SecurityAttribute) attributes [i];
+					s.Append (" ");
+					// all other attributes must align with the first one
+					if (i != 0)
+						s.Append (' ', (level * 3) + tag.Length + 1);
+					s.Append (sa.Name)
 					 .Append ("=\"")
-					 .Append (e.Value)
+					 .Append (sa.Value)
 					 .Append ("\"");
+					if (i != attributes.Count - 1)
+						s.Append (Environment.NewLine);
 				}
 			}
 			
@@ -330,12 +348,24 @@ namespace System.Security
 					foreach (SecurityElement child in children) {
 						child.ToXml (ref s, level + 1);
 					}
+					s.Append (' ', level * 3);
 				}
 				s.Append ("</")
 				 .Append (tag)
 				 .Append (">")
 				 .Append (Environment.NewLine);
 			}
+		}
+
+		internal SecurityAttribute GetAttribute (string name) 
+		{
+			if (attributes != null) {
+				foreach (SecurityAttribute sa in attributes) {
+					if (sa.Name == name)
+						return sa;
+				}
+			}
+			return null;
 		}
 	}
 }

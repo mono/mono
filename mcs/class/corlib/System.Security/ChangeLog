@@ -1,3 +1,9 @@
+2004-01-27  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SecurityElement.cs: Attributes are now kept in an ArrayList (but
+	still returned in an Hashtable) so the attributes order can be
+	kept like MS implementation (but Hashtable cannot guarantee this).
+
 2004-01-26  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* NamedPermissionSet.cs: Changed internal constructor 
