@@ -1,3 +1,24 @@
+2002-08-03  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (TypeContainer.GetClassBases): Check whether base types
+	are at least as accessible than the current type.
+	(TypeContainer.AsAccessible): Implemented and made non-static.
+	(MemberBase.CheckParameters): Report a CS0051 if
+	TypeContainer.AsAccessible returns false.
+
+	* delegate.cs (Delegate.Delegate): The default visibility is
+	internal for top-level types and private for nested types.
+
+	* enum.cs (Enum.Enum): The default visibility is internal for
+	top-level types and private for nested types.
+	(Enum.DefineType): Compute the correct visibility.
+
+	* modifiers.cs (Modifiers.TypeAttr): Added a version of this
+	function which takes a `bool is_toplevel' instead of a TypeContainer.
+
+	* typemanager.cs (TypeManager.IsBuiltinType): `void' is also a
+	builtin type.
+
 2002-08-02  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (LocalVariableReferenc): Added constructor which

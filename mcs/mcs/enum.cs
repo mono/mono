@@ -48,7 +48,8 @@ namespace Mono.CSharp {
 			: base (parent, name, l)
 		{
 			this.BaseType = type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC, l);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags,
+						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE, l);
 			OptAttributes = attrs;
 
 			ordered_enums = new ArrayList ();
@@ -117,7 +118,9 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
+			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel);
+
+			attr |= TypeAttributes.Class | TypeAttributes.Sealed;
 
 			UnderlyingType = ResolveType (BaseType, false, Location);
 
@@ -139,21 +142,10 @@ namespace Mono.CSharp {
 			if (IsTopLevel) {
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 
-				if ((ModFlags & Modifiers.PUBLIC) != 0)
-					attr |= TypeAttributes.Public;
-				else
-					attr |= TypeAttributes.NotPublic;
-				
 				TypeBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
 
-				if ((ModFlags & Modifiers.PUBLIC) != 0)
-					attr |= TypeAttributes.NestedPublic;
-				else
-					attr |= TypeAttributes.NestedPrivate;
-
-				
 				TypeBuilder = builder.DefineNestedType (
 					Basename, attr, TypeManager.enum_type);
 			}

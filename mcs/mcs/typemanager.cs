@@ -931,7 +931,7 @@ public class TypeManager {
 		if (t == object_type || t == string_type || t == int32_type || t == uint32_type ||
 		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
 		    t == char_type || t == short_type || t == decimal_type || t == bool_type ||
-		    t == sbyte_type || t == byte_type || t == ushort_type)
+		    t == sbyte_type || t == byte_type || t == ushort_type || t == void_type)
 			return true;
 		else
 			return false;

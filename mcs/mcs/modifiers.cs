@@ -65,13 +65,12 @@ namespace Mono.CSharp {
 
 			return s;
 		}
-		
-		public static TypeAttributes TypeAttr (int mod_flags, TypeContainer caller)
+
+		public static TypeAttributes TypeAttr (int mod_flags, bool is_toplevel)
 		{
 			TypeAttributes t = 0;
-			bool top_level = caller.IsTopLevel;
 
-			if (top_level){
+			if (is_toplevel){
 				if ((mod_flags & PUBLIC) != 0)
 					t |= TypeAttributes.Public;
 				if ((mod_flags & PRIVATE) != 0)
@@ -93,6 +92,13 @@ namespace Mono.CSharp {
 				t |= TypeAttributes.Sealed;
 			if ((mod_flags & ABSTRACT) != 0)
 				t |= TypeAttributes.Abstract;
+
+			return t;
+		}
+		
+		public static TypeAttributes TypeAttr (int mod_flags, TypeContainer caller)
+		{
+			TypeAttributes t = TypeAttr (mod_flags, caller.IsTopLevel);
 
 			// If we do not have static constructors, static methods
 			// can be invoked without initializing the type.

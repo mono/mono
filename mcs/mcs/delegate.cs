@@ -50,7 +50,9 @@ namespace Mono.CSharp {
 			: base (parent, name, l)
 		{
 			this.ReturnType = type;
-			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC, l);
+			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
+							   IsTopLevel ? Modifiers.INTERNAL :
+							   Modifiers.PRIVATE, l);
 			Parameters      = param_list;
 			OptAttributes   = attrs;
 		}
@@ -137,10 +139,10 @@ namespace Mono.CSharp {
 			//
 			// Invoke method
 			//
-			
+
 			// Check accessibility
 			foreach (Type partype in param_types)
-				if (!TypeContainer.AsAccessible (partype, ModFlags))
+				if (!container.AsAccessible (partype, ModFlags))
 					return false;
 			
  			ReturnType = ResolveTypeExpr (ReturnType, false, Location);
@@ -148,7 +150,7 @@ namespace Mono.CSharp {
 			if (ret_type == null)
 				return false;
 
-			if (!TypeContainer.AsAccessible (ret_type, ModFlags))
+			if (!container.AsAccessible (ret_type, ModFlags))
 				return false;
 
 			//

@@ -653,6 +653,13 @@ namespace Mono.CSharp {
 					start = 0;
 				}
 
+				if (!AsAccessible (parent, ModFlags))
+					Report.Error (60, Location,
+						      "Inconsistent accessibility: base class `" +
+						      TypeManager.CSharpName (parent) + "' is less " +
+						      "accessible than class `" +
+						      Name + "'");
+
 			} else {
 				start = 0;
 			}
@@ -706,6 +713,14 @@ namespace Mono.CSharp {
 						return null;
 					}
 				}
+
+				if (!AsAccessible (t, ModFlags))
+					Report.Error (60, Location,
+						      "Inconsistent accessibility: base class `" +
+						      TypeManager.CSharpName (parent) + "' is less " +
+						      "accessible than class `" +
+						      Name + "'");
+
 				
 				ifaces [j] = t;
 			}
@@ -1553,13 +1568,103 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		//
-		// Returns true if `type' is as accessible as the flags `flags'
-		// given for this member
-		//
-		static public bool AsAccessible (Type type, int flags)
+		// Access level of a type.
+		enum AccessLevel {
+			Public			= 0,
+			ProtectedInternal	= 1,
+			Internal		= 2,
+			Protected		= 3,
+			Private			= 4
+		}
+
+		// Check whether `flags' denotes a more restricted access than `level'
+		// and return the new level.
+		static AccessLevel CheckAccessLevel (AccessLevel level, int flags)
 		{
-			return true;
+			AccessLevel old_level = level;
+
+			if ((flags & Modifiers.INTERNAL) != 0) {
+				if ((flags & Modifiers.PROTECTED) != 0) {
+					if ((int) level < AccessLevel.ProtectedInternal)
+						level = AccessLevel.ProtectedInternal;
+				} else {
+					if ((int) level < AccessLevel.Internal)
+						level = AccessLevel.Internal;
+				}
+			} else if ((flags & Modifiers.PROTECTED) != 0) {
+				if ((int) level < AccessLevel.Protected)
+					level = AccessLevel.Protected;
+			} else if ((flags & Modifiers.PRIVATE) != 0)
+				level = AccessLevel.Private;
+
+			return level;
+		}
+
+		// Return the access level for a new member which is defined in the current
+		// TypeContainer with access modifiers `flags'.
+		AccessLevel GetAccessLevel (int flags)
+		{
+			if ((flags & Modifiers.PRIVATE) != 0)
+				return AccessLevel.Private;
+
+			AccessLevel level;
+			if (!IsTopLevel && (Parent != null))
+				level = Parent.GetAccessLevel (flags);
+			else
+				level = AccessLevel.Public;
+
+			return CheckAccessLevel (CheckAccessLevel (level, flags), ModFlags);
+		}
+
+		// Return the access level for type `t', but don't give more access than `flags'.
+		static AccessLevel GetAccessLevel (Type t, int flags)
+		{
+			if (((flags & Modifiers.PRIVATE) != 0) || t.IsNestedPrivate)
+				return AccessLevel.Private;
+
+			AccessLevel level;
+			if (TypeManager.IsBuiltinType (t))
+				return AccessLevel.Public;
+			else if ((t.DeclaringType != null) && (t != t.DeclaringType))
+				level = GetAccessLevel (t.DeclaringType, flags);
+			else {
+				level = CheckAccessLevel (AccessLevel.Public, flags);
+			}
+
+			if (t.IsNestedPublic)
+				return level;
+
+			if (t.IsNestedAssembly || t.IsNotPublic) {
+				if (level < (int) AccessLevel.Internal)
+					level = AccessLevel.Internal;
+			}
+
+			if (t.IsNestedFamily) {
+				if (level < (int) AccessLevel.Protected)
+					level = AccessLevel.Protected;
+			}
+
+			if (t.IsNestedFamORAssem) {
+				if (level < (int) AccessLevel.ProtectedInternal)
+					level = AccessLevel.ProtectedInternal;
+			}
+
+			return level;
+		}
+
+		//
+		// Returns true if `parent' is as accessible as the flags `flags'
+		// given for this member.
+		//
+		public bool AsAccessible (Type parent, int flags)
+		{
+			while (parent.HasElementType)
+				parent = parent.GetElementType ();
+
+			AccessLevel level = GetAccessLevel (flags);
+			AccessLevel level2 = GetAccessLevel (parent, flags);
+
+			return (int) level >= (int) level2;
 		}
 
 		Hashtable builder_and_args;
@@ -2764,8 +2869,13 @@ namespace Mono.CSharp {
 			bool error = false;
 
 			foreach (Type partype in parameters){
-				if (!TypeContainer.AsAccessible (partype, ModFlags))
+				if (!parent.AsAccessible (partype, ModFlags)) {
+					Report.Error (51, Location,
+						      "Inconsistent accessibility: parameter type `" +
+						      TypeManager.CSharpName (partype) + "' is less " +
+						      "accessible than method `" + Name + "'");
 					error = true;
+				}
 				if (partype.IsPointer && !UnsafeOK (parent))
 					error = true;
 			}
@@ -2789,7 +2899,7 @@ namespace Mono.CSharp {
 				return false;
 
 			// verify accessibility
-			if (!TypeContainer.AsAccessible (MemberType, ModFlags))
+			if (!parent.AsAccessible (MemberType, ModFlags))
 				return false;
 
 			if (MemberType.IsPointer && !UnsafeOK (parent))
@@ -2883,7 +2993,7 @@ namespace Mono.CSharp {
 			if (t == null)
 				return false;
 
-			if (!TypeContainer.AsAccessible (t, ModFlags))
+			if (!parent.AsAccessible (t, ModFlags))
 				return false;
 
 			if (t.IsPointer && !UnsafeOK (parent))
@@ -4039,5 +4149,5 @@ namespace Mono.CSharp {
 			}
 			return false;
 		}
-	}		
+	}
 }
