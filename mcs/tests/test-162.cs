@@ -43,6 +43,12 @@ struct E
 {
 	public D d;
 	public bool e;
+
+	public E (int foo)
+	{
+		this.e = true;
+		this.d.foo = 9;
+	}
 }
 
 struct F
@@ -121,6 +127,22 @@ class X
 		f.f = 3.14F;
 
 		test_output (f);
+	}
+
+	static void test9 ()
+	{
+		E e = new E (5);
+		Console.WriteLine (e.d.foo);
+	}
+
+	static void test10 ()
+	{
+		F f;
+		f.e = new E (10);
+		Console.WriteLine (f.e.d.foo);
+		Console.WriteLine (f.e.d);
+		f.f = 3.14F;
+		Console.WriteLine (f);
 	}
 
 	public static int Main ()
