@@ -500,35 +500,47 @@ namespace Mono.CSharp {
 		//
 		// Returns: Type or null if they type can not be found.
 		//
+		// Come to think of it, this should be a DeclSpace
+		//
 		static public Type LookupType (DeclSpace ds, string name, bool silent, Location loc)
 		{
 			Type t;
 
-			//
-			// For the case the type we are looking for is nested within this one
-			// or is in any base class
-			//
-			DeclSpace containing_ds = ds;
-			while (containing_ds != null){
-				Type current_type = containing_ds.TypeBuilder;
-
-				while (current_type != null) {
-					//
-					// nested class
-					//
-					t = TypeManager.LookupType (current_type.FullName + "+" + name);
-					if (t != null)
-						return t;
-
-					current_type = current_type.BaseType;
+			if (ds.Cache.Contains (name)){
+				t = (Type) ds.Cache [name];
+				if (t != null)
+					return t;
+			} else {
+				//
+				// For the case the type we are looking for is nested within this one
+				// or is in any base class
+				//
+				DeclSpace containing_ds = ds;
+				while (containing_ds != null){
+					Type current_type = containing_ds.TypeBuilder;
+					
+					while (current_type != null) {
+						//
+						// nested class
+						//
+						t = TypeManager.LookupType (current_type.FullName + "+" + name);
+						if (t != null){
+							ds.Cache [name] = t;
+							return t;
+						}
+						
+						current_type = current_type.BaseType;
+					}
+					
+					containing_ds = containing_ds.Parent;
 				}
-
-				containing_ds = containing_ds.Parent;
+				
+				t = NamespaceLookup (ds.Namespace, name);
+				if (t != null){
+					ds.Cache [name] = t;
+					return t;
+				}
 			}
-
-			t = NamespaceLookup (ds.Namespace, name);
-			if (t != null)
-				return t;
 
 			if (!silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");

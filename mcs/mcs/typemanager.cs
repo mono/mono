@@ -690,7 +690,7 @@ public class TypeManager {
 		public BindingFlags bf;
 	}
 	
-	static Hashtable criteria_cache = new Hashtable ();
+	static Hashtable criteria_cache = new PtrHashtable ();
 
 	//
 	// This is a wrapper for RealFindMembers, this provides a front-end cache
@@ -702,7 +702,7 @@ public class TypeManager {
 		MemberInfo [] val;
 		Hashtable type_hash;
 		CriteriaKey ck;
-
+		
 		ck.mt = mt;
 		ck.bf = bf;
 
@@ -722,6 +722,7 @@ public class TypeManager {
 			criteria_cache [criteria] = criteria_hash;
 			criteria_hash [t] = type_hash;
 		}
+		
 		val = RealFindMembers (t, mt, bf, filter, criteria);
 		type_hash [ck] = val;
 		return val;

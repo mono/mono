@@ -1,5 +1,15 @@
 2002-05-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs: Use a ptrhashtable for the criteria, because we
+	do not want to reuse potential criteria memory.
+
+	* class.cs (MyEventBuilder): Set reflected_type;
+
+	* ecore.cs (Constantify): Added support for constifying bools.
+
+	(RootContext.LookupType): Added a cache for values looked up in
+	the declaration space.
+
 	* typemanager.cs (FindMembers): Now is a front-end to
 	RealFindMembers, and provides a two-level hashtable-based cache to
 	the request.  

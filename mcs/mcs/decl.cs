@@ -219,6 +219,8 @@ namespace Mono.CSharp {
 		//
 		public Namespace Namespace;
 
+		public Hashtable Cache = new Hashtable ();
+		
 		public string Basename;
 		
 		/// <summary>

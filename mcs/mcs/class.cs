@@ -3231,9 +3231,7 @@ namespace Mono.CSharp {
 			
 			declaring_type = type_builder;
 
-			// FIXME : This is supposed to be MyBuilder but since that doesn't
-			// derive from Type, I have no clue what to do with this.
-			reflected_type = null;
+			reflected_type = type_builder;
 			
 			attributes = event_attr;
 			this.name = name;

@@ -313,6 +313,8 @@ namespace Mono.CSharp {
 				return new ByteConstant ((byte)v);
 			else if (t == TypeManager.char_type)
 				return new CharConstant ((char)v);
+			else if (t == TypeManager.bool_type)
+				return new BoolConstant ((bool) v);
 			else if (TypeManager.IsEnumType (t)){
 				Constant e = Constantify (v, v.GetType ());
 
