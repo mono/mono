@@ -1,3 +1,16 @@
+2004-12-04  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c
+	(mono_metadata_parse_type_full): Take a `MonoGenericContext *'
+	instead of a `MonoGenericContainer *'.	
+	(mono_metadata_parse_array_full): Likewise.
+	(mono_metadata_parse_signature_full): Likewise.
+	(mono_metadata_parse_method_signature_full): Likewise.
+	(mono_metadata_parse_generic_inst): Likewise.
+	(mono_metadata_parse_generic_param): Likewise.
+	(mono_metadata_parse_mh_full): Likewise.
+	(mono_type_create_from_typespec_full): Likewise.
+
 2004-12-03  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h (MonoGenericContainer): Replaced the
