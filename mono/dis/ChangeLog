@@ -1,3 +1,6 @@
+Thu Feb  6 02:43:23 PST 2003 Piers Haken <piersh@friskit.com>
+
+	* dump.c: more warning cleanups
 
 Mon Jan 27 17:16:50 CET 2003 Paolo Molaro <lupus@ximian.com>
 
