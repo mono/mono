@@ -11,7 +11,6 @@ using System;
 using System.Security.Cryptography;
 using System.Xml;
 using Microsoft.Web.Services;
-
 #if !WSE1
 using Microsoft.Web.Services.Xml;
 #endif
@@ -28,14 +27,25 @@ namespace Microsoft.Web.Services.Security {
 
 		private byte[] nonce;
 
-		internal Nonce () 
+#if WSE1
+		internal Nonce () : this (16) {}
+		internal Nonce (int size)
+#else
+		public Nonce (int size)
+#endif
 		{
-			nonce = new byte [16]; // see reference b.
-			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
-			rng.GetBytes (nonce);
+			nonce = new byte [size]; // default is 16 see reference b.
+			if (size > 0) {
+				RandomNumberGenerator rng = RandomNumberGenerator.Create ();
+				rng.GetBytes (nonce);
+			}
 		}
 
+#if WSE1
 		internal Nonce (XmlElement element)
+#else
+		public Nonce (XmlElement element) 
+#endif
 		{
 			LoadXml (element);
 		}
@@ -44,7 +54,7 @@ namespace Microsoft.Web.Services.Security {
 			get { return Convert.ToBase64String (nonce); }
 		}
 
-		public byte[] GetValueBytes() 
+		public byte[] GetValueBytes () 
 		{
 			return (byte[]) nonce.Clone ();
 		}
@@ -61,6 +71,8 @@ namespace Microsoft.Web.Services.Security {
 
 		public void LoadXml (XmlElement element) 
 		{
+			if (element == null)
+				throw new ArgumentNullException ("element");
 			if ((element.LocalName != WSSecurity.ElementNames.Nonce) || (element.NamespaceURI != WSSecurity.NamespaceURI))
 				throw new ArgumentException ("invalid LocalName or NamespaceURI");
 

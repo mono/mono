@@ -1,6 +1,7 @@
 2003-10-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyIdentifier.cs: Completed implementation.
+	* Nonce.cs: Added WSE2 support so I could include the unit tests.
 	* SecurityTokenReference.cs: Completed implementation.
 
 2003-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
