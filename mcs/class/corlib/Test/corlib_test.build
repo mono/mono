@@ -48,13 +48,40 @@
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitBase.dll"/>
 			</references>
+			<arg value="/r:..\..\lib\corlib.dll"/>
+			<arg value="/r:..\..\lib\System.dll"/>
 			<arg value="/nowarn:1595"/>
+			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
+			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
 		</csc>
-	</target>
+
+			<csc target="library" output="corlib_linux_test.dll" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="**/MartinTests.cs"/>
+				<excludes name="TheTests.cs"/>
+				<excludes name="System/IntegerFormatterTest.cs"/>
+				<excludes name="System/EnumTest.cs"/>
+				<excludes name="System.Security.Policy/*.cs"/>
+				<excludes name="System.Collections/ArrayListTest.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitCore_mono.dll"/>
+			</references>
+			<arg value="/r:..\..\lib\corlib.dll"/>
+			<arg value="/r:..\..\lib\System.dll"/>
+			<arg value="/nowarn:1595"/>
+			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
+			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
+		</csc>
+
+</target>
 
 
 	<target name="test" depends="assemblies">
-<!--		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/> -->
+
+		<!--<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/>-->
+
 		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_reference.dll" failonerror="false"/>
 	</target>
 

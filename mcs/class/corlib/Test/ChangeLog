@@ -1,3 +1,8 @@
+2002-03-18  Nick Drochak  <ndrochak@gol.com>
+
+	* corlib_test.build: build RunTests.corlib.exe with only mono class
+	libs. This tells what we are missing to run the tests.
+
 2002/03/18  Nick Drochak <ndrochak@gol.com>
 
 	* corlib_test.build: disable running of NUnit tests against mono 
