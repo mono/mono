@@ -3235,7 +3235,15 @@ namespace Mono.CSharp {
 
 			bool must_do_cs1540_check;
 			if (!IsAccessorAccessible (ec.ContainerType, getter, out must_do_cs1540_check)) {
-				Report.Error (122, loc, "'{0}.get' is inaccessible due to its protection level", PropertyInfo.Name);
+				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (getter) as PropertyBase.PropertyMethod;
+				if (pm != null && pm.HasCustomAccessModifier) {
+					Report.SymbolRelatedToPreviousError (pm);
+					Report.Error (271, loc, "The property or indexer '{0}' cannot be used in this context because the get accessor is inaccessible",
+						TypeManager.CSharpSignature (getter));
+				}
+				else
+					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
+						TypeManager.CSharpSignature (getter));
 				return null;
 			}
 			
@@ -3287,7 +3295,15 @@ namespace Mono.CSharp {
 
 			bool must_do_cs1540_check;
 			if (!IsAccessorAccessible (ec.ContainerType, setter, out must_do_cs1540_check)) {
-				Report.Error (122, loc, "'{0}.set' is inaccessible due to its protection level", PropertyInfo.Name);
+				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (setter) as PropertyBase.PropertyMethod;
+				if (pm != null && pm.HasCustomAccessModifier) {
+					Report.SymbolRelatedToPreviousError (pm);
+					Report.Error (272, loc, "The property or indexer '{0}' cannot be used in this context because the set accessor is inaccessible",
+						TypeManager.CSharpSignature (setter));
+				}
+				else
+					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
+						TypeManager.CSharpSignature (setter));
 				return null;
 			}
 			
