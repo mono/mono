@@ -1,3 +1,8 @@
+2003-02-25  Dick Porter  <dick@ximian.com>
+
+	* shared.c (_wapi_shm_attach): Return a failure code on system
+	call errors, rather than exiting.
+
 2003-02-21  Dick Porter  <dick@ximian.com>
 
 	* processes.c (GetCurrentProcessId): Use the current process
