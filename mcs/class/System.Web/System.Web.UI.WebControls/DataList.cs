@@ -645,8 +645,13 @@ namespace System.Web.UI.WebControls
 					CreateItem (-1, ListItemType.Header, useDataSource, null);
 
 				foreach (object current in source) {
-					if (!useDataSource)
-						dkeys.Add (DataBinder.GetPropertyValue (current, dataKey));
+					if (useDataSource) {
+						try {
+							dkeys.Add (DataBinder.GetPropertyValue (current, dataKey));
+						} catch {
+							dkeys.Add (dkeys.Count);
+						}
+					}
 
 					ListItemType type = ListItemType.Item;
 					if (index == editIndex) {

@@ -1,3 +1,8 @@
+2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataList.cs: handle the exception when adding new keys to
+	DataKeysArray.
+
 2003-01-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseDataList.cs: what can I say for this one? I spent so many time
