@@ -20,7 +20,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal sealed class OciStatementHandle : OciHandle, IOciHandle, IDisposable
+	internal sealed class OciStatementHandle : OciHandle, IDisposable
 	{
 		#region Fields
 
@@ -32,6 +32,7 @@ namespace System.Data.OracleClient.Oci {
 		ArrayList values;
 		ArrayList parameters;
 
+		bool disposed = false;
 		bool moreResults;
 		int columnCount;
 	
@@ -39,8 +40,8 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciStatementHandle (OciEnvironmentHandle environment, IntPtr handle)
-			: base (OciHandleType.Statement, environment, handle)
+		public OciStatementHandle (OciHandle parent, IntPtr handle)
+			: base (OciHandleType.Statement, parent, handle)
 		{
 			parameters = new ArrayList ();
 			language = OciStatementLanguage.NTV;
@@ -80,25 +81,41 @@ namespace System.Data.OracleClient.Oci {
 		#region Methods
 
 		[DllImport ("oci")]
-		public static extern int OCIDescriptorFree (IntPtr descp,
-							[MarshalAs (UnmanagedType.U4)] OciDescriptorType type);
+		static extern int OCIBindByName (IntPtr stmtp,
+						out IntPtr bindpp,
+						IntPtr errhp,
+						string placeholder,
+						int placeh_len,
+						IntPtr valuep,
+						int value_sz,
+						[MarshalAs (UnmanagedType.U4)] OciDataType dty,
+						ref int indp,
+						IntPtr alenp,
+						ushort rcodep,
+						uint maxarr_len,
+						IntPtr curelp,
+						uint mode);
 
 		[DllImport ("oci")]
-		public static extern int OCIParamGet (IntPtr hndlp,
-							[MarshalAs (UnmanagedType.U4)] OciHandleType htype,
-							IntPtr errhp,
-							out IntPtr parmdpp,
-							[MarshalAs (UnmanagedType.U4)] int pos);
+		static extern int OCIDescriptorFree (IntPtr descp,
+						[MarshalAs (UnmanagedType.U4)] OciHandleType type);
 
 		[DllImport ("oci")]
-		public static extern int OCIStmtExecute (IntPtr svchp,
-							IntPtr stmthp,
-							IntPtr errhp,
-							[MarshalAs (UnmanagedType.U4)] bool iters,
-							uint rowoff,
-							IntPtr snap_in,
-							IntPtr snap_out,
-							[MarshalAs (UnmanagedType.U4)] OciExecuteMode mode);
+		static extern int OCIParamGet (IntPtr hndlp,
+						[MarshalAs (UnmanagedType.U4)] OciHandleType htype,
+						IntPtr errhp,
+						out IntPtr parmdpp,
+						[MarshalAs (UnmanagedType.U4)] int pos);
+
+		[DllImport ("oci")]
+		static extern int OCIStmtExecute (IntPtr svchp,
+						IntPtr stmthp,
+						IntPtr errhp,
+						[MarshalAs (UnmanagedType.U4)] bool iters,
+						uint rowoff,
+						IntPtr snap_in,
+						IntPtr snap_out,
+						[MarshalAs (UnmanagedType.U4)] OciExecuteMode mode);
 
 		[DllImport ("oci")]
 		public static extern int OCIStmtFetch (IntPtr stmtp,
@@ -116,7 +133,15 @@ namespace System.Data.OracleClient.Oci {
 							[MarshalAs (UnmanagedType.U4)] OciStatementLanguage language,
 							[MarshalAs (UnmanagedType.U4)] OciStatementMode mode);
 
-		public IntPtr CreateParameterHandle (int position)
+		protected override void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				disposed = true;
+				base.Dispose (disposing);
+			}
+		}
+
+		public OciParameterDescriptor GetParameter (int position)
 		{
 			IntPtr handle = IntPtr.Zero;
 			int status = 0;
@@ -125,47 +150,88 @@ namespace System.Data.OracleClient.Oci {
 						OciHandleType.Statement,
 						ErrorHandle.Handle,
 						out handle,
-						position);
+						position + 1);
+
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 
-			return handle;
+			OciParameterDescriptor output = new OciParameterDescriptor (this, handle);
+			output.ErrorHandle = ErrorHandle;
+			return output;
 		}
 
-		public void FreeBindHandle (IntPtr handle)
+		public OciDefineHandle GetDefineHandle (int position)
 		{
-			int status = 0;
+			OciDefineHandle defineHandle = new OciDefineHandle (this, IntPtr.Zero);
+			defineHandle.ErrorHandle = ErrorHandle;
+			defineHandle.DefineByPosition (position);
 
-			//status = OCIDescriptorFree (handle, OciDescriptorType.Parameter);
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
+			return defineHandle;
 		}
 
-		public void FreeParameterHandle (IntPtr handle)
+		public OciBindHandle GetBindHandle (string name, object val, OciDataType type)
 		{
+			IntPtr handle = IntPtr.Zero;
+			IntPtr value = IntPtr.Zero;
+			int indicator = 0;
+
+			string stringValue = val.ToString ();
+			int definedSize = 0;
 			int status = 0;
 
-			status = OCIDescriptorFree (handle, OciDescriptorType.Parameter);
+			if (val == DBNull.Value)
+				indicator = -1;
+			else
+				switch (type) {
+				case OciDataType.Number:
+				case OciDataType.Integer:
+				case OciDataType.Float:
+				case OciDataType.VarNum:
+					type = OciDataType.Char;
+					definedSize = stringValue.Length;
+					value = Marshal.StringToHGlobalAnsi (stringValue);
+					break;
+				case OciDataType.Date:
+					break;
+				default:
+					type = OciDataType.Char;
+					definedSize = stringValue.Length;
+					value = Marshal.StringToHGlobalAnsi (stringValue);
+					break;
+				}
+
+			status = OCIBindByName (Handle,
+						out handle,
+						ErrorHandle,
+						name,
+						name.Length,
+						value,
+						definedSize,
+						type,
+						ref indicator,
+						IntPtr.Zero,
+						0,
+						0,
+						IntPtr.Zero,
+						0);
+
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
+
+			OciBindHandle output = new OciBindHandle (this, handle);
+			output.Value = value;
+			return output;
 		}
 
 		void Define ()
 		{
 			values = new ArrayList ();
 			for (int i = 0; i < columnCount; i += 1)  
-				values.Add (new OciDefineHandle (this, i + 1));
-		}
-
-		public void Dispose ()
-		{
-			Environment.FreeHandle (this);
+				values.Add (GetDefineHandle (i));
 		}
 
 		public bool ExecuteQuery ()
@@ -213,192 +279,12 @@ namespace System.Data.OracleClient.Oci {
 
 		void GetColumnCount ()
 		{
-			int status = 0;
-			status = OciGlue.OCIAttrGetInt32 ( Handle,
-						(uint) OciHandleType.Statement,
-						out columnCount,
-						IntPtr.Zero,
-						OciAttributeType.ParameterCount,
-						ErrorHandle.Handle);
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-		}
-
-		public bool GetAttributeBool (IntPtr handle, OciAttributeType type)
-		{
-			bool output;
-			int status = 0;
-
-			status = OciGlue.OCIAttrGetBool (handle,
-						(uint) OciDescriptorType.Parameter,
-						out output,
-						IntPtr.Zero,
-						type,
-						ErrorHandle.Handle);
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-
-			return output;
-		}
-
-		public sbyte GetAttributeSByte (IntPtr handle, OciAttributeType type) {
-			sbyte output;
-			int status = 0;
-
-			status = OciGlue.OCIAttrGetSByte (handle,
-				(uint) OciDescriptorType.Parameter,
-				out output,
-				IntPtr.Zero,
-				type,
-				ErrorHandle.Handle);
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-
-			return output;
-		}
-
-		public byte GetAttributeByte (IntPtr handle, OciAttributeType type)
-		{
-			byte output;
-			int status = 0;
-
-			status = OciGlue.OCIAttrGetByte (handle,
-						(uint) OciDescriptorType.Parameter,
-						out output,
-						IntPtr.Zero,
-						type,
-						ErrorHandle.Handle);
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-
-			return output;
-		}
-
-		public ushort GetAttributeUInt16 (IntPtr handle, OciAttributeType type) {
-			int status = 0;
-			ushort output;
-
-			status = OciGlue.OCIAttrGetUInt16 (handle,
-				(uint) OciDescriptorType.Parameter,	
-				out output,
-				IntPtr.Zero,
-				type,
-				ErrorHandle.Handle);
-
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-
-			return output;
-		}
-
-		public int GetAttributeInt32 (IntPtr handle, OciAttributeType type)
-		{
-			int status = 0;
-			int output;
-
-			status = OciGlue.OCIAttrGetInt32 (handle,
-						(uint) OciDescriptorType.Parameter,	
-						out output,
-						IntPtr.Zero,
-						type,
-						ErrorHandle.Handle);
-
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-
-			return output;
-		}
-
-		[MonoTODO]
-		public string GetAttributeString (IntPtr handle, OciAttributeType type)
-		{
-			string output = String.Empty;
-			IntPtr outputPtr = IntPtr.Zero;
-			int outSize;
-			int status = 0;
-
-			status = OciGlue.OCIAttrGet (handle,
-						(uint) OciDescriptorType.Parameter,
-						out outputPtr,
-						out outSize,
-						type,
-						ErrorHandle.Handle);
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-
-			if (outputPtr != IntPtr.Zero && outSize > 0) {
-				object name = Marshal.PtrToStringAnsi (outputPtr, outSize);
-				if (name != null) {
-					output = String.Copy ((string) name);
-					/* TRWC 
-					 * We shouldn't really free this, but how can we make Oracle
-					 * do it?
-					 */
-					// Marshal.FreeHGlobal (outputPtr); -- this *may* leak memory
-				}
-			}
-
-			return output;
-		}
-
-		[MonoTODO]
-		public OciColumnInfo DescribeColumn (int ordinal)
-		{
-			int status = 0;
-			OciColumnInfo columnInfo;
-
-			string schemaName;	
-
-			IntPtr parameterHandle = CreateParameterHandle (ordinal + 1);
-
-			columnInfo.ColumnName = GetAttributeString (parameterHandle, OciAttributeType.Name);
-			columnInfo.ColumnOrdinal = ordinal + 1;
-			columnInfo.ColumnSize = GetAttributeUInt16 (parameterHandle, OciAttributeType.DataSize);
-			columnInfo.Precision = GetAttributeByte (parameterHandle, OciAttributeType.Precision);
-			columnInfo.Scale = GetAttributeSByte (parameterHandle, OciAttributeType.Scale);
-			columnInfo.DataType = (OciDataType) GetAttributeInt32 (parameterHandle, OciAttributeType.DataType);
-			columnInfo.AllowDBNull = GetAttributeBool (parameterHandle, OciAttributeType.IsNull);
-			columnInfo.BaseColumnName = GetAttributeString (parameterHandle, OciAttributeType.Name);
-
-			// TRWC not sure what to do with this yet.
-			schemaName = GetAttributeString (parameterHandle, OciAttributeType.SchemaName);
-
-			FreeParameterHandle (parameterHandle);
-
-			return columnInfo;
+			columnCount = GetAttributeInt32 (OciAttributeType.ParameterCount, ErrorHandle);
 		}
 
 		public OciStatementType GetStatementType ()
 		{
-			int status = 0;
-			int statementType;
-
-			status = OciGlue.OCIAttrGetInt32 (Handle,
-							(uint) OciHandleType.Statement,
-							out statementType,
-							IntPtr.Zero,
-							OciAttributeType.StatementType,
-							errorHandle.Handle);
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-
-			return (OciStatementType) statementType;
+			return (OciStatementType) GetAttributeInt32 (OciAttributeType.StatementType, ErrorHandle);
 		}
 
 		public bool Fetch ()

@@ -68,54 +68,6 @@ namespace System.Data.OracleClient.Oci {
 							IntPtr errhp);
 
 		[DllImport ("oci")]
-		public static extern int OCIAttrGet (IntPtr trgthndlp,
-							uint trghndltyp,
-							out IntPtr attributep,
-							out int sizep,
-							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-							IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		public static extern int OCIAttrGetBool (IntPtr trgthndlp,
-							uint trghndltyp,
-							out bool attributep,
-							IntPtr sizep,
-							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-							IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		public static extern int OCIAttrGetSByte (IntPtr trgthndlp,
-			uint trghndltyp,
-			out sbyte attributep,
-			IntPtr sizep,
-			[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-			IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		public static extern int OCIAttrGetByte (IntPtr trgthndlp,
-							uint trghndltyp,
-							out byte attributep,
-							IntPtr sizep,
-							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-							IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		public static extern int OCIAttrGetUInt16 (IntPtr trgthndlp,
-							uint trghndltyp,
-							out ushort attributep,
-							IntPtr sizep,
-							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-							IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		public static extern int OCIAttrGetInt32 (IntPtr trgthndlp,
-							uint trghndltyp,
-							out int attributep,
-							IntPtr sizep,
-							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-							IntPtr errhp);
-
-		[DllImport ("oci")]
 		public static extern int OCIErrorGet (IntPtr hndlp,
 							uint recordno,
 							IntPtr sqlstate,

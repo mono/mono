@@ -267,8 +267,7 @@ namespace System.Data.OracleClient {
 
 		public string GetName (int i)
 		{
-			OciColumnInfo columnInfo = statement.DescribeColumn (i);
-			return columnInfo.ColumnName;
+			return statement.GetParameter (i).GetName ();
 		}
 
 		[MonoTODO]
@@ -315,18 +314,19 @@ namespace System.Data.OracleClient {
 
 			for (int i = 0; i < statement.ColumnCount; i += 1) {
 				DataRow row = schemaTable.NewRow ();
-				OciColumnInfo columnInfo = statement.DescribeColumn (i);
 
-				row ["ColumnName"] = columnInfo.ColumnName;
-				row ["ColumnOrdinal"] = i + 1;
-				row ["ColumnSize"] = (int) columnInfo.ColumnSize;
-				row ["NumericPrecision"] = (short) columnInfo.Precision;
-				row ["NumericScale"] = (short) columnInfo.Scale;
+				OciParameterDescriptor parameter = statement.GetParameter (i);
+
+				row ["ColumnName"]		= parameter.GetName ();
+				row ["ColumnOrdinal"]		= i + 1;
+				row ["ColumnSize"]		= parameter.GetDataSize ();
+				row ["NumericPrecision"]	= parameter.GetPrecision ();
+				row ["NumericScale"]		= parameter.GetScale ();
 				// FIXME: "DataType" need to implement
 				//row ["DataType"] = OciGlue.OciDataTypeToDbType (columnInfo.DataType);
-				row ["DataType"] = typeof(string);
-				row ["AllowDBNull"] = columnInfo.AllowDBNull;
-				row ["BaseColumnName"] = columnInfo.BaseColumnName;
+				row ["DataType"]		= typeof(string);
+				row ["AllowDBNull"]		= parameter.GetIsNull ();
+				row ["BaseColumnName"]		= parameter.GetName ();
 
 				schemaTable.Rows.Add (row);
 			}

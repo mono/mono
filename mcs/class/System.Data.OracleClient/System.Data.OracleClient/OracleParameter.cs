@@ -28,6 +28,7 @@ namespace System.Data.OracleClient {
 
 		string name;
 		OracleType oracleType = OracleType.VarChar;
+		OciDataType ociType;
 		int size;
 		ParameterDirection direction;
 		bool isNullable;
@@ -54,7 +55,6 @@ namespace System.Data.OracleClient {
 
 		public OracleParameter (string name, object value)
 		{
-			bindHandle = new OciBindHandle (name);
 			this.name = name;
 			this.value = value;
 			SourceVersion = DataRowVersion.Current;
@@ -78,7 +78,6 @@ namespace System.Data.OracleClient {
 
 		public OracleParameter (string name, OracleType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 		{
-			bindHandle = new OciBindHandle (name);
 			this.name = name;
 			this.size = size;
 			this.value = value;
@@ -124,8 +123,8 @@ namespace System.Data.OracleClient {
 		}
 		
 		public string ParameterName {
-			get { return bindHandle.Name; }
-			set { bindHandle.Name = value; }
+			get { return name; }
+			set { name = value; }
 		}
 
 		public byte Precision {
@@ -167,7 +166,7 @@ namespace System.Data.OracleClient {
 
 		internal void Bind (OciStatementHandle handle)
 		{
-			bindHandle.Bind (handle, value);
+			bindHandle = handle.GetBindHandle (ParameterName, value, ociType);
 		}
 
 		[MonoTODO]
@@ -225,61 +224,61 @@ namespace System.Data.OracleClient {
 			switch (type) {
 			case DbType.AnsiString:
 				oracleType = OracleType.VarChar;
-				bindHandle.Type = OciDataType.VarChar;
+				ociType = OciDataType.VarChar;
 				break;
 			case DbType.AnsiStringFixedLength:
 				oracleType = OracleType.Char;
-				bindHandle.Type = OciDataType.Char;
+				ociType = OciDataType.Char;
 				break;
 			case DbType.Binary:
 			case DbType.Guid:
 				oracleType = OracleType.Raw;
-				bindHandle.Type = OciDataType.Raw;
+				ociType = OciDataType.Raw;
 				break;
 			case DbType.Boolean:
 			case DbType.Byte:
 				oracleType = OracleType.Byte;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			case DbType.Currency:
 			case DbType.Decimal:
 			case DbType.Int64:
 				oracleType = OracleType.Number;
-				bindHandle.Type = OciDataType.Number;
+				ociType = OciDataType.Number;
 				break;
 			case DbType.Date:
 			case DbType.DateTime:
 			case DbType.Time:
 				oracleType = OracleType.DateTime;
-				bindHandle.Type = OciDataType.Char;
+				ociType = OciDataType.Char;
 				break;
 			case DbType.Double:
 				oracleType = OracleType.Double;
-				bindHandle.Type = OciDataType.Float;
+				ociType = OciDataType.Float;
 				break;
 			case DbType.Int16:
 				oracleType = OracleType.Int16;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			case DbType.Int32:
 				oracleType = OracleType.Int32;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			case DbType.Object:
 				oracleType = OracleType.Blob;
-				bindHandle.Type = OciDataType.Blob;
+				ociType = OciDataType.Blob;
 				break;
 			case DbType.Single:
 				oracleType = OracleType.Float;
-				bindHandle.Type = OciDataType.Float;
+				ociType = OciDataType.Float;
 				break;
 			case DbType.String:
 				oracleType = OracleType.NVarChar;
-				bindHandle.Type = OciDataType.VarChar;
+				ociType = OciDataType.VarChar;
 				break;
 			case DbType.StringFixedLength:
 				oracleType = OracleType.NChar;
-				bindHandle.Type = OciDataType.Char;
+				ociType = OciDataType.Char;
 				break;
 			default:
 				throw new ArgumentException (exception);
@@ -297,76 +296,76 @@ namespace System.Data.OracleClient {
 			case OracleType.LongRaw:
 			case OracleType.Raw:
 				dbType = DbType.Binary;
-				bindHandle.Type = OciDataType.Raw;
+				ociType = OciDataType.Raw;
 				break;
 			case OracleType.Byte:
 				dbType = DbType.Byte;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			case OracleType.Char:
 				dbType = DbType.AnsiStringFixedLength;
-				bindHandle.Type = OciDataType.Char;
+				ociType = OciDataType.Char;
 				break;
 			case OracleType.Clob:
 			case OracleType.LongVarChar:
 			case OracleType.RowId:
 			case OracleType.VarChar:
 				dbType = DbType.AnsiString;
-				bindHandle.Type = OciDataType.VarChar;
+				ociType = OciDataType.VarChar;
 				break;
 			case OracleType.Cursor:
 			case OracleType.IntervalDayToSecond:
 				dbType = DbType.Object;
-				bindHandle.Type = OciDataType.Blob;
+				ociType = OciDataType.Blob;
 				break;
 			case OracleType.DateTime:
 			case OracleType.Timestamp:
 			case OracleType.TimestampLocal:
 			case OracleType.TimestampWithTZ:
 				dbType = DbType.DateTime;
-				bindHandle.Type = OciDataType.Char;
+				ociType = OciDataType.Char;
 				break;
 			case OracleType.Double:
 				dbType = DbType.Double;
-				bindHandle.Type = OciDataType.Float;
+				ociType = OciDataType.Float;
 				break;
 			case OracleType.Float:
 				dbType = DbType.Single;
-				bindHandle.Type = OciDataType.Float;
+				ociType = OciDataType.Float;
 				break;
 			case OracleType.Int16:
 				dbType = DbType.Int16;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			case OracleType.Int32:
 			case OracleType.IntervalYearToMonth:
 				dbType = DbType.Int32;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			case OracleType.NChar:
 				dbType = DbType.StringFixedLength;
-				bindHandle.Type = OciDataType.Char;
+				ociType = OciDataType.Char;
 				break;
 			case OracleType.NClob:
 			case OracleType.NVarChar:
 				dbType = DbType.String;
-				bindHandle.Type = OciDataType.VarChar;
+				ociType = OciDataType.VarChar;
 				break;
 			case OracleType.Number:
 				dbType = DbType.VarNumeric;
-				bindHandle.Type = OciDataType.Number;
+				ociType = OciDataType.Number;
 				break;
 			case OracleType.SByte:
 				dbType = DbType.SByte;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			case OracleType.UInt16:
 				dbType = DbType.UInt16;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			case OracleType.UInt32:
 				dbType = DbType.UInt32;
-				bindHandle.Type = OciDataType.Integer;
+				ociType = OciDataType.Integer;
 				break;
 			default:
 				throw new ArgumentException (exception);

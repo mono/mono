@@ -19,20 +19,22 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal sealed class OciServiceHandle : OciHandle, IOciHandle, IDisposable
+	internal sealed class OciServiceHandle : OciHandle
 	{
 		#region Fields
 
-		OciSessionHandle sessionHandle;
-		OciServerHandle serverHandle;
+		bool disposed = false;
+		OciSessionHandle session;
+		OciServerHandle server;
+
 		OciErrorHandle errorHandle;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public OciServiceHandle (OciEnvironmentHandle environment, IntPtr handle)
-			: base (OciHandleType.Service, environment, handle)
+		public OciServiceHandle (OciHandle parent, IntPtr handle)
+			: base (OciHandleType.Service, parent, handle)
 		{
 		}
 
@@ -49,34 +51,46 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		public void Dispose ()
+		protected override void Dispose (bool disposing)
 		{
-			Environment.FreeHandle (this);
+			if (!disposed) {
+				try {
+					if (disposing) {
+						if (server != null)
+							server.Dispose ();
+						if (session != null)
+							session.Dispose ();
+					}
+					disposed = true;
+				} finally {
+					base.Dispose (disposing);
+				}
+			}
 		}
 
 		public bool SetServer (OciServerHandle handle)
 		{
-			serverHandle = handle;
+			server = handle;
 			int status = 0;
 			status = OciGlue.OCIAttrSet (Handle,
 						HandleType,
-						serverHandle.Handle,
+						server,
 						0,
 						OciAttributeType.Server,
-						errorHandle.Handle);
+						errorHandle);
 			return (status == 0);
 		}
 
 		public bool SetSession (OciSessionHandle handle)
 		{
-			sessionHandle = handle;
+			session = handle;
 			int status = 0;
 			status = OciGlue.OCIAttrSet (Handle,
 						HandleType,
-						sessionHandle.Handle,
+						session,
 						0,
 						OciAttributeType.Session,
-						errorHandle.Handle);
+						errorHandle);
 			return (status == 0);
 		}
 

@@ -1,3 +1,39 @@
+2003-03-04  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient.Oci/IOciDescriptorHandle.cs:
+	* System.Data.OracleClient.Oci/IOciHandle.cs:
+	* System.Data.OracleClient.Oci/OciDescriptorType.cs:
+		Removed. These are no longer used.
+	* System.Data.OracleClient.Oci/OciParameterDescriptor.cs:
+		Add new class
+	* list:
+		Add System.Data.OracleClient.Oci/OciParameterDescriptor.cs
+		Rem System.Data.OracleClient.Oci/IOciDescriptorHandle.cs
+		Rem System.Data.OracleClient.Oci/IOciHandle.cs
+		Rem System.Data.OracleClient.Oci/OciDescriptorType.cs
+	* System.Data.OracleClient/OciGlue.cs:
+		Move the OCIAttrGet* methods into OciHandle
+	* System.Data.OracleClient/OracleDataReader.cs:
+	* System.Data.OracleClient/OracleParameter.cs:
+		Change the way that columns are bound and described
+	* System.Data.OracleClient.Oci/OciBindHandle.cs:
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+	* System.Data.OracleClient.Oci/OciDescriptorHandle.cs:
+	* System.Data.OracleClient.Oci/OciEnvironmentHandle.cs:
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs:
+	* System.Data.OracleClient.Oci/OciHandle.cs:
+	* System.Data.OracleClient.Oci/OciLobLocator.cs:
+	* System.Data.OracleClient.Oci/OciServerHandle.cs:
+	* System.Data.OracleClient.Oci/OciServiceHandle.cs:
+	* System.Data.OracleClient.Oci/OciSessionHandle.cs:
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs:
+	* System.Data.OracleClient.Oci/OciTransactionHandle.cs:
+		All handles now derive from OciHandle, and these classes
+		have been rewritten as such.  Also attempted to implement
+		the Dispose () methods for these classes.
+	* System.Data.OracleClient.Oci/OciHandleType.cs:
+		Add descriptor types into here because handles and
+		descriptors are used in many of the same OCI functions.
+
 2003-02-26  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient/OracleConnection.cs:
 		Rollback transactions when connection closes if they

@@ -19,13 +19,14 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal sealed class OciSessionHandle : OciHandle, IOciHandle, IDisposable
+	internal sealed class OciSessionHandle : OciHandle, IDisposable
 	{
 		#region Fields
 
 		OciErrorHandle errorHandle;
 		OciServiceHandle serviceHandle;
-		bool begun;
+		bool begun = false;
+		bool disposed = false;
 		string username;
 		string password;
 
@@ -33,10 +34,9 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciSessionHandle (OciEnvironmentHandle environment, IntPtr handle)
-			: base (OciHandleType.Session, environment, handle)
+		public OciSessionHandle (OciHandle parent, IntPtr handle)
+			: base (OciHandleType.Session, parent, handle)
 		{
-			begun = false;
 		}
 
 		#endregion // Constructors
@@ -118,15 +118,21 @@ namespace System.Data.OracleClient.Oci {
 			return true;
 		}
 
-		public void Dispose ()
+		protected override void Dispose (bool disposing)
 		{
-			if (begun) {
-				OCISessionEnd (Service.Handle,
-						errorHandle.Handle,
-						Handle,
-						0);
+			if (!disposed) {
+				try {
+					if (begun) {
+						OCISessionEnd (Service.Handle,
+								errorHandle.Handle,
+								Handle,
+								0);
+					}
+					disposed = false;
+				} finally {
+					base.Dispose (disposing);
+				}
 			}
-			Environment.FreeHandle (this);
 		}
 
 		#endregion // Methods

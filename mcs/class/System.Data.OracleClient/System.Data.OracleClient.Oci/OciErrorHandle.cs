@@ -19,12 +19,18 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal sealed class OciErrorHandle : OciHandle, IOciHandle, IDisposable
+	internal sealed class OciErrorHandle : OciHandle, IDisposable
 	{
+		#region Fields
+
+		bool disposed = false;
+
+		#endregion // Fields
+
 		#region Constructors
 
-		public OciErrorHandle (OciEnvironmentHandle environment, IntPtr handle)
-			: base (OciHandleType.Error, environment, handle)
+		public OciErrorHandle (OciHandle parent, IntPtr handle)
+			: base (OciHandleType.Error, parent, handle)
 		{
 		}
 
@@ -32,9 +38,12 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		public void Dispose ()
+		protected override void Dispose (bool disposing)
 		{
-			Environment.FreeHandle (this);
+			if (!disposed) {
+				disposed = true;
+				base.Dispose (disposing);
+			}
 		}
 
 		public OciErrorInfo HandleError ()

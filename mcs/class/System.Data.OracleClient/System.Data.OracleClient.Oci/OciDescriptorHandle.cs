@@ -16,44 +16,32 @@
 // 
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal abstract class OciDescriptorHandle : IOciDescriptorHandle
+	internal abstract class OciDescriptorHandle : OciHandle
 	{
-		#region Fields
-
-		IntPtr handle;
-		OciEnvironmentHandle environment;
-		OciDescriptorType type;
-
-		#endregion // Fields
-
 		#region Constructors
 
-		public OciDescriptorHandle (OciDescriptorType type, OciEnvironmentHandle environment, IntPtr newHandle)
+		public OciDescriptorHandle (OciHandleType type, OciHandle parent, IntPtr newHandle)
+			: base (type, parent, newHandle)
 		{
-			this.type = type;
-			this.environment = environment;
-			this.handle = newHandle;
 		}
 
 		#endregion // Constructors
 
-		#region Properties
+		#region Methods
 
-		public OciEnvironmentHandle Environment {
-			get { return environment; }
+		[DllImport ("oci")]
+		static extern int OCIDescriptorFree (IntPtr hndlp,
+						[MarshalAs (UnmanagedType.U4)] OciHandleType type);
+
+		protected override void FreeHandle ()
+		{
+			int status = 0;
+			status = OCIDescriptorFree (Handle, HandleType);
 		}
 
-		public IntPtr Handle { 
-			get { return handle; }
-			set { handle = value; }
-		}
-
-		public OciDescriptorType HandleType { 
-			get { return type; }
-		}
-
-		#endregion // Properties
+		#endregion // Methods
 	}
 }

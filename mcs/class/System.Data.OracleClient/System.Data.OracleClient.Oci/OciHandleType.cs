@@ -35,6 +35,31 @@ namespace System.Data.OracleClient.Oci {
 		DirectPathContext = 0x0e,
 		DirectPathColumnArray = 0x0f,
 		DirectPathStream = 0x10,
-		Process = 0x11
+		Process = 0x11,
+
+		// Descriptor handles
+
+		LobLocator = 0x32,
+		Snapshot = 0x33,
+		ResultSet = 0x34,
+		Parameter = 0x35,
+		RowId = 0x36,
+		//ComplexObject = 0x37,
+		FileLobLocator = 0x38,
+		EnqueueOptions = 0x39,
+		DequeueOptions = 0x3a,
+		MessageProperties = 0x3b,
+		Agent = 0x3c,
+		Locator = 0x3d,
+		IntervalYearToMonth = 0x3e,
+		IntervalDayToSecond = 0x3f,
+		Notify = 0x40,
+		Date = 0x41,
+		Time = 0x42,
+		TimeWithTZ = 0x43,
+		TimeStamp = 0x44,
+		TimeStampWithTZ = 0x45,
+		TimeStampLocal = 0x46,
+		UserCallback = 0x47
 	}
 }

@@ -19,11 +19,12 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal sealed class OciServerHandle : OciHandle, IOciHandle, IDisposable
+	internal sealed class OciServerHandle : OciHandle, IDisposable
 	{
 		#region Fields
 
-		bool attached;
+		bool disposed = false;
+		bool attached = false;
 		OciErrorHandle errorHandle;
 		string tnsname;
 
@@ -31,10 +32,9 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciServerHandle (OciEnvironmentHandle environment, IntPtr handle)
-			: base (OciHandleType.Server, environment, handle)
+		public OciServerHandle (OciHandle parent, IntPtr handle)
+			: base (OciHandleType.Server, parent, handle)
 		{
-			attached = false;
 		}
 
 		#endregion // Constructors
@@ -79,14 +79,17 @@ namespace System.Data.OracleClient.Oci {
 			return attached;
 		}
 
-		public void Dispose ()
+		protected override void Dispose (bool disposing)
 		{
-			if (attached) {
-				OCIServerDetach (Handle,
-						errorHandle.Handle,
-						0);
+			if (!disposed) {
+				try {
+					if (attached)
+						OCIServerDetach (Handle, errorHandle, 0);
+					disposed = true;
+				} finally {
+					base.Dispose (disposing);
+				}
 			}
-			Environment.FreeHandle (this);
 		}
 
 		#endregion // Methods

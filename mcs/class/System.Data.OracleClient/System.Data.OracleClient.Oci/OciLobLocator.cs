@@ -20,10 +20,11 @@ using System.Data.OracleClient;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal sealed class OciLobLocator : OciDescriptorHandle, IOciDescriptorHandle, IDisposable
+	internal sealed class OciLobLocator : OciDescriptorHandle, IDisposable
 	{
 		#region Fields
 
+		bool disposed = false;
 		OciErrorHandle errorHandle;
 		OciServiceHandle service;
 		OciDataType type;
@@ -32,8 +33,8 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciLobLocator (OciEnvironmentHandle environment, IntPtr handle)
-			: base (OciDescriptorType.LobLocator, environment, handle)
+		public OciLobLocator (OciHandle parent, IntPtr handle)
+			: base (OciHandleType.LobLocator, parent, handle)
 		{
 		}
 
@@ -135,6 +136,14 @@ namespace System.Data.OracleClient.Oci {
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				disposed = true;
+				base.Dispose ();
 			}
 		}
 
@@ -277,11 +286,6 @@ namespace System.Data.OracleClient.Oci {
 			}
 
 			return (int) amount;
-		}
-
-		public void Dispose ()
-		{
-			Environment.FreeDescriptor (this);
 		}
 
 		#endregion // Methods

@@ -19,10 +19,11 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal sealed class OciTransactionHandle : OciHandle, IOciHandle, IDisposable
+	internal sealed class OciTransactionHandle : OciHandle, IDisposable
 	{
 		#region Fields
-		
+
+		bool disposed = false;
 		OciErrorHandle errorHandle;
 		OciServiceHandle serviceHandle;
 
@@ -30,8 +31,8 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciTransactionHandle (OciEnvironmentHandle environment, IntPtr handle)
-			: base (OciHandleType.Transaction, environment, handle)
+		public OciTransactionHandle (OciHandle parent, IntPtr handle)
+			: base (OciHandleType.Transaction, parent, handle)
 		{
 		}
 
@@ -72,12 +73,12 @@ namespace System.Data.OracleClient.Oci {
 		public void AttachToServiceContext ()
 		{
 			int status = 0;
-			status = OciGlue.OCIAttrSet (Service.Handle,
+			status = OciGlue.OCIAttrSet (Service,
 							OciHandleType.Service,
-							Handle,
+							this,
 							0,
 							OciAttributeType.Transaction,
-							ErrorHandle.Handle);
+							ErrorHandle);
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -90,10 +91,10 @@ namespace System.Data.OracleClient.Oci {
 
 			AttachToServiceContext ();
 
-			status = OCITransStart (Service.Handle,
-							ErrorHandle.Handle,
-							60,
-							OciTransactionFlags.New);
+			status = OCITransStart (Service,
+						ErrorHandle,
+						60,
+						OciTransactionFlags.New);
 
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
@@ -105,9 +106,7 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			AttachToServiceContext ();
-			status = OCITransCommit (Service.Handle,
-						ErrorHandle.Handle,
-						0);
+			status = OCITransCommit (Service, ErrorHandle, 0);
 
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
@@ -115,18 +114,19 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		public void Dispose ()
+		protected override void Dispose (bool disposing)
 		{
-			Environment.FreeHandle (this);
+			if (!disposed) {
+				disposed = true;
+				base.Dispose (disposing);
+			}
 		}
 
 		public void Rollback ()
 		{
 			int status = 0;
 			AttachToServiceContext ();
-			status = OCITransRollback (Service.Handle,
-						ErrorHandle.Handle,
-						0);
+			status = OCITransRollback (Service, ErrorHandle, 0);
 
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();

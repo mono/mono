@@ -19,14 +19,8 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal class OciEnvironmentHandle : IOciHandle, IDisposable
+	internal class OciEnvironmentHandle : OciHandle, IDisposable
 	{
-		#region Fields
-
-		IntPtr handle;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		public OciEnvironmentHandle ()
@@ -35,143 +29,35 @@ namespace System.Data.OracleClient.Oci {
 		}
 
 		public OciEnvironmentHandle (OciEnvironmentMode mode)
+			: base (OciHandleType.Environment, null, IntPtr.Zero)
 		{
 			int status = 0;
-			this.handle = IntPtr.Zero;
+			IntPtr handle = IntPtr.Zero;
+			status = OCIEnvCreate (out handle, 
+						mode, 
+						IntPtr.Zero, 
+						IntPtr.Zero, 
+						IntPtr.Zero, 
+			 			IntPtr.Zero, 
+						0, 
+						IntPtr.Zero);
 
-			status = OCIEnvCreate (out handle, mode, 
-					IntPtr.Zero, 
-					IntPtr.Zero, 
-					IntPtr.Zero, 
-			 		IntPtr.Zero, 
-					0, 
-					IntPtr.Zero);
+			SetHandle (handle);
 		}
 
 		#endregion // Constructors
 
-		#region Properties
-
-		public IntPtr Handle { 
-			get { return handle; }
-			set { handle = value; }
-		}
-
-		public OciHandleType HandleType {
-			get { return OciHandleType.Environment; }
-		}
-
-		#endregion // Properties
-
 		#region Methods
 
 		[DllImport ("oci")]
-		public static extern int OCIEnvCreate (out IntPtr envhpp,
-							[MarshalAs (UnmanagedType.U4)] OciEnvironmentMode mode,
-							IntPtr ctxp,
-							IntPtr malocfp,
-							IntPtr ralocfp,
-							IntPtr mfreep,
-							int xtramem_sz,
-							IntPtr usrmempp);
-
-		[DllImport ("oci")]
-		public static extern int OCIHandleAlloc (IntPtr parenth,
-							out IntPtr hndlpp,
-							[MarshalAs (UnmanagedType.U4)] OciHandleType type,
-							int xtramem_sz,
-							IntPtr usrmempp);
-
-		[DllImport ("oci")]
-		public static extern int OCIDescriptorAlloc (IntPtr parenth,
-							out IntPtr descpp,
-							[MarshalAs (UnmanagedType.U4)] OciDescriptorType type,
-							int xtramem_sz,
-							IntPtr usrmempp);
-
-		[DllImport ("oci")]
-		public static extern int OCIHandleFree (IntPtr hndlp, 
-							[MarshalAs (UnmanagedType.U4)] OciHandleType type);
-
-		[DllImport ("oci")]
-		public static extern int OCIDescriptorFree (IntPtr hndlp, 
-							[MarshalAs (UnmanagedType.U4)] OciDescriptorType type);
-
-
-		public IOciHandle Allocate (OciHandleType type)
-		{
-			IntPtr newHandle = IntPtr.Zero;
-			int status = 0;
-
-			status = OCIHandleAlloc (Handle,
-						out newHandle,
-						type,
-						0,
-						IntPtr.Zero);
-
-			if (status != 0 && status != 1) 
-				return null;
-
-			switch (type) {
-				case OciHandleType.Service:
-					return new OciServiceHandle (this, newHandle);
-				case OciHandleType.Error:
-					return new OciErrorHandle (this, newHandle);
-				case OciHandleType.Server:
-					return new OciServerHandle (this, newHandle);
-				case OciHandleType.Session:
-					return new OciSessionHandle (this, newHandle);
-				case OciHandleType.Statement:
-					return new OciStatementHandle (this, newHandle);
-				case OciHandleType.Transaction:
-					return new OciTransactionHandle (this, newHandle);
-				default:
-					OCIHandleFree (newHandle, type);
-					newHandle = IntPtr.Zero;
-					throw new ArgumentException ("Invalid handle type.");
-			}
-		}
-
-		public IOciDescriptorHandle AllocateDescriptor (OciDescriptorType type)
-		{
-			IntPtr newHandle = IntPtr.Zero;
-			int status = 0;
-
-			status = OCIDescriptorAlloc (Handle,
-						out newHandle,
-						type,
-						0,
-						IntPtr.Zero);
-
-			if (status != 0 && status != 1) 
-				return null;
-
-			switch (type) {
-				case OciDescriptorType.LobLocator:
-					return new OciLobLocator (this, newHandle);
-				default:
-					OCIDescriptorFree (newHandle, type);
-					newHandle = IntPtr.Zero;
-					throw new ArgumentException ("Invalid handle type.");
-			}
-		}
-
-		public void Dispose ()
-		{
-			FreeHandle (this);
-		}
-
-		public void FreeHandle (IOciHandle toBeDisposed)
-		{
-			OCIHandleFree (toBeDisposed.Handle, toBeDisposed.HandleType);
-			toBeDisposed.Handle = IntPtr.Zero;
-		}
-
-		public void FreeDescriptor (IOciDescriptorHandle toBeDisposed)
-		{
-			OCIDescriptorFree (toBeDisposed.Handle, toBeDisposed.HandleType);
-			toBeDisposed.Handle = IntPtr.Zero;
-		}
+		static extern int OCIEnvCreate (out IntPtr envhpp,
+						[MarshalAs (UnmanagedType.U4)] OciEnvironmentMode mode,
+						IntPtr ctxp,
+						IntPtr malocfp,
+						IntPtr ralocfp,
+						IntPtr mfreep,
+						int xtramem_sz,
+						IntPtr usrmempp);
 
 		public OciErrorInfo HandleError ()
 		{
