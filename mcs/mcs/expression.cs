@@ -408,11 +408,18 @@ namespace CIR {
 				
 				// from an array-type S to an array-type of type T
 				if (expr_type.IsArray && target_type.IsArray) {
+					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
 
-					Console.WriteLine ("{0} -> {1}", expr_type, target_type);
-					throw new Exception ("Implement array conversion");
-					
+						Type expr_element_type = expr_type.GetElementType ();
+						Type target_element_type = target_type.GetElementType ();
+
+						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
+							if (StandardConversionExists (expr_element_type,
+										      target_element_type))
+								return new EmptyCast (expr, target_type);
+					}
 				}
+				
 				
 				// from an array-type to System.Array
 				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
@@ -427,7 +434,7 @@ namespace CIR {
 				// from any array-type or delegate type into System.ICloneable.
 				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
 					if (target_type == TypeManager.icloneable_type)
-						throw new Exception ("Implement conversion to System.ICloneable");
+						return new EmptyCast (expr, target_type);
 				
 				// from the null type to any reference-type.
 				if (expr is NullLiteral)
@@ -764,8 +771,18 @@ namespace CIR {
 						return true;
 				
 				// from an array-type S to an array-type of type T
-				if (expr_type.IsArray && target_type.IsArray) 
-					return true;
+				if (expr_type.IsArray && target_type.IsArray) {
+					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
+						
+						Type expr_element_type = expr_type.GetElementType ();
+						Type target_element_type = target_type.GetElementType ();
+						
+						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
+							if (StandardConversionExists (expr_element_type,
+										      target_element_type))
+								return true;
+					}
+				}
 				
 				// from an array-type to System.Array
 				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
@@ -969,7 +986,7 @@ namespace CIR {
 				// by target.
 				//
 				if (look_for_explicit)
-					source=ConvertExplicit (ec, source, most_specific_source, loc);
+					source = ConvertExplicitStandard (ec, source, most_specific_source, loc);
 				else
 					source = ConvertImplicitStandard (ec, source,
 									  most_specific_source, loc);
@@ -1333,6 +1350,98 @@ namespace CIR {
 		}
 
 		// <summary>
+		//  Returns whether an explicit reference conversion can be performed
+		//  from source_type to target_type
+		// </summary>
+		static bool ExplicitReferenceConversionExists (Type source_type, Type target_type)
+		{
+			bool target_is_value_type = target_type.IsValueType;
+			
+			if (source_type == target_type)
+				return true;
+			
+			//
+			// From object to any reference type
+			//
+			if (source_type == TypeManager.object_type && !target_is_value_type)
+				return true;
+					
+			//
+			// From any class S to any class-type T, provided S is a base class of T
+			//
+			if (target_type.IsSubclassOf (source_type))
+				return true;
+
+			//
+			// From any interface type S to any interface T provided S is not derived from T
+			//
+			if (source_type.IsInterface && target_type.IsInterface){
+				if (!target_type.IsSubclassOf (source_type))
+					return true;
+			}
+			    
+			//
+			// From any class type S to any interface T, provides S is not sealed
+			// and provided S does not implement T.
+			//
+			if (target_type.IsInterface && !source_type.IsSealed &&
+			    !target_type.IsAssignableFrom (source_type))
+				return true;
+
+			//
+			// From any interface-type S to to any class type T, provided T is not
+			// sealed, or provided T implements S.
+			//
+			if (source_type.IsInterface &&
+			    (!target_type.IsSealed || source_type.IsAssignableFrom (target_type)))
+				return true;
+
+			// From an array type S with an element type Se to an array type T with an 
+			// element type Te provided all the following are true:
+			//     * S and T differe only in element type, in other words, S and T
+			//       have the same number of dimensions.
+			//     * Both Se and Te are reference types
+			//     * An explicit referenc conversions exist from Se to Te
+			//
+			if (source_type.IsArray && target_type.IsArray) {
+				if (source_type.GetArrayRank () == target_type.GetArrayRank ()) {
+					
+					Type source_element_type = source_type.GetElementType ();
+					Type target_element_type = target_type.GetElementType ();
+					
+					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
+						if (ExplicitReferenceConversionExists (source_element_type,
+										       target_element_type))
+							return true;
+				}
+			}
+			
+
+			// From System.Array to any array-type
+			if (source_type == TypeManager.array_type &&
+			    target_type.IsSubclassOf (TypeManager.array_type)){
+				return true;
+			}
+
+			//
+			// From System delegate to any delegate-type
+			//
+			if (source_type == TypeManager.delegate_type &&
+			    target_type.IsSubclassOf (TypeManager.delegate_type))
+				return true;
+
+			//
+			// From ICloneable to Array or Delegate types
+			//
+			if (source_type == TypeManager.icloneable_type &&
+			    (target_type == TypeManager.array_type ||
+			     target_type == TypeManager.delegate_type))
+				return true;
+			
+			return false;
+		}
+
+		// <summary>
 		//   Implements Explicit Reference conversions
 		// </summary>
 		static Expression ConvertReferenceExplicit (Expression source, Type target_type)
@@ -1377,17 +1486,26 @@ namespace CIR {
 			    (!target_type.IsSealed || source_type.IsAssignableFrom (target_type)))
 				return new ClassCast (source, target_type);
 
-			//
-			// FIXME: Implemet
-			//
-
-			// From an array typ eS with an element type Se to an array type T with an 
+			// From an array type S with an element type Se to an array type T with an 
 			// element type Te provided all the following are true:
 			//     * S and T differe only in element type, in other words, S and T
 			//       have the same number of dimensions.
 			//     * Both Se and Te are reference types
 			//     * An explicit referenc conversions exist from Se to Te
 			//
+			if (source_type.IsArray && target_type.IsArray) {
+				if (source_type.GetArrayRank () == target_type.GetArrayRank ()) {
+					
+					Type source_element_type = source_type.GetElementType ();
+					Type target_element_type = target_type.GetElementType ();
+					
+					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
+						if (ExplicitReferenceConversionExists (source_element_type,
+										       target_element_type))
+							return new ClassCast (source, target_type);
+				}
+			}
+			
 
 			// From System.Array to any array-type
 			if (source_type == TypeManager.array_type &&
@@ -4159,6 +4277,11 @@ namespace CIR {
 				
 				if (type == null)
 					return null;
+
+				if (TypeManager.IsDelegateType (type)) {
+					Report.Error (-100, "No support for delegate instantiation yet !");
+					return null;
+				}
 				
 				Expression ml;
 

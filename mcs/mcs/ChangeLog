@@ -1,3 +1,68 @@
+2001-10-15  Ravi Pratap  <ravi@ximian.com>
+
+	* delegate.cs (Emit): Get rid of it as there doesn't seem to be any ostensible
+	use of emitting anything at all.
+
+	* class.cs, rootcontext.cs : Get rid of calls to the same.
+
+	* delegate.cs (DefineDelegate): Make sure the class we define is also sealed.
+
+	(Populate): Define the constructor correctly and set the implementation
+	attributes.
+
+	* typemanager.cs (delegate_types): New hashtable to hold delegates that
+	have been defined.
+
+	(AddDelegateType): Implement.
+
+	(IsDelegateType): Implement helper method.
+
+	* delegate.cs (DefineDelegate): Use AddDelegateType instead of AddUserType.
+
+	* expression.cs (New::DoResolve): Check if we are trying to instantiate a delegate type
+	and accordingly handle it.
+
+	* delegate.cs (Populate): Take TypeContainer argument.
+	Implement bits to define the Invoke method. However, I still haven't figured out
+	how to take care of the native int bit :-(
+
+	* cs-parser.jay (delegate_declaration): Fixed the bug that I had introduced :-) 
+	Qualify the name of the delegate, not its return type !
+
+	* expression.cs (ImplicitReferenceConversion): Implement guts of implicit array
+	conversion.
+
+	(StandardConversionExists): Checking for array types turns out to be recursive.
+
+	(ConvertReferenceExplicit): Implement array conversion.
+
+	(ExplicitReferenceConversionExists): New method to determine precisely that :-)
+	
+2001-10-12  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (delegate_declaration): Store the fully qualified
+	name as it is a type declaration.
+
+	* delegate.cs (ReturnType, Name): Rename members to these. Make them 
+	readonly.
+
+	(DefineDelegate): Renamed from Define. Does the same thing essentially,
+	as TypeContainer::DefineType.
+
+	(Populate): Method in which all the definition of the various methods (Invoke)
+	etc is done.
+
+	(Emit): Emit any code, if necessary. I am not sure about this really, but let's
+	see.
+	
+	(CloseDelegate): Finally creates the delegate.
+
+	* class.cs (TypeContainer::DefineType): Update to define delegates.
+	(Populate, Emit and CloseType): Do the same thing here too.
+
+	* rootcontext.cs (ResolveTree, PopulateTypes, EmitCode, CloseTypes): Include
+	delegates in all these operations.
+
 2001-10-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: LocalTemporary: a new expression used to

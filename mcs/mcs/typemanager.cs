@@ -88,6 +88,12 @@ public class TypeManager {
 	static Hashtable method_arguments;
 
 	static Hashtable builder_to_interface;
+
+	// <remarks>
+	//  Keeps track of delegate types
+	// </remarks>
+
+	static Hashtable delegate_types;
 	
 	public TypeManager ()
 	{
@@ -96,6 +102,7 @@ public class TypeManager {
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
 		builder_to_interface = new Hashtable ();
+		delegate_types = new Hashtable ();
 	}
 
 	static TypeManager ()
@@ -109,12 +116,18 @@ public class TypeManager {
 		types.Add (name, t);
 		user_types.Add (t);
 	}
-
+	
 	public void AddUserType (string name, TypeBuilder t, TypeContainer tc)
 	{
 		AddUserType (name, t);
 		builder_to_container.Add (t, tc);
 		typecontainers.Add (name, tc);
+	}
+
+	public void AddDelegateType (string name, TypeBuilder t)
+	{
+		types.Add (name, t);
+		delegate_types.Add (t, name);
 	}
 
 	public void AddUserInterface (string name, TypeBuilder t, Interface i)
@@ -257,7 +270,7 @@ public class TypeManager {
 		decimal_type  = CoreLookupType ("System.Decimal");
 		bool_type     = CoreLookupType ("System.Boolean");
 		enum_type     = CoreLookupType ("System.Enum");
-		delegate_type = CoreLookupType ("System.Delegate");
+		delegate_type = CoreLookupType ("System.MulticastDelegate");
 		array_type    = CoreLookupType ("System.Array");
 		void_type     = CoreLookupType ("System.Void");
 		type_type     = CoreLookupType ("System.Type");
@@ -295,13 +308,23 @@ public class TypeManager {
 		
 		tc = (TypeContainer) builder_to_container [t];
 		
-		if (tc == null)
-			return t.FindMembers (mt, bf, filter, criteria);
+		if (tc == null) 
+		        return t.FindMembers (mt, bf, filter, criteria);
 		else 
-			return tc.FindMembers (mt, bf, filter, criteria);
+		        return tc.FindMembers (mt, bf, filter, criteria);
 		
 	}
 
+	public static bool IsDelegateType (Type t)
+	{
+		string name = (string) delegate_types [t];
+
+		if (name != null)
+			return true;
+		else
+			return false;
+	}
+	
 	// <summary>
 	//   Returns the User Defined Types
 	// </summary>

@@ -128,6 +128,10 @@ namespace CIR {
 					type_container_resolve_order.Add (tc);
 			}
 
+			if (root.Delegates != null)
+				foreach (Delegate d in root.Delegates) 
+					d.DefineDelegate (mb);
+			
 		}
 			
 		// <summary>
@@ -152,6 +156,10 @@ namespace CIR {
 			
 			foreach (TypeContainer tc in root.Types)
 				tc.CloseType ();
+
+			if (root.Delegates != null)
+				foreach (Delegate d in root.Delegates)
+					d.CloseDelegate ();
 			
 		}
 		
@@ -238,6 +246,12 @@ namespace CIR {
 			if (type_container_resolve_order != null)
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.Populate ();
+
+			ArrayList delegates = Tree.Types.Delegates;
+			if (delegates != null)
+				foreach (Delegate d in delegates)
+					d.Populate (Tree.Types);
+		       
 		}
 
 		public void EmitCode ()
@@ -245,7 +259,7 @@ namespace CIR {
 			if (type_container_resolve_order != null)
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.Emit ();
-			
+
 		}
 		
 		// <summary>

@@ -869,6 +869,11 @@ namespace CIR {
 				foreach (TypeContainer tc in Types)
 					tc.DefineType (TypeBuilder);
 			}
+
+			if (Delegates != null) {
+				foreach (Delegate d in Delegates)
+					d.DefineDelegate (TypeBuilder);
+			}
 			
 			InTransit = false;
 			return TypeBuilder;
@@ -990,13 +995,14 @@ namespace CIR {
 
 			if (Delegates != null) {
 				foreach (Delegate d in Delegates)
-					d.Define (this);
+					d.Populate (this);
 			}
 			
 			if (Types != null) {
 				foreach (TypeContainer tc in Types)
 					tc.Populate ();
 			}
+			
 		}
 
 		//
@@ -1291,7 +1297,7 @@ namespace CIR {
 			if (types != null)
 				foreach (TypeContainer tc in types)
 					tc.Emit ();
-			
+
 		}
 
 		public void CloseType ()
@@ -1300,6 +1306,10 @@ namespace CIR {
 			
 			foreach (TypeContainer tc in Types)
 				tc.CloseType ();
+
+			if (Delegates != null)
+				foreach (Delegate d in Delegates)
+					d.CloseDelegate ();
 		}
 
 		string MakeName (string n)
