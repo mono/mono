@@ -169,6 +169,7 @@ namespace System.Threading
 			runner = new Runner (callback, state, start_event);
 			Change (dueTime, period);
 			Thread t = new Thread (new ThreadStart (runner.Start));
+			t.IsBackground = true;
 			t.Start ();
 		}
 

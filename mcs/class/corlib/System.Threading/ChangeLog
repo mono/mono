@@ -1,3 +1,7 @@
+2003-02-07  Patrik Torstensson
+
+	* Timer.cs: Set the Background thread flag for the timer thread
+
 2003-02-05  Patrik Torstensson
 
 	* ThreadPool.cs: Reformated and fixed issue that made all thread exit the pool. 
