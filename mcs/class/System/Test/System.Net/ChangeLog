@@ -1,3 +1,8 @@
+2002-04-27  Lawrence Pit <loz@cable.a2000.nl>
+	* CookieTest.cs
+	* CookieCollectionTest.cs
+	* AllTests.cs
+
 2002-04-24  Nick Drochak  <ndrochak@gol.com>
 
 	* IPAddressTest.cs: Make test conform to MS behavior. Also, if wrong 

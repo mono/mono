@@ -22,6 +22,9 @@ namespace MonoTests.System.Net {
                                 TestSuite suite = new TestSuite();
                                 suite.AddTest (IPAddressTest.Suite);
                                 suite.AddTest (IPEndPointTest.Suite);
+                                suite.AddTest (CookieTest.Suite);
+                                suite.AddTest (CookieCollectionTest.Suite);
+                                // suite.AddTest (CookieContainerTest.Suite);
 				return suite;
                         }
                 }
