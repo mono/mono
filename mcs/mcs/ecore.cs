@@ -3439,7 +3439,11 @@ namespace Mono.CSharp {
 			string alias_value;
 
 			if (ec.ResolvingTypeTree){
+				int errors = Report.Errors;
 				Type dt = ec.DeclSpace.FindType (Name);
+				if (Report.Errors != errors)
+					return null;
+				
 				if (dt != null)
 					return new TypeExpr (dt, loc);
 			}

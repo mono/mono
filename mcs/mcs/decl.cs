@@ -396,9 +396,11 @@ namespace Mono.CSharp {
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 			type_resolve_ec.loc = loc;
+
+			int errors = Report.Errors;
 			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
 			if (d == null || d.eclass != ExprClass.Type){
-				if (!silent){
+				if (!silent && errors == Report.Errors){
 					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
 				}
 				return null;
@@ -538,17 +540,24 @@ namespace Mono.CSharp {
 				if (using_list == null)
 					continue;
 
+				Type match = null;
 				foreach (Namespace.UsingEntry ue in using_list){
-					t = LookupInterfaceOrClass (ue.Name, name, out error);
+					match = LookupInterfaceOrClass (ue.Name, name, out error);
 					if (error)
 						return null;
 
-					if (t != null){
+					if (match != null){
+						if (t != null){
+							Report.Error (104, "`" + name + "' is an ambiguous reference");
+							return null;
+						}
+						
+						t = match;
 						ue.Used = true;
-						return t;
 					}
 				}
-				
+				if (t != null)
+					return match;
 			}
 
 			//Report.Error (246, Location, "Can not find type `"+name+"'");

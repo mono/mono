@@ -492,13 +492,21 @@ namespace Mono.CSharp {
 				if (using_list == null)
 					continue;
 
+				Type match = null;
 				foreach (Namespace.UsingEntry ue in using_list) {
-					t = TypeManager.LookupType (MakeFQN (ue.Name, name));
-					if (t != null){
+					match = TypeManager.LookupType (MakeFQN (ue.Name, name));
+					if (match != null){
+						if (t != null){
+							Report.Error (104, "`" + name + "' is an ambiguous reference");
+							return null;
+						}
+						
+						t = match;
 						ue.Used = true;
-						return t;
 					}
 				}
+				if (t != null)
+					return t;
 
 				//
 				// Try with aliases

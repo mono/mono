@@ -1,5 +1,20 @@
 2002-09-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* decl.cs (DeclSparce.ResolveType): Only report the type-not-found
+	error if there were no errors reported during the type lookup
+	process, to avoid duplicates or redundant errors.  Without this
+	you would get an ambiguous errors plus a type not found.  We have
+	beaten the user enough with the first error.  
+
+	(DeclSparce.FindType): Emit a warning if we have an ambiguous
+	reference. 
+
+	* ecore.cs (SimpleName.DoResolveType): If an error is emitted
+	during the resolution process, stop the lookup, this avoids
+	repeated error reports (same error twice).
+
+	* rootcontext.cs: Emit a warning if we have an ambiguous reference.
+
 	* typemanager.cs (LookupType): Redo the type lookup code to match
 	the needs of System.Reflection.  
 
