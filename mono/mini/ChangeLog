@@ -1,5 +1,7 @@
 2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Remove debugging stuff left in by mistake.
+	
 	* mini.c (mono_precompile_assembly): Load and precompile referenced
 	assemblies as well. Fixes #74015.
 
