@@ -83,7 +83,7 @@ namespace Mono.Data.SqlSharp {
 		// Connection class
 		// in the provider assembly that implements the IDbConnection 
 		// interface.  for example: "Mono.Data.MySql.MySqlConnection"
-
+		Type conType;
 		private StringBuilder build = null; // SQL string to build
 		private string buff = ""; // SQL string buffer
 
@@ -121,7 +121,7 @@ namespace Mono.Data.SqlSharp {
 
 			string dataType; // .NET Type
 			Type theType; 
-			string dataTypeName; // native Database type
+			//string dataTypeName; // native Database type
 			DataRow row; // schema row
 
 			line = new StringBuilder();
@@ -144,7 +144,6 @@ namespace Mono.Data.SqlSharp {
 				columnSize = (int) schemaRow["ColumnSize"];
 				theType = (Type) schemaRow["DataType"];
 				dataType = theType.ToString();
-				dataTypeName = reader.GetDataTypeName(c);
 
 				switch(dataType) {
 				case "System.DateTime":
@@ -154,11 +153,6 @@ namespace Mono.Data.SqlSharp {
 					columnSize = 5;
 					break;
 				}
-
-				if(provider.Equals("POSTGRESQL") ||
-					provider.Equals("MYSQL"))
-					if(dataTypeName.Equals("text"))				
-						columnSize = 32; // text will be truncated to 32
 
 				hdrLen = (columnHeader.Length > columnSize) ? 
 					columnHeader.Length : columnSize;
@@ -207,9 +201,7 @@ namespace Mono.Data.SqlSharp {
 
 					columnSize = (int) row["ColumnSize"];
 					theType = (Type) row["DataType"];
-					dataType = theType.ToString();
-					
-					dataTypeName = reader.GetDataTypeName(c);
+					dataType = theType.ToString();					
 
 					switch(dataType) {
 					case "System.DateTime":
@@ -219,11 +211,6 @@ namespace Mono.Data.SqlSharp {
 						columnSize = 5;
 						break;
 					}
-
-					if(provider.Equals("POSTGRESQL") ||
-						provider.Equals("MYSQL"))
-						if(dataTypeName.Equals("text"))				
-							columnSize = 32; // text will be truncated to 32
 
 					columnSize = (colhdr.Length > columnSize) ? 
 						colhdr.Length : columnSize;
@@ -553,7 +540,8 @@ namespace Mono.Data.SqlSharp {
 				reader = null;
 			}
 			catch(Exception e) {
-				msg = "Error: " + e.Message;
+				msg = "Error: " + e;
+				// msg = "Error: " + e.Message;
 				Console.WriteLine(msg);
 				//if(reader != null) {
 				//	if(reader.IsClosed == false)
@@ -721,7 +709,8 @@ namespace Mono.Data.SqlSharp {
 			Type [] types = ass.GetTypes (); 
 			foreach (Type t in types) { 
 				if (t.IsSubclassOf (typeof(System.Data.Common.DbDataAdapter))) {
-					adapter = (DbDataAdapter) Activator.CreateInstance (t);	
+					if(t.Namespace.Equals(conType.Namespace))
+						adapter = (DbDataAdapter) Activator.CreateInstance (t);
 				}
 			}
                         
@@ -735,8 +724,8 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"Type:  \Q to quit");
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
-			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds)");
+			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,MySqlNet,Odbc,DB2,");
+			Console.WriteLine(@"                  Oracle,PostgreSql,Npgsql,Sqlite,Sybase,Tds)");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \e to execute SQL query (SELECT)");
@@ -751,8 +740,8 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"Type:  \Q to quit");
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
-			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds}");
+			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,MySqlNetOdbc,DB2,");
+			Console.WriteLine(@"                  Oracle,PostgreSql,Npgsql,Sqlite,Sybase,Tds}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \e to execute SQL query (SELECT)");
@@ -886,6 +875,24 @@ namespace Mono.Data.SqlSharp {
 			if(parms.Length == 2) {
 				string parm = parms[1].ToUpper();
 				switch(parm) {
+				case "ORACLE":
+					extp = new string[3] {
+								     "\\loadextprovider",
+								     "System.Data.OracleClient",
+								     "System.Data.OracleClient.OracleConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = true;
+					break;
+				case "DB2":
+					extp = new string[3] {
+								     "\\loadextprovider",
+								     "Mono.Data.DB2Client",
+								     "Mono.Data.DB2Client.DB2ClientConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = true;
+					break;
 				case "TDS":
 					extp = new string[3] {
 								     "\\loadextprovider",
@@ -909,6 +916,15 @@ namespace Mono.Data.SqlSharp {
 								     "\\loadextprovider",
 								     "Mono.Data.MySql",
 								     "Mono.Data.MySql.MySqlConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = false;
+					break;
+				case "MYSQLNET":
+					extp = new string[3] {
+								     "\\loadextprovider",
+								     "ByteFX.Data",
+								     "ByteFX.Data.MySQLClient.MySQLConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
@@ -942,6 +958,15 @@ namespace Mono.Data.SqlSharp {
 								     "\\loadextprovider",
 								     "Mono.Data.PostgreSqlClient",
 								     "Mono.Data.PostgreSqlClient.PgSqlConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = false;
+					break;
+				case "NPGSQL":
+					extp = new string[3] {
+								     "\\loadextprovider",
+								     "Npgsql",
+								     "Npgsql.NpgsqlConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = true;
@@ -1182,12 +1207,13 @@ namespace Mono.Data.SqlSharp {
 				Console.Out.Flush();
 
 				Assembly ps = Assembly.Load(providerAssembly);
-				Type typ = ps.GetType(providerConnectionClass);
-				conn = (IDbConnection) Activator.CreateInstance(typ);
+				conType = ps.GetType(providerConnectionClass);
+				conn = (IDbConnection) Activator.CreateInstance(conType);
 				success = true;
 				
 				Console.WriteLine("External provider loaded.");
 				Console.Out.Flush();
+				UseParameters = false;
 			}
 			catch(FileNotFoundException f) {
 				msg = "Error: unable to load the assembly of the provider: " + 

@@ -1,3 +1,9 @@
+2003-01-20  Daniel Morgan <danmorg@sc.rr.com>
+
+	* README: updated notes on connection strings and providers
+	* SqlSharpCli.cs: fixes for other providers: 
+	OracleClient, DB2Client, Npgsql, MySqlNet
+
 2002-12-10  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Makefile
