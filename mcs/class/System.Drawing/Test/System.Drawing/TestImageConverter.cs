@@ -123,9 +123,10 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertFrom ()
 		{
-			AssertEquals ("CF#1", image, (Image) imgConv.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								imageBytes));
+			Image newImage = (Image) imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, imageBytes);
+			
+			AssertEquals ("CF#1", image.Height, newImage.Height);
+			AssertEquals ("CF#1a", image.Width, newImage.Width);
 			
 			try {
 				imgConv.ConvertFrom ("System.Drawing.String");
@@ -175,9 +176,11 @@ namespace MonoTests.System.Drawing
 			}
 
 
-			AssertEquals ("CF#1A", image, (Image) imgConvFrmTD.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								imageBytes));
+			newImage = (Image) imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, imageBytes);
+
+			AssertEquals ("CF#1A", image.Height, newImage.Height);
+			AssertEquals ("CF#1aA", image.Width, newImage.Width);
+			
 			
 			try {
 				imgConvFrmTD.ConvertFrom ("System.Drawing.String");
@@ -238,12 +241,14 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("CT#1a", imageStr, (String) imgConv.ConvertTo (image, 
 									typeof (String)));
 				
-			AssertEquals ("CT#2", imageBytes, (byte []) imgConv.ConvertTo (null, 
-								CultureInfo.InvariantCulture,
-								image, imageBytes.GetType ()));
+			byte [] newImageBytes = (byte []) imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
+											image, imageBytes.GetType ());
+
+			AssertEquals ("CT#2", imageBytes.Length, newImageBytes.Length);
+
+			newImageBytes = (byte []) imgConv.ConvertTo (image, imageBytes.GetType ());
 			
-			AssertEquals ("CT#2a", imageBytes, (byte []) imgConv.ConvertTo (image, 
-									imageBytes.GetType ()));
+			AssertEquals ("CT#2a", imageBytes.Length, newImageBytes.Length);
 
 			
 			try {
@@ -318,13 +323,14 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("CT#1aA", imageStr, (String) imgConvFrmTD.ConvertTo (image, 
 									typeof (String)));
 				
-			AssertEquals ("CT#2A", imageBytes, (byte []) imgConvFrmTD.ConvertTo (null, 
-								CultureInfo.InvariantCulture,
-								image, imageBytes.GetType ()));
-			
-			AssertEquals ("CT#2aA", imageBytes, (byte []) imgConvFrmTD.ConvertTo (image, 
-									imageBytes.GetType ()));
+			newImageBytes = (byte []) imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
+											image, imageBytes.GetType ());
 
+			AssertEquals ("CT#2A", imageBytes.Length, newImageBytes.Length);
+
+			newImageBytes = (byte []) imgConvFrmTD.ConvertTo (image, imageBytes.GetType ());
+			
+			AssertEquals ("CT#2aA", imageBytes.Length, newImageBytes.Length);
 			
 			try {
 				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, 

@@ -1,5 +1,9 @@
 2004-05-18 Sanjay Gupta <gsanjay@novell.com>
 	
+	* TestImageConverter.cs: Fixed issues with test case.
+
+2004-05-18 Sanjay Gupta <gsanjay@novell.com>
+	
 	* TestIconConverter.cs: Fixed issues with test case.
 
 2004-05-18 Ravindra <rkumar@novell.com>
