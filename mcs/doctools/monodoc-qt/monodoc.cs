@@ -103,6 +103,7 @@ namespace Mono.Util.MonoDoc.Qt {
 			{
 				SetRootIsDecorated (true);
 				AddColumn ("Namespace");
+				SetSorting (-1);
 				//Console.WriteLine ("ListView "+SizeHint ().Width ());
             }
 
@@ -112,12 +113,12 @@ namespace Mono.Util.MonoDoc.Qt {
 					DocParser parser = new DocParser (filename);
 					foreach(DocType type in parser.DocTypes) {
 						ListItem typeitem = new ListItem (GetNamespaceItem (type.Namespace), type.Name, type);
-						ProcessMember (type.Ctors, typeitem);
 						ProcessMember (type.Dtors, typeitem);
-						ProcessMember (type.Methods, typeitem);
+						ProcessMember (type.Events, typeitem);
 						ProcessMember (type.Fields, typeitem);
 						ProcessMember (type.Properties, typeitem);
-						ProcessMember (type.Events, typeitem);
+						ProcessMember (type.Methods, typeitem);
+						ProcessMember (type.Ctors, typeitem);
 					}
             	}
 			}
@@ -136,10 +137,9 @@ namespace Mono.Util.MonoDoc.Qt {
 				_namespace = FindItem (name, 0);
 				if (_namespace == null) {
 					//Console.WriteLine ("ListView "+SizeHint ().Width ());
-					return new ListItem (this, name);
-				} else {
-					return _namespace;
+					_namespace = new ListItem (this, name);
 				}
+				return _namespace;
 			}
 		}
 

@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace Mono.Util.MonoDoc.Lib {
 
-	public class DocType {
+	public class DocType : IComparable {
 
 		string name, _namespace;
 		bool isClass, isInterface, isEnum, isStructure, isDelegate, isNested = false;
@@ -24,6 +24,49 @@ namespace Mono.Util.MonoDoc.Lib {
 			properties = new ArrayList ();
 			fields = new ArrayList ();
 			events = new ArrayList ();
+		}
+
+		public int CompareTo (Object value)
+		{
+			if (value == null)
+				return 1;
+			if (!(value is DocType))
+				throw new ArgumentException ();
+			if (this.Namespace != (value as DocType).Namespace)
+				return String.Compare ((value as DocType).Namespace, this.Namespace);
+			if (Score (this) > Score (value as DocType))
+				return 1;
+			else if (Score (this) < Score (value as DocType))
+				return -1;
+			else
+				return String.Compare ((value as DocType).Name, this.Name);
+		}
+
+		private int Score (DocType type)
+		{
+			if (type.IsClass)
+				return 5;
+			else if (type.IsStructure)
+				return 4;
+			else if (type.IsInterface)
+				return 3;
+			else if (type.IsEnum)
+				return 2;
+			else if (type.IsDelegate)
+				return 1;
+			else
+				return 0;
+		}
+
+		public void Sort ()
+		{
+			enums.Sort ();
+			ctors.Sort ();
+			dtors.Sort ();
+			methods.Sort ();
+			properties.Sort ();
+			fields.Sort ();
+			events.Sort ();
 		}
 
 		public void AddCtor (DocMember member)

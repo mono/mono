@@ -16,12 +16,13 @@ namespace Mono.Util.MonoDoc.Lib {
 
 		XmlTextReader xtr;
 		ArrayList types;
-		
+
 		public DocParser (string xmlfile)
 		{
 			xtr = new XmlTextReader (xmlfile);
 			types = new ArrayList ();
 			ParseDoc (xmlfile);
+			types.Sort ();
 		}
 		
 		public ArrayList DocTypes
@@ -77,6 +78,7 @@ namespace Mono.Util.MonoDoc.Lib {
 				type.Namespace = xtr.Value;
 			}
 			ParseTypeBody (type);
+			type.Sort ();
 			types.Add (type);
 		}
 

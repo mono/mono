@@ -10,7 +10,7 @@ using System.Collections;
 
 namespace Mono.Util.MonoDoc.Lib {
 
-	public class DocMember {
+	public class DocMember : IComparable {
 
 		string name, args, fullargs;
 		ArrayList _params;
@@ -19,6 +19,15 @@ namespace Mono.Util.MonoDoc.Lib {
 		public DocMember ()
 		{
 			_params = new ArrayList ();
+		}
+
+		public int CompareTo (Object value)
+		{
+			if (value == null)
+				return 1;
+			if (!(value is DocMember))
+				throw new ArgumentException ();
+			return String.Compare ((value as DocMember).Name+(value as DocMember).Args, this.Name+this.Args);
 		}
 
 		public ArrayList Params
