@@ -1,3 +1,13 @@
+2003-06-15 Alexandre Pigolkine <pigolkine@gmx.de>
+	* ColorPalette.cs
+	* ImageCodecInfo.cs
+	* ImageFormat.cs
+		implementation added
+		
+	* BmpCodec.cs
+	* JPEGCodec.cs
+		added	
+	
 2002-9-2  DennisHayes <dennish@raytek.com>
 
 * PropertyItem.cs t
