@@ -1,4 +1,15 @@
+2003-11-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_open): Avoid crash if a module is loaded
+	with an empty ASSEMBLY table.
+
+	* reflection.c (mono_image_build_metadata): Avoid using the same loop
+	variable in the inner and outer loops.
+
 2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.h (mono_metadata_make_token): Put parentheses around macro
+	argument.
 
 	* appdomain.h appdomain.c (ves_icall_System_AppDomain_InternalPushDomainRef): Fix signature.
 	
