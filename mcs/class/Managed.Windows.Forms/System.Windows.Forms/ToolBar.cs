@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.7  2004/08/22 01:20:14  ravindra
+// Correcting the formatting mess of VS.NET.
+//
 // Revision 1.6  2004/08/22 00:49:37  ravindra
 // Probably this completes the missing attributes in toolbar control.
 //
@@ -552,10 +555,8 @@ namespace System.Windows.Forms
 			Point hit = new Point (me.X, me.Y);
 
 			// draw the pushed button
-			foreach (ToolBarButton button in buttons) 
-			{
-				if (button.Rectangle.Contains (hit) && button.Enabled) 
-				{
+			foreach (ToolBarButton button in buttons) {
+				if (button.Rectangle.Contains (hit) && button.Enabled) {
 					button.Pressed = true;
 					Redraw (false);
 					Invalidate (button.Rectangle);
@@ -571,14 +572,11 @@ namespace System.Windows.Forms
 			Point hit = new Point (me.X, me.Y);
 
 			// draw the normal button
-			foreach (ToolBarButton button in buttons) 
-			{
-				if (button.Rectangle.Contains (hit) && button.Enabled) 
-				{
+			foreach (ToolBarButton button in buttons) {
+				if (button.Rectangle.Contains (hit) && button.Enabled) {
 					if (button.Pressed)
 						this.OnButtonClick (new ToolBarButtonClickEventArgs (button));
-					else 
-					{
+					else {
 						button.Pressed = false;
 						Redraw (false);
 						Invalidate (button.Rectangle);
@@ -592,8 +590,7 @@ namespace System.Windows.Forms
 		{
 			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
 
-			if (currentButton != null) 
-			{
+			if (currentButton != null) {
 				currentButton.Hilight = false;
 				Redraw (false);
 				Invalidate (currentButton.Rectangle);
@@ -607,20 +604,16 @@ namespace System.Windows.Forms
 
 			Point hit = new Point (me.X, me.Y);
 
-			if (currentButton != null && currentButton.Rectangle.Contains (hit)) 
-			{
+			if (currentButton != null && currentButton.Rectangle.Contains (hit)) {
 				if (currentButton.Hilight)
 					return;
 				currentButton.Hilight = true;
 				Redraw (false);
 				Invalidate (currentButton.Rectangle);
 			}
-			else 
-			{
-				foreach (ToolBarButton button in buttons) 
-				{
-					if (button.Rectangle.Contains (hit) && button.Enabled) 
-					{
+			else {
+				foreach (ToolBarButton button in buttons) {
+					if (button.Rectangle.Contains (hit) && button.Enabled) {
 						currentButton = button;
 						if (currentButton.Hilight)
 							break;
@@ -628,8 +621,7 @@ namespace System.Windows.Forms
 						Redraw (false);
 						Invalidate (currentButton.Rectangle);
 					}
-					else if (button.Hilight) 
-					{
+					else if (button.Hilight) {
 						button.Hilight = false;
 						Redraw (false);
 						Invalidate (button.Rectangle);
