@@ -1,5 +1,9 @@
 2003-01-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (LocalVariableReference.DoResolve): Classify a
+	constant as a value, not as a variable.   Also, set the type for
+	the variable.
+
 	* cs-parser.jay (fixed_statement): take a type instead of a
 	pointer_type, so we can produce a better error message later.
 	

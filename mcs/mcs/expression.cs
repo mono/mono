@@ -3261,6 +3261,8 @@ namespace Mono.CSharp {
 			e = Block.GetConstantExpression (Name);
 			if (e != null) {
 				vi.Used = true;
+				type = vi.VariableType;
+				eclass = ExprClass.Value;
 				return e;
 			}
 
