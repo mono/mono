@@ -1,4 +1,8 @@
 
+Thu Jun 20 23:28:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix type name parse code.
+
 Thu Jun 20 19:24:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: break out of the loop.
