@@ -1,3 +1,9 @@
+2003-12-04  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriter.cs : WriteComment() should block "--", not full "-->".
+	* XmlDocumentNavigator.cs : Added null check in MoveToNextAttribute().
+	  This may fix bug #51415.
+
 2003-11-28  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlAttribute.cs : set_Prefix checks value when existing is "xmlns".

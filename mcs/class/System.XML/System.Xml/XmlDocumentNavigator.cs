@@ -295,7 +295,6 @@ namespace System.Xml
 		{
 			if (NodeType != XPathNodeType.Element)
 				return false;
-
 			XmlElement el = node as XmlElement;
 			if (node.Attributes != null) {
 				do {
@@ -394,6 +393,8 @@ namespace System.Xml
 
 		public override bool MoveToNextAttribute ()
 		{
+			if (node == null)
+				return false;
 			if (NodeType != XPathNodeType.Attribute)
 				return false;
 

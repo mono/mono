@@ -398,7 +398,7 @@ namespace System.Xml
 
 		public override void WriteComment (string text)
 		{
-			if ((text.EndsWith("-")) || (text.IndexOf("-->") > 0)) {
+			if ((text.EndsWith("-")) || (text.IndexOf("--") > 0)) {
 				throw new ArgumentException ();
 			}
 
