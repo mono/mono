@@ -1,4 +1,9 @@
 
+Mon May 19 09:07:45 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Monitor.cs: removed test_owner, the check is already done in the
+	icall.
+
 Tue May 13 15:34:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Thread.cs: added missing field used by the runtime and

@@ -35,11 +35,6 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Monitor_exit(object obj);
 
-		// Checks whether the current thread currently owns
-		// the lock on object 'obj'
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool Monitor_test_owner(object obj);
-		
 		public static void Exit(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
@@ -48,10 +43,6 @@ namespace System.Threading
 			//	throw new ArgumentException("Value type");
 			//}
 
-			if(Monitor_test_owner(obj)==false) {
-				throw new SynchronizationLockException("The current thread does not own the lock");
-			}
-			
 			Monitor_exit(obj);
 		}
 
