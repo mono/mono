@@ -944,12 +944,12 @@ namespace System.Windows.Forms{
 			 CharSet = CharSet.Auto)]
 		internal static extern bool GetCursorPos (ref POINT lpPoint);
 
-		[DllImport ("Comdlg32.dll",
+		[DllImport ("comdlg32.dll",
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]
 		internal static extern bool GetOpenFileName ( ref OPENFILENAME lpofn );
 
-		[DllImport ("Comdlg32.dll",
+		[DllImport ("comdlg32.dll",
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]
 		internal static extern uint CommDlgExtendedError ( );
@@ -1103,6 +1103,26 @@ namespace System.Windows.Forms{
 				Win32.SelectObject ( hDC, hOldFont );
 			Win32.ReleaseDC ( hWnd, hDC );
 			return size;
+		}
+
+		[DllImport ("libntdll.dll.so", EntryPoint="PROCESS_InitWine")]
+		extern static void PROCESS_InitWine (int argc, string [] args);
+
+		[DllImport ("libntdll.dll.so", EntryPoint="LoadLibraryA")]
+		extern static void NTDLL_LoadLibraryA (string s);
+		
+		// 
+		// Used to initialize the runtime
+		//
+		static Win32 ()
+		{
+			string [] args = new string [1];
+			args [0] = "mono";
+			
+			PROCESS_InitWine (0, args);
+			NTDLL_LoadLibraryA ("kernel32.dll");
+			NTDLL_LoadLibraryA ("user32.dll");
+			NTDLL_LoadLibraryA ("comctl32.dll");
 		}
 	}
 }
