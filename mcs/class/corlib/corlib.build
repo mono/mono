@@ -10,6 +10,7 @@
 	<target name="linux">
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/corlib.dll" debug="${debug}">
+			<!-- keep in sync with corlib_cmp.dll below -->
 			<arg value="/nowarn:1595"/>
 			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
 			<arg value="/nowarn:0169"/> <!-- field never used -->
@@ -20,6 +21,23 @@
 				<excludes name="Windows/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Resources/*"/>
+			</sources>
+		</csc>
+		<csc target="library" output="../lib/corlib_cmp.dll" debug="${debug}">
+			<!-- This dll is used to compare with mscorlib -->
+			<!-- It should be the same as corlib.dll minus Object and ValueTyp -->
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
+			<arg value="/nowarn:0169"/> <!-- field never used -->
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="Test/**"/>
+				<excludes name="Windows/**"/>
+				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Resources/*"/>
+				<excludes name="System/Object.cs" />
+				<excludes name="System/ValueType.cs" />
 			</sources>
 		</csc>
 		<!-- NUnit can only run under windows right now, so build for windows
@@ -100,6 +118,7 @@
 
 	<target name="clean">
 		<delete file="../lib/corlib.dll" failonerror="false"/>
+		<delete file="../lib/corlib_cmp.dll" failonerror="false"/>
 		<delete file="Test/corlib_res.dll" failonerror="false"/>
 		<nant basedir="Test" target="clean"/>
 	</target>

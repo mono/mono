@@ -1,3 +1,9 @@
+2002-01-05  Nick Drochak  <ndrochak@gol.com>
+
+	* corlib.build: Make new build of corlib_cmp.dll.  This is the same
+	as corlib.dll without Object and ValueType.  It is used by 
+	/mcs/tools/corcompare.exe to compare with mscorlib.
+
 2002-01-03  Nick Drochak  <ndrochak@gol.com>
 
 	* corlib.build: Put the linux target at the top.  I keep changing the 
