@@ -61,7 +61,7 @@ namespace System.Drawing.Cairo {
                 public static extern void cairo_set_pattern (IntPtr cr, IntPtr pattern);
 
 		[DllImport (CairoImp)]
-		public static extern void cairo_set_tolerence (IntPtr cr, double tolerance);
+		public static extern void cairo_set_tolerance (IntPtr cr, double tolerance);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_fill_rule (IntPtr cr, FillRule fill_rule);
@@ -201,7 +201,7 @@ namespace System.Drawing.Cairo {
                 public static extern double cairo_get_alpha (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern double cairo_get_tolerence (IntPtr cr);
+		public static extern double cairo_get_tolerance (IntPtr cr);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_get_current_point (

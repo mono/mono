@@ -1,6 +1,6 @@
 2003-09-03  Alp Toker  <alp@atoker.com>
 
-	cairo-api.cs: drawble -> drawable typo
+	cairo-api.cs: typos: drawble -> drawable, tolerence -> tolerance
 
 2003-08-24  Duncan Mak  <duncan@ximian.com> 		
 
