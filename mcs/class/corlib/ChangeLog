@@ -1,3 +1,9 @@
+2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Added System.Reflection.Emit/MethodRental.cs.
+
+	* corlib_test.dll.sources: Added Test/System.Reflection.Emit/MethodRentalTest.cs.
+
 2004-04-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile: Fix tests with new directory structure.

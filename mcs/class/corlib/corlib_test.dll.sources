@@ -81,6 +81,7 @@ System.Reflection.Emit/ConstructorBuilderTest.cs
 System.Reflection.Emit/CustomAttributeBuilderTest.cs
 System.Reflection.Emit/EventBuilderTest.cs
 System.Reflection.Emit/MethodBuilderTest.cs
+System.Reflection.Emit/MethodRentalTest.cs
 System.Reflection.Emit/ModuleBuilderTest.cs
 System.Reflection.Emit/PropertyBuilderTest.cs
 System.Reflection.Emit/TypeBuilderTest.cs

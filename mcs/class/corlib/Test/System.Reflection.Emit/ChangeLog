@@ -1,3 +1,7 @@
+2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodRentalTest.cs: New file.
+
 2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyBuilderTest.cs: Added new tests to build strongnamed 

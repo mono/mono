@@ -394,6 +394,7 @@ System.Reflection.Emit/Label.cs
 System.Reflection.Emit/LocalBuilder.cs
 System.Reflection.Emit/MethodBuilder.cs
 System.Reflection.Emit/MethodToken.cs
+System.Reflection.Emit/MethodRental.cs
 System.Reflection.Emit/ModuleBuilder.cs
 System.Reflection.Emit/MonoArrayMethod.cs
 System.Reflection.Emit/OpCode.cs

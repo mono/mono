@@ -1,3 +1,7 @@
+2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodRental.cs: New file.
+
 2004-04-28  Raja R Harinath  <rharinath@novell.com>
 
 	* TypeBuilder.cs (SetCustomAttribute): Handle the presence of the
