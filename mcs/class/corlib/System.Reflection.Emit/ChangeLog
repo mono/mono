@@ -1,3 +1,11 @@
+
+Tue Mar 26 20:10:24 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: use FileMode.Create.
+	* ILGenerator.cs: optimize localbuilder related opcodes.
+	Track parameters to adjust maxstack.
+	* LocalBuilder.cS: use unsigned for position.
+
 2002-03-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* LocalBuilder.cs: Drop the symbol_writer as LocalBuilder fields.

@@ -108,6 +108,7 @@ namespace System.Reflection.Emit {
 			public int pos;
 			public int label_idx;
 		};
+		static Type void_type = typeof (void);
 		private byte[] code;
 		private MethodBase mbuilder; /* a MethodBuilder or ConstructorBuilder */
 		private int code_len;
@@ -313,12 +314,12 @@ namespace System.Reflection.Emit {
 				locals = new LocalBuilder [1];
 				locals [0] = res;
 			}
-			res.position = locals.Length - 1;
+			res.position = (uint)(locals.Length - 1);
 			return res;
 		}
 		public virtual Label DefineLabel () {
 			if (num_labels >= label_to_addr.Length) {
-				int[] new_l = new int [label_to_addr.Length + 16];
+				int[] new_l = new int [label_to_addr.Length * 2];
 				System.Array.Copy (label_to_addr, new_l, label_to_addr.Length);
 				label_to_addr = new_l;
 			}
@@ -341,6 +342,9 @@ namespace System.Reflection.Emit {
 			if (constructor is ConstructorBuilder)
 				add_token_fixup (constructor);
 			emit_int (token);
+			ParameterInfo[] mparams = constructor.GetParameters();
+			if (mparams != null)
+				cur_stack -= mparams.Length;
 		}
 		public virtual void Emit (OpCode opcode, Double val) {
 			byte[] s = System.BitConverter.GetBytes (val);
@@ -416,11 +420,56 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public virtual void Emit (OpCode opcode, LocalBuilder lbuilder) {
+			uint pos = lbuilder.position;
+			bool load_addr = false;
+			bool is_store = false;
 			make_room (6);
-			ll_emit (opcode);
-			code [code_len++] = (byte) (lbuilder.position & 0xFF);
-			if (opcode.operandType == OperandType.InlineVar) {
-				code [code_len++] = (byte) ((lbuilder.position >> 8) & 0xFF);
+			/* inline the code from ll_emit () to optimize il code size */
+			if (opcode.StackBehaviourPop == StackBehaviour.Pop1) {
+				cur_stack --;
+				is_store = true;
+			} else {
+				cur_stack++;
+				if (cur_stack > max_stack)
+					max_stack = cur_stack;
+				load_addr = opcode.StackBehaviourPush == StackBehaviour.Pushi;
+			}
+			if (load_addr) {
+				if (pos < 256) {
+					code [code_len++] = (byte)0x12;
+					code [code_len++] = (byte)pos;
+				} else {
+					code [code_len++] = (byte)0xfe;
+					code [code_len++] = (byte)0x0d;
+					code [code_len++] = (byte)(pos & 0xff);
+					code [code_len++] = (byte)((pos >> 8) & 0xff);
+				}
+			} else {
+				if (is_store) {
+					if (pos < 4) {
+						code [code_len++] = (byte)(0x0a + pos);
+					} else if (pos < 256) {
+						code [code_len++] = (byte)0x13;
+						code [code_len++] = (byte)pos;
+					} else {
+						code [code_len++] = (byte)0xfe;
+						code [code_len++] = (byte)0x0e;
+						code [code_len++] = (byte)(pos & 0xff);
+						code [code_len++] = (byte)((pos >> 8) & 0xff);
+					}
+				} else {
+					if (pos < 4) {
+						code [code_len++] = (byte)(0x06 + pos);
+					} else if (pos < 256) {
+						code [code_len++] = (byte)0x11;
+						code [code_len++] = (byte)pos;
+					} else {
+						code [code_len++] = (byte)0xfe;
+						code [code_len++] = (byte)0x0c;
+						code [code_len++] = (byte)(pos & 0xff);
+						code [code_len++] = (byte)((pos >> 8) & 0xff);
+					}
+				}
 			}
 		}
 		public virtual void Emit (OpCode opcode, MethodInfo method) {
@@ -430,6 +479,11 @@ namespace System.Reflection.Emit {
 			if (method is MethodBuilder)
 				add_token_fixup (method);
 			emit_int (token);
+			if (method.ReturnType == void_type)
+				cur_stack --;
+			ParameterInfo[] mparams = method.GetParameters();
+			if (mparams != null)
+				cur_stack -= mparams.Length;
 		}
 		[CLSCompliant(false)]
 		public virtual void Emit (OpCode opcode, sbyte val) {

@@ -31,7 +31,7 @@ namespace System.Reflection.Emit {
 		// Order does not matter after here
 		//
 		private ModuleBuilder module;
-		internal int position;
+		internal uint position;
 
 		internal LocalBuilder (ModuleBuilder m, Type t)
 		{
@@ -54,7 +54,7 @@ namespace System.Reflection.Emit {
 
 			symbol_writer.DefineLocalVariable (name, FieldAttributes.Private,
 							   signature, SymAddressKind.ILOffset,
-							   position, 0, 0,
+							   (int)position, 0, 0,
 							   startOffset, endOffset);
 		}
 

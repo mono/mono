@@ -193,7 +193,7 @@ namespace System.Reflection.Emit {
 			FileStream file;
 			int count;
 
-			file = new FileStream (assemblyFileName, FileMode.OpenOrCreate, FileAccess.Write);
+			file = new FileStream (assemblyFileName, FileMode.Create, FileAccess.Write);
 
 			count = getDataChunk (this, 0, buf);
 			if (count != 0) {
