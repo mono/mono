@@ -404,7 +404,7 @@ namespace Mono.CSharp {
 		MethodArrayList methods;
 
 		// Holds the events
-		MemberCoreArrayList events;
+		protected MemberCoreArrayList events;
 
 		// Holds the indexers
 		IndexerArrayList indexers;
