@@ -1,3 +1,7 @@
+2003-12-23  Tim Coleman <tim@timcoleman.com>
+	* DbConnectionString.cs:
+		Some implementation
+
 2003-12-16  Jackson Harper <jackson@ximian.com>
 
 	* SchemaTableOptionalColumn.cs: Add to fix default build
