@@ -3370,7 +3370,7 @@ namespace Mono.CSharp {
 
 				Type resolvedType = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
-					if (resolvedType.IsSubclassOf (prevCatches [ii])) {
+					if (resolvedType == prevCatches [ii] || resolvedType.IsSubclassOf (prevCatches [ii])) {
 						Report.Error (160, c.loc, "A previous catch clause already catches all exceptions of this or a super type '{0}'", prevCatches [ii].FullName);
 						return false;
 					}

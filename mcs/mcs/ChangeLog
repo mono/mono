@@ -1,3 +1,7 @@
+2004-08-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* statement.cs (Try.Resolve): Fixed bug #64222
+
 2004-08-27  Martin Baulig  <martin@ximian.com>
 
 	* class.cs
