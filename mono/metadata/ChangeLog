@@ -1,3 +1,9 @@
+2004-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
+	* assembly.c: escape the uri before passing it to g_filename_from_uri.
+	Fixes bug #52630.
+
 2004-01-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c: Add support for more than one unmanaged resource.
