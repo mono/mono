@@ -1,3 +1,9 @@
+2003-10-29  Dick Porter  <dick@ximian.com>
+
+	* io.c (MoveFile): If the move crosses filesystems, try and fall
+	back to copy and delete.  Patch from Jörg Rosenkranz
+	(JoergR@voelcker.com), fixes bug 50298.
+
 2003-10-28  Dick Porter  <dick@ximian.com>
 
 	* io.c: Use the new encoding conversion to cope with non-utf8
