@@ -1,3 +1,8 @@
+2003-11-11  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_inflate_method_or_ctor): Allow
+	"MonoInflatedMethod" and "MonoInflatedCtor".
+
 2003-11-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (resolution_scope_from_image): Use the assembly table
