@@ -964,7 +964,7 @@ namespace nist_dom.fundamental
             //
             // Write out results.
             //
-            results.expected = typeof (ArgumentException).FullName; // MS.NET BUG: It never raise an error.
+            results.expected = typeof (XmlException).FullName; // MS.NET BUG: It never raises an error.
             results.actual = computedValue;
 
             util.resetData();
