@@ -39,7 +39,7 @@ install-local: all-local
 
 dist-local: dist-default
 
-$(gdiplus) : $(local_sources:.c=.o) detect.h detect.libs
+$(gdiplus) : $(local_sources:.c=.o) 
 	gcc -shared -Wl,-soname,libgdiplus.dll.so -o $(gdiplus) $(local_objs) $(LOCAL_LDFLAGS)
 
 %.o: %.c
