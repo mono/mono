@@ -1,3 +1,8 @@
+2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cattr-object.cs: Fix test so it does not count the attributes on the
+	Object class.
+
 2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain-unload.cs: Get rid of hardcoded file names.
