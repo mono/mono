@@ -182,7 +182,7 @@ namespace System.Text {
 				throw new ArgumentOutOfRangeException();
 			}
 	
-			return new String( sString, startIndex, length );
+			return String.Intern (new String( sString, startIndex, length ));
 		}
 
 		public int EnsureCapacity( int capacity ) {

@@ -1,4 +1,9 @@
 
+Wed Mar 13 00:26:29 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* StringBuilder.cs: make ToString() return a interned string, this
+	seems to be required to make switch on string work.
+
 Fri Mar 8 17:29:58 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* StringBuilder.cs: make Append(char) do the smart thing.
