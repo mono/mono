@@ -1,4 +1,4 @@
-// 
+//
 // System.Web.HttpApplicationFactory
 //
 // Author:
@@ -6,6 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (c) 2002,2003 Ximian, Inc. (http://www.ximian.com)
+// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -44,9 +45,13 @@ namespace System.Web {
 		private bool _appInitialized;
 		private bool _appFiredEnd;
 
-		private Stack			_appFreePublicList;
-		private int				_appFreePublicInstances;
-		static private int	_appMaxFreePublicInstances = 32;
+		private Stack _appFreePublicList;
+		private int _appFreePublicInstances;
+
+		FileSystemWatcher appFileWatcher;
+		FileSystemWatcher binWatcher;
+		
+		static private int _appMaxFreePublicInstances = 32;
 
 		private HttpApplicationState _state;
 
@@ -72,15 +77,16 @@ namespace System.Web {
 			return Path.Combine (physicalAppPath, "global.asax");
 		}
 
-		private void CompileApp(HttpContext context) {
-			if (File.Exists(_appFilename)) {
-				// Setup filemonitor for all filedepend also. CacheDependency?
-
+		void CompileApp (HttpContext context)
+		{
+			if (File.Exists (_appFilename)) {
 				_appType = ApplicationFileParser.GetCompiledApplicationType (_appFilename, context);
 				if (_appType == null) {
 					string msg = String.Format ("Error compiling application file ({0}).", _appFilename);
 					throw new ApplicationException (msg);
 				}
+
+				appFileWatcher = CreateWatcher (_appFilename, new FileSystemEventHandler (OnAppFileChanged));
 			} else {
 				_appType = typeof (System.Web.HttpApplication);
 				_state = new HttpApplicationState ();
@@ -174,6 +180,29 @@ namespace System.Web {
 			app.Dispose ();
 		}
 
+		FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd)
+		{
+			FileSystemWatcher watcher = new FileSystemWatcher ();
+
+			watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
+			watcher.Filter = Path.GetFileName (file);
+
+			watcher.Changed += hnd;
+			watcher.Created += hnd;
+			watcher.Deleted += hnd;
+
+			watcher.EnableRaisingEvents = true;
+
+			return watcher;
+		}
+
+		void OnAppFileChanged (object sender, FileSystemEventArgs args)
+		{
+			binWatcher.EnableRaisingEvents = false;
+			appFileWatcher.EnableRaisingEvents = false;
+			HttpRuntime.UnloadAppDomain ();
+		}
+
 		private void InitializeFactory (HttpContext context)
 		{
 			_appFilename = GetAppFilename (context);
@@ -185,6 +214,13 @@ namespace System.Web {
 
 			// Startup
 			app.Startup(context, HttpApplicationFactory.ApplicationState);
+
+			// Shutdown the application if bin directory changes.
+			string binFiles = HttpRuntime.BinDirectory;
+			if (Directory.Exists (binFiles))
+				binFiles = Path.Combine (binFiles, "*.*");
+
+			binWatcher = CreateWatcher (binFiles, new FileSystemEventHandler (OnAppFileChanged));
 
 			// Fire OnAppStart
 			HttpApplicationFactory.FireOnAppStart (app);
