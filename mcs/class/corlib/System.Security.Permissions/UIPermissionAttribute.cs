@@ -12,7 +12,7 @@ namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class UIPermissionAttribute : CodeAccessSecurityAttribute	{
 
@@ -39,7 +39,12 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			return new UIPermission (window, clipboard);
+			UIPermission perm = null;
+			if (this.Unrestricted)
+				perm = new UIPermission (PermissionState.Unrestricted);
+			else
+				perm = new UIPermission (window, clipboard);
+			return perm;
 		}
 	}
 }

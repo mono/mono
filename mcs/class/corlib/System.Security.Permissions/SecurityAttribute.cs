@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 // 
-// System.Security.Permissions.SecurityPermissionAttribute.cs 
+// System.Security.Permissions.SecurityAttribute.cs 
 //
 // Copyright (C) 2001 Nick Drochak, All Rights Reserved
 // 
@@ -11,7 +11,6 @@
 
 using System;
 using System.Security;
-using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 	[System.AttributeUsage(
@@ -30,13 +29,12 @@ namespace System.Security.Permissions {
 		private SecurityAction m_Action;
 		private bool m_Unrestricted;
 
-		public SecurityAttribute(SecurityAction action) {
-			if (!SecurityAction.IsDefined(typeof(SecurityAction), action)) {
-				throw new System.ArgumentException();
-			}
+		public SecurityAttribute (SecurityAction action) 
+		{
+			Action = action;
 		}
 
-		public abstract IPermission CreatePermission();
+		public abstract IPermission CreatePermission ();
 
 		public bool Unrestricted {
 			get {
@@ -52,6 +50,9 @@ namespace System.Security.Permissions {
 				return m_Action;
 			}
 			set {
+				if (!SecurityAction.IsDefined(typeof(SecurityAction), value)) {
+					throw new System.ArgumentException();
+				}
 				m_Action = value;
 			}
 		}

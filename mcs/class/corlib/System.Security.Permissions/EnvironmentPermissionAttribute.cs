@@ -10,13 +10,12 @@
 //
 
 using System;
-using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class EnvironmentPermissionAttribute : CodeAccessSecurityAttribute {
 
@@ -51,12 +50,17 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			EnvironmentPermission p = new EnvironmentPermission (PermissionState.None);
-			if (read != null)
-				p.AddPathList (EnvironmentPermissionAccess.Read, read);
-			if (write != null)
-				p.AddPathList (EnvironmentPermissionAccess.Write, write);
-			return p;
+			EnvironmentPermission perm = null;
+			if (this.Unrestricted)
+				perm = new EnvironmentPermission (PermissionState.Unrestricted);
+			else {
+				perm = new EnvironmentPermission (PermissionState.None);
+				if (read != null)
+					perm.AddPathList (EnvironmentPermissionAccess.Read, read);
+				if (write != null)
+					perm.AddPathList (EnvironmentPermissionAccess.Write, write);
+			}
+			return perm;
 		}
 	}
 }

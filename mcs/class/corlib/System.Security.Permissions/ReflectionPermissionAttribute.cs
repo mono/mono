@@ -10,13 +10,12 @@
 //
 
 using System;
-using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class ReflectionPermissionAttribute : CodeAccessSecurityAttribute {
 
@@ -80,7 +79,12 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			return new ReflectionPermission (flags);
+			ReflectionPermission perm = null;
+			if (this.Unrestricted)
+				perm = new ReflectionPermission (PermissionState.Unrestricted);
+			else
+				perm = new ReflectionPermission (flags);
+			return perm;
 		}
 	}
 }

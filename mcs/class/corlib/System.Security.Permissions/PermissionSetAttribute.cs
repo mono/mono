@@ -7,16 +7,15 @@
 //
 
 using System;
-using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
-	public sealed class PermissionSetAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class PermissionSetAttribute : CodeAccessSecurityAttribute {
+
 		// Fields
 		private string file;
 		private string name;
@@ -52,7 +51,7 @@ namespace System.Security.Permissions
 		{
 			get { return xml; }
 			set { xml = value; }
-		 }
+		}
 		
 		// Methods
 		public override IPermission CreatePermission ()
@@ -63,7 +62,19 @@ namespace System.Security.Permissions
 		[MonoTODO]
 		public PermissionSet CreatePermissionSet ()
 		{
-			    return null;
+			PermissionSet pset = null;
+			if (this.Unrestricted)
+				pset = new PermissionSet (PermissionState.Unrestricted);
+			else {
+				pset = new PermissionSet (PermissionState.None);
+				if (name != null) {
+				}
+				else if (file != null) {
+				}
+				else if (xml != null) {
+				}
+			}
+			return pset;
 		}
 	}
 }		    

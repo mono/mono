@@ -11,7 +11,6 @@
 
 using System;
 using System.Security;
-using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 	[System.AttributeUsage(
@@ -23,185 +22,205 @@ namespace System.Security.Permissions {
 		AllowMultiple=true, 
 		Inherited=false)
 	]
+	[Serializable]
 	public sealed class SecurityPermissionAttribute : CodeAccessSecurityAttribute {
-		private SecurityPermissionFlag m_Flags = SecurityPermissionFlag.NoFlags;
+		private SecurityPermissionFlag m_Flags;
 
-		public SecurityPermissionAttribute(SecurityAction action) : base(action) {
-			if (!SecurityAction.IsDefined(typeof(SecurityAction), action)) {
-				throw new System.ArgumentException(); 
-			}
+		public SecurityPermissionAttribute (SecurityAction action) : base(action) 
+		{
+			m_Flags = SecurityPermissionFlag.NoFlags;
 		}
 
 		public bool Assertion {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.Assertion) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.Assertion;
 				}
 				else{
-					m_Flags -= SecurityPermissionFlag.Assertion;
+					m_Flags &= SecurityPermissionFlag.Assertion;
 				}
 			}
 		}
 
 		public bool ControlAppDomain {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.ControlAppDomain) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.ControlAppDomain;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.ControlAppDomain;
+				else {
+					m_Flags &= SecurityPermissionFlag.ControlAppDomain;
 				}
 			}
 		}
 
 		public bool ControlDomainPolicy {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.ControlDomainPolicy) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.ControlDomainPolicy;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.ControlDomainPolicy;
+				else {
+					m_Flags &= SecurityPermissionFlag.ControlDomainPolicy;
 				}
 			}
 		}
 
 		public bool ControlEvidence {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.ControlEvidence) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.ControlEvidence;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.ControlEvidence;
+				else {
+					m_Flags &= SecurityPermissionFlag.ControlEvidence;
 				}
 			}
 		}
 		
 		public bool ControlPolicy {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.ControlPolicy) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.ControlPolicy;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.ControlPolicy;
+				else {
+					m_Flags &= SecurityPermissionFlag.ControlPolicy;
 				}
 			}
 		}
 		
 		public bool ControlPrincipal {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.ControlPrincipal) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.ControlPrincipal;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.ControlPrincipal;
+				else {
+					m_Flags &= SecurityPermissionFlag.ControlPrincipal;
 				}
 			}
 		}
 
 		public bool ControlThread {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.ControlThread) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.ControlThread;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.ControlThread;
+				else {
+					m_Flags &= SecurityPermissionFlag.ControlThread;
 				}
 			}
 		}
 
 		public bool Execution {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.Execution) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.Execution;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.Execution;
+				else {
+					m_Flags &= SecurityPermissionFlag.Execution;
 				}
 			}
 		}
 
 		public bool Infrastructure {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.Infrastructure) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.Infrastructure;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.Infrastructure;
+				else {
+					m_Flags &= SecurityPermissionFlag.Infrastructure;
 				}
 			}
 		}
 
 		public bool RemotingConfiguration {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.RemotingConfiguration) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.RemotingConfiguration;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.RemotingConfiguration;
+				else {
+					m_Flags &= SecurityPermissionFlag.RemotingConfiguration;
 				}
 			}
 		}
 		
 		public bool SerializationFormatter {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.SerializationFormatter) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.SerializationFormatter;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.SerializationFormatter;
+				else {
+					m_Flags &= SecurityPermissionFlag.SerializationFormatter;
 				}
 			}
 		}
 		
 		public bool SkipVerification {
-			get{
+			get {
 				return ((m_Flags & SecurityPermissionFlag.SkipVerification) != 0);
 			}
-			set{
-				if (value){
+			set {
+				if (value) {
 					m_Flags |= SecurityPermissionFlag.SkipVerification;
 				}
-				else{
-					m_Flags -= SecurityPermissionFlag.SkipVerification;
+				else {
+					m_Flags &= SecurityPermissionFlag.SkipVerification;
 				}
 			}
 		}
 
-		public override IPermission CreatePermission() {
-			return new SecurityPermission(m_Flags);
+		public bool UnmanagedCode {
+			get {
+				return ((m_Flags & SecurityPermissionFlag.UnmanagedCode) != 0);
+			}
+			set {
+				if (value) {
+					m_Flags |= SecurityPermissionFlag.UnmanagedCode;
+				}
+				else {
+					m_Flags &= SecurityPermissionFlag.UnmanagedCode;
+				}
+			}
+		}
+
+		public override IPermission CreatePermission ()
+		{
+			SecurityPermission perm = null;
+			if (this.Unrestricted)
+				perm = new SecurityPermission (PermissionState.Unrestricted);
+			else
+				perm = new SecurityPermission (m_Flags);
+			return perm;
 		}
 
 		public SecurityPermissionFlag Flags {

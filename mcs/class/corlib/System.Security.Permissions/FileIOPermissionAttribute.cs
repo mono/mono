@@ -10,13 +10,12 @@
 //
 
 using System;
-using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class FileIOPermissionAttribute : CodeAccessSecurityAttribute {
 
@@ -70,16 +69,21 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			FileIOPermission p = new FileIOPermission (PermissionState.None);
-			if (append != null)
-				p.AddPathList (FileIOPermissionAccess.Append, append);
-			if (path != null)
-				p.AddPathList (FileIOPermissionAccess.PathDiscovery, path);
-			if (read != null)
-				p.AddPathList (FileIOPermissionAccess.Read, read);
-			if (write != null)
-				p.AddPathList (FileIOPermissionAccess.Write, write);
-			return p;
+			FileIOPermission perm = null;
+			if (this.Unrestricted)
+				perm = new FileIOPermission (PermissionState.Unrestricted);
+			else {
+				perm = new FileIOPermission (PermissionState.None);
+				if (append != null)
+					perm.AddPathList (FileIOPermissionAccess.Append, append);
+				if (path != null)
+					perm.AddPathList (FileIOPermissionAccess.PathDiscovery, path);
+				if (read != null)
+					perm.AddPathList (FileIOPermissionAccess.Read, read);
+				if (write != null)
+					perm.AddPathList (FileIOPermissionAccess.Write, write);
+			}
+			return perm;
 		}
 	}
 }	   

@@ -152,7 +152,7 @@ namespace System.Security.Permissions {
 			int n = result.Length;
 			if (n > 0)
 				return result.Substring (0, n - 1);
-			return null;
+			return ((_state == PermissionState.Unrestricted) ? String.Empty : null);
 		}
 
 		public override IPermission Intersect (IPermission target)

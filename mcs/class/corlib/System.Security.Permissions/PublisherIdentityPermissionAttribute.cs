@@ -8,14 +8,13 @@
 //
 
 using System;
-using System.Security.Permissions;
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class PublisherIdentityPermissionAttribute : CodeAccessSecurityAttribute {
 
@@ -53,6 +52,9 @@ namespace System.Security.Permissions {
 
 		public override IPermission CreatePermission ()
 		{
+			if (this.Unrestricted)
+				throw new ArgumentException ("Unsupported PermissionState.Unrestricted");
+
 			X509Certificate x509 = null;
 			if (x509data != null) {
 				byte[] rawcert = new byte [x509data.Length >> 1];

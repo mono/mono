@@ -31,7 +31,11 @@ namespace System.Security.Permissions {
 		}
 
 		public string Url { 
-			get { return url; }
+			get { 
+				if (url == null)
+					throw new NullReferenceException ("Url");
+				return url; 
+			}
 			set { url = value; }
 		}
 

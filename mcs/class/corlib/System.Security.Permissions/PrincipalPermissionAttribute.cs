@@ -7,13 +7,10 @@
 //
 
 using System;
-using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 
-	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
-			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class PrincipalPermissionAttribute : CodeAccessSecurityAttribute {
 
@@ -26,6 +23,7 @@ namespace System.Security.Permissions {
 		public PrincipalPermissionAttribute (SecurityAction action)
 			: base (action)
 		{
+			authenticated = true; // strange but true ;)
 		}
 
 		// Properties
@@ -50,7 +48,12 @@ namespace System.Security.Permissions {
 		// Method
 		public override IPermission CreatePermission ()
 		{
-			return new PrincipalPermission (name, role, authenticated);
+			PrincipalPermission perm = null;
+			if (this.Unrestricted)
+				perm = new PrincipalPermission (PermissionState.Unrestricted);
+			else
+				perm = new PrincipalPermission (name, role, authenticated);
+			return perm;
 		}
 	}
 }

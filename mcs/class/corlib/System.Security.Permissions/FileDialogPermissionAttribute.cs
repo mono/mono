@@ -10,13 +10,12 @@
 //
 
 using System;
-using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class FileDialogPermissionAttribute : CodeAccessSecurityAttribute {
 
@@ -41,12 +40,18 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			FileDialogPermissionAccess access = FileDialogPermissionAccess.None;
-			if (canOpen)
-				access |= FileDialogPermissionAccess.Open;
-			if (canSave)
-				access |= FileDialogPermissionAccess.Save;
-			return new FileDialogPermission (access);
+			FileDialogPermission perm = null;
+			if (this.Unrestricted)
+				perm = new FileDialogPermission (PermissionState.Unrestricted);
+			else {
+				FileDialogPermissionAccess access = FileDialogPermissionAccess.None;
+				if (canOpen)
+					access |= FileDialogPermissionAccess.Open;
+				if (canSave)
+					access |= FileDialogPermissionAccess.Save;
+				perm = new FileDialogPermission (access);
+			}
+			return perm;
 		}
 	}
 }

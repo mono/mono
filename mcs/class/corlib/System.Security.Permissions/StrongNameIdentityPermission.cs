@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -22,6 +22,8 @@ namespace System.Security.Permissions {
 		{
 			if (state == PermissionState.Unrestricted)
 				throw new ArgumentException ("state");
+			name = String.Empty;
+			version = new Version (0, 0);
 		}
 	
 		public StrongNameIdentityPermission (StrongNamePublicKeyBlob blob, string name, Version version) 

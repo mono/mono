@@ -9,37 +9,22 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 
-
 namespace System.Security.Permissions {
 
-
-	/// <summary>
-	/// </summary>
 	[Flags]
+	[Serializable]
 	public enum SecurityPermissionFlag {
 
-		/// <summary>
-		/// </summary>
 		NoFlags = 0x00000000,
 
-		/// <summary>
-		/// </summary>
 		Assertion = 0x00000001,
 
-		/// <summary>
-		/// </summary>
 		UnmanagedCode = 0x00000002,
 
-		/// <summary>
-		/// </summary>
 		SkipVerification = 0x00000004,
 
-		/// <summary>
-		/// </summary>
 		Execution = 0x00000008,
 
-		/// <summary>
-		/// </summary>
 		ControlThread = 0x00000010,
 
 		ControlEvidence = 0x00000020,
@@ -57,12 +42,9 @@ namespace System.Security.Permissions {
 		RemotingConfiguration = 0x00000800,
 
 		Infrastructure = 0x00001000,
-
 #if ! NET_1_0
 		BindingRedirects = 0x00002000,
 #endif
-		/// <summary>
-		/// </summary>
 		AllFlags = Assertion | UnmanagedCode | SkipVerification | Execution | ControlThread
 			| ControlAppDomain | ControlDomainPolicy | ControlEvidence | ControlPolicy
 			| ControlPrincipal | Infrastructure | RemotingConfiguration | SerializationFormatter

@@ -1,20 +1,21 @@
 //
 // System.Security.Permissions.IsolatedStorageFilePermissionAttribute.cs
 //
-// Duncan Mak <duncan@ximian.com>
+// Authors
+//	Duncan Mak <duncan@ximian.com>
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002 Ximian, Inc.			http://www.ximian.com
+// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
-using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class IsolatedStorageFilePermissionAttribute : IsolatedStoragePermissionAttribute
 	{
@@ -25,10 +26,17 @@ namespace System.Security.Permissions
 		}
 
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			IsolatedStorageFilePermission perm = null;
+			if (this.Unrestricted)
+				perm = new IsolatedStorageFilePermission (PermissionState.Unrestricted);
+			else {
+				perm = new IsolatedStorageFilePermission (PermissionState.None);
+				perm.UsageAllowed = this.UsageAllowed;
+				perm.UserQuota = this.UserQuota;
+			}
+			return perm;
 		}
 	}
 }

@@ -16,6 +16,7 @@ namespace System.Security.Permissions {
 	public sealed class RegistryPermission
 		: CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
+		private PermissionState _state;
 		private RegistryPermissionAccess _access;
 		private string _pathList;
 
@@ -23,10 +24,13 @@ namespace System.Security.Permissions {
 
 		public RegistryPermission (PermissionState state)
 		{
+			_state = state;
 		}
 
 		public RegistryPermission (RegistryPermissionAccess access, string pathList)
 		{
+			_state = PermissionState.None;
+			AddPathList (access, pathList);
 		}
 
 		// Properties
@@ -41,6 +45,16 @@ namespace System.Security.Permissions {
 		[MonoTODO]
 		public string GetPathList (RegistryPermissionAccess access)
 		{
+			switch (access) {
+				case RegistryPermissionAccess.Create:
+					break;
+				case RegistryPermissionAccess.Read:
+					break;
+				case RegistryPermissionAccess.Write:
+					break;
+				default:
+					throw new ArgumentException ("Invalid flag");
+			}
 			return null;
 		}
 
@@ -101,10 +115,9 @@ namespace System.Security.Permissions {
 			return false;
 		}
 
-		[MonoTODO]
 		public bool IsUnrestricted () 
 		{
-			return false;
+			return (_state == PermissionState.Unrestricted);
 		}
 
 		public override SecurityElement ToXml () 

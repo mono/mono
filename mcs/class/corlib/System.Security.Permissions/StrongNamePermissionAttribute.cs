@@ -12,7 +12,7 @@ namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public sealed class StrongNameIdentityPermissionAttribute : CodeAccessSecurityAttribute	{
 
@@ -46,10 +46,31 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			byte[] keyblob = Convert.FromBase64String (key);
-			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (keyblob);
-			Version v = new Version (version);
-			return new StrongNameIdentityPermission (blob, name, v);
+			if (this.Unrestricted)
+				throw new ArgumentException ("Unsupported PermissionState.Unrestricted");
+
+			StrongNameIdentityPermission perm = null;
+			if ((name == null) && (key == null) && (version == null))
+				perm = new StrongNameIdentityPermission (PermissionState.None);
+			else {
+				if (key == null)
+					throw new ArgumentException ("PublicKey is required");
+
+				byte[] keyblob = Convert.FromBase64String (key);
+				StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (keyblob);
+				
+				Version v = null;
+				if (version != null)
+					v = new Version (version);
+				else
+					v = new Version ();
+
+				if (name == null)
+					name = String.Empty;
+
+				perm = new StrongNameIdentityPermission (blob, name, v);
+			}
+			return perm;
 		}
 	}
 }

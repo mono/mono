@@ -22,6 +22,10 @@ namespace System.Security.Permissions {
 
 		public UIPermission (PermissionState state) 
 		{
+			if (state == PermissionState.Unrestricted) {
+				_clipboard = UIPermissionClipboard.AllClipboard;
+				_window = UIPermissionWindow.AllWindows;
+			}
 		}
 
 		public UIPermission (UIPermissionClipboard clipboardFlag) 

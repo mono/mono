@@ -1,17 +1,16 @@
 //
 // System.Security.Permissions.SecurityPermission.cs
 //
-// Author:
-//   Dan Lewis (dihlewis@yahoo.co.uk)
+// Authors:
+//	Dan Lewis (dihlewis@yahoo.co.uk)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002
-//
-// Stubbed.
+// Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
 using System.Globalization;
-using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 	
@@ -19,10 +18,16 @@ namespace System.Security.Permissions {
 	public sealed class SecurityPermission :
 		CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
-		[MonoTODO]
-		public SecurityPermission (PermissionState state) 
+		private SecurityPermissionFlag flags;
+
+		// constructors
+
+		public SecurityPermission (PermissionState state)
 		{
-			this.flags = SecurityPermissionFlag.NoFlags;
+			if (state == PermissionState.Unrestricted)
+				flags = SecurityPermissionFlag.AllFlags;
+			else
+				flags = SecurityPermissionFlag.NoFlags;
 		}
 
 		public SecurityPermission (SecurityPermissionFlag flags) 
@@ -35,10 +40,9 @@ namespace System.Security.Permissions {
 			set { flags = value; }
 		}
 
-		[MonoTODO]
 		public bool IsUnrestricted () 
 		{
-			return false;
+			return (flags == SecurityPermissionFlag.AllFlags);
 		}
 
 		public override IPermission Copy () 
@@ -46,22 +50,53 @@ namespace System.Security.Permissions {
 			return new SecurityPermission (flags);
 		}
 
-		[MonoTODO]
+		internal SecurityPermission Cast (IPermission target) 
+		{
+			SecurityPermission perm = (target as SecurityPermission);
+			if (perm == null)
+				throw new ArgumentException ("wrong type for target");
+			return perm;
+		}
+
 		public override IPermission Intersect (IPermission target) 
 		{
-			return null;
+			if (target == null)
+				return null;
+
+			SecurityPermission perm = Cast (target);
+			if (this.IsUnrestricted () && perm.IsUnrestricted ())
+				return new SecurityPermission (PermissionState.Unrestricted);
+			if (this.IsUnrestricted ())
+				return perm.Copy ();
+			if (perm.IsUnrestricted ())
+				return this.Copy ();
+			return new SecurityPermission (flags & perm.flags);
 		}
 
-		[MonoTODO]
 		public override IPermission Union (IPermission target) 
 		{
-			return null;
+			if (target == null)
+				return this.Copy ();
+
+			SecurityPermission perm = Cast (target);
+			if (this.IsUnrestricted () || perm.IsUnrestricted ())
+				return new SecurityPermission (PermissionState.Unrestricted);
+			
+			return new SecurityPermission (flags | perm.flags);
 		}
 
-		[MonoTODO]
 		public override bool IsSubsetOf (IPermission target) 
 		{
-			return false;
+			if (target == null) 
+				return (flags == SecurityPermissionFlag.NoFlags);
+
+			SecurityPermission perm = Cast (target);
+			if (perm.IsUnrestricted ())
+				return true;
+			if (this.IsUnrestricted ())
+				return false;
+
+			return ((flags & ~perm.flags) == 0);
 		}
 
 		public override void FromXml (SecurityElement e) 
@@ -92,10 +127,6 @@ namespace System.Security.Permissions {
 
 			return e;
 		}
-
-		// private 
-		
-		private SecurityPermissionFlag flags;
 
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()

@@ -21,6 +21,8 @@ namespace System.Security.Permissions {
 
 		public SiteIdentityPermission (PermissionState state) 
 		{
+			if (state == PermissionState.Unrestricted)
+				throw new ArgumentException ("Unsupported PermissionState.Unrestricted for Identity Permission");
 		}
 
 		public SiteIdentityPermission (string site) 
@@ -31,7 +33,11 @@ namespace System.Security.Permissions {
 		// Properties
 
 		public string Site {
-			get { return _site; }
+			get { 
+				if (_site == null)
+					throw new NullReferenceException ("Site");
+				return _site; 
+			}
 			set { _site = value; }
 		}
 
