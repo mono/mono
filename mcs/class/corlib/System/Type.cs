@@ -152,7 +152,9 @@ namespace System {
 
 		public bool IsClass {
 			get {
-				return (Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Class;
+				if (this == typeof (System.Enum) || this == typeof (System.ValueType))
+					return true;
+				return !type_is_subtype_of (this, typeof (System.ValueType));
 			}
 		}
 

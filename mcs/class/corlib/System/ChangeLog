@@ -1,4 +1,8 @@
 
+Sat Feb 16 12:41:41 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs: fix IsClass.
+
 Sat Feb 16 12:02:02 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: fix Trim().
