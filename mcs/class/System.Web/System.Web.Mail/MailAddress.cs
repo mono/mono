@@ -73,7 +73,7 @@ namespace System.Web.Mail {
 	    addr.Address = address;
 	    
 	    if( nameString != null ) {
-		addr.Name = nameString.Trim();
+		addr.Name = nameString.Trim( new char[] { ' ' , '"' } );
 		addr.Name = ( addr.Name.Length == 0 ? null : addr.Name ); 
 	    }
 	    
@@ -96,7 +96,7 @@ namespace System.Web.Mail {
 
 		if( MailUtil.NeedEncoding( personName ) ) {
 		    personName = String.Format( "=?{0}?B?{1}?=",
-					        Encoding.Default , 
+					        Encoding.Default.BodyName , 
 						MailUtil.Base64Encode( personName ) ) ;
 		}
 

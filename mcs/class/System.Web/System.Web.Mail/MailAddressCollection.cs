@@ -29,7 +29,7 @@ namespace System.Web.Mail {
 	    return data.GetEnumerator();
 	}
     
-    
+     
 	public override string ToString() {
 	    
 	    StringBuilder builder = new StringBuilder();
@@ -38,7 +38,7 @@ namespace System.Web.Mail {
 		
 		builder.Append( addr );
 		
-		if( i != ( data.Count - 1 ) ) builder.Append( ", " );
+		if( i != ( data.Count - 1 ) ) builder.Append( ",\r\n  " );
 	    }
 
 	    return builder.ToString(); 

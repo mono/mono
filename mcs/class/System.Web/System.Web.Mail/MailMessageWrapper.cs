@@ -52,19 +52,19 @@ namespace System.Web.Mail {
 	    
 	    // set the subject
 	    if( message.Subject != null ) {
-		// if the BodyEncoding is not 7bit us-ascii then
-		// convert the subject using base64 
-		if( message.BodyEncoding is ASCIIEncoding ) {
-		    
-		    header.Subject = message.Subject;
-		    
-		} else {
 		
+		// encode the subject if it needs encoding
+		if( MailUtil.NeedEncoding( message.Subject ) ) {
+		    		
 		    byte[] subjectBytes = message.BodyEncoding.GetBytes( message.Subject );
 		    // encode the subject with Base64
 		    header.Subject = String.Format( "=?{0}?B?{1}?=" , 
 						    message.BodyEncoding.BodyName ,
 						    Convert.ToBase64String( subjectBytes ) );
+		} else {
+		    
+		    header.Subject = message.Subject;
+		
 		}
 	    }
 

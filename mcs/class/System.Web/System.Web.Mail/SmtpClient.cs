@@ -75,6 +75,11 @@ namespace System.Web.Mail {
 	    foreach( MailAddress addr in msg.Cc ) {
 		smtp.WriteRcptTo( addr.Address );
 	    }
+
+	    // write the rcpt to command for the Bcc addresses
+	    foreach( MailAddress addr in msg.Bcc ) {
+		smtp.WriteRcptTo( addr.Address );
+	    }
 	    
 	    // write the data command and then
 	    // send the email
@@ -110,9 +115,8 @@ namespace System.Web.Mail {
 	// sends a multipart mail to the server
 	private void SendMultipartMail( MailMessageWrapper msg ) {
 	    	    
-	    // set the part boundary FIXME: THIS SHOULD NOT BE HARDCODED
-	    // look att  Gaurav Vaish implementation
-	    string boundary = "NextPart_000_1113_1962_1fe8";
+	    // generate the boundary between attachments
+	    string boundary = MailUtil.GenerateBoundary();
 		
 	    // set the Content-Type header to multipart/mixed
 	    msg.Header.ContentType = 

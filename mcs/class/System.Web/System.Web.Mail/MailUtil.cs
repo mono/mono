@@ -20,15 +20,18 @@ namespace System.Web.Mail {
 	// the smtp protocol without risking
 	// that it would be changed.
 	public static bool NeedEncoding( string str ) {
-	    bool needEnc = false;
 	    
 	    foreach( char chr in str ) {
+		
 		int ch = (int)chr;
-		if( ! ( ( ch > 33 ) && ( ch < 61 ) ) ||
-		    ( ( ch > 61 ) && ( ch < 127 ) ) ) needEnc = true;
+		
+		if( ! ( (ch > 61) && (ch < 127) || (ch>31) && (ch<61) ) ) {
+		
+		    return true;
+		}
 	    }
-
-	    return needEnc;
+	    
+	    return false;
 	}
 
 	// Encodes a string to base4
@@ -36,6 +39,28 @@ namespace System.Web.Mail {
 	    return Convert.ToBase64String( Encoding.Default.GetBytes( str ) );
 	}
 	
+	// Generate a unique boundary
+	public static string GenerateBoundary() {
+	    StringBuilder  boundary = new StringBuilder("__MONO__Boundary");
+	    
+	    boundary.Append("__");
+	    
+	    DateTime now = DateTime.Now;
+	    boundary.Append(now.Year);
+	    boundary.Append(now.Month);
+	    boundary.Append(now.Day);
+	    boundary.Append(now.Hour);
+	    boundary.Append(now.Minute);
+	    boundary.Append(now.Second);
+	    boundary.Append(now.Millisecond);
+	    	    
+	    boundary.Append("__");
+	    boundary.Append((new Random()).Next());
+	    boundary.Append("__");
+	    
+	    return boundary.ToString();
+	}
+
     }
 
 
