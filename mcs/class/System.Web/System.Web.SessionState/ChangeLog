@@ -1,3 +1,7 @@
+2004-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionStateModule.cs: use SetCurrentExePath instead of SetFilePath.
+
 2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSessionState.cs: don't share static session objects declared in

@@ -403,7 +403,7 @@ namespace System.Web
 				throw new HttpException (404, "The virtual path '" + path +
 							 "' maps to another application.");
 
-			Request.SetFilePath (path);
+			Request.SetCurrentExePath (path);
 			Request.QueryStringRaw = query;
 		}
 

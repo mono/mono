@@ -1,3 +1,14 @@
+2004-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: CurrentExecutionFilePath is the one that
+	changes when Transfer or Execute are used, not FilePath.
+
+	* HttpServerUtility.cs: moved form saving/restoring from
+	Transfer to Execute, as it's needed there too. the query string is
+	correctly set now. Fixes bug #67388.
+
+	* HttpContext.cs: use SetCurrentExePath instead of SetFilePath.
+
 2004-10-03 Ben Maurer  <bmaurer@ximian.com>
 
 	* HttpResponse.cs: use UtcNow
