@@ -142,7 +142,7 @@ namespace System.Web.UI.WebControls
 			int colSpan = 0;
 			if(user.HasHeader)
 			{
-				if(isTable)
+				if(!isTable)
 				{
 					writer.RenderBeginTag(HtmlTextWriterTag.Tr);
 					if(colsCount != 1)
@@ -160,7 +160,7 @@ namespace System.Web.UI.WebControls
 					writer.RenderBeginTag(HtmlTextWriterTag.Td);
 				}
 				user.RenderItem(ListItemType.Header, -1, this, writer);
-				if(isTable)
+				if(!isTable)
 				{
 					writer.RenderEndTag();
 					writer.RenderEndTag();
@@ -180,7 +180,7 @@ namespace System.Web.UI.WebControls
 			
 			while(rowIndex < rowsCount)
 			{
-				if(isTable)
+				if(!isTable)
 					writer.RenderBeginTag(HtmlTextWriterTag.Tr);
 				colIndex = 0;
 				while(colIndex < colsCount)
@@ -195,7 +195,7 @@ namespace System.Web.UI.WebControls
 
 					if(index < total)
 					{
-						if(isTable)
+						if(!isTable)
 						{
 							itemStyle = user.GetItemStyle(ListItemType.Item, index);
 							if(itemStyle != null)
@@ -205,7 +205,7 @@ namespace System.Web.UI.WebControls
 							writer.RenderBeginTag(HtmlTextWriterTag.Td);
 						}
 						user.RenderItem(ListItemType.Item, index, this, writer);
-						if(isTable)
+						if(!isTable)
 							writer.RenderEndTag();
 						if(hasSeps && index != (total - 1))
 						{
@@ -217,7 +217,7 @@ namespace System.Web.UI.WebControls
 							{
 								writer.WriteFullBeginTag("br");
 							}
-							if(isTable)
+							if(!isTable)
 							{
 								itemStyle = user.GetItemStyle(ListItemType.Separator, index);
 								if(itemStyle != null)
@@ -225,13 +225,13 @@ namespace System.Web.UI.WebControls
 								writer.RenderBeginTag(HtmlTextWriterTag.Td);
 							}
 							user.RenderItem(ListItemType.Separator, index, this, writer);
-							if(isTable)
+							if(!isTable)
 								writer.RenderEndTag();
 						}
 					}
 					colIndex++;
 				}
-				if(isTable)
+				if(!isTable)
 					writer.RenderEndTag();
 				else
 					if(rowIndex != (rowsCount - 1) || (user.HasFooter && !outerTableImp))
@@ -240,7 +240,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(user.HasFooter)
 			{
-				if(isTable)
+				if(!isTable)
 				{
 					writer.RenderBeginTag(HtmlTextWriterTag.Tr);
 					if(colsCount != 1)
@@ -255,7 +255,7 @@ namespace System.Web.UI.WebControls
 					writer.RenderBeginTag(HtmlTextWriterTag.Td);
 				}
 				user.RenderItem(ListItemType.Footer, -1, this, writer);
-				if(isTable)
+				if(!isTable)
 				{
 					writer.RenderEndTag();
 					writer.RenderEndTag();
@@ -291,7 +291,7 @@ namespace System.Web.UI.WebControls
 			Style itemStyle;
 			int colSpan = 0;
 			if (user.HasHeader){
-				if (isTable){
+				if (!isTable){
 					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 					if (colsCount != 1){
 						colSpan = colsCount;
@@ -308,7 +308,7 @@ namespace System.Web.UI.WebControls
 
 				user.RenderItem (ListItemType.Header, -1, this, writer);
 				
-				if (isTable){
+				if (!isTable){
 					writer.RenderEndTag();
 					writer.RenderEndTag();
 				} else if (!outerTableImp)
@@ -316,10 +316,10 @@ namespace System.Web.UI.WebControls
 			}
 
 			for (int index = 0; index < total; index++){
-				if (isTable && index == 0)
+				if (!isTable && index == 0)
 					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 
-				if (isTable){
+				if (!isTable){
 					itemStyle = user.GetItemStyle (ListItemType.Item, index);
 					if (itemStyle != null)
 						itemStyle.AddAttributesToRender(writer);
@@ -327,24 +327,24 @@ namespace System.Web.UI.WebControls
 				}
 
 				user.RenderItem(ListItemType.Item, index, this, writer);
-				if (isTable)
+				if (!isTable)
 					writer.RenderEndTag ();
 
 				if (hasSeps && index != (total - 1)){
-					if (isTable){
+					if (!isTable){
 						itemStyle = user.GetItemStyle (ListItemType.Separator, index);
 						if (itemStyle != null)
 							itemStyle.AddAttributesToRender (writer);
 						writer.RenderBeginTag (HtmlTextWriterTag.Td);
 					}
 					user.RenderItem (ListItemType.Separator, index, this, writer);
-					if (isTable)
+					if (!isTable)
 						writer.RenderEndTag ();
 				}
 
 				colsCount++;
 				if (colsCount == repeatColumns) {
-					if (isTable) {
+					if (!isTable) {
 						writer.RenderEndTag ();
 						writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 					}
@@ -354,7 +354,7 @@ namespace System.Web.UI.WebControls
 				}
 
 				if (index == (total - 1)) {
-					if (isTable)
+					if (!isTable)
 						writer.RenderEndTag ();
 					else if (rowsCount < total)
 						writer.WriteFullBeginTag ("br");
@@ -362,7 +362,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			if (user.HasFooter){
-				if (isTable){
+				if (!isTable){
 					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 					if (colsCount != 1)
 						writer.AddAttribute (HtmlTextWriterAttribute.Colspan,
@@ -374,7 +374,7 @@ namespace System.Web.UI.WebControls
 					writer.RenderBeginTag (HtmlTextWriterTag.Td);
 				}
 				user.RenderItem (ListItemType.Footer, -1, this, writer);
-				if (isTable){
+				if (!isTable){
 					writer.RenderEndTag ();
 					writer.RenderEndTag ();
 				}
