@@ -8,6 +8,7 @@ CodeAttributeDeclaration.cs
 CodeAttributeDeclarationCollection.cs
 CodeBaseReferenceExpression.cs
 CodeBinaryOperatorExpression.cs
+CodeBinaryOperatorType.cs
 CodeCastExpression.cs
 CodeCatchClause.cs
 CodeCatchClauseCollection.cs
@@ -44,6 +45,7 @@ CodeMethodReturnStatement.cs
 CodeNamespace.cs
 CodeNamespaceImport.cs
 CodeNamespaceImportCollection.cs
+CodeObject.cs
 CodeObjectCreateExpression.cs
 CodeParameterDeclarationExpression.cs
 CodeParameterDeclarationExpressionCollection.cs
@@ -54,6 +56,10 @@ CodeStatementCollection.cs
 CodeThisReferenceExpression.cs
 CodeThrowExceptionStatement.cs
 CodeTryCatchFinallyStatement.cs
+CodeTypeDeclaration.cs
+CodeTypeMember.cs
 CodeTypeOfExpression.cs
 CodeTypeReferenceExpression.cs
 CodeVariableDeclarationStatement.cs
+FieldDirection.cs
+MemberAttributes.cs
