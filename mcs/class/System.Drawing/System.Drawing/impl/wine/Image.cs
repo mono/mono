@@ -18,6 +18,7 @@ namespace System.Drawing {
 		using System.Runtime.Serialization;
 		using System.Drawing.Imaging;
 		using System.IO;
+		using System.Runtime.InteropServices;
 
 		//[Serializable]
 		//[ComVisible(true)]
@@ -30,6 +31,7 @@ namespace System.Drawing {
 
 			protected Size imageSize_;
 			protected ImageFormat imageFormat_;
+			protected PixelFormat pixelFormat_;
 			// constructor
 			public Image () {}
     
@@ -114,8 +116,54 @@ namespace System.Drawing {
 			protected InternalImageInfo createdFrom_ = null;
 			public InternalImageInfo ConvertToInternalImageInfo() {
 				InternalImageInfo result = new InternalImageInfo();
+				IntPtr hTempBitmap = IntPtr.Zero;
+				IntPtr hdc = IntPtr.Zero;
+				result.Size = imageSize_;
+				result.Format = pixelFormat_;
+				//result.Stride = 
+				if(selectedIntoGraphics_ != null) {
+					hdc = selectedIntoGraphics_.GetHdc();
+					hTempBitmap = Win32.CreateCompatibleBitmap(hdc,1,1);
+					Win32.SelectObject( hdc, hTempBitmap);
+				}
+				else {
+					hdc = Win32.GetDC(IntPtr.Zero);
+				}
 				//nativeObject_;Win32.GetDIBits();
-				return createdFrom_;
+				BITMAPINFO_FLAT bmi = new BITMAPINFO_FLAT();
+				bmi.bmiHeader_biSize = 40;
+				bmi.bmiHeader_biWidth = imageSize_.Width;
+				bmi.bmiHeader_biHeight = imageSize_.Height;
+				bmi.bmiHeader_biPlanes = 1;
+				bmi.bmiHeader_biBitCount = (short) System.Drawing.Image.GetPixelFormatSize(pixelFormat_);
+				bmi.bmiHeader_biCompression = 0;
+				bmi.bmiHeader_biSizeImage = 0;
+				bmi.bmiHeader_biXPelsPerMeter = 0;
+				bmi.bmiHeader_biYPelsPerMeter = 0;
+				bmi.bmiHeader_biClrUsed = 0;
+				bmi.bmiHeader_biClrImportant = 0;
+
+				int res = Win32.GetDIBits(hdc, nativeObject_, 0, imageSize_.Height, 0, ref bmi, (int)DibUsage.DIB_RGB_COLORS);
+				if( res != 0) {
+					IntPtr nativeBits = Marshal.AllocHGlobal(bmi.bmiHeader_biSizeImage);
+					res = Win32.GetDIBits(hdc, nativeObject_, 0, imageSize_.Height, nativeBits.ToInt32(), ref bmi, (int)DibUsage.DIB_RGB_COLORS);
+					result.RawImageBytes = new byte[bmi.bmiHeader_biSizeImage];
+					Marshal.Copy( nativeBits, result.RawImageBytes, 0, bmi.bmiHeader_biSizeImage);
+					Marshal.FreeHGlobal(nativeBits);
+				}
+				else {
+					uint err = Win32.GetLastError();
+				}
+				
+				if(selectedIntoGraphics_ != null) {
+					Win32.SelectObject( hdc, nativeObject_);
+					Win32.DeleteObject(hTempBitmap);
+					selectedIntoGraphics_.ReleaseHdc(hdc);
+				}
+				else {
+					Win32.ReleaseDC(IntPtr.Zero,hdc);
+				}
+				return result;
 			}
 
 			public void Save (string filename)

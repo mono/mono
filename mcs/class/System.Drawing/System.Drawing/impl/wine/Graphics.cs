@@ -500,34 +500,46 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
+			void DrawLine (Pen winePen, int x1, int y1, int x2, int y2)
+			{
+				POINT[] pts = new POINT[2];
+				pts[0].x = x1;
+				pts[0].y = y1;
+				pts[1].x = x2;
+				pts[1].y = y2;
+				IntPtr oldPen = Win32.SelectObject(hdc_, winePen.hpen_);
+				Win32.Polyline( hdc_, pts, 2);
+				Win32.SelectObject(hdc_, oldPen);
+			}
+
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, PointF pt1, PointF pt2)
 			{
-				throw new NotImplementedException ();
+				DrawLine( ConvertPen(pen), (int)pt1.X, (int)pt1.Y, (int)pt2.X, (int)pt2.Y);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, Point pt1, Point pt2)
 			{
-				throw new NotImplementedException ();
+				DrawLine( ConvertPen(pen), (int)pt1.X, (int)pt1.Y, (int)pt2.X, (int)pt2.Y);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, int x1, int y1, int x2, int y2)
 			{
-				throw new NotImplementedException ();
+				DrawLine( ConvertPen(pen), x1, y1, x2, y2);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, float x1, float y1, float x2, float y2)
 			{
-				throw new NotImplementedException ();
+				DrawLine( ConvertPen(pen), (int)x1, (int)y1, (int)x2, (int)y2);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLines (System.Drawing.Pen pen, PointF [] points)
 			{
-				throw new NotImplementedException ();
+				//throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
@@ -1359,13 +1371,13 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.Restore (GraphicsState gstate)
 			{
-				throw new NotImplementedException ();
+				//throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
 			void IGraphics.RotateTransform (float angle)
 			{
-				throw new NotImplementedException ();
+				//throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
@@ -1377,7 +1389,8 @@ namespace System.Drawing
 			[MonoTODO]
 			public GraphicsState Save ()
 			{
-				throw new NotImplementedException ();
+				//throw new NotImplementedException ();
+				return new GraphicsState();
 			}
 
 			[MonoTODO]
@@ -1473,7 +1486,7 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.TranslateTransform (float dx, float dy)
 			{
-				throw new NotImplementedException ();
+				//throw new NotImplementedException ();
 			}
 
 			[MonoTODO]

@@ -1,3 +1,9 @@
+2003-06-27  Alexandre Pigolkine <pigolkine@gmx.de>
+	* FontFamily.cs	added
+	* Graphics.cs	DrawLine functions
+	* Bitmap.cs		create HBITMAP in constructor
+	* Image.cs		create InternalImageInfo from HBITMAP
+
 2003-06-15  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Graphics.cs	image painting
 	* Bitmap.cs		

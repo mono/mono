@@ -56,7 +56,7 @@ namespace System.Drawing {
 		{
 			#region constructors
 			// constructors
-			public Bitmap (int width, int height) 
+			public Bitmap (int width, int height) : this( width, height, PixelFormat.Format32bppArgb)
 			{
 			}
 
@@ -68,8 +68,26 @@ namespace System.Drawing {
 				g.ReleaseHdc(hdc);
 			}
 
-			public Bitmap (int width, int heigth, System.Drawing.Imaging.PixelFormat format) {
-				throw new NotImplementedException ();
+			public Bitmap (int width, int height, System.Drawing.Imaging.PixelFormat format) {
+				IntPtr hdc = Win32.GetDC(IntPtr.Zero);
+				pixelFormat_ = format;
+				BITMAPINFO_FLAT bmi = new BITMAPINFO_FLAT();
+				bmi.bmiHeader_biSize = 40;
+				bmi.bmiHeader_biWidth = width;
+				bmi.bmiHeader_biHeight = height;
+				bmi.bmiHeader_biPlanes = 1;
+				bmi.bmiHeader_biBitCount = (short)System.Drawing.Image.GetPixelFormatSize(pixelFormat_);
+				bmi.bmiHeader_biCompression = 0;
+				bmi.bmiHeader_biSizeImage = 0;
+				bmi.bmiHeader_biXPelsPerMeter = 0;
+				bmi.bmiHeader_biYPelsPerMeter = 0;
+				bmi.bmiHeader_biClrUsed = 0;
+				bmi.bmiHeader_biClrImportant = 0;
+				IntPtr bitsPtr;
+				nativeObject_ = Win32.CreateDIBSection(hdc, ref bmi, DibUsage.DIB_RGB_COLORS,
+								out bitsPtr, IntPtr.Zero, 0);
+				imageSize_ = new Size(width, height);
+				Win32.ReleaseDC( IntPtr.Zero, hdc);
 			}
 			
 			public Bitmap (Image origial) {
@@ -128,6 +146,7 @@ namespace System.Drawing {
 					Win32.DeleteDC(memDC);
 					imageSize_ = info.Size;
 					imageFormat_ = info.RawFormat;
+					pixelFormat_ =  info.Format;
 				}
 			}
 			
