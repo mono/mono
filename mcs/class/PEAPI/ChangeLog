@@ -1,5 +1,10 @@
 2004-05-25  Jackson Harper  <jackson@ximian.com>
 
+	* PEAPI.cs: Encode string constants as unicode before putting them
+	in the blob.
+	
+2004-05-25  Jackson Harper  <jackson@ximian.com>
+
 	* PEAPI.cs: zero RVAs for abstract, runtime, and internal call
 	methods.
 	

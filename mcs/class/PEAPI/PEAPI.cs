@@ -2447,7 +2447,8 @@ namespace PEAPI
 
     internal sealed override uint GetBlobIndex(MetaData md) {
       if (!addedToBlobHeap) {
-        blobIndex = md.AddToBlobHeap(val);
+        byte [] b = Encoding.Unicode.GetBytes (val);
+        blobIndex = md.AddToBlobHeap(b);
         addedToBlobHeap = true;
       }
       return blobIndex;
