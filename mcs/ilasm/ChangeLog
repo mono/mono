@@ -1,3 +1,8 @@
+2003-11-16 Jackson Harper <jackson@ximian.com>
+
+	* Driver.cs: If an arg isn't a switch and starts with a / add it
+	as a file to be compiled. This fixes bug #51041.
+	
 2003-10-28 Jackson Harper <jackson@ximian.com>
 
 	* Driver.cs: Stub some command line args to maintain compatibility

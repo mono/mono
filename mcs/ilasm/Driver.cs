@@ -204,6 +204,11 @@ namespace Mono.ILASM {
                                                         break;
                                                 Version ();
                                                 break;
+                                        default:
+                                                if (str [0] == '-')
+                                                        break;
+                                                il_file_list.Add (str);
+                                                break;
                                         }
                                 }
                         }
