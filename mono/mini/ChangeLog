@@ -1,3 +1,8 @@
+
+Mon Aug 4 12:12:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-long32.brg: couple more opcodes implemented.
+
 Thu Jul 31 22:43:02 EDT 2003 Mark Crichton <crichton@gimp.org>
 	
 	* mini-sparc.c: Even more opcodes implemeted.
