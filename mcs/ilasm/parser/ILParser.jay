@@ -422,7 +422,7 @@ namespace_head		: D_NAMESPACE comp_name
 class_all		: class_head OPEN_BRACE class_decls
                           CLOSE_BRACE
                           {
-                                codegen.CurrentClass = null;
+                                codegen.CompleteClass ();
                           }
                         
 			;

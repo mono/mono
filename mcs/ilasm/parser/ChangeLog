@@ -1,3 +1,9 @@
+2003-04-01 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Use the CodeGen CompleteClass method when a class
+	is completed instead of setting the current class to null. This
+	does some extra cleanup
+	
 2003-03-31 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Add bound arrays
