@@ -16,7 +16,7 @@ namespace System.Web.SessionState
 	public sealed class SessionStateModule : IHttpModule, IRequiresSessionState
 	{
 		static SessionConfig config;
-		Type handlerType;
+		static Type handlerType;
 		ISessionHandler handler;
 		
 		public SessionStateModule ()
@@ -41,17 +41,18 @@ namespace System.Web.SessionState
 				    config.Mode == SessionStateMode.SQLServer)
 					throw new NotSupportedException ("Only Off and InProc modes supported.");
 				
-				if (config.Mode == SessionStateMode.InProc) {
+				if (config.Mode == SessionStateMode.InProc)
 					handlerType = typeof (SessionInProcHandler);
-					app.AddOnAcquireRequestStateAsync (
-							new BeginEventHandler (OnBeginAcquireState),
-							new EndEventHandler (OnEndAcquireState));
-
-					app.ReleaseRequestState += new EventHandler (OnReleaseRequestState);
-					app.EndRequest += new EventHandler (OnEndRequest);
-				}
 			}
+				
 
+			app.AddOnAcquireRequestStateAsync (
+				new BeginEventHandler (OnBeginAcquireState),
+				new EndEventHandler (OnEndAcquireState));
+
+			app.ReleaseRequestState += new EventHandler (OnReleaseRequestState);
+			app.EndRequest += new EventHandler (OnEndRequest);
+			
 			if (handlerType != null && handler == null) {
 				handler = (ISessionHandler) Activator.CreateInstance (handlerType);
 				handler.Init(app); //initialize

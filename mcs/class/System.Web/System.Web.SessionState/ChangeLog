@@ -1,3 +1,8 @@
+2003-10-13 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* SessionStateModule.cs: prevent Context.State from being null if
+	the module is inited in another HttpApplication. Fixes #49569.
+
 2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* IStateRuntime.cs: New interface class
