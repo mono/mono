@@ -1,3 +1,7 @@
+2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: added System.Data/DataTablePropertyDescriptor.cs
+
 2002-12-27  Ville Palo <vi64pa@koti.soon.fi>
 
 	* list: Added System.Data/XmlDataLoader.cs

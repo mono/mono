@@ -72,7 +72,7 @@ namespace System.Data
 				DataRowView drv = (DataRowView) component;
 				return drv[base.Name];
 			}
-			else if(component == typeof(DbDataRecord) && component is DbDataRecord) {
+			else if(componentType == typeof(DbDataRecord) && component is DbDataRecord) {
 				DbDataRecord dr = (DbDataRecord) component;
 				return dr[columnIndex];
 			}

@@ -27,6 +27,7 @@ System.Data/DataSet.cs
 System.Data/DataSysDescriptionAttribute.cs
 System.Data/DataTable.cs
 System.Data/DataTableCollection.cs
+System.Data/DataTablePropertyDescriptor.cs
 System.Data/DataView.cs
 System.Data/DataViewManager.cs
 System.Data/DataViewManagerListItemTypeDescriptor.cs
