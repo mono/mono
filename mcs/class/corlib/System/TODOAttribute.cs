@@ -17,7 +17,7 @@ namespace System {
 	///   Use this to decorate any element which you think is not complete
 	/// </remarks>
 	[AttributeUsage (AttributeTargets.All, AllowMultiple=true)]
-	public class MonoTODOAttribute : Attribute {
+	internal class MonoTODOAttribute : Attribute {
 
 		private string comment;
 		

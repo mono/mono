@@ -18,7 +18,7 @@ namespace Mono.Data.Tds.Protocol {
 	///   Use this to decorate any element which you think is not complete
 	/// </remarks>
 	[AttributeUsage (AttributeTargets.All)]
-	public class MonoTODOAttribute : Attribute {
+	internal class MonoTODOAttribute : Attribute {
 
 		string comment;
 
