@@ -41,7 +41,6 @@ namespace Mono.GetOptions
 			return optionParser.DoUsage();
 		}
 
-
 	}
 	
 }
