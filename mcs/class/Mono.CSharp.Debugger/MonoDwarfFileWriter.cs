@@ -95,7 +95,8 @@ namespace Mono.CSharp.Debugger
 			else if (type.IsPointer)
 				return new DiePointerType (die_compile_unit, type.GetElementType ());
 
-			throw new NotSupportedException ("Type " + type + " is not yet supported.");
+			return new DieBaseType (die_compile_unit, typeof (void));
+			// throw new NotSupportedException ("Type " + type + " is not yet supported.");
 		}
 
 		//
@@ -442,6 +443,7 @@ namespace Mono.CSharp.Debugger
 
 		// DWARF tag from the DWARF 2 specification.
 		public enum DW_TAG {
+			TAG_formal_parameter	= 0x05,
 			TAG_lexical_block	= 0x0b,
 			TAG_pointer_type	= 0x0f,
 			TAG_compile_unit	= 0x11,
@@ -460,6 +462,7 @@ namespace Mono.CSharp.Debugger
 			AT_high_pc		= 0x12,
 			AT_language		= 0x13,
 			AT_producer		= 0x25,
+			AT_artificial		= 0x34,
 			AT_declaration		= 0x3c,
 			AT_encoding		= 0x3e,
 			AT_external		= 0x3f,
@@ -497,6 +500,57 @@ namespace Mono.CSharp.Debugger
 			OP_plus			= 0x22,
 			OP_plus_uconst		= 0x23,
 			OP_fbreg		= 0x91,
+		}
+
+		protected class MethodParameter : IMethodParameter
+		{
+			public MethodParameter (ISourceMethod method, ParameterInfo param)
+			{
+				this._method = method;
+				this._param = param;
+			}
+
+			private readonly ISourceMethod _method;
+			private readonly ParameterInfo _param;
+
+			// interface IMethodParameter
+
+			public string Name {
+				get {
+					return _param.Name;
+				}
+			}
+
+			public int Token {
+				get {
+					return _method.Token;
+				}
+			}
+
+			public int Index {
+				get {
+					return _method.MethodInfo.IsStatic ? _param.Position - 1 :
+						_param.Position;
+				}
+			}
+
+			public Type Type {
+				get {
+					return _param.ParameterType;
+				}
+			}
+
+			public byte[] Signature {
+				get {
+					return null;
+				}
+			}
+
+			public ISourceLine Line {
+				get {
+					return null;
+				}
+			}
 		}
 
 		// Abstract base class for a "debugging information entry" (die).
@@ -786,6 +840,16 @@ namespace Mono.CSharp.Debugger
 					retval_die = DieCompileUnit.RegisterType (
 						method.MethodInfo.ReturnType);
 
+				if (!method.MethodInfo.IsStatic)
+					new DieMethodVariable (this, method);
+
+				ParameterInfo[] parameters = method.MethodInfo.GetParameters ();
+				foreach (ParameterInfo param in parameters) {
+					MethodParameter mp = new MethodParameter (method, param);
+
+					new DieMethodVariable (this, mp);
+				}
+
 				DieCompileUnit.LineNumberEngine.AddMethod (method);
 			}
 
@@ -992,41 +1056,85 @@ namespace Mono.CSharp.Debugger
 
 		public abstract class DieVariable : Die
 		{
-			private static int my_abbrev_id;
+			private static int my_abbrev_id_this;
+			private static int my_abbrev_id_local;
+			private static int my_abbrev_id_param;
+
+			public enum VariableType {
+				VARIABLE_THIS,
+				VARIABLE_PARAMETER,
+				VARIABLE_LOCAL
+			};
+
+			static int get_abbrev_id (VariableType vtype)
+			{
+				switch (vtype) {
+				case VariableType.VARIABLE_THIS:
+					return my_abbrev_id_this;
+				case VariableType.VARIABLE_PARAMETER:
+					return my_abbrev_id_param;
+				case VariableType.VARIABLE_LOCAL:
+					return my_abbrev_id_local;
+				default:
+					throw new ArgumentException ();
+				}
+			}
 
 			static DieVariable ()
 			{
-				AbbrevEntry[] entries = {
+				AbbrevEntry[] entries_1 = {
 					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
 					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
 					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
 					new AbbrevEntry (DW_AT.AT_location, DW_FORM.FORM_block4),
 				};
+				AbbrevEntry[] entries_2 = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_artificial, DW_FORM.FORM_flag),
+					new AbbrevEntry (DW_AT.AT_location, DW_FORM.FORM_block4),
+				};
 
-				AbbrevDeclaration decl = new AbbrevDeclaration (
-					DW_TAG.TAG_variable, true, entries);
+				AbbrevDeclaration decl_local = new AbbrevDeclaration (
+					DW_TAG.TAG_variable, false, entries_1);
+				AbbrevDeclaration decl_param = new AbbrevDeclaration (
+					DW_TAG.TAG_formal_parameter, false, entries_1);
+				AbbrevDeclaration decl_this = new AbbrevDeclaration (
+					DW_TAG.TAG_formal_parameter, false, entries_2);
 
-				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+
+				my_abbrev_id_local = RegisterAbbrevDeclaration (decl_local);
+				my_abbrev_id_param = RegisterAbbrevDeclaration (decl_param);
+				my_abbrev_id_this = RegisterAbbrevDeclaration (decl_this);
 			}
 
 			protected string name;
 			protected Die type_die;
-			protected bool is_external;
+			protected VariableType vtype;
 
-			public DieVariable (Die parent_die, string name, Type type, bool is_external)
-				: base (parent_die, my_abbrev_id)
+			public DieVariable (Die parent_die, string name, Type type, VariableType vtype)
+				: base (parent_die, get_abbrev_id (vtype))
 			{
 				this.name = name;
 				this.type_die = DieCompileUnit.RegisterType (type);
-				this.is_external = is_external;
+				this.vtype = vtype;
 			}
 
 			public override void DoEmit ()
 			{
 				aw.WriteString (name);
 				DieCompileUnit.WriteRelativeDieReference (type_die);
-				aw.WriteUInt8 (is_external);
-				DoEmitLocation ();
+				switch (vtype) {
+				case VariableType.VARIABLE_LOCAL:
+				case VariableType.VARIABLE_PARAMETER:
+					aw.WriteUInt8 (false);
+					DoEmitLocation ();
+					break;
+				case VariableType.VARIABLE_THIS:
+					aw.WriteUInt8 (true);
+					DoEmitLocation ();
+					break;
+				}
 			}
 
 			protected abstract void DoEmitLocation ();
@@ -1035,21 +1143,26 @@ namespace Mono.CSharp.Debugger
 		public class DieMethodVariable : DieVariable
 		{
 			public DieMethodVariable (Die parent_die, ILocalVariable local)
-				: base (parent_die, local.Name, local.Type, false)
+				: base (parent_die, local.Name, local.Type, VariableType.VARIABLE_LOCAL)
 			{
 				this.var = local;
-				this.is_param = false;
 			}
 
 			public DieMethodVariable (Die parent_die, IMethodParameter param)
-				: base (parent_die, param.Name, param.Type, false)
+				: base (parent_die, param.Name, param.Type, VariableType.VARIABLE_PARAMETER)
 			{
 				this.var = param;
-				this.is_param = true;
+			}
+
+			public DieMethodVariable (Die parent_die, ISourceMethod method)
+				: base (parent_die, "this", method.MethodInfo.ReflectedType,
+					VariableType.VARIABLE_THIS)
+			{
+				this.method = method;
 			}
 
 			protected IVariable var;
-			protected bool is_param;
+			protected ISourceMethod method;
 
 			protected override void DoEmitLocation ()
 			{
@@ -1059,12 +1172,20 @@ namespace Mono.CSharp.Debugger
 				aw.WriteUInt8 ((int) DW_OP.OP_fbreg);
 				aw.WriteSLeb128 (0);
 				aw.WriteUInt8 ((int) DW_OP.OP_const4s);
-				if (is_param)
-					dw.AddRelocEntry (RelocEntryType.METHOD_PARAMETER,
-							  var.Token, var.Index);
-				else
+				switch (vtype) {
+				case VariableType.VARIABLE_LOCAL:
 					dw.AddRelocEntry (RelocEntryType.LOCAL_VARIABLE,
 							  var.Token, var.Index);
+					break;
+				case VariableType.VARIABLE_PARAMETER:
+					dw.AddRelocEntry (RelocEntryType.METHOD_PARAMETER,
+							  var.Token, var.Index);
+					break;
+				case VariableType.VARIABLE_THIS:
+					dw.AddRelocEntry (RelocEntryType.METHOD_PARAMETER,
+							  method.Token, 0);
+					break;
+				}
 				aw.WriteInt32 (0);
 				aw.WriteUInt8 ((int) DW_OP.OP_plus);
 				aw.EndSubsection (end_index);

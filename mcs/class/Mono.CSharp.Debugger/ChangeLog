@@ -1,5 +1,9 @@
 2002-03-24  Martin Baulig  <martin@gnome.org>
 
+	* MonoDwarfFileWriter.cs: Added support for method parameters.
+
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
 	* IMonoSymbolWriter.cs (IMonoSymbolWriter): Removed my custom OpenMethod(),
 	we're now using the ISymbolWriter's method.
 	(IVariable): Added `byte[] Signature' property.
