@@ -24,6 +24,7 @@ namespace System.Xml {
 		XmlReader validatingReader;
 		XmlResolver resolver;
 		ValidationType validationType;
+		XmlSchemaCollection schemas;
 
 		#endregion // Fields
 
@@ -36,6 +37,7 @@ namespace System.Xml {
 			this.sourceReader = reader;
 			entityHandling = EntityHandling.ExpandEntities;
 			validationType = ValidationType.Auto;
+			schemas = new XmlSchemaCollection ();
 		}
 
 		public XmlValidatingReader (Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
@@ -198,8 +200,7 @@ namespace System.Xml {
 		}
 
 		public XmlSchemaCollection Schemas {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return schemas; }
 		}
 
 		public object SchemaType {
@@ -336,6 +337,10 @@ namespace System.Xml {
 			if (ReadState == ReadState.Initial) {
 				switch (ValidationType) {
 				case ValidationType.Auto:
+					if (schemas.Count > 0)
+						goto case ValidationType.Schema;
+					else
+						goto case ValidationType.DTD;
 				case ValidationType.None:
 					validatingReader = // new XmlSchemaValidatingReader (
 						new DTDValidatingReader (sourceReader, this);

@@ -95,6 +95,7 @@ namespace System.Xml
 					OwnerDocument.DocumentType != null ? OwnerDocument.DocumentType.DTD : null,
 					BaseURI, XmlLang, XmlSpace, null);
 				XmlTextReader xmlReader = new XmlTextReader (value, XmlNodeType.Element, ctx);
+				xmlReader.XmlResolver = OwnerDocument.Resolver;
 
 				do {
 					XmlNode n = OwnerDocument.ReadNode (xmlReader);
@@ -154,7 +155,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public override XmlDocument OwnerDocument {
 			get { 
 				return base.OwnerDocument; 
@@ -166,9 +166,8 @@ namespace System.Xml
 			set {
 				if (IsReadOnly)
 					throw new XmlException ("This node is readonly.");
-				Exception ex;
-				if (!XmlConstructs.IsValidNCName (value, out ex))
-					throw ex;
+				if (!XmlChar.IsNCName (value))
+					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
 
 				prefix = value;
 			}

@@ -176,6 +176,7 @@ namespace System.Xml
 
 		internal DTDObjectModel Dtd {
 			get { return dtd; }
+			set { dtd = value; }
 		}
 
 		public Encoding Encoding {

@@ -173,13 +173,28 @@ namespace System.Xml
 				RemoveIdenticalAttribute (retAttr);
 				ownerDocument.onNodeRemoved (node, null);
 			}
+			// If it is default, then directly create new attribute.
+			if (!retAttr.Specified) {
+				XmlAttribute attr = ownerDocument.CreateAttribute (retAttr.Prefix,
+					retAttr.LocalName, retAttr.NamespaceURI);
+				attr.SetDefault ();
+				foreach (XmlNode child in retAttr.ChildNodes)
+					attr.AppendChild (child);
+				this.SetNamedItem (attr);
+			}
 			return retAttr;
 		}
 
 		public virtual void RemoveAll () 
 		{
-			while(Count > 0)
-				Remove ((XmlAttribute)Nodes [0]);
+			int current = 0;
+			while (current < Count) {
+				XmlAttribute attr = this [current];
+				if (!attr.Specified)
+					current++;
+				// It is called for the purpose of event support.
+				Remove (attr);
+			}
 		}
 
 		public virtual XmlAttribute RemoveAt (int i) 

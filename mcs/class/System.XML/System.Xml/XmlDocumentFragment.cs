@@ -48,6 +48,7 @@ namespace System.Xml
 					OwnerDocument.DocumentType != null ? OwnerDocument.DocumentType.DTD : null,
 					BaseURI, XmlLang, XmlSpace, null);
 				XmlTextReader xmlReader = new XmlTextReader (value, XmlNodeType.Element, ctx);
+				xmlReader.XmlResolver = OwnerDocument.Resolver;
 
 				do {
 					XmlNode n = OwnerDocument.ReadNode (xmlReader);

@@ -68,6 +68,7 @@ namespace Mono.Xml.Native
 				Close ();
 			}
 		}
+
 	}
 	#endregion
 
@@ -91,16 +92,14 @@ namespace Mono.Xml.Native
 		{
 			this.isDocumentEntity = docent;
 			// Use XmlResolver to resolve external entity.
-#if true // #if REMOVE_IT_AFTER_URI_IMPLEMENTED
+
 			if (resolver == null)
 				resolver = new XmlUrlResolver ();
 			Uri uri = resolver.ResolveUri (
 				baseURI == null || baseURI == String.Empty ?
                                 null : new Uri (baseURI), url);
 			Stream s = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
-#else
-			Stream s = new FileStream (url, FileMode.Open, FileAccess.Read);
-#endif
+
 			Initialize (s);
 		}
 
@@ -165,8 +164,8 @@ namespace Mono.Xml.Native
 				// try to get encoding name from XMLDecl.
 				ms.WriteByte ((byte)'<');
 				int size = stream.Read (buffer, 1, 4);
-				ms.Write (buffer, 1, 4);
-				if (Encoding.ASCII.GetString (buffer, 1, 4) == "?xml") {
+				ms.Write (buffer, 1, size);
+				if (Encoding.ASCII.GetString (buffer, 1, size) == "?xml") {
 					int loop = 0;
 					c = SkipWhitespace (ms);
 
@@ -261,11 +260,16 @@ namespace Mono.Xml.Native
 
 		#region Public Overrides
 		public override bool CanRead {
-			get { return stream.CanRead; }
+			get {
+				if (bufLength > bufPos)
+					return true;
+				else
+					return stream.CanRead; 
+			}
 		}
 
 		public override bool CanSeek {
-			get { return false; } //stream.CanSeek; }
+			get { return stream.CanSeek; }
 		}
 
 		public override bool CanWrite {
@@ -280,7 +284,7 @@ namespace Mono.Xml.Native
 
 		public override long Position {
 			get {
-				return stream.Position + bufLength;
+				return stream.Position - bufLength + bufPos;
 			}
 			set {
 				if(value < bufLength)

@@ -483,7 +483,8 @@ namespace System.Xml
 			else
 				return new XmlParserContext (document.NameTable,
 					current.ConstructNamespaceManager (),
-					XmlLang, XmlSpace);
+					document.DocumentType != null ? document.DocumentType.DTD : null,
+					current.BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
 		}
 
 		public override string LookupNamespace (string prefix)
@@ -903,6 +904,7 @@ namespace System.Xml
 					BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
 			}
 			entityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
+			entityReader.XmlResolver = document.Resolver;
 			entityReader.MaybeTextDecl = true;
 		}
 

@@ -1,3 +1,75 @@
+2003-08-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlInputStream.cs :
+	  Fixed Initialize() that might result in incorrect buffer.
+	  CanRead and Position should consider buffer (especially when the
+	  stream was EOF).
+	  CanSeek should use stream's CanSeek.
+
+	* XmlChar.cs : added GetPredefinedEntity().
+	* DTDObjectModel.cs :
+	  - Modified ComputeDefaultValue() to use it.
+	  - Fixed NormalizedDefaultValue not to expect parsed value as string.
+	  - ResolveExternalEntity now detects invalid standalone specification.
+	  - DTDParameterEntityDeclaration.Value is now changed to property and
+	    keep its resolved value of literal value of external value using
+	    new Resolve (XmlResolver) method (called only by XmlTextReader).
+	* DTDValidatingReader.cs :
+	  - It now handles entity-expanded Whitespace and SignificantWhitespace
+	    correctly. Does not raise unexpected text not allowed error.
+	  - Fixed MoveToAttribute()s to move internal reader correctly, and
+	    should be able to move in other cases than on element node.
+	  - On Read()ing document type and ResolveEntity(), it now sets
+	    XmlResolver on text reader.
+	  - On ID constraints check and type verification, it now uses
+	    normalized attribute or its tokenized value(s).
+	  - Fixed ValidateAttributes() to add default values when 
+	    ValidationType is Auto.
+	* XmlParserContext.cs : added internal Dtd setter.
+	* XmlParserInput.cs :
+	  InsertParameterEntityBuffer() should add surrounding whitespaces.
+	  Removed unused code block.
+	* XmlTextReader.cs :
+	  - Modified ReadReference(), ReadAttribute() and Dereference() to use
+	    XmlChar.GetPredefinedEntity().
+	  - When returning entity reference, it checks extity declaration
+	    existence in certain conditions.
+	  - ReadAttribute() now skips general entity replacement on reading
+	    entity value.
+	  - ReadText() now handles whitespace texts as XmlNodeType.Whitespace.
+	  - ReadXmlDeclaration() holds isStandalone, which might be used in
+	    entity reference's well-formedness check.
+	  - internal 'DTD' now uses XmlParserContext.Dtd.
+	  - isInternalSubset was meaningless. Now uses input stack's Count.
+	  - Added some required SkipWhitespace().
+	  - Several parameter entity handling changes.  Added GetPEValue(name).
+	    TryExpandPERef() now uses ImportAsPERef(). ReadParameterEntityDecl()
+	    now uses its Resolve() when it was external PE.  Now it uses value
+	    buffer instead of currentTag, to efficiently read (included) PE.
+	    CompileDeclaration() now uses ImportAsPERef instead of ExpandPERef().
+	    ImportAsPERef() simply inserts the value to currentInput.
+	    ReadEntityDecl() also uses value buffer.   Removed non-used methods.
+	  - Default attributes are now stored in normalized form.
+	  - Dereference() now considers non-expanding predefined entities.
+	* XmlValidatingReader.cs : now holds Schemas, and ValidationType.Auto
+	  is more correctly supported.
+
+	* XmlAttributeCollection.cs :
+	  When removing default attribute, it immediately inserts the attribute.
+	  RemoveAll() should consider default (not-removable) attributes.
+	* XmlDocument.cs :
+	  Should have its default XmlResolver. Added Internal Resolver.
+	  Some Load() should use its XmlResolver.
+	  ImportNode() should copy its children in node level, not value level.
+	  It also have to consider not to copy default attribute on importing
+	  XmlElement.
+	* XmlDocumentType.cs : Now uses document's XmlResolver to read DTD.
+	* XmlAttribute.cs,
+	  XmlDocumentFragment.cs.
+	  XmlElement.cs : use XmlResolver on InnerXml. Removed some MonoTODO.
+	* XmlNodeReader.cs : GetInternalParserConext() should provide its DTD.
+	  ResolveEntity() uses XmlResolver on entityReader.
+
 2003-08-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDObjectModel.cs :

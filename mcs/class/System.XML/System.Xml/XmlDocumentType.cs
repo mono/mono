@@ -36,6 +36,7 @@ namespace System.Xml
 			this.internalSubset = internalSubset;
 
 			XmlTextReader xtr = new XmlTextReader (BaseURI, new StringReader (""), doc.NameTable);
+			xtr.XmlResolver = doc.Resolver;
 			xtr.GenerateDTDObjectModel (name, publicId, systemId, internalSubset);
 			this.dtd = xtr.DTD;
 

@@ -68,7 +68,7 @@ namespace Mono.Xml.Native
 
 		public void InsertParameterEntityBuffer (string value)
 		{
-			this.peBuffer.Insert (0, value);
+			this.peBuffer.Insert (0, ' ' + value + ' ');
 		}
 
 		public int PeekChar ()
@@ -114,76 +114,6 @@ namespace Mono.Xml.Native
 			currentMarkup.Append ((char) ch);
 			return ch;
 		}
-#if FullTextParseSupport
-		// The reader is positioned on the first character after
-		// the leading '<!--'.
-		public void ReadComment ()
-		{
-			parsedValueStart = currentMarkup.Length;
-
-			while (PeekChar () != -1) {
-				int ch = ReadChar ();
-
-				if (ch == '-' && PeekChar () == '-') {
-					ReadChar ();
-
-					if (PeekChar () != '>')
-						throw ReaderError ("comments cannot contain '--'");
-
-					ReadChar ();
-					break;
-				}
-			}
-			parsedValueEnd = currentMarkup.Length - 3;
-		}
-
-		public void ReadName ()
-		{
-			ReadNameOrNmToken (false);
-		}
-
-		public void ReadNmToken ()
-		{
-			ReadNameOrNmToken (true);
-		}
-
-		// This method stop parse at '&' regardless of its kind.
-		public void ReadNonMarkupValue (bool start)
-		{
-			if (start)
-				parsedValueStart = currentMarkup.Length;
-
-			int ch = PeekChar ();
-
-			while (ch != '&' && ch != '<' && ch != -1) {
-				ReadChar ();
-				ch = PeekChar ();
-			}
-
-			parsedValueEnd = currentMarkup.Length;
-		}
-
-		public void ReadPEReference ()
-		{
-			Expect ('%');
-			ReadName ();
-			Expect (';');
-		}
-
-		public void ReadReference ()
-		{
-			Expect ('&');
-			ReadName ();
-			Expect (';');
-		}
-
-		public void SkipWhitespace ()
-		{
-			//FIXME: Should not skip if whitespaceHandling == WhiteSpaceHandling.None
-			while (XmlConstructs.IsSpace (PeekChar ()))
-				ReadChar ();
-		}
-#endif
 		#endregion
 
 		#region Public Properties
@@ -221,17 +151,17 @@ namespace Mono.Xml.Native
 		{
 			parsedNameStart = currentMarkup.Length;
 			if(isNameToken) {
-				if (!XmlConstructs.IsName ((char) PeekChar ()))
+				if (!XmlChar.IsNameChar (PeekChar ()))
 					throw ReaderError ("a name did not start with a legal character " + PeekChar ());
 			}
 			else {
-				if (!XmlConstructs.IsNameStart ((char) PeekChar ()))
+				if (!XmlChar.IsFirstNameChar (PeekChar ()))
 					throw ReaderError ("a name did not start with a valid character " + PeekChar () + "(" + (char) PeekChar () + ")");
 			}
 
 			ReadChar ();
 
-			while (XmlConstructs.IsName (PeekChar ())) {
+			while (XmlChar.IsNameChar (PeekChar ())) {
 				ReadChar ();
 			}
 

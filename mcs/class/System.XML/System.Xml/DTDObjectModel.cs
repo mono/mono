@@ -471,7 +471,7 @@ namespace Mono.Xml
 		public string NormalizedDefaultValue {
 			get {
 				if (resolvedNormalizedDefaultValue == null) {
-					object o = (string) Datatype.ParseValue (ComputeDefaultValue (), null, null);
+					object o = Datatype.ParseValue (ComputeDefaultValue (), null, null);
 					resolvedNormalizedDefaultValue = 
 						(o is string []) ? 
 						String.Join (" ", (string []) o) :
@@ -507,26 +507,11 @@ namespace Mono.Xml
 				} else {
 					sb.Append (value.Substring (pos, next - 1));
 					string name = value.Substring (pos + 1, semicolon - 1);
-					switch (name) {
-					case "lt":
-						sb.Append ("<");
-						break;
-					case "gt":
-						sb.Append (">");
-						break;
-					case "amp":
-						sb.Append ("&");
-						break;
-					case "quot":
-						sb.Append ("\"");
-						break;
-					case "apos":
-						sb.Append ("'");
-						break;
-					default:
+					char predefined = XmlChar.GetPredefinedEntity (name);
+					if (predefined != 0)
+						sb.Append (predefined);
+					else
 						sb.Append (Root.ResolveEntity (name));
-						break;
-					}
 				}
 				pos = semicolon + 1;
 			}
@@ -637,6 +622,9 @@ namespace Mono.Xml
 
 		private string ResolveExternalEntity (XmlResolver resolver)
 		{
+			if (resolver == null)
+				return String.Empty;
+
 			string baseUri = Root.BaseURI;
 			if (baseUri == "")
 				baseUri = null;
@@ -654,8 +642,11 @@ namespace Mono.Xml
 					if (sb.ToString () == "<?xml ") {
 						// Skip Text declaration.
 						sb.Length = 0;
+						StringBuilder textdecl = new StringBuilder ();
 						while (reader.Peek () == '>' || reader.Peek () == -1)
-							reader.Read ();
+							textdecl.Append (reader.Read ());
+						if (textdecl.ToString ().IndexOf ("standalone") >= 0)
+							throw new XmlException ("Text declaration cannot have standalone declaration: " + BaseURI);
 					}
 					checkTextDecl = false;
 				}
@@ -682,11 +673,61 @@ namespace Mono.Xml
 
 	public class DTDParameterEntityDeclaration : DTDNode
 	{
+		string resolvedValue;
+		Exception loadException;
+
 		public string Name;
 		public string PublicId;
 		public string SystemId;
 		public string BaseURI;
-		public string Value;
+		public string LiteralValue;
+		public bool LoadFailed;
+
+		public string Value {
+			get {
+				if (LiteralValue != null)
+					return LiteralValue;
+				if (resolvedValue == null)
+					throw new InvalidOperationException ();
+				return resolvedValue;
+			}
+		}
+
+		public void Resolve (XmlResolver resolver)
+		{
+			if (resolver == null) {
+				resolvedValue = String.Empty;
+				LoadFailed = true;
+				return;
+			}
+
+			Uri baseUri = null;
+			try {
+				baseUri = new Uri (BaseURI);
+			} catch (UriFormatException) {
+			}
+
+			Uri absUri = resolver.ResolveUri (baseUri, SystemId);
+			string absPath = absUri.ToString ();
+
+			try {
+				TextReader tw = new XmlStreamReader (absUri.ToString (), false, resolver, BaseURI);
+				string s = tw.ReadToEnd ();
+				if (s.StartsWith ("<?xml")) {
+					int end = s.IndexOf (">" + 1);
+					if (s.IndexOf ("standal0ne", end) >= 0)
+						throw new XmlException (this as IXmlLineInfo,
+							"Text declaration cannot have standalone declaration.");
+					resolvedValue = s.Substring (end);
+				}
+				else
+					resolvedValue = s;
+			} catch (IOException ex) {
+				loadException = ex;
+				resolvedValue = String.Empty;
+				LoadFailed = true;
+			}
+		}
 	}
 
 	public enum DTDContentOrderType

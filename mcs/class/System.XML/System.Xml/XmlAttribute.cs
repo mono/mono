@@ -51,11 +51,10 @@ namespace System.Xml
 
 			// There are no means to identify the DOM is namespace-
 			// aware or not, so we can only check Name validity.
-			Exception ex;
-			if (prefix != "" && !XmlConstructs.IsValidName (prefix, out ex))
-				throw ex;
-			else if (!XmlConstructs.IsValidName (localName, out ex))
-				throw ex;
+			if (prefix != "" && !XmlChar.IsName (prefix))
+				throw new ArgumentException ("Invalid attribute prefix.");
+			else if (!XmlChar.IsName (localName))
+				throw new ArgumentException ("Invalid attribute local name.");
 
 			this.prefix = prefix;
 			this.localName = localName;
@@ -82,7 +81,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO ("Setter is incomplete(XmlTextReader.ReadAttribute is incomplete;No resolution for xml:lang/space")]
 		public override string InnerXml {
 			get {
 				// Not sure why this is an override.  Passing through for now.
@@ -96,6 +94,7 @@ namespace System.Xml
 					OwnerDocument.DocumentType != null ? OwnerDocument.DocumentType.DTD : null,
 					BaseURI, XmlLang, XmlSpace, null);
 				XmlTextReader xtr = new XmlTextReader (value, XmlNodeType.Attribute, ctx);
+				xtr.XmlResolver = OwnerDocument.Resolver;
 				OwnerDocument.ReadAttributeNodeValue (xtr, this);
 			}
 		}
@@ -149,7 +148,7 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("setter incomplete (name character check, format check, wrong prefix&nsURI)")]
+		[MonoTODO("setter incomplete (wrong prefix&nsURI)")]
 		// We gotta do more in the set block here
 		// We need to do the proper tests and throw
 		// the correct Exceptions
@@ -161,9 +160,8 @@ namespace System.Xml
 			set {
 				if (IsReadOnly)
 					throw new XmlException ("This node is readonly.");
-				Exception ex;
-				if (!XmlConstructs.IsValidNCName (value, out ex))
-					throw ex;
+				if (!XmlChar.IsNCName (value))
+					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
 
 				prefix = value;
 			}
@@ -173,7 +171,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("There are no code which sets 'specified = true', so this logic is without checking.")]
 		public virtual bool Specified {
 			get {
 				return !isDefault;

@@ -58,6 +58,7 @@ namespace System.Xml
 			implementation = (impl != null) ? impl : new XmlImplementation ();
 			nameTable = (nt != null) ? nt : implementation.internalNameTable;
 			AddDefaultNameTableKeys ();
+			resolver = new XmlUrlResolver ();
 		}
 		#endregion
 
@@ -99,7 +100,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("It doesn't have internal subset object model.")]
 		public virtual XmlDocumentType DocumentType {
 			get {
 				foreach(XmlNode n in this.ChildNodes) {
@@ -125,6 +125,14 @@ namespace System.Xml
 
 		public override bool IsReadOnly {
 			get { return false; }
+		}
+
+		internal bool IsStandalone {
+			get {
+				return FirstChild != null &&
+					FirstChild.NodeType == XmlNodeType.XmlDeclaration &&
+					((XmlDeclaration) this.FirstChild).Standalone == "yes";
+			}
 		}
 
 		internal override XmlLinkedNode LastLinkedChild {
@@ -166,6 +174,10 @@ namespace System.Xml
 		public bool PreserveWhitespace {
 			get { return preserveWhitespace; }
 			set { preserveWhitespace = value; }
+		}
+
+		internal XmlResolver Resolver {
+			get { return resolver; }
 		}
 
 		internal override string XmlLang {
@@ -469,101 +481,76 @@ namespace System.Xml
 			return attr;
 		}
 
-		[MonoTODO("default attributes (of imported doc); Entity; Notation")]
 		public virtual XmlNode ImportNode (XmlNode node, bool deep)
 		{
-			switch(node.NodeType)
-			{
-				case XmlNodeType.Attribute:
-					{
-						XmlAttribute src_att = node as XmlAttribute;
-						XmlAttribute dst_att = this.CreateAttribute (src_att.Prefix, src_att.LocalName, src_att.NamespaceURI);
-						dst_att.Value = src_att.Value;	// always explicitly specified (whether source is specified or not)
-						return dst_att;
-					}
+			switch (node.NodeType) {
+			case XmlNodeType.Attribute:
+				XmlAttribute srcAtt = node as XmlAttribute;
+				XmlAttribute dstAtt = this.CreateAttribute (srcAtt.Prefix, srcAtt.LocalName, srcAtt.NamespaceURI);
+				foreach (XmlNode child in srcAtt.ChildNodes)
+					dstAtt.AppendChild (this.ImportNode (child, deep));
+				return dstAtt;
 
-				case XmlNodeType.CDATA:
-					return this.CreateCDataSection (node.Value);
+			case XmlNodeType.CDATA:
+				return this.CreateCDataSection (node.Value);
 
-				case XmlNodeType.Comment:
-					return this.CreateComment (node.Value);
+			case XmlNodeType.Comment:
+				return this.CreateComment (node.Value);
 
-				case XmlNodeType.Document:
-					throw new XmlException ("Document cannot be imported.");
+			case XmlNodeType.Document:
+				throw new XmlException ("Document cannot be imported.");
 
-				case XmlNodeType.DocumentFragment:
-					{
-						XmlDocumentFragment df = this.CreateDocumentFragment ();
-						if(deep)
-						{
-							foreach(XmlNode n in node.ChildNodes)
-							{
-								df.AppendChild (this.ImportNode (n, deep));
-							}
-						}
-						return df;
-					}
+			case XmlNodeType.DocumentFragment:
+				XmlDocumentFragment df = this.CreateDocumentFragment ();
+				if(deep)
+					foreach(XmlNode n in node.ChildNodes)
+						df.AppendChild (this.ImportNode (n, deep));
+				return df;
 
-				case XmlNodeType.DocumentType:
-					throw new XmlException ("DocumentType cannot be imported.");
+			case XmlNodeType.DocumentType:
+				throw new XmlException ("DocumentType cannot be imported.");
 
-				case XmlNodeType.Element:
-					{
-						XmlElement src = (XmlElement)node;
-						XmlElement dst = this.CreateElement (src.Prefix, src.LocalName, src.NamespaceURI);
-						foreach(XmlAttribute attr in src.Attributes)
-						{
-							if(attr.Specified)	// copies only specified attributes
-								dst.SetAttributeNode ((XmlAttribute)this.ImportNode (attr, deep));
-							if(DocumentType != null)
-							{
-								// TODO: create default attribute values
-							}
-						}
-						if(deep)
-						{
-							foreach(XmlNode n in src.ChildNodes)
-								dst.AppendChild (this.ImportNode (n, deep));
-						}
-						return dst;
-					}
+			case XmlNodeType.Element:
+				XmlElement src = (XmlElement)node;
+				XmlElement dst = this.CreateElement (src.Prefix, src.LocalName, src.NamespaceURI);
+				foreach(XmlAttribute attr in src.Attributes)
+					if(attr.Specified)	// copies only specified attributes
+						dst.SetAttributeNode ((XmlAttribute)this.ImportNode (attr, deep));
+				if(deep)
+					foreach(XmlNode n in src.ChildNodes)
+						dst.AppendChild (this.ImportNode (n, deep));
+				return dst;
 
-				case XmlNodeType.EndElement:
-					throw new XmlException ("Illegal ImportNode call for NodeType.EndElement");
-				case XmlNodeType.EndEntity:
-					throw new XmlException ("Illegal ImportNode call for NodeType.EndEntity");
+			case XmlNodeType.EndElement:
+				throw new XmlException ("Illegal ImportNode call for NodeType.EndElement");
+			case XmlNodeType.EndEntity:
+				throw new XmlException ("Illegal ImportNode call for NodeType.EndEntity");
 
-				case XmlNodeType.Entity:
-					throw new NotImplementedException ();	// TODO
+			case XmlNodeType.EntityReference:
+				return this.CreateEntityReference (node.Name);
 
-				case XmlNodeType.EntityReference:
-					return this.CreateEntityReference (node.Name);
+			case XmlNodeType.None:
+				throw new XmlException ("Illegal ImportNode call for NodeType.None");
 
-				case XmlNodeType.None:
-					throw new XmlException ("Illegal ImportNode call for NodeType.None");
+			case XmlNodeType.ProcessingInstruction:
+				XmlProcessingInstruction pi = node as XmlProcessingInstruction;
+				return this.CreateProcessingInstruction (pi.Target, pi.Data);
 
-				case XmlNodeType.Notation:
-					throw new NotImplementedException ();	// TODO
+			case XmlNodeType.SignificantWhitespace:
+				return this.CreateSignificantWhitespace (node.Value);
 
-				case XmlNodeType.ProcessingInstruction:
-					XmlProcessingInstruction pi = node as XmlProcessingInstruction;
-					return this.CreateProcessingInstruction (pi.Target, pi.Data);
+			case XmlNodeType.Text:
+				return this.CreateTextNode (node.Value);
 
-				case XmlNodeType.SignificantWhitespace:
-					return this.CreateSignificantWhitespace (node.Value);
+			case XmlNodeType.Whitespace:
+				return this.CreateWhitespace (node.Value);
 
-				case XmlNodeType.Text:
-					return this.CreateTextNode (node.Value);
+			case XmlNodeType.XmlDeclaration:
+				XmlDeclaration srcDecl = node as XmlDeclaration;
+				return this.CreateXmlDeclaration (srcDecl.Version, srcDecl.Encoding, srcDecl.Standalone);
 
-				case XmlNodeType.Whitespace:
-					return this.CreateWhitespace (node.Value);
-
-				case XmlNodeType.XmlDeclaration:
-					XmlDeclaration srcDecl = node as XmlDeclaration;
-					return this.CreateXmlDeclaration (srcDecl.Version, srcDecl.Encoding, srcDecl.Standalone);
-
-				default:
-					throw new NotImplementedException ();
+			default:
+				throw new InvalidOperationException ("Cannot import specified node type: " + node.NodeType);
 			}
 		}
 
@@ -574,14 +561,17 @@ namespace System.Xml
 
 		public virtual void Load (string filename)
 		{
-			XmlReader xr = new XmlTextReader (filename);
+			XmlTextReader xr = new XmlTextReader (filename);
+			xr.XmlResolver = resolver;
 			Load (xr);
 			xr.Close ();
 		}
 
 		public virtual void Load (TextReader txtReader)
 		{
-			Load (new XmlTextReader (txtReader));
+			XmlTextReader xr = new XmlTextReader (txtReader);
+			xr.XmlResolver = resolver;
+			Load (xr);
 		}
 
 		public virtual void Load (XmlReader xmlReader)
@@ -603,8 +593,9 @@ namespace System.Xml
 
 		public virtual void LoadXml (string xml)
 		{
-			XmlReader xmlReader = new XmlTextReader (
+			XmlTextReader xmlReader = new XmlTextReader (
 				xml, XmlNodeType.Document, null);
+			xmlReader.XmlResolver = resolver;
 			Load (xmlReader);
 		}
 
@@ -712,8 +703,7 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO ("Child of entity is not simple Value string;Get prefix of NotationDecl")]
-		public virtual XmlNode ReadNode(XmlReader reader)
+		public virtual XmlNode ReadNode (XmlReader reader)
 		{
 			XmlNode resultNode = null;
 			XmlNode newNode = null;
