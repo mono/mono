@@ -4699,7 +4699,7 @@ namespace Mono.CSharp {
 			else
 				ec = method.CreateEmitContext (container, null);
 
-			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute (container.Parent) != null)
+			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute (container) != null)
 				ec.TestObsoleteMethodUsage = false;
 
 			Location loc = method.Location;

@@ -1,3 +1,9 @@
+2005-03-04  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #73282.
+	* class.cs (MethodData.Emit): Pass 'container' to
+	container.GetObsoleteAttribute instead of 'container.Parent'.
+
 2005-03-03  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Add 1534 error test.
