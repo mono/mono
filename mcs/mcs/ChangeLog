@@ -1,3 +1,8 @@
+2004-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add a rule to improve error handling for the
+	common mistake of placing modifiers after the type.
+
 2004-01-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay (interface_event_declaration): Catch

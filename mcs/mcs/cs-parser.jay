@@ -921,6 +921,21 @@ method_header
 		current_local_parameters = (Parameters) $6;
 		$$ = method;
 	  }
+	| opt_attributes
+	  opt_modifiers
+	  type 
+	  modifiers member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  {
+		Report.Error (1585, lexer.Location, 
+			String.Format ("Modifier {0} should appear before type", 
+				Modifiers.Name ((int) $4)));
+		Method method = new Method (current_container, TypeManager.system_void_expr, 0,
+					    (string) $5, (Parameters) $7, (Attributes) $1,
+					    lexer.Location);
+
+		current_local_parameters = (Parameters) $7;
+		$$ = method;
+	  }
 	;
 
 method_body
