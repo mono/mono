@@ -1,3 +1,7 @@
+2005-02-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c (run_finalize): Set the domain for finalizing delegates as well.
+	Thanks to Willibald Krenn and Scott Mohekey for tracking this down.
 
 Thu Feb 24 15:19:35 CET 2005 Paolo Molaro <lupus@ximian.com>
 
