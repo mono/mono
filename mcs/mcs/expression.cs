@@ -1436,7 +1436,7 @@ namespace Mono.CSharp {
 
 			bool old_state = ec.OnlyLookupTypes;
 			ec.OnlyLookupTypes = true;
-			target_type = target_type.Resolve (ec);
+			target_type = target_type.Resolve (ec, ResolveFlags.Type);
 			ec.OnlyLookupTypes = old_state;
 			
 			if (target_type == null){
@@ -1445,11 +1445,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (target_type.eclass != ExprClass.Type){
-				target_type.Error118 ("class");
-				return null;
-			}
-			
 			type = target_type.Type;
 			eclass = ExprClass.Value;
 			
@@ -3094,6 +3089,17 @@ namespace Mono.CSharp {
 				(a.ArgType == AType.Out ? "out " : "")) +
 				TypeManager.CSharpName (a.Expr.Type);
 		}
+
+		public bool ResolveMethodGroup (EmitContext ec, Location loc)
+		{
+			// FIXME: csc doesn't report any error if you try to use `ref' or
+			//        `out' in a delegate creation expression.
+			Expr = Expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			if (Expr == null)
+				return false;
+
+			return true;
+		}
 		
 		public bool Resolve (EmitContext ec, Location loc)
 		{
@@ -3111,15 +3117,8 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			if (ArgType == AType.Expression){
-				if ((Expr.eclass == ExprClass.Type) && (Expr is TypeExpr)) {
-					Report.Error (118, loc, "Expression denotes a `type' " +
-						      "where a `variable or value' was expected");
-					return false;
-				}
-
+			if (ArgType == AType.Expression)
 				return true;
-			}
 
 			if (Expr.eclass != ExprClass.Variable){
 				//
@@ -3861,7 +3860,7 @@ namespace Mono.CSharp {
 			if (expr is BaseAccess)
 				is_base = true;
 
-			expr = expr.Resolve (ec);
+			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
 
@@ -3877,7 +3876,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(expr is MethodGroupExpr)){
-				expr.Error118 ("method group");
+				expr.Error118 (ResolveFlags.MethodGroup);
 				return null;
 			}
 
@@ -5490,7 +5489,7 @@ namespace Mono.CSharp {
 			}
 
 			if (member_lookup is TypeExpr){
-				member_lookup.Resolve (ec);
+				member_lookup.Resolve (ec, ResolveFlags.Type);
 				return member_lookup;
 			}
 			
@@ -5509,7 +5508,8 @@ namespace Mono.CSharp {
 			// ones that can cope with it)
 			//
 			Expression original = expr;
-			expr = expr.ResolveWithSimpleName (ec);
+			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.SimpleName |
+					     ResolveFlags.Type);
 
 			if (expr == null)
 				return null;
@@ -5519,7 +5519,8 @@ namespace Mono.CSharp {
 				
 				Expression new_expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
 
-				return new_expr.ResolveWithSimpleName (ec);
+				return new_expr.Resolve (ec, ResolveFlags.VariableOrValue |
+							 ResolveFlags.SimpleName | ResolveFlags.Type);
 			}
 					
 			//
@@ -6489,15 +6490,10 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			left = left.Resolve (ec);
+			left = left.Resolve (ec, ResolveFlags.Type);
 			if (left == null)
 				return null;
 
-			if (left.eclass != ExprClass.Type){
-				left.Error118 ("type");
-				return null;
-			}
-			
 			type = RootContext.LookupType (
 				ec.DeclSpace, left.Type.FullName + dim, false, loc);
 			if (type == null)

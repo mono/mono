@@ -562,7 +562,7 @@ namespace Mono.CSharp {
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			Argument a = (Argument) Arguments [0];
 			
-			if (!a.Resolve (ec, loc))
+			if (!a.ResolveMethodGroup (ec, Location))
 				return null;
 			
 			Expression e = a.Expr;

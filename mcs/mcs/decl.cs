@@ -389,7 +389,7 @@ namespace Mono.CSharp {
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 			type_resolve_ec.loc = loc;
-			Expression d = e.Resolve (type_resolve_ec);
+			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent){
 					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
@@ -409,7 +409,7 @@ namespace Mono.CSharp {
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 
-			Expression d = e.Resolve (type_resolve_ec);
+			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent){
 					Report.Error (246, loc, "Cannot find type `"+ e +"'");

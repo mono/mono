@@ -31,8 +31,6 @@ BUGS
 * We suck at reporting what turns out to be error -6.  Use the standard error message
   instead.
 
-* Explicit indexer implementation is missing.
-
 * Check for Final when overriding, if the parent is Final, then we cant
   allow an override.
 
@@ -231,21 +229,3 @@ RECOMMENDATIONS
 	Not sure that this grammar is correct, we might have to
 	resolve this during semantic analysis.
 
-* Idea
-
-	MethodGroupExpr
-
-	These guys should only appear as part of an Invocation, so we
-	probably can afford to have a special callback:
-
-		Expression.ResolveAllowMemberGroups
-
-	This is only called by Invocation (or anyone that consumes 
-	MethodGroupExprs)
-
-	And the regular DoResolve and DoResolveLValue do emit the error
-	654 `Method referenced without argument list'.  
-
-	Otherwise, a resolution will return a MethodGroupExpr which is
-	not guaranteed to have set its `Expression.Type' to a non-null
-	value.

@@ -1,3 +1,23 @@
+2002-08-06  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (Expression.ResolveFlags): New [Flags] enum.  This is
+	used to tell Resolve() which kinds of expressions it may return.
+	(Expression.Resolve): Added overloaded version of this method which
+	takes a `ResolveFlags flags' argument.  This can be used to tell
+	Resolve() which kinds of expressions it may return.  Reports a
+	CS0118 on error.
+	(Expression.ResolveWithSimpleName): Removed, use Resolve() with
+	ResolveFlags.SimpleName.
+	(Expression.Error118): Added overloaded version of this method which
+	takes a `ResolveFlags flags' argument.  It uses the flags to determine
+	which kinds of expressions are allowed.
+
+	* expression.cs (Argument.ResolveMethodGroup): New public method.
+	Resolves an argument, but allows a MethodGroup to be returned.
+	This is used when invoking a delegate.
+
+	* TODO: Updated a bit.
+
 2002-08-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	Fixed compilation with csc.

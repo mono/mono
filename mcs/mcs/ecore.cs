@@ -36,6 +36,27 @@ namespace Mono.CSharp {
 		Nothing, 
 	}
 
+	/// <remarks>
+	///   This is used to tell Resolve in which types of expressions we're
+	///   interested.
+	/// </remarks>
+	[Flags]
+	public enum ResolveFlags {
+		// Returns Value, Variable, PropertyAccess, EventAccess or IndexerAccess.
+		VariableOrValue		= 1,
+
+		// Returns a type expression.
+		Type			= 2,
+
+		// Returns a method group.
+		MethodGroup		= 4,
+
+		// Allows SimpleNames to be returned.
+		// This is used by MemberAccess to construct long names that can not be
+		// partially resolved (namespace-qualified names for example).
+		SimpleName		= 8
+	}
+
 	//
 	// This is just as a hint to AddressOf of what will be done with the
 	// address.
@@ -165,47 +186,7 @@ namespace Mono.CSharp {
 		///   Currently Resolve wraps DoResolve to perform sanity
 		///   checking and assertion checking on what we expect from Resolve.
 		/// </remarks>
-		public Expression Resolve (EmitContext ec)
-		{
-			Expression e = DoResolve (ec);
-
-			if (e != null){
-
-				if (e is SimpleName){
-					SimpleName s = (SimpleName) e;
-
-					Report.Error (
-						      103, loc,
-						      "The name `" + s.Name + "' could not be found in `" +
-						      ec.DeclSpace.Name + "'");
-					return null;
-				}
-				
-				if (e.eclass == ExprClass.Invalid)
-					throw new Exception ("Expression " + e.GetType () +
-							     " ExprClass is Invalid after resolve");
-
-				if (e.eclass != ExprClass.MethodGroup)
-					if (e.type == null)
-						throw new Exception (
-							"Expression " + e.GetType () +
-							" did not set its type after Resolve\n" +
-							"called from: " + this.GetType ());
-			}
-
-			return e;
-		}
-
-		/// <summary>
-		///   Performs expression resolution and semantic analysis, but
-		///   allows SimpleNames to be returned.
-		/// </summary>
-		///
-		/// <remarks>
-		///   This is used by MemberAccess to construct long names that can not be
-		///   partially resolved (namespace-qualified names for example).
-		/// </remarks>
-		public Expression ResolveWithSimpleName (EmitContext ec)
+		public Expression Resolve (EmitContext ec, ResolveFlags flags)
 		{
 			Expression e;
 
@@ -214,23 +195,80 @@ namespace Mono.CSharp {
 			else 
 				e = DoResolve (ec);
 
-			if (e != null){
-				if (e is SimpleName)
-					return e;
+			if (e == null)
+				return null;
 
-				if (e.eclass == ExprClass.Invalid)
-					throw new Exception ("Expression " + e +
-							     " ExprClass is Invalid after resolve");
+			if (e is SimpleName){
+				SimpleName s = (SimpleName) e;
 
-				if (e.eclass != ExprClass.MethodGroup)
-					if (e.type == null)
-						throw new Exception ("Expression " + e +
-								     " did not set its type after Resolve");
+				if ((flags & ResolveFlags.SimpleName) == 0) {
+					Report.Error (
+						103, loc,
+						"The name `" + s.Name + "' could not be found in `" +
+						ec.DeclSpace.Name + "'");
+					return null;
+				}
+
+				return s;
 			}
+
+			if ((e is TypeExpr) || (e is ComposedCast)) {
+				if ((flags & ResolveFlags.Type) == 0) {
+					e.Error118 (flags);
+					return null;
+				}
+
+				return e;
+			}
+
+			switch (e.eclass) {
+			case ExprClass.Type:
+				if ((flags & ResolveFlags.VariableOrValue) == 0) {
+					e.Error118 (flags);
+					return null;
+				}
+				break;
+
+			case ExprClass.MethodGroup:
+				if ((flags & ResolveFlags.MethodGroup) == 0) {
+					((MethodGroupExpr) e).ReportUsageError ();
+					return null;
+				}
+				break;
+
+			case ExprClass.Value:
+			case ExprClass.Variable:
+			case ExprClass.PropertyAccess:
+			case ExprClass.EventAccess:
+			case ExprClass.IndexerAccess:
+				if ((flags & ResolveFlags.VariableOrValue) == 0) {
+					e.Error118 (flags);
+					return null;
+				}
+				break;
+
+			default:
+				throw new Exception ("Expression " + e.GetType () +
+						     " ExprClass is Invalid after resolve");
+			}
+
+			if (e.type == null)
+				throw new Exception (
+					"Expression " + e.GetType () +
+					" did not set its type after Resolve\n" +
+					"called from: " + this.GetType ());
 
 			return e;
 		}
-		
+
+		/// <summary>
+		///   Resolves an expression and performs semantic analysis on it.
+		/// </summary>
+		public Expression Resolve (EmitContext ec)
+		{
+			return Resolve (ec, ResolveFlags.VariableOrValue);
+		}
+
 		/// <summary>
 		///   Resolves an expression for LValue assignment
 		/// </summary>
@@ -258,10 +296,14 @@ namespace Mono.CSharp {
 					throw new Exception ("Expression " + e +
 							     " ExprClass is Invalid after resolve");
 
-				if (e.eclass != ExprClass.MethodGroup)
-					if (e.type == null)
-						throw new Exception ("Expression " + e +
-								     " did not set its type after Resolve");
+				if (e.eclass == ExprClass.MethodGroup) {
+					((MethodGroupExpr) e).ReportUsageError ();
+					return null;
+				}
+
+				if (e.type == null)
+					throw new Exception ("Expression " + e +
+							     " did not set its type after Resolve");
 			}
 
 			return e;
@@ -2177,6 +2219,42 @@ namespace Mono.CSharp {
 			       "' where a `" + expected + "' was expected");
 		}
 
+		public void Error118 (ResolveFlags flags)
+		{
+			ArrayList valid = new ArrayList (10);
+
+			if ((flags & ResolveFlags.VariableOrValue) != 0) {
+				valid.Add ("variable");
+				valid.Add ("value");
+			}
+
+			if ((flags & ResolveFlags.Type) != 0)
+				valid.Add ("type");
+
+			if ((flags & ResolveFlags.MethodGroup) != 0)
+				valid.Add ("method group");
+
+			if ((flags & ResolveFlags.SimpleName) != 0)
+				valid.Add ("simple name");
+
+			if (valid.Count == 0)
+				valid.Add ("unknown");
+
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < valid.Count; i++) {
+				if (i > 0)
+					sb.Append (", ");
+				else if (i == valid.Count)
+					sb.Append (" or ");
+				sb.Append (valid [i]);
+			}
+
+			string kind = ExprClassName (eclass);
+
+			Error (119, "Expression denotes a `" + kind + "' where " +
+			       "a `" + sb.ToString () + "' was expected");
+		}
+		
 		static void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
 		{
 			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
