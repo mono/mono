@@ -2,6 +2,7 @@
 // System.Data.DataTable.cs
 //
 // Author:
+//   Franklin Wise <gracenote@earthlink.net>
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //   Daniel Morgan <danmorg@sc.rr.com>
 //   Rodrigo Moya <rodrigo@ximian.com>
@@ -22,18 +23,16 @@ namespace System.Data
 	/// Represents one table of in-memory data.
 	/// </summary>
 	[Serializable]
-		public class DataTable : ISerializable
+	public class DataTable : ISerializable
                 //MarshalByValueComponent, IListSource, ISupportInitialize
 	{
+		internal DataSet dataSet;   
 		
 		private bool _caseSensitive;
 		private DataColumnCollection _columnCollection;
 		private ConstraintCollection _constraintCollection;
-		// FIXME: temporarily commented
+		private DataView _defaultView;
 
-		internal DataSet dataSet;   
-
-		// private DataView _defaultView;
 		private string _displayExpression;
 		private PropertyCollection _extendedProperties;
 		private bool _hasErrors;
@@ -45,7 +44,7 @@ namespace System.Data
 		// private DataTableRelationCollection _parentRelations;
 		private string _prefix;
 		private DataColumn[] _primaryKey;
-		private DataRowCollection rows;
+		private DataRowCollection _rows;
 		private ISite _site;
 		private string _tableName;
 		private bool _containsListCollection;
@@ -58,36 +57,27 @@ namespace System.Data
 		public DataTable()
 		{
 			dataSet = null;
-			// _defaultView = null; // FIXME: temporarily commented
 			_columnCollection = new DataColumnCollection(this);
 			_constraintCollection = new ConstraintCollection(); 
-			_extendedProperties = null;
+			_extendedProperties = new PropertyCollection();
 			_tableName = "";
 			_nameSpace = null;
-			_caseSensitive = false;
+			_caseSensitive = false;  	//default value
 			_displayExpression = null;
 			_primaryKey = null;
-			rows = new DataRowCollection (this);
+			_site = null;
+			_rows = new DataRowCollection (this);
+			_locale = CultureInfo.CurrentCulture;
+
+			//LAMESPEC: spec says 25 impl does 50
+			_minimumCapacity = 50;
 			
 			// FIXME: temporaily commented DataTableRelationCollection
 			// _childRelations = new DataTableRelationCollection();
 			// _parentRelations = new DataTableRelationCollection();
 
-			//_nextRowID = 1;
-			//_elementColumnCount = 0;
-			//_caseSensitiveAmbient = true;
-			//_culture = null; // _locale??
-			//_compareFlags = 25; // why 25??
-			//_fNestedInDataset = true; // what?
-			//_encodedTableName = null; //??
-			//_xmlText = null; //??
-			//_colUnique = null; //??
-			//_textOnly = false; //??
-			//repeatableElement = false; //??
-			//zeroIntegers[]
-			//zeroColumns[]
-			//primaryIndex[]
-			//delayedSetPrimaryKey = null; //??
+		
+			_defaultView = new DataView(this);
 		}
 
 		/// <summary>
@@ -184,8 +174,7 @@ namespace System.Data
 		{
 			get
 			{
-				throw new NotImplementedException();
-//				return _defaultView;
+				return _defaultView;
 			}
 		}
 		
@@ -198,7 +187,7 @@ namespace System.Data
 		public string DisplayExpression 
 		{
 			get {
-				return _displayExpression;
+				return "" + _displayExpression;
 			}
 			set {
 				_displayExpression = value;
@@ -217,7 +206,7 @@ namespace System.Data
 
 		/// <summary>
 		/// Gets a value indicating whether there are errors in 
-		/// any of the rows in any of the tables of the DataSet to 
+		/// any of the_rows in any of the tables of the DataSet to 
 		/// which the table belongs.
 		/// </summary>
 		public bool HasErrors
@@ -261,7 +250,7 @@ namespace System.Data
 		public string Namespace
 		{
 			get {
-				return _nameSpace;
+				return "" + _nameSpace;
 			}
 			set {
 				_nameSpace = value;
@@ -272,6 +261,7 @@ namespace System.Data
 		/// Gets the collection of parent relations for 
 		/// this DataTable.
 		/// </summary>
+		[MonoTODO]
 		public DataRelationCollection ParentRelations
 		{
 			get {	
@@ -288,7 +278,7 @@ namespace System.Data
 		public string Prefix
 		{
 			get {
-				return _prefix;
+				return "" + _prefix;
 			}
 			set {
 				_prefix = value;
@@ -299,9 +289,12 @@ namespace System.Data
 		/// Gets or sets an array of columns that function as 
 		/// primary keys for the data table.
 		/// </summary>
+		[MonoTODO]
 		public DataColumn[] PrimaryKey
 		{
 			get {
+				//TODO: compute PrimaryKey
+				if (null == _primaryKey) return new DataColumn[]{};
 				return _primaryKey;
 			}
 			set {
@@ -310,12 +303,12 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets the collection of rows that belong to this table.
+		/// Gets the collection of_rows that belong to this table.
 		/// </summary>
 		
 		public DataRowCollection Rows
 		{
-			get { return rows; }
+			get { return _rows; }
 		}
 
 		/// <summary>
@@ -340,7 +333,7 @@ namespace System.Data
 		public string TableName
 		{
 			get {
-				return _tableName;
+				return "" + _tableName;
 			}
 			set {
 				_tableName = value;
@@ -390,7 +383,7 @@ namespace System.Data
 		
 		public void Clear()
 		{
-			rows.Clear ();
+			_rows.Clear ();
 		}
 
 		/// <summary>
@@ -398,18 +391,22 @@ namespace System.Data
 		///  all DataTable schemas and constraints.
 		/// </summary>
 		
+		[MonoTODO]
 		public virtual DataTable Clone()
 		{
-			return this;
+			//FIXME:
+			return this; //Don't know if this is correct
 		}
 
 		/// <summary>
-		/// Computes the given expression on the current rows that 
+		/// Computes the given expression on the current_rows that 
 		/// pass the filter criteria.
 		/// </summary>
 		
+		[MonoTODO]
 		public object Compute(string expression, string filter)
 		{
+			//FIXME: //Do a real compute
 			object obj = "a";
 			return obj;
 		}
@@ -417,9 +414,10 @@ namespace System.Data
 		/// <summary>
 		/// Copies both the structure and data for this DataTable.
 		/// </summary>
-		
+		[MonoTODO]	
 		public DataTable Copy()
 		{
+			//FIXME: Do a real copy
 			return this;
 		}
 
@@ -447,9 +445,10 @@ namespace System.Data
 		///  changes made to it since it was loaded or 
 		///  AcceptChanges was last called.
 		/// </summary>
-		
+		[MonoTODO]
 		public DataTable GetChanges()
 		{
+			//TODO:
 			return this;
 		}
 
@@ -458,9 +457,10 @@ namespace System.Data
 		/// changes made to it since it was last loaded, or 
 		/// since AcceptChanges was called, filtered by DataRowState.
 		/// </summary>
-		
+		[MonoTODO]	
 		public DataTable GetChanges(DataRowState rowStates)
 		{
+			//TODO:
 			return this;
 		}
 
@@ -468,6 +468,7 @@ namespace System.Data
 		/// Gets an array of DataRow objects that contain errors.
 		/// </summary>
 		
+		[MonoTODO]
 		public DataRow[] GetErrors()
 		{
 			throw new NotImplementedException ();
@@ -499,7 +500,7 @@ namespace System.Data
 		/// Copies a DataRow into a DataTable, preserving any 
 		/// property settings, as well as original and current values.
 		/// </summary>
-		
+		[MonoTODO]
 		public void ImportRow(DataRow row)
 		{
 		}
@@ -509,6 +510,7 @@ namespace System.Data
 		///  and is not intended to be used directly from your code.
 		/// </summary>
 		
+		[MonoTODO]
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 		}
@@ -517,8 +519,10 @@ namespace System.Data
 		/// Finds and updates a specific row. If no matching row
 		///  is found, a new row is created using the given values.
 		/// </summary>
+		[MonoTODO]
 		public DataRow LoadDataRow(object[] values, bool fAcceptChanges)
 		{
+			//FIXME: implemente
 			DataRow dataRow = null;
 			return dataRow;
 		}
@@ -535,6 +539,7 @@ namespace System.Data
 		/// This member supports the .NET Framework infrastructure
 		///  and is not intended to be used directly from your code.
 		/// </summary>
+		[MonoTODO]
 		protected internal DataRow[] NewRowArray(int size)
 		{
 			DataRow[] dataRows = {null};
@@ -554,6 +559,7 @@ namespace System.Data
 		/// <summary>
 		/// Raises the ColumnChanged event.
 		/// </summary>
+		[MonoTODO]
 		protected virtual void OnColumnChanged(DataColumnChangeEventArgs e)
 		{
 		}
@@ -562,6 +568,7 @@ namespace System.Data
 		/// Raises the ColumnChanging event.
 		/// </summary>
 		
+		[MonoTODO]
 		protected virtual void OnColumnChanging(DataColumnChangeEventArgs e)
 		{
 		}
@@ -570,6 +577,7 @@ namespace System.Data
 		/// Raises the PropertyChanging event.
 		/// </summary>
 		
+		[MonoTODO]
 		protected internal virtual void OnPropertyChanging(PropertyChangedEventArgs pcevent)
 		{
 		}
@@ -578,6 +586,7 @@ namespace System.Data
 		/// Notifies the DataTable that a DataColumn is being removed.
 		/// </summary>
 		
+		[MonoTODO]
 		protected internal virtual void OnRemoveColumn(DataColumn column)
 		{
 		}
@@ -586,6 +595,7 @@ namespace System.Data
 		/// Raises the RowChanged event.
 		/// </summary>
 		
+		[MonoTODO]
 		protected virtual void OnRowChanged(DataRowChangeEventArgs e)
 		{
 		}
@@ -594,6 +604,7 @@ namespace System.Data
 		/// Raises the RowChanging event.
 		/// </summary>
 		
+		[MonoTODO]
 		protected virtual void OnRowChanging(DataRowChangeEventArgs e)
 		{
 		}
@@ -602,6 +613,7 @@ namespace System.Data
 		/// Raises the RowDeleted event.
 		/// </summary>
 		
+		[MonoTODO]
 		protected virtual void OnRowDeleted(DataRowChangeEventArgs e)
 		{
 		}
@@ -610,6 +622,7 @@ namespace System.Data
 		/// Raises the RowDeleting event.
 		/// </summary>
 		
+		[MonoTODO]
 		protected virtual void OnRowDeleting(DataRowChangeEventArgs e)
 		{
 		}
@@ -620,6 +633,7 @@ namespace System.Data
 		///  was called.
 		/// </summary>
 		
+		[MonoTODO]
 		public void RejectChanges()
 		{
 		}
@@ -628,6 +642,7 @@ namespace System.Data
 		/// Resets the DataTable to its original state.
 		/// </summary>
 		
+		[MonoTODO]
 		public virtual void Reset()
 		{
 		}
@@ -636,8 +651,10 @@ namespace System.Data
 		/// Gets an array of all DataRow objects.
 		/// </summary>
 		
+		[MonoTODO]
 		public DataRow[] Select()
 		{
+			//FIXME:
 			DataRow[] dataRows = {null};
 			return dataRows;
 		}
@@ -648,6 +665,7 @@ namespace System.Data
 		/// lacking one, order of addition.)
 		/// </summary>
 		
+		[MonoTODO]
 		public DataRow[] Select(string filterExpression)
 		{
 			DataRow[] dataRows = {null};
@@ -660,6 +678,7 @@ namespace System.Data
 		/// specified sort order.
 		/// </summary>
 		
+		[MonoTODO]
 		public DataRow[] Select(string filterExpression, string sort)
 		{
 			DataRow[] dataRows = {null};
@@ -672,6 +691,7 @@ namespace System.Data
 		/// the specified state.
 		/// </summary>
 		
+		[MonoTODO]
 		public DataRow[] Select(string filterExpression, string sort, DataViewRowState recordStates)
 		{
 			DataRow[] dataRows = {null};
@@ -683,13 +703,12 @@ namespace System.Data
 		/// there is one as a concatenated string.
 		/// </summary>
 		
+		[MonoTODO]
 		public override string ToString()
 		{
 			return "";
 		}
 
-		/* FIXME: temporarily commented - so we can get a
-		 *        a simple forward read only result set
 		/// <summary>
 		/// Occurs when after a value has been changed for 
 		/// the specified DataColumn in a DataRow.
@@ -727,6 +746,5 @@ namespace System.Data
 		/// </summary>
 		
 		public event DataRowChangeEventHandler RowDeleting;
-		*/
 	}
 }

@@ -1,8 +1,18 @@
+2002-08-20  Franklin Wise <gracenote@earthlink.net>
+	
+	* System.Data/System.Data.build: added nowarn:0679
+
+	* System.Data/System.DataTable: cleaned up class, added MonoTODO tags
+	setup to begin implementing.  Implemented ctor().
+
+	* Tests: See System.Data\Test\ChangeLog
+	
+
 2002-08-19  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.OleDb/OleDbSchemaGuid.cs: initialize static members.
 	
-2002-08-19 Franklin Wise <gracenote@earthlink.net>
+2002-08-19  Franklin Wise <gracenote@earthlink.net>
 	
 	* Tests: See System.Data\Test\ChangeLog
 	
