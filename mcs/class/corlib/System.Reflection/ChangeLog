@@ -1,3 +1,10 @@
+2004-02-08  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoGenericInst.GetParentType): New interncall.
+	(MonoGenericInst.GetInterfaces_internal): New interncall.
+	(MonoGenericInst): Reflect latest API changes; use GetParentType()
+	and GetInterfaces_internal() instead of the fields.	
+
 2004-02-06  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoGenericInst.DeclaringType): Override this.

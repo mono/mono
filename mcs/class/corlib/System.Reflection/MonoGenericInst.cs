@@ -18,8 +18,6 @@ namespace System.Reflection
 {
 	internal class MonoGenericInst : MonoType
 	{
-		private IntPtr klass;
-		protected MonoGenericInst parent;
 		protected Type generic_type;
 		private MonoGenericInst[] interfaces;
 		private MethodInfo[] methods;
@@ -52,9 +50,11 @@ namespace System.Reflection
 		protected void inflate (MonoGenericInst reflected,
 					ArrayList mlist, ArrayList clist, ArrayList flist)
 		{
+			MonoGenericInst parent = GetParentType ();
+			MonoGenericInst[] interfaces = GetInterfaces_internal ();
 			if (parent != null)
 				parent.inflate (parent, mlist, clist, flist);
-			else if (BaseType != null) {
+			else if (generic_type.BaseType != null) {
 				mlist.AddRange (generic_type.BaseType.GetMethods (flags));
 				clist.AddRange (generic_type.BaseType.GetConstructors (flags));
 				flist.AddRange (generic_type.BaseType.GetFields (flags));
@@ -95,8 +95,17 @@ namespace System.Reflection
 			flist.CopyTo (fields, 0);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern MonoGenericInst GetParentType ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern MonoGenericInst[] GetInterfaces_internal ();
+
 		public override Type BaseType {
-			get { return parent != null ? parent : generic_type.BaseType; }
+			get {
+				MonoGenericInst parent = GetParentType ();
+				return parent != null ? parent : generic_type.BaseType;
+			}
 		}
 
 		public override Type DeclaringType {
@@ -105,10 +114,7 @@ namespace System.Reflection
 
 		public override Type[] GetInterfaces ()
 		{
-			if (interfaces != null)
-				return interfaces;
-			else
-				return Type.EmptyTypes;
+			return GetInterfaces_internal ();
 		}
 
 		protected override bool IsValueTypeImpl ()
