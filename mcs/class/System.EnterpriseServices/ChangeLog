@@ -1,4 +1,7 @@
 2002-07-22 Tim Coleman  <tim@timcoleman.com>
+	* makefile.gnu: added to build on linux
+
+2002-07-22 Tim Coleman  <tim@timcoleman.com>
 	* System.EnterpriseServices: New namespace created
 		to provide enum needed by Web Services
 	* System.EnterpriseServices.build: New file
