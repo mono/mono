@@ -1,7 +1,7 @@
 /**
  * Project   : Mono
  * Namespace : System.Web.UI.MobileControls
- * Class     : MobilePage
+ * Class     : Style
  * Author    : Gaurav Vaish
  *
  * Copyright : 2002 with Gaurav Vaish, and with
@@ -9,19 +9,14 @@
  */
 
 using System.Web.UI;
-using System.Web.Mobile;
 
 namespace System.Web.UI.MobileControls
 {
-	public class MobilePage : Page
+	public class Style //: IParserAttribute, ITemplateable, IStateManager,
+	                   //    ICloneable
 	{
-		public MobilePage()
+		public Style()
 		{
-		}
-
-		public virtual IControlAdapter GetControlAdapter(MobileControl control)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

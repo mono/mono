@@ -1,6 +1,15 @@
 
 2003-01-10	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* DeviceSpecific.cs      : Dummy implementation.
+	* MobilePage.cs          : GetControlAdapter(MobileControl) - Stubbed.
+	* MobileControl.cs       : Adapter        { get; }      - Implemented
+	                         : BreakAfter     { get; set; } - Stubbed.
+	                         : DeviceSpecific { get; set; } - Stubbed.
+	                         : MobilePage     { get; }      - Stubbed.
+
+2003-01-10	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* IObjectListFieldCollection.cs,
 	* IPageAdapter.cs,
 	* ITemplateable.cs                    : Added interface.

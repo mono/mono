@@ -1,7 +1,7 @@
 /**
  * Project   : Mono
  * Namespace : System.Web.UI.MobileControls
- * Class     : MobilePage
+ * Class     : DeviceSpecific
  * Author    : Gaurav Vaish
  *
  * Copyright : 2002 with Gaurav Vaish, and with
@@ -9,19 +9,13 @@
  */
 
 using System.Web.UI;
-using System.Web.Mobile;
 
 namespace System.Web.UI.MobileControls
 {
-	public class MobilePage : Page
+	public class DeviceSpecific : Control
 	{
-		public MobilePage()
+		public DeviceSpecific()
 		{
-		}
-
-		public virtual IControlAdapter GetControlAdapter(MobileControl control)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

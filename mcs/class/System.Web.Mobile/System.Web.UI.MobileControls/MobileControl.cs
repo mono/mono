@@ -16,16 +16,23 @@ namespace System.Web.UI.MobileControls
 {
 	public abstract class MobileControl : Control
 	{
+		private Style style;
+		private IControlAdapter adapter;
+
 		protected MobileControl()
 		{
 		}
 
-		[MonoTODO]
 		public IControlAdapter Adapter
 		{
 			get
 			{
-				throw new NotImplementedException();
+				IControlAdapter retVal = null;
+				if(adapter != null)
+					retVal = adapter;
+				else if(MobilePage != null)
+					retVal = MobilePage.GetControlAdapter(this);
+				return retVal;
 			}
 		}
 
@@ -48,6 +55,38 @@ namespace System.Web.UI.MobileControls
 				throw new NotImplementedException();
 			}
 			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual bool BreakAfter
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public DeviceSpecific DeviceSpecific
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public MobilePage MobilePage
+		{
+			get
 			{
 				throw new NotImplementedException();
 			}
