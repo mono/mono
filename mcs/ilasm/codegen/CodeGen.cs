@@ -20,7 +20,7 @@ namespace Mono.ILASM {
         public class CodeGen {
 
                 private PEFile pefile;
-
+                private string assembly_name;
                 private string current_namespace;
                 private TypeDef current_typedef;
                 private MethodDef current_methoddef;
@@ -70,6 +70,16 @@ namespace Mono.ILASM {
 
                 public TypeManager TypeManager {
                         get { return type_manager; }
+                }
+
+                public void SetAssemblyName (string name)
+                {
+                        assembly_name = name;
+                }
+
+                public bool IsThisAssembly (string name)
+                {
+                        return (name == assembly_name);
                 }
 
                 public void BeginTypeDef (TypeAttr attr, string name, IClassRef parent,

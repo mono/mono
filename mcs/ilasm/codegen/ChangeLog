@@ -1,5 +1,14 @@
 2003-05-31 Jackson Harper <jackson@latitudegeo.com>
 
+	* CodeGen.cs: Allow this assembly name to be set.
+	* HandlerBlock.cs: Make label fields public so they can be
+	accessed in a TryBlocks constructor.
+	* MethodDef.cs: Allow random labels to be inserted at the current
+	position. These are use for scope blocks.
+	* TryBlock.cs: New constructor takes from and to labels as a HandlerBlock
+		
+2003-05-31 Jackson Harper <jackson@latitudegeo.com>
+
 	* CustomAttr.cs: New file - Custom attributes
 	* InstrTable.cs: Add stelem.r4 and stelem.r8 instructions. Add
 	. tail to unaligned modifier.

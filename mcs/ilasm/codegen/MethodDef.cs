@@ -65,6 +65,7 @@ namespace Mono.ILASM {
                 private Hashtable named_local_table;
                 private bool init_locals;
                 private int max_stack;
+                private Random label_random;
 
                 public MethodDef (PEAPI.MethAttr meth_attr, PEAPI.CallConv call_conv,
                                 PEAPI.ImplAttr impl_attr, string name,
@@ -83,6 +84,7 @@ namespace Mono.ILASM {
                         local_list = new ArrayList ();
                         named_local_table = new Hashtable ();
                         named_param_table = new Hashtable ();
+                        label_random = new Random ();
                         entry_point = false;
                         init_locals = false;
                         max_stack = -1;
@@ -352,6 +354,17 @@ namespace Mono.ILASM {
                         LabelInfo label_info = new LabelInfo (name, inst_list.Count);
 
                         label_table.Add (name, label_info);
+                }
+
+                /// TODO: This whole process is kinda a hack.
+                public string RandomLabel ()
+                {
+                        int rand = label_random.Next ();
+                        string name = rand.ToString ();
+                        LabelInfo label_info = new LabelInfo (name, inst_list.Count);
+
+                        label_table.Add (name, label_info);
+                        return name;
                 }
 
                 public PEAPI.CILLabel GetLabelDef (string name)

@@ -14,8 +14,8 @@ namespace Mono.ILASM {
 
         public class HandlerBlock {
 
-                private string from_label;
-                private string to_label;
+                public readonly string from_label;
+                public readonly string to_label;
 
                 public HandlerBlock (string from_label, string to_label)
                 {
