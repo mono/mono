@@ -1,3 +1,8 @@
+2003-02-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs: Added basic error checking to some methods
+	according to the MSDN docs.
+
 2003-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ConstructorBuilder.cs: 

@@ -72,7 +72,7 @@ namespace System.Reflection.Emit {
 
 		public override string CodeBase {
 			get {
-				return null;
+				throw not_supported ();
 			}
 		}
 		
@@ -312,11 +312,19 @@ namespace System.Reflection.Emit {
 
 		public void SetEntryPoint (MethodInfo entryMethod, PEFileKinds fileKind)
 		{
+			if (entryMethod == null)
+				throw new ArgumentNullException ("entryMethod");
+			if (entryMethod.DeclaringType.Assembly != this)
+				throw new InvalidOperationException ("Entry method is not defined in the same assembly.");
+
 			entry_point = entryMethod;
 			pekind = fileKind;
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (customBuilder == null)
+				throw new ArgumentNullException ("customBuilder");
+
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			byte[] data;
 			int len, pos;
@@ -367,6 +375,11 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			if (con == null)
+				throw new ArgumentNullException ("con");
+			if (binaryAttribute == null)
+				throw new ArgumentNullException ("binaryAttribute");
+
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
@@ -374,6 +387,11 @@ namespace System.Reflection.Emit {
 			this.corlib_object_type = corlib_object_type;
 			this.corlib_value_type = corlib_value_type;
 			this.corlib_enum_type = corlib_enum_type;
+		}
+
+		private Exception not_supported () {
+			// Strange message but this is what MS.NET prints...
+			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 	}
 }
