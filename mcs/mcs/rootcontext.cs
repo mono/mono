@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static Type NamespaceLookup (Namespace curr_ns, string name)
+		static Type NamespaceLookup (Namespace curr_ns, string name, Location loc)
 		{
 			Type t;
 			
@@ -497,7 +497,7 @@ namespace Mono.CSharp {
 					match = TypeManager.LookupType (MakeFQN (ue.Name, name));
 					if (match != null){
 						if (t != null){
-							Report.Error (104, "`" + name + "' is an ambiguous reference");
+							Report.Error (104, loc, "`" + name + "' is an ambiguous reference");
 							return null;
 						}
 						
@@ -567,7 +567,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds.Namespace, name);
+				t = NamespaceLookup (ds.Namespace, name, loc);
 				if (t != null){
 					ds.Cache [name] = t;
 					return t;

@@ -447,7 +447,7 @@ namespace Mono.CSharp {
 			
 			t = parent.DefineType ();
 			if (t == null){
-				Report.Error (146, "Class definition is circular: `"+name+"'");
+				Report.Error (146, Location, "Class definition is circular: `"+name+"'");
 				error = true;
 				return null;
 			}
@@ -548,7 +548,7 @@ namespace Mono.CSharp {
 
 					if (match != null){
 						if (t != null){
-							Report.Error (104, "`" + name + "' is an ambiguous reference");
+							Report.Error (104, Location, "`" + name + "' is an ambiguous reference");
 							return null;
 						}
 						
