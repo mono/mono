@@ -1,3 +1,8 @@
+2002-09-11  Martin Baulig  <martin@gnome.org>
+
+	* gc.c: Call GC_unregister_disappearing_link() on all links when
+	finalizing them, this is necessary to aviod a crash in boehm's
+	finalize handler.
 
 Wed Sep 11 17:06:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
