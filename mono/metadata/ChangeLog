@@ -1,6 +1,8 @@
 2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* string-icalls.c: Join ignores null strings in the source array.
+	* threadpool.[ch]: export busy_worker_threads, not mono_worker_threads.
+	* threads.c: GetAvailableTheads is slightly more accurate.
 
 2003-10-09  Bernie Solomon  <bernard@ugsolutions.com>
 
