@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter (dick@ximian.com)
 //
-// (C) 2003 Ximian, Inc.
+// (C) Copyright 2003 Ximian, Inc.
 //
 
 using System.IO;
@@ -17,6 +17,8 @@ namespace System.CodeDom.Compiler
 		Hashtable filehash;
 		string tempdir;
 		bool keepfiles;
+		string basepath;
+		Random rnd;
 		
 		public TempFileCollection(): this(null, false)
 		{
@@ -33,19 +35,19 @@ namespace System.CodeDom.Compiler
 			keepfiles=keepFiles;
 		}
 
-		private string basepath=null;
-		
 		public string BasePath
 		{
 			get {
 				if(basepath==null) {
-					if(tempdir==null) {
+					if (tempdir==null) {
 						/* Get the system temp dir */
 						MonoIO.GetTempPath(out tempdir);
 					}
 
-					string random=new Random().Next(10000,99999).ToString();
-					
+					if (rnd == null)
+						rnd = new Random ();
+
+					string random = rnd.Next (10000,99999).ToString ();
 					basepath = Path.Combine (tempdir, random);
 				}
 

@@ -1,3 +1,8 @@
+2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TempFileCollection.cs: don't create a Random object on every call to
+	BasePath.
+
 2004-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeGenerator.cs : delegate was output as usual class.
