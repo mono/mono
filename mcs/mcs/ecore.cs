@@ -3070,6 +3070,8 @@ namespace Mono.CSharp {
 				Field f = TypeManager.GetField (FieldInfo);
 				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
 					is_volatile = true;
+				
+				f.status |= Field.Status.USED;
 			}
 			
 			if (FieldInfo.IsStatic){
@@ -3135,6 +3137,12 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stsfld, FieldInfo);
 			else 
 				ig.Emit (OpCodes.Stfld, FieldInfo);
+
+			if (FieldInfo is FieldBuilder){
+				Field f = TypeManager.GetField (FieldInfo);
+
+				f.status |= Field.Status.ASSIGNED;
+			}
 		}
 		
 		public void AddressOf (EmitContext ec)
@@ -3147,6 +3155,15 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Volatile);
 			}
 
+			//
+			// FIXME:
+			//
+			// Mhm.  We do not know what we are being used for:
+			// READING or WRITING the field.
+			//
+			// I think we want an extra argument to AddressOf to pass
+			// this semantic information.
+			//
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {

@@ -544,7 +544,6 @@ namespace Mono.CSharp {
 			Type t = RootContext.TypeManager.LookupType (name);
 			
 			if (t != null) {
-
 				if (t.IsInterface)
 					return t;
 				
@@ -557,7 +556,8 @@ namespace Mono.CSharp {
 				else
 					cause = "Should not happen.";
 
-				Report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
+				Report.Error (527, Location, "`"+name+"' " + cause +
+					      ", need an interface instead");
 				
 				return null;
 			}
@@ -565,14 +565,25 @@ namespace Mono.CSharp {
 			Tree tree = RootContext.Tree;
 			parent = (Interface) tree.Interfaces [name];
 			if (parent == null){
-				string cause = "is undefined";
+				string cause = null;
+				Hashtable container;
 				
-				if (tree.Classes [name] != null)
+				container = tree.Classes;
+				if (container != null && container [name] != null)
 					cause = "is a class";
-				else if (tree.Structs [name] != null)
-					cause = "is a struct";
-				
-				Report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
+				else {
+					container = tree.Structs;
+					
+					if (container != null && container [name] != null)
+						cause = "is a struct";
+				}
+
+				if (cause == null){
+					Report.Error (246, Location, "Can not find type `"+name+"'");
+				} else {
+					Report.Error (527, Location, "`"+name+"' " + cause +
+						      ", need an interface instead");
+				}
 				return null;
 			}
 			

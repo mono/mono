@@ -266,6 +266,7 @@ namespace Mono.CSharp {
 				fields = new ArrayList ();
 
 			fields.Add (field);
+			
 			if (field.Initializer != null){
 				if ((field.ModFlags & Modifiers.STATIC) != 0){
 					if (initialized_static_fields == null)
@@ -1519,6 +1520,24 @@ namespace Mono.CSharp {
 						  ModFlags, false);
 
 			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
+
+			//
+			// Check for internal or private fields that were never assigned
+			//
+			if (RootContext.WarningLevel == 4){
+				foreach (Field f in fields){
+					if ((f.ModFlags & Modifiers.PUBLIC) != 0)
+						continue;
+					
+					if ((f.status & Field.Status.ASSIGNED) != 0)
+						continue;
+
+					Report.Warning (
+						649, f.Location,
+						"Field `" + f.Name + "' is never assigned to and will " +
+						"always have its default value");
+				}
+			}
 			
 //			if (types != null)
 //				foreach (TypeContainer tc in types)
@@ -2481,6 +2500,9 @@ namespace Mono.CSharp {
 		public readonly Object Initializer;
 		public readonly Attributes OptAttributes;
 		public FieldBuilder  FieldBuilder;
+		public Status status;
+		public enum Status : byte { ASSIGNED = 1, USED = 2 }
+
 		
 		// <summary>
 		//   Modifiers allowed in a class declaration

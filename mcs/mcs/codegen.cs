@@ -196,7 +196,7 @@ namespace Mono.CSharp {
 			if (block != null){
 				int errors = Report.Errors;
 				
-				block.EmitMeta (TypeContainer, ig, block, 0);
+				block.EmitMeta (this, block, 0);
 				
 				if (Report.Errors == errors){
 					has_ret = block.Emit (this);

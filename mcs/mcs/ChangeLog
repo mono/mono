@@ -1,5 +1,14 @@
 2002-01-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* interface.cs (Interface.GetInterfaceTypeByName): Only lookup the
+	hashtable if there are classes or structs defined.
+
+	* expression.cs (LocalVariableReference.DoResolve): Simplify this
+	code, as the constant resolution moved.
+
+	* statement.cs (Block.EmitMeta): Resolve all constants as we emit
+	the metadata, so we can flag error 133. 
+
 	* decl.cs (MemberCore.UnsafeOK): New function to test that a
 	pointer is being declared in an unsafe context.
 

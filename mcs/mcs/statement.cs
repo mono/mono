@@ -779,7 +779,6 @@ namespace Mono.CSharp {
 				constants = new Hashtable ();
 
 			constants.Add (name, value);
-
 			return true;
 		}
 
@@ -917,8 +916,11 @@ namespace Mono.CSharp {
 		///   toplevel: the toplevel block.  This is used for checking 
 		///   		that no two labels with the same name are used.
 		/// </remarks>
-		public int EmitMeta (TypeContainer tc, ILGenerator ig, Block toplevel, int count)
+		public int EmitMeta (EmitContext ec, Block toplevel, int count)
 		{
+			TypeContainer tc = ec.TypeContainer;
+			ILGenerator ig = ec.ig;
+				
 			//
 			// Process this block variables
 			//
@@ -937,6 +939,27 @@ namespace Mono.CSharp {
 					vi.VariableType = t;
 					vi.LocalBuilder = ig.DeclareLocal (t);
 					vi.Idx = count++;
+
+					if (constants == null)
+						continue;
+
+					Expression cv = (Expression) constants [name];
+					if (cv == null)
+						continue;
+
+					Expression e = cv.Resolve (ec);
+					if (e == null)
+						continue;
+
+					if (!(e is Constant)){
+						Report.Error (133, vi.Location,
+							      "The expression being assigned to `" +
+							      name + "' must be constant");
+						continue;
+					}
+
+					constants.Remove (name);
+					constants.Add (name, e);
 				}
 			}
 
@@ -945,7 +968,7 @@ namespace Mono.CSharp {
 			//
 			if (children != null){
 				foreach (Block b in children)
-					count = b.EmitMeta (tc, ig, toplevel, count);
+					count = b.EmitMeta (ec, toplevel, count);
 			}
 
 			return count;

@@ -2187,15 +2187,6 @@ namespace Mono.CSharp {
 			if (Block.IsConstant (Name)) {
 				Expression e = Block.GetConstantExpression (Name);
 
-				e = e.Resolve (ec);
-				if (e == null)  
-					return null;
-
-				if (!(e is Constant)) {
-					Report.Error (150, loc, "A constant value is expected");
-					return null;
-				}
-
 				vi.Used = true;
 				return e;
 			}
@@ -4684,9 +4675,8 @@ namespace Mono.CSharp {
 			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
 
 			if (member_lookup == null){
-				Report.Warning (117, loc, "`" + expr_type + "' does not contain a " +
+				Report.Error (117, loc, "`" + expr_type + "' does not contain a " +
 					      "definition for `" + Identifier + "'");
-				Report.Warning (117, loc, "THIS SHOULD BE AN ERROR");
 					      
 				return null;
 			}
