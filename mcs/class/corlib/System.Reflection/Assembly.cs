@@ -42,6 +42,8 @@ using System.Runtime.InteropServices;
 using System.Collections;
 using System.Configuration.Assemblies;
 
+using Mono.Security;
+
 namespace System.Reflection {
 
 	internal class ResolveEventHolder {
@@ -97,11 +99,9 @@ namespace System.Reflection {
 			}
 		} 
 
-		[MonoTODO]
 		public virtual string EscapedCodeBase {
 			get {
-				//FIXME: escape characters -> Uri
-				return get_code_base ();
+				return Uri.EscapeString (get_code_base (), false, true, true);
 			}
 		}
 

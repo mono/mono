@@ -1,3 +1,7 @@
+2005-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Uri.cs: Added Uri.cs from HEAD.
+
 2004-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Throw an NotSupportedException when "undefined length 
