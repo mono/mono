@@ -1,3 +1,8 @@
+2004-09-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (class_compute_field_layout): Classes with auto-layout or
+	reference fields are not blittable.
+	
 2004-09-01  Dick Porter  <dick@ximian.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_get_location): Use
