@@ -13,6 +13,7 @@ Mono.Math.Prime.Generator/SequentialSearchPrimeGeneratorBase.cs
 Mono.Security/ASN1.cs
 Mono.Security/ASN1Convert.cs
 Mono.Security/PKCS7.cs
+Mono.Security/StrongName.cs
 Mono.Security.Authenticode/AuthenticodeBase.cs
 Mono.Security.Authenticode/AuthenticodeDeformatter.cs
 Mono.Security.Cryptography/CryptoConvert.cs

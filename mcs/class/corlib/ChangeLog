@@ -1,3 +1,7 @@
+2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* corlib.dll.sources: Added classes StrongName to support StrongNames.
+
 2003-10-17  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* corlib.dll.sources: Added classes CryptoConvert to support StrongNames.
