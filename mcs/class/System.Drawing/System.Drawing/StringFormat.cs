@@ -23,15 +23,21 @@ namespace System.Drawing
 		IntPtr nativeStrFmt = IntPtr.Zero;
                 int language = GDIPlus.LANG_NEUTRAL;
 		
-		public StringFormat()
-		{						   
-			Status status = GDIPlus.GdipCreateStringFormat (0, language, out nativeStrFmt);        			
+		public StringFormat() : this (0, GDIPlus.LANG_NEUTRAL)
+		{					   
+			
+		}		
+		
+		public StringFormat(StringFormatFlags options, int lang)
+		{
+			Status status = GDIPlus.GdipCreateStringFormat (options, lang, out nativeStrFmt);        			
 			
 			if (status != Status.Ok)
 				throw new ArgumentException ("Could not allocate string format: " + status);
 				
 			LineAlignment =  StringAlignment.Near;
 			Alignment =  StringAlignment.Near;			
+			language = lang;
 		}
 		
 		internal StringFormat(IntPtr native)
@@ -146,6 +152,13 @@ namespace System.Drawing
 				return new StringFormat (ptr);
 			}
 		}
+		
+		
+		public int DigitSubstitutionLanguage {
+			get{
+				return language;
+			}
+		}
 
 		
 		public static StringFormat GenericTypographic {
@@ -211,7 +224,7 @@ namespace System.Drawing
 
                 public void SetDigitSubstitution(int language,  StringDigitSubstitute substitute)
                 {
-                        GDIPlus.GdipSetStringFormatDigitSubstitution(nativeStrFmt, language, substitute);
+                        GDIPlus.GdipSetStringFormatDigitSubstitution(nativeStrFmt, this.language, substitute);
                 }
 
                 public float[] GetTabStops(out float firstTabOffset)

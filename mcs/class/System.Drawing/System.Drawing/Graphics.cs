@@ -136,7 +136,10 @@ namespace System.Drawing
                                         x, y, width, height, startAngle, sweepAngle);                        
 		}
 
-		public void DrawArc (Pen pen, int x, int y, int width, int height, float startAngle, float sweepAngle)
+		// Microsoft documentation states that the signature for this member should be
+		// public void DrawArc( Pen pen,  int x,  int y,  int width,  int height,   int startAngle,
+   		// int sweepAngle. However, GdipDrawArcI uses also float for the startAngle and sweepAngle params
+   		public void DrawArc (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{			
 			GDIPlus.GdipDrawArcI (nativeObject, pen.nativeObject,
                                         x, y, width, height, startAngle, sweepAngle);
@@ -621,7 +624,10 @@ namespace System.Drawing
 			GDIPlus.GdipDrawPie (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
 		
-		public void DrawPie (Pen pen, int x, int y, int width, int height, float startAngle, float sweepAngle)
+		// Microsoft documentation states that the signature for this member should be
+		// public void DrawPie(Pen pen, int x,  int y,  int width,   int height,   int startAngle
+   		// int sweepAngle. However, GdipDrawPieI uses also float for the startAngle and sweepAngle params
+   		public void DrawPie (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{
 			GDIPlus.GdipDrawPieI (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
 		}

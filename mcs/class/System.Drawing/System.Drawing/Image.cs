@@ -4,6 +4,7 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: 	Christian Meyer (Christian.Meyer@cs.tum.edu)
 // 		Alexandre Pigolkine (pigolkine@gmx.de)
+//		Jordi Mas i Hernandez (jordi@ximian.com)
 //
 namespace System.Drawing {
 
@@ -25,23 +26,21 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public delegate bool GetThumbnailImageAbort();
 	
 	internal IntPtr nativeObject = IntPtr.Zero;
-	protected Size image_size;
-	protected PixelFormat pixel_format;
+	protected Size image_size;	
 	protected ColorPalette colorPalette;
-
 	protected ImageFormat raw_format;
 	
 	// constructor
-	public Image ()
-	{
-		pixel_format = PixelFormat.Format32bppArgb;
+	internal  Image()
+	{		
 		colorPalette = new ColorPalette();
 	}
+	
 
 	private Image (SerializationInfo info, StreamingContext context)
 	{
+		
 	}
-	
 	
 
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -50,25 +49,25 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
     
 	// public methods
 	// static
-	public static Image FromFile (string filename)
+	public static Image FromFile(string filename)
 	{
 		return new Bitmap (filename);
 	}
 	
-	public static Image FromFile (string filename, bool useEmbeddedColorManagement)
+	public static Image FromFile(string filename, bool useEmbeddedColorManagement)
 	{
 		return new Bitmap (filename, useEmbeddedColorManagement);
 	}
-	
-	public static Bitmap FromHbitmap (IntPtr hbitmap)
-	{
-		// Fixme: implement me
+
+	[MonoTODO]	
+	public static Bitmap FromHbitmap(IntPtr hbitmap)
+	{		
 		throw new NotImplementedException ();
 	}
 
-	public static Bitmap FromHbitmap (IntPtr hbitmap, IntPtr hpalette)
-	{
-		// Fixme: implement me
+	[MonoTODO]	
+	public static Bitmap FromHbitmap(IntPtr hbitmap, IntPtr hpalette)
+	{		
 		throw new NotImplementedException ();
 	}
 
@@ -117,7 +116,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return result;
 	}
 	
-	public static int GetPixelFormatSize (PixelFormat pixfmt)
+	public static int GetPixelFormatSize(PixelFormat pixfmt)
 	{
 		int result = 0;
 		switch (pixfmt) {
@@ -155,7 +154,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return result;
 	}
 
-	public static bool IsAlphaPixelFormat (PixelFormat pixfmt)
+	public static bool IsAlphaPixelFormat(PixelFormat pixfmt)
 	{
 		bool result = false;
 		switch (pixfmt) {
@@ -181,43 +180,55 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return result;
 	}
 	
-//	public static bool IsCanonicalPixelFormat (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
-//	
-//	public static bool IsExtendedPixelFormat (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
+	public static bool IsCanonicalPixelFormat (PixelFormat pixfmt)
+	{
+		return ((pixfmt & PixelFormat.Canonical) != 0);
+	}
+	
+	public static bool IsExtendedPixelFormat (PixelFormat pixfmt)
+	{
+		return ((pixfmt & PixelFormat.Extended) != 0);
+	}
 
 	// non-static
+	[MonoTODO]	
 	public RectangleF GetBounds (ref GraphicsUnit pageUnit)
-	{
-		// Fixme: implement me
+	{		
 		throw new NotImplementedException ();
 	}
 	
-	//public EncoderParameters GetEncoderParameterList(Guid encoder);
-	//public int GetFrameCount(FrameDimension dimension);
-	//public PropertyItem GetPropertyItem(int propid);
-	/*
-	  public Image GetThumbnailImage(int thumbWidth, int thumbHeight,
-	  Image.GetThumbnailImageAbort callback,
-	  IntPtr callbackData);
-	*/
+	[MonoTODO]	
+	public EncoderParameters GetEncoderParameterList(Guid encoder)
+	{
+		throw new NotImplementedException ();
+	}
 	
+	public int GetFrameCount(FrameDimension dimension)
+	{
+		throw new NotImplementedException ();
+	}
+	
+	[MonoTODO]	
+	public PropertyItem GetPropertyItem(int propid)
+	{
+		throw new NotImplementedException ();
+	}
+	
+	[MonoTODO]	
+	public Image GetThumbnailImage(int thumbWidth, int thumbHeight, Image.GetThumbnailImageAbort callback, IntPtr callbackData)
+	{
+		throw new NotImplementedException ();				
+	}
+	
+	[MonoTODO]	
 	public void RemovePropertyItem (int propid)
-	{
-		// Fixme: implement me
+	{		
 		throw new NotImplementedException ();
 	}
 	
+	[MonoTODO]	
 	public void RotateFlip (RotateFlipType rotateFlipType)
-	{
-		// Fixme: implement me
+	{		
 		throw new NotImplementedException ();
 	}
 
@@ -265,20 +276,51 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Marshal.FreeHGlobal (gdipalette);           					
 	}
 
-	//public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams);
-	//public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams);
-	//public void SaveAdd(EncoderParameters_ encoderParams);
-	//public void SaveAdd(Image image, EncoderParameters_ encoderParams);
-	//public int SelectActiveFrame(FrameDimension dimension, int frameIndex);
-	//public void SetPropertyItem(PropertyItem propitem);
+	[MonoTODO]	
+	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
+	{
+		throw new NotImplementedException ();
+	}
+	
+	[MonoTODO]	
+	public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
+	{
+		throw new NotImplementedException ();
+	}
+	
+	[MonoTODO]	
+	public void SaveAdd(EncoderParameters encoderParams)
+	{
+		throw new NotImplementedException ();
+	}
+	
+	[MonoTODO]	
+	public void SaveAdd(Image image, EncoderParameters encoderParams)
+	{
+		throw new NotImplementedException ();
+	}
+	
+	[MonoTODO]	
+	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)
+	{
+		throw new NotImplementedException ();
+	}
+	
+	[MonoTODO]	
+	public void SetPropertyItem(PropertyItem propitem)
+	{
+		throw new NotImplementedException ();
+	}
 
 	// properties
+	[MonoTODO]	
 	public int Flags {
 		get {
 			throw new NotImplementedException ();
 		}
 	}
 	
+	[MonoTODO]	
 	public Guid[] FrameDimensionsList {
 		get {
 			throw new NotImplementedException ();
@@ -311,6 +353,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
+	[MonoTODO]	
 	public SizeF PhysicalDimension {
 		get {
 			throw new NotImplementedException ();
@@ -319,16 +362,24 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public PixelFormat PixelFormat {
 		get {
-			return pixel_format;
-		}
+			
+			PixelFormat value;				
+			Status status = GDIPlus.GdipGetImagePixelFormat (nativeObject, out value);		
+			GDIPlus.CheckStatus (status);			
+			
+			return value;
+		}		
 	}
 	
+	
+	[MonoTODO]	
 	public int[] PropertyIdList {
 		get {
 			throw new NotImplementedException ();
 		}
 	}
 	
+	[MonoTODO]	
 	public PropertyItem[] PropertyItems {
 		get {
 			throw new NotImplementedException ();
@@ -403,6 +454,24 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	object ICloneable.Clone()
 	{
 		throw new NotImplementedException ();
+	}
+	
+	
+	public virtual object Clone()
+	{		
+		IntPtr newimage = IntPtr.Zero;
+		
+		if (!(this is Bitmap)) 
+			throw new NotImplementedException (); 
+		
+		Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);			
+		
+		GDIPlus.CheckStatus (status);			
+		
+		if (!(this is Bitmap))
+			return new Bitmap (newimage);
+		
+		throw new NotImplementedException (); 
 	}
 
 }

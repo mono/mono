@@ -643,6 +643,9 @@ namespace System.Drawing {
 		// Image functions
 		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
 		internal static extern Status GdipLoadImageFromFile ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCloneImage(IntPtr image, out IntPtr imageclone);
  
 		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
 		internal static extern Status GdipLoadImageFromFileICM ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
@@ -714,7 +717,7 @@ namespace System.Drawing {
 		internal static extern Status GdipGetEncoderParameterList ( IntPtr image, IntPtr encoder, uint size, out IntPtr buffer );
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipImageGetFrameCount ( IntPtr image, ref Guid guidDimension, out uint count );
+		internal static extern Status GdipImageGetFrameCount (IntPtr image, ref Guid guidDimension, out int count );
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipImageSelectActiveFrame ( IntPtr image, ref Guid guidDimension, uint frameIndex );
