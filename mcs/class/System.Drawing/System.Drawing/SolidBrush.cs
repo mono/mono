@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Alexandre Pigolkine(pigolkine@gmx.de)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -13,9 +14,11 @@ namespace System.Drawing
 	public class SolidBrush	: Brush {
 		
 		Color color;
-		
+		internal ISolidBrushFactory factory_ = Factories.GetSolidBrushFactory();
+
 		public SolidBrush( Color color ) {
-			this.color = color;
+			implementation_ = factory_.SolidBrush(color);
+			this.Color = color;
 		}
 
 		public Color Color {
@@ -23,7 +26,8 @@ namespace System.Drawing
 				return color;
 			}
 			set {
-				color = value;
+			    color = value;
+				((ISolidBrush)implementation_).Color = value;
 			}
 		}
 		
@@ -31,6 +35,7 @@ namespace System.Drawing
 		{
 			return new SolidBrush( color );
 		}
+		
 	}
 }
 

@@ -5,6 +5,7 @@
 //
 // Authors:
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
+//   Alexandre Pigolkine(pigolkine@gmx.de)
 //
 using System;
 using System.Drawing.Drawing2D;
@@ -17,6 +18,9 @@ namespace System.Drawing
 	[ComVisible(false)]
 	public sealed class Graphics : MarshalByRefObject, IDisposable
 	{
+		internal System.Drawing.IGraphics	implementation_;
+		internal static System.Drawing.IGraphicsFactory	graphicsFactory_ = Factories.GetGraphicsFactory();
+
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							   int flags,
 							   int dataSize,
@@ -27,7 +31,7 @@ namespace System.Drawing
 
 		private Graphics (IntPtr nativeGraphics)
 		{
-			hdc_ = nativeGraphics;
+			implementation_ = graphicsFactory_.Graphics(nativeGraphics);
 		}
 
 		[MonoTODO]
@@ -326,7 +330,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, x, y, width, height);
 		}
 
 		[MonoTODO]
@@ -512,31 +516,35 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawRectangle (Pen pen, Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			DrawRectangle(pen, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 
 		[MonoTODO]
 		public void DrawRectangle (Pen pen, float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+			DrawRectangle(pen, (int)x, (int)y, (int)width, (int)height);
 		}
 
 		[MonoTODO]
 		public void DrawRectangle (Pen pen, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawRectangle(pen, x, y, width, height);
 		}
 
 		[MonoTODO]
 		public void DrawRectangles (Pen pen, RectangleF [] rects)
 		{
-			throw new NotImplementedException ();
+			foreach( RectangleF rc in rects) {
+				DrawRectangle(pen, rc.Left, rc.Top, rc.Width, rc.Height);
+			}
 		}
 
 		[MonoTODO]
 		public void DrawRectangles (Pen pen, Rectangle [] rects)
 		{
-			throw new NotImplementedException ();
+			foreach( RectangleF rc in rects) {
+				DrawRectangle(pen, rc.Left, rc.Top, rc.Width, rc.Height);
+			}
 		}
 
 		[MonoTODO]
@@ -561,12 +569,13 @@ namespace System.Drawing
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
 			//throw new NotImplementedException ();
+			implementation_.DrawString(s, font, brush, layoutRectangle, format);
 		}
 
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			//throw new NotImplementedException ();
+			implementation_.DrawString(s, font, brush, x, y);
 		}
 
 		[MonoTODO]
@@ -920,37 +929,45 @@ namespace System.Drawing
 		[MonoTODO]
 		public void FillRectangle (Brush brush, RectangleF rect)
 		{
-			throw new NotImplementedException ();
+		    FillRectangle( brush, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 
 		[MonoTODO]
 		public void FillRectangle (Brush brush, Rectangle rect)
 		{
-			throw new NotImplementedException ();
+		    FillRectangle( brush, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 
 		[MonoTODO]
 		public void FillRectangle (Brush brush, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			implementation_.FillRectangle(brush, x, y, width, height);
 		}
 
 		[MonoTODO]
 		public void FillRectangle (Brush brush, float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+		    FillRectangle( brush, (int)x, (int)y, (int)width, (int)height);
 		}
 
 		[MonoTODO]
 		public void FillRectangles (Brush brush, Rectangle [] rects)
 		{
-			throw new NotImplementedException ();
+		    if(rects != null) {
+		        foreach( Rectangle rc in rects) {
+		            FillRectangle(brush, rc);
+		        }
+		    }
 		}
 
 		[MonoTODO]
 		public void FillRectangles (Brush brush, RectangleF [] rects)
 		{
-			throw new NotImplementedException ();
+		    if(rects != null) {
+		        foreach( RectangleF rc in rects) {
+		            FillRectangle(brush, rc);
+		        }
+		    }
 		}
 
 		[MonoTODO]
@@ -971,7 +988,6 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		IntPtr hdc_ = IntPtr.Zero;
 		[MonoTODO]
 		public static Graphics FromHdc (IntPtr hdc)
 		{
@@ -994,7 +1010,9 @@ namespace System.Drawing
 		[MonoTODO]
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
-			throw new NotImplementedException ();
+			Graphics result = new Graphics(IntPtr.Zero);
+			result.implementation_ = graphicsFactory_.FromHwnd(hwnd);
+			return result;
 		}
 
 		[MonoTODO]
@@ -1006,7 +1024,9 @@ namespace System.Drawing
 		[MonoTODO]
 		public static Graphics FromImage (Image image)
 		{
-			throw new NotImplementedException ();
+			Graphics result = new Graphics(IntPtr.Zero);
+			result.implementation_ = graphicsFactory_.FromImage(image);
+			return result;
 		}
 
 		[MonoTODO]
@@ -1018,7 +1038,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public IntPtr GetHdc ()
 		{
-			return hdc_;
+			return implementation_.GetHdc();
 		}
 
 		[MonoTODO]
@@ -1102,7 +1122,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public SizeF MeasureString (string text, Font font)
 		{
-			throw new NotImplementedException ();
+			return implementation_.MeasureString(text, font);
 		}
 
 		[MonoTODO]

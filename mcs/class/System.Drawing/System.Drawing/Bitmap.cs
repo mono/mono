@@ -17,8 +17,12 @@
 // 2002-03-27  Christian Meyer  <Christian.Meyer@cs.tum.edu>
 // I'll have a closer look at it next week.
 //
+// Alexandre Pigolkine (pigolkine@gmx.de)
+// delegate all calls to implementation
+//
 using System;
 using System.IO;
+using System.Drawing.Imaging;
 
 namespace System.Drawing {
 	struct BITMAPFILEHEADER {        // File info header
@@ -53,180 +57,96 @@ namespace System.Drawing {
 		public BITMAPINFOHEADER bitmapinfoheader;
 		public RGBQUAD[] colorpalette;
 	}
-	// I do not think pinning is needed execpt for when locked
-	// Is layout packed attribute needed here?
-	struct bitmapstruct {
-		//placed in a struct to keep all 3 (4 including the color table) contugious in memory.)
-		public BITMAPFILEHEADER fileheader;     //File info header
-		//bitmapinfo includes the color table
-		public BITMAPINFO       info;           //bitmap info
-		public byte[,]          bits;           //Actual bitmap bits
-	}
 	public sealed class Bitmap : Image {
-		// TODO: add following to an enum  with BI_RLE4 and BI_RLE8
-		const int BI_RGB = 0;                   //? 0 is from example;
-		bitmapstruct bitmap = new bitmapstruct();
-		private void CommonInit (int width, int height) {
-			// Init BITMAPFILEHANDLE
-			// document I am working from says tyoe must allways be "BM",
-			// the example has this set to 19778.
-			// TODO: verify magic number 19778 for "BM" bfType
-			bitmap.fileheader.bfType = 19778;
-			// TODO: is this the correct file size?
-			bitmap.fileheader.bfSize = (uint)
-				//bitmap
-				(width * height * 4)
-				//add color table, 0 for now
-				+ 0
-				// add header
-				+ 60;
-			bitmap.fileheader.bfReserved1 = 0;
-			bitmap.fileheader.bfReserved2 = 0;
-			// bfOffBits is bytes offset between start of bitmap (bimapfileheader)
-			// and start of actual data bits.
-			// Example puts it at 118 including 64 bytes of color table.
-			// I count 124. What is right?
-			// Also I force 32 bit color for first pass, so for now there is no color table (24 bit or greater)
-			// TODO: verify magic number 124 for bfOffBits
-			// TODO: Could also be sizeof(fileheader and bitmapinfo)
-			bitmap.fileheader.bfOffBits = 60; //14 * 4 for ints + 2 * 2 for words.
 
-			// Init BITMAPINFO HEADER
-			// TODO: document on bitmaps shows only 1, 4, 8, 24 as valid pixel depths
-			// TODO; MS's document says 32ppARGB is 32 bits per pixle, the default.
+		internal static IBitmapFactory	factory_ = Factories.GetBitmapFactory();
 
-			bitmap.info.bitmapinfoheader.biBitCount = 32;
-			// biclrused is the number of colors in the bitmap that are actualy used
-			// in the bitmap. 0 means all. default to this.
-			// TODO: As far as I know, it is fine to leave this as 0, but
-			// TODO: that it would be better to do an actual count.
-			// TODO: If we open an already created bitmap, we could in a later 
-			// TODO: version store that.
-			bitmap.info.bitmapinfoheader.biClrUsed = 0;
-			// biclrused is the number of colors in the bitmap that are importiant
-			// in the bitmap. 0 means all. default to this.
-			// TODO: As far as I know, it is fine to leave this as 0,
-			// TODO: If we open an already created bitmap, we could in a later 
-			// TODO: version store that.
-			// In a new bitmap, I do not know how we would know which colors are importiant.
-			bitmap.info.bitmapinfoheader.biClrImportant = 0;
-			// Options are BI_RGB for none, BI_RLE8 for 8 bit color ,BI_RLE4 for 4 bit color
-			// Only supprt BI_RGB for now;
-			// TODO: add definition for BI_***
-			// TODO: correctly set biSizeImage before supporting compression.
-			bitmap.info.bitmapinfoheader.biCompression = BI_RGB;
-			bitmap.info.bitmapinfoheader.biHeight = height;
-			bitmap.info.bitmapinfoheader.biWidth = width;
-			// TODO: add support for more planes
-			bitmap.info.bitmapinfoheader.biPlanes = 1;
-			// TODO: replace 40 with a sizeof() call
-			bitmap.info.bitmapinfoheader.biSize = 40;// size of this structure.
-			// TODO: correctly set biSizeImage so compression can be supported.
-			bitmap.info.bitmapinfoheader.biSizeImage = 0; //0 is allowed for BI_RGB (no compression)
-			// The example uses 0 for pels per meter, so do I.
-			// TODO: support pels per meter
-			bitmap.info.bitmapinfoheader.biXPelsPerMeter = 0;
-			bitmap.info.bitmapinfoheader.biYPelsPerMeter = 0;
-			bitmap.bits = new byte[width*4, height];
-		}
 		#region constructors
 		// constructors
 		public Bitmap (int width, int height) {
-			CommonInit (width, height);
+			implementation_ = factory_.Bitmap(width, height);
+			imageSize_ = new Size(width, height);
 		}
 
 		public Bitmap (int width, int height, Graphics g) {
-			//TODO: Error check X,Y
-			CommonInit (width,height);
-			//TODO: use graphics to set vertial and horzontal resolution.
-			//TODO: that is all the spec requires or desires
+			implementation_ = factory_.Bitmap(width, height, g);
+			imageSize_ = new Size(width, height);
 		}
 
-//		public Bitmap (int width, int heigth, PixelFormat format) {
-//			if ((int)format != BI_RGB) {
-//				throw new NotImplementedException ();
-//			}
-//			CommonInit (width, heigth);
-//		}
-//
-//		public Bitmap (Image origial) {
-//			throw new NotImplementedException ();
-//			//this.original = original;
-//		}
+		public Bitmap (int width, int height, PixelFormat format) {
+			implementation_ = factory_.Bitmap(width, height, format);
+			imageSize_ = new Size(width, height);
+		}
+
+		public Bitmap (Image original) {
+			implementation_ = factory_.Bitmap(original, original.Size);
+			imageSize_ = original.Size;
+		}
 
 		public Bitmap (Stream stream) {
-			throw new NotImplementedException ();
-			//this.stream = stream;
+			implementation_ = factory_.Bitmap(stream, false);
+			imageSize_ = implementation_.Size;
 		}
 
 		public Bitmap (string filename) {
-			throw new NotImplementedException ();
-			//this.filename = filename;
+			implementation_ = factory_.Bitmap(filename, false);
+			imageSize_ = implementation_.Size;
 		}
 
 		public Bitmap (Image original, Size newSize) {
-			throw new NotImplementedException ();
-			//this.original = original;
-			//this.newSize = newSize;
+			implementation_ = factory_.Bitmap(original, newSize);
+			imageSize_ = newSize;
 		}
 
 		public Bitmap (Stream stream, bool useIcm) {
-			throw new NotImplementedException ();
-			//this.stream = stream;
-			//this.useIcm = useIcm;
+			implementation_ = factory_.Bitmap(stream, useIcm);
+			imageSize_ = implementation_.Size;
 		}
 
 		public Bitmap (string filename, bool useIcm) {
-			throw new NotImplementedException ();
-			//this.filename = filename;
-			//this.useIcm = useIcm;
+			implementation_ = factory_.Bitmap(filename, useIcm);
+			imageSize_ = implementation_.Size;
 		}
 
 		public Bitmap (Type type, string resource) {
-			throw new NotImplementedException ();
-			//this.type = type;
-			//this.resource = resource;
+			implementation_ = factory_.Bitmap(type, resource);
+			imageSize_ = implementation_.Size;
 		}
 
 		public Bitmap (Image original, int width, int heigth) {
-			throw new NotImplementedException ();
-			//this.original = original;
-			//this.width = width;
-			//this.heigth = heigth;
+			implementation_ = factory_.Bitmap(original, new Size(width, heigth));
+			imageSize_ = implementation_.Size;
 		}
 
 
-//		public Bitmap (int width, int height, int stride,
-//			       PixelFormat format, IntPtr scan0) {
-//			throw new NotImplementedException ();
-//			//this.width = width;
-//			//this.heigth = heigth;
-//			//this.stride = stride;
-//			//this.format = format;
-//			//this.scan0 = scan0;
-//		}
+		public Bitmap (int width, int height, int stride,
+			       PixelFormat format, IntPtr scan0) {
+			implementation_ = factory_.Bitmap(width, height, stride, format, scan0);
+			imageSize_ = implementation_.Size;
+		}
 		#endregion
 		// methods
 		public Color GetPixel (int x, int y) {
-			//TODO: Error check X,Y
-			return Color.FromArgb (bitmap.bits[x,y], bitmap.bits[x+1,y], bitmap.bits[x+2,y], bitmap.bits[x+3,y]);
+			return ((IBitmap)implementation_).GetPixel(x, y);
 		}
 
 		public void SetPixel (int x, int y, Color color) {
-			//TODO: Error check X,Y
-			bitmap.bits[x, y]     = color.A;
-			bitmap.bits[x + 1, y] = color.R;
-			bitmap.bits[x + 2, y] = color.G;
-			bitmap.bits[x + 2, y] = color.B;
+			((IBitmap)implementation_).SetPixel(x, y, color);
 		}
 
-//		public Bitmap Clone (Rectangle rect,PixelFormat format) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		public Bitmap Clone (RectangleF rect, PixelFormat format) {
-//			throw new NotImplementedException ();
-//		}
+		public Bitmap Clone (Rectangle rect,PixelFormat format) {
+			Bitmap result = new Bitmap(1, 1);
+			result.implementation_ = ((IBitmap)implementation_).Clone(rect, format);
+			result.imageSize_ = result.implementation_.Size;
+			return result;
+		}
+		
+		public Bitmap Clone (RectangleF rect, PixelFormat format) {
+			Bitmap result = new Bitmap(1, 1);
+			result.implementation_ = ((IBitmap)implementation_).Clone(rect, format);
+			result.imageSize_ = result.implementation_.Size;
+			return result;
+		}
 
 		public static Bitmap FromHicon (IntPtr hicon) {
 			throw new NotImplementedException ();
@@ -238,37 +158,37 @@ namespace System.Drawing {
 		}
 
 		public IntPtr GetHbitmap () {
-			throw new NotImplementedException ();
+			return ((IBitmap)implementation_).GetHbitmap();
 		}
 
 		public IntPtr GetHbitmap (Color background) {
-			throw new NotImplementedException ();
+			return ((IBitmap)implementation_).GetHbitmap(background);
 		}
 
 		public IntPtr GetHicon () {
-			throw new NotImplementedException ();
+			return ((IBitmap)implementation_).GetHicon();
 		}
 
-//		public BitmapData LockBits (Rectangle rect, ImageLockMode flags,
-//		                            PixelFormat format) {
-//			throw new NotImplementedException ();
-//		}
+		public BitmapData LockBits (Rectangle rect, ImageLockMode flags,
+		                            PixelFormat format) {
+			return ((IBitmap)implementation_).LockBits(rect, flags, format);
+		}
 
 		public void MakeTransparent () {
-			throw new NotImplementedException ();
+			((IBitmap)implementation_).MakeTransparent();
 		}
 
 		public void MakeTransparent (Color transparentColor) {
-			throw new NotImplementedException ();
+			((IBitmap)implementation_).MakeTransparent(transparentColor);
 		}
 
 		public void SetResolution (float xDpi, float yDpi) {
-			throw new NotImplementedException ();
+			((IBitmap)implementation_).SetResolution(xDpi,yDpi );
 		}
 
-//		public void UnlockBits (BitmapData bitmapdata) {
-//			throw new NotImplementedException ();
-//		}
+		public void UnlockBits (BitmapData bitmapdata) {
+			((IBitmap)implementation_).UnlockBits(bitmapdata);
+		}
 
 		// properties
 		// needs to be done ###FIXME###

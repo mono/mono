@@ -1,5 +1,17 @@
 2003-04-26  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs
+	* Brush.cs
+	* Font.cs
+	* Graphics.cs
+	* Image.cs
+	* Pen.cs
+	* SolidBrush.cs
+	* SystemBrushes.cs
+	* Factories.cs
+			delegate function calls to implementation
+
+2003-04-26  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs
 	* ChangeLog
 	* Image.cs
 	* SystemBrushes.cs		switch to Linux style line terminators

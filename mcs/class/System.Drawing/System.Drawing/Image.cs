@@ -19,6 +19,9 @@ using System.Runtime.Serialization;
 
 public abstract class Image : MarshalByRefObject, IDisposable /*, ICloneable, ISerializable */ {
 
+	internal IImage	implementation_ = null;
+
+	protected Size imageSize_;
 	// constructor
 	public Image () {}
     
@@ -135,7 +138,7 @@ public abstract class Image : MarshalByRefObject, IDisposable /*, ICloneable, IS
 	
 	public int Height {
 		get {
-			throw new NotImplementedException ();
+			return imageSize_.Height;
 		}
 	}
 	
@@ -177,7 +180,7 @@ public abstract class Image : MarshalByRefObject, IDisposable /*, ICloneable, IS
 
 	public Size Size {
 		get {
-			throw new NotImplementedException ();
+			return imageSize_;
 		}
 	}
 	
@@ -189,13 +192,13 @@ public abstract class Image : MarshalByRefObject, IDisposable /*, ICloneable, IS
 	
 	public int Width {
 		get {
-			throw new NotImplementedException ();
+			return imageSize_.Width;
 		}
 	}
 	[MonoTODO]
 	public void Dispose ()
 	{
-		throw new NotImplementedException ();
+		implementation_.Dispose();
 	}
 
 }
