@@ -1,5 +1,7 @@
 2004-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* *.cs: New regression tests.
+
 	* mini-sparc.c inssel-sparc.brg: Update after latest changes. Ongoing sparc 
 	work.
 
