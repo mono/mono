@@ -23,5 +23,22 @@ namespace System.Web.UI.MobileControls
 		{
 			throw new NotImplementedException();
 		}
+
+		public Form ActiveForm
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public Form GetForm(string id)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -1,4 +1,22 @@
 
+2003-01-26	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* Form.cs                : HasActiveHandler()       - Stubbed.
+	* List.cs                : Initial implementation.
+	* ItemPager.cs,
+	* Image.cs,
+	* Link.cs,
+	* ListDataBindEventArgs.cs,
+	* ListDataBindEventHandler.cs,
+	* ListCommandEventArgs.cs,
+	* ListCommandEventHandler.cs,
+	* LoadItemsEventArgs.cs,
+	* LoadItemsEventHandler.cs
+	                         : Completed.
+	* MobilePage.cs          : ActivePage { get; set; } - Stubbed.
+	                         : GetForm(string)          - Stubbed.
+	* PagedControl.cs        : Initial implementation.
+
 2003-01-25	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* ControlPager.cs        : Completed.

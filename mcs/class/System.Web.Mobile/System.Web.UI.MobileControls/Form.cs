@@ -48,5 +48,10 @@ namespace System.Web.UI.MobileControls
 				throw new NotImplementedException();
 			}
 		}
+
+		public bool HasActiveHandler()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
