@@ -1,3 +1,7 @@
+2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: fixed nullref in ves_icall_type_from_name.
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-tables.h: reflecting locale-builder updates.
