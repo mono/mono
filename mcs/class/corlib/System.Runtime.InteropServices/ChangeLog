@@ -1,4 +1,12 @@
 
+Wed Jun 12 16:32:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Marshal.c: stubbed out all the methods and filled in some
+	implementation.
+	* BINDPTR.cs, ComMemberType.cs, DESCKIND.cs, DISPPARAMS.cs,
+	EXCEPINFO.cs, INVOKEKIND.cs, TYPEKIND.cs, UCOMTypeInfo.cs,
+	UCOMTypeLib.cs: enums, interfaces and structs needed in Marshal class.
+
 Tue Jun 4 18:05:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* GCHandle.cs: changed to fit spec and implementation needs.
