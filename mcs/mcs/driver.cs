@@ -100,6 +100,23 @@ namespace Mono.CSharp
 		//
 		static bool using_default_encoder = true;
 
+
+		static public void Reset ()
+		{
+			want_debugging_support = false;
+			parse_only = false;
+			timestamps = false;
+			pause = false;
+			show_counters = false;
+			load_default_config = true;
+			resources = embedded_resources = null;
+			win32ResourceFile = win32IconFile = null;
+			defines = null;
+			output_file = null;
+			encoding = null;
+			using_default_encoder = true;
+		}
+
 		public static void ShowTime (string msg)
 		{
 			if (!timestamps)
@@ -1760,6 +1777,7 @@ namespace Mono.CSharp
 
 		static void Reset ()
 		{
+			Driver.Reset ();
 			Location.Reset ();
 			RootContext.Reset ();
 			Report.Reset ();

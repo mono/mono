@@ -1,5 +1,9 @@
 2005-03-31  Raja R Harinath  <rharinath@novell.com>
 
+	Fix difference in behaviour with commandline invocation.
+	* driver.cs (Driver.Reset): New.
+	(CompilerCallableEntryPoint): Call it.
+
 	* statement.cs (If.Resolve): Avoid spurious "uninitialized
 	variable" warnings if the boolean expression failed to resolve.
 
