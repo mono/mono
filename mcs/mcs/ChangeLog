@@ -1,5 +1,7 @@
 2002-10-24  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs: Return are more gentle token on failure. 
+
 	* pending.cs (PendingImplementation.InterfaceMethod): This routine
 	had an out-of-sync index variable, which caused it to remove from
 	the list of pending methods the wrong method sometimes.

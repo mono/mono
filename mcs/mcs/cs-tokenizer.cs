@@ -874,7 +874,7 @@ namespace Mono.CSharp
 				return v;
 			default:
 				Report.Error (1009, Location, "Unrecognized escape sequence in " + (char)d);
-				return -1;
+				return d;
 			}
 			getChar ();
 			return v;
