@@ -1,2 +1,2 @@
 #!/bin/sh
-@bindir@/@mono_interp@ @bindir@/sqlsharp.exe "$@"
+@bindir@/@mono_interp@ @plat_bindir@/sqlsharp.exe "$@"

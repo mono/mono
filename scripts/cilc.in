@@ -1,2 +1,2 @@
 #!/bin/sh
-@bindir@/@mono_interp@ @bindir@/cilc.exe "$@"
+@bindir@/@mono_interp@ @plat_bindir@/cilc.exe "$@"

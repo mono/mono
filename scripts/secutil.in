@@ -1,2 +1,2 @@
 #!/bin/sh
-@bindir@/@mono_interp@ @bindir@/secutil.exe "$@"
+@bindir@/@mono_interp@ @plat_bindir@/secutil.exe "$@"
