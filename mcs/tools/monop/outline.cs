@@ -349,9 +349,13 @@ public class Outline {
                 }
 	}
 	
-	static string FormatType (Type t)
+	string FormatType (Type t)
 	{
 		string type = t.FullName;
+		
+		if (t.Namespace == this.t.Namespace)
+			return t.Name;
+		
 		if (!type.StartsWith ("System."))
 			return type;
 		
