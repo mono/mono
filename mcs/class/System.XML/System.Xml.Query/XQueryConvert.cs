@@ -41,6 +41,10 @@ namespace System.Xml
 {
 	public class XQueryConvert
 	{
+		private XQueryConvert ()
+		{
+		}
+
 		[MonoTODO]
 		public static bool ShouldCheckValueFacets (XmlSchemaType schemaTypeDest)
 		{
@@ -580,9 +584,10 @@ namespace System.Xml
 			return XmlConvert.ToBinHexString (data);
 		}
 
-		public static string HexBinaryToBase64String (byte [] data)
+		[MonoTODO]
+		public static byte [] HexBinaryToBase64Binary (byte [] data)
 		{
-			return XmlConvert.ToBinHexString (data);
+			return data;//XmlConvert.ToBinHexString (data);
 		}
 
 
