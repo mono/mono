@@ -1,3 +1,7 @@
+2003-05-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit-icalls.c (mono_llmult_ovf): added an additional check for
+	overflow (fixes Bug #43639)
 
 Tue May 27 11:33:53 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
