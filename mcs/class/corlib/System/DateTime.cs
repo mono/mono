@@ -278,9 +278,9 @@ namespace System
 	
 		public static DateTime Today 
 		{
-			get	
-			{
-				return new DateTime (false, (GetNow () / TimeSpan.TicksPerDay) * TimeSpan.TicksPerDay);
+			get {
+				DateTime now = Now;
+				return new DateTime (now.Year, now.Month, now.Day);
 			}
 		}
 
