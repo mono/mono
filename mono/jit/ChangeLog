@@ -1,5 +1,12 @@
 2002-03-17  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (mono_debug_open_assembly): Call mono_debug_get_type() on all
+	base types.
+
+	* debug-dwarf2.c: Added support for strings and arrays.
+
+2002-03-17  Martin Baulig  <martin@gnome.org>
+
 	* debug.c (mono_debug_get_type): Recursively call this for all function members
 	of a class type.
 	(mono_debug_add_method): Don't mangle function names, this must be done by the
