@@ -159,7 +159,7 @@ namespace System.Configuration
 				try {
 					FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
 					reader = new XmlTextReader (fs);
-				} catch (Exception ex) {
+				} catch (Exception) {
 					return false;
 				}
 

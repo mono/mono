@@ -1,3 +1,7 @@
+2003-07-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ConfigurationSettings.cs: Removed unused exception variable, fixes compiler warning
+
 2003-06-16  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ConfigurationSettings.cs: Avoid chicken-egg problem when reading machine.config.
