@@ -1,3 +1,9 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs: Keep a copy of the 3 permission set as an array
+	of RefEmitPermissionSet. This will allow to reuse existing 
+	functionalities already present in the runtime.
+
 2004-09-12  Marek Safar  <marek.safar@seznam.cz>
 
 	* TypeBuilder.cs: Do not create default constructor for

@@ -100,6 +100,9 @@ namespace System.Reflection.Emit {
 		uint access;
 		Module[] loaded_modules;
 		MonoWin32Resource[] win32_resources;
+		private RefEmitPermissionSet[] permissions_minimum;
+		private RefEmitPermissionSet[] permissions_optional;
+		private RefEmitPermissionSet[] permissions_refused;
 		#endregion
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
@@ -208,15 +211,43 @@ namespace System.Reflection.Emit {
 		/// <summary>
 		/// Don't change the method name and parameters order. It is used by mcs 
 		/// </summary>
-		[MonoTODO ("Missing support in runtime for parameter applying")]
 		internal void AddPermissionRequests (PermissionSet required, PermissionSet optional, PermissionSet refused)
 		{
 			if (created)
 				throw new InvalidOperationException ("Assembly was already saved.");
 
+			// required for base Assembly class (so the permissions
+			// can be used even if the assembly isn't saved to disk)
 			_minimum = required;
 			_optional = optional;
 			_refuse = refused;
+
+			// required to reuse AddDeclarativeSecurity support 
+			// already present in the runtime
+			if (required != null) {
+				int i = 0;
+				permissions_minimum = new RefEmitPermissionSet [required.Count];
+				foreach (IPermission p in required) {
+					permissions_minimum [i++] = new RefEmitPermissionSet (
+						SecurityAction.RequestMinimum, p.ToXml ().ToString ());
+				}
+			}
+			if (optional != null) {
+				int i = 0;
+				permissions_optional = new RefEmitPermissionSet [optional.Count];
+				foreach (IPermission p in optional) {
+					permissions_optional [i++] = new RefEmitPermissionSet (
+						SecurityAction.RequestOptional, p.ToXml ().ToString ());
+				}
+			}
+			if (refused != null) {
+				int i = 0;
+				permissions_refused = new RefEmitPermissionSet [refused.Count];
+				foreach (IPermission p in refused) {
+					permissions_refused [i++] = new RefEmitPermissionSet (
+						SecurityAction.RequestRefuse, p.ToXml ().ToString ());
+				}
+			}
 		}
 
 		internal void EmbedResourceFile (string name, string fileName)
