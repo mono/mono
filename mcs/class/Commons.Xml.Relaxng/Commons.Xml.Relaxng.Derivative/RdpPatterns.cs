@@ -192,7 +192,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		#region Derivative
 		public virtual RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			return RdpNotAllowed.Instance;
+			// This is an extension to JJC algorithm.
+			// Whitespace text are allowed except for Data and Value
+			// (their TextDeriv are overridden)
+			return Util.IsWhitespace (s) ? this : RdpNotAllowed.Instance;
 		}
 
 /*
