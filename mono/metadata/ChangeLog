@@ -1,4 +1,10 @@
 
+Mon Feb 28 11:59:42 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: generalized the reference bitmap creation
+	and added hooks for the new GC.
+	* class-internals.c: removed the gc_bitmap field from MonoClass.
+
 Sat Feb 26 16:06:59 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* domain.c: help the compiler to produce better code
