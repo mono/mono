@@ -24,6 +24,17 @@ namespace X {
 	}
 }
 
+namespace Foo {
+
+  // Trick: this class is called System.  but we are going to use the using alias to
+  // reference the real system.
+  class System {
+	static void X() {
+	  System2.Console.WriteLine("FOO");
+	}
+  }
+}
+
 class App {
 	public static int Main () {
 		A.B.C.Hola ();
