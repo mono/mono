@@ -1,3 +1,10 @@
+2003-07-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ChangeLog: Sorry it seems that I couldn't find the right combinaison
+	just to commit the change to changelog (probably due to convertion to
+	windows).
+	* GenericPrincipal.cs: Fixed issues found during unit testing.
+
 2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GenericIdentity.cs: check arguments and fixed IsAuthenticated.

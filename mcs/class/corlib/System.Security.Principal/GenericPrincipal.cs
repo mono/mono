@@ -16,18 +16,27 @@ namespace System.Security.Principal {
 		
 		public GenericPrincipal (IIdentity identity, string [] roles)
 		{
+			if (identity == null)
+				throw new ArgumentNullException ("identity");
+
 			this.identity = identity;
-			this.roles = roles;
+			if (roles != null) {
+				// make our own (unchangeable) copy of the roles
+				this.roles = new string [roles.Length];
+				for (int i=0; i < roles.Length; i++)
+					this.roles [i] = roles [i];
+			}
 		}
 
 		public virtual IIdentity Identity {
-			get {
-				return identity;
-			}
+			get { return identity; }
 		}
 
 		public virtual bool IsInRole (string role)
 		{
+			if (roles == null)
+				return false;
+
 			foreach (string r in roles)
 				if (role == r)
 					return true;
