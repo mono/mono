@@ -1,3 +1,7 @@
+2001-08-29  Bob Smith  <bob@thestuff.net>
+
+        * HttpWorkerRequest.cs: Partial Implementation.
+
 2001-08-16  Bob Smith  <bob@thestuff.net>
 
          * HttpCookieCollection.cs, HttpCookie.cs: Bug fixes.
