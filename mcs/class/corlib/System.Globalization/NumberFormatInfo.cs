@@ -90,7 +90,7 @@ namespace System.Globalization {
 				numberDecimalSeparator =      ".";
 				numberGroupSeparator =        ",";
 				numberGroupSizes =            new int[1] { 3 };
-				numberNegativePattern =       0;
+				numberNegativePattern =       1;
 				
 				// Percent Related Format Info
 				percentDecimalDigits =        2;

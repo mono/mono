@@ -1,3 +1,7 @@
+2002-06-11  Nick Drochak  <ndrochak@gol.com>
+
+	* NumberFormatInfo.cs: Make NumberNegativePattern = 1 for the ctor
+
 2002-06-07  Nick Drochak  <ndrochak@gol.com>
 
 	* NumberFormatInfo.cs: Make InvariantInfo.NumberNegativePattern = 1
