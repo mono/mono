@@ -1,4 +1,4 @@
-CSC=mint /usr/local/bin/mcs.exe
+CSC=csc.exe
 CSCFLAGS=/nologo /debug+ /debug:full  /optimize
 
 VERSION=0.13
@@ -46,17 +46,13 @@ dum: cs-parser.cs
 	./mcs --fatal --target exe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs2.exe: mcs.exe
-	mint ./mcs.exe --target exe --unsafe -o mcs2.exe $(COMPILER_SOURCES)
+	./mcs $(XFLAGS) --target exe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs3.exe: mcs2.exe
-	mint ./mcs2.exe --target exe -o mcs3.exe $(COMPILER_SOURCES)
+	./mcs2 --target exe -o mcs3.exe $(COMPILER_SOURCES)
 
 mm:
-<<<<<<< makefile
-	mint /usr/local/bin/mcs.exe --target exe -o mcs4.exe $(COMPILER_SOURCES)
-=======
 	mint $(MINTFLAGS) ./mcs.exe $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
->>>>>>> 1.47
 
 monomcs: cs-parser.cs
 	mcs $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
