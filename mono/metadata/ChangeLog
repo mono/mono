@@ -6,6 +6,8 @@
 	mono_runtime_invoke, but you can pass an array of objects.
 	(mono_remoting_invoke): new arch. independent impl.
 	(mono_message_invoke): new arch. independent impl.
+	(mono_runtime_class_init): new arch. independent impl.
+	(mono_runtime_object_init): new arch. independent impl.
 
 Fri Apr 5 18:29:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
