@@ -1,3 +1,7 @@
+2005-01-19  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs: Un-selecting the control when it is loosing focus
+
 2005-01-19  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Hook up to the text controls leave event so we can

@@ -3361,6 +3361,7 @@ namespace System.Windows.Forms
 				}
 
 				this.has_focus = false;
+				this.is_selected = false;
 				OnLostFocus(EventArgs.Empty);
 				return;
 			}
