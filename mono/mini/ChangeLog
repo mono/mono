@@ -1,3 +1,9 @@
+2004-01-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* debug-mini.c: Modify the debug info serialize/deserialize code so it handles
+	negative values as well. This is needed for the encoding of the line number
+	info, since sometimes the line numbers are not in increasing order.
+
 2004-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-pentium.md (localloc): Increase the size of the localloc 
