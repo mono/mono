@@ -3,6 +3,7 @@
  *
  * DO NOT MODIFY.
  */
+#include <config.h>
 
 #ifndef INC_Mono_Posix_map_H
 #define INC_Mono_Posix_map_H

@@ -3,6 +3,7 @@
  *
  * DO NOT MODIFY.
  */
+#include <config.h>
 
 #include "map.h"
 
