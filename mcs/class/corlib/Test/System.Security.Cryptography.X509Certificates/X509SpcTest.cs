@@ -16,7 +16,7 @@ using System.Text;
 
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
-	[TestFixture]
+//	[TestFixture]
 	public class SoftwarePublisherCertificateTest : Assertion {
 
 		[TearDown]

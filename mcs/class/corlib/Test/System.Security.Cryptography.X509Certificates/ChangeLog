@@ -1,3 +1,8 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509SpcTest.cs: Commented tests as the root certificates aren't part
+	of the Mono trusted store.
+
 2003-12-17  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509SpcTest.cs: Now use Path.GetFullPath for all filenames as 
