@@ -1,3 +1,6 @@
+2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ops.h cpu-sparc.md mini-sparc.h mini-sparc.c exceptions-sparc.c tramp-sparc.c inssel-long.brg: Add SPARC64 support.
 
 Mon Jun 28 18:05:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
