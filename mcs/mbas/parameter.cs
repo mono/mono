@@ -116,6 +116,8 @@ namespace Mono.MonoBASIC {
 					return ParameterAttributes.None;
 				case Modifier.OUT:
 					return ParameterAttributes.Out;
+				case Modifier.OPTIONAL:
+					return ParameterAttributes.Optional;
 				case Modifier.PARAMS:
 					return 0;
 				}

@@ -2285,7 +2285,10 @@ namespace Mono.MonoBASIC {
 					else 
 						pb = mb.DefineParameter (
 							i + 1, p [i].Attributes, p [i].Name);
-					
+
+					if (p [i].ParameterInitializer != null)
+						pb.SetConstant (((Constant) p [i].ParameterInitializer).GetValue());
+
 					Attributes attr = p [i].OptAttributes;
 					if (attr != null)
 						Attribute.ApplyAttributes (ec, pb, pb, attr, Location);

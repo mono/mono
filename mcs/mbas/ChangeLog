@@ -1,3 +1,9 @@
+2004-09-14 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: Set default constant value for optional parameters in ParameterBuilder
+	* parameter.cs: Setting optional attribute
+		These two fixes makes sure that optional parameter with default value get emitted correctly
+
+2004-08-27 Anirban Bhattacharjee <banirban@novell.com>
 2004-09-08 Bernie Solomon <bernard@ugsolutions.com>
 	* mb-parser.jay: fix CopyTo args when parsing parameters
 
