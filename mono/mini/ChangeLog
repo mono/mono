@@ -1,3 +1,20 @@
+2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c|h: Added functions to cache the declarative stack modifiers
+	in MonoJitInfo and to create a security frame from a MonoJitInfo 
+	structure.
+	* mini.c: Initialize jinfo->cas_inited to FALSE when MonoJitInfo is
+	created. Register internal calls for System.Security.SecurityFrame::
+	_GetSecurityFrame and _GetSecurityStack.
+	* mini.h: Added definition for new icalls (in mini-exceptions.c) and
+	the definitions for the new stack walk/callback mechanism.
+	* mini-exceptions.c: Added internal call GetSecurityFrame (to get the 
+	first security frame for LinkDemands and InheritanceDemands) and
+	GetSecurityStack for Demands. Both use the new mono_walk_stack code
+	from lupus.
+	* mini-x86.h, mini-amd64.h, mini-sparc.h: Architecture specific stack
+	walk initialization (lupus).
+
 2004-12-20  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c (mono_method_to_ir): In CEE_DUP, handle the dup / stloc
