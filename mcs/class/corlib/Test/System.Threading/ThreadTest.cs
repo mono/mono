@@ -202,6 +202,7 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
+		[Category("NotDotNet")]
 		public void TestStart()
 		{
 		{
@@ -350,6 +351,7 @@ namespace MonoTests.System.Threading {
 			TestThread.Abort();
 		}
 
+		[Category("NotDotNet")]
 		public void TestNestedThreads1()
 		{
 			C3Test  test1 = new C3Test();
