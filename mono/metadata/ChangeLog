@@ -1,3 +1,8 @@
+2002-08-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_delegate_to_ftnptr): pass delegate->target
+	instead of the delegate itself as this pointer (bug #28383)
+
 2002-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): added return type
