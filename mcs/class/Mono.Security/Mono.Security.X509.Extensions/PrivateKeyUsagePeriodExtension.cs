@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -33,9 +34,13 @@ namespace Mono.Security.X509.Extensions {
 			extnOid = "2.5.29.16";
 		}
 
-		public PrivateKeyUsagePeriodExtension (ASN1 asn1) : base (asn1) {}
+		public PrivateKeyUsagePeriodExtension (ASN1 asn1) : base (asn1)
+		{
+		}
 
-		public PrivateKeyUsagePeriodExtension (X509Extension extension) : base (extension) {}
+		public PrivateKeyUsagePeriodExtension (X509Extension extension) : base (extension)
+		{
+		}
 
 		protected override void Decode () 
 		{
@@ -65,12 +70,12 @@ namespace Mono.Security.X509.Extensions {
 			StringBuilder sb = new StringBuilder ();
 			if (notBefore != DateTime.MinValue) {
 				sb.Append ("Not Before: ");
-				sb.Append (notBefore.ToString ());
+				sb.Append (notBefore.ToString (CultureInfo.CurrentUICulture));
 				sb.Append (Environment.NewLine);
 			}
 			if (notAfter != DateTime.MinValue) {
 				sb.Append ("Not After: ");
-				sb.Append (notAfter.ToString ());
+				sb.Append (notAfter.ToString (CultureInfo.CurrentUICulture));
 				sb.Append (Environment.NewLine);
 			}
 			return sb.ToString ();

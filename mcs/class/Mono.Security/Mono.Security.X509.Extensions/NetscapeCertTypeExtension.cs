@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -38,13 +39,13 @@ namespace Mono.Security.X509.Extensions {
 
 		// note: because nothing is simple in ASN.1 bits are reversed
 		[Flags]
-		public enum CertType {
+		public enum CertTypes {
 			SslClient = 0x80,
 			SslServer = 0x40,
 			Smime = 0x20,
 			ObjectSigning = 0x10,
-			SslCa = 0x04,
-			SmimeCa = 0x02,
+			SslCA = 0x04,
+			SmimeCA = 0x02,
 			ObjectSigningCA = 0x01
 		}
 
@@ -55,9 +56,13 @@ namespace Mono.Security.X509.Extensions {
 			extnOid = "2.16.840.1.113730.1.1";
 		}
 
-		public NetscapeCertTypeExtension (ASN1 asn1) : base (asn1) {}
+		public NetscapeCertTypeExtension (ASN1 asn1) : base (asn1) 
+		{
+		}
 
-		public NetscapeCertTypeExtension (X509Extension extension) : base (extension) {}
+		public NetscapeCertTypeExtension (X509Extension extension) : base (extension)
+		{
+		}
 
 		protected override void Decode () 
 		{
@@ -78,9 +83,9 @@ namespace Mono.Security.X509.Extensions {
 			set { ctbits = value; }
 		}*/
 
-		public bool Support (CertType usage) 
+		public bool Support (CertTypes usage) 
 		{
-			int x = Convert.ToInt32 (usage);
+			int x = Convert.ToInt32 (usage, CultureInfo.InvariantCulture);
 			return ((x & ctbits) == x);
 		}
 
@@ -88,40 +93,40 @@ namespace Mono.Security.X509.Extensions {
 		{
 			const string separator = " , ";
 			StringBuilder sb = new StringBuilder ();
-			if (Support (CertType.SslClient))
+			if (Support (CertTypes.SslClient))
 				sb.Append ("SSL Client Authentication");
-			if (Support (CertType.SslServer)) {
+			if (Support (CertTypes.SslServer)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("SSL Server Authentication");
 			}
-			if (Support (CertType.Smime)) {
+			if (Support (CertTypes.Smime)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("SMIME");
 			}
-			if (Support (CertType.ObjectSigning)) {
+			if (Support (CertTypes.ObjectSigning)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Object Signing");
 			}
-			if (Support (CertType.SslCa)) {
+			if (Support (CertTypes.SslCA)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("SSL CA");
 			}
-			if (Support (CertType.SmimeCa)) {
+			if (Support (CertTypes.SmimeCA)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("SMIME CA");
 			}
-			if (Support (CertType.ObjectSigningCA)) {
+			if (Support (CertTypes.ObjectSigningCA)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Object Signing CA");
 			}
 			sb.Append ("(");
-			sb.Append (ctbits.ToString ("X2"));
+			sb.Append (ctbits.ToString ("X2", CultureInfo.InvariantCulture));
 			sb.Append (")");
 			sb.Append (Environment.NewLine);
 			return sb.ToString ();

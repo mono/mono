@@ -78,9 +78,13 @@ namespace Mono.Security.X509.Extensions {
 			policies = new Hashtable ();
 		}
 
-		public CertificatePoliciesExtension (ASN1 asn1) : base (asn1) {}
+		public CertificatePoliciesExtension (ASN1 asn1) : base (asn1)
+		{
+		}
 
-		public CertificatePoliciesExtension (X509Extension extension) : base (extension) {}
+		public CertificatePoliciesExtension (X509Extension extension) : base (extension)
+		{
+		}
 
 		protected override void Decode () 
 		{
@@ -90,7 +94,7 @@ namespace Mono.Security.X509.Extensions {
 				throw new ArgumentException ("Invalid CertificatePolicies extension");
 			// for every policy OID
 			for (int i=0; i < sequence.Count; i++) {
-				policies.Add (ASN1Convert.ToOID (sequence [i][0]), null);
+				policies.Add (ASN1Convert.ToOid (sequence [i][0]), null);
 			}
 		}
 

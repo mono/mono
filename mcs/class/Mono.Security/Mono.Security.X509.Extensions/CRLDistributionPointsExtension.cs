@@ -56,6 +56,13 @@ namespace Mono.Security.X509.Extensions {
 			public string DistributionPoint;
 			public ReasonFlags Reasons;
 			public string CRLIssuer;
+
+			public DP (string dp, ReasonFlags reasons, string issuer) 
+			{
+				DistributionPoint = dp;
+				Reasons = reasons;
+				CRLIssuer = issuer;
+			}
 		}
 
 		[Flags]

@@ -1,3 +1,19 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthorityKeyIdentifierExtension.cs: FxCop-ized.
+	* BasicConstraintsExtension.cs: FxCop-ized. Added INSIDE_CORLIB.
+	* CRLDistributionPointsExtension.cs: Added constructor for DP to
+	remove compilation warnings.
+	* CertificatePoliciesExtension.cs: Ajusted for changes in ASN1Convert.
+	* ExtendedKeyUsageExtension.cs: Ajusted for changes in ASN1Convert.
+	Added missing OID strings in ToString ().
+	* KeyAttributesExtension.cs: FxCop-ized. 
+	* KeyUsageExtension.cs: FxCop-ized. Added INSIDE_CORLIB.
+	* NetscapeCertTypeExtension.cs: FxCop-ized.
+	* PrivateKeyUsagePeriodExtension.cs: FxCop-ized.
+	* SubjectAltNameExtension.cs: FxCop-ized.
+	* SubjectKeyIdentifierExtension.cs: FxCop-ized. Added INSIDE_CORLIB.
+
 2004-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CRLDistributionPointsExtension.cs: Fix some warnings.

@@ -2,12 +2,14 @@
 // KeyAttributesExtension.cs: Handles X.509 *DEPRECATED* KeyAttributes extensions.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -52,9 +54,13 @@ namespace Mono.Security.X509.Extensions {
 			extnOid = "2.5.29.2";
 		}
 
-		public KeyAttributesExtension (ASN1 asn1) : base (asn1) {}
+		public KeyAttributesExtension (ASN1 asn1) : base (asn1)
+		{
+		}
 
-		public KeyAttributesExtension (X509Extension extension) : base (extension) {}
+		public KeyAttributesExtension (X509Extension extension) : base (extension)
+		{
+		}
 
 		protected override void Decode () 
 		{
@@ -102,7 +108,11 @@ namespace Mono.Security.X509.Extensions {
 		}
 
 		public byte[] KeyIdentifier {
-			get { return keyId; }
+			get { 
+				if (keyId == null)
+					return null;
+				return (byte[]) keyId.Clone ();
+			}
 		}
 
 		public override string Name {
@@ -117,9 +127,9 @@ namespace Mono.Security.X509.Extensions {
 			get { return notBefore; }
 		}
 
-		public bool Support (KeyUsage usage) 
+		public bool Support (KeyUsages usage) 
 		{
-			int x = Convert.ToInt32 (usage);
+			int x = Convert.ToInt32 (usage, CultureInfo.InvariantCulture);
 			return ((x & kubits) == x);
 		}
 
@@ -130,7 +140,7 @@ namespace Mono.Security.X509.Extensions {
 				sb.Append ("KeyID=");
 				int x = 0;
 				while (x < keyId.Length) {
-					sb.Append (keyId [x].ToString ("X2"));
+					sb.Append (keyId [x].ToString ("X2", CultureInfo.InvariantCulture));
 					if (x % 2 == 1)
 						sb.Append (" ");
 					x++;
@@ -141,62 +151,62 @@ namespace Mono.Security.X509.Extensions {
 			if (kubits != 0) {
 				sb.Append ("Key Usage=");
 				const string separator = " , ";
-				if (Support (KeyUsage.digitalSignature))
+				if (Support (KeyUsages.digitalSignature))
 					sb.Append ("Digital Signature");
-				if (Support (KeyUsage.nonRepudiation)) {
+				if (Support (KeyUsages.nonRepudiation)) {
 					if (sb.Length > 0)
 						sb.Append (separator);
 					sb.Append ("Non-Repudiation");
 				}
-				if (Support (KeyUsage.keyEncipherment)) {
+				if (Support (KeyUsages.keyEncipherment)) {
 					if (sb.Length > 0)
 						sb.Append (separator);
 					sb.Append ("Key Encipherment");
 				}
-				if (Support (KeyUsage.dataEncipherment)) {
+				if (Support (KeyUsages.dataEncipherment)) {
 					if (sb.Length > 0)
 						sb.Append (separator);
 					sb.Append ("Data Encipherment");
 				}
-				if (Support (KeyUsage.keyAgreement)) {
+				if (Support (KeyUsages.keyAgreement)) {
 					if (sb.Length > 0)
 						sb.Append (separator);
 					sb.Append ("Key Agreement");		
 				}
-				if (Support (KeyUsage.keyCertSign)) {
+				if (Support (KeyUsages.keyCertSign)) {
 					if (sb.Length > 0)
 						sb.Append (separator);
 					sb.Append ("Certificate Signing");
 				}
-				if (Support (KeyUsage.cRLSign)) {
+				if (Support (KeyUsages.cRLSign)) {
 					if (sb.Length > 0)
 						sb.Append (separator);
 					sb.Append ("CRL Signing");
 				}
-				if (Support (KeyUsage.encipherOnly)) {
+				if (Support (KeyUsages.encipherOnly)) {
 					if (sb.Length > 0)
 						sb.Append (separator);
 					sb.Append ("Encipher Only ");	// ???
 				}
-				if (Support (KeyUsage.decipherOnly)) {
+				if (Support (KeyUsages.decipherOnly)) {
 					if (sb.Length > 0)
 						sb.Append (separator);
 					sb.Append ("Decipher Only");	// ???
 				}
 				sb.Append ("(");
-				sb.Append (kubits.ToString ("X2"));
+				sb.Append (kubits.ToString ("X2", CultureInfo.InvariantCulture));
 				sb.Append (")");
 				sb.Append (Environment.NewLine);
 			}
 
 			if (notBefore != DateTime.MinValue) {
 				sb.Append ("Not Before=");
-				sb.Append (notBefore.ToString ());
+				sb.Append (notBefore.ToString (CultureInfo.CurrentUICulture));
 				sb.Append (Environment.NewLine);
 			}
 			if (notAfter != DateTime.MinValue) {
 				sb.Append ("Not After=");
-				sb.Append (notAfter.ToString ());
+				sb.Append (notAfter.ToString (CultureInfo.CurrentUICulture));
 				sb.Append (Environment.NewLine);
 			}
 			return sb.ToString ();

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -23,7 +24,12 @@ namespace Mono.Security.X509.Extensions {
 	 * KeyIdentifier ::= OCTET STRING
 	 */
 
-	public class SubjectKeyIdentifierExtension : X509Extension {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class SubjectKeyIdentifierExtension : X509Extension {
 
 		private byte[] ski;
 
@@ -32,9 +38,13 @@ namespace Mono.Security.X509.Extensions {
 			extnOid = "2.5.29.14";
 		}
 
-		public SubjectKeyIdentifierExtension (ASN1 asn1) : base (asn1) {}
+		public SubjectKeyIdentifierExtension (ASN1 asn1) : base (asn1)
+		{
+		}
 
-		public SubjectKeyIdentifierExtension (X509Extension extension) : base (extension) {}
+		public SubjectKeyIdentifierExtension (X509Extension extension) : base (extension)
+		{
+		}
 
 		protected override void Decode () 
 		{
@@ -49,7 +59,11 @@ namespace Mono.Security.X509.Extensions {
 		}
 
 		public byte[] Identifier {
-			get { return (byte[]) ski.Clone (); }
+			get { 
+				if (ski == null)
+					return null;
+				return (byte[]) ski.Clone (); 
+			}
 		}
 
 		public override string ToString () 
@@ -60,7 +74,7 @@ namespace Mono.Security.X509.Extensions {
 			StringBuilder sb = new StringBuilder ();
 			int x = 0;
 			while (x < ski.Length) {
-				sb.Append (ski [x].ToString ("X2"));
+				sb.Append (ski [x].ToString ("X2", CultureInfo.InvariantCulture));
 				if (x % 2 == 1)
 					sb.Append (" ");
 				x++;

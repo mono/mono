@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -35,9 +36,13 @@ namespace Mono.Security.X509.Extensions {
 			extnOid = "2.5.29.35";
 		}
 
-		public AuthorityKeyIdentifierExtension (ASN1 asn1) : base (asn1) {}
+		public AuthorityKeyIdentifierExtension (ASN1 asn1) : base (asn1)
+		{
+		}
 
-		public AuthorityKeyIdentifierExtension (X509Extension extension) : base (extension) {}
+		public AuthorityKeyIdentifierExtension (X509Extension extension) : base (extension)
+		{
+		}
 
 		protected override void Decode () 
 		{
@@ -70,7 +75,7 @@ namespace Mono.Security.X509.Extensions {
 				int x = 0;
 				sb.Append ("KeyID=");
 				while (x < aki.Length) {
-					sb.Append (aki [x].ToString ("X2"));
+					sb.Append (aki [x].ToString ("X2", CultureInfo.InvariantCulture));
 					if (x % 2 == 1)
 						sb.Append (" ");
 					x++;

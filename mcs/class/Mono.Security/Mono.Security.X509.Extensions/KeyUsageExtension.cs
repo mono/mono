@@ -2,12 +2,14 @@
 // KeyUsageExtension.cs: Handles X.509 KeyUsage extensions.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -32,7 +34,7 @@ namespace Mono.Security.X509.Extensions {
 	 */
 	// note: because nothing is simple in ASN.1 bits are reversed
 	[Flags]
-	public enum KeyUsage {
+	public enum KeyUsages {
 		digitalSignature = 0x80,
                 nonRepudiation = 0x40,
 		keyEncipherment = 0x20,
@@ -45,7 +47,12 @@ namespace Mono.Security.X509.Extensions {
 		none = 0x0
 	}
 
-	public class KeyUsageExtension : X509Extension {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class KeyUsageExtension : X509Extension {
 
 		private int kubits;
 
@@ -67,9 +74,9 @@ namespace Mono.Security.X509.Extensions {
 			get { return "Key Usage"; }
 		}
 
-		public bool Support (KeyUsage usage) 
+		public bool Support (KeyUsages usage) 
 		{
-			int x = Convert.ToInt32 (usage);
+			int x = Convert.ToInt32 (usage, CultureInfo.InvariantCulture);
 			return ((x & kubits) == x);
 		}
 
@@ -77,50 +84,50 @@ namespace Mono.Security.X509.Extensions {
 		{
 			const string separator = " , ";
 			StringBuilder sb = new StringBuilder ();
-			if (Support (KeyUsage.digitalSignature))
+			if (Support (KeyUsages.digitalSignature))
 				sb.Append ("Digital Signature");
-			if (Support (KeyUsage.nonRepudiation)) {
+			if (Support (KeyUsages.nonRepudiation)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Non-Repudiation");
 			}
-			if (Support (KeyUsage.keyEncipherment)) {
+			if (Support (KeyUsages.keyEncipherment)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Key Encipherment");
 			}
-			if (Support (KeyUsage.dataEncipherment)) {
+			if (Support (KeyUsages.dataEncipherment)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Data Encipherment");
 			}
-			if (Support (KeyUsage.keyAgreement)) {
+			if (Support (KeyUsages.keyAgreement)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Key Agreement");		
 			}
-			if (Support (KeyUsage.keyCertSign)) {
+			if (Support (KeyUsages.keyCertSign)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Certificate Signing");
 			}
-			if (Support (KeyUsage.cRLSign)) {
+			if (Support (KeyUsages.cRLSign)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("CRL Signing");
 			}
-			if (Support (KeyUsage.encipherOnly)) {
+			if (Support (KeyUsages.encipherOnly)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Encipher Only ");	// ???
 			}
-			if (Support (KeyUsage.decipherOnly)) {
+			if (Support (KeyUsages.decipherOnly)) {
 				if (sb.Length > 0)
 					sb.Append (separator);
 				sb.Append ("Decipher Only");	// ???
 			}
 			sb.Append ("(");
-			sb.Append (kubits.ToString ("X2"));
+			sb.Append (kubits.ToString ("X2", CultureInfo.InvariantCulture));
 			sb.Append (")");
 			sb.Append (Environment.NewLine);
 			return sb.ToString ();

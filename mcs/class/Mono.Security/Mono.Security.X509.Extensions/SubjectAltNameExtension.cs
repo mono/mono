@@ -2,9 +2,10 @@
 // SubjectAltNameExtension.cs: Handles X.509 SubjectAltName extensions.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -97,10 +98,9 @@ namespace Mono.Security.X509.Extensions {
 
 		public string[] RFC822 {
 			get {
-				string[] names = new string [rfc822Name.Count];
-				for (int i=0; i < rfc822Name.Count; i++)
-					names [i] = (string) rfc822Name [i];
-				return names;
+				if (rfc822Name == null)
+					return new string [0];
+				return (string[]) rfc822Name.ToArray (typeof(string));
 			}
 		}
 

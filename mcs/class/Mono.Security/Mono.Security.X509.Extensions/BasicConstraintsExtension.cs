@@ -2,12 +2,14 @@
 // BasicConstraintsExtension.cs: Handles X.509 BasicConstrains extensions.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -26,7 +28,12 @@ namespace Mono.Security.X509.Extensions {
 	 * 	pathLenConstraint       INTEGER (0..MAX) OPTIONAL 
 	 * }
 	 */
-	public class BasicConstraintsExtension : X509Extension {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class BasicConstraintsExtension : X509Extension {
 
 		private bool cA;
 		private int pathLenConstraint;
@@ -94,7 +101,7 @@ namespace Mono.Security.X509.Extensions {
 			if (pathLenConstraint == 0)
 				sb.Append ("None");
 			else
-				sb.Append (pathLenConstraint.ToString ());
+				sb.Append (pathLenConstraint.ToString (CultureInfo.InvariantCulture));
 			sb.Append (Environment.NewLine);
 			return sb.ToString ();
 		}

@@ -2,9 +2,10 @@
 // ExtendedKeyUsageExtension.cs: Handles X.509 ExtendedKeyUsage extensions.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -34,9 +35,13 @@ namespace Mono.Security.X509.Extensions {
 			keyPurpose = new ArrayList ();
 		}
 
-		public ExtendedKeyUsageExtension (ASN1 asn1) : base (asn1) {}
+		public ExtendedKeyUsageExtension (ASN1 asn1) : base (asn1)
+		{
+		}
 
-		public ExtendedKeyUsageExtension (X509Extension extension) : base (extension) {}
+		public ExtendedKeyUsageExtension (X509Extension extension) : base (extension)
+		{
+		}
 
 		protected override void Decode () 
 		{
@@ -46,7 +51,7 @@ namespace Mono.Security.X509.Extensions {
 				throw new ArgumentException ("Invalid ExtendedKeyUsage extension");
 			// for every policy OID
 			for (int i=0; i < sequence.Count; i++)
-				keyPurpose.Add (ASN1Convert.ToOID (sequence [i]));
+				keyPurpose.Add (ASN1Convert.ToOid (sequence [i]));
 		}
 
 		protected override void Encode () 
@@ -54,7 +59,7 @@ namespace Mono.Security.X509.Extensions {
 			if (extnValue == null) {
 				extnValue = new ASN1 (0x30);
 				foreach (string oid in keyPurpose) {
-					extnValue.Add (ASN1Convert.FromOID (oid));
+					extnValue.Add (ASN1Convert.FromOid (oid));
 				}
 			}
 		}
@@ -78,17 +83,29 @@ namespace Mono.Security.X509.Extensions {
 			StringBuilder sb = new StringBuilder ();
 			foreach (string s in keyPurpose) {
 				switch (s) {
+					case "1.3.6.1.5.5.7.3.1":
+						sb.Append ("Server Authentication");
+						break;
+					case "1.3.6.1.5.5.7.3.2":
+						sb.Append ("Client Authentication");
+						break;
 					case "1.3.6.1.5.5.7.3.3":
 						sb.Append ("Code Signing");
+						break;
+					case "1.3.6.1.5.5.7.3.4":
+						sb.Append ("Email Protection");
+						break;
+					case "1.3.6.1.5.5.7.3.8":
+						sb.Append ("Time Stamping");
+						break;
+					case "1.3.6.1.5.5.7.3.9":
+						sb.Append ("OCSP Signing");
 						break;
 					default:
 						sb.Append ("unknown");
 						break;
 				}
-				sb.Append (" (");
-				sb.Append (s);
-				sb.Append (")");
-				sb.Append (Environment.NewLine);
+				sb.AppendFormat (" ({0}){1}", s, Environment.NewLine);
 			}
 			return sb.ToString ();
 		}
