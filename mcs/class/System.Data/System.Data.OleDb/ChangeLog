@@ -1,3 +1,15 @@
+2002-06-02  Rodrigo Moya <rodrigo@ximian.com>
+
+	* OleDbTransaction.cs (Connection, IsolationLevel, Begin,
+	Commit, Rollback): implemented.
+	(GdaConnection): added new internal property.
+
+	* OleDbParameter.cs:
+	* OleDbParameterCollection.cs: implemented some methods and
+	properties.
+
+	* libgda.cs: added yet more libgda API functions.
+
 2002-06-01  Rodrigo Moya <rodrigo@ximian.com>
 
 	* libgda.cs: added new libgda API functions.

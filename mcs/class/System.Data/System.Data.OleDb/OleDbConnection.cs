@@ -106,6 +106,13 @@ namespace System.Data.OleDb
 			}
 		}
 
+		internal IntPtr GdaConnection
+		{
+			get {
+				return m_gdaConnection;
+			}
+		}
+		
 		/*
 		 * Methods
 		 */
