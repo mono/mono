@@ -1,3 +1,7 @@
+2004-12-08  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (CLEANFILES): Add *.exe, *.dll.
+
 2004-12-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.c (mono_arch_output_basic_block): Fix LOCALLOC_IMM

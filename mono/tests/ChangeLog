@@ -1,3 +1,7 @@
+2004-12-08  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (CLEANFILES): Add *.exe, stest.dat.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain-unload.cs: Disable nondeterministic async unloading test.
