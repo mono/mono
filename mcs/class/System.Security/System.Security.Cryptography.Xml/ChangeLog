@@ -1,3 +1,10 @@
+2004-03-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDsigXsltTransform.cs : LoadInnerXml() should just load stylesheet
+	  and LoadInput() should just load transformed document.
+	  Transformation should be done in GetOutput() because either of the
+	  stylesheet or input can be loaded in prior. Adjusted code format.
+
 2004-03-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Signature.cs: KeyInfo isn't required in schema.

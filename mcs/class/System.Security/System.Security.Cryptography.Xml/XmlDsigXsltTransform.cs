@@ -5,26 +5,31 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell Inc.
 //
 
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
 
-namespace System.Security.Cryptography.Xml { 
+namespace System.Security.Cryptography.Xml 
+{
 
-	[MonoTODO]
-	public class XmlDsigXsltTransform : Transform {
+	public class XmlDsigXsltTransform : Transform 
+	{
 
-		private Type[] input;
-		private Type[] output;
+		private Type [] input;
+		private Type [] output;
 		private bool comments;
 		private XmlNodeList xnl;
-		private CryptoStream cs;
+		private XmlDocument inputDoc;
 
-		public XmlDsigXsltTransform () : this (false) {}
+		public XmlDsigXsltTransform () : this (false)
+		{
+		}
 
 		public XmlDsigXsltTransform (bool includeComments) 
 		{
@@ -32,28 +37,28 @@ namespace System.Security.Cryptography.Xml {
 			Algorithm = "http://www.w3.org/TR/1999/REC-xslt-19991116";
 		}
 
-		public override Type[] InputTypes {
+		public override Type [] InputTypes {
 			get {
 				if (input == null) {
 					lock (this) {
 						// this way the result is cached if called multiple time
 						input = new Type [3];
-						input[0] = typeof (System.IO.Stream);
-						input[1] = typeof (System.Xml.XmlDocument);
-						input[2] = typeof (System.Xml.XmlNodeList);
+						input [0] = typeof (System.IO.Stream);
+						input [1] = typeof (System.Xml.XmlDocument);
+						input [2] = typeof (System.Xml.XmlNodeList);
 					}
 				}
 				return input;
 			}
 		}
 
-		public override Type[] OutputTypes {
+		public override Type [] OutputTypes {
 			get {
 				if (output == null) {
 					lock (this) {
 						// this way the result is cached if called multiple time
 						output = new Type [1];
-						output[0] = typeof (System.IO.Stream);
+						output [0] = typeof (System.IO.Stream);
 					}
 				}
 				return output;
@@ -65,10 +70,26 @@ namespace System.Security.Cryptography.Xml {
 			return xnl;
 		}
 
-		[MonoTODO("Missing some action - see InvalidXslt test")]
 		public override object GetOutput () 
 		{
-			return (object) cs;
+			XslTransform xsl = new XslTransform ();
+			XmlDocument doc = new XmlDocument ();
+			doc.XmlResolver = GetResolver ();
+			foreach (XmlNode n in xnl)
+				doc.AppendChild (doc.ImportNode (n, true));
+			xsl.Load (doc);
+
+			Stream stream = null;
+
+			stream = new MemoryStream ();
+			// only possible output: Stream
+			xsl.Transform (inputDoc, null, stream);
+
+			CryptoStream cs = null;
+			if (stream != null)
+				cs = new CryptoStream (stream, new FromBase64Transform (), CryptoStreamMode.Read);
+			// note: there is no default are other types won't throw an exception
+			return cs;
 		}
 
 		public override object GetOutput (Type type) 
@@ -85,40 +106,22 @@ namespace System.Security.Cryptography.Xml {
 			xnl = nodeList;
 		}
 
-		[MonoTODO()]
 		public override void LoadInput (object obj) 
 		{
-			XslTransform xsl = new XslTransform ();
-			XmlDocument doc = new XmlDocument ();
-			doc.XmlResolver = GetResolver ();
-			Stream stream = null;
-
 			// possible input: Stream, XmlDocument, and XmlNodeList
 			if (obj is Stream) {
-				doc.Load (obj as Stream);
-				xsl.Load (doc);
+				inputDoc = new XmlDocument ();
+				inputDoc.Load (obj as Stream);
 			}
 			else if (obj is XmlDocument) {
-				xsl.Load (obj as XmlDocument);
+				inputDoc= obj as XmlDocument;
 			}
 			else if (obj is XmlNodeList) {
+				inputDoc = new XmlDocument ();
 				XmlNodeList nl = (XmlNodeList) obj;
 				for (int i = 0; i < nl.Count; i++)
-					doc.AppendChild (doc.ImportNode (nl [i], true));
-				xsl.Load (doc);
+					inputDoc.AppendChild (inputDoc.ImportNode (nl [i], true));
 			}
-
-			if (xnl != null) {
-				stream = new MemoryStream ();
-				// only possible output: Stream
-				xsl.Transform (doc, null, stream);
-			}
-
-			if (stream != null)
-				cs = new CryptoStream (stream, new FromBase64Transform (), CryptoStreamMode.Read);
-			else
-				cs = null;
-			// note: there is no default are other types won't throw an exception
 		}
 	}
 }
