@@ -1,3 +1,8 @@
+2004-04-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Do not compute coverage for inlined
+	methods.
+
 2004-04-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Add support for STRWLPARRAY marshalling convention.
