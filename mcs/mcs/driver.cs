@@ -219,10 +219,7 @@ namespace Mono.CSharp
 				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource\n" +
 				"   -resource:FILE[,ID]     Embed FILE as a resource\n" +
-				
-#if MCS_DEBUG					       
 				"   --mcs-debug X      Sets MCS debugging level to X\n" +
-#endif						       
                                 "   @file              Read response file for more options\n\n" +
 				"Options can be of the form -option or /option");
 		}
@@ -739,7 +736,6 @@ namespace Mono.CSharp
 				SetWarningLevel (args [++i]);
 				return true;
 
-#if MCS_DEBUG
 			case "--mcs-debug":
 				if ((i + 1) >= args.Length){
 					Console.WriteLine ("--mcs-debug requires an argument");
@@ -753,7 +749,6 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				return true;
-#endif
 				
 			case "--about":
 				About ();

@@ -1,5 +1,18 @@
 2002-10-21  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Do not make mcs-debug conditional, so we do not break
+	builds that use it.
+
+	* statement.cs (UsageVector.MergeChildren): I would like Martin to
+	review this patch.  But basically after all the children variables
+	have been merged, the value of "Breaks" was not being set to
+	new_breaks for Switch blocks.  I think that it should be set after
+	it has executed.  Currently I set this to the value of new_breaks,
+	but only if new_breaks is FlowReturn.ALWAYS, which is a bit
+	conservative, but I do not understand this code very well.
+
+	I did not break anything in the build, so that is good ;-)
+
 	* cs-tokenizer.cs: Also allow \r in comments as a line separator.
 
 2002-10-20  Mark Crichton  <crichton@gimp.org>

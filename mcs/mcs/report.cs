@@ -193,7 +193,7 @@ namespace Mono.CSharp {
 					if (first)
 						first = false;
 					else
-						sb.Append (",");
+						sb.Append (", ");
 					if (arg == null)
 						sb.Append ("null");
 					else if (arg is ICollection)
@@ -218,7 +218,7 @@ namespace Mono.CSharp {
 				if (first)
 					first = false;
 				else
-					sb.Append (",");
+					sb.Append (", ");
 				sb.Append (o);
 			}
 
