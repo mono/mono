@@ -204,16 +204,16 @@ namespace System.Text {
 			}
 		}
 
-		public StringBuilder Remove( int startIndex, int length ) {
-			if( startIndex < 0 || length < 0 || startIndex + length > sLength ) {
+		public StringBuilder Remove (int startIndex, int length)
+		{
+			if( startIndex < 0 || length < 0 || startIndex + length > sLength )
 				throw new ArgumentOutOfRangeException();
-			}
 
 			// Copy everything after the 'removed' part to the start 
 			// of the removed part and truncate the sLength
 
-			Array.Copy( sString, startIndex + length, sString, 
-				startIndex, length );
+			Array.Copy (sString, startIndex + length, sString, startIndex,
+				    sLength - (startIndex + length));
 
 			sLength -= length;
 			return this;

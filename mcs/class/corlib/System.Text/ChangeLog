@@ -1,3 +1,7 @@
+2002-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilder.cs: only move the remaining chars in Remove.
+
 2002-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Encoding.cs: unixConsoleEncoding is now the same as Default. Avoid
