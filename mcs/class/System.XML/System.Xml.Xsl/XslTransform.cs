@@ -182,14 +182,8 @@ namespace System.Xml.Xsl
 
 				resultDocument = ApplyStylesheet (xmlDocument, null, null);
 
-				/*
-				 * If I do this, the <?xml version=... is always present *
 				if (-1 == xsltSaveResultToFilename (outputfile, resultDocument, stylesheet, 0))
-					throw new XmlException ("Error xsltSaveResultToFilename");
-				*/
-				StreamWriter writer = new StreamWriter (new FileStream (outputfile, FileMode.Create));
-				writer.Write (GetStringFromDocument (resultDocument, stylesheet));
-				writer.Close ();
+					throw new XmlException ("Error in xsltSaveResultToFilename");
 			} finally {
 				if (xmlDocument != IntPtr.Zero)
 					xmlFreeDoc (xmlDocument);
