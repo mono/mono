@@ -1,5 +1,10 @@
 2003-11-11  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (mono_reflection_bind_generic_parameters): Make
+	this work for interfaces.
+
+2003-11-11  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.c (mono_debug_add_type): Ignore unknown modules.
 
 2003-11-11  Martin Baulig  <martin@ximian.com>
