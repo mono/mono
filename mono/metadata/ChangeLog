@@ -1,3 +1,16 @@
+2004-09-08  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata-internals.h (MonoImage): Add module_count field.
+	* image.c (load_modules): Set image->module_count.
+	(mono_image_load_file_for_image): Use image->module_count.
+	* reflection.c (mono_image_load_module): Append to image->modules array 
+	of dynamic assembly.
+	(mono_module_get_object): Fix loop to actually increment index.
+	Use image->module_count.
+	* assembly.c (mono_assembly_load_references): Use image->module_count.
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal):
+	Likewise.
+
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal): 
