@@ -4710,6 +4710,22 @@ namespace Mono.CSharp {
 			else
 				Parameters = parameters;
 		}
+
+		public override string ToString ()
+		{
+			string pars = "";
+			if (Parameters.Length != 0){
+				System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+				for (int i = 0; i < Parameters.Length; i++){
+					sb.Append (Parameters [i]);
+					if (i+1 < Parameters.Length)
+						sb.Append (", ");
+				}
+				pars = sb.ToString ();
+			}
+
+			return String.Format ("{0} {1} ({2})", RetType, Name, pars);
+		}
 		
 		public override int GetHashCode ()
 		{
@@ -4802,9 +4818,6 @@ namespace Mono.CSharp {
 		// 
 		static bool InheritableMemberSignatureCompare (MemberInfo m, object filter_criteria)
 		{
-		        if (!MemberSignatureCompare (m, filter_criteria))
-				return false;
-
 			MethodInfo mi;
 			PropertyInfo pi = m as PropertyInfo;
 
@@ -4823,6 +4836,9 @@ namespace Mono.CSharp {
 
 			// If only accessible to the current class.
 			if (prot == MethodAttributes.Private)
+				return false;
+
+		        if (!MemberSignatureCompare (m, filter_criteria))
 				return false;
 
 			// If only accessible to the defining assembly or 

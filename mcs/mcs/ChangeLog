@@ -4,6 +4,11 @@
 
 2003-04-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (MethodSignature.InheritableMemberSignatureCompare):
+	test for protection before we test for signatures. 
+
+	(MethodSignature.ToString): implement.
+
 	* expression.cs (Unary.TryReduceNegative): Add missing minus sign
 	to the case where we reduced into a LongConstant.
 
