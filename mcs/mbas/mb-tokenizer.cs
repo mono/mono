@@ -1,4 +1,4 @@
-﻿//
+//
 // Mono.MonoBASIC.Tokenizer.cs: The Tokenizer for the MonoBASIC compiler
 //
 // Author: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
@@ -317,6 +317,8 @@ namespace Mono.MonoBASIC
 				return Token.COLON;
 			case '?':
 				return Token.INTERR;
+			case '&':
+				return Token.OP_CONCAT;				
 			}
 
 			d = peekChar ();

@@ -474,7 +474,7 @@ type_spec_declaration
 	| interface_declaration
 	| delegate_declaration
 	| struct_declaration
-//	| enum_declaration
+	| enum_declaration
 	;
 
 class_declaration
@@ -523,7 +523,7 @@ opt_modifiers
 	: /* empty */		{ $$ = (int) 0; current_modifiers = 0; }
 	| modifiers 		{ $$ = $1; current_modifiers = (int) $1; }
 	;
-
+	
 modifiers
 	: modifier
 	| modifiers modifier
@@ -640,6 +640,10 @@ sub_declaration
 	  			current_modifiers = Modifiers.STATIC;
 	  		}
 	  	}
+	  	
+		// Structure members are Public by default			
+		if ((current_container is Struct) && (current_modifiers == 0))
+			current_modifiers = Modifiers.PUBLIC;			  	
 	  }
 	  opt_statement_list 
 	  END SUB EOL
@@ -690,8 +694,12 @@ func_declaration
 	  		else
 	  		{
 	  			current_modifiers = Modifiers.STATIC;
-	  		}
+	  		}	  		
 	  	}
+	  	
+		// Structure members are Public by default			
+		if ((current_container is Struct) && (current_modifiers == 0))
+			current_modifiers = Modifiers.PUBLIC;			  	
 		// Add local var declaration
 		// for return value
 		ArrayList retval = new ArrayList ();
@@ -750,13 +758,15 @@ struct_member_declarations
 	;
 
 struct_member_declaration
+	: opt_modifiers
+	  struct_member_declarator
+	;
+struct_member_declarator	
 	: field_declaration
 	//| constant_declaration
 	| method_declaration
 	| property_declaration
 	//| event_declaration
-	//| indexer_declaration
-	//| operator_declaration
 	| constructor_declaration
 	| type_declaration
 
@@ -767,6 +777,71 @@ struct_member_declaration
 	//| destructor_declaration
 	;
 
+enum_declaration
+	: ENUM IDENTIFIER opt_type_spec EOL
+	  opt_enum_member_declarations
+	  { 
+		Location enum_location = lexer.Location;
+
+		string full_name = MakeName ((string) $2);
+		Mono.CSharp.Enum e = new Mono.CSharp.Enum (current_container, (Expression) $3, (int) current_modifiers, full_name, 
+				   (Attributes) current_attributes, enum_location);
+		
+		foreach (VariableDeclaration ev in (ArrayList) $5) {
+			Location loc = (Location) ev.Location;
+
+			CheckDef (e.AddEnumMember (ev.identifier, 
+						   (Expression) ev.expression_or_array_initializer,
+						   loc, ev.OptAttributes), ev.identifier, loc);
+		}
+
+		e.Namespace = current_namespace;
+
+		CheckDef (current_container.AddEnum (e), full_name, enum_location);
+		RootContext.Tree.RecordDecl (full_name, e);
+
+	  }
+	  END ENUM EOL
+	;
+
+opt_enum_member_declarations
+	: /* empty */			{ $$ = new ArrayList (); }
+	| enum_member_declarations  	{ $$ = $1; }
+	;
+
+enum_member_declarations
+	: enum_member_declaration 
+	  {
+		ArrayList l = new ArrayList ();
+
+		l.Add ($1);
+		$$ = l;
+	  }
+	| enum_member_declarations  enum_member_declaration
+	  {
+		ArrayList l = (ArrayList) $1;
+
+		l.Add ($2);
+
+		$$ = l;
+	  }
+	;
+
+enum_member_declaration
+	: opt_attributes IDENTIFIER EOL
+	  {
+		$$ = new VariableDeclaration ((string) $2, null, lexer.Location, (Attributes) $1);
+	  }
+	| opt_attributes IDENTIFIER
+	  {
+		  $$ = lexer.Location;
+	  }
+          ASSIGN expression EOL
+	  { 
+		$$ = new VariableDeclaration ((string) $2, $5, lexer.Location, (Attributes) $1);
+	  }
+	;
+		
 interface_declaration
 	: INTERFACE IDENTIFIER EOL
 	  {
@@ -933,6 +1008,10 @@ property_declaration
 
 		Location loc = lexer.Location;
 		
+		// Structure members are Public by default			
+		if ((current_container is Struct) && (current_modifiers == 0))
+			current_modifiers = Modifiers.PUBLIC;				
+			
 		prop = new Property ((Expression) $5, (string) $2, current_modifiers, get_block, set_block,
 				     current_attributes, loc, set_implicit_value_parameter_name, 
 				     get_parameters, set_parameters, (Expression) $6);
@@ -1067,6 +1146,10 @@ field_declaration
 		
 		if (current_container is Module)
 			mod = mod | Modifiers.STATIC;
+			
+		// Structure members are Public by default			
+		if ((current_container is Struct) && (mod == 0))
+			mod = Modifiers.PUBLIC;			
 					
 		foreach (VariableDeclaration var in (ArrayList) $2){
 			Location l = var.Location;
@@ -2356,8 +2439,31 @@ unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
 	  }
+	| cast_expression
 	;
 
+cast_expression
+        : cast_operator OPEN_PARENS expression CLOSE_PARENS
+	  {
+		  $$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
+	  }  	  	  	  
+	;
+	
+cast_operator
+	: CBOOL		{ $$ = TypeManager.system_boolean_expr; 	}
+	| CBYTE		{ $$ = TypeManager.system_byte_expr;	 	}
+	| CCHAR		{ $$ = TypeManager.system_char_expr; 		}
+	| CDATE		{ $$ = TypeManager.system_decimal_expr; 	} //FIXME
+	| CDBL		{ $$ = TypeManager.system_double_expr; 		}
+	| CDEC		{ $$ = TypeManager.system_decimal_expr; 	}
+	| CINT		{ $$ = TypeManager.system_int32_expr; 		}
+	| CLNG		{ $$ = TypeManager.system_int64_expr; 		}
+	| COBJ		{ $$ = TypeManager.system_object_expr; 		}
+	| CSHORT	{ $$ = TypeManager.system_int16_expr; 		}
+	| CSNG		{ $$ = TypeManager.system_single_expr; 		}
+	| CSTR		{ $$ = TypeManager.system_string_expr; 	}
+	;
+	
 	//
 	// The idea to split this out is from Rhys' grammar
 	// to solve the problem with casts.
@@ -2411,6 +2517,13 @@ additive_expression
 		$$ = new Binary (Binary.Operator.Subtraction,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
+	| additive_expression OP_CONCAT multiplicative_expression
+	  {
+	  	// FIXME: This should only work for String expressions
+	  	// We probably need to use something from the runtime
+		$$ = new Binary (Binary.Operator.Addition,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }	  
 	;
 
 relational_expression

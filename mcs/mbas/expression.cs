@@ -3140,7 +3140,7 @@ namespace Mono.CSharp {
 			NoArg
 		};
 
-		public readonly AType ArgType;
+		public AType ArgType;
 		public Expression Expr;
 		
 		public Argument (Expression expr, AType type)
@@ -3194,21 +3194,22 @@ namespace Mono.CSharp {
 		{
 			// Optional void arguments - MyCall (1,,2) - are resolved later
 			// in VerifyArgsCompat
-			if (ArgType == AType.NoArg) 
+			if (ArgType == AType.NoArg || ArgType == AType.Ref) 
 			{
-					return true;				
+				return true;				
 			}
-
+/*
 			if (ArgType == AType.Ref) {
 				Expr = Expr.Resolve (ec);
 				if (Expr == null)
 					return false;
 
 				Expr = Expr.ResolveLValue (ec, Expr);
-			} else if (ArgType == AType.Out)
+			} else */if (ArgType == AType.Out)
 				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
 			else
 				Expr = Expr.Resolve (ec);
+
 
 			if (Expr == null)
 				return false;
@@ -3709,8 +3710,7 @@ namespace Mono.CSharp {
 			Parameter.Modifier p_mod = pd.ParameterModifier (i) &
 				~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
 
-			if (a_mod == p_mod ||
-			    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
+			if (a_mod == p_mod || (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 				if (a_mod == Parameter.Modifier.NONE)
 					if (!ImplicitConversionExists (ec, a.Expr, ptype))
 						return false;
@@ -3772,15 +3772,28 @@ namespace Mono.CSharp {
 			if (arg_count > 0) {
 				for (int i = arg_count; i > 0 ; ) {
 					i--;
-	
+
 					Argument a = (Argument) arguments [i];
-					if (a.ArgType == Argument.AType.NoArg){
+					if (a.ArgType == Argument.AType.NoArg)
+					{
 						Parameter p = (Parameter) ps.FixedParameters[i];
 						a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
 						param_type = p.ParameterInitializer.Type;
 					}
-					else
+					else 
+					{
 						param_type = pd.ParameterType (i);
+						if (ps != null) {
+							Parameter p = (Parameter) ps.FixedParameters[i];
+							
+							if ((p.ModFlags & Parameter.Modifier.REF) != 0) 
+							{
+								a = new Argument (a.Expr, Argument.AType.Ref);
+								if (!a.Resolve(ec,Location.Null))
+									return false;
+							}
+						}
+					}	
 	
 					if (!CheckParameterAgainstArgument (ec, pd, i, a, param_type))
 						return (false);
@@ -3810,16 +3823,38 @@ namespace Mono.CSharp {
 			}
 			// We've found a candidate, so we exchange the dummy NoArg arguments
 			// with new arguments containing the default value for that parameter
+			ArrayList newarglist = new ArrayList();
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
+				Parameter p = null;
+
+				if (ps != null)
+					p = (Parameter) ps.FixedParameters[i];
+
 				if (a.ArgType == Argument.AType.NoArg){
-					Parameter p = (Parameter) ps.FixedParameters[i];
 					a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
 					a.Resolve(ec, Location.Null);
-					arguments [i] = a;
-				}				
+				}		
+				
+				if ((p != null) && ((p.ModFlags & Parameter.Modifier.REF) != 0))
+				{
+					a.ArgType = Argument.AType.Ref;
+					a.Resolve(ec, Location.Null);
+				}	
+				newarglist.Add(a);
+				int n = pd_count - arg_count;
+				if (n > 0) 
+				{
+					for (int x = 0; x < n; x++) 
+					{
+						Parameter op = (Parameter) ps.FixedParameters[x + arg_count];
+						Argument b = new Argument (op.ParameterInitializer, Argument.AType.Expression);
+						b.Resolve(ec, Location.Null);
+						newarglist.Add (b);
+					}
+				}
 			}
-
+			arguments = newarglist;
 			return true;
 		}
 		
