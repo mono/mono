@@ -7,32 +7,38 @@
 // (C) Ximian, Inc.
 //
 
+using System;
+using System.Collections;
+using System.Xml;
+
 namespace System.Xml
 {
 	public class XmlNodeReader : XmlReader
 	{
 		#region Constructor
 
-		[MonoTODO]
+		XmlNode current;
+		ReadState state = ReadState.Initial;
+
 		public XmlNodeReader (XmlNode node)
 		{
+			current = node;
 		}
 		
 		#endregion
 
 		#region Properties
 
-		[MonoTODO]
 		public override int AttributeCount {
-			get { return 0; }
+			get {
+				return ((ICollection) current.Attributes).Count;
+			}
 		}
 
-		[MonoTODO]
 		public override string BaseURI {
-			get { return null; }
+			get { return current.BaseURI; }
 		}
 
-		[MonoTODO]
 		public override bool CanResolveEntity {
 			get { return false; }
 		}
@@ -47,54 +53,99 @@ namespace System.Xml
 			get { return false; }
 		}
 
-		[MonoTODO]
 		public override bool HasAttributes {
-			get { return false; }
+			get {
+				if (current.Attributes == null)
+					return false;
+				else
+					return true;
+			}
 		}
 
-		[MonoTODO]
 		public override bool HasValue {
-			get { return false; }
+			get {
+				if (current.NodeType == XmlNodeType.Element ||
+				    current.NodeType == XmlNodeType.EntityReference ||
+				    current.NodeType == XmlNodeType.Document ||
+				    current.NodeType == XmlNodeType.DocumentFragment ||
+				    current.NodeType == XmlNodeType.Notation ||
+				    current.NodeType == XmlNodeType.EndElement ||
+				    current.NodeType == XmlNodeType.EndEntity)
+					return false;
+				else
+					return true;
+			}
+			      
 		}
 
 		[MonoTODO]
 		public override bool IsDefault {
-			get { return false; }
+			get {
+				if (current.NodeType != XmlNodeType.Attribute)
+					return false;
+				else
+					return false;
+			}
 		}
 
-		[MonoTODO]
 		public override bool IsEmptyElement {
-			get { return false; }
+			get {
+				if (current.NodeType == XmlNodeType.Entity &&
+				    ((XmlEntity) current).Value.EndsWith ("/>"))
+					return true;
+				else 
+					return false;
+			}
 		}
 
-		[MonoTODO]
 		public override string this [int i] {
-			get { return null; }
+			get {
+				if (i < 0 || i > AttributeCount)
+					throw new ArgumentOutOfRangeException ("i is out of range.");
+				
+				return current.Attributes [i].Value;
+			}
 		}
 
-		[MonoTODO]
 		public override string this [string name] {
-			get { return null; }
+			get {
+				string ret =  current.Attributes [name].Value;
+				
+				if (ret == null)
+					return String.Empty;
+				else
+					return ret;
+			}
 		}
 
-		[MonoTODO]
 		public override string this [string name, string namespaceURI] {
-			get { return null; }
+			get {
+				string ret =  current.Attributes [name].Value;
+				
+				if (ret == null)
+					return String.Empty;
+				else
+					return ret;
+			}
 		}
 
-		[MonoTODO]
 		public override string LocalName {
-			get { return null; }
+			get {
+				if (current is XmlCharacterData)
+					return String.Empty;
+				else
+					return current.LocalName;
+			}
 		}
 
-		[MonoTODO]
 		public override string Name {
-			get { return null; }
+			get { return current.Name; }
 		}
 
-		[MonoTODO]
 		public override string NamespaceURI {
-			get { return null; }
+			get {
+				return current.NamespaceURI;
+			}
 		}
 
 		[MonoTODO]
@@ -102,33 +153,33 @@ namespace System.Xml
 			get { return null; }
 		}
 
-		[MonoTODO]
 		public override XmlNodeType NodeType {
-			get { return 0; }
+			get {
+				return current.NodeType;
+			}
 		}
 
-		[MonoTODO]
 		public override string Prefix {
-			get { return null; }
+			get { 
+				return current.Prefix;
+			}
 		}
 
 		public override char QuoteChar {
 			get { return '"'; }
 		}
 
-		[MonoTODO]
 		public override ReadState ReadState {
-			get { return 0; }
+			get { return state; }
 		}
 
-		[MonoTODO]
 		public override string Value {
-			get { return null; }
+			get { return current.Value; }
 		}
 
 		[MonoTODO]
 		public override string XmlLang {
-			get { return null; }
+			get { return String.Empty; }
 		}
 
 		[MonoTODO]
@@ -139,27 +190,25 @@ namespace System.Xml
 
 		#region Methods
 
-		[MonoTODO]
 		public override void Close ()
 		{
+			current = null;
+			state = ReadState.Closed;
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (int attributeIndex)
 		{
-			return null;
+			return this [attributeIndex];
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (string name)
 		{
-			return null;
+			return this [name];
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (string name, string namespaceURI)
 		{
-			return null;
+			return this [name, namespaceURI];
 		}
 
 		[MonoTODO]
@@ -168,27 +217,38 @@ namespace System.Xml
 			return null;
 		}
 
-		[MonoTODO]
 		public override void MoveToAttribute (int attributeIndex)
 		{
+			if (attributeIndex < 0 || attributeIndex > AttributeCount)
+				throw new ArgumentOutOfRangeException ();
+			
+			state = ReadState.Interactive;
+			current = current.Attributes [attributeIndex];
 		}
 
-		[MonoTODO]
 		public override bool MoveToAttribute (string name)
 		{
-			return false;
+			if (GetAttribute (name) == null)
+				return false;
+			else
+				return true;
 		}
 
-		[MonoTODO]
 		public override bool MoveToAttribute (string name, string namespaceURI)
 		{
-			return false;
+			if (GetAttribute (name, namespaceURI) == null)
+				return false;
+			else
+				return true;
 		}
 
-		[MonoTODO]
 		public override bool MoveToElement ()
 		{
-			return false;
+			if (current.NodeType == XmlNodeType.Attribute) {
+				current = ((XmlAttribute) current).OwnerElement;
+				return true;
+			} else 
+				return false;
 		}
 
 		[MonoTODO]
@@ -200,7 +260,10 @@ namespace System.Xml
 		[MonoTODO]
 		public override bool MoveToNextAttribute ()
 		{
-			return false;
+			if (current.NodeType != XmlNodeType.Attribute)
+				return MoveToFirstAttribute ();
+			else
+				return false;
 		}
 
 		[MonoTODO]
@@ -215,16 +278,22 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public override string ReadInnerXml ()
 		{
-			return null;
+			if (current.NodeType != XmlNodeType.Attribute &&
+			    current.NodeType != XmlNodeType.Element)
+				return String.Empty;
+			else
+				return current.InnerXml;
 		}
 
-		[MonoTODO]
 		public override string ReadOuterXml ()
 		{
-			return null;
+			if (current.NodeType != XmlNodeType.Attribute &&
+			    current.NodeType != XmlNodeType.Element)
+				return String.Empty;
+			else
+				return current.OuterXml;
 		}
 
 		[MonoTODO]
@@ -236,6 +305,8 @@ namespace System.Xml
 		[MonoTODO]
 		public override void ResolveEntity ()
 		{
+			if (current.NodeType != XmlNodeType.EntityReference)
+				throw new InvalidOperationException ("The current node is not an Entity Reference");
 		}
 
 		[MonoTODO]

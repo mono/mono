@@ -1,3 +1,8 @@
+2002-06-26  Duncan Mak  <duncan@ximian.com>
+
+	* XmlNodeReader.cs: Implementation of most of the properties, and
+	some of the related methods. 
+
 2002-06-23  Piers Haken <piersh@friskit.com>
 	
 	* XmlDocumentNavigator.cs: implement Clone()
