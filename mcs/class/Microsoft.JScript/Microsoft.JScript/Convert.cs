@@ -7,13 +7,13 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using Microsoft.JScript.Vsa;
+using System;
+using Microsoft.JScript.Vsa;
 
-	public sealed class Convert
-	{
+namespace Microsoft.JScript {
+
+	public sealed class Convert {
+
 		public static bool IsBadIndex (AST ast)
 		{
 			throw new NotImplementedException ();
@@ -70,7 +70,7 @@ namespace Microsoft.JScript.Tmp
 
 		public static bool ToBoolean (object value, bool explicitConversion)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 
