@@ -16,6 +16,7 @@ bin_SCRIPTS = \
 	genxs			\
 	ilasm			\
 	makecert		\
+	macpack			\
 	mbas			\
 	mcs			\
 	mkbundle		\
