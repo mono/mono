@@ -51,6 +51,16 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		public void A0 ()
+		{
+			byte[] input = { 114, 108, 112, 55, 81, 115, 110, 69 };
+			byte[] expected = { 174, 90, 123, 66, 201, 196 };
+
+			_algo = new FromBase64Transform (FromBase64TransformMode.DoNotIgnoreWhiteSpaces);
+			TransformFinalBlock ("#A0", input, expected);
+		}
+
+		[Test]
 		public void A1 ()
 		{
 			byte[] input = { 114, 108, 112, 55, 81, 115, 110, 69 };
@@ -138,11 +148,20 @@ namespace MonoTests.System.Security.Cryptography {
 		public void ReuseDisposedTransform () 
 		{
 			byte[] input = { 114, 108, 112, 55, 81, 115, 61, 61 };
-			byte[] expected = { 174, 90, 123, 66 };
+			byte[] output = new byte [16];
 
-			TransformFinalBlock ("UseTransform", input, expected);
 			_algo.Clear ();
-			TransformFinalBlock ("ReuseTransform", input, expected);
+			_algo.TransformBlock (input, 0, input.Length, output, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void ReuseDisposedTransformFinal () 
+		{
+			byte[] input = { 114, 108, 112, 55, 81, 115, 61, 61 };
+
+			_algo.Clear ();
+			_algo.TransformFinalBlock (input, 0, input.Length);
 		}
 
 		[Test]
@@ -159,6 +178,22 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] input = { 114, 108, 112, 32 };
 			byte[] result = _algo.TransformFinalBlock (input, 0, input.Length);
 			AssertEquals ("No result", 0, result.Length);
+		}
+
+		[Test]
+		public void Dispose () 
+		{
+			byte[] input = { 114, 108, 112, 55, 81, 115, 61, 61 };
+			byte[] expected = { 174, 90, 123, 66 };
+			byte[] output = null;
+
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				output = t.TransformFinalBlock (input, 0, input.Length);
+			}
+
+			AssertEquals ("IDisposable", expected.Length, output.Length);
+			for (int i = 0; i < expected.Length; i++)
+				AssertEquals ("IDisposable(" + i + ")", expected [i], output [i]);
 		}
 	}
 }

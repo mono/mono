@@ -2,13 +2,15 @@
 // DSACryptoServiceProviderTest.cs, NUnit Test Cases for DSACryptoServiceProvider
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
@@ -24,13 +26,22 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 	static int minKeySize = 512;
 
+	private bool machineKeyStore;
+
 	[SetUp]
 	void Setup () 
 	{
+		machineKeyStore = DSACryptoServiceProvider.UseMachineKeyStore;
 		if (disposed == null) {
 			disposed = new DSACryptoServiceProvider (minKeySize);
 			disposed.Clear ();
 		}
+	}
+
+	[TearDown]
+	void Reset () 
+	{
+		DSACryptoServiceProvider.UseMachineKeyStore = machineKeyStore;
 	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -194,12 +205,30 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void SignHashInvalidAlgorithm () 
+	{
+		byte[] hash = new byte [16];
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		dsa.SignHash (hash, "MD5");
+	}
+
+	[Test]
 	[ExpectedException (typeof (ObjectDisposedException))]
 	public void VerifyDataDisposed () 
 	{
 		byte[] data = new byte [20];
 		byte[] sign = new byte [40];
 		disposed.VerifyData (data, sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void VerifyHashInvalidAlgorithm () 
+	{
+		byte[] hash = new byte [16];
+		byte[] sign = new byte [40];
+		dsa.VerifyHash (hash, "MD5", sign);
 	}
 
 	[Test]
@@ -374,18 +403,30 @@ public class DSACryptoServiceProviderTest : Assertion {
 		AssertEquals ("Capi-Xml1024", CapiXml1024, dsa.ToXmlString (true));
 	}
 
-	private void SignAndVerify (string msg, DSA dsa)
+	private void SignAndVerify (string msg, DSACryptoServiceProvider dsa)
 	{
 		byte[] hash = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13 };
-		byte[] sign = dsa.CreateSignature (hash);
+		byte[] sign1 = dsa.CreateSignature (hash);
+		byte[] sign2 = dsa.SignData (hash, 0, hash.Length);
+		byte[] sign3 = dsa.SignData (new MemoryStream (hash));
+
 		// we don't need the private key to verify
 		DSAParameters param = dsa.ExportParameters (false);
-		DSA key = DSA.Create ();
+		DSACryptoServiceProvider key = (DSACryptoServiceProvider) DSA.Create ();
 		key.ImportParameters (param);
 		// the signature is never the same so the only way to know if 
 		// it worked is to verify it ourselve (i.e. can't compare)
-		bool ok = key.VerifySignature (hash, sign);
-		Assert (msg + "-SignAndVerify", ok);
+		bool ok = key.VerifySignature (hash, sign1);
+		Assert (msg + "-CreateSignature-VerifySignature", ok);
+
+		ok = key.VerifyHash (hash, null, sign1);
+		Assert (msg + "-CreateSignature-VerifyHash", ok);
+
+		ok = key.VerifyData (hash, sign2);
+		Assert (msg + "-SignData(byte[])-VerifyData", ok);
+
+		ok = key.VerifyData (hash, sign3);
+		Assert (msg + "-SignData(Stream)-VerifyData", ok);
 	}
 
 	// Validate that we can sign with every keypair and verify the signature
@@ -706,6 +747,62 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 		Assert ("Key Pair Deleted", (original != newKeyPair));
 	}
+
+	[Test]
+	public void PersistKey_True () 
+	{
+		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (minKeySize);
+		string key = dsa.ToXmlString (true);
+		dsa.PersistKeyInCsp = true;
+		AssertEquals ("PersistKeyInCsp-True", key, dsa.ToXmlString (true));
+	}
+
+	[Test]
+	public void PersistKey_False () 
+	{
+		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (minKeySize);
+		string key = dsa.ToXmlString (true);
+		dsa.PersistKeyInCsp = false;
+		AssertEquals ("PersistKeyInCsp-False", key, dsa.ToXmlString (true));
+	}
+
+	[Test]
+	public void PersistKey_FalseTrue () 
+	{
+		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (minKeySize);
+		string key = dsa.ToXmlString (true);
+		dsa.PersistKeyInCsp = false;
+		dsa.PersistKeyInCsp = true;
+		AssertEquals ("PersistKeyInCsp-FalseTrue", key, dsa.ToXmlString (true));
+	}
+
+#if NET_1_1
+	[Test]
+	public void UseMachineKeyStore_Default () 
+	{
+		Assert ("UseMachineKeyStore(Default)", !DSACryptoServiceProvider.UseMachineKeyStore);
+	}
+
+	[Test]
+	public void UseMachineKeyStore () 
+	{
+		// note only applicable when CspParameters isn't used - which don't
+		// help much as you can't know the generated key container name
+		DSACryptoServiceProvider.UseMachineKeyStore = true;
+		CspParameters csp = new CspParameters (13, null, "UseMachineKeyStore");
+		csp.KeyContainerName = "UseMachineKeyStore";
+		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (csp);
+		string machineKeyPair = dsa.ToXmlString (true);
+		dsa.Clear ();
+
+		DSACryptoServiceProvider.UseMachineKeyStore = false;
+		csp = new CspParameters (13, null, "UseMachineKeyStore");
+		csp.Flags |= CspProviderFlags.UseMachineKeyStore;
+		dsa = new DSACryptoServiceProvider (csp);
+
+		Assert ("UseMachineKeyStore", machineKeyPair != dsa.ToXmlString (true));
+	}
+#endif
 }
 
 }

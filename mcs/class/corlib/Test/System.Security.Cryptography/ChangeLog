@@ -1,11 +1,30 @@
-2004-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+2004-04-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSACryptoServiceProviderTest.cs: New unit tests fo better coverage.
+	* FromBase64Transform.cs: New unit tests for better coverage.
+	* HashAlgorithmTest.cs: New unit tests for better coverage.
+	* HMACSHA1Test.cs: New unit tests for better coverage. Updated to 
+	NUnit2.
+	* KeyedHashAlgorithmTest.cs: Coverage already complete. Updated to 
+	NUnit 2.
+	* SHA1Test.cs: Coverage already complete. Updated to NUnit2.
+	* SHA1CryptoServiceProviderTest.cs: Coverage almost complete. Updated 
+	to NUnit2.
+	* SHA256Test.cs: Coverage already complete. Updated to NUnit2.
+	* SHA256ManagedTest.cs: Coverage already complete. Updated to NUnit2.
+	* SHA384Test.cs: Coverage already complete. Updated to NUnit2.
+	* SHA384ManagedTest.cs: Coverage almost complete. Updated to NUnit2.
+	* SHA512Test.cs: Coverage already complete. Updated to NUnit2.
+	* SHA512ManagedTest.cs: Coverage almost complete. Updated to NUnit2.
+
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DESCryptoServiceProviderTest.cs: New. Completes coverage for 
 	DESCryptoServiceProvider class. Calls the FIPS 81 tests for this
 	implementation.
 	* DESTest.cs: Added test vectors from FIPS 81.
 
-2004-03-26  Sebastien Pouliot  <sebastien@ximian.com>
+2004-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DESTest.cs: New. Unit tests for DES including checks for weak and
 	semi-weak keys (with and without parity applied on keys). Completes

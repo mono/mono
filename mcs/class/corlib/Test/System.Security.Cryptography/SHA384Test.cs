@@ -2,9 +2,10 @@
 // SHA384Test.cs - NUnit Test Cases for SHA384
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -21,13 +22,15 @@ namespace MonoTests.System.Security.Cryptography {
 
 // SHA384 is a abstract class - so most of the test included here wont be tested
 // on the abstract class but should be tested in ALL its descendants.
+
+[TestFixture]
 public class SHA384Test : HashAlgorithmTest {
+
+	[SetUp]
 	protected override void SetUp () 
 	{
 		hash = SHA384.Create ();
 	}
-
-	protected override void TearDown () {}
 
 	// test vectors from NIST FIPS 186-2
 
@@ -144,7 +147,8 @@ public class SHA384Test : HashAlgorithmTest {
 		hash.Initialize ();
 	}
 
-	public override void TestCreate () 
+	[Test]
+	public override void Create () 
 	{
 		// Note: These tests will only be valid without a "machine.config" file
 		// or a "machine.config" file that do not modify the default algorithm
@@ -160,45 +164,41 @@ public class SHA384Test : HashAlgorithmTest {
 		AssertEquals ("SHA384.Create('SHA384')", hash.ToString (), defaultSHA384);
 		hash = SHA384.Create ("SHA-384");
 		AssertEquals ("SHA384.Create('SHA-384')", hash.ToString (), defaultSHA384);
+	}
 
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void CreateIncorrect () 
+	{
 		// try to build an incorrect hash algorithms
-		try {
-			hash = SHA384.Create ("MD5");
-			Fail ("SHA384.Create('MD5') should throw InvalidCastException");
-		}
-		catch (InvalidCastException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("SHA384.Create('MD5') should throw InvalidCastException not " + e.ToString ());
-		}
+		hash = SHA384.Create ("MD5");
+	}
 
+	[Test]
+	public void CreateInvalid () 
+	{
 		// try to build invalid implementation
 		hash = SHA384.Create ("InvalidHash");
 		AssertNull ("SHA384.Create('InvalidHash')", hash);
-
-		// try to build null implementation
-		try {
-			hash = SHA384.Create (null);
-			Fail ("SHA384.Create(null) should throw ArgumentNullException");
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("SHA384.Create(null) should throw ArgumentNullException not " + e.ToString ());
-		}
 	}
 
-	// none of those values changes for any implementation of defaultSHA384
-	public virtual void TestStaticInfo () 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public override void CreateNull () 
+	{
+		// try to build null implementation
+		hash = SHA384.Create (null);
+	}
+
+        // none of those values changes for any implementation of defaultSHA384
+	[Test]
+	public virtual void StaticInfo () 
 	{
 		string className = hash.ToString ();
 		AssertEquals (className + ".HashSize", 384, hash.HashSize);
 		AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
 		AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
 	}
-
 }
 
 }

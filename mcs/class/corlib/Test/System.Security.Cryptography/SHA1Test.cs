@@ -2,9 +2,10 @@
 // SHA1Test.cs - NUnit Test Cases for SHA1
 //
 // Author:
-//		Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -22,14 +23,15 @@ namespace MonoTests.System.Security.Cryptography
 
 // SHA1 is a abstract class - so most of the test included here wont be tested
 // on the abstract class but should be tested in ALL its descendants.
-public class SHA1Test : HashAlgorithmTest 
-{
+
+[TestFixture]
+public class SHA1Test : HashAlgorithmTest {
+
+	[SetUp]
 	protected override void SetUp () 
 	{
-		hash = SHA1.Create();
+		hash = SHA1.Create ();
 	}
-
-	protected override void TearDown () {}
 
 	public new void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
@@ -136,7 +138,8 @@ public class SHA1Test : HashAlgorithmTest
 		hash.Initialize ();
 	}
 
-	public override void TestCreate ()
+	[Test]
+	public override void Create () 
 	{
 		// Note: These tests will only be valid without a "machine.config" file
 		// or a "machine.config" file that do not modify the default algorithm
@@ -157,45 +160,41 @@ public class SHA1Test : HashAlgorithmTest
 		AssertEquals ("SHA1.Create('System.Security.Cryptography.SHA1')", hash.ToString (), defaultSHA1);
 		hash = SHA1.Create ("System.Security.Cryptography.HashAlgorithm" );
 		AssertEquals ("SHA1.Create('System.Security.Cryptography.HashAlgorithm')", hash.ToString (), defaultSHA1);
+	}
 
-		// try to build an incorrect hash algorithms
-		try {
-			hash = SHA1.Create ("MD5");
-			Fail ("SHA1.Create('MD5') should throw InvalidCastException");
-		}
-		catch (InvalidCastException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("SHA1.Create(null) should throw InvalidCastException not " + e.ToString ());
-		}
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void CreateIncorrect () 
+	{
+		// try to build an incorrect (existing) hash algorithms
+		hash = SHA1.Create ("MD5");
+	}
 
-		// try to build invalid implementation
+	[Test]
+	public void CreateUnknown () 
+	{
+		// try to build invalid (unexisting) implementation
 		hash = SHA1.Create ("InvalidHash");
 		AssertNull ("SHA1.Create('InvalidHash')", hash);
+	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public override void CreateNull () 
+	{
 		// try to build null implementation
-		try {
-			hash = SHA1.Create (null);
-			Fail ("SHA1.Create(null) should throw ArgumentNullException");
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("SHA1.Create(null) should throw ArgumentNullException not " + e.ToString ());
-		}
+		hash = SHA1.Create (null);
 	}
 
 	// none of those values changes for any implementation of SHA1
-	public virtual void TestStaticInfo () 
+	[Test]
+	public virtual void StaticInfo () 
 	{
 		string className = hash.ToString ();
 		AssertEquals (className + ".HashSize", 160, hash.HashSize);
 		AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
 		AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
 	}
-
 }
 
 }

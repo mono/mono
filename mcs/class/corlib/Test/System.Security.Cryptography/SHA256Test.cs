@@ -2,9 +2,10 @@
 // SHA256Test.cs - NUnit Test Cases for SHA256
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -21,14 +22,15 @@ namespace MonoTests.System.Security.Cryptography {
 
 // SHA256 is a abstract class - so most of the test included here wont be tested
 // on the abstract class but should be tested in ALL its descendants.
+
+[TestFixture]
 public class SHA256Test : HashAlgorithmTest {
 
+	[Test]
 	protected override void SetUp () 
 	{
 		hash = SHA256.Create ();
 	}
-
-	protected override void TearDown () {}
 
 	// test vectors from NIST FIPS 186-2
 
@@ -139,7 +141,8 @@ public class SHA256Test : HashAlgorithmTest {
 		hash.Initialize ();
 	}
 
-	public override void TestCreate () 
+	[Test]
+	public override void Create () 
 	{
 		// Note: These tests will only be valid without a "machine.config" file
 		// or a "machine.config" file that do not modify the default algorithm
@@ -155,44 +158,41 @@ public class SHA256Test : HashAlgorithmTest {
 		AssertEquals ("SHA256.Create('SHA256')", hash.ToString (), defaultSHA256);
 		hash = SHA256.Create ("SHA-256");
 		AssertEquals ("SHA256.Create('SHA-256')", hash.ToString (), defaultSHA256);
+	}
 
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void CreateIncorrect () 
+	{
 		// try to build an incorrect hash algorithms
-		try {
-			hash = SHA256.Create ("MD5");
-			Fail ("SHA256.Create('MD5') should throw InvalidCastException");
-		}
-		catch (InvalidCastException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("SHA256.Create('MD5') should throw InvalidCastException not " + e.ToString ());
-		}
+		hash = SHA256.Create ("MD5");
+	}
 
+	[Test]
+	public void CreateInvalid () 
+	{
 		// try to build invalid implementation
 		hash = SHA256.Create ("InvalidHash");
 		AssertNull ("SHA256.Create('InvalidHash')", hash);
+	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public override void CreateNull () 
+	{
 		// try to build null implementation
-		try {
-			hash = SHA256.Create (null);
-			Fail ("SHA256.Create(null) should throw ArgumentNullException");
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("SHA256.Create(null) should throw ArgumentNullException not " + e.ToString ());
-		}
+		hash = SHA256.Create (null);
 	}
 
 	// none of those values changes for any implementation of defaultSHA256
-	public virtual void TestStaticInfo () {
+	[Test]
+	public virtual void StaticInfo () 
+	{
 		string className = hash.ToString ();
 		AssertEquals (className + ".HashSize", 256, hash.HashSize);
 		AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
 		AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
 	}
-
 }
 
 }

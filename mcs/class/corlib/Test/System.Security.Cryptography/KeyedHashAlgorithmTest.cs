@@ -2,9 +2,10 @@
 // KeyedHashAlgorithmTest.cs - NUnit Test Cases for KeyedHashAlgorithm
 //
 // Author:
-//		Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -16,13 +17,15 @@ namespace MonoTests.System.Security.Cryptography {
 
 // KeyedHashAlgorithm is a abstract class - so most of it's functionality wont
 // be tested here (but will be in its descendants).
+
+[TestFixture]
 public class KeyedHashAlgorithmTest : HashAlgorithmTest {
+
+	[SetUp]
 	protected override void SetUp () 
 	{
 		hash = KeyedHashAlgorithm.Create ();
 	}
-
-	protected override void TearDown () {}
 
 	// Note: These tests will only be valid without a "machine.config" file
 	// or a "machine.config" file that do not modify the default algorithm
@@ -31,7 +34,8 @@ public class KeyedHashAlgorithmTest : HashAlgorithmTest {
 	private const string defaultMACTripleDES = "System.Security.Cryptography.MACTripleDES";
 	private const string defaultKeyedHash = defaultHMACSHA1;
 
-	public override void TestCreate () 
+	[Test]
+	public override void Create () 
 	{
 		// try the default keyed hash algorithm (created in SetUp)
 		AssertEquals( "KeyedHashAlgorithm.Create()", defaultKeyedHash, hash.ToString());
@@ -52,21 +56,17 @@ public class KeyedHashAlgorithmTest : HashAlgorithmTest {
 		// try to build invalid implementation
 		hash = KeyedHashAlgorithm.Create ("InvalidKeyedHash");
 		AssertNull ("KeyedHashAlgorithm.Create('InvalidKeyedHash')", hash);
-
-		// try to build null implementation
-		try {
-			hash = KeyedHashAlgorithm.Create (null);
-			Fail ("KeyedHashAlgorithm.Create(null) should throw ArgumentNullException");
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("KeyedHashAlgorithm.Create(null) should throw ArgumentNullException not " + e.ToString ());
-		}
 	}
 
-	public void TestKey () 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public override void CreateNull () 
+	{
+		hash = KeyedHashAlgorithm.Create (null);
+	}
+
+	[Test]
+	public void Key () 
 	{
 		KeyedHashAlgorithm kh = (KeyedHashAlgorithm) hash;
 		AssertNotNull ("KeyedHashAlgorithm.Key not null (random key)", kh.Key);
@@ -79,20 +79,21 @@ public class KeyedHashAlgorithmTest : HashAlgorithmTest {
 		// you can't change individual bytes from a key
 		kh.Key [0] = 0x00;
 		AssertEquals ("KeyedHashAlgorithm.Key[0]", kh.Key, keybackup);
-		// can't change a key after starting an operation
-		kh.TransformBlock (key, 0, 3, keybackup, 0);
-		try {
-			kh.Key = keybackup;
-			Fail ("KeyedHashAlgorithm.Key should throw CryptographicException but didn't");
-		}
-		catch (CryptographicException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("KeyedHashAlgorithm.Key should throw CryptographicException not " + e.ToString ());
-		}
 	}
 
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void ChangeKey () 
+	{
+		KeyedHashAlgorithm kh = (KeyedHashAlgorithm) hash;
+		byte[] key = { 0x01, 0x02, 0x03 };
+		byte[] keybackup = (byte[]) key.Clone ();
+		kh.Key = key;
+
+		// can't change a key after starting an operation
+		kh.TransformBlock (key, 0, 3, keybackup, 0);
+		kh.Key = keybackup;
+	}
 }
 
 }

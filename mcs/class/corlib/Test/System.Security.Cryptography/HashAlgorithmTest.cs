@@ -2,9 +2,10 @@
 // HashAlgorithmTest.cs - NUnit Test Cases for HashAlgorithm
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -13,20 +14,20 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace MonoTests.System.Security.Cryptography
-{
+namespace MonoTests.System.Security.Cryptography {
 
 // HashAlgorithm is a abstract class - so most of it's functionality wont
 // be tested here (but will be in its descendants).
-public class HashAlgorithmTest : TestCase {
+
+[TestFixture]
+public class HashAlgorithmTest : Assertion {
 	protected HashAlgorithm hash;
 
-	protected override void SetUp () 
+	[SetUp]
+	protected virtual void SetUp () 
 	{
 		hash = HashAlgorithm.Create ();
 	}
-
-	protected override void TearDown () {}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
@@ -43,7 +44,8 @@ public class HashAlgorithmTest : TestCase {
 	private const string defaultSHA512 = "System.Security.Cryptography.SHA512Managed";
 	private const string defaultHash = defaultSHA1;
 
-	public virtual void TestCreate () 
+	[Test]
+	public virtual void Create () 
 	{
 		// try the default hash algorithm (created in SetUp)
 		AssertEquals( "HashAlgorithm.Create()", defaultHash, hash.ToString());
@@ -87,53 +89,64 @@ public class HashAlgorithmTest : TestCase {
 		// try to build invalid implementation
 		hash = HashAlgorithm.Create ("InvalidHash");
 		AssertNull ("HashAlgorithm.Create('InvalidHash')", hash);
-
-		// try to build null implementation
-		try {
-			hash = HashAlgorithm.Create (null);
-			Fail ("HashAlgorithm.Create(null) should throw ArgumentNullException");
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("HashAlgorithm.Create(null) should throw ArgumentNullException not " + e.ToString() );
-		}
 	}
 
-	public void TestClear () 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public virtual void CreateNull () 
+	{
+		// try to build null implementation
+		hash = HashAlgorithm.Create (null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void Clear () 
 	{
 		byte[] inputABC = Encoding.Default.GetBytes ("abc");
 		hash.ComputeHash (inputABC);
 		hash.Clear ();
 		// cannot use a disposed object
-		try {
-			hash.ComputeHash (inputABC);
-			Fail ("ComputeHash after clear should throw ObjectDisposedException but didn't");
-		}
-		catch (ObjectDisposedException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("ComputeHash after clear should throw ObjectDisposedException not " + e.ToString ());
-		}
+		hash.ComputeHash (inputABC);
 	}
 
-	public void TestNullStream () 
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void Clear2 () 
+	{
+		byte[] inputABC = Encoding.Default.GetBytes ("abc");
+		MemoryStream ms = new MemoryStream (inputABC);
+		hash.ComputeHash (ms);
+		hash.Clear ();
+		// cannot use a disposed object
+		hash.ComputeHash (ms);
+	}
+
+	[Test]
+	[ExpectedException (typeof (NullReferenceException))]
+	public void NullStream () 
 	{
 		Stream s = null;
-		try {
-			byte[] result = hash.ComputeHash (s);
-			Fail ("Expected NullReferenceException but got none");
-		}
-		catch (NullReferenceException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected NullReferenceException but got " + e.ToString ());
+		byte[] result = hash.ComputeHash (s);
+	}
+
+	[Test]
+	public void Disposable () 
+	{
+		using (HashAlgorithm hash = HashAlgorithm.Create ()) {
+			byte[] data = hash.ComputeHash (new byte [0]);
 		}
 	}
 
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void InitializeDisposed () 
+	{
+		hash.ComputeHash (new byte [0]);
+		hash.Clear (); // disposed
+		hash.Initialize ();
+		hash.ComputeHash (new byte [0]);
+	}
 }
 
 }

@@ -2,9 +2,10 @@
 // HMACSHA1Test.cs - NUnit Test Cases for HMACSHA1
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -23,57 +24,52 @@ namespace MonoTests.System.Security.Cryptography {
 
 public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
-	protected HMACSHA1 algo;
+//	protected HMACSHA1 hash;
 
-	public void TestConstructors () 
+	[Test]
+	public void Constructors () 
 	{
-		algo = new HMACSHA1 ();
-		AssertNotNull ("HMACSHA1 ()", algo);
+		hash = new HMACSHA1 ();
+		AssertNotNull ("HMACSHA1 ()", hash);
 
 		byte[] key = new byte [8];
-		algo = new HMACSHA1 (key);
-		AssertNotNull ("HMACSHA1 (key)", algo);
-
-		try {
-			algo = new HMACSHA1 (null);
-			Fail ("HMACSHA1 (null) - Expected NullReferenceException but got none");
-		}
-		catch (NullReferenceException) {
-			// well ArgumentNullException would have been more appropriate
-		}
-		catch (Exception e) {
-			Fail ("HMACSHA1 (null) - Expected NullReferenceException but got: " + e.ToString ());
-		}
+		hash = new HMACSHA1 (key);
+		AssertNotNull ("HMACSHA1 (key)", hash);
 	}
 
-	public void TestInvariants () 
+	[Test]
+	[ExpectedException (typeof (NullReferenceException))]
+	public void Constructor_Null () 
 	{
-		algo = new HMACSHA1 ();
-		AssertEquals ("HMACSHA1.CanReuseTransform", true, algo.CanReuseTransform);
-		AssertEquals ("HMACSHA1.CanTransformMultipleBlocks", true, algo.CanTransformMultipleBlocks);
-		AssertEquals ("HMACSHA1.HashName", "SHA1", algo.HashName);
-		AssertEquals ("HMACSHA1.HashSize", 160, algo.HashSize);
-		AssertEquals ("HMACSHA1.InputBlockSize", 1, algo.InputBlockSize);
-		AssertEquals ("HMACSHA1.OutputBlockSize", 1, algo.OutputBlockSize);
-		AssertEquals ("HMACSHA1.ToString()", "System.Security.Cryptography.HMACSHA1", algo.ToString ()); 
+		hash = new HMACSHA1 (null);
 	}
 
-	public void TestExceptions () 
+	[Test]
+	public void Invariants () 
 	{
-		algo = new HMACSHA1 ();
-		try {
-			algo.HashName = "MD5";
-			byte[] data = Encoding.Default.GetBytes ("MD5");
-			byte[] hmac = algo.ComputeHash (data);
-			Fail ("Expected InvalidCastException but got none");
-		}
-		catch (InvalidCastException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected InvalidCastException but got " + e.ToString ());
-		}
+		hash = new HMACSHA1 ();
+		AssertEquals ("HMACSHA1.CanReuseTransform", true, hash.CanReuseTransform);
+		AssertEquals ("HMACSHA1.CanTransformMultipleBlocks", true, hash.CanTransformMultipleBlocks);
+		AssertEquals ("HMACSHA1.HashName", "SHA1", (hash as HMACSHA1).HashName);
+		AssertEquals ("HMACSHA1.HashSize", 160, hash.HashSize);
+		AssertEquals ("HMACSHA1.InputBlockSize", 1, hash.InputBlockSize);
+		AssertEquals ("HMACSHA1.OutputBlockSize", 1, hash.OutputBlockSize);
+		AssertEquals ("HMACSHA1.ToString()", "System.Security.Cryptography.HMACSHA1", hash.ToString ()); 
 	}
+
+#if (NET_1_0 || NET_1_1)
+	// this is legal in .NET 1.2 because HMACSHA1 derives from HMAC
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void Exceptions () 
+	{
+		hash = new HMACSHA1 ();
+		(hash as HMACSHA1).HashName = "MD5";
+		byte[] data = Encoding.Default.GetBytes ("MD5");
+		byte[] hmac = hash.ComputeHash (data);
+		Fail ("Expected InvalidCastException but got none");
+	}
+#endif
 
 	public void Check (string testName, byte[] key, byte[] data, byte[] result) 
 	{
@@ -87,54 +83,55 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
 	public void CheckA (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		algo = new HMACSHA1 ();
-		algo.Key = key;
-		byte[] hmac = algo.ComputeHash (data);
+		hash = new HMACSHA1 ();
+		(hash as HMACSHA1).Key = key;
+		byte[] hmac = hash.ComputeHash (data);
 		AssertEquals (testName + "a1", result, hmac);
-		AssertEquals (testName + "a2", result, algo.Hash);
+		AssertEquals (testName + "a2", result, hash.Hash);
 	}
 
 	public void CheckB (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		algo = new HMACSHA1 ();
-		algo.Key = key;
-		byte[] hmac = algo.ComputeHash (data, 0, data.Length);
+		hash = new HMACSHA1 ();
+		(hash as HMACSHA1).Key = key;
+		byte[] hmac = hash.ComputeHash (data, 0, data.Length);
 		AssertEquals (testName + "b1", result, hmac);
-		AssertEquals (testName + "b2", result, algo.Hash);
+		AssertEquals (testName + "b2", result, hash.Hash);
 	}
 	
 	public void CheckC (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		algo = new HMACSHA1 ();
-		algo.Key = key;
+		hash = new HMACSHA1 ();
+		(hash as HMACSHA1).Key = key;
 		MemoryStream ms = new MemoryStream (data);
-		byte[] hmac = algo.ComputeHash (ms);
+		byte[] hmac = hash.ComputeHash (ms);
 		AssertEquals (testName + "c1", result, hmac);
-		AssertEquals (testName + "c2", result, algo.Hash);
+		AssertEquals (testName + "c2", result, hash.Hash);
 	}
 
 	public void CheckD (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		algo = new HMACSHA1 ();
-		algo.Key = key;
+		hash = new HMACSHA1 ();
+		(hash as HMACSHA1).Key = key;
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
-		algo.TransformFinalBlock (data, 0, data.Length);
-		AssertEquals (testName + "d", result, algo.Hash);
+		hash.TransformFinalBlock (data, 0, data.Length);
+		AssertEquals (testName + "d", result, hash.Hash);
 	}
 
 	public void CheckE (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		algo = new HMACSHA1 ();
-		algo.Key = key;
+		hash = new HMACSHA1 ();
+		(hash as HMACSHA1).Key = key;
 		byte[] copy = new byte [data.Length];
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 		for (int i=0; i < data.Length - 1; i++)
-			algo.TransformBlock (data, i, 1, copy, i);
-		algo.TransformFinalBlock (data, data.Length - 1, 1);
-		AssertEquals (testName + "e", result, algo.Hash);
+			hash.TransformBlock (data, i, 1, copy, i);
+		hash.TransformFinalBlock (data, data.Length - 1, 1);
+		AssertEquals (testName + "e", result, hash.Hash);
 	}
 
-	public void TestFIPS198_A1 () 
+	[Test]
+	public void FIPS198_A1 () 
 	{
 		// exact 64 bytes key (no hashing - no padding)
 		byte[] key =  { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
@@ -153,7 +150,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("FIPS198-A1", key, data, fips);
 	}
 
-	public void TestFIPS198_A2 () 
+	[Test]
+	public void FIPS198_A2 () 
 	{
 		// key < 64 bytes -> requires padding
 		byte[] key =  { 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
@@ -166,7 +164,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("FIPS198-A2", key, data, fips);
 	}
 
-	public void TestFIPS198_A3 () 
+	[Test]
+	public void FIPS198_A3 () 
 	{
 		// key > 64 bytes -> requires hashing
 		byte[] key =  { 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f,
@@ -184,7 +183,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("FIPS198-A3", key, data, fips);
 	}
 
-	public void TestFIPS198_A4 () 
+	[Test]
+	public void FIPS198_A4 () 
 	{
 		byte[] key =  { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
 				0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x82, 0x83,
@@ -199,7 +199,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("FIPS198-A4", key, data, fips);
 	}
 
-	public void TestRFC2202_TC1 () 
+	[Test]
+	public void RFC2202_TC1 () 
 	{
 		byte[] key =  { 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b };
 		byte[] data = Encoding.Default.GetBytes ("Hi There");
@@ -207,7 +208,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("RFC2202-TC1", key, data, digest);
 	}
 
-	public void TestRFC2202_TC2 () 
+	[Test]
+	public void RFC2202_TC2 () 
 	{
 		byte[] key = Encoding.Default.GetBytes ("Jefe");
 		byte[] data = Encoding.Default.GetBytes ("what do ya want for nothing?");
@@ -215,7 +217,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("RFC2202-TC2", key, data, digest);
 	}
 
-	public void TestRFC2202_TC3 () 
+	[Test]
+	public void RFC2202_TC3 () 
 	{
 		byte[] key = { 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa };
 		byte[] data = new byte [50];
@@ -225,7 +228,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("RFC2202-TC3", key, data, digest);
 	}
 
-	public void TestRFC2202_TC4 () 
+	[Test]
+	public void RFC2202_TC4 () 
 	{
 		byte[] key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19 };
 		byte[] data = new byte [50];
@@ -235,7 +239,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("RFC2202-TC4", key, data, digest);
 	}
 
-	public void TestRFC2202_TC5 () 
+	[Test]
+	public void RFC2202_TC5 () 
 	{
 		byte[] key = { 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c };
 		byte[] data = Encoding.Default.GetBytes ("Test With Truncation");
@@ -243,7 +248,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("RFC2202-TC5", key, data, digest);
 	}
 
-	public void TestRFC2202_TC6 () 
+	[Test]
+	public void RFC2202_TC6 () 
 	{
 		byte[] key = new byte [80];
 		for (int i = 0; i < key.Length; i++)
@@ -253,7 +259,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Check ("RFC2202-TC6", key, data, digest);
 	}
 
-	public void TestRFC2202_TC7 () 
+	[Test]
+	public void RFC2202_TC7 () 
 	{
 		byte[] key = new byte [80];
 		for (int i = 0; i < key.Length; i++)

@@ -2,9 +2,10 @@
 // SHA384ManagedTest.cs - NUnit Test Cases for SHA384Managed
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -20,38 +21,54 @@ namespace MonoTests.System.Security.Cryptography {
 
 // we inherit from SHA384Test because all SHA384 implementation must return the 
 // same results (hence should run a common set of unit tests).
+
+[TestFixture]
 public class SHA384ManagedTest : SHA384Test {
 
+	[SetUp]
 	protected override void SetUp () 
 	{
 		hash = new SHA384Managed ();
 	}
 
-	protected override void TearDown () {}
-
-	public override void TestCreate () 
+	[Test]
+	public override void Create () 
 	{
 		// no need to repeat this test
 	}
 
 	// none of those values changes for a particuliar implementation of SHA384
-	public override void TestStaticInfo () 
+	[Test]
+	public override void StaticInfo () 
 	{
 		// test all values static for SHA384
-		base.TestStaticInfo ();
+		base.StaticInfo ();
 		string className = hash.ToString ();
 		AssertEquals (className + ".CanReuseTransform", true, hash.CanReuseTransform);
 		AssertEquals (className + ".CanTransformMultipleBlocks", true, hash.CanTransformMultipleBlocks);
 		AssertEquals (className + ".ToString()", "System.Security.Cryptography.SHA384Managed", className);
 	}
 
-	public void TestSHA384forFIPSCompliance () 
+	[Test]
+	public void FIPSCompliance_Test1 () 
 	{
 		SHA384 sha = (SHA384) hash;
 		// First test, we hash the string "abc"
 		FIPS186_Test1 (sha);
+	}
+
+	[Test]
+	public void FIPSCompliance_Test2 () 
+	{
+		SHA384 sha = (SHA384) hash;
 		// Second test, we hash the string "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"
 		FIPS186_Test2 (sha);
+	}
+
+	[Test]
+	public void FIPSCompliance_Test3 () 
+	{
+		SHA384 sha = (SHA384) hash;
 		// Third test, we hash 1,000,000 times the character "a"
 		FIPS186_Test3 (sha);
 	}

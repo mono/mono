@@ -2,9 +2,10 @@
 // SHA1CryptoServiceProviderTest.cs - NUnit Test Cases for SHA1CryptoServiceProvider
 //
 // Author:
-//		Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -20,24 +21,28 @@ namespace MonoTests.System.Security.Cryptography {
 
 // we inherit from SHA1Test because all SHA1 implementation must return the 
 // same results (hence should run a common set of unit tests).
+
+[TestFixture]
 public class SHA1CryptoServiceProviderTest : SHA1Test {
+
+	[SetUp]
 	protected override void SetUp () 
 	{
 		hash = new SHA1CryptoServiceProvider ();
 	}
 
-	protected override void TearDown () {}
-
-	public override void TestCreate () 
+	[Test]
+	public override void Create () 
 	{
 		// no need to repeat this test
 	}
 
 	// none of those values changes for a particuliar implementation of SHA1
-	public override void TestStaticInfo ()
+	[Test]
+	public override void StaticInfo ()
 	{
 		// test all values static for SHA1
-		base.TestStaticInfo();
+		base.StaticInfo();
 		string className = hash.ToString ();
 		AssertEquals (className + ".CanReuseTransform", true, hash.CanReuseTransform);
 		AssertEquals (className + ".CanTransformMultipleBlocks", true, hash.CanTransformMultipleBlocks);
