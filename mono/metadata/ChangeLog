@@ -8,6 +8,13 @@
 
 2003-11-03  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (mono_reflection_inflate_method_or_ctor): Set
+	`ginst->klass' here.
+	(method_encode_methodspec): Don't use the `ginst->generic_method's
+	klass if it's a generic instance, use `ginst->klass' in this case.
+
+2003-11-03  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (mono_image_get_generic_method_param_info):
 	Removed, use mono_image_get_generic_param_info() instead.
 	(mono_image_get_type_info): Write the GenericParam table before
