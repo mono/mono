@@ -1,0 +1,4 @@
+The class libraries are grouped together in the assemblies they belong.
+
+Each directory here represents an assembly, and inside each directory we
+divide the code based on the namespace they implement.
