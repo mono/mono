@@ -31,6 +31,9 @@ namespace System.Reflection {
 
 		public abstract ParameterInfo[] GetParameters();
 		
+#if NET_1_2
+		virtual
+#endif
 		public Object Invoke(Object obj, Object[] parameters) {
 			return Invoke (obj, 0, null, parameters, null);
 		}
