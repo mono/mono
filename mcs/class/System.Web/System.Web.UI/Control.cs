@@ -46,52 +46,58 @@ namespace System.Web.UI
 	[DefaultProperty ("ID"), DesignerCategory ("Code"), ToolboxItemFilter ("System.Web.UI", ToolboxItemFilterType.Require)]
 	[ToolboxItem ("System.Web.UI.Design.WebControlToolboxItem, " + Consts.AssemblySystem_Design)]
 	[Designer ("System.Web.UI.Design.ControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
-	[DesignerSerializer ("Microsoft.VSDesigner.WebForms.ControlCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
+	[DesignerSerializer ("Microsoft.VSDesigner.WebForms.ControlCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner,
+				"System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
         public class Control : IComponent, IDisposable, IParserAccessor, IDataBindingsAccessor
 #if NET_2_0
         , IUrlResolutionService, IControlBuilderAccessor, IControlDesignerAccessor, IExpressionsAccessor
 #endif
         {
-		private static readonly object DataBindingEvent = new object();
-		private static readonly object DisposedEvent = new object();
-		private static readonly object InitEvent = new object();
-		private static readonly object LoadEvent = new object();
-		private static readonly object PreRenderEvent = new object();
-		private static readonly object UnloadEvent = new object();
-		private static string[] defaultNameArray;
-		private string _templateSourceDir;
-		private string uniqueID;
-		private string _userId;
-		private bool id_set;
-		private ControlCollection _controls;
-		private bool _enableViewState = true;
-		private IDictionary _childViewStates;
-		private bool _isNamingContainer;
-		private Control _namingContainer;
-		private Page _page;
-		private Control _parent;
-		private ISite _site;
-		private bool _visible = true;
-		private bool visibleChanged;
-		private HttpContext _context;
-		private bool _childControlsCreated;
-		private StateBag _viewState;
-		private bool _trackViewState;
-		private EventHandlerList _events;
-		private RenderMethod _renderMethodDelegate;
-		private bool autoID = true;
-		private bool creatingControls;
-		private bool bindingContainer = true;
-		private bool autoEventWireup = true;
+		static readonly object DataBindingEvent = new object();
+		static readonly object DisposedEvent = new object();
+		static readonly object InitEvent = new object();
+		static readonly object LoadEvent = new object();
+		static readonly object PreRenderEvent = new object();
+		static readonly object UnloadEvent = new object();
+		static string[] defaultNameArray;
 
-		bool inited, initing;
-		bool viewStateLoaded;
-		bool loaded;
-		bool prerendered;
+		string uniqueID;
+		string _userId;
+		ControlCollection _controls;
+		IDictionary _childViewStates;
+		Control _namingContainer;
+		Page _page;
+		Control _parent;
+		ISite _site;
+		HttpContext _context;
+		StateBag _viewState;
+		EventHandlerList _events;
+		RenderMethod _renderMethodDelegate;
 		int defaultNumberID;
  
 		DataBindingCollection dataBindings;
 		Hashtable pendingVS; // may hold unused viewstate data from child controls
+		
+
+		/*************/
+		int stateMask;
+		const int ENABLE_VIEWSTATE 	= 1;
+		const int VISIBLE 		= 1 << 1;
+		const int AUTOID		= 1 << 2;
+		const int CREATING_CONTROLS	= 1 << 3;
+		const int BINDING_CONTAINER	= 1 << 4;
+		const int AUTO_EVENT_WIREUP	= 1 << 5;
+		const int IS_NAMING_CONTAINER	= 1 << 6;
+		const int VISIBLE_CHANGED	= 1 << 7;
+		const int TRACK_VIEWSTATE	= 1 << 8;
+		const int CHILD_CONTROLS_CREATED = 1 << 9;
+		const int ID_SET		= 1 << 10;
+		const int INITED		= 1 << 11;
+		const int INITING		= 1 << 12;
+		const int VIEWSTATE_LOADED	= 1 << 13;
+		const int LOADED		= 1 << 14;
+		const int PRERENDERED		= 1 << 15;
+		/*************/
 		
 		static Control ()
 		{
@@ -102,21 +108,22 @@ namespace System.Web.UI
 
                 public Control()
                 {
-                        if (this is INamingContainer) _isNamingContainer = true;
+			stateMask = ENABLE_VIEWSTATE | VISIBLE | AUTOID | BINDING_CONTAINER | AUTO_EVENT_WIREUP;
+                        if (this is INamingContainer)
+				stateMask |= IS_NAMING_CONTAINER;
                 }
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never), Browsable (false)]
-		public Control BindingContainer
-		{
+		public Control BindingContainer {
 			get {
 				Control container = NamingContainer;
-				if (!container.bindingContainer)
+				if ((container.stateMask & BINDING_CONTAINER) == 0)
 					container = container.BindingContainer;
 				return container;
 			}
 		}
-		
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("An Identification of the control that is rendered.")]
@@ -148,16 +155,9 @@ namespace System.Web.UI
 #if NET_2_0
 		[Themeable (true)]
 #endif                
-                public virtual bool EnableViewState //DIT
-                {
-                        get
-                        {
-                                return _enableViewState;
-                        }
-                        set
-                        {
-                                _enableViewState = value;
-                        }
+                public virtual bool EnableViewState {
+                        get { return ((stateMask & ENABLE_VIEWSTATE) != 0); }
+			set { SetMask (ENABLE_VIEWSTATE, value); }
                 }
 		
 		[MergableProperty (false), ParenthesizePropertyName (true)]
@@ -168,14 +168,14 @@ namespace System.Web.UI
 
                 public virtual string ID {
                         get {
-				return (id_set ? _userId : null);
+				return (((stateMask & ID_SET) != 0) ? _userId : null);
                         }
 			
                         set {
 				if (value == "")
 					value = null;
 
-				id_set = true;
+				stateMask |= ID_SET;
                                 _userId = value;
 				NullifyUniqueID ();
                         }
@@ -184,17 +184,15 @@ namespace System.Web.UI
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("The container that this control is part of. The control's name has to be unique within the container.")]
-                public virtual Control NamingContainer //DIT
-                {
-                        get
-                        {
-                                if (_namingContainer == null && _parent != null)
-                                {
-                                        if (_parent._isNamingContainer == false)
+                public virtual Control NamingContainer {
+                        get {
+                                if (_namingContainer == null && _parent != null) {
+                                        if ((_parent.stateMask & IS_NAMING_CONTAINER) == 0)
                                                 _namingContainer = _parent.NamingContainer;
                                         else
                                                 _namingContainer = _parent;
                                 }
+
                                 return _namingContainer;
                         }
                 }
@@ -277,6 +275,14 @@ namespace System.Web.UI
                         }
                 }
 
+		void SetMask (int m, bool val)
+		{
+			if (val)
+				stateMask |= m;
+			else
+				stateMask &= ~m;
+		}
+		
 		[DefaultValue (true), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("Visiblity state of the control.")]
 #if NET_2_0
@@ -284,7 +290,7 @@ namespace System.Web.UI
 #endif
                 public virtual bool Visible {
                         get {
-				if (_visible == false)
+				if ((stateMask & VISIBLE) == 0)
 					return false;
 
 				if (_parent != null)
@@ -294,26 +300,23 @@ namespace System.Web.UI
                         }
 
                         set {
-				if (value != _visible) {
+				if ((value && (stateMask & VISIBLE) == 0) ||
+				    (!value && (stateMask & VISIBLE) != 0)) {
 					if (IsTrackingViewState)
-						visibleChanged = true;
+						stateMask |= VISIBLE_CHANGED;
 				}
 
-                                _visible = value;
+				SetMask (VISIBLE, value);
                         }
                 }
 
-                protected bool ChildControlsCreated //DIT
-                {
-                        get
-                        {
-                                return _childControlsCreated;
-                        }
-                        set
-                        {
-                                if (value == false && _childControlsCreated == true)
-                                        Controls.Clear();
-                                _childControlsCreated = value;
+                protected bool ChildControlsCreated {
+                        get { return ((stateMask & CHILD_CONTROLS_CREATED) != 0); }
+                        set {
+				if (value == false && (stateMask & CHILD_CONTROLS_CREATED) != 0)
+					Controls.Clear();
+
+				SetMask (CHILD_CONTROLS_CREATED, value);
                         }
                 }
 
@@ -353,12 +356,9 @@ namespace System.Web.UI
                                 return true;
                         }
                 }
-                protected bool IsTrackingViewState //DIT
-                {
-                        get
-                        {
-                                return _trackViewState;
-                        }
+
+                protected bool IsTrackingViewState {
+                        get { return ((stateMask & TRACK_VIEWSTATE) != 0); }
                 }
 
 		[Browsable (false)]
@@ -388,15 +388,15 @@ namespace System.Web.UI
                 }
 
 		internal bool AutoEventWireup {
-			get { return autoEventWireup; }
-			set { autoEventWireup = value; }
+			get { return (stateMask & AUTO_EVENT_WIREUP) != 0; }
+			set { SetMask (AUTO_EVENT_WIREUP, value); }
 		}
 
 		internal void SetBindingContainer (bool isBC)
 		{
-			bindingContainer = isBC;
+			SetMask (BINDING_CONTAINER, isBC);
 		}
-		
+
 		internal void ResetChildNames ()
 		{
 			defaultNumberID = 0;
@@ -431,7 +431,7 @@ namespace System.Web.UI
 
 			control._parent = this;
 			control._page = _page;
-			Control nc = _isNamingContainer ? this : NamingContainer;
+			Control nc = ((stateMask & IS_NAMING_CONTAINER) != 0) ? this : NamingContainer;
 
 			if (nc != null) {
 				control._namingContainer = nc;
@@ -439,10 +439,10 @@ namespace System.Web.UI
 					control._userId =  nc.GetDefaultName () + "a";
 			}
 
-			if (initing || inited)
+			if ((stateMask & (INITING | INITED)) != 0)
 				control.InitRecursive (nc);
 
-			if (viewStateLoaded || loaded) {
+			if ((stateMask & (VIEWSTATE_LOADED | LOADED)) != 0) {
 				if (pendingVS != null) {
 					object vs = pendingVS [index];
 					if (vs != null) {
@@ -455,10 +455,10 @@ namespace System.Web.UI
 				}
 			}
 
-			if (loaded)
+			if ((stateMask & LOADED) != 0)
 				control.LoadRecursive ();
 			
-			if (prerendered)
+			if ((stateMask & PRERENDERED) != 0)
 				control.PreRenderRecursiveInternal ();
 		}
 
@@ -488,13 +488,13 @@ namespace System.Web.UI
                         return new ControlCollection(this);
                 }
 
-                protected virtual void EnsureChildControls () //DIT
+                protected virtual void EnsureChildControls ()
                 {
-                        if (ChildControlsCreated == false && !creatingControls) {
-				creatingControls = true;
+                        if (ChildControlsCreated == false && (stateMask & CREATING_CONTROLS) == 0) {
+				stateMask |= CREATING_CONTROLS;
                                 CreateChildControls();
                                 ChildControlsCreated = true;
-				creatingControls = false;
+				stateMask &= ~CREATING_CONTROLS;
                         }
                 }
 
@@ -520,7 +520,7 @@ namespace System.Web.UI
 				if (String.Compare (id, c._userId, true) == 0)
 					return c;
 
-				if (!c._isNamingContainer && c.HasControls ()) {
+				if ((c.stateMask & IS_NAMING_CONTAINER) == 0 && c.HasControls ()) {
 					Control child = c.LookForControlByName (id);
 					if (child != null)
 						return child;
@@ -534,7 +534,7 @@ namespace System.Web.UI
                 {
 			EnsureChildControls ();
 			Control namingContainer = null;
-			if (!_isNamingContainer) {
+			if ((stateMask & IS_NAMING_CONTAINER) == 0) {
 				namingContainer = NamingContainer;
 				if (namingContainer == null)
 					return null;
@@ -563,8 +563,8 @@ namespace System.Web.UI
 				ViewState.LoadViewState (savedState);
 				object o = ViewState ["Visible"];
 				if (o != null) {
-					_visible = (bool) o;
-					visibleChanged = true;
+					SetMask (VISIBLE, (bool) o);
+					stateMask |= VISIBLE_CHANGED;
 				}
 			}
                 }
@@ -651,7 +651,7 @@ namespace System.Web.UI
 
                 protected virtual object SaveViewState ()
                 {
-			if (visibleChanged) {
+			if ((stateMask & VISIBLE_CHANGED) != 0) {
 				ViewState ["Visible"] = Visible;
 			} else if (_viewState == null) {
 				return null;
@@ -664,7 +664,8 @@ namespace System.Web.UI
                 {
 			if (_viewState != null)
 				_viewState.TrackViewState ();
-                        _trackViewState = true;
+
+                        stateMask |= TRACK_VIEWSTATE;
                 }
                 
                 public virtual void Dispose()
@@ -761,7 +762,7 @@ namespace System.Web.UI
 			#if NET_2_0
 			bool foundDataItem = false;
 			
-			if (_isNamingContainer && Page != null) {
+			if ((stateMask & IS_NAMING_CONTAINER) != 0 && Page != null) {
 				object o = DataBinder.GetDataItem (this, out foundDataItem);
 				if (foundDataItem)
 					Page.PushDataItemContext (o);
@@ -805,7 +806,7 @@ namespace System.Web.UI
 
                 public void RenderControl(HtmlTextWriter writer)
                 {
-                        if (_visible)
+                        if ((stateMask & VISIBLE) != 0)
                                 Render(writer);
                 }
 
@@ -848,7 +849,7 @@ namespace System.Web.UI
 					c.LoadRecursive ();
 				}
 			}
-			loaded = true;
+			stateMask |= LOADED;
                 }
 
                 internal void UnloadRecursive(Boolean dispose)
@@ -869,7 +870,7 @@ namespace System.Web.UI
 
                 internal void PreRenderRecursiveInternal()
                 {
-			if (_visible) {
+			if ((stateMask & VISIBLE) != 0) {
 				EnsureChildControls ();
 				OnPreRender (EventArgs.Empty);
 				if (!HasControls ())
@@ -882,18 +883,18 @@ namespace System.Web.UI
 					c.PreRenderRecursiveInternal ();
 				}
 			}
-			prerendered = true;
+			stateMask |= PRERENDERED;
                 }
 
                 internal void InitRecursive(Control namingContainer)
                 {
                         if (HasControls ()) {
-				if (_isNamingContainer)
+				if ((stateMask & IS_NAMING_CONTAINER) != 0)
 					namingContainer = this;
 
 				if (namingContainer != null && 
 				    namingContainer._userId == null &&
-				    namingContainer.autoID)
+				    namingContainer.AutoID)
 					namingContainer._userId = namingContainer.GetDefaultName () + "b";
 
 				int len = Controls.Count;
@@ -902,17 +903,17 @@ namespace System.Web.UI
 					Control c = Controls[i];
 					c._page = Page;
 					c._namingContainer = namingContainer;
-					if (namingContainer != null && c._userId == null && c.autoID)
+					if (namingContainer != null && c._userId == null && c.AutoID)
 						c._userId = namingContainer.GetDefaultName () + "c";
 					c.InitRecursive (namingContainer);	
 				}
 			}
 
-			initing = true;
+			stateMask |= INITING;
                         OnInit (EventArgs.Empty);
 			TrackViewState ();
-			inited = true;
-			initing = false;
+			stateMask |= INITED;
+			stateMask &= ~INITING;
                 }
 
                 internal object SaveViewStateRecursive ()
@@ -979,7 +980,7 @@ namespace System.Web.UI
 				}
 			}
 
-			viewStateLoaded = true;
+			stateMask |= VIEWSTATE_LOADED;
                 }
                 
                 void IParserAccessor.AddParsedSubObject(object obj)
@@ -1004,15 +1005,15 @@ namespace System.Web.UI
                 		return (dataBindings!=null && dataBindings.Count>0);
                 	}
                 }
-                
+ 
 		internal bool AutoID
 		{
-			get { return autoID; }
-			set { 
-				if (value == false && _isNamingContainer)
+			get { return (stateMask & AUTOID) != 0; }
+			set {
+				if (value == false && (stateMask & IS_NAMING_CONTAINER) != 0)
 					return;
 
-				autoID = value;
+				SetMask (AUTOID, value);
 			}
 		}
 

@@ -1,3 +1,13 @@
+2004-11-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: unified a few bool fields into an int one.
+
+	* ControlCollection.cs: use an array internally instead of always
+	allocating an arraylist. Also added our own enumerator.
+	
+	* EmptyControlCollection.cs: there's no 'special' ctor now in the base
+	class.
+
 2004-11-05 Sanjay Gupta <gsanjay@novell.com>
 
 	* DataSourceView.cs: Changes in access modifiers of methods.
