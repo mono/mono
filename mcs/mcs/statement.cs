@@ -1427,12 +1427,12 @@ namespace Mono.CSharp {
 		// </summary>
 		public LocalInfo ThisVariable {
 			get {
-				if (this_variable != null)
-					return this_variable;
-				else if (Parent != null)
-					return Parent.ThisVariable;
-				else
-					return null;
+				for (Block b = this; b != null; b = b.Parent) {
+					if (b.this_variable != null)
+						return b.this_variable;
+				}
+				
+				return null;
 			}
 		}
 

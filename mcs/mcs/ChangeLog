@@ -1,3 +1,8 @@
+2004-12-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* statement.cs (Block.ThisVariable): remove the recursion here, to
+	make the --profile more sane.
+
 2004-12-17  Carlos Cortez <calberto.cortez@gmail.com>
 
 	* driver.cs: Patch to handle a xsp bug that prevents to reference an .exe
