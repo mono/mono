@@ -1,3 +1,9 @@
+2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MetaDataExporter.cs: Several fixes.
+	* SdlChannelSink.cs: Implemented.
+	* SdlChannelSinkProvider.cs: Implemented.
+
 2003-12-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MetaData.cs: Added check of compilation results in 

@@ -29,7 +29,10 @@ namespace System.Runtime.Remoting.MetadataServices
 			if (servicetypes.Length == 0) return;
 			Type maint = servicetypes [0].ObjectType;
 			
-			ArrayList services = FindServices (servicetypes);
+			Hashtable dataTypes = new Hashtable (); 
+			ArrayList services = new ArrayList ();
+			FindTypes (servicetypes, dataTypes, services);
+			
 			if (services.Count > 0)
 				maint = ((ServiceType) services[0]).ObjectType;
 			
@@ -49,7 +52,6 @@ namespace System.Runtime.Remoting.MetadataServices
 			tw.WriteAttributeString ("xmlns", "soap", MetaData.XmlnsNamespace, MetaData.SoapNamespace);
 			
 			int nums = 0;
-			Hashtable dataTypes = FindDataTypes (servicetypes);
 			foreach (DictionaryEntry entry in dataTypes)
 			{
 				string ns = (string) entry.Key;
@@ -107,7 +109,6 @@ namespace System.Runtime.Remoting.MetadataServices
 
 			foreach (ServiceType st in services)
 			{
-//				if (st.Url == null) continue;
 				WriteServiceType (tw, st);
 			}
 			tw.WriteEndElement ();
@@ -123,9 +124,14 @@ namespace System.Runtime.Remoting.MetadataServices
 			tw.WriteStartElement ("port", MetaData.WsdlNamespace);
 			tw.WriteAttributeString ("name", GetPortName (st.ObjectType));
 			tw.WriteAttributeString ("binding", "tns:" + GetBindingName (st.ObjectType));
-			tw.WriteStartElement ("soap","address", MetaData.SoapNamespace);
-			tw.WriteAttributeString ("location", st.Url);
-			tw.WriteEndElement ();
+			
+			if (st.Url != null)
+			{
+				tw.WriteStartElement ("soap","address", MetaData.SoapNamespace);
+				tw.WriteAttributeString ("location", st.Url);
+				tw.WriteEndElement ();
+			}
+			
 			tw.WriteEndElement ();
 		}
 		
@@ -221,7 +227,7 @@ namespace System.Runtime.Remoting.MetadataServices
 			WriteTypeSuds (tw, type);
 			
 			SchemaInfo sinfo = (SchemaInfo) dataTypes [GetXmlNamespace (type,null)];
-			if (!sinfo.SudsGenerated)
+			if (sinfo != null && !sinfo.SudsGenerated)
 			{
 				foreach (Type dt in sinfo.Types)
 					WriteTypeSuds (tw, dt);
@@ -530,15 +536,26 @@ namespace System.Runtime.Remoting.MetadataServices
 			return t.Name + "Binding";
 		}
 		
-		Hashtable FindDataTypes (ServiceType[] servicetypes)
+		void FindTypes (ServiceType[] servicetypes, Hashtable dataTypes, ArrayList services)
 		{
 			Hashtable types = new Hashtable ();
+			ArrayList mbrTypes = new ArrayList();
+			
 			foreach (ServiceType st in servicetypes)
-				FindDataTypes (st.ObjectType, null, types);
-			return types;
+				FindDataTypes (st.ObjectType, null, dataTypes, mbrTypes);
+				
+			foreach (Type mbrType in mbrTypes)
+			{
+				ServiceType stFound = null;
+				foreach (ServiceType st in servicetypes)
+					if (mbrType == st.ObjectType) stFound = st;
+					
+				if (stFound != null) services.Add (stFound);
+				else services.Add (new ServiceType (mbrType));
+			}
 		}
 		
-		void FindDataTypes (Type t, Type containerType, Hashtable types)
+		void FindDataTypes (Type t, Type containerType, Hashtable types, ArrayList services)
 		{
 			if (IsSystemType (t))
 			{
@@ -569,20 +586,21 @@ namespace System.Runtime.Remoting.MetadataServices
 				{
 					string fns = GetXmlNamespace (fi.FieldType, t);
 					if (!sinfo.Imports.Contains (fns)) sinfo.Imports.Add (fns);
-					FindDataTypes (fi.FieldType, t, types);
+					FindDataTypes (fi.FieldType, t, types, services);
 				}
 			}
 			else
 			{
+				if (services.Contains (t)) return;
+				services.Add (t);
+				
 				foreach (MethodInfo met in t.GetMethods (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
 				{
 					ParameterInfo[] pars = met.GetParameters ();
 					foreach (ParameterInfo par in pars)
-						if (!par.ParameterType.IsMarshalByRef)
-							FindDataTypes (par.ParameterType, t, types);
+						FindDataTypes (par.ParameterType, t, types, services);
 							
-					if (!met.ReturnType.IsMarshalByRef)
-						FindDataTypes (met.ReturnType, t, types);
+					FindDataTypes (met.ReturnType, t, types, services);
 				}
 			}
 		}

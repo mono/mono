@@ -13,34 +13,26 @@ namespace System.Runtime.Remoting.MetadataServices
 {
 	public class SdlChannelSinkProvider : IServerChannelSinkProvider
 	{
-		[MonoTODO]
+		IServerChannelSinkProvider _next;
+		
 		public SdlChannelSinkProvider()
 		{
 		}
 
-		public IServerChannelSinkProvider Next {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+		public IServerChannelSinkProvider Next 
+		{
+			get { return _next; } 
+			set { _next = value; }
 		}
 
-		[MonoTODO]
 		public IServerChannelSink CreateSink (IChannelReceiver channel)
 		{
-			throw new NotImplementedException();
+			IServerChannelSink next = (_next != null) ? _next.CreateSink (channel) : null;
+			return new SdlChannelSink (channel, next);
 		}
 
-		[MonoTODO]
 		public void GetChannelData (IChannelDataStore localChannelData)
 		{
-			throw new NotImplementedException();
 		}
-
-		[MonoTODO]
-		~SdlChannelSinkProvider()
-		{
-		}
-
 	}
 }
