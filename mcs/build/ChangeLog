@@ -1,0 +1,17 @@
+2003-07-20  Peter Williams  <peter@newton.cx>
+
+	* library.make ($(response)): Do a "Creating ..." line here.
+
+	* executable.make ($(response)): Same.
+
+	* config-default.make: Make warning more forceful.
+
+	* rules.make: Define a useful 'PLATFORM_MONO_NATIVE' that is
+	set if the platform does not have a native runtime (ie, linux).
+	Also reorder some definitions.
+
+2003-07-20  Peter Williams  <peter@newton.cx>
+
+	* Created. See ../ChangeLog for entries earlier than
+	this.
+

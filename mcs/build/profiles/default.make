@@ -14,7 +14,7 @@
 # run the compiler; /r: flags are by default loaded from whatever's
 # in the MONO_PATH too).
 
-ifeq ($(PLATFORM_RUNTIME),$(RUNTIME))
+ifdef PLATFORM_MONO_NATIVE
 MCS = MONO_PATH="$(topdir)/class/lib:$$MONO_PATH" $(INTERNAL_MCS)
 else
 MCS = $(PLATFORM_RUNTIME) $(BOOTSTRAP_MCS) /lib:$(topdir)/class/lib

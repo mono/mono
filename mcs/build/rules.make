@@ -64,13 +64,22 @@ PLATFORM = linux
 endif
 endif
 
-ifndef PROFILE
-PROFILE = default
+# Platform config
+
+include $(topdir)/build/platforms/$(PLATFORM).make
+
+# Useful
+
+ifeq ($(PLATFORM_RUNTIME),$(RUNTIME))
+PLATFORM_MONO_NATIVE = yes
 endif
 
 # Rest of the configuration
 
-include $(topdir)/build/platforms/$(PLATFORM).make
+ifndef PROFILE
+PROFILE = default
+endif
+
 include $(topdir)/build/profiles/$(PROFILE).make
 -include $(topdir)/build/config.make
 

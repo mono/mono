@@ -87,7 +87,8 @@ $(makefrag): $(sourcefile)
 
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 $(response): $(sourcefile)
-	cat $< |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+	@echo Creating $@ ...
+	@cat $< |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 endif
 
 -include $(makefrag)
