@@ -29,6 +29,7 @@
 
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
@@ -133,6 +134,33 @@ namespace System.Reflection
 		public virtual bool IsDefined( Type attributeType, bool inherit) {
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
+
+		internal object[] GetPseudoCustomAttributes () {
+			int count = 0;
+
+			/* FIXME: Add support for MarshalAsAttribute */
+
+			if (IsIn)
+				count ++;
+			if (IsOut)
+				count ++;
+			if (IsOptional)
+				count ++;
+
+			if (count == 0)
+				return null;
+			object[] attrs = new object [count];
+			count = 0;
+
+			if (IsIn)
+				attrs [count ++] = new InAttribute ();
+			if (IsOptional)
+				attrs [count ++] = new OptionalAttribute ();
+			if (IsOut)
+				attrs [count ++] = new OutAttribute ();
+
+			return attrs;
+		}			
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MonoTODO]
