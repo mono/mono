@@ -65,6 +65,12 @@ namespace System.Xml.Serialization
 			}
 			return null;
 		}
-	
+
+		internal Hashtable Namespaces
+		{
+			get {
+				return namespaces;
+			}
+		}
 	}
 }

@@ -15,7 +15,7 @@ namespace System.Xml.Serialization {
 
 		#region Fields
 
-		static Hashtable table = new Hashtable ();
+		Hashtable table = new Hashtable ();
 
 		#endregion
 
@@ -67,6 +67,39 @@ namespace System.Xml.Serialization {
 		public void CopyTo (XmlSchema[] array, int index) 
 		{
 			List.CopyTo (array, index);
+		}
+
+		public object Find (XmlQualifiedName name, Type type)
+		{
+			XmlSchema schema = table [name.Namespace] as XmlSchema;
+			if (schema == null)
+				return null;
+
+			if (!schema.IsCompiled) {
+				try {
+					schema.Compile (null);
+				} catch {
+					throw new InvalidOperationException ("Error compiling XmlSchema " + 
+									     name.Namespace);
+				}
+			}
+
+			XmlSchemaObjectTable tbl = null;
+
+			if (type == typeof (XmlSchemaSimpleType) || type == typeof (XmlSchemaComplexType))
+				tbl = schema.SchemaTypes;
+			else if (type == typeof (XmlSchemaAttribute))
+				tbl = schema.Attributes;
+			else if (type == typeof (XmlSchemaAttributeGroup))
+				tbl = schema.AttributeGroups;
+			else if (type == typeof (XmlSchemaElement))
+				tbl = schema.Elements;
+			else if (type == typeof (XmlSchemaGroup))
+				tbl = schema.Groups;
+			else if (type == typeof (XmlSchemaNotation))
+				tbl = schema.Notations;
+
+			return (tbl != null) ? tbl [name] : null;
 		}
 
 		public int IndexOf (XmlSchema schema)

@@ -358,6 +358,20 @@ namespace System.Xml.Serialization {
 			WriteAttribute ("id", GetId (o, true));
 		}
 
+		protected void WriteNamespaceDeclarations (XmlSerializerNamespaces ns)
+		{
+			if (ns == null)
+				return;
+
+			Hashtable tbl = ns.Namespaces;
+			foreach (string key in tbl.Keys) {
+				string val = tbl [key] as string;
+				if (val == null)
+					val = String.Empty;
+				WriteAttribute ("xmlns", key, null, val);
+			}
+		}
+
 		[MonoTODO ("Implement")]
 		protected void WriteNullableQualifiedNameEncoded (string name, string ns, XmlQualifiedName value, XmlQualifiedName xsiType)
 		{

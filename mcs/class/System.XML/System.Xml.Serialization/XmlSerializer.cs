@@ -107,20 +107,16 @@ namespace System.Xml.Serialization {
 
 		#region Events
 
-		[MonoTODO]
 		public event XmlAttributeEventHandler UnknownAttribute;
-		[MonoTODO]
 		public event XmlElementEventHandler UnknownElement;
-		[MonoTODO]
 		public event XmlNodeEventHandler UnknownNode;
-		[MonoTODO]
 		public event UnreferencedObjectEventHandler UnreferencedObject;
 
 		#endregion // Events
 
 		#region Properties
 
-		public bool UseOrder {
+		internal bool UseOrder {
 			get { return useOrder; }
 			set { useOrder = value; }
 		}
@@ -165,6 +161,18 @@ namespace System.Xml.Serialization {
 
 		[MonoTODO]
 		protected virtual object Deserialize (XmlSerializationReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlSerializer [] FromMappings (XmlMapping [] mappings)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlSerializer [] FromTypes (Type [] mappings)
 		{
 			throw new NotImplementedException ();
 		}

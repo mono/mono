@@ -55,6 +55,14 @@ namespace System.Xml.Serialization {
 		}
 
 		[MonoTODO]
+		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name,
+								Type baseType,
+								bool baseTypeCanBeIndirect)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (XmlQualifiedName name)
 		{
 			throw new NotImplementedException ();

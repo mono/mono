@@ -16,7 +16,8 @@ namespace System.Xml.Serialization {
 		#region Fields
 
 		bool useCamelCasing;
-		static Hashtable table = new Hashtable ();
+		Hashtable table = new Hashtable ();
+		Hashtable reserved = new Hashtable ();
 
 		#endregion
 
@@ -44,15 +45,16 @@ namespace System.Xml.Serialization {
 			table.Add (identifier, value);
 		}
 
-		[MonoTODO ("What does this do?")]
 		public void AddReserved (string identifier)
 		{
-			throw new NotImplementedException ();
+			reserved.Add (identifier, identifier);
 		}
 
-		public void AddUnique (string identifier, object value)
+		public string AddUnique (string identifier, object value)
 		{
-			Add (MakeUnique (identifier), value);
+			string unique = MakeUnique (identifier);
+			Add (unique, value);
+			return unique;
 		}
 
 		public void Clear ()
@@ -62,7 +64,7 @@ namespace System.Xml.Serialization {
 
 		public bool IsInUse (string identifier)
 		{
-			return (table.ContainsKey (identifier));
+			return (table.ContainsKey (identifier) || reserved.ContainsKey (identifier));
 		}
 
 		public string MakeRightCase (string identifier)
@@ -91,16 +93,16 @@ namespace System.Xml.Serialization {
 			table.Remove (identifier);
 		}
 
-		[MonoTODO ("What does this do?")]
 		public void RemoveReserved (string identifier)
 		{
-			throw new NotImplementedException ();
+			reserved.Remove (identifier);
 		}
 
-		[MonoTODO ("Need to determine how to do the conversion.")]
 		public object ToArray (Type type)
 		{
-			throw new NotImplementedException ();
+			Array list = Array.CreateInstance (type, table.Count);
+			table.CopyTo (list, 0);
+			return list;
 		}
 
 		#endregion // Methods

@@ -12,6 +12,6 @@ using System;
 namespace System.Xml.Serialization {
 	
 	[Serializable]
-	public delegate object XmlSerializationWriteCallback (object o);
+	public delegate void XmlSerializationWriteCallback (object o);
 }
 
