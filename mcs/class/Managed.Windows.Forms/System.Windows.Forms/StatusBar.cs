@@ -22,6 +22,10 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 
+//
+// TODO:
+//  - Change cursor when mouse is over grip
+//
 
 using System.Collections;
 using System.Drawing;
