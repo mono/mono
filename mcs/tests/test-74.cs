@@ -10,9 +10,13 @@ class X {
 	#endif
 		string s = @"Hola\";
 		string d = "Hola\\";
+		string e = @"Co""a";
+		string f = "Co\"a";
 
 		if (s != d)
 			return 1;
+		if (e != f)
+			return 2;
 		return 0;
 	}
 }
