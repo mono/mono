@@ -74,6 +74,11 @@ namespace System.Drawing
 			{
 				return image.implementation_ as Image;
 			}
+			
+			internal static Font ConvertFont( System.Drawing.Font font) 
+			{
+				return font.implementation_ as Font;
+			}
 			#endregion
 
 			[MonoTODO]
@@ -638,19 +643,19 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawString (string s, System.Drawing.Font font, System.Drawing.Brush brush, RectangleF layoutRectangle)
 			{
-				//throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawString (string s, System.Drawing.Font font, System.Drawing.Brush brush, PointF point)
 			{
-				//throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawString (string s, System.Drawing.Font font, System.Drawing.Brush brush, PointF point, StringFormat format)
 			{
-				//throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
@@ -662,13 +667,22 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawString (string s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y)
 			{
-				throw new NotImplementedException ();
+				Font xrFont = ConvertFont(font);
+				xrFont.SetXrValues (nativeObject_);
+				Brush xrBrush = ConvertBrush(brush);
+				if( xrBrush is SolidBrush) {
+					SolidBrush xrSolidBrush = xrBrush as SolidBrush;
+					xrSolidBrush.SetXrValues( nativeObject_);
+					Xr.XrMoveTo(nativeObject_, (double)x, (double)y);
+					Xr.XrShowText(nativeObject_, s);
+				}
+				//throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawString (string s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y, StringFormat format)
 			{
-				//throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]

@@ -7,6 +7,9 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System;
+using System.Drawing;
+
 namespace System.Drawing {
 	namespace XrImpl	{
 
@@ -67,6 +70,10 @@ namespace System.Drawing {
 				this.gdiVerticalFont = isVertical;
 			}
 
+			internal void SetXrValues(IntPtr xrs) {
+				Xr.XrSelectFont( xrs, String.Format("{0}-{1}", fontFamily.Name, size) );
+			}
+			
 			public bool Bold {
 				get {
 					return (style & FontStyle.Bold) == FontStyle.Bold;

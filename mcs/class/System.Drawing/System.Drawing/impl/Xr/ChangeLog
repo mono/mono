@@ -1,4 +1,10 @@
 2003-06-22  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Font.cs
+	* Graphics.cs
+	* Xrfunctions.cs
+		implementaion of DrawString added
+
+2003-06-22  Alexandre Pigolkine <pigolkine@gmx.de>
 	* FontFamily.cs 	added
 
 2003-06-18  Alexandre Pigolkine <pigolkine@gmx.de>

@@ -40,11 +40,17 @@ namespace System.Drawing.XrImpl {
 		[DllImport(Xrimp)]
 		internal static extern void XrSetLineWidth (IntPtr xrs, double width);
 		
+		[DllImport(Xrimp, CharSet=CharSet.Ansi)]
+		internal static extern void XrSelectFont(IntPtr xrs, string key);
+		
 		[DllImport(Xrimp)]
 		internal static extern void XrMoveTo (IntPtr xrs, double x, double y);
 		
 		[DllImport(Xrimp)]
 		internal static extern void XrLineTo (IntPtr xrs, double x, double y);
+		
+		[DllImport(Xrimp, CharSet=CharSet.Ansi)]
+		internal static extern void XrShowText(IntPtr xrs, string utf8);		
 		
 		[DllImport(Xrimp)]
 		internal static extern void XrTranslate(IntPtr xrs, double tx, double ty);
