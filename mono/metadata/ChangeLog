@@ -1,3 +1,7 @@
+2003-08-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* marshal.c (emit_struct_conv): Add MONO_TYPE_CHAR
+
 2003-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Web_Util_ICalls_get_machine_install_dir): 
