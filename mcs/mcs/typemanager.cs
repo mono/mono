@@ -1361,10 +1361,18 @@ public class TypeManager {
 	//
 	public static bool IsNestedChildOf (Type type, Type parent)
 	{
-		if ((type == parent) || type.IsSubclassOf (parent))
+		if (type == parent)
 			return false;
-		else
-			return IsSubclassOrNestedChildOf (type, parent);
+
+		type = type.DeclaringType;
+		while (type != null) {
+			if ((type == parent) || type.IsSubclassOf (parent))
+				return true;
+
+			type = type.DeclaringType;
+		}
+
+		return false;
 	}
 
 	/// <summary>
@@ -2153,7 +2161,8 @@ public class TypeManager {
 			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
 			if (ma == MethodAttributes.Private)
-				return closure_private_ok || (closure_invocation_type == m.DeclaringType);
+				return closure_private_ok || (closure_invocation_type == m.DeclaringType) ||
+					IsNestedChildOf (closure_invocation_type, m.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
@@ -2201,7 +2210,8 @@ public class TypeManager {
 			FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
 
 			if (fa == FieldAttributes.Private)
-				return closure_private_ok || (closure_invocation_type == m.DeclaringType);
+				return closure_private_ok || (closure_invocation_type == m.DeclaringType) ||
+					IsNestedChildOf (closure_invocation_type, m.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
@@ -2352,7 +2362,7 @@ public class TypeManager {
 			else
 				bf = original_bf;
 
-			closure_private_ok = (bf & BindingFlags.NonPublic) != 0;
+			closure_private_ok = (original_bf & BindingFlags.NonPublic) != 0;
 			closure_queried_type = current_type;
 
 			Timer.StopTimer (TimerType.MemberLookup);
