@@ -27,6 +27,8 @@ System/DateTimeTest.cs
 System/DecimalTest.cs
 System/DecimalTest2.cs
 System/DoubleTest.cs
+System/DoubleFormatterTest.cs
+System/DecimalFormatterTest.cs
 System/EnumTest.cs
 System/ExceptionTest.cs
 System/GuidTest.cs
@@ -133,6 +135,7 @@ System.Text/ASCIIEncodingTest.cs
 System.Text/StringBuilderTest.cs
 System.Text/UTF7EncodingTest.cs
 System.Text/UTF8EncodingTest.cs
+System.Text/UnicodeEncodingTest.cs
 System.Threading/ThreadTest.cs
 System.Threading/MutexTest.cs
 System.Reflection/AssemblyNameTest.cs
