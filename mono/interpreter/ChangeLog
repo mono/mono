@@ -1,4 +1,9 @@
 
+Thu Apr 4 11:36:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: don't try to get an IL opcode for runtime and internal
+	call methods.
+
 Thu Mar 28 16:54:51 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: spring warning cleanup.
