@@ -1,3 +1,10 @@
+2003-12-01  Dick Porter  <dick@ximian.com>
+
+	* icall.c: 
+	* locales.c: Implement string compares and searching
+
+	* object.h: Add extra Thread field
+
 2003-11-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (fixup_method): Add support for MonoCMethod.
