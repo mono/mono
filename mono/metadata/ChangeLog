@@ -1,3 +1,9 @@
+2003-08-22 Jackson Harper <jackson@latitudegeo.com>
+
+	* string-icalls.c (StringReplace): If their are no occurances of
+	the old string found return a reference to the supplied
+	string. This saves some memory and matches MS behavoir.
+	
 2003-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: fixed compilation for systems that define AF_INET6
