@@ -18,6 +18,7 @@ namespace System.Drawing
 	public abstract class Brush : MarshalByRefObject, ICloneable, IDisposable
 	{
 		internal IntPtr nativeObject;
+		internal bool disposed = false;
 		abstract public object Clone ();
 
                 internal Brush ()
@@ -63,8 +64,11 @@ namespace System.Drawing
 
 		protected virtual void Dispose (bool disposing)
 		{
-			Status status = GDIPlus.GdipDeleteBrush (nativeObject);
-			GDIPlus.CheckStatus (status);
+			if (disposed == false) {
+				Status status = GDIPlus.GdipDeleteBrush (nativeObject);
+				GDIPlus.CheckStatus (status);
+				disposed = true;
+			}
 		}
 
 		~Brush ()

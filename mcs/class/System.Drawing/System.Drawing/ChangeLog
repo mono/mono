@@ -1,3 +1,9 @@
+2004-06-01  Ravindra <rkumar@novell.com>
+
+	* Pen.cs: Added a note on Dispose method.
+	* Brush.cs: Fixed Dispose method.
+	* SolidBrush.cs: Fixed Dispose method.
+
 2004-05-28  Ravindra <rkumar@novell.com>
 
 	* gdipFunctions.cs: Added some P/Invoke calls for Draw/Fill
