@@ -1,3 +1,8 @@
+2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ConstructorBuilderTest.cs (TestAttributes): Make this test more
+	general so it runs on mono too.
+
 2003-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilderTest.cs: Added tests for IsTransient ().

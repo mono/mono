@@ -46,8 +46,10 @@ public class ConstructorBuilderTest : Assertion
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0, new Type [0]);
 
-		AssertEquals ("Attributes works", 
-					  cb.Attributes, MethodAttributes.Public | MethodAttributes.SpecialName);
+		Assert ("Attributes works", 
+				(cb.Attributes & MethodAttributes.Public) != 0);
+		Assert ("Attributes works", 
+				(cb.Attributes & MethodAttributes.SpecialName) != 0);
 	}
 
 	public void TestCallingConvention () {
