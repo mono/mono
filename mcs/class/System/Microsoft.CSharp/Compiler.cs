@@ -30,8 +30,8 @@ namespace Microsoft.CSharp {
 			
 			ArrayList error_list = new ArrayList ();
 			Process mcs = new Process ();
-			StreamReader mcs_output;
-			string error_line;
+			string mcs_output;
+			string[] mcs_output_lines;
 
 			mcs.StartInfo.FileName = "mcs";
 			mcs.StartInfo.Arguments = BuildArgs (sourceTexts, 
@@ -42,18 +42,18 @@ namespace Microsoft.CSharp {
 
 			try {
 				mcs.Start ();
-				mcs_output = mcs.StandardOutput;
+				mcs_output = mcs.StandardOutput.ReadToEnd();
 				mcs.WaitForExit ();
 			} finally {
 				mcs.Close ();
 			}
 			
-			error_line = mcs_output.ReadLine ();
-			while (null != error_line) {
+			mcs_output_lines = mcs_output.Split (
+				System.Environment.NewLine.ToCharArray ());
+			foreach (string error_line in mcs_output_lines) {
 				CompilerError error = CreateErrorFromString (error_line);
 				if (null != error)
-					error_list.Add (error);
-				error_line = mcs_output.ReadLine ();
+					error_list.Add (error);	
 			}
 			
 			return (CompilerError[])error_list.ToArray (typeof(CompilerError));

@@ -1,18 +1,23 @@
+2002-11-6 Jackson Harper <jackson@latitudegeo.com>
+
+	* Compiler.cs: No longers waits untill mcs is finished running to read output, this should prevent
+	crashes from buffers filling up.	
+
 2002-11-4 Jackson Harper <jackson@latitudegeo.com>
 
-	* Compiler CompilerError: Fixed (C) in header
+	* Compiler.cs CompilerError.cs: Fixed (C) in header
 	
 2002-11-4 Jackson Harper <jackson@latitudegeo.com>
 
-	* Compiler: Added file
+	* Compiler.cs: Added file
 
 2002-11-4 Jackson Harper <jackson@latitudegeo.com>
 
-	* CompilerError: Changed FileName property to the correct name 'SourceFile'
+	* CompilerError.cs: Changed FileName property to the correct name 'SourceFile'
 
 2002-10-30 Jackson Harper <jackson@latitudegeo.com>
 
-	* CompilerError: Added class
+	* CompilerError.cs: Added class
 	
 2002-10-19  Rachel Hestilow <hestilow@ximian.com>
 
