@@ -2,6 +2,8 @@
 
 	* MACAlgorithm.cs: Removed the hardcoded PaddingMode.Zeros as this is 
 	now selectable in Fx 2.0.
+	* SymmetricTransform.cs: Throw CryptographicException when CipherMode
+	CTS or OFB is being used (to match MS implementation).
 
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 

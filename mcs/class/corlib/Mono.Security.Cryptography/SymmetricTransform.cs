@@ -6,10 +6,6 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -197,13 +193,13 @@ namespace Mono.Security.Cryptography {
 		// Output-FeedBack (OFB)
 		protected virtual void OFB (byte[] input, byte[] output) 
 		{
-			throw new NotImplementedException ("OFB not yet supported");
+			throw new CryptographicException ("OFB isn't supported by the framework");
 		}
 
 		// Cipher Text Stealing (CTS)
 		protected virtual void CTS (byte[] input, byte[] output) 
 		{
-			throw new NotImplementedException ("CTS not yet supported");
+			throw new CryptographicException ("CTS  isn't supported by the framework");
 		}
 
 		private void CheckInput (byte[] inputBuffer, int inputOffset, int inputCount)
