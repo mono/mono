@@ -1,3 +1,36 @@
+2001-12-21  Ravi Pratap  <ravi@ximian.com>
+
+	* ecore.cs (EventExpr.Resolve): Implement to correctly set the type
+	and do the usual workaround for SRE.
+
+	* class.cs (MyEventBuilder.EventType): New member to get at the type
+	of the event, quickly.
+
+	* expression.cs (Binary.ResolveOperator): Handle delegate addition.
+
+	* assign.cs (Assign.DoResolve): Handle the case when the target
+	is an EventExpr and perform the necessary checks.
+
+	* ecore.cs (EventExpr.EmitAssign): Implement the IAssignMethod
+	interface.
+
+	(SimpleName.MemberStaticCheck): Include check for EventExpr.
+
+	(EventExpr): Set the type in the constructor itself since we 
+	are meant to be born fully resolved.
+
+	(EventExpr.Define): Revert code I wrote earlier.
+		
+	* delegate.cs (NewDelegate.Resolve): Handle the case when the MethodGroup's
+	instance expression is null. The instance expression is a This in that case
+	or a null, depending on whether it is a static method or not.
+
+	Also flag an error if the reference to a method is ambiguous i.e the MethodGroupExpr
+	refers to more than one method.
+
+	* assign.cs (DoResolve): Check whether the event belongs to the same Type container
+	and accordingly flag errors.
+
 2001-12-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Throw.Emit): Add support for re-throwing exceptions.

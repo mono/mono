@@ -2524,6 +2524,11 @@ namespace Mono.CSharp {
 					Error120 (Location, Name);
 					return null;
 				}
+			} else if (e is EventExpr) {
+				if (!((EventExpr) e).IsStatic) {
+					Error120 (Location, Name);
+					return null;
+				}
 			}
 
 			return e;
@@ -2947,14 +2952,16 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   Fully resolved expression that evaluates to a Expression
+	///   Fully resolved expression that evaluates to an Event
 	/// </summary>
-	public class EventExpr : Expression {
+	public class EventExpr : Expression, IAssignMethod {
 		public readonly EventInfo EventInfo;
 		Location loc;
 		public Expression InstanceExpression;
 
 		public readonly bool IsStatic;
+
+		MethodInfo add_accessor, remove_accessor;
 		
 		public EventExpr (EventInfo ei, Location loc)
 		{
@@ -2962,31 +2969,42 @@ namespace Mono.CSharp {
 			this.loc = loc;
 			eclass = ExprClass.EventAccess;
 
-			MethodInfo add_accessor = TypeManager.GetAddMethod (ei);
-			MethodInfo remove_accessor = TypeManager.GetRemoveMethod (ei);
+			add_accessor = TypeManager.GetAddMethod (ei);
+			remove_accessor = TypeManager.GetRemoveMethod (ei);
 			
-			if (add_accessor != null)
-				if (add_accessor.IsStatic)
+			if (add_accessor.IsStatic || remove_accessor.IsStatic)
 					IsStatic = true;
 
-			if (remove_accessor != null)
-				if (remove_accessor.IsStatic)
-					IsStatic = true;
+			if (EventInfo is MyEventBuilder)
+				type = ((MyEventBuilder) EventInfo).EventType;
+			else
+				type = EventInfo.EventHandlerType;
 		}
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			// We are born in resolved state.
-
-			Console.WriteLine ("Came here");
-			type = EventInfo.EventHandlerType;
+			// We are born fully resolved
 			return this;
 		}
 
 		override public void Emit (EmitContext ec)
 		{
-			throw new Exception ("Implement me");
-			// FIXME: Implement.
+			// FIXME : Implement
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source)
+		{
+			Expression handler = ((Binary) source).Right;
+			
+			Argument arg = new Argument (handler, Argument.AType.Expression);
+			ArrayList args = new ArrayList ();
+				
+			args.Add (arg);
+			
+			if (((Binary) source).Oper == Binary.Operator.Addition)
+				Invocation.EmitCall (ec, IsStatic, InstanceExpression, add_accessor, args);
+			else
+				Invocation.EmitCall (ec, IsStatic, InstanceExpression, remove_accessor, args);
 		}
 	}
 }	

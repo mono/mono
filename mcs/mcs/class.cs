@@ -2987,8 +2987,14 @@ namespace Mono.CSharp {
 				return reflected_type;
 			}
 		}
-	}
 
+		public Type EventType {
+			get {
+				return event_type;
+			}
+		}
+	}
+	
 	public class Event : MemberCore {
 		
 		const int AllowedModifiers =

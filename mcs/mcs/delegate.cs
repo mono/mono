@@ -535,21 +535,30 @@ namespace Mono.CSharp {
 			
 			if (e is MethodGroupExpr) {
 				MethodGroupExpr mg = (MethodGroupExpr) e;
+
+				if (mg.Methods.Length > 1) {
+					Report.Error (-14, Location, "Ambiguous method reference in delegate creation");
+					return null;
+				}
 				
 				delegate_method  = Delegate.VerifyMethod (ec, type, mg.Methods [0], Location);
 				
 				if (delegate_method == null)
 					return null;
-				
+
 				if (mg.InstanceExpression != null)
 					delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
-				else
-					delegate_instance_expr = null;
-				
+				else {
+					if (!ec.IsStatic)
+						delegate_instance_expr = (new This (Location.Null)).Resolve (ec);
+					else
+						delegate_instance_expr = null;
+				}
+
 				if (delegate_instance_expr != null)
 					if (delegate_instance_expr.Type.IsValueType)
 						delegate_instance_expr = new BoxedCast (delegate_instance_expr);
-
+				
 				DictionaryEntry de = new DictionaryEntry (delegate_method, delegate_instance_expr);
 				TypeManager.RegisterDelegateData (type, de);
 				

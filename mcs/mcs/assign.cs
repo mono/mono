@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 	public class Assign : ExpressionStatement {
 		Expression target, source;
 		Location l;
-		
+
 		public Assign (Expression target, Expression source, Location l)
 		{
 			this.target = target;
@@ -106,6 +106,13 @@ namespace Mono.CSharp {
 			set {
 				source = value;
 			}
+		}
+
+		void error70 (EventInfo ei)
+		{
+			Report.Error (70, l, "The event '" + ei.Name +
+				      "' can only appear on the left-side of a += or -= (except when" +
+				      " used from within the type '" + ei.DeclaringType + "')");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -146,6 +153,42 @@ namespace Mono.CSharp {
 				IndexerAccess ia = (IndexerAccess) target;
 
 				return this;
+			}
+
+			if (target is EventExpr) {
+
+				Binary tmp = null;
+				EventInfo ei = ((EventExpr) target).EventInfo;
+
+				Expression ml = MemberLookup (ec, ec.TypeContainer.TypeBuilder, ei.Name, true,
+							      MemberTypes.Event,
+							      AllBindingsFlags, l);
+				
+				if (ml == null) {
+					//
+					// If this is the case, then the Event does not belong 
+					// to this TypeContainer and so, according to the spec
+					// is allowed to only appear on the left hand of
+					// the += and -= operators
+					//
+					
+					if (!(source is Binary)) {
+						error70 (ei);
+						return null;
+					} else {
+						tmp = ((Binary) source);
+						if (tmp.Oper != Binary.Operator.Addition &&
+						    tmp.Oper != Binary.Operator.Subtraction) {
+							error70 (ei);
+							return null;
+						}
+					}
+
+					return this;
+				} else
+					throw new Exception ("Unhandle case ! Implement me !");
+
+				// return this;
 			}
 
 			if (source is New && target_type.IsSubclassOf (TypeManager.value_type)){

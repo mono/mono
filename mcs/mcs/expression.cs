@@ -1416,7 +1416,7 @@ namespace Mono.CSharp {
 			//
 			// Step 2: Default operations on CLI native types.
 			//
-			
+
 			// Only perform numeric promotions on:
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
 			//
@@ -1463,9 +1463,17 @@ namespace Mono.CSharp {
 					return this;
 				}
 
-				//
-				// FIXME: is Delegate operator + (D x, D y) handled?
-				//
+				if (l.IsSubclassOf (TypeManager.delegate_type) &&
+				    r.IsSubclassOf (TypeManager.delegate_type)) {
+
+					Arguments = new ArrayList ();
+					Arguments.Add (new Argument (left, Argument.AType.Expression));
+					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					
+					method = TypeManager.delegate_combine_delegate_delegate;
+
+					type = l;
+				}
 			}
 			
 			if (oper == Operator.LeftShift || oper == Operator.RightShift)
@@ -3557,6 +3565,7 @@ namespace Mono.CSharp {
 						continue;
 					
 					// Handle initialization from vars, fields etc.
+
 					Expression conv = ConvertImplicitRequired (
 						ec, tmp, underlying_type, loc);
 					
@@ -4265,7 +4274,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 					pe.InstanceExpression = left;
-
+					
 					return pe;
 				}
 			}
@@ -4278,7 +4287,9 @@ namespace Mono.CSharp {
 						SimpleName.Error120 (loc, ee.EventInfo.Name);
 						return null;
 					}
+
 					return ee;
+
 				} else {
 					if (ee.IsStatic) {
 						error176 (loc, ee.EventInfo.Name);
