@@ -274,8 +274,12 @@ namespace System.Data.OracleClient.Oci {
 			case OciDataType.Number:
 				tmp = Marshal.PtrToStringAnsi (Value, Size);
 				if (tmp != null) {
-					if (Scale == 0)
-						return Int32.Parse (String.Copy ((string) tmp));
+					if (Scale == 0) {
+						if (Size < 10)
+							return Int32.Parse (String.Copy ((string) tmp));
+						else
+							return Int64.Parse (String.Copy ((string) tmp));
+					}
 					else
 						return Decimal.Parse (String.Copy ((string) tmp));
 				}

@@ -1,3 +1,8 @@
+2004-05-21  Umadevi S  <sumadevi@novell.com>
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs
+	  Fixed bug 55030. Included checking for size		
+		
+
 2004-05-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* OracleCommandBuilder.cs : Added (stub).
