@@ -1,5 +1,10 @@
 2004-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ControlCollection.cs: when clearing the control collection, tell the
+	owners about the removal. Fixes bug #60800.
+
+2004-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Page.cs: don't nullify _context after processing the request as there
 	are events not triggered yet. Fixes bug #60726.
 

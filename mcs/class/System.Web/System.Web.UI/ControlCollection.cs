@@ -111,6 +111,9 @@ namespace System.Web.UI {
 
 		public virtual void Clear ()
 		{
+			foreach (Control ctrl in list) 
+				owner.RemovedControl (ctrl);
+
 			list.Clear ();
 			if (owner != null)
 				owner.ResetChildNames ();
