@@ -95,3 +95,50 @@ char *helper_Mono_Posix_readdir(DIR *dir) {
 	if (e == NULL) return NULL;
 	return strdup (e->d_name);
 }
+
+int helper_Mono_Posix_getpwnamuid (int mode, char *in_name, int in_uid,
+	char **account,
+	char **password,
+	int *uid,
+	int *gid,
+	char **name,
+	char **home,
+	char **shell
+	) {
+
+	struct passwd pw, *pwp;
+	char buf[4096];
+	int ret;
+
+	if (mode == 0)
+		ret = getpwnam_r (in_name, &pw, buf, 4096, &pwp);
+	else
+		ret = getpwuid_r (in_uid, &pw, buf, 4096, &pwp);
+
+	if (ret == 0 && pwp == NULL) {
+		// Don't know why this happens, but it does.
+		// ret == 0, errno == 0, but no record was found.
+		ret = ENOENT;
+	}
+
+	if (ret) {
+		*account = NULL; // prevent marshalling unset pointers
+		*password = NULL;
+		*uid = 0;
+		*gid = 0;
+		*name = NULL;
+		*home = NULL;
+		*shell = NULL;
+		return ret;
+	}
+
+	*account = pwp->pw_name;
+	*password = pwp->pw_passwd;
+	*uid = pwp->pw_uid;
+	*gid = pwp->pw_gid;
+	*name = pwp->pw_gecos;
+	*home = pwp->pw_dir;
+	*shell = pwp->pw_shell;
+
+	return 0;
+}
