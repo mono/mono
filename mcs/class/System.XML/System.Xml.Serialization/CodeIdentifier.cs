@@ -44,6 +44,9 @@ namespace System.Xml.Serialization {
 				if (Char.IsLetterOrDigit (c) || c == '_')
 					output += c;
 
+			if (output.Length > 400)
+				output = output.Substring (0,400);
+				
 			return output;
 		}
 	}

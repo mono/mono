@@ -536,7 +536,7 @@ namespace System.Xml.Serialization {
 				else if (at is XmlSchemaAttributeGroupRef)
 				{
 					XmlSchemaAttributeGroupRef gref = (XmlSchemaAttributeGroupRef)at;
-					XmlSchemaAttributeGroup grp = (XmlSchemaAttributeGroup) schemas.Find (gref.RefName, typeof(XmlSchemaAttributeGroup));
+					XmlSchemaAttributeGroup grp = FindRefAttributeGroup (gref.RefName);
 					ImportAttributes (typeQName, cmap, grp.Attributes, grp.AnyAttribute, classIds);
 				}
 			}
@@ -647,7 +647,7 @@ namespace System.Xml.Serialization {
 				XmlSchemaAttributeGroupRef gref = ob as XmlSchemaAttributeGroupRef;
 				if (gref != null)
 				{
-					XmlSchemaAttributeGroup grp = (XmlSchemaAttributeGroup) schemas.Find (gref.RefName, typeof(XmlSchemaAttributeGroup));
+					XmlSchemaAttributeGroup grp = FindRefAttributeGroup (gref.RefName);
 					att = FindArrayAttribute (grp.Attributes);
 					if (att != null) return att;
 				}
@@ -1002,6 +1002,9 @@ namespace System.Xml.Serialization {
 			if (ext != null) qname = ext.BaseTypeName;
 			else qname = ((XmlSchemaComplexContentRestriction)content.Content).BaseTypeName;
 			
+			if (qname == typeQName)
+				throw new InvalidOperationException ("Cannot import schema for type '" + typeQName.Name + "' from namespace '" + typeQName.Namespace + "'. Redefine not supported");
+			
 			// Add base map members to this map
 
 			XmlTypeMapping baseMap = ImportType (qname, null);
@@ -1106,6 +1109,7 @@ namespace System.Xml.Serialization {
 			if (stype.Content is XmlSchemaSimpleTypeRestriction)
 			{
 				XmlSchemaSimpleTypeRestriction rest = (XmlSchemaSimpleTypeRestriction)stype.Content;
+				if (rest.Facets.Count == 0) return false;
 				foreach (object ob in rest.Facets)
 					if (!(ob is XmlSchemaEnumerationFacet)) return false;
 				return true;
@@ -1385,6 +1389,7 @@ namespace System.Xml.Serialization {
 			}
 			
 			if (!attr.SchemaTypeName.IsEmpty) return GetTypeData (attr.SchemaTypeName, null);
+			if (attr.SchemaType == null) return TypeTranslator.GetTypeData (typeof(string));
 			else return GetTypeData (attr.SchemaType, typeQName, attr.Name, sharedAnnType, null);
 		}
 
@@ -1449,6 +1454,7 @@ namespace System.Xml.Serialization {
 			{
 				map = new XmlTypeMapping (typeData.XmlType, XmlSchema.Namespace, typeData, typeData.XmlType, XmlSchema.Namespace);
 				map.IncludeInSchema = false;
+				map.ObjectMap = new ClassMap ();
 				dataMappedTypes [typeData] = map;
 				
 				if (typeData.Type == typeof(object))
@@ -1507,6 +1513,19 @@ namespace System.Xml.Serialization {
 			}
 			return (XmlSchemaAttribute) schemas.Find (refName, typeof(XmlSchemaAttribute));
 		}
+		
+		XmlSchemaAttributeGroup FindRefAttributeGroup (XmlQualifiedName refName)
+		{
+			XmlSchemaAttributeGroup grp = (XmlSchemaAttributeGroup) schemas.Find (refName, typeof(XmlSchemaAttributeGroup));
+			foreach (XmlSchemaObject at in grp.Attributes)
+			{
+				if (at is XmlSchemaAttributeGroupRef && ((XmlSchemaAttributeGroupRef)at).RefName == refName)
+					throw new InvalidOperationException ("Cannot import attribute group '" + refName.Name + "' from namespace '" + refName.Namespace + "'. Redefine not supported");
+					
+			}
+			return grp;
+		}
+
 
 		string GetDocumentation (XmlSchemaAnnotated elem)
 		{

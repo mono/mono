@@ -59,6 +59,9 @@ namespace System.Xml.Serialization
 		
 		static XmlSerializer ()
 		{
+			string db = Environment.GetEnvironmentVariable ("MONO_XMLSERIALIZER_DEBUG");
+			deleteTempFiles = (db == null || db == "no");
+			
 			IDictionary table = (IDictionary) ConfigurationSettings.GetConfig("system.diagnostics");
 			if (table != null) {
 				table = (IDictionary) table["switches"];
@@ -471,7 +474,9 @@ namespace System.Xml.Serialization
 			
 			string file = Path.GetTempFileName ();
 			StreamWriter sw = new StreamWriter (file);
-//			Console.WriteLine ("Generating " + file);
+			
+			if (!deleteTempFiles)
+				Console.WriteLine ("Generating " + file);
 			
 			SerializationCodeGenerator gen = new SerializationCodeGenerator (maps);
 			
@@ -536,7 +541,8 @@ namespace System.Xml.Serialization
 			if (deleteTempFiles)
 				File.Delete (file);
 
-//			Console.WriteLine ("Generation finished - " + (DateTime.Now - tim).TotalMilliseconds + " ms");
+			if (!deleteTempFiles)
+				Console.WriteLine ("Generation finished - " + (DateTime.Now - tim).TotalMilliseconds + " ms");
 		}
 		
 #endregion // Methods

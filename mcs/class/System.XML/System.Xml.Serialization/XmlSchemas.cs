@@ -74,8 +74,25 @@ namespace System.Xml.Serialization {
 		{
 			XmlSchema schema = table [name.Namespace] as XmlSchema;
 			if (schema == null)
+			{
+				// An schema may import other schemas. An imported schema would
+				// not be in the table, but its elements (although from another
+				// namespace) would be in the schema that imported it. So, we
+				// need know to check for every schema in the table.
+				
+				foreach (XmlSchema s in this)
+				{
+					object ob = Find (s, name, type);
+					if (ob != null) return ob;
+				}
 				return null;
+			}
+			else
+				return Find (schema, name, type);
+		}
 
+		object Find (XmlSchema schema, XmlQualifiedName name, Type type)
+		{
 			if (!schema.IsCompiled) {
 				schema.Compile (null);
 			}

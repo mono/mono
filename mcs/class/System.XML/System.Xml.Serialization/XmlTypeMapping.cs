@@ -551,6 +551,9 @@ namespace System.Xml.Serialization
 
 		public string GetEnumName (string xmlName)
 		{
+			if (_isFlags && xmlName.Length == 0) 
+				return "0";
+			
 			if (_isFlags && xmlName.Trim().IndexOf (' ') != -1)
 			{
 				System.Text.StringBuilder sb = new System.Text.StringBuilder ();
@@ -563,7 +566,7 @@ namespace System.Xml.Serialization
 						if (mem.XmlName == name) { foundEnumValue = mem.EnumName; break; }
 
 					if (foundEnumValue != null) sb.Append (foundEnumValue).Append (','); 
-					else throw new InvalidOperationException ("Invalid enum value '" + name + "'");
+					else return null;
 				}
 				sb.Remove (sb.Length-1, 1);
 				return sb.ToString ();

@@ -1082,6 +1082,7 @@ namespace System.Xml.Serialization
 					if (typeMap.TypeData.SchemaType == SchemaTypes.XmlNode)
 						throw new Exception ("Not supported for XmlNode types");
 						
+//					Console.WriteLine ("This should be string:" + typeMap.ElementName.GetType());
 					WriteLineInd ("if (Reader.LocalName != " + GetLiteral (typeMap.ElementName) + " || Reader.NamespaceURI != " + GetLiteral (typeMap.Namespace) + ")");
 					WriteLine ("throw CreateUnknownNodeException();");
 					Unindent ();
@@ -1926,7 +1927,9 @@ namespace System.Xml.Serialization
 				string switchMethod =  metName + "_Switch";
 				WriteLine (typeMap.TypeFullName + " " + metName + " (string xmlName)");
 				WriteLineInd ("{");
-				WriteLine ("if (xmlName.Trim().IndexOf (' ') != -1)");
+				WriteLine ("xmlName = xmlName.Trim();");
+				WriteLine ("if (xmlName.Length == 0) return (" + typeMap.TypeFullName + ")0;");
+				WriteLine ("if (xmlName.IndexOf (' ') != -1)");
 				WriteLineInd ("{");
 				WriteLine (typeMap.TypeFullName + " sb = (" + typeMap.TypeFullName + ")0;");
 				WriteLine ("string[] enumNames = xmlName.ToString().Split (' ');");

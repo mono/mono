@@ -102,7 +102,7 @@ namespace System.Xml.Serialization {
 
 			ExportMembersMapCode (codeClass, (ClassMap)map.ObjectMap, map.XmlTypeNamespace, map.BaseMap);
 
-			if (map.BaseMap != null)
+			if (map.BaseMap != null && map.BaseMap.TypeData.SchemaType != SchemaTypes.XmlNode)
 			{
 				CodeTypeReference ctr = new CodeTypeReference (map.BaseMap.TypeData.FullTypeName);
 				codeClass.BaseTypes.Add (ctr);
@@ -173,7 +173,7 @@ namespace System.Xml.Serialization {
 			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
 			if (anyAttrMember != null)
 			{
-				CodeMemberField codeField = new CodeMemberField (anyAttrMember.TypeData.FullTypeName, anyAttrMember.Name);
+				CodeMemberField codeField = new CodeMemberField (GetDomType (anyAttrMember.TypeData), anyAttrMember.Name);
 				AddComments (codeField, anyAttrMember.Documentation);
 				codeField.Attributes = MemberAttributes.Public;
 				GenerateAnyAttribute (codeField);
@@ -183,7 +183,7 @@ namespace System.Xml.Serialization {
 
 		CodeMemberField CreateFieldMember (TypeData type, string name, object defaultValue, string comments)
 		{
-			CodeMemberField codeField = new CodeMemberField (type.FullTypeName, name);
+			CodeMemberField codeField = new CodeMemberField (GetDomType (type), name);
 			codeField.Attributes = MemberAttributes.Public;
 			AddComments (codeField, comments);
 
@@ -288,7 +288,7 @@ namespace System.Xml.Serialization {
 
 		void AddArrayElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberList member, string defaultNamespace)
 		{
-			CodeMemberField codeField = new CodeMemberField (member.TypeData.FullTypeName, member.Name);
+			CodeMemberField codeField = new CodeMemberField (GetDomType (member.TypeData), member.Name);
 			AddComments (codeField, member.Documentation);
 			codeField.Attributes = MemberAttributes.Public;
 			codeClass.Members.Add (codeField);
@@ -441,6 +441,14 @@ namespace System.Xml.Serialization {
 		{
 			AddComments (type, comments);
 			codeNamespace.Types.Add (type);
+		}
+		
+		CodeTypeReference GetDomType (TypeData data)
+		{
+			if (data.SchemaType == SchemaTypes.Array)
+				return new CodeTypeReference (GetDomType (data.ListItemTypeData),1);
+			else
+				return new CodeTypeReference (data.FullTypeName);
 		}
 		
 		#endregion

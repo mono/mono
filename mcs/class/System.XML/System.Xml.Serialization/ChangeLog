@@ -1,3 +1,23 @@
+2004-03-12  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CodeIdentifier.cs: Limit the length of identifiers.
+	* MapCodeGenerator.cs: Do not generate base class if it is an XmlNode.
+	  Generate types using GetDomType, so if the type is an array, it creates
+	  the correct combination of types.
+	* SerializationCodeGenerator.cs, XmlTypeMapping.cs: When trying to parse
+	  an enum, if the string is empty and the enum has [Flags], then return 0
+	  as value. This fixes bug #55509.
+	* XmlSchemaImporter.cs: Added check for redefines of attribute groups. They
+	  are not supported. Another check: a simple type cannot be enum if it does
+	  not have any enum facet.
+	  And another fix: use string as default type for attribtues.
+	* XmlSchemas.cs: Fixed search for schema elements. An schema may import 
+	  other schemas. An imported schema would not be in the table, but its
+	  elements (although from another namespace) would be in the schema that 
+	  imported it. So, we need know to check for every schema in the table.
+	* XmlSerializer.cs: Added environment variable to help debugging code 
+	  generator output.
+
 2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MapCodeGenerator.cs: Added IncludeMetadata property, which returns a list
