@@ -1,4 +1,9 @@
 
+Thu Nov 27 19:02:07 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini.c, mini-x86.c, mini-ppc.c, mini-sparc.c: move 
+	mono_spillvar_offset() to arch-specific code.
+
 Thu Nov 27 18:30:42 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.h, mini-ppc.c: handle some different ABI call convention issues.
