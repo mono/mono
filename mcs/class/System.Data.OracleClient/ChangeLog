@@ -1,0 +1,38 @@
+2002-12-05  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.OracleClient
+	* System.Data.OracleClient/System.Data.OracleClient
+	  added directory to mcs/class for the Oracle 8i 
+	  data provider
+	
+	* System.Data.OracleClient/OciGlue.cs
+	* System.Data.OracleClient/OracleConnection.cs
+	* System.Data.OracleClient/OracleCommand.cs: added
+	files for the System.Data.OracleClient.dll assembly
+	
+	* System.Data.OracleClient/ociglue.c
+	* System.Data.OracleClient/ociglue.h: added
+	files for thte System.Data.OracleClient.gluelib.dll
+	unmanaged c shared library
+	
+	* System.Data.OracleClient/TestOracleClient.cs: test
+	the OracleClient data provider for Oracle 8i database
+	
+	* ChangeLog: added file
+	
+	* README.TXT: added file
+	
+	* System.Data.OracleClient/OciGlueLib_MSVC_win32.make:
+	added makefile for ociglue shared lib on Win32 platform 
+	and compiler Visual C++ 7.0
+	
+	* System.Data.OracleClient/OciGlueLib_BCC_win32.make:
+	added makefile for ociglue shared lib on Win32 platform
+	and compiler Borland C++ 5.5
+	
+	* MonoOracleClient.csproj
+	* MonoOracleClient.csproj.usr
+	* MonoOracleClient.sln
+	* MonoOracleClient.suo: added Visual Studio 1.0
+	project files to build the
+	assembly System.Data.OracleClient.dll
