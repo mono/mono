@@ -392,7 +392,7 @@ public class TypeManager {
 		builder_to_interface.Add (t, i);
 	}
 
-	public static void AddMethod (MethodBuilder builder, MemberBase method)
+	public static void AddMethod (MethodBuilder builder, MethodData method)
 	{
 		builder_to_method.Add (builder, method);
 	}
@@ -1613,7 +1613,7 @@ public class TypeManager {
 		MethodFlags flags = 0;
 		
 		if (mb.DeclaringType is TypeBuilder){
-			MemberBase method = (MemberBase) builder_to_method [mb];
+			MethodData method = (MethodData) builder_to_method [mb];
 			if (method == null) {
 				// FIXME: implement Obsolete attribute on Property,
 				//        Indexer and Event.

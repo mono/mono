@@ -1,5 +1,23 @@
 2002-07-25  Martin Baulig  <martin@gnome.org>
 
+	* class.cs (MethodData): New public class.  This is a `method builder'
+	class for a method or one accessor of a Property/Indexer/Event.
+	(MethodData.GetMethodFlags): Moved here from MemberBase.
+	(MethodData.ApplyAttributes): Likewise.
+	(MethodData.ApplyObsoleteAttribute): Likewise.
+	(MethodData.ApplyConditionalAttribute): Likewise.
+	(MethodData.ApplyDllImportAttribute): Likewise.
+	(MethodData.CheckAbstractAndExternal): Likewise.
+	(MethodData.Define): Formerly knows as MemberBase.DefineMethod().
+	(MethodData.Emit): Formerly known as Method.Emit().
+	(MemberBase): Moved everything which was specific to a single
+	accessor/method to MethodData.
+	(Method): Create a new MethodData and call Define() and Emit() on it.
+	(Property, Indexer, Event): Create a new MethodData objects for each
+	accessor and call Define() and Emit() on them.
+
+2002-07-25  Martin Baulig  <martin@gnome.org>
+
 	Made MethodCore derive from MemberBase to reuse the code from there.
 	MemberBase now also checks for attributes.
 

@@ -59,6 +59,9 @@ mm:
 mcs-mono2.exe: cs-parser.cs $(COMPILER_SOURCES)
 	mono mcs.exe --fatal --timestamp -o mcs-mono2.exe -g $(COMPILER_SOURCES)
 
+mcs-mono3.exe: cs-parser.cs $(COMPILER_SOURCES)
+	mono --debug mcs-mono2.exe --fatal --timestamp -o mcs-mono3.exe -g $(COMPILER_SOURCES)
+
 monomcs: cs-parser.cs
 	mcs $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
 
