@@ -1674,6 +1674,38 @@ namespace System.Globalization {
 			}
 		}
 
+		[MonoTODO]
+		public virtual string Name
+		{
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
+		[MonoTODO]
+		public virtual string ThreeLetterISORegionName
+		{
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
+		[MonoTODO]
+		public virtual string ThreeLetterWindowsRegionName
+		{
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		[MonoTODO]
+		public virtual string TwoLetterISORegionName
+		{
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
 		//
 		// methods
 
@@ -1684,6 +1716,13 @@ namespace System.Globalization {
                 public override int GetHashCode () {
 			return NLS_id.GetHashCode ();
 		}
+
+		[MonoTODO]
+		public override string ToString()
+		{
+			throw new NotImplementedException();
+		}
+		
 	}
 
 }

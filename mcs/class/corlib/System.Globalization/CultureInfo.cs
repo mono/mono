@@ -1227,13 +1227,11 @@ namespace System.Globalization
 			return(null);
 		}
 
-		/*
 		[MonoTODO]
 		public override bool Equals(object value)
 		{
-			return(false);
+			throw new NotImplementedException();
 		}
-		*/
 
 		[MonoTODO]
 		public static CultureInfo[] GetCultures(CultureTypes types)
@@ -1241,13 +1239,11 @@ namespace System.Globalization
 			return(null);
 		}
 
-		/*
 		[MonoTODO]
 		public override int GetHashCode()
 		{
-			return(0);
+			throw new NotImplementedException();
 		}
-		*/
 
 		[MonoTODO]
 		public static CultureInfo ReadOnly(CultureInfo ci)

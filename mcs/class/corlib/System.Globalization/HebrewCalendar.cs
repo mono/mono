@@ -69,6 +69,17 @@ public class HebrewCalendar : Calendar {
 		}
 	}
 
+	[MonoTODO]
+	public override int TwoDigitYearMax
+	{
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+
 	/// <summary>
 	/// A protected member checking a
 	/// <see cref="T:System.DateTime"/> value.
@@ -856,6 +867,13 @@ public class HebrewCalendar : Calendar {
 		return CCFixed.ToDateTime(rd,
 			hour, minute, second, milliseconds);
 	}
+
+	[MonoTODO]
+	public override int ToFourDigitYear(int year)
+	{
+		throw new NotImplementedException();
+	}
+	
 } // class HebrewCalendar
 	
 } // namespace System.Globalization

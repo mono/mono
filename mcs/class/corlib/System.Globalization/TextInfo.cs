@@ -55,19 +55,17 @@ namespace System.Globalization {
 			}
 		}
 
-		/*
 		[MonoTODO]
 		public override bool Equals(object obj)
 		{
-			return(false);
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
 		public override int GetHashCode()
 		{
-			return(0);
+			throw new NotImplementedException();
 		}
-		*/
 
 		[MonoTODO]
 		public virtual char ToLower(char c)

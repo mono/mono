@@ -208,7 +208,10 @@ System.Globalization/Locale.cs
 System.Globalization/NumberFormatInfo.cs
 System.Globalization/NumberStyles.cs
 System.Globalization/RegionInfo.cs
+System.Globalization/SortKey.cs
+System.Globalization/StringInfo.cs
 System.Globalization/TaiwanCalendar.cs
+System.Globalization/TextElementEnumerator.cs
 System.Globalization/TextInfo.cs
 System.Globalization/ThaiBuddhistCalendar.cs
 System.Globalization/UnicodeCategory.cs

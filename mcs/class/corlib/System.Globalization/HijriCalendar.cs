@@ -65,6 +65,17 @@ public class HijriCalendar : Calendar {
 		}
 	}
 
+	[MonoTODO]
+	public override int TwoDigitYearMax
+	{
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+
 	/// <summary>
 	/// Protected field storing the
 	/// <see cref="F:AddHijriDate"/>.
@@ -865,6 +876,13 @@ public class HijriCalendar : Calendar {
 		return M_ToDateTime(rd,
 			hour, minute, second, milliseconds);
 	}
+
+	[MonoTODO]
+	public override int ToFourDigitYear(int year)
+	{
+		throw new NotImplementedException();
+	}
+	
 } // class HijriCalendar
 	
 } // namespace System.Globalization

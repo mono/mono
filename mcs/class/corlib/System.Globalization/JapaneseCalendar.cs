@@ -90,6 +90,17 @@ public class JapaneseCalendar : Calendar {
 		}
 	}
 
+	[MonoTODO]
+	public override int TwoDigitYearMax
+	{
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+	
 	/// <summary>
 	/// A protected member checking a
 	/// <see cref="T:System.DateTime"/> value.

@@ -35,6 +35,17 @@ public class GregorianCalendar : Calendar {
 		}
 	}
 
+	[MonoTODO]
+	public override int TwoDigitYearMax 
+	{
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+
 	/// <summary>
 	/// A protected member storing the
 	/// <see cref="T:System.Globalization.GregorianCalendarTypes"/>.
@@ -150,6 +161,12 @@ public class GregorianCalendar : Calendar {
 	/// DateTime.</returns>
 	public override DateTime AddMonths(DateTime time, int months) {
 		return CCGregorianCalendar.AddMonths(time, months);
+	}
+
+	[MonoTODO]
+	public override DateTime AddWeeks(DateTime time, int weeks) 
+	{
+		throw new NotImplementedException();
 	}
 
 	/// <summary>
@@ -419,6 +436,12 @@ public class GregorianCalendar : Calendar {
 		return CCGregorianCalendar.ToDateTime(
 			year, month, day,
 			hour, minute, second, milliseconds);
+	}
+
+	[MonoTODO]
+	public override int ToFourDigitYear(int year)
+	{
+		throw new NotImplementedException();
 	}
 					
 	/// <summary>

@@ -58,6 +58,17 @@ public class KoreanCalendar : Calendar {
 		}
 	}
 
+	[MonoTODO]
+	public override int TwoDigitYearMax
+	{
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+	
 	/// <summary>
 	/// A protected method checking the era number.
 	/// </summary>
@@ -439,6 +450,13 @@ public class KoreanCalendar : Calendar {
 		return CCGregorianCalendar.ToDateTime(gregorianYear,
 			month, day, hour, minute, second, milliseconds);
 	}
+
+	[MonoTODO]
+	public override int ToFourDigitYear(int year)
+	{
+		throw new NotImplementedException();
+	}
+	
 } // class KoreanCalendar
 	
 } // namespace System.Globalization

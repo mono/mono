@@ -58,6 +58,17 @@ public class ThaiBuddhistCalendar : Calendar {
 		}
 	}
 
+	[MonoTODO]
+	public override int TwoDigitYearMax
+	{
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+
 	/// <summary>
 	/// A protected method checking the era number.
 	/// </summary>
@@ -440,6 +451,13 @@ public class ThaiBuddhistCalendar : Calendar {
 			gregorianYear, month, day,
 			hour, minute, second, milliseconds);
 	}
+
+	[MonoTODO]
+	public override int ToFourDigitYear(int year)
+	{
+		throw new NotImplementedException();
+	}
+	
 } // class ThaiBuddhistCalendar
 	
 } // namespace System.Globalization

@@ -45,6 +45,17 @@ public class JulianCalendar : Calendar {
 		}
 	}
 
+	[MonoTODO]
+	public override int TwoDigitYearMax
+	{
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+
 	/// <summary>
 	/// A protected method checking the era number.
 	/// </summary>
@@ -438,6 +449,13 @@ public class JulianCalendar : Calendar {
 		return CCFixed.ToDateTime(rd,
 			hour, minute, second, milliseconds);
 	}
+
+	[MonoTODO]
+	public override int ToFourDigitYear(int year)
+	{
+		throw new NotImplementedException();
+	}
+	
 } // class JulianCalendar
 	
 } // namespace System.Globalization
