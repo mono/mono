@@ -1,5 +1,7 @@
 2004-01-07  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c: Add support for more than one unmanaged resource.
+
 	* icall.c (ves_icall_get_enum_info): Store the value of the enum fields
 	in field->def_value, as done in all other cases.
 
