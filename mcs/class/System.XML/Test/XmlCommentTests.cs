@@ -43,7 +43,11 @@ namespace Ximian.Mono.Tests
 		{
 //			assertequals (original.nodetype + " was incorrectly cloned.",
 //				      original.baseuri, cloned.baseuri);			
+
 			AssertNull (cloned.ParentNode);
+			AssertEquals ("Value incorrectly cloned",
+				      original.Value, cloned.Value);
+
                         Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
 	       
@@ -77,8 +81,6 @@ namespace Ximian.Mono.Tests
 
 			shallow = comment.CloneNode (false); // shallow
 			TestXmlNodeBaseProperties (original, shallow);
-			AssertEquals ("Value incorrectly cloned",
-				      original.Value, shallow.Value);
 			
 			deep = comment.CloneNode (true); // deep
 			TestXmlNodeBaseProperties (original, deep);

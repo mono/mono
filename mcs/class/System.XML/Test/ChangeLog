@@ -1,3 +1,10 @@
+2002-03-26  Duncan Mak  <duncan@ximian.com>
+
+	* 
+
+	* XmlCommentTests.cs (TestXmlNodeBaseProperties): Move the
+	XmlNode.Value test in here.
+
 2002-03-26  Jason Diamond  <jason@injektilo.org>
 
 	* XPathScannerTests.cs: More location path tests.

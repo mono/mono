@@ -35,11 +35,10 @@ namespace System.Xml
 			set { data = value; }
 		}
 
-		[MonoTODO]
 		public override string InnerText
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return Data; }
+			set { data = value; }
 		}
 
 		public override string LocalName

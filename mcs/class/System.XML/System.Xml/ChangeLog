@@ -1,5 +1,8 @@
 2002-03-26  Duncan Mak  <duncan@ximian.com>
 
+	* XmlProcessingInstruction.cs (InnerText): Implemented. It works just
+	like XmlCharacterData.
+
 	* XmlDeclaration.cs (CloneNode): 
 	* XmlDocument.cs (CreateXmlDeclaration): Added missing constructor
 	arguments.
