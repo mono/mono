@@ -1,3 +1,11 @@
+2002-03-05  Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* GenerateDelegate.cs: Generates delegates (EventHandler) as
+	  specified. The output is quite simple, a delegate that has
+	  the prototype as -->
+	  public delegate void <given-name>EventHandler(object sender,
+	     <given-name>EventArgs e)
+
 2002-03-01  Martin Baulig  <martin@gnome.org>
 
 	* scan-tests.pl: Catch exceptions when running the tests so that we
