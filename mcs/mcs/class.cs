@@ -6480,6 +6480,11 @@ namespace Mono.CSharp {
 			//
 			Parameter [] p = Parameters.FixedParameters;
 			if (p != null) {
+				if ((p [0].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
+					Report.Error (631, Location, "ref and out are not valid in this context");
+					return false;
+				}
+
 				int i;
 				
 				for (i = 0; i < p.Length; ++i) {
