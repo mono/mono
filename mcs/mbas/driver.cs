@@ -1,4 +1,4 @@
-﻿//
+//
 // driver.cs: The compiler command line driver.
 //
 // Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com)
@@ -6,11 +6,11 @@
 //
 // Licensed under the terms of the GNU GPL
 //
-// (C) 2002 Rafael Teixeira
+// (C) 2002, 2003, 2004 Rafael Teixeira
 //
 
-namespace Mono.Languages
-{
+namespace Mono.Languages {
+
 	using System;
 	using System.Collections;
 	using System.Diagnostics;
@@ -22,21 +22,18 @@ namespace Mono.Languages
 	using Mono.MonoBASIC;
 	using Mono.GetOptions;
 
-	enum Target 
-	{
+	enum Target {
 		Library, Exe, Module, WinExe
 	};
 	
-	enum OptionCompare
-	{
+	enum OptionCompare {
 		Binary, Text
 	};
 	
 	/// <summary>
 	///    The compiler driver.
 	/// </summary>
-	public class Driver : Options
-	{
+	public class Driver : Options {
 		// Temporary options
 		//------------------------------------------------------------------
 		[Option("[Mono] Only parses the source file (for debugging the tokenizer)", "parse")]
@@ -49,8 +46,7 @@ namespace Mono.Languages
 		public bool stacktrace { set { Report.Stacktrace = value; } }
 
 		[Option("[Mono] Displays time stamps of various compiler events")]
-		public bool timestamp
-		{
+		public bool timestamp {
 			set
 			{
 				timestamps = true;
@@ -110,8 +106,7 @@ namespace Mono.Languages
 		[Option("Specifies the target {type} for the output file (exe [default], winexe, library, module)", 't', "target")]
 		public WhatToDoNext SetTarget(string type)
 		{
-			switch (type.ToLower())
-			{
+			switch (type.ToLower()) {
 				case "library":
 					target = Target.Library;
 					target_ext = ".dll";
@@ -216,18 +211,15 @@ namespace Mono.Languages
 		public string define { 
 			set 
 			{
-				foreach(string item in value.Split(',')) 
-				{	
+				foreach(string item in value.Split(','))  {
 					string[] dados = item.Split('=');
-					try
-					{
+					try {
 						if (dados.Length > 1)
 							Defines.Add(dados[0], dados[1]); 
 						else
 							Defines.Add(dados[0], string.Empty);
 					}
-					catch 
-					{
+					catch  {
 						Error ("Could not define symbol" + dados[0]);
 					}
 				}
@@ -264,7 +256,7 @@ namespace Mono.Languages
 		[Option("[IGNORED]Do not display compiler copyright banner")]
 		public bool nologo = false;
 		
-//		[Option("[NOT IMPLEMENTED YET]Quiet output mode")]
+		[Option("[Mono]Quiet output mode", 'q')]
 		public bool quiet = false;
 		
 		// TODO: semantics are different and should be adjusted
@@ -312,7 +304,7 @@ namespace Mono.Languages
 		ArrayList references = new ArrayList();
 		ArrayList soft_references = new ArrayList();
 		
-		string first_source = null;
+		string firstSourceFile = null;
 		Target target = Target.Exe;
 		string target_ext = ".exe";
 		ArrayList debug_arglist = new ArrayList ();
@@ -340,8 +332,7 @@ namespace Mono.Languages
 			Assembly a;
 			string total_log = "";
 
-			try 
-			{
+			try  {
 				char[] path_chars = { '/', '\\' };
 
 				if (assembly.IndexOfAny (path_chars) != -1)
@@ -355,22 +346,17 @@ namespace Mono.Languages
 				TypeManager.AddAssembly (a);
 				return 0;
 			}
-			catch (FileNotFoundException)
-			{
-				if (libpath != null)
-				{
-					foreach (string dir in libpath)
-					{
+			catch (FileNotFoundException) {
+				if (libpath != null) {
+					foreach (string dir in libpath) {
 						string full_path = dir + "/" + assembly + ".dll";
 
-						try 
-						{
+						try  {
 							a = Assembly.LoadFrom (full_path);
 							TypeManager.AddAssembly (a);
 							return 0;
 						} 
-						catch (FileNotFoundException ff) 
-						{
+						catch (FileNotFoundException ff)  {
 							total_log += ff.FusionLog;
 							continue;
 						}
@@ -379,8 +365,7 @@ namespace Mono.Languages
 				if (soft)
 					return 0;
 			}
-			catch (BadImageFormatException f) 
-			{
+			catch (BadImageFormatException f)  {
 				Error ("// Bad file format while loading assembly");
 				Error ("Log: " + f.FusionLog);
 				return 1;
@@ -570,8 +555,7 @@ namespace Mono.Languages
 			string path, pattern;
 
 			SplitPathAndPattern(spec, out path, out pattern);
-			if (pattern.IndexOf("*") == -1)
-			{
+			if (pattern.IndexOf("*") == -1) {
 				AddFile(spec);
 				return true;
 			}
@@ -654,8 +638,8 @@ namespace Mono.Languages
 		public void AddFile(string fileName)
 		{
 			string f = fileName;
-			if (first_source == null)
-				first_source = f;
+			if (firstSourceFile == null)
+				firstSourceFile = f;
 
 			if (source_files.Contains(f))
 				Report.Error(1516, "Source file '" + f + "' specified multiple times");
@@ -673,20 +657,17 @@ namespace Mono.Languages
 
 		string outputFile_Name = null;
 
-		string outputFileName
-		{
+		string outputFileName {
 			get 
 			{
-				if (outputFile_Name == null)
-				{
-					if (OutputFileName == null)
-					{
-						int pos = first_source.LastIndexOf(".");
+				if (outputFile_Name == null) {
+					if (OutputFileName == null) {
+						int pos = firstSourceFile.LastIndexOf(".");
 
 						if (pos > 0)
-							OutputFileName = first_source.Substring(0, pos);
+							OutputFileName = firstSourceFile.Substring(0, pos);
 						else
-							OutputFileName = first_source;
+							OutputFileName = firstSourceFile;
 					}
 					string bname = CodeGen.Basename(OutputFileName);
 					if (bname.IndexOf(".") == -1)
@@ -699,7 +680,7 @@ namespace Mono.Languages
 
 		bool ParseAll() // Phase 1
 		{
-			if (first_source == null) {
+			if (firstSourceFile == null) {
 				Report.Error(2008, "No files to compile were specified");
 				return false;
 			}
@@ -734,8 +715,7 @@ namespace Mono.Languages
 				ShowTime("Loading references");
 
 			// Load assemblies required
-			if (LoadReferences() > 0)
-			{
+			if (LoadReferences() > 0) {
 				Error ("Could not load one or more assemblies");
 				return false;
 			}
@@ -845,20 +825,17 @@ namespace Mono.Languages
 		
 		void FixEntryPoint()
 		{
-			if (target == Target.Exe || target == Target.WinExe)
-			{
+			if (target == Target.Exe || target == Target.WinExe) {
 				MethodInfo ep = RootContext.EntryPoint;
 			
-				if (ep == null)
-				{
+				if (ep == null) {
 					// If we don't have a valid entry point yet
 					// AND if System.Windows.Forms is included
 					// among the dependencies, we have to build
 					// a new entry point on-the-fly. Otherwise we
 					// won't be able to compile SWF code out of the box.
 
-					if (IsSWFApp()) 
-					{												
+					if (IsSWFApp())  {
 						Type t = TypeManager.LookupType(GetFQMainClass());
 						if (t != null) 
 						{							
@@ -923,12 +900,10 @@ namespace Mono.Languages
 			else if (target == Target.WinExe)
 				k = PEFileKinds.WindowApplication;
 			
-			if (target == Target.Exe || target == Target.WinExe)
-			{
+			if (target == Target.Exe || target == Target.WinExe) {
 				MethodInfo ep = RootContext.EntryPoint;
 			
-				if (ep == null)
-				{
+				if (ep == null) {
 					Report.Error (30737, "Program " + outputFileName +
 						" does not have an entry point defined");
 					return false;
@@ -948,8 +923,7 @@ namespace Mono.Languages
 				ShowTime ("Saved output");
 
 			
-			if (want_debugging_support) 
-			{
+			if (want_debugging_support)  {
 				CodeGen.SaveSymbols ();
 				if (timestamps)
 					ShowTime ("Saved symbols");
@@ -960,49 +934,61 @@ namespace Mono.Languages
 
 		public void CompileAll()
 		{
+			try {
 /* 
 		    VB.NET expects the default namespace to be "" (empty string)		
 		    
-		    if (RootContext.RootNamespace == "")
-		    {
+		    if (RootContext.RootNamespace == "") {
 		      RootContext.RootNamespace = System.IO.Path.GetFileNameWithoutExtension(outputFileName);
 		    }
 */
-			if (!ParseAll()) // Phase 1
-				return;
+				if (!ParseAll()) // Phase 1
+					return;
 
-			if (!ResolveAllTypes()) // Phase 2
-				return;
+				if (!ResolveAllTypes()) // Phase 2
+					return;
 
-			GenerateAssembly(); // Phase 3 
+				GenerateAssembly(); // Phase 3 
+				
+			} catch (Exception ex) {
+				Error("Exception: " + ex.ToString());
+			}
 		}
+		
+		private void ThisIsAlphaAlert()
+		{
+			if (!quiet) {
+				Console.WriteLine ("--------");
+				Console.WriteLine ("MonoBASIC: THIS IS AN ALPHA SOFTWARE.");
+				Console.WriteLine ("--------");
+			}		
+		}
+		
+		protected void SetupDefaults()
+		{
+			SetupDefaultDefines();	
+			SetupDefaultImports();
+			Report.Stacktrace = false;
+			RootContext.Checked = true;
+		}		
 
 		/// <summary>
 		///    Parses the arguments, and calls the compilation process.
 		/// </summary>
 		int MainDriver(string [] args)
 		{
-			Console.WriteLine ("--------");
-			Console.WriteLine ("MonoBASIC: THIS IS AN ALPHA SOFTWARE.");
-			Console.WriteLine ("--------");
-			SetupDefaultDefines();	
-			
-			SetupDefaultImports();
-
-			// Some defaults
-			RootContext.Checked = true;
-
+			SetupDefaults();
 			ProcessArgs(args);
 			
-			if (first_source == null)
-			{
+			ThisIsAlphaAlert(); // remove this call when the compiler has matured enough
+			
+			if (firstSourceFile == null) {
 				if (!quiet) 
 					DoHelp();
 				return 2;
 			}
 
 			CompileAll();
-
 			return Report.ProcessResults(quiet);
 		}
 
@@ -1010,8 +996,6 @@ namespace Mono.Languages
 		{
 			Driver Exec = new Driver();
 			
-			Report.Stacktrace = false;
-
 			return Exec.MainDriver(args);
 		}
 

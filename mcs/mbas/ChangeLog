@@ -1,6 +1,11 @@
+2004-12-01 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs: it was "monostyled" and some extract method refactorings to make things clear
+	now -q --quiet works, inclusive for the "Alpha" message
+	* Test/misc/Makefile : Added dependency on newly compiled compiler for the test executable
+
 2004-11-30 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
-    * Test/misc/Makefile : Compile new RedimPreserve.vb test source
-    * Added Test/misc/RedimPreserve.vb
+	* Test/misc/Makefile : Compile new RedimPreserve.vb test source
+	* Added Test/misc/RedimPreserve.vb
     
 2004-11-30  Alexandre Rocha Lima e Marcondes <alexandremarcondes@psl-pr.softwarelivre.org>
 	* Makefile: Included Microsoft.VisualBasic.dll assembly on LOCAL_MCS_FLAGS.

@@ -12,7 +12,7 @@ run-test-local: WriteOK.exe
 run-test-ondotnet-local: WriteOK.exe
 	./WriteOK.exe --sayho /about -say:this,that,those /say:what?
 
-WriteOK.exe: Makefile *.vb *.mbs
+WriteOK.exe: Makefile *.vb *.mbs ../../../class/lib/default/mcs.exe
 	$(BASCOMPILE) --reference=Mono.GetOptions -r:System.Data,System.Messaging --main WriteOK WriteOK.vb WriteOK2.mbs RedimPreserve.vb AssemblyInfo.vb
 
 verbose:
