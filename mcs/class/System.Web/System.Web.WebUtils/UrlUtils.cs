@@ -21,10 +21,12 @@ namespace System.Web.UI.WebUtils
 		 * the form protocol://[user:pass]host[:port]/[fullpath]
 		 * ie, a protocol, and that too without any blanks before,
 		 * is a must which may not be the case here.
+		 * Important: Escaped URL is assumed here. nothing like .aspx?path=/something
+		 * It should be .aspx?path=%2Fsomething
 		 */
 		public static string GetProtocol(string url)
 		{
-			//String url = URL;
+			//Taking code from Java Class java.net.URL
 			if(url!=null)
 			{
 				if(url.Length>0)
@@ -64,7 +66,6 @@ namespace System.Web.UI.WebUtils
 		
 		public static bool IsRootUrl(string url)
 		{
-			//Taking code from Java Class java.net.URL
 			if(url!=null)
 			{
 				if(url.Length>0)
@@ -97,11 +98,35 @@ namespace System.Web.UI.WebUtils
 			return true;
 		}
 		
-		public static string MakeRelative(string from, string to)
+		/*
+		 * MakeRelative("http://www.foo.com/bar1/bar2/file","http://www.foo.com/bar1")
+		 * will return "bar2/file"
+		 * while MakeRelative("http://www.foo.com/bar1/...","http://www.anotherfoo.com")
+		 * return 'null' and so does the call
+		 * MakeRelative("http://www.foo.com/bar1/bar2","http://www.foo.com/bar")
+		 */
+		public static string MakeRelative(string fullUrl, string relativeTo)
 		{
 			//Uri fromUri;
 			//Uri toUri;
-			return String.Empty;
+			if(fullUrl==relativeTo)
+			{
+				return String.Empty;
+			}
+			if(fullUrl.IndexOf(relativeTo)!=0)
+			{
+				return null;
+			}
+			string leftOver = fullUrl.Substring(relativeTo.Length);
+			if(!fullUrl.EndsWith("/") && !leftOver.StartsWith("/"))
+			{
+				return null;
+			}
+			if(leftOver.StartsWith("/"))
+			{
+				leftOver = leftOver.Substring(1);
+			}
+			return leftOver;
 		}
 		
 		/*
@@ -140,6 +165,25 @@ namespace System.Web.UI.WebUtils
 				}
 			}
 			return false;
+		}
+		
+		public static string GetDirectory(string url)
+		{
+			if(url==null)
+			{
+				return null;
+			}
+			if(url.Length==0)
+			{
+				return String.Empty;
+			}
+			url.Replace('\\','/');
+			string baseDir = url.Substring(0, url.LastIndexOf('/'));
+			if(baseDir.Length==0)
+			{
+				baseDir = "/";
+			}
+			return baseDir;
 		}
 	}
 }
