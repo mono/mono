@@ -1,5 +1,9 @@
 2004-12-15  Jackson Harper  <jackson@ximian.com>
 
+	* X11Keyboard.cs: Fix to compile with csc.
+	
+2004-12-15  Jackson Harper  <jackson@ximian.com>
+
 	* X11Structs.cs: Add key mask values
 	* XplatUIStruct.cs: Add keyboard event flags, and keyboard definitions
 	* X11Keyboard.cs: New file - Extrapolates and interpolates key

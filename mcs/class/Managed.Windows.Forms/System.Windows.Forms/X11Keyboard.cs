@@ -236,7 +236,7 @@ namespace System.Windows.Forms {
 			if ((dw_flags & KeybdEventFlags.KeyUp) != 0) {
 				bool sys_key = (key_state_table [(int) VirtualKeys.VK_MENU] & 0x80) != 0 &&
 					      ((key_state_table [(int) VirtualKeys.VK_CONTROL] & 0x80) == 0);
-				key_state_table [(int) vkey] &= ~0x80;
+				key_state_table [(int) vkey] &= unchecked ((byte) ~0x80);
 				message = (sys_key ? Msg.WM_SYSKEYUP : Msg.WM_KEYUP);
 			} else {
 				if ((key_state_table [(int) vkey] & 0x80) == 0) {
@@ -275,7 +275,7 @@ namespace System.Windows.Forms {
 						// SendKeyboardInput (vkey, scan, down, event_time);
 						// SendKeyboardInput (vkey, scan, up, event_time);
 						SetState (vkey, false);
-						key_state_table [(int) vkey] &= ~0x01;
+						key_state_table [(int) vkey] &= unchecked ((byte) ~0x01);
 					}
 				} else {
 					if (type == XEventName.KeyPress) {
