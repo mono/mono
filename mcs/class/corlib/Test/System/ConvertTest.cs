@@ -189,7 +189,17 @@ namespace MonoTests.System {
 			}
 			catch (Exception e) {
 				AssertEquals("#A33", typeof(ArgumentNullException), e.GetType());
-			}		
+			}
+
+			try {
+				/* should fail to convert string to any enumeration type. */
+				Convert.ChangeType("random string", typeof(DayOfWeek));
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#A34", typeof(ArgumentException), e.GetType());
+			}
+
 		}		
 
 		public void TestGetTypeCode() {
