@@ -38,11 +38,9 @@ namespace System.Web.Compilation
 			this.assemblies = assemblies;
 			options = new CompilerParameters ();
 			if (assemblies != null) {
-				StringCollection coll = new StringCollection ();
+				StringCollection coll = options.ReferencedAssemblies;
 				foreach (string str in assemblies)
 					coll.Add (str);
-
-				options.ReferencedAssemblies = coll;
 			}
 		}
 

@@ -125,11 +125,9 @@ namespace System.Web.Compilation
 		{
 			CompilerParameters options = new CompilerParameters ();
 			if (assemblies != null) {
-				StringCollection coll = new StringCollection ();
+				StringCollection coll = options.ReferencedAssemblies;
 				foreach (string str in assemblies)
 					coll.Add (str);
-
-				options.ReferencedAssemblies = coll;
 			}
 
 			return options;

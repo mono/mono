@@ -114,10 +114,10 @@ namespace System.CodeDom.Compiler
 
 		public StringCollection ReferencedAssemblies {
 			get {
+				if (referencedAssemblies == null)
+					referencedAssemblies = new StringCollection ();
+
 				return referencedAssemblies;
-			}
-			set {
-				referencedAssemblies = value;
 			}
 		}
 

@@ -44,9 +44,6 @@ namespace Mono.CSharp
 			if (options == null)
 				options = new CompilerParameters ();
 			
-			if (options.ReferencedAssemblies == null)
-				options.ReferencedAssemblies = new StringCollection ();
-
 			StringCollection assemblies = options.ReferencedAssemblies;
 
 			foreach (CodeCompileUnit e in ea)
