@@ -11,6 +11,10 @@
  * (C) Gaurav Vaish (2001)
  */
 
+using System;
+using System.Web;
+using System.Web.UI;
+
 namespace System.Web.UI.WebControls
 {
 	public class Image : WebControl
