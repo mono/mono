@@ -1,3 +1,15 @@
+2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathEditableNavigator.cs : Implemented InsertAfter() and 
+	  PrependChild(); they are virtual, not abstract.
+	* XPathNavigator.cs :
+	  Implemented many 2.0 virtual properties and methods that were 
+	  abstract in 1.x.
+	  Implemented some Select() methods that uses IXmlNamespaceResolver.
+	  Implemented most of ValueAsXxx() using XQueryConvert.
+	  IsNode is always true. Implemented OuterXml and WriteSubtree() (but
+	  actually they don't work because it depends on ReadSubtree()).
+
 2004-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathDocument.cs : added missing && not-likely-to-be-removed members.

@@ -119,8 +119,14 @@ namespace System.Xml.XPath
 		[MonoTODO ("No implementation as yet")]
 		public abstract bool DeleteCurrent ();
 
-		[MonoTODO ("No implementation as yet")]
-		public abstract XmlWriter InsertAfter ();
+		public virtual XmlWriter InsertAfter ()
+		{
+			XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+			if (nav.MoveToNext ())
+				return nav.InsertBefore ();
+			else
+				return AppendChild ();
+		}
 
 		public virtual XPathEditableNavigator InsertAfter (string xmlFragments)
 		{
@@ -183,8 +189,14 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO ("No implementation as yet")]
-		public abstract XmlWriter PrependChild ();
+		public virtual XmlWriter PrependChild ()
+		{
+			XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+			if (nav.MoveToFirstChild ())
+				return nav.InsertBefore ();
+			else
+				return InsertBefore ();
+		}
 
 		public virtual XPathEditableNavigator PrependChild (string xmlFragments)
 		{

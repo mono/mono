@@ -32,9 +32,13 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml.XPath;
+#if NET_2_0
+using MS.Internal.Xml;
+#endif
 
 #if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
@@ -63,9 +67,19 @@ namespace System.Xml.XPath
 
 		public abstract string BaseURI { get; }
 
+#if NET_2_0
+		public virtual bool HasAttributes {
+			get { return Clone ().MoveToFirstAttribute (); }
+		}
+
+		public virtual bool HasChildren {
+			get { return Clone ().MoveToFirstChild (); }
+		}
+#else
 		public abstract bool HasAttributes { get; }
 
 		public abstract bool HasChildren { get; }
+#endif
 
 		public abstract bool IsEmptyElement { get; }
 
@@ -82,11 +96,27 @@ namespace System.Xml.XPath
 		public abstract string Prefix { get; }
 
 #if NET_2_0
+		public virtual string XmlLang {
+			get {
+				XPathNavigator nav = Clone ();
+				switch (nav.NodeType) {
+				case XPathNodeType.Attribute:
+				case XPathNodeType.Namespace:
+					nav.MoveToParent ();
+					break;
+				}
+				do {
+					if (nav.MoveToAttribute ("lang", "http://www.w3.org/XML/1998/namespace"))
+						return nav.Value;
+				} while (nav.MoveToParent ());
+				return String.Empty;
+			}
+		}
 #else
 		public abstract string Value { get; }
-#endif
 
 		public abstract string XmlLang { get; }
+#endif
 
 		int Depth
 		{
@@ -282,9 +312,30 @@ namespace System.Xml.XPath
 			return cexpr.EvaluateBoolean (iterContext);
 		}
 
+#if NET_2_0
+		public virtual string GetAttribute (string localName, string namespaceURI)
+		{
+			XPathNavigator nav = Clone ();
+			if (nav.MoveToAttribute (localName, namespaceURI))
+				return nav.Value;
+			else
+				return String.Empty;
+		}
+
+		public virtual string GetNamespace (string name)
+		{
+			XPathNavigator nav = Clone ();
+			if (nav.MoveToNamespace (name))
+				return nav.Value;
+			else
+				return String.Empty;
+		}
+
+#else
 		public abstract string GetAttribute (string localName, string namespaceURI);
 
 		public abstract string GetNamespace (string name);
+#endif
 		
 		object ICloneable.Clone ()
 		{
@@ -380,9 +431,56 @@ namespace System.Xml.XPath
 
 		public abstract bool MoveTo (XPathNavigator other);
 
+#if NET_2_0
+		public virtual bool MoveToAttribute (string localName, string namespaceURI)
+		{
+			if (MoveToFirstAttribute ()) {
+				do {
+					if (LocalName == localName && NamespaceURI == namespaceURI)
+						return true;
+				} while (MoveToNextAttribute ());
+				MoveToParent ();
+			}
+			return false;
+		}
+
+		public virtual bool MoveToNamespace (string name)
+		{
+			if (MoveToFirstNamespace ()) {
+				do {
+					if (LocalName == name)
+						return true;
+				} while (MoveToNextNamespace ());
+				MoveToParent ();
+			}
+			return false;
+		}
+
+		public virtual bool MoveToFirst ()
+		{
+			if (MoveToPrevious ()) {
+				// It would be able to invoke MoveToPrevious() until the end, but this way would be much faster
+				MoveToParent ();
+				MoveToFirstChild ();
+				return true;
+			}
+			return false;
+		}
+
+		public virtual void MoveToRoot ()
+		{
+			while (MoveToParent ())
+				;
+		}
+#else
 		public abstract bool MoveToAttribute (string localName, string namespaceURI);
 
+		public abstract bool MoveToNamespace (string name);
+
 		public abstract bool MoveToFirst ();
+
+		public abstract void MoveToRoot ();
+#endif
 
 		public abstract bool MoveToFirstAttribute ();
 
@@ -396,8 +494,6 @@ namespace System.Xml.XPath
 		public abstract bool MoveToFirstNamespace (XPathNamespaceScope namespaceScope);
 
 		public abstract bool MoveToId (string id);
-
-		public abstract bool MoveToNamespace (string name);
 
 		public abstract bool MoveToNext ();
 
@@ -413,8 +509,6 @@ namespace System.Xml.XPath
 		public abstract bool MoveToParent ();
 
 		public abstract bool MoveToPrevious ();
-
-		public abstract void MoveToRoot ();
 
 		public virtual XPathNodeIterator Select (string xpath)
 		{
@@ -644,10 +738,9 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual XPathNodeIterator Select (string xpath, IXmlNamespaceResolver nsResolver)
 		{
-			throw new NotImplementedException ();
+			return Select (Compile (xpath), nsResolver);
 		}
 
 		public virtual XPathNavigator SelectSingleNode (string xpath)
@@ -655,16 +748,20 @@ namespace System.Xml.XPath
 			return SelectSingleNode (xpath, null);
 		}
 
-		[MonoTODO]
 		public virtual XPathNavigator SelectSingleNode (string xpath, IXmlNamespaceResolver nsResolver)
 		{
-			throw new NotImplementedException ();
+			XPathExpression expr = Compile (xpath);
+			expr.SetContext (nsResolver);
+			return SelectSingleNode (expr);
 		}
 
-		[MonoTODO]
 		public XPathNavigator SelectSingleNode (XPathExpression expression)
 		{
-			throw new NotImplementedException ();
+			XPathNodeIterator iter = Select (expression);
+			if (iter.MoveNext ())
+				return iter.Current;
+			else
+				return null;
 		}
 
 		[MonoTODO]
@@ -676,7 +773,8 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public virtual void WriteSubtree (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			XmlReader st = ReadSubtree ();
+			writer.WriteNode (st, false);
 		}
 
 		[MonoTODO]
@@ -686,7 +784,7 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public override bool IsNode {
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
 
 		[MonoTODO]
@@ -696,7 +794,13 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public virtual string OuterXml {
-			get { throw new NotImplementedException (); }
+			get {
+				StringWriter sw = new StringWriter ();
+				XmlTextWriter xtw = new XmlTextWriter (sw);
+				WriteSubtree (xtw);
+				xtw.Close ();
+				return sw.ToString ();
+			}
 		}
 
 		[MonoTODO]
@@ -716,32 +820,32 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public override bool ValueAsBoolean {
-			get { throw new NotImplementedException (); }
+			get { return XQueryConvert.StringToBoolean (Value); }
 		}
 
 		[MonoTODO]
 		public override DateTime ValueAsDateTime {
-			get { throw new NotImplementedException (); }
+			get { return XmlConvert.ToDateTime (Value); }
 		}
 
 		[MonoTODO]
 		public override decimal ValueAsDecimal {
-			get { throw new NotImplementedException (); }
+			get { return XQueryConvert.StringToDecimal (Value); }
 		}
 
 		[MonoTODO]
 		public override double ValueAsDouble {
-			get { throw new NotImplementedException (); }
+			get { return XQueryConvert.StringToDouble (Value); }
 		}
 
 		[MonoTODO]
 		public override int ValueAsInt32 {
-			get { throw new NotImplementedException (); }
+			get { return XQueryConvert.StringToInt (Value); }
 		}
 
 		[MonoTODO]
 		public override long ValueAsInt64 {
-			get { throw new NotImplementedException (); }
+			get { return XQueryConvert.StringToInteger (Value); }
 		}
 
 		[MonoTODO]
@@ -751,7 +855,7 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public override float ValueAsSingle {
-			get { throw new NotImplementedException (); }
+			get { return XQueryConvert.StringToFloat (Value); }
 		}
 
 		[MonoTODO]
