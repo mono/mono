@@ -1,3 +1,7 @@
+2004-09-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* FunctionDeclaration.cs: delete spaces.
+
 2004-09-21  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* FunctionDeclaration.cs: check for parent being a ScriptBlock.

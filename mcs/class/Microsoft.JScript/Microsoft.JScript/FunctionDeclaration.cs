@@ -133,21 +133,11 @@ namespace Microsoft.JScript {
 			object v;		      
 			int n;
 
-
-
-
-
-
-
-
-
-
-
 			if (locals == null)
 				n = 0;
 			else 
 				n = locals.Length;
-
+			
 			Type t = typeof (JSLocalField);
 			ConstructorInfo ctr_info =  t.GetConstructor (new Type [] { 
 							typeof (string), typeof (RuntimeTypeHandle), typeof (Int32) });
