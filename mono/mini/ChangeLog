@@ -1,3 +1,9 @@
+
+Tue Jun 22 21:29:11 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: small updates to be able to compile
+	vararg-using methods.
+
 2004-06-21  Martin Baulig  <martin@ximian.com>
 
 	* mini/mini-exceptions.c
