@@ -179,10 +179,10 @@ namespace Mono.CSharp {
 		Location loc;
 		int modifiers;
 
-		static int count;
+		static int proxy_count;
 		string MakeProxyName ()
 		{
-			return String.Format ("<Proxy_{0}>", count++);
+			return String.Format ("<Proxy_{0}>", proxy_count++);
 		}
 
 		public void EmitYieldBreak (ILGenerator ig, bool add_return)
@@ -342,7 +342,7 @@ namespace Mono.CSharp {
 
 		void LoadArgs (ILGenerator ig)
 		{
-			count = parameters.Count;
+			int count = parameters.Count;
 			if ((modifiers & Modifiers.STATIC) == 0)
 				count++;
 
