@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 			string path = Path.GetFullPath (name);
 
 			if (!source_files.Contains (path)) {
-				if (source_count >= source_bits * 8)
+				if (source_count >= (1 << source_bits))
 					return new SourceFile (name, path, 0);
 
 				source_files.Add (path, ++source_count);
