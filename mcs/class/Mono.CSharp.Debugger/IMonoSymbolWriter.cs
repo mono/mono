@@ -63,6 +63,22 @@ namespace Mono.CSharp.Debugger
 
 		void AddLocal (ILocalVariable local);
 
+		int FirstLine {
+			get;
+		}
+
+		int LastLine {
+			get;
+		}
+
+		int CodeSize {
+			get;
+		}
+
+		int Token {
+			get;
+		}
+
 		MethodInfo MethodInfo {
 			get;
 		}

@@ -1,3 +1,10 @@
+2002-03-20  Martin Baulig  <martin@gnome.org>
+
+	* IMonoSymbolWriter.cs (ISourceMethod): Added FirstLine, LastLine, CodeSize and
+	Token properties.
+
+	* MonoDwarfFileWriter.cs: Implemented line number support.
+
 2002-03-19  Martin Baulig  <martin@gnome.org>
 
 	* IMonoSymbolWriter.cs (ISourceFile, ISourceMethod, ISourceLine, ILocalVariable):

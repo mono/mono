@@ -50,6 +50,9 @@ b) IL_OFFSET - 0x02
    current method which needs to be replaced with the corresponding
    machine address.
 
+   This entry has a 4-byte unsigned integer argument containing the
+   metadata token of the current method.
+
 To use the generated object file, the JIT must:
 
 * Check whether the file contains a ".mono_reloc_table" section.
