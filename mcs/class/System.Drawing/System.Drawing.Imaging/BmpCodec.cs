@@ -188,7 +188,7 @@ namespace System.Drawing.Imaging {
 					bmih.bmiColors[index++] = (byte)stream.ReadByte();
 				}
 			}
-			catch (Exception e) {
+			catch (Exception) {
 				return false;
 			}
 			return true;
