@@ -15,7 +15,7 @@ INSTALL=$TOPDIR/install
 
 # SENDMAIL: uncomment this line if you want to send notifications.
 # be careful to check the recipients below before running this script!
-#SENDMAIL=$TOPDIR/mcs/tools/tinderbox/smtp
+SENDMAIL=$TOPDIR/mcs/tools/tinderbox/smtp
 
 # EMAIL_*: notification addresses. please change these before running!
 EMAIL_FATAL="piersh@friskit.com"
@@ -44,7 +44,7 @@ FILTER_LOG="sed -e 's/^in <0x[0-9a-z]*>//' -e 's/:[0-9]*): WARNING \*\*:/): WARN
 
 function fatal ()
 {
-	[ -x $SENDMAIL ] && $SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_FATAL -a $LOGFATAL -s "[MONOBUILD] FATAL ERROR (`uname -s -m`)"
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_FATAL -a $LOGFATAL -s "[MONOBUILD] FATAL ERROR (`uname -s -m`)"
 	echo FATAL: `date` >> $LOGLOG
 	echo FATAL ERROR
 	exit 1
@@ -179,7 +179,7 @@ function build_fixed ()
 	echo "Previous build:    `cat .build.date.last_success`" >> $BUILDMSG
 	echo >> $BUILDMSG
 
-	[ -x $SENDMAIL ] && $SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE $EMAIL_CC -s "[MONOBUILD] fixed (`uname -s -m`)" -m $BUILDMSG
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE $EMAIL_CC -s "[MONOBUILD] fixed (`uname -s -m`)" -m $BUILDMSG
 	rm -f $BUILDMSG
 }
 
@@ -192,9 +192,11 @@ function build_failed ()
 
 	sed -e 's/$//' < $LOG > errors.txt
 	tail -25 errors.txt >> $BUILDMSG
+	rm -f errors.txt.gz
+	gzip errors.txt
 
-	[ -x $SENDMAIL ] && $SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE $EMAIL_CC -a errors.txt -s "[MONOBUILD] broken (`uname -s -m`)" -m $BUILDMSG
-	rm -f $BUILDMSG errors.txt
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE $EMAIL_CC -a errors.txt.gz -s "[MONOBUILD] broken (`uname -s -m`)" -m $BUILDMSG
+	rm -f $BUILDMSG errors.txt.gz
 }
 
 function stabilize ()
