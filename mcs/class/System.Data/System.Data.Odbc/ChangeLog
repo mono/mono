@@ -1,4 +1,7 @@
 2004-08-04 Umadevi S (sumadevi@novell.com)
+	* OdbcDataReader.cs - Fixed bug 61832 - Column names were not filled, due to which name based lookup of columns failed.
+
+2004-08-04 Umadevi S (sumadevi@novell.com)
 	* OdbcDataReader.cs - Fixed bug 61405 - Handling smallint column type.
 
 2004-07-30  Sureshkumar T (tsureshkumar@novell.com)
