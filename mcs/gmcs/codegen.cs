@@ -764,77 +764,44 @@ namespace Mono.CSharp {
 	}
 
 
-	public abstract class CommonAssemblyModulClass: IAttributeSupport {
-		protected Hashtable m_attributes;
+	public abstract class CommonAssemblyModulClass: Attributable {
 
-		protected CommonAssemblyModulClass () 
+		protected CommonAssemblyModulClass ():
+			base (null)
 		{
-			m_attributes = new Hashtable ();
 		}
 
-		//
-		// Adds a global attribute that was declared in `container', 
-		// the attribute is in `attr', and it was defined at `loc'
-		//                
-		public void AddAttribute (TypeContainer container, AttributeSection attr)
+		public void AddAttribute (AttributeSection attr)
 		{
-			NamespaceEntry ns = container.NamespaceEntry;
-			Attributes a = (Attributes) m_attributes [ns];
-
-			if (a == null) {
-				m_attributes [ns] = new Attributes (attr);
+			if (OptAttributes == null) {
+				OptAttributes = new Attributes (attr);
 				return;
 			}
-
-			a.AddAttributeSection (attr);
+			OptAttributes.AddAttributeSection (attr);
 		}
 
-		public virtual void Emit () 
+		public virtual void Emit (TypeContainer tc) 
 		{
-			if (m_attributes.Count < 1)
+			if (OptAttributes == null)
 				return;
 
-			TypeContainer dummy = new TypeContainer ();
-			EmitContext temp_ec = new EmitContext (dummy, Mono.CSharp.Location.Null, null, null, 0, false);
-			
-			foreach (DictionaryEntry de in m_attributes)
-			{
-				NamespaceEntry ns = (NamespaceEntry) de.Key;
-				Attributes attrs = (Attributes) de.Value;
-				
-				dummy.NamespaceEntry = ns;
-				Attribute.ApplyAttributes (temp_ec, null, this, attrs);
-			}
+			EmitContext ec = new EmitContext (tc, Mono.CSharp.Location.Null, null, null, 0, false);
+			OptAttributes.Emit (ec, this);
 		}
-                
+
 		protected Attribute GetClsCompliantAttribute ()
 		{
-			if (m_attributes.Count < 1)
+			if (OptAttributes == null)
 				return null;
 
 			EmitContext temp_ec = new EmitContext (new TypeContainer (), Mono.CSharp.Location.Null, null, null, 0, false);
-			
-			foreach (DictionaryEntry de in m_attributes) {
-
-				NamespaceEntry ns = (NamespaceEntry) de.Key;
-				Attributes attrs = (Attributes) de.Value;
-				temp_ec.TypeContainer.NamespaceEntry = ns;
-
-				Attribute a = attrs.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
-				if (a != null) {
-					a.Resolve (temp_ec);
-					return a;
-  				}
+			Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
+			if (a != null) {
+				a.Resolve (temp_ec);
 			}
-			return null;
+			return a;
 		}
-                
-		#region IAttributeSupport Members
-		public abstract void SetCustomAttribute(CustomAttributeBuilder customBuilder);
-		#endregion
-
 	}
-	
 
 	public class AssemblyClass: CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
@@ -853,6 +820,17 @@ namespace Mono.CSharp {
 			}
 			}
 
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Assembly;
+			}
+		}
+
+		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		{
+			return is_cls_compliant;
+		}
+
 		public void ResolveClsCompliance ()
 		{
 			Attribute a = GetClsCompliantAttribute ();
@@ -862,13 +840,11 @@ namespace Mono.CSharp {
 			is_cls_compliant = a.GetClsCompliantAttributeValue (null);
 		}
 
+		//TODO: this code is buggy because compare Attribute name without resolve is wrong
 		public AssemblyName GetAssemblyName (string name, string output) 
 		{
-			// scan assembly attributes for strongname related attr
-			foreach (DictionaryEntry nsattr in m_attributes) {
-				ArrayList list = ((Attributes)nsattr.Value).AttributeSections;
-				for (int i=0; i < list.Count; i++) {
-					AttributeSection asect = (AttributeSection) list [i];
+			if (OptAttributes != null) {
+				foreach (AttributeSection asect in OptAttributes.AttributeSections) {
 					if (asect.Target != "assembly")
 						continue;
 					// strongname attributes don't support AllowMultiple
@@ -988,7 +964,7 @@ namespace Mono.CSharp {
 			return an;
 		}
 
-		public override void SetCustomAttribute(CustomAttributeBuilder customBuilder)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
 			Builder.SetCustomAttribute (customBuilder);
 		}
@@ -1005,14 +981,20 @@ namespace Mono.CSharp {
 			m_module_is_unsafe = is_unsafe;
 		}
 
-		public override void Emit () 
-		{
-			base.Emit ();
+ 		public override AttributeTargets AttributeTargets {
+ 			get {
+ 				return AttributeTargets.Module;
+ 			}
+		}
 
-			Attribute a = GetClsCompliantAttribute ();
-			if (a != null) {
-				Report.Warning_T (3012, a.Location);
+		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		{
+			return CodeGen.Assembly.IsClsCompliant;
 			}
+
+		public override void Emit (TypeContainer tc) 
+		{
+			base.Emit (tc);
 
 			if (!m_module_is_unsafe)
 				return;
@@ -1022,11 +1004,16 @@ namespace Mono.CSharp {
 				return;
 			}
 				
-			SetCustomAttribute (new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]));
+			ApplyAttributeBuilder (null, new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]));
 		}
                 
-		public override void SetCustomAttribute(CustomAttributeBuilder customBuilder)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
+			if (a != null && a.Type == TypeManager.cls_compliant_attribute_type) {
+				Report.Warning_T (3012, a.Location);
+				return;
+			}
+
 			Builder.SetCustomAttribute (customBuilder);
 		}
 	}

@@ -1,3 +1,45 @@
+2004-05-12  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs:
+	(Attribute.GetAttributeTargets): New method. Gets AttributeTargets
+	for attribute.
+	(Attribute.IsClsCompliaceRequired): Moved to base for better
+	accesibility.
+	(Attribute.UsageAttribute): New property for AttributeUsageAttribute
+	when attribute is AttributeUsageAttribute.
+	(Attribute.GetValidTargets): Simplified.
+	(Attribute.GetAttributeUsage): New method returns AttributeUsage
+	attribute for this type.
+	(Attribute.ApplyAttributes): Method renamed to Emit and make
+	non-static.
+	(GlobalAttributeSection): New class for special handling of global
+	attributes (assembly, module).
+	(AttributeSection.Emit): New method.
+
+	* class.cs: Implemented Attributable abstract methods.
+	(MethodCore.LabelParameters): Moved to Parameter class.
+	(Accessor): Is back simple class.
+	(PropertyMethod): Implemented Attributable abstract class.
+	(DelegateMethod): Implemented Attributable abstract class.
+	(Event): New constructor for disctintion between normal Event
+	and Event with accessors.
+
+	* cs-parser.jay: Used new Event ctor and GlobalAttributeSection.
+
+	* codegen.cs, const.cs, decl.cs, delegate.cs:
+	(CommonAssemblyModulClass): Implemented Attributable abstract class
+	and simplified.
+
+	* enum.cs: Implement IAttributeSupport interface.
+	(EnumMember): New class for emum members. Implemented Attributable
+	abstract class
+
+	* parameter.cs:
+	(ParameterBase): Is abstract.
+	(ReturnParameter): New class for easier [return:] attribute handling.
+
+	* typemanager.cs: Removed builder_to_attr.
+
 2004-05-11  Raja R Harinath  <rharinath@novell.com>
 
 	Fix bug #57151.

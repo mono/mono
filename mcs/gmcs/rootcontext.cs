@@ -747,8 +747,8 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in attribute_types)
 					tc.Emit ();
 
-			CodeGen.Assembly.Emit ();
-			CodeGen.Module.Emit ();
+			CodeGen.Assembly.Emit (Tree.Types);
+			CodeGen.Module.Emit (Tree.Types);
                         
 			if (Tree.Types.Enums != null) {
 				foreach (Enum e in Tree.Types.Enums)

@@ -921,9 +921,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			// FIXME
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Method | AttributeTargets.ReturnValue;
+			}
 		}
 	}
 

@@ -117,12 +117,6 @@ namespace Mono.CSharp {
 		bool members_defined;
 		bool members_defined_ok;
 
-		// Information in the case we are an attribute type
-
-		public AttributeTargets Targets = AttributeTargets.All;
-		public bool AllowMultiple = false;
-		public bool Inherited;
-
 		// The interfaces we implement.
 		TypeExpr [] ifaces;
 		Type[] base_inteface_types;
@@ -424,18 +418,8 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			TypeBuilder tb = builder as TypeBuilder;
-					
-			if (a.UsageAttr) {
-				Targets = a.Targets;
-				AllowMultiple = a.AllowMultiple;
-				Inherited = a.Inherited;
-				
-				TypeManager.RegisterAttributeAllowMultiple (tb, AllowMultiple);
-			}
-
 			if (a.Type == TypeManager.default_member_type) {
 				if (Indexers != null) {
 					Report.Error (646, a.Location,
@@ -445,17 +429,12 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			try {
-				tb.SetCustomAttribute (cb);
+			base.ApplyAttributeBuilder (a, cb);
 			} 
-			catch (System.ArgumentException e) {
-				Report.Warning (-21, a.Location,
-						"The CharSet named property on StructLayout\n"+
-						"\tdoes not work correctly on Microsoft.NET\n"+
-						"\tYou might want to remove the CharSet declaration\n"+
-						"\tor compile using the Mono runtime instead of the\n"+
-						"\tMicrosoft .NET runtime.\n"+
-						"\tThe runtime reported the error: " + e);
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -998,7 +977,6 @@ namespace Mono.CSharp {
 
 			if ((parent != null) && parent.IsAttribute) {
 				RootContext.RegisterAttribute (this);
-				TypeManager.RegisterAttrType (TypeBuilder, this);
 			} else
 				RootContext.RegisterOrder (this); 
 				
@@ -1862,7 +1840,7 @@ namespace Mono.CSharp {
 			return;
 		}
 
-		protected virtual void VerifyMembers ()
+		protected virtual void VerifyMembers (EmitContext ec)
 		{
 			//
 			// Check for internal or private fields that were never assigned
@@ -1911,7 +1889,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Emit ()
 		{
-			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this);
 
 			Emit (this);
 
@@ -1978,7 +1957,7 @@ namespace Mono.CSharp {
 				if (Pending.VerifyPendingMethods ())
 					return;
 
-			VerifyMembers ();
+			VerifyMembers (ec);
 			
 //			if (types != null)
 //				foreach (TypeContainer tc in types)
@@ -2461,12 +2440,13 @@ namespace Mono.CSharp {
 
 	public class ClassOrStruct : TypeContainer {
 		bool hasExplicitLayout = false;
-		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent, MemberName name,
+				      Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, l)
 		{
 		}
 
-		protected override void VerifyMembers () 
+		protected override void VerifyMembers (EmitContext ec) 
 		{
 			if (Fields != null) {
 				foreach (Field f in Fields) {
@@ -2474,7 +2454,7 @@ namespace Mono.CSharp {
 						continue;
 					if (hasExplicitLayout) {
 						if (f.OptAttributes == null 
-						    || !f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, this)) {
+						    || !f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, ec)) {
 							Report.Error (625, f.Location,
 								      "Instance field of type marked with" 
 								      + " StructLayout(LayoutKind.Explicit) must have a"
@@ -2483,7 +2463,7 @@ namespace Mono.CSharp {
 					}
 					else {
 						if (f.OptAttributes != null 
-						    && f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, this)) {
+						    && f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, ec)) {
 							Report.Error (636, f.Location,
 								      "The FieldOffset attribute can only be placed on members of "
 								      + "types marked with the StructLayout(LayoutKind.Explicit)");
@@ -2491,16 +2471,16 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			base.VerifyMembers ();
+			base.VerifyMembers (ec);
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.struct_layout_attribute_type
 			    && (LayoutKind) a.GetPositionalValue (0) == LayoutKind.Explicit)
 				hasExplicitLayout = true;
 
-			base.ApplyAttributeBuilder (builder, a, cb);
+			base.ApplyAttributeBuilder (a, cb);
 		}
 	}
 
@@ -2518,6 +2498,9 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.UNSAFE;
 
+		// Information in the case we are an attribute type
+		AttributeUsageAttribute attribute_usage;
+
 		public Class (NamespaceEntry ns, TypeContainer parent, MemberName name,
 			      int mod, Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, l)
@@ -2530,6 +2513,27 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
+			attribute_usage = new AttributeUsageAttribute (AttributeTargets.All);
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Class;
+			}
+		}
+
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.UsageAttribute != null)
+				attribute_usage = a.UsageAttribute;
+
+			base.ApplyAttributeBuilder (a, cb);
+		}
+
+		public AttributeUsageAttribute AttributeUsage {
+			get {
+				return attribute_usage;
+			}
 		}
 
 		//
@@ -2570,6 +2574,13 @@ namespace Mono.CSharp {
 
 			this.ModFlags |= Modifiers.SEALED;
 		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Struct;
+			}
+		}
+
 
 		//
 		// FIXME: Allow the user to specify a different set of attributes
@@ -2613,6 +2624,12 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Interface;
+			}
 		}
 
 		public override TypeAttributes TypeAttr {
@@ -2872,111 +2889,6 @@ namespace Mono.CSharp {
 			
 			return cc;
 		}
-
-		//
-		// The method's attributes are passed in because we need to extract
-		// the "return:" attribute from there to apply on the return type
-		//
-		static public void LabelParameters (EmitContext ec,
-                                                    MethodBase builder,
-                                                    Parameters parameters,
-                                                    Attributes method_attrs,
-                                                    Location loc)
-		{
-			//
-			// Define each type attribute (in/out/ref) and
-			// the argument names.
-			//
-			Parameter [] p = parameters.FixedParameters;
-			int i = 0;
-			
-			MethodBuilder mb = null;
-			ConstructorBuilder cb = null;
-
-			if (builder is MethodBuilder)
-				mb = (MethodBuilder) builder;
-			else
-				cb = (ConstructorBuilder) builder;
-
-			if (p != null){
-				for (i = 0; i < p.Length; i++) {
-					ParameterBuilder pb;
-					ParameterAttributes par_attr = p [i].Attributes;
-					
-					if (mb == null)
-						pb = cb.DefineParameter (
-							i + 1, par_attr, p [i].Name);
-					else 
-						pb = mb.DefineParameter (
-							i + 1, par_attr, p [i].Name);
-					
-					Attributes attr = p [i].OptAttributes;
-					if (attr != null){
-						Attribute.ApplyAttributes (ec, pb, p[i], attr);
-
-						if (par_attr == ParameterAttributes.Out){
-							if (attr.Contains (TypeManager.in_attribute_type, ec))
-								Report.Error (36, loc,
-                                                                    "Can not use [In] attribute on out parameter");
-						}
-					}
-				}
-			}
-
-			if (parameters.ArrayParameter != null){
-				ParameterBuilder pb;
-				Parameter array_param = parameters.ArrayParameter;
-
-				if (mb == null)
-					pb = cb.DefineParameter (
-						i + 1, array_param.Attributes,
-						array_param.Name);
-				else
-					pb = mb.DefineParameter (
-						i + 1, array_param.Attributes,
-						array_param.Name);
-					
-				CustomAttributeBuilder a = new CustomAttributeBuilder (
-					TypeManager.cons_param_array_attribute, new object [0]);
-				
-				pb.SetCustomAttribute (a);
-			}
-
-			//
-			// And now for the return type attribute decoration
-			//
-			ParameterBuilder ret_pb;
-			Attributes ret_attrs = null;
-				
-			if (mb == null || method_attrs == null)
-				return;
-
-			foreach (AttributeSection asec in method_attrs.AttributeSections) {
-
-				if (asec.Target != "return")
-					continue;
-
-				if (ret_attrs == null)
-					ret_attrs = new Attributes (asec);
-				else
-					ret_attrs.AddAttributeSection (asec);
-			}
-
-			if (ret_attrs != null) {
-				ParameterBase ret = new ParameterBase (ret_attrs);
-
-				try {
-					ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");				
-					Attribute.ApplyAttributes (ec, ret_pb, ret, ret_attrs);
-
-                                } catch (ArgumentOutOfRangeException) {
-					Report.Warning (
-						-24, loc,
-				                ".NET SDK 1.0 does not permit setting custom attributes" +
-                                                " on the return type of a method");
-				}
-			}
-		}
 	}
 
 	public class Method : MethodCore, IIteratorContainer, IMethodData {
@@ -3016,6 +2928,12 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Method | AttributeTargets.ReturnValue;
+			}
+		}
+		
 		//
 		// Returns the `System.Type' for the ReturnType of this
 		// function.  Provides a nice cache.  (used between semantic analysis
@@ -3070,14 +2988,16 @@ namespace Mono.CSharp {
                                 return false;
                 }
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			MethodBuilder mb = builder as MethodBuilder;
+			if (a.Type == TypeManager.methodimpl_attr_type && a.IsInternalCall) {
+				MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+			}
 
-			if (a.Type == TypeManager.methodimpl_attr_type && a.IsInternalCall)
-				mb.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
-			else if (a.Type != TypeManager.dllimport_type)
-				mb.SetCustomAttribute (cb);
+			if (a.Type == TypeManager.dllimport_type)
+				return;
+
+			MethodBuilder.SetCustomAttribute (cb);
 		}
 
 		//
@@ -3453,6 +3373,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Constructor;
+			}
+		}
+
+
 		//
 		// Returns true if this is a default constructor
 		//
@@ -3469,9 +3396,9 @@ namespace Mono.CSharp {
 					(Initializer.Arguments == null);
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			((ConstructorBuilder) builder).SetCustomAttribute (cb);
+			ConstructorBuilder.SetCustomAttribute (cb);
 		}
 
 		protected override bool CheckBase (TypeContainer container)
@@ -3598,8 +3525,8 @@ namespace Mono.CSharp {
 				ec.IsStatic = false;
 			}
 
-			MethodCore.LabelParameters (ec, ConstructorBuilder,
-                                                    Parameters, OptAttributes, Location);
+			Parameters.LabelParameters (ec, ConstructorBuilder,
+                                                    OptAttributes, Location);
 			
 			SymbolWriter sw = CodeGen.SymbolWriter;
 			bool generate_debugging = false;
@@ -3633,7 +3560,8 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				container.EmitFieldInitializers (ec);
 
-			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes);
+			if (OptAttributes != null) 
+				OptAttributes.Emit (ec, this);
 
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
@@ -4169,7 +4097,7 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		// 
-		public void Emit (TypeContainer container, object kind)
+		public void Emit (TypeContainer container, Attributable kind)
 		{
 			EmitContext ec;
 
@@ -4182,13 +4110,10 @@ namespace Mono.CSharp {
 			Attributes OptAttributes = method.OptAttributes;
 
 			if (OptAttributes != null)
-				Attribute.ApplyAttributes (ec, builder, kind, OptAttributes);
+				OptAttributes.Emit (ec, kind);
 
 			if (member is MethodCore)
-				MethodCore.LabelParameters (ec, MethodBuilder,
-                                                            ((MethodCore) member).Parameters,
-                                                            OptAttributes,
-                                                            loc);
+				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder,OptAttributes, loc);
                         
 			SymbolWriter sw = CodeGen.SymbolWriter;
 			Block block = method.Block;
@@ -4726,6 +4651,28 @@ namespace Mono.CSharp {
 			this.init = init;
 		}
 
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Field;
+			}
+		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.marshal_as_attr_type) {
+				UnmanagedMarshal marshal = a.GetMarshal ();
+				if (marshal != null) {
+					FieldBuilder.SetMarshal (marshal);
+					return;
+				}
+				Report.Warning_T (-24, a.Location);
+				return;
+			}
+
+			
+			FieldBuilder.SetCustomAttribute (cb);
+		}
+
 		//
 		// Whether this field has an initializer.
 		//
@@ -4835,23 +4782,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
-		{
-			FieldBuilder fb = builder as FieldBuilder;
-
-			if (a.Type == TypeManager.marshal_as_attr_type) {
-				UnmanagedMarshal marshal = a.GetMarshal ();
-				if (marshal == null)
-					Report.Warning (-24, a.Location,
-							"The Microsoft Runtime cannot set this marshal info. " +
-							"Please use the Mono runtime instead.");
-				else
-					fb.SetMarshal (marshal);
-			}
-			else
-				fb.SetCustomAttribute (cb);
-		}
-
 		public override bool Define (TypeContainer container)
 		{
 			Type t = container.ResolveType (Type, false, Location);
@@ -4947,7 +4877,7 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null) {
 				EmitContext ec = new EmitContext (tc, Location, null, FieldBuilder.FieldType, ModFlags);
-			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes);
+				OptAttributes.Emit (ec, this);
 		}
 
 			base.Emit (tc);
@@ -4957,26 +4887,17 @@ namespace Mono.CSharp {
 	//
 	// `set' and `get' accessors are represented with an Accessor.
 	// 
-	public class Accessor : Attributable {
+	public class Accessor {
 		//
 		// Null if the accessor is empty, or a Block if not
 		//
 		public Block Block;
+		public Attributes Attributes;
 		
 		public Accessor (Block b, Attributes attrs)
-			: base (attrs)
 		{
 			Block = b;
-		}
-
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
-		{
-			MethodBuilder mb = builder as MethodBuilder;
-
-			if (a.Type == TypeManager.methodimpl_attr_type && a.IsInternalCall)
-				mb.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
-			else if (a.Type != TypeManager.dllimport_type)
-				mb.SetCustomAttribute (cb);
+			Attributes = attrs;
 		}
 	}
 
@@ -5059,18 +4980,31 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public abstract class PropertyMethod: IMethodData {
+		public abstract class PropertyMethod: Attributable, IMethodData {
 			protected readonly MethodCore method;
-			public readonly Accessor Accessor;
 			protected MethodData method_data;
+			Block block;
 
-			public PropertyMethod (MethodCore method, Accessor accessor)
+			public PropertyMethod (MethodCore method, Accessor accessor):
+				base (accessor.Attributes)
 			{
 				this.method = method;
-				this.Accessor = accessor;
+				this.block = accessor.Block;
 			}
 
-			public InternalParameters ParameterInfo {
+			public override AttributeTargets AttributeTargets {
+				get {
+					return AttributeTargets.Method | AttributeTargets.ReturnValue;
+				}
+			}
+
+			public override bool IsClsCompliaceRequired(DeclSpace ds)
+			{
+				return method.IsClsCompliaceRequired (ds);
+			}
+
+			public InternalParameters ParameterInfo 
+			{
 				get {
 					return method_data.ParameterInfo;
 				}
@@ -5080,7 +5014,7 @@ namespace Mono.CSharp {
 
 			public Block Block {
 				get {
-					return Accessor.Block;
+					return block;
 				}
 			}
 
@@ -5094,14 +5028,14 @@ namespace Mono.CSharp {
 
 			public void Emit (TypeContainer container)
 			{
-				method_data.Emit (container, Accessor);
-				Accessor.Block = null;
-			}
+				method_data.Emit (container, this);
+				block = null;
 
-			public Attributes OptAttributes {
-				get {
-					return Accessor.OptAttributes;
 				}
+
+			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+			{
+				method_data.MethodBuilder.SetCustomAttribute (cb);
 			}
 
 			public virtual Type[] ParameterTypes {
@@ -5143,16 +5077,15 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (builder is PropertyBuilder) 
-				((PropertyBuilder) builder).SetCustomAttribute (cb);
-			//
-			// This is for the case we are setting attributes on
-			// the get and set accessors
-			//
-			else if (builder is MethodBuilder)
-				((MethodBuilder) builder).SetCustomAttribute (cb);
+			PropertyBuilder.SetCustomAttribute (cb);
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Property;
+			}
 		}
 
 		protected override bool DoDefine (DeclSpace decl, TypeContainer container)
@@ -5321,8 +5254,8 @@ namespace Mono.CSharp {
 			// case, we do not actually emit the ".property", so there is nowhere to
 			// put the attribute
 			//
-			if (PropertyBuilder != null)
-				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes);
+			if (PropertyBuilder != null && OptAttributes != null)
+				OptAttributes.Emit (ec, this);
 
 			if (Get != null)
 				Get.Emit (tc);
@@ -5593,6 +5526,11 @@ namespace Mono.CSharp {
 
 		sealed class AddDelegateMethod: DelegateMethod
 		{
+			public AddDelegateMethod (Event method):
+				base (method)
+			{
+			}
+
 			public AddDelegateMethod (Event method, Accessor accessor):
 				base (method, accessor)
 			{
@@ -5614,6 +5552,11 @@ namespace Mono.CSharp {
 
 		sealed class RemoveDelegateMethod: DelegateMethod
 		{
+			public RemoveDelegateMethod (Event method):
+				base (method)
+			{
+			}
+
 			public RemoveDelegateMethod (Event method, Accessor accessor):
 				base (method, accessor)
 			{
@@ -5633,16 +5576,39 @@ namespace Mono.CSharp {
 
 		}
 
-		abstract class DelegateMethod: IMethodData
+		public abstract class DelegateMethod: Attributable, IMethodData
 		{
 			protected readonly Event method;
-			public readonly Accessor Accessor;
 			protected MethodData method_data;
+			Block block;
 
-			public DelegateMethod (Event method, Accessor accessor)
+			public DelegateMethod (Event method):
+				base (null)
 			{
 				this.method = method;
-				this.Accessor = accessor;
+			}
+
+			public DelegateMethod (Event method, Accessor accessor):
+				base (accessor.Attributes)
+			{
+				this.method = method;
+				this.block = accessor.Block;
+			}
+
+			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+			{
+				method_data.MethodBuilder.SetCustomAttribute (cb);
+			}
+
+			public override AttributeTargets AttributeTargets {
+				get {
+					return AttributeTargets.Method;
+				}
+			}
+
+			public override bool IsClsCompliaceRequired(DeclSpace ds)
+			{
+				return method.IsClsCompliaceRequired (ds);
 			}
 
 			public MethodBuilder Define (TypeContainer container, InternalParameters ip)
@@ -5662,7 +5628,7 @@ namespace Mono.CSharp {
 
 			public Block Block {
 				get {
-					return Accessor.Block;
+					return block;
 				}
 			}
 
@@ -5674,9 +5640,9 @@ namespace Mono.CSharp {
 
 			public void Emit (TypeContainer tc)
 			{
-				if (Accessor != null) {
-					method_data.Emit (tc, Accessor);
-					Accessor.Block = null;
+				if (block != null) {
+					method_data.Emit (tc, this);
+					block = null;
 					return;
 				}
 
@@ -5703,12 +5669,6 @@ namespace Mono.CSharp {
 			}
 
 			protected abstract MethodInfo DelegateMethodInfo { get; }
-
-			public Attributes OptAttributes {
-				get {
-					return Accessor == null ? null : Accessor.OptAttributes;
-				}
-			}
 
 			public Type[] ParameterTypes {
 				get {
@@ -5771,16 +5731,36 @@ namespace Mono.CSharp {
 				name, init, attrs, loc)
 		{
 			IsInterface = is_iface;
+			this.ds = ds;
+
 			Add = new AddDelegateMethod (this, add);
 			Remove = new RemoveDelegateMethod (this, remove);
-			this.ds = ds;
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		public Event (DeclSpace ds, Expression type, int mod_flags, bool is_iface,
+			      MemberName name, Object init, Attributes attrs, Location loc)
+			: base (type, mod_flags,
+				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
+				name, init, attrs, loc)
 		{
-			((MyEventBuilder) builder).SetCustomAttribute (cb);
+			IsInterface = is_iface;
+			this.ds = ds;
+
+			Add = new AddDelegateMethod (this);
+			Remove = new RemoveDelegateMethod (this);
 		}
 
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			EventBuilder.SetCustomAttribute (cb);
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Event;
+			}
+		}
+  
 		public override bool Define (TypeContainer container)
 		{
 			EventAttributes e_attr;
@@ -5829,7 +5809,7 @@ namespace Mono.CSharp {
 				EventBuilder = new MyEventBuilder (this,
 					container.TypeBuilder, Name, e_attr, MemberType);
 					
-				if (Add.Accessor == null && Remove.Accessor == null &&
+				if (Add.Block == null && Remove.Block == null &&
 				    !IsInterface) {
 					FieldBuilder = container.TypeBuilder.DefineField (
 						Name, MemberType,
@@ -5858,7 +5838,7 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null) {
 				EmitContext ec = new EmitContext (tc, Location, null, MemberType, ModFlags);
-			Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes);
+				OptAttributes.Emit (ec, this);
 			}
 
 			if (!IsInterface) {
@@ -6229,9 +6209,15 @@ namespace Mono.CSharp {
 				SecondArgType + ")";
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb) 
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb) 
 		{
-			OperatorMethod.ApplyAttributeBuilder (builder, a, cb);
+			OperatorMethod.ApplyAttributeBuilder (a, cb);
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Method; 
+			}
 		}
 		
 		protected override bool CheckGenericOverride (MethodInfo method,  string name)
