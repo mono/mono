@@ -20,7 +20,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 
-namespace MonoTests.System.Microsoft.VisualBasic
+namespace MonoTests.Microsoft.VisualBasic
 {
 
 	enum OsType {
@@ -91,7 +91,7 @@ namespace MonoTests.System.Microsoft.VisualBasic
 			}
 
 			if (MyVBCodeCompilerResults.Errors.Count != 0) {
-				System.Console.WriteLine (MyVBCodeCompilerResults);
+				Console.WriteLine (MyVBCodeCompilerResults);
 				Assert ("#JW31 - Hello world compilation: " + MyOutStr, false);
 			}
 

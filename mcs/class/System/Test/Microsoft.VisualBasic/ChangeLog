@@ -1,3 +1,8 @@
+2004-12-03  Raja R Harinath  <rharinath@novell.com>
+
+	* VBCodeProviderTest.cs: Change namespace to
+	MonoTests.Microsoft.VisualBasic.
+
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
 	* VBCodeProviderTest.cs (CreateCompiler): Be more verbose about
