@@ -820,8 +820,9 @@ namespace Mono.Xml
 			string absPath = absUri.ToString ();
 			if (Root.ExternalResources.ContainsKey (absPath))
 				LiteralEntityValue = (string) Root.ExternalResources [absPath];
+			Stream s = null;
 			try {
-				Stream s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
+				s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
 				XmlTextReader xtr = new XmlTextReader (s);
 				// Don't skip Text declaration here. LiteralEntityValue contains it. See spec 4.5
 				this.BaseURI = absPath;
@@ -836,6 +837,9 @@ namespace Mono.Xml
 				LiteralEntityValue = String.Empty;
 				LoadFailed = true;
 //				throw new XmlException (this, "Cannot resolve external entity. URI is " + absPath + " .");
+			} finally {
+				if (s != null)
+					s.Close ();
 			}
 		}
 	}

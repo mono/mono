@@ -538,7 +538,7 @@ namespace System.Xml
 					target = target.ParentNode;
 				} while (target.NodeType != XmlNodeType.Document);
 			}
-			return defaultNsmgr.LookupNamespace (prefix);
+			return defaultNsmgr.LookupNamespace (prefix, false);
 		}
 
 		public override void MoveToAttribute (int attributeIndex)

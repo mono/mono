@@ -1,3 +1,11 @@
+2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs,
+	  XmlDocument.cs : Close stream always.
+	* XmlNodeReader.cs : don't expect atomized name in LookupNamespace().
+	* XmlTextReader.cs : Namespace has was not done. Some tests depends on
+	  this failure and to be fixed.
+
 2004-06-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNamespaceManagre.cs : Fixed LookupNamespace() and LookupPrefix().

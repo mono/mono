@@ -569,8 +569,9 @@ namespace System.Xml
 
 		public virtual void Load (string filename)
 		{
-			XmlTextReader xr = new XmlTextReader (filename);
+			XmlTextReader xr = null;
 			try {
+				xr = new XmlTextReader (filename);
 				xr.XmlResolver = resolver;
 				Load (xr);
 			} finally {

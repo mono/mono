@@ -1281,13 +1281,14 @@ namespace System.Xml
 				attributeTokens [i].FillNames ();
 
 			// quick name check
-			for (int i = 0; i < attributeCount; i++)
+			for (int i = 0; i < attributeCount; i++) {
 				for (int j = i + 1; j < attributeCount; j++)
 					if (Object.ReferenceEquals (attributeTokens [i].Name, attributeTokens [j].Name) ||
 						(Object.ReferenceEquals (attributeTokens [i].LocalName, attributeTokens [j].LocalName) &&
 						Object.ReferenceEquals (attributeTokens [i].NamespaceURI, attributeTokens [j].NamespaceURI)))
 						throw new XmlException (this as IXmlLineInfo,
 							"Attribute name and qualified name must be identical.");
+			}
 
 			string baseUri = GetAttribute ("xml:base");
 			if (baseUri != null) {
@@ -1327,6 +1328,18 @@ namespace System.Xml
 				null, // value
 				false // clearAttributes
 			);
+
+			if (LookupNamespace (Prefix) == null)
+				throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
+			try {
+				for (int i = 0; i < attributeCount; i++) {
+					MoveToAttribute (i);
+					if (LookupNamespace (Prefix) == null)
+						throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
+				}
+			} finally {
+				MoveToElement ();
+			}
 
 			if (IsEmptyElement)
 				CheckCurrentStateUpdate ();
