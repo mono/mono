@@ -37,9 +37,10 @@ namespace System.IO {
 	class DefaultWatcherData {
 		public FileSystemWatcher FSW;
 		public string Directory;
-		public string FileMask;
+		public string FileMask; // If NoWildcards, contains the full path to the file.
 		public bool IncludeSubdirs;
 		public bool Enabled;
+		public bool NoWildcards;
 		public DateTime DisabledTime;
 		public Hashtable Files;
 	}
@@ -100,7 +101,12 @@ namespace System.IO {
 
 				data.FSW = fsw;
 				data.Directory = fsw.FullPath;
-				data.FileMask = fsw.MangledFilter;
+				data.NoWildcards = !fsw.Pattern.HasWildcard;
+				if (data.NoWildcards)
+					data.FileMask = Path.Combine (data.Directory, fsw.MangledFilter);
+				else
+					data.FileMask = fsw.MangledFilter;
+
 				data.IncludeSubdirs = fsw.IncludeSubdirectories;
 				data.Enabled = true;
 				data.DisabledTime = DateTime.MaxValue;
@@ -185,6 +191,7 @@ namespace System.IO {
 			}
 		}
 
+		static string [] NoStringsArray = new string [0];
 		void DoFiles (DefaultWatcherData data, string directory, bool dispatch)
 		{
 			bool direxists = Directory.Exists (directory);
@@ -194,10 +201,16 @@ namespace System.IO {
 			}
 
 			string [] files = null;
-			if (direxists) {
+			if (!direxists) {
+				files = NoStringsArray;
+			} else if (!data.NoWildcards) {
 				files = Directory.GetFileSystemEntries (directory, data.FileMask);
 			} else {
-				files = new string [0];
+				// The pattern does not have wildcards
+				if (File.Exists (data.FileMask))
+					files = new string [] { data.FileMask };
+				else
+					files = NoStringsArray;
 			}
 
 			/* Set all as untested */
@@ -211,7 +224,14 @@ namespace System.IO {
 			foreach (string filename in files) {
 				FileData fd = (FileData) data.Files [filename];
 				if (fd == null) {
-					data.Files.Add (filename, CreateFileData (directory, filename));
+					try {
+						data.Files.Add (filename, CreateFileData (directory, filename));
+					} catch {
+						// The file might have been removed in the meanwhile
+						data.Files.Remove (filename);
+						continue;
+					}
+					
 					if (dispatch)
 						DispatchEvents (data.FSW, FileAction.Added, filename);
 				} else if (fd.Directory == directory) {

@@ -1,3 +1,8 @@
+2004-07-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MethodCall.cs: Use RemotingServices.GetMethodBaseFromName to get the
+	  MethodBase from the method name. This fixes bug #61774.
+
 2004-06-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ReturnMessage.cs: Added IMessage interface to class definition.

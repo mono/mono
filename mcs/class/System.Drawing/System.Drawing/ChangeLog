@@ -1,3 +1,27 @@
+2004-10-04  Ravindra  <rkumar@novell.com>
+
+	* gdipFunctioncs.cs: Backporting. Fix from Alois for bug #67383.
+
+2004-09-22  Ravindra <rkumar@novell.com>
+
+	* gdipFunctions.cs: Backporting. Improved the exception message
+	for unsupported image formats.
+
+2004-09-13  Ravindra <rkumar@novell.com>
+
+	* Graphics.cs: MSDN says that using image width and height gives
+	better performance, hence we are using image width and height to
+	avoid autoscaling in DrawImageUnscaled. DrawImageUnscaled method.
+
+2004-09-10  Ravindra <rkumar@novell.com>
+
+	* Font.cs: Fixed Height property and GetHeight method.
+	* Graphics.cs: Fixed DrawImageUnscaled method.
+
+2004-07-02 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* gdipFunctions.cs: fixes bug 61050
+
 2004-06-24  Sanjay Gupta <gsanjay@novell.com>
 
 	* ImageAnimator.cs: Rewrote complete implementation.

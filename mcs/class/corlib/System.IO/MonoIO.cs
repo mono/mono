@@ -63,7 +63,8 @@ namespace System.IO
 			// FIXME: add more exception mappings here
 			case MonoIOError.ERROR_FILE_NOT_FOUND:
 				message = String.Format ("Could not find file \"{0}\"", path);
-				return new FileNotFoundException (message);
+				return new FileNotFoundException (message,
+								  path);
 
 			case MonoIOError.ERROR_PATH_NOT_FOUND:
 				message = String.Format ("Could not find a part of the path \"{0}\"", path);
@@ -80,6 +81,10 @@ namespace System.IO
 			case MonoIOError.ERROR_FILENAME_EXCED_RANGE:
 				message = String.Format ("Path is too long. Path: {0}", path); 
 				return new PathTooLongException (message);
+
+			case MonoIOError.ERROR_INVALID_PARAMETER:
+				message = String.Format ("Invalid parameter");
+				return new IOException (message);
 
 			default:
 				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);
@@ -304,7 +309,9 @@ namespace System.IO
 			result = SetFileTime (handle, creation_time,
 					      last_access_time,
 					      last_write_time, out error);
-			Close (handle, out error);
+
+			MonoIOError ignore_error;
+			Close (handle, out ignore_error);
 			
 			return result;
 		}

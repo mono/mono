@@ -1,3 +1,14 @@
+2004-07-26  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapMessageFormater.cs: In BuildSoapMessageFromMethodResponse, add the
+	  return value to the SoapMessage even if it is null. This fixes bug #61837.
+
+2004-07-06  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapMessageFormatter.cs: In BuildMethodCallFromSoapMessage, set get the
+	  parameters from the SoapMessage by position, not by name, since names
+	  may be different. This fixes bug #60427.
+
 2004-06-16  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapServerFormatterSink.cs: Removed unneded method.

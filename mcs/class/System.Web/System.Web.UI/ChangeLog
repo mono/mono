@@ -1,3 +1,45 @@
+2004-10-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: even if the control has no children the naming container
+	may contain the control we're looking for. Fixes bug #67304.
+
+2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: ensure bin directory exists before trying to access
+	it. Fixes bug #65446 (not closed yet due to dependencies).
+
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWebHandlerParser.cs: correctly cache Type instead of the
+	assembly for ashx/asmx. Otherwise we need to open the file and check
+	for the class name in there. Thanks to Ben for pointing this out.
+
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: removed creation of StringWriter.  It's not used.
+	* Control.cs: don't create the EventHandlerList until requested.
+
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LiteralControl.cs: stylized. This control has EnableViewState disabled
+	by default and doesn't get an automatic ID. When text is null -> "".
+
+2004-07-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControl.cs: don't include private methods of base classes when
+	auto-attaching events. Fixes bug 61569.
+
+2004-07-08 Pablo Baena <pbaena@gmail.com>
+
+	* Page.cs: added workaround for __doPostBack script on Netscape 4.xx
+	
+2004-07-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: added additional checks for saving/displaying trace data.
+
+	* PageParser.cs: removed checks for trace enabled in configuration
+	files.
+
 2004-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlCollection.cs: when clearing the control collection, tell the

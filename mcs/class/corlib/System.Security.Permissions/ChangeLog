@@ -1,3 +1,9 @@
+2004-10-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrincipalPermission.cs: Fixed bug where a change to a permission
+	(e.g. Copy, Union) could affect multiple instances. Fixed FromXml
+	to clear existing entries.
+
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* StrongNameIdentityPermission.cs: removed extra useless finalizer

@@ -70,7 +70,7 @@ namespace System.IO
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("dest");
 			if (!Exists (src))
-				throw new FileNotFoundException (src + " does not exist");
+				throw new FileNotFoundException (src + " does not exist", src);
 
 			if ((GetAttributes(src) & FileAttributes.Directory) == FileAttributes.Directory){
 				throw new ArgumentException(src + " is a directory");
@@ -261,9 +261,11 @@ namespace System.IO
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("dest");
 			if (!MonoIO.Exists (src, out error))
-				throw new FileNotFoundException (src + " does not exist");
+				throw new FileNotFoundException (src + " does not exist", src);
 			if (MonoIO.ExistsDirectory (dest, out error))
 					throw new IOException (dest + " is a directory");	
+			if (MonoIO.Exists (dest, out error))
+				throw new IOException (dest + " already exists");
 
 			string DirName;
 			DirName = Path.GetDirectoryName(src);

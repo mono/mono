@@ -109,7 +109,7 @@ namespace System.Web.SessionState
 			if (id == null)
 				return;
 			
-			context.Request.SetFilePath (UrlUtils.RemoveSessionId (base_path,
+			context.Request.SetCurrentExePath (UrlUtils.RemoveSessionId (base_path,
 								     context.Request.FilePath));
 			context.Request.SetHeader (HeaderName, id);
 		}
@@ -158,7 +158,7 @@ namespace System.Web.SessionState
 				} else if (isNew) {
 					string id = context.Session.SessionID;
 					HttpCookie cookie = new HttpCookie (CookieName, id);
-					cookie.Path = UrlUtils.GetDirectory (context.Request.Path);
+					cookie.Path = UrlUtils.GetDirectory (context.Request.ApplicationPath);
 					context.Response.AppendCookie (cookie);
 				}
 			}

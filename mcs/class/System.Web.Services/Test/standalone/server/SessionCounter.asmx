@@ -8,6 +8,12 @@
  {  
     public class SessionCounter: System.Web.Services.WebService  
     {  
+		public SessionCounter ()
+		{
+			if (Context == null)
+				throw new Exception ("Context not set in constructor");
+		}
+		
          [ WebMethod(EnableSession=true) ]  
          public void Reset()
          {  

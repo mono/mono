@@ -63,10 +63,10 @@ namespace System
 		static string _process_guid;
 
 		[ThreadStatic]
-		Hashtable type_resolve_in_progress;
+		static Hashtable type_resolve_in_progress;
 
 		[ThreadStatic]
-		Hashtable assembly_resolve_in_progress;
+		static Hashtable assembly_resolve_in_progress;
 
 		// Evidence evidence;
 

@@ -176,14 +176,8 @@ namespace System.Xml
 		}
 #endif
 
-		public override bool EOF
-		{
-			get
-			{
-				return
-					readState == ReadState.EndOfFile ||
-					readState == ReadState.Closed;
-			}
+		public override bool EOF {
+			get { return readState == ReadState.EndOfFile; }
 		}
 
 #if NET_2_0
@@ -531,6 +525,14 @@ namespace System.Xml
 				return false;
 		}
 
+		private int SkipIgnorableBase64Chars (char [] chars, int charsLength, int i)
+		{
+			while (chars [i] == '=' || XmlChar.IsWhitespace (chars [i]))
+				if (charsLength == ++i)
+					break;
+			return i;
+		}
+
 		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{
 			if (offset < 0)
@@ -567,7 +569,9 @@ namespace System.Xml
 
 			byte b = 0;
 			byte work = 0;
-			for (int i = 0; i < charsLength - 3; i += 4) {
+			for (int i = 0; i < charsLength - 3; i++) {
+				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
+					break;
 				b = (byte) (GetBase64Byte (chars [i]) << 2);
 				if (bufIndex < bufLast)
 					buffer [bufIndex] = b;
@@ -577,9 +581,11 @@ namespace System.Xml
 					base64Cache [0] = b;
 				}
 				// charsLength mod 4 might not equals to 0.
-				if (i + 1 == charsLength)
+				if (++i == charsLength)
 					break;
-				b = GetBase64Byte (chars [i + 1]);
+				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
+					break;
+				b = GetBase64Byte (chars [i]);
 				work = (byte) (b >> 4);
 				if (bufIndex < bufLast) {
 					buffer [bufIndex] += work;
@@ -598,9 +604,11 @@ namespace System.Xml
 					base64Cache [1] = work;
 				}
 
-				if (i + 2 == charsLength)
+				if (++i == charsLength)
 					break;
-				b = GetBase64Byte (chars [i + 2]);
+				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
+					break;
+				b = GetBase64Byte (chars [i]);
 				work = (byte) (b >> 2);
 				if (bufIndex < bufLast) {
 					buffer [bufIndex] += work;
@@ -617,9 +625,11 @@ namespace System.Xml
 						base64CacheStartsAt = 2;
 					base64Cache [2] = work;
 				}
-				if (i + 3 == charsLength)
+				if (++i == charsLength)
 					break;
-				work = GetBase64Byte (chars [i + 3]);
+				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
+					break;
+				work = GetBase64Byte (chars [i]);
 				if (bufIndex < bufLast) {
 					buffer [bufIndex] += work;
 					bufIndex++;
@@ -672,7 +682,7 @@ namespace System.Xml
 
 		public void ResetState ()
 		{
-			Init ();
+			throw new InvalidOperationException ("Cannot call ResetState when parsing an XML fragment.");
 		}
 
 		public override void ResolveEntity ()
@@ -1130,8 +1140,11 @@ namespace System.Xml
 					return -1;
 				return PeekChar ();
 			}
-			else
-				return peekChars [peekCharsIndex];
+			else {
+				char c = peekChars [peekCharsIndex];
+				if (c != 0) return c;
+				else return -1;
+			}
 		}
 
 		private int ReadChar ()
@@ -1148,6 +1161,8 @@ namespace System.Xml
 			if (ch == '\n') {
 				line++;
 				column = 1;
+			} else if (ch == 0) {
+				return -1;
 			} else {
 				column++;
 			}
@@ -1283,6 +1298,9 @@ namespace System.Xml
 					"Multiple document element was detected.");
 			currentState = XmlNodeType.Element;
 
+			currentLinkedNodeLineNumber = line;
+			currentLinkedNodeLinePosition = column;
+
 			parserContext.NamespaceManager.PushScope ();
 
 			string name = ReadName ();
@@ -1384,6 +1402,9 @@ namespace System.Xml
 			if (currentState != XmlNodeType.Element)
 				throw new XmlException (this as IXmlLineInfo,
 					"End tag cannot appear in this state.");
+
+			currentLinkedNodeLineNumber = line;
+			currentLinkedNodeLinePosition = column;
 
 			string name = ReadName ();
 			if (elementNameStackPos == 0)
@@ -1527,8 +1548,14 @@ namespace System.Xml
 					ch = ReadReference (false);
 					if (returnEntityReference) // Returns -1 if char validation should not be done
 						break;
-				}
-				else {
+				} else if (normalization && ch == '\r') {
+					ReadChar ();
+					ch = ReadChar ();
+					if (ch != '\n')
+						// append '\n' instead of '\r'.
+						AppendValueChar ('\n');
+					// and in case of "\r\n", discard '\r'.
+				} else {
 					if (XmlChar.IsInvalid (ch))
 						throw new XmlException (this, "Not allowed character was found.");
 					ch = ReadChar ();
@@ -2121,8 +2148,18 @@ namespace System.Xml
 						skip = true;
 					}
 				}
-				if (normalization && XmlChar.IsInvalid (ch))
-					throw new XmlException (this, "Invalid character was found.");
+				if (normalization) {
+					if (ch == '\r') {
+						ch = PeekChar ();
+						if (ch != '\n')
+							// append '\n' instead of '\r'.
+							AppendValueChar ('\n');
+						// otherwise, discard '\r'.
+						continue;
+					}
+					else if (XmlChar.IsInvalid (ch))
+						throw new XmlException (this, "Invalid character was found.");
+				}
 
 				AppendValueChar (ch);
 			}
@@ -2548,6 +2585,8 @@ namespace System.Xml
 			return;
 		}
 
+		// Since ReadBase64() is processed for every 4 chars, it does
+		// not handle '=' here.
 		private byte GetBase64Byte (char ch)
 		{
 			switch (ch) {
@@ -2555,8 +2594,6 @@ namespace System.Xml
 				return 62;
 			case '/':
 				return 63;
-			case '=':
-				return 0;
 			default:
 				if (ch >= 'A' && ch <= 'Z')
 					return (byte) (ch - 'A');
@@ -2577,8 +2614,6 @@ namespace System.Xml
 				return 0;
 			}
 
-			shouldSkipUntilEndTag = true;
-
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
 			else if (length < 0)
@@ -2588,6 +2623,8 @@ namespace System.Xml
 
 			if (NodeType != XmlNodeType.Element)
 				return 0;
+
+			shouldSkipUntilEndTag = true;
 
 			int bufIndex = offset;
 			for (int i = 0; i < length; i++) {
@@ -2607,9 +2644,9 @@ namespace System.Xml
 						depth++;
 						depthUp = false;
 					}
-					ReadEndTag();
+					ReadEndTag ();
 					shouldSkipUntilEndTag = false;
-					Read ();
+					Read (); // move to the next node
 					return i;
 				default:
 					ReadChar ();

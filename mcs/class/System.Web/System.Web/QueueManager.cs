@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2003 Novell, Inc (http://www.novell.com)
+// (C) 2003,2004 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -53,35 +53,57 @@ namespace System.Web
 			queue = new Queue (queueLimit);
 		}
 
-		// TODO: handle local connections
-		public bool CanExecuteRequest (bool local)
+		// TODO: handle local connections, just check for 127.0.0.1
+		bool CanExecuteRequest ()
 		{
 			if (disposing)
 				return false;
 				
 			int threads, cports;
 			ThreadPool.GetAvailableThreads (out threads, out cports);
-			return (threads > minFree) || (local && threads > minLocalFree);
+			return (threads > minFree); // || (local && threads > minLocalFree);
+		}
+
+		public HttpWorkerRequest GetNextRequest (HttpWorkerRequest req)
+		{
+			if (!CanExecuteRequest ()) {
+				if (req != null) {
+					lock (queue) {
+						Queue (req);
+					}
+				}
+
+				return null;
+			}
+
+			HttpWorkerRequest result;
+			lock (queue) {
+				result = Dequeue ();
+				if (result != null) {
+					if (req != null)
+						Queue (req);
+				} else {
+					result = req;
+				}
+			}
+
+			return result;
 		}
 		
-		public void Queue (HttpWorkerRequest wr)
+		void Queue (HttpWorkerRequest wr)
 		{
-			lock (queue) {
-				if (queue.Count < queueLimit) {
-					queue.Enqueue (wr);
-					return;
-				}
+			if (queue.Count < queueLimit) {
+				queue.Enqueue (wr);
+				return;
 			}
 
 			HttpRuntime.FinishUnavailable (wr);
 		}
 
-		public HttpWorkerRequest Dequeue ()
+		HttpWorkerRequest Dequeue ()
 		{
-			lock (queue) {
-				if (queue.Count > 0)
-					return (HttpWorkerRequest) queue.Dequeue ();
-			}
+			if (queue.Count > 0)
+				return (HttpWorkerRequest) queue.Dequeue ();
 
 			return null;
 		}
@@ -93,7 +115,7 @@ namespace System.Web
 
 			disposing = true;
 			HttpWorkerRequest wr;
-			while ((wr = Dequeue ()) != null)
+			while ((wr = GetNextRequest (null)) != null)
 				HttpRuntime.FinishUnavailable (wr);
 
 			queue = null;

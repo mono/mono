@@ -1,3 +1,12 @@
+2004-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HtmlEmitter.cs : TH tag is not regarded as HTML tag.
+	  This fixes bug #67390.
+
+Thu Sep 9 07:09:11 PDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* ScriptCompilerInfo.cs: avoid using a .cctor and fix precomp.
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Debug.cs, HtmlEmitter.cs, MSXslScriptManager.cs,

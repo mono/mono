@@ -55,6 +55,11 @@ namespace System.Reflection {
 		const BindingFlags defaultBindingFlags = 
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 		
+		static Module () {
+			FilterTypeName = new TypeFilter (filter_by_type_name);
+			FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
+		}
+
 		internal Module () { }
 
 		~Module () {
@@ -206,13 +211,29 @@ namespace System.Reflection {
 	
 		public override string ToString () 
 		{
-			return "Reflection.Module: " + name;
+			return name;
 		}
 
 		// Mono Extension: returns the GUID of this module
 		internal Guid Mono_GetGuid ()
 		{
 			return new Guid (GetGuidInternal ());
+		}
+
+		private static bool filter_by_type_name (Type m, object filterCriteria) {
+			string s = (string)filterCriteria;
+			if (s.EndsWith ("*"))
+				return m.Name.StartsWith (s.Substring (0, s.Length - 1));
+			else
+				return m.Name == s;
+		}
+
+		private static bool filter_by_type_name_ignore_case (Type m, object filterCriteria) {
+			string s = (string)filterCriteria;
+			if (s.EndsWith ("*"))
+				return m.Name.ToLower ().StartsWith (s.Substring (0, s.Length - 1).ToLower ());
+			else
+				return String.Compare (m.Name, s, true) == 0;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

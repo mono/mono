@@ -1,3 +1,19 @@
+2004-09-02  Duncan Mak  <duncan@ximian.com>
+
+	* mono-find-provides/mono-find-provides.cs (PrintProvides): Fix
+	the handling of 2.0 mscorlib.
+
+2004-08-10  Duncan Mak  <duncan@ximian.com>
+
+	* mono-find-requires/mono-find-requires.cs (PrintRequires): Since
+	assembly versions are not changing with releases, use "=" instead
+	of ">=" to ensure that 2.0 packages will not be picked over 1.0 packages.
+
+2004-08-04  Duncan Mak  <duncan@ximian.com>
+
+	* mono-find-provides/mono-find-provides.cs: Add a hack to work
+	around the issue with a 2.0 corlib.
+
 2004-06-01  Todd Berman  <tberman@sevenl.net>
 
 	* all: move stuff around so that it builds properly.

@@ -64,6 +64,10 @@ namespace System.Web.UI
 
 		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 		{
+			cachedType = CachingCompiler.GetTypeFromCache (physicalPath);
+			if (cachedType != null)
+				return; // We don't need anything else.
+
 			this.context = context;
 			this.vPath = virtualPath;
 			this.physPath = physicalPath;
@@ -104,8 +108,7 @@ namespace System.Web.UI
 					ParseDirective (trimmed);
 					directiveFound = true;
 					if (gotDefault) {
-						cachedType = CachingCompiler.GetTypeFromCache (physPath,
-												className);
+						cachedType = CachingCompiler.GetTypeFromCache (physPath);
 						if (cachedType != null)
 							break;
 					}

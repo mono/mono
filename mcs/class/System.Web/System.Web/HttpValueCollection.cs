@@ -211,7 +211,7 @@ namespace System.Web
 			return result.ToString ();
 		}
 
-		virtual new public string ToString ()
+		public override string ToString ()
 		{
 			return ToString (false);
 		}

@@ -57,6 +57,7 @@ namespace System.Runtime.Remoting
 
 		internal static string app_id;
 		static int next_id = 1;
+		static readonly BindingFlags methodBindings = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 		
 		static RemotingServices ()
 		{
@@ -159,8 +160,10 @@ namespace System.Runtime.Remoting
 				else
 					throw new ArgumentException ("The obj parameter is a proxy.");
 			}
-			else
+			else {
 				identity = obj.ObjectIdentity;
+				obj.ObjectIdentity = null;
+			}
 
 			if (identity == null || !identity.IsConnected)
 				return false;
@@ -288,22 +291,49 @@ namespace System.Runtime.Remoting
 			Type type = Type.GetType (msg.TypeName);
 			if (type == null)
 				throw new RemotingException ("Type '" + msg.TypeName + "' not found.");
-
-			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+				
+			return GetMethodBaseFromName (type, msg.MethodName, (Type[]) msg.MethodSignature);
+		}
+		
+		internal static MethodBase GetMethodBaseFromName (Type type, string methodName, Type[] signature)
+		{
+			if (type.IsInterface) {
+				return FindInterfaceMethod (type, methodName, signature);
+			}
+			else {
+				MethodBase method = null;
+				if (signature == null)
+					method = type.GetMethod (methodName, methodBindings);
+				else
+					method = type.GetMethod (methodName, methodBindings, null, (Type[]) signature, null);
+				
+				if (method != null) 
+					return method;
+				
+				if (signature == null)
+					return type.GetConstructor (methodBindings, null, Type.EmptyTypes, null);
+				else
+					return type.GetConstructor (methodBindings, null, signature, null);
+			}
+		}
+		
+		static MethodBase FindInterfaceMethod (Type type, string methodName, Type[] signature)
+		{
+			MethodBase method = null;
 			
-			MethodBase method;
-			if (msg.MethodSignature == null)
-				method = type.GetMethod (msg.MethodName, bflags);
+			if (signature == null)
+				method = type.GetMethod (methodName, methodBindings);
 			else
-				method = type.GetMethod (msg.MethodName, bflags, null, (Type[]) msg.MethodSignature, null);
+				method = type.GetMethod (methodName, methodBindings, null, signature, null);
+				
+			if (method != null) return method;
 			
-			if (method != null) 
-				return method;
+			foreach (Type t in type.GetInterfaces ()) {
+				method = FindInterfaceMethod (t, methodName, signature);
+				if (method != null) return method;
+			}
 			
-			if (msg.MethodSignature == null)
-				return type.GetConstructor (bflags, null, Type.EmptyTypes, null);
-			else
-				return type.GetConstructor (bflags, null, (Type[]) msg.MethodSignature, null);
+			return null;
 		}
 
 		public static void GetObjectData(object obj, SerializationInfo info, StreamingContext context)

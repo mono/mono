@@ -37,6 +37,11 @@ namespace System.Web {
 				this.type = type;
 			}
 
+			public StaticItem (StaticItem item)
+			{
+				this.type = item.type;
+			}
+			
 			public object Instance {
 				get {
 					lock (this) {
@@ -99,6 +104,18 @@ namespace System.Web {
 
 		public object SyncRoot {
 			get { return this; }
+		}
+
+		internal HttpStaticObjectsCollection Clone ()
+		{
+			HttpStaticObjectsCollection coll = new HttpStaticObjectsCollection ();
+			coll._Objects = new Hashtable ();
+			foreach (string key in _Objects.Keys) {
+				StaticItem item = new StaticItem ((StaticItem) _Objects [key]);
+				coll._Objects [key] = item;
+			}
+			
+			return coll;
 		}
 
 		internal void Add (ObjectTagBuilder tag)

@@ -1,3 +1,8 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeBase.cs: Merge optimizations from HEAD.
+	* AuthenticodeDeformatter.cs: Merge optimizations from HEAD.
+
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeBase.cs: In sync with Mono.Security.dll version.

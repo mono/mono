@@ -288,11 +288,8 @@ namespace System.Runtime.Remoting.Messaging {
 				Type type = RemotingServices.GetServerTypeForUri (_uri);
 				if (type == null) throw new RemotingException ("Requested service not found. No receiver for uri " + _uri);
 
-				if (CanCastTo (_typeName, type))
-				{
-					BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-					if (_methodSignature == null) _methodBase = type.GetMethod (_methodName, bflags);
-					else _methodBase = type.GetMethod (_methodName, bflags, null, _methodSignature, null);
+				if (CanCastTo (_typeName, type)) {
+					_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, _methodSignature);
 					return;
 				}
 				else

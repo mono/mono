@@ -1235,5 +1235,74 @@ namespace MonoTests.System.Data
 			ds.WriteXml (xtw);
 			AssertEquals (xml, sw.ToString ());
 		}
+		
+		[Test]
+		public void DeserializeModifiedDataSet ()
+                {
+                        // Serialization begins
+                        DataSet prevDs = new DataSet ();
+			DataTable dt = prevDs.Tables.Add ();
+                        dt.Columns.Add(new DataColumn("Id", typeof(string)));
+                                                                                                                             
+                        DataRow dr = dt.NewRow();
+                        dr [0] = "a";
+                        dt.Rows.Add (dr);
+                        prevDs.AcceptChanges ();
+                        dr = prevDs.Tables[0].Rows[0];
+                        dr [0] = "b";
+                                                                                                                             
+			XmlSerializer serializer = new XmlSerializer (typeof (DataSet));
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xw = new XmlTextWriter (sw);
+			xw.QuoteChar = '\'';
+			serializer.Serialize (xw, prevDs);
+
+                        // Deserialization begins
+			StringReader sr = new StringReader (sw.ToString ());
+			XmlTextReader reader = new XmlTextReader (sr);
+			XmlSerializer serializer1 = new XmlSerializer (typeof (DataSet));
+			DataSet ds = serializer1.Deserialize (reader) as DataSet;
+                        AssertEquals ("deserialization after modification does not give original values",
+                                prevDs.Tables[0].Rows [0][0,DataRowVersion.Original].ToString (), 
+				ds.Tables[0].Rows [0][0,DataRowVersion.Original].ToString ());
+                        AssertEquals ("deserialization after modification does not give current values",
+                                prevDs.Tables[0].Rows [0][0,DataRowVersion.Current].ToString (), 
+				ds.Tables[0].Rows [0][0,DataRowVersion.Current].ToString ());
+                }
+
+                /// <summary>
+                /// Test for testing DataSet.Clear method with foriegn key relations
+                /// This is expected to clear all the related datatable rows also
+                /// </summary>
+                [Test]
+                public void DataSetClearTest ()
+                {
+                        DataSet ds = new DataSet ();
+                        DataTable parent = ds.Tables.Add ("Parent");
+                        DataTable child = ds.Tables.Add ("Child");
+                        
+                        parent.Columns.Add ("id", typeof (int));
+                        child.Columns.Add ("ref_id", typeof(int));
+                        
+                        child.Constraints.Add (new ForeignKeyConstraint ("fk_constraint", parent.Columns [0], child.Columns [0]));
+                        
+                        DataRow dr = parent.NewRow ();
+                        dr [0] = 1;
+                        parent.Rows.Add (dr);
+                        dr.AcceptChanges ();
+                        
+                        dr = child.NewRow ();
+                        dr [0] = 1;
+                        child.Rows.Add (dr);
+                        dr.AcceptChanges ();
+                        
+                        try {
+                                ds.Clear (); // this should clear all the rows in parent & child tables
+                        } catch (Exception e) {
+                                throw (new Exception ("Exception should not have been thrown at Clear method" + e.ToString ()));
+                        }
+                        Assertion.AssertEquals ("parent table rows should not exist!", 0, parent.Rows.Count);
+                        Assertion.AssertEquals ("child table rows should not exist!", 0, child.Rows.Count);
+                }
         }
 }

@@ -1,3 +1,153 @@
+2004-10-04  Juraj Skripsky  <js@hotfeet.ch>
+
+	* namespace.cs (NamespaceEntry.Using): No matter which warning
+	level is set, check if this namespace name has already been added.
+
+2004-10-03 Ben Maurer  <bmaurer@ximian.com>
+ 
+ 	* expression.cs: reftype [!=]= null should always use br[true,false].
+ 	# 67410
+
+2004-09-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Do not report the stack trace, it is useless
+	anyways for the production compiler.
+
+2004-09-15  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (fixed_statement): Introduce a scope for the
+	declaration in a 'fixed' statement.
+
+2004-09-10  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-290.cs.
+	* cs-parser.jay (delegate_declaration): Record a delegate
+	declaration as a type declaration.
+
+2004-09-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Return false if we fail to resolve the inner
+	expression. 
+
+2004-09-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Report errors with unsafe pointers, fixes #64896
+
+
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Pointer arith always needs to do a conv.i
+	if the operand is a long. fix 65320
+
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* PointerArithmetic (Resolve): make sure we are not doing
+	pointer arith on void*. Also, make sure we are resolved
+	by not setting eclass until resolve.
+
+	All callers: Make sure that PointerArithmetic gets resolved.
+
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ArrayCreation (LookupType): If the type does not resolve 
+	to an array, give an error.
+
+2004-08-04  Miguel de Icaza  <miguel@ximian.com>
+ 
+	* cfold.cs: Synchronize the folding with the code in expression.cs
+	Binary.DoNumericPromotions for uint operands.
+
+
+2004-08-03  Ben Maurer  <bmaurer@ximian.com>
+
+	* ecore.cs (MethodGroupExpr): new IsBase property.
+
+	* expression.cs (BaseAccess): Set IsBase on MethodGroupExpr.
+
+	* delegate.cs (DelegateCreation): store a MethodGroupExpr
+	rather than an instance expr.
+
+	(DelegateCreation.Emit): Use the method group rather than
+	the instance expression. Also, if you have base.Foo as the
+	method for a delegate, make sure to emit ldftn, not ldftnvirt.
+
+	(ResolveMethodGroupExpr): Use the MethodGroupExpr. 
+
+	(NewDelegate.DoResolve): Only check for the existance of Invoke
+	if the method is going to be needed. Use MethodGroupExpr.
+
+	(NewDelegate.Emit): Remove, DelegateCreation implements this.	
+
+	* expression.cs: For pointer arith., make sure to use
+	the size of the type, not the size of the pointer to
+	the type.
+
+2004-08-03  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Don't abort if we can't
+	use a user-defined operator; we still need to do numeric
+	promotions in case one argument is a builtin type and the other
+	one has an implicit conversion to that type.  Fixes #62322.
+
+2004-07-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Resolve the constant expression before returning
+	it.  Fixes: 61702
+
+2004-07-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs (handle_preprocessing_directive): Do not return
+	`true' for preprocessing directives that we parse.  The return
+	value indicates whether we should return to regular tokenizing or
+	not, not whether it was parsed successfully.
+
+	In the past if we were in: #if false ... #line #endif, we would
+	resume parsing after `#line'.  See bug 61604.
+	* typemanager.cs: Removed an old hack from Gonzalo to get corlib
+	building: IsEnumType should return true only for enums, not for
+	enums or System.Enum itself.  This fixes #61593.
+
+	Likely what happened is that corlib was wrong: mcs depended on
+	this bug in some places.  The bug got fixed, we had to add the
+	hack, which caused bug 61593.
+
+	* expression.cs (ArrayAccess.GetStoreOpCode): Remove an old hack
+	that was a workaround for the older conditions.
+	
+2004-07-14  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs: Use real error numbers.
+
+2004-07-14  Martin Baulig  <martin@ximian.com>
+
+	* iterator.cs (IteratorHandle.IsIEnumerable): The spec explicitly
+	requires this to be a System.Collection.IEnumerable and not a
+	class implementing that interface.
+	(IteratorHandle.IsIEnumerator): Likewise, for IEnumerator.	
+
+2004-07-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs: Fixed previous fix, it broke some error tests.
+
+2004-07-12  Martin Baulig  <martin@ximian.com>
+
+	* enum.cs (Enum.Define): Call Emit() to emit the attributes.
+	Fixes #61293.
+
+2004-07-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (LocalTemporary): Add new argument: is_address,If
+	`is_address' is true, then the value that we store is the address
+	to the real value, and not the value itself.
+	
+	* ecore.cs (PropertyExpr): use the new local temporary
+	stuff to allow us to handle X.Y += z (where X is a struct)
+
+2004-07-08  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Lock.Resolve): Set ec.NeedReturnLabel() if we do
+	not always return, just like we're doing in Using.Resolve().
+
 2004-06-24  Raja R Harinath  <rharinath@novell.com>
 
 	* expression.cs (BetterConversion): Remove buggy special-case
@@ -97,12 +247,6 @@
 2004-06-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Added error CS1669 test for indexers.
-
-2004-06-13  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-06-11  Martin Baulig  <martin@ximian.com>
 

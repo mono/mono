@@ -95,23 +95,26 @@ namespace MonoTests.System.Data
                                           "pk_tint TINYINT NOT NULL PRIMARY KEY," + 
                                           "col_char CHAR(20)," + 
                                           "col_int INT," + 
-                                          "col_blob TINYBLOB" + 
+                                          "col_blob TINYBLOB," + 
+                                          "col_datetime DATETIME," + 
+                                          "col_date DATE," + 
+                                          "col_time TIME" + 
                                           ");";  
                         ExecuteQuery (createQuery);
                         createQuery = "INSERT INTO test VALUES (1, 'mono test" +
-                                      "#1', 255, 127123645917568585638457243856234985 );" ; 
+                                      "#1', 255, 127123645917568585638457243856234985, '2004-08-22', '2004-08-22', '12:00:00' );" ; 
                         ExecuteQuery (createQuery);
                         createQuery = "INSERT INTO test VALUES (2, 'mono test" +
-                                      "#2', 256, NULL );" ; 
+                                      "#2', 256, NULL, NULL, NULL, NULL );";
                         ExecuteQuery (createQuery);
                         createQuery = "INSERT INTO test VALUES (3, 'mono test" +
-                                      "#3', 257 , 127123645917568585638457243856234985);" ; 
+                                      "#3', 257 , 127123645917568585638457243856234985, '2004-08-22', '2004-08-22', '12:00:00');" ; 
                         ExecuteQuery (createQuery);
                         createQuery = "INSERT INTO test VALUES (4, 'mono test" +
-                                      "#4', 258 , 127123645917568585638457243856234985);" ; 
+                                      "#4', 258 , 127123645917568585638457243856234985, '2004-08-22', '2004-08-22', '12:00:00');" ; 
                         ExecuteQuery (createQuery);
                         createQuery = "INSERT INTO test VALUES (5, 'mono test" +
-                                      "#5', 259, 127123645917568585638457243856234985 );" ;
+                                      "#5', 259, 127123645917568585638457243856234985, '2004-08-22', '2004-08-22', '12:00:00' );" ;
                         ExecuteQuery (createQuery);
                 }
 

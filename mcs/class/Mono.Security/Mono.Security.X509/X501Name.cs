@@ -162,6 +162,8 @@ namespace Mono.Security.X509 {
 				case "S":	// Microsoft
 				case "ST":	// RFC2253
 					return new X520.StateOrProvinceName ();
+				case "E":	// NOTE: Not part of RFC2253
+					return new X520.EmailAddress ();
 				case "DC":
 //					return streetAddress;
 				case "UID":

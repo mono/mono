@@ -57,24 +57,23 @@ namespace System.Net {
 		private static char [] reservedCharsValue = new char [] {';', ','};
 		private static char [] portSeparators = new char [] {'"', ','};
                 private static string tspecials = "()<>@,;:\\\"/[]?={} \t";   // from RFC 2965, 2068
-		
-		public Cookie () 
-			: this (String.Empty, String.Empty) {}
-		
-		public Cookie (string name, string value) 
+
+		public Cookie ()
+		{
+			expires = DateTime.MinValue;
+			timestamp = DateTime.Now;
+			domain = "";
+			name = "";
+			val = "";
+		}
+
+		public Cookie (string name, string value)
+			: this ()
 		{
 			Name = name;
 			Value = value;
-			
-			discard = false;
-			expired = false;
-			secure = false;
-			expires = DateTime.MinValue;
-			timestamp = DateTime.Now;
-			version = 0;		
-			domain = "";
-		}		
-			
+		}
+
 		public Cookie (string name, string value, string path) 
 			: this (name, value) 
 		{

@@ -101,6 +101,10 @@ namespace Mono.Security.X509 {
 						// PRINTABLESTRING
 						asn1.Add (new ASN1 (0x13, Encoding.ASCII.GetBytes (attrValue)));
 						break;
+					case 0x16:
+						// IA5STRING
+						asn1.Add (new ASN1 (0x16, Encoding.ASCII.GetBytes (attrValue)));
+						break;
 					case 0x1E:
 						// BMPSTRING
 						asn1.Add (new ASN1 (0x1E, Encoding.BigEndianUnicode.GetBytes (attrValue)));
@@ -172,6 +176,14 @@ namespace Mono.Security.X509 {
 		public class OrganizationalUnitName : AttributeTypeAndValue {
 
 			public OrganizationalUnitName () : base ("2.5.4.11", 64)
+			{
+			}
+		}
+
+		// NOTE: Not part of RFC2253
+		public class EmailAddress : AttributeTypeAndValue 
+		{
+			public EmailAddress () : base ("1.2.840.113549.1.9.1", 128, 0x16)
 			{
 			}
 		}

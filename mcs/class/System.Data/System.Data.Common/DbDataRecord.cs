@@ -340,7 +340,7 @@ namespace System.Data.Common {
 
 		public bool IsDBNull (int i)
 		{
-			return GetValue (i) == null;
+			return GetValue (i) == DBNull.Value;
 		}
 #if NET_2_0
 		public virtual bool IsSetAsDefault (int i)

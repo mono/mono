@@ -340,22 +340,26 @@ namespace System
 				name = attr.MemberName;
 			}
 			bool ignoreCase = (invokeAttr & BindingFlags.IgnoreCase) != 0;
+			bool throwMissingMethodException = false;
+			bool throwMissingFieldException = false;
 			if ((invokeAttr & BindingFlags.InvokeMethod) != 0) {
 				MethodInfo[] methods = GetMethodsByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
 				MethodBase m = binder.BindToMethod (invokeAttr, methods, ref args, modifiers, culture, namedParameters, out state);
-				if (m == null)
-					throw new MissingMethodException ();
-				object result = m.Invoke (target, invokeAttr, binder, args, culture);
-				binder.ReorderArgumentArray (ref args, state);
-				return result;
+				if (m == null) {
+					throwMissingMethodException = true;
+				} else {
+					object result = m.Invoke (target, invokeAttr, binder, args, culture);
+					binder.ReorderArgumentArray (ref args, state);
+					return result;
+				}
 			}
 			if ((invokeAttr & BindingFlags.GetField) != 0) {
 				FieldInfo f = GetField (name, invokeAttr);
 				if (f != null) {
 					return f.GetValue (target);
 				} else if ((invokeAttr & BindingFlags.GetProperty) == 0) {
-					throw new MissingFieldException ();
+					throwMissingFieldException = true;
 				}
 				/* try GetProperty */
 			} else if ((invokeAttr & BindingFlags.SetField) != 0) {
@@ -364,7 +368,7 @@ namespace System
 					f.SetValue (target, args [0]);
 					return null;
 				} else if ((invokeAttr & BindingFlags.SetProperty) == 0) {
-					throw new MissingFieldException ();
+					throwMissingFieldException = true;
 				}
 				/* try SetProperty */
 			}
@@ -384,11 +388,13 @@ namespace System
 						smethods [count++] = mb;
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
-				if (m == null)
-					throw new MissingFieldException ();
-				object result = m.Invoke (target, invokeAttr, binder, args, culture);
-				binder.ReorderArgumentArray (ref args, state);
-				return result;
+				if (m == null) {
+					throwMissingFieldException = true;
+				} else {
+					object result = m.Invoke (target, invokeAttr, binder, args, culture);
+					binder.ReorderArgumentArray (ref args, state);
+					return result;
+				}
 			} else if ((invokeAttr & BindingFlags.SetProperty) != 0) {
 				PropertyInfo[] properties = GetPropertiesByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
@@ -405,12 +411,19 @@ namespace System
 						smethods [count++] = mb;
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
-				if (m == null)
-					throw new MissingFieldException ();
-				object result = m.Invoke (target, invokeAttr, binder, args, culture);
-				binder.ReorderArgumentArray (ref args, state);
-				return result;
+				if (m == null) {
+					throwMissingFieldException = true;
+				} else {
+					object result = m.Invoke (target, invokeAttr, binder, args, culture);
+					binder.ReorderArgumentArray (ref args, state);
+					return result;
+				}
 			}
+			if (throwMissingMethodException)
+				throw new MissingMethodException();
+			if (throwMissingFieldException)
+				throw new MissingFieldException();
+
 			return null;
 		}
 

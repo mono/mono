@@ -1,3 +1,8 @@
+2004-07-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TcpServerChannel.cs: Set channel name from the provided properties.
+	  This fixes bug #61592.
+
 2004-05-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TcpChannel.cs: Made Init private.

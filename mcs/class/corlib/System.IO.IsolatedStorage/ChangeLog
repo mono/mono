@@ -1,3 +1,7 @@
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IsolatedStorageInfo.cs: useGetFolderPath instead of getting "HOME".
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* IsolatedStorage.cs: really mark the storage_scope field private

@@ -143,7 +143,7 @@ namespace System.Web {
 			return appTypeEventHandlers;
 		}
 
-		static bool FireEvents (string method_name, object target, object [] args)
+		static bool FireEvent (string method_name, object target, object [] args)
 		{
 			Hashtable possibleEvents = GetApplicationTypeEvents ((HttpApplication) target);
 			MethodInfo method = possibleEvents [method_name] as MethodInfo;
@@ -157,28 +157,24 @@ namespace System.Web {
 
 			return true;
 		}
-		
+
 		internal static void FireOnAppStart (HttpApplication app)
 		{
 			object [] args = new object [] {app, EventArgs.Empty};
-			FireEvents ("Application_Start", app, args);
+			FireEvent ("Application_Start", app, args);
 		}
 
 		void FireOnAppEnd ()
 		{
-		//	FireEvents ("Application_End", this, new object [] {this, EventArgs.Empty});
+			if (_appType == null)
+				return; // we didn't even get an application
+
+			HttpApplication app = (HttpApplication) HttpRuntime.CreateInternalObject (_appType);
+			AttachEvents (app);
+			FireEvent ("Application_End", app, new object [] {this, EventArgs.Empty});
+			app.Dispose ();
 		}
 
-		void FireOnSessionStart (HttpSessionState state, object source, EventArgs args)
-		{
-		//	FireEvents ("Session_Start", state, new object [] {source, EventArgs.Empty});
-		}
-		
-		void FireOnSessionEnd (HttpSessionState state, object source, EventArgs args)
-		{
-		//	FireEvents ("Session_End", state, new object [] {source, args});
-		}
-	
 		private void InitializeFactory (HttpContext context)
 		{
 			_appFilename = GetAppFilename (context);

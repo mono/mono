@@ -1,3 +1,18 @@
+2004-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Updated version to 1.0.3 for next stable release.
+	* MakeCert.cs: Hack for date parsing problem with Mono.
+
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* certmgr.cs: Merge enhancements from HEAD. Now allows users to 
+	manipulate the machine's cert store (not just the user's store).
+
+2004-08-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Update version number for Mono 1.0.1.
+	* sn.cs: Warn for missing machine.config (if quiet isn't specified).
+
 2004-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* sn.cs (ReSign): Return a bool indicating success or failure.

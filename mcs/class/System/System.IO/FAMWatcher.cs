@@ -320,24 +320,24 @@ namespace System.IO {
 			}
 		}
 
-		[DllImport ("fam")]
+		[DllImport ("libfam.so.0")]
 		extern static int FAMOpen (out FAMConnection fc);
 
-		[DllImport ("fam")]
+		[DllImport ("libfam.so.0")]
 		extern static int FAMClose (ref FAMConnection fc);
 
-		[DllImport ("fam")]
+		[DllImport ("libfam.so.0")]
 		extern static int FAMMonitorDirectory (ref FAMConnection fc, string filename,
 							out FAMRequest fr, IntPtr user_data);
 
-		[DllImport ("fam")]
+		[DllImport ("libfam.so.0")]
 		extern static int FAMCancelMonitor (ref FAMConnection fc, ref FAMRequest fr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static int InternalFAMNextEvent (ref FAMConnection fc, out string filename,
 							out int code, out int reqnum);
 
-		[DllImport ("fam")]
+		[DllImport ("libfam.so.0")]
 		extern static int FAMPending (ref FAMConnection fc);
 	}
 }

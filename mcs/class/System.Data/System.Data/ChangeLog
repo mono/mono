@@ -1,3 +1,57 @@
+2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : Yesterday's fix was different and broke the build :(
+
+2004-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs :
+	  - When AllowDBNull is false on attribute DataColumn, its schema
+	    should contain use="required". This fixes bug #66792.
+	  - If MaxLength is set on attribute DataColumn, the mapped schema
+	    type should contain maxLength facet. This fixes bug #66793.
+
+2004-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : For a row, when a relation is not nested, then it is
+	  still output target since it won't be written as a child of its
+	  parent. It fixes bug #66379.
+
+2004-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : Attribute constraint field XPath must be written as
+	  @blah. This fixes bug #66366.
+
+2004-09-28 Umadevi S <sumadevi@novell.com>
+        * DataRow.cs - checked for Enforceconstraints, while using indices to search for related rows
+
+2004-09-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataSet.cs : Don't check constraints for dataset clear
+	* DataRowCollection.cs : check for EnforceConstraints flag
+	before checking foriegn key constraints in Clear method
+	* DataTable.cs : Redundant checking removed in Clear method as it is
+	checked in DataRowCollection.Clear method.
+	
+2004-09-21  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRow.cs: Added a new original row cache, if the current row happens
+	to be the original row. fixed bug #63097
+
+2004-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : DataSet's ExtendedProperties were not XmlConverted.
+
+2004-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConstants.cs : Added constants for "msprop" support.
+	* DataSet.cs : ExtendedProperties should be written in the schema.
+	  This fixes bug #61233.
+
+2004-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : on serialization to XmlWriter, XmlConvert should be
+	  used. There were also some culture dependency problems to write int.
+
 2004-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDataInferenceLoader.cs : It was not always filling relation

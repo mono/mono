@@ -71,7 +71,7 @@ namespace System.Net
 
 		bool ssl;
 		bool certsAvailable;
-		static bool sslCheck;
+		static object classLock = new object ();
 		static Type sslStream;
 		static PropertyInfo piClient;
 		static PropertyInfo piServer;
@@ -127,36 +127,119 @@ namespace System.Net
 			}
 		}
 
+		static void EnsureSSLStreamAvailable ()
+		{
+			lock (classLock) {
+				if (sslStream != null)
+					return;
+
+				// HttpsClientStream is an internal glue class in Mono.Security.dll
+				sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, " +
+							Consts.AssemblyMono_Security, false);
+
+				if (sslStream == null) {
+					string msg = "Missing Mono.Security.dll assembly. " +
+							"Support for SSL/TLS is unavailable.";
+
+					throw new NotSupportedException (msg);
+				}
+				piClient = sslStream.GetProperty ("SelectedClientCertificate");
+				piServer = sslStream.GetProperty ("ServerCertificate");
+			}
+		}
+
+		bool CreateTunnel (HttpWebRequest request, Stream stream, out byte [] buffer)
+		{
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("CONNECT ");
+			sb.Append (request.Address.Host);
+			sb.Append (':');
+			sb.Append (request.Address.Port);
+			sb.Append (" HTTP/");
+			if (request.ServicePoint.ProtocolVersion == HttpVersion.Version11)
+				sb.Append ("1.1");
+			else
+				sb.Append ("1.0");
+
+			sb.Append ("\r\nHost: ");
+			sb.Append (request.Address.Authority);
+			if (request.Headers ["Proxy-Authorization"] != null) {
+				sb.Append ("\r\nProxy-Authorization: ");
+				sb.Append (request.Headers ["Proxy-Authorization"]);
+			}
+				
+			sb.Append ("\r\n\r\n");
+			byte [] connectBytes = Encoding.Default.GetBytes (sb.ToString ());
+			stream.Write (connectBytes, 0, connectBytes.Length);
+			return ReadHeaders (request, stream, out buffer);
+		}
+
+		bool ReadHeaders (HttpWebRequest request, Stream stream, out byte [] retBuffer)
+		{
+			retBuffer = null;
+
+			byte [] buffer = new byte [256];
+			MemoryStream ms = new MemoryStream ();
+			bool gotStatus = false;
+
+			while (true) {
+				int n = stream.Read (buffer, 0, 256);
+				ms.Write (buffer, 0, n);
+				int start = 0;
+				string str = null;
+				while (ReadLine (ms.GetBuffer (), ref start, (int) ms.Length, ref str)) {
+					if (str == null) {
+						if (ms.Length - start > 0) {
+							retBuffer = new byte [ms.Length - start];
+							Buffer.BlockCopy (ms.GetBuffer (), start, retBuffer, 0, retBuffer.Length);
+						}
+						return true;
+					}
+
+					if (gotStatus)
+						continue;
+
+					int spaceidx = str.IndexOf (' ');
+					if (spaceidx == -1)
+						throw new Exception ();
+
+					int resultCode = Int32.Parse (str.Substring (spaceidx + 1, 3));
+					if (resultCode != 200)
+						throw new Exception ();
+
+					gotStatus = true;
+				}
+			}
+		}
+
 		bool CreateStream (HttpWebRequest request)
 		{
 			try {
 				NetworkStream serverStream = new NetworkStream (socket, false);
-				if (request.RequestUri.Scheme == Uri.UriSchemeHttps) {
+				if (request.Address.Scheme == Uri.UriSchemeHttps) {
 					ssl = true;
-					if (!sslCheck) {
-						lock (typeof (WebConnection)) {
-							sslCheck = true;
-							// HttpsClientStream is an internal glue class in Mono.Security.dll
-							sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, " + Consts.AssemblyMono_Security, false);
-							if (sslStream != null) {
-								piClient = sslStream.GetProperty ("SelectedClientCertificate");
-								piServer = sslStream.GetProperty ("ServerCertificate");
-							}
+					EnsureSSLStreamAvailable ();
+					if (!reused || nstream == null || nstream.GetType () != sslStream) {
+						byte [] buffer = null;
+						if (sPoint.UseConnect) {
+							bool ok = CreateTunnel (request, serverStream, out buffer);
+							if (!ok)
+								return false;
 						}
+
+						object[] args = new object [4] { serverStream,
+										request.ClientCertificates,
+										request, buffer};
+						nstream = (Stream) Activator.CreateInstance (sslStream, args);
 					}
-					if (sslStream == null)
-						throw new NotSupportedException ("Missing Mono.Security.dll assembly. Support for SSL/TLS is unavailable.");
-
-					object[] args = new object [4] { serverStream, request.RequestUri.Host, request.ClientCertificates, request };
-					nstream = (Stream) Activator.CreateInstance (sslStream, args);
-
 					// we also need to set ServicePoint.Certificate 
 					// and ServicePoint.ClientCertificate but this can
 					// only be done later (after handshake - which is
 					// done only after a read operation).
-				}
-				else
+				} else {
+					ssl = false;
 					nstream = serverStream;
+				}
 			} catch (Exception) {
 				status = WebExceptionStatus.ConnectFailure;
 				return false;
@@ -268,6 +351,9 @@ namespace System.Net
 
 			data.stream = stream;
 			
+			if (!ExpectContent (data.StatusCode))
+				stream.ForceCompletion ();
+
 			lock (cnc) {
 				lock (cnc.queue) {
 					if (cnc.queue.Count > 0) {
@@ -280,6 +366,11 @@ namespace System.Net
 			}
 			
 			data.request.SetResponseData (data);
+		}
+
+		static bool ExpectContent (int statusCode)
+		{
+			return (statusCode >= 200 && statusCode != 204 && statusCode != 304);
 		}
 
 		internal void GetCertificates () 

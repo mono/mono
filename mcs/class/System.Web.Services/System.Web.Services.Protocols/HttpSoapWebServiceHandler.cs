@@ -335,11 +335,6 @@ namespace System.Web.Services.Protocols
 		
 		private SoapServerMessage Invoke (HttpContext ctx, SoapServerMessage requestMessage)
 		{
-			WebService wsi = requestMessage.Server as WebService;
-			if (wsi != null) {
-				wsi.SetContext (ctx);
-			}
-			
 			SoapMethodStubInfo methodInfo = requestMessage.MethodStubInfo;
 
 			// Assign header values to web service members

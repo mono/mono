@@ -94,7 +94,8 @@ namespace System.Data.SqlClient {
 		{
 			if (!disposed)  {
 				if (disposing) {
-					Rollback ();
+					if (isOpen)
+						Rollback ();
 				}
 				disposed = true;
 			}

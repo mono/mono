@@ -40,17 +40,18 @@ namespace Mono.Security.Protocol.Tls {
 
         internal class HttpsClientStream : SslClientStream {
 
-                private string _host;
-                private WebRequest _request;
+                private HttpWebRequest _request;
 
 
-                public HttpsClientStream (Stream stream, string targetHost, X509CertificateCollection clientCertificates, WebRequest request)
-                        : base (stream, targetHost, false, SecurityProtocolType.Default, clientCertificates)
+                public HttpsClientStream (Stream stream, X509CertificateCollection clientCertificates,
+					HttpWebRequest request, byte [] buffer)
+                        : base (stream, request.RequestUri.Host, false, SecurityProtocolType.Default, clientCertificates)
                 {
-                        _host = targetHost;
                         // this constructor permit access to the WebRequest to call
                         // ICertificatePolicy.CheckValidationResult
                         _request = request;
+			if (buffer != null)
+				InputBuffer.Write (buffer, 0, buffer.Length);
 #if !NET_1_0
                         // also saved from reflection
                         base.CheckCertRevocationStatus = ServicePointManager.CheckCertificateRevocationList;
@@ -61,8 +62,7 @@ namespace Mono.Security.Protocol.Tls {
                 {
                         bool failed = (certificateErrors.Length > 0);
                         if (ServicePointManager.CertificatePolicy != null) {
-                                Uri target = new Uri ("https://" + _host);
-                                ServicePoint sp = ServicePointManager.FindServicePoint (target);
+                                ServicePoint sp = _request.ServicePoint;
 
                                 // only one problem can be reported by this interface
                                 int problem = ((failed) ? certificateErrors [0] : 0);
@@ -73,3 +73,4 @@ namespace Mono.Security.Protocol.Tls {
                 }
         }
 }
+

@@ -38,6 +38,7 @@ using System.Web.Configuration;
 using System.Web.Util;
 using System.Web.SessionState;
 using System.Threading;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Web
 {
@@ -96,15 +97,14 @@ namespace System.Web
 			}
 		}
 
-		[MonoTODO("Context - Use System.Remoting.Messaging.CallContext instead of Thread storage")]
 		internal static HttpContext Context
 		{
 			get {
-				return (HttpContext) Thread.GetData (Thread.GetNamedDataSlot ("Context"));
+				return (HttpContext) CallContext.GetData ("Context");
 			}
 
 			set {
-				Thread.SetData (Thread.GetNamedDataSlot ("Context"), value);
+				CallContext.SetData ("Context", value);
 			}
 		}
 
@@ -287,7 +287,7 @@ namespace System.Web
 		internal void BeginTimeoutPossible ()
 		{
 			timeoutPossible = 1;
-			timeoutBegin = DateTime.Now.Ticks;
+			timeoutBegin = DateTime.UtcNow.Ticks;
 		}
 
 		internal void EndTimeoutPossible ()
@@ -403,7 +403,7 @@ namespace System.Web
 				throw new HttpException (404, "The virtual path '" + path +
 							 "' maps to another application.");
 
-			Request.SetFilePath (path);
+			Request.SetCurrentExePath (path);
 			Request.QueryStringRaw = query;
 		}
 

@@ -209,7 +209,7 @@ namespace System.Web.Caching {
 			// If we have any kind of expiration add into the CacheExpires class
 			if (objEntry.HasSlidingExpiration || objEntry.HasAbsoluteExpiration) {
 				if (objEntry.HasSlidingExpiration)
-					objEntry.Expires = DateTime.Now.Ticks + objEntry.SlidingExpiration;
+					objEntry.Expires = DateTime.UtcNow.Ticks + objEntry.SlidingExpiration;
 
 				_objExpires.Add (objEntry);
 			}
@@ -392,7 +392,7 @@ namespace System.Web.Caching {
 
 		internal CacheEntry GetEntry (string strKey) {
 			CacheEntry objEntry = null;
-			long ticksNow = DateTime.Now.Ticks;
+			long ticksNow = DateTime.UtcNow.Ticks;
 			
 			if (strKey == null)
 				throw new ArgumentNullException ("strKey");

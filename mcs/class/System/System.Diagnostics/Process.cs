@@ -50,6 +50,11 @@ namespace System.Diagnostics {
 		private struct ProcInfo 
 		{
 			public IntPtr process_handle;
+			/* If thread_handle is ever needed for
+			 * something, take out the CloseHandle() in
+			 * the Start_internal icall in
+			 * mono/metadata/process.c
+			 */
 			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
 			public int tid;
@@ -455,6 +460,10 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The standard error stream of this process.")]
 		public StreamReader StandardError {
 			get {
+				if (error_stream == null) {
+					throw new InvalidOperationException("Standard error has not been redirected");
+				}
+
 				return(error_stream);
 			}
 		}
@@ -465,6 +474,10 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The standard input stream of this process.")]
 		public StreamWriter StandardInput {
 			get {
+				if (input_stream == null) {
+					throw new InvalidOperationException("Standard input has not been redirected");
+				}
+
 				return(input_stream);
 			}
 		}
@@ -475,6 +488,10 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The standard output stream of this process.")]
 		public StreamReader StandardOutput {
 			get {
+				if (output_stream == null) {
+					throw new InvalidOperationException("Standard output has not been redirected");
+				}
+
 				return(output_stream);
 			}
 		}
@@ -734,6 +751,9 @@ namespace System.Diagnostics {
 			if(startInfo.RedirectStandardInput==true) {
 				ret=MonoIO.CreatePipe(out stdin_rd,
 						      out stdin_wr);
+				if (ret == false) {
+					throw new IOException("Error creating standard input pipe");
+				}
 			} else {
 				stdin_rd=MonoIO.ConsoleInput;
 				/* This is required to stop the
@@ -746,6 +766,9 @@ namespace System.Diagnostics {
 			if(startInfo.RedirectStandardOutput==true) {
 				ret=MonoIO.CreatePipe(out stdout_rd,
 						      out stdout_wr);
+				if (ret == false) {
+					throw new IOException("Error creating standard output pipe");
+				}
 			} else {
 				stdout_rd=(IntPtr)0;
 				stdout_wr=MonoIO.ConsoleOutput;
@@ -754,6 +777,9 @@ namespace System.Diagnostics {
 			if(startInfo.RedirectStandardError==true) {
 				ret=MonoIO.CreatePipe(out stderr_rd,
 						      out stderr_wr);
+				if (ret == false) {
+					throw new IOException("Error creating standard error pipe");
+				}
 			} else {
 				stderr_rd=(IntPtr)0;
 				stderr_wr=MonoIO.ConsoleError;
@@ -901,7 +927,7 @@ namespace System.Diagnostics {
 		
 		protected override void Dispose(bool disposing) {
 			// Check to see if Dispose has already been called.
-			if(this.disposed) {
+			if(this.disposed == false) {
 				this.disposed=true;
 				// If this is a call to Dispose,
 				// dispose all managed resources.
@@ -916,6 +942,21 @@ namespace System.Diagnostics {
 						
 						Process_free_internal(process_handle);
 						process_handle=IntPtr.Zero;
+					}
+
+					if (input_stream != null) {
+						input_stream.Close();
+						input_stream = null;
+					}
+
+					if (output_stream != null) {
+						output_stream.Close();
+						output_stream = null;
+					}
+
+					if (error_stream != null) {
+						error_stream.Close();
+						error_stream = null;
 					}
 				}
 			}

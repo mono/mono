@@ -116,14 +116,25 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO ("Incomplete - minimal validation in this version")]
 		public static X509Certificate CreateFromSignedFile (string filename)
 		{
-			AuthenticodeDeformatter a = new AuthenticodeDeformatter (filename);
-			if (a.SigningCertificate != null) {
-				return new X509Certificate (a.SigningCertificate.RawData);
-			}
-			else {
+			try {
+				AuthenticodeDeformatter a = new AuthenticodeDeformatter (filename);
+				if (a.SigningCertificate != null) {
+					if (a.Reason != 0) {
+						string msg = String.Format (Locale.GetText (
+							"Invalid digital signature on {0}, reason #{1}."),
+							filename, a.Reason);
+						throw new COMException (msg);
+					}
+					return new X509Certificate (a.SigningCertificate.RawData);
+				}
+
 				// if no signature is present return an empty certificate
 				byte[] cert = null; // must not confuse compiler about null ;)
 				return new X509Certificate (cert);
+			}
+			catch (Exception e) {
+				string msg = String.Format (Locale.GetText ("Couldn't extract digital signature from {0}."), filename);
+				throw new COMException (msg, e);
 			}
 		}
 	

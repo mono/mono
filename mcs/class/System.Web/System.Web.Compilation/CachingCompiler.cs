@@ -32,6 +32,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Specialized;
+using System.IO;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.Caching;
@@ -43,21 +44,20 @@ namespace System.Web.Compilation
 	{
 		static object compilationLock = new object ();
 		const string cachePrefix = "@@Assembly";
+		const string cacheTypePrefix = "@@@Type";
 
-		public static Type GetTypeFromCache (string filename, string typename)
+		public static void InsertType (Type type, string filename)
 		{
-			string key = CachingCompiler.cachePrefix + filename;
-			CompilerResults results = (CompilerResults) HttpRuntime.Cache [key];
-			if (results == null)
-				return null;
-
-			Assembly a = results.CompiledAssembly;
-			if (a == null)
-				return null;
-
-			return a.GetType (typename, false);
+			string [] cacheKeys = new string [] { cachePrefix + filename };
+			CacheDependency dep = new CacheDependency (null, cacheKeys);
+			HttpRuntime.Cache.Insert (cacheTypePrefix + filename, type, dep);
 		}
-		
+
+		public static Type GetTypeFromCache (string filename)
+		{
+			return (Type) HttpRuntime.Cache [cacheTypePrefix + filename];
+		}
+
 		public static CompilerResults Compile (BaseCompiler compiler)
 		{
 			Cache cache = HttpRuntime.Cache;
@@ -139,11 +139,38 @@ namespace System.Web.Compilation
 				ICodeCompiler compiler = provider.CreateCompiler ();
 				CompilerParameters options = GetOptions (assemblies);
 				results = compiler.CompileAssemblyFromFile (options, file);
-				string [] deps = (string []) assemblies.ToArray (typeof (string));
+				ArrayList realdeps = new ArrayList (assemblies.Count);
+				for (int i = assemblies.Count - 1; i >= 0; i--) {
+					string current = (string) assemblies [i];
+					if (Path.IsPathRooted (current))
+						realdeps.Add (current);
+				}
+
+				string [] deps = (string []) realdeps.ToArray (typeof (string));
 				cache.Insert (cachePrefix + key, results, new CacheDependency (deps));
 			}
 
 			return results;
+		}
+
+		public static Type CompileAndGetType (string typename, string language, string key,
+						string file, ArrayList assemblies)
+		{
+			CompilerResults result = CachingCompiler.Compile (language, key, file, assemblies);
+			if (result.NativeCompilerReturnValue != 0) {
+				StreamReader reader = new StreamReader (file);
+				throw new CompilationException (file, result.Errors, reader.ReadToEnd ());
+			}
+
+			Assembly assembly = result.CompiledAssembly;
+			if (assembly == null) {
+				StreamReader reader = new StreamReader (file);
+				throw new CompilationException (file, result.Errors, reader.ReadToEnd ());
+			}
+		
+			Type type = assembly.GetType (typename, true);
+			InsertType (type, file);
+			return type;
 		}
 	}
 }

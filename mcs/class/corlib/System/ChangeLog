@@ -1,3 +1,68 @@
+2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Convert.cs (ToType): Throw an exception when converting null to a
+	valuetype. Fixes #67780.
+
+2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : Removed incorrectly injected HEAD fix.
+
+2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : When it it not exact parse, 'Z' is allowed as a suffix
+	  of m/s/t/z. This fixes bug 66723.
+
+2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs: Make ThreadStatic variables static. Fixes #56614.
+
+2004-09-30  Geoff Norton  <gnorton@customerdna.com>
+
+        * Convert.cs: ConvertToBase* was not endian aware.  Implemented EndianSwap
+        and swapping of all values before going into the BitConverter so that values
+        are returned with proper endianess.
+
+2004-09-23  Martin Garton  <martin@wrasse.demon.co.uk>
+	
+	* Convert.cs: ToType was returning unconverted object when it should
+	fail with an ArgumentException.
+
+2004-09-19  Dick Porter  <dick@ximian.com>
+
+	* Console.cs: Use the internal wrappers for StreamReader and
+	StreamWriter that catch IOException.
+
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+       * Activator.cs (CreateInstance): If an argument is null,
+       do not call GetType () on it. #63852
+
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Environment.cs: (ExpandEnvironmentVariables) don't nullify the case
+	insensitive environment variables hashtable once we create it.
+
+2004-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : When hour format is "hh", MS.NET (maybe incorrectly)
+	  allows 12, that should not be accepted (13 is rejected) and
+	  interpreted as 0. This fixes bug 63376.
+
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Version.cs: Fixed Clone so we can use it on versions with only
+	major/minor or major/minor/build.
+
+2004-07-07  Geoff Norton <gnorton@customerdna.com>
+
+       * Monotype.cs: Patch for bug #58844.  Dont throw exceptions right away;
+         pass through all the possibly BindingInfo's and keep a bool value as to the type
+         of exception we might need to throw;
+
+2004-07-07  Geoff Norton <gnorton@customerdna.com>
+
+        * Patch to fix bug #58973
+
 2004-06-25  Ben Maurer <bmaurer@ximian.com>
 	
 	* Environment.cs: GetFolderPath has new behavior. r=miguel

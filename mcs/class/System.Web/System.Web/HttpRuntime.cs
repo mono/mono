@@ -61,11 +61,10 @@ namespace System.Web {
 		private int _activeRequests;
 		private HttpWorkerRequest.EndOfSendNotification _endOfSendCallback;
 		private AsyncCallback _handlerCallback;
-		private WaitCallback _appDomainCallback;
+		private WaitCallback unloadDomainCallback;
 
 		private bool _firstRequestStarted;
 		private bool _firstRequestExecuted;
-		private DateTime _firstRequestStartTime;
 
 		private Exception _initError;
 		private TimeoutManager timeoutManager;
@@ -76,12 +75,6 @@ namespace System.Web {
 
 		static HttpRuntime ()
 		{
-			appPathDiscoveryStackWalk = null;
-			ctrlPrincipalStackWalk    = null;
-			sensitiveInfoStackWalk    = null;
-			unmgdCodeStackWalk        = null;
-			unrestrictedStackWalk     = null;
-         
 			_runtime = new HttpRuntime ();
 			_runtime.Init();
 		}
@@ -101,9 +94,10 @@ namespace System.Web {
 				_cache = new Cache ();
 				timeoutManager = new TimeoutManager ();
 
-				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification(OnEndOfSend);
-				_handlerCallback = new AsyncCallback(OnHandlerReady);
-				_appDomainCallback = new WaitCallback(OnAppDomainUnload);
+				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification (OnEndOfSend);
+				_handlerCallback = new AsyncCallback (OnHandlerReady);
+				unloadDomainCallback = new WaitCallback (DoUnload);
+				AppDomain.CurrentDomain.DomainUnload += new EventHandler (OnDomainUnload);
 			} 
 			catch (Exception error) {
 				_initError = error;
@@ -185,6 +179,8 @@ namespace System.Web {
 				context.Response.FinalFlush ();
 			}
 
+			/*
+			 * This is not being used. OnFirstRequestEnd is empty.
 			if (!_firstRequestExecuted) {
 				lock (this) {
 					if (!_firstRequestExecuted) {
@@ -193,6 +189,7 @@ namespace System.Web {
 					}
 				}
 			}
+			*/
 
 			Interlocked.Decrement(ref _activeRequests);
 
@@ -237,20 +234,33 @@ namespace System.Web {
 			HttpContext context = new HttpContext (wr);
 			HttpException exception = new HttpException (503, "Service unavailable");
 			Interlocked.Increment (ref _runtime._activeRequests);
+			context.Response.InitializeWriter ();
 			_runtime.FinishRequest (context, exception);
 		}
 
-		private void OnAppDomainUnload(object state) {
-			Dispose();
+		void DoUnload (object state)
+		{
+			AppDomain.Unload (AppDomain.CurrentDomain);
 		}
 
 		internal void Dispose() {
-			WaitForRequests(5000);
+			WaitForRequests (2000);
 			queueManager.Dispose (); // Send a 503 to all queued requests
 			queueManager = null;
 			
 			_cache = null;
-			HttpApplicationFactory.EndApplication();
+			HttpApplicationFactory.EndApplication ();
+		}
+
+		void OnDomainUnload (object o, EventArgs args)
+		{
+			HttpApplicationFactory.EndApplication ();
+		}
+
+		internal void ByeByeDomain ()
+		{
+			HttpApplicationFactory.EndApplication ();
+			ThreadPool.QueueUserWorkItem (unloadDomainCallback);
 		}
 
 		internal void WaitForRequests(int ms) {
@@ -279,10 +289,9 @@ namespace System.Web {
 				if (!_firstRequestStarted) {
 					lock (this) {
 						if (!_firstRequestStarted) {
-							_firstRequestStarted = true;
-							_firstRequestStartTime = DateTime.Now;
 							OnFirstRequestStart(context);
-						}						
+							_firstRequestStarted = true;
+						}
 					}
 				}
 
@@ -317,44 +326,38 @@ namespace System.Web {
 		void TryExecuteQueuedRequests ()
 		{
 			// Wait for pending jobs to start
-			if (Interlocked.CompareExchange (ref pendingCallbacks, 3, 3) == 3) {
-				return;
-			}
-
-			if (queueManager == null)
+			if (Interlocked.CompareExchange (ref pendingCallbacks, 3, 3) >= 3)
 				return;
 
-			if (!queueManager.CanExecuteRequest (false)) {
+			HttpWorkerRequest wr = queueManager.GetNextRequest (null);
+			if (wr == null)
 				return;
-			}
-
-			HttpWorkerRequest wr = queueManager.Dequeue ();
-			if (wr == null) {
-				return;
-			}
 
 			Interlocked.Increment (ref pendingCallbacks);
 			ThreadPool.QueueUserWorkItem (doRequestCallback, wr);
 			TryExecuteQueuedRequests ();
 		}
 
-		public static void ProcessRequest (HttpWorkerRequest Request)
+		public static void ProcessRequest (HttpWorkerRequest request)
 		{
-			if (Request == null)
-				throw new ArgumentNullException ("Request");
+			if (request == null)
+				throw new ArgumentNullException ("request");
 
-			if (!_runtime._firstRequestExecuted || _runtime.queueManager.CanExecuteRequest (false)) {
-				_runtime.InternalExecuteRequest (Request);
-			} else {
-				_runtime.queueManager.Queue (Request);
+			QueueManager mgr = _runtime.queueManager;
+			if (_runtime._firstRequestStarted && mgr != null) {
+				request = mgr.GetNextRequest (request);
+				// We're busy, return immediately
+				if (request == null)
+					return;
 			}
+
+			_runtime.InternalExecuteRequest (request);
 		}
 
 #if NET_1_1
-		[MonoTODO]
-		public void UnloadAppDomain ()
+		public static void UnloadAppDomain ()
 		{
-			throw new NotImplementedException ();
+			_runtime.ByeByeDomain ();
 		}
 #endif
 		public static Cache Cache {
@@ -451,7 +454,7 @@ namespace System.Web {
 
 		public static void Close ()
 		{
-			_runtime.Dispose();
+			_runtime.Dispose ();
 		}
 
 		internal static string FormatResourceString (string key)
@@ -507,7 +510,7 @@ namespace System.Web {
 
 		[MonoTODO ("GetResourceStringFromResourceManager (string)")]
 		private string GetResourceStringFromResourceManager (string key) {
-			return "String returned by HttpRuntime.GetResourceStringFromResourceManager";
+			return key;
 		}
 
 		#region Security Internal Methods (not impl)
