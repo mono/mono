@@ -1,3 +1,7 @@
+2005-03-10 Marek Safar <marek.safar@seznam.cz>
+
+	* TestRunner.cs: New fast test runner.
+
 2005-03-09  Raja R Harinath  <rharinath@novell.com>
 
 	* cs1618-2.cs: New test for partial classes.
