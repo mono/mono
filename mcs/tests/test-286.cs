@@ -1,3 +1,5 @@
+// Compiler options: -r:System.XML
+
 abstract class MethodWrapper
 {
 	private string[] declaredExceptions;
