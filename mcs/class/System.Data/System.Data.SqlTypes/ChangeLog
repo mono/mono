@@ -1,3 +1,7 @@
+2003-12-19  Tim Coleman <tim@timcoleman.com>
+	* SqlBytes.cs SqlChars.cs SqlDate.cs SqlStreamChars.cs SqlTime.cs
+	* SqlUtcDateTime.cs SqlXmlReader.cs:
+		New stubs added
 2003-06-03  Ville Palo <vi64pa@kolumbus.fi>
 
 	* SqlBinary.cs: Changed one SqlTypeException --> IndexOutOfRange
