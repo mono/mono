@@ -1,3 +1,7 @@
+2004-05-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* opcode.def: Add mono_save_lmf and mono_restore_lmf.
+
 2004-05-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* opcode.def: Add mono_func2.
