@@ -1,3 +1,10 @@
+2002-11-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: Added suites for SignatureDescription and 
+	activated suites for SHA384Managed and SHA512Managed.
+	* SignatureDescriptionTest.cs: New. Basic tests (because I don't
+	know the context in which the class is used).
+
 2002-10-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Added test suites for SHA256, SHA384 and SHA512 

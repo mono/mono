@@ -1,5 +1,5 @@
 //
-// TestSuite.System.Security.Cryptography.AllCryptoTests.cs
+// TestSuite.System.Security.Cryptography.AllTests.cs
 //
 // Author:
 //      Thomas Neidhart (tome@sbox.tugraz.at)
@@ -69,9 +69,10 @@ namespace MonoTests.System.Security.Cryptography {
 				suite.AddTest (SHA256Test.Suite);
 				suite.AddTest (SHA256ManagedTest.Suite);
 				suite.AddTest (SHA384Test.Suite);
-//				suite.AddTest (SHA384ManagedTest.Suite);
+				suite.AddTest (SHA384ManagedTest.Suite);
 				suite.AddTest (SHA512Test.Suite);
-//				suite.AddTest (SHA512ManagedTest.Suite);
+				suite.AddTest (SHA512ManagedTest.Suite);
+				suite.AddTest (SignatureDescriptionTest.Suite);
                                 return suite;
                         }
                 }
