@@ -1,6 +1,18 @@
-
-// Adapted from http://www.innovation.ch/java/ntlm.html
-// http://davenport.sourceforge.net/ntlm.html
+//
+// Mono.Security.Protocol.Ntlm.ChallengeResponse
+//	Implements Challenge Response for NTLM v1
+//
+// Author:
+//	Sebastien Pouliot (spouliot@motus.com)
+//
+// Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+//
+// References
+// a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
+//	http://www.innovation.ch/java/ntlm.html
+// b.	The NTLM Authentication Protocol, Copyright © 2003 Eric Glass
+//	http://davenport.sourceforge.net/ntlm.html
+//
 
 using System;
 using System.Security.Cryptography;
@@ -150,7 +162,7 @@ namespace Mono.Security.Protocol.Ntlm {
 		private byte[] PasswordToKey (string password, int position) 
 		{
 			byte[] key7 = new byte [7];
-			int len = Math.Min (password.Length - position, 7);
+			int len = System.Math.Min (password.Length - position, 7);
 			Encoding.ASCII.GetBytes (password.ToUpper (), position, len, key7, 0);
 			byte[] key8 = PrepareDESKey (key7, 0);
 			// cleanup intermediate key material

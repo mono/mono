@@ -20,8 +20,6 @@ namespace Mono.Security.Protocol.Ntlm {
 
 	public class Type3Message : MessageBase {
 
-		static private byte[] header = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x03, 0x00, 0x00, 0x00, 0x18, 0x00, 0x18, 0x00 };
-
 		private byte[] _challenge;
 		private string _host;
 		private string _domain;
@@ -29,7 +27,6 @@ namespace Mono.Security.Protocol.Ntlm {
 		private string _password;
 		private byte[] _lm;
 		private byte[] _nt;
-		private int _options;
 
 		public Type3Message () : base (3)
 		{
@@ -37,7 +34,7 @@ namespace Mono.Security.Protocol.Ntlm {
 			_domain = Environment.UserDomainName;
 			_host = Environment.MachineName;
 			_username = Environment.UserName;
-			_options = 0x8201;
+			Flags = (NtlmFlags) 0x8201;
 		}
 
 		public Type3Message (byte[] message) : base (3)
@@ -81,11 +78,6 @@ namespace Mono.Security.Protocol.Ntlm {
 			set { _host = value; }
 		}
 
-		public int Options {
-			get { return _options; }
-			set { _options = value; }
-		}
-
 		public string Password {
 			get { return _password; }
 			set { _password = value; }
@@ -106,15 +98,9 @@ namespace Mono.Security.Protocol.Ntlm {
 
 		// methods
 
-		private void Decode (byte[] message) 
+		protected override void Decode (byte[] message) 
 		{
-			if (message == null)
-				throw new ArgumentNullException ("message");
-		
-			for (int i=0; i < header.Length; i++) {
-				if (message [i] != header [i])
-					throw new ArgumentException ("Invalid Type3 message");
-			}
+			base.Decode (message);
 
 			if (BitConverter.ToUInt16 (message, 56) != message.Length)
 				throw new ArgumentException ("Invalid Type3 message length");
@@ -132,8 +118,6 @@ namespace Mono.Security.Protocol.Ntlm {
 			int user_len = BitConverter.ToUInt16 (message, 36);
 			int user_off = BitConverter.ToUInt16 (message, 40);
 			_username = Encoding.Unicode.GetString (message, user_off, user_len);
-
-			_options = BitConverter.ToUInt16 (message, 60);
 
 			_lm = new byte [24];
 			int lm_off = BitConverter.ToUInt16 (message, 16);
@@ -153,11 +137,14 @@ namespace Mono.Security.Protocol.Ntlm {
 			byte[] user = Encoding.Unicode.GetBytes (_username);
 			byte[] host = Encoding.Unicode.GetBytes (_host.ToUpper ());
 
-			byte[] data = new byte [64 + domain.Length + user.Length + host.Length + 24 + 24];
-			Buffer.BlockCopy (header, 0, data, 0, header.Length);
+			byte[] data = PrepareMessage (64 + domain.Length + user.Length + host.Length + 24 + 24);
 
 			// LM response
 			short lmresp_off = (short)(64 + domain.Length + user.Length + host.Length);
+			data [12] = (byte) 0x18;
+			data [13] = (byte) 0x00;
+			data [14] = (byte) 0x18;
+			data [15] = (byte) 0x00;
 			data [16] = (byte) lmresp_off;
 			data [17] = (byte)(lmresp_off >> 8);
 
@@ -206,8 +193,10 @@ namespace Mono.Security.Protocol.Ntlm {
 			data [57] = (byte)(msg_len >> 8);
 
 			// options flags
-			data [60] = (byte) _options;
-			data [61] = (byte)(_options >> 8);
+			data [60] = (byte) Flags;
+			data [61] = (byte)((uint)Flags >> 8);
+			data [62] = (byte)((uint)Flags >> 16);
+			data [63] = (byte)((uint)Flags >> 24);
 
 			Buffer.BlockCopy (domain, 0, data, dom_off, domain.Length);
 			Buffer.BlockCopy (user, 0, data, uname_off, user.Length);

@@ -21,7 +21,6 @@ namespace Mono.Security.Protocol.Ntlm {
 	public class Type2Message : MessageBase {
 
 		private byte[] _nonce;
-		private int _options;
 
 		public Type2Message () : base (2)
 		{
@@ -59,13 +58,9 @@ namespace Mono.Security.Protocol.Ntlm {
 
 		// methods
 
-		private void Decode (byte[] message)
+		protected override void Decode (byte[] message) 
 		{
-			if (message == null)
-				throw new ArgumentNullException ("message");
-			
-			if (!CheckHeader (message))
-				throw new ArgumentException ("Invalid Type2 message");
+			base.Decode (message);
 
 			Flags = (NtlmFlags) BitConverter.ToUInt32 (message, 20);
 
@@ -82,9 +77,10 @@ namespace Mono.Security.Protocol.Ntlm {
 			data [17] = (byte)(msg_len >> 8);
 
 			// flags
-			uint f = (uint) Flags;
-			data [20] = (byte) f;
-			data [21] = (byte)(f >> 8);
+			data [20] = (byte) Flags;
+			data [21] = (byte)((uint)Flags >> 8);
+			data [22] = (byte)((uint)Flags >> 16);
+			data [23] = (byte)((uint)Flags >> 24);
 
 			Buffer.BlockCopy (_nonce, 0, data, 24, _nonce.Length);
 			return data;

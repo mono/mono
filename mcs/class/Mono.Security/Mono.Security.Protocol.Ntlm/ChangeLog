@@ -1,3 +1,12 @@
+2003-12-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ChallengeResponse.cs: Fixed compilation error with mcs (System.Math.Min)
+	* Type2Message.cs: Fixed compilation warning for override. Flags are now
+	32 bits.
+	* Type3Message.cs: Fixed compilation warning for override. Removed (old)
+	header code to use base class. Changed 16 bits Options for 32 bits Flags 
+	(NtlmFlags).
+
 2003-12-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ChallengeResponse.cs: New. Implements the NTLM (v1) Challenge Response.
