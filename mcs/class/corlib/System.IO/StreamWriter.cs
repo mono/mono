@@ -64,10 +64,10 @@ namespace System.IO {
 		}
 
 		public StreamWriter (string path)
-			: this (path, false, Encoding.UTF8, DefaultFileBufferSize) {}
+			: this (path, false, Encoding.UTF8Unmarked, DefaultFileBufferSize) {}
 
 		public StreamWriter (string path, bool append)
-			: this (path, append, Encoding.UTF8, DefaultFileBufferSize) {}
+			: this (path, append, Encoding.UTF8Unmarked, DefaultFileBufferSize) {}
 
 		public StreamWriter (string path, bool append, Encoding encoding)
 			: this (path, append, encoding, DefaultFileBufferSize) {}

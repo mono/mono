@@ -1,3 +1,7 @@
+2002-11-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* StreamWriter.cs: Changed all Encoding.UTF8 to Encoding.UTF8Unmarked.
+
 2002-10-31  Dick Porter  <dick@ximian.com>
 
 	* FileStream.cs: Fix buffering properly this time.  Also kludge
