@@ -1736,6 +1736,14 @@ namespace System
 
 			TimeSpan offset = tz.GetUtcOffset (this);
 
+			if (offset.Ticks < 0) {
+				if (DateTime.MinValue - offset > this)
+					return DateTime.MinValue;
+			} else if (offset.Ticks > 0) {
+				if (DateTime.MaxValue - offset < this)
+					return DateTime.MaxValue;
+			}
+
 			return new DateTime (true, ticks + offset);
 		}
 
@@ -1744,6 +1752,14 @@ namespace System
 			TimeZone tz = TimeZone.CurrentTimeZone;
 
 			TimeSpan offset = tz.GetUtcOffset (this);
+
+			if (offset.Ticks < 0) {
+				if (DateTime.MaxValue - offset < this)
+					return DateTime.MaxValue;
+			} else if (offset.Ticks > 0) {
+				if (DateTime.MinValue + offset > this)
+					return DateTime.MinValue;
+			}
 
 			return new DateTime (false, ticks - offset);
 		}

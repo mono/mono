@@ -1,3 +1,8 @@
+2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : Added overflow check in ToUniversalTime() and
+	  ToLocalTime(). Fixed bug #60253.
+
 2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FloatingPointFormatter.cs: Implemented "R" format using Jon Skeet
