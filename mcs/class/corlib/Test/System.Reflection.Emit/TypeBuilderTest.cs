@@ -553,8 +553,6 @@ public class TypeBuilderTest : Assertion
 
 	[Test]
 	[ExpectedException (typeof(NotSupportedException))]
-	[Category("ValueAdd")]
-	// See bug: 71305
 	public void TestTypeInitializerIncomplete ()
 	{
 		TypeBuilder tb = module.DefineType (genTypeName ());

@@ -1,3 +1,7 @@
+2005-01-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* TypeBuilder.cs: Add check for creation.  Fix from Geoff.
+
 2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeBuilder.cs: Fix a warning.

@@ -517,7 +517,36 @@ namespace MonoTests.System.IO
                 	stream.Close ();
 			DeleteFile (path);
                 }
-                
+
+		[Category("NotWorking")]
+		// Bug: 71371
+		public void TestLock_FailsOnMono ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "TestLock";
+                	DeleteFile (path);
+
+                	FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite);
+                	                	
+	               	stream.Write (new Byte [] {0,1,2,3,4,5,6,7,8,9,10}, 0, 10);                              	
+                	stream.Close ();
+
+                	stream = new FileStream (path, FileMode.Open, FileAccess.ReadWrite);
+                	
+                	stream.Lock (0, 5);
+                	
+                	FileStream stream2 = new FileStream (path , FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                	
+                	byte [] bytes = new byte [5];
+                	try {                		
+                		stream2.Read (bytes, 0, 5);
+                		Fail ();
+                	} catch (Exception e) {
+                		
+                		// locked
+                		AssertEquals ("test#01", typeof (IOException), e.GetType ());
+                	}
+		}
+		    
                 public void TestLock()
                 {
 			string path = TempFolder + Path.DirectorySeparatorChar + "TestLock";
@@ -541,7 +570,9 @@ namespace MonoTests.System.IO
                 	} catch (Exception e) {
                 		
                 		// locked
-                		AssertEquals ("test#01", typeof (IOException), e.GetType ());
+                		// AssertEquals ("test#01", typeof (IOException), e.GetType ());
+				//
+				// Moved into the previous test case.
                 	}
                		                
                 	stream2.Seek (5, SeekOrigin.Begin);

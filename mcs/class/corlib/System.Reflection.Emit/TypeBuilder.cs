@@ -271,6 +271,8 @@ namespace System.Reflection.Emit {
 								       CallingConventions callConvention, Type[] types,
 								       ParameterModifier[] modifiers)
 		{
+			check_created ();
+			
 			if (ctors == null)
 				return null;
 

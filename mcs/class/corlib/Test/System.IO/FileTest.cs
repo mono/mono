@@ -980,6 +980,11 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(IOException))]
+		[Category("ValueAdd")]
+		//
+		// This is category ValueAdd, since in Unix the semantics allow for
+		// a file to be deleted while a handle to it remains.
+		//
 		public void FileStreamCloseException ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "FileStreamCloseException";
@@ -1036,8 +1041,11 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+		[Category("ValueAdd")]
+		// On Unix there are no invalid path chars.
 		public void SetCreationTimeArgumenException3 ()
 		{
+
 			File.SetCreationTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
 		}
 
@@ -1109,6 +1117,8 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+		[Category("ValueAdd")]
+		// On Unix there are no invalid path chars.
 		public void SetCreationTimeUtcArgumenException3 ()
 		{
 			File.SetCreationTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1184,6 +1194,8 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+		[Category("ValueAdd")]
+		// On Unix there are no invalid path chars.
 		public void SetLastAccessTimeArgumenException3 ()
 		{
 			File.SetLastAccessTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1257,6 +1269,8 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+		[Category("ValueAdd")]
+		// On Unix there are no invalid path chars.
 		public void SetLastAccessTimeUtcArgumenException3 ()
 		{
 			File.SetLastAccessTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1332,6 +1346,8 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+		[Category("ValueAdd")]
+		// On Unix there are no invalid path chars.
 		public void SetLastWriteTimeArgumenException3 ()
 		{
 			File.SetLastWriteTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1405,6 +1421,8 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+		[Category("ValueAdd")]
+		// On Unix there are no invalid path chars.
 		public void SetLastWriteTimeUtcArgumenException3 ()
 		{
 			File.SetLastWriteTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
