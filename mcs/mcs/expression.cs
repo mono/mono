@@ -487,6 +487,47 @@ namespace CIR {
 		}
 
 		// <summary>
+		//   Attemps to perform an implict constant conversion of the IntLiteral
+		//   into a different data type using casts (See Implicit Constant
+		//   Expression Conversions)
+		// </summary>
+		static protected Expression TryImplicitIntConversion (Type target_type, IntLiteral il)
+		{
+			int value = il.Value;
+			
+			if (target_type == TypeManager.sbyte_type){
+				if (value >= SByte.MinValue && value <= SByte.MaxValue)
+					return il;
+			} else if (target_type == TypeManager.byte_type){
+				if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+					return il;
+			} else if (target_type == TypeManager.short_type){
+				if (value >= Int16.MinValue && value <= Int16.MaxValue)
+					return il;
+			} else if (target_type == TypeManager.ushort_type){
+				if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
+					return il;
+			} else if (target_type == TypeManager.uint32_type){
+				//
+				// we can optimize this case: a positive int32
+				// always fits on a uint32
+				//
+				if (value >= 0)
+					return il;
+			} else if (target_type == TypeManager.uint64_type){
+				//
+				// we can optimize this case: a positive int32
+				// always fits on a uint64.  But we need an opcode
+				// to do it.
+				//
+				if (value >= 0)
+					return new OpcodeCast (il, target_type, OpCodes.Conv_I8);
+			}
+
+			return null;
+		}
+
+		// <summary>
 		//   Attemptes to implicityly convert `target' into `type', using
 		//   ConvertImplicit.  If there is no implicit conversion, then
 		//   an error is signaled
@@ -497,14 +538,33 @@ namespace CIR {
 			Expression e;
 			
 			e = ConvertImplicit (tc, target, type);
-			if (e == null){
-				string msg = "Can not convert implicitly from `"+
-					TypeManager.CSharpName (target.Type) + "' to `" +
-					TypeManager.CSharpName (type) + "'";
+			if (e != null)
+				return e;
+			
+			//
+			// Attempt to do the implicit constant expression conversions
 
-				tc.RootContext.Report.Error (29, l, msg);
+			if (target is IntLiteral){
+				e = TryImplicitIntConversion (type, (IntLiteral) target);
+				if (e != null)
+					return e;
+			} else if (target is LongLiteral){
+				//
+				// Try the implicit constant expression conversion
+				// from long to ulong, instead of a nice routine,
+				// we just inline it
+				//
+				if (((LongLiteral) target).Value > 0)
+					return target;
 			}
-			return e;
+			
+			string msg = "Can not convert implicitly from `"+
+				TypeManager.CSharpName (target.Type) + "' to `" +
+				TypeManager.CSharpName (type) + "'";
+
+			tc.RootContext.Report.Error (29, l, msg);
+
+			return null;
 		}
 
 		// <summary>
@@ -557,11 +617,11 @@ namespace CIR {
 				//
 				// From ushort to sbyte, byte, short, char
 				//
-				if (target_type == TypeManager.ushort_type)
+				if (target_type == TypeManager.sbyte_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
-				if (target_type == TypeManager.uint32_type)
+				if (target_type == TypeManager.byte_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
-				if (target_type == TypeManager.uint64_type)
+				if (target_type == TypeManager.short_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
 				if (target_type == TypeManager.char_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
@@ -569,42 +629,143 @@ namespace CIR {
 				//
 				// From int to sbyte, byte, short, ushort, uint, ulong, char
 				//
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.uint32_type)
+					return new EmptyCast (expr, target_type);
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to sbyte, byte, short, ushort, int, char
 				//
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.int32_type)
+					return new EmptyCast (expr, target_type);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long to sbyte, byte, short, ushort, int, uint, ulong, char
 				//
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.int32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (target_type == TypeManager.uint32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+				if (target_type == TypeManager.uint64_type)
+					return new EmptyCast (expr, target_type);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
 			} else if (expr_type == TypeManager.uint64_type){
 				//
-				// From ulong, byte, short, ushort, int, uint, long, char
+				// From ulong to sbyte, byte, short, ushort, int, uint, long, char
 				//
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.int32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (target_type == TypeManager.uint32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+				if (target_type == TypeManager.int64_type)
+					return new EmptyCast (expr, target_type);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to sbyte, byte, short
 				//
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// From float to sbyte, byte, short,
-				// ushort, int uint, long, ulong, char
+				// ushort, int, uint, long, ulong, char
 				// or decimal
 				//
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.int32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (target_type == TypeManager.uint32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.double_type){
 				//
-				// FRom double to byte, byte, short,
+				// From double to byte, byte, short,
 				// ushort, int, uint, long, ulong,
 				// char, float or decimal
 				//
-			} else if (expr_type == TypeManager.decimal_type){
-				//
-				// From decimal to sbyte, byte, short,
-				// ushort, int, uint, long, ulong,
-				// char, float or double
-				//
-			} else
-				return null;
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.int32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (target_type == TypeManager.uint32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
+			} 
+
+			// decimal is taken care of by the op_Explicit methods.
 
 			return null;
 		}
@@ -624,6 +785,7 @@ namespace CIR {
 			ne = ConvertNumericExplicit (tc, expr, target_type);
 			if (ne != null)
 				return ne;
+
 			
 			return expr;
 		}
@@ -2360,11 +2522,10 @@ namespace CIR {
 				}
 			} else if (argument_type == TypeManager.int64_type && argument_expr is LongLiteral){
 				LongLiteral ll = (LongLiteral) argument_expr;
-				
-				if (t == TypeManager.uint64_type){
+
+				if (t == TypeManager.uint64_type)
 					if (ll.Value > 0)
 						return 1;
-				}
 			}
 			
 			// FIXME: Implement user-defined implicit conversions here.
@@ -2791,8 +2952,6 @@ namespace CIR {
 			for (int i = 0; i < top; i++){
 				Argument a = (Argument) Arguments [i];
 
-				Console.WriteLine ("Perform the actual type widening of arguments here for things like: void fn (sbyte s);  ... fn (1)");
-				
 				a.Emit (ec);
 			}
 		}
@@ -2804,11 +2963,17 @@ namespace CIR {
 			if (!is_static){
 				MethodGroupExpr mg = (MethodGroupExpr) this.expr;
 
+				//
+				// If this is ourselves, push "this"
+				//
 				if (mg.InstanceExpression == null){
-					throw new Exception ("Internal compiler error.  Should check in the method groups for static/instance");
+					ec.ig.Emit (OpCodes.Ldarg_0);
+				} else {
+					//
+					// Push the instance expression
+					//
+					mg.InstanceExpression.Emit (ec);
 				}
-
-				mg.InstanceExpression.Emit (ec);
 			}
 
 			if (Arguments != null)

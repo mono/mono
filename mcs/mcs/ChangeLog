@@ -1,7 +1,29 @@
+2001-09-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (TypeManager::CSharpName): support ushort.
+
+	* expression.cs (Expression::TryImplicitIntConversion): Attempts
+	to provide an expression that performsn an implicit constant int
+	conversion (section 6.1.6).
+	(Expression::ConvertImplicitRequired): Reworked to include
+	implicit constant expression conversions.
+
+	(Expression::ConvertNumericExplicit): Finished.
+
+	(Invocation::Emit): If InstanceExpression is null, then it means
+	that we perform a call on this.
+	
 2001-09-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Unary::Emit): Remove some dead code.
 	(Probe): Implement Resolve and Emit for `is'.
+	(Expression::ConvertImplicitRequired): Attempt to do constant
+	expression conversions here.  Maybe should be moved to
+	ConvertImplicit, but I am not sure.
+	(Expression::ImplicitLongConstantConversionPossible,
+	Expression::ImplicitIntConstantConversionPossible): New functions
+	that tell whether is it possible to apply an implicit constant
+	expression conversion.
 
 	(ConvertNumericExplicit): Started work on explicit numeric
 	conversions.

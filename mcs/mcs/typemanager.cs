@@ -147,6 +147,8 @@ public class TypeManager {
 			return "byte";
 		else if (t == short_type)
 			return "short";
+		else if (t == ushort_type)
+			return "ushort";
 		else if (t == System.Type.GetType ("System.String"))
 			return "string";
 		else
