@@ -1,3 +1,7 @@
+2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c: don't call GC_gcollect when creating new handles.
+
 2003-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* handles.c: added some debugging code. Call GC_gcollect
