@@ -1,3 +1,10 @@
+2005-01-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* UpDownBase.cs (InitTimer): If the timer has been already
+	created, enable it.
+
+	Use a TextBox instead of a Label.
+
 2005-01-12  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Refresh the tree after sorting the nodes. Always

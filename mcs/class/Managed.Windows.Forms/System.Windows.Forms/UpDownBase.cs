@@ -117,6 +117,11 @@ namespace System.Windows.Forms {
 			//
 			void InitTimer ()
 			{
+				if (timer != null){
+					timer.Enabled = true;
+					return;
+				}
+				
 				timer = new Timer ();
 				int kd = SystemInformation.KeyboardDelay;
 				kd = kd < 0 ? 0 : (kd > 4 ? 4 : kd);
@@ -215,7 +220,7 @@ namespace System.Windows.Forms {
 		}
 
 		int desired_height = 0;
-		Label entry;
+		TextBox entry;
 		Spinner spinner;
 
 		int scrollbar_button_size = ThemeEngine.Current.ScrollBarButtonSize;
@@ -224,10 +229,9 @@ namespace System.Windows.Forms {
 		{
 			SuspendLayout ();
 
-			entry = new Label ();
-			entry.Text = "I will be an Entry";
+			entry = new TextBox ();
 			entry.Font = Font;
-			entry.Size = new Size (100, Font.Height + 4);
+			entry.Size = new Size (120, Font.Height + 4);
 			entry.Location = new Point (0, 0);
 			Controls.Add (entry);
 

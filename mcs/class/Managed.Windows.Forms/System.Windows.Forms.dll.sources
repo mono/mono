@@ -71,6 +71,7 @@ System.Windows.Forms/DateRangeEventHandler.cs
 System.Windows.Forms/Day.cs
 System.Windows.Forms/DialogResult.cs
 System.Windows.Forms/DockStyle.cs
+System.Windows.Forms/DomainUpDown.cs
 System.Windows.Forms/DragAction.cs
 System.Windows.Forms/DragDropEffects.cs
 System.Windows.Forms/DragEventArgs.cs
