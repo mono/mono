@@ -734,7 +734,7 @@ namespace Mono.CSharp {
 		{
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
-					tc.Emit ();
+					tc.EmitType ();
 
 			CodeGen.Assembly.Emit (Tree.Types);
 			CodeGen.Module.Emit (Tree.Types);
@@ -754,7 +754,7 @@ namespace Mono.CSharp {
 					tc.EmitConstants ();
 				
 				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.Emit ();
+					tc.EmitType ();
 			}
 			
 			if (Tree.Types.Delegates != null) {

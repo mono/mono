@@ -1993,7 +1993,7 @@ namespace Mono.CSharp {
 		///   Emits the code, this step is performed after all
 		///   the types, enumerations, constructors
 		/// </summary>
-		public void Emit ()
+		public void EmitType ()
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this);
@@ -2067,7 +2067,7 @@ namespace Mono.CSharp {
 
 			if (parts != null) {
 				foreach (ClassPart part in parts)
-					part.Emit ();
+					part.EmitType ();
 			}
 
 			if ((Pending != null) && !(this is ClassPart))
@@ -2078,7 +2078,7 @@ namespace Mono.CSharp {
 
 			if (iterators != null)
 				foreach (Iterator iterator in iterators)
-					iterator.Emit ();
+					iterator.EmitType ();
 			
 //			if (types != null)
 //				foreach (TypeContainer tc in types)
