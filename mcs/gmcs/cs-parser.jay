@@ -1466,7 +1466,7 @@ interface_declaration
 
 		current_class.Register ();
 	  }
-	  interface_body opt_semicolon
+	  interface_body
 	  { 
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;

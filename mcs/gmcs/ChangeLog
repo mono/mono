@@ -1,3 +1,8 @@
+2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-parser.jay : interface comment was not consumed because of
+	  extra opt_semicolon before doc handling.
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	Fix test-327.cs, test-328.cs, and put in early infrastructure
