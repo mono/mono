@@ -1,3 +1,8 @@
+
+Thu Dec 5 12:52:52 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* pedump.c, cil-coff.h, monosn.c: add strong name cli header flag.
+
 2002-12-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.[ch]: handle the assembly preload event to try loading the
