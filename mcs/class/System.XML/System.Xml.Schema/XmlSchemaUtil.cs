@@ -3,6 +3,7 @@ using System.Xml;
 using System.Collections;
 using Mono.Xml;
 using Mono.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace System.Xml.Schema
 {
@@ -230,7 +231,19 @@ namespace System.Xml.Schema
 					xso.unhandledAttributeList = new System.Collections.ArrayList();
 				XmlAttribute attr = new XmlDocument().CreateAttribute(reader.LocalName,reader.NamespaceURI);
 				attr.Value = reader.Value;
+				ParseWsdlArrayType (reader, attr);
 				xso.unhandledAttributeList.Add(attr);
+			}
+		}
+		
+		static void ParseWsdlArrayType (XmlReader reader, XmlAttribute attr)
+		{
+			if (attr.NamespaceURI == XmlSerializer.WsdlNamespace && attr.LocalName == "arrayType")
+			{
+				string ns = "", type, dimensions;
+				TypeTranslator.ParseArrayType (attr.Value, out type, out ns, out dimensions);
+				if (ns != "") ns = reader.LookupNamespace (ns) + ":";
+				attr.Value = ns + type + dimensions;
 			}
 		}
 
