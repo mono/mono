@@ -152,9 +152,6 @@ namespace System.Web.UI {
 			return;
 		}
 
-		[MonoTODO ("Extra method to keep things compiling, need to remove later")]
-		public abstract IEnumerable Select ();
-		
 		public virtual void Select (DataSourceSelectArguments selectArgs,
 						DataSourceViewSelectCallback callBack)
 		{
