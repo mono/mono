@@ -1,4 +1,3 @@
-
 //
 // System/IAppDomainSetup.cs
 //
@@ -9,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System {
 
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IAppDomainSetup {
 
 		string ApplicationBase { get; set; }
