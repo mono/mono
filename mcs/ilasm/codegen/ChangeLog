@@ -1,4 +1,8 @@
-2003-02-10 Jackson Harper <jackson@latitudegeo.com>
+2003-02-6 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Reconfigure to work with new PEAPI emission system
+
+2003-02-6 Jackson Harper <jackson@latitudegeo.com>
 
 	* ClassTable.cs: Add file, this is a 'table' for storing classes
 	* Location.cs: Add file, this will eventually be used for marking
