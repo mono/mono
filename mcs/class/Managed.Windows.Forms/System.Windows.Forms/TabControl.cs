@@ -374,7 +374,6 @@ namespace System.Windows.Forms {
 
 		private bool CanScrollLeft {
 			get {
-				Console.WriteLine (TabPages [TabCount - 1].TabBounds.Right + "	" + (ClientRectangle.Right - 40));
 				if (TabPages [TabCount - 1].TabBounds.Right > ClientRectangle.Right - 40)
 					return true;
 				return false;
@@ -387,7 +386,6 @@ namespace System.Windows.Forms {
 				Rectangle right = new Rectangle (ClientRectangle.Right - 17, ClientRectangle.Top + 1, 17, 17);
 				Rectangle left = new Rectangle (ClientRectangle.Right - 34, ClientRectangle.Top + 1, 17, 17);
 				if (right.Contains (e.X, e.Y)) {
-					Console.WriteLine ("scroll right");
 					right_slider_state = ButtonState.Pushed;
 					if (CanScrollRight) {
 						slider_pos++;
@@ -542,7 +540,7 @@ namespace System.Windows.Forms {
 				page.TabBounds = new Rectangle (xpos,
 						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
 						width, item_size.Height);
-				Console.WriteLine ("setting bounds:   " + page.TabBounds);
+
 				if (i == SelectedIndex)
 					 ExpandSelected (page, xpos == 4 || xpos == row_width, row_width);
 
