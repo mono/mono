@@ -14,9 +14,23 @@ namespace System.Web.UI.MobileControls
 {
 	public class ControlPager
 	{
+		private int pageCount;
+
 		public ControlPager(Form form, int pageWeight)
 		{
 			throw new NotImplementedException();
+		}
+
+		public int PageCount
+		{
+			get
+			{
+				return pageCount;
+			}
+			set
+			{
+				pageCount = value;
+			}
 		}
 	}
 }

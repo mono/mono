@@ -1,4 +1,12 @@
 
+2003-01-24	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* ControlPager.cs        : PageCount { get; set; }   - Stubbed.
+	* MobileControl.cs       : EnablePagination { get; set; }
+	                                                     - Completed
+	                         : SetControlPageRecursive   - Stubbed.
+	* Panel.cs               : Completed.
+
 2003-01-23	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* Command.cs             : Completed.

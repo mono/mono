@@ -20,6 +20,8 @@ namespace System.Web.UI.MobileControls
 		private Style style;
 		private IControlAdapter adapter;
 
+		private bool enablePagination;
+
 		protected MobileControl()
 		{
 		}
@@ -277,6 +279,28 @@ namespace System.Web.UI.MobileControls
 		protected virtual object SavePrivateViewState()
 		{
 			throw new NotImplementedException();
+		}
+
+		protected virtual void CreateTemplatedUI(bool doDataBind)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal static void SetControlPageRecursive(Control ctrl, int page)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal bool EnablePagination
+		{
+			get
+			{
+				return enablePagination;
+			}
+			set
+			{
+				enablePagination = value;
+			}
 		}
 	}
 }
