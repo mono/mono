@@ -235,7 +235,7 @@ namespace System.Xml
 		public abstract XmlNode CloneNode (bool deep);
 
 		[MonoTODO]
-		public virtual XPathNavigator CreateNavigator ()
+		public XPathNavigator CreateNavigator ()
 		{
 			return new XmlDocumentNavigator(this);
 		}

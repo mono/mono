@@ -45,6 +45,8 @@ namespace System.Xml
 
 		public override string Value {
 			get { return null; } // always return null here.
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		// Methods

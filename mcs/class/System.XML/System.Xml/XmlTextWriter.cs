@@ -18,28 +18,28 @@ namespace System.Xml
 	{
 		#region Fields
 
-		protected TextWriter w;
-		protected bool nullEncoding = false;
-		protected bool openWriter = true;
-		protected bool openStartElement = false;
-		protected bool openStartAttribute = false;
-		protected bool documentStarted = false;
-		private bool namespaces = true;
-		protected bool openAttribute = false;
-		protected bool attributeWrittenForElement = false;
-		protected Stack openElements = new Stack ();
-		private Formatting formatting = Formatting.None;
-		private int indentation = 2;
-		private char indentChar = ' ';
-		protected string indentChars = "  ";
-		private char quoteChar = '\"';
-		protected int indentLevel = 0;
-		protected string indentFormatting;
-		protected Stream baseStream = null;
-		protected string xmlLang = null;
-		protected XmlSpace xmlSpace = XmlSpace.None;
-		protected bool openXmlLang = false;
-		protected bool openXmlSpace = false;
+		TextWriter w;
+		bool nullEncoding = false;
+		bool openWriter = true;
+		bool openStartElement = false;
+		bool openStartAttribute = false;
+		bool documentStarted = false;
+		bool namespaces = true;
+		bool openAttribute = false;
+		bool attributeWrittenForElement = false;
+		Stack openElements = new Stack ();
+		Formatting formatting = Formatting.None;
+		int indentation = 2;
+		char indentChar = ' ';
+		string indentChars = "  ";
+		char quoteChar = '\"';
+		int indentLevel = 0;
+		string indentFormatting;
+		Stream baseStream = null;
+		string xmlLang = null;
+		XmlSpace xmlSpace = XmlSpace.None;
+		bool openXmlLang = false;
+		bool openXmlSpace = false;
 
 		#endregion
 
@@ -87,7 +87,7 @@ namespace System.Xml
 			set { formatting = value; }
 		}
 
-		public bool IndentingOverriden 
+		private bool IndentingOverriden 
 		{
 			get {
 				if (openElements.Count == 0)
@@ -515,7 +515,7 @@ namespace System.Xml
 			WriteStartElementInternal (prefix, localName, ns);
 		}
 
-		protected override void WriteStartElementInternal (string prefix, string localName, string ns)
+		private void WriteStartElementInternal (string prefix, string localName, string ns)
 		{
 			if (prefix == null)
 				prefix = String.Empty;
@@ -575,7 +575,7 @@ namespace System.Xml
 			WriteStringInternal (text, true);
 		}
 
-		public void WriteStringInternal (string text, bool entitize)
+		private void WriteStringInternal (string text, bool entitize)
 		{
 			if (text == null)
 				text = String.Empty;

@@ -1,3 +1,17 @@
+2002-08-25  Tim Coleman <tim@timcoleman.com>
+        * XmlNode.cs:
+                Change CreateNavigator to not be virtual.
+        * XmlElement.cs:
+                Add set_Prefix and InnerText accessors.
+        * XmlEntityReference.cs:
+                Add set_Value accessor.
+        * XmlTextWriter.cs:
+                Make objects which should be private private.
+        * XmlWriter.cs:
+                Remove WriteStartElementInternal abstract definition.
+        * XmlValidatingReader.cs:
+                New stubs added.
+
 2002-08-22  Jason Diamond <jason@injektilo.org>
 
 	* XmlAttributeCollection.cs, XmlElement.cs: Implementation of RemoveAll

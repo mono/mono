@@ -15,8 +15,8 @@ namespace System.Xml
 	{
 		#region Fields
 
-		protected WriteState ws = WriteState.Start;
-		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
+		private WriteState ws = WriteState.Start;
+		private XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 
 		#endregion
 
@@ -147,17 +147,15 @@ namespace System.Xml
 
 		public void WriteStartElement (string localName)
 		{
-			WriteStartElementInternal (null, localName, null);
+			WriteStartElement (String.Empty, localName, String.Empty);
 		}
 
 		public void WriteStartElement (string localName, string ns)
 		{
-			WriteStartElement (null, localName, ns);
+			WriteStartElement (String.Empty, localName, ns);
 		}
 
 		public abstract void WriteStartElement (string prefix, string localName, string ns);
-
-		protected abstract void WriteStartElementInternal (string prefix, string localName, string ns);
 
 		public abstract void WriteString (string text);
 

@@ -52,6 +52,15 @@ namespace System.Xml
 		}
 
 		[MonoTODO ("Setter.")]
+		public override string InnerText {
+			get {
+				// Not sure why this is an override.  Passing through for now.
+				return base.InnerText;
+			}
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO ("Setter.")]
 		public override string InnerXml {
 			get {
 				// Not sure why this is an override.  Passing through for now.
@@ -108,9 +117,8 @@ namespace System.Xml
 		}
 
 		public override string Prefix {
-			get { 
-				return prefix; 
-			}
+			get { return prefix; }
+			set { prefix = value; }
 		}
 
 		#endregion
