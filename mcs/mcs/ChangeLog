@@ -1,5 +1,8 @@
 2003-08-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs: Use a bitfield;  Do not initialize to null things
+	which are done by the constructor by default.
+
 	* cs-parser.jay: bug fix, parameter was 4, not 3.
 
 	* expression.cs: Just use the property;

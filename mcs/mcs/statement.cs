@@ -1023,17 +1023,20 @@ namespace Mono.CSharp {
 
 		public VariableInfo VariableInfo;
 
-		public bool Used;
-		public bool Assigned;
-		public bool ReadOnly;
-		bool is_fixed;
+		enum Flags : byte {
+			Used = 1,
+			Assigned = 2,
+			ReadOnly = 4,
+			Fixed = 8
+		}
+
+		Flags flags;
 		
 		public LocalInfo (Expression type, string name, Block block, Location l)
 		{
 			Type = type;
 			Name = name;
 			Block = block;
-			LocalBuilder = null;
 			Location = l;
 		}
 
@@ -1041,7 +1044,6 @@ namespace Mono.CSharp {
 		{
 			VariableType = tc.TypeBuilder;
 			Block = block;
-			LocalBuilder = null;
 			Location = l;
 		}
 
@@ -1070,12 +1072,12 @@ namespace Mono.CSharp {
 		public void MakePinned ()
 		{
 			TypeManager.MakePinned (LocalBuilder);
-			is_fixed = true;
+			flags |= Flags.Fixed;
 		}
 
 		public bool IsFixed {
 			get {
-				if (is_fixed || TypeManager.IsValueType (VariableType))
+				if (((flags & Flags.Fixed) != 0) || TypeManager.IsValueType (VariableType))
 					return true;
 
 				return false;
@@ -1087,6 +1089,36 @@ namespace Mono.CSharp {
 			return String.Format ("LocalInfo ({0},{1},{2},{3})",
 					      Name, Type, VariableInfo, Location);
 		}
+
+		public bool Used {
+			get {
+				return (flags & Flags.Used) != 0;
+			}
+			set {
+				flags = value ? (flags | Flags.Used) : (flags & ~Flags.Used);
+			}
+		}
+
+		public bool Assigned {
+			get {
+				return (flags & Flags.Assigned) != 0;
+			}
+			set {
+				flags = value ? (flags | Flags.Assigned) : (flags & ~Flags.Assigned);
+			}
+		}
+		
+		public bool ReadOnly {
+			get {
+				return (flags & Flags.ReadOnly) != 0;
+			}
+			set {
+				flags = value ? (flags | Flags.ReadOnly) : (flags & ~Flags.ReadOnly);
+			}
+		}
+
+		
+		
 	}
 		
 	/// <summary>
