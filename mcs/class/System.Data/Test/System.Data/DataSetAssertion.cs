@@ -34,12 +34,26 @@ using System.IO;
 using System.Data;
 using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using NUnit.Framework;
 
 namespace MonoTests.System.Data
 {
 	public class DataSetAssertion : Assertion
 	{
+		public string GetNormalizedSchema (string source)
+		{
+			// Due to the implementation difference, we must have
+			// one more step to reorder attributes. Here, read
+			// schema document into XmlSchema once, and compare
+			// output string with those emission from Write().
+			XmlSchema xs = XmlSchema.Read (new XmlTextReader (
+				new StringReader (source)), null);
+			StringWriter writer = new StringWriter ();
+			xs.Write (writer);
+			return writer.ToString ();
+		}
+
 		public void AssertDataSet (string label, DataSet ds, string name, int tableCount, int relCount)
 		{
 			AssertEquals (label + ".DataSetName", name, ds.DataSetName);

@@ -1,5 +1,9 @@
 2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSetAssertion.cs : forgot one required update for refreshed tests.
+
+2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSetReadXmlSchemaTest.cs : added test for bug #58744.
 	* DataSetReadXmlTest.cs : Added NameConflictDSAndTable().
 	* DataSetTest.cs :
