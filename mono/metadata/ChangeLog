@@ -1,3 +1,18 @@
+
+Wed Feb 20 22:20:29 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: change getToken () and add custom attribute GetBlob()helper
+	method.
+	* reflection.h: add custom attrs array to the reflection builder structures.
+	* reflection.c: encode and emit custom attributes for all the relevant
+	reflection objects. Cache fieldref and methodref tokens. Change
+	mono_image_create_token() interface to take a MonoDynamicAssembly.
+	More complete custom attributes decoder. Load custom attributes for
+	Assembly, Field, Method and Constructor objects, too. Make the
+	returned array an Attribute[] one, not object[]. Added
+	mono_reflection_get_custom_attrs_blob() to encode the arguments of a
+	custom attribute constructor.
+
 2002-02-20  Dick Porter  <dick@ximian.com>
 
 	* icall.c:

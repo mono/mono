@@ -1,4 +1,9 @@
 
+Wed Feb 20 22:18:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: more complete runtime_invoke () implementation.
+	Fixed castclass/isinst to work correctly with arrays.
+
 Tue Feb 19 20:21:14 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: implement the runtime_invoke function.
