@@ -133,7 +133,6 @@ namespace System.Xml.XPath
 		{
 			_iter = iter;
 			_nav = iter.Current.Clone ();
-			_current = _nav.Clone ();
 		}
 		protected SimpleIterator (SimpleIterator other) : base (other)
 		{
@@ -142,15 +141,21 @@ namespace System.Xml.XPath
 			else
 				_nav = other._nav.Clone ();
 			_pos = other._pos;
-			_current = other._current.Clone ();
+			if (other._current != null)
+				_current = other._current.Clone ();
 		}
 		public SimpleIterator (XPathNavigator nav, NSResolver nsm) : base (nsm)
 		{
 			_nav = nav.Clone ();
-			_current = nav.Clone ();
 		}
 
-		public override XPathNavigator Current { get { return _current; }}
+		public override XPathNavigator Current {
+			get {
+				if (_current == null) // position == 0
+					_current = _nav.Clone ();
+				return _current;
+			}
+		}
 		public override int CurrentPosition { get { return _pos; }}
 	}
 
@@ -295,7 +300,8 @@ namespace System.Xml.XPath
 			startPosition = other.startPosition;
 			started = other.started;
 			finished = other.finished;
-			_current = other._current.Clone ();
+			if (other._current != null)
+				_current = other._current.Clone ();
 		}
 
 		public override XPathNodeIterator Clone () { return new PrecedingSiblingIterator (this); }
@@ -363,7 +369,8 @@ namespace System.Xml.XPath
 			finished = other.finished;
 			positions = (ArrayList) other.positions.Clone ();
 			nextDepth = other.nextDepth;
-			_current = other._current.Clone ();
+			if (other._current != null)
+				_current = other._current.Clone ();
 		}
 		public override XPathNodeIterator Clone () { return new AncestorIterator (this); }
 		public override bool MoveNext ()
@@ -446,7 +453,8 @@ namespace System.Xml.XPath
 			finished = other.finished;
 			positions = (ArrayList) other.positions.Clone ();
 			nextDepth = other.nextDepth;
-			_current = other._current.Clone ();
+			if (other._current != null)
+				_current = other._current.Clone ();
 		}
 		public override XPathNodeIterator Clone () { return new AncestorOrSelfIterator (this); }
 		public override bool MoveNext ()
@@ -520,7 +528,8 @@ namespace System.Xml.XPath
 		{
 			_depth = other._depth;
 			_finished = other._finished;
-			_current = other._current.Clone ();
+			if (other._current != null)
+				_current = other._current.Clone ();
 		}
 
 		public override XPathNodeIterator Clone () { return new DescendantIterator (this); }
@@ -568,7 +577,8 @@ namespace System.Xml.XPath
 		protected DescendantOrSelfIterator (DescendantOrSelfIterator other) : base (other)
 		{
 			_depth = other._depth;
-			_current = other._current.Clone ();
+			if (other._current != null)
+				_current = other._current.Clone ();
 		}
 
 		public override XPathNodeIterator Clone () { return new DescendantOrSelfIterator (this); }
@@ -687,7 +697,8 @@ namespace System.Xml.XPath
 			startPosition = other.startPosition;
 			started = other.started;
 			finished = other.finished;
-			_current = other._current.Clone ();
+			if (other._current != null)
+				_current = other._current.Clone ();
 		}
 		public override XPathNodeIterator Clone () { return new PrecedingIterator (this); }
 		public override bool MoveNext ()
