@@ -1,4 +1,10 @@
-2004-10-18    <vargaz@freemail.hu>
+2004-10-20  Martin Baulig  <martin@ximian.com>
+
+	* mini-exceptions.c (mono_handle_exception): Call
+	mono_debugger_handle_exception() to tell the debugger about
+	catch/finally clauses.
+
+2004-10-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions-amd64.c (mono_arch_find_jit_info): Pop arguments of the stack.
 
