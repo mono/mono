@@ -9,7 +9,12 @@
 // 
 using System;
 namespace System.Drawing {
-	public class ColorTranslator{
+	public sealed class ColorTranslator{
+
+		private ColorTranslator ()
+		{
+		}
+
 		// From converisons
 		/// <summary>
 		/// 

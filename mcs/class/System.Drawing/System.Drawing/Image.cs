@@ -14,10 +14,15 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
 
 [Serializable]
+[ComVisible (true)]
+[Editor ("System.Drawing.Design.ImageEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+[TypeConverter (typeof(ImageConverter))]
+[ImmutableObject (true)]
 public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable 
 {
 	public delegate bool GetThumbnailImageAbort ();

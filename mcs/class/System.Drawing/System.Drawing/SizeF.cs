@@ -8,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing {
-	
+
+	[ComVisible (true)]
 	public struct SizeF { 
 		
 		// Private height and width fields.

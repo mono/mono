@@ -6,8 +6,11 @@
 //
 
 using System;
+using System.ComponentModel;
+
 namespace System.Drawing 
 {
+	[Editor ("System.Drawing.Design.ContentAlignmentEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public enum ContentAlignment {
 		TopLeft      = 0x001,
 		TopCenter    = 0x002,

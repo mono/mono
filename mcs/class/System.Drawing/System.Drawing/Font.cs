@@ -1,8 +1,13 @@
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing {
 
 	[Serializable]
+	[ComVisible (true)]
+	[Editor ("System.Drawing.Design.FontEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+	[TypeConverter(typeof(FontConverter))]
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
        	private Font (SerializationInfo info, StreamingContext context)

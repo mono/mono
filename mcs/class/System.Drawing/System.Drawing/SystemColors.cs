@@ -1,5 +1,5 @@
 //
-// System.Drawing.SystemColors
+// System.Drawing.SystemColors.cs
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -14,6 +14,11 @@ namespace System.Drawing {
 
 	public sealed class SystemColors
 	{
+
+		private SystemColors ()
+		{
+		}
+
 		static public Color ActiveBorder
 		{	
 			get {

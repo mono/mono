@@ -13,12 +13,15 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Reflection;
 
 namespace System.Drawing 
 {
 	[TypeConverter(typeof(ColorConverter))]
+	[ComVisible (true)]
+	[Editor ("System.Drawing.Design.ColorEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	[Serializable]
 	public struct Color
 	{

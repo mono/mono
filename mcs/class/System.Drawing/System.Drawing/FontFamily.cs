@@ -12,7 +12,7 @@ using System.Drawing.Text;
 
 namespace System.Drawing {
 
-	public class FontFamily : MarshalByRefObject, IDisposable {
+	public sealed class FontFamily : MarshalByRefObject, IDisposable {
 		
 		static FontFamily genericMonospace;
 		static FontFamily genericSansSerif;

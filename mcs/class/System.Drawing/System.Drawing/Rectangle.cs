@@ -9,10 +9,13 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing {
 	
 	[StructLayout(LayoutKind.Sequential)]
+	[ComVisible (true)]
+	[TypeConverter(typeof(RectangleConverter))]
 	public struct Rectangle { 
 		int x, y, width, height;
 

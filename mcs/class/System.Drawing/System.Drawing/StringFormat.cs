@@ -16,7 +16,7 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for StringFormat.
 	/// </summary>
-	public class StringFormat
+	public sealed class StringFormat
 	{
 		StringAlignment alignment;
 		StringAlignment line_alignment;

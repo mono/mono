@@ -13,9 +13,9 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for ImageAnimator.
 	/// </summary>
-	public class ImageAnimator
+	public sealed class ImageAnimator
 	{
-		public ImageAnimator()
+		private ImageAnimator ()
 		{
 			//
 			// TODO: Add constructor logic here

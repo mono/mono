@@ -1,3 +1,30 @@
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Bitmap.cs: Added Attributes
+	* ColorTranslator.cs: Added private constructor
+	* Font.cs: Added Attributes
+	* FontFamily.cs: sealed
+	* Icon.cs: Added Attributes
+	* IconConverter.cs: Fixed signature
+	* Image.cs: Added attributes
+	* ImageAnimator.cs: 
+	* ImageConverter.cs:
+	* ImageFormatConverter.cs:
+	* SolidBrush.cs:
+	* StringFormat.cs:
+	* SystemBrushes.cs:
+	* SystemColors.cs:
+	* SystemIcons.cs:
+	* SystemPens.cs:
+	* TextureBrush.cs: Fixed signature
+	* Color.cs: Added attributes
+	* Point.cs:
+	* PointF.cs:
+	* Rectangle.cs:
+	* Size.cs:
+	* SizeF.cs: Added attributes
+	* ContentAlignment.cs: Added attribute
+
 2003-11-13  Duncan Mak  <duncan@ximian.com>
 
 	* Pen.cs (LineCape, LineJoin, MiterLimit, Transform): implemented.

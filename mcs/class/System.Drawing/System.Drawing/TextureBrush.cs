@@ -13,13 +13,16 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for TextureBrush.
 	/// </summary>
-	public class TextureBrush
+	public sealed class TextureBrush : Brush
 	{
-		public TextureBrush()
+		internal TextureBrush()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+		}
+
+		[MonoTODO()]
+		public override object Clone()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

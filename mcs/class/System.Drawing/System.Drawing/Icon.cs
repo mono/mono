@@ -10,11 +10,16 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing
 {
 
 	[Serializable]
+	[ComVisible (false)]
+	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+	[TypeConverter(typeof(IconConverter))]
 	public sealed class Icon : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 

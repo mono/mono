@@ -8,10 +8,14 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing {
 
 	[Serializable]	
+	[ComVisible (true)]
+	[TypeConverter(typeof(PointConverter))]
 	public struct Point { 
 		
 		// Private x and y coordinate fields.

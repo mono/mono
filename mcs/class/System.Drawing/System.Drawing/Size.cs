@@ -9,10 +9,14 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing {
 	
 	[Serializable]
+	[ComVisible (true)]
+	[TypeConverter(typeof(SizeConverter))]
 	public struct Size { 
 		
 		// Private Height and width fields.

@@ -13,14 +13,12 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for SystemBrushes.
 	/// </summary>
-	public class SystemBrushes
+	public sealed class SystemBrushes
 	{
-		public SystemBrushes()
+		private SystemBrushes()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
+
 		public static Brush ActiveBorder
 		{	
 			get {

@@ -13,13 +13,10 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for SystemIcons.
 	/// </summary>
-	public class SystemIcons
+	public sealed class SystemIcons
 	{
-		public SystemIcons()
+		private SystemIcons()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
 	}
 }

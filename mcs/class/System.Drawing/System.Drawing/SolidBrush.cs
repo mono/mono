@@ -11,7 +11,7 @@ using System;
 
 namespace System.Drawing
 {
-	public class SolidBrush	: Brush {
+	public sealed class SolidBrush	: Brush {
 		
 		Color color;
 

@@ -13,10 +13,13 @@ using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing {
 
 	[Serializable]
+	[ComVisible (true)]
+	[Editor ("System.Drawing.Design.BitmapEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class Bitmap : Image {
 		//
 		// This one holds the actual memory buffer at the PixelFormat/height/width

@@ -49,6 +49,10 @@ namespace System.Drawing
 			window_text = new Pen (SystemColors.WindowText);
 			info_text = new Pen (SystemColors.InfoText);
 		}
+
+		private SystemPens ()
+		{
+		}
 		
 		public static Pen ActiveCaptionText {
 			get {
