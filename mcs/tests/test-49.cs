@@ -432,6 +432,21 @@ class X {
 		}
 		return 0;
 	}
+
+	enum My : byte {
+		A
+	}
+
+	static int test_casts (int n)
+	{
+		switch (n) {
+			case (int) (char) (int) My.A: 
+				return 1;
+
+			default:
+				return 2;
+		}
+	}
 	
 	static int Main ()
 	{
@@ -535,7 +550,10 @@ class X {
 			return 39;
 		if (test_string_multiple_targets ("E") != 0)
 			return 40;
-	       
+	      
+		if (test_casts (0) != 1)
+			return 41;
+ 
 		Console.WriteLine ("All tests pass");
 		return 0;
 	}
