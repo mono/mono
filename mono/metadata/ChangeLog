@@ -1,3 +1,8 @@
+2002-04-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mempool.c (mono_mempool_alloc): only use g_malloc when
+	absolutely necessary.
+
 2002-04-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mempool.c (MEM_ALIGN): hardcode MEM_ALIGN to 8
