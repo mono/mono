@@ -514,37 +514,29 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// Updats the menu rect
-		static public void MenuBarCalcSize (Graphics dc, IntPtr hMenu, Rectangle rect)
+		// Updates the menu rect and returns the height
+		static public int MenuBarCalcSize (Graphics dc, IntPtr hMenu, int width)
 		{
-			int x = 3;
-			int i, y;
-
+			int x = 0;
+			int i = 0;
 			MENU menu = GetMenuFromID (hMenu);
 			MENUITEM item;
 
-			x = rect.X;
-			y = rect.Height + 1;
 			menu.Width = 0;
-
-			i = 0;
 			while (i < menu.items.Count) {
 
 				item = (MENUITEM) menu.items[i];
-				CalcItemSize (dc, item, y, x, true);
+				CalcItemSize (dc, item, 0, x, true);
 				i = i + 1;
 				x += item.rect.Width;
 				item.fState |= MF.MF_MENUBAR;
 
 				if (item.rect.Height > menu.Height)
 					menu.Height = item.rect.Height;
-
-				//Console.WriteLine ("MenuBarCalcSize {0} {1}", item.item.Text, item.rect.X);
 			}
 
 			menu.Width = x;
-
-			//Console.WriteLine ("CalcPopupMenuSize {0} {1}", menu.Width, menu.Height);
+			return menu.Height;
 		}
 
 		// Draws a menu bar in a Window
@@ -554,7 +546,7 @@ namespace System.Windows.Forms
 			Rectangle rect_menu = new Rectangle ();
 
 			if (menu.Height == 0)
-				MenuBarCalcSize (dc, hMenu, rect_menu);
+				MenuBarCalcSize (dc, hMenu, rect_menu.Width);
 
 			rect.Height = menu.Height;
 			rect.Width = menu.Width;
