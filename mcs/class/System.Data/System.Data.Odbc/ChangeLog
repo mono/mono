@@ -1,3 +1,7 @@
+2005-03-15  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcConnection.cs: re-throw error on exception in Open method.
+
 2005-03-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcConnection.cs : notify state change through event. clean up

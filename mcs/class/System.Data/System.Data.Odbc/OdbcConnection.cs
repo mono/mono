@@ -376,6 +376,7 @@ namespace System.Data.Odbc
                         } catch (Exception) {
                                 // free handles if any.
                                 FreeHandles ();
+                                throw;
                         }
 		}
 
