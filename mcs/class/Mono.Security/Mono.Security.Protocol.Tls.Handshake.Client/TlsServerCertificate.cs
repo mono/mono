@@ -99,7 +99,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				}
 			}
 
-// TEMP			this.validateCertificates(certificates);
+			this.validateCertificates(certificates);
 		}
 
 		#endregion
@@ -110,7 +110,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		// DH certificates requires some changes - does anyone use one ?
 		private bool checkCertificateUsage (X509Certificate cert) 
 		{
-            ClientContext context = (ClientContext)this.Context;
+			ClientContext context = (ClientContext)this.Context;
 
 			// certificate extensions are required for this
 			// we "must" accept older certificates without proofs
@@ -171,30 +171,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private void validateCertificates(X509CertificateCollection certificates)
 		{
-            ClientContext context = (ClientContext)this.Context;
+			ClientContext context = (ClientContext)this.Context;
 
 			// the leaf is the web server certificate
 			X509Certificate leaf = certificates [0];
 			X509Cert.X509Certificate cert = new X509Cert.X509Certificate (leaf.RawData);
-
-			// Notes:
-			// - we don't want to verify the certificate each time
-			//   (e.g. if we have multiple simultaneous SSL 
-			//   connections to a server).
-			// - this won't work when used directly from assembly 
-			//   Mono.Security.dll but will when called from System.dll
-			Uri target = new Uri ("https://" + context.ClientSettings.TargetHost);
-			ServicePoint sp = ServicePointManager.FindServicePoint (target);
-			if ((sp != null) && (sp.Certificate != null)) {
-				// is the service point still valid ?
-				if (sp.IdleSince.AddMilliseconds (sp.MaxIdleTime) > DateTime.Now) {
-					cert = new X509Cert.X509Certificate (leaf.RawData);
-					// is so, is this the same certificate 
-					// (the one we already validated previously)
-					if (sp.Certificate.Equals (cert))
-						return;
-				}
-			}
 
 			ArrayList errors = new ArrayList();
 
@@ -286,7 +267,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		// 3.1		Existing practice but DEPRECATED
 		private bool checkServerIdentity (X509Certificate cert) 
 		{
-            ClientContext context = (ClientContext)this.Context;
+			ClientContext context = (ClientContext)this.Context;
 
 			string targetHost = context.ClientSettings.TargetHost;
 
@@ -313,7 +294,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private bool checkDomainName(string subjectName)
 		{
-            ClientContext context = (ClientContext)this.Context;
+			ClientContext context = (ClientContext)this.Context;
 
 			string	domainName = String.Empty;
 			Regex search = new Regex(@"([\w\s\d]*)\s*=\s*([^,]*)");
