@@ -60,6 +60,7 @@ namespace System.Reflection.Emit {
 		PEFileKinds pekind = PEFileKinds.Dll;
 		bool delay_sign;
 		uint access;
+		private Module[] loaded_modules;
 		#endregion
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
@@ -237,13 +238,37 @@ namespace System.Reflection.Emit {
 			if (modules != null) {
 				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];
 				System.Array.Copy(modules, new_modules, modules.Length);
-				new_modules [modules.Length] = r;
 				modules = new_modules;
 			} else {
 				modules = new ModuleBuilder [1];
-				modules [0] = r;
 			}
+			modules [modules.Length - 1] = r;
 			return r;
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern Module InternalAddModule (string fileName);
+
+		/*
+		 * Mono extension to support /addmodule in mcs.
+		 */
+		internal Module AddModule (string fileName)
+		{
+			if (fileName == null)
+				throw new ArgumentNullException (fileName);
+
+			Module m = InternalAddModule (fileName);
+
+			if (loaded_modules != null) {
+				Module[] new_modules = new Module [loaded_modules.Length + 1];
+				System.Array.Copy (loaded_modules, new_modules, loaded_modules.Length);
+				loaded_modules = new_modules;
+			} else {
+				loaded_modules = new Module [1];
+			}
+			loaded_modules [loaded_modules.Length - 1] = m;
+
+			return m;
 		}
 
 		public IResourceWriter DefineResource (string name, string description, string fileName)
