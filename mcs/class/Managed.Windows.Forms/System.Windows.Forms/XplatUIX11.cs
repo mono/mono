@@ -46,12 +46,13 @@ namespace System.Windows.Forms {
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static int		wm_protocols;		// X Atom
 		private static int		wm_delete_window;	// X Atom
+		private static uint		default_colormap;	// X Colormap ID
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
 		internal static	bool		is_visible;
 
-		private Hashtable handle_data;
+		private static Hashtable	handle_data;
 
 		#endregion	// Local Variables
 
@@ -86,28 +87,14 @@ namespace System.Windows.Forms {
 		}
 
 		#region Constructor & Destructor
+
+
 		private XplatUIX11() {
 			// Handle singleton stuff first
 			ref_count=0;
 
 			// Now regular initialization
-			DisplayHandle = XOpenDisplay(IntPtr.Zero);
-			key_state = Keys.None;
-			mouse_state = MouseButtons.None;
-			mouse_position = Point.Empty;
-			root_window = XRootWindow(DisplayHandle, 0);
-
-			// Create the foster parent
-			FosterParent=XCreateSimpleWindow(DisplayHandle, root_window, 0, 0, 1, 1, 4, 0, 0);
-			if (FosterParent==IntPtr.Zero) {
-				Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
-			}
-
-			// Prepare for shutdown
-			wm_protocols=XInternAtom(DisplayHandle, "WM_PROTOCOLS", false);
-			wm_delete_window=XInternAtom(DisplayHandle, "WM_DELETE_WINDOW", false);
-
-			handle_data = new Hashtable ();
+			SetDisplay(XOpenDisplay(IntPtr.Zero));
 		}
 
 		~XplatUIX11() {
@@ -146,6 +133,38 @@ namespace System.Windows.Forms {
 			return IntPtr.Zero;
 		}
 
+		internal static void SetDisplay(IntPtr display_handle) {
+			if (display_handle != IntPtr.Zero) {
+				if (FosterParent != IntPtr.Zero) {
+					XDestroyWindow(DisplayHandle, FosterParent);
+				}
+				if (DisplayHandle != IntPtr.Zero) {
+					XCloseDisplay(DisplayHandle);
+				}
+
+				DisplayHandle=display_handle;
+
+				// Create a few things
+				key_state = Keys.None;
+				mouse_state = MouseButtons.None;
+				mouse_position = Point.Empty;
+				root_window = XRootWindow(display_handle, 0);
+				default_colormap = XDefaultColormap(display_handle, 0);
+
+				// Create the foster parent
+				FosterParent=XCreateSimpleWindow(display_handle, root_window, 0, 0, 1, 1, 4, 0, 0);
+				if (FosterParent==IntPtr.Zero) {
+					Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
+				}
+
+				// Prepare for shutdown
+				wm_protocols=XInternAtom(display_handle, "WM_PROTOCOLS", false);
+				wm_delete_window=XInternAtom(display_handle, "WM_DELETE_WINDOW", false);
+
+				handle_data = new Hashtable ();
+			}
+		}
+
 		internal override void ShutdownDriver(IntPtr token) {
 			if (DisplayHandle!=IntPtr.Zero) {
 				XCloseDisplay(DisplayHandle);
@@ -167,14 +186,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr CreateWindow(CreateParams cp) {
-			IntPtr	WindowHandle;
-			IntPtr	ParentHandle;
-			int	X;
-			int	Y;
-			int	Width;
-			int	Height;
-			int	BorderWidth;
-			int	protocols;
+			IntPtr			WindowHandle;
+			IntPtr			ParentHandle;
+			int			X;
+			int			Y;
+			int			Width;
+			int			Height;
+			int			BorderWidth;
+			int			protocols;
 
 			ParentHandle=cp.Parent;
 
@@ -199,7 +218,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, 0, 0);
+			WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, 0, (this.BackColor.ToArgb() & 0x00ffffff));
 			XMapWindow(DisplayHandle, WindowHandle);
 
 			XSelectInput(DisplayHandle, WindowHandle, 
@@ -213,7 +232,7 @@ namespace System.Windows.Forms {
 				EventMask.PointerMotionMask | 
 				EventMask.VisibilityChangeMask |
 				EventMask.StructureNotifyMask);
-			XSetWindowBackground(DisplayHandle, WindowHandle, (uint)this.BackColor.ToArgb());
+
 			is_visible=true;
 
 			protocols=wm_delete_window;
@@ -437,7 +456,7 @@ namespace System.Windows.Forms {
 				}							
 			}
 
-			if (msg.wParam == IntPtr.Zero) {
+			if ((msg.wParam == IntPtr.Zero) && (keys.Length>0)) {
 				char[] keychars;				
 				keychars=keys.ToCharArray(0, 1);
 				msg.wParam=(IntPtr)keychars[0];
@@ -686,7 +705,6 @@ namespace System.Windows.Forms {
 				XUnmapWindow(DisplayHandle, handle);
 				is_visible=false;
 			}
-//			Console.WriteLine("Setting window visibility: {0}", visible);
 			return true;
 		}
 
@@ -892,9 +910,32 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11.so", EntryPoint="XTranslateCoordinates")]
 		internal extern static bool XTranslateCoordinates (IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, out int intdest_x_return,  out int dest_y_return, out IntPtr child_return);
 
-
 		[DllImport ("libX11.so", EntryPoint="XGetGeometry")]
 		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, out IntPtr root, out int x, out int y, out int width, out int height, out int border_width, out int depth);
+
+		[DllImport ("libX11.so", EntryPoint="XAllocColor")]
+		internal extern static int XAllocColor(IntPtr display, uint Colormap, ref XColor colorcell_def);
+
+		[DllImport ("libX11.so", EntryPoint="XGetStandardColormap")]
+		internal extern static int XGetStandardColormap(IntPtr display, IntPtr window, ref XStandardColormap cmap_info, Atom property);
+
+		[DllImport ("libX11.so", EntryPoint="XSetRGBColormaps")]
+		internal extern static int XSetRGBColormaps(IntPtr display, IntPtr window, ref XStandardColormap cmap_info, int count, Atom property);
+
+		[DllImport ("libX11.so", EntryPoint="XInstallColormap")]
+		internal extern static int XInstallColormap(IntPtr display, uint cmap);
+
+		[DllImport ("libX11.so", EntryPoint="XDefaultColormap")]
+		internal extern static uint XDefaultColormap(IntPtr display, int screen_number);
+
+		[DllImport ("libX11.so", EntryPoint="XDefaultDepth")]
+		internal extern static uint XDefaultDepth(IntPtr display, int screen_number);
+
+		[DllImport ("libX11.so", EntryPoint="XDefaultVisual")]
+		internal extern static uint XDefaultVisual(IntPtr display, int screen_number);
+
+		[DllImport ("libX11.so", EntryPoint="XSetWindowColormap")]
+		internal extern static uint XSetWindowColormap(IntPtr display, IntPtr window, uint cmap);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
