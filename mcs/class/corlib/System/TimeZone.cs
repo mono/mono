@@ -51,10 +51,7 @@ namespace System {
 
 		public virtual bool IsDaylightSavingTime (DateTime time)
 		{
-			int currentYear = CultureInfo.CurrentCulture.Calendar.GetYear (time);
-			DaylightTime daylight = GetDaylightChanges (currentYear);
-
-			return IsDaylightSavingTime (time, daylight);
+			return IsDaylightSavingTime (time, GetDaylightChanges (time.Year));
 		}
 
 		public virtual bool IsDaylightSavingTime (DateTime time, DaylightTime daylightTimes)

@@ -3,7 +3,7 @@
 	* TimeZone.cs: patch from Ajay Kumar Dwivedi (adwiv@yahoo.com) to
 	make IsDaylightSavingTime (DateTime) call 
 	IsDaylightSavingTime (DateTime, DaylightTime).	
-
+	
 	Added internal class CurrentTimeZone from Ajay. It needs more work
 	to fill in the appropriate internal calls.
 	
