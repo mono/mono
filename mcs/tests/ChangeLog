@@ -1,3 +1,7 @@
+2003-12-13  Martin Baulig  <martin@ximian.com>
+
+	* test-154.cs: Added testcase for bug #48962.
+
 2003-12-11  Martin Baulig  <martin@ximian.com>
 
 	* test-154.cs: Added testcases for bugs #49153, #49359 and #49602.

@@ -500,4 +500,19 @@ public class X
                 if (i == 0)
                         return 0;
         }
+
+	//
+	// Bug 48962
+	//
+	public void test34 ()
+	{
+		int y, x = 3;
+		if (x > 3) {
+			y = 3;
+			goto end;
+		}
+		return;
+        end:
+		x = y;
+	}
 }
