@@ -30,11 +30,26 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public sealed class In : BinaryOp {
 
 		public static bool JScriptIn (object v1, object v2)
+		{
+			return false;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
 		}

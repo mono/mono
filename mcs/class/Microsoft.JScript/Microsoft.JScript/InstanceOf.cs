@@ -30,13 +30,13 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public sealed class InstanceOf : BinaryOp {
 
-		public static bool JScriptInstanceOf (object v1, object v2)
+		public static bool JScriptInstanceof (object v1, object v2)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
