@@ -1,3 +1,25 @@
+2004-12-02  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (generic_inst_cache): New static hashtable.
+	(mono_metadata_lookup_generic_inst): New public function.
+	(mono_metadata_inflate_generic_inst): New public function.
+	(mono_metadata_parse_generic_inst): New public function.
+	(do_mono_metadata_parse_generic_class): Use the new
+	mono_metadata_parse_generic_inst() for parsing the `gclass->inst'
+	since this'll also use the cache.
+
+	* reflection.c (mono_reflection_bind_generic_method_parameters):
+	Use mono_metadata_lookup_generic_inst() to use the new cache.
+
+	* class.c (inflate_mono_type): Use
+	mono_metadata_inflate_generic_inst() to inflate a generic
+	instance; this'll also use the new cache.
+
+	* loader.c (method_from_methodspec): Use
+	mono_metadata_parse_generic_inst() and
+	mono_metadata_inflate_generic_inst() rather than parsing it
+	manually, so we can use the new cache.
+
 2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (wait_for_tids): Do not incorrectly free threads when 
