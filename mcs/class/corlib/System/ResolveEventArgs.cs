@@ -13,7 +13,7 @@ using System;
 
 namespace System {
 
-	public class ResolveEventArgs
+	public class ResolveEventArgs : EventArgs
 	{
 		private string m_Name;
 		public string Name {get{return m_Name;}}
