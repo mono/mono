@@ -4,5 +4,9 @@ namespace System.Windows.Forms {
 	// to Font... to be removed
 
 	public class Font {
+		public static Font FromHfont	(IntPtr font)
+		{
+			return null;
+		}	
 	}
 }
