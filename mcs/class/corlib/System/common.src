@@ -23,7 +23,6 @@ Exception.cs
 ExecutionEngineException.cs
 FlagsAttribute.cs
 FormatException.cs
-IAsyncResult.cs
 ICloneable.cs
 IComparable.cs
 IConvertible.cs
