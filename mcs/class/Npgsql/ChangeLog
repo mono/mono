@@ -1,3 +1,14 @@
+2004-05-01  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+
+	* Npgsql/NpgsqlCommand.cs,
+        Npgsql/NpgsqlConnection.cs,
+        Npgsql/NpgsqlConnector.cs,
+        Npgsql/NpgsqlConnectorPool.cs,
+        Npgsql/NpgsqlError.cs,
+        Npgsql/NpgsqlException.cs,
+        Npgsql/NpgsqlParameterCollection.cs,
+        NpgsqlTypes/NpgsqlTypesHelper.cs: Improved exception support. Now NpgsqlException as well as NpgsqlError provide much more information. Thanks Glen Parker (glenebob@nwlink.com) for the patch.
+
 2004-04-30  Todd Berman  <tberman@sevenl.net>
 
 	* Npgsql/AssemblyInfo.cs: use the proper path to the .pub file
