@@ -1,3 +1,10 @@
+
+Mon Apr 22 19:28:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: win32 counter implementation (untested).
+	* icall.cs: win32 GetNow() and GetTimeZoneData() implementations
+	(the latter needs testing and more complete impl. from win32 folks).
+
 2002-04-21  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* object.c: mono_array_new_full workaround mono_array_class_get
