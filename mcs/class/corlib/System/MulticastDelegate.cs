@@ -91,11 +91,17 @@ namespace System {
 		// </summary>
 		public override Delegate[] GetInvocationList()
 		{
-			ArrayList list = new ArrayList ();
 			MulticastDelegate d;
 			for (d = (MulticastDelegate) this.Clone (); d.prev != null; d = d.prev)
 				d.prev.kpm_next = d;
 
+			if (d.kpm_next == null) {
+				MulticastDelegate other = (MulticastDelegate) d.Clone ();
+				other.prev = null;
+				other.kpm_next = null;				
+				return new Delegate [1] { other };
+			}
+			ArrayList list = new ArrayList ();
 			for (; d != null; d = d.kpm_next) {
 				MulticastDelegate other = (MulticastDelegate) d.Clone ();
 				other.prev = null;

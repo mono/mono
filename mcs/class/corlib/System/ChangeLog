@@ -1,3 +1,8 @@
+2003-05-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MulticastDelegate.cs (GetInvocationList): Avoid ArrayList 
+	construction if the delegate list only has one element.
+
 2003-05-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Environment.cs: Changed the method GetFolderPath because it must
