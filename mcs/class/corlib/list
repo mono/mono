@@ -1,4 +1,4 @@
---unsafe
+--unsafe --nostdlib
 Linux/Linux.cs
 System.Collections/ArrayList.cs
 System.Collections/BitArray.cs
