@@ -19,7 +19,8 @@ namespace MonoTests.System.Security.Permissions {
                         get 
                         {
                                 TestSuite suite =  new TestSuite();
-                                suite.AddTest(FileIOPermissionTest.Suite);
+                                suite.AddTest (FileIOPermissionTest.Suite);
+                                suite.AddTest (StrongNamePublicKeyBlobTest.Suite);
                                 return suite;
                         }
                 }

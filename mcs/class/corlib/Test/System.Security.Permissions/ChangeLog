@@ -1,3 +1,9 @@
+2002-12-16  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	AllTests.cs: Added StrongNamePublicKeyBlobTest suite.
+	StrongNamePublicKeyBlobTest.cs: New. Test suite for
+	StrongNamePublicKeyBlob.
+
 2002-06-18  Nick Drochak  <ndrochak@gol.com>
 
 	* FileIOPermissionTest.cs: Use Unix paths if it looks like we are not
