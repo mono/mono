@@ -163,10 +163,8 @@ namespace CIR {
 			if (ifaces == null)
 				return;
 
-			foreach (Interface iface in ifaces){
-				string name = iface.Name;
-
-				CreateInterface (iface);
+			foreach (string name in ifaces){
+				CreateInterface ((Interface) ifaces [name]);
 			}
 		}
 

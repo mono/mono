@@ -874,6 +874,7 @@ interface_type_list
 		ArrayList interfaces = new ArrayList ();
 
 		interfaces.Add ($1);
+		$$ = interfaces;
 	  }
 	| interface_type_list COMMA interface_type
 	  {

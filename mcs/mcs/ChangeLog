@@ -1,5 +1,7 @@
 2001-08-03  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay (interface_base): set our $$ to be interfaces.
+
 	* rootcontext.cs (CreateInterface): Handle the case where there
 	are no parent interfaces.
 	
