@@ -374,6 +374,7 @@ namespace System.Xml
 		public override bool MoveToAttribute (string name)
 		{
 			MoveToElement ();
+			bool match = false;
 
 			if (attributes == null)
 				return false;
@@ -385,18 +386,24 @@ namespace System.Xml
 
 			while (orderedAttributesEnumerator.MoveNext ()) {
 				if(name == orderedAttributesEnumerator.Current as string) {
-					string value = attributes [name] as string;
-					SetProperties (
-						XmlNodeType.Attribute, // nodeType
-						name, // name
-						false, // isEmptyElement
-						value, // value
-						false // clearAttributes
-					);
+					match = true;
+					break;
 				}
 			}
 
-			return false;
+			if (match) {
+					
+				string value = attributes [name] as string;
+				SetProperties (
+					XmlNodeType.Attribute, // nodeType
+					name, // name
+					false, // isEmptyElement
+					value, // value
+					false // clearAttributes
+				);
+			}
+			
+			return match;
 		}
 
 		[MonoTODO]
