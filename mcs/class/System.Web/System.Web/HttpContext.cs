@@ -249,6 +249,10 @@ namespace System.Web
 			}
 		}
 
+		internal bool TimeoutPossible {
+			get { return (Interlocked.CompareExchange (ref timeoutPossible, 1, 1) == 1); }
+		}
+		
 		internal void BeginTimeoutPossible ()
 		{
 			timeoutPossible = 1;

@@ -710,6 +710,9 @@ namespace System.Web
 			if (_bEnded)
 				return;
 
+			if (_Context.TimeoutPossible)
+				Thread.CurrentThread.Abort (new StepCompleteRequest ());
+
 			Flush ();
 			_bEnded = true;
 			_Context.ApplicationInstance.CompleteRequest ();

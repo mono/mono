@@ -679,10 +679,14 @@ namespace System.Web
 
 					readysync = state.CompletedSynchronously;
 				} catch (ThreadAbortException obj) {
-					StepTimeout timeout = obj.ExceptionState as StepTimeout;
-					if (timeout != null) {
+					object o = obj.ExceptionState;
+					Type type = (o != null) ? o.GetType () : null;
+					if (type == typeof (StepTimeout)) {
 						Thread.ResetAbort ();
 						lasterror = new HttpException ("The request timed out.");
+						_app.CompleteRequest ();
+					} else if (type == typeof (StepCompleteRequest)) {
+						Thread.ResetAbort ();
 						_app.CompleteRequest ();
 					}
 				} catch (Exception obj) {
@@ -1057,6 +1061,11 @@ namespace System.Web
 			set { _Site = value; }
 		}
 #endregion Properties
+	}
+
+	// Used in HttpResponse.End ()
+	class StepCompleteRequest
+	{
 	}
 }
 
