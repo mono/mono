@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	public class TextBox : WebControl, IPostBackDataHandler
 	{
-		private static readonly object TextChangedEvent = new object ();
+		static readonly object TextChangedEvent = new object ();
 
 		public TextBox() : base (HtmlTextWriterTag.Input)
 		{
@@ -34,8 +34,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (false), WebCategory ("Behavior")]
 		[WebSysDescription ("The control automatically posts back after changing the text.")]
-		public virtual bool AutoPostBack
-		{
+		public virtual bool AutoPostBack {
 			get {
 				object o = ViewState ["AutoPostBack"];
 				return (o == null) ? false : (bool) o;
@@ -46,8 +45,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0), Bindable (true), WebCategory ("Appearance")]
 		[WebSysDescription ("The width of this control specified in characters.")]
-		public virtual int Columns
-		{
+		public virtual int Columns {
 			get {
 				object o = ViewState ["Columns"];
 				return (o == null) ? 0 : (int) o;
@@ -55,34 +53,34 @@ namespace System.Web.UI.WebControls
 
 			set {
 				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value", "Columns value has to be 0 for 'not set' or bigger than 0.");
+					throw new ArgumentOutOfRangeException ("value",
+						"Columns value has to be 0 for 'not set' or bigger than 0.");
+
 				ViewState ["Columns"] = value; 
 			}
 		}
 
 		[DefaultValue (0), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("The maximum number of characters you can enter in this control.")]
-		public virtual int MaxLength
-		{
-			get
-			{
+		public virtual int MaxLength {
+			get {
 				object o = ViewState ["MaxLength"];
 				return (o == null) ? 0 : (int) o;
 			}
 
 			set {
 				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value", "MaxLength value has to be 0 for 'not set' or bigger than 0.");
+					throw new ArgumentOutOfRangeException ("value",
+						"MaxLength value has to be 0 for 'not set' or bigger than 0.");
+
 				ViewState ["MaxLength"] = value;
 			}
 		}
 
 		[DefaultValue (false), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("If the control is ReadOnly you cannot enter new text.")]
-		public virtual bool ReadOnly
-		{
-			get
-			{
+		public virtual bool ReadOnly {
+			get {
 				object o = ViewState ["ReadOnly"];
 				return (o == null) ? false : (bool) o;
 			}
@@ -91,17 +89,16 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("The number of lines that this multiline contol spans.")]
-		public virtual int Rows
-		{
-			get
-			{
+		public virtual int Rows {
+			get {
 				object o = ViewState ["Rows"];
 				return (o == null) ? 0 : (int) o;
 			}
 
 			set {
 				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value", "Rows value has to be 0 for 'not set' or bigger than 0.");
+					throw new ArgumentOutOfRangeException ("value",
+						"Rows value has to be 0 for 'not set' or bigger than 0.");
 				ViewState ["Rows"] = value;
 			}
 		}
@@ -109,8 +106,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[PersistenceMode (PersistenceMode.EncodedInnerDefaultProperty)]
 		[WebSysDescription ("The text that this control initially displays.")]
-		public virtual string Text
-		{
+		public virtual string Text {
 			get {
 				object o = ViewState ["Text"];
 				return (o == null) ? String.Empty : (string) o;
@@ -121,8 +117,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (typeof (TextBoxMode), "SingleLine"), WebCategory ("Behavior")]
 		[WebSysDescription ("A mode of how the control operates.")]
-		public virtual TextBoxMode TextMode
-		{
+		public virtual TextBoxMode TextMode {
 			get {
 				object o = ViewState ["TextMode"];
 				return (o == null) ? TextBoxMode.SingleLine : (TextBoxMode) o;
@@ -130,15 +125,16 @@ namespace System.Web.UI.WebControls
 
 			set {
 				if(!Enum.IsDefined (typeof(TextBoxMode), value))
-					throw new ArgumentOutOfRangeException ("value", "Only existing modes are allowed");
+					throw new ArgumentOutOfRangeException ("value",
+								"Only existing modes are allowed");
+
 				ViewState ["TextMode"] = value;
 			}
 		}
 
 		[DefaultValue (true), WebCategory ("Layout")]
 		[WebSysDescription ("Determines if a line wraps at line-end.")]
-		public virtual bool Wrap
-		{
+		public virtual bool Wrap {
 			get {
 				object o = ViewState ["Wrap"];
 				return (o == null) ? true : (bool) o;
@@ -150,14 +146,12 @@ namespace System.Web.UI.WebControls
 
 		[WebCategory ("Action")]
 		[WebSysDescription ("Raised when the text is changed.")]
-		public event EventHandler TextChanged
-		{
+		public event EventHandler TextChanged {
 			add { Events.AddHandler (TextChangedEvent, value); }
 			remove { Events.RemoveHandler (TextChangedEvent, value); }
 		}
 
-		protected override HtmlTextWriterTag TagKey
-		{
+		protected override HtmlTextWriterTag TagKey {
 			get {
 				if(TextMode == TextBoxMode.MultiLine)
 					return HtmlTextWriterTag.Textarea;
@@ -170,25 +164,25 @@ namespace System.Web.UI.WebControls
 			if(Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
+			NumberFormatInfo invar = NumberFormatInfo.InvariantInfo;
+
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
-			if (TextMode == TextBoxMode.MultiLine){
+			if (TextMode == TextBoxMode.MultiLine) {
 				if (Rows > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Rows,
-							     Rows.ToString (
-								NumberFormatInfo.InvariantInfo));
+							     Rows.ToString (invar));
 
 				if (Columns > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Cols,
-							     Columns.ToString (
-								NumberFormatInfo.InvariantInfo));
+							     Columns.ToString (invar));
 
 				if (!Wrap)
 					writer.AddAttribute(HtmlTextWriterAttribute.Wrap, "off");
 			} else {
 				string mode;
-				if (TextMode == TextBoxMode.Password)
+				if (TextMode == TextBoxMode.Password) {
 					mode = "password";
-				else {
+				} else {
 					mode = "text";
 					if (Text.Length > 0)
 						writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
@@ -197,11 +191,11 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute (HtmlTextWriterAttribute.Type, mode);
 				if (MaxLength > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Maxlength,
-							     MaxLength.ToString (NumberFormatInfo.InvariantInfo));
+							     MaxLength.ToString (invar));
 
 				if (Columns > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Size,
-							     Columns.ToString (NumberFormatInfo.InvariantInfo));
+							     Columns.ToString (invar));
 			}
 
 			if (ReadOnly)
@@ -219,9 +213,7 @@ namespace System.Web.UI.WebControls
 		protected override void AddParsedSubObject(object obj)
 		{
 			if(!(obj is LiteralControl))
-				throw new HttpException (HttpRuntime.FormatResourceString (
-							"Cannot_Have_Children_Of_Type", "TextBox",
-							GetType ().Name.ToString ()));
+				throw new HttpException ("Cannot have children of type" + obj.GetType ());
 
 			Text = ((LiteralControl) obj).Text;
 		}
@@ -229,6 +221,11 @@ namespace System.Web.UI.WebControls
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+			if (Page != null) {
+				if (AutoPostBack && Enabled)
+					Page.RequiresPostBackScript ();
+			}
+			
 			if (Events [TextChangedEvent] == null)
 				ViewState.SetItemDirty ("Text", false);
 		}
@@ -266,3 +263,4 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
+
