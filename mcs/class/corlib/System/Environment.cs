@@ -41,7 +41,7 @@ using System.Text;
 
 namespace System {
 
-#if NET_2_0_FIXME
+#if NET_2_0
 	public static class Environment {
 #else
 	public sealed class Environment {
