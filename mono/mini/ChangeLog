@@ -1,5 +1,7 @@
 2004-03-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-sparc.brg cpu-sparc.md: Ongoing sparc work.
+
 	* mini-sparc.h mini-sparc.c tramp-sparc.c exceptions-sparc.c: Ongoing
 	sparc work.
 
