@@ -1,4 +1,8 @@
 
+Tue May 13 16:43:18 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: handle thread static fields.
+
 Sun Apr 27 13:27:59 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: check for arraytypemismatch.
