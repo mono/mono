@@ -1,0 +1,19 @@
+#!/bin/sh
+args="$@"
+assembly=
+while test x$1 != x; do
+	case $1 in
+		-[ldnm]:*) ;;
+		*) assembly=$1;;
+	esac
+	shift
+done
+
+if test x$assembly = x; then
+	echo You must specify at least the assembly name
+	echo Usage is:
+	echo mono-service [-d:DIRECTORY] [-l:LOCKFILE] [-n:NAME] [-m:LOGNAME] service.exe
+	exit 1
+fi
+
+exec @bindir@/@mono_interp@ @mono_one_instdir@/@exe_file@ "$args"
