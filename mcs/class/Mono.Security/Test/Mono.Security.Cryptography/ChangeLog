@@ -1,3 +1,7 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DiffieHellmanManagedTest.cs: New. Basic unit test for DH.
+
 2004-02-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistenceTest.cs: New. Unit tests for key pair persistence.
