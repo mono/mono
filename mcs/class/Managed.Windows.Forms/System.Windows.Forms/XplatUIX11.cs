@@ -895,15 +895,25 @@ namespace System.Windows.Forms {
 			return;
 		}
 
-		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
+		internal override void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
 			IntPtr	root;
 			int	border_width;
 			int	depth;
+			IntPtr	child;
+			IntPtr	parent;
 
 			lock (xlib_lock) {
-				
 				XGetGeometry(DisplayHandle, handle, out root, out x,
 						out y, out width, out height, out border_width, out depth);
+
+				if (is_toplevel) {
+					parent = GetParent(handle);
+					if (parent == IntPtr.Zero || parent == root) {
+						XTranslateCoordinates(DisplayHandle, handle, root, 0, 0, out x, out y, out child);
+					} else {
+						XTranslateCoordinates(DisplayHandle, parent, root, 0, 0, out x, out y, out child);
+					}
+				}
 			}
 
 			client_width = width;

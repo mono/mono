@@ -772,7 +772,7 @@ namespace System.Windows.Forms {
 			return;
 		}
 
-		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
+		internal override void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
 			RECT	rect;
 			POINT	pt;
 
@@ -1259,10 +1259,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetFocus(IntPtr hwnd) {
-Control c = Control.ControlNativeWindow.ControlFromHandle(hwnd);
-if (c != null) {
-	Console.WriteLine("setting focus to window {0}", c.Text);
-}
 			Win32SetFocus(hwnd);
 		}
 

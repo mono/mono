@@ -1,3 +1,20 @@
+2005-01-27  Peter Bartok  <pbartok@novell.com>
+
+	* Form.cs:
+	  - Place window in default location, instead of hardcoded 0/0
+	  - Send initial LocationChanged event
+	* Control.cs:
+	  - UpdateBounds after creation to find out where the WM placed us
+	  - Make sure that if the ParentForm changes location the Form
+	    is notified
+	* XplatUIX11.cs: XGetGeometry will not return the coords relative 
+	    to the root, but to whatever the WM placed around us. 
+	    Translate to root coordinates before returning toplevel 
+	    coordinates
+	* XplatUIWin32.cs: Removed debug output
+	* XplatUIOSX.cs, XplatUI.cs, XplatUIDriver.cs: Added toplevel
+	  flag to GetWindowPos, to allow translation of coordinates on X11
+
 2005-01-27  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs: connect LostFocus Event

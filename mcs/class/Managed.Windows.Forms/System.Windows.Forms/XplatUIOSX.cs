@@ -437,7 +437,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
+		internal override void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
 			width = 0;
 			height = 0;
 			if (view_window_mapping [handle] != null) {

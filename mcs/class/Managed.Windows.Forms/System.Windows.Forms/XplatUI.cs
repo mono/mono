@@ -202,8 +202,8 @@ namespace System.Windows.Forms {
 			driver.SetWindowPos(handle, x, y, width, height);
 		}
 
-		internal static void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
-			driver.GetWindowPos(handle, out x, out y, out width, out height, out client_width, out client_height);
+		internal static void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
+			driver.GetWindowPos(handle, is_toplevel, out x, out y, out width, out height, out client_width, out client_height);
 		}
 
 		internal static void Invalidate(IntPtr handle, Rectangle rc, bool clear) {

@@ -80,7 +80,6 @@ namespace System.Windows.Forms {
 
 				BackColor = owner.BackColor;
 				Text = "FormParent";
-				this.Location = new Point(0, 0);
 				this.Dock = DockStyle.Fill;
 				this.is_visible = false;
 
@@ -690,8 +689,13 @@ namespace System.Windows.Forms {
 				cp.ExStyle=0;
 				cp.Param=0;
 				cp.Parent = IntPtr.Zero;
-				cp.X = Left;
-				cp.Y = Top;
+//				if (start_position == FormStartPosition.WindowsDefaultLocation) {
+					cp.X = unchecked((int)0x80000000);
+					cp.Y = unchecked((int)0x80000000);
+//				} else {
+//					cp.X = Left;
+//					cp.Y = Top;
+//				}
 				cp.Width = Width;
 				cp.Height = Height;
 				
@@ -846,6 +850,9 @@ namespace System.Windows.Forms {
 				}
 			}
 			OnLoad(EventArgs.Empty);
+
+			// Send initial location
+			OnLocationChanged(EventArgs.Empty);
 		}
 
 		protected override void OnHandleCreated(EventArgs e) {

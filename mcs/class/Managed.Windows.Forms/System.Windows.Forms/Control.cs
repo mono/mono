@@ -2581,6 +2581,9 @@ namespace System.Windows.Forms
 			if (window==null) {
 				window = new ControlNativeWindow(this);
 				window.CreateHandle(CreateParams);
+
+				// Find out where the window manager placed us
+				UpdateBounds();
 				UpdateStyles();
 			}
 
@@ -3066,7 +3069,7 @@ namespace System.Windows.Forms
 				CreateHandle();
 			}
 
-			XplatUI.GetWindowPos(this.Handle, out x, out y, out width, out height, out client_width, out client_height);
+			XplatUI.GetWindowPos(this.Handle, this is Form.FormParentWindow, out x, out y, out width, out height, out client_width, out client_height);
 			UpdateBounds(x, y, width, height, client_width, client_height);
 		}
 
@@ -3596,6 +3599,15 @@ namespace System.Windows.Forms
 		protected virtual void OnLocationChanged(EventArgs e) {
 			OnMove(e);
 			if (LocationChanged!=null) LocationChanged(this, e);
+			if (this is Form.FormParentWindow) {
+				Form	form;
+
+				form = ((Form.FormParentWindow)this).owner;
+
+				if (form.LocationChanged != null) {
+					form.LocationChanged(form, e);
+				}
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
