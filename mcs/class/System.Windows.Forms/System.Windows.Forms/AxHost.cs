@@ -244,7 +244,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		protected override bool ProcessProcessdialogKey(Keys keyData) { // .NET V1.1 Beta
+		protected override bool ProcessDialogKey(Keys keyData) { // .NET V1.1 Beta
 			throw new NotImplementedException ();
 		}
 		

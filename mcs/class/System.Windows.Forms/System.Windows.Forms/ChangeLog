@@ -1,4 +1,78 @@
+  2002-10-27  DennisHayes <dennish@raytek.com>	
+
+	* AccessibleObject.cs
+	* AssemblyInfo.cs
+	* AxHost.cs
+	* BaseCollection.cs
+	* BindingMemberInfo.cs
+	* BindingsCollection.cs
+	* ButtonBase.cs
+	* ColumnClickEventArgs.cs
+	* ComboBox.cs
+	* ContainerControl.cs
+	* ContentsResizedEventArgs.cs
+	* Control.cs
+	* ControlEventArgs.cs
+	* ConvertEventArgs.cs
+	* DateBoldEventArgs.cs
+	* DateRangeEventArgs.cs
+	* DomainUpDown.cs
+	* DragEventArgs.cs
+	* DrawItemEventArgs.cs
+	* FolderBrowserDialog.cs
+	* Form.cs
+	* GiveFeedbackEventArgs.cs
+	* HelpEventArgs.cs
+	* InputLanguageChangedEventArgs.cs
+	* InputLanguageChangingEventArgs.cs
+	* InvalidateEventArgs.cs
+	* ItemChangedEventArgs.cs
+	* ItemCheckEventArgs.cs
+	* ItemDragEventArgs.cs
+	* KeyEventArgs.cs
+	* KeyPressEventArgs.cs
+	* Keys.cs
+	* LabelEditEventArgs.cs
+	* LayoutEventArgs.cs
+	* LinkClickedEventArgs.cs
+	* LinkLabelLinkClickedEventArgs.cs
+	* ListControl.cs
+	* MeasureItemEventArgs.cs
+	* MouseEventArgs.cs
+	* NavigateEventArgs.cs
+	* NodeLabelEditEventArgs.cs
+	* PaintEventArgs.cs
+	* PrintPreviewDialog.cs
+	* PropertyTabChangedEventArgs.cs
+	* PropertyValueChangedEventArgs.cs
+	* QueryAccessibilityHelpEventArgs.cs
+	* QueryContinueDragEventArgs.cs
+	* ScrollEventArgs.cs
+	* SelectedGridItemChangedEventArgs.cs
+	* SplitterEventArgs.cs
+	* StatusBarDrawItemEventArgs.cs
+	* StatusBarPanelClickEventArgs.cs
+	* System.Windows.Forms.csproj
+	* System.Windows.Forms.csproj.user
+	* TextBox.cs
+	* ToolBarButtonClickEventArgs.cs
+	* TreeNodeConverter.cs
+	* TreeViewCancelEventArgs.cs
+	* UICuesEventArgs.cs
+	* UpDownBase.cs
+	* UpDownEventArgs.cs
+	* VScrollBar.cs
+
+	* Stubs now compliant with .NET 1.1 Beta, except for one that has dependencies.
+	* Added FolderBrowserDialog.cs for .NET 1.1 beta compatibility.
+	* Completed implmentation of all *Args classes.
+	* Updated checkoutlist.
+	* Made fixes so this will compile using Visual studio under windows.
+
+
+
   2002-10-26  DennisHayes <dennish@raytek.com>	
+
 	* Added CheckOutFile to SWF one level up from here
 	* to keep track of who is working on what.
 

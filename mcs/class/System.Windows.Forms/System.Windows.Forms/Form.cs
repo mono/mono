@@ -676,12 +676,11 @@
     		}
     
 	  		//Compact Framework
-    		//[MonoTODO]
-    		// CancelEventArgs not yet stubbed/implemented
-    		//protected virtual void  OnClosing(CancelEventArgs e)
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
+    		[MonoTODO]
+    		protected virtual void  OnClosing(CancelEventArgs e)
+    		{
+    				throw new NotImplementedException ();
+    		}
     
     		protected override void OnCreateControl ()
     		{

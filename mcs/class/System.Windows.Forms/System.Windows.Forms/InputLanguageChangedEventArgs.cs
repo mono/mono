@@ -13,128 +13,54 @@ using System.Globalization;
 namespace System.Windows.Forms {
 
 	// <summary>
-	// Template. Needs completition on CharSet property
 	// </summary>
 
 	public class InputLanguageChangedEventArgs : EventArgs {
 
 		#region Fields
 		private CultureInfo culture;
-		private byte b;
+		private byte charSet;
+		private InputLanguage inputLanguage;
 		#endregion
 
 		//
 		//  --- Constructor
 		//
-		public InputLanguageChangedEventArgs ( CultureInfo culture, byte b) {
+		public InputLanguageChangedEventArgs ( CultureInfo culture, byte charSet) {
 			this.culture = culture;
-			this.b = b;
+			this.charSet = charSet;
+			inputLanguage = InputLanguage.FromCulture(culture);
+		}
+
+		public InputLanguageChangedEventArgs ( InputLanguage inputLanguage, byte charSet) {
+			this.inputLanguage = inputLanguage;
+			this.charSet = charSet;
+			culture = this.inputLanguage.Culture;
 		}
 
 		#region Public Properties
-		[MonoTODO]
+
 		public byte CharSet 
 		{
 			get {
-				throw new NotImplementedException ();
+				
+				return charSet;
 			}
 		}
+
 		public CultureInfo Culture {
 			get {
 				return culture;
 			}
 		}
+
 		[MonoTODO]
 		public InputLanguage InputLanguage {
 			get {
-				throw new NotImplementedException ();
+				return InputLanguage;
 			}
 		}
-		#endregion
-
-		#region Public Methods
-
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two InputLanguageChangedEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	CharSet, Culture and InputLanguage Property
-		///	of the two InputLanguageChangedEventArgs.
-		/// </remarks>
-		public static bool operator == (InputLanguageChangedEventArgs InputLanguageChangedEventArgsA, InputLanguageChangedEventArgs InputLanguageChangedEventArgsB) 
-		{
-			return (InputLanguageChangedEventArgsA.CharSet == InputLanguageChangedEventArgsB.CharSet) && 
-				   (InputLanguageChangedEventArgsA.Culture == InputLanguageChangedEventArgsB.Culture) && 
-				   (InputLanguageChangedEventArgsA.InputLanguage == InputLanguageChangedEventArgsB.InputLanguage);
-
-		}
-		
-		/// <summary>
-		///	Inequality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two InputLanguageChangedEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	CharSet, Culture and InputLanguage Property
-		///	of the two InputLanguageChangedEventArgs.
-		/// </remarks>
-		public static bool operator != (InputLanguageChangedEventArgs InputLanguageChangedEventArgsA, InputLanguageChangedEventArgs InputLanguageChangedEventArgsB) 
-		{
-			return (InputLanguageChangedEventArgsA.CharSet != InputLanguageChangedEventArgsB.CharSet) || 
-				(InputLanguageChangedEventArgsA.Culture != InputLanguageChangedEventArgsB.Culture) || 
-				(InputLanguageChangedEventArgsA.InputLanguage != InputLanguageChangedEventArgsB.InputLanguage);
-
-		}
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this
-		///	InputLanguageChangedEventArgs and another
-		///	object.
-		/// </remarks>
-		public override bool Equals (object obj) 
-		{
-			if (!(obj is InputLanguageChangedEventArgs))return false;
-			return (this == (InputLanguageChangedEventArgs) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME: add class specific stuff;
-			return base.GetHashCode();
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the object as a string.
-		/// </remarks>
-		[MonoTODO]
-		public override string ToString () 
-		{
-			//FIXME: add class specific stuff;
-			return base.ToString() + " InputLanguageChangedEventArgs";
-		}
-
 
 		#endregion
-
 	}
 }

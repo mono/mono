@@ -8,6 +8,7 @@
 // (C) Ximian, Inc., 2002
 //
 using System.Collections;
+using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -82,11 +83,13 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected virtual void WndProc(Message m) // override changed to virtual in .NET V.1. Beta
-		{
-			throw new NotImplementedException ();
-		}
+
+		//inherited
+		//[MonoTODO]
+		//protected override void WndProc(Message m) // override changed to virtual in .NET V.1. Beta
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		
 		//  --- Public Events

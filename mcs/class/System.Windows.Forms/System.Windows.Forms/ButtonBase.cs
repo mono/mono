@@ -32,6 +32,7 @@ namespace System.Windows.Forms {
 		ImeMode imeMode;
 		bool isDefault;
 		CreateParams createParams;
+		Label label;
 //		
 //		// --- Constructor ---
 		protected ButtonBase() : base() 
@@ -98,10 +99,10 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		//public virtual ContentAlignment TextAlign {
-		//	get { return label.TextAlign; }
-		//	set { label.TextAlign = value; }
-		//}
+		public virtual ContentAlignment TextAlign {
+			get { return label.TextAlign; }
+			set { label.TextAlign = value; }
+		}
 
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:

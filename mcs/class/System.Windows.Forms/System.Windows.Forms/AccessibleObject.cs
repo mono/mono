@@ -48,52 +48,6 @@ namespace System.Windows.Forms {
 
 		}
 
-		[MonoTODO]
-		~AccessibleObject(){
-		}
-		
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this AccessibleObject and another object.
-		/// </remarks>
-		
-		public override bool Equals (object obj) {
-			if (!(obj is AccessibleObject))
-				return false;
-
-			return (this == (AccessibleObject) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		
-		public override int GetHashCode () {
-			//unchecked{//FIXME Add out proprities to the hash
-				return base.GetHashCode();
-			//}
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the AccessibleObject as a string.
-		/// </remarks>
-		
-		//spec says inherited
-		//public override string ToString () {
-		//	return "AccessibleObject".GetType();//per spec as I read it?
-		//}
-
 		// --- Properties ---
 
 		[ComVisible(true)]
@@ -162,11 +116,13 @@ namespace System.Windows.Forms {
 			return; //default action is "" and cannot be changed, must be overridden.
 		}
 		
+		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleObject GetChild(int index) {
 			return null;
 		}
 		
+		[MonoTODO]
 		[ComVisible(true)]
 		public virtual int GetChildCount() {
 			return -1; //as per spec

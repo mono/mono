@@ -128,22 +128,11 @@ namespace System.Windows.Forms {
 		
 		public override int GetHashCode ()
 		{
-			unchecked{// MONOTODO: This should not be checked, remove unchecked, if redundant.
+			unchecked{
+				// MONOTODO: This should not be checked, remove unchecked, if redundant.
 				return (int)( bindingfield.GetHashCode() ^ bindingmember.GetHashCode() ^ bindingpath.GetHashCode());
 			}
 		}
 
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the BindingMemberInfo as a string.
-		/// </remarks>
-		
-		public override string ToString ()
-		{
-			return String.Format ("[{0},{1},{2}]", bindingpath, bindingfield, bindingmember);
-		}
 	}
 }

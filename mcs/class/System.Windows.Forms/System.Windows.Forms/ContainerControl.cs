@@ -64,12 +64,12 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		// not memeber?
-		//bool IContainerControl.ActivateControl(Control control) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		bool IContainerControl.ActivateControl(Control control) 
+		{
+			throw new NotImplementedException ();
+		}
 		
 		// [event methods]
 		protected override void OnControlRemoved (ControlEventArgs e) 

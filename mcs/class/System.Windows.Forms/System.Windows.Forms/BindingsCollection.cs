@@ -18,7 +18,6 @@ namespace System.Windows.Forms {
 	///
 	/// </summary>
 	
-	[MonoTODO]
 	public class BindingsCollection : BaseCollection {
 
 		#region Constructors

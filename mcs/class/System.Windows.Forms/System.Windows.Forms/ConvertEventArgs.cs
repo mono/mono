@@ -32,6 +32,7 @@ namespace System.Windows.Forms {
 		}
 		
 		#region Public Properties
+
 		public Type DesiredType 
 		{
 			get { 
@@ -48,87 +49,5 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion
-
-		#region Public Methods
-
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two ConvertEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	DesiredType and Value Property
-		///	of the two ContentsResizedEventArgs.
-		/// </remarks>
-		public static bool operator == (ConvertEventArgs ConvertEventArgsA, ConvertEventArgs ConvertEventArgsB) 
-		{
-			return (ConvertEventArgsA.DesiredType == ConvertEventArgsB.DesiredType) && 
-				   (ConvertEventArgsA.Value == ConvertEventArgsB.Value);
-
-		}
-		
-		/// <summary>
-		///	Inequality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two ConvertEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	DesiredType and Value Property
-		///	of the two ContentsResizedEventArgs.
-		/// </remarks>
-		public static bool operator != (ConvertEventArgs ConvertEventArgsA, ConvertEventArgs ConvertEventArgsB) 
-		{
-			return (ConvertEventArgsA.DesiredType != ConvertEventArgsB.DesiredType) || 
-				   (ConvertEventArgsA.Value != ConvertEventArgsB.Value);
-		}
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this
-		///	ConvertEventArgs and another
-		///	object.
-		/// </remarks>
-		public override bool Equals (object obj) 
-		{
-			if (!(obj is ConvertEventArgs))return false;
-			return (this == (ConvertEventArgs) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME: add class specific stuff;
-			return base.GetHashCode();
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the object as a string.
-		/// </remarks>
-		[MonoTODO]
-		public override string ToString () 
-		{
-			//FIXME: add class specific stuff;
-			return base.ToString() + " ConvertEventArgs";
-		}
-
-
-		#endregion
-
 	}
 }

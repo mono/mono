@@ -12,13 +12,14 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
 	public class ItemChangedEventArgs : EventArgs {
 
 		#region Fields
+		// After looking at ItemChangedEvent, It seems index is always zero.
+		// The ItemChangedEventhandler quierys the sender object to find the item changed.
 		private int index = 0;		//Never assigned. default to 0.
 		#endregion
 
@@ -29,84 +30,6 @@ namespace System.Windows.Forms {
 				return index;
 			}
 		}
-		#endregion
-
-		#region Public Methods
-
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two ItemChangedEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	Index Property
-		///	of the two ItemChangedEventArgs.
-		/// </remarks>
-		public static bool operator == (ItemChangedEventArgs ItemChangedEventArgsA, ItemChangedEventArgs ItemChangedEventArgsB) 
-		{
-			return (ItemChangedEventArgsA.Index == ItemChangedEventArgsB.Index);
-		}
-		
-		/// <summary>
-		///	Inequality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two ItemChangedEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	Index Property
-		///	of the two ItemChangedEventArgs.
-		/// </remarks>
-		public static bool operator != (ItemChangedEventArgs ItemChangedEventArgsA, ItemChangedEventArgs ItemChangedEventArgsB) 
-		{
-			return (ItemChangedEventArgsA.Index != ItemChangedEventArgsB.Index);
-		}
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this
-		///	ItemChangedEventArgs and another
-		///	object.
-		/// </remarks>
-		public override bool Equals (object obj) 
-		{
-			if (!(obj is ItemChangedEventArgs))return false;
-			return (this == (ItemChangedEventArgs) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME: add class specific stuff;
-			return base.GetHashCode();
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the object as a string.
-		/// </remarks>
-		[MonoTODO]
-		public override string ToString () 
-		{
-			//FIXME: add class specific stuff;
-			return base.ToString() + " ItemChangedEventArgs";
-		}
-
-
 		#endregion
 
 	}

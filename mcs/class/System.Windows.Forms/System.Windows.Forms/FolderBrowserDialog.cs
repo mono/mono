@@ -13,118 +13,115 @@ namespace System.Windows.Forms {
 	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
+	using System.Runtime.Remoting;
+	using System.ComponentModel;
 
-	public class FolderBrowserDialog {
+
+	// Beta specs do not specify what class to defrive from.
+	// Using CommonDialog because 
+	public class FolderBrowserDialog : CommonDialog  {
+
+		string description;
 
 		//
 		//  --- Constructor
 		//
 		[MonoTODO]
 		public FolderBrowserDialog() {
+			description = "";
+		}
+
+		[MonoTODO]
+		public override void Reset(){
+			//
+		}
+
+		[MonoTODO]
+		protected override bool RunDialog(IntPtr hWndOwner){
 			throw new NotImplementedException ();
 		}
 
 		//
 		//	 --- Public Fields
 		//
-		
-		[MonoTODO]
-		public virtual ObjRef CreateObjRef(Type requstedType){
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public virtual object GetLifetimeService(){
-			throw new NotImplementedException ();
-		}
 
-		[MonoTODO]
-		protected virtual object GetService(Type service){
-			throw new NotImplementedException ();
-		}
-
-
-		[MonoTODO]
-		public Type GetType(){
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		protected virtual IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam){
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual object InitializeLifetimeService(){
-			throw new NotImplementedException ();
-		}
-
-		
-		public virtual void Dispose(){
-			base.Dispose();
-		}
-
-		public virtual void Dispose(){
-			base.Dispose();
-		}
-		
-		[MonoTODO]
-		~FolderBrowserDialog(){
-		}
-		
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this FolderBrowserDialog and another object.
-		/// </remarks>
-		
-		public override bool Equals (object obj) {
-			if (!(obj is FolderBrowserDialog))
-				return false;
-
-			return (this == (FolderBrowserDialog) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		
-		public override int GetHashCode () {
-			unchecked{//FIXME Add our proprities to the hash
-				return base.GetHashCode();
-			}
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the FolderBrowserDialog as a string.
-		/// </remarks>
-		
-		public override string ToString () {
-			//FIXME do a better tostring
-			return base.ToString() + "FolderBrowserDialog";
-		}
-
-		
-		public virtual void Dispose(bool disposing){
-			base.Dispose(disposing);
-		}
 
 		//
 		//  --- Public Properties
 		//
 
-		public event EventHandler Disposed;
-		public event EventHandler HelpRequest;
+		public string Description {
+			get {
+				return description;
+			}
+			set {
+				description = value;
+			}
+		}
+
+		//beta docs do not have accessor.
+		//protected bool DesignMode {
+		//}
+
+		//protected EventHandlerList Events {
+		//}
+
+		public Environment.SpecialFolder RootFolder {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public string SelectedPath {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public bool ShowNewFolderButton {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+
+		//public virtual System.ComponentModel.IContainer Container {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+
+		// FIXME: beta 1.1 says the following should be public virtual ISite Site {
+		// but the compiler gives warning that it must be new.
+		// Probably system.component needs to change to be beta 1.1 compliant
+		public new virtual ISite Site {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		//Specs seem to say they need to be here, but adding them conflicts with commondialog : component.disposed/helprequest
+		//public event EventHandler Disposed;
+		//public event EventHandler HelpRequest;
 
 	}
 }
+
+
+
+
+
+
+

@@ -280,11 +280,14 @@ namespace System.Windows.Forms {
 		
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
-		protected override void OnSelectedItemChanged(EventArgs e); // .NET V1.1 Beta
+		[MonoTODO]
+		protected override void OnSelectedValueChanged(EventArgs e){ // .NET V1.1 Beta
+			throw new NotImplementedException ();
+		}
+
 		/// - protected override void SetItemCore(int index,object value);
 		[MonoTODO]
-		protected virtual void AddItemsCore(object[] value) 
-		{
+		protected virtual void AddItemsCore(object[] value) {
 			throw new NotImplementedException ();
 		}
 		

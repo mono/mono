@@ -20,19 +20,15 @@ namespace System.Windows.Forms {
 	///  - MarshalByRefObject members not stubbed out
 	/// </summary>
 	
-	[MonoTODO]
 	public class BaseCollection : MarshalByRefObject, ICollection, IEnumerable {
 
 		ArrayList list;
-		
-		
+
 		// --- Constructor ---
 		public BaseCollection()
 		{
 			this.list = null;
 		}
-
-
 
 		// --- public and protected Properties ---
 //		public virtual int ICollection.Count {
@@ -47,7 +43,6 @@ namespace System.Windows.Forms {
 			get { return false; }
 		}
 		
-		[MonoTODO]
 		public bool IsSynchronized {
 			//always false as per spec.
 			get { return false; }
@@ -59,7 +54,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public object SyncRoot {
 			get { return this; }
 		}

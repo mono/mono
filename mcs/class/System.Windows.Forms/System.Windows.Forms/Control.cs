@@ -409,17 +409,17 @@
     		}
     		
  			//Compact Framework
-    		//[MonoTODO]
-    		//public virtual ContextMenu ContextMenu {
-    		//	get {
-    		//		//return contextMenu;
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//	set {
-    		//		//contextMenu=value;
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//}
+    		[MonoTODO]
+    		public virtual ContextMenu ContextMenu {
+    			get {
+    				//return contextMenu;
+    				throw new NotImplementedException ();
+    			}
+    			set {
+    				//contextMenu=value;
+    				throw new NotImplementedException ();
+    			}
+    		}
     		
     		public ControlCollection Controls {
     			get { return childControls; }

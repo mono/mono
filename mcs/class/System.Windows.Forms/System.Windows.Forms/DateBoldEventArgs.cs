@@ -11,29 +11,37 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template. Nothing is implemented yet.
 	//	This class is internal to the .NET framework.
 	// </summary>
 	public class DateBoldEventArgs : EventArgs {
 
+		private int size;
+		private DateTime start;
+		private int [] daysToBold;
+
 		//
 		//  --- Public Properties
 		//
-		[MonoTODO]
+
+		DateBoldEventArgs(DateTime start, int size, int [] daysToBold){
+			this.size = size;
+			this.start = start;
+			this.daysToBold = daysToBold;
+		}
+
 		public int[] DaysToBold {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return daysToBold; }
+			set { daysToBold = value; }
 		}
-		[MonoTODO]
-		public int Size {
 
-			get { throw new NotImplementedException (); }
+		public int Size {
+			get { return size; }
 		}
-		[MonoTODO]
+
 		public DateTime StartDate {
 
-			get { throw new NotImplementedException (); }
+			get { return start; }
 		}
 	}
 }
