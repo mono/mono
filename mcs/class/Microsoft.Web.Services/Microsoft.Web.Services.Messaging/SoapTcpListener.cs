@@ -16,9 +16,9 @@ namespace Microsoft.Web.Services.Messaging
 
 		private int _refs = 0;
 
-		private delegate Socket AcceptSocket ();
+		private delegate Socket AcceptSock ();
 
-		private AcceptSocket _acceptSocket;
+		private AcceptSock _acceptSocket;
 	
 		public SoapTcpListener (IPEndPoint endpoint) : base (endpoint)
 		{
@@ -54,7 +54,7 @@ namespace Microsoft.Web.Services.Messaging
 		public IAsyncResult BeginAcceptSocket (AsyncCallback callback, object state)
 		{
 			if(_acceptSocket == null) {
-				_acceptSocket = new AcceptSocket (base.AcceptSocket);
+				_acceptSocket = new AcceptSock (base.AcceptSocket);
 			}
 			return _acceptSocket.BeginInvoke (callback, state);
 		}

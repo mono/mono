@@ -48,7 +48,7 @@ namespace Microsoft.Web.Services.Messaging
 			_port = uri.Port < 0 ? 8081 : uri.Port;
 		}
 
-		public new void Close ()
+		public override void Close ()
 		{
 			lock(SyncRoot) {
 				try {
@@ -132,7 +132,7 @@ namespace Microsoft.Web.Services.Messaging
 		}
 
 
-		public new SoapEnvelope Receive ()
+		public override SoapEnvelope Receive ()
 		{
 			if(!_active) {
 				Connect ();
@@ -149,7 +149,7 @@ namespace Microsoft.Web.Services.Messaging
 			return env;
 		}
 
-		public new void Send (SoapEnvelope env)
+		public override void Send (SoapEnvelope env)
 		{
 			lock(SyncRoot) {
 				if(!_active) {
@@ -167,7 +167,7 @@ namespace Microsoft.Web.Services.Messaging
 			}
 		}
 
-		public new bool Active {
+		public override bool Active {
 			get { return _active; }
 		}
 
@@ -179,7 +179,7 @@ namespace Microsoft.Web.Services.Messaging
 			get { return _lastActivity; }
 		}
 
-		public new string Scheme {
+		public override string Scheme {
 			get { return "soap.tcp"; }
 		}
 		

@@ -1,3 +1,9 @@
+2003-10-25  Todd Berman <tberman@gentoo.org>
+
+	* SoapTcpChannel.cs: fixes for csc
+	* SoapTcpListener.cs: fix for csc
+	* SoapTcpTransport.cs: fix for csc
+
 2003-10-22  Todd Berman <tberman@gentoo.org>
 
 	* SoapPort.cs: Implemented.

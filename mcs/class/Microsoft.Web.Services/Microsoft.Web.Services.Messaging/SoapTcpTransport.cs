@@ -196,7 +196,7 @@ namespace Microsoft.Web.Services.Messaging
 			try {
 				env = tcp.EndReceive (result);
 				tcp.BeginReceive (new AsyncCallback (OnReceive), result);
-			} catch (Exception e) {
+			} catch (Exception) {
 				lock (Channels.SyncRoot) {
 					Channels.Remove (tcp.Destination.AbsoluteUri);
 					tcp.Close ();
@@ -225,4 +225,5 @@ namespace Microsoft.Web.Services.Messaging
 		}
 		
 	}
+
 }
