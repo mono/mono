@@ -38,6 +38,10 @@ namespace System.Data
 
 		#region Constructors
 
+		/// <summary>
+		/// This member supports the .NET Framework infrastructure and is not intended to be 
+		/// used directly from your code.
+		/// </summary>
 		protected internal DataRow (DataRowBuilder builder)
 		{
 			table = builder.Table;
@@ -45,6 +49,8 @@ namespace System.Data
 			original = new object[table.Columns.Count];
 			proposed = null;
 			current = new object[table.Columns.Count];
+
+			Array.Copy (current, original, table.Columns.Count);
 	
 			versions = new Hashtable ();
 
@@ -62,6 +68,9 @@ namespace System.Data
 
 		#region Properties
 
+		/// <summary>
+		/// Gets a value indicating whether there are errors in a row.
+		/// </summary>
 		public bool HasErrors {
 			[MonoTODO]
 			get {
@@ -69,6 +78,9 @@ namespace System.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the data stored in the column specified by name.
+		/// </summary>
 		public object this[string columnName] {
 			get { return this[columnName, DataRowVersion.Current]; }
 			set {
@@ -79,6 +91,9 @@ namespace System.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the data stored in specified DataColumn
+		/// </summary>
 		public object this[DataColumn column] {
 			get { return this[column, DataRowVersion.Current]; }
 			set {
@@ -97,6 +112,9 @@ namespace System.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the data stored in column specified by index.
+		/// </summary>
 		public object this[int columnIndex] {
 			get { return this[columnIndex, DataRowVersion.Current]; }
 			set {
@@ -107,6 +125,9 @@ namespace System.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets the specified version of data stored in the named column.
+		/// </summary>
 		public object this[string columnName, DataRowVersion version] {
 			get {
 				DataColumn column = table.Columns[columnName];
@@ -116,6 +137,9 @@ namespace System.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets the specified version of data stored in the specified DataColumn.
+		/// </summary>
 		public object this[DataColumn column, DataRowVersion version] {
 			get {
 				if (column == null)
@@ -125,12 +149,16 @@ namespace System.Data
 					throw new ArgumentException ();
 				if (version == DataRowVersion.Default)
 					return column.DefaultValue;
-				if (versions[version] == null)
+				if (!HasVersion (version))
 					throw new VersionNotFoundException ();
 				return ((object[])(versions[version]))[columnIndex];
 			}
 		}
 
+		/// <summary>
+		/// Gets the data stored in the column, specified by index and version of the data to
+		/// retrieve.
+		/// </summary>
 		public object this[int columnIndex, DataRowVersion version] {
 			get {
 				DataColumn column = table.Columns[columnIndex];
@@ -140,6 +168,9 @@ namespace System.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets all of the values for this row through an array.
+		/// </summary>
 		public object[] ItemArray {
 			get { return current; }
 			set {
@@ -147,8 +178,6 @@ namespace System.Data
 					throw new ArgumentException ();
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
-				BeginEdit ();
-				proposed = value;
 
 				for (int i = 0; i < value.Length; i += 1)
 				{
@@ -159,23 +188,32 @@ namespace System.Data
 					if (!table.Columns[i].AllowDBNull && value[i] == null)
 						throw new NoNullAllowedException ();
 				}
+
+				BeginEdit ();
+				proposed = value;
 				EndEdit ();
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the custom error description for a row.
+		/// </summary>
 		public string RowError {
-			get {
-				if (this.HasErrors)
-					return rowError;
-				return String.Empty;
-			}
+			get { return rowError; }
 			set { rowError = value; }
 		}
 
+		/// <summary>
+		/// Gets the current state of the row in regards to its relationship to the
+		/// DataRowCollection.
+		/// </summary>
 		public DataRowState RowState {
 			get { return rowState; }
 		}
 
+		/// <summary>
+		/// Gets the DataTable for which this row has a schema.
+		/// </summary>
 		public DataTable Table {
 			get { return table; }
 		}
@@ -184,9 +222,16 @@ namespace System.Data
 
 		#region Methods
 
+		/// <summary>
+		/// Commits all the changes made to this row since the last time AcceptChanges was
+		/// called.
+		/// </summary>
 		public void AcceptChanges () 
 		{
 			this.EndEdit ();
+
+			Array.Copy (proposed, current, table.Columns.Count);
+			proposed = null;
 
 			switch (rowState)
 			{
@@ -197,194 +242,320 @@ namespace System.Data
 					rowState = DataRowState.Unchanged;
 					break;
 				case DataRowState.Deleted:
-					rowState = DataRowState.Deleted;
+					table.Rows.Remove (this);
 					break;
 			}
 		}
 
+		/// <summary>
+		/// Begins an edit operation on a DataRow object.
+		/// </summary>
 		public void BeginEdit() 
 		{
 			proposed = new object[table.Columns.Count];
 			Array.Copy (current, proposed, table.Columns.Count);
 		}
 
+		/// <summary>
+		/// Cancels the current edit on the row.
+		/// </summary>
 		public void CancelEdit() 
 		{
 			proposed = null;
 			rowState = DataRowState.Unchanged;
 		}
 
-		[MonoTODO]
+		/// <summary>
+		/// Clears the errors for the row, including the RowError and errors set with
+		/// SetColumnError.
+		/// </summary>
 		public void ClearErrors() 
 		{
-			throw new NotImplementedException ();
+			rowError = String.Empty;
+			columnErrors = new String[table.Columns.Count];
 		}
 
+		/// <summary>
+		/// Deletes the DataRow.
+		/// </summary>
 		public void Delete() 
 		{
 			rowState = DataRowState.Deleted;
 		}
 
+		/// <summary>
+		/// Ends the edit occurring on the row.
+		/// </summary>
 		public void EndEdit() 
 		{
-			Array.Copy (proposed, current, table.Columns.Count);
-			proposed = null;
 			rowState = DataRowState.Modified;
 		}
 
+		/// <summary>
+		/// Gets the child rows of this DataRow using the specified DataRelation.
+		/// </summary>
 		[MonoTODO]
-		public DataRow[] GetChildRows (DataRelation dr) 
+		public DataRow[] GetChildRows (DataRelation relation) 
 		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the child rows of a DataRow using the specified RelationName of a
+		/// DataRelation.
+		/// </summary>
 		[MonoTODO]
-		public DataRow[] GetChildRows (string s) {
+		public DataRow[] GetChildRows (string relationName) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the child rows of a DataRow using the specified DataRelation, and
+		/// DataRowVersion.
+		/// </summary>
 		[MonoTODO]
-		public DataRow[] GetChildRows (DataRelation dr, DataRowVersion version) {
+		public DataRow[] GetChildRows (DataRelation relation, DataRowVersion version) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the child rows of a DataRow using the specified RelationName of a
+		/// DataRelation, and DataRowVersion.
+		/// </summary>
 		[MonoTODO]
-		public DataRow[] GetChildRows (string s, DataRowVersion version) {
+		public DataRow[] GetChildRows (string relationName, DataRowVersion version) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the error description of the specified DataColumn.
+		/// </summary>
 		public string GetColumnError (DataColumn column) 
 		{
-			if (this.HasErrors)
-				return (string)(columnErrors[table.Columns.IndexOf(column)]);
-			
-			return String.Empty;
+			return GetColumnError (table.Columns.IndexOf(column));
 		}
 
+		/// <summary>
+		/// Gets the error description for the column specified by index.
+		/// </summary>
 		public string GetColumnError (int columnIndex) 
 		{
-			if (columnIndex > table.Columns.Count)
+			if (columnIndex < 0 || columnIndex >= columnErrors.Length)
 				throw new IndexOutOfRangeException ();
 
-			if (this.HasErrors)
-				return (string)(columnErrors[columnIndex]);
-
-			return String.Empty;
+			return columnErrors[columnIndex];
 		}
 
+		/// <summary>
+		/// Gets the error description for the column, specified by name.
+		/// </summary>
 		public string GetColumnError (string columnName) 
 		{
-			if (this.HasErrors)
-				return (string)(columnErrors[table.Columns.IndexOf(columnName)]);
-
-			return String.Empty;
+			return GetColumnError (table.Columns.IndexOf(columnName));
 		}
 
+		/// <summary>
+		/// Gets an array of columns that have errors.
+		/// </summary>
+		public DataColumn[] GetColumnsInError () 
+		{
+			ArrayList dataColumns = new ArrayList ();
+
+			for (int i = 0; i < columnErrors.Length; i += 1)
+			{
+				if (columnErrors[i] != String.Empty)
+					dataColumns.Add (table.Columns[i]);
+			}
+
+			return (DataColumn[])(dataColumns.ToArray ());
+		}
+
+		/// <summary>
+		/// Gets the parent row of a DataRow using the specified DataRelation.
+		/// </summary>
 		[MonoTODO]
-		public DataColumn[] GetColumnsInError () {
+		public DataRow GetParentRow (DataRelation relation) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the parent row of a DataRow using the specified RelationName of a
+		/// DataRelation.
+		/// </summary>
 		[MonoTODO]
-		public DataRow GetParentRow (DataRelation dr) {
+		public DataRow GetParentRow (string relationName) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the parent row of a DataRow using the specified DataRelation, and
+		/// DataRowVersion.
+		/// </summary>
 		[MonoTODO]
-		public DataRow GetParentRow (string s) {
+		public DataRow GetParentRow (DataRelation relation, DataRowVersion version) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the parent row of a DataRow using the specified RelationName of a 
+		/// DataRelation, and DataRowVersion.
+		/// </summary>
 		[MonoTODO]
-		public DataRow GetParentRow (DataRelation dr, DataRowVersion version) {
+		public DataRow GetParentRow (string relationName, DataRowVersion version) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the parent rows of a DataRow using the specified DataRelation.
+		/// </summary>
 		[MonoTODO]
-		public DataRow GetParentRow (string s, DataRowVersion version) {
+		public DataRow[] GetParentRows (DataRelation relation) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the parent rows of a DataRow using the specified RelationName of a 
+		/// DataRelation.
+		/// </summary>
 		[MonoTODO]
-		public DataRow[] GetParentRows (DataRelation dr) {
+		public DataRow[] GetParentRows (string relationName) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the parent rows of a DataRow using the specified DataRelation, and
+		/// DataRowVersion.
+		/// </summary>
 		[MonoTODO]
-		public DataRow[] GetParentRows (string s) {
+		public DataRow[] GetParentRows (DataRelation relation, DataRowVersion version) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Gets the parent rows of a DataRow using the specified RelationName of a 
+		/// DataRelation, and DataRowVersion.
+		/// </summary>
 		[MonoTODO]
-		public DataRow[] GetParentRows (DataRelation dr, DataRowVersion version) {
+		public DataRow[] GetParentRows (string relationName, DataRowVersion version) 
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public DataRow[] GetParentRows (string s, DataRowVersion version) {
-			throw new NotImplementedException ();
+		/// <summary>
+		/// Gets a value indicating whether a specified version exists.
+		/// </summary>
+		public bool HasVersion (DataRowVersion version) 
+		{
+			return (versions[version] != null);
 		}
 
-		[MonoTODO]
-		public bool HasVersion (DataRowVersion version) {
-			throw new NotImplementedException ();
-		}
-
+		/// <summary>
+		/// Gets a value indicating whether the specified DataColumn contains a null value.
+		/// </summary>
 		public bool IsNull (DataColumn column) 
 		{
 			return (this[column] == null);
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the column at the specified index contains a null
+		/// value.
+		/// </summary>
 		public bool IsNull (int columnIndex) 
 		{
 			return (this[columnIndex] == null);
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the named column contains a null value.
+		/// </summary>
 		public bool IsNull (string columnName) 
 		{
 			return (this[columnName] == null);
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the specified DataColumn and DataRowVersion
+		/// contains a null value.
+		/// </summary>
 		public bool IsNull (DataColumn column, DataRowVersion version) 
 		{
 			return (this[column, version] == null);
 		}
 
+		/// <summary>
+		/// Rejects all changes made to the row since AcceptChanges was last called.
+		/// </summary>
 		[MonoTODO]
 		public void RejectChanges () 
 		{
 			CancelEdit ();
 		}
 
+		/// <summary>
+		/// Sets the error description for a column specified as a DataColumn.
+		/// </summary>
+		public void SetColumnError (DataColumn column, string error) 
+		{
+			SetColumnError (table.Columns.IndexOf (column), error);
+		}
+
+		/// <summary>
+		/// Sets the error description for a column specified by index.
+		/// </summary>
+		public void SetColumnError (int columnIndex, string error) 
+		{
+			if (columnIndex < 0 || columnIndex >= columnErrors.Length)
+				throw new IndexOutOfRangeException ();
+			columnErrors[columnIndex] = error;
+		}
+
+		/// <summary>
+		/// Sets the error description for a column specified by name.
+		/// </summary>
+		public void SetColumnError (string columnName, string error) 
+		{
+			SetColumnError (table.Columns.IndexOf (columnName), error);
+		}
+
+		/// <summary>
+		/// Sets the value of the specified DataColumn to a null value.
+		/// </summary>
 		[MonoTODO]
-		public void SetColumnError (DataColumn dc, string err) {
+		protected void SetNull (DataColumn column) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Sets the parent row of a DataRow with specified new parent DataRow.
+		/// </summary>
 		[MonoTODO]
-		public void SetColumnError (int i, string err) {
+		public void SetParentRow (DataRow parentRow) 
+		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Sets the parent row of a DataRow with specified new parent DataRow and
+		/// DataRelation.
+		/// </summary>
 		[MonoTODO]
-		public void SetColumnError (string a, string err) {
+		public void SetParentRow (DataRow parentRow, DataRelation relation) 
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public void SetParentRow (DataRow row) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void SetParentRow (DataRow row, DataRelation rel) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected void SetNull (DataColumn column) {
-			throw new NotImplementedException ();
-		}
 		
 		#endregion // Methods
 	}

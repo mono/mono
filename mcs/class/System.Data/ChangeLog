@@ -1,3 +1,10 @@
+2002-05-16  Tim Coleman <tim@timcoleman.com>
+	* System.Data/DataRow.cs:
+		More implementation and documentation.  It should
+		work more like expected, although there is no way
+		to demonstrate this well yet.  DataTable requires
+		more work.
+
 2002-05-15  Tim Coleman <tim@timcoleman.com>
         * System.Data/DataRow.cs:
 	                Minor tweaks as I determine exactly how to
