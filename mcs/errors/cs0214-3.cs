@@ -1,3 +1,5 @@
+// cs0214: Pointer can only be used in unsafe context
+// Line: 13
 // Compiler options: -unsafe
 
 struct X {
