@@ -20,10 +20,6 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	[DefaultEvent("SelectedIndexChanged")]
-	[DefaultProperty("DataSource")]
-	[ParseChildren(true, "Items")]
-	[PersistChildren(false)]
 	public class CheckBoxList: ListControl, IRepeatInfoUser, INamingContainer, IPostBackDataHandler
 	{
 		CheckBox checkBoxRepeater;

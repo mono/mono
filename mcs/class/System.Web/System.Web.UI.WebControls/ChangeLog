@@ -1,3 +1,33 @@
+2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AdRotator.cs:
+	* Button.cs:
+	* Calendar.cs:
+	* CheckBox.cs:
+	* CheckBoxList.cs:
+	* DataList.cs:
+	* DropDownList.cs:
+	* HyperLink.cs:
+	* HyperLinkColumn.cs:
+	* Image.cs:
+	* ImageButton.cs:
+	* Label.cs:
+	* LinkButton.cs:
+	* ListBox.cs:
+	* Panel.cs:
+	* PlaceHolder.cs:
+	* RadioButton.cs:
+	* RadioButtonList.cs:
+	* Table.cs:
+	* TableRow.cs:
+	* TextBox.cs:
+	* WebControl.cs: removed attributes added by mistake (i used
+	GetCustomAttributes (true), d'oh!).
+
+	* DataListItem.cs: implemented RenderItem.
+
+	* Repeater.cs: implemented CreateItem and InitializeItem.
+
 2002-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseDataList.cs: a couple of fiex and added attributes.

@@ -2,13 +2,14 @@
  * Namespace: System.Web.UI.WebControls
  * Class:     DataListItem
  *
- * Author:  Gaurav Vaish
+ * Authors:  Gaurav Vaish, Gonzalo Paniagua (gonzalo@ximian.com)
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  95%
+ * Status:  100%
  *
  * (C) Gaurav Vaish (2002)
+ * (c) 2002 Ximian, Inc. (http://www.ximian.com)
  */
 
 using System;
@@ -60,11 +61,29 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
-		public virtual void RenderItem(HtmlTextWriter writer, bool extractRows, bool tableLayout)
+		public virtual void RenderItem (HtmlTextWriter writer, bool extractRows, bool tableLayout)
 		{
-			//TODO: Complete me!
-			throw new NotImplementedException();
+			if (extractRows){
+				Table tbl = null;
+				foreach (Control ctrl in Controls){
+					if (ctrl is Table){
+						tbl = (Table) ctrl;
+						break;
+					}
+				}
+				
+				if (tbl == null)
+					throw new HttpException ("Template table not found!");
+
+				foreach (TableRow row in tbl.Rows)
+					row.RenderControl (writer);
+			} else {
+				if (tableLayout)
+					RenderContents (writer);
+				else
+					RenderControl (writer);
+			}
+
 		}
 
 		protected override Style CreateControlStyle()

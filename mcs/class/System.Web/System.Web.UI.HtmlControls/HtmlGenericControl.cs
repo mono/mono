@@ -1,10 +1,12 @@
 //
 // System.Web.UI.HtmlControls.HtmlGenericControl.cs
 //
-// Author:
+// Authors:
 //   Bob Smith <bob@thestuff.net>
+//   Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) Bob Smith
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 	
 using System;
@@ -15,20 +17,25 @@ namespace System.Web.UI.HtmlControls{
 	
 	[ConstructorNeedsTag]
 	public class HtmlGenericControl : HtmlContainerControl {
-		
+		private string tagName;
+
 		public HtmlGenericControl() :
 			this ("span")
 		{
 		}
 		
 		public HtmlGenericControl (string tag) :
-			base(tag)
+			base ()
 		{
+			if (tag == null)
+				tag = "";
+			tagName = tag;
 		}
 		
-		public override string TagName
+		public new string TagName
 		{
-			get { return base.TagName; }
+			get { return tagName; }
+			set { tagName = value; }
 		}
 	}
 }

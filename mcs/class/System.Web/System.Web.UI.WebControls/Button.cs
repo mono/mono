@@ -23,8 +23,6 @@ namespace System.Web.UI.WebControls
 	//TODO: [Designer("??")]
 	//TODO: [DataBindingHandler("??UI.Design.TextDataBindingHandler??")]
 	[ToolboxData("<{0}:Button runat=\"server\" Text=\"Button\"></{0}:Button>")]
-	[PersistChildren(false)]
-	[ParseChildren(true)]
 	public class Button : WebControl, IPostBackEventHandler
 	{
 		private static readonly object ClickEvent   = new object();

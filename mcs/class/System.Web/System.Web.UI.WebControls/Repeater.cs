@@ -2,13 +2,14 @@
  * Namespace: System.Web.UI.WebControls
  * Class:     Repeater
  *
- * Author:  Gaurav Vaish
+ * Author:  Gaurav Vaish, Gonzalo Paniagua (gonzalo@ximian.com)
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  90%
+ * Status:  100%
  *
  * (C) Gaurav Vaish (2002)
+ * (c) 2002 Ximian, Inc. (http://www.ximian.com)
  */
 
 using System;
@@ -363,16 +364,14 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected virtual RepeaterItem CreateItem (int itemIndex, ListItemType itemType)
 		{
-			throw new NotImplementedException ();
+			return new RepeaterItem (itemIndex, itemType);
 		}
 
-		[MonoTODO]
 		protected virtual void InitializeItem (RepeaterItem item)
 		{
-			throw new NotImplementedException ();
+			InstantiateItem (item);
 		}
 	}
 }

@@ -23,7 +23,6 @@ namespace System.Web.UI.WebControls
 	[DefaultEvent("TextChanged")]
 	[DefaultProperty("Text")]
 	[ParseChildren(false)]
-	[PersistChildren(false)]
 	[ValidationProperty("Text")]
 	public class TextBox : WebControl, IPostBackDataHandler
 	{

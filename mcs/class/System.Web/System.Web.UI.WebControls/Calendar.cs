@@ -27,8 +27,6 @@ namespace System.Web.UI.WebControls
 	[DefaultProperty("SelectedDate")]
 	//TODO: [Designer("??")]
 	//[DataBindingHandler("??")]
-	[PersistChildren(false)]
-	[ParseChildren(true)]
 	public class Calendar : WebControl, IPostBackEventHandler
 	{
 		//
@@ -714,7 +712,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void TrackViewState()
 		{
-			TrackViewState();
+			base.TrackViewState();
 			if(titleStyle!=null)
 			{
 				titleStyle.TrackViewState();

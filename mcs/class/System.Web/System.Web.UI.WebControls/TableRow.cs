@@ -20,7 +20,6 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("Cells")]
 	[ParseChildren(true, "Cells")]
-	[PersistChildren(false)]
 	public class TableRow: WebControl
 	{
 		private TableCellCollection cells;

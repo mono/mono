@@ -1,5 +1,9 @@
 2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* list: added some more files from System.Web.Hosting.
+
+2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* System.Web.build: removed some more excludes.
 
 2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>

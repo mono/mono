@@ -20,10 +20,6 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	[DefaultEvent("SelectedIndexChanged")]
-	[DefaultProperty("DataSource")]
-	[ParseChildren(true, "Items")]
-	[PersistChildren(false)]
 	[ValidationProperty("SelectedItem")]
 	public class DropDownList : ListControl, IPostBackDataHandler
 	{
@@ -98,7 +94,7 @@ namespace System.Web.UI.WebControls
 				Page.VerifyRenderingInServerForm(this);
 			}
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender(writer);
 
 			if(AutoPostBack && Page != null)
 			{

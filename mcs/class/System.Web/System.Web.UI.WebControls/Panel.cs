@@ -19,7 +19,6 @@ using System.Web.UI;
 namespace System.Web.UI.WebControls
 {
 	//[Designer("??")]
-	[DefaultProperty("ID")]
 	[ParseChildren(false)]
 	[PersistChildren(true)]
 	[ToolboxData("<{0}:Panel runat=\"server\">Panel</{0}:Panel>")]

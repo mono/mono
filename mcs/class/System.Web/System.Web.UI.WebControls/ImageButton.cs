@@ -21,9 +21,6 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("Click")]
-	[DefaultProperty("ImageUrl")]
-	[ParseChildren(true)]
-	[PersistChildren(false)]
 	public class ImageButton: Image, IPostBackDataHandler, IPostBackEventHandler
 	{
 		private static readonly object ClickEvent   = new object();

@@ -20,10 +20,6 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	[DefaultEvent("SelectedIndexChanged")]
-	[DefaultProperty("DataSource")]
-	[ParseChildren(true, "Items")]
-	[PersistChildren(false)]
 	[ValidationProperty("SelectedItem")]
 	public class RadioButtonList : ListControl, IRepeatInfoUser, INamingContainer, IPostBackDataHandler
 	{

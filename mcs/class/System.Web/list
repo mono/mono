@@ -54,7 +54,11 @@ System.Web.Configuration/ClientTargetSectionHandler.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
 System.Web.Configuration/HttpCapabilitiesBase.cs
+System.Web.Hosting/AppDomainFactory.cs
 System.Web.Hosting/ApplicationHost.cs
+System.Web.Hosting/IAppDomainFactory.cs
+System.Web.Hosting/IISAPIRuntime.cs
+System.Web.Hosting/ISAPIRuntime.cs
 System.Web.Hosting/SimpleWorkerRequest.cs
 System.Web.Mail/MailAttachment.cs
 System.Web.Mail/MailEncoding.cs

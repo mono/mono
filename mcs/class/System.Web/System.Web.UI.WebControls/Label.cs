@@ -24,7 +24,6 @@ namespace System.Web.UI.WebControls
 	//[ControlBuilder(typeof(LabelControlBuilder))] 
 	//[DataBindingHandler("??")]
 	[ParseChildren(false)]
-	[PersistChildren(false)]
 	[ToolboxData("<{0}:Label runat=\"server\">Label</{0}:Label>")]
 	public class Label : WebControl
 	{

@@ -29,8 +29,6 @@ namespace System.Web.UI.WebControls
 	//TODO: [Designer("??")]
 	[ToolboxData("<{0}:AdRotator runat=\"server\" Height=\"60px\" "
 	             + "Width=\"468\"></{0}:AdRotator>")]
-	[PersistChildren(false)]
-	[ParseChildren(true)]
 	public class AdRotator: WebControl
 	{
 

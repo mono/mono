@@ -140,7 +140,7 @@ namespace System.Web.UI.WebControls
 
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
-			InitializeCell(cell, columnIndex, itemType);
+			base.InitializeCell(cell, columnIndex, itemType);
 			if(Enum.IsDefined(typeof(ListItemType), itemType) && itemType != ListItemType.Footer)
 			{
 				HyperLink toDisplay = new HyperLink();

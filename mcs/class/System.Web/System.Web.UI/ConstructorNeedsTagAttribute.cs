@@ -14,10 +14,9 @@ namespace System.Web.UI {
 	{
 		bool needsTag;
 
-		// LAMESPEC: we will default to true for now.
 		public ConstructorNeedsTagAttribute ()
 		{
-			needsTag = true;
+			needsTag = false;
 		}
 
 		public ConstructorNeedsTagAttribute (bool needsTag)

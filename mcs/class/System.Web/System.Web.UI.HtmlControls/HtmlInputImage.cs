@@ -4,13 +4,15 @@
 */
 
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
-using System.Globalization;
-using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerClick")]
 	public class HtmlInputImage : HtmlInputControl, IPostBackEventHandler, IPostBackDataHandler{
 		
 		private static readonly object EventServerClick;
@@ -59,7 +61,7 @@ namespace System.Web.UI.HtmlControls{
 		{
 		}
 		
-		public event EventHandler ServerClick{
+		public event ImageClickEventHandler ServerClick{
 			add{
 				Events.AddHandler(EventServerClick, value);
 			}

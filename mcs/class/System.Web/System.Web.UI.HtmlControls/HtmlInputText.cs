@@ -13,6 +13,7 @@ using System.Web.UI;
 namespace System.Web.UI.HtmlControls{
 	
 	[DefaultEvent("ServerChange")]
+	[ValidationProperty("Value")]
 	public class HtmlInputText : HtmlInputControl, IPostBackDataHandler{
 		
 		private static readonly object EventServerChange;

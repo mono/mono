@@ -24,7 +24,6 @@ namespace System.Web.UI.WebControls
 	[ControlBuilder(typeof(LinkButtonControlBuilder))]
 	//[DataBindingHandler("??")]
 	[ParseChildren(false)]
-	[PersistChildren(false)]
 	[ToolboxData("<{0}:LinkButton runat=\"server\">LinkButton</{0}:LinkButton>")]
 	public class LinkButton : WebControl, IPostBackEventHandler
 	{

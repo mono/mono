@@ -22,10 +22,6 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 	//[Designer("??")]
-	[DefaultEvent("CheckedChanged")]
-	[DefaultProperty("Text")]
-	[ParseChildren(true)]
-	[PersistChildren(false)]
 	public class RadioButton : CheckBox, IPostBackDataHandler
 	{
 		public RadioButton () : base ()
