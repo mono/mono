@@ -6,6 +6,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
 //      Alexandre Pigolkine(pigolkine@gmx.de)
+//		Jordi Mas i Hernandez (jordi@ximian.com)
 //
 using System;
 using System.Drawing.Drawing2D;
@@ -275,11 +276,11 @@ namespace System.Drawing
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		public void DrawImage (Image image, RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRect(nativeObject, image.NativeObject, rect.X, rect.Y,
+                           rect.Width, rect.Height);
 		}
 
 		
@@ -354,11 +355,11 @@ namespace System.Drawing
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		public void DrawImage (Image image, float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRect(nativeObject, image.NativeObject, x, y,
+                           width, height);
 		}
 
 		[MonoTODO]
@@ -373,17 +374,15 @@ namespace System.Drawing
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		public void DrawImage (Image image, int x, int y, int width, int height)
 		{
 			GDIPlus.GdipDrawImageRectI (nativeObject, image.nativeObject, x, y, width, height);
 		}
 
-		[MonoTODO]
 		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePointRect(nativeObject, image.nativeObject, x, y, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, srcUnit);                                                            
 		}
 
 		[MonoTODO]
@@ -470,30 +469,26 @@ namespace System.Drawing
                                 GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
+		}		
+		
 		public void DrawImageUnscaled (Image image, Point point)
 		{
-			throw new NotImplementedException ();
+			DrawImage(image, point.X, point.Y);
 		}
-
-		[MonoTODO]
+		
 		public void DrawImageUnscaled (Image image, Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
-
-		[MonoTODO]
+		
 		public void DrawImageUnscaled (Image image, int x, int y)
 		{
-			throw new NotImplementedException ();
+			DrawImage(image, x, y);
 		}
 
-		[MonoTODO]
 		public void DrawImageUnscaled (Image image, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			DrawImage(image, x, y, width, height);
 		}
 
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
@@ -537,26 +532,22 @@ namespace System.Drawing
 		{
 			GDIPlus.GdipDrawPath (nativeObject, pen.nativeObject, path.nativePath);
 		}
-
-		[MonoTODO]
+		
 		public void DrawPie (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 		{
 			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
-
-		[MonoTODO]
+		
 		public void DrawPie (Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 		{
 			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
-
-		[MonoTODO]
+		
 		public void DrawPie (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
 			GDIPlus.GdipDrawPie (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
-
-		[MonoTODO]
+		
 		public void DrawPie (Pen pen, int x, int y, int width, int height, float startAngle, float sweepAngle)
 		{
 			GDIPlus.GdipDrawPieI (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
@@ -614,21 +605,21 @@ namespace System.Drawing
 		public void DrawString (string s, Font font, Brush brush, PointF point)
 		{
 			RectangleF rc = new RectangleF (point.X, point.Y, 0, 0);
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rc, IntPtr.Zero, brush.nativeObject);
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref rc, IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO ("This ignores the font and format")]
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format)
 		{
 			RectangleF rc = new RectangleF (point.X, point.Y, 0, 0);
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rc, IntPtr.Zero, brush.nativeObject);
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref rc, IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO ("This ignores the font and the format")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref layoutRectangle, 
-                                        IntPtr.Zero, brush.nativeObject);
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref layoutRectangle, 
+			IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO("This ignores the font")]
@@ -637,7 +628,7 @@ namespace System.Drawing
 			Console.WriteLine ("DrawString!");
 			RectangleF rc = new RectangleF (x, y, 0, 0);
 			
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, 
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, 
 				ref rc, IntPtr.Zero, brush.nativeObject);			
 		}
 

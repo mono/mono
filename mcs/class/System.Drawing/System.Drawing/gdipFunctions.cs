@@ -516,6 +516,15 @@ namespace System.Drawing {
                                 int dstx, int dsty, int dstwidth, int dstheight,
                        		int srcx, int srcy, int srcwidth, int srcheight,
                        		GraphicsUnit srcUnit, IntPtr imageattr, IntPtr callback, int callbackData);                      		
+                       		
+		[DllImport("gdiplus.dll")]                       		
+		internal static extern Status GdipDrawImageRect(IntPtr graphics, IntPtr image, float x, float y, float width, float height);
+		[DllImport("gdiplus.dll")]                       		
+		internal static extern Status GdipDrawImagePointRect(IntPtr graphics, IntPtr image, float x,
+                                float y, float srcx, float srcy, float srcwidth, float srcheight, GraphicsUnit srcUnit);
+                                
+		[DllImport("gdiplus.dll")]                       		
+		internal static extern Status GdipCreateStringFormat(StringFormatFlags formatAttributes,  int language, out IntPtr native);
 		
 		[DllImport("gdiplus.dll")]		
 		internal static extern Status GdipCreateHBITMAPFromBitmap (IntPtr bmp, out IntPtr HandleBmp, int clrbackground);
