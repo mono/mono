@@ -1,5 +1,5 @@
 //
-// System.IO.BufferedStream
+// System.IO.BufferedStream Unit Tests
 //
 // Authors: 
 //	Ville Palo (vi64pa@kolumbus.fi)
@@ -237,8 +237,8 @@ public class BufferedStreamTest : Assertion {
 	[ExpectedException(typeof(NotSupportedException))]
 	public void Read_CantRead () 
 	{
-		BufferedStream stream = new BufferedStream (mem);
-		mem.Close (); // CanRead == false
+		WriteOnlyStream wo = new WriteOnlyStream ();
+		BufferedStream stream = new BufferedStream (wo);
 		stream.Read (new byte [1], 0, 1);
 	}
 
@@ -339,8 +339,8 @@ public class BufferedStreamTest : Assertion {
 	[ExpectedException(typeof(NotSupportedException))]
 	public void Write_CantWrite () 
 	{
-		BufferedStream stream = new BufferedStream (mem);
-		mem.Close (); // CanWrite == false
+		ReadOnlyStream ro = new ReadOnlyStream ();
+		BufferedStream stream = new BufferedStream (ro);
 		stream.Write (new byte [1], 0, 1);
 	}
 
