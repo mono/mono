@@ -1,3 +1,7 @@
+2003-03-26  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DataRowCollectionTest.cs: Tests for AutoIncrement
+	
 2003-03-25  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DataTableTest.cs: Added test for PrimaryKey-property

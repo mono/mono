@@ -26,23 +26,56 @@ namespace MonoTests.System.Data
 			_tbl = new DataTable();
 		}
 
-		//FINISHME
-		[Test]
-		public void AutoIncrement()
-		{
-			DataColumn col = new DataColumn();
-			col.AutoIncrement = true;
-			col.AutoIncrementSeed = 0;
-			col.AutoIncrementStep = 1;
-			
-			_tbl.Columns.Add(col);
-			_tbl.Rows.Add(_tbl.NewRow());
+                [Test]
+                public void AutoIncrement()
+                {
+                        DataColumn col = new DataColumn("Auto");
+                        col.AutoIncrement = true;
+                        col.AutoIncrementSeed = 0;
+                        col.AutoIncrementStep = 1;
+                        
+                        _tbl.Columns.Add(col);
+                        _tbl.Rows.Add(_tbl.NewRow());
 
-			//Assertion.Assertion.Assertion.AssertEquals("Inc 0" , 0, Convert.ToInt32(_tbl.Rows[0]["Auto"] ));
-				
-			_tbl.Rows.Add(_tbl.NewRow());
-			//Assertion.Assertion.Assertion.AssertEquals("Inc 1" , 1, Convert.ToInt32(_tbl.Rows[0]["Auto"] ));
-		}
+                        Assertion.AssertEquals("test#01" , 0, Convert.ToInt32(_tbl.Rows[0]["Auto"] ));
+                                
+                        _tbl.Rows.Add(_tbl.NewRow());
+                       	Assertion.AssertEquals("test#02" , 1, Convert.ToInt32(_tbl.Rows[1]["Auto"] ));
+                	
+                	col.AutoIncrement = false;
+                	Assertion.AssertEquals("test#03" , 1, Convert.ToInt32(_tbl.Rows[1]["Auto"] ));
+
+                        _tbl.Rows.Add(_tbl.NewRow());
+                       	Assertion.AssertEquals("test#04" , DBNull.Value, _tbl.Rows[2]["Auto"]);
+
+                	col.AutoIncrement = true;
+			col.AutoIncrementSeed = 10;
+                	col.AutoIncrementStep = 2;
+                	
+                        _tbl.Rows.Add(_tbl.NewRow());
+                       	Assertion.AssertEquals("test#05" , 10, Convert.ToInt32(_tbl.Rows[3]["Auto"] ));
+                        _tbl.Rows.Add(_tbl.NewRow());
+                       	Assertion.AssertEquals("test#06" , 12, Convert.ToInt32(_tbl.Rows[4]["Auto"] ));
+
+			col = new DataColumn ("Auto2");
+                	col.DataType = typeof(string);
+                	col.AutoIncrement = true;
+                	col.AutoIncrementSeed = 0;
+                	col.AutoIncrementStep = 1;
+                	_tbl.Columns.Add (col);
+                	
+                	_tbl.Rows.Add(_tbl.NewRow());
+                	Assertion.AssertEquals ("test#07", typeof (int), _tbl.Columns [1].DataType);
+                       	Assertion.AssertEquals ("test#08" , typeof (int), _tbl.Rows[5]["Auto2"].GetType ());
+
+			col = new DataColumn ("Auto3");
+                	col.AutoIncrement = true;
+                	col.AutoIncrementSeed = 0;
+                	col.AutoIncrementStep = 1;
+	               	col.DataType = typeof(string);
+                	Assertion.AssertEquals ("test#09", typeof (string), col.DataType);
+                	Assertion.AssertEquals ("test#10", false, col.AutoIncrement);
+                }
 
 		[Test]
 		public void Add ()
@@ -90,7 +123,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail ("test#16");
 			} catch (Exception e) {
 				Assertion.AssertEquals ("test#17", typeof (ArgumentNullException), e.GetType ());
-				Assertion.AssertEquals ("test#18", "'row' argument cannot be null.\r\nParameter name: row", e.Message);
+				//Assertion.AssertEquals ("test#18", "'row' argument cannot be null.\r\nParameter name: row", e.Message);
 			}
 			
 			DataColumn Column = new DataColumn ("not_null");
@@ -107,12 +140,12 @@ namespace MonoTests.System.Data
 				Assertion.Fail ("test#19");
 			} catch (Exception e) {
 				Assertion.AssertEquals ("test#20", typeof (NoNullAllowedException), e.GetType ());
-				Assertion.AssertEquals ("test#21", "Column 'not_null' does not allow nulls.", e.Message);
+				//Assertion.AssertEquals ("test#21", "Column 'not_null' does not allow nulls.", e.Message);
 			}
 			
-			Column = _tbl.Columns [0];
+			Column = _tbl.Columns [0];			
 			Column.Unique = true;
-			
+
 			cols = new string [3];
 			cols [0] = "first";
 			cols [1] = "second";
@@ -125,7 +158,7 @@ namespace MonoTests.System.Data
 				Assertion.AssertEquals ("test#23", typeof (ConstraintException), e.GetType ());
 				Assertion.AssertEquals ("test#24", "Column 'Column1' is constrained to be unique.  Value 'first' is already present.", e.Message);
 			}
-			
+		       
 			Column = new DataColumn ("integer");
 			Column.DataType = typeof (short);
 			_tbl.Columns.Add (Column);
@@ -135,7 +168,7 @@ namespace MonoTests.System.Data
 			obs [1] = "second";
 			obs [2] = "blabal";
 			obs [3] = "ads";
-
+			
 			try {
 				Rows.Add (obs);
 				Assertion.Fail ("test#25");
@@ -318,7 +351,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail ("test#01");
 			} catch (Exception e) {			
 				Assertion.AssertEquals ("test#02", typeof (ArgumentException), e.GetType ());
-				Assertion.AssertEquals ("test#03", "Destination array was not long enough.  Check destIndex and length, and the array's lower bounds.", e.Message);
+				//Assertion.AssertEquals ("test#03", "Destination array was not long enough.  Check destIndex and length, and the array's lower bounds.", e.Message);
 			}
 			
 			dr = new DataRow [11];
@@ -409,10 +442,9 @@ namespace MonoTests.System.Data
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0]};
-			
 			DataRow row = Rows.Find (1);
 			Assertion.AssertEquals ("test#04", 1L, row [0]);
-			row = Rows.Find (2);
+			row = Rows.Find (2);			
 			Assertion.AssertEquals ("test#05", 2L, row [0]);
 			row = Rows.Find ("2");
 			Assertion.AssertEquals ("test#06", 2L, row [0]);
@@ -422,13 +454,12 @@ namespace MonoTests.System.Data
 				Assertion.Fail ("test#07");
 			} catch (Exception e) {
 				Assertion.AssertEquals ("test#08", typeof (FormatException), e.GetType ());
-				Assertion.AssertEquals ("test#09", "Input string was not in a correct format.", e.Message);
+				//Assertion.AssertEquals ("test#09", "Input string was not in a correct format.", e.Message);
 			}
 			
-			String tes = null;
-			row = Rows.Find (tes);
+			String tes = null;			
+			row = Rows.Find (tes);			
 			Assertion.AssertEquals ("test#10", null, row);
-			
 			_tbl.PrimaryKey = null;
 			
 			try {
@@ -443,16 +474,16 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows.Find (1);
-				Assertion.Fail ("test#11");
+				Assertion.Fail ("test#14");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("test#12", typeof (ArgumentException), e.GetType ());
-				Assertion.AssertEquals ("test#13", "Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message);
+				Assertion.AssertEquals ("test#15", typeof (ArgumentException), e.GetType ());
+				Assertion.AssertEquals ("test#16", "Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message);
 			}
 			
 			row = Rows.Find (new object [] {1, "fir"});
-			Assertion.AssertEquals ("test#14", null, row);
+			Assertion.AssertEquals ("test#16", null, row);
 			row = Rows.Find (new object [] {1, "first"});
-			Assertion.AssertEquals ("test#15", 1L, row [0]);
+			Assertion.AssertEquals ("test#17", 1L, row [0]);
 		}
 		
 		[Test]
@@ -492,12 +523,12 @@ namespace MonoTests.System.Data
 			
 			Rows.InsertAt (Row, 5);
 			Assertion.AssertEquals ("test#06", "f", Rows [5][0]);
-		
+			
 			Row = _tbl.NewRow ();
 			Row [0] = "g";
 			Row [1] = "gg";
 			Row [2] = "ggg";
-			
+
 			Rows.InsertAt (Row, 500);
 			Assertion.AssertEquals ("test#07", "g", Rows [6][0]);
 		}
