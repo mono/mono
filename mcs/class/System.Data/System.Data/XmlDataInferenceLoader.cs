@@ -59,9 +59,10 @@ namespace System.Data
 		// decoded LocalName -> TableMapping
 		public TableMappingCollection ChildTables = new TableMappingCollection ();
 
-		public TableMapping (string name)
+		public TableMapping (string name, string ns)
 		{
 			Table = new DataTable (name);
+			Table.Namespace = ns;
 		}
 
 		public TableMapping (DataTable dt)
@@ -81,6 +82,7 @@ namespace System.Data
 					break;
 				}
 			}
+			PrimaryKey = dt.PrimaryKey.Length > 0 ? dt.PrimaryKey [0] : null;
 		}
 
 		public bool ExistsInDataSet {
@@ -286,7 +288,7 @@ namespace System.Data
 			string localName = XmlConvert.DecodeName (el.LocalName);
 			// FIXME: can be checked later
 			CheckExtraneousElementColumn (parentTable, el);
-			TableMapping table = GetMappedTable (parentTable, localName);
+			TableMapping table = GetMappedTable (parentTable, localName, el.NamespaceURI);
 
 			// If the mapping is actually complex type (not simple
 			// repeatable), then ignore it.
@@ -309,7 +311,7 @@ namespace System.Data
 			CheckExtraneousElementColumn (parentTable, el);
 
 			string localName = XmlConvert.DecodeName (el.LocalName);
-			TableMapping table = GetMappedTable (parentTable, localName);
+			TableMapping table = GetMappedTable (parentTable, localName, el.NamespaceURI);
 
 			bool hasChildElements = false;
 			bool hasAttributes = false;
@@ -368,14 +370,14 @@ namespace System.Data
 			}
 		}
 
-		private TableMapping GetMappedTable (TableMapping parent, string tableName)
+		private TableMapping GetMappedTable (TableMapping parent, string tableName, string ns)
 		{
 			TableMapping map = tables [tableName];
 			if (map != null) {
 				if (map.ParentTable != parent)
 					throw new DataException (String.Format ("The table {0} is already allocated as another table's child table.", tableName));
 			} else {
-				map = new TableMapping (tableName);
+				map = new TableMapping (tableName, ns);
 				map.ParentTable = parent;
 				tables.Add (map);
 				if (parent != null)
