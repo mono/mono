@@ -1,3 +1,4 @@
+Assembly/AssemblyInfo.cs
 Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/Registry.cs
 Microsoft.Win32/RegistryHive.cs

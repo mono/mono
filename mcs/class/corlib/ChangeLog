@@ -1,3 +1,8 @@
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* corlib.dll.sources:
+	* unix.args: AssemblyInfo.cs added
+
 2003-07-17  Peter Williams  <peter@newton.cx>
 
 	* Makefile ($(testlib)): Build with $(BOOT_COMPILE), not $(CSCOMPILE),
