@@ -30,13 +30,13 @@ namespace System {
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit) {
 			object[] res = from_cache (obj);
 			// shortcut
-			if (res.Length == 1 && res[0].GetType () == attributeType)
+			if (res.Length == 1 && (res[0].GetType () == attributeType || res[0].GetType().IsSubclassOf(attributeType)))
 				return (object[])res.Clone ();
 			ArrayList a = new ArrayList ();
 			Type btype = obj as Type;
 			do {
 				foreach (object attr in res) {
-					if (attributeType.Equals (attr.GetType ()))
+					if (attributeType.Equals (attr.GetType ()) || attr.GetType().IsSubclassOf(attributeType))
 						a.Add (attr);
 				}
 				if (btype != null && ((btype = btype.BaseType) != null)) {

@@ -1,3 +1,9 @@
+
+Fri Sep 27 15:06:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoCustomAttrs.cs: applied patch by "Si Jingnan"
+	<stonewell@21cn.com> to return also derived types.
+
 2002-09-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Activator.cs: little fix in CreateInstance (Type, bool).
