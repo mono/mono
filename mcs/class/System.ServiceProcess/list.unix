@@ -1,8 +1,0 @@
-System.ServiceProcess/ServiceControllerPermissionAccess.cs
-System.ServiceProcess/ServiceType.cs
-System.ServiceProcess/PowerBroadcastStatus.cs
-System.ServiceProcess/ServiceControllerStatus.cs
-System.ServiceProcess/ServiceAccount.cs
-System.ServiceProcess/ServiceStartMode.cs
-System.ServiceProcess/ServiceBase.cs
-
