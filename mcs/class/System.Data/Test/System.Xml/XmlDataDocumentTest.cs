@@ -733,7 +733,7 @@ namespace MonoTests.System.Data.Xml
 			
 			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-			DataDoc.Load("System.Xml/region.xml" );
+			DataDoc.Load("Test/System.Xml/region.xml" );
 			DataDoc.DataSet.EnforceConstraints = false;
 			
 			XmlElement newNode = DataDoc.CreateElement ("Region");
