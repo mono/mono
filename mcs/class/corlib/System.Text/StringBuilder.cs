@@ -23,9 +23,8 @@ namespace System.Text {
 
 		public StringBuilder(string value, int startIndex, int length, int capacity) {
 			// first, check the parameters and throw appropriate exceptions if needed
-			if(null==value) {
-				throw new System.ArgumentNullException("value");
-			}
+			if(null==value)
+				value = "";
 
 			// make sure startIndex is zero or positive
 			if(startIndex < 0) {
@@ -37,13 +36,18 @@ namespace System.Text {
 				throw new System.ArgumentOutOfRangeException("length", length, "Length cannot be less than zero.");
 			}
 
+			if (capacity < 0)
+				throw new System.ArgumentOutOfRangeException ("capacity", capacity, "capacity must be greater than zero.");
+
 			// make sure startIndex and length give a valid substring of value
 			if(startIndex + (length -1) > (value.Length - 1) ) {
 				throw new System.ArgumentOutOfRangeException("startIndex", startIndex, "StartIndex and length must refer to a location within the string.");
 			}
 			
-			// the capacity must be at least as big as the default capacity
-			sCapacity = Math.Max(capacity, defaultCapacity);
+			if (capacity == 0)
+				sCapacity = defaultCapacity;
+			else
+				sCapacity = capacity;
 
 			// LAMESPEC: what to do if capacity is too small to hold the substring?
 			// Like the MS implementation, double the capacity until it is large enough

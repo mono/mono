@@ -1,3 +1,9 @@
+2003-01-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringBuilder.cs: fix the constructor: 'value' can be NULL,
+	'capacity' must be >=0, use defaultCapacity only if capacity equals 0.
+	This fixes the StringBuilder unit tests.
+
 2003-01-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringBuilder.cs: fixed typo in set_Length.
