@@ -224,4 +224,22 @@ public class X
 
 		return 0;
 	}
+
+	// `continue' breaks unless we're a loop block.
+	public static void test16 ()
+	{
+                int value;
+
+                for (int i = 0; i < 5; ++i) {
+                        if (i == 0) {
+                                continue;
+                        } else if (i == 1) {
+                                value = 2;
+                        } else {
+                                value = 0;
+                        }
+                        if (value > 0)
+                                return;
+                }
+	}
 }

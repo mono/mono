@@ -1,5 +1,9 @@
 2002-08-08  Martin Baulig  <martin@gnome.org>
 
+	* test-154.cs (test16): Added test for bug #28717.
+
+2002-08-08  Martin Baulig  <martin@gnome.org>
+
 	* test-161.cs: New test.
 
 2002-08-07  Martin Baulig  <martin@gnome.org>
