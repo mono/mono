@@ -1,3 +1,8 @@
+2003-10-30  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* socket-io.c (in6_addr ipaddress_to_struct_in6_addr): fix
+	for Solaris and other platforms without s6_addr16
+
 2003-10-30  Martin Baulig  <martin@ximian.com>
 
 	* class.c (inflate_generic_type): Take just one `MonoGenericInst *'
