@@ -1,5 +1,9 @@
 2002-08-08  Dietmar Maurer  <dietmar@ximian.com>
 
+	* exception.c (arch_handle_exception): simply return and let the
+	libpthread/kernel restore the context. This should work on recent
+	versions of linuxthreads.
+
 	* jit.c (mono_runtime_install_handlers): switch back to use
 	sigaction from libpthreads. As long as this does not make problems
 	we should use this instead of syscall.
