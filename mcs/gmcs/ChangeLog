@@ -1,3 +1,23 @@
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.IsParamsMethodApplicable): We need to
+	call this twice: for params and varargs methods.
+
+2004-06-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs:
+	(FieldBase.DoDefine, PropertyBase.DoDefine): Added error test CS0610.
+
+2004-06-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.GetValidTargets): Made public.
+
+	* class.cs: 
+	(AbstractPropertyEventMethod): New class for better code sharing.
+	(AbstractPropertyEventMethod.ApplyAttributeBuilder): Add error
+	CS1667 report.
+	(PropertyMethod, DelegateMethod): Derived from AbstractPropertyEventMethod
+
 2004-06-09  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay: Removed a reduce/reduce conflict.

@@ -4586,20 +4586,22 @@ namespace Mono.CSharp {
 		}
 
 		static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
-						      ArrayList arguments, ref MethodBase candidate)
+						      ArrayList arguments, bool do_varargs,
+						      ref MethodBase candidate)
 		{
 			if (!me.HasTypeArguments &&
 			    !InferParamsTypeArguments (ec, arguments, ref candidate))
 				return false;
 
-			return IsParamsMethodApplicable (ec, arguments, candidate);
+			return IsParamsMethodApplicable (ec, arguments, candidate, do_varargs);
 		}
 
 		/// <summary>
 		///   Determines if the candidate method, if a params method, is applicable
 		///   in its expanded form to the given set of arguments
 		/// </summary>
-		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
+		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments,
+						      MethodBase candidate, bool do_varargs)
 		{
 			int arg_count;
 			
@@ -4616,12 +4618,15 @@ namespace Mono.CSharp {
 				return false;
 			
 			int count = pd_count - 1;
-
-			bool is_varargs = false;
-			if (pd.ParameterModifier (count) == Parameter.Modifier.ARGLIST)
-				is_varargs = true;
-			else if (pd.ParameterModifier (count) != Parameter.Modifier.PARAMS)
+			if (do_varargs) {
+				if (pd.ParameterModifier (count) != Parameter.Modifier.ARGLIST)
+					return false;
+				if (pd_count != arg_count)
+					return false;
+			} else {
+				if (pd.ParameterModifier (count) != Parameter.Modifier.PARAMS)
 				return false;
+			}
 			
 			if (count > arg_count)
 				return false;
@@ -4665,8 +4670,13 @@ namespace Mono.CSharp {
 				
 			}
 
-			if (is_varargs)
+			if (do_varargs) {
+				Argument a = (Argument) arguments [count];
+				if (!(a.Expr is Arglist))
+					return false;
+
 				return true;
+			}
 
 			Type element_type = TypeManager.GetElementType (pd.ParameterType (pd_count - 1));
 
@@ -4818,7 +4828,16 @@ namespace Mono.CSharp {
 					applicable_type = candidate.DeclaringType;
 					found_applicable = true;
 					candidate_to_form [candidate] = false;
-				} else if (IsParamsMethodApplicable (ec, me, Arguments, ref methods [i])) {
+				} else if (IsParamsMethodApplicable (
+						   ec, me, Arguments,false, ref methods [i])) {
+					// Candidate is applicable in expanded form
+ 					MethodBase candidate = methods [i];
+					candidates.Add (candidate);
+					applicable_type = candidate.DeclaringType;
+					found_applicable = true; 
+					candidate_to_form [candidate] = true;
+				} else if (IsParamsMethodApplicable (
+						   ec, me, Arguments,true, ref methods [i])) {
 					// Candidate is applicable in expanded form
  					MethodBase candidate = methods [i];
 					candidates.Add (candidate);
