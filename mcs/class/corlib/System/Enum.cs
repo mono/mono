@@ -496,8 +496,8 @@ namespace System {
 							  "\"x\",\"F\",\"f\",\"D\" or \"d\".");
 
 			char formatChar = format [0];
-			if ((formatChar == 'G' || formatChar == 'g') 
-				&& Attribute.IsDefined(enumType, typeof(FlagsAttribute)))
+			if ((formatChar == 'G' || formatChar == 'g') && value.GetHashCode () != 0 &&
+				Attribute.IsDefined(enumType, typeof(FlagsAttribute)))
 				formatChar = 'F';
 
 			string retVal = "";
