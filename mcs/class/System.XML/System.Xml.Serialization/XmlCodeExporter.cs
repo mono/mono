@@ -71,7 +71,7 @@ namespace System.Xml.Serialization {
 		}
 
 		[MonoTODO]
-		public XmlQualifiedName ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
+		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,4 +1,19 @@
 2002-07-24  Tim Coleman <tim@timcoleman.com>
+	* CodeIdentifier.cs:
+	* IXmlSerializable.cs:
+	* XmlSerializationCollectionFixupCallback.cs:
+	* XmlSerializationFixupCallback.cs:
+	* XmlSerializationReadCallback.cs:
+	* XmlSerializationReader.cs:
+	* XmlSerializationWriteCallback.cs:
+		Add new classes.
+	* XmlSchemas.cs
+	* CodeIdentifiers.cs:
+		Implement some of these classes
+	* XmlCodeExporter.cs:
+		Fix return type of a function
+
+2002-07-24  Tim Coleman <tim@timcoleman.com>
 	* SoapReflectionImporter.cs:
 		New class added to build
 		System.Web.Services.Description.ServiceDescription.cs

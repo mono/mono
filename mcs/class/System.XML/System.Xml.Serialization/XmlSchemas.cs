@@ -15,7 +15,7 @@ namespace System.Xml.Serialization {
 
 		#region Fields
 
-		Hashtable table;
+		static Hashtable table = new Hashtable ();
 
 		#endregion
 
@@ -23,7 +23,6 @@ namespace System.Xml.Serialization {
 
 		public XmlSchemas ()
 		{
-			table = new Hashtable ();
 		}
 
 		#endregion // Constructors
@@ -37,7 +36,7 @@ namespace System.Xml.Serialization {
 
 				return (XmlSchema) List [index]; 
 			}
-			set { throw new NotImplementedException (); }
+			set { List [index] = value; }
 		}
 
 		public XmlSchema this [string ns] {
@@ -86,28 +85,24 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override void OnClear ()
 		{
-			throw new NotImplementedException ();
+			table.Clear ();
 		}
 
-		[MonoTODO]
 		protected override void OnInsert (int index, object value)
-		{
-			throw new NotImplementedException ();
+		{	
+			table [((XmlSchema) value).TargetNamespace] = value;
 		}
 
-		[MonoTODO]
 		protected override void OnRemove (int index, object value)
 		{
-			throw new NotImplementedException ();
+			table.Remove (value);
 		}
 
-		[MonoTODO]
 		protected override void OnSet (int index, object oldValue, object newValue)
 		{
-			throw new NotImplementedException ();
+			table [((XmlSchema) oldValue).TargetNamespace] = newValue;
 		}
 	
 		public void Remove (XmlSchema schema)

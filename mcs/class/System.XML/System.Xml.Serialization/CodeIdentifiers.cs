@@ -7,12 +7,16 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System;
+using System.Collections;
+
 namespace System.Xml.Serialization {
 	public class CodeIdentifiers {
 
 		#region Fields
 
 		bool useCamelCasing;
+		static Hashtable table = new Hashtable ();
 
 		#endregion
 
@@ -35,61 +39,65 @@ namespace System.Xml.Serialization {
 
 		#region Methods
 
-		[MonoTODO]
 		public void Add (string identifier, object value)
 		{
-			throw new NotImplementedException ();
+			table.Add (identifier, value);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("What does this do?")]
 		public void AddReserved (string identifier)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void AddUnique (string identifier, object value)
 		{
-			throw new NotImplementedException ();
+			Add (MakeUnique (identifier), value);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			table.Clear ();
 		}
 
-		[MonoTODO]
 		public bool IsInUse (string identifier)
 		{
-			throw new NotImplementedException ();
+			return (table.ContainsKey (identifier));
 		}
 
-		[MonoTODO]
 		public string MakeRightCase (string identifier)
 		{
-			throw new NotImplementedException ();
+			if (UseCamelCasing)
+				return CodeIdentifier.MakeCamel (identifier);
+			else
+				return CodeIdentifier.MakePascal (identifier);
 		}
 
-		[MonoTODO]
 		public string MakeUnique (string identifier)
 		{
-			throw new NotImplementedException ();
+			string uniqueIdentifier = identifier;
+			int i = 1;
+
+			while (IsInUse (uniqueIdentifier)) {
+				uniqueIdentifier = String.Format ("{0}{1}", identifier, i.ToString ());
+				i += 1;
+			}
+
+			return uniqueIdentifier;
 		}
 
-		[MonoTODO]
 		public void Remove (string identifier)
 		{
-			throw new NotImplementedException ();
+			table.Remove (identifier);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("What does this do?")]
 		public void RemoveReserved (string identifier)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Need to determine how to do the conversion.")]
 		public object ToArray (Type type)
 		{
 			throw new NotImplementedException ();
