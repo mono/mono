@@ -1,3 +1,7 @@
+2003-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c regalloc.c regalloc.h: Fix memory leak.
+
 2003-04-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* aot.c (mono_aot_get_method): register all used strings
