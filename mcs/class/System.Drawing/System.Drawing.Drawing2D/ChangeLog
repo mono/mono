@@ -1,3 +1,7 @@
+2005-01-02  Geoff Norton  <gnorton@customerdna.com>
+
+	* GraphicsPath.cs: Fixed the AddPoints methods.  Fixes bug #70916
+
 2004-07-21  Ravindra  <rkumar@novell.com>
 
 	* GraphicsPath.cs: Implemented Dispose method and added error
