@@ -1,3 +1,11 @@
+2005-01-28  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TemplateControlCompiler.cs: When generating a property value,
+	check for TypeConverterAttribute in the PropertyInfo, not only in the
+	property type.
+	Implemented code generation using InstanceDescriptor, when the type
+	converter supports conversion to that type.
+
 2005-01-21  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Directive.cs: Added MASTER directive.

@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.Web.Compilation
 {
@@ -267,7 +268,7 @@ namespace System.Web.Compilation
 			return method.Name;
 		}
 
-		void AddCodeForPropertyOrField (ControlBuilder builder, Type type, string var_name, string att, bool isDataBound)
+		void AddCodeForPropertyOrField (ControlBuilder builder, Type type, string var_name, string att, MemberInfo member, bool isDataBound)
 		{
 			CodeMemberMethod method = builder.method;
 			if (isDataBound) {
@@ -279,7 +280,7 @@ namespace System.Web.Compilation
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, var_name);
 			currentLocation = builder.location;
-			assign.Right = GetExpressionFromString (type, att);
+			assign.Right = GetExpressionFromString (type, att, member);
 
 			method.Statements.Add (assign);
 		}
@@ -311,7 +312,7 @@ namespace System.Web.Compilation
 			}
 
 			if (0 == String.Compare (member.Name, id, true)){
-				AddCodeForPropertyOrField (builder, type, member.Name, attValue, isDataBound);
+				AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound);
 				return true;
 			}
 			
@@ -343,7 +344,7 @@ namespace System.Web.Compilation
 
 				AddCodeForPropertyOrField (builder, subprop.PropertyType,
 						 member.Name + "." + subprop.Name,
-						 value, isDataBound);
+						 value, subprop, isDataBound);
 				is_processed = true;
 			}
 
@@ -899,7 +900,7 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (prop);
 		}
 		
-		CodeExpression GetExpressionFromString (Type type, string str)
+		CodeExpression GetExpressionFromString (Type type, string str, MemberInfo member)
 		{
 			if (type == typeof (string))
 				return new CodePrimitiveExpression (str);
@@ -918,21 +919,7 @@ namespace System.Web.Compilation
 				return new CodePrimitiveExpression (null);
 
 			if (type.IsPrimitive)
-				return new CodePrimitiveExpression (Convert.ChangeType (str, type));
-
-			if (type.IsEnum) {
-				object val = null;
-				try {
-					val = Enum.Parse (type, str, true);
-				} catch (Exception) {
-					throw new ParseException (currentLocation,
-							str + " is not a valid value for enum '" + type + "'");
-				}
-				CodeFieldReferenceExpression expr = new CodeFieldReferenceExpression ();
-				expr.TargetObject = new CodeTypeReferenceExpression (type);
-				expr.FieldName = val.ToString ();
-				return expr;
-			}
+				return new CodePrimitiveExpression (Convert.ChangeType (str, type, CultureInfo.InvariantCulture));
 
 			if (type == typeof (string [])) {
 				string [] subs = str.Split (',');
@@ -942,30 +929,6 @@ namespace System.Web.Compilation
 					expr.Initializers.Add (new CodePrimitiveExpression (v.Trim ()));
 				}
 
-				return expr;
-			}
-
-			if (type == typeof (Size)) {
-				string [] subs = str.Split (',');
-				if (subs.Length != 2)
-					throw new ParseException (currentLocation,
-						String.Format ("Cannot create {0} from '{1}'", type, str));
-
-				int width = 0;
-				int height = 0;
-				try {
-					width = Int32.Parse (subs [0]);
-					height = Int32.Parse (subs [0]);
-					new Size (width, height);
-				} catch {
-					throw new ParseException (currentLocation,
-						String.Format ("Cannot create {0} from '{1}'", type, str));
-				}
-				
-				CodeObjectCreateExpression expr = new CodeObjectCreateExpression ();
-				expr.CreateType = new CodeTypeReference (type);
-				expr.Parameters.Add (new CodePrimitiveExpression (width));
-				expr.Parameters.Add (new CodePrimitiveExpression (height));
 				return expr;
 			}
 
@@ -1018,62 +981,106 @@ namespace System.Web.Compilation
 				}
 			}
 
-			TypeConverter converter = TypeDescriptor.GetConverter (type);
-			if (converter != null && converter.CanConvertFrom (typeof (string))) {
-				CodeMethodReferenceExpression m = new CodeMethodReferenceExpression ();
-				m.TargetObject = new CodeTypeReferenceExpression (typeof (TypeDescriptor));
-				m.MethodName = "GetConverter";
-				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (m);
-				CodeTypeReference tref = new CodeTypeReference (type);
-				invoke.Parameters.Add (new CodeTypeOfExpression (tref));
-				
-				invoke = new CodeMethodInvokeExpression (invoke, "ConvertFrom");
-				invoke.Parameters.Add (new CodePrimitiveExpression (str));
-
-				return new CodeCastExpression (tref, invoke);
-			}
-
-			bool parms = false;
-			BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
-			MethodInfo parse = type.GetMethod ("Parse", flags, null, arrayStringCultureInfo, null);
-			if (parse != null) {
-				parms = true;
+			TypeConverter converter = null;
+			
+			TypeConverterAttribute at = (TypeConverterAttribute) Attribute.GetCustomAttribute (member, typeof(TypeConverterAttribute), true);
+			if (at != null) {
+				Type t = Type.GetType (at.ConverterTypeName);
+				converter = (TypeConverter) Activator.CreateInstance (t);
 			} else {
-				parse = type.GetMethod ("Parse", flags, null, arrayString, null);
+				converter = TypeDescriptor.GetConverter (type);
 			}
+			
+			if (converter != null && converter.CanConvertFrom (typeof (string)))
+			{
+				object value = converter.ConvertFrom (str);
 
-			if (parse != null) {
-				object o = null;
-				try {
-					if (parms)
-						o = parse.Invoke (null, new object [] { str, CultureInfo.InvariantCulture });
-					else
-						o = parse.Invoke (null, new object [] { str });
-				} catch (Exception e) {
-					throw new ParseException (currentLocation, "Cannot parse " + str + " as " + type, e);
+				if (converter.CanConvertTo (typeof (InstanceDescriptor))) {
+					InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
+					return GenerateInstance (idesc);
 				}
 				
-				if (o == null)
-					throw new ParseException (currentLocation, str + " as " + type + " is null");
-
-				CodeTypeReferenceExpression exprType = new CodeTypeReferenceExpression (type);
-				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (exprType, "Parse");
-				//FIXME: may be we gotta ensure roundtrip between o.ToString and Parse
-				invoke.Parameters.Add (new CodePrimitiveExpression (o.ToString ()));
-				if (parms) {
-					CodeTypeReferenceExpression texp = new CodeTypeReferenceExpression (typeof (CultureInfo));
-					CodePropertyReferenceExpression pexp = new CodePropertyReferenceExpression ();
-					pexp.TargetObject = texp;
-					pexp.PropertyName = "InvariantCulture";
-					invoke.Parameters.Add (pexp);
-				}
-				return invoke;
+				InstanceDescriptor desc = GetDefaultInstanceDescriptor (value);
+				if (desc != null) return GenerateInstance (desc);
+				
+				return GenerateObjectInstance (value);
 			}
-
-			// FIXME: Arrays
+			
 			Console.WriteLine ("Unknown type: " + type + " value: " + str);
 
 			return new CodePrimitiveExpression (str);
+		}
+		
+		CodeExpression GenerateInstance (InstanceDescriptor idesc)
+		{
+			CodeExpression[] parameters = new CodeExpression [idesc.Arguments.Count];
+			int n = 0;
+			foreach (object ob in idesc.Arguments)
+				parameters [n++] = GenerateObjectInstance (ob);
+			
+			switch (idesc.MemberInfo.MemberType) {
+			case MemberTypes.Constructor:
+				CodeTypeReference tob = new CodeTypeReference (idesc.MemberInfo.DeclaringType);
+				return new CodeObjectCreateExpression (tob, parameters);
+
+			case MemberTypes.Method:
+				CodeTypeReferenceExpression mt = new CodeTypeReferenceExpression (idesc.MemberInfo.DeclaringType);
+				return new CodeMethodInvokeExpression (mt, idesc.MemberInfo.Name, parameters);
+
+			case MemberTypes.Field:
+				CodeTypeReferenceExpression ft = new CodeTypeReferenceExpression (idesc.MemberInfo.DeclaringType);
+				return new CodeFieldReferenceExpression (ft, idesc.MemberInfo.Name);
+
+			case MemberTypes.Property:
+				CodeTypeReferenceExpression pt = new CodeTypeReferenceExpression (idesc.MemberInfo.DeclaringType);
+				return new CodePropertyReferenceExpression (pt, idesc.MemberInfo.Name);
+			}
+			throw new ParseException (currentLocation, "Invalid instance type.");
+		}
+		
+		CodeExpression GenerateObjectInstance (object value)
+		{
+			if (value == null)
+				return new CodePrimitiveExpression (null);
+			
+			Type t = value.GetType();
+			if (t.IsPrimitive || value is string)
+				return new CodePrimitiveExpression (value);
+				
+			if (t.IsArray) {
+				Array ar = (Array) value;
+				CodeExpression[] items = new CodeExpression [ar.Length];
+				for (int n=0; n<ar.Length; n++)
+					items [n] = GenerateObjectInstance (ar.GetValue (n));
+				return new CodeArrayCreateExpression (new CodeTypeReference (t), items);
+			}
+			
+			TypeConverter converter = TypeDescriptor.GetConverter (t);
+			if (converter != null && converter.CanConvertTo (typeof (InstanceDescriptor))) {
+				InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
+				return GenerateInstance (idesc);
+			}
+			
+			InstanceDescriptor desc = GetDefaultInstanceDescriptor (value);
+			if (desc != null) return GenerateInstance (desc);
+			
+			throw new ParseException (currentLocation, "Cannot generate an instance for the type: " + t);
+		}
+		
+		InstanceDescriptor GetDefaultInstanceDescriptor (object value)
+		{
+			if (value is System.Web.UI.WebControls.Unit) {
+				System.Web.UI.WebControls.Unit s = (System.Web.UI.WebControls.Unit) value;
+				MethodInfo met = typeof(System.Web.UI.WebControls.Unit).GetMethod ("Parse", new Type[] {typeof(string)});
+				return new InstanceDescriptor (met, new object[] {s.ToString ()});
+			}
+			
+			if (value is System.Web.UI.WebControls.FontUnit) {
+				System.Web.UI.WebControls.FontUnit s = (System.Web.UI.WebControls.FontUnit) value;
+				MethodInfo met = typeof(System.Web.UI.WebControls.FontUnit).GetMethod ("Parse", new Type[] {typeof(string)});
+				return new InstanceDescriptor (met, new object[] {s.ToString ()});
+			}
+			return null;
 		}
 	}
 }
