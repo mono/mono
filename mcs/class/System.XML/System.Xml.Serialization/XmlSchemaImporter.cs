@@ -277,9 +277,11 @@ namespace System.Xml.Serialization
 			else
 			{
 				if (elem.SchemaTypeName.IsEmpty) return null;
-				if (elem.SchemaTypeName.Namespace == XmlSchema.Namespace) return null;
 				object type = schemas.Find (elem.SchemaTypeName, typeof (XmlSchemaComplexType));
-				if (type == null) throw new InvalidOperationException ("Schema type '" + elem.SchemaTypeName + "' not found");
+				if (type == null) {
+					if (IsPrimitiveTypeNamespace (elem.SchemaTypeName.Namespace)) return null;
+					throw new InvalidOperationException ("Schema type '" + elem.SchemaTypeName + "' not found");
+				}
 				stype = type as XmlSchemaComplexType;
 			}
 			
@@ -443,14 +445,15 @@ namespace System.Xml.Serialization
 			{
 				if (elem.SchemaTypeName.IsEmpty) return false;
 				
-				if (elem.SchemaTypeName.Namespace == XmlSchema.Namespace) {
-					qname = elem.SchemaTypeName;
-					return true;
-				}
-				
 				object type = schemas.Find (elem.SchemaTypeName, typeof (XmlSchemaComplexType));
 				if (type == null) type = schemas.Find (elem.SchemaTypeName, typeof (XmlSchemaSimpleType));
-				if (type == null) throw new InvalidOperationException ("Schema type '" + elem.SchemaTypeName + "' not found");
+				if (type == null) {
+					if (IsPrimitiveTypeNamespace (elem.SchemaTypeName.Namespace)) {
+						qname = elem.SchemaTypeName;
+						return true;
+					}
+					throw new InvalidOperationException ("Schema type '" + elem.SchemaTypeName + "' not found");
+				}
 				stype = (XmlSchemaType) type;
 				qname = stype.QualifiedName;
 				
@@ -463,7 +466,7 @@ namespace System.Xml.Serialization
 			return true;
 		}
 
-		XmlTypeMapping ImportType (XmlQualifiedName name, XmlQualifiedName root)
+		XmlTypeMapping ImportType (XmlQualifiedName name, XmlQualifiedName root, bool throwOnError)
 		{
 			XmlTypeMapping map = GetRegisteredTypeMapping (name);
 			if (map != null) {
@@ -476,10 +479,13 @@ namespace System.Xml.Serialization
 			
 			if (type == null) 
 			{
-				if (name.Namespace == XmlSerializer.EncodingNamespace)
-					throw new InvalidOperationException ("Referenced type '" + name + "' valid only for encoded SOAP");
-				else
-					throw new InvalidOperationException ("Referenced type '" + name + "' not found");
+				if (throwOnError) {
+					if (name.Namespace == XmlSerializer.EncodingNamespace)
+						throw new InvalidOperationException ("Referenced type '" + name + "' valid only for encoded SOAP.");
+					else
+						throw new InvalidOperationException ("Referenced type '" + name + "' not found.");
+				} else
+					return null;
 			}
 
 			return ImportType (name, type, root);
@@ -487,7 +493,7 @@ namespace System.Xml.Serialization
 
 		XmlTypeMapping ImportClass (XmlQualifiedName name)
 		{
-			XmlTypeMapping map = ImportType (name, null);
+			XmlTypeMapping map = ImportType (name, null, true);
 			if (map.TypeData.SchemaType == SchemaTypes.Class) return map;
 			XmlSchemaComplexType stype = schemas.Find (name, typeof (XmlSchemaComplexType)) as XmlSchemaComplexType;
 			return CreateClassMap (name, stype, new XmlQualifiedName (map.ElementName, map.Namespace));
@@ -1074,11 +1080,11 @@ namespace System.Xml.Serialization
 			ClassMap cmap = (ClassMap)map.ObjectMap;
 			XmlQualifiedName qname = GetContentBaseType (content.Content);
 			
-			if (qname.Namespace != XmlSchema.Namespace)
+			if (!IsPrimitiveTypeNamespace (qname.Namespace))
 			{
 				// Add base map members to this map
 	
-				XmlTypeMapping baseMap = ImportType (qname, null);
+				XmlTypeMapping baseMap = ImportType (qname, null, true);
 				BuildPendingMap (baseMap);
 				ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
 	
@@ -1104,9 +1110,6 @@ namespace System.Xml.Serialization
 
 		TypeData FindBuiltInType (XmlQualifiedName qname)
 		{
-			if (qname.Namespace == XmlSchema.Namespace)
-				return TypeTranslator.GetPrimitiveTypeData (qname.Name);
-
 			XmlSchemaComplexType ct = (XmlSchemaComplexType) schemas.Find (qname, typeof(XmlSchemaComplexType));
 			if (ct != null)
 			{
@@ -1119,13 +1122,16 @@ namespace System.Xml.Serialization
 			if (st != null)
 				return FindBuiltInType (qname, st);
 
+			if (IsPrimitiveTypeNamespace (qname.Namespace))
+				return TypeTranslator.GetPrimitiveTypeData (qname.Name);
+
 			throw new InvalidOperationException ("Definition of type " + qname + " not found");
 		}
 
 		TypeData FindBuiltInType (XmlQualifiedName qname, XmlSchemaSimpleType st)
 		{
 			if (CanBeEnum (st))
-				return ImportType (qname, null).TypeData;
+				return ImportType (qname, null, true).TypeData;
 
 			if (st.Content is XmlSchemaSimpleTypeRestriction) {
 				return FindBuiltInType (GetContentBaseType (st.Content));
@@ -1393,7 +1399,7 @@ namespace System.Xml.Serialization
 			// xml types can be mapped to a single CLR type
 
 			string t;
-			if (type.Namespace == XmlSchema.Namespace)
+			if (IsPrimitiveTypeNamespace (type.Namespace))
 				t = TypeTranslator.GetPrimitiveTypeData (type.Name).FullTypeName + ":" + type.Namespace;
 
 			else
@@ -1609,10 +1615,16 @@ namespace System.Xml.Serialization
 
 		TypeData GetTypeData (XmlQualifiedName typeQName, XmlQualifiedName root)
 		{
-			if (typeQName.Namespace == XmlSchema.Namespace || (encodedFormat && typeQName.Namespace == ""))
+			if (IsPrimitiveTypeNamespace (typeQName.Namespace)) {
+				XmlTypeMapping map = ImportType (typeQName, root, false);
+				if (map != null) return map.TypeData;
+				else return TypeTranslator.GetPrimitiveTypeData (typeQName.Name);
+			}
+			
+			if (encodedFormat && typeQName.Namespace == "")
 				return TypeTranslator.GetPrimitiveTypeData (typeQName.Name);
 
-			return ImportType (typeQName, root).TypeData;
+			return ImportType (typeQName, root, true).TypeData;
 		}
 
 		TypeData GetTypeData (XmlSchemaType stype, XmlQualifiedName typeQNname, string propertyName, bool sharedAnnType, XmlQualifiedName root)
@@ -1723,15 +1735,18 @@ namespace System.Xml.Serialization
 
 		XmlSchemaElement FindRefElement (XmlSchemaElement elem)
 		{
-			if (elem.RefName.Namespace == XmlSchema.Namespace)
+			XmlSchemaElement refelem = (XmlSchemaElement) schemas.Find (elem.RefName, typeof(XmlSchemaElement));
+			if (refelem != null) return refelem;
+			
+			if (IsPrimitiveTypeNamespace (elem.RefName.Namespace))
 			{
 				if (anyElement != null) return anyElement;
 				anyElement = new XmlSchemaElement ();
 				anyElement.Name = "any";
 				anyElement.SchemaTypeName = anyType;
 				return anyElement;
-			}
-			return (XmlSchemaElement) schemas.Find (elem.RefName, typeof(XmlSchemaElement));
+			} else
+				return null;
 		}
 		
 		XmlSchemaAttribute FindRefAttribute (XmlQualifiedName refName)
@@ -1788,6 +1803,11 @@ namespace System.Xml.Serialization
 				}
 			}
 			return res;
+		}
+		
+		bool IsPrimitiveTypeNamespace (string ns)
+		{
+			return (ns == XmlSchema.Namespace) || (encodedFormat && ns == XmlSerializer.EncodingNamespace);
 		}
 
 		#endregion // Methods

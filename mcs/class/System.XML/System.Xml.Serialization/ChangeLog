@@ -1,3 +1,10 @@
+2005-03-08  Lluis Sanchez Gual <lluis@novell.com>
+
+	* XmlSchemaImporter.cs: Support importing schemas that define
+	extra types in the standard xml schema namespace. When using encoded
+	format, support the primitive types defined by the SOAP encoding
+	namespace.
+
 2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ReflectionHelper.cs: Avoid endless loop.
