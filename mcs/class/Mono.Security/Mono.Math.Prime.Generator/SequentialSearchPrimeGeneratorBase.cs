@@ -12,7 +12,6 @@ using Mono.Math.Prime;
 
 namespace Mono.Math.Prime.Generator {
 
-	[CLSCompliant(false)]
 #if INSIDE_CORLIB
 	internal
 #else
@@ -20,10 +19,10 @@ namespace Mono.Math.Prime.Generator {
 #endif
 	class SequentialSearchPrimeGeneratorBase : PrimeGeneratorBase {
 
-		protected virtual BigInteger GenerateSearchBase (int bits, object Context)
+		protected virtual BigInteger GenerateSearchBase (int bits, object context)
 		{
-			BigInteger ret = BigInteger.genRandom (bits);
-			ret.setBit (0);
+			BigInteger ret = BigInteger.GenerateRandom (bits);
+			ret.SetBit (0);
 			return ret;
 		}
 
@@ -34,12 +33,12 @@ namespace Mono.Math.Prime.Generator {
 		}
 
 
-		public virtual BigInteger GenerateNewPrime (int bits, object Context)
+		public virtual BigInteger GenerateNewPrime (int bits, object context)
 		{
 			//
 			// STEP 1. Find a place to do a sequential search
 			//
-			BigInteger curVal = GenerateSearchBase (bits, Context);
+			BigInteger curVal = GenerateSearchBase (bits, context);
 
 			const uint primeProd1 = 3u* 5u * 7u * 11u * 13u * 17u * 19u * 23u * 29u;
 
@@ -77,7 +76,7 @@ namespace Mono.Math.Prime.Generator {
 				//
 				// STEP 2.3 Is the potential prime acceptable?
 				//
-				if (!IsPrimeAcceptable (curVal, Context)) goto biNotPrime;
+				if (!IsPrimeAcceptable (curVal, context)) goto biNotPrime;
 
 				//
 				// STEP 2.4 Filter out all primes that pass this step with a primality test
@@ -95,7 +94,7 @@ namespace Mono.Math.Prime.Generator {
 			}
 		}
 
-		protected virtual bool IsPrimeAcceptable (BigInteger bi, object Context)
+		protected virtual bool IsPrimeAcceptable (BigInteger bi, object context)
 		{
 			return true;
 		}

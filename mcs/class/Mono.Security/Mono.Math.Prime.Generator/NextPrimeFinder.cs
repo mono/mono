@@ -14,7 +14,6 @@ namespace Mono.Math.Prime.Generator {
 	/// <summary>
 	/// Finds the next prime after a given number.
 	/// </summary>
-	[CLSCompliant(false)]
 #if INSIDE_CORLIB
 	internal
 #else
@@ -24,9 +23,11 @@ namespace Mono.Math.Prime.Generator {
 		
 		protected override BigInteger GenerateSearchBase (int bits, object Context) 
 		{
-			if (Context == null) throw new ArgumentNullException ("Context");
+			if (Context == null) 
+				throw new ArgumentNullException ("Context");
+
 			BigInteger ret = new BigInteger ((BigInteger)Context);
-			ret.setBit (0);
+			ret.SetBit (0);
 			return ret;
 		}
 	}
