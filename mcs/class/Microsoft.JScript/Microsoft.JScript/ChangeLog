@@ -1,3 +1,31 @@
+2003-11-05 cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: Now we take care of parents. This allows
+	to keep track if we are inside nested blocks. At
+	'func_decl_or_expr', now I built the FunctionDeclaration or
+	FunctionExpression first and then assign its body to it - this let
+	me get a non-null value of the FunctionExpression or
+	FunctionDeclaration so I can detect if it's a nested block (thanks go to Jackson!).
+
+	* Block.cs, FunctionObject.cs, VariableDeclaration.cs: Added 'AST parent' field.
+	* Block.cs, FunctionDeclaration.cs, FunctionExpression.cs,
+	FunctionObject.cs, VariableDeclaration.cs: Added 'AST parent' parameter to constructor.
+
+	* ScriptBlock.cs: Initiate the global block with 'null' as parent.
+	
+	* FunctionDeclaration.cs: Added 'get_composite_name ()' method
+	(gets the name of a function if it's nested). Emit code for
+	function's body. At 'Emit ()' now we take care if it's a nested
+	declaration.
+
+	* FunctionObject.cs: default return type is 'void' not
+	'Object'. Function declarations without parameters map to functions with
+	'Object this' and 'VsaEngine engine' as parameters by
+	default. Assign parent to nested block.
+
+	* VariableDeclaration.cs: At 'Emit ()', now we take care if we are
+	a global declaration or inside a function declaration.
+	
 2003-11-04 cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* FunctionObject.cs: Handle no parameters on functions.
