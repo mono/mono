@@ -1,3 +1,7 @@
+2004-08-18  Sanjay Gupta <gsanjay@novell.com>
+
+	* System.Web.dll.sources: Added new file RelatedBodyPart.cs.
+
 2004-08-05  Sanjay Gupta  <gsanjay@novell.com>
 
 	* System.Web.dll.sources: Added new interfaces to System.Web.UI.WebControls and 

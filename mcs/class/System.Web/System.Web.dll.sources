@@ -114,6 +114,7 @@ System.Web.Mail/SmtpMail.cs
 System.Web.Mail/SmtpResponse.cs
 System.Web.Mail/SmtpStream.cs
 System.Web.Mail/ToUUEncodingTransform.cs
+System.Web.Mail/RelatedBodyPart.cs
 System.Web.Mail/UUAttachmentEncoder.cs
 System.Web.Management/EventNotificationType.cs
 System.Web.Management/IRegiisUtility.cs
