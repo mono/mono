@@ -91,6 +91,14 @@ namespace System {
 			// FIXME: implement me
 			
 			return null;
-		} 
+		}
+
+		public bool IsValueType {
+			get {
+				// FIXME
+				return(false);
+			}
+		}
+		
 	}
 }
