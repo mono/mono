@@ -108,7 +108,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
- 		public override bool Define (TypeContainer container)
+ 		public override bool Define ()
 		{
 			MethodAttributes mattr;
 			int i;
@@ -167,14 +167,14 @@ namespace Mono.CSharp {
 
 			// Check accessibility
 			foreach (Type partype in param_types){
-				if (!container.AsAccessible (partype, ModFlags)) {
+				if (!Parent.AsAccessible (partype, ModFlags)) {
 					Report.Error (59, Location,
 						      "Inconsistent accessibility: parameter type `" +
 						      TypeManager.CSharpName (partype) + "` is less " +
 						      "accessible than delegate `" + Name + "'");
 					return false;
 				}
-				if (partype.IsPointer && !UnsafeOK (container))
+				if (partype.IsPointer && !UnsafeOK (Parent))
 					return false;
 			}
 			
@@ -186,7 +186,7 @@ namespace Mono.CSharp {
 			if (ret_type == null)
 				return false;
 
-			if (!container.AsAccessible (ret_type, ModFlags)) {
+			if (!Parent.AsAccessible (ret_type, ModFlags)) {
 				Report.Error (58, Location,
 					      "Inconsistent accessibility: return type `" +
 					      TypeManager.CSharpName (ret_type) + "` is less " +
@@ -194,7 +194,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (ret_type.IsPointer && !UnsafeOK (container))
+			if (ret_type.IsPointer && !UnsafeOK (Parent))
 				return false;
 
 			//
@@ -237,7 +237,7 @@ namespace Mono.CSharp {
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			TypeManager.RegisterMethod (InvokeBuilder,
-						    new InternalParameters (container, Parameters),
+						    new InternalParameters (Parent, Parameters),
 						    param_types);
 
 			//
@@ -304,7 +304,7 @@ namespace Mono.CSharp {
 			
 			async_parameters.ComputeAndDefineParameterTypes (this);
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
-						    new InternalParameters (container, async_parameters),
+						    new InternalParameters (Parent, async_parameters),
 						    async_param_types);
 
 			//
@@ -349,7 +349,7 @@ namespace Mono.CSharp {
 
 			TypeManager.RegisterMethod (
 				EndInvokeBuilder,
-				new InternalParameters (container, end_parameters),
+				new InternalParameters (Parent, end_parameters),
 				end_param_types);
 
 			return true;

@@ -366,7 +366,7 @@ namespace Mono.CSharp {
 			is_static = (modifiers & Modifiers.STATIC) != 0;
 		}
 
-		public bool Define ()
+		public bool DefineIterator ()
 		{
 			if (!CheckType (return_type)) {
 				Report.Error (

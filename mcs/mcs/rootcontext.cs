@@ -591,7 +591,7 @@ namespace Mono.CSharp {
 			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
 
 			ds.DefineMembers (root);
-			ds.Define (root);
+			ds.Define ();
 		}
 		
 		static public void BootCorlib_PopulateCoreTypes ()
@@ -691,12 +691,12 @@ namespace Mono.CSharp {
 
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
-					tc.Define (root);
+					tc.Define ();
 			
 			if (interface_resolve_order != null){
 				foreach (Interface iface in interface_resolve_order)
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.Define (root);
+						iface.Define ();
 			}
 
 
@@ -711,7 +711,7 @@ namespace Mono.CSharp {
 						continue;
 
 					if ((tc.ModFlags & Modifiers.NEW) == 0)
-						tc.Define (root);
+						tc.Define ();
 				}
 			}
 
@@ -719,14 +719,14 @@ namespace Mono.CSharp {
 			if (delegates != null){
 				foreach (Delegate d in delegates)
 					if ((d.ModFlags & Modifiers.NEW) == 0)
-						d.Define (root);
+						d.Define ();
 			}
 
 			ArrayList enums = root.Enums;
 			if (enums != null){
 				foreach (Enum en in enums)
 					if ((en.ModFlags & Modifiers.NEW) == 0)
-						en.Define (root);
+						en.Define ();
 			}
 		}
 

@@ -86,7 +86,7 @@ namespace Mono.CSharp {
 			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, Location);
 		}
 
-		public abstract bool Define (TypeContainer parent);
+		public abstract bool Define ();
 
 		// 
 		// Returns full member name for error message

@@ -1,3 +1,14 @@
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs (Iterator.Define): Renamed to DefineIterator().
+
+	* decl.cs (DeclSpace.Define): Removed the `TypeContainer'
+	argument, we can just use the `Parent' field instead.
+
+	* class.cs
+	(MemberBase.CheckBase): Removed the `TypeContainer' argument.	
+	(MemberBase.DoDefine): Likewise.
+
 2004-07-24  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberCore.Parent): New public field.

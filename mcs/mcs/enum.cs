@@ -622,7 +622,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override bool Define (TypeContainer parent)
+		public override bool Define ()
 		{
 			//
 			// If there was an error during DefineEnum, return

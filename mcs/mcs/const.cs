@@ -71,14 +71,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>
-		public override bool Define (TypeContainer parent)
+		public override bool Define ()
 		{
-			type = parent.ResolveType (Type, false, Location);
+			type = Parent.ResolveType (Type, false, Location);
 
 			if (type == null)
 				return false;
 
-			const_ec = new EmitContext (parent, Location, null, type, ModFlags);
+			const_ec = new EmitContext (Parent, Location, null, type, ModFlags);
 
 			Type ttype = type;
 			while (ttype.IsArray)
@@ -92,7 +92,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Type ptype = parent.TypeBuilder.BaseType;
+			Type ptype = Parent.TypeBuilder.BaseType;
 
 			if (ptype != null) {
 				MemberList list = TypeContainer.FindMembers (
@@ -101,12 +101,12 @@ namespace Mono.CSharp {
 				
 				if (list.Count == 0)
 					if ((ModFlags & Modifiers.NEW) != 0)
-						WarningNotHiding (parent);
+						WarningNotHiding (Parent);
 
 			} else if ((ModFlags & Modifiers.NEW) != 0)
-				WarningNotHiding (parent);
+				WarningNotHiding (Parent);
 
-			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 
 			TypeManager.RegisterConstant (FieldBuilder, this);
 
