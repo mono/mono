@@ -1,3 +1,8 @@
+2002-03-07  Duncan Mak  <duncan@ximian.com>
+
+	* Makefile.am: A small patch fixing errors in vpath-based builds (make clean
+	failing to rerun monoburg due to BUILT_SOURCES usage), committed
+	for Daniel Stodden <stodden@in.tum.de>.
 
 Thu Mar 7 17:22:52 CET 2002 Paolo Molaro <lupus@ximian.com>
 
