@@ -27,7 +27,9 @@ namespace System.Runtime.Remoting
 		protected string _objectUri;
 
 		// Message sink to use to send a message to the remote server
-		protected IMessageSink _clientSink = null;
+		protected IMessageSink _channelSink = null;
+
+		protected IMessageSink _envoySink = null;
 
 		// The ObjRef 
 		protected ObjRef _objRef;
@@ -44,15 +46,19 @@ namespace System.Runtime.Remoting
 		{
 			get
 			{
-				// fixme: what if it is contextbound?
-				return (_clientSink == null);
+				return (_channelSink == null);
 			}
 		}
 
-		public IMessageSink ClientSink
+		public IMessageSink ChannelSink
 		{
-			get { return _clientSink; }
-			set { _clientSink = value; }
+			get { return _channelSink; }
+			set { _channelSink = value; }
+		}
+
+		public IMessageSink EnvoySink
+		{
+			get { return _envoySink; }
 		}
 
 		public Type ObjectType
@@ -63,6 +69,7 @@ namespace System.Runtime.Remoting
 		public string ObjectUri
 		{
 			get { return _objectUri; }
+			set { _objectUri = value; }
 		}
 	}
 
@@ -73,6 +80,7 @@ namespace System.Runtime.Remoting
 		public ClientIdentity (string objectUri, ObjRef objRef): base (objectUri, Type.GetType (objRef.TypeInfo.TypeName,true))
 		{
 			_objRef = objRef;
+			_envoySink = (_objRef.EnvoyInfo != null) ? _objRef.EnvoyInfo.EnvoySinks : null;
 		}
 
 		public MarshalByRefObject ClientProxy

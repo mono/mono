@@ -148,10 +148,10 @@ namespace System.Runtime.Remoting {
 		[MonoTODO]
 		public virtual IEnvoyInfo EnvoyInfo {
 			get {
-				throw new NotImplementedException ();
+				return envoyInfo;
 			}
 			set {
-				throw new NotImplementedException ();
+				envoyInfo = value;
 			}
 		}
 		

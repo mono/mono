@@ -141,9 +141,19 @@ namespace System.Runtime.Remoting
 			if (IsTransparentProxy (obj))
 			{
 				RealProxy proxy = RemotingServices.GetRealProxy(obj);
-				if (proxy != null && proxy.ObjectIdentity != null)
+				Identity identity = proxy.ObjectIdentity;
+
+				if (identity != null)
 				{
-					if (uri != null)
+					if (identity.ObjectType.IsContextful && identity.ObjectUri == null)
+					{
+						// Unregistered contextbound object. Register now.
+						if (uri == null) uri = NewUri();
+						identity.ObjectUri = uri;
+						RegisterServerIdentity ((ServerIdentity) identity);
+						((ServerIdentity)identity).StartTrackingLifetime();
+					}
+					else if (uri != null)
 						throw new RemotingException ("It is not possible marshal a proxy of a remote object");
 
 					return proxy.ObjectIdentity.CreateObjRef(requested_type);
@@ -154,7 +164,7 @@ namespace System.Runtime.Remoting
 
 			if (uri == null) 
 			{
-				uri = app_id + Environment.TickCount + "_" + next_id++;
+				uri = NewUri();
 				CreateClientActivatedServerIdentity (obj, requested_type, uri);
 			}
 			else
@@ -165,6 +175,11 @@ namespace System.Runtime.Remoting
 			}
 
 			return obj.CreateObjRef(requested_type);
+		}
+
+		static string NewUri ()
+		{
+			return app_id + Environment.TickCount + "_" + next_id++;
 		}
 
 		public static RealProxy GetRealProxy (object proxy)
@@ -242,6 +257,28 @@ namespace System.Runtime.Remoting
 
 		#region Internal Methods
 		
+		internal static object CreateClientProxy (ActivatedClientTypeEntry entry)
+		{
+			string activationUrl = entry.ApplicationUrl + "/RemoteActivationService.rem";
+
+			string objectUri;
+			IMessageSink sink = GetClientChannelSinkChain (activationUrl, null, out objectUri);
+
+			RemotingProxy proxy = new RemotingProxy (entry.ObjectType, activationUrl, sink);
+			return proxy.GetTransparentProxy();
+		}
+	
+		internal static object CreateClientProxy (WellKnownClientTypeEntry entry)
+		{
+			return Connect (entry.ObjectType, entry.ObjectUrl);
+		}
+	
+		internal static object CreateClientProxyForContextBound (Type type)
+		{
+			RemotingProxy proxy = new RemotingProxy (type, ChannelServices.CrossContextUrl, ChannelServices.CrossContextChannel);
+			return proxy.GetTransparentProxy();
+		}
+	
 		internal static Identity GetIdentityForUri (string uri)
 		{
 			lock (uri_hash)
@@ -258,7 +295,7 @@ namespace System.Runtime.Remoting
 				return obj.ObjectIdentity;
 		}
 
-		private static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef)
+		internal static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef, RealProxy proxyToAttach)
 		{
 			// This method looks for an identity for the given url. 
 			// If an identity is not found, it creates the identity and 
@@ -271,18 +308,7 @@ namespace System.Runtime.Remoting
 			string url = (channelData == null) ? objRef.URI : null;
 
 			string objectUri;
-			IMessageSink sink = ChannelServices.CreateClientChannelSinkChain (url, channelData, out objectUri);
-			if (sink == null) 
-			{
-				if (url != null) {
-					string msg = String.Format ("Cannot create channel sink to connect to URL {0}. An appropriate channel has probably not been registered.", url); 
-					throw new RemotingException (msg);
-				}
-				else {
-					string msg = String.Format ("Cannot create channel sink to connect to the remote object. An appropriate channel has probably not been registered.", url); 
-					throw new RemotingException (msg);
-				}
-			}
+			IMessageSink sink = GetClientChannelSinkChain (url, channelData, out objectUri);
 
 			if (objectUri == null) objectUri = objRef.URI;
 
@@ -295,10 +321,10 @@ namespace System.Runtime.Remoting
 				// Creates an identity and a proxy for the remote object
 
 				identity = new ClientIdentity (objectUri, objRef);
-				identity.ClientSink = sink;
+				identity.ChannelSink = sink;
 
-				RemotingProxy proxy = new RemotingProxy (Type.GetType (objRef.TypeInfo.TypeName), identity);
-				identity.ClientProxy = (MarshalByRefObject) proxy.GetTransparentProxy();
+				if (proxyToAttach == null) proxyToAttach = new RemotingProxy (Type.GetType (objRef.TypeInfo.TypeName), identity);
+				identity.ClientProxy = (MarshalByRefObject) proxyToAttach.GetTransparentProxy();
 
 				// Registers the identity
 				uri_hash [objRef.URI] = identity;
@@ -306,11 +332,38 @@ namespace System.Runtime.Remoting
 			}
 		}
 
+		static IMessageSink GetClientChannelSinkChain(string url, object channelData, out string objectUri)
+		{
+			IMessageSink sink = ChannelServices.CreateClientChannelSinkChain (url, channelData, out objectUri);
+			if (sink == null) 
+			{
+				if (url != null) 
+				{
+					string msg = String.Format ("Cannot create channel sink to connect to URL {0}. An appropriate channel has probably not been registered.", url); 
+					throw new RemotingException (msg);
+				}
+				else 
+				{
+					string msg = String.Format ("Cannot create channel sink to connect to the remote object. An appropriate channel has probably not been registered.", url); 
+					throw new RemotingException (msg);
+				}
+			}
+			return sink;
+		}
+
+		internal static ClientActivatedIdentity CreateContextBoundObjectIdentity(Type objectType)
+		{
+			ClientActivatedIdentity identity = new ClientActivatedIdentity (null, objectType);
+			identity.ChannelSink = ChannelServices.CrossContextChannel;
+			return identity;
+		}
+
 		internal static ClientActivatedIdentity CreateClientActivatedServerIdentity(MarshalByRefObject realObject, Type objectType, string objectUri)
 		{
-			ClientActivatedIdentity identity = new ClientActivatedIdentity (objectUri, Context.DefaultContext, objectType);
-			identity.AttachServerObject (realObject);
+			ClientActivatedIdentity identity = new ClientActivatedIdentity (objectUri, objectType);
+			identity.AttachServerObject (realObject, Context.DefaultContext);
 			RegisterServerIdentity (identity);
+			identity.StartTrackingLifetime();
 			return identity;
 		}
 
@@ -327,7 +380,7 @@ namespace System.Runtime.Remoting
 			return identity;
 		}
 
-		private static void RegisterServerIdentity(Identity identity)
+		private static void RegisterServerIdentity(ServerIdentity identity)
 		{
 			lock (uri_hash)
 			{
@@ -340,7 +393,7 @@ namespace System.Runtime.Remoting
 
 		internal static object GetRemoteObject(ObjRef objRef)
 		{
-			ClientIdentity id = GetOrCreateClientIdentity (objRef);
+			ClientIdentity id = GetOrCreateClientIdentity (objRef, null);
 			return id.ClientProxy;
 		}
 
@@ -378,15 +431,23 @@ namespace System.Runtime.Remoting
 			uri_hash.Remove (ident.ObjectUri);
 		}
 
-		internal static ServerIdentity GetMessageTargetIdentity (IMessage msg)
+		internal static Identity GetMessageTargetIdentity (IMessage msg)
 		{
 			// Returns the identity where the message is sent
-			// TODO: check for identity embedded in MethodCall
+
+			if (msg is IInternalMessage) 
+				return ((IInternalMessage)msg).TargetIdentity;
 
 			lock (uri_hash)
 			{
 				return uri_hash [((IMethodMessage)msg).Uri] as ServerIdentity;
 			}
+		}
+
+		internal static void SetMessageTargetIdentity (IMessage msg, Identity ident)
+		{
+			if (msg is IInternalMessage) 
+				((IInternalMessage)msg).TargetIdentity = ident;
 		}
 
 		#endregion

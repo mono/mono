@@ -34,6 +34,7 @@ namespace System.Runtime.Remoting
 			// Adds this identity to the LeaseManager. 
 			// _serverObject must be set.
 
+			// FIXME: make the call through the sink
 			ILease lease = (ILease) _serverObject.InitializeLifetimeService ();
 			if (lease != null && lease.CurrentState == LeaseState.Null) lease = null;
 
@@ -63,14 +64,21 @@ namespace System.Runtime.Remoting
 			_objRef = new ObjRef ();
 			_objRef.TypeInfo = new TypeInfo(requestedType);
 			_objRef.URI = _objectUri;
+
+			if (_envoySink != null && !(_envoySink is EnvoyTerminatorSink))
+				_objRef.EnvoyInfo = new EnvoyInfo (_envoySink);
+
 			return _objRef;
 		}
 
-		public void AttachServerObject (MarshalByRefObject serverObject)
+		public void AttachServerObject (MarshalByRefObject serverObject, Context context)
 		{
+			if (_objectType.IsContextful)
+				_envoySink = context.CreateEnvoySink (serverObject);
+
+			_context = context;
 			_serverObject = serverObject;
 			_serverObject.ObjectIdentity = this;
-			StartTrackingLifetime ();
 		}
 
 		public Lease Lease
@@ -81,6 +89,7 @@ namespace System.Runtime.Remoting
 		public Context Context
 		{
 			get { return _context; }
+			set { _context = value; }
 		}
 
 		public abstract IMessage SyncObjectProcessMessage (IMessage msg);
@@ -99,7 +108,7 @@ namespace System.Runtime.Remoting
 
 	internal class ClientActivatedIdentity : ServerIdentity
 	{
-		public ClientActivatedIdentity (string objectUri, Context context, Type objectType): base (objectUri, context, objectType)
+		public ClientActivatedIdentity (string objectUri, Type objectType): base (objectUri, null, objectType)
 		{
 		}
 	
@@ -139,8 +148,10 @@ namespace System.Runtime.Remoting
 
 			lock (this) 
 			{
-				if (_serverObject == null)
-					AttachServerObject ((MarshalByRefObject) Activator.CreateInstance (_objectType));
+				if (_serverObject == null) {
+					AttachServerObject ((MarshalByRefObject) Activator.CreateInstance (_objectType), Context.DefaultContext);
+					StartTrackingLifetime();
+				}
 			}
 			return _serverObject;
 		}

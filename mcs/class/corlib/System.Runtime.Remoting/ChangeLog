@@ -1,3 +1,14 @@
+2003-02-18 Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Identity.cs: Added envoy message sink.
+	* ObjRef.cs: Implemented EnvoySink property
+	* RemotingConfiguration.cs: now enables proxy creation for types registered
+	  as ClientActivatedType or WellKnownClientType.
+	* RemotingServices.cs: Added support for ContextBoundObjects.
+	  Added methods for creating proxies. 
+	* ServerIdentity.cs: Added initialization of envoy sink.
+	* EnvoyInfo.cs: Added. It is an implementation on IEnvoyInfo.
+
 2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RemotingConfiguration.cs: Changed using to Mono.Xml for MiniParser.

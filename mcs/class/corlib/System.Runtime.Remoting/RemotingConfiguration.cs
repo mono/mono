@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Collections;
+using System.Runtime.Remoting.Activation;
 using Mono.Xml;
 
 namespace System.Runtime.Remoting
@@ -129,6 +130,7 @@ namespace System.Runtime.Remoting
 				throw new RemotingException ("Attempt to redirect activation of type '" + entry.ObjectType.FullName + "' which is already redirected.");
 
 			activatedClientEntries[entry.ObjectType] = entry;
+			ActivationServices.EnableProxyActivation (entry.ObjectType, true);
 		}
 
 		public static void RegisterActivatedClientType (Type type, string appUrl) 
@@ -163,6 +165,7 @@ namespace System.Runtime.Remoting
 				throw new RemotingException ("Attempt to redirect activation of type '" + entry.ObjectType.FullName + "' which is already redirected.");
 
 			wellKnownClientEntries[entry.ObjectType] = entry;
+			ActivationServices.EnableProxyActivation (entry.ObjectType, true);
 		}
 
 		public static void RegisterWellKnownServiceType (Type type, string objectUrl, WellKnownObjectMode mode) 
