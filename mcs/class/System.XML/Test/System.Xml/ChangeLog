@@ -1,3 +1,8 @@
+2005-03-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : added testcase for duplicating namespace 
+	  mapping processing (should create another prefix, not exception).
+
 2005-03-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriterTests.cs : Added test for LookupPrefix() for

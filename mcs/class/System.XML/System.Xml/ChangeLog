@@ -1,3 +1,8 @@
+2005-03-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : For duplicating namespace mapping, it should
+	  create another prefix without throwing an exception.
+
 2005-03-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : LookupPrefix() should not return those prefix

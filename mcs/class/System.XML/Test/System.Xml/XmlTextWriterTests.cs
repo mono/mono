@@ -1317,5 +1317,29 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("baz", "foo", "abc");
 			AssertNull (xtw.LookupPrefix ("xyz"));
 		}
+
+		[Test]
+		public void DuplicatingNamespaceMappingInAttributes ()
+		{
+			xtw.WriteStartElement ("out");
+			xtw.WriteAttributeString ("p", "foo", "urn:foo", "xyz");
+			xtw.WriteAttributeString ("p", "bar", "urn:bar", "xyz");
+			xtw.WriteAttributeString ("p", "baz", "urn:baz", "xyz");
+			xtw.WriteStartElement ("out");
+			xtw.WriteAttributeString ("p", "foo", "urn:foo", "xyz");
+			xtw.WriteStartElement ("out");
+			xtw.WriteAttributeString ("p", "foo", "urn:foo", "xyz");
+			xtw.WriteEndElement ();
+			xtw.WriteEndElement ();
+			xtw.WriteEndElement ();
+			string xml = sw.ToString ();
+			Assert ("p:foo", xml.IndexOf ("p:foo='xyz'") > 0);
+			Assert ("d1p1:bar", xml.IndexOf ("d1p1:bar='xyz'") > 0);
+			Assert ("d1p1:baz", xml.IndexOf ("d1p2:baz='xyz'") > 0);
+			Assert ("xmlns:d1p2", xml.IndexOf ("xmlns:d1p2='urn:baz'") > 0);
+			Assert ("xmlns:d1p1", xml.IndexOf ("xmlns:d1p1='urn:bar'") > 0);
+			Assert ("xmlns:p", xml.IndexOf ("xmlns:p='urn:foo'") > 0);
+			Assert ("remaining", xml.IndexOf ("<out p:foo='xyz'><out p:foo='xyz' /></out></out>") > 0);
+		}
 	}
 }

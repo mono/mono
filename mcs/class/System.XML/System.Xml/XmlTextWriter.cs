@@ -73,6 +73,7 @@ namespace System.Xml
 		Hashtable newAttributeNamespaces = new Hashtable ();
 		Hashtable userWrittenNamespaces = new Hashtable ();
 		StringBuilder cachedStringBuilder;
+		int autoCreatedPrefixes;
 
 		XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 		string savingAttributeValue = String.Empty;
@@ -328,16 +329,18 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 					if (namespaceManager.LookupNamespace (aprefix, false) == ans)
 						continue;
-	
+					ans = EscapeString (ans, false);
 					w.Write (" xmlns:");
 					w.Write (aprefix);
 					w.Write ('=');
 					w.Write (quoteChar);
-					w.Write (EscapeString (ans, false));
+					w.Write (ans);
 					w.Write (quoteChar);
+					namespaceManager.AddNamespace (aprefix, ans);
 				}
 				newAttributeNamespaces.Clear ();
 			}
+			autoCreatedPrefixes = 0;
 		}
 
 		private void CheckState ()
@@ -784,14 +787,18 @@ openElements [openElementCount - 1]).IndentingOverriden;
 							}
 						}
 					}
+
+			do {
 					if (createPrefix)
-						prefix = "d" + indentLevel + "p" + (newAttributeNamespaces.Count + 1);
-					
+						prefix = "d" + indentLevel + "p" + (++autoCreatedPrefixes);
+					createPrefix = false;
 					// check if prefix exists. If yes - check if namespace is the same.
 					if (newAttributeNamespaces [prefix] == null)
 						newAttributeNamespaces.Add (prefix, ns);
 					else if (!newAttributeNamespaces [prefix].Equals (ns))
-						throw new ArgumentException ("Duplicate prefix with different namespace");
+//						throw new ArgumentException ("Duplicate prefix with different namespace");
+						createPrefix = true;
+			} while (createPrefix);
 				}
 
 				if (prefix == String.Empty && ns != XmlnsNamespace)
