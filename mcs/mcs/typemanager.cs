@@ -1487,19 +1487,22 @@ public class TypeManager {
 	/// </remarks>
 	public static string IndexerPropertyName (Type t)
 	{
-		
 		if (t is TypeBuilder) {
-			TypeContainer tc = (TypeContainer) builder_to_container [t];
+			if (t.IsInterface) {
+				Interface i = LookupInterface (t);
 
-			//
-			// FIXME: Temporary hack, until we deploy the IndexerName
-			// property code (and attributes) in the interface code.
-			//
-			if (tc == null){
-				return "Item";
+				if ((i == null) || (i.IndexerName == null))
+					return "Item";
+
+				return i.IndexerName;
+			} else {
+				TypeContainer tc = LookupTypeContainer (t);
+
+				if ((tc == null) || (tc.IndexerName == null))
+					return "Item";
+
+				return tc.IndexerName;
 			}
-			
-			return tc.IndexerName;
 		}
 		
 		System.Attribute attr = System.Attribute.GetCustomAttribute (

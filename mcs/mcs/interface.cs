@@ -47,6 +47,8 @@ namespace Mono.CSharp {
 		
 		Attributes OptAttributes;
 
+		public string IndexerName;
+
 		// These will happen after the semantic analysis
 		
 		// Hashtable defined_indexers;
@@ -460,8 +462,15 @@ namespace Mono.CSharp {
 				value_arg_types [1] = prop_type;
 			}
 
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  null, ModFlags, false);
+
+			IndexerName = Attribute.ScanForIndexerName (ec, ii.OptAttributes);
+			if (IndexerName == null)
+				IndexerName = "Item";
+			
 			pb = TypeBuilder.DefineProperty (
-				"Item", PropertyAttributes.None,
+				IndexerName, PropertyAttributes.None,
 				prop_type, arg_types);
 			
 			MethodBuilder set_item = null, get_item = null;
@@ -469,7 +478,8 @@ namespace Mono.CSharp {
 				Parameter [] p = ii.Parameters.FixedParameters;
 				
 				get_item = TypeBuilder.DefineMethod (
-					"get_Item", property_attributes, prop_type, arg_types);
+					"get_" + IndexerName, property_attributes,
+					prop_type, arg_types);
 				pb.SetGetMethod (get_item);
 				//
 				// HACK because System.Reflection.Emit is lame
@@ -502,7 +512,7 @@ namespace Mono.CSharp {
 				value_params.GetParameterInfo (decl_space);
 				
 				set_item = TypeBuilder.DefineMethod (
-					"set_Item", property_attributes,
+					"set_" + IndexerName, property_attributes,
 					TypeManager.void_type, value_arg_types);
 				pb.SetSetMethod (set_item);
 				//
@@ -524,9 +534,6 @@ namespace Mono.CSharp {
 				
 				set_item.DefineParameter (i + 1, ParameterAttributes.None, "value");
 			}
-
-			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
-							  null, ModFlags, false);
 
 			if (ii.OptAttributes != null)
 				Attribute.ApplyAttributes (ec, pb, ii, ii.OptAttributes, Location);
@@ -679,6 +686,40 @@ namespace Mono.CSharp {
 			
 			return TypeBuilder;
 		}
+
+		//
+		// Defines the indexers, and also verifies that the IndexerNameAttribute in the
+		// interface is consistent.  Either it is `Item' or it is the name defined by all the
+		// indexers with the `IndexerName' attribute.
+		//
+		// Turns out that the IndexerNameAttribute is applied to each indexer,
+		// but it is never emitted, instead a DefaultName attribute is attached
+		// to the interface
+		//
+		void DefineIndexers (TypeContainer parent)
+		{
+			string interface_indexer_name;
+
+			foreach (InterfaceIndexer ii in defined_indexer){
+
+				PopulateIndexer (parent, this, ii);
+
+				if (interface_indexer_name == null){
+					interface_indexer_name = IndexerName;
+					continue;
+				}
+				
+				if (IndexerName == interface_indexer_name)
+					continue;
+				
+				Report.Error (
+					668, "Two indexers have different names, " +
+					" you should use the same name for all your indexers");
+			}
+			if (interface_indexer_name == null)
+				interface_indexer_name = "Item";
+			IndexerName = interface_indexer_name;
+		}
 		
 		/// <summary>
 		///   Performs semantic analysis, and then generates the IL interfaces
@@ -702,15 +743,11 @@ namespace Mono.CSharp {
 				foreach (InterfaceEvent ie in defined_events)
 					PopulateEvent (parent, this, ie);
 
-			//
-			// FIXME: Pull the right indexer name out of the `IndexerName' attribute
-			//
 			if (defined_indexer != null) {
-				foreach (InterfaceIndexer ii in defined_indexer)
-					PopulateIndexer (parent, this, ii);
+				DefineIndexers (parent);
 
 				CustomAttributeBuilder cb = EmitDefaultMemberAttr (
-					parent, "Item", ModFlags, Location);
+					parent, IndexerName, ModFlags, Location);
 				if (cb != null)
 					TypeBuilder.SetCustomAttribute (cb);
  			}

@@ -1,3 +1,39 @@
+2002-07-23  Martin Baulig  <martin@gnome.org>
+
+	Implemented the IndexerName attribute in interfaces.
+
+	* class.cs (TypeContainer.DefineIndexers): Don't set the indexer
+	name if this is an explicit interface implementation.
+	(Indexer.InterfaceIndexerName): New public variable.  If we're
+	implementing an interface indexer, this is the IndexerName in that
+	interface.  Otherwise, it's the IndexerName.
+	(Indexer.DefineMethod): If we're implementing interface indexer,
+	set InterfaceIndexerName.  Use the new Pending.IsInterfaceIndexer
+	and Pending.ImplementIndexer methods.
+	(Indexer.Define): Also define the PropertyBuilder if we're
+	implementing an interface indexer and this is neither an explicit
+	interface implementation nor do the IndexerName match the one in
+	the interface.
+
+	* pending.cs (TypeAndMethods): Added `MethodInfo [] need_proxy'.
+	If a method is defined here, then we always need to create a proxy
+	for it.  This is used when implementing interface indexers.
+	(Pending.IsInterfaceIndexer): New public method.
+	(Pending.ImplementIndexer): New public method.
+	(Pending.InterfaceMethod): Added `MethodInfo need_proxy' argument.
+	This is used when implementing interface indexers to define a proxy
+	if necessary.
+	(Pending.VerifyPendingMethods): Look in the `need_proxy' array and
+	define a proxy if necessary.
+
+	* interface.cs (Interface.IndexerName): New public variable.
+	(Interface.PopulateIndexer): Set the IndexerName.
+	(Interface.DefineIndexers): New private method.  Populate all the
+	indexers and make sure their IndexerNames match.
+
+	* typemanager.cs (IndexerPropertyName): Added support for interface
+	indexers.
+
 2002-07-22  Martin Baulig  <martin@gnome.org>
 
 	* codegen.cs (EmitContext.HasReturnLabel): New public variable.

@@ -918,6 +918,10 @@ namespace Mono.CSharp {
 				i.Define (this);
 
 				name = i.IndexerName;
+
+				if (i.InterfaceType != null)
+					continue;
+
 				if (class_indexer_name == null){
 					class_indexer_name = name;
 					continue;
@@ -3345,6 +3349,7 @@ namespace Mono.CSharp {
 		public PropertyBuilder PropertyBuilder;
 	        public Type IndexerType;
 		public string IndexerName;
+		public string InterfaceIndexerName;
 		
 		EmitContext ec;
 		
@@ -3370,8 +3375,11 @@ namespace Mono.CSharp {
 			bool is_implementation;
 
 			if (parent.Pending != null){
-				implementing = parent.Pending.IsInterfaceMethod (
-					explicit_iface_type, name, ret_type, parameters);
+				implementing = parent.Pending.IsInterfaceIndexer (
+					explicit_iface_type, ret_type, parameters);
+
+				if (implementing != null)
+					InterfaceIndexerName = implementing.Name.Substring (4);
 
 				if (explicit_iface_type != null && implementing == null){
 					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (Location, "this");
@@ -3409,6 +3417,14 @@ namespace Mono.CSharp {
 					}
 				}
 			}
+
+			string meth_name = null;
+			string prefix;
+			if (explicit_iface_type == null)
+				prefix = "";
+			else
+				prefix = explicit_iface_type.FullName + ".";
+
 			if (implementing != null){
 				//
 				// When implementing interface methods, set NewSlot.
@@ -3420,44 +3436,43 @@ namespace Mono.CSharp {
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
 
-				//
-				// clear the pending implementing flag
-				//
-				parent.Pending.ImplementMethod (
-					explicit_iface_type, name, ret_type, parameters, true);
+				// Get the method name from the explicit interface.
+				if (explicit_iface_type != null)
+					meth_name = prefix + implementing.Name;
 			}
 
-			//
-			// If this is not an explicit interface implementation,
-			// clear implementing, as it is only used for explicit
-			// interface implementation
-			//
-			if (InterfaceType == null)
-				implementing = null;
-
-			string prefix;
-			if (explicit_iface_type == null)
-				prefix = "";
-			else
-				prefix = explicit_iface_type.FullName + ".";
-			
 			if (is_get){
-				string meth_name = prefix + "get_" + IndexerName;
+				if (meth_name == null)
+					meth_name = prefix + "get_" + IndexerName;
 				
 				GetBuilder = parent.TypeBuilder.DefineMethod (
 					meth_name, attr, IndexerType, parameters);
 
-				if (implementing != null) 
-					parent.TypeBuilder.DefineMethodOverride (
-						GetBuilder, implementing);
+				if (implementing != null) {
+					parent.Pending.ImplementIndexer (
+						explicit_iface_type, GetBuilder,
+						ret_type, parameters, true);
+
+					if (InterfaceType != null)
+						parent.TypeBuilder.DefineMethodOverride (
+							GetBuilder, implementing);
+				}
 			} else {
-				string meth_name = prefix + "set_" + IndexerName;
+				if (meth_name == null)
+					meth_name = prefix + "set_" + IndexerName;
 
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 				        meth_name, attr, null, parameters);
-				if (implementing != null)
-					parent.TypeBuilder.DefineMethodOverride (
-						SetBuilder, implementing);
+
+				if (implementing != null) {
+					parent.Pending.ImplementIndexer (
+						explicit_iface_type, SetBuilder,
+						ret_type, parameters, true);
+
+					if (InterfaceType != null)
+						parent.TypeBuilder.DefineMethodOverride (
+							SetBuilder, implementing);
+				}
 			}
 
 			return is_implementation;
@@ -3516,7 +3531,16 @@ namespace Mono.CSharp {
 			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);
 			if (IndexerName == null)
 				IndexerName = "Item";
-			
+			else if (explicit_iface_type != null)
+				Report.Error (592, Location,
+					      "Attribute 'IndexerName' is not valid on this declaration " +
+					      "type. It is valid on `property' declarations only.");
+
+			if (explicit_iface_type != null)
+				InterfaceIndexerName = TypeManager.IndexerPropertyName (explicit_iface_type);
+			else
+				InterfaceIndexerName = IndexerName;
+
 			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
 
 			bool is_implementing = false;
@@ -3616,10 +3640,13 @@ namespace Mono.CSharp {
 
 
 			//
-			// Only define the PropertyBuilder if we are not implementing
-			// an interface property.
+			// Define the PropertyBuilder if one of the following conditions are met:
+			// a) we're not implementing an interface indexer.
+			// b) the indexer has a different IndexerName and this is no
+			//    explicit interface implementation.
 			//
-			if (!is_implementing){
+			if (!is_implementing ||
+			    ((explicit_iface_type == null) && (IndexerName != InterfaceIndexerName))){
 				PropertyBuilder = parent.TypeBuilder.DefineProperty (
 					IndexerName, prop_attr, IndexerType, parameters);
 
