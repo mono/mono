@@ -1,5 +1,10 @@
 2005-03-29  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #74060.
+	* expression.cs (MemberAccess.ResolveMemberAccess): Allow the
+	internal field "value__" of an enum be private.  The examples for
+	"value__" that I found on MSDN all used FieldAttributes.Private.
+
 	* decl.cs (MemberCache.AddMethods): Use C# terminology in warning.
 	Don't mention IL method attribute names.
 

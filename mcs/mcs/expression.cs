@@ -7322,7 +7322,7 @@ namespace Mono.CSharp {
 						
 						Expression enum_member = MemberLookup (
 							ec, decl_type, "value__", MemberTypes.Field,
-							AllBindingFlags, loc); 
+							AllBindingFlags | BindingFlags.NonPublic, loc); 
 
 						Enum en = TypeManager.LookupEnum (decl_type);
 
