@@ -1,4 +1,9 @@
 
+Tue Jun 15 18:34:21 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, monitor.h, object.h, threadpool.c, threadpool.h,
+	threads-types.h: more API cleanups.
+
 Tue Jun 15 16:40:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* domain-internals.h, Makefile.am, appdomain.c, appdomain.h,
