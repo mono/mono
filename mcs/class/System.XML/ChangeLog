@@ -1,3 +1,7 @@
+2004-07-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources: added Mono.Xml/SubtreeXmlReader.cs
+
 2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources: added Mono.Xml.XPath/XPathEditableDocument.cs
