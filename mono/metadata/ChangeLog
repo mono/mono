@@ -1,3 +1,12 @@
+2004-01-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (ves_icall_System_AppDomain_LoadAssembly): Receive the
+	assembly name as an string instead of an AssemblyName, since it is
+	easier to extract info from it.
+
+	* appdomain.c (mono_domain_assembly_preload): Look for assemblies in
+	the culture subdirectories too. Fixes #52231.
+
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: renamed ves_icall_Type_GetMethods to GetMethodsByName.
