@@ -1,3 +1,11 @@
+2005-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* driver.c: Added --security option to activate the security manager.
+	Right now this will allow code generation for declarative demands and
+	is disabled when AOT is specified.
+	* mini.c: Add code generation for declarative security demands.
+	* mini.h: Add mono_use_security_manager as an extern gboolean.
+
 2005-01-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_compile_assembly): Speed up compilation a bit by
