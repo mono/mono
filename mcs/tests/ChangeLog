@@ -1,3 +1,7 @@
+2004-06-18  Raja R Harinath  <rharinath@novell.com>
+
+	* test-272.cs: New test case for the breaking build.
+
 2004-06-13  Martin Baulig  <martin@ximian.com>
 
 	* gen-57.cs: New test.
