@@ -1,0 +1,8 @@
+2003-04-22  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* NextPrimeFinder.cs: New. Prime Generator.
+	Support class for BigInteger (commited for Ben Maurer).
+	* PrimeGeneratorBase.cs: New. Abstract Prime Generator.
+	Support class for BigInteger (commited for Ben Maurer).
+	* SequentialSearchPrimeGeneratorBase.cs: New. Prime Generator.
+	Support class for BigInteger (commited for Ben Maurer).
