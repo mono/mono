@@ -1099,6 +1099,13 @@ fixed_parameter
 	| opt_attributes
 	  opt_parameter_modifier
 	  type
+	  {
+		Report.Error (1001, lexer.Location, "Identifier expected");
+		$$ = null;
+	  }
+	| opt_attributes
+	  opt_parameter_modifier
+	  type
 	  error {
 		CheckIdentifierToken (yyToken);
 		$$ = null;
