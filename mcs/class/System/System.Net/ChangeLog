@@ -1,3 +1,7 @@
+2004-10-10 David Sheldon <dave-mono@earth.li>
+  
+  * HttpWebRequest.cs: Use RemoveAndAdd for AddRange. Fixes unittest.
+
 2004-10-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: use RemoveAndAdd for headers multivalue headers.
