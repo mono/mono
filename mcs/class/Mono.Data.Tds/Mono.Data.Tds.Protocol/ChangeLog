@@ -1,3 +1,15 @@
+2002-11-01  Tim Coleman (tim@timcoleman.com)
+	* ITds.cs:
+		Add DoneProc property
+	* Tds.cs:
+		*Lots*.  Some stuff to get binary types
+		to work, other stuff to get new prepares
+		working.
+	* TdsPacketEndTokenResult.cs:
+		Add Packetsubtype property
+	* TdsPacketRowResult:
+		Now implements ICollection and IList.
+
 2002-10-31  Tim Coleman (tim@timcoleman.com)
 	* TdsSchemaInfo.cs:
 		Added because I can't really use SchemaInfo
