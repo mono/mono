@@ -232,6 +232,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void ReadAttributeValue ()
 		{
 			RunTest ("<root attr=''/>", new TestMethod (ReadAttributeValue));
@@ -249,7 +250,7 @@ namespace MonoTests.System.Xml
 			// MS.NET XmlTextReader fails. Its Prefix returns 
 			// null instead of "". It is fixed in MS.NET 2.0.
 			this.AssertNodeValues (reader, XmlNodeType.Text,
-				2, false, "", null, "", null, "", true, 1, true);
+				2, false, "", "", "", "", "", true, 1, true);
 			Assert (reader.MoveToElement ());
 			this.AssertNodeValues (reader, XmlNodeType.Element,
 				0, true, "root", "", "root", "", "", false, 1, true);

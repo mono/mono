@@ -1,5 +1,10 @@
 2004-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderCommonTests.cs :
+	  Oops, ReadAttributeValue() was not reverted. Now marked as NotDotNet.
+
+2004-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderCommonTests.cs : reverted r38601. It is MS XmlTextReader
 	  that is buggy on attribute value's Prefix and NamespaceURI.
 
