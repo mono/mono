@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 //[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 //[assembly: AssemblyTrademark("")]
 
-[assembly: CLSCompliant(true)]
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: AssemblyDelaySign(true)]
