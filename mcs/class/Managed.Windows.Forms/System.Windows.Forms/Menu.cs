@@ -41,8 +41,6 @@ namespace System.Windows.Forms
 		
  		protected Menu (MenuItem[] items)
 		{
-			//Console.WriteLine ("Menu.Menu " + (items != null));
-
 			menu_items = new MenuItemCollection (this);
 
 			if (items != null)
@@ -64,7 +62,10 @@ namespace System.Windows.Forms
 		
 		public virtual bool IsParent {
 			get {
-				throw new NotImplementedException ();
+				if (menu_items != null && menu_items.Count > 0)
+					return true;
+				else
+					return false;
 			}
 		}
 		
@@ -95,9 +96,12 @@ namespace System.Windows.Forms
 			return menu;
 		}
 
-		protected override void Dispose (bool diposing)
+		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			if (disposing) {
+				if (menu_handle != IntPtr.Zero)
+					MenuAPI.DestroyMenu (menu_handle);
+			}
 		}
 		
 		public MenuItem FindMenuItem (int type, IntPtr value)
@@ -117,7 +121,10 @@ namespace System.Windows.Forms
 		
 		public MainMenu GetMainMenu ()
 		{
-			throw new NotImplementedException ();
+			if (this is MainMenu)
+				return (MainMenu) this;
+			else 
+				return null;
 		}
 		
 		public virtual void MergeMenu (Menu menuSrc)
@@ -127,12 +134,13 @@ namespace System.Windows.Forms
 
 		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
-			throw new NotImplementedException ();
+			return false;			
 		}
 
 		public override string ToString ()
-		{
-			throw new NotImplementedException ();
+		{			
+			return base.ToString ();
+						
 		}
 
 		#endregion Public Methods
@@ -201,7 +209,7 @@ namespace System.Windows.Forms
 			{
 				mi.parent_menu = owner;
 				items.Add (mi);
-
+				
 				return items.Count - 1;
 			}
 
@@ -242,32 +250,32 @@ namespace System.Windows.Forms
 
 			public bool Contains (MenuItem value)
 			{
-				throw new NotImplementedException ();
+				return items.Contains (value);
 			}
 			
 			public virtual void CopyTo (Array dest, int index)
 			{
-				throw new NotImplementedException ();
+				throw new NotImplementedException ();	
 			}
 			
 			public virtual IEnumerator GetEnumerator ()
 			{
-				throw new NotImplementedException ();
+				return items.GetEnumerator ();
 			}
 			
 			int IList.Add (object value)
 			{
-				throw new NotImplementedException ();
+				return Add ((MenuItem)value);
 			}
 
 			bool IList.Contains (object value)
 			{
-				throw new NotImplementedException ();
+				return Contains ((MenuItem)value);
 			}
 
 			int IList.IndexOf (object value)
 			{
-				throw new NotImplementedException ();
+				return IndexOf ((MenuItem)value);
 			}
 
 			void IList.Insert (int index, object value)
@@ -282,7 +290,7 @@ namespace System.Windows.Forms
 
 			public int IndexOf (MenuItem value)
 			{
-				throw new NotImplementedException ();
+				return items.IndexOf (value);
 			}
 
 			public virtual void Remove (MenuItem item)

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.19 $
+// $Revision: 1.20 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.20  2004/10/29 15:55:26  jordi
+// Menu key navigation, itemcollection completion, menu fixes
+//
 // Revision 1.19  2004/10/20 03:56:23  pbartok
 // - Added private FormParentWindow class which acts as the container for
 //   our form and as the non-client area where menus are drawn
@@ -256,7 +259,7 @@ namespace System.Windows.Forms {
 		
 		
 			private void OnDrawMenu (Graphics dc) {
-				if (owner.menu != null) {								
+				if (owner.menu != null) {													
 					Rectangle rect = new Rectangle (0,0, Width, 0);			
 					MenuAPI.DrawMenuBar (dc, owner.menu.Handle, rect);
 				}			
@@ -399,6 +402,7 @@ namespace System.Windows.Forms {
 					}
 
 					menu.SetForm (this);
+					MenuAPI.SetMenuBarWindow (menu.Handle, this);
 				}
 			}
 		}

@@ -76,7 +76,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return base.ToString ();
 		}
 
 		#endregion Public Methods

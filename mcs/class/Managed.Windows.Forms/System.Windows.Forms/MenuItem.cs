@@ -285,7 +285,7 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}		
 		
-		public void MergeMenu (MenuItem menuteim)
+		public void MergeMenu (MenuItem menuitem)
 		{
 			throw new NotImplementedException ();
 		}
@@ -298,7 +298,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
-
+			if (DrawItem != null)
+				DrawItem (this, e);
 		}
 
 		
@@ -309,12 +310,14 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMeasureItem (MeasureItemEventArgs e)
 		{
-
+			if (MeasureItem != null)
+				MeasureItem (this, e);			
 		}
 
 		protected virtual void OnPopup (EventArgs e)
 		{
-
+			if (Popup != null)
+				Popup (this, e);
 		}
 
 		protected virtual void OnSelect (EventArgs e)
@@ -351,7 +354,7 @@ namespace System.Windows.Forms
 			index = MenuAPI.InsertMenuItem (Parent.menu_handle, -1, true, this, ref hSubMenu);
 
 			if (IsPopup) {
-				Console.WriteLine ("MenuItem.Create Popup:" + hSubMenu);
+				//Console.WriteLine ("MenuItem.Create Popup:" + hSubMenu);
 				menu_handle = hSubMenu;
 				CreateItems ();
 			}

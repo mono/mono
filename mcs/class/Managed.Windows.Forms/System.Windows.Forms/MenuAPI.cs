@@ -64,8 +64,9 @@ namespace System.Windows.Forms
 			public ArrayList	items;		// Array of menu items
 			public int		FocusedItem;	// Currently focused item
 			public IntPtr		hParent;
-
+			public TRACKER		tracker;
 			public MENUITEM		SelectedItem;	// Currently focused item
+			public bool 		bMenubar;
 
 			public MENU ()
 			{
@@ -74,41 +75,44 @@ namespace System.Windows.Forms
 				items = new ArrayList ();
 				Flags = MF.MF_INSERT;
 				Width = Height = FocusedItem = 0;
+				tracker = new TRACKER ();
+				bMenubar = false;
 			}
+
 		}
 
 		public class MENUITEM
 		{
 			public	MenuItem 	item;
 			public  Rectangle	rect;
-			public	int		fMask; 
-			public	int		fType; 
-			public	MF		fState; 
-			public 	int    		wID; 
+			public	int		fMask;
+			public	int		fType;
+			public	MF		fState;
+			public 	int    		wID;
 			public	IntPtr		hSubMenu;
 			public 	int		xTab;
+			public  int 		pos;	/* Position in the menuitems array*/
 
 			public MENUITEM ()
 			{
 				xTab = 0;
 				fMask = 0;
 				wID = 0;
+				pos = 0;
 				rect = new Rectangle ();
 			}
+
 		};
 
 		public class TRACKER
 		{
 		    	public 	IntPtr	hCurrentMenu;
 		    	public	IntPtr	hTopMenu;
-		    	public 	bool menubar;
 
 		    	public TRACKER ()
 			{
 				hCurrentMenu = hTopMenu = IntPtr.Zero;
-				menubar = false;
 			}
-
 		};
 
 		static void DumpMenuItems (ArrayList list)
@@ -125,6 +129,14 @@ namespace System.Windows.Forms
 		{
 			Down,
 			Move,
+		}
+
+		internal enum ItemNavigation
+		{
+			First,
+			Last,
+			Next,
+			Previous
 		}
 
 		internal enum MF
@@ -156,7 +168,7 @@ namespace System.Windows.Forms
 			MF_RIGHTJUSTIFY     = 0x4000,
 			MF_MENUBAR	    = 0x8000	// Internal
 		}
-				
+
 		static MenuAPI ()
 		{
 			Console.WriteLine ("MenuAPI::MenuAPI");
@@ -203,8 +215,7 @@ namespace System.Windows.Forms
 			return StoreMenuID (popMenu);
 		}
 
-		static public int InsertMenuItem (IntPtr hMenu, int uItem, bool fByPosition, MenuItem item,
-			ref IntPtr hSubMenu)
+		static public int InsertMenuItem (IntPtr hMenu, int uItem, bool fByPosition, MenuItem item, ref IntPtr hSubMenu)
 		{
 			int id;
 
@@ -222,6 +233,8 @@ namespace System.Windows.Forms
 
 			if (item.IsPopup) {
 				menu_item.hSubMenu = CreatePopupMenu ();
+				MENU submenu = GetMenuFromID (menu_item.hSubMenu);
+				submenu.hParent = hMenu;
 			}
 			else
 				menu_item.hSubMenu = IntPtr.Zero;
@@ -231,6 +244,7 @@ namespace System.Windows.Forms
 			hSubMenu = menu_item.hSubMenu;
 
 			id = menu.items.Count;
+			menu_item.pos = menu.items.Count;
 			menu.items.Insert (uItem, menu_item);
 
 			//Console.WriteLine ("InsertMenuItem {0} {1} {2}" + menu.items.Count,
@@ -239,33 +253,27 @@ namespace System.Windows.Forms
 		}
 
 		// X and Y are screen coordinates
-		static public bool TrackPopupMenu (IntPtr hTopMenu, IntPtr hMenu, Point pnt,  bool menubar, Control Wnd)
+		static public bool TrackPopupMenu (IntPtr hTopMenu, IntPtr hMenu, Point pnt, bool bMenubar, Control Wnd)
 		{
-			Console.WriteLine ("TrackPopupMenu start");
 			MENU menu = GetMenuFromID (hMenu);
-			TRACKER tracker = new TRACKER ();
-			PopUpWindow popup = new PopUpWindow (hMenu, tracker);
+			PopUpWindow popup = new PopUpWindow (hMenu);
 			menu.Wnd = popup;
-			tracker.hCurrentMenu = hMenu;
-			tracker.hTopMenu = hTopMenu;
-			tracker.menubar = menubar;
+			menu.tracker.hCurrentMenu = hMenu;
+			menu.tracker.hTopMenu = hTopMenu;
+			//menu.bMenubar = bMenubar;
 
-			//Console.WriteLine ("TrackPopupMenu:Setting current to {0}", menu.hCurrent);
-			//Console.WriteLine ("menubar: path2 {0}" + pnt);
+			MENUITEM select_item = GetNextItem (hMenu, ItemNavigation.First);
+
+			if (select_item != null)
+				MenuAPI.SelectItem (hMenu, select_item, false);
 
 			popup.Location =  popup.PointToClient (pnt);
 			popup.ShowWindow ();
-			//MenuAPI.DumpMenuItems (menu.items);
+			menu.Wnd.Refresh ();
 
-			MSG msg = new MSG();
-
-			while (XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0))  {
-				XplatUI.TranslateMessage(ref msg);
-				XplatUI.DispatchMessage(ref msg);
-			}
+			Application.Run ();
 
 			//popup.DestroyHandle ();
-			Console.WriteLine ("TrackPopupMenu end");
 			menu.Wnd = null;
 			return true;
 		}
@@ -278,9 +286,9 @@ namespace System.Windows.Forms
 		{
 			item.rect.Y = y;
 			item.rect.X = x;
-			
+
 			if (item.item.Visible == false)
-				return;	
+				return;
 
 			if (item.item.Separator == true) {
 				item.rect.Height = SEPARATOR_HEIGHT / 2;
@@ -367,9 +375,9 @@ namespace System.Windows.Forms
 		static public void DrawMenuItem (Graphics dc, MENUITEM item, int menu_height, bool menuBar)
 		{
 			StringFormat string_format;
-			
+
 			if (item.item.Visible == false)
-				return;	
+				return;
 
 			if (menuBar)
 				string_format = string_format_menubar_text;
@@ -411,14 +419,14 @@ namespace System.Windows.Forms
 
 			if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE) {
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(ThemeEngine.Current.ColorHilight), item.rect);				
-			} 
+					(ThemeEngine.Current.ColorHilight), item.rect);
+			}
 
 			if (item.item.Enabled) {
 
 				Color color_text;
 
-				if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE)					
+				if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE)
 					color_text = ThemeEngine.Current.ColorHilightText;
 				else
 					color_text = ThemeEngine.Current.ColorMenuText;
@@ -475,7 +483,7 @@ namespace System.Windows.Forms
 					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Checkmark);
 
 				bmp.MakeTransparent ();
-				dc.DrawImage (bmp, area.X, item.rect.Y + (item.rect.Height /2)); //aki
+				dc.DrawImage (bmp, area.X, item.rect.Y + (item.rect.Height /2));
 
 				gr.Dispose ();
 				bmp.Dispose ();
@@ -509,10 +517,10 @@ namespace System.Windows.Forms
 			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
 				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
 
-			for (int i = 0; i < menu.items.Count; i++) 
+			for (int i = 0; i < menu.items.Count; i++)
 				if (cliparea.IntersectsWith (((MENUITEM) menu.items[i]).rect)) {
-					DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, false);
-				
+					DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, menu.bMenubar);
+
 			}
 		}
 
@@ -524,7 +532,6 @@ namespace System.Windows.Forms
 			MENU menu = GetMenuFromID (hMenu);
 			MENUITEM item;
 
-			menu.Width = 0;
 			while (i < menu.items.Count) {
 
 				item = (MENUITEM) menu.items[i];
@@ -537,7 +544,7 @@ namespace System.Windows.Forms
 					menu.Height = item.rect.Height;
 			}
 
-			menu.Width = x;
+			menu.Width = width;
 			return menu.Height;
 		}
 
@@ -553,15 +560,16 @@ namespace System.Windows.Forms
 			rect.Height = menu.Height;
 			rect.Width = menu.Width;
 
-			for (int i = 0; i < menu.items.Count; i++) {
+			Console.WriteLine ("DrawMenuBar {0}", rect);
+
+			for (int i = 0; i < menu.items.Count; i++)
 				DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, true);
-			}
 		}
 
 		/*
 			Menu handeling API
 		*/
-		static public MENUITEM FindItemByCoords (IntPtr hMenu, Point pt, ref int pos)
+		static public MENUITEM FindItemByCoords (IntPtr hMenu, Point pt)
 		{
 			MENU menu = GetMenuFromID (hMenu);
 
@@ -569,20 +577,19 @@ namespace System.Windows.Forms
 				MENUITEM item = (MENUITEM) menu.items[i];
 				if (item.rect.Contains (pt)) {
 					//Console.WriteLine ("FindItemByCoords: " + item.item.Text);
-					pos = i;
 					return item;
 				}
 			}
 
 			//Console.WriteLine ("FindItemByCoords none ");
-			pos = -1;
 			return null;
 		}
 
-		static public void SelectItem (TRACKER tracker, IntPtr hMenu, MENUITEM item, int pos, bool execute)
+		static public void SelectItem (IntPtr hMenu, MENUITEM item, bool execute)
 		{
 			MENU menu = GetMenuFromID (hMenu);
-			
+			//int pos = 0;
+
 			//Console.WriteLine ("Current: {0} select {1}", menu_parent.hCurrent, hMenu);
 			MENUITEM highlight_item = null;
 
@@ -600,49 +607,57 @@ namespace System.Windows.Forms
 
 			//Console.WriteLine ("SelectItem:Current is {0} {1}", tracker.hCurrentMenu, hMenu);
 
-			if (tracker.hCurrentMenu != hMenu) {
+			if (menu.tracker.hCurrentMenu != hMenu) {
 				Console.WriteLine ("Changing current menu!");
 				HideSubPopups (hMenu);
-				tracker.hCurrentMenu = hMenu;
+				menu.tracker.hCurrentMenu = hMenu;
 			}
-			
+
 			/* Unselect previous item*/
 			for (int i = 0; i < menu.items.Count; i++) {
 				MENUITEM it = (MENUITEM) menu.items[i];
 
 				if ((it.fState & MF.MF_HILITE) == MF.MF_HILITE) {
 					it.fState = item.fState & ~MF.MF_HILITE;
-					menu.items[i] = it;
 					menu.Wnd.Invalidate (it.rect);
+
+					if (menu.bMenubar)
+						Console.WriteLine ("**Select item invalidate {0}", it.rect);
+
 				}
+
+				//if (menu.items[i].Equals(item))
+				//	pos = i;
 			}
 
+			menu.SelectedItem = item;
 			item.fState |= MF.MF_HILITE;
-			menu.items[pos] = item;
+			//menu.items[pos] = item;
+
+			if (menu.bMenubar)
+				Console.WriteLine ("**Select item invalidate {0}", item.rect);
+
 			menu.Wnd.Invalidate (item.rect);
 
-			//Console.WriteLine ("SelectItem {0} {1} {2} {3}", item.item.Text, item.fState,
-			//	((MENUITEM)(menu.items[pos])).fState, pos);
-
 			if (execute)
-				ExecFocusedItem (tracker, hMenu, item);
+				ExecFocusedItem (hMenu, item);
 		}
 
 		/*
 			Used when the user executes the action of an item (press enter, shortcut)
 			or a sub-popup menu has to be shown
 		*/
-		static public void ExecFocusedItem (TRACKER tracker, IntPtr hMenu, MENUITEM item)
+		static public void ExecFocusedItem (IntPtr hMenu, MENUITEM item)
 		{
 			if (item.item.IsPopup) {
-				ShowSubPopup (tracker, hMenu, item.hSubMenu, item);
+				ShowSubPopup (hMenu, item.hSubMenu, item);
 			}
 			else {
 				// Execute function
 			}
 		}
 
-		static public void ShowSubPopup (TRACKER tracker, IntPtr hParent, IntPtr hMenu, MENUITEM item)
+		static public void ShowSubPopup (IntPtr hParent, IntPtr hMenu, MENUITEM item)
 		{
 			MENU menu = GetMenuFromID (hMenu);
 
@@ -653,29 +668,35 @@ namespace System.Windows.Forms
 				return;
 
 			MENU menu_parent = GetMenuFromID (hParent);
-			PopUpWindow popup = new PopUpWindow (hMenu, tracker);
+			PopUpWindow popup = new PopUpWindow (hMenu);
 			((PopUpWindow)menu_parent.Wnd).LostFocus ();
 			menu.Wnd = popup;
-			tracker.hCurrentMenu = hMenu;
+			menu.tracker.hCurrentMenu = hMenu;
 
-			Console.WriteLine ("ShowSubPopup:Setting current to {0}", tracker.hCurrentMenu);
+			//Console.WriteLine ("ShowSubPopup:Setting current to {0}", menu.tracker.hCurrentMenu);
 
 			Point pnt = new Point ();
 			pnt.X = item.rect.X + item.rect.Width;
 			pnt.Y = item.rect.Y + 1;
-			Console.WriteLine ("ShowSubPopup prev:" + pnt);
+			//Console.WriteLine ("ShowSubPopup prev:" + pnt);
 			pnt = menu_parent.Wnd.PointToScreen (pnt);
 			popup.Location = pnt;
+
+			MENUITEM select_item = GetNextItem (hMenu, ItemNavigation.First);
+
+			if (select_item != null)
+				MenuAPI.SelectItem (hMenu, select_item, false);
+
 			popup.ShowWindow ();
 			popup.Refresh ();
 
-			Console.WriteLine ("ShowSubPopup location:" + popup.Location);
+			//Console.WriteLine ("ShowSubPopup location:" + popup.Location);
 		}
 
 		/* Hides all the submenus open in a menu */
 		static public void HideSubPopups (IntPtr hMenu)
 		{
-			Console.WriteLine ("HideSubPopups: " + hMenu);
+			//Console.WriteLine ("HideSubPopups: " + hMenu);
 
 			MENU menu = GetMenuFromID (hMenu);
 			MENUITEM item;
@@ -687,7 +708,7 @@ namespace System.Windows.Forms
 					MENU sub_menu = GetMenuFromID (item.hSubMenu);
 
 					if (sub_menu.Wnd != null) {
-						Console.WriteLine ("Hiding!");
+						//Console.WriteLine ("Hiding!");
 						HideSubPopups (item.hSubMenu);
 						((PopUpWindow)sub_menu.Wnd).Destroy ();
 						sub_menu.Wnd = null;
@@ -698,6 +719,9 @@ namespace System.Windows.Forms
 
 		static public void DestroyMenu (IntPtr hMenu)
 		{
+			if (hMenu == IntPtr.Zero)
+				return;
+
 			MENU menu = GetMenuFromID (hMenu);
 			MENUITEM item;
 
@@ -714,12 +738,10 @@ namespace System.Windows.Forms
 				}
 			}
 
-			Console.WriteLine ("Menu.Wnd1: " + menu);
-			Console.WriteLine ("Menu.Wnd2: " + menu.Wnd);
 			// TODO: Remove from list
 
 			// Do not destroy the window of a Menubar
-			if (menu.Wnd != null && ((menu.Flags & MF.MF_POPUP) ==  MF.MF_POPUP)) {
+			if (menu.Wnd != null && menu.bMenubar == false) {
 				((PopUpWindow)menu.Wnd).Destroy ();
 				menu.Wnd = null;
 			}
@@ -727,74 +749,54 @@ namespace System.Windows.Forms
 
 		static public void SetMenuBarWindow (IntPtr hMenu, Control wnd)
 		{
+			Console.WriteLine ("SetMenuBarWindow {0}", hMenu);
 			MENU menu = GetMenuFromID (hMenu);
 			menu.Wnd = wnd;
+			menu.bMenubar = true;
 		}
 
-		static TRACKER tracker = new TRACKER ();
-		//static Control mywnd  = null;
+		static private void MenuBarMove (IntPtr hMenu, MENUITEM item)
+		{
+
+			MENU menu = GetMenuFromID (hMenu);
+			Point pnt = new Point (item.rect.X, item.rect.Y + item.rect.Height);
+			pnt = menu.Wnd.PointToScreen (pnt);
+
+			Console.WriteLine ("MenuBarMove {0} {1}", item.item.Text, menu.tracker.hCurrentMenu);
+
+			MenuAPI.SelectItem (hMenu, item, false);
+			MenuAPI.DestroyMenu (menu.tracker.hCurrentMenu);
+			menu.tracker.hCurrentMenu = hMenu;
+			MenuAPI.TrackPopupMenu (hMenu, item.hSubMenu, pnt, false, null);
+		}
 
 		// Function that process all menubar mouse events
 		static public void TrackBarMouseEvent (IntPtr hMenu, Control wnd, MouseEventArgs e, MenuMouseEvent eventype)
 		{
 			MENU menu = GetMenuFromID (hMenu);
-			int pos = 0;
-			Point pnt;
-
-			//if (mywnd == null)
-			//	mywnd = wnd;
 
 			switch (eventype) {
 				case MenuMouseEvent.Down: {
 
-					MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu,
-						new Point (e.X, e.Y), ref pos);
+					MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
 
 					//Console.WriteLine ("menubar: {0} {1}",item.rect.X,
 					//	item.rect.Y + item.rect.Height + 1);
 
-					if (item != null) {
+					if (item != null && menu.SelectedItem != item)
+						MenuBarMove (hMenu, item);
 
-						MenuAPI.SelectItem (tracker, hMenu, item, pos, false);
-						tracker.hCurrentMenu = hMenu;
-
-						pnt = new Point (item.rect.X, item.rect.Y + item.rect.Height);
-						pnt = wnd.PointToScreen (pnt);
-
-						menu.SelectedItem = item;
-						//wnd.Refresh ();
-						MenuAPI.TrackPopupMenu (hMenu, item.hSubMenu, pnt, true, null);
-					}
 					break;
 				}
 
-				case MenuMouseEvent.Move: { //aki
+				case MenuMouseEvent.Move: {
 
-					if (tracker.hCurrentMenu != IntPtr.Zero) {
+					if (menu.tracker.hCurrentMenu != IntPtr.Zero) {
 
-						Point p;
-						p = new Point (e.X, e.Y);
-						p = wnd.PointToScreen (p);
-						p = menu.Wnd.PointToClient (p);
+						MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
 
-						MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, p, ref pos);
-
-						if (item != null && menu.SelectedItem != item) {
-							//Console.WriteLine ("Changing from MenuMouseEvent.Move {0} {1} {2} {3}",
-							//	hMenu, item.item.Text, tracker.hCurrentMenu, hMenu);
-
-							menu.SelectedItem = item;
-
-							pnt = new Point (item.rect.X, item.rect.Y + item.rect.Height);
-							pnt = menu.Wnd.PointToScreen (pnt);
-							MenuAPI.SelectItem (tracker, hMenu, item, pos, false);
-
-							MenuAPI.DestroyMenu (tracker.hCurrentMenu);
-							tracker.hCurrentMenu = hMenu;
-
-							//((PopUpWindow)wnd).UpdateMenu ();
-							MenuAPI.TrackPopupMenu (hMenu, item.hSubMenu, pnt, true, null);
-						}
+						if (item != null && menu.SelectedItem != item)
+						MenuBarMove (hMenu, item);
 					}
 					break;
 				}
@@ -802,6 +804,218 @@ namespace System.Windows.Forms
 				default:
 					break;
 			}
+		}
+
+		static public MENUITEM FindItemByKey (IntPtr hMenu, IntPtr key)
+		{
+			MENU menu = GetMenuFromID (hMenu);
+			MENUITEM item;
+
+			char key_char = (char ) (key.ToInt32() & 0xff);
+			key_char = Char.ToUpper (key_char);
+
+			for (int i = 0; i < menu.items.Count; i++) {
+				item = (MENUITEM) menu.items[i];
+
+				//Console.WriteLine ("text {0} mnenonic {1} {2}", item.item.Text, item.item.Mnemonic, key_char);
+
+				if (item.item.Mnemonic == '\0')
+					continue;
+
+				if (item.item.Mnemonic == key_char)
+					return item;
+			}
+
+			return null;
+		}
+
+		// Get the next or previous selectable item on a menu
+		static public MENUITEM GetNextItem (IntPtr hMenu, ItemNavigation navigation)
+		{
+			MENU menu = GetMenuFromID (hMenu);
+			int pos = 0;
+			bool selectable_items = false;
+			MENUITEM item;
+
+			// Check if there is at least a selectable item
+			for (int i = 0; i < menu.items.Count; i++) {
+				item = (MENUITEM)menu.items[i];
+				if (item.item.Separator == false && item.item.Visible == true) {
+					selectable_items = true;
+					break;
+				}
+			}
+
+			if (selectable_items == false)
+				return null;
+
+			switch (navigation) {
+			case ItemNavigation.First: {
+				pos = 0;
+
+				/* Next item that is not separator and it is visible*/
+				for (; pos < menu.items.Count; pos++) {
+					item = (MENUITEM)menu.items[pos];
+					if (item.item.Separator == false && item.item.Visible == true)
+						break;
+				}
+
+				if (pos >= menu.items.Count) { /* Jump at the start of the menu */
+					pos = 0;
+					/* Next item that is not separator and it is visible*/
+					for (; pos < menu.items.Count; pos++) {
+						item = (MENUITEM)menu.items[pos];
+						if (item.item.Separator == false && item.item.Visible == true)
+							break;
+					}
+				}
+
+				break;
+			}
+
+			case ItemNavigation.Last: { // Not used
+				break;
+			}
+
+			case ItemNavigation.Next: {
+
+				if (menu.SelectedItem != null)
+					pos = menu.SelectedItem.pos;
+
+				/* Next item that is not separator and it is visible*/
+				for (pos++; pos < menu.items.Count; pos++) {
+					item = (MENUITEM)menu.items[pos];
+					if (item.item.Separator == false && item.item.Visible == true)
+						break;
+				}
+
+				if (pos >= menu.items.Count) { /* Jump at the start of the menu */
+					pos = 0;
+					/* Next item that is not separator and it is visible*/
+					for (; pos < menu.items.Count; pos++) {
+						item = (MENUITEM)menu.items[pos];
+						if (item.item.Separator == false && item.item.Visible == true)
+							break;
+					}
+				}
+				break;
+			}
+
+			case ItemNavigation.Previous: {
+
+				if (menu.SelectedItem != null)
+					pos = menu.SelectedItem.pos;
+
+				/* Previous item that is not separator and it is visible*/
+				for (pos--; pos >= 0; pos--) {
+					item = (MENUITEM)menu.items[pos];
+					if (item.item.Separator == false && item.item.Visible == true)
+						break;
+				}
+
+				if (pos < 0 ) { /* Jump at the end of the menu*/
+					pos = menu.items.Count - 1;
+					/* Previous item that is not separator and it is visible*/
+					for (; pos >= 0; pos--) {
+						item = (MENUITEM)menu.items[pos];
+						if (item.item.Separator == false && item.item.Visible == true)
+							break;
+					}
+				}
+
+				break;
+			}
+
+			default:
+				break;
+			}
+
+			return (MENUITEM)menu.items[pos];
+		}
+
+		static public bool ProcessKeys (IntPtr hMenu, ref Message msg, Keys keyData)
+		{
+			MENU menu = GetMenuFromID (hMenu);
+			Console.WriteLine ("Menu.ProcessCmdKey {0} {1} {2}",keyData, msg.LParam, msg.WParam);
+			MENUITEM item;
+
+			switch (keyData) {
+				case Keys.Up: {
+					item = GetNextItem (hMenu, ItemNavigation.Previous);
+					if (item != null)
+						MenuAPI.SelectItem (hMenu, item, false);
+
+					break;
+				}
+
+				case Keys.Down: {
+					item = GetNextItem (hMenu, ItemNavigation.Next);
+
+					if (item != null)
+						MenuAPI.SelectItem (hMenu, item, false);
+					break;
+				}
+
+				/* Menubar selects and opens next. Popups next or open*/
+				case Keys.Right: {
+					//Console.WriteLine ("Key.Right next menubar item info {0}", menu.hParent);
+
+					// Try to Expand popup first
+					if (menu.SelectedItem.item.IsPopup) {
+						ShowSubPopup (hMenu, menu.SelectedItem.hSubMenu, menu.SelectedItem);
+						Console.WriteLine ("Key.Right next menubar item Showing popup");
+					} else {
+
+						MENU parent = null;
+						if (menu.hParent != IntPtr.Zero)
+							parent = GetMenuFromID (menu.hParent);
+
+						if (parent != null && parent.bMenubar == true) {
+							MENUITEM select_item = GetNextItem (menu.hParent, ItemNavigation.Next);
+							MenuBarMove (menu.hParent, select_item);
+						}
+					}
+
+					break;
+				}
+
+				case Keys.Left: {
+					//Console.WriteLine ("Key.Right next menubar item info {0}", menu.hParent);
+
+					// Try to Collapse popup first
+					if (menu.SelectedItem.item.IsPopup) {
+
+					} else {
+
+						MENU parent = null;
+						if (menu.hParent != IntPtr.Zero)
+							parent = GetMenuFromID (menu.hParent);
+
+						if (parent != null && parent.bMenubar == true) {
+							MENUITEM select_item = GetNextItem (menu.hParent, ItemNavigation.Previous);
+							MenuBarMove (menu.hParent, select_item);
+						}
+					}
+
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			/* Try if it is a menu hot key */
+			item = MenuAPI.FindItemByKey (hMenu, msg.WParam);
+
+			//Console.WriteLine ("menu item is null: " + (item == null));
+
+			if (item != null) {
+				Console.WriteLine ("HotKey found: item.text" + item.item.Text);
+				MenuAPI.SelectItem (hMenu, item, false);
+				return true;
+			}
+
+			return false;
 		}
 	}
 
@@ -813,12 +1027,10 @@ namespace System.Windows.Forms
 	internal class PopUpWindow : Control
 	{
 		private IntPtr hMenu;
-		private MenuAPI.TRACKER tracker;
 
-		public PopUpWindow (IntPtr hMenu, MenuAPI.TRACKER tracker): base ()
+		public PopUpWindow (IntPtr hMenu): base ()
 		{
 			this.hMenu = hMenu;
-			this.tracker = tracker;
 			MouseDown += new MouseEventHandler (OnMouseDownPUW);
 			MouseMove += new MouseEventHandler (OnMouseMovePUW);
 			MouseUp += new MouseEventHandler (OnMouseUpPUW);
@@ -830,7 +1042,7 @@ namespace System.Windows.Forms
 		protected override CreateParams CreateParams
 		{
 			get {
-				CreateParams cp = base.CreateParams;									
+				CreateParams cp = base.CreateParams;
 				cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE));
 				cp.ExStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
 				return cp;
@@ -858,7 +1070,7 @@ namespace System.Windows.Forms
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize (e);
-			Console.WriteLine ("OnResize {0} {1} ", Width, Height);
+			//Console.WriteLine ("OnResize {0} {1} ", Width, Height);
 		}
 
 		private void OnPaintPUW (Object o, PaintEventArgs pevent)
@@ -872,7 +1084,7 @@ namespace System.Windows.Forms
 
 		private void OnMouseDownPUW (object sender, MouseEventArgs e)
     		{
-    			Console.WriteLine ("OnMouseDownPUW");
+    			//Console.WriteLine ("OnMouseDownPUW");
     			/* Click outside the client area*/
     			if (ClientRectangle.Contains (e.X, e.Y) == false) {
     				Console.WriteLine ("Hide");
@@ -883,14 +1095,14 @@ namespace System.Windows.Forms
 
 		private void OnMouseUpPUW (object sender, MouseEventArgs e)
     		{
-    			Console.WriteLine ("OnMouseUpPUW");
+    			//Console.WriteLine ("OnMouseUpPUW");
     			/* Click outside the client area*/
-    			int pos = 0;
-			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y), ref pos);
+			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
+			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
 
 			if (item != null && item.item.Enabled) {
 				item.item.PerformClick ();
-				MenuAPI.DestroyMenu (tracker.hTopMenu);
+				MenuAPI.DestroyMenu (menu.tracker.hTopMenu);
 
 				Capture = false;
 				Refresh ();
@@ -901,27 +1113,31 @@ namespace System.Windows.Forms
 		private void OnMouseMovePUW (object sender, MouseEventArgs e)
 		{
 			//Console.WriteLine ("OnMouseMovePUW");
-			int pos = 0;
-			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y), ref pos);
+			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
+			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
 
 			if (item != null) {
-
-				MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
-				MenuAPI.SelectItem (tracker, hMenu, item, pos, true);				
+				MenuAPI.SelectItem (hMenu, item, true);
 			} else {
 
-				if (tracker.menubar) {
+				if (menu.bMenubar) {
 					//Console.WriteLine ("MenuBar tracker move " + e.Y);
 					//MenuAPI.TrackBarMouseEvent (tracker.hTopMenu,
 					//	this, e, MenuAPI.MenuMouseEvent.Move);
 
 					Point pnt = PointToClient (MousePosition);
 
-					MenuAPI.TrackBarMouseEvent (tracker.hTopMenu,
+					MenuAPI.TrackBarMouseEvent (menu.tracker.hTopMenu,
 						this, new MouseEventArgs(e.Button, e.Clicks, pnt.X, pnt.Y, e.Delta),
-						MenuAPI.MenuMouseEvent.Move); //aku
+						MenuAPI.MenuMouseEvent.Move);
 				}
 			}
+		}
+
+		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		{
+			Console.WriteLine ("PopUpWindow.ProcessCmdKey");
+			return MenuAPI.ProcessKeys (hMenu, ref msg, keyData);
 		}
 
 		protected override void CreateHandle ()
