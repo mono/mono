@@ -1,4 +1,10 @@
-2003/03/25  Nick Drochak <ndrochak@gol.com>
+2003-12-30  Nick Drochak <ndrochak@gol.com>
+
+	* DiagnosticsConfigurationHandlerTest.cs: Inherit from Assertion to
+	make it a bit simpler.
+	* SwitchesTest.cs: Make the tests pass on .NET 1.1
+
+2003-03-25  Nick Drochak <ndrochak@gol.com>
 
 	* DiagnosticsConfigurationHandlerTest.cs: Fix compiler warnings
 

@@ -19,7 +19,7 @@ using System.Xml;
 namespace MonoTests.System.Diagnostics {
 
 	[TestFixture]
-	public class DiagnosticsConfigurationHandlerTest {
+	public class DiagnosticsConfigurationHandlerTest : Assertion {
 		
 		private const string XmlFormat = 
 			"{0}";
@@ -45,7 +45,7 @@ namespace MonoTests.System.Diagnostics {
 						string.Format (format, arg));
 				try {
 					CreateHandler (xml);
-					Assertion.Fail (string.Format ("{0}:{1}: no exception generated", name, arg));
+					Fail (string.Format ("{0}:{1}: no exception generated", name, arg));
 				}
 				catch (ConfigurationException) {
 				}
@@ -54,7 +54,7 @@ namespace MonoTests.System.Diagnostics {
 					throw;
 				}
 				catch (Exception e) {
-					Assertion.Fail (string.Format ("{0}:{1}: wrong exception generated: {2} ({3}).", 
+					Fail (string.Format ("{0}:{1}: wrong exception generated: {2} ({3}).", 
 								// name, arg, e.Message, 
 								name, arg, e.ToString(), 
 								// e.InnerException == null ? "" : e.InnerException.Message));
@@ -72,7 +72,7 @@ namespace MonoTests.System.Diagnostics {
 					CreateHandler (xml);
 				}
 				catch (Exception e) {
-					Assertion.Fail (string.Format ("{0}:{1}: exception generated: {2} ({3}).", 
+					Fail (string.Format ("{0}:{1}: exception generated: {2} ({3}).", 
 								// name, arg, e.Message,
 								name, arg, e.ToString(),
 								// e.InnerException == null ? "" : e.InnerException.Message));

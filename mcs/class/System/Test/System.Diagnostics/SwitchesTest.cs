@@ -10,11 +10,6 @@
 // (C) 2002 Jonathan Pryor
 // (C) 2003 Martin Willemoes Hansen
 //
-// README:
-// Tests in this file are expected to fail until a decent strategy to test
-// .config files is found.  See the mono-list archives for more information
-// (assuming anybody ever answers the initial requests for help...).
-// 
 
 using NUnit.Framework;
 using System;
@@ -32,7 +27,7 @@ namespace MonoTests.System.Diagnostics {
 			".ctor\n" +
 			"get_Value\n" +
 			"OnSwitchSettingChanged\n" +
-			"GetSetting";
+			"GetSetting\n";
 
 		public TestNewSwitch (string name, string desc)
 			: base (name, desc)
@@ -75,7 +70,7 @@ namespace MonoTests.System.Diagnostics {
 	}
 
 	[TestFixture]
-	public class SwitchesTest {
+	public class SwitchesTest : Assertion {
     
 		private static BooleanSwitch bon = new BooleanSwitch ("bool-true", "");
 		private static BooleanSwitch bon2 = new BooleanSwitch ("bool-true-2", "");
@@ -97,11 +92,11 @@ namespace MonoTests.System.Diagnostics {
 		[Test]
 		public void BooleanSwitches ()
 		{
-			Assertion.AssertEquals ("#BS:T:1", true, bon.Enabled);
-			Assertion.AssertEquals ("#BS:T:2", true, bon2.Enabled);
-			Assertion.AssertEquals ("#BS:T:3", true, bon3.Enabled);
-			Assertion.AssertEquals ("#BS:F:1", false, boff.Enabled);
-			Assertion.AssertEquals ("#BS:F:2", false, boff2.Enabled);
+			Assert ("#BS:T:1", bon.Enabled);
+			Assert ("#BS:T:2", bon2.Enabled);
+			Assert ("#BS:T:3", bon3.Enabled);
+			Assert ("#BS:F:1", !boff.Enabled);
+			Assert ("#BS:F:2", !boff2.Enabled);
 		}
 
 		[Test]
@@ -127,17 +122,17 @@ namespace MonoTests.System.Diagnostics {
 		private void CheckTraceSwitch (TraceSwitch ts, bool te, bool tw, bool ti, bool tv)
 		{
 			string desc = string.Format ("#TS:{0}", ts.DisplayName);
-			Assertion.AssertEquals (desc + ":TraceError",   te, ts.TraceError);
-			Assertion.AssertEquals (desc + ":TraceWarning", tw, ts.TraceWarning);
-			Assertion.AssertEquals (desc + ":TraceInfo",    ti, ts.TraceInfo);
-			Assertion.AssertEquals (desc + ":TraceVerbose", tv, ts.TraceVerbose);
+			AssertEquals (desc + ":TraceError",   te, ts.TraceError);
+			AssertEquals (desc + ":TraceWarning", tw, ts.TraceWarning);
+			AssertEquals (desc + ":TraceInfo",    ti, ts.TraceInfo);
+			AssertEquals (desc + ":TraceVerbose", tv, ts.TraceVerbose);
 		}
 
 		[Test]
 		public void NewSwitch ()
 		{
-			Assertion.AssertEquals ("#NS:Validate", true, tns.Validate());
-			Assertion.AssertEquals ("#NS:Value", "string-value", tns.Value);
+			AssertEquals ("#NS:Value", "0", tns.Value);
+			Assert ("#NS:Validate", tns.Validate());
 		}
 	}
 }
