@@ -996,6 +996,7 @@ System.Text/UTF7Encoding.cs
 System.Text/UTF8Encoding.cs
 System.Threading/ApartmentState.cs
 System.Threading/AutoResetEvent.cs
+System.Threading/CompressedStack.cs
 System.Threading/Interlocked.cs
 System.Threading/IOCompletionCallback.cs
 System.Threading/LockCookie.cs
