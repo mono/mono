@@ -53,6 +53,19 @@ namespace System.Net.Sockets
 			client.Bind(new IPEndPoint(IPAddress.Any, 0));
 		}
 	
+#if NET_1_1
+		public TcpClient (AddressFamily family)
+		{
+			if (family != AddressFamily.InterNetwork &&
+			    family != AddressFamily.InterNetworkV6) {
+				throw new ArgumentException ("Family must be InterNetwork or InterNetworkV6", "family");
+			}
+			
+			Init (family);
+			client.Bind (new IPEndPoint (IPAddress.Any, 0));
+		}
+#endif
+		
 		/// <summary>
 		/// Constructs a new TcpClient with a specified local endpoint.
 		/// Use this if you want to have your connections originating

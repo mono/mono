@@ -24,6 +24,7 @@ namespace System.Net.Sockets
 		{
 		}
 
+#if NET_1_1
 		public UdpClient(AddressFamily family)
 		{
 			if(family != AddressFamily.InterNetwork && family != AddressFamily.InterNetwork)
@@ -32,6 +33,7 @@ namespace System.Net.Sockets
 			this.family = family;
 			InitSocket (null);
 		}
+#endif
 
 		public UdpClient (int port)
 		{
@@ -54,6 +56,26 @@ namespace System.Net.Sockets
 			InitSocket (localEP);
 		}
 
+#if NET_1_1
+		public UdpClient (int port, AddressFamily family)
+		{
+			if (family != AddressFamily.InterNetwork &&
+			    family != AddressFamily.InterNetworkV6) {
+				throw new ArgumentException ("Family must be InterNetwork or InterNetworkV6", "family");
+			}
+			
+			if (port < IPEndPoint.MinPort ||
+			    port > IPEndPoint.MaxPort) {
+				throw new ArgumentOutOfRangeException ("port");
+			}
+			
+			this.family = family;
+
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Any, port);
+			InitSocket (localEP);
+		}
+#endif
+		
 		public UdpClient (string hostname, int port)
 		{
 			if (hostname == null)
@@ -151,6 +173,30 @@ namespace System.Net.Sockets
 #endif
 		}
 
+#if NET_1_1
+		public void DropMulticastGroup (IPAddress multicastAddr,
+						int ifindex)
+		{
+			CheckDisposed ();
+
+			/* LAMESPEC: exceptions haven't been specified
+			 * for this overload.
+			 */
+			if (multicastAddr == null) {
+				throw new ArgumentNullException ("multicastAddr");
+			}
+
+			/* Does this overload only apply to IPv6?
+			 * Only the IPv6MulticastOption has an
+			 * ifindex-using constructor.  The MS docs
+			 * don't say.
+			 */
+			if (family == AddressFamily.InterNetworkV6) {
+				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DropMembership, new IPv6MulticastOption (multicastAddr, ifindex));
+			}
+		}
+#endif
+		
 		public void JoinMulticastGroup (IPAddress multicastAddr)
 		{
 			CheckDisposed ();
@@ -165,6 +211,23 @@ namespace System.Net.Sockets
 #endif
 		}
 
+#if NET_1_1
+		public void JoinMulticastGroup (int ifindex,
+						IPAddress multicastAddr)
+		{
+			CheckDisposed ();
+
+			/* Does this overload only apply to IPv6?
+			 * Only the IPv6MulticastOption has an
+			 * ifindex-using constructor.  The MS docs
+			 * don't say.
+			 */
+			if (family == AddressFamily.InterNetworkV6) {
+				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership, new IPv6MulticastOption (multicastAddr, ifindex));
+			}
+		}
+#endif
+		
 		public void JoinMulticastGroup (IPAddress multicastAddr, int timeToLive)
 		{
 			CheckDisposed ();
