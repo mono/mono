@@ -1,3 +1,7 @@
+2003-07-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebClient.cs: fixed bug #45651.
+
 2003-06-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebClient.cs: Small fix by Sebastian <scut@nb.in-berlin.de>.

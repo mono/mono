@@ -282,7 +282,7 @@ namespace System.Net
 				StringBuilder sb = new StringBuilder ();
 				sb.Append ('?');
 				foreach (string key in queryString)
-					sb.AppendFormat ("{0}={1}&", key, queryString [key]);
+					sb.AppendFormat ("{0}={1}&", key, UrlEncode (queryString [key]));
 
 				if (sb.Length != 0) {
 					sb.Length--; // remove trailing '&'
@@ -295,12 +295,12 @@ namespace System.Net
 				return new Uri (path);
 
 			if (baseAddress == null)
-				return new Uri (path + query);
+				return new Uri (path + query, (query != null));
 
 			if (query == null)
 				return new Uri (baseAddress, path);
 
-			return new Uri (baseAddress, path + query);
+			return new Uri (baseAddress, path + query, (query != null));
 		}
 		
 		WebRequest SetupRequest (string address)
@@ -395,6 +395,32 @@ namespace System.Net
 				return ms.ToArray ();
 
 			return buffer;
+		}
+
+		string UrlEncode (string str)
+		{
+			StringBuilder result = new StringBuilder ();
+
+			int len = str.Length;
+			for (int i = 0; i < len; i++) {
+				char c = str [i];
+				if (c == ' ')
+					result.Append ('+');
+				else if ((c < '0' && c != '-' && c != '.') ||
+					 (c < 'A' && c > '9') ||
+					 (c > 'Z' && c < 'a' && c != '_') ||
+					 (c > 'z')) {
+					result.Append ('%');
+					int idx = ((int) c) >> 4;
+					result.Append ((char) hexBytes [idx]);
+					idx = ((int) c) & 0x0F;
+					result.Append ((char) hexBytes [idx]);
+				} else {
+					result.Append (c);
+				}
+			}
+
+			return result.ToString ();
 		}
 
 		static void UrlEncodeAndWrite (Stream stream, byte [] bytes)
