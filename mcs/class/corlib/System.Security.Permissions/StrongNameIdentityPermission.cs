@@ -40,10 +40,6 @@ namespace System.Security.Permissions {
 			this.version = version;
 		}
 	
-		~StrongNameIdentityPermission () 
-		{
-		}
-	
 		public string Name { 
 			get { return name; }
 			set { name = value; }
