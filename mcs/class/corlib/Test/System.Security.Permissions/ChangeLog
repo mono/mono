@@ -1,3 +1,9 @@
+2003-10-21  Nick Drochak <ndrochak@gol.com>
+
+	* FileIOPermissionAttributeTest.cs: Handle Short File Name vs. Long
+	File Name messiness.  This probably needs to be worked on for the 
+	tests to work on Linux, etc.
+
 2003-07-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PrincipalPermissionAttributeTest.cs: New.
