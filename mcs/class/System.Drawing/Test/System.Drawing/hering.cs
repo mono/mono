@@ -48,6 +48,8 @@ namespace xrtest {
    Console.WriteLine("output file Hering.bmp");
    bmp.Save("Hering.jpg", ImageFormat.Jpeg);
    Console.WriteLine("output file Hering.jpg");
+   bmp.Save("Hering.png", ImageFormat.Png);
+   Console.WriteLine("output file Hering.png");
   }
  }
 }
