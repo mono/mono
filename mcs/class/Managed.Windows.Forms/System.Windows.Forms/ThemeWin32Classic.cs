@@ -26,9 +26,22 @@
 //
 //
 //
-// $Revision: 1.56 $
+// $Revision: 1.57 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.57  2004/11/05 05:47:34  jba
+// - Fix Button rendering for FlatStyle = Flat or Popup
+// - Fix RadioButton and CheckBox rendering when Appearance = Button (normal and
+//   flatstyle).
+// - Correct outer rectangle color when drawing focus rectangle
+// - Adjust button bounds to be 1 px smaller when focused
+// - Make button not draw sunken 3d border when pushed (windows compat)
+// - Fix CPDrawBorder3D to not make bottom right hand corner rounded
+// - Offset the text in RadioButton and Checkbox when being rendered as a button.
+// - Hover and Click behaviour for Colored FlatStyle.Flat and Popup radiobuttons
+// - Fixed disabled rendering for colored flatstyle radiobuttons (both)
+// - Fixed disabled text rendering for normally rendered radiobuttons
+//
 // Revision 1.56  2004/11/04 11:26:09  ravindra
 // 	- Changed default ListView values signatures (prefixed all with ListView).
 // 	- Fixed default size values for VScrollBar and HScrollBar.
@@ -334,6 +347,7 @@ namespace System.Windows.Forms
 		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button) {
 			int		width;
 			int		height;
+			Rectangle buttonRectangle;
 
 			width = button.ClientSize.Width;
 			height = button.ClientSize.Height;
@@ -341,13 +355,20 @@ namespace System.Windows.Forms
 			SolidBrush	sb = new SolidBrush(button.BackColor);
 			dc.FillRectangle(sb, button.ClientRectangle);
 			sb.Dispose();
-
-			CPDrawButton(dc, button.ClientRectangle, button.ButtonState);
-
+			
+			// set up the button rectangle
+			buttonRectangle = button.ClientRectangle;
 			if (button.has_focus) {
-				CPDrawFocusRectangle(dc, button.ClientRectangle, ColorButtonText, ColorButtonFace);
+				// shrink the rectangle for the normal button drawing inside the focus rectangle
+				buttonRectangle.Inflate(-1,-1);
 			}
 
+			if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
+				DrawFlatStyleButton (dc, buttonRectangle, button);
+			} else {
+				CPDrawButton(dc, buttonRectangle, button.ButtonState);
+			}
+			
 			// First, draw the image
 			if ((button.image != null) || (button.image_list != null)) {
 				// Need to draw a picture
@@ -439,10 +460,19 @@ namespace System.Windows.Forms
 					CPDrawImageDisabled(dc, i, image_x, image_y, ColorButtonFace);
 				}
 			}
-
+			
+			// Draw the focus rectangle
+			if (button.has_focus) {
+				if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
+					DrawFlatStyleFocusRectangle (dc, button.ClientRectangle, button, button.ForeColor, button.BackColor);
+				} else { 
+					CPDrawFocusRectangle(dc, button.ClientRectangle, button.ForeColor, button.BackColor);
+				}
+			}
+			
 			// Now the text
 			if (button.text != null && button.text != String.Empty) {
-				Rectangle	text_rect = new Rectangle(3, 3, button.ClientSize.Width-6, button.ClientSize.Height-6); // FIXME; calculate rect properly
+				Rectangle text_rect = new Rectangle(6, 6, button.ClientSize.Width-12, button.ClientSize.Height-12);
 
 				if (button.is_pressed) {
 					text_rect.X++;
@@ -454,7 +484,97 @@ namespace System.Windows.Forms
 					dc.DrawString(button.text, button.Font, b, text_rect, button.text_format);
 					b.Dispose();
 				} else {
-					CPDrawStringDisabled(dc, button.text, button.Font, ColorButtonText, text_rect, button.text_format);
+					if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
+						dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), text_rect, button.text_format);
+					} else {
+						CPDrawStringDisabled(dc, button.text, button.Font, ColorButtonText, text_rect, button.text_format);
+					}
+				}
+			}
+		}
+		
+		// draw the flat style part of the rectangle
+		public void DrawFlatStyleButton (Graphics graphics, Rectangle rectangle, ButtonBase button) {
+			Color rect_back_color = button.BackColor;
+			Color rect_fore_color = button.ForeColor;
+			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
+				
+			if (button.Enabled) {
+				if (button.Capture || button.is_entered) {
+					if (button.FlatStyle == FlatStyle.Flat) {
+						// fill the rectangle
+						graphics.FillRectangle (ResPool.GetSolidBrush (rect_back_color), rectangle);
+						
+						// now draw the outer border
+						if (button.Capture && button.is_entered) {
+							rect_back_color = ControlPaint.LightLight (rect_back_color);
+						} else {
+							rect_back_color = ControlPaint.Light (rect_back_color);
+						}
+						
+						// draw rectangle and fill it
+						graphics.FillRectangle (ResPool.GetSolidBrush (rect_back_color), rectangle);
+						graphics.DrawRectangle(ResPool.GetPen (rect_fore_color), trace_rectangle);
+					} else {
+						// else it must be a popup button
+						
+						if (button.Capture && button.is_entered) {
+							graphics.DrawRectangle(ResPool.GetPen (this.ColorButtonText), trace_rectangle);
+						} else {
+							// draw a 3d border
+							CPDrawBorder3D (graphics, rectangle, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top, button.BackColor); 
+							graphics.DrawLine ( ResPool.GetPen (this.ColorButtonText), trace_rectangle.X, trace_rectangle.Bottom, trace_rectangle.Right, trace_rectangle.Bottom);
+							graphics.DrawLine ( ResPool.GetPen (this.ColorButtonText), trace_rectangle.Right, trace_rectangle.Y, trace_rectangle.Right, trace_rectangle.Bottom);
+						}
+					}
+					
+					// TODO: draw inner focus rectangle
+					
+				} else {
+					// popup has a ButtonColorText forecolor, not a button.ForeCOlor
+					if (button.FlatStyle == FlatStyle.Popup) {
+						rect_fore_color = this.ColorButtonText;
+					}
+					
+					// fill then draw outer rect
+					graphics.FillRectangle (ResPool.GetSolidBrush (rect_back_color), rectangle);
+					graphics.DrawRectangle(ResPool.GetPen (rect_fore_color), trace_rectangle);
+				}
+				
+				// finally some small tweaks to render radiobutton and checkbox
+				CheckBox checkbox = button as CheckBox;
+				RadioButton radiobutton = button as RadioButton;
+				if ((checkbox != null && checkbox.Checked) ||
+					(radiobutton != null && radiobutton.Checked)) {
+					if (button.FlatStyle == FlatStyle.Flat && button.is_entered && !button.Capture) {
+						// render the hover for flat flatstyle and cheked
+						graphics.DrawRectangle(ResPool.GetPen (this.ColorButtonText), trace_rectangle);
+					} else if (!button.is_entered && !button.Capture) {
+						// render the checked state for popup when unhovered
+						CPDrawBorder3D (graphics, rectangle, Border3DStyle.SunkenInner, Border3DSide.Right | Border3DSide.Bottom, button.BackColor); 
+					}
+				}
+			} else {
+				// rendering checkbox or radio button style buttons
+				CheckBox checkbox = button as CheckBox;
+				RadioButton radiobutton = button as RadioButton;
+				bool draw_popup_checked = false;
+				
+				if (button.FlatStyle == FlatStyle.Popup) {
+					rect_fore_color = this.ColorButtonText;
+				
+					// see if we should draw a disabled checked popup button
+					draw_popup_checked = ((checkbox != null && checkbox.Checked) ||
+						(radiobutton != null && radiobutton.Checked));
+				}
+				
+				graphics.FillRectangle (ResPool.GetSolidBrush (rect_back_color), rectangle);
+				graphics.DrawRectangle(ResPool.GetPen (rect_fore_color), trace_rectangle);
+				
+				// finally draw the flatstyle checked effect if need
+				if (draw_popup_checked) {
+					// render the checked state for popup when unhovered
+					CPDrawBorder3D (graphics, rectangle, Border3DStyle.SunkenInner, Border3DSide.Right | Border3DSide.Bottom, button.BackColor);
 				}
 			}
 		}
@@ -565,6 +685,8 @@ namespace System.Windows.Forms
 				text_rectangle.X=client_rectangle.X;
 				text_rectangle.Width=client_rectangle.Width;
 			}
+			
+			text_rectangle.Inflate (-4, -4);
 
 			/* Set the horizontal alignment of our text */
 			switch(checkbox.text_alignment) {
@@ -642,34 +764,53 @@ namespace System.Windows.Forms
 			sb=new SolidBrush(checkbox.BackColor);
 			dc.FillRectangle(sb, checkbox.ClientRectangle);
 			sb.Dispose();
-
-			// establish if we are rendering a flat style of some sort
-			if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
-				DrawFlatStyleCheckBox (dc, checkbox_rectangle, checkbox);
-			} else {
-				// render as per normal
-				if (checkbox.appearance!=Appearance.Button) {
-					ControlPaint.DrawCheckBox(dc, checkbox_rectangle, state);
+			
+			// render as per normal button
+			if (checkbox.appearance==Appearance.Button) {
+				if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
+					DrawFlatStyleButton(dc, checkbox.ClientRectangle, checkbox);
 				} else {
-					ControlPaint.DrawButton(dc, text_rectangle, state);
+					CPDrawButton(dc, checkbox.ClientRectangle, state);
+				}
+			} else {
+				// establish if we are rendering a flat style of some sort
+				if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
+					DrawFlatStyleCheckBox (dc, checkbox_rectangle, checkbox);
+				} else {
+					ControlPaint.DrawCheckBox(dc, checkbox_rectangle, state);
 				}
 			}
 			
 			// win32 compat - win32 seems to give the text a slight (3px) offset when rendering
-			Rectangle inner_text_rectangle = new Rectangle (text_rectangle.X + 3, text_rectangle.Y, Math.Max (text_rectangle.Width - 3, 0), text_rectangle.Height); 
-
+			Rectangle inner_text_rectangle = new Rectangle (text_rectangle.X + 2, text_rectangle.Y + 2, Math.Max (text_rectangle.Width - 4, 0), Math.Max (text_rectangle.Height - 4, 0)); 
+			// offset the text if it's pressed and a button
+			if (checkbox.Appearance == Appearance.Button) {
+				int buttonXOffset = 2;
+				int buttonYOffset = 0;
+				int pressedOffset = 0;
+				
+				if (checkbox.Checked || (checkbox.Capture && checkbox.FlatStyle != FlatStyle.Flat)) {
+					pressedOffset += 2;
+				}
+				
+				inner_text_rectangle = new Rectangle (inner_text_rectangle.X + buttonXOffset + pressedOffset, inner_text_rectangle.Y + buttonYOffset + pressedOffset, inner_text_rectangle.Width - 2*buttonXOffset, inner_text_rectangle.Height - 2*buttonYOffset); 
+			} 
 			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
 			if (checkbox.Enabled) {
 				sb = ResPool.GetSolidBrush(checkbox.ForeColor);
 				dc.DrawString(checkbox.Text, checkbox.Font, sb, inner_text_rectangle, text_format);				
 			} else if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
-				dc.DrawString(checkbox.Text, checkbox.Font, SystemBrushes.ControlDark, inner_text_rectangle, text_format);
+				dc.DrawString(checkbox.Text, checkbox.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), inner_text_rectangle, text_format);
 			} else {
 				CPDrawStringDisabled(dc, checkbox.Text, checkbox.Font, ColorButtonText, inner_text_rectangle, text_format);
 			}
 
 			if (checkbox.Focused) {
-				ControlPaint.DrawFocusRectangle(dc, text_rectangle);
+				if (checkbox.FlatStyle != FlatStyle.Flat) {
+					DrawInnerFocusRectangle (dc, text_rectangle, checkbox.BackColor);
+				} else {
+					dc.DrawRectangle (ResPool.GetPen (checkbox.ForeColor), text_rectangle);
+				}
 			}
 		}
 
@@ -713,10 +854,10 @@ namespace System.Windows.Forms
 						ControlPaint.DrawBorder(graphics, checkbox_rectangle, checkbox.ForeColor, ButtonBorderStyle.Solid);
 					} else {
 						// draw sunken effect
-						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right, checkbox.BackColor);
+						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.All, checkbox.BackColor);
 						// draw top left
-						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, checkbox_rectangle.X, checkbox_rectangle.Y+checkbox_rectangle.Height);
-						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, Math.Max(checkbox_rectangle.X + checkbox_rectangle.Width - 1, 0), checkbox_rectangle.Y);
+//						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, checkbox_rectangle.X, checkbox_rectangle.Y+checkbox_rectangle.Height);
+						//graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, Math.Max(checkbox_rectangle.X + checkbox_rectangle.Width - 1, 0), checkbox_rectangle.Y);
 					}
 				} else {
 					graphics.FillRectangle(ResPool.GetSolidBrush (ControlPaint.LightLight (checkbox.BackColor)), fill_rectangle);				
@@ -1238,6 +1379,8 @@ namespace System.Windows.Forms
 				text_rectangle.X=client_rectangle.X;
 				text_rectangle.Width=client_rectangle.Width;
 			}
+			
+			text_rectangle.Inflate (-4, -4);
 
 			/* Set the horizontal alignment of our text */
 			switch(radio_button.text_alignment) {
@@ -1302,29 +1445,58 @@ namespace System.Windows.Forms
 			dc.FillRectangle(sb, radio_button.ClientRectangle);
 			sb.Dispose();
 			
-			// establish if we are rendering a flat style of some sort
-			if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
-				DrawFlatStyleRadioButton (dc, radiobutton_rectangle, radio_button);
+		
+			
+			if (radio_button.appearance==Appearance.Button) {
+				if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
+					DrawFlatStyleButton(dc, radio_button.ClientRectangle, radio_button);
+				} else {				
+					CPDrawButton(dc, radio_button.ClientRectangle, state);
+				}		
 			} else {
-				// render as per normal
-				if (radio_button.appearance!=Appearance.Button) {
-					ControlPaint.DrawRadioButton (dc, radiobutton_rectangle, state);
+				// establish if we are rendering a flat style of some sort
+				if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
+					DrawFlatStyleRadioButton (dc, radiobutton_rectangle, radio_button);
 				} else {
-					ControlPaint.DrawButton (dc, text_rectangle, state);
+					ControlPaint.DrawRadioButton (dc, radiobutton_rectangle, state);
 				}
 			}
 			
 			// wind32 compat - win32 seems to give the text a slight (3px) offset when rendering
-			Rectangle inner_text_rectangle = new Rectangle (text_rectangle.X + 3, text_rectangle.Y, Math.Max (text_rectangle.Width - 3, 0), text_rectangle.Height); 
+			Rectangle inner_text_rectangle = new Rectangle (text_rectangle.X + 3, text_rectangle.Y, Math.Max (text_rectangle.Width - 3, 0), text_rectangle.Height);
+			// offset the text if it's pressed and a button
+			if (radio_button.Appearance == Appearance.Button) {
+				int buttonXOffset = 2;
+				int buttonYOffset = 0;
+				int pressedOffset = 0;
+				
+				if (radio_button.Checked || (radio_button.Capture && radio_button.FlatStyle != FlatStyle.Flat)) {
+					pressedOffset += 2;
+				}
+				
+				inner_text_rectangle = new Rectangle (inner_text_rectangle.X + buttonXOffset + pressedOffset, inner_text_rectangle.Y + buttonYOffset + pressedOffset, inner_text_rectangle.Width - 2*buttonXOffset, inner_text_rectangle.Height - 2*buttonYOffset); 
+			} 
 
 			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */
 			sb=new SolidBrush(radio_button.ForeColor);
 			dc.DrawString (radio_button.Text, radio_button.Font, sb, inner_text_rectangle, text_format);
 			sb.Dispose();
+			if (radio_button.Enabled) {
+				sb = ResPool.GetSolidBrush(radio_button.ForeColor);
+				dc.DrawString(radio_button.Text, radio_button.Font, sb, inner_text_rectangle, text_format);				
+			} else if (radio_button.FlatStyle == FlatStyle.Flat) {
+				dc.DrawString(radio_button.Text, radio_button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), inner_text_rectangle, text_format);
+			} else {
+				CPDrawStringDisabled(dc, radio_button.Text, radio_button.Font, this.ColorButtonText, inner_text_rectangle, text_format);
+			}
 
 			if (radio_button.Focused) {
-				ControlPaint.DrawFocusRectangle(dc, text_rectangle);
-			}
+				if (radio_button.FlatStyle != FlatStyle.Flat) {
+					DrawInnerFocusRectangle (dc, text_rectangle, radio_button.BackColor);
+				} else {
+					dc.DrawRectangle (ResPool.GetPen (radio_button.ForeColor), text_rectangle);
+				}
+			}			
 		}
 
 		// renders a radio button with the Flat and Popup FlatStyle
@@ -1332,24 +1504,40 @@ namespace System.Windows.Forms
 		{
 			int	lineWidth;
 			
-			// win32 compat fill in the background of the knob
-			graphics.FillPie (ResPool.GetSolidBrush (this.ColorWindow), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
-			
-			// draw the outer flatstyle arcs
-			if (radio_button.FlatStyle == FlatStyle.Flat) {
-				graphics.DrawArc (ResPool.GetPen (ColorButtonText), rectangle, 0, 359);
-			} else {
-				// must be a popup radio button
-				if (radio_button.is_entered) {
-					// draw the popup 3d button knob
-					graphics.DrawArc (SystemPens.ControlLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 0, 359);
-
-					graphics.DrawArc (SystemPens.ControlDark, rectangle, 135, 180);
-					graphics.DrawArc (SystemPens.ControlLightLight, rectangle, 315, 180);
+			if (radio_button.Enabled) {
+				// draw the outer flatstyle arcs
+				if (radio_button.FlatStyle == FlatStyle.Flat) {
+					graphics.DrawArc (ResPool.GetPen (radio_button.ForeColor), rectangle, 0, 359);
+					
+					// fill in the area depending on whether or not the mouse is hovering
+					if (radio_button.is_entered && radio_button.Capture) {
+						graphics.FillPie (ResPool.GetSolidBrush (ControlPaint.Light (radio_button.BackColor)), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+					} else {
+						graphics.FillPie (ResPool.GetSolidBrush (ControlPaint.LightLight (radio_button.BackColor)), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+					}
 				} else {
-					// just draw lighter flatstyle outer circle
-					graphics.DrawArc (SystemPens.ControlDark, rectangle, 0, 359);
+					// must be a popup radio button
+					// fill the control
+					graphics.FillPie (ResPool.GetSolidBrush (ControlPaint.LightLight (radio_button.BackColor)), rectangle, 0, 359);
+
+					if (radio_button.is_entered || radio_button.Capture) {
+						// draw the popup 3d button knob
+						graphics.DrawArc (ResPool.GetPen (ControlPaint.Light (radio_button.BackColor)), rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 0, 359);
+
+						graphics.DrawArc (ResPool.GetPen (ControlPaint.Dark (radio_button.BackColor)), rectangle, 135, 180);
+						graphics.DrawArc (ResPool.GetPen (ControlPaint.LightLight (radio_button.BackColor)), rectangle, 315, 180);
+						
+					} else {
+						// just draw lighter flatstyle outer circle
+						graphics.DrawArc (ResPool.GetPen (ControlPaint.Dark (this.ColorButtonFace)), rectangle, 0, 359);						
+					}										
 				}
+			} else {
+				// disabled
+				// fill control background color regardless of actual backcolor
+				graphics.FillPie (ResPool.GetSolidBrush (this.ColorButtonFace), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+				// draw the ark as control dark
+				graphics.DrawArc (ResPool.GetPen (ControlPaint.Dark(this.ColorButtonFace)), rectangle, 0, 359);
 			}
 
 			// draw the check
@@ -1358,12 +1546,14 @@ namespace System.Windows.Forms
 				SolidBrush buttonBrush;
 
 				if (!radio_button.Enabled) {
-					buttonBrush = (SolidBrush) SystemBrushes.ControlDark;
+					buttonBrush = ResPool.GetSolidBrush (ControlPaint.Dark (this.ColorButtonFace));
+				} else if (radio_button.FlatStyle == FlatStyle.Popup && radio_button.is_entered && radio_button.Capture) {
+					buttonBrush = ResPool.GetSolidBrush (this.ColorButtonText);
 				} else {
-					buttonBrush = (SolidBrush) SystemBrushes.ControlText;
+					buttonBrush = ResPool.GetSolidBrush (radio_button.ForeColor);
 				}
 				graphics.FillPie (buttonBrush, rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2, 0, 359);
-			}			
+			}	
 		}
 
 		public override Size RadioButtonDefaultSize {
@@ -2635,7 +2825,7 @@ namespace System.Windows.Forms
 
 			if ((style & Border3DStyle.RaisedInner)!=0) {
 				if (doInner) {
-					penTopLeftInner=ResPool.GetPen(ControlPaint.Light(control_color));
+					penTopLeftInner=ResPool.GetPen(control_color);
 					penBottomRightInner=ResPool.GetPen(ControlPaint.Dark(control_color));
 				} else {
 					penTopLeft=ResPool.GetPen(ControlPaint.LightLight(control_color));
@@ -2644,7 +2834,7 @@ namespace System.Windows.Forms
 			} else if ((style & Border3DStyle.SunkenInner)!=0) {
 				if (doInner) {
 					penTopLeftInner=ResPool.GetPen(ControlPaint.Dark(control_color));
-					penBottomRightInner=ResPool.GetPen(ControlPaint.Light(control_color));
+					penBottomRightInner=ResPool.GetPen(control_color);
 				} else {
 					penTopLeft=ResPool.GetPen(ControlPaint.DarkDark(control_color));
 					penBottomRight=ResPool.GetPen(ControlPaint.LightLight(control_color));
@@ -2656,20 +2846,20 @@ namespace System.Windows.Forms
 			}
 
 			if ((sides & Border3DSide.Left)!=0) {
-				graphics.DrawLine(penTopLeft, rect.Left, rect.Bottom-1, rect.Left, rect.Top);
+				graphics.DrawLine(penTopLeft, rect.Left, rect.Bottom-2, rect.Left, rect.Top);
 				if (doInner) {
-					graphics.DrawLine(penTopLeftInner, rect.Left+1, rect.Bottom-1, rect.Left+1, rect.Top);
+					graphics.DrawLine(penTopLeftInner, rect.Left+1, rect.Bottom-2, rect.Left+1, rect.Top);
 				}
 			}
 
 			if ((sides & Border3DSide.Top)!=0) {
-				graphics.DrawLine(penTopLeft, rect.Left, rect.Top, rect.Right-1, rect.Top);
+				graphics.DrawLine(penTopLeft, rect.Left, rect.Top, rect.Right-2, rect.Top);
 
 				if (doInner) {
 					if ((sides & Border3DSide.Left)!=0) {
-						graphics.DrawLine(penTopLeftInner, rect.Left+1, rect.Top+1, rect.Right-1, rect.Top+1);
+						graphics.DrawLine(penTopLeftInner, rect.Left+1, rect.Top+1, rect.Right-3, rect.Top+1);
 					} else {
-						graphics.DrawLine(penTopLeftInner, rect.Left, rect.Top+1, rect.Right-1, rect.Top+1);
+						graphics.DrawLine(penTopLeftInner, rect.Left, rect.Top+1, rect.Right-3, rect.Top+1);
 					}
 				}
 			}
@@ -2679,9 +2869,9 @@ namespace System.Windows.Forms
 
 				if (doInner) {
 					if ((sides & Border3DSide.Top)!=0) {
-						graphics.DrawLine(penBottomRightInner, rect.Right-2, rect.Top+1, rect.Right-2, rect.Bottom-1);
+						graphics.DrawLine(penBottomRightInner, rect.Right-2, rect.Top+1, rect.Right-2, rect.Bottom-2);
 					} else {
-						graphics.DrawLine(penBottomRightInner, rect.Right-2, rect.Top, rect.Right-2, rect.Bottom-1);
+						graphics.DrawLine(penBottomRightInner, rect.Right-2, rect.Top, rect.Right-2, rect.Bottom-2);
 					}
 				}
 			}
@@ -2699,7 +2889,7 @@ namespace System.Windows.Forms
 					if ((sides & Border3DSide.Right)!=0) {
 						graphics.DrawLine(penBottomRightInner, left, rect.Bottom-2, rect.Right-2, rect.Bottom-2);
 					} else {
-						graphics.DrawLine(penBottomRightInner, left, rect.Bottom-2, rect.Right-1, rect.Bottom-2);
+						graphics.DrawLine(penBottomRightInner, left, rect.Bottom-2, rect.Right-2, rect.Bottom-2);
 					}
 				}
 			}
@@ -2904,27 +3094,61 @@ namespace System.Windows.Forms
 
 		}
 
+		public virtual void DrawFlatStyleFocusRectangle (Graphics graphics, Rectangle rectangle, ButtonBase button, Color foreColor, Color backColor) {
+			// make a rectange to trace around border of the button
+			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
+			
+			Color outerColor = foreColor;
+			// adjust focus color according to the flatstyle
+			if (button.FlatStyle == FlatStyle.Popup && !button.is_pressed) {
+				outerColor = (backColor == ColorButtonFace) ? ControlPaint.Dark(ColorButtonFace) : ColorButtonText;				
+			}
+			
+			// draw the outer rectangle
+			graphics.DrawRectangle (ResPool.GetPen (outerColor), trace_rectangle);			
+			
+			// draw the inner rectangle						
+			if (button.FlatStyle == FlatStyle.Popup) {
+				DrawInnerFocusRectangle (graphics, Rectangle.Inflate (rectangle, -5, -5), backColor);
+			} else {
+				// draw a flat inner rectangle
+				Pen pen = ResPool.GetPen (ControlPaint.LightLight (backColor));
+				graphics.DrawRectangle(pen, Rectangle.Inflate (trace_rectangle, -5, -5));				
+			}
+		}
+		
+		public virtual void DrawInnerFocusRectangle(Graphics graphics, Rectangle rectangle, Color backColor)
+		{	
+			// make a rectange to trace around border of the button
+			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
+			
+			Color colorBackInverted = Color.FromArgb (Math.Abs (backColor.R-255), Math.Abs (backColor.G-255), Math.Abs (backColor.B-255));
+			DashStyle oldStyle; // used for caching old penstyle
+			Pen pen = ResPool.GetPen (colorBackInverted);
+			
+			oldStyle = pen.DashStyle; 
+			pen.DashStyle = DashStyle.Dot;
+			graphics.DrawRectangle (pen, trace_rectangle);
+			pen.DashStyle = oldStyle;
+		}
+				
 
 		public override void CPDrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) {
+			// make a rectange to trace around border of the button
+			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
+			
 			//Color			colorForeInverted;
-			Color			colorBackInverted;
 			Pen			pen;
 
-			//colorForeInverted=Color.FromArgb(Math.Abs(foreColor.R-255), Math.Abs(foreColor.G-255), Math.Abs(foreColor.B-255));
+ 			//colorForeInverted=Color.FromArgb(Math.Abs(foreColor.R-255), Math.Abs(foreColor.G-255), Math.Abs(foreColor.B-255));
 			//pen=new Pen(colorForeInverted, 1);
 			// MS seems to always use black
-			pen=new Pen(Color.Black, 1);
-			graphics.DrawRectangle(pen, rectangle);
-			pen.Dispose();
-
-			colorBackInverted=Color.FromArgb(Math.Abs(backColor.R-255), Math.Abs(backColor.G-255), Math.Abs(backColor.B-255));
-			pen=new Pen(colorBackInverted, 1);
-			pen.DashStyle=DashStyle.Dot;
-			graphics.DrawRectangle(pen, rectangle);
-			pen.Dispose();
+			pen = ResPool.GetPen (Color.Black);
+			graphics.DrawRectangle(pen, trace_rectangle);
+			
+			DrawInnerFocusRectangle (graphics, Rectangle.Inflate (rectangle, -4, -4), backColor);
 		}
-
-
+		
 		public override void CPDrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled) {
 			SolidBrush	sb;
 			Pen			pen;
@@ -3576,18 +3800,22 @@ namespace System.Windows.Forms
 
 		[MonoTODO("Finish drawing code for Caption, Menu and Scroll")]
 		private void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) {
+			// make a rectange to trace around border of the button
+			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
 			switch(Type) {
 			case DrawFrameControlTypes.Button: {
-				if ((State & DrawFrameControlStates.ButtonPush)!=0) {
-					/* Goes first, affects the background */
-					if ((State & DrawFrameControlStates.Checked)!=0) {
-						HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, ColorButtonLight, ColorButtonHilight);
-						graphics.FillRectangle(hatchBrush,rectangle);
-						hatchBrush.Dispose();
-					}
 
-					if ((State & DrawFrameControlStates.Pushed)!=0) {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
+				if ((State & DrawFrameControlStates.ButtonPush)!=0) {
+// JBA 31 oct 2004 - I don't think that button style should be rendered like this
+//					/* Goes first, affects the background */
+//					if ((State & DrawFrameControlStates.Checked)!=0) {
+//						HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, ColorButtonLight, ColorButtonHilight);
+//						graphics.FillRectangle(hatchBrush,rectangle);
+//						hatchBrush.Dispose();
+//					}
+
+					if ((State & DrawFrameControlStates.Pushed)!=0 || (State & DrawFrameControlStates.Checked)!=0) {
+						graphics.DrawRectangle (ResPool.GetPen (ControlPaint.Dark (ColorButtonFace)), trace_rectangle);
 					} else if ((State & DrawFrameControlStates.Flat)!=0) {
 						ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 					} else if ((State & DrawFrameControlStates.Inactive)!=0) {
