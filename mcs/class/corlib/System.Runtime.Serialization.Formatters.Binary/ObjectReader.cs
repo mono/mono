@@ -285,7 +285,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		private void ReadGenericArray (BinaryReader reader, out long objectId, out object val)
 		{
 			objectId = (long) reader.ReadUInt32 ();
-			ArrayStructure structure = (ArrayStructure) reader.ReadByte();
+			// Array structure
+			reader.ReadByte();
 
 			int rank = reader.ReadInt32();
 

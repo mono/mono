@@ -622,11 +622,15 @@ internal class Win32ResFileReader {
 
 			read_padding ();
 
-			int data_version = read_int32 ();
-			int memory_flags = read_int16 ();
+			//int data_version = 
+			read_int32 ();
+			//int memory_flags =
+			read_int16 ();
 			int language_id = read_int16 ();
-			int version = read_int32 ();
-			int characteristics = read_int32 ();
+			//int version =
+			read_int32 ();
+			//int characteristics =
+			read_int32 ();
 
 			if (data_size == 0)
 				/* Empty resource entry */

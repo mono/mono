@@ -266,7 +266,6 @@ namespace System.Threading
 			if((millisecondsTimeout<0) && (millisecondsTimeout != Timeout.Infinite)) {
 				throw new ArgumentException("Negative timeout");
 			}
-			Thread thread=CurrentThread;
 			Sleep_internal(millisecondsTimeout);
 		}
 
@@ -278,7 +277,6 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
 
-			Thread thread=CurrentThread;
 			Sleep_internal(ms);
 		}
 
@@ -593,8 +591,6 @@ namespace System.Threading
 			if((state & ThreadState.Unstarted) != 0) {
 				throw new ThreadStateException("Thread has not been started");
 			}
-			
-			Thread thread=CurrentThread;
 				
 			Join_internal(Timeout.Infinite, system_thread_handle);
 		}
@@ -607,7 +603,6 @@ namespace System.Threading
 				throw new ThreadStateException("Thread has not been started");
 			}
 
-			Thread thread=CurrentThread;
 			return Join_internal(millisecondsTimeout, system_thread_handle);
 		}
 
@@ -622,7 +617,6 @@ namespace System.Threading
 				throw new ThreadStateException("Thread has not been started");
 			}
 
-			Thread thread=CurrentThread;
 			return Join_internal(ms, system_thread_handle);
 		}
 
