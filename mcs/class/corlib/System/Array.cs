@@ -69,6 +69,9 @@ namespace System
 		internal extern void SetValueImpl (object value, int pos);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static Array CreateInstanceImpl(Type elementType, int[] lengths, int [] bounds);
 
 		// Properties
@@ -370,34 +373,42 @@ namespace System
 			if (source_idx < source.GetLowerBound (0) || dest_idx < dest.GetLowerBound (0))
 				throw new ArgumentException ();
 
-			source_idx -= source.GetLowerBound (0);
-			dest_idx -= dest.GetLowerBound (0);
+			int source_pos = source_idx - source.GetLowerBound (0);
+			int dest_pos = dest_idx - dest.GetLowerBound (0);
 
-			if (source_idx + length > source.Length || dest_idx + length > dest.Length)
+			if (source_pos + length > source.Length || dest_pos + length > dest.Length)
 				throw new ArgumentException ();
 
 			if (source.Rank != dest.Rank)
 				throw new RankException ();
 
-			// FIXME: This should be implemented in C so that we can use memcpy()
-			//        whereever possible.
+			Type src_type = source.GetType ().GetElementType ();
+			Type dst_type = dest.GetType ().GetElementType ();
+
+			if (src_type.IsValueType && dst_type.IsValueType && (src_type == dst_type)) {
+				FastCopy (source, source_pos, dest, dest_pos, length);
+				return;
+			}
 
 			for (int i = 0; i < length; i++) 
 			{
-				Object srcval = source.GetValueImpl (source_idx + i);
+				Object srcval = source.GetValueImpl (source_pos + i);
 
-				bool argumentException = false;
-				bool castException = false;
+				bool errorThrown = false;
 
 				try {
-					dest.SetValueImpl (srcval, dest_idx + i);
-				} catch (ArgumentException) {
-					argumentException = true;
-				} catch (InvalidCastException) {
-					castException = true;
+					dest.SetValueImpl (srcval, dest_pos + i);
+				} catch {
+					errorThrown = true;
 				}
 
-				if (argumentException || castException)
+				if (!errorThrown)
+					continue;
+
+				if ((dst_type.IsValueType || dst_type.Equals (typeof (String))) &&
+				    (src_type.Equals (typeof (Object))))
+					throw new InvalidCastException ();
+				else
 					throw new ArrayTypeMismatchException ();
 			}
 		}

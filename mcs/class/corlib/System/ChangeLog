@@ -1,3 +1,8 @@
+2002-03-06  Martin Baulig  <martin@gnome.org>
+
+	* Array.cs (Copy): Use FastCopy when appropriate and do correct
+	exception handling.
+
 2002-03-06  Duco Fijma  <duco@lorentz.xs4all.nl>
 	* CharEnumerator.cs: fixes to CharEnumertor.MoveNext, fixing 
 	some of the failures found be new tests (see ChangeLog in 
