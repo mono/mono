@@ -608,8 +608,9 @@ namespace System.Web
 							}
 
 							// Check if request flow is to be stopped
-							if (_app._Context.Error != null || _app._CompleteRequest) {
+							if (_app.GetLastError () != null || _app._CompleteRequest) {
 								_currentStateIdx = _endStateIdx;
+								break;
 							} else if (_currentStateIdx < _endStateIdx) {
 								// Get next state handler
 								_currentStateIdx++;
@@ -620,16 +621,15 @@ namespace System.Web
 							lasterror = ExecuteState (handler, ref ready_sync);
 							if (ready_sync) 
 								_countSyncSteps++;
-
 						} while (ready_sync && _currentStateIdx < _endStateIdx);
 
 						if (null != lasterror)
 							_app.HandleError (lasterror);
-
 					} finally {
 						_app.OnStateExecuteLeave ();
 					}
 				}
+				
 
 				// Finish the request off..
 				if (lasterror != null || _currentStateIdx == _endStateIdx) {
@@ -802,6 +802,14 @@ namespace System.Web
 			_lastError = null;
 		}
 
+		internal Exception GetLastError ()
+		{
+			if (_Context == null)
+				return _lastError;
+
+			return _Context.Error;
+		}
+		
 		internal void HandleError (Exception obj)
 		{
 			EventHandler handler;			
@@ -834,10 +842,8 @@ namespace System.Web
 			}
 		}
 
-		[MonoTODO]
 		internal void Startup (HttpContext context, HttpApplicationState state)
 		{
-			// TODO: Need to attach methods in global.asax to correct events
 			_Context = context;
 
 			_appState = state;
@@ -912,7 +918,7 @@ namespace System.Web
 								    object extraData)
 		{
 			_Context = context;
-			Context.ApplicationInstance = this;
+			_Context.ApplicationInstance = this;
 			_CompleteRequest = false;
 
 			_asyncWebResult = new HttpAsyncResult (cb, extraData);

@@ -95,7 +95,7 @@ namespace System.Web
 			builder.Append ("</td></tr>\n</table>\n<p>\n");
 
 			builder.Append ("<hr>\n</body>\n</html>\n");
-			builder.AppendFormat ("<!--\n{0}\n-->\n", HtmlEncode (this.ToString ()));
+			builder.AppendFormat ("<!--\n{0}\n-->\n", HttpUtility.HtmlEncode (this.ToString ()));
 
 			return builder.ToString ();
 		}

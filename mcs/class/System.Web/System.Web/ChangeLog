@@ -1,3 +1,10 @@
+2003-07-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: prevent nullref if an error happens before context
+	is set.
+	* HttpException.cs: small fix in the stack trace sent.
+	* HttpUtility.cs: the lock is not needed.
+
 2003-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: added REMOTE_PORT.
