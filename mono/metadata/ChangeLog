@@ -1,3 +1,9 @@
+
+Tue Jan 13 20:03:17 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* string-icalls.c: fix stringbuilder regression as suggested by
+	Iain McCoy <iain@mccoy.id.au>.
+
 2004-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* process.c (process_read_stringtable_block): Recognize '007f' as
