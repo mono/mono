@@ -1178,7 +1178,7 @@ namespace CIR {
 
 			MethodAttributes method_attr = Modifiers.MethodAttr(ModFlags);
 					
-			// FIXME - how to handle PropertyAttributes.HasDefault
+			// FIXME - PropertyAttributes.HasDefault ?
 
 			PropertyAttributes prop_attr = PropertyAttributes.RTSpecialName |
 				                       PropertyAttributes.SpecialName;

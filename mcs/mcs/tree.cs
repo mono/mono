@@ -48,6 +48,11 @@ namespace CIR
 		// </summary>
 		Hashtable classes;
 
+		// <summary>
+		//  Keeps track of namespaces defined in the source code
+		// </summary>
+		Hashtable namespaces;
+
 		RootContext rc;
 		
 		public Tree (RootContext rc)
@@ -80,6 +85,15 @@ namespace CIR
 
 			classes.Add (name, c);
 		}
+
+		public void RecordNamespace (string name, Namespace ns)
+		{
+			if (namespaces == null)
+				namespaces = new Hashtable ();
+
+			namespaces.Add (name, ns);
+
+		}
 		
 		public TypeContainer Types {
 			get {
@@ -102,6 +116,12 @@ namespace CIR
 		public Hashtable Structs {
 			get {
 				return structs;
+			}
+		}
+
+		public Hashtable Namespaces {
+			get {
+				return namespaces;
 			}
 		}
 	}

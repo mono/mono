@@ -292,7 +292,8 @@ using_namespace_directive
 namespace_declaration
 	: NAMESPACE qualified_identifier 
 	  {
-		current_namespace = new Namespace (current_namespace, (string) $2); 
+		current_namespace = new Namespace (current_namespace, (string) $2);
+		tree.RecordNamespace ((string) $2, current_namespace);
 	  } 
 	  namespace_body opt_semicolon
 	  { 

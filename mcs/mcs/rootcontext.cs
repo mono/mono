@@ -535,9 +535,6 @@ namespace CIR {
 			// It's possible that name already is fully qualified. So we do
 			// a simple direct lookup without adding any namespace names
 
-			// FIXME : We need to determine the exact order in which
-			// we perform the lookups.
-			
 			t = type_manager.LookupType (name); 
 			if (t != null)
 				return t;
@@ -568,8 +565,13 @@ namespace CIR {
 
 		public bool IsNamespace (string name)
 		{
-			Console.WriteLine ("FIXME: IsNamespace returns false always!");
-			return false;
+			Namespace ns = (Namespace) tree.Namespaces [name];
+
+			if (ns != null)
+				return true;
+			else
+				return false;
+			
 		}
 		
 		// <summary>

@@ -1,3 +1,15 @@
+2001-09-15  Ravi Pratap  <ravi@ximian.com>
+
+	* tree.cs (Tree::namespaces): New hashtable to keep track of namespaces
+	in the source.
+	(Tree::RecordNamespace): Method to do what the name says ;-)
+	(Tree::Namespaces): Property to get at the namespaces hashtable.
+
+	* cs-parser.jay (namespace_declaration): Call RecordNamespace to 
+	keep track.
+
+	* rootcontext.cs (IsNamespace): Fixed it :-)
+
 2001-09-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer::FindMembers): Add support for
@@ -27,7 +39,7 @@
 	* driver.cs: Added --parse option that only parses its input files
 	and terminates.
 
-	* class.cs: Reveted lsat change from Ravi to IsTopLevel.  That is
+	* class.cs: Reverted last change from Ravi to IsTopLevel.  That is
 	incorrect.  IsTopLevel is not used to tell whether an object is
 	root_types or not (that can be achieved by testing this ==
 	root_types).  But to see if this is a top-level *class* (not
