@@ -1,6 +1,13 @@
+2004-05-05  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* object.c: in mono_object_get_virtual_method(), take into account that
+	non-virtual methods don't have a slot in the vtable. Check needed when
+	the object is a proxy.
+
 2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
-	* marshal.h marshal.c icall.c: Applied patch from vladimir@pobox.com (Vladimir Vukicevic). Implement UnsafeAddrOfPinnedArrayElement.
+	* marshal.h marshal.c icall.c: Applied patch from vladimir@pobox.com
+	(Vladimir Vukicevic). Implement UnsafeAddrOfPinnedArrayElement.
 
 	* object.c (mono_class_compute_gc_descriptor): Fix warning.
 
