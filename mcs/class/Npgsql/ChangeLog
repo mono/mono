@@ -1,3 +1,10 @@
+2004-12-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (CLEAN_FILES): Add $(RESX_RES).
+	($(the_lib)): Depend on $(OTHER_RES) too.
+	($(RESX_RES)): Pass argument of RESGEN through
+	PLATFORM_CHANGE_SEPARATOR_CMD.
+
 2004-12-05  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
 
 	* Npgsql/NpgsqlCommand.cs: gborg 971 & 1068: Added support for ParameterDirection.Output and ParameterDirection.InputOutput parameters. Now you can use these types of parameters to get results. Thanks Ivan (ivan-sun1 at mail dot ru) and (teste at aslls dot ss) for heads up.

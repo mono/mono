@@ -32,7 +32,7 @@ EXTRA_DISTFILES = \
 	$(OTHER_RES)		\
 	Npgsql.dll.resources
 
-include ../../build/library.make
+CLEAN_FILES = $(RESX_RES)
 
 OTHER_RES = \
 	Npgsql/NpgsqlConnection.bmp		\
@@ -55,7 +55,9 @@ RESX_RES = \
 	NpgsqlTypes/NpgsqlTypesHelper.resources			\
 	Npgsql/Design/ConnectionStringEditorForm.resources
 
-$(the_lib): $(RESX_RES)
+include ../../build/library.make
 
-%.resources: %.resx
-	$(RESGEN) $<
+$(the_lib): $(RESX_RES) $(OTHER_RES)
+
+$(RESX_RES): %.resources: %.resx
+	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`

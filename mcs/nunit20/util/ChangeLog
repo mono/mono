@@ -1,3 +1,8 @@
+2004-12-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile ($(RESX_RES)): Pass argument of RESGEN through
+	PLATFORM_CHANGE_SEPARATOR_CMD.
+
 2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlResultVisitor.cs : ... was still broken.
