@@ -264,7 +264,7 @@ namespace System.Reflection {
 
 		public override String ToString ()
 		{
-			return GetName ().Name;
+			return GetName ().ToString ();
 		}
 
 		public static String CreateQualifiedName (String assemblyName, String typeName) 
