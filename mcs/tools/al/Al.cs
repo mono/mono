@@ -79,6 +79,7 @@ namespace Mono.AssemblyLinker
 				string arg;
 				string opt = GetCommand (str, out arg);
 
+				ResourceInfo res;
 				switch (opt) {
 				case "help":
 				case "?":
@@ -88,7 +89,7 @@ namespace Mono.AssemblyLinker
 				case "embed": {
 					if (arg == null)
 						ReportMissingFileSpec (opt);
-					ResourceInfo res = new ResourceInfo ();
+					res = new ResourceInfo ();
 					res.isEmbedded = true;
 					String[] parts = arg.Split (',');
 					res.fileName = parts [0];
@@ -113,7 +114,7 @@ namespace Mono.AssemblyLinker
 				case "link": {
 					if (arg == null)
 						ReportMissingFileSpec (opt);
-					ResourceInfo res = new ResourceInfo ();
+					res = new ResourceInfo ();
 					String[] parts = arg.Split (',');
 					res.fileName = parts [0];
 					if (parts.Length > 1)
@@ -204,7 +205,7 @@ namespace Mono.AssemblyLinker
 				case "evidence":
 					if (arg == null)
 						ReportMissingFileSpec (opt);
-					ResourceInfo res = new ResourceInfo ();
+					res = new ResourceInfo ();
 					res.name = "Security.Evidence";
 					res.fileName = arg;
 					res.isEmbedded = true;
