@@ -182,13 +182,33 @@ namespace Mono.TypeReflector
 
 		public static ITypeDisplayer CreateDisplayer (TypeReflectorOptions options)
 		{
-			ITypeDisplayer d = Factories.Displayer.Create (options.Displayer);
+			ITypeDisplayer d = null;
+			if (options.Displayer != string.Empty)
+				d = Factories.Displayer.Create (options.Displayer);
+			else
+				d = CreateDefaultDisplayer ();
 
 			if (d != null) {
 				d.MaxDepth = options.MaxDepth;
 			}
 
 			return d;
+		}
+
+		private static ITypeDisplayer CreateDefaultDisplayer ()
+		{
+			try {
+				// Get the correct order to load displayers...
+				string order = ConfigurationSettings.AppSettings["displayer-order"];
+				foreach (string d in order.Split (' ')) {
+					ITypeDisplayer displayer = Factories.Displayer.Create (d);
+					if (displayer != null)
+						return displayer;
+				}
+			}
+			catch {
+			}
+			return null;
 		}
 
 		public static INodeFinder CreateFinder (TypeReflectorOptions options)

@@ -78,11 +78,18 @@ GUI Support
 Type Reflector has two GUI front-ends, depending on which platform you're on.
 The front-end is specified with the --displayer program argument.
 
-All front ends have their own makefile target.  For now, the "gui" makefile
-target defaults to the Gtk# front-end (essentially because I'm usually on
-Linux).  Long-term, the "gui" target will compile in support for all
-front-ends.
+All front ends have their own makefile target.  For now, the "gui" target 
+attempts to compiles in support for all displayers (Gtk#,
+System.Windows.Forms, and Console output).
 
+The ``--displayer'' argument is no longer required in order to use GUI output.
+The displayer to be used is specified in the .config file.  (In the
+<appSettings/> element, <add/> sub-element with attribute
+key="displayer-order".  XPath: /appSettings/add[@key='displayer-order'].)
+
+The current order is Gtk#, followed by System.Windows.Forms, followed by
+console output.  If you don't like this order, change the entry so your
+preferred displayer is first.
 
 Gtk#
 ----

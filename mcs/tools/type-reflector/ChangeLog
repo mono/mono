@@ -1,4 +1,16 @@
 2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
+	- General: Specify the order of displayers to use in the .config file.  This
+	  allows us to have "intelligent" defaults, so that (by default) GUI
+	  front-ends are preferred to console output.  If no GUI is supported, then
+	  fallback to console output.
+	* README: Updates
+	* TypeReflectorApp.cs: Follow the "displayer-order" when finding the default
+	  displayer.
+	* TypeReflectorOptions.cs: Change default Displayer to "" so that we know if
+	  the user has specified a preferred displayer.
+	* type-reflector.exe.config: Specify the default displayer ordering.
+
+2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
 	* TypeReflectorApp.cs: Don't always require that types be specified on the
 	  command line.  This isn't necessary for the GUI front-ends, as the user
 		can just open an assembly from within the app after it's running.

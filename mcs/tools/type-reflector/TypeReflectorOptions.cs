@@ -378,7 +378,7 @@ namespace Mono.TypeReflector
 			get {
 				string s = base.FoundOptionValue (displayer);
 				if (s == null)
-					return "console";
+					return string.Empty;
 				return s;
 			}
 		}
