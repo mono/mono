@@ -28,7 +28,7 @@ namespace System.IO
 		
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize)
 			: this (handle, access, ownsHandle, bufferSize, false) {}
-
+		
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync)
 		{
 			this.handle = handle;
@@ -36,12 +36,6 @@ namespace System.IO
 			this.owner = ownsHandle;
 			this.async = isAsync;
 
-			if(MonoIO.GetFileType(handle)==MonoFileType.Disk) {
-				this.canseek = true;
-			} else {
-				this.canseek = false;
-			}
-			
 			InitBuffer (bufferSize);
 		}
 
@@ -61,21 +55,14 @@ namespace System.IO
 
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync)
 		{
-			if (name == null) {
-				throw new ArgumentNullException ("Name is null");
-			}
-			
-			if (name == "") {
-				throw new ArgumentException ("Name is empty");
-			}
+			if (name == null)
+				throw new ArgumentNullException ();
+			if (name == "" || name.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
 
-			if (name.IndexOfAny (Path.InvalidPathChars) != -1) {
-				throw new ArgumentException ("Name has invalid chars");
-			}
-
-			if (Directory.Exists (name)) {
-				throw new UnauthorizedAccessException ("Access to the path '" + Path.GetFullPath (name) + "' is denied.");
-			}
+			if (Directory.Exists (name))
+				throw new UnauthorizedAccessException ("Access to the path '" + Path.GetFullPath (name) +
+								       "' is denied.");
 
 			this.name = name;
 
@@ -84,18 +71,11 @@ namespace System.IO
 			this.handle = MonoIO.Open (name, mode, access, share);
 			if (handle == MonoIO.InvalidHandle)
 				throw MonoIO.GetException (name);
-
+			
 			this.access = access;
 			this.owner = true;
 			this.async = isAsync;
-
-			/* Can we open non-files by name? */
-			if(MonoIO.GetFileType(handle)==MonoFileType.Disk) {
-				this.canseek = true;
-			} else {
-				this.canseek = false;
-			}
-
+			
 			InitBuffer (bufferSize);
 		}
 
@@ -114,10 +94,10 @@ namespace System.IO
 				       access == FileAccess.ReadWrite;
                         }
                 }
-		
+
 		public override bool CanSeek {
                         get {
-                                return(canseek);
+                                return true;	// FIXME: false for pipes & streams
                         }
                 }
 
@@ -132,24 +112,8 @@ namespace System.IO
 		}
 
 		public override long Position {
-			get {
-				if(CanSeek == false) {
-					throw new NotSupportedException("The stream does not support seeking");
-				}
-				
-				return(buf_start + buf_offset);
-			}
-			set {
-				if(CanSeek == false) {
-					throw new NotSupportedException("The stream does not support seeking");
-				}
-
-				if(value < 0) {
-					throw new ArgumentOutOfRangeException("Attempt to set the position to a negative value");
-				}
-				
-				Seek (value, SeekOrigin.Begin);
-			}
+			get { return buf_start + buf_offset; }
+			set { Seek (value, SeekOrigin.Begin); }
 		}
 
 		public virtual IntPtr Handle {
@@ -185,39 +149,31 @@ namespace System.IO
 		public override int Read (byte[] dest, int dest_offset, int count)
 		{
 			int copied = 0;
+			while (count > 0) {
+				int n = ReadSegment (dest, dest_offset + copied, count);
+				copied += n;
+				count -= n;
 
-			int n = ReadSegment (dest, dest_offset, count);
-			copied += n;
-			count -= n;
+				if (count == 0)
+					break;
 
-			if(count == 0) {
-				/* If there was already enough
-				 * buffered, no need to read more from
-				 * the file.
-				 */
-				return (copied);
-			}
+				if (count > buf_size) {	// shortcut for long reads
+					FlushBuffer ();
 
-			if(count > buf_size) {
-				/* Read as much as we can, up to count
-				 * bytes
-				 */
-				FlushBuffer ();
-				if (CanSeek == true) {
-					MonoIO.Seek (handle, buf_start,
-						     SeekOrigin.Begin);
+					MonoIO.Seek (handle, buf_start, SeekOrigin.Begin);
+					n = MonoIO.Read (handle, dest, dest_offset + copied, count);
+
+					copied += n;
+					buf_start += n;
+					break;
 				}
-				n=MonoIO.Read (handle, dest,
-					       dest_offset+copied, count);
-			} else {
-				RefillBuffer();
-				n = ReadSegment (dest, dest_offset, count);
-			}
-			
-			copied += n;
-			buf_start += n;
 
-			return (copied);
+				RefillBuffer ();
+				if (buf_length == 0)
+					break;
+			}
+
+			return copied;
 		}
 
 		public override void Write (byte[] src, int src_offset, int count)
@@ -246,32 +202,21 @@ namespace System.IO
 			long pos;
 
 			// make absolute
-
-			if(CanSeek == false) {
-				throw new NotSupportedException("The stream does not support seeking");
-			}
-			
+		
 			switch (origin) {
 			case SeekOrigin.End:
 				pos = Length + offset;
 				break;
-
+			
 			case SeekOrigin.Current:
 				pos = Position + offset;
 				break;
-
+				
 			case SeekOrigin.Begin: default:
 				pos = offset;
 				break;
 			}
 
-			if (pos < 0) {
-				/* LAMESPEC: shouldn't this be
-				 * ArgumentOutOfRangeException?
-				 */
-				throw new ArgumentException("Attempted to Seek before the beginning of the stream");
-			}
-			
 			if (pos >= buf_start && pos <= buf_start + buf_length) {
 				buf_offset = (int) (pos - buf_start);
 				return pos;
@@ -285,18 +230,6 @@ namespace System.IO
 
 		public override void SetLength (long length)
 		{
-			if(CanSeek == false) {
-				throw new NotSupportedException("The stream does not support seeking");
-			}
-
-			if(CanWrite == false) {
-				throw new NotSupportedException("The stream does not support writing");
-			}
-
-			if(length < 0) {
-				throw new ArgumentOutOfRangeException("Length is less than 0");
-			}
-			
 			Flush ();
 			MonoIO.SetLength (handle, length);
 		}
@@ -372,10 +305,7 @@ namespace System.IO
 		private void FlushBuffer ()
 		{
 			if (buf_dirty) {
-				if (CanSeek == true) {
-					MonoIO.Seek (handle, buf_start,
-						     SeekOrigin.Begin);
-				}
+				MonoIO.Seek (handle, buf_start, SeekOrigin.Begin);
 				MonoIO.Write (handle, buf, 0, buf_length);
 			}
 
@@ -387,15 +317,11 @@ namespace System.IO
 		private void RefillBuffer ()
 		{
 			FlushBuffer ();
-
-			if (CanSeek == true) {
-				MonoIO.Seek (handle, buf_start,
-					     SeekOrigin.Begin);
-			}
 			
+			MonoIO.Seek (handle, buf_start, SeekOrigin.Begin);
 			buf_length = MonoIO.Read (handle, buf, 0, buf_size);
 		}
-		
+
 		private void InitBuffer (int size)
 		{
 			if (size < 0)
@@ -417,7 +343,6 @@ namespace System.IO
 		private FileAccess access;
 		private bool owner;
 		private bool async;
-		private bool canseek;
 
 		private byte [] buf;			// the buffer
 		private int buf_size;			// capacity in bytes
