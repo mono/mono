@@ -58,7 +58,7 @@ namespace System.Data.SqlClient {
 		// SqlDataReader state data for ExecuteReader()
 		private SqlDataReader dataReader = null;
 		private string[] queries = null;
-		private int currentQuery;
+		private int currentQuery = -1;
 		private CommandBehavior cmdBehavior = CommandBehavior.Default;
 
 		private ParmUtil parmUtil = null;
@@ -197,13 +197,7 @@ namespace System.Data.SqlClient {
 			currentQuery = -1;
 			dataReader = new SqlDataReader(this);
 
-			if((behavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult) {
-				queries = new String[1];
-				queries[0] = sql;
-			}
-			else {
-				queries = sql.Split(new Char[] {';'});			
-			}
+			queries = sql.Split(new Char[] {';'});			
 
 			dataReader.NextResult();
 					
@@ -214,11 +208,15 @@ namespace System.Data.SqlClient {
 		{
 			SqlResult res = new SqlResult();
 			res.Connection = this.Connection;
+			res.Behavior = cmdBehavior;
 			string statement;
 		
 			currentQuery++;
 
+			res.CurrentQuery = currentQuery;
+
 			if(currentQuery < queries.Length && queries[currentQuery].Equals("") == false) {
+				res.SQL = queries[currentQuery];
 				statement = TweakQuery(queries[currentQuery], cmdType);
 				ExecuteQuery(statement, res);
 				res.ResultReturned = true;
@@ -685,6 +683,27 @@ namespace System.Data.SqlClient {
 		private SqlConnection con = null;
 		private int rowsAffected = -1;
 		private ExecStatusType execStatus = ExecStatusType.PGRES_FATAL_ERROR;
+		private int currentQuery = -1;
+		private string sql = "";
+		private CommandBehavior cmdBehavior = CommandBehavior.Default;
+
+		internal CommandBehavior Behavior {
+			get {
+				return cmdBehavior;
+			}
+			set {
+				cmdBehavior = value;
+			}
+		}
+
+		internal string SQL {
+			get {
+				return sql;
+			}
+			set {
+				sql = value;
+			}
+		}
 
 		internal ExecStatusType ExecStatus {
 			get {
@@ -695,7 +714,22 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		internal int CurrentQuery {
+			get {
+				return currentQuery;
+			}
+
+			set {
+				currentQuery = value;
+			}
+
+		}
+
 		internal SqlConnection Connection {
+			get {
+				return con;
+			}
+
 			set {
 				con = value;
 			}
@@ -770,6 +804,8 @@ namespace System.Data.SqlClient {
 				dataTableSchema.Columns.Add ("NumericScale", typeof (int));
 				dataTableSchema.Columns.Add ("IsUnique", typeof (bool));
 				dataTableSchema.Columns.Add ("IsKey", typeof (bool));
+				DataColumn dc = dataTableSchema.Columns["IsKey"];
+				dc.AllowDBNull = true; // IsKey can have a DBNull
 				dataTableSchema.Columns.Add ("BaseCatalogName", typeof (string));
 				dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
 				dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
@@ -790,6 +826,25 @@ namespace System.Data.SqlClient {
 				rowCount = PostgresLibrary.PQntuples(pgResult);
 				pgtypes = new string[fieldCount];
 
+				// TODO: for CommandBehavior.SingleRow
+				//       use IRow, otherwise, IRowset
+				if(fieldCount > 0)
+					if((cmdBehavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow)
+						fieldCount = 1;
+
+				// TODO: for CommandBehavior.SchemaInfo
+				if((cmdBehavior & CommandBehavior.SchemaOnly) == CommandBehavior.SchemaOnly)
+					fieldCount = 0;
+
+				// TODO: for CommandBehavior.SingleResult
+				if((cmdBehavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult)
+					if(currentQuery > 0)
+						fieldCount = 0;
+
+				// TODO: for CommandBehavior.SequentialAccess - used for reading Large OBjects
+				//if((cmdBehavior & CommandBehavior.SequentialAccess) == CommandBehavior.SequentialAccess) {
+				//}
+
 				DataRow schemaRow;
 				int oid;
 				DbType dbType;
@@ -798,17 +853,25 @@ namespace System.Data.SqlClient {
 				for (int i = 0; i < fieldCount; i += 1 ) {
 					schemaRow = dataTableSchema.NewRow ();
 
-					schemaRow["ColumnName"] = PostgresLibrary.PQfname (pgResult, i);
+					string columnName = PostgresLibrary.PQfname (pgResult, i);
+
+					schemaRow["ColumnName"] = columnName;
 					schemaRow["ColumnOrdinal"] = i+1;
 					schemaRow["ColumnSize"] = PostgresLibrary.PQfsize (pgResult, i);
 					schemaRow["NumericPrecision"] = 0;
 					schemaRow["NumericScale"] = 0;
-					schemaRow["IsUnique"] = false;
-					schemaRow["IsKey"] = false;
+					if((cmdBehavior & CommandBehavior.SingleResult) == CommandBehavior.KeyInfo) {
+						bool IsUnique, IsKey;
+						GetKeyInfo(columnName, out IsUnique, out IsKey);
+					}
+					else {
+						schemaRow["IsUnique"] = false;
+						schemaRow["IsKey"] = DBNull.Value;
+					}
 					schemaRow["BaseCatalogName"] = "";
-					schemaRow["BaseColumnName"] = PostgresLibrary.PQfname (pgResult, i);
+					schemaRow["BaseColumnName"] = columnName;
 					schemaRow["BaseSchemaName"] = "";
-					schemaRow["BaseTableName"]  = "";
+					schemaRow["BaseTableName"] = "";
 				
 					// PostgreSQL type to .NET type stuff
 					oid = PostgresLibrary.PQftype (pgResult, i);
@@ -830,9 +893,9 @@ namespace System.Data.SqlClient {
 					schemaRow["IsLong"] = false;
 					schemaRow["IsReadOnly"] = false;
 					schemaRow.AcceptChanges();
-					dataTableSchema.Rows.Add (schemaRow);	
+					dataTableSchema.Rows.Add (schemaRow);
 				}
-
+				
 #if DEBUG_SqlCommand
 				Console.WriteLine("********** DEBUG Table Schema BEGIN ************");
 				foreach (DataRow myRow in dataTableSchema.Rows) {
@@ -844,6 +907,21 @@ namespace System.Data.SqlClient {
 #endif // DEBUG_SqlCommand
 
 			}
+		}
+
+		// TODO: how do we get the key info if
+		//       we don't have the tableName?
+		private void GetKeyInfo(string columnName, out bool isUnique, out bool isKey) {
+			isUnique = false;
+			isKey = false;
+
+			string sql;
+
+			sql =
+			"SELECT i.indkey, i.indisprimary, i.indisunique " +
+			"FROM pg_class c, pg_class c2, pg_index i " +
+			"WHERE c.relname = ':tableName' AND c.oid = i.indrelid " +
+			"AND i.indexrelid = c2.oid ";
 		}
 	}
 }

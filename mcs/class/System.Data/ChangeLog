@@ -1,5 +1,20 @@
 2002-05-26  Daniel Morgan <danmorg@sc.rr.com>
 
+	* System.Data/DataRow.cs: modified
+	support setting of DBNull.Value
+	using the Item indexer this[DataColumn]
+	
+	* System.Data.SqlClient/SqlCommand.cs: modified
+	tweaks to show TODO's for other CommandBehavior.
+	Set AllowDBNull column to true for IsKey row 
+	in schema DataTable.
+	
+	* System.Data.SqlClient/SqlConnection.cs: modified
+	if transaction is in progress when a Close() is called,
+	do a transaction Rollback.
+
+2002-05-26  Daniel Morgan <danmorg@sc.rr.com>
+
 	* Test/SqlSharpCli.cs: added file
 	My new toy.  SQL# is a command-line tool to enter
 	SQL	commands and queries using Mono System.Data.

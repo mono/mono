@@ -88,18 +88,23 @@ namespace System.Data
 		public object this[DataColumn column] {
 			get { return this[column, DataRowVersion.Current]; }
 			set {
+				bool objIsDBNull = value.Equals(DBNull.Value);
 				if (column == null)
 					throw new ArgumentNullException ();
 				int columnIndex = table.Columns.IndexOf (column);
 				if (columnIndex == -1)
 					throw new ArgumentException ();
-				if (column.DataType != value.GetType ())
-					throw new InvalidCastException ();
+				if(column.DataType != value.GetType ())
+					if(objIsDBNull == true && column.AllowDBNull == false)
+						throw new InvalidCastException ();
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 
 				BeginEdit ();  // implicitly called
-				proposed[columnIndex] = value;
+				if(objIsDBNull)
+					proposed[columnIndex] = DBNull.Value;
+				else
+					proposed[columnIndex] = value;
 				EndEdit (); // is this the right thing to do?
 			}
 		}

@@ -307,6 +307,13 @@ namespace System.Data.SqlClient {
 		private void CloseDataSource () {
 			// FIXME: just a quick hack
 			if(conState == ConnectionState.Open) {
+				if(trans != null)
+					if(trans.DoingTransaction == true) {
+						trans.Rollback();
+						// trans.Dispose();
+						trans = null;
+					}
+
 				conState = ConnectionState.Closed;
 				PostgresLibrary.PQfinish (pgConn);
 				pgConn = IntPtr.Zero;
