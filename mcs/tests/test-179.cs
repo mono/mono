@@ -1,42 +1,84 @@
-using System;
 
 class A {
-        public object this[double x] {
-                get { return 3*x; }
-        }
+	double d1,d2;
+	public double this[double x] {
+		set {
+			d1 = x;
+			d2 = value;
+		}
+		get {
+			if (d1 == x) {
+				return d2;
+			}
+			return 0.0;
+		}
+	}
 }
 
 class B : A {
-        public new object this[double x] {
-                get { return x + 100; }
-        }
+	double d1,d2;
+	public new double this[double x] {
+		set {
+			d1 = x;
+			d2 = value;
+		}
+		get {
+			if (d1 == x) {
+				return d2;
+			}
+			return 0.0;
+		}
+	}
 }
 
 class C : B{
-        public object this[string s] {
-                get { return "hey:" + s; }
-        }
-        public object this[int x] {
-                get { return x * 2; }
-        }
+	string s1,s2;
+	int i1,i2;
+	public string this[string x] {
+		set {
+			s1 = x;
+			s2 = value;
+		}
+		get {
+			if (s1 == x) {
+				return s2;
+			}
+			return "";
+		}
+	}
+	public int this[int x] {
+		set {
+			i1 = x;
+			i2 = value;
+		}
+		get {
+			if (i1 == x) {
+				return i2;
+			}
+			return 0;
+		}
+	}
 }
 
 struct EntryPoint {
 
-        public static int Main (string[] args) {
-                C test = new C();
+	public static int Main (string[] args) {
+		C test = new C();
 
-		if (((double)test [333.333]) != 433.333)
+		test[333.333] = 444.444;
+		if (test[333.333] != 444.444)
 			return 1;
-		
-		if (((string)test ["a string"]) != "hey:a string")
+
+		test["a string"] = "another string";
+		if (test["a string"] != "another string")
 			return 2;
 
-		if (((int)test [111]) != 222)
+		test[111] = 222;
+		if (test[111] != 222)
 			return 3;
 
 		System.Console.WriteLine ("Passes");
 		return 0;
-        }
+	}
 
 }
