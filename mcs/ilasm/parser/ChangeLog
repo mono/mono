@@ -1,5 +1,11 @@
 2003-05-07 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Remove dotted_name, it is not used at all
+	anymore. vtattr only take an int64 param, this fix gets rid of all
+	of the remaining reduce/reduce conflicts
+		
+2003-05-07 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Remove extraneous dotted_name, also make comp_name
 	contain dotted_name logic. Oh how I will miss the 301
 	reduce/reduce conflicts these small changes fixed :-)

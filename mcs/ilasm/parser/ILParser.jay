@@ -402,7 +402,6 @@ vtfixup_decl		: D_VTFIXUP OPEN_BRACKET int32 CLOSE_BRACKET
 			;
 
 vtfixup_attr		: /* EMPTY */
-			| vtfixup_attr int32
 			| vtfixup_attr int64
 			| vtfixup_attr K_FROMUNMANAGED
 			| vtfixup_attr K_CALLMOSTDERIVED
@@ -1825,10 +1824,6 @@ manifestres_decls	: /* EMPTY */
 manifestres_decl	: D_FILE comp_name K_AT int32
 			| D_ASSEMBLY K_EXTERN comp_name
 			| customattr_decl
-			;
-
-dotted_name		: id
-			| dotted_name DOT id	{ $$ = String.Format ("{0}.{1}", $1, $3); }
 			;
 
 comp_qstring		: QSTRING
