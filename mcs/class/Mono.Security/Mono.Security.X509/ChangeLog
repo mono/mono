@@ -1,3 +1,8 @@
+2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PKCS12.cs: New. PKCS#12 implementation. Only decoding is working
+	right now.
+
 2003-09-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ITrustAnchors.cs: New. Interface to trust anchors.
