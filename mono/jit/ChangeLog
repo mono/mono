@@ -1,4 +1,9 @@
-2002/08/15  Nick Drochak <ndrochak@gol.com>
+2002-08-16  Nick Drochak <ndrochak@gol.com>
+
+	* x86.brg (mono_llmult_ovf): Flip ALL the bits, dummy. Now negative numbers
+	work.
+
+2002-08-15  Nick Drochak <ndrochak@gol.com>
 
 	* x86.brg (mono_llmult_ovf): Fix so it throws an overflow when result
 	will not fit in 64 bits.  Fixes bug #27375.
