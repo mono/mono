@@ -1,18 +1,24 @@
 //
-// This has a bunch of different ways of using the mutator
-// operators in C#.  Not all of them are yet supported by the
-// compiler.  This is here just for references purposes until
-// I am finised and make this into a real test.
+// This test exercises the various ways in which mutator operators can be
+// used in C# and the various different scenarios that the compiler would
+// have to deal with
 //
+// variables, linear arrays, multi-dimensional arrays, jagged arrays,
+// properties, indexers and overloaded ++ and --
+//
+
 class X {
 
-	int v, p;
+	public int v, p;
+	public int idx;
 	
 	public int this [int n] {
 		get {
+			idx = n;
 			return v;
 		}
 		set {
+			idx = n;
 			v = value;
 		}
 	}
@@ -67,36 +73,76 @@ class Y {
 
 	static int  i_post_increment (X x)
 	{
-		return x [100]++;
+		return x [14]++;
 	}
 
 	static Z overload_increment (Z z)
 	{
-		return z++;
-	}
-
-	static Z overload_pre_increment (Z z)
-	{
-		return ++z;
-	}
-
-	static Z ugly (Z z)
-	{
-		return z.P++;
+		  return z++;
 	}
 	
-	static void Main ()
+	static Z overload_pre_increment (Z z)
+	{
+		  return ++z;
+	}
+	
+	static Z ugly (Z z)
+	{
+		  return z.P++;
+	}
+
+	//
+	// Tests the ++ and -- operators on integers
+	//
+	static int simple (int i)
+	{
+		if (++i != 11)
+			return 1;
+		if (--i != 10)
+			return 2;
+		if (i++ != 10)
+			return 3;
+		if (i-- != 11)
+			return 4;
+		return 0;
+	}
+	static int Main ()
 	{
 		X x = new X ();
+		int c;
 		
-		i_pre_increment (x);
-		i_post_increment (x);
-		p_pre_increment (x);
-		p_post_increment (x);
+		if ((c = simple (10)) != 0)
+			return c;
+		
+		if (i_pre_increment (x) != 1)
+			return 5;
+		
+		if (x.idx != 100)
+			return 6;
+		
+		if (i_post_increment (x) != 1)
+			return 7;
+
+		if (x.idx != 14)
+			return 8;
+		
+		if (p_pre_increment (x) != 1)
+			return 9;
+
+		if (x.p != 1)
+			return 10;
+		
+		if (p_post_increment (x) != 1)
+			return 10;
+
+		if (x.p != 2)
+			return 11;
 
 		Z z = new Z();
 
 		overload_increment (z);
+
+		return 0;
 	}
 	
 }
