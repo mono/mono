@@ -596,17 +596,19 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
-
-			if (array.Rank > 1)
-				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length < 0");
 
 			int low = array.GetLowerBound (0);
-			if (index < low || length < 0 || index + length > array.GetUpperBound (0) + 1)
-				throw new ArgumentOutOfRangeException ();
+			if (index < low)
+				throw new ArgumentOutOfRangeException ("index < lower bound");
+			index = index - low;
 
-			low = index - low;
+			if (index + length > array.Length)
+				throw new ArgumentOutOfRangeException ("index + length > size");
+
 			for (int i = 0; i < length; i++) 
-				array.SetValueImpl (null, low + i);
+				array.SetValueImpl (null, index + i);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
