@@ -22,13 +22,13 @@ namespace Mono.ILASM {
                 {
                         this.op = op;
                         this.operand = operand;
-			
-			if (op == PEAPI.MethodOp.newobj)
-				operand.CallConv |= PEAPI.CallConv.Instance;
+
+                        if (op == PEAPI.MethodOp.newobj || op == PEAPI.MethodOp.callvirt)
+                                operand.CallConv |= PEAPI.CallConv.Instance;
                 }
 
-                public void Emit (CodeGen code_gen, MethodDef meth, 
-				  PEAPI.CILInstructions cil)
+                public void Emit (CodeGen code_gen, MethodDef meth,
+                                  PEAPI.CILInstructions cil)
                 {
                         operand.Resolve (code_gen);
                         cil.MethInst (op, operand.PeapiMethod);

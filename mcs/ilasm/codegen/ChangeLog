@@ -1,3 +1,7 @@
+2003-09-13 Jackson Harper <jackson@latitudegeo.com>
+
+	* MethodInstr.cs: callvirt operation is implicitly instance.
+	
 2003-09-12 Jackson Harper <jackson@latitudegeo.com>
 
 	* TypeRef.cs: Remove unused enum, this has been moved to the
