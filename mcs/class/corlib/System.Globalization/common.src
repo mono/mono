@@ -1,7 +1,10 @@
+CalendarWeekRule.cs
 CompareOptions.cs
 CultureTypes.cs
 DateTimeStyles.cs
+GregorianCalendar.cs
 GregorianCalendarTypes.cs
+JulianCalendar.cs
 NumberFormatInfo.cs
 NumberStyles.cs
 UnicodeCategory.cs
