@@ -83,6 +83,7 @@ namespace Mono.Xml.XPath
 
 		int prevSibling;
 		int position;
+		int lastNsInScope;
 		bool skipRead = false;
 
 		public DTMXPathDocument CreateDocument ()
@@ -116,6 +117,7 @@ namespace Mono.Xml.XPath
 			AddNode (0, 0, 0, 0, -1, 0, XPathNodeType.Root, xmlReader.BaseURI, false, "", "", "", "", "", 1, 0, 0);
 
 			this.nodeIndex = 1;
+			this.lastNsInScope = 1;
 			this.requireFirstChildFill = true;
 
 			while (!xmlReader.EOF)
@@ -232,6 +234,9 @@ namespace Mono.Xml.XPath
 			int firstAttributeIndex = 0;
 			int lastNsIndexInCurrent = 0;
 
+			while (namespaces [lastNsInScope].DeclaredElement == previousSibling) {
+				lastNsInScope = namespaces [lastNsInScope].NextNamespace;
+			}
 
 			// process namespaces and attributes.
 			if (xmlReader.MoveToFirstAttribute ()) {
@@ -247,8 +252,6 @@ namespace Mono.Xml.XPath
 								"" : xmlReader.LocalName,
 							xmlReader.Value);
 						namespaces [nsIndex].NextNamespace = nextTmp;
-//						if (lastNsIndexInCurrent == 0)
-//							nodes [nodeIndex].FirstNamespace = nsIndex;
 						lastNsIndexInCurrent = nsIndex;
 					} else {
 						// add attribute node.
@@ -284,6 +287,9 @@ namespace Mono.Xml.XPath
 				xmlReader.MoveToElement ();
 			}
 
+			if (lastNsIndexInCurrent > 0)
+				lastNsInScope = nsIndex;
+
 			AddNode (parent,
 				firstAttributeIndex,
 				attributeIndex,
@@ -298,7 +304,7 @@ namespace Mono.Xml.XPath
 				xmlReader.Prefix,
 				"",	// Element has no internal value.
 				xmlReader.XmlLang,
-				nsIndex,
+				lastNsInScope,
 				lineInfo != null ? lineInfo.LineNumber : 0,
 				lineInfo != null ? lineInfo.LinePosition : 0);
 			if (!xmlReader.IsEmptyElement)
@@ -332,13 +338,11 @@ namespace Mono.Xml.XPath
 		public void AddNode (int parent, int firstAttribute, int attributeEnd, int previousSibling, int depth, int position, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
 		{
 			if (nodes.Length < nodeIndex + 1) {
-//				if (nodes.Length >= nodeCapacity) {
-					nodeCapacity *= 2;
-					SetNodeArrayLength (nodeCapacity);
-//				}
+				nodeCapacity *= 2;
+				SetNodeArrayLength (nodeCapacity);
 			}
 
-			DTMXPathLinkedNode curNode = nodes [nodeIndex];// = new DTMXPathLinkedNode ();
+			DTMXPathLinkedNode curNode = nodes [nodeIndex];
 			nodes [nodeIndex].FirstChild = 0;		// dummy
 			nodes [nodeIndex].Parent = parent;
 			nodes [nodeIndex].FirstAttribute = firstAttribute;
@@ -363,13 +367,11 @@ namespace Mono.Xml.XPath
 		public void AddAttribute (int ownerElement, string localName, string ns, string prefix, string value, object schemaType, int lineNumber, int linePosition)
 		{
 			if (attributes.Length < attributeIndex + 1) {
-//				if (attributes.Length >= attributeCapacity) {
-					attributeCapacity *= 2;
-					SetAttributeArrayLength (attributeCapacity);
-//				}
+				attributeCapacity *= 2;
+				SetAttributeArrayLength (attributeCapacity);
 			}
 
-			DTMXPathAttributeNode attr = attributes [attributeIndex];// = new DTMXPathAttributeNode ();
+			DTMXPathAttributeNode attr = attributes [attributeIndex];
 			attributes [attributeIndex].OwnerElement = ownerElement;
 			attributes [attributeIndex].LocalName = localName;
 			attributes [attributeIndex].NamespaceURI = ns;
@@ -384,13 +386,11 @@ namespace Mono.Xml.XPath
 		public void AddNsNode (int declaredElement, string name, string ns)
 		{
 			if (namespaces.Length < nsIndex + 1) {
-//				if (namespaces.Length >= nsCapacity) {
-					nsCapacity *= 2;
-					SetNsArrayLength (nsCapacity);
-//				}
+				nsCapacity *= 2;
+				SetNsArrayLength (nsCapacity);
 			}
 
-			DTMXPathNamespaceNode nsNode = namespaces [nsIndex];// = new DTMXPathNamespaceNode ();
+			DTMXPathNamespaceNode nsNode = namespaces [nsIndex];
 			namespaces [nsIndex].DeclaredElement = declaredElement;
 			namespaces [nsIndex].Name = name;
 			namespaces [nsIndex].Namespace = ns;

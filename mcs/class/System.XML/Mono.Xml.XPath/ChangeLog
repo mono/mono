@@ -1,3 +1,8 @@
+2004-01-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder.cs : Namespace nodes are incorrectly created.
+	  This fix should make XPathDocument compatible with XmlDocument.
+
 2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocument.cs : CreateNavigator() should return the first root
