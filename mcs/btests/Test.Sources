@@ -126,7 +126,8 @@ StructureB \
 ArrayA \
 ArrayB \
 ArrayC \
-ArrayD
+ArrayD \
+EnumA
 
 
 # All negetive test cases which should
@@ -265,8 +266,14 @@ StructureC1 \
 StructureC2 \
 StructureC3 \
 ArrayC1 \
-ArrayC2 
-
+ArrayC2 \
+EnumC1 \
+EnumC2 \
+EnumC3 \
+EnumC4 \
+EnumC5 \
+EnumC6 \
+EnumC7 
 
 # All negetive test cases which should fail at
 # runtime goes here
