@@ -39,8 +39,6 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		XmlDataDocument xmlDataDocument;
-		[MonoTODO ("caching stuff, remove clscompliant attribute once s.data is fixed")]
-		[CLSCompliant (false)]
 		public XmlDataDocument GetXmlDataDocument ()
 		{
 			if (xmlDataDocument == null) {

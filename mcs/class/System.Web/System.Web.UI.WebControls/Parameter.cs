@@ -125,8 +125,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		[MonoTODO ("remove clscomp attribute")]
-		[CLSCompliant (false)]
 		public ParameterDirection Direction {
 			get {
 				object o = ViewState ["Direction"];
