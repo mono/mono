@@ -4207,12 +4207,12 @@ private ConstructorInitializer FixConstructorInitializer (ref ArrayList s)
 				BaseAccess ba = (BaseAccess) i.expr;
 				if (ba.member == "New" || ba.member == ".ctor") {
 					ci = new ConstructorBaseInitializer (i.Arguments, current_local_parameters, lexer.Location);
-					s.Remove(0);
+					s.RemoveAt(0);
 				}
 			}
 			if (i.expr.ToString() == "Mono.MonoBASIC.This..ctor") {
 				ci = new ConstructorThisInitializer (i.Arguments, current_local_parameters, lexer.Location); 
-				s.Remove(0);
+				s.RemoveAt(0);
 			}
 		}
 	}

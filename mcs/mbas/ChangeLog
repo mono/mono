@@ -1,4 +1,7 @@
 2004-04-12 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Bug fixed - Base class ctor was getting called twice when called explicitly from the derived class ctor as MyBase.New
+
+2004-04-12 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Fixed bugs for calling ctor from another ctor in the same class by using statments like
 		Me.New 
 		or 
