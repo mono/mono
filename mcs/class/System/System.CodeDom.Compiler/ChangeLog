@@ -1,3 +1,11 @@
+2004-02-04  Jackson Harper <jackson@ximian.com>
+
+	* CodeGenerator.cs (GenerateExpression): Don't allow null
+	expressions. Throw ArgumentException if the expression type is not
+	handled.
+	* CodeGenerator.cs (GenerateStatement): Add line pragmas if they
+	are set. Throw ArgumentException if the expression type is not handled.
+	
 2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TempFileCollection.cs: fixed temp path in BaseDir.

@@ -223,6 +223,9 @@ namespace System.CodeDom.Compiler {
 
 		protected void GenerateExpression (CodeExpression e)
 		{
+			if (e == null)
+				throw new ArgumentNullException ("Value cannot be null.");
+
 			CodeArgumentReferenceExpression argref = e as CodeArgumentReferenceExpression;
 			if (argref != null) {
 				GenerateArgumentReferenceExpression (argref);
@@ -343,6 +346,8 @@ namespace System.CodeDom.Compiler {
 				GenerateVariableReferenceExpression (varref);
 				return;
 			}
+
+			throw new ArgumentException ("Element type " + e + " is not supported.");
 		}
 
 		protected abstract void GenerateExpressionStatement (CodeExpressionStatement statement);
@@ -453,76 +458,88 @@ namespace System.CodeDom.Compiler {
 
 		protected void GenerateStatement (CodeStatement s)
 		{
+			bool handled = false;
+
+			if (s.LinePragma != null)
+				GenerateLinePragmaStart (s.LinePragma);
+
 			CodeAssignStatement assign = s as CodeAssignStatement;
 			if (assign != null) {
 				GenerateAssignStatement (assign);
-				return;
+				handled = true;
 			}
 			CodeAttachEventStatement attach = s as CodeAttachEventStatement;
 			if (attach != null) {
 				GenerateAttachEventStatement (attach);
-				return;
+				handled = true;
 			}
 			CodeCommentStatement comment = s as CodeCommentStatement;
 			if (comment != null) {
 				GenerateCommentStatement (comment);
-				return;
+				handled = true;
 			}
 			CodeConditionStatement condition = s as CodeConditionStatement;
 			if (condition != null) {
 				GenerateConditionStatement (condition);
-				return;
+				handled = true;
 			}
 			CodeExpressionStatement expression = s as CodeExpressionStatement;
 			if (expression != null) {
 				GenerateExpressionStatement (expression);
-				return;
+				handled = true;
 			}
 			CodeGotoStatement gotostmt = s as CodeGotoStatement;
 			if (gotostmt != null) {
 				GenerateGotoStatement (gotostmt);
-				return;
+				handled = true;
 			}
 			CodeIterationStatement iteration = s as CodeIterationStatement;
 			if (iteration != null) {
 				GenerateIterationStatement (iteration);
-				return;
+				handled = true;
 			}
 			CodeLabeledStatement label = s as CodeLabeledStatement;
 			if (label != null) {
 				GenerateLabeledStatement (label);
-				return;
+				handled = true;
 			}
 			CodeMethodReturnStatement returnstmt = s as CodeMethodReturnStatement;
 			if (returnstmt != null) {
 				GenerateMethodReturnStatement (returnstmt);
-				return;
+				handled = true;
 			}
 			CodeRemoveEventStatement remove = s as CodeRemoveEventStatement;
 			if (remove != null) {
 				GenerateRemoveEventStatement (remove);
-				return;
+				handled = true;
 			}
 			CodeSnippetStatement snippet = s as CodeSnippetStatement;
 			if (snippet != null) {
 				GenerateSnippetStatement (snippet);
-				return;
+				handled = true;
 			}
 			CodeThrowExceptionStatement exception = s as CodeThrowExceptionStatement;
 			if (exception != null) {
 				GenerateThrowExceptionStatement (exception);
-				return;
+				handled = true;
 			}
 			CodeTryCatchFinallyStatement trycatch = s as CodeTryCatchFinallyStatement;
 			if (trycatch != null) {
 				GenerateTryCatchFinallyStatement (trycatch);
-				return;
+				handled = true;
 			}
 			CodeVariableDeclarationStatement declaration = s as CodeVariableDeclarationStatement;
 			if (declaration != null) {
 				GenerateVariableDeclarationStatement (declaration);
-				return;
+				handled = true;
 			}
+
+			if (!handled)
+				throw new ArgumentException ("Element type " + s + " is not supported.");
+
+			if (s.LinePragma != null)
+				GenerateLinePragmaEnd (s.LinePragma);
+			
 		}
 
 		protected void GenerateStatements (CodeStatementCollection c)
@@ -1104,7 +1121,7 @@ namespace System.CodeDom.Compiler {
 
 		// The position in the array determines the order in which those
 		// kind of CodeTypeMembers are generated. Less is more ;-)
-		static Type [] memberTypes = {  typeof (CodeMemberField),
+		static Type [] memberTypes = {	typeof (CodeMemberField),
 						typeof (CodeSnippetTypeMember),
 						typeof (CodeTypeConstructor),
 						typeof (CodeConstructor),
