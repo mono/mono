@@ -475,7 +475,7 @@ namespace Mono.CSharp {
 					} else if (kind is Property || kind is Indexer) {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Event) {
-						((EventBuilder) builder).SetCustomAttribute (cb);
+						((MyEventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder) {
 
 						if (a.Type == TypeManager.marshal_as_attr_type) {

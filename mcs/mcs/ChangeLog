@@ -1,5 +1,15 @@
 2002-05-01  Miguel de Icaza  <miguel@ximian.com>
 
+	* attribute.cs: Use proper cast for Events, since we use a MyEventBuilder.
+
+	* parameter.cs (ComputeParameterTypes,
+	ComputeAndDefineParameterTypes): Better error handling: now we
+	clear the `types' cache if we fail during any of the type lookups.
+	We also return the status code correctly to our caller
+
+	* delegate.cs: If we fail to define a delegate, abort the extra
+	steps. 
+
 	* expression.cs (Binary.ResolveOperator): for
 	operator==(object,object) and operator !=(object, object) we also
 	have to verify that there is an implicit conversion from one to

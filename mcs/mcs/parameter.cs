@@ -269,11 +269,13 @@ namespace Mono.CSharp {
 				}
 			}
 			if (failed)
-				return false;
+				types = null;
 			
 			if (extra > 0){
 				if (ArrayParameter.Resolve (ds, loc))
 					types [i] = ArrayParameter.ExternalType (ds, loc);
+				else
+					return false;
 			}
 
 			return true;
@@ -301,12 +303,16 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			bool ok_flag = true;
+			
 			if (FixedParameters != null){
 				foreach (Parameter p in FixedParameters){
 					Type t = null;
 					
 					if (p.ResolveAndDefine (ds))
 						t = p.ExternalType (ds, loc);
+					else
+						ok_flag = false;
 					
 					types [i] = t;
 					i++;
@@ -316,9 +322,18 @@ namespace Mono.CSharp {
 			if (extra > 0){
 				if (ArrayParameter.ResolveAndDefine (ds))
 					types [i] = ArrayParameter.ExternalType (ds, loc);
+				else
+					ok_flag = false;
 			}
 
-			return true;
+			//
+			// invalidate the cached types
+			//
+			if (!ok_flag){
+				types = null;
+			}
+			
+			return ok_flag;
 		}
 		
 		/// <summary>
@@ -334,8 +349,10 @@ namespace Mono.CSharp {
 			if (FixedParameters == null && ArrayParameter == null)
 				return no_types;
 
-			if (ComputeParameterTypes (ds) == false)
+			if (ComputeParameterTypes (ds) == false){
+				types = null;
 				return null;
+			}
 			
 			return types;
 		}

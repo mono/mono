@@ -1466,11 +1466,13 @@ destructor_declaration
 			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");
 		} else {
 			Location l = lexer.Location;
+			int m = Modifiers.PROTECTED | Modifiers.OVERRIDE;
+
+			if (!RootContext.StdLib && current_container.Name == "System.Object")
+				m &= ~Modifiers.OVERRIDE;
 
 			Method d = new Method (
-				"System.Void", 
-				Modifiers.PROTECTED | Modifiers.OVERRIDE, 
-				"Finalize", 
+				"System.Void", m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
 			d.Block = (Block) $6;

@@ -127,7 +127,9 @@ namespace Mono.CSharp {
 			//
 			// First, call the `out of band' special method for
 			// defining recursively any types we need:
-			Parameters.ComputeAndDefineParameterTypes (this);
+			
+			if (!Parameters.ComputeAndDefineParameterTypes (this))
+				return false;
 			
  			param_types = Parameters.GetParameterInfo (this);
 			if (param_types == null)
