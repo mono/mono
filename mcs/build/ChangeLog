@@ -1,3 +1,8 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/basic.make (real-profile-check): Prepend ./ when
+	executing basic-profile-check.exe.  EXTERNAL_RUNTIME can be empty.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* platforms/linux.make (EXTERNAL_MCS,EXTERNAL_MBAS,EXTERNAL_RUNTIME):

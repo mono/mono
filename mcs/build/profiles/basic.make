@@ -22,7 +22,7 @@ real-profile-check:
 	$$ok && echo 'class X { static void Main () { System.Console.Write("OK");}}' > basic-profile-check.cs; \
 	$$ok && { $(EXTERNAL_MCS) basic-profile-check.cs || ok=false; }; \
 	$$ok && { test -f basic-profile-check.exe || ok=false; }; \
-	$$ok && { $(EXTERNAL_RUNTIME) basic-profile-check.exe > /dev/null || ok=false; }; \
+	$$ok && { $(EXTERNAL_RUNTIME) ./basic-profile-check.exe > /dev/null || ok=false; }; \
 	rm -f basic-profile-check.cs basic-profile-check.exe; \
 	if $$ok; then :; else \
 	    echo "*** The compiler '$(EXTERNAL_MCS)' doesn't appear to be usable." 1>&2 ; \

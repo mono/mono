@@ -12,7 +12,7 @@ LIB_MCS_FLAGS_RESOURCES = $(LIB_MCS_FLAGS)
 TXT_RESOURCES = Microsoft.VisualBasic/VBUtils.resources
 RESX_RESOURCES = 
 
-EXTRA_DISTFILES = $(TXT_RESOURCES:.resources=.txt) $(RESX_RESOURCES:.resources=.resx)
+EXTRA_DISTFILES = $(TXT_RESOURCES:.resources=.txt) $(RESX_RESOURCES:.resources=.resx) Microsoft.VisualBasic.dll.resources
 CLEAN_FILES = $(TXT_RESOURCES) $(RESX_RESOURCES)
 
 include ../../build/library.make

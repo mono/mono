@@ -1,3 +1,7 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Add Microsoft.VisualBasic.dll.resources.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Fix typo.
