@@ -70,12 +70,16 @@ namespace System.Xml.Schema
 		{
 			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
 			schema.Compile (ValidationEventHandler, this, resolver);
-			return schemaSet.Add (schema);
+			lock (schemaSet) {
+				return schemaSet.Add (schema);
+			}
 		}
 
 		public XmlSchema Add (string ns, string uri)
 		{
-			return schemaSet.Add (ns, uri);
+			lock (schemaSet) {
+				return schemaSet.Add (ns, uri);
+			}
 		}
 
 		public XmlSchema Add (XmlSchema schema)
@@ -93,9 +97,11 @@ namespace System.Xml.Schema
 				schema.Compile (ValidationEventHandler, this, resolver);
 
 			string ns = GetSafeNs (schema.TargetNamespace);
-			if (schemaSet.Contains (ns))
-				schemaSet.Remove (schemaSet.Get (ns));
-			return schemaSet.Add (schema);
+			lock (schemaSet) {
+				if (schemaSet.Contains (ns))
+					schemaSet.Remove (schemaSet.Get (ns));
+				return schemaSet.Add (schema);
+			}
 		}
 
 		private string GetSafeNs (string ns)
@@ -110,25 +116,33 @@ namespace System.Xml.Schema
 
 			foreach (XmlSchema s in schema) {
 				string ns = GetSafeNs (s.TargetNamespace);
-				if (schemaSet.Contains (ns))
-					schemaSet.Remove (schemaSet.Get (ns));
-				schemaSet.Add (s);
+				lock (schemaSet) {
+					if (schemaSet.Contains (ns))
+						schemaSet.Remove (schemaSet.Get (ns));
+					schemaSet.Add (s);
+				}
 			}
 		}
 
 		public bool Contains (string ns)
 		{
-			return schemaSet.Contains (ns);
+			lock (schemaSet) {
+				return schemaSet.Contains (ns);
+			}
 		}
 
 		public bool Contains (XmlSchema schema)
 		{
-			return schemaSet.Contains (schema);
+			lock (schemaSet) {
+				return schemaSet.Contains (schema);
+			}
 		}
 
 		public void CopyTo (XmlSchema[] array, int index)
 		{
-			schemaSet.CopyTo (array, index);
+			lock (schemaSet) {
+				schemaSet.CopyTo (array, index);
+			}
 		}
 
 		public XmlSchemaCollectionEnumerator GetEnumerator ()
@@ -139,13 +153,14 @@ namespace System.Xml.Schema
 		// interface Methods
 		void ICollection.CopyTo (Array array, int index)
 		{
-			schemaSet.CopyTo (array, index);
+			lock (schemaSet) {
+				schemaSet.CopyTo (array, index);
+			}
 		}
 
-		[MonoTODO]
 		bool ICollection.IsSynchronized
 		{
-			get { throw new NotImplementedException (); }
+			get { return true; } // always
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -153,10 +168,9 @@ namespace System.Xml.Schema
 			return schemaSet.GetEnumerator ();
 		}
 
-		[MonoTODO]
 		Object ICollection.SyncRoot
 		{
-			get { throw new NotImplementedException (); }
+			get { return this; }
 		}
 
 		// Internal Methods
