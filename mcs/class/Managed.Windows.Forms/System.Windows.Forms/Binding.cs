@@ -42,6 +42,10 @@ namespace System.Windows.Forms {
 		private PropertyDescriptor prop_desc;
 		private object data;
 
+		private EventDescriptor changed_event;
+		private EventHandler property_value_changed_handler;
+		private object event_current; // The manager.Current as far as the changed_event knows
+
 		#region Public Constructors
 		public Binding (string propertyName, object dataSource, string dataMember)
 		{
@@ -105,9 +109,6 @@ namespace System.Windows.Forms {
 			if (Parse!=null)
 				Parse (this, cevent);
 		}
-
-
-
 		#endregion	// Protected Instance Methods
 
 		
@@ -133,6 +134,8 @@ namespace System.Windows.Forms {
 			manager = control.BindingContext [data_source, property_name];
 			manager.AddBinding (this);
 
+			WirePropertyValueChangedEvent ();
+
 			PullData ();
 			PushData ();
 		}
@@ -150,6 +153,31 @@ namespace System.Windows.Forms {
 
 		internal void UpdateIsBinding ()
 		{
+			PushData ();
+		}
+
+		private void CurrentChangedHandler ()
+		{
+			if (changed_event != null) {
+				changed_event.RemoveEventHandler (event_current, property_value_changed_handler);
+				WirePropertyValueChangedEvent ();
+			}
+		}
+
+		private void WirePropertyValueChangedEvent ()
+		{
+			EventDescriptor changed_event = TypeDescriptor.GetEvents (manager.Current).Find (property_name + "Changed", false);
+			if (changed_event == null)
+				return;
+			property_value_changed_handler = new EventHandler (PropertyValueChanged);
+			changed_event.AddEventHandler (manager.Current, property_value_changed_handler);
+
+			event_current = manager.Current;
+		}
+
+		private void PropertyValueChanged (object sender, EventArgs e)
+		{
+			PullData ();
 			PushData ();
 		}
 

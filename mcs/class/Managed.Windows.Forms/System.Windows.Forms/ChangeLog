@@ -1,5 +1,11 @@
+2005-03-03  Jackson Harper  <jackson@ximian.com>
+
+	* Binding.cs: Bind to <Property>Changed events so we can detect
+	when properties are changed and update the data.
+
 2005-03-02  Jordi Mas i Hernandez <jordi@ximian.com>
-	* ImageList.cs
+
+	* ImageList.cs:
 	  - Changes 32-bit pixel format to Format32bppArgb to allow transparency
 	  - Fixes ImageList constructor with ImageList container
 	  - Fixes image scaling (wrong parameters at DrawImage)
