@@ -13,21 +13,18 @@
 
 	<target name="assemblies">
 		<csc target="library" output="System.Security_test.dll" debug="${debug}">
-			<arg value="/nowarn:1595"/>
 			<sources>
 				<includes name="**/*.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
 				<includes name="..\class\lib\corlib.dll"/>
-				<includes name="..\class\lib\System.dll"/>
-				<includes name="..\class\lib\System.Xml.dll"/>
+				<includes name="..\class\lib\System.XML.dll"/>
 				<includes name="..\class\lib\System.Security.dll"/>
 			</references>
-			<arg value="/r:..\..\lib\System.dll"/>
-			<arg value="/r:..\..\lib\System.Xml.dll"/>
-			<arg value="/r:..\..\lib\System.Security.dll"/>
 		</csc>
+		<copy file="../../lib/System.Security.dll" tofile="System.Security.dll"/>
+		<copy file="../../lib/System.XML.dll" tofile="System.XML.dll"/>
 	</target>
 
 	<target name="test" depends="assemblies">
@@ -35,7 +32,8 @@
 	</target>
 
 	<target name="clean">
-		<delete file="System.Security.dll" failonerror="false"/>
 		<delete file="System.Security_test.dll" failonerror="false"/>
+		<delete file="System.Security.dll" failonerror="false"/>
+		<delete file="System.XML.dll" failonerror="false"/>
 	</target>
 </project>

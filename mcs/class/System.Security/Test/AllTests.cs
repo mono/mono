@@ -1,5 +1,5 @@
 //
-// TestSuite.System.Security.AllTests.cs
+// MonoTests.System.Security.AllTests.cs
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
@@ -8,10 +8,9 @@
 //
 
 using System;
-using System.Security.Cryptography;
 using NUnit.Framework;
 
-namespace MonoTests.System.Security{
+namespace MonoTests.System.Security {
 
 public class AllTests : TestCase {
 
