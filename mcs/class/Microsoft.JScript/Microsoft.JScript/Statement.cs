@@ -65,13 +65,13 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label true_lbl = ig.DefineLabel ();
+			Label false_lbl = ig.DefineLabel ();
 			Label merge_lbl = ig.DefineLabel ();
-			CodeGenerator.fall_false (ec, cond, true_lbl);			
+			CodeGenerator.fall_true (ec, cond, false_lbl);
 			if (true_stm != null)
 				true_stm.Emit (ec);			
 			ig.Emit (OpCodes.Br, merge_lbl);
-			ig.MarkLabel (true_lbl);
+			ig.MarkLabel (false_lbl);
 			if (false_stm != null)
 				false_stm.Emit (ec);			
 			ig.MarkLabel (merge_lbl);
@@ -94,22 +94,15 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			if ((parent == null || !ParentIsItrStm) && identifier == string.Empty)
+
+			if (!InLoop && identifier == string.Empty)
 				throw new Exception ("A continue can't be outside a iteration stm");
-			return false;
+			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
-		}
-
-		private bool ParentIsItrStm {
-			get {
-				if (parent is DoWhile || parent is While || parent is For || parent is ForIn)
-					return true;
-				return false;
-			}
+			ec.ig.Emit (OpCodes.Br, ec.LoopBegin);
 		}
 	}
 
@@ -124,22 +117,17 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			if ((parent == null || !ParentIsCorrect) && identifier == string.Empty)
-				throw new Exception ("A break statement can't be outside a switch or iteration stm");
-			return false;
-		}
+                        if ((!InLoop && !InSwitch) && identifier == string.Empty)
+                                throw new Exception ("A break statement can't be outside a switch or iteration stm");
+                        // FIXME: when we have label_stm on the grammar, we
+                        // must check that the target label is defined.
+                        return true;
 
-		private bool ParentIsCorrect {
-			get {
-				if (parent is DoWhile || parent is While || parent is For || parent is ForIn || parent is Switch)
-					return true;
-				return false;
-			}
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ec.ig.Emit (OpCodes.Br, ec.LoopEnd);
 		}
 	}
 
@@ -198,10 +186,18 @@ namespace Microsoft.JScript {
 		{
 			ILGenerator ig = ec.ig;
 			Label body_label = ig.DefineLabel ();
+
+			ec.LoopBegin = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
+
 			ig.MarkLabel (body_label);
+
 			if (stm != null)
 				stm.Emit (ec);
-			CodeGenerator.fall_false (ec, exp, body_label);			
+
+			ig.MarkLabel (ec.LoopBegin);
+			CodeGenerator.fall_false (ec, exp, body_label);
+			ig.MarkLabel (ec.LoopEnd);
 		}
 	}
 
@@ -234,15 +230,21 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label body_label = ig.DefineLabel ();
+			Label body_label = ig.DefineLabel ();			
 			Label cond_label = ig.DefineLabel ();
+
+			ec.LoopBegin = cond_label;
+                        ec.LoopEnd = ig.DefineLabel ();
+
 			ig.Emit (OpCodes.Br, cond_label);
 			ig.MarkLabel (body_label);
+
 			if (stm != null)
 				stm.Emit (ec);
+
 			ig.MarkLabel (cond_label);
 			CodeGenerator.fall_false (ec, exp, body_label);
-			
+			ig.MarkLabel (ec.LoopEnd);
 		}
 	}
 
@@ -275,6 +277,8 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			Label back = ig.DefineLabel ();
 			Label forward = ig.DefineLabel ();
+                        ec.LoopBegin = ig.DefineLabel ();
+                        ec.LoopEnd = forward;
 
 			/* emit init expr */
 			tmp = exprs [0];
@@ -298,10 +302,13 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Bge, forward);
 				}
 			}
-			/* emit stm */
+			/* emit stms */
 			if (stms != null)
 				stms.Emit (ec);
+
 			tmp = exprs [2];
+			ig.MarkLabel (ec.LoopBegin);
+			/* emit increment */
 			if (tmp != null)
 				tmp.Emit (ec);
 			
@@ -347,6 +354,7 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			Label init_default = ig.DefineLabel ();
 			Label end_of_default = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
 
 			LocalBuilder loc = ig.DeclareLocal (typeof (object));
 			ig.Emit (OpCodes.Stloc, loc);
@@ -382,6 +390,7 @@ namespace Microsoft.JScript {
 					c.EmitStms (ec);				
 				}
 			} 
+			ig.MarkLabel (ec.LoopEnd);			
 		}
 	}
 
