@@ -1,3 +1,10 @@
+2002-08-12      Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* DataGrid.cs                 - Added protected method (skeleton)
+	                                CreateColumnSet(PagedDataSource, bool)
+	                              Still trying to know how will it be used
+	                              and what for...
+
 2002-08-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PagedDataSource.cs: fixed compilation.
