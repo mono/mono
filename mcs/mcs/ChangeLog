@@ -1,3 +1,9 @@
+2005-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs: Check for null and empty strings.  
+
+	I have lost another battle to Paolo.
+
 2005-01-07  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #70942
