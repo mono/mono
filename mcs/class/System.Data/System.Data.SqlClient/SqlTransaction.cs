@@ -94,7 +94,8 @@ namespace System.Data.SqlClient {
 		{
 			if (!disposed)  {
 				if (disposing) {
-					Rollback ();
+					if (isOpen) // in case it is called in the dispose of the class, then the isOpen is already false 
+						Rollback ();
 				}
 				disposed = true;
 			}

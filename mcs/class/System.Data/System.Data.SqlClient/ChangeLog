@@ -1,3 +1,6 @@
+2004-09-24  Umadevi S <sumadevi@novell.com>
+	* SqlTransaction.cs - Dispose will not call rollback incase the transaction is not open.
+
 2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SqlClientPermission.cs: Added internal constructor accepting an Sql
