@@ -915,7 +915,7 @@ namespace Mono.Data.PostgreSqlClient {
 		private void GetKeyInfo(string columnName, out bool isUnique, out bool isKey) {
 			isUnique = false;
 			isKey = false;
-
+/*
 			string sql;
 
 			sql =
@@ -923,6 +923,7 @@ namespace Mono.Data.PostgreSqlClient {
 			"FROM pg_class c, pg_class c2, pg_index i " +
 			"WHERE c.relname = ':tableName' AND c.oid = i.indrelid " +
 			"AND i.indexrelid = c2.oid ";
+*/			
 		}
 	}
 }

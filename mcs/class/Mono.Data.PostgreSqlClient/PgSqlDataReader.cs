@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 
 namespace Mono.Data.PostgreSqlClient {
 	/// <summary>
@@ -34,10 +35,9 @@ namespace Mono.Data.PostgreSqlClient {
 	/// of result sets obtained by executing a command 
 	/// at a SQL database.
 	/// </summary>
-	//public sealed class PgSqlDataReader : MarshalByRefObject,
-	//	IEnumerable, IDataReader, IDisposable, IDataRecord
-	public sealed class PgSqlDataReader : IEnumerable, 
-		IDataReader, IDataRecord {
+	public sealed class PgSqlDataReader : MarshalByRefObject,
+		IEnumerable, IDataReader, IDisposable, IDataRecord {
+
 		#region Fields
 
 		private PgSqlCommand cmd;
@@ -60,6 +60,8 @@ namespace Mono.Data.PostgreSqlClient {
 
 		private int currentRow = -1; // no Read() has been done yet
 
+		private bool disposed = false;
+
 		#endregion // Fields
 
 		#region Constructors
@@ -79,15 +81,13 @@ namespace Mono.Data.PostgreSqlClient {
 		public void Close() {
 			open = false;
 			
-			// free SqlDataReader resources in SqlCommand
-			// and allow SqlConnection to be used again
+			// free PgSqlDataReader resources in PgSqlCommand
+			// and allow PgSqlConnection to be used again
 			cmd.CloseReader();
 
 			// TODO: get parameters from result
 
-			// clear unmanaged PostgreSQL result set
-			PostgresLibrary.PQclear (pgResult);
-			pgResult = IntPtr.Zero;
+			Dispose (true);
 		}
 
 		[MonoTODO]
@@ -328,21 +328,46 @@ namespace Mono.Data.PostgreSqlClient {
 		}
 
 		[MonoTODO]
-		public IEnumerator GetEnumerator() {
-			throw new NotImplementedException ();
+		IEnumerator IEnumerable.GetEnumerator () {
+			return new DbEnumerator (this);
 		}
 
 		#endregion // Public Methods
 
 		#region Destructors
 
-		[MonoTODO]
-		public void Dispose () {
+		private void Dispose(bool disposing) {
+			if(!this.disposed) {
+				if(disposing) {
+					// release any managed resources
+					cmd = null;
+					table = null;
+					fields = null;
+					types = null;
+					isNull = null;
+					actualLength = null;
+					dbTypes = null;
+				}
+				// release any unmanaged resources
+
+				// clear unmanaged PostgreSQL result set
+				if (pgResult != IntPtr.Zero) {
+					PostgresLibrary.PQclear (pgResult);
+					pgResult = IntPtr.Zero;
+				}
+
+				// close any handles
+				this.disposed = true;
+			}
 		}
 
-		//[MonoTODO]
-		//~PgSqlDataReader() {
-		//}
+		void IDisposable.Dispose() {
+			Dispose(true);
+		}
+
+		~PgSqlDataReader() {
+			Dispose(false);
+		}
 
 		#endregion // Destructors
 
