@@ -4559,7 +4559,8 @@ namespace Mono.CSharp {
 		///   Determines if the candidate method, if a params method, is applicable
 		///   in its expanded form to the given set of arguments
 		/// </summary>
-		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
+		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments,
+						      MethodBase candidate, bool do_varargs)
 		{
 			int arg_count;
 			
@@ -4575,12 +4576,15 @@ namespace Mono.CSharp {
 				return false;
 
 			int count = pd_count - 1;
-
-			bool is_varargs = false;
-			if (pd.ParameterModifier (count) == Parameter.Modifier.ARGLIST)
-				is_varargs = true;
-			else if (pd.ParameterModifier (count) != Parameter.Modifier.PARAMS)
-				return false;
+			if (do_varargs) {
+				if (pd.ParameterModifier (count) != Parameter.Modifier.ARGLIST)
+					return false;
+				if (pd_count != arg_count)
+					return false;
+			} else {
+				if (pd.ParameterModifier (count) != Parameter.Modifier.PARAMS)
+					return false;
+			}
 			
 			if (count > arg_count)
 				return false;
@@ -4624,14 +4628,19 @@ namespace Mono.CSharp {
 				
 			}
 
-			if (is_varargs)
+			if (do_varargs) {
+				Argument a = (Argument) arguments [count];
+				if (!(a.Expr is Arglist))
+					return false;
+
 				return true;
+			}
 
 			Type element_type = TypeManager.GetElementType (pd.ParameterType (pd_count - 1));
 
 			for (int i = pd_count - 1; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
-				
+
 				if (!Convert.ImplicitConversionExists (ec, a.Expr, element_type))
 					return false;
 			}
@@ -4763,7 +4772,16 @@ namespace Mono.CSharp {
                                         candidates.Add (candidate);
                                         applicable_type = candidate.DeclaringType;
                                         found_applicable = true;
-                                } else if (IsParamsMethodApplicable (ec, Arguments, candidate)) {
+                                } else if (IsParamsMethodApplicable (ec, Arguments, candidate, false)) {
+					if (candidate_to_form == null)
+						candidate_to_form = new PtrHashtable ();
+					
+					// Candidate is applicable in expanded form
+					candidates.Add (candidate);
+					applicable_type = candidate.DeclaringType;
+					found_applicable = true; 
+					candidate_to_form [candidate] = candidate;
+                                } else if (IsParamsMethodApplicable (ec, Arguments, candidate, true)) {
 					if (candidate_to_form == null)
 						candidate_to_form = new PtrHashtable ();
 					

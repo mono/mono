@@ -1,3 +1,8 @@
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.IsParamsMethodApplicable): We need to
+	call this twice: for params and varargs methods.
+
 2004-06-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs:
