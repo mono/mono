@@ -38,7 +38,7 @@ namespace Microsoft.JScript {
 
 		public static void WriteLine (string str)
 		{
-			throw new NotImplementedException ();
+			Out.WriteLine (str);
 		}
 	}
 }

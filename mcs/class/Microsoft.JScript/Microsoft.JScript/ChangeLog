@@ -1,3 +1,7 @@
+2003-10-28  cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* ScriptStream.cs: added WriteLine.
+
 2003-10-24  cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* ast.cs: Added 'virtual' Emit method (I might change it to be
