@@ -10,6 +10,8 @@
 // (C) Copyright 2002 Tim Coleman 
 //
 
+using System;
+
 namespace System.Data.SqlTypes
 {
 
