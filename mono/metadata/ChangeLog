@@ -3,6 +3,7 @@
 	* marshal.c (mono_marshal_get_native_wrapper): correctly marshal
 	string arrays.
 	(mono_marshal_string_array): null terminate unmanaged string arrays.
+	(mono_marshal_get_managed_wrapper): print warning for arrays (not implemented)
 
 Wed Jul 24 13:32:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
