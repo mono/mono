@@ -1,3 +1,10 @@
+2004-11-19  Geoff Norton  <gnorton@customerdna.com>
+
+	* System.IO/KeventWatcher.cs:  Dont marshal a string to a struct
+	that the kernel will hold; this causes a double free bug.  Marshal
+	it as a IntPtr and clean it up in the dispose method.  Don't pass
+	FullName to the pattern matcher, pass the filename.  Fixes bug #69692.
+
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (USE_BOOT_COMPILE): Re-organize to use BOOT_COMPILE
