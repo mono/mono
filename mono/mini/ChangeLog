@@ -1,4 +1,8 @@
 
+Wed Jul 2 11:08:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: use faster allocation for CEE_BOX if possible.
+
 Mon Jun 30 19:16:33 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini-ops.h, inssel.brg, mini-x86.c: optimized access to fields.
