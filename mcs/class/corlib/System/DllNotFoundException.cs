@@ -18,7 +18,7 @@ namespace System
 	   {
 			 // Constructors
 			 public DllNotFoundException ()
-				    : base (Locale.GetText ("DLL not found."));
+				    : base (Locale.GetText ("DLL not found."))
 			 {
 			 }
 
