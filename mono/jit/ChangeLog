@@ -1,3 +1,9 @@
+
+Wed Sep 25 12:04:08 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: reorder mono_runtime_cleanup () call since it needs the
+	engine still fully working.
+
 2002-09-24  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_open): When we're invoked from inside the
