@@ -278,8 +278,10 @@ namespace Mono.CSharp {
 			
 			for (int i = 0; i < count; i++){
 				Expression e = ((Expression)args [i]).ResolveAsTypeTerminal (ec);
-				if (e == null)
+				if (e == null) {
 					ok = false;
+					continue;
+				}
 				if (e is TypeParameterExpr)
 					has_type_args = true;
 				args [i] = e;
@@ -364,6 +366,12 @@ namespace Mono.CSharp {
 			Expression resolved = sn.ResolveAsTypeStep (ec);
 			if (resolved == null)
 				return null;
+
+			if (resolved.Type == null) {
+				Report.Error (-220, loc, "Failed to resolve constructed type `{0}'",
+					      full_name);
+				return null;
+			}
 
 			Type gt = resolved.Type.GetGenericTypeDefinition ();
 			gen_params = gt.GetGenericArguments ();
