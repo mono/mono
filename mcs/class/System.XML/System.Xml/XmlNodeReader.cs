@@ -51,8 +51,6 @@ namespace System.Xml
 		int depth;
 		bool isEndElement;
 		bool alreadyRead;
-		XmlNamespaceManager defaultNsmgr;
-		Stack entityReaderStack = new Stack ();
 		XmlReader entityReader;
 
 		private XmlNode ownerLinkedNode {
@@ -69,15 +67,26 @@ namespace System.Xml
 		#region Constructor
 
 		public XmlNodeReader (XmlNode node)
+			: this (node, 0)
+		{
+		}
+		
+		private XmlNodeReader (XmlNode node, int startDepth)
 		{
 			startNode = node;
+			depth = startDepth;
 			document = startNode.NodeType == XmlNodeType.Document ?
 				startNode as XmlDocument : startNode.OwnerDocument;
 
-			if (node.NodeType != XmlNodeType.Document
-				&& node.NodeType != XmlNodeType.DocumentFragment)
+			switch (node.NodeType) {
+			case XmlNodeType.Document:
+			case XmlNodeType.DocumentFragment:
+			case XmlNodeType.EntityReference:
+				break;
+			default:
 				alreadyRead = true;
-			defaultNsmgr = new XmlNamespaceManager (this.NameTable);
+				break;
+			}
 
 		}
 		
@@ -90,6 +99,8 @@ namespace System.Xml
 				if (entityReader != null)
 					return entityReader.ReadState == ReadState.Interactive ?
 						entityReader.AttributeCount : 0;
+				if (state != ReadState.Interactive)
+					return 0;
 
 				if (isEndElement || current == null)
 					return 0;
@@ -118,7 +129,7 @@ namespace System.Xml
 		public override int Depth {
 			get {
 				if (entityReader != null && entityReader.ReadState == ReadState.Interactive)
-					return entityReader.Depth + depth + entityReaderStack.Count + 1;
+					return entityReader.Depth + depth;// + entityReaderStack.Count + 1;
 
 				if (current == null)
 					return 0;
@@ -163,7 +174,7 @@ namespace System.Xml
 			get {
 				if (entityReader != null)
 					return entityReader.ReadState == ReadState.Interactive ?
-						entityReader.IsDefault : false;
+						entityReader.HasValue : false;
 
 				if (current == null)
 					return false;
@@ -206,7 +217,7 @@ namespace System.Xml
 			get {
 				if (entityReader != null)
 					return entityReader.ReadState == ReadState.Interactive ?
-						entityReader.IsDefault : false;
+						entityReader.IsEmptyElement : false;
 
 				if (current == null)
 					return false;
@@ -295,7 +306,7 @@ namespace System.Xml
 
 		public override XmlNodeType NodeType {
 			get {
-				if (entityReader != null)
+				if (entityReader != null) {
 					switch (entityReader.ReadState) {
 					case ReadState.Interactive:
 						return entityReader.NodeType;
@@ -304,6 +315,7 @@ namespace System.Xml
 					case ReadState.EndOfFile:
 						return XmlNodeType.EndEntity;
 					}
+				}
 
 				if (current == null)
 					return XmlNodeType.None;
@@ -320,10 +332,7 @@ namespace System.Xml
 				if (current == null)
 					return String.Empty;
 
-//				if (current.NodeType == XmlNodeType.Attribute)
-//					return current.Prefix != String.Empty ? current.Prefix : null;
-//				else
-					return current.Prefix;
+				return current.Prefix;
 			}
 		}
 
@@ -396,8 +405,7 @@ namespace System.Xml
 			if (current != null && current.ParentNode != null &&
 				current.ParentNode.NodeType == XmlNodeType.Attribute) {
 				entityReader.Close ();
-				entityReader = entityReaderStack.Count > 0 ?
-					entityReaderStack.Pop () as XmlTextReader : null;
+				entityReader = null;
 				return true;
 			}
 			else
@@ -408,9 +416,6 @@ namespace System.Xml
 		{
 			if (entityReader != null)
 				entityReader.Close ();
-			while (entityReaderStack.Count > 0)
-				((XmlTextReader) entityReaderStack.Pop ()).Close ();
-
 			current = null;
 			state = ReadState.Closed;
 		}
@@ -847,8 +852,7 @@ namespace System.Xml
 					entityReader.Read ();
 					return true;
 				default:
-					entityReader = entityReaderStack.Count > 0 ?
-						entityReaderStack.Pop () as XmlTextReader : null;
+					entityReader = null;
 					return Read ();
 				}
 				// and go on ...
@@ -871,6 +875,13 @@ namespace System.Xml
 
 			MoveToElement ();
 
+			if (alreadyRead) {
+				alreadyRead = false;
+				return current != null;
+			}
+
+			bool isEnd = false;
+
 			if (IsEmptyElement || isEndElement) {
 				// Then go up and move to next.
 				// If no more nodes, then set EOF.
@@ -878,9 +889,7 @@ namespace System.Xml
 				if (current.ParentNode == null
 					|| current.ParentNode.NodeType == XmlNodeType.Document
 					|| current.ParentNode.NodeType == XmlNodeType.DocumentFragment) {
-					current = null;
-					state = ReadState.EndOfFile;
-					return false;
+					isEnd = true;
 				} else if (current.NextSibling == null) {
 					depth--;
 					current = current.ParentNode;
@@ -890,10 +899,16 @@ namespace System.Xml
 					current = current.NextSibling;
 					return true;
 				}
+			}
 
-			} else if (alreadyRead) {
-				alreadyRead = false;
-				return current != null;
+			if (current.NextSibling == null
+				&& current.ParentNode is XmlEntityReference)
+				isEnd = true;
+
+			if (isEnd) {
+				current = null;
+				state = ReadState.EndOfFile;
+				return false;
 			}
 
 			if (!isEndElement && current.FirstChild != null && current.NodeType != XmlNodeType.EntityReference) {
@@ -919,8 +934,7 @@ namespace System.Xml
 					// If it is ended, then other properties/methods will take care.
 					return entityReader.ReadAttributeValue ();
 				default:
-					entityReader = entityReaderStack.Count > 0 ?
-						entityReaderStack.Pop () as XmlTextReader : null;
+					entityReader = null;
 					// and go on ...
 					return ReadAttributeValue ();
 				}
@@ -961,31 +975,7 @@ namespace System.Xml
 		{
 			if (NodeType != XmlNodeType.EntityReference)
 				throw new InvalidOperationException ("The current node is not an Entity Reference");
-
-			// FIXME: Now that XmlEntityReference holds the target 
-			// entity's child nodes, we don't have to use 
-			// XmlTextReader and simply use those nodes directly.
-			string replacementText = current.InnerXml;
-
-			XmlNodeType xmlReaderNodeType = 
-				(current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute) ?
-				XmlNodeType.Attribute : XmlNodeType.Element;
-
-			XmlParserContext ctx = null;
-			if (entityReader != null) {
-				entityReaderStack.Push (entityReader);
-				ctx = ((IHasXmlParserContext) entityReader).ParserContext;
-			}
-			if (ctx == null) {
-				ctx = new XmlParserContext (document.NameTable,
-					current.ConstructNamespaceManager (),
-					document.DocumentType != null ? document.DocumentType.DTD : null,
-					BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
-			}
-			XmlTextReader xtr = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
-			xtr.XmlResolver = document.Resolver;
-			xtr.SkipTextDeclaration ();
-			entityReader = xtr;
+			entityReader = new XmlNodeReader (current, 1);
 		}
 
 		public override void Skip ()

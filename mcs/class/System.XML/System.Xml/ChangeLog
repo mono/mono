@@ -1,5 +1,10 @@
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNodeReader.cs : Reimplemented ResolveEntity(). It does not use
+	  XmlTextReader trick anymore. XmlNodeReader itself it used instead.
+
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNodeReader.cs : for NET_1_0 ReadInnerXml(), just use
 	  XmlReader.ReadInnerXmlInternal(). It should work fine.
 	  Ditto for ReadOuterXml().
