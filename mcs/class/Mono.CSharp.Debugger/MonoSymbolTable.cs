@@ -664,33 +664,6 @@ namespace Mono.CSharp.Debugger
 			ClassTypeIndex = file.DefineType (method.ReflectedType);
 		}
 
-		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
-		{
-			ArrayList list = new ArrayList ();
-			int last_offset = -1;
-			int last_row = -1;
-
-			for (int i = 0; i < line_numbers.Length; i++) {
-				LineNumberEntry line = (LineNumberEntry) line_numbers [i];
-
-				if (line.Offset > last_offset) {
-					if (last_row >= 0)
-						list.Add (new LineNumberEntry (last_row, last_offset));
-					last_row = line.Row;
-					last_offset = line.Offset;
-				} else if (line.Row > last_row) {
-					last_row = line.Row;
-				}
-			}
-
-			if (last_row >= 0)
-				list.Add (new LineNumberEntry (last_row, last_offset));
-
-			LineNumberEntry[] retval = new LineNumberEntry [list.Count];
-			list.CopyTo (retval, 0);
-			return retval;
-		}
-
 		internal MethodSourceEntry Write (MonoSymbolFile file, BinaryWriter bw)
 		{
 			NameOffset = (int) bw.BaseStream.Position;
