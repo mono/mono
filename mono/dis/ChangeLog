@@ -1,3 +1,7 @@
+2004-07-06  Jackson Harper  <jackson@ximian.com>
+
+	* get.c: Add float cast for outputing floats. Patch by Steve Brown.
+	
 2004-06-25  Jackson Harper  <jackson@ximian.com>
 
 	* get.c: Add a few more keywords to be escaped.
