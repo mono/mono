@@ -23,32 +23,47 @@ namespace System.IO {
                 // new public static readonly StreamWriter Null;
 
 		public StreamWriter (Stream stream)
-			: this (stream, null, 0) {}
+			: this (stream, Encoding.UTF8, 0) {}
 
 		public StreamWriter (Stream stream, Encoding encoding)
 			: this (stream, encoding, 0) {}
 
+		[MonoTODO("Nothing is done with bufferSize")]
 		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
 		{
-			internalStream = stream;
+			if (null == stream)
+				throw new ArgumentNullException("stream");
+			if (null == encoding)
+				throw new ArgumentNullException("encoding");
+			if (bufferSize < 0)
+				throw new ArgumentOutOfRangeException("bufferSize");
+			if (!stream.CanWrite)
+				throw new ArgumentException("bufferSize");
 
-			if (encoding == null)
-				internalEncoding = Encoding.UTF8;
-			else
-				internalEncoding = encoding;
+			internalStream = stream;
+			internalEncoding = encoding;
 		}
 
 		public StreamWriter (string path)
-			: this (path, false, null, 0) {}
+			: this (path, false, Encoding.UTF8, 0) {}
 
 		public StreamWriter (string path, bool append)
-			: this (path, append, null, 0) {}
+			: this (path, append, Encoding.UTF8, 0) {}
 
 		public StreamWriter (string path, bool append, Encoding encoding)
 			: this (path, append, encoding, 0) {}
 		
 		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize)
 		{
+			if (null == path)
+				throw new ArgumentNullException("path");
+			if (String.Empty == path)
+				throw new ArgumentException("path cannot be empty string");
+			if (null == encoding)
+				throw new ArgumentNullException("encoding");
+			if (bufferSize < 0)
+				throw new ArgumentOutOfRangeException("bufferSize");
+
 			FileMode mode;
 
 			if (append)
@@ -63,10 +78,7 @@ namespace System.IO {
 			else
 				internalStream.SetLength (0);
 
-			if (encoding == null)
-				internalEncoding = Encoding.UTF8;
-			else
-				internalEncoding = encoding;
+			internalEncoding = encoding;
 			
 		}
 
