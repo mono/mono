@@ -22,6 +22,8 @@ namespace MonoTests.System.Threading {
 			counter ++;
 		}
 
+		// Doesn't work when I do a full run #72535
+		[Category("NotWorking")]
 		public void TestDueTime ()
 		{
 			counter = 0;

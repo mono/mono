@@ -125,7 +125,7 @@ namespace MonoTests.System.Threading
 
 */
 		
-		// Hangs
+		// Hangs #72534
 		[Category("NotWorking")]
 		public void TestWaitAndSignal1()
 		{
