@@ -12,6 +12,7 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Drawing.Imaging;
+using System.IO;
 
 //[Serializable]
 //[ComVisible(true)]
@@ -61,8 +62,8 @@ internal interface IImage : IDisposable {
 
 	void Save (string filename);
 
-	//void Save(Stream stream, ImageFormat format);
-	//void Save(string filename, ImageFormat format);
+	void Save(Stream stream, ImageFormat format);
+	void Save(string filename, ImageFormat format);
 	//void Save(Stream stream, ImageCodecInfo encoder,
 	//                 EncoderParameters encoderParams);
 	//void Save(string filename, ImageCodecInfo encoder,
