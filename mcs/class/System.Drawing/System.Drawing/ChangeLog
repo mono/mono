@@ -1,3 +1,7 @@
+2002-02-26  Christian Meyer  <Christian.Meyer@cs.tum.edu>
+
+	* Bitmap.cs: Added method headers.
+
 2002-02-25  Christian Meyer  <Christian.Meyer@cs.tum.edu>
 
 	* Bitmap.cs: Added, no implementation's done, yet.
