@@ -39,6 +39,26 @@ namespace System.Xml.Xsl
 	[Serializable]
 	public class XsltException : SystemException
 	{
+		static string CreateMessage (string message, XPathNavigator nav)
+		{
+			IXmlLineInfo li = nav as IXmlLineInfo;
+			int lineNumber = li != null ? li.LineNumber : 0;
+			int linePosition = li != null ? li.LinePosition : 0;
+			string sourceUri = nav != null ? nav.BaseURI : String.Empty;
+			return CreateMessage (lineNumber, linePosition, sourceUri, message);
+		}
+
+		static string CreateMessage (int lineNumber, int linePosition, string sourceUri, string msg)
+		{
+			if (sourceUri != null)
+				msg += " " + sourceUri;
+			if (lineNumber != 0)
+				msg += " line " + lineNumber;
+			if (linePosition != 0)
+				msg += ", position " + linePosition;
+			return msg;
+		}
+
 		#region Fields
 
 		int lineNumber;
@@ -75,7 +95,7 @@ namespace System.Xml.Xsl
 		}
 
 		internal XsltException (string message, Exception innerException, int lineNumber, int linePosition, string sourceUri)
-			: base (message, innerException)
+			: base (CreateMessage (lineNumber, linePosition, sourceUri, message), innerException)
 		{
 			this.lineNumber = lineNumber;
 			this.linePosition = linePosition;
@@ -83,7 +103,7 @@ namespace System.Xml.Xsl
 		}
 
 		internal XsltException (string message, Exception innerException, XPathNavigator nav)
-			: base (message, innerException)
+			: base (CreateMessage (message, nav), innerException)
 		{
 			IXmlLineInfo li = nav as IXmlLineInfo;
 			this.lineNumber = li != null ? li.LineNumber : 0;
@@ -103,6 +123,7 @@ namespace System.Xml.Xsl
 			get { return linePosition; }
 		}
 
+#if NET_2_0
 		public override string Message {
 			get {
 				string msg = base.Message;
@@ -115,6 +136,7 @@ namespace System.Xml.Xsl
 				return msg;
 			}
 		}
+#endif
 
 		public string SourceUri {
 			get { return sourceUri; }
