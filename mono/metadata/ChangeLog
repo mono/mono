@@ -1,5 +1,8 @@
 2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (create_dynamic_mono_image): Call mono_image_init to 
+	avoid code duplication.
+
 	* reflection.h (MonoDynamicImage): New type which is currently unused,
 	but will be used through the ref.emit code in place of 
 	MonoDynamicAssembly.
