@@ -113,10 +113,9 @@ public abstract class DES : SymmetricAlgorithm {
 	public override byte[] Key {
 		get {
 			if (KeyValue == null) {
-				// generate keys as long as we get weak or semi-weak keys
+				// GenerateKey is responsible to return a valid key
+				// e.g. no weak or semi-weak keys
 				GenerateKey ();
-				while (IsWeakKey (KeyValue) || IsSemiWeakKey (KeyValue))
-					GenerateKey ();
 			}
 			return (byte[]) KeyValue.Clone ();
 		}

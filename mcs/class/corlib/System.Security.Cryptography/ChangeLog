@@ -1,3 +1,9 @@
+2004-04-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DES.cs: Removed redundant weak/semi-weak key check in Key property.
+	* DESCryptoServiceProvider.cs: Implementation already had 100% 
+	coverage.
+
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSACryptoServiceProvider.cs: Changed delegate signature.

@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Sergey Chaban (serge@wildwestsoftware.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -24,9 +25,9 @@ namespace System.Security.Cryptography {
 		internal static readonly int BLOCK_BIT_SIZE = 64;
 		internal static readonly int BLOCK_BYTE_SIZE = BLOCK_BIT_SIZE / 8;
 	
-		private byte [] keySchedule;
-		private byte [] byteBuff;
-		private uint [] dwordBuff;
+		private byte[] keySchedule;
+		private byte[] byteBuff;
+		private uint[] dwordBuff;
 	
 		// S-boxes from FIPS 46-3, Appendix 1, page 17
 		private static byte [] sBoxes = {
@@ -202,10 +203,11 @@ namespace System.Security.Cryptography {
 	
 			InitPermutationTable (ipBits, out ipTab);
 			InitPermutationTable (fpBits, out fpTab);
-		} // class constructor
+		}
 	
 		// Default constructor.
-		internal DESTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] key, byte[] iv) : base (symmAlgo, encryption, iv)
+		internal DESTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] key, byte[] iv) 
+			: base (symmAlgo, encryption, iv)
 		{
 			keySchedule = new byte [KEY_BYTE_SIZE * 16];
 			byteBuff = new byte [BLOCK_BYTE_SIZE];
@@ -213,7 +215,7 @@ namespace System.Security.Cryptography {
 			SetKey (key);
 		}
 	
-		private static void InitPermutationTable (byte [] pBits, out int [] permTab)
+		private static void InitPermutationTable (byte[] pBits, out int[] permTab)
 		{
 			permTab = new int [8*2 * 8*2 * (64/32)];
 	
@@ -231,10 +233,10 @@ namespace System.Security.Cryptography {
 			}
 		}
 	
-		private uint CipherFunct(uint r, int n)
+		private uint CipherFunct (uint r, int n)
 		{
 			uint res = 0;
-			byte [] subkey = keySchedule;
+			byte[] subkey = keySchedule;
 			int i = n << 3;
 	
 			uint rt = (r >> 1) | (r << 31); // ROR32(r)
@@ -251,19 +253,18 @@ namespace System.Security.Cryptography {
 			return res;
 		}
 	
-	
-		private static void Permutation (byte [] input, byte [] _output, int [] permTab, bool preSwap)
+		private static void Permutation (byte[] input, byte[] _output, int[] permTab, bool preSwap)
 		{
-			if (preSwap && BitConverter.IsLittleEndian) BSwap (input);
+			if (preSwap && BitConverter.IsLittleEndian)
+				BSwap (input);
 	
-			byte [] output = _output;
+			byte[] output = _output;
 	
 			int offs1 = (((int)(input [0]) >> 4)) << 1;
 			int offs2 = (1 << 5) + ((((int)input [0]) & 0xF) << 1);
 	
 			int d1 = permTab [offs1++] | permTab [offs2++];
 			int d2 = permTab [offs1]   | permTab [offs2];
-	
 	
 			int max = BLOCK_BYTE_SIZE << 1;
 			for (int i = 2, indx = 1; i < max; i += 2, indx++) {
@@ -284,7 +285,8 @@ namespace System.Security.Cryptography {
 				output [5] = (byte) (d2 >> 8);
 				output [6] = (byte) (d2 >> 16);
 				output [7] = (byte) (d2 >> 24);
-			} else {
+			}
+			else {
 				output [0] = (byte) (d1 >> 24);
 				output [1] = (byte) (d1 >> 16);
 				output [2] = (byte) (d1 >> 8);
@@ -298,9 +300,7 @@ namespace System.Security.Cryptography {
 	
 		private static void BSwap (byte [] byteBuff)
 		{
-			byte t;
-	
-			t = byteBuff [0];
+			byte t = byteBuff [0];
 			byteBuff [0] = byteBuff [3];
 			byteBuff [3] = t;
 	
@@ -324,8 +324,8 @@ namespace System.Security.Cryptography {
 	
 			int keyBitSize = PC1.Length;
 	
-			byte [] keyPC1 = new byte [keyBitSize]; // PC1-permuted key
-			byte [] keyRot = new byte [keyBitSize]; // PC1 & rotated
+			byte[] keyPC1 = new byte [keyBitSize]; // PC1-permuted key
+			byte[] keyRot = new byte [keyBitSize]; // PC1 & rotated
 	
 			int indx = 0;
 	
@@ -367,15 +367,15 @@ namespace System.Security.Cryptography {
 	
 		protected override void ECB (byte[] input, byte[] output) 
 		{
-			byte [] byteBuff = this.byteBuff;
-			uint [] dwordBuff = this.dwordBuff;
+			byte[] byteBuff = this.byteBuff;
+			uint[] dwordBuff = this.dwordBuff;
 	
 			Permutation (input, byteBuff, ipTab, false);
 			Buffer.BlockCopy (byteBuff, 0, dwordBuff, 0, BLOCK_BYTE_SIZE);
 	
 			if (encrypt) {
-				uint d0 = dwordBuff[0];
-				uint d1 = dwordBuff[1];
+				uint d0 = dwordBuff [0];
+				uint d1 = dwordBuff [1];
 	
 				// 16 rounds
 				d0 ^= CipherFunct (d1,  0);
@@ -431,7 +431,9 @@ namespace System.Security.Cryptography {
 	
 	public sealed class DESCryptoServiceProvider : DES {
 	
-		public DESCryptoServiceProvider () : base () {}
+		public DESCryptoServiceProvider () : base ()
+		{
+		}
 	
 		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
@@ -454,11 +456,10 @@ namespace System.Security.Cryptography {
 	
 		public override void GenerateKey () 
 		{
-			KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
+			int size = (KeySizeValue >> 3);
+			KeyValue = KeyBuilder.Key (size);
 			while (IsWeakKey (KeyValue) || IsSemiWeakKey (KeyValue))
-				KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
+				KeyValue = KeyBuilder.Key (size);
 		}
-	
-	} // DESCryptoServiceProvider
-
-} // System.Security.Cryptography
+	}
+}
