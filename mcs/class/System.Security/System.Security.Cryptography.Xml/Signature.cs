@@ -101,7 +101,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
-			return GetXml (new XmlDocument ());
+			return GetXml (null);
 		}
 
 		internal XmlElement GetXml (XmlDocument document)
@@ -113,6 +113,9 @@ namespace System.Security.Cryptography.Xml {
 				throw new CryptographicException ("SignedInfo");
 			if (signature == null)
 				throw new CryptographicException ("SignatureValue");
+
+			if (document == null)
+				document = new XmlDocument ();
 
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Signature, XmlSignature.NamespaceURI);
 			if (id != null)

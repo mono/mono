@@ -293,7 +293,7 @@ namespace System.Security.Cryptography.Xml {
 					try {
 						// no way to know if valid without throwing an exception
 						Uri uri = new Uri (r.Uri);
-						s = (Stream) xmlResolver.GetEntity (new Uri (r.Uri), null, typeof (Stream));
+						s = (Stream) xmlResolver.GetEntity (uri, null, typeof (Stream));
 					}
 					catch {
 						// may still be a local file (and maybe not xml)

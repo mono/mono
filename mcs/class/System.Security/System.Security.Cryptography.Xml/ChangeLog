@@ -1,3 +1,10 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Signature.cs: Fixed Xmldsig and broken unit tests.
+	* SignedXml.cs: Fixed warning (level 4) for unused variable.
+	* XmlDsigEnvelopedSignatureTransform.cs: Fixed warning (l4) for unused
+	variable.
+
 2004-09-04  Tim Coleman <tim@timcoleman.com>
 	* XmlDecryptionTransform.cs:
 		Implement rudimentary xpointer support for Except URIs.

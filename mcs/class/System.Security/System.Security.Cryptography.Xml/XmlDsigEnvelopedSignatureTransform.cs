@@ -146,7 +146,6 @@ namespace System.Security.Cryptography.Xml {
 
 		private XmlNode GetOutputFromNode (XmlNode input, XmlNamespaceManager nsmgr, bool remove)
 		{
-			XmlDocument doc = input is XmlDocument ? input as XmlDocument : input.OwnerDocument;
 			if (remove) {
 				XmlNodeList nl = input.SelectNodes ("descendant-or-self::dsig:Signature", nsmgr);
 				foreach (XmlNode n in nl)
