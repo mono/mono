@@ -1,3 +1,9 @@
+2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* MACAlgorithm.cs: Fixed difference between 1.0 and 1.1 framework. 
+	The 1.0 framework is adding an additional  padding block (empty) 
+	to MAC when MACing an exact multiple of the TripleDES block size.
+
 2003-10-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConvert.cs: Fixed strongname generation for small exponents 
