@@ -7,10 +7,7 @@
 //   Patrik Torstensson (totte_mono@yahoo.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +31,7 @@
 
 using System.Threading;
 using System.Runtime.Remoting;
+using System.Security.Permissions;
 
 namespace System
 {
@@ -68,6 +66,7 @@ namespace System
 			set { _identity = value; }
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public virtual ObjRef CreateObjRef (Type type)
 		{
 			// This method can only be called when this object has been marshalled
@@ -76,6 +75,7 @@ namespace System
 			return _identity.CreateObjRef (type);
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public object GetLifetimeService ()
 		{
 			if (_identity == null)
@@ -83,6 +83,7 @@ namespace System
 			else return _identity.Lease;
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public virtual object InitializeLifetimeService ()
 		{
 			return new System.Runtime.Remoting.Lifetime.Lease();

@@ -6,10 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +31,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 
 namespace System
 {
@@ -77,11 +75,11 @@ namespace System
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern IntPtr GetFunctionPointer (IntPtr m);
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public IntPtr GetFunctionPointer ()
 		{
 			return GetFunctionPointer (value);
 		}
-
 
 		public override bool Equals (object obj)
 		{

@@ -1,3 +1,19 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Activator.cs: Now use the supplied evidences when loading 
+	assemblies. Added LinkDemand for RemotingConfiguration on both
+	GetObject methods.
+	* Console.cs: Added Assert for UnmanagedCode on OpenStandard[Error|
+	Input|Output] as they use a handle on a FileStream (which is
+	restricted otherwise). Added Demand for UnmanagedCode for the
+	Set[Error|In|Out] methods.
+	* MarshalByRefObject.cs: Added LinkDemand for Infrastructure on	
+	CreateObjRef, GetLifetimeService and InitializeLifetimeService.
+	* RuntimeMethodHandle.cs: Added Demand for UnmanagedCode on 
+	GetFunctionPointer method.
+	* TypedReference.cs: Added LinkDemand for ReflectionPermission's
+	MemberAccess on MakeTypedReference.
+
 2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Environment.cs: Fix CAS unit tests for NET_1_1.

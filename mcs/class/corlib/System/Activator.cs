@@ -7,10 +7,7 @@
 //
 // (C) 2001 Nick Drochak II
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,6 +34,7 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 using System.Security.Policy;
 using System.Configuration.Assemblies;
 
@@ -91,15 +89,12 @@ namespace System
 				activationAttributes, null);
 		}
 
-		[MonoTODO ("security")]
 		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 		                                               BindingFlags bindingAttr, Binder binder, object [] args,
 		                                               CultureInfo culture, object [] activationAttributes,
 		                                               Evidence securityInfo)
 		{
-			//TODO: when Assembly implements security, use it.
-			//Assembly assembly = Assembly.LoadFrom (assemblyFile, securityInfo);
-			Assembly assembly = Assembly.LoadFrom (assemblyFile);
+			Assembly assembly = Assembly.LoadFrom (assemblyFile, securityInfo);
 			if (assembly == null)
 				return null;
 
@@ -128,18 +123,15 @@ namespace System
 				activationAttributes, null);
 		}
 
-		[MonoTODO ("security")]
 		public static ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
 		                                           BindingFlags bindingAttr, Binder binder, object [] args,
 							   CultureInfo culture, object [] activationAttributes, Evidence securityInfo)
 		{
-			//TODO: when Assembly implements security, use it.
-			//Assembly assembly = Assembly.Load (assemblyFile, securityInfo);
 			Assembly assembly = null;
 			if(assemblyName == null)
 				assembly = Assembly.GetCallingAssembly ();
 			else
-				assembly = Assembly.Load (assemblyName);
+				assembly = Assembly.Load (assemblyName, securityInfo);
 			Type type = assembly.GetType (typeName, true, ignoreCase);
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
 			return (obj != null) ? new ObjectHandle (obj) : null;
@@ -267,11 +259,13 @@ namespace System
 			return ctor.Invoke (null);
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
 		public static object GetObject (Type type, string url)
 		{
 			return RemotingServices.Connect (type, url);
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
 		public static object GetObject (Type type, string url, object state)
 		{
 			return RemotingServices.Connect (type, url, state);

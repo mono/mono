@@ -30,6 +30,7 @@
 //
 
 using System.IO;
+using System.Security.Permissions;
 using System.Text;
 
 namespace System
@@ -109,6 +110,11 @@ namespace System
 			return OpenStandardError (0);
 		}
 
+		// calling any FileStream constructor with an handle normally
+		// requires permissions UnmanagedCode permissions. In this 
+		// case we assert this permission so the console can be used
+		// in partial trust (i.e. without having UnmanagedCode).
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public static Stream OpenStandardError (int bufferSize)
 		{
 			try {
@@ -123,6 +129,11 @@ namespace System
 			return OpenStandardInput (0);
 		}
 
+		// calling any FileStream constructor with an handle normally
+		// requires permissions UnmanagedCode permissions. In this 
+		// case we assert this permission so the console can be used
+		// in partial trust (i.e. without having UnmanagedCode).
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public static Stream OpenStandardInput (int bufferSize)
 		{
 			try {
@@ -137,6 +148,11 @@ namespace System
 			return OpenStandardOutput (0);
 		}
 
+		// calling any FileStream constructor with an handle normally
+		// requires permissions UnmanagedCode permissions. In this 
+		// case we assert this permission so the console can be used
+		// in partial trust (i.e. without having UnmanagedCode).
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public static Stream OpenStandardOutput (int bufferSize)
 		{
 			try {
@@ -146,6 +162,7 @@ namespace System
 			}
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void SetError (TextWriter newError)
 		{
 			if (newError == null)
@@ -154,6 +171,7 @@ namespace System
 			stderr = newError;
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void SetIn (TextReader newIn)
 		{
 			if (newIn == null)
@@ -162,6 +180,7 @@ namespace System
 			stdin = newIn;
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void SetOut (TextWriter newOut)
 		{
 			if (newOut == null)
