@@ -23,28 +23,39 @@ namespace System.Windows.Forms
 {
 	public class ListBox : ListControl
 	{
-		[MonoTODO]
-		public ListBox ()
-		{
-		}
+		private ListBox.ObjectCollection items;
+		private ListBox.SelectedIndexCollection selectedIndices;
+		private ListBox.SelectedObjectCollection selectedItems;
+		private bool sorted;
+		
+		
 		public const int DefaultItemHeight = 13;
 		public const int NoMatches = -1;
+		
+		[MonoTODO]
+		public ListBox () : base ()
+		{
+			items = new ListBox.ObjectCollection (this);	
+			selectedIndices = new ListBox.SelectedIndexCollection (this);
+			selectedItems = new ListBox.SelectedObjectCollection (this);
+		}
+		
 
 		[MonoTODO]
 		public override Color BackColor {
 			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			set { }
 		}
 		[MonoTODO]
 		public override System.Drawing.Image BackgroundImage {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set {  }
 		}
 		[MonoTODO]
 		// Don't use ?
 		public BorderStyle BorderStyle {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set {  }
 		}
 		[MonoTODO]
 		// Default is 0
@@ -70,7 +81,7 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		// Default = DrawMode.Normal
 		public virtual DrawMode DrawMode {
-			get { throw new NotImplementedException (); }
+			get { return DrawMode.Normal; }
 			set { 
 				if (! Enum.IsDefined (typeof (DrawMode), value))
 					throw new InvalidEnumArgumentException  ("");
@@ -80,7 +91,7 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public override Color ForeColor {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set { }
 		}
 		[MonoTODO]
 		// Defaults to 0.
@@ -91,27 +102,27 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public bool HorizontalScrollbar {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set {  }
 		}
 		[MonoTODO]
 		public bool IntegralHeight {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set {  }
 		}
 		[MonoTODO]
 		public virtual int ItemHeight {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set {  }
 		}
 		[MonoTODO]
 		public ListBox.ObjectCollection Items {
-			get { throw new NotImplementedException (); }
+			get { return items; }
 		}
 		[MonoTODO]
 		// Default false.
 		public bool MultiColumn {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return false; }
+			set { }
 		}
 		[MonoTODO]
 		public int PreferredHeight {
@@ -120,12 +131,12 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public override RightToLeft RightToLeft {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set {  }
 		}
 		[MonoTODO]
 		public bool ScrollAlwaysVisible {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set {  }
 		}
 		[MonoTODO]
 		public override int SelectedIndex {
@@ -134,7 +145,7 @@ namespace System.Windows.Forms
 		}
 		[MonoTODO]
 		public ListBox.SelectedIndexCollection SelectedIndices {
-			get { throw new NotImplementedException (); }		
+			get { return selectedIndices; }		
 		}
 		[MonoTODO]
 		public object SelectedItem {
@@ -143,17 +154,21 @@ namespace System.Windows.Forms
 		}
 		[MonoTODO]
 		public ListBox.SelectedObjectCollection SelectedItems {
-			get { throw new NotImplementedException (); }
+			get { return selectedItems; }
 		}
 		[MonoTODO]
 		public virtual SelectionMode SelectionMode {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set { }
 		}
 		[MonoTODO]
 		public bool Sorted {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return sorted; }
+			set { 
+				if (value == true) 
+					this.Sort();
+				sorted = value;
+			}
 		}
 		[MonoTODO]
 		public override string Text {
@@ -291,6 +306,13 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public override void Refresh()
 		{
+			ListStore store = new ListStore (typeof (string));
+			foreach (Object o in Items){
+				Value value = new Value (o);
+				TreeIter iter = store.Append();
+				store.SetValue (iter, 0, value);
+			}
+			(Widget as Gtk.TreeView).Model = store;
 		}
 		[MonoTODO]
 		protected override void RefreshItem(int index)
@@ -345,123 +367,144 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public class ObjectCollection : IList, ICollection, IEnumerable 
 		{
-			[MonoTODO]
+			private ListBox owner;
+			private ArrayList list;
+			
 			public ObjectCollection(ListBox owner)
 			{
+				this.owner = owner;
+				this.list = new ArrayList();
+			}
+			public ObjectCollection(ListBox owner, object[] value) : this(owner)
+			{
+				AddRange (value);
 			}
 			[MonoTODO]
-			public ObjectCollection(ListBox owner, object[] value)
+			public ObjectCollection(ListBox owner, ObjectCollection value) : this (owner)
 			{
-			}
-			[MonoTODO]
-			public ObjectCollection(ListBox owner, ObjectCollection value)
-			{
+				//TODO: Implement
 			}
 			[MonoTODO]
 			public virtual int Count {
-				get {throw new NotImplementedException (); }
+				get { return list.Count; }
 			}
 			[MonoTODO]
 			public virtual bool IsReadOnly {
-				get {throw new NotImplementedException (); }
+				get { return false; }
 			}
 			[MonoTODO]
 			public virtual object this[int index] {
-				get {throw new NotImplementedException (); }
-				set {throw new NotImplementedException (); }
+				get { return list[index]; }
+				set { throw new NotImplementedException(); }
 			}
 			// Net 1.1
-			[MonoTODO]
 			bool ICollection.IsSynchronized {
-				get {throw new NotImplementedException ();}
+				get { return list.IsSynchronized; }
 			}
 			// Net 1.1
-			[MonoTODO]
 			object ICollection.SyncRoot {
-				get {throw new NotImplementedException (); }
+				get { return list.SyncRoot; }
 			}
 			// Net 1.1
-			[MonoTODO]
 			bool IList.IsFixedSize {
-				get {throw new NotImplementedException (); }
+				get { return list.IsFixedSize; }
 			}
 
 			[MonoTODO]
 			public int Add(object item)
 			{
-				throw new NotImplementedException ();
+				// FIXME: Implement sorted insert, if ListBox.Sorted == true,
+				int ret = list.Add (item);
+				owner.Refresh();
+				return ret;
 			}
+			
+			/*public class ItemCollection {
+
+			ListBox owner;
+			TreeIter iter = new TreeIter ();
+			 
+			public ItemCollection (ListBox owner){
+				this.owner = owner;
+				owner.store = new ListStore (typeof (string));				
+			}
+						
+			public void Add(String items){
+			
+				Value value = new Value(items);
+				iter = owner.store.Append ();
+ 				owner.store.SetValue (iter, 0, value);
+				owner.UpdateStore();
+			}
+		}*/
 			
 			[MonoTODO]
 			public void AddRange(object[] items)
 			{
-				throw new NotImplementedException ();
+				// FIXME: should stop Control refresh until added finished
+				foreach (object o in items)
+					this.Add (o);
 			}
 			
 			[MonoTODO]
 			public void AddRange(ListBox.ObjectCollection value)
 			{
-				throw new NotImplementedException ();
+				list.AddRange (value);
 			}
 			
 			[MonoTODO]
 			public virtual void Clear()
 			{
-				throw new NotImplementedException ();
+				list.Clear();
 			}
 			
-			[MonoTODO]
 			public virtual bool Contains(object value)
 			{
-				throw new NotImplementedException ();
+				return list.Contains (value);
 			}
 			
-			[MonoTODO]
 			public void CopyTo(object[] dest, int arrayIndex)
 			{
-				throw new NotImplementedException ();
+				list.CopyTo (dest, arrayIndex);
 			}
 			
-			[MonoTODO]
 			public virtual IEnumerator GetEnumerator()
 			{
-				throw new NotImplementedException ();
+				return list.GetEnumerator();
 			}
 			
-			[MonoTODO]
 			void ICollection.CopyTo( Array dest,  int index)
 			{
-				throw new NotImplementedException ();
+				list.CopyTo(dest, index);
 			}
 			
 			[MonoTODO]
 			int IList.Add( object item)
 			{
-				throw new NotImplementedException ();
+				return this.Add (item);
 			}
 			
-			[MonoTODO]
 			public virtual int IndexOf(object value)
 			{
-				throw new NotImplementedException ();
+				return list.IndexOf(value);
 			}		
 			
 			[MonoTODO]
 			public virtual void Insert( int index, object item)
 			{
-				throw new NotImplementedException ();
+				list.Insert (index, item);
 			}
 			
 			[MonoTODO]
 			public virtual void Remove(object value)
 			{
-				throw new NotImplementedException ();
+				list.Remove (value);
 			}
 			
 			[MonoTODO]
 			public virtual void RemoveAt(int index)
 			{
-				throw new NotImplementedException ();
+				list.RemoveAt (index);
 			}
 
 		}
@@ -469,32 +512,34 @@ namespace System.Windows.Forms
 		public class SelectedIndexCollection : IList, ICollection,  IEnumerable
 		{
 		
+			private ListBox owner;
+			private ArrayList list;
 			public bool IsFixedSize {
 				get { return false; }
 			}
 		
 			public bool IsSynchronized {
-				get { throw new NotImplementedException (); }
+				get { return list.IsSynchronized; }
 			}
 			public object SyncRoot {
-				get { throw new NotImplementedException (); }
+				get { return list.SyncRoot; }
 			}
 		
-			[MonoTODO]
 			public SelectedIndexCollection(ListBox owner)
 			{
+				this.owner = owner;
+				list = new ArrayList ();
 			}
-			[MonoTODO]
+			
 			public virtual int Count {
-				get { throw new NotImplementedException (); }
+				get { return list.Count; }
 			}
-			[MonoTODO]
 			public virtual bool IsReadOnly {
-				get { throw new NotImplementedException (); }
+				get { return false; }
 			}
 			[MonoTODO]
 			public object this[int index] {
-				get { throw new NotImplementedException (); }
+				get { return list[index]; }
 				set { throw new NotImplementedException (); }
 			}
 			
@@ -507,19 +552,22 @@ namespace System.Windows.Forms
 			[MonoTODO]
 			public virtual void CopyTo(Array dest, int index)
 			{
-				throw new NotImplementedException ();
+				list.CopyTo(dest, index);
+				//throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
 			public virtual IEnumerator GetEnumerator()
 			{
-				throw new NotImplementedException ();
+				return list.GetEnumerator();
+				//throw new NotImplementedException ();
 			}
 			
 			// don't use
 			[MonoTODO]
 			int IList.Add(object value)
 			{
+				//list.Add (value);
 				throw new NotImplementedException ();
 			}
 			
@@ -527,7 +575,7 @@ namespace System.Windows.Forms
 			[MonoTODO]
 			void IList.Clear()
 			{
-				throw new NotImplementedException ();
+				//throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -536,10 +584,9 @@ namespace System.Windows.Forms
 				throw new NotImplementedException ();
 			}
 			
-			[MonoTODO]
 			int IList.IndexOf(object selectedIndex)
 			{
-				throw new NotImplementedException ();
+				return list.IndexOf (selectedIndex);
 			}
 			
 			[MonoTODO]
@@ -572,54 +619,54 @@ namespace System.Windows.Forms
 		
 		public class SelectedObjectCollection : IList, ICollection, IEnumerable
 		{
+		
+		
+			private ListBox owner;
+			private ArrayList list;
+			
 			public bool IsFixedSize {
 				get { return false; }
 			}
 		
 			public bool IsSynchronized {
-				get { throw new NotImplementedException (); }
+				get { return list.IsSynchronized; }
 			}
 			public object SyncRoot {
-				get { throw new NotImplementedException (); }
+				get { return list.SyncRoot; }
 			}
 		
-			[MonoTODO]
 			public SelectedObjectCollection(ListBox owner)
 			{
-				throw new NotImplementedException ();
+				this.owner = owner;
+				list = new ArrayList();
 			}
 			
-			[MonoTODO]
 			public virtual int Count {
-				get { throw new NotImplementedException (); }
+				get { return list.Count; }
 			}
 			
-			[MonoTODO]
 			public virtual bool IsReadOnly {
-				get { throw new NotImplementedException (); }
+				get { return list.IsReadOnly; }
 			}
 			[MonoTODO]
 			public virtual object this[int index] {
-				get { throw new NotImplementedException (); }
+				get { return list[index]; }
 				set { throw new NotImplementedException (); }
 			}
 			
-			[MonoTODO]
 			public virtual bool Contains(object selectedObject)
 			{
-				throw new NotImplementedException ();
+				return list.Contains (selectedObject);
 			}
 			
-			[MonoTODO]
 			public virtual void CopyTo(Array dest,  int index)
 			{
-				throw new NotImplementedException ();
+				list.CopyTo(dest, index);
 			}
 			
-			[MonoTODO]
 			public virtual IEnumerator GetEnumerator()
 			{
-				throw new NotImplementedException ();
+				return list.GetEnumerator();
 			}
 			
 			[MonoTODO]
@@ -663,29 +710,33 @@ namespace System.Windows.Forms
 			}
 
 		}
-	}
+		
+		internal override Gtk.Widget CreateWidget () {
+						
+			ListStore store = new ListStore (typeof (string));
+			TreeView tv = new TreeView (store);
+			tv.HeadersVisible = false;
+			tv.HeadersClickable = false;
+			tv.EnableSearch = false;
+			TreeViewColumn NameCol = new TreeViewColumn ();
+			CellRenderer NameRenderer = new CellRendererText ();
+			NameCol.Title = "Name";
+			NameCol.PackStart (NameRenderer, true);
+			NameCol.AddAttribute (NameRenderer, "text", 0);
+			tv.AppendColumn (NameCol);
+			tv.Model = store;
+			return tv;
+		}		
+	}	
 }
 
-
-
-
-/*
-old Joel Code.
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// Represents a Windows ListBox control.
-	///
-	/// </summary>
-
-	public class ListBox: ListControl{
-	
-		ListStore store = null;
-		TreeIter iter = new TreeIter ();
-		public ItemCollection Items;
+		//ListStore store = null;
+		//TreeIter iter = new TreeIter ();
+		
+		//public ItemCollection Items;
 		//ListStore store = new ListStore ((int)TypeFundamentals.TypeString);
 		
-		public class ItemCollection {
+		/*public class ItemCollection {
 
 			ListBox owner;
 			TreeIter iter = new TreeIter ();
@@ -704,46 +755,4 @@ namespace System.Windows.Forms {
  				owner.store.SetValue (iter, 0, value);
 				owner.UpdateStore();
 			}
-		}
-		
-		protected override void SetItemsCore(IList items){}
-		public ListBox () : base (){
-			this.Items = new ItemCollection(this);
-		}
-	
-		internal override Gtk.Widget CreateWidget () {
-		
-			ListStore store = new ListStore (typeof (string));
-			TreeView tv = new TreeView ();
-			tv.HeadersVisible = true;
-			tv.HeadersClickable = false;
-			tv.EnableSearch = false;
-			TreeViewColumn NameCol = new TreeViewColumn ();
-			CellRenderer NameRenderer = new CellRendererText ();
-			NameCol.Title = "Name";
-			NameCol.PackStart (NameRenderer, true);
-			NameCol.AddAttribute (NameRenderer, "text", 0);
-			tv.AppendColumn (NameCol);
-			tv.Model = store;
-			return tv;
-		}
-		
-		public void UpdateStore () {
-			((Gtk.TreeView)Widget).Model = store;		
-		}
-
-		protected override void RefreshItem(int index) {
-			//FIXME:
-		}
-
-		public override int SelectedIndex {
-			get{
-				throw new NotImplementedException ();
-			}
-			set{
-				//FIXME:
-			}
-		}
-	}
-}
-*/
+		}*/
