@@ -1,3 +1,18 @@
+2003-10-22 Jackson Harper <jackson@ximian.com>
+
+	* main.c: Use escaped names for method, and type names. Initialize
+	the name table.
+	* main.c (visibility_map): Fix typo, should be nested family not
+	family
+	* main.c (dis_data): Use uppercase hex to avoid name conflicts.
+	* get.c/get.h: New method to get an escaped name. This method will
+	take a name and escape it if it is an ilasm keyword, or uses a non
+	id char. Use escaped names for type, method, field, and parameter names.
+	* get.c (get_typespec): A typespec can be used for anything, so we
+	need to handle all types not just modified types.
+	* get.c (dis_stringify_object_with_class): Handle nested classes
+	* get.c (get_token): Add field keyword to field tokens.
+	
 2003-10-21 Jackson Harper <jackson@ximian.com>
 
 	* get.c (get_fieldref_signature): Use MONO_MEMBERREF_SIGNATURE in
