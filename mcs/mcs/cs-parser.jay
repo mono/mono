@@ -669,7 +669,7 @@ variable_declarator
 variable_initializer
 	: expression
 	  {
-		$$ = $$;
+		$$ = $1;
 	  }
 	| array_initializer
 	{
