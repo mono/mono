@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.8  2004/08/20 19:34:26  jackson
+// Use the SWF timer so callbacks are run in the correct thread
+//
 // Revision 1.7  2004/08/19 22:25:31  jordi
 // theme enhancaments
 //
@@ -55,7 +58,6 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Timers;
 
 namespace System.Windows.Forms 
 {	
@@ -80,8 +82,8 @@ namespace System.Windows.Forms
 		private ButtonState secondbutton_state = ButtonState.Normal;
 		private bool thumb_pressed = false;
 		private float pixel_per_pos = 0;
-		private System.Timers.Timer firstclick_timer = new System.Timers.Timer ();
-		private System.Timers.Timer holdclick_timer = new System.Timers.Timer ();
+		private Timer firstclick_timer;
+		private Timer holdclick_timer;
 		private int thumb_pixel_click_move;			
 		private int thumb_size = 0;		
 		private const int thumb_min_size = 8;
@@ -104,8 +106,11 @@ namespace System.Windows.Forms
 			Scroll = null;
 			ValueChanged = null;			
 
-			holdclick_timer.Elapsed += new ElapsedEventHandler (OnHoldClickTimer);
-			firstclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
+
+			holdclick_timer = new Timer (this);
+			firstclick_timer = new Timer (this);
+			holdclick_timer.Tick += new EventHandler (OnHoldClickTimer);
+			firstclick_timer.Tick += new EventHandler (OnFirstClickTimer);
 
 			if (ThemeEngine.Current.WriteToWindow == true)
 				double_buffering = false;
@@ -265,7 +270,6 @@ namespace System.Windows.Forms
 				ValueChanged (this, e);			
 		}
 
-		
 		private void Draw ()
 		{					
 			ThemeEngine.Current.DrawScrollBar (DeviceContext, paint_area, this, thumb_pos,
@@ -393,8 +397,8 @@ namespace System.Windows.Forms
 				if (vert)
 					UpdateThumbPos (thumb_area.Y + (int)(((float)(position - Minimum)) * pixel_per_pos), false);
 				else
-					UpdateThumbPos (thumb_area.X + (int)(((float)(position - Minimum)) * pixel_per_pos), false);							    			
-					
+					UpdateThumbPos (thumb_area.X + (int)(((float)(position - Minimum)) * pixel_per_pos), false);
+
 			if (position != old) // Fire event
 				fire_Scroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
 			
@@ -431,14 +435,14 @@ namespace System.Windows.Forms
 				new_pos = new_pos / pixel_per_pos;
 			}
 			
-			//Console.WriteLine ("UpdateThumbPos: thumb_pos.Y {0} thumb_area.Y {1} pixel_per_pos {2}, new pos {3}, pixel {4}",
+				  // Console.WriteLine ("UpdateThumbPos: thumb_pos.Y {0} thumb_area.Y {1} pixel_per_pos {2}, new pos {3}, pixel {4}",
 			//	thumb_pos.Y, thumb_area.Y, pixel_per_pos, new_pos, pixel);
 			
 			if (update_value) 				
 				UpdatePos ((int) new_pos, false);						
     		}
     		
-    		private void OnHoldClickTimer (Object source, ElapsedEventArgs e)
+		private void OnHoldClickTimer (Object source, EventArgs e)
 		{			
 			if ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)								
 				SmallDecrement();
@@ -448,7 +452,7 @@ namespace System.Windows.Forms
 			
 		}
     		
-    		private void OnFirstClickTimer (Object source, ElapsedEventArgs e)
+		private void OnFirstClickTimer (Object source, EventArgs e)
 		{
 			firstclick_timer.Enabled = false;			
 		        holdclick_timer.Interval = 50;
@@ -542,7 +546,6 @@ namespace System.Windows.Forms
 				//Console.WriteLine ("Activate Timer");				
 		        	firstclick_timer.Interval = 200;
 		        	firstclick_timer.Enabled = true;
-		        	firstclick_timer.AutoReset = false;		        	
 			}  			
     		}
     		
