@@ -1,3 +1,10 @@
+
+Tue Jun 10 17:35:03 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* debug-mono-symfile.c, marshal.c, metadata.c, monitor.c,
+	mono-debug-debugger.c, mono-debug.c, process.c: portability fixes
+	by Bernie Solomon <bernard@ugsolutions.com>.
+
 2003-06-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gc.c (mono_gc_init): Avoid error message on shutdown when
