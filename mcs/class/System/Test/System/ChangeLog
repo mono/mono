@@ -1,5 +1,9 @@
 2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriTest.cs : Should not expect exception for Unix file path.
+
+2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* test-uri-list.txt,
 	  test-uri-props.txt,
 	  test-uri-props-manual.txt :

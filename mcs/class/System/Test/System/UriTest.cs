@@ -300,7 +300,8 @@ namespace MonoTests.System
 			Assert ("#8", !uri.IsUnc);
 		}
 
-		[Test, ExpectedException (typeof (UriFormatException))]
+		[Test]
+//		[ExpectedException (typeof (UriFormatException))]
 		public void UncFail ()
 		{
 			Uri uri = new Uri ("/home/user/dir/filename.ext");
