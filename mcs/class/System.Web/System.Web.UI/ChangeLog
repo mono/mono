@@ -1,3 +1,8 @@
+2003-12-11  Jackson Harper <jackson@ximian.com>
+
+	* Control.cs: Give null for the ID if it hasn't been explicitly
+	set. This fixes bug #51520.
+	
 2003-12-08  Jackson Harper <jackson@ximian.com>
 
 	* PageParser.cs: Ignore the SmartNavigation attribute for now.

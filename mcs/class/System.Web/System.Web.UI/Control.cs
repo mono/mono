@@ -32,6 +32,7 @@ namespace System.Web.UI
                 private static readonly object LoadEvent = new object();
                 private static readonly object PreRenderEvent = new object();
                 private static readonly object UnloadEvent = new object();
+		private bool id_set = false;
 		private string uniqueID;
                 private string _userId = null;
                 private string _cachedClientId = null;
@@ -125,13 +126,14 @@ namespace System.Web.UI
 		[WebSysDescription ("The name of the control that is rendered.")]
                 public virtual string ID {
                         get {
-                                return _userId;
+				return (id_set ? _userId : null);
                         }
 			
                         set {
 				if (value == "")
 					value = null;
 
+				id_set = true;
                                 _userId = value;
 				NullifyUniqueID ();
                         }
