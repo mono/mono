@@ -1,18 +1,15 @@
 using System;
 using System.Reflection;
 
-namespace Test {
-	
-       	//[AttributeUsage (AttributeTargets.All)]
-	public class MyAttribute: Attribute {
-		public string val;
-		public MyAttribute (string stuff) {
-			System.Console.WriteLine (stuff);
-			val = stuff;
-		}
+[AttributeUsage (AttributeTargets.All)]
+public class My : Attribute {
+	public object o;
+
+	public My (object o) {
+		this.o = o;
 	}
 	
-	[My("testclass")]
+	[My(TypeCode.Empty)]
 	public class Test {
 		static public int Main() {
 			System.Reflection.MemberInfo info = typeof (Test);
@@ -22,8 +19,8 @@ namespace Test {
 			}
 			if (attributes.Length != 1)
 				return 1;
-			MyAttribute attr = (MyAttribute) attributes [0];
-			if (attr.val != "testclass")
+			My attr = (My) attributes [0];
+			if (attr.o != TypeCode.Empty)
 				return 2;
 			return 0;
 		}

@@ -31,7 +31,7 @@ Test cases listed by Category:
 
 * Member Access & Simple Names
 
-  test-151.cs
+  test-151.cs test-159.cs
 
 * Invocation
 
@@ -47,7 +47,7 @@ Test cases listed by Category:
 
 * Attributes
 
-  test-157.cs
+  test-157.cs test-158.cs
 
 Test cases listed by Number:
 ============================
@@ -105,6 +105,14 @@ Check whether base types are at least as accessible than the current type.
 test-157.cs
 -----------
 Attributes.
+
+test-158.cs
+-----------
+Attributes.
+
+test-159.cs
+-----------
+SimpleNameLookup: Cast to `A.Iface' type when there's a parameter called `A'.
 
 verify-1.cs
 -----------
