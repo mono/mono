@@ -44,10 +44,18 @@ namespace System {
 		static string GetAppBase (string appBase)
 		{
 			int len = appBase.Length;
-			if (len >= 8 && appBase.ToLower ().StartsWith ("file://"))
+			if (len >= 8 && appBase.ToLower ().StartsWith ("file://")) {
 				appBase = appBase.Substring (7);
-			else if (appBase.IndexOf (':') == -1)
+				if (Path.DirectorySeparatorChar != '/')
+					appBase = appBase.Replace ('/', Path.DirectorySeparatorChar);
+
+			} else if (appBase.IndexOf (':') == -1) {
 				appBase = Path.GetFullPath (appBase);
+			}
+
+			len = appBase.Length;
+			if (len == 0 || appBase [len - 1] != Path.DirectorySeparatorChar)
+				appBase = appBase + Path.DirectorySeparatorChar;
 
 			return appBase;
 		}

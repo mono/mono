@@ -1,4 +1,8 @@
 
+2003-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomainSetup.cs: fixed bug #46609.
+
 Thu Jul 17 17:28:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* MonoType.cs: use an icall for IsPrimitiveImpl ().
