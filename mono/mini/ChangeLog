@@ -1,3 +1,7 @@
+2003-05-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mono_method_to_ir): inline LDFLD/STFLD wrappers
+
 2003-05-15  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* mini.c: fixed little bug in CEE_NEWOBJ case when calling
