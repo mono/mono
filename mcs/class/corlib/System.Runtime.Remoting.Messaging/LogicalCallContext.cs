@@ -11,9 +11,8 @@
 using System.Collections;
 using System.Runtime.Serialization;
 
-namespace System.Runtime.Remoting.Messaging {
-
-	[MonoTODO]
+namespace System.Runtime.Remoting.Messaging 
+{
 	[Serializable]
 	public sealed class LogicalCallContext : ISerializable, ICloneable
 	{

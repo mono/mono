@@ -31,7 +31,7 @@ namespace System.Runtime.Remoting.Messaging
 			_isContextOk = true;
 		}
 
-		public ConstructionCall (Type type)
+		internal ConstructionCall (Type type)
 		{
 			_activationType = type;
 			_activationTypeName = type.AssemblyQualifiedName;
@@ -124,5 +124,10 @@ namespace System.Runtime.Remoting.Messaging
 			info.AddValue ("__ContextProperties", props);
 			info.AddValue ("__ActivationTypeName", _activationTypeName);
 		} 
+		
+		public override IDictionary Properties 
+		{
+			get { return base.Properties; }
+		}
 	}
 }

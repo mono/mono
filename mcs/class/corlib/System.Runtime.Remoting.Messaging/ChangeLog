@@ -1,3 +1,15 @@
+2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* CADMessages.cs: Added methods for setting and getting the logical call
+	  context.
+	* ConstructionCall.cs: Fixed signature of some methods.
+	* ConstructionResponse.cs: Fixed signature of constructor and added missing
+	  property.
+	* LogicalCallContext.cs: Removed TODO.
+	* MethodCall.cs, MethodResponse.cs: Added support for LogicalCallContext in
+	  consturctor.
+	* MethodReturnMessageWrapper.cs: Removed some unneded methods.
+
 2003-11-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ConstructionCall.cs, ReturnMessage.cs: minor fixes.

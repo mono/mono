@@ -106,12 +106,6 @@ namespace System.Runtime.Remoting.Messaging {
 			return ((IMethodReturnMessage)WrappedMessage).GetArgName(index);
 		}
 
-		[MonoTODO]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		} 
-
 		public virtual object GetOutArg (int argNum)
 		{
 			return _args [_outArgInfo.GetInOutArgIndex (argNum)];
@@ -121,18 +115,6 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			return _outArgInfo.GetInOutArgName(index);
 		}
-
-		[MonoTODO]
-		public virtual object HeaderHandler (Header[] h)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RootSetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		} 
 
 		class DictionaryWrapper : MethodReturnDictionary
 		{

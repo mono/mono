@@ -94,6 +94,9 @@ namespace System.Runtime.Remoting.Messaging {
 			_returnValue = retmsg.GetReturnValue (args);
 			_outArgs = retmsg.GetArgs (args);
 
+			_callContext = retmsg.GetLogicalCallContext (args);
+			if (_callContext == null) _callContext = new LogicalCallContext ();
+			
 			if (retmsg.PropertiesCount > 0)
 				CADMessageBase.UnmarshalProperties (Properties, retmsg.PropertiesCount, args);
 		}

@@ -230,6 +230,26 @@ namespace System.Runtime.Remoting.Messaging {
 
 			return unmarshalledArgs;
 		}
+		
+		protected void SaveLogicalCallContext (IMethodMessage msg, ref ArrayList serializeList)
+		{
+			if (msg.LogicalCallContext.HasInfo) 
+			{
+				if (serializeList == null)
+					serializeList = new ArrayList();
+
+				_callContext = new CADArgHolder (serializeList.Count);
+				serializeList.Add (msg.LogicalCallContext);
+			}
+		}
+		
+		internal LogicalCallContext GetLogicalCallContext (ArrayList args) 
+		{
+			if (null == _callContext)
+				return null;
+
+			return (LogicalCallContext) args [_callContext.index];
+		}
 	}
 
 	// Used when passing a IMethodCallMessage between appdomains
@@ -287,7 +307,10 @@ namespace System.Runtime.Remoting.Messaging {
 				serializeList.Add(callMsg.MethodSignature);
 			}
 
-			// todo: save callcontext
+			// Save callcontext
+			SaveLogicalCallContext (callMsg, ref serializeList);
+			
+			// Serialize message data if needed
 
 			if (null != serializeList) {
 				MemoryStream stm = CADSerializer.SerializeObject (serializeList.ToArray());
@@ -354,7 +377,8 @@ namespace System.Runtime.Remoting.Messaging {
 				serializeList.Add(retMsg.Exception);
 			}
 
-			// todo: save callcontext
+			// Save callcontext
+			SaveLogicalCallContext (retMsg, ref serializeList);
 
 			if (null != serializeList) {
 				MemoryStream stm = CADSerializer.SerializeObject (serializeList.ToArray());

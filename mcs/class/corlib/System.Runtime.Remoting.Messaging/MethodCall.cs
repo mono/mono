@@ -63,6 +63,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 			_args = msg.GetArgs (args);
 			_methodSignature = (Type []) msg.GetMethodSignature (args);
+			_callContext = msg.GetLogicalCallContext (args);
+			if (_callContext == null) _callContext = new LogicalCallContext ();
 	
 			ResolveMethod ();
 			Init();
@@ -279,7 +281,7 @@ namespace System.Runtime.Remoting.Messaging {
 			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
 		}
 
-		public bool CanCastTo (string clientType, Type serverType)
+		bool CanCastTo (string clientType, Type serverType)
 		{
 			int i = clientType.IndexOf(",");
 			if (i != -1) clientType = clientType.Substring (0,i).Trim();
