@@ -1,4 +1,8 @@
 
+Thu May 29 12:21:47 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c, get.c: misc fixes.
+
 Wed May 7 16:50:00 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: output custom attributes for method parameters.
