@@ -1,3 +1,12 @@
+
+Mon Jan 10 17:54:16 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: added experimental rtc support in the statistical
+	profiler: if the user has the permission, more accurate statistics
+	are gathered. Run with: MONO_RTC=4096 mono --profiler=default:stat ....
+	The MONO_RTC value must be restricted to what the linux rtc allows:
+	power of two from 64 to 8192 Hz.
+
 2005-01-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (mono_arch_emit_exceptions): Fix #71121.
