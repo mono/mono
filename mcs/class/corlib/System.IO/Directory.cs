@@ -321,7 +321,7 @@ namespace System.IO
 			MonoIOStat stat;
 			IntPtr find;
 
-			if (path == null)
+			if (path == null || pattern == null)
 				throw new ArgumentNullException ();
 
 			if (path == "")

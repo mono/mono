@@ -17,11 +17,15 @@ namespace System.IO {
 	[Serializable]
 	public sealed class FileInfo : FileSystemInfo {
 	
+
+                private bool exists = false;
+
 		public FileInfo (string path) {
 			CheckPath (path);
 		
 			OriginalPath = path;
 			FullPath = Path.GetFullPath (path);
+			exists = File.Exists (path);
 		}
 
 		// public properties
@@ -36,7 +40,7 @@ namespace System.IO {
 				if ((stat.Attributes & FileAttributes.Directory) != 0)
 					return false;
 
-				return File.Exists (FullPath);
+				return exists;
 			}
 		}
 
@@ -113,10 +117,14 @@ namespace System.IO {
 
 		public override void Delete () {
 			MonoIOError error;
-			
+						
 			if (!MonoIO.Exists (FullPath, out error)) {
 				// a weird MS.NET behaviour
 				return;
+			}
+
+			if (MonoIO.ExistsDirectory (FullPath, out error)) {
+				throw new UnauthorizedAccessException ("Access to the path \"" + FullPath + "\" is denied.");
 			}
 			
 			if (!MonoIO.DeleteFile (FullPath, out error)) {
@@ -135,6 +143,10 @@ namespace System.IO {
 
 		public FileInfo CopyTo (string path, bool overwrite) {
 			string dest = Path.GetFullPath (path);
+
+			if (overwrite && File.Exists (path))
+				File.Delete (path);
+
 			File.Copy (FullPath, dest);
 		
 			return new FileInfo (dest);

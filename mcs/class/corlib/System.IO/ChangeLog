@@ -1,3 +1,22 @@
+2003-05-06  Ville Palo <vi64pa@kolumbus.fi>
+
+	* BufferedStream.cs: 
+	  - Removed unusefull code.
+	  - Added ObjectDisposedException to Position
+	  - Dont flush if stream is allready closed.
+	  - Flush throws also ObjectDisposedException.
+	* Directory.cs:
+	  - GetFileSystemEtries: ArgumentNullException if pattern is null
+	* DirectoryInfo.cs: Fixed little MoveTo () bug.
+	* FileInfo.cs:
+	  - Exists: If file does not exists when instance is created the
+	  value of the Exists property does not change even if file is created
+	  afterwards.
+	  - Delete: If path is a directory UnauthorizedException is thrown.
+	  - CopyTo: Now we can overwrite file if wanted.
+	* Path.cs: 
+	  - GetFullPath: Now throws exception when path is "   ".
+	
 2003-05-04  Ben Maurer <bmaurer@users.sourceforge.net>
 	* Directory.cs (GetLogicalDrives) Marked as MonoTODO
 	because we need to implement the method on Windows.

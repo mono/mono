@@ -161,7 +161,7 @@ namespace System.IO
 					"path",
 					"You must specify a path when calling System.IO.Path.GetFullPath"));
 			
-			if (path == String.Empty)
+			if (path.Trim () == String.Empty)
 				throw new ArgumentException ("The path is not of a legal form", "path");
 
 			if (!IsPathRooted (path))

@@ -128,7 +128,7 @@ namespace System.IO {
 		}
 
 		public void MoveTo (string dest) {
-			Directory.Move (FullPath, dest);
+ 			Directory.Move (FullPath, Path.GetFullPath (dest));
 		}
 
 		public override string ToString () {

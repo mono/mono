@@ -25,14 +25,7 @@ namespace System.IO {
 				throw new ArgumentNullException ("stream was null");
 			if (buffer_size < 0)
 				throw new ArgumentOutOfRangeException ();
-			
-			// There are stream classes that don't support Positioning.
-			if (stream.CanSeek) {
-				// if stream is closed this throws an exception
-				// FIXME: better way?
-				long l = stream.Position;
-			}
-			
+						
 			m_stream = stream;
 			m_buffer = new byte[buffer_size];
 		}
@@ -64,6 +57,7 @@ namespace System.IO {
 		
 		public override long Position {
 			get {
+				CheckObjectDisposedException ();
 				return m_stream.Position - m_buffer_read_ahead + m_buffer_pos;
 			}
 
@@ -74,7 +68,10 @@ namespace System.IO {
 		}
 
 		public override void Close() {
-			Flush();
+			
+			if (m_buffer != null)
+				Flush();
+
 			m_stream.Close();
 			m_buffer = null;
 			disposed = true;
@@ -82,6 +79,8 @@ namespace System.IO {
 
 		public override void Flush() {
 			
+			CheckObjectDisposedException ();
+
 			if (m_buffer_reading) {
 				if (CanSeek)
 					m_stream.Position = Position;
