@@ -1,3 +1,8 @@
+2001-11-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs (DelegateInvocation.Emit): Invocation of Invoke
+	method should be virtual, as this method is always virtual.
+
 2001-11-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Foreach.Emit): Use EmitAssign instead of Store.

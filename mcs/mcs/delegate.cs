@@ -535,7 +535,12 @@ namespace CIR {
 		public override void Emit (EmitContext ec)
 		{
 			Delegate del = TypeManager.LookupDelegate (InstanceExpr.Type);
-			Invocation.EmitCall (ec, del.TargetMethod.IsStatic, InstanceExpr, method, Arguments);
+
+			//
+			// Invocation on delegates call the virtual Invoke member
+			// so we are always `instance' calls
+			//
+			Invocation.EmitCall (ec, false, InstanceExpr, method, Arguments);
 		}
 
 		public override void EmitStatement (EmitContext ec)
