@@ -1,3 +1,7 @@
+2004-03-22  Ravindra <rkumar@novell.com>
+	* gdipFunctions.cs: Added P/Invoke calls for LinearGradientBrush
+	and did few coding style fixes.
+
 2004-03-18  Ravindra <rkumar@novell.com>
 	* Brush.cs: Fixed Dispose method.
 	* SolidBrush.cs: Fixed clone method.
