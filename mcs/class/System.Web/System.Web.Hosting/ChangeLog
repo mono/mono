@@ -1,5 +1,7 @@
 2004-08-02  Duncan Mak  <duncan@ximian.com>
 
+	* IApplicationHost.cs (MapPath): Add [In] attribute.
+
 	* IAppManagerAppDomainFactory.cs:
 	* IProcessHostSupportFunction.cs: signature fixes.
 	

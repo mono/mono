@@ -38,7 +38,7 @@ namespace System.Web.Hosting
                 string GetSiteName ();
                 string GetVirtualPath ();
                 bool IsHostProcessMultiInstance ();
-                string MapPath (string s);
+                string MapPath ([In] string s);
                 void MessageReceived ();
         }
 }
