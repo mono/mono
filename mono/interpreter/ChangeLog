@@ -1,3 +1,7 @@
+2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_exec_method): support internalcall String constructors
+
 2002-04-19  Dan Lewis  <dihlewis@yahoo.co.uk>
 	
 	* interp.c: support for new szarray format.
