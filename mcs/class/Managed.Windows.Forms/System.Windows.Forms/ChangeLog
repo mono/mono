@@ -1,3 +1,7 @@
+2005-01-09  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Clear window when scrolling (fixes build).
+
 2005-01-09  Peter Bartok <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs, XplatUIOSX.cs,

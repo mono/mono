@@ -966,7 +966,7 @@ static int current;
 		}
 
 		private void hscroll_ValueChanged(object sender, EventArgs e) {
-			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0);
+			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0, false);
 			document.ViewPortX = this.hscroll.Value;
 			document.UpdateCaret();
 			Console.WriteLine("Dude scrolled");
