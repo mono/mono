@@ -8,6 +8,7 @@ codegen/IClassRef.cs
 codegen/FieldDef.cs
 codegen/ParamDef.cs
 codegen/MethodDef.cs
+codegen/LabelInfo.cs
 codegen/TypeDef.cs
 codegen/DataDef.cs
 codegen/TypeRef.cs
