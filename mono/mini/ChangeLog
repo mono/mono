@@ -1,3 +1,8 @@
+2004-05-16	Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* mini-x86.c (mono_arch_local_regalloc): Correctly free 
+	reg in long and clob case (bug #58343). Fixed/added comments.
+
 2004-05-14 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* mini.c (mono_jit_runtime_invoke): Follow new convention
