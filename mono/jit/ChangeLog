@@ -1,3 +1,8 @@
+2002-08-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_emit_prologue): make the call to
+	mono_get_lmf_addr relocatable.
+
 2002-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): impl. CEE_MONO_RETOBJ
