@@ -27,6 +27,7 @@ namespace Mono.Xml.Schema
 
 		XmlReader reader;
 		XmlValidatingReader xvReader;
+		IHasXmlSchemaInfo sourceReaderSchemaInfo;
 		IXmlLineInfo readerLineInfo;
 		bool laxElementValidation = true;
 		bool reportNoValidationError;
@@ -79,6 +80,7 @@ namespace Mono.Xml.Schema
 					reportNoValidationError = true;
 			}
 			readerLineInfo = reader as IXmlLineInfo;
+			sourceReaderSchemaInfo = reader as IHasXmlSchemaInfo;
 		}
 #endregion
 		// Provate Properties
@@ -122,20 +124,24 @@ namespace Mono.Xml.Schema
 					else if (context.Element != null)
 						return context.Element.ElementType;
 					else
-						return null;
+						return SourceReaderSchemaType;
 				case XmlNodeType.Attribute:
 					// TODO: Default attribute support
 					XmlSchemaComplexType ct = context.ActualType as XmlSchemaComplexType;
 					if (ct != null) {
 						XmlSchemaAttribute attdef = ct.AttributeUses [CurrentQName] as XmlSchemaAttribute;
-						if (attdef !=null)
+						if (attdef != null)
 							return attdef.AttributeType;
 					}
-					return null;
+					return SourceReaderSchemaType;
 				default:
-					return null;
+					return SourceReaderSchemaType;
 				}
 			}
+		}
+
+		private object SourceReaderSchemaType {
+			get { return this.sourceReaderSchemaInfo != null ? sourceReaderSchemaInfo.SchemaType : null; }
 		}
 
 		// This property is never used in Mono.
