@@ -1,5 +1,9 @@
 2003-05-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Try.Resolve): Avoid crashing if there is a failure
+	in the regular case.   CreateSiblingForFinally is doing extra
+	error checking.
+
 	* attribute.cs (GetAttributeArgumentExpression): Store the result
 	on an out value, and use the return value to indicate failure
 	instead of using null (which is a valid return for Constant.GetValue).

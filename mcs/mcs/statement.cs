@@ -4574,7 +4574,8 @@ namespace Mono.CSharp {
 			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
 
 			if (Fini != null) {
-				ec.CurrentBranching.CreateSiblingForFinally ();
+				if (ok)
+					ec.CurrentBranching.CreateSiblingForFinally ();
 				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
 
 				bool old_in_finally = ec.InFinally;
