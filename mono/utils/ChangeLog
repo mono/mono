@@ -1,4 +1,9 @@
 
+Thu Jul 25 13:59:34 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* mono-digest.h, mono-md5.c, mono-sha1.c: MD5 and SHA1
+	implementations.
+
 Mon Jun 3 15:59:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* strtod.c: make __bsd_dtoa() always return malloc()ed memory.
