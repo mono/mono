@@ -1,3 +1,7 @@
+2004-10-19 Sanjay Gupta <gsanjay@novell.com>
+
+	* HierarchicalDataSourceView.cs: Corrected class definition and updated.
+
 2004-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HierarchicalDataSourceView.cs: fix typo.

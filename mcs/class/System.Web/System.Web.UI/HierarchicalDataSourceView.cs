@@ -36,17 +36,12 @@ using System.Collections.Specialized;
 using System.Text;
 
 namespace System.Web.UI {
-	public abstract class HierarchicalDataSourceView : DataSourceView {
+	public abstract class HierarchicalDataSourceView {
 		protected HierarchicalDataSourceView ()
 		{
 		}
 	
-		public abstract IHierarchicalEnumerable GetHierarchicalList ();
-		public override IEnumerable Select ()
-		{
-			return GetHierarchicalList ();
-		}	
-	//	public abstract IHierarchicalEnumerable Select();
+		public abstract IHierarchicalEnumerable Select();		
 	}
 }
 #endif
