@@ -37,6 +37,87 @@ using System.Security.Permissions;
 
 namespace MonoTests.System.Security {
 
+	// "alternate" IList implementation
+	class TestList : IList {
+
+		private IList l;
+
+		public TestList ()
+		{
+			l = (IList) new ArrayList ();
+		}
+
+		public int Add (object value)
+		{
+			return l.Add (value);
+		}
+
+		public void Clear ()
+		{
+			l.Clear ();
+		}
+
+		public bool Contains (object value)
+		{
+			return l.Contains (value);
+		}
+
+		public int IndexOf (object value)
+		{
+			return l.IndexOf (value);
+		}
+
+		public void Insert (int index, object value)
+		{
+			l.Insert (index, value);
+		}
+
+		public bool IsFixedSize {
+			get { return l.IsFixedSize; }
+		}
+
+		public bool IsReadOnly {
+			get { return l.IsReadOnly; }
+		}
+
+		public void Remove (object value)
+		{
+			l.Remove (value);
+		}
+
+		public void RemoveAt (int index)
+		{
+			l.RemoveAt (index);
+		}
+
+		public object this [int index] {
+			get { return l [index]; }
+			set { l [index] = value; }
+		}
+
+		public void CopyTo (Array array, int index)
+		{
+			l.CopyTo (array, index);
+		}
+
+		public int Count {
+			get { return l.Count; }
+		}
+
+		public bool IsSynchronized {
+			get { return l.IsSynchronized; }
+		}
+
+		public object SyncRoot {
+			get { return l.SyncRoot; }
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			return l.GetEnumerator ();
+		}
+	}
+
 	[TestFixture]
 	public class PermissionSetCollectionTest {
 
@@ -227,6 +308,24 @@ namespace MonoTests.System.Security {
 			PermissionSet ps = psc.GetSet (0);
 			Assert.AreEqual (unr.ToString (), ps.ToString (), "Same XML");
 			Assert.IsTrue (Object.ReferenceEquals (unr, ps), "Same Object Reference");
+		}
+
+		[Test]
+		public void PermissionSets_SetArrayList ()
+		{
+			PermissionSetCollection psc = new PermissionSetCollection ();
+			PermissionSet unr = new PermissionSet (PermissionState.Unrestricted);
+			psc.Add (unr);
+			Assert.AreEqual (1, psc.Count, "original ArrayList");
+			psc.PermissionSets = new ArrayList ();
+			Assert.AreEqual (0, psc.Count, "new ArrayList");
+		}
+
+		[Test]
+		public void PermissionSets_SetTestList ()
+		{
+			PermissionSetCollection psc = new PermissionSetCollection ();
+			psc.PermissionSets = new TestList ();
 		}
 
 		[Test]
