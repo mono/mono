@@ -1,3 +1,8 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfigCas.cs: New. CAS unit tests for CryptoConfig.
+	* CryptoAPITransformCas.cs: New. CAS unit tests for CryptoAPITransform.
+
 2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSATest.cs: Added unit test for Counter == 0. Actualized test cases
