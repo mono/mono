@@ -1,3 +1,17 @@
+2002-05-24  Martin Baulig  <martin@gnome.org>
+
+	* ModuleBuilder.cs (symwriter_define_local): New private variable.
+	(GetSymbolWriter): Look for a custom version of "DefineLocalVariable"
+	and store it in `symwriter_define_local'.
+	(SymWriter_DefineLocalVariable): New internal method to call the
+	symbol writer's custom DefineLocalVariable() method.  It is safe to
+	call this method if there's no symbol writer.
+
+	* LocalBuilder.cs (SetLocalSymInfo): Use the MethodBuilder'snew
+	SymWriter_DefineLocalVariable().
+
+	* MethodBuilder.cs (GetParameters): Implemented.
+
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
 	* ModuleBuilder.cs (GetSymbolWriter): Pass the this pointer to the

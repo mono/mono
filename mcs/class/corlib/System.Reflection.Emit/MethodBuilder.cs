@@ -90,7 +90,18 @@ namespace System.Reflection.Emit {
 			return iattrs;
 		}
 		public override ParameterInfo[] GetParameters() {
-			return null;
+			if ((parameters == null) || (pinfo == null))
+				return null;
+
+			ParameterInfo[] retval = new ParameterInfo [parameters.Length - 1];
+			for (int i = 1; i < parameters.Length; i++) {
+				if (pinfo [i] == null)
+					return null;
+
+				retval [i - 1] = new ParameterInfo (pinfo [i], parameters [i - 1], this);
+			}
+
+			return retval;
 		}
 		
 		public void CreateMethodBody( byte[] il, int count) {

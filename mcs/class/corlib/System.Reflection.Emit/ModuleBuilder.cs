@@ -24,6 +24,7 @@ namespace System.Reflection.Emit {
 		private int table_idx;
 		private AssemblyBuilder assemblyb;
 		private ISymbolWriter symbol_writer;
+		private MethodInfo symwriter_define_local;
 		Hashtable name_cache;
 
 		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo) {
@@ -35,43 +36,80 @@ namespace System.Reflection.Emit {
 			name_cache = new Hashtable ();
 
 			if (emitSymbolInfo)
-				symbol_writer = GetSymbolWriter (fullyqname);
+				GetSymbolWriter (fullyqname);
 		}
 
-		internal ISymbolWriter GetSymbolWriter (string filename)
+		internal void GetSymbolWriter (string filename)
 		{
 			Assembly assembly;
 			try {
 				assembly = Assembly.Load ("Mono.CSharp.Debugger");
 			} catch (FileNotFoundException) {
-				return null;
+				return;
 			}
 
 			Type type = assembly.GetType ("Mono.CSharp.Debugger.MonoSymbolWriter");
 			if (type == null)
-				return null;
+				return;
 
-			Type[] arg_types = new Type [2];
-			arg_types [0] = typeof (ModuleBuilder);
-			arg_types [1] = typeof (string);
-			ConstructorInfo constructor = type.GetConstructor (arg_types);
+			// First get the constructor.
+			{
+				Type[] arg_types = new Type [2];
+				arg_types [0] = typeof (ModuleBuilder);
+				arg_types [1] = typeof (string);
+				ConstructorInfo constructor = type.GetConstructor (arg_types);
 
-			object[] args = new object [2];
-			args [0] = this;
-			args [1] = filename;
+				object[] args = new object [2];
+				args [0] = this;
+				args [1] = filename;
 
-			if (constructor == null)
-				return null;
+				if (constructor == null)
+					return;
 
-			Object instance = constructor.Invoke (args);
-			if (instance == null)
-				return null;
+				Object instance = constructor.Invoke (args);
+				if (instance == null)
+					return;
 
-			if (!(instance is ISymbolWriter))
-				return null;
+				if (!(instance is ISymbolWriter))
+					return;
 
-			return (ISymbolWriter) instance;
+				symbol_writer = (ISymbolWriter) instance;
+			}
+
+			// Get the DefineLocalVariable method.
+			{
+				Type[] arg_types = new Type [6];
+				arg_types [0] = typeof (string);
+				arg_types [1] = typeof (LocalBuilder);
+				arg_types [2] = typeof (FieldAttributes);
+				arg_types [3] = typeof (int);
+				arg_types [4] = typeof (int);
+				arg_types [5] = typeof (int);
+
+				symwriter_define_local = type.GetMethod ("DefineLocalVariable", arg_types);
+
+				if (symwriter_define_local == null)
+					throw new NotSupportedException ();
+			}
 		}
+
+		internal void SymWriter_DefineLocalVariable (string name, LocalBuilder local,
+							     FieldAttributes attributes,
+							     int position, int startOffset, int endOffset)
+		{
+			if ((symbol_writer == null) || (symwriter_define_local == null))
+				return;
+
+			object[] args = new object [6];
+			args [0] = name;
+			args [1] = local;
+			args [2] = attributes;
+			args [3] = position;
+			args [4] = startOffset;
+			args [5] = endOffset;
+
+			symwriter_define_local.Invoke (symbol_writer, args);
+		}							     
 	
 		public override string FullyQualifiedName {get { return fqname;}}
 

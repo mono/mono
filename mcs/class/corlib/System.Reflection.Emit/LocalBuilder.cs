@@ -40,22 +40,10 @@ namespace System.Reflection.Emit {
 		}
 		public void SetLocalSymInfo (string lname, int startOffset, int endOffset)
 		{
-			ISymbolWriter symbol_writer = module.GetSymWriter ();
-			name = lname;
+			this.name = lname;
 
-			if (symbol_writer == null)
-				return;
-
-			SignatureHelper sig_helper = SignatureHelper.GetLocalVarSigHelper (module);
-
-			sig_helper.AddArgument (type);
-
-			byte[] signature = sig_helper.GetSignature ();
-
-			symbol_writer.DefineLocalVariable (name, FieldAttributes.Private,
-							   signature, SymAddressKind.ILOffset,
-							   (int)position, 0, 0,
-							   startOffset, endOffset);
+			module.SymWriter_DefineLocalVariable (lname, this, FieldAttributes.Private,
+							      (int) position, startOffset, endOffset);
 		}
 
 		public void SetLocalSymInfo (string lname)
