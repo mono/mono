@@ -17,6 +17,8 @@ namespace System.Net.Sockets
 	// </remarks>
 	public class MulticastOption
 	{
+		// Don't change the names of these fields without also
+		// changing socket-io.c in the runtime
 		protected IPAddress group;
 		protected IPAddress local;
 
@@ -41,21 +43,6 @@ namespace System.Net.Sockets
 		{
 			get { return local; }
 			set { local = value; }
-		}
-
-		public override bool Equals (object o)
-		{	
-			return false;
-		}
-
-		public override int GetHashCode()
-		{
-			return group.GetHashCode();
-		}
-
-		public override string ToString()
-		{
-			return group.ToString() + " " + local.ToString();
 		}
 	}
 }

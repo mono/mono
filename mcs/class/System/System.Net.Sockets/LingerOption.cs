@@ -16,6 +16,8 @@ namespace System.Net.Sockets
 	// </remarks>
 	public class LingerOption
 	{
+		// Don't change the names of these fields without also
+		// changing socket-io.c in the runtime
 		protected bool	enabled;
 		protected int	seconds;
 
@@ -35,29 +37,6 @@ namespace System.Net.Sockets
 		{
 			get { return seconds; }
 			set { seconds = value; }
-		}
-
-		public override bool Equals (object o)
-		{
-			return (enabled == ((LingerOption)o).enabled) &&
-				(seconds == ((LingerOption)o).seconds);
-		}
-
-		public override int GetHashCode()
-		{
-			return seconds;
-		}
-
-		public override string ToString()
-		{
-			string ret;
-			if (enabled) {
-				ret = "off";
-			}
-			else {
-				ret = seconds.ToString();
-			}
-			return ret;
 		}
 	}
 }

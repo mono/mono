@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 namespace System
 {
 
+	[MonoTODO("This should implement IList and IEnumerable too")]
 	public abstract class Array : ICloneable, ICollection
 	{
 		// Constructor		

@@ -205,12 +205,24 @@ namespace System.Net.Sockets
 			}
 		}
 			
+		/* the field "socket" is looked up by name by the runtime */
 		private IntPtr socket;
 		private AddressFamily address_family;
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
+		private bool blocking=true;
+
+		/* When true, the socket was connected at the time of
+		 * the last IO operation
+		 */
+		private bool connected=false;
 		
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void Select_internal(ref Socket[] read,
+							   ref Socket[] write,
+							   ref Socket[] err,
+							   int timeout);
+
 		public static void Select(IList read_list, IList write_list,
 					  IList err_list, int time_us) {
 			if(read_list==null &&
@@ -218,8 +230,81 @@ namespace System.Net.Sockets
 			   err_list==null) {
 				throw new ArgumentNullException();
 			}
+
+			int read_count, write_count, err_count;
+
+			if(read_list!=null) {
+				read_count=read_list.Count;
+			} else {
+				read_count=0;
+			}
+
+			if(write_list!=null) {
+				write_count=write_list.Count;
+			} else {
+				write_count=0;
+			}
+
+			if(err_list!=null) {
+				err_count=err_list.Count;
+			} else {
+				err_count=0;
+			}
 			
-			throw new NotImplementedException();
+			Socket[] read_arr=new Socket[read_count];
+			Socket[] write_arr=new Socket[write_count];
+			Socket[] err_arr=new Socket[err_count];
+
+			int i;
+
+			if(read_list!=null) {
+				i=0;
+				
+				foreach (Socket s in read_list) {
+					read_arr[i]=s;
+					i++;
+				}
+			}
+
+			if(write_list!=null) {
+				i=0;
+				foreach (Socket s in write_list) {
+					write_arr[i]=s;
+					i++;
+				}
+			}
+			
+			if(err_list!=null) {
+				i=0;
+				foreach (Socket s in err_list) {
+					err_arr[i]=s;
+					i++;
+				}
+			}
+
+			Select_internal(ref read_arr, ref write_arr,
+					ref err_arr, time_us);
+
+			if(read_list!=null) {
+				read_list.Clear();
+				for(i=0; i<read_arr.Length; i++) {
+					read_list.Add(read_arr[i]);
+				}
+			}
+			
+			if(write_list!=null) {
+				write_list.Clear();
+				for(i=0; i<write_arr.Length; i++) {
+					write_list.Add(write_arr[i]);
+				}
+			}
+			
+			if(err_list!=null) {
+				err_list.Clear();
+				for(i=0; i<err_arr.Length; i++) {
+					err_list.Add(err_arr[i]);
+				}
+			}
 		}
 
 		// private constructor used by Accept, which already
@@ -231,6 +316,7 @@ namespace System.Net.Sockets
 			protocol_type=proto;
 			
 			socket=sock;
+			connected=true;
 		}
 		
 		// Creates a new system socket, returning the handle
@@ -264,20 +350,23 @@ namespace System.Net.Sockets
 			}
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void Blocking_internal(IntPtr socket,
+							    bool block);
+
 		public bool Blocking {
 			get {
-				throw new NotImplementedException();
-				//return false;
+				return(blocking);
 			}
-			set { }
+			set {
+				Blocking_internal(socket, value);
+				blocking=value;
+			}
 		}
 
-		[MonoTODO]
 		public bool Connected {
 			get {
-				throw new NotImplementedException();
-				//return false;
+				return(connected);
 			}
 		}
 
@@ -446,6 +535,7 @@ namespace System.Net.Sockets
 		private extern static void Close_internal(IntPtr socket);
 		
 		public void Close() {
+			connected=false;
 			Close_internal(socket);
 		}
 
@@ -460,6 +550,7 @@ namespace System.Net.Sockets
 			}
 			
 			Connect_internal(socket, remote_end.Serialize());
+			connected=true;
 		}
 		
 		public Socket EndAccept(IAsyncResult result) {
@@ -505,27 +596,49 @@ namespace System.Net.Sockets
 			return(req.Worker.Total);
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void GetSocketOption_obj_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, out object obj_val);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void GetSocketOption_arr_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val);
+
 		public object GetSocketOption(SocketOptionLevel level,
 					      SocketOptionName name) {
-			throw new NotImplementedException();
+			object obj_val;
+			
+			GetSocketOption_obj_internal(socket, level, name,
+						     out obj_val);
+			
+			if(name==SocketOptionName.Linger) {
+				return((LingerOption)obj_val);
+			} else if (name==SocketOptionName.AddMembership ||
+				   name==SocketOptionName.DropMembership) {
+				return((MulticastOption)obj_val);
+			} else {
+				return((int)obj_val);
+			}
 		}
 
-		[MonoTODO]
 		public void GetSocketOption(SocketOptionLevel level,
 					    SocketOptionName name,
 					    byte[] opt_value) {
-			throw new NotImplementedException();
+			int opt_value_len=opt_value.Length;
+			
+			GetSocketOption_arr_internal(socket, level, name,
+						     ref opt_value);
 		}
 
-		[MonoTODO]
 		public byte[] GetSocketOption(SocketOptionLevel level,
 					      SocketOptionName name,
 					      int length) {
-			throw new NotImplementedException();
+			byte[] byte_val=new byte[length];
+			
+			GetSocketOption_arr_internal(socket, level, name,
+						     ref byte_val);
+
+			return(byte_val);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Totally undocumented")]
 		public int IOControl(int ioctl_code, byte[] in_value,
 				     byte[] out_value) {
 			throw new NotImplementedException();
@@ -539,9 +652,33 @@ namespace System.Net.Sockets
 			Listen_internal(socket, backlog);
 		}
 
-		[MonoTODO]
+		/* The docs for Poll() are a bit lightweight too, but
+		 * it seems to be just a simple wrapper around Select.
+		 */
 		public bool Poll(int time_us, SelectMode mode) {
-			throw new NotImplementedException();
+			ArrayList socketlist=new ArrayList(1);
+
+			socketlist.Add(socket);
+			
+			switch(mode) {
+			case SelectMode.SelectError:
+				Select(null, null, socketlist, time_us);
+				break;
+			case SelectMode.SelectRead:
+				Select(socketlist, null, null, time_us);
+				break;
+			case SelectMode.SelectWrite:
+				Select(null, socketlist, null, time_us);
+				break;
+			default:
+				throw new NotSupportedException();
+			}
+
+			if(socketlist.Contains(socket)) {
+				return(true);
+			} else {
+				return(false);
+			}
 		}
 		
 		public int Receive(byte[] buf) {
@@ -572,8 +709,18 @@ namespace System.Net.Sockets
 				throw new ArgumentException();
 			}
 			
-			return(Receive_internal(socket, buf, offset, size,
-						flags));
+			int ret;
+			
+			try {
+				ret=Receive_internal(socket, buf, offset,
+						     size, flags);
+			} catch(SocketException) {
+				connected=false;
+				throw;
+			}
+			connected=true;
+
+			return(ret);
 		}
 		
 		public int ReceiveFrom(byte[] buf, ref EndPoint remote_end) {
@@ -615,8 +762,15 @@ namespace System.Net.Sockets
 			SocketAddress sockaddr=remote_end.Serialize();
 			int count;
 
-			count=RecvFrom_internal(socket, buf, offset, size,
-						flags, ref sockaddr);
+			try {
+				count=RecvFrom_internal(socket, buf, offset,
+							size, flags,
+							ref sockaddr);
+			} catch(SocketException) {
+				connected=false;
+				throw;
+			}
+			connected=true;
 			
 			// Stupidly, EndPoint.Create() is an
 			// instance method
@@ -651,9 +805,19 @@ namespace System.Net.Sockets
 			if(offset+size>buf.Length) {
 				throw new ArgumentException();
 			}
-			
-			return(Send_internal(socket, buf, offset, size,
-					     flags));
+
+			int ret;
+
+			try {
+				ret=Send_internal(socket, buf, offset, size,
+						  flags);
+			} catch(SocketException) {
+				connected=false;
+				throw;
+			}
+			connected=true;
+
+			return(ret);
 		}
 
 		public int SendTo(byte[] buffer, EndPoint remote_end) {
@@ -693,25 +857,38 @@ namespace System.Net.Sockets
 
 			SocketAddress sockaddr=remote_end.Serialize();
 
-			return(SendTo_internal(socket, buffer, offset, size,
-					       flags, sockaddr));
+			int ret;
+
+			try {
+				ret=SendTo_internal(socket, buffer, offset,
+						    size, flags, sockaddr);
+			}
+			catch(SocketException) {
+				connected=false;
+				throw;
+			}
+			connected=true;
+
+			return(ret);
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void SetSocketOption_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, object obj_val, byte[] byte_val, int int_val);
+
 		public void SetSocketOption(SocketOptionLevel level,
 					    SocketOptionName name,
 					    byte[] opt_value) {
-			throw new NotImplementedException();
+			SetSocketOption_internal(socket, level, name, null,
+						 opt_value, 0);
 		}
 
-		[MonoTODO]
 		public void SetSocketOption(SocketOptionLevel level,
 					    SocketOptionName name,
 					    int opt_value) {
-			throw new NotImplementedException();
+			SetSocketOption_internal(socket, level, name, null,
+						 null, opt_value);
 		}
 
-		[MonoTODO]
 		public void SetSocketOption(SocketOptionLevel level,
 					    SocketOptionName name,
 					    object opt_value) {
@@ -719,12 +896,15 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException();
 			}
 			
-			throw new NotImplementedException();
+			SetSocketOption_internal(socket, level, name,
+						 opt_value, null, 0);
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void Shutdown_internal(IntPtr socket, SocketShutdown how);
+		
 		public void Shutdown(SocketShutdown how) {
-			throw new NotImplementedException();
+			Shutdown_internal(socket, how);
 		}
 
 		private bool disposed = false;
