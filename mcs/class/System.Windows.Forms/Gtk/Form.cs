@@ -18,6 +18,7 @@ namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		internal Window win;
 		string caption;
+		bool firsttimeactivated=false;
 		Size csize;
 		// if the application has a menu and/or a statusbar
 		// then this menu should be added to the vbox before
@@ -44,18 +45,25 @@ namespace System.Windows.Forms {
 				Closed (o, args);
 		}
 		
+		void load_cb (object o, EventArgs args)
+		{
+			if (Load != null)
+				Load (this, EventArgs.Empty);
+		}
+
+		internal void ConnectEvents ()
+		{
+			win.DeleteEvent += new DeleteEventHandler (delete_cb);
+			win.Realized += new EventHandler (load_cb);
+		}
+
 		internal override Widget CreateWidget ()
 		{
 			Widget contents = base.CreateWidget ();
 			win = new Window (WindowType.Toplevel);
-			win.DeleteEvent += new DeleteEventHandler (delete_cb);
-
 			win.Title = Text;
 			win.Add(contents);
-			// TODO: The Gtk.Windows does not have a on_show signal ? :(
-			if (Load != null)
-				Load (this, EventArgs.Empty);
-
+			this.ConnectEvents();
 			return (Widget) win;
 		}
 
@@ -321,7 +329,7 @@ namespace System.Windows.Forms {
 		// public Form Owner {
 		//	get {
 		//		throw new NotImplementedException ();
-		//	}
+		//	}DefaultActivated
 		//	set {
 		//		throw new NotImplementedException ();
 		//	}
@@ -513,7 +521,7 @@ namespace System.Windows.Forms {
 		// public event EventHandler Activated {
 		//	add {
 		//		throw new NotImplementedException ();
-		//	}
+		//	}DefaultActivated
 		//	remove {
 		//		throw new NotImplementedException ();
 		//	}
