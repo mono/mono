@@ -1,3 +1,9 @@
+2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.h marshal.c: Free unmanaged memory allocated by managed code
+	properly. Also move implementation of string array marshalling to 
+	managed code. Fixes #42316.
+
 2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* assembly.c: provide more information when loading an assembly fails.
