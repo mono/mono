@@ -765,7 +765,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern IntPtr GetFunctionPointerForDelegateInternal (Delegate d);
+		private static extern IntPtr GetFunctionPointerForDelegateInternal (Delegate d);
 		
 		public static IntPtr GetFunctionPointerForDelegate (Delegate d) {
 			if (d == null)

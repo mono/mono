@@ -1,3 +1,9 @@
+2004-09-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Marshal.cs: Make GetFunctionPointerForDelegate icall private.
+
+	* MarshalAsAttribute.cs: Add 2.0 IidParamIndex field.
+
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Marshal.cs: Add some ReliabilityContractAttributes.

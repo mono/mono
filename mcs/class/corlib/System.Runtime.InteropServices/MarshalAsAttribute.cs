@@ -44,6 +44,9 @@ namespace System.Runtime.InteropServices {
 		public int SizeConst;
 		public short SizeParamIndex;
 		public Type SafeArrayUserDefinedSubType;
+#if NET_2_0
+		public int IidParamIndex;
+#endif
 
 		public MarshalAsAttribute (short unmanagedType) {
 			utype = (UnmanagedType)unmanagedType;
@@ -54,6 +57,5 @@ namespace System.Runtime.InteropServices {
 		public UnmanagedType Value {
 			get {return utype;}
 		}
-		
 	}
 }
