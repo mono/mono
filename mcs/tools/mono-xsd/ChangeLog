@@ -1,3 +1,16 @@
+2003-03-20  Duncan Mak  <duncan@ximian.com>
+
+	* MonoXSD.cs: More refinements. We now support transforming
+	enumerations as well as arrays to their corresponding XML Schema
+	type. Read/Write properties will also be transformed (thanks to
+	reading KeithBa's book). XmlNode is properly handled, and XmlElement
+	& co. should also be transformed correctly.
+	
+	Next up: I should look into whether or not xsd.exe makes use of
+	XmlAttributes. If so, I'll have to support that.
+	
+	Other than that, this part of MonoXSD should be complete.
+
 2003-03-17  Duncan Mak  <duncan@ximian.com>
 
 	* MonoXSD.cs: A simple implementation of MonoXSD. It current
