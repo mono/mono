@@ -1,3 +1,10 @@
+2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): 
+	Add 'module' argument.
+	(mono_module_get_types): New helper function.
+	(ves_icall_System_Reflection_Module_InternalGetTypes): New icall.
+
 2003-11-08  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_inflate_generic_method): Interface method
