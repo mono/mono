@@ -1009,9 +1009,7 @@ namespace Mono.CSharp
 			arg = "";
 			static_cmd_arg.Length = 0;
 				
-			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' ') && (c != '\t')){
-				if (c == '\r')
-					continue;
+			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
 				static_cmd_arg.Append ((char) c);
 			}
 
@@ -1021,31 +1019,34 @@ namespace Mono.CSharp
 				line++;
 				ref_line++;
 				return;
-			}
+			} else if (c == '\r')
+				col = 0;
 
 			// skip over white space
-			while ((c = getChar ()) != -1 && (c != '\n') && ((c == ' ') || (c == '\t')))
+			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
 				;
 
 			if (c == '\n'){
 				line++;
 				ref_line++;
 				return;
+			} else if (c == '\r'){
+				col = 0;
+				return;
 			}
 			
 			static_cmd_arg.Length = 0;
 			static_cmd_arg.Append ((char) c);
 			
-			while ((c = getChar ()) != -1 && (c != '\n')){
-				if (c == '\r')
-					continue;
+			while ((c = getChar ()) != -1 && (c != '\n') && (c != '\r')){
 				static_cmd_arg.Append ((char) c);
 			}
 
 			if (c == '\n'){
 				line++;
 				ref_line++;
-			}
+			} else if (c == '\r')
+				col = 0;
 			arg = static_cmd_arg.ToString ().Trim ();
 		}
 
