@@ -17,6 +17,7 @@ namespace System.EnterpriseServices.CompensatingResourceManager {
 	
 	[AttributeUsage(AttributeTargets.Assembly)]
 	[ComVisible(false)]
+	[ProgId("System.EnterpriseServices.Crm.ApplicationCrmEnabledAttribute")]
 	public sealed class ApplicationCrmEnabledAttribute : Attribute
 	{
 		bool val;
