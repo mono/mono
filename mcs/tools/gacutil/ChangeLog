@@ -1,3 +1,8 @@
+2003-11-16  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* gacutil.cs: Added strongname validation
+	* Makefile: Added a reference to Mono.Security assembly.
+
 2003-11-16  Todd Berman  <tberman@gentoo.org>
 
 	* gacutil.cs: /il functionality

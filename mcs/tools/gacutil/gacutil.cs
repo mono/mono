@@ -10,6 +10,8 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 
+using Mono.Security;
+
 namespace Mono.Tools
 {
 
@@ -235,7 +237,18 @@ namespace Mono.Tools
 				return;
 			}
 
-			//FIXME: need to ensure strongly named here.
+			byte[] akey = an.GetPublicKey ();
+			if (akey == null || akey.Length < 12) {
+				Console.WriteLine ("ERROR: assembly has no valid public key token");
+				return;
+			}
+			byte[] pkey = new byte [akey.Length - 12];
+			Buffer.BlockCopy (akey, 12, pkey, 0, pkey.Length);
+			StrongName sn = new StrongName (pkey);
+			if (!sn.Verify (args[0])) {
+				Console.WriteLine ("ERROR: invalid strongname signature in assembly");
+				return;
+			}
 
 			bool force = false;
 
