@@ -36,7 +36,7 @@ public class GuidTest : TestCase
 		}
 
 		try {
-			Guid g1 = new Guid (null);
+			Guid g1 = new Guid ((byte[])null);
 			exception = false;
 		}
 		catch (ArgumentNullException) {

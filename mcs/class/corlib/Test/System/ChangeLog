@@ -1,3 +1,8 @@
+2002-02-18  Nick Drochak  <ndrochak@gol.com>
+
+	* GuidTest.cs: Fix compile error.  Needed to cast the null in the call to
+	constructor to avoid ambiguity.
+
 2002-02-11  Nick Drochak  <ndrochak@gol.com>
 
 	* Int64Test.cs: Various fixes to make tests work against the ms corlib.
