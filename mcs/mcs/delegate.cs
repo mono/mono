@@ -55,7 +55,23 @@ namespace Mono.CSharp {
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PRIVATE, l);
-			Parameters      = param_list;		}
+			Parameters      = param_list;
+		}
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			try {
+				((TypeBuilder) builder).SetCustomAttribute (cb);
+			} catch (System.ArgumentException e) {
+				Report.Warning (-21, a.Location,
+						"The CharSet named property on StructLayout\n"+
+						"\tdoes not work correctly on Microsoft.NET\n"+
+						"\tYou might want to remove the CharSet declaration\n"+
+						"\tor compile using the Mono runtime instead of the\n"+
+						"\tMicrosoft .NET runtime\n"+
+						"\tThe runtime gave the error: " + e);
+			}
+		}
 
 		public override TypeBuilder DefineType ()
 		{
@@ -211,7 +227,7 @@ namespace Mono.CSharp {
 					pb = InvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 					cattr = p.OptAttributes;
 					if (cattr != null)
-						Attribute.ApplyAttributes (ec, pb, pb, cattr);
+						Attribute.ApplyAttributes (ec, pb, p, cattr);
 
 					if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
 						out_params++;
@@ -224,7 +240,7 @@ namespace Mono.CSharp {
 					i+1, p.Attributes, p.Name);
 				cattr = p.OptAttributes;
 				if (cattr != null)
-					Attribute.ApplyAttributes (ec, pb, pb, cattr);
+					Attribute.ApplyAttributes (ec, pb, p, cattr);
 			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
@@ -264,7 +280,7 @@ namespace Mono.CSharp {
 					pb = BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 					cattr = p.OptAttributes;
 					if (cattr != null)
-						Attribute.ApplyAttributes (ec, pb, pb, cattr);
+						Attribute.ApplyAttributes (ec, pb, p, cattr);
 				}
 			}
 			if (Parameters.ArrayParameter != null){
@@ -273,7 +289,7 @@ namespace Mono.CSharp {
 				pb = BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 				cattr = p.OptAttributes;
 				if (cattr != null)
-					Attribute.ApplyAttributes (ec, pb, pb, cattr);
+					Attribute.ApplyAttributes (ec, pb, p, cattr);
 				i++;
 			}
 

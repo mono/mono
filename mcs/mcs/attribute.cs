@@ -20,6 +20,36 @@ using System.Text;
 
 namespace Mono.CSharp {
 
+	/// <summary>
+	///   Base class for objects that can have Attributes applied to them.
+	/// </summary>
+	public abstract class Attributable {
+		/// <summary>
+		///   Attributes for this type
+		/// </summary>
+ 		Attributes attributes;
+
+		public Attributable(Attributes attrs)
+		{
+			attributes = attrs;
+		}
+
+		public Attributes OptAttributes 
+		{
+			get {
+				return attributes;
+			}
+			set {
+				attributes = value;
+			}
+		}
+
+		/// <summary>
+		/// Use member-specific procedure to apply attribute @a in @cb to the entity being built in @builder
+		/// </summary>
+		public abstract void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb);
+	};
+
 	public class Attribute {
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
@@ -32,11 +62,15 @@ namespace Mono.CSharp {
 		// The following are only meaningful when the attribute
 		// being emitted is an AttributeUsage attribute
 		//
-		AttributeTargets Targets;
-		bool AllowMultiple;
-		bool Inherited;
+		public AttributeTargets Targets;
+		public bool AllowMultiple;
+		public bool Inherited;
 
-		bool UsageAttr = false;
+		bool usage_attr = false;
+
+		public bool UsageAttr {
+			get { return usage_attr; }
+		}
 		
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
@@ -80,11 +114,11 @@ namespace Mono.CSharp {
 		/// <summary>
                 ///   Tries to resolve the type of the attribute. Flags an error if it can't.
                 /// </summary>
-		private Type CheckAttributeType (EmitContext ec) {
-			Type t1 = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+		private Type CheckAttributeType (DeclSpace ds) {
+			Type t1 = RootContext.LookupType (ds, Name, true, Location);
 
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
-			Type t2 = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
+			Type t2 = RootContext.LookupType (ds, Name + "Attribute", true, Location);
 
 			String err0616 = null;
 
@@ -120,9 +154,10 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public Type ResolveType (EmitContext ec)
+		public Type ResolveType (DeclSpace ds)
 		{
-			Type = CheckAttributeType (ec);
+			if (Type == null)
+				Type = CheckAttributeType (ds);
 			return Type;
 		}
 
@@ -171,15 +206,14 @@ namespace Mono.CSharp {
 		
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			if (Type == null)
-				Type = CheckAttributeType (ec);
+			ResolveType (ec.DeclSpace);
 			if (Type == null)
 				return null;
 
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 			bool GuidAttr = false;
-			UsageAttr = false;
+			usage_attr = false;
 
 			bool DoCompares = true;
 
@@ -189,7 +223,7 @@ namespace Mono.CSharp {
                         //
                         
 			if (Type == TypeManager.attribute_usage_type)
-				UsageAttr = true;
+				usage_attr = true;
 			else if (Type == TypeManager.methodimpl_attr_type)
 				MethodImplAttr = true;
 			else if (Type == TypeManager.marshal_as_attr_type)
@@ -602,77 +636,25 @@ namespace Mono.CSharp {
 				targets = attr.Targets;
 
 
-			if (element is Class) {
-				if ((targets & AttributeTargets.Class) != 0)
-					return true;
-				else
-					return false;
-				
-			} else if (element is Struct) {
-				if ((targets & AttributeTargets.Struct) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is Constructor) {
-				if ((targets & AttributeTargets.Constructor) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is Delegate) {
-				if ((targets & AttributeTargets.Delegate) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is Enum) {
-				if ((targets & AttributeTargets.Enum) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is Event) {
-				if ((targets & AttributeTargets.Event) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is Field || element is FieldBuilder) {
-				if ((targets & AttributeTargets.Field) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is Interface) {
-				if ((targets & AttributeTargets.Interface) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is Method || element is Operator ||
-                                   element is Accessor) {
-				if ((targets & AttributeTargets.Method) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is ParameterBuilder) {
-				if ((targets & AttributeTargets.Parameter) != 0 ||
-                                    (targets & AttributeTargets.ReturnValue) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is Property || element is Indexer ||
-				   element is Accessor) {
-				if ((targets & AttributeTargets.Property) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is AssemblyClass){
-				if ((targets & AttributeTargets.Assembly) != 0)
-					return true;
-				else
-					return false;
-			} else if (element is ModuleClass){
-				if ((targets & AttributeTargets.Module) != 0)
-					return true;
-				else
-					return false;
-			}
-
+			if (element is Class)		return ((targets & AttributeTargets.Class) != 0);
+			if (element is Struct)		return ((targets & AttributeTargets.Struct) != 0);
+			if (element is Constructor)	return ((targets & AttributeTargets.Constructor) != 0);
+			if (element is Delegate)	return ((targets & AttributeTargets.Delegate) != 0);
+			if (element is Enum)		return ((targets & AttributeTargets.Enum) != 0);
+			if (element is Event)		return ((targets & AttributeTargets.Event) != 0);
+			if (element is Field 
+			    || element is FieldBuilder)	return ((targets & AttributeTargets.Field) != 0);
+			if (element is Interface)	return ((targets & AttributeTargets.Interface) != 0);
+			if (element is Method
+			    || element is Operator
+			    || element is Accessor)	return ((targets & AttributeTargets.Method) != 0);
+			if (element is ParameterBase)	return ((targets & (AttributeTargets.Parameter 
+									    | AttributeTargets.ReturnValue)) != 0);
+			if (element is Property
+			    || element is Indexer
+			    || element is Accessor)	return ((targets & AttributeTargets.Property) != 0);
+			if (element is AssemblyClass)	return ((targets & AttributeTargets.Assembly) != 0);
+			if (element is ModuleClass)	return ((targets & AttributeTargets.Module) != 0);
 			return false;
 		}
 
@@ -692,7 +674,7 @@ namespace Mono.CSharp {
 					continue;
 
 				foreach (Attribute a in asec.Attributes){
-					if (a.ResolveType (ec) == null)
+					if (a.ResolveType (ec.DeclSpace) == null)
 						return null;
 					
 					if (a.Type != TypeManager.indexer_name_type)
@@ -820,26 +802,26 @@ namespace Mono.CSharp {
 			return (bool)pos_values [0];
 		}
 
-		static object GetFieldValue (Attribute a, string name)
+		object GetFieldValue (string name)
                 {
 			int i;
-			if (a.field_info_arr == null)
+			if (field_info_arr == null)
 				return null;
 			i = 0;
-			foreach (FieldInfo fi in a.field_info_arr) {
+			foreach (FieldInfo fi in field_info_arr) {
 				if (fi.Name == name)
-					return a.field_values_arr [i];
+					return field_values_arr [i];
 				i++;
 			}
 			return null;
 		}
 
-		static UnmanagedMarshal GetMarshal (Attribute a)
+		public UnmanagedMarshal GetMarshal ()
 		{
-			object o = GetFieldValue (a, "ArraySubType");
+			object o = GetFieldValue ("ArraySubType");
 			UnmanagedType array_sub_type = o == null ? UnmanagedType.I4 : (UnmanagedType) o;
 			
-			switch (a.UnmanagedType) {
+			switch (UnmanagedType) {
 			case UnmanagedType.CustomMarshaler:
 				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
                                                                        BindingFlags.Static | BindingFlags.Public);
@@ -847,9 +829,9 @@ namespace Mono.CSharp {
 					return null;
 				
 				object [] args = new object [4];
-				args [0] = GetFieldValue (a, "MarshalTypeRef");
-				args [1] = GetFieldValue (a, "MarshalCookie");
-				args [2] = GetFieldValue (a, "MarshalType");
+				args [0] = GetFieldValue ("MarshalTypeRef");
+				args [1] = GetFieldValue ("MarshalCookie");
+				args [2] = GetFieldValue ("MarshalType");
 				args [3] = Guid.Empty;
 				return (UnmanagedMarshal) define_custom.Invoke (null, args);
 				
@@ -860,14 +842,19 @@ namespace Mono.CSharp {
 				return UnmanagedMarshal.DefineSafeArray (array_sub_type);
 			
 			case UnmanagedType.ByValArray:
-				return UnmanagedMarshal.DefineByValArray ((int) GetFieldValue (a, "SizeConst"));
+				return UnmanagedMarshal.DefineByValArray ((int) GetFieldValue ("SizeConst"));
 			
 			case UnmanagedType.ByValTStr:
-				return UnmanagedMarshal.DefineByValTStr ((int) GetFieldValue (a, "SizeConst"));
+				return UnmanagedMarshal.DefineByValTStr ((int) GetFieldValue ("SizeConst"));
 			
 			default:
-				return UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
+				return UnmanagedMarshal.DefineUnmanagedMarshal (UnmanagedType);
 			}
+		}
+
+		public bool IsInternalCall
+		{
+			get { return ImplOptions == MethodImplOptions.InternalCall; }
 		}
 
 		/// <summary>
@@ -902,12 +889,6 @@ namespace Mono.CSharp {
 
 					if (cb == null) 
 						continue;
-					
-					if (!(kind is TypeContainer))
-						if (!CheckAttributeTarget (a, kind)) {
-							Error_AttributeNotValidForElement (a, loc);
-							return;
-						}
 
 					//
 					// Perform the check for duplicate attributes
@@ -919,32 +900,24 @@ namespace Mono.CSharp {
 						return;
 					}
 
-					if (kind is IAttributeSupport) {
-						if (attr_type == TypeManager.methodimpl_attr_type && a.ImplOptions == MethodImplOptions.InternalCall) {
-							((MethodBuilder) builder).SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
-						} 
-						else {
-							IAttributeSupport attributeSupport = kind as IAttributeSupport;
-							attributeSupport.SetCustomAttribute (cb);
-						}
+					if (!CheckAttributeTarget (a, kind)) {
+						Error_AttributeNotValidForElement (a, loc);
+						return;
 					}
-					else if (kind is Method || kind is Operator || kind is Accessor) {
-						if (attr_type == TypeManager.methodimpl_attr_type) {
-							if (a.ImplOptions == MethodImplOptions.InternalCall)
-								((MethodBuilder) builder).
-								SetImplementationFlags (
-									MethodImplAttributes.InternalCall |
-									MethodImplAttributes.Runtime);
-							else
-								((MethodBuilder) builder).SetCustomAttribute (cb);
-						} else if (attr_type != TypeManager.dllimport_type){
-							((MethodBuilder) builder).SetCustomAttribute (cb);
-						}
-					} else if (kind is Constructor) {
-						((ConstructorBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Field) {
+
+					if (kind is Attributable) {
+						Attributable able = kind as Attributable;
+						able.ApplyAttributeBuilder (builder, a, cb);
+					} 
+					else if (kind is IAttributeSupport) {
+						IAttributeSupport attributeSupport = kind as IAttributeSupport;
+						attributeSupport.SetCustomAttribute (cb);
+					} 
+					else if (kind is FieldBuilder) {
+						// This is used only for enumerated constants
+
 						if (attr_type == TypeManager.marshal_as_attr_type) {
-							UnmanagedMarshal marshal = GetMarshal (a);
+							UnmanagedMarshal marshal = a.GetMarshal ();
 							if (marshal == null) {
 								Report.Warning (-24, loc,
 									"The Microsoft Runtime cannot set this marshal info. " +
@@ -955,134 +928,12 @@ namespace Mono.CSharp {
 						} else { 
 							((FieldBuilder) builder).SetCustomAttribute (cb);
 						}
-					} else if (kind is Property || kind is Indexer) {
+					} 
+					else {
+						throw new Exception ("" + loc + ": Error applying Attribute " + a.Type 
+								     + " to unknown kind " + kind);
 
-                                                if (builder is PropertyBuilder) 
-                                                        ((PropertyBuilder) builder).SetCustomAttribute (cb);
-                                                //
-                                                // This is for the case we are setting attributes on
-                                                // the get and set accessors
-                                                //
-                                                else if (builder is MethodBuilder)
-                                                        ((MethodBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Event) {
-						((MyEventBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is ParameterBuilder) {
-
-						if (attr_type == TypeManager.marshal_as_attr_type) {
-							UnmanagedMarshal marshal = GetMarshal (a);
-							if (marshal == null) {
-								Report.Warning (-24, loc,
-									"The Microsoft Runtime cannot set this marshal info. " +
-									"Please use the Mono runtime instead.");
-							} else {
-								((ParameterBuilder) builder).SetMarshal (marshal);
-							}
-						} else { 
-
-							try {
-								((ParameterBuilder) builder).SetCustomAttribute (cb);
-							} catch (System.ArgumentException) {
-								Report.Warning (-24, loc,
-										"The Microsoft Runtime cannot set attributes \n" +
-										"on the return type of a method. Please use the \n" +
-										"Mono runtime instead.");
-							}
-
-						}
-					} else if (kind is Enum) {
-						((TypeBuilder) builder).SetCustomAttribute (cb); 
-
-					} else if (kind is TypeContainer) {
-						TypeContainer tc = (TypeContainer) kind;
-						
-						if (a.UsageAttr) {
-							tc.Targets = a.Targets;
-							tc.AllowMultiple = a.AllowMultiple;
-							tc.Inherited = a.Inherited;
-
-							TypeManager.RegisterAttributeAllowMultiple (tc.TypeBuilder,
-												    tc.AllowMultiple);
-							
-						} else if (attr_type == TypeManager.default_member_type) {
-							if (tc.Indexers != null) {
-								Report.Error (646, loc,
-								      "Cannot specify the DefaultMember attribute on" +
-								      " a type containing an indexer");
-								return;
-							}
-
-						} else {
-							if (!CheckAttributeTarget (a, kind)) {
-								Error_AttributeNotValidForElement (a, loc);
-								return;
-							}
-						}
-
-						try {
-							((TypeBuilder) builder).SetCustomAttribute (cb);
-						} catch (System.ArgumentException) {
-							Report.Warning (
-								-21, loc,
-						"The CharSet named property on StructLayout\n"+
-						"\tdoes not work correctly on Microsoft.NET\n"+
-						"\tYou might want to remove the CharSet declaration\n"+
-						"\tor compile using the Mono runtime instead of the\n"+
-						"\tMicrosoft .NET runtime");
-						}
-					} else if (kind is Delegate){
-						if (!CheckAttributeTarget (a, kind)) {
-							Error_AttributeNotValidForElement (a, loc);
-							return;
-						}
-						try {
-							((TypeBuilder) builder).SetCustomAttribute (cb);
-						} catch (System.ArgumentException) {
-							Report.Warning (
-								-21, loc,
-						"The CharSet named property on StructLayout\n"+
-						"\tdoes not work correctly on Microsoft.NET\n"+
-						"\tYou might want to remove the CharSet declaration\n"+
-						"\tor compile using the Mono runtime instead of the\n"+
-						"\tMicrosoft .NET runtime");
-						}
-					} else if (kind is Interface) {
-						Interface iface = (Interface) kind;
-
-						if ((attr_type == TypeManager.default_member_type) &&
-						    (iface.Indexers != null)) {
-							Report.Error (
-								646, loc,
-								"Cannot specify the DefaultMember attribute on" +
-								" a type containing an indexer");
-							return;
-						}
-
-						if (!CheckAttributeTarget (a, kind)) {
-							Error_AttributeNotValidForElement (a, loc);
-							return;
-						}
-
-						((TypeBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is AssemblyBuilder){
-						((AssemblyBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is ModuleBuilder) {
-						((ModuleBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is FieldBuilder) {
-						if (attr_type == TypeManager.marshal_as_attr_type) {
-							UnmanagedMarshal marshal = GetMarshal (a);
-							if (marshal == null) {
-								Report.Warning (-24, loc,
-									"The Microsoft Runtime cannot set this marshal info. " +
-									"Please use the Mono runtime instead.");
-							} else {
-								((ParameterBuilder) builder).SetMarshal (marshal);
-							}
-						} else { 
-							((FieldBuilder) builder).SetCustomAttribute (cb);
-						}
-					} else
-						throw new Exception ("Unknown kind: " + kind);
+					}
 
 					//
 					// Once an attribute type has been emitted once we
@@ -1169,7 +1020,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Type = CheckAttributeType (ec);
+			ResolveType (ec.DeclSpace);
 			if (Type == null)
 				return null;
 			

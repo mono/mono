@@ -18,10 +18,10 @@ using System.Reflection;
 namespace Mono.CSharp {
 
 	/// <summary>
-	///   Base representation for members.  This is only used to keep track
-	///   of Name, Location and Modifier flags.
+	///   Base representation for members.  This is used to keep track
+	///   of Name, Location and Modifier flags, and handling Attributes.
 	/// </summary>
-	public abstract class MemberCore {
+	public abstract class MemberCore : Attributable {
 		/// <summary>
 		///   Public name
 		/// </summary>
@@ -36,11 +36,6 @@ namespace Mono.CSharp {
 		///   Location where this declaration happens
 		/// </summary>
 		public readonly Location Location;
-
-		/// <summary>
-		///   Attributes for this type
-		/// </summary>
- 		Attributes attributes;
 
 		[Flags]
 		public enum Flags {
@@ -57,10 +52,10 @@ namespace Mono.CSharp {
 		protected Flags caching_flags;
 
 		public MemberCore (string name, Attributes attrs, Location loc)
+			: base (attrs)
 		{
 			Name = name;
 			Location = loc;
-			attributes = attrs;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected;
 		}
 
@@ -72,16 +67,6 @@ namespace Mono.CSharp {
 		public virtual string GetSignatureForError ()
 		{
 			return Name;
-		}
-
-		public Attributes OptAttributes 
-		{
-			get {
-				return attributes;
-			}
-			set {
-				attributes = value;
-			}
 		}
 
 		/// <summary>

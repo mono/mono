@@ -67,6 +67,11 @@ namespace Mono.CSharp {
 		}
 #endif
 
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			throw new NotImplementedException ("Can't apply attributes to constants ???");
+		}
+
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>

@@ -1,3 +1,35 @@
+2004-04-29  Raja R Harinath  <rharinath@novell.com>
+
+	Refactor Attribute.ApplyAttributes.
+	* attribute.cs (Attributable): New base class for objects that can
+	have Attributes applied on them.
+	(Attribute): Make AttributeUsage fields public.
+	(Attribute.GetFieldValue, Attribute.GetMarshal): Make non-static.
+	(Attribute.IsInternalCall): New property.
+	(Attribute.UsageAttr): Convert to a public read-only property.
+	(Attribute.CheckAttributeType): Use a DeclSpace, not an	EmitContext.
+	(Attribute.ResolveType, Attribute.Resolve)
+	(Attribute.ScanForIndexerName): Update to reflect changes.
+	(Attribute.CheckAttributeTarget): Re-format.
+	(Attribute.ApplyAttributes): Refactor, to various
+	Attributable.ApplyAttributeBuilder methods.
+	* decl.cs (MemberCore): Make Attributable.
+	* class.cs (Accessor): Make Attributable.
+	(MethodData.ApplyAttributes): Use proper attribute types, not
+	attribute names.
+	(TypeContainer.LabelParameters): Pass Parameter to ApplyAttributes.
+	(TypeContainer.ApplyAttributeBuilder)
+	(Method.ApplyAttributeBuilder, Constructor.ApplyAttributeBuilder)
+	(Field.ApplyAttributeBuilder, Accessor.ApplyAttributeBuilder)	
+	(PropertyBase.ApplyAttributeBuilder, Event.ApplyAttributeBuilder)
+	(Operator.ApplyAttributeBuilder): New factored-out methods.
+	* const.cs (Const.ApplyAttributeBuilder): Likewise.
+	* delegate.cs (Delegate.ApplyAttributeBuilder): Likewise.
+	* enum.cs (Enum.ApplyAttributeBuilder): Likewise.
+	* parameter.cs (ParameterBase): New Attributable base class
+	that can also represent Return types.
+	(Parameter): Update to the changes.
+
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* driver.cs: Prefer the corlib system version when looking for
@@ -174,7 +206,6 @@
 	for a named field or property, implicity convert it to the correct
 	type.
 
->>>>>>> 1.1450
 2004-04-27  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Block.Block): Implicit blocks share

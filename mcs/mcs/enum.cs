@@ -91,6 +91,11 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			((TypeBuilder) builder).SetCustomAttribute (cb);
+		}
+
 		//
 		// This is used by corlib compilation: we map from our
 		// type to a type that is consumable by the DefineField

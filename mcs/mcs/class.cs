@@ -420,6 +420,41 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			TypeBuilder tb = builder as TypeBuilder;
+					
+			if (a.UsageAttr) {
+				Targets = a.Targets;
+				AllowMultiple = a.AllowMultiple;
+				Inherited = a.Inherited;
+				
+				TypeManager.RegisterAttributeAllowMultiple (tb, AllowMultiple);
+			}
+
+			if (a.Type == TypeManager.default_member_type) {
+				if (Indexers != null) {
+					Report.Error (646, a.Location,
+						      "Cannot specify the DefaultMember attribute on" +
+						      " a type containing an indexer");
+					return;
+				}
+			}
+			
+			try {
+				tb.SetCustomAttribute (cb);
+			} 
+			catch (System.ArgumentException e) {
+				Report.Warning (-21, a.Location,
+						"The CharSet named property on StructLayout\n"+
+						"\tdoes not work correctly on Microsoft.NET\n"+
+						"\tYou might want to remove the CharSet declaration\n"+
+						"\tor compile using the Mono runtime instead of the\n"+
+						"\tMicrosoft .NET runtime.\n"+
+						"\tThe runtime reported the error: " + e);
+			}
+		}
+
 		public void RegisterOrder (Interface iface)
 		{
 			if (interface_order == null)
@@ -2603,7 +2638,7 @@ namespace Mono.CSharp {
 					
 					Attributes attr = p [i].OptAttributes;
 					if (attr != null){
-						Attribute.ApplyAttributes (ec, pb, pb, attr);
+						Attribute.ApplyAttributes (ec, pb, p[i], attr);
 
 						if (par_attr == ParameterAttributes.Out){
 							if (attr.Contains (TypeManager.in_attribute_type))
@@ -2654,9 +2689,11 @@ namespace Mono.CSharp {
 			}
 
 			if (ret_attrs != null) {
+				ParameterBase ret = new ParameterBase (ret_attrs);
+
 				try {
-				 	ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");
-					Attribute.ApplyAttributes (ec, ret_pb, ret_pb, ret_attrs);
+					ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");				
+					Attribute.ApplyAttributes (ec, ret_pb, ret, ret_attrs);
 
                                 } catch (ArgumentOutOfRangeException) {
 					Report.Warning (
@@ -2757,6 +2794,16 @@ namespace Mono.CSharp {
                         else
                                 return false;
                 }
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			MethodBuilder mb = builder as MethodBuilder;
+
+			if (a.Type == TypeManager.methodimpl_attr_type && a.IsInternalCall)
+				mb.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+			else if (a.Type != TypeManager.dllimport_type)
+				mb.SetCustomAttribute (cb);
+		}
 
 		//
 		// Checks our base implementation if any
@@ -3118,6 +3165,11 @@ namespace Mono.CSharp {
 					(Initializer is ConstructorBaseInitializer) &&
 					(Initializer.Arguments == null);
 		}
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			((ConstructorBuilder) builder).SetCustomAttribute (cb);
+		}
 		
 		protected override bool CheckBase (TypeContainer container)
 		{
@@ -3436,7 +3488,7 @@ namespace Mono.CSharp {
 		string obsolete = null;
 		bool obsolete_error = false;
 
-		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method)
+		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method, DeclSpace ds)
 		{
 			if ((opt_attrs == null) || (opt_attrs.AttributeSections == null))
 				return true;
@@ -3446,15 +3498,15 @@ namespace Mono.CSharp {
 					continue;
 					
 				foreach (Attribute a in asec.Attributes) {
-					if (a.Name == "Conditional") {
+					Type attr_type = a.ResolveType (ds);
+					if (attr_type == TypeManager.conditional_attribute_type) {
 						if (!ApplyConditionalAttribute (a))
 							return false;
-					} else if (a.Name == "Obsolete") {
+					} else if (attr_type == TypeManager.obsolete_attribute_type) {
 						if (!ApplyObsoleteAttribute (a))
 							return false;
-					} else if (a.Name.IndexOf ("DllImport") != -1) {
+					} else if (attr_type == TypeManager.dllimport_type) {
 						if (!is_method) {
-							a.Type = TypeManager.dllimport_type;
 							Attribute.Error_AttributeNotValidForElement (a, method.Location);
 							return false;
 						}
@@ -3619,7 +3671,7 @@ namespace Mono.CSharp {
 			string prefix;
 
 			if (method.OptAttributes != null)
-				if (!ApplyAttributes (method.OptAttributes, is_method))
+				if (!ApplyAttributes (method.OptAttributes, is_method, container))
 					return false;
 
 			if (member.IsExplicitImpl)
@@ -4431,6 +4483,23 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			FieldBuilder fb = builder as FieldBuilder;
+
+			if (a.Type == TypeManager.marshal_as_attr_type) {
+				UnmanagedMarshal marshal = a.GetMarshal ();
+				if (marshal == null)
+					Report.Warning (-24, a.Location,
+							"The Microsoft Runtime cannot set this marshal info. " +
+							"Please use the Mono runtime instead.");
+				else
+					fb.SetMarshal (marshal);
+			}
+			else
+				fb.SetCustomAttribute (cb);
+		}
+
 		public override bool Define (TypeContainer container)
 		{
 			Type t = container.ResolveType (Type, false, Location);
@@ -4535,17 +4604,26 @@ namespace Mono.CSharp {
 	//
 	// `set' and `get' accessors are represented with an Accessor.
 	// 
-	public class Accessor {
+	public class Accessor : Attributable {
 		//
 		// Null if the accessor is empty, or a Block if not
 		//
 		public Block Block;
-		public Attributes OptAttributes;
 		
 		public Accessor (Block b, Attributes attrs)
+			: base (attrs)
 		{
 			Block = b;
-			OptAttributes = attrs;
+		}
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			MethodBuilder mb = builder as MethodBuilder;
+
+			if (a.Type == TypeManager.methodimpl_attr_type && a.IsInternalCall)
+				mb.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+			else if (a.Type != TypeManager.dllimport_type)
+				mb.SetCustomAttribute (cb);
 		}
 	}
 
@@ -4712,6 +4790,18 @@ namespace Mono.CSharp {
 			: base (ds, type, mod_flags, allowed_mod, is_iface, name,
 				attrs, parameters, loc)
 		{
+		}
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			if (builder is PropertyBuilder) 
+				((PropertyBuilder) builder).SetCustomAttribute (cb);
+			//
+			// This is for the case we are setting attributes on
+			// the get and set accessors
+			//
+			else if (builder is MethodBuilder)
+				((MethodBuilder) builder).SetCustomAttribute (cb);
 		}
 
 		protected override bool DoDefine (TypeContainer container)
@@ -5333,6 +5423,11 @@ namespace Mono.CSharp {
 			this.ds = ds;
 		}
 
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			((MyEventBuilder) builder).SetCustomAttribute (cb);
+		}
+
 		public override bool Define (TypeContainer container)
 		{
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
@@ -5772,6 +5867,11 @@ namespace Mono.CSharp {
 		{
 			return container.Name + ".operator " + OperatorType + " (" + FirstArgType + "," +
 				SecondArgType + ")";
+		}
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb) 
+		{
+			OperatorMethod.ApplyAttributeBuilder (builder, a, cb);
 		}
 		
 		public override bool Define (TypeContainer container)
