@@ -33,7 +33,7 @@ namespace System.Security.Policy {
                 }
 
                 [MonoTODO]
-                IPermission IIdentityPermissionFactory.CreateIdentityPermission (Evidence evidence)
+                public IPermission CreateIdentityPermission (Evidence evidence)
                 {
                         return null;
                 }
