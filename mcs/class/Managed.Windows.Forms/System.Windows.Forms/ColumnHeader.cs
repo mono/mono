@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ColumnHeader.cs,v $
+// Revision 1.3  2004/10/26 09:33:00  ravindra
+// Added some internal members and calculations for ColumnHeader.
+//
 // Revision 1.2  2004/10/15 15:06:44  ravindra
 // Flushing some formatting changes.
 //
@@ -47,9 +50,12 @@ namespace System.Windows.Forms
 	{
 		#region Instance Variables
 		internal ListView owner;
+		private StringFormat format;
 		private string text = "ColumnHeader";
-		private HorizontalAlignment textAlignment = HorizontalAlignment.Left;
-		private int width = 60;
+		private HorizontalAlignment text_alignment = HorizontalAlignment.Left;
+		private int width = ThemeEngine.Current.DefaultColumnWidth;
+		// column area
+		internal Rectangle column_rect = Rectangle.Empty;
 		#endregion	// Instance Variables
 
 		#region Internal Constructor
@@ -58,13 +64,74 @@ namespace System.Windows.Forms
 			this.owner = owner;
 			this.text = text;
 			this.width = width;
-			this.textAlignment = alignment;
+			this.text_alignment = alignment;
+			CalcColumnHeader ();
 		}
 		#endregion	// Internal Constructor
 
 		#region Public Constructors
 		public ColumnHeader () { }
 		#endregion	// Public Constructors
+
+		#region Private Internal Methods Properties
+		// Since this class inherits from MarshalByRef,
+		// we can't do ColumnHeader.column_rect.XXX. Hence,
+		// we have following properties to work around.
+		internal int X {
+			get { return this.column_rect.X; }
+			set { this.column_rect.X = value; }
+		}
+
+		internal int Y {
+			get { return this.column_rect.Y; }
+			set { this.column_rect.Y = value; }
+		}
+
+		internal int Wd {
+			get { return this.column_rect.Width; }
+			set { this.column_rect.Width = value; }
+		}
+
+		internal int Ht {
+			get { return this.column_rect.Height; }
+			set { this.column_rect.Height = value; }
+		}
+
+		internal Rectangle Rect {
+			get { return this.column_rect; }
+		}
+
+		internal StringFormat Format {
+			get { return this.format; }
+		}
+
+		internal void CalcColumnHeader ()
+		{
+			format = new StringFormat ();
+			if (text_alignment == HorizontalAlignment.Center)
+				format.Alignment = StringAlignment.Center;
+			else if (text_alignment == HorizontalAlignment.Right)
+				format.Alignment = StringAlignment.Far;
+			else
+				format.Alignment = StringAlignment.Near;
+			format.LineAlignment = StringAlignment.Center;
+			format.Trimming = StringTrimming.EllipsisWord;
+			// text is wrappable only in LargeIcon and SmallIcon views
+			format.FormatFlags = StringFormatFlags.NoWrap;
+
+			if (width >= 0) {
+				this.column_rect.Width = width;
+				if (owner != null)
+					this.column_rect.Height = owner.Font.Height;
+				else
+					this.column_rect.Height = ThemeEngine.Current.DefaultFont.Height;
+			}
+			else if (this.Index != -1)
+				this.column_rect.Size = owner.GetChildColumnSize (this.Index);
+			else
+				this.column_rect.Size = Size.Empty;
+		}
+		#endregion	// Private Internal Methods Properties
 
 		#region Public Instance Properties
 		[Browsable (false)]
@@ -86,21 +153,33 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		public string Text {
 			get { return text; }
-			set { text = value; }
+			set {
+				text = value;
+				if (owner != null)
+					owner.Redraw (true);
+			}
 		}
 
 		[DefaultValue (HorizontalAlignment.Left)]
 		[Localizable (true)]
 		public HorizontalAlignment TextAlign {
-			get { return textAlignment; }
-			set { textAlignment = value; }
+			get { return text_alignment; }
+			set {
+				text_alignment = value;
+				if (owner != null)
+					owner.Redraw (true);
+			}
 		}
 
 		[DefaultValue (60)]
 		[Localizable (true)]
 		public int Width {
 			get { return width; }
-			set { width = value; }
+			set {
+				width = value;
+				if (owner != null)
+					owner.Redraw (true);
+			}
 		}
 		#endregion // Public Instance Properties
 
@@ -108,10 +187,11 @@ namespace System.Windows.Forms
 		public virtual object Clone ()
 		{
 			ColumnHeader columnHeader = new ColumnHeader ();
-			columnHeader.Text = text;
-			columnHeader.TextAlign = textAlignment;
-			columnHeader.Width = width;
+			columnHeader.text = text;
+			columnHeader.text_alignment = text_alignment;
+			columnHeader.width = width;
 			columnHeader.owner = owner;
+			columnHeader.column_rect = column_rect = new Rectangle (Point.Empty, Size.Empty);
 			return columnHeader;
 		}
 
