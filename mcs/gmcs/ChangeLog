@@ -1,3 +1,34 @@
+2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	all things are for /doc support:
+
+	* doc.cs: new file that supports XML documentation generation.
+	* mcs.exe.sources: added doc.cs.
+	* driver.cs:
+	  Handle /doc command line option.
+	  Report error 2006 instead of 5 for missing file name for /doc.
+	  Generate XML documentation when required, after type resolution.
+	* cs-tokenizer.cs:
+	  Added support for picking up documentation (/// and /** ... */),
+	  including a new XmlCommentState enumeration.
+	* cs-parser.jay:
+	  Added lines to fill Documentation element for field, constant,
+	  property, indexer, method, constructor, destructor, operator, event
+	  and class, struct, interface, delegate, enum.
+	  Added lines to warn incorrect comment.
+	* rootcontext.cs :
+	  Added Documentation field (passed only when /doc was specified).
+	* decl.cs:
+	  Added DocComment, DocCommentHeader, GenerateDocComment() and
+	  OnGenerateDocComment() and some supporting private members for
+	  /doc feature to MemberCore.
+	* class.cs:
+	  Added GenerateDocComment() on TypeContainer, MethodCore and Operator.
+	* delegate.cs:
+	  Added overriden DocCommentHeader.
+	* enum.cs:
+	  Added overriden DocCommentHeader and GenerateDocComment().
+
 2004-12-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* cfold.cs (ConstantFold.DoConstantNumericPromotions): After

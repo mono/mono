@@ -6,6 +6,7 @@
 // Licensed under the terms of the GNU GPL
 //
 // (C) 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2004 Novell, Inc
 //
 
 namespace Mono.CSharp
@@ -18,6 +19,8 @@ namespace Mono.CSharp
 	using System.IO;
 	using System.Text;
 	using System.Globalization;
+	using System.Xml;
+	using System.Diagnostics;
 
 	public enum Target {
 		Library, Exe, Module, WinExe
@@ -220,6 +223,7 @@ namespace Mono.CSharp
 				"   -nostdlib[+|-]     Does not load core libraries\n" +
 				"   -nowarn:W1[,W2]    Disables one or more warnings\n" + 
 				"   -out:FNAME         Specifies output file\n" +
+				"   -doc:XMLFILE         Generates xml documentation into specified file\n" +
 				"   -pkg:P1[,Pn]       References packages P1..Pn\n" + 
 				"   --expect-error X   Expect that error X will be encountered\n" +
 				"   -recurse:SPEC      Recursively compiles the files in SPEC ([dir]/file)\n" + 
@@ -1102,10 +1106,10 @@ namespace Mono.CSharp
 			}
 			case "/doc": {
 				if (value == ""){
-					Report.Error (5, arg + " requires an argument");
+					Report.Error (2006, arg + " requires an argument");
 					Environment.Exit (1);
 				}
-				// TODO handle the /doc argument to generate xml doc
+				RootContext.Documentation = new Documentation (value);
 				return true;
 			}
 			case "/lib": {
@@ -1538,6 +1542,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("Resolving tree");
 			RootContext.ResolveTree ();
+
 			if (Report.Errors > 0)
 				return false;
 			if (timestamps)
@@ -1547,6 +1552,11 @@ namespace Mono.CSharp
 			RootContext.PopulateTypes ();
 			RootContext.DefineTypes ();
 			
+			if (RootContext.Documentation != null &&
+				!RootContext.Documentation.OutputDocComment (
+					output_file))
+				return false;
+
 			TypeManager.InitCodeHelpers ();
 
 			//
@@ -1736,7 +1746,6 @@ namespace Mono.CSharp
 #endif
 			return (Report.Errors == 0);
 		}
-
 	}
 
 	//

@@ -8,6 +8,7 @@
 // Licensed under the terms of the GNU GPL
 //
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
+// (C) 2004 Novell, Inc
 //
 // TODO:
 //   (1) Figure out why error productions dont work.  `type-declaration' is a
@@ -83,6 +84,14 @@ namespace Mono.CSharp
 		/// The current file.
 		///
 		SourceFile file;
+
+		///
+		/// Temporary Xml documentation cache.
+		/// For enum types, we need one more temporary store.
+		///
+		string tmpComment;
+		string enumTypeComment;
+
 		
 		
 		/// Current attribute target
@@ -290,7 +299,13 @@ compilation_unit
 	
 opt_EOF
 	: /* empty */
+	{
+		Lexer.check_incorrect_doc_comment ();
+	}
 	| EOF
+	{
+		Lexer.check_incorrect_doc_comment ();
+	}
 	;
 
 outer_declarations
@@ -310,7 +325,15 @@ using_directives
 
 using_directive
 	: using_alias_directive
+	{
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	}
 	| using_namespace_directive
+	{
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	}
 	;
 
 using_alias_directive
@@ -386,6 +409,10 @@ namespace_name
 
 namespace_body
 	: OPEN_BRACE
+	  {
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
 	  opt_using_directives
 	  opt_namespace_member_declarations
 	  CLOSE_BRACE
@@ -501,6 +528,13 @@ attribute_sections
 				$$ = null;
 			} else {
 				$$ = new Attributes (sect);
+			}
+			if ($$ == null) {
+				if (RootContext.Documentation != null) {
+					Lexer.check_incorrect_doc_comment ();
+					Lexer.doc_state =
+						XmlCommentState.Allowed;
+				}
 			}
 		} else {
 			$$ = new Attributes (sect);
@@ -769,9 +803,16 @@ struct_declaration
 
 		current_class.SetParameterInfo ((ArrayList) $8);
 
+		if (RootContext.Documentation != null)
+			current_class.DocComment = Lexer.consume_doc_comment ();
+
 		current_class.Register ();
 	  }
 	  struct_body
+	  {
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
 	  opt_semicolon
 	  {
 		$$ = current_class;
@@ -785,7 +826,12 @@ struct_declaration
 	;
 
 struct_body
-	: OPEN_BRACE opt_struct_member_declarations CLOSE_BRACE
+	: OPEN_BRACE
+	  {
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
+	  opt_struct_member_declarations CLOSE_BRACE
 	;
 
 opt_struct_member_declarations
@@ -837,6 +883,10 @@ constant_declaration
 				(Expression) constant.expression_or_array_initializer, modflags, 
 				(Attributes) $1, l);
 
+			if (RootContext.Documentation != null) {
+				c.DocComment = Lexer.consume_doc_comment ();
+				Lexer.doc_state = XmlCommentState.Allowed;
+			}
 			current_container.AddConstant (c);
 		}
 	  }
@@ -889,6 +939,10 @@ field_declaration
 						 var.expression_or_array_initializer, 
 						 (Attributes) $1, l);
 
+			if (RootContext.Documentation != null) {
+				field.DocComment = Lexer.consume_doc_comment ();
+				Lexer.doc_state = XmlCommentState.Allowed;
+			}
 			current_container.AddField (field);
 		}
 	  }
@@ -950,6 +1004,8 @@ variable_initializer
 method_declaration
 	: method_header {
 		iterator_container = (IIteratorContainer) $1;
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.NotAllowed;
 	  }
 	  method_body
 	  {
@@ -976,6 +1032,9 @@ method_declaration
 
 		current_local_parameters = null;
 		iterator_container = null;
+
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
 
@@ -1031,6 +1090,9 @@ method_header
 
 		current_local_parameters = (Parameters) $6;
 
+		if (RootContext.Documentation != null)
+			method.DocComment = Lexer.consume_doc_comment ();
+
 		$$ = method;
 	  }
 	| opt_attributes
@@ -1064,6 +1126,10 @@ method_header
 				     lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
+
+		if (RootContext.Documentation != null)
+			method.DocComment = Lexer.consume_doc_comment ();
+
 		$$ = method;
 	  }
 	| opt_attributes
@@ -1081,6 +1147,10 @@ method_header
 					    lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
+
+		if (RootContext.Documentation != null)
+			method.DocComment = Lexer.consume_doc_comment ();
+
 		$$ = method;
 	  }
 	;
@@ -1214,7 +1284,12 @@ parameter_array
 property_declaration
 	: opt_attributes
 	  opt_modifiers
-	  type namespace_or_type_name
+	  type
+	  namespace_or_type_name
+	  {
+		if (RootContext.Documentation != null)
+			tmpComment = Lexer.consume_doc_comment ();
+	  }
 	  OPEN_BRACE 
 	  {
 		implicit_value_parameter_type = (Expression) $3;
@@ -1232,11 +1307,11 @@ property_declaration
 	  CLOSE_BRACE
 	  { 
 		Property prop;
-		Pair pair = (Pair) $7;
+		Pair pair = (Pair) $8;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
-		Location loc = (Location) $6;
+		Location loc = (Location) $7;
 		MemberName name = (MemberName) $4;
 
 		if (name.TypeArguments != null)
@@ -1250,6 +1325,10 @@ property_declaration
 		current_container.AddProperty (prop);
 		implicit_value_parameter_type = null;
 		iterator_container = null;
+
+		if (RootContext.Documentation != null)
+			prop.DocComment = ConsumeStoredComment ();
+
 	  }
 	;
 
@@ -1290,6 +1369,10 @@ get_accessor_declaration
 		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
+
+		if (RootContext.Documentation != null)
+			if (Lexer.doc_state == XmlCommentState.Error)
+				Lexer.doc_state = XmlCommentState.NotAllowed;
 	  }
 	;
 
@@ -1327,6 +1410,10 @@ set_accessor_declaration
 		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
+
+		if (RootContext.Documentation != null
+			&& Lexer.doc_state == XmlCommentState.Error)
+			Lexer.doc_state = XmlCommentState.NotAllowed;
 	  }
 	;
 
@@ -1372,10 +1459,20 @@ interface_declaration
 
 		current_class.SetParameterInfo ((ArrayList) $8);
 
+		if (RootContext.Documentation != null) {
+			current_class.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+
 		current_class.Register ();
 	  }
 	  interface_body opt_semicolon
 	  { 
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
+	  opt_semicolon 
+	  {
 		$$ = current_class;
 
 		current_container = current_container.Parent;
@@ -1408,25 +1505,37 @@ interface_member_declaration
 		Method m = (Method) $1;
 
 		current_container.AddMethod (m);
+
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	| interface_property_declaration	
 	  { 
 		Property p = (Property) $1;
 
 		current_container.AddProperty (p);
-          }
+
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
 	| interface_event_declaration 
           { 
 		if ($1 != null){
 			Event e = (Event) $1;
 			current_container.AddEvent (e);
 		}
+
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	| interface_indexer_declaration
 	  { 
 		Indexer i = (Indexer) $1;
 
 		current_container.AddIndexer (i);
+
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
 
@@ -1466,6 +1575,8 @@ interface_method_declaration
 
 		$$ = new Method (current_class, generic, (Expression) $3, (int) $2, true, name,
 				 (Parameters) $6, (Attributes) $1, lexer.Location);
+		if (RootContext.Documentation != null)
+			((Method) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
 	| opt_attributes opt_new VOID namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
@@ -1493,6 +1604,8 @@ interface_method_declaration
 
 		$$ = new Method (current_class, generic, TypeManager.system_void_expr, (int) $2,
 				 true, name, (Parameters) $6, (Attributes) $1, lexer.Location);
+		if (RootContext.Documentation != null)
+			((Method) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
 	;
 
@@ -1511,6 +1624,8 @@ interface_property_declaration
 		$$ = new Property (current_class, (Expression) $3, (int) $2, true,
 				   new MemberName ((string) $4), (Attributes) $1,
 				   pinfo.Get, pinfo.Set, lexer.Location);
+		if (RootContext.Documentation != null)
+			((Property) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
 	| opt_attributes
 	  opt_new
@@ -1537,6 +1652,8 @@ interface_event_declaration
 		$$ = new EventField (current_class, (Expression) $4, (int) $2, true,
 				     new MemberName ((string) $5), null,
 				     (Attributes) $1, lexer.Location);
+		if (RootContext.Documentation != null)
+			((EventField) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
 	| opt_attributes opt_new EVENT type error {
 		CheckIdentifierToken (yyToken);
@@ -1567,6 +1684,8 @@ interface_indexer_declaration
 				  new MemberName (TypeContainer.DefaultIndexerName),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
 				  info.Get, info.Set, lexer.Location);
+		if (RootContext.Documentation != null)
+			((Indexer) $$).DocComment = ConsumeStoredComment ();
 	  }
 	;
 
@@ -1589,6 +1708,9 @@ operator_declaration
 			current_class, decl.optype, decl.ret_type, (int) $2, 
 			new Parameters (param_list, null, decl.location),
 			(ToplevelBlock) $5, (Attributes) $1, decl.location);
+
+		if (RootContext.Documentation != null)
+			op.DocComment = ConsumeStoredComment ();
 
 		if (SimpleIteratorContainer.Simple.Yields)
 			op.SetYields ();
@@ -1619,12 +1741,18 @@ operator_declarator
 			op = Operator.OpType.UnaryNegation;
 
 		Parameter [] pars = new Parameter [1];
+		Expression type = (Expression) $5;
 
-		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null);
+		pars [0] = new Parameter (type, (string) $6, Parameter.Modifier.NONE, null);
 
 		current_local_parameters = new Parameters (pars, null, lexer.Location);
 
-		$$ = new OperatorDeclaration (op, (Expression) $1, (Expression) $5, (string) $6,
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+
+		$$ = new OperatorDeclaration (op, (Expression) $1, type, (string) $6,
 					      null, null, lexer.Location);
 	}
 	| type OPERATOR overloadable_operator
@@ -1633,18 +1761,26 @@ operator_declarator
 	  	type IDENTIFIER 
 	  CLOSE_PARENS
         {
-	       CheckBinaryOperator ((Operator.OpType) $3);
+		CheckBinaryOperator ((Operator.OpType) $3);
 
-	       Parameter [] pars = new Parameter [2];
+		Parameter [] pars = new Parameter [2];
 
-	       pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null);
-	       pars [1] = new Parameter ((Expression) $8, (string) $9, Parameter.Modifier.NONE, null);
+		Expression typeL = (Expression) $5;
+		Expression typeR = (Expression) $8;
+
+	       pars [0] = new Parameter (typeL, (string) $6, Parameter.Modifier.NONE, null);
+	       pars [1] = new Parameter (typeR, (string) $9, Parameter.Modifier.NONE, null);
 
 	       current_local_parameters = new Parameters (pars, null, lexer.Location);
+
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
 	       
 	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (Expression) $1, 
-					     (Expression) $5, (string) $6,
-					     (Expression) $8, (string) $9, lexer.Location);
+					     typeL, (string) $6,
+					     typeR, (string) $9, lexer.Location);
         }
 	| conversion_operator_declarator
 	;
@@ -1721,6 +1857,9 @@ constructor_declaration
 		c.OptAttributes = (Attributes) $1;
 		c.ModFlags = (int) $2;
 	
+		if (RootContext.Documentation != null)
+			c.DocComment = ConsumeStoredComment ();
+
 		if (c.Name == current_container.Basename){
 			if ((c.ModFlags & Modifiers.STATIC) != 0){
 				if ((c.ModFlags & Modifiers.Accessibility) != 0){
@@ -1754,22 +1893,30 @@ constructor_declaration
 		current_container.AddConstructor (c);
 
 		current_local_parameters = null;
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
 
 constructor_declarator
-	: IDENTIFIER 
+	: IDENTIFIER
+	  {
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+	  }
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		oob_stack.Push (lexer.Location);
 
-		current_local_parameters = (Parameters) $3;
+		current_local_parameters = (Parameters) $4;
 	  }
 	  opt_constructor_initializer
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor (current_class, (string) $1, 0, (Parameters) $3,
-				      (ConstructorInitializer) $6, l);
+		$$ = new Constructor (current_class, (string) $1, 0, (Parameters) $4,
+				      (ConstructorInitializer) $7, l);
 	  }
 	;
 
@@ -1805,9 +1952,16 @@ opt_finalizer
         ;
         
 destructor_declaration
-	: opt_attributes opt_finalizer TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
+	: opt_attributes opt_finalizer TILDE 
 	  {
-		if ((string) $4 != current_container.Basename){
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.NotAllowed;
+		}
+	  }
+	  IDENTIFIER OPEN_PARENS CLOSE_PARENS block
+	  {
+		if ((string) $5 != current_container.Basename){
 			Report.Error (574, lexer.Location, "Name of destructor must match name of class");
 		} else if (!(current_container is Class)){
 			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");
@@ -1831,8 +1985,10 @@ destructor_declaration
 			Method d = new Destructor (
 				current_class, TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
+			if (RootContext.Documentation != null)
+				d.DocComment = ConsumeStoredComment ();
 		  
-			d.Block = (ToplevelBlock) $7;
+			d.Block = (ToplevelBlock) $8;
 			current_container.AddMethod (d);
 		}
 	  }
@@ -1853,7 +2009,11 @@ event_declaration
 				lexer.Location);
 
 			current_container.AddEvent (e);
-				       
+
+			if (RootContext.Documentation != null) {
+				e.DocComment = Lexer.consume_doc_comment ();
+				Lexer.doc_state = XmlCommentState.Allowed;
+			}
 		}
 	  }
 	| opt_attributes
@@ -1888,7 +2048,11 @@ event_declaration
 				current_class, (Expression) $4, (int) $2, false, name, null,
 				(Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second,
 				loc);
-			
+			if (RootContext.Documentation != null) {
+				e.DocComment = Lexer.consume_doc_comment ();
+				Lexer.doc_state = XmlCommentState.Allowed;
+			}
+
 			current_container.AddEvent (e);
 			implicit_value_parameter_type = null;
 		}
@@ -1900,6 +2064,9 @@ event_declaration
 			Report.Error (71, lexer.Location, "Explicit implementation of events requires property syntax");
 		else 
 			Report.Error (71, lexer.Location, "Event declaration should use property syntax");
+
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
 
@@ -2010,6 +2177,8 @@ indexer_declaration
 		indexer = new Indexer (current_class, decl.type, name,
 				       (int) $2, false, decl.param_list, (Attributes) $1,
 				       get_block, set_block, loc);
+		if (RootContext.Documentation != null)
+			indexer.DocComment = ConsumeStoredComment ();
 
 		current_container.AddIndexer (indexer);
 		
@@ -2029,6 +2198,10 @@ indexer_declarator
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
 
 		$$ = new IndexerDeclaration ((Expression) $1, null, pars);
 	  }
@@ -2042,11 +2215,17 @@ indexer_declarator
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
+
 		MemberName name = (MemberName) $2;
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "an indexer can't have type arguments");
 
 		$$ = new IndexerDeclaration ((Expression) $1, name, pars);
+
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
 	  }
 	;
 
@@ -2054,7 +2233,10 @@ enum_declaration
 	: opt_attributes
 	  opt_modifiers
 	  ENUM IDENTIFIER 
-	  opt_enum_base
+	  opt_enum_base {
+		if (RootContext.Documentation != null)
+			enumTypeComment = Lexer.consume_doc_comment ();
+	  }
 	  enum_body
 	  opt_semicolon
 	  { 
@@ -2064,10 +2246,14 @@ enum_declaration
 		Enum e = new Enum (current_namespace, current_container, (Expression) $5, (int) $2,
 				   full_name, (Attributes) $1, enum_location);
 		
-		foreach (VariableDeclaration ev in (ArrayList) $6) {
+		if (RootContext.Documentation != null)
+			e.DocComment = enumTypeComment;
+
+		foreach (VariableDeclaration ev in (ArrayList) $7) {
 			e.AddEnumMember (ev.identifier, 
 					 (Expression) ev.expression_or_array_initializer,
-					 ev.Location, ev.OptAttributes);
+					 ev.Location, ev.OptAttributes,
+					 ev.DocComment);
 		}
 
 		string name = full_name.GetName ();
@@ -2083,9 +2269,20 @@ opt_enum_base
 	;
 
 enum_body
-	: OPEN_BRACE opt_enum_member_declarations CLOSE_BRACE
+	: OPEN_BRACE
 	  {
-		$$ = $2;
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
+	  opt_enum_member_declarations
+	  {
+	  	// here will be evaluated after CLOSE_BLACE is consumed.
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
+	  CLOSE_BRACE
+	  {
+		$$ = $3;
 	  }
 	;
 
@@ -2115,15 +2312,31 @@ enum_member_declarations
 enum_member_declaration
 	: opt_attributes IDENTIFIER 
 	  {
-		$$ = new VariableDeclaration ((string) $2, null, lexer.Location, (Attributes) $1);
+		VariableDeclaration vd = new VariableDeclaration ((string) $2, null, lexer.Location, (Attributes) $1);
+
+		if (RootContext.Documentation != null) {
+			vd.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+
+		$$ = vd;
 	  }
 	| opt_attributes IDENTIFIER
 	  {
-		  $$ = lexer.Location;
+		$$ = lexer.Location;
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.NotAllowed;
+		}
 	  }
           ASSIGN expression
 	  { 
-		$$ = new VariableDeclaration ((string) $2, $5, lexer.Location, (Attributes) $1);
+		VariableDeclaration vd = new VariableDeclaration ((string) $2, $5, lexer.Location, (Attributes) $1);
+
+		if (RootContext.Documentation != null)
+			vd.DocComment = ConsumeStoredComment ();
+
+		$$ = vd;
 	  }
 	;
 
@@ -2137,6 +2350,11 @@ delegate_declaration
 		MemberName name = MakeName ((MemberName) $5);
 		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
 					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
+
+		if (RootContext.Documentation != null) {
+			del.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
 
 		current_container.AddDelegate (del);
 		RootContext.Tree.RecordDecl (name.GetName (true), del);
@@ -2166,6 +2384,11 @@ delegate_declaration
 			current_namespace, current_container,
 			TypeManager.system_void_expr, (int) $2, name,
 			(Parameters) $7, (Attributes) $1, l);
+
+		if (RootContext.Documentation != null) {
+			del.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
 
 		current_container.AddDelegate (del);
 		RootContext.Tree.RecordDecl (name.GetName (true), del);
@@ -3231,9 +3454,18 @@ class_declaration
 
 		current_class.SetParameterInfo ((ArrayList) $8);
 
+		if (RootContext.Documentation != null) {
+			current_class.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+
 		current_class.Register ();
 	  }
-	  class_body 
+	  class_body
+	  {
+		if (RootContext.Documentation != null)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
 	  opt_semicolon 
 	  {
 		$$ = current_class;
@@ -4362,6 +4594,7 @@ public class VariableDeclaration {
 	public object expression_or_array_initializer;
 	public Location Location;
 	public Attributes OptAttributes;
+	public string DocComment;
 
 	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs)
 	{
@@ -4704,6 +4937,14 @@ void CheckToken (int error, int yyToken, string msg)
 void CheckIdentifierToken (int yyToken)
 {
 	CheckToken (1041, yyToken, "Identifier expected");
+}
+
+string ConsumeStoredComment ()
+{
+	string s = tmpComment;
+	tmpComment = null;
+	Lexer.doc_state = XmlCommentState.Allowed;
+	return s;
 }
 
 /* end end end */

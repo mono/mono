@@ -8,6 +8,7 @@
 // Licensed under the terms of the GNU GPL
 //
 // (C) 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2004 Novell, Inc
 //
 //
 //  2002-10-11  Miguel de Icaza  <miguel@ximian.com>
@@ -40,6 +41,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
+using System.Xml;
 
 using Mono.CompilerServices.SymbolWriter;
 
@@ -2395,6 +2397,10 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public Constructor DefaultStaticConstructor {
+			get { return default_static_constructor; }
+		}
+
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!base.VerifyClsCompliance (ds))
@@ -2529,6 +2535,19 @@ namespace Mono.CSharp {
 								null, null);
 			else
 				return FindMembers (mt, new_bf, null, null);
+		}
+
+		//
+		// Generates xml doc comments (if any), and if required,
+		// handle warning report.
+		//
+		internal override void GenerateDocComment (DeclSpace ds)
+		{
+			DocUtil.GenerateTypeDocComment (this, ds);
+		}
+
+		public override string DocCommentHeader {
+			get { return "T:"; }
 		}
 
 		public virtual MemberCache ParentCache {
@@ -3553,6 +3572,34 @@ namespace Mono.CSharp {
 			}
 
 			return false;
+		}
+
+		//
+		// Returns a string that represents the signature for this 
+		// member which should be used in XML documentation.
+		//
+		public override string GetDocCommentName (DeclSpace ds)
+		{
+			return DocUtil.GetMethodDocCommentName (this, ds);
+		}
+
+		//
+		// Raised (and passed an XmlElement that contains the comment)
+		// when GenerateDocComment is writing documentation expectedly.
+		//
+		// FIXME: with a few effort, it could be done with XmlReader,
+		// that means removal of DOM use.
+		//
+		internal override void OnGenerateDocComment (DeclSpace ds, XmlElement el)
+		{
+			DocUtil.OnMethodGenerateDocComment (this, ds, el);
+		}
+
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader {
+			get { return "M:"; }
 		}
 
 		protected override void VerifyObsoleteAttribute()
@@ -5593,6 +5640,13 @@ namespace Mono.CSharp {
 
 			base.Emit ();
 		}
+
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader {
+			get { return "F:"; }
+		}
 	}
 
 	//
@@ -5906,6 +5960,13 @@ namespace Mono.CSharp {
 			get {
 				return base.Location;
 			}
+		}
+
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader {
+			get { throw new InvalidOperationException ("Unexpected attempt to get doc comment from " + this.GetType () + "."); }
 		}
 
 		protected override void VerifyObsoleteAttribute()
@@ -6353,6 +6414,13 @@ namespace Mono.CSharp {
 			get {
 				return attribute_targets;
 			}
+		}
+
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader {
+			get { return "P:"; }
 		}
 	}
 			
@@ -7005,6 +7073,13 @@ namespace Mono.CSharp {
 				return base.GetSignatureForError (Parent);
 
 			return TypeManager.GetFullNameSignature (EventBuilder);
+		}
+
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader {
+			get { return "E:"; }
 		}
 	}
 
