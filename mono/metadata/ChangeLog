@@ -1,3 +1,15 @@
+2004-11-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* assembly.c (do_mono_assembly_open): Instead of having a
+	conditional WITH_BUNDLE, incorporate support for bundles here, by
+	having a global `bundles' variable holding a pointer to the actual
+	bundles. 
+
+	(mono_register_bundled_assemblies): New API call used by the
+	bundle code. 
+
+	See mkbundle.1 for details.
+	
 2004-11-27  Martin Baulig  <martin@ximian.com>
 
 	* object.c (mono_class_vtable): Store the `MonoMethod *' itself in
