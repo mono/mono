@@ -71,6 +71,7 @@ namespace System.Reflection {
 
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			UnitySerializationHolder.GetAssemblyData (this, info, context);
 		}
 
 		public virtual bool IsDefined (Type attributeType, bool inherit)
