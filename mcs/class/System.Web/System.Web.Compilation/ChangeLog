@@ -1,3 +1,10 @@
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: handle builders that need to process inner text
+	with tags.
+
+	* Location.cs: added setters for the properties.
+
 2004-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: the path for file was treated as virtual, but it's
