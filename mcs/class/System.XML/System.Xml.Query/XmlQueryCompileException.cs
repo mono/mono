@@ -3,8 +3,10 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Novell Inc., 2004
 //
 
 #if NET_2_0
@@ -12,12 +14,13 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace System.Xml.Query {
-        public class XmlQueryCompileException : XmlQueryException
-        {
+namespace System.Xml.Query
+{
+	public class XmlQueryCompileException : XmlQueryException
+	{
 		#region Constructors
 
-		public XmlQueryCompileException (SerializationInfo info, StreamingContext context)
+		protected XmlQueryCompileException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
@@ -39,15 +42,6 @@ namespace System.Xml.Query {
 
 		#endregion // Constructors
 
-		#region Properties
-	
-		[MonoTODO]
-		public override string Message {
-			get { throw new NotImplementedException(); }
-		}
-
-		#endregion // Properties
-
 		#region Methods
 
 		[MonoTODO]
@@ -57,7 +51,7 @@ namespace System.Xml.Query {
 		}
 
 		#endregion // Methods
-        }
+	}
 }
 
 #endif // NET_2_0

@@ -12,12 +12,13 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace System.Xml.Query {
-        public class XmlQueryException : SystemException
-        {
+namespace System.Xml.Query
+{
+	public class XmlQueryException : SystemException
+	{
 		#region Constructors
 
-		public XmlQueryException (SerializationInfo info, StreamingContext context)
+		protected XmlQueryException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
@@ -70,15 +71,8 @@ namespace System.Xml.Query {
 		{
 			throw new NotImplementedException();
 		}
-
-		[MonoTODO]
-		public void SetMessage (string message, bool addLineInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
 		#endregion // Methods
-        }
+	}
 }
 
 #endif // NET_2_0
