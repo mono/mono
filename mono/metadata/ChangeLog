@@ -1,3 +1,9 @@
+2002-04-28 Patrik Torstensson <patrik.torstensson@intel.com>
+
+	* reflection.c (mono_reflection_setup_internal_class): remove g_assert_not_reached() to allow 
+	mcs selfhosting	again (build breaker) and did move the check to class instead. parent is
+	allowed to be null when it's System.Object class setup.
+
 2002-04-27  Martin Baulig  <martin@gnome.org>
 
 	* reflection.c (mono_reflection_setup_internal_class): g_assert_not_reached()
