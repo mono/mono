@@ -22,12 +22,12 @@
 				<includes name="NUnitCore.dll"/>
 			</references>
 			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
-			<arg value="/lib:../../lib/"/>
+			<!--<arg value="/lib:../../lib/"/>-->
 			
 			<!-- cor compare dies with these currently -->
 			<!--<arg value="/nostdlib"/>--> 	<!-- don't reference mscorlib -->
 			<!--<arg value="/r:corlib.dll"/>-->
-			<arg value="/r:.\System.dll"/>
+			<arg value="/r:System.dll"/>
 			<arg value="/r:.\Microsoft.VisualBasic.dll"/>
 		</csc>
 

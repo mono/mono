@@ -13,20 +13,20 @@
 			
 			<!-- cor compare dies with these currently -->
 			<!--<arg value="/nostdlib"/>--> 	<!-- don't reference mscorlib -->
-			<arg value="/lib:../lib/"/>
+			<!--<arg value="/lib:../lib/"/>-->
 			<!--<arg value="/r:..\lib\corlib.dll"/>-->
-			<arg value="/r:..\lib\System.dll"/>
+			<!--<arg value="/r:..\lib\System.dll"/>-->
+			<arg value="/r:System.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
 			</sources>
 			<references>
 				<!--<includes name="../lib/corlib.dll"/>-->
-				<includes name="../lib/System.dll"/>
+				<!--<includes name="../lib/System.dll"/>-->
 			</references>
 		</csc>
 		<copy file="../lib/Microsoft.VisualBasic.dll" tofile="Test/Microsoft.VisualBasic.dll"/>
-		<copy file="../lib/System.dll" tofile="Test/System.dll"/>
 	</target>
 
 	<target name="test" depends="build">
