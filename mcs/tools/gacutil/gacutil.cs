@@ -30,7 +30,17 @@ namespace Mono.Tools
 				ShowHelp (false);
 				return;
 			}
-			
+	
+			if (args[0] == "/user" || args[0] == "--user") {
+				//FIXME: Need to check machine.config to make sure this is legal (potential security hole)
+				gac_path = Path.Combine (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), ".mono"), "gac");
+				gac_path += Path.DirectorySeparatorChar;
+
+				string[] stripped = new string[args.Length - 1];
+				Array.Copy (args, 1, stripped, 0, args.Length - 1);
+				args = stripped;
+			}
+	
 			string[] remainder_args = new string[args.Length - 1];
 			
 			if (args.Length >= 2) {
@@ -103,6 +113,10 @@ namespace Mono.Tools
 					WriteAssemblyInfo (Path.Combine (dir, "__AssemblyInfo__"), info);
 					Console.WriteLine ("Assembly was not deleted because its still needed by other applications");
 				}
+			}
+			if(Directory.GetDirectories (Path.Combine (gac_path, (string) paramInfo["assembly"])).Length == 0) {
+				Console.WriteLine ("Cleaning assembly dir, its empty");
+				Directory.Delete (Path.Combine (gac_path, (string) paramInfo["assembly"]));
 			}
 			
 		}

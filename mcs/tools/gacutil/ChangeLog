@@ -6,6 +6,8 @@
 	Thanks to Ben Maurer. Turns out code marked as potentially not
 	needed was not needed, now refcounting with /u assemblyname works
 	as well.
+	* gacutil.cs: Incorporated uac (User Assembly Cache), needs some
+	machine.config security checking as well.
 
 2003-11-14  Todd Berman  <tberman@gentoo.org>
 
