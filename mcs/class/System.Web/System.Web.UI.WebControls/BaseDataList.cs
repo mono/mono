@@ -74,7 +74,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		public DataKeysCollection DataKeys
+		public DataKeyCollection DataKeys
 		{
 			get
 			{

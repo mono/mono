@@ -10,6 +10,7 @@
 		<csc target="library" output="../lib/System.Web.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
 			<arg value="/unsafe"/>
+			<arg value="/r:System.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
@@ -17,7 +18,6 @@
 				<excludes name="System.Web.Hosting/**"/>
 				<excludes name="System.Web.UI/**"/>
 				<excludes name="System.Web.UI.HtmlControls/**"/>
-				<excludes name="System.Web.UI.WebControls/**"/>
 				<excludes name="System.Web/IHttpModule.cs"/>
 				<excludes name="System.Web/IHttpHandlerFactory.cs"/>
 				<excludes name="System.Web/HttpCacheValidateHandler.cs"/>
