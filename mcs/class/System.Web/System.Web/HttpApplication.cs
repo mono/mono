@@ -682,14 +682,14 @@ namespace System.Web {
 		#endregion
 
 		#region Methods
-		[MonoTODO("Deal with other handlers")]
-		private IHttpHandler CreateHttpHandler(HttpContext context, string type, string file, string path) {
-			//return (IHttpHandler) HandlerFactoryConfiguration.FindHandler(type, path).Create();
-			// FIXME: dummy stuff that should be replaced with machine.config + web.config stuff
-			if (file.EndsWith (".aspx"))
-				return new PageHandlerFactory ().GetHandler (context, type, file, path);
-			else
-				return new StaticFileHandler ();
+		private IHttpHandler CreateHttpHandler (HttpContext context, string type, string file, string path)
+		{
+			HandlerFactoryConfiguration handler = HttpContext.GetAppConfig ("system.web/httpHandlers")
+								as HandlerFactoryConfiguration;
+			if (handler == null)
+				throw new HttpException ("Cannot get system.web/httpHandlers handler.");
+
+			return (IHttpHandler) handler.FindHandler (type, path).Create ();
 		}
 
 		[MonoTODO()]

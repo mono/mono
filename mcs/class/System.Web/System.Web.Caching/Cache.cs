@@ -135,7 +135,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Virtual override of the IEnumerable.GetEnumerator() method, returns a specialized enumerator.
 		/// </summary>
-		public virtual System.Collections.IDictionaryEnumerator GetEnumerator()
+		public System.Collections.IDictionaryEnumerator GetEnumerator()
 		{
 			return CreateEnumerator();
 		}
@@ -458,7 +458,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Gets the number of items stored in the cache.
 		/// </summary>
-		long Count
+		public long Count
 		{
 			get 
 			{

@@ -6,6 +6,7 @@
 //
 using System;
 using System.Collections;
+using System.Configuration;
 using System.Security.Principal;
 using System.Web.Caching;
 using System.Web.Configuration;
@@ -264,22 +265,10 @@ namespace System.Web
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO("GetAppConfig(string name)")]
+		[MonoTODO("We gotta deal with web.config files too")]
 		public static object GetAppConfig (string name)
 		{
-			if (null == name)
-				throw new NotImplementedException();
-
-			// This is a temp hack to fix the config stuff
-			if  (name.ToLower() == "system.web/httpmodules") {
-				return new ModulesConfiguration();
-			}
-
-			if (name.ToLower() == "system.web/globalization") {
-				return new System.Web.Configuration.GlobalizationConfiguration();
-			}
-
-			throw new NotImplementedException();
+			return ConfigurationSettings.GetConfig (name);
 		}
 
 		object IServiceProvider.GetService (Type service)

@@ -1,3 +1,8 @@
+2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: use handlers from configuration.
+	* HttpContext.cs: get handlers from ConfigurationSettings.
+
 2002-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpMethodNotAllowedHandler.cs:

@@ -1,8 +1,9 @@
-//
-// System.Web.Configuration.HttpHandlerTypeMapper
+// 
+// System.Web.Configuration.HandlerFactoryConfiguration
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+// 	Patrik Torstensson (ptorsten@hotmail.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
@@ -11,15 +12,15 @@ using System.Collections;
 
 namespace System.Web.Configuration
 {
-	class HttpHandlerTypeMapper
+	class HandlerFactoryConfiguration
 	{
 		ArrayList mappings;
 
-		public HttpHandlerTypeMapper () : this (null)
+		public HandlerFactoryConfiguration () : this (null)
 		{
 		}
 
-		public HttpHandlerTypeMapper (HttpHandlerTypeMapper parent)
+		public HandlerFactoryConfiguration (HandlerFactoryConfiguration parent)
 		{
 			if (parent != null)
 				mappings = new ArrayList (parent.mappings);
@@ -34,7 +35,7 @@ namespace System.Web.Configuration
 
 		public HandlerItem Remove (string verb, string path)
 		{
-			int i = SearchHandler (verb, path);
+			int i = GetIndex (verb, path);
 			if (i == -1)
 				return null;
 			
@@ -50,14 +51,14 @@ namespace System.Web.Configuration
 
 		public HandlerItem FindHandler (string verb, string path)
 		{
-			int i = SearchHandler (verb, path);
+			int i = GetIndex (verb, path);
 			if (i == -1)
 				return null;
 
 			return (HandlerItem) mappings [i];
 		}
 
-		int SearchHandler (string verb, string path)
+		int GetIndex (string verb, string path)
 		{
 			int end = mappings.Count;
 
@@ -69,7 +70,6 @@ namespace System.Web.Configuration
 
 			return -1;
 		}
-		
 	}
 }
 

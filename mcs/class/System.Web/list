@@ -66,8 +66,9 @@ System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
 System.Web.Configuration/GlobalizationConfiguration.cs
 System.Web.Configuration/HttpCapabilitiesBase.cs
+System.Web.Configuration/HandlerFactoryConfiguration.cs
 System.Web.Configuration/HandlerFactoryProxy.cs
-System.Web.Configuration/HttpHandlerTypeMapper.cs
+System.Web.Configuration/HttpConfigurationContext.cs
 System.Web.Configuration/HttpHandlersSectionHandler.cs
 System.Web.Configuration/HandlerItem.cs
 System.Web.Configuration/ModulesConfiguration.cs
@@ -125,6 +126,7 @@ System.Web.UI/ParseChildrenAttribute.cs
 System.Web.UI/PartialCachingAttribute.cs
 System.Web.UI/PersistChildrenAttribute.cs
 System.Web.UI/PersistenceModeAttribute.cs
+System.Web.UI/SimpleHandlerFactory.cs
 System.Web.UI/TagPrefixAttribute.cs
 System.Web.UI/TemplateContainerAttribute.cs
 System.Web.UI/TemplateControlParser.cs

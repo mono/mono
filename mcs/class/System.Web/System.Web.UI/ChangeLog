@@ -1,3 +1,7 @@
+2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleHandlerFactory.cs: new handler for .ashx files.
+
 2002-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.UI/PageHandlerFactory.cs: new file.

@@ -1,3 +1,13 @@
+2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpHandlerTypeMapper.cs: removed.
+	* HandlerFactoryConfiguration.cs: readded. I removed it by mistake.
+	* HandlerItem.cs: only load the type if we gotta validate it.
+	Implemented initial IsMatch.
+	* HttpConfigurationContext.cs: New file.
+	* HttpHandlersSectionHandler.cs: validate is optional (default true). 
+	Use HttpHandlerTypeMapper.
+
 2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.Configuration/HandlerFactoryConfiguration.cs: removed.

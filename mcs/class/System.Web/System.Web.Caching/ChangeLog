@@ -1,3 +1,7 @@
+2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Cache.cs: little fixes.
+
 2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CacheDefinitions.cs: fixed a couple of enums.
