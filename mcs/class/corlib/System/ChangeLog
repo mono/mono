@@ -1,3 +1,8 @@
+
+Tue Feb 26 14:21:19 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* UInt64.cs: fixed Parse method () to handle some of the NumberStyle flags.
+
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
 	* DateTime.cs: Miguel already committed this, but there was still a

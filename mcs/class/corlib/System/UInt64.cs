@@ -50,53 +50,7 @@ namespace System {
 
 		public static ulong Parse (string s)
 		{
-			ulong val = 0;
-			int len;
-			int i;
-			bool digits_seen = false;
-			
-			if (s == null)
-				throw new ArgumentNullException (Locale.GetText ("s is null"));
-
-			len = s.Length;
-
-			char c;
-			for (i = 0; i < len; i++){
-				c = s [i];
-				if (!Char.IsWhiteSpace (c))
-					break;
-			}
-			
-			if (i == len)
-				throw new FormatException ();
-
-			if (s [i] == '+')
-				i++;
-
-			for (; i < len; i++){
-				c = s [i];
-
-				if (c >= '0' && c <= '9'){
-					uint d = (uint) (c - '0');
-					
-					val = checked (val * 10 + d);
-					digits_seen = true;
-				} else {
-					if (Char.IsWhiteSpace (c)){
-						for (i++; i < len; i++){
-							if (!Char.IsWhiteSpace (s [i]))
-								throw new FormatException ();
-						}
-						break;
-					} else
-						throw new FormatException ();
-				}
-			}
-			if (!digits_seen)
-				throw new FormatException ();
-			
-			return val;
-
+			return Parse (s, NumberStyles.Integer, null);
 		}
 
 		public static ulong Parse (string s, IFormatProvider fp)
@@ -112,14 +66,71 @@ namespace System {
 		public static ulong Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			ulong val = 0;
-			int j;
-			for (j = 0; j < s.Length; ++j) {
-				if (s [j] >= '0' && s [j] <= '9')
-					val = val * 10 + s [j] - '0';
-				else
+			int len;
+			int i;
+			bool digits_seen = false;
+			
+			if (s == null)
+				throw new ArgumentNullException (Locale.GetText ("s is null"));
+
+			len = s.Length;
+
+			char c;
+			i = 0;
+			if ((style & NumberStyles.AllowLeadingWhite) != 0)
+				for (i = 0; i < len; i++){
+					c = s [i];
+					if (!Char.IsWhiteSpace (c))
+						break;
+				}
+			
+			if (i == len)
+				throw new FormatException ();
+
+			if ((style & NumberStyles.AllowLeadingSign) != 0 && (s [i] == '+'))
+				i++;
+
+			for (; i < len; i++){
+				c = s [i];
+
+				if ((style & NumberStyles.AllowHexSpecifier) != 0) {
+					if (c >= '0' && c <= '9') {
+						uint d = (uint) (c - '0');
+						val = checked (val * 16 + d);
+						digits_seen = true;
+					} else if (c >= 'a' && c <= 'f') {
+						uint d = (uint) (c - 'a');
+						val = checked (val * 16 + 10 + d);
+						digits_seen = true;
+					} else if (c >= 'A' && c <= 'F') {
+						uint d = (uint) (c - 'A');
+						val = checked (val * 16 + 10 + d);
+						digits_seen = true;
+					} else
+						break;
+				} else if (c >= '0' && c <= '9'){
+					uint d = (uint) (c - '0');
+					
+					val = checked (val * 10 + d);
+					digits_seen = true;
+				} else {
 					break;
+				}
 			}
+			if (!digits_seen)
+				throw new FormatException ();
+			if (i < len) {
+				if ((style & NumberStyles.AllowTrailingWhite) != 0 && Char.IsWhiteSpace (s [i])){
+					for (i++; i < len; i++){
+						if (!Char.IsWhiteSpace (s [i]))
+							throw new FormatException ();
+					}
+				} else
+					throw new FormatException ();
+			}
+	
 			return val;
+
 		}
 
 		public override string ToString ()
