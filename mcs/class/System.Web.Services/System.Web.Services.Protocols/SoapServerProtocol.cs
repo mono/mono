@@ -21,15 +21,13 @@ namespace System.Web.Services.Protocols {
 
 		#region Properties
 
-		public bool IsOneWay {
+		public override bool IsOneWay {
 			get { return isOneWay; }
-			set { isOneWay = value; }
 		}
 
 		[MonoTODO]
-		public LogicalMethodInfo MethodInfo {
+		public override LogicalMethodInfo MethodInfo {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
 		}
 
 		#endregion // Properties
