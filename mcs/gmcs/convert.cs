@@ -431,8 +431,6 @@ namespace Mono.CSharp {
 			if (expr_type == target_type)
 				return true;
 
-                        //Console.WriteLine ("No !!");
-
 			// First numeric conversions 
 
 			if (expr_type == TypeManager.sbyte_type){
@@ -928,13 +926,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			Type most_specific_source, most_specific_target;
-#if BLAH
-			foreach (MethodBase m in union.Methods){
-				Console.WriteLine ("Name: " + m.Name);
-				Console.WriteLine ("    : " + ((MethodInfo)m).ReturnType);
-			}
-#endif
-			
+
 			most_specific_source = FindMostSpecificSource (union, source, look_for_explicit, loc);
 			if (most_specific_source == null)
 				return null;

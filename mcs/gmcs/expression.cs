@@ -81,6 +81,28 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Pop);
 		}
 	}
+
+	public class ParenthesizedExpression : Expression
+	{
+		public Expression Expr;
+
+		public ParenthesizedExpression (Expression expr, Location loc)
+		{
+			this.Expr = expr;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Expr = Expr.Resolve (ec);
+			return Expr;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new Exception ("Should not happen");
+		}
+	}
 	
 	/// <summary>
 	///   Unary expressions.  
@@ -950,9 +972,7 @@ namespace Mono.CSharp {
 				// For now: only localvariables when not remapped
 				//
 
-				if (method == null && 
-				    (expr is LocalVariableReference && ec.RemapToProxy == false) ||
-				    (expr is FieldExpr && ((FieldExpr) expr).FieldInfo.IsStatic)){
+				if (method == null && (expr is FieldExpr && ((FieldExpr) expr).FieldInfo.IsStatic)){
 					if (empty_expr == null)
 						empty_expr = new EmptyExpression ();
 					
@@ -1816,15 +1836,6 @@ namespace Mono.CSharp {
 		Operator oper;
 		Expression left, right;
 
-		//
-		// After resolution, method might contain the operator overload
-		// method.
-		//
-		protected MethodBase method;
-		ArrayList  Arguments;
-
-		bool DelegateOperation;
-
 		// This must be kept in sync with Operator!!!
 		public static readonly string [] oper_names;
 		
@@ -2239,16 +2250,15 @@ namespace Mono.CSharp {
 					union = (MethodGroupExpr) left_expr;
 				
 				if (union != null) {
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					ArrayList args = new ArrayList (2);
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
 					
-					method = Invocation.OverloadResolve (ec, union, Arguments, Location.Null);
+					MethodBase method = Invocation.OverloadResolve (ec, union, args, Location.Null);
 					if (method != null) {
 						MethodInfo mi = (MethodInfo) method;
 						
-						type = mi.ReturnType;
-						return this;
+						return new BinaryMethod (mi.ReturnType, method, args);
 					} else {
 						overload_failed = true;
 					}
@@ -2268,6 +2278,7 @@ namespace Mono.CSharp {
 				//
 				
 				if (l == TypeManager.string_type){
+					MethodBase method;
 					
 					if (r == TypeManager.void_type) {
 						Error_OperatorCannotBeApplied ();
@@ -2283,33 +2294,29 @@ namespace Mono.CSharp {
 								ls.Value + rs.Value);
 						}
 
-						if (left is Binary){
-							Binary b = (Binary) left;
+						if (left is BinaryMethod){
+							BinaryMethod b = (BinaryMethod) left;
 
 							//
 							// Call String.Concat (string, string, string) or
 							// String.Concat (string, string, string, string)
 							// if possible.
 							//
-							if (b.oper == Operator.Addition &&
-							    (b.method == TypeManager.string_concat_string_string ||
-							     b.method == TypeManager.string_concat_string_string_string)){
+							if (b.method == TypeManager.string_concat_string_string ||
+							     b.method == TypeManager.string_concat_string_string_string){
 								ArrayList bargs = b.Arguments;
 								int count = bargs.Count;
 								
 								if (count == 2){
-									Arguments = bargs;
-									Arguments.Add (new Argument (right, Argument.AType.Expression));
-									type = TypeManager.string_type;
-									method = TypeManager.string_concat_string_string_string;
-									
-									return this;
+									bargs.Add (new Argument (right, Argument.AType.Expression));
+									return new BinaryMethod (
+										TypeManager.string_type,
+										TypeManager.string_concat_string_string_string, bargs);
 								} else if (count == 3){
-									Arguments = bargs;
-									Arguments.Add (new Argument (right, Argument.AType.Expression));
-									type = TypeManager.string_type;
-									method = TypeManager.string_concat_string_string_string_string;									
-									return this;
+									bargs.Add (new Argument (right, Argument.AType.Expression));
+									return new BinaryMethod (
+										TypeManager.string_type,
+										TypeManager.string_concat_string_string_string_string, bargs);
 								}
 							}
 						}
@@ -2326,14 +2333,15 @@ namespace Mono.CSharp {
 							return null;
 						}
 					}
-					type = TypeManager.string_type;
 
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					//
+					// Cascading concats will hold up to 4 arguments
+					//
+					ArrayList args = new ArrayList (4);
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
 
-					return this;
-					
+					return new BinaryMethod (TypeManager.string_type, method, args);
 				} else if (r == TypeManager.string_type){
 					// object + string
 
@@ -2342,19 +2350,16 @@ namespace Mono.CSharp {
 						return null;
 					}
 					
-					method = TypeManager.string_concat_object_object;
 					left = Convert.ImplicitConversion (ec, left, TypeManager.object_type, loc);
 					if (left == null){
 						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 						return null;
 					}
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					ArrayList args = new ArrayList (2);
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
 
-					type = TypeManager.string_type;
-
-					return this;
+					return new BinaryMethod (TypeManager.string_type, TypeManager.string_concat_object_object, args);
 				}
 
 				//
@@ -2438,10 +2443,12 @@ namespace Mono.CSharp {
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
 				if (l.IsSubclassOf (TypeManager.delegate_type) &&
 				    r.IsSubclassOf (TypeManager.delegate_type)) {
+					MethodInfo method;
+					ArrayList args = new ArrayList (2);
 					
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					args = new ArrayList (2);
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
 					
 					if (oper == Operator.Addition)
 						method = TypeManager.delegate_combine_delegate_delegate;
@@ -2453,9 +2460,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					DelegateOperation = true;
-					type = l;
-					return this;
+					return new BinaryDelegate (l, method, args);
 				}
 
 				//
@@ -2669,7 +2674,18 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			left = left.Resolve (ec);
+			if ((oper == Operator.Subtraction) && (left is ParenthesizedExpression)) {
+				left = ((ParenthesizedExpression) left).Expr;
+				left = left.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.Type);
+				if (left == null)
+					return null;
+
+				if (left.eclass == ExprClass.Type) {
+					Error (75, "Casting a negative value needs to have the value in parentheses.");
+					return null;
+				}
+			} else
+				left = left.Resolve (ec);
 			right = right.Resolve (ec);
 
 			if (left == null || right == null)
@@ -2700,9 +2716,6 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public bool EmitBranchable (EmitContext ec, Label target, bool onTrue)
 		{
-			if (method != null)
-				return false;
-
 			ILGenerator ig = ec.ig;
 
 			//
@@ -2928,24 +2941,6 @@ namespace Mono.CSharp {
 			Type r = right.Type;
 			OpCode opcode;
 
-			if (method != null) {
-
-				// Note that operators are static anyway
-				
-				if (Arguments != null) 
-					Invocation.EmitArguments (ec, method, Arguments);
-				
-				if (method is MethodInfo)
-					ig.Emit (OpCodes.Call, (MethodInfo) method);
-				else
-					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-
-				if (DelegateOperation)
-					ig.Emit (OpCodes.Castclass, type);
-					
-				return;
-			}
-
 			//
 			// Handle short-circuit operators differently
 			// than the rest
@@ -3139,14 +3134,87 @@ namespace Mono.CSharp {
 
 			ig.Emit (opcode);
 		}
+	}
 
-		public bool IsBuiltinOperator {
-			get {
-				return method == null;
-			}
+	//
+	// Object created by Binary when the binary operator uses an method instead of being
+	// a binary operation that maps to a CIL binary operation.
+	//
+	public class BinaryMethod : Expression {
+		public MethodBase method;
+		public ArrayList  Arguments;
+		
+		public BinaryMethod (Type t, MethodBase m, ArrayList args)
+		{
+			method = m;
+			Arguments = args;
+			type = t;
+			eclass = ExprClass.Value;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			if (Arguments != null) 
+				Invocation.EmitArguments (ec, method, Arguments);
+			
+			if (method is MethodInfo)
+				ig.Emit (OpCodes.Call, (MethodInfo) method);
+			else
+				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 		}
 	}
 
+	//
+	// Object created with +/= on delegates
+	//
+	public class BinaryDelegate : Expression {
+		MethodInfo method;
+		ArrayList  args;
+
+		public BinaryDelegate (Type t, MethodInfo mi, ArrayList args)
+		{
+			method = mi;
+			this.args = args;
+			type = t;
+			eclass = ExprClass.Value;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			Invocation.EmitArguments (ec, method, args);
+			
+			ig.Emit (OpCodes.Call, (MethodInfo) method);
+			ig.Emit (OpCodes.Castclass, type);
+		}
+
+		public Expression Right {
+			get {
+				Argument arg = (Argument) args [1];
+				return arg.Expr;
+			}
+		}
+
+		public bool IsAddition {
+			get {
+				return method == TypeManager.delegate_combine_delegate_delegate;
+			}
+		}
+	}
+	
 	//
 	// User-defined conditional logical operator
 	public class ConditionalLogicalOperator : Expression {
@@ -3493,6 +3561,9 @@ namespace Mono.CSharp {
 			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
+			if (local_info.LocalBuilder == null)
+				return ec.RemapLocal (local_info);
+			
 			return this;
 		}
 
@@ -3512,6 +3583,9 @@ namespace Mono.CSharp {
 				Error (1604, "cannot assign to `" + Name + "' because it is readonly");
 				return null;
 			}
+
+			if (local_info.LocalBuilder == null)
+				return ec.RemapLocalLValue (local_info, right_side);
 			
 			return this;
 		}
@@ -3525,13 +3599,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (local_info.LocalBuilder == null){
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
-			} else 
-				ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
-			
-			local_info.Used = true;
+			ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
 		}
 		
 		public void EmitAssign (EmitContext ec, Expression source)
@@ -3540,25 +3608,15 @@ namespace Mono.CSharp {
 
 			local_info.Assigned = true;
 
-			if (local_info.LocalBuilder == null){
-				ig.Emit (OpCodes.Ldarg_0);
-				source.Emit (ec);
-				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
-			} else {
-				source.Emit (ec);
-				ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
-			}
+			source.Emit (ec);
+			ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (local_info.LocalBuilder == null){
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
-			} else
-				ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
+			ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
 		}
 
 		public override string ToString ()
@@ -3663,6 +3721,9 @@ namespace Mono.CSharp {
 			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
 
+			if (ec.RemapToProxy)
+				return ec.RemapParameter (idx);
+			
 			return this;
 		}
 
@@ -3672,6 +3733,9 @@ namespace Mono.CSharp {
 
 			SetAssigned (ec);
 
+			if (ec.RemapToProxy)
+				return ec.RemapParameterLValue (idx, right_side);
+			
 			return this;
 		}
 
@@ -3710,12 +3774,6 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (ec.RemapToProxy){
-				ig.Emit (OpCodes.Ldarg_0);
-				ec.EmitArgument (idx);
-				return;
-			}
-			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)
@@ -3736,13 +3794,6 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			ILGenerator ig = ec.ig;
-			
-			if (ec.RemapToProxy){
-				ig.Emit (OpCodes.Ldarg_0);
-				source.Emit (ec);
-				ec.EmitStoreArgument (idx);
-				return;
-			}
 			
 			int arg_idx = idx;
 
@@ -3766,11 +3817,6 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			if (ec.RemapToProxy){
-				Report.Error (-1, "Report this: Taking the address of a remapped parameter not supported");
-				return;
-			}
-			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)
@@ -3986,9 +4032,10 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///  Determines "better conversion" as specified in 7.4.2.3
-		///  Returns : 1 if a->p is better
-		///            0 if a->q or neither is better 
+		///   Determines "better conversion" as specified in 7.4.2.3
+		///
+                ///    Returns : 1 if a->p is better
+		///              0 if a->q or neither is better 
 		/// </summary>
 		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, Location loc)
 		{
@@ -3996,15 +4043,20 @@ namespace Mono.CSharp {
 			Expression argument_expr = a.Expr;
 
 			if (argument_type == null)
-				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
+				throw new Exception ("Expression of type " + a.Expr +
+                                                     " does not resolve its type");
 
 			//
 			// This is a special case since csc behaves this way. I can't find
 			// it anywhere in the spec but oh well ...
 			//
-			if (argument_expr is NullLiteral && p == TypeManager.string_type && q == TypeManager.object_type)
+			if (argument_expr is NullLiteral &&
+                            p == TypeManager.string_type &&
+                            q == TypeManager.object_type)
 				return 1;
-			else if (argument_expr is NullLiteral && p == TypeManager.object_type && q == TypeManager.string_type)
+			else if (argument_expr is NullLiteral &&
+                                 p == TypeManager.object_type &&
+                                 q == TypeManager.string_type)
 				return 0;
 			
 			if (p == q)
@@ -4125,16 +4177,18 @@ namespace Mono.CSharp {
 		}
 		
 		/// <summary>
-		///  Determines "Better function"
+		///   Determines "Better function" between candidate
+                ///   and the current best match
 		/// </summary>
 		/// <remarks>
-		///    and returns an integer indicating :
-		///    0 if candidate ain't better
-		///    1 if candidate is better than the current best match
+		///    Returns an integer indicating :
+		///     0 if candidate ain't better
+		///     1 if candidate is better than the current best match
 		/// </remarks>
 		static int BetterFunction (EmitContext ec, ArrayList args,
-					   MethodBase candidate, MethodBase best,
-					   bool expanded_form, Location loc)
+					   MethodBase candidate, bool candidate_params,
+                                           MethodBase best, bool best_params,
+					   Location loc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
@@ -4153,7 +4207,7 @@ namespace Mono.CSharp {
 			if (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS)
 				if (cand_count != argument_count)
 					return 0;
-			
+
 			if (best == null) {
 				int x = 0;
 
@@ -4161,14 +4215,13 @@ namespace Mono.CSharp {
 				    candidate_pd.ParameterModifier (cand_count - 1) == Parameter.Modifier.PARAMS)
 					return 1;
 				
-				for (int j = argument_count; j > 0;) {
-					j--;
+				for (int j = 0; j < argument_count; ++j) {
 
 					Argument a = (Argument) args [j];
 					Type t = candidate_pd.ParameterType (j);
 
 					if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-						if (expanded_form)
+						if (candidate_params)
 							t = TypeManager.GetElementType (t);
 
 					x = BetterConversion (ec, a, t, null, loc);
@@ -4196,13 +4249,13 @@ namespace Mono.CSharp {
 				Type bt = best_pd.ParameterType (j);
 
 				if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-					if (expanded_form)
+					if (candidate_params)
 						ct = TypeManager.GetElementType (ct);
 
 				if (best_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-					if (expanded_form)
+					if (best_params)
 						bt = TypeManager.GetElementType (bt);
-				
+
 				x = BetterConversion (ec, a, ct, bt, loc);
 				y = BetterConversion (ec, a, bt, ct, loc);
 
@@ -4212,6 +4265,16 @@ namespace Mono.CSharp {
 				rating1 += x;
 				rating2 += y;
 			}
+
+                        //
+                        // If a method (in the normal form) with the
+                        // same signature as the expanded form of the
+                        // current best params method already exists,
+                        // the expanded form is not applicable so we
+                        // force it to select the candidate
+                        //
+                        if (!candidate_params && best_params && cand_count == argument_count)
+                                return 1;
 
 			if (rating1 > rating2)
 				return 1;
@@ -4254,7 +4317,7 @@ namespace Mono.CSharp {
 			MemberInfo [] miset;
 			MethodGroupExpr union;
 
-			if (mg1 == null){
+			if (mg1 == null) {
 				if (mg2 == null)
 					return null;
 				return (MethodGroupExpr) mg2;
@@ -4274,33 +4337,29 @@ namespace Mono.CSharp {
 			
 			ArrayList common = new ArrayList ();
 
-			foreach (MethodBase l in left_set.Methods){
-				foreach (MethodBase r in right_set.Methods){
-					if (l != r)
-						continue;
+			foreach (MethodBase r in right_set.Methods){
+				if (TypeManager.ArrayContainsMethod (left_set.Methods, r))
 					common.Add (r);
-					break;
-				}
 			}
-			
+
 			miset = new MemberInfo [length1 + length2 - common.Count];
 			left_set.Methods.CopyTo (miset, 0);
 			
 			int k = length1;
 
-			foreach (MemberInfo mi in right_set.Methods){
-				if (!common.Contains (mi))
-					miset [k++] = mi;
+			foreach (MethodBase r in right_set.Methods) {
+				if (!common.Contains (r))
+					miset [k++] = r;
 			}
-			
+
 			union = new MethodGroupExpr (miset, loc);
 			
 			return union;
 		}
 
 		/// <summary>
-		///  Determines is the candidate method, if a params method, is applicable
-		///  in its expanded form to the given set of arguments
+		///   Determines if the candidate method, if a params method, is applicable
+		///   in its expanded form to the given set of arguments
 		/// </summary>
 		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
 		{
@@ -4328,8 +4387,9 @@ namespace Mono.CSharp {
 				return true;
 
 			//
-			// If we have come this far, the case which remains is when the number of parameters
-			// is less than or equal to the argument count.
+			// If we have come this far, the case which
+			// remains is when the number of parameters is
+			// less than or equal to the argument count.
 			//
 			for (int i = 0; i < pd_count - 1; ++i) {
 
@@ -4343,7 +4403,9 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod) {
 
 					if (a_mod == Parameter.Modifier.NONE)
-						if (!Convert.ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
+						if (!Convert.ImplicitConversionExists (ec,
+                                                                                       a.Expr,
+                                                                                       pd.ParameterType (i)))
 							return false;
 										
 					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
@@ -4365,7 +4427,7 @@ namespace Mono.CSharp {
 			for (int i = pd_count - 1; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
 				
-				if (!Convert.ImplicitStandardConversionExists (a.Expr, element_type))
+				if (!Convert.ImplicitConversionExists (ec, a.Expr, element_type))
 					return false;
 			}
 			
@@ -4373,8 +4435,8 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///  Determines if the candidate method is applicable (section 14.4.2.1)
-		///  to the given set of arguments
+		///   Determines if the candidate method is applicable (section 14.4.2.1)
+		///   to the given set of arguments
 		/// </summary>
 		static bool IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
 		{
@@ -4407,8 +4469,9 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 					if (a_mod == Parameter.Modifier.NONE) {
-                                                 if (!Convert.ImplicitConversionExists (ec,
-                                                                                       a.Expr, pd.ParameterType (i)))
+                                                if (!Convert.ImplicitConversionExists (ec,
+                                                                                       a.Expr,
+                                                                                       pd.ParameterType (i)))
 							return false;
                                         }
 					
@@ -4417,7 +4480,7 @@ namespace Mono.CSharp {
 
 						if (!pt.IsByRef)
 							pt = TypeManager.GetReferenceType (pt);
-
+                                                
 						if (pt != a.Type)
 							return false;
 					}
@@ -4455,9 +4518,15 @@ namespace Mono.CSharp {
 			ArrayList candidates = new ArrayList ();
 
                         //
-                        // First we construct the set of applicable methods
+                        // Used to keep a map between the candidate
+                        // and whether it is being considered in its
+                        // normal or expanded form
                         //
+                        Hashtable candidate_to_form = new PtrHashtable ();
 
+
+                        //
+                        // First we construct the set of applicable methods
                         //
                         // We start at the top of the type hierarchy and
                         // go down to find applicable methods
@@ -4468,7 +4537,6 @@ namespace Mono.CSharp {
                                 Error_InvokeOnDelegate (loc);
                                 return null;
                         }
-
 
                         bool found_applicable = false;
 			foreach (MethodBase candidate in me.Methods) {
@@ -4486,59 +4554,48 @@ namespace Mono.CSharp {
 
 
 				// Check if candidate is applicable (section 14.4.2.1)
-				if (!IsApplicable (ec, Arguments, candidate))
-					continue;
-
-                                
-				candidates.Add (candidate);
-                                applicable_type = candidate.DeclaringType;
-                                found_applicable = true;
-
+				if (!IsApplicable (ec, Arguments, candidate)) {
+					// Candidate is applicable in normal form
+					candidates.Add (candidate);
+					applicable_type = candidate.DeclaringType;
+					found_applicable = true;
+					candidate_to_form [candidate] = false;
+				} else {
+                                        if (IsParamsMethodApplicable (ec, Arguments, candidate)) {
+                                                // Candidate is applicable in expanded form
+                                                candidates.Add (candidate);
+                                                applicable_type = candidate.DeclaringType;
+                                                found_applicable = true; 
+                                                candidate_to_form [candidate] = true;
+                                        }
+				}
 			}
-
 
                         //
                         // Now we actually find the best method
                         //
                         foreach (MethodBase candidate in candidates) {
-                                int x = BetterFunction (ec, Arguments, candidate, method, false, loc);
+                                bool cand_params = (bool) candidate_to_form [candidate];
+                                bool method_params = false;
+				
+                                if (method != null)
+                                        method_params = (bool) candidate_to_form [method];
                                 
+                                int x = BetterFunction (ec, Arguments,
+                                                        candidate, cand_params,
+							method, method_params,
+                                                        loc);
                                 if (x == 0)
                                         continue;
                                 
                                 method = candidate;
                         }
 
-
 			if (Arguments == null)
 				argument_count = 0;
 			else
 				argument_count = Arguments.Count;
 			
-			//
-			// Now we see if we can find params functions,
-			// applicable in their expanded form since if
-			// they were applicable in their normal form,
-			// they would have been selected above anyways
-			//
-			bool chose_params_expanded = false;
-			
-			if (method == null) {
-				candidates = new ArrayList ();
-				foreach (MethodBase candidate in me.Methods){
-					if (!IsParamsMethodApplicable (ec, Arguments, candidate))
-						continue;
-
-					candidates.Add (candidate);
-
-					int x = BetterFunction (ec, Arguments, candidate, method, true, loc);
-					if (x == 0)
-						continue;
-
-					method = candidate; 
-					chose_params_expanded = true;
-				}
-			}
 
 			if (method == null) {
 				//
@@ -4555,6 +4612,7 @@ namespace Mono.CSharp {
 
 					VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
 							       null, loc);
+                                        break;
 				}
 
                                 if (!Location.IsNull (loc)) {
@@ -4572,11 +4630,13 @@ namespace Mono.CSharp {
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
 			//
+                        bool best_params = (bool) candidate_to_form [method];
 
 			foreach (MethodBase candidate in candidates){
- 				if (candidate == method)
- 					continue;
 
+                                if (candidate == method)
+                                        continue;
+                                               
 				//
 				// If a normal method is applicable in
 				// the sense that it has the same
@@ -4585,13 +4645,15 @@ namespace Mono.CSharp {
 				// applicable so we debar the params
 				// method.
 				//
-
-                                if (IsParamsMethodApplicable (ec, Arguments, candidate) &&
-				    IsApplicable (ec, Arguments, method))
-					continue;
-					
-				int x = BetterFunction (ec, Arguments, method, candidate,
-							chose_params_expanded, loc);
+                                if ((IsParamsMethodApplicable (ec, Arguments, candidate) &&
+                                     IsApplicable (ec, Arguments, method)))
+                                        continue;
+                                
+                                bool cand_params = (bool) candidate_to_form [candidate];
+				int x = BetterFunction (ec, Arguments,
+                                                        method, best_params,
+                                                        candidate, cand_params,
+							loc);
 
 				if (x != 1) {
  					Report.Error (
@@ -4607,9 +4669,8 @@ namespace Mono.CSharp {
 			// necessary etc. and return if everything is
 			// all right
 			//
-
-			if (!VerifyArgumentsCompat (ec, Arguments, argument_count, method,
-						   chose_params_expanded, null, loc))
+                        if (!VerifyArgumentsCompat (ec, Arguments, argument_count, method,
+                                                    best_params, null, loc))
 				return null;
 
 			return method;
@@ -4723,9 +4784,6 @@ namespace Mono.CSharp {
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
 					if (!Location.IsNull (loc)) {
-						Console.WriteLine ("A:P: " + a.GetParameterModifier ());
-						Console.WriteLine ("PP:: " + pd.ParameterModifier (j));
-						Console.WriteLine ("PT:  " + parameter_type.IsByRef);
 						Report.Error (1502, loc,
 						       "The best overloaded match for method '" + FullMethodDesc (method)+
 						       "' has some invalid arguments");
@@ -6321,6 +6379,29 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// This produces the value that renders an instance, used by the iterators code
+	//
+	public class ProxyInstance : Expression, IMemoryLocation  {
+		public override Expression DoResolve (EmitContext ec)
+		{
+			eclass = ExprClass.Variable;
+			type = ec.ContainerType;
+			return this;
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldarg_0);
+
+		}
+		
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			ec.ig.Emit (OpCodes.Ldarg_0);
+		}
+	}
+	
 	/// <summary>
 	///   Implements the typeof operator
 	/// </summary>

@@ -20,6 +20,7 @@ COMPILER_SOURCES = \
 	enum.cs				\
 	ecore.cs			\
 	expression.cs 			\
+	flowanalysis.cs			\
 	generic.cs			\
 	interface.cs			\
 	iterators.cs			\
@@ -84,3 +85,6 @@ mcs2.exe: gmcs.exe
 
 mcs3.exe: mcs2.exe
 	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(all_sources)
+
+response:
+	echo $(all_sources) > res

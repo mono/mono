@@ -30,7 +30,7 @@ namespace Mono.CSharp
 
 	public class Tokenizer : yyParser.yyInput
 	{
-		StreamReader reader;
+		SeekableStreamReader reader;
 		public SourceFile ref_name;
 		public SourceFile file_name;
 		public int ref_line = 1;
@@ -335,7 +335,7 @@ namespace Mono.CSharp
 			defines [def] = true;
 		}
 		
-		public Tokenizer (StreamReader input, SourceFile file, ArrayList defs)
+		public Tokenizer (SeekableStreamReader input, SourceFile file, ArrayList defs)
 		{
 			this.ref_name = file;
 			this.file_name = file;
@@ -384,8 +384,28 @@ namespace Mono.CSharp
 				return Token.CLOSE_BRACKET;
 			case '(':
 				return Token.OPEN_PARENS;
-			case ')':
-				return Token.CLOSE_PARENS;
+			case ')': {
+				if (deambiguate_close_parens == 0)
+					return Token.CLOSE_PARENS;
+
+				--deambiguate_close_parens;
+
+				// Save current position and parse next token.
+				int old = reader.Position;
+				int new_token = token ();
+				reader.Position = old;
+				putback_char = -1;
+
+				if (new_token == Token.OPEN_PARENS)
+					return Token.CLOSE_PARENS_OPEN_PARENS;
+				else if (new_token == Token.MINUS)
+					return Token.CLOSE_PARENS_MINUS;
+				else if (IsCastToken (new_token))
+					return Token.CLOSE_PARENS_CAST;
+				else
+					return Token.CLOSE_PARENS_NO_CAST;
+			}
+
 			case ',':
 				return Token.COMMA;
 			case ':':
@@ -527,6 +547,14 @@ namespace Mono.CSharp
 				return Token.OP_GT;
 			}
 			return Token.ERROR;
+		}
+
+		int deambiguate_close_parens = 0;
+
+		public void Deambiguate_CloseParens ()
+		{
+			putback (')');
+			deambiguate_close_parens++;
 		}
 
 		void Error_NumericConstantTooLong ()
@@ -999,12 +1027,44 @@ namespace Mono.CSharp
 		{
 			return val;
 		}
-		
-		public int token ()
+
+		bool IsCastToken (int token)
 		{
-			current_token = xtoken ();
-			return current_token;
+			switch (token) {
+			case Token.BANG:
+			case Token.TILDE:
+			case Token.IDENTIFIER:
+			case Token.LITERAL_INTEGER:
+			case Token.LITERAL_FLOAT:
+			case Token.LITERAL_DOUBLE:
+			case Token.LITERAL_DECIMAL:
+			case Token.LITERAL_CHARACTER:
+			case Token.LITERAL_STRING:
+			case Token.BASE:
+			case Token.CHECKED:
+			case Token.FALSE:
+			case Token.FIXED:
+			case Token.NEW:
+			case Token.NULL:
+			case Token.SIZEOF:
+			case Token.THIS:
+			case Token.THROW:
+			case Token.TRUE:
+			case Token.TYPEOF:
+			case Token.UNCHECKED:
+			case Token.UNSAFE:
+				return true;
+
+			default:
+				return false;
+			}
 		}
+
+		public int token ()
+                {
+			current_token = xtoken ();
+                        return current_token;
+                }
 
 		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
 		

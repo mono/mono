@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections;
@@ -255,4 +256,76 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   This is a wrapper around StreamReader which is seekable.
+	/// </summary>
+	public class SeekableStreamReader
+	{
+		public SeekableStreamReader (StreamReader reader)
+		{
+			this.reader = reader;
+			this.buffer = new char [DefaultCacheSize];
+		}
+
+		public SeekableStreamReader (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks)
+			: this (new StreamReader (stream, encoding, detect_encoding_from_bytemarks))
+		{ }
+
+		StreamReader reader;
+
+		private const int DefaultCacheSize = 1024;
+
+		char[] buffer;
+		int buffer_start;
+		int buffer_size;
+		int pos;
+
+		/// <remarks>
+		///   The difference to the StreamReader's BaseStream.Position is that this one is reliable; ie. it
+		//    always reports the correct position and if it's modified, it also takes care of the buffered data.
+		/// </remarks>
+		public int Position {
+			get {
+				return buffer_start + pos;
+			}
+
+			set {
+				// This one is easy: we're modifying the position within our current
+				// buffer.
+				if ((value >= buffer_start) && (value < buffer_start + buffer_size)) {
+					pos = value - buffer_start;
+					return;
+				}
+
+				// Ok, now we need to seek.
+				reader.DiscardBufferedData ();
+				reader.BaseStream.Position = buffer_start = value;
+				buffer_size = pos = 0;
+			}
+		}
+
+		private bool ReadBuffer ()
+		{
+			pos = 0;
+			buffer_start += buffer_size;
+			buffer_size = reader.Read (buffer, 0, buffer.Length);
+			return buffer_size > 0;
+		}
+
+		public int Peek ()
+		{
+			if ((pos >= buffer_size) && !ReadBuffer ())
+				return -1;
+
+			return buffer [pos];
+		}
+
+		public int Read ()
+		{
+			if ((pos >= buffer_size) && !ReadBuffer ())
+				return -1;
+
+			return buffer [pos++];
+		}
+	}
 }

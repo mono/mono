@@ -64,12 +64,12 @@ namespace Mono.CSharp {
 			type = t;
 			eclass = ExprClass.Value;
 			loc = Location.Null;
-			builder = ec.GetTemporaryStorage (t);
+			builder = ec.GetTemporaryLocal (t);
 		}
 
 		public void Release (EmitContext ec)
 		{
-			ec.FreeTemporaryStorage (builder);
+			ec.FreeTemporaryLocal (builder, type);
 			builder = null;
 		}
 		
@@ -235,17 +235,10 @@ namespace Mono.CSharp {
 					// it will appear as a FieldExpr in that case.
 					//
 					
-					if (!(source is Binary)) {
+					if (!(source is BinaryDelegate)) {
 						error70 (ei, loc);
 						return null;
-					} else {
-						Binary tmp = ((Binary) source);
-						if (tmp.Oper != Binary.Operator.Addition &&
-						    tmp.Oper != Binary.Operator.Subtraction) {
-							error70 (ei, loc);
-							return null;
-						}
-					}
+					} 
 				}
 			}
 			
@@ -259,8 +252,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess &&
-			    target.eclass != ExprClass.IndexerAccess && target.eclass != ExprClass.PropertyAccess){
+			if (!(target is IAssignMethod) && (target.eclass != ExprClass.EventAccess)) {
 				Report.Error (131, loc,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");
@@ -288,7 +280,7 @@ namespace Mono.CSharp {
 				CompoundAssign a = (CompoundAssign) this;
 				
 				Binary b = source as Binary;
-				if (b != null && b.IsBuiltinOperator){
+				if (b != null){
 					//
 					// 1. if the source is explicitly convertible to the
 					//    target_type

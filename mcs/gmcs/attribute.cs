@@ -30,7 +30,7 @@ namespace Mono.CSharp {
 		
 		//
 		// The following are only meaningful when the attribute
-		// being emitted is one of the builtin ones
+		// being emitted is an AttributeUsage attribute
 		//
 		AttributeTargets Targets;
 		bool AllowMultiple;
@@ -42,7 +42,7 @@ namespace Mono.CSharp {
 		UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
 	
-		/* non-null if named args present after Resolve () is called */
+		// non-null if named args present after Resolve () is called
 		PropertyInfo [] prop_info_arr;
 		FieldInfo [] field_info_arr;
 		object [] field_values_arr;
@@ -81,7 +81,10 @@ namespace Mono.CSharp {
 			Report.Error (
 				-202, loc, "Can not use a type parameter in an attribute");
 		}
-		
+
+		/// <summary>
+                ///   Tries to resolve the type of the attribute. Flags an error if it can't.
+                /// </summary>
 		private Type CheckAttributeType (EmitContext ec) {
 			Type t;
 			bool isattributeclass = true;
@@ -167,6 +170,12 @@ namespace Mono.CSharp {
 			UsageAttr = false;
 
 			bool DoCompares = true;
+
+                        //
+                        // If we are a certain special attribute, we
+                        // set the information accordingly
+                        //
+                        
 			if (Type == TypeManager.attribute_usage_type)
 				UsageAttr = true;
 			else if (Type == TypeManager.methodimpl_attr_type)
@@ -425,7 +434,8 @@ namespace Mono.CSharp {
 				// Don't know what to do here
 				//
 				Report.Warning (
-				        -100, Location, "NullReferenceException while trying to create attribute. Something's wrong!");
+				        -100, Location, "NullReferenceException while trying to create attribute." +
+                                        "Something's wrong!");
 			} catch (Exception e) {
 				//
 				// Sample:
@@ -442,7 +452,10 @@ namespace Mono.CSharp {
 			return cb;
 		}
 
-		static string GetValidPlaces (Attribute attr)
+                /// <summary>
+                ///   Get a string containing a list of valid targets for the attribute 'attr'
+                /// </summary>
+		static string GetValidTargets (Attribute attr)
 		{
 			StringBuilder sb = new StringBuilder ();
 			AttributeTargets targets = 0;
@@ -523,10 +536,13 @@ namespace Mono.CSharp {
 			Report.Error (
 				592, loc, "Attribute '" + a.Name +
 				"' is not valid on this declaration type. " +
-				"It is valid on " + GetValidPlaces (a) + "declarations only.");
+				"It is valid on " + GetValidTargets (a) + "declarations only.");
 		}
 
-		public static bool CheckAttribute (Attribute a, object element)
+                /// <summary>
+                ///   Ensure that Attribute 'a' is being applied to the right target
+                /// </summary>
+		public static bool CheckAttributeTarget (Attribute a, object element)
 		{
 			TypeContainer attr = TypeManager.LookupAttr (a.Type);
 			AttributeTargets targets = 0;
@@ -742,7 +758,8 @@ namespace Mono.CSharp {
 			return ((StringConstant) arg.Expr).Value;
 		}
 
-		static object GetFieldValue (Attribute a, string name) {
+		static object GetFieldValue (Attribute a, string name)
+                {
 			int i;
 			if (a.field_info_arr == null)
 				return null;
@@ -755,11 +772,13 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static UnmanagedMarshal GetMarshal (Attribute a) {
+		static UnmanagedMarshal GetMarshal (Attribute a)
+                {
 			UnmanagedMarshal marshal;
 
 			if (a.UnmanagedType == UnmanagedType.CustomMarshaler) {
-				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom", BindingFlags.Static | BindingFlags.Public);
+				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
+                                                                       BindingFlags.Static | BindingFlags.Public);
 				if (define_custom == null) {
 					return null;
 				}
@@ -778,9 +797,9 @@ namespace Mono.CSharp {
 			return marshal;
 		}
 
-		//
-		// Applies the attributes to the `builder'.
-		//
+		/// <summary>
+		///   Applies the attributes specified on target 'kind' to the `builder'.
+		/// </summary>
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs)
 		{
@@ -815,7 +834,7 @@ namespace Mono.CSharp {
 						continue;
 					
 					if (!(kind is TypeContainer))
-						if (!CheckAttribute (a, kind)) {
+						if (!CheckAttributeTarget (a, kind)) {
 							Error_AttributeNotValidForElement (a, loc);
 							return;
 						}
@@ -898,7 +917,7 @@ namespace Mono.CSharp {
 							}
 
 						} else {
-							if (!CheckAttribute (a, kind)) {
+							if (!CheckAttributeTarget (a, kind)) {
 								Error_AttributeNotValidForElement (a, loc);
 								return;
 							}
@@ -928,7 +947,7 @@ namespace Mono.CSharp {
 							return;
 						}
 
-						if (!CheckAttribute (a, kind)) {
+						if (!CheckAttributeTarget (a, kind)) {
 							Error_AttributeNotValidForElement (a, loc);
 							return;
 						}

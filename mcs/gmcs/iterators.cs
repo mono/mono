@@ -96,8 +96,8 @@ namespace Mono.CSharp {
 			if (!Yield.CheckContext (ec, loc))
 				return false;
 
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Always;
 			return true;
 		}
 
@@ -255,9 +255,13 @@ namespace Mono.CSharp {
 		// Invoked when a local variable declaration needs to be mapped to
 		// a field in our proxy class
 		//
-		public FieldBuilder MapVariable (string name, Type t)
+		// Prefixes registered:
+		//   v_   for EmitContext.MapVariable
+		//   s_   for Storage
+		//
+		public FieldBuilder MapVariable (string pfx, string name, Type t)
 		{
-			return enumerator_proxy_class.DefineField ("v" + name, t, FieldAttributes.Public);
+			return enumerator_proxy_class.DefineField (pfx + name, t, FieldAttributes.Public);
 		}
 		
 		void Create_Reset ()

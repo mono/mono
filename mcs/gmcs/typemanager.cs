@@ -1622,6 +1622,11 @@ public class TypeManager {
 		return true;
 	}
 
+	//
+	// The return value can be null;  This will be the case for
+	// auxiliary FieldBuilders created by the compiler that have no
+	// real field being declared on the source code
+	//
 	static public FieldBase GetField (FieldInfo fb)
 	{
 		return (FieldBase) fieldbuilders_to_fields [fb];
@@ -2051,14 +2056,19 @@ public class TypeManager {
 	//
 	// Returns whether the array of memberinfos contains the given method
 	//
-	static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method)
+	public static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method)
 	{
 		Type [] new_args = TypeManager.GetArgumentTypes (new_method);
 		
-		foreach (MethodBase method in array){
+		foreach (MethodBase method in array) {
 			if (method.Name != new_method.Name)
 				continue;
-			
+
+                        if (method is MethodInfo && new_method is MethodInfo)
+                                if (((MethodInfo) method).ReturnType != ((MethodInfo) new_method).ReturnType)
+                                        continue;
+
+                        
 			Type [] old_args = TypeManager.GetArgumentTypes (method);
 			int old_count = old_args.Length;
 			int i;
@@ -2075,6 +2085,7 @@ public class TypeManager {
 
 			return true;
 		}
+                
 		return false;
 	}
 	

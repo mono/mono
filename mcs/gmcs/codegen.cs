@@ -119,6 +119,52 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// Provides "local" store across code that can yield: locals
+	// or fields, notice that this should not be used by anonymous
+	// methods to create local storage, those only require
+	// variable mapping.
+	//
+	public class VariableStorage {
+		ILGenerator ig;
+		FieldBuilder fb;
+		LocalBuilder local;
+		
+		static int count;
+		
+		public VariableStorage (EmitContext ec, Type t)
+		{
+			count++;
+			if (ec.InIterator)
+				fb = IteratorHandler.Current.MapVariable ("s_", count.ToString (), t);
+			else
+				local = ec.ig.DeclareLocal (t);
+			ig = ec.ig;
+		}
+
+		public void EmitThis ()
+		{
+			if (fb != null)
+				ig.Emit (OpCodes.Ldarg_0);
+		}
+
+		public void EmitStore ()
+		{
+			if (fb == null)
+				ig.Emit (OpCodes.Stloc, local);
+			else
+				ig.Emit (OpCodes.Stfld, fb);
+		}
+
+		public void EmitLoad ()
+		{
+			if (fb == null)
+				ig.Emit (OpCodes.Ldloc, local);
+			else 
+				ig.Emit (OpCodes.Ldfld, fb);
+		}
+	}
+	
 	/// <summary>
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
@@ -344,7 +390,7 @@ namespace Mono.CSharp {
 		//   Starts a new code branching.  This inherits the state of all local
 		//   variables and parameters from the current branching.
 		// </summary>
-		public FlowBranching StartFlowBranching (FlowBranchingType type, Location loc)
+		public FlowBranching StartFlowBranching (FlowBranching.BranchingType type, Location loc)
 		{
 			FlowBranching cfb = new FlowBranching (CurrentBranching, type, null, loc);
 
@@ -359,12 +405,12 @@ namespace Mono.CSharp {
 		public FlowBranching StartFlowBranching (Block block)
 		{
 			FlowBranching cfb;
-			FlowBranchingType type;
+			FlowBranching.BranchingType type;
 
-			if (CurrentBranching.Type == FlowBranchingType.SWITCH)
-				type = FlowBranchingType.SWITCH_SECTION;
+			if (CurrentBranching.Type == FlowBranching.BranchingType.Switch)
+				type = FlowBranching.BranchingType.SwitchSection;
 			else
-				type = FlowBranchingType.BLOCK;
+				type = FlowBranching.BranchingType.Block;
 
 			cfb = new FlowBranching (CurrentBranching, type, block, block.StartLocation);
 
@@ -377,7 +423,7 @@ namespace Mono.CSharp {
 		//   Ends a code branching.  Merges the state of locals and parameters
 		//   from all the children of the ending branching.
 		// </summary>
-		public FlowReturns EndFlowBranching ()
+		public FlowBranching.FlowReturns EndFlowBranching ()
 		{
 			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
 
@@ -404,7 +450,7 @@ namespace Mono.CSharp {
 			    try {
 				int errors = Report.Errors;
 
-				block.EmitMeta (this, ip, block);
+				block.EmitMeta (this, ip);
 
 				if (Report.Errors == errors){
 					bool old_do_flow_analysis = DoFlowAnalysis;
@@ -420,15 +466,15 @@ namespace Mono.CSharp {
 					}
 
 					cfb = (FlowBranching) FlowStack.Pop ();
-					FlowReturns returns = cfb.MergeTopBlock ();
+					FlowBranching.FlowReturns returns = cfb.MergeTopBlock ();
 
 					DoFlowAnalysis = old_do_flow_analysis;
 
 					has_ret = block.Emit (this);
 
-					if ((returns == FlowReturns.ALWAYS) ||
-					    (returns == FlowReturns.EXCEPTION) ||
-					    (returns == FlowReturns.UNREACHABLE))
+					if ((returns == FlowBranching.FlowReturns.Always) ||
+					    (returns == FlowBranching.FlowReturns.Exception) ||
+					    (returns == FlowBranching.FlowReturns.Unreachable))
 						has_ret = true;
 
 					if (Report.Errors == errors){
@@ -508,24 +554,60 @@ namespace Mono.CSharp {
 		///   Returns a temporary storage for a variable of type t as 
 		///   a local variable in the current body.
 		/// </summary>
-		public LocalBuilder GetTemporaryStorage (Type t)
+		public LocalBuilder GetTemporaryLocal (Type t)
 		{
-			LocalBuilder location;
+			LocalBuilder location = null;
 			
 			if (temporary_storage != null){
-				location = (LocalBuilder) temporary_storage [t];
-				if (location != null)
-					return location;
+				object o = temporary_storage [t];
+				if (o != null){
+					if (o is ArrayList){
+						ArrayList al = (ArrayList) o;
+						
+						for (int i = 0; i < al.Count; i++){
+							if (al [i] != null){
+								location = (LocalBuilder) al [i];
+								al [i] = null;
+								break;
+							}
+						}
+					} else
+						location = (LocalBuilder) o;
+					if (location != null)
+						return location;
+				}
 			}
 			
-			location = ig.DeclareLocal (t);
-			
-			return location;
+			return ig.DeclareLocal (t);
 		}
 
-		public void FreeTemporaryStorage (LocalBuilder b)
+		public void FreeTemporaryLocal (LocalBuilder b, Type t)
 		{
-			// Empty for now.
+			if (temporary_storage == null){
+				temporary_storage = new Hashtable ();
+				temporary_storage [t] = b;
+				return;
+			}
+			object o = temporary_storage [t];
+			if (o == null){
+				temporary_storage [t] = b;
+				return;
+			}
+			if (o is ArrayList){
+				ArrayList al = (ArrayList) o;
+				for (int i = 0; i < al.Count; i++){
+					if (al [i] == null){
+						al [i] = b;
+						return;
+					}
+				}
+				al.Add (b);
+				return;
+			}
+			ArrayList replacement = new ArrayList ();
+			replacement.Add (o);
+			temporary_storage.Remove (t);
+			temporary_storage [t] = replacement;
 		}
 
 		/// <summary>
@@ -583,12 +665,44 @@ namespace Mono.CSharp {
 		public FieldBuilder MapVariable (string name, Type t)
 		{
 			if (InIterator){
-				return IteratorHandler.Current.MapVariable (name, t);
+				return IteratorHandler.Current.MapVariable ("v_", name, t);
 			}
 
 			throw new Exception ("MapVariable for an unknown state");
 		}
 
+		//
+		// Invoke this routine to remap a VariableInfo into the
+		// proper MemberAccess expression
+		//
+		public Expression RemapLocal (LocalInfo local_info)
+		{
+			FieldExpr fe = new FieldExpr (local_info.FieldBuilder, loc);
+			fe.InstanceExpression = new ProxyInstance ();
+			return fe.DoResolve (this);
+		}
+
+		public Expression RemapLocalLValue (LocalInfo local_info, Expression right_side)
+		{
+			FieldExpr fe = new FieldExpr (local_info.FieldBuilder, loc);
+			fe.InstanceExpression = new ProxyInstance ();
+			return fe.DoResolveLValue (this, right_side);
+		}
+
+		public Expression RemapParameter (int idx)
+		{
+			FieldExpr fe = new FieldExprNoAddress (IteratorHandler.Current.parameter_fields [idx], loc);
+			fe.InstanceExpression = new ProxyInstance ();
+			return fe.DoResolve (this);
+		}
+
+		public Expression RemapParameterLValue (int idx, Expression right_side)
+		{
+			FieldExpr fe = new FieldExprNoAddress (IteratorHandler.Current.parameter_fields [idx], loc);
+			fe.InstanceExpression = new ProxyInstance ();
+			return fe.DoResolveLValue (this, right_side);
+		}
+		
 		//
 		// Emits the proper object to address fields on a remapped
 		// variable/parameter to field in anonymous-method/iterator proxy classes.
@@ -605,22 +719,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void EmitArgument (int idx)
-		{
-			if (InIterator)
-				ig.Emit (OpCodes.Ldfld, IteratorHandler.Current.parameter_fields [idx]);
-			else
-				throw new Exception ("EmitStoreArgument for an unknown state");
-		}
-		
-		public void EmitStoreArgument (int idx)
-		{
-			if (InIterator)
-				ig.Emit (OpCodes.Stfld, IteratorHandler.Current.parameter_fields [idx]);
-			else
-				throw new Exception ("EmitStoreArgument for an unknown state");
-		}
-		
 		public Expression GetThis (Location loc)
 		{
 			This my_this;

@@ -1,3 +1,185 @@
+2003-08-08  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowReturns): This is now nested in the
+	`FlowBranching' class.
+	(MyBitVector): Moved this here from statement.cs.
+	(FlowBranching.SiblingType): New enum type.
+	(FlowBranching.CreateSibling): Added `SiblingType' argument.
+
+2003-08-07  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranchingType): This is now nested in the
+	`FlowBranching' class and called `BranchingType'.
+
+2003-08-07  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs: Moved all the control flow analysis code into
+	its own file.
+
+2003-08-07  Martin Baulig  <martin@ximian.com>
+
+	* assign.cs (Assign.DoResolve): `target' must either be an
+	IAssignMethod or an EventAccess; report a CS0131 otherwise.  Fixes
+	#37319.
+
+2003-08-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (BinaryMethod): This kind of expression is created by the
+	Binary class if it determines that the operator has to be handled
+	by a method.
+
+	(BinaryDelegate): This kind of expression is created if we are
+	dealing with a + or - operator on delegates.
+
+	(Binary): remove method, argumetns, and DelegateOperator: when
+	dealing with methods, 
+	
+	* ecore.cs (EventExpr.EmitAddOrRemove): Update to new layout.
+
+	* statement.cs (Block): use bitfields for the three extra booleans
+	we had in use.   Remove unused topblock parameter.
+
+	* codegen.cs: Remove unecessary argument to Block.EmitTopBlock
+
+	* assign.cs: Drop extra unneeded tests.
+
+2003-08-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* iterators.cs (Mapvariable): provide a mechanism to use prefixes.
+
+	* statement.cs (Foreach): Use VariableStorage instead of
+	LocalBuilders.   
+
+	* codegen.cs (VariableStorage): New class used by clients that
+	require a variable stored: locals or fields for variables that
+	need to live across yield.
+
+	Maybe provide a convenience api for EmitThis+EmitLoad?
+
+	(GetTemporaryLocal, FreeTemporaryLocal): Recycle
+	these bad boys.
+
+2003-08-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (RemapLocal, RemapLocalLValue, RemapParameter,
+	RemapParameterLValue): New methods that are used to turn a
+	precomputed FieldInfo into an expression like this:
+
+		instance.FieldInfo
+
+	The idea is to use this instead of making LocalVariableReference
+	have more than one meaning.
+
+	* cs-parser.jay: Add error production to BASE.
+
+	* ecore.cs: Deal with TypeManager.GetField returning null, which
+	is now a valid return value.
+
+	(FieldExprNoAddress): New expression for Fields whose address can
+	not be taken.
+
+	* expression.cs (LocalVariableReference): During the resolve
+	phases, create new expressions if we are in a remapping context.
+	Remove code that dealt with remapping here.
+
+	(ParameterReference): same.
+
+	(ProxyInstance): New expression, like the `This' expression, but
+	it is born fully resolved.  We know what we are doing, so remove
+	the errors that are targeted to user-provided uses of `this'.
+
+	* statement.cs (Foreach): our variable is now stored as an
+	Expression;  During resolution, follow the protocol, dont just
+	assume it will return this.
+	
+2003-08-06  Martin Baulig  <martin@ximian.com>
+
+	* support.cs (SeekableStreamReader.cs): New public class.
+
+	* cs-tokenizer.cs, cs-parser.jay, driver.cs: Use the new
+	SeekableStreamReader instead of the normal StreamReader.
+
+2003-08-04  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (CLOSE_PARENS_CAST, CLOSE_PARENS_NO_CAST,
+	CLOSE_PARENS_OPEN_PARENS, CLOSE_PARENS_MINUS): New tokens to
+	deambiguate casts and delegate invocations.
+	(parenthesized_expression): Use the new tokens to ensure this is
+	not a cast of method invocation.
+
+	* cs-tokenizer.cs (is_punct): Return one of the new special tokens
+	when reading a `)' and Deambiguate_CloseParens () was previously
+	called.
+
+	* expression.cs (ParenthesizedExpression): New class.  This is
+	just used for the CS0075 test.
+	(Binary.DoResolve): Check for CS0075.	
+
+2003-07-29  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation.MakeUnionSet): Patch from Lluis
+	Sanchez : use TypeManager.ArrayContainsMethod instead of a direct
+	reference comparison.
+
+	(TypeManager.ArrayContainsMethod): When we have a MethodInfo, also
+	examine the ReturnType for equality - this is necessary in the
+	cases of implicit and explicit operators whose signature also
+	includes the return type.
+
+2003-07-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* namespace.cs: Cache the result of the namespace computation,
+	instead of computing it every time.
+
+2003-07-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs: Use a global arraylist that we reuse over invocations
+	to avoid excesive memory consumption.  Reduces memory usage on an
+	mcs compile by one meg (45 average).
+
+	* typemanager.cs (LookupTypeReflection): In .NET pointers are
+	private, work around that.
+
+2003-07-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* literal.cs (IntLiteral): Define Zero and One static literals. 
+
+	* cs-parser.jay (integer_literal): use static literals to reduce
+	memory usage for the most used literals (0, 1 and -1).  211kb
+	reduced in memory usage.
+
+	Replace all calls to `new ArrayList' with `new
+	ArrayList(4)' which is a good average number for most allocations,
+	and also requires only 16 bytes of memory for its buffer by
+	default. 
+
+	This reduced MCS memory usage in seven megabytes for the RSS after
+	bootstrapping.
+
+2003-07-28  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Fix the algorithm to
+	handle params methods the correct way by forming only one
+	applicable set with params and normal methods in them. Earlier we
+	were looking at params methods only if we found no normal methods
+	which was not the correct thing to do.
+
+	(Invocation.BetterFunction): Take separate arguments indicating
+	when candidate and the best method are params methods in their
+	expanded form.
+
+	This fixes bugs #43367 and #46199.
+
+	* attribute.cs: Documentation updates.
+
+	(CheckAttribute): Rename to CheckAttributeTarget.
+	(GetValidPlaces): Rename to GetValidTargets.
+
+	* expression.cs (Invocation.IsParamsMethodApplicable): Fix trivial
+	bug - use Convert.ImplicitConversion, not ImplicitUserConversion!
+
+	Fixes bug #44468.
+
 2003-07-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs: Compute IsGeneric correctly.

@@ -2304,7 +2304,8 @@ namespace Mono.CSharp {
 
 						if (par_attr == ParameterAttributes.Out){
 							if (attr.Contains (TypeManager.in_attribute_type))
-								Report.Error (36, Location, "Can not use [In] attribute on out parameter");
+								Report.Error (36, Location,
+                                                                    "Can not use [In] attribute on out parameter");
 						}
 					}
 				}
@@ -2356,7 +2357,8 @@ namespace Mono.CSharp {
 				} catch (ArgumentOutOfRangeException) {
 					Report.Warning (
 						-24, Location,
-						".NET SDK 1.0 does not permit to set custom attributes to the return type of a method");
+				                ".NET SDK 1.0 does not permit setting custom attributes" +
+                                                " on the return type of a method");
 				}
 			}
 		}
