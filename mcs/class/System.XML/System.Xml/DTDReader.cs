@@ -649,7 +649,6 @@ namespace System.Xml
 		{
 			if (decl.LiteralEntityValue.StartsWith ("<?xml")) {
 				XmlTextReader xtr = new XmlTextReader (decl.LiteralEntityValue, XmlNodeType.Element, null);
-				xtr.SkipTextDeclaration ();
 				if (decl is DTDEntityDeclaration) {
 					// GE - also checked as valid contents
 					StringBuilder sb = new StringBuilder ();

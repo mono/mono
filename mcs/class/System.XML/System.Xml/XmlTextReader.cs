@@ -1217,10 +1217,12 @@ namespace System.Xml
 			switch (fragType) {
 			case XmlNodeType.Attribute:
 				reader = new StringReader (fragment.ReadToEnd ().Replace ("\"", "&quot;"));
+				SkipTextDeclaration ();
 				break;
 			case XmlNodeType.Element:
 				currentState = XmlNodeType.Element;
 				allowMultipleRoot = true;
+				SkipTextDeclaration ();
 				break;
 			case XmlNodeType.Document:
 				break;
@@ -2126,7 +2128,7 @@ namespace System.Xml
 			Expect ("?>");
 		}
 
-		internal void SkipTextDeclaration ()
+		private void SkipTextDeclaration ()
 		{
 			this.currentState = XmlNodeType.Element;
 

@@ -929,7 +929,6 @@ namespace Mono.Xml
 				nextEntityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ParserContext);
 			}
 			nextEntityReader.XmlResolver = resolver;
-			nextEntityReader.SkipTextDeclaration ();
 		}
 
 		public override int AttributeCount {
