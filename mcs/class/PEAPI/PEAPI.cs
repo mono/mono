@@ -104,7 +104,7 @@ namespace PEAPI
                     this.type = type;
                     this.is_value = is_value;
                     if (is_value)
-                            typeIndex = 0x11;
+                            type.SetTypeIndex (0x11);
                     tabIx = MDTable.TypeSpec;
             }
 
@@ -6692,7 +6692,8 @@ CalcHeapSizes ();
     internal Type(byte tyIx) { typeIndex = tyIx; }
 
     internal byte GetTypeIndex() { return typeIndex; }
-
+    internal void SetTypeIndex (byte b) { typeIndex = b; }
+          
     internal virtual MetaDataElement GetTypeSpec(MetaData md) {
       if (typeSpec == null) {
         typeSpec = new TypeSpec(this,md);

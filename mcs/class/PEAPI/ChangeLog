@@ -1,3 +1,8 @@
+2004-07-23  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: Make the type index modifiable so ClassRefInsts will
+	be emitted properly. This is in desperate need of some API love.
+	
 2004-07-21  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: Do all the index size checks. I always wondered why
