@@ -41,11 +41,8 @@ namespace System.Drawing
                 
 		public Region()
 		{                  
-			lock (this)
-			{      
-				Status status = GDIPlus.GdipCreateRegion (out nativeRegion);
-				GDIPlus.CheckStatus (status);
-			}
+			Status status = GDIPlus.GdipCreateRegion (out nativeRegion);
+			GDIPlus.CheckStatus (status);
 		}
 
                 internal Region(IntPtr native)
@@ -56,29 +53,20 @@ namespace System.Drawing
 		
 		public Region (GraphicsPath path)
 		{	
-			lock (this)
-			{      					
-				Status status = GDIPlus.GdipCreateRegionPath (path.NativeObject, out nativeRegion);
-				GDIPlus.CheckStatus (status);
-			}
+			Status status = GDIPlus.GdipCreateRegionPath (path.NativeObject, out nativeRegion);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Region (Rectangle rect)                
 		{
-			lock (this)
-			{      			
-				Status status = GDIPlus.GdipCreateRegionRectI (ref rect, out nativeRegion);
-				GDIPlus.CheckStatus (status);
-			}
+			Status status = GDIPlus.GdipCreateRegionRectI (ref rect, out nativeRegion);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Region (RectangleF rect)
 		{
-			lock (this)
-			{      							
-				Status status = GDIPlus.GdipCreateRegionRect (ref rect, out nativeRegion);
-				GDIPlus.CheckStatus (status);
-			}
+			Status status = GDIPlus.GdipCreateRegionRect (ref rect, out nativeRegion);
+			GDIPlus.CheckStatus (status);
 		}
 
                 [MonoTODO]
@@ -537,15 +525,12 @@ namespace System.Drawing
 		
 		public Region Clone()
 		{
-			lock (this)
-			{
-				IntPtr cloned;
+			IntPtr cloned;
 				
-				Status status = GDIPlus.GdipCloneRegion (nativeRegion, out cloned);
-				GDIPlus.CheckStatus (status);
+			Status status = GDIPlus.GdipCloneRegion (nativeRegion, out cloned);
+			GDIPlus.CheckStatus (status);
 				
-				return new Region (cloned); 
-			}
+			return new Region (cloned); 
 		}
 
 		public void Dispose ()
@@ -556,12 +541,8 @@ namespace System.Drawing
 
 		void Dispose (bool disposing)
 		{
-			if (disposing) {
-				lock (this)
-				{
-					GDIPlus.GdipDeleteRegion (nativeRegion);
-				}
-			}
+			if (disposing) 
+				GDIPlus.GdipDeleteRegion (nativeRegion);
 		}
 
 		~Region ()

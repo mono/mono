@@ -58,72 +58,51 @@ namespace System.Drawing
 
 		public TextureBrush (Image image, Rectangle dstRect)
 		{
-			lock (this)
-			{
-				this.image = image;
-				Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-				GDIPlus.CheckStatus (status);
-			}
+			this.image = image;
+			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			GDIPlus.CheckStatus (status);			
 		}
 
 		public TextureBrush (Image image, RectangleF dstRect)
 		{
-			lock (this)
-			{			
-				this.image = image;
-				Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-				GDIPlus.CheckStatus (status);
-			}
+			this.image = image;
+			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode)
 		{
-			lock (this)
-			{			
-				this.image = image;
-				Status status = GDIPlus.GdipCreateTexture (image.nativeObject, wrapMode, out nativeObject);
-				GDIPlus.CheckStatus (status);
-			}
+			this.image = image;
+			Status status = GDIPlus.GdipCreateTexture (image.nativeObject, wrapMode, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, Rectangle dstRect, ImageAttributes imageAttr)
 		{
-			lock (this)
-			{			
-				this.image = image;
-				Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-				GDIPlus.CheckStatus (status);
-			}
+			this.image = image;
+			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, RectangleF dstRect, ImageAttributes imageAttr)
-		{
-			lock (this)
-			{
-				this.image = image;
-				Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-				GDIPlus.CheckStatus (status);
-			}
+		{	
+			this.image = image;
+			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			GDIPlus.CheckStatus (status);			
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode, Rectangle dstRect)
 		{
-			lock (this)
-			{			
-				this.image = image;
-				Status status = GDIPlus.GdipCreateTexture2I (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-				GDIPlus.CheckStatus (status);
-			}
+			this.image = image;
+			Status status = GDIPlus.GdipCreateTexture2I (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode, RectangleF dstRect)
 		{
-			lock (this)
-			{			
-				this.image = image;
-				Status status = GDIPlus.GdipCreateTexture2 (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-				GDIPlus.CheckStatus (status);
-			}
+			this.image = image;
+			Status status = GDIPlus.GdipCreateTexture2 (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		// properties

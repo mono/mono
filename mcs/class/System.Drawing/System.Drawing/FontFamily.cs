@@ -143,14 +143,12 @@ namespace System.Drawing {
 			{
 				if (genericMonospace == null) 
 				{
-					lock (typeof (FontFamily))
-					{
-						IntPtr generic = IntPtr.Zero;
-						Status status = GDIPlus.GdipGetGenericFontFamilyMonospace (out generic);
-						GDIPlus.CheckStatus (status);
-						genericMonospace = new FontFamily (generic);
-						genericMonospace.refreshName ();
-					}
+					IntPtr generic = IntPtr.Zero;
+					Status status = GDIPlus.GdipGetGenericFontFamilyMonospace (out generic);
+					GDIPlus.CheckStatus (status);
+					genericMonospace = new FontFamily (generic);						
+					genericMonospace.refreshName ();
+					
 				}
 				return genericMonospace;
 			}
@@ -162,14 +160,12 @@ namespace System.Drawing {
 			{
 				if (genericSansSerif == null) 
 				{
-					lock (typeof (FontFamily))
-					{
-						IntPtr generic = IntPtr.Zero;
-						Status status = GDIPlus.GdipGetGenericFontFamilySansSerif (out generic);
-						GDIPlus.CheckStatus (status);
-						genericSansSerif = new FontFamily (generic);
-						genericSansSerif.refreshName ();
-					}
+					IntPtr generic = IntPtr.Zero;
+					Status status = GDIPlus.GdipGetGenericFontFamilySansSerif (out generic);
+					GDIPlus.CheckStatus (status);
+					genericSansSerif = new FontFamily (generic);
+					genericSansSerif.refreshName ();
+					
 				}
 				return genericSansSerif;
 			}
@@ -181,14 +177,11 @@ namespace System.Drawing {
 			{
 				if (genericSerif == null) 
 				{
-					lock (typeof (FontFamily))
-					{
-						IntPtr generic = IntPtr.Zero;
-						Status status = GDIPlus.GdipGetGenericFontFamilySerif (out generic);
-						GDIPlus.CheckStatus (status);
-						genericSerif = new FontFamily (generic);
-						genericSerif.refreshName ();
-					}
+					IntPtr generic = IntPtr.Zero;
+					Status status = GDIPlus.GdipGetGenericFontFamilySerif (out generic);
+					GDIPlus.CheckStatus (status);
+					genericSerif = new FontFamily (generic);
+					genericSerif.refreshName ();
 				}
 				return genericSerif;
 			}
@@ -277,14 +270,10 @@ namespace System.Drawing {
 		
 		public void Dispose ()
 		{	
-			lock (this)
-			{
-				Status status = GDIPlus.GdipDeleteFontFamily (nativeFontFamily);
-				if ( status == Status.Ok ) 
-					nativeFontFamily = IntPtr.Zero;							
-			}
-		}
-		
+			Status status = GDIPlus.GdipDeleteFontFamily (nativeFontFamily);
+			if ( status == Status.Ok ) 
+				nativeFontFamily = IntPtr.Zero;								
+		}		
 		
 		public override bool Equals(object obj)
 		{

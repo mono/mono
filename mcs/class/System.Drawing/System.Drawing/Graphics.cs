@@ -153,12 +153,9 @@ namespace System.Drawing
 		{
 			Status status;
 			if (! disposed) {
-				lock (this)
-				{
-					status = GDIPlus.GdipDeleteGraphics (nativeObject);
-					GDIPlus.CheckStatus (status);
-					disposed = true;
-				}
+				status = GDIPlus.GdipDeleteGraphics (nativeObject);
+				GDIPlus.CheckStatus (status);
+				disposed = true;				
 			}
 		}
 
@@ -1283,32 +1280,27 @@ namespace System.Drawing
 
 		public static Graphics FromImage (Image image)
 		{
-			lock (typeof (Graphics))
-			{
-				if (image == null) throw new ArgumentException ();
-				int graphics;
-				Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
-				GDIPlus.CheckStatus (status);
-				Graphics result = new Graphics ((IntPtr) graphics);
+			if (image == null) throw new ArgumentException ();
+
+			int graphics;
+			Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
+			GDIPlus.CheckStatus (status);
+			Graphics result = new Graphics ((IntPtr) graphics);
 				
-				if (Environment.OSVersion.Platform == (PlatformID) 128)  {
-					Rectangle rect  = new Rectangle (0,0, image.Width, image.Height);
-					GDIPlus.GdipSetVisibleClip_linux (result.NativeObject, ref rect);
-				}
-				
-				return result;
+			if (Environment.OSVersion.Platform == (PlatformID) 128)  {
+				Rectangle rect  = new Rectangle (0,0, image.Width, image.Height);
+				GDIPlus.GdipSetVisibleClip_linux (result.NativeObject, ref rect);
 			}
+				
+			return result;
 		}
 
 		internal static Graphics FromXDrawable (IntPtr drawable, IntPtr display)
 		{
-			lock (typeof (Graphics))
-			{
-				IntPtr graphics;
-				Status s = GDIPlus.GdipCreateFromXDrawable_linux (drawable, display, out graphics);
-				GDIPlus.CheckStatus (s);
-				return new Graphics (graphics);
-			}
+			IntPtr graphics;
+			Status s = GDIPlus.GdipCreateFromXDrawable_linux (drawable, display, out graphics);
+			GDIPlus.CheckStatus (s);
+			return new Graphics (graphics);
 		}
 
 		[MonoTODO]

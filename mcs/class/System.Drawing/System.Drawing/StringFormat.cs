@@ -50,15 +50,12 @@ namespace System.Drawing
 		
 		public StringFormat(StringFormatFlags options, int lang)
 		{
-			lock (this)
-			{
-				Status status = GDIPlus.GdipCreateStringFormat (options, lang, out nativeStrFmt);        			
-				GDIPlus.CheckStatus (status);
+			Status status = GDIPlus.GdipCreateStringFormat (options, lang, out nativeStrFmt);        			
+			GDIPlus.CheckStatus (status);
 	
-				LineAlignment =  StringAlignment.Near;
-				Alignment =  StringAlignment.Near;			
-				language = lang;
-			}
+			LineAlignment =  StringAlignment.Near;
+			Alignment =  StringAlignment.Near;			
+			language = lang;			
 		}
 		
 		internal StringFormat(IntPtr native)
@@ -80,31 +77,23 @@ namespace System.Drawing
 		void Dispose (bool disposing)
 		{
 			if (nativeStrFmt != IntPtr.Zero) {
-				lock (this)
-				{
-					Status status = GDIPlus.GdipDeleteStringFormat (nativeStrFmt);
-					GDIPlus.CheckStatus (status);
-				}
+				Status status = GDIPlus.GdipDeleteStringFormat (nativeStrFmt);
+				GDIPlus.CheckStatus (status);
+				
 				nativeStrFmt = IntPtr.Zero;
 			}
 		}
 
 		public StringFormat (StringFormat source)
 		{		
-			lock (this)
-			{	
-				Status status = GDIPlus.GdipCloneStringFormat (source.NativeObject, out nativeStrFmt);
-				GDIPlus.CheckStatus (status);
-			}
+			Status status = GDIPlus.GdipCloneStringFormat (source.NativeObject, out nativeStrFmt);
+			GDIPlus.CheckStatus (status);			
 		}
 
 		public StringFormat (StringFormatFlags flags)
 		{
-			lock (this)
-			{				
-				Status status = GDIPlus.GdipCreateStringFormat (flags, GDIPlus.LANG_NEUTRAL, out nativeStrFmt);
-				GDIPlus.CheckStatus (status);
-			}
+			Status status = GDIPlus.GdipCreateStringFormat (flags, GDIPlus.LANG_NEUTRAL, out nativeStrFmt);
+			GDIPlus.CheckStatus (status);			
 		}
 		
 		public StringAlignment Alignment {
@@ -184,15 +173,13 @@ namespace System.Drawing
 
 		public static StringFormat GenericDefault {
 			get {
-				lock (typeof (StringFormat))
-				{
-					IntPtr ptr;
+				IntPtr ptr;
 				
-					Status status = GDIPlus.GdipStringFormatGetGenericDefault (out ptr);
-					GDIPlus.CheckStatus (status);
+				Status status = GDIPlus.GdipStringFormatGetGenericDefault (out ptr);
+				GDIPlus.CheckStatus (status);
 	
-					return new StringFormat (ptr);
-				}
+				return new StringFormat (ptr);
+				
 			}
 		}
 		
@@ -207,15 +194,12 @@ namespace System.Drawing
 		public static StringFormat GenericTypographic {
 			get {
 			
-				lock (typeof (StringFormat))
-				{
-					IntPtr ptr;
+				IntPtr ptr;
 						
-					Status status = GDIPlus.GdipStringFormatGetGenericTypographic (out ptr);
-					GDIPlus.CheckStatus (status);
+				Status status = GDIPlus.GdipStringFormatGetGenericTypographic (out ptr);
+				GDIPlus.CheckStatus (status);
 	
-					return new StringFormat (ptr);				
-				}
+				return new StringFormat (ptr);
 			}
 		}
 
@@ -233,38 +217,29 @@ namespace System.Drawing
 
       		public void SetMeasurableCharacterRanges (CharacterRange [] range)
 		{					
-			lock (this)
-			{					
-				Status status = GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (nativeStrFmt, 
-					range.Length,	range);
+			Status status = GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (nativeStrFmt, 
+				range.Length,	range);
 				
-				GDIPlus.CheckStatus (status);			
-			}
+			GDIPlus.CheckStatus (status);
 		}
 		
 		internal int GetMeasurableCharacterRangeCount () 
 		{
-			lock (this)
-			{				
-				int cnt;		
-				Status status = GDIPlus.GdipGetStringFormatMeasurableCharacterRangeCount (nativeStrFmt, out cnt);
+			int cnt;		
+			Status status = GDIPlus.GdipGetStringFormatMeasurableCharacterRangeCount (nativeStrFmt, out cnt);
 				
-				GDIPlus.CheckStatus (status);			
-				return cnt;
-			}
+			GDIPlus.CheckStatus (status);			
+			return cnt;			
 		}			
 			
 		public object Clone()
 		{
-			lock (this)
-			{
-				IntPtr native;
+			IntPtr native;
 				
-				Status status = GDIPlus.GdipCloneStringFormat (nativeStrFmt, out native);
-				GDIPlus.CheckStatus (status);
+			Status status = GDIPlus.GdipCloneStringFormat (nativeStrFmt, out native);
+			GDIPlus.CheckStatus (status);
 	
-				return new StringFormat (native);
-			}
+			return new StringFormat (native);			
 		}
 
 		public override string ToString()

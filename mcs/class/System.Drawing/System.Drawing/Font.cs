@@ -63,10 +63,7 @@ namespace System.Drawing
 		public void Dispose ()
 		{
 			if (fontObject != IntPtr.Zero) {
-				lock (this)
-				{
-					GDIPlus.CheckStatus (GDIPlus.GdipDeleteFont (fontObject));
-				}
+				GDIPlus.CheckStatus (GDIPlus.GdipDeleteFont (fontObject));
 				GC.SuppressFinalize (this);
 			}
 		}
@@ -174,11 +171,9 @@ namespace System.Drawing
 			// If we're on Unix we use our private gdiplus API to avoid Wine 
 			// dependencies in S.D
 
-				lock (typeof (Font))
-				{
-					Status s = GDIPlus.GdipCreateFontFromHfont (Hfont, out newObject, ref lf);
-					GDIPlus.CheckStatus (s);
-				}
+				Status s = GDIPlus.GdipCreateFontFromHfont (Hfont, out newObject, ref lf);
+				GDIPlus.CheckStatus (s);
+				
 			} else {
 
 				// This needs testing
@@ -187,13 +182,10 @@ namespace System.Drawing
 
 				newStyle = FontStyle.Regular;
 
-				lock (typeof (Font))
-				{
-					hdc = GDIPlus.GetDC (IntPtr.Zero);
-					Font f = FromLogFont (lf, hdc);
-					GDIPlus.ReleaseDC (hdc);
-					return f;
-				}
+				hdc = GDIPlus.GetDC (IntPtr.Zero);
+				Font f = FromLogFont (lf, hdc);
+				GDIPlus.ReleaseDC (hdc);
+				return f;				
 			}
 
 			if (lf.lfItalic != 0) {
@@ -251,14 +243,11 @@ namespace System.Drawing
 
 		public Font (Font original, FontStyle style)
 		{
-			lock (this)
-			{
-				Status status;
-				setProperties (original.FontFamily, original.Size, style, original.Unit, original.GdiCharSet, original.GdiVerticalFont);
+			Status status;
+			setProperties (original.FontFamily, original.Size, style, original.Unit, original.GdiCharSet, original.GdiVerticalFont);
 				
-				status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);
-				GDIPlus.CheckStatus (status);
-			}
+			status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);
+			GDIPlus.CheckStatus (status);			
 		}
 
 		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
@@ -295,13 +284,10 @@ namespace System.Drawing
 				GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			// MS does not accept null family
-			lock (this)
-			{
-				Status status;
-				setProperties (family, emSize, style, unit, charSet, isVertical);		
-				status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style,   unit,  out fontObject);
-				GDIPlus.CheckStatus (status);
-			}
+			Status status;
+			setProperties (family, emSize, style, unit, charSet, isVertical);		
+			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style,   unit,  out fontObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Font (string familyName, float emSize)
@@ -327,17 +313,14 @@ namespace System.Drawing
 		public Font (string familyName, float emSize, FontStyle style,
 				GraphicsUnit unit, byte charSet, bool isVertical)
 		{
-			lock (this)
-			{
-				// NOTE: If family name is null, empty or invalid,
-				// MS creates Microsoft Sans Serif font.
-				Status status;
-				FontFamily family = new FontFamily (familyName);
-				setProperties (family, emSize, style, unit, charSet, isVertical);
-				
-				status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
-				GDIPlus.CheckStatus (status);
-			}
+			// NOTE: If family name is null, empty or invalid,
+			// MS creates Microsoft Sans Serif font.
+			Status status;
+			FontFamily family = new FontFamily (familyName);
+			setProperties (family, emSize, style, unit, charSet, isVertical);				
+
+			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
+			GDIPlus.CheckStatus (status);			
 		}
 
 		public object Clone ()
