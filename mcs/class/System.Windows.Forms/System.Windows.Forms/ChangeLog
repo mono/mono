@@ -328,3 +328,9 @@ Added delegates. All delegates in System.Windows.Forms done
 * Just stubbs
 * New files, work in progress, needs cleanup and mono style
 
+2002-6-18 DennisHayes <dennish@raytek.com>
+* checked in  for Stefan Warnke (StefanW@POBox.com)
+* UICuesEventArgs.cs
+* UpDownBase.cs
+* Better comments and formatting
+
