@@ -1,3 +1,7 @@
+2004-05-13 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* basic.cs: test for my new cmov stuff.
+
 2004-05-13	Patrik Torstensson
 
 	* mini-x86.c: added OP_X86_COMPARE_MEMBASE_IMM peephole
