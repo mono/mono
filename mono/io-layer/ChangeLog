@@ -1,4 +1,10 @@
-2003-13-08  Bernie Solomon  <bernard@ugsolutions.com>
+2003-12-12  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* wapi-private.h: Replace G_GNUC_PRETTY_FUNCTION
+	definition with file & line number for non-GCC
+	compiles.
+
+2003-12-08  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* Makefile.am: make sure hppa_atomic.s is in distribution
 
