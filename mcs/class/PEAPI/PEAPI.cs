@@ -5728,7 +5728,9 @@ namespace PEAPI
         if (!dirName.EndsWith("\\")) result += "\\";
       }
       result += name;
-      if (isDLL) result += ".dll";  else result += ".exe"; 
+       
+      // if (isDLL) result += ".dll";  else result += ".exe";
+      
       return result;
     }
 
