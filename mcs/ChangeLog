@@ -1,3 +1,7 @@
+2004-04-28  Jackson Harper  <jackson@ximian.com>
+
+	* Makefile: build the net_1_1 and net_2_0 profiles by default.
+	
 2004-01-14  Martin Willemoes Hansen  <mwh@sysrq.dk>
 
 	* INSTALL.txt: Fixed, autogen should be autogen.sh

@@ -5,7 +5,13 @@ include build/rules.make
 
 # Define these ourselves to that the platform checks come first
 
-all: platform-check profile-check all-recursive #all-local
+#all: platform-check profile-check all-recursive #all-local
+
+all:
+	$(MAKE) all-profile PROFILE=default || exit 1; \
+	$(MAKE) all-profile PROFILE=net_2_0 || exit 1;
+
+all-profile: platform-check profile-check all-recursive
 
 install: platform-check profile-check install-recursive #install-local
 
