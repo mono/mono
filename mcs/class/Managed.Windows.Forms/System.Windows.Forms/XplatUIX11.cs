@@ -619,6 +619,13 @@ namespace System.Windows.Forms {
 						goto begin;
 					}
 
+					// Try combining expose events to reduce drawing
+					while (XCheckWindowEvent (DisplayHandle, xevent.AnyEvent.window,
+							    EventMask.ExposureMask, ref xevent)) {
+						data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+					}
+
 					msg.message=Msg.WM_PAINT;
 					break;
 				}
@@ -825,6 +832,8 @@ namespace System.Windows.Forms {
 		internal extern static IntPtr XRootWindow(IntPtr display, int screen_number);
 		[DllImport ("libX11.so", EntryPoint="XNextEvent")]
 		internal extern static IntPtr XNextEvent(IntPtr display, ref XEvent xevent);
+		[DllImport ("libX11.so")]
+		internal extern static bool XCheckWindowEvent (IntPtr display, IntPtr window, EventMask mask, ref XEvent xevent);
 		[DllImport ("libX11.so", EntryPoint="XSelectInput")]
 		internal extern static IntPtr XSelectInput(IntPtr display, IntPtr window, EventMask mask);
 		[DllImport ("libX11.so", EntryPoint="XLookupString")]
