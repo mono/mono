@@ -92,6 +92,14 @@ namespace System.Windows.Forms {
 		}
 
 		//
+		//  --- public methods
+		//
+
+		[MonoTODO]
+		public void ScrollControlIntoView (Control activeControl) {
+		}
+
+		//
 		//  --- Protected Properties
 		//
 
@@ -199,11 +207,11 @@ namespace System.Windows.Forms {
 		
 		public class DockPaddingEdges : ICloneable {
 			// --- Fields ---
-			int all;
-			int bottom;
-			int left;
-			int right;
-			int top;
+			public int all;
+			public int bottom;
+			public int left;
+			public int right;
+			public int top;
 			
 			
 			// --- public Properties ---
@@ -331,6 +339,8 @@ namespace System.Windows.Forms {
 					" Right = " + right.ToString() + " Bottom = " + bottom.ToString() + 
 					" Left = " + left.ToString();
 			}
+		}
+		public class DockPaddingEdgeConverter : TypeConverter {
 		}
 	}
 }

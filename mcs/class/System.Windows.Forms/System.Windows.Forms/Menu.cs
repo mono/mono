@@ -110,10 +110,10 @@ namespace System.Windows.Forms  {
 			}
 		}
 		
-        protected Menu parent_ = null;
+        internal Menu parent_ = null;
         
-		protected IntPtr menuHandle_ = IntPtr.Zero;
-		protected bool   isPopupMenu = false;
+		internal IntPtr menuHandle_ = IntPtr.Zero;
+		internal bool   isPopupMenu = false;
 
 		internal void CreateMenuHandle() {
 			if( menuHandle_ == IntPtr.Zero) {

@@ -21,7 +21,7 @@ namespace System.Windows.Forms {
 
 	public class ContainerControl : ScrollableControl, IContainerControl {
 
-		protected ContainerControl () : base () 
+		public ContainerControl () : base () 
 		{
 			controlStyles_ |= ControlStyles.ContainerControl;
 		}
@@ -37,12 +37,16 @@ namespace System.Windows.Forms {
 		}
 		
 		//Compact Framework
-		//[MonoTODO]
+		[MonoTODO]
 		// not ready for BindingContext
-		//public override BindingContext BindingContext {
-		//	get { throw new NotImplementedException (); }
-		//	set { throw new NotImplementedException (); }
-		//}
+		public override BindingContext BindingContext {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//fixme:
+			}
+		}
 		
 		protected override CreateParams CreateParams {
 			get { return base.CreateParams; }
@@ -124,11 +128,15 @@ namespace System.Windows.Forms {
 		}
 		
 		// Not an overridden function?
-		//protected override void Select(bool directed,bool forward) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		
+		protected override void Select(bool directed,bool forward) 
+		{
+			base.Select(directed, forward);
+		}
+
+		protected virtual void UpdateDefaultButton() {
+			
+		}
+	
 		[MonoTODO]
 		public bool Validate () 
 		{

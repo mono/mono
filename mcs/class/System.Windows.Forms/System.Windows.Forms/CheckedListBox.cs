@@ -129,6 +129,9 @@ namespace System.Windows.Forms {
 		}
 
 		public override SelectionMode SelectionMode {
+			get {
+				return base.SelectionMode;
+			}
 			set {
 				if (value!=SelectionMode.One && value!=SelectionMode.None)
 					throw new ArgumentException();

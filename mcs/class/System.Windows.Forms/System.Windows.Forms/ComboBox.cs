@@ -446,7 +446,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override void OnCreateControl () {
+		protected override void Dispose(bool disposing) {
+			base.Dispose(disposing);
 		}
 
 		[MonoTODO]
@@ -455,7 +456,10 @@ namespace System.Windows.Forms {
 			base.OnSelectedValueChanged(e);
 		}
 
-		/// - protected override void SetItemCore(int index,object value);
+		[MonoTODO]
+		protected override void SetItemCore(int index,object value){
+		}
+
 		[MonoTODO]
 		protected virtual void AddItemsCore(object[] value) {
 			//FIXME:		
@@ -625,6 +629,11 @@ namespace System.Windows.Forms {
 				SelectedIndexChanged( this, e);
 			}
 		}
+
+		[MonoTODO]
+		protected virtual void OnSelectedItemChanged(EventArgs e) {
+			
+		}
 		
 		[MonoTODO]
 		protected virtual void OnSelectionChangeCommitted(EventArgs e) 
@@ -773,7 +782,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected override void SetItemsCore (IList Items){
+		protected override void SetItemsCore (IList value){
 		}
 	
 		/// --- Button events ---
@@ -801,8 +810,11 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public event EventHandler SelectionChangeCommitted;
 		
-		/// --- public class ComboBox.ChildAccessibleObject : AccessibleObject ---
+		[MonoTODO]
+		public class ChildAccessibleObject : AccessibleObject {
 		/// the class is not stubbed, cause it's only used for .NET framework
+		
+		}
 		
 		
 		/// sub-class: ComboBox.ObjectCollection

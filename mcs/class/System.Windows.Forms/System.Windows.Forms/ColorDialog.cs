@@ -32,6 +32,11 @@ namespace System.Windows.Forms {
 		{
 			Reset ( );
 		}
+
+		// these are show to be in the ms implmentation by winchurn
+		// but are not valid since they are not abstract or have any accessors.
+		//protected virtual IntPtr Instance {		}
+		//protected virtual int Options {		}
 		
 		public virtual bool AllowFullOpen {
 			get {
