@@ -1,4 +1,8 @@
 
+Mon Jun 17 14:55:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ModuleBuilder.cs, TypeBuilder.cs: fixes for nested types handling.
+
 Fri Jun 14 16:21:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* CustomAttributeBuilder.cs: added custom attribute related internal

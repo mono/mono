@@ -192,13 +192,43 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
+		private TypeBuilder search_nested_in_array (TypeBuilder[] arr, string className, bool ignoreCase) {
+			int i;
+			for (i = 0; i < arr.Length; ++i) {
+				if (String.Compare (className, arr [i].Name, ignoreCase) == 0)
+					return arr [i];
+			}
+			return null;
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Type create_modified_type (TypeBuilder tb, string modifiers);
 
 		static char[] type_modifiers = {'&', '[', '*'};
+
+		private TypeBuilder GetMaybeNested (TypeBuilder t, string className, bool ignoreCase) {
+			int subt;
+			string pname, rname;
+
+			subt = className.IndexOf ('+');
+			if (subt < 0) {
+				if (t.subtypes != null)
+					return search_nested_in_array (t.subtypes, className, ignoreCase);
+				return null;
+			}
+			if (t.subtypes != null) {
+				pname = className.Substring (0, subt);
+				rname = className.Substring (subt + 1);
+				TypeBuilder result = search_nested_in_array (t.subtypes, pname, ignoreCase);
+				if (result != null)
+					return GetMaybeNested (result, rname, ignoreCase);
+			}
+			return null;
+		}
 		
 		public override Type GetType( string className, bool throwOnError, bool ignoreCase) {
 			int subt;
+			string orig = className;
 			string modifiers;
 			TypeBuilder result = null;
 
@@ -221,13 +251,11 @@ namespace System.Reflection.Emit {
 				pname = className.Substring (0, subt);
 				rname = className.Substring (subt + 1);
 				result = search_in_array (types, pname, ignoreCase);
-				if ((result != null) && (result.subtypes != null))
-					result = search_in_array (result.subtypes, rname, ignoreCase);
-				else
-					result = null;
+				if (result != null)
+					result = GetMaybeNested (result, rname, ignoreCase);
 			}
 			if ((result == null) && throwOnError)
-				throw new TypeLoadException (className);
+				throw new TypeLoadException (orig);
 			if (result != null && (modifiers != null))
 				return create_modified_type (result, modifiers);
 			return result;

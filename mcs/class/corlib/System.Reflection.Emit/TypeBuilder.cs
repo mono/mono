@@ -22,6 +22,7 @@ namespace System.Reflection.Emit {
 	private string tname;
 	private string nspace;
 	private Type parent;
+	private Type nesting_type;
 	private Type[] interfaces;
 	private MethodBuilder[] methods;
 	private ConstructorBuilder[] ctors;
@@ -96,6 +97,8 @@ namespace System.Reflection.Emit {
 
 		public override string FullName {
 			get {
+				if (nesting_type != null)
+					return String.Concat (nesting_type.FullName, "+", tname);
 				if ((nspace != null) && (nspace.Length > 0))
 					return String.Concat (nspace, ".", tname);
 				return tname;
@@ -164,6 +167,7 @@ namespace System.Reflection.Emit {
 
 		private TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
 			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packsize, typesize);
+			res.nesting_type = this;
 			if (subtypes != null) {
 				TypeBuilder[] new_types = new TypeBuilder [subtypes.Length + 1];
 				System.Array.Copy (subtypes, new_types, subtypes.Length);
@@ -455,10 +459,28 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
-			// FIXME
-			throw new NotImplementedException ();
+			bool match;
+			ArrayList result = new ArrayList ();
+		
+			if (subtypes == null)
+				return Type.EmptyTypes;
+			foreach (TypeBuilder t in subtypes) {
+				match = false;
+				if ((t.attrs & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPublic) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				result.Add (t);
+			}
+			Type[] r = new Type [result.Count];
+			result.CopyTo (r);
+			return r;
 		}
 
 		public override PropertyInfo[] GetProperties( BindingFlags bindingAttr) {
