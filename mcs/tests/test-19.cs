@@ -19,10 +19,27 @@ class I {
 }
 
 class X {
+
+	public delegate int Foo (int i, int j);
 	
 	private void Thread_func () {
 		Console.WriteLine ("Inside the thread !");
 	}
+
+	public int Func (int i, int j)
+	{
+		return i+j;
+	}
+
+	public void Bar ()
+	{
+		Foo my_func = new Foo (Func);
+
+		int result = my_func (2, 4);
+
+		Console.WriteLine ("Answer is : " + result);
+	}
+
 	
 	public static int Main ()
 	{
@@ -37,6 +54,10 @@ class X {
 		thr.Join ();
 
 		Console.WriteLine (_("Hello"));
+
+		t.Bar ();
+
+		Console.WriteLine ("Test passes");
 
 		return 0;
 	}

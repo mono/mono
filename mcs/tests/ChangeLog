@@ -1,3 +1,9 @@
+2001-12-21  Ravi Pratap  <ravi@ximian.com>
+
+	* test-19.cs : Augment to exercise code which fixed the bug
+	where we were not generating a This for the delegate's 
+	instance expression - for the non-static methods ie.
+
 2001-12-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-45.cs: Make test also use variables as arguments to new;
