@@ -1,5 +1,12 @@
 2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaObjectTable.cs : Modified enumerator's Current to return
+	  DictionaryEntry.
+	* XmlSchemaComplexType.cs, XmlSchemaUtil.cs :
+	  In reflection to object table enumerator change.
+
+2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaElement.cs : Fixed incorrect unique particle attribution
 	  check on ##other and target namespace element.
 

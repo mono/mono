@@ -90,15 +90,7 @@ namespace System.Xml.Schema
 		public static bool CheckNCName(string name)
 		{
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#NCName
-			try
-			{
-				XmlConvert.VerifyNCName(name);
-				return true;
-			}
-			catch(Exception)
-			{
-				return false;
-			}
+			return XmlChar.IsNCName (name);
 		}
 
 		public static bool CheckQName(XmlQualifiedName qname)
@@ -470,7 +462,8 @@ namespace System.Xml.Schema
 						if (anyAttribute == null)
 							anyAttributeUse = grp.AnyAttributeUse;
 					}
-					foreach (XmlSchemaAttribute attr in grp.AttributeUses) {
+					foreach (DictionaryEntry entry in grp.AttributeUses) {
+						XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty)
 							AddToTable (attributesResolved, attr, attr.RefName, h);
 						else

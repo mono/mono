@@ -131,7 +131,6 @@ namespace System.Xml.Schema
 			get{ return resolvedContentType; }
 		}
 		[XmlIgnore]
-		[MonoTODO ("Derivation is not supported yet.")]
 		public XmlSchemaParticle ContentTypeParticle 
 		{
 			get{ return contentTypeParticle; }
@@ -167,7 +166,6 @@ namespace System.Xml.Schema
 		///		4. block must be absent
 		///		
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -357,7 +355,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.ValidationId))
@@ -410,7 +407,8 @@ namespace System.Xml.Schema
 
 			// 3.4.6 Properties Correct :: 5 (Two distinct ID attributes)
 			XmlSchemaAttribute idAttr = null;
-			foreach (XmlSchemaAttribute attr in attributeUses) {
+			foreach (DictionaryEntry entry in attributeUses) {
+				XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 				XmlSchemaDatatype dt = attr.AttributeType as XmlSchemaDatatype;
 				if (dt != null && dt.TokenizedType != XmlTokenizedType.ID)
 					continue;
@@ -570,8 +568,10 @@ namespace System.Xml.Schema
 				// defines as to include base type's attribute uses.
 				localAnyAttribute = cce.AnyAttribute;
 				if (baseComplexType != null) {
-					foreach (XmlSchemaAttribute attr in baseComplexType.AttributeUses)
+					foreach (DictionaryEntry entry in baseComplexType.AttributeUses) {
+						XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 						XmlSchemaUtil.AddToTable (attributeUses, attr, attr.QualifiedName, h);
+					}
 					baseAnyAttribute = baseComplexType.AttributeWildcard;
 				}
 				// attributes
@@ -612,7 +612,8 @@ namespace System.Xml.Schema
 				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
 					this.attributeUses, h, schema, ccr.Attributes, 
 					ccr.AnyAttribute, ref attributeWildcard, null);
-				foreach (XmlSchemaAttribute attr in baseComplexType.AttributeUses) {
+				foreach (DictionaryEntry entry in baseComplexType.AttributeUses) {
+					XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 					if (attributeUses [attr.QualifiedName] == null)
 						XmlSchemaUtil.AddToTable (attributeUses, attr, attr.QualifiedName, h);
 				}
@@ -637,8 +638,10 @@ namespace System.Xml.Schema
 				if (baseComplexType != null) {
 					baseAnyAttribute = baseComplexType.AttributeWildcard;
 
-					foreach (XmlSchemaAttribute attr in baseComplexType.AttributeUses)
+					foreach (DictionaryEntry entry in baseComplexType.AttributeUses) {
+						XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 						XmlSchemaUtil.AddToTable (attributeUses, attr, attr.QualifiedName, h);
+					}
 				}
 				if (baseAnyAttribute != null && localAnyAttribute != null)
 					// 1.3 attribute wildcard subset. (=> 3.10.6)
@@ -743,7 +746,8 @@ namespace System.Xml.Schema
 			if ((baseComplexType.FinalResolved & XmlSchemaDerivationMethod.Extension) != 0)
 				error (h, "Derivation by extension is prohibited.");
 			// 1.2
-			foreach (XmlSchemaAttribute ba in baseComplexType.AttributeUses) {
+			foreach (DictionaryEntry entry in baseComplexType.AttributeUses) {
+				XmlSchemaAttribute ba = (XmlSchemaAttribute) entry.Value;
 				XmlSchemaAttribute da = AttributeUses [ba.QualifiedName] as XmlSchemaAttribute;
 				if (da == null)
 					error (h, "Invalid complex type derivation by extension was found. Missing attribute was found: " + ba.QualifiedName + " .");
@@ -834,7 +838,8 @@ namespace System.Xml.Schema
 			}
 
 			// 2.
-			foreach (XmlSchemaAttribute attr in this.AttributeUses) {
+			foreach (DictionaryEntry entry in this.AttributeUses) {
+				XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 				XmlSchemaAttribute baseAttr = baseType.AttributeUses [attr.QualifiedName] as XmlSchemaAttribute;
 				if (baseAttr != null) {
 					// 2.1

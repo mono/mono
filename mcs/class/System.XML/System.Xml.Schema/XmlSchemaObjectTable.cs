@@ -105,7 +105,7 @@ namespace System.Xml.Schema
 			}
 			object IEnumerator.Current
 			{
-				get { return xenum.Value; }
+				get { return xenum.Entry; }
 			}
 			DictionaryEntry IDictionaryEnumerator.Entry {
 				get { return xenum.Entry; }
