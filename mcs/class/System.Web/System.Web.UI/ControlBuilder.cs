@@ -25,7 +25,7 @@ namespace System.Web.UI {
 							   BindingFlags.IgnoreCase;
 
 		TemplateParser parser;
-		ControlBuilder parentBuilder;
+		internal ControlBuilder parentBuilder;
 		Type type;	       
 		string tagName;
 		string id;
@@ -112,7 +112,7 @@ namespace System.Web.UI {
 
 				Type ptype = parentBuilder.ControlType;
 				if (ptype == null)
-					return typeof (Control);
+					return parentBuilder.NamingContainerType;
 
 				if (!typeof (INamingContainer).IsAssignableFrom (ptype))
 					return parentBuilder.NamingContainerType;
@@ -175,6 +175,7 @@ namespace System.Web.UI {
 		{
 			subBuilder.OnAppendToParentBuilder (this);
 			
+			subBuilder.parentBuilder = this;
 			if (childrenAsProperties) {
 				AppendToProperty (subBuilder);
 				return;

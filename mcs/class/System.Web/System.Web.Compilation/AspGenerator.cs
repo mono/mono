@@ -109,6 +109,10 @@ namespace System.Web.Compilation
 			if (text.Length > 0)
 				FlushText ();
 
+#if DEBUG
+			PrintTree (rootBuilder, 0);
+#endif
+
 			if (stack.Count > 1)
 				throw new ParseException (stack.Builder.location,
 						"Expecting </" + stack.Builder.TagName + ">" + stack.Builder);
@@ -118,6 +122,25 @@ namespace System.Web.Compilation
 			return compiler.GetCompiledType ();
 		}
 
+#if DEBUG
+		static void PrintTree (ControlBuilder builder, int indent)
+		{
+			if (builder == null)
+				return;
+
+			string i = new string ('\t', indent);
+			Console.Write (i);
+			Console.WriteLine ("b: {0} id: {1} type: {2} parent: {3}",
+					   builder, builder.ID, builder.ControlType, builder.parentBuilder);
+
+			if (builder.Children != null)
+			foreach (object o in builder.Children) {
+				if (o is ControlBuilder)
+					PrintTree ((ControlBuilder) o, indent++);
+			}
+		}
+#endif
+		
 		static void PrintLocation (ILocation loc)
 		{
 			Console.WriteLine ("\tFile name: " + loc.Filename);
@@ -331,6 +354,8 @@ namespace System.Web.Compilation
 					builder.AppendSubBuilder (new CodeRenderBuilder (tagid, false, location));
 				else if (tagtype == TagType.CodeRenderExpression)
 					builder.AppendSubBuilder (new CodeRenderBuilder (tagid, true, location));
+				else if (tagtype == TagType.DataBinding)
+					builder.AppendSubBuilder (new DataBindingBuilder (tagid, location));
 				else
 					builder.AppendLiteralString (location.PlainText);
 			}

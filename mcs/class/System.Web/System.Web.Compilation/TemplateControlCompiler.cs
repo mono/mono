@@ -262,7 +262,6 @@ namespace System.Web.Compilation
 		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id, string attValue)
 		{
 			CodeMemberMethod method = builder.method;
-			this.dataBoundAtts = 0;
 			int hyphen = id.IndexOf ('-');
 
 			bool isPropertyInfo = (member is PropertyInfo);
@@ -330,6 +329,7 @@ namespace System.Web.Compilation
 		
 		void CreateAssignStatementsFromAttributes (ControlBuilder builder)
 		{
+			this.dataBoundAtts = 0;
 			IDictionary atts = builder.attribs;
 			if (atts == null || atts.Count == 0)
 				return;
@@ -481,8 +481,6 @@ namespace System.Web.Compilation
 		static Type GetContainerType (ControlBuilder builder)
 		{
 			Type type = builder.NamingContainerType;
-			if (builder.ControlType != null && !typeof (ITemplate).IsAssignableFrom (builder.ControlType))
-				return type;
 
 			PropertyInfo prop = type.GetProperty ("Items", noCaseFlags);
 			if (prop == null)

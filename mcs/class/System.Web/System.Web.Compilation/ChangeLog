@@ -1,3 +1,11 @@
+2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: also support data bind syntax inside tags not
+	processed as controls. Added debugging method.
+
+	* TemplateControlCompiler.cs: reset the number of data binding handlers 
+	in the proper place. Small fix when getting the container type.
+
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: correctly set the TemplateSourceDirectory 

@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Web;
 using System.Web.Compilation;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -18,7 +19,7 @@ namespace System.Web.UI
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
 		{
 			Context = context;
-			InputFile = Path.Combine (context.Request.MapPath (virtualPath), inputFile);
+			InputFile = context.Request.MapPath (UrlUtils.Combine (virtualPath, inputFile));
 		}
 		
 		public static Type GetCompiledType (string virtualPath, string inputFile, HttpContext context)

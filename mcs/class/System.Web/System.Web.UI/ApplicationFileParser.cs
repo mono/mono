@@ -29,8 +29,8 @@ namespace System.Web.UI
 		internal static Type GetCompiledApplicationType (string inputFile, HttpContext context)
 		{
 			ApplicationFileParser parser = new ApplicationFileParser (inputFile, context);
-			parser.Context = context;
-			return parser.CompileIntoType ();
+			AspGenerator generator = new AspGenerator (parser);
+			return generator.GetCompiledType ();
 		}
 
 		protected override Type DefaultBaseType {
