@@ -41,9 +41,9 @@ namespace Mfconsulting.General.Prj2Make
 			set{ m_bIsMcs = value; }
 		}
 
-    	public Mfconsulting.General.Prj2Make.Schema.Cmbx.Combine Solucion {
-    		get { return m_cmbObject; }
-    	}
+	    public Mfconsulting.General.Prj2Make.Schema.Cmbx.Combine Solucion {
+		    get { return m_cmbObject; }
+	    }
 
 		public CmbxMaker()
 		{
@@ -190,8 +190,8 @@ namespace Mfconsulting.General.Prj2Make
 								}
 
 								MakefileBuilder.AppendFormat("\nLIBS=-lib:{0} -lib:{1}\n\n", 
-									Path.Combine(strlibDir.TrimEnd(), "mono/1.0"),
-									Path.Combine(strlibDir.TrimEnd(), "mono/gtk-sharp")
+									Utils.Escape (Path.Combine(strlibDir.TrimEnd(), "mono/1.0")),
+									Utils.Escape (Path.Combine(strlibDir.TrimEnd(), "mono/gtk-sharp"))
 									);
 							}
         				}        		

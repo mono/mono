@@ -256,9 +256,9 @@ namespace Mfconsulting.General.Prj2Make
 								}							
 								
 								MakefileBuilder.AppendFormat("LIBS=-lib:{0} -lib:{1}\n\n", 
-									Path.Combine(strlibDir.TrimEnd(), "mono/1.0"),
-									Path.Combine(strlibDir.TrimEnd(), "mono/gtk-sharp")
-									);
+								     Utils.Escape (Path.Combine(strlibDir.TrimEnd(), "mono/1.0")),
+								     Utils.Escape (Path.Combine(strlibDir.TrimEnd(), "mono/gtk-sharp"))
+											     );
 							}
 						}        		
 					}
@@ -410,12 +410,12 @@ namespace Mfconsulting.General.Prj2Make
 
 					foreach (string libdir in libdirs.Keys)
 					{
-						MakefileBuilder.AppendFormat(" -lib:{0}", libdir);
+						MakefileBuilder.AppendFormat(" -lib:{0}", Utils.Escape (libdir));
 					}
 					
 					foreach (string libdir in pi.libdirs) 
 					{
-						MakefileBuilder.AppendFormat(" -lib:{0}", libdir);
+						MakefileBuilder.AppendFormat(" -lib:{0}", Utils.Escape (libdir));
 					}
 					
 					// Test to see if any configuratino has the Allow unsafe blocks on

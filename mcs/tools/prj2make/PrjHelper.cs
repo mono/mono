@@ -13,6 +13,24 @@ using Mfconsulting.General.Prj2Make.Schema.Csproj;
 
 namespace Mfconsulting.General.Prj2Make
 {
+	public class Utils {
+	    public static string Escape (string s)
+	    {
+		    if (s.IndexOf (' ') == -1)
+			    return s;
+
+		    StringBuilder sb = new StringBuilder ();
+		    foreach (char c in s){
+			    if (c == ' ')
+				    sb.Append ('\\');
+			    sb.Append (c);
+		    }
+		    return sb.ToString ();
+	    }
+	    
+		
+	}
+	
     public class Maker
     {
     	public enum TypeOfFile {
