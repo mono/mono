@@ -1,3 +1,13 @@
+2002-03-19  Martin Baulig  <martin@gnome.org>
+
+	* StreamWriter.cs (StreamWriter (string)): The default is to override
+	the file, not to append to it.
+	(StreamWriter (string path, bool append)): When appending, seek to the
+	end of the file, otherwise truncate the file to zero length.
+	(Dispose (bool)): Close the internalStream.
+	(Flush): Flush the interalStream.
+	(Write (char[], int, int)): Flush the internalStream in auto-flush-mode.
+
 2002-03-19  Dan Lewis <dihlewis@yahoo.co.uk>
 
 	* FileStream.cs: Flush buffer before FileSetLength.

@@ -38,7 +38,7 @@ namespace System.IO {
 		}
 
 		public StreamWriter (string path)
-			: this (path, true, null, 0) {}
+			: this (path, false, null, 0) {}
 
 		public StreamWriter (string path, bool append)
 			: this (path, append, null, 0) {}
@@ -56,6 +56,11 @@ namespace System.IO {
 				mode = FileMode.Create;
 			
 			internalStream = new FileStream (path, mode, FileAccess.Write);
+
+			if (append)
+				internalStream.Position = internalStream.Length;
+			else
+				internalStream.SetLength (0);
 
 			if (encoding == null)
 				internalEncoding = Encoding.UTF8;
@@ -90,24 +95,30 @@ namespace System.IO {
 			}
 		}
 
-		protected override void Dispose( bool disposing )
+		protected override void Dispose (bool disposing)
 		{
-			// fixme: implement me			
+			if (disposing && internalStream != null) {
+				internalStream.Close ();
+				internalStream = null;
+			}
 		}
 
 		public override void Flush ()
 		{
-			// fixme: implement me
+			internalStream.Flush ();
 		}
 		
 		public override void Write (char[] buffer, int index, int count)
 		{
 			byte[] res = new byte [internalEncoding.GetMaxByteCount (buffer.Length)];
 			int len;
-			
+
 			len = internalEncoding.GetBytes (buffer, index, count, res, 0);
 
 			internalStream.Write (res, 0, len);
+
+			if (iflush)
+				Flush ();
 			
 		}
 
