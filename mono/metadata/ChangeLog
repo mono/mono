@@ -1,3 +1,8 @@
+2002-01-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_init): set min_align to 1 (instead of 0)
+	(mono_class_value_size): use min_align
+
 2002-01-20  Dick Porter  <dick@ximian.com>
 
 	* threads.h:
