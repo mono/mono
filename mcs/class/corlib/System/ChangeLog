@@ -1,3 +1,8 @@
+2003-05-20  Philip Van Hoof <spamfrommailing@freax.org>
+
+	* DateTime.cs (FromOADate, GetDateTimeFormats, ToOADate):
+	Implemented.
+
 2003-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomainSetup.cs: Added new field which is used to notify the

@@ -40,7 +40,27 @@ namespace System
 		
 		public static readonly DateTime MaxValue = new DateTime (false,TimeSpan.MaxValue);
 		public static readonly DateTime MinValue = new DateTime (false,0);
-		
+
+		private static string[] formats = {
+			// For compatibility with MS's CLR, this format (which
+			// doesn't have a one-letter equivalent) is parsed
+			// too. It's important because it's used in XML
+			// serialization.
+			"yyyy-MM-ddTHH:mm:sszzz",
+			// Full date and time
+			"F", "G", "r", "s", "u", "U",
+			// Full date and time, but no seconds
+			"f", "g",
+			// Only date
+			"d", "D",
+			// Only time
+			"T", "t",
+			// Only date, but no year
+			"m",
+			// Only date, but no day
+			"y" 
+		};
+
 		private enum Which 
 		{
 			Day,
@@ -423,25 +443,35 @@ namespace System
 			return new DateTime (true, w32file_epoch + fileTime);
 		}
 
-		// TODO: Implement me.
-		[MonoTODO]
 		public static DateTime FromOADate (double d)
 		{
-				return new DateTime(0);
-		}
-		
-		// TODO: Implement me.
-		[MonoTODO]
-		public string[] GetDateTimeFormats() 
-		{
-			return null;
+			// An OLE Automation date is implemented as a floating-point number
+			// whose value is the number of days from midnight, 30 December 1899.
+
+			// d must be negative 657435.0 through positive 2958466.0.
+
+			if ((d < -657435.0) || (d > 2958466.0))
+				throw new OverflowException();
+
+			return (new DateTime(1899, 12, 30, 0, 0, 0)).AddDays(d);
 		}
 
-		//TODO: implement me
-		[MonoTODO]
+		public string[] GetDateTimeFormats() 
+		{
+			string[] result = new string[formats.Length];
+			int index=0;
+			foreach (string format in formats) {
+				result [index] = this.ToString(format);
+				index++;
+			}
+			return result;
+		}
+
 		public string[] GetDateTimeFormats(char format)
 		{
-			return null;
+			string[] result = new string[1];
+			result[0] = this.ToString(format.ToString());
+			return result;
 		}
 		
 		// TODO: implement me
@@ -485,26 +515,6 @@ namespace System
 
 		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)
 		{
-			string[] formats = {
-				// For compatibility with MS's CLR, this format (which
-				// doesn't have a one-letter equivalent) is parsed
-				// too. It's important because it's used in XML
-				// serialization.
-				"yyyy-MM-ddTHH:mm:sszzz",
-				// Full date and time
-				"F", "G", "r", "s", "u", "U",
-				// Full date and time, but no seconds
-				"f", "g",
-				// Only date
-				"d", "D",
-				// Only time
-				"T", "t",
-				// Only date, but no year
-				"m",
-				// Only date, but no day
-				"y" 
-			};
-
 			return ParseExact (s, formats, fp, styles);
 		}
 
@@ -1012,11 +1022,11 @@ namespace System
 			return ToString ("T");
 		}
 
-		[MonoTODO]
 		public double ToOADate()
 		{
-			// TODO implement me 
-			return 0;
+			DateTime p = new DateTime(1899, 12, 30, 0, 0, 0);
+			TimeSpan t = new TimeSpan (this.Ticks - p.Ticks);
+			return t.TotalDays;
 		}
 
 		public string ToShortDateString()
