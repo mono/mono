@@ -1,3 +1,8 @@
+2005-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Add the security manager to the build.
+	* security-manager.c|h: New. Initialization of the security manager.
+
 2005-01-07  Dick Porter  <dick@ximian.com>
 
 	* threads.c: 
