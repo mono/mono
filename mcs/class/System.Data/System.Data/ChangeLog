@@ -1,3 +1,8 @@
+2004-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaDataImporter.cs : Removed unused code and extra MonoTODO.
+	  Fixed relation inference to consider attribute XPath.
+
 2004-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataColumn.cs : Fixed set_Item[int]. Convert.ToInt64(DBNull.Value)

@@ -531,19 +531,6 @@ el.ElementType != schemaAnyType)
 			return rel;
 		}
 
-		/*
-		private void HandleAttributes (XmlSchemaObjectCollection atts)
-		{
-			foreach (XmlSchemaObject attrObj in atts) {
-				XmlSchemaAttribute attr = attrObj as XmlSchemaAttribute;
-				if (attr != null)
-					ImportColumnAttribute (attr);
-				else
-					HandleAttributes (((XmlSchemaAttributeGroup) attrObj).Attributes);
-			}
-		}
-		*/
-
 		private void ImportColumnGroupBase (XmlSchemaElement parent, XmlSchemaGroupBase gb)
 		{
 			foreach (XmlSchemaParticle p in gb.Items) {
@@ -643,7 +630,6 @@ el.ElementType != schemaAnyType)
 			}
 		}
 
-		[MonoTODO]
 		private void FillDataColumnComplexElement (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
 		{
 			if (targetElements.Contains (el))
@@ -670,7 +656,6 @@ el.ElementType != schemaAnyType)
 				relations.Add (rel);
 			}
 
-			// FIXME: Add relation from this parent to child table
 			// If the element is not referenced one, the element will be handled later.
 			if (el.RefName == XmlQualifiedName.Empty)
 				targetElements.Add (el);
@@ -772,7 +757,6 @@ el.ElementType != schemaAnyType)
 				return;
 
 			// Handle restriction facets
-			// FIXME: how to handle list and union??
 
 			XmlSchemaSimpleTypeRestriction restriction = st == null ? null : st.Content as XmlSchemaSimpleTypeRestriction;
 			if (restriction == null)
@@ -832,15 +816,21 @@ el.ElementType != schemaAnyType)
 			int i = 0;
 			foreach (XmlSchemaXPath Field in ic.Fields) {
 				string colName = Field.XPath;
-				// FIXME: attribute XPath
-				int index = colName.LastIndexOf (':');
+				bool isAttr = colName.Length > 0 && colName [0] == '@';
+				int index = colName.LastIndexOf (':', isAttr ? 1 : 0);
 				if (index > 0)
 					colName = colName.Substring (index + 1);
+				else if (isAttr)
+					colName = colName.Substring (1);
 
 				colName = XmlConvert.DecodeName (colName);
 				DataColumn col = dt.Columns [colName];
 				if (col == null)
 					throw new DataException (String.Format ("Invalid XPath selection inside field. Cannot find: {0}", tableName));
+				if (isAttr && col.ColumnMapping != MappingType.Attribute)
+					throw new DataException ("The XPath specified attribute field, but mapping type is not attribute.");
+				if (!isAttr && col.ColumnMapping != MappingType.Element)
+					throw new DataException ("The XPath specified simple element field, but mapping type is not simple element.");
 
 				cols [i] = dt.Columns [colName];
 				i++;
@@ -882,14 +872,21 @@ el.ElementType != schemaAnyType)
 			cols = new DataColumn [keyref.Fields.Count];
 			int i = 0;
 			foreach (XmlSchemaXPath Field in keyref.Fields) {
-				// FIXME: attribute XPath
 				string colName = Field.XPath;
-				int index = colName.LastIndexOf (':');
-				if (index != -1)
+				bool isAttr = colName.Length > 0 && colName [0] == '@';
+				int index = colName.LastIndexOf (':', isAttr ? 1 : 0);
+				if (index > 0)
 					colName = colName.Substring (index + 1);
+				else if (isAttr)
+					colName = colName.Substring (1);
 
 				colName = XmlConvert.DecodeName (colName);
-				cols [i] = dt.Columns [colName];
+				DataColumn col = dt.Columns [colName];
+				if (isAttr && col.ColumnMapping != MappingType.Attribute)
+					throw new DataException ("The XPath specified attribute field, but mapping type is not attribute.");
+				if (!isAttr && col.ColumnMapping != MappingType.Element)
+					throw new DataException ("The XPath specified simple element field, but mapping type is not simple element.");
+				cols [i] = col;
 				i++;
 			}
 			string name = keyref.Refer.Name;
