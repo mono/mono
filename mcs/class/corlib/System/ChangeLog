@@ -1,3 +1,8 @@
+2002-04-22  Nick Drochak  <ndrochak@gol.com>
+
+	* String.cs (IndexOfAny): check arguments and throw exceptions as
+	neccessary.  ALso remove some debug WriteLines.
+
 2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* String.cs: use internal constructors

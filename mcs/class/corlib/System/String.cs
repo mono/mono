@@ -154,7 +154,6 @@ namespace System {
 
 		public String Substring (int sindex) {
 			if (sindex < 0 || sindex > this.length) {
-				Console.WriteLine("Substring({0}) = {2}\n", sindex, this.length, this);
 				throw new ArgumentOutOfRangeException();
 			}
 
@@ -166,7 +165,6 @@ namespace System {
 
 		public String Substring (int sindex, int length) {
 			if (length < 0 || sindex < 0 || sindex + length > this.length) {
-				Console.WriteLine("Substring({0}, {1}) = {2}\n", sindex, length, this.ToString());
 				throw new ArgumentOutOfRangeException();
 			}
 
@@ -302,6 +300,9 @@ namespace System {
 		}
 
 		public bool EndsWith(String value) {
+			if (null == value)
+				throw new ArgumentNullException();
+
 			if (value.length > this.length) {
 				return false;
 			}
@@ -317,10 +318,20 @@ namespace System {
 		}
 
 		public int IndexOfAny(char [] arr, int sindex) {
+			if (null == arr)
+				throw new ArgumentNullException();
+			if (sindex < 0 || sindex >= this.length)
+				throw new ArgumentOutOfRangeException();
+
 			return InternalIndexOfAny(arr, sindex, this.length - sindex);
 		}
 
 		public int IndexOfAny(char [] arr, int sindex, int count) {
+			if (null == arr)
+				throw new ArgumentNullException();
+			if (sindex < 0 || count < 0 || sindex + count > this.length)
+				throw new ArgumentOutOfRangeException ();
+
 			return InternalIndexOfAny(arr, sindex, count);
 		}
 
@@ -334,7 +345,6 @@ namespace System {
 
 		public int IndexOf(char value, int sindex) {
 			if (sindex < 0 || sindex >= this.length) {
-				Console.WriteLine("value={0} sindex={0}\n", value, sindex);
 				throw new ArgumentOutOfRangeException();
 			}
 
