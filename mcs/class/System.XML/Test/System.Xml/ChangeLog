@@ -1,3 +1,7 @@
+2003-06-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlUrlResolverTests.cs.
+
 2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlCharTests.cs(separated XmlChar tests from XmlTextReaderTests)
