@@ -69,7 +69,7 @@ namespace System.Web.Handlers
 			table.Rows.Add (TraceData.SubHeadRow ("No", "Time of Request",
 							"File", "Status Code", "Verb", "&nbsp;"));
 
-			if (manager.Data != null) {
+			if (manager.TraceData != null) {
 				for (int i=0; i<manager.ItemCount; i++) {
 					int item = i + 1;
 					TraceData d = manager.TraceData [i];
