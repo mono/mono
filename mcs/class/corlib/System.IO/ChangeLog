@@ -1,3 +1,10 @@
+2002/03/15 Nick Drochak <ndrochak@gol.com>
+
+	* DirectoryInfo.cs: Fixed the overloaded GetDirectories and GetFiles.
+	This code seemed to be copied from somewhere, and it was close,
+	but didn't match the docs.  This was the last bit needed to get
+	NAnt to compile with our class libs.
+
 2002-03-12  Duncan Mak  <duncan@ximian.com>
 
 	* EndOfStreamException.cs:

@@ -95,21 +95,18 @@ namespace System.IO
 				Delete ();
 		}
 
-		public DirectoryInfo[] GetDirectories (string path)
+		public DirectoryInfo[] GetDirectories ()
 		{
 			return GetDirectories ("*");
 		}
 
-		public static DirectoryInfo[] GetDirectories (string path, string mask)
+		[MonoTODO("Add FileIOPermission Checks")]
+		public DirectoryInfo[] GetDirectories (string searchPattern)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path is null");
-			if (mask == null)
-				throw new ArgumentNullException ("mask is null");
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Invalid characters in path");
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern is null");
 			
-			ArrayList list = Directory.GetListing (path, "*");
+			ArrayList list = Directory.GetListing (path, searchPattern);
 			if (list == null)
 				throw new DirectoryNotFoundException ();
 			
@@ -135,21 +132,17 @@ namespace System.IO
 			return di_array;
 		}
 
-		public static FileInfo[] GetFiles (string path)
+		public FileInfo[] GetFiles ()
 		{
-			return GetFiles (path, "*");
+			return GetFiles ("*");
 		}
 
-		public static FileInfo[] GetFiles (string path, string mask)
-		{
-			if (path == null)
-				throw new ArgumentNullException ("path is null");
-			if (mask == null)
-				throw new ArgumentNullException ("mask is null");
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Invalid characters in path");
-			
-			ArrayList list = Directory.GetListing (path, "*");
+		[MonoTODO("Add FileIOPermission Checks")]
+		public FileInfo[] GetFiles (string searchPattern) {
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern is null");
+
+			ArrayList list = Directory.GetListing (path, searchPattern);
 			if (list == null)
 				throw new DirectoryNotFoundException ();
 
