@@ -1,3 +1,12 @@
+2002-09-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Revert patch until I can properly fix it.  The issue
+	is that we have a shared Type space across all namespaces
+	currently, which is wrong.
+
+	Options include making the Namespace a DeclSpace, and merge
+	current_namespace/current_container in the parser.
+
 2002-09-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Improve error reporting when we get a different
