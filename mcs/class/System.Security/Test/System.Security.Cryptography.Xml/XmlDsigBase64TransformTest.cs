@@ -104,8 +104,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			byte[] output = Stream2Array (s);
-			UTF8Encoding utf8 = new UTF8Encoding ();
-			Assertion.AssertEquals("XmlDocument", base64, utf8.GetString (output));
+			Assertion.AssertEquals("XmlDocument", base64, Encoding.UTF8.GetString (output));
 		}
 
 		[Test]
@@ -113,40 +112,38 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			XmlDocument doc = GetDoc ();
 			XmlNodeList xpath = doc.SelectNodes ("//.");
+			Assertion.AssertEquals("XPathNodeList.Count", 3, xpath.Count);
 			transform.LoadInput (xpath);
 			Stream s = (Stream) transform.GetOutput ();
 			byte[] output = Stream2Array (s);
-			UTF8Encoding utf8 = new UTF8Encoding ();
-			Assertion.AssertEquals("XPathNodeList", base64, utf8.GetString (output));
+			Assertion.AssertEquals("XPathNodeList", base64, Encoding.UTF8.GetString (output));
 		}
 
 		[Test]
-		[Ignore ("FIXME: works with Mono ??? why doesn't this works with MS ???")]
+		[Ignore ("LAMESPEC or BUG but this returns nothing with MS implementation ???")]
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetDoc ();
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			byte[] output = Stream2Array (s);
-			UTF8Encoding utf8 = new UTF8Encoding ();
-			Assertion.AssertEquals("XmlChildNodes", base64, utf8.GetString (output));
+			Assertion.AssertEquals("XmlChildNodes", null, Encoding.UTF8.GetString (output));
 		}
 
 		[Test]
 		public void LoadInputAsStream () 
 		{
 			string base64 = "XmlDsigBase64Transform";
-			UTF8Encoding utf8 = new UTF8Encoding ();
-			byte[] base64array = utf8.GetBytes (base64);
+			byte[] base64array = Encoding.UTF8.GetBytes (base64);
 
 			MemoryStream ms = new MemoryStream ();
-			byte[] x = utf8.GetBytes (Convert.ToBase64String (base64array));
+			byte[] x = Encoding.UTF8.GetBytes (Convert.ToBase64String (base64array));
 			ms.Write (x, 0, x.Length);
 			ms.Position = 0;
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
 			byte[] output = Stream2Array (s);
-			Assertion.AssertEquals("MemoryStream", base64, utf8.GetString (output));
+			Assertion.AssertEquals("MemoryStream", base64, Encoding.UTF8.GetString (output));
 		}
 
 		[Test]
