@@ -177,7 +177,8 @@ namespace MonoTests.System.ComponentModel
 		public void TestGetComponentName ()
 		{
 			AssertNotNull ("t1", TypeDescriptor.GetComponentName (com));
-			AssertEquals ("t1", "TestName", TypeDescriptor.GetComponentName (sitedcom));
+			AssertEquals ("t2", "MyComponent", TypeDescriptor.GetComponentName (com));
+			AssertEquals ("t3", "TestName", TypeDescriptor.GetComponentName (sitedcom));
 		}
 		
 		[Test]

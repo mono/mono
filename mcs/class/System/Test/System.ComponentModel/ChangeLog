@@ -1,3 +1,8 @@
+2005-01-19  Nick Drochak  <ndrochak@ieee.org>
+
+	* TypeDescriptorTests.cs: Add another test in GetComponentName() to check
+	  the component name returned for a component without a Site.
+
 2005-01-08  Nick Drochak  <ndrochak@ieee.org>
 
 	* TypeDescriptorTests.cs: Fix/Ignore tests for MS.NET
