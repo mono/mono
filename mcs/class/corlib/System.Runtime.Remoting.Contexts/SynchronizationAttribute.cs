@@ -1,4 +1,4 @@
-//
+pp//
 // System.Runtime.Remoting.Contexts.SynchronizationAttribute..cs
 //
 // Author:
@@ -13,6 +13,8 @@ using System.Runtime.Remoting.Activation;
 
 namespace System.Runtime.Remoting.Contexts {
 
+	[Serializable]
+	[AttributeUsage (AttributeTargets.Class)]
 	public class SynchronizationAttribute : ContextAttribute
 	{
 		public const int NOT_SUPPORTED = 1;

@@ -1,5 +1,7 @@
 2002-07-24  Duncan Mak  <duncan@ximian.com>
 
+	* SynchronizationAttribute.cs: Added missing attributes.
+
 	* IContextPropertyActivator.cs: 
 	* IContributeClientContextSink.cs: 
 	* IContributeDynamicSink.cs: 
