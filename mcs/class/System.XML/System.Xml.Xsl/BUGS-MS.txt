@@ -26,7 +26,7 @@ No. 0003
 No. 0004
 	String variable are not properly compared with strings (at least in
 	some cases).
-	(select_select67, select_select68)
+	(select_select67, select_select68, variable_variable24)
 
 No. 0005
 	MS.NET misses some kind of whitespaces.
@@ -34,7 +34,11 @@ No. 0005
 
 No. 0006
 	disable-output-escaping is not working on xsl:text.
-	(Text_78308, Text_78311)
+	(Text_78308, Text_78311, modified_78308, modified_78309, modified_78311)
+
+
+Not sure the reason why:
+	whitespace_whitespace35
 
 Notes:
 
@@ -44,4 +48,11 @@ Notes:
 	XXXXXXXXXIX. It is not violating XSLT 1.0 spec. However, section
 	7.7.1 explicitly describes 4 and 9 as iv and ix, so the "strict"
 	Oxford style violates the spec.
+
+2. Name conflict in variables
+
+	If there is a conflict between a template local variable and a
+	for-each local variable, MS.NET raises an error. It is a spec bug
+	that does not define the behavior (like "implementation MAY reort
+	an error ..., or recover ...).
 
