@@ -116,7 +116,7 @@ install: install-recursive install-local
 
 test: test-recursive test-local
 
-run-test: run-test-recursive run-test-local
+run-test: test run-test-recursive run-test-local
 
 clean: clean-recursive clean-local
 
