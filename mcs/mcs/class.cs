@@ -1120,8 +1120,8 @@ namespace Mono.CSharp {
 		//
 		// Since the whole process is a no-op, it is fine to check for null here.
 		//
-		internal override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-							  MemberFilter filter, object criteria)
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 

@@ -457,8 +457,8 @@ namespace Mono.CSharp {
 		}
 		
 		// Hack around System.Reflection as found everywhere else
-		internal override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-							  MemberFilter filter, object criteria)
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 

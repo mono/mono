@@ -556,8 +556,8 @@ namespace Mono.CSharp {
 		///   be used while the type is still being created since it doesn't use the cache
 		///   and relies on the filter doing the member name check.
 		/// </remarks>
-		internal abstract MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-							  MemberFilter filter, object criteria);
+		public abstract MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria);
 
 		/// <remarks>
 		///   If we have a MemberCache, return it.  This property may return null if the
