@@ -1,3 +1,8 @@
+2004-09-19  Dick Porter  <dick@ximian.com>
+
+	* Console.cs: Use the internal wrappers for StreamReader and
+	StreamWriter that catch IOException.
+
 2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
        * Activator.cs (CreateInstance): If an argument is null,
