@@ -244,7 +244,7 @@ namespace System.Xml.XPath
 					public XPathTextComparer (XmlSortOrder orderSort, XmlCaseOrder orderCase, string strLang)
 					{
 						_orderCase = orderCase;
-						_nMulCase = (orderCase == XmlCaseOrder.LowerFirst) ? -1 : 1;
+						_nMulCase = (orderCase == XmlCaseOrder.UpperFirst) ? -1 : 1;
 
 						_nMulSort = (orderSort == XmlSortOrder.Ascending) ? 1 : -1;
 
@@ -330,6 +330,8 @@ namespace System.Xml.XPath
 					return (double) result;
 				case XPathResultType.Boolean:
 					return Convert.ToDouble ((bool) result);
+				case XPathResultType.NodeSet:
+					return XmlConvert.ToDouble (EvaluateString (iter));
 				case XPathResultType.String:
 					return XmlConvert.ToDouble ((string) result);	// TODO: spec? convert string to number
 				default:

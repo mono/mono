@@ -1,6 +1,12 @@
 2003-07-27  Piers Haken	<piersh@friskit.com>
 
 	* Expression.cs:
+		fix case sorting order
+		allow EvaluateNumber to take XPathResultType.Any
+
+2003-07-27  Piers Haken	<piersh@friskit.com>
+
+	* Expression.cs:
 	* Tokenizer.cs:
 		don't pass null to XmlQualifiedName constructor
 
