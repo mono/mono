@@ -13,6 +13,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
+using Mono.Xml.Schema;
 
 namespace System.Xml {
 	public class XmlValidatingReader : XmlReader, IXmlLineInfo {
@@ -189,7 +190,6 @@ namespace System.Xml {
 		}
 
 		public override string Prefix {
-			[MonoTODO]
 			get { return validatingReader == null ? String.Empty : validatingReader.Prefix; }
 		}
 
@@ -202,7 +202,6 @@ namespace System.Xml {
 		}
 
 		public override ReadState ReadState { 
-			[MonoTODO]
 			get {
 				if (validatingReader == null)
 					return ReadState.Initial;
@@ -259,7 +258,6 @@ namespace System.Xml {
 		}
 
 		public override XmlSpace XmlSpace {
-			[MonoTODO]
 			get { return validatingReader == null ? XmlSpace.None : validatingReader.XmlSpace; }
 		}
 
@@ -360,10 +358,10 @@ namespace System.Xml {
 				switch (ValidationType) {
 				case ValidationType.Auto:
 				case ValidationType.None:
-					if (schemas.Count > 0)
-						goto case ValidationType.Schema;
-					else
-						goto case ValidationType.DTD;
+//					if (schemas.Count > 0)
+						goto case ValidationType.Schema; // might be specified by xsi:schemaLocation.
+//					else
+//						goto case ValidationType.DTD;
 				case ValidationType.DTD:
 					validatingReader = dtdReader = new DTDValidatingReader (sourceReader, this);
 					if (specifiedResolver)
@@ -397,8 +395,7 @@ namespace System.Xml {
 
 #if NET_1_0
 		// LAMESPEC: MS.NET 1.0 has critical bug here.
-		// After calling these methods, validation does no more work!
-		[MonoTODO]
+		// After calling these methods, validation does not work anymore!
 		public override string ReadInnerXml ()
 		{
 			if (validatingReader == null)
@@ -406,7 +403,6 @@ namespace System.Xml {
 			return validatingReader.ReadInnerXml ();
 		}
 
-		[MonoTODO]
 		public override string ReadOuterXml ()
 		{
 			if (validatingReader == null)
@@ -415,7 +411,6 @@ namespace System.Xml {
 		}
 #endif
 
-		[MonoTODO]
 #if NET_1_0
 		public override string ReadString ()
 		{

@@ -926,21 +926,7 @@ namespace Mono.Xml
 		}
 
 		public XmlParserContext ParserContext {
-			get {
-				XmlParserContext ctx = null;
-				if (sourceTextReader != null)
-					ctx = sourceTextReader.GetInternalParserContext ();
-				else if (reader is XmlNodeReader)
-					ctx = ((XmlNodeReader) reader).GetInternalParserContext ();
-				else if (reader is IHasXmlParserContext)
-					ctx = ((IHasXmlParserContext) reader).ParserContext;
-
-				if (ctx == null)
-					throw new NotSupportedException (
-						"Cannot get parser context from specified XmlReader. To support this XmlReader, implement IHasXmlParserContext interface on the reader.");
-
-				return ctx;
-			}
+			get { return XmlSchemaUtil.GetParserContext (reader); }
 		}
 
 		public override string Prefix {

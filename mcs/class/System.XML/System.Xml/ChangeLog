@@ -1,5 +1,12 @@
 2003-09-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* DTDValidatingReader.cs : Simplified to use 
+	  XmlSchemaUtil.GetParserContext().
+	* XmlValidatingReader.cs : ValidationType.Auto should always use
+	  XsdValidatingReader because xsi:schemaLocation might be used.
+
+2003-09-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextReader.cs : Attribute value token properties were incorrectly
 	  set by the linked node.
 
