@@ -1,3 +1,7 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TransportHeaders.cs: added TODO for serialization
+
 2004-06-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ChannelServices.cs: ExceptionFilterSink should be internal.
