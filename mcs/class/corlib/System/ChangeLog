@@ -1,5 +1,10 @@
 2002-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Array.cs: use Object.Equals (obj, obj) to compare objects to avoid
+	nulls. Fixes #34909.
+
+2002-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AppDomain.cs: DoAssemblyResolve now returns when one of the handlers
 	returns a non-null assembly.
 

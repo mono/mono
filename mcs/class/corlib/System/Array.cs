@@ -71,7 +71,7 @@ namespace System
 
 			int length = this.Length;
 			for (int i = 0; i < length; i++) {
-				if (value.Equals (this.GetValueImpl (i)))
+				if (Object.Equals (value, this.GetValueImpl (i)))
 					return true;
 			}
 			return false;
@@ -83,7 +83,7 @@ namespace System
 
 			int length = this.Length;
 			for (int i = 0; i < length; i++) {
-				if (value.Equals (this.GetValueImpl (i)))
+				if (Object.Equals (value, this.GetValueImpl (i)))
 					// array index may not be zero-based.
 					// use lower bound
 					return i + this.GetLowerBound (0);
@@ -578,7 +578,7 @@ namespace System
 
 			for (int i = 0; i < length; i++)
 			{
-				if (array.GetValueImpl(index + i).Equals(value))
+				if (Object.Equals (array.GetValueImpl(index + i), value))
 					return index + i;
 			}
 
@@ -621,7 +621,7 @@ namespace System
 
 			for (int i = index; i >= index-length+1; i--)
 			{
-				if (array.GetValueImpl(i).Equals(value))
+				if (Object.Equals (array.GetValueImpl(i), value))
 					return i;
 			}
 
