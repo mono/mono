@@ -31,4 +31,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyVersion("2.1.4.0")]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../mono.pub")]
+[assembly: AssemblyKeyFile ("../../class/mono.pub")]
