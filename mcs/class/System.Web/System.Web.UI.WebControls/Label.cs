@@ -26,69 +26,60 @@ namespace System.Web.UI.WebControls
 	[ToolboxData("<{0}:Label runat=\"server\">Label</{0}:Label>")]
 	public class Label : WebControl
 	{
-		public Label(): base()
+		public Label (): base ()
 		{
 		}
 
-		internal Label(HtmlTextWriterTag tagKey): base(tagKey)
+		internal Label (HtmlTextWriterTag tagKey) : base (tagKey)
 		{
 		}
 
 		public virtual string Text
 		{
-			get
-			{
-				object o = ViewState["Text"];
-				if(o!=null)
-					return (string)o;
-				return String.Empty;
+			get {
+				object o = ViewState ["Text"];
+				return (o == null) ? String.Empty : (string) o;
 			}
-			set
-			{
-				ViewState["Text"] = value;
-			}
+
+			set { ViewState ["Text"] = value; }
 		}
 
-		protected override void AddParsedSubObject(object obj)
+		protected override void AddParsedSubObject (object obj)
 		{
-			if(HasControls())
-			{
-				AddParsedSubObject(obj);
+			if(HasControls ()){
+				base.AddParsedSubObject (obj);
 				return;
 			}
-			if(obj is LiteralControl)
-			{
-				Text = ((LiteralControl)obj).Text;
+
+			if(obj is LiteralControl){
+				Text = ((LiteralControl) obj).Text;
 				return;
 			}
-			if(Text.Length > 0)
-			{
-				AddParsedSubObject(Text);
+
+			if(Text.Length > 0){
+				base.AddParsedSubObject (new LiteralControl (Text));
 				Text = String.Empty;
 			}
-			AddParsedSubObject(obj);
+
+			base.AddParsedSubObject (obj);
 		}
 
-		protected override void LoadViewState(object savedState)
+		protected override void LoadViewState (object savedState)
 		{
-			if(savedState != null)
-			{
-				base.LoadViewState(savedState);
-				string savedText = (string)ViewState["Text"];
+			if(savedState != null) {
+				base.LoadViewState (savedState);
+				string savedText = ViewState ["Text"] as string;
 				if(savedText != null)
 					Text = savedText;
 			}
 		}
 
-		protected override void RenderContents(HtmlTextWriter writer)
+		protected override void RenderContents (HtmlTextWriter writer)
 		{
-			if(HasControls())
-			{
-				RenderContents(writer);
-			} else
-			{
-				writer.Write(Text);
-			}
+			if(HasControls ())
+				base.RenderContents (writer);
+			else
+				writer.Write (Text);
 		}
 	}
 }

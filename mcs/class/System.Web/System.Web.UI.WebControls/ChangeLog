@@ -1,5 +1,12 @@
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Label.cs: beautified and fixed a couple of 'classic' bugs.
+
+	* WebControl.cs: use Span as default tag when no other provided in 
+	constructor. That is what MS renders.
+
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Button.cs:
 	(AddAttributesToRender): fixed (classic) stack overflow.
 

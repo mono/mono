@@ -35,10 +35,8 @@ namespace System.Web.UI.WebControls
 		private string              tagName;
 
 		// TODO: The constructors definitions
-		protected WebControl(): base()
+		protected WebControl () : this (HtmlTextWriterTag.Span)
 		{
-			//todo: what now? To be rendered as SPAN tag!
-			Initialize();
 		}
 
 		public WebControl(HtmlTextWriterTag tag): base()
