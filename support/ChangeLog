@@ -1,5 +1,9 @@
 2005-01-04  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* stdio.c: Add wrapper for C99's snprintf(3).
+
+2005-01-04  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Makefile.am: Rewrite.  Remove configure-generated warnings about 
 	  multiple _LIBADD and _SOURCES lines.  Add support for Win32.  
 	  Win32 support is limited to ANSI C functions.

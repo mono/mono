@@ -7,6 +7,7 @@
  * Copyright (C) 2004-2005 Jonathan Pryor
  */
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -45,6 +46,22 @@ Mono_Posix_Stdlib_fwrite (const void *ptr, mph_size_t size, mph_size_t nmemb, FI
 
 	return fwrite (ptr, (size_t) size, (size_t) nmemb, stream);
 }
+
+#ifdef HAVE_VSNPRINTF
+gint32
+Mono_Posix_Stdlib_snprintf (char *s, mph_size_t n, char *format, ...)
+{
+	va_list ap;
+	gint32 r;
+	mph_return_if_size_t_overflow (n);
+
+	va_start (ap, format);
+	r = vsnprintf (s, (size_t) n, format, ap);
+	va_end (ap);
+
+	return r;
+}
+#endif /* def HAVE_SNPRINTF */
 
 gint32
 Mono_Posix_Stdlib__IOFBF (void)
