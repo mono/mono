@@ -1,3 +1,10 @@
+2003-02-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ConstructorBuilder.cs: 
+	- Added basic error checking to all methods according to the MSDN docs.
+	- modified a lot of methods to throw NotSupportedException, to comply
+	  with MS.NET.
+
 2003-02-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs:

@@ -63,13 +63,18 @@ namespace System.Reflection.Emit {
 			return retval;
 		}
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			return null;
+			throw not_supported ();
 		}
 		public override object Invoke(BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) {
-			return null;
+			throw not_supported ();
 		}
 
-		public override RuntimeMethodHandle MethodHandle { get {return new RuntimeMethodHandle ();} }
+		public override RuntimeMethodHandle MethodHandle { 
+			get {
+				throw not_supported ();
+			}
+		}
+
 		public override MethodAttributes Attributes { 
 			get {return attrs;} 
 		}
@@ -89,6 +94,11 @@ namespace System.Reflection.Emit {
 		[MonoTODO]
 		public ParameterBuilder DefineParameter(int iSequence, ParameterAttributes attributes, string strParamName)
 		{
+			if ((iSequence < 1) || (iSequence > parameters.Length))
+				throw new ArgumentOutOfRangeException ("iSequence");
+			if (type.is_created)
+				throw not_after_created ();
+
 			ParameterBuilder pb = new ParameterBuilder (this, iSequence, attributes, strParamName);
 			// check iSequence
 			if (pinfo == null)
@@ -97,11 +107,17 @@ namespace System.Reflection.Emit {
 			return pb;
 		}
 
-		public override bool IsDefined (Type attribute_type, bool inherit) {return false;}
+		public override bool IsDefined (Type attribute_type, bool inherit) {
+			throw not_supported ();
+		}
 
-		public override object [] GetCustomAttributes (bool inherit) {return null;}
+		public override object [] GetCustomAttributes (bool inherit) {
+			throw not_supported ();
+		}
 
-		public override object [] GetCustomAttributes (Type attribute_type, bool inherit) {return null;}
+		public override object [] GetCustomAttributes (Type attribute_type, bool inherit) {
+			throw not_supported ();
+		}
 
 		public ILGenerator GetILGenerator () {
 			return GetILGenerator (64);
@@ -112,6 +128,9 @@ namespace System.Reflection.Emit {
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (customBuilder == null)
+				throw new ArgumentNullException ("customBuilder");
+
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.CompilerServices.MethodImplAttribute") {
 				byte[] data = customBuilder.Data;
@@ -132,19 +151,32 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			if (con == null)
+				throw new ArgumentNullException ("con");
+			if (binaryAttribute == null)
+				throw new ArgumentNullException ("binaryAttribute");
+
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 		public void SetImplementationFlags( MethodImplAttributes attributes) {
+			if (type.is_created)
+				throw not_after_created ();
+
 			iattrs = attributes;
 		}
 		public Module GetModule() {
-			return null;
+			return type.Module;
 		}
 		public MethodToken GetToken() {
 			return new MethodToken (0x06000000 | table_idx);
 		}
+
+		[MonoTODO]
 		public void SetSymCustomAttribute( string name, byte[] data) {
+			if (type.is_created)
+				throw not_after_created ();
 		}
+
 		public override string ToString() {
 			return "constructor";
 		}
@@ -157,5 +189,12 @@ namespace System.Reflection.Emit {
 			return type.get_next_table_index (obj, table, inc);
 		}
 
+		private Exception not_supported () {
+			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
+		}
+
+		private Exception not_after_created () {
+			return new InvalidOperationException ("Unable to change after type has been created.");
+		}
 	}
 }
