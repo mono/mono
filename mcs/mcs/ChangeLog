@@ -1,3 +1,10 @@
+2004-07-14  Martin Baulig  <martin@ximian.com>
+
+	* iterator.cs (IteratorHandle.IsIEnumerable): The spec explicitly
+	requires this to be a System.Collection.IEnumerable and not a
+	class implementing that interface.
+	(IteratorHandle.IsIEnumerator): Likewise, for IEnumerator.	
+
 2004-07-13  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs: Fixed previous fix, it broke some error tests.
