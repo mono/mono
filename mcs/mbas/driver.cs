@@ -18,6 +18,7 @@ namespace Mono.Languages
 	using System.IO;
 	using System.Globalization;
 	using Mono.CSharp;
+	using Mono.GetOptions;
 
 	enum Target {
 		Library, Exe, Module, WinExe
@@ -65,7 +66,6 @@ namespace Mono.Languages
 		// 
 		static bool load_default_config = true;
 
-		static Hashtable response_file_list;
 		static Hashtable source_files = new Hashtable ();
 
 		//
@@ -148,7 +148,7 @@ Options:
 			Console.WriteLine (msg);
 		}
 		
-//		private static Mono.GetOptions.OptionList Options;
+		private static Mono.GetOptions.OptionList Options;
 
 		private static bool SetVerboseParsing(object nothing)
 		{
@@ -156,14 +156,38 @@ Options:
 			return true;
 		}
 
+		private static bool SetMainClass(object className)
+		{
+			RootContext.MainClass = (string)className;
+			return true;
+		}
+
+		private static bool AddFile(object fileName)
+		{
+			string f = (string)fileName;
+			if (first_source == null)
+				first_source = f;
+
+			if (source_files.Contains(f))
+			{
+				Report.Error (1516, "Source file `" + f + "' specified multiple times");
+				return false;
+			} 
+			else
+				source_files.Add(f, f);
+					
+			return true;
+		}
+
 		public static int Main (string[] args)
 		{
-/*			Options = new Mono.GetOptions.OptionList("The compiler source code is released under the terms of the GNU GPL\n\n" +
-				"For more information on Mono, visit the project Web site\n" +
-				"   http://www.go-mono.com" , "mbas [options] source-files");
+			Options = new OptionList();
+			Options.ShowTitle();
+			Options.AddParameterReader(new OptionFound(AddFile));
 			Options.AddAbout(' ',"about", "About the MonoBASIC compiler");
-			Options.AddBooleanSwitch ('v',"verbose", "Verbose parsing (for debugging the parser)", false, new Mono.GetOptions.OptionFound(SetVerboseParsing) );
-*/			MainDriver(args);	
+			Options.AddBooleanSwitch('v',"verbose", "Verbose parsing (for debugging the parser)", new OptionFound(SetVerboseParsing) );
+			Options.AddSymbolAdder('m',"main", "Specifies CLASS as main (starting) class", "CLASS", new OptionFound(SetMainClass) );
+			MainDriver(args);	
 			return (error_count + Report.Errors) != 0 ? 1 : 0;
 		}
 
@@ -237,29 +261,6 @@ Options:
 			defines.Add ("__MonoBASIC__");
 		}
 
-		static string [] LoadArgs (string file)
-		{
-			StreamReader f;
-			ArrayList args = new ArrayList ();
-			string line;
-			try {
-				f = new StreamReader (file);
-			} catch {
-				return null;
-			}
-
-			while ((line = f.ReadLine ()) != null){
-				string [] line_args = line.Split (new char [] { ' ' });
-
-				foreach (string arg in line_args)
-					args.Add (arg);
-			}
-
-			string [] ret_value = new string [args.Count];
-			args.CopyTo (ret_value, 0);
-
-			return ret_value;
-		}
 
 		//
 		// Returns the directory where the system assemblies are installed
@@ -311,21 +312,6 @@ Options:
 			pattern = spec;
 		}
 
-		static int AddFile(string f)
-		{
-			if (first_source == null)
-				first_source = f;
-
-			if (source_files.Contains (f)){
-				Report.Error (
-					1516,
-					"Source file `" + f + "' specified multiple times");
-				Environment.Exit(1);
-			} else
-				source_files.Add(f, f);
-					
-			return 0;
-		}
 
 		static int ProcessSourceFile(string filename)
 		{
@@ -337,7 +323,7 @@ Options:
 			return 0;
 		}
 
-		static int AddFiles (string spec, bool recurse)
+		static bool AddFiles (string spec, bool recurse)
 		{
 			string path, pattern;
 			int errors = 0;
@@ -352,16 +338,16 @@ Options:
 				files = Directory.GetFiles (path, pattern);
 			} catch (System.IO.DirectoryNotFoundException) {
 				Report.Error (2001, "Source file `" + spec + "' could not be found");
-				return 1;
+				return false;
 			} catch (System.IO.IOException){
 				Report.Error (2001, "Source file `" + spec + "' could not be found");
-				return 1;
+				return false;
 			}
 			foreach (string f in files)
-				errors += AddFile (f);
+				AddFile (f);
 
 			if (!recurse)
-				return errors;
+				return true;
 			
 			string [] dirs = null;
 
@@ -374,11 +360,11 @@ Options:
 					
 				// Don't include path in this string, as each
 				// directory entry already does
-				errors += AddFiles (d + "/" + pattern, true);
+				AddFiles (d + "/" + pattern, true);
 			}
 			
 
-			return errors;
+			return true;
 		}
 
 		static void DefineDefaultConfig ()
@@ -450,53 +436,18 @@ Options:
 			//
 			link_paths.Add (GetSystemDir ());
 
-//			Options.ProcessArgs(args);
-//			return; 
+			if (!Options.ProcessArgs(args))
+				return;
 
-			int argc = args.Length;
+/*			int argc = args.Length;
 			for (i = 0; i < argc; i++){
 				string arg = args [i];
-
-				if (arg.StartsWith ("@")){
-					string [] new_args, extra_args;
-					string response_file = arg.Substring (1);
-
-					if (response_file_list == null)
-						response_file_list = new Hashtable ();
-					
-					if (response_file_list.Contains (response_file)){
-						Report.Error (
-							1515, "Response file `" + response_file +
-							"' specified multiple times");
-						Environment.Exit (1);
-					}
-					
-					response_file_list.Add (response_file, response_file);
-						    
-					extra_args = LoadArgs (response_file);
-					if (extra_args == null){
-						Report.Error (2011, "Unable to open response file: " +
-							      response_file);
-						return;
-					}
-
-					new_args = new string [extra_args.Length + argc];
-					args.CopyTo (new_args, 0);
-					extra_args.CopyTo (new_args, argc);
-					args = new_args;
-					argc = new_args.Length;
-					continue;
-				}
-
 				//
 				// Prepare to recurse
 				//
 				
 				if (parsing_options && (arg.StartsWith ("-"))){
 					switch (arg){
-					case "-v":
-						GenericParser.yacc_verbose_flag = true;
-						continue;
 
 					case "--":
 						parsing_options = false;
@@ -504,14 +455,6 @@ Options:
 
 					case "--parse":
 						parse_only = true;
-						continue;
-
-					case "--main": case "-m":
-						if ((i + 1) >= argc){
-							Usage (true);
-							return;
-						}
-						RootContext.MainClass = args [++i];
 						continue;
 
 					case "--unsafe":
@@ -692,7 +635,7 @@ Options:
 							error_count++;
 							return;
 						}
-						errors += AddFiles (args [++i], true);
+						AddFiles (args [++i], true);
 						continue;
 						
 					case "--timestamp":
@@ -729,7 +672,7 @@ Options:
 				// Rafael: Does not compile them yet!!!
 				errors += AddFiles(arg, false); 
 			}
-
+*/
 			//Rafael: Compile all source files!!!
 			foreach(string filename in source_files.Values)
 				errors += ProcessSourceFile(filename);

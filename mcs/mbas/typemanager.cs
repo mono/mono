@@ -1049,20 +1049,13 @@ public class TypeManager {
 		ArrayList new_ifaces = new ArrayList ();
 		
 		foreach (Type iface in base_interfaces){
-			new_ifaces.Add (iface);
+			if (!new_ifaces.Contains (iface))
+				new_ifaces.Add (iface);
 			
 			Type [] implementing = TypeManager.GetInterfaces (iface);
 			
 			foreach (Type imp in implementing){
-				bool found = false;
-				
-				foreach (Type ni in new_ifaces){
-					if (ni == imp){
-						found = true;
-						break;
-					}
-				}
-				if (!found)
+				if (!new_ifaces.Contains (imp))
 					new_ifaces.Add (imp);
 			}
 		}
@@ -1202,6 +1195,9 @@ public class TypeManager {
 	//
 	public static Type EnumToUnderlying (Type t)
 	{
+		if (t == TypeManager.enum_type)
+			return t;
+
 		t = t.UnderlyingSystemType;
 		if (!TypeManager.IsEnumType (t))
 			return t;

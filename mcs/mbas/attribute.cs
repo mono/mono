@@ -145,10 +145,6 @@ namespace Mono.CSharp {
 			// First process positional arguments 
 			//
 
-			if (Type.Name.IndexOf ("DefaultValue") != -1){
-				Console.WriteLine ("HELLO");
-			}
-			
 			int i;
 			for (i = 0; i < pos_arg_count; i++) {
 				Argument a = (Argument) pos_args [i];
@@ -571,15 +567,15 @@ namespace Mono.CSharp {
 						}
 
 					if (kind is Method || kind is Operator || kind is InterfaceMethod) {
-
 						if (a.Type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
-								((MethodBuilder) builder).SetImplementationFlags (
-									   MethodImplAttributes.InternalCall |
-									   MethodImplAttributes.Runtime);
-						} else if (a.Type != TypeManager.dllimport_type)
+								((MethodBuilder) builder).
+								SetImplementationFlags (
+									MethodImplAttributes.InternalCall |
+									MethodImplAttributes.Runtime);
+						} else if (a.Type != TypeManager.dllimport_type){
 							((MethodBuilder) builder).SetCustomAttribute (cb);
-
+						}
 					} else if (kind is Constructor) {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Field) {

@@ -15,9 +15,13 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
-//[assembly: Mono.GetOptions.Author("Ravi Pratap")]
-//[assembly: Mono.GetOptions.Author("Miguel de Icaza")]
-//[assembly: Mono.GetOptions.Author("Rafael Teixeira")]
+[assembly: Mono.GetOptions.Author("Ravi Pratap")]
+[assembly: Mono.GetOptions.Author("Miguel de Icaza")]
+[assembly: Mono.GetOptions.Author("Rafael Teixeira")]
+
+[assembly: Mono.GetOptions.LicensingWith(Mono.GetOptions.Licenses.GPL)]
+[assembly: Mono.GetOptions.ForMoreInformation("http://www.go-mono.com")]
+[assembly: Mono.GetOptions.UsageClause("mbas [options] source-files")]
 
 //
 // Version information for an assembly consists of the following four values:

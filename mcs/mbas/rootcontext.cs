@@ -351,6 +351,8 @@ namespace Mono.CSharp {
 				"System.Runtime.InteropServices.DllImportAttribute",
 				"System.Runtime.CompilerServices.MethodImplAttribute",
 				"System.Runtime.InteropServices.MarshalAsAttribute",
+				"System.Diagnostics.ConditionalAttribute",
+				"System.ObsoleteAttribute",
 				"System.ParamArrayAttribute",
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
