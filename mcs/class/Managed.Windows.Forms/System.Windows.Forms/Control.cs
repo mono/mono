@@ -2179,7 +2179,7 @@ namespace System.Windows.Forms
 				}
 
 				if (c.CanSelect && ((c.parent == this) || nested) && (c.tab_stop || !tabStopOnly)) {
-					c.Select(false, forward);
+					Select(c);
 					return true;
 				}
 			} while (c != ctl);	// If we wrap back to ourselves we stop

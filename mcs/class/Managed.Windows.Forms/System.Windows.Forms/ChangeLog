@@ -1,3 +1,8 @@
+2005-01-13  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs (SelectNextControl): Was using wrong method to select
+	  a control
+
 2005-01-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: fixes dropstyle
