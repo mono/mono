@@ -1,5 +1,13 @@
 2004-12-09  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.InferType): Moved the type inference
+	implementation into TypeManager.
+
+	* generics.cs (TypeManager): Moved the type inference
+	implementation here.
+
+2004-12-09  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager): Make this a partial class.
 
 	* generics.cs

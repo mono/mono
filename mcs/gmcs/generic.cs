@@ -1847,5 +1847,283 @@ namespace Mono.CSharp {
 
 			return mb.IsGenericMethodDefinition;
 		}
+
+		//
+		// Type inference.
+		//
+
+		static bool InferType (Type pt, Type at, Type[] infered)
+		{
+			if (pt.IsGenericParameter && (pt.DeclaringMethod != null)) {
+				int pos = pt.GenericParameterPosition;
+
+				if (infered [pos] == null) {
+					Type check = at;
+					while (check.IsArray)
+						check = check.GetElementType ();
+
+					if (pt == check)
+						return false;
+
+					infered [pos] = at;
+					return true;
+				}
+
+				if (infered [pos] != at)
+					return false;
+
+				return true;
+			}
+
+			if (!pt.ContainsGenericParameters) {
+				if (at.ContainsGenericParameters)
+					return InferType (at, pt, infered);
+				else
+					return true;
+			}
+
+			if (at.IsArray) {
+				if (!pt.IsArray ||
+				    (at.GetArrayRank () != pt.GetArrayRank ()))
+					return false;
+
+				return InferType (pt.GetElementType (), at.GetElementType (), infered);
+			}
+
+			if (pt.IsArray) {
+				if (!at.IsArray ||
+				    (pt.GetArrayRank () != at.GetArrayRank ()))
+					return false;
+
+				return InferType (pt.GetElementType (), at.GetElementType (), infered);
+			}
+
+			if (pt.IsByRef && at.IsByRef)
+				return InferType (pt.GetElementType (), at.GetElementType (), infered);
+			ArrayList list = new ArrayList ();
+			if (at.IsGenericInstance)
+				list.Add (at);
+			else {
+				for (Type bt = at.BaseType; bt != null; bt = bt.BaseType)
+					list.Add (bt);
+
+				list.AddRange (TypeManager.GetInterfaces (at));
+			}
+
+			bool found_one = false;
+
+			foreach (Type type in list) {
+				if (!type.IsGenericInstance)
+					continue;
+
+				Type[] infered_types = new Type [infered.Length];
+
+				if (!InferGenericInstance (pt, type, infered_types))
+					continue;
+
+				for (int i = 0; i < infered_types.Length; i++) {
+					if (infered [i] == null) {
+						infered [i] = infered_types [i];
+						continue;
+					}
+
+					if (infered [i] != infered_types [i])
+						return false;
+				}
+
+				found_one = true;
+			}
+
+			return found_one;
+		}
+
+		static bool InferGenericInstance (Type pt, Type at, Type[] infered_types)
+		{
+			Type[] at_args = at.GetGenericArguments ();
+			Type[] pt_args = pt.GetGenericArguments ();
+
+			if (at_args.Length != pt_args.Length)
+				return false;
+
+			for (int i = 0; i < at_args.Length; i++) {
+				if (!InferType (pt_args [i], at_args [i], infered_types))
+					return false;
+			}
+
+			for (int i = 0; i < infered_types.Length; i++) {
+				if (infered_types [i] == null)
+					return false;
+			}
+
+			return true;
+		}
+
+		public static bool InferParamsTypeArguments (EmitContext ec, ArrayList arguments,
+							     ref MethodBase method)
+		{
+			if ((arguments == null) || !TypeManager.IsGenericMethod (method))
+				return true;
+
+			int arg_count;
+			
+			if (arguments == null)
+				arg_count = 0;
+			else
+				arg_count = arguments.Count;
+			
+			ParameterData pd = Invocation.GetParameterData (method);
+
+			int pd_count = pd.Count;
+
+			if (pd_count == 0)
+				return false;
+			
+			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
+				return false;
+			
+			if (pd_count - 1 > arg_count)
+				return false;
+			
+			if (pd_count == 1 && arg_count == 0)
+				return true;
+
+			Type[] method_args = method.GetGenericArguments ();
+			Type[] infered_types = new Type [method_args.Length];
+
+			//
+			// If we have come this far, the case which
+			// remains is when the number of parameters is
+			// less than or equal to the argument count.
+			//
+			for (int i = 0; i < pd_count - 1; ++i) {
+				Argument a = (Argument) arguments [i];
+
+				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
+					continue;
+
+				Type pt = pd.ParameterType (i);
+				Type at = a.Type;
+
+				if (!InferType (pt, at, infered_types))
+					return false;
+			}
+
+			Type element_type = TypeManager.GetElementType (pd.ParameterType (pd_count - 1));
+
+			for (int i = pd_count - 1; i < arg_count; i++) {
+				Argument a = (Argument) arguments [i];
+
+				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
+					continue;
+
+				if (!InferType (element_type, a.Type, infered_types))
+					return false;
+			}
+
+			for (int i = 0; i < infered_types.Length; i++)
+				if (infered_types [i] == null)
+					return false;
+
+			method = method.BindGenericParameters (infered_types);
+			return true;
+		}
+
+		public static bool InferTypeArguments (Type[] param_types, Type[] arg_types, Type[] infered_types)
+		{
+			if (infered_types == null)
+				return false;
+
+			for (int i = 0; i < arg_types.Length; i++) {
+				if (arg_types [i] == null)
+					continue;
+
+				if (!InferType (param_types [i], arg_types [i], infered_types))
+					return false;
+			}
+
+			for (int i = 0; i < infered_types.Length; i++)
+				if (infered_types [i] == null)
+					return false;
+
+			return true;
+		}
+
+		public static bool InferTypeArguments (EmitContext ec, ArrayList arguments,
+						       ref MethodBase method)
+		{
+			if (!TypeManager.IsGenericMethod (method))
+				return true;
+
+			int arg_count;
+			if (arguments != null)
+				arg_count = arguments.Count;
+			else
+				arg_count = 0;
+
+			ParameterData pd = Invocation.GetParameterData (method);
+			if (arg_count != pd.Count)
+				return false;
+
+			Type[] method_args = method.GetGenericArguments ();
+
+			bool is_open = false;
+			for (int i = 0; i < method_args.Length; i++) {
+				if (method_args [i].IsGenericParameter) {
+					is_open = true;
+					break;
+				}
+			}
+			if (!is_open)
+				return true;
+
+			Type[] infered_types = new Type [method_args.Length];
+
+			Type[] param_types = new Type [pd.Count];
+			Type[] arg_types = new Type [pd.Count];
+
+			for (int i = 0; i < arg_count; i++) {
+				param_types [i] = pd.ParameterType (i);
+
+				Argument a = (Argument) arguments [i];
+				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
+					continue;
+
+				arg_types [i] = a.Type;
+			}
+
+			if (!InferTypeArguments (param_types, arg_types, infered_types))
+				return false;
+
+			method = method.BindGenericParameters (infered_types);
+			return true;
+		}
+
+		public static bool InferTypeArguments (EmitContext ec, ParameterData apd,
+						       ref MethodBase method)
+		{
+			if (!TypeManager.IsGenericMethod (method))
+				return true;
+
+			ParameterData pd = Invocation.GetParameterData (method);
+			if (apd.Count != pd.Count)
+				return false;
+
+			Type[] method_args = method.GetGenericArguments ();
+			Type[] infered_types = new Type [method_args.Length];
+
+			Type[] param_types = new Type [pd.Count];
+			Type[] arg_types = new Type [pd.Count];
+
+			for (int i = 0; i < apd.Count; i++) {
+				param_types [i] = pd.ParameterType (i);
+				arg_types [i] = apd.ParameterType (i);
+			}
+
+			if (!InferTypeArguments (param_types, arg_types, infered_types))
+				return false;
+
+			method = method.BindGenericParameters (infered_types);
+			return true;
+		}
 	}
 }

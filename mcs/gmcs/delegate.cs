@@ -458,7 +458,7 @@ namespace Mono.CSharp {
 			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
 			if (!mg.HasTypeArguments &&
-			    !Invocation.InferTypeArguments (ec, invoke_pd, ref mb))
+			    !TypeManager.InferTypeArguments (ec, invoke_pd, ref mb))
 				return null;
 
 			ParameterData pd = Invocation.GetParameterData (mb);
@@ -752,7 +752,7 @@ namespace Mono.CSharp {
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
 			if (!mg.HasTypeArguments &&
-			    !Invocation.InferTypeArguments (ec, param, ref candidate))
+			    !TypeManager.InferTypeArguments (ec, param, ref candidate))
 				Report.Error (411, loc, "The type arguments for " +
 					      "method `{0}' cannot be infered from " +
 					      "the usage. Try specifying the type " +
