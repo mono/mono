@@ -1,7 +1,10 @@
+2004-07-29  Martin Baulig  <martin@ximian.com>
+
+	* Module.cs (Mono_GetGuid): Make this static.
 
 Sat Jul 10 15:48:34 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
-	* Modulec.s: return just name in ToString (bug #61287).
+	* Module.cs: return just name in ToString (bug #61287).
 
 2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
 

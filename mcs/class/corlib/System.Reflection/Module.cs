@@ -215,9 +215,9 @@ namespace System.Reflection {
 		}
 
 		// Mono Extension: returns the GUID of this module
-		internal Guid Mono_GetGuid ()
+		internal static Guid Mono_GetGuid (Module module)
 		{
-			return new Guid (GetGuidInternal ());
+			return new Guid (module.GetGuidInternal ());
 		}
 
 		private static bool filter_by_type_name (Type m, object filterCriteria) {
