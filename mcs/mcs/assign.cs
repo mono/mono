@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (target.ExprClass != ExprClass.Variable){
+			if (target.eclass != ExprClass.Variable){
 				Report.Error (131, l,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");
@@ -175,7 +175,7 @@ namespace Mono.CSharp {
 		void Emit (EmitContext ec, bool is_statement)
 		{
 			ILGenerator ig = ec.ig;
-			ExprClass eclass = target.ExprClass;
+			ExprClass eclass = target.eclass;
 
 			//
 			// FIXME! We need a way to "probe" if the process can

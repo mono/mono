@@ -256,7 +256,6 @@ OPTIMIZATIONS
 
 * Add a cache for the various GetArrayMethod operations.
 
-  
 RECOMMENDATIONS
 ---------------
 

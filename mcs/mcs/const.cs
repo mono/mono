@@ -123,14 +123,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Expr = Expression.Reduce (ec, Expr);
-			
-			if (!(Expr is Literal)) {
+			if (!(Expr is Constant)) {
 				Report.Error (150, Location, "A constant value is expected");
 				return null;
 			}
 
-			ConstantValue = ((Literal) Expr).GetValue ();
+			ConstantValue = ((Constant) Expr).GetValue ();
 
 			if (type.IsEnum){
 				//

@@ -1,3 +1,43 @@
+2001-12-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* location.cs (ToString): Provide useful rutine.
+
+2001-12-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (Expression.ConvertIntLiteral): Do not return Constant
+	objects, return the actual integral boxed.
+
+	* statement.cs (SwitchLabel): define an ILLabel for each
+	SwitchLabel. 
+	
+	(Switch.CheckSwitch): If the value is a Literal, extract
+	the underlying literal.
+	
+	Also in the unused hashtable we had, add the SwitchLabel so we can
+	quickly look this value up.
+
+	* constant.cs: Implement a bunch of new constants.  Rewrite
+	Literal based on this.  Made changes everywhere to adapt to this.
+	
+	* expression.cs (Expression.MakeByteBlob): Optimize routine by
+	dereferencing array only once, and also copes with enumrations.
+
+	bytes are two bytes wide, not one.
+
+	(Cast): Perform constant conversions.
+	
+	* ecore.cs (TryImplicitIntConversion): Return literals instead of
+	wrappers to the literals here.
+
+	* expression.cs (DoNumericPromotions): long literals can converted
+	to ulong implicity (this is taken care of elsewhere, but I was
+	missing this spot).
+
+	* ecore.cs (Expression.Literalize): Make the return type Literal,
+	to improve type checking.
+
+	* rootcontext.cs: Lookup for nested classes in our class hierarchy.
+
 2001-12-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* literal.cs: Revert code from ravi that checked the bounds.  The

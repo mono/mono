@@ -21,7 +21,7 @@
             >
                 <Config
                     Name = "Debug"
-                    AllowUnsafeBlocks = "false"
+                    AllowUnsafeBlocks = "true"
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
@@ -99,6 +99,11 @@
                 />
                 <File
                     RelPath = "codegen.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "const.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

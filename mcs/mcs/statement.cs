@@ -423,15 +423,23 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			expr = Expression.Reduce (ec, expr);
-			if (!(expr is Literal)){
+			if (!(expr is Constant)){
 				Report.Error (159, loc, "Target expression for goto case is not constant");
 				return false;
 			}
-			
-			// FIXME: implement me.
 
-			throw new Exception ("FIXME: IMPLEMENT ME");
+			object val = ((Constant) expr).GetValue ();
+
+			SwitchLabel sl = (SwitchLabel) ec.Switch.Elements [val];
+
+			if (sl == null){
+				Report.Error (
+					159, loc,
+					"No such label 'case " + val + "': for the goto case");
+			}
+
+			ec.ig.Emit (OpCodes.Br, sl.ILLabel);
+			return false;
 		}
 	}
 	
@@ -899,8 +907,9 @@ namespace Mono.CSharp {
 
 	public class SwitchLabel {
 		Expression label;
-		Literal converted;
+		object converted;
 		public Location loc;
+		public Label ILLabel;
 		
 		//
 		// if expr == null, then it is the default case.
@@ -917,7 +926,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Literal Converted {
+		public object Converted {
 			get {
 				return converted;
 			}
@@ -929,6 +938,8 @@ namespace Mono.CSharp {
 		//
 		public bool ResolveAndReduce (EmitContext ec, Type required_type)
 		{
+			ILLabel = ec.ig.DefineLabel ();
+
 			if (label == null)
 				return true;
 			
@@ -937,26 +948,24 @@ namespace Mono.CSharp {
 			if (e == null)
 				return false;
 
-			label = e.Reduce (ec);
-
-			if (!(label is Literal)){
+			if (!(e is Constant)){
 				Console.WriteLine ("Value is: " + label);
-				Report.Error (150, loc,
-					      "A constant value is expected");
+				Report.Error (150, loc, "A constant value is expected");
 				return false;
 			}
 
-			if (label is StringLiteral || label is NullLiteral){
+			if (e is StringConstant || e is NullLiteral){
 				if (required_type == TypeManager.string_type){
-					converted = (Literal) label;
+					converted = label;
+					ILLabel = ec.ig.DefineLabel ();
 					return true;
 				}
 			}
 
-			converted = Expression.ConvertIntLiteral ((Literal) label, required_type, loc);
+			converted = Expression.ConvertIntLiteral ((Constant) e, required_type, loc);
 			if (converted == null)
 				return false;
-			
+
 			return true;
 		}
 	}
@@ -974,16 +983,25 @@ namespace Mono.CSharp {
 	}
 	
 	public class Switch : Statement {
-		ArrayList sections;
-		Expression expr;
-		Location loc;
+		public readonly ArrayList Sections;
+		public Expression Expr;
+
+		/// <summary>
+		///   Maps constants whose type type SwitchType to their  SwitchLabels.
+		/// </summary>
+		public Hashtable Elements;
+
+		/// <summary>
+		///   The governing switch type
+		/// </summary>
+		public Type SwitchType;
 
 		//
 		// Computed
 		//
-		bool      got_default;
-		Hashtable elements;
-		Label     default_target;
+		bool got_default;
+		Label default_target;
+		Location loc;
 		
 		//
 		// The types allowed to be implicitly cast from
@@ -993,21 +1011,9 @@ namespace Mono.CSharp {
 		
 		public Switch (Expression e, ArrayList sects, Location l)
 		{
-			expr = e;
-			sections = sects;
+			Expr = e;
+			Sections = sects;
 			loc = l;
-		}
-
-		public Expression Expr {
-			get {
-				return expr;
-			}
-		}
-
-		public ArrayList Sections {
-			get {
-				return sections;
-			}
 		}
 
 		public bool GotDefault {
@@ -1022,12 +1028,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Hashtable Elements {
-			get {
-				return elements;
-			}
-		}
-		
 		//
 		// Determines the governing type for a switch.  The returned
 		// expression might be the expression from the switch, or an
@@ -1047,7 +1047,7 @@ namespace Mono.CSharp {
 			    t == TypeManager.int64_type ||
 			    t == TypeManager.string_type ||
 			    t.IsSubclassOf (TypeManager.enum_type))
-				return expr;
+				return Expr;
 
 			if (allowed_types == null){
 				allowed_types = new Type [] {
@@ -1074,14 +1074,14 @@ namespace Mono.CSharp {
 			foreach (Type tt in allowed_types){
 				Expression e;
 				
-				e = Expression.ImplicitUserConversion (ec, expr, tt, loc);
+				e = Expression.ImplicitUserConversion (ec, Expr, tt, loc);
 				if (e == null)
 					continue;
 
 				if (converted != null){
 					Report.Error (-12, loc, "More than one conversion to an integral " +
 						      " type exists for type `" +
-						      TypeManager.CSharpName (expr.Type)+"'");
+						      TypeManager.CSharpName (Expr.Type)+"'");
 					return null;
 				}
 			}
@@ -1102,14 +1102,26 @@ namespace Mono.CSharp {
 		// It also returns a hashtable with the keys that we will later
 		// use to compute the switch tables
 		//
-		bool CheckSwitch (EmitContext ec, Type switch_type)
+		bool CheckSwitch (EmitContext ec)
 		{
+			Type compare_type;
 			bool error = false;
-			elements = new Hashtable ();
+			Elements = new Hashtable ();
 				
 			got_default = false;
-			foreach (SwitchSection ss in sections){
+
+			if (TypeManager.IsEnumType (SwitchType))
+				compare_type = SwitchType.UnderlyingSystemType;
+			else
+				compare_type = SwitchType;
+			
+			foreach (SwitchSection ss in Sections){
 				foreach (SwitchLabel sl in ss.Labels){
+					if (!sl.ResolveAndReduce (ec, SwitchType)){
+						error = true;
+						continue;
+					}
+
 					if (sl.Label == null){
 						if (got_default){
 							error152 ("default");
@@ -1119,63 +1131,95 @@ namespace Mono.CSharp {
 						continue;
 					}
 					
-					if (!sl.ResolveAndReduce (ec, switch_type)){
-						error = true;
-						continue;
-					}
+					object key = sl.Converted;
 
-					Literal key = sl.Converted;
+					if (key is Constant)
+						key = ((Constant) key).GetValue ();
 
-					//
-					// We can do this because ConvertIntLiteral
-					// will only return the following 4 kinds literals and
-					// they will be consistent. 
-					//
+					if (key == null)
+						key = NullLiteral.Null;
+					
 					string lname = null;
-					if (switch_type == TypeManager.uint64_type){
-						ulong v = ((ULongLiteral) key).Value;
+					if (compare_type == TypeManager.uint64_type){
+						ulong v = (ulong) key;
 
-						if (elements.Contains (v))
+						if (Elements.Contains (v))
 							lname = v.ToString ();
 						else
-							elements.Add (v, key);
-					} else if (switch_type == TypeManager.int64_type){
-						long v = ((LongLiteral) key).Value;
+							Elements.Add (v, sl);
+					} else if (compare_type == TypeManager.int64_type){
+						long v = (long) key;
 
-						if (elements.Contains (v))
+						if (Elements.Contains (v))
 							lname = v.ToString ();
 						else
-							elements.Add (v, key);
-					} else if (switch_type == TypeManager.uint32_type){
-						uint v = ((UIntLiteral) key).Value;
+							Elements.Add (v, sl);
+					} else if (compare_type == TypeManager.uint32_type){
+						uint v = (uint) key;
 
-						if (elements.Contains (v))
+						if (Elements.Contains (v))
 							lname = v.ToString ();
 						else
-							elements.Add (v, key);
-					} else if (switch_type == TypeManager.string_type){
+							Elements.Add (v, sl);
+					} else if (compare_type == TypeManager.char_type){
+						char v = (char) key;
+						
+						if (Elements.Contains (v))
+							lname = v.ToString ();
+						else
+							Elements.Add (v, sl);
+					} else if (compare_type == TypeManager.byte_type){
+						byte v = (byte) key;
+						
+						if (Elements.Contains (v))
+							lname = v.ToString ();
+						else
+							Elements.Add (v, sl);
+					} else if (compare_type == TypeManager.sbyte_type){
+						sbyte v = (sbyte) key;
+						
+						if (Elements.Contains (v))
+							lname = v.ToString ();
+						else
+							Elements.Add (v, sl);
+					} else if (compare_type == TypeManager.short_type){
+						short v = (short) key;
+						
+						if (Elements.Contains (v))
+							lname = v.ToString ();
+						else
+							Elements.Add (v, sl);
+					} else if (compare_type == TypeManager.ushort_type){
+						ushort v = (ushort) key;
+						
+						if (Elements.Contains (v))
+							lname = v.ToString ();
+						else
+							Elements.Add (v, sl);
+					} else if (compare_type == TypeManager.string_type){
 						if (key is NullLiteral){
-							if (elements.Contains (NullLiteral.Null))
+							if (Elements.Contains (NullLiteral.Null))
 								lname = "null";
 							else
-								elements.Add (NullLiteral.Null, null);
+								Elements.Add (NullLiteral.Null, null);
 						} else {
-							string s;
-							
-							s = ((StringLiteral) key).Value;
+							string s = (string) key;
 
-							if (elements.Contains (s))
+							if (Elements.Contains (s))
 								lname = s;
 							else
-								elements.Add (s, key);
+								Elements.Add (s, sl);
 						}
-					} else {
-						int v = ((IntLiteral) key).Value;
+					} else if (compare_type == TypeManager.int32_type) {
+						int v = (int) key;
 
-						if (elements.Contains (v))
+						if (Elements.Contains (v))
 							lname = v.ToString ();
 						else
-							elements.Add (v, key);
+							Elements.Add (v, sl);
+					} else {
+						throw new Exception ("Unknown switch type!" +
+								     SwitchType);
 					}
 
 					if (lname != null){
@@ -1190,12 +1234,34 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		void EmitObjectInteger (ILGenerator ig, object k)
+		{
+			if (k is int)
+				IntConstant.EmitInt (ig, (int) k);
+			else if (k is Constant){
+				EmitObjectInteger (ig, ((Constant) k).GetValue ());
+			} else if (k is uint)
+				IntConstant.EmitInt (ig, unchecked ((int) (uint) k));
+			else if (k is long)
+				LongConstant.EmitLong (ig, (long) k);
+			else if (k is ulong)
+				LongConstant.EmitLong (ig, unchecked ((long) (ulong) k));
+			else if (k is char)
+				IntConstant.EmitInt (ig, (int) k);
+			else if (k is sbyte)
+				IntConstant.EmitInt (ig, (sbyte) k);
+			else if (k is byte)
+				IntConstant.EmitInt (ig,(byte) k);
+			else 
+				throw new Exception ("Unhandled case");
+		}
+		
 		//
 		// This simple emit switch works, but does not take advantage of the
 		// `switch' opcode.  The swithc opcode uses a jump table that we are not
 		// computing at this point
 		//
-		bool SimpleSwitchEmit (EmitContext ec, LocalBuilder val, Type switch_type, Hashtable el)
+		bool SimpleSwitchEmit (EmitContext ec, LocalBuilder val)
 		{
 			ILGenerator ig = ec.ig;
 			Label end_of_switch = ig.DefineLabel ();
@@ -1212,11 +1278,11 @@ namespace Mono.CSharp {
 			// Special processing for strings: we cant compare
 			// against null.
 			//
-			if (switch_type == TypeManager.string_type){
+			if (SwitchType == TypeManager.string_type){
 				ig.Emit (OpCodes.Ldloc, val);
 				is_string = true;
 				
-				if (el.Contains (NullLiteral.Null)){
+				if (Elements.Contains (NullLiteral.Null)){
 					ig.Emit (OpCodes.Brfalse, null_target);
 				} else
 					ig.Emit (OpCodes.Brfalse, default_target);
@@ -1226,7 +1292,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stloc, val);
 			}
 			
-			foreach (SwitchSection ss in sections){
+			foreach (SwitchSection ss in Sections){
 				Label sec_begin = ig.DefineLabel ();
 
 				if (pending_goto_end)
@@ -1235,6 +1301,8 @@ namespace Mono.CSharp {
 				int label_count = ss.Labels.Count;
 				null_found = false;
 				foreach (SwitchLabel sl in ss.Labels){
+					ig.MarkLabel (sl.ILLabel);
+					
 					if (!first_test){
 						ig.MarkLabel (next_test);
 						next_test = ig.DefineLabel ();
@@ -1246,7 +1314,7 @@ namespace Mono.CSharp {
 						ig.MarkLabel (default_target);
 						default_found = true;
 					} else {
-						Literal lit = sl.Converted;
+						object lit = sl.Converted;
 
 						if (lit is NullLiteral){
 							null_found = true;
@@ -1256,7 +1324,7 @@ namespace Mono.CSharp {
 									      
 						}
 						if (is_string){
-							StringLiteral str = (StringLiteral) lit;
+							StringConstant str = (StringConstant) lit;
 
 							ig.Emit (OpCodes.Ldloc, val);
 							ig.Emit (OpCodes.Ldstr, str.Value);
@@ -1266,7 +1334,7 @@ namespace Mono.CSharp {
 								ig.Emit (OpCodes.Beq, sec_begin);
 						} else {
 							ig.Emit (OpCodes.Ldloc, val);
-							lit.Emit (ec);
+							EmitObjectInteger (ig, lit);
 							ig.Emit (OpCodes.Ceq);
 							if (label_count == 1)
 								ig.Emit (OpCodes.Brfalse, next_test);
@@ -1299,25 +1367,24 @@ namespace Mono.CSharp {
 		
 		public override bool Emit (EmitContext ec)
 		{
-			expr = expr.Resolve (ec);
-			if (expr == null)
+			Expr = Expr.Resolve (ec);
+			if (Expr == null)
 				return false;
 
-			Expression new_expr = SwitchGoverningType (ec, expr.Type);
+			Expression new_expr = SwitchGoverningType (ec, Expr.Type);
 			if (new_expr == null){
 				Report.Error (151, loc, "An integer type or string was expected for switch");
 				return false;
 			}
 
 			// Validate switch.
-			
-			Type switch_type = new_expr.Type;
+			SwitchType = new_expr.Type;
 
-			if (!CheckSwitch (ec, switch_type))
+			if (!CheckSwitch (ec))
 				return false;
 
 			// Store variable for comparission purposes
-			LocalBuilder value = ec.ig.DeclareLocal (switch_type);
+			LocalBuilder value = ec.ig.DeclareLocal (SwitchType);
 			new_expr.Emit (ec);
 			ec.ig.Emit (OpCodes.Stloc, value);
 
@@ -1335,7 +1402,7 @@ namespace Mono.CSharp {
 			ec.Switch = this;
 
 			// Emit Code.
-			bool all_return =  SimpleSwitchEmit (ec, value, switch_type, elements);
+			bool all_return =  SimpleSwitchEmit (ec, value);
 
 			// Restore context state. 
 			ig.MarkLabel (ec.LoopEnd);
@@ -2032,7 +2099,7 @@ namespace Mono.CSharp {
 			// FIXME: When we implement propertyaccess, will those turn
 			// out to return values in ExprClass?  I think they should.
 			//
-			if (!(expr.ExprClass == ExprClass.Variable || expr.ExprClass == ExprClass.Value)){
+			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value)){
 				error1579 (expr.Type);
 				return false;
 			}

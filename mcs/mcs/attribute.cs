@@ -100,16 +100,15 @@ namespace Mono.CSharp {
 			
 			int i;
 			for (i = 0; i < pos_args.Count; i++) {
-
 				Argument a = (Argument) pos_args [i];
+				Expression e;
 
 				if (!a.Resolve (ec, Location))
 					return null;
 
-				Expression e = Expression.Reduce (ec, a.Expr);
-
-				if (e is Literal) {
-					pos_values [i] = ((Literal) e).GetValue ();
+				e = a.Expr;
+				if (e is Constant) {
+					pos_values [i] = ((Constant) e).GetValue ();
 
 					if (UsageAttr)
 						this.Targets = (AttributeTargets) pos_values [0];
@@ -129,25 +128,26 @@ namespace Mono.CSharp {
 			ArrayList prop_values = new ArrayList ();
 
 			for (i = 0; i < named_args.Count; i++) {
-
 				DictionaryEntry de = (DictionaryEntry) named_args [i];
-
 				string member_name = (string) de.Key;
 				Argument a  = (Argument) de.Value;
-
+				Expression e;
+				
 				if (!a.Resolve (ec, Location))
 					return null;
 
-				Expression member = Expression.MemberLookup (ec, Type, member_name, false,
-									     MemberTypes.Field | MemberTypes.Property,
-									     BindingFlags.Public | BindingFlags.Instance,
-									     Location);
+				Expression member = Expression.MemberLookup (
+					ec, Type, member_name, false,
+					MemberTypes.Field | MemberTypes.Property,
+					BindingFlags.Public | BindingFlags.Instance,
+					Location);
 
 				if (member == null || !(member is PropertyExpr || member is FieldExpr)) {
 					error617 (member_name);
 					return null;
 				}
 
+				e = a.Expr;
 				if (member is PropertyExpr) {
 					PropertyExpr pe = (PropertyExpr) member;
 					PropertyInfo pi = pe.PropertyInfo;
@@ -157,10 +157,8 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Expression e = Expression.Reduce (ec, a.Expr);
-					
-					if (e is Literal) {
-						object o = ((Literal) e).GetValue ();
+					if (e is Constant) {
+						object o = ((Constant) e).GetValue ();
 						prop_values.Add (o);
 						
 						if (UsageAttr) {
@@ -186,10 +184,8 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Expression e = Expression.Reduce (ec, a.Expr);
-					
-					if (e is Literal)
-						field_values.Add (((Literal) e).GetValue ());
+					if (e is Constant)
+						field_values.Add (((Constant) e).GetValue ());
 					else { 
 						error182 ();
 						return null;
@@ -199,20 +195,24 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			Expression mg = Expression.MemberLookup (ec, Type, ".ctor", false,
-								 MemberTypes.Constructor,
-								 BindingFlags.Public | BindingFlags.Instance,
-								 Location);
+			Expression mg = Expression.MemberLookup (
+				ec, Type, ".ctor", false, MemberTypes.Constructor,
+				BindingFlags.Public | BindingFlags.Instance, Location);
 
 			if (mg == null) {
-				Report.Error (-6, Location, "Could not find a constructor for this argument list.");
+				Report.Error (
+					-6, Location,
+					"Could not find a constructor for this argument list.");
 				return null;
 			}
 
-			MethodBase constructor = Invocation.OverloadResolve (ec, (MethodGroupExpr) mg, pos_args, Location);
+			MethodBase constructor = Invocation.OverloadResolve (
+				ec, (MethodGroupExpr) mg, pos_args, Location);
 
 			if (constructor == null) {
-				Report.Error (-6, Location, "Could not find a constructor for this argument list.");
+				Report.Error (
+					-6, Location,
+					"Could not find a constructor for this argument list.");
 				return null;
 			}
 			
@@ -227,9 +227,10 @@ namespace Mono.CSharp {
 			prop_values.CopyTo  (prop_values_arr, 0);
 			prop_infos.CopyTo   (prop_info_arr, 0);
 			
-			CustomAttributeBuilder cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, pos_values,
-										prop_info_arr, prop_values_arr,
-										field_info_arr, field_values_arr); 
+			CustomAttributeBuilder cb = new CustomAttributeBuilder (
+				(ConstructorInfo) constructor, pos_values,
+				prop_info_arr, prop_values_arr,
+				field_info_arr, field_values_arr); 
 			
 			return cb;
 		}
@@ -419,10 +420,8 @@ namespace Mono.CSharp {
 			if (!tmp.Resolve (ec, Location))
 				return null;
 			
-			Expression exp = Expression.Reduce (ec, tmp.Expr);
-			
-			if (exp is Literal)
-				dll_name = (string) ((Literal) exp).GetValue ();
+			if (tmp.Expr is Constant)
+				dll_name = (string) ((Constant) tmp.Expr).GetValue ();
 			else { 
 				error182 ();
 				return null;
@@ -465,23 +464,21 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Expression e = Expression.Reduce (ec, a.Expr);
-					
-					if (e is Literal) {
-						Literal l = (Literal) e;
+					if (a.Expr is Constant) {
+						Constant c = (Constant) a.Expr;
 						
 						if (member_name == "CallingConvention")
-							cc = (CallingConvention) l.GetValue ();
+							cc = (CallingConvention) c.GetValue ();
 						else if (member_name == "CharSet")
-							charset = (CharSet) l.GetValue ();
+							charset = (CharSet) c.GetValue ();
 						else if (member_name == "EntryPoint")
-							entry_point = (string) l.GetValue ();
+							entry_point = (string) c.GetValue ();
 						else if (member_name == "SetLastError")
-							set_last_err = (bool) l.GetValue ();
+							set_last_err = (bool) c.GetValue ();
 						else if (member_name == "ExactSpelling")
-							exact_spelling = (bool) l.GetValue ();
+							exact_spelling = (bool) c.GetValue ();
 						else if (member_name == "PreserveSig")
-							preserve_sig = (bool) l.GetValue ();
+							preserve_sig = (bool) c.GetValue ();
 					} else { 
 						error182 ();
 						return null;
@@ -491,12 +488,12 @@ namespace Mono.CSharp {
 			}
 
 			MethodBuilder mb = builder.DefinePInvokeMethod (
-								   name, dll_name, flags,
-								   CallingConventions.Standard,
-								   ret_type,
-								   param_types,
-								   cc,
-								   charset); 
+				name, dll_name, flags,
+				CallingConventions.Standard,
+				ret_type,
+				param_types,
+				cc,
+				charset); 
 			
 			return mb;
 		}

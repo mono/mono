@@ -241,10 +241,17 @@ namespace Mono.CSharp {
 				}
 			}
 
-			// For the case the type we are looking for is nested within this one.
-			t = TypeManager.LookupType (ds.Name + "+" + name);
-			if (t != null)
-				return t;
+			//
+			// For the case the type we are looking for is nested within this one
+			// or any base class
+			//
+			Type current_type = ds.TypeBuilder;
+			do {
+				t = TypeManager.LookupType (current_type.FullName + "+" + name);
+				if (t != null)
+					return t;
+				current_type = current_type.BaseType;
+			} while (current_type != null);
 
 			if (!silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");

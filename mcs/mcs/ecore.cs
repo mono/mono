@@ -51,7 +51,7 @@ namespace Mono.CSharp {
 	///   Base class for expressions
 	/// </remarks>
 	public abstract class Expression {
-		protected ExprClass eclass;
+		public ExprClass eclass;
 		protected Type      type;
 		
 		public Type Type {
@@ -61,16 +61,6 @@ namespace Mono.CSharp {
 
 			set {
 				type = value;
-			}
-		}
-
-		public ExprClass ExprClass {
-			get {
-				return eclass;
-			}
-
-			set {
-				eclass = value;
 			}
 		}
 
@@ -159,14 +149,16 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				if (e.ExprClass == ExprClass.Invalid)
-					throw new Exception ("Expression " + e +
+				if (e.eclass == ExprClass.Invalid)
+					throw new Exception ("Expression " + e.GetType () +
 							     " ExprClass is Invalid after resolve");
 
-				if (e.ExprClass != ExprClass.MethodGroup)
+				if (e.eclass != ExprClass.MethodGroup)
 					if (e.type == null)
-						throw new Exception ("Expression " + e +
-								     " did not set its type after Resolve");
+						throw new Exception (
+							"Expression " + e.GetType () +
+							" did not set its type after Resolve\n" +
+							"called from: " + this.GetType ());
 			}
 
 			return e;
@@ -189,11 +181,11 @@ namespace Mono.CSharp {
 				if (e is SimpleName)
 					return e;
 
-				if (e.ExprClass == ExprClass.Invalid)
+				if (e.eclass == ExprClass.Invalid)
 					throw new Exception ("Expression " + e +
 							     " ExprClass is Invalid after resolve");
 
-				if (e.ExprClass != ExprClass.MethodGroup)
+				if (e.eclass != ExprClass.MethodGroup)
 					if (e.type == null)
 						throw new Exception ("Expression " + e +
 								     " did not set its type after Resolve");
@@ -225,11 +217,11 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (e.ExprClass == ExprClass.Invalid)
+				if (e.eclass == ExprClass.Invalid)
 					throw new Exception ("Expression " + e +
 							     " ExprClass is Invalid after resolve");
 
-				if (e.ExprClass != ExprClass.MethodGroup)
+				if (e.eclass != ExprClass.MethodGroup)
 					if (e.type == null)
 						throw new Exception ("Expression " + e +
 								     " did not set its type after Resolve");
@@ -249,15 +241,6 @@ namespace Mono.CSharp {
 		public abstract void Emit (EmitContext ec);
 
 		/// <summary>
-		///   This method should perform a reduction of the expression.  This should
-		///   never return null.
-		/// </summary>
-		public virtual Expression Reduce (EmitContext ec)
-		{
-			return this;
-		}
-
-		/// <summary>
 		///   Protected constructor.  Only derivate types should
 		///   be able to be created
 		/// </summary>
@@ -274,43 +257,45 @@ namespace Mono.CSharp {
 		///
 		/// <remarks>
 		///   The possible return values are:
-		///      IntLiteral, UIntLiteral
-		///      LongLiteral, ULongLiteral
-		///      FloatLiteral, DoubleLiteral
-		///      StringLiteral
+		///      IntConstant, UIntConstant
+		///      LongLiteral, ULongConstant
+		///      FloatConstant, DoubleConstant
+		///      StringConstant
+		///
+		///   The value returned is already resolved.
 		/// </remarks>
-		public static Expression Literalize (object v, Type t)
+		public static Constant Constantify (object v, Type t)
 		{
 			if (t == TypeManager.int32_type)
-				return new IntLiteral ((int) v);
+				return new IntConstant ((int) v);
 			else if (t == TypeManager.uint32_type)
-				return new UIntLiteral ((uint) v);
+				return new UIntConstant ((uint) v);
 			else if (t == TypeManager.int64_type)
-				return new LongLiteral ((long) v);
+				return new LongConstant ((long) v);
 			else if (t == TypeManager.uint64_type)
-				return new ULongLiteral ((ulong) v);
+				return new ULongConstant ((ulong) v);
 			else if (t == TypeManager.float_type)
-				return new FloatLiteral ((float) v);
+				return new FloatConstant ((float) v);
 			else if (t == TypeManager.double_type)
-				return new DoubleLiteral ((double) v);
+				return new DoubleConstant ((double) v);
 			else if (t == TypeManager.string_type)
-				return new StringLiteral ((string) v);
+				return new StringConstant ((string) v);
 			else if (t == TypeManager.short_type)
-				return new IntLiteral ((int) ((short)v));
+				return new ShortConstant ((short)v);
 			else if (t == TypeManager.ushort_type)
-				return new IntLiteral ((int) ((ushort)v));
+				return new UShortConstant ((ushort)v);
 			else if (t == TypeManager.sbyte_type)
-				return new IntLiteral ((int) ((sbyte)v));
+				return new SByteConstant (((sbyte)v));
 			else if (t == TypeManager.byte_type)
-				return new IntLiteral ((int) ((byte)v));
+				return new ByteConstant ((byte)v);
 			else if (t == TypeManager.char_type)
-				return new IntLiteral ((int) ((char)v));
+				return new CharConstant ((char)v);
 			else if (TypeManager.IsEnumType (t)){
-				Expression e = Literalize (v, v.GetType ());
+				Expression e = Constantify (v, v.GetType ());
 
-				return new EnumLiteral (e, t);
+				return new EnumConstant ((Constant) e, t);
 			} else
-				throw new Exception ("Unknown type for literal (" + t +
+				throw new Exception ("Unknown type for constant (" + t +
 						     "), details: " + v);
 		}
 
@@ -588,21 +573,22 @@ namespace Mono.CSharp {
 			//
 			// Attempt to do the implicit constant expression conversions
 
-			if (expr is IntLiteral){
+			if (expr is IntConstant){
 				Expression e;
 				
-				e = TryImplicitIntConversion (target_type, (IntLiteral) expr);
+				e = TryImplicitIntConversion (target_type, (IntConstant) expr);
 
 				if (e != null)
 					return e;
-			} else if (expr is LongLiteral && target_type == TypeManager.uint64_type){
+			} else if (expr is LongConstant && target_type == TypeManager.uint64_type){
 				//
 				// Try the implicit constant expression conversion
 				// from long to ulong, instead of a nice routine,
 				// we just inline it
 				//
-				if (((LongLiteral) expr).Value > 0)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				long v = ((LongConstant) expr).Value;
+				if (v > 0)
+					return new ULongConstant ((ulong) v);
 			}
 			
 			if (expr_type == TypeManager.sbyte_type){
@@ -1213,33 +1199,32 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Attemps to perform an implict constant conversion of the IntLiteral
+		///   Attemps to perform an implict constant conversion of the IntConstant
 		///   into a different data type using casts (See Implicit Constant
 		///   Expression Conversions)
 		/// </summary>
-		static protected Expression TryImplicitIntConversion (Type target_type, IntLiteral il)
+		static protected Expression TryImplicitIntConversion (Type target_type, IntConstant ic)
 		{
-			int value = il.Value;
-			
+			int value = ic.Value;
+
+			//
+			// FIXME: This should really return constants instead of EmptyCasts
+			//
 			if (target_type == TypeManager.sbyte_type){
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
-					return new EmptyCast (il, target_type);
+					return new SByteConstant ((sbyte) value);
 			} else if (target_type == TypeManager.byte_type){
 				if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
-					return new EmptyCast (il, target_type);
+					return new ByteConstant ((byte) value);
 			} else if (target_type == TypeManager.short_type){
 				if (value >= Int16.MinValue && value <= Int16.MaxValue)
-					return new EmptyCast (il, target_type);
+					return new ShortConstant ((short) value);
 			} else if (target_type == TypeManager.ushort_type){
 				if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
-					return new EmptyCast (il, target_type);
+					return new UShortConstant ((ushort) value);
 			} else if (target_type == TypeManager.uint32_type){
-				//
-				// we can optimize this case: a positive int32
-				// always fits on a uint32
-				//
 				if (value >= 0)
-					return new EmptyCast (il, target_type);
+					return new UIntConstant ((uint) value);
 			} else if (target_type == TypeManager.uint64_type){
 				//
 				// we can optimize this case: a positive int32
@@ -1247,7 +1232,7 @@ namespace Mono.CSharp {
 				// to do it.
 				//
 				if (value >= 0)
-					return new OpcodeCast (il, target_type, OpCodes.Conv_I8);
+					return new ULongConstant ((ulong) value);
 			}
 
 			return null;
@@ -1710,8 +1695,8 @@ namespace Mono.CSharp {
 			//
 			// Enum types
 			//
-			if (expr is EnumLiteral) {
-				Expression e = ((EnumLiteral) expr).Child;
+			if (expr is EnumConstant) {
+				Expression e = ((EnumConstant) expr).Child;
 				
 				return ConvertImplicit (ec, e, target_type, loc);
 			}
@@ -1786,20 +1771,10 @@ namespace Mono.CSharp {
 			string kind = "Unknown";
 			
 			if (expr != null)
-				kind = ExprClassName (expr.ExprClass);
+				kind = ExprClassName (expr.eclass);
 
 			Error (118, loc, "Expression denotes a `" + kind +
 			       "' where a `" + expected + "' was expected");
-		}
-
-		/// <summary>
-		///   This function tries to reduce the expression performing
-		///   constant folding and common subexpression elimination
-		/// </summary>
-		static public Expression Reduce (EmitContext ec, Expression e)
-		{
-			//Console.WriteLine ("Calling reduce");
-			return e.Reduce (ec);
 		}
 
 		static void error31 (Location l, string val, Type t)
@@ -1809,146 +1784,160 @@ namespace Mono.CSharp {
 		}
 		
 		/// <summary>
-		///   Converts the IntLiteral, UIntLiteral, LongLiteral or
-		///   ULongLiteral into the integral target_type.
+		///   Converts the IntConstant, UIntConstant, LongConstant or
+		///   ULongConstant into the integral target_type.   Notice
+		///   that we do not return an `Expression' we do return
+		///   a boxed integral type.
+		///
+		///   FIXME: Since I added the new constants, we need to
+		///   also support conversions from CharConstant, ByteConstant,
+		///   SByteConstant, UShortConstant, ShortConstant
 		///
 		///   This is used by the switch statement, so the domain
 		///   of work is restricted to the literals above, and the
 		///   targets are int32, uint32, char, byte, sbyte, ushort,
 		///   short, uint64 and int64
 		/// </summary>
-		public static Literal ConvertIntLiteral (Literal l, Type target_type, Location loc)
+		public static object ConvertIntLiteral (Constant c, Type target_type, Location loc)
 		{
 			string s = "";
 
-			if (l.Type == target_type)
-				return l;
+			if (c.Type == target_type)
+				return c;
 
 			//
 			// Make into one of the literals we handle, we dont really care
 			// about this value as we will just return a few limited types
 			// 
-			if (l is EnumLiteral)
-				l = ((EnumLiteral)l).WidenToCompilerLiteral ();
+			if (c is EnumConstant)
+				c = ((EnumConstant)c).WidenToCompilerConstant ();
 
-			if (l is IntLiteral){
-				int v = ((IntLiteral) l).Value;
+			if (c is IntConstant){
+				int v = ((IntConstant) c).Value;
 				
 				if (target_type == TypeManager.uint32_type){
 					if (v >= 0)
-						return new UIntLiteral ((uint) v);
+						return (object) ((uint) v);
 				} else if (target_type == TypeManager.char_type){
 					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return l;
+						return (object) ((char) v);
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return l;
+						return (object) ((byte) v);
 				} else if (target_type == TypeManager.sbyte_type){
 					if (v >= SByte.MinValue && v <= SByte.MaxValue)
-						return l;
+						return (object) ((sbyte) v);
 				} else if (target_type == TypeManager.short_type){
 					if (v >= Int16.MinValue && v <= UInt16.MaxValue)
-						return l;
+						return (object) ((short) v);
 				} else if (target_type == TypeManager.ushort_type){
 					if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
-						return l;
+						return (object) ((ushort) v);
 				} else if (target_type == TypeManager.int64_type)
-					return new LongLiteral (v);
+					return (object) ((long) v);
 			        else if (target_type == TypeManager.uint64_type){
 					if (v > 0)
-						return new ULongLiteral ((ulong) v);
+						return (object) ((ulong) v);
 				}
 
 				s = v.ToString ();
-			} else if (l is	UIntLiteral){
-				uint v = ((UIntLiteral) l).Value;
+			} else if (c is	UIntConstant){
+				uint v = ((UIntConstant) c).Value;
 
 				if (target_type == TypeManager.int32_type){
 					if (v <= Int32.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((int) v);
 				} else if (target_type == TypeManager.char_type){
 					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return l;
+						return (object) ((char) v);
 				} else if (target_type == TypeManager.byte_type){
 					if (v <= Byte.MaxValue)
-						return l;
+						return (object) ((byte) v);
 				} else if (target_type == TypeManager.sbyte_type){
 					if (v <= SByte.MaxValue)
-						return l;
+						return (object) ((sbyte) v);
 				} else if (target_type == TypeManager.short_type){
 					if (v <= UInt16.MaxValue)
-						return l;
+						return (object) ((short) v);
 				} else if (target_type == TypeManager.ushort_type){
 					if (v <= UInt16.MaxValue)
-						return l;
+						return (object) ((ushort) v);
 				} else if (target_type == TypeManager.int64_type)
-					return new LongLiteral (v);
+					return (object) ((long) v);
 			        else if (target_type == TypeManager.uint64_type)
-					return new ULongLiteral (v);
+					return (object) ((ulong) v);
 				s = v.ToString ();
-			} else if (l is	LongLiteral){ 
-				long v = ((LongLiteral) l).Value;
+			} else if (c is	LongLiteral){ 
+				long v = ((LongLiteral) c).Value;
 
 				if (target_type == TypeManager.int32_type){
 					if (v >= UInt32.MinValue && v <= UInt32.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((int) v);
 				} else if (target_type == TypeManager.uint32_type){
 					if (v >= 0 && v <= UInt32.MaxValue)
-						return new UIntLiteral ((uint) v);
+						return (object) ((uint) v);
 				} else if (target_type == TypeManager.char_type){
 					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((char) v);
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((byte) v);
 				} else if (target_type == TypeManager.sbyte_type){
 					if (v >= SByte.MinValue && v <= SByte.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((sbyte) v);
 				} else if (target_type == TypeManager.short_type){
 					if (v >= Int16.MinValue && v <= UInt16.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((short) v);
 				} else if (target_type == TypeManager.ushort_type){
 					if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((ushort) v);
 			        } else if (target_type == TypeManager.uint64_type){
 					if (v > 0)
-						return new ULongLiteral ((ulong) v);
+						return (object) ((ulong) v);
 				}
 				s = v.ToString ();
-			} else if (l is	ULongLiteral){
-				ulong v = ((ULongLiteral) l).Value;
+			} else if (c is	ULongLiteral){
+				ulong v = ((ULongLiteral) c).Value;
 
 				if (target_type == TypeManager.int32_type){
 					if (v <= Int32.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((int) v);
 				} else if (target_type == TypeManager.uint32_type){
 					if (v <= UInt32.MaxValue)
-						return new UIntLiteral ((uint) v);
+						return (object) ((uint) v);
 				} else if (target_type == TypeManager.char_type){
 					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((char) v);
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((byte) v);
 				} else if (target_type == TypeManager.sbyte_type){
 					if (v <= (int) SByte.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((sbyte) v);
 				} else if (target_type == TypeManager.short_type){
 					if (v <= UInt16.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((short) v);
 				} else if (target_type == TypeManager.ushort_type){
 					if (v <= UInt16.MaxValue)
-						return new IntLiteral ((int) v);
+						return (object) ((ushort) v);
 			        } else if (target_type == TypeManager.int64_type){
 					if (v <= Int64.MaxValue)
-						return new LongLiteral ((long) v);
+						return (object) ((long) v);
 				}
 				s = v.ToString ();
-			} 
+			} else if (c is ByteConstant){
+				throw new Exception ("Implement me");
+			} else if (c is SByteConstant){
+				throw new Exception ("Implement me");
+			} else if (c is ShortConstant){
+				throw new Exception ("Implement me");
+			} else if (c is UShortConstant){
+				throw new Exception ("Implement me");
+			}
 			
 			error31 (loc, s, target_type);
 			return null;
-		}
+		}		
 			
 	}
 
@@ -1987,7 +1976,7 @@ namespace Mono.CSharp {
 
 		public EmptyCast (Expression child, Type return_type)
 		{
-			ExprClass = child.ExprClass;
+			eclass = child.eclass;
 			type = return_type;
 			this.child = child;
 		}
@@ -2010,12 +1999,12 @@ namespace Mono.CSharp {
 	/// <summary>
 	///  This class is used to wrap literals which belong inside Enums
 	/// </summary>
-	public class EnumLiteral : Literal {
-		public Expression Child;
+	public class EnumConstant : Constant {
+		public Constant Child;
 
-		public EnumLiteral (Expression child, Type enum_type)
+		public EnumConstant (Constant child, Type enum_type)
 		{
-			ExprClass = child.ExprClass;
+			eclass = child.eclass;
 			this.Child = child;
 			type = enum_type;
 		}
@@ -2035,7 +2024,7 @@ namespace Mono.CSharp {
 
 		public override object GetValue ()
 		{
-			return ((Literal) Child).GetValue ();
+			return Child.GetValue ();
 		}
 
 		//
@@ -2043,27 +2032,27 @@ namespace Mono.CSharp {
 		// (int32, uint32, int64, uint64, short, ushort, byte, sbyte) to
 		// one of the internal compiler literals: Int/UInt/Long/ULong Literals.
 		//
-		public Literal WidenToCompilerLiteral ()
+		public Constant WidenToCompilerConstant ()
 		{
 			Type t = Child.Type.UnderlyingSystemType;
-			object v = ((Literal) Child).GetValue ();;
+			object v = ((Constant) Child).GetValue ();;
 			
 			if (t == TypeManager.int32_type)
-				return new IntLiteral ((int) v);
+				return new IntConstant ((int) v);
 			if (t == TypeManager.uint32_type)
-				return new UIntLiteral ((uint) v);
+				return new UIntConstant ((uint) v);
 			if (t == TypeManager.int64_type)
-				return new LongLiteral ((long) v);
+				return new LongConstant ((long) v);
 			if (t == TypeManager.uint64_type)
-				return new ULongLiteral ((ulong) v);
+				return new ULongConstant ((ulong) v);
 			if (t == TypeManager.short_type)
-				return new IntLiteral ((short) v);
+				return new ShortConstant ((short) v);
 			if (t == TypeManager.ushort_type)
-				return new UIntLiteral ((ushort) v);
+				return new UShortConstant ((ushort) v);
 			if (t == TypeManager.byte_type)
-				return new UIntLiteral ((byte) v);
+				return new ByteConstant ((byte) v);
 			if (t == TypeManager.sbyte_type)
-				return new IntLiteral ((sbyte) v);
+				return new SByteConstant ((sbyte) v);
 
 			throw new Exception ("Invalid enumeration underlying type: " + t);
 		}
@@ -2074,7 +2063,7 @@ namespace Mono.CSharp {
 		public object GetPlainValue ()
 		{
 			Type t = Child.Type.UnderlyingSystemType;
-			object v = ((Literal) Child).GetValue ();;
+			object v = ((Constant) Child).GetValue ();;
 			
 			if (t == TypeManager.int32_type)
 				return (int) v;
@@ -2098,7 +2087,7 @@ namespace Mono.CSharp {
 		
 		public override string AsString ()
 		{
-			return ((Literal) Child).AsString ();
+			return Child.AsString ();
 		}
 	}
 
@@ -2613,10 +2602,8 @@ namespace Mono.CSharp {
 					
 					if (c != null) {
 						object o = c.LookupConstantValue (ec);
-						object real_value = ((Literal)c.Expr).GetValue ();
-						Expression l = Literalize (real_value, fi.FieldType);
-						l = l.Resolve (ec);
-						return ((Literal) l);
+						object real_value = ((Constant)c.Expr).GetValue ();
+						return Constantify (real_value, fi.FieldType);
 					}
 				}
 			} 				

@@ -152,26 +152,81 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (t) + "'");
 		}
 
+		/// <remarks>
+		///   The result has been already resolved:
+		///
+		///   FIXME: a minus constant -128 sbyte cant be turned into a
+		///   constant byte.
+		/// </remarks>
 		static Expression TryReduceNegative (Expression expr)
 		{
 			Expression e = null;
 			
-			if (expr is IntLiteral)
-				e = new IntLiteral (-((IntLiteral) expr).Value);
-			else if (expr is UIntLiteral)
-				e = new LongLiteral (-((UIntLiteral) expr).Value);
-			else if (expr is LongLiteral)
-				e = new LongLiteral (-((LongLiteral) expr).Value);
-			else if (expr is FloatLiteral)
-				e = new FloatLiteral (-((FloatLiteral) expr).Value);
-			else if (expr is DoubleLiteral)
-				e = new DoubleLiteral (-((DoubleLiteral) expr).Value);
-			else if (expr is DecimalLiteral)
-				e = new DecimalLiteral (-((DecimalLiteral) expr).Value);
+			if (expr is IntConstant)
+				e = new IntConstant (-((IntConstant) expr).Value);
+			else if (expr is UIntConstant)
+				e = new LongConstant (-((UIntConstant) expr).Value);
+			else if (expr is LongConstant)
+				e = new LongConstant (-((LongConstant) expr).Value);
+			else if (expr is FloatConstant)
+				e = new FloatConstant (-((FloatConstant) expr).Value);
+			else if (expr is DoubleConstant)
+				e = new DoubleConstant (-((DoubleConstant) expr).Value);
+			else if (expr is DecimalConstant)
+				e = new DecimalConstant (-((DecimalConstant) expr).Value);
+			else if (expr is ShortConstant)
+				e = new IntConstant (-((ShortConstant) expr).Value);
+			else if (expr is UShortConstant)
+				e = new IntConstant (-((UShortConstant) expr).Value);
 
 			return e;
 		}
 		
+		Expression Reduce (EmitContext ec)
+		{
+			Type expr_type = expr.Type;
+			
+			switch (oper){
+			case Operator.UnaryPlus:
+				return expr;
+				
+			case Operator.UnaryNegation:
+				return TryReduceNegative (expr);
+				
+			case Operator.LogicalNot:
+				if (expr_type != TypeManager.bool_type) {
+					error23 (expr.Type);
+					return null;
+				}
+				
+				BoolConstant b = (BoolConstant) expr;
+				return new BoolConstant (!(b.Value));
+				
+			case Operator.OnesComplement:
+				if (!((expr_type == TypeManager.int32_type) ||
+				      (expr_type == TypeManager.uint32_type) ||
+				      (expr_type == TypeManager.int64_type) ||
+				      (expr_type == TypeManager.uint64_type) ||
+				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
+					error23 (expr.Type);
+					return null;
+				}
+				Type et = expr.Type;
+				
+				if (et == TypeManager.int32_type)
+					return new IntConstant (~ ((IntConstant) expr).Value);
+				if (et == TypeManager.uint32_type)
+					return new UIntConstant (~ ((UIntConstant) expr).Value);
+				if (et == TypeManager.int64_type)
+					return new LongConstant (~ ((LongConstant) expr).Value);
+				if (et == TypeManager.uint64_type)
+					return new ULongConstant (~ ((ULongConstant) expr).Value);
+
+				throw new Exception ("FIXME: Implement constant OnesComplement of enumerations");
+			}
+			throw new Exception ("Can not constant fold");
+		}
+
 		Expression ResolveOperator (EmitContext ec)
 		{
 			Type expr_type = expr.Type;
@@ -201,16 +256,18 @@ namespace Mono.CSharp {
 				return e;
 			}
 
-			//
-			// Step 2: Default operations on CLI native types.
-			//
-
 			// Only perform numeric promotions on:
 			// +, - 
 
 			if (expr_type == null)
 				return null;
 			
+			//
+			// Step 2: Default operations on CLI native types.
+			//
+			if (expr is Constant)
+				return Reduce (ec);
+
 			if (oper == Operator.LogicalNot){
 				if (expr_type != TypeManager.bool_type) {
 					error23 (expr.Type);
@@ -257,16 +314,6 @@ namespace Mono.CSharp {
 				Expression e = null;
 
 				//
-				// Is this a constant? 
-				//
-				e = TryReduceNegative (expr);
-				
-				if (e != null){
-					e = e.Resolve (ec);
-					return e;
-				}
-
-				//
 				// Not a constant we can optimize, perform numeric 
 				// promotions to int, long, double.
 				//
@@ -281,7 +328,7 @@ namespace Mono.CSharp {
 					//
 					// FIXME: handle exception to this rule that
 					// permits the int value -2147483648 (-2^31) to
-					// bt written as a decimal interger literal
+					// bt wrote as a decimal interger literal
 					//
 					type = TypeManager.int64_type;
 					expr = ConvertImplicit (ec, expr, type, loc);
@@ -291,7 +338,7 @@ namespace Mono.CSharp {
 				if (expr_type == TypeManager.uint64_type){
 					//
 					// FIXME: Handle exception of `long value'
-					// -92233720368547758087 (-2^63) to be written as
+					// -92233720368547758087 (-2^63) to be wrote as
 					// decimal integer literal.
 					//
 					error23 (expr_type);
@@ -324,7 +371,7 @@ namespace Mono.CSharp {
 			}
 
 			if (oper == Operator.AddressOf){
-				if (expr.ExprClass != ExprClass.Variable){
+				if (expr.eclass != ExprClass.Variable){
 					Error (211, loc, "Cannot take the address of non-variables");
 					return null;
 				}
@@ -399,47 +446,6 @@ namespace Mono.CSharp {
 			expr.Emit (ec);
 		}
 		
-		public override Expression Reduce (EmitContext ec)
-		{
-			Expression e;
-			
-			//
-			// First, reduce our child.  Note that although we handle 
-			//
-			expr = expr.Reduce (ec);
-			if (!(expr is Literal))
-				return expr;
-			
-			switch (oper){
-			case Operator.UnaryPlus:
-				return expr;
-				
-			case Operator.UnaryNegation:
-				e = TryReduceNegative (expr);
-				if (e == null)
-					break;
-				return e;
-				
-			case Operator.LogicalNot:
-				BoolLiteral b = (BoolLiteral) expr;
-
-				return new BoolLiteral (!(b.Value));
-				
-			case Operator.OnesComplement:
-				Type et = expr.Type;
-				
-				if (et == TypeManager.int32_type)
-					return new IntLiteral (~ ((IntLiteral) expr).Value);
-				if (et == TypeManager.uint32_type)
-					return new UIntLiteral (~ ((UIntLiteral) expr).Value);
-				if (et == TypeManager.int64_type)
-					return new LongLiteral (~ ((LongLiteral) expr).Value);
-				if (et == TypeManager.uint64_type)
-					return new ULongLiteral (~ ((ULongLiteral) expr).Value);
-				break;
-			}
-			return this;
-		}
 	}
 
 	/// <summary>
@@ -550,12 +556,12 @@ namespace Mono.CSharp {
 			// a property access or an indexer access
 			//
 			type = expr_type;
-			if (expr.ExprClass == ExprClass.Variable){
+			if (expr.eclass == ExprClass.Variable){
 				if (IsIncrementableNumber (expr_type) ||
 				    expr_type == TypeManager.decimal_type){
 					return this;
 				}
-			} else if (expr.ExprClass == ExprClass.IndexerAccess){
+			} else if (expr.eclass == ExprClass.IndexerAccess){
 				IndexerAccess ia = (IndexerAccess) expr;
 				
 				temp_storage = new LocalTemporary (ec, expr.Type);
@@ -565,7 +571,7 @@ namespace Mono.CSharp {
 					return null;
 
 				return this;
-			} else if (expr.ExprClass == ExprClass.PropertyAccess){
+			} else if (expr.eclass == ExprClass.PropertyAccess){
 				PropertyExpr pe = (PropertyExpr) expr;
 
 				if (pe.VerifyAssignable ())
@@ -805,6 +811,235 @@ namespace Mono.CSharp {
 				expr = value;
 			}
 		}
+
+		/// <summary>
+		///   Attempts to do a compile-time folding of a constant cast.
+		/// </summary>
+		Expression TryReduce (EmitContext ec, Type target_type)
+		{
+			if (expr is ByteConstant){
+				byte v = ((ByteConstant) expr).Value;
+	
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is SByteConstant){
+				sbyte v = ((SByteConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is ShortConstant){
+				short v = ((ShortConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is UShortConstant){
+				ushort v = ((UShortConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is IntConstant){
+				int v = ((IntConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is UIntConstant){
+				uint v = ((UIntConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is LongConstant){
+				long v = ((LongConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is ULongConstant){
+				ulong v = ((ULongConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is FloatConstant){
+				float v = ((FloatConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+			}
+			if (expr is DoubleConstant){
+				double v = ((DoubleConstant) expr).Value;
+	
+				if (target_type == TypeManager.byte_type)
+					return new ByteConstant ((byte) v);
+				if (target_type == TypeManager.sbyte_type)
+					return new SByteConstant ((sbyte) v);
+				if (target_type == TypeManager.short_type)
+					return new ShortConstant ((short) v);
+				if (target_type == TypeManager.ushort_type)
+					return new UShortConstant ((ushort) v);
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+			}
+
+			return null;
+		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -816,7 +1051,7 @@ namespace Mono.CSharp {
 			if (target_type == null)
 				return null;
 
-			if (target_type.ExprClass != ExprClass.Type){
+			if (target_type.eclass != ExprClass.Type){
 				report118 (loc, target_type, "class");
 				return null;
 			}
@@ -827,6 +1062,13 @@ namespace Mono.CSharp {
 			if (type == null)
 				return null;
 
+			if (expr is Constant){
+				Expression e = TryReduce (ec, type);
+
+				if (e != null)
+					return e;
+			}
+			
 			expr = ConvertExplicit (ec, expr, type, loc);
 			return expr;
 		}
@@ -992,17 +1234,29 @@ namespace Mono.CSharp {
 				//
 				
 				if (l == TypeManager.uint64_type){
-					if (r != TypeManager.uint64_type && right is IntLiteral){
-						e = TryImplicitIntConversion (l, (IntLiteral) right);
-						if (e != null)
-							right = e;
+					if (r != TypeManager.uint64_type){
+						if (right is IntConstant){
+							e = TryImplicitIntConversion(l, (IntConstant) right);
+							if (e != null)
+								right = e;
+						} else if (right is LongConstant){
+							long ll = ((LongConstant) right).Value;
+
+							if (ll > 0)
+								right = new ULongConstant ((ulong) ll);
+						}
 					}
 					other = right.Type;
 				} else {
-					if (left is IntLiteral){
-						e = TryImplicitIntConversion (r, (IntLiteral) left);
+					if (left is IntConstant){
+						e = TryImplicitIntConversion (r, (IntConstant) left);
 						if (e != null)
 							left = e;
+					} else if (left is LongConstant){
+						long ll = ((LongConstant) left).Value;
+
+						if (ll > 0)
+							left = new ULongConstant ((ulong) ll);
 					}
 					other = left.Type;
 				}
@@ -1172,11 +1426,12 @@ namespace Mono.CSharp {
 				//
 				if (l == TypeManager.string_type){
 					if (r == TypeManager.string_type){
-						if (left is Literal && right is Literal){
-							StringLiteral ls = (StringLiteral) left;
-							StringLiteral rs = (StringLiteral) right;
+						if (left is Constant && right is Constant){
+							StringConstant ls = (StringConstant) left;
+							StringConstant rs = (StringConstant) right;
 							
-							return new StringLiteral (ls.Value + rs.Value);
+							return new StringConstant (
+								ls.Value + rs.Value);
 						}
 						
 						// string + string
@@ -1309,11 +1564,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Expression ConstantFold (EmitContext ec)
 		{
-			if (left is StringLiteral && right is StringLiteral){
-				StringLiteral ls = (StringLiteral) left;
-				StringLiteral rs = (StringLiteral) right;
+			if (left is StringConstant && right is StringConstant){
+				StringConstant ls = (StringConstant) left;
+				StringConstant rs = (StringConstant) right;
 				
-				return new StringLiteral (ls.Value + rs.Value);
+				return new StringConstant (ls.Value + rs.Value);
 			}
 
 			Type result_type = null;
@@ -1322,11 +1577,11 @@ namespace Mono.CSharp {
 			//
 			// Enumerator folding
 			//
-			if (left.Type == right.Type && left is EnumLiteral){
+			if (left.Type == right.Type && left is EnumConstant){
 				result_type = left.Type;
 
-				l = ((EnumLiteral)left).GetPlainValue ();
-				r = ((EnumLiteral)right).GetPlainValue ();
+				l = ((EnumConstant)left).GetPlainValue ();
+				r = ((EnumConstant)right).GetPlainValue ();
 			} else {
 				l = left;
 				r = right;
@@ -1335,27 +1590,27 @@ namespace Mono.CSharp {
 			switch (oper){
 			case Operator.BitwiseOr:
 				if ((l is int) && (r is int)){
-					IntLiteral v;
+					IntConstant v;
 					int res = (int)l | (int)r;
 					
-					v = new IntLiteral (res);
+					v = new IntConstant (res);
 					if (result_type == null)
-						return v.Resolve (ec);
+						return v;
 					else
-						return new EnumLiteral (v.Resolve (ec), result_type);
+						return new EnumConstant (v, result_type);
 				}
 				break;
 				
 			case Operator.BitwiseAnd:
 				if ((l is int) && (r is int)){
-					IntLiteral v;
+					IntConstant v;
 					int res = (int)l & (int)r;
 					
-					v = new IntLiteral (res);
+					v = new IntConstant (res);
 					if (result_type == null)
-						return v.Resolve (ec);
+						return v;
 					else
-						return new EnumLiteral (v.Resolve (ec), result_type);
+						return new EnumConstant (v, result_type);
 				}
 				break;
 			}
@@ -1381,13 +1636,6 @@ namespace Mono.CSharp {
 					right + ") at Line: "+ loc.Row);
 
 			eclass = ExprClass.Value;
-
-			//
-			// We always need to reduce on Binary operators, as we need to do
-			// constant folding
-			//
-			left = left.Reduce (ec);
-			right = right.Reduce (ec);
 
 			if (left is Constant && right is Constant){
 				//
@@ -1743,15 +1991,15 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (expr is BoolLiteral){
-				BoolLiteral bl = (BoolLiteral) expr;
+			if (expr is BoolConstant){
+				BoolConstant bc = (BoolConstant) expr;
 
-				if (bl.Value)
+				if (bc.Value)
 					return trueExpr;
 				else
 					return falseExpr;
 			}
-			
+
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -1771,22 +2019,6 @@ namespace Mono.CSharp {
 			ig.MarkLabel (end_target);
 		}
 
-		public override Expression Reduce (EmitContext ec)
-		{
-			expr = expr.Reduce (ec);
-			trueExpr = trueExpr.Reduce (ec);
-			falseExpr = falseExpr.Reduce (ec);
-
-			if (!(expr is Literal && trueExpr is Literal && falseExpr is Literal))
-				return this;
-
-			BoolLiteral bl = (BoolLiteral) expr;
-
-			if (bl.Value)
-				return trueExpr;
-			else
-				return falseExpr;
-		}
 	}
 
 	/// <summary>
@@ -1825,9 +2057,7 @@ namespace Mono.CSharp {
 				if (e == null)  
 					return null;
 
-				e = Expression.Reduce (ec, e);
-
-				if (!(e is Literal)) {
+				if (!(e is Constant)) {
 					Report.Error (150, loc, "A constant value is expected");
 					return null;
 				}
@@ -2158,7 +2388,7 @@ namespace Mono.CSharp {
 			if (ArgType == AType.Expression)
 				return expr != null;
 
-			if (expr.ExprClass != ExprClass.Variable){
+			if (expr.eclass != ExprClass.Variable){
 				Report.Error (206, loc,
 					      "A property or indexer can not be passed as an out or ref " +
 					      "parameter");
@@ -2327,8 +2557,8 @@ namespace Mono.CSharp {
 			// taken place.  We dont do constant folding yet.
 			//
 
-			if (argument_expr is IntLiteral){
-				IntLiteral ei = (IntLiteral) argument_expr;
+			if (argument_expr is IntConstant){
+				IntConstant ei = (IntConstant) argument_expr;
 				int value = ei.Value;
 				
 				if (p == TypeManager.sbyte_type){
@@ -2358,11 +2588,11 @@ namespace Mono.CSharp {
 					if (value >= 0)
 						return 1;
 				}
-			} else if (argument_type == TypeManager.int64_type && argument_expr is LongLiteral){
-				LongLiteral ll = (LongLiteral) argument_expr;
+			} else if (argument_type == TypeManager.int64_type && argument_expr is LongConstant){
+				LongConstant lc = (LongConstant) argument_expr;
 				
 				if (p == TypeManager.uint64_type){
-					if (ll.Value > 0)
+					if (lc.Value > 0)
 						return 1;
 				}
 			}
@@ -2751,13 +2981,6 @@ namespace Mono.CSharp {
 					} else
 						continue;
 				}
-
-				if (method_count > 1) {
-					Report.Error (121, loc,
-						      "Ambiguous call when selecting function due to implicit casts");
-					return null;
-					
-				}
 			}
 
 			if (method == null)
@@ -2779,8 +3002,9 @@ namespace Mono.CSharp {
 				x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
 				
 				if (x != 1) {
-					Report.Error (121, loc,
-						      "Ambiguous call when selecting function due to implicit casts");
+					Report.Error (
+						121, loc,
+						"Ambiguous call when selecting function due to implicit casts");
 					return null;
 				}
 			}
@@ -2935,7 +3159,7 @@ namespace Mono.CSharp {
 			LocalBuilder array;
 			
 			array = ig.DeclareLocal (Type.GetType (array_type));
-			IntLiteral.EmitInt (ig, count);
+			IntConstant.EmitInt (ig, count);
 			ig.Emit (OpCodes.Newarr, t);
 			ig.Emit (OpCodes.Stloc, array);
 
@@ -2944,7 +3168,7 @@ namespace Mono.CSharp {
 				a = (Argument) arguments [j];
 				
 				ig.Emit (OpCodes.Ldloc, array);
-				IntLiteral.EmitInt (ig, j - idx);
+				IntConstant.EmitInt (ig, j - idx);
 				a.Emit (ec);
 				
 				ArrayAccess.EmitStoreOpcode (ig, t);
@@ -3306,14 +3530,12 @@ namespace Mono.CSharp {
 				if (!a.Resolve (ec, loc))
 					return false;
 				
-				Expression e = Expression.Reduce (ec, a.Expr);
-				
-				if (!(e is Literal)) {
+				if (!(a.Expr is Constant)) {
 					Report.Error (150, loc, "A constant value is expected");
 					return false;
 				}
 				
-				int value = (int) ((Literal) e).GetValue ();
+				int value = (int) ((Constant) a.Expr).GetValue ();
 				
 				if (value != probe.Count) {
 					error178 ();
@@ -3334,21 +3556,19 @@ namespace Mono.CSharp {
 					if (tmp == null)
 						continue;
 					
-					tmp = Expression.Reduce (ec, tmp);
-
 					// Handle initialization from vars, fields etc.
-					
-					Expression conv = ConvertImplicitRequired (ec, tmp, underlying_type, loc);
+					Expression conv = ConvertImplicitRequired (
+						ec, tmp, underlying_type, loc);
 					
 					if (conv == null) 
 						return false;
 
-					if (tmp is StringLiteral)
-						ArrayData.Add (tmp);
-					else if (tmp is Literal)
-						ArrayData.Add (((Literal) tmp).GetValue ());
+					if (conv is StringConstant)
+						ArrayData.Add (conv);
+					else if (tmp is Constant)
+						ArrayData.Add (((Constant) conv).GetValue ());
 					else
-						ArrayData.Add (tmp);
+						ArrayData.Add (conv);
 				}
 			}
 
@@ -3361,7 +3581,7 @@ namespace Mono.CSharp {
 			for (ArrayList probe = Initializers; probe != null;) {
 				
 				if (probe [0] is ArrayList) {
-					Expression e = new IntLiteral (probe.Count);
+					Expression e = new IntConstant (probe.Count);
 					Arguments.Add (new Argument (e, Argument.AType.Expression));
 
 					Bounds [i++] =  probe.Count;
@@ -3369,7 +3589,7 @@ namespace Mono.CSharp {
 					probe = (ArrayList) probe [0];
 					
 				} else {
-					Expression e = new IntLiteral (probe.Count);
+					Expression e = new IntConstant (probe.Count);
 					Arguments.Add (new Argument (e, Argument.AType.Expression));
 
 					Bounds [i++] = probe.Count;
@@ -3543,10 +3763,10 @@ namespace Mono.CSharp {
 			        factor = 8;
 			else if (underlying_type == TypeManager.byte_type ||
 				 underlying_type == TypeManager.sbyte_type ||
-				 underlying_type == TypeManager.char_type ||
 				 underlying_type == TypeManager.bool_type) 	
 			        factor = 1;
 			else if (underlying_type == TypeManager.short_type ||
+				 underlying_type == TypeManager.char_type ||
 				 underlying_type == TypeManager.ushort_type)
 				factor = 2;
 			else {	
@@ -3555,34 +3775,37 @@ namespace Mono.CSharp {
 			}
 
 			data = new byte [count * factor];
+			int idx = 0;
 			
 			for (int i = 0; i < count; ++i) {
-				
+				object v = ArrayData [i];
+
+				if (v is EnumConstant)
+					v = ((EnumConstant) v).Child;
+
 				if (underlying_type == TypeManager.int64_type ||
 				    underlying_type == TypeManager.uint64_type){
-
 					long val = 0;
-					if (!(ArrayData [i] is Expression))
-						val = (long) ArrayData [i];
-					
-					for (int j = 0; j < factor; ++j) {
-						data [(i * factor) + j] = (byte) (val & 0xFF);
-						val = val >> 8;
+					if (!(v is Expression))
+						val = (long) v;
+
+				        for (int j = 0; j < factor; ++j) {
+						data [idx + j] = (byte) (val & 0xFF);
+						val = (val >> 8);
 					}
-					
 				} else if (underlying_type == TypeManager.float_type) {
 #if __MonoCS__
 #else
 					unsafe {
 						float val = 0;
 
-						if (!(ArrayData [i] is Expression))
-							val = (float) ArrayData [i];
+						if (!(v is Expression))
+							val = (float) v;
 
 						byte *ptr = (byte *) &val;
 						
 						for (int j = 0; j < factor; ++j)
-							data [(i * factor) + j] = (byte) ptr [j];
+							data [idx + j] = (byte) ptr [j];
 					}
 #endif
 				} else if (underlying_type == TypeManager.double_type) {
@@ -3591,26 +3814,38 @@ namespace Mono.CSharp {
 					unsafe {
 						double val = 0;
 
-						if (!(ArrayData [i] is Expression))
-							val = (double) ArrayData [i];
+						if (!(v is Expression))
+							val = (double) v;
 
 						byte *ptr = (byte *) &val;
 						
 						for (int j = 0; j < factor; ++j)
-							data [(i * factor) + j] = (byte) ptr [j];
+							data [idx + j] = (byte) ptr [j];
 					}
 #endif
-				} else {
+				} else if (underlying_type == TypeManager.char_type){
+					int val = (char) 0;
 
-					int val = 0;
-					if (!(ArrayData [i] is Expression))
-						val = (int) ArrayData [i];
+					if (!(v is Expression))
+						v = (int) ((char) v);
 					
-				        for (int j = 0; j < factor; ++j) {
-						data [(i * factor) + j] = (byte) (val & 0xFF);
-						val = val >> 8;
-					}
+					data [idx] = (byte) (val & 0xff);
+					data [idx+1] = (byte) (val >> 8);
+				} else if (underlying_type == TypeManager.int32_type) {
+					int val = 0;
+					
+					if (!(v is Expression))
+						val = (int) v;
+					
+					data [idx]   = (byte) (val & 0xff);
+					data [idx+1] = (byte) ((val >> 8) & 0xff);
+					data [idx+2] = (byte) ((val >> 16) & 0xff);
+					data [idx+3] = (byte) (val >> 24);
+				} else {
+					throw new Exception ("Underlying type not recognized");
 				}
+
+                                idx += factor;
 			}
 
 			return data;
@@ -3684,18 +3919,17 @@ namespace Mono.CSharp {
 					e = (Expression) ArrayData [i];
 				
 				if (e != null) {
-
 					//
 					// Basically we do this for string literals and
 					// other non-literal expressions
 					//
-					if (e is StringLiteral || !(e is Literal)) {
+					if (e is StringConstant || !(e is Constant)) {
 						
 						ig.Emit (OpCodes.Ldloc, temp);
 						
 						for (int idx = dims; idx > 0; ) {
 							idx--;
-							IntLiteral.EmitInt (ig, current_pos [idx]);
+							IntConstant.EmitInt (ig, current_pos [idx]);
 						}
 
 						e.Emit (ec);
@@ -3960,9 +4194,7 @@ namespace Mono.CSharp {
 					
 					if (c != null) {
 						object o = c.LookupConstantValue (ec);
-						Expression l = Literalize (o, fi.FieldType);
-						l = l.Resolve (ec);
-						return ((Literal) l);
+						return Constantify (o, fi.FieldType);
 					}
 				}
 
@@ -3982,18 +4214,16 @@ namespace Mono.CSharp {
 
 						Enum en = TypeManager.LookupEnum (decl_type);
 
-						Expression e;
+						Constant c;
 						if (en != null)
-							e = Literalize (o, en.UnderlyingType);
+							c = Constantify (o, en.UnderlyingType);
 						else 
-							e = Literalize (o, enum_member.Type);
+							c = Constantify (o, enum_member.Type);
 						
-						e.Resolve (ec);
-						return new EnumLiteral (e, decl_type);
+						return new EnumConstant (c, decl_type);
 					}
 					
-					Expression exp = Literalize (o, t);
-					exp.Resolve (ec);
+					Expression exp = Constantify (o, t);
 
 					if (!(left is TypeExpr)) {
 						error176 (loc, fe.FieldInfo.Name);
@@ -4061,6 +4291,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (member_lookup is TypeExpr){
+				member_lookup.Resolve (ec);
+				return member_lookup;
+			}
+			
+			Console.WriteLine ("Left is: " + left);
 			Report.Error (-100, loc, "Support for [" + member_lookup + "] is not present yet");
 			Environment.Exit (0);
 			return null;
@@ -4102,9 +4338,8 @@ namespace Mono.CSharp {
 					if (value == null)
 						return null;
 					
-					Expression l = Literalize (value, en.UnderlyingType);
-					l = l.Resolve (ec);
-					return new EnumLiteral (l, expr_type);
+					Constant c = Constantify (value, en.UnderlyingType);
+					return new EnumConstant (c, expr_type);
 				}
 			}
 
@@ -4141,7 +4376,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			eclass = Expr.ExprClass;
+			eclass = Expr.eclass;
 			type = Expr.Type;
 			return this;
 		}
@@ -4176,7 +4411,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			eclass = Expr.ExprClass;
+			eclass = Expr.eclass;
 			type = Expr.Type;
 			return this;
 		}
@@ -4290,7 +4525,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (ea.Expr.ExprClass != ExprClass.Variable) {
+			if (ea.Expr.eclass != ExprClass.Variable) {
 				report118 (ea.loc, ea.Expr, "variable");
 				return null;
 			}
@@ -4756,7 +4991,7 @@ namespace Mono.CSharp {
 			if (left == null)
 				return null;
 
-			if (left.ExprClass != ExprClass.Type){
+			if (left.eclass != ExprClass.Type){
 				report118 (loc, left, "type");
 				return null;
 			}

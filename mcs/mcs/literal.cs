@@ -6,6 +6,17 @@
 //
 // (C) 2001 Ximian, Inc.
 //
+//
+// Notice that during parsing we create objects of type Literal, but the
+// types are not loaded (thats why the Resolve method has to assign the
+// type at that point).
+//
+// Literals differ from the constants in that we know we encountered them
+// as a literal in the source code (and some extra rules apply there) and
+// they have to be resolved (since during parsing we have not loaded the
+// types yet) while constants are created only after types have been loaded
+// and are fully resolved when born.
+//
 
 using System;
 using System.Reflection;
@@ -13,45 +24,7 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
-	/// <summary>
-	///   Base class for literals
-	/// </summary>
-	public abstract class Literal : Constant {
-		static public string descape (char c)
-		{
-			switch (c){
-			case '\a':
-				return "\\a"; 
-			case '\b':
-				return "\\b"; 
-			case '\n':
-				return "\\n"; 
-			case '\t':
-				return "\\t"; 
-			case '\v':
-				return "\\v"; 
-			case '\r':
-				return "\\r"; 
-			case '\\':
-				return "\\\\";
-			case '\f':
-				return "\\f"; 
-			case '\0':
-				return "\\0"; 
-			case '"':
-				return "\\\""; 
-			case '\'':
-				return "\\\'"; 
-			}
-			return c.ToString ();
-		}
-
-		protected Literal ()
-		{
-		}
-	}
-
-	public class NullLiteral : Literal {
+	public class NullLiteral : Constant {
 		public static readonly NullLiteral Null;
 		
 		static NullLiteral ()
@@ -78,7 +51,6 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.object_type;
-			eclass = ExprClass.Value;
 			return this;
 		}
 
@@ -88,346 +60,113 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class BoolLiteral : Literal {
-		public readonly bool Value;
-		
-		public BoolLiteral (bool val)
+	public class BoolLiteral : BoolConstant {
+		public BoolLiteral (bool val) : base (val)
 		{
-			Value = val;
 		}
 
-		override public string AsString ()
-		{
-			return Value ? "true" : "false";
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
-		}
-				
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.bool_type;
-
 			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			if (Value)
-				ec.ig.Emit (OpCodes.Ldc_I4_1);
-			else
-				ec.ig.Emit (OpCodes.Ldc_I4_0);
 		}
 	}
 
-	public class CharLiteral : Literal {
-		char c;
-		
-		public CharLiteral (char c)
+	public class CharLiteral : CharConstant {
+		public CharLiteral (char c) : base (c)
 		{
-			this.c = c;
 		}
 
-		override public string AsString ()
-		{
-			return "\"" + descape (c) + "\"";
-		}
-
-		public override object GetValue ()
-		{
-			return (object) c;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.char_type;
-
 			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			IntLiteral.EmitInt (ec.ig, c);
 		}
 	}
 
-	public class IntLiteral : Literal {
-		public readonly int Value;
-
-		public IntLiteral (int l)
+	public class IntLiteral : IntConstant {
+		public IntLiteral (int l) : base (l)
 		{
-			Value = l;
-		}
-
-		override public string AsString ()
-		{
-			return Value.ToString ();
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.int32_type;
-
 			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-
-			EmitInt (ig, Value);
-		}
-
-		static public void EmitInt (ILGenerator ig, int i)
-		{
-			switch (i){
-			case -1:
-				ig.Emit (OpCodes.Ldc_I4_M1);
-				break;
-				
-			case 0:
-				ig.Emit (OpCodes.Ldc_I4_0);
-				break;
-				
-			case 1:
-				ig.Emit (OpCodes.Ldc_I4_1);
-				break;
-				
-			case 2:
-				ig.Emit (OpCodes.Ldc_I4_2);
-				break;
-				
-			case 3:
-				ig.Emit (OpCodes.Ldc_I4_3);
-				break;
-				
-			case 4:
-				ig.Emit (OpCodes.Ldc_I4_4);
-				break;
-				
-			case 5:
-				ig.Emit (OpCodes.Ldc_I4_5);
-				break;
-				
-			case 6:
-				ig.Emit (OpCodes.Ldc_I4_6);
-				break;
-				
-			case 7:
-				ig.Emit (OpCodes.Ldc_I4_7);
-				break;
-				
-			case 8:
-				ig.Emit (OpCodes.Ldc_I4_8);
-				break;
-
-			default:
-				if (i > 0 && i < 127){
-					ig.Emit (OpCodes.Ldc_I4_S, (sbyte) i);
-				} else
-					ig.Emit (OpCodes.Ldc_I4, i);
-				break;
-			}
 		}
 	}
 
-	public class UIntLiteral : Literal {
-		public readonly uint Value;
-
-		public UIntLiteral (uint l)
+	public class UIntLiteral : UIntConstant {
+		public UIntLiteral (uint l) : base (l)
 		{
-			Value = l;
 		}
 
-		override public string AsString ()
-		{
-			return Value.ToString ();
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.uint32_type;
-
 			return this;
 		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-
-			IntLiteral.EmitInt (ig, unchecked ((int) Value));
-		}
-
 	}
 	
-	public class LongLiteral : Literal {
-		public readonly long Value;
-
-		public LongLiteral (long l)
+	public class LongLiteral : LongConstant {
+		public LongLiteral (long l) : base (l)
 		{
-			Value = l;
 		}
 
-		override public string AsString ()
-		{
-			return Value.ToString ();
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.int64_type;
 
 			return this;
 		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-
-			EmitLong (ig, Value);
-		}
-
-		static public void EmitLong (ILGenerator ig, long l)
-		{
-			ig.Emit (OpCodes.Ldc_I8, l);
-		}
 	}
 
-	public class ULongLiteral : Literal {
-		public readonly ulong Value;
-
-		public ULongLiteral (ulong l)
+	public class ULongLiteral : ULongConstant {
+		public ULongLiteral (ulong l) : base (l)
 		{
-			Value = l;
-		}
-
-		override public string AsString ()
-		{
-			return Value.ToString ();
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.uint64_type;
-
 			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-
-			LongLiteral.EmitLong (ig, unchecked ((long) Value));
 		}
 	}
 	
-	public class FloatLiteral : Literal {
-		public readonly float Value;
-
-		public FloatLiteral (float f)
-		{
-			Value = f;
-		}
-
-		override public string AsString ()
-		{
-			return Value.ToString ();
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
-		}
+	public class FloatLiteral : FloatConstant {
 		
+		public FloatLiteral (float f) : base (f)
+		{
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.float_type;
-
 			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldc_R4, Value);
 		}
 	}
 
-	public class DoubleLiteral : Literal {
-		public readonly double Value;
-
-		public DoubleLiteral (double d)
+	public class DoubleLiteral : DoubleConstant {
+		public DoubleLiteral (double d) : base (d)
 		{
-			Value = d;
 		}
 
-		override public string AsString ()
-		{
-			return Value.ToString ();
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.double_type;
 
 			return this;
 		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldc_R8, Value);
-		}
 	}
 
-	public class DecimalLiteral : Literal {
-		public readonly decimal Value;
-
-		public DecimalLiteral (decimal d)
+	public class DecimalLiteral : DecimalConstant {
+		public DecimalLiteral (decimal d) : base (d)
 		{
-			Value = d;
-		}
-
-		override public string AsString ()
-		{
-			return Value.ToString ();
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.decimal_type;
-
 			return this;
 		}
 
@@ -437,35 +176,16 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class StringLiteral : Literal {
-		public readonly string Value;
-
-		public StringLiteral (string s)
+	public class StringLiteral : StringConstant {
+		public StringLiteral (string s) : base (s)
 		{
-			Value = s;
 		}
 
-		// FIXME: Escape the string.
-		override public string AsString ()
-		{
-			return "\"" + Value + "\"";
-		}
-
-		public override object GetValue ()
-		{
-			return (object) Value;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.string_type;
 
 			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldstr, Value);
 		}
 	}
 }

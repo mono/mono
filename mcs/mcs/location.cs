@@ -55,6 +55,11 @@ namespace Mono.CSharp {
 					global_count = token;
 			}
 		}
+
+		public override string ToString ()
+		{
+			return Name + ": (" + Row + ")";
+		}
 		
 		/// <summary>
 		///   Whether the Location is Null

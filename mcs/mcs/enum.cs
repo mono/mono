@@ -126,12 +126,14 @@ namespace Mono.CSharp {
 			return;
 		}
 
-	        bool IsValidEnumLiteral (Expression e)
+	        bool IsValidEnumConstant (Expression e)
 		{
-			if (!(e is Literal))
+			if (!(e is Constant))
 				return false;
 
-			if (e is IntLiteral || e is UIntLiteral || e is LongLiteral || e is ULongLiteral || e is EnumLiteral)
+			if (e is IntConstant || e is UIntConstant || e is LongConstant ||
+			    e is ByteConstant || e is SByteConstant || e is ShortConstant ||
+			    e is UShortConstant || e is ULongConstant || e is EnumConstant)
 				return true;
 			else
 				return false;
@@ -202,8 +204,8 @@ namespace Mono.CSharp {
 
 		void error31 (object val, Location loc)
 		{
-			if (val is Literal)
-				Report.Error (31, loc, "Constant value '" + ((Literal) val).AsString () +
+			if (val is Constant)
+				Report.Error (31, loc, "Constant value '" + ((Constant) val).AsString () +
 					      "' cannot be converted" +
 					      " to a " + TypeManager.CSharpName (UnderlyingType));
 			else 
@@ -220,7 +222,7 @@ namespace Mono.CSharp {
 		public object LookupEnumValue (EmitContext ec, string name, Location loc)
 		{
 			object default_value = null;
-			Literal l = null;
+			Constant c = null;
 
 			default_value = member_to_value [name];
 
@@ -263,18 +265,20 @@ namespace Mono.CSharp {
 					return null;
 				}	
 				
-				if (IsValidEnumLiteral (val)) {
-					l = (Literal) val;
-					default_value = l.GetValue ();
+				if (IsValidEnumConstant (val)) {
+					c = (Constant) val;
+					default_value = c.GetValue ();
 					
 					if (default_value == null) {
-						error31 (l, loc);
+						error31 (c, loc);
 						return null;
 					}
 					
 				} else {
-					Report.Error (1008, loc,
-					       "Type byte, sbyte, short, ushort, int, uint, long, or ulong expected");
+					Report.Error (
+						1008, loc,
+						"Type byte, sbyte, short, ushort, int, uint, long, or " +
+						"ulong expected");
 					return null;
 				}
 			}
@@ -287,7 +291,7 @@ namespace Mono.CSharp {
 			try {
 				default_value = Convert.ChangeType (default_value, UnderlyingType);
 			} catch {
-				error31 (l, loc);
+				error31 (c, loc);
 				return null;
 			}
 
