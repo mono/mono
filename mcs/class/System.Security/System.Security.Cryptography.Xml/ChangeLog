@@ -1,3 +1,11 @@
+2004-03-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* KeyInfoX509Data.cs,
+	  Reference.cs,
+	  SignedInfo.cs,
+	  XmlSignature.cs : GetElementsByTagName() should be eliminated or
+	  at least should use namespace URI.
+
 2004-03-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* KeyInfo.cs :

@@ -170,9 +170,9 @@ namespace System.Security.Cryptography.Xml {
 			if (xnl != null) {
 				for (int i=0; i < xnl.Count; i++) {
 					XmlElement xel = (XmlElement) xnl[i];
-					XmlNodeList issuer = xel.GetElementsByTagName (XmlSignature.ElementNames.X509IssuerName, XmlSignature.NamespaceURI);
-					XmlNodeList serial = xel.GetElementsByTagName (XmlSignature.ElementNames.X509SerialNumber, XmlSignature.NamespaceURI);
-					AddIssuerSerial (issuer[0].InnerText, serial[0].InnerText);
+					XmlElement issuer = XmlSignature.GetChildElement (xel, XmlSignature.ElementNames.X509IssuerName, XmlSignature.NamespaceURI);
+					XmlElement serial = XmlSignature.GetChildElement (xel, XmlSignature.ElementNames.X509SerialNumber, XmlSignature.NamespaceURI);
+					AddIssuerSerial (issuer.InnerText, serial.InnerText);
 				}
 			}
 			// <X509SKI>
@@ -199,9 +199,9 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			// only one <X509CRL> 
-			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509CRL, XmlSignature.NamespaceURI);
-			if ((xnl != null) && (xnl.Count > 0)) {
-				x509crl = Convert.FromBase64String (xnl[0].InnerXml);
+			XmlElement x509crl = XmlSignature.GetChildElement (element, XmlSignature.ElementNames.X509CRL, XmlSignature.NamespaceURI);
+			if (x509crl != null) {
+				x509crl = Convert.FromBase64String (x509crl.InnerXml);
 			}
 		}
 	}

@@ -111,18 +111,6 @@ namespace System.Security.Cryptography.Xml {
 			return xel;
 		}
 
-		private string GetAttributeFromElement (XmlElement xel, string attribute, string element) 
-		{
-			string result = null;
-			XmlNodeList xnl = xel.GetElementsByTagName (element);
-			if ((xnl != null) && (xnl.Count > 0)) {
-				XmlAttribute xa = xnl[0].Attributes [attribute];
-				if (xa != null)
-					result = xa.InnerText;
-			}
-			return result;
-		}
-
 		// note: we do NOT return null -on purpose- if attribute isn't found
 		private string GetAttribute (XmlElement xel, string attribute) 
 		{
@@ -142,7 +130,7 @@ namespace System.Security.Cryptography.Xml {
 			uri = GetAttribute (value, XmlSignature.AttributeNames.URI);
 			type = GetAttribute (value, XmlSignature.AttributeNames.Type);
 			// Note: order is important for validations
-			XmlNodeList xnl = value.GetElementsByTagName (XmlSignature.ElementNames.Transform);
+			XmlNodeList xnl = value.GetElementsByTagName (XmlSignature.ElementNames.Transform, XmlSignature.NamespaceURI);
 			if ((xnl != null) && (xnl.Count > 0)) {
 				Transform t = null;
 				foreach (XmlNode xn in xnl) {
@@ -176,12 +164,11 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			// get DigestMethod
-			DigestMethod = GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.DigestMethod);
+			DigestMethod = XmlSignature.GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.DigestMethod);
 			// get DigestValue
-			xnl = value.GetElementsByTagName (XmlSignature.ElementNames.DigestValue);
-			if ((xnl != null) && (xnl.Count > 0)) {
-				DigestValue = Convert.FromBase64String (xnl[0].InnerText);
-			}
+			XmlElement dig = XmlSignature.GetChildElement (value, XmlSignature.ElementNames.DigestValue, XmlSignature.NamespaceURI);
+			if (dig != null)
+				DigestValue = Convert.FromBase64String (dig.InnerText);
 		}
 	}
 }

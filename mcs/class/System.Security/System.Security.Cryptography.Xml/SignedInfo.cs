@@ -55,6 +55,7 @@ namespace System.Security.Cryptography.Xml {
 			get { return references; }
 		}
 
+		[MonoTODO ("when does it return non-null string?")]
 		public string SignatureLength {
 			get { return signatureLength; }
 			set { signatureLength = value; }
@@ -125,18 +126,6 @@ namespace System.Security.Cryptography.Xml {
 			return xel;
 		}
 
-		private string GetAttributeFromElement (XmlElement xel, string attribute, string element) 
-		{
-			string result = null;
-			XmlNodeList xnl = xel.GetElementsByTagName (element);
-			if ((xnl != null) && (xnl.Count > 0)) {
-				XmlAttribute xa = xnl[0].Attributes [attribute];
-				if (xa != null)
-					result = xa.InnerText;
-			}
-			return result;
-		}
-
 		private string GetAttribute (XmlElement xel, string attribute) 
 		{
 			XmlAttribute xa = xel.Attributes [attribute];
@@ -153,14 +142,18 @@ namespace System.Security.Cryptography.Xml {
 				throw new CryptographicException ();
 
 			id = GetAttribute (value, XmlSignature.AttributeNames.Id);
-			c14nMethod = GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.CanonicalizationMethod);
-			signatureMethod = GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.SignatureMethod);
+			c14nMethod = XmlSignature.GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.CanonicalizationMethod);
+			signatureMethod = XmlSignature.GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.SignatureMethod);
 			// TODO signatureLength for HMAC
-			XmlNodeList xnl = value.GetElementsByTagName (XmlSignature.ElementNames.Reference);
-			foreach (XmlNode xn in xnl) {
-				Reference r = new Reference ();
-				r.LoadXml ((XmlElement) xn);
-				AddReference (r);
+			for (int i = 0; i < value.ChildNodes.Count; i++) {
+				XmlNode n = value.ChildNodes [i];
+				if (n.NodeType == XmlNodeType.Element &&
+					n.LocalName == XmlSignature.ElementNames.Reference &&
+					n.NamespaceURI == XmlSignature.NamespaceURI) {
+					Reference r = new Reference ();
+					r.LoadXml ((XmlElement) n);
+					AddReference (r);
+				}
 			}
 		}
 	}

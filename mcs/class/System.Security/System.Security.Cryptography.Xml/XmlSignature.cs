@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
 
@@ -75,6 +76,24 @@ namespace System.Security.Cryptography.Xml {
 		public const string NamespaceURI = "http://www.w3.org/2000/09/xmldsig#";
 		public const string Prefix = "ds";
 
-		public XmlSignature () {}
+		public XmlSignature () 
+		{
+		}
+
+		public static XmlElement GetChildElement (XmlElement xel, string element, string ns)
+		{
+			for (int i = 0; i < xel.ChildNodes.Count; i++) {
+				XmlNode n = xel.ChildNodes [i];
+				if (n.NodeType == XmlNodeType.Element && n.LocalName == element && n.NamespaceURI == ns)
+					return n as XmlElement;
+			}
+			return null;
+		}
+
+		public static string GetAttributeFromElement (XmlElement xel, string attribute, string element) 
+		{
+			XmlElement el = GetChildElement (xel, element, XmlSignature.NamespaceURI);
+			return el != null ? el.GetAttribute (attribute) : null;
+		}
 	}
 }
