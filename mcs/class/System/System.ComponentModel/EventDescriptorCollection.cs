@@ -88,12 +88,12 @@ namespace System.ComponentModel
 			throw new NotImplementedException ();
 		}
 
-		protected virtual void InternalSort (IComparer comparer) {
+		protected void InternalSort (IComparer comparer) {
 			eventList.Sort (comparer);
 		}
 
 		[MonoTODO]
-		protected virtual void InternalSort (string[] order) {
+		protected void InternalSort (string[] order) {
 			throw new NotImplementedException ();
 		}
 		

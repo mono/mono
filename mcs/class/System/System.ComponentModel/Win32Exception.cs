@@ -1,5 +1,5 @@
 //
-// System.ComponentModel.Win32Exceptioncs
+// System.ComponentModel.Win32Exception.cs
 //
 // Author:
 //   Dick Porter (dick@ximian.com)
@@ -7,6 +7,7 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Security;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Collections;
@@ -14,7 +15,7 @@ using System.Globalization;
 
 namespace System.ComponentModel
 {
-	[Serializable]
+	[Serializable, SuppressUnmanagedCodeSecurity]
 	public class Win32Exception : ExternalException
 	{
 		private int native_error_code;

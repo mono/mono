@@ -21,10 +21,5 @@ namespace System.ComponentModel
 
 		public abstract string LicenseKey { get; }
 		public abstract void Dispose();
-
-		~License()
-		{
-			// Intentionally empty
-		}
 	}
 }

@@ -6,11 +6,9 @@
 //
 
 using System;
-using System.Security;
 
 namespace System.ComponentModel {
 
-	[SuppressUnmanagedCodeSecurity]
 	public class WarningException : SystemException
 	{
 		private string helpUrl;

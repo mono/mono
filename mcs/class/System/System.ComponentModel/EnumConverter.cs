@@ -91,7 +91,7 @@ namespace System.ComponentModel
 			return stdValues;
 		}
 
-		protected IComparer Comparer {
+		protected virtual IComparer Comparer {
 			get { return new EnumConverter.EnumComparer (); }
 		}
 

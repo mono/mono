@@ -21,7 +21,6 @@ namespace System.ComponentModel
 	{
 		public static readonly PropertyDescriptorCollection Empty = new PropertyDescriptorCollection (null);
 		ArrayList properties;
-		bool readOnly;
 
 		public PropertyDescriptorCollection (PropertyDescriptor[] properties)
 		{
@@ -187,21 +186,21 @@ namespace System.ComponentModel
 		bool IDictionary.IsFixedSize
 		{
 			get {
-				return !readOnly;
+				return true;
 			}
 		}
 
 		bool IList.IsFixedSize
 		{
 			get {
-				return !readOnly;
+				return true;
 			}
 		}
 
 		bool IList.IsReadOnly
 		{
 			get {
-				return readOnly;
+				return false;
 			}
 		}
 
@@ -209,7 +208,7 @@ namespace System.ComponentModel
 		{
 			get 
 			{
-				return readOnly;
+				return false;
 			}
 		}
 

@@ -1,3 +1,14 @@
+2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* EnumConverter.cs: Fixed signature
+	* EventDescriptorCollection.cs: Fixed signature
+	* InheritanceLevel.cs: Fixed enum values; little restyling
+	* License.cs: Removed undefined member
+	* LicenseManager.cs: Fixed signature, little implementation added
+	* PropertyDescriptorCollection.cs: Removed unused field (fixes last remaining compiler warning in this namespace)
+	* WarningException.cs: Removed wrong attribute
+	* Win32Exception.cs: Added missing attribute
+
 2003-07-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AttributeCollection.cs: Fixed public members

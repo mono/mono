@@ -1,34 +1,51 @@
 //
-// System.ComponentModel.LicenseManager
+// System.ComponentModel.LicenseManager.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	public sealed class LicenseManager
 	{
-		[MonoTODO]
+		private static LicenseContext mycontext = null;
+
+		private LicenseManager ()
+		{
+		}
+
 		public static LicenseContext CurrentContext {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get {
+				lock (mycontext) {
+					return mycontext;
+				}
+			} 
+			set { 
+				lock (mycontext) {
+					mycontext = value;
+				}
+			}
 		}
 
 		public static LicenseUsageMode UsageMode {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { 
+				lock (mycontext) 
+				{
+					return mycontext.UsageMode;
+
+				}
+			}
 		}
 
-		[MonoTODO]
 		public static object CreateWithContext (Type type,
 							LicenseContext creationContext)
 		{
-			throw new NotImplementedException();
+			return CreateWithContext (type, creationContext, new object[0]);
 		}
 
 		[MonoTODO]
