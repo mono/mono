@@ -1,3 +1,44 @@
+2005-02-05  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs: rework the late binding algorithm, we directly
+	call an object's method if it's a static method of it. Added field
+	late_bind, properties AccessField and Binding, renamed emit_access
+	to emit_array_access to class Binary. Added fields params_info,
+	late_bind and var_args to Class Args; also methods has_var_args,
+	force_strong_type, reworked its	Emit code, we take care of methods
+	which have variable number of arguments, take care of needed
+	conversions and boxing when the	call has specific strong types as
+	formal parameters. Added method IsPrint and property Parameters to
+	class BuiltIn.
+	* IdentificationTable.cs: Better implementation of jscript's
+	environments semantics. Added classes Symbol and Binder.
+	* SymbolTable.cs: Nuked.
+	* Block.cs: Fix the semantic of semantic analysis and code
+	generatipo process, we now allow forward declarations of variables
+	and functions.
+	* FunctionDeclaration.cs: Added default ctr and Init method. Fix
+	the semantics of the Resolve and Emit process, we can have forward
+	declaration of variables and functions. Fix order in which
+	JSLocalField's get build.
+	* FunctionExpression.cs: Fix order in which JSLocalField's get build. 
+	* VariableStatement.cs: Added methods EmitVariableDecls and PopulateContext.
+	* VariableDeclaration.cs: Added method EmitDecl. Delay the Resolve
+	and Emit process until the second phase.
+	* Statement.cs: Resolve process of For class take care of
+	VariableStatements for populating the environment in advance.
+	* TypeManager.cs: Make GetMethod return a MethodBuilder.
+	* ast.cs: Added field locals, property NumOfArgs, method GetName
+	to abstract class Function.
+	* SemanticAnalyser.cs: unified global environment and the stack of
+	contexts. Added field global_obj, adapt methods to new
+	IdentificationTable api. Delete method ObjectSystemContains. Added
+	method contains, is_js_object, object_contains_method, map_to_ctr,
+	get_member.
+	* Try.cs: Update to new IdentificationTable api.
+	* ScriptObject.cs, JSPropertyInfo.cs, FormalParameterList.cs,
+	JSFieldInfo.cs, JSMethodInfo.cs, JSLocalField.cs,
+	ScriptFunction.cs: use full namespace name for Binder.
+
 2005-01-17  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* CodeGenerator.cs: Added load_engine.
