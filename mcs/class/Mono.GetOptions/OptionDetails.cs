@@ -91,13 +91,30 @@ namespace Mono.GetOptions
 		}
 				
 		public static bool Verbose = false;
+
+		private OptionsParsingMode parsingMode { get { return this.OptionBundle.ParsingMode; } } 
+
+		private static bool x = true;
+
+		private string linuxLongPrefix {
+			get { 
+				if (x)
+				{	
+
+					Console.WriteLine("linuxLongPrefix - parsingMode = " +  parsingMode.ToString()); 
+					Console.WriteLine("linuxLongPrefix > " + ((((int)parsingMode & (int)OptionsParsingMode.GNU_DoubleDash) == (int)OptionsParsingMode.GNU_DoubleDash)? "--":"-")); 
+					x = false;
+				}
+				return (((parsingMode & OptionsParsingMode.GNU_DoubleDash) == OptionsParsingMode.GNU_DoubleDash)? "--":"-"); 
+			} 
+		}
 		
 		public string DefaultForm
 		{
 			get {
 				string shortPrefix = "-";
-				string longPrefix = "--";
-				if(this.OptionBundle.ParsingMode == Mono.GetOptions.OptionsParsingMode.Windows) {
+				string longPrefix = linuxLongPrefix;
+				if (parsingMode == OptionsParsingMode.Windows) {
 					shortPrefix = "/";
 					longPrefix = "/";
 				} 
@@ -115,7 +132,7 @@ namespace Mono.GetOptions
 			string shortPrefix;
 			string longPrefix;
 			bool hasLongForm = (this.LongForm != null && this.LongForm != string.Empty);
-			if(this.OptionBundle.ParsingMode == Mono.GetOptions.OptionsParsingMode.Windows)
+			if(this.OptionBundle.ParsingMode == OptionsParsingMode.Windows)
 			{
 				shortPrefix = "/";
 				longPrefix = "/";
@@ -123,7 +140,7 @@ namespace Mono.GetOptions
 			else 
 			{
 				shortPrefix = "-";
-				longPrefix = "--";
+				longPrefix = linuxLongPrefix;
 			}
 			optionHelp = "  ";
 			optionHelp += (this.ShortForm != string.Empty) ? shortPrefix+this.ShortForm+" " : "   ";

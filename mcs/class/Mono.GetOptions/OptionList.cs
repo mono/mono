@@ -36,14 +36,6 @@ using System.Text;
 namespace Mono.GetOptions
 {
 
-	[Flags]
-	public enum OptionsParsingMode 
-	{ 
-		Linux   = 1, 
-		Windows = 2,
-		Both    = 3
-	}
-
 	/// <summary>
 	/// Option Parsing
 	/// </summary>
