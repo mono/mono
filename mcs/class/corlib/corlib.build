@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for corlib.dll -->
+<!-- Target windows builds libraries _for_ windows -->
+<!-- Target linux builds libraries _for_ linux -->
+
+<project name="corlib" default="linux">
+	<property name="debug" value="false"/>
+
+	<target name="windows">
+		<mkdir dir="../lib"/>
+		<csc target="library" output="../lib/corlib.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+				<excludes name="Linux/**"/>
+				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Collections/Queue.cs"/>
+			</sources>
+		</csc>
+		<nant basedir="Test" target="build"/>
+	</target>
+
+	<target name="linux">
+		<mkdir dir="../lib"/>
+		<csc target="library" output="../lib/corlib.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="Test/**"/>
+				<excludes name="Windows/**"/>
+				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Collections/Queue.cs"/>
+			</sources>
+		</csc>
+		<nant basedir="Test" target="build"/>
+	</target>
+
+	<target name="test">
+		<nant basedir="Test" target="test"/>
+	</target>
+
+	<target name="clean">
+		<delete file="corlib.dll" failonerror="false"/>
+		<nant basedir="Test" target="clean"/>
+	</target>
+</project>

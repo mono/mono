@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.Web.dll -->
+
+<project name="System" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<mkdir dir="../lib"/>
+		<csc target="library" output="../lib/System.Web.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+				<excludes name="System.Web/HttpWorkerRequest.cs"/>
+				<excludes name="System.Web.Hosting/**"/>
+				<excludes name="System.Web.UI/**"/>
+				<excludes name="System.Web.UI.HtmlControls/**"/>
+				<excludes name="System.Web.UI.WebControls/**"/>
+			</sources>
+		</csc>
+	</target>
+</project>

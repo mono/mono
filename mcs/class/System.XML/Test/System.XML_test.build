@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.XML_test.dll -->
+<!-- Target build (default) builds tests -->
+<!-- Target test runs tests -->
+
+<project name="System.XML_test" default="build">
+	<property name="debug" value="false"/>
+	<property name="nunit_home" value="..\..\..\nunit"/>
+
+	<target name="build">
+		<csc target="library" output="System.XML_test.dll" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitCore.dll"/>
+			</references>
+		</csc>
+	</target>
+
+	<target name="test" depends="build">
+		<exec program="..\..\..\nunit\NUnitConsole" commandline="Ximian.Mono.Tests.AllTests,System.XML_test.dll" failonerror="false"/>
+	</target>
+
+	<target name="clean">
+		<delete file="System.XML_test.dll" failonerror="false"/>
+	</target>
+</project>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.dll -->
+
+<project name="System" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<mkdir dir="../lib"/>
+		<csc target="library" output="../lib/System.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+				<excludes name="System.CodeDom/Code-X-Collection.cs"/>
+				<excludes name="System.Net.Sockets/LingerOption.cs"/>
+				<excludes name="System.Net.Sockets/NetworkStream.cs"/>
+				<excludes name="System.Net.Sockets/Socket.cs"/>
+				<excludes name="System.Net.Sockets/SocketException.cs"/>
+			</sources>
+		</csc>
+		<nant basedir="Test" target="build"/>
+	</target>
+
+	<target name="test">
+		<nant basedir="Test" target="test"/>
+	</target>
+
+	<target name="clean">
+		<nant basedir="Test" target="clean"/>
+	</target>
+</project>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.Data.dll -->
+
+<project name="System" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<csc target="library" output="../lib/System.Data.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+			</sources>
+			<references>
+				<includes name="../lib/corlib.dll"/>
+			</references>
+		</csc>
+	</target>
+</project>
