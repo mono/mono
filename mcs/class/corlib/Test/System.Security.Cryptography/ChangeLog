@@ -1,3 +1,10 @@
+2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PaddingModeTest.cs: New. Unit tests to check every padding modes for
+	symmetric algorithms.
+	* MACTripleDESTest.cs: Updated unit tests for NUnit2 and to work for 
+	both 1.0 and 1.1 framework.
+
 2003-11-13  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ProtectedDataTest.cs: New. Unit tests for ProtectedData (1.2).

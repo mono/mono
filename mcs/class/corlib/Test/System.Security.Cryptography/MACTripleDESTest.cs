@@ -14,17 +14,14 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
-public class MACTripleDESTest : TestCase {
+[TestFixture]
+public class MACTripleDESTest : Assertion {
 
 	protected MACTripleDES algo;
 
 	private static byte[] key1 = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef };
 	private static byte[] key2 = { 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01 };
 	private static byte[] key3 = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef };
-
-	protected override void SetUp () {}
-
-	protected override void TearDown () {}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
@@ -43,59 +40,55 @@ public class MACTripleDESTest : TestCase {
 		return key;
 	}
 
-	public void TestConstructors () 
+	[Test]
+	public void ConstructorEmpty () 
 	{
 		algo = new MACTripleDES ();
 		AssertNotNull ("MACTripleDES ()", algo);
+	}
 
-		byte[] key = new byte [24];
-		key [0] = 1;  // so this isn't a weak key
-		key [23] = 1;
+	[Test]
+	public void ConstructorKey () 
+	{
+		byte[] key = CombineKeys (key1, key2, key3);
 		algo = new MACTripleDES (key);
 		AssertNotNull ("MACTripleDES (key)", algo);
+	}
 
-		try {
-			algo = new MACTripleDES (null);
-			Fail ("MACTripleDES (null) - Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("MACTripleDES (null) - Expected ArgumentNullException but got: " + e.ToString ());
-		}
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void ConstructorKeyNull () 
+	{
+		algo = new MACTripleDES (null);
+	}
 
+	[Test]
+	public void ConstructorNameKey () 
+	{
+		byte[] key = CombineKeys (key1, key2, key3);
 		algo = new MACTripleDES ("TripleDES", key);
 		AssertNotNull ("MACTripleDES ('TripleDES',key)", algo);
+	}
 
-		try {
-			algo = new MACTripleDES ("TripleDES", null);
-			Fail ("MACTripleDES ('TripleDES', null) - Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("MACTripleDES ('TripleDES', null) - Expected ArgumentNullException but got: " + e.ToString ());
-		}
-
+	[Test]
+	// LAMESPEC: [ExpectedException (typeof (ArgumentNullException))]
+	public void ConstructorNameNullKey () 
+	{
+		byte[] key = CombineKeys (key1, key2, key3);
 		// funny null is a valid name!
 		algo = new MACTripleDES (null, key);
 		AssertNotNull ("MACTripleDES (null,key)", algo);
-
-		try {
-			algo = new MACTripleDES (null, null);
-			Fail ("MACTripleDES (null, null) - Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("MACTripleDES (null, null) - Expected ArgumentNullException but got: " + e.ToString ());
-		}
 	}
 
-	public void TestInvariants () 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void ConstructorNameNullKeyNull () 
+	{
+		algo = new MACTripleDES (null, null);
+	}
+
+	[Test]
+	public void Invariants () 
 	{
 		algo = new MACTripleDES ();
 		AssertEquals ("MACTripleDES.CanReuseTransform", true, algo.CanReuseTransform);
@@ -107,32 +100,22 @@ public class MACTripleDESTest : TestCase {
 		AssertNotNull ("MACTripleDES.Key", algo.Key);
 	}
 
-	public void TestExceptions () 
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void InvalidAlgorithmName () 
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
-		try {
-			algo = new MACTripleDES ("DES", key);
-			Fail ("Expected InvalidCastException but got none");
-		}
-		catch (InvalidCastException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected InvalidCastException but got " + e.ToString ());
-		}
+		algo = new MACTripleDES ("DES", key);
+	}
 
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void ObjectDisposed () 
+	{
+		byte[] key = CombineKeys (key1, key2, key3);
 		algo = new MACTripleDES (key);
 		algo.Clear ();
-		try {
-			algo.ComputeHash (new byte[1]);
-			Fail ("Expected ObjectDisposedException but got none");
-		}
-		catch (ObjectDisposedException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected ObjectDisposedException but got " + e.ToString ());
-		}
+		algo.ComputeHash (new byte[1]);
 	}
 
 	public void Check (string testName, byte[] key, byte[] data, byte[] result) 
@@ -202,7 +185,8 @@ public class MACTripleDESTest : TestCase {
 	}
 
 	// Here data is smaller than the 3DES block size (8 bytes)
-	public void Test_A1 () 
+	[Test]
+	public void SmallerThanOneBlockSize () 
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
 		byte[] expected = { 0x86, 0xE9, 0x65, 0xBD, 0x1E, 0xC4, 0x44, 0x61 };
@@ -211,19 +195,23 @@ public class MACTripleDESTest : TestCase {
 	}
 
 	// Here data is exactly one 3DES block size (8 bytes)
-#if NET_1_1
-	[Ignore("Believe it or not, MACTripleDES returns different values in 1.1")]
-#endif
-	public void Test_A2 () 
+	[Test]
+	public void ExactlyOneBlockSize () 
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
+#if NET_1_0
+		// Believe it or not, MACTripleDES returns different values in 1.1
 		byte[] expected = { 0x23, 0xD6, 0x92, 0xA0, 0x80, 0x6E, 0xC9, 0x30 };
+#else
+		byte[] expected = { 0x86, 0xE9, 0x65, 0xBD, 0x1E, 0xC4, 0x44, 0x61 };
+#endif
 		byte[] data = new byte [8];
 		Check ("3DESMAC-A2", key, data, expected);
 	}
 
 	// Here data is more then one 3DES block size (8 bytes)
-	public void Test_A3 () 
+	[Test]
+	public void MoreThanOneBlockSize () 
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
 		// note: same result as A2 because of the Zero padding (and that
@@ -234,13 +222,16 @@ public class MACTripleDESTest : TestCase {
 	}
 
 	// Here data is a multiple of 3DES block size (8 bytes)
-#if NET_1_1
-	[Ignore("Believe it or not, MACTripleDES returns different values in 1.1")]
-#endif
-	public void Test_A4 () 
+	[Test]
+	public void ExactMultipleBlockSize () 
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
+#if NET_1_0
+		// Believe it or not, MACTripleDES returns different values in 1.1
 		byte[] expected = { 0xD6, 0x6D, 0x75, 0xD4, 0x75, 0xF1, 0x01, 0x71 };
+#else
+		byte[] expected = { 0xA3, 0x0E, 0x34, 0x26, 0x8B, 0x49, 0xEF, 0x49 };
+#endif
 		byte[] data = new byte [48];
 		Check ("3DESMAC-A4", key, data, expected);
 	}
