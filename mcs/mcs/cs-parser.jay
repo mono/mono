@@ -696,7 +696,7 @@ field_declaration
 
 		foreach (VariableDeclaration var in (ArrayList) $4){
 			Field field = new Field (type, mod, var.identifier, 
-						 var.expression_or_array_initializer, (Attributes) $1);
+						 var.expression_or_array_initializer, (Attributes) $1, var.Location);
 
 			CheckDef (current_container.AddField (field), field.Name);
 		}
@@ -1165,6 +1165,8 @@ operator_declaration
 
 		// Note again, checking is done in semantic analysis
 		current_container.AddOperator (op);
+
+		current_local_parameters = null;
 	  }
 	;
 
@@ -1181,6 +1183,12 @@ operator_declarator
 		if (op == Operator.OpType.Subtraction)
 			op = Operator.OpType.UnaryNegation;
 
+		Parameter [] pars = new Parameter [1];
+
+		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
+
+		current_local_parameters = new Parameters (pars, null);
+
 		$$ = new OperatorDeclaration (op, (string) $1, (string) $5, (string) $6,
 					      null, null, lexer.Location);
 	}
@@ -1191,6 +1199,13 @@ operator_declarator
 	  CLOSE_PARENS
         {
 	       CheckBinaryOperator ((Operator.OpType) $3);
+
+	       Parameter [] pars = new Parameter [2];
+
+	       pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
+	       pars [1] = new Parameter ((string) $8, (string) $9, Parameter.Modifier.NONE, null);
+
+	       current_local_parameters = new Parameters (pars, null);
 	       
 	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6,
 					     (string) $8, (string) $9, lexer.Location);
@@ -1229,11 +1244,23 @@ overloadable_operator
 conversion_operator_declarator
 	: IMPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	  {
+		Parameter [] pars = new Parameter [1];
+
+		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
+
+		current_local_parameters = new Parameters (pars, null);  
+		  
 		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (string) $3, (string) $5, (string) $6,
 					      null, null, lexer.Location);
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	  {
+		Parameter [] pars = new Parameter [1];
+
+		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
+
+		current_local_parameters = new Parameters (pars, null);  
+		  
 		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (string) $3, (string) $5, (string) $6,
 					      null, null, lexer.Location);
 	  }

@@ -52,6 +52,7 @@ public class TypeManager {
 	static public Type intptr_type;
 	static public Type monitor_type;
 	static public Type runtime_field_handle_type;
+	static public Type attribute_usage_type;
 
 	//
 	// Internal, not really used outside
@@ -127,6 +128,12 @@ public class TypeManager {
 
 	static Hashtable builder_to_enum;
 
+	// <remarks>
+	//  Keeps track of attribute types
+	// </remarks>
+
+	static Hashtable builder_to_attr;
+
 	public TypeManager ()
 	{
 		assemblies = new ArrayList ();
@@ -137,6 +144,7 @@ public class TypeManager {
 		builder_to_interface = new Hashtable ();
 		builder_to_delegate = new Hashtable ();
 		builder_to_enum  = new Hashtable ();
+		builder_to_attr = new Hashtable ();
 	}
 
 	static TypeManager ()
@@ -176,6 +184,11 @@ public class TypeManager {
 		AddUserType (name, t);
 		builder_to_interface.Add (t, i);
 	}
+
+	public void RegisterAttrType (Type t, TypeContainer tc)
+	{
+		builder_to_attr.Add (t, tc);
+	}
 		
 	// <summary>
 	//   Returns the TypeContainer whose Type is `t' or null if there is no
@@ -194,6 +207,11 @@ public class TypeManager {
 	public static Delegate LookupDelegate (Type t)
 	{
 		return (Delegate) builder_to_delegate [t];
+	}
+
+	public static TypeContainer LookupAttr (Type t)
+	{
+		return (TypeContainer) builder_to_attr [t];
 	}
 	
 	// <summary>
@@ -356,6 +374,8 @@ public class TypeManager {
 		icloneable_type      = CoreLookupType ("System.ICloneable");
 		monitor_type         = CoreLookupType ("System.Threading.Monitor");
 		intptr_type          = CoreLookupType ("System.IntPtr");
+
+		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
 		
 		//
 		// Now load the default methods that we use.
@@ -467,7 +487,7 @@ public class TypeManager {
 		else
 			return false;
 	}
-	
+
 	// <summary>
 	//   Returns the User Defined Types
 	// </summary>

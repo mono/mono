@@ -1,4 +1,47 @@
-2001-12-11  Ravi Pratap  <ravi@ximian.com>
+2001-11-13  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (operator_declarator, conversion_operator_declarator): Set
+	current_local_parameters as expected since I, in my stupidity, had forgotten
+	to do this :-)
+
+	* attribute.cs (GetValidPlaces): Fix stupid bug.
+
+	* class.cs (Method::Emit): Perform check on applicability of attributes.
+
+	(Constructor::Emit): Ditto.
+
+	(Field::Emit): Ditto.
+
+	(Field.Location): Store location information.
+
+	(Property, Event, Indexer, Operator): Ditto.
+
+	* cs-parser.jay (field_declaration): Pass in location for each field.
+
+	* ../errors/cs0592.cs : Add.
+
+2001-11-12  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (attribute_usage_type): New static member for System.AttributeUsage.
+
+	(InitCoreTypes): Update accordingly.
+
+	(RegisterAttrType, LookupAttr): Implement.
+
+	* attribute.cs (Attribute.Targets, AllowMultiple, Inherited): New fields to hold
+	info about the same.
+
+	(Resolve): Update to populate the above as necessary.
+
+	(Error592): Helper.
+
+	(GetValidPlaces): Helper to the above.
+
+	(CheckAttribute): Implement to perform validity of attributes on declarative elements.
+
+	* class.cs (TypeContainer::Emit): Update attribute emission code to perform checking etc.
+
+2001-11-12  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (Attribute::Resolve): Expand to handle named arguments too.
 

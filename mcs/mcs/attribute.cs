@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 
 namespace CIR {
 
@@ -22,6 +23,18 @@ namespace CIR {
 		public readonly ArrayList Arguments;
 
 		Location Location;
+
+		public Type Type;
+		
+		//
+		// The following are only meaningful when the attribute
+		// being emitted is one of the builtin ones
+		//
+		public AttributeTargets Targets;
+		public bool AllowMultiple;
+		public bool Inherited;
+
+		public bool UsageAttr = false;
 		
 		public Attribute (string name, ArrayList args, Location loc)
 		{
@@ -49,18 +62,23 @@ namespace CIR {
 		{
 			string name = Name;
 
+			UsageAttr = false;
+
 			if (Name.IndexOf ("Attribute") == -1)
 				name = Name + "Attribute";
 			else if (Name.LastIndexOf ("Attribute") == 0)
 				name = Name + "Attribute";
 			
-			Type attribute_type = ec.TypeContainer.LookupType (name, false);
+			Type = ec.TypeContainer.LookupType (name, false);
 
-			if (attribute_type == null) {
+			if (Type == null) {
 				Report.Error (246, Location, "Could not find attribute '" + Name + "' (are you" +
 					      " missing a using directive or an assembly reference ?)");
 				return null;
 			}
+
+			if (Type == TypeManager.attribute_usage_type)
+				UsageAttr = true;
 			
 			// Now we extract the positional and named arguments
 			
@@ -89,9 +107,12 @@ namespace CIR {
 
 				Expression e = Expression.Reduce (ec, a.Expr);
 
-				if (e is Literal) 
+				if (e is Literal) {
 					pos_values [i] = ((Literal) e).GetValue ();
-				else { 
+
+					if (UsageAttr)
+						this.Targets = (AttributeTargets) pos_values [0];
+				} else { 
 					error182 ();
 					return null;
 				}
@@ -116,7 +137,7 @@ namespace CIR {
 				if (!a.Resolve (ec))
 					return null;
 
-				Expression member = Expression.MemberLookup (ec, attribute_type, member_name, false,
+				Expression member = Expression.MemberLookup (ec, Type, member_name, false,
 									     MemberTypes.Field | MemberTypes.Property,
 									     BindingFlags.Public | BindingFlags.Instance,
 									     Location);
@@ -137,9 +158,18 @@ namespace CIR {
 
 					Expression e = Expression.Reduce (ec, a.Expr);
 					
-					if (e is Literal) 
-						prop_values.Add (((Literal) e).GetValue ());
-					else { 
+					if (e is Literal) {
+						object o = ((Literal) e).GetValue ();
+						prop_values.Add (o);
+						
+						if (UsageAttr) {
+							if (member_name == "AllowMultiple")
+								this.AllowMultiple = (bool) o;
+							if (member_name == "Inherited")
+								this.Inherited = (bool) o;
+						}
+						
+					} else { 
 						error182 ();
 						return null;
 					}
@@ -157,7 +187,7 @@ namespace CIR {
 
 					Expression e = Expression.Reduce (ec, a.Expr);
 					
-					if (e is Literal) 
+					if (e is Literal)
 						field_values.Add (((Literal) e).GetValue ());
 					else { 
 						error182 ();
@@ -168,7 +198,7 @@ namespace CIR {
 				}
 			}
 			
-			Expression mg = Expression.MemberLookup (ec, attribute_type, ".ctor", false,
+			Expression mg = Expression.MemberLookup (ec, Type, ".ctor", false,
 								 MemberTypes.Constructor,
 								 BindingFlags.Public | BindingFlags.Instance,
 								 Location);
@@ -203,6 +233,134 @@ namespace CIR {
 			return cb;
 		}
 
+		static string GetValidPlaces (Attribute attr)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			TypeContainer a = TypeManager.LookupAttr (attr.Type);
+
+			if (a == null)
+				return "(none) ";
+
+			if ((a.Targets & AttributeTargets.Assembly) != 0)
+				sb.Append ("'assembly' ");
+
+			if ((a.Targets & AttributeTargets.Class) != 0)
+				sb.Append ("'class' ");
+
+			if ((a.Targets & AttributeTargets.Constructor) != 0)
+				sb.Append ("'constructor' ");
+
+			if ((a.Targets & AttributeTargets.Delegate) != 0)
+				sb.Append ("'delegate' ");
+
+			if ((a.Targets & AttributeTargets.Enum) != 0)
+				sb.Append ("'enum' ");
+
+			if ((a.Targets & AttributeTargets.Event) != 0)
+				sb.Append ("'event' ");
+
+			if ((a.Targets & AttributeTargets.Field) != 0)
+				sb.Append ("'field' ");
+
+			if ((a.Targets & AttributeTargets.Interface) != 0)
+				sb.Append ("'interface' ");
+
+			if ((a.Targets & AttributeTargets.Method) != 0)
+				sb.Append ("'method' ");
+
+			if ((a.Targets & AttributeTargets.Module) != 0)
+				sb.Append ("'module' ");
+
+			if ((a.Targets & AttributeTargets.Parameter) != 0)
+				sb.Append ("'parameter' ");
+
+			if ((a.Targets & AttributeTargets.Property) != 0)
+				sb.Append ("'property' ");
+
+			if ((a.Targets & AttributeTargets.ReturnValue) != 0)
+				sb.Append ("'return value' ");
+
+			if ((a.Targets & AttributeTargets.Struct) != 0)
+				sb.Append ("'struct' ");
+
+			return sb.ToString ();
+
+		}
+
+		public static void Error592 (Attribute a, Location loc)
+		{
+			Report.Error (592, loc, "Attribute '" + a.Name + "' is not valid on this declaration type. " +
+				      "It is valid on " + GetValidPlaces (a) + "declarations only.");
+		}
+
+		public static bool CheckAttribute (Attribute a, object element)
+		{
+			TypeContainer attr = TypeManager.LookupAttr (a.Type);
+
+			if (attr == null)
+				return false;
+
+			if (element is Class) {
+				if ((attr.Targets & AttributeTargets.Class) != 0)
+					return true;
+				else
+					return false;
+				
+			} else if (element is Struct) {
+				if ((attr.Targets & AttributeTargets.Struct) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Constructor) {
+				if ((attr.Targets & AttributeTargets.Constructor) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Delegate) {
+				if ((attr.Targets & AttributeTargets.Delegate) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Enum) {
+				if ((attr.Targets & AttributeTargets.Enum) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Event) {
+				if ((attr.Targets & AttributeTargets.Event) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Field) {
+				if ((attr.Targets & AttributeTargets.Field) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Interface) {
+				if ((attr.Targets & AttributeTargets.Interface) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Method) {
+				if ((attr.Targets & AttributeTargets.Method) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Parameter) {
+				if ((attr.Targets & AttributeTargets.Parameter) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is Property) {
+				if ((attr.Targets & AttributeTargets.Property) != 0)
+					return true;
+				else
+					return false;
+			}
+			
+			return false;
+		}
 	}
 	
 	public class AttributeSection {

@@ -98,6 +98,13 @@ namespace CIR {
 		// Attributes for this type
 		protected Attributes attributes;
 
+		// Information in the case we are an attribute type
+
+		public AttributeTargets Targets;
+		public bool AllowMultiple;
+		public bool Inherited;
+		
+
 		public TypeContainer (RootContext rc, TypeContainer parent, string name, Location l)
 			: base (name, l)
 		{
@@ -1353,8 +1360,25 @@ namespace CIR {
 						if (asec.Attributes != null) {
 							foreach (Attribute a in asec.Attributes) {
 								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb != null)
-									TypeBuilder.SetCustomAttribute (cb);
+								if (cb == null)
+									continue;
+
+								if (a.UsageAttr) {
+									this.Targets = a.Targets;
+									this.AllowMultiple = a.AllowMultiple;
+									this.Inherited = a.Inherited;
+
+									RootContext.TypeManager.RegisterAttrType (
+										           TypeBuilder, this);
+								} else {
+
+									if (!Attribute.CheckAttribute (a, this)) {
+										Attribute.Error592 (a, Location);
+										return;
+									}
+								}
+								
+								TypeBuilder.SetCustomAttribute (cb);
 							}
 						}
 					}
@@ -1868,8 +1892,15 @@ namespace CIR {
 						if (asec.Attributes != null) {
 							foreach (Attribute a in asec.Attributes) {
 								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb != null)
-									MethodBuilder.SetCustomAttribute (cb);
+								if (cb == null)
+									continue;
+
+								if (!Attribute.CheckAttribute (a, this)) {
+									Attribute.Error592 (a, Location);
+									return;
+								}
+								
+								MethodBuilder.SetCustomAttribute (cb);
 							}
 						}
 					}
@@ -2063,8 +2094,15 @@ namespace CIR {
 						if (asec.Attributes != null) {
 							foreach (Attribute a in asec.Attributes) {
 								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb != null)
-									ConstructorBuilder.SetCustomAttribute (cb);
+								if (cb == null)
+									continue;
+
+								if (!Attribute.CheckAttribute (a, this)) {
+									Attribute.Error592 (a, Location);
+									return;
+								}
+								
+								ConstructorBuilder.SetCustomAttribute (cb);
 							}
 						}
 					}
@@ -2083,6 +2121,7 @@ namespace CIR {
 		public readonly Attributes OptAttributes;
 		public FieldBuilder  FieldBuilder;
 		
+		Location Location;
 		
 		// <summary>
 		//   Modifiers allowed in a class declaration
@@ -2096,13 +2135,14 @@ namespace CIR {
 			Modifiers.STATIC |
 			Modifiers.READONLY;
 
-		public Field (string type, int mod, string name, Object expr_or_array_init, Attributes attrs)
+		public Field (string type, int mod, string name, Object expr_or_array_init, Attributes attrs, Location loc)
 		{
 			Type = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
 			Name = name;
 			Initializer = expr_or_array_init;
 			OptAttributes = attrs;
+			this.Location = loc;
 		}
 
 		public void Define (TypeContainer parent)
@@ -2135,6 +2175,11 @@ namespace CIR {
 					if (cb == null)
 						continue;
 					
+					if (!Attribute.CheckAttribute (a, this)) {
+						Attribute.Error592 (a, Location);
+						return;
+					}
+
 					FieldBuilder.SetCustomAttribute (cb);
 				}
 			}
@@ -2266,6 +2311,12 @@ namespace CIR {
 							CustomAttributeBuilder cb = a.Resolve (ec);
 							if (cb == null)
 								continue;
+
+							if (!Attribute.CheckAttribute (a, this)) {
+								Attribute.Error592 (a, Location);
+								return;
+							}
+
 							PropertyBuilder.SetCustomAttribute (cb);
 						}
 					}
@@ -2398,6 +2449,11 @@ namespace CIR {
 					CustomAttributeBuilder cb = a.Resolve (ec);
 					if (cb == null)
 						continue;
+
+					if (!Attribute.CheckAttribute (a, this)) {
+						Attribute.Error592 (a, Location);
+						return;
+					}
 					
 					EventBuilder.SetCustomAttribute (cb);
 				}
@@ -2560,8 +2616,15 @@ namespace CIR {
 						if (asec.Attributes != null) {
 							foreach (Attribute a in asec.Attributes) {
 								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb != null)
-									PropertyBuilder.SetCustomAttribute (cb);
+								if (cb == null)
+									continue;
+
+								if (!Attribute.CheckAttribute (a, this)) {
+									Attribute.Error592 (a, Location);
+									return;
+								}
+
+								PropertyBuilder.SetCustomAttribute (cb);
 							}
 						}
 					}
@@ -2775,8 +2838,15 @@ namespace CIR {
 						if (asec.Attributes != null) {
 							foreach (Attribute a in asec.Attributes) {
 								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb != null)
-									OperatorMethodBuilder.SetCustomAttribute (cb);
+								if (cb == null)
+									continue;
+
+								if (!Attribute.CheckAttribute (a, this)) {
+									Attribute.Error592 (a, Location);
+									return;
+								}
+
+								OperatorMethodBuilder.SetCustomAttribute (cb);
 							}
 						}
 					}
