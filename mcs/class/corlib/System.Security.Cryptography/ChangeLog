@@ -1,3 +1,8 @@
+2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DSA.cs : In ToXmlString(), sequence of Seed and PgenCounter is
+	  optional.
+
 2004-02-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DES.cs: Same fix as for SymmetricAlgorithm (get_Key is 

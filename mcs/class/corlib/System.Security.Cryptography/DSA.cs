@@ -122,21 +122,23 @@ namespace System.Security.Cryptography {
 				sb.Append ("<J>");
 				sb.Append (Convert.ToBase64String (dsaParams.J));
 				sb.Append ("</J>");
-				
-				sb.Append ("<Seed>");
-				sb.Append (Convert.ToBase64String (dsaParams.Seed));
-				sb.Append ("</Seed>");
-				
-				sb.Append ("<PgenCounter>");
-				// the number of bytes is important (no matter == 0x00)
-				byte[] inArr = BitConverter.GetBytes (dsaParams.Counter);
-				int l = inArr.Length;
-				while (inArr[l-1] == 0x00)
-					l--;
-				byte[] c = new byte[l];
-				Array.Copy (inArr, 0, c, 0, l);
-				sb.Append (Convert.ToBase64String (c));
-				sb.Append ("</PgenCounter>");
+
+				if (dsaParams.Seed != null) {
+					sb.Append ("<Seed>");
+					sb.Append (Convert.ToBase64String (dsaParams.Seed));
+					sb.Append ("</Seed>");
+
+					sb.Append ("<PgenCounter>");
+					// the number of bytes is important (no matter == 0x00)
+					byte[] inArr = BitConverter.GetBytes (dsaParams.Counter);
+					int l = inArr.Length;
+					while (inArr[l-1] == 0x00)
+						l--;
+					byte[] c = new byte[l];
+					Array.Copy (inArr, 0, c, 0, l);
+					sb.Append (Convert.ToBase64String (c));
+					sb.Append ("</PgenCounter>");
+				}
 
 				if (dsaParams.X != null) {
 					sb.Append ("<X>");
@@ -148,7 +150,7 @@ namespace System.Security.Cryptography {
 
 				sb.Append ("</DSAKeyValue>");
 			}
-			catch {
+			catch (NotImplementedException ex) {
 				ZeroizePrivateKey (dsaParams);
 				throw;
 			}
