@@ -18,8 +18,9 @@ namespace MonoTests.System.Runtime.Serialization {
                 public static ITest Suite 
                 { 
                         get {
-                                TestSuite suite =  new TestSuite();
-                                suite.AddTest(ObjectIDGeneratorTests.Suite);
+                                TestSuite suite =  new TestSuite ();
+                                suite.AddTest (ObjectIDGeneratorTests.Suite);
+                                suite.AddTest (FormatterServicesTests.Suite);
                                 return suite;
                         }
                 }
