@@ -1,3 +1,7 @@
+2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile.am : windows build fix.
+
 2005-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* iltests.il: Add new regression test.
