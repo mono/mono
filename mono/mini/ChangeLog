@@ -1,4 +1,8 @@
 
+Fri Jul 18 13:16:18 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* aot.c, mini.c: updates for array type representation changes.
+
 Fri Jul 18 11:28:28 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: register function to perform jit shutdown.
