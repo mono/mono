@@ -96,7 +96,7 @@ namespace System.Runtime.Remoting.Proxies
 		}
 		
 		[MonoTODO]
-		public virtual IntPtr SupportsInterface (Guid iid)
+		public virtual IntPtr SupportsInterface (ref Guid iid)
 		{
 			throw new NotImplementedException ();
 		}

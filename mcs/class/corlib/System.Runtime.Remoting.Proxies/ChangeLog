@@ -1,3 +1,7 @@
+2003-11-26  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RealProxy.cs: Signature fix.
+	
 2003-11-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RealProxy.cs: Added some missing methods.
