@@ -80,8 +80,9 @@ public class CryptoStream : Stream {
 
 	public override void Close () 
 	{
-		if (_mode != CryptoStreamMode.Write)
-			throw new NotSupportedException ();
+		// LAMESPEC: A CryptoStream can be close in read mode
+		//if (_mode != CryptoStreamMode.Write)
+		//	throw new NotSupportedException ();
 
 		if (!_flushedFinalBlock)
 			FlushFinalBlock ();
@@ -110,6 +111,7 @@ public class CryptoStream : Stream {
 			workPos += len;
 			count -= len;
 			if (_stream.Position == _stream.Length) {
+				_flushedFinalBlock = true; // in case Close is called
 				byte[] input = _transform.TransformFinalBlock (work, 0, work.Length);
 				Array.Copy (input, 0, buffer, bufferPos, input.Length);
 				result += input.Length;
