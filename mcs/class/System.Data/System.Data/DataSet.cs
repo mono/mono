@@ -751,8 +751,12 @@ namespace System.Data {
 
 		public void ReadXmlSchema (XmlReader reader)
 		{
+#if true
+			new XmlSchemaDataImporter (this, reader);
+#else
 			XmlSchemaMapper SchemaMapper = new XmlSchemaMapper (this);
 			SchemaMapper.Read (reader);
+#endif
 		}
 
 		public XmlReadMode ReadXml (Stream stream)
@@ -837,7 +841,6 @@ namespace System.Data {
 					return mode;
 				}
 			}
-			XmlSchemaMapper SchemaMapper = null;
 			// If schema, then read the first element as schema 
 			if (reader.LocalName == "schema" && reader.NamespaceURI == XmlSchema.Namespace) {
 				switch (mode) {
@@ -847,21 +850,22 @@ namespace System.Data {
 					// (and break up read)
 					return mode;
 				case XmlReadMode.Fragment:
-					SchemaMapper = new XmlSchemaMapper (this);
-					SchemaMapper.Read (reader);
+					ReadXmlSchema (reader);
 					// (and continue to read)
 					break;
 				case XmlReadMode.Auto:
-					if (Tables.Count == 0)
-						goto default;
+					if (Tables.Count == 0) {
+						ReadXmlSchema (reader);
+						return XmlReadMode.ReadSchema;
+					} else {
 					// otherwise just ignore and return IgnoreSchema
-					reader.Skip ();
-					return XmlReadMode.IgnoreSchema;
+						reader.Skip ();
+						return XmlReadMode.IgnoreSchema;
+					}
 				default:
-					SchemaMapper = new XmlSchemaMapper (this);
-					SchemaMapper.Read (reader);
+					ReadXmlSchema (reader);
 					// (and leave rest of the reader as is)
-					return XmlReadMode.ReadSchema;
+					return mode; // When DiffGram, return DiffGram
 				}
 			}
 			// Otherwise, read as dataset... but only when required.

@@ -1,3 +1,11 @@
+2004-04-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Added XmlSchemaDataImporter.cs (new schema reader).
+	* DataSet.cs : Use XmlSchemaDataImporter (right now for DataSet only)
+	  for ReadXmlSchema().
+	  Let schema reading work to ReadXmlSchema().
+	  Don't return ReadSchema when argument read mode was DiffGram.
+
 2004-04-15 Umadevi S (sumadevi@novell.com)
 	*  Updated Clone/Copy methods in DataSet along with Testcase
 	*  ForeignKeyConstraint.cs - special ctor implemented 
