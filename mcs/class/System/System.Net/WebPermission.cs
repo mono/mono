@@ -35,8 +35,39 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 
-namespace System.Net
-{
+namespace System.Net {
+
+	internal enum WebPermissionInfoType {
+		InfoString,
+		InfoUnexecutedRegex,
+		InfoRegex,
+	}
+
+	internal class WebPermissionInfo {
+		WebPermissionInfoType _type;
+		object _info;
+
+		public WebPermissionInfo (WebPermissionInfoType type, string info)
+		{
+			_type = type;
+			_info = (string) info;
+		}
+
+		public WebPermissionInfo (Regex regex)
+		{
+			_type = WebPermissionInfoType.InfoRegex;
+			_info = (object) regex;
+		}
+
+		public string Info {
+			get {
+				if (_type == WebPermissionInfoType.InfoRegex)
+					return null;
+				return (string) _info;
+			}
+		}
+	}
+
 	// (based on SocketPermission.cs - Please look there to implement missing members!)
 	[MonoTODO ("Most private members that include functionallity are not implemented!")]
 	[Serializable]
@@ -78,15 +109,31 @@ namespace System.Net
 
 		// Methods
 
-		[MonoTODO]
 		public void AddPermission (NetworkAccess access, string uriString)
 		{
-			throw new NotImplementedException ();
+			WebPermissionInfo info = new WebPermissionInfo (WebPermissionInfoType.InfoString, uriString); 
+			AddPermission (access, info);
 		}
-		[MonoTODO]
+
 		public void AddPermission (NetworkAccess access, Regex uriRegex)
 		{
-			throw new NotImplementedException ();
+			WebPermissionInfo info = new WebPermissionInfo (uriRegex); 
+			AddPermission (access, info);
+		}
+
+		internal void AddPermission (NetworkAccess access, WebPermissionInfo info)
+		{
+			switch (access) {
+				case NetworkAccess.Accept:
+					m_acceptList.Add (info);
+					break;
+				case NetworkAccess.Connect:
+					m_connectList.Add (info);
+					break;
+				default:
+					string msg = Locale.GetText ("Unknown NetworkAccess value {0}.");
+					throw new ArgumentException (String.Format (msg, access), "access");
+			}
 		}
 
 		public override IPermission Copy ()
@@ -194,9 +241,7 @@ namespace System.Net
 			// LAMESPEC: it says to throw an ArgumentNullException in this case
 			if (securityElement.Tag != "IPermission")
 				throw new ArgumentException ("securityElement");
-			string classStr = securityElement.Attribute ("class");
-			if (classStr == null || !classStr.StartsWith (this.GetType ().FullName + ","))
-				throw new ArgumentException ("securityElement");
+
 			string unrestricted = securityElement.Attribute ("Unrestricted");
 			if (unrestricted != null) {
 				this.m_noRestriction = (String.Compare (unrestricted, "true", true) == 0);
@@ -246,4 +291,3 @@ namespace System.Net
 		}
 	}
 } 
-

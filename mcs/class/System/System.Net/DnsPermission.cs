@@ -1,10 +1,11 @@
 //
 // System.Net.DnsPermission.cs
 //
-// Author:
-//   Lawrence Pit (loz@cable.a2000.nl)
+// Authors:
+//	Lawrence Pit (loz@cable.a2000.nl)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,21 +27,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Net
-{
+namespace System.Net {
+
 	[Serializable]
-	public sealed class DnsPermission : CodeAccessPermission, IUnrestrictedPermission
-	{
+	public sealed class DnsPermission : CodeAccessPermission, IUnrestrictedPermission {
+
+		private const int version = 1;
+
 		// Fields
 		bool m_noRestriction;
 		
 		// Constructors
-		public DnsPermission (PermissionState state) : base () 
+		public DnsPermission (PermissionState state)
+			: base () 
 		{						
 			m_noRestriction = (state == PermissionState.Unrestricted);
 		}
@@ -49,40 +52,26 @@ namespace System.Net
 				
 		public override IPermission Copy ()
 		{
-			// this is immutable.
-			return this;		
+			return new DnsPermission (m_noRestriction ? PermissionState.Unrestricted : PermissionState.None);		
 		}
 		
 		public override IPermission Intersect (IPermission target)
 		{
-			// LAMESPEC: says to throw an exception when null
-			// but at same time it says to return null. We'll
-			// follow MS behaviour.
-			if (target == null) 
+			DnsPermission dp = Cast (target);
+			if (dp == null)
 				return null;
-			
-			DnsPermission perm = target as DnsPermission;
-			
-			if (perm == null)
-				throw new ArgumentException ("Argument not of type DnsPermission");
-				
-			if (this.m_noRestriction && perm.m_noRestriction)
-				return this;
-			
-			return this.m_noRestriction ? perm : this;
+			if (IsUnrestricted () && dp.IsUnrestricted ())
+				return new DnsPermission (PermissionState.Unrestricted);
+			return null;
 		}
 		
 		public override bool IsSubsetOf (IPermission target) 
 		{
-			if (target == null)
-				return !m_noRestriction;
-			
-			DnsPermission perm = target as DnsPermission;
-			
-			if (perm == null)
-				throw new ArgumentException ("Argument not of type DnsPermission");
-			
-			return !this.m_noRestriction || perm.m_noRestriction;
+			DnsPermission dp = Cast (target);
+			if (dp == null)
+				return IsEmpty ();
+
+			return (dp.IsUnrestricted () || (m_noRestriction == dp.m_noRestriction));
 		}
 
 		public bool IsUnrestricted () 
@@ -90,71 +79,54 @@ namespace System.Net
 			return this.m_noRestriction;
 		}
 
-		/*
-		
-		DnsPermission dns1 = new DnsPermission (PermissionState.None);
-		Console.WriteLine (dns1.ToXml ().ToString ());
-
-		DnsPermission dns2 = new DnsPermission (PermissionState.Unrestricted);
-		Console.WriteLine (dns2.ToXml ().ToString ());
-		
-		This is the sample xml output:
-
-		<IPermission class="System.Net.DnsPermission, System, Version=1.0.3300.0, Cultur
-		e=neutral, PublicKeyToken=b77a5c561934e089"
-			     version="1"/>
-
-		<IPermission class="System.Net.DnsPermission, System, Version=1.0.3300.0, Cultur
-		e=neutral, PublicKeyToken=b77a5c561934e089"
-			     version="1"
-			     Unrestricted="true"/>
-		*/
 		public override SecurityElement ToXml ()
 		{
-             
-			SecurityElement root = new SecurityElement ("IPermission");
-			root.AddAttribute ("class", this.GetType ().AssemblyQualifiedName);
-			root.AddAttribute ("version", "1");
+			SecurityElement se = PermissionHelper.Element (typeof (DnsPermission), version);
 			if (m_noRestriction)
-				root.AddAttribute ("Unrestricted", "true");				
-
-			return root;
+				se.AddAttribute ("Unrestricted", "true");				
+			return se;
 		}
 		
 		public override void FromXml (SecurityElement securityElement)
 		{
-			if (securityElement == null)
-				throw new ArgumentNullException ("securityElement");
-				
+			PermissionHelper.CheckSecurityElement (securityElement, "securityElement", version, version);
+		
 			// LAMESPEC: it says to throw an ArgumentNullException in this case				
 			if (securityElement.Tag != "IPermission")
 				throw new ArgumentException ("securityElement");
 				
-			string classStr = securityElement.Attribute ("class");
-			if (classStr == null || !classStr.StartsWith (this.GetType ().FullName + ","))
-				throw new ArgumentException ("securityElement");
-				
-			string unrestricted = securityElement.Attribute ("Unrestricted");
-			if (unrestricted != null) 
-				this.m_noRestriction = (String.Compare (unrestricted, "true", true) == 0);
+			this.m_noRestriction = PermissionHelper.IsUnrestricted (securityElement);
 		}		
 		
 		public override IPermission Union (IPermission target) 
 		{
-			// LAMESPEC: according to spec we should throw an 
-			// exception when target is null. We'll follow the
-			// behaviour of MS.Net instead of the spec.
-			if (target == null)
-				return this;
-				// throw new ArgumentNullException ("target");
-				
-			DnsPermission perm = target as DnsPermission;
-			
-			if (perm == null)
-				throw new ArgumentException ("Argument not of type DnsPermission");
-			
-			return this.m_noRestriction ? this : perm;
+			DnsPermission dp = Cast (target);
+			if (dp == null)
+				return Copy ();
+			if (IsUnrestricted () || dp.IsUnrestricted ())
+				return new DnsPermission (PermissionState.Unrestricted);
+			else
+				return new DnsPermission (PermissionState.None);
 		}
 
+		// Internal helpers methods
+
+		private bool IsEmpty ()
+		{
+			return !m_noRestriction;
+		}
+
+		private DnsPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			DnsPermission dp = (target as DnsPermission);
+			if (dp == null) {
+				PermissionHelper.ThrowInvalidPermission (target, typeof (DnsPermission));
+			}
+
+			return dp;
+		}
 	}
 }

@@ -1,3 +1,12 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DnsPermission.cs: Updated to pass new unit tests.
+	* DnsPermissionAttribute.cs: Cleanup.
+	* SocketPermission.cs: Updated to pass new unit tests.
+	* SocketPermissionAttribute.cs: Updated to pass new unit tests.
+	* WebPermission.cs: Implemented some TODO - not complete yet.
+	* WebPermissionAttribute.cs: Updated to pass new unit tests.
+
 2004-08-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Cookie.cs: don't fail when using default constructor. Fixes bug

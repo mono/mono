@@ -26,13 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Net
-{
+namespace System.Net {
+
 	[Serializable]
 	public sealed class SocketPermission : CodeAccessPermission, IUnrestrictedPermission
 	{
@@ -287,10 +286,6 @@ namespace System.Net
 			if (securityElement.Tag != "IPermission")
 				throw new ArgumentException ("securityElement");
 				
-			string classStr = securityElement.Attribute ("class");
-			if (classStr == null || !classStr.StartsWith (this.GetType ().FullName + ","))
-				throw new ArgumentException ("securityElement");
-				
 			string unrestricted = securityElement.Attribute ("Unrestricted");
 			if (unrestricted != null) {
 				this.m_noRestriction = (String.Compare (unrestricted, "true", true) == 0);
@@ -355,6 +350,5 @@ namespace System.Net
 			
 			return copy;
 		}
-
 	}
 }

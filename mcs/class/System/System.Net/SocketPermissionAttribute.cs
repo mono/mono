@@ -2,9 +2,10 @@
 // System.Net.SocketPermissionAttribute.cs
 //
 // Author:
-//   Lawrence Pit (loz@cable.a2000.nl)
+//	Lawrence Pit (loz@cable.a2000.nl)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Net
-{
+namespace System.Net {
+
 	[AttributeUsage (AttributeTargets.Assembly 
 	               | AttributeTargets.Class 
 	               | AttributeTargets.Struct 
@@ -39,8 +39,8 @@ namespace System.Net
 	               | AttributeTargets.Method, AllowMultiple = true, Inherited = false)
 	]	
 	[Serializable]
-	public sealed class SocketPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class SocketPermissionAttribute : CodeAccessSecurityAttribute {
+
 		// Fields
 		string m_access;
 		string m_host;
@@ -48,7 +48,8 @@ namespace System.Net
 		string m_transport;
 		
 		// Constructors
-		public SocketPermissionAttribute (SecurityAction action) : base (action)
+		public SocketPermissionAttribute (SecurityAction action)
+			: base (action)
 		{
 		}
 
@@ -58,9 +59,8 @@ namespace System.Net
 			get { return m_access; }
 			set { 
 				if (m_access != null)
-					throw new ArgumentException ("The parameter 'Access' can be set only once.");
-				if (value == null) 
-					throw new ArgumentException ("The parameter 'Access' cannot be null.");
+					AlreadySet ("Access");
+
 				m_access = value;
 			}
 		}
@@ -69,9 +69,8 @@ namespace System.Net
 			get { return m_host; }
 			set { 
 				if (m_host != null)
-					throw new ArgumentException ("The parameter 'Host' can be set only once.");
-				if (value == null) 
-					throw new ArgumentException ("The parameter 'Host' cannot be null.");					
+					AlreadySet ("Host");
+
 				m_host = value;
 			}
 		}
@@ -80,9 +79,8 @@ namespace System.Net
 			get { return m_port; }
 			set { 
 				if (m_port != null)
-					throw new ArgumentException ("The parameter 'Port' can be set only once.");
-				if (value == null) 
-					throw new ArgumentException ("The parameter 'Port' cannot be null.");					
+					AlreadySet ("Port");
+
 				m_port = value;
 			}
 		}
@@ -91,27 +89,33 @@ namespace System.Net
 			get { return m_transport; }
 			set { 
 				if (m_transport != null)
-					throw new ArgumentException ("The parameter 'Transport' can be set only once.");
-				if (value == null) 
-					throw new ArgumentException ("The parameter 'Transport' cannot be null.");					
+					AlreadySet ("Transport");
+
 				m_transport = value;
 			}
 		}
 		
 		// Methods
 		
-		public override IPermission CreatePermission () {
+		public override IPermission CreatePermission () 
+		{
 			if (this.Unrestricted)
 				return new SocketPermission (PermissionState.Unrestricted);
 
+			string missing = String.Empty;
 			if (m_access == null) 
-				throw new ArgumentException ("The value for 'Access' must be specified.");
+				missing += "Access, ";
 			if (m_host == null) 
-				throw new ArgumentException ("The value for 'Host' must be specified.");
+				missing += "Host, ";
 			if (m_port == null) 
-				throw new ArgumentException ("The value for 'Port' must be specified.");
+				missing += "Port, ";
 			if (m_transport == null) 
-				throw new ArgumentException ("The value for 'Transport' must be specified.");
+				missing += "Transport, ";
+			if (missing.Length > 0) {
+				string msg = Locale.GetText ("The value(s) for {0} must be specified.");
+				missing = missing.Substring (0, missing.Length - 2); // remove last separator
+				throw new ArgumentException (String.Format (msg, missing));
+			}
 
 			NetworkAccess access;
 			TransportType transport;
@@ -121,14 +125,18 @@ namespace System.Net
 				access = NetworkAccess.Connect;
 			else if (String.Compare (m_access, "Accept", true) == 0)
 				access = NetworkAccess.Accept;
-			else 
-				throw new ArgumentException ("The parameter value 'Access=" + m_access + "' is invalid.");
+			else {
+				string msg = Locale.GetText ("The parameter value for 'Access', '{1}, is invalid.");
+				throw new ArgumentException (String.Format (msg, m_access));
+			}
 
 			if (String.Compare (m_port, "All", true) != 0) {
 				try {
 					port = Int32.Parse (m_port);					
-				} catch (Exception) {
-					throw new ArgumentException ("The parameter value 'Port=" + port + "' is invalid.");
+				} 
+				catch {
+					string msg = Locale.GetText ("The parameter value for 'Port', '{1}, is invalid.");
+					throw new ArgumentException (String.Format (msg, m_port));
 				}
 				// test whether port number is valid..
 				new IPEndPoint (1, port);
@@ -136,13 +144,23 @@ namespace System.Net
 
 			try {
 				transport = (TransportType) Enum.Parse (typeof (TransportType), m_transport, true);
-			} catch (Exception) {
-				throw new ArgumentException ("The parameter value 'Transport=" + m_transport + "' is invalid.");
+			}
+			catch {
+				string msg = Locale.GetText ("The parameter value for 'Transport', '{1}, is invalid.");
+				throw new ArgumentException (String.Format (msg, m_transport));
 			}
 						
 			SocketPermission perm = new SocketPermission (PermissionState.None);
 			perm.AddPermission (access, transport, m_host, port);
 			return perm;
-		}		
+		}
+
+		// helpers
+
+		internal void AlreadySet (string property)
+		{
+			string msg = Locale.GetText ("The parameter '{0}' can be set only once.");
+			throw new ArgumentException (String.Format (msg, property), property);
+		}
 	}
 }

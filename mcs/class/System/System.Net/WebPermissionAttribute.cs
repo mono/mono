@@ -1,12 +1,12 @@
 //
 // System.Net.WebPermissionAttribute.cs
 //
-// Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// Authors:
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,69 +28,86 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Security;
-using System.Security.Permissions;using System.Text.RegularExpressions;
+using System.Security.Permissions;
 
-namespace System.Net
-{
+namespace System.Net {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class 
 		 | AttributeTargets.Struct | AttributeTargets.Constructor 
 		 | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]	
 	[Serializable]
-	public sealed class WebPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class WebPermissionAttribute : CodeAccessSecurityAttribute {
+
 		// Fields
 		object m_accept;
 		object m_connect;
 
 		// Constructors
-		public WebPermissionAttribute (SecurityAction action) : base (action)
+		public WebPermissionAttribute (SecurityAction action)
+			: base (action)
 		{
 		}
 
 		// Properties
 
 		public string Accept {
-			get { return m_accept.ToString (); }
+			get {
+				if (m_accept == null)
+					return null;
+				return (m_accept as WebPermissionInfo).Info; 
+			}
 			set { 
 				if (m_accept != null)
-					throw new ArgumentException ("The parameter 'Accept' can be set only once.");
-				if (value == null) 
-					throw new ArgumentException ("The parameter 'Accept' cannot be null.");
-				m_accept = value;
+					AlreadySet ("Accept", "Accept");
+
+				m_accept = new WebPermissionInfo (WebPermissionInfoType.InfoString, value);
 			}
 		}
 
 		public string AcceptPattern {
-			get { return m_accept.ToString (); }
+			get {
+				if (m_accept == null)
+					return null;
+				return (m_accept as WebPermissionInfo).Info; 
+			}
 			set { 
 				if (m_accept != null)
-					throw new ArgumentException ("The parameter 'Accept' can be set only once.");
+					AlreadySet ("Accept", "AcceptPattern");
 				if (value == null) 
-					throw new ArgumentException ("The parameter 'Accept' cannot be null.");
-				m_accept = new Regex (value, RegexOptions.IgnoreCase);
+					throw new ArgumentNullException ("AcceptPattern");
+
+				m_accept = new WebPermissionInfo (WebPermissionInfoType.InfoUnexecutedRegex , value); 
 			}
 		}
 
 		public string Connect {
-			get { return m_connect.ToString (); }
+			get {
+				if (m_connect == null)
+					return null;
+				return (m_connect as WebPermissionInfo).Info; 
+			}
 			set { 
 				if (m_connect != null)
-					throw new ArgumentException ("The parameter 'Connect' can be set only once.");
-				if (value == null) 
-					throw new ArgumentException ("The parameter 'Connect' cannot be null.");
-				m_connect = value;
+					AlreadySet ("Connect", "Connect");
+
+				m_connect = new WebPermissionInfo (WebPermissionInfoType.InfoString, value);
 			}
 		}
+
 		public string ConnectPattern {
-			get { return m_connect.ToString (); }
+			get {
+				if (m_connect == null)
+					return null;
+				return (m_connect as WebPermissionInfo).Info; 
+			}
 			set { 
 				if (m_connect != null)
-					throw new ArgumentException ("The parameter 'Connect' can be set only once.");
+					AlreadySet ("Connect", "ConnectConnectPattern");
 				if (value == null) 
-					throw new ArgumentException ("The parameter 'Connect' cannot be null.");
-				m_connect = new Regex (value, RegexOptions.IgnoreCase);
+					throw new ArgumentNullException ("ConnectPattern");
+
+				m_connect = new WebPermissionInfo (WebPermissionInfoType.InfoUnexecutedRegex , value);
 			}
 		}
 
@@ -100,23 +117,23 @@ namespace System.Net
 		{
 			if (this.Unrestricted)
 				return new WebPermission (PermissionState.Unrestricted);
+
 			WebPermission newPermission = new WebPermission ();
-			if (m_accept != null)
-			{
-				if (m_accept is Regex)
-					newPermission.AddPermission (NetworkAccess.Accept, (Regex)m_accept);
-				else
-					newPermission.AddPermission (NetworkAccess.Accept, (string)m_accept);
+			if (m_accept != null) {
+				newPermission.AddPermission (NetworkAccess.Accept, (WebPermissionInfo) m_accept);
 			}
-			if (m_connect != null)
-			{
-				if (m_connect is Regex)
-					newPermission.AddPermission (NetworkAccess.Connect, (Regex)m_connect);
-				else
-					newPermission.AddPermission (NetworkAccess.Connect, (string)m_connect);
+			if (m_connect != null) {
+				newPermission.AddPermission (NetworkAccess.Connect, (WebPermissionInfo) m_connect);
 			}
 			return newPermission;
 		}
+
+		// helpers
+
+		internal void AlreadySet (string parameter, string property)
+		{
+			string msg = Locale.GetText ("The parameter '{0}' can be set only once.");
+			throw new ArgumentException (String.Format (msg, parameter), property);
+		}
 	}
 } 
-
