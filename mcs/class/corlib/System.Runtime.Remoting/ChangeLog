@@ -1,5 +1,10 @@
 2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* RemotingConfiguration.cs: Added initial implementation of Configure method
+	  by Jaime Anguiano.
+
+2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* ActivatedClientTypeEntry.cs, ActivatedServiceTypeEntry.cs, 
 	  IRemotingTypeInfo.cs, RemotingServices.cs, WellKnownServiceTypeEntry.cs:
 	  Removed some TODOs.
