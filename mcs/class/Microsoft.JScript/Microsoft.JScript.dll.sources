@@ -22,6 +22,7 @@ Microsoft.JScript/Closure.cs
 Microsoft.JScript/CmdLineException.cs
 Microsoft.JScript/CmdLineError.cs
 Microsoft.JScript/CmdLineOptionParser.cs
+Microsoft.JScript/CodeGenerator.cs
 Microsoft.JScript/Context.cs
 Microsoft.JScript/ContinueOutOfFinally.cs
 Microsoft.JScript/Convert.cs
@@ -31,6 +32,7 @@ Microsoft.JScript/DatePrototype.cs
 Microsoft.JScript/DebugBreak.cs
 Microsoft.JScript/DocumentContext.cs
 Microsoft.JScript/Empty.cs
+Microsoft.JScript/Enum.cs
 Microsoft.JScript/EnumeratorConstructor.cs
 Microsoft.JScript/EnumeratorObject.cs
 Microsoft.JScript/EnumeratorPrototype.cs
@@ -94,6 +96,7 @@ Microsoft.JScript/LenientRegExpPrototype.cs
 Microsoft.JScript/LenientStringConstructor.cs
 Microsoft.JScript/LenientStringPrototype.cs
 Microsoft.JScript/LenientVBArrayPrototype.cs
+Microsoft.JScript/Literal.cs
 Microsoft.JScript/MathObject.cs
 Microsoft.JScript/MemberInfoList.cs
 Microsoft.JScript/MethodInvoker.cs
@@ -110,6 +113,7 @@ Microsoft.JScript/ObjectPrototype.cs
 Microsoft.JScript/Package.cs
 Microsoft.JScript/Plus.cs
 Microsoft.JScript/PostOrPrefixOperator.cs
+Microsoft.JScript/Print.cs
 Microsoft.JScript/RangeErrorObject.cs
 Microsoft.JScript/ReferenceAttribute.cs
 Microsoft.JScript/ReferenceErrorObject.cs
@@ -129,6 +133,7 @@ Microsoft.JScript/StackFrame.cs
 Microsoft.JScript/Statement.cs
 Microsoft.JScript/StrictEquality.cs
 Microsoft.JScript/StringConstructor.cs
+Microsoft.JScript/StringLiteral.cs
 Microsoft.JScript/StringObject.cs
 Microsoft.JScript/StringPrototype.cs
 Microsoft.JScript/SuperTypeMembersSorter.cs
