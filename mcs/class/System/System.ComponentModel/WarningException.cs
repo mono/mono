@@ -1,15 +1,16 @@
-//------------------------------------------------------------------------------
 // 
-// System.ComponentModel.WarningException.
+// System.ComponentModel.WarningException.cs
 //
-// Author:  Asier Llano Palacios, asierllano@infonegocio.com
+// Author:
+//   Asier Llano Palacios (asierllano@infonegocio.com)
 //
-//------------------------------------------------------------------------------
 
 using System;
+using System.Security;
 
 namespace System.ComponentModel {
 
+	[SuppressUnmanagedCodeSecurity]
 	public class WarningException : SystemException
 	{
 		private string helpUrl;

@@ -1,9 +1,9 @@
 //
-// System.ComponentModel.TypeConverter
+// System.ComponentModel.TypeConverter.cs
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-// 	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002/2003 Ximian, Inc (http://www.ximian.com)
 // (C) 2003 Andreas Nahr
@@ -12,9 +12,11 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.ComponentModel
 {
+	[ComVisible (true)]
 	public class TypeConverter
 	{
 		public bool CanConvertFrom (Type sourceType)

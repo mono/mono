@@ -1,42 +1,34 @@
 //
 // System.ComponentModel.ExpandableObjectConverter.cs
 //
-// Author:
+// Authors:
 //   Tim Coleman (tim@timcoleman.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// (C) 2003 Andreas Nahr
 //
 
 using System;
 
-namespace System.ComponentModel {
-	public class ExpandableObjectConverter : TypeConverter {
+namespace System.ComponentModel 
+{
+	public class ExpandableObjectConverter : TypeConverter 
+	{
 
-		#region Constructors
-
-		[MonoTODO]
 		public ExpandableObjectConverter ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		#endregion // Constructors
-
-		#region Methods
-
-		[MonoTODO]
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
 									    object value, Attribute[] attributes)
 		{
-			throw new NotImplementedException ();
+			return TypeDescriptor.GetProperties (value, attributes);
 		}
 
-		[MonoTODO]
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
-
-		#endregion // Methods
 	}
 }

@@ -13,30 +13,29 @@ using System.Reflection;
 
 namespace System.ComponentModel
 {
+	// Serves as base class for RuntimeLicenseContext and DesignTimeLicenseContext
+	// (no clue why this isn't abstract)
 	public class LicenseContext : IServiceProvider
 	{
-		[MonoTODO]
+
 		public LicenseContext()
 		{
 		}
 
-		[MonoTODO]
 		public virtual string GetSavedLicenseKey (Type type,
 							  Assembly resourceAssembly)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual object GetService (Type type)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void SetSavedLicenseKey (Type type, string key)
 		{
-			throw new NotImplementedException();
+			// Intentionally empty
 		}
 
 		public virtual LicenseUsageMode UsageMode {

@@ -1,8 +1,8 @@
 //
-// System.ComponentModel.LicenseProvider
+// System.ComponentModel.LicenseProvider.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
@@ -11,7 +11,7 @@ namespace System.ComponentModel
 {
 	public abstract class LicenseProvider
 	{
-		[MonoTODO]
+
 		protected LicenseProvider()
 		{
 		}
@@ -20,10 +20,5 @@ namespace System.ComponentModel
 						    Type type,
 						    object instance,
 						    bool allowExceptions);
-
-		[MonoTODO]
-		~LicenseProvider()
-		{
-		}
 	}
 }

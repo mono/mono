@@ -1,5 +1,5 @@
 //
-// System.ComponentModel.RefreshEventArgs
+// System.ComponentModel.RefreshEventArgs.cs
 //
 // Author:
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -11,34 +11,34 @@ using System;
 
 namespace System.ComponentModel
 {
-public class RefreshEventArgs : EventArgs
-{
-	private object component;
-	private Type type;
-
-	public RefreshEventArgs (object componentChanged)
+	public class RefreshEventArgs : EventArgs
 	{
-		if (componentChanged == null)
-			throw new ArgumentNullException ("componentChanged");
+		private object component;
+		private Type type;
 
-		component = componentChanged;
-		type = component.GetType ();
-	}
+		public RefreshEventArgs (object componentChanged)
+		{
+			if (componentChanged == null)
+				throw new ArgumentNullException ("componentChanged");
 
-	public RefreshEventArgs (Type typeChanged)
-	{
-		type = typeChanged;
-	}
+			component = componentChanged;
+			type = component.GetType ();
+		}
 
-	public object ComponentChanged
-	{
-		get { return component; }
-	}
+		public RefreshEventArgs (Type typeChanged)
+		{
+			type = typeChanged;
+		}
 
-	public Type TypeChanged
-	{
-		get { return type; }
+		public object ComponentChanged
+		{
+			get { return component; }
+		}
+
+		public Type TypeChanged
+		{
+			get { return type; }
+		}
 	}
-}
 }
 

@@ -1,56 +1,49 @@
 //
-// System.ComponentModel.LicenseException
+// System.ComponentModel.LicenseException.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	public class LicenseException : SystemException
 	{
-		[MonoTODO]
+
+		private Type type;
+
 		public LicenseException (Type type)
+			: this (type, null)
 		{
 		}
 		
-		[MonoTODO]
 		public LicenseException (Type type, object instance)
 		{
+			// LAMESPEC what should we do with instance?
+			this.type = type;
 		}
 		
-		[MonoTODO]
 		public LicenseException (Type type, object instance, 
 					 string message)
+			: this (type, instance, message, null)
 		{
 		}
 		
-		[MonoTODO]
 		public LicenseException (Type type, object instance,
 					 string message,
 					 Exception innerException)
+			: base (message, innerException)
 		{
-			throw new NotImplementedException();
+			// LAMESPEC what should we do with instance?
+			this.type = type;
 		}
 		
-		[MonoTODO]
 		public Type LicensedType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~LicenseException()
-		{
-		}
-		
+			get { return type; }
+		}		
 	}
 }

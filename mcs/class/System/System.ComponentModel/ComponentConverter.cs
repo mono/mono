@@ -1,38 +1,33 @@
 //
-// System.ComponentModel.ComponentConverter
+// System.ComponentModel.ComponentConverter.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	public class ComponentConverter : ReferenceConverter
 	{
-		[MonoTODO]
+
 		public ComponentConverter (Type type) : base (type)
 		{
 		}
 
-		[MonoTODO]
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
 									    object value,
 									    Attribute[] attributes)
 		{
-			throw new NotImplementedException();
+			return TypeDescriptor.GetProperties (value, attributes);
 		}
 
-		[MonoTODO]
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ComponentConverter()
-		{
+			return true;
 		}
 	}
 }

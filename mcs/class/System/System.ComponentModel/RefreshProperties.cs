@@ -11,8 +11,8 @@ namespace System.ComponentModel
 {
 	[Serializable]
 	public enum RefreshProperties {
-		All,
-		None,
-		Repaint
+		All = 1,
+		None = 0,
+		Repaint = 2
 	}
 }

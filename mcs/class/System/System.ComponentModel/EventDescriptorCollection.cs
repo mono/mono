@@ -2,8 +2,8 @@
 // System.ComponentModel.EventDescriptorCollection.cs
 //
 // Authors: 
-//  Rodrigo Moya (rodrigo@ximian.com)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Rodrigo Moya (rodrigo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.
 // (C) 2003 Andreas Nahr
@@ -21,7 +21,8 @@ namespace System.ComponentModel
 		
 		public static readonly EventDescriptorCollection Empty;
 		
-		public EventDescriptorCollection (EventDescriptor[] events) {
+		public EventDescriptorCollection (EventDescriptor[] events) 
+		{
 			for (int i = 0; i < events.Length; i++)
 				this.Add (events[i]);
 		}

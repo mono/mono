@@ -1,3 +1,36 @@
+2003-07-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ISite.cs: Fixed attributes, fixed header
+	* ITypeDescriptorContext.cs: Fixed attributes, formatting corrections
+	* WarningException.cs: Fixed attributes, formatting corrections
+	* AttributeCollection.cs: Fixed attributes
+	* DesignerSerializationVisibility.cs: Fixed attributes
+	* TypeConverter.cs: Fixed attributes
+	
+	* MarshalByValueComponent.cs:
+	* IComponent.cs: Fixed attributes, supports .Net 1.0 and 1.1
+	
+	* DescriptionAttribute.cs: 
+	* DesignerCategoryAttribute.cs:
+	* DoubleConverter.cs:
+	* EditorBrowsableAttribute.cs:
+	* EventDescriptorCollection.cs:
+	* PropertyChangedEventHandler.cs:
+	* RefreshEventArgs.cs:
+	* StringConverter.cs:
+	* DefaultValueAttribute.cs: Reformatted following style guidelines
+	
+	* License.cs: Removed unused MonoTODOs
+	* LicenseContext.cs: Implemented
+	* LicenseException.cs: Implemented
+	* LicenseProvider.cs: Removed unused MonoTODOs and unneccesary Finalizer
+	* LicenseUsageMode.cs: Fixed enum
+	* RefreshProperties.cs: Fixed enum
+	* LicFileLicenseProvider.cs: Implementation added
+	* ExtenderProvidedPropertyAttribute.cs: Implementation added, formatting corrections
+	* ExpandableObjectConverter.cs: Implemented
+	* ComponentConverter.cs: Implemented
+	
 2003-06-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* DesignerAttribute.cs: Fixed AttributeUsage, implementation errors,

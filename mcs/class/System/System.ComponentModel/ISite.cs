@@ -1,5 +1,5 @@
 //
-// System.ComponentModel.Component.cs
+// System.ComponentModel.ISite.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -8,10 +8,14 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
-namespace System.ComponentModel {
+namespace System.ComponentModel 
+{
 
-	public interface ISite : IServiceProvider {
+	[ComVisible (true)]
+	public interface ISite : IServiceProvider
+	{
 		IComponent Component { get; }
 
 		IContainer Container { get; }

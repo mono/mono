@@ -1,21 +1,24 @@
 //
-// System.ComponentModel.LicFileLicenseProvider
+// System.ComponentModel.LicFileLicenseProvider.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	public class LicFileLicenseProvider : LicenseProvider
 	{
-		[MonoTODO]
+
 		public LicFileLicenseProvider()
 		{
 		}
 
+		[MonoTODO]
 		public override License GetLicense (LicenseContext context,
 						    Type type,
 						    object instance,
@@ -24,21 +27,16 @@ namespace System.ComponentModel
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		protected virtual string GetKey (Type type)
 		{
-			throw new NotImplementedException();
+			return (type.FullName + " is a licensed component.");
 		}
 
-		[MonoTODO]
 		protected virtual bool IsKeyValid (string key, Type type)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~LicFileLicenseProvider()
-		{
+			if (key == null)
+				return false;
+			return key.Equals (GetKey (type));
 		}
 	}
 }

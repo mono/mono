@@ -1,9 +1,9 @@
 //
 // System.ComponentModel.DescriptionAttribute.cs
 //
-// Author:
-//  Miguel de Icaza (miguel@ximian.com)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// Authors:
+//   Miguel de Icaza (miguel@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) 2003 Andreas Nahr
@@ -13,14 +13,15 @@
 namespace System.ComponentModel {
 
 	[AttributeUsage (AttributeTargets.All)]
-	public class DescriptionAttribute : Attribute {
+	public class DescriptionAttribute : Attribute 
+	{
 		private string desc;
 
 		public static readonly DescriptionAttribute Default = new DescriptionAttribute ();
 			
 		public DescriptionAttribute ()
 		{
-			desc = "";
+			desc = string.Empty;
 		}
 
 		public DescriptionAttribute (string name)

@@ -11,9 +11,11 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.ComponentModel
 {
+	[ComVisible (true)]
 	public class AttributeCollection : ICollection, IEnumerable
 	{
 		private ArrayList attrList = new ArrayList ();

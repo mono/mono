@@ -1,10 +1,9 @@
-//------------------------------------------------------------------------------
 // 
-// System.ComponentModel.PropertyChangedEventHandler.
+// System.ComponentModel.PropertyChangedEventHandler.cs
 //
-// Author:  Asier Llano Palacios, asierllano@infonegocio.com
+// Author:
+//   Asier Llano Palacios (asierllano@infonegocio.com)
 //
-//------------------------------------------------------------------------------
 
 using System;
 
