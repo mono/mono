@@ -1,3 +1,9 @@
+
+Sat Jan 22 13:41:51 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: make the branch info relative as the code
+	buffer can be reallocated.
+
 2005-01-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* aot.c: Allow decoding of the new  MONO_PATCH_INFO_DECLSEC.
