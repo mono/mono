@@ -1,6 +1,7 @@
 2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_type_size): code cleanup
+	(mono_type_stack_size): removed some test code
 
 2002-07-21  Miguel de Icaza  <miguel@ximian.com>
 
