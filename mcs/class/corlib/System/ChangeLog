@@ -1,3 +1,9 @@
+2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* String.cs: Fixed reported exception for PadLeft|Right. Fixed 
+	possible integer overflow in methods that takes index and count
+	as parameters.
+
 2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* String.cs: Add new Strcpy icalls which take a char array as 

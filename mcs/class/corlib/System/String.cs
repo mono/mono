@@ -5,8 +5,10 @@
 //   Patrik Torstensson
 //   Jeffrey Stedfast (fejj@ximian.com)
 //   Dan Lewis (dihlewis@yahoo.co.uk)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -112,11 +114,12 @@ namespace System
 			if (sourceIndex < 0 || destinationIndex < 0 || count < 0)
 				throw new ArgumentOutOfRangeException (); 
 
-			if (sourceIndex + count > Length)
-				throw new ArgumentOutOfRangeException ();
-
-			if (destinationIndex + count > destination.Length)
-				throw new ArgumentOutOfRangeException ();
+			// re-ordered to avoid possible integer overflow
+			if (sourceIndex > Length - count)
+				throw new ArgumentOutOfRangeException ("sourceIndex + count > Length");
+			// re-ordered to avoid possible integer overflow
+			if (destinationIndex > destination.Length - count)
+				throw new ArgumentOutOfRangeException ("destinationIndex + count > destination.Length");
 
 			InternalCopyTo (sourceIndex, destination, destinationIndex, count);
 		}
@@ -128,10 +131,15 @@ namespace System
 
 		public char[] ToCharArray (int startIndex, int length)
 		{
-			if (startIndex < 0 || length < 0 || startIndex + length > this.length)
-				throw new ArgumentOutOfRangeException (); 
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0"); 
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", "< 0"); 
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > this.length - length)
+				throw new ArgumentOutOfRangeException ("startIndex + length > this.length"); 
 
-			char [] tmp = new char[length];
+			char[] tmp = new char [length];
 
 			InternalCopyTo (startIndex, tmp, 0, length);
 
@@ -149,7 +157,7 @@ namespace System
 				separator = WhiteChars;
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("count");
 
 			if (count == 0) 
 				return new String[0];
@@ -173,8 +181,13 @@ namespace System
 
 		public String Substring (int startIndex, int length)
 		{
-			if (length < 0 || startIndex < 0 || startIndex + length > this.length)
-				throw new ArgumentOutOfRangeException ();
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", "< 0");
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > this.length - length)
+				throw new ArgumentOutOfRangeException ("startIndex + length > this.length");
 
 			if (length == 0)
 				return String.Empty;
@@ -416,8 +429,13 @@ namespace System
 		{
 			if (anyOf == null)
 				throw new ArgumentNullException ("anyOf");
-			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
-				throw new ArgumentOutOfRangeException ();
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > this.length - count)
+				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
 
 			return InternalIndexOfAny (anyOf, startIndex, count);
 		}
@@ -445,8 +463,13 @@ namespace System
 		/* This method is culture-insensitive */
 		public int IndexOf (char value, int startIndex, int count)
 		{
-			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
-				throw new ArgumentOutOfRangeException ();
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > this.length - count)
+				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
 
 			if ((startIndex == 0 && this.length == 0) || (startIndex == this.length) || (count == 0))
 				return -1;
@@ -463,9 +486,13 @@ namespace System
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-
-			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
-				throw new ArgumentOutOfRangeException ();
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > this.length - count)
+				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
 
 			if (value.length == 0)
 				return startIndex;
@@ -506,8 +533,12 @@ namespace System
 			if (anyOf == null) 
 				throw new ArgumentNullException ("anyOf");
 
-			if (startIndex < 0 || count < 0 || startIndex > this.length || startIndex - count < -1)
-				throw new ArgumentOutOfRangeException ();
+			if ((startIndex < 0) || (startIndex > this.Length))
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0 || > this.Length");
+			if ((count < 0) || (count > this.Length))
+				throw new ArgumentOutOfRangeException ("count", "< 0 || > this.Length");
+			if (startIndex - count + 1 < 0)
+				throw new ArgumentOutOfRangeException ("startIndex - count + 1 < 0");
 
 			if (this.length == 0)
 				return -1;
@@ -539,7 +570,12 @@ namespace System
 
 		public int LastIndexOf (String value, int startIndex)
 		{
-			return LastIndexOf (value, startIndex, startIndex + 1);
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			int max = startIndex;
+			if (max < this.Length)
+				max++;
+			return LastIndexOf (value, startIndex, max);
 		}
 
 		/* This method is culture-insensitive */
@@ -548,11 +584,13 @@ namespace System
 			if (startIndex == 0 && this.length == 0)
 				return -1;
 
-			if (startIndex < 0 || count < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			if (startIndex >= this.length || startIndex - count + 1 < 0)
-				throw new ArgumentOutOfRangeException ();
+			// >= for char (> for string)
+			if ((startIndex < 0) || (startIndex >= this.Length))
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0 || >= this.Length");
+			if ((count < 0) || (count > this.Length))
+				throw new ArgumentOutOfRangeException ("count", "< 0 || > this.Length");
+			if (startIndex - count + 1 < 0)
+				throw new ArgumentOutOfRangeException ("startIndex - count + 1 < 0");
 
 			for(int pos = startIndex; pos > startIndex - count; pos--) {
 				if (this [pos] == value)
@@ -566,6 +604,13 @@ namespace System
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
+			// -1 > startIndex > for string (0 > startIndex >= for char)
+			if ((startIndex < -1) || (startIndex > this.Length))
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0 || > this.Length");
+			if ((count < 0) || (count > this.Length))
+				throw new ArgumentOutOfRangeException ("count", "< 0 || > this.Length");
+			if (startIndex - count + 1 < 0)
+				throw new ArgumentOutOfRangeException ("startIndex - count + 1 < 0");
 
 			if (value == String.Empty)
 				return 0;
@@ -583,12 +628,8 @@ namespace System
 			if (count == 0)
 				return -1;
 
-			if (startIndex < 0 || startIndex > this.length)
-				throw new ArgumentOutOfRangeException ();
-
-			if (count < 0 || startIndex - count + 1 < 0)
-				throw new ArgumentOutOfRangeException ();
-
+			if (startIndex == this.Length)
+				startIndex--;
 			return CultureInfo.CurrentCulture.CompareInfo.LastIndexOf (this, value, startIndex, count);
 		}
 
@@ -600,7 +641,7 @@ namespace System
 		public String PadLeft (int totalWidth, char paddingChar)
 		{
 			if (totalWidth < 0)
-				throw new ArgumentException ();
+				throw new ArgumentOutOfRangeException ("totalWidth", "< 0");
 
 			if (totalWidth < this.length)
 				return String.Copy (this);
@@ -616,7 +657,7 @@ namespace System
 		public String PadRight (int totalWidth, char paddingChar)
 		{
 			if (totalWidth < 0)
-				throw new ArgumentException ();
+				throw new ArgumentOutOfRangeException ("totalWidth", "< 0");
 
 			if (totalWidth < this.length)
 				return String.Copy (this);
@@ -668,8 +709,13 @@ namespace System
 
 		public String Remove (int startIndex, int count)
 		{
-			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
-				throw new ArgumentOutOfRangeException ();
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > this.length - count)
+				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
 
 			return InternalRemove (startIndex, count);
 		}
@@ -1129,9 +1175,13 @@ namespace System
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-
-			if (startIndex + count > value.Length)
-				throw new ArgumentOutOfRangeException ();
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > value.Length - count)
+				throw new ArgumentOutOfRangeException ("startIndex + count > value.length");
 
 			if (startIndex == value.Length)
 				return String.Empty;
