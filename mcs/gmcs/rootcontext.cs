@@ -376,6 +376,7 @@ namespace Mono.CSharp {
 				"System.Runtime.InteropServices.MarshalAsAttribute",
 				"System.Runtime.CompilerServices.NewConstraintAttribute",
 				"System.Runtime.CompilerServices.CompilerGeneratedAttribute",
+				"System.Runtime.CompilerServices.FixedButterAttribute",
 				"System.Diagnostics.ConditionalAttribute",
 				"System.ObsoleteAttribute",
 				"System.ParamArrayAttribute",
