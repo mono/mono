@@ -1,5 +1,8 @@
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* main.c: Better implementation of the quote keyword, list all of
+	the known keywords to ildasm here. 
+
 	* get.c (dis_stringify_object_with_class): Take an argument
 	`prefix' that controls whether the `class', `valuetype' labels are
 	used.  This is needed for the catch clause that takes the type
