@@ -1,3 +1,7 @@
+2004-10-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added -nowarn:0162 -nowarn:0618 to the compiler options.
+
 2004-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources:
