@@ -63,7 +63,6 @@ namespace System.Web
                 	mimeTypes.Add ("cco", "application/x-cocoa");
                 	mimeTypes.Add ("cdf", "application/cdf");
                 	mimeTypes.Add ("cer", "application/pkix-cert");
-                	mimeTypes.Add ("cer", "application/x-x509-ca-cert");
                 	mimeTypes.Add ("cha", "application/x-chat");
                 	mimeTypes.Add ("chat", "application/x-chat");
                 	mimeTypes.Add ("class", "application/java");
@@ -73,7 +72,6 @@ namespace System.Web
                 	mimeTypes.Add ("cpt", "application/x-cpt");
                 	mimeTypes.Add ("crl", "application/pkix-crl");
                 	mimeTypes.Add ("crt", "application/pkix-cert");
-                	mimeTypes.Add ("crt", "application/x-x509-ca-cert");
                 	mimeTypes.Add ("csh", "application/x-csh");
                 	mimeTypes.Add ("css", "text/css");
                 	mimeTypes.Add ("cxx", "text/plain");
@@ -148,7 +146,6 @@ namespace System.Web
                 	mimeTypes.Add ("iefs", "image/ief");
                 	mimeTypes.Add ("iges", "application/iges");
                 	mimeTypes.Add ("igs", "application/iges");
-                	mimeTypes.Add ("igs", "model/iges");
                 	mimeTypes.Add ("ima", "application/x-ima");
                 	mimeTypes.Add ("imap", "application/x-httpd-imap");
                 	mimeTypes.Add ("inf ", "application/inf");
@@ -183,7 +180,6 @@ namespace System.Web
                 	mimeTypes.Add ("lsx", "text/x-la-asf");
                 	mimeTypes.Add ("ltx", "application/x-latex");
                 	mimeTypes.Add ("m", "text/plain");
-                	mimeTypes.Add ("m", "text/x-m");
                 	mimeTypes.Add ("m1v", "video/mpeg");
                 	mimeTypes.Add ("m2a", "audio/mpeg");
                 	mimeTypes.Add ("m2v", "video/mpeg");
@@ -243,7 +239,6 @@ namespace System.Web
                 	mimeTypes.Add ("omcr", "application/x-omcregerator");
                 	mimeTypes.Add ("p", "text/x-pascal");
                 	mimeTypes.Add ("p10", "application/pkcs10");
-                	mimeTypes.Add ("p10", "application/x-pkcs10");
                 	mimeTypes.Add ("p12", "application/pkcs-12");
                 	mimeTypes.Add ("p7a", "application/x-pkcs7-signature");
                 	mimeTypes.Add ("p7c", "application/pkcs7-mime");
