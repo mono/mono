@@ -1,3 +1,7 @@
+2004-10-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs : should be NET_2_0.
+
 2004-10-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs : IsDefault considers IXmlSchemaInfo
