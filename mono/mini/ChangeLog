@@ -1,3 +1,7 @@
+2004-11-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-sparc.c (get_throw_exception): Really fix this.
+
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* tramp-*.c: we no longer support icalls without wrappers, so
