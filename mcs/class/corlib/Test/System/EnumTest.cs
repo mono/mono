@@ -58,7 +58,7 @@ public class EnumTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("Compare type mismatch not caught.", 
+			Assert("1) Compare type mismatch not caught.", 
 			       errorThrown);
 		}
 		{
@@ -68,7 +68,7 @@ public class EnumTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("Compare type mismatch not caught.", 
+			Assert("2) Compare type mismatch not caught.", 
 			       errorThrown);
 		}
 	}
