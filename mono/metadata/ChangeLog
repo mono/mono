@@ -1,4 +1,9 @@
 
+Sat Feb 19 15:19:46 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, assembly.c, domain-internals.h: make some data
+	const and relocation-free.
+
 Sat Feb 19 11:12:34 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* object.c, appdomain.c, class-internals.h: introduce the
