@@ -1,3 +1,8 @@
+
+Wed Aug 7 12:44:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ResXResourceReader.cs, ResXResourceWriter.cs: added stubs.
+
 2002-03-12  Duncan Mak  <duncan@ximian.com>
 
 	* MissingManifestResourceException.cs: This should inherit from
