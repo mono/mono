@@ -503,6 +503,14 @@ namespace System.Xml.Xsl
 		{
 			WriteCurrentNode (navigator, writer);
 
+			if (navigator.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
+				do {
+					WriteCurrentNode (navigator, writer);
+				} while (navigator.MoveToNextNamespace (XPathNamespaceScope.Local));
+
+				navigator.MoveToParent ();
+			}
+
 			if (navigator.MoveToFirstAttribute ()) {
 				do {
 					WriteCurrentNode (navigator, writer);
@@ -530,6 +538,15 @@ namespace System.Xml.Xsl
 			switch (navigator.NodeType) {
 			case XPathNodeType.Root:
 				writer.WriteStartDocument ();
+				break;
+			case XPathNodeType.Namespace:
+				if (navigator.Name == String.Empty)
+					writer.WriteAttributeString ("xmlns", navigator.Value);
+				else
+					writer.WriteAttributeString ("xmlns",
+						navigator.Name,
+						"http://www.w3.org/2000/xmlns/",
+						navigator.Value);
 				break;
 			case XPathNodeType.Attribute:
 				writer.WriteAttributeString (navigator.Name, navigator.Value);
