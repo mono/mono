@@ -1,3 +1,7 @@
+2003-11-06  Zoltan Varga  <zovarga@ws-zovarga2>
+
+	* appdomain.c (mono_domain_unload): Add a workaround for bug #27663.
+
 2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c 
