@@ -12,9 +12,9 @@ using System.Collections;
 
 
 // TODO: 1. Interfaces to implement: ISerializable and IDeserializationCallback;
-//          Synchronized wrapper (it's really easy but requires at least
-//          System.Threading.Monitor to be present, maybe just a stub for now).
 //       2. Meaningfull error messages for all exceptions.
+//          Probably we should use ResourceSet to translate
+//          error codes to messages.
 
 
 namespace System.Collections {
@@ -23,7 +23,7 @@ namespace System.Collections {
 	                         IEnumerable, ICloneable
 	{
 
-		internal struct slot {
+		internal struct Slot {
 			internal Object key;
 
 			internal Object value;
@@ -46,11 +46,11 @@ namespace System.Collections {
 		private int inUse;
 		private int modificationCount;
 		private float loadFactor;
-		private slot [] table;
+		private Slot [] table;
 		private int threshold;
 
-		private IHashCodeProvider m_hcp;
-		private IComparer m_comparer;
+		private IHashCodeProvider hcpRef;
+		private IComparer comparerRef;
 
 		public static int [] primeTbl = {};
 
@@ -93,7 +93,7 @@ namespace System.Collections {
 			this.loadFactor = 0.75f*loadFactor;
 			int size = (int) (capacity/this.loadFactor);
 			size = ToPrime (size);
-			this.SetTable (new slot [size]);
+			this.SetTable (new Slot [size]);
 
 			this.hcp = hcp;
 			this.comparer = comparer;
@@ -162,19 +162,19 @@ namespace System.Collections {
 
 		protected IComparer comparer {
 			set {
-				m_comparer = value;
+				comparerRef = value;
 			}
 			get {
-				return m_comparer;
+				return comparerRef;
 			}
 		}
 
 		protected IHashCodeProvider hcp {
 			set {
-				m_hcp = value;
+				hcpRef = value;
 			}
 			get {
-				return m_hcp;
+				return hcpRef;
 			}
 		}
 
@@ -248,7 +248,8 @@ namespace System.Collections {
 
 		// IEnumerable
 
-		IEnumerator IEnumerable.GetEnumerator () {
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
 			return new Enumerator (this, EnumeratorMode.KEY_MODE);
 		}
 
@@ -279,6 +280,9 @@ namespace System.Collections {
 				table [i].value = null;
 				table [i].hashMix = 0;
 			}
+
+			inUse = 0;
+			modificationCount++;
 		}
 
 		public virtual bool Contains (Object key)
@@ -294,7 +298,7 @@ namespace System.Collections {
 		public virtual void Remove (Object key)
 		{
 			int i = Find (key);
-			slot [] table = this.table;
+			Slot [] table = this.table;
 			if (i >= 0) {
 				int h = table [i].hashMix;
 				h &= CHAIN_MARKER;
@@ -319,10 +323,10 @@ namespace System.Collections {
 		public virtual bool ContainsValue (object value)
 		{
 			int size = this.table.Length;
-			slot [] table = this.table;
+			Slot [] table = this.table;
 
 			for (int i = 0; i < size; i++) {
-				slot entry = table [i];
+				Slot entry = table [i];
 				if (entry.key != null && entry.key!= REMOVED_MARKER
 				    && value.Equals (entry.value)) {
 					return true;
@@ -372,8 +376,7 @@ namespace System.Collections {
 		/// </summary>
 		public static Hashtable Synchronized (Hashtable table)
 		{
-			// TODO: implement
-			return null;
+			return new SynchedHashtable (table);
 		}
 
 
@@ -387,7 +390,7 @@ namespace System.Collections {
 		{
 			IHashCodeProvider hcp = this.hcp;
 			return (hcp!= null)
-			        ? hcp.GetHashCode ()
+			        ? hcp.GetHashCode (key)
 			        : key.GetHashCode ();
 		}
 
@@ -419,7 +422,7 @@ namespace System.Collections {
 				threshold = size-1;
 		}
 
-		private void SetTable (slot [] table)
+		private void SetTable (Slot [] table)
 		{
 			if (table == null)
 				throw new ArgumentNullException ("table");
@@ -448,11 +451,11 @@ namespace System.Collections {
 			int h = this.GetHash (key) & Int32.MaxValue;
 			uint spot = (uint)h;
 			uint step = (uint) ((h >> 5)+1) % (size-1)+1;
-			slot[] table = this.table;
+			Slot[] table = this.table;
 
 			for (int i = 0; i < size;i++) {
 				int indx = (int) (spot % size);
-				slot entry = table [indx];
+				Slot entry = table [indx];
 				Object k = entry.key;
 				if (k == null)
 					return -1;
@@ -481,11 +484,11 @@ namespace System.Collections {
 			uint newSize = (uint)ToPrime ((oldSize<<1)|1);
 
 
-			slot [] newTable = new slot [newSize];
-			slot [] table = this.table;
+			Slot [] newTable = new Slot [newSize];
+			Slot [] table = this.table;
 
 			for (int i = 0;i<oldSize;i++) {
-				slot s = table [i];
+				Slot s = table [i];
 				if (s.key!= null) {
 					int h = s.hashMix & Int32.MaxValue;
 					uint spot = (uint)h;
@@ -525,8 +528,8 @@ namespace System.Collections {
 			int h = this.GetHash (key) & Int32.MaxValue;
 			uint spot = (uint)h;
 			uint step = (uint) ((spot>>5)+1)% (size-1)+1;
-			slot [] table = this.table;
-			slot entry;
+			Slot [] table = this.table;
+			Slot entry;
 
 			int freeIndx = -1;
 			for (int i = 0; i < size; i++) {
@@ -679,7 +682,7 @@ namespace System.Collections {
 
 				if (pos < size) {
 					while (++pos < size) {
-						slot entry = host.table [pos];
+						Slot entry = host.table [pos];
 
 						if (entry.key != null && entry.key != REMOVED_MARKER) {
 							currentKey = entry.key;
@@ -820,6 +823,163 @@ namespace System.Collections {
 		}
 
 
-	}
+
+		protected class SynchedHashtable : Hashtable, IEnumerable {
+
+			private Hashtable host;
+
+			public SynchedHashtable (Hashtable host) {
+				if (host == null)
+					throw new ArgumentNullException ();
+
+				this.host = host;
+			}
+
+			// ICollection
+
+			public override int Count {
+				get {
+					return host.Count;
+				}
+			}
+
+			public override bool IsSynchronized {
+				get {
+					return true;
+				}
+			}
+
+			public override Object SyncRoot {
+				get {
+					return host.SyncRoot;
+				}
+			}
+
+
+
+			// IDictionary
+
+			public override bool IsFixedSize {
+				get {
+					return host.IsFixedSize;
+				}     
+			}
+
+
+			public override bool IsReadOnly {
+				get {
+					return host.IsReadOnly;
+				}
+			}
+
+			public override ICollection Keys {
+				get {
+					ICollection keys = null;
+					lock (host.SyncRoot) {
+						keys = host.Keys;
+					}
+					return keys;
+				}
+			}
+
+			public override ICollection Values {
+				get {
+					ICollection vals = null;
+					lock (host.SyncRoot) {
+						vals = host.Values;
+					}
+					return vals;
+				}
+			}
+
+
+
+			public override Object this [Object key] {
+				get {
+					return host.GetImpl (key);
+				}
+				set {
+					lock (host.SyncRoot) {
+						host.PutImpl (key, value, true);
+					}
+				}
+			}
+
+			// IEnumerable
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return new Enumerator (host, EnumeratorMode.KEY_MODE);
+			}
+
+
+
+
+			// ICollection
+
+			public override void CopyTo (Array array, int arrayIndex)
+			{
+				host.CopyTo (array, arrayIndex);
+			}
+
+
+			// IDictionary
+
+			public override void Add (Object key, Object value)
+			{
+				lock (host.SyncRoot) {
+					host.PutImpl (key, value, false);
+				}
+			}
+
+			public override void Clear () 
+			{
+				lock (host.SyncRoot) {
+					host.Clear ();
+				}
+			}
+
+			public override bool Contains (Object key)
+			{
+				return (host.Find (key) >= 0);
+			}
+
+			public override IDictionaryEnumerator GetEnumerator ()
+			{
+				return new Enumerator (host, EnumeratorMode.KEY_MODE);
+			}
+
+			public override void Remove (Object key)
+			{
+				lock (host.SyncRoot) {
+					host.Remove (key);
+				}
+			}
+
+
+
+			public override bool ContainsKey (object key)
+			{
+				return host.Contains (key);
+			}
+
+			public override bool ContainsValue (object value)
+			{
+				return host.ContainsValue (value);
+			}
+
+
+			// ICloneable
+
+			public override object Clone ()
+			{
+				return (host.Clone () as Hashtable);
+			}
+
+		} // SynchedHashtable
+
+
+	} // Hashtable
+
 }
 
