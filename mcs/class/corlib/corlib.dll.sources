@@ -437,6 +437,7 @@ System.Runtime.CompilerServices/IsVolatile.cs
 System.Runtime.CompilerServices/MethodCodeType.cs
 System.Runtime.CompilerServices/MethodImplAttribute.cs
 System.Runtime.CompilerServices/MethodImplOptions.cs
+System.Runtime.CompilerServices/NewConstraintAttribute.cs
 System.Runtime.CompilerServices/RequiredAttributeAttribute.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
 System.Runtime.InteropServices/ArrayWithOffset.cs
