@@ -50,10 +50,10 @@ namespace System.Runtime.InteropServices.ComTypes
 		void ComposeWith (IMoniker pmkRight, [MarshalAs (UnmanagedType.LPWStr)] bool fOnlyIfNotGeneric, out IMoniker ppmkComposite);
 		void Enum ([MarshalAs(UnmanagedType.Bool)] bool fForward, out IEnumMoniker ppenumMoniker);
 		[PreserveSig]
-		void IsEqual (IMoniker pmkOtherMoniker);
+		int IsEqual (IMoniker pmkOtherMoniker);
 		void Hash (out int pdwHash);
 		[PreserveSig]
-		void IsRunning (IBindCtx pbc, IMoniker pmkToLeft, IMoniker pmkNewlyRunning);
+		int IsRunning (IBindCtx pbc, IMoniker pmkToLeft, IMoniker pmkNewlyRunning);
 		void GetTimeOfLastChange (IBindCtx pbc, IMoniker pmkToLeft, out FILETIME pFileTime);
 		void Inverse (out IMoniker ppmk);
 		void CommonPrefixWith (IMoniker pmkOther, out IMoniker ppmkPrefix);
@@ -61,7 +61,7 @@ namespace System.Runtime.InteropServices.ComTypes
 		void GetDisplayName (IBindCtx pbc, IMoniker pmkToLeft, [MarshalAs (UnmanagedType.LPWStr)] out string ppszDisplayName);
 		void ParseDisplayName (IBindCtx pbc, IMoniker pmkToLeft, [MarshalAs (UnmanagedType.LPWStr)] string pszDisplayName, out int pchEaten, out IMoniker ppmkOut);
 		[PreserveSig]
-		void IsSystemMoniker (out int pdwMksys);
+		int IsSystemMoniker (out int pdwMksys);
 	}
 }
 #endif

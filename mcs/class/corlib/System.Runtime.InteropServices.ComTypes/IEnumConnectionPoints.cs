@@ -42,7 +42,7 @@ namespace System.Runtime.InteropServices.ComTypes
 		int Next (int celt, [Out, MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 0)] IConnectionPoint[] rgelt, IntPtr pceltFetched);
 		[PreserveSigAttribute]
 		int Skip (int celt);
-		int Reset ();
+		void Reset ();
 		void Clone (out IEnumConnectionPoints ppenum);
 	}
 }

@@ -48,6 +48,7 @@ namespace System.Runtime.InteropServices.ComTypes
 		void RegisterObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] object punk);
 		void GetObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] out object ppunk);
 		void EnumObjectParam (out IEnumString ppenum);
+		[PreserveSig]
 		void RevokeObjectParam ([MarshalAs(UnmanagedType.LPWStr)] string pszKey);
 	}
 }

@@ -39,12 +39,12 @@ namespace System.Runtime.InteropServices.ComTypes
 	public interface IEnumVARIANT
 	{
 		[PreserveSigAttribute]
-		int Next (int celt, [Out] object[] rgvar, int pceltFetched);
+		int Next (int celt, [Out] object[] rgvar, IntPtr pceltFetched);
 		[PreserveSigAttribute]
 		int Skip (int celt);
 		[PreserveSigAttribute]
 		int Reset ();
-		void Clone ();
+		IEnumVARIANT Clone ();
 	}
 }
 #endif

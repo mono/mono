@@ -41,12 +41,12 @@ namespace System.Runtime.InteropServices.ComTypes
 		void Register (int grfFlags, [MarshalAs (UnmanagedType.Interface)] object punkObject, IMoniker pmkObjectName, IntPtr pdwRegister);
 		void Revoke (int dwRegister);
 		[PreserveSig]
-		void IsRunning (IMoniker pmkObjectName);
+		int IsRunning (IMoniker pmkObjectName);
 		[PreserveSig]
-		void GetObject (IMoniker pmkObjectName, [MarshalAs (UnmanagedType.Interface)] out object ppunkObject);
+		int GetObject (IMoniker pmkObjectName, [MarshalAs (UnmanagedType.Interface)] out object ppunkObject);
 		void NoteChangeTime (int dwRegister, ref FILETIME pfiletime);
 		[PreserveSig]
-		void GetTimeOfLastChange (IMoniker pmkObjectName, out FILETIME pfiletime);
+		int GetTimeOfLastChange (IMoniker pmkObjectName, out FILETIME pfiletime);
 		void EnumRunning (out IEnumMoniker ppenumMoniker);
 	}
 }

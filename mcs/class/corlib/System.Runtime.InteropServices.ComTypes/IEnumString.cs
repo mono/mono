@@ -42,7 +42,7 @@ namespace System.Runtime.InteropServices.ComTypes
 		int Next (int celt, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 0)] string[] rgelt, IntPtr pceltFetched);
 		[PreserveSigAttribute]
 		int Skip (int celt);
-		int Reset ();
+		void Reset ();
 		void Clone (out IEnumString ppenum);
 	}
 }
