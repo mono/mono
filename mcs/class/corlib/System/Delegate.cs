@@ -256,6 +256,9 @@ namespace System
 		/// </symmary>
 		public static Delegate Combine (Delegate[] delegates)
 		{
+			if (delegates == null)
+				return null;
+
 			Delegate retval = null;
 
 			foreach (Delegate next in delegates)
