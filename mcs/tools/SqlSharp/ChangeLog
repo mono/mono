@@ -1,3 +1,10 @@
+2002-10-25  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: added support for
+	SqlClient and TdsClient
+	
+	* SqlSharpCli.build: added target of "clean"
+
 2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: added support for new place

@@ -13,5 +13,8 @@
 			</sources>
 		</csc>
 	</target>
+	<target name="clean">
+		<delete file="SqlSharpCli.exe" failonerror="false"/>
+	</target>
 </project>
 

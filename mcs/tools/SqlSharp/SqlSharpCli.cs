@@ -37,7 +37,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
 using System.Data.OleDb;
-//using System.Data.SqlClient;
+using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting;
@@ -62,13 +62,14 @@ namespace Mono.Data.SqlSharp {
 	
 		private IDbConnection conn = null;
                 		
-		private string provider = "LOADEXTPROVIDER"; // name of internal provider
-		// {OleDb,SqlClient,MySql,Odbc,Oracle,PostgreSql,SqlLite} however, it
+		private string provider = ""; // name of internal provider
+		// {OleDb,SqlClient,MySql,Odbc,Oracle,
+		// PostgreSql,SqlLite,Sybase,Tds} however, it
 		// can be set to LOADEXTPROVIDER to load an external provider
-		private string providerAssembly = "Mono.Data.PostgreSqlClient";
+		private string providerAssembly = "";
 		// filename of assembly
 		// for example: "Mono.Data.MySql"
-		private string providerConnectionClass = "Mono.Data.PostgreSqlClient.PgSqlConnection";
+		private string providerConnectionClass = "";
 		// Connection class
 		// in the provider assembly that implements the IDbConnection 
 		// interface.  for example: "Mono.Data.MySql.MySqlConnection"
@@ -76,8 +77,7 @@ namespace Mono.Data.SqlSharp {
 		private StringBuilder build = null; // SQL string to build
 		private string buff = ""; // SQL string buffer
 
-		private string connectionString = 
-			"host=localhost;dbname=test;user=postgres";
+		private string connectionString = "";
 
 		private string inputFilename = "";
 		private string outputFilename = "";
@@ -626,7 +626,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
 			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
-			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite)");
+			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds)");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
@@ -642,7 +642,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
 			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
-			Console.WriteLine(@"                  Oracle,PostgreSql, Sqlite}");
+			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
@@ -661,8 +661,6 @@ namespace Mono.Data.SqlSharp {
 			WaitForEnterKey();
 			Console.WriteLine(@"       \unset NAME - remove an internal variable.");
 			Console.WriteLine(@"       \variable NAME - display the value of an internal variable.");
-			Console.WriteLine(@"       \loadprovider CLASS - load the provider");
-			Console.WriteLine(@"            use the complete name of its connection class.");
 			Console.WriteLine(@"       \loadextprovider ASSEMBLY CLASS - load the provider"); 
 			Console.WriteLine(@"            use the complete name of its assembly and");
 			Console.WriteLine(@"            its Connection class.");
@@ -680,17 +678,25 @@ namespace Mono.Data.SqlSharp {
 		// ShowDefaults - show defaults for connection variables
 		public void ShowDefaults() {
 			Console.WriteLine();
-			Console.WriteLine("The default Provider is " + provider);
-			if(provider.Equals("LOADEXTPROVIDER")) {
-				Console.WriteLine("          Assembly: " + 
-					providerAssembly);
-				Console.WriteLine("  Connection Class: " + 
-					providerConnectionClass);
+			if(provider.Equals(""))
+				Console.WriteLine("Provider is not set.");
+			else {
+				Console.WriteLine("The default Provider is " + provider);
+				if(provider.Equals("LOADEXTPROVIDER")) {
+					Console.WriteLine("          Assembly: " + 
+						providerAssembly);
+					Console.WriteLine("  Connection Class: " + 
+						providerConnectionClass);
+				}
 			}
 			Console.WriteLine();
-			Console.WriteLine("The default ConnectionString is: ");
-			Console.WriteLine("    \"" + connectionString + "\"");
-			Console.WriteLine();
+			if(connectionString.Equals(""))
+				Console.WriteLine("ConnectionString is not set.");
+			else {
+				Console.WriteLine("The default ConnectionString is: ");
+				Console.WriteLine("    \"" + connectionString + "\"");
+				Console.WriteLine();
+			}
 		}
 
 		// OpenDataSource - open connection to the data source
@@ -707,9 +713,7 @@ namespace Mono.Data.SqlSharp {
 					conn = new OleDbConnection();
 					break;
 				case "SQLCLIENT":
-					Console.WriteLine("Error: SqlClient not currently supported.");
-					throw new Exception();
-					// conn = new SqlConnection();
+					conn = new SqlConnection();
 					break;
 				case "LOADEXTPROVIDER":
 					if(LoadExternalProvider() == false)
@@ -762,50 +766,49 @@ namespace Mono.Data.SqlSharp {
 			if(parms.Length == 2) {
 				string parm = parms[1].ToUpper();
 				switch(parm) {
-				case "ORACLE":
 				case "TDS":
-				case "SYBASE":
-					Console.WriteLine("Error: Provider not currently supported.");
+					extp = new string[3] {
+								     "\\loadextprovider",
+								     "Mono.Data.TdsClient",
+								     "Mono.Data.TdsClient.TdsConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = false;
 					break;
 				case "MYSQL":
 					extp = new string[3] {
-									      "\\loadextprovider",
-									      "Mono.Data.MySql",
-									      "Mono.Data.MySql.MySqlConnection"};
+								     "\\loadextprovider",
+								     "Mono.Data.MySql",
+								     "Mono.Data.MySql.MySqlConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
 				case "SQLITE":
 					extp = new string[3] {
-									      "\\loadextprovider",
-									      "Mono.Data.SqliteClient",
-									      "Mono.Data.SqliteClient.SqliteConnection"};
+								     "\\loadextprovider",
+								     "Mono.Data.SqliteClient",
+								     "Mono.Data.SqliteClient.SqliteConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = true;
 					break;
 				case "SQLCLIENT":
-					provider = parm;
 					UseParameters = false;
-					UseSimpleReader = true;
-					Console.WriteLine("Error: SqlClient provider is not currently supported.");
+					UseSimpleReader = false;
+					provider = parm;
 					break;
 				case "ODBC":
 					UseParameters = false;
 					UseSimpleReader = false;
 					provider = parm;
 					break;
-				case "GDA":
 				case "OLEDB":
 					UseParameters = false;
 					UseSimpleReader = true;
 					provider = parm;
 					break;
 				case "POSTGRESQL":
-					UseParameters = true;
-					UseSimpleReader = false;
-					provider = parm;
 					extp = new string[3] {
 								     "\\loadextprovider",
 								     "Mono.Data.PostgreSqlClient",
@@ -977,7 +980,8 @@ namespace Mono.Data.SqlSharp {
 				internalVariables.Remove(parm);
 			}
 			catch(Exception e) {
-				Console.WriteLine("Error: internal variable does not exist.");
+				Console.WriteLine("Error: internal variable does not exist: " + 
+					e.Message);
 			}
 		}
 
@@ -1010,16 +1014,10 @@ namespace Mono.Data.SqlSharp {
 
 			}
 			catch(Exception e) {
-				Console.WriteLine("Error: internal variable does not exist.");
+				Console.WriteLine("Error: internal variable does not exist: "+
+					e.Message);
 			}
 			return valueReturned;
-		}
-
-		// to be used for loading .NET Data Providers that exist in
-		// the System.Data assembly, but are not explicitly handling
-		// in SQL#
-		public void LoadProvider(string[] parms) {
-			Console.WriteLine("Error: not implemented yet.");			
 		}
 
 		public void SetupExternalProvider(string[] parms) {
@@ -1059,7 +1057,7 @@ namespace Mono.Data.SqlSharp {
 			}
 			catch(FileNotFoundException f) {
 				Console.WriteLine("Error: unable to load the assembly of the provider: " + 
-					providerAssembly);
+					providerAssembly + " : " + f.Message);
 			}
 			return success;
 		}
@@ -1100,10 +1098,6 @@ namespace Mono.Data.SqlSharp {
 				break;
 			case "\\CONNECTIONSTRING":
 				ChangeConnectionString(entry);
-				break;
-			case "\\LOADPROVIDER":
-				// TODO:
-				//SetupProvider(parms);
 				break;
 			case "\\LOADEXTPROVIDER":
 				SetupExternalProvider(parms);
@@ -1274,7 +1268,8 @@ namespace Mono.Data.SqlSharp {
 					}
 				}
 				catch(Exception e) {
-					Console.WriteLine("Error: Reading command from file.");
+					Console.WriteLine("Error: Reading command from file: " +
+						e.Message);
 				}
 				Console.Write("\nSQL# ");
 				entry = Console.ReadLine();
