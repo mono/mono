@@ -1,3 +1,10 @@
+2002-07-24  Tim Coleman <tim@timcoleman.com>
+	* list: 
+		Add System.Web/ProcessInfo.cs
+		Add System.Web/HttpCompileException.cs
+		Add System.Web/HttpParseException.cs
+		Add System.Web/HttpUnhandledException.cs
+
 2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added some more files from System.Web.Hosting.
