@@ -1,4 +1,9 @@
 
+Thu Feb 28 15:35:51 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h: more refactoring of class init.
+	Export mono_class_setup_mono_type() and mono_class_setup_parent().
+
 Thu Feb 28 12:33:41 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c, marshal.h: start of marshaling interface.
