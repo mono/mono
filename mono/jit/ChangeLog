@@ -1,3 +1,13 @@
+2002-01-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (main): install the trampoline before we start to create
+	objects.
+
+	* x86.brg: impl. CLT_UN, CGT_UN
+
+	* emit-x86.c (leave_method): added check for null object
+	(enter_method): consider byref arguments
+
 2002-01-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: bug fix in CONV_OVF_I1_UN
