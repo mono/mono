@@ -1,3 +1,7 @@
+2004-01-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am: Set SHELL to bash, since some commands require it.
+
 2004-01-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke17.cs: Fix test.
