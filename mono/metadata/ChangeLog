@@ -1,5 +1,8 @@
 2004-11-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): 
+	Add support for dynamic assemblies. Fixes #69114.
+
 	* loader.c (mono_method_get_header): Handle icalls and pinvoke methods.
 
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
