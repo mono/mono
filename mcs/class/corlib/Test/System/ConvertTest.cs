@@ -2657,7 +2657,8 @@ namespace MonoTests.System
 		}
 
 		
-		public void TestToBase64CharArray() {
+		public void TestToBase64CharArray ()
+		{
 			byte[] byteArr = {33, 127, 255, 109, 170, 54};
 			//						   0	1	 2	  3    4	5	 6	  7
 			char[] expectedCharArr = {'I', 'X', '/', '/', 'b', 'a', 'o', '2'};
@@ -2668,54 +2669,86 @@ namespace MonoTests.System
 			for (int i = 0; i < expectedCharArr.Length; i++) {
 				AssertEquals("#S0" + i, expectedCharArr[i], result[i]);
 			}
+		}
 
-			try {
-				Convert.ToBase64CharArray(null, 0, byteArr.Length, result, 0);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#S10", typeof(ArgumentNullException), e.GetType());
-			}
+		[Test]
+		[ExpectedException (typeof(ArgumentNullException))]
+		public void ToBase64CharArray_InNull ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			char[] result = new Char[8];
+			Convert.ToBase64CharArray (null, 0, byteArr.Length, result, 0);
+		}
 
-			try {
-				Convert.ToBase64CharArray(byteArr, -1, byteArr.Length, result, 0);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#S11", typeof(ArgumentOutOfRangeException), e.GetType());
-			}
+		[Test]
+		[ExpectedException (typeof(ArgumentNullException))]
+		public void ToBase64CharArray_OutNull ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			Convert.ToBase64CharArray (byteArr, 0, byteArr.Length, null, 0);
+		}
 
-			try {
-				Convert.ToBase64CharArray(byteArr, 0, -5, result, 0);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#S12", typeof(ArgumentOutOfRangeException), e.GetType());
-			}
+		[Test]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+		public void ToBase64CharArray_OffsetInNegative ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			char[] result = new Char[8];
+			Convert.ToBase64CharArray (byteArr, -1, byteArr.Length, result, 0);
+		}
 
-			try {
-				Convert.ToBase64CharArray(byteArr, 0, byteArr.Length, result, -2);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#S13", typeof(ArgumentOutOfRangeException), e.GetType());
-			}
+		[Test]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+		public void ToBase64CharArray_LengthNegative ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			char[] result = new Char[8];
+			Convert.ToBase64CharArray (byteArr, 0, -5, result, 0);
+		}
 
-			try {
-				Convert.ToBase64CharArray(byteArr, 4, byteArr.Length, result, 0);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#S14", typeof(ArgumentOutOfRangeException), e.GetType());
-			}
+		[Test]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+		public void ToBase64CharArray_OffsetOutNegative ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			char[] result = new Char[8];
+			Convert.ToBase64CharArray (byteArr, 0, byteArr.Length, result, -2);
+		}
 
-			try {
-				Convert.ToBase64CharArray(byteArr, 0, byteArr.Length, result, 2);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#S15", typeof(ArgumentOutOfRangeException), e.GetType());
-			}
+		[Test]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+		public void ToBase64CharArray_TotalIn ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			char[] result = new Char[8];
+			Convert.ToBase64CharArray (byteArr, 4, byteArr.Length, result, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+		public void ToBase64CharArray_TotalInOverflow ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			char[] result = new Char[8];
+			Convert.ToBase64CharArray (byteArr, Int32.MaxValue, byteArr.Length, result, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+		public void ToBase64CharArray_TotalOut ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			char[] result = new Char[8];
+			Convert.ToBase64CharArray (byteArr, 0, byteArr.Length, result, 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+		public void ToBase64CharArray_TotalOutOverflow ()
+		{
+			byte[] byteArr = {33, 127, 255, 109, 170, 54};
+			char[] result = new Char[8];
+			Convert.ToBase64CharArray (byteArr, 0, byteArr.Length, result, Int32.MaxValue);
 		}
 
 		public void TestToBase64String() {
@@ -2791,10 +2824,25 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void FromBase64CharArray_Overflow () 
+		{
+			Convert.FromBase64CharArray (new char [4], Int32.MaxValue, 4);
+		}
+
+		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void FromBase64CharArray_InvalidLength () 
 		{
 			Convert.FromBase64CharArray (new char [4], 0, 3);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void FromBase64CharArray_WideChar () 
+		{
+			char[] c = new char [4] { 'A', 'A', 'A', (char) Char.MaxValue };
+			Convert.FromBase64CharArray (c, 0, 4);
 		}
 
 		[Test]
