@@ -1,3 +1,13 @@
+2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspComponentFoundry.cs: reworked to allow same prefix for multiple
+	controls. You can register 1 assembly plus any number of user controls
+	under the same prefix.
+
+	* AspGenerator.cs: don't add duplicate 'using' for the same namespace.
+	Hack to allow @Register access to assemblies in other places than bin
+	directory.
+
 2003-01-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspElements.cs: added 'codebehind' attribute for page, control and

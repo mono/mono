@@ -416,6 +416,17 @@ class AspGenerator
 		set { context = value; }
 	}
 	
+	bool AddUsing (string nspace)
+	{
+		string _using = "using " + nspace + ";";
+		if (prolog.ToString ().IndexOf (_using) == -1) {
+			prolog.AppendFormat ("\t{0}\n", _using);
+			return true;
+		}
+
+		return false;
+	}
+
 	void AddInterface (Type type)
 	{
 		AddInterface (type.ToString ());
@@ -662,8 +673,14 @@ class AspGenerator
 			if (tag_name != "" || src != "")
 				throw new ApplicationException ("Invalid attributes for @ Register: " +
 								att.ToString ());
-			prolog.AppendFormat ("\tusing {0};\n", name_space);
+
+			AddUsing (name_space);
 			string dll = privateBinPath + Path.DirectorySeparatorChar + assembly_name + ".dll";
+			// Hack: it should use assembly.load semantics...
+			// may be when we don't run mcs as a external program...
+			if (!File.Exists (dll))
+				dll = assembly_name;
+
 			Foundry.RegisterFoundry (tag_prefix, dll, name_space);
 			AddReference (dll);
 			return;
@@ -681,9 +698,9 @@ class AspGenerator
 			UserControlData data = GenerateUserControl (src, Context);
 			switch (data.result) {
 			case UserControlResult.OK:
-				prolog.AppendFormat ("\tusing {0};\n", "ASP");
+				AddUsing ("ASP");
 				string dll = "output" + Path.DirectorySeparatorChar + data.assemblyName + ".dll";
-				Foundry.RegisterFoundry (tag_prefix, data.assemblyName, "ASP", data.className);
+				Foundry.RegisterFoundry (tag_prefix, tag_name, data.assemblyName, "ASP", data.className);
 				AddReference (data.assemblyName);
 				break;
 			case UserControlResult.FileNotFound:
@@ -742,8 +759,7 @@ class AspGenerator
 				throw new ApplicationException ("Wrong syntax in Import directive.");
 
 			string _using = "using " + value + ";";
-			if (prolog.ToString ().IndexOf (_using) == -1) {
-				prolog.AppendFormat ("\t{0}\n", _using);
+			if (AddUsing (value) == true) {
 				string imports = Options ["Import"] as string;
 				if (imports == null) {
 					imports = value;
