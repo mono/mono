@@ -93,7 +93,7 @@ namespace System.Drawing
 			for (int i=0; i<count; i++){
 				IconDirEntry ide = iconDir.idEntries [i];
 				if (!sizeObtained)   
-					if (ide.height>=size.Height && ide.width>=size.Width) {
+					if (ide.height==size.Height && ide.width==size.Width) {
 						this.id = (ushort) i;
 						sizeObtained = true;
 						this.iconSize.Height = ide.height;
@@ -155,7 +155,7 @@ namespace System.Drawing
 				iconDir.idEntries [i] = ide;
 				//is this is the best fit??
 				if (!sizeObtained)   
-					if (ide.height>=height && ide.width>=width) {
+					if (ide.height==height && ide.width==width) {
 						this.id = (ushort) i;
 						sizeObtained = true;
 						this.iconSize.Height = ide.height;
