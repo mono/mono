@@ -1,3 +1,11 @@
+2004-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs: Fixed spcSpOpusInfo attribute (it wasn't 
+	added) and contentType attribute (was added 2 times). Also fixed the
+	case where we signed an already Authenticode signed file (re-signing).
+	* SoftwarePublisherCertificate.cs: Support for base64 encoded ASN.1 
+	files (either Unicode or ASCII).
+
 2004-10-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeFormatter.cs: Fixed case where Url is null (broken since

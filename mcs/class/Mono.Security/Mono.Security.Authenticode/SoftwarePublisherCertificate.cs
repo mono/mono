@@ -34,6 +34,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 using Mono.Security;
 using Mono.Security.X509;
@@ -89,6 +90,29 @@ namespace Mono.Security.Authenticode {
 				fs.Read (data, 0, data.Length);
 				fs.Close ();
 			}
+
+			// It seems that VeriSign send the SPC file in Unicode
+			// (base64 encoded) and Windows accept them.
+			if (data.Length < 2)
+				return null;
+
+			if (data [0] != 0x30) {
+				// this isn't an ASN.1 SEQUENCE (so not legal)
+				if (data [1] == 0x00) {
+					// this could be base64/unicode (e.g. VeriSign)
+					data = Convert.FromBase64String (Encoding.Unicode.GetString (data));
+				}
+				else {
+					// default to base64/ascii
+					data = Convert.FromBase64String (Encoding.ASCII.GetString (data));
+				}
+			}
+#if DEBUG
+			using (FileStream fs = File.OpenWrite (filename + ".der")) {
+				fs.Write (data, 0, data.Length);
+				fs.Close ();
+			}
+#endif
 			return new SoftwarePublisherCertificate (data);
 		}
 	}

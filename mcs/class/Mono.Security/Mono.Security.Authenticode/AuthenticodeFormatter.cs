@@ -189,11 +189,10 @@ namespace Mono.Security.Authenticode {
 
 			ASN1 opus = null;
 			if (url == null)
-				Attribute (spcSpOpusInfo, Opus (description, null));
+				opus = Attribute (spcSpOpusInfo, Opus (description, null));
 			else
-				Attribute (spcSpOpusInfo, Opus (description, url.ToString ()));
+				opus = Attribute (spcSpOpusInfo, Opus (description, url.ToString ()));
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (opus);
-			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (contentType, ASN1Convert.FromOid (spcIndirectDataContext)));
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
 			pkcs7.GetASN1 (); // sign
 			return pkcs7.SignerInfo.Signature;
@@ -297,8 +296,9 @@ namespace Mono.Security.Authenticode {
 			File.Copy (fileName, fileName + ".bak", true);
 
 			using (FileStream fs = File.Open (fileName, FileMode.Create, FileAccess.Write)) {
+				int filesize = (dirSecurityOffset == 0) ? file.Length : dirSecurityOffset;
 				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
-				byte[] data = BitConverter.GetBytes (file.Length);
+				byte[] data = BitConverter.GetBytes (filesize);
 				file [peOffset + 152] = data [0];
 				file [peOffset + 153] = data [1];
 				file [peOffset + 154] = data [2];
@@ -314,7 +314,7 @@ namespace Mono.Security.Authenticode {
 				file [peOffset + 157] = data [1];
 				file [peOffset + 158] = data [2];
 				file [peOffset + 159] = data [3];
-				fs.Write (file, 0, file.Length);
+				fs.Write (file, 0, filesize);
 				fs.Write (data, 0, data.Length);		// length (again)
 				data = BitConverter.GetBytes (0x00020200);	// magic
 				fs.Write (data, 0, data.Length);
