@@ -1,3 +1,6 @@
+2005-03-23  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (mono_type_to_unmanaged): Add MONO_TYPE_GENERICINST.
 
 Tue Mar 22 16:57:01 CET 2005 Paolo Molaro <lupus@ximian.com>
 
