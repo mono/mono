@@ -90,9 +90,8 @@ namespace System.Windows.Forms {
 			set {
 				if ( checked_ != value ) {
 					checked_ = value;
-
-					updateCheck ( );
 					OnCheckedChanged ( EventArgs.Empty );
+					Invalidate ();
 				}
 			}
 		}
@@ -105,7 +104,6 @@ namespace System.Windows.Forms {
 
 		public void PerformClick()
 		{
-			Checked = !Checked;
 			OnClick ( EventArgs.Empty );
 		}
 
@@ -158,20 +156,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnClick(EventArgs e)
 		{
-			int res = Win32.SendMessage ( Handle, (int)ButtonMessages.BM_GETCHECK, 0, 0);
-
-			bool check = Checked;
-
-			if ( res == (int) NativeButtonState.BST_CHECKED ) 
-				check = true;
-			else if ( res == (int) NativeButtonState.BST_UNCHECKED ) 
-				check = false;
-
-			if ( checked_ != check ) {
-				checked_ = check;
-				OnCheckedChanged ( EventArgs.Empty );
+			if (AutoCheck && !Checked) {
+				Checked = true;
+				foreach (Control ctr in Parent.Controls) {
+					RadioButton rbtn = ctr as RadioButton;
+					if (rbtn != null && rbtn != this) {
+						rbtn.Checked = false;
+					}
+				}
 			}
-
 			base.OnClick ( e );
 		}
 
@@ -184,18 +177,11 @@ namespace System.Windows.Forms {
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated ( e );
-			updateCheck ( );
 		}
 
-		protected override void OnMouseDown (MouseEventArgs e) 
-		{
-			base.OnMouseDown (e);
-		}
-		
 		protected override void OnMouseUp(MouseEventArgs e) 
 		{
-			Checked = Checked ? false : true;
-			Invalidate ();
+			OnClick (EventArgs.Empty);
 			base.OnMouseUp(e);
 		}
 		
@@ -215,13 +201,6 @@ namespace System.Windows.Forms {
 			get { return (int) ( Appearance == Appearance.Normal ? 0 : ButtonStyles.BS_PUSHLIKE ); }
 		}
 
-		private void updateCheck ( ) {
-			if ( IsHandleCreated ) 
-				Win32.SendMessage ( Handle, (int) ButtonMessages.BM_SETCHECK, 
-							Checked ? (int) NativeButtonState.BST_CHECKED :
-								  ( int ) NativeButtonState.BST_UNCHECKED, 0 );
-		}
-		
 		internal override void ButtonPaint (PaintEventArgs e) 
 		{
 			Rectangle paintBounds = ClientRectangle;
@@ -233,11 +212,26 @@ namespace System.Windows.Forms {
 			sb.Dispose ();
 			
 			// FIXME: Width/Heigth of radiobutton are not correct
-			Rectangle checkRect = new Rectangle(paintBounds.Left,paintBounds.Top,12,12);
-			Rectangle textRect = new Rectangle( checkRect.Right,paintBounds.Top,paintBounds.Width - checkRect.Width - 1,paintBounds.Height);
-			//paintOn.DrawString(Text, Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
-			Win32.DrawText(paintOn, Text, Font, ForeColor, textRect, TextAlign);
-		
+			int CheckSize = 12;
+			Rectangle checkRect = new Rectangle (paintBounds.Left, paintBounds.Top, CheckSize, CheckSize);
+			Rectangle textRect = new Rectangle (checkRect.Right + 3, paintBounds.Top, paintBounds.Width - checkRect.Width - 4, paintBounds.Height);
+			if (0 != (CheckAlign & (ContentAlignment.BottomLeft | ContentAlignment.BottomCenter | ContentAlignment.BottomRight))) {
+				checkRect.Y = paintBounds.Bottom - CheckSize;
+			}
+			else if(0 != (CheckAlign & (ContentAlignment.MiddleLeft | ContentAlignment.MiddleCenter | ContentAlignment.MiddleRight))) {
+				checkRect.Y = paintBounds.Top + paintBounds.Height / 2 - CheckSize / 2;
+			}
+			
+			if (0 != (CheckAlign & (ContentAlignment.TopRight | ContentAlignment.MiddleRight | ContentAlignment.BottomRight))) {
+				checkRect.X = paintBounds.Right - CheckSize;
+				textRect.X = paintBounds.Left;
+			}
+			else if(0 != (CheckAlign & (ContentAlignment.TopCenter | ContentAlignment.MiddleCenter | ContentAlignment.BottomCenter))) {
+				checkRect.X = paintBounds.Left + paintBounds.Width / 2 - CheckSize / 2;
+				textRect.X = paintBounds.Left;
+				textRect.Width = paintBounds.Width;
+			}
+			
 			ButtonState state = ButtonState.Normal;
 			if (FlatStyle == FlatStyle.Flat) {
 				state |= ButtonState.Flat;
@@ -248,6 +242,8 @@ namespace System.Windows.Forms {
 			}
 			
 			ControlPaint.DrawRadioButton (paintOn, checkRect, state);
+			
+			Win32.DrawText(paintOn, Text, Font, ForeColor, textRect, TextAlign);
 			
 			if (Focused) {
 				ControlPaint.DrawFocusRectangle (paintOn, textRect);

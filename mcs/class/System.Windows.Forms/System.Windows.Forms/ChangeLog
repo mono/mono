@@ -1,3 +1,6 @@
+2003-08-26  Alexandre Pigolkine <pigolkine@gmx.de>
+	* RadioButton.cs		painting code and click logic updated 
+
 2003-08-24  Alexandre Pigolkine <pigolkine@gmx.de>
 	* CheckBox.cs		modified to be compatible with specification	
 
