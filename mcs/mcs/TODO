@@ -1,3 +1,8 @@
+* Optimizations
+
+	Handle if (!x) converting to remove the `!' and instead of using
+	a brfalse use a brtrue to jump to the end.
+
 * Emitcontext
 
 	Do we really need to instanciate this variable all the time?

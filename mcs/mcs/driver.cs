@@ -338,8 +338,7 @@ namespace CIR
 			if (errors > 0){
 				error ("Parsing failed");
 				return;
-			} else
-				notice ("Parsing successful");
+			}
 
 			//
 			// Load assemblies required

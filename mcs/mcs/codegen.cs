@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -83,7 +84,6 @@ namespace CIR {
 	public class EmitContext {
 		public TypeContainer TypeContainer;
 		public ILGenerator   ig;
-		
 		public bool CheckState;
 
 		// <summary>
@@ -96,6 +96,13 @@ namespace CIR {
 		//   return type.
 		// </summary>
 		public Type ReturnType;
+
+		// <summary>
+		//   Keeps track of the Type to LocalBuilder temporary storage created
+		//   to store structures (used to compute the address of the structure
+		//   value on structure method invocations)
+		// </summary>
+		public Hashtable temporary_storage;
 		
 		public EmitContext (TypeContainer parent, ILGenerator ig, Type return_type, int code_flags)
 		{
@@ -129,6 +136,27 @@ namespace CIR {
 
 			if (!has_ret)
 				ig.Emit (OpCodes.Ret);
+		}
+
+		// <summary>
+		//   Returns a temporary storage for a variable of type t as 
+		//   a local variable in the current body.
+		// </summary>
+		public LocalBuilder GetTemporaryStorage (Type t)
+		{
+			LocalBuilder location;
+			
+			if (temporary_storage == null)
+				temporary_storage = new Hashtable ();
+
+			location = (LocalBuilder) temporary_storage [t];
+			if (location != null)
+				return location;
+
+			location = ig.DeclareLocal (t);
+			temporary_storage.Add (t, location);
+
+			return location;
 		}
 	}
 }

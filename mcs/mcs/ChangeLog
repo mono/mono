@@ -1,3 +1,20 @@
+2001-10-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Invocation::Emit): Deal with invocation of
+	methods on value types.  We need to pass the address to structure
+	methods rather than the object itself.  (The equivalent code to
+	emit "this" for structures leaves the entire structure on the
+	stack instead of a pointer to it). 
+
+	(ParameterReference::DoResolve): Compute the real index for the
+	argument based on whether the method takes or not a `this' pointer
+	(ie, the method is static).
+
+	* codegen.cs (EmitContext::GetTemporaryStorage): Used to store
+	value types returned from functions when we need to invoke a
+	method on the sturcture.
+	
+
 2001-10-11  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (TypeContainer::DefineType): Method to actually do the business of

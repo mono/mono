@@ -3211,6 +3211,7 @@ namespace CIR {
 		public readonly Parameters Pars;
 		public readonly String Name;
 		public readonly int Idx;
+		int arg_idx;
 		
 		public ParameterReference (Parameters pars, int idx, string name)
 		{
@@ -3226,32 +3227,36 @@ namespace CIR {
 
 			type = types [Idx];
 
+			arg_idx = Idx;
+			if (!ec.IsStatic)
+				arg_idx++;
+			
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			if (Idx <= 255)
-				ec.ig.Emit (OpCodes.Ldarg_S, (byte) Idx);
+			if (arg_idx <= 255)
+				ec.ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
 			else
-				ec.ig.Emit (OpCodes.Ldarg, Idx);
+				ec.ig.Emit (OpCodes.Ldarg, arg_idx);
 		}
 
 		public void Store (EmitContext ec)
 		{
-			if (Idx <= 255)
-				ec.ig.Emit (OpCodes.Starg_S, (byte) Idx);
+			if (arg_idx <= 255)
+				ec.ig.Emit (OpCodes.Starg_S, (byte) arg_idx);
 			else
-				ec.ig.Emit (OpCodes.Starg, Idx);
+				ec.ig.Emit (OpCodes.Starg, arg_idx);
 			
 		}
 
 		public void AddressOf (EmitContext ec)
 		{
-			if (Idx <= 255)
-				ec.ig.Emit (OpCodes.Ldarga_S, (byte) Idx);
+			if (arg_idx <= 255)
+				ec.ig.Emit (OpCodes.Ldarga_S, (byte) arg_idx);
 			else
-				ec.ig.Emit (OpCodes.Ldarga, Idx);
+				ec.ig.Emit (OpCodes.Ldarga, arg_idx);
 		}
 	}
 	
@@ -3869,7 +3874,9 @@ namespace CIR {
 		public override void Emit (EmitContext ec)
 		{
 			bool is_static = method.IsStatic;
-
+			ILGenerator ig = ec.ig;
+			bool struct_call = false;
+				
 			if (!is_static){
 				MethodGroupExpr mg = (MethodGroupExpr) this.expr;
 
@@ -3877,28 +3884,50 @@ namespace CIR {
 				// If this is ourselves, push "this"
 				//
 				if (mg.InstanceExpression == null){
-					ec.ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Ldarg_0);
 				} else {
+					Expression ie = mg.InstanceExpression;
+					
 					//
 					// Push the instance expression
 					//
-					mg.InstanceExpression.Emit (ec);
+					if (ie.Type.IsSubclassOf (TypeManager.value_type)){
+
+						struct_call = true;
+
+						//
+						// If the expression is an LValue, then
+						// we can optimize and use AddressOf on the
+						// return.
+						//
+						// If not we have to use some temporary storage for
+						// it.
+						if (ie is LValue)
+							((LValue) ie).AddressOf (ec);
+						else {
+							ie.Emit (ec);
+							LocalBuilder temp = ec.GetTemporaryStorage (ie.Type);
+							ig.Emit (OpCodes.Stloc, temp);
+							ig.Emit (OpCodes.Ldloca, temp);
+						}
+					} else 
+						ie.Emit (ec);
 				}
 			}
 
 			if (Arguments != null)
 				EmitArguments (ec, method, Arguments);
 
-			if (is_static){
+			if (is_static || struct_call){
 				if (method is MethodInfo)
-					ec.ig.Emit (OpCodes.Call, (MethodInfo) method);
+					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
-					ec.ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 			} else {
 				if (method is MethodInfo)
-					ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
+					ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
 				else
-					ec.ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
+					ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
 			}
 		}
 
