@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-my $gmcs = "mono ../gmcs/gmcs.exe";
+my $gmcs = "gmcs2";
 my $monodis = "monodis";
 my $mono = "mono";
 
