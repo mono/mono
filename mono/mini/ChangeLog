@@ -1,5 +1,7 @@
 2003-09-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c (mono_aot_get_method_inner): Fix MONO_PATCH_INFO_IMAGE.
+
 	* .cvsignore: Added *.dll.
 
 	* mini.c (mono_print_tree_nl): New function callable while debugging.
