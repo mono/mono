@@ -1,3 +1,7 @@
+2003-08-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* cs0666.xml: added sample xml file for monodoc error provider.
+
 2003-07-28  Martin Baulig  <martin@ximian.com>
 
 	* cs0075.cs: This test case was incorrect; according to the spec,
