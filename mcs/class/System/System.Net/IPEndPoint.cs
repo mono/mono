@@ -80,10 +80,10 @@ namespace System.Net {
 			}
 			
 			int port=(((int)sockaddr[2])<<8) + (int)sockaddr[3];
-			long address=(((long)sockaddr[4])<<24) +
-				(((long)sockaddr[5])<<16) +
-				(((long)sockaddr[6])<<8) +
-				(long)sockaddr[7];
+			long address=(((long)sockaddr[7])<<24) +
+				(((long)sockaddr[6])<<16) +
+				(((long)sockaddr[5])<<8) +
+				(long)sockaddr[4];
 
 			IPEndPoint ipe = new IPEndPoint(address, port);
 			
@@ -98,13 +98,13 @@ namespace System.Net {
 
 			// bytes 2 and 3 store the port, the rest
 			// stores the address
-			sockaddr[2]=(byte)((port>>8) & 0xff);
-			sockaddr[3]=(byte)(port & 0xff);
+			sockaddr [2] = (byte) ((port>>8) & 0xff);
+			sockaddr [3] = (byte) (port & 0xff);
 
-			sockaddr[4]=(byte)((address.Address >> 24) & 0xff);
-			sockaddr[5]=(byte)((address.Address >> 16) & 0xff);
-			sockaddr[6]=(byte)((address.Address >> 8) & 0xff);
-			sockaddr[7]=(byte)(address.Address & 0xff);
+			sockaddr [4] = (byte) (address.Address & 0xff);
+			sockaddr [5] = (byte) ((address.Address >> 8) & 0xff);
+			sockaddr [6] = (byte) ((address.Address >> 16) & 0xff);
+			sockaddr [7] = (byte) ((address.Address >> 24) & 0xff);
 			
 			return(sockaddr);
 		}
