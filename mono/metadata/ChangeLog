@@ -1,3 +1,9 @@
+
+Mon Aug 5 13:08:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: support the object type argument when loading
+	custom attributes.
+
 2002-08-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): add suppport for
