@@ -93,11 +93,11 @@ the output file name.
 	}
 	
 	static int CompileResourceFile(string sname, string dname ) {
-		try {
 		FileStream source, dest;
 		IResourceReader reader;
 		IResourceWriter writer;
 
+		try {
 			source = new FileStream (sname, FileMode.Open, FileAccess.Read);
 			dest = new FileStream (dname, FileMode.OpenOrCreate, FileAccess.Write);
 
@@ -120,6 +120,9 @@ the output file name.
 			Console.WriteLine("Writing resource file...  Done.");
 		} catch (Exception e) {
 			Console.WriteLine ("Error: {0}", e.Message);
+			Exception inner = e.InnerException;
+			if (inner != null)
+				Console.WriteLine ("Inner exception: {0}", inner.Message);
 			return 1;
 		}
 		return 0;
