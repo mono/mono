@@ -1,3 +1,9 @@
+2004-07-06  Dick Porter  <dick@ximian.com>
+
+	* MonoIO.cs: Add ERROR_INVALID_PARAMETER to the exception list.
+	Don't blow away the SetFileTime() error before the caller gets to
+	see it.  Part of the bug fix to 60970.
+
 2004-07-05  Dick Porter  <dick@ximian.com>
 
 	* CheckPermission.cs:
