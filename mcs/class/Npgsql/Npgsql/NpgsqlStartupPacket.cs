@@ -115,7 +115,7 @@ namespace Npgsql
 
             if (protocol_version >= ProtocolVersion.Version3) // Protocol 3+
             {
-                PGUtil.WriteInt32(output_stream, 4 + 4 + 5 + encoding.GetByteCount(user_name) + 1 + 9 + encoding.GetByteCount(database_name) + 1 + 1);
+                PGUtil.WriteInt32(output_stream, 4 + 4 + 5 + (encoding.GetByteCount(user_name) + 1) + 9 + (encoding.GetByteCount(database_name) + 1) + 10 + 4 + 1);
 
                 // Protocol version = 3.0
 
@@ -133,6 +133,12 @@ namespace Npgsql
 
                 // Database name.
                 PGUtil.WriteString(database_name, output_stream, encoding);
+                
+                // DateStyle.
+                PGUtil.WriteString("DateStyle", output_stream, encoding);
+
+                // DateStyle.
+                PGUtil.WriteString("ISO", output_stream, encoding);
 
                 output_stream.WriteByte(0);
                 output_stream.Flush();
