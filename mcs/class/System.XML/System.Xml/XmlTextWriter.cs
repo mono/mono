@@ -487,10 +487,9 @@ namespace System.Xml
 			WriteStringInternal (data, false);
 		}
 
-		[MonoTODO]
 		public override void WriteRaw (char[] buffer, int index, int count)
 		{
-			throw new NotImplementedException ();
+			WriteStringInternal (new string (buffer, index, count), false);
 		}
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)

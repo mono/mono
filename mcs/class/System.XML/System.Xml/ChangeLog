@@ -1,3 +1,7 @@
+2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextWriter.cs: implemented WriteRaw (char[], int, int).
+
 2003-02-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReader.cs : implemented QuoteChar.
