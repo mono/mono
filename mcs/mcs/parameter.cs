@@ -47,13 +47,30 @@ namespace Mono.CSharp {
 		{
 			return false;
 		}
-
 	}
 
+	/// <summary>
+	/// Class for applying custom attributes on the return type
+	/// </summary>
 	public class ReturnParameter: ParameterBase {
-		public ReturnParameter (Attributes attrs):
-			base (attrs)
+		public ReturnParameter (MethodBuilder mb, Location location):
+			base (null)
 		{
+			try {
+				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
+			}
+			catch (ArgumentOutOfRangeException) {
+				Report.Warning_T (-28, location);
+			}
+		}
+
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			// This occurs after Warning -28
+			if (builder == null)
+				return;
+
+			base.ApplyAttributeBuilder (a, cb);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -62,19 +79,43 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void DefineParameter (EmitContext ec, MethodBuilder mb, Location loc)
-		{
-			try {
-				builder = mb.DefineParameter (0, ParameterAttributes.None, "");				
-				OptAttributes.Emit (ec, this);
-			} catch (ArgumentOutOfRangeException) {
-				Report.Warning (
-					-24, loc,
-					".NET SDK 1.0 does not permit setting custom attributes" +
-					" on the return type of a method");
+		/// <summary>
+		/// Is never called
+		/// </summary>
+		protected override string[] ValidAttributeTargets {
+			get {
+				return null;
 			}
 		}
 	}
+
+	/// <summary>
+	/// Class for applying custom attributes on the parameter type.
+	/// ! Now it works only with 1st parameter (for properties and events)
+	/// </summary>
+	public class ParameterAtribute: ParameterBase {
+		public ParameterAtribute (MethodBuilder mb):
+			base (null)
+		{
+			builder = mb.DefineParameter (1, ParameterAttributes.None, "");			
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Parameter;
+			}
+		}
+
+		/// <summary>
+		/// Is never called
+		/// </summary>
+		protected override string[] ValidAttributeTargets {
+			get {
+				return null;
+			}
+		}
+	}
+
 
 	/// <summary>
 	///   Represents a single method parameter
@@ -91,6 +132,8 @@ namespace Mono.CSharp {
 			// This is a flag which says that it's either REF or OUT.
 			ISBYREF = 8
 		}
+
+		static string[] attribute_targets = new string [] { "param" };
 
 		public readonly Expression TypeName;
 		public readonly Modifier ModFlags;
@@ -211,6 +254,12 @@ namespace Mono.CSharp {
 					if (OptAttributes.Contains (TypeManager.in_attribute_type, ec.DeclSpace))
 						Report.Error (36, loc,	"Can not use [In] attribute on out parameter");
 				}
+			}
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
 			}
 		}
 	}
@@ -523,7 +572,6 @@ namespace Mono.CSharp {
 		//
 		public void LabelParameters (EmitContext ec,
 			MethodBase builder,
-			Attributes method_attrs,
 			Location loc) {
 			//
 			// Define each type attribute (in/out/ref) and
@@ -558,34 +606,6 @@ namespace Mono.CSharp {
 				
 				pb.SetCustomAttribute (a);
 			}
-
-			//
-			// And now for the return type attribute decoration
-			//
-				
-			if (mb == null || method_attrs == null)
-				return;
-
-			Attributes ret_attrs = null;
-			foreach (AttributeSection asec in method_attrs.AttributeSections) {
-
-				if (asec.Target != "return")
-					continue;
-
-				if (ret_attrs == null)
-					ret_attrs = new Attributes (asec);
-				else
-					ret_attrs.AddAttributeSection (asec);
-			}
-
-			if (ret_attrs != null) {
-				ReturnParameter ret = new ReturnParameter (ret_attrs);
-				ret.DefineParameter (ec, mb, loc);
-			}
 		}
-
 	}
 }
-		
-	
-

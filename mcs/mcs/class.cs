@@ -2544,6 +2544,8 @@ namespace Mono.CSharp {
 		// Whether this is an operator method.
 		public bool IsOperator;
 
+		static string[] attribute_targets = new string [] { "method", "return" };
+
 		public MethodCore (DeclSpace ds, Expression type, int mod, int allowed_mod,
 				   bool is_interface, string name, Attributes attrs,
 				   Parameters parameters, Location loc)
@@ -2598,6 +2600,12 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 
 		protected override bool VerifyClsCompliance (DeclSpace ds)
@@ -2671,6 +2679,7 @@ namespace Mono.CSharp {
 	public class Method : MethodCore, IIteratorContainer, IMethodData {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
+		ReturnParameter return_attributes;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -2766,6 +2775,14 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
+			if (a.Target == "return") {
+				if (return_attributes == null)
+					return_attributes = new ReturnParameter (MethodBuilder, Location);
+
+				return_attributes.ApplyAttributeBuilder (a, cb);
+				return;
+			}
+
 			if (a.Type == TypeManager.methodimpl_attr_type && a.IsInternalCall) {
 				MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
 			}
@@ -3283,8 +3300,7 @@ namespace Mono.CSharp {
 				ec.IsStatic = false;
 			}
 
-			Parameters.LabelParameters (ec, ConstructorBuilder,
-                                                    OptAttributes, Location);
+			Parameters.LabelParameters (ec, ConstructorBuilder, Location);
 			
 			SymbolWriter sw = CodeGen.SymbolWriter;
 			bool generate_debugging = false;
@@ -3482,11 +3498,7 @@ namespace Mono.CSharp {
 			if ((opt_attrs == null) || (opt_attrs.AttributeSections == null))
 				return true;
 
-			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-				if (asec.Attributes == null)
-					continue;
-					
-				foreach (Attribute a in asec.Attributes) {
+			foreach (Attribute a in opt_attrs.AttributeSections) {
 					Type attr_type = a.ResolveType (ds, true);
 					if (attr_type == TypeManager.conditional_attribute_type) {
 						if (!ApplyConditionalAttribute (a))
@@ -3501,7 +3513,6 @@ namespace Mono.CSharp {
 						}
 						if (!ApplyDllImportAttribute (a))
 							return false;
-					}
 				}
 			}
 
@@ -3834,11 +3845,11 @@ namespace Mono.CSharp {
 			Location loc = method.Location;
 			Attributes OptAttributes = method.OptAttributes;
 
-			if (OptAttributes != null) 
+			if (OptAttributes != null)
 				OptAttributes.Emit (ec, kind);
 
 			if (member is MethodCore)
-				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder,OptAttributes, loc);
+				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder, loc);
 
 			SymbolWriter sw = CodeGen.SymbolWriter;
 			Block block = method.Block;
@@ -4356,6 +4367,8 @@ namespace Mono.CSharp {
 		[Flags]
 		public enum Status : byte { ASSIGNED = 1, USED = 2 }
 
+		static string[] attribute_targets = new string [] { "field" };
+
 		//
 		// The constructor is only exposed to our children
 		//
@@ -4443,6 +4456,12 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return TypeManager.GetFullNameSignature (FieldBuilder);
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 
 		protected override bool VerifyClsCompliance (DeclSpace ds)
@@ -4618,6 +4637,8 @@ namespace Mono.CSharp {
 
 		public class GetMethod: PropertyMethod
 		{
+			static string[] attribute_targets = new string [] { "method", "return" };
+
 			public GetMethod (MethodCore method, Accessor accessor):
 				base (method, accessor)
 			{
@@ -4644,12 +4665,35 @@ namespace Mono.CSharp {
 					return method.MemberType;
 				}
 			}
+
+			protected override string[] ValidAttributeTargets {
+				get {
+					return attribute_targets;
+				}
+			}
 		}
 
 		public class SetMethod: PropertyMethod {
+
+			static string[] attribute_targets = new string [] { "method", "param", "return" };
+			ParameterAtribute param_attr;
+
 			public SetMethod (MethodCore method, Accessor accessor):
 				base (method, accessor)
 			{
+			}
+
+			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+			{
+				if (a.Target == "param") {
+					if (param_attr == null)
+						param_attr = new ParameterAtribute (method_data.MethodBuilder);
+
+					param_attr.ApplyAttributeBuilder (a, cb);
+					return;
+				}
+
+				base.ApplyAttributeBuilder (a, cb);
 			}
 
 			protected virtual InternalParameters GetParameterInfo (TypeContainer container)
@@ -4687,13 +4731,24 @@ namespace Mono.CSharp {
 					return TypeManager.void_type;
 				}
 			}
+
+			protected override string[] ValidAttributeTargets {
+				get {
+					return attribute_targets;
+				}
+			}
 		}
 
 
-		public abstract class PropertyMethod: Attributable, IMethodData {
+		static string[] attribute_targets = new string [] { "property" };
+
+		public abstract class PropertyMethod: Attributable, IMethodData 
+		{
 			protected readonly MethodCore method;
 			protected MethodData method_data;
 			Block block;
+
+			ReturnParameter return_attributes;
 
 			public PropertyMethod (MethodCore method, Accessor accessor):
 				base (accessor.Attributes)
@@ -4707,6 +4762,7 @@ namespace Mono.CSharp {
 					return AttributeTargets.Method | AttributeTargets.ReturnValue;
 				}
 			}
+
 
 			public override bool IsClsCompliaceRequired(DeclSpace ds)
 			{
@@ -4740,11 +4796,18 @@ namespace Mono.CSharp {
 			{
 				method_data.Emit (container, this);
 				block = null;
-
 			}
 
 			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 			{
+				if (a.Target == "return") {
+					if (return_attributes == null)
+						return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
+
+					return_attributes.ApplyAttributeBuilder (a, cb);
+					return;
+				}
+
 				method_data.MethodBuilder.SetCustomAttribute (cb);
 			}
 
@@ -4975,6 +5038,12 @@ namespace Mono.CSharp {
 				Set.Emit (tc);
 
 			base.Emit (tc);
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 	}
 			
@@ -5233,9 +5302,69 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Event : FieldBase {
+	/// <summary>
+	/// For case when event is declared like property (with add and remove accessors).
+	/// </summary>
+	public class EventProperty: Event {
 
-		sealed class AddDelegateMethod: DelegateMethod
+		static string[] attribute_targets = new string [] { "event", "property" };
+
+		public EventProperty (DeclSpace ds, Expression type, int mod_flags, bool is_iface, string name,
+			Object init, Attributes attrs, Accessor add, Accessor remove, Location loc)
+			: base (ds, type, mod_flags, is_iface, name, init, attrs, loc)
+		{
+			Add = new AddDelegateMethod (this, add);
+			Remove = new RemoveDelegateMethod (this, remove);
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Event is declared like field.
+	/// </summary>
+	public class EventField: Event {
+
+		static string[] attribute_targets = new string [] { "method", "field", "event" };
+
+		public EventField (DeclSpace ds, Expression type, int mod_flags, bool is_iface, string name,
+			Object init, Attributes attrs, Location loc)
+			: base (ds, type, mod_flags, is_iface, name, init, attrs, loc)
+		{
+			Add = new AddDelegateMethod (this);
+			Remove = new RemoveDelegateMethod (this);
+		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Target == "field") {
+				FieldBuilder.SetCustomAttribute (cb);
+				return;
+			}
+
+			if (a.Target == "method") {
+				AddBuilder.SetCustomAttribute (cb);
+				RemoveBuilder.SetCustomAttribute (cb);
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, cb);
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
+	}
+
+	public abstract class Event : FieldBase {
+
+		protected sealed class AddDelegateMethod: DelegateMethod
 		{
 			public AddDelegateMethod (Event method):
 				base (method)
@@ -5261,7 +5390,7 @@ namespace Mono.CSharp {
 
 		}
 
-		sealed class RemoveDelegateMethod: DelegateMethod
+		protected sealed class RemoveDelegateMethod: DelegateMethod
 		{
 			public RemoveDelegateMethod (Event method):
 				base (method)
@@ -5292,6 +5421,10 @@ namespace Mono.CSharp {
 			protected readonly Event method;
 			protected MethodData method_data;
 			Block block;
+			ReturnParameter return_attributes;
+			ParameterAtribute param_attr;
+
+			static string[] attribute_targets = new string [] { "method", "param", "return" };
 
 			public DelegateMethod (Event method):
 				base (null)
@@ -5308,6 +5441,22 @@ namespace Mono.CSharp {
 
 			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 			{
+				if (a.Target == "return") {
+					if (return_attributes == null)
+						return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
+
+					return_attributes.ApplyAttributeBuilder (a, cb);
+					return;
+				}
+
+				if (a.Target == "param") {
+					if (param_attr == null)
+						param_attr = new ParameterAtribute (method_data.MethodBuilder);
+
+					param_attr.ApplyAttributeBuilder (a, cb);
+					return;
+				}
+
 				method_data.MethodBuilder.SetCustomAttribute (cb);
 			}
 
@@ -5401,13 +5550,18 @@ namespace Mono.CSharp {
 
 			public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 			{
-				return new EmitContext (tc, method.ds, method.Location, ig, ReturnType, method.ModFlags, false);
+				return new EmitContext (tc, method.ds, Location, ig, ReturnType, method.ModFlags, false);
 			}
 
 			public abstract string MethodName { get; }
 
 			#endregion
 
+			protected override string[] ValidAttributeTargets {
+				get {
+					return attribute_targets;
+				}
+			}
 		}
 
 
@@ -5427,22 +5581,10 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		readonly DelegateMethod Add, Remove;
+		protected DelegateMethod Add, Remove;
 		public MyEventBuilder     EventBuilder;
 		public MethodBuilder AddBuilder, RemoveBuilder;
 		public DeclSpace ds;
-
-		public Event (DeclSpace ds, Expression type, int mod_flags, bool is_iface, string name,
-				Object init, Attributes attrs, Accessor add, Accessor remove, Location loc)
-			: base (type, mod_flags, is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				name, init, attrs, loc)
-		{
-			IsInterface = is_iface;
-			this.ds = ds;
-
-			Add = new AddDelegateMethod (this, add);
-			Remove = new RemoveDelegateMethod (this, remove);
-		}
 
 		public Event (DeclSpace ds, Expression type, int mod_flags, bool is_iface, string name,
 				Object init, Attributes attrs, Location loc)
@@ -5451,9 +5593,6 @@ namespace Mono.CSharp {
 		{
 			IsInterface = is_iface;
 			this.ds = ds;
-
-			Add = new AddDelegateMethod (this);
-			Remove = new RemoveDelegateMethod (this);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -5554,7 +5693,6 @@ namespace Mono.CSharp {
 
 			base.Emit (tc);
 		}
-		
 	}
 
 	//
@@ -5894,6 +6032,8 @@ namespace Mono.CSharp {
 		public string MethodName;
 		public Method OperatorMethod;
 
+		static string[] attribute_targets = new string [] { "param" };
+
 		public Operator (OpType type, Expression ret_type, int mod_flags,
 				 Expression arg1type, string arg1name,
 				 Expression arg2type, string arg2name,
@@ -6152,6 +6292,12 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (return_type),
 					GetName (OperatorType),
 					param_types [0], param_types [1]);
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 
 		public void SetYields ()

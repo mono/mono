@@ -90,6 +90,13 @@ namespace Mono.CSharp
 		/// The current file.
 		///
 		SourceFile file;
+		
+		
+		/// Current attribute target
+		string current_attr_target;
+		
+		/// assembly and module attribute definition is enabled
+		bool global_attrs_enabled = true;
 %}
 
 %token EOF
@@ -332,15 +339,8 @@ using_namespace_directive
 namespace_declaration
 	: opt_attributes NAMESPACE namespace_or_type_name
 	{
-		Attributes attrs = (Attributes) $1;
-
-		if (attrs != null) {
-			foreach (AttributeSection asec in attrs.AttributeSections)
-				if (asec.Target == "assembly")
-					CodeGen.Assembly.AddAttribute (new GlobalAttributeSection (current_container, asec));
-				else
-					Report.Error(1518, Lexer.Location,
-					"Attributes cannot be applied to namespaces."
+		if ($1 != null) {
+			Report.Error(1518, Lexer.Location, "Attributes cannot be applied to namespaces."
 					+ " Expected class, delegate, enum, interface, or struct");
 		}
 
@@ -447,67 +447,88 @@ type_declaration
 //
 
 opt_attributes
-        : /* empty */
-	| attribute_sections { $$ = $1; }
-        ;
+	: /* empty */ 
+	  {
+		global_attrs_enabled = false;
+		$$ = null;
+      }
+	| attribute_sections
+	  { 
+		global_attrs_enabled = false;
+		$$ = $1;
+	  }
+    ;
  
+
 attribute_sections
 	: attribute_section
-          {
-		AttributeSection sect = (AttributeSection) $1;
+      {
+		ArrayList sect = (ArrayList) $1;
 
-		if (sect.Target == "assembly") {
-			CodeGen.Assembly.AddAttribute (new GlobalAttributeSection (current_container, sect));
-			$$ = null;
-		}
-		else if (sect.Target == "module") {
-			CodeGen.Module.AddAttribute (new GlobalAttributeSection (current_container, sect));
-			$$ = null;
-		}
-		else
+		if (global_attrs_enabled) {
+			if (current_attr_target == "module") {
+				CodeGen.Module.AddAttributes (sect);
+				$$ = null;
+			} else if (current_attr_target == "assembly") {
+				CodeGen.Assembly.AddAttributes (sect);
+				$$ = null;
+			} else {
+
+				// Because we don't know if target should be on assembly or type
+				// we add it to both. This leads error CS0657 is reported twice
+				// for this case but it is better than mistification.
+				CodeGen.Assembly.AddAttributes (sect);
+				$$ = new Attributes (sect);
+			}
+		} else {
 			$$ = new Attributes (sect);
-          }
+		}		
+		current_attr_target = null;
+      }
 	| attribute_sections attribute_section
 	  {
 		Attributes attrs = $1 as Attributes;
-		AttributeSection sect = (AttributeSection) $2;
+		ArrayList sect = (ArrayList) $2;
 
-		if (sect.Target == "assembly") {
-			CodeGen.Assembly.AddAttribute (new GlobalAttributeSection (current_container, sect));
-		}
-		else if (sect.Target == "module") {
-			CodeGen.Module.AddAttribute (new GlobalAttributeSection (current_container, sect));
-		}
-		else {
+		if (global_attrs_enabled) {
+			if (current_attr_target == "module") {
+				CodeGen.Module.AddAttributes (sect);
+				$$ = null;
+			} else if (current_attr_target == "assembly") {
+				CodeGen.Assembly.AddAttributes (sect);
+				$$ = null;
+			} else {
+				if (attrs == null)
+					attrs = new Attributes (sect);
+				else
+					attrs.AddAttributes (sect);			
+			}
+		} else {
 			if (attrs == null)
 				attrs = new Attributes (sect);
 			else
-			attrs.AddAttributeSection (sect);
-		}
-		
+				attrs.AddAttributes (sect);
+		}		
 		$$ = attrs;
+		current_attr_target = null;
 	  }
 	;
 
 attribute_section
 	: OPEN_BRACKET attribute_target_specifier attribute_list opt_comma CLOSE_BRACKET
 	  {
-		string target = null;
-		
-		if ($2 != null)
-			target = (string) $2;
-		
-		$$ = new AttributeSection (target, (ArrayList) $3);
+		$$ = $3;
  	  }
         | OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
 	  {
-		$$ = new AttributeSection (null, (ArrayList) $2);
+		$$ = $2;
 	  }
 	;
  
 attribute_target_specifier
 	: attribute_target COLON
 	  {
+		current_attr_target = (string)$1;
 		$$ = $1;
 	  }
 	;
@@ -547,7 +568,10 @@ attribute
 	  }
 	  opt_attribute_arguments
 	  {
-		$$ = new Attribute ((string) ($1).ToString (), (ArrayList) $3, (Location) $2);
+		if (current_attr_target == "assembly" || current_attr_target == "module")
+			$$ = new GlobalAttribute (current_container, current_attr_target, (string) ($1).ToString (), (ArrayList) $3, (Location) $2);
+		else
+			$$ = new Attribute (current_attr_target, (string) ($1).ToString (), (ArrayList) $3, (Location) $2);
 	  }
 	;
 
@@ -1302,7 +1326,7 @@ interface_accessors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new Event (current_container, (Expression) $4, (int) $2, true, (string) $5, null,
+		$$ = new EventField (current_container, (Expression) $4, (int) $2, true, (string) $5, null,
 				(Attributes) $1, lexer.Location);
 	  }
 	| opt_attributes opt_new EVENT type error {
@@ -1603,7 +1627,7 @@ event_declaration
 	  {
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
-			Event e = new Event (current_container, (Expression) $4, (int) $2, false, var.identifier,
+			Event e = new EventField (current_container, (Expression) $4, (int) $2, false, var.identifier,
 					     var.expression_or_array_initializer,
 					     (Attributes) $1, lexer.Location);
 
@@ -1634,7 +1658,7 @@ event_declaration
 		} else {
 			Pair pair = (Pair) $8;
 			
-			Event e = new Event (current_container, (Expression) $4, (int) $2, false, (string) $5,
+			Event e = new EventProperty (current_container, (Expression) $4, (int) $2, false, (string) $5,
 					     null, (Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second,
 					     loc);
 			

@@ -294,6 +294,8 @@ namespace Mono.CSharp {
 
 		TypeContainer parent;		
 
+		static string[] attribute_targets = new string [] { "type" };
+
 		public DeclSpace (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
 			: base (name, attrs, l)
 		{
@@ -1038,11 +1040,17 @@ namespace Mono.CSharp {
 					if (found_ds.IsClsCompliaceRequired (found_ds.Parent)) {
 						Report.SymbolRelatedToPreviousError (found_ds.Location, found_ds.GetSignatureForError ());
 						return false;
+					}
 				}
-			}
 			}
 
 			return true;
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 	}
 

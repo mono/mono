@@ -88,6 +88,7 @@ namespace Mono.CSharp {
 		static string GetErrorMsg (int error_no)
 		{
 			switch (error_no) {
+				case 0657: return "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'";
 				case 3001: return "Argument type '{0}' is not CLS-compliant";
 				case 3002: return "Return type of '{0}' is not CLS-compliant";
 				case 3003: return "Type of '{0}' is not CLS-compliant";
@@ -109,6 +110,7 @@ namespace Mono.CSharp {
 		{
 			switch (warn_no) {
 				case -24: return new WarningData (1, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
+				case -28: return new WarningData (1, "The Microsoft .NET Runtime 1.x does not permit setting custom attributes on the return type");
 				case 3012: return new WarningData (1, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
 				case 3019: return new WarningData (2, "CLS compliance checking will not be performed on '{0}' because it is private or internal");
 			}

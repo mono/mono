@@ -21,6 +21,8 @@ namespace Mono.CSharp {
 		Enum parent;
 		Location loc;
 
+		static string[] attribute_targets = new string [] { "field" };
+
 		public FieldBuilder builder;
 
 		public EnumMember (string name, Enum parent, Location loc, Attributes attrs):
@@ -71,6 +73,11 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (ec, this); 
 		}
 
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
 	}
 
 	/// <summary>

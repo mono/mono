@@ -33,6 +33,8 @@ namespace Mono.CSharp {
 		public Attributable(Attributes attrs)
 		{
 			attributes = attrs;
+			if (attributes != null)
+				attributes.CheckTargets (ValidAttributeTargets);
 		}
 
 		public Attributes OptAttributes 
@@ -56,9 +58,15 @@ namespace Mono.CSharp {
 		public abstract AttributeTargets AttributeTargets { get; }
 
 		public abstract bool IsClsCompliaceRequired (DeclSpace ds);
+
+		/// <summary>
+		/// Gets list of valid attribute targets for explicit target declaration
+		/// </summary>
+		protected abstract string[] ValidAttributeTargets { get; }
 	};
 
 	public class Attribute {
+		public readonly string Target;
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
@@ -88,11 +96,12 @@ namespace Mono.CSharp {
 
 		static PtrHashtable usage_attr_cache = new PtrHashtable ();
 		
-		public Attribute (string name, ArrayList args, Location loc)
+		public Attribute (string target, string name, ArrayList args, Location loc)
 		{
 			Name = name;
 			Arguments = args;
 			Location = loc;
+			Target = target;
 		}
 
 		void Error_InvalidNamedArgument (string name)
@@ -117,9 +126,10 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-                ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
-                /// </summary>
-		private Type CheckAttributeType (DeclSpace ds, bool complain) {
+		///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
+		/// </summary>
+		protected virtual Type CheckAttributeType (DeclSpace ds, bool complain)
+		{
 			Type t1 = RootContext.LookupType (ds, Name, true, Location);
 
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
@@ -629,11 +639,7 @@ namespace Mono.CSharp {
 			if (opt_attrs.AttributeSections == null)
 				return null;
 
-			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-				if (asec.Attributes == null)
-					continue;
-
-				foreach (Attribute a in asec.Attributes){
+			foreach (Attribute a in opt_attrs.AttributeSections) {
 					if (a.ResolveType (ec.DeclSpace, true) == null)
 						return null;
 					
@@ -666,10 +672,11 @@ namespace Mono.CSharp {
 					//
 					// Remove the attribute from the list
 					//
-					asec.Attributes.Remove (a);
+
+					//TODO: It is very close to hack and it can crash here
+					opt_attrs.AttributeSections.Remove (a);
 
 					return (((StringConstant) e).Value);
-				}
 			}
 			return null;
 		}
@@ -825,7 +832,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>
-		public void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr, string target)
+		public void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
 		{
 			CustomAttributeBuilder cb = Resolve (ec);
 			if (cb == null)
@@ -840,11 +847,11 @@ namespace Mono.CSharp {
 			ias.ApplyAttributeBuilder (this, cb);
 
 			string emitted = emitted_attr [Type] as string;
-			if (target != null && emitted == target && !usage_attr.AllowMultiple) {
+			if (Target != null && emitted == Target && !usage_attr.AllowMultiple) {
 				Report.Error (579, Location, "Duplicate '" + Name + "' attribute");
 			}
 
-			emitted_attr [Type] = target;
+			emitted_attr [Type] = Target;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
@@ -1057,78 +1064,77 @@ namespace Mono.CSharp {
 	/// For global attributes (assembly, module) we need special handling.
 	/// Attributes can be located in the several files
 	/// </summary>
-	public class GlobalAttributeSection: AttributeSection
+	public class GlobalAttribute: Attribute
 	{
 		public readonly NamespaceEntry ns;
 
-		public GlobalAttributeSection (TypeContainer container, AttributeSection attrsec):
-			base (attrsec.Target, attrsec.Attributes)
+		public GlobalAttribute (TypeContainer container, string target, string name, ArrayList args, Location loc):
+			base (target, name, args, loc)
 		{
 			ns = container.NamespaceEntry;
 		}
 
-		public override void Emit(EmitContext ec, Attributable ias, ListDictionary ld)
-		{
-			ec.DeclSpace.NamespaceEntry = ns;
-			base.Emit (ec, ias, ld);
-		}
-
-		public override Attribute Search(Type t, DeclSpace ds)
+		protected override Type CheckAttributeType (DeclSpace ds, bool complain)
 		{
 			ds.NamespaceEntry = ns;
-			return base.Search (t, ds);
-		}
-	}
-
-	public class AttributeSection {
-		public readonly string    Target;
-		public readonly ArrayList Attributes;
-		
-		public AttributeSection (string target, ArrayList attrs)
-		{
-			Target = target;
-			Attributes = attrs;
-		}
-
-		public virtual void Emit (EmitContext ec, Attributable ias, ListDictionary ld)
-		{
-			foreach (Attribute a in Attributes) {
-				a.Emit (ec, ias, ld, Target);
-			}
-		}
-
-		public virtual Attribute Search (Type t, DeclSpace ds)
-		{
-			foreach (Attribute a in Attributes) {
-				if (a.ResolveType (ds, false) == t)
-					return a;
-			}
-			return null;
+			return base.CheckAttributeType (ds, complain);
 		}
 	}
 
 	public class Attributes {
 		public ArrayList AttributeSections;
 
-		public Attributes (AttributeSection a)
+		public Attributes (Attribute a)
 		{
 			AttributeSections = new ArrayList ();
 			AttributeSections.Add (a);
-
 		}
 
-		public void AddAttributeSection (AttributeSection a)
+		public Attributes (ArrayList attrs)
 		{
-			if (a != null && !AttributeSections.Contains (a))
-				AttributeSections.Add (a);
+			AttributeSections = attrs;
+		}
+
+		public void AddAttributes (ArrayList attrs)
+		{
+			AttributeSections.AddRange (attrs);
+		}
+
+		/// <summary>
+		/// Checks whether attribute target is valid for the current element
+		/// </summary>
+		public void CheckTargets (string[] possible_targets)
+		{
+			foreach (Attribute a in AttributeSections) {
+				if (a.Target == null)
+					continue;
+
+				bool valid_target = false;
+				for (int i = 0; i < possible_targets.Length; ++i) {
+					if (a.Target == possible_targets [i]) {
+						valid_target = true;
+						break;
+					}
+				}
+
+				if (valid_target)
+					continue;
+
+				StringBuilder sb = new StringBuilder ();
+				foreach (string s in possible_targets) {
+					sb.Append (s);
+					sb.Append (", ");
+				}
+				sb.Remove (sb.Length - 2, 2);
+				Report.Error_T (657, a.Location, a.Target, sb.ToString ());
+			}
 		}
 
 		public Attribute Search (Type t, DeclSpace ds)
 		{
-			foreach (AttributeSection attr_section in AttributeSections){
-				Attribute a = attr_section.Search (t, ds);
-				if (a != null)
-					return a;
+			foreach (Attribute attr_section in AttributeSections) {
+				if (attr_section.ResolveType (ds, false) == t)
+					return attr_section;
 			}
 			return null;
 		}
@@ -1137,8 +1143,8 @@ namespace Mono.CSharp {
 		{
 			ListDictionary ld = new ListDictionary ();
 
-			foreach (AttributeSection attr_section in AttributeSections) {
-				attr_section.Emit (ec, ias, ld);
+			foreach (Attribute a in AttributeSections) {
+				a.Emit (ec, ias, ld);
 			}
 		}
 
