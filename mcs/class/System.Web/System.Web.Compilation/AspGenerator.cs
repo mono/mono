@@ -87,7 +87,13 @@ namespace System.Web.Compilation
 				return null;
 
 			files.Remove (current.Filename);
-			return (AspParser) parsers.Pop ();
+			AspParser result = (AspParser) parsers.Pop ();
+			if (parsers.Count > 0)
+				current = (AspParser) parsers.Peek ();
+			else
+				current = null;
+
+			return result;
 		}
 		
 		public AspParser Parser {

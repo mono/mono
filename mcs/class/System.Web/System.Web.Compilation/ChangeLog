@@ -1,3 +1,7 @@
+2003-08-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: fixed bug #46429.
+
 2003-08-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directive.cs: support @WebHandler.
