@@ -1,4 +1,11 @@
+2004-07-13  Peter Williams  <peter@newton.cx>
+
+	* CSharpCodeCompiler.cs (CompileAssemblyFromDomBatch): Include
+	counter in the extension so that batch compilations work.
+	(CompileAssemblyFromSourceBatch): Same.
+
 2004-07-12  Fawad Halim <fawad@fawad.net>
+
 	* CSharpCodeGenerator.cs : Have GenerateField generate field sans the type for enums.
 
 2004-06-28  Atsushi Enomoto  <atsushi@ximian.com>
