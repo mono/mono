@@ -73,15 +73,18 @@ namespace System.Web {
 	 Write(category, msg, error, false);
       }
 
-      [MonoTODO("Save the data into a web dataset directly...")]
       private void Write(string category, string msg, Exception error, bool Warning) {
-	      if (!_Enabled)
+	      if (!_Enabled && !HttpRuntime.TraceManager.Enabled)
 		      return;
+              if (data == null)
+                      data = new TraceData ();
 	      data.Write (category, msg, error, Warning);
       }
 
            internal void SaveData ()
            {
+                   if (data == null)
+                           data = new TraceData ();
  		   SetRequestDetails ();
 		   data.AddControlTree ((Page) _Context.Handler);
 		   AddCookies ();
@@ -93,15 +96,15 @@ namespace System.Web {
            
 	   internal void Render (HtmlTextWriter output)
 	   {
-                   if (!data_saved)
-                           SaveData ();
+		   if (!data_saved)
+			   SaveData ();
 		   data.Render (output);
 	   }
 
 	   private void SetRequestDetails ()
 	   {
 		   data.RequestPath = _Context.Request.FilePath;
-		   data.SessionID = _Context.Session.SessionID;
+		   data.SessionID = (_Context.Session != null ? _Context.Session.SessionID : String.Empty);
 		   data.RequestType = _Context.Request.RequestType;
 		   data.RequestTime = _Context.Timestamp;
 		   data.StatusCode = _Context.Response.StatusCode;

@@ -79,7 +79,6 @@ namespace System.Web {
 			try {
 				_cache = new Cache ();
 				timeoutManager = new TimeoutManager ();
-				traceManager = new TraceManager ();
 
 				// TODO: Load all app domain data
 				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification(OnEndOfSend);
@@ -97,6 +96,7 @@ namespace System.Web {
 
 			try {
 				WebConfigurationSettings.Init (context);
+				traceManager = new TraceManager (context);
 				queueManager = new QueueManager ();
 			} catch (Exception e) {
 				_initError = e;

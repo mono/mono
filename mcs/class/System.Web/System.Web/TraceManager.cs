@@ -10,11 +10,13 @@
 
 using System;
 using System.Collections;
+using System.Web.Configuration;
 
 namespace System.Web {
 
 	internal class TraceManager {
 
+		private static string traceConfigPath = "system.web/trace";
 		private bool enabled = false;
 		private bool local_only = true;
 		private bool page_output = false;
@@ -24,8 +26,15 @@ namespace System.Web {
 		private int cur_item;
 		private TraceData[] data;
 		
-		public TraceManager ()
+		public TraceManager (HttpContext context)
 		{
+			TraceConfig config = (TraceConfig) context.GetConfig (traceConfigPath);
+			
+			enabled = config.Enabled;
+			local_only = config.LocalOnly;
+			page_output = config.PageOutput;
+			mode = config.TraceMode;
+			request_limit = config.RequestLimit;
 		}
 
 		public bool Enabled {
@@ -87,6 +96,5 @@ namespace System.Web {
 			get { return cur_item; }
 		}
 	}
-
 }
 

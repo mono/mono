@@ -1,5 +1,13 @@
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
+	* TraceContext.cs: Handle tracing when it is enabled in the config
+	file but not on the page.
+	* TraceManager.cs: Get settings from the configuration object.
+	* HttpRuntime.cs: Create trace manager in the first request start
+	so it can get configuration settings.
+	
+2004-01-10  Jackson Harper <jackson@ximian.com>
+
 	* TraceContext.cs: Save the request path in the trace data.
 	* TraceData.cs: Add RequestPath property, make some rendering
 	methods internal static so the TraceHandler can use them.
