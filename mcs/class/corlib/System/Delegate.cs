@@ -148,9 +148,8 @@ namespace System {
 		{
 			Delegate retval = null;
 
-			foreach ( Delegate next in delegates ) {
+			foreach ( Delegate next in delegates )
 				retval = Combine( retval, next );
-			}
 
 			return retval;
 		}
@@ -161,21 +160,21 @@ namespace System {
 			throw new MulticastNotSupportedException ("");
 		}
 		
-		[MonoTODO]
-		public static Delegate Remove( Delegate source, Delegate value) {
+		
+		public static Delegate Remove( Delegate source, Delegate value ) 
+		{
 			if ( source == null )
 				return null;
 				
-			if ( value == null )
-				return source;
-
-			throw new NotImplementedException ();
+			return source.RemoveImpl( value );
 		}
 
-		[MonoTODO]
-		protected virtual Delegate RemoveImpl(Delegate d)
+		protected virtual Delegate RemoveImpl( Delegate d )
 		{
-			throw new NotImplementedException();
+			if ( this.Equals( d ) )
+				return null;
+		       
+			return this;
 		}
 
 		public static bool operator ==( Delegate a, Delegate b )
