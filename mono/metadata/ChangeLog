@@ -1,4 +1,9 @@
 
+Thu Mar 3 17:53:17 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: setting the new vtable in a transparent proxy object must
+	not change the GC descriptor.
+
 Thu Mar 3 12:11:46 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: fixed compilation without GCJ support.
