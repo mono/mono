@@ -1,5 +1,9 @@
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataViewTest.cs : Enabled TestFindRows(). Added more FindRows() tests.
+
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTableTest.cs : PrimaryKeyColumnChecksNonNull() is working now.
 
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>

@@ -324,7 +324,6 @@ namespace MonoTests.System.Data
 		}
 	
 		[Test]
-		[Ignore ("Still not implemented")]
 		public void TestFindRows ()
 		{
 			DataView TestView = new DataView (dataTable);
@@ -333,7 +332,42 @@ namespace MonoTests.System.Data
 			Assertion.AssertEquals ("Dv #1", 1, Result.Length);
 			Assertion.AssertEquals ("Dv #2", "item 3", Result [0]["itemId"]);
 		}
-									    
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FindRowsWithoutSort ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Columns.Add ("col3");
+			dt.Rows.Add (new object [] {1,2,3});
+			dt.Rows.Add (new object [] {4,5,6});
+			dt.Rows.Add (new object [] {4,7,8});
+			dt.Rows.Add (new object [] {5,7,8});
+			dt.Rows.Add (new object [] {4,8,9});
+			DataView dv = new DataView (dt);
+			dv.Find (1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FindRowsInconsistentKeyLength ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Columns.Add ("col3");
+			dt.Rows.Add (new object [] {1,2,3});
+			dt.Rows.Add (new object [] {4,5,6});
+			dt.Rows.Add (new object [] {4,7,8});
+			dt.Rows.Add (new object [] {5,7,8});
+			dt.Rows.Add (new object [] {4,8,9});
+			DataView dv = new DataView (dt, null, "col1",
+				DataViewRowState.CurrentRows);
+			dv.FindRows (new object [] {1, 2, 3});
+		}
+
 		[Test]
 		[ExpectedException (typeof (DeletedRowInaccessibleException))]
 		public void TestDelete ()
