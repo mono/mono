@@ -1700,7 +1700,7 @@ filter_clause		: K_FILTER scope_block
                           }
 			| K_FILTER id
                           {
-                                FilterBlock fb = new FilterBlock (new HandlerBlock (null, (string) $2));
+                                FilterBlock fb = new FilterBlock (new HandlerBlock ((string) $2, null));
                                 $$ = fb;
                           }
 			| K_FILTER int32

@@ -1,3 +1,7 @@
+2003-08-02 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Set from label, not to label for filter block handlers
+	
 2003-07-30 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Create branch instructions with explicit offsets
