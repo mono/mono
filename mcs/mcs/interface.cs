@@ -348,7 +348,7 @@ namespace Mono.CSharp {
                         // removing the old code here.
                         //
                         
-                        im.Builder = mb;
+                        im.SetBuilder (mb);
                         
                 }
 
@@ -359,11 +359,11 @@ namespace Mono.CSharp {
 		{
 			PropertyBuilder pb;
 
-			ip.Type = this.ResolveTypeExpr (ip.Type, false, ip.Location);
-			if (ip.Type == null)
+			ip.ReturnType = this.ResolveTypeExpr (ip.ReturnType, false, ip.Location);
+			if (ip.ReturnType == null)
 				return;
 			
-			Type prop_type = ip.Type.Type;
+			Type prop_type = ip.ReturnType.Type;
 			Type [] setter_args = new Type [1];
 
 			if (prop_type == null)
@@ -418,7 +418,7 @@ namespace Mono.CSharp {
 				// HACK because System.Reflection.Emit is lame
 				//
 				Parameter [] parms = new Parameter [1];
-				parms [0] = new Parameter (ip.Type, "value", Parameter.Modifier.NONE, null);
+				parms [0] = new Parameter (ip.ReturnType, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ipp = new InternalParameters (
 					this, new Parameters (parms, null, Location.Null));
 					
@@ -430,9 +430,7 @@ namespace Mono.CSharp {
 
 			TypeManager.RegisterProperty (pb, get, set);
 			property_builders.Add (pb);
-                        ip.Builder = pb;
-                        ip.GetBuilder = get;
-                        ip.SetBuilder = set;
+			ip.SetBuilders (pb, get, set);
 		}
 
 		//
@@ -446,11 +444,11 @@ namespace Mono.CSharp {
 			//
 			MyEventBuilder eb;
 			MethodBuilder add = null, remove = null;
-			ie.Type = this.ResolveTypeExpr (ie.Type, false, ie.Location);
-			if (ie.Type == null)
+			ie.ReturnType = this.ResolveTypeExpr (ie.ReturnType, false, ie.Location);
+			if (ie.ReturnType == null)
 				return;
 			
-			Type event_type = ie.Type.Type;
+			Type event_type = ie.ReturnType.Type;
 
 			if (event_type == null)
 				return;
@@ -481,7 +479,7 @@ namespace Mono.CSharp {
 			eb.SetRemoveOnMethod (remove);
 
 			Parameter [] parms = new Parameter [1];
-			parms [0] = new Parameter (ie.Type, "value", Parameter.Modifier.NONE, null);
+			parms [0] = new Parameter (ie.ReturnType, "value", Parameter.Modifier.NONE, null);
 			InternalParameters ip = new InternalParameters (
 				this, new Parameters (parms, null, Location.Null));
 
@@ -498,7 +496,7 @@ namespace Mono.CSharp {
 			TypeManager.RegisterEvent (eb, add, remove);
 			event_builders.Add (eb);
 
-                        ie.Builder = eb;
+                        ie.SetBuilder (eb);
 		}
 
 		//
@@ -507,11 +505,11 @@ namespace Mono.CSharp {
 		void PopulateIndexer (TypeContainer parent, DeclSpace decl_space, InterfaceIndexer ii)
 		{
 			PropertyBuilder pb;
-			ii.Type = this.ResolveTypeExpr (ii.Type, false, ii.Location);
-			if (ii.Type == null)
+			ii.ReturnType = this.ResolveTypeExpr (ii.ReturnType, false, ii.Location);
+			if (ii ==null || ii.ReturnType == null)
 				return;
 			
-			Type prop_type = ii.Type.Type;
+			Type prop_type = ii.ReturnType.Type;
 			Type [] arg_types = ii.ParameterTypes (this);
 			Type [] value_arg_types;
 
@@ -586,7 +584,7 @@ namespace Mono.CSharp {
 				
 				pv = new Parameter [p.Length + 1];
 				p.CopyTo (pv, 0);
-				pv [p.Length] = new Parameter (ii.Type, "value", Parameter.Modifier.NONE, null);
+				pv [p.Length] = new Parameter (ii.ReturnType, "value", Parameter.Modifier.NONE, null);
 				Parameters value_params = new Parameters (pv, null, Location.Null);
 				value_params.GetParameterInfo (decl_space);
 				
@@ -616,9 +614,7 @@ namespace Mono.CSharp {
 
 			property_builders.Add (pb);
 
-                        ii.Builder = pb;
-                        ii.GetBuilder = get_item;
-                        ii.SetBuilder = set_item;
+			ii.SetBuilders (pb, get_item, set_item);
 		}
 
 		/// <summary>
@@ -880,72 +876,26 @@ namespace Mono.CSharp {
                 /// <summary>
 		///   Applies all the attributes.
 		/// </summary>
-                public void Emit (TypeContainer tc)
-                {
+		public void Emit (TypeContainer tc) {
                         if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (tc, this, Location, null, null,
-								  ModFlags, false);
+				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
 				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
 			}
 
-                        // Now emit attributes for each interface member
-                        if (defined_method != null) {
-                                foreach (InterfaceMethod im in defined_method) {
-                                        EmitContext ec = new EmitContext (tc, this, Location, null,
-                                                                          im.ReturnType.Type, ModFlags, false);
-  
-                                        MethodCore.LabelParameters (ec, im.Builder,
-                                                                    im.Parameters,
-                                                                    im.OptAttributes,
-                                                                    Location);
-                                        
-                                        if (im.OptAttributes != null)
-                                        	Attribute.ApplyAttributes (ec, im.Builder,
-                                                                           im, im.OptAttributes);
-                                        
-                                }
-                        }
+			EmitSubType (tc, defined_method);
+			EmitSubType (tc, defined_properties);
+			EmitSubType (tc, defined_indexer);
+			EmitSubType (tc, defined_events);
+		}
 
-                        if (defined_properties != null) {
-                                foreach (InterfaceProperty ip in defined_properties) {
-                                        EmitContext ec = new EmitContext (tc, this, Location, null,
-                                                                          null, ModFlags, false);
+		void EmitSubType (TypeContainer tc, ArrayList subType) {
+			if (subType == null)
+				return;
                                         
-                                        if (ip.OptAttributes != null)
-                                        	Attribute.ApplyAttributes (ec, ip.Builder, ip, ip.OptAttributes);
-
-                                        if (ip.GetAttributes != null)
-                                                Attribute.ApplyAttributes (ec, ip.GetBuilder, ip, ip.GetAttributes);
-
-                                        if (ip.SetAttributes != null)
-                                                Attribute.ApplyAttributes (ec, ip.SetBuilder, ip, ip.SetAttributes);
-                                }
-                        }
-
-                        if (defined_events != null) {
-                                foreach (InterfaceEvent ie in defined_events) {
-                                        EmitContext ec = new EmitContext (tc, this, Location, null,
-                                                                          null, ModFlags, false);
-                                        
-                                        if (ie.OptAttributes != null)
-                                        	Attribute.ApplyAttributes (ec, ie.Builder, ie, ie.OptAttributes);
-                                }
-                        }
-
-                        if (defined_indexer != null) {
-                                foreach (InterfaceIndexer ii in defined_indexer) {
-                                        EmitContext ec = new EmitContext (tc, this, Location, null,
-                                                                          null, ModFlags, false);
-
-                                        if (ii.OptAttributes != null)
-                                        	Attribute.ApplyAttributes (ec, ii.Builder, ii, ii.OptAttributes);
-                                        
-                                        if (ii.GetAttributes != null)
-                                                Attribute.ApplyAttributes (ec, ii.GetBuilder, ii, ii.GetAttributes);
-                                        
-                                        if (ii.SetAttributes != null)
-                                                Attribute.ApplyAttributes (ec, ii.SetBuilder, ii, ii.SetAttributes);
-                                }
+			foreach (InterfaceMemberBase imb in subType) {
+				//TODO: set it somewhere earlier
+				imb.ModFlags = ModFlags;
+				imb.Emit (tc, this);
                         }
                 }
 
@@ -1034,72 +984,147 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class InterfaceMemberBase {
-		public readonly string Name;
+	public abstract class InterfaceMemberBase: MemberCore, IAttributeSupport {
 		public readonly bool IsNew;
-		public Attributes OptAttributes;
+                // Why is not readonly
+		public Expression ReturnType;
 		
-		public InterfaceMemberBase (string name, bool is_new, Attributes attrs)
+		public InterfaceMemberBase (Expression type, string name, bool is_new, Attributes attrs, Location loc):
+			base (name, attrs, loc)
 		{
-			Name = name;
+                	ReturnType = type;
 			IsNew = is_new;
-			OptAttributes = attrs;
 		}
-	}
+
+		public virtual EmitContext Emit (TypeContainer tc, DeclSpace ds) {
+			EmitContext ec = null;
+			if (OptAttributes != null) {
+				ec = new EmitContext (tc, ds, Location, null, null, ModFlags, false);
+
+				Attribute.ApplyAttributes (ec, null, this, OptAttributes);
+			}
+
+			return ec;
+		}
+
+		#region IAttributeSupport Members
+		public abstract void SetCustomAttribute (CustomAttributeBuilder customBuilder);
+		#endregion
 	
-	public class InterfaceProperty : InterfaceMemberBase {
-		public readonly bool HasSet;
-		public readonly bool HasGet;
-		public readonly Location Location;
-		public Expression Type;
-                public PropertyBuilder Builder;
-                public MethodBuilder GetBuilder;
-                public MethodBuilder SetBuilder;
-                public Attributes GetAttributes;
-                public Attributes SetAttributes;
-		
-		public InterfaceProperty (Expression type, string name,
-					  bool is_new, bool has_get, bool has_set,
-					  Attributes prop_attrs, Attributes get_attrs,
-                                          Attributes set_attrs, Location loc)
-			: base (name, is_new, prop_attrs)
-		{
-			Type = type;
-			HasGet = has_get;
-			HasSet = has_set;
-                        GetAttributes = get_attrs;
-                        SetAttributes = set_attrs;
-			Location = loc;
+		public override bool Define (TypeContainer parent) {
+			throw new NotImplementedException ();
 		}
 	}
 
+	abstract public class InterfaceSetGetBase: InterfaceMemberBase 
+	{
+		internal sealed class PropertyAccessor: IAttributeSupport 
+		{
+			Attributes m_attrs;
+			MethodBuilder m_builder;
+
+			public PropertyAccessor (Attributes attrs) {
+				m_attrs = attrs;
+			}
+                        
+			public MethodBuilder Builder {
+				set {
+					m_builder = value;
+				}
+			}
+                        
+			public void Emit (EmitContext ec) {
+				if (m_attrs != null) {
+					Attribute.ApplyAttributes (ec, this, this, m_attrs);
+                                }
+			}
+					
+			public void SetCustomAttribute (CustomAttributeBuilder customAttribute) {
+				m_builder.SetCustomAttribute (customAttribute);
+			}
+		}
+            
+
+		PropertyAccessor m_get;
+		PropertyAccessor m_set;
+		protected PropertyBuilder Builder;
+
+		public readonly bool HasSet;
+		public readonly bool HasGet;
+		
+		public InterfaceSetGetBase (Expression type, string name, bool is_new,
+						bool has_get, bool has_set, Attributes prop_attrs, Attributes get_attrs,
+                        Attributes set_attrs, Location loc)
+			:base (type, name, is_new, prop_attrs, loc)
+		{
+			HasGet = has_get;
+			HasSet = has_set;
+			m_get = new PropertyAccessor (get_attrs);
+			m_set = new PropertyAccessor (set_attrs);
+			ReturnType = type;
+		}
+
+		public override EmitContext Emit (TypeContainer tc, DeclSpace ds) {
+			EmitContext ec = base.Emit (tc, ds);
+			m_get.Emit (ec);
+			m_set.Emit (ec);
+
+			return ec;
+		}
+
+		// TODO: It would be nice to have this method private
+		public void SetBuilders (PropertyBuilder pb, MethodBuilder gb, MethodBuilder sb) {
+			Builder = pb;
+			m_get.Builder = gb;
+			m_set.Builder = sb;
+		}
+
+		public override void SetCustomAttribute (CustomAttributeBuilder customBuilder) {
+			Builder.SetCustomAttribute (customBuilder);
+		}
+
+	}
+
 	public class InterfaceEvent : InterfaceMemberBase {
-		public readonly Location Location;
-		public Expression Type;
-                public MyEventBuilder Builder;
+		MyEventBuilder Builder;
                 
 		public InterfaceEvent (Expression type, string name, bool is_new, Attributes attrs,
 				       Location loc)
-			: base (name, is_new, attrs)
+			: base (type, name, is_new, attrs, loc)
 		{
-			Type = type;
-			Location = loc;
+		}
+
+		public override string GetSignatureForError () {
+			return TypeManager.GetFullNameSignature (Builder);
+		}
+
+		public void SetBuilder (MyEventBuilder eb) {
+			Builder = eb;
+		}
+
+		public override void SetCustomAttribute (CustomAttributeBuilder customBuilder) {
+			Builder.SetCustomAttribute (customBuilder);
 		}
 	}
 	
 	public class InterfaceMethod : InterfaceMemberBase {
-		public Expression ReturnType;
 		public readonly Parameters Parameters;
-		public readonly Location Location;
-                public MethodBuilder Builder;
+		MethodBuilder Builder;
                 
 		public InterfaceMethod (Expression return_type, string name, bool is_new, Parameters args,
 					Attributes attrs, Location l)
-			: base (name, is_new, attrs)
+			: base (return_type, name, is_new, attrs, l)
 		{
-			this.ReturnType = return_type;
 			this.Parameters = args;
-			Location = l;
+		}
+
+		public override EmitContext Emit(TypeContainer tc, DeclSpace ds) {
+			EmitContext ec = base.Emit(tc, ds);
+			if (ec == null) 
+				ec = new EmitContext (tc, ds, Location, null, null, ModFlags, false);
+
+			MethodCore.LabelParameters (ec, Builder, Parameters, OptAttributes, Location);
+			return ec;
 		}
 
 		/// <summary>
@@ -1120,40 +1145,55 @@ namespace Mono.CSharp {
 			return (IsNew ? "new-" : "") + ret.FullName + "(" + args + ")";
 		}
 
+		public override string GetSignatureForError () {
+			return TypeManager.CSharpSignature (Builder);
+		}
+
 		public Type [] ParameterTypes (DeclSpace ds)
 		{
 			return Parameters.GetParameterInfo (ds);
 		}
-	}
 
-	public class InterfaceIndexer : InterfaceMemberBase {
-		public readonly bool HasGet, HasSet;
-		public readonly Parameters Parameters;
-		public readonly Location Location;
-		public Expression Type;
-                public PropertyBuilder Builder;
-                public MethodBuilder GetBuilder;
-                public MethodBuilder SetBuilder;
-                public Attributes GetAttributes;
-                public Attributes SetAttributes;
-                
-		public InterfaceIndexer (Expression type, Parameters args, bool do_get, bool do_set,
-					 bool is_new, Attributes attrs,
-                                         Attributes get_attrs, Attributes set_attrs,
-                                         Location loc)
-			: base ("", is_new, attrs)
-		{
-			Type = type;
-			Parameters = args;
-			HasGet = do_get;
-			HasSet = do_set;
-                        GetAttributes = get_attrs;
-                        SetAttributes = set_attrs;
-			Location = loc;
+		public void SetBuilder (MethodBuilder mb) {
+			Builder = mb;
 		}
 
-		public Type [] ParameterTypes (DeclSpace ds)
+		public override void SetCustomAttribute(CustomAttributeBuilder customBuilder) {
+			Builder.SetCustomAttribute (customBuilder);
+		}
+	}
+
+	public class InterfaceProperty : InterfaceSetGetBase 
+	{
+		public InterfaceProperty (Expression type, string name,
+			bool is_new, bool has_get, bool has_set,
+			Attributes prop_attrs, Attributes get_attrs,
+			Attributes set_attrs, Location loc)
+			: base (type, name, is_new, has_get, has_set, prop_attrs, get_attrs, set_attrs, loc)
 		{
+		}
+
+		public override string GetSignatureForError () {
+			return TypeManager.CSharpSignature (Builder, false);
+		}	
+	}
+
+	public class InterfaceIndexer : InterfaceSetGetBase {
+		public readonly Parameters Parameters;
+                
+		public InterfaceIndexer (Expression type, Parameters args, bool do_get, bool do_set,
+					 bool is_new, Attributes attrs, Attributes get_attrs, Attributes set_attrs,
+                                         Location loc)
+			: base (type, "Item", is_new, do_get, do_set, attrs, get_attrs, set_attrs, loc)
+		{
+			Parameters = args;
+		}
+
+		public override string GetSignatureForError() {
+			return TypeManager.CSharpSignature (Builder, true);
+		}
+
+		public Type [] ParameterTypes (DeclSpace ds) {
 			return Parameters.GetParameterInfo (ds);
 		}
 	}

@@ -51,6 +51,9 @@ namespace Mono.CSharp {
 
 		public abstract bool Define (TypeContainer parent);
 
+		// 
+		// Returns full member name for error message
+		//
 		public virtual string GetSignatureForError () {
 			return Name;
 		}

@@ -1,3 +1,15 @@
+2004-02-09  Marek Safar  <marek.safar@seznam.cz>
+
+        * decl.cs (GetSignatureForError): New virtual method to get full name
+	  for error messages.
+        
+	* attribute.cs (IAttributeSupport): New interface for attribute setting.
+	  Now it is possible to rewrite ApplyAttributes method to be less if/else.
+
+        * interface.cs : All InterfaceXXX classes are now derived from MemberCore.
+	  Duplicated members and code in these classes has been removed.
+	  Better encapsulation in these classes.
+
 2004-02-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs (Assign.DoResolve): When dealing with compound

@@ -620,7 +620,7 @@ namespace Mono.CSharp {
 				else
 					return false;
 			} else if (element is Property || element is Indexer ||
-				   element is InterfaceProperty || element is InterfaceIndexer) {
+				   element is InterfaceProperty || element is InterfaceIndexer || element is InterfaceProperty.PropertyAccessor) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
@@ -859,7 +859,17 @@ namespace Mono.CSharp {
 						return;
 					}
 
-					if (kind is Method || kind is Operator || kind is InterfaceMethod ||
+					if (kind is IAttributeSupport) {
+						if (attr_type == TypeManager.methodimpl_attr_type && a.ImplOptions == MethodImplOptions.InternalCall) {
+							((MethodBuilder) builder).SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+						} 
+						else {
+							IAttributeSupport attributeSupport = kind as IAttributeSupport;
+							attributeSupport.SetCustomAttribute (cb);
+						}
+					}
+					else if (kind is Method || kind is Operator || kind is InterfaceMethod ||
+
 					    kind is Accessor) {
 						if (attr_type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
@@ -1199,5 +1209,9 @@ namespace Mono.CSharp {
                         
 			return false;
 		}
+	}
+
+	public interface IAttributeSupport {
+		void SetCustomAttribute (CustomAttributeBuilder customBuilder);
 	}
 }
