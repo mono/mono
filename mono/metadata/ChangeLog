@@ -1,3 +1,11 @@
+2004-01-25  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_inflate_generic_type): Added support for
+	MONO_TYPE_GENERICINST.
+
+	* reflection.c (mono_reflection_inflate_method_or_ctor): Also
+	inflate methods on open constructed types.	
+
 2004-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object.c: fire ProcessExit event in the root AppDomain after running
