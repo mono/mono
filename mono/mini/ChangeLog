@@ -1,3 +1,12 @@
+2004-11-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h: Add mono_arch_get_rethrow_exception () arch specific function.
+	* mini-ops.h: Add OP_RETHROW.
+
+	* mini.c inssel.brg: Distinguish between THROW and RETHROW.
+
+	* cpu-amd64.c mini-amd64.c exceptions-amd64.c: Add support for OP_RETHROW.
+
 2004-11-05  Geoff Norton  <gnorton@customerdna.com>
 	
 	* helpers.c: Change otool arguments from -V -v -t to -v -t on Darwin
