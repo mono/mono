@@ -3428,7 +3428,7 @@ unsafe_statement
 
 fixed_statement
 	: FIXED OPEN_PARENS 
-	  pointer_type fixed_pointer_declarators 
+	  type fixed_pointer_declarators 
 	  CLOSE_PARENS 
 	  {
 		Block assign_block = new Block (current_block, true);

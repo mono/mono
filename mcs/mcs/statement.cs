@@ -531,9 +531,16 @@ namespace Mono.CSharp {
 			// If test is null, there is no test, and we are just
 			// an infinite loop
 			//
-			if (Test != null)
-				EmitBoolExpression (ec, Test, loop, true);
-			else
+			if (Test != null){
+				//
+				// The Resolve code already catches the case for Test == BoolConstant (false)
+				// so we know that this is true
+				//
+				if (Test is BoolConstant)
+					ig.Emit (OpCodes.Br, loop);
+				else
+					EmitBoolExpression (ec, Test, loop, true);
+			} else
 				ig.Emit (OpCodes.Br, loop);
 			ig.MarkLabel (ec.LoopEnd);
 
@@ -4148,6 +4155,11 @@ namespace Mono.CSharp {
 
 			data = new FixedData [declarators.Count];
 
+			if (!expr_type.IsPointer){
+				Report.Error (209, loc, "Variables in a fixed statement must be pointers");
+				return false;
+			}
+			
 			int i = 0;
 			foreach (Pair p in declarators){
 				VariableInfo vi = (VariableInfo) p.First;
