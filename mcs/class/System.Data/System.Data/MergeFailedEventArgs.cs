@@ -17,7 +17,7 @@ namespace System.Data
 		Exception errors;
 		bool f_continue;
 
-		public FillErrorEventArgs (DataTable dataTable, string conflict)
+		public MergeFailedEventArgs (DataTable dataTable, string conflict)
 		{
 			this.data_table = dataTable;
 			this.conflict = conflict;
