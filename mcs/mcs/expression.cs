@@ -1649,7 +1649,7 @@ namespace Mono.CSharp {
 			       TypeManager.CSharpName (r) + "'");
 		}
 		
-		void error19 ()
+		void Error_OperatorCannotBeApplied ()
 		{
 			Error_OperatorCannotBeApplied (loc, OperName (oper), left.Type, right.Type);
 		}
@@ -1668,7 +1668,7 @@ namespace Mono.CSharp {
 
 			e = ForceConversion (ec, right, TypeManager.int32_type);
 			if (e == null){
-				error19 ();
+				Error_OperatorCannotBeApplied ();
 				return null;
 			}
 			right = e;
@@ -1682,7 +1682,7 @@ namespace Mono.CSharp {
 
 				return this;
 			}
-			error19 ();
+			Error_OperatorCannotBeApplied ();
 			return null;
 		}
 
@@ -1690,6 +1690,43 @@ namespace Mono.CSharp {
 		{
 			Type l = left.Type;
 			Type r = right.Type;
+
+			//
+			// Step 1: Perform Operator Overload location
+			//
+			Expression left_expr, right_expr;
+			
+			string op = oper_names [(int) oper];
+
+			bool overload_failed = false;
+			MethodGroupExpr union;
+			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
+			if (r != l){
+				right_expr = MemberLookup (
+					ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
+				union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
+			} else
+				union = (MethodGroupExpr) left_expr;
+			
+			if (union != null) {
+				Arguments = new ArrayList ();
+				Arguments.Add (new Argument (left, Argument.AType.Expression));
+				Arguments.Add (new Argument (right, Argument.AType.Expression));
+
+				method = Invocation.OverloadResolve (ec, union, Arguments, Location.Null);
+				if (method != null) {
+					MethodInfo mi = (MethodInfo) method;
+
+					type = mi.ReturnType;
+					return this;
+				} else {
+					overload_failed = true;
+				}
+			}	
+
+			//
+			// Step 2: Default operations on CLI native types.
+			//
 
 			//
 			// Step 0: String concatenation (because overloading will get this wrong)
@@ -1702,7 +1739,7 @@ namespace Mono.CSharp {
 				if (l == TypeManager.string_type){
 					
 					if (r == TypeManager.void_type) {
-						error19 ();
+						Error_OperatorCannotBeApplied ();
 						return null;
 					}
 					
@@ -1735,7 +1772,7 @@ namespace Mono.CSharp {
 					// object + string
 
 					if (l == TypeManager.void_type) {
-						error19 ();
+						Error_OperatorCannotBeApplied ();
 						return null;
 					}
 					
@@ -1764,42 +1801,58 @@ namespace Mono.CSharp {
 				}
 			}
 
-			//
-			// Step 1: Perform Operator Overload location
-			//
-			Expression left_expr, right_expr;
-			
-			string op = oper_names [(int) oper];
-
-			MethodGroupExpr union;
-			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
-			if (r != l){
-				right_expr = MemberLookup (
-					ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
-				union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
-			} else
-				union = (MethodGroupExpr) left_expr;
-			
-			if (union != null) {
-				Arguments = new ArrayList ();
-				Arguments.Add (new Argument (left, Argument.AType.Expression));
-				Arguments.Add (new Argument (right, Argument.AType.Expression));
-
-				method = Invocation.OverloadResolve (ec, union, Arguments, loc);
-				if (method != null) {
-					MethodInfo mi = (MethodInfo) method;
-
-					type = mi.ReturnType;
+			if (oper == Operator.Equality || oper == Operator.Inequality){
+				if (l == TypeManager.bool_type || r == TypeManager.bool_type){
+					if (r != TypeManager.bool_type || l != TypeManager.bool_type){
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+					
+					type = TypeManager.bool_type;
 					return this;
-				} else {
-					error19 ();
-					return null;
 				}
-			}	
 
-			//
-			// Step 2: Default operations on CLI native types.
-			//
+				//
+				// operator != (object a, object b)
+				// operator == (object a, object b)
+				//
+				// For this to be used, both arguments have to be reference-types.
+				// Read the rationale on the spec (14.9.6)
+				//
+				// Also, if at compile time we know that the classes do not inherit
+				// one from the other, then we catch the error there.
+				//
+				if (!(l.IsValueType || r.IsValueType)){
+					type = TypeManager.bool_type;
+
+					if (l == r)
+						return this;
+					
+					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
+						return this;
+
+					//
+					// Also, a standard conversion must exist from either one
+					//
+					if (!(StandardConversionExists (left, r) ||
+					      StandardConversionExists (right, l))){
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+					//
+					// We are going to have to convert to an object to compare
+					//
+					if (l != TypeManager.object_type)
+						left = new EmptyCast (left, TypeManager.object_type);
+					if (r != TypeManager.object_type)
+						right = new EmptyCast (right, TypeManager.object_type);
+
+					//
+					// FIXME: CSC here catches errors cs254 and cs252
+					//
+					return this;
+				}
+			}
 
 			// Only perform numeric promotions on:
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
@@ -1868,7 +1921,7 @@ namespace Mono.CSharp {
 				//
 				if (oper == Operator.Addition){
 					if (lie && rie){
-						error19 ();
+						Error_OperatorCannotBeApplied ();
 						return null;
 					}
 
@@ -1878,7 +1931,7 @@ namespace Mono.CSharp {
 ;
 					
 					if (underlying_type != other_type){
-						error19 ();
+						Error_OperatorCannotBeApplied ();
 						return null;
 					}
 
@@ -1919,55 +1972,13 @@ namespace Mono.CSharp {
 
 			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
 				if (l != TypeManager.bool_type || r != TypeManager.bool_type){
-					error19 ();
+					Error_OperatorCannotBeApplied ();
 					return null;
 				}
 
 				type = TypeManager.bool_type;
 				return this;
 			} 
-
-			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if (l == TypeManager.bool_type || r == TypeManager.bool_type){
-					if (r != TypeManager.bool_type || l != TypeManager.bool_type){
-						error19 ();
-						return null;
-					}
-					
-					type = TypeManager.bool_type;
-					return this;
-				}
-
-				//
-				// operator != (object a, object b)
-				// operator == (object a, object b)
-				//
-				// For this to be used, both arguments have to be reference-types.
-				// Read the rationale on the spec (14.9.6)
-				//
-				// Also, if at compile time we know that the classes do not inherit
-				// one from the other, then we catch the error there.
-				//
-				if (!(l.IsValueType || r.IsValueType)){
-					type = TypeManager.bool_type;
-
-					if (l == r)
-						return this;
-					
-					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
-						return this;
-
-					//
-					// We are going to have to convert to an object to compare
-					//
-					if (l != TypeManager.object_type)
-						left = new EmptyCast (left, TypeManager.object_type);
-					if (r != TypeManager.object_type)
-						right = new EmptyCast (right, TypeManager.object_type);
-
-					return this;
-				}
-			}
 
 			//
 			// operator & (bool x, bool y)
@@ -1998,8 +2009,13 @@ namespace Mono.CSharp {
 			//
 			// We are dealing with numbers
 			//
+			if (overload_failed){
+				Error_OperatorCannotBeApplied ();
+				return null;
+			}
+
 			if (!DoNumericPromotions (ec, l, r)){
-				error19 ();
+				Error_OperatorCannotBeApplied ();
 				return null;
 			}
 
@@ -2022,7 +2038,7 @@ namespace Mono.CSharp {
 					      (l == TypeManager.uint64_type)))
 						type = l;
 				} else {
-					error19 ();
+					Error_OperatorCannotBeApplied ();
 					return null;
 				}
 			}
