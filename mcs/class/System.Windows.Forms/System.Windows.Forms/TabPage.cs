@@ -30,10 +30,11 @@ namespace System.Windows.Forms {
 		}
 
 		private string toolTipText;
+		private bool   added;
 
 		[MonoTODO]
 		public TabPage() {
-			//FIXME:
+			added = false;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
@@ -94,6 +95,12 @@ namespace System.Windows.Forms {
 			}
 			else
 				base.SetBoundsCore( x, y, width, height, specified );
+		}
+
+		internal bool isAdded
+		{
+			get { return added; }
+			set { added = value;}
 		}
 	}
 }

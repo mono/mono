@@ -1,4 +1,8 @@
 2003-04-30  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* TabControl.cs
+	* TabPage.cs : prevent pages from being added to the TabControl multiple times
+
+2003-04-30  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : some fixes, added call to OnControlAdded, update visibility flag in Show and Hide
 	* GroupBox.cs
 	* Label.cs

@@ -39,7 +39,7 @@ namespace System.Windows.Forms {
 				int index = IndexOf ( value );
 				base.Remove ( value );
 				if ( index != -1 && owner.IsHandleCreated )
-					((TabControl) owner).removeTab ( index );
+					((TabControl) owner).removeTab ( value, index );
 			}
 		}
 
@@ -513,17 +513,22 @@ namespace System.Windows.Forms {
 		}
 
 		private void addPage ( Control page, int index ) {
+			TabPage tabPage = page as TabPage;
+			if ( tabPage.isAdded )
+				return;
+
 			TCITEM header = new TCITEM();
 			header.mask = (uint) TabControlItemFlags.TCIF_TEXT;
-			header.pszText = page.Text;
+			header.pszText = tabPage.Text;
 				
 			sendMessageHelper ( TabControlMessages.TCM_INSERTITEM, index, ref header );
+			tabPage.isAdded = true;
 
 			if ( index == SelectedIndex )
 				selectPage ( index );
 			else {
-				page.Visible = false;
-				page.SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
+				tabPage.Visible = false;
+				tabPage.SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
 			}
 		}
 
@@ -568,13 +573,17 @@ namespace System.Windows.Forms {
 		}
 
 		private void removeAllTabs ( ) {
+			for (int i = 0; i < Controls.Count; i++ )
+				( ( TabPage ) Controls[i] ).isAdded = false;
+
 			if ( IsHandleCreated )
 				Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_DELETEALLITEMS, 0, 0 );
 		}
 
-		private void removeTab ( int index ) {
+		private void removeTab ( Control c, int index ) {
 			if ( IsHandleCreated )
 				Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_DELETEITEM, index, 0 );
+			( ( TabPage ) c ).isAdded = false;
 		}
 
 		private void showOrHidePages ( int index ) {
@@ -583,6 +592,8 @@ namespace System.Windows.Forms {
 		}
 
 		private void recreate ( ) {
+			removeAllTabs ( );
+
 			if ( IsHandleCreated ) {
 				RecreateHandle ( );
 
