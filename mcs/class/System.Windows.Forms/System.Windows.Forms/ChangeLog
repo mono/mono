@@ -1,3 +1,8 @@
+2003-08-03 Alexandre Pigolkine <pigolkine@gmx.de>
+	* CheckBox.cs			12x12 checkmark dimensions for a moment
+	* ControlPaint.cs		DrawRadioButton implemented
+	* RadioButton.cs		painting is in OnPaint
+
 2003-08-02 Alexandre Pigolkine <pigolkine@gmx.de>
 	* CheckBox.cs			painting in OnPaint implemented
 	* CheckedListBox.cs		changes to painting code

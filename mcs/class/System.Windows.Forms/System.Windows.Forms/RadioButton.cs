@@ -25,11 +25,15 @@ namespace System.Windows.Forms {
 
 		public RadioButton()
 		{
+			SubClassWndProc_ = true;
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			callWinControlProcMask &= ~(CallWinControlProcMask.MOUSE_MESSAGES | CallWinControlProcMask.KEYBOARD_MESSAGES);
+			
 			appearance = Appearance.Normal;
 			autoCheck  = true;
 			checkAlign = ContentAlignment.MiddleLeft;
 			checked_   = false;
-			TextAlign  = ContentAlignment.MiddleLeft;			
+			TextAlign  = ContentAlignment.MiddleLeft;
 		}
 
 		public Appearance Appearance {
@@ -183,11 +187,18 @@ namespace System.Windows.Forms {
 			updateCheck ( );
 		}
 
-		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs mevent)
+		protected override void OnMouseDown (MouseEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			base.OnMouseDown (e);
 		}
+		
+		protected override void OnMouseUp(MouseEventArgs e) 
+		{
+			Checked = Checked ? false : true;
+			Invalidate ();
+			base.OnMouseUp(e);
+		}
+		
 		[MonoTODO]
 		protected override bool ProcessMnemonic(char charCode)
 		{
@@ -209,6 +220,54 @@ namespace System.Windows.Forms {
 				Win32.SendMessage ( Handle, (int) ButtonMessages.BM_SETCHECK, 
 							Checked ? (int) NativeButtonState.BST_CHECKED :
 								  ( int ) NativeButtonState.BST_UNCHECKED, 0 );
+		}
+		
+		protected override void OnPaint (PaintEventArgs e) 
+		{
+			Rectangle paintBounds = ClientRectangle;
+			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
+			Graphics paintOn = Graphics.FromImage(bmp);
+			
+			SolidBrush sb = new SolidBrush (BackColor);
+			paintOn.FillRectangle (sb, paintBounds);
+			sb.Dispose ();
+			
+			// FIXME: Width/Heigth of radiobutton are not correct
+			Rectangle checkRect = new Rectangle(paintBounds.Left,paintBounds.Top,12,12);
+			Rectangle textRect = new Rectangle( checkRect.Right,paintBounds.Top,paintBounds.Width - checkRect.Width - 1,paintBounds.Height);
+			//paintOn.DrawString(Text, Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
+			Win32.DrawText(paintOn, Text, Font, ForeColor, textRect, TextAlign);
+		
+			ButtonState state = ButtonState.Normal;
+			if (FlatStyle == FlatStyle.Flat) {
+				state |= ButtonState.Flat;
+			}
+			
+			if (Checked) {
+				state |= ButtonState.Checked;
+			}
+			
+			ControlPaint.DrawRadioButton (paintOn, checkRect, state);
+			
+			if (Focused) {
+				ControlPaint.DrawFocusRectangle (paintOn, textRect);
+			}
+			
+			e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
+			paintOn.Dispose ();
+			bmp.Dispose();
+		}
+		
+		protected override void WndProc (ref Message m) {
+			switch (m.Msg) {
+				case Msg.WM_DRAWITEM: {
+					m.Result = (IntPtr)1;
+				}
+					break;
+				default:
+					base.WndProc (ref m);
+					break;
+			}
 		}
 	 }
 }

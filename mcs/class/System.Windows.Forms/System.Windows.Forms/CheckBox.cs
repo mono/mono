@@ -252,7 +252,8 @@ namespace System.Windows.Forms {
 			paintOn.FillRectangle (sb, paintBounds);
 			sb.Dispose ();
 			
-			Rectangle checkRect = new Rectangle(paintBounds.Left,paintBounds.Top,paintBounds.Height,paintBounds.Height);
+			// FIXME: Width/Heigth of checkmark are not correct
+			Rectangle checkRect = new Rectangle(paintBounds.Left,paintBounds.Top,12,12);
 			Rectangle textRect = new Rectangle( checkRect.Right,paintBounds.Top,paintBounds.Width - checkRect.Width - 1,paintBounds.Height);
 			paintOn.DrawString(Text, Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
 			

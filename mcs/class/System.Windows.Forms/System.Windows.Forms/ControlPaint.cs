@@ -427,11 +427,21 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawRadioButton(
-			Graphics graphics,
-			Rectangle rectangle,
-			ButtonState state) {
-			//FIXME:
+		public static void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
+			Bitmap bmp = new Bitmap(rectangle.Width+1, rectangle.Height+1,graphics);
+			Graphics g = Graphics.FromImage(bmp);
+			// FIXME: fill new context with some color here?
+			IntPtr hdc = g.GetHdc();
+			RECT rc = new RECT();
+			rc.left = 0;
+			rc.top = 0;
+			rc.right = rectangle.Width;
+			rc.bottom = rectangle.Height;
+			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONRADIO);
+			g.ReleaseHdc(hdc);
+			g.Dispose();
+			graphics.DrawImage(bmp, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			bmp.Dispose();
 		}
 		
 		[MonoTODO]
@@ -442,7 +452,7 @@ namespace System.Windows.Forms {
 			int width,
 			int height,
 			ButtonState state) {
-			//FIXME:
+			DrawRadioButton(graphics, new Rectangle(x, y, width, height), state);
 		}
 		
 		[MonoTODO]
