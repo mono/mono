@@ -1,4 +1,13 @@
 2004-08-11 Sachin Kumar <skumar1@novell.com>
+	* LocalVariables1.vb:
+	* LocalVariablesA.vb:
+	* LocalVariablesB.vb:
+	* LocalVariablesC1.vb:
+	* LocalVariablesC2.vb:
+	* LocalVariablesC3.vb:
+	* Test.Sources: Included new tests
+
+2004-08-11 Sachin Kumar <skumar1@novell.com>
 	* BlockStatementsA.vb:
 	* BlockStatementsC1.vb:
 	* BlockStatementsC2.vb:

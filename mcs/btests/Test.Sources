@@ -167,7 +167,9 @@ ArithmeticOperatorsA \
 LikeOperator \
 LikeOperatorA \
 GetType \
-BlockStatementsA
+BlockStatementsA \
+LocalVariablesA \
+LocalVariablesB
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -353,7 +355,10 @@ RelationalOperatorsC1 \
 BlockStatementsC1 \
 BlockStatementsC2 \
 BlockStatementsC3 \
-BlockStatementsC4
+BlockStatementsC4 \
+LocalVariablesC1 \
+LocalVariablesC2 \
+LocalVariablesC3
 
 # All negetive test cases which should fail at
 # runtime goes here
@@ -379,6 +384,7 @@ ArithmeticOperators1 \
 ArithmeticOperators2 \
 ArithmeticOperators3 \
 LikeOperator1 \
-RelationalOperators1
+RelationalOperators1 \
+LocalVariables1
 
 
