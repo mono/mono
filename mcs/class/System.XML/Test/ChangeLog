@@ -1,3 +1,9 @@
+2002-10-24  Nick Drochak  <ndrochak@gol.com>
+
+	* System.XML_test.build: remove legacy build of a standalone exe of the
+	unit tests
+	* XmlDocumentTests.cs: Cannot use a URI with Load().
+
 2002-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextReaderTests.cs: fixed TestEntityReferenceInsideText.

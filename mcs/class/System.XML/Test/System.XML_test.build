@@ -23,21 +23,6 @@
 			</references>
 			<arg value="/r:.\System.XML.dll"/>
 		</csc>
-
-		<csc target="exe" output="RunTests.System.XML.exe" debug="${debug}">
-			<sources>
-				<includes name="**/*.cs"/>
-				<excludes name="**/AllTests.cs"/>
-				<excludes name="**/MartinTests.cs"/>
-			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitBase.dll"/>
-			</references>
-			<arg value="/nowarn:1595"/>
-			<arg value="/noconfig"/>
-			<arg value="/r:.\System.XML.dll"/>
-		</csc>
-
 	</target>
 
 	<target name="test" depends="assemblies">
