@@ -1,3 +1,7 @@
+2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Binder.cs: Add support for byref types. Fixes #69140.
+
 2004-10-12  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoGenericInst): Call initialize() just

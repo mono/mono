@@ -168,6 +168,8 @@ namespace System.Reflection
 				if (value == null)
 					return null;
 				Type vtype = value.GetType ();
+				if (type.IsByRef)
+					type = type.GetElementType ();
 				if (vtype == type || type.IsAssignableFrom (vtype))
 					return value;
 				if (vtype.IsArray && type.IsArray){
@@ -196,6 +198,9 @@ namespace System.Reflection
 
 				TypeCode fromt = Type.GetTypeCode (from);
 				TypeCode tot = Type.GetTypeCode (to);
+
+				if (to.IsByRef && !from.IsByRef)
+					return check_type (from, to.GetElementType ());
 
 				switch (fromt) {
 				case TypeCode.Char:
