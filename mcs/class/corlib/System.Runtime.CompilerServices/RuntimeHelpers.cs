@@ -40,9 +40,7 @@ namespace System.Runtime.CompilerServices
 				return true;
 			if ((o1 == null) || (o2 == null))
 				return false;
-			// FIXME: the following does not work due to bug #41550
-			//if (o1 is ValueType)
-			if (o1.GetType ().IsValueType)
+			if (o1 is ValueType)
 				return ValueType.InternalEquals (o1, o2);
 			else
 				return Object.Equals (o1, o2);

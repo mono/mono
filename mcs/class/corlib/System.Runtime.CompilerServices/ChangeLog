@@ -1,3 +1,8 @@
+2003-04-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* RuntimeHelpers.cs: Remove workaround for bug #41550 since it is fixed
+	now.
+
 2003-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* RuntimeHelpers.cs: Enable the last changes again since they no
