@@ -1,3 +1,12 @@
+2002-09-21  Martin Baulig  <martin@gnome.org>
+
+	* ModuleBuilder.cs (ModuleBuilder.symbol_writer): Make this
+	field internal, not private.
+	(ModuleBuilder.SymWriter_DefineLocalVariable): Removed.
+
+	* LocalBuilder.cs (LocalBuilder.SetLocalSymInfo): Use the
+	ISymbolWriter's DefineLocalVariable() method instead of the
+	IMonoSymbolWriter hack.
 
 Mon Sep 16 19:02:58 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -23,8 +23,7 @@ namespace System.Reflection.Emit {
 		private byte[] guid;
 		private int table_idx;
 		internal AssemblyBuilder assemblyb;
-		private ISymbolWriter symbol_writer;
-		private MethodInfo symwriter_define_local;
+		internal ISymbolWriter symbol_writer;
 		Hashtable name_cache;
 
 		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo) {
@@ -80,42 +79,8 @@ namespace System.Reflection.Emit {
 
 				symbol_writer = (ISymbolWriter) instance;
 			}
-
-			// Get the DefineLocalVariable method.
-			{
-				Type[] arg_types = new Type [6];
-				arg_types [0] = typeof (string);
-				arg_types [1] = typeof (LocalBuilder);
-				arg_types [2] = typeof (FieldAttributes);
-				arg_types [3] = typeof (int);
-				arg_types [4] = typeof (int);
-				arg_types [5] = typeof (int);
-
-				symwriter_define_local = type.GetMethod ("DefineLocalVariable", arg_types);
-
-				if (symwriter_define_local == null)
-					throw new NotSupportedException ();
-			}
 		}
 
-		internal void SymWriter_DefineLocalVariable (string name, LocalBuilder local,
-							     FieldAttributes attributes,
-							     int position, int startOffset, int endOffset)
-		{
-			if ((symbol_writer == null) || (symwriter_define_local == null))
-				return;
-
-			object[] args = new object [6];
-			args [0] = name;
-			args [1] = local;
-			args [2] = attributes;
-			args [3] = position;
-			args [4] = startOffset;
-			args [5] = endOffset;
-
-			symwriter_define_local.Invoke (symbol_writer, args);
-		}							     
-	
 		public override string FullyQualifiedName {get { return fqname;}}
 
 		[MonoTODO]

@@ -44,8 +44,14 @@ namespace System.Reflection.Emit {
 		{
 			this.name = lname;
 
-			module.SymWriter_DefineLocalVariable (lname, this, FieldAttributes.Private,
-							      (int) position, startOffset, endOffset);
+			SignatureHelper sighelper = SignatureHelper.GetLocalVarSigHelper (module);
+			sighelper.AddArgument (type);
+			byte[] signature = sighelper.GetSignature ();
+
+			module.symbol_writer.DefineLocalVariable (lname, FieldAttributes.Private,
+								  signature, SymAddressKind.ILOffset,
+								  (int) position, 0, 0,
+								  startOffset, endOffset);
 		}
 
 		public void SetLocalSymInfo (string lname)
