@@ -1,5 +1,8 @@
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tabledefs.h: Add constants for pinvoke attributes BestFit and
+	ThrowOnUnmappableChar.
+
 	* icall.c (ves_icall_Type_GetPacking): New icall.
 
 2004-09-24  Martin Baulig  <martin@ximian.com>
