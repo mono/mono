@@ -78,9 +78,12 @@ namespace Mono.Util {
 			{
 				new Driver().Run (args);
 			}
-			catch (Exception ex)
+			catch (ApplicationException ex)
 			{
 				Console.WriteLine (ex.Message);
+			}
+			catch (Exception ex)
+			{
 				Console.WriteLine (ex);
 			}
 		}
@@ -118,7 +121,7 @@ namespace Mono.Util {
 				{
 					if ((arg.EndsWith (".dll") || arg.EndsWith (".exe")) && !arg.Substring (1).StartsWith ("generator:") && !arg.Substring (1).StartsWith ("g:"))
 					{
-						if (!readingFiles) throw new Exception (incorrectOrder);
+						if (!readingFiles) throw new ApplicationException (incorrectOrder);
 						assemblies.Add (arg);
 						assemblyOptions = true;
 						continue;
@@ -474,12 +477,12 @@ namespace Mono.Util {
 
 		public void Error (string msg)
 		{
-			throw new Exception (msg);
+			throw new ApplicationException (msg);
 		}
 
 		public void Error (string msg, string param)
 		{
-			throw new Exception (string.Format(msg,param));
+			throw new ApplicationException (string.Format(msg,param));
 		}
 
 		private string StripQuot (string input)
