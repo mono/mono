@@ -63,7 +63,6 @@ LiteralNothing \
 ConditionalCompilation \
 ConditionalCompilationA \
 ConditionalCompilationB \
-ConditionalCompilationC \
 ConditionalCompilationD \
 ConditionalCompilationE \
 ConditionalConstants \
@@ -174,7 +173,8 @@ LocalVariablesA \
 LocalVariablesB \
 LocalDeclarationA \
 WithStatementA \
-WithStatementB
+WithStatementB \
+ForEachA
 
 # All negetive test cases which should
 # fail during compilation goes here

@@ -1,3 +1,7 @@
+2004-08-14 Bernie Solomon <bernard@ugsolutions.com>
+	* ForEachA.vb:
+	* Test.Sources: new test
+
 2004-08-12 Sachin Kumar <skumar1@novell.com>
 	* WithStatementA.vb:
 	* WithStatementB.vb:
