@@ -1,4 +1,10 @@
 2003-12-15  Alon Gazit <along@mainsoft.com>
+	* RepeatInfo.cs: Fixed DoVerticalRendering() and DoHorizontalRendering().
+	Both methods add to rendered Header a colspan attribute according to the
+	rows count. after the change the colspan is added according to the columns
+	count.   
+
+2003-12-15  Alon Gazit <along@mainsoft.com>
 	* CheckBox.cs: Disabled CheckBox does not produce same HTML as .NET.
 	In .NET if the checkbox is disabled ,its text appears disabled too.
 	In Mono the text appears enabled. the fix is in Render().

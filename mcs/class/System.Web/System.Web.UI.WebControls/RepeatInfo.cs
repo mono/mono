@@ -145,11 +145,11 @@ namespace System.Web.UI.WebControls
 				if(isTable)
 				{
 					writer.RenderBeginTag(HtmlTextWriterTag.Tr);
-					if(rowsCount != 1)
+					if(colsCount != 1)
 					{
-						colSpan = rowsCount;
+						colSpan = colsCount;
 						if(hasSeps)
-							colSpan += rowsCount;
+							colSpan += colsCount;
 						writer.AddAttribute(HtmlTextWriterAttribute.Colspan, colSpan.ToString(NumberFormatInfo.InvariantInfo));
 					}
 					itemStyle = user.GetItemStyle(ListItemType.Header, -1);
@@ -293,10 +293,10 @@ namespace System.Web.UI.WebControls
 			if (user.HasHeader){
 				if (isTable){
 					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-					if (rowsCount != 1){
-						colSpan = rowsCount;
+					if (colsCount != 1){
+						colSpan = colsCount;
 						if (hasSeps)
-							colSpan += rowsCount;
+							colSpan += colsCount;
 						writer.AddAttribute (HtmlTextWriterAttribute.Colspan,
 						     colSpan.ToString (NumberFormatInfo.InvariantInfo));
 					}
