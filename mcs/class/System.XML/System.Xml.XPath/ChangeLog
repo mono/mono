@@ -1,3 +1,7 @@
+2004-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultContext.cs : trivial processing order fix.
+
 2004-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DefaultContext.cs : Avoid exception if possible.

@@ -62,6 +62,8 @@ namespace System.Xml.XPath
 		{
 			if (arg == null)
 				throw new ArgumentNullException ();
+			if (arg is BaseIterator)
+				arg = ToString (arg);	// follow on
 			if (arg is string)
 			{
 				string s = arg as string;
@@ -76,8 +78,6 @@ namespace System.Xml.XPath
 					return double.NaN;
 				}
 			}
-			if (arg is BaseIterator)
-				arg = ToString (arg);	// follow on
 			if (arg is double)
 				return (double) arg;
 			if (arg is bool)
