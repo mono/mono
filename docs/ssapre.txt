@@ -245,4 +245,6 @@ Other interesting issues are:
   - no more than one version of each originsl variable is live at the same time
     in the CFG.
   It would be better to relax these assumptions.
-- SSAPRE operates on "syntactic"
+- SSAPRE operates on "syntactic" redundancies, not on "values".
+  GVNPRE (or other means of merging GVN) would be a nice alternative, see
+  "http://www.cs.purdue.edu/homes/vandrutj/papers/thesis.pdf".
