@@ -25,86 +25,59 @@ namespace Mono.Languages
 		Library, Exe, Module, WinExe
 	};
 	
+	enum OptionCompare
+	{
+		Binary, Text
+	};
+	
 	/// <summary>
 	///    The compiler driver.
 	/// </summary>
 	public class Driver : Options
 	{
-		
-		[Option("Verbose parsing (for debugging the parser)",'v')] 
-		public bool verbose	{ set { GenericParser.yacc_verbose_flag = value; } }
+		// Temporary options
+		//------------------------------------------------------------------
+		[Option("[Mono] Only parses the source file (for debugging the tokenizer)", "parse")]
+		public bool parse_only = false;
 
-		[Option("Specifies PARAM as main (starting) class", 'm')]
-		public string main { set { RootContext.MainClass = value; } }
+		[Option("[Mono] Only tokenizes source files")]
+		public bool tokenize = false;
 
+		[Option("[Mono] Shows stack trace at Error location")]
+		public bool stacktrace { set { Report.Stacktrace = value; } }
+
+		[Option("[Mono] Displays time stamps of various compiler events")]
+		public bool timestamp
+		{
+			set
+			{
+				timestamps = true;
+				last_time = DateTime.Now;
+				debug_arglist.Add("timestamp");
+			}
+		}
+
+		// Mono-specific options
+		//------------------------------------------------------------------
 		[Option("About the MonoBASIC compiler", "about")]
 		public override WhatToDoNext DoAbout()
 		{
 			return base.DoAbout();
 		}
 
-		[Option("Adds PARAM to the assembly link path", 'L')]
-		public string[] LinkPaths = null;
-
-		[Option("Defines the symbol PARAM", "define")]
-		public string[] Defines = null;
-
-		[Option("Only parses the source file (for debugging the tokenizer)", "parse")]
-		public bool parse_only = false;
-
-
-		[Option("Disables implicit references to assemblies", "noconfig")]
-		public bool NoConfig { set { load_default_config = !value; } }
-
-		[Option("Allows unsafe code", "unsafe")]
-		public bool AllowUnsafeCode { set { RootContext.Unsafe = value; } }
-
-		[Option("Specifies output file", 'o', "output")]
-		public string output_file = null;
-
-		[Option("Only tokenizes source files", "tokenize")]
-		public bool tokenize = false;
-
-		[Option("Set default context to checked", "checked")]
-		public bool Checked { set { RootContext.Checked = value; } }
-
-		[Option("Shows stack trace at Error location", "Stacktrace")]
-		public bool Stacktrace { set { Report.Stacktrace = value; } }
-
-		[Option(-1, "References an assembly", 'r')]
-		public string reference { set { references.Add(value); } }
-
-		[Option("Adds PARAM as a resource", "resource")]
-		public string[] resources;
-
-		[Option("Set default context to checked", "nostdlib")]
+		[Option("[Mono] Don\'t assume the standard library", "nostdlib")]
 		public bool nostdlib { set { RootContext.StdLib = !value; } }
 
-		[Option("Makes errors fatal", "fatal")]
-		public bool Fatal { set { Report.Fatal = value; } }
+		[Option("[Mono] Disables implicit references to assemblies", "noconfig")]
+		public bool NoConfig { set { load_default_config = !value; } }
 
-		[Option("Treat warnings as errors", "werror")]
-		public bool WarningsAreErrors { set { Report.WarningsAreErrors = value; } }
+		[Option("[Mono] Allows unsafe code", "unsafe")]
+		public bool AllowUnsafeCode { set { RootContext.Unsafe = value; } }
 
-		[Option("Ignores warning number PARAM", "nowarn")]
-		public WhatToDoNext SetIgnoreWarning(int warn)
-		{
-			Report.SetIgnoreWarning(warn);
-			return WhatToDoNext.GoAhead;
-		}
+		[Option("[Mono] Set default context to checked", "checked")]
+		public bool Checked { set { RootContext.Checked = value; } }
 
-		[Option("Recursively compiles the files in PARAM ([dir]/file)", "recurse")]
-		public WhatToDoNext recurse(string DirName)
-		{
-			AddFiles (DirName, true);
-			return WhatToDoNext.GoAhead;
-		}
-	
-
-		[Option("Write symbolic debugging information to FILE-debug.s", 'g', "debug")]
-		public bool want_debugging_support = false;
-
-		[Option("Debugger arguments", "debug-args")]
+		[Option("[Mono] Debugger arguments", "debug-args")]
 		public WhatToDoNext SetDebugArgs(string args)
 		{
 			char[] sep = { ',' };
@@ -112,10 +85,31 @@ namespace Mono.Languages
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("Specifies the target (PARAM is one of: exe, winexe, library, module)", "target")]
+		[Option("[Mono] Ignores warning number PARAM", "ignorewarn")]
+		public WhatToDoNext SetIgnoreWarning(int warn)
+		{
+			Report.SetIgnoreWarning(warn);
+			return WhatToDoNext.GoAhead;
+		}	
+
+		[Option("[Mono] Sets warning level (the highest is 4, the default)", "wlevel")]
+		public int wlevel { set { RootContext.WarningLevel = value; } }
+
+		[Option("[Mono] Makes errors fatal", "fatal")]
+		public bool Fatal { set { Report.Fatal = value; } }
+
+		[Option("[Mono] Adds path to the assembly link path")]
+		public string[] linkpaths = null;
+
+		// Output file options
+		//------------------------------------------------------------------
+		[Option("Specifies the output file name", 'o', "out")]
+		public string output_file = null;
+
+		[Option("Specifies the target type for the output file (exe [default], winexe, library, module)", "target")]
 		public WhatToDoNext SetTarget(string type)
 		{
-			switch (type)
+			switch (type.ToLower())
 			{
 				case "library":
 					target = Target.Library;
@@ -138,23 +132,170 @@ namespace Mono.Languages
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("Sets warning level (the highest is 4, the default)", "wlevel")]
-		public int wlevel { set { RootContext.WarningLevel = value; } }
+		// input file options
+		//------------------------------------------------------------------
+		[Option("[NOT IMPLEMENTED YET]Reference metadata from specified module", "addmodule")]
+		public string[] addedModules = null;
 
-		[Option("Displays time stamps of various compiler events")]
-		public bool timestamp
+		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the wildcard", "recurse")]
+		public WhatToDoNext recurse(string wildcard)
 		{
-			set
-			{
-				timestamps = true;
-				last_time = DateTime.Now;
-				debug_arglist.Add("timestamp");
-			}
+			//AddFiles (DirName, true); // TODO wrong semantics
+			return WhatToDoNext.GoAhead;
 		}
 
-		// TODO : response file support
+		[Option(-1, "References metadata from the specified assembly", 'r', "reference")]
+		public string reference { set { references.Add(value); } }
 
-	
+		// resource options
+		//------------------------------------------------------------------
+		public ArrayList EmbeddedResources = new ArrayList();
+		
+		// TODO : accept a multi-letter short form: 'res'
+		[Option(-1, "Adds the specified file as an embedded assembly resource", "resource")]
+		public string resource { set { EmbeddedResources.Add(value); } }
+
+		public ArrayList LinkedResources = new ArrayList();
+		
+		// TODO : accept a multi-letter short form: 'linkres'
+		[Option(-1, "[NOT IMPLEMENTED YET]Adds the specified file as an embedded assembly resource", "linkresource")]
+		public string linkresource { set { LinkedResources.Add(value); } }
+
+		public ArrayList Win32Resources = new ArrayList();
+		
+		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 resource file (.res)", "win32resource")]
+		public string win32resource { set { Win32Resources.Add(value); } }
+
+		public ArrayList Win32Icons = new ArrayList();
+		
+		// TODO : accept a multi-letter short form: 'res'
+		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 icon file (.ico) for the default Win32 resources", "win32icon")]
+		public string win32icon { set { Win32Icons.Add(value); } }
+
+
+		// code generation options
+		//------------------------------------------------------------------
+		[Option("[NOT IMPLEMENTED YET]Enable optimizations")]
+		public bool optimize = false;
+
+		[Option("[NOT IMPLEMENTED YET]Remove integer checks. Default off.")]
+		public bool removeintchecks = false;
+
+		// TODO: handle VB.NET [+|-] boolean syntax
+		[Option("Emit debugging information", "debug")]
+		public bool want_debugging_support = false;
+
+		[Option("Emit full debugging information (default)", "debug:full")]
+		public bool fullDebugging = false;
+
+		[Option("[IGNORED]Emit PDB file only", "debug:pdbonly")]
+		public bool pdbOnly = false;
+
+		// errors and warnings options
+		//------------------------------------------------------------------
+		[Option("Treat warnings as errors", "warnaserror")]
+		public bool WarningsAreErrors { set { Report.WarningsAreErrors = value; } }
+
+		[Option("Disable warnings")]
+		public bool nowarn { set { if (value) RootContext.WarningLevel = 0; } }
+
+
+		// language options
+		//------------------------------------------------------------------
+		public Hashtable Defines = new Hashtable();
+		
+		// TODO: Symbol-List parsing
+		[Option(-1, "[NOT IMPLEMENTED YET]Declares global conditional compilation symbol(s). symbol list:name=value,...", 'd', "define")]
+		public string define { 
+			set {
+				foreach(string item in value.Split(',')) {	
+					string[] dados = item.Split('=');
+					if (dados.Length > 1)
+						Defines.Add(dados[0], dados[1]); 
+					else
+						Defines.Add(dados[0], string.Empty);
+				}
+			} 
+		}
+		
+		private string[] importsList = null;
+		
+		[Option("[NOT IMPLEMENTED YET]Declare global Imports for namespaces in referenced metadata files. import list:namespace,...", "imports")]
+		public WhatToDoNext imports(string importslist)
+		{
+			importsList = importslist.Split(';');
+			return WhatToDoNext.GoAhead;
+		}
+
+		// TODO: handle VB.NET [+|-] boolean syntax
+		[Option("[NOT IMPLEMENTED YET]Require explicit declaration of variables")]
+		public bool optionexplicit = false;
+
+		// TODO: handle VB.NET [+|-] boolean syntax
+		[Option("[NOT IMPLEMENTED YET]Enforce strict language semantics")]
+		public bool optionstrict = false;
+		
+		[Option("[NOT IMPLEMENTED YET]Specifies de root namespace for all type declarations")]
+		public string rootnamespace;
+		
+		private OptionCompare optioncompare = OptionCompare.Binary;
+		
+		[Option("[NOT IMPLEMENTED YET]Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
+		public bool optioncomparebinary { set { optioncompare = OptionCompare.Binary; } }
+
+		[Option("[NOT IMPLEMENTED YET]Specifies text-style string comparisons.", "optioncompare:text")]
+		public bool optioncomparetext { set { optioncompare = OptionCompare.Text; } }
+
+		// Miscellaneous options	
+		//------------------------------------------------------------------
+		
+		[Option("[NOT IMPLEMENTED YET]Do not display compiler copyright banner")]
+		public bool nologo = false;
+		
+		[Option("[NOT IMPLEMENTED YET]Quiet output mode")]
+		public bool quiet = false;
+		
+		// TODO: semantics are different and should be adjusted
+		[Option("Display verbose messages", 'v')] 
+		public bool verbose	{ set { GenericParser.yacc_verbose_flag = value; } }
+
+		// Advanced options	
+		//------------------------------------------------------------------
+		// TODO: force option to accept number in hex format
+		[Option("[NOT IMPLEMENTED YET]The base address for a library or module (hex)")]
+		public int baseaddress;
+		
+		[Option("[NOT IMPLEMENTED YET]Create bug report file")]
+		public string bugreport;
+		
+		// TODO: handle VB.NET [+|-] boolean syntax
+		[Option("[NOT IMPLEMENTED YET]Delay-sign the assembly using only the public portion of the strong name key")]
+		public bool delaysign;
+		
+		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key container")]
+		public string keycontainer;
+		
+		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key file")]
+		public string keyfile;
+
+		public string[] libpath = null;
+		
+		[Option("[NOT IMPLEMENTED YET]List of directories to search for metada references (semi-colon delimited)", "libpath")]
+		public WhatToDoNext setlibpath(string pathlist)
+		{
+			libpath = pathlist.Split(';');
+			return WhatToDoNext.GoAhead;
+		}
+
+		[Option("Specifies the Class or Module that contains Sub Main.It can also be a Class that inherits from System.Windows.Forms.Form.", 'm', "main")]
+		public string main { set { RootContext.MainClass = value; } }
+
+		// TODO: handle VB.NET [+|-] boolean syntax
+		[Option("[NOT IMPLEMENTED YET]Emit compiler output in UTF8 character encoding")]
+		public bool utf8output;
+
+		// TODO : response file support
+		
 		ArrayList defines = new ArrayList();
 		ArrayList references = new ArrayList();
 		ArrayList soft_references = new ArrayList();
@@ -220,7 +361,7 @@ namespace Mono.Languages
 				TypeManager.AddAssembly (a);
 				return 0;
 			} catch (FileNotFoundException){
-				foreach (string dir in LinkPaths){
+				foreach (string dir in linkpaths){
 					string full_path = dir + "/" + assembly + ".dll";
 
 					try {
@@ -622,8 +763,8 @@ namespace Mono.Languages
 			}
 
 			// Add the resources
-			if (resources != null)
-				foreach (string file in resources)
+			if (EmbeddedResources != null)
+				foreach (string file in EmbeddedResources)
 					CodeGen.AssemblyBuilder.AddResourceFile (file, file);
 			
 			CodeGen.Save(outputFileName);
