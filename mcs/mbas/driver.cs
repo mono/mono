@@ -716,6 +716,24 @@ namespace Mono.Languages
 			return true;
 		}
 		
+		bool IsSWFApp()
+		{
+			bool hasSWF = false, isForm = false;
+			
+			foreach (string r in references) {
+				if (r.IndexOf ("System.Windows.Forms") >= 0) {
+					hasSWF = true;
+					break;	
+				}	
+			}	
+			
+			Type t = TypeManager.LookupType(RootContext.RootNamespace + "." + RootContext.MainClass);
+			if (t != null) 
+				isForm = t.IsSubclassOf (TypeManager.LookupType("System.Windows.Forms.Form"));
+	
+			return (hasSWF && isForm);
+		}
+		
 		void FixEntryPoint()
 		{
 			if (target == Target.Exe || target == Target.WinExe)
@@ -730,8 +748,8 @@ namespace Mono.Languages
 					// a new entry point on-the-fly. Otherwise we
 					// won't be able to compile SWF code out of the box.
 
-					if (references.Contains ("System.Windows.Forms")) 
-					{
+					if (IsSWFApp()) 
+					{					
 						Type t = TypeManager.LookupType(RootContext.RootNamespace + "." + RootContext.MainClass);
 						if (t != null) 
 						{
@@ -745,8 +763,10 @@ namespace Mono.Languages
 							args[0] = SWFF;
 							MethodInfo mi = SWFA.GetMethod("Run", args);
 							ILGenerator ig = mb.GetILGenerator();
-							ig.Emit (OpCodes.Newobj, t.FullName);
-							ig.Emit (OpCodes.Call,mi);
+							ConstructorInfo ci = TypeManager.GetConstructor (TypeManager.LookupType(t.FullName), new Type[0]);
+							
+							ig.Emit (OpCodes.Newobj, ci);
+							ig.Emit (OpCodes.Call, mi);
 							ig.Emit (OpCodes.Ret);
 
 							RootContext.EntryPoint = mb as MethodInfo;
