@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Mono.TypeReflector
+namespace Mono.TypeReflector.Displayers
 {
 	public class IndentingTextWriter : TextWriter {
 

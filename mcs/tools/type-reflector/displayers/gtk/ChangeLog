@@ -1,4 +1,10 @@
 2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
+	* GtkTypeDisplayer.cs:
+	  - If the current window isn't displaying an assembly, open the assembly 
+	    within the current window.
+	  - Use [GladeWidget] attributes to get items from the .glade file.
+
+2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
 	* GtkTypeDisplayer.cs: Moved to Mono.TypeReflector.Displayers.Gtk.
 
 2003-01-09  Jonathan Pryor <jonpryor@vt.edu>

@@ -62,9 +62,15 @@ namespace Mono.TypeReflector.Displayers.Gtk
 	public class GtkTypeDisplayer : TypeDisplayer
 	{
 		private TreeStore store;
+
+		[GladeWidget("main_window")]
 		private Window mainWindow;
+
+		[GladeWidget("status_bar")]
 		private Statusbar statusbar;
+
 		private Window aboutWindow;
+
 		private static int windows = 0;
 
 		public override int MaxDepth {
@@ -108,8 +114,8 @@ namespace Mono.TypeReflector.Displayers.Gtk
 			nameCol.AddAttribute (nameRenderer, "text", 0);
 			tv.AppendColumn (nameCol);
 
-			mainWindow = (Window) gxml ["main_window"];
-			statusbar = (Statusbar) gxml ["status_bar"];
+			// mainWindow = (Window) gxml ["main_window"];
+			// statusbar = (Statusbar) gxml ["status_bar"];
 		}
 
 		private void RowExpanded (object o, RowExpandedArgs args)
@@ -203,12 +209,19 @@ namespace Mono.TypeReflector.Displayers.Gtk
 
 		private void OpenAssembly (string assembly)
 		{
-			GtkTypeDisplayer d = new GtkTypeDisplayer ();
-			d.Finder = Finder;
-			d.Formatter = Formatter;
-			d.Options = Options;
+			GtkTypeDisplayer d = null;
+			if (base.Assemblies.Count == 0)
+				d = this;
+			else {
+				d = new GtkTypeDisplayer ();
+				d.Finder = Finder;
+				d.Formatter = Formatter;
+				d.Options = Options;
+			}
+
 			TypeLoader tl = TypeReflectorApp.CreateLoader (Options);
       tl.Assemblies = new string[]{assembly};
+
 			try {
 				TypeReflectorApp.FindTypes (d, tl, new string[]{"."});
 				d.ShowTypes ();

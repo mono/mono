@@ -1,4 +1,10 @@
 2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
+	* TypeReflectorApp.cs: Don't always require that types be specified on the
+	  command line.  This isn't necessary for the GUI front-ends, as the user
+		can just open an assembly from within the app after it's running.
+	* IndentingTextWriter.cs: Move to Mono.TypeReflector.Displayers.
+
+2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
 	- General: Namespace partitioning.  It was getting annoying (when using
 	  type-reflector to display itself) to have ~70 classes in a single
 	  namespace.  So I split up the classes into namespace according to

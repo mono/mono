@@ -158,12 +158,19 @@ namespace Mono.TypeReflector.Displayers.Swf
 
 		private void OpenAssemblies (string[] assemblies)
 		{
-			SwfTypeDisplayer d = new SwfTypeDisplayer ();
-			d.Finder = Finder;
-			d.Formatter = Formatter;
-			d.Options = Options;
+			SwfTypeDisplayer d = null;
+			if (base.Assemblies.Count == 0)
+				d = this;
+			else {
+				d = new SwfTypeDisplayer ();
+				d.Finder = Finder;
+				d.Formatter = Formatter;
+				d.Options = Options;
+			}
+
 			TypeLoader tl = TypeReflectorApp.CreateLoader (Options);
 			tl.Assemblies = assemblies;
+
 			try {
 				TypeReflectorApp.FindTypes (d, tl, new string[]{"."});
 				d.ShowTypes ();

@@ -1,4 +1,8 @@
 2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
+	* SwfTypeDisplayer.cs: If the current window isn't displaying an assembly,
+    open the assembly within the current window.
+
+2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
 	* SwfTypeDisplayer.cs: Moved to Mono.TypeReflector.Displayers.Swf.
 	* SwfWindow.cs: Moved to Mono.TypeReflector.Displayers.Swf.
 

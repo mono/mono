@@ -136,18 +136,19 @@ namespace Mono.TypeReflector
 				return;
 			}
 
-			if (options.Types.Count == 0) {
+			displayer.Finder = finder;
+			displayer.Formatter = formatter;
+			displayer.Options = options;
+
+			if (displayer.RequireTypes && options.Types.Count == 0) {
 				Console.WriteLine ("No types specified.");
 				Console.WriteLine ("See `{0} --help' for more information", ProgramOptions.ProgramName);
 				return;
 			}
 
-			displayer.Finder = finder;
-			displayer.Formatter = formatter;
-			displayer.Options = options;
-
 			// Find the requested types and display them.
-			FindTypes (displayer, loader, options.Types);
+			if (options.Types.Count != 0)
+				FindTypes (displayer, loader, options.Types);
 
 			displayer.Run ();
 		}
