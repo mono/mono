@@ -1,5 +1,7 @@
 2004-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DSACryptoServiceProviderTest.cs: Added a new unit test for SignData
+	(was badly tested) and simplified test to reduce key pair generations.
 	* PasswordDerivceBytesTest.cs: Added new tests to complete
 	coverage.
 	* RSACryptoServiceProviderTest.cs: Added new tests to complete

@@ -25,6 +25,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 //	static string xmlPublic = "<DSAKeyValue><P>s/Oc0t4gj0NRqkCKi4ynJnOAEukNhjkHJPOzNsHP69kyHMUwZ3AzOkLGYOWlOo2zlYKzSbZygDDI5dCWA5gQF2ZGHEUlWJMgUyHmkybOi44cyHaX9yeGfbnoc3xF9sYgkA3vPUZaJuYMOsBp3pyPdeN8/mLU8n0ivURyP+3Ge9M=</P><Q>qkcTW+Ce0L5k8OGTUMkRoGKDc1E=</Q><G>PU/MeGp6I/FBduuwD9UPeCFzg8Ib9H5osku5nT8AhHTY8zGqetuvHhxbESt4lLz8aXzX0oIiMsusBr6E/aBdooBI36fHwW8WndCmwkB1kv7mhRIB4302UrfvC2KWQuBypfl0++a1whBMCh5VTJYH1sBkFIaVNeUbt5Q6/UdiZVY=</G><Y>shJRUdGxEYxSKM5JVol9HAdQwIK+wF9X4n9SAD++vfZOMOYi+M1yuvQAlQvnSlTTWr7CZPRVAICLgDBbqi9iN+Id60ccJ+hw3pGDfLpJ7IdFPszJEeUO+SZBwf8njGXULqSODs/NTciiX7E07rm+KflxFOg0qtWAhmYLxIkDx7s=</Y><J>AAAAAQ6LSuRiYdsocZ6rgyqIOpE1/uCO1PfEn758Lg2VW6OHJTYHNC30s0gSTG/Jt3oHYX+S8vrtNYb8kRJ/ipgcofGq2Qo/cYKP7RX2K6EJwSfWInhsNMr1JmzuK0lUKkXXXVo15fL8O2/16uEWMg==</J><Seed>uYM5b20luvbuyevi9TXHwekbr5s=</Seed><PgenCounter>4A==</PgenCounter></DSAKeyValue>";
 
 	static int minKeySize = 512;
+	private DSACryptoServiceProvider smallDsa;
 
 	private bool machineKeyStore;
 
@@ -36,6 +37,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 			disposed = new DSACryptoServiceProvider (minKeySize);
 			disposed.Clear ();
 		}
+		// do not generate a new keypair for each test
+		if (smallDsa == null)
+			smallDsa = new DSACryptoServiceProvider (minKeySize);
 	}
 
 	[TearDown]
@@ -172,20 +176,24 @@ public class DSACryptoServiceProviderTest : Assertion {
 	[ExpectedException (typeof (CryptographicException))]
 	public void CreateSignatureInvalidHashLength () 
 	{
-		// Small because MS will generate a new keypair
-		dsa = new DSACryptoServiceProvider (minKeySize);
 		byte[] hash = new byte [19];
-		dsa.CreateSignature (hash);
+		smallDsa.CreateSignature (hash);
 	}
 
 	[Test]
 	public void CreateSignature () 
 	{
-		// Small because MS will generate a new keypair
-		dsa = new DSACryptoServiceProvider (minKeySize);
 		byte[] hash = new byte [20];
 		// for Mono, no keypair has yet been generated before calling CreateSignature
-		dsa.CreateSignature (hash);
+		smallDsa.CreateSignature (hash);
+	}
+
+	[Test]
+	public void SignData () 
+	{
+		byte[] data = new byte [128];
+		byte[] signature = smallDsa.SignData (data);
+		Assert ("SignData", smallDsa.VerifyData (data, signature));
 	}
 
 	[Test]
@@ -209,8 +217,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	public void SignHashInvalidAlgorithm () 
 	{
 		byte[] hash = new byte [16];
-		dsa = new DSACryptoServiceProvider (minKeySize);
-		dsa.SignHash (hash, "MD5");
+		smallDsa.SignHash (hash, "MD5");
 	}
 
 	[Test]
@@ -228,7 +235,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	{
 		byte[] hash = new byte [16];
 		byte[] sign = new byte [40];
-		dsa.VerifyHash (hash, "MD5", sign);
+		smallDsa.VerifyHash (hash, "MD5", sign);
 	}
 
 	[Test]
@@ -253,33 +260,29 @@ public class DSACryptoServiceProviderTest : Assertion {
 	[ExpectedException (typeof (CryptographicException))]
 	public void VerifySignatureInvalidHashLength () 
 	{
-		// Small because MS will generate a new keypair
-		dsa = new DSACryptoServiceProvider (minKeySize);
 		byte[] hash = new byte [19];
 		byte[] sign = new byte [40];
-		dsa.VerifySignature (hash, sign);
+		smallDsa.VerifySignature (hash, sign);
 	}
 
 	[Test]
 	[ExpectedException (typeof (CryptographicException))]
 	public void VerifySignatureInvalidSignatureLength () 
 	{
-		dsa = new DSACryptoServiceProvider (minKeySize);
 		byte[] hash = new byte [20];
 		byte[] sign = new byte [39];
-		dsa.VerifySignature (hash, sign);
+		smallDsa.VerifySignature (hash, sign);
 	}
 
 	[Test]
 	[Ignore ("Running this test breaks all further DSA tests on MS runtime!")]
 	public void VerifySignatureWithoutKey () 
 	{
-		dsa = new DSACryptoServiceProvider (minKeySize);
 		byte[] hash = new byte [20];
 		byte[] sign = new byte [40];
 		// Mono hasn't generated a keypair - but it's impossible to 
 		// verify a signature based on a new just generated keypair
-		Assert ("VerifySignature(WithoutKey)", !dsa.VerifySignature (hash, sign));
+		Assert ("VerifySignature(WithoutKey)", !smallDsa.VerifySignature (hash, sign));
 	}
 
 	[Test]
