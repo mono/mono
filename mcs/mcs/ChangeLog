@@ -1,5 +1,14 @@
 2004-10-31  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix #68850
+	* attribute.cs (GetMarshal): Add method argument for
+	caller identification.
+
+	* class.cs, codegen.cs, enum.cs, parameter.cs: Added
+	agument for GetMarshal and RuntimeMissingSupport.
+
+2004-10-31  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs (ExtractSecurityPermissionSet): Removed
 	TypeManager.code_access_permission_type.
 

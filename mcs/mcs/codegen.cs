@@ -1272,7 +1272,7 @@ namespace Mono.CSharp {
 					add_permission.Invoke (builder_instance, args);
 				}
 				catch {
-					Report.RuntimeMissingSupport ("assembly permission setting");
+					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
 				}
 			}
 		}

@@ -854,8 +854,14 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public UnmanagedMarshal GetMarshal ()
+		public UnmanagedMarshal GetMarshal (Attributable attr)
 		{
+			object value = GetFieldValue ("SizeParamIndex");
+			if (value != null && UnmanagedType != UnmanagedType.LPArray) {
+				Error_AttributeEmitError ("SizeParamIndex field is not valid for the specified unmanaged type");
+				return null;
+			}
+
 			object o = GetFieldValue ("ArraySubType");
 			UnmanagedType array_sub_type = o == null ? UnmanagedType.I4 : (UnmanagedType) o;
 			
@@ -863,8 +869,10 @@ namespace Mono.CSharp {
 			case UnmanagedType.CustomMarshaler:
 				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
                                                                        BindingFlags.Static | BindingFlags.Public);
-				if (define_custom == null)
+				if (define_custom == null) {
+					Report.RuntimeMissingSupport (Location, "set marshal info");
 					return null;
+				}
 				
 				object [] args = new object [4];
 				args [0] = GetFieldValue ("MarshalTypeRef");
@@ -880,6 +888,11 @@ namespace Mono.CSharp {
 				return UnmanagedMarshal.DefineSafeArray (array_sub_type);
 			
 			case UnmanagedType.ByValArray:
+				FieldMember fm = attr as FieldMember;
+				if (fm == null) {
+					Error_AttributeEmitError ("Specified unmanaged type is only valid on fields");
+					return null;
+				}
 				return UnmanagedMarshal.DefineByValArray ((int) GetFieldValue ("SizeConst"));
 			
 			case UnmanagedType.ByValTStr:

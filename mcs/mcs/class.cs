@@ -1200,7 +1200,7 @@ namespace Mono.CSharp {
 				}
 			}
 			catch (ArgumentException) {
-				Report.RuntimeMissingSupport ("static classes");
+				Report.RuntimeMissingSupport (Location, "static classes");
 				return null;
 			}
 				
@@ -5028,12 +5028,10 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.marshal_as_attr_type) {
-				UnmanagedMarshal marshal = a.GetMarshal ();
+				UnmanagedMarshal marshal = a.GetMarshal (this);
 				if (marshal != null) {
 					FieldBuilder.SetMarshal (marshal);
-					return;
 				}
-				Report.Warning (-24, a.Location, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
 				return;
 			}
 
