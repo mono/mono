@@ -1,3 +1,12 @@
+2003-05-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini-x86.c (mono_arch_output_basic_block): cleanup up exception code
+
+	* inssel-x86.brg: added OP_START_HANDLER, CEE_ENDFINALLY, OP_ENDFILTER
+
+	* mini-x86.c (mono_arch_allocate_vars): only reserve space for lmf
+	if needed.
+
 2003-05-21  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_method_to_ir): call handle_loaded_temps before inlining.
