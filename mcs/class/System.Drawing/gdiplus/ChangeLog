@@ -1,3 +1,11 @@
+2004-01-29  Duncan Mak  <duncan@ximian.com>
+
+	* bitmap.c (gdip_bitmap_dispose): Add a check for own_scan0.
+	(GdipCreateBitmapFromScan0): Set own_scan0 flag if we own the
+	incoming buffer, scan0.
+
+	* gdip.h (GdipBitmapData): Add new field, own_scan0.
+
 2004-01-26  Duncan Mak  <duncan@ximian.com>
 
 	* bitmap.c (GdipCreateBitmapFromScan0): Use GdipAlloc here instead

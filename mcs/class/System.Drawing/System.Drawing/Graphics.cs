@@ -34,11 +34,12 @@ namespace System.Drawing
 			nativeObject = nativeGraphics;
 		}
 		
-		internal IntPtr NativeObject{
+		internal IntPtr NativeObject {
 			get{
 				return nativeObject;
 			}
-			set	{
+
+			set {
 				nativeObject = value;
 			}
 		}
@@ -54,19 +55,18 @@ namespace System.Drawing
 		{
 			int state;
 
-        	GDIPlus.GdipBeginContainer2(nativeObject, out state);
+                        GDIPlus.GdipBeginContainer2 (nativeObject, out state);
         	
-        	return new GraphicsContainer(state);
+                        return new GraphicsContainer(state);
 		}
-
 		
 		public GraphicsContainer BeginContainer (Rectangle dstrect, Rectangle srcrect, GraphicsUnit unit)
 		{
 			int state;
 
-        	GDIPlus.GdipBeginContainerI(nativeObject, dstrect, srcrect, unit, out state);        	
+                        GDIPlus.GdipBeginContainerI (nativeObject, dstrect, srcrect, unit, out state);        	
         	
-        	return new GraphicsContainer(state);
+                        return new GraphicsContainer (state);
 		}
 
 		
@@ -74,9 +74,9 @@ namespace System.Drawing
 		{
 			int state;
 
-        	GDIPlus.GdipBeginContainer(nativeObject,  dstrect, srcrect, unit, out state);        	
+                        GDIPlus.GdipBeginContainer (nativeObject, dstrect, srcrect, unit, out state);        	
         	
-        	return new GraphicsContainer(state);
+                        return new GraphicsContainer (state);
 		}
 
 		
@@ -135,7 +135,7 @@ namespace System.Drawing
 			GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, x1, y1, x2, y2, x3, y3, x4, y4);
 		}
 
-        [MonoTODO]
+                [MonoTODO]
 		public void DrawBeziers (Pen pen, Point [] points)
 		{
                         int length = points.Length;
@@ -178,47 +178,44 @@ namespace System.Drawing
 		
 		public void DrawClosedCurve (Pen pen, PointF [] points)
 		{
-	 		GDIPlus.GdipDrawClosedCurve(nativeObject, pen.nativeObject,  points, points.Length); 					
+	 		GDIPlus.GdipDrawClosedCurve (nativeObject, pen.nativeObject, points, points.Length);
 		}
-
 		
 		public void DrawClosedCurve (Pen pen, Point [] points)
 		{
-			GDIPlus.GdipDrawClosedCurveI(nativeObject, pen.nativeObject,  points, points.Length);	 		
+			GDIPlus.GdipDrawClosedCurveI (nativeObject, pen.nativeObject, points, points.Length);	 		
 		}
  			
 		public void DrawClosedCurve (Pen pen, Point [] points, float tension, FillMode fillmode)
 		{
-			GDIPlus.GdipDrawClosedCurve2I(nativeObject, pen.nativeObject,  points, points.Length, tension); 					
+			GDIPlus.GdipDrawClosedCurve2I (nativeObject, pen.nativeObject, points, points.Length, tension); 
 		}
-
 		
 		public void DrawClosedCurve (Pen pen, PointF [] points, float tension, FillMode fillmode)
 		{
-			GDIPlus.GdipDrawClosedCurve2(nativeObject, pen.nativeObject,  points, points.Length, tension);
-			
+			GDIPlus.GdipDrawClosedCurve2 (nativeObject, pen.nativeObject, points, points.Length, tension);
 		}
 		
 		public void DrawCurve (Pen pen, Point [] points)
 		{
-			GDIPlus.GdipDrawCurveI(nativeObject, pen.nativeObject,  points, points.Length);	 		
+			GDIPlus.GdipDrawCurveI (nativeObject, pen.nativeObject, points, points.Length);	 		
 		}
 		
 		public void DrawCurve (Pen pen, PointF [] points)
 		{
-			GDIPlus.GdipDrawCurve(nativeObject, pen.nativeObject,  points, points.Length); 				
+			GDIPlus.GdipDrawCurve (nativeObject, pen.nativeObject, points, points.Length); 				
 			
 		}
 		
 		public void DrawCurve (Pen pen, PointF [] points, float tension)
 		{			
-			GDIPlus.GdipDrawCurve2(nativeObject, pen.nativeObject,  points, points.Length, tension); 		
+			GDIPlus.GdipDrawCurve2 (nativeObject, pen.nativeObject, points, points.Length, tension); 		
 			
 		}
 		
 		public void DrawCurve (Pen pen, Point [] points, float tension)
 		{
-			GDIPlus.GdipDrawCurve2I(nativeObject, pen.nativeObject,  points, points.Length, tension);		
+			GDIPlus.GdipDrawCurve2I (nativeObject, pen.nativeObject, points, points.Length, tension);		
 			
 		}
 		
@@ -230,13 +227,15 @@ namespace System.Drawing
 
 		public void DrawCurve (Pen pen, Point [] points, int offset, int numberOfSegments, float tension)
 		{
-			GDIPlus.GdipDrawCurve3I(nativeObject, pen.nativeObject, points, points.Length, offset,  numberOfSegments, tension);	 					
+			GDIPlus.GdipDrawCurve3I (nativeObject, pen.nativeObject, points, points.Length,
+                                        offset, numberOfSegments, tension);
 		}
 
 		
 		public void DrawCurve (Pen pen, PointF [] points, int offset, int numberOfSegments, float tension)
 		{
-			GDIPlus.GdipDrawCurve3(nativeObject, pen.nativeObject, points, points.Length, offset,  numberOfSegments, tension); 					
+			GDIPlus.GdipDrawCurve3 (nativeObject, pen.nativeObject, points, points.Length, 
+                                        offset, numberOfSegments, tension);
 		}
 
 		public void DrawEllipse (Pen pen, Rectangle rect)
@@ -286,19 +285,19 @@ namespace System.Drawing
 		
 		public void DrawImage (Image image, PointF point)
 		{
-			GDIPlus.GdipDrawImage(nativeObject, image.NativeObject, point.X, point.Y); 			
+			GDIPlus.GdipDrawImage (nativeObject, image.NativeObject, point.X, point.Y); 			
 		}
 
 		
 		public void DrawImage (Image image, Point [] destPoints)
 		{
-			GDIPlus.GdipDrawImagePointsI(nativeObject, image.NativeObject, destPoints, destPoints.Length);                                                           
+			GDIPlus.GdipDrawImagePointsI (nativeObject, image.NativeObject, destPoints, destPoints.Length);
 		}
 
 		
 		public void DrawImage (Image image, Point point)
 		{
-			DrawImage(image, point.X, point.Y);
+			DrawImage (image, point.X, point.Y);
 		}
 
 		
@@ -310,19 +309,19 @@ namespace System.Drawing
 		
 		public void DrawImage (Image image, PointF [] destPoints)
 		{
-			GDIPlus.GdipDrawImagePoints(nativeObject, image.NativeObject, destPoints, destPoints.Length);
+			GDIPlus.GdipDrawImagePoints (nativeObject, image.NativeObject, destPoints, destPoints.Length);
 		}
 
 		
 		public void DrawImage (Image image, int x, int y)
 		{
-			GDIPlus.GdipDrawImageI(nativeObject, image.NativeObject, x, y);
+			GDIPlus.GdipDrawImageI (nativeObject, image.NativeObject, x, y);
 		}
 
 		
 		public void DrawImage (Image image, float x, float y)
 		{
-			GDIPlus.GdipDrawImage(nativeObject, image.NativeObject, x, y);
+			GDIPlus.GdipDrawImage (nativeObject, image.NativeObject, x, y);
 		}
 
 		[MonoTODO]
@@ -350,7 +349,8 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
+		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
+                                ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
@@ -362,7 +362,8 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
+		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
+                                ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
@@ -386,76 +387,87 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
+		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
+                                ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
+		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
+                                ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
+		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
+                                ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, 
+                                GraphicsUnit srcUnit)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
+		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
+                                ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, 
+                                GraphicsUnit srcUnit)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs)
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, 
+                                GraphicsUnit srcUnit, ImageAttributes imageAttrs)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
+		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, 
+                                GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{			
-			GDIPlus.GdipDrawImageRectRectI(nativeObject, image.NativeObject, 
-								destRect.X, destRect.Y, destRect.Width, destRect.Height,
-								srcX, srcY, srcWidth, srcHeight,
-								srcUnit, imageAttr.NativeObject, IntPtr.Zero, 0);				 			
- 			
+			GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject, 
+                                        destRect.X, destRect.Y, destRect.Width, destRect.Height,
+                                        srcX, srcY, srcWidth, srcHeight, srcUnit, imageAttr.NativeObject, IntPtr.Zero, 0);
+ 
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
+		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight,
+                                GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback)
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight,
+                                GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight,
+                                GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
+		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, 
+                                GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
@@ -486,8 +498,7 @@ namespace System.Drawing
 
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
-			
-                GDIPlus.GdipDrawLine (
+                        GDIPlus.GdipDrawLine (
                                 nativeObject, pen.nativeObject,
                                 pt1.X, pt1.Y,
                                 pt2.X, pt2.Y);                             
@@ -496,7 +507,7 @@ namespace System.Drawing
 
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
 		{
-            GDIPlus.GdipDrawLineI (
+                        GDIPlus.GdipDrawLineI (
                                 nativeObject, pen.nativeObject,
                                 pt1.X, pt1.Y,
                                 pt2.X, pt2.Y);                           
@@ -510,13 +521,11 @@ namespace System.Drawing
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
 		{
 			GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject, x1, y1, x2, y2);	
-			
 		}
 
 		public void DrawLines (Pen pen, PointF [] points)
 		{
 			GDIPlus.GdipDrawLines (nativeObject, pen.nativeObject, points, points.Length);	
-			
 		}
 
 		public void DrawLines (Pen pen, Point [] points)
@@ -580,7 +589,7 @@ namespace System.Drawing
 
 		public void DrawRectangle (Pen pen, int x, int y, int width, int height)
 		{
-			GDIPlus.GdipDrawRectangleI (nativeObject, pen.nativeObject, x, y, width, height);					
+			GDIPlus.GdipDrawRectangleI (nativeObject, pen.nativeObject, x, y, width, height);
 		}
 
 		public void DrawRectangles (Pen pen, RectangleF [] rects)
@@ -618,13 +627,14 @@ namespace System.Drawing
 		[MonoTODO ("This ignores the font and the format")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref layoutRectangle, 
+                                        IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			Console.WriteLine("DrawString!");
+			Console.WriteLine ("DrawString!");
 			RectangleF rc = new RectangleF (x, y, 0, 0);
 			
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, 
@@ -861,7 +871,7 @@ namespace System.Drawing
 	
 		public void ExcludeClip (Rectangle rect)
 		{
-			GDIPlus.GdipSetClipRectI(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Exclude);    
+			GDIPlus.GdipSetClipRectI (nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Exclude);    
 		}
 
 		[MonoTODO]
@@ -873,13 +883,13 @@ namespace System.Drawing
 		
 		public void FillClosedCurve (Brush brush, PointF [] points)
 		{
-		       GDIPlus.GdipFillClosedCurve(nativeObject, brush.NativeObject, points, points.Length);
+		       GDIPlus.GdipFillClosedCurve (nativeObject, brush.NativeObject, points, points.Length);
 		}
 
 		
 		public void FillClosedCurve (Brush brush, Point [] points)
 		{
-			GDIPlus.GdipFillClosedCurveI(nativeObject, brush.NativeObject, points, points.Length);
+			GDIPlus.GdipFillClosedCurveI (nativeObject, brush.NativeObject, points, points.Length);
 		}
 
 		
@@ -895,12 +905,12 @@ namespace System.Drawing
 
 		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode, float tension)
 		{
-			GDIPlus.GdipFillClosedCurve2(nativeObject, brush.NativeObject, points, points.Length, tension, fillmode);
+			GDIPlus.GdipFillClosedCurve2 (nativeObject, brush.NativeObject, points, points.Length, tension, fillmode);
 		}
 
 		public void FillClosedCurve (Brush brush, Point [] points, FillMode fillmode, float tension)
 		{
-			GDIPlus.GdipFillClosedCurve2I(nativeObject, brush.NativeObject, points, points.Length, tension, fillmode);
+			GDIPlus.GdipFillClosedCurve2I (nativeObject, brush.NativeObject, points, points.Length, tension, fillmode);
 		}
 
 		public void FillEllipse (Brush brush, Rectangle rect)
@@ -925,23 +935,23 @@ namespace System.Drawing
 
 		public void FillPath (Brush brush, GraphicsPath path)
 		{
-			GDIPlus.GdipFillPath(nativeObject, brush.NativeObject,  path.NativeObject);
+			GDIPlus.GdipFillPath (nativeObject, brush.NativeObject,  path.NativeObject);
 		}
 
 		public void FillPie (Brush brush, Rectangle rect, float startAngle, float sweepAngle)
 		{
-			GDIPlus.GdipFillPie(nativeObject, brush.NativeObject, rect.X, rect.Y, rect.Width, rect.Height,
-                       startAngle, sweepAngle);
+			GDIPlus.GdipFillPie (nativeObject, brush.NativeObject, rect.X, rect.Y, rect.Width, rect.Height,
+                                        startAngle, sweepAngle);
 		}
 
 		public void FillPie (Brush brush, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{
-			GDIPlus.GdipFillPieI(nativeObject, brush.NativeObject, x, y, width, height, startAngle, sweepAngle);
+			GDIPlus.GdipFillPieI (nativeObject, brush.NativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
 
 		public void FillPie (Brush brush, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
-			GDIPlus.GdipFillPie(nativeObject, brush.NativeObject, x, y, width, height, startAngle, sweepAngle);
+			GDIPlus.GdipFillPie (nativeObject, brush.NativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
 
 		public void FillPolygon (Brush brush, PointF [] points)
@@ -1005,7 +1015,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Flush ()
 		{
-			Flush(FlushIntention.Flush);
+			Flush (FlushIntention.Flush);
 		}
 
 		[MonoTODO]
@@ -1019,7 +1029,7 @@ namespace System.Drawing
 		{
 			int graphics;
 			GDIPlus.GdipCreateFromHDC (hdc, out graphics);
-			Graphics result = new Graphics ((IntPtr)graphics);
+			Graphics result = new Graphics ((IntPtr) graphics);
 			return result;
 		}
 
@@ -1039,9 +1049,9 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 			
-			GDIPlus.GdipCreateFromHWND(hwnd, out graphics); 			
+			GDIPlus.GdipCreateFromHWND (hwnd, out graphics); 			
  			
-			return new Graphics(graphics);			
+			return new Graphics (graphics); 
 		}
 
 		[MonoTODO]
@@ -1056,7 +1066,7 @@ namespace System.Drawing
 			if (image == null) throw new ArgumentException ();
 			int graphics;
 			GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
-			Graphics result = new Graphics ((IntPtr)graphics);
+			Graphics result = new Graphics ((IntPtr) graphics);
 			return result;
 		}
 
@@ -1071,7 +1081,7 @@ namespace System.Drawing
 		{
 			int hdc;
 			GDIPlus.GdipGetDC (nativeObject, out hdc);
-			return (IntPtr)hdc;
+			return (IntPtr) hdc;
 		}
 
 		
@@ -1079,8 +1089,8 @@ namespace System.Drawing
 		{
 			int argb;
 			
-			GDIPlus.GdipGetNearestColor(nativeObject,  out  argb);			
-			return Color.FromArgb(argb);
+			GDIPlus.GdipGetNearestColor (nativeObject, out argb);			
+			return Color.FromArgb (argb);
 		}
 
 		[MonoTODO]
@@ -1091,71 +1101,70 @@ namespace System.Drawing
 		
 		public void IntersectClip (RectangleF rect)
 		{
-			GDIPlus.GdipSetClipRect(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Intersect);
+			GDIPlus.GdipSetClipRect (nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Intersect);
 		}
 
 		public void IntersectClip (Rectangle rect)
 		{			
-			GDIPlus.GdipSetClipRectI(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Intersect);
-
+			GDIPlus.GdipSetClipRectI (nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Intersect);
 		}
 
 		public bool IsVisible (Point point)
 		{
-			bool bIsVisible = false;
+			bool isVisible = false;
 
-			GDIPlus.GdipIsVisiblePointI(nativeObject, point.X, point.Y, out bIsVisible);
+			GDIPlus.GdipIsVisiblePointI (nativeObject, point.X, point.Y, out isVisible);
 
-        	return bIsVisible;
+                        return isVisible;
 		}
 
 		
 		public bool IsVisible (RectangleF rect)
 		{
-			bool bIsVisible = false;
+			bool isVisible = false;
 
-			GDIPlus.GdipIsVisibleRect(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, out bIsVisible);
+			GDIPlus.GdipIsVisibleRect (nativeObject, rect.X, rect.Y, rect.Width, rect.Height, out isVisible);
 
-        	return bIsVisible;
+                        return isVisible;
 		}
 
 		public bool IsVisible (PointF point)
 		{
-			bool bIsVisible = false;
+			bool isVisible = false;
 
-			GDIPlus.GdipIsVisiblePoint(nativeObject, point.X, point.Y, out bIsVisible);
+			GDIPlus.GdipIsVisiblePoint (nativeObject, point.X, point.Y, out isVisible);
 
-        	return bIsVisible;
+                        return isVisible;
 		}
 		
 		public bool IsVisible (Rectangle rect)
 		{
-			bool bIsVisible = false;
+			bool isVisible = false;
 
-			GDIPlus.GdipIsVisibleRectI(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, out bIsVisible);
+			GDIPlus.GdipIsVisibleRectI (nativeObject, rect.X, rect.Y, rect.Width, rect.Height, out isVisible);
 
-        	return bIsVisible;
+                        return isVisible;
 		}
 		
 		public bool IsVisible (float x, float y)
 		{
-			return IsVisible(new PointF(x,y));
+			return IsVisible (new PointF (x, y));
 		}
 		
 		public bool IsVisible (int x, int y)
 		{
-			return IsVisible(new Point(x,y));
+			return IsVisible (new Point (x, y));
 		}
 		
 		public bool IsVisible (float x, float y, float width, float height)
 		{
-			return IsVisible(new RectangleF(x, y, width, height));
+			return IsVisible (new RectangleF (x, y, width, height));
 		}
 
 		
 		public bool IsVisible (int x, int y, int width, int height)
 		{
-			return IsVisible(new Rectangle(x, y, width, height));
+			return IsVisible (new Rectangle (x, y, width, height));
 		}
 
 		[MonoTODO]
@@ -1201,7 +1210,8 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
-		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, out int charactersFitted, out int linesFilled)
+		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, 
+                                out int charactersFitted, out int linesFilled)
 		{
 			throw new NotImplementedException ();
 		}
@@ -1263,7 +1273,7 @@ namespace System.Drawing
 		{
 			//return implementation.Save();
 			GraphicsState state = new GraphicsState();
-			state.matrix = Transform.Clone();
+			state.matrix = Transform.Clone ();
 			uint saveState;
 			GDIPlus.GdipSaveGraphics (nativeObject, out saveState);
 			state.nativeState = saveState;
@@ -1283,43 +1293,43 @@ namespace System.Drawing
 		
 		public void SetClip (RectangleF rect)
 		{
-			 SetClip (rect, CombineMode.Replace);
+                        SetClip (rect, CombineMode.Replace);
 		}
 
 		
 		public void SetClip (GraphicsPath path)
 		{
-			SetClip(path, CombineMode.Replace);
+			SetClip (path, CombineMode.Replace);
 		}
 
 		
 		public void SetClip (Rectangle rect)
 		{
-			SetClip(rect, CombineMode.Replace);
+			SetClip (rect, CombineMode.Replace);
 		}
 
 		
 		public void SetClip (Graphics g)
 		{
-			SetClip(g, CombineMode.Replace);
+			SetClip (g, CombineMode.Replace);
 		}
 
 		
 		public void SetClip (Graphics g, CombineMode combineMode)
 		{
-			GDIPlus.GdipSetClipGraphics(nativeObject, g.NativeObject, combineMode);
+			GDIPlus.GdipSetClipGraphics (nativeObject, g.NativeObject, combineMode);
 		}
 
 		
 		public void SetClip (Rectangle rect, CombineMode combineMode)
 		{
-			GDIPlus.GdipSetClipRectI(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, combineMode);
+			GDIPlus.GdipSetClipRectI (nativeObject, rect.X, rect.Y, rect.Width, rect.Height, combineMode);
 		}
 
 		
 		public void SetClip (RectangleF rect, CombineMode combineMode)
 		{
-			GDIPlus.GdipSetClipRect(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, combineMode);		
+			GDIPlus.GdipSetClipRect (nativeObject, rect.X, rect.Y, rect.Width, rect.Height, combineMode);		
 		}
 
 		[MonoTODO]
@@ -1331,39 +1341,39 @@ namespace System.Drawing
 		
 		public void SetClip (GraphicsPath path, CombineMode combineMode)
 		{
-			GDIPlus.GdipSetClipPath(nativeObject, path.NativeObject, combineMode);
+			GDIPlus.GdipSetClipPath (nativeObject, path.NativeObject, combineMode);
 		}
 
 		
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts)
 		{
-			IntPtr ptrPt =  GDIPlus.FromPointToUnManagedMemory(pts);			
+			IntPtr ptrPt =  GDIPlus.FromPointToUnManagedMemory (pts);
             
-            Status status = GDIPlus.GdipTransformPoints(nativeObject, destSpace, srcSpace,  ptrPt, pts.Length); 				
+                        Status status = GDIPlus.GdipTransformPoints (nativeObject, destSpace, srcSpace,  ptrPt, pts.Length);
 			
-			GDIPlus.FromUnManagedMemoryToPoint(ptrPt, pts);
+			GDIPlus.FromUnManagedMemoryToPoint (ptrPt, pts);
 		}
 
 				
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, Point [] pts)
 		{						
-            IntPtr ptrPt =  GDIPlus.FromPointToUnManagedMemoryI(pts);			
+                        IntPtr ptrPt =  GDIPlus.FromPointToUnManagedMemoryI (pts);
             
-            Status status = GDIPlus.GdipTransformPointsI(nativeObject, destSpace, srcSpace,  ptrPt, pts.Length); 				
+                        Status status = GDIPlus.GdipTransformPointsI (nativeObject, destSpace, srcSpace, ptrPt, pts.Length);
 			
-			GDIPlus.FromUnManagedMemoryToPointI(ptrPt, pts);
+			GDIPlus.FromUnManagedMemoryToPointI (ptrPt, pts);
 		}
 
 		
 		public void TranslateClip (int dx, int dy)
 		{
-			GDIPlus.GdipTranslateClipI(nativeObject,  dx,  dy);			
+			GDIPlus.GdipTranslateClipI (nativeObject, dx, dy);			
 		}
 
 		
 		public void TranslateClip (float dx, float dy)
 		{
-			GDIPlus.GdipTranslateClip(nativeObject,  dx,  dy);
+			GDIPlus.GdipTranslateClip (nativeObject, dx, dy);
 		}
 
 		public void TranslateTransform (float dx, float dy)
@@ -1388,119 +1398,118 @@ namespace System.Drawing
 
 		public RectangleF ClipBounds {
 			get {
-					RectangleF	rect = new RectangleF();					
-					GDIPlus.GdipGetClipBounds(nativeObject, out rect);
-					return rect;
+                                RectangleF rect = new RectangleF ();					
+                                GDIPlus.GdipGetClipBounds (nativeObject, out rect);
+                                return rect;
 			}
 		}
 
 		public CompositingMode CompositingMode {
 			get {
-					CompositingMode mode;
-					GDIPlus.GdipGetCompositingMode(nativeObject, out mode);    
-					return mode;
+                                CompositingMode mode;
+                                GDIPlus.GdipGetCompositingMode (nativeObject, out mode);    
+                                return mode;
 			}
 			set {
 				
-					GDIPlus.GdipSetCompositingMode(nativeObject, value);    
+                                GDIPlus.GdipSetCompositingMode (nativeObject, value);    
 			}
 
 		}
 
 		public CompositingQuality CompositingQuality {
 			get {
-					CompositingQuality quality;
-        			GDIPlus.GdipGetCompositingQuality(nativeObject, out quality);
+                                CompositingQuality quality;
+
+                                GDIPlus.GdipGetCompositingQuality (nativeObject, out quality);
         			return quality;
 			}
 			set {
-					GDIPlus.GdipSetCompositingQuality(nativeObject, value);            
+                                GDIPlus.GdipSetCompositingQuality (nativeObject, value); 
 			}
 		}
 
 		public float DpiX {
 			get {
-					float x;
+                                float x;
 
-       				GDIPlus.GdipGetDpiX(nativeObject, out x);
+       				GDIPlus.GdipGetDpiX (nativeObject, out x);
         			return x;
 			}
 		}
 
 		public float DpiY {
 			get {
-					float y;
+                                float y;
 
-       				GDIPlus.GdipGetDpiY(nativeObject, out y);
+       				GDIPlus.GdipGetDpiY (nativeObject, out y);
         			return y;
 			}
 		}
 
 		public InterpolationMode InterpolationMode {
 			get {				
-					InterpolationMode imode = InterpolationMode.Invalid;
-        			GDIPlus.GdipGetInterpolationMode(nativeObject, out imode);
+                                InterpolationMode imode = InterpolationMode.Invalid;
+        			GDIPlus.GdipGetInterpolationMode (nativeObject, out imode);
         			return imode;
 			}
 			set {
-					GDIPlus.GdipSetInterpolationMode(nativeObject, value);
+                                GDIPlus.GdipSetInterpolationMode (nativeObject, value);
 			}
 		}
 
 		public bool IsClipEmpty {
 			get {
-				
-					bool isEmpty = false;
+                                bool isEmpty = false;
 
-        			GDIPlus.GdipIsClipEmpty(nativeObject, out isEmpty);
+        			GDIPlus.GdipIsClipEmpty (nativeObject, out isEmpty);
         			return isEmpty;
 			}
 		}
 
 		public bool IsVisibleClipEmpty {
 			get {
-				
-					bool isEmpty = false;
+                                bool isEmpty = false;
 
-        			GDIPlus.GdipIsVisibleClipEmpty(nativeObject, out isEmpty);
+        			GDIPlus.GdipIsVisibleClipEmpty (nativeObject, out isEmpty);
         			return isEmpty;
 			}
 		}
 
 		public float PageScale {
 			get {
-					float scale;
+                                float scale;
 
-        			GDIPlus.GdipGetPageScale(nativeObject, out scale);
+        			GDIPlus.GdipGetPageScale (nativeObject, out scale);
         			return scale;
 			}
 			set {
-					GDIPlus.GdipSetPageScale(nativeObject, value);
+                                GDIPlus.GdipSetPageScale (nativeObject, value);
 			}
 		}
 
 		public GraphicsUnit PageUnit {
 			get {
-					GraphicsUnit unit;
-
-					GDIPlus.GdipGetPageUnit(nativeObject, out unit);
+                                GraphicsUnit unit;
+                                
+                                GDIPlus.GdipGetPageUnit (nativeObject, out unit);
         			return unit;
 			}
 			set {
-				  	GDIPlus.GdipSetPageUnit(nativeObject, value);
+                                GDIPlus.GdipSetPageUnit (nativeObject, value);
 			}
 		}
 
 		public PixelOffsetMode PixelOffsetMode {
 			get {
 			        PixelOffsetMode pixelOffset = PixelOffsetMode.Invalid;
-
-    			    GDIPlus.GdipGetPixelOffsetMode(nativeObject, out pixelOffset);
+                                
+                                GDIPlus.GdipGetPixelOffsetMode (nativeObject, out pixelOffset);
 
         			return pixelOffset;
 			}
 			set {
-					GDIPlus.GdipSetPixelOffsetMode(nativeObject, value);    	
+                                GDIPlus.GdipSetPixelOffsetMode (nativeObject, value); 
 			}
 		}
 
@@ -1520,40 +1529,41 @@ namespace System.Drawing
 
 		public SmoothingMode SmoothingMode {
 			get {
-					SmoothingMode mode = SmoothingMode.Invalid;
+                                SmoothingMode mode = SmoothingMode.Invalid;
 
-        			GDIPlus.GdipGetSmoothingMode(nativeObject, out mode);
-	
-    			    return mode;
+        			GDIPlus.GdipGetSmoothingMode (nativeObject, out mode);
+                                
+                                return mode;
 			}
+
 			set {
-					GDIPlus.GdipSetSmoothingMode(nativeObject, value);
+                                GDIPlus.GdipSetSmoothingMode (nativeObject, value);
 			}
 		}
 
 		public int TextContrast {
 			get {	
-					int contrast;
+                                int contrast;
 					
-				 	GDIPlus.GdipGetTextContrast(nativeObject, out contrast);
-				 	return contrast;
+                                GDIPlus.GdipGetTextContrast (nativeObject, out contrast);
+                                return contrast;
 			}
-			set {
-					GDIPlus.GdipSetTextContrast(nativeObject, value);
+
+                        set {
+                                GDIPlus.GdipSetTextContrast (nativeObject, value);
 			}
 		}
 
 		public TextRenderingHint TextRenderingHint {
 			get {
-				
-					TextRenderingHint hint;
+                                TextRenderingHint hint;
 
-        			GDIPlus.GdipGetTextRenderingHint(nativeObject, out hint);
-					return hint;        
+                                GDIPlus.GdipGetTextRenderingHint (nativeObject, out hint);
+                                return hint;        
 			}
+
 			set {
-				
-					GDIPlus.GdipSetTextRenderingHint(nativeObject, value);
+                                GDIPlus.GdipSetTextRenderingHint (nativeObject, value);
 			}
 		}
 
@@ -1571,10 +1581,10 @@ namespace System.Drawing
 
 		public RectangleF VisibleClipBounds {
 			get {
-					RectangleF	rect;
+                                RectangleF rect;
 					
-					GDIPlus.GdipGetVisibleClipBounds(nativeObject, out rect);
-					return rect;
+                                GDIPlus.GdipGetVisibleClipBounds (nativeObject, out rect);
+                                return rect;
 			}
 		}
 	}

@@ -1,3 +1,12 @@
+2004-01-29  Duncan Mak  <duncan@ximian.com>
+
+	* gdipFunctions.cs
+	* Graphics.cs: Indentation fixes, removed long dangling lines and
+	extra spaces. 
+
+	* Graphics.cs (IsVisible): Renamed variable to not use hungarian
+	notation.
+
 2004-01-29  Sanjay Gupta <gsanjay@novell.com>
 	
 	* FontFamily.cs: Implemented few methods and a constructor

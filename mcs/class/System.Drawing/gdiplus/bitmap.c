@@ -65,7 +65,8 @@ gdip_bitmap_new ()
 void 
 gdip_bitmap_dispose (GpBitmap *bitmap)
 {
-	GdipFree (bitmap->data.Scan0);
+        if (bitmap->data.own_scan0 == TRUE)
+                GdipFree (bitmap->data.Scan0);
 }
 
 void 
@@ -166,12 +167,15 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 {
 	GpBitmap *result = 0;
 	int cairo_format = 0;
+        bool own_scan0 = FALSE;
 
 	if (stride == 0)
 		return InvalidParameter;
 
-	if (scan0 == NULL)
+	if (scan0 == NULL) {
                 scan0 = GdipAlloc (stride*height);
+                own_scan0 = TRUE;
+        }
 			
 	switch (format) {
 	case Format24bppRgb:
@@ -184,6 +188,7 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 		*bitmap = 0;
 		return NotImplemented;
 	}
+
 	result = gdip_bitmap_new ();
 	result->cairo_format = cairo_format;
 	result->data.Width = width;
@@ -191,6 +196,7 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 	result->data.Stride = stride;
 	result->data.PixelFormat = format;
 	result->data.Scan0 = scan0;
+        result->data.own_scan0 = own_scan0;
 	
 	*bitmap = result;
 	return Ok;

@@ -422,7 +422,7 @@ namespace System.Drawing {
                 internal static extern Status GdipTranslatePenTransform (IntPtr pen, float dx, float dy, MatrixOrder order);
 
 		[DllImport("gdiplus.dll")]
-				internal static  extern Status GdipCreateFromHWND(IntPtr hwnd, out IntPtr graphics);
+		internal static extern Status GdipCreateFromHWND (IntPtr hwnd, out IntPtr graphics);
 		
 		// Bitmap functions
 		[DllImport("gdiplus.dll")]
@@ -446,59 +446,57 @@ namespace System.Drawing {
 		internal static extern Status GdipBitmapUnlockBits (IntPtr bmp, [In,Out] BitmapData bmpData);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipBitmapGetPixel(IntPtr bmp, int x, int y, out int argb); 
+		internal static extern Status GdipBitmapGetPixel (IntPtr bmp, int x, int y, out int argb); 
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipBitmapSetPixel(IntPtr bmp, int x, int y, int argb);
+		internal static extern Status GdipBitmapSetPixel (IntPtr bmp, int x, int y, int argb);
 
 		// Image functions
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDisposeImage (IntPtr image);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipDrawImageI( IntPtr graphics, IntPtr image, int x, int y);
+		internal static extern Status GdipDrawImageI (IntPtr graphics, IntPtr image, int x, int y);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageGraphicsContext( IntPtr image, out int graphics);		
+		internal static extern Status GdipGetImageGraphicsContext (IntPtr image, out int graphics);		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipDrawImage(IntPtr graphics, IntPtr image, float x, float y);
+		internal static extern Status GdipDrawImage (IntPtr graphics, IntPtr image, float x, float y);
 		
 		[DllImport("gdiplus.dll")]	
-		internal static extern Status GdipBeginContainer(IntPtr graphics,  RectangleF dstrect,
+		internal static extern Status GdipBeginContainer (IntPtr graphics,  RectangleF dstrect,
                    RectangleF srcrect, GraphicsUnit unit, out int  state);
 
 		[DllImport("gdiplus.dll")]	
-		internal static extern Status GdipBeginContainerI(IntPtr graphics, Rectangle dstrect,
+		internal static extern Status GdipBeginContainerI (IntPtr graphics, Rectangle dstrect,
                     Rectangle srcrect, GraphicsUnit unit, out int state);
 
 		[DllImport("gdiplus.dll")]	
-		internal static extern Status GdipBeginContainer2(IntPtr graphics, out int state); 
+		internal static extern Status GdipBeginContainer2 (IntPtr graphics, out int state); 
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipDrawImagePoints(IntPtr graphics, IntPtr image, PointF [] destPoints, int count);
+		internal static extern Status GdipDrawImagePoints (IntPtr graphics, IntPtr image, PointF [] destPoints, int count);
 
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipDrawImagePointsI(IntPtr graphics, IntPtr image,  Point [] destPoints, int count);
+		internal static extern Status GdipDrawImagePointsI (IntPtr graphics, IntPtr image,  Point [] destPoints, int count);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipDrawImageRectRectI(IntPtr graphics, IntPtr image,
-							int dstx, int dsty, int dstwidth, int dstheight,
+		internal static extern Status GdipDrawImageRectRectI (IntPtr graphics, IntPtr image,
+                                int dstx, int dsty, int dstwidth, int dstheight,
                        		int srcx, int srcy, int srcwidth, int srcheight,
                        		GraphicsUnit srcUnit, IntPtr imageattr, IntPtr callback, int callbackData);                      		
 		
 		[DllImport("gdiplus.dll")]		
-		internal static extern Status GdipCreateHBITMAPFromBitmap(IntPtr bmp, out IntPtr HandleBmp, int clrbackground);
+		internal static extern Status GdipCreateHBITMAPFromBitmap (IntPtr bmp, out IntPtr HandleBmp, int clrbackground);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreateHICONFromBitmap(IntPtr bmp, out IntPtr HandleIcon);
+		internal static extern Status GdipCreateHICONFromBitmap (IntPtr bmp, out IntPtr HandleIcon);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreateBitmapFromHICON(IntPtr  hicon,  out IntPtr bitmap);
+		internal static extern Status GdipCreateBitmapFromHICON (IntPtr  hicon,  out IntPtr bitmap);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreateBitmapFromResource(IntPtr hInstance,
-                             string lpBitmapName, out IntPtr bitmap);
-
-
+		internal static extern Status GdipCreateBitmapFromResource (IntPtr hInstance,
+                                string lpBitmapName, out IntPtr bitmap);
 
                 // Matrix functions
                 [DllImport ("gdiplus.dll")]
@@ -639,88 +637,88 @@ namespace System.Drawing {
                 internal static extern Status GdipIsOutlineVisiblePathPoint (IntPtr path, float x, float y, IntPtr graphics, out bool result);
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipIsOutlineVisiblePathPointI (IntPtr path, int x, int y, IntPtr graphics, out bool result); 
-                                             
-				// ImageAttributes
-				[DllImport ("gdiplus.dll")]     
-				internal static extern Status GdipCreateImageAttributes(out IntPtr imageattr);
+                
+		// ImageAttributes
+		[DllImport ("gdiplus.dll")]     
+		internal static extern Status GdipCreateImageAttributes (out IntPtr imageattr);
 				
-				[DllImport ("gdiplus.dll")]     
-				internal static extern Status GdipSetImageAttributesColorKeys(IntPtr imageattr,
+		[DllImport ("gdiplus.dll")]     
+		internal static extern Status GdipSetImageAttributesColorKeys (IntPtr imageattr,
                                 ColorAdjustType type, bool enableFlag, int colorLow, int colorHigh);
                                 
                 [DllImport ("gdiplus.dll")]     
-				internal static extern Status GdipDisposeImageAttributes(IntPtr imageattr);
+                internal static extern Status GdipDisposeImageAttributes (IntPtr imageattr);
 				
-				[DllImport ("gdiplus.dll")]     
-				internal static extern Status GdipSetImageAttributesColorMatrix(IntPtr imageattr,
-                             ColorAdjustType type, bool enableFlag, ColorMatrix colorMatrix,
-                               ColorMatrix grayMatrix,  ColorMatrixFlag flags); 
+                [DllImport ("gdiplus.dll")]     
+                internal static extern Status GdipSetImageAttributesColorMatrix (IntPtr imageattr,
+                                ColorAdjustType type, bool enableFlag, ColorMatrix colorMatrix,
+                                ColorMatrix grayMatrix,  ColorMatrixFlag flags);                                
                                
 		// Font		
 		[DllImport("gdiplus.dll")]                   
-		internal static extern Status GdipCreateFont(IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit  unit,  out IntPtr font);
+		internal static extern Status GdipCreateFont (IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit  unit,  out IntPtr font);
 		[DllImport("gdiplus.dll")]                   
-		internal static extern Status GdipDeleteFont(IntPtr font);		
+		internal static extern Status GdipDeleteFont (IntPtr font);		
 
 		// FontCollection
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetFontCollectionFamilyCount( IntPtr collection, out int found );
+		internal static extern Status GdipGetFontCollectionFamilyCount (IntPtr collection, out int found);
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetFontCollectionFamilyList( IntPtr collection, int getCount, IntPtr dest, out int retCount );
+		internal static extern Status GdipGetFontCollectionFamilyList (IntPtr collection, int getCount, IntPtr dest, out int retCount);
 		//internal static extern Status GdipGetFontCollectionFamilyList( IntPtr collection, int getCount, [Out] FontFamily[] familyList, out int retCount );
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipNewInstalledFontCollection( out IntPtr collection );
+		internal static extern Status GdipNewInstalledFontCollection (out IntPtr collection);
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipNewPrivateFontCollection( out IntPtr collection );
+		internal static extern Status GdipNewPrivateFontCollection (out IntPtr collection);
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipDeletePrivateFontCollection( IntPtr collection );
+		internal static extern Status GdipDeletePrivateFontCollection (IntPtr collection);
 		
 		[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
-		internal static extern Status GdipPrivateAddFontFile( IntPtr collection, [MarshalAs(UnmanagedType.LPWStr)] string fileName );
+		internal static extern Status GdipPrivateAddFontFile (IntPtr collection,
+                                [MarshalAs (UnmanagedType.LPWStr)] string fileName );
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipPrivateAddMemoryFont( IntPtr collection, IntPtr mem, int length );
+		internal static extern Status GdipPrivateAddMemoryFont (IntPtr collection, IntPtr mem, int length);
 
 		//FontFamily
 		[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
-		internal static extern Status GdipCreateFontFamilyFromName( [MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily );
+		internal static extern Status GdipCreateFontFamilyFromName (
+                        [MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
 
 		/*[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
 		internal static extern Status GdipGetFamilyName(IntPtr fontFamily,  );
 		GpStatus WINGDIPAPI GdipGetFamilyName( GDIPCONST GpFontFamily *family, WCHAR name[LF_FACESIZE], LANGID language )*/
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetGenericFontFamilySansSerif( out IntPtr fontFamily );
+		internal static extern Status GdipGetGenericFontFamilySansSerif (out IntPtr fontFamily);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetGenericFontFamilySerif( out IntPtr fontFamily );
+		internal static extern Status GdipGetGenericFontFamilySerif (out IntPtr fontFamily);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetGenericFontFamilyMonospace( out IntPtr fontFamily );
+		internal static extern Status GdipGetGenericFontFamilyMonospace (out IntPtr fontFamily);
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetCellAscent( IntPtr fontFamily, int style, out uint ascent );
+		internal static extern Status GdipGetCellAscent (IntPtr fontFamily, int style, out uint ascent);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetCellDescent( IntPtr fontFamily, int style, out uint descent );
+		internal static extern Status GdipGetCellDescent (IntPtr fontFamily, int style, out uint descent);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetLineSpacing( IntPtr fontFamily, int style, out uint spacing );
+		internal static extern Status GdipGetLineSpacing (IntPtr fontFamily, int style, out uint spacing);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetEmHeight( IntPtr fontFamily, int style, out uint emHeight);
+		internal static extern Status GdipGetEmHeight (IntPtr fontFamily, int style, out uint emHeight);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipIsStyleAvailable( IntPtr fontFamily, int style, out bool styleAvailable );
+		internal static extern Status GdipIsStyleAvailable (IntPtr fontFamily, int style, out bool styleAvailable);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipDeleteFontFamily( IntPtr fontFamily );                              
-				
-
+		internal static extern Status GdipDeleteFontFamily (IntPtr fontFamily);
 #endregion      
 	}               
 }               

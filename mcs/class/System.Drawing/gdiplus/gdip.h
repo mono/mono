@@ -191,6 +191,7 @@ typedef struct {
 	unsigned int Height;
 	int          Stride;
 	int          PixelFormat;
+        bool         own_scan0;
 	void         *Scan0;
 	unsigned int Reserved;
 } GdipBitmapData, BitmapData;
