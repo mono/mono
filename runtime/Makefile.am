@@ -7,8 +7,6 @@ SUBDIRS = . net_1_1 net_2_0
 mcs_topdir=$(top_srcdir)/../mcs
 
 monobins_DATA = \
-	mcs.exe 				\
-	mbas.exe				\
 	monoresgen.exe				\
 	secutil.exe				\
 	ilasm.exe				\
@@ -28,10 +26,16 @@ monobins_DATA = \
 	certmgr.exe				\
 	MakeCert.exe				\
 	gacutil.exe				\
-	gmcs.exe				\
 	sn.exe
 
-EXTRA_DIST= $(monobins_DATA)
+fx11_DATA = \
+	mcs.exe					\
+	mbas.exe
+
+fx20_DATA = \
+	gmcs.exe
+
+EXTRA_DIST= $(monobins_DATA) $(fx11_DATA) $(fx20_DATA)
 
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
@@ -40,8 +44,12 @@ MAINTAINERCLEANFILES = $(EXTRA_DIST)
 #
 if PLATFORM_WIN32
 monobinsdir = $(libdir)
+fx11dir = $(libdir)
+fx20dir = $(libdir)
 else
 monobinsdir = $(bindir)
+fx11dir = $(libdir)/mono/1.1/
+fx20dir = $(libdir)/mono/2.0/
 endif
 
 $(monobins_DATA):

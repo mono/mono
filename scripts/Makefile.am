@@ -12,20 +12,24 @@ endif
 
 if PLATFORM_WIN32
 plat_bindir = $(shell cygpath -m $(libdir))
+fx11_instdir = $(shell cygpath -m $(libdir))/mono/1.1/
+fx20_instdir = $(shell cygpath -m $(libdir))/mono/2.0/
 else
-plat_bindir = $(bindir)
+plat_bindir = $(bindir)/mono
+fx11_instdir = $(libdir)/mono/1.1/
+fx20_instdir = $(libdir)/mono/2.0/
 endif
 
 mcs: mcs.in
-	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/mcs.in > mcs.tmp \
+	sed -e 's^\@fx11_instdir\@^$(fx11_instdir)^g' -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/mcs.in > mcs.tmp \
 	&& mv mcs.tmp mcs
 
 gmcs: gmcs.in
-	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@libdir\@^$(libdir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/gmcs.in > gmcs.tmp \
+	sed -e 's^\@fx20_instdir\@^$(fx20_instdir)^g' -e 's^\@bindir\@^$(bindir)^g' -e 's^\@libdir\@^$(libdir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/gmcs.in > gmcs.tmp \
 	&& mv gmcs.tmp gmcs 
 
 mbas: mbas.in
-	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/mbas.in > mbas.tmp \
+	sed -e 's^\@fx11_instdir\@^$(fx11_instdir)^g' -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/mbas.in > mbas.tmp \
 	&& mv mbas.tmp mbas 
 
 ilasm: ilasm.in

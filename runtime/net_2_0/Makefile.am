@@ -5,8 +5,6 @@
 mcs_topdir=$(top_srcdir)/../mcs
 gacutil=$(srcdir)/../gacutil.exe
 
-PROFILE=net_2_0
-
 if JIT_SUPPORTED
 mono_runtime = $(top_builddir)/mono/mini/mono
 else
@@ -64,9 +62,13 @@ gac_assemblies_list = \
 	System.Windows.Forms				\
 	System.Xml
 
+if INSTALL_2_0
 gac_assemblies = $(gac_assemblies_list:=.dll)
+else
+gac_assemblies = 
+endif
 
-corlibdir = $(libdir)/net_2_0
+corlibdir = $(libdir)/mono/2.0
 corlib_DATA = mscorlib.dll
 
 EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
@@ -78,7 +80,7 @@ MAINTAINERCLEANFILES = $(EXTRA_DIST)
 assembliesdir = $(libdir)
 
 mscorlib.dll $(gac_assemblies):
-	cp -f $(mcs_topdir)/class/lib/$(PROFILE)/$@ $(srcdir)
+	cp -f $(mcs_topdir)/class/lib/net_2_0/$@ $(srcdir)
 
 all-local: $(gac_assemblies)
 

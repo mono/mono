@@ -1,2 +1,2 @@
 #!/bin/sh
-exec @bindir@/@mono_interp@ @plat_bindir@/mcs.exe "$@"
+exec @bindir@/@mono_interp@ @fx11_instdir@/mcs.exe "$@"

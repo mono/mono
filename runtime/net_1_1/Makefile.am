@@ -5,8 +5,6 @@
 mcs_topdir=$(top_srcdir)/../mcs
 gacutil=$(srcdir)/../gacutil.exe
 
-PROFILE=default
-
 if JIT_SUPPORTED
 mono_runtime = $(top_builddir)/mono/mini/mono
 else
@@ -79,7 +77,7 @@ MAINTAINERCLEANFILES = $(EXTRA_DIST)
 assembliesdir = $(libdir)
 
 mscorlib.dll $(gac_assemblies):
-	cp -f $(mcs_topdir)/class/lib/$(PROFILE)/$@ $(srcdir)
+	cp -f $(mcs_topdir)/class/lib/default/$@ $(srcdir)
 
 all-local: $(gac_assemblies)
 
