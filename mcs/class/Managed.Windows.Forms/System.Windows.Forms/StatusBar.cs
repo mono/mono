@@ -37,8 +37,6 @@ namespace System.Windows.Forms {
 		private bool show_panels = false;
 		private bool sizing_grip = true;
 
-		private Bitmap bmp_mem;
-		private Graphics dc_mem = null;
 		private Rectangle paint_area = new Rectangle ();
 
 		public StatusBar ()
@@ -87,7 +85,7 @@ namespace System.Windows.Forms {
 				return;
 
 			UpdateArea ();
-			CreateBuffers ();
+			CreateBuffers (Width, Height);
 			CalcPanelSizes ();
 			Draw ();
 		}
@@ -97,7 +95,7 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated (e);
 
 			UpdateArea ();
-			CreateBuffers ();
+			CreateBuffers (Width, Height);
 			Draw();
 		}
 
@@ -106,22 +104,10 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <=  0 || Visible == false)
 				return;
 
-			/* Copies memory drawing buffer to screen*/
 			UpdateArea ();
 			CalcPanelSizes ();
 			Draw();
-			pevent.Graphics.DrawImage (bmp_mem, 0, 0);
-		}
-
-		private void CreateBuffers ()
-		{
-			if (bmp_mem != null)
-				bmp_mem.Dispose ();
-			if (dc_mem != null)
-				dc_mem.Dispose ();
-
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);
-			dc_mem = Graphics.FromImage (bmp_mem);
+			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
 		}
 
 		private void CalcPanelSizes ()
@@ -140,9 +126,9 @@ namespace System.Windows.Forms {
 					continue;
 				}
 				if (p.AutoSize == StatusBarPanelAutoSize.Contents) {
-					if (dc_mem == null)
-						CreateBuffers ();
-					int len = (int) (dc_mem.MeasureString (p.Text, Font).Width + 0.5F);
+					if (DeviceContext == null)
+						CreateBuffers (Width, Height);
+					int len = (int) (DeviceContext.MeasureString (p.Text, Font).Width + 0.5F);
 					p.Width = (int) (len * 1.5F);
 					taken += p.Width;
 					taken += gap;
@@ -177,7 +163,7 @@ namespace System.Windows.Forms {
 
 		private void Draw ()
 		{
-			ThemeEngine.Current.DrawStatusBar (dc_mem, paint_area, this);
+			ThemeEngine.Current.DrawStatusBar (DeviceContext, paint_area, this);
 		}
 
 		public class StatusBarPanelCollection :	 IList, ICollection, IEnumerable {
