@@ -139,6 +139,8 @@ namespace Mono.CSharp {
 		Type [] param_types;
 		InternalParameters parameters;
 
+		MethodInfo dispose_method;
+
 		Expression enumerator_type;
 		Expression enumerable_type;
 		Expression generic_enumerator_type;
@@ -207,7 +209,7 @@ namespace Mono.CSharp {
 			ig.BeginFaultBlock ();
 
 			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Callvirt, dispose.MethodBuilder);
+			ig.Emit (OpCodes.Callvirt, dispose_method);
 
 			ig.EndExceptionBlock ();
 
@@ -434,6 +436,33 @@ namespace Mono.CSharp {
 			container.AddIterator (this);
 
 			Bases = list;
+			return true;
+		}
+
+		MethodInfo FetchMethodDispose ()
+		{
+			MemberList dispose_list;
+
+			dispose_list = FindMembers (
+				current_type.Type,
+				MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance,
+				Type.FilterName, "Dispose");
+
+			if (dispose_list.Count != 1)
+				throw new InternalErrorException ("Cannot find Dipose() method.");
+
+			return (MethodInfo) dispose_list [0];
+		}
+
+		protected override bool DoDefineMembers ()
+		{
+			if (!base.DoDefineMembers ())
+				return false;
+
+			dispose_method = FetchMethodDispose ();
+			if (dispose_method == null)
+				return false;
+
 			return true;
 		}
 

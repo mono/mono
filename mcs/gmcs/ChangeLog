@@ -1,3 +1,13 @@
+2004-11-25  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs (Iterator.DoDefineMembers): Override and lookup the
+	"Dispose" method from the `current_type'.
+	(Iterator.EmitMoveNext): Use the `dispose_method' we looked up in
+	DoDefineMembers() instead of using the MethodBuilder; this is
+	required for generic iterators.
+
+	* class.cs (TypeContainer.DoDefineMembers): Make this virtual.
+
 2004-11-24  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (Expression.LoadFromPtr): Use `ldobj' for generic parameters.

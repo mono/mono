@@ -1439,7 +1439,7 @@ namespace Mono.CSharp {
 			return members_defined_ok;
 		}
 
-		bool DoDefineMembers ()
+		protected virtual bool DoDefineMembers ()
 		{
 			//
 			// We need to be able to use the member cache while we are checking/defining
