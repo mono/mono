@@ -670,6 +670,11 @@ named_argument_list
 
 		$$ = args;
 	  }
+	  | named_argument_list COMMA expression
+	    {
+		  Report.Error (1016, lexer.Location, "Named attribute argument expected");
+		  $$ = null;
+		}
         ;
 
 named_argument
