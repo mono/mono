@@ -1029,8 +1029,14 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		public override MethodInfo DeclaringMethod {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static Type define_generic_parameter (TypeBuilder tb, MonoGenericParam param);
+		private extern Type define_generic_parameter (MonoGenericParam param);
 		
 		public Type DefineGenericParameter (string name, Type[] constraints)
 		{
@@ -1046,7 +1052,7 @@ namespace System.Reflection.Emit {
 				generic_params [0] = gparam;
 			}
 
-			return define_generic_parameter (this, gparam);
+			return define_generic_parameter (gparam);
 		}
 
 		public MethodBuilder DefineGenericMethod (string name, MethodAttributes attributes)

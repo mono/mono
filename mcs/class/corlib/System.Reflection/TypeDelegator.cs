@@ -250,7 +250,13 @@ namespace System.Reflection {
 
 		public override int GenericParameterPosition {
 			get {
-				throw new Exception ("Unimplemented");
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override MethodInfo DeclaringMethod {
+			get {
+				throw new NotImplementedException ();
 			}
 		}
 #endif

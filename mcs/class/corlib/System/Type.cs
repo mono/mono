@@ -995,6 +995,10 @@ namespace System {
 				return res;
 			}
 		}
+
+		public abstract MethodInfo DeclaringMethod {
+			get;
+		}
 #endif
 	}
 }

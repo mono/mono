@@ -567,6 +567,10 @@ namespace System
 			get;
 		}
 
+		public extern override MethodInfo DeclaringMethod {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
 #endif
 	}
 }

@@ -1,3 +1,8 @@
+2003-10-15  Martin Baulig  <martin@ximian.com>
+
+	* Type.cs (Type.DeclaringMethod): For a generic method's type
+	parameter, return this method - otherwise, return null.
+
 2003-10-14  Martin Baulig  <martin@ximian.com>
 
 	The generics API has changed in the spec since it was added here;

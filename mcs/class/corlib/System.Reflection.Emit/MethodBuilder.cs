@@ -237,7 +237,7 @@ namespace System.Reflection.Emit {
 
 #if GENERICS
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static Type define_generic_parameter (MethodBuilder tb, TypeBuilder.MonoGenericParam param);
+		private extern Type define_generic_parameter (TypeBuilder.MonoGenericParam param);
 		
 		public Type DefineGenericParameter (string name, Type[] constraints)
 		{
@@ -253,7 +253,7 @@ namespace System.Reflection.Emit {
 				generic_params [0] = gparam;
 			}
 
-			return define_generic_parameter (this, gparam);
+			return define_generic_parameter (gparam);
 		}
 
 		public void SetGenericMethodSignature (Type return_type, Type[] parameter_types)

@@ -289,6 +289,12 @@ namespace System.Reflection.Emit {
 				throw new NotImplementedException ();
 			}
 		}
+
+		public override MethodInfo DeclaringMethod {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 #endif
 	}
 }
