@@ -1,3 +1,10 @@
+
+Wed Aug 29 12:46:06 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: some small optimizations. Fixes to do signed
+	compares when needed. Change C++ comments into C.
+	Implemented cgt, clt. Added --opcode-count cmdline switch.
+
 2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_exec_method): better check for value types (get
