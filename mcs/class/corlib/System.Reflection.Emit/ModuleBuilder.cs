@@ -280,9 +280,9 @@ namespace System.Reflection.Emit {
 			return GetType (className, false, ignoreCase);
 		}
 
-		private TypeBuilder search_in_array (TypeBuilder[] arr, string className) {
+		private TypeBuilder search_in_array (TypeBuilder[] arr, int validElementsInArray, string className) {
 			int i;
-			for (i = 0; i < arr.Length; ++i) {
+			for (i = 0; i < validElementsInArray; ++i) {
 				if (String.Compare (className, arr [i].FullName, true, CultureInfo.InvariantCulture) == 0) {
 					return arr [i];
 				}
@@ -290,9 +290,9 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
-		private TypeBuilder search_nested_in_array (TypeBuilder[] arr, string className) {
+		private TypeBuilder search_nested_in_array (TypeBuilder[] arr, int validElementsInArray, string className) {
 			int i;
-			for (i = 0; i < arr.Length; ++i) {
+			for (i = 0; i < validElementsInArray; ++i) {
 				if (String.Compare (className, arr [i].Name, true, CultureInfo.InvariantCulture) == 0)
 					return arr [i];
 			}
@@ -311,13 +311,13 @@ namespace System.Reflection.Emit {
 			subt = className.IndexOf ('+');
 			if (subt < 0) {
 				if (t.subtypes != null)
-					return search_nested_in_array (t.subtypes, className);
+					return search_nested_in_array (t.subtypes, t.subtypes.Length, className);
 				return null;
 			}
 			if (t.subtypes != null) {
 				pname = className.Substring (0, subt);
 				rname = className.Substring (subt + 1);
-				TypeBuilder result = search_nested_in_array (t.subtypes, pname);
+				TypeBuilder result = search_nested_in_array (t.subtypes, t.subtypes.Length, pname);
 				if (result != null)
 					return GetMaybeNested (result, rname);
 			}
@@ -346,12 +346,12 @@ namespace System.Reflection.Emit {
 				subt = className.IndexOf ('+');
 				if (subt < 0) {
 					if (types != null)
-						result = search_in_array (types, className);
+						result = search_in_array (types, num_types,  className);
 				} else {
 					string pname, rname;
 					pname = className.Substring (0, subt);
 					rname = className.Substring (subt + 1);
-					result = search_in_array (types, pname);
+					result = search_in_array (types, num_types, pname);
 					if (result != null)
 						result = GetMaybeNested (result, rname);
 				}
