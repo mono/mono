@@ -565,7 +565,7 @@ namespace MonoTests.System.Security {
 			Compare ("Unrestricted N PS1", ups1.Intersect (ps1), false, 1);
 
 			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
-			Compare ("UPS1 N UPS2", ups1.Intersect (ups1), true, 1);
+			Compare ("UPS1 N UPS2", ups1.Intersect (ups2), true, 0);
 			Compare ("UPS2 N UPS1", ups2.Intersect (ups1), true, 0);
 			ups2.AddPermission (zip);
 			Compare ("UPS1 N UPS2+ZIP", ups1.Intersect (ups2), true, 1);
@@ -669,9 +669,8 @@ namespace MonoTests.System.Security {
 			AssertNull ("SecurityPermissionn", ps.RemovePermission (typeof (SecurityPermission)));
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			ps.AddPermission (zip);
-			ZoneIdentityPermission removed = (ZoneIdentityPermission)ps.RemovePermission (typeof (SecurityPermission));
-			AssertNull ("ZoneIdentityPermission", removed);
-			// not expected - see FDBK14622
+			ZoneIdentityPermission removed = (ZoneIdentityPermission)ps.RemovePermission (typeof (ZoneIdentityPermission));
+			AssertNotNull ("ZoneIdentityPermission", removed);
 		}
 
 		[Test]

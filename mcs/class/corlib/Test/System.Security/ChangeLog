@@ -1,3 +1,8 @@
+2003-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetTest.cs: Fixed two typos than changed the behaviour of
+	Intersect and RemovePermission.
+
 2003-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NamedPermissionTest.cs: Added unit tests for Copy(), Copy(name), 
