@@ -1,3 +1,8 @@
+2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Convert.cs (ToType): Throw an exception when converting null to a
+	valuetype. Fixes #67780.
+
 2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : Performance fix. ParseExact() implementation should
