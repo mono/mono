@@ -1,5 +1,17 @@
 2005-03-26  Jambunathan K  <kjambunathan.devel@gmail.com>
 
+	* ecore.cs (ImplicitInvocation): Set eclass and type to that of the child
+	
+	* convert.cs (ImplicitVBConversion, ImplicitVBConversionRequired,
+	ExplicitVBConversion): Added
+	(WideningNumericConversion): Added support for converting an enum to
+	it's underlying numeric type or any type that it's underlyinmg
+	type has widening conversion to.
+	
+	* assign.cs (DoAssign): Plugged in ImplicitVBConversionRequired.
+
+2005-03-26  Jambunathan K  <kjambunathan.devel@gmail.com>
+
 	* expression.cs (Binary.Operator): Added Exponentiation,
 	Concatenation, Like, Is and IntegerDivision opeartors
 

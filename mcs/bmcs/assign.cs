@@ -475,7 +475,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			source = Convert.WideningConversionRequired (ec, source, target_type, loc);
+			source = Convert.ImplicitVBConversionRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;
 

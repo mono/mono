@@ -419,6 +419,34 @@ namespace Mono.CSharp {
 			
  			Type real_target_type = target_type;
 
+			// VB.NET specific: Convert an enum to it's
+			// underlying numeric type or any type that
+			// it's underlyinmg type has widening
+			// conversion to.
+
+			if (expr_type.IsSubclassOf (TypeManager.enum_type)){
+				if (target_type == TypeManager.enum_type ||
+				    target_type == TypeManager.object_type) {
+					if (expr is EnumConstant)
+						expr = ((EnumConstant) expr).Child;
+					// We really need all these casts here .... :-(
+					expr = new BoxedCast (new EmptyCast (expr, expr_type));
+					return new EmptyCast (expr, target_type);
+				} 
+
+				//
+				// Notice that we have kept the expr_type unmodified, which is only
+				// used later on to 
+				if (expr is EnumConstant)
+					expr = ((EnumConstant) expr).Child;
+				else
+					expr = new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type));
+				expr_type = expr.Type;
+
+				if (expr_type == target_type)
+					return expr;
+			}
+
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to short, int, long, float, double.
@@ -2268,5 +2296,66 @@ namespace Mono.CSharp {
 			Error_CannotConvertType (l, expr.Type, target_type);
 			return null;
 		}
+
+		/// <summary>
+		///   Entry point for VB.NET specific implicit conversions
+		/// </summary>
+		static public Expression ImplicitVBConversion (EmitContext ec, Expression expr,
+							     Type target_type, Location loc)
+		{
+			if (RootContext.StricterTypeChecking)
+				return WideningConversion (ec, expr, target_type, loc);
+			else
+				return WideningAndNarrowingConversion(ec, expr, target_type, loc);
+		}
+
+		/// <summary>
+		///   Mandates VB.NET specific implicit conversions
+		/// </summary>
+		static public Expression ImplicitVBConversionRequired (EmitContext ec, Expression source,
+								     Type target_type, Location loc)
+		{
+			Expression e;
+
+
+			int errors = Report.Errors;
+			e = ImplicitVBConversion (ec, source, target_type, loc);
+			if (Report.Errors > errors)
+				return null;
+			if (e != null)
+				return e;
+
+			if (source is DoubleLiteral) {
+				if (target_type == TypeManager.float_type) {
+					Error_664 (loc, "float", "f");
+					return null;
+				}
+				if (target_type == TypeManager.decimal_type) {
+					Error_664 (loc, "decimal", "m");
+					return null;
+				}
+			}
+
+			if (source is Constant){
+				Constant c = (Constant) source;
+
+				Expression.Error_ConstantValueCannotBeConverted (loc, c.AsString (), target_type);
+				return null;
+			}
+			
+			Error_CannotWideningConversion (loc, source.Type, target_type);
+
+			return null;
+		}
+
+		/// <summary>
+		///   Entry point for VB.NET specific explicit conversions
+		/// </summary>
+		static public Expression ExplicitVBConversion (EmitContext ec, Expression expr,
+							     Type target_type, Location loc)
+		{
+				return WideningAndNarrowingConversion(ec, expr, target_type, loc);
+		}
+
 	}
 }

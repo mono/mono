@@ -1525,6 +1525,8 @@ namespace Mono.CSharp {
 				args.Add (new Argument (expr, Argument.AType.Expression));
 
 			child = new Invocation (StringToExpression (name, l), args, l).Resolve (ec);
+			eclass = child.eclass;
+			type = child.Type;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
