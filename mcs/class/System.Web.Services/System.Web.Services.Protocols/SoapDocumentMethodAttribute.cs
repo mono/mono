@@ -97,7 +97,7 @@ namespace System.Web.Services.Protocols {
 
 		public string ResponseNamespace {
 			get {
-				if (requestNamespace == null)
+				if (responseNamespace == null)
 					return "";
 				return responseNamespace;
 			}
