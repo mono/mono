@@ -1,4 +1,21 @@
-2005-02-03  Peter Bartok  <pbartok@novell.com>
+2005-02-09  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ProgressBar.cs
+		- Add missing attributes
+		- Add missing method
+		
+	* CheckedListBox.cs: Added missing attributes
+		- Add missing attributes
+		- Remove extra method
+	
+	* ComboBox.cs: Added missing attributes
+	* VScrollBar.cs: Added missing attributes
+	* ScrollBar.cs:  Added missing attributes
+	* ListBox.cs: Fixes signature, add missing consts
+	* LinkArea.cs:   Added missing attributes
+	
+
+2005-02-08  Peter Bartok  <pbartok@novell.com>
 
 	* Menu.cs: Added missing attributes
 	* MainMenu.cs: Added missing attributes

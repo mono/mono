@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -54,25 +54,47 @@ namespace System.Windows.Forms
 		}
 
 		#region events
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Click;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler DataSourceChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler DisplayMemberChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event DrawItemEventHandler DrawItem;
 		public event ItemCheckEventHandler ItemCheck;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MeasureItemEventHandler MeasureItem;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ValueMemberChanged;
 		#endregion Events
 
 		#region Public Properties
 		
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public CheckedListBox.CheckedIndexCollection CheckedIndices {
 			get {return checked_indices; }
 		}
 				
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public CheckedListBox.CheckedItemCollection CheckedItems {
 			get {return checked_items; }
 		}
 
+		[DefaultValue (false)]
 		public bool CheckOnClick {
 			get { return check_onclick; }
 			set { check_onclick = value; }
@@ -82,26 +104,39 @@ namespace System.Windows.Forms
 			get { return base.CreateParams;}
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public new object DataSource {
 			get { return base.DataSource; }
 			set { DataSource = value; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public new string DisplayMember {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override DrawMode DrawMode {
 			get { return DrawMode.Normal; }
 			set { /* Not possible */ }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override int ItemHeight {
 			get { return listbox_info.item_height; }
 			set { /* Not possible */ }
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Localizable (true)]
+		[Editor ("System.Windows.Forms.Design.ListContolStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public new CheckedListBox.ObjectCollection Items {
 			get { return (CheckedListBox.ObjectCollection) base.Items; }
 		}
@@ -116,6 +151,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool ThreeDCheckBoxes {
 			get { return three_dcheckboxes; }
 			set {
@@ -127,6 +163,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new string ValueMember {
 			get { return base.ValueMember; }
 			set { base.ValueMember = value; }			
@@ -606,12 +644,7 @@ namespace System.Windows.Forms
 			{
 				throw new NotImplementedException ();
 			}
-
-			int IList.IndexOf (object selectedIndex)
-			{
-				return IndexOf ((int) selectedIndex);
-			}
-	
+				
 			void IList.Insert (int index, object value)
 			{
 				throw new NotSupportedException ();
@@ -627,9 +660,9 @@ namespace System.Windows.Forms
 				throw new NotSupportedException ();
 			}
 	
-			public int IndexOf (int selectedIndex)
+			public int IndexOf (object item)
 			{
-				return object_items.IndexOf (selectedIndex);
+				return object_items.IndexOf (item);
 			}
 
 			public virtual IEnumerator GetEnumerator ()

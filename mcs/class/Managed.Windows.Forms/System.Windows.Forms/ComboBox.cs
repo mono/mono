@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -323,6 +323,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable (true)]
 		public virtual int ItemHeight {
 			get { return combobox_info.item_height; }
 			set {
@@ -376,14 +377,13 @@ namespace System.Windows.Forms
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[Browsable (false)]		
 		public int PreferredHeight {
 			get { return preferred_height; }
 		}
 		
 		[Browsable (false)]
-		[DefaultValue (-1)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
 			get { return selected_index; }
 			set {
@@ -406,6 +406,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Bindable(true)]
 		public object SelectedItem {
 			get {
 				if (selected_index !=-1 && Items !=null && Items.Count > 0)
@@ -433,7 +434,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		[Browsable (false)]
+		[Localizable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SelectedText {
 			get {

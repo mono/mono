@@ -20,7 +20,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004, Novell, Inc.
+// Copyright (C) 2004-2005, Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez	jordi@ximian.com
@@ -93,20 +93,58 @@ namespace System.Windows.Forms
 			Backwards,
 		}
 
-		#region Events
+		#region events
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackColorChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Click;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler DoubleClick;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler FontChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseDown;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseMove;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseUp;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
+		
 		public event ScrollEventHandler Scroll;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged;
+		
 		public event EventHandler ValueChanged;
 		#endregion Events
 
@@ -171,6 +209,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override Color BackColor
 		{
 			get { return base.BackColor; }
@@ -187,6 +226,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override Image BackgroundImage
 		{
 			get { return base.BackgroundImage; }
@@ -211,6 +251,8 @@ namespace System.Windows.Forms
 			get { return ImeMode.Disable; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override Font Font
 		{
 			get { return base.Font; }
@@ -226,6 +268,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override Color ForeColor
 		{
 			get { return base.ForeColor; }
@@ -242,6 +285,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public new ImeMode ImeMode
 		{
 			get { return base.ImeMode; }
@@ -256,6 +300,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (10)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public int LargeChange {
 			get {
 				if (large_change > maximum)
@@ -279,6 +325,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (100)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public int Maximum {
 			get { return maximum; }
 			set {
@@ -295,6 +343,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (0)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public int Minimum {
 			get { return minimum; }
 			set {
@@ -311,6 +361,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (1)]
 		public int SmallChange {
 			get { return small_change; }
 			set {
@@ -325,17 +376,23 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (false)]
 		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Bindable (false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override string Text {
 			 get { return base.Text;  }
 			 set { base.Text = value; }
 		}
 
+		[Bindable(true)]
+		[DefaultValue (0)]
 		public int Value {
 			get { return position; }
 			set {

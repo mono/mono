@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -46,6 +46,9 @@ namespace System.Windows.Forms
 	[Designer ("System.Windows.Forms.Design.ListBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class ListBox : ListControl
 	{
+		public const int DefaultItemHeight = 13;
+		public const int NoMatches = -1;
+		
 		internal class ListBoxInfo
 		{
 			internal int item_height; 		/* Item's height */
@@ -668,7 +671,7 @@ namespace System.Windows.Forms
 					return i;
 			}
 
-			return -1;
+			return NoMatches;
 		}
 
 		public int FindStringExact (string s)
@@ -683,7 +686,7 @@ namespace System.Windows.Forms
 					return i;
 			}
 
-			return -1;
+			return NoMatches;
 		}
 
 		public int GetItemHeight (int index)
@@ -2260,12 +2263,7 @@ namespace System.Windows.Forms
 			{
 				throw new NotImplementedException ();
 			}
-
-			int IList.IndexOf (object selectedIndex)
-			{
-				return IndexOf ((int) selectedIndex);
-			}
-	
+			
 			void IList.Insert (int index, object value)
 			{
 				throw new NotSupportedException ();
@@ -2281,9 +2279,9 @@ namespace System.Windows.Forms
 				throw new NotSupportedException ();
 			}
 	
-			public int IndexOf (int selectedIndex)
+			public int IndexOf (object item)
 			{
-				return object_items.IndexOf (selectedIndex);
+				return object_items.IndexOf (item);
 			}
 
 			public virtual IEnumerator GetEnumerator ()

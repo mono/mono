@@ -20,7 +20,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004, Novell, Inc.
+// Copyright (C) 2004-2005, Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez	jordi@ximian.com
@@ -30,19 +30,27 @@
 
 
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms 
 {
-
 	public class VScrollBar : ScrollBar 
-	{
+	{		
+		#region events
+		
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public new event EventHandler RightToLeftChanged;
+		
+		#endregion Events
 
 		public VScrollBar()
 		{			
 			vert = true;
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override RightToLeft RightToLeft {
 			get { return base.RightToLeft; }
 			set {

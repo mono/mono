@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //
@@ -29,9 +29,11 @@
 
 // COMPLETE
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms
 {
-	[Serializable]
+	[Serializable]	
 	public struct LinkArea
 	{
 		private int start;
@@ -55,6 +57,8 @@ namespace System.Windows.Forms
 			set { length = value; }
 		}				
 		
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool IsEmpty {
 			get {
 				if (start == 0 && length == 0)

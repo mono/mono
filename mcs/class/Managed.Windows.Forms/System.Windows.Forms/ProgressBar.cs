@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2005 Novell, Inc.
 //
 // Autors:
 //		Jordi Mas i Hernandez	jordi@ximian.com
@@ -32,6 +32,7 @@ using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty ("Value")]
 	public sealed class ProgressBar : Control
 	{
 		#region Local Variables
@@ -43,22 +44,69 @@ namespace System.Windows.Forms
 		internal Rectangle client_area = new Rectangle ();
 		#endregion	// Local Variables
 
-		#region Events
+		#region events
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]		
 		public new event EventHandler BackColorChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler CausesValidationChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler DoubleClick;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Enter;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler FontChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyDown;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyPressEventHandler KeyPress;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyUp;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Leave;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler RightToLeftChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TabStopChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged;
 		#endregion Events
 
@@ -80,6 +128,8 @@ namespace System.Windows.Forms
 
 		#region Public Instance Properties
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool AllowDrop
 		{
 			get { return base.AllowDrop; }
@@ -89,7 +139,9 @@ namespace System.Windows.Forms
 		}
 
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
-		// does not fires a BackColorChanged event
+		// does not fire a BackColorChanged event
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color BackColor
 		{
 			get { return base.BackColor; }
@@ -97,13 +149,17 @@ namespace System.Windows.Forms
 		}
 
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
-		// does not fires a BackgroundImageChanged event
+		// does not fire a BackgroundImageChanged event
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage
 		{
 			get { return base.BackgroundImage; }
 			set {BackgroundImage = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new bool CausesValidation
 		{
 			get { return base.CausesValidation; }
@@ -133,7 +189,9 @@ namespace System.Windows.Forms
 		}
 
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
-		// does not fires a FontChanged event
+		// does not fire a FontChanged event
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Font Font
 		{
 			get { return base.Font;	}
@@ -141,13 +199,17 @@ namespace System.Windows.Forms
 		}
 
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
-		// does not fires a FontChanged event
+		// does not fire a FontChanged event
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color ForeColor
 		{
 			get { return base.ForeColor; }
 			set { base.ForeColor = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ImeMode ImeMode
 		{
 			get { return base.ImeMode; }
@@ -162,6 +224,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[RefreshProperties(RefreshProperties.Repaint)]
+		[DefaultValue (100)]
 		public int Maximum
 		{
 			get {
@@ -177,6 +241,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[RefreshProperties(RefreshProperties.Repaint)]
+		[DefaultValue (0)]
 		public int Minimum {
 			get {
 				return minimum;
@@ -191,6 +257,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override RightToLeft RightToLeft
 		{
 			get { return base.RightToLeft; }
@@ -206,6 +274,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (10)]
 		public int Step
 		{
 			get { return step; }
@@ -215,6 +284,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new bool TabStop
 		{
 			get { return base.TabStop; }
@@ -230,6 +301,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Bindable(false)]
 		public override string Text
 		{
 			get { return base.Text; }
@@ -245,7 +319,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-
+		[Bindable(true)]
+		[DefaultValue (0)]
 		public int Value
 		{
 			get {
@@ -265,7 +340,11 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
-
+		
+		protected override void CreateHandle ()
+		{
+			base.CreateHandle ();
+		}
 
 		public void Increment (int value)
 		{
