@@ -1,5 +1,8 @@
 2004-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c cpu-amd64.md: Implement checked int<->uint casts.
+	Beginnings of SSE2 support.
+
 	* exceptions.cs: Add more tests for checked int<->uint casts.
 
 2004-08-28  Martin Baulig  <martin@ximian.com>
