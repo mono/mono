@@ -332,12 +332,13 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 		}
 	}
+
+	internal enum CallType: int
+	{
+		Sync = 0,
+		BeginInvoke = 1,
+		EndInvoke = 2,
+		OneWay = 3
+	}
 }
 
-internal enum CallType: int
-{
-	Sync = 0,
-	BeginInvoke = 1,
-	EndInvoke = 2,
-	OneWay = 3
-}
