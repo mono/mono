@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
+//  Implemented by Jordi Mas i Hernàndez (jmas@softcatala.org)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,52 +15,40 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-    public sealed class SaveFileDialog : FileDialog {
+    public sealed class SaveFileDialog : FileDialog {    	    	
 
 		//
 		//  --- Constructor
-		//
-		[MonoTODO]
-		public SaveFileDialog()
-		{
-			
+		//		
+		public SaveFileDialog()		{			
+			Reset();
 		}
 
 		//
 		//  --- Public Properties
-		//
-		[MonoTODO]
+		//		
 		public bool CreatePrompt {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return createPrompt;}			
+			set {createPrompt=value;}
 		}
-		[MonoTODO]
+		
 		public bool OverwritePrompt {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return overwritePrompt;}			
+			set {overwritePrompt=value;}
 		}
 
 		//
 		//  --- Public Methods
-		//
-
-		[MonoTODO]
-		public Stream OpenFile()
-		{
-			throw new NotImplementedException ();
+		//		
+		public Stream OpenFile(){						
+			return new FileStream(FileName, FileMode.OpenOrCreate);
 		}
-		[MonoTODO]
-		public override void Reset()
-		{
-			//FIXME:
+		
+		public override void Reset(){
+			
+			isSave = true;			
+			createPrompt = false;				
+			overwritePrompt = true;
 		}
 	 }
 }

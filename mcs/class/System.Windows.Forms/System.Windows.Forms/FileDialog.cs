@@ -32,6 +32,11 @@ namespace System.Windows.Forms {
 		string initialDirectory;
 		bool restoreDirectory;
 		bool validateNames;
+		
+		internal bool createPrompt = false;		
+		internal bool isSave = false;
+		internal bool overwritePrompt = true;
+		
 
 		protected static readonly object EventFileOk;
 		internal FileDialog ( )
@@ -181,7 +186,13 @@ namespace System.Windows.Forms {
 
 			initOpenFileName ( ref opf );
 
-			bool res = Win32_WineLess.GetOpenFileName ( ref opf );
+			bool res;
+			
+			if (isSave)
+			 	res = Win32_WineLess.GetSaveFileName ( ref opf );
+			else
+			 	res = Win32_WineLess.GetOpenFileName ( ref opf );
+			
 			if ( res )
 				FileName = Win32.wine_get_unix_file_name(opf.lpstrFile);
 			else {
@@ -247,6 +258,15 @@ namespace System.Windows.Forms {
 				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_NOCHANGEDIR );
 			if ( !ValidateNames )
 				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_NOVALIDATE );
+				
+			if (isSave)
+			{
+				if (createPrompt)
+					opf.Flags |= (int) (OpenFileDlgFlags.OFN_CREATEPROMPT);
+				
+				if (overwritePrompt)
+					opf.Flags |= (int) (OpenFileDlgFlags.OFN_OVERWRITEPROMPT);
+			}
 		}
 
 		private int getSeparatorsCount ( string filter )

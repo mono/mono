@@ -1,4 +1,6 @@
-
+2003-10-15 Jordi Mas i Hernàndez <jmas@softcatala.org>
+	* Implemented SaveFileDialog.cs
+	
 2003-10-14 Jordi Mas i Hernàndez <jmas@softcatala.org>
 	* Fixes CommonDialog.cs to work with windowless containers
 

@@ -66,6 +66,11 @@ namespace System.Windows.Forms{
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]
 		internal static extern bool GetOpenFileName ( ref OPENFILENAME lpofn );
+		
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool GetSaveFileName ( ref OPENFILENAME lpofn );
 
 		[DllImport ("comdlg32.dll",
 			 CallingConvention = CallingConvention.StdCall, 
