@@ -452,6 +452,18 @@ namespace System.Text {
 			return this;
 		}
 
+#if NET_2_0
+		public StringBuilder AppendLine ()
+		{
+			return Append (System.Environment.NewLine);
+		}
+
+		public StringBuilder AppendLine (string value)
+		{
+			return Append (value).Append (System.Environment.NewLine);
+		}
+#endif
+
 		public StringBuilder AppendFormat (string format, object arg0)
 		{
 			return AppendFormat (null, format, new object [] { arg0 });

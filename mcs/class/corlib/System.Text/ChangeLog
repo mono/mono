@@ -1,3 +1,6 @@
+2004-09-09  Tim Coleman <tim@timcoleman.com>
+	* StringBuilder.cs: Added AppendLine methods for Fx 2.0
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UTF7Encoding.cs: Fixed decoding table. Fixed char count calculation.
