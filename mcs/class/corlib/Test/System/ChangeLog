@@ -1,3 +1,9 @@
+2002-09-29  Nick Drochak  <ndrochak@gol.com>
+
+	* DecimalTest.cs: Change from Assert() with == to AssertEquals(). This
+	gets the tests to pass on linux, but they shouldn't need that.  Now
+	to find out why.  This seems deep...
+
 2002-09-19  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayTest.cs: Report errors with CopyTo().

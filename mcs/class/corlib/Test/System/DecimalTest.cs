@@ -388,12 +388,12 @@ namespace MonoTests.System {
 
         public void TestConstants()
         {
-            Assert(0m == (decimal)Decimal.Zero);
-            Assert(1m == (decimal)Decimal.One);
-            Assert(-1m == (decimal)Decimal.MinusOne);
-            Assert(0m == (decimal)Decimal.Zero);
-            Assert(79228162514264337593543950335m == (decimal)Decimal.MaxValue);
-            Assert(-79228162514264337593543950335m == (decimal)Decimal.MinValue);       
+            AssertEquals ("Zero", 0m, Decimal.Zero);
+            AssertEquals ("One", 1m, Decimal.One);
+            AssertEquals ("MinusOne", -1m, Decimal.MinusOne);
+            AssertEquals ("MaxValue", 79228162514264337593543950335m, Decimal.MaxValue);
+            AssertEquals ("MinValue", -79228162514264337593543950335m, Decimal.MinValue);       
+            Assert ("MinusOne 2", -1m == Decimal.MinusOne);
         }
 
         public void TestConstructInt32()
