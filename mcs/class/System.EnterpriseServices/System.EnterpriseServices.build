@@ -24,4 +24,7 @@
 			</sources>
 		</csc>
 	</target>
+	<target name="clean">
+		<delete file="../lib/System.EnterpriseServices.dll" failonerror="false"/>
+	</target>
 </project>
