@@ -56,7 +56,7 @@ function_decl_or_expr returns [AST func]
 	Block body = null;
 }
 	: "function" (id:IDENTIFIER | { is_func_exp = true; } ) 
-	  OPEN_PARENS p = formal_param_list CLOSE_PARENS 
+	  OPEN_PARENS (p = formal_param_list | ) CLOSE_PARENS 
 	  (COLON type_annot:IDENTIFIER | )
 	  OPEN_BRACE body = function_body CLOSE_BRACE
 	  {

@@ -1,3 +1,7 @@
+2003-11-04 cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: Allow functions without parameters.
+
 2003-11-03 cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* ASTList.cs, ArrayLiteral.cs, BitwiseBinary.cs, Blocks.cs,
