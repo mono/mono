@@ -1,4 +1,9 @@
 
+Tue Jun 11 14:11:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* get.c: handle modulerefs.
+	* main.c: fix --mscorlib argument handling.
+
 Fri Jun 7 19:39:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* get.c: handle typerefs of nested types. Don't print "."
