@@ -108,9 +108,16 @@
 
 2002-05-27  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (Invocation.Emit): Only emit calls to
-	System.Diagnostics.Debug and System.Diagnostics.Trace if the
-	TRACE and DEBUG defines are passed on the command line.
+	* typemanager.cs (MethodFlags): returns the method flags
+	(Obsolete/ShouldIgnore) that control warning emission and whether
+	the invocation should be made, or ignored. 
+
+	* expression.cs (Invocation.Emit): Remove previous hack, we should
+	not do this on matching a base type, we should do this based on an attribute
+
+	Only emit calls to System.Diagnostics.Debug and
+	System.Diagnostics.Trace if the TRACE and DEBUG defines are passed
+	on the command line.
 
 	* rootcontext.cs: Global settings for tracing and debugging.
 

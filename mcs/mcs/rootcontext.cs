@@ -23,17 +23,11 @@ namespace Mono.CSharp {
 		//
 		static Tree tree;
 
-		static public bool Optimize;
-
 		//
-		// If this value is `true', then calls to the Trace class are disabled
+		// This hashtable contains all of the #definitions across the source code
+		// it is used by the ConditionalAttribute handler.
 		//
-		static public bool DisableTrace = true;
-
-		//
-		// If this value is `true', then calls to the Debug class are disabled
-		//
-		static public bool DisableDebug = true;
+		public static Hashtable AllDefines = new Hashtable ();
 		
 		//
 		// The list of global attributes (those that target the assembly)

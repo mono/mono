@@ -285,11 +285,9 @@ namespace Mono.CSharp
 
 		void define (string def)
 		{
-			if (def == "TRACE")
-				RootContext.DisableTrace = false;
-			else if (def == "DEBUG")
-				RootContext.DisableDebug = false;
-			defines [def] = true;
+			if (RootContext.AllDefines.Contains (def))
+				return;
+			RootContext.AllDefines [def] = true;
 		}
 		
 		public Tokenizer (System.IO.Stream input, string fname, ArrayList defs)

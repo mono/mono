@@ -169,7 +169,6 @@ namespace Mono.CSharp
 				"   --nostdlib      Does not load core libraries\n" +
 				"   --nowarn XXX    Ignores warning number XXX\n" +
 				"   -o FNAME        Specifies output file\n" +
-				"   --optimize      Optimizes\n" +
 				"   -g, --debug     Write symbolic debugging information to FILE-debug.s\n" +
 				"   --parse         Only parses the source file\n" +
 				"   --probe X       Probes for the source to generate code X on line L\n" +
@@ -562,10 +561,6 @@ namespace Mono.CSharp
 						RootContext.Unsafe = true;
 						continue;
 						
-					case "--optimize":
-						RootContext.Optimize = true;
-						continue;
-
 					case "/?": case "/h": case "/help":
 					case "--help":
 						Usage (false);
