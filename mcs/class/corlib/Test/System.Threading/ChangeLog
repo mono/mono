@@ -1,3 +1,8 @@
+2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* InterlockedTest.cs: New file. Tests from 
+	Luca Barbieri (luca.barbieri@gmail.com).
+
 2005-02-16  Ben Maurer  <bmaurer@ximian.com>
 
 	* TimerTest.cs: Disable this test. It seems to be completely
