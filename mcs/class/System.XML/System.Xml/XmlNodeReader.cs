@@ -31,7 +31,7 @@ namespace System.Xml
 		Stack entityReaderStack = new Stack ();
 		XmlTextReader entityReader;
 
-		private XmlNode ownerElement {
+		private XmlNode ownerLinkedNode {
 			get {
 				if (current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute)
 					return ((XmlAttribute) current.ParentNode).OwnerElement;
@@ -69,7 +69,7 @@ namespace System.Xml
 
 				if (isEndElement || current == null)
 					return 0;
-				XmlNode n = ownerElement;
+				XmlNode n = ownerLinkedNode;
 				return n.Attributes != null ? n.Attributes.Count : 0;
 			}
 		}
@@ -125,7 +125,7 @@ namespace System.Xml
 
 				// MS BUG: inconsistent return value between XmlTextReader and XmlNodeReader.
 				// As for attribute and its descendants, XmlReader returns element's HasAttributes.
-				XmlNode n = ownerElement;
+				XmlNode n = ownerLinkedNode;
 
 				if (n.Attributes == null ||
 					n.Attributes.Count == 0)
@@ -424,7 +424,7 @@ namespace System.Xml
 			if (attributeIndex < 0 || attributeIndex > AttributeCount)
 				throw new ArgumentOutOfRangeException ("Index out of range.");
 
-			return ownerElement.Attributes [attributeIndex].Value;
+			return ownerLinkedNode.Attributes [attributeIndex].Value;
 		}
 
 		public override string GetAttribute (string name)
@@ -441,7 +441,9 @@ namespace System.Xml
 			else if (NodeType == XmlNodeType.DocumentType)
 				return GetDocumentTypeAttribute (name);
 
-			XmlAttribute attr = ownerElement.Attributes [name];
+			if (ownerLinkedNode.Attributes == null)
+				return null;
+			XmlAttribute attr = ownerLinkedNode.Attributes [name];
 			if (attr == null)
 				return null;
 			else
@@ -462,7 +464,9 @@ namespace System.Xml
 			else if (NodeType == XmlNodeType.DocumentType)
 				return GetDocumentTypeAttribute (name);
 
-			XmlAttribute attr = ownerElement.Attributes [name, namespaceURI];
+			if (ownerLinkedNode.Attributes == null)
+				return null;
+			XmlAttribute attr = ownerLinkedNode.Attributes [name, namespaceURI];
 			if (attr == null)
 				return null;	// In fact MS.NET returns null instead of String.Empty.
 			else
@@ -551,7 +555,7 @@ namespace System.Xml
 				throw new ArgumentOutOfRangeException ();
 			
 			state = ReadState.Interactive;
-			current = ownerElement.Attributes [attributeIndex];
+			current = ownerLinkedNode.Attributes [attributeIndex];
 		}
 
 		public override bool MoveToAttribute (string name)
@@ -568,7 +572,9 @@ namespace System.Xml
 			if (current.ParentNode.NodeType == XmlNodeType.Attribute)
 				current = current.ParentNode;
 
-			XmlAttribute attr = ownerElement.Attributes [name];
+			if (ownerLinkedNode.Attributes == null)
+				return false;
+			XmlAttribute attr = ownerLinkedNode.Attributes [name];
 			if (attr == null) {
 				current = tmpCurrent;
 				return false;
@@ -590,7 +596,9 @@ namespace System.Xml
 			if (isEndElement || current == null)
 				return false;
 
-			XmlAttribute attr = ownerElement.Attributes [name, namespaceURI];
+			if (ownerLinkedNode.Attributes == null)
+				return false;
+			XmlAttribute attr = ownerLinkedNode.Attributes [name, namespaceURI];
 			if (attr == null)
 				return false;
 			else {
@@ -617,10 +625,9 @@ namespace System.Xml
 
 			if (current == null)
 				return false;
-			XmlNode n = ownerElement;
+			XmlNode n = ownerLinkedNode;
 			if (current != n) {
-//			if (current.NodeType == XmlNodeType.Attribute) {
-				current = n;//((XmlAttribute) current).OwnerElement;
+				current = n;
 				return true;
 			} else 
 				return false;
@@ -637,9 +644,11 @@ namespace System.Xml
 			if (current == null)
 				return false;
 
-			if(ownerElement.Attributes.Count > 0)
+			if (ownerLinkedNode.Attributes == null)
+				return false;
+			if(ownerLinkedNode.Attributes.Count > 0)
 			{
-				current = ownerElement.Attributes [0];
+				current = ownerLinkedNode.Attributes [0];
 				return true;
 			}
 			else

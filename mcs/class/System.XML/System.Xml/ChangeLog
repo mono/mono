@@ -1,5 +1,11 @@
 2004-05-10  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNodeReader.cs : renamed ownerElement to ownerLinkedNode (text
+	  node can be it as well) and added check for Attributes existence
+	  in GetAttribute() and MoveTo*Attribute().
+
+2004-05-10  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : comment not in the content state is indented.
 	  This fixes bug #58247.
 
