@@ -1055,3 +1055,8 @@ System/Converter.cs
 System/Predicate.cs
 System.Collections.Generic/Comparer.cs
 System.Collections/IKeyComparer.cs
+System.Runtime.Reliability/CER.cs
+System.Runtime.Reliability/Consistency.cs
+System.Runtime.Reliability/CriticialFinalizerObject.cs
+System.Runtime.Reliability/PrePrepareMethodAttribute.cs
+System.Runtime.Reliability/ReliabilityContractAttribute.cs
