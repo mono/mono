@@ -1,3 +1,8 @@
+2004-03-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilder.cs (Initialize): Add more argument checking. 
+	Fixes #55793.
+
 2004-03-09  Jackson Harper  <jackson@ximian.com>
 
 	* CustomAttributeBuilder.cs: Add some argument checking. Handle

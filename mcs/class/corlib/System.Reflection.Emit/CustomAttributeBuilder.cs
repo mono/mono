@@ -89,6 +89,49 @@ namespace System.Reflection.Emit {
 			if ((con.Attributes & MethodAttributes.Static) == MethodAttributes.Static ||
 					(con.Attributes & MethodAttributes.Private) == MethodAttributes.Private)
 				throw new ArgumentException ("Cannot have private or static constructor.");
+			Type atype = ctor.DeclaringType;
+			int i;
+			i = 0;
+			foreach (FieldInfo fi in namedFields) {
+				Type t = fi.DeclaringType;
+				if ((atype != t) && (!t.IsSubclassOf (atype)) && (!atype.IsSubclassOf (t)))
+					throw new ArgumentException ("Field '" + fi.Name + "' does not belong to the same class as the constructor");
+				// FIXME: Check enums and TypeBuilders as well
+				if (fieldValues [i] != null)
+					// IsEnum does not seem to work on TypeBuilders
+					if (!(fi.FieldType is TypeBuilder) && !fi.FieldType.IsEnum && !fi.FieldType.IsAssignableFrom (fieldValues [i].GetType ())) {
+						throw new ArgumentException ("Value of field '" + fi.Name + "' does not match field type: " + fi.FieldType);
+						}
+				i ++;
+			}
+
+			i = 0;
+			foreach (PropertyInfo pi in namedProperties) {
+				if (!pi.CanWrite)
+					throw new ArgumentException ("Property '" + pi.Name + "' does not have a setter.");
+				Type t = pi.DeclaringType;
+				if ((atype != t) && (!t.IsSubclassOf (atype)) && (!atype.IsSubclassOf (t)))
+					throw new ArgumentException ("Property '" + pi.Name + "' does not belong to the same class as the constructor");
+				// FIXME: Check enums and TypeBuilders as well
+				if (propertyValues [i] != null) {
+					// IsEnum does not seem to work on TypeBuilders
+					if (!(pi.PropertyType is TypeBuilder) && !pi.PropertyType.IsEnum && !pi.PropertyType.IsAssignableFrom (propertyValues [i].GetType ()))
+						throw new ArgumentException ("Value of property '" + pi.Name + "' does not match property type");
+				}
+				i ++;
+			}
+
+			i = 0;
+			foreach (ParameterInfo pi in con.GetParameters ()) {
+				if (pi != null) {
+					Type paramType = pi.ParameterType;
+					if (constructorArgs [i] != null)
+						// IsEnum does not seem to work on TypeBuilders
+						if (!(paramType is TypeBuilder) && !paramType.IsEnum && !paramType.IsAssignableFrom (constructorArgs [i].GetType ()))
+							throw new ArgumentException ("Value of argument " + i + " does not match parameter type: " + paramType);
+				}
+				i ++;
+			}
 				
 			data = GetBlob (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
 		}
