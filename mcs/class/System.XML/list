@@ -1,4 +1,5 @@
 System.Xml\\EntityHandling.cs
+System.Xml\\XmlConvert.cs
 System.Xml\\Formatting.cs
 System.Xml\\IHasXmlNode.cs
 System.Xml\\IXmlLineInfo.cs
