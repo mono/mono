@@ -36,6 +36,14 @@ namespace System.Xml
 			string prefix, 
 			string localName, 
 			string namespaceURI, 
+			XmlDocument doc) : this (prefix, localName, namespaceURI, doc, false)
+		{
+		}
+
+		internal XmlElement (
+			string prefix, 
+			string localName, 
+			string namespaceURI, 
 			XmlDocument doc,
 			bool atomizedNames) : base (doc)
 		{

@@ -1,3 +1,8 @@
+2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttribute.cs, XmlElement.cs : 
+	  Fixed incorrect protected .ctor modification.
+
 2004-01-08  Nick Drochak <ndrochak@ieee.org>
 
 	* DTDValidatingReader.cs: Removed unused variable
