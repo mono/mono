@@ -78,6 +78,8 @@ namespace System.Windows.Forms {
 		internal int			Y;			// Baseline
 		internal int			height;			// Height of the line (height of tallest tag)
 		internal int			ascent;			// Ascent of the line (ascent of the tallest tag)
+		internal HorizontalAlignment	alignment;		// Alignment of the line
+		internal int			align_shift;		// Pixel shift caused by the alignment
 
 		// Stuff that's important for the tree
 		internal Line			parent;			// Our parent line
@@ -97,6 +99,7 @@ namespace System.Windows.Forms {
 			parent = null;
 			text = null;
 			recalc = true;
+			alignment = HorizontalAlignment.Left;
 
 			if (string_format == null) {
 				string_format = new StringFormat(StringFormat.GenericTypographic);
@@ -110,6 +113,19 @@ namespace System.Windows.Forms {
 
 			text = new StringBuilder(Text, space);
 			line_no = LineNo;
+
+			widths = new float[space + 1];
+			tags = new LineTag(this, 1, text.Length);
+			tags.font = font;
+			tags.color = color;
+		}
+
+		public Line(int LineNo, string Text, HorizontalAlignment align, Font font, Brush color) : this() {
+			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
+
+			text = new StringBuilder(Text, space);
+			line_no = LineNo;
+			alignment = align;
 
 			widths = new float[space + 1];
 			tags = new LineTag(this, 1, text.Length);
@@ -157,6 +173,19 @@ namespace System.Windows.Forms {
 
 			set {
 				text = new StringBuilder(value, value.Length > DEFAULT_TEXT_LEN ? value.Length : DEFAULT_TEXT_LEN);
+			}
+		}
+
+		public HorizontalAlignment Alignment {
+			get {
+				return alignment;
+			}
+
+			set {
+				if (alignment != value) {
+					alignment = value;
+					recalc = true;
+				}
 			}
 		}
 #if no
@@ -895,7 +924,7 @@ namespace System.Windows.Forms {
 
 			XplatUI.DestroyCaret(owner.Handle);
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 		}
 
 		public void PositionCaret(int x, int y) {
@@ -905,13 +934,13 @@ namespace System.Windows.Forms {
 
 			XplatUI.DestroyCaret(owner.Handle);
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 		}
 
 		public void CaretHasFocus() {
 			if (caret.tag != null) {
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 				XplatUI.CaretVisible(owner.Handle, true);
 			}
 		}
@@ -925,7 +954,7 @@ namespace System.Windows.Forms {
 			caret.height = caret.tag.height;
 
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
@@ -934,7 +963,7 @@ namespace System.Windows.Forms {
 				caret.height = caret.tag.height;
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
 			}
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
@@ -1151,12 +1180,12 @@ namespace System.Windows.Forms {
 						// Check for selection
 						if ((!selection_visible) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
 							// regular drawing
-							g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+							g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 						} else {
 							// we might have to draw our selection
 							if ((line_no != selection_start.line.line_no) && (line_no != selection_end.line.line_no)) {
-								g.FillRectangle(tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
-								g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+								g.FillRectangle(tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+								g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 							} else {
 								int	middle;
 								bool	highlight;
@@ -1170,32 +1199,32 @@ namespace System.Windows.Forms {
 									partial = true;
 
 									// First, the regular part
-									g.DrawString(s.Substring(tag.start - 1, selection_start.pos - tag.start + 1), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+									g.DrawString(s.Substring(tag.start - 1, selection_start.pos - tag.start + 1), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 
 									// Now the highlight
-									g.FillRectangle(tag.color, line.widths[selection_start.pos], line.Y + tag.shift - viewport_y, line.widths[selection_end.pos] - line.widths[selection_start.pos], tag.height);
-									g.DrawString(s.Substring(selection_start.pos, selection_end.pos - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos], line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+									g.FillRectangle(tag.color, line.widths[selection_start.pos] + line.align_shift, line.Y + tag.shift - viewport_y, line.widths[selection_end.pos] - line.widths[selection_start.pos], tag.height);
+									g.DrawString(s.Substring(selection_start.pos, selection_end.pos - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
 
 									// And back to the regular
-									g.DrawString(s.Substring(selection_end.pos, tag.length - selection_end.pos), tag.font, tag.color, line.widths[selection_end.pos], line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+									g.DrawString(s.Substring(selection_end.pos, tag.length - selection_end.pos), tag.font, tag.color, line.widths[selection_end.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
 								} else if (selection_start.tag == tag) {
 									partial = true;
 
 									// The highlighted part
-									g.FillRectangle(tag.color, line.widths[selection_start.pos], line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
-									g.DrawString(s.Substring(selection_start.pos, tag.length - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos], line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+									g.FillRectangle(tag.color, line.widths[selection_start.pos] + line.align_shift, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+									g.DrawString(s.Substring(selection_start.pos, tag.length - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
 
 									// The regular part
-									g.DrawString(s.Substring(tag.start - 1, selection_start.pos - tag.start + 1), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+									g.DrawString(s.Substring(tag.start - 1, selection_start.pos - tag.start + 1), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 								} else if (selection_end.tag == tag) {
 									partial = true;
 
 									// The highlighted part
-									g.FillRectangle(tag.color, tag.X - viewport_x, line.Y + tag.shift - viewport_y, line.widths[selection_end.pos], tag.height);
-									g.DrawString(s.Substring(tag.start - 1, selection_end.pos - tag.start + 1), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+									g.FillRectangle(tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, line.widths[selection_end.pos], tag.height);
+									g.DrawString(s.Substring(tag.start - 1, selection_end.pos - tag.start + 1), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 
 									// The regular part
-									g.DrawString(s.Substring(selection_end.pos, tag.length - selection_end.pos), tag.font, tag.color, line.widths[selection_end.pos], line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+									g.DrawString(s.Substring(selection_end.pos, tag.length - selection_end.pos), tag.font, tag.color, line.widths[selection_end.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
 								} else {
 									// no partially selected tags here, simple checks...
 									if (selection_start.line == line) {
@@ -1212,10 +1241,10 @@ namespace System.Windows.Forms {
 
 								if (!partial) {
 									if (highlight) {
-										g.FillRectangle(tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
-										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+										g.FillRectangle(tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 									} else {
-										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 									}
 								}
 							}
@@ -1535,12 +1564,12 @@ namespace System.Windows.Forms {
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
-				Add(line.line_no + 1, "", tag.font, tag.color);
+				Add(line.line_no + 1, "", line.alignment, tag.font, tag.color);
 				return;
 			}
 
 			// We need to move the rest of the text into the new line
-			Add(line.line_no + 1, line.text.ToString(pos, line.text.Length - pos), tag.font, tag.color);
+			Add(line.line_no + 1, line.text.ToString(pos, line.text.Length - pos), line.alignment, tag.font, tag.color);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -1602,6 +1631,10 @@ namespace System.Windows.Forms {
 		// Adds a line of text, with given font.
 		// Bumps any line at that line number that already exists down
 		public void Add(int LineNo, string Text, Font font, Brush color) {
+			Add(LineNo, Text, HorizontalAlignment.Left, font, color);
+		}
+
+		public void Add(int LineNo, string Text, HorizontalAlignment align, Font font, Brush color) {
 			Line	add;
 			Line	line;
 			int	line_no;
@@ -1614,7 +1647,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			add = new Line(LineNo, Text, font, color);
+			add = new Line(LineNo, Text, align, font, color);
 
 			line = document;
 			while (line != sentinel) {
@@ -1803,9 +1836,21 @@ namespace System.Windows.Forms {
 				selection_end.tag = caret.tag;
 				selection_end.pos = caret.pos;
 			} else {
-				selection_end.line = caret.line;
-				selection_end.tag = caret.tag;
-				selection_end.pos = caret.pos;
+				if (caret.line.line_no <= selection_end.line.line_no) {
+					if ((caret.line != selection_end.line) || (caret.pos < selection_end.pos)) {
+						selection_start.line = caret.line;
+						selection_start.tag = caret.tag;
+						selection_start.pos = caret.pos;
+					} else {
+						selection_end.line = caret.line;
+						selection_end.tag = caret.tag;
+						selection_end.pos = caret.pos;
+					}
+				} else {
+					selection_end.line = caret.line;
+					selection_end.tag = caret.tag;
+					selection_end.pos = caret.pos;
+				}
 			}
 
 
@@ -1879,6 +1924,7 @@ if (end != null) {
 				pos = selection_start.pos;
 				selection_start.pos = selection_end.pos;
 				selection_end.pos = pos;
+				Console.WriteLine("flipped: sel start: {0} end: {1}", selection_start.pos, selection_end.pos);
 				return;
 			}
 
@@ -1892,7 +1938,7 @@ if (end != null) {
 
 			FixupSelection();
 
-			if ((selection_end.line != selection_start.line) && (selection_end.pos != selection_start.pos)) {
+			if ((selection_end.line != selection_start.line) || (selection_end.pos != selection_start.pos)) {
 				selection_visible = true;
 			}
 
@@ -2031,12 +2077,11 @@ if (end != null) {
 				// Insert the first line
 				InsertString(selection_start.line, selection_start.pos, ins[0]);
 
-
 				if (insert_lines > 1) {
 					base_line = selection_start.line.line_no + 1;
 
 					for (i = 1; i < insert_lines; i++) {
-						Add(base_line + i, ins[i], selection_start.tag.font, selection_start.tag.color);
+						Add(base_line + i, ins[i], selection_start.line.alignment, selection_start.tag.font, selection_start.tag.color);
 					}
 				}
 			}
@@ -2133,6 +2178,9 @@ if (end != null) {
 			}
 			tag = line.tags;
 
+			// Alignment adjustment
+			x += line.align_shift;
+
 			while (true) {
 				if (x >= tag.X && x < (tag.X+tag.width)) {
 					int	end;
@@ -2170,6 +2218,9 @@ if (end != null) {
 			line = GetLineByPixel(y, false);
 			tag = line.tags;
 
+			// Adjust for alignment
+			x += line.align_shift;
+
 			while (true) {
 				if (x >= tag.X && x < (tag.X+tag.width)) {
 					int	end;
@@ -2194,6 +2245,28 @@ if (end != null) {
 					return tag;
 				}
 			}
+		}
+
+		public void RecalculateAlignments() {
+			Line	line;
+			int	line_no;
+
+			line_no = 1;
+
+			while (line_no <= lines) {
+				line = GetLine(line_no);
+
+				if (line.alignment != HorizontalAlignment.Left) {
+					if (line.alignment == HorizontalAlignment.Center) {
+						line.align_shift = (document_x - (int)line.widths[line.text.Length]) / 2;
+					} else {
+						line.align_shift = document_x - (int)line.widths[line.text.Length];
+					}
+				}
+
+				line_no++;
+			}
+			return;
 		}
 
 		// Calculate formatting for the whole document
@@ -2221,8 +2294,10 @@ if (end != null) {
 			line_no = start;
 			if (optimize) {
 				bool	changed;
+				bool	alignment_recalc;
 
 				changed = false;
+				alignment_recalc = false;
 
 				while (line_no <= end) {
 					line = GetLine(line_no++);
@@ -2233,13 +2308,26 @@ if (end != null) {
 							// If the height changed, all subsequent lines change
 							end = this.lines;
 						}
+
 						if (line.widths[line.text.Length] > this.document_x) {
 							this.document_x = (int)line.widths[line.text.Length];
+							alignment_recalc = true;
+						}
+
+						// Calculate alignment
+						if (line.alignment != HorizontalAlignment.Left) {
+							if (line.alignment == HorizontalAlignment.Center) {
+								line.align_shift = (document_x - (int)line.widths[line.text.Length]) / 2;
+							} else {
+								line.align_shift = document_x - (int)line.widths[line.text.Length];
+							}
 						}
 					}
 
 					Y += line.height;
 				}
+
+				RecalculateAlignments();
 
 				return changed;
 			} else {
@@ -2250,8 +2338,19 @@ if (end != null) {
 					if (line.widths[line.text.Length] > this.document_x) {
 						this.document_x = (int)line.widths[line.text.Length];
 					}
+
+					// Calculate alignment
+					if (line.alignment != HorizontalAlignment.Left) {
+						if (line.alignment == HorizontalAlignment.Center) {
+							line.align_shift = (document_x - (int)line.widths[line.text.Length]) / 2;
+						} else {
+							line.align_shift = document_x - (int)line.widths[line.text.Length];
+						}
+					}
+
 					Y += line.height;
 				}
+				RecalculateAlignments();
 				return true;
 			}
 		}

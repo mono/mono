@@ -35,25 +35,29 @@ using System.Text;
 namespace System.Windows.Forms {
 	public abstract class TextBoxBase : Control {
 		#region Local Variables
-		internal bool		accepts_tab;
-		internal bool		auto_size;
-		internal BorderStyle	border_style;
-		internal bool		undo;
-		internal bool		hide_selection;
-		internal int		max_length;
-		internal bool		modified;
-		internal bool		multiline;
-		internal bool		read_only;
-		internal bool		word_wrap;
-		internal Document	document;
-		internal LineTag	caret_tag;		// tag our cursor is in
-		internal int		caret_pos;		// position on the line our cursor is in (can be 0 = beginning of line)
-		internal int		viewport_x;		// left visible pixel
-		internal int		viewport_y;		// top visible pixel
-		internal HScrollBar	hscroll;
-		internal VScrollBar	vscroll;
-		internal ScrollBars	scrollbars;
-		internal bool		grabbed;
+		internal HorizontalAlignment	alignment;
+		internal bool			accepts_tab;
+		internal bool			accepts_return;
+		internal bool			auto_size;
+		internal BorderStyle		border_style;
+		internal CharacterCasing	character_casing;
+		internal bool			undo;
+		internal bool			hide_selection;
+		internal int			max_length;
+		internal bool			modified;
+		internal bool			multiline;
+		internal bool			read_only;
+		internal bool			word_wrap;
+		internal Document		document;
+		internal LineTag		caret_tag;		// tag our cursor is in
+		internal int			caret_pos;		// position on the line our cursor is in (can be 0 = beginning of line)
+		internal int			viewport_x;		// left visible pixel
+		internal int			viewport_y;		// top visible pixel
+		internal HScrollBar		hscroll;
+		internal VScrollBar		vscroll;
+		internal ScrollBars		scrollbars;
+		internal bool			grabbed;
+		internal bool			richtext;
 
 		#if Debug
 		internal static bool	draw_lines = false;
@@ -64,9 +68,12 @@ namespace System.Windows.Forms {
 		#region Private Constructor
 		// Constructor will go when complete, only for testing - pdb
 		public TextBoxBase() {
+			alignment = HorizontalAlignment.Left;
+			accepts_return = false;
 			accepts_tab = false;
 			auto_size = true;
 			border_style = BorderStyle.Fixed3D;
+			character_casing = CharacterCasing.Normal;
 			undo = false;
 			hide_selection = true;
 			max_length = 32767;
@@ -74,11 +81,14 @@ namespace System.Windows.Forms {
 			multiline = false;
 			read_only = false;
 			word_wrap = true;
+			richtext = false;
 			document = new Document(this);
-			this.MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
-			this.MouseUp += new MouseEventHandler(TextBoxBase_MouseUp);
-			this.MouseMove += new MouseEventHandler(TextBoxBase_MouseMove);
-			this.SizeChanged +=new EventHandler(TextBoxBase_SizeChanged);
+			MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
+			MouseUp += new MouseEventHandler(TextBoxBase_MouseUp);
+			MouseMove += new MouseEventHandler(TextBoxBase_MouseMove);
+			SizeChanged += new EventHandler(TextBoxBase_SizeChanged);
+			FontChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
+			ForeColorChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
 
 			
 			scrollbars = ScrollBars.None;
@@ -99,6 +109,19 @@ namespace System.Windows.Forms {
 			SetStyle(ControlStyles.UserPaint, true);
 		}
 		#endregion	// Private Constructor
+
+		#region Private and Internal Methods
+		internal string CaseAdjust(string s) {
+			if (character_casing == CharacterCasing.Normal) {
+				return s;
+			}
+			if (character_casing == CharacterCasing.Lower) {
+				return s.ToLower();
+			} else {
+				return s.ToUpper();
+			}
+		}
+		#endregion	// Private and Internal Methods
 
 		#region Public Instance Properties
 		public bool AcceptsTab {
@@ -220,8 +243,9 @@ namespace System.Windows.Forms {
 				brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.BackColor);
 
 				for (i = 0; i < l; i++) {
-					document.Add(i+1, value[i], font, brush);
+					document.Add(i+1, CaseAdjust(value[i]), alignment, font, brush);
 				}
+				document.RecalculateDocument(CreateGraphics());
 			}
 		}
 
@@ -267,7 +291,7 @@ namespace System.Windows.Forms {
 
 		public int PreferredHeight {
 			get {
-				return this.font.Height + 7;	// FIXME - consider border style as well
+				return this.Font.Height + 7;	// FIXME - consider border style as well
 			}
 		}
 
@@ -290,7 +314,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				document.ReplaceSelection(value);
+				document.ReplaceSelection(CaseAdjust(value));
 			}
 		}
 
@@ -406,6 +430,26 @@ namespace System.Windows.Forms {
 			base.CreateHandle ();
 		}
 
+		protected override bool IsInputKey(Keys keyData) {
+			switch (keyData) {
+				case Keys.Enter: {
+					if (multiline && (accepts_return || ((keyData & Keys.Control) != 0))) {
+						return true;
+					}
+					return false;
+				}
+
+				case Keys.Tab: {
+					if (accepts_tab) {
+						return true;
+					}
+					return false;
+				}
+			}
+			return false;
+		}
+
+
 		protected virtual void OnAcceptsTabChanged(EventArgs e) {
 			if (AcceptsTabChanged != null) {
 				AcceptsTabChanged(this, e);
@@ -465,6 +509,14 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			// Make sure we don't get sized bigger than we want to be
+			if (!richtext) {
+				if (!multiline) {
+					if (height > PreferredHeight) {
+						height = PreferredHeight;
+					}
+				}
+			}
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
@@ -550,14 +602,17 @@ Console.WriteLine("Destroying caret");
 						}
 
 						case Keys.Enter: {
-							document.Split(document.CaretLine, document.CaretTag, document.CaretPosition);
-							document.UpdateView(document.CaretLine, 2, 0);
-							document.MoveCaret(CaretDirection.CharForward);
+							
+							if (multiline && (accepts_return || ((Control.ModifierKeys & Keys.Control) != 0))) {
+								document.Split(document.CaretLine, document.CaretTag, document.CaretPosition);
+								document.UpdateView(document.CaretLine, 2, 0);
+								document.MoveCaret(CaretDirection.CharForward);
+							}
 							return;
 						}
 
 						case Keys.Tab: {
-							if (this.accepts_tab) {
+							if (accepts_tab) {
 								document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
 							}
 							return;
@@ -619,7 +674,22 @@ Console.WriteLine("Destroying caret");
 
 				case Msg.WM_CHAR: {
 					if (m.WParam.ToInt32() >= 32) {	// FIXME, tabs should probably go through
-						document.InsertCharAtCaret((char)m.WParam, true);
+						switch (character_casing) {
+							case CharacterCasing.Normal: {
+								document.InsertCharAtCaret((char)m.WParam, true);
+								return;
+							}
+
+							case CharacterCasing.Lower: {
+								document.InsertCharAtCaret(Char.ToLower((char)m.WParam), true);
+								return;
+							}
+
+							case CharacterCasing.Upper: {
+								document.InsertCharAtCaret(Char.ToUpper((char)m.WParam), true);
+								return;
+							}
+						}
 					}
 						
 					return;
@@ -660,7 +730,6 @@ Console.WriteLine("Destroying caret");
 static int current;
 
 		private void PaintControl(PaintEventArgs pevent) {
-Console.WriteLine("Received expose: {0}", pevent.ClipRectangle);
 			// Fill background
 			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
 			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
@@ -764,13 +833,8 @@ Console.WriteLine("Received expose: {0}", pevent.ClipRectangle);
 			this.Capture = false;
 			this.grabbed = false;
 			if (e.Button == MouseButtons.Left) {
-				document.PositionCaret(e.X, e.Y);
-				if ((Control.ModifierKeys & Keys.Shift) == 0) {
-					document.SetSelectionToCaret(true);
-				} else {
-					document.SetSelectionToCaret(false);
-				}
-
+				document.PositionCaret(e.X + viewport_x, e.Y + viewport_y);
+				document.SetSelectionToCaret(false);
 				document.DisplayCaret();
 				return;
 			}
@@ -796,13 +860,24 @@ Console.WriteLine("Received expose: {0}", pevent.ClipRectangle);
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
 			if (grabbed) {
+				document.PositionCaret(e.X + viewport_x, e.Y + viewport_y);
+				document.SetSelectionToCaret(false);
+				document.DisplayCaret();
+			}
+		}
+
+		private void TextBoxBase_FontOrColorChanged(object sender, EventArgs e) {
+			if (!richtext) {
 				Line	line;
-				int	pos;
-//mcs bug requires this:
-pos = 0;
-				line = document.FindCursor(e.X + viewport_x, e.Y + viewport_y, out pos).line;
-				document.SetSelectionEnd(line, pos);
-				Invalidate();
+
+				// Font changes apply to the whole document
+				for (int i = 1; i <= document.Lines; i++) {
+					line = document.GetLine(i);
+					LineTag.FormatText(line, 1, line.text.Length, font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
+					document.UpdateView(line, 0);
+				}
+				// Make sure the caret height is matching the new font height
+				document.AlignCaret();
 			}
 		}
 	}

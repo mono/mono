@@ -1,3 +1,25 @@
+2005-01-03  Peter Bartok  <pbartok@novell.com>
+
+	* TextBox.cs:
+	  - set_Text: Tied into TextControl
+	  - set_TextAlignment: Tied into TextControl
+	* TextControl.cs: 
+	  - Added alignment properties and implemented alignment handling
+	    and drawing (still has a bug, not generating proper expose events)
+	  - Added new Line() constructor to allow passing the line alignment
+	  - Fixed selection setting, properly handling end<start now
+	  - Added aligment considerations to RecalculateDocument()
+	* TextBoxBase.cs:
+	  - Now properly enforces control height for single line controls
+	  - Added support for CharacterCasing
+	  - Added IsInputKey override
+	  - Fixed Keys.Enter logic
+	  - Added SetBoundsCore override
+	  - Fixed mouse selection handling
+	* ThemeWin32Classic.cs (DrawMonthCalendarDate): Now cast Math.Floor
+	  argument to double, to allow compiling with csc 2.0 (Atsushi ran
+	  into this)
+
 2005-01-03  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs:
