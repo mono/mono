@@ -1,4 +1,8 @@
 
+Wed Jun 25 13:14:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix memory leak when getting type members.
+
 Mon Jun 23 16:12:48 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: added more pubtoken special cases.
