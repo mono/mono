@@ -1,5 +1,10 @@
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
+	* metadata.c (_mono_metadata_type_equal): Renamed to
+	do_mono_metadata_type_equal() and made static.
+
+2004-10-11  Martin Baulig  <martin@ximian.com>
+
 	* appdomain.c: Bump corlib version number to 28.
 
 2004-10-10  Martin Baulig  <martin@ximian.com>
