@@ -1,5 +1,9 @@
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslNumber.cs: Support for multiple level numbering
+
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XslNumber.cs: Initial support.
 
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>

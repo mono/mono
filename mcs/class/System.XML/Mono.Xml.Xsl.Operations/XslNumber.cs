@@ -117,12 +117,44 @@ namespace Mono.Xml.Xsl.Operations {
 				case XslNumberingLevel.Single:
 					return nf.Format (NumberSingle (p));
 				case XslNumberingLevel.Multiple:
-					throw new NotImplementedException ();
+					return nf.Format (NumberMultiple (p));
 				case XslNumberingLevel.Any:
 					return nf.Format (NumberAny (p));
 				default:
 					throw new Exception ("Should not get here");
 			}
+		}
+		
+		int [] NumberMultiple (XslTransformProcessor p)
+		{
+			ArrayList nums = new ArrayList ();
+			XPathNavigator n = p.CurrentNode.Clone ();
+			
+			bool foundFrom = false;
+			
+			do {
+				if (MatchesFrom (n, p)) {
+					foundFrom = true;
+					break;
+				}
+				
+				if (MatchesCount (n, p)) {
+					int i = 1;
+					while (n.MoveToPrevious ()) {
+						if (MatchesCount (n, p)) i++;
+					}
+					nums.Add (i);
+				}
+			} while (n.MoveToParent ());
+			
+			if (!foundFrom) return new int [0];
+				
+			int [] ret = new int [nums.Count];
+			int pos = nums.Count;
+			foreach (int num in nums)
+				ret [--pos] = num;
+			
+			return ret;
 		}
 		int NumberAny (XslTransformProcessor p)
 		{
@@ -225,10 +257,6 @@ namespace Mono.Xml.Xsl.Operations {
 				}
 			}
 			
-			public int NumbersNeeded {
-				get { return fmtList.Count; }
-			}
-			
 			// return the format for a single value, ie, if using Single or Any
 			public string Format (int value)
 			{
@@ -243,7 +271,22 @@ namespace Mono.Xml.Xsl.Operations {
 			// format for an array of numbers.
 			public string Format (int [] values)
 			{
-				throw new NotImplementedException ();
+				StringBuilder b = new StringBuilder ();
+				if (firstSep != null) b.Append (firstSep);
+				
+				int i = 0;
+				foreach (int v in values) {
+					FormatItem itm = (FormatItem)fmtList [i];
+					if (i > 0) b.Append (itm.sep);
+					itm.Format (b, v);
+					
+					if (++i == fmtList.Count)
+						i--;
+				}
+				
+				if (lastSep != null) b.Append (lastSep);
+				
+				return b.ToString ();
 			}
 			
 			class NumberFormatterScanner {
