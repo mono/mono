@@ -80,6 +80,12 @@
 
 		mono_jit_cleanup (domain);
 
+** Applications that use threads.
+
+	The Boehm GC system needs to catch your calls to the pthreads
+	layer, so in each file where you use pthread.h you should
+	include the <gc/gc.h> file.  
+
 * Exposing C code to the CIL universe
 
 	The Mono runtime provides two mechanisms to expose C code to
