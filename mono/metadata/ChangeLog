@@ -1,3 +1,8 @@
+
+Thu May 16 13:04:59 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix finally position calculation.
+
 2002-05-15  Radek Doulik  <rodo@ximian.com>
 
 	* reflection.c: fixed endianess at many places
