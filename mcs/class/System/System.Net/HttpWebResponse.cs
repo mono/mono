@@ -234,7 +234,18 @@ namespace System.Net
 			string value = webHeaders [headerName];
 			return (value != null) ? value : "";
 		}
-		
+
+		internal void ReadAll ()
+		{
+			WebConnectionStream wce = stream as WebConnectionStream;
+			if (wce == null)
+				return;
+				
+			try {
+				wce.ReadAll ();
+			} catch {}
+		}
+
 		public override Stream GetResponseStream ()
 		{
 			CheckDisposed ();
