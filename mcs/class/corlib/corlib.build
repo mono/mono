@@ -4,10 +4,10 @@
 <!-- Target windows builds libraries _for_ windows -->
 <!-- Target linux builds libraries _for_ linux -->
 
-<project name="corlib" default="linux">
+<project name="corlib" default="build">
 	<property name="debug" value="true"/>
 
-	<target name="linux">
+	<target name="build">
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/corlib.dll" debug="${debug}">
 			<!-- keep in sync with corlib_cmp.dll below -->
@@ -23,9 +23,12 @@
 				<includes name="**/*.cs"/>
 
 				<excludes name="Test/**"/>
-				<excludes name="Windows/**"/>
 				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>	<!-- custom security attributes problem -->
-				<excludes name="System.PAL/IOperatingSystem.cs"/>
+
+				<excludes name="Unix/**"/>
+				<excludes name="Linux/**"/>
+				<excludes name="Windows/**"/>
+				<excludes name="System.PAL/**"/>
 			</sources>
 		</csc>
 		<csc target="library" output="../lib/corlib_cmp.dll" debug="${debug}">
@@ -44,9 +47,12 @@
 				<includes name="**/*.cs"/>
 
 				<excludes name="Test/**"/>
-				<excludes name="Windows/**"/>
 				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
-				<excludes name="System.PAL/IOperatingSystem.cs"/>
+
+				<excludes name="Unix/**"/>
+				<excludes name="Linux/**"/>
+				<excludes name="Windows/**"/>
+				<excludes name="System.PAL/**"/>
 
 				<excludes name="System/Object.cs"/>
 				<excludes name="System/ValueType.cs"/>
@@ -67,7 +73,11 @@
 				<includes name="**/*.cs"/>
 
 				<excludes name="Test/**"/>
+
+				<excludes name="Unix/**"/>
 				<excludes name="Linux/**"/>
+				<excludes name="Windows/**"/>
+				<excludes name="System.PAL/**"/>
 
 				<excludes name="System/Object.cs"/>
 				<excludes name="System/ValueType.cs"/>
@@ -98,48 +108,8 @@
 		<nant basedir="Test" target="build"/>
 	</target>
 
-	<target name="test" depends="linux">
+	<target name="test" depends="build">
 		<nant basedir="Test" target="test"/>
-	</target>
-
-	<target name="windows">
-		<mkdir dir="../lib"/>
-		<csc target="library" output="../lib/corlib.dll" debug="${debug}">
-			<arg value="/nowarn:1595"/>
-			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
-			<arg value="/nowarn:0169"/> <!-- field never used -->
-			<arg value="/unsafe"/>
-			<sources>
-				<includes name="**/*.cs"/> 
-				<excludes name="Test/**"/>
-				<excludes name="Linux/**"/>
-				<excludes name="System.PAL/IOperatingSystem.cs"/>
-			</sources>
-		</csc>
-		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
-			<arg value="/nowarn:1595"/>
-			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
-			<arg value="/nowarn:0169"/> <!-- field never used -->
-			<arg value="/unsafe"/>
-			<sources>
-				<includes name="**/*.cs"/>
-				<excludes name="Test/**"/>
-				<excludes name="Linux/**"/>
-				<excludes name="System/Object.cs"/>
-				<excludes name="System/ValueType.cs"/>
-				<excludes name="System/Type.cs"/>
-				<excludes name="System/Array.cs"/>
-				<excludes name="System/String.cs"/>
-				<excludes name="System/Console.cs"/>
-				<excludes name="System/AppDomain.cs"/>
-				<excludes name="System.Reflection.Emit/**"/>
-				<excludes name="System/RuntimeTypeHandle.cs"/>
-				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Collections/Queue.cs"/>
-				<excludes name="System.Security/CodeAccessPermission.cs"/>
-			</sources>
-		</csc>
-		<nant basedir="Test" target="build"/>
 	</target>
 
 	<target name="clean">

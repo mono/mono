@@ -62,7 +62,10 @@ namespace System.IO
 
 			// TODO: demand permissions
 
-			this.handle = FileOpen (name, mode, access, share);
+			this.handle = MonoIO.Open (name, mode, access, share);
+			if (handle == MonoIO.InvalidHandle)
+				throw MonoIO.GetException ();
+			
 			this.access = access;
 			this.owner = true;
 			this.async = isAsync;
@@ -93,7 +96,7 @@ namespace System.IO
                 }
 
 		public override long Length {
-			get { return FileGetLength (handle); }
+			get { return MonoIO.GetLength (handle); }
 		}
 
 		public override long Position {
@@ -145,8 +148,8 @@ namespace System.IO
 				if (count > buf_size) {	// shortcut for long reads
 					FlushBuffer ();
 
-					FileSeek (handle, buf_start, SeekOrigin.Begin);
-					n = FileRead (handle, dest, dest_offset + copied, count);
+					MonoIO.Seek (handle, buf_start, SeekOrigin.Begin);
+					n = MonoIO.Read (handle, dest, dest_offset + copied, count);
 
 					copied += n;
 					buf_start += n;
@@ -175,7 +178,7 @@ namespace System.IO
 				FlushBuffer ();
 
 				if (count > buf_size) {	// shortcut for long writes
-					FileWrite (handle, src, src_offset + copied, count);
+					MonoIO.Write (handle, src, src_offset + copied, count);
 					buf_start += count;
 					break;
 				}
@@ -208,7 +211,7 @@ namespace System.IO
 			}
 
 			FlushBuffer ();
-			buf_start = FileSeek (handle, pos, SeekOrigin.Begin);
+			buf_start = MonoIO.Seek (handle, pos, SeekOrigin.Begin);
 
 			return buf_start;
 		}
@@ -216,13 +219,13 @@ namespace System.IO
 		public override void SetLength (long length)
 		{
 			Flush ();
-			FileSetLength (handle, length);
+			MonoIO.SetLength (handle, length);
 		}
 
 		public override void Flush ()
 		{
 			FlushBuffer ();
-			FileFlush (handle);
+			MonoIO.Flush (handle);
 		}
 
 		public override void Close ()
@@ -244,11 +247,11 @@ namespace System.IO
 		}
 
 		protected override void Dispose (bool disposing) {
-			if (handle != IntPtr.Zero) {
+			if (handle != MonoIO.InvalidHandle) {
 				Flush ();
-				FileClose (handle);
+				MonoIO.Close (handle);
 
-				handle = IntPtr.Zero;
+				handle = MonoIO.InvalidHandle;
 			}
 
 			if (disposing)
@@ -290,8 +293,8 @@ namespace System.IO
 		private void FlushBuffer ()
 		{
 			if (buf_dirty) {
-				FileSeek (handle, buf_start, SeekOrigin.Begin);
-				FileWrite (handle, buf, 0, buf_length);
+				MonoIO.Seek (handle, buf_start, SeekOrigin.Begin);
+				MonoIO.Write (handle, buf, 0, buf_length);
 			}
 
 			buf_start += buf_length;
@@ -303,8 +306,8 @@ namespace System.IO
 		{
 			FlushBuffer ();
 			
-			FileSeek (handle, buf_start, SeekOrigin.Begin);
-			buf_length = FileRead (handle, buf, 0, buf_size);
+			MonoIO.Seek (handle, buf_start, SeekOrigin.Begin);
+			buf_length = MonoIO.Read (handle, buf, 0, buf_size);
 		}
 
 		private void InitBuffer (int size)
@@ -315,32 +318,6 @@ namespace System.IO
 			buf_offset = buf_length = 0;
 			buf_dirty = false;
 		}
-
-		// internal calls
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static IntPtr FileOpen (string filename, FileMode mode, FileAccess access, FileShare share);
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void FileClose (IntPtr handle);
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static int FileRead (IntPtr handle, byte [] dest, int dest_offset, int count);
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static int FileWrite (IntPtr handle, byte [] src, int src_offset, int count);
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static long FileSeek (IntPtr handle, long offset, SeekOrigin origin);
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static long FileGetLength (IntPtr handle);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void FileSetLength (IntPtr handle, long length);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void FileFlush (IntPtr handle);
 
 		// fields
 

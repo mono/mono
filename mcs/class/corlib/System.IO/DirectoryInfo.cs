@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza, miguel@ximian.com
 //   Jim Richardson, develop@wtfo-guru.com
+//   Dan Lewis, dihlewis@yahoo.co.uk
 //
 // Copyright (C) 2002 Ximian, Inc.
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
@@ -11,214 +12,123 @@
 
 using System;
 using System.Collections;
-using System.Private;
 
-namespace System.IO
-{
-	public sealed class DirectoryInfo : FileSystemInfo
-	{
-		string path;
+namespace System.IO {
+	
+	public sealed class DirectoryInfo : FileSystemInfo {
+	
+		public DirectoryInfo (string path) {
+			CheckPath (path);
 		
-		public DirectoryInfo (string path)
-		{
-			if (path == null)
-				throw new ArgumentNullException ();
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Invalid characters in pathname");
+			OriginalPath = path;
+			FullPath = Path.GetFullPath (path);
+		}
 
-			this.path = path;
-			
-			unsafe {
-				stat s;
-				int code;
-				
-				code = Wrapper.stat (path, &s);
-				if (code != 0)
-					throw new DirectoryNotFoundException ();
+		// properties
+
+		public override bool Exists {
+			get {
+				Refresh (false);
+
+				if (stat.Attributes == MonoIO.InvalidFileAttributes)
+					return false;
+
+				if ((stat.Attributes & FileAttributes.Directory) == 0)
+					return false;
+
+				return true;
 			}
 		}
 
-		public override bool Exists
-		{
+		public override string Name {
 			get {
-				unsafe {
-					stat s;
-					int code;
-					
-					code = Wrapper.stat (path, &s);
-					return (code == 0);
-				}
+				return Path.GetFileName (FullPath);
 			}
 		}
 
 		public DirectoryInfo Parent {
 			get {
-				return new DirectoryInfo (path + Path.PathSeparator + "..");
+				return new DirectoryInfo (Path.GetDirectoryName (FullPath));
 			}
 		}
 
-		public override string Name
-		{
+		public DirectoryInfo Root {
 			get {
-				return path;
+				return new DirectoryInfo (Path.GetPathRoot (FullPath));
 			}
 		}
 
-		public DirectoryInfo Root
-		{
-			get {
-				return new DirectoryInfo ("" + Path.PathSeparator);
-			}
+		// creational methods
+
+		public void Create () {
+			Directory.CreateDirectory (FullPath);
 		}
 
-		public void Create ()
-		{
-			Wrapper.mkdir (path, 0777);
+		public DirectoryInfo CreateSubdirectory (string name) {
+			string path = Path.Combine (FullPath, Path.GetFileName (name));
+			Directory.CreateDirectory (path);
+
+			return new DirectoryInfo (path);
 		}
 
-		[MonoTODO]
-		DirectoryInfo CreateSubdirectory (string path)
-		{
-			return null;
-		}
+		// directory listing methods
 
-		public override void Delete ()
-		{
-			if (Wrapper.rmdir (path) == Wrapper.ENOTEMPTY)
-				throw new IOException ("Directory not empty");
-		}
-
-		[MonoTODO]
-		public void Delete (bool recursive)
-		{
-			if (recursive == false)
-				Delete ();
-		}
-
-		public DirectoryInfo[] GetDirectories ()
-		{
-			return GetDirectories ("*");
-		}
-
-		[MonoTODO("Add FileIOPermission Checks")]
-		public DirectoryInfo[] GetDirectories (string searchPattern)
-		{
-			if (searchPattern == null)
-				throw new ArgumentNullException ("searchPattern is null");
-			
-			ArrayList list = Directory.GetListing (path, searchPattern);
-			if (list == null)
-				throw new DirectoryNotFoundException ();
-			
-			ArrayList dir_list = new ArrayList ();
-			
-			foreach (string name in list){
-				string full = path + Path.DirectorySeparatorChar + name;
-
-				unsafe {
-					stat s;
-					
-					if (Wrapper.stat (full, &s) != 0)
-						continue;
-
-					if ((s.st_mode & Wrapper.S_IFDIR) != 0)
-						dir_list.Add (new DirectoryInfo (full));
-				}
-			}
-
-			DirectoryInfo [] di_array = new DirectoryInfo [dir_list.Count];
-			dir_list.CopyTo (di_array);
-			
-			return di_array;
-		}
-
-		public FileInfo[] GetFiles ()
-		{
+		public FileInfo [] GetFiles () {
 			return GetFiles ("*");
 		}
 
-		[MonoTODO("Add FileIOPermission Checks")]
-		public FileInfo[] GetFiles (string searchPattern) {
-			if (searchPattern == null)
-				throw new ArgumentNullException ("searchPattern is null");
+		public FileInfo [] GetFiles (string pattern) {
+			string [] names = Directory.GetFiles (FullPath, pattern);
 
-			ArrayList list = Directory.GetListing (path, searchPattern);
-			if (list == null)
-				throw new DirectoryNotFoundException ();
+			ArrayList infos = new ArrayList ();
+			foreach (string name in names)
+				infos.Add (new FileInfo (name));
 
-			ArrayList file_list = new ArrayList ();
-			
-			foreach (string name in list){
-				string full = path + Path.DirectorySeparatorChar + name;
-
-				unsafe {
-					stat buf;
-					
-					if (Wrapper.stat (full, &buf) != 0)
-						continue;
-
-					if ((buf.st_mode & Wrapper.S_IFDIR) == 0)
-						file_list.Add (new FileInfo (full));
-				}
-			}
-			FileInfo [] fi_array = new FileInfo [file_list.Count];
-			file_list.CopyTo (fi_array);
-			
-			return fi_array;
+			return (FileInfo []) infos.ToArray (typeof (FileInfo));
 		}
 
-		public static FileSystemInfo[] GetFileSystemInfos (string path)
-		{
-			return GetFileSystemInfos (path, "*");
+		public DirectoryInfo [] GetDirectories () {
+			return GetDirectories ("*");
 		}
 
-		public static FileSystemInfo[] GetFileSystemInfos (string path, string mask)
-		{
-			if (path == null)
-				throw new ArgumentNullException ("path is null");
-			if (mask == null)
-				throw new ArgumentNullException ("mask is null");
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Invalid characters in path");
+		public DirectoryInfo [] GetDirectories (string pattern) {
+			string [] names = Directory.GetDirectories (FullPath, pattern);
 
-			ArrayList list = Directory.GetListing (path, "*");
-			if (list == null)
-				throw new DirectoryNotFoundException ();
+			ArrayList infos = new ArrayList ();
+			foreach (string name in names)
+				infos.Add (new DirectoryInfo (name));
 
-			FileSystemInfo [] fi = new FileSystemInfo [list.Count];
-			int i = 0;
-			foreach (string s in list){
-				string name = path + Path.DirectorySeparatorChar + s;
-
-				unsafe {
-					stat buf;
-					
-					if (Wrapper.stat (name, &buf) != 0)
-						continue;
-					if ((buf.st_mode & Wrapper.S_IFDIR) == 0)
-						fi [i++] = new FileInfo (name);
-					else
-						fi [i++] = new DirectoryInfo (name);
-				}
-			}
-			
-			return fi;
+			return (DirectoryInfo []) infos.ToArray (typeof (DirectoryInfo));
 		}
 
-		public void MoveTo (string dest)
-		{
-			if (dest == null)
-				throw new ArgumentNullException ();
-			if (dest == "")
-				throw new ArgumentException ();
-
-			if (Wrapper.rename (path, dest) != 0)
-				throw new IOException ();
+		public FileSystemInfo [] GetFileSystemInfos () {
+			return GetFileSystemInfos ("*");
 		}
 
-		public override string ToString ()
-		{
-			return FullName;
+		public FileSystemInfo [] GetFileSystemInfos (string pattern) {
+			ArrayList infos = new ArrayList ();
+			infos.AddRange (GetDirectories (pattern));
+			infos.AddRange (GetFiles (pattern));
+
+			return (FileSystemInfo []) infos.ToArray (typeof (FileSystemInfo));
+		}
+
+		// directory management methods
+
+		public override void Delete () {
+			Delete (false);
+		}
+
+		public void Delete (bool recurse) {
+			Directory.Delete (FullPath, recurse);
+		}
+
+		public void MoveTo (string dest) {
+			Directory.Move (FullPath, dest);
+		}
+
+		public override string ToString () {
+			return OriginalPath;
 		}
 	}
 }

@@ -8,7 +8,6 @@
 //
 
 using System.IO;
-using System.PAL;
 
 namespace System {
 
@@ -17,8 +16,6 @@ namespace System {
 		private static TextWriter stdout;
 		private static TextWriter stderr;
 		private static TextReader stdin;
-
-		private static OpSys _os = Platform.OS;
 
 		static Console ()
 		{
@@ -55,7 +52,7 @@ namespace System {
 		
 		public static Stream OpenStandardError (int bufferSize)
 		{
-			return new FileStream (_os.StderrHandle,
+			return new FileStream (MonoIO.ConsoleError,
 					       FileAccess.Write,
 					       false,  bufferSize);
 		}
@@ -67,7 +64,7 @@ namespace System {
 		
 		public static Stream OpenStandardInput (int bufferSize)
 		{
-			return new FileStream (_os.StdinHandle,
+			return new FileStream (MonoIO.ConsoleInput,
 					       FileAccess.Read,
 					       false,  bufferSize);
 		}
@@ -79,7 +76,7 @@ namespace System {
 		
 		public static Stream OpenStandardOutput (int bufferSize)
 		{
-			return new FileStream (_os.StdoutHandle,
+			return new FileStream (MonoIO.ConsoleOutput,
 					       FileAccess.Write,
 					       false,  bufferSize);
 		}

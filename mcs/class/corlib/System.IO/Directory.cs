@@ -4,6 +4,7 @@
 // Authors:
 //   Jim Richardson  (develop@wtfo-guru.com)
 //   Miguel de Icaza (miguel@ximian.com)
+//   Dan Lewis       (dihlewis@yahoo.co.uk)
 //
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // Copyright (C) 2002 Ximian, Inc.
@@ -15,7 +16,6 @@
 using System;
 using System.Security.Permissions;
 using System.Collections;
-using System.Private;
 
 namespace System.IO
 {
@@ -28,10 +28,8 @@ namespace System.IO
 			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
 
-			int code;
-			
-			if ((code = Wrapper.mkdir (path, 0777)) != 0)
-				throw new IOException (Errno.Message (code));
+			if (!MonoIO.CreateDirectory (path))
+				throw MonoIO.GetException ();
 
 			return new DirectoryInfo (path);
 		}
@@ -43,37 +41,19 @@ namespace System.IO
 			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
 
-			int code = Wrapper.rmdir (path);
-
-			if (code != 0)
-				throw new IOException (Errno.Message (code));
+			if (!MonoIO.RemoveDirectory (path))
+				throw MonoIO.GetException ();
 		}
 
 		static void RecursiveDelete (string path)
 		{
-			ArrayList list = GetListing (path, "*");
-			if (list == null)
-				throw new DirectoryNotFoundException ();
+			foreach (string dir in GetDirectories (path))
+				RecursiveDelete (dir);
 
-			if (!path.EndsWith (Path.DirectorySeparatorStr))
-				path = path + Path.DirectorySeparatorChar;
-			
-			foreach (string n in list){
-				string full = path + n;
-				
-				unsafe {
-					stat s;
-					
-					if (Wrapper.stat (full, &s) != 0)
-						continue;
+			foreach (string file in GetFiles (path))
+				File.Delete (file);
 
-					if ((s.st_mode & Wrapper.S_IFDIR) != 0){
-						RecursiveDelete (full);
-					} else {
-						Wrapper.unlink (full);
-					}
-				}
-			}
+			Directory.Delete (path);
 		}
 		
 		public static void Delete (string path, bool recurse)
@@ -93,175 +73,44 @@ namespace System.IO
 		
 		public static bool Exists (string path)
 		{
-			unsafe {
-				stat s;
-
-				if (Wrapper.stat (path, &s) == 0)
-					return true;
-				else
-					return false;
-			}
+			return MonoIO.ExistsDirectory (path);
 		}
 
-		enum Time { Creation, Modified, Access }
-			
-		static DateTime GetTime (string path, Time kind)
-		{
-			
-			if (path == null)
-				throw new ArgumentNullException ();
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid characters");
-
-			unsafe {
-				stat s;
-				int code;
-
-				code = Wrapper.stat (path, &s);
-
-				if (code == 0){
-					switch (kind){
-					case Time.Creation:
-						return new DateTime (DateTime.UnixEpoch + s.st_ctime);
-					case Time.Modified:
-						return new DateTime (DateTime.UnixEpoch + s.st_mtime);
-					case Time.Access:
-						return new DateTime (DateTime.UnixEpoch + s.st_atime);
-					}
-				}
-				if (code == Wrapper.ENOTDIR)
-					throw new DirectoryNotFoundException ();
-				throw new IOException (Errno.Message (code));
-			}
-		}
-		
 		public static DateTime GetLastAccessTime (string path)
 		{
-			return GetTime (path, Time.Access);
+			return File.GetLastAccessTime (path);
 		}
 		
 		public static DateTime GetLastWriteTime (string path)
 		{
-			return GetTime (path, Time.Modified);
+			return File.GetLastWriteTime (path);
 		}
 		
 		public static DateTime GetCreationTime (string path)
 		{
-			return GetTime (path, Time.Creation);
+			return File.GetLastWriteTime (path);
 		}
 		
 		public static string GetCurrentDirectory ()
-		{	// Implementation complete 08/25/2001 14:24 except for
+		{
+			/*
+			// Implementation complete 08/25/2001 14:24 except for
 			// LAMESPEC: documentation specifies invalid exceptions (i think)
 			//           also shouldn't need Write to getcurrrent should we?
 			string str = Environment.CurrentDirectory;
 			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, str);
-			return str;	
-		}
-
-		internal static ArrayList GetListing (string path, string pattern)
-		{
-			IntPtr dir_handle;
-			SearchPattern search_pattern;
-			ArrayList list;
-			string name, subdir = "";
-			int slashpos;
-			
-			if (path == null)
-				return null;
-
-			if (!path.EndsWith (Path.DirectorySeparatorStr))
-				path = path + Path.DirectorySeparatorChar;
-
-			if (pattern [0] == '/') // need to adapt to windows conventions...
-				path = "";
-
-			if (pattern == "*")
-				search_pattern = null;
-			else {
-				// do we need to handle globbing in directory names, too?
-				if ((slashpos = pattern.LastIndexOf (Path.DirectorySeparatorStr)) >= 0) {
-					subdir = pattern.Substring (0, slashpos + 1);
-					path += subdir;
-					pattern = pattern.Substring (slashpos + 1);
-				}
-				search_pattern = new SearchPattern (pattern);
-			}
-			
-			dir_handle = Wrapper.opendir (path);
-			if (dir_handle == IntPtr.Zero)
-				return null;
-			list = new ArrayList ();
-			while ((name = Wrapper.readdir (dir_handle)) != null){
-				if (search_pattern == null){
-					list.Add (name);
-					continue;
-				}
-
-				if (search_pattern.IsMatch (name))
-					list.Add (subdir + name);
-			}
-			Wrapper.closedir (dir_handle);
-
-			return list;
+			*/
+			return Environment.CurrentDirectory;
 		}
 		
-		public static string[] GetDirectories (string path)
+		public static string [] GetDirectories (string path)
 		{
 			return GetDirectories (path, "*");
 		}
-
-		enum Kind {
-			Files = 1,
-			Dirs  = 2,
-			All   = Files | Dirs
-		}
 		
-		static string [] GetFileListing (ArrayList list, string path, Kind kind)
+		public static string [] GetDirectories (string path, string pattern)
 		{
-			ArrayList result_list = new ArrayList ();
-
-			if (!path.EndsWith (Path.DirectorySeparatorStr))
-				path = path + Path.DirectorySeparatorChar;
-
-			foreach (string name in list){
-				string full = path + name;
-
-				if (name [0] == '/') // update for windows stuff
-					full = name;
-
-				unsafe {
-					stat s;
-					
-					if (Wrapper.stat (full, &s) != 0)
-						continue;
-
-					if ((s.st_mode & Wrapper.S_IFDIR) != 0){
-						if ((kind & Kind.Dirs) != 0)
-							result_list.Add (full);
-					} else {
-						if ((kind & Kind.Files) != 0)
-							result_list.Add (full);
-					}
-				}
-			}
-			string [] names = new string [result_list.Count];
-			result_list.CopyTo (names);
-			return names;
-		}
-		
-		public static string[] GetDirectories (string path, string mask)
-		{
-			if (path == null || mask == null)
-				throw new ArgumentNullException ();
-			
-			ArrayList list = GetListing (path, mask);
-			if (list == null)
-				throw new DirectoryNotFoundException ();
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid characters");
-
-			return GetFileListing (list, path, Kind.Dirs);
+			return GetFileSystemEntries (path, pattern, FileAttributes.Directory, FileAttributes.Directory);
 		}
 		
 		public static string GetDirectoryRoot (string path)
@@ -269,42 +118,24 @@ namespace System.IO
 			return "" + Path.DirectorySeparatorChar;
 		}
 		
-		public static string[] GetFiles (string path)
+		public static string [] GetFiles (string path)
 		{
 			return GetFiles (path, "*");
 		}
 		
-		public static string[] GetFiles (string path, string mask)
+		public static string [] GetFiles (string path, string pattern)
 		{
-			if (path == null || mask == null)
-				throw new ArgumentNullException ();
-			
-			ArrayList list = GetListing (path, mask);
-			if (list == null)
-				throw new DirectoryNotFoundException ();
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid characters");
-
-			return GetFileListing (list, path, Kind.Files);
+			return GetFileSystemEntries (path, pattern, FileAttributes.Directory, 0);
 		}
 
-		public static string[] GetFileSystemEntries (string path)
+		public static string [] GetFileSystemEntries (string path)
 		{	
 			return GetFileSystemEntries (path, "*");
 		}
 
-		public static string[] GetFileSystemEntries (string path, string mask)
+		public static string [] GetFileSystemEntries (string path, string pattern)
 		{
-			if (path == null || mask == null)
-				throw new ArgumentNullException ();
-			
-			ArrayList list = GetListing (path, mask);
-			if (list == null)
-				throw new DirectoryNotFoundException ();
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid characters");
-
-			return GetFileListing (list, path, Kind.All);
+			return GetFileSystemEntries (path, pattern, 0, 0);
 		}
 		
 		public static string[] GetLogicalDrives ()
@@ -312,53 +143,29 @@ namespace System.IO
 			return new string [] { "A:\\", "C:\\" };
 		}
 
-		[MonoTODO]
 		public static DirectoryInfo GetParent (string path)
-		{	// TODO: Implement
-			return null;
+		{
+			return new DirectoryInfo (Path.GetDirectoryName (path));
 		}
 
-		public static void Move (string src, string dst)
+		public static void Move (string src, string dest)
 		{
-			if (src == null || dst == null)
-				throw new ArgumentNullException ();
-			if (src.IndexOfAny (Path.InvalidPathChars) != -1 ||
-			    dst.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ();
-			
-			int code;
-			
-			code = Wrapper.rename (src, dst);
-			if (code == 0)
-				return;
-			
-			throw new IOException (Errno.Message (code));
+			File.Move (src, dest);
 		}
 
-		[MonoTODO]
-		public static void SetCreationTime (string path, DateTime creationTime)
+		public static void SetCreationTime (string path, DateTime creation_time)
 		{
-			if (path == null)
-				throw new ArgumentNullException ();
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ();
-
-			long ticks = creationTime.Ticks;
-			if (ticks < DateTime.UnixEpoch)
-				throw new ArgumentOutOfRangeException ();
-
-			long res = ticks - DateTime.UnixEpoch;
-			if (res > UInt32.MaxValue)
-				throw new ArgumentOutOfRangeException ();
-
-			throw new Exception ("Unimplemented");
+			File.SetCreationTime (path, creation_time);
 		}
 		
 		public static void SetCurrentDirectory (string path)
-		{	// Implementation complete 08/25/2001 14:24 except for
+		{
+			/*
+			// Implementation complete 08/25/2001 14:24 except for
 			// LAMESPEC: documentation specifies invalid exceptions IOException (i think)
 			CheckArgument.Path (path, true);
 			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, path);	
+			*/
 			if (!Exists (path))
 			{
 				throw new DirectoryNotFoundException ("Directory \"" + path + "\" not found.");
@@ -366,21 +173,45 @@ namespace System.IO
 			Environment.CurrentDirectory = path;
 		}
 
-		[MonoTODO]
-		public static void SetLastAccessTime (string path, DateTime accessTime)
+		public static void SetLastAccessTime (string path, DateTime last_access_time)
 		{
-			throw new Exception ("Unimplemented");
+			File.SetLastAccessTime (path, last_access_time);
 		}
 		
-		[MonoTODO]
-		public static void SetLastWriteTime (string path, DateTime modifiedTime)
+		public static void SetLastWriteTime (string path, DateTime last_write_time)
 		{
-			throw new Exception ("Unimplemented");
+			File.SetLastWriteTime (path, last_write_time);
 		}
 		
-		private static DirectoryInfo getInfo (string path)
+		// private
+
+		private static string [] GetFileSystemEntries (string path, string pattern, FileAttributes mask, FileAttributes attrs)
 		{
-			return new DirectoryInfo (path);
+			SearchPattern search;
+			MonoIOStat stat;
+			IntPtr find;
+
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid characters.");
+
+			search = new SearchPattern (pattern);
+
+			find = MonoIO.FindFirstFile (Path.Combine (path , "*"), out stat);
+			if (find == MonoIO.InvalidHandle)
+				throw MonoIO.GetException ();	// DirectoryNotFoundException
+
+			ArrayList entries = new ArrayList ();
+
+			while (true) {
+				if ((stat.Attributes & mask) == attrs && search.IsMatch (stat.Name))
+					entries.Add (Path.Combine (path, stat.Name));
+
+				if (!MonoIO.FindNextFile (find, out stat))
+					break;
+			}
+			MonoIO.FindClose (find);
+
+			return (string []) entries.ToArray (typeof (string));
 		}
 	}
 }

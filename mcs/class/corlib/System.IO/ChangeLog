@@ -1,3 +1,11 @@
+2002-03-27  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* Directory.cs, File.cs, FileSystemInfo.cs, FileInfo.cs,
+	DirectoryInfo.cs, Path.cs: Modified to use MonoIO class instead of
+	wrapper and PAL classes.
+
+	* MonoIO.cs, MonoIOStat.cs, MonoIOError.cs: Added.
+
 2002-03-25  Mike Kestner <mkestner@speakeasy.net>
 
 	* MemoryStream.cs (Read): Fixed bug in exception throw.

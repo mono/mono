@@ -5,29 +5,25 @@
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // 
 // Author:         Jim Richardson, develop@wtfo-guru.com
+//                 Dan Lewis (dihlewis@yahoo.co.uk)
 // Created:        Saturday, August 11, 2001 
 //
 //------------------------------------------------------------------------------
 
 using System;
-using System.PAL;
 
 namespace System.IO
 {
 	public class Path
 	{
-		private static OpSys _os = Platform.OS;
+		public static readonly char AltDirectorySeparatorChar;
+		public static readonly char DirectorySeparatorChar;
+		public static readonly char[] InvalidPathChars;
+		public static readonly char PathSeparator;
+		internal static readonly string DirectorySeparatorStr;
+		public static readonly char VolumeSeparatorChar;
 
-		public static readonly char AltDirectorySeparatorChar = _os.AltDirectorySeparator;
-		public static readonly char DirectorySeparatorChar = _os.DirectorySeparator;
-		public static readonly char[] InvalidPathChars = _os.InvalidPathChars;
-		public static readonly char PathSeparator = _os.PathSeparator;
-		internal static readonly string DirectorySeparatorStr = _os.DirectorySeparator + "";
-		public static readonly char VolumeSeparatorChar = _os.VolumeSeparator;
-
-		private static readonly char[] PathSeparatorChars = {	DirectorySeparatorChar, 
-									AltDirectorySeparatorChar,
-									VolumeSeparatorChar };
+		private static readonly char[] PathSeparatorChars;
 
 		// class methods
 		public static string ChangeExtension (string path, string extension)
@@ -235,6 +231,24 @@ namespace System.IO
 					return iLastDot;
 			}
 			return -1;
+		}
+
+		static Path () {
+			VolumeSeparatorChar = MonoIO.VolumeSeparatorChar;
+			DirectorySeparatorChar = MonoIO.DirectorySeparatorChar;
+			AltDirectorySeparatorChar = MonoIO.AltDirectorySeparatorChar;
+
+			PathSeparator = MonoIO.PathSeparator;
+			InvalidPathChars = MonoIO.InvalidPathChars;
+
+			// internal fields
+
+			DirectorySeparatorStr = DirectorySeparatorChar.ToString ();
+			PathSeparatorChars = new char [] {
+				DirectorySeparatorChar,
+				AltDirectorySeparatorChar,
+				VolumeSeparatorChar
+			};
 		}
 	}
 }

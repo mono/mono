@@ -5,6 +5,7 @@
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // 
 // Author:         Jim Richardson, develop@wtfo-guru.com
+//                 Dan Lewis (dihlewis@yahoo.co.uk)
 // Created:        Saturday, August 11, 2001 
 //
 //------------------------------------------------------------------------------
@@ -14,16 +15,13 @@ using System.IO;
 //using System.Diagnostics;
 using System.Collections;
 using System.Security;
-using System.PAL;
 using System.Security.Permissions;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace System
 {
 	public sealed class Environment
 	{
-		private static OpSys _os = Platform.OS;
-
 		[MonoTODO]
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
@@ -53,13 +51,12 @@ namespace System
 		/// <summary>
 		/// Gets the command line for this process
 		/// </summary>
-		[MonoTODO]
 		public static string CommandLine
 		{	// TODO: Coordinate with implementor of EnvironmentPermissionAttribute
 			// [EnvironmentPermissionAttribute(SecurityAction.Demand, Read = "COMMANDLINE")]
 			get
 			{
-				return _os.CommandLine;
+				return GetCommandLine ();
 			}
 		}
 
@@ -77,13 +74,13 @@ namespace System
 			// [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
 			get
 			{
-				return _os.GetCurrentDirectory();
+				return MonoIO.GetCurrentDirectory ();
 			}
 			[MonoTODO("disabled because of compile error. Need mcs magic.")]
 			//[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 			set
 			{
-				_os.SetCurrentDirectory(value);
+				MonoIO.SetCurrentDirectory (value);
 			}
 		}
 
@@ -106,33 +103,26 @@ namespace System
 		/// <summary>
 		/// Gets the name of the local computer
 		/// </summary>
-		public static string MachineName
-		{
-			get
-			{
-				return _os.MachineName;
-			}
+		public extern static string MachineName {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		/// <summary>
 		/// Gets the standard new line value
 		/// </summary>
-		public static string NewLine
-		{
-			get
-			{
-				return _os.NewLineSequence;
-			}
+		public extern static string NewLine {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		/// <summary>
 		/// Gets the current OS version information
 		/// </summary>
-		public static OperatingSystem OSVersion
-		{
+		public static OperatingSystem OSVersion {
 			get
 			{
-				return _os.OSVersion;
+				return null;
 			}
 		}
 
@@ -251,17 +241,15 @@ namespace System
 		{
 			char[] delimiter = new char[1];
 			delimiter[0] = ' ';
-			return _os.CommandLine.Split(delimiter);
+			return CommandLine.Split (delimiter);
 		}
 
 		/// <summary>
 		/// Return a string containing the value of the environment
 		/// variable identifed by parameter "variable"
 		/// </summary>
-		public static string GetEnvironmentVariable(string variable)
-		{
-			return _os.GetEnvironmentVariable(variable);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static string GetEnvironmentVariable (string name);
 
 		/// <summary>
 		/// Return a set of all environment variables and their values
@@ -269,7 +257,11 @@ namespace System
 	   
 		public static IDictionary GetEnvironmentVariables()
 		{
-			return _os.EnvironmentVariables;
+			Hashtable vars = new Hashtable ();
+			foreach (string name in GetEnvironmentVariableNames ())
+				vars [name] = GetEnvironmentVariable (name);
+			
+			return vars;
 		}
 
 		/// <summary>
@@ -289,5 +281,12 @@ namespace System
 			return null;
 		}
 
+		// private methods
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string [] GetEnvironmentVariableNames ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string GetCommandLine ();
 	}
 }

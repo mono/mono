@@ -4,20 +4,11 @@
 <!-- Target windows builds libraries _for_ windows -->
 <!-- Target linux builds libraries _for_ linux -->
 
-<project name="corlib" default="linux">
+<project name="corlib" default="build">
 	<property name="debug" value="false"/>
 
-	<target name="windows">
-		<nant basedir="corlib" target="windows"/>
-		<nant basedir="System" target="build"/>
-		<nant basedir="System.Data" target="build"/>
-		<!--nant basedir="System.Drawing" target="build"/-->
-		<nant basedir="System.XML" target="build"/>
-		<nant basedir="System.Web" target="build"/>
-	</target>
-
-	<target name="linux">
-		<nant basedir="corlib" target="linux"/>
+	<target name="build">
+		<nant basedir="corlib" target="build"/>
 		<nant basedir="System" target="build"/>
 		<!--nant basedir="System.Drawing" target="build"/-->
 		<nant basedir="System.XML" target="build"/>

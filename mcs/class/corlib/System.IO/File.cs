@@ -5,13 +5,13 @@
 // Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Jim Richardson  (develop@wtfo-guru.com)
+//   Dan Lewis       (dihlewis@yahoo.co.uk)
 //
 // Copyright 2002 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 //
 
 using System;
-using System.Private;
 
 namespace System.IO
 {
@@ -20,8 +20,6 @@ namespace System.IO
 	/// </summary>
 	public sealed class File : Object
 	{
-		const int COPY_BLOCK_SIZE = 32 * 1024;
-		
 		public static StreamWriter AppendText (string path)
 		{	
 			return new StreamWriter (path, true);
@@ -32,7 +30,7 @@ namespace System.IO
 			Copy (sourceFilename, destFilename, true);
 		}
 		 
-		public static void Copy (string src, string dest, bool overrite)
+		public static void Copy (string src, string dest, bool overwrite)
 		{	
 			if (src == null || dest == null)
 				throw new ArgumentNullException ();
@@ -41,17 +39,8 @@ namespace System.IO
 			    dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
 
-			using (FileStream src_stream = new FileStream (
-				src, FileMode.Open, FileAccess.Read, FileShare.Read, COPY_BLOCK_SIZE),
-			       dst_stream = new FileStream (
-				       dest, FileMode.CreateNew, FileAccess.Write, FileShare.None,
-				       COPY_BLOCK_SIZE)){
-				byte [] buffer = new byte [COPY_BLOCK_SIZE];
-				int count;
-			
-				while ((count = src_stream.Read (buffer, 0, COPY_BLOCK_SIZE)) != 0)
-					dst_stream.Write (buffer, 0, count);
-			}
+			if (!MonoIO.CopyFile (src, dest, overwrite))
+				throw MonoIO.GetException ();
 		}
 
 		public static FileStream Create (string path)
@@ -67,55 +56,48 @@ namespace System.IO
 		
 		public static void Delete (string path)
 		{
-			int code;
-			
 			if (path == null)
 				throw new ArgumentNullException ();
 			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
 			
-			code = Wrapper.unlink (path);
-			if (code == Wrapper.EISDIR)
-				throw new UnauthorizedAccessException ();
-			else
-				throw new IOException (Errno.Message (code));
+			if (!MonoIO.DeleteFile (path))
+				throw MonoIO.GetException ();
 		}
 		
 		public static bool Exists (string path)
 		{
-			unsafe {
-				stat s;
-				
-				if (Wrapper.stat (path, &s) == 0)
-					return true;
-				return false;
-			}
+			return MonoIO.ExistsFile (path);
 		}
 
-		[MonoTODO]
 		public static FileAttributes GetAttributes (string path)
 		{
-			throw new Exception ("Unimplemented");
+			return MonoIO.GetFileAttributes (path);
 		}
 
-		[MonoTODO]
 		public static DateTime GetCreationTime (string path)
 		{
-			throw new Exception ("Unimplemented");
+			MonoIOStat stat;
+
+			MonoIO.GetFileStat (path, out stat);
+			return DateTime.FromFileTime (stat.CreationTime);
 		}
 
-		[MonoTODO]
 		public static DateTime GetLastAccessTime (string path)
 		{
-			throw new Exception ("Unimplemented");
+			MonoIOStat stat;
+
+			MonoIO.GetFileStat (path, out stat);
+			return DateTime.FromFileTime (stat.LastAccessTime);
 		}
 
-		[MonoTODO]
 		public static DateTime GetLastWriteTime (string path)
 		{
-			throw new Exception ("Unimplemented");
-		}
+			MonoIOStat stat;
 
+			MonoIO.GetFileStat (path, out stat);
+			return DateTime.FromFileTime (stat.LastWriteTime);
+		}
 
 		public static void Move (string src, string dest)
 		{
@@ -126,10 +108,8 @@ namespace System.IO
 			    dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
 
-			int code = Wrapper.rename (src, dest);
-			if (code == 0)
-				return;
-			throw new Exception (Errno.Message (code));
+			if (!MonoIO.MoveFile (src, dest))
+				throw MonoIO.GetException ();
 		}
 		
 		public static FileStream Open (string path, FileMode mode)
@@ -163,28 +143,28 @@ namespace System.IO
 			return new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}
 
-		[MonoTODO]
 		public static void SetAttributes (string path, FileAttributes attributes)
 		{
-			throw new Exception ("Unimplemented");
+			if (!MonoIO.SetFileAttributes (path, attributes))
+				throw MonoIO.GetException (path);
 		}
 
-		[MonoTODO]
-		public static void SetCreationTime (string path, DateTime creationTime)
+		public static void SetCreationTime (string path, DateTime creation_time)
 		{
-			throw new Exception ("Unimplemented");
+			if (!MonoIO.SetFileTime (path, creation_time.Ticks, -1, -1))
+				throw MonoIO.GetException (path);
 		}
 
-		[MonoTODO]
-		public static void SetLastAccessTime (string path, DateTime accessTime)
+		public static void SetLastAccessTime (string path, DateTime last_access_time)
 		{
-			throw new Exception ("Unimplemented");
+			if (!MonoIO.SetFileTime (path, -1, last_access_time.Ticks, -1))
+				throw MonoIO.GetException (path);
 		}
 
-		[MonoTODO]
-		public static void SetLastWriteTime (string path, DateTime modifiedTime)
+		public static void SetLastWriteTime (string path, DateTime last_write_time)
 		{
-			throw new Exception ("Unimplemented");
+			if (!MonoIO.SetFileTime (path, -1, -1, last_write_time.Ticks))
+				throw MonoIO.GetException (path);
 		}
 	}
 }

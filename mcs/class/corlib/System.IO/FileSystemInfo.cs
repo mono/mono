@@ -5,216 +5,128 @@
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // 
 // Author:         Jim Richardson, develop@wtfo-guru.com
+//                 Dan Lewis (dihlewis@yahoo.co.uk)
 // Created:        Monday, August 13, 2001 
 //
 //------------------------------------------------------------------------------
 
 using System;
 
-namespace System.IO
-{
-	/// <summary>
-	/// 
-	/// </summary>
-	public abstract class FileSystemInfo : MarshalByRefObject
-	{
-		// protected stat status;
-		private bool inited;
-		
-		protected string FullPath;
-		protected string OriginalPath;
+namespace System.IO {
+	
+	public abstract class FileSystemInfo : MarshalByRefObject {
+		// public properties
+
+		public abstract bool Exists { get; }
+
+		public abstract string Name { get; }
+
+		public virtual string FullName {
+			get {
+				return FullPath;
+			}
+		}
+
+		public string Extension {
+			get {
+				return Path.GetExtension (Name);
+			}
+		}
+
+		public FileAttributes Attributes {
+			get {
+				Refresh (false);
+				return stat.Attributes;
+			}
+
+			set {
+				if (!MonoIO.SetFileAttributes (FullName, value))
+					throw MonoIO.GetException ();
+			}
+		}
+
+		public DateTime CreationTime {
+			get {
+				Refresh (false);
+				return DateTime.FromFileTime (stat.CreationTime);
+			}
+
+			set {
+				long filetime = value.ToFileTime ();
+			
+				if (!MonoIO.SetFileTime (FullName, filetime, -1, -1))
+					throw MonoIO.GetException ();
+			}
+		}
+
+		public DateTime LastAccessTime {
+			get {
+				Refresh (false);
+				return DateTime.FromFileTime (stat.LastAccessTime);
+			}
+
+			set {
+				long filetime = value.ToFileTime ();
+
+				if (!MonoIO.SetFileTime (FullName, -1, filetime, -1))
+					throw MonoIO.GetException ();
+			}
+		}
+
+		public DateTime LastWriteTime {
+			get {
+				Refresh (false);
+				return DateTime.FromFileTime (stat.LastWriteTime);
+			}
+
+			set {
+				long filetime = value.ToFileTime ();
+
+				if (!MonoIO.SetFileTime (FullName, -1, -1, filetime))
+					throw MonoIO.GetException ();
+			}
+		}
+
+		// public methods
+
+		public abstract void Delete ();
+
+		public void Refresh ()
+		{
+			Refresh (true);
+		}
+
+		// protected
 
 		protected FileSystemInfo ()
 		{
-			/*
-			status.st_dev = 0;
-			status.st_mode = 0;
-			status.st_nlink = 0;
-			status.st_uid = 0;
-			status.st_gid = 0;
-			status.st_size = 0;
-			status.st_atime = 0;
-			status.st_mtime = 0;
-			status.st_ctime = 0;
-			*/
-
-			FullPath = OriginalPath = String.Empty;
+			this.valid = false;
+			this.FullPath = null;
 		}
 
-		[MonoTODO]
-		public FileAttributes Attributes
-		{ 
-			get
-			{
-				return getAttributes ();
-			}
-			set
-			{
-				//TODO: Implement 
-			}
-		}
+		protected string FullPath;
+		protected string OriginalPath;
 
-		[MonoTODO]
-		public DateTime CreationTime
+		// internal
+
+		internal void Refresh (bool force)
 		{
-			get
-			{
-				if (!inited)
-				{
-					update ();
-				}
-				// TODO: fix next line as far as my research has taken me so far, Unix/Linux don't
-				//       have a creation time and according to my man the ctime if the last time
-				//       one of the chmod flags was changed
-				return c2csharpTime (10);//status.st_ctime);
-			}
-			set
-			{
-				//TODO: Implement
-			}
+			if (valid && !force)
+				return;
+
+			MonoIO.GetFileStat (FullName, out stat);
+			valid = true;
 		}
 
-		public abstract bool Exists {get;}
-		public abstract string Name {get;}
-		public abstract void Delete ();
-
-		/// <summary>
-		/// Get the extension of this item
-		/// </summary>
-		public string Extension
+		internal void CheckPath (string path)
 		{
-			get
-			{
-				return Path.GetExtension (getPathName ());
-			}
+			if (path == null)
+				throw new ArgumentNullException ();
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Invalid characters in path.");
 		}
 
-		public string FullName
-		{
-			get
-			{
-				return getPathName ();
-			}
-		}
-
-		[MonoTODO]
-		public DateTime LastAccessTime
-		{
-			get
-			{
-				if (!inited)
-				{
-					update ();
-				}
-				return c2csharpTime (1);//status.st_atime);
-			}
-
-			set
-			{
-				// TODO: Implement
-			}
-		}
-
-		[MonoTODO]
-		public DateTime LastWriteTime
-		{	// TODO: Implement
-			get
-			{
-				if (!inited)
-				{
-					update ();
-				}
-				return c2csharpTime (1);//status.st_mtime);
-			}
-			set
-			{	// TODO: Implement
-			}
-		}
-
-		public override int GetHashCode ()
-		{
-			return getPathName ().GetHashCode ();
-		}
-
-		[MonoTODO]
-		public override bool Equals (object obj)
-		{	// TODO: Implement
-			return false;
-		}
-
-		[MonoTODO]
-		new public static bool Equals (object obj1, object obj2)
-		{	// TODO: Implement
-			return false;
-		}
-				
-		public void Refresh ()
-		{
-			update ();
-		}
-		
-
-		unsafe private void update ()
-		{
-			/*
-			stat fs;			
-			int nRetCode = Wrapper.stat (getPathName (), &fs);
-			status = fs;
-			switch (nRetCode)
-			{
-			case 0:
-				break;
-			case Wrapper.ENOENT:
-			case Wrapper.ENOTDIR:
-				throw new ArgumentException ("File not found");	
-				//break; generates warning CS0162 unreachable code
-			default:
-				throw new IOException ();
-			   //break; generates warning CS0162 unreachable code
-			}
-			*/
-			inited = true;
-		}
-
-		[MonoTODO]
-		private DateTime c2csharpTime (double seconds)
-		{	// TODO: determine if UTC time which the 
-			//       calculation below is in is correct
-		   DateTime dt = new DateTime (1970, 1, 1, 0, 0, 0);
-		   dt.AddSeconds (seconds);
-		   return dt;	
-		}
-		
-		protected string getPathName ()
-		{
-			if (FullPath == String.Empty)
-				FullPath = Path.GetFullPath (OriginalPath);
-			return FullPath;
-		} 
-
-		[MonoTODO]
-		protected FileAttributes getAttributes ()
-		{	
-			if (!inited)
-			{
-				update ();
-			}
-			
-			// TODO: lots more attribute work needed
-				
-			FileAttributes attrib = 0;
-			/*
-			if (((status.st_mode & Wrapper.S_IFMT) & Wrapper.S_IFDIR) != 0)
-			{
-				attrib |= FileAttributes.Directory;
-			}
-			else
-			{
-				attrib |= FileAttributes.Normal;
-			}
-			*/
-
-			return attrib;
-		}
+		internal MonoIOStat stat;
+		internal bool valid;
 	}
 }
