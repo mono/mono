@@ -69,12 +69,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
-		#if (NET_1_0)
-			[Editor ("System.ComponentModel.Design.BinaryEditor, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[Editor ("System.ComponentModel.Design.BinaryEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[Editor ("System.ComponentModel.Design.BinaryEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MonitoringDescription ("The message of this event entry.")]
 		public string Message {
 			get {throw new NotImplementedException ();}

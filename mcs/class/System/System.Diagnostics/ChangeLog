@@ -1,3 +1,14 @@
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CounterCreationData.cs:
+	* EventLog.cs:
+	* EventLogEntry.cs:
+	* PerformanceCounter.cs:
+	* Process.cs:
+	* ProcessModule.cs:
+	* ProcessStartInfo.cs:
+	* ProcessThread.cs: Reworked attributes based on the new Consts scheme
+
 2003-07-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* PerformanceCounterCategory.cs: Fixed signatures

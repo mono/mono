@@ -18,12 +18,7 @@ namespace System.Diagnostics {
 
 	[MonoTODO("This class is just stubbed out")]
 	[DefaultEvent ("EntryWritten"), InstallerType (typeof (EventLogInstaller))]
-	#if (NET_1_0)
-		[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, Microsoft.VisualStudio, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
-	#endif
-	#if (NET_1_1)
-    		[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, Microsoft.VisualStudio, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
-	#endif
+	[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, typeof (IDesigner))]
 	public class EventLog : Component, ISupportInitialize 
 	{
 
@@ -69,12 +64,7 @@ namespace System.Diagnostics {
 
 		[MonoTODO]
 		[ReadOnly (true), DefaultValue (""), RecommendedAsConfigurable (true)]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.LogConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[TypeConverter ("System.Diagnostics.Design.LogConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.LogConverter, " + Consts.AssemblySystem_Design)]
 		[MonitoringDescription ("Name of the log that is read and written.")]
 		public string Log {
 			get {return logName;}
@@ -97,12 +87,7 @@ namespace System.Diagnostics {
 
 		[MonoTODO]
 		[ReadOnly (true), DefaultValue (""), RecommendedAsConfigurable (true)]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		[MonitoringDescription ("The application name that writes the log.")]
 		public string Source {
 			get {return source;}

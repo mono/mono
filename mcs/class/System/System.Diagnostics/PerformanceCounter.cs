@@ -17,12 +17,7 @@ using System.Diagnostics;
 namespace System.Diagnostics {
 
 	// must be safe for multithreaded operations
-	#if (NET_1_0)
-		[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, Microsoft.VisualStudio, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
-	#endif
-	#if (NET_1_1)
-		[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, Microsoft.VisualStudio, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
-	#endif
+	[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, Microsoft.VisualStudio, " + Consts.AssemblyMicrosoft_VisualStudio, typeof (IDesigner))]
 	[InstallerType (typeof (PerformanceCounterInstaller))]
 	public sealed class PerformanceCounter : Component, ISupportInitialize 
 	{
@@ -94,12 +89,7 @@ namespace System.Diagnostics {
 
 		// may throw ArgumentNullException
 		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.CategoryValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-			[TypeConverter ("System.Diagnostics.Design.CategoryValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.CategoryValueConverter, " + Consts.AssemblySystem_Design)]
 		public string CategoryName {
 			get {return categoryName;}
 			set {
@@ -119,12 +109,7 @@ namespace System.Diagnostics {
 
 		// may throw ArgumentNullException
 		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.CounterNameConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-			[TypeConverter ("System.Diagnostics.Design.CounterNameConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.CounterNameConverter, " + Consts.AssemblySystem_Design)]
 		public string CounterName 
 			{
 			get {return counterName;}
@@ -144,12 +129,7 @@ namespace System.Diagnostics {
 		}
 
 		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-			[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, " + Consts.AssemblySystem_Design)]
 		public string InstanceName 
 			{
 			get {return instanceName;}

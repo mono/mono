@@ -15,12 +15,7 @@ using System.ComponentModel;
 namespace System.Diagnostics {
 
 	[Serializable]
-	#if (NET_1_0)
-		[TypeConverter ("System.Diagnostics.Design.CounterCreationDataConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-	#endif
-	#if (NET_1_1)
-    		[TypeConverter ("System.Diagnostics.Design.CounterCreationDataConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-	#endif
+	[TypeConverter ("System.Diagnostics.Design.CounterCreationDataConverter, " + Consts.AssemblySystem_Design)]
 	public class CounterCreationData 
 	{
 
@@ -50,12 +45,7 @@ namespace System.Diagnostics {
 
 		[DefaultValue ("")]
 		[MonitoringDescription ("Name of this counter.")]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string CounterName 
 		{
 			get {return name;}

@@ -46,12 +46,8 @@ namespace System.Diagnostics
 		}
 
 		[RecommendedAsConfigurable (true), DefaultValue ("")]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
+
 		[MonitoringDescription ("Command line agruments for this process.")]
 		public string Arguments {
 			get {
@@ -75,12 +71,7 @@ namespace System.Diagnostics
 
 		[MonoTODO("Need to read the env block somehow")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content), DefaultValue (null)]
-		#if (NET_1_0)
-			[Editor ("System.Diagnostics.Design.StringDictionaryEditor, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[Editor ("System.Diagnostics.Design.StringDictionaryEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[Editor ("System.Diagnostics.Design.StringDictionaryEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MonitoringDescription ("Environment variables used for this process.")]
 		public StringDictionary EnvironmentVariables {
 			get {
@@ -110,14 +101,8 @@ namespace System.Diagnostics
 		}
 		
 		[RecommendedAsConfigurable (true), DefaultValue ("")]
-		#if (NET_1_0)
-			[Editor ("System.Diagnostics.Design.StartFileNameEditor, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-			[Editor ("System.Diagnostics.Design.StartFileNameEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-    			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[Editor ("System.Diagnostics.Design.StartFileNameEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		[MonitoringDescription ("The name of the resource to start this process.")]
 		public string FileName {
 			get {
@@ -173,12 +158,7 @@ namespace System.Diagnostics
 		}
 		
 		[DefaultValue ("")]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.VerbConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[TypeConverter ("System.Diagnostics.Design.VerbConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.VerbConverter, " + Consts.AssemblySystem_Design)]
 		[MonitoringDescription ("The verb to apply to a used document.")]
 		public string Verb {
 			get {
@@ -209,14 +189,8 @@ namespace System.Diagnostics
 		}
 		
 		[RecommendedAsConfigurable (true), DefaultValue ("")]
-		#if (NET_1_0)
-			[Editor ("System.Diagnostics.Design.WorkingDirectoryEditor, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-			[Editor ("System.Diagnostics.Design.WorkingDirectoryEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-    			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[Editor ("System.Diagnostics.Design.WorkingDirectoryEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		[MonitoringDescription ("The initial directory for this process.")]
 		public string WorkingDirectory {
 			get {
