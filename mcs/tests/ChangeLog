@@ -1,3 +1,8 @@
+2004-01-02  Ravi Pratap  <ravi@ximian.com>
+
+	* test-222.cs: Overload resolution test for bugzilla 
+	bug #52046.
+
 2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* test-141.cs: add tests for #38674.

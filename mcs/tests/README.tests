@@ -408,6 +408,10 @@ test-221.cs:
 ------------
 Test for correct scanning for base properties.
 
+test-222.cs:
+------------
+Compilation test to check overload resolution. We should prefer int->uint over int->ulong.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

@@ -28,9 +28,8 @@ namespace N1 {
 		}
 	}
 
-	interface A {
-		[Mine ("hello")]
-		void Hello ();
+	public interface TestInterface {
+		void Hello ([Mine ("param")] int i);
 	}	
 
 	public class Foo {	
@@ -66,6 +65,19 @@ namespace N1 {
 				}
 			}
 
+                        Type ifType = typeof (TestInterface);
+                        
+                        MethodInfo method = ifType.GetMethod ("Hello", 
+                                                              BindingFlags.Public | BindingFlags.Instance);
+                        
+                        ParameterInfo[] parameters = method.GetParameters();
+                        ParameterInfo param = parameters [0];
+                        
+                        object[] testAttrs = param.GetCustomAttributes (true);
+                        
+                        if (testAttrs.Length != 1)
+                                return 1;
+                        
 			return 0;
 		}
 	}
