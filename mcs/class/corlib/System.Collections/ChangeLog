@@ -1,3 +1,8 @@
+2004-02-12  Jackson Harper  <jackson@ximian.com>
+
+	* SortedList.cs: Only .et 1.0 sets the capacity to a min of
+	initial size.
+	
 2004-01-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Hashtable.cs: Added serialization support to SynchedHashtable. This

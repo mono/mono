@@ -169,14 +169,14 @@ namespace System.Collections {
 			set {
 				int current = this.table.Length;
 
-				if (inUse > value)
+				if (inUse > value) {
 					throw new ArgumentOutOfRangeException("capacity too small");
-
-                                else if (current > INITIAL_SIZE && value < current) {
+#if NET_1_0
+				} else if (current > INITIAL_SIZE && value < current) {
                                         Slot [] newTable = new Slot [INITIAL_SIZE];
                                         Array.Copy (table, newTable, inUse);
                                         this.table = newTable;
-                                
+#endif
                                 } else if (value > inUse) {
                                         Slot [] newTable = new Slot [value];
                                         Array.Copy (table, newTable, inUse);
