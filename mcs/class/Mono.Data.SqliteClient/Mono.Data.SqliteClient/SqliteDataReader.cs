@@ -195,7 +195,7 @@ namespace Mono.Data.SqliteClient
                                 for (int i = 0; i < argc; i++) {
                                         string col = new String (colnames[i]);
                                         columns.Add (col);
-                                        column_names[col.ToLower ()] = i++;
+                                        column_names[col.ToLower ()] = i;
                                 }
                         }
 
