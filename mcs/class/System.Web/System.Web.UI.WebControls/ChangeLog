@@ -1,5 +1,16 @@
 2002-03-04      Gaurav Vaish <gvaish@iitk.ac.in>
 
+Comments:
+	And with this, ie, today's work, all the objects mentioned in the
+	namespace appear in the implementation. But it may not be worth
+	trying to go for a build because of dependence of several of the
+	internal methods that may clash with already available assembly
+	System.Web.
+	
+	Also, the classes lack possible attributes, like those informing
+	about child-controls etc. But I have to first create the attribute
+	classes before I attach the attributes to the classes.
+
 	* CustomValidator.cs          - Completed. In process realized that
 	             I have to complete / rejuvinate BaseValidator class.
 	* BaseValidator.cs            - Complete rejuvination. Completed 80%
@@ -20,6 +31,10 @@
 	* DataGridPageChangedEventArgs.cs
 	                              - Damn, I marked them "*", while they
 	            did not exist.
+	* Repeater.cs                 - Done all except for an undocumented
+	            method CreateControlHierarchy(bool). Though the method
+	            is quite clear by its name, but it will take some time
+	            for me to come with some material to flush in.
 
 2002-03-03      Gaurav Vaish <gvaish@iitk.ac.in>
 
