@@ -50,7 +50,7 @@ namespace System.Reflection
 		{
 			if (parent != null)
 				parent.inflate (reflected, mlist, clist, flist);
-			else {
+			else if (BaseType != null) {
 				mlist.AddRange (generic_type.BaseType.GetMethods (flags));
 				clist.AddRange (generic_type.BaseType.GetConstructors (flags));
 				flist.AddRange (generic_type.BaseType.GetFields (flags));
@@ -88,6 +88,8 @@ namespace System.Reflection
 
 		protected override bool IsValueTypeImpl ()
 		{
+			if (BaseType == null)
+				return false;
 			if (BaseType == typeof (Enum) || BaseType == typeof (ValueType))
 				return true;
 
@@ -229,6 +231,7 @@ namespace System.Reflection
 		private readonly MethodInfo declaring;
 		private readonly MonoGenericInst declaring_type;
 		private readonly MonoGenericInst reflected_type;
+		private readonly IntPtr ginst;
 
 		public override Type DeclaringType {
 			get {
@@ -264,6 +267,7 @@ namespace System.Reflection
 		private readonly ConstructorInfo declaring;
 		private readonly MonoGenericInst declaring_type;
 		private readonly MonoGenericInst reflected_type;
+		private readonly IntPtr ginst;
 
 		public override Type DeclaringType {
 			get {

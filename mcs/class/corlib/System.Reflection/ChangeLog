@@ -1,3 +1,9 @@
+2003-11-08  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoInflatedMethod, MonoInflatedCtor): Added
+	a private `IntPtr ginst' field.
+	(MonoGenericInst.IsValueTypeImpl, inflate): Allow interfaces.
+
 2003-11-02  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoGenericInst.initialize): Include members
