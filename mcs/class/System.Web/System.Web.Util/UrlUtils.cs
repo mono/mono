@@ -154,7 +154,11 @@ namespace System.Web.Util
 						slash = "/";
 					}
 
-					return Reduce (HttpRuntime.AppDomainAppVirtualPath + slash + relPath);
+					string appvpath = HttpRuntime.AppDomainAppVirtualPath;
+					if (appvpath.EndsWith ("/"))
+						slash = "";
+
+					return Reduce (appvpath + slash + relPath);
 				}
 
 				return Reduce (basePath + slash + relPath);
