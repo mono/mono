@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls
 			{
 				if(Page.Validators.Count > 0)
 				{
-					writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent());
+					writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent(Page));
 					writer.AddAttribute("language", "javascript");
 				}
 			}

@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute(HtmlTextWriterAttribute.Value,Text);
 			if(Page!=null && CausesValidation && Page.Validators.Count > 0)
 			{
-				writer.AddAttribute(System.Web.UI.HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent());
+				writer.AddAttribute(System.Web.UI.HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent(Page));
 				writer.AddAttribute("language", "javascript");
 			}
 			AddAttributesToRender(writer);
