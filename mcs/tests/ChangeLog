@@ -1,3 +1,7 @@
+2002-06-09  Martin Baulig  <martin@gnome.org>
+
+	* test-129.cs: New test for unary minus.
+
 2002-06-08  Ravi Pratap  <ravi@ximian.com>
 
 	* test-128.cs : Add. This ensures we apply attributes to accessors
