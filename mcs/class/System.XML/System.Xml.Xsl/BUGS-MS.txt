@@ -56,3 +56,28 @@ Notes:
 	that does not define the behavior (like "implementation MAY reort
 	an error ..., or recover ...).
 
+3. Indentation behavior difference 
+
+	Even if the xsl:output method is "xml", when indent="yes" is
+	specified, the indentation behavior is different depending on the
+	passed Transform() outout argument; TextWriter, or XmlTextWriter.
+
+	Currently many of ConflictResolution tests comparison give us
+	different results. We always use XmlTextWriter (which should be sane
+	for <xsl:output method="xml" />), but with XmlTextWriter:
+
+		XmlTextWriter w = new XmlTextWriter (Console.Out);
+		w.Formatting = Formatting.Indented;
+		w.WriteString ("- ");
+		w.WriteStartElement ("Foo");
+		w.WriteEndElement ();
+
+	gives
+
+		0: - 
+		1: <Foo />
+
+	on both MS.NET and Mono. So Microsft must have another writer for
+	XML output, but I don't think that makes sense (at least it brings
+	inconsistent indentation behavior).
+
