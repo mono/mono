@@ -299,6 +299,7 @@ namespace System.Xml.Serialization {
 		{
 			localName = XmlCustomFormatter.FromXmlNCName (localName);
 			WriteStartElement (localName, ns);
+			if (xsiType != null) WriteXsiType (xsiType.Name, xsiType.Namespace);
 			Writer.WriteString (FromXmlQualifiedName (value));
 			WriteEndElement ();
 		}
@@ -423,16 +424,20 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullableQualifiedNameEncoded (string name, string ns, XmlQualifiedName value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			if (value != null)
+				WriteElementQualifiedName (name, ns, value, xsiType);
+			else
+				WriteNullTagEncoded (name, ns);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullableQualifiedNameLiteral (string name, string ns, XmlQualifiedName value)
 		{
-			throw new NotImplementedException ();
+			if (value != null)
+				WriteElementQualifiedName (name, ns, value);
+			else
+				WriteNullTagLiteral (name, ns);
 		}
 
 		protected void WriteNullableStringEncoded (string name, string ns, string value, XmlQualifiedName xsiType)

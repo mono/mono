@@ -373,8 +373,7 @@ namespace System.Xml.Serialization
 
 				case SchemaTypes.Primitive:
 				case SchemaTypes.Enum:
-					if (elem.IsNullable) return GetValueFromXmlString (ReadNullableString (), elem.TypeData, elem.MappedType);
-					else return GetValueFromXmlString (Reader.ReadElementString (), elem.TypeData, elem.MappedType);
+					return ReadPrimitiveValue (elem);
 
 				case SchemaTypes.Array:
 					return ReadListElement (elem.MappedType, elem.IsNullable, null, true);
@@ -391,6 +390,18 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		object ReadPrimitiveValue (XmlTypeMapElementInfo elem)
+		{
+			if (elem.TypeData.Type == typeof (XmlQualifiedName)) {
+				if (elem.IsNullable) return ReadNullableQualifiedName ();
+				else return ReadElementQualifiedName ();
+			}
+			else if (elem.IsNullable)
+				return GetValueFromXmlString (ReadNullableString (), elem.TypeData, elem.MappedType);
+			else
+				return GetValueFromXmlString (Reader.ReadElementString (), elem.TypeData, elem.MappedType);
+		}
+		
 		object GetValueFromXmlString (string value, TypeData typeData, XmlTypeMapping typeMap)
 		{
 			if (typeData.SchemaType == SchemaTypes.Enum)

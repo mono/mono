@@ -318,6 +318,7 @@ namespace System.Xml.Serialization {
 				return ToXmlQualifiedName (String.Empty);
 			}
 
+			reader.ReadStartElement ();
 			XmlQualifiedName xqn = ToXmlQualifiedName(reader.ReadString ());
 			reader.ReadEndElement ();
 			return xqn;
@@ -621,6 +622,8 @@ namespace System.Xml.Serialization {
 			if (qname == null) qname = GetXsiType ();
 			TypeData typeData = TypeTranslator.GetPrimitiveTypeData (qname.Name);
 			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive) throw new InvalidOperationException ("Unknown type: " + qname.Name);
+
+			if (typeData.Type == typeof (XmlQualifiedName)) return ReadNullableQualifiedName ();
 			return XmlCustomFormatter.FromXmlString (typeData.Type, Reader.ReadElementString ());
 		}
 

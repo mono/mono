@@ -1,5 +1,12 @@
 2003-06-13  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* XmlSerializationReader.cs: Fixed implementation of ReadElementQualifiedName() and ReadTypedPrimitive().
+	* XmlSerializationReaderInterpreter.cs: Improved serialization of XmlQualifiedNames.
+	* XmlSerializationWriter.cs: implemented methods for reading XmlQualifiedNames.
+	* XmlSerializationWriterInterpreter.cs: Improved deserialization of XmlQualifiedNames.
+
+2003-06-13  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* SchemaTypes.cs: Changed DataSet type for a more generic XmlSerializable.
 	* SoapReflectionImporter.cs: tiny fix.
 	* XmlReflectionImporter.cs, TypeData.cs, XmlSerializationWriterInterpreter.cs,
