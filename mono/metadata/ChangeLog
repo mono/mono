@@ -1,5 +1,7 @@
 2004-12-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* image.c: Add unbox_wrapper_cache.
+
 	* class-internals.h debug-helpers.c: Add MONO_WRAPPER_UNBOX.
 
 	* marshal.h marshal.c (mono_marshal_get_unbox_wrapper): New wrapper
