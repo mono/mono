@@ -14,5 +14,10 @@ namespace System.Drawing {
 		public void Dispose ()
 		{
 		}
+
+		public void FillRectangle (Brush b, Rectangle r)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
