@@ -254,3 +254,4 @@ Microsoft.JScript/VsaItems.cs
 Microsoft.JScript/VsaGlobalItem.cs
 Microsoft.JScript/VsaReferenceItem.cs
 Microsoft.JScript/VsaCodeItem.cs
+Microsoft.JScript/expression.cs
