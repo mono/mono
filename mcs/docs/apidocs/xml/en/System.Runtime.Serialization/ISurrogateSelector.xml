@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
-<monodoc language="en">
-    <interface name="System.Runtime.Serialization.ISurrogateSelector" assembly="corlib">
-        <summary>TODO</summary>
-        <remarks>TODO</remarks>
-    </interface>
-</monodoc>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
-<monodoc language="en">
-    <enum name="System.Runtime.InteropServices.GCHandleType" assembly="corlib">
-        <summary>TODO</summary>
-        <remarks>TODO</remarks>
-        <member name="TODO" />
-    </enum>
-</monodoc>
