@@ -1,3 +1,4 @@
+<<<<<<< mb-parser.jay
 %{
 //
 // Mono.MonoBASIC.Parser.cs (from .jay): The Parser for the MonoBASIC compiler
@@ -2515,3 +2516,2522 @@ public override int parse ()
 }
 
 
+=======
+%{
+//
+// Mono.MonoBASIC.Parser.cs (from .jay): The Parser for the MonoBASIC compiler
+//
+// Author: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
+//
+// Licensed under the terms of the GNU GPL
+//
+// Copyright (C) 2001 A Rafael D Teixeira
+//
+// TODO:
+//	Nearly everything
+//
+
+namespace Mono.MonoBASIC
+{
+	using System.Text;
+	using System;
+	using System.Reflection;
+	using System.Collections;
+	using Mono.Languages;
+	using Mono.CSharp;
+
+	/// <summary>
+	///    The MonoBASIC Parser
+	/// </summary>
+	public class Parser : GenericParser 
+	{
+	
+
+		/// <summary>
+		///   Current block is used to add statements as we find
+		///   them.  
+		/// </summary>
+		Block      current_block;
+		
+		/// <summary>
+		///   Tmp block is used to store block endings in if/select's
+		/// </summary>
+		Block      tmp_block;		
+
+		/// <summary>
+		///   Tmp block is used to store tmp copies of expressions
+		/// </summary>
+		Expression      tmp_expr;	
+		
+		/// <summary>
+		///   Tmp catch is used to store catch clauses in try..catch..finally
+		/// </summary>
+		ArrayList      tmp_catch_clauses;			
+		
+		/// <summary>
+		///   Current interface is used by the various declaration
+		///   productions in the interface declaration to "add"
+		///   the interfaces as we find them.
+		/// </summary>
+		//Interface  current_interface;
+
+		/// <summary>
+		///   This is used by the unary_expression code to resolve
+		///   a name against a parameter.  
+		/// </summary>
+		Parameters current_local_parameters;
+		
+		/// <summary>
+		///   This are used when parsing parameters in property
+		///   declarations.
+		/// </summary>		
+		Parameters set_parameters;
+		Parameters get_parameters;
+		
+		/// <summary>
+		///   This is used by the sub_header parser to store modifiers
+		///   to be passed to sub/constructor  
+		/// </summary>
+		int current_modifiers;		
+		
+		/// <summary>
+		///   This is used by the sub_header parser to store attributes
+		///   to be passed to sub/constructor  
+		/// </summary>
+		Attributes current_attributes;				
+
+		/// <summary>
+		///   Using during property parsing to describe the implicit
+		///   value parameter that is passed to the "set" accessor
+		///   method
+		/// </summary>
+		string get_implicit_value_parameter_name;
+		
+		// <summary>
+		//   Using during property parsing to describe the implicit
+		//   value parameter that is passed to the "set" and "get"accesor
+		//   methods (properties and indexers).
+		// </summary>
+		Expression get_implicit_value_parameter_type;
+		
+		/// <summary>
+		///   Using during property parsing to describe the implicit
+		///   value parameter that is passed to the "set" accessor
+		///   method
+		/// </summary>
+		string set_implicit_value_parameter_name;
+		
+		// <summary>
+		//   Using during property parsing to describe the implicit
+		//   value parameter that is passed to the "set" and "get"accesor
+		//   methods (properties and indexers).
+		// </summary>
+		Expression set_implicit_value_parameter_type;		
+		
+		// An out-of-band stack.
+		//
+		Stack oob_stack;
+		
+		DoOptions do_type;
+		//
+		// Switch stack.
+		//
+		Stack switch_stack;
+
+		bool UseExtendedSyntax; // for ".mbs" files
+
+		public override string[] extensions()
+		{
+			string [] list = { ".vb", ".mbs" };
+			return list;
+		}
+
+%}
+
+%token EOF
+%token NONE   /* This token is never returned by our lexer */
+%token ERROR  // This is used not by the parser, but by the tokenizer.
+	      // do not remove.
+
+/*
+ *These are the MonoBASIC keywords
+ */
+%token ADDHANDLER
+%token ADDRESSOF
+%token ALIAS
+%token AND
+%token ANDALSO
+%token ANSI
+%token AS
+%token ASSEMBLY
+%token AUTO
+%token BOOLEAN	
+%token BYREF
+%token BYTE
+%token BYVAL	
+%token CALL
+%token CASE	
+%token CATCH	
+%token CBOOL
+%token CBYTE
+%token CCHAR	
+%token CDATE
+%token CDEC
+%token CDBL
+%token CHAR	
+%token CINT
+%token CLASS
+%token CLNG
+%token COBJ
+//%token COMPARE	
+%token CONST	
+%token CSHORT	
+%token CSNG
+%token CSTR
+%token CTYPE
+%token DATE
+%token DECIMAL	
+%token DECLARE
+%token DEFAULT	
+%token DELEGATE	
+%token DESCRIPTION // MonoBASIC extension
+%token DIM
+%token DO	
+%token DOUBLE	
+%token EACH	
+%token ELSE
+%token ELSEIF
+%token END	
+%token ENUM	
+%token EOL
+%token ERASE
+%token ERROR
+%token EVENT
+%token EXIT	
+//%token EXPLICIT	
+%token FALSE	
+%token FINALLY	
+%token FOR	
+%token FRIEND
+%token FUNCTION
+%token GET
+%token GETTYPE
+%token GOTO	
+%token HANDLES
+%token IF	
+%token IMPLEMENTS
+%token IMPORTS	
+%token IN	
+%token INHERITS
+%token INTEGER	
+%token INTERFACE
+%token IS
+%token LET
+%token LIB	
+%token LIKE	
+%token LONG	
+%token LOOP
+%token ME
+%token MOD
+%token MODULE
+%token MUSTINHERIT	
+%token MUSTOVERRIDE
+%token MYBASE
+%token MYCLASS
+%token NAMESPACE
+%token NEW
+%token NEXT	
+%token NOT
+%token NOTHING
+%token NOTINHERITABLE
+%token NOTOVERRIDABLE
+%token OBJECT	
+%token ON
+%token OPTION	
+%token OPTIONAL	
+%token OR
+%token ORELSE
+%token OVERLOADS
+%token OVERRIDABLE	
+%token OVERRIDES	
+%token PARAMETER // MonoBASIC extension
+%token PARAM_ARRAY
+%token PRESERVE
+%token PRIVATE	
+%token PROPERTY
+%token PROTECTED
+%token PUBLIC
+%token RAISEEVENT
+%token READONLY	
+%token REDIM
+%token REM
+%token REMOVEHANDLER
+%token RESUME	
+%token RETURN
+%token SELECT
+%token SET
+%token SHADOWS
+%token SHARED
+%token SHORT	
+%token SINGLE
+%token SIZEOF	
+%token STATIC	
+%token STEP
+%token STOP
+%token STRING	
+%token STRUCTURE	
+%token SUB
+%token SUMMARY // MonoBASIC extension
+%token SYNCLOCK
+%token THEN
+%token THROW
+%token TO
+%token TRUE	
+%token TRY	
+%token TYPEOF	
+%token UNICODE
+%token UNTIL
+%token VARIANT	
+%token WHEN	
+%token WHILE	
+%token WITH
+%token WITHEVENTS
+%token WRITEONLY
+%token XOR
+
+/* MonoBASIC single character operators/punctuation. */
+%token OPEN_BRACKET  "["
+%token CLOSE_BRACKET "]"
+%token OPEN_PARENS   "("
+%token CLOSE_PARENS  ")"
+%token DOT           "."
+%token COMMA         ","
+%token COLON         ":"
+
+%token PLUS           "+"
+%token MINUS          "-"
+%token ASSIGN         "="
+%token OP_LT          "<"
+%token OP_GT          ">"
+%token STAR           "*"
+%token PERCENT        "%"
+%token DIV            "/"
+%token OP_EXP         "^"
+%token INTERR         "?"
+%token OP_IDIV        "\\"
+%token OP_CONCAT      "&"
+
+/* MonoBASIC multi-character operators. */
+%token OP_LE                  "<="
+%token OP_GE                  ">="
+%token OP_EQ                  "=="
+%token OP_NE                  "<>"
+%token OP_AND                 //"and"
+%token OP_OR                  //"or"
+%token OP_XOR                 //"xor"
+%token OP_MODULUS             //"mod"
+%token OP_MULT_ASSIGN         "*="
+%token OP_DIV_ASSIGN          "/="
+%token OP_IDIV_ASSIGN         "\\="
+%token OP_ADD_ASSIGN          "+="
+%token OP_SUB_ASSIGN          "-="
+%token OP_CONCAT_ASSIGN       "&="
+%token OP_EXP_ASSIGN          "^="
+
+/* Numbers */
+%token LITERAL_INTEGER           "int literal"
+%token LITERAL_SINGLE            "float literal"
+%token LITERAL_DOUBLE            "double literal"
+%token LITERAL_DECIMAL           "decimal literal"
+%token LITERAL_CHARACTER         "character literal"
+%token LITERAL_STRING            "string literal"
+
+%token IDENTIFIER
+
+/* Add precedence rules to solve dangling else s/r conflict */
+%nonassoc LOWPREC
+%nonassoc IF
+%nonassoc ELSE
+%right ASSIGN
+%left OP_OR
+%left OP_AND
+%left BITWISE_OR
+%left BITWISE_AND
+%left OP_SHIFT_LEFT OP_SHIFT_RIGHT
+%left PLUS MINUS
+%left STAR DIV PERCENT
+%right BITWISE_NOT CARRET UMINUS
+%nonassoc OP_INC OP_DEC
+%left OPEN_PARENS
+%left OPEN_BRACKET OPEN_BRACE
+%left DOT
+%nonassoc HIGHPREC
+
+%start compilation_unit
+%%
+
+compilation_unit
+	: opt_imports_directives 
+	  opt_attributes
+	  opt_declarations 
+	  EOF
+	  {
+		$$ = $3;
+	  }
+	;
+	
+opt_declarations
+	: /* empty */
+	| declarations
+	;
+
+declarations
+	: declaration
+	| declarations declaration
+	;
+	
+declaration
+	: namespace_declaration
+	| type_declaration
+	  {
+		string name = "";
+		int mod_flags;
+
+		if ($1 is Class){
+			Class c = (Class) $1;
+			mod_flags = c.ModFlags;
+			name = c.Name;
+		} else if ($1 is Struct){
+			Struct s = (Struct) $1;
+			mod_flags = s.ModFlags;
+			name = s.Name;
+		} else if ($1 is Module){
+			Module m = (Module) $1;
+			mod_flags = m.ModFlags;
+			name = m.Name;			
+		} else
+			break;
+
+		if ((mod_flags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
+			Report.Error (
+				1527, lexer.Location, 
+				"Namespace elements cannot be explicitly " +
+			        "declared private or protected in '" + name + "'");
+		}
+	  }
+	;
+
+qualified_identifier
+	: IDENTIFIER
+	| qualified_identifier DOT IDENTIFIER 
+	  { 
+	    $$ = (($1).ToString ()) + "." + ($3.ToString ()); 
+	  }
+	;
+opt_imports_directives
+	: /* empty */
+	| imports_directives
+	;
+
+imports_directives
+	: imports_directive 
+	| imports_directives imports_directive 
+	;
+
+imports_directive
+	: /* imports_alias_directive
+	| */ imports_namespace_directive
+	;
+
+imports_namespace_directive
+	: IMPORTS qualified_identifier EOL 
+	  {
+		current_namespace.Using ((string) $2, lexer.Location);
+	  }
+	;
+
+opt_attributes
+	: /* empty */
+	| OP_LT attribute_list OP_GT
+	; 
+
+attribute_list
+	: attribute 
+	| attribute_list COMMA attribute
+	;
+	
+attribute 
+	: IDENTIFIER
+	;
+		
+namespace_declaration
+	: NAMESPACE qualified_identifier EOL
+	  {
+		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$2);
+	  } 
+	  opt_imports_directives
+	  opt_declarations
+	  END NAMESPACE EOL
+	  { 
+		current_namespace = current_namespace.Parent;
+	  }
+	;
+
+type_declaration
+	: opt_attributes
+	  opt_modifiers
+	  type_spec_declaration
+	   { 
+	   	current_attributes = (Attributes) $1;
+	   	current_modifiers = (int) $2; 
+	   }	  
+	;
+
+type_spec_declaration
+	: class_declaration
+	| module_declaration
+//	| struct_declaration		
+//	| interface_declaration		
+//	| enum_declaration		
+	| delegate_declaration
+	;
+	
+class_declaration
+	: 
+	  CLASS IDENTIFIER /* opt_class_interfaces */ EOL opt_class_base EOL
+	  {
+		Class new_class;
+		string name;
+
+		name = MakeName ((string) $2);
+
+		new_class = new Class (current_container, name, current_modifiers, 
+				       (Attributes) current_attributes, lexer.Location);
+
+		current_container = new_class;
+		current_container.Namespace = current_namespace;
+		RootContext.Tree.RecordDecl (name, new_class);
+	  }
+	  opt_class_member_declarations
+	  END CLASS EOL
+	  {
+		Class new_class = (Class) current_container;
+
+		if ($4 != null)
+			new_class.Bases = (ArrayList) $4;
+
+		current_container = current_container.Parent;
+		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
+
+		$$ = new_class;
+	  }
+	;
+
+opt_class_base
+	: /* empty */		{ $$ = null; }
+	| class_base		{ $$ = $1;   }
+	;
+
+class_base
+	: INHERITS type_list { $$ = $2; }
+	;
+	
+opt_modifiers
+	: /* empty */		{ $$ = (int) 0; current_modifiers = 0; }
+	| modifiers 		{ $$ = $1; current_modifiers = (int) $1; }
+	;
+
+modifiers
+	: modifier
+	| modifiers modifier
+	  { 
+		int m1 = (int) $1;
+		int m2 = (int) $2;
+
+		if ((m1 & m2) != 0) {
+			Location l = lexer.Location;
+			Report.Error (1004, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
+		}
+		$$ = (int) (m1 | m2);
+	  }
+        ;
+
+modifier
+	: PUBLIC		{ $$ = Modifiers.PUBLIC; }
+	| PROTECTED		{ $$ = Modifiers.PROTECTED; }
+	| PRIVATE		{ $$ = Modifiers.PRIVATE; }
+	| STATIC		{ $$ = Modifiers.STATIC; }
+	/* FIXME: FRIEND and PROTECTED FRIEND are missing */
+	;
+
+module_declaration
+	: MODULE IDENTIFIER EOL
+	  { 
+		Module new_module;
+		string name;
+		// FIXME : Check for valid module modifiers
+		name = MakeName((string) $2);
+		new_module = new Module(current_container, 
+								name, 
+								current_modifiers, 
+								(Attributes) current_attributes,
+								lexer.Location);
+		current_container = new_module;
+		current_container.Namespace = current_namespace;
+		RootContext.Tree.RecordDecl(name, new_module);
+	  }
+	  opt_class_member_declarations
+	  END MODULE EOL
+	  {
+		Module new_module = (Module)current_container;
+
+		current_container = current_container.Parent;
+		CheckDef (current_container.AddClass(new_module), new_module.Name, new_module.Location);
+
+		$$ = new_module;
+	  }
+	;
+
+opt_class_member_declarations
+	: /* empty */
+	| class_member_declarations
+	;
+
+class_member_declarations
+	: class_member_declaration
+	| class_member_declarations class_member_declaration
+	;
+
+class_member_declaration
+	:  
+	   opt_attributes
+	   opt_modifiers
+	   { 
+	   	current_attributes = (Attributes) $1;
+	   	current_modifiers = (int) $2; 
+	   }
+	   class_member_declarator
+	   {
+	   	$$ = $3;
+	   }
+	;
+
+class_member_declarator
+	:	
+	   constructor_declaration
+	|  method_declaration
+	   { 
+	   	Method method = (Method) $1;
+	   	CheckDef (current_container.AddMethod (method), method.Name, method.Location);
+	   }	
+	|  field_declaration
+	|  property_declaration			
+//	|  event_declaration	
+	|  withevents_declaration	/* This is a field but must be treated specially, see below */
+	|  type_declaration			
+	;
+	
+	
+method_declaration
+	: sub_declaration
+	| func_declaration 
+	;
+	
+sub_declaration
+	: SUB IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_evt_handler EOL
+	  { 
+	  	
+	  	current_local_parameters = (Parameters) $4;
+		start_block(); 
+	  } 
+	  opt_local_declarations 
+	  {	
+	  	/* This is WEIRD: declaring a method (sub) in a module as static will
+	  	   trigger a syntax error, but the same methods MUST be static in order
+	  	   to be properly called
+	  	*/
+	  	if (current_container is Module) {
+	  	 	if (current_modifiers == Modifiers.STATIC) {
+	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
+	  		}
+	  		else
+	  		{
+	  			current_modifiers = Modifiers.STATIC;
+	  		}
+	  	}
+	  }
+	  opt_statement_list 
+	  END SUB EOL
+	  {
+		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
+					    (Parameters) current_local_parameters, null, lexer.Location);
+	
+		method.Block = (Block) end_block();
+		$$ = method;
+
+		if ($6 != null) { /* we have an event handler to take care of */
+			// This wouldn't work: AddHandler ((Expression)$6, (string) $2);
+			string evt_def = ((MemberAccess)$6).ToString();
+			int pos = evt_def.LastIndexOf (".");
+			string evt_target = ((string) $2).Substring (0, pos);
+
+			foreach (Property p in current_container.Properties) {
+				if (p.Name == evt_target) {
+					// FIXME: See below 
+					// RemoveHandler (p.Set.Block, (Expression)$6, (string) $2);
+					AddHandler (p.Set.Block, (Expression)$6, (string) $2);
+					break;
+				}
+			}
+							
+							
+		}	
+	  }	  
+	;
+	
+func_declaration
+	: FUNCTION IDENTIFIER 
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type EOL
+	  { 
+	  	
+	  	current_local_parameters = (Parameters) $4;
+		start_block(); 
+	  } 
+	  opt_local_declarations 
+	  {	
+	  	/* This is WEIRD: declaring a method (sub) in a module as static will
+	  	   trigger a syntax error, but the same methods MUST be static in order
+	  	   to be properly called
+	  	*/
+	  	if (current_container is Module) {
+	  	 	if (current_modifiers == Modifiers.STATIC) {
+	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
+	  		}
+	  		else
+	  		{
+	  			current_modifiers = Modifiers.STATIC;
+	  		}
+	  	}
+		// Add local var declaration
+		// for return value
+		ArrayList retval = new ArrayList ();
+		retval.Add (new VariableDeclaration ((string) $2, null, lexer.Location));
+		declare_local_variables ((Expression) $7, retval, lexer.Location);
+	  }	  
+	  opt_statement_list
+	  END FUNCTION EOL
+	  {
+		Method method = new Method ((Expression) $7, (int) current_modifiers, (string) $2,
+					    (Parameters) current_local_parameters, null, lexer.Location);
+	
+		method.Block = end_block();
+		$$ = method;
+
+	  }	  
+	;		
+	
+property_declaration
+	  : PROPERTY IDENTIFIER opt_property_parameters AS type EOL
+	  {
+		get_implicit_value_parameter_type = (Expression) $5;
+		get_implicit_value_parameter_name = (string) $2;
+		
+		current_local_parameters = (Parameters) $3;
+		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
+			get_parameters = current_local_parameters.Copy (lexer.Location);
+			set_parameters = current_local_parameters.Copy (lexer.Location);
+		}
+		else
+		{
+			get_parameters = Parameters.EmptyReadOnlyParameters;
+			set_parameters = new Parameters (null, null ,lexer.Location);		
+		}
+		lexer.PropertyParsing = true;
+
+		$$ = lexer.Location;
+	  }
+	  accessor_declarations 
+	  END PROPERTY EOL
+	  {
+		lexer.PropertyParsing = false;
+
+		Property prop;
+		Pair pair = (Pair) $8;
+		Accessor get_block = (Accessor) pair.First;
+		Accessor set_block = (Accessor) pair.Second;
+		Location loc = lexer.Location;
+		
+		prop = new Property ((Expression) $5, (string) $2, current_modifiers, get_block, set_block,
+				     current_attributes, loc, set_implicit_value_parameter_name, 
+				     get_parameters, set_parameters);
+		
+		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
+		get_implicit_value_parameter_type = null;
+		set_implicit_value_parameter_type = null;
+		get_parameters = null;
+		set_parameters = null;
+		current_local_parameters = null;
+	  }
+	;
+
+opt_property_parameters
+	: /* empty */
+	  {
+	  	$$ = Parameters.EmptyReadOnlyParameters; ;
+	  }
+	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  {
+	  	$$ = $2;
+	  }
+	;
+	
+accessor_declarations
+	: get_accessor_declaration opt_set_accessor_declaration
+	  { 
+		$$ = new Pair ($1, $2);
+	  }
+	| set_accessor_declaration opt_get_accessor_declaration
+	  {
+		$$ = new Pair ($2, $1);
+	  }
+	;
+
+opt_get_accessor_declaration
+	: /* empty */			{ $$ = null; }
+	| get_accessor_declaration
+	;
+
+opt_set_accessor_declaration
+	: /* empty */			{ $$ = null; }
+	| set_accessor_declaration
+	;
+
+get_accessor_declaration
+	: opt_attributes GET EOL
+	  {
+		current_local_parameters = get_parameters;
+		
+		lexer.PropertyParsing = false;
+		
+		start_block();	
+		// Add local var declaration
+		// for return value
+		ArrayList retval = new ArrayList ();
+		retval.Add (new VariableDeclaration (get_implicit_value_parameter_name, null, lexer.Location));
+		declare_local_variables (get_implicit_value_parameter_type, retval, lexer.Location);	
+		
+	  }
+          opt_statement_list
+          END GET EOL
+	  {
+		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
+		current_local_parameters = null;
+		lexer.PropertyParsing = true;
+	  }
+	;
+
+set_accessor_declaration
+	: opt_attributes SET opt_set_parameter EOL
+	  {
+		
+		Parameter implicit_value_parameter = new Parameter (
+			set_implicit_value_parameter_type, 
+			set_implicit_value_parameter_name, 
+			Parameter.Modifier.NONE, null);
+
+		current_local_parameters = set_parameters;
+		current_local_parameters.AppendParameter (implicit_value_parameter);
+		
+		start_block();
+		lexer.PropertyParsing = false;
+	  }
+	  opt_statement_list
+	  END SET EOL
+	  {
+		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
+		current_local_parameters = null;
+		lexer.PropertyParsing = true;
+	  }
+	;
+		
+opt_set_parameter
+	: /* empty */
+	{
+		set_implicit_value_parameter_type = (Expression) TypeManager.system_object_expr;
+		set_implicit_value_parameter_name = "Value";
+	}	
+	| OPEN_PARENS opt_identifier opt_type_spec CLOSE_PARENS
+	{
+		/* FIXME: possible syntax error which must be caught
+		   Set ( As <type>) is currently (and wrongly so) legal
+		*/
+		set_implicit_value_parameter_type = (Expression) $3;
+		if ($2 != null)
+			set_implicit_value_parameter_name = (string) $2;
+		else
+			set_implicit_value_parameter_name = "Value";
+	}
+	;
+			
+field_declaration
+	: opt_dim_stmt 
+	  variable_declarators opt_type_spec EOL
+	  { 
+		Expression type = (Expression) $3;
+		int mod = (int) current_modifiers;
+		
+		foreach (VariableDeclaration var in (ArrayList) $2){
+			Location l = var.Location;
+
+			Field field = new Field (type, mod, var.identifier, 
+						 var.expression_or_array_initializer, 
+						 (Attributes) null, l);
+
+			CheckDef (current_container.AddField (field), field.Name, l);
+		}
+	  }
+	;
+	
+withevents_declaration
+	: WITHEVENTS variable_declarators AS type EOL
+	  {
+	  	/* WithEvents Fields must be resolved into properties
+	  	   with a bit of magic behind the scenes */
+	  	  
+	  	 
+		foreach (VariableDeclaration var in (ArrayList) $2) {
+			// 1 - We create a private field
+			Location l = var.Location;
+			Property prop;
+			Expression type = (Expression) $4;
+			if ((current_modifiers & Modifiers.STATIC) > 0) 
+				Report.Error (30234, l, "'Static' is not valid on a WithEvents declaration.");
+			
+			Field field = new Field (type, Modifiers.PRIVATE, "_" + var.identifier, 
+						 var.expression_or_array_initializer, 
+						 (Attributes) null, l);
+
+			CheckDef (current_container.AddField (field), field.Name, l);	
+			
+			// 2 - Public property
+				
+			prop = BuildSimpleProperty (type, (string) var.identifier, 
+						field, (int) current_modifiers, 
+					     	(Attributes) current_attributes, l);
+			
+			CheckDef (current_container.AddProperty (prop), prop.Name, l);
+		}		
+	  }
+	;
+	
+opt_dim_stmt 
+	: /* empty */
+	| DIM
+	; 
+		
+delegate_declaration
+	: DELEGATE SUB  
+	  IDENTIFIER OPEN_PARENS 
+	  opt_formal_parameter_list
+	  CLOSE_PARENS 
+	  EOL
+	  {
+		Location l = lexer.Location;
+		Mono.CSharp.Delegate del = new Mono.CSharp.Delegate (current_container, TypeManager.system_void_expr, 
+					     (int) current_modifiers, 
+		                             MakeName ((string) $3), (Parameters) $5, 
+					     (Attributes) current_attributes, l);
+					     	  
+		del.Namespace = current_namespace;
+		CheckDef (current_container.AddDelegate (del), del.Name, l);
+	  }	
+	| DELEGATE FUNCTION	  
+	  IDENTIFIER OPEN_PARENS 
+	  opt_formal_parameter_list
+	  CLOSE_PARENS AS type
+	  {
+		Location l = lexer.Location;
+		Mono.CSharp.Delegate del = new Mono.CSharp.Delegate (
+			current_container,
+			(Expression) $8, (int) current_modifiers, MakeName ((string) $3), 
+			(Parameters) $5, (Attributes) current_attributes, l);
+
+		del.Namespace = current_namespace;
+		CheckDef (current_container.AddDelegate (del), del.Name, l);
+	  }
+	;
+	
+opt_evt_handler
+	: /* empty */
+	{ 	$$ = null; }
+	| HANDLES qualified_identifier
+	{
+		$$ = (Expression) DecomposeQI ((string)$2, lexer.Location);	
+	}
+	;	
+	
+constructor_declaration
+	: constructor_declarator
+	  opt_local_declarations
+	  opt_statement_list
+	  { 
+		Constructor c = (Constructor) $1;
+		c.Block = (Block) end_block();
+		c.ModFlags = (int) current_modifiers;
+		c.OptAttributes = (Attributes) null;
+		
+		CheckDef (current_container.AddConstructor (c), c.Name, c.Location);
+		current_local_parameters = null;
+	  }
+	  END SUB EOL
+	;
+
+constructor_declarator
+	: SUB NEW OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
+	  {
+	  	current_local_parameters = (Parameters) $4;
+	  	start_block();
+		oob_stack.Push (lexer.Location);
+
+		Location l = (Location) oob_stack.Pop ();
+		$$ = new Constructor ((string) "New", (Parameters) $4, (ConstructorInitializer) null, l);
+	  }
+	;
+	
+	
+opt_formal_parameter_list
+	: /* empty */			
+	  { 
+		$$ = Parameters.EmptyReadOnlyParameters; 
+	  }
+	| formal_parameter_list	
+	  { 
+	  	$$ = $1;	
+	    	Parameter p = ((Parameters) $1).FixedParameters[0];
+	  }
+	;
+	
+formal_parameter_list
+	: fixed_parameters		
+	  { 
+		ArrayList pars_list = (ArrayList) $1;
+
+		Parameter [] pars = new Parameter [pars_list.Count];
+		pars_list.CopyTo (pars);
+	  	$$ = new Parameters (pars, null, lexer.Location); 
+	  } 
+	/*| fixed_parameters COMMA parameter_array
+	  {
+		ArrayList pars_list = (ArrayList) $1;
+
+		Parameter [] pars = new Parameter [pars_list.Count];
+		pars_list.CopyTo (pars);
+
+		$$ = new Parameters (pars, (Parameter) $3, lexer.Location); 
+	  }
+	| parameter_array 
+	  {
+		$$ = new Parameters (null, (Parameter) $1, lexer.Location);
+	  }*/
+	;
+
+fixed_parameters
+	: fixed_parameter	
+	  {
+		ArrayList pars = new ArrayList ();
+
+		pars.Add ($1);
+		$$ = pars;
+	  }
+	| fixed_parameters COMMA fixed_parameter
+	  {
+		ArrayList pars = (ArrayList) $1;
+
+		pars.Add ($3);
+		$$ = $1;
+	  }
+	;
+
+fixed_parameter
+	: opt_attributes
+	  opt_parameter_modifier
+	  IDENTIFIER opt_type_spec
+	  {
+		$$ = new Parameter ((Expression) $4, (string) $3, (Parameter.Modifier) $2, (Attributes) $1);
+	  }
+	;
+	
+opt_type_spec
+	: /* empty */	{ $$ = (Expression) TypeManager.system_object_expr; }
+	| AS type 	{ $$ = (Expression) $2; };
+	;
+	
+opt_parameter_modifier
+	: /* empty */		{ $$ = Parameter.Modifier.NONE; }
+	| parameter_modifier
+	;
+
+parameter_modifier
+	: BYREF			{ $$ = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF; }
+	;	
+
+opt_actual_parameters 
+	: /* empty */
+	| qualified_identifier
+	| LITERAL_STRING
+	;
+
+opt_statement_list
+	: /* empty */
+	| statement_list EOL
+	;
+
+statement_list
+	: statement 
+	| statement_list EOL statement
+	;
+	
+statement : embedded_statement 
+	  {
+		Statement s = (Statement) $1;
+
+		current_block.AddStatement ((Statement) $1);
+	  } 
+	  | labeled_statement EOL
+	  | ADDHANDLER prefixed_unary_expression COMMA ADDRESSOF qualified_identifier
+	   {
+	   	AddHandler ((Expression) $2, (string) $5);
+	   }
+	  ;	
+	  
+
+labeled_statement
+	: IDENTIFIER COLON 
+	  {
+		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
+
+		if (!current_block.AddLabel ((string) $1, labeled)){
+			Location l = lexer.Location;
+			Report.Error (140, l, "The label '" + ((string) $1) + "' is a duplicate");
+		}	
+		current_block.AddStatement (labeled);
+	  }
+	  statement
+	;
+
+embedded_statement
+	: expression_statement
+	| selection_statement
+	| iteration_statement
+	| try_statement
+	| jump_statement 
+	;
+        
+jump_statement
+	: /*break_statement
+	| continue_statement
+	| goto_statement
+	| throw_statement
+	| */return_statement
+	;
+	        
+return_statement
+	: RETURN opt_expression 
+	  {	  
+		$$ = new Return ((Expression) $2, lexer.Location);
+	  }
+	;
+	        
+iteration_statement
+	: while_statement
+	| do_statement
+	| for_statement
+	/*| foreach_statement*/
+	;
+
+try_statement
+	: try_catch
+	| try_catch_finally
+	;
+				
+try_catch
+	: try_header 
+	  END TRY
+	  { 
+		Catch g = null;
+		ArrayList s = new ArrayList ();
+
+		foreach (Catch cc in (ArrayList) tmp_catch_clauses) {
+			if (cc.IsGeneral)
+				g = cc;
+			else
+				s.Add (cc);
+		}
+
+		// Now s contains the list of specific catch clauses
+		// and g contains the general one.
+		Block b = end_block();
+
+		$$ = new Try ((Block) b, s, g, null, lexer.Location);
+	  }	  
+	;	
+	  
+try_catch_finally
+	: try_header 
+	  { 
+		tmp_block = end_block(); 
+	  }	
+	  FINALLY EOL
+  	  { 
+		start_block(); 
+	  }	  
+	  opt_statement_list 
+	  END TRY
+	  {
+		Catch g = null;
+		ArrayList s = new ArrayList ();
+		ArrayList catch_list = (ArrayList) tmp_catch_clauses;
+
+		if (catch_list != null){
+			foreach (Catch cc in catch_list) {
+				if (cc.IsGeneral)
+					g = cc;
+				else
+					s.Add (cc);
+			}
+		}
+
+		$$ = new Try ((Block) tmp_block, s, g, (Block) end_block(), lexer.Location);
+	
+	  }	
+	  ;	  
+	
+try_header
+	: TRY EOL
+	  {   Console.WriteLine ("try_header");
+		start_block();  
+	  }
+	  opt_statement_list 
+	  opt_catch_clauses
+	  {
+	  	tmp_catch_clauses = (ArrayList) $5;
+	  }
+	;	
+
+opt_catch_clauses
+	: /* empty */  {  $$ = null;  }
+        | catch_clauses
+	;
+
+catch_clauses
+	: catch_clause 
+	  {
+		ArrayList l = new ArrayList ();
+
+		l.Add ($1);
+		$$ = l;
+	  }
+	| catch_clauses catch_clause
+	  {
+		ArrayList l = (ArrayList) $1;
+
+		l.Add ($2);
+		$$ = l;
+	  }
+	;
+
+opt_identifier
+	: /* empty */	{  $$ = null;  }
+	| IDENTIFIER
+	;
+
+catch_clause 
+	: CATCH opt_catch_args EOL
+	{
+		Expression type = null;
+		string id = null;
+		
+		if ($2 != null) {
+			DictionaryEntry cc = (DictionaryEntry) $2;
+			type = (Expression) cc.Key;
+			id   = (string) cc.Value;
+			
+			if (id != null){
+				ArrayList one = new ArrayList ();
+				Location loc = lexer.Location;
+
+				one.Add (new VariableDeclaration (id, null, loc));
+
+
+				$1 = current_block;
+				current_block = new Block (current_block);
+				Block b = declare_local_variables (type, one, loc);
+				current_block = b;
+			}
+		}
+	
+	} 
+	opt_statement_list {
+		Expression type = null;
+		string id = null;
+		Block b_catch = current_block;
+		
+		if ($2 != null){
+			DictionaryEntry cc = (DictionaryEntry) $2;
+			type = (Expression) cc.Key;
+			id   = (string) cc.Value;
+			
+			if ($1 != null) {
+				//
+				// FIXME: I can change this for an assignment.
+				//
+				while (current_block != (Block) $1)
+					current_block = current_block.Parent;
+			}
+		}
+
+		$$ = new Catch (type, id , (Block)b_catch, lexer.Location);
+	}
+        ;
+
+opt_catch_args
+	: /* empty */ {  $$ = null; }
+        | catch_args
+	;	  
+
+catch_args 
+        : IDENTIFIER AS type
+        {
+		 $$ = new DictionaryEntry ($3, $1); 
+	}
+        ;
+        
+        
+do_statement
+	: DO opt_do_construct EOL
+	  {
+		start_block();
+		oob_stack.Push (lexer.Location);
+	  }	
+	  opt_statement_list
+	  LOOP opt_do_construct
+	  {
+	  	Expression t_before = (Expression) $2;
+		Expression t_after = (Expression) $7;
+		Expression t;
+
+		if  ((t_before != null) && (t_after != null))
+			Report.Error (30238, "'Loop' cannot have a condition if matching 'Do' has one.");
+
+		if ((t_before == null) && (t_after == null))
+			t = new BoolLiteral (true);
+		else
+			t = (t_before != null) ? t_before : t_after;
+			
+		DoOptions test_type = (t_before != null) ? DoOptions.TEST_BEFORE : DoOptions.TEST_AFTER;
+		
+		if (((do_type == DoOptions.WHILE) && (test_type == DoOptions.TEST_BEFORE)) ||
+		    ((do_type == DoOptions.UNTIL) && (test_type == DoOptions.TEST_AFTER)))
+			 t = new Unary (Unary.Operator.LogicalNot, (Expression) t, lexer.Location);
+			 
+		$$ = new Do ((Statement) end_block(), (Expression) t, test_type, lexer.Location);
+	  }
+	  ;
+
+opt_do_construct
+	: /* empty */ { $$ = null; }
+	| while_or_until boolean_expression
+	  {
+		do_type = (DoOptions)$1;
+		$$ = (Expression) $2;
+	  }
+	;
+
+while_or_until
+	: WHILE { $$ = DoOptions.WHILE; }
+	| UNTIL { $$ = DoOptions.UNTIL; }
+	;
+
+while_statement
+	: WHILE
+	{
+		start_block();
+		oob_stack.Push (lexer.Location);
+	}
+	boolean_expression EOL
+	opt_statement_list
+	END WHILE
+	{
+		Location l = (Location) oob_stack.Pop ();
+		Block b = end_block();
+		Expression e = (Expression) $3;
+		$$ = new While ((Expression) e, (Statement) b, l);
+	}
+	;
+	
+		
+for_statement
+	: FOR qualified_identifier ASSIGN expression TO expression opt_step EOL
+	  {
+	  	start_block();
+	  }
+	  opt_statement_list
+	  NEXT opt_next_identifier 
+	  {
+	  	Block statement = end_block();
+	  	Expression for_var = (Expression) DecomposeQI ((string)$2, lexer.Location);;
+	  	
+		Expression assign_expr = new Assign (for_var, (Expression) $4, lexer.Location);
+		Expression test_expr =  new Binary (Binary.Operator.LessThanOrEqual,
+			         	        for_var, (Expression) $6, lexer.Location);
+		Expression step_expr = new Assign (for_var, (Expression) new Binary (Binary.Operator.Addition,
+			         for_var, (Expression) $7, lexer.Location), lexer.Location);
+			         
+		Statement assign_stmt =	new StatementExpression ((ExpressionStatement) assign_expr, lexer.Location);		         
+		Statement step_stmt = new StatementExpression ((ExpressionStatement) step_expr, lexer.Location);
+		
+		$$ = new For (assign_stmt, test_expr, step_stmt, statement, lexer.Location);	  	
+	  }	  
+	;
+
+opt_step
+	: /* empty */ 		{ $$ = new IntLiteral ((Int32) 1); }
+	| STEP expression 	{ $$ = $2; }
+	;
+
+opt_next_identifier
+	: /* empty */
+	| qualified_identifier
+	;
+
+selection_statement
+	: if_statement
+	| select_statement
+	;
+
+if_statement
+	: if_statement_open if_statement_rest
+	  {
+		$$ = $2;
+	  }
+	;
+	
+if_statement_open
+	: IF boolean_expression THEN EOL 
+	  {
+	   	oob_stack.Push (lexer.Location);
+	   	start_block();
+	   	tmp_expr = (Expression) $2;
+	  }
+	 ;
+
+if_statement_rest
+	:	  
+	  opt_statement_list
+	  END IF
+	  { 
+		Location l = (Location) oob_stack.Pop ();
+
+		$$ = new If ((Expression) tmp_expr, (Statement) end_block(), l);
+
+	  }	  
+	|
+	  opt_statement_list
+	  ELSE EOL 
+	  { 
+	  	tmp_block = end_block();
+	  	start_block();
+	  }
+	  opt_statement_list
+	  END IF	
+	  {
+		Location l = (Location) oob_stack.Pop ();
+
+		$$ = new If ((Expression) tmp_expr, (Statement) tmp_block, (Statement) end_block(), l);
+	  }	   
+	;
+	
+select_statement
+	: SELECT opt_case expression EOL
+	  { 
+		oob_stack.Push (lexer.Location);
+		switch_stack.Push (current_block);
+	  }	
+	  opt_case_sections
+	  END SELECT 
+	  {
+		$$ = new Switch ((Expression) $3, (ArrayList) $6, (Location) oob_stack.Pop ());
+		current_block = (Block) switch_stack.Pop ();
+	  }	  
+	;
+
+opt_case_sections
+	: /* empty */ 	{ $$ = null; }
+	| case_sections { $$ = $1; }
+	;
+	
+case_sections
+	: case_sections case_section
+	  {
+		ArrayList sections = (ArrayList) $1;
+
+		sections.Add ($2);
+		$$ = sections;
+	  }
+	| case_section
+	  {
+		ArrayList sections = new ArrayList ();
+
+		sections.Add ($1);
+		$$ = sections;
+	  }
+	;
+
+case_section
+	: CASE case_clauses EOL
+	  { 
+	  	start_block();
+	  }
+	  opt_statement_list
+	  {
+	  	Block topmost = current_block;
+
+		while (topmost.Implicit)
+			topmost = topmost.Parent;
+			
+		// FIXME: This is a horrible hack which MUST go			
+		topmost.statements.Add (new Break (lexer.Location));
+	  	$$ = new SwitchSection ((ArrayList) $2, topmost);
+	  }
+	  | CASE ELSE EOL
+	    /* FIXME: we should somehow flag an error 
+	       (BC30321 'Case' cannot follow a 'Case Else' 
+	       in the same 'Select' statement.) 
+	       if Case Else is not the last of the Case clauses
+	    */
+	  { 
+	  	start_block();
+	  }	
+	  opt_statement_list
+	  { 
+	  	Block topmost = current_block;
+
+		while (topmost.Implicit)
+			topmost = topmost.Parent;
+			
+		// FIXME: This is a horrible hack which MUST go			
+		topmost.statements.Add (new Break (lexer.Location));
+		
+		ArrayList a = new ArrayList();
+		a.Add (new SwitchLabel (null, lexer.Location));			
+	  	$$ = new SwitchSection ((ArrayList) a, topmost);	  	
+	  }
+	;	  
+	
+case_clauses
+	: case_clause
+	  {
+		ArrayList labels = new ArrayList ();
+
+		labels.Add ($1);
+		$$ = labels;
+	  }	
+	| case_clauses COMMA case_clause
+	  {
+		ArrayList labels = (ArrayList) ($1);
+		labels.Add ($2);
+
+		$$ = labels;
+	  }	
+	;
+	
+case_clause
+	: opt_is comparison_operator expression
+	| expression
+	  {
+	  	$$ = new SwitchLabel ((Expression) $1, lexer.Location);
+	  }
+	;
+	
+opt_is 
+	: /* empty */
+	| IS
+	;
+
+comparison_operator
+	: OP_LT
+	| OP_GT
+	| OP_LT
+	| OP_LE
+	| OP_NE
+	| OP_EQ
+	;
+
+opt_case
+	: /* empty */
+	| CASE
+	;
+
+expression_statement
+	: statement_expression 
+	  {
+		 $$ = $1; 
+	  }
+	;
+
+statement_expression
+	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
+	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
+	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
+	;
+
+object_creation_expression
+	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS
+	  {
+		$$ = new New ((Expression) $2, (ArrayList) $4, lexer.Location);  
+	  }
+	;
+
+new_expression
+	: object_creation_expression
+	/*| array_creation_expression*/
+	;
+
+assignment_expression
+	: prefixed_unary_expression ASSIGN expression
+	  {
+		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location); 
+	  }
+	;
+
+opt_local_declarations
+	: /* empty */
+	| local_declarations
+	{	if ($1 != null && (Block) $1 != current_block){
+			current_block.AddStatement ((Statement) $1);
+			current_block = (Block) $1;
+		}
+	}
+	;
+	
+local_declarations
+	: local_declaration EOL
+	| local_declaration EOL local_declarations
+	;
+	
+local_declaration
+	: local_variable_declaration 
+	  {
+		if ($1 != null){
+			DictionaryEntry de = (DictionaryEntry) $1;
+
+			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
+		}
+	  }
+
+	| local_constant_declaration 
+	  {
+		if ($1 != null){
+			DictionaryEntry de = (DictionaryEntry) $1;
+
+			$$ = declare_local_constant ((Expression) de.Key, (VariableDeclaration) de.Value);
+		}
+	  }
+	;	 
+	
+local_variable_declaration
+	: DIM variable_declarators AS local_variable_type
+	  {
+		if ($4 != null)
+			$$ = new DictionaryEntry ($4, $2);
+		else
+			$$ = null;
+						
+	  }
+	| DIM variable_declarators 
+	  {
+		$$ = new DictionaryEntry (TypeManager.system_object_expr, $2);
+	  }
+	/*| DIM variable_declarators AS object_creation_expression
+	  {
+		if ($4 != null)
+			$$ = new DictionaryEntry ($4, $2);
+		else
+			$$ = null;
+						
+	  } */
+ 	;
+
+	
+local_constant_declaration
+	: CONST constant_declarator
+	  {
+		if ($2 != null)
+			$$ = new DictionaryEntry ($1, $2);
+		else
+			$$ = null;
+	  }
+	;	 
+	
+constant_declarator
+	: IDENTIFIER ASSIGN constant_expression
+	  {
+		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+	  }
+	;		
+
+variable_declarators
+	: variable_declarator 
+	  {
+		ArrayList decl = new ArrayList ();
+		decl.Add ($1);
+		$$ = decl;
+	  }
+	| variable_declarators COMMA variable_declarator
+	  {
+		ArrayList decls = (ArrayList) $1;
+		decls.Add ($3);
+		$$ = $1;
+	  }
+	;
+
+variable_declarator
+	: IDENTIFIER ASSIGN variable_initializer
+	  {
+		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+	  }
+	| IDENTIFIER
+	  {
+		$$ = new VariableDeclaration ((string) $1, null, lexer.Location);
+	  }
+	;
+	
+variable_initializer
+	: expression
+	  {
+		$$ = $1;
+	  }
+	/*| array_initializer
+	  {
+		$$ = $1;
+	  }
+	| STACKALLOC type OPEN_BRACKET expression CLOSE_BRACKET
+	  {
+		$$ = new StackAlloc ((Expression) $2, (Expression) $4, lexer.Location);
+	  } */
+	;	
+	
+/* 
+ * The following is from Rhys' grammar:
+ * > Types in local variable declarations must be recognized as 
+ * > expressions to prevent reduce/reduce errors in the grammar.
+ * > The expressions are converted into types during semantic analysis.
+ */
+local_variable_type
+	: primary_expression opt_rank_specifier
+	  { 
+		// FIXME: Do something smart here regarding the composition of the type.
+
+		// Ok, the above "primary_expression" is there to get rid of
+		// both reduce/reduce and shift/reduces in the grammar, it should
+		// really just be "type_name".  If you use type_name, a reduce/reduce
+		// creeps up.  If you use qualified_identifier (which is all we need
+		// really) two shift/reduces appear.
+		// 
+
+		// So the super-trick is that primary_expression
+		// can only be either a SimpleName or a MemberAccess. 
+		// The MemberAccess case arises when you have a fully qualified type-name like :
+		// Foo.Bar.Blah i;
+		// SimpleName is when you have
+		// Blah i;
+		  
+		Expression expr = (Expression) $1;  
+		if (!(expr is SimpleName || expr is MemberAccess)) {
+			Error_ExpectingTypeName (lexer.Location, expr);
+			$$ = null;
+		} else {
+			//
+			// So we extract the string corresponding to the SimpleName
+			// or MemberAccess
+			// 
+			if ((string) $2 == "")
+				$$ = $1;
+			else
+				$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+		}
+	  }
+	| builtin_types opt_rank_specifier
+	  {
+		if ((string) $2 == "")
+			$$ = $1;
+		else
+			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+	  }
+        ;
+        	
+rank_specifiers
+	: rank_specifier
+	  {
+		  $$ = $1;
+	  }
+	| rank_specifiers rank_specifier
+	  {
+		  $$ = (string) $2 + (string) $1;
+	  }     	
+        ;
+
+rank_specifier
+	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET
+	  {
+		$$ = "[" + (string) $2 + "]";
+	  }
+	;
+	        	
+opt_rank_specifier
+	: /* empty */
+	  {
+		  $$ = "";
+	  }
+	| rank_specifiers
+	  {
+			$$ = $1;
+	  }
+	;        	
+	
+opt_dim_separators
+	: /* empty */
+	  {
+		$$ = "";
+	  }
+	| dim_separators
+	  {
+		  $$ = $1;
+	  }		  
+	;
+
+dim_separators
+	: COMMA
+	  {
+		$$ = ",";
+	  }
+	| dim_separators COMMA
+	  {
+		$$ = (string) $1 + ",";
+	  }
+	;
+		
+/* Expressions */
+primary_expression
+	: literal
+	  {
+		// 7.5.1: Literals
+	  }
+
+	| qualified_identifier
+	  {
+		string name = (string) $1;
+
+		$$ = null;
+		$$ = DecomposeQI (name, lexer.Location);
+	  }
+	| parenthesized_expression
+	| member_access
+	| invocation_expression
+	| element_access
+	| this_access
+	| base_access
+	| new_expression
+	;
+
+literal
+	: boolean_literal
+	| integer_literal
+	| real_literal
+	| LITERAL_CHARACTER     { $$ = new CharLiteral ((char) lexer.Value); }
+	| LITERAL_STRING        { $$ = new StringLiteral ((string) lexer.Value); }
+	| NOTHING			{ $$ = NullLiteral.Null; }
+	;
+
+real_literal
+	: LITERAL_SINGLE        { $$ = new FloatLiteral ((float) lexer.Value); }
+	| LITERAL_DOUBLE        { $$ = new DoubleLiteral ((double) lexer.Value); }
+	| LITERAL_DECIMAL       { $$ = new DecimalLiteral ((decimal) lexer.Value); }
+	;
+
+integer_literal
+	: LITERAL_INTEGER       {
+		object v = lexer.Value;
+
+		if (v is int)
+			$$ = new IntLiteral ((Int32) v); 
+		else if (v is uint)
+			$$ = new UIntLiteral ((UInt32) v);
+		else if (v is long)
+			$$ = new LongLiteral ((Int64) v);
+		else if (v is ulong)
+			$$ = new ULongLiteral ((UInt64) v);
+		else
+			Console.WriteLine ("OOPS.  Unexpected result from scanner");
+			
+	  }
+	;
+
+boolean_literal
+	: TRUE			{ $$ = new BoolLiteral (true); }
+	| FALSE			{ $$ = new BoolLiteral (false); }
+	;
+
+parenthesized_expression
+	: OPEN_PARENS expression CLOSE_PARENS
+	  { $$ = $2; }
+	;
+
+member_access
+	: primary_expression DOT IDENTIFIER
+	  {
+		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	  }
+	| predefined_type DOT IDENTIFIER
+	  {
+		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	  }
+	;
+
+predefined_type
+	: builtin_types
+	;
+
+invocation_expression
+	: primary_expression OPEN_PARENS opt_argument_list CLOSE_PARENS
+	  {
+		if ($1 == null) {
+			Location l = lexer.Location;
+			Report.Error (1, l, "THIS IS CRAZY");
+		}
+		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
+	  }
+	;
+
+opt_argument_list
+	: /* empty */		{ $$ = null; }
+	| argument_list
+	;
+
+argument_list
+	: argument
+	  {
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+		$$ = list;
+	  }
+	| argument_list COMMA argument
+	  {
+		ArrayList list = (ArrayList) $1;
+		list.Add ($3);
+		$$ = list;
+	  }
+	;
+
+argument
+	: expression
+	  {
+		$$ = new Argument ((Expression) $1, Argument.AType.Expression);
+	  }
+	| BYREF variable_reference
+	  {
+		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
+	  }
+	/*| OUT variable_reference
+	  {
+		$$ = new Argument ((Expression) $2, Argument.AType.Out);
+	  }*/
+	;
+
+variable_reference
+	: expression {/* note ("section 5.4"); $$ = $1; */ }
+	;
+
+element_access
+	: primary_expression OPEN_BRACKET expression_list CLOSE_BRACKET
+	  {
+		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3, lexer.Location);
+	  }/*
+	| primary_expression rank_specifiers
+	  {
+		// So the super-trick is that primary_expression
+		// can only be either a SimpleName or a MemberAccess.
+		// The MemberAccess case arises when you have a fully qualified type-name like :
+		// Foo.Bar.Blah i;
+		// SimpleName is when you have
+		// Blah i;
+
+		Expression expr = (Expression) $1;
+		if (!(expr is SimpleName || expr is MemberAccess)) {
+			Error_ExpectingTypeName (lexer.Location, expr);
+			$$ = TypeManager.system_object_expr;
+		} else {
+			//
+			// So we extract the string corresponding to the SimpleName
+			// or MemberAccess
+			//
+			$$ = new SimpleName (GetQualifiedIdentifier (expr) + (string) $2, lexer.Location);
+		}
+	  }*/
+	;
+
+opt_expression
+	: /* empty */
+	| expression
+	;
+	
+expression_list
+	: expression
+	  {
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+		$$ = list;
+	  }
+	| expression_list COMMA expression
+	  {
+		ArrayList list = (ArrayList) $1;
+		list.Add ($3);
+		$$ = list;
+	  }
+	;
+
+this_access
+	: ME
+	  {
+		$$ = new This (current_block, lexer.Location);
+	  }
+	;
+
+base_access
+	: MYBASE DOT IDENTIFIER
+	  {
+		$$ = new BaseAccess ((string) $3, lexer.Location);
+	  }
+	| MYBASE OPEN_BRACKET expression_list CLOSE_BRACKET
+	  {
+		$$ = new BaseIndexerAccess ((ArrayList) $3, lexer.Location);
+	  }
+	;
+
+post_increment_expression
+	: primary_expression OP_INC
+	  {
+		$$ = new UnaryMutator (UnaryMutator.Mode.PostIncrement,
+				       (Expression) $1, lexer.Location);
+	  }
+	;
+
+unary_expression
+	: primary_expression
+	| NOT prefixed_unary_expression
+	  {
+		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
+	  }
+	;
+
+	//
+	// The idea to split this out is from Rhys' grammar
+	// to solve the problem with casts.
+	//
+prefixed_unary_expression
+	: unary_expression
+	| PLUS prefixed_unary_expression
+	  {
+	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, lexer.Location);
+	  }
+	| MINUS prefixed_unary_expression
+	  {
+		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, lexer.Location);
+	  }
+	| ADDRESSOF prefixed_unary_expression
+	  {
+	  	// FIXME: We should generate an error if AddressOf is NOT used
+	  	// during delegate creation
+		$$ = $2;
+	  }	  
+	;
+
+multiplicative_expression
+	: prefixed_unary_expression
+	| multiplicative_expression STAR prefixed_unary_expression
+	  {
+		$$ = new Binary (Binary.Operator.Multiply,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| multiplicative_expression DIV prefixed_unary_expression
+	  {
+		$$ = new Binary (Binary.Operator.Division,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| multiplicative_expression OP_MODULUS prefixed_unary_expression
+	  {
+		$$ = new Binary (Binary.Operator.Modulus,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+additive_expression
+	: multiplicative_expression
+	| additive_expression PLUS multiplicative_expression
+	  {
+		$$ = new Binary (Binary.Operator.Addition,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| additive_expression MINUS multiplicative_expression
+	  {
+		$$ = new Binary (Binary.Operator.Subtraction,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+relational_expression
+	: additive_expression
+	| relational_expression OP_LT additive_expression
+	  {
+		$$ = new Binary (Binary.Operator.LessThan,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression OP_GT additive_expression
+	  {
+		$$ = new Binary (Binary.Operator.GreaterThan,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression OP_LE additive_expression
+	  {
+		$$ = new Binary (Binary.Operator.LessThanOrEqual,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression OP_GE additive_expression
+	  {
+		$$ = new Binary (Binary.Operator.GreaterThanOrEqual,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression IS type
+	  {
+		$$ = new Is ((Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression AS type
+	  {
+		$$ = new As ((Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+equality_expression
+	: relational_expression
+	| equality_expression OP_EQ relational_expression
+	  {
+		$$ = new Binary (Binary.Operator.Equality,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| equality_expression OP_NE relational_expression
+	  {
+		$$ = new Binary (Binary.Operator.Inequality,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+and_expression
+	: equality_expression
+	| and_expression OP_AND equality_expression
+	  {
+		$$ = new Binary (Binary.Operator.BitwiseAnd,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+exclusive_or_expression
+	: and_expression
+	| exclusive_or_expression OP_XOR and_expression
+	  {
+		$$ = new Binary (Binary.Operator.ExclusiveOr,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+conditional_and_expression
+	: exclusive_or_expression
+	| conditional_and_expression OP_AND exclusive_or_expression
+	  {
+		$$ = new Binary (Binary.Operator.LogicalAnd,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+conditional_or_expression
+	: conditional_and_expression
+	| conditional_or_expression OP_OR conditional_and_expression
+	  {
+		$$ = new Binary (Binary.Operator.LogicalOr,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+conditional_expression
+	: conditional_or_expression
+	;
+
+assignment_expression
+	: prefixed_unary_expression ASSIGN expression
+	  {
+		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+
+expression
+	: conditional_expression
+	| assignment_expression
+	;
+
+constant_expression
+	: expression
+	;
+
+boolean_expression
+	: expression
+	;
+
+type
+	: type_name {  	/* class_type */
+		/*
+	           This does interfaces, delegates, struct_types, class_types,
+	           parent classes, and more! 4.2
+	         */
+		$$ = DecomposeQI ((string) $1, lexer.Location); 
+	  }
+	| builtin_types /*
+	| array_type
+	| pointer_type */
+	;
+
+type_list
+	: type
+	  {
+		ArrayList types = new ArrayList ();
+
+		types.Add ($1);
+		$$ = types;
+	  }
+	| type_list COMMA type
+	  {
+		ArrayList types = (ArrayList) $1;
+
+		types.Add ($3);
+		$$ = types;
+	  }
+	;
+
+type_name
+	: namespace_or_type_name
+	;
+	
+namespace_or_type_name
+	: qualified_identifier
+	;
+
+/* Built-in / Integral types */
+builtin_types
+	: OBJECT	{ $$ = TypeManager.system_object_expr; }
+	| STRING	{ $$ = TypeManager.system_string_expr; }
+	| BOOLEAN	{ $$ = TypeManager.system_boolean_expr; }
+	| DECIMAL	{ $$ = TypeManager.system_decimal_expr; }
+	| SINGLE	{ $$ = TypeManager.system_single_expr; }
+	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
+	| integral_type
+	;
+
+integral_type
+	: /*SBYTE		{ $$ = TypeManager.system_sbyte_expr; }
+	| BYTE		{ $$ = TypeManager.system_byte_expr; }
+	| SHORT		{ $$ = TypeManager.system_int16_expr; }
+	| USHORT	{ $$ = TypeManager.system_uint16_expr; }
+	| */ INTEGER	{ $$ = TypeManager.system_int32_expr; }/*
+	| UINT		{ $$ = TypeManager.system_uint32_expr; }
+	| LONG		{ $$ = TypeManager.system_int64_expr; }
+	| ULONG		{ $$ = TypeManager.system_uint64_expr; }
+	| CHAR		{ $$ = TypeManager.system_char_expr; }
+	| VOID		{ $$ = TypeManager.system_void_expr; }*/
+	;
+
+%%
+
+
+Tokenizer lexer;
+
+public Tokenizer Lexer {
+	get {
+		return lexer;
+	}
+}		   
+
+Expression DecomposeQI (string name, Location loc)
+{
+	Expression o;
+
+	if (name.IndexOf ('.') == -1){
+		return new SimpleName (name, loc);
+	} else {
+		int pos = name.LastIndexOf (".");
+		string left = name.Substring (0, pos);
+		string right = name.Substring (pos + 1);
+
+		o = DecomposeQI (left, loc);
+
+		return new MemberAccess (o, right, loc);
+	}
+}
+
+Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)
+{
+	Block implicit_block;
+	ArrayList inits = null;
+
+	//
+	// We use the `Used' property to check whether statements
+	// have been added to the current block.  If so, we need
+	// to create another block to contain the new declaration
+	// otherwise, as an optimization, we use the same block to
+	// add the declaration.
+	//
+	// FIXME: A further optimization is to check if the statements
+	// that were added were added as part of the initialization
+	// below.  In which case, no other statements have been executed
+	// and we might be able to reduce the number of blocks for
+	// situations like this:
+	//
+	// int j = 1;  int k = j + 1;
+	//
+	if (current_block.Used) {
+		implicit_block = new Block (current_block, true, loc, Location.Null);
+		implicit_block.AddChildVariableNames (current_block);
+	} else
+		implicit_block = current_block;
+
+	foreach (VariableDeclaration decl in variable_declarators){
+
+		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, decl.Location) != null) {
+			if (decl.expression_or_array_initializer != null){
+				if (inits == null)
+					inits = new ArrayList ();
+				inits.Add (decl);
+			}
+		}
+	}
+
+	if (inits == null)
+		return implicit_block;
+
+	foreach (VariableDeclaration decl in inits){
+		Assign assign;
+		Expression expr;
+		
+		if (decl.expression_or_array_initializer is Expression){
+			expr = (Expression) decl.expression_or_array_initializer;
+
+		} else {
+			ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+			
+			expr = new ArrayCreation (type, "", init, decl.Location);
+		}
+
+		LocalVariableReference var;
+		var = new LocalVariableReference (implicit_block, decl.identifier, loc);
+
+		assign = new Assign (var, expr, decl.Location);
+
+		implicit_block.AddStatement (new StatementExpression (assign, lexer.Location));
+	}
+	
+	return implicit_block;
+}
+
+
+Block declare_local_constant (Expression type, VariableDeclaration decl)
+{
+	Block implicit_block;
+
+	if (current_block.Used)
+		implicit_block = new Block (current_block, true);
+	else
+		implicit_block = current_block;
+
+	if (!(implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer,
+					  current_local_parameters, decl.Location))){
+	}
+	
+	return implicit_block;
+}
+
+// <summary>
+//   A class used to pass around variable declarations and constants
+// </summary>
+public class VariableDeclaration {
+	public string identifier;
+	public object expression_or_array_initializer;
+	public Location Location;
+	public Attributes OptAttributes;
+
+	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs)
+	{
+		this.identifier = id;
+		this.expression_or_array_initializer = eoai;
+		this.Location = l;
+		this.OptAttributes = opt_attrs;
+	}
+
+	public VariableDeclaration (string id, object eoai, Location l) : this (id, eoai, l, null)
+	{
+	}
+}
+
+public Property BuildSimpleProperty (Expression p_type, string name, 
+					Field p_fld, int mod_flags,
+			 		Attributes attrs, Location loc) 
+{
+	Property p;
+	Block get_block, set_block;
+	Accessor acc_set, acc_get;
+	StatementExpression a_set;
+	Statement a_get;
+	Parameter [] args;
+	
+	// Build SET Block
+	Parameter implicit_value_parameter = new Parameter (p_type, "value", Parameter.Modifier.NONE, null);	
+	args  = new Parameter [1];
+	args [0] = implicit_value_parameter;
+		
+	Parameters set_params = new Parameters (args, null, loc);
+	a_set = new StatementExpression ((ExpressionStatement) new Assign ((Expression) DecomposeQI(p_fld.Name, loc), 
+			    (Expression) new SimpleName("value", loc), loc), loc);
+			    
+	set_block = new Block (current_block, set_params, loc, Location.Null);
+	set_block.AddStatement ((Statement) a_set);					    
+	acc_set = new Accessor (set_block, attrs);
+	
+	// Build GET Block
+	a_get = (Statement) new Return ((Expression) DecomposeQI(p_fld.Name, loc), loc);
+	get_block = new Block (current_block, null, loc, Location.Null);
+	get_block.AddStatement ((Statement) a_get);					    
+	acc_get = new Accessor (get_block, attrs);
+		
+	p = new Property (p_type, name, mod_flags, (Accessor) acc_get, (Accessor) acc_set, attrs, loc);
+	
+	return (p);
+}
+		
+void start_block () 
+{
+	current_block = new Block (current_block, current_local_parameters,
+			   lexer.Location, Location.Null);
+} 
+
+Block end_block ()
+{ 
+	Block res;
+	
+	while (current_block.Implicit)
+		current_block = current_block.Parent;
+
+	res = current_block;
+
+	current_block.SetEndLocation (lexer.Location);
+	current_block = current_block.Parent;
+	
+	return (res);
+}
+
+private void AddHandler (Expression evt_definition, string handler_name)
+{
+	AddHandler (current_block, evt_definition, handler_name);
+}
+
+private void AddHandler (Block b, Expression evt_definition, string handler_name)
+{
+   	Location loc = lexer.Location;
+   	ArrayList neh_args = new ArrayList();
+   	neh_args.Add (new Argument (DecomposeQI(handler_name, loc), Argument.AType.Expression));
+   	
+   	ExpressionStatement se = (ExpressionStatement)new New (DecomposeQI("System.EventHandler", loc), neh_args, loc);
+   	
+   	CompoundAssign ca = new CompoundAssign (
+			Binary.Operator.Addition, evt_definition, (Expression) se, loc);
+			
+	Statement s = (Statement)(new StatementExpression ((ExpressionStatement) ca, loc)); 
+	b.AddStatement (s);	
+}
+
+// FIXME: THIS DOES NOT WORK!!!
+private void RemoveHandler (Block b, Expression evt_definition, string handler_name)
+{
+   	Location loc = lexer.Location;
+   	ArrayList neh_args = new ArrayList();
+   	neh_args.Add (new Argument (DecomposeQI(handler_name, loc), Argument.AType.Expression));
+   	
+   	ExpressionStatement se = (ExpressionStatement)new New (DecomposeQI("System.EventHandler", loc), neh_args, loc);
+   	
+   	CompoundAssign ca = new CompoundAssign (
+			Binary.Operator.Subtraction, evt_definition, (Expression) se, loc);
+			
+	Statement s = (Statement)(new StatementExpression ((ExpressionStatement) ca, loc)); 
+	b.AddStatement (s);	
+}
+
+private void RemoveHandler (Expression evt_definition, string handler_name)
+{
+	RemoveHandler (current_block, evt_definition, handler_name);
+}
+
+
+
+void Error_ExpectingTypeName (Location l, Expression expr)
+{
+	if (expr is Invocation){
+		Report.Error (1002, l, "; expected");
+	} else {
+		Report.Error (-1, l, "Invalid Type definition");
+	}
+}
+
+static bool AlwaysAccept (MemberInfo m, object filterCriteria) {
+	return true;
+}
+
+public override int parse ()
+{
+	current_namespace = new Namespace (null, "");
+	current_container = RootContext.Tree.Types;
+	current_container.Namespace = current_namespace;
+	oob_stack = new Stack ();
+	switch_stack = new Stack ();
+	
+	UseExtendedSyntax = name.EndsWith(".mbs");
+
+	lexer = new Tokenizer (input, name, defines);
+	StringBuilder value = new StringBuilder ();
+//yacc_verbose_flag=true;
+	try 
+	{
+		if (yacc_verbose_flag)
+			yyparse (lexer, new yydebug.yyDebugSimple ());
+		else
+			yyparse (lexer);
+	} 
+	catch (Exception e)
+	{
+		//Console.WriteLine (lexer.location + "  : Parsing error in " + lexer.ref_name);
+		Report.Error (9999, lexer.Location, "");
+		//Console.WriteLine (e);
+	}
+	
+	return Report.Errors;
+}
+
+/* end end end */
+}
+
+
+>>>>>>> 1.15
