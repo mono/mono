@@ -1,4 +1,9 @@
 
+Thu Jun 10 16:02:27 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, image.h, appdomain.c, assembly.c, loader.c, metadata.c,
+	reflection.c, socket-io.c: leak fixes.
+
 Wed Jun 9 18:23:59 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: handle sentinel pos in vararg methods in position different
