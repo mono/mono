@@ -2978,6 +2978,11 @@ namespace MonoTests.System {
 			AssertEquals ("0xfF", 255, Convert.ToByte ("0xfF", 16));
 			AssertEquals ("0xFf", 255, Convert.ToByte ("0xFf", 16));
 			AssertEquals ("0xFF", 255, Convert.ToByte ("0xFF", 16));
+
+			AssertEquals ("0Xff", 255, Convert.ToByte ("0Xff", 16));
+			AssertEquals ("0XfF", 255, Convert.ToByte ("0XfF", 16));
+			AssertEquals ("0XFf", 255, Convert.ToByte ("0XFf", 16));
+			AssertEquals ("0XFF", 255, Convert.ToByte ("0XFF", 16));
 		}
 
 		[Test]

@@ -1,3 +1,7 @@
+2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConvertTest.cs: Added case where 0X00 is valid when parsed in base16
+
 2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ArrayTest.cs: Added tests to check for integer overflow in Clear,
