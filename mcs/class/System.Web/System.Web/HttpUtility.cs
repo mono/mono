@@ -578,7 +578,7 @@ namespace System.Web {
 			return UrlEncodeToBytes (bytes, 0, bytes.Length);
 		}
 
-		static char [] hexChars = "012456789ABCDEF".ToCharArray ();
+		static char [] hexChars = "0123456789ABCDEF".ToCharArray ();
 
 		public static byte [] UrlEncodeToBytes (byte [] bytes, int offset, int count)
 		{
