@@ -1,4 +1,10 @@
 2002-05-16  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlDataReader.cs:
+		Modify GetValues to use Array.Copy() to copy
+		the results from fields to values, rather than
+		an assignment, which results in loss of data.
+
+2002-05-16  Tim Coleman <tim@timcoleman.com>
 	* System.Data/DataRow.cs:
 		More implementation and documentation.  It should
 		work more like expected, although there is no way

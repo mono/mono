@@ -280,9 +280,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		public int GetValues(object[] values) {
-			
-			values = fields;
+		public int GetValues(object[] values) 
+		{
+			Array.Copy (fields, values, fields.Length);
 			return fields.Length;
 		}
 
