@@ -1,4 +1,8 @@
 
+Wed May 14 12:40:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-x86.brg: fixed thinko in int to double conversions.
+
 Wed May 14 12:01:58 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, jit-icalls.c: added runtime thread-static variable support.
