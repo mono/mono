@@ -1,3 +1,8 @@
+2005-02-14  Anil Bhatia  <banil@novell.com>
+	* Fixed DoSearch() in DirectorySearcher.cs: Search scope was hardcoded
+	as LdapConnection.SCOPE_SUB. Chnaged to the value contained by
+	_SearchScope.
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Activate unit tests.

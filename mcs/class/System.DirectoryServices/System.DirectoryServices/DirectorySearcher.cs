@@ -616,8 +616,27 @@ namespace System.DirectoryServices
 			InitBlock();
 			String[] attrs= new String[PropertiesToLoad.Count];
 			PropertiesToLoad.CopyTo(attrs,0);
+			int connScope = LdapConnection.SCOPE_SUB;
+			switch (_SearchScope)
+			{
+			case SearchScope.Base:
+			  connScope = LdapConnection.SCOPE_BASE;
+			  break;
+
+			case SearchScope.OneLevel:
+			  connScope = LdapConnection.SCOPE_ONE;
+			  break;
+
+			case SearchScope.Subtree:
+			  connScope = LdapConnection.SCOPE_SUB;
+			  break;
+
+			default:
+			  connScope = LdapConnection.SCOPE_SUB;
+			  break;
+			}
 			LdapSearchResults lsc=_conn.Search(	SearchRoot.Fdn,
-												LdapConnection.SCOPE_SUB,
+								connScope,
 												Filter,
 												attrs,
 												false);
