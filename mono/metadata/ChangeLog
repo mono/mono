@@ -1,3 +1,17 @@
+2002-03-05  Martin Baulig  <martin@gnome.org>
+
+	* exception.c (mono_get_exception_argument_out_of_range): New exception.
+
+	* icall.c (ves_icall_System_Array_GetValue): Moved actual implementation to
+	ves_icall_System_Array_GetValue(), only calculate the absolute array position
+	here.
+	(ves_icall_System_Array_SetValue): Likewise.
+	(ves_icall_System_Array_GetValueImpl): New interncall. Takes an array position
+	as argument and does the actual work. This function is used when copying a
+	multi-dimensional array.
+	(ves_icall_System_Array_SetValueImpl): Almost completely rewrote this. It can
+	now do all the widening conversions of value types.
+	(ves_icall_System_Array_CreateInstanceImpl): Implemented.
 
 Tue Mar 5 18:14:01 CET 2002 Paolo Molaro <lupus@ximian.com>
 
