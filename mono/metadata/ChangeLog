@@ -1,3 +1,17 @@
+2003-02-19  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* appdomain.h: Added in MonoDomain a couple of MonoMethod* variables
+	  used to cache the managed methods used to create proxies and make 
+	  remote invocation of methods.
+	* class.h: Added in MonoVTable a flag to indicate that a class needs 
+	  to be remotely created.
+	* object.c: Modified the method mono_class_vtable(). It now initializes 
+	  the remote flag of the vtable. Modified mono_object_new_specific(), 
+	  so now it checks the remote flag.
+	* icall.c: Added a couple of internal methods, one for enabling instance 
+	  creation interception for a type, and one for creating objects bypassing
+	  the remote check.
+
 2003-02-18  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c (ves_icall_MonoDebugger_GetMethodToken):
