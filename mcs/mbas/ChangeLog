@@ -1,3 +1,6 @@
+2005-04-06 Ritvik Mayank <mritvik@novell.com>
+  	   by Sudharsan V <vsudharsan@novell.com>
+	* class.cs: correction for reflecting the correct Line No. in the Error message	
 2005-04-05 Ritvik Mayank <mritvik@novell.com>
   	   Patch Submitted by Sudharsan V <vsudharsan@novell.com>
 	* mb-parser.jay : correction for reflecting the correct Line No. in the Error message	

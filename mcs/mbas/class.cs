@@ -691,7 +691,7 @@ namespace Mono.MonoBASIC {
 								"'NotInheritable' class " + TypeManager.MonoBASIC_Name (parent));
 					
 				if (!AsAccessible (parent, ModFlags))
-					Report.Error (30389, Location,
+					 Report.Error (30389, Location,
 						      "Inconsistent accessibility: base class `" +
 						      TypeManager.MonoBASIC_Name (parent) + "' is less " +
 						      "accessible than class `" +
@@ -714,7 +714,7 @@ namespace Mono.MonoBASIC {
 				}
 
 				if (is_class == false && !t.IsInterface){
-					Report.Error (527, "In Struct `" + Name + "', type `"+
+					Report.Error (527, Location, "In Struct `" + Name + "', type `"+
 						      name +"' is not an interface");
 					error = true;
 					return null;
@@ -722,10 +722,10 @@ namespace Mono.MonoBASIC {
 			
 				if (t.IsSealed) {
 					if (t.IsValueType)
-						Report.Error (30258, "class `"+ Name +
+						Report.Error (30258, Location, "class `"+ Name +
 							"': a class can not inherit from a struct/enum");
 							
-					/*Report.Error (509, "class `"+ Name +
+					/*Report.Error (509, Location, "class `"+ Name +
 						      "': Cannot inherit from sealed class `"+
 						      bases [i]);*/
 					error = true;
@@ -734,7 +734,7 @@ namespace Mono.MonoBASIC {
 
 				if (t.IsClass) {
 					if (parent != null){
-						Report.Error (30121, Name + ": A class cannot inherit " +
+						Report.Error (30121, Location, Name + ": A class cannot inherit " +
 							"more than one class");
 						error = true;
 						return null;
@@ -743,7 +743,7 @@ namespace Mono.MonoBASIC {
 
 				for (int x = 0; x < j; x++) {
 					if (t == ifaces [x]) {
-						Report.Error (528, "`" + name + "' is already listed in interface list");
+						Report.Error (528,Location, "`" + name + "' is already listed in interface list");
 						error = true;
 						return null;
 					}
