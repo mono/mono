@@ -195,10 +195,11 @@ namespace System.Threading
 
 			if (runner == null)
 				return false;
-			
+
+			start_event.Reset ();
+			runner.Abort ();
 			runner.DueTime = dueTime;
 			runner.Period = period;
-			runner.Abort ();
 			start_event.Set ();
 			return true;
 		}

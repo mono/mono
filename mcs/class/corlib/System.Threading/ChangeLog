@@ -1,3 +1,8 @@
+2004-08-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Timer.cs: don't invoke the callback if the period changes before the
+	due time. Fixes bug #62421.
+
 2004-07-15  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Hold a lock in GetNamedDataSlot.  Fixes bug 61582,
