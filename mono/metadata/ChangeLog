@@ -1,3 +1,7 @@
+2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c: Reorganize native->managed marshalling code to also use
+	the emit_marshal_... functions.
 
 Tue Mar 1 16:16:42 CET 2005 Paolo Molaro <lupus@ximian.com>
 
