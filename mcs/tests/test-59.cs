@@ -83,6 +83,14 @@ class X {
 		if (v != 0)
 			return 20 + v;
 
+		//
+		// Just a compilation fix: 21418
+		//
+		ulong l = 1;
+		if (l != 0L)
+			;
+
+
 		// This was a compilation bug, error: 57522
 		ulong myulog = 0L;
 
