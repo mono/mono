@@ -1,3 +1,6 @@
+2003-07-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* socket-io.c: ignore EINTR error in select.
 
 Tue Jul 29 15:25:01 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
