@@ -428,7 +428,7 @@ namespace System.Windows.Forms
 					ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
 					rect_text, string_format);
 
-				if (item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
+				if (!menuBar && item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
 
 					string str = item.item.GetShortCutText ();
 					Rectangle rect = rect_text;
