@@ -245,7 +245,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				writer.Write ((byte) BinaryElement.End);
 		}
 
-		public static object ReadMethodCall (BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, ISurrogateSelector surrogateSelector, StreamingContext context)
+		public static object ReadMethodCall (BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, ISurrogateSelector surrogateSelector, StreamingContext context, SerializationBinder binder)
 		{
 			BinaryElement elem = (BinaryElement)reader.ReadByte();	// The element code
 			if (elem != BinaryElement.MethodCall) throw new SerializationException("Invalid format. Expected BinaryElement.MethodCall, found " +  elem);
@@ -283,7 +283,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			if ((flags & MethodFlags.NeedsInfoArrayMask) > 0)
 			{
-				ObjectReader objectReader = new ObjectReader(surrogateSelector, context);
+				ObjectReader objectReader = new ObjectReader(surrogateSelector, context, binder);
 				object[] msgInfo = (object[]) objectReader.ReadObjectGraph (reader, hasHeaders, headerHandler);
 
 				if ((flags & MethodFlags.ArgumentsInSimpleArray) > 0) {
@@ -330,7 +330,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			return call;
 		}
 
-		public static object ReadMethodResponse (BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, IMethodCallMessage methodCallMessage, ISurrogateSelector surrogateSelector, StreamingContext context)
+		public static object ReadMethodResponse (BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, IMethodCallMessage methodCallMessage, ISurrogateSelector surrogateSelector, StreamingContext context, SerializationBinder binder)
 		{
 			BinaryElement elem = (BinaryElement)reader.ReadByte();	// The element code
 			if (elem != BinaryElement.MethodResponse) throw new SerializationException("Invalid format. Expected BinaryElement.MethodResponse, found " +  elem);
@@ -372,7 +372,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			{
 				// There objects that need to be deserialized using an ObjectReader
 
-				ObjectReader objectReader = new ObjectReader(surrogateSelector, context);
+				ObjectReader objectReader = new ObjectReader(surrogateSelector, context, binder);
 				object[] msgInfo = (object[]) objectReader.ReadObjectGraph (reader, hasHeaders, headerHandler);
 
 				if ((typeTag & ReturnTypeTag.Exception) > 0) {

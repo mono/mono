@@ -16,11 +16,11 @@ using System.Runtime.Remoting.Messaging;
 namespace System.Runtime.Serialization.Formatters.Binary {
 	public sealed class BinaryFormatter : IRemotingFormatter, IFormatter 
 	{
-		private FormatterAssemblyStyle assembly_format;
+		private FormatterAssemblyStyle assembly_format;	// TODO: Do something with this
 		private SerializationBinder binder;
 		private StreamingContext context;
 		private ISurrogateSelector surrogate_selector;
-		private FormatterTypeStyle type_format;
+		private FormatterTypeStyle type_format;			// TODO: Do something with this
 		
 		public BinaryFormatter()
 		{
@@ -112,13 +112,13 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			BinaryElement elem = (BinaryElement) reader.PeekChar();
 
 			if (elem == BinaryElement.MethodCall) {
-				return MessageFormatter.ReadMethodCall (reader, hasHeader, handler, surrogate_selector, context);
+				return MessageFormatter.ReadMethodCall (reader, hasHeader, handler, surrogate_selector, context, binder);
 			}
 			else if (elem == BinaryElement.MethodResponse) {
-				return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, null, surrogate_selector, context);
+				return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, null, surrogate_selector, context, binder);
 			}
 			else {
-				ObjectReader serializer = new ObjectReader (surrogate_selector, context);
+				ObjectReader serializer = new ObjectReader (surrogate_selector, context, binder);
 				return serializer.ReadObjectGraph (reader, hasHeader, handler);
 			}
 		}
@@ -137,7 +137,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 
 			bool hasHeader;
 			ReadBinaryHeader (reader, out hasHeader);
-			return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, methodCallmessage, surrogate_selector, context);
+			return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, methodCallmessage, surrogate_selector, context, binder);
 		}
 
 		public void Serialize(Stream serializationStream, object graph)

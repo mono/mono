@@ -21,6 +21,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 	{
 		ISurrogateSelector _surrogateSelector;
 		StreamingContext _context;
+		SerializationBinder _binder;
 
 		ObjectManager _manager;
 		Hashtable _registeredAssemblies = new Hashtable();
@@ -45,11 +46,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			public int NullCount;
 		}
 
-		public ObjectReader(ISurrogateSelector surrogateSelector, StreamingContext context)
+		public ObjectReader(ISurrogateSelector surrogateSelector, StreamingContext context, SerializationBinder binder)
 		{
 			_manager = new ObjectManager (surrogateSelector, context);
 			_surrogateSelector = surrogateSelector;
 			_context = context;
+			_binder = binder;
 		}
 
 		public object ReadObjectGraph (BinaryReader reader, bool readHeaders, HeaderHandler headerHandler)
@@ -185,8 +187,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		{
 			long id = (long) reader.ReadUInt32 ();
 			string assemblyName = reader.ReadString ();
-			Assembly assembly = Assembly.Load (assemblyName);
-			_registeredAssemblies [id] = assembly;
+			_registeredAssemblies [id] = assemblyName;
 		}
 
 		private void ReadObjectInstance (BinaryReader reader, bool isRuntimeObject, out long objectId, out object value, out SerializationInfo info)
@@ -365,8 +366,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (!isRuntimeObject) 
 			{
 				long assemblyId = (long)reader.ReadUInt32();
-				Assembly asm = (Assembly)_registeredAssemblies[assemblyId];
-				metadata.Type = asm.GetType (className, true);
+				metadata.Type = GetDeserializationType (assemblyId, className);
 			}
 			else
 				metadata.Type = Type.GetType (className, true);
@@ -525,6 +525,19 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			return members[0];
 		}
 
+		private Type GetDeserializationType (long assemblyId, string className)
+		{
+			string assemblyName = (string)_registeredAssemblies[assemblyId];
+
+			if (_binder == null)
+			{
+				Assembly assembly = Assembly.Load (assemblyName);
+				return assembly.GetType (className, true);
+			}
+			else
+				return _binder.BindToType (assemblyName, className);
+		}
+
 		public Type ReadType (BinaryReader reader, TypeTag code)
 		{
 			switch (code)
@@ -548,8 +561,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				{
 					string name = reader.ReadString ();
 					long asmid = (long) reader.ReadUInt32();
-					Assembly asm = (Assembly)_registeredAssemblies[asmid];
-					return asm.GetType (name, true);
+					return GetDeserializationType (asmid, name);
 				}
 
 				case TypeTag.ArrayOfObject:

@@ -1,3 +1,9 @@
+2003-02-25  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* BinaryFormatter.cs: Implemented support for binders.
+    * MessageFormatter.cs: Implemented support for binders.
+    * ObjectReader.cs: Implemented support for binders.
+
 2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
 
     * MessageFormatter.cs: Fixed bug in serialization of arguments.
