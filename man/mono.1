@@ -297,6 +297,13 @@ managed implementation on error.
 Provides a search path to the runtime where to look for library files.
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
+.TP
+.I "MONO_GAC_PREFIX"
+Provides a prefix the runtime uses to look for Global Assembly Caches.
+Directories are separated by the platform path separator (colons on
+unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
+install. Or to the directory provided in the gacutil /gacdir command. Example:
+.B /home/username/.mono:/usr/local/mono/
 .TP 
 .I "MONO_SHARED_DIR"
 If set its the directory where the ".wapi" handle state is stored.
