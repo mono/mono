@@ -1,5 +1,11 @@
 2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h (MONO_PATCH_INFO_WRAPPER): New patch type.
+
+	* aot.c: Added support for AOT compiling methods which contain calls
+	to wrappers. Currently, only remoting-invoke-with-check wrappers are
+	handled.
+	
 	* driver.c (compile_all_methods): Run the compilation in a thread
 	managed by mono. Fixes #44023.
 
