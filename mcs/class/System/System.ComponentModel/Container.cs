@@ -35,26 +35,26 @@ namespace System.ComponentModel {
 			IContainer container;
 			string     name;
 			
-			void DefaultSite (string name, IComponent component, IContainer container)
+			public DefaultSite (string name, IComponent component, IContainer container)
 			{
 				this.component = component;
 				this.container = container;
 				this.name = name;
 			}
 
-			IComponent Component {
+			public IComponent Component {
 				get {
 					return component;
 				}
 			}
 
-			IContainer Container {
+			public IContainer Container {
 				get {
 					return container;
 				}
 			}
 
-			bool DesignMode {
+			public bool DesignMode {
 				get {
 					// FIXME: should we provide a way to set
 					// this value?
@@ -62,10 +62,20 @@ namespace System.ComponentModel {
 				}
 			}
 
-			string Name {
+			public string Name {
 				get {
 					return name;
 				}
+
+				set {
+					name = value;
+				}
+			}
+
+			public virtual object GetService (Type t)
+			{
+				// FIXME: do not know what this is supposed to do.
+				return null;
 			}
 		}
 		
@@ -103,13 +113,13 @@ namespace System.ComponentModel {
 		// <summary>
 		protected virtual ISite CreateSite (IComponent component, string name)
 		{
-			return DefaultSite (name, component, this);
+			return new DefaultSite (name, component, this);
 		}
 
 		public virtual void Dispose ()
 		{
 			Dispose (true);
-			GC.SupressFinalize (this);
+			GC.SuppressFinalize (this);
 		}
 
 		bool disposed = false;

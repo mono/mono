@@ -7,6 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System;
+
 namespace System.ComponentModel {
 
 	// <summary>
@@ -89,6 +91,8 @@ namespace System.ComponentModel {
 		// </summary>
 		protected virtual object GetService (Type service)
 		{
+			// FIXME: Not sure what this should do.
+			return null;
 		}
 
 		// <summary>

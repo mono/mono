@@ -10,6 +10,11 @@
 namespace System.ComponentModel {
 
 	public class ComponentCollection { // FIXME: ReadOnlyCollectionBase
+
+		public void Dispose ()
+		{
+		}
+		
 	}
 }
 			
