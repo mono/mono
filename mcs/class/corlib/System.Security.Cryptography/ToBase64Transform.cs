@@ -1,9 +1,9 @@
-// 
+//
 // System.Security.Cryptography.ToBase64Transform
-// 
+//
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
-// 
+//
 
 using System;
 using System.Security.Cryptography;
@@ -68,7 +68,7 @@ namespace System.Security.Cryptography {
 			if (inputCount != this.InputBlockSize)
 				throw new CryptographicException();
 
-			byte [] lookup = Base64Table.Table;
+			byte [] lookup = Base64Table.EncodeTable;
 
 			int b1 = inputBuffer [inputOffset];
 			int b2 = inputBuffer [inputOffset + 1];
@@ -122,7 +122,7 @@ namespace System.Security.Cryptography {
 			}
 
 
-			byte [] lookup = Base64Table.Table;
+			byte [] lookup = Base64Table.EncodeTable;
 			int b1,b2;
 
 
@@ -170,46 +170,64 @@ namespace System.Security.Cryptography {
 			return "mono::System.Security.Cryptography.ToBase64Transform";
 		}
 
-
-
-		internal sealed class Base64Table {
-
-			// TODO: replace this with "precalculated" table.
-			// This is the Base64 alphabet as described in RFC 2045
-			// (Table 1, page 25).
-			private static string ALPHABET =
-				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-			private static byte[] table;
-
-
-			static Base64Table ()
-			{
-				int len = ALPHABET.Length;
-				table = new byte [len];
-
-				for (int i=0; i < len; i++) {
-					table [i] = (byte) ALPHABET [i];
-				}
-			}
-
-
-			private Base64Table ()
-			{
-				// Never instantiated.
-			}
-
-
-			internal static byte [] Table {
-				get {
-					return table;
-				}
-			}
-
-		} // Base64Table
-
-
-
 	} // ToBase64Transform
+
+
+
+	// FIXME: Ought to be in a standalone file.
+	internal sealed class Base64Table {
+
+		// This is the Base64 alphabet as described in RFC 2045
+		// (Table 1, page 25).
+		private static string ALPHABET =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+		private static byte[] encodeTable;
+		private static byte[] decodeTable;
+
+
+		static Base64Table ()
+		{
+			int len = ALPHABET.Length;
+
+			encodeTable = new byte [len];
+
+			for (int i=0; i < len; i++) {
+				encodeTable [i] = (byte) ALPHABET [i];
+			}
+
+
+			decodeTable = new byte [1 + (int)'z'];
+
+			for (int i=0; i < decodeTable.Length; i++) {
+				decodeTable [i] = Byte.MaxValue;
+			}
+
+			for (int i=0; i < len; i++) {
+				char ch = ALPHABET [i];
+				decodeTable [(int)ch] = (byte) i;
+			}
+		}
+
+
+		private Base64Table ()
+		{
+			// Never instantiated.
+		}
+
+
+		internal static byte [] EncodeTable {
+			get {
+				return encodeTable;
+			}
+		}
+
+		internal static byte [] DecodeTable {
+			get {
+				return decodeTable;
+			}
+		}
+
+	} // Base64Table
 
 } // System.Security.Cryptography
