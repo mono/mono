@@ -1,8 +1,9 @@
 NANT	= ../nant/NAnt.exe
 
-all: linux
+all: 
+	if test x$(OS) = xWindows_NT; then make windows; else make -f makefile.gnu; fi
 
-linux:
+windows:
 	$(NANT)
 
 push:
