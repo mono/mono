@@ -615,6 +615,13 @@ namespace MonoTests.System
 			}
 		}
 
+		[Ignore ("http://bugzilla.ximian.com/show_bug.cgi?id=45066")]
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void G22 () {
+			Convert.ToDateTime("20002-25-01");
+		} 
+
 		public void TestToDateTime() {
 			string dateString = "01/01/2002";
 			
@@ -724,14 +731,6 @@ namespace MonoTests.System
 			catch (Exception e) {
 				AssertEquals("#G21", typeof(FormatException), e.GetType());
 			}
-
-			try {
-				Convert.ToDateTime("20002-25-01");
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#G22", typeof(ArgumentOutOfRangeException), e.GetType());
-			} 
 
 			try {
 				Convert.ToDateTime(tryUI16);

@@ -1,5 +1,9 @@
 2003-06-23  Nick Drochak <ndrochak@gol.com>
 
+	* ConvertTest.cs: Ignore and report bug in bugzilla #45066.
+
+2003-06-23  Nick Drochak <ndrochak@gol.com>
+
 	* TimeZoneTest.cs: Make pass when on Tokyo Standard Time.
 
 2003-06-23  Nick Drochak <ndrochak@gol.com>
