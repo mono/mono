@@ -204,19 +204,20 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotDotNet")]
+//		[NUnit.Framework.Category ("NotDotNet")]
 		public void AddNew_2 ()
 		{
 			dataView.AllowNew = true;
 			DataRowView drv = dataView.AddNew ();
 			AssertEquals ("test#01",ListChangedType.ItemAdded,listChangedArgs.ListChangedType);
 			AssertEquals ("test#02",drv["itemName"],dataView [dataView.Count - 1]["itemName"]);
+			listChangedArgs = null;
 			drv["itemId"] = "item " + 1001;
 			drv["itemName"] = "name " + rndm.Next();
 			drv["itemPrice"] = "Rs. " + (rndm.Next() % 1000);
 			drv["itemCategory"] = "Cat " + ((rndm.Next() % 10) + 1);
-			// .NET 1.1 passes .ItemAdded to listChangedArgs here.
-			AssertEquals ("test#01",ListChangedType.ItemChanged,listChangedArgs.ListChangedType);				
+			// Actually no events are arisen when items are set.
+			AssertNull ("test#03", listChangedArgs);
 		}
 
 		[Test]
@@ -369,6 +370,5 @@ namespace MonoTests.System.Data
 			TestView.Dispose (); // Close the table
 			TestView.Delete (0);
 		}
-
 	}
 }

@@ -1,5 +1,9 @@
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataViewTest.cs : With a tiny fix, removed NotDotNet.
+
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataRowTest.cs : added DetachedRowItemException().
 	* DataSetTest.cs : WriteXmlSchema7() is now NotWorking.
 
