@@ -1,0 +1,36 @@
+2002-12-07 Jackson Harper <jackson@latitudegeo.com>
+
+	* Compiler.cs CompilerError.cs: Moved file
+
+2002-11-11 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs: Reordered ErrorLevel enumeration to match MS values
+
+2002-11-11 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs: Error levels are now lower case to match MS spec
+
+2002-11-9 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs: ToString() Do not show source file info if there was no source file in the error message
+
+2002-11-6 Jackson Harper <jackson@latitudegeo.com>
+
+	* Compiler.cs: No longers waits untill mcs is finished running to read output, this should prevent
+	crashes from buffers filling up.	
+
+2002-11-4 Jackson Harper <jackson@latitudegeo.com>
+
+	* Compiler.cs CompilerError.cs: Fixed (C) in header
+	
+2002-11-4 Jackson Harper <jackson@latitudegeo.com>
+
+	* Compiler.cs: Added file
+
+2002-11-4 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs: Changed FileName property to the correct name 'SourceFile'
+
+2002-10-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs: Added class
