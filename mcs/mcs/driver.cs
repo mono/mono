@@ -212,6 +212,7 @@ namespace Mono.CSharp
 				"Mono C# compiler, (C) 2001 - 2003 Ximian, Inc.\n" +
 				"mcs [options] source-files\n" +
 				"   --about            About the Mono C# compiler\n" +
+				"   -addmodule:MODULE  Adds the module to the generated assembly\n" + 
 				"   -checked[+|-]      Set default context to checked\n" +
 				"   -codepage:ID       Sets code page to the one in ID\n" +
 				"                      (number, `utf8' or `reset')\n" +
