@@ -1,5 +1,10 @@
-// SmtpClient.cs
-// author: Per Arneng <pt99par@student.bth.se>
+//
+// System.Web.Mail.SmtpClient.cs
+//
+// Author(s):
+//   Per Arneng <pt99par@student.bth.se>
+//
+//
 using System;
 using System.Net;
 using System.IO;

@@ -1,5 +1,10 @@
-// SmtpResponse.cs
-// author: Per Arneng <pt99par@student.bth.se>
+//
+// System.Web.Mail.SmtpResponse.cs
+//
+// Author(s):
+//   Per Arneng <pt99par@student.bth.se>
+//
+//
 using System;
 
 namespace System.Web.Mail {

@@ -1,11 +1,18 @@
-// Per Arneng <pt99par@student.bth.se>
+//
+// System.Web.Mail.Base64AttachmentEncoder.cs
+//
+// Author(s):
+//   Per Arneng <pt99par@student.bth.se>
+//
+//
 using System;
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 
 namespace System.Web.Mail {
-
+    
+    // a class that handles Base64 encoding for attachments
     internal class Base64AttachmentEncoder : IAttachmentEncoder {
 	
 	// reads bytes from a stream and writes the encoded

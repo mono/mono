@@ -1,5 +1,10 @@
-// SmtpStream.cs
-// author: Per Arneng <pt99par@student.bth.se>
+//
+// System.Web.Mail.SmtpStream.cs
+//
+// Author(s):
+//   Per Arneng <pt99par@student.bth.se>
+//
+//
 using System;
 using System.IO;
 using System.Collections;
