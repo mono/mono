@@ -90,8 +90,8 @@ statement returns [AST stm]
 	| empty_stm
 	| stm = if_stm
 	| iteration_stm
-	| continue_stm
-	| break_stm
+	| stm = continue_stm
+	| stm = break_stm
 	| return_stm
 	| with_stm
 	| switch_stm
@@ -148,12 +148,20 @@ return_stm
 	: "return" (expr | ) SEMI_COLON
 	;
 
-break_stm
-	: "break" (IDENTIFIER | ) SEMI_COLON
+break_stm returns [AST b]
+{
+	b = new Break ();
+}
+	: "break" ( id:IDENTIFIER
+		    { ((Break) b).identifier = id.getText (); }
+		  | { ((Break) b).identifier = String.Empty; } ) SEMI_COLON
 	;
 	
-continue_stm
-	: "continue" (IDENTIFIER | ) SEMI_COLON
+continue_stm returns [AST cont]
+{ cont = new Continue (); }
+	: "continue" ( id:IDENTIFIER 
+	               { ((Continue) cont).identifier = id.getText (); } 
+	             | { ((Continue) cont).identifier = String.Empty; } ) SEMI_COLON
 	;
 
 iteration_stm
@@ -173,7 +181,7 @@ inside_for
 	// FIXME: left_hand_side_expr in exp rule, missing
 	;
 
-if_stm returns [If ifStm]
+if_stm returns [AST ifStm]
 {
 	ifStm = null;
 	AST cond, true_stm, false_stm;
@@ -265,8 +273,8 @@ assignment_expr returns [AST assign_expr]
 		  Console.WriteLine ("\nDEBUG::jscript.g::assign_expr::ToString::" + a.ToString () + "\n");
 		  assign_expr = a;
 	    }
-
-	| assign_expr = cond_expr 
+ 
+	| assign_expr = cond_expr
 	)
 	;
 

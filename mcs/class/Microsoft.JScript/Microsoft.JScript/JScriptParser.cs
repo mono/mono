@@ -341,12 +341,12 @@ _loop4_breakloop:			;
 			}
 			case LITERAL_continue:
 			{
-				continue_stm();
+				stm=continue_stm();
 				break;
 			}
 			case LITERAL_break:
 			{
-				break_stm();
+				stm=break_stm();
 				break;
 			}
 			case LITERAL_return:
@@ -435,10 +435,8 @@ _loop4_breakloop:			;
 			{
 				
 						if (is_func_exp)
-							func = new FunctionExpression (String.Empty,
-										       p, body);
-						else func = new FunctionDeclaration (id.getText (),
-										     p, body);
+							func = new FunctionExpression (String.Empty, p, body);
+						else func = new FunctionDeclaration (id.getText (), p, body);
 					
 			}
 			return func;
@@ -583,9 +581,9 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public If  if_stm() //throws RecognitionException, TokenStreamException
+	public AST  if_stm() //throws RecognitionException, TokenStreamException
 {
-		If ifStm;
+		AST ifStm;
 		
 		traceIn("if_stm");
 		try { // debugging
@@ -695,11 +693,14 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public void continue_stm() //throws RecognitionException, TokenStreamException
+	public AST  continue_stm() //throws RecognitionException, TokenStreamException
 {
+		AST cont;
 		
 		traceIn("continue_stm");
 		try { // debugging
+			Token  id = null;
+			cont = new Continue ();
 			
 			match(LITERAL_continue);
 			{
@@ -707,11 +708,20 @@ _loop12_breakloop:				;
 				{
 				case IDENTIFIER:
 				{
+					id = LT(1);
 					match(IDENTIFIER);
+					if (0==inputState.guessing)
+					{
+						((Continue) cont).identifier = id.getText ();
+					}
 					break;
 				}
 				case SEMI_COLON:
 				{
+					if (0==inputState.guessing)
+					{
+						((Continue) cont).identifier = String.Empty;
+					}
 					break;
 				}
 				default:
@@ -721,6 +731,7 @@ _loop12_breakloop:				;
 				 }
 			}
 			match(SEMI_COLON);
+			return cont;
 		}
 		finally
 		{ // debugging
@@ -728,11 +739,16 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public void break_stm() //throws RecognitionException, TokenStreamException
+	public AST  break_stm() //throws RecognitionException, TokenStreamException
 {
+		AST b;
 		
 		traceIn("break_stm");
 		try { // debugging
+			Token  id = null;
+			
+				b = new Break ();
+			
 			
 			match(LITERAL_break);
 			{
@@ -740,11 +756,20 @@ _loop12_breakloop:				;
 				{
 				case IDENTIFIER:
 				{
+					id = LT(1);
 					match(IDENTIFIER);
+					if (0==inputState.guessing)
+					{
+						((Break) b).identifier = id.getText ();
+					}
 					break;
 				}
 				case SEMI_COLON:
 				{
+					if (0==inputState.guessing)
+					{
+						((Break) b).identifier = String.Empty;
+					}
 					break;
 				}
 				default:
@@ -754,6 +779,7 @@ _loop12_breakloop:				;
 				 }
 			}
 			match(SEMI_COLON);
+			return b;
 		}
 		finally
 		{ // debugging

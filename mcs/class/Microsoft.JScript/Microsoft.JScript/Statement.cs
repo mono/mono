@@ -17,7 +17,7 @@ namespace Microsoft.JScript {
 		{}
 	}
 
-	public class If : Statement {
+	internal class If : Statement {
 
 		internal AST cond, true_stm, false_stm;
 
@@ -41,4 +41,25 @@ namespace Microsoft.JScript {
 			
 			return sb.ToString ();
 		}
-}	}
+	}
+
+	internal class Continue : Statement {
+
+		internal string identifier;
+
+		public override string ToString ()
+		{
+			return identifier;
+		}
+	}
+
+	internal class Break : Statement {
+
+		internal string identifier;
+
+		public override string ToString ()
+		{
+			return identifier;
+		}
+	}
+}
