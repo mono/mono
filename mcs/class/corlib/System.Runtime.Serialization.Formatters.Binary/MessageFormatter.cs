@@ -8,16 +8,14 @@
 
 using System;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Reflection;
+using System.Collections;
 using System.Runtime.Remoting;
+using System.Runtime.Serialization;
 using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Serialization.Formatters.Binary
 {
-	/// <summary>
-	/// Summary description for MessageFormatter.
-	/// </summary>
 	internal class MessageFormatter
 	{
 		public static void WriteMethodCall (BinaryWriter writer, object obj, Header[] headers, ISurrogateSelector surrogateSelector, StreamingContext context)
@@ -28,6 +26,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			MethodFlags methodFlags;
 			int infoArraySize = 0;
 			object info = null;
+			object[] extraProperties = null;
 
 			if (call.LogicalCallContext != null && call.LogicalCallContext.HasInfo)
 			{
@@ -41,6 +40,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			{
 				infoArraySize++;
 				methodFlags |= MethodFlags.IncludesSignature;
+			}
+
+			if (call.Properties.Count > MethodCallDictionary.InternalKeys.Length)
+			{
+				extraProperties = GetExtraProperties (call.Properties, MethodCallDictionary.InternalKeys);
+				infoArraySize++;
 			}
 
 			if (call.InArgCount == 0)
@@ -97,6 +102,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				if ((methodFlags & MethodFlags.ArgumentsInMultiArray) > 0) ainfo[n++] = call.Args;
 				if ((methodFlags & MethodFlags.IncludesSignature) > 0) ainfo[n++] = call.MethodSignature;
 				if ((methodFlags & MethodFlags.IncludesLogicalCallContext) > 0) ainfo[n++] = call.LogicalCallContext;
+				if (extraProperties != null) ainfo[n++] = extraProperties;
 				info = ainfo;
 			}
 			else if ((methodFlags & MethodFlags.ArgumentsInSimpleArray) > 0)
@@ -116,8 +122,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			IMethodReturnMessage resp = (IMethodReturnMessage)obj;
 			writer.Write ((byte) BinaryElement.MethodResponse);
 
+			string[] internalProperties = MethodReturnDictionary.InternalReturnKeys;
+
 			int infoArrayLength = 0;
 			object info = null;
+			object[] extraProperties = null;
 
 			// Type of return value
 
@@ -126,6 +135,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (resp.Exception != null) {
 				returnTypeTag = ReturnTypeTag.Exception | ReturnTypeTag.Null;
 				info = new object[] {resp.Exception};
+				internalProperties = MethodReturnDictionary.InternalExceptionKeys;
 			}
 			else if (resp.ReturnValue == null) {
 				returnTypeTag = ReturnTypeTag.Null;
@@ -150,6 +160,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 			else
 				contextFlag = MethodFlags.ExcludeLogicalCallContext;
+
+			if (resp.Properties.Count > internalProperties.Length)
+			{
+				extraProperties = GetExtraProperties (resp.Properties, internalProperties);
+				infoArrayLength++;
+			}
 
 			if (resp.OutArgCount == 0)
 				formatFlag = MethodFlags.NoArguments;
@@ -212,6 +228,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				if (contextFlag == MethodFlags.IncludesLogicalCallContext)
 					infoArray[n++] = resp.LogicalCallContext;
 
+				if (extraProperties != null)
+					infoArray[n++] = extraProperties;
+
 				info = infoArray;
 			}
 			else if ((formatFlag & MethodFlags.ArgumentsInSimpleArray) > 0)
@@ -249,6 +268,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			object[] arguments = null;
 			object methodSignature = null;
 			object callContext = null;
+			object[] extraProperties = null;
 
 			if ((flags & MethodFlags.PrimitiveArguments) > 0)
 			{
@@ -273,7 +293,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				{
 					int n = 0;
 					if ((flags & MethodFlags.ArgumentsInMultiArray) > 0) {
-						if (msgInfo.Length > 1) arguments = (object[])msgInfo[n++];
+						if (msgInfo.Length > 1) arguments = (object[]) msgInfo[n++];
 						else arguments = new object[0];
 					}
 
@@ -281,7 +301,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 						methodSignature = msgInfo[n++];
 
 					if ((flags & MethodFlags.IncludesLogicalCallContext) > 0) 
-						callContext = msgInfo[n];
+						callContext = msgInfo[n++];
+
+					if (n < msgInfo.Length)
+						extraProperties = (object[]) msgInfo[n];
 				}
 			}
 			else {
@@ -297,7 +320,14 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			methodInfo[3] = new Header("__Args", arguments);
 			methodInfo[4] = new Header("__CallContext", callContext);
 
-			return new MethodCall (methodInfo);
+			MethodCall call = new MethodCall (methodInfo);
+
+			if (extraProperties != null) {
+				foreach (DictionaryEntry entry in extraProperties)
+					call.Properties [(string)entry.Key] = entry.Value;
+			}
+
+			return call;
 		}
 
 		public static object ReadMethodResponse (BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, IMethodCallMessage methodCallMessage, ISurrogateSelector surrogateSelector, StreamingContext context)
@@ -317,6 +347,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			object[] outArgs = null;
 			LogicalCallContext callContext = null;
 			Exception exception = null;
+			object[] extraProperties = null;
 
 			if ((typeTag & ReturnTypeTag.PrimitiveType) > 0)
 			{
@@ -350,7 +381,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				if ((flags & MethodFlags.NoArguments) > 0 || (flags & MethodFlags.PrimitiveArguments) > 0) {
 					int n = 0;
 					if ((typeTag & ReturnTypeTag.ObjectType) > 0) returnValue = msgInfo [n++];
-					if (hasContextInfo) callContext = (LogicalCallContext)msgInfo[n];
+					if (hasContextInfo) callContext = (LogicalCallContext)msgInfo[n++];
+					if (n < msgInfo.Length) extraProperties = (object[]) msgInfo[n];
 				}
 				else if ((flags & MethodFlags.ArgumentsInSimpleArray) > 0) {
 					outArgs = msgInfo;
@@ -359,7 +391,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					int n = 0;
 					outArgs = (object[]) msgInfo[n++];
 					if ((typeTag & ReturnTypeTag.ObjectType) > 0) returnValue = msgInfo[n++];
-					if (hasContextInfo) callContext = (LogicalCallContext)msgInfo[n];
+					if (hasContextInfo) callContext = (LogicalCallContext)msgInfo[n++];
+					if (n < msgInfo.Length) extraProperties = (object[]) msgInfo[n];
 				}
 			}
 			else {
@@ -371,7 +404,14 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			else
 			{
 				int argCount = (outArgs!=null) ? outArgs.Length : 0;
-				return new ReturnMessage (returnValue, outArgs, argCount, callContext, methodCallMessage);
+				ReturnMessage result = new ReturnMessage (returnValue, outArgs, argCount, callContext, methodCallMessage);
+
+				if (extraProperties != null) {
+					foreach (DictionaryEntry entry in extraProperties)
+						result.Properties [(string)entry.Key] = entry.Value;
+				}
+
+				return result;
 			}
 		}
 
@@ -389,6 +429,25 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		public static bool IsMethodPrimitive (Type type)
 		{
 			return type.IsPrimitive || type == typeof(string) || type == typeof (DateTime) || type == typeof (Decimal);
+		}
+
+		static object[] GetExtraProperties (IDictionary properties, string[] internalKeys)
+		{
+			object[] extraProperties = new object [properties.Count - internalKeys.Length];
+			
+			int n = 0;
+			IDictionaryEnumerator e = properties.GetEnumerator();
+			while (e.MoveNext())
+				if (!IsInternalKey ((string) e.Entry.Key, internalKeys)) extraProperties [n++] = e.Entry;
+
+			return extraProperties;
+		}
+
+		static bool IsInternalKey (string key, string[] internalKeys)
+		{
+			foreach (string ikey in internalKeys)
+				if (key == ikey) return true;
+			return false;
 		}
 
 	}

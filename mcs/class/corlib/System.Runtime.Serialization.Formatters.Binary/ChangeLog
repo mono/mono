@@ -1,3 +1,7 @@
+2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
+
+    * MessageFormatter.cs: Implemented serialization of message properties.
+
 2003-01-24  Martin Baulig  <martin@ximian.com>
 
 	* ObjectReader.cs (ReadNextObject): Call
