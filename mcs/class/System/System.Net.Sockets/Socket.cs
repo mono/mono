@@ -1321,7 +1321,9 @@ namespace System.Net.Sockets
 			ret = Receive_internal (socket, buf, offset, size, flags, out error);
 
 			if (error != 0) {
-				connected = false;
+				if (error != 10035 && error != 10036) // WSAEWOULDBLOCK && WSAEINPROGRESS
+					connected = false;
+
 				throw new SocketException (error);
 			}
 			
@@ -1405,7 +1407,9 @@ namespace System.Net.Sockets
 			cnt = RecvFrom_internal (socket, buf, offset, size, flags, ref sockaddr, out error);
 
 			if (error != 0) {
-				connected = false;
+				if (error != 10035 && error != 10036) // WSAEWOULDBLOCK && WSAEINPROGRESS
+					connected = false;
+
 				throw new SocketException (error);
 			}
 
@@ -1483,7 +1487,9 @@ namespace System.Net.Sockets
 			ret = Send_internal (socket, buf, offset, size, flags, out error);
 
 			if (error != 0) {
-				connected = false;
+				if (error != 10035 && error != 10036) // WSAEWOULDBLOCK && WSAEINPROGRESS
+					connected = false;
+
 				throw new SocketException (error);
 			}
 
@@ -1566,7 +1572,9 @@ namespace System.Net.Sockets
 			ret = SendTo_internal (socket, buffer, offset, size, flags, sockaddr, out error);
 
 			if (error != 0) {
-				connected = false;
+				if (error != 10035 && error != 10036) // WSAEWOULDBLOCK && WSAEINPROGRESS
+					connected = false;
+
 				throw new SocketException (error);
 			}
 

@@ -1,3 +1,8 @@
+2004-12-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: for Receive*/Send*, don't set the connected status to false
+	when the error is EINPROGRESS or EWOULDBLOCK.
+
 2004-12-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NetworkStream.cs: Write should ensure that writes all the contents
