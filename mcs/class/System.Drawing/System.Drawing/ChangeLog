@@ -1,3 +1,7 @@
+2001-12-15  Mike Kestner <mkestner@speakeasy.net>
+
+	* Rectangle.cs : New struct implementation.
+
 2001-08-17  Mike Kestner <mkestner@speakeasy.net>
 
 	* PointF.cs, Size.cs, SizeF.cs : New struct implementations.

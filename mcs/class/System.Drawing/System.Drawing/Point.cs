@@ -4,7 +4,7 @@
 // Author:
 //   Mike Kestner (mkestner@speakeasy.net)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2001 Mike Kestner
 //
 
 using System;
