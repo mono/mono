@@ -6,21 +6,41 @@ SUBDIRS = . net_1_1 net_2_0
 
 mcs_topdir=$(top_srcdir)/../mcs
 
-monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe ilasm.exe cilc.exe xsd.exe wsdl.exe genxs.exe al.exe disco.exe sqlsharp.exe signcode.exe chktrust.exe soapsuds.exe monop.exe setreg.exe cert2spc.exe certmgr.exe MakeCert.exe gacutil.exe gmcs.exe sn.exe
-
-EXTRA_DIST = $(monobins_DATA)
+dist_monobins_DATA = \
+	mcs.exe 				\
+	mbas.exe				\
+	monoresgen.exe				\
+	secutil.exe				\
+	ilasm.exe				\
+	cilc.exe				\
+	xsd.exe					\
+	wsdl.exe				\
+	genxs.exe				\
+	al.exe					\
+	disco.exe				\
+	sqlsharp.exe				\
+	signcode.exe				\
+	chktrust.exe				\
+	soapsuds.exe				\
+	monop.exe				\
+	setreg.exe				\
+	cert2spc.exe				\
+	certmgr.exe				\
+	MakeCert.exe				\
+	gacutil.exe				\
+	gmcs.exe				\
+	sn.exe
 
 #
 # Keep in sync with mono/mono/metadata/Makefile.am
 #
-assembliesdir = $(libdir)
 if PLATFORM_WIN32
 monobinsdir = $(libdir)
 else
 monobinsdir = $(bindir)
 endif
 
-$(monobins_DATA):
+$(dist_monobins_DATA):
 	@case "$@" in \
 	mcs.exe)                 d=mcs                          ;; \
 	mbas.exe)                d=mbas                         ;; \
@@ -51,11 +71,6 @@ $(monobins_DATA):
 	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
-
-dist-hook:
-	for i in $(monobins_DATA) $(assemblies_DATA); do        \
-		if test ! -s $(srcdir)/$$i; then echo $$i is empty && exit 1; fi	\
-	done
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .

@@ -4,35 +4,43 @@
 
 mcs_topdir=$(top_srcdir)/../mcs
 gacutil=$(srcdir)/../gacutil.exe
-corlib = mscorlib.dll
-corlibdir = net_2_0
+
+PROFILE=net_2_0
+
+if JIT_SUPPORTED
+mono_runtime = $(top_builddir)/mono/mini/mono
+else
+mono_runtime = $(top_builddir)/mono/interpreter/mint
+endif
 
 gac_assemblies_list = \
-	Accessibility.dll					\
-	Cscompmgd.dll						\
-	Mono.Security.dll					\
-	Mono.Security.Win32.dll					\
-	System.Configuration.Install.dll			\
-	System.Data.dll						\
-	System.Data.OracleClient.dll				\
-	System.dll						\
-	System.Design.dll					\
-	System.DirectoryServices.dll				\
-	System.Drawing.Design.dll				\
-	System.Drawing.dll					\
-	System.EnterpriseServices.dll				\
-	System.Management.dll					\
-	System.Messaging.dll					\
-	System.Runtime.Remoting.dll				\
-	System.Runtime.Serialization.Formatters.Soap.dll	\
-	System.Security.dll					\
-	System.ServiceProcess.dll				\
-	System.Web.dll						\
-	System.Web.Services.dll					\
-	System.Windows.Forms.dll				\
-	System.Xml.dll
+	Accessibility					\
+	Cscompmgd					\
+	Mono.Security					\
+	Mono.Security.Win32				\
+	System.Configuration.Install			\
+	System.Data					\
+	System.Data.OracleClient			\
+	System						\
+	System.Design					\
+	System.DirectoryServices			\
+	System.Drawing.Design				\
+	System.Drawing					\
+	System.EnterpriseServices			\
+	System.Management				\
+	System.Messaging				\
+	System.Runtime.Remoting				\
+	System.Runtime.Serialization.Formatters.Soap	\
+	System.Security					\
+	System.ServiceProcess				\
+	System.Web					\
+	System.Web.Services				\
+	System.Windows.Forms				\
+	System.Xml
 
-assemblies_DATA =	\
+gac_assemblies = $(gac_assemblies_list:=.dll)
+
+non_gac_assemblies = \
 	ByteFX.Data.dll						\
 	Commons.Xml.Relaxng.dll					\
 	I18N.CJK.dll						\
@@ -60,50 +68,43 @@ assemblies_DATA =	\
 	NUnit.Framework.dll					\
 	PEAPI.dll						
 
+corlibdir = $(libdir)/net_2_0
+dist_corlib_DATA = mscorlib.dll
 
-EXTRA_DIST = $(assemblies_DATA)
+EXTRA_DIST = $(gac_assemblies)
 
 #
 # Keep in sync with mono/mono/metadata/Makefile.am
 #
 assembliesdir = $(libdir)
+dist_assemblies_DATA = $(non_gac_assemblies)
 
-$(assemblies_DATA):
-	@f=$(mcs_topdir)/class/lib/net_2_0/$@; \
+$(non_gac_assemblies):
+	@f=$(mcs_topdir)/class/lib/$(PROFILE)/$@; \
 	if test -f $$f; then :; else f=$(assembliesdir)/$@; fi ; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
 
-$(gac_assemblies_list):
-	cp -f $(mcs_topdir)/class/lib/net_2_0/$@ $(srcdir)
+mscorlib.dll $(gac_assemblies):
+	cp -f $(mcs_topdir)/class/lib/$(PROFILE)/$@ $(srcdir)
 
-$(corlib):
-	cp -f $(mcs_topdir)/class/lib/net_2_0/mscorlib.dll $(srcdir)
-
-all-local: $(gac_assemblies_list) $(corlib)
+all-local: $(gac_assemblies)
 
 install-data-local:
-	$(mkinstalldirs) $(DESTDIR)/$(libdir)/$(corlibdir)
-	$(INSTALL_DATA) $(corlib) $(DESTDIR)/$(libdir)/$(corlibdir) 
-	@if test -n '$(gac_assemblies_list)'; then \
-	  for i in ''$(gac_assemblies_list); do	\
-		echo "$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f" ; \
-		$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f /prefix $(DESTDIR)/$(libdir)/mono/gac || exit 1 ; \
+	@if test -n '$(gac_assemblies)'; then \
+	  for i in ''$(gac_assemblies); do \
+	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) $(gacutil) /i $(srcdir)/$$i /f /prefix $(DESTDIR)$(libdir)/mono/gac" ; \
+	    MONO_PATH=$(srcdir)/../net_1_1 \
+	      $(mono_runtime) $(gacutil) /i $(srcdir)/$$i /f /prefix $(DESTDIR)$(libdir)/mono/gac || exit 1 ; \
 	  done; fi
 
 uninstall-local:
 	@if test -n '$(gac_assemblies_list)'; then \
 	  for i in ''$(gac_assemblies_list); do \
-		echo "$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$$i" ; \
-		$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$(basename $$i dll) || exit 1 ; \
+	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) $(gacutil) /u $$i" ; \
+	    MONO_PATH=$(srcdir)/../net_1_1 \
+	      $(mono_runtime) $(gacutil) /u $$i || exit 1 ; \
 	  done; fi
-	rm -f $(DESTDIR)/$(libdir)/$(corlibdir)/$(corlib)
-
-dist-hook: $(gac_assemblies_list)
-	@for i in $(gac_assemblies_list); do \
-		cp $(srcdir)/$$i $(distdir)/. ; \
-	done
-	cp $(srcdir)/$(corlib) $(distdir)/.
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .
