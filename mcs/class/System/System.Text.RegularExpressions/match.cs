@@ -21,7 +21,12 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public string Value {
-			get { return text.Substring (index, length); }
+			get { 
+				if (text!= null)
+					return text.Substring (index, length); 
+				else
+					return String.Empty;
+			}
 		}
 
 		public override string ToString () {
