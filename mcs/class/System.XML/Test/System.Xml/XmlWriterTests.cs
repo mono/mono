@@ -124,7 +124,7 @@ namespace MonoTests.System.Xml
 			xtr.Read ();
 			try {
 				xtr.Read ();
-			} catch (XmlException ex) {
+			} catch {
 			}
 			XmlTextWriter xtw = new XmlTextWriter (new StringWriter ());
 			xtw.WriteNode (xtr, false);
