@@ -166,6 +166,15 @@ namespace Mono.ILASM {
                         return methoddef.Resolve (code_gen, classdef);
                 }
 
+                public PEAPI.Method ResolveVarargMethod (string signature,
+                                CodeGen code_gen, PEAPI.Type[] opt)
+                {
+                        MethodDef methoddef = (MethodDef) method_table[signature];
+                        methoddef.Resolve (code_gen, classdef);
+
+                        return methoddef.GetVarargSig (opt);
+                }
+
                 public PEAPI.Field ResolveField (string name, CodeGen code_gen)
                 {
                         FieldDef fielddef = (FieldDef) field_table[name];

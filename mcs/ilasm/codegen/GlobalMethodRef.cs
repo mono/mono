@@ -18,12 +18,15 @@ namespace Mono.ILASM {
                 private ITypeRef ret_type;
                 private string name;
                 private ITypeRef[] param;
+                private PEAPI.CallConv call_conv;
 
                 private PEAPI.Method peapi_method;
 
-                public GlobalMethodRef (ITypeRef ret_type, string name, ITypeRef[] param)
+                public GlobalMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, ITypeRef[] param)
                 {
                         this.ret_type = ret_type;
+                        this.call_conv = call_conv;
                         this.name = name;
                         this.param = param;
                 }
@@ -35,7 +38,25 @@ namespace Mono.ILASM {
                 public void Resolve (CodeGen code_gen)
                 {
                         string sig = MethodDef.CreateSignature (name, param);
-                        peapi_method = code_gen.ResolveMethod (sig);
+
+                        if ((call_conv & PEAPI.CallConv.Vararg) == 0) {
+                                peapi_method = code_gen.ResolveMethod (sig);
+                        } else {
+                                ArrayList opt_list = new ArrayList ();
+                                bool in_opt = false;
+                                foreach (ITypeRef type in param) {
+                                        if (TypeRef.Ellipsis == type) {
+                                                in_opt = true;
+                                        } else if (in_opt) {
+                                                type.Resolve (code_gen);
+                                                opt_list.Add (type.PeapiType);
+                                        }
+                                }
+                                peapi_method = code_gen.ResolveVarargMethod (sig, code_gen,
+                                                (PEAPI.Type[]) opt_list.ToArray (typeof (PEAPI.Type)));
+                        }
+
+                        peapi_method.AddCallConv (call_conv);
                 }
 
         }

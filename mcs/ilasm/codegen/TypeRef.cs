@@ -35,6 +35,8 @@ namespace Mono.ILASM {
 
                 private bool is_resolved;
 
+                public static TypeRef Ellipsis = new TypeRef ("ELLIPSIS", null);
+
                 public TypeRef (string full_name, Location location)
                 {
                         this.full_name = full_name;
@@ -112,7 +114,7 @@ namespace Mono.ILASM {
                 public  IMethodRef GetMethodRef (ITypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, ITypeRef[] param)
                 {
-                        return new MethodRef (this, ret_type, name, param);
+                        return new MethodRef (this, call_conv, ret_type, name, param);
                 }
 
                 public IFieldRef GetFieldRef (ITypeRef ret_type, string name)

@@ -1,3 +1,15 @@
+2003-05-25 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Add method to resolve global vararg methods.
+	* ExternMethodRef.cs: Resolve vararg methods
+	* GlobalMethodRef.cs: Set calling conventions, add vararg methods
+	* MethodDef.cs: Set calling conventions, add vararg methods
+	* MethodRef.cs: Set calling conventions, add vararg methods
+	* TypeDef.cs: Resolve vararg methods
+	* TypeRef.cs: Add Ellipsis pseudo type, this should never really
+	be used as a type, but is stored in arrays with other types. Pass
+	call convs to methodref constructor.
+		
 2003-05-24 Jackson Harper <jackson@latitudegeo.com>
 
 	* CatchBlock.cs: Remove typo causing to labels to be the same as

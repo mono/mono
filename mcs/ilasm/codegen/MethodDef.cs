@@ -47,6 +47,7 @@ namespace Mono.ILASM {
                 }
 
                 private PEAPI.MethAttr meth_attr;
+                private PEAPI.CallConv call_conv;
                 private PEAPI.ImplAttr impl_attr;
                 private string name;
                 private string signature;
@@ -64,10 +65,12 @@ namespace Mono.ILASM {
                 private bool init_locals;
                 private int max_stack;
 
-                public MethodDef (PEAPI.MethAttr meth_attr, PEAPI.ImplAttr impl_attr,
-                                string name, ITypeRef ret_type, ArrayList param_list)
+                public MethodDef (PEAPI.MethAttr meth_attr, PEAPI.CallConv call_conv,
+                                PEAPI.ImplAttr impl_attr, string name,
+                                ITypeRef ret_type, ArrayList param_list)
                 {
                         this.meth_attr = meth_attr;
+                        this.call_conv = call_conv;
                         this.impl_attr = impl_attr;
                         this.name = name;
                         this.ret_type = ret_type;
@@ -98,6 +101,10 @@ namespace Mono.ILASM {
 
                 public PEAPI.MethodDef PeapiMethodDef {
                         get { return methoddef; }
+                }
+
+                public bool IsVararg {
+                        get { return (call_conv & PEAPI.CallConv.Vararg) == 0; }
                 }
 
                 public void AddLocals (ArrayList local_list)
@@ -176,6 +183,7 @@ namespace Mono.ILASM {
                         methoddef = code_gen.PEFile.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
 
+                        methoddef.AddCallConv (call_conv);
                         is_resolved = true;
 
                         return methoddef;
@@ -206,9 +214,18 @@ namespace Mono.ILASM {
                         methoddef = classdef.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
 
+                        methoddef.AddCallConv (call_conv);
                         is_resolved = true;
 
                         return methoddef;
+                }
+
+                public PEAPI.MethodRef GetVarargSig (PEAPI.Type[] opt)
+                {
+                        if (!is_resolved)
+                                throw new Exception ("Methods must be resolved before a vararg sig can be created.");
+
+                        return methoddef.MakeVarArgSignature (opt);
                 }
 
                 /// <summary>
@@ -345,7 +362,6 @@ namespace Mono.ILASM {
                         }
                         builder.Append (')');
 
-
                         return builder.ToString ();
                 }
 
@@ -359,6 +375,8 @@ namespace Mono.ILASM {
                         if (param_list != null) {
                                 bool first = true;
                                 foreach (ITypeRef param in param_list) {
+                                        if (param == TypeRef.Ellipsis)
+                                                break;
                                         if (!first)
                                                 builder.Append (',');
                                         builder.Append (param.FullName);
