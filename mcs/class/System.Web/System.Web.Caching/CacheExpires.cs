@@ -71,7 +71,7 @@ namespace System.Web.Caching {
 			} while (bytePos < 60);
 
 			// GC Bucket controller
-			_intFlush = System.DateTime.Now.Minute - 1;
+			_intFlush = System.DateTime.UtcNow.Minute - 1;
 			_objTimer = new System.Threading.Timer (new System.Threading.TimerCallback (GarbageCleanup), null, 10000, 60000);
 		}
 
@@ -80,7 +80,7 @@ namespace System.Web.Caching {
 		/// </summary>
 		/// <param name="objEntry">Cache entry to add.</param>
 		internal void Add (CacheEntry objEntry) {
-			long now = DateTime.Now.Ticks;
+			long now = DateTime.UtcNow.Ticks;
 			if (objEntry.Expires < now)
 				objEntry.Expires = now;
 

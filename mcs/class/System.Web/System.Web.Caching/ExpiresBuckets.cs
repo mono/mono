@@ -231,7 +231,7 @@ namespace System.Web.Caching {
 			int	intPos;
 			long ticksNow;
 	
-			ticksNow = DateTime.Now.Ticks;
+			ticksNow = DateTime.UtcNow.Ticks;
 
 			intPos = 0;
 			// Lookup all items that needs to be removed, this is done in a two part
