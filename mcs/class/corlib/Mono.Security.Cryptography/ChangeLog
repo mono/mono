@@ -1,3 +1,8 @@
+2003-07-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DSAManaged.cs: Fixed bugs that appeared with the new unit tests.
+	* RSAManaged.cs: Fixed bugs that appeared with the new unit tests.
+
 2003-07-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* PKCS1.cs DSAManaged.cs: Changed strange characters in comments to 

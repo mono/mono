@@ -197,7 +197,7 @@ namespace Mono.Security.Cryptography {
 		}
 
 		public override string KeyExchangeAlgorithm {
-			get { return ""; }
+			get { return null; }
 		}
 
 		public override string SignatureAlgorithm {
@@ -218,8 +218,14 @@ namespace Mono.Security.Cryptography {
 
 		public override DSAParameters ExportParameters (bool includePrivateParameters)
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("");
+
 			if (!keypairGenerated)
 				Generate ();
+
+			if ((includePrivateParameters) && (x == null))
+				throw new CryptographicException ("no private key to export");
 	
 			DSAParameters param = new DSAParameters ();
 			// all parameters must be in multiple of 4 bytes arrays
@@ -245,6 +251,9 @@ namespace Mono.Security.Cryptography {
 
 		public override void ImportParameters (DSAParameters parameters) 
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("");
+
 			// if missing "mandatory" parameters
 			if ((parameters.P == null) || (parameters.Q == null) || (parameters.G == null) || (parameters.Y == null))
 				throw new CryptographicException ();
@@ -257,7 +266,7 @@ namespace Mono.Security.Cryptography {
 			if (parameters.X != null)
 				x = new BigInteger (parameters.X);
 			else
-				x = 0;
+				x = null;
 			// optional parameter - pre-computation
 			if (parameters.J != null)
 				j = new BigInteger (parameters.J);
@@ -277,15 +286,20 @@ namespace Mono.Security.Cryptography {
 
 		public override byte[] CreateSignature (byte[] rgbHash) 
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("");
+
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
-			if (x.ToString() == "0")
-				throw new CryptographicException ("no private key available for signature");
 			if (rgbHash.Length != 20)
-				throw new Exception (); // not documented
+				throw new CryptographicException ("invalid hash length");
 
 			if (!keypairGenerated)
 				Generate ();
+
+			// if required key must be generated before checking for X
+			if (x == null)
+				throw new CryptographicException ("no private key available for signature");
 	
 			BigInteger m = new BigInteger (rgbHash);
 			// (a) Select a random secret integer k; 0 < k < q.
@@ -311,16 +325,21 @@ namespace Mono.Security.Cryptography {
 
 		public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature) 
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("");
+
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
 			if (rgbSignature == null)
 				throw new ArgumentNullException ("rgbSignature");
 
+			if (rgbHash.Length != 20)
+				throw new CryptographicException ("invalid hash length");
 			// signature is always 40 bytes (no matter the size of the
 			// public key). In fact it is 2 times the size of the private
 			// key (which is 20 bytes for 512 to 1024 bits DSA keypairs)
 			if (rgbSignature.Length != 40)
-				throw new Exception(); // not documented
+				throw new CryptographicException ("invalid signature length");
 
 			// it would be stupid to verify a signature with a newly
 			// generated keypair - so we return false
@@ -352,7 +371,7 @@ namespace Mono.Security.Cryptography {
 				return (v == r);
 			}
 			catch {
-				throw new CryptographicException ();
+				throw new CryptographicException ("couldn't compute signature verification");
 			}
 		}
 

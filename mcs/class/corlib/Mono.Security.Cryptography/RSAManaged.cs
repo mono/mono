@@ -134,10 +134,9 @@ namespace Mono.Security.Cryptography {
 			if (m_disposed)
 				throw new ObjectDisposedException ("private key");
 
-			// it would be stupid to decrypt data with a newly
-			// generated keypair - so we return null
+			// decrypt operation is used for signature
 			if (!keypairGenerated)
-				return null;
+				GenerateKeyPair ();
 
 			BigInteger input = new BigInteger (rgb);
 			BigInteger output;
@@ -191,6 +190,9 @@ namespace Mono.Security.Cryptography {
 
 		public override RSAParameters ExportParameters (bool includePrivateParameters) 
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("");
+
 			if (!keypairGenerated)
 				GenerateKeyPair ();
 	
@@ -210,6 +212,9 @@ namespace Mono.Security.Cryptography {
 
 		public override void ImportParameters (RSAParameters parameters) 
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("");
+
 			// if missing "mandatory" parameters
 			if (parameters.Exponent == null) 
 				throw new CryptographicException ("Missing Exponent");
