@@ -16,6 +16,9 @@ using System.Data.Common;
 
 namespace System.Data.OleDb
 {
+	[DefaultEvent ("RowUpdated")]
+        [DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OleDbDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+        [ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.OleDbDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]	
 	public sealed class OleDbDataAdapter : DbDataAdapter, IDbDataAdapter
 	{
 		#region Fields
@@ -57,7 +60,10 @@ namespace System.Data.OleDb
 		#endregion // Fields
 
 		#region Properties
-
+		
+		[DefaultValue ("")]
+		[DataSysDescriptionAttribute ("Used during Update for deleted rows in DataSet")]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand DeleteCommand {
 			get {
 				return deleteCommand;
@@ -67,6 +73,9 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DefaultValue ("")]
+                [DataSysDescriptionAttribute ("Used during Update for new rows in DataSet")]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand InsertCommand {
 			get {
 				return insertCommand;
@@ -76,6 +85,9 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DefaultValue ("")]
+                [DataSysDescriptionAttribute ("Used during Fill/FillSchema")]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand SelectCommand {
 			get {
 				return selectCommand;
@@ -85,6 +97,9 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DefaultValue ("")]
+                [DataSysDescriptionAttribute ("Used during Update for modified rows in DataSet")]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand UpdateCommand {
 			get {
 				return updateCommand;
@@ -195,6 +210,16 @@ namespace System.Data.OleDb
 				RowUpdating (this, (OleDbRowUpdatingEventArgs) value);
 		}
 		
+		[MonoTODO]
+		public int Fill(DataTable datatable, Object adoDBRecordSet) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+                public int Fill(DataTable datatable, Object adoDBRecordSet, String srcTable) {
+                        throw new NotImplementedException ();
+                }
+
 		#endregion // Methods
 
 		#region Events and Delegates
