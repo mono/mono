@@ -620,6 +620,15 @@ namespace Mono.Xml.Schema
 					XmlSchemaSimpleTypeRestriction str = st.Content as XmlSchemaSimpleTypeRestriction;
 					// facet validation
 					if (str != null) {
+						/* Don't forget to validate against inherited type's facets 
+						 * Could we simplify this by assuming that the basetype will also
+						 * be restriction?
+						 * */
+						 // mmm, will check later.
+						XmlSchemaSimpleType baseType = str.ActualBaseSchemaType as XmlSchemaSimpleType;
+						if (baseType != null) {
+							 AssessStringValid(baseType, dt, normalized);
+						}
 						if (!str.ValidateValueWithFacets (normalized, NameTable)) {
 							HandleError ("Specified value was invalid against the facets.");
 							break;

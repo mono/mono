@@ -1,3 +1,8 @@
+2003-12-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XsdValidatingReader.cs : patch by David Sheldon. Base type's facet 
+	  validation should also be done.
+
 2003-12-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XsdValidatingReader.cs : FindElement() should use argument names
