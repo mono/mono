@@ -16,45 +16,183 @@ using System.Reflection;
 
 namespace System.Runtime.Serialization.Formatters.Binary
 {
+	abstract class TypeMetadata
+	{
+		public TypeMetadata (Type instanceType)
+		{
+			InstanceType = instanceType;
+			TypeAssembly = instanceType.Assembly;
+		}
+		
+		public Assembly TypeAssembly;
+		public Type InstanceType;
+		
+		public abstract void WriteAssemblies (ObjectWriter ow, BinaryWriter writer);
+		public abstract void WriteTypeData (ObjectWriter ow, BinaryWriter writer);
+		public abstract void WriteObjectData (ObjectWriter ow, BinaryWriter writer, object data);
+		
+		public virtual bool IsCompatible (TypeMetadata other)
+		{
+			return true;
+		}
+	}
+	
+	class SerializableTypeMetadata: TypeMetadata
+	{
+		Type[] types;
+		string[] names;
+		
+		public SerializableTypeMetadata (Type itype, SerializationInfo info): base (itype)
+		{
+			types = new Type [info.MemberCount];
+			names = new string [info.MemberCount];
+
+			SerializationInfoEnumerator e = info.GetEnumerator ();
+
+			int n = 0;
+			while (e.MoveNext ())
+			{
+				types[n] = e.ObjectType;
+				names[n] = e.Name;
+				n++;
+			}
+
+			if (info.FullTypeName != InstanceType.FullName || info.AssemblyName != TypeAssembly.FullName) 
+			{
+				TypeAssembly = Assembly.Load (info.AssemblyName);
+				InstanceType = TypeAssembly.GetType (info.FullTypeName);
+			}
+		}
+		
+		public override bool IsCompatible (TypeMetadata other)
+		{
+			if (!(other is SerializableTypeMetadata)) return false;
+			
+			SerializableTypeMetadata tm = (SerializableTypeMetadata)other;
+			if (types.Length != tm.types.Length) return false;
+			if (TypeAssembly != tm.TypeAssembly) return false;
+			if (InstanceType != tm.InstanceType) return false;
+			for (int n=0; n<types.Length; n++)
+			{
+				if (types[n] != tm.types[n]) return false;
+				if (names[n] != tm.names[n]) return false;
+			}
+			return true;
+		}
+		
+		public override void WriteAssemblies (ObjectWriter ow, BinaryWriter writer)
+		{
+			foreach (Type mtype in types)
+			{
+				Type type = mtype;
+				while (type.IsArray) 
+					type = type.GetElementType();
+					
+				ow.WriteAssembly (writer, type.Assembly);
+			}
+		}
+		
+		public override void WriteTypeData (ObjectWriter ow, BinaryWriter writer)
+		{
+			writer.Write (types.Length);
+
+			// Names of fields
+			foreach (string name in names)
+				writer.Write (name);
+
+			// Types of fields
+			foreach (Type type in types)
+				ObjectWriter.WriteTypeCode (writer, type);
+
+			// Type specs of fields
+			foreach (Type type in types)
+				ow.WriteTypeSpec (writer, type);
+		}
+		
+		public override void WriteObjectData (ObjectWriter ow, BinaryWriter writer, object data)
+		{
+			SerializationInfo info = (SerializationInfo) data;
+			SerializationInfoEnumerator e = info.GetEnumerator ();
+
+			while (e.MoveNext ())
+				ow.WriteValue (writer, e.ObjectType, e.Value);
+		}
+	}
+	
+	class MemberTypeMetadata: TypeMetadata
+	{
+		MemberInfo[] members;
+		
+		public MemberTypeMetadata (Type type, StreamingContext context): base (type)
+		{
+			members = FormatterServices.GetSerializableMembers (type, context);
+		}
+
+		public override void WriteAssemblies (ObjectWriter ow, BinaryWriter writer)
+		{
+			foreach (FieldInfo field in members)
+			{
+				Type type = field.FieldType;
+				while (type.IsArray) 
+					type = type.GetElementType();
+					
+				ow.WriteAssembly (writer, type.Assembly);
+			}
+		}
+		
+		public override void WriteTypeData (ObjectWriter ow, BinaryWriter writer)
+		{
+			writer.Write (members.Length);
+
+			// Names of fields
+			foreach (FieldInfo field in members)
+				writer.Write (field.Name);
+
+			// Types of fields
+			foreach (FieldInfo field in members)
+				ObjectWriter.WriteTypeCode (writer, field.FieldType);
+
+			// Type specs of fields
+			foreach (FieldInfo field in members)
+				ow.WriteTypeSpec (writer, field.FieldType);
+		}
+		
+		public override void WriteObjectData (ObjectWriter ow, BinaryWriter writer, object data)
+		{
+			object[] values = FormatterServices.GetObjectData (data, members);
+			for (int n=0; n<values.Length; n++)
+				ow.WriteValue (writer, ((FieldInfo)members[n]).FieldType, values[n]);
+		}
+	}
+	
 	internal class ObjectWriter
 	{
 		ObjectIDGenerator _idGenerator = new ObjectIDGenerator();
-		Hashtable _cachedTypes = new Hashtable();
+		Hashtable _cachedMetadata = new Hashtable();
 		Queue _pendingObjects = new Queue();
 		Hashtable _assemblyCache = new Hashtable();
+		
+		// Type metadata that can be shared with all serializers
+		static Hashtable _cachedTypes = new Hashtable();
 
-		static Assembly _corlibAssembly = typeof(string).Assembly;
+		internal static Assembly CorlibAssembly = typeof(string).Assembly;
 
 		ISurrogateSelector _surrogateSelector;
 		StreamingContext _context;
 		FormatterAssemblyStyle _assemblyFormat;
-
-		class TypeMetadata
+		
+		class MetadataReference
 		{
-			public Type[] Types;
-			public string[] Names;
-			public Assembly TypeAssembly;
-			public Type InstanceType;
+			public TypeMetadata Metadata;
 			public long ObjectID;
-			public bool CustomSerialization;
-
-			public bool Equals (TypeMetadata other)
+			
+			public MetadataReference (TypeMetadata metadata, long id)
 			{
-				if (!CustomSerialization) return true;
-
-				TypeMetadata tm = (TypeMetadata)other;
-				if (Types.Length != tm.Types.Length) return false;
-				if (TypeAssembly != other.TypeAssembly) return false;
-				if (InstanceType != other.InstanceType) return false;
-				for (int n=0; n<Types.Length; n++)
-				{
-					if (Types[n] != tm.Types[n]) return false;
-					if (Names[n] != tm.Names[n]) return false;
-				}
-				return true;
+				Metadata = metadata;
+				ObjectID = id;
 			}
 		}
-
+		
 		public ObjectWriter (ISurrogateSelector surrogateSelector, StreamingContext context, FormatterAssemblyStyle assemblyFormat)
 		{
 			_surrogateSelector = surrogateSelector;
@@ -112,14 +250,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		private void WriteObject (BinaryWriter writer, long id, object obj)
 		{
-			object[] values;
+			object data;
 			TypeMetadata metadata;
 
-			GetObjectData (obj, out metadata, out values);
+			GetObjectData (obj, out metadata, out data);
+			MetadataReference metadataReference = (MetadataReference)_cachedMetadata [metadata.InstanceType];
 
-			TypeMetadata chachedMetadata = (TypeMetadata)_cachedTypes[metadata.InstanceType];
-
-			if (chachedMetadata != null && metadata.Equals(chachedMetadata))
+			if (metadataReference != null && metadata.IsCompatible (metadataReference.Metadata))
 			{
 				// An object of the same type has already been serialized
 				// It is not necessary to write again type metadata
@@ -127,24 +264,21 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				writer.Write ((byte) BinaryElement.RefTypeObject);
 				writer.Write ((int)id);
 
-				// Get the id of the object that has the same type as this
-				long refId = chachedMetadata.ObjectID;
-
-				writer.Write ((int)refId);
-				WriteObjectContent (writer, metadata.Types, values);
+				writer.Write ((int)metadataReference.ObjectID);
+				metadata.WriteObjectData (this, writer, data);
 				return;
 			}
 
-			if (chachedMetadata == null)
+			if (metadataReference == null)
 			{
-				metadata.ObjectID = id;
-				_cachedTypes [metadata.InstanceType] = metadata;
+				metadataReference = new MetadataReference (metadata, id);
+				_cachedMetadata [metadata.InstanceType] = metadataReference;
 			}
 
 			BinaryElement objectTag;
 
 			int assemblyId;
-			if (metadata.TypeAssembly == _corlibAssembly)
+			if (metadata.TypeAssembly == CorlibAssembly)
 			{
 				// A corlib type
 				objectTag = BinaryElement.RuntimeObject;
@@ -153,72 +287,30 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			else
 			{
 				objectTag = BinaryElement.ExternalObject;
-
-				bool firstTime;
-				assemblyId = RegisterAssembly (metadata.TypeAssembly, out firstTime);
-				if (firstTime) WriteAssembly (writer, assemblyId, metadata.TypeAssembly);
+				assemblyId = WriteAssembly (writer, metadata.TypeAssembly);
 			}
 
 			// Registers the assemblies needed for each field
 			// If there are assemblies that where not registered before this object,
 			// write them now
 
-			foreach (Type type in metadata.Types)
-			{
-				Type memberType = type;
-				while (memberType.IsArray) 
-					memberType = memberType.GetElementType();
-
-				if (memberType.Assembly != _corlibAssembly)
-				{
-					bool firstTime;
-					int aid = RegisterAssembly (memberType.Assembly, out firstTime);
-					if (firstTime) WriteAssembly (writer, aid, memberType.Assembly);
-				}
-			}
+			metadata.WriteAssemblies (this, writer);
 
 			// Writes the object
 
 			writer.Write ((byte) objectTag);
 			writer.Write ((int)id);
 			writer.Write (metadata.InstanceType.FullName);
-			WriteObjectMetadata (writer, metadata, assemblyId);
-			WriteObjectContent (writer, metadata.Types, values);
-		}
-
-		private void WriteObjectMetadata (BinaryWriter writer, TypeMetadata metadata, int assemblyId)
-		{
-			Type[] types = metadata.Types;
-			string[] names = metadata.Names;
-
-			writer.Write (types.Length);
-
-			// Names of fields
-			foreach (string name in names)
-				writer.Write (name);
-
-			// Types of fields
-			foreach (Type type in types)
-				WriteTypeCode (writer, type);
-
-			// Type specs of fields
-			foreach (Type type in types)
-				WriteTypeSpec (writer, type);
-
+			
+			metadata.WriteTypeData (this, writer);
 			if (assemblyId != -1) writer.Write (assemblyId);
+			
+			metadata.WriteObjectData (this, writer, data);
 		}
 
-		private void WriteObjectContent (BinaryWriter writer, Type[] types, object[] values)
+		private void GetObjectData (object obj, out TypeMetadata metadata, out object data)
 		{
-			for (int n=0; n<values.Length; n++)
-				WriteValue (writer, types[n], values[n]);
-		}
-
-		private void GetObjectData (object obj, out TypeMetadata metadata, out object[] values)
-		{
-			metadata = new TypeMetadata();
-			metadata.InstanceType = obj.GetType();
-			metadata.TypeAssembly = metadata.InstanceType.Assembly;
+			Type instanceType = obj.GetType();
 
 			// Check if the formatter has a surrogate selector – if it does, 
 			// check if the surrogate selector handles objects of the given type. 
@@ -226,20 +318,21 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (_surrogateSelector != null)
 			{
 				ISurrogateSelector selector;
-				ISerializationSurrogate surrogate = _surrogateSelector.GetSurrogate (metadata.InstanceType, _context, out selector);
+				ISerializationSurrogate surrogate = _surrogateSelector.GetSurrogate (instanceType, _context, out selector);
 				if (surrogate != null)
 				{
-					SerializationInfo info = new SerializationInfo (metadata.InstanceType, new FormatterConverter ());
-					surrogate.GetObjectData(obj, info, _context);
-					GetDataFromSerializationInfo (info, ref metadata, out values);
+					SerializationInfo info = new SerializationInfo (instanceType, new FormatterConverter ());
+					surrogate.GetObjectData (obj, info, _context);
+					metadata = new SerializableTypeMetadata (instanceType, info);
+					data = info;
 					return;
 				}
 			}
 
 			// Check if the object is marked with the Serializable attribute
 
-			if (!metadata.InstanceType.IsSerializable)
-				throw new SerializationException ("Type " + metadata.InstanceType +
+			if (!instanceType.IsSerializable)
+				throw new SerializationException ("Type " + instanceType +
 								  " is not marked as Serializable " + 
 								  "and does not implement ISerializable.");
 
@@ -247,64 +340,56 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			if (ser != null) 
 			{
-				SerializationInfo info = new SerializationInfo (metadata.InstanceType, new FormatterConverter ());
+				SerializationInfo info = new SerializationInfo (instanceType, new FormatterConverter ());
 				ser.GetObjectData (info, _context);
-				GetDataFromSerializationInfo (info, ref metadata, out values);
+				metadata = new SerializableTypeMetadata (instanceType, info);
+				data = info;
 			} 
 			else 
-				GetDataFromObjectFields (obj, ref metadata, out values);
+			{
+				data = obj;
+				if (_context.Context != null)
+				{
+					// Don't cache metadata info when the Context property is not null sice
+					// we can't control the number of possible contexts in this case
+					metadata = new MemberTypeMetadata (instanceType, _context);
+					return;
+				}
+				
+				metadata = null;
+				lock (_cachedTypes)
+				{
+					Hashtable typesTable = (Hashtable) _cachedTypes [_context.State];
+					if (typesTable != null)
+					{
+						metadata = (TypeMetadata) typesTable [instanceType];
+						if (metadata == null) 
+						{
+							metadata = CreateMemberTypeMetadata (instanceType);
+							typesTable [instanceType] = metadata;
+						}
+					}
+					else
+					{
+						metadata = CreateMemberTypeMetadata (instanceType);
+						typesTable = new Hashtable ();
+						typesTable [instanceType] = metadata;
+						_cachedTypes [_context.State] = typesTable;
+					}
+				}
+			}
 		}
-
-		private void GetDataFromSerializationInfo (SerializationInfo info, ref TypeMetadata metadata, out object[] values)
+		
+		TypeMetadata CreateMemberTypeMetadata (Type type)
 		{
-			Type[] types = types = new Type [info.MemberCount];
-			string[] names = new string [info.MemberCount];
-			values = new object [info.MemberCount];
-
-			SerializationInfoEnumerator e = info.GetEnumerator ();
-
-			int n = 0;
-			while (e.MoveNext ())
-			{
-				values[n] = e.Value;
-				types[n] = e.ObjectType;
-				names[n] = e.Name;
-				n++;
+			// This environment variable is only for test and benchmarking pourposes.
+			// By default, mono will always use IL generated class serializers.
+			if (Environment.GetEnvironmentVariable("MONO_REFLECTION_SERIALIZER") == null) {
+				Type metaType = CodeGenerator.GenerateMetadataType (type, _context);
+				return (TypeMetadata) Activator.CreateInstance (metaType);
 			}
-
-			if (info.FullTypeName != metadata.InstanceType.FullName || info.AssemblyName != metadata.TypeAssembly.FullName) 
-			{
-				metadata.TypeAssembly = Assembly.Load (info.AssemblyName);
-				metadata.InstanceType = metadata.TypeAssembly.GetType (info.FullTypeName);
-			}
-
-			metadata.Types = types;
-			metadata.Names = names;
-			metadata.CustomSerialization = true;
-		}
-
-		private void GetDataFromObjectFields (object obj, ref TypeMetadata metadata, out object[] values)
-		{
-			MemberInfo[] members = FormatterServices.GetSerializableMembers (obj.GetType(), _context);
-			values = FormatterServices.GetObjectData (obj, members);
-
-			Type[] types = new Type [members.Length];
-			string[] names = new string [members.Length];
-
-			for (int n=0; n<members.Length; n++)
-			{
-				MemberInfo member = members[n];
-				names[n] = member.Name;
-				if (member is FieldInfo)
-					types[n] = ((FieldInfo)member).FieldType;
-				else if (member is PropertyInfo)
-					types[n] = ((PropertyInfo)member).PropertyType;
-			}
-
-			metadata.Types = types;
-			metadata.Names = names;
-
-			metadata.CustomSerialization = false;
+			else
+				return new MemberTypeMetadata (type, _context);
 		}
 
 		private void WriteArray (BinaryWriter writer, long id, Array array)
@@ -337,12 +422,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			// Registers and writes the assembly of the array element type if needed
 
-			if (!elementType.IsArray && elementType.Assembly != _corlibAssembly)
-			{
-				bool firstTime;
-				int aid = RegisterAssembly (elementType.Assembly, out firstTime);
-				if (firstTime) WriteAssembly (writer, aid, elementType.Assembly);
-			}
+			if (!elementType.IsArray)
+				WriteAssembly (writer, elementType.Assembly);
 
 			// Writes the array
 
@@ -432,8 +513,91 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			Type elementType = array.GetType().GetElementType();
 			WriteTypeSpec (writer, elementType);
 
-			for (int n=0; n<array.Length; n++)
-				WritePrimitiveValue (writer, array.GetValue (n));
+			switch (Type.GetTypeCode (elementType))
+			{
+				case TypeCode.Boolean:
+					foreach (bool item in (bool[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.Byte:
+					writer.Write ((byte[]) array);
+					break;
+
+				case TypeCode.Char:
+					foreach (char item in (char[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.DateTime: 
+					foreach (DateTime item in (DateTime[]) array)
+						writer.Write (item.Ticks);
+					break;
+
+				case TypeCode.Decimal:
+					foreach (decimal item in (decimal[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.Double:
+					foreach (double item in (double[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.Int16:
+					foreach (short item in (short[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.Int32:
+					foreach (int item in (int[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.Int64:
+					foreach (long item in (long[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.SByte:
+					foreach (sbyte item in (sbyte[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.Single:
+					foreach (float item in (float[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.UInt16:
+					foreach (ushort item in (ushort[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.UInt32:
+					foreach (uint item in (uint[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.UInt64:
+					foreach (ulong item in (ulong[]) array)
+						writer.Write (item);
+					break;
+
+				case TypeCode.String:
+					foreach (string item in (string[]) array)
+						writer.Write (item);
+					break;
+
+				default:
+					if (elementType == typeof (TimeSpan)) {
+						foreach (TimeSpan item in (TimeSpan[]) array)
+							writer.Write (item.Ticks);
+					}
+					else
+						throw new NotSupportedException ("Unsupported primitive type: " + elementType.FullName);
+					break;
+			}			
 		}
 
 		private void WriteSingleDimensionArrayElements (BinaryWriter writer, Array array, Type elementType)
@@ -483,7 +647,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			writer.Write ((int)id);
 		}
 
-		private void WriteValue (BinaryWriter writer, Type valueType, object val)
+		public void WriteValue (BinaryWriter writer, Type valueType, object val)
 		{
 			if (val == null) 
 			{
@@ -533,17 +697,25 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			writer.Write (str);
 		}
 
-		private void WriteAssembly (BinaryWriter writer, int id, Assembly assembly)
+		public int WriteAssembly (BinaryWriter writer, Assembly assembly)
 		{
+			if (assembly == ObjectWriter.CorlibAssembly) return -1;
+			
+			bool firstTime;
+			int id = RegisterAssembly (assembly, out firstTime);
+			if (!firstTime) return id;
+					
 			writer.Write ((byte) BinaryElement.Assembly);
 			writer.Write (id);
 			if (_assemblyFormat == FormatterAssemblyStyle.Full)
 				writer.Write (assembly.GetName ().FullName);
 			else
 				writer.Write (assembly.GetName ().Name);
+				
+			return id;
 		}
 
-		private int GetAssemblyId (Assembly assembly)
+		public int GetAssemblyId (Assembly assembly)
 		{
 			return (int)_assemblyCache[assembly];
 		}
@@ -663,7 +835,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			else if (type.IsArray && type.GetArrayRank() == 1 && BinaryCommon.IsPrimitive(type.GetElementType())) {
 				return TypeTag.ArrayOfPrimitiveType;
 			}
-			else if (type.Assembly == _corlibAssembly) {
+			else if (type.Assembly == CorlibAssembly) {
 				return TypeTag.RuntimeType;
 			}
 			else
@@ -672,6 +844,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public void WriteTypeSpec (BinaryWriter writer, Type type)
 		{
+			// WARNING Keep in sync with EmitWriteTypeSpec
+			
 			switch (GetTypeTag (type))
 			{
 				case TypeTag.PrimitiveType:

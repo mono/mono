@@ -1,3 +1,11 @@
+2004-02-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ObjectWriter.cs: Factorized some serialization code in new classes, so it
+	  is now possible to use fast IL generated classes that use direct access
+	  to class fields instead of using reflection.
+	* CodeGenerator.cs: New file. Has several methods used by ObjectWriter to 
+	  generate serialization code.
+
 2004-02-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ObjectWriter.cs: Get the assembly of a member from the member's type, not
