@@ -1,3 +1,7 @@
+2004-01-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbDataPermission.cs : tiny fix to pass OleDbPermission.
+
 2004-01-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbDataPermission.cs : .ctor(PermissionState state) should not call

@@ -54,7 +54,7 @@ namespace System.Data.Common {
 		{
 		}
 
-		DBDataPermission (PermissionState state, bool allowBlankPassword, bool dummyArg)
+		internal DBDataPermission (PermissionState state, bool allowBlankPassword, bool dummyArg)
 		{
 			this.state = state;
 			this.allowBlankPassword = allowBlankPassword;
