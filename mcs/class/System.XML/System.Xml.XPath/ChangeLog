@@ -1,5 +1,11 @@
 2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* Added XPathComparer.cs
+	* DefaultContext.cs : Fixed XPathFunctionId.Evaluate() to iterate base 
+	  iterator correctly, and sort results.
+
+2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* DefaultContext.cs : Imcomplete fix ;-)
 
 2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>

@@ -190,7 +190,7 @@ namespace System.Xml.XPath
 			if (valItr != null)
 			{
 				strArgs = "";
-				while (!valItr.MoveNext ())
+				while (valItr.MoveNext ())
 					strArgs += valItr.Current.Value + " ";
 			}
 			else
@@ -198,21 +198,16 @@ namespace System.Xml.XPath
 			
 			XPathNavigator n = iter.Current.Clone ();
 			ArrayList rgNodes = new ArrayList ();
-			// FIXME: sort
-//			SortedList rgNodes = new SortedList (XPathComparer.Instance);
 			foreach (string strArg in strArgs.Split (rgchWhitespace))
 			{
 				if (n.MoveToId (strArg)) {
 					rgNodes.Add (n.Clone ());
-//					XPathNavigator clone = n.Clone ();
-//					rgNodes.Add (clone, clone);
 				}
 			}
+			rgNodes.Sort (XPathNavigatorComparer.Instance);
 			return new EnumeratorIterator (iter, rgNodes.GetEnumerator ());
-//			return new EnumeratorIterator (iter, rgNodes.Values.GetEnumerator ());
 		}
 	}
-
 
 	internal class XPathFunctionLocalName : XPathFunction
 	{
