@@ -140,12 +140,6 @@ namespace System.Data
 			}
 		}
 
-		public string Error {
-			get {
-				return ""; // FIXME:
-			}
-		}
-                
 		// the compiler creates a DefaultMemeberAttribute from
 		// this IndexerNameAttribute
 		public object this[int column] {

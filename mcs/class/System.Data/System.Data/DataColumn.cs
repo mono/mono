@@ -34,7 +34,6 @@ namespace System.Data {
 	[DefaultMember ("Item")]
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
-	[TypeConverterAttribute (typeof (ComponentConverter))]
 	public class DataColumn : MarshalByValueComponent
 	{		
 		#region Events

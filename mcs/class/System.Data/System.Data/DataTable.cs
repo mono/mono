@@ -32,7 +32,6 @@ namespace System.Data {
 	[DefaultProperty ("TableName")]
 	[DesignTimeVisible (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-	[TypeConverterAttribute("System.ComponentModel.ComponentConverter, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	[Serializable]
 	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize, ISerializable 
 	{
@@ -531,7 +530,7 @@ namespace System.Data {
 			}
 		}
 
-		public bool RowsExist(Object[] columns, Object[] relatedColumns,DataRow row)
+		internal bool RowsExist(Object[] columns, Object[] relatedColumns,DataRow row)
 		{
 			object[] vals = new object[relatedColumns.Length];
 			for (int i = 0; i < vals.Length; i++)
@@ -540,7 +539,7 @@ namespace System.Data {
 			return RowsExist(columns,vals);
 		}
 
-		public bool RowsExist(Object[] columns,Object[] values)
+		internal bool RowsExist(Object[] columns,Object[] values)
 		{
 			bool rowsExist = false;
 			Index indx = this.GetIndexByColumns ((DataColumn[])columns);

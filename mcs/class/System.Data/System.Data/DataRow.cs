@@ -1319,7 +1319,7 @@ namespace System.Data {
 		}
 
 		
-		public void CollectionChanged(object sender, System.ComponentModel.CollectionChangeEventArgs args)
+		private void CollectionChanged(object sender, System.ComponentModel.CollectionChangeEventArgs args)
 		{
 			// if a column is added we hava to add an additional value the 
 			// the priginal, current and propoed arrays.

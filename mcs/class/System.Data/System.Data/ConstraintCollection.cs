@@ -277,7 +277,7 @@ namespace System.Data {
 		}
 
 		// Helper AddRange() - Call this function when EndInit is called
-                public void PostEndInit()
+                internal void PostEndInit()
                 {
                         AddRange (_mostRecentConstraints);
                 }

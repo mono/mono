@@ -1,3 +1,13 @@
+2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
+	* DataTable.cs: removed TypeConverterAttribute, marked RowsExist
+	methods internal
+	* DataRowView.cs: removed extra Error property
+	* DataRow.cs: reduced accessibility of CollectionChanged method 
+	to private
+	* DataColumnPropertyDescriptor.cs: made class internal
+	* DataColumn.cs: removed extra TypeConvertorAttribute
+	* ConstrainCollection.cs: marked PostEndInit method internal
+
 2004-05-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : 

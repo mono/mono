@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace System.Data 
 {
-	public class DataColumnPropertyDescriptor : PropertyDescriptor 
+	internal class DataColumnPropertyDescriptor : PropertyDescriptor 
 	{
 		private bool readOnly = true;
 		private Type componentType = null;
