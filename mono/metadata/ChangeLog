@@ -1,5 +1,7 @@
 2004-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* metadata.h (MONO_TYPE_ISSTRUCT): Fix warning.
+
 	* icall.c (ves_icall_System_Reflection_MethodBase_GetMethodFromHandle): New icall.
 
 2004-08-28  Zoltan Varga  <vargaz@freemail.hu>
