@@ -487,27 +487,49 @@ namespace System.Security {
 		}
 #endif
 
+		private static IPermission UnmanagedCode {
+			get {
+				// double-lock pattern
+				if (_unmanagedCode == null) {
+					lock (_lockObject) {
+						if (_unmanagedCode == null)
+							_unmanagedCode = new SecurityPermission (SecurityPermissionFlag.UnmanagedCode);
+					}
+				}
+				return _unmanagedCode;
+			}
+		}
+
 		//  security check when using reflection
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static unsafe extern bool GetLinkDemandSecurity (MethodBase method, RuntimeDeclSecurityActions *cdecl, RuntimeDeclSecurityActions *mdecl);
+
 		// When using reflection LinkDemand are promoted to full Demand (i.e. stack walk)
-		private unsafe static void ReflectedLinkDemand (RuntimeDeclSecurityActions *klass, RuntimeDeclSecurityActions *method)
+		internal unsafe static void ReflectedLinkDemandInvoke (MethodBase mb)
 		{
+			RuntimeDeclSecurityActions klass;
+			RuntimeDeclSecurityActions method;
+
+			if (!GetLinkDemandSecurity (mb, &klass, &method))
+				return;
+
 			PermissionSet ps = null;
 
-			if (klass->cas.size > 0) {
-				ps = Decode (klass->cas.blob, klass->cas.size);
+			if (klass.cas.size > 0) {
+				ps = Decode (klass.cas.blob, klass.cas.size);
 			}
-			if (klass->noncas.size > 0) {
-				PermissionSet p = Decode (klass->noncas.blob, klass->noncas.size);
+			if (klass.noncas.size > 0) {
+				PermissionSet p = Decode (klass.noncas.blob, klass.noncas.size);
 				ps = (ps == null) ? p : ps.Union (p);
 			}
 
-			if (method->cas.size > 0) {
-				PermissionSet p = Decode (method->cas.blob, method->cas.size);
+			if (method.cas.size > 0) {
+				PermissionSet p = Decode (method.cas.blob, method.cas.size);
 				ps = (ps == null) ? p : ps.Union (p);
 			}
-			if (method->noncas.size > 0) {
-				PermissionSet p = Decode (method->noncas.blob, method->noncas.size);
+			if (method.noncas.size > 0) {
+				PermissionSet p = Decode (method.noncas.blob, method.noncas.size);
 				ps = (ps == null) ? p : ps.Union (p);
 			}
 
@@ -517,18 +539,34 @@ namespace System.Security {
 				ps.Demand ();
 #if NET_2_0
 			// Process LinkDemandChoice (2.0)
-			if (klass->choice.size > 0) {
-				PermissionSetCollection psc = DecodeCollection (klass->choice.blob, klass->choice.size);
+			if (klass.choice.size > 0) {
+				PermissionSetCollection psc = DecodeCollection (klass.choice.blob, klass.choice.size);
 				psc.DemandChoice ();
 			}
-			if (method->choice.size > 0) {
-				PermissionSetCollection psc = DecodeCollection (method->choice.blob, method->choice.size);
+			if (method.choice.size > 0) {
+				PermissionSetCollection psc = DecodeCollection (method.choice.blob, method.choice.size);
 				psc.DemandChoice ();
 			}
 #endif
 		}
 
+		internal unsafe static bool ReflectedLinkDemandQuery (MethodBase mb)
+		{
+			RuntimeDeclSecurityActions klass;
+			RuntimeDeclSecurityActions method;
+
+			if (!GetLinkDemandSecurity (mb, &klass, &method))
+				return true;
+
+			return LinkDemand (mb.ReflectedType.Assembly, &klass, &method);
+		}
+
 		// internal - get called at JIT time
+
+		private static void DemandUnmanaged ()
+		{
+			UnmanagedCode.Demand ();
+		}
 
 		private unsafe static bool LinkDemand (Assembly a, RuntimeDeclSecurityActions *klass, RuntimeDeclSecurityActions *method)
 		{
@@ -606,15 +644,7 @@ namespace System.Security {
 
 		private static bool LinkDemandUnmanaged (Assembly a)
 		{
-			// double-lock pattern
-			if (_unmanagedCode == null) {
-				lock (_lockObject) {
-					if (_unmanagedCode == null)
-						_unmanagedCode = new SecurityPermission (SecurityPermissionFlag.UnmanagedCode);
-				}
-			}
-
-			return IsGranted (a, _unmanagedCode);
+			return IsGranted (a, UnmanagedCode);
 		}
 
 		// we try to provide as much details as possible to help debugging

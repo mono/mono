@@ -1,3 +1,9 @@
+2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs: Added methods to support reflection query and 
+	invoke for LinkDemand and InheritanceDemand. Added method to do a
+	stack walk (demand) when a p/invoking (called by JIT generated code).
+
 2005-03-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs,
