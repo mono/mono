@@ -1,3 +1,9 @@
+2004-04-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* typemanager.cs: Property.GetGetMethod() does not return the method if it
+	is private (it did until now because of a bug). Make sure it works as it 
+	worked before the fix.
+	
 2004-04-28 Anirban Bhattacharjee <banirban@novell.com>
 	* expression.cs: fixed bug to get enum running
 	* enum.cs: handling several negative scenarios 

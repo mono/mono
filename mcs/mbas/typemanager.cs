@@ -1510,7 +1510,7 @@ public class TypeManager {
 
 			return (MethodInfo) de.Second;
 		} else
-			return pi.GetSetMethod ();
+			return pi.GetSetMethod (true);
 	}
 
 	static public MethodInfo GetPropertySetter (PropertyInfo pi)
@@ -1520,7 +1520,7 @@ public class TypeManager {
 
 			return (MethodInfo) de.First;
 		} else
-			return pi.GetGetMethod ();
+			return pi.GetGetMethod (true);
 	}
 
 	/// <summary>
