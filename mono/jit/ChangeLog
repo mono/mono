@@ -1,5 +1,23 @@
 2002-03-26  Martin Baulig  <martin@gnome.org>
 
+	* debug-dwarf2.c (write_method_lines_dwarf2): Don't generate method
+	lines if we don't have line number information.
+	(write_method_dwarf2): Use `minfo->method_info.this_offset' instead
+	of hardcoding 8.
+
+	* debug-stabs.c (write_method_stabs): Don't generate method lines if
+	we don't have line number information. Use `minfo->method_info.this_offset'
+	instead of hardcoding 8.
+
+	* debug.c (debug_generate_method_lines): Don't crash if we don't have
+	line number information.
+	(mono_debug_open_assembly): Don't generate line numbers for
+	MONO_DEBUG_FORMAT_DWARF2_PLUS.
+	(mono_debug_add_method): Don't store the 'this' offset in `param_offsets',
+	but it in the new `this_offset' field.
+	
+Mon Mar 25 13:03:35 CET 2002 Paolo Molaro <lupus@ximian.com>
+
 	* debug.c (debug_generate_method_lines): Use correct addresses for
 	record_il_offset().
 
