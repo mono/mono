@@ -3505,7 +3505,6 @@ namespace Mono.CSharp {
 		public readonly string Name;
 		public readonly Block Block;
 		LocalInfo local_info;
-		VariableInfo variable_info;
 		bool is_readonly;
 		
 		public LocalVariableReference (Block block, string name, Location l)
@@ -3527,7 +3526,7 @@ namespace Mono.CSharp {
 		}
 
 		public VariableInfo VariableInfo {
-			get { return variable_info; }
+			get { return local_info.VariableInfo; }
 		}
 
 		public bool IsReadOnly {
@@ -3543,7 +3542,6 @@ namespace Mono.CSharp {
 				is_readonly = local_info.ReadOnly;
 			}
 
-			variable_info = local_info.VariableInfo; 
 			type = local_info.VariableType;
 #if false
 			if (ec.InAnonymousMethod)
@@ -3562,6 +3560,7 @@ namespace Mono.CSharp {
 				return e;
 			}
 
+			VariableInfo variable_info = local_info.VariableInfo; 
 			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
@@ -3575,6 +3574,7 @@ namespace Mono.CSharp {
 		{
 			DoResolveBase (ec);
 
+			VariableInfo variable_info = local_info.VariableInfo; 
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
 
