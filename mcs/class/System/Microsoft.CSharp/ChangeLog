@@ -1,3 +1,7 @@
+2003-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CSharpCodeCompiler.cs: Few fixes for update in CodeDom.Compiler
+
 2003-07-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: ignore debug statistics in mcs output when

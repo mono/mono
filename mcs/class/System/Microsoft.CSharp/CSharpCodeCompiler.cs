@@ -58,7 +58,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				GenerateCodeFromCompileUnit(e,s,new CodeGeneratorOptions());
+				((ICodeGenerator)this).GenerateCodeFromCompileUnit (e, s, new CodeGeneratorOptions());
 				s.Close();
 				f.Close();
 				i++;
@@ -140,7 +140,7 @@ namespace Mono.CSharp
 			CompilerParameters options,string[] fileNames)
 		{
 			StringBuilder args=new StringBuilder();
-			if (options.GenerateExecutables)
+			if (options.GenerateExecutable)
 				args.AppendFormat("/target:exe ");
 			else
 				args.AppendFormat("/target:library ");
@@ -148,7 +148,10 @@ namespace Mono.CSharp
 				args.AppendFormat("/debug ");
 			if (options.TreatWarningsAsErrors)
 				args.AppendFormat("/warnaserror ");
-			args.AppendFormat("/warn:{0} ",options.WarningLevel);
+
+			if (options.WarningLevel != -1)
+				args.AppendFormat ("/warn:{0} ", options.WarningLevel);
+
 			if (options.OutputAssembly==null)
 				options.OutputAssembly=Path.ChangeExtension(Path.GetTempFileName(),"dll");
 			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
