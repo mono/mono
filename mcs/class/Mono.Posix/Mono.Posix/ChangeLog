@@ -1,3 +1,8 @@
+
+Tue Apr 29 16:53:56 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Syscall.cs: remove the unsafe mess.
+
 2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Check in.

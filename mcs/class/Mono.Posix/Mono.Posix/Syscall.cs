@@ -3,23 +3,27 @@
 //
 
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 
 namespace Mono.Posix {
 
-	public unsafe class Syscall {
+	public class Syscall {
 		[DllImport ("libc", EntryPoint="gethostname")]
-		static unsafe extern int syscall_gethostname (byte *p, int len);
+		static extern int syscall_gethostname (byte[] p, int len);
 
 		public static string GetHostName ()
 		{
 			byte [] buf = new byte [256];
-			unsafe {
-				fixed (byte *p = &buf [0]){
-					gethostname (p, 256);
-				}
+			int res = syscall_gethostname (buf, buf.Length);
+			if (res == -1)
+				return "localhost";
+			for (res = 0; res < buf.Length; ++res) {
+				if (buf [res] == 0)
+					break;
 			}
-			return new String(Encoding.UTF8.GetChars (buf));
+				
+			return Encoding.UTF8.GetString (buf, 0, res);
 		}
 	}
 }
