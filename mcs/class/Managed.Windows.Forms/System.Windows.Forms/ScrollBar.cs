@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.23 $
+// $Revision: 1.24 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.24  2004/10/17 22:11:49  jordi
+// disabled scrollbar should not honor any keyboard or mouse event
+//
 // Revision 1.23  2004/10/05 04:56:11  jackson
 // Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
 //
@@ -644,6 +647,9 @@ namespace System.Windows.Forms
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
     		{
+			if (Enabled == false)
+				return;
+
 			if (firstbutton_pressed) {
     				if (!first_arrow_area.Contains (e.X, e.Y) && ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
 					firstbutton_state = ButtonState.Normal;
@@ -745,6 +751,9 @@ namespace System.Windows.Forms
 
     		private void OnMouseDownSB (object sender, MouseEventArgs e)
     		{
+			if (Enabled == false)
+				return;
+
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
 				this.Capture = true;				
 				firstbutton_state = ButtonState.Pushed;
@@ -824,6 +833,9 @@ namespace System.Windows.Forms
     		
     		private void OnMouseUpSB (object sender, MouseEventArgs e)
     		{
+			if (Enabled == false)
+				return;
+
     			timer.Enabled = false;
     			
     			if (thumb_moving != ThumbMoving.None) {
@@ -857,6 +869,9 @@ namespace System.Windows.Forms
 
     		private void OnKeyDownSB (Object o, KeyEventArgs key)
 		{
+			if (Enabled == false)
+				return;
+
 			switch (key.KeyCode){
 			case Keys.Up:
 			{
