@@ -1,3 +1,8 @@
+2004-08-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added SecurityPermissionTest.cs to unit 
+	tests.
+
 2004-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Added GacIdentityPermissionTest.cs and
