@@ -31,7 +31,7 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields);
+		protected extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern MethodInfo[] GetMethods_internal (Type reflected_type);
@@ -41,6 +41,9 @@ namespace System.Reflection
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern FieldInfo[] GetFields_internal (Type reflected_type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern PropertyInfo[] GetProperties_internal (Type reflected_type);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -56,7 +59,8 @@ namespace System.Reflection
 
 			initialize (generic_type.GetMethods (flags),
 				    generic_type.GetConstructors (flags),
-				    generic_type.GetFields (flags));
+				    generic_type.GetFields (flags),
+				    generic_type.GetProperties (flags));
 
 			initialized = true;
 		}
@@ -297,6 +301,80 @@ namespace System.Reflection
 				l.Add (c);
 			}
 			FieldInfo[] result = new FieldInfo [l.Count];
+			l.CopyTo (result);
+			return result;
+		}
+
+		public override PropertyInfo[] GetProperties (BindingFlags bf)
+		{
+			initialize ();
+
+			ArrayList l = new ArrayList ();
+
+			Type current_type = this;
+			do {
+				MonoGenericInst gi = current_type as MonoGenericInst;
+				if (gi != null)
+					l.AddRange (gi.GetProperties_impl (bf, this));
+				else if (current_type is TypeBuilder)
+					l.AddRange (current_type.GetProperties (bf));
+				else {
+					MonoType mt = (MonoType) current_type;
+					l.AddRange (mt.GetPropertiesByName (null, bf, false, this));
+					break;
+				}
+
+				if ((bf & BindingFlags.DeclaredOnly) != 0)
+					break;
+				current_type = current_type.BaseType;
+			} while (current_type != null);
+
+			PropertyInfo[] result = new PropertyInfo [l.Count];
+			l.CopyTo (result);
+			return result;
+		}
+
+		protected PropertyInfo[] GetProperties_impl (BindingFlags bf, Type reftype)
+		{
+			ArrayList l = new ArrayList ();
+			bool match;
+			MethodAttributes mattrs;
+			MethodInfo accessor;
+
+			PropertyInfo[] properties = GetProperties_internal (reftype);
+
+			for (int i = 0; i < properties.Length; i++) {
+				PropertyInfo c = properties [i];
+
+				match = false;
+				accessor = c.GetGetMethod (true);
+				if (accessor == null)
+					accessor = c.GetSetMethod (true);
+				if (accessor == null)
+					continue;
+				mattrs = accessor.Attributes;
+				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
+					if ((bf & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bf & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((mattrs & MethodAttributes.Static) != 0) {
+					if ((bf & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bf & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (c);
+			}
+			PropertyInfo[] result = new PropertyInfo [l.Count];
 			l.CopyTo (result);
 			return result;
 		}

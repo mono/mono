@@ -1,5 +1,10 @@
 2004-02-17  Martin Baulig  <martin@ximian.com>
 
+	* MonoGenericInst.cs (MonoGenericInst.GetProperties): Added
+	support for properties.
+
+2004-02-17  Martin Baulig  <martin@ximian.com>
+
 	* MonoGenericInst.cs (MonoGenericInst.GetMethods): Walk up the
 	class hierarchy and return members from the parent classes.
 	(GetConstructors, GetFields): Likewise.
