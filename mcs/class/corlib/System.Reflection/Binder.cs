@@ -349,7 +349,7 @@ namespace System.Reflection
 					throw new ArgumentException ("No properties provided", "match");
 
 				bool haveRet = (returnType != null);
-				int idxlen = (indexes != null) ? indexes.Length : 0;
+				int idxlen = (indexes != null) ? indexes.Length : -1;
 				PropertyInfo result = null;
 				int i;
 				int best_score = Int32.MaxValue - 1;

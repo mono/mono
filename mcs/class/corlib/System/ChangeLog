@@ -1,3 +1,9 @@
+2005-02-12  Ben Maurer  <bmaurer@ximian.com>
+
+	* Type.cs (GetProperty): Passing new Type [0] is different than
+	null. null means `I don't care how many types this has,' while new
+	Type [0] means `this must have 0 types.'
+
 2005-02-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* corlib.dll.sources: added WindowsConsoleDriver.cs
