@@ -1,3 +1,7 @@
+2003-01-19  Martin Baulig  <martin@ximian.com>
+
+	* debug.c: Ok, this should now finally be working this time ....
+
 2003-01-18  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (mono_debugger_jit_exec): Send the background thread a
