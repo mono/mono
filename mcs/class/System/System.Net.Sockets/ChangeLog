@@ -1,3 +1,8 @@
+2002-06-24  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Make SetSocketOption cope with boolean values (they
+	are passed as objects, not the ints the runtime was expecting)
+
 2002-05-17  Lawrence Pit <loz@cable.a2000.nl>
  	* TcpListener.cs: Renamed LocalEndPoint to LocalEndpoint
 	* NetworkStream.cs, UdpClient.cs and TcpClient.cs: modified disposable 

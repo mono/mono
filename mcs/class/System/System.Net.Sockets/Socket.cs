@@ -896,8 +896,28 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException();
 			}
 			
-			SetSocketOption_internal(socket, level, name,
-						 opt_value, null, 0);
+			/* Passing a bool as the third parameter to
+			 * SetSocketOption causes this overload to be
+			 * used when in fact we want to pass the value
+			 * to the runtime as an int.
+			 */
+			if(opt_value is System.Boolean) {
+				bool bool_val=(bool)opt_value;
+				
+				/* Stupid casting rules :-( */
+				if(bool_val==true) {
+					SetSocketOption_internal(socket, level,
+								 name, null,
+								 null, 1);
+				} else {
+					SetSocketOption_internal(socket, level,
+								 name, null,
+								 null, 0);
+				}
+			} else {
+				SetSocketOption_internal(socket, level, name,
+							 opt_value, null, 0);
+			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
