@@ -3,24 +3,23 @@
 //
 // (C) Sergey Chaban (serge@wildwestsoftware.com)
 
+using PEAPI;
 using System;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Collections;
 
 namespace Mono.ILASM {
 
 	public class ILParser {
 
-		private Method method;
+		// private Method method;
 
-		private InstrBase currentInstr;
+		// private InstrBase currentInstr;
 
-		private CallingConventions currentCallConv;
+		// private CallingConventions currentCallConv;
 
-		private TypeAttributes currentTypeAttrs;
+		// private TypeAttributes currentTypeAttrs;
 
-		private Class currentClass;
+		// private Class currentClass;
 
 		private CodeGen codegen;
 
@@ -36,7 +35,7 @@ namespace Mono.ILASM {
 				return codegen;
 			}
 		}
-
+		
 %}
 
 %token EOF
@@ -378,7 +377,7 @@ decls                   : /* EMPTY */
 			;
 
 decl                    : classAll
-			| nameSpaceHead OPEN_BRACE decls CLOSE_BRACE 
+			| nameSpaceHead OPEN_BRACE decls CLOSE_BRACE { codegen.CurrentNameSpace = String.Empty; }
 			| methodAll
 			| fieldDecl
 			| dataDecl
@@ -438,43 +437,73 @@ vtableHead              : D_VTABLE ASSIGN OPEN_PARENS
 			;
 
 nameSpaceHead           : D_NAMESPACE name1 
+			{
+				codegen.CurrentNameSpace = (string) $2;
+			}
 			;
 
-classHead               : D_CLASS classAttr id extendsClause implClause
+classHead               : D_CLASS type_attr id extendsClause implClause
 			{
+				/*
 				currentTypeAttrs = 0;
 				currentClass = new Class ($3 as string);
 				currentClass.Attrs = currentTypeAttrs;
-
+				*/
+				codegen.AddClass ((TypeAttr)$2, (string) $3);
 				// TODO: extends/implemets
 			}
 			;
 
+type_attr               : /* EMPTY */ 				{ $$ = new TypeAttr (); }
+			| type_attr K_PUBLIC			{ $$ = (TypeAttr)$1 | TypeAttr.Public; }
+			| type_attr K_PRIVATE			{ $$ = (TypeAttr)$1 | TypeAttr.Private; }
+			| type_attr K_INTERFACE			{ $$ = (TypeAttr)$1 | TypeAttr.Interface; }
+			| type_attr K_SEALED			{ $$ = (TypeAttr)$1 | TypeAttr.Sealed; }
+			| type_attr K_ABSTRACT			{ $$ = (TypeAttr)$1 | TypeAttr.Abstract; }
+			| type_attr K_AUTO			{ /* */ }
+			| type_attr K_SEQUENTIAL		{ $$ = (TypeAttr)$1 | TypeAttr.SequentialLayout; }
+			| type_attr K_EXPLICIT			{ $$ = (TypeAttr)$1 | TypeAttr.ExplicitLayout; }
+			| type_attr K_ANSI			{ /*  */ }
+			| type_attr K_UNICODE			{ $$ = (TypeAttr)$1 | TypeAttr.UnicodeClass; }
+			| type_attr K_AUTOCHAR			{ $$ = (TypeAttr)$1 | TypeAttr.AutoClass; }
+			| type_attr K_IMPORT			{ $$ = (TypeAttr)$1 | TypeAttr.Import; }
+			| type_attr K_SERIALIZABLE		{ $$ = (TypeAttr)$1 | TypeAttr.Serializable; }
+			| type_attr K_NESTED K_PUBLIC		{ $$ = (TypeAttr)$1 | TypeAttr.NestedPublic; }
+			| type_attr K_NESTED K_PRIVATE		{ $$ = (TypeAttr)$1 | TypeAttr.NestedPrivate; }
+			| type_attr K_NESTED K_FAMILY		{ $$ = (TypeAttr)$1 | TypeAttr.NestedFamily; }
+			| type_attr K_NESTED K_ASSEMBLY		{ $$ = (TypeAttr)$1 | TypeAttr.NestedAssembly; }
+			| type_attr K_NESTED K_FAMANDASSEM	{ $$ = (TypeAttr)$1 | TypeAttr.NestedFamAndAssem; }
+			| type_attr K_NESTED K_FAMORASSEM	{ $$ = (TypeAttr)$1 | TypeAttr.NestedFamOrAssem; }
+			| type_attr K_BEFOREFIELDINIT		{ $$ = (TypeAttr)$1 | TypeAttr.BeforeFieldInit; }
+			| type_attr K_SPECIALNAME		{ $$ = (TypeAttr)$1 | TypeAttr.SpecialName; }
+			| type_attr K_RTSPECIALNAME		{ $$ = (TypeAttr)$1 | TypeAttr.RTSpecialName; }
+			;
+
 classAttr               : /* EMPTY */ 
-			| classAttr K_PUBLIC			{currentTypeAttrs |= TypeAttributes.Public;}
-			| classAttr K_PRIVATE			{currentTypeAttrs &= ~TypeAttributes.Public;}
+			| classAttr K_PUBLIC			{ /* currentTypeAttrs |= TypeAttributes.Public; */}
+			| classAttr K_PRIVATE			{ /* currentTypeAttrs &= ~TypeAttributes.Public; */}
 			| classAttr K_VALUE			{ /* FIXME */ }
 			| classAttr K_ENUM			{ /* FIXME */ }
-			| classAttr K_INTERFACE			{currentTypeAttrs |= TypeAttributes.Interface;}
-			| classAttr K_SEALED			{currentTypeAttrs |= TypeAttributes.Sealed;}
-			| classAttr K_ABSTRACT			{currentTypeAttrs |= TypeAttributes.Abstract;}
-			| classAttr K_AUTO			{currentTypeAttrs |= TypeAttributes.AutoLayout;}
-			| classAttr K_SEQUENTIAL		{currentTypeAttrs |= TypeAttributes.SequentialLayout;}
-			| classAttr K_EXPLICIT			{currentTypeAttrs |= TypeAttributes.ExplicitLayout;}
-			| classAttr K_ANSI			{currentTypeAttrs |= TypeAttributes.AnsiClass;}
-			| classAttr K_UNICODE			{currentTypeAttrs |= TypeAttributes.UnicodeClass;}
-			| classAttr K_AUTOCHAR			{currentTypeAttrs |= TypeAttributes.AutoClass;}
-			| classAttr K_IMPORT			{currentTypeAttrs |= TypeAttributes.Import;}
-			| classAttr K_SERIALIZABLE		{currentTypeAttrs |= TypeAttributes.Serializable;}
-			| classAttr K_NESTED K_PUBLIC		{currentTypeAttrs |= TypeAttributes.NestedPublic;}
-			| classAttr K_NESTED K_PRIVATE		{currentTypeAttrs |= TypeAttributes.NestedPrivate;}
-			| classAttr K_NESTED K_FAMILY		{currentTypeAttrs |= TypeAttributes.NestedFamily;}
-			| classAttr K_NESTED K_ASSEMBLY		{currentTypeAttrs |= TypeAttributes.NestedAssembly;}
-			| classAttr K_NESTED K_FAMANDASSEM	{currentTypeAttrs |= TypeAttributes.NestedFamANDAssem;}
-			| classAttr K_NESTED K_FAMORASSEM	{currentTypeAttrs |= TypeAttributes.NestedFamORAssem;}
-			| classAttr K_BEFOREFIELDINIT		{currentTypeAttrs |= TypeAttributes.BeforeFieldInit;}
-			| classAttr K_SPECIALNAME		{currentTypeAttrs |= TypeAttributes.SpecialName;}
-			| classAttr K_RTSPECIALNAME		{currentTypeAttrs |= TypeAttributes.RTSpecialName;}
+			| classAttr K_INTERFACE			{ /* currentTypeAttrs |= TypeAttributes.Interface; */ }
+			| classAttr K_SEALED			{ /* currentTypeAttrs |= TypeAttributes.Sealed; */ }
+			| classAttr K_ABSTRACT			{ /* currentTypeAttrs |= TypeAttributes.Abstract; */ }
+			| classAttr K_AUTO			{ /* currentTypeAttrs |= TypeAttributes.AutoLayout; */ }
+			| classAttr K_SEQUENTIAL		{ /* currentTypeAttrs |= TypeAttributes.SequentialLayout; */ }
+			| classAttr K_EXPLICIT			{ /* currentTypeAttrs |= TypeAttributes.ExplicitLayout; */ }
+			| classAttr K_ANSI			{ /* currentTypeAttrs |= TypeAttributes.AnsiClass; */ }
+			| classAttr K_UNICODE			{ /* currentTypeAttrs |= TypeAttributes.UnicodeClass; */ }
+			| classAttr K_AUTOCHAR			{ /* currentTypeAttrs |= TypeAttributes.AutoClass; */ }
+			| classAttr K_IMPORT			{ /* currentTypeAttrs |= TypeAttributes.Import; */ }
+			| classAttr K_SERIALIZABLE		{ /* currentTypeAttrs |= TypeAttributes.Serializable; */ }
+			| classAttr K_NESTED K_PUBLIC		{ /* currentTypeAttrs |= TypeAttributes.NestedPublic; */ }
+			| classAttr K_NESTED K_PRIVATE		{ /* currentTypeAttrs |= TypeAttributes.NestedPrivate; */ }
+			| classAttr K_NESTED K_FAMILY		{ /* currentTypeAttrs |= TypeAttributes.NestedFamily; */ }
+			| classAttr K_NESTED K_ASSEMBLY		{ /* currentTypeAttrs |= TypeAttributes.NestedAssembly; */ }
+			| classAttr K_NESTED K_FAMANDASSEM	{ /* currentTypeAttrs |= TypeAttributes.NestedFamANDAssem; */ }
+			| classAttr K_NESTED K_FAMORASSEM	{ /* currentTypeAttrs |= TypeAttributes.NestedFamORAssem; */ }
+			| classAttr K_BEFOREFIELDINIT		{ /* currentTypeAttrs |= TypeAttributes.BeforeFieldInit; */ }
+			| classAttr K_SPECIALNAME		{ /* currentTypeAttrs |= TypeAttributes.SpecialName; */ }
+			| classAttr K_RTSPECIALNAME		{ /* currentTypeAttrs |= TypeAttributes.RTSpecialName; */ }
 			;
 
 extendsClause           : /* EMPTY */                                           
@@ -496,8 +525,10 @@ classDecls              : /* EMPTY */
 
 classAll		: classHead OPEN_BRACE classDecls CLOSE_BRACE
 			{
+				/*
 				codegen.AddClass (currentClass);
 				currentClass = null;
+				*/
 			}
 			;
 
@@ -518,9 +549,52 @@ classDecl               : methodAll
 			| languageDecl
 			;
 
-fieldDecl               : D_FIELD repeatOpt fieldAttr type id atOpt initOpt 
+fieldDecl               : D_FIELD repeatOpt fieldAttr type_ref id atOpt initOpt 
+			  {
+				codegen.CurrentClass.AddField ((FieldAttr) $3, 
+					(string) $5, (PEAPI.Type) $4);
+			  }
 			;
 
+type_ref		: primative_type_ref
+			| internal_type_ref
+			| external_type_ref
+			;
+
+primative_type_ref	: K_CHAR 		{$$ = PrimitiveType.Char; }
+			| K_VOID 		{$$ = PrimitiveType.Void; }
+			| K_BOOL 		{$$ = PrimitiveType.Boolean; }
+			| K_INT8 		{$$ = PrimitiveType.Int8; }
+			| K_INT16 		{$$ = PrimitiveType.Int16; }
+			| K_INT32 		{$$ = PrimitiveType.Int32; }
+			| K_INT64 		{$$ = PrimitiveType.Int64; }
+			| K_FLOAT32 		{$$ = PrimitiveType.Float32; }
+			| K_FLOAT64 		{$$ = PrimitiveType.Float64; }
+			| K_UNSIGNED K_INT8 	{$$ = PrimitiveType.UInt8; }
+			| K_UNSIGNED K_INT16	{$$ = PrimitiveType.UInt16; }
+			| K_UNSIGNED K_INT32	{$$ = PrimitiveType.UInt32; }
+			| K_UNSIGNED K_INT64	{$$ = PrimitiveType.UInt64; }
+			| K_STRING 		{$$ = PrimitiveType.String; }
+			;
+
+internal_type_ref	: name1
+			  {
+				$$ = codegen.ClassTable.GetReference ((string) $1, null); 
+			  }
+			;
+
+external_type_ref	: assembly_name namespace_name DOT id
+			  { 
+				AssemblyRef asmb_ref;
+				asmb_ref = codegen.PEFile.AddExternAssembly ((string) $1);
+				$$ = asmb_ref.AddClass ($2 as string, $4 as string);
+			  }
+			;
+
+namespace_name		: /* EMPTY */
+			| id
+			| namespace_name DOT id	{$$ = String.Format ("{0}.{1}", $1, $3); }
+			;
 
 atOpt                   : /* EMPTY */  
 			| K_AT id 
@@ -599,17 +673,22 @@ propDecl                : D_SET callConv type typeSpec DOUBLE_COLON methodName O
 
 methodHeadPart1         : D_METHOD
 			{
+				/*
 				method = new Method ();
-				currentCallConv = 0; /*?*/
+				currentCallConv = 0;
+				*/
 			}
 			;
 
 methodHead              : methodHeadPart1 methAttr callConv paramAttr type methodName OPEN_PARENS arg_list CLOSE_PARENS implAttr OPEN_BRACE 
 			{
+				
+				/*
 				method.SetMethodName ($6 as MethodName);
 				method.SetParamList ($8 as ArrayList);
 				method.CallConv = currentCallConv;
 				method.RetType = $5 as string;
+				*/
 			}
 			| methodHeadPart1 methAttr callConv paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS methodName OPEN_PARENS sigArgs0 CLOSE_PARENS implAttr OPEN_BRACE
 			;
@@ -617,30 +696,32 @@ methodHead              : methodHeadPart1 methAttr callConv paramAttr type metho
 
 methodAll		: methodHead methodDecls CLOSE_BRACE
 			{
+				/*
 				// Console.WriteLine (method);
 				currentClass.AddMethod (method);
+				*/
 			}
 			;
 
 
 methAttr                : /* EMPTY */ 
-			| methAttr K_STATIC		{method.Attrs |=  MethodAttributes.Static;}
-			| methAttr K_PUBLIC 		{method.Attrs |=  MethodAttributes.Public;}
-			| methAttr K_PRIVATE		{method.Attrs &= ~MethodAttributes.Public;}
-			| methAttr K_FAMILY		{method.Attrs |=  MethodAttributes.Family;}
-			| methAttr K_FINAL		{method.Attrs |=  MethodAttributes.Final;}
-			| methAttr K_SPECIALNAME	{method.Attrs |=  MethodAttributes.SpecialName;}
-			| methAttr K_VIRTUAL		{method.Attrs |=  MethodAttributes.Virtual;}
-			| methAttr K_ABSTRACT		{method.Attrs |=  MethodAttributes.Abstract;}
-			| methAttr K_ASSEMBLY		{method.Attrs |=  MethodAttributes.Assembly;}
-			| methAttr K_FAMANDASSEM	{method.Attrs |=  MethodAttributes.FamANDAssem;}
-			| methAttr K_FAMORASSEM		{method.Attrs |=  MethodAttributes.FamORAssem;}
+			| methAttr K_STATIC		{/* method.Attrs |=  MethodAttributes.Static; */}
+			| methAttr K_PUBLIC 		{/* method.Attrs |=  MethodAttributes.Public; */}
+			| methAttr K_PRIVATE		{/* method.Attrs &= ~MethodAttributes.Public; */}
+			| methAttr K_FAMILY		{/* method.Attrs |=  MethodAttributes.Family; */}
+			| methAttr K_FINAL		{/* method.Attrs |=  MethodAttributes.Final; */}
+			| methAttr K_SPECIALNAME	{/* method.Attrs |=  MethodAttributes.SpecialName; */}
+			| methAttr K_VIRTUAL		{/* method.Attrs |=  MethodAttributes.Virtual; */}
+			| methAttr K_ABSTRACT		{/* method.Attrs |=  MethodAttributes.Abstract; */}
+			| methAttr K_ASSEMBLY		{/* method.Attrs |=  MethodAttributes.Assembly; */}
+			| methAttr K_FAMANDASSEM	{/* method.Attrs |=  MethodAttributes.FamANDAssem; */}
+			| methAttr K_FAMORASSEM		{/* method.Attrs |=  MethodAttributes.FamORAssem; */}
 			| methAttr K_COMPILERCONTROLLED	{/* FIXME */}
-			| methAttr K_HIDEBYSIG		{method.Attrs |=  MethodAttributes.HideBySig;}
-			| methAttr K_NEWSLOT		{method.Attrs |=  MethodAttributes.NewSlot;}
+			| methAttr K_HIDEBYSIG		{/* method.Attrs |=  MethodAttributes.HideBySig; */}
+			| methAttr K_NEWSLOT		{/* method.Attrs |=  MethodAttributes.NewSlot; */}
 			| methAttr K_RTSPECIALNAME /**/ {/* FIXME */}
-			| methAttr K_UNMANAGEDEXP	{method.Attrs |=  MethodAttributes.UnmanagedExport;}
-			| methAttr K_REQSECOBJ		{method.Attrs |=  MethodAttributes.RequireSecObject;}
+			| methAttr K_UNMANAGEDEXP	{/*method.Attrs |=  MethodAttributes.UnmanagedExport; */}
+			| methAttr K_REQSECOBJ		{/* method.Attrs |=  MethodAttributes.RequireSecObject; */}
 			| methAttr K_PINVOKEIMPL OPEN_PARENS compQstring K_AS compQstring pinvAttr CLOSE_PARENS	{/* FIXME */}
 			| methAttr K_PINVOKEIMPL OPEN_PARENS compQstring  pinvAttr CLOSE_PARENS			{/* FIXME */}
 			| methAttr K_PINVOKEIMPL OPEN_PARENS pinvAttr CLOSE_PARENS				{/* FIXME */}
@@ -659,9 +740,9 @@ pinvAttr                : /* EMPTY */
 			| pinvAttr K_FASTCALL 
 			;
 
-methodName              : D_CTOR	{$$ = new MethodName ("ctor", true);}
-			| D_CCTOR	{$$ = new MethodName ("cctor", true);}
-			| name1		{$$ = new MethodName ($1 as string);}
+methodName              : D_CTOR	{/*$$ = new MethodName ("ctor", true); */}
+			| D_CCTOR	{/*$$ = new MethodName ("cctor", true); */}
+			| name1		{/*$$ = new MethodName ($1 as string); */}
 			;
 
 paramAttr               : /* EMPTY */ 
@@ -671,26 +752,27 @@ paramAttr               : /* EMPTY */
 			| paramAttr OPEN_BRACKET int32 CLOSE_BRACKET  
 			;
         
-fieldAttr               : /* EMPTY */ 
-			| fieldAttr K_STATIC 
-			| fieldAttr K_PUBLIC 
-			| fieldAttr K_PRIVATE 
-			| fieldAttr K_FAMILY 
-			| fieldAttr K_INITONLY 
-			| fieldAttr K_RTSPECIALNAME  /**/
-			| fieldAttr K_SPECIALNAME 
+fieldAttr               : /* EMPTY */ 			{$$ = FieldAttr.Default; }
+			| fieldAttr K_STATIC 		{$$ = FieldAttr.Static; }
+			| fieldAttr K_PUBLIC 		{$$ = FieldAttr.Public; }
+			| fieldAttr K_PRIVATE 		{$$ = FieldAttr.Private; }
+			| fieldAttr K_FAMILY 		{$$ = FieldAttr.Family; }
+			| fieldAttr K_INITONLY 		{$$ = FieldAttr.Initonly; }
+			| fieldAttr K_RTSPECIALNAME  	{$$ = FieldAttr.RTSpecialName; }
+			| fieldAttr K_SPECIALNAME 	{$$ = FieldAttr.SpecialName; }
 				/* commented out because PInvoke for fields is not supported by EE
 			| fieldAttr K_PINVOKEIMPL OPEN_PARENS compQstring K_AS compQstring pinvAttr CLOSE_PARENS 
 			| fieldAttr K_PINVOKEIMPL OPEN_PARENS compQstring  pinvAttr CLOSE_PARENS 
 			| fieldAttr K_PINVOKEIMPL OPEN_PARENS pinvAttr CLOSE_PARENS 
-				*/
+				
 			| fieldAttr K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS 
-			| fieldAttr K_ASSEMBLY 
-			| fieldAttr K_FAMANDASSEM 
-			| fieldAttr K_FAMORASSEM 
-			| fieldAttr K_COMPILERCONTROLLED 
-			| fieldAttr K_LITERAL 
-			| fieldAttr K_NOTSERIALIZED 
+				*/
+			| fieldAttr K_ASSEMBLY 		{$$ = FieldAttr.Assembly; }
+			| fieldAttr K_FAMANDASSEM 	{$$ = FieldAttr.FamAndAssem; }
+			| fieldAttr K_FAMORASSEM 	{$$ = FieldAttr.FamOrAssem; }
+		/*	| fieldAttr K_COMPILERCONTROLLED {$$ = FieldAttr. */
+			| fieldAttr K_LITERAL 		{$$ = FieldAttr.Literal; }
+			| fieldAttr K_NOTSERIALIZED 	{$$ = FieldAttr.Notserialized; }
 			;
 
 implAttr                : /* empty */ 
@@ -719,6 +801,7 @@ methodDecl              : D_EMITBYTE int32
 			| localsHead OPEN_PARENS sigArgs0 CLOSE_PARENS 
 			| localsHead K_INIT OPEN_PARENS named_arg_list CLOSE_PARENS  
 				{
+					/*
 					ArrayList arg_list = $4 as ArrayList;
 					
 					if (arg_list != null) {
@@ -726,12 +809,13 @@ methodDecl              : D_EMITBYTE int32
 							method.AddLocal (local);
 						}
 					}
+					*/
 				}
-			| D_ENTRYPOINT          {method.IsEntryPoint = true;}
+			| D_ENTRYPOINT          {/* method.IsEntryPoint = true; */}
 			| D_ZEROINIT 
 			| dataDecl
 			| instr	{
-					method.AddInstruction (currentInstr);
+				/*	method.AddInstruction (currentInstr); */
 				}
 			| id COLON 
 			| secDecl
@@ -879,18 +963,19 @@ instr_r_head            : INSTR_R OPEN_PARENS
 methodSpec              : K_METHOD 
 			;
 
-instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1);}
-			| INSTR_VAR int32	{currentInstr = new InstrVar ((OpCode) $1, $2);}
-			| INSTR_VAR id		{currentInstr = new InstrVar ((OpCode) $1, $2);}
-			| INSTR_I int32		{currentInstr = new InstrI ((OpCode) $1, (Int32) $2);}
-			| INSTR_I8 int64	{currentInstr = new InstrI8 ((OpCode) $1, (Int64) $2);}
-			| INSTR_R float64	{currentInstr = new InstrR ((OpCode) $1, (Double) $2);}
-			| INSTR_R int64		{currentInstr = new InstrR ((OpCode) $1, (Int64) $2);}
+instr                   : INSTR_NONE		{/* currentInstr = new InstrNone ((OpCode) $1);*/}
+			| INSTR_VAR int32	{/* currentInstr = new InstrVar ((OpCode) $1, $2);*/}
+			| INSTR_VAR id		{/* currentInstr = new InstrVar ((OpCode) $1, $2); */}
+			| INSTR_I int32		{/* currentInstr = new InstrI ((OpCode) $1, (Int32) $2);*/}
+			| INSTR_I8 int64	{/* currentInstr = new InstrI8 ((OpCode) $1, (Int64) $2);*/}
+			| INSTR_R float64	{/* currentInstr = new InstrR ((OpCode) $1, (Double) $2);*/}
+			| INSTR_R int64		{/* currentInstr = new InstrR ((OpCode) $1, (Int64) $2);*/}
 			| instr_r_head bytes CLOSE_PARENS 
 			| INSTR_BRTARGET int32  
 			| INSTR_BRTARGET id 
 			| INSTR_METHOD binding_flags type full_type DOUBLE_COLON call_name OPEN_PARENS arg_list CLOSE_PARENS 
 			  {
+				/*
 				if (OpCodes.Call.Equals ((OpCode)$1) || OpCodes.Callvirt.Equals ((OpCode)$1)) {
 					currentInstr = new InstrCall ((OpCode) $1, (string)$2, (string)$3, 
 						(string)$4, (string)$6, $8 as ArrayList);
@@ -898,7 +983,7 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 					currentInstr = new InstrNewobj ((OpCode) $1, (string)$2, (string)$3, 
 						(string)$4, (string)$6, $8 as ArrayList);
 				}
-								
+				*/			
 			  }
 
 					
@@ -908,14 +993,14 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 						}
 			| INSTR_NEWOBJ callConv type assembly_name name1 DOUBLE_COLON call_name OPEN_PARENS signature_args CLOSE_PARENS
 						{ 
-							Console.WriteLine ("new newobj.");	
+							
 						}
 			| INSTR_FIELD type typeSpec DOUBLE_COLON id 
 			| INSTR_FIELD type id 
 			| INSTR_TYPE typeSpec 
 			| INSTR_STRING compQstring 
 				{
-					currentInstr = new InstrString ((OpCode) $1, $2 as string);
+				/*	currentInstr = new InstrString ((OpCode) $1, $2 as string); */
 				}
 			| INSTR_STRING bytearrayhead bytes CLOSE_PARENS 
 			| INSTR_SIG callConv type OPEN_PARENS sigArgs0 CLOSE_PARENS 
@@ -1043,14 +1128,14 @@ typeSpec                : className
 			| type 
 			;
 
-callConv                : K_INSTANCE callConv	{currentCallConv |= CallingConventions.HasThis;}
-			| K_EXPLICIT callConv	{currentCallConv |= CallingConventions.ExplicitThis;}
+callConv                : K_INSTANCE callConv	{ /* currentCallConv |= CallingConventions.HasThis; */}
+			| K_EXPLICIT callConv	{ /* currentCallConv |= CallingConventions.ExplicitThis; */}
 			| callKind 
 			;
 
 callKind                : /* EMPTY */ 
-			| K_DEFAULT		{currentCallConv |= CallingConventions.Standard;}
-			| K_VARARG		{currentCallConv |= CallingConventions.VarArgs;}
+			| K_DEFAULT		{ /* currentCallConv |= CallingConventions.Standard; */}
+			| K_VARARG		{ /* currentCallConv |= CallingConventions.VarArgs; */}
 			| K_UNMANAGED K_CDECL 
 			| K_UNMANAGED K_STALL 
 			| K_UNMANAGED K_THISCALL 
@@ -1295,8 +1380,10 @@ hashHead                : D_HASH ASSIGN OPEN_PARENS
 
 assemblyHead            : D_ASSEMBLY asmAttr name1
 			{
+				/*
 				// TODO: set assembly attrs
 				codegen.SetName ($3 as string);
+				*/
 			}
 			;
 
@@ -1388,6 +1475,7 @@ manifestResDecl         : D_FILE name1 K_AT int32
 			| D_ASSEMBLY K_EXTERN name1 
 			| customAttrDecl
 			;
+
 
 
 %%

@@ -1,3 +1,7 @@
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Reconfigure to work with new PEAPI emission system
+
 2003-02-10 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Use arg_list for method signatures, set method parameters
