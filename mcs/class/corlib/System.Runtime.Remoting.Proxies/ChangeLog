@@ -1,3 +1,14 @@
+2004-04-23	Patrik Torstensson
+
+	* RealProxy.cs: Moved async functionlity here, also take
+	care of custom proxies (non RemotingProxy) case for async and
+	construction calls.
+	
+	* RemotingProxy.cs: allow RealProxy to call construction method and
+	remove end async control (moved to RealProxy)
+	
+	Fixes remoting2/3 test case (mono/mono/tests) and closes bug #57672.
+
 2004-04-13  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* RealProxy.cs: IRemotingTypeInfo.TypeName can return null, beware of that.

@@ -38,14 +38,13 @@ namespace System.Runtime.Remoting.Proxies
 
 		protected RealProxy ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		protected RealProxy (Type classToProxy) : this(classToProxy, (IntPtr) 0, null)
+		protected RealProxy (Type classToProxy) : this(classToProxy, IntPtr.Zero, null)
 		{
 		}
 
-		internal RealProxy (Type classToProxy, ClientIdentity identity) : this(classToProxy, (IntPtr) 0, null)
+		internal RealProxy (Type classToProxy, ClientIdentity identity) : this(classToProxy, IntPtr.Zero, null)
 		{
 			_objectIdentity = identity;
 		}
@@ -57,7 +56,8 @@ namespace System.Runtime.Remoting.Proxies
 
 			this.class_to_proxy = classToProxy;
 
-			// TODO: Fix stub
+			if (stub != IntPtr.Zero)
+				throw new NotSupportedException ("stub is not used in Mono");
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -125,12 +125,44 @@ namespace System.Runtime.Remoting.Proxies
 		{
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
 			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext();
-			
-			if (mMsg.CallType == CallType.BeginInvoke) 
-				mMsg.AsyncResult.CallMessage = mMsg;	// TODO: do this in the runtime
+			CallType call_type = mMsg.CallType;
+			bool is_remproxy = (rp as RemotingProxy) != null;
 
 			IMethodReturnMessage res_msg = null;
-			res_msg = (IMethodReturnMessage)rp.Invoke (msg);
+			
+			if (call_type == CallType.BeginInvoke) 
+				// todo: set CallMessage in runtime instead
+				mMsg.AsyncResult.CallMessage = mMsg;
+
+			if (call_type == CallType.EndInvoke)
+				res_msg = (IMethodReturnMessage)mMsg.AsyncResult.EndInvoke ();
+
+			// Check for constructor msg
+			if (mMsg.MethodBase.IsConstructor) 
+			{
+				if (is_remproxy) 
+					res_msg = (IMethodReturnMessage) (rp as RemotingProxy).ActivateRemoteObject ((IMethodMessage) msg);
+				else 
+					msg = new ConstructionCall (rp.GetProxiedType ());
+			}
+				
+			if (null == res_msg) 
+			{
+				res_msg = (IMethodReturnMessage)rp.Invoke (msg);
+
+				// Note, from begining this code used AsyncResult.IsCompleted for
+				// checking if it was a remoting or custom proxy, but in some
+				// cases the remoting proxy finish before the call returns
+				// causing this method to be called, therefore causing all kind of bugs.
+				if ((!is_remproxy) && call_type == CallType.BeginInvoke)
+				{
+					IMessage asyncMsg = null;
+
+					// allow calltype EndInvoke to finish
+					asyncMsg = mMsg.AsyncResult.SyncProcessMessage (res_msg as IMessage);
+					res_msg = new ReturnMessage (asyncMsg, null, 0, null, res_msg as IMethodCallMessage);
+				}
+			}
 			
 			if (res_msg.LogicalCallContext != null && res_msg.LogicalCallContext.HasInfo)
 				CallContext.UpdateCurrentCallContext (res_msg.LogicalCallContext);

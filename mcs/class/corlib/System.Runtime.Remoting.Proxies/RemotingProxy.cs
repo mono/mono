@@ -48,12 +48,6 @@ namespace System.Runtime.Remoting.Proxies
 		{
 			MonoMethodMessage mMsg = (MonoMethodMessage) request;
 
-			if (mMsg.CallType == CallType.EndInvoke)
-				return mMsg.AsyncResult.EndInvoke ();
-				
-			if (mMsg.MethodBase.IsConstructor)
-				return ActivateRemoteObject (mMsg);
-
 			if (mMsg.MethodBase == _cache_GetHashCodeMethod)
 				return new MethodResponse(ObjectIdentity.GetHashCode(), null, null, request as IMethodCallMessage);
 
@@ -78,7 +72,7 @@ namespace System.Runtime.Remoting.Proxies
 				response = sink.SyncProcessMessage (request);
 			else
 			{
-				AsyncResult ares = ((MonoMethodMessage)request).AsyncResult;
+				AsyncResult ares = mMsg.AsyncResult;
 				IMessageCtrl mctrl = sink.AsyncProcessMessage (request, ares);
 				if (ares != null) ares.SetMessageCtrl (mctrl);
 				response = new ReturnMessage (null, new object[0], 0, null, mMsg);
@@ -119,7 +113,7 @@ namespace System.Runtime.Remoting.Proxies
 			_ctorCall = null;	// Object already constructed
 		}
 
-		IMessage ActivateRemoteObject (IMethodMessage request)
+		internal IMessage ActivateRemoteObject (IMethodMessage request)
 		{
 			if (_ctorCall == null)	// It must be a WKO
 				return new ConstructionResponse (this, null, (IMethodCallMessage) request);	// Ignore constructor call for WKOs
