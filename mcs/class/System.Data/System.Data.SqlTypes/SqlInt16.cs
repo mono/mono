@@ -392,7 +392,7 @@ namespace System.Data.SqlTypes
 				if (x.IsNull)
 					return Null;
 				else 
-					return new SqlInt16 ((short)x.Value);
+					return new SqlInt16 ((short) Math.Round (x.Value));
 			}			
 		}
 

@@ -404,7 +404,7 @@ namespace System.Data.SqlTypes
 				if (x.IsNull) 
 					return Null;
 				else 
-					return new SqlInt32 ((int)x.Value);
+					return new SqlInt32 ((int) Math.Round (x.Value));
 			}
 		}
 

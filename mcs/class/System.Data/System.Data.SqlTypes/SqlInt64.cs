@@ -375,7 +375,7 @@ namespace System.Data.SqlTypes
 				if (x.IsNull) 
 					return SqlInt64.Null;
 				else
-					return new SqlInt64 ((long)x.Value);
+					return new SqlInt64 ((long) Math.Round (x.Value));
 			}
 		}
 

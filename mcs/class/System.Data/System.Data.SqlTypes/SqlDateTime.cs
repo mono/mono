@@ -34,49 +34,71 @@ namespace System.Data.SqlTypes
 		{
 			this.value = value;
 			notNull = true;
+			CheckRange (this);
 		}
 
 		public SqlDateTime (int dayTicks, int timeTicks) 
 		{
-			DateTime temp = new DateTime (1900, 1, 1);
-			this.value = new DateTime (temp.Ticks + (long)(dayTicks + timeTicks));
+			try {
+				DateTime temp = new DateTime (1900, 1, 1);
+				this.value = new DateTime (temp.Ticks + (long)(dayTicks + timeTicks));
+			} catch (ArgumentOutOfRangeException ex) {
+				throw new SqlTypeException (ex.Message);
+			}
 			notNull = true;
+			CheckRange (this);
 		}
 
 		public SqlDateTime (int year, int month, int day) 
 		{
-			this.value = new DateTime (year, month, day);
+			try {
+				this.value = new DateTime (year, month, day);
+			} catch (ArgumentOutOfRangeException ex) {
+				throw new SqlTypeException (ex.Message);
+			}
 			notNull = true;
+			CheckRange (this);
 		}
 
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second) 
 		{
-			this.value = new DateTime (year, month, day, hour, minute, second);
+			try {
+				this.value = new DateTime (year, month, day, hour, minute, second);
+			} catch (ArgumentOutOfRangeException ex) {
+				throw new SqlTypeException (ex.Message);
+			}
 			notNull = true;
+			CheckRange (this);
 		}
 
+		[MonoTODO ("Round milisecond")]
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, double millisecond) 
 		{
-			DateTime t = new DateTime(year, month, day);
+			try {
+				DateTime t = new DateTime(year, month, day, hour, minute, second);
 			
-			this.value = new DateTime ((long)(t.Day * 24 * SQLTicksPerHour + 
-						   hour * SQLTicksPerHour + 
-						   minute * SQLTicksPerMinute +
-						   second * SQLTicksPerSecond +
-						   millisecond * 1000));
+				long ticks = (long) (t.Ticks + millisecond * 10000);
+				this.value = new DateTime (ticks);
+			} catch (ArgumentOutOfRangeException ex) {
+				throw new SqlTypeException (ex.Message);
+			}
 			notNull = true;
+			CheckRange (this);
 		}
 
-		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond) 
+		[MonoTODO ("Round bilisecond")]
+		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond) // bilisecond??
 		{
-			DateTime t = new DateTime(year, month, day);
+			try {
+				DateTime t = new DateTime(year, month, day, hour, minute, second);
 			
-			this.value = new DateTime ((long)(t.Day * 24 * SQLTicksPerHour + 
-						   hour * SQLTicksPerHour + 
-						   minute * SQLTicksPerMinute +
-						   second * SQLTicksPerSecond +
-						   bilisecond));
+				long dateTick = (long) (t.Ticks + bilisecond * 10);
+				this.value = new DateTime (dateTick);
+			} catch (ArgumentOutOfRangeException ex) {
+				throw new SqlTypeException (ex.Message);
+			}
 			notNull = true;
+			CheckRange (this);
 		}
 
 		#endregion
@@ -122,6 +144,13 @@ namespace System.Data.SqlTypes
 		#endregion
 
 		#region Methods
+		private static void CheckRange (SqlDateTime target)
+		{
+			if (target.IsNull)
+				return;
+			if (target.value > MaxValue.value || target.value < MinValue.value)
+				throw new SqlTypeException (String.Format ("SqlDateTime overflow. Must be between {0} and {1}. Value was {2}", MinValue.Value, MaxValue.Value, target.value));
+		}
 
 		public int CompareTo (object value)
 		{
@@ -197,7 +226,7 @@ namespace System.Data.SqlTypes
 			if (this.IsNull)
 				return String.Empty;
 			else
-				return value.ToString ();
+				return value.ToString (CultureInfo.InvariantCulture);
 		}
 	
 		public static SqlDateTime operator + (SqlDateTime x, TimeSpan t)
@@ -258,6 +287,8 @@ namespace System.Data.SqlTypes
 
 		public static SqlDateTime operator - (SqlDateTime x, TimeSpan t)
 		{
+			if (x.IsNull)
+				return x;
 			return new SqlDateTime (x.Value - t);
 		}
 
