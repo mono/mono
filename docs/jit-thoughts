@@ -149,3 +149,18 @@ either to local variable, to the stack or to array elements. Value types with a
 size smaller than sizeof(int) are handled like any other basic type. For other
 value types we load the base address and emit block copies to store them. 
 
+Possible Optimisations:
+=======================
+
+Miguel said ORP does some optimisation on IL level, for example moving array
+bounds checking out of loops:
+
+for (i = 0; i < N; i++) { check_range (a, i); a [i] = X; }
+
+id transformed to:
+
+if (in_range (a, 0, N)) { for (i = 0; i < N; i++) a[i] = X; }  
+else for (i = 0; i < N; i++) { check_range (a, i); a [i] = X; }
+
+The else is only to keep original semantics (exception handling).
+

@@ -1,5 +1,11 @@
 2001-09-19  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg: added more floating point grammar 
+
+	* testjit.c (mono_compile_method): make local offsets negative
+
+	* x86.brg: added some floating point trees
+
 	* testjit.c (mono_compile_method): arguments on the runtime 
 	stack are at least 4 bytes
 
