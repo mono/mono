@@ -1,5 +1,11 @@
 2002-11-24  Martin Baulig  <martin@ximian.com>
 
+	* test-130.cs: This test did not compile with csc and
+	mcs now reports the error as well.  Removed the offending
+	line from the test.
+
+2002-11-24  Martin Baulig  <martin@ximian.com>
+
 	* verify-6.cs: New test for bug #32269.
 
 2002-11-24  Martin Baulig  <martin@ximian.com>

@@ -20,7 +20,6 @@ class X {
 	public const char c4 = (char) b;
 	public const char c5 = (char) c;
 
-	public const short s1 = (short) b;
 	public const short s2 = (short) c;
 
 	static int Main ()
