@@ -318,5 +318,60 @@ namespace MonoTests.System.Xml
 			nav.MoveToRoot ();
 			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "test.", false, true, false);
 		}
+
+		[Test]
+		public void MoveToNamespaces ()
+		{
+			string xml = "<a xmlns:x='urn:x'><b xmlns:y='urn:y'/><c/><d><e attr='a'/></d></a>";
+
+			nav = GetXmlDocumentNavigator (xml);
+			MoveToNamespaces (nav);
+			nav = GetXPathDocumentNavigator (document);
+			MoveToNamespaces (nav);
+		}
+
+		private void MoveToNamespaces (XPathNavigator nav)
+		{
+			XPathNodeIterator iter = nav.Select ("//e");
+			iter.MoveNext ();
+			nav.MoveTo (iter.Current);
+			AssertEquals ("e", nav.Name);
+			nav.MoveToFirstNamespace ();
+			AssertEquals ("x", nav.Name);
+			nav.MoveToNextNamespace ();
+			AssertEquals ("xml", nav.Name);
+		}
+
+		[Test]
+		public void IsDescendant ()
+		{
+			string xml = "<a><b/><c/><d><e attr='a'/></d></a>";
+
+			nav = GetXmlDocumentNavigator (xml);
+			IsDescendant (nav);
+			nav = GetXPathDocumentNavigator (document);
+			IsDescendant (nav);
+		}
+
+		private void IsDescendant (XPathNavigator nav)
+		{
+			XPathNavigator tmp = nav.Clone ();
+			XPathNodeIterator iter = nav.Select ("//e");
+			iter.MoveNext ();
+			nav.MoveTo (iter.Current);
+			nav.MoveToFirstAttribute ();
+			AssertEquals ("attr", nav.Name);
+			AssertEquals ("", tmp.Name);
+			Assert (tmp.IsDescendant (nav));
+			Assert (!nav.IsDescendant (tmp));
+			tmp.MoveToFirstChild ();
+			AssertEquals ("a", tmp.Name);
+			Assert (tmp.IsDescendant (nav));
+			Assert (!nav.IsDescendant (tmp));
+			tmp.MoveTo (iter.Current);
+			AssertEquals ("e", tmp.Name);
+			Assert (tmp.IsDescendant (nav));
+			Assert (!nav.IsDescendant (tmp));
+		}
 	}
 }

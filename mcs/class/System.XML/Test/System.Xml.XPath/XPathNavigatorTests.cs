@@ -250,6 +250,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			nav = new XPathDocument (xtr).CreateNavigator ();
 			Assert ("ctor() from XmlTextReader", !nav.MoveToId ("aaa"));
+			xtr.Close ();
 		}
 	}
 }
