@@ -37,27 +37,28 @@ namespace System.Windows.Forms {
 
 			get{ throw new NotImplementedException (); }
 		}
-		[MonoTODO]
-		public static Size Border3DSize {
 
-			get{ throw new NotImplementedException (); }
+		public static Size Border3DSize {
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXBORDER ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYBORDER ) );
+			}
 		}
 		[MonoTODO]
 		public static Size BorderSize {
 
 			get{ throw new NotImplementedException (); }
 		}
-		[MonoTODO]
+
 		public static Size CaptionButtonSize {
-
-			get{ throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public static int CaptionHeight {
-
 			get{ 
-				return Win32.GetSystemMetrics(SystemMetricsCodes.SM_CYCAPTION); 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXSIZE ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYSIZE ) );
 			}
+		}
+
+		public static int CaptionHeight {
+			get{ 	return Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYCAPTION ); }
 		}
 
 		[DllImport ("libc")]
@@ -85,25 +86,26 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public static Size CursorSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXCURSOR ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYCURSOR ) );
+			}
 		}
-		[MonoTODO]
+
 		public static bool DbcsEnabled {
-
-			get{ throw new NotImplementedException (); }
+			get{ 	return Win32.GetSystemMetrics( SystemMetricsCodes.SM_DBCSENABLED ) != 0; }
 		}
-		[MonoTODO]
+
 		public static bool DebugOS {
-
-			get{ throw new NotImplementedException (); }
+			get{ 	return Win32.GetSystemMetrics( SystemMetricsCodes.SM_DEBUG ) != 0; }
 		}
-		[MonoTODO]
-		public static Size DoubleClickSize {
 
-			get{ throw new NotImplementedException (); }
+		public static Size DoubleClickSize {
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXDOUBLECLK ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYDOUBLECLK ) );
+			}
 		}
 		[MonoTODO]
 		public static int DoubleClickTime {
@@ -115,135 +117,143 @@ namespace System.Windows.Forms {
 
 			get{ throw new NotImplementedException (); }
 		}
-		[MonoTODO]
+
 		public static Size DragSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXDRAG ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYDRAG ) );
+			}
 		}
-		[MonoTODO]
+
 		public static Size FixedFrameBorderSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXFIXEDFRAME ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYFIXEDFRAME ) );
+			}
 		}
-		[MonoTODO]
-		public static Size FrameBorderSize {
 
-			get{ throw new NotImplementedException (); }
+		public static Size FrameBorderSize {
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXFRAME ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYFRAME ) );
+			}
 		}
 		[MonoTODO]
 		public static bool HighContrast {
 
 			get{ throw new NotImplementedException (); }
 		}
-		[MonoTODO]
+
 		public static int HorizontalScrollBarArrowWidth {
-
-			get{ throw new NotImplementedException (); }
+			get{ 	return Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXHSCROLL ); }
 		}
-		[MonoTODO]
+
 		public static int HorizontalScrollBarHeight {
-
-			get{ throw new NotImplementedException (); }
+			get{ 	return Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYHSCROLL ); }
 		}
-		[MonoTODO]
+
 		public static int HorizontalScrollBarThumbWidth {
-
-			get{ throw new NotImplementedException (); }
+			get{ 	return Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXHTHUMB ); }
 		}
-		[MonoTODO]
+
 		public static Size IconSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXICON ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYICON ) );
+			}
 		}
-		[MonoTODO]
+
 		public static Size IconSpacingSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXICONSPACING ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYICONSPACING ) );
+			}
 		}
-		[MonoTODO]
+
 		public static int KanjiWindowHeight {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics ( SystemMetricsCodes.SM_CYKANJIWINDOW ); }
 		}
-		[MonoTODO]
-		public static Size MaxWindowTrackSize {
 
-			get{ throw new NotImplementedException (); }
+		public static Size MaxWindowTrackSize {
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXMAXTRACK ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYMAXTRACK ) );
+			}
 		}
 		[MonoTODO]
 		public static Size MenuButtonSize {
 
 			get{ throw new NotImplementedException (); }
 		}
-		[MonoTODO]
+
 		public static Size MenuCheckSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXMENUCHECK ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYMENUCHECK ) );
+			}
 		}
-		[MonoTODO]
 		public static Font MenuFont {
-
-			get{ throw new NotImplementedException (); }
+			get { return Font.FromHfont( Win32.GetStockObject( GSO_.SYSTEM_FONT ) ); }
 		}
-		[MonoTODO]
+
 		public static int MenuHeight {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics ( SystemMetricsCodes.SM_CYMENU ); }
 		}
-		[MonoTODO]
+
 		public static bool MidEastEnabled {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics ( SystemMetricsCodes.SM_MIDEASTENABLED ) != 0; }
 		}
-		[MonoTODO]
+
 		public static Size MinimizedWindowSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXMINIMIZED ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYMINIMIZED ) );
+			}
 		}
-		[MonoTODO]
+
 		public static Size MinimizedWindowSpacingSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXMINSPACING ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYMINSPACING ) );
+			}
 		}
-		[MonoTODO]
+
 		public static Size MinimumWindowSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXMIN ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYMIN ) );
+			}
 		}
-		[MonoTODO]
+
 		public static Size MinWindowTrackSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXMINTRACK ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYMINTRACK ) );
+			}
 		}
-		[MonoTODO]
+
 		public static int MonitorCount {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_CMONITORS ); }
 		}
-		[MonoTODO]
+
 		public static bool MonitorsSameDisplayFormat {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_SAMEDISPLAYFORMAT ) != 0; }
 		}
-		[MonoTODO]
+
 		public static int MouseButtons {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_CMOUSEBUTTONS ); }
 		}
-		[MonoTODO]
+
 		public static bool MouseButtonsSwapped {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_SWAPBUTTON ) != 0; }
 		}
-		[MonoTODO]
+
 		public static bool MousePresent {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_MOUSEPRESENT ) != 0; }
 		}
-		[MonoTODO]
-		public static bool MouseWheelPresent {
 
-			get{ throw new NotImplementedException (); }
+		public static bool MouseWheelPresent {
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_MOUSEWHEELPRESENT ) != 0; }
 		}
 		[MonoTODO]
 		public static int MouseWheelScrollLines {
@@ -255,40 +265,40 @@ namespace System.Windows.Forms {
 
 			get{ throw new NotImplementedException (); }
 		}
-		[MonoTODO]
+
 		public static bool Network {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_NETWORK ) != 0; }
 		}
-		[MonoTODO]
+
 		public static bool PenWindows {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_PENWINDOWS ) != 0; }
 		}
-		[MonoTODO]
+
 		public static Size PrimaryMonitorMaximizedWindowSize {
-
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXFULLSCREEN ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYFULLSCREEN ) );
+			}
 		}
-		[MonoTODO]
-		public static Size PrimaryMonitorSize {
 
-			get{ throw new NotImplementedException (); }
+		public static Size PrimaryMonitorSize {
+			get{ 
+				return new Size ( Win32.GetSystemMetrics( SystemMetricsCodes.SM_CXSCREEN ),
+						  Win32.GetSystemMetrics( SystemMetricsCodes.SM_CYSCREEN ) );
+			}
 		}
 		[MonoTODO]
 		public static bool RightAlignedMenus {
 
 			get{ throw new NotImplementedException (); }
 		}
-		[MonoTODO]
+
 		public static bool Secure {
-
-			get{ throw new NotImplementedException (); }
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_SECURE ) != 0; }
 		}
-		[MonoTODO]
-		public static bool ShowSounds {
 
-			get{ throw new NotImplementedException (); }
+		public static bool ShowSounds {
+			get{ return Win32.GetSystemMetrics( SystemMetricsCodes.SM_SHOWSOUNDS ) != 0; }
 		}
 		[MonoTODO]
 		public static Size SmallIconSize {
@@ -312,7 +322,6 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public static bool UserInteractive {
-
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]

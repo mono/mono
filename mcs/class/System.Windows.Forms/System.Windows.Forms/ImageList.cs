@@ -226,7 +226,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public int AddStrip( Image value ) {
-			throw new NotImplementedException ();
+			return -1;
 		}
 
 		[MonoTODO]

@@ -1,4 +1,9 @@
-2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+2003-06-12 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : don't do anything if Anchor is set to default value
+	* SystemInformation.cs : return some system metrics
+	* UserControl.cs : default size impl.
+
+2003-06-11 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* ContextMenu.cs : SourceControl, Show method
 	* Control.cs : ContextMenu, CanSelect, force parent to perform layout when Dock property changes
 	* GroupBox.cs

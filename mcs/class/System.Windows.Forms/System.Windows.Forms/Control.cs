@@ -2885,6 +2885,10 @@
     		}
 
 		private void DoAnchor(Control ctrl) {
+			// the default, no actions are needed
+			if ( ctrl.Anchor == ( AnchorStyles.Left | AnchorStyles.Top ) )
+				return;
+
 			int deltaWidth = Bounds.Width - oldBounds.Width;
 			int deltaHeight = Bounds.Height - oldBounds.Height;
 			int halfDeltaWidth = deltaWidth / 2;
