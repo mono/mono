@@ -272,12 +272,12 @@ namespace Mono.ILASM {
                         // Misc other instructions
                         //
 
-                        inst_table["ldstr"] = new ILToken (Token.INSTR_STRING, "ldstr");
-                        inst_table["ldc.r4"] = new ILToken (Token.INSTR_R, "ldc.r4");
-                        inst_table["ldc.r8"] = new ILToken (Token.INSTR_R, "ldc.r8");
-                        inst_table["switch"] = new ILToken (Token.INSTR_SWITCH, "switch");
-                        inst_table["calli"] = new ILToken (Token.INSTR_SIG, "calli");
-                        inst_table["ldtoken"] = new ILToken (Token.INSTR_TOK, "ldtoken");
+                        inst_table["ldstr"] = new ILToken (Token.INSTR_STRING, MiscInstr.ldstr);
+                        inst_table["ldc.r4"] = new ILToken (Token.INSTR_R, MiscInstr.ldc_r4);
+                        inst_table["ldc.r8"] = new ILToken (Token.INSTR_R, MiscInstr.ldc_r8);
+                        inst_table["switch"] = new ILToken (Token.INSTR_SWITCH, MiscInstr._switch);
+                        inst_table["calli"] = new ILToken (Token.INSTR_SIG, MiscInstr.calli);
+                        inst_table["ldtoken"] = new ILToken (Token.INSTR_TOK, MiscInstr.ldtoken);
                 }
 
         }

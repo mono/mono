@@ -1,3 +1,10 @@
+2003-05-04 Jackson Harper <jackson@latitudegeo.com>
+
+	* LdcInstr.cs: New file - lcd* instructions
+	* MiscInstr.cs: New file - Just an enum that gives me constant
+	values for instructions PEAPI does not define in an enum
+	* InstrTable.cs: Use new MiscInstr constants instead of string values.
+		
 2003-05-01 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeGen.cs: Define the contents of types after all types have
