@@ -4,12 +4,8 @@
 using System;
 
 class ErrorCS0078 {
-	static void Test1() {
-	}
-	static void Testl() {
-	}
 	public static void Main () {
-		Test1();
+		long a = 1l;
 	}
 }
 
