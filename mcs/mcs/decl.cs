@@ -224,9 +224,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void Emit ()
 		{
-			// Hack with Parent == null is for EnumMember 
-			if (Parent == null || (GetObsoleteAttribute (Parent) == null && Parent.GetObsoleteAttribute (Parent) == null))
-				VerifyObsoleteAttribute ();
+			VerifyObsoleteAttribute ();
 
 			if (!RootContext.VerifyClsCompliance)
 				return;
@@ -273,11 +271,8 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return null;
 
-			// TODO: remove this allocation
-			EmitContext ec = new EmitContext (ds.Parent, ds, ds.Location,
-				null, null, ds.ModFlags, false);
-
-			Attribute obsolete_attr = OptAttributes.Search (TypeManager.obsolete_attribute_type, ec);
+			Attribute obsolete_attr = OptAttributes.Search (
+				TypeManager.obsolete_attribute_type, ds.EmitContext);
 			if (obsolete_attr == null)
 				return null;
 
@@ -330,9 +325,8 @@ namespace Mono.CSharp {
 		bool GetClsCompliantAttributeValue (DeclSpace ds)
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (ds.Parent, ds, ds.Location,
-								  null, null, ds.ModFlags, false);
-				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
+				Attribute cls_attribute = OptAttributes.Search (
+					TypeManager.cls_compliant_attribute_type, ds.EmitContext);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					return cls_attribute.GetClsCompliantAttributeValue (ds);
@@ -349,7 +343,6 @@ namespace Mono.CSharp {
 				return (caching_flags & Flags.HasClsCompliantAttribute) != 0;
 			}
 		}
-
 
 		/// <summary>
 		/// The main virtual method for CLS-Compliant verifications.
@@ -422,7 +415,7 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public abstract class DeclSpace : MemberCore {
 		/// <summary>
-		///   this points to the actual definition that is being
+		///   This points to the actual definition that is being
 		///   created with System.Reflection.Emit
 		/// </summary>
 		public TypeBuilder TypeBuilder;
@@ -438,6 +431,13 @@ namespace Mono.CSharp {
 		public string Basename;
 		
 		protected Hashtable defined_names;
+
+		// The emit context for toplevel objects.
+		protected EmitContext ec;
+		
+		public EmitContext EmitContext {
+			get { return ec; }
+		}
 
 		static string[] attribute_targets = new string [] { "type" };
 
@@ -1050,8 +1050,6 @@ namespace Mono.CSharp {
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (Parent, this, Location,
-								  null, null, ModFlags, false);
 				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;

@@ -623,9 +623,7 @@ namespace Mono.CSharp {
 			if (TypeBuilder == null)
 				return false;
 
-			EmitContext ec = new EmitContext (this, this, Location, null,
-							  UnderlyingType, ModFlags, false);
-
+			ec = new EmitContext (this, this, Location, null, UnderlyingType, ModFlags, false);
 			
 			object default_value = 0;
 			
@@ -684,9 +682,6 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-			EmitContext ec = new EmitContext (
-				Parent, this, Location, null, null, ModFlags, false);
-
 			if (OptAttributes != null) {
 				OptAttributes.Emit (ec, this);
 			}

@@ -369,6 +369,8 @@ namespace Mono.CSharp {
 
 		public bool DefineIterator ()
 		{
+			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+
 			if (!CheckType (return_type)) {
 				Report.Error (
 					1624, Location,

@@ -428,13 +428,6 @@ namespace Mono.CSharp {
 		// Holds the parts of a partial class;
 		ArrayList parts;
 
-		// The emit context for toplevel objects.
-		EmitContext ec;
-
-		public EmitContext EmitContext {
-			get { return ec; }
-		}
-
 		//
 		// Pointers to the default constructor and the default static constructor
 		//

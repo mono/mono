@@ -1,3 +1,24 @@
+2004-12-07  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs
+	(MemberCore.Emit): Always call VerifyObsoleteAttribute().
+	(MemberCore.GetObsoleteAttribute): Don't create a new EmitContext.
+	(MemberCore.GetClsCompliantAttributeValue): Likewise.
+	(DeclSpace.ec): New protected field; store the EmitContext here.
+	(DeclSpace.EmitContext): New public property; moved here from
+	`TypeContainer'.
+	(DeclSpace.GetClsCompliantAttributeValue): Don't create a new
+	EmitContext.
+
+	* enum.cs (Enum.Define): Store the EmitContext in the `ec' field.
+	(Enum.Emit): Don't create a new EmitContext.
+
+	* delegate.cs (Delegate.DefineType): Always create the
+	EmitContext.
+
+	* iterators.cs (Iterators.DefineIterator): Create a new
+	EmitContext and store it in `ec'.
+
 2004-08-24  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs

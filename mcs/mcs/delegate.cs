@@ -79,6 +79,8 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
+			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
+
 			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel) |
 				TypeAttributes.Class | TypeAttributes.Sealed;
 
@@ -112,8 +114,7 @@ namespace Mono.CSharp {
 		{
 			MethodAttributes mattr;
 			int i;
-			EmitContext ec = new EmitContext (this, this, Location, null,
-							  null, ModFlags, false);
+			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
 
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
@@ -359,8 +360,6 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (
-					Parent, this, Location, null, null, ModFlags, false);
 				Parameters.LabelParameters (ec, InvokeBuilder, Location);
 				OptAttributes.Emit (ec, this);
 			}
