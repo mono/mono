@@ -17,5 +17,6 @@ namespace System.Web.UI
                 void LoadViewState(object state);
                 object SaveViewState();
                 void TrackViewState();
+        	    bool IsTrackingViewState { get; }
         }
 }

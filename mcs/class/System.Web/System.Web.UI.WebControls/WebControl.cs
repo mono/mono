@@ -33,26 +33,23 @@ namespace System.Web.UI.WebControls
 		private string              tagName;
 
 		// TODO: The constructors definitions
-		protected WebControl()
+		protected WebControl(): base()
 		{
 			//todo: what now? To be rendered as SPAN tag!
-			base();
 			Initialize();
 		}
 		
-		public WebControl(HtmlTextWriterTag tag)
+		public WebControl(HtmlTextWriterTag tag): base()
 		{
 			//FIXME: am i right?
-			base();
 			writerTag = tag;
 			//stringTag = null;
 			Initialize();
 		}
 
-		protected WebControl(string tag)
+		protected WebControl(string tag): base()
 		{
 			//FIXME: am i right?
-			base();
 			stringTag = tag;
 			//writerTag = null;
 			Initialize();
@@ -268,7 +265,7 @@ namespace System.Web.UI.WebControls
 			Enabled    = controlSrc.Enabled;
 			ToolTip    = controlSrc.ToolTip;
 			TabIndex   = controlSrc.TabIndex;
-			Attributes = controlSrc.Attributes;
+			attributes = controlSrc.Attributes;
 			throw new NotImplementedException();
 		}
 		

@@ -338,7 +338,7 @@ namespace System.Web.UI
                         //TODO: I think there is Naming Container stuff here. Redo.
                         int i;
                         for (i = pathOffset; i < _controls.Count; i++)
-                                if (_controls[i].ID == id) return _controls[i].ID;
+                                if (_controls[i].ID == id) return _controls[i];
                         return null;
                 }
                 protected virtual void LoadViewState(object savedState)
@@ -347,6 +347,7 @@ namespace System.Web.UI
                 }
                 protected string MapPathSecure(string virtualPath)
                 {
+                        throw new NotImplementedException();
                         //TODO: Need to read up on security+web.
                 }
                 protected virtual bool OnBubbleEvent(object source, EventArgs args) //DIT
@@ -395,7 +396,8 @@ namespace System.Web.UI
                 }
                 protected void RaiseBubbleEvent(object source, EventArgs args)
                 {
-                        return false;
+                        throw new NotImplementedException();
+                        //return false;
                 }
                 protected virtual void Render(HtmlTextWriter writer) //DIT
                 {
@@ -420,11 +422,14 @@ namespace System.Web.UI
                 public virtual void Dispose()
                 {
                         //TODO: nuke stuff.
+                        throw new NotImplementedException();
+                	/*
                         if (_events != null)
                         {
                                 EventHandler eh = (EventHandler)(_events[DisposedEvent]);
                                 if (eh != null) eh(this, e);
                         }
+                    */
                 }
                 public event EventHandler DataBinding //DIT
                 {
@@ -516,7 +521,10 @@ namespace System.Web.UI
                                 Render(writer);
                         }
                 }
-                public string ResolveUrl(string relativeUrl) {} //TODO
+                public string ResolveUrl(string relativeUrl)
+                {
+                	throw new NotImplementedException();
+                }
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
                 {
                         _renderMethodDelegate = renderMethod;
@@ -529,7 +537,7 @@ namespace System.Web.UI
                 protected void UnloadRecursive(Boolean dispose)
                 {
                         OnUnload(EventArgs.Empty);
-                        if (_controls != null) foreach (Control c in _controls) c.UnloadRecursive();
+                        if (_controls != null) foreach (Control c in _controls) c.UnloadRecursive(dispose);
                         if (dispose) Dispose();
                 }
                 protected void PreRenderRecursiveInternal()
@@ -544,11 +552,11 @@ namespace System.Web.UI
                 }
                 protected object SaveViewStateRecursive()
                 {
-                        //TODO
+                        throw new NotImplementedException();
                 }
                 protected void LoadViewStateRecursive(Object savedState)
                 {
-                        //TODO
+                        throw new NotImplementedException();
                 }
                 
                 void IParserAccessor.AddParsedSubObject(object obj)

@@ -1,7 +1,12 @@
+2001-12-18   Gaurav Vaish <gvaish@iitk.ac.in>
+
+        * DesignTimeParseData.cs  - Initial implementation
+        * StateBag.cs             - Initial implementation
+
 2001-12-17   Gaurav Vaish <gvaish@iitk.ac.in>
 
-	* PropertyConverter.cs    - Undocumented class. Completed.
-	* Utils.cs                - Undocumented, private class.
+        * PropertyConverter.cs    - Undocumented class. Completed.
+        * Utils.cs                - Undocumented, private class.
 				    Initial implementation
 
 2001-08-28  Bob Smith  <bob@thestuff.net>
