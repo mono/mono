@@ -20,6 +20,7 @@ namespace System.Data.SqlTypes
 	        Guid value;
 
 		private bool notNull;
+		private byte[] lastSixBytes;
 
 		public static readonly SqlGuid Null;
 
@@ -29,6 +30,7 @@ namespace System.Data.SqlTypes
 
 		public SqlGuid (byte[] value) 
 		{
+			lastSixBytes = new byte[6];
 			this.value = new Guid (value);
 			notNull = true;
 		}
@@ -36,18 +38,21 @@ namespace System.Data.SqlTypes
 		public SqlGuid (Guid g) 
 		{
 			this.value = g;
+			lastSixBytes = new byte[6];
 			notNull = true;
 		}
 
 		public SqlGuid (string s) 
 		{
 			this.value = new Guid (s);
+			lastSixBytes = new byte[6];
 			notNull = true;
 		}
 
 		public SqlGuid (int a, short b, short c, byte d, byte e, byte f, byte g, byte h, byte i, byte j, byte k) 
 		{
 			this.value = new Guid (a, b, c, d, e, f, g, h, i, j, k);
+			lastSixBytes = new byte[6];
 			notNull = true;
 		}
 
@@ -68,6 +73,21 @@ namespace System.Data.SqlTypes
 			}
 		}
 
+		private byte[] GetLastSixBytes()
+		{
+			lastSixBytes = new byte[6];
+			
+			byte[] guidArray = value.ToByteArray();
+			lastSixBytes[0] = guidArray[10];
+			lastSixBytes[1] = guidArray[11];
+			lastSixBytes[2] = guidArray[12];
+			lastSixBytes[3] = guidArray[13];
+			lastSixBytes[4] = guidArray[14];
+			lastSixBytes[5] = guidArray[15];
+		
+			return lastSixBytes;
+		}	
+
 		#endregion
 
 		#region Methods
@@ -81,8 +101,33 @@ namespace System.Data.SqlTypes
 			else if (((SqlGuid)value).IsNull)
 				return 1;
 			else
-				return this.value.CompareTo (((SqlGuid)value).Value);
+				{
+					//MSDN documentation says that CompareTo is different from 
+					//Guid's CompareTo. It uses the SQL Server behavior where					    //only the last 6 bytes of value are evaluated	
+					byte[] compareValue = ((SqlGuid)value).GetLastSixBytes();
+					byte[] currentValue = GetLastSixBytes();
+					for (int i = 0; i < 6; i++)
+					{
+						if (currentValue[i] != compareValue[i]) {
+			                              return Compare(currentValue[i], compareValue[i]);
+                        			}
+					}
+			                return 0;
+				}
+				
 		}
+
+
+		private static int Compare (uint x, uint y)
+                {
+                        if (x < y) {
+                                return -1;
+                        }
+                        else {
+                                return 1;
+                        }
+                }
+
 
 		public override bool Equals (object value)
 		{
