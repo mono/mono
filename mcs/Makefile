@@ -9,14 +9,7 @@ include build/rules.make
 
 .PHONY: all clean all-profile clean-profile install uninstall test run-test testcorlib
 all clean:
-ifeq ($(PROFILE),)
-	$(MAKE) PROFILE=default $@-profile
-ifneq ($(PLATFORM),win32)
-	$(MAKE) PROFILE=net_2_0 $@-profile
-endif
-else
-	$(MAKE) PROFILE=$(PROFILE) $@-profile
-endif
+	$(MAKE) $@-profile
 
 all-profile: platform-check profile-check all-recursive
 
@@ -31,6 +24,10 @@ run-test: run-test-recursive #run-test-local
 clean-profile: clean-recursive #clean-local
 
 # fun specialty targets
+
+all-profiles:
+	$(MAKE) PROFILE=default all || exit 1 ; \
+	$(MAKE) PROFILE=net_2_0 all || exit 1 ;
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test
