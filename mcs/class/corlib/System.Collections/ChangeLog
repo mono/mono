@@ -1,3 +1,8 @@
+2002-07-05  Sergey Chaban <serge@wildwestsoftware.com>
+
+	* SortedList.cs: Implemented thread-safe wrapper. Changed some
+	args to camelCase.
+
 2002-07-02  Nick Drochak  <ndrochak@gol.com>
 
 	* SortedList.cs: Constructors should use the capacity given regardless 
