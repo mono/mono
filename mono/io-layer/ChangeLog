@@ -1,3 +1,11 @@
+2002-03-22  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Fix a race condition where a thread can start and
+	exit before the handle has been properly initialised (no reason
+	why the handle couldn't be initialised beforehand, so do so)
+
+	Fix a ms to ns conversion magnitude thinko.
+
 2002-03-21  Dick Porter  <dick@ximian.com>
 
 	* semaphores.c: Fix a problem when waiting for one or more
