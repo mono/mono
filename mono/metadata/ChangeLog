@@ -1,3 +1,10 @@
+
+Thu Mar 3 12:11:46 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: fixed compilation without GCJ support.
+	* reflection.c: for runtime-created types ensure klass->has_references
+	is correct (bug #73215).
+
 2005-03-02  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_is_assignable_from): Make this work if
