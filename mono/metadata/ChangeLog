@@ -1,3 +1,9 @@
+2003-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c:
+	(ves_icall_Type_GetInterfaces): don't return an interface twice when
+	it's also implemented in base classes. Fixes bug #50927.
+
 2003-11-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gc.c (ves_icall_System_GC_WaitForPendingFinalizers): Avoid deadlocks
