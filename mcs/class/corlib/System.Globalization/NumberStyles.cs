@@ -14,8 +14,8 @@
 
 namespace System.Globalization {
 
-	public enum NumberStyles 
-	{
+	[Flags]
+	public enum NumberStyles {
 		None                 = 0x00000000,
 		AllowLeadingWhite    = 0x00000001,
 		AllowTrailingWhite   = 0x00000002,
