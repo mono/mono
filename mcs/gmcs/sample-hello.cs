@@ -16,6 +16,9 @@ namespace Test
 		{
 			Foo foo = new Bar ();
 			Driver.Init (foo);
+			Stack<int> a = Driver.int_stack;
+			Console.WriteLine ("STACK: {0}", a);
+			foo.Hello (a);
 		}
 	}
 }
