@@ -1,3 +1,8 @@
+2002-12-23  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* AssemblyNameTest.cs: Added test for non-signed assembly (which
+	returns an empty array - i.e. not null like an empty assembly).
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2

@@ -67,6 +67,7 @@ public class AssemblyNameTest : TestCase {
 	public void TestPublicKey () 
 	{
 		an = new AssemblyName ();
+		AssertNull ("PublicKey(empty)", an.GetPublicKey ());
 		an.SetPublicKey (test);
 
 		AssertEquals ("Flags", AssemblyNameFlags.PublicKey, an.Flags);
@@ -97,6 +98,17 @@ public class AssemblyNameTest : TestCase {
 		AssertNull ("PublicKey", an.GetPublicKey ());
 		AssertNull ("PublicKeyToken", an.GetPublicKeyToken ());
 	}
+
+	// !!! this assembly MUST NOT use a StrongName !!!
+	public void TestSelf () 
+	{
+		Assembly a = Assembly.GetExecutingAssembly ();
+		AssemblyName an = a.GetName ();
+
+		AssertNotNull ("PublicKey(self)", an.GetPublicKey ());
+		AssertEquals ("PublicKey.Length", 0, an.GetPublicKey ().Length);
+	}
+
 
 	private AssemblyName GetAssemblyName (string assemblyFile) 
 	{
