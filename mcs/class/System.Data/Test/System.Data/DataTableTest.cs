@@ -233,6 +233,99 @@ namespace MonoTests.System.Data
 
                 }
 
+		public void TestSelectParsing ()
+		{
+			DataTable T = new DataTable ("test");
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("id");
+			T.Columns.Add (C);
+			
+			DataSet Set = new DataSet ("TestSet");
+			Set.Tables.Add (T);
+			
+			DataRow Row = null;
+			for (int i = 0; i < 100; i++) {
+				Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				Row [2] = i;
+				T.Rows.Add (Row);
+			}
+			
+			Row = T.NewRow ();
+			Row [0] = "h*an";
+			Row [1] = 1;
+			Row [2] = 1;
+			T.Rows.Add (Row);
+
+			AssertEquals ("test#01", 12, T.Select ("age<=10").Length);
+			AssertEquals ("test#02", 12, T.Select ("age\n\t<\n\t=\t\n10").Length);
+			
+			try {
+				T.Select ("name = 1human ");
+				Fail ("test#03");
+			} catch (Exception e) {
+				
+				// missing operand after 'human' operand 
+				AssertEquals ("test#04", typeof (SyntaxErrorException), e.GetType ());				
+			}
+			
+			try {			
+				T.Select ("name = 1");
+				Fail ("test#05");
+			} catch (Exception e) {
+				
+				// Cannot perform '=' operation between string and Int32
+				AssertEquals ("test#06", typeof (EvaluateException), e.GetType ());
+			}
+			
+			AssertEquals ("test#07", 1, T.Select ("age = '13'").Length);
+		}
+
+		public void TestSelectOperators ()
+		{
+			DataTable T = new DataTable ("test");
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("id");
+			T.Columns.Add (C);
+			
+			DataSet Set = new DataSet ("TestSet");
+			Set.Tables.Add (T);
+			
+			DataRow Row = null;
+			for (int i = 0; i < 100; i++) {
+				Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				Row [2] = i;
+				T.Rows.Add (Row);
+			}
+			
+			Row = T.NewRow ();
+			Row [0] = "h*an";
+			Row [1] = 1;
+			Row [2] = 1;
+			T.Rows.Add (Row);
+
+			AssertEquals ("test#01", 11, T.Select ("age < 10").Length);
+			AssertEquals ("test#02", 12, T.Select ("age <= 10").Length);
+			AssertEquals ("test#03", 12, T.Select ("age< =10").Length);
+			AssertEquals ("test#04", 89, T.Select ("age > 10").Length);
+			AssertEquals ("test#05", 90, T.Select ("age >= 10").Length);			
+			AssertEquals ("test#06", 100, T.Select ("age <> 10").Length);
+			AssertEquals ("test#07", 3, T.Select ("name < 'human10'").Length);
+			AssertEquals ("test#08", 3, T.Select ("id < '10'").Length);
+			AssertEquals ("test#09", 25, T.Select ("id < 10").Length);
+		}
+
 		public void TestSelectExceptions ()
 		{
 			DataTable T = new DataTable ("test");
@@ -276,7 +369,7 @@ namespace MonoTests.System.Data
 		
 		public void TestSelectStringOperators ()
 		{
-			DataTable T = new DataTable ("test");
+ 			DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
 			T.Columns.Add (C);
 			C = new DataColumn ("age");
@@ -303,6 +396,7 @@ namespace MonoTests.System.Data
 			T.Rows.Add (Row);
 					
 			AssertEquals ("test#01", 1, T.Select ("name = 'human' + 1").Length);
+			
 			AssertEquals ("test#02", "human1", T.Select ("name = 'human' + 1") [0] ["name"]);			
 			AssertEquals ("test#03", 1, T.Select ("name = 'human' + '1'").Length);
 			AssertEquals ("test#04", "human1", T.Select ("name = 'human' + '1'") [0] ["name"]);			
@@ -310,7 +404,7 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#06", "human12", T.Select ("name = 'human' + '1' + '2'") [0] ["name"]);
 			
 			AssertEquals ("test#07", 1, T.Select ("name = 'huMAn' + 1").Length);
-
+			
 			Set.CaseSensitive = true;
 			AssertEquals ("test#08", 0, T.Select ("name = 'huMAn' + 1").Length);
 			
@@ -350,6 +444,7 @@ namespace MonoTests.System.Data
 			
 			AssertEquals ("test#21", 0, T.Select ("name like 'h[%]an'").Length);
 			AssertEquals ("test#22", 1, T.Select ("name like 'h[*]an'").Length);
+			
 		}
 
 		public void TestSelectAggregates ()
@@ -409,9 +504,13 @@ namespace MonoTests.System.Data
 
 			//TODO: How to test Convert-function
 			AssertEquals ("test#01", 25, T.Select ("age = 5*5") [0]["age"]);
+			
 			AssertEquals ("test#02", 901, T.Select ("len(name) > 7").Length);
+			
 			AssertEquals ("test#03", 125, T.Select ("age = 5*5*5 AND len(name)>7") [0]["age"]);
+			
 			AssertEquals ("test#04", 1, T.Select ("isnull(id, 'test') = 'test'").Length);
+			
 			AssertEquals ("test#05", 1000, T.Select ("iif(id = '56', 'test', 'false') = 'false'").Length);
 			AssertEquals ("test#06", 1, T.Select ("iif(id = '56', 'test', 'false') = 'test'").Length);
 			AssertEquals ("test#07", 9, T.Select ("substring(id, 2, 3) = '23'").Length);
