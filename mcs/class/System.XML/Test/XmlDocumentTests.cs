@@ -1,4 +1,4 @@
-//
+
 // System.Xml.XmlDocumentTests
 //
 // Authors:
@@ -663,13 +663,17 @@ namespace MonoTests.System.Xml
 		public void TestLoadXmlElementWithAttributes ()
 		{
 			AssertNull (document.DocumentElement);
-			document.LoadXml ("<foo bar='baz' quux='quuux'/>");
+			document.LoadXml ("<foo bar='baz' quux='quuux' hoge='hello &amp; world' />");
 
 			XmlElement documentElement = document.DocumentElement;
 
 			AssertEquals ("baz", documentElement.GetAttribute ("bar"));
 			AssertEquals ("quuux", documentElement.GetAttribute ("quux"));
+			AssertEquals ("hello & world", documentElement.GetAttribute ("hoge"));
+			AssertEquals ("hello & world", documentElement.Attributes ["hoge"].Value);
+			AssertEquals (1, documentElement.GetAttributeNode ("hoge").ChildNodes.Count);
 		}
+
 		public void TestLoadXmlElementWithChildElement ()
 		{
 			document.LoadXml ("<foo><bar/></foo>");

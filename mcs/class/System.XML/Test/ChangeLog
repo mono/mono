@@ -1,5 +1,9 @@
 2003-01-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocumentTests.cs : test for attribute value bugfix.
+
+2003-01-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextReaderTests.cs : test for attribute value bugfix.
 
 2002-01-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
