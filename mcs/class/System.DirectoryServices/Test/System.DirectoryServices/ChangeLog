@@ -1,3 +1,9 @@
+2005-03-17  Boris Kirzner  <borisk@mainsoft.com>
+
+	* DirectoryServicesDirectoryEntryTest.cs: New. Unit tests for DirectoryServices.DirectoryEntry.
+	* DirectoryServicesDirectorySearcherTest.cs: New. Unit tests for DirectoryServices.DirectorySearcher.
+	* DirectoryServicesSearchResultTest.cs: New. Unit tests for DirectoryServices.SearchResult.
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ChangeLog: New.
