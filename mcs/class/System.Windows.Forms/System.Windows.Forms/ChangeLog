@@ -1,3 +1,7 @@
+  2002-10-26  DennisHayes <dennish@raytek.com>	
+	* Added CheckOutFile to SWF one level up from here
+	* to keep track of who is working on what.
+
   2002-10-24  DennisHayes <dennish@raytek.com>	
 
 	* AccessibleObject.cs
