@@ -150,9 +150,12 @@ namespace Mono.CSharp
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
+			mcs.StartInfo.RedirectStandardError=true;
 			try {
 				mcs.Start();
-				mcs_output=mcs.StandardOutput.ReadToEnd();
+				// If there are a few kB in stdout, we might lock
+				mcs_output=mcs.StandardError.ReadToEnd();
+				mcs.StandardOutput.ReadToEnd ();
 				mcs.WaitForExit();
 			} finally {
 				results.NativeCompilerReturnValue = mcs.ExitCode;
@@ -241,9 +244,6 @@ namespace Mono.CSharp
 		}
 		private static CompilerError CreateErrorFromString(string error_string)
 		{
-			// When IncludeDebugInformation is true, prevents the debug symbols stats from braeking this.
-			if (error_string.StartsWith ("WROTE SYMFILE") || error_string.StartsWith ("OffsetTable"))
-				return null;
 #if NET_2_0
 			if (error_string.StartsWith ("BETA"))
 				return null;

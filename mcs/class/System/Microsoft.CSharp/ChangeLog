@@ -1,6 +1,8 @@
 2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: ignore the 'BETA SOFTWARE blah' from gmcs.
+	Use stderr to get the errors/warnings instead of stdout. Removed
+	obsolete lines from CreateErrorFromString.
 
 2004-10-02 Marek Safar <marek.safar@seznam.cz>
 
