@@ -57,11 +57,17 @@ namespace Mono.Posix {
 		O_APPEND    = 64,
 		O_NONBLOCK  = 128,
 		O_SYNC      = 256,
-		O_NOFOLLOW  = 512,
-		O_DIRECTORY = 1024,
-		O_DIRECT    = 2048,
-		O_ASYNC     = 4096,
-		O_LARGEFILE = 8192
+
+		//
+		// These are non-Posix, think of a way of exposing
+		// this for Linux users.
+		//
+		
+		// O_NOFOLLOW  = 512,
+		// O_DIRECTORY = 1024,
+		// O_DIRECT    = 2048,
+		// O_ASYNC     = 4096,
+		// O_LARGEFILE = 8192
 	}
 	
 	[Flags][Map]
@@ -100,7 +106,11 @@ namespace Mono.Posix {
 		SIGFPE, SIGKILL, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE,
 		SIGALRM, SIGTERM, SIGCHLD, SIGCONT, SIGSTOP, SIGTSTP,
 		SIGTTIN, SIGTTOU, SIGURG, SIGXCPU, SIGXFSZ, SIGVTALRM,
-		SIGPROF, SIGWINCH, SIGIO, SIGPWR, SIGSYS, SIGRTMIN
+		SIGPROF, SIGWINCH, SIGIO,
+		
+		// SIGPWR,
+		SIGSYS,
+		// SIGRTMIN
 	}
 	
 	public class Syscall {
