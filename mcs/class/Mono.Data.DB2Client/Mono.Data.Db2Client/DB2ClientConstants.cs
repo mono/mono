@@ -54,7 +54,7 @@ namespace DB2ClientCS
 		public const long SQL_AUTOCOMMIT_OFF	= 0L;
 		public const long SQL_AUTOCOMMIT_ON		= 1L;
 
-		/*Data Types */
+		/* Data Types */
 		public const int  SQL_CHAR				= 1;
 		public const int  SQL_DECIMAL			= 3;
 		public const int  SQL_VARCHAR			= 12;
@@ -63,6 +63,13 @@ namespace DB2ClientCS
 		public const int  SQL_TYPE_TIMESTAMP	= 93;
 
 		public const int  SQL_C_CHAR			= SQL_CHAR;
+
+		/* SQLDriverConnect Options */
+        public const int  SQL_DRIVER_NOPROMPT   = 0;
+        public const int  SQL_DRIVER_COMPLETE   = 1;
+        public const int  SQL_DRIVER_PROMPT     = 2;
+		public const int  SQL_DRIVER_COMPLETE_REQUIRED = 3;
+
 		
 		}
 }

@@ -24,11 +24,11 @@ namespace DB2ClientCS
 		[DllImport("db2cli.Dll", EntryPoint = "SQLConnect")]
 			unsafe public static extern short SQLConnect(IntPtr sqlHdbc, string serverName, short serverNameLength, string userName, short userNameLength, string authentication, short authenticationLength);
 		[DllImport("db2cli.Dll", CharSet = CharSet.Auto, EntryPoint = "SQLDisconnect")]
-			unsafe public static extern short SQLDisconnect(long sqlHdbc);
+			unsafe public static extern short SQLDisconnect(IntPtr sqlHdbc);
 		[DllImport("db2cli.dll", EntryPoint = "SQLGetDiagRec")]
 			unsafe public static extern short SQLGetDiagRec( short handleType, IntPtr handle, short recNum, [Out] StringBuilder sqlState, ref IntPtr nativeErrorPtr, [Out] StringBuilder errorMessage, short bufferLength, ref IntPtr shortTextLengthPtr);
 		[DllImport("db2cli.Dll", EntryPoint = "SQLSetConnectAttr")]
-			unsafe public static extern short SQLSetConnectAttr(long sqlHdbc, long sqlAttr, IntPtr sqlValuePtr, long sqlStrLength);
+			unsafe public static extern short SQLSetConnectAttr(IntPtr sqlHdbc, long sqlAttr, IntPtr sqlValuePtr, long sqlStrLength);
 		[DllImport("db2cli.Dll", EntryPoint = "SQLEndTran")]
 			unsafe public static extern short SQLEndTran (short handleType, IntPtr handle, short fType);
 		[DllImport("db2cli.Dll", EntryPoint = "SQLCancel")]
@@ -47,5 +47,7 @@ namespace DB2ClientCS
 			unsafe public static extern short SQLDescribeCol(IntPtr stmtHandle, ushort colNum, [Out] StringBuilder colName, short colNameMaxLength, IntPtr colNameLength, ref IntPtr dataType, ref IntPtr colSizePtr, ref IntPtr scalePtr, ref IntPtr nullablePtr );
 		[DllImport("db2cli.dll", EntryPoint = "SQLBindCol")]
 			unsafe public static extern short  SQLBindCol(IntPtr stmtHandle, ushort colNum, int dataType,[In][Out] IntPtr dataBufferPtr, int dataBufferLength, ref IntPtr StrLen_or_IndPtr);
+		[DllImport("db2cli.dll", EntryPoint = "SQLDriverConnect")]
+			unsafe public static extern short SQLDriverConnect(IntPtr hdbc, int centered, [In] string inConnectStr, [In] int inStrLength, [Out] StringBuilder outConnectStr, [Out] int outStrCapacity, [Out] IntPtr outStrLengthReturned, [In] int completion);
 	}
 }

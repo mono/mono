@@ -31,12 +31,20 @@ namespace DB2ClientCS
 			int sqlReturn;
 			short recNum=1;
 			short bufLength = 1025;
-			short textLength = 0;
-			long nativeError = 0;
-			IntPtr textLengthPtr = new IntPtr(textLength);
-			IntPtr nativeErrorPtr = new IntPtr(nativeError);
+
+			IntPtr textLengthPtr = IntPtr.Zero;
+			IntPtr nativeErrorPtr = IntPtr.Zero;
+
 			sqlReturn = DB2ClientPrototypes.SQLGetDiagRec(sqlHandleType, sqlHandle, recNum, sqlState, ref nativeErrorPtr, errorMessage, bufLength, ref textLengthPtr);
-			this.message = Message + " " + sqlState.ToString() + " " + errorMessage.ToString()+"\n";
+			this.message = Message + "\n" + sqlState.ToString() + " " + errorMessage.ToString()+"\n";
+			//See if there are more errors to retrieve and get them.
+			while (sqlReturn == DB2ClientConstants.SQL_SUCCESS_WITH_INFO)
+			{
+				recNum++;
+				sqlReturn = DB2ClientPrototypes.SQLGetDiagRec(sqlHandleType, sqlHandle, recNum, sqlState, ref nativeErrorPtr, errorMessage, bufLength, ref textLengthPtr);
+				this.message += "\n" + sqlState.ToString() + " " + errorMessage.ToString()+"\n";
+			}
+
 		}
 		public override string Message
 		{

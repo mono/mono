@@ -195,9 +195,9 @@ namespace DB2ClientCS
 		internal void AllocateStatement(string location)
 		{
 			short sqlRet;
-			sqlRet = DB2ClientPrototypes.SQLAllocHandle(DB2ClientConstants.SQL_HANDLE_STMT, db2Conn.Handle, ref hwndStmt);
+			sqlRet = DB2ClientPrototypes.SQLAllocHandle(DB2ClientConstants.SQL_HANDLE_STMT, db2Conn.DBHandle, ref hwndStmt);
 			if (sqlRet == DB2ClientConstants.SQL_ERROR)
-				throw new DB2ClientException(DB2ClientConstants.SQL_HANDLE_DBC, db2Conn.Handle, location +": Unable to allocate statement handle.");
+				throw new DB2ClientException(DB2ClientConstants.SQL_HANDLE_DBC, db2Conn.DBHandle, location +": Unable to allocate statement handle.");
 		}
 		#endregion
 		#region Cancel
@@ -245,7 +245,8 @@ namespace DB2ClientCS
 		///
 		public IDataReader ExecuteReader()
 		{
-
+			
+			ExecuteNonQuery();
 			DB2ClientDataReader reader = new DB2ClientDataReader(db2Conn, this);
 			return reader;
 

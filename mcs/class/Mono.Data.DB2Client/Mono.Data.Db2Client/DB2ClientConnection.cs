@@ -33,10 +33,11 @@ namespace DB2ClientCS
 		}
 		private ConnectionParameters connectionParms = new ConnectionParameters();
 		private string connectionString = null;
+		private StringBuilder outConnectStr;
 		private string dbName = null;
 		private int connectionTimeout;
 
-		unsafe internal long dbHandle;
+		private IntPtr dbHandle = IntPtr.Zero;
 		private bool disposed = false;
 		public DB2ClientConnection()
 		{
@@ -100,22 +101,22 @@ namespace DB2ClientCS
 		{
 			get
 			{   
-				if (dbHandle == DB2ClientConstants.SQL_NULL_HANDLE)
+				if ((long)dbHandle.ToPointer() == DB2ClientConstants.SQL_NULL_HANDLE)
 					return ConnectionState.Closed;
 				else
 					return ConnectionState.Open;
 			}
 		}
 		#endregion
-		#region Handle
+		#region DBHandle
 		///
 		/// Handle Returns an IntPtr of the dbm handle
 		/// 
-		public IntPtr Handle
+		public IntPtr DBHandle
 		{
 			get
 			{
-				return new IntPtr(dbHandle);
+				return dbHandle;
 			}
 		}
 		#endregion
@@ -155,7 +156,7 @@ namespace DB2ClientCS
 		unsafe public void Close()
 		{
 			DB2ClientPrototypes.SQLDisconnect(dbHandle);
-			dbHandle = DB2ClientConstants.SQL_NULL_HANDLE;
+			dbHandle = new IntPtr(DB2ClientConstants.SQL_NULL_HANDLE);
 		}
 		#endregion
 		#region CreateCommand
@@ -175,43 +176,33 @@ namespace DB2ClientCS
 		/// </summary>
 		unsafe public void Open()
 		{
-			IntPtr pdbHandle = Marshal.AllocHGlobal(4);
-			IntPtr penvHandle = Marshal.AllocHGlobal(4);
-			short sqlReturn;
+			DB2ClientUtils util = new DB2ClientUtils();
+			outConnectStr = new StringBuilder(60);  //Set some initial size, we know we're gettig a chunk of data back
+			IntPtr penvHandle=IntPtr.Zero;
+			IntPtr numOutCharsReturned = IntPtr.Zero;
+			short sqlRet=0;
+
 			try
 			{
-			IntPtr tempInt = IntPtr.Zero;
-			sqlReturn = DB2ClientPrototypes.SQLAllocHandle(DB2ClientConstants.SQL_HANDLE_ENV, tempInt, ref penvHandle);
-			sqlReturn = DB2ClientPrototypes.SQLAllocHandle(DB2ClientConstants.SQL_HANDLE_DBC, penvHandle, ref pdbHandle);
+				sqlRet = DB2ClientPrototypes.SQLAllocHandle(DB2ClientConstants.SQL_HANDLE_ENV, IntPtr.Zero, ref penvHandle);
+				util.DB2CheckReturn(sqlRet, 0, IntPtr.Zero, "Unable to allocate Environment handle in DB2ClientConnection.");
 
-			if (sqlReturn == DB2ClientConstants.SQL_ERROR) 
-			{
-				throw new DB2ClientException(DB2ClientConstants.SQL_HANDLE_ENV, penvHandle, "Alloc Env Handle: ");
-			}
-			sqlReturn = DB2ClientPrototypes.SQLConnect(pdbHandle, 
-				connectionParms.server, (short)connectionParms.server.Length, 
-				connectionParms.username, (short)connectionParms.username.Length, 
-				connectionParms.authentication, (short)connectionParms.authentication.Length);
-			if (sqlReturn == DB2ClientConstants.SQL_ERROR) 
-			{
-				throw new DB2ClientException(DB2ClientConstants.SQL_HANDLE_DBC, pdbHandle, "Error connecting to DB: ");
-			}
+				sqlRet = DB2ClientPrototypes.SQLAllocHandle(DB2ClientConstants.SQL_HANDLE_DBC, penvHandle, ref dbHandle);
+				util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_ENV, penvHandle, "Unable to allocate database handle in DB2ClientConnection.");
 
-			if(IntPtr.Size == 4)
-			  dbHandle = pdbHandle.ToInt32();
-			else
-			  dbHandle = pdbHandle.ToInt64();
+				sqlRet = DB2ClientPrototypes.SQLDriverConnect(dbHandle, 0, connectionString,
+					connectionString.Length, outConnectStr, 100, numOutCharsReturned, 
+					DB2ClientConstants.SQL_DRIVER_COMPLETE);
+				util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_ENV, penvHandle, "Unable to connect to the database.");
+
+			}
+			catch (DB2ClientException DB2E)
+			{
+				Console.WriteLine(DB2E.Message);
+				Dispose();
+				throw DB2E;
+			}
 		}
-		catch (DB2ClientException DB2E)
-		{
-			Console.WriteLine(DB2E.Message);
-			Marshal.FreeHGlobal(pdbHandle);
-			Marshal.FreeHGlobal(penvHandle);
-			return;
-		}
-		Marshal.FreeHGlobal(pdbHandle);
-		Marshal.FreeHGlobal(penvHandle);
-	}
 		#endregion
 		#region Dispose
 		/// <summary>
@@ -238,7 +229,17 @@ namespace DB2ClientCS
 		void SetConnectionString (string connectionString) 
 		{
 			this.connectionString = connectionString;
-			
+		}
+
+		#region ParseOutConnectString
+		/// <summary>
+		/// Since we're using SQLDriverConnect, we should really only need to parse the
+		/// connection string it returns. This will have to be expanded upun to account
+		/// for any of the keywords (properties) returned.
+		/// </summary>
+		/// <param name="outStr"></param>
+		void ParseOutConnectString(string outStr)
+		{
 			connectionString += ";";
 			NameValueCollection parameters = new NameValueCollection ();
 
@@ -289,6 +290,7 @@ namespace DB2ClientCS
 
 			SetProperties (parameters);
 		}
+		#endregion
 
 		private void SetProperties (NameValueCollection parameters) 
 		{

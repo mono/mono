@@ -47,8 +47,8 @@ namespace DB2ClientCS
 
 			IntPtr iso = new IntPtr(db2IsoL);
 			IntPtr attr = new IntPtr(DB2ClientConstants.SQL_AUTOCOMMIT_OFF);
-			sqlRet = DB2ClientPrototypes.SQLSetConnectAttr(db2Conn.dbHandle, DB2ClientConstants.SQL_AUTOCOMMIT, attr, 0);
-			sqlRet = DB2ClientPrototypes.SQLSetConnectAttr(db2Conn.dbHandle, DB2ClientConstants.SQL_TXN_ISOLATION, iso, 0);
+			sqlRet = DB2ClientPrototypes.SQLSetConnectAttr(db2Conn.DBHandle, DB2ClientConstants.SQL_AUTOCOMMIT, attr, 0);
+			sqlRet = DB2ClientPrototypes.SQLSetConnectAttr(db2Conn.DBHandle, DB2ClientConstants.SQL_TXN_ISOLATION, iso, 0);
 			
 		}
 
@@ -75,13 +75,11 @@ namespace DB2ClientCS
 		}
 
 		public void Commit() {
-			IntPtr handle = new IntPtr(db2Conn.dbHandle);
-			DB2ClientPrototypes.SQLEndTran(DB2ClientConstants.SQL_HANDLE_DBC, handle, DB2ClientConstants.SQL_COMMIT);
+			DB2ClientPrototypes.SQLEndTran(DB2ClientConstants.SQL_HANDLE_DBC, db2Conn.DBHandle, DB2ClientConstants.SQL_COMMIT);
 		}
 		public void Rollback() 
 		{
-			IntPtr handle = new IntPtr(db2Conn.dbHandle);
-			DB2ClientPrototypes.SQLEndTran(DB2ClientConstants.SQL_HANDLE_DBC, handle, DB2ClientConstants.SQL_ROLLBACK);
+			DB2ClientPrototypes.SQLEndTran(DB2ClientConstants.SQL_HANDLE_DBC, db2Conn.DBHandle, DB2ClientConstants.SQL_ROLLBACK);
 		}
 
 		/// <summary>
