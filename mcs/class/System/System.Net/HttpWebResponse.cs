@@ -49,21 +49,30 @@ namespace System.Net
 			if (!socket.Poll (timeout, SelectMode.SelectRead))
 				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
 
-			line = ReadHttpLine (responseStream);
-			protocol = line.Split (' ');
+			this.statusCode = 0;
+			do {
+				if (statusCode == HttpStatusCode.Continue)
+					while ((line = ReadHttpLine (responseStream)) != "")
+						Console.WriteLine ("Ignoro: " + line);
+
+				line = ReadHttpLine (responseStream);
+
+				protocol = line.Split (' ');
 			
-			switch (protocol[0]) {
-				case "HTTP/1.0":
-					this.version = HttpVersion.Version10;
-					break;
-				case "HTTP/1.1":
-					this.version = HttpVersion.Version11;
-					break;
-				default:
-					throw new WebException ("Unrecognized HTTP Version: " + line);
-			}
+				switch (protocol[0]) {
+					case "HTTP/1.0":
+						this.version = HttpVersion.Version10;
+						break;
+					case "HTTP/1.1":
+						this.version = HttpVersion.Version11;
+						break;
+					default:
+						throw new WebException ("Unrecognized HTTP Version: " + line);
+				}
 			
-			this.statusCode = (HttpStatusCode) Int32.Parse (protocol[1]);
+				this.statusCode = (HttpStatusCode) Int32.Parse (protocol[1]);
+			} while (this.statusCode == HttpStatusCode.Continue);
+
 			while ((line = ReadHttpLine (responseStream)).Length != 0) {
 				if (!Char.IsWhiteSpace (line[0])) { // new header
 					header = line.Split (new char[] {':'}, 2);
