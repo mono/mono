@@ -149,6 +149,9 @@ namespace Mono.CSharp {
 				MethodInfo [] mi;
 				Type t = missing.Type;
 
+				if (!t.IsInterface)
+					continue;
+
 				if (t is TypeBuilder){
 					TypeContainer iface;
 

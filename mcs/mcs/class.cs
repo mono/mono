@@ -4920,8 +4920,8 @@ namespace Mono.CSharp {
 
 				InterfaceType = texpr.ResolveType (ec);
 
-				if (InterfaceType.IsClass) {
-					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
+				if (!InterfaceType.IsInterface) {
+					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
 					return false;
 				}
 

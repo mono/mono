@@ -1,5 +1,11 @@
 2004-11-19  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs (MemberBase.DoDefine): Fix error cs0508 report.
+    
+	* pending.cs (PendingImplementation): Grab only interfaces.
+
+2004-11-19  Marek Safar  <marek.safar@seznam.cz>
+
 	* statement.cs (ForeachHelperMethods): Add location member and
 	error 202 detection.
 
