@@ -3,10 +3,12 @@
 //
 // Author:
 //   Chris J Breisch (cjbreisch@altavista.net) 
-//   Francesco Delfino (pluto@tipic.com
+//   Francesco Delfino (pluto@tipic.com)
+//   Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //
 // (C) 2002 Chris J Breisch
 //     2003 Tipic, Inc. (http://www.tipic.com)
+//     2004 Rafael Teixeira
 //
 
 using System;
@@ -38,8 +40,27 @@ namespace Microsoft.VisualBasic
 		public static System.Boolean IsError (System.Object Expression) { throw new NotImplementedException (); }
 		[MonoTODO]
 		public static System.Boolean IsReference (System.Object Expression) { throw new NotImplementedException (); }
-		[MonoTODO]
-		public static System.Boolean IsNumeric (System.Object Expression) { throw new NotImplementedException (); }
+
+		public static System.Boolean IsNumeric (System.Object Expression) 
+		{ 
+			if (Expression == null || Expression is DateTime)
+				return false;
+
+			if (Expression is Int16 || Expression is Int32 || Expression is Int64 || Expression is Decimal ||
+				Expression is Single || Expression is Double)
+				return true;
+
+			try {
+				if (Expression is string)
+					Double.Parse(Expression as string);
+				else
+					Double.Parse(Expression.ToString());
+				return true;
+			} catch {} // just dismiss errors but return false
+
+			return false;
+		}
+
 		[MonoTODO]
 		public static System.Int32 LBound (System.Array Array, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(1)] System.Int32 Rank) { throw new NotImplementedException (); }
 		[MonoTODO]
