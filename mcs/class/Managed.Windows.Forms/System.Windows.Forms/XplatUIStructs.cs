@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: XplatUIStructs.cs,v $
+// Revision 1.6  2004/11/08 20:53:48  pbartok
+// - Added missing WS_EX styles
+//
 // Revision 1.5  2004/10/18 04:51:28  pbartok
 // - Added WS_EX styles to WindowStyles enumeration
 //
@@ -80,6 +83,8 @@ namespace System.Windows.Forms {
 		WS_CHILDWINDOW		= WS_CHILD,
 
 		// Extended Styles
+		WS_EX_DLGMODALFRAME	= 0x00000001,
+		WS_EX_DRAGDETECT	= 0x00000002,
 		WS_EX_NOPARENTNOTIFY	= 0x00000004,
 		WS_EX_TOPMOST		= 0x00000008,
 		WS_EX_ACCEPTFILES	= 0x00000010,
