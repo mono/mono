@@ -1,3 +1,7 @@
+2002-05-10  Duncan Mak  <duncan@ximian.com>
+
+	* TagPrefixAttribute.cs: Added to CVS.
+
 2002-05-07  Duncan Mak  <duncan@ximian.com>
 
 	* Utils.cs (GetClientValidatedEvent): Uncommented the 'Page' argument.

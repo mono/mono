@@ -67,9 +67,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public HtmlTableRow this[int index] {
+		public HtmlTableCell this[int index] {
 			get{
-				return (HtmlTableRow) _owner.Controls[index];
+				return _owner.Controls[index] as HtmlTableCell;
 			}
 		}
 		

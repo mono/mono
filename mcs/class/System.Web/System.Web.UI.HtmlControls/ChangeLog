@@ -1,5 +1,8 @@
 2002-05-10  Duncan Mak  <duncan@ximian.com>
 
+	* HtmlTableCellCollection.cs (this): Updated the indexer to return
+	the right type, HtmlTableCell instead of HtmlTableRow. 
+
 	* HtmlInputImage.cs (OnServerClick): Commented out parts that
 	won't compile.
 
