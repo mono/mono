@@ -1,3 +1,8 @@
+2004-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RandomTest.cs: Commented test CompareWithMS following constants
+	changes in Mono implementation (to use Knuth's constants).
+
 2004-09-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleHandleTest.cs: New file.
