@@ -320,30 +320,34 @@ namespace Mono.CSharp {
 			
 			reader.BaseStream.Position = 0;
 			Encoding enc = reader.CurrentEncoding;
-			
 			// First of all, get at least a char
 			
 			byte[] auxb = new byte [50];
-			int nr = 0;
-			int nc = 0;
+			int num_bytes = 0;
+			int num_chars = 0;
+			int br = 0;
 			do {
-				nr += reader.BaseStream.Read (auxb, nr, auxb.Length - nr);
-				nc = enc.GetCharCount (auxb, 0, nr);
+				br = reader.BaseStream.Read (auxb, num_bytes, auxb.Length - num_bytes);
+				num_bytes += br;
+				num_chars = enc.GetCharCount (auxb, 0, num_bytes);
 			}
-			while (nc == 0);
+			while (num_chars == 0 && br > 0);
 			
-			// Now, check which bytes at the beginning have no effect in the
-			// char count
-			
-			int p = 0;
-			while (enc.GetCharCount (auxb, p, nr-p) >= nc)
-				p++;
-			
-			preamble_size = p - 1;
-			reader.BaseStream.Position = 0;
-			reader.DiscardBufferedData ();
-			
-			buffer_start = preamble_size;
+			if (num_chars != 0)
+			{
+				// Now, check which bytes at the beginning have no effect in the
+				// char count
+				
+				int p = 0;
+				while (enc.GetCharCount (auxb, p, num_bytes-p) >= num_chars)
+					p++;
+				
+				preamble_size = p - 1;
+				reader.BaseStream.Position = 0;
+				reader.DiscardBufferedData ();
+				
+				buffer_start = preamble_size;
+			}
 		}
 
 		public SeekableStreamReader (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks)

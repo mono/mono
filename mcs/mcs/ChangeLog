@@ -1,5 +1,9 @@
 2004-05-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* support.cs: Don't hang when the file is empty.
+
+2004-05-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* support.cs: In SeekableStreamReader, compute the preamble size of the
 	  underlying stream. Position changes should take into account that initial
 	  count of bytes.
