@@ -1,3 +1,8 @@
+2004-09-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c (mono_metadata_parse_type): Fix parsing of custom
+	modifiers.
+
 2004-09-14  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* reflection.h: add prototype for mono_get_dbnull_object
