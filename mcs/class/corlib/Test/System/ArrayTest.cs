@@ -667,6 +667,165 @@ public class ArrayTest : TestCase
 		AssertEquals ("#AA14", "change", en.Current);
 	}
 
+	public void TestGetEnumeratorNonZeroLowerBounds() {
+		int[] myLengthsArray = new int[2] { 3, 5 };
+		int[] myBoundsArray = new int[2] { 2, 3 };
+
+		Array myArray=Array.CreateInstance( typeof(String), myLengthsArray, myBoundsArray );
+		for ( int i = myArray.GetLowerBound(0); i <= myArray.GetUpperBound(0); i++ )
+			for ( int j = myArray.GetLowerBound(1); j <= myArray.GetUpperBound(1); j++ )  {
+				int[] myIndicesArray = new int[2] { i, j };
+				myArray.SetValue( Convert.ToString(i) + j, myIndicesArray );
+			}
+		IEnumerator en = myArray.GetEnumerator ();
+		AssertNotNull ("#AB01", en);
+
+		// check the first couple of values
+		Assert ("#AB02", en.MoveNext ());
+		AssertEquals ("#AB03", "23", en.Current);
+		Assert ("#AB04", en.MoveNext ());
+		AssertEquals ("#AB05", "24", en.Current);
+
+		// then check the last element's value
+		string lastElement;
+		do {  
+			lastElement = (string)en.Current;
+		} while (en.MoveNext());
+		AssertEquals ("#AB06", "47", lastElement);
+	}
+
+	public void TestIList_Add () {
+		int[] myLengthsArray = new int[2] { 3, 5 };
+		int[] myBoundsArray = new int[2] { 2, 3 };
+
+		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
+		try {
+			((IList)myArray).Add ("can not");
+			Fail ("IList.Add should throw");    
+		}
+		catch (NotSupportedException) {
+			return;
+		}
+		catch (Exception) {
+			Fail ("IList.Add threw wrong exception type");    
+		}
+
+		Fail("IList.Add shouldn't get this far");
+	}
+
+	public void TestIList_Insert () {
+		int[] myLengthsArray = new int[2] { 3, 5 };
+		int[] myBoundsArray = new int[2] { 2, 3 };
+
+		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
+		try {
+			((IList)myArray).Insert (0, "can not");
+			Fail ("IList.Insert should throw");    
+		}
+		catch (NotSupportedException) {
+			return;
+		}
+		catch (Exception) {
+			Fail ("IList.Insert threw wrong exception type");    
+		}
+
+		Fail("IList.Insert shouldn't get this far");
+	}
+
+	public void TestIList_Remove () {
+		int[] myLengthsArray = new int[2] { 3, 5 };
+		int[] myBoundsArray = new int[2] { 2, 3 };
+
+		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
+		try {
+			((IList)myArray).Remove ("can not");
+			Fail ("IList.Remove should throw");    
+		}
+		catch (NotSupportedException) {
+			return;
+		}
+		catch (Exception) {
+			Fail ("IList.Remove threw wrong exception type");    
+		}
+
+		Fail("IList.Remove shouldn't get this far");
+	}
+
+	public void TestIList_RemoveAt () {
+		int[] myLengthsArray = new int[2] { 3, 5 };
+		int[] myBoundsArray = new int[2] { 2, 3 };
+
+		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
+		try {
+			((IList)myArray).RemoveAt (0);
+			Fail ("IList.RemoveAt should throw");    
+		}
+		catch (NotSupportedException) {
+			return;
+		}
+		catch (Exception) {
+			Fail ("IList.RemoveAt threw wrong exception type");    
+		}
+
+		Fail("IList.RemoveAt shouldn't get this far");
+	}
+
+	public void TestIList_Contains () {
+		int[] myLengthsArray = new int[2] { 3, 5 };
+		int[] myBoundsArray = new int[2] { 2, 3 };
+
+		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
+
+		try {
+			bool b = ((IList)myArray).Contains ("23");
+			Fail("IList.Contains should throw with multi-dimensional arrays");
+		}
+		catch (RankException) {
+			int[] iArr = new int[3] { 1, 2, 3};
+			// check the first and last items
+			Assert("AC01", ((IList)iArr).Contains (1));
+			Assert("AC02", ((IList)iArr).Contains (3));
+
+			// and one that is definately not there
+			Assert("AC03", !((IList)iArr).Contains (42));
+			return;
+		}
+
+		Fail("Should not get here");
+	}
+
+	public void TestIList_IndexOf () {
+		int[] myLengthsArray = new int[2] { 3, 5 };
+		int[] myBoundsArray = new int[2] { 2, 3 };
+
+		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
+
+		try {
+			bool b = ((IList)myArray).Contains ("23");
+			Fail("IList.Contains should throw with multi-dimensional arrays");
+		}
+		catch (RankException) {
+			int[] iArr = new int[3] { 1, 2, 3};
+			// check the first and last items
+			AssertEquals("AD01", 0, ((IList)iArr).IndexOf (1));
+			AssertEquals("AD02", 2, ((IList)iArr).IndexOf (3));
+
+			// and one that is definately not there
+			AssertEquals("AD03", -1, ((IList)iArr).IndexOf (42));
+		}
+		catch (Exception) {
+			Fail("Should not get here");
+		}
+
+		// check that wierd case whem lowerbound is Int32.MinValue,
+		// so that IndexOf() needs to return Int32.MaxValue when it cannot find the object
+		int[] myLengthArray = new int[1] { 3 };
+		int[] myBoundArray = new int[1] { Int32.MinValue };
+		Array myExtremeArray=Array.CreateInstance ( typeof(String), myLengthArray, myBoundArray );
+		AssertEquals("AD04", Int32.MaxValue, ((IList)myExtremeArray).IndexOf (42));
+
+	}
+
 	public void TestGetLength() {
 		{
 			bool errorThrown = false;

@@ -1,3 +1,8 @@
+2002-03-12  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayTest.cs: Add tests for IList methods and for enumerator on
+	an array with non-zero lower bounds.
+
 2002-03-09  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayTest.cs: Enable the enumerator test and include test for
