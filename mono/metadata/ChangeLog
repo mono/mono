@@ -1,5 +1,7 @@
 2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c: Add AppDomainSetup icalls.
+
 	* reflection.h (MonoReflectionMethodAux): Add 'param_cattr' field.
 
 	* reflection.c (mono_custom_attrs_from_param): Add support for dynamic
