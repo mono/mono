@@ -1,3 +1,9 @@
+2004-11-01 Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* Tds70.cs: when type of parameter value is enum, convert value to
+	underlying type before converting value to string as we'd otherwise
+	be using the enum field name
+
 2004-10-30 Umadevi S <sumadevi@novell.com>
 	* Tds.cs : GetColumnValue method: handling null guid values correctly.
 		This fixes bug #68804. 
