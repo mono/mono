@@ -3,6 +3,8 @@
 	* Makefile.am: Disable thread6.exe since it might hang. Fix check for
 	failed tests.
 
+	* Makefile.am: Only disable thread6.exe on x86.
+
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke2.cs libtest.c: New tests for long fields inside structs.
