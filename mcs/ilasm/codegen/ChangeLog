@@ -1,5 +1,17 @@
 2003-08-03 Jackson Harper <jackson@latitudegeo.com>
 
+	* IClassRef.cs: Add method for making types into value types
+	* ExternTypeRef.cs: Add functionality for valuetypes
+	* MethodDef.cs: Handle Vararg signatures individually. Fixes for
+	new Sentinel type in vararg signatures
+	* MethodRef.cs: Use new SentinelTypeRef instead of Sentinel type 
+	ref constant.
+	* ParamDef.cs: New method to check if this parameter is the sentinel
+	* TypeRef.cs: Add some functionality for creating valuetypes
+	* Sentinel.cs: New type represents the sentinel
+
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
+
 	* TypeDef.cs: Make types into value types if specified. Also
 	add the functionality to make types into Enums.
 	TODO: Value types of nested classes.

@@ -20,14 +20,16 @@ namespace Mono.ILASM {
                 private PEAPI.Type type;
                 private string assembly_name;
                 private string full_name;
+		private bool is_valuetype;
 
 		private bool is_resolved;
 
-                public ExternTypeRef (string assembly_name, string full_name)
+                public ExternTypeRef (string assembly_name, string full_name, bool is_valuetype)
                 {
                         this.assembly_name = assembly_name;
                         this.full_name = full_name;
-			
+			this.is_valuetype = is_valuetype;		
+	
 			is_resolved = false;
                 }
 
@@ -48,11 +50,20 @@ namespace Mono.ILASM {
 			if (is_resolved)
 				return;
 
-                        type = code_gen.ExternTable.GetClass (assembly_name, full_name);
+			if (is_valuetype)
+                        	type = code_gen.ExternTable.GetValueClass (assembly_name, full_name);
+			else
+				type = code_gen.ExternTable.GetClass (assembly_name, full_name);
+
                         type = Modify (code_gen, type, ref full_name);
 
 			is_resolved = true;
                 }
+
+		public void MakeValueClass ()
+		{
+			is_valuetype = true;
+		}
 
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, ITypeRef[] param)

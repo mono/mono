@@ -66,7 +66,7 @@ namespace Mono.ILASM {
                                 ArrayList opt_list = new ArrayList ();
                                 bool in_opt = false;
                                 foreach (ITypeRef type in param) {
-                                        if (TypeRef.Ellipsis == type) {
+                                        if (type is SentinelTypeRef) {
                                                 in_opt = true;
                                         } else if (in_opt) {
                                                 type.Resolve (code_gen);

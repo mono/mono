@@ -19,6 +19,8 @@ namespace Mono.ILASM {
                                 string name, ITypeRef[] param);
 
                 IFieldRef GetFieldRef (ITypeRef ret_type, string name);
+	
+		void MakeValueClass ();
         }
 
 }

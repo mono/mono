@@ -28,16 +28,18 @@ namespace Mono.ILASM {
                 private Location location;
                 private string full_name;
                 private PEAPI.Type type;
+		private bool is_valuetype;
 
                 private bool is_resolved;
 
-                public static readonly TypeRef Ellipsis = new TypeRef ("ELLIPSIS", null);
-                public static readonly TypeRef Any = new TypeRef ("any", null);
+                public static readonly TypeRef Ellipsis = new TypeRef ("ELLIPSIS", false, null);
+                public static readonly TypeRef Any = new TypeRef ("any", false, null);
 
-                public TypeRef (string full_name, Location location)
+                public TypeRef (string full_name, bool is_valuetype, Location location)
                 {
                         this.full_name = full_name;
                         this.location = location;
+			this.is_valuetype = is_valuetype;
                         is_resolved = false;
                 }
 
@@ -56,6 +58,11 @@ namespace Mono.ILASM {
                 public bool IsResolved {
                         get { return is_resolved; }
                 }
+
+		public void MakeValueClass ()
+		{
+			is_valuetype = true;
+		}
 
                 public  IMethodRef GetMethodRef (ITypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, ITypeRef[] param)

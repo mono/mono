@@ -46,6 +46,11 @@ namespace Mono.ILASM {
                         get { return peapi_param; }
                 }
 
+		public bool IsSentinel ()
+		{
+			return (typeref is SentinelTypeRef);
+		}
+
                 public void Define (CodeGen code_gen)
                 {
                         if (is_defined)

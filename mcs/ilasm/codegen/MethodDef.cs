@@ -399,7 +399,10 @@ namespace Mono.ILASM {
 
                 private void CreateSignature ()
                 {
-                        signature = CreateSignature (name, param_list);
+			if (IsVararg)
+				signature = CreateVarargSignature (name, param_list);
+			else
+                        	signature = CreateSignature (name, param_list);
                 }
 
                 public static string CreateSignature (string name, IList param_list)
@@ -412,14 +415,39 @@ namespace Mono.ILASM {
                         if (param_list != null) {
                                 bool first = true;
                                 foreach (ParamDef paramdef in param_list) {
-                                        if (ParamDef.Ellipsis == paramdef)
-                                                break;
                                         if (!first)
                                                 builder.Append (',');
                                         builder.Append (paramdef.TypeName);
                                         first = false;
                                 }
                         }
+                        builder.Append (')');
+
+                        return builder.ToString ();
+                }
+
+		 public static string CreateVarargSignature (string name, IList param_list)
+                {
+                        StringBuilder builder = new StringBuilder ();
+
+                        builder.Append (name);
+                        builder.Append ('(');
+
+			bool first = true;
+                        if (param_list != null) {
+                                foreach (ParamDef paramdef in param_list) {
+                                        if (!first)
+                                                builder.Append (',');
+                                        builder.Append (paramdef.TypeName);
+                                        first = false;
+                                }
+                        }
+			ParamDef last = (ParamDef) param_list[param_list.Count - 1];
+			if (!last.IsSentinel ()) {
+				if (!first)
+					builder.Append (',');
+				builder.Append ("...");
+			}
                         builder.Append (')');
 
                         return builder.ToString ();
@@ -435,12 +463,12 @@ namespace Mono.ILASM {
                         if (param_list != null) {
                                 bool first = true;
                                 foreach (ITypeRef param in param_list) {
-                                        if (param == TypeRef.Ellipsis)
-                                                break;
                                         if (!first)
                                                 builder.Append (',');
                                         builder.Append (param.FullName);
                                         first = false;
+					if (param is SentinelTypeRef)
+						break;
                                 }
                         }
                         builder.Append (')');
