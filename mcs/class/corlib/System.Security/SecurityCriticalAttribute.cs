@@ -1,11 +1,10 @@
 //
-// System.Security.SuppressUnmanagedCodeSecurityAttribute.cs
+// System.Security.SecurityCriticalAttribute implementation
 //
 // Author:
-//   Nick Drochak(ndrochak@gol.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) Nick Drochak
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,10 +26,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
+using System.Runtime.InteropServices;
+
 namespace System.Security {
 
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method |
-			 AttributeTargets.Interface, AllowMultiple=true, Inherited=false)]
-	public sealed class SuppressUnmanagedCodeSecurityAttribute : Attribute {
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface,
+		AllowMultiple=false, Inherited=false)]
+	[ComVisible (false)]
+	public sealed class SecurityCriticalAttribute : Attribute {
+
+		public SecurityCriticalAttribute ()
+			: base ()
+		{
+		}
 	}
 }
+
+#endif

@@ -1,3 +1,11 @@
+2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AllowPartiallyTrustedCallersAttribute.cs: Cleanup;
+	* HostSecurityManagerFlags.cs: Updated flags for 2.0 Dec CTP.
+	* SecurityCriticalAttribute.cs: New. New 2.0 attribute.
+	* SecurityTransparentAttribute.cs: New. New 2.0 attribute.
+	* SuppressUnmanagedCodeSecurityAttribute.cs: Cleanup;
+
 2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Refactored to play more nicely with 
