@@ -1,3 +1,7 @@
+2005-03-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* stack-overflow.cs: New tests, not yet enabled.
+
 2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* dataslot.cs: Add tests for #65414.
