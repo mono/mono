@@ -1,5 +1,7 @@
 2004-05-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* basic-calls.cs: Add new regression test.
+
 	* mini.c (mono_runtime_install_handlers): Use SA_ONSTACK since it is
 	more portable.
 
