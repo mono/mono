@@ -1,3 +1,7 @@
+2003-11-06 Jackson Harper <jackson@ximian.com>
+
+	* System.web.dll.sources: Add SessionId.cs to build
+	
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
 	* System.Web.dll.sources: Add SessionSQLServerHandler.cs
