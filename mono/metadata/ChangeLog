@@ -1,3 +1,10 @@
+2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* icall.c: Added ves_icall_type_IsInstanceOf internal call.
+	* object.h: Added async_callback field in MonoAsyncResult.
+	* marshal.c: In mono_delegate_begin_invoke, set the value of async_callback.
+	* verify.c: Added async_callback in MonoAsyncResult layout.
+
 2004-01-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_get_custom_attrs): Add support
