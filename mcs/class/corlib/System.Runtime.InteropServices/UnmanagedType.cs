@@ -188,6 +188,7 @@ namespace System.Runtime.InteropServices {
 #if BOOTSTRAP_WITH_OLDLIB
 		/// <summary>
 		/// </summary>
+		[CLSCompliant(false)]
 		__mono_bootstrap_NativeTypeMax = 80,
 #endif
 	} // UnmanagedType
