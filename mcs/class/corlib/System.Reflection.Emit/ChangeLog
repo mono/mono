@@ -1,5 +1,7 @@
 2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyBuilderAccess.cs PackingSize: Add [Flags].
+
 	* AssemblyBuilder.cs (DefineDynamicModule): Make internal method
 	private.
 

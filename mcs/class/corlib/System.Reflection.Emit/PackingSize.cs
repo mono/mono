@@ -8,6 +8,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Specifies the packing size (data alignment) of a type.
 	/// </summary>
+	[Flags]
 	public enum PackingSize {
 
 		/// <summary>
