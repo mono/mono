@@ -300,7 +300,6 @@ namespace System.Data {
 
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates if this constraint is a primary key.")]
-		[ReadOnly (true)]
 		public bool IsPrimaryKey {
 			get { return _isPrimaryKey; }
 		}

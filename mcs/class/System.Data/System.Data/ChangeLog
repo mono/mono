@@ -1,3 +1,10 @@
+2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
+       * DataTableTypeConverter.cs: added
+       * DataView.cs: added missing attribute on Table property
+       * DataViewManager.cs: moved attribute to correct property
+       * UniqueConstraint.cs: removed extra ReadOnly attribute from
+        IsPrimaryKey property
+
 2004-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRow.cs : ColumnsChanged event is not required in .ctor().

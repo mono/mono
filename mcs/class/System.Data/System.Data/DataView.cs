@@ -239,6 +239,7 @@ namespace System.Data
 		[DataSysDescription ("Indicates the table this DataView uses to get data.")]
 		[DefaultValue (null)]
 		[RefreshProperties (RefreshProperties.All)]
+		[TypeConverter (typeof(DataTableTypeConverter))]
 		public DataTable Table {
 			[MonoTODO]
 			get {

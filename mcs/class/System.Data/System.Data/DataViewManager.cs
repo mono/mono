@@ -53,14 +53,14 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		[DataSysDescription ("Indicates the sorting/filtering/state settings for any table in the corresponding DataSet.")]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public string DataViewSettingCollectionString {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
+		[DataSysDescription ("Indicates the sorting/filtering/state settings for any table in the corresponding DataSet.")]
+                [DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataViewSettingCollection DataViewSettings {
 			get { throw new NotImplementedException (); }
 		}
