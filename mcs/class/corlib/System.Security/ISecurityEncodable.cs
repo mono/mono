@@ -9,7 +9,7 @@
 
 namespace System.Security {
 
-	interface ISecurityEncodable {
+	public interface ISecurityEncodable {
 
 		void FromXml (SecurityElement e);
 

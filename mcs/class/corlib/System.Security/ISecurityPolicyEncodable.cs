@@ -11,7 +11,7 @@ using System.Security.Policy;
 
 namespace System.Security {
 
-	interface ISecurityPolicyEncodable {
+	public interface ISecurityPolicyEncodable {
 
 		void FromXml (SecurityElement e, PolicyLevel level);
 

@@ -9,7 +9,7 @@
 
 namespace System.Security {
 
-	interface IStackWalk {
+	public interface IStackWalk {
 
 		void Assert ();
 

@@ -9,7 +9,7 @@
 
 namespace System.Security {
 
-	interface IPermission {
+	public interface IPermission : ISecurityEncodable {
 
 		IPermission Copy ();
 

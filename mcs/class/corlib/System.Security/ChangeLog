@@ -1,3 +1,12 @@
+2001-12-30  Nick Drochak  <ndrochak@gol.com>
+
+	* PermissionSet.cs SecurityManager.cs: New Files
+	* CodeAccessPermission.cs: Skeleton code
+	* IPermission.cs: Make public and inherit from ISecurityEncodable like it should
+	* ISecurityEncodable.cs: Make interface public
+	* ISecurityPolicyEncodable.cs: Ditto
+	* IStackWalk.cs: Ditto
+
 2001-12-29  Nick Drochak  <ndrochak@gol.com>
 
 	* ISecurityPolicyEncodable.cs, PolicyLevelType.cs, 
