@@ -1,5 +1,8 @@
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
+	* library.make (HAVE_CS_TESTS, HAVE_VB_TESTS): Allow to be
+	overriden.  Useful if the tests sourcefile is generated.
+
 	* platforms/win32.make (PLATFORM_TWEAK_CORLIB_SOURCES): Remove.
 
 	Support enough features to build mscorlib.dll.

@@ -14,7 +14,7 @@ PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
 ifdef PLATFORM_excludes
 sourcefile = $(depsdir)/$(LIBRARY).$(PLATFORM)-sources
 $(sourcefile): $(core_sourcefile) $(PLATFORM_excludes)
-	sort $(core_sourcefile) $(PLATFORM_excludes) | uniq -u >$@
+	cat $(core_sourcefile) $(PLATFORM_excludes) | sort | uniq -u >$@
 else
 sourcefile = $(core_sourcefile)
 endif
@@ -63,8 +63,12 @@ btest_response = $(depsdir)/$(btest_lib).response
 btest_makefrag = $(depsdir)/$(btest_lib).makefrag
 btest_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
 
-HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
+ifndef HAVE_CS_TESTS
+HAVE_CS_TESTS := $(wildcard $(btest_sourcefile))
+endif
+ifndef HAVE_VB_TESTS
 HAVE_VB_TESTS := $(wildcard $(btest_sourcefile))
+endif
 
 endif
 
