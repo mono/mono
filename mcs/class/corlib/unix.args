@@ -341,6 +341,7 @@ System.Reflection/MonoProperty.cs
 System.Reflection/ParameterAttributes.cs
 System.Reflection/ParameterInfo.cs
 System.Reflection/ParameterModifier.cs
+System.Reflection/Pointer.cs
 System.Reflection/PropertyAttributes.cs
 System.Reflection/PropertyInfo.cs
 System.Reflection/ReflectionTypeLoadException.cs
