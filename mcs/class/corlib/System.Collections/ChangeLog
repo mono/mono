@@ -1,3 +1,10 @@
+2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CaseInsensitiveHashCodeProvider.cs: Fix the default constructor (needs to
+	  set CurrentCulture, Add null check to other constructor, Call correct function
+	  for invariant case, ensure culture is set to null for invariant case, removed
+	  static constructor, made invariant version available as internal in .Net 1.0
+
 2004-04-21  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CaseInsensitiveHashCodeProvider.cs: If the culture is null, don't use

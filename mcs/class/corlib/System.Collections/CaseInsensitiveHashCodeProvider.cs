@@ -16,31 +16,31 @@ namespace System.Collections {
 	[Serializable]
 	public class CaseInsensitiveHashCodeProvider : IHashCodeProvider {
 
-		private static CaseInsensitiveHashCodeProvider singleton;
-		private static CaseInsensitiveHashCodeProvider singletonInvariant;
+		private static CaseInsensitiveHashCodeProvider singleton = new CaseInsensitiveHashCodeProvider ();
+		private static CaseInsensitiveHashCodeProvider singletonInvariant = new CaseInsensitiveHashCodeProvider (true);
 		
 		CultureInfo culture;
-
-
-		// Class constructor
-
-		static CaseInsensitiveHashCodeProvider ()
-		{
-			singleton = new CaseInsensitiveHashCodeProvider ();
-			singletonInvariant = new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture);
-		}
-
-
 
 		// Public instance constructor
 
 		public CaseInsensitiveHashCodeProvider ()
 		{
+			culture = CultureInfo.CurrentCulture;
+		}
+
+		public CaseInsensitiveHashCodeProvider (bool invariant)
+		{
+			// leave culture == null
 		}
 
 		public CaseInsensitiveHashCodeProvider (CultureInfo culture)
 		{
-			this.culture = culture;
+			if (culture == null)
+ 				throw new ArgumentNullException ("culture");
+
+			if (culture.LCID != CultureInfo.InvariantCulture.LCID)
+				this.culture = culture;
+			// else leave culture == null
 		}
 
 
@@ -55,13 +55,15 @@ namespace System.Collections {
 		}
 
 #if NET_1_1
-		public static CaseInsensitiveHashCodeProvider DefaultInvariant {
+		public
+#else
+		internal
+#endif
+		static CaseInsensitiveHashCodeProvider DefaultInvariant {
 			get {
 				return singletonInvariant;
 			}
 		}
-#endif
-
 
 		//
 		// Instance methods
@@ -73,9 +75,8 @@ namespace System.Collections {
 
 		public int GetHashCode (object obj)
 		{
-			if (obj == null) {
-				throw new ArgumentNullException ("obj is null");
-			}
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
 
 			string str = obj as string;
 
@@ -94,7 +95,7 @@ namespace System.Collections {
 			}
 			else {
 				for (int i = 0;i<length;i++) {
-					c = Char.ToLower (str [i]);
+					c = Char.ToLowerInvariant (str [i]);
 					h = h * 31 + c;
 				}
 			}
