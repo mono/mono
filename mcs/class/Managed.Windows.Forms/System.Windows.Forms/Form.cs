@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.9  2004/09/13 16:51:29  pbartok
+// - Added Accept and CancelButton properties
+// - Added ProcessDialogKey() method
+//
 // Revision 1.8  2004/09/01 02:05:18  pbartok
 // - Added (partial) implementation of DialogResult; rest needs to be
 //   implemented when the modal loop code is done
@@ -68,9 +72,12 @@ using System.Threading;
 namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		#region Local Variables
+		internal bool		closing;
+
 		private static bool	autoscale;
 		private static Size	autoscale_base_size;
-		internal bool		closing;
+		private IButtonControl	accept_button;
+		private IButtonControl	cancel_button;
 		private DialogResult	dialog_result;
 		
 		#endregion	// Local Variables
@@ -94,6 +101,16 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
+		public IButtonControl AcceptButton {
+			get {
+				return accept_button;
+			}
+
+			set {
+				accept_button = value;
+			}
+		}
+			
 		public bool AutoScale {
 			get {
 				return autoscale;
@@ -126,6 +143,17 @@ namespace System.Windows.Forms {
 				// Add termination code here
 			}
 		}
+
+		public IButtonControl CancelButton {
+			get {
+				return cancel_button;
+			}
+
+			set {
+				cancel_button = value;
+			}
+		}
+
 		#endregion	// Public Instance Properties
 
 		#region Public Static Methods
@@ -158,6 +186,17 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		protected override bool ProcessDialogKey(Keys keyData) {
+			if (keyData == Keys.Enter && accept_button != null) {
+				accept_button.PerformClick();
+				return true;
+			} else if (keyData == Keys.Enter && cancel_button != null) {
+				cancel_button.PerformClick();
+				return true;
+			}
+			return base.ProcessDialogKey(keyData);
+		}
+
 		protected override void WndProc(ref Message m) {
 			switch((Msg)m.Msg) {
 				case Msg.WM_CLOSE: {
