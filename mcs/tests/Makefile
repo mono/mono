@@ -226,7 +226,7 @@ test-generic-4:
 # Tests the 2.0 features
 #
 test-2:
-	make INTERNAL_MCS="mono ../mcs/mcs.exe -v2" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=mcs-v2
+	make INTERNAL_MCS="mono ../mcs/mcs.exe /langversion:default" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=mcs-v2
 
 test-unsafe-compiler-jit:
 	make INTERNAL_MCS="$(INTERNAL_MCS) /unsafe" test-compiler-jit-real TEST_SOURCES="$(UNSAFE_SOURCES)" TEST_TAG=mcs-unsafe

@@ -1,3 +1,8 @@
+2004-09-02  Duncan Mak  <duncan@ximian.com>
+
+	* Makefile (test-2): Use /langversion instead of -v2. This fixes
+	the compiler test build.
+
 2004-09-02  Marek Safar <marek.safar@seznam.cz>
 
 	* test-288.cs: New test for #62342.
