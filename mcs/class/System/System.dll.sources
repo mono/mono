@@ -336,6 +336,7 @@ System.ComponentModel.Design.Serialization/IDesignerLoaderService.cs
 System.ComponentModel.Design.Serialization/InstanceDescriptor.cs
 System.Configuration/AppSettingsReader.cs
 System.Configuration/AppSettingsSection.cs
+System.Configuration/ApplicationSettingsBase.cs
 System.Configuration/ConfigHelper.cs
 System.Configuration/ConfigInfo.cs
 System.Configuration/ConfigXmlDocument.cs

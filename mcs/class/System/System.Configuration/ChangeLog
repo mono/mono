@@ -1,3 +1,8 @@
+2005-03-23  Jackson Harper  <jackson@ximian.com>
+
+	* ApplicationSettingsBase.cs: We need this stub to do some 2.0
+	winforms stuff.
+
 2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Configuration.cs: a few MonoTODOs less.
