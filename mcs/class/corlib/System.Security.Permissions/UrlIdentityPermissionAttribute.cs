@@ -3,13 +3,10 @@
 //
 // Authors:
 //	Duncan Mak <duncan@ximian.com>
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
@@ -46,11 +41,13 @@ namespace System.Security.Permissions {
 		private string url;
 		
 		// Constructor
-		public UrlIdentityPermissionAttribute (SecurityAction action) : base (action) {}
+		public UrlIdentityPermissionAttribute (SecurityAction action)
+			: base (action)
+		{
+		}
 		
 		// Properties
-		public string Url
-		{
+		public string Url {
 			get { return url; }
 			set { url = value; }
 		}
@@ -59,11 +56,10 @@ namespace System.Security.Permissions {
 		public override IPermission CreatePermission ()
 		{
 			if (this.Unrestricted)
-				throw new ArgumentException ("Unsupported PermissionState.Unrestricted for Identity Permissions");
-
+				return new UrlIdentityPermission (PermissionState.Unrestricted);
 			// Note: It is possible to create a permission with a 
 			// null URL but not to create a UrlIdentityPermission (null)
-			if (url == null)
+			else if (url == null)
 				return new UrlIdentityPermission (PermissionState.None);
 			else
 				return new UrlIdentityPermission (url);

@@ -1,12 +1,11 @@
 //
 // System.Security.Permissions.PrincipalPermissionAttribute.cs
 //
-// Duncan Mak <duncan@ximian.com>
+// Authors:
+//	Duncan Mak <duncan@ximian.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -29,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
@@ -50,20 +47,17 @@ namespace System.Security.Permissions {
 		}
 
 		// Properties
-		public bool Authenticated
-		{
+		public bool Authenticated {
 			get { return authenticated; }
 			set { authenticated = value; }
 		}
-			 			 
-		public string Name
-		{
+
+		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
-			 
-		public string Role
-		{
+
+		public string Role {
 			get { return role; }
 			set { role = value; }
 		}

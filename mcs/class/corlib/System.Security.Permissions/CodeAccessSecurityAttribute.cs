@@ -32,25 +32,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Security.Permissions;
-
 namespace System.Security.Permissions {
 
-	[System.AttributeUsage(
-		System.AttributeTargets.Assembly 
-		| System.AttributeTargets.Class 
-		| System.AttributeTargets.Struct 
-		| System.AttributeTargets.Constructor 
-		| System.AttributeTargets.Method, 
+	[AttributeUsage(
+		AttributeTargets.Assembly 
+		| AttributeTargets.Class 
+		| AttributeTargets.Struct 
+		| AttributeTargets.Constructor 
+		| AttributeTargets.Method, 
 		AllowMultiple=true, 
 		Inherited=false)
 	]
 	[Serializable]
 	public abstract class CodeAccessSecurityAttribute : SecurityAttribute {
 
-		public CodeAccessSecurityAttribute (SecurityAction action) : base (action) {}
-
-	}  // public abstract class CodeAccessSecurityAttribute
-}  // namespace System.Security.Permissions
+		public CodeAccessSecurityAttribute (SecurityAction action) 
+			: base (action)
+		{
+		}
+	}
+}
 

@@ -68,29 +68,24 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			if (this.Unrestricted) {
-				throw new ArgumentException (Locale.GetText (
-					"Unsupported PermissionState.Unrestricted"));
-			}
+			if (this.Unrestricted)
+				return new StrongNameIdentityPermission (PermissionState.Unrestricted);
 
 			StrongNameIdentityPermission perm = null;
 			if ((name == null) && (key == null) && (version == null))
-				perm = new StrongNameIdentityPermission (PermissionState.None);
-			else {
-				if (key == null) {
-					throw new ArgumentException (Locale.GetText (
-						"PublicKey is required"));
-				}
+				return new StrongNameIdentityPermission (PermissionState.None);
 
-				StrongNamePublicKeyBlob blob = StrongNamePublicKeyBlob.FromString (key);
-				
-				Version v = null;
-				if (version != null)
-					v = new Version (version);
-
-				perm = new StrongNameIdentityPermission (blob, name, v);
+			if (key == null) {
+				throw new ArgumentException (Locale.GetText (
+					"PublicKey is required"));
 			}
-			return perm;
+			StrongNamePublicKeyBlob blob = StrongNamePublicKeyBlob.FromString (key);
+				
+			Version v = null;
+			if (version != null)
+				v = new Version (version);
+
+			return new StrongNameIdentityPermission (blob, name, v);
 		}
 	}
 }

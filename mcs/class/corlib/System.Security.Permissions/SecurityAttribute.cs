@@ -33,16 +33,16 @@
 //
 
 namespace System.Security.Permissions {
-	[System.AttributeUsage(
-		System.AttributeTargets.Assembly 
-		| System.AttributeTargets.Class 
-		| System.AttributeTargets.Struct 
-		| System.AttributeTargets.Constructor 
-		| System.AttributeTargets.Method, 
+
+	[AttributeUsage(
+		AttributeTargets.Assembly 
+		| AttributeTargets.Class 
+		| AttributeTargets.Struct 
+		| AttributeTargets.Constructor 
+		| AttributeTargets.Method, 
 		AllowMultiple=true, 
 		Inherited=false)
 	]
-
 	[Serializable]
 	public abstract class SecurityAttribute : Attribute {
 
@@ -57,21 +57,13 @@ namespace System.Security.Permissions {
 		public abstract IPermission CreatePermission ();
 
 		public bool Unrestricted {
-			get {
-				return m_Unrestricted;
-			}
-			set {
-				m_Unrestricted = value;
-			}
+			get { return m_Unrestricted; }
+			set { m_Unrestricted = value; }
 		}
 
 		public SecurityAction Action {
-			get {
-				return m_Action;
-			}
-			set {
-				m_Action = value;
-			}
+			get { return m_Action; }
+			set { m_Action = value; }
 		}
 	}
 }

@@ -3,13 +3,10 @@
 //
 // Authors
 //	Duncan Mak <duncan@ximian.com>
-//	Sebastien Pouliot <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 // Portions Copyright (C) 2003 Motus Technologies (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -46,13 +43,22 @@ namespace System.Security.Permissions {
 		private string create;
 		private string read;
 		private string write;
-		       
+#if NET_2_0
+		private string changeAccessControl;
+		private string viewAccessControl;
+		private string viewAndModify;
+#endif
+
 		// Constructor
-		public RegistryPermissionAttribute (SecurityAction action) : base (action) {}
+		public RegistryPermissionAttribute (SecurityAction action) : base (action)
+		{
+		}
 		
 		// Properties
-		public string All
-		{
+#if NET_2_0
+		[Obsolete ("use newer properties")]
+#endif
+		public string All {
 #if ! NET_1_0
 			get { throw new NotSupportedException ("All"); }
 #endif
@@ -63,24 +69,41 @@ namespace System.Security.Permissions {
 			}
 		}
 		
-		public string Create
-		{
+		public string Create {
 			get { return create; }
 			set { create = value; }
 		}
 
-		public string Read
-		{ 
+		public string Read { 
 			get { return read; }
 			set { read = value; }
 		}
 
-		public string Write
-		{
+		public string Write {
 			get { return write; }
 			set { write = value; }
 		}
 
+#if NET_2_0
+		public string ChangeAccessControl {
+			get { return changeAccessControl; }
+			set { changeAccessControl = value; }
+		}
+
+		public string ViewAccessControl {
+			get { return viewAccessControl; }
+			set { viewAccessControl = value; }
+		}
+
+		public string ViewAndModify {
+			get { throw new NotSupportedException (); }	// as documented
+			set {
+				create = value;
+				read = value;
+				write = value;
+			}
+		}
+#endif
 		// Methods
 		public override IPermission CreatePermission ()
 		{

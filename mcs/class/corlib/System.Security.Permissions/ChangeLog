@@ -1,7 +1,35 @@
 2004-08-19  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CodeAccessSecurityAttribute.cs: Namespace clean-up (removing System.)
+	* EnvironmentPermission.cs: Common exception for flags validation.
+	Fixed Fx 2.0 return values (String.Empty not null).
+	* EnvironmentPermissionAttribute.cs: Namespace clean-up.
+	* FileIOPermission.cs: Updated to use the common template. Added Fx 
+	2.0 properties.
+	* FileIOPermissionAttribute.cs: Added Fx 2.0 properties.
+	* HostProtectionAttribute.cs: Namespace clean-up (removing System.)
+	* IsolatedStoragePermissionAttribute.cs: Namespace cleanup.
+	* KeyContainerPermissionAttribute.cs: Added default values. Removed
+	unrequired flags validations. Can now create unrestricted permissions.
+	* PermissionSetAttribute.cs: Added new Fx 2.0 Hex property.
+	* PrincipalPermission.cs: Updated to use the common template.
+	* PrincipalPermissionAttribute.cs: Namespace cleanup.
+	* PublisherIdentityPermissionAttribute.cs: Namespace cleanup.
+	* RegistryPermission.cs: Updated to use the common template.
+	* RegistryPermissionAttribute.cs: Added Fx 2.0 properties.
+	* SecurityAttribute.cs: Namespace clean-up (removing System.)
 	* SecurityPermission.cs: Updated to use the common template. Now 
 	pass all unit tests.
+	* SiteIdentityPermission.cs: Updated to use the common template.
+	* SiteIdentityPermissionAttribute.cs: Move unrestricted responsability
+	check to SiteIdentityPermission constructor.
+	* StrongNamePermissionAttribute.cs: Move unrestricted responsability
+	check to StrongNameIdentityPermission constructor.
+	* UrlIdentityPermission.cs: Updated to use the common template.
+	* UrlIdentityPermissionAttribute.cs: Move unrestricted responsability
+	check to UrlIdentityPermission constructor.
+	* ZoneIdentityPermissionAttribute.cs: Move unrestricted responsability
+	check to ZoneIdentityPermission constructor.
 
 2004-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 

@@ -3,13 +3,10 @@
 //
 // Authors
 //	Duncan Mak <duncan@ximian.com>
-//	Sebastien Pouliot <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 // Portions Copyright (C) 2003 Motus Technologies (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
@@ -47,14 +42,25 @@ namespace System.Security.Permissions {
 		private string path;
 		private string read;
 		private string write;
-		
+#if NET_2_0
+		private FileIOPermissionAccess allFiles;
+		private FileIOPermissionAccess allLocalFiles;
+		private string changeAccessControl;
+		private string viewAccessControl;
+		private string viewAndModify;
+#endif
+
 		// Constructor
-		public FileIOPermissionAttribute (SecurityAction action) : base (action) {}
+		public FileIOPermissionAttribute (SecurityAction action) : base (action)
+		{
+		}
 		
 		// Properties
-		public string All
-		{
-#if ! NET_1_0
+#if NET_2_0
+		[Obsolete ("use newer properties")]
+#endif
+		public string All {
+#if NET_1_1
 			get { throw new NotSupportedException ("All"); }
 #endif
 			set {
@@ -65,29 +71,57 @@ namespace System.Security.Permissions {
 			}
 		}
 
-		public string Append
-		{
+		public string Append {
 			get { return append; }
 			set { append = value; }
 		}
 
-		public string PathDiscovery
-		{
+		public string PathDiscovery {
 			get { return path; }
 			set { path = value; }
 		}
 
-		public string Read
-		{
+		public string Read {
 			get { return read; }
 			set { read = value; }
 		}				    
 		
-		public string Write
-		{
+		public string Write {
 			get { return write; }
 			set { write = value; }
 		}
+
+#if NET_2_0
+		public FileIOPermissionAccess AllFiles {
+			get { return allFiles; }
+			set { allFiles = value; }
+		}
+
+		public FileIOPermissionAccess AllLocalFiles {
+			get { return allLocalFiles; }
+			set { allLocalFiles = value; }
+		}
+
+		public string ChangeAccessControl {
+			get { return changeAccessControl; }
+			set { changeAccessControl = value; }
+		}
+
+		public string ViewAccessControl {
+			get { return viewAccessControl; }
+			set { viewAccessControl = value; }
+		}
+
+		public string ViewAndModify {
+			get { throw new NotSupportedException (); }	// as documented
+			set {
+				append = value;
+				path = value;
+				read = value;
+				write = value;
+			}
+		}
+#endif
 			 
 		// Methods
 		public override IPermission CreatePermission ()

@@ -1,12 +1,11 @@
 //
 // System.Security.Permissions.SiteIdentityPermissionAttribute.cs
 //
-// Duncan Mak <duncan@ximian.com>
+// Authors:
+//	Duncan Mak <duncan@ximian.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.			http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -29,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
@@ -44,11 +41,12 @@ namespace System.Security.Permissions {
 		
 		// Constructor
 		public SiteIdentityPermissionAttribute (SecurityAction action)
-			: base (action) {}
+			: base (action)
+		{
+		}
 		
 		// Properties
-		public string Site
-		{
+		public string Site {
 			get { return site; }
 			set { site = value; }
 		}
@@ -56,11 +54,10 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			if (this.Unrestricted)
-				throw new ArgumentException ("Unsupported PermissionState.Unrestricted");
-
 			SiteIdentityPermission perm = null;
-			if (site == null)
+			if (this.Unrestricted)
+				perm = new SiteIdentityPermission (PermissionState.Unrestricted);
+			else if (site == null)
 				perm = new SiteIdentityPermission (PermissionState.None);
 			else
 				perm = new SiteIdentityPermission (site);

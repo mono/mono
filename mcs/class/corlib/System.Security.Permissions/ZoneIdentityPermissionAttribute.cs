@@ -32,8 +32,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
@@ -46,14 +44,14 @@ namespace System.Security.Permissions {
 		private SecurityZone zone;
 		
 		// Constructor
-		public ZoneIdentityPermissionAttribute (SecurityAction action) : base (action) 
+		public ZoneIdentityPermissionAttribute (SecurityAction action)
+			: base (action) 
 		{
 			zone = SecurityZone.NoZone;
 		}
 		
 		// Properties
-		public SecurityZone Zone
-		{
+		public SecurityZone Zone {
 			get { return zone; }
 			set { zone = value; }
 		}
@@ -62,9 +60,9 @@ namespace System.Security.Permissions {
 		public override IPermission CreatePermission ()
 		{
 			if (this.Unrestricted)
-				throw new ArgumentException ("Unsupported PermissionState.Unrestricted");
-
-			return new ZoneIdentityPermission (zone);
+				return new ZoneIdentityPermission (PermissionState.Unrestricted);
+			else
+				return new ZoneIdentityPermission (zone);
 		}
 	}
 }

@@ -1,13 +1,10 @@
 //
-// System.Security.Permissions.IsolatedStoragePermissionAttributes.cs
+// System.Security.Permissions.IsolatedStoragePermissionAttribute.cs
 //
 // Author:
 //   Dan Lewis (dihlewis@yahoo.co.uk)
 //
 // (C) 2002
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Permissions {
 	
 	[AttributeUsage ( AttributeTargets.Assembly | AttributeTargets.Class |
@@ -40,7 +35,9 @@ namespace System.Security.Permissions {
 	[Serializable]
 	public abstract class IsolatedStoragePermissionAttribute : CodeAccessSecurityAttribute {
 		
-		public IsolatedStoragePermissionAttribute (SecurityAction action) : base (action) {
+		public IsolatedStoragePermissionAttribute (SecurityAction action) 
+			: base (action)
+		{
 		}
 
 		public IsolatedStorageContainment UsageAllowed {

@@ -3,12 +3,9 @@
 //
 // Authors
 //	Duncan Mak <duncan@ximian.com>
-//	Sebastien Pouliot  <spouliot@videotron.ca>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -31,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Security.Policy;
 using System.Text;
@@ -51,6 +47,9 @@ namespace System.Security.Permissions {
 		private string name;
 		private bool isUnicodeEncoded;
 		private string xml;
+#if NET_2_0
+		private string hex;
+#endif
 		
 		// Constructor
 		public PermissionSetAttribute (SecurityAction action)
@@ -59,26 +58,28 @@ namespace System.Security.Permissions {
 		}
 		
 		// Properties
-		public string File
-		{
+		public string File {
 			get { return file; }
 			set { file = value; }
 		}
-
-		public string Name
-		{
+#if NET_2_0
+		[MonoTODO ("Undocumented")]
+		public string Hex {
+			get { return hex; }
+			set { hex = value; }
+		}
+#endif
+		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
 
-		public bool UnicodeEncoded
-		{
+		public bool UnicodeEncoded {
 			get { return isUnicodeEncoded; }
 			set { isUnicodeEncoded = value; }
 		}
 
-		public string XML
-		{
+		public string XML {
 			get { return xml; }
 			set { xml = value; }
 		}
@@ -100,7 +101,7 @@ namespace System.Security.Permissions {
 				return null;
 
 			PermissionState state = PermissionState.None;
-			if (se.Attribute ("Unrestricted") == "true")
+			if (CodeAccessPermission.IsUnrestricted (se))
 				state = PermissionState.Unrestricted;
 
 			if (className.EndsWith ("NamedPermissionSet")) {

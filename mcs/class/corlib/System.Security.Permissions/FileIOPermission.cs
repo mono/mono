@@ -1,15 +1,11 @@
-//------------------------------------------------------------------------------
 // 
 // System.Security.Permissions.FileIOPermission.cs 
 //
+// Authors:
+//	Nick Drochak, ndrochak@gol.com
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//
 // Copyright (C) 2001 Nick Drochak, All Rights Reserved
-// 
-// Author:         Nick Drochak, ndrochak@gol.com
-// Created:        2002-01-09 
-//
-//------------------------------------------------------------------------------
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -36,11 +32,17 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
+#if NET_2_0
+using System.Security.AccessControl;
+#endif
+
 namespace System.Security.Permissions {
 
 	[Serializable]
 	public sealed class FileIOPermission
                 : CodeAccessPermission, IBuiltInPermission, IUnrestrictedPermission {
+
+		private const int version = 1;
 
 		private static char[] m_badCharacters = {'\"','<', '>', '|', '*', '?'};
 		private bool m_Unrestricted = false;
@@ -48,18 +50,16 @@ namespace System.Security.Permissions {
 		private FileIOPermissionAccess m_AllFilesAccess = FileIOPermissionAccess.NoAccess;
 		private FileIOPermissionAccess m_AllLocalFilesAccess = FileIOPermissionAccess.NoAccess;
 
-		public FileIOPermission(PermissionState state) {
-			if (!Enum.IsDefined(typeof(PermissionState), state)){
-				throw new ArgumentException("Invalid permission state.", "state");
-			}
-			m_Unrestricted = (PermissionState.Unrestricted == state);
-			if (m_Unrestricted) {
+		public FileIOPermission (PermissionState state)
+		{
+			if (CheckPermissionState (state, true) == PermissionState.Unrestricted) {
+				m_Unrestricted = true;
 				m_AllFilesAccess = FileIOPermissionAccess.AllAccess;
 				m_AllLocalFilesAccess = FileIOPermissionAccess.AllAccess;
 			}
 		}
 
-		public FileIOPermission(FileIOPermissionAccess access, string path)
+		public FileIOPermission (FileIOPermissionAccess access, string path)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
@@ -75,7 +75,7 @@ namespace System.Security.Permissions {
 			AddPathList(access, path);
 		}
 
-		public FileIOPermission(FileIOPermissionAccess access, string[] pathList)
+		public FileIOPermission (FileIOPermissionAccess access, string[] pathList)
 		{
 			if (pathList == null)
 				throw new ArgumentNullException ("pathList");
@@ -86,6 +86,20 @@ namespace System.Security.Permissions {
 
 			AddPathList(access, pathList);
 		}
+
+#if NET_2_0
+		[MonoTODO ("Access Control isn't implemented")]
+		public FileIOPermission (FileIOPermissionAccess access, AccessControlActions control, string path)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("Access Control isn't implemented")]
+		public FileIOPermission (FileIOPermissionAccess access, AccessControlActions control, string[] pathList)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public FileIOPermissionAccess AllFiles {
 			get {
@@ -136,11 +150,11 @@ namespace System.Security.Permissions {
 			}
 		}
 
-		public void AddPathList(FileIOPermissionAccess access, string[] pathList	){
-			foreach(string path in pathList){
-				AddPathList(access, path);
+		public void AddPathList (FileIOPermissionAccess access, string[] pathList)
+		{
+			foreach (string path in pathList) {
+				AddPathList (access, path);
 			}
-			
 		}
 
 		// private constructor used by Copy() method
@@ -172,33 +186,31 @@ namespace System.Security.Permissions {
 								 ) v Unrestricted=”true” 
 								 />
 		*/
-		public override void FromXml(SecurityElement esd){
-			if (null == esd) {
-				throw new ArgumentNullException();
-			}
-			if (esd.Tag != "IPermission" || (string)esd.Attributes["class"] != "FileIOPermission"
-					|| (string)esd.Attributes["version"] != "1"){
-				throw new ArgumentException("Not a valid permission element");
-			}
-			m_PathList.Clear();
-			if ("true" == (string)esd.Attributes["Unrestricted"]){
+		public override void FromXml (SecurityElement esd)
+		{
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
+
+			m_PathList.Clear ();
+			if (IsUnrestricted (esd)) {
 				m_Unrestricted = true;
 			}
 			else{
 				m_Unrestricted = false;
-				string fileList;
-				fileList = (string)esd.Attributes["Read"];
+				string fileList = esd.Attribute ("Read");
 				string[] files;
 				if (fileList != null){
 					files = fileList.Split(';');
 					AddPathList(FileIOPermissionAccess.Read, files);
 				}
-				fileList = (string)esd.Attributes["Write"];
+				fileList = esd.Attribute ("Write");
 				if (fileList != null){
 					files = fileList.Split(';');
 					AddPathList(FileIOPermissionAccess.Write, files);
 				}
-				fileList = (string)esd.Attributes["Append"];
+				fileList = esd.Attribute ("Append");
 				if (fileList != null){
 					files = fileList.Split(';');
 					AddPathList(FileIOPermissionAccess.Append, files);
@@ -228,16 +240,12 @@ namespace System.Security.Permissions {
 			}
 		}
 
-		public override IPermission Intersect(IPermission target){ 
-			if (null == target){
+		public override IPermission Intersect (IPermission target)
+		{ 
+			FileIOPermission FIOPTarget = Cast (target);
+			if (FIOPTarget == null)
 				return null;
-			}
-			else {
-				if (target.GetType() != typeof(FileIOPermission)){
-					throw new ArgumentException();
-				}
-			}
-			FileIOPermission FIOPTarget = (FileIOPermission)target;
+
 			if (FIOPTarget.IsUnrestricted() && m_Unrestricted){
 				return new FileIOPermission(PermissionState.Unrestricted);
 			}
@@ -288,12 +296,10 @@ namespace System.Security.Permissions {
 		}
 
 
-		public override bool IsSubsetOf(IPermission target){
-			// X.IsSubsetOf(Y) is true if permission Y includes everything allowed by X.
-			if (target != null && target.GetType() != typeof(FileIOPermission)){
-				throw new ArgumentException();
-			}
-			FileIOPermission FIOPTarget = (FileIOPermission)target;
+		public override bool IsSubsetOf (IPermission target)
+		{
+			FileIOPermission FIOPTarget = Cast (target);
+
 			if (FIOPTarget.IsUnrestricted()){
 				return true;
 			}
@@ -344,7 +350,8 @@ namespace System.Security.Permissions {
 			}
 		}
 
-		public bool IsUnrestricted(){
+		public bool IsUnrestricted ()
+		{
 			return m_Unrestricted;
 		}
 
@@ -374,46 +381,35 @@ namespace System.Security.Permissions {
 			AddPathList(access, pathList);
 		}
 
-		public override SecurityElement ToXml(){
-			//Encode the the current permission to XML using the 
-			//security element class.
-			SecurityElement element = new SecurityElement("IPermission");
-			Type type = this.GetType();
-			StringBuilder AsmName = new StringBuilder(type.Assembly.ToString());
-			AsmName.Replace('\"', '\'');
-			element.AddAttribute("class", type.FullName + ", " + AsmName);
-			element.AddAttribute("version", "1");
-			if(m_Unrestricted){
-				element.AddAttribute("Unrestricted", "true");
+		public override SecurityElement ToXml ()
+		{
+			SecurityElement se = Element (1);
+			if (m_Unrestricted) {
+				se.AddAttribute("Unrestricted", "true");
 			}
 			else {
-				string[] paths;
-				paths = GetPathList(FileIOPermissionAccess.Append);
+				string[] paths = GetPathList(FileIOPermissionAccess.Append);
 				if (null != paths && paths.Length >0){
-					element.AddAttribute("Append", String.Join(";",paths));
+					se.AddAttribute("Append", String.Join(";",paths));
 				}
 				paths = GetPathList(FileIOPermissionAccess.Read);
 				if (null != paths && paths.Length >0){
-					element.AddAttribute("Read", String.Join(";",paths));
+					se.AddAttribute("Read", String.Join(";",paths));
 				}
 				paths = GetPathList(FileIOPermissionAccess.Write);
 				if (null != paths && paths.Length >0){
-					element.AddAttribute("Write", String.Join(";",paths));
+					se.AddAttribute("Write", String.Join(";",paths));
 				}
 			}
-			return element;
+			return se;
 		}
 
-		public override IPermission Union(IPermission other){
-			if (null == other){
+		public override IPermission Union (IPermission other)
+		{
+			FileIOPermission FIOPTarget = Cast (other);
+			if (FIOPTarget == null)
 				return null;
-			}
-			else {
-				if (other.GetType() != typeof(FileIOPermission)){
-					throw new ArgumentException();
-				}
-			}
-			FileIOPermission FIOPTarget = (FileIOPermission)other;
+
 			if (FIOPTarget.IsUnrestricted() || m_Unrestricted){
 				return new FileIOPermission(PermissionState.Unrestricted);
 			}
@@ -421,10 +417,10 @@ namespace System.Security.Permissions {
 				FileIOPermission retVal = (FileIOPermission)Copy();
 				retVal.AllFiles |= FIOPTarget.AllFiles;
 				retVal.AllLocalFiles |= FIOPTarget.AllLocalFiles;
-				string[] paths;
-				paths = FIOPTarget.GetPathList(FileIOPermissionAccess.Append);
+
+				string[] paths = FIOPTarget.GetPathList(FileIOPermissionAccess.Append);
 				if (null != paths){
-						retVal.AddPathList(FileIOPermissionAccess.Append, paths);
+					retVal.AddPathList(FileIOPermissionAccess.Append, paths);
 				}
 				paths = FIOPTarget.GetPathList(FileIOPermissionAccess.Read);
 				if (null != paths){
@@ -438,10 +434,39 @@ namespace System.Security.Permissions {
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public override bool Equals (object obj)
+		{
+			return false;
+		}
+
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+#endif
+
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 2;
+			return (int) BuiltInToken.FileIO;
+		}
+
+		// helpers
+
+		private FileIOPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			FileIOPermission fiop = (target as FileIOPermission);
+			if (fiop == null) {
+				ThrowInvalidPermission (target, typeof (FileIOPermission));
+			}
+
+			return fiop;
 		}
 	}
 }

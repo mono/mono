@@ -50,19 +50,15 @@ namespace System.Security.Permissions {
 		public KeyContainerPermissionAttribute (SecurityAction action) 
 			: base (action)
 		{
+			_spec = -1;
+			_type = -1;
 		}
 
 		// Properties
 
 		public KeyContainerPermissionFlags Flags {
 			get { return _flags; }
-			set {
-				if ((value & KeyContainerPermissionFlags.AllFlags) != 0) {
-					string msg = String.Format (Locale.GetText ("Invalid enum {0}"), value);
-					throw new ArgumentException (msg, "KeyContainerPermissionFlags");
-				}
-				_flags = value;
-			}
+			set { _flags = value; }
 		}
 
 		public string KeyContainerName {
@@ -94,9 +90,10 @@ namespace System.Security.Permissions {
 
 		public override IPermission CreatePermission ()
 		{
-			if (EmptyEntry ()) {
+			if (this.Unrestricted)
+				return new KeyContainerPermission (PermissionState.Unrestricted);
+			else if (EmptyEntry ())
 				return new KeyContainerPermission (_flags);
-			}
 			else {
 				KeyContainerPermissionAccessEntry[] list = new KeyContainerPermissionAccessEntry [1];
 				list [0] = new KeyContainerPermissionAccessEntry (_store, _providerName, _type, _containerName, _spec, _flags);

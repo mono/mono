@@ -2,12 +2,9 @@
 // System.Security.Permissions.SiteIdentityPermission.cs
 //
 // Author
-//	Sebastien Pouliot  <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies. http://www.motus.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 
 namespace System.Security.Permissions {
@@ -38,14 +34,16 @@ namespace System.Security.Permissions {
 	[Serializable]
 	public sealed class SiteIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 
+		private const int version = 1;
+
 		private string _site;
 
 		// Constructors
 
 		public SiteIdentityPermission (PermissionState state) 
 		{
-			if (state == PermissionState.Unrestricted)
-				throw new ArgumentException ("Unsupported PermissionState.Unrestricted for Identity Permission");
+			// false == do not allow Unrestricted for Identity Permissions
+			CheckPermissionState (state, false);
 		}
 
 		public SiteIdentityPermission (string site) 
@@ -73,17 +71,10 @@ namespace System.Security.Permissions {
 
 		public override void FromXml (SecurityElement esd) 
 		{
-			if (esd == null)
-				throw new ArgumentNullException (
-					Locale.GetText ("The argument is null."));
-			
-			if (esd.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
-
-			if (esd.Attribute ("version") != "1")
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
 			this.Site = esd.Attribute ("Site");
 		}
@@ -102,12 +93,8 @@ namespace System.Security.Permissions {
 
 		public override SecurityElement ToXml ()
 		{
-			SecurityElement e = new SecurityElement ("IPermission");
-			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
-			e.AddAttribute ("version", "1");
-
+			SecurityElement e = Element (version);
 			e.AddAttribute ("Site", _site);
-
                         return e;
 		}
 
@@ -120,7 +107,22 @@ namespace System.Security.Permissions {
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 10;
+			return (int) BuiltInToken.SiteIdentity;
+		}
+
+		// helpers
+
+		private SiteIdentityPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			SiteIdentityPermission sip = (target as SiteIdentityPermission);
+			if (sip == null) {
+				ThrowInvalidPermission (target, typeof (SiteIdentityPermission));
+			}
+
+			return sip;
 		}
 	}
 }

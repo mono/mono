@@ -27,16 +27,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Security.Principal;
-using System.Text;
 using System.Threading;
 
 namespace System.Security.Permissions {
 
 	[Serializable]
 	public sealed class PrincipalPermission : IPermission, IUnrestrictedPermission, IBuiltInPermission {
+
+		private const int version = 1;
 
 		internal class PrincipalInfo {
 
@@ -71,15 +71,9 @@ namespace System.Security.Permissions {
 		public PrincipalPermission (PermissionState state)
 		{
 			principals = new ArrayList ();
-			switch (state) {
-				case PermissionState.None:
-					break;
-				case PermissionState.Unrestricted:
-					PrincipalInfo pi = new PrincipalInfo (null, null, true);
-					principals.Add (pi);
-					break;
-				default:
-					throw new ArgumentException ("unknown PermissionState");
+			if (CodeAccessPermission.CheckPermissionState (state, true) == PermissionState.Unrestricted) {
+				PrincipalInfo pi = new PrincipalInfo (null, null, true);
+				principals.Add (pi);
 			}
 		}
 
@@ -136,14 +130,10 @@ namespace System.Security.Permissions {
 
 		public void FromXml (SecurityElement esd) 
 		{
-			if (esd == null)
-				throw new ArgumentNullException ("esd");
-			if (esd.Tag != "IPermission")
-				throw new ArgumentException ("not IPermission");
-			if (!(esd.Attributes ["class"] as string).StartsWith ("System.Security.Permissions.PrincipalPermission"))
-				throw new ArgumentException ("not PrincipalPermission");
-			if ((esd.Attributes ["version"] as string) != "1")
-				throw new ArgumentException ("wrong version");
+			// General validation in CodeAccessPermission
+			CodeAccessPermission.CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
 			// Children is null, not empty, when no child is present
 			if (esd.Children != null) {
@@ -161,20 +151,18 @@ namespace System.Security.Permissions {
 
 		public IPermission Intersect (IPermission target) 
 		{
-			if (target == null)
+			PrincipalPermission pp = Cast (target);
+			if (pp == null)
 				return null;
-			if (! (target is PrincipalPermission))
-				throw new ArgumentException ("wrong type");
 
-			PrincipalPermission o = (PrincipalPermission) target;
 			if (IsUnrestricted ())
-				return o.Copy ();
-			if (o.IsUnrestricted ())
+				return pp.Copy ();
+			if (pp.IsUnrestricted ())
 				return Copy ();
 
 			PrincipalPermission intersect = new PrincipalPermission (PermissionState.None);
 			foreach (PrincipalInfo pi in principals) {
-				foreach (PrincipalInfo opi in o.principals) {
+				foreach (PrincipalInfo opi in pp.principals) {
 					if (pi.IsAuthenticated == opi.IsAuthenticated) {
 						string name = null;
 						if ((pi.Name == opi.Name) || (opi.Name == null))
@@ -195,22 +183,19 @@ namespace System.Security.Permissions {
 
 		public bool IsSubsetOf (IPermission target) 
 		{
-			if (target == null)
+			PrincipalPermission pp = Cast (target);
+			if (pp == null)
 				return false;
 
-			if (! (target is PrincipalPermission))
-				throw new ArgumentException ("wrong type");
-
-			PrincipalPermission o = (PrincipalPermission) target;
 			if (IsUnrestricted ())
-				return o.IsUnrestricted ();
-			else if (o.IsUnrestricted ())
+				return pp.IsUnrestricted ();
+			else if (pp.IsUnrestricted ())
 				return true;
 
 			// each must be a subset of the target
 			foreach (PrincipalInfo pi in principals) {
 				bool thisItem = false;
-				foreach (PrincipalInfo opi in o.principals) {
+				foreach (PrincipalInfo opi in pp.principals) {
 					if (((pi.Name == opi.Name) || (opi.Name == null)) && 
 						((pi.Role == opi.Role) || (opi.Role == null)) && 
 						(pi.IsAuthenticated == opi.IsAuthenticated))
@@ -241,10 +226,9 @@ namespace System.Security.Permissions {
 		{
 			SecurityElement se = new SecurityElement ("IPermission");
 			Type type = this.GetType ();
-			StringBuilder asmName = new StringBuilder (type.Assembly.ToString ());
-			asmName.Replace ('\"', '\'');
-			se.AddAttribute ("class", type.FullName + ", " + asmName);
-			se.AddAttribute ("version", "1");
+			se.AddAttribute ("class", type.FullName + ", " + type.Assembly.ToString ().Replace ('\"', '\''));
+			se.AddAttribute ("version", version.ToString ());
+
 			foreach (PrincipalInfo pi in principals) {
 				SecurityElement sec = new SecurityElement ("Identity");
 				if (pi.Name != null)
@@ -260,17 +244,15 @@ namespace System.Security.Permissions {
 
 		public IPermission Union (IPermission target)
 		{
-			if (target == null)
+			PrincipalPermission pp = Cast (target);
+			if (pp == null)
 				return Copy ();
-			if (! (target is PrincipalPermission))
-				throw new ArgumentException ("wrong type");
 
-			PrincipalPermission o = (PrincipalPermission) target;
-			if (IsUnrestricted () || o.IsUnrestricted ())
+			if (IsUnrestricted () || pp.IsUnrestricted ())
 				return new PrincipalPermission (PermissionState.Unrestricted);
 
 			PrincipalPermission union = new PrincipalPermission (principals);
-			foreach (PrincipalInfo pi in o.principals)
+			foreach (PrincipalInfo pi in pp.principals)
 				principals.Add (pi);
 
 			return union;
@@ -281,6 +263,7 @@ namespace System.Security.Permissions {
 		{
 			if (obj == null)
 				return false;
+
 			PrincipalPermission pp = (obj as PrincipalPermission);
 			if (pp == null)
 				return false;
@@ -317,7 +300,22 @@ namespace System.Security.Permissions {
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 8;
+			return (int) BuiltInToken.Principal;
+		}
+
+		// helpers
+
+		private PrincipalPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			PrincipalPermission pp = (target as PrincipalPermission);
+			if (pp == null) {
+				CodeAccessPermission.ThrowInvalidPermission (target, typeof (PrincipalPermission));
+			}
+
+			return pp;
 		}
 	}
 }

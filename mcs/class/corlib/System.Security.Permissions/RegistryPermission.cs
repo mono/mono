@@ -2,12 +2,9 @@
 // System.Security.Permissions.RegistryPermission.cs
 //
 // Author
-//	Sebastien Pouliot  <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies. http://www.motus.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,8 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
+
+#if NET_2_0
+using System.Security.AccessControl;
+#endif
 
 namespace System.Security.Permissions {
 
@@ -39,15 +39,19 @@ namespace System.Security.Permissions {
 	public sealed class RegistryPermission
 		: CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
+		private const int version = 1;
+
 		private PermissionState _state;
 		private RegistryPermissionAccess _access;
 		private string _pathList;
-
+#if NET_2_0
+		private AccessControlActions _control;
+#endif
 		// Constructors
 
 		public RegistryPermission (PermissionState state)
 		{
-			_state = state;
+			_state = CheckPermissionState (state, true);
 		}
 
 		public RegistryPermission (RegistryPermissionAccess access, string pathList)
@@ -55,7 +59,17 @@ namespace System.Security.Permissions {
 			_state = PermissionState.None;
 			AddPathList (access, pathList);
 		}
-
+#if NET_2_0
+		public RegistryPermission (RegistryPermissionAccess access, AccessControlActions control, string pathList)
+		{
+			if (!Enum.IsDefined (typeof (AccessControlActions), control)) {
+				string msg = String.Format (Locale.GetText ("Invalid enum {0}"), control);
+				throw new ArgumentException (msg, "AccessControlActions");
+			}
+			_state = PermissionState.None;
+			AddPathList (access, control, pathList);
+		}
+#endif
 		// Properties
 
 		// Methods
@@ -64,7 +78,12 @@ namespace System.Security.Permissions {
 		public void AddPathList (RegistryPermissionAccess access, string pathList) 
 		{
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public void AddPathList (RegistryPermissionAccess access, AccessControlActions control, string pathList) 
+		{
+		}
+#endif
 		[MonoTODO]
 		public string GetPathList (RegistryPermissionAccess access)
 		{
@@ -93,17 +112,10 @@ namespace System.Security.Permissions {
 
 		public override void FromXml (SecurityElement esd) 
 		{
-			if (esd == null)
-				throw new ArgumentNullException (
-					Locale.GetText ("The argument is null."));
-			
-			if (esd.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
-
-			if (esd.Attribute ("version") != "1")
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
 			// This serialization format stinks
 			foreach (object o in esd.Attributes.Keys) {
@@ -145,11 +157,8 @@ namespace System.Security.Permissions {
 
 		public override SecurityElement ToXml () 
 		{
-			SecurityElement e = new SecurityElement ("IPermission");
-			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
-			e.AddAttribute ("version", "1");
+			SecurityElement e = Element (version);
 			e.AddAttribute (_access.ToString (), _pathList);
-
 			return e;
 		}
 
@@ -162,7 +171,22 @@ namespace System.Security.Permissions {
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 5;
+			return (int) BuiltInToken.Registry;
+		}
+
+		// helpers
+
+		private RegistryPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			RegistryPermission rp = (target as RegistryPermission);
+			if (rp == null) {
+				ThrowInvalidPermission (target, typeof (RegistryPermission));
+			}
+
+			return rp;
 		}
 	}
 }

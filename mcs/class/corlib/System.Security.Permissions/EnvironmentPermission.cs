@@ -102,7 +102,8 @@ namespace System.Security.Permissions {
 					}
 					break;
 				default:
-					throw new ArgumentException ("Invalid EnvironmentPermissionAccess", "flag");
+					ThrowInvalidFlag (flag, false);
+					break;
 			}
 		}
 
@@ -141,7 +142,8 @@ namespace System.Security.Permissions {
 			switch (flag) {
 				case EnvironmentPermissionAccess.AllAccess:
 				case EnvironmentPermissionAccess.NoAccess:
-					throw new ArgumentException ("Invalid EnvironmentPermissionAccess in context", "flag");
+					ThrowInvalidFlag (flag, true);
+					break;
 				case EnvironmentPermissionAccess.Read:
 					foreach (string path in readList) {
 						sb.Append (path);
@@ -155,14 +157,19 @@ namespace System.Security.Permissions {
 					}
 					break;
 				default:
-					throw new ArgumentException ("Unknown EnvironmentPermissionAccess", "flag");
+					ThrowInvalidFlag (flag, false);
+					break;
 			}
 			string result = sb.ToString ();
 			// remove last ';'
 			int n = result.Length;
 			if (n > 0)
 				return result.Substring (0, n - 1);
+#if NET_2_0
+			return String.Empty;
+#else
 			return ((_state == PermissionState.Unrestricted) ? String.Empty : null);
+#endif
 		}
 
 		public override IPermission Intersect (IPermission target)
@@ -207,7 +214,6 @@ namespace System.Security.Permissions {
 			EnvironmentPermission ep = Cast (target);
 			if (ep == null)
 				return false;
-
 
 			if (IsUnrestricted ())
 				return ep.IsUnrestricted ();
@@ -265,7 +271,8 @@ namespace System.Security.Permissions {
 					}
 					break;
 				default:
-					throw new ArgumentException ("Invalid EnvironmentPermissionAccess", "flag");
+					ThrowInvalidFlag (flag, false);
+					break;
 			}
 		}
 
@@ -325,6 +332,16 @@ namespace System.Security.Permissions {
 			}
 
 			return ep;
+		}
+
+		internal void ThrowInvalidFlag (EnvironmentPermissionAccess flag, bool context) 
+		{
+			string msg = null;
+			if (context)
+				msg = Locale.GetText ("Unknown flag '{0}'.");
+			else
+				msg = Locale.GetText ("Invalid flag '{0}' in this context.");
+			throw new ArgumentException (String.Format (msg, flag), "flag");
 		}
 
 		#endregion // Methods

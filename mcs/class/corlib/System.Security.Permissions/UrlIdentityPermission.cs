@@ -2,12 +2,9 @@
 // System.Security.Permissions.UrlIdentityPermission.cs
 //
 // Author
-//	Sebastien Pouliot  <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies. http://www.motus.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 
 namespace System.Security.Permissions {
@@ -38,12 +34,14 @@ namespace System.Security.Permissions {
 	[Serializable]
 	public sealed class UrlIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 
+		private const int version = 1;
+
 		private string url;
 
 		public UrlIdentityPermission (PermissionState state) : base ()
 		{
-			if (state != PermissionState.None)
-				throw new ArgumentException ("only accept None");
+			// false == do not allow Unrestricted for Identity Permissions
+			CheckPermissionState (state, false);
 		}
 
 		public UrlIdentityPermission (string site) : base ()
@@ -69,17 +67,10 @@ namespace System.Security.Permissions {
 
 		public override void FromXml (SecurityElement esd)
 		{
-			if (esd == null)
-				throw new ArgumentNullException (
-					Locale.GetText ("The argument is null."));
-			
-			if (esd.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
-
-			if (esd.Attribute ("version") != "1")
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", 1, 1);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
 			url = esd.Attribute ("Url");
 		}
@@ -89,15 +80,11 @@ namespace System.Security.Permissions {
 		{
 			// if one permission is null (object or url) then there's no intersection
 			// if both are null then intersection is null
-			if ((target == null) || (url == null))
+			UrlIdentityPermission uip = Cast (target);
+			if ((uip == null) || (url == null))
 				return null;
 
-			// if non null, target must be of the same type
-			if (!(target is UrlIdentityPermission))
-				throw new ArgumentNullException ("target");
-
-			UrlIdentityPermission targetUrl = (target as UrlIdentityPermission);
-			if (targetUrl.Url == null)
+			if (uip.Url == null)
 				return null;
 
 			// TODO
@@ -112,13 +99,9 @@ namespace System.Security.Permissions {
 
 		public override SecurityElement ToXml () 
 		{
-			SecurityElement e = new SecurityElement ("IPermission");
-			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
-			e.AddAttribute ("version", "1");
-
-			e.AddAttribute ("Url", url);
-
-			return e;
+			SecurityElement se = Element (version);
+			se.AddAttribute ("Url", url);
+			return se;
 		}
 
 		[MonoTODO]
@@ -130,7 +113,22 @@ namespace System.Security.Permissions {
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 12;
+			return (int) BuiltInToken.UrlIdentity;
+		}
+
+		// helpers
+
+		private UrlIdentityPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			UrlIdentityPermission uip = (target as UrlIdentityPermission);
+			if (uip == null) {
+				ThrowInvalidPermission (target, typeof (UrlIdentityPermission));
+			}
+
+			return uip;
 		}
 	}
 }

@@ -6,9 +6,6 @@
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -31,8 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Security.Cryptography.X509Certificates;
+using SSCX = System.Security.Cryptography.X509Certificates;
 
 using Mono.Security.Cryptography;
 
@@ -48,7 +44,10 @@ namespace System.Security.Permissions {
 		private string signedFile;
 		private string x509data;
 		
-		public PublisherIdentityPermissionAttribute (SecurityAction action) : base (action) {}
+		public PublisherIdentityPermissionAttribute (SecurityAction action)
+			: base (action)
+		{
+		}
 
 		// If X509Certificate is set, this property is ignored.
 		public string CertFile {
@@ -70,20 +69,20 @@ namespace System.Security.Permissions {
 		public override IPermission CreatePermission ()
 		{
 			if (this.Unrestricted)
-				throw new ArgumentException ("Unsupported PermissionState.Unrestricted");
+				return new PublisherIdentityPermission (PermissionState.Unrestricted);
 
-			X509Certificate x509 = null;
+			SSCX.X509Certificate x509 = null;
 			if (x509data != null) {
 				byte[] rawcert = CryptoConvert.FromHex (x509data);
-				x509 = new X509Certificate (rawcert);
+				x509 = new SSCX.X509Certificate (rawcert);
 				return new PublisherIdentityPermission (x509);
 			}
 			if (certFile != null) {
-				x509 = System.Security.Cryptography.X509Certificates.X509Certificate.CreateFromCertFile (certFile);
+				x509 = SSCX.X509Certificate.CreateFromCertFile (certFile);
 				return new PublisherIdentityPermission (x509);
 			}
 			if (signedFile != null) {
-				x509 = System.Security.Cryptography.X509Certificates.X509Certificate.CreateFromSignedFile (signedFile);
+				x509 = SSCX.X509Certificate.CreateFromSignedFile (signedFile);
 				return new PublisherIdentityPermission (x509);
 			}
 			return new PublisherIdentityPermission (PermissionState.None);

@@ -3,13 +3,10 @@
 //
 // Authors
 //	Duncan Mak <duncan@ximian.com>
-//	Sebastien Pouliot <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 // Portions Copyright (C) 2003 Motus Technologies (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
@@ -47,11 +42,13 @@ namespace System.Security.Permissions {
 		private string write;
 		
 		// Constructor
-		public EnvironmentPermissionAttribute (SecurityAction action) : base (action) {}
+		public EnvironmentPermissionAttribute (SecurityAction action) : base (action)
+		{
+		}
 		
 		// Properties
 		public string All {
-#if ! NET_1_0
+#if NET_1_1
 			get { throw new NotSupportedException ("All"); }
 #endif
 			set { 
