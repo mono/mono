@@ -1,4 +1,10 @@
 
+Wed Sep 11 12:53:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: ignore overridden methods in GetMethods ().
+	Fix for FieldInfo::SetValue().
+	* object.c: handle float/double in runtime invoke.
+
 Tue Sep 10 15:51:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: allow a constructor to be called again on an object.
