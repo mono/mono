@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.39 $
+// $Revision: 1.40 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.40  2004/10/13 20:18:21  pbartok
+// - Added code to destroy a window
+//
 // Revision 1.39  2004/10/06 09:59:05  jordi
 // removes warnings from compilation
 //
@@ -742,7 +745,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void DestroyWindow(IntPtr handle) {
-			Console.WriteLine("#region #line");
+			Win32DestroyWindow(handle);
 			return;
 		}
 
@@ -1170,6 +1173,9 @@ internal static void EnableWindow(IntPtr handle, bool Enabled) {
 
 		[DllImport ("user32.dll", EntryPoint="CreateWindowExA", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32CreateWindow(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lParam);
+
+		[DllImport ("user32.dll", EntryPoint="DestroyWindow", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32DestroyWindow(IntPtr hWnd);
 
 		[DllImport ("user32.dll", EntryPoint="PeekMessageA", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags);
