@@ -584,3 +584,10 @@ Method group conversions for C# 2.0
 2test-6.cs
 ----------
 Test iterators using foreach where you have to load the address of a struct
+
+pu-ip.cs, pu-pi.cs, pi.cs, pu.cs
+--------------------------------
+Test that the order for internal/public in external assemblies does not
+affect the outcome of a build.  Also checks that multiple `entry points'
+can be declared in a library. (eg, that it is not confused by two Main
+methods).

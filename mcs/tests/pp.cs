@@ -1,3 +1,5 @@
+// Compiler options: -t:library
+
 public class Provider {
 	public static void Main ()
 	{

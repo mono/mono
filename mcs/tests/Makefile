@@ -15,6 +15,7 @@ ifeq (default, $(PROFILE))
 
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
 endif
+ILASM = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_ILASM)
 
 # We don't want debugging info :-)
 
@@ -36,6 +37,7 @@ NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307 test-318 
 # Martin Baulig is the only one who may add tests here - after merging the latest MCS patches
 # into GMCS
 #
+
 TEST_SOURCES_common = \
 	test-1   test-2   test-3   test-4   test-5   test-6   test-7   test-8   test-9   test-10  \
 	test-11  test-12  test-13  test-14  test-15  test-16  test-17  test-18  test-19  test-20  \
@@ -81,6 +83,7 @@ TEST_SOURCES_common = \
 	conv-dll conv-exe \
 	vararg-dll vararg-exe \
 	module-1 module-2 module-3 \
+	pi pp pu-ip pu-pi \
 	a-call		a-capture5    a-instance	a-parameter2			\
 	a-capture10	a-capture6    a-nested-anon2  	a-parameter4 			\
 	a-capture1	a-capture7    a-nested-anon3    				\
@@ -120,7 +123,11 @@ TEST_SOURCES_win32 = test-67
 # provide test-ordering rules to support multi-file testcases.  By default, any test named
 # 'foo-exe' requires that a test named 'foo-dll' be present, and they're run in the order: foo-dll, foo-exe
 # Additional test-orderings can be listed below.  Note that x:y says that 'x' should be run _after_ y
-TEST_ORDERING = module-2:module-1 module-3:module-1 module-3:module-2
+TEST_ORDERING = \
+	module-2:module-1 \
+	module-3:module-2 \
+	pu-pi:pi pu-pi:pp \
+	pu-ip:pi pu-ip:pp
 
 all-local install-local uninstall-local:
 
@@ -152,7 +159,7 @@ test-casts: boot-casts.out mcs-casts.out
 
 test-local: 
 
-run-test-local: multi test-harness test-casts
+run-test-local: ilasm test-harness test-casts
 
 test-everything:
 	$(MAKE) PROFILE=default run-test
@@ -199,29 +206,10 @@ test-harness-run:
 	  failed=$$failed`sed -n 's,^FAIL: ,,p' ../$(TEST_TAG).log` ; \
 	  if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi; fi
 
-#
-# Tests that require separate compilation
-#
-multi: multi-2 ilasm
-	echo Multi-assembly test passes
-
-#
-# Tests that the order for internal/public in external 
-# assemblies does not affect the outcome of a build.
-# also checks that multiple `entry points' can be declared
-# in a library. (eg, that it is not confused by two Main methods)
-#
-multi-2:
-	$(CSCOMPILE) -target:library pi.cs
-	$(CSCOMPILE) -target:library pp.cs
-	$(CSCOMPILE) pu.cs -r:pi.dll -r:pp.dll
-	$(CSCOMPILE) pu.cs -r:pp.dll -r:pi.dll
-
 ilasm:
-	$(INTERNAL_ILASM) /dll property-il.il
+	$(ILASM) /dll property-il.il
 	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
 	$(TEST_RUNTIME) property-main.exe
-
 
 #
 # Test for /doc option; need to compare result documentation files.

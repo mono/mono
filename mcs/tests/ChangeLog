@@ -1,3 +1,16 @@
+2004-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (multi-2): Remove.  Move comments to README.tests.
+	Integrate into regular test harness.
+	(multi): Remove.
+	(ILASM): New define.
+	(TEST_SOURCES_common): Add pi, pp, pu-ip, pu-pi.
+	(TEST_ORDERING): Update.
+	* pi.cs, pp.cs: Add '// Compiler options: ' comments.
+	* pu-ip.cs, pu-pi.cs: New files.  Copies of pu.cs, with flags to
+	integrate into regular test harness.
+	* pu.cs: Remove.
+
 2004-12-04  Martin Baulig  <martin@ximian.com>
 
 	* gen-116.cs: New test for #69781.
