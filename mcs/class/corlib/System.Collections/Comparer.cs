@@ -6,15 +6,11 @@
 //
 
 using System.Globalization;
-using System.Runtime.Serialization;
 
 namespace System.Collections
 {
 	[Serializable]
 	public sealed class Comparer : IComparer
-#if NET_1_1
-, ISerializable
-#endif
 	{
 		public static readonly Comparer Default = new Comparer ();
 #if NET_1_1
@@ -24,7 +20,7 @@ namespace System.Collections
 #endif
 		static readonly Comparer DefaultInvariant = new Comparer (CultureInfo.InvariantCulture);
 
-		private CompareInfo _compareInfo;
+		CultureInfo _culture;
 
 		private Comparer ()
 		{
@@ -41,7 +37,7 @@ namespace System.Collections
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
-			_compareInfo = culture.CompareInfo;
+			_culture = culture;
 		}
 
 
@@ -55,11 +51,11 @@ namespace System.Collections
 			else if (b == null)
 				return 1;
 
-			if (_compareInfo != null) {
+			if (_culture != null) {
 				string sa = a as string;
 				string sb = b as string;
 				if (sa != null && sb != null)
-					return _compareInfo.Compare (sa, sb);
+					return _culture.CompareInfo.Compare (sa, sb);
 			}
 
 			if (a is IComparable)
@@ -69,37 +65,5 @@ namespace System.Collections
 
 			throw new ArgumentException (Locale.GetText ("Neither a nor b Comparable."));
 		}
-
-		#region Implementation of ISerializable
-
-#if NET_1_1
-		private Comparer (SerializationInfo info, StreamingContext context)
-		{
-			_compareInfo = null;
-			foreach (SerializationEntry entry in info)
-			{
-				if (entry.Name == "CompareInfo")
-				{
-					_compareInfo = (CompareInfo) info.GetValue("CompareInfo", typeof(CompareInfo));
-					break;
-				}
-			}
-		}
-
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
-		{
- 			if (info == null)
-			{
- 				throw new ArgumentNullException ("info");
-			}
-
-			if (_compareInfo != null)
-			{
-				info.AddValue("CompareInfo", _compareInfo);
-			}
-		}
-#endif
-
-		#endregion Implementation of ISerializable
 	}
 }
