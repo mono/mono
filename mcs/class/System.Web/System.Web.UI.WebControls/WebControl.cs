@@ -407,10 +407,15 @@ namespace System.Web.UI.WebControls
 			ControlStyle.MergeWith(s);
 		}
 
-		public virtual void RenderBeginTag(HtmlTextWriter writer)
+		public virtual void RenderBeginTag (HtmlTextWriter writer)
 		{
-			AddAttributesToRender(writer);
-			writer.RenderBeginTag(TagKey);
+			AddAttributesToRender (writer);
+			HtmlTextWriterTag tkey = TagKey;
+			// The tagkey goes takes precedence if TagKey != 0 and TagName != null
+			if (tkey != 0)
+				writer.RenderBeginTag (tkey);
+			else
+				writer.RenderBeginTag (TagName);
 		}
 
 		public virtual void RenderEndTag(HtmlTextWriter writer)
@@ -439,6 +444,7 @@ namespace System.Web.UI.WebControls
 					tagName = Enum.Format(typeof(HtmlTextWriterTag), TagKey, "G").ToString();
 				}
 				// What if tagName is null and tagKey 0?
+				// Got the answer: nothing is rendered, empty, null
 				return tagName;
 			}
 		}

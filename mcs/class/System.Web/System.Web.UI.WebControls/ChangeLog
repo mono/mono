@@ -1,3 +1,8 @@
+2005-02-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebControl.cs: correctly use TagName in RenderBeginTag, ie, if TagKey
+	is zero, use the TagName no matter its value. Fixes bug #72415.
+
 2005-02-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Style.cs: Method name fix.
