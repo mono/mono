@@ -131,7 +131,6 @@ namespace System
 			Int32.CheckStyle (style);
 
 			bool AllowCurrencySymbol = (style & NumberStyles.AllowCurrencySymbol) != 0;
-			bool AllowExponent = (style & NumberStyles.AllowExponent) != 0;
 			bool AllowHexSpecifier = (style & NumberStyles.AllowHexSpecifier) != 0;
 			bool AllowThousands = (style & NumberStyles.AllowThousands) != 0;
 			bool AllowDecimalPoint = (style & NumberStyles.AllowDecimalPoint) != 0;
