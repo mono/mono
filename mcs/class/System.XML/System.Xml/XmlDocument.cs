@@ -12,6 +12,9 @@ using System.IO;
 
 namespace System.Xml
 {
+
+	public delegate void XmlNodeChangedEventHandler (XmlNodeChangedEventArgs args);	
+
 	/// <summary>
 	/// Abstract class XmlNodeList.
 	/// </summary>
@@ -19,6 +22,20 @@ namespace System.Xml
 	{
 		// Private data members
 		XmlResolver _resolver = null;
+
+		// Public events
+		//===========================================================================
+		public event XmlNodeChangedEventHandler NodeChanged;
+
+		public event XmlNodeChangedEventHandler NodeChanging;
+
+		public event XmlNodeChangedEventHandler NodeInserted;
+
+		public event XmlNodeChangedEventHandler NodeInserting;
+
+		public event XmlNodeChangedEventHandler NodeRemoved;
+
+		public event XmlNodeChangedEventHandler NodeRemoving;
 
 		// public properties
 		
@@ -338,21 +355,6 @@ namespace System.Xml
 			throw new NotImplementedException("XmlDocument.CreateXmlDeclaration not implemented.");
 		}
 
-		public override bool Equals(object obj)
-		{
-			// TODO - implement XmlDocument.Equals(object obj)
-			throw new NotImplementedException("XmlDocument.Equals(object obj) not implemented.");
-		}
-
-		public static bool Equals(
-			object objA,
-			object objB
-			)
-		{
-			// TODO - implement XmlDocument.Equals(object objA, objB)
-			throw new NotImplementedException("XmlDocument.Equals(object objA, objB) not implemented.");
-		}
-
 		public virtual XmlElement GetElementById(string elementId)
 		{
 			// TODO - implement XmlDocument.GetElementById
@@ -449,25 +451,58 @@ namespace System.Xml
 			throw new NotImplementedException("XmlDocument.WriteTo not implemented.");
 		}
 
-		// Public events
+
+		// Internal functions
 		//===========================================================================
-		public delegate void XmlNodeChangedEventHandler (XmlNodeChangedEventArgs args);
+		internal void onNodeChanging(XmlNode node, XmlNode Parent)
+		{
+			if (NodeInserting != null)
+				NodeChanging( new XmlNodeChangedEventArgs(XmlNodeChangedAction.Change,
+					node, Parent, Parent));
+		}
 
-		public event XmlNodeChangedEventHandler NodeChanged;
+		internal void onNodeChanged(XmlNode node, XmlNode Parent)
+		{
+			if (NodeChanged != null)
+				NodeInserted( new XmlNodeChangedEventArgs(XmlNodeChangedAction.Change,
+					node, Parent, Parent));
+		}
 
-		public event XmlNodeChangedEventHandler NodeChanging;
+		internal void onNodeInserting(XmlNode node, XmlNode newParent)
+		{
+			if (NodeInserting != null)
+				NodeInserting( new XmlNodeChangedEventArgs(XmlNodeChangedAction.Insert,
+					node, null, newParent));
+		}
 
-		public event XmlNodeChangedEventHandler NodeInserted;
+		internal void onNodeInserted(XmlNode node, XmlNode newParent)
+		{
+			if (NodeInserted != null)
+				NodeInserted( new XmlNodeChangedEventArgs(XmlNodeChangedAction.Insert,
+					node, null, newParent));
+		}
 
-		public event XmlNodeChangedEventHandler NodeInserting;
+		internal void onNodeRemoving(XmlNode node, XmlNode oldParent)
+		{
+			if (NodeRemoving != null)
+				NodeRemoving(new XmlNodeChangedEventArgs(XmlNodeChangedAction.Remove,
+					node, oldParent, null));
+		}
 
-		public event XmlNodeChangedEventHandler NodeRemoved;
+		internal void onNodeRemoved(XmlNode node, XmlNode oldParent)
+		{
+			if (NodeRemoved != null)
+				NodeRemoved(new XmlNodeChangedEventArgs(XmlNodeChangedAction.Remove,
+					node, oldParent, null));
 
-		public event XmlNodeChangedEventHandler NodeRemoving;
+		}
 
 		// Constructors
 		//===========================================================================
-
+		public XmlDocument() : base(null)
+		{
+		}
+		
 
 	}
 }
