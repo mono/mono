@@ -1430,8 +1430,7 @@ namespace Mono.CSharp {
 			if (child_variable_names == null)
 				child_variable_names = new Hashtable ();
 
-			if (!child_variable_names.Contains (name))
-				child_variable_names.Add (name, true);
+			child_variable_names [name] = null;
 		}
 
 		// <summary>
