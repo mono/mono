@@ -24,6 +24,9 @@
 //
 //
 // $Log: ImageList.cs,v $
+// Revision 1.4  2004/08/11 17:43:08  pbartok
+// - Removed disposing of the actual images when the list is disposed
+//
 // Revision 1.3  2004/08/11 13:43:13  pbartok
 // - Added missing creation of the collection list
 //
@@ -147,11 +150,13 @@ namespace System.Windows.Forms {
 			}
 
 			internal void Dispose() {
+#if dontwantthis
 				if (list!=null) {
 					for (int i=0; i<list.Count; i++) {
 						((Image)list[i]).Dispose();
 					}
 				}
+#endif
 			}
 			#endregion	// ImageCollection Private Instance Methods
 
