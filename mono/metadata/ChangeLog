@@ -1,3 +1,7 @@
+2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* file-io.c: disabled file async. IO using aio_*. It uses the
+	threadpool now. Workaround for bug #73718.
 
 Wed Mar 16 18:08:00 CET 2005 Paolo Molaro <lupus@ximian.com>
 
@@ -13,6 +17,7 @@ Wed Mar 16 16:34:38 CET 2005 Paolo Molaro <lupus@ximian.com>
 	* reflection.c (mono_image_get_method_info): Encode best_fit_mapping
 	and throw_on_unmappable_char attributes.
 
+>>>>>>> .r41918
 2005-03-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* process.c: Fix buffer length in ves_icall_System_Diagnostics_Process
