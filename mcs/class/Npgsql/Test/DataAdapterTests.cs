@@ -1,4 +1,26 @@
 // created on 3/5/2003 at 14:29
+// 
+// Author:
+// 	Francisco Figueiredo Jr. <fxjrlists@yahoo.com>
+//
+//	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 
 using System;
 using System.Data;
@@ -23,7 +45,8 @@ namespace NpgsqlTests
 		[SetUp]
 		protected void SetUp()
 		{
-			NpgsqlEventLog.Level = LogLevel.Debug;	
+			//NpgsqlEventLog.Level = LogLevel.None;
+			NpgsqlEventLog.Level = LogLevel.Debug;
 			NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
 			_conn = new NpgsqlConnection(_connString);
 		}
@@ -94,5 +117,39 @@ namespace NpgsqlTests
 			
 						
 		}
+		
+		[Test]
+		public void FillWithEmptyResultset()
+		{
+		  
+		  _conn.Open();
+			
+			DataSet ds = new DataSet();
+
+			NpgsqlDataAdapter da = new NpgsqlDataAdapter("select * from tableb where field_serial = -1", _conn);
+		  
+		  
+		  da.Fill(ds);
+		  
+		  Assertion.AssertEquals(1, ds.Tables.Count);
+		  Assertion.AssertEquals(4, ds.Tables[0].Columns.Count);
+		  Assertion.AssertEquals("field_serial", ds.Tables[0].Columns[0].ColumnName);
+		  Assertion.AssertEquals("field_int2", ds.Tables[0].Columns[1].ColumnName);
+		  Assertion.AssertEquals("field_timestamp", ds.Tables[0].Columns[2].ColumnName);
+		  Assertion.AssertEquals("field_numeric", ds.Tables[0].Columns[3].ColumnName);
+		  
+		}
+        
+        [Test]
+        public void FillWithDuplicateColumnName()
+        {
+            _conn.Open();
+            DataSet ds = new DataSet();
+
+			NpgsqlDataAdapter da = new NpgsqlDataAdapter("select field_serial, field_serial from tableb", _conn);
+		  
+		    da.Fill(ds);
+            
+        }
 	}
 }

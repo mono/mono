@@ -42,9 +42,9 @@ namespace NpgsqlTests
 		[SetUp]
 		protected void SetUp()
 		{
-			NpgsqlEventLog.Level = LogLevel.None;
-			//NpgsqlEventLog.Level = LogLevel.Debug;
-			//NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
+			//NpgsqlEventLog.Level = LogLevel.None;
+			NpgsqlEventLog.Level = LogLevel.Debug;
+			NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
 			_conn = new NpgsqlConnection(_connString);
 		}
 		
@@ -155,15 +155,16 @@ namespace NpgsqlTests
 		public void GetDouble()
 		{
 			_conn.Open();
-			NpgsqlCommand command = new NpgsqlCommand("select * from tablea where field_serial = 2;", _conn);
+			NpgsqlCommand command = new NpgsqlCommand("select * from tabled where field_serial = 2;", _conn);
 			
 			NpgsqlDataReader dr = command.ExecuteReader();
 			
 			dr.Read();
 			
-			Double result = Double.Parse(dr.GetInt32(2).ToString());
+			//Double result = Double.Parse(dr.GetInt32(2).ToString());
+		  Double result = dr.GetDouble(2);
 			
-			Assertion.AssertEquals(4, result);
+			Assertion.AssertEquals(.123456789012345D, result);
 			
 		}
 		
@@ -172,15 +173,16 @@ namespace NpgsqlTests
 		public void GetFloat()
 		{
 			_conn.Open();
-			NpgsqlCommand command = new NpgsqlCommand("select * from tablea where field_serial = 2;", _conn);
+			NpgsqlCommand command = new NpgsqlCommand("select * from tabled where field_serial = 1;", _conn);
 			
 			NpgsqlDataReader dr = command.ExecuteReader();
 			
 			dr.Read();
 			
-			Single result = Single.Parse(dr.GetInt32(2).ToString());
+			//Single result = Single.Parse(dr.GetInt32(2).ToString());
+		  Single result = dr.GetFloat(1);
 			
-			Assertion.AssertEquals(4, result);
+			Assertion.AssertEquals(.123456F, result);
 			
 		}
 		

@@ -35,14 +35,14 @@ namespace NpgsqlTests
 	public class CommandTests
 	{
 		private NpgsqlConnection 	_conn = null;
-		private String 						_connString = "Server=localhost;User ID=npgsql_tests;Password=npgsql_tests;Database=npgsql_tests";
+		private String 						_connString = "Server=localhost;User ID=npgsql_tests;Password=npgsql_tests;Database=npgsql_tests;SSL=yes";
 		
 		[SetUp]
 		protected void SetUp()
 		{
-			NpgsqlEventLog.Level = LogLevel.None;
-			//NpgsqlEventLog.Level = LogLevel.Debug;
-			//NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
+			//NpgsqlEventLog.Level = LogLevel.None;
+			NpgsqlEventLog.Level = LogLevel.Debug;
+			NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
 			_conn = new NpgsqlConnection(_connString);
 		}
 		
@@ -321,7 +321,7 @@ namespace NpgsqlTests
 		  NpgsqlCommand command = new NpgsqlCommand("listen notifytest;", _conn);
 		  command.ExecuteNonQuery();
 		  
-		  _conn.OnNotification += new NotificationEventHandler(NotificationSupportHelper);
+		  _conn.Notification += new NotificationEventHandler(NotificationSupportHelper);
 		  
 		                                                       
 		  command = new NpgsqlCommand("notify notifytest;", _conn);
@@ -413,6 +413,72 @@ namespace NpgsqlTests
 			
 			
 			
+			
+		}
+		
+		[Test]
+		public void InsertSingleValue()
+		{
+		  _conn.Open();
+			
+			
+			NpgsqlCommand command = new NpgsqlCommand("insert into tabled(field_float4) values (:a)", _conn);
+			command.Parameters.Add(new NpgsqlParameter(":a", DbType.Single));
+			
+			command.Parameters[0].Value = 7.4F;
+			
+			Int32 rowsAdded = command.ExecuteNonQuery();
+			
+			Assertion.AssertEquals(1, rowsAdded);
+			
+			command.CommandText = "select * from tabled where field_float4 = :a";
+			
+			
+			NpgsqlDataReader dr = command.ExecuteReader();
+			dr.Read();
+			
+			Single result = dr.GetFloat(1);
+			
+			
+			command.CommandText = "delete from tabled where field_serial > 2;";
+			command.Parameters.Clear();
+			command.ExecuteNonQuery();
+			
+			
+			Assertion.AssertEquals(7.4F, result);
+			
+		}
+		
+		[Test]
+		public void InsertDoubleValue()
+		{
+		  _conn.Open();
+			
+			
+			NpgsqlCommand command = new NpgsqlCommand("insert into tabled(field_float8) values (:a)", _conn);
+			command.Parameters.Add(new NpgsqlParameter(":a", DbType.Double));
+			
+			command.Parameters[0].Value = 7.4D;
+			
+			Int32 rowsAdded = command.ExecuteNonQuery();
+			
+			Assertion.AssertEquals(1, rowsAdded);
+			
+			command.CommandText = "select * from tabled where field_float8 = :a";
+			
+			
+			NpgsqlDataReader dr = command.ExecuteReader();
+			dr.Read();
+			
+			Double result = dr.GetDouble(2);
+			
+			
+			command.CommandText = "delete from tabled where field_serial > 2;";
+			command.Parameters.Clear();
+			//command.ExecuteNonQuery();
+			
+			
+			Assertion.AssertEquals(7.4D, result);
 			
 		}
 		
@@ -625,6 +691,33 @@ namespace NpgsqlTests
 			command.ExecuteNonQuery();
 			
 			Assertion.AssertEquals(5, result);
+			
+		}
+        
+        [Test]
+		public void AnsiStringSupport()
+		{
+			_conn.Open();
+			
+			NpgsqlCommand command = new NpgsqlCommand("insert into tablea(field_text) values (:a)", _conn);
+			
+			command.Parameters.Add(new NpgsqlParameter("a", DbType.AnsiString));
+			
+			command.Parameters[0].Value = "TesteAnsiString";
+			
+			Int32 rowsAdded = command.ExecuteNonQuery();
+			
+			Assertion.AssertEquals(1, rowsAdded);
+			
+			command.CommandText = String.Format("select count(*) from tablea where field_text = '{0}'", command.Parameters[0].Value);
+			command.Parameters.Clear();
+			
+			Object result = command.ExecuteScalar(); // The missed cast is needed as Server7.2 returns Int32 and Server7.3+ returns Int64
+			
+			command.CommandText = "delete from tablea where field_serial = (select max(field_serial) from tablea);";
+			command.ExecuteNonQuery();
+			
+			Assertion.AssertEquals(1, result);
 			
 		}
 		
