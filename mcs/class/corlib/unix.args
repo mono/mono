@@ -7,10 +7,16 @@ Microsoft.Win32/RegistryHive.cs
 Mono/Runtime.cs
 Mono.Math/BigInteger.cs
 Mono.Security/ASN1.cs
+Mono.Security/ASN1Convert.cs
 Mono.Security.Cryptography/CryptoTools.cs
 Mono.Security.Cryptography/PKCS1.cs
 Mono.Security.Cryptography/HMACAlgorithm.cs
 Mono.Security.Cryptography/MACAlgorithm.cs
+Mono.Security.X509/X501Name.cs
+Mono.Security.X509/X509Certificate.cs
+Mono.Security.X509/X509Extension.cs
+Mono.Security.X509/X509Extensions.cs
+Mono.Security.X509/X520Attributes.cs
 Mono.Xml/MiniParser.cs
 System/Activator.cs
 System/AppDomain.cs
