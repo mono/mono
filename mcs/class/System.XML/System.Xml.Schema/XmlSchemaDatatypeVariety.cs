@@ -29,7 +29,7 @@
 
 namespace System.Xml.Schema
 {
-	public enum XmlSchemaDatatypeVarielty
+	public enum XmlSchemaDatatypeVariety
 	{
 		Atomic,
 		List,

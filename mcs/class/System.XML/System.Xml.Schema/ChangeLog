@@ -1,3 +1,8 @@
+2004-07-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaDatatypeVariety.cs : Fixed class name typo.
+	* XmlValueConverter.cs : fixed return types.
+
 2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* CustomSerializer.cs, XmlSchemaException.cs,
