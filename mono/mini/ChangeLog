@@ -1,5 +1,7 @@
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c: Avoid costly calls to mono_method_full_name in tracing code and fix memory leaks.
+
 	* TestDriver.cs: Add --verbose flags.
 
 	* graph.c ssa.c: Fix 64 bit warnings.
