@@ -1,3 +1,16 @@
+2002-07-02  Dick Porter  <dick@ximian.com>
+
+	* handles.c (shared_init): Make a second attempt to contact the
+	daemon if the shared memory attach succeeds, but the connect()
+	fails. (This copes with the daemon crashing without cleaning up
+	the shared memory.)
+
+	* Makefile.am: 
+	* daemon-private.h:
+	* daemon.c:
+	* shared.c (_wapi_shm_attach): Don't exec() anything when we fork
+	the daemon, it's now built into the library.
+
 2002-06-25  Dick Porter  <dick@ximian.com>
 
 	* handles.c:
