@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: Border3DStyle.cs,v $
+// Revision 1.2  2004/08/10 22:24:21  jackson
+// Add flags attribute
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -44,6 +47,6 @@ namespace System.Windows.Forms {
 		Bump		= 9,
 		Sunken		= 10,
 		Adjust		= 8192,
-		Flat		= 16384
+		Flat		= 16394
 	}
 }

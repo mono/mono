@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: Border3DSide.cs,v $
+// Revision 1.2  2004/08/10 22:24:21  jackson
+// Add flags attribute
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -34,6 +37,8 @@
 // COMPLETE
 
 namespace System.Windows.Forms {
+
+	[Flags]
 	public enum Border3DSide {
 		Left	= 0x00000001,
 		Top	= 0x00000002,
