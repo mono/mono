@@ -61,7 +61,7 @@ namespace System.Web.SessionState {
 			}
 		}
 
-		public void UpdateHandler (HttpContext context)
+		public void UpdateHandler (HttpContext context, SessionStateModule module)
 		{
 			if (context.Session == null)
 				return;
@@ -72,7 +72,7 @@ namespace System.Web.SessionState {
 			UpdateSession (id, dict);
 		}
 
-		public bool UpdateContext (HttpContext context)
+		public bool UpdateContext (HttpContext context, SessionStateModule module)
 		{
 			HttpSessionState session = null;
 			string id = GetId (context);
@@ -85,7 +85,7 @@ namespace System.Web.SessionState {
 				}
 			}
 
-			id = System.Guid.NewGuid ().ToString ();
+			id = SessionId.Create (module.Rng);
 			session = new HttpSessionState (id, new SessionDictionary (),
 					new HttpStaticObjectsCollection (), config.Timeout, true,
 					false, SessionStateMode.SQLServer, false);

@@ -14,8 +14,8 @@ namespace System.Web.SessionState
 	{
 	      void Dispose ();
 	      void Init (HttpApplication context, SessionConfig config);
-	      bool UpdateContext (HttpContext context);
-	      void UpdateHandler (HttpContext context);
+	      bool UpdateContext (HttpContext context, SessionStateModule module);
+	      void UpdateHandler (HttpContext context, SessionStateModule module);
 	}
 }
 

@@ -1,3 +1,16 @@
+2003-11-06 Jackson Harper <jackson@ximian.com>
+
+	* ISessionHandler.cs: Pass the SessionStateModule to handlers when
+	updating.
+	* SessionSqlServerHandler.cs:
+	* SessionInProcHandler.cs: Accept SessionStateModule when
+	updating. Use new SessionId.Create method for creating session
+	ids.
+	* SessionStateModule.cs: Add a random number generator that will
+	be used for creating session ids. Pass this to handlers when
+	updating.
+	* SessionId.cs: New class for creating session ids.
+	
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
 	* HttpSessionState.cs (CopyTo): Copy values not keys. Patch by Yaron Shkop.

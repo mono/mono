@@ -9,6 +9,7 @@
 // (C) 2003 Stefan Görling (http://www.gorling.se)
 
 using System.Web;
+using System.Security.Cryptography;
 
 namespace System.Web.SessionState
 {
@@ -18,11 +19,18 @@ namespace System.Web.SessionState
 		static SessionConfig config;
 		static Type handlerType;
 		ISessionHandler handler;
+
+		private RandomNumberGenerator rng;
 		
 		public SessionStateModule ()
 		{
+			rng = new RNGCryptoServiceProvider ();
 		}
 
+                internal RandomNumberGenerator Rng {
+                        get { return rng; }
+                }
+                
 		public void Dispose ()
 		{
 		    if (handler!=null)
@@ -67,7 +75,7 @@ namespace System.Web.SessionState
 
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
-			handler.UpdateHandler (context);
+			handler.UpdateHandler (context, this);
 		}
 
 		void OnEndRequest (object o, EventArgs args)
@@ -82,7 +90,7 @@ namespace System.Web.SessionState
 
 			bool isNew = false;
 			if (handler != null)
-			    isNew = handler.UpdateContext (context);
+			    isNew = handler.UpdateContext (context, this);
 			
 			// In the future, we might want to move the Async stuff down to
 			// the interface level, if we're going to support other than

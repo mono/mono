@@ -70,12 +70,12 @@ namespace System.Web.SessionState
 			_sessionTable = new Hashtable();
 		}
 
-		public void UpdateHandler (HttpContext context)
+		public void UpdateHandler (HttpContext context, SessionStateModule module)
 		{
 		}
 
 		//this is the code that actually do stuff.
-		public bool UpdateContext (HttpContext context)
+		public bool UpdateContext (HttpContext context, SessionStateModule module)
 		{
 			SessionContainer container = null;
 
@@ -100,7 +100,7 @@ namespace System.Web.SessionState
 			}
 
 			// else we create a new session.
-			string sessionID = System.Guid.NewGuid ().ToString ();
+			string sessionID = SessionId.Create (module.Rng);
 			container = new SessionContainer (new HttpSessionState (sessionID, // unique identifier
 										new SessionDictionary(), // dictionary
 										new HttpStaticObjectsCollection(),
