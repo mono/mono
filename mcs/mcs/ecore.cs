@@ -723,7 +723,7 @@ namespace Mono.CSharp {
 				if (expr_type.IsPointer)
 					return null;
 
-				if (TypeManager.IsValueType (expr_type))
+				if (expr_type.IsValueType)
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return new EmptyCast (expr, target_type);
@@ -986,7 +986,7 @@ namespace Mono.CSharp {
 			// This is the boxed case.
 			//
 			if (target_type == TypeManager.object_type) {
-				if (expr_type.IsClass || TypeManager.IsValueType (expr_type) ||
+				if (expr_type.IsClass || expr_type.IsValueType ||
 				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return true;
 			} else if (expr_type.IsSubclassOf (target_type)) {
@@ -4173,11 +4173,14 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {
-#if false
-				if (instance_expr is IMemoryLocation)
-					((IMemoryLocation)instance_expr).AddressOf (ec, AddressOp.LoadStore);
+				//
+				// In the case of `This', we call the AddressOf method, which will
+				// only load the pointer, and not perform an Ldobj immediately after
+				// the value has been loaded into the stack.
+				//
+				if (instance_expr is This)
+					((This)instance_expr).AddressOf (ec, AddressOp.LoadStore);
 				else
-#endif
 					instance_expr.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
