@@ -3,6 +3,9 @@
 	* SHA1CryptoServiceProvider.cs: Removed memory allocation in 
 	ProcessBlock method (now global). This gives up to 8% performance
 	increase when multiple blocks are being used.
+	* SHA256Managed.cs: Removed memory allocation in ProcessBlock method
+	(now global). This gives up to 5% performance increase when multiple 
+	blocks are being used.
 
 2004-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
