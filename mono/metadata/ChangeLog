@@ -1,5 +1,10 @@
 2004-04-07  Jackson Harper  <jackson@ximian.com>
 
+	* appdomain.c: Revert extra patches, just wanted to bump the
+	version number.
+	
+2004-04-07  Jackson Harper  <jackson@ximian.com>
+
 	* Makefile.am: Add culture-info private headers.
 	* icall.c: Add new icalls for contructing locales.
 	* locales.c: Construct CultureInfo objects from lookup tables instead of using ICU.
