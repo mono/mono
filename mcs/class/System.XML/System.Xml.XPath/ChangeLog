@@ -1,3 +1,9 @@
+2004-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathAtomicValue.cs : Handle .ctor() with object parameter more
+	  precisely (still not enough, for list argument).
+	  Removed commended blocks.
+
 2004-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathAtomicValue.cs : DateTime should be convertible to string.

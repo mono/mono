@@ -49,7 +49,7 @@ namespace System.Xml.XPath
 		string stringValue;
 		XmlSchemaType schemaType;
 		XmlTypeCode xmlTypeCode;
-		ArrayList valueAsList;
+		ICollection valueAsList;
 
 		#region Constructors
 
@@ -116,16 +116,16 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public XPathAtomicValue (object value, XmlSchemaType xmlType)
 		{
-			// (known) acceptable types:
-			//	* ArrayList
-			//	* XPathAtomicValue (including Clone() support)
-
+			// It accepts any kind of object, but will be rejected on each value properties.
 			if (value == null)
 				throw new ArgumentNullException ("value");
 			if (xmlType == null)
 				throw new ArgumentNullException ("xmlType");
-			xmlTypeCode = xmlType.TypeCode;
-			objectValue = value;
+
+			if (value is XPathAtomicValue)
+				objectValue = ((XPathAtomicValue) value).TypedValue;
+			else
+				objectValue = value;
 			schemaType = xmlType;
 		}
 
@@ -169,6 +169,33 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public override object ValueAs (Type type, IXmlNamespaceResolver nsResolver)
 		{
+			switch (XmlTypeCodeFromRuntimeType (type, false)) {
+			case XmlTypeCode.Int:
+			case XmlTypeCode.Short:
+			case XmlTypeCode.UnsignedShort:
+				return ValueAsInt32;
+			case XmlTypeCode.Decimal:
+				return ValueAsDecimal;
+			case XmlTypeCode.Double:
+				return ValueAsDouble;
+			case XmlTypeCode.Float:
+				return ValueAsSingle;
+			case XmlTypeCode.Long:
+			case XmlTypeCode.UnsignedInt:
+				return ValueAsInt64;
+			case XmlTypeCode.String:
+				return Value;
+			case XmlTypeCode.DateTime:
+				return ValueAsDateTime;
+			case XmlTypeCode.Boolean:
+				return ValueAsBoolean;
+			case XmlTypeCode.Item:
+				return TypedValue;
+			case XmlTypeCode.QName:
+				return XmlQualifiedName.Parse (Value, nsResolver);
+			}
+			if (type.GetInterface ("System.Collections.ICollection") != null)
+				return ValueAsList;
 			throw new NotImplementedException ();
 		}
 
@@ -233,12 +260,22 @@ namespace System.Xml.XPath
 				case XmlTypeCode.String:
 					return stringValue;
 
-				// FIXME: more check
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
 				case XmlTypeCode.AnyAtomicType:
-					return objectValue.ToString ();
+					if (objectValue is string)
+						return (string) objectValue;
+					break;
+
+//				// FIXME: more check
+//				case XmlTypeCode.AnyAtomicType:
+//					return objectValue.ToString ();
 				}
 
-				throw new InvalidOperationException (String.Format ("Conversion from {0} ({1}) to {2} is not supported", schemaType.QualifiedName, xmlTypeCode, XmlTypeCode.String));
+				if (objectValue != null)
+					throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", objectValue.GetType (), XmlTypeCode.String));
+				else
+					throw new InvalidOperationException (String.Format ("Conversion from {0} ({1}) to {2} is not supported", schemaType.QualifiedName, xmlTypeCode, XmlTypeCode.String));
 			}
 		}
 
@@ -262,6 +299,14 @@ namespace System.Xml.XPath
 					return XQueryConvert.FloatToBoolean (floatValue);
 				case XmlTypeCode.String:
 					return XQueryConvert.StringToBoolean (stringValue);
+
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
+				case XmlTypeCode.AnyAtomicType:
+					if (objectValue is bool)
+						return (bool) objectValue;
+					break;
+
 				}
 
 				throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", schemaType, XmlTypeCode.Boolean));
@@ -272,22 +317,17 @@ namespace System.Xml.XPath
 		public override DateTime ValueAsDateTime {
 			get {
 				switch (xmlTypeCode) {
-//				case XmlTypeCode.Boolean:
-//					return XQueryConvert.BooleanToDateTime (booleanValue);
 				case XmlTypeCode.DateTime:
 					return dateTimeValue;
-//				case XmlTypeCode.Decimal:
-//					return XQueryConvert.DecimalToDateTime (decimalValue);
-//				case XmlTypeCode.Double:
-//					return XQueryConvert.DoubleToDateTime (doubleValue);
-//				case XmlTypeCode.Long:
-//					return XQueryConvert.IntegerToDateTime (longValue);
-//				case XmlTypeCode.Int:
-//					return XQueryConvert.IntToDateTime (intValue);
-//				case XmlTypeCode.Float:
-//					return XQueryConvert.FloatToDateTime (floatValue);
 				case XmlTypeCode.String:
 					return XQueryConvert.StringToDateTime (stringValue);
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
+				case XmlTypeCode.AnyAtomicType:
+					if (objectValue is DateTime)
+						return (DateTime) objectValue;
+					break;
+
 				}
 
 				throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", schemaType, XmlTypeCode.DateTime));
@@ -300,8 +340,6 @@ namespace System.Xml.XPath
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
 					return XQueryConvert.BooleanToDecimal (booleanValue);
-//				case XmlTypeCode.DateTime:
-//					return XQueryConvert.DateTimeToDecimal (decimalValue);
 				case XmlTypeCode.Decimal:
 					return decimalValue;
 				case XmlTypeCode.Double:
@@ -314,6 +352,13 @@ namespace System.Xml.XPath
 					return XQueryConvert.FloatToDecimal (floatValue);
 				case XmlTypeCode.String:
 					return XQueryConvert.StringToDecimal (stringValue);
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
+				case XmlTypeCode.AnyAtomicType:
+					if (objectValue is decimal)
+						return (decimal) objectValue;
+					break;
+
 				}
 
 				throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", schemaType, XmlTypeCode.Decimal));
@@ -326,8 +371,6 @@ namespace System.Xml.XPath
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
 					return XQueryConvert.BooleanToDouble (booleanValue);
-//				case XmlTypeCode.DateTime:
-//					return XQueryConvert.DateTimeToDouble (dateTimeValue);
 				case XmlTypeCode.Decimal:
 					return XQueryConvert.DecimalToDouble (decimalValue);
 				case XmlTypeCode.Double:
@@ -340,6 +383,13 @@ namespace System.Xml.XPath
 					return XQueryConvert.FloatToDouble (floatValue);
 				case XmlTypeCode.String:
 					return XQueryConvert.StringToDouble (stringValue);
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
+				case XmlTypeCode.AnyAtomicType:
+					if (objectValue is double)
+						return (double) objectValue;
+					break;
+
 				}
 
 				throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", schemaType, XmlTypeCode.Double));
@@ -352,8 +402,6 @@ namespace System.Xml.XPath
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
 					return XQueryConvert.BooleanToInt (booleanValue);
-//				case XmlTypeCode.DateTime:
-//					return XQueryConvert.DateTimeToInt (dateTimeValue);
 				case XmlTypeCode.Decimal:
 					return XQueryConvert.DecimalToInt (decimalValue);
 				case XmlTypeCode.Double:
@@ -366,6 +414,13 @@ namespace System.Xml.XPath
 					return XQueryConvert.FloatToInt (floatValue);
 				case XmlTypeCode.String:
 					return XQueryConvert.StringToInt (stringValue);
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
+				case XmlTypeCode.AnyAtomicType:
+					if (objectValue is int)
+						return (int) objectValue;
+					break;
+
 				}
 
 				throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", schemaType, XmlTypeCode.Int));
@@ -378,8 +433,6 @@ namespace System.Xml.XPath
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
 					return XQueryConvert.BooleanToInteger (booleanValue);
-//				case XmlTypeCode.DateTime:
-//					return XQueryConvert.DateTimeToInteger (dateTimeValue);
 				case XmlTypeCode.Decimal:
 					return XQueryConvert.DecimalToInteger (decimalValue);
 				case XmlTypeCode.Double:
@@ -392,6 +445,13 @@ namespace System.Xml.XPath
 					return XQueryConvert.FloatToInteger (floatValue);
 				case XmlTypeCode.String:
 					return XQueryConvert.StringToInteger (stringValue);
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
+				case XmlTypeCode.AnyAtomicType:
+					if (objectValue is long)
+						return (long) objectValue;
+					break;
+
 				}
 
 				throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", schemaType, XmlTypeCode.Long));
@@ -404,8 +464,6 @@ namespace System.Xml.XPath
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
 					return XQueryConvert.BooleanToFloat (booleanValue);
-//				case XmlTypeCode.DateTime:
-//					return XQueryConvert.DateTimeToFloat (dateTimeValue);
 				case XmlTypeCode.Decimal:
 					return XQueryConvert.DecimalToFloat (decimalValue);
 				case XmlTypeCode.Double:
@@ -418,6 +476,13 @@ namespace System.Xml.XPath
 					return XQueryConvert.IntegerToFloat (longValue);
 				case XmlTypeCode.String:
 					return XQueryConvert.StringToFloat (stringValue);
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
+				case XmlTypeCode.AnyAtomicType:
+					if (objectValue is float)
+						return (float) objectValue;
+					break;
+
 				}
 
 				throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", schemaType, XmlTypeCode.Float));
@@ -429,13 +494,14 @@ namespace System.Xml.XPath
 			get {
 				if (valueAsList != null)
 					return valueAsList;
-				if (objectValue is ArrayList)
-					valueAsList = objectValue as ArrayList;
+				if (objectValue is ICollection)
+					valueAsList = objectValue as ICollection;
 				else if (objectValue is Array)
 					valueAsList = new ArrayList ((Array) objectValue);
 				else if (xmlTypeCode != XmlTypeCode.None) {
-					valueAsList = new ArrayList ();
-					valueAsList.Add (TypedValue);
+					ArrayList al = new ArrayList ();
+					al.Add (TypedValue);
+					valueAsList = al;
 				}
 				else
 					throw new NotImplementedException ();
@@ -453,6 +519,74 @@ namespace System.Xml.XPath
 			get { return schemaType; }
 		}
 
+		#endregion
+
+		#region internal static members
+
+		internal static Type RuntimeTypeFromXmlTypeCode (XmlTypeCode typeCode)
+		{
+			switch (typeCode) {
+			case XmlTypeCode.Int:
+				return typeof (int);
+			case XmlTypeCode.Decimal:
+				return typeof (decimal);
+			case XmlTypeCode.Double:
+				return typeof (double);
+			case XmlTypeCode.Float:
+				return typeof (float);
+			case XmlTypeCode.Long:
+				return typeof (long);
+			case XmlTypeCode.Short:
+				return typeof (short);
+			case XmlTypeCode.UnsignedShort:
+				return typeof (ushort);
+			case XmlTypeCode.UnsignedInt:
+				return typeof (uint);
+			case XmlTypeCode.String:
+				return typeof (string);
+			case XmlTypeCode.DateTime:
+				return typeof (DateTime);
+			case XmlTypeCode.Boolean:
+				return typeof (bool);
+			case XmlTypeCode.Item:
+				return typeof (object);
+			}
+			throw new NotSupportedException (String.Format ("XQuery internal error: Cannot infer Runtime Type from XmlTypeCode {0}.", typeCode));
+		}
+
+		internal static XmlTypeCode XmlTypeCodeFromRuntimeType (Type cliType, bool raiseError)
+		{
+			switch (Type.GetTypeCode (cliType)) {
+			case TypeCode.Int32:
+				return XmlTypeCode.Int;
+			case TypeCode.Decimal:
+				return XmlTypeCode.Decimal;
+			case TypeCode.Double:
+				return XmlTypeCode.Double;
+			case TypeCode.Single:
+				return XmlTypeCode.Float;
+			case TypeCode.Int64:
+				return XmlTypeCode.Long;
+			case TypeCode.Int16:
+				return XmlTypeCode.Short;
+			case TypeCode.UInt16:
+				return XmlTypeCode.UnsignedShort;
+			case TypeCode.UInt32:
+				return XmlTypeCode.UnsignedInt;
+			case TypeCode.String:
+				return XmlTypeCode.String;
+			case TypeCode.DateTime:
+				return XmlTypeCode.DateTime;
+			case TypeCode.Boolean:
+				return XmlTypeCode.Boolean;
+			case TypeCode.Object:
+				return XmlTypeCode.Item;
+			}
+			if (raiseError)
+				throw new NotSupportedException (String.Format ("XQuery internal error: Cannot infer XmlTypeCode from Runtime Type {0}", cliType));
+			else
+				return XmlTypeCode.None;
+		}
 		#endregion
 	}
 }
