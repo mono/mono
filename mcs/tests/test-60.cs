@@ -1,6 +1,10 @@
 //
 // Really lame test, but it should be fine for now
 //
+#define TEST
+
+#region"dunno"
+#endregion
 
 #if FLAG_FALSE
         namespace ns1
@@ -43,10 +47,12 @@
 class X {
 	static int Main ()
 	{
+#if(TEST)
 		ns5.Y y = new ns5.Y ();
 
 		y.Run ();
 		return 0;
+#endif
 	}
 }
 #endif
