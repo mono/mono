@@ -1,5 +1,7 @@
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mono-logger.c (mono_trace_is_traced): Fix comment.
+
 	* mono-logger.h mono-logger.c (mono_trace_is_traced): New helper function.
 
 2005-01-15  Zoltan Varga  <vargaz@freemail.hu>
