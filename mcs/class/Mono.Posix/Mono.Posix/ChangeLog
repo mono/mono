@@ -1,3 +1,8 @@
+2005-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UnixEndPoint.cs: get the correct bytes when building the filename from
+	a SocketAddress. Fixes bug #72850.
+
 2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Syscall.cs: Add [Obsolete] to Syscall, letting users know they should 
