@@ -115,7 +115,7 @@ namespace System.Text.RegularExpressions {
 			 RegexOptions options)
 		{
 			Regex re = new Regex (pattern, options);
-			return re.Replace (input, pattern);
+			return re.Replace (input, replacement);
 		}
 
 		public static string[] Split (string input, string pattern) {
