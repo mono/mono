@@ -1,3 +1,7 @@
+2003-11-14  Nick Drochak <ndrochak@gol.com>
+
+	* X509SpcTest.cs: Ignore for now test where we need an exe to load.
+
 2003-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509SpcTest.cs: New. Test for Software Publisher Certificates

@@ -860,6 +860,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		0x72, 0xE9, 0x83, 0x6F, 0x93, 0xD8 };
 
 		[Test]
+		[Ignore ("need to get smallspc.exe before this test will pass")]
 		public void ValidSignature () 
 		{
 			FileStream fs = new FileStream ("smallspc.exe", FileMode.Create, FileAccess.Write);
