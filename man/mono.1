@@ -11,7 +11,7 @@ mono \- Mono ECMA-CLI Just in Time compiler.
 .PP
 .B mono
 [\-\-help] [\-d] [\-\-debug-asm] [\-\-debug-forest] [\-\-trace-calls]
-[\-\-stabs] [\-\-compile cname] [\-\-ncompile num] [\-\-debug] [\-\-profile]
+[\-\-stabs] [\-\-compile cname] [\-\-ncompile num] [\-\-debug] [\-\-noinline] [\-\-profile]
 program.exe [arguments...]
 .SH DESCRIPTION
 The \fImono\fP program is a Just in Time compiler for ECMA CLI byte
@@ -68,6 +68,9 @@ Compiles the method on the given class (namespace.name:methodname).
 .I "--ncompile"
 Compiles the method a number of times.  If no argument is specified,
 the method will be compiled a thousand times.
+.TP
+.I "--noinline"
+Disables the code inliner.
 .TP
 .I "--profile"
 Collect profiling information and dump it at the end of the process.
