@@ -15,7 +15,12 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security {
 
-	public class StrongName {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class StrongName {
 
 		internal class StrongNameSignature {
 			private byte[] hash;
