@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.9  2004/08/08 21:08:10  jordi
+// fixes keyboard crash
+//
 // Revision 1.8  2004/08/06 23:46:56  pbartok
 // - Implemented GetParent
 //
@@ -404,25 +407,28 @@ namespace System.Windows.Forms {
 			XKeySym	keysym;
 			string	keys;
 			int	len;
+			msg.wParam = IntPtr.Zero;
 			
 			len = XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
-			if (len>0) {
-				char[] keychars;
 
-				keys=Marshal.PtrToStringAuto(buffer);
+			if (len>0) /* String is not zero terminated*/
+				Marshal.WriteByte (buffer, len, 0);
+
+			keys=Marshal.PtrToStringAuto(buffer);
+
+			for (int i = 0; i < KeyMapping.Length; i++) {
+				if (KeyMapping[i].X11Key == keysym) {
+					msg.wParam = (IntPtr) KeyMapping[i].Win32Key;
+					Console.WriteLine("Got special key {0} {1:x} ", keysym, keysym);
+					break;
+				}							
+			}
+
+			if (msg.wParam == IntPtr.Zero) {
+				char[] keychars;				
 				keychars=keys.ToCharArray(0, 1);
 				msg.wParam=(IntPtr)keychars[0];
 				Console.WriteLine("Got key {0} {1:x} ", keysym, keysym);
-			} else {
-				Console.WriteLine("Got special key {0} {1:x} ", keysym, keysym);
-
-				for (int i = 0; i < KeyMapping.Length; i++) {
-					if (KeyMapping[i].X11Key == keysym) {
-						msg.wParam = (IntPtr) KeyMapping[i].Win32Key;
-						break;
-					}							
-				}					
-
 			}
 
 			Marshal.FreeHGlobal (buffer);
