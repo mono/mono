@@ -1,3 +1,7 @@
+2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryConvert.cs : moved from System.Xml.Query.
+
 2004-11-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriter.cs : after WriteAttributes(), argument XmlReader must

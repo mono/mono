@@ -1,3 +1,7 @@
+2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryConvert.cs : moved to System.Xml.
+
 2004-11-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XQueryConvert.cs : added some date/dateTime methods.

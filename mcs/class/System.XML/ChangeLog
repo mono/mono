@@ -1,5 +1,10 @@
 2004-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Xml.dll.sources : Moved XQueryConvert.cs from
+	  System.Xml.Query to System.Xml.
+
+2004-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Xml.dll.sources : added XmlSchemaInference.cs,
 	  XmlSchemaInferenceException.cs and XmlSchemaValidationException.cs.
 

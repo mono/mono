@@ -357,5 +357,5 @@ System.Xml.Serialization/XmlTypeMapMemberNamespaces.cs
 System.Xml.Serialization/XmlTypeMapping.cs
 System.Xml.Serialization/XmlElementEventHandler.cs
 System.Xml.Serialization/XmlNodeEventHandler.cs
-System.Xml.Query/XQueryConvert.cs
+System.Xml/XQueryConvert.cs
 
