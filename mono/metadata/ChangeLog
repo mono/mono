@@ -1,5 +1,11 @@
 2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): 
+	Handle unloadable modules without crashing.
+
+	* image.c (load_modules): Revert the previous patch since modules must
+	have a fixed index inside the array.
+	
 	* image.c (load_modules): Don't include native modules in the modules
 	array.
 
