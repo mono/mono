@@ -1895,7 +1895,7 @@ namespace Mono.CSharp {
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
 				
-				method = Invocation.OverloadResolve (ec, union, Arguments, loc);
+				method = Invocation.OverloadResolve (ec, union, Arguments, Location.Null);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
 					
