@@ -1,3 +1,8 @@
+2002-05-18  Tim Coleman <tim@timcoleman.com>
+	* System.Data/DataRow.cs: Move the null check in
+	ItemArray set to above the Invalid Cast check, so
+	that we don't get null reference exceptions.
+
 2002-05-17  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.SqlClient/PostgresLibrary.cs: handle

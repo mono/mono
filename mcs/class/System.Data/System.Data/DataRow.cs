@@ -181,12 +181,16 @@ namespace System.Data
 
 				for (int i = 0; i < value.Length; i += 1)
 				{
-					if (table.Columns[i].DataType != value[i].GetType())
-						throw new InvalidCastException ();
 					if (table.Columns[i].ReadOnly && value[i] != this[i])
 						throw new ReadOnlyException ();
-					if (!table.Columns[i].AllowDBNull && value[i] == null)
-						throw new NoNullAllowedException ();
+					if (value[i] == null)
+					{
+						if (!table.Columns[i].AllowDbNull)
+							throw new NoNullAllowedException ();
+						continue;
+					}
+					if (table.Columns[i].DataType != value[i].GetType())
+						throw new InvalidCastException ();
 				}
 
 				BeginEdit ();
