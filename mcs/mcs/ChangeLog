@@ -1,3 +1,9 @@
+2004-09-23  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-09-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (Operator.Define): Add error 448 and 559 report.
@@ -53,12 +59,6 @@
 
 	* expression.cs (ArrayAccess.DoResolve): Add warning 251.
 	(StackAlloc.DoResolve): Reused IsNegative.
-
-2004-09-21  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-09-21  Martin Baulig  <martin@ximian.com>
 
