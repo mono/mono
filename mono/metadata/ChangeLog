@@ -1,3 +1,8 @@
+2003-06-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): use custom
+	marshaler for return types.
+
 2003-06-10  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c: Don't assume that one of struct ip_mreqn or struct
