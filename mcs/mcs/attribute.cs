@@ -83,11 +83,8 @@ namespace Mono.CSharp {
 
 		bool resolve_error;
 
-		public AttributeUsageAttribute UsageAttribute;
-		public static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
+		static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 
-		MethodImplOptions ImplOptions;
-		UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
 	
 		// non-null if named args present after Resolve () is called
@@ -237,20 +234,6 @@ namespace Mono.CSharp {
 			return Type;
 		}
 
-		/// <summary>
-		///   Validates the guid string
-		/// </summary>
-		bool ValidateGuid (string guid)
-		{
-			try {
-				new Guid (guid);
-				return true;
-			} catch {
-				Report.Error (647, Location, "Format of GUID is invalid: " + guid);
-				return false;
-			}
-		}
-
 		string GetFullMemberName (string member)
 		{
 			return Type.FullName + '.' + member;
@@ -329,29 +312,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			bool MethodImplAttr = false;
-			bool MarshalAsAttr = false;
-			bool GuidAttr = false;
-			bool usage_attr = false;
-
-			bool DoCompares = true;
-
-                        //
-                        // If we are a certain special attribute, we
-                        // set the information accordingly
-                        //
-                        
-			if (Type == TypeManager.attribute_usage_type)
-				usage_attr = true;
-			else if (Type == TypeManager.methodimpl_attr_type)
-				MethodImplAttr = true;
-			else if (Type == TypeManager.marshal_as_attr_type)
-				MarshalAsAttr = true;
-			else if (Type == TypeManager.guid_attr_type)
-				GuidAttr = true;
-			else
-				DoCompares = false;
-
 			// Now we extract the positional and named arguments
 			
 			ArrayList pos_args = new ArrayList ();
@@ -388,27 +348,9 @@ namespace Mono.CSharp {
 
 				pos_values [i] = val;
 
-				if (DoCompares){
-					if (usage_attr) {
-						if ((int)val == 0) {
-							Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
-							return null;
-						}
-						UsageAttribute = new AttributeUsageAttribute ((AttributeTargets)val);
-					} else if (MethodImplAttr) {
-						this.ImplOptions = (MethodImplOptions) val;
-					} else if (GuidAttr){
-						//
-						// we will later check the validity of the type
-						//
-						if (val is string){
-							if (!ValidateGuid ((string) val))
-								return null;
-						}
-						
-					} else if (MarshalAsAttr)
-						this.UnmanagedType =
-						(System.Runtime.InteropServices.UnmanagedType) val;
+				if (i == 0 && Type == TypeManager.attribute_usage_type && (int)val == 0) {
+					Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
+					return null;
 				}
 			}
 
@@ -487,13 +429,6 @@ namespace Mono.CSharp {
 					object value;
 					if (!GetAttributeArgumentExpression (e, Location, pi.PropertyType, out value))
 						return null;
-
-					if (UsageAttribute != null) {
-						if (member_name == "AllowMultiple")
-							UsageAttribute.AllowMultiple = (bool) value;
-						if (member_name == "Inherited")
-							UsageAttribute.Inherited = (bool) value;
-					}
 
 					prop_values.Add (value);
 					prop_infos.Add (pi);
@@ -617,7 +552,7 @@ namespace Mono.CSharp {
 					if (pos_values.Length == 0)
 						att_cache.Add (Type, cb);
 				}
-			} catch (Exception e) {
+			} catch (Exception) {
 				//
 				// Sample:
 				// using System.ComponentModel;
@@ -628,10 +563,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			if (!usage_attr) {
-				UsageAttribute = DefaultUsageAttribute;
-			}
-
 			resolve_error = false;
 			return cb;
 		}
@@ -642,7 +573,7 @@ namespace Mono.CSharp {
 		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = UsageAttribute.ValidOn;
+			AttributeTargets targets = GetAttributeUsage (null).ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
@@ -693,7 +624,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns AttributeUsage attribute for this type
 		/// </summary>
-		public AttributeUsageAttribute GetAttributeUsage (EmitContext ec)
+		AttributeUsageAttribute GetAttributeUsage (EmitContext ec)
 		{
 			AttributeUsageAttribute ua = usage_attr_cache [Type] as AttributeUsageAttribute;
 			if (ua != null)
@@ -708,9 +639,43 @@ namespace Mono.CSharp {
 				return ua;
 			}
 
-			ua = attr_class.ResolveAttributeUsage (ec);
+			if (attr_class.OptAttributes == null) {
+				usage_attr_cache.Add (Type, DefaultUsageAttribute);
+				return DefaultUsageAttribute;
+			}
+
+			Attribute a = attr_class.OptAttributes.Search (TypeManager.attribute_usage_type, ec);
+			if (a == null) {
+				usage_attr_cache.Add (Type, DefaultUsageAttribute);
+				return DefaultUsageAttribute;
+			}
+
+			ua = a.GetAttributeUsageAttribute (ec);
 			usage_attr_cache.Add (Type, ua);
 			return ua;
+		}
+
+		AttributeUsageAttribute GetAttributeUsageAttribute (EmitContext ec)
+		{
+			if (pos_values == null)
+				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
+				// But because a lot of attribute class code must be rewritten will be better to wait...
+				Resolve (ec);
+
+			if (resolve_error)
+				return DefaultUsageAttribute;
+
+			AttributeUsageAttribute usage_attribute = new AttributeUsageAttribute ((AttributeTargets)pos_values [0]);
+
+			object field = GetPropertyValue ("AllowMultiple");
+			if (field != null)
+				usage_attribute.AllowMultiple = (bool)field;
+
+			field = GetPropertyValue ("Inherited");
+			if (field != null)
+				usage_attribute.Inherited = (bool)field;
+
+			return usage_attribute;
 		}
 
 		/// <summary>
@@ -722,6 +687,9 @@ namespace Mono.CSharp {
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
+
+			if (resolve_error)
+				return null;
 
 			return pos_values [0] as string;
 		}
@@ -736,8 +704,7 @@ namespace Mono.CSharp {
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
 
-			// Some error occurred
-			if (pos_values [0] == null)
+			if (resolve_error)
 				return null;
 
 			return (string)pos_values [0];
@@ -753,7 +720,6 @@ namespace Mono.CSharp {
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
 
-			// Some error occurred
 			if (resolve_error)
 				return null;
 
@@ -778,8 +744,7 @@ namespace Mono.CSharp {
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
 
-			// Some error occurred
-			if (pos_values [0] == null)
+			if (resolve_error)
 				return false;
 
 			return (bool)pos_values [0];
@@ -857,13 +822,7 @@ namespace Mono.CSharp {
 			}
 
 			IPermission perm;
-			try {
-				perm = sa.CreatePermission ();
-			}
-			catch (Exception e) {
-				Error_AttributeEmitError (String.Format ("{0} was thrown during attribute processing: {1}", e.GetType (), e.Message));
-				return;
-			}
+			perm = sa.CreatePermission ();
 			SecurityAction action = GetSecurityActionValue ();
 
 			// IS is correct because for corlib we are using an instance from old corlib
@@ -904,13 +863,21 @@ namespace Mono.CSharp {
 				return value;				
 		}
 
-		public object GetPositionalValue (int i)
+		object GetPropertyValue (string name)
 		{
-			return (pos_values == null) ? null : pos_values[i];
+			if (prop_info_arr == null)
+				return null;
+
+			for (int i = 0; i < prop_info_arr.Length; ++i) {
+				if (prop_info_arr [i].Name == name)
+					return prop_values_arr [i];
+			}
+
+			return null;
 		}
 
 		object GetFieldValue (string name)
-                {
+		{
 			int i;
 			if (field_info_arr == null)
 				return null;
@@ -925,6 +892,8 @@ namespace Mono.CSharp {
 
 		public UnmanagedMarshal GetMarshal (Attributable attr)
 		{
+			UnmanagedType UnmanagedType = (UnmanagedType)System.Enum.Parse (typeof (UnmanagedType), pos_values [0].ToString ());
+
 			object value = GetFieldValue ("SizeParamIndex");
 			if (value != null && UnmanagedType != UnmanagedType.LPArray) {
 				Error_AttributeEmitError ("SizeParamIndex field is not valid for the specified unmanaged type");
@@ -972,9 +941,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsInternalCall
+		public MethodImplOptions GetMethodImplOptions ()
 		{
-			get { return ImplOptions == MethodImplOptions.InternalCall; }
+			return (MethodImplOptions)System.Enum.Parse (typeof (MethodImplOptions), pos_values [0].ToString ());
+		}
+
+		public LayoutKind GetLayoutKindValue ()
+		{
+			return (LayoutKind)System.Enum.Parse (typeof (LayoutKind), pos_values [0].ToString ());
 		}
 
 		/// <summary>
@@ -992,7 +966,13 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			ias.ApplyAttributeBuilder (this, cb);
+			try {
+				ias.ApplyAttributeBuilder (this, cb);
+			}
+			catch (Exception e) {
+				Error_AttributeEmitError (e.Message);
+				return;
+			}
 
 			if (!usage_attr.AllowMultiple) {
 				ArrayList emitted_targets = (ArrayList)emitted_attr [Type];
@@ -1047,7 +1027,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public object GetValue (EmitContext ec, Constant c, Type target)
+		object GetValue (EmitContext ec, Constant c, Type target)
 		{
 			if (Convert.ImplicitConversionExists (ec, c, target))
 				return c.GetValue ();
@@ -1059,134 +1039,70 @@ namespace Mono.CSharp {
 		public MethodBuilder DefinePInvokeMethod (EmitContext ec, TypeBuilder builder, string name,
 							  MethodAttributes flags, Type ret_type, Type [] param_types)
 		{
-			//
-			// We extract from the attribute the information we need 
-			//
+			if (pos_values == null)
+				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
+				// But because a lot of attribute class code must be rewritten will be better to wait...
+				Resolve (ec);
 
-			if (Arguments == null) {
-				Console.WriteLine ("Internal error : this is not supposed to happen !");
+			if (resolve_error)
 				return null;
-			}
+			
+			string dll_name = (string)pos_values [0];
 
-			ResolveType (ec);
-			if (Type == null)
-				return null;
-			
-			ArrayList named_args = new ArrayList ();
-			
-			ArrayList pos_args = (ArrayList) Arguments [0];
-			if (Arguments.Count > 1)
-				named_args = (ArrayList) Arguments [1];
-			
-
-			string dll_name = null;
-			
-			Argument tmp = (Argument) pos_args [0];
-
-			if (!tmp.Resolve (ec, Location))
-				return null;
-			
-			if (tmp.Expr is Constant)
-				dll_name = (string) ((Constant) tmp.Expr).GetValue ();
-			else { 
-				Error_AttributeArgumentNotValid (Location);
-				return null;
-			}
-			if (dll_name == null || dll_name == ""){
-				Error_AttributeArgumentNotValid (": DllImport requires a non-empty string", Location);
-				return null;
-			}
-			
-			// Now we process the named arguments
+			// Default settings
 			CallingConvention cc = CallingConvention.Winapi;
 			CharSet charset = CharSet.Ansi;
 			bool preserve_sig = true;
-#if FIXME
-			bool exact_spelling = false;
-#endif
-			bool set_last_err = false;
-			string entry_point = null;
+			string entry_point = name;
 
-			for (int i = 0; i < named_args.Count; i++) {
+			if (prop_info_arr != null) {
+				int char_set_extra = 0;
 
-				DictionaryEntry de = (DictionaryEntry) named_args [i];
-
-				string member_name = (string) de.Key;
-				Argument a  = (Argument) de.Value;
-
-				if (!a.Resolve (ec, Location))
-					return null;
-
-				Expression member = Expression.MemberLookup (
-					ec, Type, member_name, 
-					MemberTypes.Field | MemberTypes.Property,
-					BindingFlags.Public | BindingFlags.Instance,
-					Location);
-
-				if (member == null || !(member is FieldExpr)) {
-					Error_InvalidNamedArgument (member_name);
-					return null;
-				}
-
-				if (member is FieldExpr) {
-					FieldExpr fe = (FieldExpr) member;
-					FieldInfo fi = fe.FieldInfo;
-
-					if (fi.IsInitOnly) {
-						Error_InvalidNamedArgument (member_name);
-						return null;
+				for (int i = 0; i < prop_info_arr.Length; i++) {
+					switch (prop_info_arr [i].Name) {
+						case "BestFitMapping":
+							throw new NotImplementedException ();
+						case "CallingConvention":
+							cc = (CallingConvention) prop_values_arr [i];
+							break;
+						case "CharSet":
+							charset = (CharSet) prop_values_arr [i];
+							break;
+						case "EntryPoint":
+							entry_point = (string) prop_values_arr [i];
+							break;
+						case "ExactSpelling":
+							char_set_extra |= 0x01;
+							break;
+						case "PreserveSig":
+							preserve_sig = (bool) prop_values_arr [i];
+							break;
+						case "SetLastError":
+							char_set_extra |= 0x40;
+							break;
+						case "ThrowOnUnmappableChar":
+							throw new NotImplementedException ();
+						default: 
+							throw new InternalErrorException (prop_info_arr [i].ToString ());
 					}
-
-					if (a.Expr is Constant) {
-						Constant c = (Constant) a.Expr;
-
-						try {
-							if (member_name == "CallingConvention"){
-								object val = GetValue (ec, c, typeof (CallingConvention));
-								if (val == null)
-									return null;
-								cc = (CallingConvention) val;
-							} else if (member_name == "CharSet"){
-								charset = (CharSet) c.GetValue ();
-							} else if (member_name == "EntryPoint")
-								entry_point = (string) c.GetValue ();
-							else if (member_name == "SetLastError")
-								set_last_err = (bool) c.GetValue ();
-#if FIXME
-							else if (member_name == "ExactSpelling")
-								exact_spelling = (bool) c.GetValue ();
-#endif
-							else if (member_name == "PreserveSig")
-								preserve_sig = (bool) c.GetValue ();
-						} catch (InvalidCastException){
-							Error_InvalidNamedArgument (member_name);
-							Error_AttributeArgumentNotValid (Location);
-						}
-					} else { 
-						Error_AttributeArgumentNotValid (Location);
-						return null;
-					}
-					
 				}
+				charset |= (CharSet)char_set_extra;
 			}
 
-			if (entry_point == null)
-				entry_point = name;
-			if (set_last_err)
-				charset = (CharSet)((int)charset | 0x40);
-			
-			MethodBuilder mb = builder.DefinePInvokeMethod (
-				name, dll_name, entry_point, flags | MethodAttributes.HideBySig,
-				CallingConventions.Standard,
-				ret_type,
-				param_types,
-				cc,
-				charset);
+			try {
+				MethodBuilder mb = builder.DefinePInvokeMethod (
+					name, dll_name, entry_point, flags | MethodAttributes.HideBySig | MethodAttributes.PinvokeImpl,
+					CallingConventions.Standard, ret_type, param_types, cc, charset);
 
-			if (preserve_sig)
-				mb.SetImplementationFlags (MethodImplAttributes.PreserveSig);
+				if (preserve_sig)
+					mb.SetImplementationFlags (MethodImplAttributes.PreserveSig);
 			
-			return mb;
+				return mb;
+			}
+			catch (ArgumentException e) {
+				Error_AttributeEmitError (e.Message);
+				return null;
+			}
 		}
 
 		private Expression GetValue () 
