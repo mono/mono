@@ -1,3 +1,7 @@
+2005-03-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlParserInput.cs : silly mixed line endings :(
+
 2005-03-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : namespace declaration check for those which starts
