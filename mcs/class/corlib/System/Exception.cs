@@ -12,6 +12,8 @@ using System.Reflection;
 
 namespace System {
 
+	[Serializable]
+//	[ClassInterface (ClassInterfaceType.AutoDual)] (no implementation yet)
 	[MonoTODO]
 	public class Exception : ISerializable {
 		Exception inner_exception;
@@ -59,7 +61,7 @@ namespace System {
 			}
 		}
 
-		public string HelpLink {
+		public virtual string HelpLink {
 			get {
 				return help_link;
 			}
@@ -79,14 +81,14 @@ namespace System {
 			}
 		}
 
-		public string Message {
+		public virtual string Message {
 			get {
 				return message;
 			}
 		}
 
 		[MonoTODO]
-		public string Source {
+		public virtual string Source {
 			get {
 				// TODO: if source is null, we must return
 				// the name of the assembly where the error
@@ -99,7 +101,7 @@ namespace System {
 			}
 		}
 
-		public string StackTrace {
+		public virtual string StackTrace {
 			get {
 				return stack_trace;
 			}

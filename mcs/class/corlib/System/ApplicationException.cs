@@ -8,13 +8,16 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Runtime.Serialization;
 using System.Reflection;
 using System.Globalization;
+using System.Runtime.Serialization;
 
-namespace System {
+namespace System
+{
 
-	public class ApplicationException : Exception {
+     [Serializable]
+	public class ApplicationException : Exception
+	{
 		// Constructors
 		public ApplicationException ()
 			: base (Locale.GetText ("An application exception has occurred."))

@@ -2,8 +2,12 @@ using System;
 using System.Runtime.Serialization;
 using System.Globalization;
 
-namespace System {
-	public class MissingMethodException : MissingMemberException {
+
+namespace System
+{
+     [Serializable]
+     public class MissingMethodException : MissingMemberException
+	{
 		public MissingMethodException ()
 			: base (Locale.GetText ("A missing method exception has occurred."))
 		{

@@ -8,10 +8,12 @@
 //
 
 using System.Runtime.Serialization;
+using System;
 using System.Globalization;
 
 namespace System {
 
+	[Serializable]
 	public class SystemException : Exception {
 		// Constructors
 		public SystemException ()

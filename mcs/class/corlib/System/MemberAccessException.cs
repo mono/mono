@@ -1,9 +1,10 @@
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
-using System.Globalization;
-
 namespace System {
+
+	[Serializable]
 	public class MemberAccessException : SystemException {
 		
 		public MemberAccessException ()
