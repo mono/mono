@@ -44,6 +44,7 @@ System/ExceptionTest.cs
 System/FloatingPointFormatterTest.cs
 System.Globalization/CalendarTest.cs
 System.Globalization/CompareInfoTest.cs
+System.Globalization/TextInfoTest.cs
 System/GuidTest.cs
 System/Int16Test.cs
 System/Int32Test.cs
