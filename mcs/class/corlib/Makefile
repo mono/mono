@@ -165,7 +165,7 @@ corlib_compile: $(makefrag) $(response) $(stampfile)
 corlib_net_2_0: corlib_net_2_0_compile
 
 corlib_net_2_0_compile: corlib_net_2_0_bootstrap $(net_2_0_makefrag) $(net_2_0_response) $(net_2_0_stampfile) $(gmcs)
-	MONO_PATH="../lib/net_2_0_bootstrap:$(MONO_PATH)" $(RUNTIME) $(gmcs) $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(corlib_flags) /define:NET_1_1 /define:NET_2_0 /target:library /out:../lib/net_2_0/mscorlib.dll @$(net_2_0_response)
+	MONO_PATH="../lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gmcs) $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(corlib_flags) /define:NET_1_1 /define:NET_2_0 /target:library /out:../lib/net_2_0/mscorlib.dll @$(net_2_0_response)
 
 corlib_net_2_0_bootstrap: $(net_2_0_bootstrap_response) $(net_2_0_bootstrap_stampfile)
 	$(BOOTSTRAP_MCS) /nowarn:649 /nowarn:169 /define:INSIDE_CORLIB /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:../lib/net_2_0_bootstrap/mscorlib.dll @$(net_2_0_bootstrap_response)
