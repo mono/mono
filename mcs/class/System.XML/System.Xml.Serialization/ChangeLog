@@ -1,3 +1,12 @@
+2003-06-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SchemaTypes.cs: Changed DataSet type for a more generic XmlSerializable.
+	* SoapReflectionImporter.cs: tiny fix.
+	* XmlReflectionImporter.cs, TypeData.cs, XmlSerializationWriterInterpreter.cs,
+	  XmlSerializationReaderInterpreter.cs: Added support for IXmlSerializable.
+	* XmlSerializationReader.cs: Fixed implementation of ReadSerializable().
+	* XmlSerializationWriter.cs: implemented WriteSerializable ().
+
 2003-06-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlAnyElementAttribute.cs, XmlArrayItemAttribute.cs: Added AllowMultiple flag.

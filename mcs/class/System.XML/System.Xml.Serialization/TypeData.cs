@@ -30,8 +30,8 @@ namespace System.Xml.Serialization
 			{
 				if (type.IsEnum)
 					sType = SchemaTypes.Enum;
-				/*else if (type == typeof (System.Data.DataSet))
-					sType = SchemaTypes.DataSet;*/
+				else if (type.GetInterface ("IXmlSerializable") != null)
+					sType = SchemaTypes.XmlSerializable;
 				else if (typeof (System.Xml.XmlNode).IsAssignableFrom (type))
 					sType = SchemaTypes.XmlNode;
 				else if (type.IsArray || type.GetInterface ("IEnumerable") != null || type.GetInterface ("ICollection") != null)

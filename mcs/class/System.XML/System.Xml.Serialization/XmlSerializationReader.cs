@@ -601,7 +601,10 @@ namespace System.Xml.Serialization {
 
 		protected IXmlSerializable ReadSerializable (IXmlSerializable serializable)
 		{
+			if (ReadNull ()) return null;
 			serializable.ReadXml (reader);
+			Reader.MoveToContent ();
+			Reader.ReadEndElement ();
 			return serializable;
 		}
 

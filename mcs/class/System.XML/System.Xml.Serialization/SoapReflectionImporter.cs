@@ -97,7 +97,7 @@ namespace System.Xml.Serialization {
 				case SchemaTypes.XmlNode: throw CreateTypeException (type);
 				case SchemaTypes.Primitive: map = ImportPrimitiveMapping (type, defaultNamespace); break;
 				case SchemaTypes.Enum: map = ImportEnumMapping (type, defaultNamespace); break;
-				case SchemaTypes.DataSet:
+				case SchemaTypes.XmlSerializable:
 				default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML stialization");
 			}
 			map.RelatedMaps = relatedMaps;

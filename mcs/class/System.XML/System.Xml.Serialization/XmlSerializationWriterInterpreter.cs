@@ -80,6 +80,12 @@ namespace System.Xml.Serialization
 				return;
 			}
 
+			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
+			{
+				WriteSerializable ((IXmlSerializable)ob, element, namesp, isNullable);
+				return;
+			}
+
 			XmlTypeMapping map = typeMap.GetRealTypeMap (ob.GetType().FullName);
 
 			if (map == null) 
@@ -267,8 +273,9 @@ namespace System.Xml.Serialization
 					else WriteObject (elem.MappedType, memberValue, elem.ElementName, elem.Namespace, elem.IsNullable, false, true);
 					break;
 
-				case SchemaTypes.DataSet:
-					throw new NotSupportedException ("Invalid type");
+				case SchemaTypes.XmlSerializable:
+					WriteSerializable ((IXmlSerializable) memberValue, elem.ElementName, elem.Namespace, elem.IsNullable);
+					break;
 
 				default:
 					throw new NotSupportedException ("Invalid value type");

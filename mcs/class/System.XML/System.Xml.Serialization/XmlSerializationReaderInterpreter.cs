@@ -116,6 +116,7 @@ namespace System.Xml.Serialization
 				case SchemaTypes.XmlNode: return ReadXmlNodeElement (typeMap, isNullable);
 				case SchemaTypes.Primitive: return ReadPrimitiveElement (typeMap, isNullable);
 				case SchemaTypes.Enum: return ReadEnumElement (typeMap, isNullable);
+				case SchemaTypes.XmlSerializable: return ReadXmlSerializableElement (typeMap, isNullable);
 				default: throw new Exception ("Unsupported map type");
 			}
 		}
@@ -379,8 +380,11 @@ namespace System.Xml.Serialization
 					return ReadListElement (elem.MappedType, elem.IsNullable, null, true);
 
 				case SchemaTypes.Class:
-				case SchemaTypes.DataSet:
 					return ReadObject (elem.MappedType, elem.IsNullable, true);
+
+				case SchemaTypes.XmlSerializable:
+					object ob = Activator.CreateInstance (elem.TypeData.Type);
+					return ReadSerializable ((IXmlSerializable)ob);
 
 				default:
 					throw new NotSupportedException ("Invalid value type");
@@ -516,6 +520,26 @@ namespace System.Xml.Serialization
 		{
 			EnumMap map = (EnumMap) typeMap.ObjectMap;
 			return Enum.Parse (typeMap.TypeData.Type, map.GetEnumName (val));
+		}
+
+		object ReadXmlSerializableElement (XmlTypeMapping typeMap, bool isNullable)
+		{
+			Reader.MoveToContent ();
+			if (Reader.NodeType == XmlNodeType.Element)
+			{
+				if (Reader.LocalName == typeMap.ElementName && Reader.NamespaceURI == typeMap.Namespace)
+				{
+					object ob = Activator.CreateInstance (typeMap.TypeData.Type);
+					return ReadSerializable ((IXmlSerializable)ob);
+				}
+				else
+					throw CreateUnknownNodeException ();
+			}
+			else
+			{
+				UnknownNode (null);
+				return null;
+			}
 		}
 
 		class FixupCallbackInfo

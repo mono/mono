@@ -109,7 +109,7 @@ namespace System.Xml.Serialization {
 				case SchemaTypes.XmlNode: map = ImportXmlNodeMapping (type, root, defaultNamespace); break;
 				case SchemaTypes.Primitive: map = ImportPrimitiveMapping (type, root, defaultNamespace); break;
 				case SchemaTypes.Enum: map = ImportEnumMapping (type, root, defaultNamespace); break;
-				case SchemaTypes.DataSet:
+				case SchemaTypes.XmlSerializable: map = ImportXmlSerializableMapping (type, root, defaultNamespace); break;
 				default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML stialization");
 			}
 
@@ -370,6 +370,15 @@ namespace System.Xml.Serialization {
 
 			map.ObjectMap = new EnumMap ((EnumMap.EnumMapMember[])members.ToArray (typeof(EnumMap.EnumMapMember)));
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
+			return map;
+		}
+
+		XmlTypeMapping ImportXmlSerializableMapping (Type type, XmlRootAttribute root, string defaultNamespace)
+		{
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			if (map != null) return map;
+			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), root, null, defaultNamespace);
+			helper.RegisterClrType (map, type, defaultNamespace);
 			return map;
 		}
 

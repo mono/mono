@@ -608,11 +608,19 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-
-		[MonoTODO ("Implement")]
 		protected void WriteSerializable (IXmlSerializable serializable, string name, string ns, bool isNullable)
 		{
-			throw new NotImplementedException ();
+			if (serializable == null)
+			{
+				if (isNullable) WriteNullTagLiteral (name, ns);
+				return;
+			}
+			else
+			{
+				Writer.WriteStartElement (name, ns);
+				serializable.WriteXml (Writer);
+				Writer.WriteEndElement ();
+			}
 		}
 
 		protected void WriteStartDocument ()

@@ -15,7 +15,7 @@ namespace System.Xml.Serialization
 		Enum,
 		Array,
 		Class,
-		DataSet,
+		XmlSerializable,
 		XmlNode,
 		Void
 	}
