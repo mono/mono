@@ -1,3 +1,8 @@
+2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (wait_for_tids): Do not incorrectly free threads when 
+	the wait times out.
+
 2004-12-01  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* icall.c (mono_ArgIterator_Setup) : Conditionally compile calculation of
