@@ -1,3 +1,7 @@
+2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TableItemStyle.cs: TypeDescriptor.GetConverter seems to fail.
+	Commented out some code until it works.
 
 2002-10-29      Gaurav Vaish <gvaish_mono@lycos.com>
 

@@ -161,11 +161,15 @@ namespace System.Web.UI.WebControls
 			}
 			if(HorizontalAlign != HorizontalAlign.NotSet)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Align, TypeDescriptor.GetConverter(typeof(HorizontalAlign)).ConvertToString(HorizontalAlign));
+				// Temporarily commented out. I'm having problems in cygwin.
+				//writer.AddAttribute(HtmlTextWriterAttribute.Align, TypeDescriptor.GetConverter(typeof(HorizontalAlign)).ConvertToString(HorizontalAlign));
+				writer.AddAttribute(HtmlTextWriterAttribute.Align, HorizontalAlign.ToString ());
 			}
 			if(VerticalAlign != VerticalAlign.NotSet)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Valign, TypeDescriptor.GetConverter(typeof(VerticalAlign)).ConvertToString(VerticalAlign));
+				// Temporarily commented out. I'm having problems in cygwin.
+				//writer.AddAttribute(HtmlTextWriterAttribute.Valign, TypeDescriptor.GetConverter(typeof(VerticalAlign)).ConvertToString(VerticalAlign));
+				writer.AddAttribute(HtmlTextWriterAttribute.Valign, VerticalAlign.ToString ());
 			}
 		}
 	}
