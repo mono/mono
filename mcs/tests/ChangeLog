@@ -1,3 +1,7 @@
+2004-06-24  Raja R Harinath  <rharinath@novell.com>
+
+	* test-276.cs: New test for #60459.
+
 2004-06-21  Marek Safar <marek.safar@seznam.cz>
 
 	* test-275.cs: New test for #59792
