@@ -22,7 +22,7 @@ namespace System
 		 {
 			    str = s;
 			    idx = -1;
-				len = s.Length;
+ 			    len = s.Length;
 		 }
 			 
 		 // Property
