@@ -1374,13 +1374,13 @@ namespace Mono.CSharp {
 							extra = ".  (method might be private or static)";
 						Report.Error (
 							536, Location,
-							"`" + mi.Name + "' does not implement " +
+							"`" + Name + "' does not implement " +
 							"interface member `" +
 							type.FullName + "." + mi.Name + "'" + extra);
 					} else {
 						Report.Error (
 							534, Location,
-							"`" + mi.Name + "' does not implement " +
+							"`" + Name + "' does not implement " +
 							"inherited abstract member `" +
 							type.FullName + "." + mi.Name + "'");
 					}
@@ -1811,8 +1811,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static Hashtable mine;
-		
 		//
 		// Creates the type
 		// 
@@ -1824,7 +1822,7 @@ namespace Mono.CSharp {
 			bool error = false;
 			MethodInfo implementing;
 			Type iface_type = null;
-			string iface = "";
+			string iface = "", short_name;
 			
 			//
 			// Verify if the parent has a type with the same name, and then
@@ -1864,21 +1862,23 @@ namespace Mono.CSharp {
 			if (Name.IndexOf (".") != -1){
 				int pos = Name.LastIndexOf (".");
 				iface = Name.Substring (0, pos);
-				Name = Name.Substring (pos + 1);
 
 				iface_type = parent.LookupType (iface, false);
+				short_name = Name.Substring (pos + 1);
 
-				//
-				// FIXME: Should we return here if iface_type == null?
-				//
-			}
+				if (iface_type == null)
+					return null;
+
+				Name = iface_type.FullName + "." + short_name;
+			} else
+				short_name = Name;
 
 			//
 			// Check if we are an implementation of an interface method or
 			// a method
 			//
 			implementing = parent.IsInterfaceMethod (
-				iface_type, Name, ret_type, parameters, false);
+				iface_type, short_name, ret_type, parameters, false);
 				
 			//
 			// For implicit implementations, make sure we are public, for
@@ -1922,7 +1922,7 @@ namespace Mono.CSharp {
 					flags |= MethodAttributes.Final;
 				
 				parent.IsInterfaceMethod (
-					iface_type, Name, ret_type, parameters, true);
+					iface_type, short_name, ret_type, parameters, true);
 			}
 
 			//
@@ -2015,6 +2015,8 @@ namespace Mono.CSharp {
 					ret_type, parameters);
 
 				if (implementing != null){
+					Console.WriteLine ("Defining this as implementing stuff:" + Name);
+					
 					parent.TypeBuilder.DefineMethodOverride (
 						MethodBuilder, implementing);
 				}

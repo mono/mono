@@ -1,5 +1,15 @@
 2001-12-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (TypeContainer.Define): Correctly define explicit
+	method implementations (they require the full interface name plus
+	the method name).
+
+	* typemanager.cs: Deply the PtrHashtable here and stop using the
+	lame keys.  Things work so much better.
+
+	This of course broke everyone who depended on `RegisterMethod' to
+	do the `test for existance' test.  This has to be done elsewhere.
+
 	* support.cs (PtrHashtable): A hashtable that avoid comparing with
 	the object stupid Equals method (because, that like fails all over
 	the place).  We still do not use it.

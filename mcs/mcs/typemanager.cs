@@ -115,7 +115,7 @@ public class TypeManager {
 	// <remarks>
 	//   Keeps a mapping between TypeBuilders and their TypeContainers
 	// </remarks>
-	static Hashtable builder_to_container;
+	static PtrHashtable builder_to_container;
 
 	// <remarks>
 	//   Maps MethodBase.RuntimeTypeHandle to a Type array that contains
@@ -129,7 +129,7 @@ public class TypeManager {
 	// <remarks>
 	static Hashtable method_internal_params;
 
-	static Hashtable builder_to_interface;
+	static PtrHashtable builder_to_interface;
 
 	// <remarks>
 	//  Keeps track of delegate types
@@ -156,25 +156,20 @@ public class TypeManager {
 		user_types = new ArrayList ();
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
-		builder_to_interface = new Hashtable ();
-		builder_to_delegate = new Hashtable ();
-		builder_to_enum  = new Hashtable ();
-		builder_to_attr = new Hashtable ();
+		builder_to_interface = new PtrHashtable ();
+		builder_to_delegate = new PtrHashtable ();
+		builder_to_enum  = new PtrHashtable ();
+		builder_to_attr = new PtrHashtable ();
 	}
 
 	static TypeManager ()
 	{
-		method_arguments = new Hashtable ();
-		method_internal_params = new Hashtable ();
-		builder_to_container = new Hashtable ();
-		type_interface_cache = new Hashtable ();
+		method_arguments = new PtrHashtable ();
+		method_internal_params = new PtrHashtable ();
+		builder_to_container = new PtrHashtable ();
+		type_interface_cache = new PtrHashtable ();
 	}
 
-	static string MakeKey (Type t)
-	{
-		return t.FullName + t.GetHashCode ();
-	}
-	
 	public void AddUserType (string name, TypeBuilder t)
 	{
 		types.Add (name, t);
@@ -184,7 +179,7 @@ public class TypeManager {
 	public void AddUserType (string name, TypeBuilder t, TypeContainer tc)
 	{
 		AddUserType (name, t);
-		builder_to_container.Add (MakeKey (t), tc);
+		builder_to_container.Add (t, tc);
 		typecontainers.Add (name, tc);
 	}
 
@@ -197,18 +192,18 @@ public class TypeManager {
 	public void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
 		types.Add (name, t);
-		builder_to_enum.Add (MakeKey (t), en);
+		builder_to_enum.Add (t, en);
 	}
 
 	public void AddUserInterface (string name, TypeBuilder t, Interface i)
 	{
 		AddUserType (name, t);
-		builder_to_interface.Add (MakeKey (t), i);
+		builder_to_interface.Add (t, i);
 	}
 
 	public void RegisterAttrType (Type t, TypeContainer tc)
 	{
-		builder_to_attr.Add (MakeKey (t), tc);
+		builder_to_attr.Add (t, tc);
 	}
 		
 	/// <summary>
@@ -217,12 +212,12 @@ public class TypeManager {
 	/// </summary>
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
-		return (TypeContainer) builder_to_container [MakeKey (t)];
+		return (TypeContainer) builder_to_container [t];
 	}
 
 	public Interface LookupInterface (Type t)
 	{
-		return (Interface) builder_to_interface [MakeKey (t)];
+		return (Interface) builder_to_interface [t];
 	}
 
 	public static Delegate LookupDelegate (Type t)
@@ -232,12 +227,12 @@ public class TypeManager {
 
 	public static Enum LookupEnum (Type t)
 	{
-		return (Enum) builder_to_enum [MakeKey (t)];
+		return (Enum) builder_to_enum [t];
 	}
 	
 	public static TypeContainer LookupAttr (Type t)
 	{
-		return (TypeContainer) builder_to_attr [MakeKey (t)];
+		return (TypeContainer) builder_to_attr [t];
 	}
 	
 	/// <summary>
@@ -476,12 +471,10 @@ public class TypeManager {
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
 	{
-		string key = MakeKey (t);
-		
 		if (!(t is TypeBuilder))
 		        return t.FindMembers (mt, bf, filter, criteria);
 
-		Enum e = (Enum) builder_to_enum [key];
+		Enum e = (Enum) builder_to_enum [t];
 
 		if (e != null)
 		        return e.FindMembers (mt, bf, filter, criteria);
@@ -491,12 +484,12 @@ public class TypeManager {
 		if (del != null)
 		        return del.FindMembers (mt, bf, filter, criteria);
 
-		Interface iface = (Interface) builder_to_interface [key];
+		Interface iface = (Interface) builder_to_interface [t];
 
 		if (iface != null) 
 		        return iface.FindMembers (mt, bf, filter, criteria);
 		
-		TypeContainer tc = (TypeContainer) builder_to_container [key];
+		TypeContainer tc = (TypeContainer) builder_to_container [t];
 
 		if (tc != null)
 		        return tc.FindMembers (mt, bf, filter, criteria);
@@ -556,14 +549,6 @@ public class TypeManager {
 		}
 	}
 
-	static string GetSig (MethodBase mb)
-	{
-		if (mb is MethodBuilder || mb is ConstructorBuilder)
-			return mb.ReflectedType.FullName + ":" + ":" + mb;
-		else
-			return mb.MethodHandle.ToString ();
-	}
-
 	static Hashtable builder_to_constant;
 
 	public static void RegisterConstant (FieldBuilder fb, Const c)
@@ -611,29 +596,24 @@ public class TypeManager {
 	//
 	static public bool RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
 	{
-		string s;
-		
-		s = GetSig (mb);
-
-		if (method_arguments.Contains (s))
+		if (method_arguments.Contains (mb))
 			return false;
 		
-		method_arguments.Add (s, args);
-		method_internal_params.Add (s, ip);
+		method_arguments.Add (mb, args);
+		method_internal_params.Add (mb, ip);
 		
 		return true;
 	}
 	
 	static public InternalParameters LookupParametersByBuilder (MethodBase mb)
 	{
-		string sig = GetSig (mb);
-		object o = method_arguments [sig];
+		object o = method_arguments [mb];
 
 		if (! (mb is ConstructorBuilder || mb is MethodBuilder))
 			return null;
 		
-		if (method_arguments.Contains (sig))
-			return (InternalParameters) method_internal_params [sig];
+		if (method_internal_params.Contains (mb))
+			return (InternalParameters) method_internal_params [mb];
 		else
 			throw new Exception ("Argument for Method not registered" + mb);
 	}
@@ -647,11 +627,10 @@ public class TypeManager {
 	/// </summary>
 	static public Type [] GetArgumentTypes (MethodBase mb)
 	{
-		string sig = GetSig (mb);
-		object o = method_arguments [sig];
+		object o = method_arguments [mb];
 
-		if (method_arguments.Contains (sig))
-			return (Type []) method_arguments [sig];
+		if (method_arguments.Contains (mb))
+			return (Type []) method_arguments [mb];
 		else {
 			ParameterInfo [] pi = mb.GetParameters ();
 			int c = pi.Length;
@@ -660,7 +639,7 @@ public class TypeManager {
 			for (int i = 0; i < c; i++)
 				types [i] = pi [i].ParameterType;
 
-			method_arguments.Add (sig, types);
+			method_arguments.Add (mb, types);
 			return types;
 		}
 	}
