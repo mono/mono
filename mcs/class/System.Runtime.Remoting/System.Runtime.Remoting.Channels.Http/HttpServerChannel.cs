@@ -37,7 +37,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		private int               _channelPriority = 1;  // priority of channel (default=1)
 		private String            _channelName = "http"; // channel name
 		private String            _machineName = null;   // machine name
-		private int               _port = -1;            // port to listen on
+		private int               _port = 0;            // port to listen on
 		private ChannelDataStore  _channelData = null;   // channel data
 		
 		private bool _bUseIpAddress = true; // by default, we'll use the ip address.
