@@ -29,9 +29,15 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.25 $
+// $Revision: 1.26 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.26  2004/08/13 18:52:07  pbartok
+// - Added Dispose() and destructor
+// - Fixed resizing and bounds calculation
+// - Fixed Layout
+// - Added memory savings for invisible windows
+//
 // Revision 1.25  2004/08/12 19:31:19  pbartok
 // - Fixed Anchoring bugs
 //
@@ -139,6 +145,7 @@ namespace System.Windows.Forms
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
         {
 		#region Local Variables
+
 		// Basic
 		internal Rectangle		bounds;			// bounding rectangle for control (client area + decorations)
 		internal object			creator_thread;		// thread that created the control
@@ -179,8 +186,8 @@ namespace System.Windows.Forms
 		internal RightToLeft		right_to_left;		// drawing direction for control
 		internal int			layout_suspended;
 
-		private Graphics dc_mem;
-		private Bitmap bmp_mem;
+		private Graphics		dc_mem;			// Graphics context for double buffering
+		private Bitmap			bmp_mem;		// Bitmap for double buffering control
 
 		#endregion	// Local Variables
 
@@ -445,7 +452,7 @@ namespace System.Windows.Forms
 			child_controls = CreateControlsInstance();
 			bounds = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
-			prev_size = client_size;
+			prev_size = Size.Empty;
 
 			is_visible = true;
 			is_disposed = false;
@@ -464,10 +471,11 @@ namespace System.Windows.Forms
 
 		public Control(Control parent, string text, int left, int top, int width, int height) : this() {
 			Parent=parent;
-			Left=left;
-			Top=top;
-			Width=width;
-			Height=height;
+			bounds.X=left;
+			bounds.Y=top;
+			bounds.Width=width;
+			bounds.Height=height;
+			SetBoundsCore(left, top, width, height, BoundsSpecified.All);
 			Text=text;
 		}
 
@@ -476,11 +484,36 @@ namespace System.Windows.Forms
 		}
 
 		public Control(string text, int left, int top, int width, int height) : this() {
-			Left=left;
-			Top=top;
-			Width=width;
-			Height=height;
+			bounds.X=left;
+			bounds.Y=top;
+			bounds.Width=width;
+			bounds.Height=height;
+			SetBoundsCore(left, top, width, height, BoundsSpecified.All);
 			Text=text;
+		}
+
+		~Control() {
+			Dispose(true);
+		}
+	
+		public void Dispose() {
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected override void Dispose(bool disposing) {
+			if (dc_mem!=null) {
+				dc_mem.Dispose();
+				dc_mem=null;
+			}
+
+			if (bmp_mem!=null) {
+				bmp_mem.Dispose();
+				bmp_mem=null;
+			}
+
+			DestroyHandle();
+			is_disposed=true;
 		}
 		#endregion 	// Public Constructors
 
@@ -1003,11 +1036,21 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 
 		internal Graphics DeviceContext {
-			get { return dc_mem; }
+			get { 
+				if (dc_mem==null) {
+					CreateBuffers(this.Width, this.Height);
+				}
+				return dc_mem;
+			}
 		}
 
 		internal Bitmap ImageBuffer {
-			get { return bmp_mem; }
+			get {
+				if (bmp_mem==null) {
+					CreateBuffers(this.Width, this.Height);
+				}
+				return bmp_mem;
+			}
 		}
 
 		internal void CreateBuffers (int width, int height)
@@ -1139,19 +1182,22 @@ namespace System.Windows.Forms
 			int	y;
 			int	width;
 			int	height;
+			int	client_width;
+			int	client_height;
 
 			if (!IsHandleCreated) {
 				CreateHandle();
 			}
 
-			XplatUI.GetWindowPos(this.Handle, out x, out y, out width, out height);
-			UpdateBounds(x, y, width, height);
+			XplatUI.GetWindowPos(this.Handle, out x, out y, out width, out height, out client_width, out client_height);
+			UpdateBounds(x, y, width, height, client_width, client_height);
 		}
 
 		protected void UpdateBounds(int x, int y, int width, int height) {
 			// UpdateBounds only seems to set our sizes and fire events but not update the GUI window to match
 			bool	moved	= false;
 			bool	resized	= false;
+
 			int	client_x_diff = this.bounds.Width-this.client_size.Width;
 			int	client_y_diff = this.bounds.Height-this.client_size.Height;
 
@@ -1170,6 +1216,8 @@ namespace System.Windows.Forms
 			bounds.Height=height;
 
 			// Update client rectangle as well
+			prev_size.Width=client_size.Width;
+			prev_size.Height=client_size.Height;
 			client_size.Width=width-client_x_diff;
 			client_size.Height=height-client_y_diff;
 
@@ -1183,18 +1231,18 @@ namespace System.Windows.Forms
 		}
 
 		protected void UpdateBounds(int x, int y, int width, int height, int clientWidth, int clientHeight) {
+			UpdateBounds(x, y, width, height);
+
 			this.client_size.Width=clientWidth;
 			this.client_size.Height=clientHeight;
-
-			UpdateBounds(x, y, width, height);
 		}
 
 		public void Invalidate() {
-			Invalidate(new Rectangle(0, 0, bounds.Width, bounds.Height), false);
+			Invalidate(ClientRectangle, false);
 		}
 
 		public void Invalidate(bool invalidateChildren) {
-			Invalidate(new Rectangle(0, 0, bounds.Width, bounds.Height), invalidateChildren);
+			Invalidate(ClientRectangle, invalidateChildren);
 		}
 
 		public void Invalidate(System.Drawing.Rectangle rc) {
@@ -1263,8 +1311,12 @@ namespace System.Windows.Forms
 				Control		child;
 				AnchorStyles	anchor;
 				Rectangle	space;
+				int		diff_width;
+				int		diff_height;
 
 				space=this.DisplayRectangle;
+				diff_width=space.Width-prev_size.Width;
+				diff_height=space.Height-prev_size.Height;
 
 				// Deal with docking
 				for (int i=0; i < child_controls.Count; i++) {
@@ -1318,22 +1370,14 @@ namespace System.Windows.Forms
 					int top;
 					int width;
 					int height;
-					int diff_width;
-					int diff_height;
 
 					child=child_controls[i];
 					anchor=child.Anchor;
 
-					left=child.Left-space.Left;
-					top=child.Top-space.Top;
+					left=child.Left;
+					top=child.Top;
 					width=child.Width;
 					height=child.Height;
-
-					diff_width=space.Width-prev_size.Width;
-					diff_height=space.Height-prev_size.Height;
-
-					prev_size.Width=space.Width;
-					prev_size.Height=space.Height;
 
 					// If the control is docked we don't need to do anything
 					if (child.Dock != DockStyle.None) {
@@ -1505,14 +1549,11 @@ namespace System.Windows.Forms
 							0));
 					break;
 				}
-				
+
 				case Msg.WM_SIZE: {					
 					if (GetStyle(ControlStyles.ResizeRedraw)) {
 						Invalidate();
 					}
-					// Call UpdateBounds, the GUI already has the sizes
-					UpdateBounds (bounds.X, bounds.Y, LowOrder ((int) m.LParam.ToInt32 ()),
-						HighOrder ((int) m.LParam.ToInt32 ()));
 					DefWndProc(ref m);	
 					break;				
 				}
@@ -2026,7 +2067,31 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void OnVisibleChanged(EventArgs e) {
+			if (!is_visible) {
+				if (dc_mem!=null) {
+					dc_mem.Dispose ();
+					bmp_mem=null;
+				}
+
+				if (bmp_mem!=null) {
+					bmp_mem.Dispose();
+					bmp_mem=null;
+				}
+			} else {
+				if (!is_disposed) {
+					if (!this.IsHandleCreated) {
+						this.CreateHandle();
+					}
+					PerformLayout();
+				}
+			}
+			
 			if (VisibleChanged!=null) VisibleChanged(this, e);
+
+			// We need to tell our kids
+			for (int i=0; i<child_controls.Count; i++) {
+				child_controls[i].OnParentVisibleChanged(e);
+			}
 		}
 		#endregion	// OnXXX methods
 
