@@ -1,3 +1,9 @@
+2004-09-23  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: Fixed wrong patch for InternalExecuteMessage.
+	  The MethodBase in the message may not be the same type of the object
+	  (the method can be called using an interface).
+
 2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingServices.cs: In InternalExecute, use MethodBase instead

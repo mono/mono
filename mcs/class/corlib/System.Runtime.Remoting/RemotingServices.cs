@@ -80,7 +80,8 @@ namespace System.Runtime.Remoting
 		{
 			ReturnMessage result;
 			
-			MethodBase method = reqMsg.MethodBase;
+			Type tt = target.GetType ();
+			MethodBase method = reqMsg.MethodBase.DeclaringType == tt ? reqMsg.MethodBase : tt.GetMethod(reqMsg.MethodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, (Type[]) reqMsg.MethodSignature, null);
 			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
 			
 			try 
