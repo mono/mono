@@ -24,39 +24,11 @@
 //
 // Todo:
 //     - Drawing of focus rectangle
-//
-// $Revision: 1.8 $
-// $Modtime: $
-// $Log: ListViewItem.cs,v $
-// Revision 1.8  2004/11/05 14:00:50  ravindra
-// Implemented some methods and fixed scrolling.
-//
-// Revision 1.7  2004/11/04 11:29:38  ravindra
-// 	- Changed default value signatures (prefixed all with ListView).
-// 	- Fixed/implemented layout LargeIcon, SmallIcon and List views for ListView.
-// 	- Fixed calculations for ListViewItem and implemented Clone() method.
-//
-// Revision 1.6  2004/10/30 10:21:14  ravindra
-// Added support for scrolling and fixed calculations.
-//
-// Revision 1.5  2004/10/26 09:55:48  ravindra
-// Some formatting for my last checkins.
-//
-// Revision 1.4  2004/10/26 09:32:19  ravindra
-// Calculations for ListViewItem.
-//
-// Revision 1.3  2004/10/15 15:05:09  ravindra
-// Implemented GetBounds method and fixed coding style.
-//
-// Revision 1.2  2004/10/02 11:57:56  ravindra
-// Added attributes.
-//
-// Revision 1.1  2004/09/30 13:24:45  ravindra
-// Initial implementation.
-//
-//
+
+
+
 // NOT COMPLETE
-//
+
 
 using System.Collections;
 using System.ComponentModel;

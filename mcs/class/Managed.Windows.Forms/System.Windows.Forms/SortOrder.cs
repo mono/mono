@@ -22,15 +22,9 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: SortOrder.cs,v $
-// Revision 1.1  2004/09/30 13:26:00  ravindra
-// Enum for ListView control.
-//
-//
+
 // COMPLETE
-//
+
 
 namespace System.Windows.Forms
 {

@@ -22,13 +22,6 @@
 // Authors:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: FormStartPosition.cs,v $
-// Revision 1.1  2004/09/09 05:47:47  ravindra
-// Enums for Form.
-//
-//
 
 using System.Runtime.InteropServices;
 

@@ -22,16 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Log: Cursor.cs,v $
-// Revision 1.2  2004/08/23 19:39:59  pbartok
-// - Implemented Position property
-//
-// Revision 1.1  2004/08/22 18:03:57  pbartok
-// - Started implementation, not usable yet
-//
-//
-//
+
 
 // NOT COMPLETE
 

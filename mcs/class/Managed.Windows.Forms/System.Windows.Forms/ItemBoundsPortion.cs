@@ -22,16 +22,7 @@
 // Authors:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.2 $
-// $Modtime: $
-// $Log: ItemBoundsPortion.cs,v $
-// Revision 1.2  2004/09/09 05:56:20  ravindra
-// It's enum, not a class!
-//
-// Revision 1.1  2004/09/09 03:13:39  ravindra
-// Enums for ListView control.
-//
-//
+
 
 namespace System.Windows.Forms
 {

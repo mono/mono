@@ -22,33 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Log: ImageList.cs,v $
-// Revision 1.7  2004/11/04 11:04:40  ravindra
-// Implemented the missing overload for Draw method.
-//
-// Revision 1.6  2004/08/21 01:50:52  ravindra
-// Changed draw method to use the arguments passed in to draw the image.
-//
-// Revision 1.5  2004/08/19 21:39:09  pbartok
-// - Added missing Draw() method
-// - Added missing RecreateHandle event
-//
-// Revision 1.4  2004/08/11 17:43:08  pbartok
-// - Removed disposing of the actual images when the list is disposed
-//
-// Revision 1.3  2004/08/11 13:43:13  pbartok
-// - Added missing creation of the collection list
-//
-// Revision 1.2  2004/08/09 23:12:13  pbartok
-// - Fixed several bugs Ravindra pointed out
-//
-// Revision 1.1  2004/07/15 20:05:28  pbartok
-// - Implemented ImageList and ImageList.ImageCollection classes
-// - Added ColorDepth enumeration
-// - Updated SWF VS.Net project
-//
-//
+
 
 // COMPLETE
 

@@ -22,20 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Revision: 1.3 $
-// $Modtime: $
-// $Log: NativeWindow.cs,v $
-// Revision 1.3  2004/10/02 19:06:20  pbartok
-// - Changed access level for the window_collection hash table
-//
-// Revision 1.2  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // COMPLETE
 

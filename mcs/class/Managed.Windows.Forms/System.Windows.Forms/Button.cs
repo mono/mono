@@ -23,14 +23,6 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-// $Log: Button.cs,v $
-// Revision 1.2  2004/09/28 18:17:46  jackson
-// Do not redraw OnClick MouseUp/Down will handle the drawing
-//
-// Revision 1.1  2004/09/01 20:39:41  pbartok
-// - Functional initial check-in
-//
-//
 
 // COMPLETE
 

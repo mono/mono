@@ -24,48 +24,7 @@
 //	Peter Bartok, pbartok@novell.com
 //
 //
-// $Revision: 1.16 $
-// $Modtime: $
-// $Log: Label.cs,v $
-// Revision 1.16  2004/10/05 04:56:11  jackson
-// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
-//
-// Revision 1.15  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.14  2004/09/07 09:40:15  jordi
-// LinkLabel fixes, methods, multiple links
-//
-// Revision 1.13  2004/09/04 17:10:18  jordi
-// Refresh when font changed
-//
-// Revision 1.12  2004/09/01 15:10:10  jordi
-// fixes method signatures, new methods, events, fixes autosize
-//
-// Revision 1.11  2004/08/21 22:30:53  pbartok
-// - Signature fixes
-//
-// Revision 1.10  2004/08/21 22:21:13  pbartok
-// - Signature fixes
-//
-// Revision 1.9  2004/08/11 18:54:11  pbartok
-// - Forcing redraw on resize
-//
-// Revision 1.8  2004/08/10 15:24:35  jackson
-// Let Control handle buffering.
-//
-// Revision 1.7  2004/08/08 19:47:41  jordi
-// add cvs header info
-//
-//
+
 // INCOMPLETE
 
 using System.Drawing;

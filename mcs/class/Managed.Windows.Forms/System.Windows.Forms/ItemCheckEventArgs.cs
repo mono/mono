@@ -22,15 +22,9 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: ItemCheckEventArgs.cs,v $
-// Revision 1.1  2004/09/23 07:39:19  ravindra
-// EventArgs and EventHandlers needed by ListView Control.
-//
-//
+
 // COMPLETE
-//
+
 
 using System;
 using System.Runtime.InteropServices;

@@ -28,41 +28,7 @@
 // TODO:
 //     - Adding a button to two toolbars
 //
-// $Revision: 1.9 $
-// $Modtime: $
-// $Log: ToolBarButton.cs,v $
-// Revision 1.9  2004/10/14 11:10:47  ravindra
-// 	- Added an internal member 'inside' to handle mouse move
-// 	with mouse pressed ie mouse drag event.
-// 	- Changed 'Pressed' property to return true only when
-// 	'inside' and 'pressed' are both true.
-// 	- Some coding style love.
-//
-// Revision 1.8  2004/10/05 08:42:20  ravindra
-// Added an internal member dd_pressed to handle clicks on DropDown arrow.
-//
-// Revision 1.7  2004/09/09 11:23:05  ravindra
-// Changes in ToolBarButton need to make it's parent redraw.
-//
-// Revision 1.6  2004/08/27 22:12:56  ravindra
-// Added TypeConverter attribute.
-//
-// Revision 1.5  2004/08/25 20:04:40  ravindra
-// Added the missing divider code and grip for ToolBar Control.
-//
-// Revision 1.4  2004/08/22 00:03:20  ravindra
-// Fixed toolbar control signatures.
-//
-// Revision 1.3  2004/08/21 01:52:08  ravindra
-// Improvments in mouse event handling in the ToolBar control.
-//
-// Revision 1.2  2004/08/17 02:00:54  ravindra
-// Added attributes.
-//
-// Revision 1.1  2004/08/15 23:13:15  ravindra
-// First Implementation of ToolBar control.
-//
-//
+
 
 // NOT COMPLETE
 

@@ -22,29 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Revision: 1.6 $
-// $Modtime: $
-// $Log: XplatUIStructs.cs,v $
-// Revision 1.6  2004/11/08 20:53:48  pbartok
-// - Added missing WS_EX styles
-//
-// Revision 1.5  2004/10/18 04:51:28  pbartok
-// - Added WS_EX styles to WindowStyles enumeration
-//
-// Revision 1.4  2004/08/21 00:58:31  pbartok
-// - Added private message for async communication
-//
-// Revision 1.3  2004/08/16 21:46:08  pbartok
-// - Added WM_MOUSE_ENTER & WM_MOUSE_LEAVE to support OnMouseEnter/Leave()
-//
-// Revision 1.2  2004/07/15 17:06:48  jordi
-// added MsgButons enum
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // NOT COMPLETE
 

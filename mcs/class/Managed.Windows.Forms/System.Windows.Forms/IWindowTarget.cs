@@ -22,13 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Log: IWindowTarget.cs,v $
-// Revision 1.1  2004/09/13 14:18:42  pbartok
-// - Initial check-in
-//
-//
-//
+
 
 namespace System.Windows.Forms {
 	public interface IWindowTarget {

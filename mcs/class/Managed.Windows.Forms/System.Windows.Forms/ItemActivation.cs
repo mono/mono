@@ -24,17 +24,9 @@
 // Author:
 //	Kevin Rector (krector@nazmail.com)
 //
-// Enum for ListView control.
-//
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: ItemActivation.cs,v $
-// Revision 1.1  2004/09/30 13:20:20  ravindra
-// Enum for ListView Control.
-//
-//
+
+
 // COMPLETE
-//
 
 namespace System.Windows.Forms
 {

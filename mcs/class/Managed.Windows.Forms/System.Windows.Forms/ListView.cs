@@ -28,42 +28,10 @@
 //   - Column resizing/reodering
 //   - Feedback for item activation, change in cursor types as mouse moves.
 //   - HideSelection
-//
-// $Revision: 1.9 $
-// $Modtime: $
-// $Log: ListView.cs,v $
-// Revision 1.9  2004/11/05 14:00:50  ravindra
-// Implemented some methods and fixed scrolling.
-//
-// Revision 1.8  2004/11/04 11:29:38  ravindra
-// 	- Changed default value signatures (prefixed all with ListView).
-// 	- Fixed/implemented layout LargeIcon, SmallIcon and List views for ListView.
-// 	- Fixed calculations for ListViewItem and implemented Clone() method.
-//
-// Revision 1.7  2004/10/30 10:21:14  ravindra
-// Added support for scrolling and fixed calculations.
-//
-// Revision 1.6  2004/10/26 19:51:20  jordi
-// removes warning
-//
-// Revision 1.5  2004/10/26 09:55:48  ravindra
-// Some formatting for my last checkins.
-//
-// Revision 1.4  2004/10/26 09:31:35  ravindra
-// Added some internal members and calculations for ListView.
-//
-// Revision 1.3  2004/10/15 15:03:39  ravindra
-// Implemented Paint method and fixed coding style.
-//
-// Revision 1.2  2004/10/02 11:32:01  ravindra
-// Added attributes.
-//
-// Revision 1.1  2004/09/30 13:24:25  ravindra
-// Initial implementation.
-//
-//
+
+
 // NOT COMPLETE
-//
+
 
 using System.Collections;
 using System.ComponentModel;

@@ -25,16 +25,7 @@
 //	Andreas Nahr, ClassDevelopment@A-SoftTech.com
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
-// $Revision: 1.2 $
-// $Modtime: $
-// $Log: LinkArea.cs,v $
-// Revision 1.2  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.1  2004/07/21 16:19:17  jordi
-// LinkLabel control implementation
-//
-//
+
 
 // COMPLETE
 

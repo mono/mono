@@ -24,17 +24,7 @@
 //		Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-//
-// $Revision: 1.2 $
-// $Modtime: $
-// $Log: IButtonControl.cs,v $
-// Revision 1.2  2004/07/21 16:28:05  jordi
-// fixes comments filenames
-//
-// Revision 1.1  2004/07/21 16:19:17  jordi
-// LinkLabel control implementation
-//
-//
+
 
 // COMPLETE
 

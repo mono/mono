@@ -23,16 +23,7 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
-// $Modtime: $
-// $Log: MouseButtons.cs,v $
-// Revision 1.2  2004/08/09 21:35:34  pbartok
-// - Fixed values
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // COMPLETE
 

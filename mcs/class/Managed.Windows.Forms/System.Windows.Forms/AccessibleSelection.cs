@@ -22,13 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Log: AccessibleSelection.cs,v $
-// Revision 1.1  2004/09/02 20:24:16  pbartok
-// - Initial check-in
-//
-//
-//
+
 
 // COMPLETE
 

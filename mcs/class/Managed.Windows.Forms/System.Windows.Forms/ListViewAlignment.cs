@@ -22,13 +22,7 @@
 // Authors:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: ListViewAlignment.cs,v $
-// Revision 1.1  2004/09/09 03:13:39  ravindra
-// Enums for ListView control.
-//
-//
+
 
 namespace System.Windows.Forms
 {

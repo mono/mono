@@ -26,13 +26,7 @@
 //	Ravindra (rkumar@novell.com)
 //
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: ToolBarAppearance.cs,v $
-// Revision 1.1  2004/08/15 23:13:15  ravindra
-// First Implementation of ToolBar control.
-//
-//
+
 
 // COMPLETE
 

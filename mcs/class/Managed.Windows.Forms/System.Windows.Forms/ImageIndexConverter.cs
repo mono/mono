@@ -22,13 +22,7 @@
 // Authors:
 //	Ravindra	rkumar@novell.com
 //
-//
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: ImageIndexConverter.cs,v $
-// Revision 1.1  2004/08/27 22:07:37  ravindra
-// Implemented.
-//
+
 
 // COMPLETE
 

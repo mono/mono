@@ -23,52 +23,7 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.9 $
-// $Modtime: $
-// $Log: ProgressBar.cs,v $
-// Revision 1.9  2004/10/05 04:56:11  jackson
-// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
-//
-// Revision 1.8  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.7  2004/08/25 18:29:14  jordi
-// new methods, properties, and fixes for progressbar
-//
-// Revision 1.6  2004/08/10 15:41:50  jackson
-// Allow control to handle buffering
-//
-// Revision 1.5  2004/07/26 17:42:03  jordi
-// Theme support
-//
-// Revision 1.4  2004/07/09 20:13:05  miguel
-// Spelling
-//
-// Revision 1.3  2004/07/09 17:25:23  pbartok
-// - Removed usage of Rectangle for drawing. Miguel pointed out it's faster
-//
-// Revision 1.2  2004/07/09 17:17:46  miguel
-// 2004-07-09  Miguel de Icaza  <miguel@ximian.com>
-//
-// 	* ProgressBar.cs: Fixed spelling for `block'
-//
-// 	drawProgressBar: renamed to `DrawProgressBar' to follow the coding
-// 	style guidelines.
-//
-// 	Avoid using the += on rect.X, that exposed a bug in the compiler.
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 using System.Drawing;
 using System.ComponentModel;

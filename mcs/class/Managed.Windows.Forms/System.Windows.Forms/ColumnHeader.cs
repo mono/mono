@@ -22,29 +22,10 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.5 $
-// $Modtime: $
-// $Log: ColumnHeader.cs,v $
-// Revision 1.5  2004/11/04 11:29:38  ravindra
-// 	- Changed default value signatures (prefixed all with ListView).
-// 	- Fixed/implemented layout LargeIcon, SmallIcon and List views for ListView.
-// 	- Fixed calculations for ListViewItem and implemented Clone() method.
-//
-// Revision 1.4  2004/10/26 09:55:48  ravindra
-// Some formatting for my last checkins.
-//
-// Revision 1.3  2004/10/26 09:33:00  ravindra
-// Added some internal members and calculations for ColumnHeader.
-//
-// Revision 1.2  2004/10/15 15:06:44  ravindra
-// Flushing some formatting changes.
-//
-// Revision 1.1  2004/09/30 13:25:33  ravindra
-// Supporting class for ListView control.
-//
-//
+
+
 // COMPLETE
-//
+
 
 using System.ComponentModel;
 using System.Drawing;

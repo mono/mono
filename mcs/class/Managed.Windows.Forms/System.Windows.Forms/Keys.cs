@@ -23,19 +23,7 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
-// $Modtime: $
-// $Log: Keys.cs,v $
-// Revision 1.3  2004/08/21 20:22:58  pbartok
-// - Added [Flags] attribute so that modifiers can be used in bitwise ops
-//
-// Revision 1.2  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // COMPLETE
 

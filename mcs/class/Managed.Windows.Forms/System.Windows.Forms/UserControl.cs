@@ -23,12 +23,7 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Log: UserControl.cs,v $
-// Revision 1.1  2004/08/22 18:00:49  pbartok
-// - Implemented UserControl (complete)
-//
-//
-//
+
 
 // COMPLETE
 

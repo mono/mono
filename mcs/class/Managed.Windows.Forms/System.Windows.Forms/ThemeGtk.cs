@@ -37,36 +37,8 @@
 //		- GTK paints controls into a window no a device context. We should inverstigate if we 
 //		we can encapsulate a dc in a gtkwindow.
 //
-// $Revision: 1.6 $
-// $Modtime: $
-// $Log: ThemeGtk.cs,v $
-// Revision 1.6  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.5  2004/09/02 16:32:54  jordi
-// implements resource pool for pens, brushes, and hatchbruses
-//
-// Revision 1.4  2004/08/24 18:37:02  jordi
-// fixes formmating, methods signature, and adds missing events
-//
-// Revision 1.3  2004/08/20 20:39:51  jordi
-// use style_attach
-//
-// Revision 1.2  2004/08/20 00:55:28  jordi
-// fixes button order
-//
-// Revision 1.1  2004/08/19 22:27:40  jordi
-// experimental GTK theme support
-//
-//
+
+
 // NOT COMPLETE
 
 using System;

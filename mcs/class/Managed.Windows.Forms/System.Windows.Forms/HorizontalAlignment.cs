@@ -22,12 +22,7 @@
 // Authors:
 //      Jackson Harper (jackson@ximian.com)
 //
-// $Revision: 1.1 $
-// $Modtime$
-// $Log: HorizontalAlignment.cs,v $
-// Revision 1.1  2004/08/07 22:56:34  jackson
-// Initial checkin
-//
+
 
 namespace System.Windows.Forms {
 

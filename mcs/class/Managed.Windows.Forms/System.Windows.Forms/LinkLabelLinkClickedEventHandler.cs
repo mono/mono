@@ -27,16 +27,7 @@
 //	Dennis hayes (dennish@raytek.com)
 //
 //
-// $Revision: 1.2 $
-// $Modtime: $
-// $Log: LinkLabelLinkClickedEventHandler.cs,v $
-// Revision 1.2  2004/07/22 15:22:19  jordi
-// link label: check link overlapping, implement events, and fixes
-//
-// Revision 1.1  2004/07/21 16:19:17  jordi
-// LinkLabel control implementation
-//
-//
+
 
 // COMPLETE
 

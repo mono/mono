@@ -22,14 +22,8 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
-//
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: LinkState.cs,v $
-// Revision 1.1  2004/07/21 16:19:17  jordi
-// LinkLabel control implementation
-//
-//
+
+
 // COMPLETE
 
 

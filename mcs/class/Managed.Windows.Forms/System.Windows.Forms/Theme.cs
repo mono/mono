@@ -22,75 +22,7 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
-//
-// $Revision: 1.18 $
-// $Modtime: $
-// $Log: Theme.cs,v $
-// Revision 1.18  2004/11/08 20:40:08  jackson
-// Render the little scrolling jimmi in the correct location with bottom aligned tabs
-//
-// Revision 1.17  2004/11/04 11:26:09  ravindra
-// 	- Changed default ListView values signatures (prefixed all with ListView).
-// 	- Fixed default size values for VScrollBar and HScrollBar.
-// 	- Fixed DrawListViewItem method.
-//
-// Revision 1.16  2004/11/02 02:47:55  jackson
-// New rendering and sizing code for tab controls
-//
-// Revision 1.15  2004/10/30 10:23:02  ravindra
-// Drawing ListView and some default values.
-//
-// Revision 1.14  2004/10/26 09:35:18  ravindra
-// Added some default values for ListView control.
-//
-// Revision 1.13  2004/10/18 04:49:06  pbartok
-// - Added ToolTip abstracts
-//
-// Revision 1.12  2004/10/15 15:08:49  ravindra
-// Added ColumnHeaderHeight property in Theme for ListView.
-//
-// Revision 1.11  2004/10/05 09:03:55  ravindra
-// 	- Added DrawListView method and ListViewDefaultSize property.
-//
-// Revision 1.10  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.9  2004/09/17 12:18:42  jordi
-// Very early menu support
-//
-// Revision 1.8  2004/09/07 17:12:26  jordi
-// GroupBox control
-//
-// Revision 1.7  2004/09/07 09:40:15  jordi
-// LinkLabel fixes, methods, multiple links
-//
-// Revision 1.6  2004/09/02 16:32:54  jordi
-// implements resource pool for pens, brushes, and hatchbruses
-//
-// Revision 1.5  2004/08/25 20:04:40  ravindra
-// Added the missing divider code and grip for ToolBar Control.
-//
-// Revision 1.4  2004/08/24 18:37:02  jordi
-// fixes formmating, methods signature, and adds missing events
-//
-// Revision 1.3  2004/08/24 16:16:46  jackson
-// Handle drawing picture boxes in the theme now. Draw picture box borders and obey sizing modes
-//
-// Revision 1.2  2004/08/20 00:12:51  jordi
-// fixes methods signature
-//
-// Revision 1.1  2004/08/19 22:26:30  jordi
-// move themes from an interface to a class
-//
-//
+
 
 using System.Drawing;
 using System.Drawing.Drawing2D;

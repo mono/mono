@@ -23,12 +23,7 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Log: LeftRightAlignment.cs,v $
-// Revision 1.1  2004/10/04 08:14:40  pbartok
-// - Initial check-in
-//
-//
-//
+
 
 // COMPLETE
 

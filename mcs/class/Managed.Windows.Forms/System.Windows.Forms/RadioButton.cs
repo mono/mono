@@ -22,43 +22,6 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-// $Log: RadioButton.cs,v $
-// Revision 1.8  2004/10/15 13:32:45  ravindra
-// 	- Renamed Paint() method to Draw() for clarity. Also, moved
-// 	DrawImage() to OnPaint().
-//
-// Revision 1.7  2004/10/15 13:25:50  ravindra
-// 	- Removed Redraw (), we get it from ButtonBase.
-// 	- Implemented Paint (), to do class specific painting.
-//
-// Revision 1.6  2004/10/05 18:23:54  jackson
-// Fix ctor
-//
-// Revision 1.5  2004/09/30 17:34:08  jackson
-// Fix typo. Patch by John BouAntoun.
-//
-// Revision 1.4  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.3  2004/09/02 20:26:48  pbartok
-// - Added missing RadioButton.RadioButtonAccessibleObject class
-//
-// Revision 1.2  2004/09/01 20:44:11  pbartok
-// - Fixed state
-//
-// Revision 1.1  2004/09/01 20:40:02  pbartok
-// - Functional initial check-in
-//
-//
-//
 
 // COMPLETE
 

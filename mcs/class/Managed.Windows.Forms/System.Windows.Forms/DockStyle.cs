@@ -22,17 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Revision: 1.2 $
-// $Modtime: $
-// $Log: DockStyle.cs,v $
-// Revision 1.2  2004/08/07 00:00:21  jackson
-//         Add flags and serializable attributes.
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // COMPLETE
 

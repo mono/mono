@@ -22,15 +22,8 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: StructFormat.cs,v $
-// Revision 1.1  2004/10/15 15:10:08  ravindra
-// General Enum.
-//
-//
+
 // COMPLETE
-//
 
 namespace System.Windows.Forms
 {

@@ -28,76 +28,7 @@
 //
 // Copyright (C) Novell, Inc. 2004 (http://www.novell.com)
 //
-//
-// $Revision: 1.17 $
-// $Modtime: $
-// $Log: ToolBar.cs,v $
-// Revision 1.17  2004/10/26 09:33:42  ravindra
-// ToolBar should use the user specified button size, if there is any. Added a size_specified flag for the same.
-//
-// Revision 1.16  2004/10/14 11:14:05  ravindra
-// 	- Changed Redraw () to do a Refresh () always.
-// 	- Fixed the MouseMove event handling when mouse is pressed,
-// 	ie drag event handling.
-// 	- Replaced the usage of ToolBarButton.Pressed property to
-// 	ToolBarButton.pressed internal variable.
-//
-// Revision 1.15  2004/10/06 09:59:05  jordi
-// removes warnings from compilation
-//
-// Revision 1.14  2004/10/05 09:07:07  ravindra
-// 	- Removed a private method, Draw ().
-// 	- Fixed the ButtonDropDown event handling.
-// 	- Fixed MouseMove event handling.
-//
-// Revision 1.13  2004/10/05 04:56:12  jackson
-// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
-//
-// Revision 1.12  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.11  2004/09/16 13:00:19  ravindra
-// Invalidate should be done before redrawing.
-//
-// Revision 1.10  2004/09/09 11:25:03  ravindra
-// Make redraw accessible from ToolBarButton.
-//
-// Revision 1.9  2004/08/25 20:04:40  ravindra
-// Added the missing divider code and grip for ToolBar Control.
-//
-// Revision 1.8  2004/08/25 00:43:13  ravindra
-// Fixed wrapping related issues in ToolBar control.
-//
-// Revision 1.7  2004/08/22 01:20:14  ravindra
-// Correcting the formatting mess of VS.NET.
-//
-// Revision 1.6  2004/08/22 00:49:37  ravindra
-// Probably this completes the missing attributes in toolbar control.
-//
-// Revision 1.5  2004/08/22 00:03:20  ravindra
-// Fixed toolbar control signatures.
-//
-// Revision 1.4  2004/08/21 01:52:08  ravindra
-// Improvments in mouse event handling in the ToolBar control.
-//
-// Revision 1.3  2004/08/17 02:00:54  ravindra
-// Added attributes.
-//
-// Revision 1.2  2004/08/17 00:48:50  ravindra
-// Added attributes.
-//
-// Revision 1.1  2004/08/15 23:13:15  ravindra
-// First Implementation of ToolBar control.
-//
-//
+
 
 // NOT COMPLETE
 

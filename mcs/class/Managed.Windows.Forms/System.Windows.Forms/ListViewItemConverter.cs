@@ -21,16 +21,10 @@
 //
 // Authors:
 //	Ravindra (rkumar@novell.com)
-//
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: ListViewItemConverter.cs,v $
-// Revision 1.1  2004/09/30 13:26:35  ravindra
-// Converter for ListViewItem.
-//
-//
-// NOTE COMPLETE
-//
+
+
+// COMPLETE
+
 
 using System;
 using System.ComponentModel;

@@ -28,23 +28,7 @@
 //	- Add support for MessageBoxOptions and MessageBoxDefaultButton.
 //
 //
-// $Log: MessageBox.cs,v $
-// Revision 1.4  2004/10/15 06:30:56  ravindra
-// 	- MessageBox on windows does not have min/max buttons.
-// 	This change in CreateParams fixes this on Windows. We
-// 	still need to implement this windowstyle behavior in
-// 	our X11 driver.
-//
-// Revision 1.3  2004/10/14 06:14:03  ravindra
-// Moved InitFormSize () out of Paint method and removed unnecessary calls to Button.Show () method.
-//
-// Revision 1.2  2004/10/05 17:10:57  pbartok
-// - Partial implementation by Benjamin Dasnois
-//
-// Revision 1.1	 2004/07/26 11:41:35  jordi
-// initial messagebox implementation
-//
-//
+
 
 // INCOMPLETE
 

@@ -21,16 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//
-//
-// $Log: Message.cs,v $
-// Revision 1.2  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // COMPLETE
 

@@ -22,13 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Log: Appearance.cs,v $
-// Revision 1.1  2004/08/30 15:17:20  pbartok
-// - Initial check-in
-//
-//
-//
+
 
 // COMPLETE
 

@@ -22,18 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Log: AccessibleObject.cs,v $
-// Revision 1.3  2004/09/02 20:25:21  pbartok
-// - Added missing methods
-//
-// Revision 1.2  2004/08/11 13:44:33  pbartok
-// - Fixed to match ControlCollection rewrite
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // NOT COMPLETE
 

@@ -26,13 +26,7 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: Orientation.cs,v $
-// Revision 1.1  2004/07/15 09:38:02  jordi
-// Horizontal and Vertical TrackBar control implementation
-//
-//
+
 
 namespace System.Windows.Forms
 {

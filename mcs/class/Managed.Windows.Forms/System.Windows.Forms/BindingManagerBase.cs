@@ -22,16 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Log: BindingManagerBase.cs,v $
-// Revision 1.2  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.1  2004/08/11 21:22:27  pbartok
-// - Was checked in with wrong filename
-//
-//
-//
+
 
 // NOT COMPLETE
 

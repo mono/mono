@@ -22,35 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Revision: 1.5 $
-// $Modtime: $
-// $Log: ScrollableControl.cs,v $
-// Revision 1.5  2004/09/22 20:12:45  pbartok
-// - Implemented DockPadding property
-// - Implemented AutoScroll property
-// - Implemented AutoScrollMargin property
-// - Implemented AutoScrollMinSize property
-// - Implemented AutoScrollPosition property
-// - Implemented DisplayRectangle property (still incomplete)
-// - Implemented CreateParams property
-// - Implemented HScroll property
-// - Implemented VScroll property
-// - Implemented OnVisibleChanged property
-//
-// Revision 1.4  2004/09/09 03:01:35  ravindra
-// Removed unreachable code.
-//
-// Revision 1.3  2004/08/12 15:25:49  jordi
-// calls ctrlbase instead of exeception
-//
-// Revision 1.2  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // NOT COMPLETE
 

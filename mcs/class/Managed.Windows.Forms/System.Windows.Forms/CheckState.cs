@@ -21,14 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//
-//
-// $Log: CheckState.cs,v $
-// Revision 1.1  2004/08/30 15:28:14  pbartok
-// - Initial checkin
-//
-//
-//
+
 
 // COMPLETE
 

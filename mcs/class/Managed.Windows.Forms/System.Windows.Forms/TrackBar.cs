@@ -30,63 +30,7 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.15 $
-// $Modtime: $
-// $Log: TrackBar.cs,v $
-// Revision 1.15  2004/10/05 04:56:12  jackson
-// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
-//
-// Revision 1.14  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.13  2004/08/23 20:10:03  jordi
-// fixes properties and methods
-//
-// Revision 1.12  2004/08/21 20:21:48  pbartok
-// - Replaced direct XplatUI calls with their Control counterpart
-//
-// Revision 1.11  2004/08/20 19:45:50  jordi
-// fixes timer, new properties and methods
-//
-// Revision 1.10  2004/08/13 20:55:20  jordi
-// change from wndproc to events
-//
-// Revision 1.9  2004/08/13 18:46:26  jordi
-// adds timer and grap window
-//
-// Revision 1.8  2004/08/12 20:29:01  jordi
-// Trackbar enhancement, fix mouse problems, highli thumb, etc
-//
-// Revision 1.7  2004/08/10 23:27:12  jordi
-// add missing methods, properties, and restructure to hide extra ones
-//
-// Revision 1.6  2004/08/10 15:47:11  jackson
-// Allow control to handle buffering
-//
-// Revision 1.5  2004/08/07 23:32:26  jordi
-// throw exceptions of invalid enums values
-//
-// Revision 1.4  2004/08/06 23:18:06  pbartok
-// - Fixed some rounding issues with float/int
-//
-// Revision 1.3  2004/07/27 15:53:02  jordi
-// fixes trackbar events, def classname, methods signature
-//
-// Revision 1.2  2004/07/26 17:42:03  jordi
-// Theme support
-//
-// Revision 1.1  2004/07/15 09:38:02  jordi
-// Horizontal and Vertical TrackBar control implementation
-//
-//
+
 
 // NOT COMPLETE
 

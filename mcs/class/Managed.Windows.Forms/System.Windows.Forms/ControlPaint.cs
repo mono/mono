@@ -22,35 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Log: ControlPaint.cs,v $
-// Revision 1.5  2004/10/13 03:15:16  pbartok
-// - Fixed Dark(), DarkDark(), Light() and LightLight() methods to match MS
-//   documentation. They need to return defined colors if the passed
-//   color matches the configured control color. Thanks to John BouAntoun for
-//   pointing this out.
-//
-// Revision 1.4  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.3  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.2  2004/07/26 17:42:03  jordi
-// Theme support
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // NOT COMPLETE
 

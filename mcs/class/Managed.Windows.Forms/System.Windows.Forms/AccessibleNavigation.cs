@@ -21,14 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//
-//
-// $Log: AccessibleNavigation.cs,v $
-// Revision 1.1  2004/09/02 20:23:52  pbartok
-// - Initial check-in
-//
-//
-//
+
 
 // COMPLETE
 

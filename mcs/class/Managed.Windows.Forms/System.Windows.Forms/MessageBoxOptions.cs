@@ -23,13 +23,7 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: MessageBoxOptions.cs,v $
-// Revision 1.1  2004/07/26 11:41:35  jordi
-// initial messagebox implementation
-//
-//
+
 
 // COMPLETE
 

@@ -23,22 +23,7 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
-// $Modtime: $
-// $Log: InputLanguageChangingEventArgs.cs,v $
-// Revision 1.4  2004/08/11 22:28:02  pbartok
-// - Never check in before compiling. Fixes the last check-in
-//
-// Revision 1.3  2004/08/11 22:26:14  pbartok
-// - More signature fixes
-//
-// Revision 1.2  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // COMPLETE
 

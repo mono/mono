@@ -23,23 +23,7 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
-// $Log: ToolTip.cs,v $
-// Revision 1.4  2004/11/08 20:49:35  pbartok
-// - Fixed arguments for updated SetTopmost function
-// - Fixed usage of PointToClient
-//
-// Revision 1.3  2004/10/19 06:04:59  ravindra
-// Fixed constructor.
-//
-// Revision 1.2  2004/10/18 06:28:30  ravindra
-// Suppressed a warning message.
-//
-// Revision 1.1  2004/10/18 05:19:57  pbartok
-// - Complete implementation
-//
-//
-//
+
 
 // COMPLETE
 

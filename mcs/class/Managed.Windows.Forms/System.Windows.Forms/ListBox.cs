@@ -153,6 +153,7 @@ namespace System.Windows.Forms
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownLB);
+			
 
 			UpdateFormatString ();
 		}

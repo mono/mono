@@ -22,15 +22,9 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: SizeGripStyle.cs,v $
-// Revision 1.1  2004/10/15 15:09:48  ravindra
-// Enum for Form.
-//
-//
+
 // COMPLETE
-//
+
 
 namespace System.Windows.Forms
 {

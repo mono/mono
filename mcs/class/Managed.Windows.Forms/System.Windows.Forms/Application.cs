@@ -22,40 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Revision: 1.8 $
-// $Modtime: $
-// $Log: Application.cs,v $
-// Revision 1.8  2004/10/20 03:33:33  pbartok
-// - Fixed to deal with new Form subclasses for menus
-//
-// Revision 1.7  2004/10/18 04:14:14  pbartok
-// - Added code to simulate modal dialogs on Win32
-//
-// Revision 1.6  2004/09/22 20:05:41  pbartok
-// - Added message loop for modal dialogs
-//
-// Revision 1.5  2004/09/21 00:54:15  jackson
-// New message loop that uses poll so we don't get a busy loop
-//
-// Revision 1.4  2004/08/23 22:45:19  pbartok
-// - Removed debug output
-// - Simplifications
-//
-// Revision 1.3  2004/08/23 22:09:29  pbartok
-// - Added handling of Idle event
-// - Added handling of form closing
-// - Fixed reporting of MessageLoop property
-// - Removed some unneeded code, should provide a bit of a speedup
-//
-// Revision 1.2  2004/08/11 22:16:50  pbartok
-// - Fixed Signature
-// - Added .Net 1.1 method
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // COMPLETE
 

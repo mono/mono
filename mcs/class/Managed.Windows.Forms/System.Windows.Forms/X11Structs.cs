@@ -22,59 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-// $Revision: 1.12 $
-// $Modtime: $
-// $Log: X11Structs.cs,v $
-// Revision 1.12  2004/11/08 20:52:15  pbartok
-// - Added XSetWindowAttributes structure
-// - Improved XWindowAttributes structure
-// - Added SetWindowValuemask enum
-// - Added window creation arguments enum
-// - Added gravity enum
-// - Added Motif hints structure
-// - Added various Motif flags and enums
-// - Added PropertyMode enum for property functions
-//
-// Revision 1.11  2004/09/14 00:13:29  jackson
-// Timers are now handled in a second thread and post messages into the main threads message queue. This makes timing much more consistent. Both win2K and XP have a minimum timer value of 15 milliseconds, so we now do this too.
-//
-// Revision 1.10  2004/09/13 21:18:32  pbartok
-// - Added Z-Ordering methods
-//
-// Revision 1.9  2004/08/24 22:35:44  pbartok
-// - Refined definitions for CrossingEvent
-//
-// Revision 1.8  2004/08/20 19:11:56  jackson
-// Use IntPtrs for ClientMessage extra data (TODO: This will screw up on 64 bit systems)
-//
-// Revision 1.7  2004/08/19 21:51:59  pbartok
-// - Removed packing hints (Paolo suggested this a while back)
-// - fixed colormap type
-// - Added default Atom types
-// - Added Screen and color structs and enums
-//
-// Revision 1.6  2004/08/09 20:56:18  pbartok
-// - Added GrabMode enum
-//
-// Revision 1.5  2004/08/06 23:17:44  pbartok
-// - Fixed Refresh and Invalidate
-//
-// Revision 1.4  2004/08/06 21:30:56  pbartok
-// - Fixed recursive loop when resizing
-// - Improved/fixed redrawing on expose messages
-//
-// Revision 1.3  2004/08/06 15:53:39  jordi
-// X11 keyboard navigation
-//
-// Revision 1.2  2004/08/06 14:02:33  pbartok
-// - Fixed reparenting
-// - Fixed window border creation
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
 
 // NOT COMPLETE
 

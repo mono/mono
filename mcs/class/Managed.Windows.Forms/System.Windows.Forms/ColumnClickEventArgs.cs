@@ -22,15 +22,9 @@
 // Authors:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: ColumnClickEventArgs.cs,v $
-// Revision 1.1  2004/09/16 03:18:11  ravindra
-// Event for ListView Control.
-//
-//
+
+
 // COMPLETE
-//
 
 using System;
 

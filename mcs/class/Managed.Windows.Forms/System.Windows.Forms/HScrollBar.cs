@@ -26,28 +26,7 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-//
-// $Revision: 1.3 $
-// $Modtime: $
-// $Log: HScrollBar.cs,v $
-// Revision 1.3  2004/09/28 18:44:25  pbartok
-// - Streamlined Theme interfaces:
-//   * Each DrawXXX method for a control now is passed the object for the
-//     control to be drawn in order to allow accessing any state the theme
-//     might require
-//
-//   * ControlPaint methods for the theme now have a CP prefix to avoid
-//     name clashes with the Draw methods for controls
-//
-//   * Every control now retrieves it's DefaultSize from the current theme
-//
-// Revision 1.2  2004/08/23 20:10:03  jordi
-// fixes properties and methods
-//
-// Revision 1.1  2004/07/13 15:33:46  jordi
-// vertical and hort. classes commit
-//
-//
+
 
 using System.Drawing;
 

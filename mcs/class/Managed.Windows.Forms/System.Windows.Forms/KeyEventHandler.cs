@@ -23,13 +23,8 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: KeyEventHandler.cs,v $
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
+
+
 
 // COMPLETE
 
