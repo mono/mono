@@ -1,3 +1,21 @@
+2004-12-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ops.h: Add new opcodes.
+
+	* mini.h: Add new patch types. Add got_var to MonoCompile.
+
+	* mini.h mini-x86.c mini-amd64.c aot.c: Rename 
+	mono_arch_get_aot_patch_offset () to mono_arch_get_patch_offset () and
+	make it work with all kinds of patchable code.
+
+	* inssel.brg inssel-x86.brg: Add new rules dealing with computing the
+	address of the GOT, and referencing entries in the GOT.
+
+	* mini.c: Add code to load the GOT address if needed by an opcode.
+
+	* aot.c mini-x86.h mini-x86.c cpu-pentium.md: Add support for position 
+	independent AOT code on the x86 using an elf-style Global Offset Table.
+
 2004-12-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (RUNTIME): Set MONO_SHARED_DIR.
