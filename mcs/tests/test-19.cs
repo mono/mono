@@ -75,9 +75,40 @@ class X {
 		Console.WriteLine ("   Count: " + mi.Length);
 		if (!filter (mi [0], "MyFilter"))
 			return 1;
+
+		//
+		// This test is used to call into a delegate defined in a separate
+		// namespace, but which is still not a nested delegate inside a class
+		//
+		NameSpace.TestDelegate td = new NameSpace.TestDelegate (multiply_by_three);
+
+		if (td (8) != 24)
+			return 30;
+
+		//
+		// Check the names that were used to define the delegates
+		//
+		if (td.GetType ().FullName != "NameSpace.TestDelegate")
+			return 31;
+
+		if (_.GetType ().FullName != "I+GetTextFn")
+			return 32;
 		
 		Console.WriteLine ("Test passes");
 
 		return 0;
 	}
+
+	static int multiply_by_three (int v)
+	{
+		return v * 3;
+	}
+	
 }
+
+namespace NameSpace {
+
+	public delegate int TestDelegate (int a);
+
+}
+	
