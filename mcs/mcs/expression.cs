@@ -7405,7 +7405,7 @@ namespace Mono.CSharp {
 		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
 		{
 			Indexers ix = (Indexers) map [lookup_type];
-			
+
 			if (ix != null)
 				return ix;
 
@@ -7421,6 +7421,22 @@ namespace Mono.CSharp {
 				}
 					
 				copy = copy.BaseType;
+			}
+
+			if (!lookup_type.IsInterface)
+				return ix;
+
+			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
+			if (ifaces != null) {
+				foreach (Type itype in ifaces) {
+					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, itype);
+					if (mi != null){
+						if (ix == null)
+							ix = new Indexers ();
+					
+						ix.Append (mi);
+					}
+				}
 			}
 
 			return ix;

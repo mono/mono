@@ -5,6 +5,12 @@
 
 2003-07-25  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Indexers.GetIndexersForType): Only look in the
+	interface hierarchy if the requested type is already an
+	interface.  Fixes #46788 while keeping #46502 fixed.
+
+2003-07-25  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.DefineMembers): Check whether all
 	readonly fields have been assigned and report warning CS0649 if
 	not.
