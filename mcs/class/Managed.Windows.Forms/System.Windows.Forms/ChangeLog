@@ -1,3 +1,17 @@
+2005-03-18  Peter Bartok  <pbartok@novell.com>
+
+	* ComboBox.cs: Now also firing the OnKeyPress events for the embedded
+	  textbox
+	* FileDialog.cs:
+	  - Made Open/Save button the accept button for FileDialog
+	  - Tied the cancel button to the IButtonControl cancel button
+	  - Save/Open now properly builds the pathname
+	  - Now handles user-entered text
+	  - Preventing crash on right-click if no item is selected
+	  - Fixed Text property, now uses contents of textbox
+	  - Fixed SelectedText property, now just returns the text part that
+	    is selected in the text box
+
 2005-03-18  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Use the proper func for drawing the focus

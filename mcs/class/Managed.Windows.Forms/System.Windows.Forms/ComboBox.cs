@@ -246,6 +246,7 @@ namespace System.Windows.Forms
 				if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl == null) {
 					textbox_ctrl = new TextBox ();
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
+					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);
 
 					if (IsHandleCreated == true) {
 						Controls.Add (textbox_ctrl);
@@ -450,15 +451,13 @@ namespace System.Windows.Forms
 				if (dropdown_style == ComboBoxStyle.DropDownList)
 					return "";
 					
-				return textbox_ctrl.Text;
+				return textbox_ctrl.SelectedText;
 			}
 			set {
-				if (dropdown_style == ComboBoxStyle.DropDownList)
+				if (dropdown_style == ComboBoxStyle.DropDownList) {
 					return;
+				}
 				
-				if (textbox_ctrl.Text == value)
-					return;
-					
 				textbox_ctrl.SelectedText = value;
 			}
 		}
@@ -518,9 +517,16 @@ namespace System.Windows.Forms
 		[Bindable (true)]
 		[Localizable (true)]
 		public override string Text {
-			get { 
-				if (SelectedItem != null) 
+			get {
+				if (dropdown_style != ComboBoxStyle.DropDownList) {
+					if (textbox_ctrl != null) {
+						return textbox_ctrl.Text;
+					}
+				}
+
+				if (SelectedItem != null)  {
 					return SelectedItem.ToString ();
+				}
 								
 				return base.Text;				
 			}
@@ -856,6 +862,9 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
+		private void textbox_ctrl_KeyPress(object sender, KeyPressEventArgs e) {
+			OnKeyPress(e);
+		}
 		
 		// Calcs the text area size
 		internal void CalcTextArea ()

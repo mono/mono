@@ -462,11 +462,13 @@ namespace System.Windows.Forms
 				menueToolBarButton = new ToolBarButton( );
 				fileTypeLabel = new Label( );
 				openSaveButton = new Button( );
+				fileDialog.form.AcceptButton = openSaveButton;
 				helpButton = new Button( );
 //				bigButtonToolBar = new ToolBar( );
 				buttonPanel = new ButtonPanel( this );
 				upToolBarButton = new ToolBarButton( );
 				cancelButton = new Button( );
+				fileDialog.form.CancelButton = cancelButton;
 				imageListTopToolbar = new ImageList( );
 //				imageListLeftToolbar = new ImageList( );
 				menueToolBarButtonContextMenu = new ContextMenu( );
@@ -756,9 +758,8 @@ namespace System.Windows.Forms
 			
 			void OnClickOpenButton( object sender, EventArgs e )
 			{
+				currentFileName = Path.Combine(currentDirectoryName, fileNameComboBox.Text.Trim());
 				Console.WriteLine( "OnClickOpenButton currentFileName: " + currentFileName );
-				
-				currentFileName.Trim( );
 				
 				if ( currentFileName.Length == 0 )
 					return;
@@ -1063,14 +1064,18 @@ namespace System.Windows.Forms
 				
 				protected override void OnClick( EventArgs e )
 				{
-					ListViewItem listViewItem = SelectedItems[ 0 ];
+					ListViewItem listViewItem;
+
+					if (SelectedItems.Count > 0) {
+						listViewItem = SelectedItems[ 0 ];
+
+						FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ listViewItem.Text ];
 					
-					FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ listViewItem.Text ];
-					
-					if ( fileStruct.attributes != FileAttributes.Directory )
-					{
-						fileDialogPanel.FileNameComboBox.Text = listViewItem.Text;
-						fileDialogPanel.CurrentFileName = fileStruct.fullname;
+						if ( fileStruct.attributes != FileAttributes.Directory )
+						{
+							fileDialogPanel.FileNameComboBox.Text = listViewItem.Text;
+							fileDialogPanel.CurrentFileName = fileStruct.fullname;
+						}
 					}
 					
 					base.OnClick( e );
