@@ -569,7 +569,7 @@ namespace System.Net
 				webWriter = new StreamWriter (this);
 	
 				webWriter.Write (webRequest.Method + " " + 
-					webRequest.actualUri.AbsolutePath + " HTTP/" + webRequest.version.ToString(2) + "\r\n");
+					webRequest.actualUri.PathAndQuery + " HTTP/" + webRequest.version.ToString(2) + "\r\n");
 
 				foreach (string header in webRequest.webHeaders)
 					webWriter.Write (header + ": " + webRequest.webHeaders[header] + "\r\n");
