@@ -2,11 +2,15 @@
 /// MonoWSDL.cs -- a WSDL to proxy code generator.
 ///
 /// Author: Erik LeBel (eriklebel@yahoo.ca)
+/// 		Lluis Sanchez (lluis@ximian.com)
 ///
 /// Copyright (C) 2003, Erik LeBel,
 ///
 
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Collections;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
@@ -39,6 +43,7 @@ namespace Mono.WebServices
 		string password = null;
 		string username = null;
 		
+		ArrayList readLocations = new ArrayList ();
 		
 		///
 		/// <summary>
@@ -53,6 +58,10 @@ namespace Mono.WebServices
 					throw new Exception("Too many document sources");
 				
 				url = value;
+			}
+			get
+			{
+				return url;
 			}
 		}
 		
@@ -87,36 +96,47 @@ namespace Mono.WebServices
 		///	This property returns the document found at the DocumentRetriever's URL.
 		/// </summary>
 		///
-		public string Document
+		public Stream GetStream ()
 		{
-			get
+			return GetStream (url);
+		}
+		
+		public Stream GetStream (string documentUrl)
+		{
+			WebClient webClient = new WebClient();
+			
+			if (username != null || password != null || domain != null)
 			{
-				WebClient webClient = new WebClient();
+				NetworkCredential credentials = new NetworkCredential();
 				
-				if (username != null || password != null || domain != null)
-				{
-					NetworkCredential credentials = new NetworkCredential();
-					
-					if (username != null)
-						credentials.UserName = username;
-					
-					if (password != null)
-						credentials.Password = password;
-					
-					if (domain != null)
-						credentials.Domain = domain;
-					
-					webClient.Credentials = credentials;
-				}
-	
+				if (username != null)
+					credentials.UserName = username;
 				
-				byte [] rawDocument = webClient.DownloadData(url);
+				if (password != null)
+					credentials.Password = password;
 				
-				// FIXME this ASCII encoding is probably wrong, what about Unicode....
-				string document = Encoding.ASCII.GetString(rawDocument);
+				if (domain != null)
+					credentials.Domain = domain;
 				
-				return document;
+				webClient.Credentials = credentials;
 			}
+			
+			readLocations.Add (documentUrl);
+
+			try
+			{
+				Console.WriteLine ("Fetching " + documentUrl);
+				return webClient.OpenRead (documentUrl);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception ("Could not read document from url " + documentUrl + ". " + ex.Message);
+			}
+		}
+		
+		public bool AlreadyDownloaded (string documentUrl)
+		{
+			return readLocations.Contains (documentUrl);
 		}
 	}
 	
@@ -209,11 +229,11 @@ namespace Mono.WebServices
 		///	Generate code for the specified ServiceDescription.
 		/// </summary>
 		///
-		public void GenerateCode(ServiceDescription serviceDescription)
+		public void GenerateCode (ArrayList descriptions, ArrayList schemas)
 		{
 			// FIXME iterate over each serviceDescription.Services?
 			CodeNamespace codeNamespace = GetCodeNamespace();
-			CodeCompileUnit codeUnit    = new CodeCompileUnit();
+			CodeCompileUnit codeUnit = new CodeCompileUnit();
 			
 			codeUnit.Namespaces.Add(codeNamespace);
 
@@ -222,13 +242,30 @@ namespace Mono.WebServices
 			if (server)
 				importer.Style = ServiceDescriptionImportStyle.Server;
 			
-			importer.AddServiceDescription(serviceDescription, appSettingURLKey, appSettingBaseURL);
+			foreach (ServiceDescription sd in descriptions)
+				importer.AddServiceDescription(sd, appSettingURLKey, appSettingBaseURL);
+				
+			foreach (XmlSchema sc in schemas)
+				importer.Schemas.Add (sc);
 			
 			ServiceDescriptionImportWarnings warnings = importer.Import(codeNamespace, codeUnit);
 			if (warnings != 0)
-				Console.WriteLine("WARNING: {0}", warnings.ToString());
+			{
+				if ((warnings & ServiceDescriptionImportWarnings.NoCodeGenerated) > 0)
+					Console.WriteLine ("WARNING: No proxy class was generated"); 
+				if ((warnings & ServiceDescriptionImportWarnings.NoMethodsGenerated) > 0)
+					Console.WriteLine ("WARNING: The proxy class generated includes no methods");
+				if ((warnings & ServiceDescriptionImportWarnings.OptionalExtensionsIgnored) > 0)
+					Console.WriteLine ("WARNING: At least one optional extension has been ignored");
+				if ((warnings & ServiceDescriptionImportWarnings.RequiredExtensionsIgnored) > 0)
+					Console.WriteLine ("WARNING: At least one necessary extension has been ignored");
+				if ((warnings & ServiceDescriptionImportWarnings.UnsupportedBindingsIgnored) > 0)
+					Console.WriteLine ("WARNING: At least one binding is of an unsupported type and has been ignored");
+				if ((warnings & ServiceDescriptionImportWarnings.UnsupportedOperationsIgnored) > 0)
+					Console.WriteLine ("WARNING: At least one operation is of an unsupported type and has been ignored");
+			}
 			
-			string serviceName = serviceDescription.Services[0].Name;
+			string serviceName = ((ServiceDescription)descriptions[0]).Services[0].Name;
 			WriteCodeUnit(codeUnit, serviceName);
 		}
 		
@@ -254,9 +291,9 @@ namespace Mono.WebServices
 		///
 		void WriteCodeUnit(CodeCompileUnit codeUnit, string serviceName)
 		{
-			CodeDomProvider 	provider 	= GetProvider();
-			ICodeGenerator 		generator 	= provider.CreateGenerator();
-			CodeGeneratorOptions 	options 	= new CodeGeneratorOptions();
+			CodeDomProvider provider = GetProvider();
+			ICodeGenerator generator = provider.CreateGenerator();
+			CodeGeneratorOptions options = new CodeGeneratorOptions();
 			
 			string filename;
 			if (outFilename != null)
@@ -264,8 +301,8 @@ namespace Mono.WebServices
 			else
 				filename = serviceName	+ "." + provider.FileExtension;
 			
-			StreamWriter writer = new StreamWriter(	File.OpenWrite(filename));
-			
+			Console.WriteLine ("Writing file '{0}'", filename);
+			StreamWriter writer = new StreamWriter(filename);
 			generator.GenerateCodeFromCompileUnit(codeUnit, writer, options);
 			writer.Close();
 		}
@@ -326,6 +363,9 @@ namespace Mono.WebServices
 		
 		DocumentRetriever retriever = null;
 		SourceGenerator generator = null;
+		
+		ArrayList descriptions = new ArrayList ();
+		ArrayList schemas = new ArrayList ();
 		
 		bool noLogo = false;
 		bool help = false;
@@ -500,19 +540,51 @@ namespace Mono.WebServices
 				}
 				
 				// fetch the document
-				StringReader reader = new StringReader(retriever.Document);
-				
-				// import the document as a ServiceDescription
-				ServiceDescription serviceDescription = ServiceDescription.Read(reader);
+				using (Stream stream = retriever.GetStream ())
+				{
+					// import the document as a ServiceDescription
+					XmlTextReader xtr = new XmlTextReader (stream);
+					xtr.MoveToContent ();
+					if (xtr.LocalName != "definitions") throw new Exception ("The document at '" + retriever.URL + "' is not a valid WSDL document");
+					ServiceDescription serviceDescription = ServiceDescription.Read (xtr);
+					xtr.Close ();
+					ReadDocuments (serviceDescription);
+				}
 				
 				// generate the code
-				generator.GenerateCode(serviceDescription);
+				generator.GenerateCode (descriptions, schemas);
 			}
 			catch (Exception exception)
 			{
 				Console.WriteLine("Error: {0}", exception.Message);
 				// FIXME: surpress this except for when debug is enabled
 				Console.WriteLine("Stack:\n {0}", exception.StackTrace);
+			}
+		}
+		
+		void ReadDocuments (ServiceDescription serviceDescription)
+		{
+			descriptions.Add (serviceDescription);
+			
+			foreach (Import import in serviceDescription.Imports)
+			{
+				if (retriever.AlreadyDownloaded (import.Location)) continue;
+				using (Stream stream = retriever.GetStream (import.Location))
+				{
+					XmlTextReader reader = new XmlTextReader (stream);
+					reader.MoveToContent ();
+					
+					if (reader.LocalName == "definitions")
+					{
+						ServiceDescription desc = ServiceDescription.Read (reader);
+						ReadDocuments (desc);
+					}
+					else
+					{
+						XmlSchema schema = XmlSchema.Read (reader, null);
+						schemas.Add (schema);
+					}
+				}
 			}
 		}
 		

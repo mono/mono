@@ -1,3 +1,9 @@
+2003-09-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs: Implemented support for WSDL documents that import other
+	  documents and schemas.
+	  Improved warning messages.
+
 2003-08-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Makefile: Fixed assembly reference.
