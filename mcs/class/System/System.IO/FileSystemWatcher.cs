@@ -86,7 +86,11 @@ namespace System.IO {
 				if (watcher != null)
 					return;
 
-				int mode = InternalSupportsFSW ();
+				string managed = Environment.GetEnvironmentVariable ("MONO_MANAGED_WATCHER");
+				int mode = 0;
+				if (managed == null)
+					mode = InternalSupportsFSW ();
+
 				bool ok = false;
 				if (mode == 2)
 					ok = FAMWatcher.GetInstance (out watcher);
