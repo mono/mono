@@ -1,3 +1,6 @@
+2004-06-02 Umadevi S <sumadevi@novell.com>
+	* added System.Data/DataTableTypeConverter to system.data.dll.sources
+
 2004-05-27 Umadevi S <sumadevi@novell.com>
 	* added files DataTableMappingCollectionTest and DataColumnMappingCollectionTest to system.data_test.dll.sources
 
