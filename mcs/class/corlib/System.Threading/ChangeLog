@@ -1,3 +1,8 @@
+2004-04-07  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ReaderWriterLock.cs: When a thread holds a writer lock, a call to
+	  AcquireReaderLock works like a call to AcquireWriterLock.
+
 2004-04-06  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Monitor.cs: In Wait(), release the synchronization context when 

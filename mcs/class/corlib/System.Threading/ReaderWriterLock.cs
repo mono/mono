@@ -55,6 +55,11 @@ namespace System.Threading
 		public void AcquireReaderLock (int millisecondsTimeout, int initialLockCount) 
 		{
 			lock (this) {
+				if (HasWriterLock ()) {
+					AcquireWriterLock (millisecondsTimeout, initialLockCount);
+					return;
+				}
+				
 				// Wait if there is a write lock
 				readers++;
 				try {
