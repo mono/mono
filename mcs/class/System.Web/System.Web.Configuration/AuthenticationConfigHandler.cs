@@ -35,7 +35,7 @@ namespace System.Web.Configuration
 					continue;
 				
 				if (child.Name == "forms") {
-					config.CookieName = AttValue ("name", child, false);
+					config.CookieName = AttValue ("name", child);
 					config.CookiePath = AttValue ("path", child);
 					config.LoginUrl = AttValue ("loginUrl", child);
 					config.SetProtection (AttValue ("protection", child));

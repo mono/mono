@@ -1,3 +1,7 @@
+2003-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AuthenticationConfigHandler.cs: 'name' is optional in <forms>.
+
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HandlerFactoryConfiguration.cs: first search in the mappings of this
