@@ -1156,43 +1156,22 @@ namespace Mono.CSharp
 		// if false, the code stays in a loop until another directive is
 		// reached.
 		//
-		bool handle_preprocessing_directive ()
+		bool handle_preprocessing_directive (bool caller_is_taking)
 		{
 			char [] blank = { ' ', '\t' };
 			string cmd, arg;
 			
 			get_cmd_arg (out cmd, out arg);
-			
+
+			//
+			// The first group of pre-processing instructions is always processed
+			//
 			switch (cmd){
 			case "line":
 				if (!PreProcessLine (arg))
 					Report.Error (
 						1576, Location,
 						"Argument to #line directive is missing or invalid");
-				return true;
-
-			case "define":
-				if (any_token_seen){
-					Error_TokensSeen ();
-					return true;
-				}
-				PreProcessDefinition (true, arg);
-				return true;
-
-			case "undef":
-				if (any_token_seen){
-					Error_TokensSeen ();
-					return true;
-				}
-				PreProcessDefinition (false, arg);
-				return true;
-
-			case "error":
-				Report.Error (1029, Location, "#error: '" + arg + "'");
-				return true;
-
-			case "warning":
-				Report.Warning (1030, Location, "#warning: '" + arg + "'");
 				return true;
 
 			case "region":
@@ -1294,7 +1273,39 @@ namespace Mono.CSharp
 					return false;
 				}
 			}
-			
+
+			//
+			// These are only processed if we are in a `taking' block
+			//
+			if (!caller_is_taking)
+				return false;
+					
+			switch (cmd){
+			case "define":
+				if (any_token_seen){
+					Error_TokensSeen ();
+					return true;
+				}
+				PreProcessDefinition (true, arg);
+				return true;
+
+			case "undef":
+				if (any_token_seen){
+					Error_TokensSeen ();
+					return true;
+				}
+				PreProcessDefinition (false, arg);
+				return true;
+
+			case "error":
+				Report.Error (1029, Location, "#error: '" + arg + "'");
+				return true;
+
+			case "warning":
+				Report.Warning (1030, Location, "#warning: '" + arg + "'");
+				return true;
+			}
+
 			Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
 			return true;
 		}
@@ -1393,9 +1404,11 @@ namespace Mono.CSharp
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
 				if (c == '#' && !tokens_seen){
+					bool cont = true;
+					
 				start_again:
 					
-					bool cont = handle_preprocessing_directive ();
+					cont = handle_preprocessing_directive (cont);
 
 					if (cont){
 						col = 0;

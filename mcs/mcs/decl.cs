@@ -57,6 +57,17 @@ namespace Mono.CSharp {
 			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
 		}
 
+		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method)
+		{
+			//
+			// FIXME: report the old/new permissions?
+			//
+			Report.Error (
+				507, "`" + parent_method + "." + Name +
+				": can't change the access modifiers from `" +
+				parent_method.DeclaringType.Name + "." + parent_method.Name + "'");
+		}
+		
 		//
 		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
 		// that have been defined.
@@ -64,7 +75,8 @@ namespace Mono.CSharp {
 		// `name' is the user visible name for reporting errors (this is used to
 		// provide the right name regarding method names and properties)
 		//
-		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodInfo mb)
+		protected bool CheckMethodAgainstBase (TypeContainer parent,
+						       MethodAttributes my_attrs, MethodInfo mb)
 		{
 			bool ok = true;
 			
@@ -81,11 +93,20 @@ namespace Mono.CSharp {
 				// Now we check that the overriden method is not final
 				
 				if (mb.IsFinal) {
-					MethodAttributes m = mb.Attributes;
-
 					Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
 						      "override inherited member " + MethodBaseName (mb) +
 						      " because it is sealed.");
+					ok = false;
+				}
+
+				//
+				// Check that the permissions are not being changed
+				//
+				MethodAttributes thisp = my_attrs & MethodAttributes.MemberAccessMask;
+				MethodAttributes parentp = mb.Attributes & MethodAttributes.MemberAccessMask;
+
+				if (thisp != parentp){
+					Error_CannotChangeAccessModifiers (parent, mb);
 					ok = false;
 				}
 			}

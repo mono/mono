@@ -1062,10 +1062,11 @@ namespace Mono.CSharp {
 					is_ret = s.Emit (ec);
 				}
 
-				ec.Mark (EndLocation);
-			} else
+				ec.Mark (EndLocation); 
+			} else {
 				foreach (Statement s in Statements)
 					is_ret = s.Emit (ec);
+			}
 			
 			ec.CurrentBlock = prev_block;
 			return is_ret;

@@ -2285,7 +2285,7 @@ namespace Mono.CSharp {
 					mi = null;
 				
 				if (mi != null && mi.Length > 0){
-					if (!CheckMethodAgainstBase (parent, (MethodInfo) mi [0])){
+					if (!CheckMethodAgainstBase (parent, flags, (MethodInfo) mi [0])){
 						return false;
 					}
 				} else {
@@ -2340,9 +2340,16 @@ namespace Mono.CSharp {
 				// but it wont get cleared
 				//
 				if (iface_type == null){
-					if ((ModFlags & Modifiers.PUBLIC) == 0)
+					//
+					// We already catch different accessibility settings
+					// so we just need to check that we are not private
+					//
+					if ((ModFlags & Modifiers.PRIVATE) != 0)
 						implementing = null;
 
+					//
+					// Static is not allowed
+					//
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
@@ -2891,7 +2898,7 @@ namespace Mono.CSharp {
 		//
 		// Checks our base implementation if any
 		//
-		bool CheckBase (TypeContainer parent)
+		bool CheckBase (MethodAttributes flags, TypeContainer parent)
 		{
 			//
 			// Find properties with the same name on the base class
@@ -2937,7 +2944,7 @@ namespace Mono.CSharp {
 				MethodInfo reference = inherited_get == null ?
 					inherited_set : inherited_get;
 				
-				if (!CheckMethodAgainstBase (parent, reference))
+				if (!CheckMethodAgainstBase (parent, flags, reference))
 					return false;
 			} else {
 				if ((ModFlags & Modifiers.NEW) != 0)
@@ -2953,16 +2960,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool DefineMethod (TypeContainer parent, Type iface_type, string short_name, bool is_get)
+		bool DefineMethod (TypeContainer parent, Type iface_type, string short_name,
+				   MethodAttributes flags, bool is_get)
 		{
-			MethodAttributes flags = Modifiers.MethodAttr (ModFlags);
 			Type [] parameters = TypeManager.NoTypes;
 			MethodInfo implementing;
 			Type fn_type;
 			string name;
-
-			flags |= MethodAttributes.HideBySig |
-				MethodAttributes.SpecialName;
 
 			if (is_get){
 				fn_type = PropertyType;
@@ -2990,8 +2994,16 @@ namespace Mono.CSharp {
 				// but it wont get cleared
 				//
 				if (iface_type == null){
-					if ((ModFlags & Modifiers.PUBLIC) == 0)
+					//
+					// We already catch different accessibility settings
+					// so we just need to check that we are not private
+					//
+					if ((ModFlags & Modifiers.PRIVATE) != 0)
 						implementing = null;
+					
+					//
+					// Static is not allowed
+					//
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
@@ -3098,6 +3110,11 @@ namespace Mono.CSharp {
 			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
 				return false;
 
+			MethodAttributes flags = Modifiers.MethodAttr (ModFlags);
+			
+			flags |= MethodAttributes.HideBySig |
+				MethodAttributes.SpecialName;
+
 			// Lookup Type, verify validity
 			PropertyType = RootContext.LookupType (parent, Type, false, Location);
 			if (PropertyType == null)
@@ -3110,7 +3127,7 @@ namespace Mono.CSharp {
 			if (PropertyType.IsPointer && !UnsafeOK (parent))
 				return false;
 			
-			if (!CheckBase (parent))
+			if (!CheckBase (flags, parent))
 				return false;
 
 			//
@@ -3140,11 +3157,11 @@ namespace Mono.CSharp {
 				Name, prop_attr, PropertyType, null);
 
 			if (Get != null)
-				if (!DefineMethod (parent, iface_type, short_name, true))
+				if (!DefineMethod (parent, iface_type, short_name, flags, true))
 					return false;
 			
 			if (Set != null)
-				if (!DefineMethod (parent, iface_type, short_name, false))
+				if (!DefineMethod (parent, iface_type, short_name, flags, false))
 					return false;
 			
 			//
@@ -3551,11 +3568,10 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		void DefineMethod (TypeContainer parent, Type iface_type,
+		void DefineMethod (TypeContainer parent, Type iface_type, 
 				   Type ret_type, string name,
-				   Type [] parameters, bool is_get)
+				   Type [] parameters, MethodAttributes attr, bool is_get)
 		{
-			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
 			MethodInfo implementing;
 
 			implementing = parent.IsInterfaceMethod (
@@ -3570,8 +3586,16 @@ namespace Mono.CSharp {
 			//
 			if (implementing != null){
 				if (iface_type == null){
-					if ((ModFlags & Modifiers.PUBLIC) == 0)
+					//
+					// We already catch different accessibility settings
+					// so we just need to check that we are not private
+					//
+					if ((ModFlags & Modifiers.PRIVATE) != 0)
 						implementing = null;
+					
+					//
+					// Static is not allowed
+					//
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
@@ -3693,8 +3717,11 @@ namespace Mono.CSharp {
 				TypeManager.IndexerPropertyName (parent.TypeBuilder),
 				prop_attr, IndexerType, parameters);
 
+			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
+			
 			if (Get != null){
-				DefineMethod (parent, iface_type, IndexerType, "get_Item", parameters, true);
+				DefineMethod (parent, iface_type, IndexerType, "get_Item",
+					      parameters, attr, true);
                                 InternalParameters pi = new InternalParameters (parent, FormalParameters);
 				if (!TypeManager.RegisterMethod (GetBuilder, pi, parameters)) {
 					Report.Error (111, Location,
@@ -3724,7 +3751,7 @@ namespace Mono.CSharp {
 				
 				DefineMethod (
 					parent, iface_type, TypeManager.void_type,
-					"set_Item", set_pars, false);
+					"set_Item", set_pars, attr, false);
 
 				InternalParameters ip = new InternalParameters (parent, set_formal_params);
 				

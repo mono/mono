@@ -172,6 +172,8 @@ PENDING TASKS
 OPTIMIZATIONS
 -------------
 
+* Make the CodeGen fields static (like SymbolWriter, which gets used a lot)
+
 * Add test case for destructors
 
 * Places that use `Ldelema' are basically places where I will be

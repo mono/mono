@@ -2,6 +2,7 @@
 // Really lame test, but it should be fine for now
 //
 #if YY
+#errro this should not be printed
 #if X
 #elif Y
 #else
