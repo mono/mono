@@ -401,11 +401,11 @@ namespace System.IO
 			find = MonoIO.FindFirstFile (wild, out stat, out error);
 			if (find == MonoIO.InvalidHandle) {
 				switch (error) {
-				case MonoIOError.ERROR_FILE_NOT_FOUND:
 				case MonoIOError.ERROR_PATH_NOT_FOUND:
 					string message = String.Format ("Could not find a part of the path \"{0}\"",
 									wildpath);
 					throw new DirectoryNotFoundException (message);
+				case MonoIOError.ERROR_FILE_NOT_FOUND:
 				case MonoIOError.ERROR_NO_MORE_FILES:
 					return new string [0];
 
