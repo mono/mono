@@ -129,7 +129,7 @@ namespace Mono.CSharp {
 
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
-			bool GuidAttr = true;
+			bool GuidAttr = false;
 			UsageAttr = false;
 
 			bool DoCompares = true;
@@ -346,7 +346,7 @@ namespace Mono.CSharp {
 				//
 				Report.Warning (
 				        -100, Location, "NullReferenceException while trying to create attribute. Something's wrong!");
-			} catch {
+			} catch (Exception e) {
 				//
 				// Sample:
 				// using System.ComponentModel;
@@ -356,7 +356,7 @@ namespace Mono.CSharp {
 				Report.Warning (
 					-23, Location,
 					"The compiler can not encode this attribute in .NET due to\n" +
-					"\ta bug in the .NET runtime.  Try the Mono runtime");
+					"\ta bug in the .NET runtime.  Try the Mono runtime.\nThe error was: " + e.Message);
 			}
 			
 			return cb;
