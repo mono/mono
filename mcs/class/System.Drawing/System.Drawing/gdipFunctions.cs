@@ -1,10 +1,11 @@
 //
 // System.Drawing.gdipFunctions.cs
 //
-// Author: 
+// Authors: 
 // Alexandre Pigolkine (pigolkine@gmx.de)
 // Jordi Mas i Hernàndez (jordi@ximian.com)
 // Sanjay Gupta (gsanjay@novell.com)
+// Ravindra (rkumar@novell.com)
 //
 
 using System;
@@ -197,6 +198,32 @@ namespace System.Drawing {
 		static internal extern Status GdipScaleTextureTransform (IntPtr texture, float sx, float sy, MatrixOrder order);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipTranslateTextureTransform (IntPtr texture, float dx, float dy, MatrixOrder order);
+
+		// PathGradientBrush functions
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreatePathGradientFromPath (IntPtr path, out IntPtr brush);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreatePathGradientI (Point[] points, int count, WrapMode wrapMode, out IntPtr brush);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreatePathGradient (PointF[] points, int count, WrapMode wrapMode, out IntPtr brush);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetPathGradientBlend (IntPtr brush, float[] blend, float[] positions, int count);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetPathGradientCenterColor (IntPtr brush, int color);
+		[DllImport("gdiplus.dll")] // check it
+		static internal extern Status GdipSetPathGradientCenterPoint (IntPtr brush, PointF point);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetPathGradientFocusScales (IntPtr brush, float xScale, float yScale);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetPathGradientPresetBlend (IntPtr brush, int[] blend, float[] positions, int count);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetPathGradientRect (IntPtr brush, out RectangleF rect);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetPathGradientSurroundColorsWithCount (IntPtr brush, int[] color, int count);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetPathGradientTransform (IntPtr brush, IntPtr matrix);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetPathGradientWrapMode (IntPtr brush, WrapMode wrapMode);
 
 		// Graphics functions
 		[DllImport("gdiplus.dll")]
