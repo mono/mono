@@ -1,3 +1,7 @@
+2001-08-27  Bob Smith  <bob@thestuff.net>
+
+        * Control.cs: Bug fixes and implementations.
+
 2001-08-24  Bob Smith  <bob@thestuff.net>
 
         * Control.cs: Bug fixes.

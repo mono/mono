@@ -11,6 +11,8 @@
 //more notes: look at the private on* methods for initialization order. they will help.
 //even more notes: view state info in trackviewstate method description. read later.
 //Ok, enough notes: what the heck is different between enable view state, and track view state.
+//Well, maybe not. How does the ViewState know when to track changes? Does it look at the property
+//on the owning control, or does it have a method/property of its own that gets called?
 
 //cycle:
 //init is called when control is first created.
@@ -22,6 +24,8 @@
 //prerender is called when the server is about to render its page object
 //SaveViewState is called.
 //Dispose disposed/unload not sure but is last.
+
+//Naming Container MUST have some methods. What are they? No clue. Help?
 
 //read this later. http://gotdotnet.com/quickstart/aspplus/
 
@@ -39,27 +43,36 @@ namespace System.Web.UI
                 private static readonly object LoadEvent = new object();
                 private static readonly object PreRenderEvent = new object();
                 private static readonly object UnloadEvent = new object();
-                private string _clientId; //default to "ctrl#" where # is a static count of ctrls per page.
                 private string _userId = null;
+                private string _cachedUserId = null;
+                private string _cachedClientId = null;
                 private ControlCollection _controls = null;
                 private bool _enableViewState = true;
+                private IDictionary _childViewStates = null; //TODO: Not sure datatype. Placeholder guess.
                 private bool _isNamingContainer = false;
                 private Control _namingContainer = null;
                 private Page _page = null;
-                private Control _parent; //TODO: set default.
-                private ISite _site; //TODO: what default?
+                private Control _parent = null;
+                private ISite _site = null;
                 private bool _visible; //TODO: what default?
                 private HttpContext _context = null;
                 private bool _childControlsCreated = false;
                 private StateBag _viewState = null;
-                private bool _trackViewState = false; //TODO: I think this is right. Verify. Also modify other methods to use this.
+                private bool _trackViewState = false;
                 private EventHandlerList _events = new EventHandlerList();
-                public Control() {}
-                public virtual string ClientID
+                private RenderMethod _renderMethodDelegate = null;
+                public Control()
+                {
+                        if (this is NamingContainer) isNamingContainer = true;
+                }
+                public virtual string ClientID //DIT
                 {
                         get
                         {
-                                return _clientId;
+                                if (_cachedUserId != null && _cachedClientId != null)
+                                        return _cachedClientId;
+                                _cachedUserId = UniqueID.Replace(':', '_');
+                                return _cachedUserId;
                         }
                 }
                 public virtual ControlCollection Controls //DIT
@@ -83,16 +96,16 @@ namespace System.Web.UI
                 }
                 public virtual string ID
                 {
-                        get
+                        get //DIT
                         {
-                                if (_userId == null)
-                                        return _clientId;
-                                else
-                                        return _userId;
+                                return _userID;
                         }
                         set
                         {
+                                if (value == null || value == "") return;
                                 _userId = value;
+                                _cachedUserId = null;
+                                //TODO: Some Naming Container stuff here I think.
                         }
                 }
                 public virtual Control NamingContainer //DIT
@@ -143,25 +156,19 @@ namespace System.Web.UI
                 {
                         get
                         {
-                                return Context.Request.ApplicationPath;
+                                return Context.Request.ApplicationPath; //TODO: Dont think this is right.
                         }
                 }
                 public virtual string UniqueID
                 {
                         get
                         {
-                                if (_namingContainer == null)
-                                        if (_userId == null)
-                                                return _clientId;
-                                        else
-                                                return _clientId + ":" + _userId;
-                                else if (_userId == null)
-                                        return _namingContainer.UniqueID + ":" + _clientId;
-                                return _namingContainer.UniqueID + ":" + _clientId + ":" + _userId;
+                                //TODO: Some Naming container methods here. What are they? Why arnt they declared?
+                                //Note: Nuked the old stuff here. Was total crap. :)
                         }
                 }
                 public virtual bool Visible
-                {
+                { //TODO: Are children visible when parents are not?
                         get
                         {
                                 return _visible;
@@ -171,7 +178,7 @@ namespace System.Web.UI
                                 _visible = value;
                         }
                 }
-                protected bool ChildControlsCreated
+                protected bool ChildControlsCreated //DIT
                 {
                         get
                         {
@@ -179,6 +186,8 @@ namespace System.Web.UI
                         }
                         set
                         {
+                                if (value == false && _childControlsCreated == true)
+                                        _controls.Clear();
                                 _childControlsCreated = value;
                         }
                 }
@@ -205,13 +214,12 @@ namespace System.Web.UI
                                 _events = new EventHandlerList();
                         }
                 }
-                protected bool HasChildViewState
+                protected bool HasChildViewState //DIT
                 {
                         get
-                        {       //FIXME: Relook over this. not sure!
-                                foreach (control c in _controls)
-                                        if (c.IsTrackingViewState) return true;
-                                return false;
+                        {
+                                if (_childViewStates == null) return false;
+                                return true;
                         }
                 }
                 protected bool IsTrackingViewState //DIT
@@ -264,15 +272,9 @@ namespace System.Web.UI
                                 ChildControlsCreated = true;
                         }
                 }
-                public virtual Control FindControl(string id)
-                {
-                        int i;
-                        for (i = 0; i < _controls.Count; i++)
-                                if (_controls[i].ID == id) return _controls[i].ID;
-                        return null;
-                }
                 protected virtual Control FindControl(string id, int pathOffset)
                 {
+                        //TODO: I think there is Naming Container stuff here. Redo.
                         int i;
                         for (i = pathOffset; i < _controls.Count; i++)
                                 if (_controls[i].ID == id) return _controls[i].ID;
@@ -338,10 +340,13 @@ namespace System.Web.UI
                 {
                         RenderChildren(writer);
                 }
-                protected virtual void RenderChildren(HtmlTextWriter writer)
+                protected virtual void RenderChildren(HtmlTextWriter writer) //DIT
                 {
-                        //if render method delegate is set, call it here. otherwise,
-                        //render any child controls. just a for loop?
+                        if (_renderMethodDelegate != null)
+                                _renderMethodDelegate(writer, this);
+                        else if (_controls != null)
+                                foreach (Control c in _controls)
+                                        c.RenderControl(writer);
                 }
                 protected virtual object SaveViewState()
                 {
@@ -350,10 +355,6 @@ namespace System.Web.UI
                 protected virtual void TrackViewState()
                 {
                         _trackViewState = true;
-                }
-                public virtual void DataBind()
-                {
-//TODO: I think this recursively calls this method on its children.
                 }
                 public virtual void Dispose()
                 {
@@ -430,6 +431,34 @@ namespace System.Web.UI
                                 Events.RemoveHandler(UnloadEvent, value);
                         }
                 }
-
+                public virtual void DataBind() //DIT
+                {
+                        OnDataBinding(EventArgs.Empty);
+                        if (_controls != null)
+                                foreach (Control c in _controls)
+                                        c.DataBind();
+                }
+                public virtual Control FindControl(string id) //DIT
+                {
+                        return FindControl(id, 0);
+                }
+                public virtual bool HasControls() //DIT
+                {
+                        if (_controls != null && _controls.Count >0) return true;
+                        return false;
+                }
+                public void RenderControl(HtmlTextWriter writer)
+                {
+                        if (_visible)
+                        {
+                                //TODO: Something about tracing here.
+                                Render(writer);
+                        }
+                }
+                public string ResolveUrl(string relativeUrl) {} //TODO
+                public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
+                {
+                        _renderMethodDelegate = renderMethod;
+                }
         }
 }
