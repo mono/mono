@@ -1,3 +1,7 @@
+2002-05-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* assembly.c (mono_assembly_setrootdir): New function used to
+	override the MONO_ASSEMBLIES directory.
 
 Fri May 17 20:39:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
