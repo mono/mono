@@ -1,4 +1,4 @@
-MCS = ../mcs/mcs
+MCS = csc
 MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr
@@ -12,7 +12,7 @@ linux: monoresgen.exe
 windows: monoresgen.exe
 
 monoresgen.exe: $(SOURCES)
-	$(RUNTIME) $(MCS) $(MCS_FLAGS) -o $@ $(SOURCES)
+	$(RUNTIME) $(MCS) $(MCS_FLAGS) /out:$@ $(SOURCES)
 
 install: all
 	mkdir -p $(prefix)/bin/
