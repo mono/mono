@@ -382,7 +382,7 @@ namespace Mono.GetOptions
 					if (!OptionWasProcessed)
 					{
 						if (OptionDetails.Verbose)
-							Console.WriteLine("Could not find what to do with [" + arg + "] followed by [" + nextArg + "]");
+							Console.WriteLine("argument [" + arg + "]");
 
 						arguments.Add(arg);
 					}
@@ -402,7 +402,7 @@ namespace Mono.GetOptions
 			}
 			catch (Exception ex)
 			{
-				ShowUsage(ex.Message);
+				System.Console.WriteLine(ex.ToString());
 				System.Environment.Exit(1);
 			}
 

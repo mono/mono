@@ -1,6 +1,6 @@
 2003-08-25  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* ArgumentProcessorAttribute.cs, OptionAttribute.cs:
-		- Copyright attribute was missing
+		- Copyright attribution was missing
 
 2003-06-16  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
     * OptionDetails.cs :

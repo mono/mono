@@ -16,58 +16,81 @@ namespace Mono.GetOptions
 		public string ShortDescription;
 		public char ShortForm;
 		public string LongForm;
+		public string AlternateForm;
 		public int MaxOccurs; // negative means there is no limit
 
 		private void SetValues(
 			string shortDescription, 
 			char shortForm, 
 			string longForm, 
+			string alternateForm,
 			int maxOccurs)
 		{
 			ShortDescription = shortDescription; 
 			ShortForm = shortForm;
 			LongForm = longForm;
 			MaxOccurs = maxOccurs;
+			AlternateForm = alternateForm;
 		}
 
 		public OptionAttribute(string shortDescription)
 		{
-			SetValues(shortDescription, ' ', string.Empty, 1);
+			SetValues(shortDescription, ' ', string.Empty, string.Empty, 1);
 		}
 
 		public OptionAttribute(string shortDescription, char shortForm)
 		{
-			SetValues(shortDescription, shortForm, string.Empty, 1);
+			SetValues(shortDescription, shortForm, string.Empty, string.Empty, 1);
 		}
 
 		public OptionAttribute(string shortDescription, char shortForm, string longForm)
 		{
-			SetValues(shortDescription, shortForm, longForm, 1);
+			SetValues(shortDescription, shortForm, longForm, string.Empty, 1);
 		}
 
 		public OptionAttribute(string shortDescription, string longForm)
 		{
-			SetValues(shortDescription, ' ', longForm, 1); 
+			SetValues(shortDescription, ' ', longForm, string.Empty, 1); 
+		}
+
+		public OptionAttribute(string shortDescription, char shortForm, string longForm, string alternateForm)
+		{
+			SetValues(shortDescription, shortForm, longForm, alternateForm, 1);
+		}
+
+		public OptionAttribute(string shortDescription, string longForm, string alternateForm)
+		{
+			SetValues(shortDescription, ' ', longForm, alternateForm, 1); 
 		}
 
 		public OptionAttribute(int maxOccurs, string shortDescription)
 		{
-			SetValues(shortDescription, ' ', string.Empty, maxOccurs); 
+			SetValues(shortDescription, ' ', string.Empty, string.Empty, maxOccurs); 
 		}
 
 		public OptionAttribute(int maxOccurs, string shortDescription, char shortForm)
 		{
-			SetValues(shortDescription, shortForm, string.Empty, maxOccurs);
+			SetValues(shortDescription, shortForm, string.Empty, string.Empty, maxOccurs);
 		}
 
 		public OptionAttribute(int maxOccurs, string shortDescription, char shortForm, string longForm)
 		{
-			SetValues(shortDescription, shortForm, longForm, maxOccurs); 
+			SetValues(shortDescription, shortForm, longForm, string.Empty, maxOccurs); 
 		}
 
 		public OptionAttribute(int maxOccurs, string shortDescription, string longForm)
 		{
-			SetValues(shortDescription, ' ', longForm, maxOccurs); 
+			SetValues(shortDescription, ' ', longForm, string.Empty, maxOccurs); 
+		}
+		
+		public OptionAttribute(int maxOccurs, string shortDescription, char shortForm, string longForm, string alternateForm)
+		{
+			SetValues(shortDescription, shortForm, longForm, alternateForm, maxOccurs); 
+		}
+
+		public OptionAttribute(int maxOccurs, string shortDescription, string longForm, string alternateForm)
+		{
+			SetValues(shortDescription, ' ', longForm, alternateForm, maxOccurs); 
 		}
 	}
 }

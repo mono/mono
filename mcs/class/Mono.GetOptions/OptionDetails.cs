@@ -30,6 +30,7 @@ namespace Mono.GetOptions
 	{
 		public char ShortForm;
 		public string LongForm;
+		public string AlternateForm;
 		public string ShortDescription;
 		public bool NeedsParameter;
 		public int MaxOccurs; // negative means there is no limit
@@ -38,8 +39,33 @@ namespace Mono.GetOptions
 		public MemberInfo MemberInfo;
 		public ArrayList Values;
 		public System.Type ParameterType;
-		public string ParamName = "PARAM"; // TODO: another element to get from OptionAttribute
-		
+		public string paramName = null;
+		public string ParamName 
+		{
+			get 
+			{ 
+				if (paramName == null)
+				{
+					int whereBegins = ShortDescription.IndexOf("{");
+					if (whereBegins < 0)
+						paramName = "PARAM";
+					else
+					{
+						int whereEnds = ShortDescription.IndexOf("}");
+						if (whereEnds < whereBegins)
+							whereEnds = ShortDescription.Length+1;
+						
+						paramName = ShortDescription.Substring(whereBegins + 1, whereEnds - whereBegins - 1);
+						ShortDescription = 
+							ShortDescription.Substring(0, whereBegins) + 
+							paramName +
+							ShortDescription.Substring(whereEnds + 1);
+					}
+				}
+				return paramName;
+			}
+		}
+				
 		public static bool Verbose = false;
 		
 		public override string ToString()
@@ -52,11 +78,13 @@ namespace Mono.GetOptions
 			if (NeedsParameter)
 			{
 				if (this.LongForm != string.Empty && this.LongForm != null)
-					optionHelp += "="; 
+					optionHelp += ":"; 
 				optionHelp += ParamName; 
 			}
-			optionHelp = optionHelp.PadRight(26) + " ";
+			optionHelp = optionHelp.PadRight(32) + " ";
 			optionHelp += this.ShortDescription;
+			if (this.AlternateForm != string.Empty && this.AlternateForm != null)
+				optionHelp += " [/"+this.AlternateForm + "]";
 			return optionHelp; 
 		}
 
@@ -87,6 +115,7 @@ namespace Mono.GetOptions
 		{
 			this.ShortForm = option.ShortForm;
 			this.LongForm = (option.LongForm == string.Empty)? memberInfo.Name:option.LongForm;
+			this.AlternateForm = option.AlternateForm;
 			this.ShortDescription = option.ShortDescription;
 			this.Occurs = 0;
 			this.OptionBundle = optionBundle; 
@@ -240,7 +269,7 @@ namespace Mono.GetOptions
 			if (StartsLikeAnOption(arg))
 			{
 				arg = arg.TrimStart('-');
-				return (arg == "" + ShortForm || arg == LongForm);
+				return (arg == "" + ShortForm || arg == LongForm || arg == AlternateForm);
 			}
 			return false;
 		}
