@@ -1,10 +1,10 @@
-#
 # This is just used to copy and install the DLL files that are currently
 # being compiled on windows.
 #
 
 assemblies_DATA =	\
 	Accessibility.dll					\
+	ByteFX.Data.dll						\
 	corlib.dll						\
 	Cscompmgd.dll						\
 	I18N.CJK.dll						\
@@ -26,13 +26,16 @@ assemblies_DATA =	\
 	Mono.Data.Tds.dll					\
 	Mono.GetOptions.dll					\
 	Mono.PEToolkit.dll					\
+	Mono.Posix.dll						\
 	Npgsql.dll						\
-	NUnitCore_mono.dll					\
+	NUnit.Util.dll						\
+	NUnit.Framework.dll					\
 	PEAPI.dll						\
 	System.Configuration.Install.dll			\
 	System.Data.dll						\
 	System.Data.OracleClient.dll				\
 	System.dll						\
+	System.Design.dll					\
 	System.Drawing.dll					\
 	System.EnterpriseServices.dll				\
 	System.Runtime.Remoting.dll				\
@@ -57,12 +60,17 @@ $(assemblies_DATA):
 	-cp $(top_srcdir)/../mcs/class/lib/$@ . || cp $(assembliesdir)/$@ . 
 
 $(monobins_DATA):
-	-cp $(top_srcdir)/../mcs/mcs/mcs.exe . || cp $(monobinsdir)/$@ . 
-	-cp $(top_srcdir)/../mcs/mbas/mbas.exe . || cp $(monobinsdir)/$@ .
-	-cp $(top_srcdir)/../mcs/tools/secutil.exe . || cp $(monobinsdir)/$@ . 
-	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/$@ . 
-	-cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/$@ . 
-	-cp $(top_srcdir)/../mcs/ilasm/ilasm.exe . || cp $(monobinsdir)/$@ .
+	-cp $(top_srcdir)/../mcs/mcs/mcs.exe . || cp $(monobinsdir)/mcs.exe . 
+	-cp $(top_srcdir)/../mcs/mbas/mbas.exe . || cp $(monobinsdir)/mbas.exe .
+	-cp $(top_srcdir)/../mcs/tools/security/secutil.exe . || cp $(monobinsdir)/secutil.exe . 
+	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/sqlsharp.exe . 
+	-cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/monoresgen.exe . 
+	-cp $(top_srcdir)/../mcs/ilasm/ilasm.exe . || cp $(monobinsdir)/ilasm.exe .
+	-cp $(top_srcdir)/../mcs/tools/cilc/cilc.exe . || cp $(monobinsdir)/cilc.exe .
+
+Accessibility.dll: $(top_srcdir)/../mcs/class/lib/Accessibility.dll
+	cp $(top_srcdir)/../mcs/class/lib/Accessibility.dll .
+
 
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
