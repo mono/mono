@@ -112,6 +112,7 @@ namespace Microsoft.JScript
 		public const int SPACE = 90;
 		public const int NO_BREAK_SPACE = 91;
 		public const int SL_COMMENT = 92;
+		public const int ML_COMMENT = 93;
 		
 		
 		protected void initialize()
@@ -1506,7 +1507,7 @@ _loop66_breakloop:			;
 		if (0==inputState.guessing)
 		{
 			
-					if (var_decln != null)
+					if (var_decln != null && var_stm != null)
 						var_stm.Add (var_decln);
 				
 		}
@@ -1520,7 +1521,7 @@ _loop66_breakloop:			;
 					if (0==inputState.guessing)
 					{
 						
-								  if (var_decln != null) 
+								  if (var_decln != null && var_stm != null) 
 								  	  var_stm.Add (var_decln);
 							
 					}
@@ -3724,10 +3725,6 @@ _loop87_breakloop:			;
 					}
 _loop139_breakloop:					;
 				}    // ( ... )*
-				if (0==inputState.guessing)
-				{
-					Console.WriteLine ("object literal");
-				}
 			}
 			else if ((tokenSet_6_.member(LA(1)))) {
 				{    // ( ... )*
@@ -4134,7 +4131,8 @@ _loop145_breakloop:		;
 		@"""FORM_FEED""",
 		@"""SPACE""",
 		@"""NO_BREAK_SPACE""",
-		@"""SL_COMMENT"""
+		@"""SL_COMMENT""",
+		@"""ML_COMMENT"""
 	};
 	
 	private static long[] mk_tokenSet_0_()

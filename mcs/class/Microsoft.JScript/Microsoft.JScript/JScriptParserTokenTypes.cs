@@ -95,6 +95,7 @@ namespace Microsoft.JScript
 		public const int SPACE = 90;
 		public const int NO_BREAK_SPACE = 91;
 		public const int SL_COMMENT = 92;
+		public const int ML_COMMENT = 93;
 		
 	}
 }
