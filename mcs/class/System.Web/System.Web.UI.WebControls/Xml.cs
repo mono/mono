@@ -1,19 +1,19 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Xml
- *
- * Author:  Gaurav Vaish, Gonzalo Paniagua Javier
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>, <gonzalo@ximian.com>
- * Implementation: yes
- * Status:  95%
- *
- * (C) Gaurav Vaish (2002)
- * (c) 2002 Ximian, Inc. (http://www.ximian.com)
- */
+//
+// System.Web.UI.WebControls.Xml.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
@@ -25,6 +25,9 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("DocumentSource")]
 	[PersistChildren(false)]
+	// TODO add control builder
+	//[ControlBuilder ()]
+	[Designer ("System.Web.UI.Design.WebControls.XmlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class Xml : Control
 	{
 		private XmlDocument      document;
@@ -69,6 +72,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("This is the XML document that is used for the XML Webcontrol.")]
 		public XmlDocument Document
 		{
 			get
@@ -86,6 +91,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The XML content that is transformed for the XML Webcontrol.")]
 		public string DocumentContent
 		{
 			get
@@ -100,6 +107,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("The URL or the source of the XML content that is transformed for the XML Webcontrol.")]
 		public string DocumentSource
 		{
 			get
@@ -117,6 +127,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The XSL transform that is applied to this XML Webcontrol.")]
 		public XslTransform Transform
 		{
 			get
@@ -130,6 +142,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("An URL specifying the source that is used for the XSL transformation.")]
 		public string TransformSource
 		{
 			get
@@ -145,6 +160,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("Arguments that are used by the XSL Transform.")]
 		public XsltArgumentList TransformArgumentList
 		{
 			get

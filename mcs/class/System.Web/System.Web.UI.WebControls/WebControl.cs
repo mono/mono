@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     WebControl
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  40%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.WebControl.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections;
@@ -63,6 +61,8 @@ namespace System.Web.UI.WebControls
 			attributeState = null;
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("A keyboard shortcut for the WebControl.")]
 		public virtual string AccessKey
 		{
 			get
@@ -79,6 +79,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		[MonoTODO("FIXME_Internal_method_calls")]
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("Attribute tags for the Webcontrol.")]
 		public AttributeCollection Attributes
 		{
 			get
@@ -100,6 +102,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[TypeConverter (typeof (WebColorConverter))]
+		[WebSysDescription ("The background color for the WebControl.")]
 		public virtual Color BackColor
 		{
 			get {
@@ -113,6 +118,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[TypeConverter (typeof (WebColorConverter))]
+		[WebSysDescription ("The border color for the WebControl.")]
 		public virtual Color BorderColor
 		{
 			get {
@@ -126,6 +134,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof(BorderStyle), "NotSet"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The style/type of the border used for the WebControl.")]
 		public virtual BorderStyle BorderStyle
 		{
 			get {
@@ -139,6 +149,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The width of the border used for the WebControl.")]
 		public virtual Unit BorderWidth
 		{
 			get {
@@ -154,6 +166,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The style used to display this Webcontrol.")]
 		public Style ControlStyle
 		{
 			get
@@ -171,6 +185,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("Determines if a style exists for this Webcontrol.")]
 		public bool ControlStyleCreated
 		{
 			get
@@ -179,6 +195,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The cascading stylesheet class that is associated with this WebControl.")]
 		public virtual string CssClass
 		{
 			get
@@ -191,6 +209,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("The activation state of this WebControl.")]
 		public virtual bool Enabled
 		{
 			get
@@ -203,6 +223,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), NotifyParentProperty (true), WebCategory ("Appearance")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[WebSysDescription ("The font of this WebControl.")]
 		public virtual FontInfo Font
 		{
 			get
@@ -211,6 +234,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[TypeConverter (typeof (WebColorConverter))]
+		[WebSysDescription ("The color that is used to paint the primary display of the WebControl.")]
 		public virtual Color ForeColor
 		{
 			get {
@@ -224,6 +250,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The height of this WebControl.")]
 		public virtual Unit Height
 		{
 			get
@@ -236,6 +264,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("Direct access to the styles used for this Webcontrol.")]
 		public CssStyleCollection Style
 		{
 			get
@@ -244,6 +274,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (0), WebCategory ("Behavior")]
+		[WebSysDescription ("The order in which this WebControl gets tabbed through.")]
 		public virtual short TabIndex
 		{
 			get
@@ -261,6 +293,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("A tooltip that is shown when hovering the mouse above the WebControl.")]
 		public virtual string ToolTip
 		{
 			get
@@ -276,6 +310,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The width of this WebControl.")]
 		public virtual Unit Width
 		{
 			get

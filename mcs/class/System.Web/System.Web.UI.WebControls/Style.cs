@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Style
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.Style.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Text;
@@ -95,6 +93,10 @@ namespace System.Web.UI.WebControls
 				selectionBits |= MARKED;
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[TypeConverter (typeof (WebColorConverter))]
+		[WebSysDescription ("The background color for the WebControl.")]
 		public Color BackColor
 		{
 			get
@@ -110,6 +112,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[TypeConverter (typeof (WebColorConverter))]
+		[WebSysDescription ("The border color for the WebControl.")]
 		public Color BorderColor
 		{
 			get
@@ -125,6 +131,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (typeof(BorderStyle), "NotSet"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The style/type of the border used for the WebControl.")]
 		public BorderStyle BorderStyle
 		{
 			get
@@ -140,6 +149,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The width of the border used for the WebControl.")]
 		public Unit BorderWidth
 		{
 			get
@@ -155,6 +167,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The cascading stylesheet class that is associated with this WebControl.")]
 		public string CssClass
 		{
 			get
@@ -170,6 +185,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[TypeConverter (typeof (WebColorConverter))]
+		[WebSysDescription ("The color that is used to paint the primary display of the WebControl.")]
 		public Color ForeColor
 		{
 			get
@@ -185,6 +204,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The height of this WebControl.")]
 		public Unit Height
 		{
 			get
@@ -200,6 +222,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The width of this WebControl.")]
 		public Unit Width
 		{
 			get
@@ -215,6 +240,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true)]
+		[DefaultValue (null), WebCategory ("Appearance")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[WebSysDescription ("The font of this WebControl.")]
 		public FontInfo Font
 		{
 			get

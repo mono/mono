@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     TextBox
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  80%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.TextBox.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections.Specialized;
@@ -25,6 +23,7 @@ namespace System.Web.UI.WebControls
 	[DefaultProperty("Text")]
 	[ParseChildren(false)]
 	[ValidationProperty("Text")]
+	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	public class TextBox : WebControl, IPostBackDataHandler
 	{
 		private static readonly object TextChangedEvent = new object ();
@@ -33,6 +32,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (false), WebCategory ("Behavior")]
+		[WebSysDescription ("The control automatically posts back after changing the text.")]
 		public virtual bool AutoPostBack
 		{
 			get {
@@ -43,6 +44,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["AutoPostBack"] = value; }
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The width of this control specified in characters.")]
 		public virtual int Columns
 		{
 			get {
@@ -50,9 +53,15 @@ namespace System.Web.UI.WebControls
 				return (o == null) ? 0 : (int) o;
 			}
 
-			set { ViewState ["Columns"] = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "Columns value has to be 0 for 'not set' or bigger than 0.");
+				ViewState ["Columns"] = value; 
+			}
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("The maximum number of characters you can enter in this control.")]
 		public virtual int MaxLength
 		{
 			get
@@ -61,9 +70,15 @@ namespace System.Web.UI.WebControls
 				return (o == null) ? 0 : (int) o;
 			}
 
-			set { ViewState ["MaxLength"] = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "MaxLength value has to be 0 for 'not set' or bigger than 0.");
+				ViewState ["MaxLength"] = value;
+			}
 		}
 
+		[DefaultValue (false), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("If the control is ReadOnly you cannot enter new text.")]
 		public virtual bool ReadOnly
 		{
 			get
@@ -74,6 +89,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ReadOnly"] = value; }
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("The number of lines that this multiline contol spans.")]
 		public virtual int Rows
 		{
 			get
@@ -82,9 +99,16 @@ namespace System.Web.UI.WebControls
 				return (o == null) ? 0 : (int) o;
 			}
 
-			set { ViewState ["Rows"] = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "Rows value has to be 0 for 'not set' or bigger than 0.");
+				ViewState ["Rows"] = value;
+			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[PersistenceMode (PersistenceMode.EncodedInnerDefaultProperty)]
+		[WebSysDescription ("The text that this control initially displays.")]
 		public virtual string Text
 		{
 			get {
@@ -95,6 +119,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["Text"] = value; }
 		}
 
+		[DefaultValue (typeof (TextBoxMode), "SingleLine"), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("A mode of how the control operates.")]
 		public virtual TextBoxMode TextMode
 		{
 			get {
@@ -104,11 +130,13 @@ namespace System.Web.UI.WebControls
 
 			set {
 				if(!Enum.IsDefined (typeof(TextBoxMode), value))
-					throw new ArgumentException ();
+					throw new ArgumentOutOfRangeException ("value", "Only existing modes are allowed");
 				ViewState ["TextMode"] = value;
 			}
 		}
 
+		[DefaultValue (true), WebCategory ("Layout")]
+		[WebSysDescription ("Determines if a line wraps at line-end.")]
 		public virtual bool Wrap
 		{
 			get {

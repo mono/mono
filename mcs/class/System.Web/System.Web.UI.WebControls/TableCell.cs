@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     TableCell
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.TableCell.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Globalization;
@@ -36,6 +34,8 @@ namespace System.Web.UI.WebControls
 			PreventAutoID ();
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The number of columns spanned by this cell.")]
 		public virtual int ColumnSpan
 		{
 			get {
@@ -43,9 +43,15 @@ namespace System.Web.UI.WebControls
 				return (o == null) ? 0 : (int) o;
 			}
 
-			set { ViewState ["ColumnSpan"] = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "ColumnSpan value has to be >= 0.");
+				ViewState ["ColumnSpan"] = value;
+			}
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The number of rows spanned by this cell.")]
 		public virtual int RowSpan
 		{
 			get {
@@ -53,9 +59,15 @@ namespace System.Web.UI.WebControls
 				return (o == null) ? 0 : (int) o;
 			}
 
-			set { ViewState ["RowSpan"] = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "RowSpan value has to be >= 0.");
+				ViewState ["RowSpan"] = value;
+			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The text that is shown in this cell.")]
 		public virtual string Text
 		{
 			get {
@@ -66,6 +78,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["Text"] = value; }
 		}
 
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The horizontal alignment for this cell.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get {
@@ -76,6 +90,8 @@ namespace System.Web.UI.WebControls
 			set { ((TableItemStyle) ControlStyle).HorizontalAlign = value; }
 		}
 
+		[DefaultValue (typeof (VerticalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The horizontal alignment for this cell.")]
 		public virtual VerticalAlign VerticalAlign
 		{
 			get {
@@ -87,6 +103,8 @@ namespace System.Web.UI.WebControls
 			set { ((TableItemStyle) ControlStyle).VerticalAlign = value; }
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("Determines if the text in the cell should be wraped at line-end.")]
 		public virtual bool Wrap
 		{
 			get {

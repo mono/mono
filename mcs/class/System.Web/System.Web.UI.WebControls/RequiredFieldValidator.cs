@@ -11,6 +11,8 @@
  * (C) Gaurav Vaish (2002)
  */
 
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls
 {
 	[ToolboxData("<{0}:RequiredFieldValidator runat=\"server\" "
@@ -22,6 +24,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("The initial value for the required field.")]
 		public string InitialValue
 		{
 			get

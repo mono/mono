@@ -1,17 +1,17 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     TemplateColumn
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.TemplateColumn.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
+
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 
@@ -28,6 +28,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (null), Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty), TemplateContainer (typeof (DataGridItem))]
+		[WebSysDescription ("The template that is used to build that are being edited rows for this column.")]
 		public virtual ITemplate EditItemTemplate
 		{
 			get
@@ -41,6 +44,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty), TemplateContainer (typeof (DataGridItem))]
+		[WebSysDescription ("The template that is used to build the footer for this column.")]
 		public virtual ITemplate FooterTemplate
 		{
 			get
@@ -54,6 +60,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty), TemplateContainer (typeof (DataGridItem))]
+		[WebSysDescription ("The template that is used to build the header for this column.")]
 		public virtual ITemplate HeaderTemplate
 		{
 			get
@@ -67,6 +76,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty), TemplateContainer (typeof (DataGridItem))]
+		[WebSysDescription ("The template that is used to build rows for this column.")]
 		public virtual ITemplate ItemTemplate
 		{
 			get

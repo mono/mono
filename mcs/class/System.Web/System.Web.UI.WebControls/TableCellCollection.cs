@@ -19,7 +19,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-	//[Editor("??")]
+	[Editor ("System.Web.UI.Design.WebControls.TableCellsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class TableCellCollection: IList, ICollection, IEnumerable
 	{
 		private TableRow owner;

@@ -12,12 +12,14 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Collections;
 using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[Editor ("System.Web.UI.Design.WebControls.TableRowsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class TableRowCollection: IList, ICollection, IEnumerable
 	{
 		Table owner;

@@ -1,17 +1,16 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     ValidationSummary
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  ??%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.ValidationSummary.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Web;
 using System.Web.UI;
@@ -28,6 +27,8 @@ namespace System.Web.UI.WebControls
 			ForeColor     = Color.Red;
 		}
 
+		[DefaultValue (typeof (ValidationSummaryDisplayMode), "BulletList"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The type of how validation summaries should be displayed.")]
 		public ValidationSummaryDisplayMode DisplayMode
 		{
 			get
@@ -45,6 +46,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), WebCategory ("Behavior")]
+		[WebSysDescription ("Determines if the validation summary should be updated directly on the client using script code.")]
 		public bool EnableClientScript
 		{
 			get
@@ -60,6 +63,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
 		public override Color ForeColor
 		{
 			get
@@ -72,6 +76,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("Determines if the validation summary should display a message box on the client if an uplevel browser is used.")]
 		public bool ShowMessageBox
 		{
 			get
@@ -87,6 +93,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("Determines if the validation summary should display a summary.")]
 		public bool ShowSummary
 		{
 			get
@@ -102,6 +110,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("A text that is diplayed as a header for the validation report.")]
 		public string HeaderText
 		{
 			get

@@ -1,17 +1,16 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     TableStyle
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.TableStyle.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
@@ -34,6 +33,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("An Url specifying the background image for the table.")]
 		public virtual string BackImageUrl
 		{
 			get
@@ -45,12 +46,14 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(value == null)
-					throw new ArgumentNullException("BackImageUrl");
+					throw new ArgumentNullException("value");
 				ViewState["BackImageUrl"] = value;
 				Set(IMAGE_URL);
 			}
 		}
 
+		[DefaultValue (-1), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The space left around the borders within a cell.")]
 		public virtual int CellPadding
 		{
 			get
@@ -62,12 +65,14 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(value < -1)
-					throw new ArgumentOutOfRangeException("CellPadding");
+					throw new ArgumentOutOfRangeException("value", "CellPadding value has to be -1 for 'not set' or a value >= 0");
 				ViewState["CellPadding"] = value;
 				Set(CELL_PADD);
 			}
 		}
 
+		[DefaultValue (-1), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The space left between cells.")]
 		public virtual int CellSpacing
 		{
 			get
@@ -79,12 +84,14 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(value < -1)
-					throw new ArgumentOutOfRangeException("CellSpacing");
+					throw new ArgumentOutOfRangeException("value"," CellSpacing value has to be -1 for 'not set' or a value >= 0");
 				ViewState["CellSpacing"] = value;
 				Set(CELL_SPAC);
 			}
 		}
 
+		[DefaultValue (typeof (GridLines), "None"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The type of grid that a table uses.")]
 		public virtual GridLines GridLines
 		{
 			get
@@ -96,12 +103,14 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!Enum.IsDefined(typeof(GridLines), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException("value"," Gridlines value has to be a valid enumeration member");
 				ViewState["GridLines"] = value;
 				Set(GRID_LINE);
 			}
 		}
 
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The horizonal alignment of the table.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -113,7 +122,7 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!Enum.IsDefined(typeof(HorizontalAlign), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException("value"," Gridlines value has to be a valid enumeration member");
 				ViewState["HorizontalAlign"] = value;
 				Set(HOR_ALIGN);
 			}

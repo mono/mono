@@ -1,3 +1,19 @@
+2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* RequiredFieldValidator.cs: Added all attributes
+	* Style.cs: Added all attributes
+	* Table.cs: Added all attributes
+	* TableCell.cs: Added all attributes, added error checks, throws more exceptions
+	* TableCellCollection.cs: Added attribute
+	* TableRow.cs: Added all attributes
+	* TableRowCollection: Added attribute
+	* TableStyle.cs: Added all attributes, improved error messages
+	* TemplateColumn.cs: Added all attributes
+	* TextBox.cs: Added all attributes, added error checks, throws more exceptions
+	* ValidationSummary.cs: Added all attributes
+	* WebControl.cs: Added all attributes
+	* Xml.cs: Added all attributes
+
 2003-07-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: fixed signature of ItemCreated and PageIndexChanged.

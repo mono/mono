@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     TableRow
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.TableRow.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
@@ -20,6 +18,7 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("Cells")]
 	[ParseChildren(true, "Cells")]
+	[ToolboxItem (false)]
 	public class TableRow: WebControl
 	{
 		private TableCellCollection cells;
@@ -29,6 +28,8 @@ namespace System.Web.UI.WebControls
 			PreventAutoID ();
 		}
 
+		[MergableProperty (false), PersistenceMode (PersistenceMode.InnerDefaultProperty)]
+		[WebSysDescription ("All cells that exist in a table row.")]
 		public virtual TableCellCollection Cells
 		{
 			get {
@@ -38,6 +39,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The horizontal alignment for all table cells in that row.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get {
@@ -48,6 +51,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["HorizontalAlign"] = value; }
 		}
 
+		[DefaultValue (typeof (VerticalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The verical alignment for all table cells in that row.")]
 		public virtual VerticalAlign VerticalAlign
 		{
 			get {
