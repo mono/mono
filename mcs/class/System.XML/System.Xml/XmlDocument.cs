@@ -319,13 +319,16 @@ namespace System.Xml
 			return new XmlWhitespace (text, this);
 		}
 
-		[MonoTODO]
-		public virtual XmlDeclaration CreateXmlDeclaration (
-			string version,
-			string encoding,
-			string standalone)
+		public virtual XmlDeclaration CreateXmlDeclaration (string version, string encoding,
+								    string standalone)
 		{
-			throw new NotImplementedException();
+			if (version != "1.0")
+				throw new ArgumentException ("version string is not correct.");
+
+			if  ((standalone != null) && !((standalone == "yes") || (standalone == "no")))
+				throw new ArgumentException ("standalone string is not correct.");
+			
+			return new XmlDeclaration (encoding, standalone, this);
 		}
 
 		[MonoTODO]

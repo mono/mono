@@ -1,3 +1,10 @@
+2002-03-25  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDeclaration.cs: Rewrote the class, fixed formatting, added
+	missing properties (InnerText, Value).
+	
+	* XmlDocument.cs (CreateXmlDeclaration): Implemented.
+
 2002-03-23  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlTextWriter.cs: Impls for BaseStream and

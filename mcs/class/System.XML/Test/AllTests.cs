@@ -31,6 +31,7 @@ namespace Ximian.Mono.Tests
 				suite.AddTest (new TestSuite (typeof (XmlCDataSectionTests)));
 				suite.AddTest (new TestSuite (typeof (XmlWhitespaceTests)));
 				suite.AddTest (new TestSuite (typeof (XmlSignificantWhitespaceTests)));
+                                suite.AddTest (new TestSuite (typeof (XmlDeclarationTests)));
 				return suite;
 			}
 		}

@@ -1,3 +1,12 @@
+2002-03-25  Duncan Mak  <duncan@ximian.com>
+
+	* AllTests.cs: 
+	* Microsoft.Test.csproj: 
+	* Mono.Test.csproj: Updated to include new test,
+	XmlDeclarationTests.
+
+	* XmlDeclarationTests.cs: Added new test for XmlDeclaration class.
+
 2002-03-23  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlTextWriterTests.cs: Tests for BaseStream,

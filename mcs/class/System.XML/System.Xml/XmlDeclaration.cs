@@ -1,174 +1,103 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Xml.XmlDeclaration
 //
 // Author:
-//   Daniel Weber (daniel-weber@austin.rr.com)
+//	Duncan Mak  (duncan@ximian.com)
 //
-// (C) 2001 Daniel Weber
+// (C) Ximian, Inc.
 
 using System;
+using System.Xml;
 
 namespace System.Xml
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public class XmlDeclaration : XmlLinkedNode
 	{
-		// Private data members
-		private string Fencoding = "UTF-8";
-		bool Fstandalone;
+		string encoding = "UTF-8"; // defaults to UTF-8
+		string standAlone;
 
-		// public properties
-		/// <summary>
-		/// Get/Set the encoding used for the document
-		/// Typical values are "UTF-8", "UTF-16", "ISO-8859-nn" (where n is 0-9).
-		/// If not defined, "UTF-8" is assumed.
-		/// encoding is not case sensitive.
-		/// </summary>
-		public string Encoding 
+		protected internal XmlDeclaration (string encoding, string standAlone, XmlDocument doc)
+			: base (doc)
 		{
-			get
-			{
-				return Fencoding;
-			}
+			this.encoding = encoding;
+			this.standAlone = standAlone;
+		}
 
-			set
-			{
-				string val = value.ToUpper();
-
-				if ( (val == "UTF-8") | ( val == "UTF-16") )
-				{
-					Fencoding = value;
-					return;
-				}
+		public string Encoding  {
+			get {
+				if (encoding == null)
+					return String.Empty;
 				else
-				{
-					if ( ( val.StartsWith( "ISO-8859-" ) ) & (val.Length == 10) )
-					{
-						try
-						{
-							int code = System.Convert.ToInt32( val.Substring(9,1) );
-							Fencoding = value;
-						}
-						catch
-						{
-							throw new NotImplementedException("Encoding " + value + " is not supported");
-						}
+					return encoding;
+			} 
 
-					}
+			set { encoding = value ; } // Note: MS' doesn't check this string, should we?
+		}
 
-					
-				}
-			}
+		public override string InnerText {
+			get { return Value; }
+			set { ParseInput (value); }
 		}
 		
-		/// <summary>
-		/// Get the local name of the declaration.  Returns "xml"
-		/// </summary>
-		public override string LocalName 
-		{
-			get
-			{
-				return "xml";
-			}
+		public override string LocalName {
+			get { return "xml"; }
 		}
 
-		/// <summary>
-		/// Get the name of the node.  For XmlDeclaration, returns "xml".
-		/// </summary>
-		public override string Name 
-		{
-			get
-			{
-				return "xml";
-			}
+		public override string Name {
+			get { return "xml"; }
 		}
 
-		/// <summary>
-		/// Return the node type.  For XmlDeclaration, returns XmlNodeType.XmlDeclaration.
-		/// </summary>
-		public override XmlNodeType NodeType 
-		{
-			get
-			{
-				return XmlNodeType.XmlDeclaration;
-			}
+		public override XmlNodeType NodeType {
+			get { return XmlNodeType.XmlDeclaration; }
 		}
 
-		/// <summary>
-		/// Get/Set the value of the standalone attribute.
-		/// "yes" => no external DTD required.
-		/// "no" => external data sources required.
-		/// Silently fails if Set to invalid value.
-		/// Not case sensitive.
-		/// </summary>
 		public string Standalone {
-			get
-			{
-				if (Fstandalone) 
-					return "yes";
+			get {
+				if (standAlone == null)
+					return String.Empty;
 				else
-					return "no";
+					return standAlone;
 			}
 
-			set
-			{
+			set {
 				if (value.ToUpper() == "YES")
-					Fstandalone = true;
+					standAlone = "yes";
 				if (value.ToUpper() == "NO")
-					Fstandalone = false;
+					standAlone = "no";
 			}
 		}
 
-		/// <summary>
-		/// Get the xml version of the file.  Returns "1.0"
-		/// </summary>
-		public string Version 
-		{
-			get
-			{
-				return "1.0";
-			}
+		public override string Value {
+			get { return String.Format ("version=\"{0}\" encoding=\"{1}\" standalone=\"{2}\"",
+						    Version, Encoding, Standalone); }
+			set { ParseInput (value); }
 		}
 
-		// Public Methods
-		/// <summary>
-		/// Overriden.  Returns a cloned version of this node.
-		/// Serves as a copy constructor.  Duplicate node has no parent.
-		/// </summary>
-		/// <param name="deep">Create deep copy.  N/A for XmlDeclaration.</param>
-		/// <returns>Cloned node.</returns>
-		public override XmlNode CloneNode(bool deep)
-		{
-			// TODO - implement XmlDeclration.CloneNode()
-			throw new NotImplementedException("XmlDeclration.CloneNode() not implemented");
+		public string Version {
+			get { return "1.0"; }
 		}
 
-		/// <summary>
-		/// Save the children of this node to the passed XmlWriter.  Since an XmlDeclaration has 
-		/// no children, this call has no effect.
-		/// </summary>
-		/// <param name="w"></param>
-		public override void WriteContentTo(XmlWriter w)
+		public override XmlNode CloneNode (bool deep)
+		{
+			return new XmlDeclaration (Encoding, standAlone, OwnerDocument);
+		}
+
+		public override void WriteContentTo (XmlWriter w)
 		{
 			// Nothing to do - no children.
 		}
 
-		/// <summary>
-		/// Saves the node to the specified XmlWriter
-		/// </summary>
-		/// <param name="w">XmlWriter to writ to.</param>
-		public override void WriteTo(XmlWriter w)
+		[MonoTODO]
+		public override void WriteTo (XmlWriter w)
 		{
-			// TODO - implement XmlDeclration.WriteTo()
-			throw new NotImplementedException("XmlDeclaration.WriteTo() not implemented");
+			if ((Standalone == String.Empty) || (Encoding == String.Empty))
+				return;
 		}
 
-		// Constructors
-		internal XmlDeclaration( XmlDocument aOwnerDoc) : base(aOwnerDoc)
-		{
+		void ParseInput (string input)
+		{			
+			Encoding = input.Split (new char [] { ' ' }) [1].Split (new char [] { '=' }) [1];
+			Standalone = input.Split (new char [] { ' ' }) [2].Split (new char [] { '=' }) [1];
 		}
 	}
 }
