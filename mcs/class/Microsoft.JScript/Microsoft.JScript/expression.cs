@@ -1250,6 +1250,9 @@ namespace Microsoft.JScript {
 				case "Number":
 					type = typeof (NumberConstructor);
 					break;
+				case "Object":
+					type = typeof (ObjectConstructor);
+					break;
 				}
 				if (type != null)
 					ig.Emit (OpCodes.Call, type.GetMethod ("CreateInstance"));
