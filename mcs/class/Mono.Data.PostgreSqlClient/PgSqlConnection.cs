@@ -14,13 +14,24 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlConnection : IDBConnection
 	{
-		public SqlTransaction BeginTransaction()
-		{
+		[MonoTODO]
+		public SqlConnection () {
+			this.ConnectionString = null;
+			this.ConnectionTimeout = 0;
+			this.Database = null;
+			this.State = 0;
+		}
+		
+		[MonoTODO]
+		public SqlConnection (string cs) : SqlConnection () {
+			this.ConnectionString = cs;
+		}
+		
+		public SqlTransaction BeginTransaction() {
 			return new SqlTransaction (this);
 		}
 
-		public SqlTransaction BeginTransaction(IsolationLevel il)
-		{
+		public SqlTransaction BeginTransaction(IsolationLevel il) {
 			SqlTransaction xaction = new SqlTransaction (cnc);
 			xaction.IsolationLevel = il;
 			
@@ -28,51 +39,43 @@ namespace System.Data.SqlClient
 		}
 
 		[MonoTODO]
-		public void ChangeDatabase(string databaseName)
-		{
+		public void ChangeDatabase(string databaseName) {
 			throw new NotImplementedException ();
 		}
 				
 		[MonoTODO]
-		public void Close()
-		{
+		public void Close() {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public SqlCommand CreateCommand()
-		{
+		public SqlCommand CreateCommand() {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Open()
-		{
+		public void Open() {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public string ConnectionString
-		{
+		public string ConnectionString {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public int ConnectionTimeout
-		{
+		public int ConnectionTimeout {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public string Database
-		{
+		public string Database {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public ConnectionState State
-		{
+		public ConnectionState State {
 			get { throw new NotImplementedException (); }
 		}
 	}

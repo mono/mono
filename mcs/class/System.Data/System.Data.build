@@ -19,6 +19,7 @@
 				<excludes name="Test/**"/>
 				<excludes name="System.Data.Common/*"/>
                                 <excludes name="System.Data.SqlClient/*"/>
+				<excludes name="System.Data.SqlTypes/*"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>

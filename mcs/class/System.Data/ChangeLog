@@ -1,3 +1,16 @@
+2002-04-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/PostgresLibrary.cs: new internal class, which
+	contains all calls the the PostgreSQL client library, to be used
+	everywhere in System.Data.SqlClient.
+
+2002-03-30  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.SqlClient/SqlConnection.cs: implemented basic
+	constructors.
+
+	* System.Data.SqlTypes/SqlNullValueException.cs: new skeletons.
+
 2002-03-29  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.Common/DbDataRecord.cs:
