@@ -1961,7 +1961,8 @@ abstract_propery_declaration
 	  : PROPERTY identifier opt_type_character opt_property_parameters opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  {
 		if ((current_modifiers & Modifiers.DEFAULT) > 0) {
-			if (current_container.DefaultPropName != null)
+			if (current_container.DefaultPropName != null 
+				  && current_container.DefaultPropName != (string) $2)
 				Report.Error (30359, 
 						lexer.Location,
 						"Type '" + current_container.Name +

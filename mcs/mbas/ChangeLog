@@ -1,4 +1,7 @@
 2005-01-10 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Check for the overloaded property  
+
+2005-01-10 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: A better check provided before adding a property to TypeContainer
 
 2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
