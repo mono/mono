@@ -5014,6 +5014,13 @@ namespace Mono.CSharp {
 						a.Expr = conv;
 				}
 
+				if (parameter_type.IsPointer){
+					if (!ec.InUnsafe){
+						UnsafeError (loc);
+						return false;
+					}
+				}
+				
 				Parameter.Modifier a_mod = a.GetParameterModifier () &
 					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
 				Parameter.Modifier p_mod = pd.ParameterModifier (j) &

@@ -1,3 +1,8 @@
+2004-11-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Flag error if we are
+	calling an unsafe method from a safe location.
+
 2004-11-06  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #69167
