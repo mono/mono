@@ -1,3 +1,8 @@
+2004-03-25  Ravindra <rkumar@novell.com>
+	* bitmaps: Added a repository for the bitmaps required by some of
+	the samples of this repository.
+	* TextureWrapModes.cs: Added a sample for texture brush wrapmodes.
+
 2004-03-24  Jordi <jordi@ximian.com>
 	* Added drawimage.cs example	
 	
