@@ -123,7 +123,7 @@ namespace System
 		}
 
 		protected override bool IsArrayImpl () {
-			return type_is_subtype_of (this, typeof (System.Array));
+			return type_is_subtype_of (this, typeof (System.Array), false);
 		}
 		protected override bool IsByRefImpl () {
 			// FIXME
@@ -141,7 +141,7 @@ namespace System
 			return false;
 		}
 		protected override bool IsValueTypeImpl () {
-			return type_is_subtype_of (this, typeof (System.ValueType)) &&
+			return type_is_subtype_of (this, typeof (System.ValueType), false) &&
 				this != typeof (System.ValueType) &&
 				this != typeof (System.Enum);
 		}

@@ -1,4 +1,9 @@
 
+Thu Feb 21 19:23:46 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs, MonoType.cs: type_is_subtype_of () changed to include extra
+	argument.
+
 Thu Feb 21 16:56:51 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Type.cs: implemented IsAssignableFrom.

@@ -361,7 +361,7 @@ namespace System.Reflection.Emit {
 		}
 		protected override bool IsValueTypeImpl () {
 			// test this one
-			return type_is_subtype_of (this, typeof (System.ValueType));
+			return type_is_subtype_of (this, typeof (System.ValueType), false);
 		}
 		
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }

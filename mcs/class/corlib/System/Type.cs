@@ -154,7 +154,7 @@ namespace System {
 			get {
 				if (this == typeof (System.Enum) || this == typeof (System.ValueType))
 					return true;
-				return !type_is_subtype_of (this, typeof (System.ValueType));
+				return !type_is_subtype_of (this, typeof (System.ValueType), false);
 			}
 		}
 
@@ -172,7 +172,7 @@ namespace System {
 
 		public bool IsEnum {
 			get {
-				return type_is_subtype_of (this, typeof (System.Enum)) &&
+				return type_is_subtype_of (this, typeof (System.Enum), false) &&
 					this != typeof (System.Enum);
 			}
 		}
@@ -413,11 +413,11 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected static extern bool type_is_subtype_of (Type a, Type b);
+		protected static extern bool type_is_subtype_of (Type a, Type b, bool check_interfaces);
 		
 		public bool IsSubclassOf (Type c)
 		{
-			return type_is_subtype_of (this, c);
+			return type_is_subtype_of (this, c, false);
 		}
 
 		[MonoTODO]
@@ -443,7 +443,7 @@ namespace System {
 		public virtual bool IsAssignableFrom (Type c)
 		{
 			// FIXME
-			return type_is_subtype_of (this, c);
+			return type_is_subtype_of (c, this, true);
 		}
 
 		public virtual bool IsInstanceOfType (object o) {
