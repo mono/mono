@@ -111,26 +111,46 @@ namespace System.Data.Common {
 				dataReader.Close ();
 				return 0;
 			}
+			
+			try
+			{
+				object[] itemArray = new object [dataReader.FieldCount];
+				string tableName = SetupSchema (SchemaType.Mapped, dataTable.TableName);
+				if (tableName != null)
+				{
+					dataTable.TableName = tableName;
+					Hashtable mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
 
-			object[] itemArray = new object [dataReader.FieldCount];
-			SetupSchema (SchemaType.Mapped, dataTable.TableName, dataTable); // FIXME
-			BuildSchema (dataReader, dataTable, SchemaType.Mapped);
+					while (doContinue && dataReader.Read ()) 
+					{
+						// we get the values from the datareader
+						dataReader.GetValues (itemArray);
 
-			while (doContinue && dataReader.Read ()) {
-				dataReader.GetValues (itemArray);
-				try {
-					dataTable.BeginLoadData ();
-					dataTable.LoadDataRow (itemArray, AcceptChangesDuringFill);
-					dataTable.EndLoadData ();
-					count += 1;
-				}
-				catch (Exception e) {
-					FillErrorEventArgs args = CreateFillErrorEvent (dataTable, itemArray, e);
-					OnFillError (args);
-					doContinue = args.Continue;
+						// we only need the values that has a mapping to the table.
+						object[] tableArray = new object[mapping.Count];
+						for (int i = 0; i < tableArray.Length; i++)
+							tableArray[i] = mapping[i]; // get the value for each column
+
+						try 
+						{
+							dataTable.BeginLoadData ();
+							dataTable.LoadDataRow (itemArray, AcceptChangesDuringFill);
+							dataTable.EndLoadData ();
+							count += 1;
+						}
+						catch (Exception e) 
+						{
+							FillErrorEventArgs args = CreateFillErrorEvent (dataTable, itemArray, e);
+							OnFillError (args);
+							doContinue = args.Continue;
+						}
+					}
 				}
 			}
-			dataReader.Close ();
+			finally
+			{
+				dataReader.Close ();
+			}
 
 			return count;
 		}
@@ -168,53 +188,76 @@ namespace System.Data.Common {
                         int resultIndex = 0;
                         int count = 0;
 			bool doContinue = true;
+			
+			try
+			{
+				string tableName = srcTable;
+				object[] itemArray;
 
-			string tableName = srcTable;
-			object[] itemArray = new object [dataReader.FieldCount];
+				do 
+				{
+					tableName = SetupSchema (SchemaType.Mapped, tableName);
+					if (tableName != null)
+					{
+						// check if the table exists in the dataset
+						if (dataSet.Tables.Contains (tableName)) 
+							// get the table from the dataset
+							dataTable = dataSet.Tables [tableName];
+						else
+						{
+							dataTable = new DataTable(tableName);
+							dataSet.Tables.Add (dataTable);
+						}
+						Hashtable mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
 
-                       	do {
-				dataTable = new DataTable ();
-				SetupSchema (SchemaType.Mapped, tableName, dataTable);
+						for (int i = 0; i < startRecord; i += 1)
+							dataReader.Read ();
+						
+						itemArray = new object [dataReader.FieldCount];
 
-				// check if the table exists in the dataset
-				if (dataSet.Tables.Contains (dataTable.TableName)) 
-					// get the table from the dataset
-					dataTable = dataSet.Tables [dataTable.TableName];
-				else
-					dataSet.Tables.Add (dataTable);
-				BuildSchema (dataReader, dataTable, SchemaType.Mapped);
+						while (doContinue && dataReader.Read () && !(maxRecords > 0 && count >= maxRecords)) 
+						{
+							// we get the values from the datareader
+							dataReader.GetValues (itemArray);
+							
+							// we only need the values that has a mapping to the table.
+							object[] tableArray = new object[mapping.Count];
+							for (int i = 0; i < tableArray.Length; i++)
+								tableArray[i] = itemArray[(int)mapping[i]]; // get the value for each column
+							
+							try 
+							{
+								dataTable.BeginLoadData ();
+								//dataTable.LoadDataRow (itemArray, AcceptChangesDuringFill);
+								dataTable.LoadDataRow (tableArray, AcceptChangesDuringFill);
+								dataTable.EndLoadData ();
+								count += 1;
+							}
+							catch (Exception e) 
+							{
+								FillErrorEventArgs args = CreateFillErrorEvent (dataTable, itemArray, e);
+								OnFillError (args);
+								doContinue = args.Continue;
+							}
+						}
 
-				for (int i = 0; i < startRecord; i += 1)
-					dataReader.Read ();
+						tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
 
-				while (doContinue && dataReader.Read () && !(maxRecords > 0 && count >= maxRecords)) {
-					dataReader.GetValues (itemArray);
-					try {
-						dataTable.BeginLoadData ();
-						dataTable.LoadDataRow (itemArray, AcceptChangesDuringFill);
-						dataTable.EndLoadData ();
-						count += 1;
+						startRecord = 0;
+						maxRecords = 0;
 					}
-					catch (Exception e) {
-						FillErrorEventArgs args = CreateFillErrorEvent (dataTable, itemArray, e);
-						OnFillError (args);
-						doContinue = args.Continue;
-					}
-				}
 
-                               	tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
-
-				startRecord = 0;
-				maxRecords = 0;
-
-                       	} while (doContinue && dataReader.NextResult ());
-
-                        dataReader.Close ();
+				} while (doContinue && dataReader.NextResult ());
+			}
+			finally
+			{
+				dataReader.Close ();
+			}
 
                         return count;
 		}
 
-
+		
 		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
 		{
 			CommandBehavior commandBehavior = behavior;
@@ -243,7 +286,6 @@ namespace System.Data.Common {
 		[MonoTODO ("Verify")]
 		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDbCommand command, CommandBehavior behavior) 
 		{
-			DataTable table;
 			behavior |= CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo;
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
@@ -251,12 +293,19 @@ namespace System.Data.Common {
 			}
 
 			IDataReader reader = command.ExecuteReader (behavior);
-			table = new DataTable ();
-			SetupSchema (schemaType, DefaultSourceTableName, table);
-			BuildSchema (reader, table, schemaType);
-
-			reader.Close ();
-			return table;
+			try
+			{
+				string tableName =  SetupSchema (schemaType, dataTable.TableName);
+				if (tableName != null)
+				{
+					BuildSchema (reader, dataTable, schemaType);
+				}
+			}
+			finally
+			{
+				reader.Close ();
+			}
+			return dataTable;
 		}
 
 		[MonoTODO ("Verify")]
@@ -272,47 +321,65 @@ namespace System.Data.Common {
 			ArrayList output = new ArrayList ();
 			string tableName = srcTable;
 			int index = 0;
-
-			do {
-				// FixMe: Allocate table only if it doesn't exist already!
-				DataTable table = new DataTable ();
-				SetupSchema (schemaType, tableName, table);
-				if (dataSet.Tables.Contains (table.TableName))
-					table = dataSet.Tables [table.TableName];	
-				else
-					dataSet.Tables.Add (table);
-				BuildSchema (reader, table, schemaType);
-				output.Add (table);
-				tableName = String.Format ("{0}{1}", srcTable, ++index);
-			} while (reader.NextResult ());
-			reader.Close ();
+			DataTable table;
+			try
+			{
+				tableName = SetupSchema (schemaType, tableName);
+				if (tableName != null)
+				{
+					if (dataSet.Tables.Contains (tableName))
+						table = dataSet.Tables [tableName];	
+					else
+					{
+						table = new DataTable(tableName);
+						dataSet.Tables.Add (table);
+					}
+					BuildSchema (reader, table, schemaType);
+					output.Add (table);
+					tableName = String.Format ("{0}{1}", srcTable, ++index);
+				}
+			}
+			finally
+			{
+				reader.Close ();
+			}
 			return (DataTable[]) output.ToArray (typeof (DataTable));
 		}
 
-		private void SetupSchema (SchemaType schemaType, string sourceTableName, DataTable table)
+		private string SetupSchema (SchemaType schemaType, string sourceTableName)
 		{
 			DataTableMapping tableMapping = null;
 
 			if (schemaType == SchemaType.Mapped) 
-				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTableName, "", MissingMappingAction.Ignore);
+			{
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTableName, sourceTableName, MissingMappingAction);
 
-			if (tableMapping != null)
-				table.TableName = tableMapping.DataSetTable;
+				if (tableMapping != null)
+					return tableMapping.DataSetTable;
+				return null;
+			}
 			else
-				table.TableName = sourceTableName;
+				return sourceTableName;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override IDataParameter[] GetFillParameters () 
 		{
-			object[] parameters = new object [SelectCommand.Parameters.Count];
+			IDataParameter[] parameters = new IDataParameter[SelectCommand.Parameters.Count];
 			SelectCommand.Parameters.CopyTo (parameters, 0);
-			return (IDataParameter[]) parameters;
+			return parameters;
 		}
-
+		
+		// this method bulds the schema for a given datatable
+		// returns a hashtable that his keys are the ordinal of the datatable columns, and his values
+		// are the indexes of the source columns in the data reader.
+		// each column in the datatable has a mapping to a specific column in the datareader
+		// the hashtable represents this match.
 		[MonoTODO ("Test")]
-		private void BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
+		private Hashtable BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
 		{
+			int readerIndex = 0;
+			Hashtable mapping = new Hashtable(); // hashing the reader indexes with the datatable indexes
 			ArrayList primaryKey = new ArrayList ();
 			ArrayList sourceColumns = new ArrayList ();
 
@@ -334,31 +401,45 @@ namespace System.Data.Common {
 				string dsColumnName = realSourceColumnName;
 				DataTableMapping tableMapping = null;
 				if (schemaType == SchemaType.Mapped)
-					tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, table.TableName, table.TableName, MissingMappingAction.Ignore); 
-				if (tableMapping != null) {
+					tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, table.TableName, table.TableName, MissingMappingAction); 
+				if (tableMapping != null) 
+				{
+					
 					table.TableName = tableMapping.DataSetTable;
-
 					// check to see if the column mapping exists
-					if (tableMapping.ColumnMappings.Contains (dsColumnName)) {
-						dsColumnName = tableMapping.ColumnMappings [realSourceColumnName].DataSetColumn;
-					} else {
-						if (MissingSchemaAction == MissingSchemaAction.Error)
-							throw new SystemException ();
-						tableMapping.ColumnMappings.Add (sourceColumnName, dsColumnName);
+					DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction(tableMapping.ColumnMappings, realSourceColumnName, MissingMappingAction);
+					if (columnMapping != null)
+					{
+						DataColumn col =
+							columnMapping.GetDataColumnBySchemaAction(
+							table ,
+							(Type)schemaRow["DataType"],
+							MissingSchemaAction);
+
+						if (col != null)
+						{
+							// if the column is not in the table - add it.
+							if (table.Columns.IndexOf(col) == -1)
+							{
+								if (MissingSchemaAction == MissingSchemaAction.Add || MissingSchemaAction == MissingSchemaAction.AddWithKey)
+									table.Columns.Add(col);
+							}
+
+							if (!schemaRow["IsKey"].Equals (DBNull.Value))
+								if ((bool) (schemaRow ["IsKey"]))
+									primaryKey.Add (col);
+							
+							// add the ordinal of the column as a key and the index of the column in the datareader as a value.
+							mapping.Add(col.Ordinal, readerIndex);
+						}
 					}
-					if (!TableMappings.Contains (tableMapping))
-						TableMappings.Add (tableMapping);
 				}
-
-				if (!table.Columns.Contains(dsColumnName))
-					table.Columns.Add (dsColumnName, (Type) schemaRow ["DataType"]);
-
-				if (!schemaRow["IsKey"].Equals (DBNull.Value))
-					if ((bool) (schemaRow ["IsKey"]))
-						primaryKey.Add (table.Columns [dsColumnName]);	
+				readerIndex++;
 			}
 			if (MissingSchemaAction == MissingSchemaAction.AddWithKey && primaryKey.Count > 0)
 				table.PrimaryKey = (DataColumn[])(primaryKey.ToArray(typeof (DataColumn)));
+
+			return mapping;
 		}
 
 		[MonoTODO]
@@ -370,7 +451,50 @@ namespace System.Data.Common {
 		[MonoTODO]
 		public int Update (DataRow[] dataRows) 
 		{
-			throw new NotImplementedException (); // FIXME: Which mapping?
+			if (dataRows == null)
+				throw new ArgumentNullException("dataRows");
+			
+			if (dataRows.Length == 0)
+				return 0;
+
+			if (dataRows[0] == null)
+				throw new ArgumentException("dataRows[0].");
+
+			DataTable table = dataRows[0].Table;
+			if (table == null)
+				throw new ArgumentException("table is null reference.");
+			
+			// all rows must be in the same table
+			for (int i = 0; i < dataRows.Length; i++)
+			{
+				if (dataRows[i] == null)
+					throw new ArgumentException("dataRows[" + i + "].");
+				if (dataRows[i].Table != table)
+					throw new ArgumentException(
+						" DataRow["
+						+ i
+						+ "] is from a different DataTable than DataRow[0].");
+			}
+			
+			// get table mapping for this rows
+			DataTableMapping tableMapping = TableMappings.GetByDataSetTable(table.TableName);
+			if (tableMapping == null)
+			{
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction(
+					TableMappings,
+					table.TableName,
+					table.TableName,
+					MissingMappingAction);
+				if (tableMapping == null)
+					tableMapping =
+						new DataTableMapping(
+						table.TableName,
+						table.TableName);
+			}
+
+			DataRow[] copy = new DataRow [dataRows.Length];
+			Array.Copy(dataRows, 0, copy, 0, dataRows.Length);
+			return Update(copy, tableMapping);
 		}
 
 		public override int Update (DataSet dataSet) 
@@ -397,6 +521,7 @@ namespace System.Data.Common {
 		protected virtual int Update (DataRow[] dataRows, DataTableMapping tableMapping) 
 		{
 			int updateCount = 0;
+
 			foreach (DataRow row in dataRows) {
 				StatementType statementType = StatementType.Update;
 				IDbCommand command = null;
@@ -458,10 +583,28 @@ namespace System.Data.Common {
 					}
 					row.AcceptChanges ();
 				}
-				updateCount += command.ExecuteNonQuery ();
 
-				OnRowUpdated (CreateRowUpdatedEvent (row, command, statementType, tableMapping));
+				if (command.Connection.State == ConnectionState.Closed) 
+					command.Connection.Open ();
+				
+				try
+				{
+					int tmp = command.ExecuteNonQuery ();
+					// if the execute does not effect any rows we throw an exception.
+					if (tmp == 0)
+						throw new DBConcurrencyException("Concurrency violation: the " + commandName +"Command affected 0 records.");
+					updateCount += tmp;
+					OnRowUpdated (CreateRowUpdatedEvent (row, command, statementType, tableMapping));
+				}
+				catch (Exception e)
+				{
+					if (ContinueUpdateOnError)
+						row.RowError = e.Message;// do somthing with the error
+					else
+						throw e;
+				}
 			}
+			
 			return updateCount;
 		}
 
