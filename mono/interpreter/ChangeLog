@@ -1,3 +1,8 @@
+
+Mon Feb 25 17:37:07 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: use correct value for guint64 max.
+
 2002-02-22  Radek Doulik  <rodo@ximian.com>
 
 	* interp.c: s/gulong/guint64 as it differs on ppc
