@@ -6752,12 +6752,14 @@ namespace Mono.CSharp {
 						e.Emit (ec);
 
 						if (dims == 1) {
-							bool is_stobj, has_typearg;
+							bool is_stobj, has_type_arg;
 							OpCode op = ArrayAccess.GetStoreOpcode (
 								etype, out is_stobj,
-								out has_typearg);
+								out has_type_arg);
 							if (is_stobj)
 								ig.Emit (OpCodes.Stobj, etype);
+							else if (has_type_arg)
+								ig.Emit (op, etype);
 							else
 								ig.Emit (op);
 						} else 
@@ -8186,6 +8188,7 @@ namespace Mono.CSharp {
 			if (rank == 1) {
 				bool is_stobj, has_type_arg;
 				OpCode op = GetStoreOpcode (t, out is_stobj, out has_type_arg);
+
 				//
 				// The stobj opcode used by value types will need
 				// an address on the stack, not really an array/array
@@ -8203,6 +8206,8 @@ namespace Mono.CSharp {
 				
 				if (is_stobj)
 					ig.Emit (OpCodes.Stobj, t);
+				else if (has_type_arg)
+					ig.Emit (op, t);
 				else
 					ig.Emit (op);
 			} else {
