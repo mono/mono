@@ -49,6 +49,8 @@ DISTFILES = \
 	mcs.exe.config		\
 	NOTES			\
 	TODO
+#uncomment to enable some debug stuff
+#DEBUG_FLAGS=/define:MCS_DEBUG
 
 all-local: gmcs.exe
 
@@ -67,16 +69,16 @@ clean-local:
 dist-local: dist-default
 
 gmcs.exe: $(all_sources)
-	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../mcs/mcs.exe -2 /target:exe /debug /define:MCS_DEBUG /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../mcs/mcs.exe $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
 
 gmcs2.exe: $(all_sources)
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mcs -2 /target:exe /debug /define:MCS_DEBUG /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time mcs -2 /target:exe /debug /out:$@ $^ $(DEBUG_FLAGS) 
 
 gmcs3.exe: $(all_sources)
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) ./gmcs2.exe $(USE_MCS_FLAGS) -2 /target:exe /debug /define:MCS_DEBUG /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) ./gmcs2.exe $(USE_MCS_FLAGS) $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
 
 gmcs4.exe: $(all_sources)
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) ./gmcs3.exe $(USE_MCS_FLAGS) -2 /target:exe /debug /define:MCS_DEBUG /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) ./gmcs3.exe $(USE_MCS_FLAGS) $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
 
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
@@ -117,8 +119,8 @@ do-corlib:
 
 PROFILER=default
 
-profile : mcs.exe
-	$(RUNTIME) --profile=$(PROFILER) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources)
+profile : gmcs2.exe
+	make gmcs3.exe RUNTIME="$(RUNTIME) --profile"
 
 response:
 	echo $(all_sources) > res

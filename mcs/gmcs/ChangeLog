@@ -4,7 +4,9 @@
 	for other tests (such as the one in OverloadResolve for Invoke
 	on a delegate) to work. As well, it does not really help
 	error reporting because the method group had multiple methods.
-
+	* Makefile: Remove MCS_DEBUG, you can enable with the DEBUG_FLAGS.
+	Make profiling work.
+	
 2004-06-13  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay: Don't allow generic attributes.
