@@ -12,6 +12,7 @@
 			<arg value="/nowarn:1595"/>
 			<!-- Other languages may permit the internal virtual member 'foo' to be overridden -->
 			<arg value="/nowarn:0679"/>
+			<arg value="/nowarn:0649"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>

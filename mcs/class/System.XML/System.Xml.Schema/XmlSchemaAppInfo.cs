@@ -1,0 +1,36 @@
+// Author: Dwivedi, Ajay kumar
+//            Adwiv@Yahoo.com
+using System;
+using System.Xml;
+using System.Xml.Serialization;
+
+namespace System.Xml.Schema
+{
+	/// <summary>
+	/// Summary description for XmlSchemaAppInfo.
+	/// </summary>
+	public class XmlSchemaAppInfo : XmlSchemaObject
+	{
+		private XmlNode[] markup;
+		private string source;
+
+		public XmlSchemaAppInfo()
+		{
+			source = string.Empty;
+		}
+
+		[XmlAnyElement]
+		[XmlText]
+		public XmlNode[] Markup 
+		{
+			get{ return  markup; }
+			set{ markup = value; }
+		}
+		[XmlAttribute]
+		public string Source 
+		{
+			get{ return  source; } 
+			set{ source = value; }
+		}
+	}
+}
