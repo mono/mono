@@ -1,5 +1,8 @@
 2004-11-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_Type_GetField): Support BFLAGS_IgnoreCase. Fixes
+	#69365.
+
 	* marshal.c (mono_string_to_ansibstr): Make g_error messages more
 	descriptive.
 
