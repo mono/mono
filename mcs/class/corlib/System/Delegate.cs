@@ -74,7 +74,6 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info);
 
-		[MonoTODO]
 		public static Delegate CreateDelegate (Type type, MethodInfo info)
 		{
 			if (type == null)
@@ -86,7 +85,6 @@ namespace System {
 			return CreateDelegate_internal (type, null, info);
 		}
 		
-		[MonoTODO]
 		public static Delegate CreateDelegate (Type type, object target, string method)
 		{
 			if (type == null)
@@ -103,7 +101,6 @@ namespace System {
 			return CreateDelegate_internal (type, target, info);
 		}
 
-		[MonoTODO]
  		public static Delegate CreateDelegate (Type type, Type target, string method)
 		{
 			if (type == null)
@@ -120,7 +117,6 @@ namespace System {
 			return CreateDelegate_internal (type, null, info);
 		}
 
-		[MonoTODO]
 		public static Delegate CreateDelegate (Type type, object target, string method, bool ignorecase)
 		{
 			if (type == null)
