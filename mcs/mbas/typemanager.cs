@@ -1098,21 +1098,38 @@ public class TypeManager {
 	//
 	public static bool IsUnmanagedType (Type t)
 	{
-		if (IsBuiltinType (t))
+		if (IsBuiltinType (t) && t != TypeManager.string_type)
 			return true;
+
 		if (IsEnumType (t))
 			return true;
+
 		if (t.IsPointer)
 			return true;
 
 		if (IsValueType (t)){
-			//
-			// FIXME: Check that every field in the struct is Unmanaged
-			//
+			if (t is TypeBuilder){
+				TypeContainer tc = LookupTypeContainer (t);
 
+				foreach (Field f in tc.Fields){
+					if (f.FieldBuilder.IsStatic)
+						continue;
+					if (!IsUnmanagedType (f.FieldBuilder.FieldType))
+						return false;
+				}
+			} else {
+				FieldInfo [] fields = t.GetFields ();
+
+				foreach (FieldInfo f in fields){
+					if (f.IsStatic)
+						continue;
+					if (!IsUnmanagedType (f.FieldType))
+						return false;
+				}
+			}
 			return true;
 		}
-		
+
 		return false;
 	}
 		

@@ -51,6 +51,12 @@ namespace Mono.CSharp {
 		public bool Resolve (DeclSpace ds, Location l)
 		{
 			parameter_type = ds.ResolveType (TypeName, false, l);
+
+			if (parameter_type == TypeManager.void_type){
+				Report.Error (1536, l, "`void' parameter is not permitted");
+				return false;
+			}
+			
 			return parameter_type != null;
 		}
 

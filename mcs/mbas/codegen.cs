@@ -312,11 +312,6 @@ namespace Mono.CSharp {
 		public bool InUnsafe;
 
 		/// <summary>
-		///   Whether we break from a loop or not
-		/// </summary>
-		public bool Breaks;
-		
-		/// <summary>
 		///   Location for this EmitContext
 		/// </summary>
 		public Location loc;
@@ -527,7 +522,8 @@ namespace Mono.CSharp {
 					has_ret = block.Emit (this);
 
 					if ((returns == FlowReturns.ALWAYS) ||
-					    (returns == FlowReturns.EXCEPTION))
+					    (returns == FlowReturns.EXCEPTION) ||
+					    (returns == FlowReturns.UNREACHABLE))
 						has_ret = true;
 
 					if (Report.Errors == errors){
@@ -566,13 +562,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Mark (Location loc)
 		{
-			if (!Location.IsNull (loc)) {
+			if ((CodeGen.SymbolWriter != null) && !Location.IsNull (loc)) {
 				ISymbolDocumentWriter doc = loc.SymbolDocument;
 
 				if (doc != null)
 					ig.MarkSequencePoint (doc, loc.Row, 0,  loc.Row, 0);
-			}		}
-
+			}
+		}
 
 		/// <summary>
 		///   Returns a temporary storage for a variable of type t as 

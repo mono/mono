@@ -1127,6 +1127,13 @@ namespace Mono.CSharp {
 			type = probe_type;
 			eclass = ExprClass.Value;
 			Type etype = expr.Type;
+
+			if (TypeManager.IsValueType (probe_type)){
+				Report.Error (77, loc, "The as operator should be used with a reference type only (" +
+					      TypeManager.CSharpName (probe_type) + " is a value type");
+				return null;
+			
+			}
 			
 			e = ConvertImplicit (ec, expr, probe_type, loc);
 			if (e != null){
@@ -1928,6 +1935,10 @@ namespace Mono.CSharp {
 						method = TypeManager.string_concat_object_object;
 						right = ConvertImplicit (ec, right,
 									 TypeManager.object_type, loc);
+						if (right == null){
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
 					}
 					type = TypeManager.string_type;
 
@@ -1947,6 +1958,10 @@ namespace Mono.CSharp {
 					
 					method = TypeManager.string_concat_object_object;
 					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
+					if (left == null){
+						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+						return null;
+					}
 					Arguments = new ArrayList ();
 					Arguments.Add (new Argument (left, Argument.AType.Expression));
 					Arguments.Add (new Argument (right, Argument.AType.Expression));
@@ -2099,15 +2114,21 @@ namespace Mono.CSharp {
 			if (lie || rie){
 				Expression temp;
 
+				// U operator - (E e, E f)
+				if (lie && rie && oper == Operator.Subtraction){
+					if (l == r){
+						type = TypeManager.EnumToUnderlying (l);
+						return this;
+					} 
+					Error_OperatorCannotBeApplied ();
+					return null;
+				}
+					
 				//
 				// operator + (E e, U x)
+				// operator - (E e, U x)
 				//
-				if (oper == Operator.Addition){
-					if (lie && rie){
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-
+				if (oper == Operator.Addition || oper == Operator.Subtraction){
 					Type enum_type = lie ? l : r;
 					Type other_type = lie ? r : l;
 					Type underlying_type = TypeManager.EnumToUnderlying (enum_type);
@@ -3528,9 +3549,9 @@ namespace Mono.CSharp {
 			string ret_type = "";
 
 			if (mb is MethodInfo)
-				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType);
+				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType) + " ";
 			
-			StringBuilder sb = new StringBuilder (ret_type + " " + mb.Name);
+			StringBuilder sb = new StringBuilder (ret_type + mb.Name);
 			ParameterData pd = GetParameterData (mb);
 
 			int count = pd.Count;
@@ -6247,7 +6268,8 @@ namespace Mono.CSharp {
 			// pair
 			//
 			if (rank == 1){
-				if (t.IsSubclassOf (TypeManager.value_type) && (!TypeManager.IsBuiltinType (t) || t == TypeManager.decimal_type))
+				if (t == TypeManager.enum_type || t == TypeManager.decimal_type ||
+				    (t.IsSubclassOf (TypeManager.value_type) && !TypeManager.IsEnumType (t) && !TypeManager.IsBuiltinType (t)))
 					ig.Emit (OpCodes.Ldelema, t);
 			}
 			

@@ -684,9 +684,17 @@ namespace Mono.CSharp {
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface)
 					return new EmptyCast (expr, target_type);
-			} else if (expr_type.IsSubclassOf (target_type)) 
+			} else if (expr_type.IsSubclassOf (target_type)) {
+				//
+				// Special case: enumeration to System.Enum.
+				// System.Enum is not a value type, it is a class, so we need
+				// a boxing conversion
+				//
+				if (expr_type.IsEnum)
+					return new BoxedCast (expr);
+			
 				return new EmptyCast (expr, target_type);
-			else {
+			} else {
 
 				// This code is kind of mirrored inside StandardConversionExists
 				// with the small distinction that we only probe there
@@ -939,7 +947,6 @@ namespace Mono.CSharp {
 				
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				return true;
-				
 			} else {
 				// Please remember that all code below actually comes
 				// from ImplicitReferenceConversion so make sure code remains in sync
@@ -1559,10 +1566,9 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (method == null || count > 1) {
-				Report.Error (-11, loc, "Ambiguous user defined conversion");
+			if (method == null || count > 1)
 				return null;
-			}
+			
 			
 			//
 			// This will do the conversion to the best match that we
@@ -2217,7 +2223,12 @@ namespace Mono.CSharp {
 				if (t != null)
 					return t;
 				
-				return ConvertNumericExplicit (ec, e, target_type, loc);
+				t = ConvertNumericExplicit (ec, e, target_type, loc);
+				if (t != null)
+					return t;
+				
+				Error_CannotConvertType (loc, expr_type, target_type);
+				return null;
 			}
 			
 			ne = ConvertReferenceExplicit (expr, target_type);
@@ -4061,17 +4072,13 @@ namespace Mono.CSharp {
 			// Handle initonly fields specially: make a copy and then
 			// get the address of the copy.
 			//
-			if (FieldInfo.IsInitOnly){
-				if (ec.IsConstructor) {
-					ig.Emit (OpCodes.Ldsflda, FieldInfo);
-				} else {
-					LocalBuilder local;
+			if (FieldInfo.IsInitOnly && !ec.IsConstructor){
+				LocalBuilder local;
 				
-					Emit (ec);
-					local = ig.DeclareLocal (type);
-					ig.Emit (OpCodes.Stloc, local);
-					ig.Emit (OpCodes.Ldloca, local);
-				}
+				Emit (ec);
+				local = ig.DeclareLocal (type);
+				ig.Emit (OpCodes.Stloc, local);
+				ig.Emit (OpCodes.Ldloca, local);
 				return;
 			}
 
@@ -4249,7 +4256,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList ();
 
 			args.Add (arg);
-			Invocation.EmitCall (ec, false, IsStatic, instance_expr, Accessors [1], args, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, Accessors [1], args, loc);
 		}
 
 		override public void EmitStatement (EmitContext ec)

@@ -33,7 +33,17 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
-		public abstract bool Emit (EmitContext ec);
+		protected abstract bool DoEmit (EmitContext ec);
+
+		/// <summary>
+		///   Return value indicates whether all code paths emitted return.
+		/// </summary>
+		public virtual bool Emit (EmitContext ec)
+		{
+			ec.Mark (loc);
+			Report.Debug (8, "MARK", this, loc);
+			return DoEmit (ec);
+		}
 		
 		public static Expression ResolveBoolean (EmitContext ec, Expression e, Location loc)
 		{
@@ -51,8 +61,7 @@ namespace Mono.CSharp {
 					31, loc, "Can not convert the expression to a boolean");
 			}
 
-			if (CodeGen.SymbolWriter != null)
-				ec.Mark (loc);
+			ec.Mark (loc);
 
 			return e;
 		}
@@ -114,7 +123,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			return false;
 		}
@@ -173,7 +182,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label false_target = ig.DefineLabel ();
@@ -229,6 +238,7 @@ namespace Mono.CSharp {
 	public class Do : Statement {
 		public Expression expr;
 		public readonly Statement  EmbeddedStatement;
+		bool infinite, may_return;
 		
 		public Do (Statement statement, Expression boolExpr, Location l)
 		{
@@ -246,23 +256,30 @@ namespace Mono.CSharp {
 			if (!EmbeddedStatement.Resolve (ec))
 				ok = false;
 
-			ec.EndFlowBranching ();
-
 			expr = ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				ok = false;
+			else if (expr is BoolConstant){
+				bool res = ((BoolConstant) expr).Value;
+
+				if (res)
+					infinite = true;
+			}
+
+			ec.CurrentBranching.Infinite = infinite;
+			FlowReturns returns = ec.EndFlowBranching ();
+			may_return = returns != FlowReturns.NEVER;
 
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label loop = ig.DefineLabel ();
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool  old_inloop = ec.InLoop;
-			bool old_breaks = ec.Breaks;
 			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			
 			ec.LoopBegin = ig.DefineLabel ();
@@ -271,9 +288,7 @@ namespace Mono.CSharp {
 			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 				
 			ig.MarkLabel (loop);
-			ec.Breaks = false;
 			EmbeddedStatement.Emit (ec);
-			bool breaks = ec.Breaks;
 			ig.MarkLabel (ec.LoopBegin);
 
 			//
@@ -293,25 +308,18 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
-			ec.Breaks = old_breaks;
 
-			//
-			// Inform whether we are infinite or not
-			//
-			if (expr is BoolConstant){
-				BoolConstant bc = (BoolConstant) expr;
-
-				if (bc.Value == true)
-					return breaks == false;
-			}
-			
-			return false;
+			if (infinite)
+				return may_return == false;
+			else
+				return false;
 		}
 	}
 
 	public class While : Statement {
 		public Expression expr;
 		public readonly Statement Statement;
+		bool may_return, empty, infinite;
 		
 		public While (Expression boolExpr, Statement statement, Location l)
 		{
@@ -330,22 +338,47 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
 
+			//
+			// Inform whether we are infinite or not
+			//
+			if (expr is BoolConstant){
+				BoolConstant bc = (BoolConstant) expr;
+
+				if (bc.Value == false){
+					Warning_DeadCodeFound (Statement.loc);
+					empty = true;
+				} else
+					infinite = true;
+			} else {
+				//
+				// We are not infinite, so the loop may or may not be executed.
+				//
+				ec.CurrentBranching.CreateSibling ();
+			}
+
 			if (!Statement.Resolve (ec))
 				ok = false;
 
-			ec.EndFlowBranching ();
+			if (empty)
+				ec.KillFlowBranching ();
+			else {
+				ec.CurrentBranching.Infinite = infinite;
+				FlowReturns returns = ec.EndFlowBranching ();
+				may_return = returns != FlowReturns.NEVER;
+			}
 
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
+			if (empty)
+				return false;
+
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
-			bool old_breaks = ec.Breaks;
-			Label while_loop = ig.DefineLabel ();
 			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			bool ret;
 			
@@ -354,9 +387,6 @@ namespace Mono.CSharp {
 			ec.InLoop = true;
 			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
-			ig.Emit (OpCodes.Br, ec.LoopBegin);
-			ig.MarkLabel (while_loop);
-
 			//
 			// Inform whether we are infinite or not
 			//
@@ -364,25 +394,21 @@ namespace Mono.CSharp {
 				BoolConstant bc = (BoolConstant) expr;
 
 				ig.MarkLabel (ec.LoopBegin);
-				if (bc.Value == false){
-					Warning_DeadCodeFound (Statement.loc);
-					ret = false;
-				} else {
-					bool breaks;
+				Statement.Emit (ec);
+				ig.Emit (OpCodes.Br, ec.LoopBegin);
 					
-					ec.Breaks = false;
-					Statement.Emit (ec);
-					breaks = ec.Breaks;
-					ig.Emit (OpCodes.Br, ec.LoopBegin);
-					
-					//
-					// Inform that we are infinite (ie, `we return'), only
-					// if we do not `break' inside the code.
-					//
-					ret = breaks == false;
-				}
+				//
+				// Inform that we are infinite (ie, `we return'), only
+				// if we do not `break' inside the code.
+				//
+				ret = may_return == false;
 				ig.MarkLabel (ec.LoopEnd);
 			} else {
+				Label while_loop = ig.DefineLabel ();
+
+				ig.Emit (OpCodes.Br, ec.LoopBegin);
+				ig.MarkLabel (while_loop);
+
 				Statement.Emit (ec);
 			
 				ig.MarkLabel (ec.LoopBegin);
@@ -396,7 +422,6 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
-			ec.Breaks = old_breaks;
 			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 
 			return ret;
@@ -408,6 +433,7 @@ namespace Mono.CSharp {
 		readonly Statement InitStatement;
 		readonly Statement Increment;
 		readonly Statement Statement;
+		bool may_return, infinite, empty;
 		
 		public For (Statement initStatement,
 			    Expression test,
@@ -435,7 +461,17 @@ namespace Mono.CSharp {
 				Test = ResolveBoolean (ec, Test, loc);
 				if (Test == null)
 					ok = false;
-			}
+				else if (Test is BoolConstant){
+					BoolConstant bc = (BoolConstant) Test;
+
+					if (bc.Value == false){
+						Warning_DeadCodeFound (Statement.loc);
+						empty = true;
+					} else
+						infinite = true;
+				}
+			} else
+				infinite = true;
 
 			if (Increment != null){
 				if (!Increment.Resolve (ec))
@@ -443,22 +479,32 @@ namespace Mono.CSharp {
 			}
 
 			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+			if (!infinite)
+				ec.CurrentBranching.CreateSibling ();
 
 			if (!Statement.Resolve (ec))
 				ok = false;
 
-			ec.EndFlowBranching ();
+			if (empty)
+				ec.KillFlowBranching ();
+			else {
+				ec.CurrentBranching.Infinite = infinite;
+				FlowReturns returns = ec.EndFlowBranching ();
+				may_return = returns != FlowReturns.NEVER;
+			}
 
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
+			if (empty)
+				return false;
+
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
-			bool old_breaks = ec.Breaks;
 			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			Label loop = ig.DefineLabel ();
 			Label test = ig.DefineLabel ();
@@ -474,9 +520,7 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Br, test);
 			ig.MarkLabel (loop);
-			ec.Breaks = false;
 			Statement.Emit (ec);
-			bool breaks = ec.Breaks;
 
 			ig.MarkLabel (ec.LoopBegin);
 			if (!(Increment is EmptyStatement))
@@ -496,7 +540,6 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
-			ec.Breaks = old_breaks;
 			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			
 			//
@@ -507,11 +550,11 @@ namespace Mono.CSharp {
 					BoolConstant bc = (BoolConstant) Test;
 
 					if (bc.Value)
-						return breaks == false;
+						return may_return == false;
 				}
 				return false;
 			} else
-				return breaks == false;
+				return may_return == false;
 		}
 	}
 	
@@ -530,7 +573,7 @@ namespace Mono.CSharp {
 			return expr != null;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -574,12 +617,15 @@ namespace Mono.CSharp {
 
 			if (ec.CurrentBranching.InTryBlock ())
 				ec.CurrentBranching.AddFinallyVector (vector);
+			else
+				vector.CheckOutParameters (ec.CurrentBranching);
 
 			vector.Returns = FlowReturns.ALWAYS;
+			vector.Breaks = FlowReturns.ALWAYS;
 			return true;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (ec.InFinally){
 				Report.Error (157,loc,"Control can not leave the body of the finally block");
@@ -662,9 +708,8 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
-			ec.Breaks = true;
 			Label l = label.LabelTarget (ec);
 			ec.ig.Emit (OpCodes.Br, l);
 			
@@ -721,13 +766,17 @@ namespace Mono.CSharp {
 		{
 			if (vectors != null)
 				ec.CurrentBranching.CurrentUsageVector.MergeJumpOrigins (vectors);
+			else {
+				ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.NEVER;
+				ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.NEVER;
+			}
 
 			referenced = true;
 
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			LabelTarget (ec);
 			ec.ig.MarkLabel (label);
@@ -749,12 +798,11 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.UNREACHABLE;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.UNREACHABLE;
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (ec.Switch == null){
 				Report.Error (153, loc, "goto default is only valid in a switch statement");
@@ -765,7 +813,6 @@ namespace Mono.CSharp {
 				Report.Error (159, loc, "No default target on switch statement");
 				return false;
 			}
-			ec.Breaks = true;	
 			ec.ig.Emit (OpCodes.Br, ec.Switch.DefaultTarget);
 			return false;
 		}
@@ -816,14 +863,12 @@ namespace Mono.CSharp {
 
 			label = sl.ILLabelCode;
 
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.UNREACHABLE;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.UNREACHABLE;
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
-			ec.Breaks = true;
 			ec.ig.Emit (OpCodes.Br, label);
 			return true;
 		}
@@ -866,12 +911,12 @@ namespace Mono.CSharp {
 			}
 
 			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.EXCEPTION;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.EXCEPTION;
 			return true;
 		}
 			
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
-			ec.Breaks = true;
 			if (expr == null){
 				if (ec.InCatch)
 					ec.ig.Emit (OpCodes.Rethrow);
@@ -901,11 +946,12 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			ec.CurrentBranching.MayLeaveLoop = true;
 			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -914,7 +960,6 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			ec.Breaks = true;
 			if (ec.InTry || ec.InCatch)
 				ig.Emit (OpCodes.Leave, ec.LoopEnd);
 			else
@@ -937,7 +982,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			Label begin = ec.LoopBegin;
 			
@@ -957,7 +1002,6 @@ namespace Mono.CSharp {
 			// From:
 			// try {} catch { while () { continue; }}
 			//
-			ec.Breaks = true;
 			if (ec.TryCatchLevel > ec.LoopBeginTryCatchLevel)
 				ec.ig.Emit (OpCodes.Leave, begin);
 			else if (ec.TryCatchLevel < ec.LoopBeginTryCatchLevel)
@@ -1241,6 +1285,16 @@ namespace Mono.CSharp {
 		// </summary>
 		public ArrayList Siblings;
 
+		// <summary>
+		//   If this is an infinite loop.
+		// </summary>
+		public bool Infinite;
+
+		// <summary>
+		//   If we may leave the current loop.
+		// </summary>
+		public bool MayLeaveLoop;
+
 		//
 		// Private
 		//
@@ -1324,7 +1378,7 @@ namespace Mono.CSharp {
 			//
 			MyBitVector locals, parameters;
 			FlowReturns real_returns, real_breaks;
-			bool breaks_set, is_finally;
+			bool is_finally;
 
 			static int next_id = 0;
 			int id;
@@ -1344,6 +1398,8 @@ namespace Mono.CSharp {
 					locals = new MyBitVector (parent.locals, CountLocals);
 					if (num_params > 0)
 						parameters = new MyBitVector (parent.parameters, num_params);
+					real_returns = parent.Returns;
+					real_breaks = parent.Breaks;
 				} else {
 					locals = new MyBitVector (null, CountLocals);
 					if (num_params > 0)
@@ -1425,6 +1481,10 @@ namespace Mono.CSharp {
 
 			// <summary>
 			//   Specifies when the current block returns.
+			//   If this is FlowReturns.UNREACHABLE, then control can never reach the
+			//   end of the method (so that we don't need to emit a return statement).
+			//   The same applies for FlowReturns.EXCEPTION, but in this case the return
+			//   value will never be used.
 			// </summary>
 			public FlowReturns Returns {
 				get {
@@ -1440,6 +1500,8 @@ namespace Mono.CSharp {
 			//   Specifies whether control may return to our containing block
 			//   before reaching the end of this block.  This happens if there
 			//   is a break/continue/goto/return in it.
+			//   This can also be used to find out whether the statement immediately
+			//   following the current block may be reached or not.
 			// </summary>
 			public FlowReturns Breaks {
 				get {
@@ -1448,7 +1510,34 @@ namespace Mono.CSharp {
 
 				set {
 					real_breaks = value;
-					breaks_set = true;
+				}
+			}
+
+			public bool AlwaysBreaks {
+				get {
+					return (Breaks == FlowReturns.ALWAYS) ||
+						(Breaks == FlowReturns.EXCEPTION) ||
+						(Breaks == FlowReturns.UNREACHABLE);
+				}
+			}
+
+			public bool MayBreak {
+				get {
+					return Breaks != FlowReturns.NEVER;
+				}
+			}
+
+			public bool AlwaysReturns {
+				get {
+					return (Returns == FlowReturns.ALWAYS) ||
+						(Returns == FlowReturns.EXCEPTION);
+				}
+			}
+
+			public bool MayReturn {
+				get {
+					return (Returns == FlowReturns.SOMETIMES) ||
+						(Returns == FlowReturns.ALWAYS);
 				}
 			}
 
@@ -1463,22 +1552,24 @@ namespace Mono.CSharp {
 				FlowReturns new_returns = FlowReturns.NEVER;
 				FlowReturns new_breaks = FlowReturns.NEVER;
 				bool new_returns_set = false, new_breaks_set = false;
-				bool breaks;
 
-				Report.Debug (1, "MERGING CHILDREN", branching, this);
+				Report.Debug (2, "MERGING CHILDREN", branching, branching.Type,
+					      this, children.Count);
 
 				foreach (UsageVector child in children) {
-					Report.Debug (1, "  MERGING CHILD", child, child.is_finally);
+					Report.Debug (2, "  MERGING CHILD", child, child.is_finally);
 
 					if (!child.is_finally) {
-						// If Returns is already set, perform an
-						// `And' operation on it, otherwise just set just.
-						if (!new_returns_set) {
-							new_returns = child.Returns;
-							new_returns_set = true;
-						} else
-							new_returns = AndFlowReturns (
-								new_returns, child.Returns);
+						if (child.Breaks != FlowReturns.UNREACHABLE) {
+							// If Returns is already set, perform an
+							// `And' operation on it, otherwise just set just.
+							if (!new_returns_set) {
+								new_returns = child.Returns;
+								new_returns_set = true;
+							} else
+								new_returns = AndFlowReturns (
+									new_returns, child.Returns);
+						}
 
 						// If Breaks is already set, perform an
 						// `And' operation on it, otherwise just set just.
@@ -1488,19 +1579,7 @@ namespace Mono.CSharp {
 						} else
 							new_breaks = AndFlowReturns (
 								new_breaks, child.Breaks);
-
-						// Check whether control may reach the end of this sibling.
-						// This happens unless we either always return or always break.
-						if ((child.Returns == FlowReturns.EXCEPTION) ||
-						    (child.Returns == FlowReturns.ALWAYS) ||
-						    ((branching.Type != FlowBranchingType.SWITCH_SECTION) &&
-						     (branching.Type != FlowBranchingType.LOOP_BLOCK) &&
-						     (child.Breaks == FlowReturns.ALWAYS)))
-							breaks = true;
-						else
-							breaks = false;
-					} else
-						breaks = false;
+					}
 
 					// Ignore unreachable children.
 					if (child.Returns == FlowReturns.UNREACHABLE)
@@ -1545,37 +1624,52 @@ namespace Mono.CSharp {
 						if (new_locals == null)
 							new_locals = locals.Clone ();
 						new_locals.Or (child.locals);
-					} else if (!breaks) {
-						if (new_locals != null)
-							new_locals.And (child.locals);
-						else {
+
+						if (parameters != null) {
+							if (new_params == null)
+								new_params = parameters.Clone ();
+							new_params.Or (child.parameters);
+						}
+
+					} else {
+						if (!child.AlwaysReturns && !child.AlwaysBreaks) {
+							if (new_locals != null)
+								new_locals.And (child.locals);
+							else {
+								new_locals = locals.Clone ();
+								new_locals.Or (child.locals);
+							}
+						} else if (children.Count == 1) {
 							new_locals = locals.Clone ();
 							new_locals.Or (child.locals);
 						}
-					}
 
-					// An `out' parameter must be assigned in all branches which do
-					// not always throw an exception.
-					if (!child.is_finally && (child.Returns != FlowReturns.EXCEPTION)) {
+						// An `out' parameter must be assigned in all branches which do
+						// not always throw an exception.
 						if (parameters != null) {
-							if (new_params != null)
-								new_params.And (child.parameters);
-							else {
+							if (child.Breaks != FlowReturns.EXCEPTION) {
+								if (new_params != null)
+									new_params.And (child.parameters);
+								else {
+									new_params = parameters.Clone ();
+									new_params.Or (child.parameters);
+								}
+							} else if (children.Count == 1) {
 								new_params = parameters.Clone ();
 								new_params.Or (child.parameters);
 							}
 						}
 					}
-
-					// If we always return, check whether all `out' parameters have
-					// been assigned.
-					if ((child.Returns == FlowReturns.ALWAYS) && (child.parameters != null)) {
-						branching.CheckOutParameters (
-							child.parameters, branching.Location);
-					}
 				}
 
 				Returns = new_returns;
+				if ((branching.Type == FlowBranchingType.BLOCK) ||
+				    (branching.Type == FlowBranchingType.EXCEPTION) ||
+				    (new_breaks == FlowReturns.UNREACHABLE) ||
+				    (new_breaks == FlowReturns.EXCEPTION))
+					Breaks = new_breaks;
+				else if (branching.Type == FlowBranchingType.SWITCH_SECTION)
+					Breaks = new_returns;
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -1586,45 +1680,50 @@ namespace Mono.CSharp {
 				// we need to look at (see above).
 				//
 
-				bool or_locals = (Returns == FlowReturns.NEVER) ||
-					(Returns == FlowReturns.SOMETIMES);
-				if ((branching.Type != FlowBranchingType.SWITCH_SECTION) &&
-				    (branching.Type != FlowBranchingType.LOOP_BLOCK))
-					or_locals &= ((Breaks == FlowReturns.NEVER) ||
-						      (Breaks == FlowReturns.SOMETIMES));
+				if (((new_breaks != FlowReturns.ALWAYS) &&
+				     (new_breaks != FlowReturns.EXCEPTION) &&
+				     (new_breaks != FlowReturns.UNREACHABLE)) ||
+				    (children.Count == 1)) {
+					if (new_locals != null)
+						locals.Or (new_locals);
 
-				if ((new_locals != null) && or_locals) {
-					locals.Or (new_locals);
+					if (new_params != null)
+						parameters.Or (new_params);
 				}
 
-				if ((new_params != null) && (Breaks == FlowReturns.NEVER))
-					parameters.Or (new_params);
+				Report.Debug (2, "MERGING CHILDREN DONE", branching.Type,
+					      new_params, new_locals, new_returns, new_breaks,
+					      branching.Infinite, branching.MayLeaveLoop, this);
 
-				//
-				// If we may have returned (this only happens if there was a reachable
-				// `return' statement in one of the branches), then we may return to our
-				// parent block before reaching the end of the block, so set `Breaks'.
-				//
-				if ((Returns != FlowReturns.NEVER) && (Returns != FlowReturns.SOMETIMES)) {
-					// real_breaks = Returns;
-					// breaks_set = true;
-				} else if (branching.Type == FlowBranchingType.BLOCK) {
-					//
-					// If this is not a loop or switch block, `break' actually breaks.
-					//
-
-					if (!breaks_set) {
-						Breaks = new_breaks;
-						breaks_set = true;
-					} else
-						Breaks = AndFlowReturns (Breaks, new_breaks);
+				if (branching.Type == FlowBranchingType.SWITCH_SECTION) {
+					if ((new_breaks != FlowReturns.ALWAYS) &&
+					    (new_breaks != FlowReturns.EXCEPTION) &&
+					    (new_breaks != FlowReturns.UNREACHABLE))
+						Report.Error (163, branching.Location,
+							      "Control cannot fall through from one " +
+							      "case label to another");
 				}
 
-				if (new_returns == FlowReturns.EXCEPTION)
-					Breaks = FlowReturns.UNREACHABLE;
+				if (branching.Infinite && !branching.MayLeaveLoop) {
+					Report.Debug (1, "INFINITE", new_returns, new_breaks,
+						      Returns, Breaks, this);
 
-				Report.Debug (1, "MERGING CHILDREN DONE", new_params, new_locals,
-					      new_returns, new_breaks, this);
+					// We're actually infinite.
+					if (new_returns == FlowReturns.NEVER) {
+						Breaks = FlowReturns.UNREACHABLE;
+						return FlowReturns.UNREACHABLE;
+					}
+
+					// If we're an infinite loop and do not break, the code after
+					// the loop can never be reached.  However, if we may return
+					// from the loop, then we do always return (or stay in the loop
+					// forever).
+					if ((new_returns == FlowReturns.SOMETIMES) ||
+					    (new_returns == FlowReturns.ALWAYS)) {
+						Returns = FlowReturns.ALWAYS;
+						return FlowReturns.ALWAYS;
+					}
+				}
 
 				return new_returns;
 			}
@@ -1654,7 +1753,7 @@ namespace Mono.CSharp {
 				Report.Debug (1, "MERGING JUMP ORIGIN", this);
 
 				real_breaks = FlowReturns.NEVER;
-				breaks_set = false;
+				real_returns = FlowReturns.NEVER;
 
 				foreach (UsageVector vector in origin_vectors) {
 					Report.Debug (1, "  MERGING JUMP ORIGIN", vector);
@@ -1663,6 +1762,7 @@ namespace Mono.CSharp {
 					if (parameters != null)
 						parameters.And (vector.parameters);
 					Breaks = AndFlowReturns (Breaks, vector.Breaks);
+					Returns = AndFlowReturns (Returns, vector.Returns);
 				}
 
 				Report.Debug (1, "MERGING JUMP ORIGIN DONE", this);
@@ -1677,7 +1777,6 @@ namespace Mono.CSharp {
 				Report.Debug (1, "MERGING FINALLY ORIGIN", this);
 
 				real_breaks = FlowReturns.NEVER;
-				breaks_set = false;
 
 				foreach (UsageVector vector in finally_vectors) {
 					Report.Debug (1, "  MERGING FINALLY ORIGIN", vector);
@@ -1690,6 +1789,12 @@ namespace Mono.CSharp {
 				is_finally = true;
 
 				Report.Debug (1, "MERGING FINALLY ORIGIN DONE", this);
+			}
+
+			public void CheckOutParameters (FlowBranching branching)
+			{
+				if (parameters != null)
+					branching.CheckOutParameters (parameters, branching.Location);
 			}
 
 			// <summary>
@@ -1925,9 +2030,16 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowReturns MergeChild (FlowBranching child)
 		{
-			return CurrentUsageVector.MergeChildren (child, child.Siblings);
-		}
+			FlowReturns returns = CurrentUsageVector.MergeChildren (child, child.Siblings);
 
+			if (child.Type != FlowBranchingType.LOOP_BLOCK)
+				MayLeaveLoop |= child.MayLeaveLoop;
+			else
+				MayLeaveLoop = false;
+
+			return returns;
+ 		}
+ 
 		// <summary>
 		//   Does the toplevel merging.
 		// </summary>
@@ -1938,17 +2050,21 @@ namespace Mono.CSharp {
 
 			UsageVector vector = new UsageVector (null, num_params, Block.CountVariables);
 
+			Report.Debug (1, "MERGING TOP BLOCK", Location, vector);
+
 			vector.MergeChildren (this, Siblings);
 
 			Siblings.Clear ();
 			Siblings.Add (vector);
 
-			Report.Debug (1, "MERGING TOP BLOCK", vector);
+			Report.Debug (1, "MERGING TOP BLOCK DONE", Location, vector);
 
-			if (vector.Returns != FlowReturns.EXCEPTION)
-				CheckOutParameters (CurrentUsageVector.Parameters, Location);
-
-			return vector.Returns;
+			if (vector.Breaks != FlowReturns.EXCEPTION) {
+				if (!vector.AlwaysBreaks)
+					CheckOutParameters (CurrentUsageVector.Parameters, Location);
+				return vector.AlwaysBreaks ? FlowReturns.ALWAYS : vector.Returns;
+			} else
+				return FlowReturns.EXCEPTION;
 		}
 
 		public bool InTryBlock ()
@@ -1976,7 +2092,7 @@ namespace Mono.CSharp {
 
 		public bool IsVariableAssigned (VariableInfo vi)
 		{
-			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+			if (CurrentUsageVector.AlwaysBreaks)
 				return true;
 			else
 				return CurrentUsageVector [vi, 0];
@@ -1984,7 +2100,7 @@ namespace Mono.CSharp {
 
 		public bool IsVariableAssigned (VariableInfo vi, int field_idx)
 		{
-			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+			if (CurrentUsageVector.AlwaysBreaks)
 				return true;
 			else
 				return CurrentUsageVector [vi, field_idx];
@@ -1992,7 +2108,7 @@ namespace Mono.CSharp {
 
 		public void SetVariableAssigned (VariableInfo vi)
 		{
-			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+			if (CurrentUsageVector.AlwaysBreaks)
 				return;
 
 			CurrentUsageVector [vi, 0] = true;
@@ -2000,7 +2116,7 @@ namespace Mono.CSharp {
 
 		public void SetVariableAssigned (VariableInfo vi, int field_idx)
 		{
-			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+			if (CurrentUsageVector.AlwaysBreaks)
 				return;
 
 			CurrentUsageVector [vi, field_idx] = true;
@@ -2038,7 +2154,11 @@ namespace Mono.CSharp {
 			if (index == 0)
 				return true;
 
-			int field_idx = struct_params [number] [field_name];
+			MyStructInfo info = (MyStructInfo) struct_params [number];
+			if (info == null)
+				return true;
+
+			int field_idx = info [field_name];
 
 			return CurrentUsageVector [index + field_idx];
 		}
@@ -2048,7 +2168,7 @@ namespace Mono.CSharp {
 			if (param_map [number] == 0)
 				return;
 
-			if (CurrentUsageVector.Breaks == FlowReturns.NEVER)
+			if (!CurrentUsageVector.AlwaysBreaks)
 				CurrentUsageVector [param_map [number]] = true;
 		}
 
@@ -2059,10 +2179,46 @@ namespace Mono.CSharp {
 			if (index == 0)
 				return;
 
-			int field_idx = struct_params [number] [field_name];
+			MyStructInfo info = (MyStructInfo) struct_params [number];
+			if (info == null)
+				return;
 
-			if (CurrentUsageVector.Breaks == FlowReturns.NEVER)
+			int field_idx = info [field_name];
+
+			if (!CurrentUsageVector.AlwaysBreaks)
 				CurrentUsageVector [index + field_idx] = true;
+		}
+
+		public bool IsReachable ()
+		{
+			bool reachable;
+
+			switch (Type) {
+			case FlowBranchingType.SWITCH_SECTION:
+				// The code following a switch block is reachable unless the switch
+				// block always returns.
+				reachable = !CurrentUsageVector.AlwaysReturns;
+				break;
+
+			case FlowBranchingType.LOOP_BLOCK:
+				// The code following a loop is reachable unless the loop always
+				// returns or it's an infinite loop without any `break's in it.
+				reachable = !CurrentUsageVector.AlwaysReturns &&
+					(CurrentUsageVector.Breaks != FlowReturns.UNREACHABLE);
+				break;
+
+			default:
+				// The code following a block or exception is reachable unless the
+				// block either always returns or always breaks.
+				reachable = !CurrentUsageVector.AlwaysBreaks &&
+					!CurrentUsageVector.AlwaysReturns;
+				break;
+			}
+
+			Report.Debug (1, "REACHABLE", Type, CurrentUsageVector.Returns,
+				      CurrentUsageVector.Breaks, CurrentUsageVector, reachable);
+
+			return reachable;
 		}
 
 		public override string ToString ()
@@ -2901,6 +3057,8 @@ namespace Mono.CSharp {
 					b.UsageWarning ();
 		}
 
+		bool has_ret = false;
+
 		public override bool Resolve (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
@@ -2909,17 +3067,40 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = this;
 			ec.StartFlowBranching (this);
 
-			Report.Debug (1, "RESOLVE BLOCK", StartLocation);
+			Report.Debug (1, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
 			if (!variables_initialized)
 				UpdateVariableInfo (ec);
 
-			foreach (Statement s in statements){
-				if (s.Resolve (ec) == false)
-					ok = false;
+			ArrayList new_statements = new ArrayList ();
+			bool unreachable = false, warning_shown = false;
+
+ 			foreach (Statement s in statements){
+				if (unreachable && !(s is LabeledStatement)) {
+					if (!warning_shown && !(s is EmptyStatement)) {
+						warning_shown = true;
+						Warning_DeadCodeFound (s.loc);
+					}
+
+					continue;
+				}
+
+				if (s.Resolve (ec) == false) {
+ 					ok = false;
+					continue;
+				}
+
+				if (s is LabeledStatement)
+					unreachable = false;
+				else
+					unreachable = ! ec.CurrentBranching.IsReachable ();
+
+				new_statements.Add (s);
 			}
 
-			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation);
+			statements = new_statements;
+
+			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
 
 			FlowReturns returns = ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;
@@ -2937,49 +3118,27 @@ namespace Mono.CSharp {
 								"This label has not been referenced");
 			}
 
+			if ((returns == FlowReturns.ALWAYS) ||
+			    (returns == FlowReturns.EXCEPTION) ||
+			    (returns == FlowReturns.UNREACHABLE))
+				has_ret = true;
+
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
-			bool is_ret = false, this_ret = false;
 			Block prev_block = ec.CurrentBlock;
-			bool warning_shown = false;
 
 			ec.CurrentBlock = this;
 
-			if (CodeGen.SymbolWriter != null) {
-				ec.Mark (StartLocation);
-				
-				foreach (Statement s in statements) {
-					ec.Mark (s.loc);
-					
-					if (is_ret && !warning_shown && !(s is EmptyStatement)){
-						warning_shown = true;
-						Warning_DeadCodeFound (s.loc);
-						continue;
-					}
-					this_ret = s.Emit (ec);
-					if (this_ret)
-						is_ret = true;
-				}
-
-				ec.Mark (EndLocation); 
-			} else {
-				foreach (Statement s in statements){
-					if (is_ret && !warning_shown && !(s is EmptyStatement)){
-						warning_shown = true;
-						Warning_DeadCodeFound (s.loc);
-						continue;
-					}
-					this_ret = s.Emit (ec);
-					if (this_ret)
-						is_ret = true;
-				}
-			}
+			ec.Mark (StartLocation);
+			foreach (Statement s in statements)
+				s.Emit (ec);
+			ec.Mark (EndLocation); 
 			
 			ec.CurrentBlock = prev_block;
-			return is_ret;
+			return has_ret;
 		}
 	}
 
@@ -3585,12 +3744,7 @@ namespace Mono.CSharp {
 						fFoundDefault = true;
 					}
 				}
-				ec.Breaks = false;
 				bool returns = ss.Block.Emit (ec);
-				if (!ec.Breaks && !returns)
-					Report.Error (163, ((SwitchLabel) ss.Labels [0]).loc,
-						      "Control cannot fall through from one " +
-						      "case label to another");
 				fAllReturn &= returns;
 				//ig.Emit (OpCodes.Br, lblEnd);
 			}
@@ -3639,9 +3793,6 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
 				ig.Emit (OpCodes.Stloc, val);
 			}
-
-			SwitchSection last_section;
-			last_section = (SwitchSection) Sections [Sections.Count-1];
 			
 			foreach (SwitchSection ss in Sections){
 				Label sec_begin = ig.DefineLabel ();
@@ -3694,7 +3845,7 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-				if (label_count != 1 && ss != last_section)
+				if (label_count != 1)
 					ig.Emit (OpCodes.Br, next_test);
 				
 				if (null_found)
@@ -3703,12 +3854,7 @@ namespace Mono.CSharp {
 				foreach (SwitchLabel sl in ss.Labels)
 					ig.MarkLabel (sl.ILLabelCode);
 
-				ec.Breaks = false;
 				bool returns = ss.Block.Emit (ec);
-				if (!ec.Breaks && !returns)
-					Report.Error (163, ((SwitchLabel) ss.Labels [0]).loc,
-						      "Control cannot fall through from one " +
-						      "case label to another");
 				if (returns)
 					pending_goto_end = false;
 				else {
@@ -3762,13 +3908,17 @@ namespace Mono.CSharp {
 					return false;
 			}
 
+
+			if (!got_default)
+				ec.CurrentBranching.CreateSibling ();
+
 			ec.EndFlowBranching ();
 			ec.Switch = old_switch;
 
 			return true;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			// Store variable for comparission purposes
 			LocalBuilder value = ec.ig.DeclareLocal (SwitchType);
@@ -3825,7 +3975,7 @@ namespace Mono.CSharp {
 			return Statement.Resolve (ec) && expr != null;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			Type type = expr.Type;
 			bool val;
@@ -3879,7 +4029,7 @@ namespace Mono.CSharp {
 			return Block.Resolve (ec);
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
 			bool previous_state_const = ec.ConstantCheckState;
@@ -3917,7 +4067,7 @@ namespace Mono.CSharp {
 			return ret;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
 			bool previous_state_const = ec.ConstantCheckState;
@@ -3953,7 +4103,7 @@ namespace Mono.CSharp {
 			return val;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.InUnsafe;
 			bool val;
@@ -4103,7 +4253,7 @@ namespace Mono.CSharp {
 			return statement.Resolve (ec);
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -4299,10 +4449,8 @@ namespace Mono.CSharp {
 
 				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
 
-				if ((current.Returns == FlowReturns.NEVER) ||
-				    (current.Returns == FlowReturns.SOMETIMES)) {
+				if (!current.AlwaysReturns && !current.AlwaysBreaks)
 					vector.AndLocals (current);
-				}
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
@@ -4321,10 +4469,8 @@ namespace Mono.CSharp {
 
 				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
 
-				if ((current.Returns == FlowReturns.NEVER) ||
-				    (current.Returns == FlowReturns.SOMETIMES)) {
+				if (!current.AlwaysReturns && !current.AlwaysBreaks)
 					vector.AndLocals (current);
-				}
 			}
 
 			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
@@ -4342,9 +4488,9 @@ namespace Mono.CSharp {
 				ec.InFinally = old_in_finally;
 			}
 
-			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
-
 			FlowReturns returns = ec.EndFlowBranching ();
+
+			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
 
 			Report.Debug (1, "END OF FINALLY", ec.CurrentBranching, returns, vector, f_vector);
 
@@ -4359,7 +4505,7 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label end;
@@ -4435,10 +4581,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// FIXME: We still do not support the expression variant of the using
-	// statement.
-	//
 	public class Using : Statement {
 		object expression_or_block;
 		Statement Statement;
@@ -4482,7 +4624,7 @@ namespace Mono.CSharp {
 					if (var == null)
 						return false;
 					
-					converted_vars [i] = Expression.ConvertImplicit (
+					converted_vars [i] = Expression.ConvertImplicitRequired (
 						ec, var, TypeManager.idisposable_type, loc);
 
 					if (converted_vars [i] == null)
@@ -4515,7 +4657,7 @@ namespace Mono.CSharp {
 		bool ResolveExpression (EmitContext ec)
 		{
 			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
-				conv = Expression.ConvertImplicit (
+				conv = Expression.ConvertImplicitRequired (
 					ec, expr, TypeManager.idisposable_type, loc);
 
 				if (conv == null)
@@ -4623,7 +4765,7 @@ namespace Mono.CSharp {
 			return Statement.Resolve (ec);
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (expression_or_block is DictionaryEntry)
 				return EmitLocalVariableDecls (ec);
@@ -4698,6 +4840,10 @@ namespace Mono.CSharp {
 				empty = new EmptyExpression (hm.element_type);
 			}
 
+			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+			ec.CurrentBranching.CreateSibling ();
+
+ 			//
 			//
 			// FIXME: maybe we can apply the same trick we do in the
 			// array handling to avoid creating empty and conv in some cases.
@@ -4714,6 +4860,8 @@ namespace Mono.CSharp {
 
 			if (!statement.Resolve (ec))
 				return false;
+
+			FlowReturns returns = ec.EndFlowBranching ();
 
 			return true;
 		}
@@ -5156,7 +5304,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			bool ret_val;
 			
@@ -5184,4 +5332,3 @@ namespace Mono.CSharp {
 		}
 	}
 }
-

@@ -10,6 +10,25 @@
 // (C) 2001, 2002 Ximian, Inc (http://www.ximian.com)
 //
 //
+//  2002-10-11  Miguel de Icaza  <miguel@ximian.com>
+//
+//	* class.cs: Following the comment from 2002-09-26 to AddMethod, I
+//	have fixed a remaining problem: not every AddXXXX was adding a
+//	fully qualified name.  
+//
+//	Now everyone registers a fully qualified name in the DeclSpace as
+//	being defined instead of the partial name.  
+//
+//	Downsides: we are slower than we need to be due to the excess
+//	copies and the names being registered this way.  
+//
+//	The reason for this is that we currently depend (on the corlib
+//	bootstrap for instance) that types are fully qualified, because
+//	we dump all the types in the namespace, and we should really have
+//	types inserted into the proper namespace, so we can only store the
+//	basenames in the defined_names array.
+//
+//
 #define CACHE
 using System;
 using System.Collections;
@@ -136,16 +155,16 @@ namespace Mono.CSharp {
 		public AdditionResult AddConstant (Const constant)
 		{
 			AdditionResult res;
-			string name = constant.Name;
+			string basename = constant.Name;
 
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 			
 			if (constants == null)
 				constants = new ArrayList ();
 
 			constants.Add (constant);
-			DefineName (name, constant);
+			DefineName (Name + "." + basename, constant);
 
 			return AdditionResult.Success;
 		}
@@ -153,16 +172,15 @@ namespace Mono.CSharp {
 		public AdditionResult AddEnum (Mono.CSharp.Enum e)
 		{
 			AdditionResult res;
-			string name = e.Name;
 
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (e.Basename)) != AdditionResult.Success)
 				return res;
 
 			if (enums == null)
 				enums = new ArrayList ();
 
 			enums.Add (e);
-			DefineName (name, e);
+			DefineName (e.Name, e);
 
 			return AdditionResult.Success;
 		}
@@ -170,13 +188,11 @@ namespace Mono.CSharp {
 		public AdditionResult AddClass (Class c)
 		{
 			AdditionResult res;
-			string name = c.Name;
 
-
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (c.Basename)) != AdditionResult.Success)
 				return res;
 
-			DefineName (name, c);
+			DefineName (c.Name, c);
 			types.Add (c);
 
 			return AdditionResult.Success;
@@ -185,12 +201,11 @@ namespace Mono.CSharp {
 		public AdditionResult AddStruct (Struct s)
 		{
 			AdditionResult res;
-			string name = s.Name;
 			
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (s.Basename)) != AdditionResult.Success)
 				return res;
 
-			DefineName (name, s);
+			DefineName (s.Name, s);
 			types.Add (s);
 
 			return AdditionResult.Success;
@@ -199,15 +214,14 @@ namespace Mono.CSharp {
 		public AdditionResult AddDelegate (Delegate d)
 		{
 			AdditionResult res;
-			string name = d.Name;
 
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (d.Basename)) != AdditionResult.Success)
 				return res;
 
 			if (delegates == null)
 				delegates = new ArrayList ();
 			
-			DefineName (name, d);
+			DefineName (d.Name, d);
 			delegates.Add (d);
 
 			return AdditionResult.Success;
@@ -215,13 +229,15 @@ namespace Mono.CSharp {
 
 		public AdditionResult AddMethod (Method method)
 		{
-			string name = Name + "." + method.Name;
-			Object value = defined_names [name];
+			string basename = method.Name;
+			string fullname = Name + "." + basename;
+
+			Object value = defined_names [fullname];
 
 			if (value != null && (!(value is Method)))
 				return AdditionResult.NameExists;
 
-			if (name == Basename)
+			if (basename == Basename)
 				return AdditionResult.EnclosingClash;
 
 			if (methods == null)
@@ -233,7 +249,7 @@ namespace Mono.CSharp {
 				methods.Add (method);
 			
 			if (value == null)
-				DefineName (name, method);
+				DefineName (fullname, method);
 
 			return AdditionResult.Success;
 		}
@@ -273,15 +289,14 @@ namespace Mono.CSharp {
 		public AdditionResult AddInterface (Interface iface)
 		{
 			AdditionResult res;
-			string name = iface.Name;
 
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (iface.Basename)) != AdditionResult.Success)
 				return res;
 			
 			if (interfaces == null)
 				interfaces = new ArrayList ();
 			interfaces.Add (iface);
-			DefineName (name, iface);
+			DefineName (iface.Name, iface);
 			
 			return AdditionResult.Success;
 		}
@@ -289,9 +304,9 @@ namespace Mono.CSharp {
 		public AdditionResult AddField (Field field)
 		{
 			AdditionResult res;
-			string name = field.Name;
+			string basename = field.Name;
 
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 			
 			if (fields == null)
@@ -322,16 +337,16 @@ namespace Mono.CSharp {
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
 				have_nonstatic_fields = true;
 
-			DefineName (name, field);
+			DefineName (Name + "." + basename, field);
 			return AdditionResult.Success;
 		}
 
 		public AdditionResult AddProperty (Property prop)
 		{
 			AdditionResult res;
-			string name = prop.Name;
+			string basename = prop.Name;
 
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 
 			if (properties == null)
@@ -341,7 +356,7 @@ namespace Mono.CSharp {
 				properties.Insert (0, prop);
 			else
 				properties.Add (prop);
-			DefineName (name, prop);
+			DefineName (Name + "." + basename, prop);
 
 			return AdditionResult.Success;
 		}
@@ -349,16 +364,16 @@ namespace Mono.CSharp {
 		public AdditionResult AddEvent (Event e)
 		{
 			AdditionResult res;
-			string name = e.Name;
+			string basename = e.Name;
 
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 
 			if (events == null)
 				events = new ArrayList ();
 			
 			events.Add (e);
-			DefineName (name, e);
+			DefineName (Name + "." + basename, e);
 
 			return AdditionResult.Success;
 		}
@@ -3406,7 +3421,17 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			
+
+			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
+
+			if (parent is Struct && 
+			    ((fa & FieldAttributes.Static) == 0) &&
+			    t == parent.TypeBuilder &&
+			    !TypeManager.IsBuiltinType (t)){
+				Report.Error (523, Location, "Struct member `" + parent.Name + "." + Name + 
+					      "' causes a cycle in the structure layout");
+				return false;
+			}
 			FieldBuilder = parent.TypeBuilder.DefineField (
 				Name, t, Modifiers.FieldAttr (ModFlags));
 
@@ -3921,7 +3946,8 @@ namespace Mono.CSharp {
 					
 				if (Add == null && Remove == null) {
 					FieldBuilder = parent.TypeBuilder.DefineField (
-						Name, MemberType, FieldAttributes.FamANDAssem);
+						Name, MemberType,
+						FieldAttributes.FamANDAssem | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
 					TypeManager.RegisterPrivateFieldOfEvent (
 						(EventInfo) EventBuilder, FieldBuilder);
 					TypeManager.RegisterFieldBase (FieldBuilder, this);
