@@ -7,7 +7,7 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,15 +29,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Configuration.Assemblies;
 using System.Globalization;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+
+using Mono.Security;
 
 namespace System.Reflection {
 
@@ -98,17 +98,12 @@ namespace System.Reflection {
 			set { codebase = value; }
 		}
 
-		[MonoTODO("RFC 2396")]
-		private string Escape (string url) 
-		{
-			// we already have code in mcs\class\System\System\Uri.cs
-			// but Uri class ins't part of corlib !
-			// TODO
-			return url;
-		}
-
 		public string EscapedCodeBase {
-			get { return Escape (codebase); }
+			get {
+				if (codebase == null)
+					return null;
+				return Uri.EscapeString (codebase, false, true, true);
+			}
 		}
 
 		public CultureInfo CultureInfo {
@@ -249,6 +244,9 @@ namespace System.Reflection {
 
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
 			info.AddValue ("_Name", name);
 			info.AddValue ("_PublicKey", publicKey);
 			info.AddValue ("_PublicToken", keyToken);

@@ -1,3 +1,12 @@
+2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyName.cs: Implemented EscapedCodeBase using the copy of 
+	System.Uri (System.dll) located in Mono.Security.Uri. Added missing
+	null check in GetObjectData.
+	* Module.cs: Added a FileIOPermission for PathDiscovery on 
+	FullyQualifiedName property (but not on Name property like MS).
+	Added missing null check in GetObjectData.
+
 2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Binder.cs (check_type): Fix byref support. Fixes #73972.

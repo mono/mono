@@ -27,12 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Security;
 using System.Security.Permissions;
 
 namespace System.Reflection {
@@ -73,9 +72,16 @@ namespace System.Reflection {
 		}
 	
 		public virtual string FullyQualifiedName {
-			get { return fqname; }
+			get {
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fqname).Demand ();
+				}
+				return fqname;
+			}
 		}
-	
+
+		// Note: we do not ask for PathDiscovery because no path is returned here.
+		// However MS Fx requires it (see FDBK23572 for details).
 		public string Name {
 			get { return name; }
 		}
@@ -200,6 +206,9 @@ namespace System.Reflection {
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
 			UnitySerializationHolder.GetModuleData (this, info, context);
 		}
 	
