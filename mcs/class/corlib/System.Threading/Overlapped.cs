@@ -33,6 +33,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace System.Threading
 {
@@ -78,6 +79,7 @@ namespace System.Threading
 		}
 
 		[CLSCompliant(false)]
+		[MonoTODO ("Security - we need to propagate the call stack")]
 		unsafe public NativeOverlapped *Pack (IOCompletionCallback iocb)
 		{
 			NativeOverlapped *result = (NativeOverlapped *) Marshal.AllocHGlobal (Marshal.SizeOf (typeof (NativeOverlapped)));
@@ -88,8 +90,10 @@ namespace System.Threading
 		}
 		
 		[CLSCompliant(false)]
+		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		unsafe public NativeOverlapped *UnsafePack (IOCompletionCallback iocb)
 		{
+			// no need to propagate the call stack in the unsafe version
 			return Pack (iocb);
 		}
 

@@ -100,6 +100,7 @@ namespace System.Threading
 		private CompressedStack _stack;
 		
 		public static Context CurrentContext {
+			[SecurityPermission (SecurityAction.LinkDemand, Infrastructure=true)]
 			get {
 				return(AppDomain.InternalGetContext ());
 			}
@@ -118,7 +119,7 @@ namespace System.Threading
 				}
 				return p;
 			}
-			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+			[SecurityPermission (SecurityAction.Demand, ControlPrincipal = true)]
 			set {
 				CurrentThread._principal = value;
 			}
@@ -251,9 +252,10 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void ResetAbort_internal();
 
-		public static void ResetAbort()
+		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+		public static void ResetAbort ()
 		{
-			ResetAbort_internal();
+			ResetAbort_internal ();
 		}
 		
 
@@ -401,6 +403,7 @@ namespace System.Threading
 				return culture;
 			}
 			
+			[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 			set {
 				in_currentculture = true;
 
@@ -578,17 +581,23 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Abort_internal (object stateInfo);
 
-		public void Abort() {
+		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+		public void Abort () 
+		{
 			Abort_internal (null);
 		}
 
-		public void Abort(object stateInfo) {
-			Abort_internal(stateInfo);
+		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+		public void Abort (object stateInfo) 
+		{
+			Abort_internal (stateInfo);
 		}
 		
 
 		[MonoTODO]
-		public void Interrupt() {
+		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+		public void Interrupt ()
+		{
 		}
 
 		// The current thread joins with 'this'. Set ms to 0 to block
@@ -642,6 +651,7 @@ namespace System.Threading
 #if NET_2_0
 		[Obsolete ("")]
 #endif
+		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Resume () 
 		{
 			if ((state & ThreadState.Unstarted) != 0 || !IsAlive || 
@@ -695,7 +705,9 @@ namespace System.Threading
 #if NET_2_0
 		[Obsolete ("")]
 #endif
-		public void Suspend() {
+		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+		public void Suspend ()
+		{
 			if((state & ThreadState.Unstarted) != 0 || !IsAlive) {
 				throw new ThreadStateException("Thread has not been started, or is dead");
 			}

@@ -1,3 +1,9 @@
+2005-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Overlapped.cs: Added check for ControlPolicy and ControlEvidence for
+	Unsafe pack. Added MonoTODO for missing security stack propagation.
+	* Thread.cs: Add security checks for ControlThread.
+	* ThreadPool.cs: Added declarative security checks.
 
 Thu Jan 13 18:15:32 CET 2005 Paolo Molaro <lupus@ximian.com>
 

@@ -7,11 +7,7 @@
 //   Maurer Dietmar (dietmar@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,10 +29,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 
 namespace System.Threading {
 
@@ -50,6 +46,7 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern bool BindHandleInternal (IntPtr osHandle);
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode=true)]
 		public static bool BindHandle (IntPtr osHandle)
 		{
 			return BindHandleInternal (osHandle);
@@ -65,6 +62,7 @@ namespace System.Threading {
 		public static extern void GetMinThreads (out int workerThreads, out int completionPortThreads);
 			
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public static extern bool SetMinThreads (int workerThreads, int completionPortThreads);
 			
 		public static bool QueueUserWorkItem (WaitCallback callback)
@@ -135,6 +133,7 @@ namespace System.Threading {
 							    (long) millisecondsTimeOutInterval, executeOnlyOnce);
 		}
 
+		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static bool UnsafeQueueUserWorkItem (WaitCallback callback, object state)
 		{
 			IAsyncResult ar = callback.BeginInvoke (state, null, null);
@@ -144,6 +143,7 @@ namespace System.Threading {
 		}
 		
 		[MonoTODO]
+		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
 			WaitOrTimerCallback callBack, object state, int millisecondsTimeOutInterval,
 			bool executeOnlyOnce) 
@@ -152,6 +152,7 @@ namespace System.Threading {
 		}
 		
 		[MonoTODO]
+		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
 			WaitOrTimerCallback callBack, object state, long millisecondsTimeOutInterval,
 			bool executeOnlyOnce) 
@@ -160,6 +161,7 @@ namespace System.Threading {
 		}
 
 		[MonoTODO]
+		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
 			WaitOrTimerCallback callBack, object state, TimeSpan timeout,
 			bool executeOnlyOnce) 
@@ -169,6 +171,7 @@ namespace System.Threading {
 
 		[MonoTODO]
 		[CLSCompliant (false)]
+		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
 			WaitOrTimerCallback callBack, object state, uint millisecondsTimeOutInterval,
 			bool executeOnlyOnce) 
