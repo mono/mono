@@ -35,7 +35,7 @@ using System;
 namespace System.Globalization
 {
 	// FIXME: might be better to have them as icall.
-	public static sealed class CharUnicodeInfo
+	public static class CharUnicodeInfo
 	{
 		public static int GetDecimalDigitValue (char c)
 		{
