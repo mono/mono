@@ -19,11 +19,14 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Collections.Specialized;
 
-namespace System.Windows.Forms {
-	
-    	public class Control : Component , ISynchronizeInvoke, IWin32Window {
-    
-
+namespace System.Windows.Forms
+{
+	public class Control : Component, ISynchronizeInvoke, IWin32Window,
+		UnsafeNativeMethods.IOleControl, UnsafeNativeMethods.IOleObject, UnsafeNativeMethods.IOleInPlaceObject,
+		UnsafeNativeMethods.IOleInPlaceActiveObject, UnsafeNativeMethods.IOleWindow, UnsafeNativeMethods.IViewObject,
+		UnsafeNativeMethods.IViewObject2, UnsafeNativeMethods.IPersist, UnsafeNativeMethods.IPersistStreamInit,
+		UnsafeNativeMethods.IPersistPropertyBag, UnsafeNativeMethods.IPersistStorage, UnsafeNativeMethods.IQuickActivate
+	{
 		//
     		// Helper NativeWindow class to dispatch messages back
     		// to the Control class

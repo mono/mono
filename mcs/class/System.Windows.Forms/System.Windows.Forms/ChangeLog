@@ -1,3 +1,9 @@
+2004-03-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Deleted
+	* Control.cs: Hopefully satisfies corecompare a little more than now
+	* UnsafeNativeMethods.cs: Added for above
+
 2004-03-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* Form.cs: Drop call to SharedWineInit, the runtime does that for
