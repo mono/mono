@@ -1,3 +1,7 @@
+2004-11-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_method_get_header): Handle icalls and pinvoke methods.
+
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* class-internals.h (MonoMethod): Move addr to MonoMethodPInvoke
