@@ -1,3 +1,8 @@
+2005-02-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: send the calculated content length even when it's 0.
+	Fixes bug #72655.
+
 2005-02-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HttpContext.cs: Added internal property to keep a reference to
