@@ -82,7 +82,7 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			string nm, nmsp, localName, prefix;
+			string nm, nmsp, prefix;
 			
 			nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : String.Empty;
