@@ -387,9 +387,14 @@ namespace Mono.CSharp {
 						return null;
 					}
 
+					Type type = e.Type;
+					EmptyCast ecast = e as EmptyCast;
+					if ((ecast != null) && (ecast.Child is Constant))
+						e = ecast.Child;
+
 					Constant c = e as Constant;
 					if (c != null) {
-						if (c.Type != pi.PropertyType) {
+						if (type != pi.PropertyType) {
 							c = Const.ChangeType (Location, c, pi.PropertyType);
 							if (c == null)
 								return null;
@@ -425,12 +430,17 @@ namespace Mono.CSharp {
 						return null;
 					}
 
+					Type type = e.Type;
+					EmptyCast ecast = e as EmptyCast;
+					if ((ecast != null) && (ecast.Child is Constant))
+						e = ecast.Child;
+
 					//
 					// Handle charset here, and set the TypeAttributes
 
 					Constant c = e as Constant;
 					if (c != null) {
-						if (c.Type != fi.FieldType) {
+						if (type != fi.FieldType) {
 							c = Const.ChangeType (Location, c, fi.FieldType);
 							if (c == null)
 								return null;
