@@ -41,12 +41,6 @@ namespace Mono.CSharp.Debugger
 		// Interface ISymbolDocumentWriter
 		//
 
-		//
-		// MonoSymbolWriter creates a DWARF 2 debugging file and DWARF operates
-		// on file names, but has no way to include a whole source file in the
-		// symbol file.
-		//
-
 		public void SetCheckSum (Guid algorithmId, byte[] checkSum)
 		{
 			throw new NotSupportedException ();
