@@ -22,10 +22,10 @@ all:
 windows: make-list
 	$(CSC) /unsafe /target:library /out:corlibx.dll /nowarn:1595 @list
 
-monolib: make-list-mono
+monolib: make-list
 	$(CSC) /unsafe /nostdlib /target:library /out:corlib.dll /nowarn:1595 @listmono
 
-monolib2: make-list-mono
+monolib2: make-list
 	$(CSC) /unsafe /target:library /out:corlib.dll /nowarn:1595 @listmono
 
 unix:
@@ -36,7 +36,3 @@ make-list:
 		cat $$i/common.src $$i/windows.src | sed "s/^/$$i\\\\/";	\
 	done > list
 
-make-list-mono:
-	for i in $(DIRS); do						\
-		cat $$i/common.src $$i/mono.src $$i/windows.src | sed "s/^/$$i\\\\/";	\
-	done > listmono
