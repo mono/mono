@@ -1,3 +1,10 @@
+2002-10-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Catch the case where
+	DoNumericPromotions returns true, 
+
+	(Binary.DoNumericPromotions): Simplify the code, and the tests.
+
 2002-09-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (EventExpr.Emit): Instead of emitting an exception,

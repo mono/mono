@@ -1713,7 +1713,7 @@ namespace Mono.CSharp {
 					left = ConvertImplicit (ec, left, TypeManager.int64_type, loc);
 				if (r != TypeManager.int64_type)
 					right = ConvertImplicit (ec, right, TypeManager.int64_type, loc);
-
+				
 				type = TypeManager.int64_type;
 			} else if (l == TypeManager.uint32_type || r == TypeManager.uint32_type){
 				//
@@ -1767,30 +1767,24 @@ namespace Mono.CSharp {
 					type = TypeManager.uint32_type;
 				} 
 			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
+				Expression tmp;
+				
 				if (l != TypeManager.decimal_type)
 					left = ConvertImplicit (ec, left, TypeManager.decimal_type, loc);
+
 				if (r != TypeManager.decimal_type)
 					right = ConvertImplicit (ec, right, TypeManager.decimal_type, loc);
-
 				type = TypeManager.decimal_type;
 			} else {
 				Expression l_tmp, r_tmp;
 
-				l_tmp = ForceConversion (ec, left, TypeManager.int32_type);
-				if (l_tmp == null)
-					return false;
-				
-				r_tmp = ForceConversion (ec, right, TypeManager.int32_type);
-				if (r_tmp == null)
-					return false;
+				left = ForceConversion (ec, left, TypeManager.int32_type);
+				right = ForceConversion (ec, right, TypeManager.int32_type);
 
-				left = l_tmp;
-				right = r_tmp;
-				
 				type = TypeManager.int32_type;
 			}
 
-			return true;
+			return (left != null) && (right != null);
 		}
 
 		static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
@@ -2195,13 +2189,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!DoNumericPromotions (ec, l, r)){
-				Error_OperatorCannotBeApplied ();
+			//
+			// This will leave left or right set to null if there is an error
+			//
+			DoNumericPromotions (ec, l, r);
+			if (left == null || right == null){
+				Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 				return null;
 			}
-
-			if (left == null || right == null)
-				return null;
 
 			//
 			// reload our cached types if required
