@@ -1,3 +1,10 @@
+2003-01-21  Tim Haynes <thaynes@openlinksw.com>
+
+	* AspGenerator.cs:
+	* BaseCompiler.cs:
+	* CachingCompiler.cs: changes to work around spaces and
+        directory-separators in the local filesystem.
+
 2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: make the generated file compile with csc after last

@@ -82,9 +82,9 @@ namespace System.Web.Compilation
 				if (references == null)
 					return result.ToString ();
 
-				split = references.Split (' ');
+				split = references.Split ('|');
 				foreach (string s in split)
-					result.AppendFormat (" /r:{0}", s);
+					result.AppendFormat (" /r:\"{0}\"", s);
 
 				return result.ToString ();
 			}

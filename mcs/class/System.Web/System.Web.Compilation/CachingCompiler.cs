@@ -134,8 +134,13 @@ namespace System.Web.Compilation
 			options.AppendFormat ("/out:{0} ", compiler.TargetFile);
 			options.Append (compiler.SourceFile);
 
+			//Console.WriteLine ("mcs {0}", options);
 			Process proc = new Process ();
-			proc.StartInfo.FileName = "mcs";
+			if (System.IO.Path.DirectorySeparatorChar == '\\')
+				proc.StartInfo.FileName = "mcs.bat";
+			else
+				proc.StartInfo.FileName = "mcs";
+
 			proc.StartInfo.Arguments = options.ToString ();
 			proc.StartInfo.UseShellExecute = false;
 			proc.StartInfo.RedirectStandardOutput = true;
@@ -149,6 +154,7 @@ namespace System.Web.Compilation
 			proc = null;
 
 			result.CompilerOutput = poutput;
+			//Console.WriteLine ("output: {0}\n", poutput);
 			result.OutputFile = compiler.TargetFile;
 		}
 	}

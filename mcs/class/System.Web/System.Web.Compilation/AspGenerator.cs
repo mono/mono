@@ -667,7 +667,7 @@ class AspGenerator
 		if (references == null)
 			references = dll;
 		else
-			references = references + " " + dll;
+			references = references + "|" + dll;
 
 		Options ["References"] = references;
 	}
