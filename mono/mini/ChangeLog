@@ -1,4 +1,8 @@
 
+Mon Jan 10 18:53:05 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: we don't run the Main() code in a subthread anymore.
+
 Mon Jan 10 17:54:16 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: added experimental rtc support in the statistical
