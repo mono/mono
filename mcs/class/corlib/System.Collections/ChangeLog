@@ -1,3 +1,10 @@
+2002-07-02  Nick Drochak  <ndrochak@gol.com>
+
+	* SortedList.cs: Constructors should use the capacity given regardless 
+	how small. After a Clear() the Capacit should be 16. Since a Dictionary
+	might be used in the constructor, make sure we trap exceptions thrown
+	by the Comparer, like in Add().
+
 2002-06-30  Nick Drochak  <ndrochak@gol.com>
 
 	* SortedList.cs: Many fixed. A lot of checking for null and throwing

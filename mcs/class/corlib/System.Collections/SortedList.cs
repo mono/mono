@@ -35,8 +35,6 @@ namespace System.Collections {
 		private Slot[] table;
 		private IComparer comparer;
 
-
-
 		//
 		// Constructors
 		//
@@ -51,13 +49,17 @@ namespace System.Collections {
 
 		public SortedList (IComparer comparer, int initialCapacity)
 		{
+			if (initialCapacity < 0)
+				throw new ArgumentOutOfRangeException();
+
 			this.comparer = comparer;
-			InitTable (initialCapacity);
+			InitTable (initialCapacity, true);
 		}
 
 		public SortedList (IComparer comparer)
-			: this (comparer, 0)
 		{
+			this.comparer = comparer;
+			InitTable (INITIAL_SIZE, true);
 		}
 
 
@@ -83,13 +85,9 @@ namespace System.Collections {
 			}
 		}
 
-
-
-
 		//
 		// Properties
 		//
-
 
 		// ICollection
 
@@ -178,12 +176,9 @@ namespace System.Collections {
 			}
 		}
 
-
-
 		//
 		// Public instance methods.
 		//
-
 
 		// IEnumerable
 
@@ -203,7 +198,7 @@ namespace System.Collections {
 
 		public virtual void Clear () 
 		{
-			this.table = new Slot [Capacity];
+			this.table = new Slot [INITIAL_SIZE];
 			inUse = 0;
 			modificationCount++;
 		}
@@ -458,7 +453,14 @@ namespace System.Collections {
 				throw new ArgumentNullException ("null key");
 
 			Slot [] table = this.table;
-			int freeIndx = Find (key);
+
+			int freeIndx = -1;
+
+			try {
+				freeIndx = Find (key);
+			} catch (Exception) {
+				throw new InvalidOperationException();
+			}
 
 			if (freeIndx >= 0) {
 				if (!overwrite)
@@ -502,9 +504,8 @@ namespace System.Collections {
 		}
 
 		private void InitTable (int capacity, bool force_size) {
-			int size = (capacity + 1) & (~1);
-			if (!force_size && (size < INITIAL_SIZE)) size = INITIAL_SIZE;
-			this.table = new Slot [size];
+			if (!force_size && (capacity < INITIAL_SIZE)) capacity = INITIAL_SIZE;
+			this.table = new Slot [capacity];
 			this.inUse = 0;
 			this.modificationCount = 0;
 		}
@@ -539,8 +540,6 @@ namespace System.Collections {
 
 				int cmp = comparer.Compare (key, table[guess].key);
 				if (cmp == 0) return guess;
-
-				//cmp &= ~Int32.MaxValue;
 
 				if (cmp >  0) left = guess+1;
 				else right = guess-1;
