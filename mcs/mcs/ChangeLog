@@ -1,3 +1,11 @@
+2003-12-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* support.cs (CharArrayHashtable): New helper class.
+
+	* cs-tokenizer.cs: Store keywords in a hashtable indexed by 
+	char arrays, not strings, so we can avoid creating a string in
+	consume_identifier if the identifier is a keyword.
+
 2003-12-16  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (LocalInfo.Assigned): Removed this property.

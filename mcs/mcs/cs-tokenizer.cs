@@ -136,7 +136,7 @@ namespace Mono.CSharp
 		//
 		// Class variables
 		// 
-		static Hashtable keywords;
+		static CharArrayHashtable[] keywords;
 		static NumberStyles styles;
 		static NumberFormatInfo csharp_format_info;
 		
@@ -194,96 +194,103 @@ namespace Mono.CSharp
 			}
 		}
 
+		static void AddKeyword (string kw, int token) {
+			if (keywords [kw.Length] == null) {
+				keywords [kw.Length] = new CharArrayHashtable (kw.Length);
+			}
+			keywords [kw.Length] [kw.ToCharArray ()] = token;
+		}
+
 		static void InitTokens ()
 		{
-			keywords = new Hashtable ();
+			keywords = new CharArrayHashtable [64];
 
-			keywords.Add ("abstract", Token.ABSTRACT);
-			keywords.Add ("as", Token.AS);
-			keywords.Add ("add", Token.ADD);
-			keywords.Add ("assembly", Token.ASSEMBLY);
-			keywords.Add ("base", Token.BASE);
-			keywords.Add ("bool", Token.BOOL);
-			keywords.Add ("break", Token.BREAK);
-			keywords.Add ("byte", Token.BYTE);
-			keywords.Add ("case", Token.CASE);
-			keywords.Add ("catch", Token.CATCH);
-			keywords.Add ("char", Token.CHAR);
-			keywords.Add ("checked", Token.CHECKED);
-			keywords.Add ("class", Token.CLASS);
-			keywords.Add ("const", Token.CONST);
-			keywords.Add ("continue", Token.CONTINUE);
-			keywords.Add ("decimal", Token.DECIMAL);
-			keywords.Add ("default", Token.DEFAULT);
-			keywords.Add ("delegate", Token.DELEGATE);
-			keywords.Add ("do", Token.DO);
-			keywords.Add ("double", Token.DOUBLE);
-			keywords.Add ("else", Token.ELSE);
-			keywords.Add ("enum", Token.ENUM);
-			keywords.Add ("event", Token.EVENT);
-			keywords.Add ("explicit", Token.EXPLICIT);
-			keywords.Add ("extern", Token.EXTERN);
-			keywords.Add ("false", Token.FALSE);
-			keywords.Add ("finally", Token.FINALLY);
-			keywords.Add ("fixed", Token.FIXED);
-			keywords.Add ("float", Token.FLOAT);
-			keywords.Add ("for", Token.FOR);
-			keywords.Add ("foreach", Token.FOREACH);
-			keywords.Add ("goto", Token.GOTO);
-			keywords.Add ("get", Token.GET);
-			keywords.Add ("if", Token.IF);
-			keywords.Add ("implicit", Token.IMPLICIT);
-			keywords.Add ("in", Token.IN);
-			keywords.Add ("int", Token.INT);
-			keywords.Add ("interface", Token.INTERFACE);
-			keywords.Add ("internal", Token.INTERNAL);
-			keywords.Add ("is", Token.IS);
-			keywords.Add ("lock", Token.LOCK);
-			keywords.Add ("long", Token.LONG);
-			keywords.Add ("namespace", Token.NAMESPACE);
-			keywords.Add ("new", Token.NEW);
-			keywords.Add ("null", Token.NULL);
-			keywords.Add ("object", Token.OBJECT);
-			keywords.Add ("operator", Token.OPERATOR);
-			keywords.Add ("out", Token.OUT);
-			keywords.Add ("override", Token.OVERRIDE);
-			keywords.Add ("params", Token.PARAMS);
-			keywords.Add ("private", Token.PRIVATE);
-			keywords.Add ("protected", Token.PROTECTED);
-			keywords.Add ("public", Token.PUBLIC);
-			keywords.Add ("readonly", Token.READONLY);
-			keywords.Add ("ref", Token.REF);
-			keywords.Add ("remove", Token.REMOVE);
-			keywords.Add ("return", Token.RETURN);
-			keywords.Add ("sbyte", Token.SBYTE);
-			keywords.Add ("sealed", Token.SEALED);
-			keywords.Add ("set", Token.SET);
-			keywords.Add ("short", Token.SHORT);
-			keywords.Add ("sizeof", Token.SIZEOF);
-			keywords.Add ("stackalloc", Token.STACKALLOC);
-			keywords.Add ("static", Token.STATIC);
-			keywords.Add ("string", Token.STRING);
-			keywords.Add ("struct", Token.STRUCT);
-			keywords.Add ("switch", Token.SWITCH);
-			keywords.Add ("this", Token.THIS);
-			keywords.Add ("throw", Token.THROW);
-			keywords.Add ("true", Token.TRUE);
-			keywords.Add ("try", Token.TRY);
-			keywords.Add ("typeof", Token.TYPEOF);
-			keywords.Add ("uint", Token.UINT);
-			keywords.Add ("ulong", Token.ULONG);
-			keywords.Add ("unchecked", Token.UNCHECKED);
-			keywords.Add ("unsafe", Token.UNSAFE);
-			keywords.Add ("ushort", Token.USHORT);
-			keywords.Add ("using", Token.USING);
-			keywords.Add ("virtual", Token.VIRTUAL);
-			keywords.Add ("void", Token.VOID);
-			keywords.Add ("volatile", Token.VOLATILE);
-			keywords.Add ("while", Token.WHILE);
+			AddKeyword ("abstract", Token.ABSTRACT);
+			AddKeyword ("as", Token.AS);
+			AddKeyword ("add", Token.ADD);
+			AddKeyword ("assembly", Token.ASSEMBLY);
+			AddKeyword ("base", Token.BASE);
+			AddKeyword ("bool", Token.BOOL);
+			AddKeyword ("break", Token.BREAK);
+			AddKeyword ("byte", Token.BYTE);
+			AddKeyword ("case", Token.CASE);
+			AddKeyword ("catch", Token.CATCH);
+			AddKeyword ("char", Token.CHAR);
+			AddKeyword ("checked", Token.CHECKED);
+			AddKeyword ("class", Token.CLASS);
+			AddKeyword ("const", Token.CONST);
+			AddKeyword ("continue", Token.CONTINUE);
+			AddKeyword ("decimal", Token.DECIMAL);
+			AddKeyword ("default", Token.DEFAULT);
+			AddKeyword ("delegate", Token.DELEGATE);
+			AddKeyword ("do", Token.DO);
+			AddKeyword ("double", Token.DOUBLE);
+			AddKeyword ("else", Token.ELSE);
+			AddKeyword ("enum", Token.ENUM);
+			AddKeyword ("event", Token.EVENT);
+			AddKeyword ("explicit", Token.EXPLICIT);
+			AddKeyword ("extern", Token.EXTERN);
+			AddKeyword ("false", Token.FALSE);
+			AddKeyword ("finally", Token.FINALLY);
+			AddKeyword ("fixed", Token.FIXED);
+			AddKeyword ("float", Token.FLOAT);
+			AddKeyword ("for", Token.FOR);
+			AddKeyword ("foreach", Token.FOREACH);
+			AddKeyword ("goto", Token.GOTO);
+			AddKeyword ("get", Token.GET);
+			AddKeyword ("if", Token.IF);
+			AddKeyword ("implicit", Token.IMPLICIT);
+			AddKeyword ("in", Token.IN);
+			AddKeyword ("int", Token.INT);
+			AddKeyword ("interface", Token.INTERFACE);
+			AddKeyword ("internal", Token.INTERNAL);
+			AddKeyword ("is", Token.IS);
+			AddKeyword ("lock", Token.LOCK);
+			AddKeyword ("long", Token.LONG);
+			AddKeyword ("namespace", Token.NAMESPACE);
+			AddKeyword ("new", Token.NEW);
+			AddKeyword ("null", Token.NULL);
+			AddKeyword ("object", Token.OBJECT);
+			AddKeyword ("operator", Token.OPERATOR);
+			AddKeyword ("out", Token.OUT);
+			AddKeyword ("override", Token.OVERRIDE);
+			AddKeyword ("params", Token.PARAMS);
+			AddKeyword ("private", Token.PRIVATE);
+			AddKeyword ("protected", Token.PROTECTED);
+			AddKeyword ("public", Token.PUBLIC);
+			AddKeyword ("readonly", Token.READONLY);
+			AddKeyword ("ref", Token.REF);
+			AddKeyword ("remove", Token.REMOVE);
+			AddKeyword ("return", Token.RETURN);
+			AddKeyword ("sbyte", Token.SBYTE);
+			AddKeyword ("sealed", Token.SEALED);
+			AddKeyword ("set", Token.SET);
+			AddKeyword ("short", Token.SHORT);
+			AddKeyword ("sizeof", Token.SIZEOF);
+			AddKeyword ("stackalloc", Token.STACKALLOC);
+			AddKeyword ("static", Token.STATIC);
+			AddKeyword ("string", Token.STRING);
+			AddKeyword ("struct", Token.STRUCT);
+			AddKeyword ("switch", Token.SWITCH);
+			AddKeyword ("this", Token.THIS);
+			AddKeyword ("throw", Token.THROW);
+			AddKeyword ("true", Token.TRUE);
+			AddKeyword ("try", Token.TRY);
+			AddKeyword ("typeof", Token.TYPEOF);
+			AddKeyword ("uint", Token.UINT);
+			AddKeyword ("ulong", Token.ULONG);
+			AddKeyword ("unchecked", Token.UNCHECKED);
+			AddKeyword ("unsafe", Token.UNSAFE);
+			AddKeyword ("ushort", Token.USHORT);
+			AddKeyword ("using", Token.USING);
+			AddKeyword ("virtual", Token.VIRTUAL);
+			AddKeyword ("void", Token.VOID);
+			AddKeyword ("volatile", Token.VOLATILE);
+			AddKeyword ("while", Token.WHILE);
 
 			if (RootContext.V2){
-				keywords.Add ("__yield", Token.YIELD);
-				keywords.Add ("yield", Token.YIELD);
+				AddKeyword ("__yield", Token.YIELD);
+				AddKeyword ("yield", Token.YIELD);
 			}
 		}
 
@@ -299,9 +306,16 @@ namespace Mono.CSharp
 			string_builder = new System.Text.StringBuilder ();
 		}
 
-		int GetKeyword (string name)
+		int GetKeyword (char[] id, int id_len)
 		{
-			object o = keywords [name];
+			/*
+			 * Keywords are stored in an array of hashtables grouped by their
+			 * length.
+			 */
+
+			if ((id_len >= keywords.Length) || (keywords [id_len] == null))
+				return -1;
+			object o = keywords [id_len] [id];
 
 			if (o == null)
 				return -1;
@@ -1638,21 +1652,18 @@ namespace Mono.CSharp
 				}
 			}
 
-			string ids = new String (id_builder, 0, pos);
-
 			//
 			// Optimization: avoids doing the keyword lookup
 			// on uppercase letters and _
 			//
 			if (s >= 'a'){
-				int keyword = GetKeyword (ids);
-				if (keyword == -1 || quoted){
-					val = ids;
-					return Token.IDENTIFIER;
-				}
-				return keyword;
+				int keyword = GetKeyword (id_builder, pos);
+				if (keyword != -1 && !quoted)
+					return keyword;
 			}
-			val = ids;
+
+			val = new String (id_builder, 0, pos);
+
 			return Token.IDENTIFIER;
 		}
 		
