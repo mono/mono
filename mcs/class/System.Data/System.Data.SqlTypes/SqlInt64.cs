@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Data.SqlTypes
 {
@@ -77,10 +78,10 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlInt64))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlInt64"));
-			else if (value.IsNull)
+			else if (((SqlInt64)value).IsNull)
 				return 1;
 			else
-				return value.CompareTo (value.Value);
+				return this.value.CompareTo (((SqlInt64)value).Value);
 		}
 
 		public static SqlInt64 Divide (SqlInt64 x, SqlInt64 y)
@@ -93,7 +94,7 @@ namespace System.Data.SqlTypes
 			if (!(value is SqlInt64))
 				return false;
 			else
-				return (bool) (this == value);
+				return (bool) (this == (SqlInt64)value);
 		}
 
 		public static SqlBoolean Equals (SqlInt64 x, SqlInt64 y)

@@ -1,4 +1,21 @@
 2002-05-07  Tim Coleman <tim@timcoleman.com>
+	* SqlBinary.cs:
+	* SqlBoolean.cs:
+	* SqlByte.cs:
+	* SqlDateTime.cs:
+	* SqlDecimal.cs:
+	* SqlDouble.cs:
+	* SqlGuid.cs:
+	* SqlInt16.cs:
+	* SqlInt32.cs:
+	* SqlInt64.cs:
+	* SqlMoney.cs:
+	* SqlSingle.cs:
+	* SqlString.cs:
+		Fix the broken build I made before.  Bad
+		me.
+
+2002-05-07  Tim Coleman <tim@timcoleman.com>
 	* SqlString.cs:
 		Fix a symantic error I made in SqlString
 		Equals where I copied and pasted wrongly

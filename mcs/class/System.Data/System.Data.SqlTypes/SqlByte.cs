@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Data.SqlTypes
 {
@@ -72,10 +73,10 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlByte))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlByte"));
-			else if (value.IsNull)
+			else if (((SqlByte)value).IsNull)
 				return 1;
 			else
-				return value.CompareTo (value.Value);
+				return this.value.CompareTo (((SqlByte)value).Value);
 		}
 
 		public static SqlByte Divide (SqlByte x, SqlByte y)
@@ -88,7 +89,7 @@ namespace System.Data.SqlTypes
 			if (!(value is SqlByte))
 				return false;
 			else
-				return (bool) (this == value);
+				return (bool) (this == (SqlByte)value);
 		}
 
 		public static SqlBoolean Equals (SqlByte x, SqlByte y)
@@ -141,9 +142,10 @@ namespace System.Data.SqlTypes
 			return ~x;
 		}
 
+		[MonoTODO]
 		public static SqlByte Parse (string s)
 		{
-			return new SqlByte (s.ToByte ());
+			throw new NotImplementedException ();
 		}
 
 		public static SqlByte Subtract (SqlByte x, SqlByte y)

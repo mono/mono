@@ -10,6 +10,9 @@
 // (C) Copyright 2002 Tim Coleman
 //
 
+using System;
+using System.Globalization;
+
 namespace System.Data.SqlTypes
 {
 	/// <summary>
@@ -100,10 +103,10 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlBoolean))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlBoolean"));
-			else if (value.IsNull)
+			else if (((SqlBoolean)value).IsNull)
 				return 1;
 			else
-				return value.CompareTo (value.ByteValue);
+				return this.value.CompareTo (((SqlBoolean)value).ByteValue);
 		}
 
 		public override bool Equals(object value) 
@@ -111,7 +114,7 @@ namespace System.Data.SqlTypes
 			if (!(value is SqlByte))
 				return false;
 			else
-				return (bool) (this == value);
+				return (bool) (this == (SqlBoolean)value);
 		}
 
 		public static SqlBoolean Equals(SqlBoolean x, SqlBoolean y) 

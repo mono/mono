@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Data.SqlTypes
 {
@@ -137,10 +138,10 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlDecimal))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlDecimal"));
-			else if (value.IsNull)
+			else if (((SqlDecimal)value).IsNull)
 				return 1;
 			else
-				return value.CompareTo (value.Value);
+				return this.value.CompareTo (((SqlDecimal)value).Value);
 		}
 
 		[MonoTODO]
@@ -159,7 +160,7 @@ namespace System.Data.SqlTypes
 			if (!(value is SqlDecimal))
 				return false;
 			else
-				return (bool) (this == value);
+				return (bool) (this == (SqlDecimal)value);
 		}
 
 		public static SqlBoolean Equals (SqlDecimal x, SqlDecimal y)

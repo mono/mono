@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Data.SqlTypes
 {
@@ -73,10 +74,10 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlInt16))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlInt16"));
-			else if (value.IsNull)
+			else if (((SqlInt16)value).IsNull)
 				return 1;
 			else
-				return value.CompareTo (value.Value);
+				return this.value.CompareTo (((SqlInt16)value).Value);
 		}
 
 		public static SqlInt16 Divide (SqlInt16 x, SqlInt16 y)
@@ -89,7 +90,7 @@ namespace System.Data.SqlTypes
 			if (!(value is SqlInt16))
 				return false;
 			else
-				return (bool) (this == value);
+				return (bool) (this == (SqlInt16)value);
 		}
 
 		public static SqlBoolean Equals (SqlInt16 x, SqlInt16 y)

@@ -9,6 +9,9 @@
 // (C) Copyright 2002 Tim Coleman
 //
 
+using System;
+using System.Globalization;
+
 namespace System.Data.SqlTypes
 {
 	/// <summary>
@@ -90,7 +93,7 @@ namespace System.Data.SqlTypes
 			if (!(value is SqlBinary))
 				return false;
 			else
-				return (bool) (this == value);
+				return (bool) (this == (SqlBinary)value);
 		}
 
 		public static SqlBoolean Equals(SqlBinary x, SqlBinary y) 
