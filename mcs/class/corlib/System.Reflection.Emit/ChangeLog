@@ -1,3 +1,7 @@
+2003-01-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AssemblyBuilder.cs: fixed compilation with csc.
+
 2003-01-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* AssemblyBuilder.cs (Save): Set the executable bit at the end.
