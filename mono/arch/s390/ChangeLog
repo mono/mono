@@ -1,3 +1,7 @@
+2004-12-15	Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* s390-codegen.h: Add some new instructions (CS, CDS)
+
 2004-11-15	Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* s390-codegen.h: Minor macro modifications

@@ -1,3 +1,14 @@
+Mon Jan 10 16:11:16 EST 2005 Neale Ferguson <nealeferguson@earthlink.net>
+
+	* mini-ops.h, inssel-s390.brg, cpu-s390.md: Support OP_ATOMIC__xxx 
+	operations.
+
+	* tramp-s390.c: Check vtable slot belongs to the domain.
+
+	* mini-exceptions.c, exceptions-s390.c: Standardize exception handling
+	as per other platforms.
+
+	* mini-s390.c, mini-s390.h: Enable out-of-line bblock support.
 
 Mon Jan 10 18:53:05 CET 2005 Paolo Molaro <lupus@ximian.com>
 
