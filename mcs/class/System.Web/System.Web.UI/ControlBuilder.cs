@@ -349,6 +349,11 @@ namespace System.Web.UI {
 			AppendSubBuilder (old);
 		}
 
+		internal void SetTagName (string name)
+		{
+			tagName = name;
+		}
+		
 		public virtual void SetTagInnerText (string text)
 		{
 		}

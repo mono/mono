@@ -1,3 +1,10 @@
+2004-02-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlBuilder.cs: added SetTagName().
+
+	* ObjectTagBuilder.cs: use SetTagName so that we can properly close
+	<object> builders if the closing tag is provided.
+
 2004-02-16  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Set cacheability for Location.DownStream.

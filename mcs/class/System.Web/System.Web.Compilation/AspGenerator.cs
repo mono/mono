@@ -262,7 +262,7 @@ namespace System.Web.Compilation
 				tparser.AddDirective (tagid, attributes.GetDictionary (null));
 				break;
 			case TagType.Tag:
-				if (!ProcessTag (tagid, attributes))
+				if (!ProcessTag (tagid, attributes, tagtype))
 					TextParsed (location, location.PlainText);
 				break;
 			case TagType.Close:
@@ -271,7 +271,7 @@ namespace System.Web.Compilation
 				break;
 			case TagType.SelfClosing:
 				int count = stack.Count;
-				if (!ProcessTag (tagid, attributes)) {
+				if (!ProcessTag (tagid, attributes, tagtype)) {
 					TextParsed (location, location.PlainText);
 				} else if (stack.Count != count) {
 					CloseControl (tagid);
@@ -341,7 +341,7 @@ namespace System.Web.Compilation
 			stack.Builder.AppendLiteralString (t);
 		}
 
-		bool ProcessTag (string tagid, TagAttributes atts)
+		bool ProcessTag (string tagid, TagAttributes atts, TagType tagtype)
 		{
 			if ((atts == null || !atts.IsRunAtServer ()) && String.Compare (tagid, "tbody", true) == 0) {
 				// MS completely ignores tbody or, if runat="server", fails when compiling
@@ -399,6 +399,11 @@ namespace System.Web.Compilation
 					ObjectTagBuilder ot = (ObjectTagBuilder) builder;
 					if (ot.Scope != null && ot.Scope != "")
 						throw new ParseException (location, "Scope not allowed here");
+
+					if (tagtype == TagType.Tag) {
+						stack.Push (builder, location);
+						return true;
+					}
 				}
 				
 				parent.AppendSubBuilder (builder);

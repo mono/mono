@@ -21,6 +21,7 @@ namespace System.Web.UI
 		
 		public ObjectTagBuilder ()
 		{
+			SetTagName ("object");
 		}
 
 		public override void AppendLiteralString (string s) 
