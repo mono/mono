@@ -1,5 +1,13 @@
 2002-05-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (ExplicitReferenceConversionExists): Made public.
+	(ImplicitReferenceConversionExists): Split out from
+	StandardConversionExists. 
+
+	* expression.cs (As): We were only implementing one of the three
+	cases for the as operator.  We now implement them all.
+	(Is): Implement the various other cases for Is as well.
+
 	* typemanager.cs (CACHE): New define used to control if we want or
 	not the FindMembers cache.  Seems to have a negative impact on
 	performance currently

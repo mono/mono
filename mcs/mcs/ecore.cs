@@ -742,6 +742,84 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// Tests whether an implicit reference conversion exists between expr_type
+		// and target_type
+		//
+		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
+		{
+			Type expr_type = expr.Type;
+			
+			//
+			// This is the boxed case.
+			//
+			if (target_type == TypeManager.object_type) {
+				if ((expr_type.IsClass) ||
+				    (expr_type.IsValueType) ||
+				    (expr_type.IsInterface))
+					return true;
+				
+			} else if (expr_type.IsSubclassOf (target_type)) {
+				return true;
+				
+			} else {
+				// Please remember that all code below actually comes
+				// from ImplicitReferenceConversion so make sure code remains in sync
+				
+				// from any class-type S to any interface-type T.
+				if (expr_type.IsClass && target_type.IsInterface) {
+					if (TypeManager.ImplementsInterface (expr_type, target_type))
+						return true;
+				}
+				
+				// from any interface type S to interface-type T.
+				if (expr_type.IsInterface && target_type.IsInterface)
+					if (TypeManager.ImplementsInterface (expr_type, target_type))
+						return true;
+				
+				// from an array-type S to an array-type of type T
+				if (expr_type.IsArray && target_type.IsArray) {
+					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
+						
+						Type expr_element_type = expr_type.GetElementType ();
+
+						if (MyEmptyExpr == null)
+							MyEmptyExpr = new EmptyExpression ();
+						
+						MyEmptyExpr.SetType (expr_element_type);
+						Type target_element_type = target_type.GetElementType ();
+						
+						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
+							if (StandardConversionExists (MyEmptyExpr,
+										      target_element_type))
+								return true;
+					}
+				}
+				
+				// from an array-type to System.Array
+				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
+					return true;
+				
+				// from any delegate type to System.Delegate
+				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
+				    target_type == TypeManager.delegate_type)
+					if (target_type.IsAssignableFrom (expr_type))
+						return true;
+					
+				// from any array-type or delegate type into System.ICloneable.
+				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
+					if (target_type == TypeManager.icloneable_type)
+						return true;
+				
+				// from the null type to any reference-type.
+				if (expr is NullLiteral && !target_type.IsValueType)
+					return true;
+				
+			}
+
+			return false;
+		}
+		
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
@@ -859,73 +937,9 @@ namespace Mono.CSharp {
 					return true;
 			}	
 			
-			// Next reference conversions
-
-			if (target_type == TypeManager.object_type) {
-				if ((expr_type.IsClass) ||
-				    (expr_type.IsValueType) ||
-				    (expr_type.IsInterface))
-					return true;
-				
-			} else if (expr_type.IsSubclassOf (target_type)) {
+			if (ImplicitReferenceConversionExists (expr, target_type))
 				return true;
-				
-			} else {
-				// Please remember that all code below actually comes
-				// from ImplicitReferenceConversion so make sure code remains in sync
-				
-				// from any class-type S to any interface-type T.
-				if (expr_type.IsClass && target_type.IsInterface) {
-					if (TypeManager.ImplementsInterface (expr_type, target_type))
-						return true;
-				}
-				
-				// from any interface type S to interface-type T.
-				// FIXME : Is it right to use IsAssignableFrom ?
-				if (expr_type.IsInterface && target_type.IsInterface)
-					if (target_type.IsAssignableFrom (expr_type))
-						return true;
-				
-				// from an array-type S to an array-type of type T
-				if (expr_type.IsArray && target_type.IsArray) {
-					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
-						
-						Type expr_element_type = expr_type.GetElementType ();
-
-						if (MyEmptyExpr == null)
-							MyEmptyExpr = new EmptyExpression ();
-						
-						MyEmptyExpr.SetType (expr_element_type);
-						Type target_element_type = target_type.GetElementType ();
-						
-						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-							if (StandardConversionExists (MyEmptyExpr,
-										      target_element_type))
-								return true;
-					}
-				}
-				
-				// from an array-type to System.Array
-				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
-					return true;
-				
-				// from any delegate type to System.Delegate
-				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
-				    target_type == TypeManager.delegate_type)
-					if (target_type.IsAssignableFrom (expr_type))
-						return true;
-					
-				// from any array-type or delegate type into System.ICloneable.
-				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
-					if (target_type == TypeManager.icloneable_type)
-						return true;
-				
-				// from the null type to any reference-type.
-				if (expr is NullLiteral && !target_type.IsValueType)
-					return true;
-				
-			}
-
+			
 			if (expr is IntConstant){
 				int value = ((IntConstant) expr).Value;
 
@@ -1757,7 +1771,7 @@ namespace Mono.CSharp {
 		///  Returns whether an explicit reference conversion can be performed
 		///  from source_type to target_type
 		/// </summary>
-		static bool ExplicitReferenceConversionExists (Type source_type, Type target_type)
+		public static bool ExplicitReferenceConversionExists (Type source_type, Type target_type)
 		{
 			bool target_is_value_type = target_type.IsValueType;
 			

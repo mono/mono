@@ -54,3 +54,6 @@ numbers to match the Microsoft numbers:
 
 -20	Cannot find attribute type Blah (maybe you forgot to set the 
 	usage using the AttributeUsage attribute ?).
+
+-21	Bug in Microsoft compiler while applying named attribute for
+	StructLayout.CharSet value.

@@ -966,15 +966,37 @@ namespace Mono.CSharp {
 		{
 		}
 
+		enum Action {
+			AlwaysTrue, AlwaysNull, AlwaysFalse, LeaveOnStack, Probe
+		}
+
+		Action action;
+		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			
+
 			expr.Emit (ec);
-			
-			ig.Emit (OpCodes.Isinst, probe_type);
-			ig.Emit (OpCodes.Ldnull);
-			ig.Emit (OpCodes.Cgt_Un);
+
+			switch (action){
+			case Action.AlwaysFalse:
+				ig.Emit (OpCodes.Pop);
+				IntConstant.EmitInt (ig, 0);
+				return;
+			case Action.AlwaysTrue:
+				ig.Emit (OpCodes.Pop);
+				ig.Emit (OpCodes.Nop);
+				IntConstant.EmitInt (ig, 1);
+				return;
+			case Action.LeaveOnStack:
+				// the `e != null' rule.
+				return;
+			case Action.Probe:
+				ig.Emit (OpCodes.Isinst, probe_type);
+				ig.Emit (OpCodes.Ldnull);
+				ig.Emit (OpCodes.Cgt_Un);
+				return;
+			}
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -984,15 +1006,46 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
+			Type etype = expr.Type;
+			bool warning_always_matches = false;
+			bool warning_never_matches = false;
+
+			type = TypeManager.bool_type;
+			eclass = ExprClass.Value;
+
+			//
+			// First case, if at compile time, there is an implicit conversion
+			// then e != null (objects) or true (value types)
+			//
+			e = ConvertImplicitStandard (ec, expr, probe_type, loc);
+			if (e != null){
+				expr = e;
+				if (etype.IsValueType)
+					action = Action.AlwaysTrue;
+				else
+					action = Action.LeaveOnStack;
+
+				warning_always_matches = true;
+			} else if (ExplicitReferenceConversionExists (etype, probe_type)){
+				//
+				// Second case: explicit reference convresion
+				//
+				if (expr is NullLiteral)
+					action = Action.AlwaysFalse;
+				else
+					action = Action.Probe;
+			} else {
+				action = Action.AlwaysFalse;
+				warning_never_matches = true;
+			}
+			
 			if (RootContext.WarningLevel >= 1){
-				Type etype = expr.Type;
-				
-				if (etype == probe_type || etype.IsSubclassOf (probe_type)){
+				if (warning_always_matches)
 					Report.Warning (
 						183, loc,
 						"The expression is always of type `" +
 						TypeManager.CSharpName (probe_type) + "'");
-				} else if (etype != probe_type && !probe_type.IsSubclassOf (etype)){
+				else if (warning_never_matches){
 					if (!(probe_type.IsInterface || expr.Type.IsInterface))
 						Report.Warning (
 							184, loc,
@@ -1000,9 +1053,6 @@ namespace Mono.CSharp {
 							TypeManager.CSharpName (probe_type) + "'");
 				}
 			}
-			
-			type = TypeManager.bool_type;
-			eclass = ExprClass.Value;
 
 			return this;
 		}				
@@ -1017,19 +1067,26 @@ namespace Mono.CSharp {
 		{
 		}
 
+		bool do_isinst = false;
+		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
-			Type etype = expr.Type;
-
 			expr.Emit (ec);
-			if (etype == probe_type || etype.IsSubclassOf (probe_type))
-				return;
-			
-			ig.Emit (OpCodes.Isinst, probe_type);
+
+			if (do_isinst)
+				ig.Emit (OpCodes.Isinst, probe_type);
 		}
 
+		static void Error_CannotConvertType (Type source, Type target, Location loc)
+		{
+			Report.Error (
+				39, loc, "as operator can not convert from `" +
+				TypeManager.CSharpName (source) + "' to `" +
+				TypeManager.CSharpName (target) + "'");
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Expression e = base.DoResolve (ec);
@@ -1039,8 +1096,22 @@ namespace Mono.CSharp {
 
 			type = probe_type;
 			eclass = ExprClass.Value;
+			Type etype = expr.Type;
+			
+			e = ConvertImplicit (ec, expr, probe_type, loc);
+			if (e != null){
+				expr = e;
+				do_isinst = false;
+				return this;
+			}
 
-			return this;
+			if (ExplicitReferenceConversionExists (etype, probe_type)){
+				do_isinst = true;
+				return this;
+			}
+
+			Error_CannotConvertType (etype, probe_type, loc);
+			return null;
 		}				
 	}
 	
