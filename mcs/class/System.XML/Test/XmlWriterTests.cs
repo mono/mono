@@ -1,16 +1,16 @@
 //
 // System.Xml.XmlTextWriterTests
 //
-// Author:
+// Authors:
 //   Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//   Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) 2003 Atsushi Enomoto
+// (C) 2003 Martin Willemoes Hansen
 //
 //
 //  This class mainly checks inheritance and behaviors of XmlWriter.
 //
-
-
 
 using System;
 using System.IO;
@@ -21,30 +21,25 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlWriterTests : TestCase
+	[TestFixture]
+	public class XmlWriterTests
 	{
-		public XmlWriterTests () : base ("MonoTests.System.Xml.XmlWriterTests testsuite") {}
-		public XmlWriterTests (string name) : base (name) {}
-
-		protected override void SetUp ()
-		{
-		}
-
 		// MS.NET's not-overriden XmlWriter.WriteStartElement(name)
 		// invokes WriteStartElement(null, name, null). 
 		// WriteStartElement(name, ns) invokes (null, name, ns), too.
-		public void TestStartElement ()
+		[Test]
+		public void StartElement ()
 		{
 			StartElementTestWriter xw = new StartElementTestWriter ();
 			xw.WriteStartDocument ();
 			xw.WriteStartElement ("test");
-			AssertEquals ("StartElementOverride.NS", null, xw.NS);
-			AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
+			Assertion.AssertEquals ("StartElementOverride.NS", null, xw.NS);
+			Assertion.AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
 			xw.NS = String.Empty;
 			xw.Prefix = String.Empty;
 			xw.WriteStartElement ("test", "urn:hoge");
-			AssertEquals ("StartElementOverride.NS", "urn:hoge", xw.NS);
-			AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
+			Assertion.AssertEquals ("StartElementOverride.NS", "urn:hoge", xw.NS);
+			Assertion.AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
 		}
 		
 		class StartElementTestWriter : DefaultXmlWriter

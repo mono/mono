@@ -6,7 +6,7 @@
 
 <project name="System.XML_test" default="build">
 	<property name="debug" value="false"/>
-	<property name="nunit_home" value="..\..\..\nunit"/>
+	<property name="nunit_home" value="..\..\..\nunit20"/>
 
 	<target name="build">
 	</target>
@@ -16,17 +16,18 @@
 			<arg value="/nowarn:1595"/>
 			<sources>
 				<includes name="**/*.cs"/>
+				<excludes name="AllTests.cs"/>
 				<excludes name="TheTests.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
+			<references basedir="..\..\..\nunit20">
+				<includes name="NUnit.Framework.dll"/>
 			</references>
 			<arg value="/r:.\System.XML.dll"/>
 		</csc>
 	</target>
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.System.Xml.AllTests,System.XML_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="System.XML_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">

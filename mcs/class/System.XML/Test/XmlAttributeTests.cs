@@ -1,8 +1,10 @@
 // XmlAttributeTests.cs : Tests for the XmlAttribute class
 //
 // Author: Mike Kestner <mkestner@speakeasy.net>
+// Author: Martin Willemoes Hansen <mwh@sysrq.dk>
 //
-// <c> 2002 Mike Kestner
+// (C) 2002 Mike Kestner
+// (C) 2003 Martin Willemoes Hansen
 
 using System;
 using System.Xml;
@@ -11,104 +13,114 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlAttributeTests : TestCase
+	[TestFixture]
+	public class XmlAttributeTests
 	{
-		public XmlAttributeTests () : base("MonoTests.System.Xml.XmlAttributeTests testsuite") { }
-		public XmlAttributeTests (string name) : base(name) { }
-
 		XmlDocument doc;
 		XmlAttribute attr;
 
-		protected override void SetUp()
+		[SetUp]
+		public void GetReady()
 		{
 			doc = new XmlDocument ();
 			attr = doc.CreateAttribute ("attr1");
 			attr.Value = "val1";
 		}
 
-		public void TestAttributes ()
+		[Test]
+		public void Attributes ()
 		{
-			AssertNull (attr.Attributes);
+			Assertion.AssertNull (attr.Attributes);
 		}
 
-		public void TestAttributeInnerAndOuterXml ()
+		[Test]
+		public void AttributeInnerAndOuterXml ()
 		{
 			attr = doc.CreateAttribute ("foo", "bar", "http://abc.def");
 			attr.Value = "baz";
-			AssertEquals ("baz", attr.InnerXml);
-			AssertEquals ("foo:bar=\"baz\"", attr.OuterXml);
+			Assertion.AssertEquals ("baz", attr.InnerXml);
+			Assertion.AssertEquals ("foo:bar=\"baz\"", attr.OuterXml);
 		}
 
-		public void TestAttributeWithNoValue ()
+		[Test]
+		public void AttributeWithNoValue ()
 		{
 			XmlAttribute attribute = doc.CreateAttribute ("name");
-			AssertEquals (String.Empty, attribute.Value);
-			Assert (!attribute.HasChildNodes);
-			AssertNull (attribute.FirstChild);
-			AssertNull (attribute.LastChild);
-			AssertEquals (0, attribute.ChildNodes.Count);
+			Assertion.AssertEquals (String.Empty, attribute.Value);
+			Assertion.Assert (!attribute.HasChildNodes);
+			Assertion.AssertNull (attribute.FirstChild);
+			Assertion.AssertNull (attribute.LastChild);
+			Assertion.AssertEquals (0, attribute.ChildNodes.Count);
 		}
 
-		public void TestAttributeWithValue ()
+		[Test]
+		public void AttributeWithValue ()
 		{
 			XmlAttribute attribute = doc.CreateAttribute ("name");
 			attribute.Value = "value";
-			AssertEquals ("value", attribute.Value);
-			Assert (attribute.HasChildNodes);
-			AssertNotNull (attribute.FirstChild);
-			AssertNotNull (attribute.LastChild);
-			AssertEquals (1, attribute.ChildNodes.Count);
-			AssertEquals (XmlNodeType.Text, attribute.ChildNodes [0].NodeType);
-			AssertEquals ("value", attribute.ChildNodes [0].Value);
+			Assertion.AssertEquals ("value", attribute.Value);
+			Assertion.Assert (attribute.HasChildNodes);
+			Assertion.AssertNotNull (attribute.FirstChild);
+			Assertion.AssertNotNull (attribute.LastChild);
+			Assertion.AssertEquals (1, attribute.ChildNodes.Count);
+			Assertion.AssertEquals (XmlNodeType.Text, attribute.ChildNodes [0].NodeType);
+			Assertion.AssertEquals ("value", attribute.ChildNodes [0].Value);
 		}
 
-		public void TestHasChildNodes ()
+		[Test]
+		public void HasChildNodes ()
 		{
-			Assert (attr.HasChildNodes);
+			Assertion.Assert (attr.HasChildNodes);
 		}
 
-		public void TestName ()
+		[Test]
+		public void Name ()
 		{
-			AssertEquals ("attr1", attr.Name);
+			Assertion.AssertEquals ("attr1", attr.Name);
 		}
 
-		public void TestNodeType ()
+		[Test]
+		public void NodeType ()
 		{
-			AssertEquals (XmlNodeType.Attribute, attr.NodeType);
+			Assertion.AssertEquals (XmlNodeType.Attribute, attr.NodeType);
 		}
 
-		public void TestOwnerDocument ()
+		[Test]
+		public void OwnerDocument ()
 		{
-			AssertSame (doc, attr.OwnerDocument);
+			Assertion.AssertSame (doc, attr.OwnerDocument);
 		}
 
-		public void TestParentNode ()
+		[Test]
+		public void ParentNode ()
 		{
-			AssertNull ("Attr parents not allowed", attr.ParentNode);
+			Assertion.AssertNull ("Attr parents not allowed", attr.ParentNode);
 		}
 
-		public void TestValue ()
+		[Test]
+		public void Value ()
 		{
-			AssertEquals ("val1", attr.Value);
+			Assertion.AssertEquals ("val1", attr.Value);
 		}
 
-		public void TestSetInnerTextAndXml ()
+		[Test]
+		public void SetInnerTextAndXml ()
 		{
 			string original = doc.OuterXml;
 			doc.LoadXml ("<root name='value' />");
 			XmlNodeChangedEventHandler eh = new XmlNodeChangedEventHandler (OnSetInnerText);
 			try {
 				doc.DocumentElement.Attributes ["name"].InnerText = "a&b";
-				AssertEquals ("setInnerText", "a&b", doc.DocumentElement.Attributes ["name"].Value);
+				Assertion.AssertEquals ("setInnerText", "a&b", doc.DocumentElement.Attributes ["name"].Value);
 				doc.DocumentElement.Attributes ["name"].InnerXml = "a&amp;b";
-				AssertEquals ("setInnerXml", "a&b", doc.DocumentElement.Attributes ["name"].Value);
+				Assertion.AssertEquals ("setInnerXml", "a&b", doc.DocumentElement.Attributes ["name"].Value);
 
 				doc.NodeChanged += eh;
 				doc.DocumentElement.Attributes ["name"].InnerText = "fire";
 				// If you failed to pass it, then the reason may be loop of event.
-				AssertEquals ("setInnerText.Event", "event was fired", doc.DocumentElement.GetAttribute ("appended"));
+				Assertion.AssertEquals ("setInnerText.Event", "event was fired", doc.DocumentElement.GetAttribute ("appended"));
 			} catch(Exception ex) {
-				Fail(ex.Message);
+				Assertion.Fail(ex.Message);
 			} finally {
 				doc.LoadXml (original);
 				doc.NodeChanged -= eh;

@@ -1,10 +1,11 @@
 //
 // System.Xml.XmlCommentTests.cs
 //
-// Author:
-//	Duncan Mak  (duncan@ximian.com)
+// Author: Duncan Mak  (duncan@ximian.com)
+// Author: Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) Ximian, Inc.
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -14,7 +15,8 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlCommentTests : TestCase
+	[TestFixture]
+	public class XmlCommentTests
 	{
 		XmlDocument document;
 		XmlComment comment;
@@ -22,73 +24,76 @@ namespace MonoTests.System.Xml
 		XmlNode deep;
 		XmlNode shallow;
 
-		public XmlCommentTests () : base ("MonoTests.System.Xml.XmlCommentTests testsuite") {}
-
-		public XmlCommentTests (string name) : base (name) {}
-
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 			document = new XmlDocument ();
 		}
 
-		public void TestXmlCommentCloneNode ()
+		[Test]
+		public void XmlCommentCloneNode ()
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
 			original = comment;
 
 			shallow = comment.CloneNode (false); // shallow
-			TestXmlNodeBaseProperties (original, shallow);
+			XmlNodeBaseProperties (original, shallow);
 			
 			deep = comment.CloneNode (true); // deep
-			TestXmlNodeBaseProperties (original, deep);
-			AssertEquals ("Value incorrectly cloned",
+			XmlNodeBaseProperties (original, deep);
+			Assertion.AssertEquals ("Value incorrectly cloned",
 				original.Value, deep.Value);
 
-			AssertEquals ("deep cloning differs from shallow cloning",
+			Assertion.AssertEquals ("deep cloning differs from shallow cloning",
 				deep.OuterXml, shallow.OuterXml);
 		}
 
-		public void TestXmlCommentInnerAndOuterXml ()
+		[Test]
+		public void XmlCommentInnerAndOuterXml ()
 		{
 			comment = document.CreateComment ("foo");
-			AssertEquals (String.Empty, comment.InnerXml);
-			AssertEquals ("<!--foo-->", comment.OuterXml);
+			Assertion.AssertEquals (String.Empty, comment.InnerXml);
+			Assertion.AssertEquals ("<!--foo-->", comment.OuterXml);
 		}
 
-		public void TestXmlCommentIsReadOnly ()
+		[Test]
+		public void XmlCommentIsReadOnly ()
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
-			AssertEquals ("XmlComment IsReadOnly property broken",
+			Assertion.AssertEquals ("XmlComment IsReadOnly property broken",
 				comment.IsReadOnly, false);
 		}
 
-		public void TestXmlCommentLocalName ()
+		[Test]
+		public void XmlCommentLocalName ()
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
-			AssertEquals (comment.NodeType + " LocalName property broken",
+			Assertion.AssertEquals (comment.NodeType + " LocalName property broken",
 				      comment.LocalName, "#comment");
 		}
 
-		public void TestXmlCommentName ()
+		[Test]
+		public void XmlCommentName ()
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
-			AssertEquals (comment.NodeType + " Name property broken",
+			Assertion.AssertEquals (comment.NodeType + " Name property broken",
 				comment.Name, "#comment");
 		}
 
-		public void TestXmlCommentNodeType ()
+		[Test]
+		public void XmlCommentNodeType ()
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
-			AssertEquals ("XmlComment NodeType property broken",
+			Assertion.AssertEquals ("XmlComment NodeType property broken",
 				      comment.NodeType.ToString (), "Comment");
 		}
 
-		internal void TestXmlNodeBaseProperties (XmlNode original, XmlNode cloned)
+		internal void XmlNodeBaseProperties (XmlNode original, XmlNode cloned)
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
@@ -96,11 +101,11 @@ namespace MonoTests.System.Xml
 			//			assertequals (original.nodetype + " was incorrectly cloned.",
 			//				      original.baseuri, cloned.baseuri);			
 
-			AssertNull (cloned.ParentNode);
-			AssertEquals ("Value incorrectly cloned",
+			Assertion.AssertNull (cloned.ParentNode);
+			Assertion.AssertEquals ("Value incorrectly cloned",
 				original.Value, cloned.Value);
 
-			Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
+			Assertion.Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
        
 	}

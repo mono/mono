@@ -1,10 +1,12 @@
 //
 // System.Xml.XmlEntityReference.cs
 //
-// Author:
+// Authors:
 //   Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//   Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) 2002 Atsushi Enomoto
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -13,23 +15,18 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlEntityReferenceTests : TestCase
+	[TestFixture]
+	public class XmlEntityReferenceTests
 	{
-		public XmlEntityReferenceTests () : base ("MonoTests.System.Xml.XmlEntityReferenceTests testsuite") {}
-		public XmlEntityReferenceTests (string name) : base (name) {}
-
-		protected override void SetUp ()
-		{
-		}
-
-		public void TestWriteTo ()
+		[Test]
+		public void WriteTo ()
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml("<root/>");
 			XmlEntityReference er = doc.CreateEntityReference("foo");
 			doc.DocumentElement.AppendChild(er);
-			AssertEquals ("Name", "foo", er.Name);
-			AssertEquals ("WriteTo", "<root>&foo;</root>", doc.DocumentElement.OuterXml);
+			Assertion.AssertEquals ("Name", "foo", er.Name);
+			Assertion.AssertEquals ("WriteTo", "<root>&foo;</root>", doc.DocumentElement.OuterXml);
 		}
 	}
 }

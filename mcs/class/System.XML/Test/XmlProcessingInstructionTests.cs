@@ -1,10 +1,12 @@
 //
 // System.Xml.XmlTextWriterTests
 //
-// Author:
+// Authors:
 //   Kral Ferch <kral_ferch@hotmail.com>
+//   Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) 2002 Kral Ferch
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -13,24 +15,24 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlProcessingInstructionTests : TestCase
+	[TestFixture]
+	public class XmlProcessingInstructionTests
 	{
-		public XmlProcessingInstructionTests () : base ("MonoTests.System.Xml.XmlProcessingInstructionTests testsuite") {}
-		public XmlProcessingInstructionTests (string name) : base (name) {}
-
 		XmlDocument document;
 		XmlProcessingInstruction pi;
 
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 			document = new XmlDocument ();
 		}
 
-		public void TestInnerAndOuterXml ()
+		[Test]
+		public void InnerAndOuterXml ()
 		{
 			pi = document.CreateProcessingInstruction ("foo", "bar");
-			AssertEquals (String.Empty, pi.InnerXml);
-			AssertEquals ("<?foo bar?>", pi.OuterXml);
+			Assertion.AssertEquals (String.Empty, pi.InnerXml);
+			Assertion.AssertEquals ("<?foo bar?>", pi.OuterXml);
 		}
 	}
 }

@@ -2,8 +2,10 @@
 // System.Xml.XmlDocumentFragment.cs
 //
 // Author: Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
+// Author: Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) 2002 Atsushi Enomoto
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -13,29 +15,23 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlDocumentFragmentTests : TestCase
+	[TestFixture]
+	public class XmlDocumentFragmentTests
 	{
 		XmlDocument document;
 		XmlDocumentFragment fragment;
-		
-		public XmlDocumentFragmentTests (string name)
-			: base (name)
-		{
-		}
 
-		protected override void SetUp ()
-		{
-		}
-
-		public void TestConstructor ()
+		[Test]
+		public void Constructor ()
 		{
 			XmlDocument d = new XmlDocument ();
 			XmlDocumentFragment df = d.CreateDocumentFragment ();
-			AssertEquals ("#Constructor.NodeName", "#document-fragment", df.Name);
-			AssertEquals ("#Constructor.NodeType", XmlNodeType.DocumentFragment, df.NodeType);
+			Assertion.AssertEquals ("#Constructor.NodeName", "#document-fragment", df.Name);
+			Assertion.AssertEquals ("#Constructor.NodeType", XmlNodeType.DocumentFragment, df.NodeType);
 		}
 
-		public void TestAppendChildToFragment ()
+		[Test]
+		public void AppendChildToFragment ()
 		{
 			document = new XmlDocument ();
 			fragment = document.CreateDocumentFragment ();
@@ -45,12 +41,13 @@ namespace MonoTests.System.Xml
 
 			// appending element to fragment
 			fragment.AppendChild (el);
-			AssertNotNull ("#AppendChildToFragment.Element", fragment.FirstChild);
-			AssertNotNull ("#AppendChildToFragment.Element.Children", fragment.FirstChild.FirstChild);
-			AssertEquals ("#AppendChildToFragment.Element.Child.Text", "Test Paragraph", fragment.FirstChild.FirstChild.Value);
+			Assertion.AssertNotNull ("#AppendChildToFragment.Element", fragment.FirstChild);
+			Assertion.AssertNotNull ("#AppendChildToFragment.Element.Children", fragment.FirstChild.FirstChild);
+			Assertion.AssertEquals ("#AppendChildToFragment.Element.Child.Text", "Test Paragraph", fragment.FirstChild.FirstChild.Value);
 		}
 
-		public void TestAppendFragmentToElement ()
+		[Test]
+		public void AppendFragmentToElement ()
 		{
 			document = new XmlDocument ();
 			fragment = document.CreateDocumentFragment ();
@@ -61,13 +58,14 @@ namespace MonoTests.System.Xml
 
 			// appending fragment to element
 			body.AppendChild (fragment);
-			AssertNotNull ("#AppendFragmentToElement.Exist", body.FirstChild);
-			AssertEquals ("#AppendFragmentToElement.ChildIsElement", XmlNodeType.Element, body.FirstChild.NodeType);
-			AssertEquals ("#AppendFragmentToElement.FirstChild", "p", body.FirstChild.Name);
-			AssertEquals ("#AppendFragmentToElement.LastChild", "div", body.LastChild.Name);
+			Assertion.AssertNotNull ("#AppendFragmentToElement.Exist", body.FirstChild);
+			Assertion.AssertEquals ("#AppendFragmentToElement.ChildIsElement", XmlNodeType.Element, body.FirstChild.NodeType);
+			Assertion.AssertEquals ("#AppendFragmentToElement.FirstChild", "p", body.FirstChild.Name);
+			Assertion.AssertEquals ("#AppendFragmentToElement.LastChild", "div", body.LastChild.Name);
 		}
 
-		public void TestGetInnerXml ()
+		[Test]
+		public void GetInnerXml ()
 		{
 			// this will be also tests of TestWriteTo()/TestWriteContentTo()
 
@@ -76,18 +74,19 @@ namespace MonoTests.System.Xml
 			fragment.AppendChild (document.CreateElement ("foo"));
 			fragment.AppendChild (document.CreateElement ("bar"));
 			fragment.AppendChild (document.CreateElement ("baz"));
-			AssertEquals ("#Simple", "<foo /><bar /><baz />", fragment.InnerXml);
+			Assertion.AssertEquals ("#Simple", "<foo /><bar /><baz />", fragment.InnerXml);
 		}
 
-		public void TestSetInnerXml ()
+		[Test]
+		public void SetInnerXml ()
 		{
 			document = new XmlDocument ();
 			fragment = document.CreateDocumentFragment ();
 			fragment.InnerXml = "<foo /><bar><child /></bar><baz />";
-			AssertEquals ("foo", fragment.FirstChild.Name);
-			AssertEquals ("bar", fragment.FirstChild.NextSibling.Name);
-			AssertEquals ("child", fragment.FirstChild.NextSibling.FirstChild.Name);
-			AssertEquals ("baz", fragment.LastChild.Name);
+			Assertion.AssertEquals ("foo", fragment.FirstChild.Name);
+			Assertion.AssertEquals ("bar", fragment.FirstChild.NextSibling.Name);
+			Assertion.AssertEquals ("child", fragment.FirstChild.NextSibling.FirstChild.Name);
+			Assertion.AssertEquals ("baz", fragment.LastChild.Name);
 		}
 	}
 }

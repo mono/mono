@@ -1,10 +1,12 @@
 //
 // System.Xml.XmlTextWriterTests
 //
-// Author:
+// Authors:
 //   Kral Ferch <kral_ferch@hotmail.com>
+//   Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) 2002 Kral Ferch
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -13,11 +15,9 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlTextTests : TestCase
+	[TestFixture]
+	public class XmlTextTests
 	{
-		public XmlTextTests () : base ("MonoTests.System.Xml.XmlTextTests testsuite") {}
-		public XmlTextTests (string name) : base (name) {}
-
 		XmlDocument document;
 		XmlText text;
 		bool inserted;
@@ -27,7 +27,8 @@ namespace MonoTests.System.Xml
 		bool removed;
 		bool removing;
 
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 			document = new XmlDocument ();
 		}
@@ -62,14 +63,16 @@ namespace MonoTests.System.Xml
 			removing = true;
 		}
 
-		public void TestInnerAndOuterXml ()
+		[Test]
+		public void InnerAndOuterXml ()
 		{
 			text = document.CreateTextNode ("&<>\"'");
-			AssertEquals (String.Empty, text.InnerXml);
-			AssertEquals ("&amp;&lt;&gt;\"'", text.OuterXml);
+			Assertion.AssertEquals (String.Empty, text.InnerXml);
+			Assertion.AssertEquals ("&amp;&lt;&gt;\"'", text.OuterXml);
 		}
 		
-		public void TestSplitText ()
+		[Test]
+		public void SplitText ()
 		{
 			document.LoadXml ("<root>test text.</root>");
 			document.NodeInserted += new XmlNodeChangedEventHandler(EventNodeInserted);
@@ -77,12 +80,12 @@ namespace MonoTests.System.Xml
 			document.NodeRemoved += new XmlNodeChangedEventHandler(EventNodeRemoved);
 			XmlText t = document.DocumentElement.FirstChild as XmlText;
 			t.SplitText (5);
-			AssertNotNull (t.NextSibling);
-			AssertEquals ("test ", t.Value);
-			AssertEquals ("text.", t.NextSibling.Value);
-			Assert (changed);
-			Assert (inserted);
-			Assert (!removed);
+			Assertion.AssertNotNull (t.NextSibling);
+			Assertion.AssertEquals ("test ", t.Value);
+			Assertion.AssertEquals ("text.", t.NextSibling.Value);
+			Assertion.Assert (changed);
+			Assertion.Assert (inserted);
+			Assertion.Assert (!removed);
 		}
 	}
 }

@@ -2,8 +2,10 @@
 // System.Xml.NameTableTests.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
+// Author: Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) Ximian, Inc.
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -13,16 +15,13 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class NameTableTests : TestCase
+	[TestFixture]
+	public class NameTableTests
 	{
 		NameTable table;
 		
-		public NameTableTests (string name)
-			: base (name)
-		{
-		}
-
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 			table = new NameTable ();
 		}
@@ -30,42 +29,46 @@ namespace MonoTests.System.Xml
 		//
 		// Tests System.Xml.NameTable.Add (string)
 		//		
-		public void TestAdd1 ()
+		[Test]
+		public void Add1 ()
 		{
 			string add = "add1";
 			string testAdd = table.Add (add);
-			AssertEquals (add, testAdd);
-			AssertSame (add, testAdd);
+			Assertion.AssertEquals (add, testAdd);
+			Assertion.AssertSame (add, testAdd);
 		}
 
 		//
 		// Tests System.Xml.NameTable.Add (char[], int, int)
 		//		
-		public void TestAdd2 ()
+		[Test]
+		public void Add2 ()
 		{
 			char[] test = new char [4] { 'a', 'd', 'd', '2' };
 			int index = 0;
 			int length = 3; // "add"			
 
-			AssertEquals ("add", table.Add (test, index, length));
+			Assertion.AssertEquals ("add", table.Add (test, index, length));
 		}
 
 		//
 		// Tests System.Xml.NameTable.Get (string)
 		//
-		public void TestGet1 ()
+		[Test]
+		public void Get1 ()
 		{
 			string get1 = "get1";
 			string testGet = table.Add (get1);			
 
-			AssertEquals (table.Get (get1), testGet);
-			AssertSame (get1, testGet );
+			Assertion.AssertEquals (table.Get (get1), testGet);
+			Assertion.AssertSame (get1, testGet );
 		}
 
 		//
 		// Tests System.Xml.NameTable.Get (char[], int, int)
 		//
-		public void TestGet2 ()
+		[Test]
+		public void Get2 ()
 		{						
 			char[] test = new char [4] { 'g', 'e', 't', '2' };
 			int index = 0; 
@@ -73,19 +76,20 @@ namespace MonoTests.System.Xml
 			
 			string testGet = table.Add (test, index, length);			
 
-			AssertEquals (table.Get (test, index, length), testGet);
+			Assertion.AssertEquals (table.Get (test, index, length), testGet);
 		}
 
 		//
 		// Tests System.Xml.NameTable.Get (char[], int, 0)
 		//
-		public void TestGet3 ()
+		[Test]
+		public void Get3 ()
 		{
 			char[] test = new char [4] { 't', 'e', 's', 't' };
 			int index = 0;
 			int length = 0;
 
-			AssertEquals (table.Get (test, index, length), String.Empty);
+			Assertion.AssertEquals (table.Get (test, index, length), String.Empty);
 		}
 	}
 }

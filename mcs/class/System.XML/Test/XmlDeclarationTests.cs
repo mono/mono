@@ -1,10 +1,11 @@
 //
 // System.Xml.XmlDeclarationTests.cs
 //
-// Author:
-// 	Duncan Mak  (duncan@ximian.com)
+// Author: Duncan Mak  (duncan@ximian.com)
+// Author: Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) Ximian, Inc.
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -14,55 +15,54 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlDeclarationTests : TestCase
+	[TestFixture]
+	public class XmlDeclarationTests
 	{
-
 		XmlDocument document;
 		XmlDeclaration declaration;
 		
-		public XmlDeclarationTests () : base ("MonoTests.System.Xml.XmlDeclarationTests testsuite") {}
-		
-		public XmlDeclarationTests (string name) : base (name) {}
-
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 			document = new XmlDocument ();
 			document.LoadXml ("<foo><bar></bar></foo>");
 			declaration = document.CreateXmlDeclaration ("1.0", null, null);
 		}
 
-		public void TestInnerAndOuterXml ()
+		[Test]
+		public void InnerAndOuterXml ()
 		{
 			declaration = document.CreateXmlDeclaration ("1.0", null, null);
-			AssertEquals (String.Empty, declaration.InnerXml);
-			AssertEquals ("<?xml version=\"1.0\"?>", declaration.OuterXml);
+			Assertion.AssertEquals (String.Empty, declaration.InnerXml);
+			Assertion.AssertEquals ("<?xml version=\"1.0\"?>", declaration.OuterXml);
 
 			declaration = document.CreateXmlDeclaration ("1.0", "doesn't check", null);
-			AssertEquals (String.Empty, declaration.InnerXml);
-			AssertEquals ("<?xml version=\"1.0\" encoding=\"doesn't check\"?>", declaration.OuterXml);
+			Assertion.AssertEquals (String.Empty, declaration.InnerXml);
+			Assertion.AssertEquals ("<?xml version=\"1.0\" encoding=\"doesn't check\"?>", declaration.OuterXml);
 
 			declaration = document.CreateXmlDeclaration ("1.0", null, "yes");
-			AssertEquals (String.Empty, declaration.InnerXml);
-			AssertEquals ("<?xml version=\"1.0\" standalone=\"yes\"?>", declaration.OuterXml);
+			Assertion.AssertEquals (String.Empty, declaration.InnerXml);
+			Assertion.AssertEquals ("<?xml version=\"1.0\" standalone=\"yes\"?>", declaration.OuterXml);
 
 			declaration = document.CreateXmlDeclaration ("1.0", "foo", "no");
-			AssertEquals (String.Empty, declaration.InnerXml);
-			AssertEquals ("<?xml version=\"1.0\" encoding=\"foo\" standalone=\"no\"?>", declaration.OuterXml);
+			Assertion.AssertEquals (String.Empty, declaration.InnerXml);
+			Assertion.AssertEquals ("<?xml version=\"1.0\" encoding=\"foo\" standalone=\"no\"?>", declaration.OuterXml);
 		}
 
-		internal void TestXmlNodeBaseProperties (XmlNode original, XmlNode cloned)
+		internal void XmlNodeBaseProperties (XmlNode original, XmlNode cloned)
 		{
 //			assertequals (original.nodetype + " was incorrectly cloned.",
 //				      original.baseuri, cloned.baseuri);			
-			AssertNull (cloned.ParentNode);
+			Assertion.AssertNull (cloned.ParentNode);
 
-			AssertEquals ("Value incorrectly cloned",
+			Assertion.AssertEquals ("Value incorrectly cloned",
 				      original.Value, cloned.Value);
 			
-                        Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
+                        Assertion.Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
 
-		public void TestConstructor ()
+		[Test]
+		public void Constructor ()
 		{
 			try {
 				XmlDeclaration broken = document.CreateXmlDeclaration ("2.0", null, null);
@@ -70,83 +70,89 @@ namespace MonoTests.System.Xml
 				return;
 
 			} catch (Exception e) {
-				Fail("first arg null, wrong exception: " + e.ToString());
+				Assertion.Fail("first arg null, wrong exception: " + e.ToString());
 			}
 		}
 
-		public void TestNodeType ()
+		[Test]
+		public void NodeType ()
 		{
-			AssertEquals ("incorrect NodeType returned", XmlNodeType.XmlDeclaration, declaration.NodeType);
+			Assertion.AssertEquals ("incorrect NodeType returned", XmlNodeType.XmlDeclaration, declaration.NodeType);
 		}
 
-		public void TestNames ()
+		[Test]
+		public void Names ()
 		{
-			AssertEquals ("Name is incorrect", "xml", declaration.Name);
-			AssertEquals ("LocalName is incorrect", "xml", declaration.LocalName);
+			Assertion.AssertEquals ("Name is incorrect", "xml", declaration.Name);
+			Assertion.AssertEquals ("LocalName is incorrect", "xml", declaration.LocalName);
 		}
 
-		public void TestEncodingProperty ()
+		[Test]
+		public void EncodingProperty ()
 		{
 			XmlDeclaration d1 = document.CreateXmlDeclaration ("1.0", "foo", null);
-			AssertEquals ("Encoding property", "foo", d1.Encoding);
+			Assertion.AssertEquals ("Encoding property", "foo", d1.Encoding);
 
 			XmlDeclaration d2 = document.CreateXmlDeclaration ("1.0", null, null);
-			AssertEquals ("null Encoding property", String.Empty, d2.Encoding);
+			Assertion.AssertEquals ("null Encoding property", String.Empty, d2.Encoding);
 		}
 
-		public void TestStandaloneProperty ()
+		[Test]
+		public void StandaloneProperty ()
 		{
 			XmlDeclaration d1 = document.CreateXmlDeclaration ("1.0", null, "yes");
-			AssertEquals ("Yes standalone property", "yes", d1.Standalone);
+			Assertion.AssertEquals ("Yes standalone property", "yes", d1.Standalone);
 
 			XmlDeclaration d2 = document.CreateXmlDeclaration ("1.0", null, "no");
-			AssertEquals ("No standalone property", "no", d2.Standalone);
+			Assertion.AssertEquals ("No standalone property", "no", d2.Standalone);
 
 			XmlDeclaration d3 = document.CreateXmlDeclaration ("1.0", null, null);
-			AssertEquals ("null Standalone property", String.Empty, d3.Standalone);
+			Assertion.AssertEquals ("null Standalone property", String.Empty, d3.Standalone);
 		}
 
-		public void TestValueProperty ()
+		[Test]
+		public void ValueProperty ()
 		{
 			string expected = "version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"" ;
 
 			XmlDeclaration d = document.CreateXmlDeclaration ("1.0", "ISO-8859-1", "yes");
-			AssertEquals ("Value property", expected, d.Value);
+			Assertion.AssertEquals ("Value property", expected, d.Value);
 
 			d.Value = expected;
-			AssertEquals ("Value round-trip", expected, d.Value);
+			Assertion.AssertEquals ("Value round-trip", expected, d.Value);
 
 			d.Value = "   " + expected;
-			AssertEquals ("Value round-trip (padded)", expected, d.Value);
+			Assertion.AssertEquals ("Value round-trip (padded)", expected, d.Value);
 
 			d.Value = "version=\"1.0\"     encoding=\"ISO-8859-1\" standalone=\"yes\"" ;
-			AssertEquals ("Value round-trip (padded 2)", expected, d.Value);
+			Assertion.AssertEquals ("Value round-trip (padded 2)", expected, d.Value);
 
 			d.Value = "version=\"1.0\"\tencoding=\"ISO-8859-1\" standalone=\"yes\"" ;
-			AssertEquals ("Value round-trip (\\t)", expected, d.Value);
+			Assertion.AssertEquals ("Value round-trip (\\t)", expected, d.Value);
 
 			d.Value = "version=\"1.0\"\n    encoding=\"ISO-8859-1\" standalone=\"yes\"" ;
-			AssertEquals ("Value round-trip (\\n)", expected, d.Value);
+			Assertion.AssertEquals ("Value round-trip (\\n)", expected, d.Value);
 
 			d.Value = "version=\"1.0\"    encoding	=   \"ISO-8859-1\" standalone = \"yes\"" ;
-			AssertEquals ("Value round-trip (spaces)", expected, d.Value);
+			Assertion.AssertEquals ("Value round-trip (spaces)", expected, d.Value);
 
 			d.Value = "version='1.0' encoding='ISO-8859-1' standalone='yes'" ;
-			AssertEquals ("Value round-trip ('s)", expected, d.Value);
+			Assertion.AssertEquals ("Value round-trip ('s)", expected, d.Value);
 
 		}
 
-		public void TestXmlCommentCloneNode ()
+		[Test]
+		public void XmlCommentCloneNode ()
 		{
 			XmlNode original = declaration;
 
 			XmlNode shallow = declaration.CloneNode (false); // shallow
-			TestXmlNodeBaseProperties (original, shallow);
+			XmlNodeBaseProperties (original, shallow);
 			
 			XmlNode deep = declaration.CloneNode (true); // deep
-			TestXmlNodeBaseProperties (original, deep);
+			XmlNodeBaseProperties (original, deep);
 
-                        AssertEquals ("deep cloning differs from shallow cloning",
+                        Assertion.AssertEquals ("deep cloning differs from shallow cloning",
 				      deep.OuterXml, shallow.OuterXml);
 		}
 	}

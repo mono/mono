@@ -2,8 +2,10 @@
 // System.Xml.XmlDocumentTypeTests.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+// Author: Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) Ximian, Inc.
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -13,56 +15,53 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlDocumentTypeTests : TestCase
+	[TestFixture]
+	public class XmlDocumentTypeTests
 	{
 		XmlDocument document;
 		XmlDocumentType docType;
-		public XmlDocumentTypeTests ()
-			: base ("MonoTests.System.Xml.XmlDocumentTypeTests testsuite")
-		{
-		}
 
-		public XmlDocumentTypeTests (string name)
-			: base (name)
-		{
-		}
-
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 			document = new XmlDocument ();
 			docType = document.CreateDocumentType ("book", null, null, "<!ELEMENT book ANY>");
 			document.AppendChild (docType);
 		}
 
-		internal void TestXmlNodeBaseProperties (XmlNode original, XmlNode cloned)
+		internal void XmlNodeBaseProperties (XmlNode original, XmlNode cloned)
 		{
 //			assertequals (original.nodetype + " was incorrectly cloned.",
 //				      original.baseuri, cloned.baseuri);			
 
-			AssertNull (cloned.ParentNode);
-			AssertEquals ("Value incorrectly cloned",
+			Assertion.AssertNull (cloned.ParentNode);
+			Assertion.AssertEquals ("Value incorrectly cloned",
 				      original.Value, cloned.Value);
 
-                        Assert ("Copies, not pointers", !Object.ReferenceEquals (original, cloned));
+                        Assertion.Assert ("Copies, not pointers", !Object.ReferenceEquals (original, cloned));
 		}
 
-		public void TestName ()
+		[Test]
+		public void Name ()
 		{
-			AssertEquals ("Getting Name property", "book", docType.Name);
+			Assertion.AssertEquals ("Getting Name property", "book", docType.Name);
 		}
 
-		public void TestLocalName ()
+		[Test]
+		public void LocalName ()
 		{
-			AssertEquals ("Getting LocalName property", "book", docType.LocalName);
+			Assertion.AssertEquals ("Getting LocalName property", "book", docType.LocalName);
 		}
 
-		public void TestInternalSubset ()
+		[Test]
+		public void InternalSubset ()
 		{
-			AssertEquals ("Getting Internal Subset property",
+			Assertion.AssertEquals ("Getting Internal Subset property",
 				      "<!ELEMENT book ANY>", docType.InternalSubset);
 		}
 
-		public void TestAppendChild ()
+		[Test]
+		public void AppendChild ()
 		{
 			try {
 				XmlDocumentType type1 = document.CreateDocumentType ("book", null, null, null);
@@ -72,32 +71,35 @@ namespace MonoTests.System.Xml
 				return;
 
 			} catch (Exception) {				
-				Fail ("Incorrect Exception thrown.");
+				Assertion.Fail ("Incorrect Exception thrown.");
 			}
 		}
 
-		public void TestNodeType ()
+		[Test]
+		public void NodeType ()
 		{
-			AssertEquals ("NodeType property broken",
+			Assertion.AssertEquals ("NodeType property broken",
 				      docType.NodeType.ToString (), "DocumentType");
 		}
 		
-		public void TestIsReadOnly ()
+		[Test]
+		public void IsReadOnly ()
 		{
-			AssertEquals ("IsReadOnly property", "True", docType.IsReadOnly.ToString ());
+			Assertion.AssertEquals ("IsReadOnly property", "True", docType.IsReadOnly.ToString ());
 		}
 
-		public void TestCloneNode ()
+		[Test]
+		public void CloneNode ()
 		{
 			XmlNode original = docType;
 
 			XmlNode cloned1 = docType.CloneNode (true);
-			TestXmlNodeBaseProperties (original, cloned1);
+			XmlNodeBaseProperties (original, cloned1);
 
 			XmlNode cloned2 = docType.CloneNode (false);
-			TestXmlNodeBaseProperties (original, cloned2);
+			XmlNodeBaseProperties (original, cloned2);
 
-			AssertEquals ("Deep and shallow cloning", cloned1.Value, cloned2.Value);
+			Assertion.AssertEquals ("Deep and shallow cloning", cloned1.Value, cloned2.Value);
 		}
 	       
 	}

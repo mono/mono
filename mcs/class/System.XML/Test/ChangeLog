@@ -1,3 +1,21 @@
+2003-03-13  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* Removed AllTests.cs and TheTests.cs
+	* NUnit20ified NameTableTests.cs, SelectNodesTests.cs,
+          XmlAttributeCollectionTests.cs, XmlAttributeTests.cs,
+          XmlCDataSectionTests.cs, XmlCharacterDataTests.cs,
+          XmlCommentTests.cs, XmlDeclarationTests.cs,
+          XmlDocumentFragmentTests.cs, XmlDocumentTests.cs,
+          XmlDocumentTypeTests.cs, XmlElementTests.cs,
+          XmlEntityReferenceTests.cs, XmlNamespaceManagerTests.cs,
+          XmlNodeListTests.cs, XmlNodeReaderTests.cs,
+          XmlNodeTests.cs, XmlProcessingInstructionTests.cs,
+          XmlSignificantWhitespaceTests.cs, XmlTextReaderTests.cs,
+          XmlTextTests.cs, XmlTextWriterTests.cs,
+          XmlWhiteSpaceTests.cs, XmlWriterTests.cs,
+          XPathNavigatorEvaluateTests.cs, XPathNavigatorMatchesTests.cs,
+          XPathNavigatorTests.cs, makefile.gnu, System.XML_linux_test.args 
+	* Commited Atsushi Eno changes to System.XML_test.build
+	
 2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentTests.cs: added TestLoadExternalUri

@@ -1,10 +1,12 @@
 //
 // System.Xml.XmlCDataSectionTests.cs
 //
-// Author:
+// Authors:
 //	Duncan Mak  (duncan@ximian.com)
+//      Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) Ximian, Inc.
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -14,7 +16,8 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XmlCDataSectionTests : TestCase
+	[TestFixture]
+	public class XmlCDataSectionTests
 	{
 		XmlDocument document;
 		XmlCDataSection section;
@@ -22,77 +25,74 @@ namespace MonoTests.System.Xml
 		XmlNode deep;
 		XmlNode shallow;
 
-		public XmlCDataSectionTests ()
-			: base ("MonoTests.System.Xml.XmlCDataSectionTests testsuite")
-		{
-		}
-
-		public XmlCDataSectionTests (string name)
-			: base (name)
-		{
-		}
-
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 			document = new XmlDocument ();
 			document.LoadXml ("<root><foo></foo></root>");
 			section = document.CreateCDataSection ("CDataSection");
 		}
 
-		internal void TestXmlNodeBaseProperties (XmlNode original, XmlNode cloned)
+		internal void XmlNodeBaseProperties (XmlNode original, XmlNode cloned)
 		{
-			// AssertEquals (original.nodetype + " was incorrectly cloned.",
+			// Assertion.AssertEquals (original.nodetype + " was incorrectly cloned.",
 			// 		 original.baseuri, cloned.baseuri);			
-			AssertNull (cloned.ParentNode);
-                        Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
+			Assertion.AssertNull (cloned.ParentNode);
+                        Assertion.Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
 	       
-		public void TestXmlCDataSectionInnerAndOuterXml ()
+		[Test]
+		public void XmlCDataSectionInnerAndOuterXml ()
 		{
 			section = document.CreateCDataSection ("foo");
-			AssertEquals (String.Empty, section.InnerXml);
-			AssertEquals ("<![CDATA[foo]]>", section.OuterXml);
+			Assertion.AssertEquals (String.Empty, section.InnerXml);
+			Assertion.AssertEquals ("<![CDATA[foo]]>", section.OuterXml);
 		}
 
-		public void TestXmlCDataSectionName ()
+		[Test]
+		public void XmlCDataSectionName ()
 		{
-			AssertEquals (section.NodeType + " Name property broken",
+			Assertion.AssertEquals (section.NodeType + " Name property broken",
 				      section.Name, "#cdata-section");
 		}
 
-		public void TestXmlCDataSectionLocalName ()
+		[Test]
+		public void XmlCDataSectionLocalName ()
 		{
-			AssertEquals (section.NodeType + " LocalName property broken",
+			Assertion.AssertEquals (section.NodeType + " LocalName property broken",
 				      section.LocalName, "#cdata-section");
 		}
 
-		public void TestXmlCDataSectionNodeType ()
+		[Test]
+		public void XmlCDataSectionNodeType ()
 		{
-			AssertEquals ("XmlCDataSection NodeType property broken",
+			Assertion.AssertEquals ("XmlCDataSection NodeType property broken",
 				      section.NodeType.ToString (), "CDATA");
 		}
 
-		public void TestXmlCDataSectionIsReadOnly ()
+		[Test]
+		public void XmlCDataSectionIsReadOnly ()
 		{
-			AssertEquals ("XmlCDataSection IsReadOnly property broken",
+			Assertion.AssertEquals ("XmlCDataSection IsReadOnly property broken",
 				      section.IsReadOnly, false);
 		}
 
-		public void TestXmlCDataSectionCloneNode ()
+		[Test]
+		public void XmlCDataSectionCloneNode ()
 		{
 			original = section;
 
 			shallow = section.CloneNode (false); // shallow
-			TestXmlNodeBaseProperties (original, shallow);
-			AssertEquals ("Value incorrectly cloned",
+			XmlNodeBaseProperties (original, shallow);
+			Assertion.AssertEquals ("Value incorrectly cloned",
 				      original.Value, shallow.Value);
 			
 			deep = section.CloneNode (true); // deep
-			TestXmlNodeBaseProperties (original, deep);
-			AssertEquals ("Value incorrectly cloned",
+			XmlNodeBaseProperties (original, deep);
+			Assertion.AssertEquals ("Value incorrectly cloned",
 				       original.Value, deep.Value);
 
-                        AssertEquals ("deep cloning differs from shallow cloning",
+                        Assertion.AssertEquals ("deep cloning differs from shallow cloning",
 				      deep.OuterXml, shallow.OuterXml);
 		}
 	}

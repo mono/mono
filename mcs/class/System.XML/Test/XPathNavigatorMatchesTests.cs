@@ -1,10 +1,12 @@
 //
 // MonoTests.System.Xml.XPathNavigatorMatchesTests
 //
-// Author:
+// Authors:
 //   Jason Diamond <jason@injektilo.org>
+//   Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) 2002 Jason Diamond
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -15,101 +17,109 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class XPathNavigatorMatchesTests : TestCase
+	[TestFixture]
+	public class XPathNavigatorMatchesTests
 	{
-		public XPathNavigatorMatchesTests () : base ("MonoTests.System.Xml.XPathNavigatorMatchesTests testsuite") {}
-		public XPathNavigatorMatchesTests (string name) : base (name) {}
-
-		public void TestMatchRoot ()
+		[Test]
+		public void MatchRoot ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XPathNavigator navigator = document.CreateNavigator ();
 
-			Assert (navigator.Matches ("/"));
+			Assertion.Assert (navigator.Matches ("/"));
 		}
 
-		public void TestFalseMatchRoot ()
+		[Test]
+		public void FalseMatchRoot ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XPathNavigator navigator = document.CreateNavigator ();
 
-			Assert (!navigator.Matches ("foo"));
+			Assertion.Assert (!navigator.Matches ("foo"));
 		}
 
-		public void TestMatchDocumentElement ()
+		[Test]
+		public void MatchDocumentElement ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
-			Assert (navigator.Matches ("foo"));
+			Assertion.Assert (navigator.Matches ("foo"));
 		}
 
-		public void TestMatchAbsoluteDocumentElement ()
+		[Test]
+		public void MatchAbsoluteDocumentElement ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
-			Assert (navigator.Matches ("/foo"));
+			Assertion.Assert (navigator.Matches ("/foo"));
 		}
 
-		public void TestMatchDocumentElementChild ()
+		[Test]
+		public void MatchDocumentElementChild ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /></foo>");
 			XPathNavigator navigator = document.DocumentElement.FirstChild.CreateNavigator ();
 
-			Assert (navigator.Matches ("bar"));
-			Assert (navigator.Matches ("foo/bar"));
+			Assertion.Assert (navigator.Matches ("bar"));
+			Assertion.Assert (navigator.Matches ("foo/bar"));
 		}
 
-		public void TestMatchAttribute ()
+		[Test]
+		public void MatchAttribute ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' />");
 			XPathNavigator navigator = document.DocumentElement.Attributes[0].CreateNavigator ();
 
-			Assert (navigator.Matches ("@bar"));
-			Assert (navigator.Matches ("foo/@bar"));
+			Assertion.Assert (navigator.Matches ("@bar"));
+			Assertion.Assert (navigator.Matches ("foo/@bar"));
 		}
 
-		public void TestSlashSlash ()
+		[Test]
+		public void SlashSlash ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar><baz/></bar></foo>");
 			XPathNavigator navigator = document.DocumentElement.FirstChild.FirstChild.CreateNavigator ();
 
-			Assert (navigator.Matches ("foo//baz"));
+			Assertion.Assert (navigator.Matches ("foo//baz"));
 		}
 
-		public void TestAbsoluteSlashSlash ()
+		[Test]
+		public void AbsoluteSlashSlash ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar><baz/></bar></foo>");
 			XPathNavigator navigator = document.DocumentElement.FirstChild.FirstChild.CreateNavigator ();
 
-			Assert (navigator.Matches ("//baz"));
+			Assertion.Assert (navigator.Matches ("//baz"));
 		}
 
-		public void TestMatchDocumentElementWithPredicate ()
+		[Test]
+		public void MatchDocumentElementWithPredicate ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /></foo>");
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
-			Assert (navigator.Matches ("foo[bar]"));
+			Assertion.Assert (navigator.Matches ("foo[bar]"));
 		}
 
-		public void TestFalseMatchDocumentElementWithPredicate ()
+		[Test]
+		public void FalseMatchDocumentElementWithPredicate ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /></foo>");
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
-			Assert (!navigator.Matches ("foo[baz]"));
+			Assertion.Assert (!navigator.Matches ("foo[baz]"));
 		}
 	}
 }

@@ -1,10 +1,11 @@
 //
 // MonoTests.System.Xml.SelectNodesTests
 //
-// Author:
-//   Jason Diamond <jason@injektilo.org>
+// Author: Jason Diamond <jason@injektilo.org>
+// Author: Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) 2002 Jason Diamond
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -14,225 +15,246 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
-	public class SelectNodesTests : TestCase
+	[TestFixture]
+	public class SelectNodesTests
 	{
-		public SelectNodesTests () : base ("MonoTests.System.Xml.SelectNodesTests testsuite") {}
-		public SelectNodesTests (string name) : base (name) {}
 
-		public void TestRoot ()
+		[Test]
+		public void Root ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XmlNodeList nodes = document.SelectNodes ("/");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document, nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document, nodes [0]);
 		}
 
-		public void TestDocumentElement ()
+		[Test]
+		public void DocumentElement ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XmlNodeList nodes = document.SelectNodes ("/foo");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement, nodes [0]);
 		}
 
-		public void TestBadDocumentElement ()
+		[Test]
+		public void BadDocumentElement ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XmlNodeList nodes = document.SelectNodes ("/bar");
-			AssertEquals (0, nodes.Count);
+			Assertion.AssertEquals (0, nodes.Count);
 		}
 
-		public void TestElementWildcard ()
+		[Test]
+		public void ElementWildcard ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/*");
-			AssertEquals (2, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
+			Assertion.AssertEquals (2, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
 		}
 
-		public void TestOneChildElement ()
+		[Test]
+		public void OneChildElement ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
 		}
 
-		public void TestOneOtherChildElement ()
+		[Test]
+		public void OneOtherChildElement ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/baz");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
 		}
 
-		public void TestTextNode ()
+		[Test]
+		public void TextNode ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo>bar</foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/text()");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
 		}
 
-		public void TestSplitTextNodes ()
+		[Test]
+		public void SplitTextNodes ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo>bar<baz />quux</foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/text()");
-			AssertEquals (2, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [2], nodes [1]);
+			Assertion.AssertEquals (2, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [2], nodes [1]);
 		}
 
-		public void TestAbbreviatedParentAxis ()
+		[Test]
+		public void AbbreviatedParentAxis ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/..");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement, nodes [0]);
 		}
 
-		public void TestFullParentAxis ()
+		[Test]
+		public void FullParentAxis ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/parent::node()");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement, nodes [0]);
 		}
 
-		public void TestAbbreviatedAttributeAxis ()
+		[Test]
+		public void AbbreviatedAttributeAxis ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' />");
 			XmlNodeList nodes = document.SelectNodes ("/foo/@bar");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
 		}
 
-		public void TestFullAttributeAxis ()
+		[Test]
+		public void FullAttributeAxis ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' />");
 			XmlNodeList nodes = document.SelectNodes ("/foo/attribute::bar");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
 		}
 
-		public void TestAbbreviatedAttributeWildcard ()
+		[Test]
+		public void AbbreviatedAttributeWildcard ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' quux='quuux' />");
 			XmlNodeList nodes = document.SelectNodes ("/foo/@*");
-			AssertEquals (2, nodes.Count);
+			Assertion.AssertEquals (2, nodes.Count);
 			// are the attributes guanteed to be ordered in the node list?
-			AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
-			AssertSame (document.DocumentElement.Attributes ["quux"], nodes [1]);
+			Assertion.AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
+			Assertion.AssertSame (document.DocumentElement.Attributes ["quux"], nodes [1]);
 		}
 
-		public void TestAttributeParent ()
+		[Test]
+		public void AttributeParent ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' />");
 			XmlNodeList nodes = document.SelectNodes ("/foo/@bar/..");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement, nodes [0]);
 		}
 		
-		public void TestUnionOperator ()
+		[Test]
+		public void UnionOperator ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar|/foo/baz");
-			AssertEquals (2, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
+			Assertion.AssertEquals (2, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
 		}
 		
-		public void TestNodeWildcard ()
+		[Test]
+		public void NodeWildcard ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar />baz<quux /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/node()");
-			AssertEquals (3, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
-			AssertSame (document.DocumentElement.ChildNodes [2], nodes [2]);
+			Assertion.AssertEquals (3, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [2], nodes [2]);
 		}
 
-		public void TestPositionalPredicate ()
+		[Test]
+		public void PositionalPredicate ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar>1</bar><bar>2</bar></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar[1]");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
 		}
 
-		public void TestAllFollowingSiblings ()
+		[Test]
+		public void AllFollowingSiblings ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /><quux /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/following-sibling::*");
-			AssertEquals (2, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [2], nodes [1]);
+			Assertion.AssertEquals (2, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [2], nodes [1]);
 		}
 
-		public void TestFollowingSiblingBaz ()
+		[Test]
+		public void FollowingSiblingBaz ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /><quux /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/following-sibling::baz");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
 		}
 
-		public void TestFollowingSiblingQuux ()
+		[Test]
+		public void FollowingSiblingQuux ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /><quux /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/following-sibling::quux");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [2], nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement.ChildNodes [2], nodes [0]);
 		}
 
-		public void TestUnion ()
+		[Test]
+		public void Union ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XmlNodeList nodes = document.SelectNodes ("(/foo) | (/foo)");
-			AssertEquals (1, nodes.Count);	// bug #27548
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);	// bug #27548
+			Assertion.AssertSame (document.DocumentElement, nodes [0]);
 		}
 
-		public void TestAlphabetDigitMixedName ()
+		[Test]
+		public void AlphabetDigitMixedName ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo1 />");
 			XmlNodeList nodes = document.SelectNodes ("/foo1");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assertion.AssertEquals (1, nodes.Count);
+			Assertion.AssertSame (document.DocumentElement, nodes [0]);
 		}
 
-
-		public void TestNamespaceSelect()
+		[Test]
+		public void NamespaceSelect()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<root xmlns=\"urn:foo1:foo2\"/>");
 			XmlNamespaceManager nsmgr = new XmlNamespaceManager(document.NameTable);
 			nsmgr.AddNamespace("foons", "urn:foo1:foo2");
 			XmlNodeList nodes = document.SelectNodes ("/foons:root", nsmgr);
-			AssertEquals (1, nodes.Count);
+			Assertion.AssertEquals (1, nodes.Count);
 		}
 	}
 }
