@@ -1599,10 +1599,7 @@ namespace System
 				format = _GetStandardPattern (fchar, dfi, out useutc);
 			}
 
-			if (useutc)
-				return this.ToUniversalTime ()._ToString (format, dfi);
-			else
-				return this._ToString (format, dfi);
+			return this._ToString (format, dfi);
 		}
 
 		public DateTime ToLocalTime()
