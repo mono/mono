@@ -1,4 +1,8 @@
 
+Fri Jun 7 17:36:33 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* debug-helpers.c: fix typo.
+
 Fri Jun 7 17:00:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cil-coff.h, icall.c, image.c, reflection.c, reflection.h:
