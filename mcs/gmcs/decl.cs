@@ -303,9 +303,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void Emit ()
 		{
-			// Hack with Parent == null is for EnumMember 
-			if (Parent == null || (GetObsoleteAttribute (Parent) == null && Parent.GetObsoleteAttribute (Parent.Parent) == null))
-				VerifyObsoleteAttribute ();
+			VerifyObsoleteAttribute ();
 
 			if (!RootContext.VerifyClsCompliance)
 				return;
