@@ -278,4 +278,23 @@ public class X
 			throw new FormatException ();
 		}
 	}
+
+	// code after try/catch block is unreachable. always returns.
+        static int test19 () {
+                int res;
+                int a = Environment.NewLine.Length;
+                int fin = 0;
+
+                try {
+                        res = 10/a;
+                        throw new NotImplementedException ();
+                } catch (NotImplementedException e) {
+                        fin = 2;
+                        throw new NotImplementedException ();
+                } finally {
+                        fin = 1;
+                }
+                return res;
+        }
+
 }
