@@ -1,0 +1,7 @@
+
+2003-01-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* IControlAdapter.cs     : Completed interface.
+	* MobileControl.cs       : Initial implementation.
+	* MobilePage.cs          : Dummy implementation.
+
