@@ -24,20 +24,92 @@ public class CharEnumeratorTest : TestCase
 		}
 	}
 
-	public void TestBasic ()
-	{
-		string s = "Emma en Sophie";
-		string s2 = "";
-		CharEnumerator ce = s.GetEnumerator ();
-		bool cont;
+	string _s;
 
-		cont = ce.MoveNext ();
+	protected override void SetUp ()
+	{
+		_s = "Emma en Sophie";
+	}
+
+	private string GetFromEnumerator (CharEnumerator ce)
+	{
+		string res = "";
+		bool cont = true;
+
 		while (cont) {
-			s2 += ce.Current;
+			res += ce.Current;
 			cont = ce.MoveNext ();
 		}
+
+		return res;
+	}
+
+	public void TestBasic ()
+	{
+		CharEnumerator ce = _s.GetEnumerator ();
+
+		ce.MoveNext ();
+
+		AssertEquals ("A1", _s, GetFromEnumerator (ce));
+	}
+
+	public void TestClone ()
+	{
+		CharEnumerator ce1, ce2=null;
+		bool cont;
+
+		ce1 = _s.GetEnumerator ();
+		cont = ce1.MoveNext ();
+		while (cont) {
+			if (ce1.Current == 'S') {
+				ce2 = (CharEnumerator) (ce1.Clone ());
+			}
+			cont = ce1.MoveNext ();
+		}
+
+		AssertEquals ("A1", "Sophie", GetFromEnumerator(ce2));
+	}
+
+	public void TestReadOutOfBounds ()
+	{
+		char c;
+		bool exception;
+		CharEnumerator ce = _s.GetEnumerator ();
 	
-		AssertEquals ("A1", s, s2);
+		try {
+			c = ce.Current;
+			exception = false;
+		}
+		catch (InvalidOperationException) {
+			exception = true;
+		}
+		Assert ("A1", exception);
+
+		ce.MoveNext ();
+
+		AssertEquals ("A2", _s, GetFromEnumerator (ce));
+
+		try {
+			c = ce.Current;
+		}
+		catch (InvalidOperationException) {
+			exception = true;
+		}
+		Assert ("A3", exception);
+
+		ce.Reset ();
+
+		try {
+			c = ce.Current;
+		}
+		catch (InvalidOperationException) {
+			exception = true;
+		}
+		Assert ("A4", exception);
+
+		ce.MoveNext ();
+
+		AssertEquals ("A5", _s, GetFromEnumerator (ce));
 	}
 
 }

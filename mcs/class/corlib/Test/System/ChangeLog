@@ -1,3 +1,6 @@
+2002-03-03  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* CharEnumeratorTest.cs: completed the test cases
+
 2002-03-03  Nick Drochak  <ndrochak@gol.com>
 
 	* DateTimeTest.cs: make static member non-static -- wouldn't work on 
