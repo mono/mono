@@ -148,6 +148,7 @@ namespace System.Xml.XPath
 	{
 		public ParentIterator (BaseIterator iter) : base (iter) {}
 		protected ParentIterator (ParentIterator other) : base (other) {}
+		public ParentIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
 		public override XPathNodeIterator Clone () { return new ParentIterator (this); }
 		public override bool MoveNext ()
 		{

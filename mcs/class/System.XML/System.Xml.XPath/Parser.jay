@@ -228,8 +228,7 @@ PathExpr
 	}
 	| FilterExpr SLASH2 RelativeLocationPath
 	{
-		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
-		$$ = new ExprSLASH (new ExprSLASH ((Expression) $1, test), (NodeSet) $3);
+		$$ = new ExprSLASH2 ((Expression) $1, (NodeSet) $3);
 	}
 	;
 
@@ -249,8 +248,7 @@ AbsoluteLocationPath
 	}
 	| SLASH2 RelativeLocationPath
 	{
-		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
-		$$ = new ExprSLASH (new ExprSLASH (new ExprRoot (), test), (NodeSet) $2);
+		$$ = new ExprSLASH2 (new ExprRoot (), (NodeSet) $3);
 	}
 	;
 
@@ -262,8 +260,7 @@ RelativeLocationPath
 	}
 	| RelativeLocationPath SLASH2 Step 
 	{
-		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
-		$$ = new ExprSLASH (new ExprSLASH ((NodeSet) $1, test), (NodeSet) $3);
+		$$ = new ExprSLASH2 ((NodeSet) $1, (NodeSet) $3);
 	}
 	;
 

@@ -801,35 +801,55 @@ namespace System.Xml.XPath
 	}
 	internal class ExprUNION : NodeSet
 	{
-		protected Expression _left, _right;
+		public readonly Expression left, right;
 		public ExprUNION (Expression left, Expression right)
 		{
-			_left = left;
-			_right = right;
+			this.left = left;
+			this.right = right;
 		}
-		public override String ToString () { return _left.ToString ()+ " | " + _right.ToString (); }
+		public override String ToString () { return left.ToString ()+ " | " + right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
-			BaseIterator iterLeft = _left.EvaluateNodeSet (iter);
-			BaseIterator iterRight = _right.EvaluateNodeSet (iter);
+			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
+			BaseIterator iterRight = right.EvaluateNodeSet (iter);
 			return new UnionIterator (iter, iterLeft, iterRight);
 		}
 	}
 
 	internal class ExprSLASH : NodeSet
 	{
-		protected Expression _left;
-		protected NodeSet _right;
+		public readonly Expression left;
+		public readonly NodeSet right;
 		public ExprSLASH (Expression left, NodeSet right)
 		{
-			_left = left;
-			_right = right;
+			this.left = left;
+			this.right = right;
 		}
-		public override String ToString () { return _left.ToString ()+ "/" + _right.ToString (); }
+		public override String ToString () { return left.ToString ()+ "/" + right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
-			BaseIterator iterLeft = _left.EvaluateNodeSet (iter);
-			return new SlashIterator (iterLeft, _right);
+			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
+			return new SlashIterator (iterLeft, right);
+		}
+	}
+	
+	internal class ExprSLASH2 : NodeSet {
+		public readonly Expression left;
+		public readonly NodeSet right;
+
+		public ExprSLASH2 (Expression left, NodeSet right)
+		{
+			this.left = left;
+			this.right = right;
+		}
+		public override String ToString () { return left.ToString ()+ "//" + right.ToString (); }
+		public override object Evaluate (BaseIterator iter)
+		{
+			BaseIterator iterLeft = new DescendantOrSelfIterator(
+				left.EvaluateNodeSet (iter)
+			);
+			
+			return new SlashIterator (iterLeft, right);
 		}
 	}
 
@@ -1048,6 +1068,8 @@ namespace System.Xml.XPath
 			_name = name;
 		}
 		public override String ToString () { return _axis.ToString () + "::" + _name.ToString (); }
+		
+		public XmlQualifiedName Name { get { return _name; } }
 		[MonoTODO]
 		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
 		{
@@ -1113,19 +1135,20 @@ namespace System.Xml.XPath
 
 	internal class ExprFilter : NodeSet
 	{
-		protected Expression _expr;
-		protected Expression _pred;
+		public readonly Expression expr, pred;
+		
 		public ExprFilter (Expression expr, Expression pred)
 		{
-			_expr = expr;
-			_pred = pred;
+			this.expr = expr;
+			this.pred = pred;
 		}
-		internal Expression LeftHandSide {get{return _expr;}}
-		public override String ToString () { return "(" + _expr.ToString () + ")[" + _pred.ToString () + "]"; }
+		
+		internal Expression LeftHandSide {get{return expr;}}
+		public override String ToString () { return "(" + expr.ToString () + ")[" + pred.ToString () + "]"; }
 		public override object Evaluate (BaseIterator iter)
 		{
-			BaseIterator iterExpr = _expr.EvaluateNodeSet (iter);
-			return new PredicateIterator (iterExpr, _pred);
+			BaseIterator iterExpr = expr.EvaluateNodeSet (iter);
+			return new PredicateIterator (iterExpr, pred);
 		}
 	}
 

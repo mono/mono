@@ -5,6 +5,11 @@ Mono.Xml.Schema/XsdValidatingReader.cs
 Mono.Xml.XPath/DTMXPathDocument.cs
 Mono.Xml.XPath/DTMXPathDocumentBuilder.cs
 Mono.Xml.XPath/DTMXPathNavigator.cs
+Mono.Xml.XPath/IdPattern.cs
+Mono.Xml.XPath/KeyPattern.cs
+Mono.Xml.XPath/LocationPathPattern.cs
+Mono.Xml.XPath/Pattern.cs
+Mono.Xml.XPath/UnionPattern.cs
 Mono.Xml.Xsl.Operations/XslApplyImports.cs
 Mono.Xml.Xsl.Operations/XslApplyTemplates.cs
 Mono.Xml.Xsl.Operations/XslAttribute.cs
