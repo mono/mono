@@ -1523,6 +1523,9 @@ method_decls		: /* EMPTY */
 
 method_decl		: D_EMITBYTE int32
 			| D_MAXSTACK int32
+                          {
+                                codegen.CurrentMethodDef.SetMaxStack ((int) $2);
+                          }
 			| D_LOCALS OPEN_PARENS local_list CLOSE_PARENS
                           {
                                 if ($3 != null) {

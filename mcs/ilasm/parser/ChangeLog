@@ -1,3 +1,7 @@
+2003-07-21 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Set maxstack
+	
 2003-07-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Do not use the AsClassRef method anymore to attach
