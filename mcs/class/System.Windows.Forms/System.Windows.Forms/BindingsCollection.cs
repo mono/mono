@@ -5,7 +5,7 @@
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 
 using System.Collections;
@@ -48,9 +48,18 @@ namespace System.Windows.Forms {
 		
 		// --- public Methods ---
 		// following internal methods are (will) not be stubbed out:
-		// - protected virtual void AddCore(Binding dataBinding);
-		// - protected virtual void ClearCore();
-		// - protected virtual void RemoveCore(Binding dataBinding);
+		[MonoTODO]
+		protected virtual void AddCore(Binding dataBinding) {
+		}
+
+		[MonoTODO]
+		protected virtual void ClearCore(){
+		}
+
+		[MonoTODO]
+		protected virtual void RemoveCore(Binding dataBinding){
+		}
+
 		// 
 		// CollectionChanged event:
 		// Though it was not documented, here methods Add and Remove 

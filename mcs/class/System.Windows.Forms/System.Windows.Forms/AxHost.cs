@@ -5,7 +5,7 @@
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //	Dennis hayes (dennish@raytek.com)
 //
-// (C) Ximian, Inc., 2002
+// (C) Ximian, Inc., 2002/3
 //
 //
 using System;
@@ -26,15 +26,23 @@ namespace System.Windows.Forms {
 		/// Class AxHost does not have a constructor for non-internal purposes.
 		/// Thus, no constructor is stubbed out.
 		/// Here are the two AxHost constructors for supporting .NET Framework infrastructure:
-		/// - AxHost(String clsid);
-		/// - AxHost(string clsid,int flags);
+		protected AxHost(string clsid){
+		}
+
+		protected AxHost(string clsid,int flags){
+		}
 		
 		
 		
 		
 		/// --- public Properties ---
 		/// Properties supporting .NET framework, only. Not stubbed out:
-		///  - public bool EditMode {get;}
+		public bool EditMode {
+			get {
+				throw new NotImplementedException (); 
+			}
+		}
+
 		[MonoTODO]
 		public override Color BackColor {
 			get {
@@ -110,14 +118,13 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public override bool Enabled {
+		public new virtual bool Enabled {
 			get {
 				//FIXME:
-				return base.Enabled;
+				throw new NotImplementedException ();
 			}
 			set {
 				//FIXME:
-				base.Enabled = value;
 			}
 		}
 		
@@ -195,34 +202,123 @@ namespace System.Windows.Forms {
 		
 		/// --- methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
-		///  - protected virtual void CreateSink();
-		///  - protected virtual void DetachSink();
-		///  - public void DoVerb(int verb);
-		///  - protected static Color GetColorFromOleColor(uint color);
-		///  - protected static Font GetFontFromIFont(object font);
-		///  - protected static Font GetFontFromIFontDisp(object font);
-		///  - protected static object GetIFontDispFromFont(Font font);
-		///  - protected static object GetIFontFromFont(Font font);
-		///  - protected static object GetIPictureDispFromPicture(Image image);
-		///  - protected static object GetIPictureFromCursor(Cursor cursor);
-		///  - protected static object GetIPictureFromPicture(Image image);
-		///  - protected static double GetOADateFromTime(DateTime time);
-		///  - protected static uint GetOleColorFromColor(Color color);
-		///  - protected static Image GetPictureFromIPicture(object picture);
-		///  - protected static Image GetPictureFromIPictureDisp(object picture);
-		///  - protected static DateTime GetTimeFromOADate(double date);
-		///  - public void InvokeEditMode();
-		///  - public void MakeDirty();
-		///  - protected bool PropsValid();
-		///  - protected void RaiseOnMouseDown(short button,short shift,int x,int y);
-		///  - protected void RaiseOnMouseDown(short button,short shift,float x,float y);
-		///  - protected void RaiseOnMouseDown(object o1,object o2,object o3,object o4);
-		///  - protected void RaiseOnMouseMove(short button,short shift,int x,int y);
-		///  - protected void RaiseOnMouseMove(short button,short shift,float x,float y);
-		///  - protected void RaiseOnMouseMove(object o1,object o2,object o3,object o4);
-		///  - protected void RaiseOnMouseUp(short button,short shift,int x,int y);
-		///  - protected void RaiseOnMouseUp(short button,short shift,float x,float y);
-		///  - protected void RaiseOnMouseUp(object o1,object o2,object o3,object o4);
+		/// 
+
+		[MonoTODO]
+		protected virtual void CreateSink(){
+		}
+
+		[MonoTODO]
+		protected virtual void DetachSink(){
+		}
+
+		[MonoTODO]
+		public void DoVerb(int verb){
+		}
+
+		[MonoTODO]
+		protected static Color GetColorFromOleColor(uint color){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static Font GetFontFromIFont(object font){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static Font GetFontFromIFontDisp(object font){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static object GetIFontDispFromFont(Font font){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static object GetIFontFromFont(Font font){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static object GetIPictureDispFromPicture(Image image){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static object GetIPictureFromCursor(Cursor cursor){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static object GetIPictureFromPicture(Image image){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static double GetOADateFromTime(DateTime time){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static uint GetOleColorFromColor(Color color){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static Image GetPictureFromIPicture(object picture){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static Image GetPictureFromIPictureDisp(object picture){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		protected static DateTime GetTimeFromOADate(double date){
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		public void InvokeEditMode(){
+		}
+
+		[MonoTODO]
+		public void MakeDirty(){
+		}
+
+		protected bool PropsValid(){
+			throw new NotImplementedException (); 
+		}
+
+		protected void RaiseOnMouseDown(short button,short shift,int x,int y){
+		}
+
+		protected void RaiseOnMouseDown(short button,short shift,float x,float y){
+		}
+
+		protected void RaiseOnMouseDown(object o1,object o2,object o3,object o4){
+		}
+
+		protected void RaiseOnMouseMove(short button,short shift,int x,int y){
+		}
+
+		protected void RaiseOnMouseMove(short button,short shift,float x,float y){
+		}
+
+		protected void RaiseOnMouseMove(object o1,object o2,object o3,object o4){
+		}
+
+		protected void RaiseOnMouseUp(short button,short shift,int x,int y){
+		}
+
+		protected void RaiseOnMouseUp(short button,short shift,float x,float y){
+		}
+
+		protected void RaiseOnMouseUp(object o1,object o2,object o3,object o4){
+		}
 		
 		[MonoTODO]
 		protected virtual void AttachInterfaces() {
@@ -401,7 +497,7 @@ namespace System.Windows.Forms {
 		//public new event EventHandler TabIndexChanged;
 		//public new event EventHandler TabStopChanged;
 		//public new event EventHandler TextChanged;
-		
+		public event CancelEventHandler Validating;
 		/// --- public delegates ---
 		//[Serializable]
 		protected delegate void AboutBoxDelegate();
@@ -514,5 +610,39 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
+		AccessibleObject AccessibilityObject {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		//protected bool RenderRightToLeft{
+		//}
+
+		public enum ActiveXInvokeKind {
+			MethodInvoke = 0,
+			PropertyGet = 1,
+			PropertySet = 2
+		}
+		
+		public class AxComponentEditor {
+		}
+		
+		public class ConnectionPointCookie {
+		}
+		
+		public class StateConverter : System.ComponentModel.TypeConverter {
+		}
+
+		[AttributeUsage(AttributeTargets.Class)]
+			public sealed class ClsidAttribute : Attribute{
+		}
+
+		[AttributeUsage(AttributeTargets.Assembly)]
+			public sealed class TypeLibraryTimeStampAtribute : Attribute{
+		}
+
+
 	}
 }

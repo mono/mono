@@ -4,7 +4,7 @@
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 //
 //TODO:
 // 1) Add real values in constructor.
@@ -110,12 +110,12 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this BindingMemberInfo and another object.
 		/// </remarks>
 		
-		public override bool Equals (object obj)
+		public override bool Equals (object otherObject)
 		{
-			if (!(obj is BindingMemberInfo))
+			if (!(otherObject is BindingMemberInfo))
 				return false;
 
-			return (this == (BindingMemberInfo) obj);
+			return (this == (BindingMemberInfo) otherObject);
 		}
 
 		/// <summary>

@@ -8,7 +8,7 @@
 //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
 //   Alexandre Pigokine (pigolkine@gmx.de)
 //
-// (C) Ximian, Inc., 2002
+// (C) Ximian, Inc., 2002/3
 //
 
 using System.ComponentModel;
@@ -171,34 +171,40 @@ namespace System.Windows.Forms {
 			base.OnLostFocus (e);
 		}
 		
-		protected override void OnMouseDown (MouseEventArgs e) 
+		protected override void OnMouseDown (MouseEventArgs mevent) 
 		{
-			base.OnMouseDown (e);
+			base.OnMouseDown (mevent);
 		}
 		
-		protected override void OnMouseEnter (EventArgs e) 
+		protected override void OnMouseEnter (EventArgs eventargs) 
 		{
-			base.OnMouseEnter (e);
+				base.OnMouseEnter(eventargs);
+				if( FlatStyle == FlatStyle.Flat || FlatStyle == FlatStyle.Popup) {
+					Invalidate();
+				}
 		}
 		
-		protected override void OnMouseLeave (EventArgs e) 
+		protected override void OnMouseLeave (EventArgs eventargs) 
 		{
-			base.OnMouseLeave (e);
+			base.OnMouseLeave(eventargs);
+			if( FlatStyle == FlatStyle.Flat || FlatStyle == FlatStyle.Popup) {
+				Invalidate();
+			}
 		}
 		
-		protected override void OnMouseMove (MouseEventArgs e) 
+		protected override void OnMouseMove (MouseEventArgs mevent) 
 		{
-			base.OnMouseMove (e);
+			base.OnMouseMove (mevent);
 		}
 		
-		protected override void OnMouseUp (MouseEventArgs e) 
+		protected override void OnMouseUp (MouseEventArgs mevent) 
 		{
-			base.OnMouseUp (e);
+			base.OnMouseUp (mevent);
 		}
 		
-		protected override void OnPaint (PaintEventArgs e) 
+		protected override void OnPaint (PaintEventArgs pevent) 
 		{
-			base.OnPaint (e);
+			base.OnPaint (pevent);
 		}
 		
 		protected override void OnParentChanged (EventArgs e) 

@@ -18,11 +18,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Provides information that accessibility applications use to adjust an application's UI for users with impairments.
-	///
-	/// ToDo note:
-	///  - IAccessible members not stubbed out
-	///  - MarshalByRefObject members not stubbed out
-	/// MSDN gives little info on the members of IAccessible: "This member supports the .NET Framework infrastructure and is not intended to be used directly from your code."
 	/// </summary>
 	[MonoTODO]
 	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible {
@@ -48,6 +43,13 @@ namespace System.Windows.Forms {
 
 		// --- Properties ---
 
+		//Version 1.1
+		protected void UseStdAccessibleObjects(IntPtr handle){
+		}
+
+		//Version 1.1
+		protected void UseStdAccessibleObjects(IntPtr handle, int objid){
+		}
 	
 		public virtual Rectangle Bounds {
 			get { return Rectangle.Empty; } // As per spec for default. Expect override.

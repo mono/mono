@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 
 namespace System.Windows.Forms {
@@ -20,13 +20,13 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public static void ShowHelp(Control c, string s)
+		public static void ShowHelp(Control parent, string url)
 		{
 			//FIXME:
 		}
 
 		[MonoTODO]
-		public static void ShowHelp(Control c, string s, HelpNavigator nav)
+		public static void ShowHelp(Control parent, string url, HelpNavigator command)
 		{
 			//FIXME:
 		}

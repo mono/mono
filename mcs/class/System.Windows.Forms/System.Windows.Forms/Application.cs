@@ -7,7 +7,7 @@
 //	Dennis hayes (dennish@raytek.com)
 //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
 //
-// (C) Ximian, Inc 2002
+// (C) Ximian, Inc 2002/3
 //
 
 using System;
@@ -188,11 +188,11 @@ namespace System.Windows.Forms {
 		}
 	
 		[MonoTODO]
-		public static void OnThreadException (Exception ex) 
+		public static void OnThreadException (Exception t) 
 		{
 			//FIXME:
 			if( Application.ThreadException != null) {
-				Application.ThreadException(null, new ThreadExceptionEventArgs(ex));
+				Application.ThreadException(null, new ThreadExceptionEventArgs(t));
 			}
 			
 		}
@@ -266,28 +266,28 @@ namespace System.Windows.Forms {
 		}
 
 		//[TypeAttributes.BeforeFieldInit]
-		public static void Run (Form form)
+		public static void Run (Form mainForm)
 		// Documents say this parameter name should be mainform, 
 		// but the verifier says context.
 		{
-			form.CreateControl ();
+			mainForm.CreateControl ();
 			ApplicationContext context = new ApplicationContext (
-				form);
+				mainForm);
 			Run (context);
 		}
 		
-		public static void enterModalLoop ( Form form )
+		public static void enterModalLoop ( Form mainForm )
 		{
-			form.ExitModalLoop = false;
+			mainForm.ExitModalLoop = false;
 
 			MSG msg = new MSG();
 			while( Win32.GetMessageA( ref msg, 0, 0, 0 ) != 0 ) {
 
-				if ( form.ExitModalLoop ) {
+				if ( mainForm.ExitModalLoop ) {
 					break;
 				}
 
-				if( Win32.IsDialogMessage ( form.Handle, ref msg ) )
+				if( Win32.IsDialogMessage ( mainForm.Handle, ref msg ) )
 					continue;
 				
 				Win32.TranslateMessage (ref msg);
@@ -296,9 +296,9 @@ namespace System.Windows.Forms {
 			
 		}
 		
-		public static void exitModalLoop ( Form form )
+		public static void exitModalLoop ( Form mainForm )
 		{
-			form.ExitModalLoop = true;
+			mainForm.ExitModalLoop = true;
 
 			Win32.PostMessage( IntPtr.Zero, Msg.WM_NULL, 0, 0 ); 
 		}

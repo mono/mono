@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Collections;
 
@@ -20,7 +20,7 @@ namespace System.Windows.Forms {
 		//  --- Public Properties
 		//
 		[MonoTODO]
-		public int Count {
+		public virtual int Count {
 			get {
 				throw new NotImplementedException ();
 			}

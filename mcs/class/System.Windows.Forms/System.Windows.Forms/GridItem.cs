@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 
 namespace System.Windows.Forms {
@@ -19,12 +19,12 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		public bool Expandable {
+		public virtual bool Expandable {
 			get {
 				return expandable;
 			}
 		}
-		public bool Expanded {
+		public virtual bool Expanded {
 			get {
 				return expanded;
 			}
@@ -32,6 +32,8 @@ namespace System.Windows.Forms {
 				expanded = value;
 			}
 		}
+
+
 		public abstract GridItemCollection GridItems {
 			get;
 		}

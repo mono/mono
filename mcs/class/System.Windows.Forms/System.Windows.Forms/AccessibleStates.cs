@@ -3,7 +3,7 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
@@ -27,8 +27,8 @@ namespace System.Windows.Forms {
 		Focusable = 1048576,
 		Focused = 4,
 		HotTracked = 128,
-		Indeterminate =32,
 		Mixed = 32,
+		Indeterminate =32,
 		Invisible = 32768,
 		Linked = 4194304,
 		Marqueed = 8192,

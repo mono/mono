@@ -4,7 +4,7 @@
 // Author:
 //   Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@raytek.com)
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;

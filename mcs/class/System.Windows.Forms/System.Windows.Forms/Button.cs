@@ -104,9 +104,9 @@ namespace System.Windows.Forms {
 			base.OnClick (e);
 		}
 		
-		protected override void OnMouseUp(MouseEventArgs e) 
+		protected override void OnMouseUp(MouseEventArgs mevent) 
 		{
-			base.OnMouseUp (e);
+			base.OnMouseUp (mevent);
 		}
 		
 		// --- Button methods ---
@@ -121,15 +121,15 @@ namespace System.Windows.Forms {
 			return base.ToString();
 		}
 
-		protected override void OnMouseEnter (EventArgs e) {
-			base.OnMouseEnter(e);
+		protected override void OnMouseEnter (EventArgs mevent) {
+			base.OnMouseEnter(mevent);
 			if( FlatStyle == FlatStyle.Flat || FlatStyle == FlatStyle.Popup) {
 				Invalidate();
 			}
 		}
     
-		protected override void OnMouseLeave (EventArgs e) {
-			base.OnMouseLeave(e);
+		protected override void OnMouseLeave (EventArgs mevent) {
+			base.OnMouseLeave(mevent);
 			if( FlatStyle == FlatStyle.Flat || FlatStyle == FlatStyle.Popup) {
 				Invalidate();
 			}

@@ -82,6 +82,10 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 		
+		protected override void Dispose(bool disposing){
+		}
+
+
 		#region Properties
 		public bool AllowNavigation {
 			get {
@@ -440,7 +444,7 @@ namespace System.Windows.Forms {
 			 - public void SubObjectsSiteChange(bool site)
 		 */
 		[MonoTODO]
-		public bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) 
+		public virtual bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -495,7 +499,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) 
+		public virtual bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -683,17 +687,17 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected override void OnKeyPress(KeyPressEventArgs e) 
+		protected override void OnKeyPress(KeyPressEventArgs kpe) 
 		{
 			//FIXME:
-			base.OnKeyPress(e);
+			base.OnKeyPress(kpe);
 		}
 		
 		[MonoTODO]
-		protected override void OnLayout(LayoutEventArgs e) 
+		protected override void OnLayout(LayoutEventArgs levent) 
 		{
 			//FIXME:
-			base.OnLayout(e);
+			base.OnLayout(levent);
 		}
 		
 		[MonoTODO]
@@ -745,17 +749,17 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs e) 
+		protected override void OnPaint(PaintEventArgs pe) 
 		{
 			//FIXME:
-			base.OnPaint(e);
+			base.OnPaint(pe);
 		}
 		
 		[MonoTODO]
-		protected override void OnPaintBackground(PaintEventArgs e) 
+		protected override void OnPaintBackground(PaintEventArgs ebe) 
 		{
 			//FIXME:
-			base.OnPaintBackground(e);
+			base.OnPaintBackground(ebe);
 		}
 		
 		[MonoTODO]
@@ -770,6 +774,8 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		
+		
+
 		[MonoTODO]
 		protected virtual void OnReadOnlyChanged(EventArgs e) 
 		{
