@@ -1,3 +1,7 @@
+2003-03-11 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeRef.cs: New file, used for pairing types and their names.
+
 2003-03-09 Jackson Harper <jackson@latitudegeo.com>
 
 	* ExternTable.cs: Do not verify the existence of external types
