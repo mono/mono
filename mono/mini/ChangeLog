@@ -1,5 +1,9 @@
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* aot.c : Reverting the previous fix. This time it broke linux build.
+
+2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* aot.c : quick cygwin build fix. mkdir() with two args does not exist.
 
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
