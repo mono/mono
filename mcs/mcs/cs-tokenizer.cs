@@ -66,7 +66,7 @@ namespace CIR
 	/// <summary>
 	///    Tokenizer for C# source code. 
 	/// </summary>
-	
+
 	public class Tokenizer : yyParser.yyInput
 	{
 		StreamReader reader;
@@ -77,6 +77,9 @@ namespace CIR
 		public int current_token;
 		bool handle_get_set = false;
 
+		//
+		// Returns a verbose representation of the current location
+		//
 		public string location {
 			get {
 				string det;
@@ -246,6 +249,12 @@ namespace CIR
 		int getKeyword (string name)
 		{
 			return (int) (keywords [name]);
+		}
+
+		public Location Location {
+			get {
+				return new Location (ref_name, col, ref_line);
+			}
 		}
 		
 		public Tokenizer (System.IO.Stream input, string fname)
@@ -873,4 +882,18 @@ namespace CIR
 			return Token.EOF;
 		}
 	}
+
+	public struct Location {
+		public readonly string Name;
+		public readonly int    Col;
+		public readonly int    Row;
+
+		public Location (string name, int col, int row)
+		{
+			Name = name;
+			Col = col;
+			Row = row;
+		}
+	}
+	
 }

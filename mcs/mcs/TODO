@@ -9,6 +9,10 @@
 	Can a constant_expression invoke overloaded operators?
 	Explicit user-defined conversions?
 
+* Visibility
+
+	I am not processing visibility yet.
+
 * Tokenizer
 
 	Propagate file/location to upper layers
@@ -47,3 +51,23 @@
 	Wont be parsed.
 
   
+* Interfaces
+
+	For indexers, the output of ix2.cs is different from our
+	compiler and theirs.  They use a DefaultMemberAttribute, which
+	I have yet to figure out:
+
+	.class interface private abstract auto ansi INTERFACE
+	{
+		.custom instance void [mscorlib]System.Reflection.DefaultMemberAttribute::.ctor(string) 
+		= ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+		...
+	}
+
+* Interface indexers
+
+	I have not figured out why the Microsoft version puts an
+	`instance' attribute, and I am not generating this `instance' attribute.
+
+
+	

@@ -141,6 +141,9 @@ namespace CIR {
 		// </summary>
 		public Type [] GetParameterInfo (TypeContainer tc)
 		{
+			if (FixedParameters == null)
+				return null;
+			
 			Type [] types;
 			int extra = (ArrayParameter != null) ? 1 : 0;
 			int i = 0;

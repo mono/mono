@@ -180,8 +180,8 @@ namespace CIR {
 		//
 		void PopulateMethod (InterfaceMethod im)
 		{
-			Type ReturnType = parent.LookupType (im.ReturnType, true);
-			Type [] ArgTypes = im.ParameterTypes (parent);
+			Type return_type = parent.LookupType (im.ReturnType, true);
+			Type [] arg_types = im.ParameterTypes (parent);
 			MethodBuilder mb;
 			Parameter [] p;
 			int i;
@@ -191,19 +191,20 @@ namespace CIR {
 			//
 			mb = TypeBuilder.DefineMethod (
 				im.Name, interface_method_attributes,
-				ReturnType, ArgTypes);
+				return_type, arg_types);
 			
 			//
 			// Define each type attribute (in/out/ref) and
 			// the argument names.
 			//
 			p = im.Parameters.FixedParameters;
+			if (p != null){
+				for (i = 0; i < p.Length; i++)
+					mb.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
 
-			for (i = 0; i < p.Length; i++)
-				mb.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
-
-			if (i != ArgTypes.Length)
-				Console.WriteLine ("Implement the type definition for params");
+				if (i != arg_types.Length)
+					Console.WriteLine ("Implement the type definition for params");
+			}
 		}
 
 		//
@@ -238,7 +239,7 @@ namespace CIR {
 				setter_args [0] = prop_type;
 
 				mb = TypeBuilder.DefineMethod (
-					"set_" + ip.Name, interface_method_attributes,
+					"set_" + ip.Name, property_attributes,
 					null, setter_args);
 
 				mb.DefineParameter (1, ParameterAttributes.None, "value");
@@ -262,7 +263,63 @@ namespace CIR {
 		//
 		void PopulateIndexer (InterfaceIndexer ii)
 		{
-			
+			PropertyBuilder pb;
+			Type prop_type = parent.LookupType (ii.Type, true);
+			Type [] arg_types = ii.ParameterTypes (parent);
+			Type [] value_arg_types;
+
+			//
+			// Sets up the extra invisible `value' argument for setters.
+			// 
+			if (arg_types != null){
+				int count = arg_types.Length;
+				value_arg_types = new Type [count + 1];
+
+				arg_types.CopyTo (value_arg_types, 0);
+				value_arg_types [count] = prop_type;
+			} else {
+				value_arg_types = new Type [1];
+
+				value_arg_types [1] = prop_type;
+			}
+
+			pb = TypeBuilder.DefineProperty (
+				"Item", PropertyAttributes.None,
+				prop_type, arg_types);
+
+			if (ii.HasGet){
+				MethodBuilder get_item;
+				Parameter [] p = ii.Parameters.FixedParameters;
+				
+				get_item = TypeBuilder.DefineMethod (
+					"get_Item", property_attributes, prop_type, arg_types);
+				pb.SetGetMethod (get_item);
+
+				if (p != null){
+					for (int i = 0; i < p.Length; i++)
+						get_item.DefineParameter (
+							i + 1,
+							p [i].Attributes, p [i].Name);
+				}
+			}
+
+			if (ii.HasSet){
+				Parameter [] p = ii.Parameters.FixedParameters;
+				MethodBuilder set_item;
+				int i = 0;
+				
+				set_item = TypeBuilder.DefineMethod (
+					"set_Item", property_attributes, null, value_arg_types);
+				pb.SetSetMethod (set_item);
+
+				if (p != null){
+					for (; i < p.Length; i++)
+						set_item.DefineParameter (
+							i + 1,
+							p [i].Attributes, p [i].Name);
+				}
+				set_item.DefineParameter (i + 1, ParameterAttributes.None, "value");
+			}
 		}
 
 		// <summary>
@@ -405,6 +462,11 @@ namespace CIR {
 			Parameters = args;
 			HasGet = do_get;
 			HasSet = do_set;
+		}
+
+		public Type [] ParameterTypes (TypeContainer tc)
+		{
+			return Parameters.GetParameterInfo (tc);
 		}
 	}
 }

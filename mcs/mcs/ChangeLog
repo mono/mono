@@ -1,3 +1,11 @@
+2001-08-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* parameter.cs (GetParameterInfo): Fix bug where there would be no
+	method arguments.
+
+	* interface.cs (PopulateIndexer): Implemented the code generator
+	for interface indexers.
+
 2001-08-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* interface.cs (InterfaceMemberBase): Now we track the new status

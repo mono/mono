@@ -13,6 +13,20 @@ namespace CIR {
 	public class Report {
 		int errors;
 		int warnings;
+
+		public void Error (int code, Location l, string text)
+		{
+			Console.WriteLine (l.Name + "(" + l.row + "," + l.col +
+					   "): Error CS"+code+": " + text);
+			errors++;
+		}
+
+		public void Warning (int code, Location l, string text)
+		{
+			Console.WriteLine (l.Name + "(" + l.row + "," + l.col +
+					   "): Warning CS"+code+": " + text);
+			warnings++;
+		}
 		
 		public void Error (int code, string text)
 		{
