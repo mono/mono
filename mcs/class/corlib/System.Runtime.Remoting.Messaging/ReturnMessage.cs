@@ -23,7 +23,6 @@ namespace System.Runtime.Remoting.Messaging {
 			       IMethodCallMessage request)
 		{
 			// fixme: why do we need outArgCount?
-
 			msg = new MonoMethodMessage ((MonoMethod)request.MethodBase, outArgs);
 			this.request = request;
 			msg.rval = returnValue;

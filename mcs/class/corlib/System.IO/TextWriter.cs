@@ -103,7 +103,7 @@ namespace System.IO {
 		
                 public virtual void Write (object value)
 		{
-			Write (value.ToString ());
+			Write (value != null ? value.ToString () : String.Empty);
 		}
 		
                 public virtual void Write (float value)

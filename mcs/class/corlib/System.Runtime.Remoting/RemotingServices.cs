@@ -20,6 +20,9 @@ namespace System.Runtime.Remoting
 		internal extern static object InternalExecute (MonoMethod method, Object obj,
 							       Object[] parameters, out object [] out_args);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsTransparentProxy (object proxy);
+		
 		public static IMethodReturnMessage ExecuteMessage (
 		        MarshalByRefObject target, IMethodCallMessage reqMsg)
 		{
@@ -32,7 +35,7 @@ namespace System.Runtime.Remoting
 				object rval = InternalExecute (method, target, reqMsg.Args, out out_args);
 				result = new ReturnMessage (rval, out_args, out_args.Length,
 							    reqMsg.LogicalCallContext, reqMsg);
-				
+			
 			} catch (Exception e) {
 				result = new ReturnMessage (e, reqMsg);
 			}
