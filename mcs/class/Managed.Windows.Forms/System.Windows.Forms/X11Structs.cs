@@ -1175,6 +1175,12 @@ namespace System.Windows.Forms {
 		GXnand                  	= 0xe,		/* NOT src OR NOT dst */
 		GXset                   	= 0xf		/* 1 */
 	}
-	#endregion
+
+	internal enum NetWindowManagerState {
+		Remove				= 0,
+		Add				= 1,
+		Toggle				= 2
+	}
+#endregion
 }
 
