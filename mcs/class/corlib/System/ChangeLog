@@ -1,3 +1,11 @@
+2004-06-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: Hacked the Parse method to allow the runtime C code to
+	decode it properly (i.e. matching MS results). Fixed the Round method
+	for negative decimal numbers (moved code from Math.cs).
+	* Math.cs: Now use Decimal class for Round(Decimal,int). Required to
+	fix a bug when rounding a negative decimal.
+
 2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomain.cs: set the _principal to null when changing the policy.
@@ -64,7 +72,6 @@
 	  - RFC1123 pattern is (again) now parsed in local time. I regressed
 	    some problems in previous fix.
 
->>>>>>> 1.864
 2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Fixed cast to integer types to truncate (not round) the

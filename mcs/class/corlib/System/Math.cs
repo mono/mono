@@ -285,20 +285,7 @@ namespace System
 
 		public static decimal Round (decimal d, int decimals)
 		{
-			if (decimals < 0 || decimals > 28)
-				throw new ArgumentOutOfRangeException (Locale.GetText ("Value is too small or too big."));
-
-			// Just call Decimal.Round(d, decimals); when it
-			// rounds good.
-			decimal p = (decimal) Math.Pow(10, decimals);
-			decimal int_part = Decimal.Floor(d);
-			decimal dec_part = d - int_part;
-			dec_part *= 10000000000000000000000000000M;
-			dec_part = Decimal.Floor(dec_part);
-			dec_part /= (10000000000000000000000000000M / p);
-			dec_part = Math.Round(dec_part);
-			dec_part /= p;
-			return int_part + dec_part;
+			return Decimal.Round (d, decimals);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

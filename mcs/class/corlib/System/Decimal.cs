@@ -516,8 +516,29 @@ namespace System
 
         public static Decimal Round (Decimal d, int decimals) 
         {
-		// until Math.Round can call an optimized Decimal.Round ;-)
-		return Math.Round (d, decimals);
+		if (decimals < 0 || decimals > 28) {
+			throw new ArgumentOutOfRangeException ("decimals", "[0,28]");
+		}
+
+		bool negative = d.IsNegative ();
+		if (negative)
+			d.ss32 ^= SIGN_FLAG;
+
+		// Moved from Math.cs because it's easier to fix the "sign"
+		// issue here :( as the logic is OK only for positive numbers
+		decimal p = (decimal) Math.Pow (10, decimals);
+		decimal int_part = Decimal.Floor (d);
+		decimal dec_part = d - int_part;
+		dec_part *= 10000000000000000000000000000M;
+		dec_part = Decimal.Floor(dec_part);
+		dec_part /= (10000000000000000000000000000M / p);
+		dec_part = Math.Round (dec_part);
+		dec_part /= p;
+		decimal result = int_part + dec_part;
+
+		if (negative)
+			result.ss32 ^= SIGN_FLAG;
+		return result;
         }
 
         public static Decimal Multiply (Decimal d1, Decimal d2) 
@@ -835,36 +856,95 @@ namespace System
             return sb.ToString();
         }
 
-        public static Decimal Parse(string s, NumberStyles style, IFormatProvider provider) 
-        {
-            if (s == null)
-		throw new ArgumentNullException ("s");
+	public static Decimal Parse (string s, NumberStyles style, IFormatProvider provider) 
+	{
+		if (s == null)
+			throw new ArgumentNullException ("s");
 
-            NumberFormatInfo nfi = NumberFormatInfo.GetInstance(provider);
+		NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
 
-            int iDecPos, exp;
-            bool isNegative, expFlag;
-            s = stripStyles(s, style, nfi, out iDecPos, out isNegative, out expFlag, out exp);
+		int iDecPos, exp;
+		bool isNegative, expFlag;
+		s = stripStyles(s, style, nfi, out iDecPos, out isNegative, out expFlag, out exp);
 
-            if (iDecPos < 0)
-		throw new Exception (Locale.GetText ("Error in System.Decimal.Parse"));
-            uint decPos = (uint) iDecPos;
+		if (iDecPos < 0)
+			throw new Exception (Locale.GetText ("Error in System.Decimal.Parse"));
 
-            Decimal d;
-            int digits = s.Length;
-            int sign = (isNegative) ? 1 : 0;
-            if (string2decimal(out d, s, decPos, sign) != 0)
-            {
-                throw new OverflowException();
-            }
+		// first we remove leading 0
+		int len = s.Length;
+		int i = 0;
+		while ((i < iDecPos) && (s [i] == '0'))
+			i++;
+		if ((i > 1) && (len > 1)) {
+			s = s.Substring (i, len - i);
+			iDecPos -= i;
+		}
 
-            if (expFlag)
-            {
-                if (decimalSetExponent(ref d, exp) != 0)
-                    throw new OverflowException();
-            }
+		// first 0. may not be here but is part of the maximum length
+		int max = ((iDecPos == 0) ? 27 : 28);
+		len = s.Length;
+		if (len >= max + 1) {
+			// number lower than MaxValue (base-less) can have better precision
+			if (String.Compare (s, 0, "79228162514264337593543950335", 0, max + 1,
+				false, CultureInfo.InvariantCulture) <= 0) {
+				max++;
+			}
+		}
 
-            return d;
+		// then we trunc the string
+		if ((len > max) && (iDecPos < len)) {
+			int round = (s [max] - '0');
+			s = s.Substring (0, max);
+
+			bool addone = false;
+			if (round > 5) {
+				addone = true;
+			}
+			else if (round == 5) {
+				if (isNegative) {
+					addone = true;
+				}
+				else {
+					// banker rounding applies :(
+					int previous = (s [max - 1] - '0');
+					addone = ((previous & 0x01) == 0x01);
+				}
+			}
+			if (addone) {
+				char[] array = s.ToCharArray ();
+				int p = max - 1;
+				while (p >= 0) {
+					int b = (array [p] - '0');
+					if (array [p] != '9') {
+						array [p] = (char)(b + '1');
+						break;
+					}
+					else {
+						array [p--] = '0';
+					}
+				}
+				if ((p == -1) && (array [0] == '0')) {
+					iDecPos++;
+					s = "1".PadRight (iDecPos, '0');
+				}
+				else
+					s = new String (array);
+			}
+		}
+
+		Decimal result;
+		// always work in positive (rounding issues)
+		if (string2decimal (out result, s, (uint)iDecPos, 0) != 0)
+			throw new OverflowException ();
+
+		if (expFlag) {
+			if (decimalSetExponent (ref result, exp) != 0)
+				throw new OverflowException ();
+		}
+
+		if (isNegative)
+			result.ss32 ^= SIGN_FLAG;
+		return result;
         }
 
 	public TypeCode GetTypeCode ()
