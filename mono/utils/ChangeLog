@@ -1,4 +1,8 @@
 
+Mon Jun 3 15:59:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* strtod.c: make __bsd_dtoa() always return malloc()ed memory.
+
 Mon Jun 3 15:42:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monobitset.c, monobitset.h: documentation and fixes from
