@@ -10,15 +10,19 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.IO
 {
-	internal sealed class MonoIO {
+	unsafe internal sealed class MonoIO {
 		public static readonly FileAttributes
 			InvalidFileAttributes = (FileAttributes)(-1);
 
 		public static readonly IntPtr
 			InvalidHandle = (IntPtr)(-1L);
+
+		public static readonly bool SupportsAsync = GetSupportsAsync ();
 
 		// error methods
 
@@ -108,6 +112,10 @@ namespace System.IO
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static MonoFileType GetFileType (IntPtr handle, out MonoIOError error);
 
+		// aio_* methods
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static bool GetSupportsAsync ();
+
 		public static bool Exists (string path, out MonoIOError error)
 		{
 			FileAttributes attrs = GetFileAttributes (path,
@@ -158,6 +166,7 @@ namespace System.IO
 						  FileMode mode,
 						  FileAccess access,
 						  FileShare share,
+						  bool async,
 						  out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -170,7 +179,7 @@ namespace System.IO
 					       out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int Write (IntPtr handle, byte [] src,
+		public extern static int Write (IntPtr handle, [In] byte [] src,
 						int src_offset, int count,
 						out MonoIOError error);
 		
@@ -210,7 +219,7 @@ namespace System.IO
 
 			handle = Open (path, FileMode.Open,
 				       FileAccess.ReadWrite,
-				       FileShare.ReadWrite, out error);
+				       FileShare.ReadWrite, false, out error);
 			if (handle == MonoIO.InvalidHandle)
 				return false;
 
@@ -273,6 +282,13 @@ namespace System.IO
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int GetTempPath(out string path);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static void BeginWrite (IntPtr handle,FileStreamAsyncResult ares);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static void BeginRead (IntPtr handle, FileStreamAsyncResult ares);
+
 	}
 }
 

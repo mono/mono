@@ -1,9 +1,14 @@
+2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Environment.cs: updated corlib version.
+
 2004-03-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Boolean.cs, Byte.cs, Char.cs, Double.cs, Int16.cs, Int32.cs, Int64.cs,
 	  SByte.cs, Single.cs, UInt16.cs, UInt32.cs, UInt64.cs: Renamed internal
 	  field "value" to "m_value", so it is interoperable with MS.NET when 
-	  serializing and deserializing data. Based on the patch from Daniel Keep.
+	  serializing and deserializing data. Based on the patch from Daniel
+	  Keep.
 
 2004-03-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 

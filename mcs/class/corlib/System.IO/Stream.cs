@@ -4,8 +4,10 @@
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Miguel de Icaza (miguel@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
+// (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 using System.Threading;
@@ -72,9 +74,7 @@ namespace System.IO
 		
 		public abstract void Flush ();
 
-		public abstract int Read ([In,Out] byte[] buffer,
-					  int offset,
-					  int count);
+		public abstract int Read ([In,Out] byte[] buffer, int offset, int count);
 
 		public virtual int ReadByte ()
 		{
@@ -86,14 +86,11 @@ namespace System.IO
 			return -1;
 		}
 
-		public abstract long Seek (long offset,
-					   SeekOrigin origin);
+		public abstract long Seek (long offset, SeekOrigin origin);
 
 		public abstract void SetLength (long value);
 
-		public abstract void Write (byte[] buffer,
-					    int offset,
-					    int count);
+		public abstract void Write (byte[] buffer, int offset, int count);
 
 		public virtual void WriteByte (byte value)
 		{
@@ -104,17 +101,32 @@ namespace System.IO
 			Write (buffer, 0, 1);
 		}
 
-		delegate int ReadDelegate (byte [] buffer, int offset, int count);
-
 		public virtual IAsyncResult
 		BeginRead (byte [] buffer, int offset, int count, AsyncCallback cback, object state)
 		{
 			if (!CanRead)
 				throw new NotSupportedException ("This stream does not support reading");
 
-			ReadDelegate read_delegate = new ReadDelegate (Read);
+			// Creating a class derived from Stream that doesn't override BeginRead
+			// shows that it actually calls Read and does everything synchronously.
+			// Just put this in the Read override:
+			//	Console.WriteLine ("Read");
+			// 	Console.WriteLine (Environment.StackTrace);
+			//	Thread.Sleep (10000);
+			//	return 10;
 
-			return read_delegate.BeginInvoke (buffer, offset, count, cback, state);			
+			StreamAsyncResult result = new StreamAsyncResult (state);
+			try {
+				int nbytes = Read (buffer, offset, count);
+				result.SetComplete (null, nbytes);
+			} catch (Exception e) {
+				result.SetComplete (e, 0);
+			}
+
+			if (cback != null)
+				cback (result);
+
+			return result;
 		}
 
 		delegate void WriteDelegate (byte [] buffer, int offset, int count);
@@ -125,9 +137,26 @@ namespace System.IO
 			if (!CanWrite)
 				throw new NotSupportedException ("This stream does not support writing");
 	
-			WriteDelegate write_delegate = new WriteDelegate (Write);
+			// Creating a class derived from Stream that doesn't override BeginWrite
+			// shows that it actually calls Write and does everything synchronously except
+			// when invoking the callback, which is done from the ThreadPool.
+			// Just put this in the Write override:
+			// 	Console.WriteLine ("Write");
+			// 	Console.WriteLine (Environment.StackTrace);
+			//	Thread.Sleep (10000);
 
-			return write_delegate.BeginInvoke (buffer, offset, count, cback, state);
+			StreamAsyncResult result = new StreamAsyncResult (state);
+			try {
+				Write (buffer, offset, count);
+				result.SetComplete (null);
+			} catch (Exception e) {
+				result.SetComplete (e);
+			}
+
+			if (cback != null)
+				cback.BeginInvoke (result, null, null);
+
+			return result;
 		}
 		
 		public virtual int EndRead (IAsyncResult async_result)
@@ -135,9 +164,18 @@ namespace System.IO
 			if (async_result == null)
 				throw new ArgumentNullException ("async_result");
 
-			AsyncResult ar = (AsyncResult)async_result;
-			ReadDelegate read_delegate = (ReadDelegate)ar.AsyncDelegate;
-			return read_delegate.EndInvoke (async_result);
+			StreamAsyncResult result = async_result as StreamAsyncResult;
+			if (result == null || result.NBytes == -1)
+				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+
+			if (result.Done)
+				throw new InvalidOperationException ("EndRead already called.");
+
+			result.Done = true;
+			if (result.Exception != null)
+				throw result.Exception;
+
+			return result.NBytes;
 		}
 
 		public virtual void EndWrite (IAsyncResult async_result)
@@ -145,9 +183,16 @@ namespace System.IO
 			if (async_result == null)
 				throw new ArgumentNullException ("async_result");
 
-			AsyncResult ar = (AsyncResult)async_result;
-			WriteDelegate write_delegate = (WriteDelegate)ar.AsyncDelegate;
-			write_delegate.EndInvoke (async_result);
+			StreamAsyncResult result = async_result as StreamAsyncResult;
+			if (result == null || result.NBytes != -1)
+				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+
+			if (result.Done)
+				throw new InvalidOperationException ("EndWrite already called.");
+
+			result.Done = true;
+			if (result.Exception != null)
+				throw result.Exception;
 		}
 	}
 

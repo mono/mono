@@ -21,9 +21,12 @@ namespace System.Threading {
 			/* nothing to do */
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern bool BindHandleInternal (IntPtr osHandle);
+
 		public static bool BindHandle (IntPtr osHandle)
 		{
-			throw new NotSupportedException("This is MS specific");
+			return BindHandleInternal (osHandle);
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

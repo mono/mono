@@ -1,3 +1,18 @@
+2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: added support for asynchronous I/O without using the
+	OS native libraries if available.
+
+	* FileStreamAsyncResult.cs: IAsyncResult for asynch. I/O.
+
+	* MonoIO.cs: added BeginRead/Write, GetSupportsAsync. Open has now a
+	new parameter to tell ifthe file will be used for asynch operations.
+
+	* Stream.cs: BeginRead/Write do not use delegates. They just are
+	actually synchronous.
+
+	* StreamAsyncResult.cs: IAsyncResult for Stream.
+
 2004-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: check if the error returned in Exists is different

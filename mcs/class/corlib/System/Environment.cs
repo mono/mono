@@ -29,7 +29,7 @@ namespace System
 		 * increment this variable. Also increment the
 		 * pair of this variable in the runtime in metadata/appdomain.c.
 		 */
-		private const int mono_corlib_version = 13;
+		private const int mono_corlib_version = 14;
 
 		private Environment ()
 		{
@@ -281,8 +281,9 @@ namespace System
 		public static IDictionary GetEnvironmentVariables()
 		{
 			Hashtable vars = new Hashtable ();
-			foreach (string name in GetEnvironmentVariableNames ())
+			foreach (string name in GetEnvironmentVariableNames ()) {
 				vars [name] = GetEnvironmentVariable (name);
+			}
 
 			return vars;
 		}
