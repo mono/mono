@@ -433,7 +433,6 @@ System.Net/MonoHttpDate.cs
 System.Net/NetworkAccess.cs
 System.Net/NetworkCredential.cs
 System.Net/ProtocolViolationException.cs
-System.Net/ProxyUseType.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/SocketAddress.cs
@@ -471,7 +470,6 @@ System.Net/WebPermissionAttribute.cs
 System.Net/WebProxy.cs
 System.Net/WebRequest.cs
 System.Net/WebResponse.cs
-System.Net/WebStatus.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 System.Security.Permissions/ResourcePermissionBase.cs
 System.Security.Permissions/ResourcePermissionBaseEntry.cs
