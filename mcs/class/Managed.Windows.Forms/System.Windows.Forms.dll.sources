@@ -41,6 +41,7 @@ System.Windows.Forms/GiveFeedbackEventArgs.cs
 System.Windows.Forms/GiveFeedbackEventHandler.cs
 System.Windows.Forms/HelpEventArgs.cs
 System.Windows.Forms/HelpEventHandler.cs
+System.Windows.Forms/HorizontalAlignment.cs
 System.Windows.Forms/IContainerControl.cs
 System.Windows.Forms/IDataObject.cs
 System.Windows.Forms/ImeMode.cs
