@@ -1,3 +1,44 @@
+2003-10-18  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_signature): Renamed to
+	mono_class_inflate_generic_signature() and made it public.
+	(my_mono_class_from_generic_parameter): New static function; if we
+	don't already have the generic parameter's MonoClass, create a
+	very simple one which is just used internally in the runtime and
+	not passed back to managed code.
+
+	* class.h (MonoGenericInst): Added `gpointer mbuilder' field.
+
+	* metadata.h (MonoMethodSignature): Moved the
+	`MonoGenericParam *gen_params' to the MonoMethodHeader.
+	(MonoMethodHeader): Moved the `MonoGenericParam *gen_params' here.
+
+	* icall.c (ves_icall_MethodInfo_GetGenericArguments): Renamed to
+	ves_icall_MonoMethod_GetGenericArguments(); this is now an
+	interncall on the MonoMethod class, not on MethodInfo.
+	(ves_icall_MethodInfo_BindGenericParameters): Removed, we're now
+	calling mono_reflection_bind_generic_method_parameters() directly.
+
+	* loader.c (mono_method_get_signature): If this is a MethodSpec;
+	return the already computed `method->signature'.
+	(method_from_methodspec): New static function to load a method
+	from a MethodSpec entry.
+	(mono_get_method_from_token): Call the new method_from_methodspec()
+	for MethodSpec tokens.  
+	(mono_get_method_from_token): If we're a generic method, load the
+	type parameters.
+
+	* reflection.c (mono_image_get_memberref_token): Allow
+	MEMBERREF_PARENT_TYPEDEF here; this will be used in the MethodSpec
+	table.
+	(fixup_method): Added support for MONO_TABLE_METHODSPEC.
+	(mono_image_create_token): First check whether it's a generic
+	method (so we'd need to create a MethodSpec), then do the other
+	two alternatives.
+	(mono_reflection_bind_generic_method_parameters): Return a
+	`MonoReflectionMethod *' instead of a `MonoMethod *'; we're now
+	called directly from the interncall.
+
 2003-10-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.h (MonoAssemblyName): Add public_key and hash_alg fields.
