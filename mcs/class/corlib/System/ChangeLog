@@ -1,6 +1,6 @@
 2001-08-06  Miguel de Icaza  <miguel@ximian.com>
 
-	* IntPtr.cs: Added.
+	* IntPtr.cs: Added and Completed implementation.
 
 	* Uri.cs: Add a note.
 

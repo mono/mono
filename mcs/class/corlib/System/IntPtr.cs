@@ -15,34 +15,115 @@ namespace System {
 	
 	public struct IntPtr : ISerializable {
 
-		public int value;
+		unsafe public void *value;
 
-		public static int Zero = 0;
-		
-		public IntPtr (int i32)
+		public static IntPtr Zero;
+
+		unsafe static IntPtr ()
 		{
-			value = i32;
+			Zero.value = (void *) 0;
+		}
+		
+		unsafe public IntPtr (int i32)
+		{
+			value = (void *) i32;
 		}
 
-		public IntPtr (long i64)
+		unsafe public IntPtr (long i64)
 		{
-			value = (int) i64;
+			value = (void *) i64;
 		}
 
 		unsafe public IntPtr (void *ptr)
 		{
-			value = (int) ptr;
+			value = ptr;
 		}
 
 		unsafe public static int Size {
 			get {
-				return sizeof (int);
+				return sizeof (void *);
 			}
 		}
 
 		public void GetObjectData (SerializationInfo si, StreamingContext sc)
 		{
 			// FIXME: Implement me.
+		}
+
+		unsafe public override bool Equals (object o)
+		{
+			if (!(o is System.IntPtr))
+				return false;
+
+			return ((IntPtr) o).value == value;
+		}
+
+		unsafe public override int GetHashCode ()
+		{
+			return (int) value;
+		}
+
+		unsafe public int ToInt32 ()
+		{
+			return (int) value;
+		}
+
+		unsafe public long ToInt64 ()
+		{
+			return (long) value;
+		}
+
+		unsafe public void *ToPointer ()
+		{
+			return value;
+		}
+
+		unsafe override public string ToString ()
+		{
+			if (Size == 4)
+				return ((int) value).ToString ();
+			else
+				return ((long) value).ToString ();
+		}
+
+		unsafe public static bool operator == (IntPtr a, IntPtr b)
+		{
+			return (a.value == b.value);
+		}
+
+		unsafe public static bool operator != (IntPtr a, IntPtr b)
+		{
+			return (a.value != b.value);
+		}
+
+		unsafe public static explicit operator IntPtr (int value)
+		{
+			return new IntPtr (value);
+		}
+
+		unsafe public static explicit operator IntPtr (long value)
+		{
+			return new IntPtr (value);
+		}
+		
+		unsafe public static explicit operator IntPtr (void *value)
+		{
+			return new IntPtr (value);
+		}
+
+		unsafe public static explicit operator int (IntPtr value)
+		{
+			return (int) value.value;
+		}
+
+		unsafe public static explicit operator long (IntPtr value)
+		{
+			return (long) value.value;
+		}
+
+		unsafe public static explicit operator void * (IntPtr value)
+		{
+			return value.value;
 		}
 	}
 }
