@@ -1,5 +1,11 @@
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
+	* DataGridPagerStyle.cs: Name of view state attribute is
+	PagerVisible not Visible. Call owner.OnPagerChanged when the pager
+	visibility is changed.
+	
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
 	* RepeatInfo.cs: When doing horizontal rendering use the repeat
 	columns as the number of columns in a row. This fixes bug #49016.
 	

@@ -168,14 +168,15 @@ namespace System.Web.UI.WebControls
 			{
 				if(IsSet(VISIBLE))
 				{
-					return (bool)ViewState["Visible"];
+					return (bool)ViewState["PagerVisible"];
 				}
 				return true;
 			}
 			set
 			{
-				ViewState["Visible"] = value;
-				Set(PG_BTN_COUNT);
+				ViewState["PagerVisible"] = value;
+				Set(VISIBLE);
+				owner.OnPagerChanged();
 			}
 		}
 
@@ -276,7 +277,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(IsSet(VISIBLE))
 			{
-				ViewState.Remove("Visible");
+				ViewState.Remove("PagerVisible");
 			}
 			if(IsSet(PREV_PG_TEXT))
 			{
