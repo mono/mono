@@ -64,7 +64,7 @@ TEST_SOURCES_common = \
 	test-281 test-282 test-283 test-284 test-285 test-286 test-287 test-288 test-289 test-290 \
 	test-291 test-292 test-293          test-295 test-296 test-297 test-298 test-299 test-300 \
 	test-301 test-302 test-303                                              test-309 test-310 \
-	test-311 test-312 test-313 test-314 test-315 test-316 test-317 test-318 \
+	test-311 test-312 test-313 test-314 test-315 test-316 test-317 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
