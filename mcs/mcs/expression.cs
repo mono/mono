@@ -2309,6 +2309,13 @@ namespace Mono.CSharp {
 					
 					return this;
 				}
+				
+				// IntPtr equality
+				if (l == TypeManager.intptr_type && r == TypeManager.intptr_type) {
+					Type = TypeManager.bool_type;
+					
+					return this;
+				}
 			}
 
 			//
