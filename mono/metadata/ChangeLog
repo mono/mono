@@ -1,3 +1,14 @@
+2004-11-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* reflection.c (mono_image_create_pefile): take a file HANDLE.
+	rather than writing to memory, write to this file. Right now,
+	we are just writting into a buffer, and copying that. However
+	we can avoid the buffer later.
+
+	(mono_dynamic_stream_reset): new function
+
+	* icall.c, object-internals.h: update for the above.
+
 2004-11-13  Ben Maurer  <bmaurer@ximian.com>
 
 	* reflection.c: Remove *_ATOMIC macros. We really shouldn't
