@@ -1,26 +1,3 @@
-2004-10-10  Miguel de Icaza  <miguel@ximian.com>
-
-	* expression.cs (MemberAccess.ResolveMemberAccess): When looking
-	up a constant, do not use the "Const" object after LookupConstant,
-	instead use the result that is returned in the `out' parameter
-	that already has the GetValue done.   Fixes the corlib regression,
-	and removes duplicated code.
-
-2004-10-09  Miguel de Icaza  <miguel@ximian.com>
-
-	* const.cs (ConvertExpressionToConstant): Refactor code that does
-	the Expression to Constant checking.  This can be used in other
-	places in the compiler that need to go from an Expression that
-	wraps a Constant (like the casts) to a Constant.
-
-	* ecore.cs (Expression.ConvertIntLiteral): If we got enumerations,
-	unfold those into the underlying types before testing for the
-	ImplicitConversions, as that code wont cope with casts from
-	enumerations to constants.
-
-	* statement.cs (SwitchLabel.ResolveAndReduce): Reuse
-	ConvertExpressionToConstant.
-
 2004-10-07  Raja R Harinath  <rharinath@novell.com>
 
 	More DeclSpace.ResolveType avoidance.

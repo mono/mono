@@ -160,46 +160,6 @@ namespace Mono.CSharp {
 			
 			return retval;
 		}
-
-		static void ReportConstantError (Location loc, string opt_name)
-		{
-			if (opt_name != null)
-				Report.Error (133, loc, String.Format ("The expression being assigned to `{0}' must be constant"));
-			else
-				Report.Error (150, loc, "A constant value is expected");
-		}
-			
-		public static Constant ConvertExpressionToConstant (Expression expr, Location loc, bool show_errors, string opt_name)
-		{
-			Constant ce = expr as Constant;
-			if (ce == null){
-				UnCheckedExpr un_expr = expr as UnCheckedExpr;
-				CheckedExpr ch_expr = expr as CheckedExpr;
-				EmptyCast ec_expr = expr as EmptyCast;
-
-				if ((un_expr != null) && (un_expr.Expr is Constant))
-					expr = un_expr.Expr;
-				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
-					expr = ch_expr.Expr;
-				else if ((ec_expr != null) && (ec_expr.Child is Constant))
-					expr = ec_expr.Child;
-				else if (expr is ArrayCreation){
-					if (show_errors)
-						Report.Error (133, loc, "Arrays can not be constant");
-				} else {
-					if (show_errors)
-						ReportConstantError (loc, opt_name);
-					return null;
-				}
-
-				ce = expr as Constant;
-				if (ce == null){
-					if (show_errors)
-						ReportConstantError (loc, opt_name);
-				}
-			}
-			return ce;
-		}
 		
 		/// <summary>
 		///  Looks up the value of a constant field. Defines it if it hasn't
@@ -244,12 +204,30 @@ namespace Mono.CSharp {
 
 			Expression real_expr = Expr;
 
-			Constant ce = ConvertExpressionToConstant (Expr, Location, errors == Report.Errors, null);
+			Constant ce = Expr as Constant;
 			if (ce == null){
-				value = null;
-				return false;
+				UnCheckedExpr un_expr = Expr as UnCheckedExpr;
+				CheckedExpr ch_expr = Expr as CheckedExpr;
+				EmptyCast ec_expr = Expr as EmptyCast;
+
+				if ((un_expr != null) && (un_expr.Expr is Constant))
+					Expr = un_expr.Expr;
+				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
+					Expr = ch_expr.Expr;
+				else if ((ec_expr != null) && (ec_expr.Child is Constant))
+					Expr = ec_expr.Child;
+				else if (Expr is ArrayCreation){
+					Report.Error (133, Location, "Arrays can not be constant");
+				} else {
+					if (errors == Report.Errors)
+						Report.Error (150, Location, "A constant value is expected");
+					value = null;
+					return false;
+				}
+
+				ce = Expr as Constant;
 			}
-			
+
 			if (MemberType != real_expr.Type) {
 				ce = ChangeType (Location, ce, MemberType);
 				if (ce == null){
