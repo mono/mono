@@ -148,6 +148,9 @@ namespace System.Collections {
 
 			public ListWrapper (IList list)
 			{
+				if (null == list)
+					throw new ArgumentNullException();
+
 				this.list = list;
 				count = ((ICollection) list).Count;
 			}
@@ -264,6 +267,10 @@ namespace System.Collections {
 
 			public override int LastIndexOf (object value, int startIndex, int count)
 			{
+				if (null == value){
+					return -1;
+				}
+
 				if (startIndex > Count || count < 0 || (startIndex + count > Count))
 					throw new ArgumentOutOfRangeException ();
 				
@@ -861,8 +868,15 @@ namespace System.Collections {
 		public virtual int LastIndexOf (object value, int startIndex,
 						int count)
 		{
-			if (startIndex > Count || count < 0 || (startIndex + count > Count))
-				throw new ArgumentOutOfRangeException ();
+			if (null == value){
+				return -1;
+			}
+			if (startIndex >= this.count)
+				throw new ArgumentOutOfRangeException ("startIndex >= Count");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count < 0");
+			if (startIndex + 1 < count)
+				throw new ArgumentOutOfRangeException ("startIndex + 1 < count");
 			
 			int EndIndex = startIndex - count + 1;
 			for (int i = startIndex; i >= EndIndex; i--) {

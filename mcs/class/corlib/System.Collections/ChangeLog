@@ -1,3 +1,11 @@
+2002-05-27  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayList.cs (LastIndexOf): Return -1 if searching for null, also
+	fix check of parameters sent to make sure we don't search beyond the
+	beginning of the list.
+	(ListWrapper): Throw exception if called with null.
+	We now pass all unit tests.
+
 2002-05-23  Duncan Mak  <duncan@ximian.com>
 
 	* ArrayList.cs (Wrapper): Preliminary implementation of
