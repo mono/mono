@@ -196,6 +196,37 @@ mono_linear_scan (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_ma
 			} else
 				vmv->reg = -1;
 		}
+
+		if (vmv->reg == -1) {
+			if ((vmv->range.first_use.abs_pos >> 16) == (vmv->range.last_use.abs_pos >> 16)) {
+#if 0
+				static int count = 0;
+				count ++;
+				/* 
+				 * This variable is local to a basic block, so convert it to
+				 * a virtual register.
+				 */
+				//if (getenv ("COUNT") && strstr(cfg->method->name, "Emit")) {
+				if (getenv ("COUNT")) {
+					if (count <= atoi (getenv ("COUNT"))) {
+						int reg = mono_regstate_next_int (cfg->rs);
+						printf ("HIT: %d ", reg); mono_print_tree_nl (cfg->varinfo [vmv->idx]);
+
+						cfg->varinfo [vmv->idx]->opcode = OP_REGVAR;
+						cfg->varinfo [vmv->idx]->dreg = reg;
+						vmv->reg = reg;
+					}
+				}
+#else
+#if 1
+				cfg->varinfo [vmv->idx]->opcode = OP_REGVAR;
+				cfg->varinfo [vmv->idx]->dreg = mono_regstate_next_int (cfg->rs);
+
+				//printf ("HIT!\n");
+#endif
+#endif
+			}
+		}
 	}
 
 	/* Compute used regs */

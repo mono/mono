@@ -4744,6 +4744,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			}
 			else {
+				handle_loaded_temps (cfg, bblock, stack_start, sp);
+
 				MONO_INST_NEW (cfg, ins, *ip);
 				ins->type = STACK_OBJ;
 				ins->inst_left = *sp;
@@ -4799,6 +4801,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					inline_costs += costs;				
 				}
 				else {
+					handle_loaded_temps (cfg, bblock, stack_start, sp);
+
 					MONO_INST_NEW (cfg, ins, CEE_CASTCLASS);
 					ins->type = STACK_OBJ;
 					ins->inst_left = *sp;
@@ -4928,6 +4932,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				inline_costs += costs;
 			}
 			else {
+				handle_loaded_temps (cfg, bblock, stack_start, sp);
+
 				MONO_INST_NEW (cfg, ins, *ip);
 				ins->type = STACK_OBJ;
 				ins->inst_left = *sp;
@@ -5939,6 +5945,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			case CEE_MONO_CCASTCLASS: {
 				int token;
 				CHECK_STACK (1);
+				handle_loaded_temps (cfg, bblock, stack_start, sp);
 				--sp;
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
@@ -6545,7 +6552,10 @@ mono_print_tree (MonoInst *tree) {
 			printf ("[0x%x(%s)]", (int)(tree->inst_offset), mono_arch_regname (tree->inst_basereg));
 		break;
 	case OP_REGVAR:
-		printf ("[%s]", mono_arch_regname (tree->dreg));
+		if (tree->dreg >= MONO_MAX_IREGS)
+			printf ("[R%d]", tree->dreg);
+		else
+			printf ("[%s]", mono_arch_regname (tree->dreg));
 		break;
 	case CEE_NEWARR:
 		printf ("[%s]",  tree->inst_newa_class->name);
@@ -8335,9 +8345,9 @@ static void
 mini_select_instructions (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
+	int first_vireg, first_vfreg;
 	
 	cfg->state_pool = mono_mempool_new ();
-	cfg->rs = mono_regstate_new ();
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins) &&
@@ -8376,6 +8386,9 @@ mini_select_instructions (MonoCompile *cfg)
 	}
 #endif
 
+	first_vireg = cfg->rs->next_vireg;
+	first_vfreg = cfg->rs->next_vfreg;
+
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *tree = bb->code, *next;	
 		MBState *mbstate;
@@ -8386,7 +8399,10 @@ mini_select_instructions (MonoCompile *cfg)
 		bb->last_ins = NULL;
 		
 		cfg->cbb = bb;
-		mono_regstate_reset (cfg->rs);
+
+		/* Reset regstate */
+		cfg->rs->next_vireg = first_vireg;
+		cfg->rs->next_vfreg = first_vfreg;
 
 #ifdef DEBUG_SELECTION
 		if (cfg->verbose_level >= 3)
@@ -9063,6 +9079,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		
 		g_list_free (regs);
 	}
+
+	cfg->rs = mono_regstate_new ();
 
 	if (cfg->opt & MONO_OPT_LINEARS) {
 		GList *vars, *regs;
