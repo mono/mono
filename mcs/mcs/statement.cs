@@ -1479,7 +1479,10 @@ namespace Mono.CSharp {
 			
 			end = ig.BeginExceptionBlock ();
 			returns = Block.Emit (ec);
-			ig.Emit (OpCodes.Leave, finish);
+
+			//
+			// System.Reflection.Emit provides this automatically:
+			// ig.Emit (OpCodes.Leave, finish);
 			
 			foreach (Catch c in Specific){
 				Type catch_type = ec.TypeContainer.LookupType (c.Type, false);

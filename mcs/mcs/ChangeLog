@@ -1,3 +1,7 @@
+2001-12-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: Remove the explicit emit for the Leave opcode.
+
 2001-12-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (ConvCast): new class used to encapsulate the various
