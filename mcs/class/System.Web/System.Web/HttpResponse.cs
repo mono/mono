@@ -190,7 +190,7 @@ namespace System.Web
 			CultureInfo oSavedInfo = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			string date = DateTime.Now.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ");
+			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss ");
 			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date + "GMT");
 			oHeaders.Add (date_header);
 			
