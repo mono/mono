@@ -1,3 +1,9 @@
+2003-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RijndaelManaged.cs: Now 7 (encrypt) to 10 (decrypt) times faster 
+	by removing allocation inside intensively called methods, using pre-
+	calculated tables instead of Mult_GF methods and inlining most methods.
+
 2002-12-31  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsymmetricAlgorithm.cs: Removed ValidKeySize (method only present
