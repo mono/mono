@@ -1,3 +1,8 @@
+2003-08-22  Alexandre Pigolkine <pigolkine@gmx.de>
+
+	* ComboBox.cs
+	* Control.cs		modofications for ComboBox sample
+
 2003-08-22  Duncan Mak  <duncan@ximian.com>
 
 	* ListControl.cs (DataSource): Implementation by Brian Takita

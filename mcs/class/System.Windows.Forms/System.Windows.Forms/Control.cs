@@ -1093,9 +1093,7 @@ namespace System.Windows.Forms {
 		//Compact Framework
     		public virtual string Text {
     			get {
-				// CHECKME: if we really need to provide back current text of real window
-				// or just our copy in text member.
-    				if (IsHandleCreated){
+    				if (GetStyle(ControlStyles.CacheText) && IsHandleCreated){
 					int len = Win32.GetWindowTextLengthA (Handle);
 					// FIXME: len is doubled due to some strange behaviour. (of GetWindowText function ?)
 					// instead of 10 characters we can get only 9, even if sb.Capacity is 10.

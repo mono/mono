@@ -31,7 +31,6 @@ namespace System.Windows.Forms {
 		bool sorted;
 		Image backgroundImage;
 		ControlStyles controlStyles;
-		string text;
 		int selectedLength;
 		string selectedText;
 		int selectedIndex;
@@ -53,12 +52,11 @@ namespace System.Windows.Forms {
 			updateing = false;
 			//controlStyles = null;
 			drawMode = DrawMode.Normal;
-			dropDownStyle = ComboBoxStyle.DropDownList;
+			dropDownStyle = ComboBoxStyle.DropDown;
 			droppedDown = false;
 			integralHeight = true;
 			sorted = false;
 			backgroundImage = null;
-			text = "";
 			Items_ = new ComboBox.ObjectCollection(this);
 			itemHeight_ = 13;
 			maxDropDownItems = 8;
@@ -424,10 +422,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string Text {
 			get {
-				return text;
+				return base.Text;
 			}
 			set {
-				text = value;
+				base.Text = value;
+				if (value == null || value == String.Empty) {
+					SelectedIndex = -1;
+				}
 			}
 		}
 		
@@ -573,7 +574,12 @@ namespace System.Windows.Forms {
 			//FIXME:
 			base.OnHandleCreated(e);
 			populateControl(Items_);
-			Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETCURSEL, selectedIndex, 0);
+			if (DropDownStyle != ComboBoxStyle.DropDown || Text == String.Empty) {
+				if (selectedIndex == -1 && Items.Count != 0) {
+					selectedIndex = 0;
+				}
+				Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETCURSEL, selectedIndex, 0);
+			}
 		}
 		
 		[MonoTODO]
@@ -727,19 +733,17 @@ namespace System.Windows.Forms {
 					else {
 						switch(m.HiWordWParam) {
 							case (uint)ComboBoxNotification.CBN_SELCHANGE:
-								//OnSelectedIndexChanged(new EventArgs());
 								SelectedIndex = Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_GETCURSEL, 0, 0);
 								m.Result = IntPtr.Zero;
-								//CallControlWndProc(ref m);
 								break;
 							default:
-								Console.WriteLine("ComboBox enter default");
-								//CallControlWndProc(ref m);
 								m.Result = IntPtr.Zero;
-								Console.WriteLine("ComboBox exit default");
 								break;
 						}
 					}
+					break;
+				case Msg.WM_CTLCOLOREDIT :
+					CallControlWndProc ( ref m );
 					break;
 				default:
 					base.WndProc(ref m);
