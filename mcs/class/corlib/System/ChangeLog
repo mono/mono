@@ -1,3 +1,8 @@
+
+Wed Apr 10 21:20:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: make IndexOfAny() use an internalcall.
+
 2002-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Int32.cs:

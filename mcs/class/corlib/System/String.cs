@@ -859,6 +859,9 @@ namespace System {
 			return IndexOfAny (values, startIndex, this.length - startIndex);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern int InternalIndexOfAny (char[] values, int startIndex, int count);
+
 		public int IndexOfAny (char[] values, int startIndex, int count)
 		{
 			if (values == null)
@@ -867,14 +870,7 @@ namespace System {
 			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = startIndex; i < startIndex + count; i++) {
-				for (int j = 0; j < strlen (values); j++) {
-					if (this.c_str[i] == values[j])
-						return i;
-				}
-			}
-
-			return -1;
+			return InternalIndexOfAny (values, startIndex, count);
 		}
 
 		public string Insert (int startIndex, string value)
