@@ -308,9 +308,9 @@ namespace System {
 					if (Char.IsDigit (hexDigit))
 						digitValue = (int) (hexDigit - '0');
 					else if (Char.IsLower (hexDigit))
-						digitValue = (int) (hexDigit - 'a');
+						digitValue = (int) (hexDigit - 'a' + 10);
 					else
-						digitValue = (int) (hexDigit - 'A');
+						digitValue = (int) (hexDigit - 'A' + 10);
 
 					number = checked (number * 16 - digitValue);
 				}

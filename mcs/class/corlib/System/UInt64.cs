@@ -262,9 +262,9 @@ namespace System {
 					if (Char.IsDigit (hexDigit))
 						digitValue = (ulong) (hexDigit - '0');
 					else if (Char.IsLower (hexDigit))
-						digitValue = (ulong) (hexDigit - 'a');
+						digitValue = (ulong) (hexDigit - 'a' + 10);
 					else
-						digitValue = (ulong) (hexDigit - 'A');
+						digitValue = (ulong) (hexDigit - 'A' + 10);
 
 					number = checked (number * 16 + digitValue);
 				}
