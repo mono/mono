@@ -1,3 +1,7 @@
+2002-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Formatter.cs: added namespace.
+
 2002-06-10  Duncan Mak  <duncan@ximian.com>
 
 	* Formatter.cs: Addd to CVS.

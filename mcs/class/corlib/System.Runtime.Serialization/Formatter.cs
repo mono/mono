@@ -9,8 +9,9 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Runtime.Serialization;
 
+namespace System.Runtime.Serialization
+{
 [CLSCompliant (false)]
 [Serializable]
 public abstract class Formatter : IFormatter
@@ -95,4 +96,5 @@ public abstract class Formatter : IFormatter
 	protected abstract void WriteInt64 (ulong val, string name);
 
 	protected abstract void WriteValueType (object obj, string name, Type memberType);	
+}
 }
