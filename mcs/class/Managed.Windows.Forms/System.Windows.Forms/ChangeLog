@@ -1,3 +1,8 @@
+2005-01-27  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Only refresh on mouseup if we are showing the
+	slider. Also only invalidate the button whose state has changed.
+
 2005-01-26  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs: Added Systray methods

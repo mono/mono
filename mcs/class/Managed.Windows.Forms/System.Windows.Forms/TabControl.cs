@@ -421,9 +421,17 @@ namespace System.Windows.Forms {
 
 		private void MouseUpHandler (object sender, MouseEventArgs e)
 		{
-			left_slider_state = ButtonState.Normal;
-			right_slider_state = ButtonState.Normal;
-			Refresh ();
+			if (ShowSlider && (left_slider_state != ButtonState.Pushed || right_slider_state != ButtonState.Pushed)) {
+				Rectangle invalid;
+				if (left_slider_state == ButtonState.Pushed)
+					invalid = ThemeEngine.Current.GetTabControlLeftScrollRect (this);
+				else
+					invalid = ThemeEngine.Current.GetTabControlRightScrollRect (this);
+				left_slider_state = ButtonState.Normal;
+				right_slider_state = ButtonState.Normal;
+
+				Invalidate (invalid);
+			}
 		}
 
 		private void SizeChangedHandler (object sender, EventArgs e)
