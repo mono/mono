@@ -435,6 +435,12 @@ namespace CIR {
 				return operators;
 			}
 		}
+
+		public ArrayList Delegates {
+			get {
+				return delegates;
+			}
+		}
 		
 		public Attributes OptAttributes {
 			get {
@@ -634,6 +640,12 @@ namespace CIR {
 				foreach (Operator o in Operators)
 					o.Define (this);
 			}
+
+			if (Delegates != null) {
+				foreach (Delegate d in Delegates)
+					d.Define (this);
+			}
+			
 			
 		}
 
@@ -1196,13 +1208,13 @@ namespace CIR {
 			EventBuilder = parent.TypeBuilder.DefineEvent (Name, e_attr, t);
 			
 			if (Add != null) {
-				mb = parent.TypeBuilder.DefineMethod ("addOn_" + Name, m_attr, null, p_type);
+				mb = parent.TypeBuilder.DefineMethod ("add_" + Name, m_attr, null, p_type);
 				mb.DefineParameter (1, ParameterAttributes.None, "value");
 				EventBuilder.SetAddOnMethod (mb);
 			}
 
 			if (Remove != null) {
-				mb = parent.TypeBuilder.DefineMethod ("removeOn_" + Name, m_attr, null, p_type);
+				mb = parent.TypeBuilder.DefineMethod ("remove_" + Name, m_attr, null, p_type);
 				mb.DefineParameter (1, ParameterAttributes.None, "value");
 				EventBuilder.SetRemoveOnMethod (mb);
 			}

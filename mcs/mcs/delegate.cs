@@ -21,8 +21,9 @@ namespace CIR {
 		public string name;
 		public string type;
 		public int    mod_flags;
-		public Parameters parameters;
+		public Parameters Parameters;
 		public Attributes OptAttributes;
+		public TypeBuilder DelegateBuilder;
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -37,10 +38,24 @@ namespace CIR {
 			this.name       = name;
 			this.type       = type;
 			this.mod_flags  = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
-			parameters      = param_list;
+			Parameters      = param_list;
 			OptAttributes   = attrs;
 		}
-		    
+
+		public void Define (TypeContainer parent)
+		{
+			TypeAttributes attr = Modifiers.TypeAttr (ModFlags);
+
+			Type t = parent.LookupType (type, false);
+			Type [] param_types = Parameters.GetParameterInfo (parent);
+			Type base_type = System.Type.GetType ("System.MulticastDelegate");
+
+			DelegateBuilder = parent.TypeBuilder.DefineNestedType (name, attr, base_type);
+
+			// FIXME : Need to figure out how to proceed from here. 
+
+		}
+		
 		
 		public string Type {
 			get {

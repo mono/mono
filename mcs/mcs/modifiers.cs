@@ -68,8 +68,15 @@ namespace CIR {
 			
 			if ((mod_flags & PUBLIC) != 0)
 				t |= TypeAttributes.Public;
+			if ((mod_flags & PRIVATE) != 0)
+				t |= TypeAttributes.NotPublic;
+			if ((mod_flags & SEALED) != 0)
+				t |= TypeAttributes.Sealed;
+			if ((mod_flags & ABSTRACT) != 0)
+				t |= TypeAttributes.Abstract;
 
-			// FIXME: implement all flags
+			// FIXME: what happens to protected and internal ? Are
+			// they connected with NestedAssembly etc. ?
 
 			return t;
 		}
