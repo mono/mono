@@ -195,6 +195,30 @@ namespace Mono.Xml.Schema
 						 XmlSchemaFacet.Facet.enumeration | XmlSchemaFacet.Facet.whiteSpace; 
 	}
 
+#if NET_2_0
+	internal class XdtAnyAtomicType : XsdAnySimpleType
+	{
+		internal XdtAnyAtomicType ()
+		{
+		}
+
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.AnyAtomicType; }
+		}
+	}
+
+	internal class XdtUntypedAtomic : XdtAnyAtomicType
+	{
+		internal XdtUntypedAtomic ()
+		{
+		}
+
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.UntypedAtomic; }
+		}
+	}
+#endif
+
 	// xs:string
 	internal class XsdString : XsdAnySimpleType
 	{
@@ -1594,15 +1618,61 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, NSResolver nsmgr)
 		{
-			return ParseValueType (s, nameTable, nsmgr);
+			return new XmlSchemaUri (Normalize (s));
 		}
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
-			return new UriValueType (Normalize (s));
+			return new UriValueType ((XmlSchemaUri) ParseValue (s, nameTable, nsmgr));
 		}
 	}
-	
+
+	internal class XmlSchemaUri : Uri
+	{
+		public string value;
+
+		// LAMESPEC: In this way, some strings that contain ':' might
+		// result in exception (MS.NET looks implemented as such).
+		public XmlSchemaUri (string src)
+			: this (src, src.IndexOf (':') > 0)
+		{
+		}
+
+		private XmlSchemaUri (string src, bool formal)
+			: base (formal ? src : "anyuri:" + src, !formal)
+		{
+			value = src;
+		}
+
+		public static bool operator == (XmlSchemaUri v1, XmlSchemaUri v2)
+		{
+			return v1.value == v2.value;
+		}
+
+		public static bool operator != (XmlSchemaUri v1, XmlSchemaUri v2)
+		{
+			return v1.value != v2.value;
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj is XmlSchemaUri)
+				return (XmlSchemaUri) obj == this;
+			else
+				return false;
+		}
+
+		public override int GetHashCode () 
+		{
+			return value.GetHashCode ();
+		}
+
+		public override string ToString ()
+		{
+			return value;
+		}
+	}
+
 	// xs:duration
 	internal class XsdDuration : XsdAnySimpleType
 	{
@@ -1678,6 +1748,92 @@ namespace Mono.Xml.Schema
 	 
 		}
 	}
+
+#if NET_2_0
+	// xdt:dayTimeDuration
+	internal class XdtDayTimeDuration : XsdDuration
+	{
+		internal XdtDayTimeDuration ()
+		{
+		}
+
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.DayTimeDuration; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (TimeSpan); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, NSResolver nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
+		{
+			return XmlConvert.ToTimeSpan (Normalize (s));
+		}
+
+		// FIXME: Fundamental Facets
+		public override bool Bounded {
+			get { return false; }
+		}
+		public override bool Finite {
+			get { return false; }
+		}
+		public override bool Numeric {
+			get { return false; }
+		}
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Partial; }
+	 
+		}
+	}
+
+	// xdt:yearMonthDuration
+	internal class XdtYearMonthDuration : XsdDuration
+	{
+		internal XdtYearMonthDuration ()
+		{
+		}
+
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.YearMonthDuration; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (TimeSpan); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, NSResolver nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
+		{
+			return XmlConvert.ToTimeSpan (Normalize (s));
+		}
+
+		// FIXME: Fundamental Facets
+		public override bool Bounded {
+			get { return false; }
+		}
+		public override bool Finite {
+			get { return false; }
+		}
+		public override bool Numeric {
+			get { return false; }
+		}
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Partial; }
+	 
+		}
+	}
+#endif
 
 	// xs:dateTime
 	internal class XsdDateTime : XsdAnySimpleType

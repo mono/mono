@@ -1,3 +1,9 @@
+2004-09-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* BuiltInDatatype.cs, SchemaDataValueType.cs :
+	  ParseValue() for xs:AnyURI should return System.Uri. MS.NET returns
+	  XmlSchemaUri, but it is derived from System.Uri, while ours was not.
+
 2004-09-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* IXmlType.cs : deprecated in .NET 2.0.
