@@ -1,3 +1,9 @@
+2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* TestSqlDataReader.cs: got to work
+	with new place for the PostgreSQL provider
+	at Mono.Data.PostgreSqlClient.
+
 2002-10-16  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.SqlTypes/AllTests.cs:

@@ -1,8 +1,8 @@
 //
-// Test/SqlDataRead.cs
+// Test/SqlDataReader.cs - to test Mono.Data.PostgreSqlClient/PgSqlDataReader.cs
 //
 // Test to do read a simple forward read only record set.
-// Using SqlCommand.ExecuteReader() to return a SqlDataReader
+// Using PgSqlCommand.ExecuteReader() to return a PgSqlDataReader
 // which can be used to Read a row
 // and Get a String or Int32.
 //
@@ -14,17 +14,17 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
+using Mono.Data.PostgreSqlClient;
 
-namespace TestSystemDataSqlClient {
-	class TestSqlDataReader {
+namespace Test.Mono.Data.PostgreSqlClient {
+	class TestPgSqlDataReader {
 
-		static void Test(SqlConnection con, string sql, 
+		static void Test(PgSqlConnection con, string sql, 
 				CommandType cmdType, CommandBehavior behavior,
 				string testDesc) 
 		{ 
-			SqlCommand cmd = null;
-			SqlDataReader rdr = null;
+			PgSqlCommand cmd = null;
+			PgSqlDataReader rdr = null;
 			
 			int c;
 			int results = 0;
@@ -34,7 +34,7 @@ namespace TestSystemDataSqlClient {
 			Console.WriteLine(sql);
 			Console.WriteLine("[END SQL]");
 
-			cmd = new SqlCommand(sql, con);
+			cmd = new PgSqlCommand(sql, con);
 			cmd.CommandType = cmdType;
 						
 			Console.WriteLine("ExecuteReader...");
@@ -135,8 +135,8 @@ namespace TestSystemDataSqlClient {
 				"dbname=test;" +
 				"user=postgres";
 						
-			SqlConnection con;
-			con = new SqlConnection(connectionString);
+			PgSqlConnection con;
+			con = new PgSqlConnection(connectionString);
 			con.Open();
 
 			string sql;
