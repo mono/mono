@@ -1,3 +1,9 @@
+2004-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : WriteNode(XPathNavigator,bool) should check null arg.
+	  For attribute nodes, it should not use WriteSubtree() which does not
+	  support attribute nodes.
+
 2004-09-20  Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* XmlValidatingReader.cs: Added deprecation message.

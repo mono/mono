@@ -125,19 +125,16 @@ namespace System.Xml
 			return Create (new StreamWriter (file, false, enc), settings);
 		}
 
-		[MonoTODO]
 		public static XmlWriter Create (StringBuilder builder, XmlWriterSettings settings)
 		{
 			return Create (new StringWriter (builder), null);
 		}
 
-		[MonoTODO]
 		public static XmlWriter Create (TextWriter writer, XmlWriterSettings settings)
 		{
 			return CreateTextWriter (writer, settings);
 		}
 
-		[MonoTODO]
 		public static XmlWriter Create (XmlWriter writer, XmlWriterSettings settings)
 		{
 			if (settings == null)
@@ -171,7 +168,6 @@ namespace System.Xml
 			return Create (xtw, settings);
 		}
 
-		[MonoTODO]
 		public virtual void Dispose ()
 		{
 			Close ();
@@ -392,7 +388,17 @@ namespace System.Xml
 		[MonoTODO ("defattr handling")]
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{
-			WriteNode (navigator.ReadSubtree (), defattr);
+			if (navigator == null)
+				throw new ArgumentNullException ("navigator");
+			switch (navigator.NodeType) {
+			case XPathNodeType.Attribute:
+			case XPathNodeType.Namespace:
+				WriteAttributeString (navigator.Prefix, navigator.LocalName, navigator.NamespaceURI, navigator.Value);
+				break;
+			default:
+				WriteNode (navigator.ReadSubtree (), defattr);
+				break;
+			}
 		}
 #endif
 
