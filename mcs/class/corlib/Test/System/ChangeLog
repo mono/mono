@@ -1,5 +1,7 @@
 2004-05-23  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* BooleanTest.cs: Added new test to compare booleans using Equals
+	and == (case of True!=True). Converted to NUnit2 format.
 	* BitConverterTest.cs: Added new tests for negative integers and 
 	integer overflow in To... methods. Added new boolean convertion
 	tests.
