@@ -1,3 +1,8 @@
+2002-02-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Handle the case where there is no catch
+	statements (missing null test).
+
 2002-02-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs (MainDriver): Be conservative on our command line

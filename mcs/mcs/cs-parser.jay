@@ -3191,12 +3191,15 @@ try_statement
 	  {
 		Catch g = null;
 		ArrayList s = new ArrayList ();
-		
-		foreach (Catch cc in (ArrayList) $3) {
-			if (cc.Type == null)
-				g = cc;
-			else
-				s.Add (cc);
+		ArrayList catch_list = (ArrayList) $3;
+
+		if (catch_list != null){
+			foreach (Catch cc in catch_list) {
+				if (cc.Type == null)
+					g = cc;
+				else
+					s.Add (cc);
+			}
 		}
 
 		$$ = new Try ((Block) $2, s, g, (Block) $5);
