@@ -383,7 +383,14 @@ namespace System.Xml.Serialization {
 		XmlTypeMapping ImportType (XmlQualifiedName name, XmlSchemaType stype, XmlQualifiedName root)
 		{
 			XmlTypeMapping map = GetRegisteredTypeMapping (name);
-			if (map != null) return map;
+			if (map != null) {
+				XmlSchemaComplexType ct = stype as XmlSchemaComplexType;
+				if (map.TypeData.SchemaType != SchemaTypes.Class || ct == null || !CanBeArray (name, ct))
+					return map;
+					
+				// The map was initially imported as a class, but it turns out that it is an
+				// array. It has to be imported now as array.
+			}
 			
 			if (stype is XmlSchemaComplexType)
 				return ImportClassComplexType (name, (XmlSchemaComplexType) stype, root);

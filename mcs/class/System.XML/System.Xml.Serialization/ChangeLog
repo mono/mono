@@ -1,3 +1,10 @@
+2004-04-20  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TypeTranslator.cs: Mapped again anyUri, but now it is mapped to String.
+	* XmlSchemaImporter.cs: If a map was initially imported as a class, but it
+	  turns out that it is an array, import it again as array. This fixes
+	  bug #57133.
+
 2004-04-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSchemaExporter.cs: When checking if a map has been exported or not,
