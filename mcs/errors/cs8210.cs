@@ -1,4 +1,4 @@
-//
+// Compiler options: -unsafe
 // Generic type parameters
 //
 class X <Y> {
