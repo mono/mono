@@ -4442,6 +4442,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if ((method.Attributes & MethodAttributes.SpecialName) != 0){
+				Report.Error (571, loc, method.Name + ": can not call operator or accessor");
+			}
+			
 			eclass = ExprClass.Value;
 			return this;
 		}

@@ -1,3 +1,8 @@
+2002-12-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Invocation.DoResolve): Do not allow methods with
+	SpecialName to be invoked.
+
 2002-12-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Small fix to the parser: compute the ascii
