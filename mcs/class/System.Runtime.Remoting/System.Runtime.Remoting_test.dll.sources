@@ -11,3 +11,4 @@ TcpCalls.cs
 CrossDomainCalls.cs
 HttpCalls.cs
 ActivationTests.cs
+RemotingServicesTest.cs
