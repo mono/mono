@@ -366,6 +366,34 @@ public class TypeManager {
 			return types;
 		}
 	}
+
+	static Hashtable properties;
+	
+	static public void RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)
+	{
+		if (properties == null)
+			properties = new Hashtable ();
+		
+		properties.Add (pb, new DictionaryEntry (get, set));
+	}
+	
+	static public MethodInfo [] GetAccessors (PropertyInfo pi)
+	{
+		MethodInfo [] ret;
+			
+		if (pi is PropertyBuilder){
+			DictionaryEntry de = (DictionaryEntry) properties [pi];
+
+			ret = new MethodInfo [2];
+			ret [0] = (MethodInfo) de.Key;
+			ret [1] = (MethodInfo) de.Value;
+
+			return ret;
+		} else
+			return pi.GetAccessors ();
+	}
+		
+
 }
 
 }

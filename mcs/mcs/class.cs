@@ -1806,7 +1806,7 @@ namespace CIR {
 				ec,
 				ec.TypeContainer.TypeBuilder.BaseType, ".ctor", false,
 				MemberTypes.Constructor,
-				BindingFlags.Public | BindingFlags.Instance);
+				BindingFlags.Public | BindingFlags.Instance, location);
 
 			if (parent_constructor_group == null){
 				Console.WriteLine ("Could not find a constructor in our parent");
@@ -2039,7 +2039,7 @@ namespace CIR {
 
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
 				Name, prop_attr, PropertyType, null);
-					
+
 			if (Get != null)
 			{
 				GetBuilder = parent.TypeBuilder.DefineMethod (
@@ -2062,7 +2062,11 @@ namespace CIR {
 				//
 				TypeManager.RegisterMethod (SetBuilder, parameters);
 			}
-			
+
+			//
+			// HACK for the reasons exposed above
+			//
+			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
 		}
 
 		public void Emit (TypeContainer tc)

@@ -213,10 +213,10 @@ namespace CIR {
 		// 
 		// Returns a fully formed expression after a MemberLookup
 		//
-		static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi)
+		static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo){
-				return new EventExpr ((EventInfo) mi);
+				return new EventExpr ((EventInfo) mi, loc);
 			} else if (mi is FieldInfo){
 				FieldInfo fi = (FieldInfo) mi;
 
@@ -228,7 +228,7 @@ namespace CIR {
 				} else
 					return new FieldExpr (fi);
 			} else if (mi is PropertyInfo){
-				return new PropertyExpr ((PropertyInfo) mi);
+				return new PropertyExpr ((PropertyInfo) mi, loc);
 			} else if (mi is Type)
 				return new TypeExpr ((Type) mi);
 
@@ -263,7 +263,8 @@ namespace CIR {
 		// from a static body (scan for error 120 in ResolveSimpleName).
 		//
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
-						       bool same_type, MemberTypes mt, BindingFlags bf)
+						       bool same_type, MemberTypes mt,
+						       BindingFlags bf, Location loc)
 		{
 			if (same_type)
 				bf |= BindingFlags.NonPublic;
@@ -279,7 +280,7 @@ namespace CIR {
 				return null;
 			
 			if (mi.Length == 1 && !(mi [0] is MethodBase))
-				return Expression.ExprClassFromMemberInfo (ec, mi [0]);
+				return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
 			
 			for (int i = 0; i < mi.Length; i++)
 				if (!(mi [i] is MethodBase)){
@@ -315,9 +316,9 @@ namespace CIR {
 			BindingFlags.Instance;
 
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
-						       bool same_type)
+						       bool same_type, Location loc)
 		{
-			return MemberLookup (ec, t, name, same_type, AllMemberTypes, AllBindingsFlags);
+			return MemberLookup (ec, t, name, same_type, AllMemberTypes, AllBindingsFlags, loc);
 		}
 
 		//
@@ -889,15 +890,15 @@ namespace CIR {
 			else
 				op_name = "op_Implicit";
 			
-			mg1 = MemberLookup (ec, source_type, op_name, false);
+			mg1 = MemberLookup (ec, source_type, op_name, false, loc);
 
 			if (source_type.BaseType != null)
-				mg2 = MemberLookup (ec, source_type.BaseType, op_name, false);
+				mg2 = MemberLookup (ec, source_type.BaseType, op_name, false, loc);
 			
-			mg3 = MemberLookup (ec, target, op_name, false);
+			mg3 = MemberLookup (ec, target, op_name, false, loc);
 
 			if (target.BaseType != null)
-				mg4 = MemberLookup (ec, target.BaseType, op_name, false);
+				mg4 = MemberLookup (ec, target.BaseType, op_name, false, loc);
 
 			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2);
 			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4);
@@ -910,15 +911,15 @@ namespace CIR {
 
 				op_name = "op_Explicit";
 				
-				mg5 = MemberLookup (ec, source_type, op_name, false);
+				mg5 = MemberLookup (ec, source_type, op_name, false, loc);
 
 				if (source_type.BaseType != null)
-					mg6 = MemberLookup (ec, source_type.BaseType, op_name, false);
+					mg6 = MemberLookup (ec, source_type.BaseType, op_name, false, loc);
 				
-				mg7 = MemberLookup (ec, target, op_name, false);
+				mg7 = MemberLookup (ec, target, op_name, false, loc);
 				
 				if (target.BaseType != null)
-					mg8 = MemberLookup (ec, target.BaseType, op_name, false);
+					mg8 = MemberLookup (ec, target.BaseType, op_name, false, loc);
 				
 				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6);
 				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8);
@@ -1732,10 +1733,10 @@ namespace CIR {
 			else
 				op_name = "op_" + oper;
 
-			mg = MemberLookup (ec, expr_type, op_name, false);
+			mg = MemberLookup (ec, expr_type, op_name, false, loc);
 			
 			if (mg == null && expr_type.BaseType != null)
-				mg = MemberLookup (ec, expr_type.BaseType, op_name, false);
+				mg = MemberLookup (ec, expr_type.BaseType, op_name, false, loc);
 			
 			if (mg != null) {
 				Arguments = new ArrayList ();
@@ -1839,8 +1840,6 @@ namespace CIR {
 				// It is also not clear if we should convert to Float
 				// or Double initially.
 				//
-				Location loc = new Location (-1);
-				
 				if (expr_type == TypeManager.uint32_type){
 					//
 					// FIXME: handle exception to this rule that
@@ -2000,7 +1999,7 @@ namespace CIR {
 				break;
 				
 			case Operator.AddressOf:
-				((LValue)expr).AddressOf (ec);
+				((MemoryLocation)expr).AddressOf (ec);
 				break;
 				
 			case Operator.Indirection:
@@ -2469,13 +2468,13 @@ namespace CIR {
 			
 			string op = "op_" + oper;
 
-			left_expr = MemberLookup (ec, l, op, false);
+			left_expr = MemberLookup (ec, l, op, false, loc);
 			if (left_expr == null && l.BaseType != null)
-				left_expr = MemberLookup (ec, l.BaseType, op, false);
+				left_expr = MemberLookup (ec, l.BaseType, op, false, loc);
 			
-			right_expr = MemberLookup (ec, r, op, false);
+			right_expr = MemberLookup (ec, r, op, false, loc);
 			if (right_expr == null && r.BaseType != null)
-				right_expr = MemberLookup (ec, r.BaseType, op, false);
+				right_expr = MemberLookup (ec, r.BaseType, op, false, loc);
 			
 			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
 			
@@ -3017,7 +3016,7 @@ namespace CIR {
 			//
 			// Stage 2: Lookup members
 			//
-			e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, true);
+			e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, true, Location);
 			if (e == null){
 				//
 				// Stage 3: Lookup symbol in the various namespaces. 
@@ -3088,20 +3087,25 @@ namespace CIR {
 		void Store     (EmitContext ec);
 
 		// <summary>
-		//   The AddressOf method should generate code that loads
-		//   the address of the LValue and leaves it on the stack
-		// </summary>
-		void AddressOf (EmitContext ec);
-
-		// <summary>
 		//   Allows an LValue to perform any necessary semantic
 		//   analysis in an lvalue-context.
 		// </summary>
 
 		Expression LValueResolve (EmitContext ec);
 	}
+
+	// <summary>
+	//   This interface is implemented by variables
+	// </summary>
+	public interface MemoryLocation {
+		// <summary>
+		//   The AddressOf method should generate code that loads
+		//   the address of the LValue and leaves it on the stack
+		// </summary>
+		void AddressOf (EmitContext ec);
+	}
 	
-	public class LocalVariableReference : Expression, LValue {
+	public class LocalVariableReference : Expression, LValue, MemoryLocation {
 		public readonly string Name;
 		public readonly Block Block;
 
@@ -3226,7 +3230,7 @@ namespace CIR {
 		}
 	}
 
-	public class ParameterReference : Expression, LValue {
+	public class ParameterReference : Expression, LValue, MemoryLocation {
 		public readonly Parameters Pars;
 		public readonly String Name;
 		public readonly int Idx;
@@ -3396,13 +3400,13 @@ namespace CIR {
 		//
 		//   FIXME: we could implement a cache here. 
 		// </summary>
-		static bool ConversionExists (EmitContext ec, Type from, Type to)
+		static bool ConversionExists (EmitContext ec, Type from, Type to, Location loc)
 		{
 			// Locate user-defined implicit operators
 
 			Expression mg;
 			
-			mg = MemberLookup (ec, to, "op_Implicit", false);
+			mg = MemberLookup (ec, to, "op_Implicit", false, loc);
 
 			if (mg != null) {
 				MethodGroupExpr me = (MethodGroupExpr) mg;
@@ -3417,7 +3421,7 @@ namespace CIR {
 				}
 			}
 
-			mg = MemberLookup (ec, from, "op_Implicit", false);
+			mg = MemberLookup (ec, from, "op_Implicit", false, loc);
 
 			if (mg != null) {
 				MethodGroupExpr me = (MethodGroupExpr) mg;
@@ -3440,9 +3444,9 @@ namespace CIR {
 		//  Returns : 1 if a->p is better
 		//            0 if a->q or neither is better 
 		// </summary>
-		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, bool use_standard)
+		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, bool use_standard,
+					     Location loc)
 		{
-			
 			Type argument_type = a.Expr.Type;
 			Expression argument_expr = a.Expr;
 
@@ -3521,9 +3525,9 @@ namespace CIR {
 				Expression tmp;
 
 				if (use_standard)
-					tmp = ConvertImplicitStandard (ec, argument_expr, p, Location.Null);
+					tmp = ConvertImplicitStandard (ec, argument_expr, p, loc);
 				else
-					tmp = ConvertImplicit (ec, argument_expr, p, Location.Null);
+					tmp = ConvertImplicit (ec, argument_expr, p, loc);
 
 				if (tmp != null)
 					return 1;
@@ -3532,8 +3536,8 @@ namespace CIR {
 
 			}
 
-			if (ConversionExists (ec, p, q) == true &&
-			    ConversionExists (ec, q, p) == false)
+			if (ConversionExists (ec, p, q, loc) == true &&
+			    ConversionExists (ec, q, p, loc) == false)
 				return 1;
 
 			if (p == TypeManager.sbyte_type)
@@ -3564,7 +3568,7 @@ namespace CIR {
 		// </summary>
 		static int BetterFunction (EmitContext ec, ArrayList args,
 					   MethodBase candidate, MethodBase best,
-					   bool use_standard)
+					   bool use_standard, Location loc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
@@ -3588,7 +3592,7 @@ namespace CIR {
 						
 						x = BetterConversion (
 							ec, a, candidate_pd.ParameterType (j), null,
-							use_standard);
+							use_standard, loc);
 						
 						if (x <= 0)
 							break;
@@ -3615,9 +3619,10 @@ namespace CIR {
 					Argument a = (Argument) args [j];
 
 					x = BetterConversion (ec, a, candidate_pd.ParameterType (j),
-							      best_pd.ParameterType (j), use_standard);
+							      best_pd.ParameterType (j), use_standard, loc);
 					y = BetterConversion (ec, a, best_pd.ParameterType (j),
-							      candidate_pd.ParameterType (j), use_standard);
+							      candidate_pd.ParameterType (j), use_standard,
+							      loc);
 					
 					rating1 += x;
 					rating2 += y;
@@ -3747,7 +3752,7 @@ namespace CIR {
 				MethodBase candidate  = me.Methods [i];
 				int x;
 
-				x = BetterFunction (ec, Arguments, candidate, method, use_standard);
+				x = BetterFunction (ec, Arguments, candidate, method, use_standard, loc);
 				
 				if (x == 0)
 					continue;
@@ -3926,8 +3931,8 @@ namespace CIR {
 						//
 						// If not we have to use some temporary storage for
 						// it.
-						if (ie is LValue)
-							((LValue) ie).AddressOf (ec);
+						if (ie is MemoryLocation)
+							((MemoryLocation) ie).AddressOf (ec);
 						else {
 							ie.Emit (ec);
 							LocalBuilder temp = ec.GetTemporaryStorage (ie.Type);
@@ -4037,7 +4042,7 @@ namespace CIR {
 				Expression ml;
 
 				ml = MemberLookup (ec, type, ".ctor", false,
-						   MemberTypes.Constructor, AllBindingsFlags);
+						   MemberTypes.Constructor, AllBindingsFlags, Location);
 				
 				if (! (ml is MethodGroupExpr)){
 				        //
@@ -4093,7 +4098,7 @@ namespace CIR {
 	//
 	// Represents the `this' construct
 	//
-	public class This : Expression, LValue {
+	public class This : Expression, LValue, MemoryLocation {
 		Location loc;
 		
 		public This (Location loc)
@@ -4235,7 +4240,7 @@ namespace CIR {
 				return expr.Resolve (ec);
 			}
 					
-			member_lookup = MemberLookup (ec, expr.Type, Identifier, false);
+			member_lookup = MemberLookup (ec, expr.Type, Identifier, false, loc);
 
 			//
 			// Method Groups
@@ -4424,7 +4429,7 @@ namespace CIR {
 	// <summary>
 	//   Fully resolved expression that evaluates to a Field
 	// </summary>
-	public class FieldExpr : Expression, LValue {
+	public class FieldExpr : Expression, LValue, MemoryLocation {
 		public readonly FieldInfo FieldInfo;
 		public Expression InstanceExpression;
 			
@@ -4502,24 +4507,29 @@ namespace CIR {
 	// <summary>
 	//   Fully resolved expression that evaluates to a Property
 	// </summary>
-	public class PropertyExpr : Expression {
+	public class PropertyExpr : Expression, LValue {
 		public readonly PropertyInfo PropertyInfo;
 		public readonly bool IsStatic;
+		MethodInfo [] Accessors;
+		Location loc;
 		
 		Expression instance_expr;
 		
-		public PropertyExpr (PropertyInfo pi)
+		public PropertyExpr (PropertyInfo pi, Location loc)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
 			IsStatic = false;
-				
-			MethodBase [] acc = pi.GetAccessors ();
 
-			for (int i = 0; i < acc.Length; i++)
-				if (acc [i].IsStatic)
-					IsStatic = true;
+			Accessors = TypeManager.GetAccessors (pi);
 
+			if (Accessors != null)
+				for (int i = 0; i < Accessors.Length; i++)
+					if (Accessors [i].IsStatic)
+						IsStatic = true;
+			else
+				Accessors = new MethodInfo [2];
+			
 			type = pi.PropertyType;
 		}
 
@@ -4539,9 +4549,38 @@ namespace CIR {
 			return this;
 		}
 
+		public Expression LValueResolve (EmitContext ec)
+		{
+			if (!PropertyInfo.CanWrite){
+				Report.Error (200, loc, 
+					      "The property `" + PropertyInfo.Name +
+					      "' can not be assigned to, as it has not set accessor");
+				return null;
+			}
+			
+			return this;
+		}
+		
+		public void Store (EmitContext ec)
+		{
+		}
+		
 		override public void Emit (EmitContext ec)
 		{
-			// FIXME: Implement;
+			//
+			// This really should be done in Resolve, but
+			// at that point we might be used as an LValue
+			// and it is valid to only have a setter and no getter.
+			//
+
+			if (!PropertyInfo.CanRead){
+				Report.Error (154, loc, 
+					      "The property `" + PropertyInfo.Name +
+					      "' can not be used in " +
+					      "this context because it lacks a get accessor");
+				return;
+			}
+			
 			throw new Exception ("Unimplemented");
 		}
 	}
@@ -4551,10 +4590,12 @@ namespace CIR {
 	// </summary>
 	public class EventExpr : Expression {
 		public readonly EventInfo EventInfo;
+		Location loc;
 		
-		public EventExpr (EventInfo ei)
+		public EventExpr (EventInfo ei, Location loc)
 		{
 			EventInfo = ei;
+			this.loc = loc;
 			eclass = ExprClass.EventAccess;
 		}
 
@@ -4699,11 +4740,6 @@ namespace CIR {
 			throw new Exception ("Implement me !");
 		}
 
-		public void AddressOf (EmitContext ec)
-		{
-			throw new Exception ("Implement me !");
-		}
-		
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Implement me !");

@@ -3,6 +3,12 @@
 	Handle if (!x) converting to remove the `!' and instead of using
 	a brfalse use a brtrue to jump to the end.
 
+* LValueResolve
+
+	Maybe we should only call Resolve on RValues and LValueRsolve
+	on LValues so that DoREsolve can flag errors on properties
+	missing `get' and indexers without a get indexer.
+
 * MemberLookup
 
 	Should take a Location, and pass this information down, so we
