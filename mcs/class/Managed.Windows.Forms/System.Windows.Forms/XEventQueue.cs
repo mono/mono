@@ -49,9 +49,9 @@ namespace System.Windows.Forms {
 
 		public XEvent Dequeue ()
 		{
-			if (xindex == 0) {
+			if (xindex == -1) {
 				lock (lxevents) {
-					if (lxindex == 0)
+					if (lxindex == -1)
 						throw new Exception ("No more items in XQueue");
 					return lxevents [lxindex--];
 				}
