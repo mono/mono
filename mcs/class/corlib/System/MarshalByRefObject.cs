@@ -40,6 +40,7 @@ namespace System
 	[Serializable]
 	public abstract class MarshalByRefObject
 	{
+		[NonSerialized]
 		private ServerIdentity _identity; // Holds marshalling iformation of the object
 
 		protected MarshalByRefObject ()

@@ -1,3 +1,8 @@
+2004-10-19  Lluis Sanchez  <lluis@novell.com>
+
+	* MarshalByRefObject.cs: Field _identity is not serializable.
+	This fixes bug #68567.
+
 2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Convert.cs (ToType): Throw an exception when converting null to a
