@@ -232,9 +232,11 @@ namespace System.Xml.Serialization
 				WriteLine ("namespace " + entry.Key);
 				WriteLineInd ("{");
 				
-				GenerateReader (readerClassName, maps);
+				if (!_config.NoReader)
+					GenerateReader (readerClassName, maps);
 				WriteLine ("");
-				GenerateWriter (writerClassName, maps);
+				if (!_config.NoWriter)
+					GenerateWriter (writerClassName, maps);
 				WriteLine ("");
 				
 #if NET_2_0
@@ -411,7 +413,10 @@ namespace System.Xml.Serialization
 			
 			InitHooks ();
 			
-			WriteLine ("public class " + writerClassName + " : XmlSerializationWriter");
+			if (!_config.GenerateAsInternal)
+				WriteLine ("public class " + writerClassName + " : XmlSerializationWriter");
+			else
+				WriteLine ("internal class " + writerClassName + " : XmlSerializationWriter");
 			WriteLineInd ("{");
 			
 			for (int n=0; n<maps.Count; n++)
@@ -1199,7 +1204,10 @@ namespace System.Xml.Serialization
 		
 		public void GenerateReader (string readerClassName, ArrayList maps)
 		{
-			WriteLine ("public class " + readerClassName + " : XmlSerializationReader");
+			if (!_config.GenerateAsInternal)
+				WriteLine ("public class " + readerClassName + " : XmlSerializationReader");
+			else
+				WriteLine ("internal class " + readerClassName + " : XmlSerializationReader");
 			WriteLineInd ("{");
 
 			_mapsToGenerate = new ArrayList ();

@@ -31,6 +31,7 @@
 using System;
 using System.Xml;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace System.Xml.Serialization
 {
@@ -39,11 +40,11 @@ namespace System.Xml.Serialization
 	/// </summary>
 	public class XmlSerializerNamespaces
 	{
-		private Hashtable namespaces;
+		private ListDictionary namespaces;
 			
 		public XmlSerializerNamespaces ()
 		{
-			namespaces = new Hashtable ();
+			namespaces = new ListDictionary ();
 		}
 	
 		public XmlSerializerNamespaces(XmlQualifiedName[] namespaces)
@@ -95,7 +96,7 @@ namespace System.Xml.Serialization
 			return null;
 		}
 
-		internal Hashtable Namespaces
+		internal ListDictionary Namespaces
 		{
 			get {
 				return namespaces;
