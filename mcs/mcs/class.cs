@@ -564,11 +564,12 @@ namespace CIR {
 		public void RegisterRequiredImplementations ()
 		{
 			Type [] ifaces = TypeBuilder.GetInterfaces ();
+			Type b = TypeBuilder.BaseType;
 			
 			if (ifaces != null)
 				SetRequiredInterfaces (ifaces);
 
-			if (TypeBuilder.BaseType.IsAbstract){
+			if (b.IsAbstract){
 				MemberInfo [] abstract_methods;
 
 				abstract_methods = FindMembers (
@@ -580,10 +581,18 @@ namespace CIR {
 					MethodInfo [] mi = new MethodInfo [abstract_methods.Length];
 
 					abstract_methods.CopyTo (mi, 0);
-					//RequireMethods (mi);
+					RequireMethods (mi, b);
 				}
 			}
 			
+		}
+
+		static object MakeKey (MethodBase mb)
+		{
+			if (mb is MethodBuilder || mb is ConstructorBuilder)
+				return mb.ReflectedType.FullName + ":" + mb;
+			else
+				return mb.MethodHandle.ToString ();
 		}
 		
 		//
@@ -623,18 +632,24 @@ namespace CIR {
 					ReportStructInitializedInstanceError ();
 			}
 
+			RegisterRequiredImplementations ();
+			
 			ArrayList remove_list = new ArrayList ();
+
+			if (constructors != null || methods != null ||
+			    properties != null || operators != null){
+				if (method_builders_to_methods == null)
+					method_builders_to_methods = new Hashtable ();
+			}
 			
 			if (constructors != null){
 				foreach (Constructor c in constructors){
-					object key = c.Define (this);
-					if (method_builders_to_methods == null)
-						method_builders_to_methods = new Hashtable ();
+					MethodBase builder = c.Define (this);
 					
-					if (key == null)
+					if (builder == null)
 						remove_list.Add (c);
 					else
-						method_builders_to_methods.Add (key, c);
+						method_builders_to_methods.Add (MakeKey (builder), c);
 				}
 
 				foreach (object o in remove_list)
@@ -645,9 +660,7 @@ namespace CIR {
 
 			if (Methods != null){
 				foreach (Method m in methods){
-					object key = m.Define (this);
-					if (method_builders_to_methods == null)
-						method_builders_to_methods = new Hashtable ();
+					MethodBase key = m.Define (this);
 
 					//
 					// FIXME:
@@ -659,7 +672,7 @@ namespace CIR {
 					if (key == null)
 						remove_list.Add (m);
 					else
-						method_builders_to_methods.Add (key, m);
+						method_builders_to_methods.Add (MakeKey (key), m);
 				}
 				foreach (object o in remove_list)
 					methods.Remove (o);
@@ -690,10 +703,9 @@ namespace CIR {
 			if (Operators != null) {
 				foreach (Operator o in Operators) {
 					o.Define (this);
-					if (method_builders_to_methods == null)
-						method_builders_to_methods = new Hashtable ();
 					
-					method_builders_to_methods.Add (o.OperatorMethodBuilder, o.OperatorMethod);
+					method_builders_to_methods.Add (
+						MakeKey (o.OperatorMethodBuilder), o.OperatorMethod);
 				}
 			}
 
@@ -701,8 +713,6 @@ namespace CIR {
 				foreach (Delegate d in Delegates)
 					d.Define (this);
 			}
-
-			RegisterRequiredImplementations ();
 		}
 
 		//
@@ -712,7 +722,7 @@ namespace CIR {
 		// 
 		static public MethodCore LookupMethodByBuilder (MethodBase mb)
 		{
-			return (MethodCore) method_builders_to_methods [mb];
+			return (MethodCore) method_builders_to_methods [MakeKey (mb)];
 		}
 		
 		public Type LookupType (string name, bool silent)
@@ -732,9 +742,6 @@ namespace CIR {
 		static bool IsAbstractMethod (MemberInfo m, object filter_criteria)
 		{
 			MethodInfo mi = (MethodInfo) m;
-
-			Console.WriteLine ("Is abstract " + m.Name);
-			Console.WriteLine ("        ==> " + mi.IsAbstract);
 
 			return mi.IsAbstract;
 		}
@@ -781,7 +788,6 @@ namespace CIR {
 					foreach (Method m in Methods) {
 						MethodBuilder mb = m.MethodBuilder;
 
-						Console.WriteLine (m.Name);
 						if (filter (mb, criteria) == true)
 							members.Add (mb);
 					}
@@ -866,21 +872,22 @@ namespace CIR {
 		
 
 		Hashtable pending_implementations;
-
+		
 		// <summary>
 		//   Requires that the methods in `mi' be implemented for this
 		//   class
 		// </summary>
-		public void RequireMethods (MethodInfo [] mi)
+		public void RequireMethods (MethodInfo [] mi, object data)
 		{
 			if (pending_implementations == null)
 				pending_implementations = new Hashtable ();
 
 			foreach (MethodInfo m in mi){
 				Type [] types = TypeManager.GetArgumentTypes (m);
-				
-				pending_implementations.Add (new MethodSignature 
-					(m.Name, m.ReturnType, types), null);
+
+				pending_implementations.Add (
+					new MethodSignature 
+						(m.Name, m.ReturnType, types), data);
 			}
 		}
 
@@ -905,7 +912,8 @@ namespace CIR {
 					mi = iface.GetMethods ();
 				} else
 					mi = t.GetMethods ();
-				RequireMethods (mi);
+
+				RequireMethods (mi, t);
 			}
 		}
 
@@ -924,12 +932,13 @@ namespace CIR {
 
 			if (pending_implementations == null)
 				return false;
-			
+
 			query = new MethodSignature (Name, ret_type, args);
 
 			if (pending_implementations.Contains (query)){
+				pending_implementations.Remove (query);
 				return true;
-			} 
+			}
 
 			return false;
 		}
@@ -944,13 +953,21 @@ namespace CIR {
 			
 			foreach (object m in pending_implementations){
 				DictionaryEntry de = (DictionaryEntry) m;
-				
+				Type t = (Type) de.Value;
 				pending++;
 
 				MethodSignature method = (MethodSignature) de.Key;
-				
-				Console.WriteLine ("Missing implementations: " + method.Name);
-				Report.Error (1, "Blah");
+
+				if (t.IsInterface)
+					Report.Error (
+						536, Location,
+						"`" + Name + "' does not implement interface member `" +
+						t.FullName + "." + method.Name + "'");
+				else
+					Report.Error (
+						534, Location,
+						"`" + Name + "' does not implement inherited abstract " +
+						"member `" + t.FullName + "." + method.Name + "'");
 			}
 		}
 		
@@ -979,7 +996,16 @@ namespace CIR {
 			if (pending_implementations != null)
 				VerifyPendingMethods ();
 		}
+
+		string MakeName (string n)
+		{
+			return "`" + Name + "." + n + "'";
+		}
 		
+		public static int CheckMember (string name, MemberInfo mi, int ModFlags)
+		{
+			return 0;
+		}
 	}
 
 	public class Class : TypeContainer {
@@ -1169,15 +1195,45 @@ namespace CIR {
 
 		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria)
 		{
-			MethodBase mb;
+			MethodInfo mi;
 			
-			if (! (m is MethodBase))
+			if (! (m is MethodInfo))
 				return false;
 
-			mb = (MethodBase) m;
-			
 			MethodSignature sig = (MethodSignature) filter_criteria;
+			
+			if (m.Name != sig.Name)
+				return false;
+			
+			mi = (MethodInfo) m;
 
+			if (mi.ReturnType != sig.RetType)
+				return false;
+
+			Type [] args = TypeManager.GetArgumentTypes (mi);
+			Type [] sigp = sig.Parameters;
+
+			//
+			// FIXME: remove this assumption if we manage to
+			// not enter a null as a the Parameters in TypeManager's 
+			// MethodBase to Type argument mapper.
+			//
+			if (args == null){
+				if (sigp != null)
+					return false;
+				else
+					return true;
+			} else if (sigp == null)
+				return false;
+			
+			if (args.Length != sigp.Length)
+				return false;
+
+			for (int i = args.Length; i > 0; ){
+				i--;
+				if (args [i] != sigp [i])
+					return false;
+			}
 			return true;
 		}
 		
@@ -1215,6 +1271,43 @@ namespace CIR {
 							   
 		}
 
+		string MakeName (TypeContainer parent)
+		{
+			return "`" + parent.Name + "." + Name + "'";
+		}
+
+		string MethodBaseName (MethodBase mb)
+		{
+			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
+		}
+		
+		bool CheckMethod (TypeContainer parent, MemberInfo [] mi)
+		{
+			MethodInfo mb = (MethodInfo) mi [0];
+
+			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+				Report.Warning (
+					108, Location, "The keyword new is required on " + 
+					MakeName (parent) + " because it hides `" +
+					mb.ReflectedType.Name + "." +
+					mb.Name + "'");
+			}
+
+			if (mb.IsVirtual || mb.IsAbstract){
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+					Report.Warning (
+						114, Location, MakeName (parent) + 
+						"hides inherited member " + MethodBaseName (mb) +
+						".  To make the current member override that " +
+						"implementation, add the override keyword, " +
+						"otherwise use the new keyword");
+				}
+				
+			}
+
+			return true;
+		}
+		
 		//
 		// Creates the type
 		// 
@@ -1223,7 +1316,8 @@ namespace CIR {
 			Type ret_type = GetReturnType (parent);
 			Type [] parameters = ParameterTypes (parent);
 			MethodAttributes flags;
-
+			bool error = false;
+			
 			//
 			// Verify if the parent has a type with the same name, and then
 			// check whether we have to create a new slot for it or not.
@@ -1238,69 +1332,70 @@ namespace CIR {
 				mi = parent.FindMembers (ptype, MemberTypes.Method,
 							 BindingFlags.Public, method_signature_filter,
 							 ms);
-				
-				//
-				// FIXME: Replace GetMethod with FindMembers
-				// because it has the same problem that FindMembers does:
-				// it does not work with partial types.
-				//
-				
+
 				if (mi != null && mi.Length > 0){
-					if ((ModFlags & Modifiers.NEW) == 0){
-						Report.Error (
-							      108, Location, "The keyword new is required on `" +
-							      parent.Name + "." + Name + "' because it hides `" +
-							      mi [0].ReflectedType.Name + "." +
-							      mi [0].Name + "'");
-					} 
-				} else if ((ModFlags & Modifiers.NEW) != 0)
-					WarningNotHiding (parent);
+					CheckMethod (parent, mi);
+				} else {
+					if ((ModFlags & Modifiers.NEW) != 0)
+						WarningNotHiding (parent);
+					
+					if ((ModFlags & Modifiers.OVERRIDE) != 0)
+						Report.Error (115, Location,
+							      MakeName (parent) +
+							      " no suitable methods found to override");
+				}
 			} else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
 
-			
 			//
 			// If we implement an interface, then set the proper flags.
 			//
 			flags = Modifiers.MethodAttr (ModFlags);
 
 			if (parent.IsInterfaceMethod (Name, ret_type, parameters))
-				flags |= MethodAttributes.Virtual | MethodAttributes.Abstract;
+				flags |= MethodAttributes.Virtual;
 
 			//
 			// Catch invalid uses of virtual and abtract modifiers
 			//
-			int av = ModFlags & (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
-			if (av != 0){
-				bool error = false;
-				
-				if (av == (Modifiers.VIRTUAL | Modifiers.ABSTRACT)){
+			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
+			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
+			
+			if ((ModFlags & va) == va){
+				if ((ModFlags & va) == va){
 					Report.Error (
-						503, Location, "The abstract method `" +
-						parent.Name + "." + Name + "' " + 
-						"can not be marked virtual");
+						503, Location, "The abstract method " +
+						MakeName (parent) + "can not be marked virtual");
 					error = true;
 				}
-
-				if ((ModFlags & Modifiers.ABSTRACT) != 0){
-					if ((parent.ModFlags & Modifiers.ABSTRACT) == 0){
-						Report.Error (
-							513, Location, "`" + parent.Name + "." +
-							Name + "' is abstract but its container class is not");
-						error = true;
-					}
-				}
-				
-				if ((ModFlags & Modifiers.PRIVATE) != 0){
-					Report.Error (
-						621, Location, "`" + parent.Name + "." + Name + "' " + 
-						"virtual or abstract members can not be private");
-					error = true;
-				}
-				if (error)
-					return null;
 			}
 
+			if ((ModFlags & Modifiers.ABSTRACT) != 0){
+				if ((parent.ModFlags & Modifiers.ABSTRACT) == 0){
+					Report.Error (
+						513, Location, MakeName (parent) +
+						" is abstract but its container class is not");
+					error = true;
+				}
+			}
+
+			if ((ModFlags & va) != 0 && ((ModFlags & Modifiers.PRIVATE) != 0)){
+				Report.Error (
+					621, Location, MakeName (parent) +
+					" virtual or abstract members can not be private");
+				error = true;
+			}
+
+			if ((ModFlags & Modifiers.OVERRIDE) != 0 && ((ModFlags & nv) != 0)){
+				Report.Error (
+					113, Location, MakeName (parent) +
+					"marked as override cannot be marked as new or virtual");
+				error = true;
+			}
+
+			if (error)
+				return null;
+			
 			//
 			// Finally, define the method
 			//
@@ -2015,6 +2110,11 @@ namespace CIR {
 			Name = name;
 			RetType = ret_type;
 			Parameters = parameters;
+
+			if (parameters != null){
+				if (parameters.Length == 0)
+					Parameters = null;
+			} 
 		}
 		
 		public override int GetHashCode ()
@@ -2025,9 +2125,10 @@ namespace CIR {
 		public override bool Equals (Object o)
 		{
 			MethodSignature other = (MethodSignature) o;
-			
+
 			if (other.Name != Name)
 				return false;
+
 			if (other.RetType != RetType)
 				return false;
 			
@@ -2036,17 +2137,18 @@ namespace CIR {
 					return true;
 				return false;
 			}
+
 			if (other.Parameters == null)
 				return false;
 			
 			int c = Parameters.Length;
 			if (other.Parameters.Length != c)
 				return false;
-			
+
 			for (int i = 0; i < c; i++)
 				if (other.Parameters [i] != Parameters [i])
 					return false;
-			
+
 			return true;
 		}
 	}		

@@ -305,11 +305,7 @@ public class TypeManager {
 
 	static string GetSig (MethodBase mb)
 	{
-		string sig;
-		
-		if (mb is MethodBuilder)
-			return mb.ReflectedType.FullName + ":" + mb;
-		else if (mb is ConstructorBuilder)
+		if (mb is MethodBuilder || mb is ConstructorBuilder)
 			return mb.ReflectedType.FullName + ":" + mb;
 		else
 			return mb.MethodHandle.ToString ();

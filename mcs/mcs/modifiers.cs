@@ -146,6 +146,9 @@ namespace CIR {
 			if ((mod_flags & VIRTUAL) != 0)
 				ma |= MethodAttributes.Virtual;
 
+			if ((mod_flags & OVERRIDE) != 0)
+				ma |= MethodAttributes.Virtual;
+			
 			if ((mod_flags & NEW) != 0)
 				ma |= MethodAttributes.NewSlot;
 			

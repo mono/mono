@@ -1,3 +1,20 @@
+2001-10-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer::RegisterRequiredImplementations):
+	Record methods we need.
+
+	(TypeContainer::MakeKey): Helper function to make keys for
+	MethodBases, since the Methodbase key is useless.
+
+	(TypeContainer::Populate): Call RegisterRequiredImplementations
+	before defining the methods.   
+
+	Create a mapping for method_builders_to_methods ahead of time
+	instead of inside a tight loop.
+
+	(::RequireMethods):  Accept an object as the data to set into the
+	hashtable so we can report interface vs abstract method mismatch.
+
 2001-10-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* report.cs: Make all of it static.
