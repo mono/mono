@@ -31,7 +31,7 @@ Public Class WriteOK2
 '		Const sometext = "Yeah! Some Text" ' FIXME: raises InvalidCastException in yyParse
 '		Const someOtherText as string = "Blah! Some Other Text" ' FIXME: raises InvalidCastException in yyParse
 		Text = "This is a test!"
-        Console.WriteLine("Sub:OK! - """ & Text & """ " & someText & someOtherText)
+        Console.WriteLine("Sub:OK! - """ & Text & """ " & someText & " " & someOtherText)
     End Sub
 
 End Class
@@ -40,7 +40,4 @@ Public Module WriteOK5
     Public Sub ModuleSub()
         Console.WriteLine("ModuleSub:OK!")
     End Sub
-	
-	Public Module X
-	End Module
 End Module
