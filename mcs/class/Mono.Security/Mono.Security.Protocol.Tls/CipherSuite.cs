@@ -355,7 +355,10 @@ namespace Mono.Security.Protocol.Tls
 			TlsStream stream = new TlsStream();
 
 			// Write protocol version
-			stream.Write(this.Context.Protocol);
+			// We need to send here the protocol version used in 
+			// the ClientHello message, that can be different than the actual
+			// protocol version
+			stream.Write(this.Context.ClientHelloProtocol);
 
 			// Generate random bytes
 			stream.Write(this.context.GetSecureRandomBytes(46));

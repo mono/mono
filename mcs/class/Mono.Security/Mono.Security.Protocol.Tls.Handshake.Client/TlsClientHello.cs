@@ -31,7 +31,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region Fields
 
-		private byte[] random;
+		private byte[]	random;
 
 		#endregion
 
@@ -50,7 +50,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.Update();
 
-			this.Context.ClientRandom = random;
+			this.Context.ClientRandom			= random;
+			this.Context.ClientHelloProtocol	= this.Context.Protocol;
 
 			random = null;
 		}

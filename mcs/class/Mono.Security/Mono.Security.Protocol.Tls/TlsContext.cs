@@ -36,6 +36,15 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal class TlsContext
 	{
+		#region Internal Constants
+
+		internal const short MAX_FRAGMENT_SIZE	= 16384; // 2^14
+		internal const short TLS1_PROTOCOL_CODE = (0x03 << 8) | 0x01;
+		internal const short SSL3_PROTOCOL_CODE = (0x03 << 8) | 0x00;
+		internal const long  UNIX_BASE_TICKS	= 621355968000000000;
+
+		#endregion
+
 		#region Fields
 		
 		// SslClientStream that owns the context
@@ -43,6 +52,9 @@ namespace Mono.Security.Protocol.Tls
 
 		// Protocol version
 		private SecurityProtocolType securityProtocol;
+		
+		// Client hello protocol code
+		private short clientHelloProtocol;
 
 		// Sesison ID
 		private byte[] sessionId;
@@ -51,10 +63,10 @@ namespace Mono.Security.Protocol.Tls
 		private SecurityCompressionType compressionMethod;
 
 		// Information sent and request by the server in the Handshake protocol
-		private TlsServerSettings	serverSettings;
+		private TlsServerSettings serverSettings;
 
 		// Client configuration
-		private TlsClientSettings	clientSettings;
+		private TlsClientSettings clientSettings;
 
 		// Cipher suite information
 		private CipherSuite					cipher;
@@ -88,18 +100,8 @@ namespace Mono.Security.Protocol.Tls
 		// Handshake hashes
 		private TlsStream			handshakeMessages;
 		
-
 		// Secure Random generator		
 		private RandomNumberGenerator random;
-
-		#endregion
-
-		#region Internal Constants
-
-		internal const short MAX_FRAGMENT_SIZE	= 16384; // 2^14
-		internal const short TLS1_PROTOCOL_CODE = (0x03 << 8) | 0x01;
-		internal const short SSL3_PROTOCOL_CODE = (0x03 << 8) | 0x00;
-		internal const long  UNIX_BASE_TICKS		= 621355968000000000;
 
 		#endregion
 
@@ -112,28 +114,63 @@ namespace Mono.Security.Protocol.Tls
 
 		public SecurityProtocolType SecurityProtocol
 		{
-			get { return this.securityProtocol; }
+			get 
+			{
+				if (this.handshakeFinished)
+				{
+					return this.securityProtocol;
+				}
+				else
+				{
+					if ((this.securityProtocol & SecurityProtocolType.Tls) == SecurityProtocolType.Tls ||	
+						(this.securityProtocol & SecurityProtocolType.Default) == SecurityProtocolType.Default)
+					{
+						return SecurityProtocolType.Tls;
+					}
+					else
+					{
+						if ((this.securityProtocol & SecurityProtocolType.Ssl3) == SecurityProtocolType.Ssl3)
+						{
+							return SecurityProtocolType.Ssl3;
+						}
+					}
+
+					throw new NotSupportedException("Unsupported security protocol type");
+				}
+			}
+
 			set { this.securityProtocol = value; }
+		}
+
+		public SecurityProtocolType SecurityProtocolFlags
+		{
+			get { return this.securityProtocol; }
 		}
 
 		public short Protocol
 		{
 			get 
 			{ 
-				switch (this.securityProtocol)
+				switch (this.SecurityProtocol)
 				{
 					case SecurityProtocolType.Tls:
 					case SecurityProtocolType.Default:
-						return TLS1_PROTOCOL_CODE;
+						return TlsContext.TLS1_PROTOCOL_CODE;
 
 					case SecurityProtocolType.Ssl3:
-						return SSL3_PROTOCOL_CODE;
+						return TlsContext.SSL3_PROTOCOL_CODE;
 
 					case SecurityProtocolType.Ssl2:
 					default:
 						throw new NotSupportedException("Unsupported security protocol type");
 				}
 			}
+		}
+
+		public short ClientHelloProtocol
+		{
+			get { return this.clientHelloProtocol; }
+			set { this.clientHelloProtocol = value; }
 		}
 
 		public byte[] SessionId
@@ -290,7 +327,7 @@ namespace Mono.Security.Protocol.Tls
 			X509CertificateCollection	clientCertificates)
 		{
 			this.sslStream			= sslStream;
-			this.securityProtocol	= securityProtocolType;
+			this.SecurityProtocol	= securityProtocolType;
 			this.compressionMethod	= SecurityCompressionType.None;
 			this.serverSettings		= new TlsServerSettings();
 			this.clientSettings		= new TlsClientSettings();
@@ -347,6 +384,21 @@ namespace Mono.Security.Protocol.Tls
 			{
 				this.clientWriteMAC = null;
 				this.serverWriteMAC = null;
+			}
+		}
+
+		public SecurityProtocolType DecodeProtocolCode(short code)
+		{
+			switch (code)
+			{
+				case TlsContext.TLS1_PROTOCOL_CODE:
+					return SecurityProtocolType.Tls;
+
+				case TlsContext.SSL3_PROTOCOL_CODE:
+					return SecurityProtocolType.Ssl3;
+
+				default:
+					throw new NotSupportedException("Unsupported security protocol type");
 			}
 		}
 

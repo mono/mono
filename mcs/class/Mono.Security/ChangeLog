@@ -5,6 +5,26 @@
 
 2004-02-20 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/TlsContext.cs:
+
+		- Added changes for handle te SecurityProtocolType enum
+		as a Flags enum.
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientHello.cs:
+
+		- Let the Ssl3 message to be process in the same way as the Tls1.
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientHello.cs:
+		
+		- Added changes for use the Protocol version send by the server
+
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+
+		- Compute the premaster secret using the protocol version sent in 
+		the ClientHello message instead of the actual protocol version.
+
 	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
 
         - Commented the server cert validation.

@@ -108,7 +108,8 @@ namespace Mono.Security.Protocol.Tls
 			TlsStream message = new TlsStream(buffer);
 		
 			// Check that the message has a valid protocol version
-			if (protocol != this.context.Protocol)
+			if (protocol != this.context.Protocol &&
+				this.context.HelloDone)
 			{
 				throw this.context.CreateException("Invalid protocol version on message received from server");
 			}

@@ -30,7 +30,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region Fields
 
-		private SecurityProtocolType	protocol;
 		private SecurityCompressionType	compressionMethod;
 		private byte[]					random;
 		private byte[]					sessionId;
@@ -80,11 +79,16 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
+			this.ProcessAsTls1();
+		}
+
+		protected override void ProcessAsTls1()
+		{
 			// Read protocol version
-			this.protocol	= (SecurityProtocolType)this.ReadInt16();
+			this.processProtocol(this.ReadInt16());
 			
 			// Read random  - Unix time + Random bytes
-			this.random		= this.ReadBytes(32);
+			this.random	= this.ReadBytes(32);
 			
 			// Read Session id
 			int length = (int)ReadByte();
@@ -106,32 +110,25 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.compressionMethod = (SecurityCompressionType)this.ReadByte();
 		}
 
-		protected override void ProcessAsTls1()
-		{
-			// Read protocol version
-			this.protocol	= (SecurityProtocolType)this.ReadInt16();
-			
-			// Read random  - Unix time + Random bytes
-			this.random		= this.ReadBytes(32);
-			
-			// Read Session id
-			int length = (int)ReadByte();
-			if (length > 0)
-			{
-				this.sessionId = this.ReadBytes(length);
-			}
+		#endregion
 
-			// Read cipher suite
-			short cipherCode = this.ReadInt16();
-			if (this.Context.SupportedCiphers.IndexOf(cipherCode) == -1)
+		#region Private Methods
+
+		private void processProtocol(short protocol)
+		{
+			SecurityProtocolType serverProtocol = this.Context.DecodeProtocolCode(protocol);
+
+			if ((serverProtocol & this.Context.SecurityProtocolFlags) == serverProtocol)
 			{
-				// The server has sent an invalid ciphersuite
-				throw new TlsException("Invalid cipher suite received from server");
+				this.Context.SecurityProtocol = serverProtocol;
+				this.Context.SupportedCiphers.Clear();
+				this.Context.SupportedCiphers = null;
+				this.Context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(serverProtocol);
 			}
-			this.cipherSuite = this.Context.SupportedCiphers[cipherCode];
-			
-			// Read compression methods ( always 0 )
-			this.compressionMethod = (SecurityCompressionType)this.ReadByte();
+			else
+			{
+				throw this.Context.CreateException("Incorrect protocol version received from server");
+			}
 		}
 
 		#endregion
