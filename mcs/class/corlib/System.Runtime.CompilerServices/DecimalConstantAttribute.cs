@@ -10,7 +10,8 @@ using System;
 namespace System.Runtime.CompilerServices {
 
 	[Serializable] [CLSCompliant (false)]
-	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter)]
+	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter,
+			 Inherited=false)]
 	public sealed class DecimalConstantAttribute : Attribute
 	{
 		byte scale;

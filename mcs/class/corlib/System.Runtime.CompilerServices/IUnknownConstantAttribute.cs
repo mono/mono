@@ -10,7 +10,8 @@ using System;
 namespace System.Runtime.CompilerServices {
 
 	[Serializable]
-	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter)]
+	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter,
+			 Inherited=false)]
 	public sealed class IUnknownConstantAttribute : CustomConstantAttribute
 	{
 		public IUnknownConstantAttribute ()

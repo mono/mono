@@ -10,7 +10,8 @@ using System;
 namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
-			AttributeTargets.Enum | AttributeTargets.Interface)]
+			AttributeTargets.Enum | AttributeTargets.Interface,
+			Inherited=false)]
 	[Serializable]
 	public sealed class RequiredAttributeAttribute : Attribute
 	{

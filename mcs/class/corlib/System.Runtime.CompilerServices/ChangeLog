@@ -1,3 +1,16 @@
+2004-05-19  Gert Driesen   (drieseng@users.sourceforge.net)
+
+	* CustomConstantAttribute.cs
+	* DateTimeconstantAttribute.cs
+	* DecimalConstantAttribute.cs
+	* IDispatchConstantAttribute.cs
+	* IUnknownConstantAttribute.cs
+	* MethodImplAttribute.cs
+	* RequiredAttributeAttribute.cs: now that Inherited is 
+	false by default on AttributeUsageAttribute (as it 
+	should be) we need to explicitly set Inherited to false 
+	for those attributes where it should be false.
+
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
 	* NewConstraintAttribute.cs: New file.
