@@ -283,10 +283,12 @@ namespace System.Xml
 			return oldAttr != null ? oldAttr as XmlAttribute : null;
 		}
 
-		[MonoTODO]
+		
 		public virtual XmlAttribute SetAttributeNode (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			XmlDocument xmlDoc = this.OwnerDocument;
+			XmlAttribute xmlAttribute = new XmlAttribute (String.Empty, localName, namespaceURI, xmlDoc);	
+			return this.attributes.Append (xmlAttribute);
 		}
 
 		public override void WriteContentTo (XmlWriter w)

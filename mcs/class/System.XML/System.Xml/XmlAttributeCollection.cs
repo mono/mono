@@ -54,11 +54,12 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
+		
 		public virtual XmlAttribute Append (XmlAttribute node) 
 		{
-			throw new NotImplementedException ();
-		}
+			XmlNode xmlNode = this.SetNamedItem (node);
+			return node;
+		}	
 
 		[MonoTODO]
 		public void CopyTo (XmlAttribute [] array, int index)
