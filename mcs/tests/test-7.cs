@@ -15,8 +15,12 @@ namespace Mine {
 			k = ~ new Blah ();
 			k = + new Blah ();
 
-			//int number = 5;
-	
+			int number = k;
+			Console.WriteLine (number);
+			
+			// Uncomment this to see how beautifully we catch errors :)
+			// Console.WriteLine (k);
+			
 			//Console.WriteLine ("This is : " + number);
 			
 		}
@@ -38,6 +42,12 @@ namespace Mine {
 		{
 			Console.WriteLine ("This is even better !");
 			return null;
+		}
+	
+		public static implicit operator int (Blah i) 
+		{	
+			Console.WriteLine ("User-defined implicit conversion works !");
+			return 3;
 		}
 
 	}
