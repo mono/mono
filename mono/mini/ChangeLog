@@ -1,5 +1,8 @@
 2004-12-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_emit_method_call): Only allocate the got var when it is
+	needed.
+
 	* mini-x86.c (mono_arch_patch_code): Add missing PATCH_INFO_METHOD_REL
 	in the AOT case.
 
