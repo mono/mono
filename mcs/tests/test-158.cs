@@ -20,7 +20,7 @@ public class My : Attribute {
 			if (attributes.Length != 1)
 				return 1;
 			My attr = (My) attributes [0];
-			if (attr.o != TypeCode.Empty)
+			if ((TypeCode) attr.o != TypeCode.Empty)
 				return 2;
 			return 0;
 		}
