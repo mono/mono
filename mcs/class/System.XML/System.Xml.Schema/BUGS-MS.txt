@@ -66,8 +66,7 @@ BUGS in MS Implementation of XmlSchema:
 
 	Particles that have maxOccurs="0" looks simply ignored *before*
 	evaluating particle restriction valid, but it might get incorrect
-	result. For example, it is regarded as valid (while 'e1' must occur 1
-	time for the base 'bar' type):
+	result.
 
 	<xsd:complexType name="foo">
 	<xsd:complexContent>
@@ -87,7 +86,7 @@ BUGS in MS Implementation of XmlSchema:
 	</xsd:choice>
 	</xsd:complexType>
 
-	Related msxsdtest is groupG001.xsd and mgH014.xsd.
+	Related msxsdtest is groupG001.xsd.
 
 009. derived list incorrectly allowed
 
@@ -147,4 +146,13 @@ BUGS in MS Implementation of XmlSchema:
 	As to structures spec 3.14.6 Derivation Valid (Simple) 2.2, only length,
 	minLength, maxLength, pattern and enumeration are allowed. However, MS
 	implementation allows whitespace (and possibly and so on).
+
+014. Incorrectly disallowed mixed derivation with empty content from elementOnly
+
+	When a complexType whose mixed='true' and -explicit content- is empty,
+	is derived from a complexType whose {content type} is ElementOnly,
+	MS.NET rejects such schema. But 3.4.2 (complex content Schema
+	Component) especially 2.1 of {content type} does not say it is an error.
+
+	Related msxsdtest: ctF008.xsd
 

@@ -1,3 +1,8 @@
+2004-02-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* BUGS-MS.txt : fixed incorrect thought on case 008. Added case 014.
+	* BUGS.txt : FYI.
+
 2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs : Fixed some Parse() for token based datatypes.
