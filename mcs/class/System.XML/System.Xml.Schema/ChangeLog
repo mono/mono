@@ -1,3 +1,8 @@
+2004-01-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BuiltInDatatype.cs : internal type should not appear in protected
+	  members' signature.
+
 2004-01-11  David Sheldon <dave-mono@earth.li>
 
   * BuiltInDatatype.cs : Added XsdOrdering enum, and Compare methods
@@ -25,6 +30,29 @@
     facets, duplicated facets and derivation by restriction. Added checking 
     for min/max Inclusive/Exclusive, totalDigits and fractionDigits facets in 
     validation.
+
+2004-01-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaSet.cs : implemented some members.
+	* XmlSchemaCollection.cs : modified to use internal schema set (This
+	  class provides more precise schema validation feature and will be
+	  commonly used for XPathNavigator2).
+	  Added .NET 1.1 .ctor() which takes XmlResolver.
+	* XmlSchema.cs : fix related to above changes.
+	  Use validation event handler on Read() at all required places.
+	  Added .NET 1.1 .ctor() which takes XmlResolver.
+	* XmlSchemaComplexType.cs : content type comparison was incorrect.
+	  Renamed confusing method.
+	* XmlSchemaElement.cs : don't use ContentTypeParticle in 
+	  CheckRecursion(), where that property might not be determined yet.
+	* XmlSchemaGroupBase.cs : Modified ValidateRecurse() a bit (currently
+	  no effect)
+	* XmlSchemaGroupBase.cs,
+	  XmlSchemaChoice.cs,
+	  XmlSchemaAll.cs,
+	  XmlSchemaSequence.cs : moved CheckRecursion to XmlSchemaGroupBase.
+	* XmlSchemaObjectTable.cs : Fixed missing error info.
+	* BUGS-MS.txt : Added info a bit.
 
 2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 

@@ -111,12 +111,12 @@ namespace Mono.Xml.Schema
 
 		/* Matches facets allowed on boolean type
 		 */
-		protected const XmlSchemaFacet.Facet booleanAllowedFacets = 
+		internal const XmlSchemaFacet.Facet booleanAllowedFacets = 
 					 XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.whiteSpace;
 
 		/* Matches facets allowed on decimal type. 
 		 */
-		protected const XmlSchemaFacet.Facet decimalAllowedFacets = 
+		internal const XmlSchemaFacet.Facet decimalAllowedFacets = 
 							XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.enumeration | 
 							XmlSchemaFacet.Facet.whiteSpace | XmlSchemaFacet.Facet.maxInclusive | 
 							XmlSchemaFacet.Facet.minInclusive | XmlSchemaFacet.Facet.maxExclusive | 
@@ -127,7 +127,7 @@ namespace Mono.Xml.Schema
 		 * gYearMonth, gYear, gMonthDay, gMonth, and gDay types
 		 */
 
-		protected const XmlSchemaFacet.Facet durationAllowedFacets = 
+		internal const XmlSchemaFacet.Facet durationAllowedFacets = 
 							XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.enumeration | 
 							XmlSchemaFacet.Facet.whiteSpace | XmlSchemaFacet.Facet.maxInclusive |
 							XmlSchemaFacet.Facet.minInclusive | XmlSchemaFacet.Facet.maxExclusive |
@@ -139,7 +139,7 @@ namespace Mono.Xml.Schema
 		 * Also used on list types
 		 */
 
-		protected const XmlSchemaFacet.Facet stringAllowedFacets = 
+		internal const XmlSchemaFacet.Facet stringAllowedFacets = 
 						 XmlSchemaFacet.Facet.length | XmlSchemaFacet.Facet.minLength |
 						 XmlSchemaFacet.Facet.maxLength | XmlSchemaFacet.Facet.pattern | 
 						 XmlSchemaFacet.Facet.enumeration | XmlSchemaFacet.Facet.whiteSpace; 
