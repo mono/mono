@@ -1,3 +1,7 @@
+2003-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Exception.cs: changed default message to match MS one.
+
 2003-01-12  Patrik Torstensson <totte@race-x-change.com>
 
 	* String.cs: Fixed bug with CompareOrdinal

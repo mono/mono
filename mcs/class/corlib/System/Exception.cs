@@ -30,7 +30,7 @@ namespace System {
 		public Exception ()
 		{
 			inner_exception = null;
-			message = "";
+			message = null;
 		}
 
 		public Exception (string msg)
@@ -89,6 +89,9 @@ namespace System {
 
 		public virtual string Message {
 			get {
+				if (message == null)
+					message = "Exception of type " + GetType () + " was thrown.";
+
 				return message;
 			}
 		}
