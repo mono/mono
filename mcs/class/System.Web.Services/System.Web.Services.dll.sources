@@ -104,6 +104,7 @@ System.Web.Services.Protocols/PatternMatcher.cs
 System.Web.Services.Protocols/ServerProtocol.cs
 System.Web.Services.Protocols/SoapClientMessage.cs
 System.Web.Services.Protocols/SoapClientMethod.cs
+System.Web.Services.Protocols/SoapDocumentationHandler.cs
 System.Web.Services.Protocols/SoapDocumentMethodAttribute.cs
 System.Web.Services.Protocols/SoapDocumentServiceAttribute.cs
 System.Web.Services.Protocols/SoapException.cs
