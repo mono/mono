@@ -17,18 +17,21 @@ namespace System.Threading
  	public sealed class ManualResetEvent : WaitHandle 
 	{
 		// Constructor
-		public ManualResetEvent(bool initialState) {
-			os_handle = NativeEventCalls.CreateEvent_internal(true,initialState,null);
+		public ManualResetEvent (bool initialState)
+		{
+			os_handle = NativeEventCalls.CreateEvent_internal (true, initialState, null);
 		}
 
 		// Methods
 
-		public bool Set() {
-			return(NativeEventCalls.SetEvent_internal(os_handle));
+		public bool Set()
+		{
+			return (NativeEventCalls.SetEvent_internal (os_handle));
 		}
 
-		public bool Reset() {
-			return(NativeEventCalls.ResetEvent_internal(os_handle));
+		public bool Reset()
+		{
+			return(NativeEventCalls.ResetEvent_internal (os_handle));
 		}
 
 	}

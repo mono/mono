@@ -465,7 +465,8 @@ namespace System
 				    (src_type.Equals (typeof (Object))))
 					throw new InvalidCastException ();
 				else
-					throw new ArrayTypeMismatchException ();
+					throw new ArrayTypeMismatchException (
+						String.Format ("(Types: source={0};  target={1})", src_type.FullName, dst_type.FullName));
 			}
 		}
 		

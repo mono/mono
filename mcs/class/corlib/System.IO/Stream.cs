@@ -1,24 +1,25 @@
 //
 // System.IO/Stream.cs
 //
-// Author:
+// Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Threading;
 
 namespace System.IO
 {
-
+	[Serializable]
 	public abstract class Stream : MarshalByRefObject, IDisposable
 	{
-		// public static readonly Stream Null;
+		public static readonly Stream Null;
 
 		static Stream ()
 		{
-			//Null = new NullStream ();
+			Null = new NullStream ();
 		}
 
 		protected Stream ()
@@ -60,10 +61,10 @@ namespace System.IO
 		public virtual void Dispose ()
 		{
 		}
-		
+
 		protected virtual WaitHandle CreateWaitHandle()
 		{
-			return(null);
+			return new ManualResetEvent (false);
 		}
 		
 		protected virtual void Dispose (bool disposing)
@@ -107,13 +108,45 @@ namespace System.IO
 
 			Write (buffer, 0, 1);
 		}
+
+		delegate int ReadDelegate (byte [] buffer, int offset, int count);
+
+		[MonoTODO]
+		public virtual IAsyncResult
+		BeginRead (byte [] buffer, int offset, int count, AsyncCallback cback, object state)
+		{
+			if (!CanRead)
+				throw new NotSupportedException ("This stream does not support reading");
+
+			return null;
+		}
+
+		[MonoTODO]
+		public virtual IAsyncResult
+		BeginWrite (byte [] buffer, int offset, int count, AsyncCallback cback, object state)
+		{
+			return null;
+		}
+		
+		[MonoTODO]
+		public virtual int EndRead (IAsyncResult async_result)
+		{
+			if (async_result == null)
+				throw new ArgumentNullException ("async_result");
+			return 0;
+		}
+
+		[MonoTODO]
+		public virtual int EndWrite (IAsyncResult async_result)
+		{
+			if (async_result == null)
+				throw new ArgumentNullException ("async_result");
+			return 0;
+		}
 	}
 
 	class NullStream : Stream
 	{
-                private long position = 0;
-                private long length = System.Int64.MaxValue;
-
 		public override bool CanRead
 		{
 			get {
@@ -138,17 +171,16 @@ namespace System.IO
 		public override long Length
 		{
 			get {
-				return length;
+				return 0;
 			}
 		}
 
 		public override long Position
 		{
 			get {
-				return position;
+				return 0;
 			}
 			set {
-				position = value;
 			}
 		}
 
@@ -160,12 +192,7 @@ namespace System.IO
 					  int offset,
 					  int count)
 		{
-			int max = offset + count;
-			
-			for (int i = offset; i < max; i++)
-				buffer [i] = 0;
-
-			return count;
+			return 0;
 		}
 
 		public override int ReadByte ()
@@ -176,24 +203,11 @@ namespace System.IO
 		public override long Seek (long offset,
 					   SeekOrigin origin)
 		{
-			switch (origin) {
-			case SeekOrigin.Begin:
-				position = offset;
-				break;
-			case SeekOrigin.Current:
-				position = position + offset;
-				break;
-			case SeekOrigin.End:
-				position = Length - offset;
-				break;
-			}
-
-			return position;
+			return 0;
 		}
 
 		public override void SetLength (long value)
 		{
-			length = value;
 		}
 
 		public override void Write (byte[] buffer,
@@ -205,6 +219,12 @@ namespace System.IO
 		public override void WriteByte (byte value)
 		{
 		}
-
 	}
 }
+
+
+
+
+
+
+
