@@ -1,3 +1,7 @@
+2003-02-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringTest.cs: added String constructor tests.
+
 2003/02/26 Nick Drochak <ndrochak@gol.com>
 
 	* ActivatorTest.cs: Unregister the channel like it should.

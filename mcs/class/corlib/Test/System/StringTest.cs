@@ -21,6 +21,50 @@ public class StringTest : TestCase
 	{
 	}
 
+	public void TestConstructors ()
+	{
+		AssertEquals ("", new String ((char[])null));
+		AssertEquals ("", new String (new Char [0]));
+		AssertEquals ("A", new String (new Char [1] {'A'}));
+
+		AssertEquals ("", new String ('A', 0));
+		AssertEquals ("AAA", new String ('A', 3));
+		try {
+			new String ('A', -1);
+			Fail ("Should reject negative count");
+		}
+		catch (ArgumentOutOfRangeException) {
+		}
+
+		char[] arr = new char [3] { 'A', 'B', 'C' };
+		AssertEquals ("BC", new String (arr, 1, 2));
+		AssertEquals ("", new String ((char[])null, 0, 0));
+		try {
+			new String ((char[])null, 1, 0);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+		try {
+			new String (arr, -1, 1);
+			Fail ();
+		}
+		catch (ArgumentOutOfRangeException) {
+		}
+		try {
+			new String (arr, 0, -1);
+			Fail ();
+		}
+		catch (ArgumentOutOfRangeException) {
+		}
+		try {
+			new String (arr, 1, 3);
+			Fail ();
+		}
+		catch (ArgumentOutOfRangeException) {
+		}
+	}
+
 	public void TestLength ()
 	{
 		string str = "test string";
