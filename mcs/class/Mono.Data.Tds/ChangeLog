@@ -1,3 +1,19 @@
+2002-11-30  Tim Coleman <tim@timcoleman.com>
+	* list:
+	* Mono.Data.Tds.Protocol/TdsPacketColumnNamesResult:
+	* Mono.Data.Tds.Protocol/TdsPacketTableNameResult:
+		Remove these classes, since they are essentially just
+		ArrayLists.
+	* Mono.Data.Tds.Protocol/Tds.cs:
+	* Mono.Data.Tds.Protocol/Tds42.cs:
+	* Mono.Data.Tds.Protocol/Tds50.cs:
+	* Mono.Data.Tds.Protocol/Tds70.cs:
+		Make ProcessSubPacket return an enum instead of instantiating
+		useless classes.  Remove the TdsPacketColumnNamesResult
+		and TdsPacketTableNameResult in favour of ArrayLists.
+	* Mono.Data.Tds.Protocol/TdsPacketColumnInfoResult.cs:
+		Add a Count property.
+
 2002-11-26  Tim Coleman <tim@timcoleman.com>
 	* list:
 	* Mono.Data.Tds/TdsMetaParameter.cs:
