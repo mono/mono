@@ -779,7 +779,7 @@ namespace Mono.CSharp
 				if (Char.IsDigit (e))
 					c = (int) e - (int) '0';
 				else
-					c = (int) e - (int) 'A';
+					c = (int) e - (int) 'A' + 10;
 				total = (total * 16) + c;
 				if (count == -1){
 					int p = peekChar ();
