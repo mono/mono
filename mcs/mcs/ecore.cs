@@ -2840,9 +2840,7 @@ namespace Mono.CSharp {
 
 				// Assembly and FamORAssem succeed if we're in the same assembly.
 				if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
-					if (mi.DeclaringType.Assembly != invocation_type.Assembly)
-						continue;
-					else
+					if (mi.DeclaringType.Assembly == invocation_type.Assembly)
 						return mi;
 				}
 
@@ -2851,7 +2849,7 @@ namespace Mono.CSharp {
 					continue;
 
 				// Family and FamANDAssem require that we derive.
-				if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem)){
+				if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem){
 					if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
 						continue;
 					else {

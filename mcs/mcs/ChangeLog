@@ -1,3 +1,9 @@
+2003-10-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs: Applied fix from Ben Maurer.   We were handling in the
+	`internal' case regular and protected, but not allowing protected
+	to be evaluated later.  Bug 49840
+
 2003-10-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Switch.TableSwitchEmit): Compare the upper bound
