@@ -31,7 +31,6 @@ Mono.Data.Tds.Protocol/TdsPacketRetStatResult.cs
 Mono.Data.Tds.Protocol/TdsPacketRowResult.cs
 Mono.Data.Tds.Protocol/TdsPacketSubType.cs
 Mono.Data.Tds.Protocol/TdsPacketType.cs
-Mono.Data.Tds.Protocol/TdsPacketUnknown.cs
 Mono.Data.Tds.Protocol/TdsSchemaInfo.cs
 Mono.Data.Tds.Protocol/TdsServerType.cs
 Mono.Data.Tds.Protocol/TdsTimeoutException.cs

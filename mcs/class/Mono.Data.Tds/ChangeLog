@@ -1,7 +1,10 @@
 2002-11-30  Tim Coleman <tim@timcoleman.com>
 	* list:
-	* Mono.Data.Tds.Protocol/TdsPacketColumnNamesResult:
-	* Mono.Data.Tds.Protocol/TdsPacketTableNameResult:
+		Remove unnecessary files.
+	* Mono.Data.Tds.Protocol/TdsPacketUnknown.cs:
+		Remove this class as it is unused.
+	* Mono.Data.Tds.Protocol/TdsPacketColumnNamesResult.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketTableNameResult.cs:
 		Remove these classes, since they are essentially just
 		ArrayLists.
 	* Mono.Data.Tds.Protocol/Tds.cs:
