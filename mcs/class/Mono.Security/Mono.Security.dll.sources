@@ -29,6 +29,8 @@
 ./Mono.Security.X509.Extensions/KeyAttributesExtension.cs
 ./Mono.Security.X509.Extensions/KeyUsageExtension.cs
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
+./Mono.Security.X509.Stores/FileCertificateStore.cs
+./Mono.Security.X509.Stores/ICertificateStore.cs
 ./Mono.Security.Cryptography/TlsHMAC.cs
 ./Mono.Security.Cryptography/MD5SHA1CryptoServiceProvider.cs
 ./Mono.Security.Protocol.Tls/CipherSuite.cs
