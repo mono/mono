@@ -43,7 +43,7 @@ IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	(cd security; make CSC=$(CSC))
 
 ./cilc/cilc.exe: dummy
-	(cd cilc; make)
+	(cd cilc; make CSC=$(CSC))
 
 clean:
 	(cd corcompare; make clean)
