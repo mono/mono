@@ -15,16 +15,25 @@ namespace Mono.ILASM {
         public class LdstrInstr : IInstr {
 
                 private string operand;
-
+                private byte[] b_operand;
+                
                 public LdstrInstr (string operand)
                 {
                         this.operand = operand;
                 }
 
+                public LdstrInstr (byte[] b_operand)
+                {
+                        this.b_operand = b_operand;
+                }
+                
                 public void Emit (CodeGen code_gen, MethodDef meth,
 				  PEAPI.CILInstructions cil)
                 {
-                        cil.ldstr (operand);
+                        if (operand != null)
+                                cil.ldstr (operand);
+                        else
+                                cil.ldstr (b_operand);
                 }
 
         }

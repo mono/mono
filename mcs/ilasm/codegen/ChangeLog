@@ -1,3 +1,7 @@
+2003-11-17  Jackson Harper <jackson@ximian.com>
+
+	* LdstrInstr.cs: Allow strings to be created as bytearrays.
+	
 2003-10-28 Jackson Harper <jackson@ximian.com>
 
 	* ExternTable.cs: Revert back to resolving value and class types
