@@ -1,3 +1,8 @@
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0038-3.cs: New testcase from #60730.
+	* cs0038-4.cs: Likewise.
+
 2004-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0592-8.cs: Avoid spurious "unexpected incorrect error".
