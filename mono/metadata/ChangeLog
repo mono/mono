@@ -1,4 +1,8 @@
 
+Mon Jun 14 00:27:15 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: make binaries run on .Net 1.1 by default.
+
 Sun Jun 13 18:22:40 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* threadpool.c, threadpool.h: use the correct return type in SetMinThreads ().
