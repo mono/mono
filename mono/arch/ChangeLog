@@ -1,4 +1,9 @@
 
+Mon Jan 27 12:49:10 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* alpha/*: start of the port to the alpha architecture by
+	Laramie Leavitt (<lar@leavitt.us>).
+
 Tue Jan 21 17:29:53 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* ppc/ppc-codegen.h: completed ppc native code generation by
