@@ -307,6 +307,11 @@ namespace System.IO
 
 		private void InitBuffer (int size)
 		{
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("Buffer size cannot be negative.");
+			if (size < 8)
+				size = 8;
+		
 			buf = new byte [size];
 			buf_size = size;
 			buf_start = 0;

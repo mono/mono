@@ -1,3 +1,7 @@
+2002-05-17  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* FileStream.cs: Enforce lower bound on buffer size.
+
 2002-05-16  Piers Haken <piersh@friskit.com>
 
 	* Stream.cs: Implement synchronous {Begin|End}{Read|Write}() methods.
