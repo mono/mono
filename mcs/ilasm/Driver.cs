@@ -6,12 +6,15 @@
 //  Jackson Harper (Jackson@LatitudeGeo.com)
 //
 // (C) 2003 Jackson Harper, All rights reserved
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 using System;
 using System.IO;
 using System.Reflection;
 using System.Collections;
+using System.Security.Cryptography;
+using Mono.Security;
 
 namespace Mono.ILASM {
 
@@ -52,6 +55,8 @@ namespace Mono.ILASM {
                         private bool scan_only = false;
 			private bool debugging_info = false;
                         private CodeGen codegen;
+			private bool keycontainer = false;
+			private string keyname;
 
                         public DriverMain (string[] args)
                         {
@@ -75,8 +80,41 @@ namespace Mono.ILASM {
                                         if (report.ErrorCount > 0)
                                                 return false;
                                         codegen.Write ();
+
+                                try {
+					if (keyname != null) {
+						Console.WriteLine ("Signing assembly with the specified strongname keypair");
+						return Sign (output_file);
+					}
+                                } catch {
+                                        return false;
+                                }
+
                                 return true;
                         }
+
+			private bool Sign (string filename)
+			{
+				// note: if the file cannot be signed (no public key in it) then
+				// we do not show an error, or a warning, if the key file doesn't 
+				// exists
+				StrongName sn = null;
+				if (keycontainer) {
+					CspParameters csp = new CspParameters ();
+					csp.KeyContainerName = keyname;
+					RSACryptoServiceProvider rsa = new RSACryptoServiceProvider (csp);
+					sn = new StrongName (rsa);
+				} else {
+					byte[] data = null;
+					using (FileStream fs = File.OpenRead (keyname)) {
+						data = new byte [fs.Length];
+						fs.Read (data, 0, data.Length);
+						fs.Close ();
+					}
+					sn = new StrongName (data);
+				}
+				return sn.Sign (filename);
+			}
 
                         private void ProcessFile (string file_path)
                         {
@@ -189,9 +227,16 @@ namespace Mono.ILASM {
                                         case "flags":
                                         case "alignment":
                                         case "base":
-                                        case "key":
                                         case "resource":
                                                 break;
+                                        case "key":
+						if (command_arg.Length > 0)
+							keycontainer = (command_arg [0] == '@');
+						if (keycontainer)
+							keyname = command_arg.Substring (1);
+						else
+							keyname = command_arg;
+						break;
                                         case "scan_only":
                                                 scan_only = true;
                                                 break;
@@ -266,6 +311,8 @@ namespace Mono.ILASM {
                                         "   /exe               Compile to executable.\n" +
                                         "   /dll               Compile to library.\n" +
                                         "   /debug             Include debug information.\n" +
+					"   /key:keyfile       Strongname using the specified key file\n" +
+					"   /key:@container    Strongname using the specified key container\n" +
                                         "Options can be of the form -option or /option\n");
                                 Environment.Exit (1);
                         }

@@ -1,3 +1,10 @@
+2004-12-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Driver.cs: Added support for /key option to strongname assemblies
+	produced by ilasm. Fix bug #69721.
+	* Makefile: Added dependency on Mono.Security.dll assembly to provide
+	strongnaming support.
+
 2004-12-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* CodeGen.cs: Correctly compute the name of a nested class,
