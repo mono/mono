@@ -22,11 +22,15 @@ namespace System.Web.Caching {
 		internal CachedVaryBy (HttpCachePolicy policy)
 		{
 			prms = policy.VaryByParams.GetParamNames ();
+			headers = policy.VaryByHeaders.GetHeaderNames ();
+			custom = policy.GetVaryByCustom ();
 		}
-		
-		internal string CreateKey (string file_path, HttpRequest request)
+
+		internal string CreateKey (string file_path, HttpContext context)
 		{
 			StringBuilder builder = new StringBuilder ();
+			HttpApplication app = context.ApplicationInstance;
+			HttpRequest request = context.Request;
 
 			builder.Append ("CachedRawResponse\n");
 			builder.Append (file_path);
@@ -45,9 +49,28 @@ namespace System.Web.Caching {
 					builder.Append ('\n');
 				}
 			}
+			
+			if (headers != null) {
+				for (int i=0; i<headers.Length; i++) {
+					builder.Append ("VH:");
+					builder.Append (headers [i]);
+					builder.Append ('=');
+					builder.Append (request.Headers [headers [i]]);
+					builder.Append ('\n');
+				}
+			}
+
+			if (custom != null) {
+				string s = app.GetVaryByCustomString (context, custom);
+				builder.Append ("VC:");
+				builder.Append (custom);
+				builder.Append ('=');
+				builder.Append (s != null ? s : "__null__");
+				builder.Append ('\n');
+			}
 
 			return builder.ToString ();
 		}
-	}	 
+	}
 }
 

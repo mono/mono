@@ -1,3 +1,8 @@
+2004-01-04  Jackson Harper <jackson@ximian.com>
+
+	* OutputCacheModule.cs: VaryBy keys now need the HttpContext not just the request.
+	* CachedVaryBy.cs: Handle vary by headers, and vary by custom.
+	
 2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ExpiresBuckets.cs: set _intPos when expanding the array. Fixes bug

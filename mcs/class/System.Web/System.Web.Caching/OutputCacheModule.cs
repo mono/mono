@@ -12,7 +12,7 @@ using System.Web;
 namespace System.Web.Caching {
 	
 	internal sealed class OutputCacheModule : IHttpModule {
-		
+
 		public OutputCacheModule ()
 		{
 		}
@@ -36,7 +36,6 @@ namespace System.Web.Caching {
 		{
 			HttpApplication app = (HttpApplication) o;
 			HttpContext context = app.Context;
-
 			
 			string vary_key = context.Request.FilePath;
 			CachedVaryBy varyby = context.Cache [vary_key] as CachedVaryBy;
@@ -46,7 +45,7 @@ namespace System.Web.Caching {
 			if (varyby == null)
 				goto leave;
 
-			key = varyby.CreateKey (vary_key, context.Request);
+			key = varyby.CreateKey (vary_key, context);
 			c = context.Cache [key] as CachedRawResponse;
 			
 			if (c != null && context.Timestamp < c.Policy.Expires) {
@@ -109,8 +108,8 @@ namespace System.Web.Caching {
 				lookup = false;
 			} 
 			
-			key = varyby.CreateKey (vary_key, context.Request);
-			
+			key = varyby.CreateKey (vary_key, context);
+
 			if (lookup)
 				prev = context.Cache [key] as CachedRawResponse;
 			
