@@ -28,6 +28,107 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 		
+		#region Helpers
+		/*
+		internal static HISColorCheck() {		
+			Color[] cArr = new Color[] { SystemColors.ControlText, SystemColors.Control, SystemColors.GrayText};
+			foreach( Color c in cArr) {
+				double H1 = c.GetHue();
+				double I1 = c.GetBrightness();
+				double S1 = c.GetSaturation();
+				double H2, I2, S2;
+				ControlPaint.Color2HIS(c, out H2, out I2, out S2);
+
+				Color c2 = ControlPaint.HIS2Color( H2, I2, S2);
+			}
+		}
+		*/				
+		internal static void Color2HIS(Color col, out double Hue, out double Intensity, out double Saturation) {
+			Hue = 0.0;
+			Saturation = 0.0;
+
+			double red = (double)col.R / 255.0;
+			double green = (double)col.G / 255.0;
+			double blue = (double)col.B / 255.0;
+
+			Intensity = Math.Max(red, green);
+			Intensity = Math.Max(Intensity, blue);
+
+			if( Intensity != 0.0) {
+				double IntensityDiff = Intensity - Math.Min( Math.Min( red, green), blue);
+				if( IntensityDiff != 0.0) {
+					Saturation = IntensityDiff / Intensity;
+					if( Intensity == red) {
+						double b = ( Intensity - blue) / IntensityDiff;
+						double g = ( Intensity - green) / IntensityDiff;
+						Hue = 10.0 * ( b - g);
+					}
+					else if( Intensity == green) {
+						double r = ( Intensity - red) / IntensityDiff;
+						double b = ( Intensity - blue) / IntensityDiff;
+						Hue = 10.0 * ( 2 + r - b);
+					}
+					else {
+						double g = ( Intensity - green) / IntensityDiff;
+						double r = ( Intensity - red) / IntensityDiff;
+						Hue = 10.0 * ( 4 + g - r);
+					}
+					Hue = Hue * 60.0;
+					Hue = Math.Round(Hue);
+				}
+			}
+		}
+
+		internal static Color HIS2Color(double Hue, double Intensity, double Saturation) {
+			double R = Intensity, G = Intensity, B = Intensity;
+			if( Saturation != 0) {
+				double Hue1 = (Hue * 60.0) / 360.0;
+				double X = Hue1 / 10.0;
+				double h = Math.Floor(X);
+				double P = Intensity * ( 1 - Saturation);
+				double Q = Intensity * ( Saturation - ( X - h));
+				double T = Intensity * ( 1 - Saturation * ( 1 - X + h));
+				switch( (int)Math.Round(h)) {
+					case 0:
+						R = Intensity;
+						G = T;
+						B = P;
+						break;
+					case 1:
+						R = Q;
+						G = Intensity;
+						B = P;
+						break;
+					case 2:
+						R = P;
+						G = Intensity;
+						B = T;
+						break;
+					case 3:
+						R = P;
+						G = Q;
+						B = Intensity;
+						break;
+					case 4:
+						R = T;
+						G = P;
+						B = Intensity;
+						break;
+					case 5:
+						R = Intensity;
+						G = P;
+						B = Q;
+						break;
+				}
+			}
+			int red = (int)(R * 255.0);
+			int gree = (int)(G * 255.0);
+			int blue = (int)(B * 255.0);
+			return Color.FromArgb(red, gree, blue);
+		}
+
+		#endregion
+
 		#region Methods
 		/// following methods were not stubbed out, because they only support .NET framework:
 		/// - public static IntPtr CreateHBitmap16Bit(Bitmap bitmap,Color background)
@@ -36,45 +137,64 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static Color Dark(Color baseColor) 
 		{
-			throw new NotImplementedException ();
+			return Dark(baseColor, 10.0f);
 		}
 		
 		[MonoTODO]
 		public static Color Dark(Color baseColor,float percOfDarkDark) 
 		{
-			throw new NotImplementedException ();
+			double H, I, S;
+			ControlPaint.Color2HIS(baseColor, out H, out I, out S);
+			double NewIntensity = Math.Max( 0.0, I - (percOfDarkDark / 100.0));
+			return ControlPaint.HIS2Color(H, NewIntensity, S);
 		}
 		
 		[MonoTODO]
 		public static Color DarkDark(Color baseColor) 
 		{
-			throw new NotImplementedException ();
+			return Dark(baseColor, 20.0f);
 		}
 		
 		[MonoTODO]
-		public static void DrawBorder(
-			Graphics graphics) {
-			throw new NotImplementedException ();
+		public static void DrawBorder(Graphics graphics, Rectangle bounds, Color color, ButtonBorderStyle style) {
+			DrawBorder(graphics, bounds, color, 1, style, color, 1, style, color, 1, style, color, 1, style);
 		}
 		
 		[MonoTODO]
-		public static void DrawBorder(
-			Graphics graphics,
-			Rectangle bounds,
-			Color leftColor,
-			int leftWidth,
-			ButtonBorderStyle leftStyle,
-			Color topColor,
-			int topWidth,
-			ButtonBorderStyle topStyle,
-			Color rightColor,
-			int rightWidth,
-			ButtonBorderStyle rightStyle,
-			Color bottomColor,
-			int bottomWidth,
+		public static void DrawBorder( Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
+			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
+			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor, int bottomWidth,
 			ButtonBorderStyle bottomStyle) {
 
-			throw new NotImplementedException ();
+			IntPtr hdc = graphics.GetHdc();
+
+			RECT rc = new RECT();
+
+			// Top side
+			Win32.SetBkColor(hdc, (uint)Win32.RGB(topColor));
+			rc.left = bounds.Left;
+			rc.top = bounds.Top;
+			rc.right = bounds.Right - rightWidth;
+			rc.bottom = bounds.Top + topWidth;
+			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
+			// Left side
+			Win32.SetBkColor(hdc, (uint)Win32.RGB(leftColor));
+			rc.right = bounds.Left + leftWidth;
+			rc.bottom = bounds.Bottom - bottomWidth;
+			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
+			// Right side
+			Win32.SetBkColor(hdc, (uint)Win32.RGB(rightColor));
+			rc.left = bounds.Right - rightWidth;
+			rc.right = bounds.Right;
+			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
+			// Bottom side
+			Win32.SetBkColor(hdc, (uint)Win32.RGB(bottomColor));
+			rc.left = bounds.Left;
+			rc.top = bounds.Bottom - bottomWidth;
+			rc.bottom = bounds.Bottom;
+			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
+
+			graphics.ReleaseHdc(hdc);
 		}
 		
 		[MonoTODO]
@@ -207,10 +327,15 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawFocusRectangle(
-			Graphics graphics,
-			Rectangle rectangle) {
-			//FIXME:
+		public static void DrawFocusRectangle( Graphics graphics, Rectangle rectangle) {
+			RECT rc = new RECT();
+			rc.left = rectangle.Left;
+			rc.top = rectangle.Top;
+			rc.right = rectangle.Right;
+			rc.bottom = rectangle.Bottom;
+			IntPtr hdc = graphics.GetHdc();
+			int res = Win32.DrawFocusRect( hdc, ref rc);
+			graphics.ReleaseHdc(hdc);
 		}
 		
 		[MonoTODO]
@@ -399,18 +524,21 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static Color Light(Color baseColor) 
 		{
-			throw new NotImplementedException ();
+			return Light( baseColor, 10.0f);
 		}
 		
 		[MonoTODO]
 		public static Color Light(Color baseColor,float percOfLightLight) 
 		{
-			throw new NotImplementedException ();
+			double H, I, S;
+			ControlPaint.Color2HIS(baseColor, out H, out I, out S);
+			double NewIntensity = Math.Min( 1.0, I + (percOfLightLight / 100.0));
+			return ControlPaint.HIS2Color(H, NewIntensity, S);
 		}
 		[MonoTODO]
 		public static Color LightLight(Color baseColor) 
 		{
-			throw new NotImplementedException ();
+			return Light( baseColor, 20.0f);
 		}
 		#endregion
 	}

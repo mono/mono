@@ -22,6 +22,12 @@ namespace System.Drawing
 			//
 		}
 
+		public static Brush Control {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
 		public static Brush ControlText {
 			get {
 				throw new NotImplementedException();

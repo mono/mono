@@ -56,10 +56,11 @@ namespace System.Windows.Forms {
 					createParams.Style = (int) (
 						WindowStyles.WS_CHILD | 
 						WindowStyles.WS_VISIBLE |
-						WindowStyles.WS_CLIPSIBLINGS);
+						WindowStyles.WS_CLIPSIBLINGS );
 					if(FlatStyle != FlatStyle.System) {
 						createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
 					}
+					createParams.Style |= (int)sysButtonStyles_;
 					// CHECKME : this call is commented because (IMHO) Control.CreateHandle suppose to do this
 					// and this function is CreateParams, not CreateHandle
 					// window.CreateHandle (createParams);
@@ -111,33 +112,149 @@ namespace System.Windows.Forms {
 			return base.ToString();
 		}
 
-		internal void OnDrawItem(DrawItemEventArgs e) {
-
-			Rectangle rc = e.Bounds;
-			ButtonState	btnState = ButtonState.Normal;
-
-			if( (e.State & DrawItemState.Selected) != 0) {
-				btnState = ButtonState.Pushed;
+		protected override void OnMouseEnter (EventArgs e) {
+			base.OnMouseEnter(e);
+			if( FlatStyle == FlatStyle.Flat || FlatStyle == FlatStyle.Popup) {
+				Invalidate();
 			}
+		}
+    
+		protected override void OnMouseLeave (EventArgs e) {
+			base.OnMouseLeave(e);
+			if( FlatStyle == FlatStyle.Flat || FlatStyle == FlatStyle.Popup) {
+				Invalidate();
+			}
+		}
+
+		internal void OnDrawItem(DrawItemEventArgs e) {
+			Graphics paintOn = e.Graphics;
+			Rectangle rc = e.Bounds;
+			Rectangle rcImageClip = e.Bounds;
+			rcImageClip.Inflate(-2,-2);
 
 			if( FlatStyle == FlatStyle.Flat) {
-				btnState |= ButtonState.Flat;
+				if( (e.State & DrawItemState.Selected) != 0) {
+					SolidBrush sb = new SolidBrush(ControlPaint.Light(SystemColors.Control));
+					paintOn.FillRectangle(sb, rc);
+					sb.Dispose();
+				}
+				else {
+					if( mouseIsInside_) {
+						SolidBrush sb = new SolidBrush(ControlPaint.Dark(SystemColors.Control));
+						paintOn.FillRectangle(sb, rc);
+						sb.Dispose();
+					}
+					else {
+						paintOn.FillRectangle(SystemBrushes.Control, rc);
+					}
+				}
+
+				ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+				rc.Inflate(-1,-1);
+
+				if( (e.State & DrawItemState.Focus) != 0) {
+					ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+				}
+				else {
+					rcImageClip.Inflate(1,1);
+				}
+				rc.Inflate(-3,-3);
+			}
+			else if( FlatStyle == FlatStyle.Popup) {
+				if( (e.State & DrawItemState.Selected) != 0) {
+					ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+					rc.Inflate(-1,-1);
+					ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+					rc.Inflate(-1,-1);
+				}
+				else {
+					if( (e.State & DrawItemState.Focus) != 0) {
+						ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+						rc.Inflate(-1,-1);
+					}
+
+					if( mouseIsInside_) {
+						Color colorLight = ControlPaint.Light(SystemColors.Control);
+						ControlPaint.DrawBorder(paintOn, rc, colorLight, 1, ButtonBorderStyle.Solid,
+							colorLight, 1, ButtonBorderStyle.Solid, SystemColors.ControlText, 1, ButtonBorderStyle.Solid,
+							SystemColors.ControlText, 1, ButtonBorderStyle.Solid);
+					}
+					else {
+						ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+					}
+					rc.Inflate(-2,-2);
+				}
+				paintOn.FillRectangle(SystemBrushes.Control, rc);
+
+				rc.Inflate(-1,-1);
+			}
+			else {
+				ButtonState	btnState = ButtonState.Normal;
+
+				if( (e.State & DrawItemState.Selected) != 0) {
+					btnState = ButtonState.Pushed;
+				}
+
+				ControlPaint.DrawButton(paintOn, rc, btnState);
+
+				rc.Inflate(-2,-2);
 			}
 
-			// FIXME: how to draw FlatStyle.Popup ?
-			// FIXME: how to draw Pushed FlatStyle.Flat ?
-			ControlPaint.DrawButton(e.Graphics, rc, btnState);
+			// Do not place Text and Images on the borders 
+			paintOn.Clip = new Region(rcImageClip);
+			if( BackgroundImage != null) {
+				paintOn.DrawImage(BackgroundImage, e.Bounds.X, e.Bounds.Y, BackgroundImage.Width, BackgroundImage.Height);
+			}
 
-			StringFormat format = new StringFormat();
-			format.Alignment = horizontalAlign;
-			format.LineAlignment = verticalAlign;
+			// Make "Focus" rectangle
+			rc.Inflate(-3,-3);
+			Rectangle	focusRC = rc;
+
+			if(Image != null) {
+				int X = rc.X;
+				int Y = rc.Y;
+
+				if( ImageAlign == ContentAlignment.TopCenter ||
+					ImageAlign == ContentAlignment.MiddleCenter ||
+					ImageAlign == ContentAlignment.BottomCenter) {
+					X += (rc.Width - Image.Width) / 2;
+				}
+				else if(ImageAlign == ContentAlignment.TopRight ||
+					ImageAlign == ContentAlignment.MiddleRight||
+					ImageAlign == ContentAlignment.BottomRight) {
+					X += (rc.Width - Image.Width);
+				}
+
+				if( ImageAlign == ContentAlignment.BottomCenter ||
+					ImageAlign == ContentAlignment.BottomLeft ||
+					ImageAlign == ContentAlignment.BottomRight) {
+					Y += rc.Height - Image.Height;
+				}
+				else if(ImageAlign == ContentAlignment.MiddleCenter ||
+						ImageAlign == ContentAlignment.MiddleLeft ||
+						ImageAlign == ContentAlignment.MiddleRight) {
+					Y += (rc.Height - Image.Height) / 2;
+				}
+				paintOn.DrawImage(Image, X, Y, Image.Width, Image.Height);
+			}
 
 			if( (e.State & DrawItemState.Selected) != 0) {
-				// FIXME: FlatStyle.Flat uses color and not dext offset to show state
+				// FlatStyle.Flat uses color and not text offset to show state
 				// FIXME: use SysMetrics to determine offset values ?
-				rc.Offset(2,2);
+				if( FlatStyle != FlatStyle.Flat) {
+					rc.Offset(1,1);
+				}
 			}
-			e.Graphics.DrawString(Text, Font, SystemBrushes.ControlText, rc, format);
+
+			StringFormat format = new StringFormat();
+			format.Alignment = horizontalAlign_;
+			format.LineAlignment = verticalAlign_;
+			paintOn.DrawString(Text, Font, SystemBrushes.ControlText, rc, format);
+
+			if( (e.State & DrawItemState.Focus) != 0) {
+				// FIXME: Draw focus rectangle in different colors
+				ControlPaint.DrawFocusRectangle( paintOn, focusRC);
+			}
 		}
 
 		protected override void WndProc (ref Message m) {
@@ -150,10 +267,6 @@ namespace System.Windows.Forms {
 						rect, dis.itemID, (DrawItemState)dis.itemState);
 					OnDrawItem( args);
 					Win32.CopyMemory(m.LParam, ref dis, 48);
-				}
-					break;
-				case Msg.WM_MOUSEMOVE: {
-					MouseIsOver_ = true;
 				}
 					break;
 				default:

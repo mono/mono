@@ -1,3 +1,19 @@
+ 2003-02-09 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Button.cs
+	* ButtonBase.cs
+	* CheckBox.cs
+	* ComboBox.cs
+	* Control.cs
+	* ControlPaint.cs
+							implementation added
+	* Message.cs
+							bug fixed
+	* win32Enums.cs
+	* win32functions.cs
+	* win32Structs.cs
+ 							declarations added
+			
+
  2003-02-07  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Font.cs 				removed
 	* Button.cs

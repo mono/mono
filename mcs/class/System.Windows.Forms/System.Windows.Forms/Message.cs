@@ -124,6 +124,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal int HiWordLParam {
+			get {
+				return (int)(((uint)LParam.ToInt32() & 0xFFFF0000) >> 16);
+			}
+		}
+
+		internal int LoWordLParam {
+			get {
+				return LParam.ToInt32() & 0x0000FFFF;
+			}
+		}
+
 		public static Message create(IntPtr hWnd, Msg msg, IntPtr wparam, IntPtr lparam)
 		{
 			Message NewMessage =  new Message();

@@ -17,6 +17,11 @@ namespace System.Drawing
 	public sealed class Region// : MarshalByRefObject, IDisposable
 	{
 		public Region() {
+
+		}
+
+		public Region( Rectangle rect) {
+
 		}
 		//[comVisible(false)]
 		//public Region(GraphicsPath path) {

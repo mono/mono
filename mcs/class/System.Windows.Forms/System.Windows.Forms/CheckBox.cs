@@ -60,12 +60,35 @@ namespace System.Windows.Forms {
 		
 		public bool Checked {
 			get { return _checked; }
-			set { _checked=value; }
+			set { 
+				if( _checked != value) {
+					CheckState = (value) ? CheckState.Checked : CheckState.Unchecked;
+				}
+			}
 		}
 		
 		public CheckState CheckState {
 			get { return checkState; }
-			set { checkState = value; }
+			set { 
+				if( checkState != value) {
+
+					checkState = value; 
+					bool oldChecked = _checked;
+
+					if( checkState == CheckState.Unchecked) {
+						_checked = false;
+					}
+					else {
+						_checked = true;
+					}
+
+					if( oldChecked != _checked) { 
+						OnCheckedChanged(new EventArgs());
+					}
+
+					OnCheckStateChanged(new EventArgs());
+				}
+			}
 		}
 		
 		[MonoTODO]
@@ -145,18 +168,24 @@ namespace System.Windows.Forms {
 		protected virtual void OnCheckedChanged(EventArgs e) 
 		{
 			//FIXME:
+			if(CheckedChanged != null) {
+				CheckedChanged( this, e);
+			}
 		}
 		
 		[MonoTODO]
 		protected virtual void OnCheckStateChanged(EventArgs e) 
 		{
 			//FIXME:
+			if(CheckStateChanged != null) {
+				CheckStateChanged( this, e);
+			}
 		}
 		
 		[MonoTODO]
 		protected override void OnClick(EventArgs e) 
 		{
-			//FIXME:
+			CheckState = (CheckState)Win32.SendMessage(Handle, (int)ButtonMessages.BM_GETCHECK, 0, 0);
 			base.OnClick(e);
 		}
 		
@@ -165,6 +194,7 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			base.OnHandleCreated(e);
+			Win32.SendMessage(Handle, (int)ButtonMessages.BM_SETCHECK, (int)checkState, 0);
 		}
 		
 		[MonoTODO]

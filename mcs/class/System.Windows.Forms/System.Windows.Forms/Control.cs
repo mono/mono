@@ -36,7 +36,7 @@
     			}
     
     			protected override void WndProc (ref Message m) {
-					Console.WriteLine ("Control WndProc Message HWnd {0}, Msg {1}", m.HWnd, m.Msg);
+					//Console.WriteLine ("Control WndProc Message HWnd {0}, Msg {1}", m.HWnd, m.Msg);
 					// Do not call default WndProc here
 					// let the control decide what to do
     				// base.WndProc (ref m);
@@ -80,6 +80,7 @@
     		string text;
     		bool visible;
 			object tag;
+			protected bool mouseIsInside_;
 
 			// BeginInvoke() etc. helpers
 			static int InvokeMessage = Win32.RegisterWindowMessage("mono_control_invoke_helper");
@@ -187,6 +188,7 @@
     			text = "";
     			visible = true;
     			parent = null;
+				mouseIsInside_ = false;
 				// Do not create Handle here, only in CreateHandle
     			// CreateHandle();//sets window handle. FIXME: No it does not
     		}
@@ -317,6 +319,7 @@
     			set {
     				backgroundImage = value;
     				// FIXME: force redraw
+					Invalidate();
     			}
     		}
     
@@ -1638,6 +1641,7 @@
     		
     		protected virtual void OnMouseEnter (EventArgs e) 
     		{
+				System.Console.WriteLine("OnMouseEnter");
     			if (MouseEnter != null)
     				MouseEnter (this, e);
     		}
@@ -1650,6 +1654,9 @@
     		
     		protected virtual void OnMouseLeave (EventArgs e) 
     		{
+				System.Console.WriteLine("OnMouseLeave");
+
+				mouseIsInside_ = false;
     			if (MouseLeave != null)
     				MouseLeave (this, e);
     		}
@@ -1657,6 +1664,41 @@
  			//Compact Framework
     		protected virtual void OnMouseMove (MouseEventArgs e) 
     		{
+				// If enter and mouse pressed - do not process
+				if( ((e.Button & MouseButtons.Left) != 0) && !mouseIsInside_) return;
+
+				if( !mouseIsInside_) {
+					TRACKMOUSEEVENT tme = new TRACKMOUSEEVENT();
+					tme.cbSize = 16;
+					tme.hWnd = Handle;
+					tme.dwFlags = (int)TrackerEventFlags.TME_LEAVE;
+					tme.dwHoverTime = 0;
+
+					bool result = Win32.TrackMouseEvent(ref tme);
+					if( !result) {
+						System.Console.WriteLine("{0}",Win32.FormatMessage(Win32.GetLastError()));
+					}
+				}
+
+				POINT pt = new POINT();
+				pt.x = e.X;
+				pt.y = e.Y;
+				Win32.ClientToScreen(Handle, ref pt);
+				IntPtr wndUnderMouse = Win32.WindowFromPoint(pt);
+
+				if( wndUnderMouse != Handle) {
+					// we are outside of the window
+					if( mouseIsInside_) {
+						OnMouseLeave(new EventArgs());
+						mouseIsInside_ = false;
+					}
+				}
+				else {
+					if( !mouseIsInside_) {
+						mouseIsInside_ = true;
+						OnMouseEnter(new EventArgs());
+					}
+				}
     			if (MouseMove != null)
     				MouseMove (this, e);
     		}
@@ -2202,6 +2244,29 @@
 				//FIXME:
 			}
     		
+
+			internal MouseEventArgs Msg2MouseEventArgs( ref Message msg) {
+				MouseButtons mb = MouseButtons.None;
+				KeyStatusFlags keyIndicator = (KeyStatusFlags)msg.WParam.ToInt32();
+				if( (keyIndicator & KeyStatusFlags.MK_LBUTTON) != 0) {
+					mb |= MouseButtons.Left;
+				}
+				if( (keyIndicator & KeyStatusFlags.MK_RBUTTON) != 0) {
+					mb |= MouseButtons.Right;
+				}
+				if( (keyIndicator & KeyStatusFlags.MK_MBUTTON) != 0) {
+					mb |= MouseButtons.Middle;
+				}
+				if( (keyIndicator & KeyStatusFlags.MK_XBUTTON1) != 0) {
+					mb |= MouseButtons.XButton1;
+				}
+				if( (keyIndicator & KeyStatusFlags.MK_XBUTTON2) != 0) {
+					mb |= MouseButtons.XButton2;
+				}
+
+				return new MouseEventArgs( mb, (mb != MouseButtons.None) ? 1: 0, msg.LoWordLParam, msg.HiWordLParam, 0);
+			}
+
     		// WndProc - calls appriate On... function for the give
     		// message
     		//
@@ -2352,7 +2417,7 @@
 					break;
     			case Msg.WM_MOUSEMOVE:
     				// FIXME:
-    				//OnMouseMove (eventArgs);
+    				OnMouseMove (Msg2MouseEventArgs(ref m));
 					CallControlWndProc(ref m);
 					break;
 				case Msg.WM_LBUTTONDOWN:

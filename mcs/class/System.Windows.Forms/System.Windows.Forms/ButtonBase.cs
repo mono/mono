@@ -31,8 +31,10 @@ namespace System.Windows.Forms {
 		bool isDefault;
 		CreateParams createParams;
 		Label label;
-		protected StringAlignment	horizontalAlign;
-		protected StringAlignment	verticalAlign;
+		protected StringAlignment	horizontalAlign_;
+		protected StringAlignment	verticalAlign_;
+		internal ButtonStyles	sysButtonStyles_;
+
 //		
 //		// --- Constructor ---
 		protected ButtonBase() : base() 
@@ -42,12 +44,13 @@ namespace System.Windows.Forms {
 			imageAlign = ContentAlignment.MiddleCenter;
 			imageIndex = -1;
 			textAlign = ContentAlignment.MiddleCenter;
-			horizontalAlign = StringAlignment.Center;
-			verticalAlign = StringAlignment.Center;
+			horizontalAlign_ = StringAlignment.Center;
+			verticalAlign_ = StringAlignment.Center;
+			sysButtonStyles_ = ButtonStyles.BS_CENTER | ButtonStyles.BS_VCENTER;
 			imeMode = ImeMode.Inherit;
 			isDefault = false;
 		}
-		
+
 		// --- Properties ---
 		protected override CreateParams CreateParams {
 			get { return createParams; }
@@ -68,19 +71,36 @@ namespace System.Windows.Forms {
 		public FlatStyle FlatStyle {
 			get { return flatStyle; }
 			set { 
-				flatStyle = value; 
-				Invalidate();
+				if( flatStyle != value) {
+					flatStyle = value; 
+
+					if( flatStyle == FlatStyle.System) {
+						Win32.UpdateWindowStyle(Handle, (int)ButtonStyles.BS_OWNERDRAW, 0);
+					}
+					else {
+						Win32.UpdateWindowStyle(Handle, 0, (int)ButtonStyles.BS_OWNERDRAW);
+					}
+					Invalidate();
+				}
 			}
 		}
 		
 		public Image Image {
 			get { return image; }
-			set { image=value; }
+			set { 
+				image = value; 
+				Invalidate();
+			}
 		}
 		
 		public ContentAlignment ImageAlign {
 			get { return imageAlign; }
-			set { imageAlign=value; }
+			set { 
+				if( imageAlign != value) {
+					imageAlign = value;
+					Invalidate();
+				}
+			}
 		}
 		
 		public int ImageIndex {
@@ -111,36 +131,46 @@ namespace System.Windows.Forms {
 				return textAlign; 
 			}
 			set { 
-				textAlign = value;
+				if( textAlign != value) {
+					textAlign = value;
+					sysButtonStyles_ = 0;
+					if( textAlign == ContentAlignment.BottomCenter ||
+						textAlign == ContentAlignment.BottomLeft ||
+						textAlign == ContentAlignment.BottomRight) {
+						verticalAlign_ = StringAlignment.Far;
+						sysButtonStyles_ |= ButtonStyles.BS_BOTTOM;
+					}
+					else if(textAlign == ContentAlignment.TopCenter ||
+						textAlign == ContentAlignment.TopLeft ||
+						textAlign == ContentAlignment.TopRight) {
+						verticalAlign_ = StringAlignment.Near;
+						sysButtonStyles_ |= ButtonStyles.BS_TOP;
+					}
+					else {
+						verticalAlign_ = StringAlignment.Center;
+						sysButtonStyles_ |= ButtonStyles.BS_VCENTER;
+					}
 
-				if( textAlign == ContentAlignment.BottomCenter ||
-					textAlign == ContentAlignment.BottomLeft ||
-					textAlign == ContentAlignment.BottomRight) {
-					verticalAlign = StringAlignment.Far;
-				}
-				else if(textAlign == ContentAlignment.TopCenter ||
-					textAlign == ContentAlignment.TopLeft ||
-					textAlign == ContentAlignment.TopRight) {
-					verticalAlign = StringAlignment.Near;
-				}
-				else {
-					verticalAlign = StringAlignment.Center;
-				}
+					if( textAlign == ContentAlignment.BottomLeft ||
+						textAlign == ContentAlignment.MiddleLeft ||
+						textAlign == ContentAlignment.TopLeft) {
+						horizontalAlign_ = StringAlignment.Near;
+						sysButtonStyles_ |= ButtonStyles.BS_LEFT;
+					}
+					else if(textAlign == ContentAlignment.BottomRight ||
+						textAlign == ContentAlignment.MiddleRight ||
+						textAlign == ContentAlignment.TopRight) {
+						horizontalAlign_ = StringAlignment.Far;
+						sysButtonStyles_ |= ButtonStyles.BS_RIGHT;
+					}
+					else {
+						horizontalAlign_ = StringAlignment.Center;
+						sysButtonStyles_ |= ButtonStyles.BS_CENTER;
+					}
 
-				if( textAlign == ContentAlignment.BottomLeft ||
-					textAlign == ContentAlignment.MiddleLeft ||
-					textAlign == ContentAlignment.TopLeft) {
-					horizontalAlign = StringAlignment.Near;
+					Win32.UpdateWindowStyle(Handle, (int)0xF00, (int)sysButtonStyles_);
+					Invalidate();
 				}
-				else if(textAlign == ContentAlignment.BottomRight ||
-					textAlign == ContentAlignment.MiddleRight ||
-					textAlign == ContentAlignment.TopRight) {
-					horizontalAlign = StringAlignment.Far;
-				}
-				else {
-					horizontalAlign = StringAlignment.Center;
-				}
-				Invalidate();
 			}
 		}
 

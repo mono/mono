@@ -2207,6 +2207,25 @@ namespace System.Windows.Forms{
 		BN_KILLFOCUS        =7
 	}
 
+	internal enum ButtonMessages : uint {
+		BM_GETCHECK          =0x00f0,
+		BM_SETCHECK          =0x00f1,
+		BM_GETSTATE          =0x00f2,
+		BM_SETSTATE          =0x00f3,
+		BM_SETSTYLE          =0x00f4,
+		BM_CLICK             =0x00f5,
+		BM_GETIMAGE          =0x00f6,
+		BM_SETIMAGE          =0x00f7
+	}
+
+	internal enum NativeButtonState : int {
+		BST_UNCHECKED        = 0x0000,
+		BST_CHECKED          = 0x0001,
+		BST_INDETERMINATE    = 0x0002,
+		BST_PUSHED           = 0x0004,
+		BST_FOCUS            = 0x0008
+	}
+
 	internal enum ComboBoxNotification : int {
 		CBN_ERRSPACE        =-1,
 		CBN_SELCHANGE       =1,
@@ -2359,4 +2378,22 @@ namespace System.Windows.Forms{
 		DFCS_MONO               =0x8000 
 	}
 */	
+	internal enum KeyStatusFlags : int {
+		MK_LBUTTON	    = 0x0001,
+		MK_RBUTTON	    = 0x0002,
+		MK_SHIFT	    = 0x0004,
+		MK_CONTROL	    = 0x0008,
+		MK_MBUTTON	    = 0x0010,
+		MK_XBUTTON1     = 0x0020,
+		MK_XBUTTON2     = 0x0040
+	}
+
+	internal enum ExtTextOutFlags : int {
+		ETO_GRAYED          =0x0001,
+		ETO_OPAQUE          =0x0002,
+		ETO_CLIPPED         =0x0004,
+		ETO_GLYPH_INDEX     =0x0010,
+		ETO_RTLREADING      =0x0080,
+		ETO_IGNORELANGUAGE  =0x1000
+	}
 }

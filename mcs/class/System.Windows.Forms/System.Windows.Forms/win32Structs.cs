@@ -410,10 +410,10 @@ namespace System.Windows.Forms
 	
 	#region TRACKMOUSEEVENTS
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct TRACKMOUSEEVENTS
+	internal struct TRACKMOUSEEVENT
 	{
-		internal int cbSize;
-		internal TrackerEventFlags dwFlags;
+		internal int cbSize; // = 16
+		internal int dwFlags;	// not TrackerEventFlags 
 		internal IntPtr hWnd;
 		internal int dwHoverTime;
 	}

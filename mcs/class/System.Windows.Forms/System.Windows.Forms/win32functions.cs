@@ -166,9 +166,24 @@ namespace System.Windows.Forms{
 		internal static extern IntPtr CreateRectRgn(int nLeftRect,  int TopRect, int nRightRect, int nBottomRect);
 		[DllImport("gdi32")]
 		internal static extern int GetRgnBox(IntPtr hRegion, ref RECT rc);
-		
 		[DllImport("gdi32")]
 		internal static extern IntPtr GetStockObject(GSO_ objectType);
+		[DllImport("gdi32")]
+		internal static extern int ExtTextOut(IntPtr hdc, int x, int y,
+				ExtTextOutFlags options, ref RECT rc, int str, int strLen, IntPtr distances);
+		[DllImport("gdi32")]
+		internal static extern int ExtTextOut(IntPtr hdc, int x, int y,
+				ExtTextOutFlags options, ref RECT rc, string str, int strLen, IntPtr distances);
+
+		[DllImport ("gdi32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Auto)]
+		internal static extern uint GetBkColor (IntPtr hdc);
+
+		[DllImport ("gdi32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Auto)]
+		internal static extern uint SetBkColor (IntPtr hdc, uint crColor);
 
 		internal static int RGB(Color color)
 		{
@@ -296,7 +311,7 @@ namespace System.Windows.Forms{
 		internal static extern bool ClientToScreen(IntPtr hWnd, ref POINT pt);
 
 		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern bool TrackMouseEvent(ref TRACKMOUSEEVENTS tme);
+		internal static extern bool TrackMouseEvent(ref TRACKMOUSEEVENT tme);
 
 		[DllImport("User32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool redraw);
@@ -431,6 +446,10 @@ namespace System.Windows.Forms{
 
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal static extern int DrawFrameControl(IntPtr hdc, ref RECT rc, uint uType, uint uState);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern int DrawFocusRect( IntPtr hdc, ref RECT rc);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern IntPtr WindowFromPoint( POINT pt);
 
 		#endregion
 
@@ -766,16 +785,6 @@ namespace System.Windows.Forms{
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Auto)]
-		internal static extern uint GetBkColor (IntPtr hdc);
-
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Auto)]
-		internal static extern uint SetBkColor (IntPtr hdc, uint crColor);
-
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Auto)]
 		internal static extern IntPtr GetDC (IntPtr hWnd);
 
 		[DllImport ("user32.dll", 
@@ -861,6 +870,17 @@ namespace System.Windows.Forms{
 
 		#endregion
 
+		internal static void UpdateWindowStyle( IntPtr hwnd, int RemoveStyle, int AddStyle) {
+			if( Win32.IsWindow(hwnd)) {
+				int style = Win32.GetWindowLong(hwnd, GetWindowLongFlag.GWL_STYLE).ToInt32();
+				style &= ~RemoveStyle;
+				style |= AddStyle;
+				Win32.SetWindowLong(hwnd, GetWindowLongFlag.GWL_STYLE, style);
+				Win32.SetWindowPos(hwnd, 0, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE |
+					SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOSIZE |
+					SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_FRAMECHANGED);
+			}
+		}
 	}
 
 }

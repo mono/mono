@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		{
 			selectedLength = 0;
 			selectedText = "";
-			selectedIndex = 0;
+			selectedIndex = -1;
 			selectedItem = null;
 			selecedStart = 0;
 			updateing = false;
@@ -257,13 +257,16 @@ namespace System.Windows.Forms {
 				}
 			}
 			set {
-				//FIXME: set exception parameters
-				if( value >= Items_.Count) {
-					throw new ArgumentOutOfRangeException();
-				}
-				selectedIndex = value;
-				if( IsHandleCreated) {
-					Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETCURSEL, selectedIndex, 0);
+				if( selectedIndex != value) {
+					//FIXME: set exception parameters
+					if( value >= Items_.Count) {
+						throw new ArgumentOutOfRangeException();
+					}
+					selectedIndex = value;
+					if( IsHandleCreated) {
+						Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETCURSEL, selectedIndex, 0);
+					}
+					OnSelectedIndexChanged(new EventArgs());
 				}
 			}
 		}
