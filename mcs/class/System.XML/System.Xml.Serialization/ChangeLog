@@ -1,3 +1,8 @@
+2002-08-03  Tim Coleman <tim@timcoleman.com>
+	* XmlSerializer.cs: 
+		Changed Implements() to check based on name rather
+		than FullName.  FullName was never working correctly.
+
 2002-07-26  Tim Coleman <tim@timcoleman.com>
 	* XmlSerializer.cs:
 		The constructor now looks for an XmlRootAttribute attribute

@@ -518,6 +518,7 @@ namespace System.Xml.Serialization
 					return;
 				}
 			}
+
 			
 			//Add the Class to the hashtable.
 			//Each value of the hashtable has two objects, one is the hashtable with key of membername (for deserialization)
@@ -878,7 +879,7 @@ namespace System.Xml.Serialization
 
 		private bool Implements(Type type, Type interfaceType)
 		{
-			if(type.GetInterface(interfaceType.FullName) == interfaceType)
+			if(type.GetInterface(interfaceType.Name) == interfaceType)
 				return true;
 			return false;
 		}
