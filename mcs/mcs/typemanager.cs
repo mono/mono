@@ -73,6 +73,7 @@ public class TypeManager {
 	static public Type methodimpl_attr_type;
 	static public Type marshal_as_attr_type;
 	static public Type param_array_type;
+	static public Type guid_attr_type;
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
 	static public Type exception_type;
@@ -809,6 +810,7 @@ public class TypeManager {
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
 		marshal_as_attr_type  = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
 		param_array_type      = CoreLookupType ("System.ParamArrayAttribute");
+		guid_attr_type        = CoreLookupType ("System.Runtime.InteropServices.GuidAttribute");
 
 		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 

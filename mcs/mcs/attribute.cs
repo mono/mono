@@ -106,6 +106,19 @@ namespace Mono.CSharp {
 			return Type;
 		}
 
+		/// <summary>
+		///   Validates the guid string
+		/// </summary>
+		bool ValidateGuid (string guid)
+		{
+			try {
+				new Guid (guid);
+				return true;
+			} catch {
+				Report.Error (647, Location, "Format of GUID is invalid: " + guid);
+				return false;
+			}
+		}
 		
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
@@ -116,15 +129,20 @@ namespace Mono.CSharp {
 
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
-
+			bool GuidAttr = true;
 			UsageAttr = false;
 
+			bool DoCompares = true;
 			if (Type == TypeManager.attribute_usage_type)
 				UsageAttr = true;
-			if (Type == TypeManager.methodimpl_attr_type)
+			else if (Type == TypeManager.methodimpl_attr_type)
 				MethodImplAttr = true;
-			if (Type == TypeManager.marshal_as_attr_type)
+			else if (Type == TypeManager.marshal_as_attr_type)
 				MarshalAsAttr = true;
+			else if (Type == TypeManager.guid_attr_type)
+				GuidAttr = true;
+			else
+				DoCompares = false;
 
 			// Now we extract the positional and named arguments
 			
@@ -164,16 +182,19 @@ namespace Mono.CSharp {
 					Error_AttributeArgumentNotValid ();
 					return null;
 				}
-				
-				if (UsageAttr)
-					this.Targets = (AttributeTargets) pos_values [0];
-				
-				if (MethodImplAttr)
-					this.ImplOptions = (MethodImplOptions) pos_values [0];
-				
-				if (MarshalAsAttr)
-					this.UnmanagedType =
-					(System.Runtime.InteropServices.UnmanagedType) pos_values [0];
+
+				if (DoCompares){
+					if (UsageAttr)
+						this.Targets = (AttributeTargets) pos_values [0];
+					else if (MethodImplAttr)
+						this.ImplOptions = (MethodImplOptions) pos_values [0];
+					else if (GuidAttr){
+						if (!ValidateGuid ((string) pos_values [0]))
+							return null;
+					} else if (MarshalAsAttr)
+						this.UnmanagedType =
+						(System.Runtime.InteropServices.UnmanagedType) pos_values [0];
+				}
 			}
 
 			//
@@ -426,7 +447,6 @@ namespace Mono.CSharp {
 
 			
 			if (attr == null) {
-
 				System.Attribute [] attrs = null;
 				
 				try {

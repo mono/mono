@@ -1,3 +1,8 @@
+2002-11-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs (Attribute.ValidateGuid): new method.
+	(Attribute.Resolve): Use above.
+
 2002-11-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* enum.cs: In FindMembers, perform a recursive lookup for values. (34308)
