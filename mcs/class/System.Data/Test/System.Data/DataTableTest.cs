@@ -12,6 +12,9 @@ using NUnit.Framework;
 using System;
 using System.Data;
 using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml;
 
 namespace MonoTests.System.Data
 {
@@ -1168,6 +1171,55 @@ namespace MonoTests.System.Data
 			AssertEquals ("#A09", 1, table.Constraints.Count);
 #endif
 			AssertEquals ("#A05", 0, table.ChildRelations.Count);
+		}
+
+		[Test]
+		public void Serialize ()
+		{
+			MemoryStream fs = new MemoryStream ();
+			
+			// Construct a BinaryFormatter and use it 
+			// to serialize the data to the stream.
+			BinaryFormatter formatter = new BinaryFormatter();
+		
+			// Create an array with multiple elements refering to 
+			// the one Singleton object.
+			DataTable dt = new DataTable();
+		
+		
+			dt.Columns.Add(new DataColumn("Id", typeof(string)));
+			dt.Columns.Add(new DataColumn("ContactName", typeof(string)));
+			dt.Columns.Add(new DataColumn("ContactTitle", typeof(string)));
+			dt.Columns.Add(new DataColumn("ContactAreaCode", typeof(string)));
+			dt.Columns.Add(new DataColumn("ContactPhone", typeof(string)));
+		
+			DataRow loRowToAdd;
+			loRowToAdd = dt.NewRow();
+			loRowToAdd[0] = "a";
+			loRowToAdd[1] = "b";
+			loRowToAdd[2] = "c";
+			loRowToAdd[3] = "d";
+			loRowToAdd[4] = "e";
+						
+			dt.Rows.Add(loRowToAdd);
+		
+			DataTable[] dtarr = new DataTable[] {dt}; 
+		
+			// Serialize the array elements.
+			formatter.Serialize(fs, dtarr);
+		
+			// Deserialize the array elements.
+			fs.Position = 0;
+			DataTable[] a2 = (DataTable[]) formatter.Deserialize(fs);
+		
+			DataSet ds = new DataSet();
+			ds.Tables.Add(a2[0]);
+		
+			StringWriter sw = new StringWriter ();
+			ds.WriteXml(sw);
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (sw.ToString ());
+			AssertEquals (5, doc.DocumentElement.FirstChild.ChildNodes.Count);
 		}
 	}
 }

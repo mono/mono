@@ -475,5 +475,35 @@ namespace MonoTests.System.Data
 			// a:foo is ignored
 			AssertDataTable ("dt", ds.Tables [0], "root", 1, 0, 0, 0, 0, 0);
 		}
+
+		[Test]
+		public void ContainsSchema ()
+		{
+			DataSet ds = new DataSet();
+			DataTable dt1 = new DataTable();
+			ds.Tables.Add(dt1);
+			DataColumn dc1 = new DataColumn("Col1");
+			dt1.Columns.Add(dc1);
+			dt1.Rows.Add(new string[] { "aaa" } );
+			DataTable dt2 = new DataTable();
+			ds.Tables.Add(dt2);
+			DataColumn dc2 = new DataColumn("Col2");
+			dt2.Columns.Add(dc2);
+			dt2.Rows.Add(new string[] { "bbb" } );
+
+			DataRelation rel = new DataRelation("Rel1",dc1,dc2,false);
+			ds.Relations.Add(rel);
+
+			StringWriter sw = new StringWriter ();
+			ds.WriteXml(sw, XmlWriteMode.WriteSchema);
+
+			ds = new DataSet();
+			ds.ReadXml(new StringReader (sw.ToString ()));
+			sw = new StringWriter ();
+			ds.WriteXml(sw);
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (sw.ToString ());
+			AssertEquals (2, doc.DocumentElement.ChildNodes.Count);
+		}
 	}
 }
