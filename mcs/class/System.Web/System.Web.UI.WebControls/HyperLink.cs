@@ -116,7 +116,8 @@ namespace System.Web.UI.WebControls
 			base.AddAttributesToRender(writer);
 			if(NavigateUrl.Length > 0)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Href, NavigateUrl);
+				string url = ResolveBaseUrl (NavigateUrl);
+				writer.AddAttribute(HtmlTextWriterAttribute.Href, url);
 			}
 			if(Target.Length > 0)
 			{

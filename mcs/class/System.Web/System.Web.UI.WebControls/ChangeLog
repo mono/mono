@@ -1,3 +1,8 @@
+2003-11-19  Jackson Harper  <jackson@ximian.com>
+
+	* HyperLink.cs: Use ResolveBaseUrl so that ~/ is interpreted as
+	teh applications base directory. This fixes bug #51092.
+	
 2003-11-18  Todd Berman  <tberman@gentoo.org>
 
 	* ControlParameter.cs:
