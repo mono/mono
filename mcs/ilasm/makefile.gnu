@@ -46,6 +46,13 @@ SOURCES = 				\
         codegen/FieldInstr.cs           \
         codegen/LdtokenInstr.cs         \
         codegen/CalliInstr.cs           \
+        codegen/TryBlock.cs             \
+        codegen/ISehClause.cs           \
+        codegen/FilterBlock.cs          \
+        codegen/FinallyBlock.cs         \
+        codegen/HandlerBlock.cs         \
+        codegen/FaultBlock.cs           \
+        codegen/CatchBlock.cs           \
         parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
