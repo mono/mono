@@ -68,3 +68,9 @@ using System.Web.UI;
 
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+
+// Resources
+
+[assembly: WebResource ("TreeView_Default_Collapse.gif", "image/gif")]
+[assembly: WebResource ("TreeView_Default_Expand.gif", "image/gif")]
+[assembly: WebResource ("TreeView_Default_NoExpand.gif", "image/gif")]
