@@ -44,7 +44,8 @@ namespace Cairo {
                 public static extern void cairo_set_target_image (
                         IntPtr cr, string data, Cairo.Format format, int width, int height, int stride);
 
-                public static extern void cairo_set_target_drawble (IntPtr cr, IntPtr dpy, ulong drawable);
+                [DllImport (CairoImp), CLSCompliant (false)]
+                public static extern void cairo_set_target_drawable (IntPtr cr, IntPtr dpy, ulong drawable);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_operator (IntPtr cr, Cairo.Operator op);
@@ -59,7 +60,7 @@ namespace Cairo {
                 public static extern void cairo_set_pattern (IntPtr cr, IntPtr pattern);
 
 		[DllImport (CairoImp)]
-		public static extern void cairo_set_tolerence (IntPtr cr, double tolerance);
+		public static extern void cairo_set_tolerance (IntPtr cr, double tolerance);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_fill_rule (IntPtr cr, Cairo.FillRule fill_rule);
@@ -199,7 +200,7 @@ namespace Cairo {
                 public static extern double cairo_current_alpha (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern double cairo_current_tolerence (IntPtr cr);
+		public static extern double cairo_current_tolerance (IntPtr cr);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_current_point (
@@ -247,7 +248,7 @@ namespace Cairo {
                 // This is commented out because we don't have access
                 // to the X11 Drawable and Visual types.
                 //                
-                [DllImport (CairoImp)]
+                [DllImport (CairoImp), CLSCompliant (false)]
                 public static extern IntPtr cairo_surface_create_for_drawable (
                         IntPtr display, ulong drawable, IntPtr visual, Cairo.Format format, ulong colormap);
 

@@ -1,7 +1,11 @@
 2003-09-04  Duncan Mak  <duncan@ximian.com>
 
 	* Mono.Cairo/Cairo.cs: Update to the new API in CVS. Change all
-	*_get_* to *_current_*.
+	*_get_* to *_current_*.	
+	(cairo_set_target_drawable): 
+	(cairo_surface_create_for_drawable): Add CLSCompliantAttribute.
+	(cairo_current_tolerance):
+	(cairo_set_tolerance): Fix typo. Thanks Alp.
 
 	* Mono.Cairo/Object.cs: Update binding to reflect changes in the
 	API.
