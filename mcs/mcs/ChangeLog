@@ -1,3 +1,8 @@
+2002-03-31  Dick Porter  <dick@ximian.com>
+
+	* driver.cs: use the GetDirectories() return values properly, and
+	use "/" as path separator.
+
 2002-03-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Unary): Optimize - - expr into expr.

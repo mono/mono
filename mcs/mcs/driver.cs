@@ -404,8 +404,13 @@ namespace Mono.CSharp
 			} catch {
 			}
 			
-			foreach (string d in dirs)
-				errors += CompileFiles (path + "\\" + d + "\\" + pattern, true);
+			foreach (string d in dirs) {
+					
+				// Don't include path in this string, as each
+				// directory entry already does
+				errors += CompileFiles (d + "/" + pattern, true);
+			}
+			
 
 			return errors;
 		}
