@@ -1,25 +1,31 @@
-﻿// UTF8EncodingTest.cs - NUnit Test Cases for System.Text.UTF8Encoding
 //
-// Patrick Kalkman  kalkman@cistron.nl
+// UTF8EncodingTest.cs - NUnit Test Cases for System.Text.UTF8Encoding
+//
+// Authors:
+//	Patrick Kalkman  kalkman@cistron.nl
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2003 Patrick Kalkman
-// 
+// (C) 2004 Novell (http://www.novell.com)
+//
+
 using NUnit.Framework;
 using System;
 using System.Text;
 
-namespace MonoTests.System.Text
-{
+namespace MonoTests.System.Text {
 
-        [TestFixture]
-        public class UTF8EncodingTest 
-        {
-                [SetUp]
-                public void GetReady() {}
-                
-                [TearDown]
-                public void Clean() {}
-                
+	[TestFixture]
+	public class UTF8EncodingTest : Assertion {
+
+		private UTF8Encoding utf8;
+
+		[SetUp]
+		public void Create () 
+		{
+			utf8 = new UTF8Encoding (true, true);
+		}
+
                 [Test]
                 public void TestEncodingGetBytes1()
                 {
@@ -94,9 +100,753 @@ namespace MonoTests.System.Text
                         Assertion.AssertEquals ("UTF #1", 200, UTF8enc.GetMaxByteCount(50));
                 }
 
-                
-        }
+
+		// UTF8 decoding tests from http://www.cl.cam.ac.uk/~mgk25/
+
+		[Test]
+		public void T1_Correct_GreekWord_kosme () 
+		{
+			byte[] data = { 0xCE, 0xBA, 0xE1, 0xBD, 0xB9, 0xCF, 0x83, 0xCE, 0xBC, 0xCE, 0xB5 };
+			string s = utf8.GetString (data);
+			// cute but saving source code in unicode can be problematic
+			// so we just ensure we can re-encode this
+			AssertEquals ("Reconverted", BitConverter.ToString (data), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		public void T2_Boundary_1_FirstPossibleSequence_Pass () 
+		{
+			byte[] data211 = { 0x00 };
+			string s = utf8.GetString (data211);
+			AssertEquals ("1 byte  (U-00000000)", "\0", s);
+			AssertEquals ("Reconverted-1", BitConverter.ToString (data211), BitConverter.ToString (utf8.GetBytes (s)));
+
+			byte[] data212 = { 0xC2, 0x80 };
+			s = utf8.GetString (data212);
+			AssertEquals ("2 bytes (U-00000080)", 128, s [0]);
+			AssertEquals ("Reconverted-2", BitConverter.ToString (data212), BitConverter.ToString (utf8.GetBytes (s)));
+
+			byte[] data213 = { 0xE0, 0xA0, 0x80 };
+			s = utf8.GetString (data213);
+			AssertEquals ("3 bytes (U-00000800)", 2048, s [0]);
+			AssertEquals ("Reconverted-3", BitConverter.ToString (data213), BitConverter.ToString (utf8.GetBytes (s)));
+
+			byte[] data214 = { 0xF0, 0x90, 0x80, 0x80 };
+			s = utf8.GetString (data214);
+			AssertEquals ("4 bytes (U-00010000)", 55296, s [0]);
+			AssertEquals ("Reconverted-4", BitConverter.ToString (data214), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		// Fail on MS Fx 1.1
+		[ExpectedException (typeof (ArgumentException))]
+		public void T2_Boundary_1_FirstPossibleSequence_Fail_5 () 
+		{
+			byte[] data215 = { 0xF8, 0x88, 0x80, 0x80, 0x80 };
+			string s = utf8.GetString (data215);
+			AssertNull ("5 bytes (U-00200000)", s);
+			AssertEquals ("Reconverted-5", BitConverter.ToString (data215), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		// Fail on MS Fx 1.1
+		[ExpectedException (typeof (ArgumentException))]
+		public void T2_Boundary_1_FirstPossibleSequence_Fail_6 () 
+		{
+			byte[] data216 = { 0xFC, 0x84, 0x80, 0x80, 0x80, 0x80 };
+			string s = utf8.GetString (data216);
+			AssertNull ("6 bytes (U-04000000)", s);
+			AssertEquals ("Reconverted-6", BitConverter.ToString (data216), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		public void T2_Boundary_2_LastPossibleSequence_Pass () 
+		{
+			byte[] data221 = { 0x7F };
+			string s = utf8.GetString (data221);
+			AssertEquals ("1 byte  (U-0000007F)", 127, s [0]);
+			AssertEquals ("Reconverted-1", BitConverter.ToString (data221), BitConverter.ToString (utf8.GetBytes (s)));
+
+			byte[] data222 = { 0xDF, 0xBF };
+			s = utf8.GetString (data222);
+			AssertEquals ("2 bytes (U-000007FF)", 2047, s [0]);
+			AssertEquals ("Reconverted-2", BitConverter.ToString (data222), BitConverter.ToString (utf8.GetBytes (s)));
+
+			byte[] data223 = { 0xEF, 0xBF, 0xBF };
+			s = utf8.GetString (data223);
+			AssertEquals ("3 bytes (U-0000FFFF)", 65535, s [0]);
+			AssertEquals ("Reconverted-3", BitConverter.ToString (data223), BitConverter.ToString (utf8.GetBytes (s)));
+
+		}
+
+		[Test]
+		// Fail on MS Fx 1.1
+		[ExpectedException (typeof (ArgumentException))]
+		public void T2_Boundary_2_LastPossibleSequence_Fail_4 () 
+		{
+			byte[] data224 = { 0x7F, 0xBF, 0xBF, 0xBF };
+			string s = utf8.GetString (data224);
+			AssertNull ("4 bytes (U-001FFFFF)", s);
+			AssertEquals ("Reconverted-4", BitConverter.ToString (data224), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		// Fail on MS Fx 1.1
+		[ExpectedException (typeof (ArgumentException))]
+		public void T2_Boundary_2_LastPossibleSequence_Fail_5 () 
+		{
+			byte[] data225 = { 0xFB, 0xBF, 0xBF, 0xBF, 0xBF };
+			string s = utf8.GetString (data225);
+			AssertNull ("5 bytes (U-03FFFFFF)", s);
+			AssertEquals ("Reconverted-5", BitConverter.ToString (data225), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		// Fail on MS Fx 1.1
+		[ExpectedException (typeof (ArgumentException))]
+		public void T2_Boundary_2_LastPossibleSequence_Fail_6 () 
+		{
+			byte[] data226 = { 0xFD, 0xBF, 0xBF, 0xBF, 0xBF, 0xBF };
+			string s = utf8.GetString (data226);
+			AssertNull ("6 bytes (U-7FFFFFFF)", s);
+			AssertEquals ("Reconverted-6", BitConverter.ToString (data226), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		public void T2_Boundary_3_Other_Pass () 
+		{
+			byte[] data231 = { 0xED, 0x9F, 0xBF };
+			string s = utf8.GetString (data231);
+			AssertEquals ("U-0000D7FF", 55295, s [0]);
+			AssertEquals ("Reconverted-1", BitConverter.ToString (data231), BitConverter.ToString (utf8.GetBytes (s)));
+
+			byte[] data232 = { 0xEE, 0x80, 0x80 };
+			s = utf8.GetString (data232);
+			AssertEquals ("U-0000E000", 57344, s [0]);
+			AssertEquals ("Reconverted-2", BitConverter.ToString (data232), BitConverter.ToString (utf8.GetBytes (s)));
+
+			byte[] data233 = { 0xEF, 0xBF, 0xBD };
+			s = utf8.GetString (data233);
+			AssertEquals ("U-0000FFFD", 65533, s [0]);
+			AssertEquals ("Reconverted-3", BitConverter.ToString (data233), BitConverter.ToString (utf8.GetBytes (s)));
+
+			byte[] data234 = { 0xF4, 0x8F, 0xBF, 0xBF };
+			s = utf8.GetString (data234);
+			AssertEquals ("U-0010FFFF-0", 56319, s [0]);
+			AssertEquals ("U-0010FFFF-1", 57343, s [1]);
+			AssertEquals ("Reconverted-4", BitConverter.ToString (data234), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		// Fail on MS Fx 1.1
+		[ExpectedException (typeof (ArgumentException))]
+		public void T2_Boundary_3_Other_Fail_5 () 
+		{
+			byte[] data235 = { 0xF4, 0x90, 0x80, 0x80 };
+			string s = utf8.GetString (data235);
+			AssertNull ("U-00110000", s);
+			AssertEquals ("Reconverted-5", BitConverter.ToString (data235), BitConverter.ToString (utf8.GetBytes (s)));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_311 () 
+		{
+			byte[] data = { 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_312 () 
+		{
+			byte[] data = { 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_313 () 
+		{
+			byte[] data = { 0x80, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_314 () 
+		{
+			byte[] data = { 0x80, 0xBF, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_315 () 
+		{
+			byte[] data = { 0x80, 0xBF, 0x80, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_316 () 
+		{
+			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_317 () 
+		{
+			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_318 () 
+		{
+			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_1_UnexpectedContinuation_319 () 
+		{
+			// 64 different continuation characters
+			byte[] data = {
+				0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 
+				0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 0x9F, 
+				0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 
+				0xB0, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_2_LonelyStart_321 ()
+		{
+			byte[] data = { 
+				0xC0, 0x20, 0xC1, 0x20, 0xC2, 0x20, 0xC3, 0x20, 0xC4, 0x20, 0xC5, 0x20, 0xC6, 0x20, 0xC7, 0x20, 
+				0xC8, 0x20, 0xC9, 0x20, 0xCA, 0x20, 0xCB, 0x20, 0xCC, 0x20, 0xCD, 0x20, 0xCE, 0x20, 0xCF, 0x20, 
+				0xD0, 0x20, 0xD1, 0x20, 0xD2, 0x20, 0xD3, 0x20, 0xD4, 0x20, 0xD5, 0x20, 0xD6, 0x20, 0xD7, 0x20, 
+				0xD8, 0x20, 0xD9, 0x20, 0xDA, 0x20, 0xDB, 0x20, 0xDC, 0x20, 0xDD, 0x20, 0xDE, 0x20, 0xDF, 0x20 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_2_LonelyStart_322 () 
+		{
+			byte[] data = { 
+				0xE0, 0x20, 0xE1, 0x20, 0xE2, 0x20, 0xE3, 0x20, 0xE4, 0x20, 0xE5, 0x20, 0xE6, 0x20, 0xE7, 0x20, 
+				0xE8, 0x20, 0xE9, 0x20, 0xEA, 0x20, 0xEB, 0x20, 0xEC, 0x20, 0xED, 0x20, 0xEE, 0x20, 0xEF, 0x20 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_2_LonelyStart_323 () 
+		{
+			byte[] data = { 0xF0, 0x20, 0xF1, 0x20, 0xF2, 0x20, 0xF3, 0x20, 0xF4, 0x20, 0xF5, 0x20, 0xF6, 0x20, 0xF7, 0x20 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_2_LonelyStart_324 () 
+		{
+			byte[] data = { 0xF0, 0x20, 0xF1, 0x20, 0xF2, 0x20, 0xF3, 0x20, 0xF4, 0x20, 0xF5, 0x20, 0xF6, 0x20, 0xF7, 0x20 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_2_LonelyStart_325 () 
+		{
+			byte[] data = { 0xFC, 0x20, 0xFD, 0x20 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_331 () 
+		{
+			byte[] data = { 0xC0 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_332 () 
+		{
+			byte[] data = { 0xE0, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_333 () 
+		{
+			byte[] data = { 0xF0, 0x80, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_334 () 
+		{
+			byte[] data = { 0xF8, 0x80, 0x80, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_335 () 
+		{
+			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_336 () 
+		{
+			byte[] data = { 0xDF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", String.Empty, s);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_337 () 
+		{
+			byte[] data = { 0xEF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", String.Empty, s);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_338 () 
+		{
+			byte[] data = { 0xF7, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_339 () 
+		{
+			byte[] data = { 0xF, 0xBF, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_3_LastContinuationMissing_3310 () 
+		{
+			byte[] data = { 0xFD, 0xBF, 0xBF, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_4_ConcatenationImcomplete () 
+		{
+			byte[] data = {
+				0xC0, 0xE0, 0x80, 0xF0, 0x80, 0x80, 0xF8, 0x80, 0x80, 0x80, 0xFC, 0x80, 0x80, 0x80, 0x80, 0xDF, 
+				0xEF, 0xBF, 0xF7, 0xBF, 0xBF, 0xFB, 0xBF, 0xBF, 0xBF, 0xFD, 0xBF, 0xBF, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_5_ImpossibleBytes_351 () 
+		{
+			byte[] data = { 0xFE };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_5_ImpossibleBytes_352 () 
+		{
+			byte[] data = { 0xFF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T3_Malformed_5_ImpossibleBytes_353 () 
+		{
+			byte[] data = { 0xFE, 0xFE, 0xFF, 0xFF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		// Overlong == dangereous -> "safe" decoder should reject them
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_1_ASCII_Slash_411 () 
+		{
+			byte[] data = { 0xC0, 0xAF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_1_ASCII_Slash_412 () 
+		{
+			byte[] data = { 0xE0, 0x80, 0xAF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_1_ASCII_Slash_413 () 
+		{
+			byte[] data = { 0xF0, 0x80, 0x80, 0xAF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_1_ASCII_Slash_414 () 
+		{
+			byte[] data = { 0xF8, 0x80, 0x80, 0x80, 0xAF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_1_ASCII_Slash_415 () 
+		{
+			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80, 0xAF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_2_MaximumBoundary_421 () 
+		{
+			byte[] data = { 0xC1, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_2_MaximumBoundary_422 () 
+		{
+			byte[] data = { 0xE0, 0x9F, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_2_MaximumBoundary_423 () 
+		{
+			byte[] data = { 0xF0, 0x8F, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_2_MaximumBoundary_424 () 
+		{
+			byte[] data = { 0xF8, 0x87, 0xBF, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_2_MaximumBoundary_425 () 
+		{
+			byte[] data = { 0xFC, 0x83, 0xBF, 0xBF, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_3_NUL_431 () 
+		{
+			byte[] data = { 0xC0, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_3_NUL_432 () 
+		{
+			byte[] data = { 0xE0, 0x80, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_3_NUL_433 () 
+		{
+			byte[] data = { 0xF0, 0x80, 0x80, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_3_NUL_434 () 
+		{
+			byte[] data = { 0xF8, 0x80, 0x80, 0x80, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void T4_Overlong_3_NUL_435 () 
+		{
+			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+			public void T5_IllegalCodePosition_1_UTF16Surrogates_511 () 
+		{
+			byte[] data = { 0xED, 0xA0, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 55296, s [0]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_1_UTF16Surrogates_512 () 
+		{
+			byte[] data = { 0xED, 0xAD, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56191, s [0]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_1_UTF16Surrogates_513 ()
+		{
+			byte[] data = { 0xED, 0xAE, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56192, s [0]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_1_UTF16Surrogates_514 () 
+		{
+			byte[] data = { 0xED, 0xAF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56319, s [0]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_1_UTF16Surrogates_515 ()
+		{
+			byte[] data = { 0xED, 0xB0, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56320, s [0]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_1_UTF16Surrogates_516 () 
+		{
+			byte[] data = { 0xED, 0xBE, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 57216, s [0]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_1_UTF16Surrogates_517 () 
+		{
+			byte[] data = { 0xED, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 57343, s [0]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_521 () 
+		{
+			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xB0, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 55296, s [0]);
+			AssertEquals ("MS FX 1.1 behaviour", 56320, s [1]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_522 () 
+		{
+			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 55296, s [0]);
+			AssertEquals ("MS FX 1.1 behaviour", 57343, s [1]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_523 () 
+		{
+			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xB0, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56191, s [0]);
+			AssertEquals ("MS FX 1.1 behaviour", 56320, s [1]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_524 () 
+		{
+			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56191, s [0]);
+			AssertEquals ("MS FX 1.1 behaviour", 57343, s [1]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_525 () 
+		{
+			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xB0, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56192, s [0]);
+			AssertEquals ("MS FX 1.1 behaviour", 56320, s [1]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_526 () 
+		{
+			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xBF, 0x8F };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56192, s [0]);
+			AssertEquals ("MS FX 1.1 behaviour", 57295, s [1]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_527 () 
+		{
+			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xB0, 0x80 };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56319, s [0]);
+			AssertEquals ("MS FX 1.1 behaviour", 56320, s [1]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_528 () 
+		{
+			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 56319, s [0]);
+			AssertEquals ("MS FX 1.1 behaviour", 57343, s [1]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_3_Other_531 () 
+		{
+			byte[] data = { 0xEF, 0xBF, 0xBE };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 65534, s [0]);
+		}
+
+		[Test]
+// MS Fx 1.1 accept this
+//		[ExpectedException (typeof (ArgumentException))]
+		public void T5_IllegalCodePosition_3_Other_532 () 
+		{
+			byte[] data = { 0xEF, 0xBF, 0xBF };
+			string s = utf8.GetString (data);
+			// exception is "really" expected here
+			AssertEquals ("MS FX 1.1 behaviour", 65535, s [0]);
+		}
+	}
 }
-
-
-
