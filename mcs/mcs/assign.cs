@@ -162,11 +162,8 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			if (target is IndexerAccess){
-				IndexerAccess ia = (IndexerAccess) target;
-
+			if (target is IndexerAccess)
 				return this;
-			}
 
 			if (target is EventExpr) {
 
@@ -211,18 +208,62 @@ namespace Mono.CSharp {
 				return n;
 			}
 
-			if (target_type != source_type){
-				source = ConvertImplicitRequired (ec, source, target_type, l);
-				if (source == null)
-					return null;
-			}
-
 			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess){
 				Report.Error (131, l,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");
 				return null;
 			}
+
+			if (target_type == source_type)
+				return this;
+			
+			//
+			// If this assignemnt/operator was part of a compound binary
+			// operator, then we allow an explicit conversion, as detailed
+			// in the spec. 
+			//
+
+			if (this is CompoundAssign){
+				CompoundAssign a = (CompoundAssign) this;
+				
+				a.original_source = a.original_source.Resolve (ec);
+				if (a.original_source == null)
+					return null;
+				
+				Binary b = source as Binary;
+				if (b != null && b.IsBuiltinOperator){
+					//
+					// 1. if the source is explicitly convertible to the
+					//    target_type
+					//
+					
+					source = ConvertExplicit (ec, source, target_type, l);
+					if (source == null){
+						Error_CannotConvertImplicit (l, source_type, target_type);
+						return null;
+					}
+				
+					//
+					// 2. and the original right side is implicitly convertible to
+					// the type of target_type.
+					//
+					a.original_source = a.original_source.Resolve (ec);
+					if (a.original_source == null){
+						Error_CannotConvertImplicit (l, source_type, target_type);
+						return null;
+					}
+					
+					if (StandardConversionExists (a.original_source, target_type))
+						return this;
+
+					return null;
+				}
+			}
+			
+			source = ConvertImplicitRequired (ec, source, target_type, l);
+			if (source == null)
+				return null;
 
 			return this;
 		}
@@ -263,6 +304,26 @@ namespace Mono.CSharp {
 		public override void EmitStatement (EmitContext ec)
 		{
 			Emit (ec, true);
+		}
+	}
+
+	
+	//
+	// This is just a class used to flag that the assignment was part of a
+	// compound assignment, hence allowing a set of extra rules to be used.
+	//
+	class CompoundAssign : Assign {
+		public Expression original_source;
+		
+		public CompoundAssign (Expression target, Expression source, Expression osource, Location l)
+			: base (target, source, l)
+		{
+			original_source = osource;
+		}
+
+		public Expression ResolveSource (EmitContext ec)
+		{
+			return original_source.Resolve (ec);
 		}
 	}
 }

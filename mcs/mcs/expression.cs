@@ -1327,8 +1327,14 @@ namespace Mono.CSharp {
 
 		Operator oper;
 		Expression left, right;
-		MethodBase method;
+
+		//
+		// After resolution, method might contain the operator overload
+		// method.
+		//
+		protected MethodBase method;
 		ArrayList  Arguments;
+
 		Location   loc;
 
 		bool DelegateOperation;
@@ -1679,7 +1685,7 @@ namespace Mono.CSharp {
 			error19 ();
 			return null;
 		}
-		
+
 		Expression ResolveOperator (EmitContext ec)
 		{
 			Type l = left.Type;
@@ -2332,6 +2338,12 @@ namespace Mono.CSharp {
 			}
 
 			ig.Emit (opcode);
+		}
+
+		public bool IsBuiltinOperator {
+			get {
+				return method == null;
+			}
 		}
 	}
 

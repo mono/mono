@@ -1,5 +1,25 @@
 2002-04-30  Miguel de Icaza  <miguel@ximian.com>
 
+	* assign.cs (CompoundAssign): A new class used as a "flag" that
+	the assignment actually is happening as part of a compound
+	assignment operator.
+
+	During compound assignment, a few new rules exist to enable things
+	like:
+
+	byte b |= 1 + 2
+
+	From the spec:
+	
+	x op= y can be evaluated as x = (T) (x op y) (ie, an explicit cast
+	to the type of x) if y is implicitly convertible to the type of x,
+	and the operator is a builtin operator and the return type of the
+	operator is explicitly convertible to the type of x. 
+
+	* rootcontext.cs: Reset warning level to 2.  4 catches various
+	"interesting" features in mcs, we must clean this up at some
+	point, but currently am trying to kill other bugs ;-)
+
 	* ecore.cs (SimpleName.SimpleNameResolve): Perform member lookups
 	in container classes as well.  
 
