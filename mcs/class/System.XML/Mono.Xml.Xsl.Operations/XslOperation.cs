@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -42,5 +43,16 @@ namespace Mono.Xml.Xsl.Operations {
 	internal abstract class XslOperation {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 		public abstract void Evaluate (XslTransformProcessor p);
+
+		public virtual string EvaluateAsString (XslTransformProcessor p)
+		{
+			StringWriter sw = new StringWriter ();
+			Outputter outputter = new TextOutputter (sw, true);
+			p.PushOutput (outputter);
+			Evaluate (p);
+			p.PopOutput ();
+			outputter.Done ();
+			return sw.ToString ();
+		}
 	}
 }

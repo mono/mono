@@ -146,17 +146,8 @@ namespace Mono.Xml.Xsl.Operations {
 
 			XmlConvert.VerifyName (nm);
 
-			if (value == null)
-				p.Out.WriteAttributeString(prefix, nm, nmsp, "");
-			else {
-				StringWriter sw = new StringWriter ();
-				Outputter outputter = new TextOutputter (sw, true);
-				p.PushOutput (outputter);
-				value.Evaluate (p);			    
-				p.PopOutput ();
-				outputter.Done ();			        
-				p.Out.WriteAttributeString (prefix, nm, nmsp, sw.ToString ());			                    			        
-			}						
+			p.Out.WriteAttributeString (prefix, nm, nmsp,
+				value == null ? "" : value.EvaluateAsString (p));
 		}
 	}
 }

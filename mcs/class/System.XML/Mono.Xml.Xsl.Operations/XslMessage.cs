@@ -54,12 +54,8 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			if (children != null) {
-				p.PushOutput (new TextOutputter(Console.Out, true));
-				children.Evaluate (p);
-				p.PopOutput ();
-			}
-			
+			if (children != null)
+				Console.Write (children.EvaluateAsString (p));
 			if (terminate)
 				throw new XsltException ("Transformation terminated.", null, p.CurrentNode);
 		}

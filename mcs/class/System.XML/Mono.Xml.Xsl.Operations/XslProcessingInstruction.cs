@@ -65,21 +65,15 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			StringWriter s = new StringWriter ();
-			if (value != null) {
-				Outputter outputter = new TextOutputter(s, true);
-				p.PushOutput (outputter);
-				value.Evaluate (p);
-				p.PopOutput ();
-			}
-			
 			string actualName = name.Evaluate (p);
 			if (String.Compare (actualName, "xml", true, CultureInfo.InvariantCulture) == 0)
 				throw new XsltException ("Processing instruction name was evaluated to \"xml\"", null, p.CurrentNode);
 			if (actualName.IndexOf (':') >= 0)
 				return; //MS.NET ignores such processing instructions
 
-			p.Out.WriteProcessingInstruction (actualName, s.ToString ());
+			p.Out.WriteProcessingInstruction (actualName,
+				value == null ? String.Empty :
+				value.EvaluateAsString (p));
 		}
 	}
 }

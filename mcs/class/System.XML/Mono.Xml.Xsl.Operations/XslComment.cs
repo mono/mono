@@ -61,14 +61,8 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			StringWriter s = new StringWriter ();
-			Outputter outputter = new TextOutputter(s, true);			
-			p.PushOutput (outputter);
-			if (value != null)
-				value.Evaluate (p);
-			p.PopOutput ();
-			
-			p.Out.WriteComment (s.ToString ());
+			p.Out.WriteComment (value == null ? String.Empty :
+				value.EvaluateAsString (p));
 		}
 	}
 }
