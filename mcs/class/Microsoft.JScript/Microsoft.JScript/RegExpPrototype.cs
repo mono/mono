@@ -28,12 +28,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class RegExpPrototype : JSObject
-	{
+namespace Microsoft.JScript {	
+
+	public class RegExpPrototype : JSObject	{
+
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_compile)]
 		public static RegExpObject compile (object thisObj, object source, object flags)
 		{
 			throw new NotImplementedException ();
@@ -44,19 +45,20 @@ namespace Microsoft.JScript.Tmp
 			get { throw new NotImplementedException (); }
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_exec)]
 		public static object exec (object thisObj, object input)
 		{
 			throw new NotImplementedException ();
 		}
 
 
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_test)]
 		public static bool test (object thisObj, object input)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_toString)]
 		public static string toString (object thisObj)
 		{
 			throw new NotImplementedException ();
