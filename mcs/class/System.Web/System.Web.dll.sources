@@ -81,6 +81,7 @@ System.Web.Configuration/ProcessModelComAuthenticationLevel.cs
 System.Web.Configuration/ProcessModelComImpersonationLevel.cs
 System.Web.Configuration/ProcessModelLogLevel.cs
 System.Web.Configuration/SerializationMode.cs
+System.Web.Configuration/SiteMapSection.cs
 System.Web.Configuration/TraceConfig.cs
 System.Web.Configuration/TraceConfigurationHandler.cs
 System.Web.Configuration/TraceDisplayMode.cs
@@ -135,7 +136,7 @@ System.Web.Management/WebApplicationInformation.cs
 System.Web.Management/WebBaseEvent.cs
 System.Web.Management/WebEventFormatter.cs
 System.Web.Profile/ProfileAuthenticationOption.cs
-System.Web.Security/ADMembershipProvider.cs
+System.Web.Security/ActiveDirectoryMembershipProvider.cs
 System.Web.Security/AccessMembershipProvider.cs
 System.Web.Security/AccessRoleProvider.cs
 System.Web.Security/AnonymousIdentificationEventArgs.cs
@@ -152,8 +153,8 @@ System.Web.Security/FormsAuthenticationEventHandler.cs
 System.Web.Security/FormsAuthenticationModule.cs
 System.Web.Security/FormsAuthenticationTicket.cs
 System.Web.Security/FormsIdentity.cs
-System.Web.Security/IMembershipProvider.cs
-System.Web.Security/IRoleProvider.cs
+System.Web.Security/MembershipProvider.cs
+System.Web.Security/RoleProvider.cs
 System.Web.Security/Membership.cs
 System.Web.Security/MembershipCreateStatus.cs
 System.Web.Security/MembershipCreateUserException.cs
@@ -449,7 +450,9 @@ System.Web.UI.WebControls/SendMailErrorEventHandler.cs
 System.Web.UI.WebControls/ServerValidateEventArgs.cs
 System.Web.UI.WebControls/ServerValidateEventHandler.cs
 System.Web.UI.WebControls/SessionParameter.cs
+System.Web.UI.WebControls/SiteMapDataSource.cs
 System.Web.UI.WebControls/SiteMapDataSourceView.cs
+System.Web.UI.WebControls/SiteMapHierarchicalDataSourceView.cs
 System.Web.UI.WebControls/SiteMapNodeItemType.cs
 System.Web.UI.WebControls/SiteMapNodeType.cs
 System.Web.UI.WebControls/SortDirection.cs
@@ -761,9 +764,10 @@ System.Web/IHttpHandler.cs
 System.Web/IHttpHandlerFactory.cs
 System.Web/IHttpMapPath.cs
 System.Web/IHttpModule.cs
-System.Web/ISiteMapProvider.cs
 System.Web/MimeTypes.cs
 System.Web/NoParamsInvoker.cs
+System.Web/ParserError.cs
+System.Web/ParserErrorCollection.cs
 System.Web/ProcessInfo.cs
 System.Web/ProcessModelInfo.cs
 System.Web/ProcessShutdownReason.cs
@@ -775,6 +779,7 @@ System.Web/SiteMapNode.cs
 System.Web/SiteMapNodeCollection.cs
 System.Web/SiteMapProvider.cs
 System.Web/SiteMapProviderCollection.cs
+System.Web/SiteMapResolveEventArgs.cs
 System.Web/StaticFileHandler.cs
 System.Web/TODOAttribute.cs
 System.Web/TimeoutManager.cs

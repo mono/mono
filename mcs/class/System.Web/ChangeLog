@@ -1,3 +1,15 @@
+2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.Security/ActiveDirectoryMembershipProvider.cs
+		System.Web.Security/MembershipProvider.cs
+		System.Web.Security/RoleProvider.cs
+		System.Web.UI.WebControls/SiteMapDataSource.cs
+		System.Web.UI.WebControls/SiteMapHierarchicalDataSourceView.cs
+		System.Web/ParserError.cs
+		System.Web/ParserErrorCollection.cs
+		System.Web/SiteMapResolveEventArgs.cs
+
 2004-11-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:
