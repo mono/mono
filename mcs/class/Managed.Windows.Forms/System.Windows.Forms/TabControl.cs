@@ -284,7 +284,7 @@ namespace System.Windows.Forms {
 			remove { base.TextChanged -= value; }
 		}
 
-		public event EventHandler DrawItem;
+		public event DrawItemEventHandler DrawItem;
 		public event EventHandler SelectedIndexChanged;
 
 		public Rectangle GetTabRect (int index)
