@@ -1,3 +1,8 @@
+2003-02-06  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* unix.args: Move some class from System.Security.Cryptography
+	  into Mono.* for easier reuse.
+
 2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* unix.args: added ServerIdentity.cs, Lease.cs, LeaseManager.cs
