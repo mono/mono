@@ -56,6 +56,10 @@ namespace System.Reflection.Emit {
 			native_cc = nativeCConv;
 			ncharset = nativeCharset;
 		}
+
+		internal TypeBuilder TypeBuilder {
+			get {return type;}
+		}
 		
 		public override Type ReturnType {get {return rtype;}}
 		public override Type ReflectedType {get {return type;}}

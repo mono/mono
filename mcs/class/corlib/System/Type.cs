@@ -22,6 +22,13 @@ namespace System {
 		
 		internal RuntimeTypeHandle _impl;
 
+		public static readonly char Delimiter = '.';
+		public static readonly Type[] EmptyTypes = {};
+		public static readonly MemberFilter FilterAttribute;
+		public static readonly MemberFilter FilterName;
+		public static readonly MemberFilter FilterNameIgnoreCase;
+		public static readonly object Missing;
+
 		/// <summary>
 		///   The assembly where the type is defined.
 		/// </summary>
@@ -37,12 +44,15 @@ namespace System {
 			get;
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern TypeAttributes get_attributes (Type type);
+		
 		/// <summary>
 		///   Returns the Attributes associated with the type.
 		/// </summary>
 		public TypeAttributes Attributes {
 			get {
-				throw new NotImplementedException ();
+				return get_attributes (this);
 			}
 		}
 		
@@ -61,6 +71,8 @@ namespace System {
 				throw new NotImplementedException ();
 			}
 		}
+
+		public abstract Type UnderlyingSystemType {get;}
 		
 		/// <summary>
 		///
@@ -112,36 +124,34 @@ namespace System {
 		
 		public bool IsValueType {
 			get {
-				// FIXME: Implement me.
-				throw new NotImplementedException ();
+				return (Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.ValueType;
 			}
 		}
 
 		public bool IsClass {
 			get {
-				// FIXME
-				throw new NotImplementedException ();
+				return (Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Class;
 			}
 		}
 
 		public bool IsInterface {
 			get {
-				// FIXME
-				throw new NotImplementedException ();
+				return (Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Interface;
 			}
 		}
 
 		public bool IsArray {
 			get {
-				// FIXME
-				throw new NotImplementedException ();
+				return type_is_subtype_of (this, typeof (System.Array));
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern bool type_is_subtype_of (Type a, Type b);
+		
 		public bool IsSubclassOf (Type c)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			return type_is_subtype_of (this, c);
 		}
 
 		public virtual Type[] FindInterfaces (TypeFilter filter, object filterCriteria)
@@ -168,15 +178,13 @@ namespace System {
 
 		public bool IsSealed {
 			get {
-				// FIXME
-				throw new NotImplementedException ();
+				return (Attributes & TypeAttributes.Sealed) != 0;
 			}
 		}
 
 		public bool IsAbstract {
 			get {
-				// FIXME
-			throw new NotImplementedException ();
+				return (Attributes & TypeAttributes.Abstract) != 0;
 			}
 		}
 
@@ -188,31 +196,52 @@ namespace System {
 
 		public bool IsNotPublic {
 			get {
-				// FIXME
-				throw new NotImplementedException ();
+				return !IsPublic;
 			}
 		}
 
 		public bool IsPublic {
 			get {
-				// FIXME
-				throw new NotImplementedException ();
+				// FIXME: handle nestedpublic, too?
+				return (Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public;
 			}
 		}
 
 		public abstract Module Module {get;}
 		public abstract string Namespace {get;}
 
+		public override int GetHashCode() {
+			return (int)_impl.Value;
+		}
+
+		public FieldInfo[] GetFields ()
+		{
+			return GetFields (BindingFlags.Public);
+		}
+
+		public FieldInfo[] GetFields (BindingFlags bindingAttr)
+		{
+			MemberInfo[] m = FindMembers (MemberTypes.Field, bindingAttr, null, null);
+			FieldInfo[] res = new FieldInfo [m.Length];
+			int i;
+			for (i = 0; i < m.Length; ++i)
+				res [i] = (FieldInfo) m [i];
+			return res;
+		}
+
 		public MethodInfo[] GetMethods ()
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			return GetMethods (BindingFlags.Public);
 		}
 
 		public MethodInfo[] GetMethods (BindingFlags bindingAttr)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			MemberInfo[] m = FindMembers (MemberTypes.Method, bindingAttr, null, null);
+			MethodInfo[] res = new MethodInfo [m.Length];
+			int i;
+			for (i = 0; i < m.Length; ++i)
+				res [i] = (MethodInfo) m [i];
+			return res;
 		}
 
 		public PropertyInfo GetProperty (string name, Type[] types)
@@ -221,23 +250,32 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern ConstructorInfo get_constructor (Type type, Type[] types);
+		
 		public ConstructorInfo GetConstructor (Type[] types)
 		{
-			// FIXME
+			return get_constructor (this, types);
+		}
+
+		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers) {
+			throw new NotImplementedException ();
+		}
+		public ConstructorInfo GetConstructor( BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern MethodInfo get_method (Type type, string name, Type[] types);
+		
 		public MethodInfo GetMethod (string name, Type[] types)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			return get_method (this, name, types);
 		}
 
-		public virtual MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr,
-							 MemberFilter filter, object filterCriteria)
-		{
-			return null;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public virtual extern MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr,
+							 MemberFilter filter, object filterCriteria);
 
 		public static TypeCode GetTypeCode( Type type)
 		{
@@ -246,7 +284,7 @@ namespace System {
 
 		public override string ToString()
 		{
-			return null;
+			return FullName;
 		}
 
 	}

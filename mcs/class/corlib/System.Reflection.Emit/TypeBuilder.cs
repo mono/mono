@@ -55,6 +55,10 @@ namespace System.Reflection.Emit {
 		public override string AssemblyQualifiedName {get {return null;}}
 		public override Type BaseType {get {return parent;}}
 		public override Type DeclaringType {get {return null;}}
+		public override Type UnderlyingSystemType {
+			get {return null;}
+		}
+
 		public override string FullName {
 			get {
 				if (nspace != null)

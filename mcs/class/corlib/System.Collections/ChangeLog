@@ -1,3 +1,8 @@
+
+Thu Dec 13 20:17:08 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* ArrayList.cs: implemented AddRange(), CopyTo().
+
 2001-11-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* DictionaryBase.cs: Implemented.

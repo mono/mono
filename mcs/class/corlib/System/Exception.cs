@@ -121,7 +121,7 @@ namespace System {
 					return inner;
 			}
 
-			return null;
+			return this;
 		}
 
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)

@@ -1,3 +1,16 @@
+
+Thu Dec 13 20:10:57 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Array.cs: implement CopyTo ().
+	* Char.cs: implement ToString ().
+	* Exception.cs: bugfix.
+	* Int32.cs: bare-bones Parse ().
+	* MonoType.cs: query the needed info with an internalcall.
+	* String.cs: speedups, bugfixes, reduced copies.
+	* Type.cs: added missing fields. Implemented many of the Is*
+	properties. Implemented GetMethod(), GetConstructor(), GetMethods(),
+	GetFields(), FindMembers(), ToString().
+	
 2001-12-11  Dick Porter  <dick@ximian.com>
 
 	* DateTime.cs: Implemented FromFileTime() and ToFileTime()

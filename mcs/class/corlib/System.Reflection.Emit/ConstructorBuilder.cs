@@ -35,6 +35,10 @@ namespace System.Reflection.Emit {
 			table_idx = get_next_table_index (0x06, true);
 		}
 		
+		internal TypeBuilder TypeBuilder {
+			get {return type;}
+		}
+		
 		public override MethodImplAttributes GetMethodImplementationFlags() {
 			return iattrs;
 		}

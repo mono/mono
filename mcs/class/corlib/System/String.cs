@@ -35,6 +35,13 @@ namespace System {
 		private int length;
 
 		// Constructors
+
+		internal String (int storage)
+		{
+			length = storage;
+			c_str = new char [storage];
+		}
+		
 		[CLSCompliant(false)]
 		unsafe public String (char *value)
 		{
@@ -481,20 +488,21 @@ namespace System {
 					strings[i] = String.Empty;
 				else
 					strings[i] = arg.ToString ();
-				len += strings[i].Length;
+				len += strings[i].length;
 				i++;
 			}
 
 			if (len == 0)
 				return String.Empty;
 
-			str = new char [len];
+			String res = new String (len);
+			str = res.c_str;
 			i = 0;
 			for (int j = 0; j < strings.Length; j++)
-				for (int k = 0; k < strings[j].Length; k++)
-					str[i++] = strings[j][k];
+				for (int k = 0; k < strings[j].length; k++)
+					str[i++] = strings[j].c_str[k];
 
-			return new String (str);
+			return res;
 		}
 
 		public static string Concat (params string[] values)
@@ -512,17 +520,18 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new char [len];
+			String res = new String (len);
+			str = res.c_str;
 			i = 0;
 			foreach (string value in values) {
 				if (value == null)
 					continue;
 
-				for (int j = 0; j < value.Length; j++)
-					str[i++] = value[j];
+				for (int j = 0; j < value.length; j++)
+					str[i++] = value.c_str[j];
 			}
 
-			return new String (str);
+			return res;
 		}
 
 		public static string Concat (object arg0, object arg1)
@@ -543,17 +552,19 @@ namespace System {
 			if (str1 == null)
 				str1 = String.Empty;
 
-			len = str0.Length + str1.Length;
+			len = str0.length + str1.length;
 			if (len == 0)
 				return String.Empty;
 
-			concat = new char [len];
-			for (i = 0; i < str0.Length; i++)
-				concat[i] = str0[i];
-			for (j = 0 ; j < str1.Length; j++)
-				concat[i + j] = str1[j];
+			String res = new String (len);
 
-			return new String (concat);
+			concat = res.c_str;
+			for (i = 0; i < str0.length; i++)
+				concat[i] = str0.c_str[i];
+			for (j = 0 ; j < str1.length; j++)
+				concat[i + j] = str1.c_str[j];
+
+			return res;
 		}
 
 		public static string Concat (object arg0, object arg1, object arg2)
@@ -577,19 +588,21 @@ namespace System {
 			if (str2 == null)
 				str2 = String.Empty;
 
-			len = str0.Length + str1.Length + str2.Length;
+			len = str0.length + str1.length + str2.length;
 			if (len == 0)
 				return String.Empty;
 
-			concat = new char [len];
-			for (i = 0; i < str0.Length; i++)
-				concat[i] = str0[i];
-			for (j = 0; j < str1.Length; j++)
-				concat[i + j] = str1[j];
-			for (k = 0; k < str2.Length; k++)
-				concat[i + j + k] = str2[k];
+			String res = new String (len);
 
-			return new String (concat);
+			concat = res.c_str;
+			for (i = 0; i < str0.length; i++)
+				concat[i] = str0.c_str[i];
+			for (j = 0; j < str1.length; j++)
+				concat[i + j] = str1.c_str[j];
+			for (k = 0; k < str2.length; k++)
+				concat[i + j + k] = str2.c_str[k];
+
+			return res;
 		}
 
 		public static string Concat (string str0, string str1, string str2, string str3)
@@ -606,21 +619,22 @@ namespace System {
 			if (str3 == null)
 				str3 = String.Empty;
 
-			len = str0.Length + str1.Length + str2.Length + str3.Length;
+			len = str0.length + str1.length + str2.length + str3.length;
 			if (len == 0)
 				return String.Empty;
+			String res = new String (len);
 
-			concat = new char [len];
-			for (i = 0; i < str0.Length; i++)
-				concat[i] = str0[i];
-			for (j = 0; j < str1.Length; j++)
-				concat[i + j] = str1[j];
-			for (k = 0; k < str2.Length; k++)
-				concat[i + j + k] = str2[k];
-			for (l = 0; l < str3.Length; l++)
-				concat[i + j + k + l] = str3[l];
+			concat = res.c_str;
+			for (i = 0; i < str0.length; i++)
+				concat[i] = str0.c_str[i];
+			for (j = 0; j < str1.length; j++)
+				concat[i + j] = str1.c_str[j];
+			for (k = 0; k < str2.length; k++)
+				concat[i + j + k] = str2.c_str[k];
+			for (l = 0; l < str3.length; l++)
+				concat[i + j + k + l] = str3.c_str[l];
 
-			return new String (concat);
+			return res;
 		}
 
 		public static string Copy (string str)
@@ -661,12 +675,12 @@ namespace System {
 			if (value == null)
 				throw new ArgumentNullException ();
 
-			start = this.length - value.Length;
+			start = this.length - value.length;
 			if (start < 0)
 				return false;
 
 			for (i = start; i < this.length && endswith; i++)
-				endswith = this.c_str[i] == value[i - start];
+				endswith = this.c_str[i] == value.c_str[i - start];
 
 			return endswith;
 		}
@@ -728,20 +742,16 @@ namespace System {
 
 		public override int GetHashCode ()
 		{
-			// FIXME: implement me
-			return 0;
-		}
-
-		public new Type GetType ()
-		{
-			// FIXME: implement me
-			return null;
+			int h = 0;
+			int i;
+			for (i = 0; i < length; ++i)
+				h = (h << 5) - h + c_str [i];
+			return h;
 		}
 
 		public TypeCode GetTypeCode ()
 		{
-			// FIXME: implement me
-			return 0;
+			return TypeCode.String;
 		}
 
 		public int IndexOf (char value)
@@ -854,15 +864,17 @@ namespace System {
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			str = new char [value.Length + this.length];
+			String res = new String (value.length + this.length);
+
+			str = res.c_str;
 			for (i = 0; i < startIndex; i++)
 				str[i] = this.c_str[i];
-			for (j = 0; j < value.Length; j++)
-				str[i + j] = value[j];
+			for (j = 0; j < value.length; j++)
+				str[i + j] = value.c_str[j];
 			for ( ; i < this.length; i++)
 				str[i + j] = this.c_str[i];
 
-			return new String (str);
+			return res;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -891,30 +903,32 @@ namespace System {
 			len = 0;
 			for (i = startIndex, used = 0; used < count; i++, used++) {
 				if (i != startIndex)
-					len += separator.Length;
+					len += separator.length;
 
-				len += value[i].Length;
+				len += value[i].length;
 			}
 
 			// We have no elements to join?
 			if (i == startIndex)
 				return String.Empty;
 
-			str = new char [len];
-			for (i = 0; i < value[startIndex].Length; i++)
+			String res = new String (len);
+
+			str = res.c_str;
+			for (i = 0; i < value[startIndex].length; i++)
 				str[i] = value[startIndex][i];
 
 			used = 1;
 			for (j = startIndex + 1; used < count; j++, used++) {
 				int k;
 
-				for (k = 0; k < separator.Length; k++)
-					str[i++] = separator[k];
-				for (k = 0; k < value[j].Length; k++)
-					str[i++] = value[j][k];
+				for (k = 0; k < separator.length; k++)
+					str[i++] = separator.c_str[k];
+				for (k = 0; k < value[j].length; k++)
+					str[i++] = value[j].c_str[k];
 			}
 
-			return new String (str);
+			return res;
 		}
 
 		public int LastIndexOf (char value)
@@ -989,24 +1003,24 @@ namespace System {
 			if (value == String.Empty)
 				return startIndex;
 
-			if (startIndex + value.Length > this.length) {
+			if (startIndex + value.length > this.length) {
 				/* just a little optimization */
 				int start;
 
-				start = this.length - value.Length;
+				start = this.length - value.length;
 				count -= startIndex - start;
 				startIndex = start;
 			}
 
 			// FIXME: use a reversed-unicode-safe-Boyer-Moore?
-			len = value.Length - 1;
+			len = value.length - 1;
 			for (i = startIndex; i >= startIndex - count; i--) {
-				if (this.c_str[i + len] == value[len]) {
+				if (this.c_str[i + len] == value.c_str[len]) {
 					bool equal = true;
 					int j;
 
 					for (j = len - 1; equal && j >= 0; j--)
-						equal = this.c_str[i + j] == value[j];
+						equal = this.c_str[i + j] == value.c_str[j];
 
 					if (equal)
 						return i;
@@ -1103,14 +1117,15 @@ namespace System {
 			len = this.length - count;
 			if (len == 0)
 				return String.Empty;
-
-			str = new char [len];
+			
+			String res = new String (len);
+			str = res.c_str;
 			for (i = 0; i < startIndex; i++)
 				str[i] = this.c_str[i];
 			for (j = i + count; j < this.length; j++)
 				str[i++] = this.c_str[j];
 
-			return new String (str);
+			return res;
 		}
 
 		public string Replace (char oldChar, char newChar)
@@ -1118,7 +1133,8 @@ namespace System {
 			char[] str;
 			int i;
 
-			str = new char [this.length];
+			String res = new String (length);
+			str = res.c_str;
 			for (i = 0; i < this.length; i++) {
 				if (this.c_str[i] == oldChar)
 					str[i] = newChar;
@@ -1126,7 +1142,7 @@ namespace System {
 					str[i] = this.c_str[i];
 			}
 
-			return new String (str);
+			return res;
 		}
 
 		public string Replace (string oldValue, string newValue)
@@ -1145,19 +1161,20 @@ namespace System {
 				return Substring (0, this.length);
 			}
 
-			len = this.length - oldValue.Length + newValue.Length;
+			len = this.length - oldValue.length + newValue.length;
 			if (len == 0)
 				return String.Empty;
 
-			str = new char [len];
+			String res = new String (len);
+			str = res.c_str;
 			for (i = 0; i < index; i++)
 				str[i] = this.c_str[i];
-			for (j = 0; j < newValue.Length; j++)
+			for (j = 0; j < newValue.length; j++)
 				str[i++] = newValue[j];
-			for (j = index + oldValue.Length; j < this.length; j++)
+			for (j = index + oldValue.length; j < this.length; j++)
 				str[i++] = this.c_str[j];
 
-			return new String (str);
+			return res;
 		}
 
 		private int splitme (char[] separators, int startIndex)
@@ -1288,11 +1305,11 @@ namespace System {
 			if (value == null)
 				throw new ArgumentNullException ();
 
-			if (value.Length > this.length)
+			if (value.length > this.length)
 				return false;
 
-			for (i = 0; i < value.Length && startswith; i++)
-				startswith = startswith && value[i] == this.c_str[i];
+			for (i = 0; i < value.length && startswith; i++)
+				startswith = startswith && value.c_str[i] == this.c_str[i];
 
 			return startswith;
 		}
@@ -1308,12 +1325,12 @@ namespace System {
 			len = this.length - startIndex;
 			if (len == 0)
 				return String.Empty;
-
-			str = new char [len];
+			String res = new String (len);
+			str = res.c_str;
 			for (i = startIndex; i < this.length; i++)
 				str[i - startIndex] = this.c_str[i];
 
-			return new String (str);
+			return res;
 		}
 
 		public string Substring (int startIndex, int length)
@@ -1326,12 +1343,13 @@ namespace System {
 
 			if (length == 0)
 				return String.Empty;
-
-			str = new char [length];
+			
+			String res = new String (length);
+			str = res.c_str;
 			for (i = startIndex; i < startIndex + length; i++)
 				str[i - startIndex] = this.c_str[i];
 
-			return new String (str);
+			return res;
 		}
 
 		public bool ToBoolean (IFormatProvider provider)
@@ -1414,11 +1432,12 @@ namespace System {
 			char[] str;
 			int i;
 
-			str = new char [this.length];
+			String res = new String (length);
+			str = res.c_str;
 			for (i = 0; i < this.length; i++)
 				str[i] = Char.ToLower (this.c_str[i]);
 
-			return new String (str);
+			return res;
 		}
 
 		public string ToLower (CultureInfo culture)
@@ -1443,7 +1462,7 @@ namespace System {
 
 		public override string ToString ()
 		{
-			return Substring (0, this.length);
+			return this;
 		}
 
 		public string ToString (IFormatProvider format)
@@ -1484,11 +1503,12 @@ namespace System {
 			char[] str;
 			int i;
 
-			str = new char [this.length];
+			String res = new String (length);
+			str = res.c_str;
 			for (i = 0; i < this.length; i++)
 				str[i] = Char.ToUpper (this.c_str[i]);
 
-			return new String (str);
+			return res;
 		}
 
 		public string ToUpper (CultureInfo culture)

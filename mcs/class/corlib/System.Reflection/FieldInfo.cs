@@ -30,13 +30,20 @@ namespace System.Reflection {
 			get { return MemberTypes.Field;}
 		}
 
-		// FIXME
-		public bool IsLiteral { get { return true; } } 
+		public bool IsLiteral
+		{
+			get {return (Attributes & FieldAttributes.Literal) != 0;}
+		} 
 
-		// FIXME
-		public bool IsStatic { get { return false; } }
+		public bool IsStatic
+		{
+			get {return (Attributes & FieldAttributes.Static) != 0;}
+		} 
 
-		public bool IsInitOnly {get { return false; } }
+		public bool IsInitOnly
+		{
+			get {return (Attributes & FieldAttributes.InitOnly) != 0;}
+		} 
 
 		public virtual void SetValue( object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture) {
 		}

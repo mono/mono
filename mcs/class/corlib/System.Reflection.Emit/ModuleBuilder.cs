@@ -21,7 +21,7 @@ namespace System.Reflection.Emit {
 		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
-			this.assemblyb = assb;
+			this.assembly = this.assemblyb = assb;
 			table_idx = get_next_table_index (0x00, true);
 		}
 	

@@ -55,9 +55,9 @@ namespace System.Reflection.Emit {
 		public FieldBuilder UnderlyingField {
 			get {return null;}
 		}
-		/*public override Type UnderlyingSystemType {
+		public override Type UnderlyingSystemType {
 			get {return null;}
-		}*/
+		}
 		public override MemberTypes MemberType {
 			get {return MemberTypes.TypeInfo;}
 		}

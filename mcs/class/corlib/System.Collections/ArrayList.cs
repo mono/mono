@@ -241,7 +241,11 @@ namespace System.Collections {
 		}
 
 		public virtual void AddRange (ICollection c) {
-			throw new NotImplementedException ("System.Collections.ArrayList.AddRange");
+			int cc = c.Count;
+			if (count + cc >= capacity)
+				Capacity = cc < count? count * 2: count + cc + 1;
+			c.CopyTo (dataArray, count);
+			count += cc;
 		}
 
 		public virtual int BinarySearch (object value) {
@@ -278,13 +282,17 @@ namespace System.Collections {
 		}
 
 		public virtual void CopyTo (Array array) {
+			CopyTo (array, 0);
 		}
 
 		public virtual void CopyTo (Array array, int arrayIndex) {
+			System.Array.Copy (dataArray, 0, array, arrayIndex, count);
 		}
 
 		public virtual void CopyTo (int index, Array array,
 					    int arrayIndex, int count) {
+			// FIXME: check count...
+			System.Array.Copy (dataArray, index, array, arrayIndex, count);
 		}
 
 		private class ArrayListEnumerator : IEnumerator {

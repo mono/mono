@@ -1,4 +1,9 @@
 
+Thu Dec 13 20:22:18 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* DllImportAttribute.cs: added.
+	* MethodImplOptions.cs: removed: this is already in CompilerServices.
+
 Wed Nov 14 17:02:57 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* CallingConvention.cs: add missing Winapi.

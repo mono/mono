@@ -28,6 +28,7 @@ namespace System.Reflection.Emit {
 		private int num_labels;
 		private LabelFixup[] fixups;
 		private int num_fixups;
+		private AssemblyBuilder abuilder;
 
 		internal ILGenerator (MethodBase mb, int size) {
 			if (size < 0)
@@ -39,6 +40,11 @@ namespace System.Reflection.Emit {
 			num_fixups = num_labels = 0;
 			label_to_addr = new int [16];
 			fixups = new LabelFixup [16];
+			if (mb is MethodBuilder) {
+				abuilder = (AssemblyBuilder)((MethodBuilder)mb).TypeBuilder.Module.Assembly;
+			} else if (mb is ConstructorBuilder) {
+				abuilder = (AssemblyBuilder)((ConstructorBuilder)mb).TypeBuilder.Module.Assembly;
+			}
 		}
 
 		private void make_room (int nbytes) {
@@ -162,10 +168,15 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 			code [code_len++] = val;
 		}
-		public virtual void Emit (OpCode opcode, ConstructorInfo constructor) {}
+		public virtual void Emit (OpCode opcode, ConstructorInfo constructor) {
+			int token = abuilder.GetToken (constructor);
+			make_room (6);
+			ll_emit (opcode);
+			emit_int (token);
+		}
 		public virtual void Emit (OpCode opcode, Double val) {}
 		public virtual void Emit (OpCode opcode, FieldInfo field) {
-			int token = 0; // FIXME: request a token from the modulebuilder
+			int token = abuilder.GetToken (field);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
@@ -226,7 +237,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public virtual void Emit (OpCode opcode, MethodInfo method) {
-			int token = 0; // FIXME: request a token from the modulebuilder
+			int token = abuilder.GetToken (method);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
@@ -245,7 +256,7 @@ namespace System.Reflection.Emit {
 		}
 		public virtual void Emit (OpCode opcode, float val) {}
 		public virtual void Emit (OpCode opcode, string val) {
-			int token = 0; /* FIXME: request the token from the assembly */
+			int token = abuilder.GetToken (val);
 			make_room (3);
 			ll_emit (opcode);
 			emit_int (token);

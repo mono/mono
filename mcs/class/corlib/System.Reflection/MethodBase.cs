@@ -44,68 +44,57 @@ namespace System.Reflection {
 		public virtual CallingConventions CallingConvention { get {return CallingConventions.Standard;} }
 		public Boolean IsPublic { 
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.Public) != 0;
+				return (Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public;
 			}
 		}
 		public Boolean IsPrivate {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.Private) != 0;
+				return (Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private;
 			}
 		}
 		public Boolean IsFamily {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.Family) != 0;
+				return (Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Family;
 			}
 		}
 		public Boolean IsAssembly {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.Assembly) != 0;
+				return (Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Assembly;
 			}
 		}
 		public Boolean IsFamilyAndAssembly {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.FamANDAssem) != 0;
+				return (Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.FamANDAssem;
 			}
 		}
 		public Boolean IsFamilyOrAssembly {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.FamORAssem) != 0;
+				return (Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.FamORAssem;
 			}
 		}
 		public Boolean IsStatic {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.Static) != 0;
+				return (Attributes & MethodAttributes.Static) != 0;
 			}
 		}
 		public Boolean IsFinal {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.Final) != 0;
+				return (Attributes & MethodAttributes.Final) != 0;
 			}
 		}
 		public Boolean IsVirtual {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.Virtual) != 0;
+				return (Attributes & MethodAttributes.Virtual) != 0;
 			}
 		}
 		public Boolean IsHideBySig {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.HideBySig) != 0;
+				return (Attributes & MethodAttributes.HideBySig) != 0;
 			}
 		}
 		public Boolean IsAbstract {
 			get {
-				int attr = (int)Attributes;
-				return (attr & (int)MethodAttributes.Abstract) != 0;
+				return (Attributes & MethodAttributes.Abstract) != 0;
 			}
 		}
 		public Boolean IsSpecialName {

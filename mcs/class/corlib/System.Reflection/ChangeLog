@@ -1,4 +1,14 @@
 
+Thu Dec 13 20:18:05 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* FieldInfo.cs: implemented some Is* propeties.
+	* MethodBase.cs: fixed attribute accessors.
+	* MonoField.cs: runtime object to represent a field.
+	* MonoMethod.cs: runtime object to represent a method.
+	* AssemblyBuilder.cs: GetToken() methods to get tokens for
+	strings, fields, methods...
+	* ILGenerator.cs: handle tokens for methods.
+
 Mon Nov 19 13:56:55 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* MethodBase.cs: add internal get_next_table_index() for use in

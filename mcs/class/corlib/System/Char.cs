@@ -337,13 +337,13 @@ namespace System {
 		{
 			// LAMESPEC: ECMA draft lists this as returning ToString (null), 
 			// However it doesn't list another ToString() method.
-			return ToString (null);
+			return new String (value, 1);
 		}
 
 		public string ToString (IFormatProvider fp)
 		{
 			// LAMESPEC: ECMA draft doesn't say Char implements IFormattable
-			return "";
+			return new String (value, 1);
 		}
 
 		// =========== IConvertible Methods =========== //

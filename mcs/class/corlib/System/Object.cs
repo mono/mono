@@ -74,9 +74,6 @@ namespace System {
 		// </summary>
 		public Type GetType ()
 		{
-			// TODO: This probably needs to be tied up
-			// with the Type system.  Private communications
-			// channel? 
 			return new MonoType (this);
 		}
 
