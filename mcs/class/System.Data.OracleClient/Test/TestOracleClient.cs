@@ -130,6 +130,28 @@ namespace Test.OracleClient
 			if(row == 0)
 				Console.WriteLine("No data returned.");
 		}
+		
+		static void DataAdapterTest (OracleConnection connection)
+		{
+			OracleCommand command = connection.CreateCommand ();
+			command.CommandText = "SELECT * FROM EMP";
+			OracleDataAdapter adapter = new OracleDataAdapter (command);
+
+			DataSet dataSet = new DataSet ("EMP");
+
+			adapter.Fill (dataSet);
+
+			DataTable table = dataSet.Tables [0];
+			int rowCount = 0;
+			foreach (DataRow row in table.Rows) {
+				Console.WriteLine ("row {0}", rowCount + 1);
+				for (int i = 0; i < table.Columns.Count; i += 1) {
+					Console.WriteLine ("{0}:{1}", table.Columns [i].ColumnName, row [i]);
+				}
+				Console.WriteLine ();
+				rowCount += 1;
+			}
+		}
 
 		static void Wait(string msg) 
 		{
@@ -181,6 +203,12 @@ namespace Test.OracleClient
 			Console.WriteLine ("Read Simple Test BEGIN...");
                         ReadSimpleTest(con1);
 			Console.WriteLine ("Read Simple Test END.");
+
+			Wait ("Press enter to continue ...");
+
+			Console.WriteLine ("DataAdapter Test BEGIN...");
+                        DataAdapterTest(con1);
+			Console.WriteLine ("DataAdapter Test END.");
 
 			Wait("Verify Proper Results.");
 						

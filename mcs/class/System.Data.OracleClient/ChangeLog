@@ -1,4 +1,6 @@
 2003-02-17  Tim Coleman <tim@timcoleman.com>
+	* Test/TestOracleClient.cs:
+		Add OracleDataAdapter test.
 	* System.Data.OracleClient/OracleDataAdapter.cs:
 	* System.Data.OracleClient/OracleRowUpdatedEventArgs.cs:
 	* System.Data.OracleClient/OracleRowUpdatedEventHandler.cs:
