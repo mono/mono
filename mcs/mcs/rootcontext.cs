@@ -276,6 +276,8 @@ namespace Mono.CSharp {
 			foreach (string cname in classes_first_stage)
 				BootstrapCorlib_ResolveClass (root, cname);
 
+			TypeManager.InitBaseTypes ();
+			
 			string [] interfaces_first_stage = {
 				"System.IComparable", "System.ICloneable",
 				"System.IConvertible",
@@ -295,6 +297,7 @@ namespace Mono.CSharp {
 
 			foreach (string iname in interfaces_first_stage)
 				BootstrapCorlib_ResolveInterface (root, iname);
+
 
 			//
 			// These are the base value types

@@ -1,3 +1,13 @@
+2002-04-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Property, Indexer): Allow extern modifier in there. 
+
+	* typemanager.cs (InitBaseTypes): Initializes object_type and
+	value_type, since those will be used early on during the bootstrap
+	process to compile corlib.
+
+	(InitCoreTypes): Move code from here to InitBaseTypes.
+
 2002-04-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (PropertyExpr): Optimize calls to Array::get_Length on

@@ -880,6 +880,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (!is_class && TypeManager.value_type == null)
+				throw new Exception ();
+
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
@@ -2192,7 +2195,7 @@ namespace Mono.CSharp {
 				} else {
 					if ((ModFlags & Modifiers.NEW) != 0)
 						WarningNotHiding (parent);
-					
+
 					if ((ModFlags & Modifiers.OVERRIDE) != 0)
 						Report.Error (115, Location,
 							      parent.MakeName (Name) +
@@ -2790,6 +2793,7 @@ namespace Mono.CSharp {
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
 		        Modifiers.UNSAFE |
+			Modifiers.EXTERN |
 			Modifiers.VIRTUAL;
 
 		public Property (string type, string name, int mod_flags, Block get_block, Block set_block,
@@ -3451,6 +3455,7 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.UNSAFE |
+			Modifiers.EXTERN |
 			Modifiers.ABSTRACT;
 
 		public readonly string     Type;
