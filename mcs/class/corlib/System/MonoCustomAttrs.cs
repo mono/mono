@@ -20,85 +20,134 @@ namespace System {
 		internal static extern object[] GetCustomAttributes (ICustomAttributeProvider obj);
 
 		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
-							      Type attributeType,
-							      bool inherit)
+								Type attributeType,
+								bool inherit)
 		{
-			if (obj == null)
-				throw new ArgumentNullException ("attribute_type"); // argument name in the caller
+			object[] res = GetCustomAttributes (obj, attributeType, inherit);
+			if (res.Length == 0)
+			{
+				return null;
+			} else if (res.Length > 1)
+			{
+				string msg = "'{0}' has more than one attribute of type '{1}";
+				msg = String.Format (msg, obj, attributeType);
+				throw new AmbiguousMatchException (msg);
+			}
 
-			object[] res = GetCustomAttributes (obj);
-			ICustomAttributeProvider btype = obj;
-			Attribute result = null;
-
-			do {
-				foreach (object attr in res) {
-					if (!attributeType.IsAssignableFrom (attr.GetType ()))
-						continue;
-
-					if (result != null) {
-						string msg = "'{0}' has more than one attribute of type '{1}";
-						msg = String.Format (msg, obj, attributeType);
-						throw new AmbiguousMatchException (msg);
-					}
-					result = (Attribute) attr;
-				}
-
-				if (inherit && (btype = GetBase (btype)) != null)
-					res = GetCustomAttributes (btype);
-
-			// Stop when encounters the first one for a given provider.
-			} while (inherit && result == null && btype != null);
-
-			return result;
+			return (Attribute) res[0];
 		}
 
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			if (obj == null)
-				return (object []) Array.CreateInstance (attributeType, 0);
+				throw new ArgumentNullException ("obj");
 
 			object[] r;
 			object[] res = GetCustomAttributes (obj);
 			// shortcut
-			if (!inherit && res.Length == 1) {
-				if (attributeType.IsAssignableFrom (res[0].GetType ())) {
-					r = (object []) Array.CreateInstance (attributeType, 1);
-					r [0] = res [0];
-				} else {
-					r = (object []) Array.CreateInstance (attributeType, 0);
+			if (!inherit && res.Length == 1)
+			{
+				if (attributeType != null)
+				{
+					if (attributeType.IsAssignableFrom (res[0].GetType ()))
+					{
+						r = (object[]) Array.CreateInstance (attributeType, 1);
+						r[0] = res[0];
+					}
+					else
+					{
+						r = (object[]) Array.CreateInstance (attributeType, 0);
+					}
+				}
+				else
+				{
+					r = (object[]) Array.CreateInstance (res[0].GetType (), 0);
+
 				}
 				return r;
 			}
 
-			ArrayList a = new ArrayList (res.Length < 16 ? res.Length : 16);
+			// if AttributeType is sealed, and Inherited is set to false, then 
+			// there's no use in scanning base types 
+			if ((attributeType != null && attributeType.IsSealed) && !inherit)
+			{
+				AttributeUsageAttribute usageAttribute = RetrieveAttributeUsage (
+					attributeType);
+				if (!usageAttribute.Inherited)
+				{
+					inherit = false;
+				}
+			}
+
+			int initialSize = res.Length < 16 ? res.Length : 16;
+
+			Hashtable attributeUsages = new Hashtable (initialSize);
+			ArrayList a = new ArrayList (initialSize);
 			ICustomAttributeProvider btype = obj;
+
+			int inheritanceLevel = 0;
+
 			do {
 				foreach (object attr in res)
-					if (attributeType.IsAssignableFrom (attr.GetType ()))
+				{
+					Type attrType = attr.GetType ();
+					if (attributeType != null)
+					{
+						if (!attributeType.IsAssignableFrom (attrType))
+						{
+							continue;
+						}
+					}
+
+					AttributeUsageAttribute usage = (AttributeUsageAttribute)
+						attributeUsages[attrType];
+					if (usage == null)
+					{
+						usage = RetrieveAttributeUsage (attrType);
+						attributeUsages.Add (attrType, usage);
+					} else if (!usage.AllowMultiple) 
+					{
+						// we already have an attribute of this type and AllowMultiple
+						// is false, so skip this attribute
+						continue;
+					}
+
+					if (inheritanceLevel == 0 || usage.Inherited)
 						a.Add (attr);
+				}
 
 				if ((btype = GetBase (btype)) != null)
+				{
+					inheritanceLevel++;
 					res = GetCustomAttributes (btype);
+				}
 			} while (inherit && btype != null);
 
-			return (object []) a.ToArray (attributeType);
+			object[] array = null;
+			if (attributeType == null || attributeType.IsValueType)
+			{
+				array = (object[]) Array.CreateInstance (typeof(Attribute), a.Count);
+			}
+			else
+			{
+				array = Array.CreateInstance (attributeType, a.Count) as object[];
+			}
+
+			// copy attributes to array
+			a.CopyTo (array, 0);
+
+			return array;
 		}
 
 		internal static object [] GetCustomAttributes (ICustomAttributeProvider obj, bool inherit)
 		{
 			if (obj == null)
-				return new object [0]; //FIXME: Should i throw an exception here?
+				throw new ArgumentNullException ("obj");
 
 			if (!inherit)
-				return (object []) GetCustomAttributes (obj).Clone ();
+				return (object[]) GetCustomAttributes (obj).Clone ();
 
-			ArrayList a = new ArrayList ();
-			ICustomAttributeProvider btype = obj;
-			a.AddRange (GetCustomAttributes (btype));
-			while ((btype = GetBase (btype)) != null)
-				a.AddRange (GetCustomAttributes (btype));
-
-			return (object []) a.ToArray (typeof (Attribute));
+			return GetCustomAttributes (obj, null, inherit);
 		}
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
@@ -152,6 +201,46 @@ namespace System {
 
 			return baseMethod;
 		}
+
+		private static AttributeUsageAttribute RetrieveAttributeUsage (Type attributeType)
+		{
+			AttributeUsageAttribute usageAttribute = null;
+			object[] attribs = GetCustomAttributes (attributeType, 
+				MonoCustomAttrs.AttributeUsageType, false);
+			if (attribs.Length == 0)
+			{
+				// if no AttributeUsage was defined on the attribute level, then
+				// try to retrieve if from its base type
+				if (attributeType.BaseType != null)
+				{
+					usageAttribute = RetrieveAttributeUsage (attributeType.BaseType);
+
+				}
+				if (usageAttribute != null)
+				{
+					// return AttributeUsage of base class
+					return usageAttribute;
+
+				}
+				// return default AttributeUsageAttribute if no AttributeUsage 
+				// was defined on attribute, or its base class
+				return DefaultAttributeUsage;
+			}
+			// check if more than one AttributeUsageAttribute has been specified 
+			// on the type
+			// NOTE: compilers should prevent this, but that doesn't prevent
+			// anyone from using IL ofcourse
+			if (attribs.Length > 1)
+			{
+				throw new FormatException ("Duplicate AttributeUsageAttribute cannot be specified on an attribute type.");
+			}
+
+			return ((AttributeUsageAttribute) attribs[0]);
+		}
+
+		private static readonly Type AttributeUsageType = typeof(AttributeUsageAttribute);
+		private static readonly AttributeUsageAttribute DefaultAttributeUsage = 
+			new AttributeUsageAttribute (AttributeTargets.All);
 	}
 }
 

@@ -1,5 +1,16 @@
 2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
 
+	* MonoCustomAttrs.cs: respect Inherited property, and
+	AllowMultiple property of a CustomAttribute. This fixes
+	a major issue we had with respect to custom attributes.
+
+2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* AttributeUsageAttribute.cs: Inherited property should be
+	true by default
+
+2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
+
 	* MonoType.cs: throw ArgumentNullException when type parameter in
 	GetCustomAttributes(Type, bool) is null
 
