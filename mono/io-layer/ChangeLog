@@ -1,3 +1,7 @@
+2003-13-08  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* Makefile.am: make sure hppa_atomic.s is in distribution
+
 2003-12-01  Dick Porter  <dick@ximian.com>
 
 	* wapi-private.h: 
