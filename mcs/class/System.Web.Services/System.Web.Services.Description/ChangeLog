@@ -1,3 +1,11 @@
+2004-06-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSimpleProtocolImporter.cs: Fixed case of generated methods to match
+	  MS behavior. Always use import input parameters as System.String.
+	* ProtocolImporter.cs: Remove _x0020_ from type names.
+	* SoapProtocolImporter.cs: Fixed case of generated methods to match
+	  MS behavior.
+	
 2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Binding.cs: removed extra XmlIgnore attribute on ServiceDescription

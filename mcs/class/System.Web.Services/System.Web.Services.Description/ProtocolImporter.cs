@@ -210,6 +210,7 @@ namespace System.Web.Services.Description {
 			else className = service.Name;
 			
 			className = classNames.AddUnique (CodeIdentifier.MakeValid (className), port);
+			className = className.Replace ("_x0020_", "");	// MS.NET seems to do this
 			
 			try
 			{

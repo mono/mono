@@ -297,8 +297,8 @@ namespace System.Web.Services.Description {
 
 			method.Name = CodeIdentifier.MakeValid(Operation.Name);
 			if (method.Name == ClassName) method.Name += "1";
-			methodBegin.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("Begin" + memberIds.MakeRightCase(method.Name)),method);
-			methodEnd.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("End" + memberIds.MakeRightCase(method.Name)),method);
+			methodBegin.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("Begin" + method.Name),method);
+			methodEnd.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("End" + method.Name),method);
 
 			method.ReturnType = new CodeTypeReference (typeof(void));
 			methodEnd.ReturnType = new CodeTypeReference (typeof(void));

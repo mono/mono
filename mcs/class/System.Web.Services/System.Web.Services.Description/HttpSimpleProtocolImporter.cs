@@ -166,8 +166,8 @@ namespace System.Web.Services.Description
 			string messageName = memberIds.AddUnique(CodeIdentifier.MakeValid(Operation.Name),method);
 
 			method.Name = Operation.Name;
-			methodBegin.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("Begin" + memberIds.MakeRightCase(Operation.Name)),method);
-			methodEnd.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("End" + memberIds.MakeRightCase(Operation.Name)),method);
+			methodBegin.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("Begin" + Operation.Name),method);
+			methodEnd.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("End" + Operation.Name),method);
 
 			method.ReturnType = new CodeTypeReference (typeof(void));
 			methodEnd.ReturnType = new CodeTypeReference (typeof(void));
@@ -178,7 +178,15 @@ namespace System.Web.Services.Description
 
 			for (int n=0; n<inputMembers.Count; n++)
 			{
-				CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (inputMembers[n].TypeFullName, inputMembers[n].MemberName);
+//				CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (inputMembers[n].TypeFullName, inputMembers[n].MemberName);
+
+				// MS always use System.String for input parameters
+				string ptype = inputMembers[n].TypeFullName;
+				int i = ptype.IndexOf ('[');
+				if (i == -1) i = ptype.Length;
+				ptype = "System.String" + ptype.Substring (i);
+				CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (ptype, inputMembers[n].MemberName);
+				
 				param.Direction = FieldDirection.In;
 				method.Parameters.Add (param);
 				methodBegin.Parameters.Add (param);
