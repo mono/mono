@@ -370,14 +370,29 @@ namespace Mono.CSharp
 			identifiers = null;
 		}
 
-		bool is_identifier_start_character (char c)
+		static bool is_identifier_start_character (char c)
 		{
 			return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || Char.IsLetter (c);
 		}
 
-		bool is_identifier_part_character (char c)
+		static bool is_identifier_part_character (char c)
 		{
 			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c);
+		}
+		
+		public static bool IsValidIdentifier (string s)
+		{
+			if (s == null || s.Length == 0)
+				return false;
+			
+			if (!is_identifier_start_character (s [0]))
+				return false;
+			
+			for (int i = 1; i < s.Length; i ++)
+				if (! is_identifier_part_character (s [i]))
+					return false;
+			
+			return true;
 		}
 
 		int is_punct (char c, ref bool doread)

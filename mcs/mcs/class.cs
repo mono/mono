@@ -5184,12 +5184,6 @@ namespace Mono.CSharp {
 		{
 			ExplicitInterfaceName = int_type;
 		}
-
-		void CheckIndexerName (string name)
-		{
-			if (name.IndexOf (' ') != -1)
-				Report.Error (633, Location, "The IndexerName specified is an invalid identifier");
-		}
 		       
 		public override bool Define (TypeContainer container)
 		{
@@ -5204,11 +5198,18 @@ namespace Mono.CSharp {
 			if (IndexerName == null)
 				IndexerName = "Item";
 			else {
-				CheckIndexerName (IndexerName);
-				if (IsExplicitImpl)
+				if (! Tokenizer.IsValidIdentifier (IndexerName)) {
+					Report.Error (633, Location, "The IndexerName specified is an invalid identifier");
+					return false;
+				}
+				
+				if (IsExplicitImpl) {
 					Report.Error (592, Location,
 						      "Attribute 'IndexerName' is not valid on explicit " +
 						      "implementations.");
+					
+					return false;
+				}
 			}
 
 			ShortName = IndexerName;

@@ -1,3 +1,10 @@
+2004-04-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs (Indexer.Define): use the new name checking method.
+	Also, return false on an error.
+	* cs-tokenizer.cs (IsValidIdentifier): Checks for a valid identifier.
+	(is_identifier_[start/part]_character): make static.
+
 2004-04-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Do no append strings
