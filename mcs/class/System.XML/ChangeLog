@@ -1,3 +1,8 @@
+2004-10-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : just ignore obsolete attribute warnings (those obsolete
+	  members are widely used in obsolete code).
+
 2004-10-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : removed IXmlDataEvidence, fixed
