@@ -1,3 +1,8 @@
+2004-04-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoType.cs: AssemblyQualifiedName now displays culture, version...
+	Fixes bug #56341.
+
 2004-03-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* Console.cs: If we fail to open stdin/stdout/stderr, create
@@ -7,8 +12,8 @@
 
 2004-03-29  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* Convert.cs: In ToSingle(double), removed checks for Single.MaxValue and
-	  Single.MinValue. MS.NET don't do it. This fixes bug #56005.
+	* Convert.cs: In ToSingle(double), removed checks for Single.MaxValue
+	and Single.MinValue. MS.NET don't do it. This fixes bug #56005.
 	* Guid.cs: Added support for guid strings in the "N" and "P" formats in
 	  the constructor. This fixes bug #54019.
 
