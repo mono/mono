@@ -1,5 +1,8 @@
 2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* pinvoke3.cs: Remove an error handling test which no longer fails in
+	2.0.
+
 	* marshal.cs libtest.c: Add new test for GetDelegateForFunctionPointer.
 
 2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
