@@ -57,3 +57,5 @@ numbers to match the Microsoft numbers:
 
 -21	Bug in Microsoft compiler while applying named attribute for
 	StructLayout.CharSet value.
+
+-22     Location of previous error 
