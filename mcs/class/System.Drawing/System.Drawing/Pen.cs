@@ -77,6 +77,17 @@ namespace System.Drawing {
 			}
 		}
 
+
+		public DashStyle DashStyle {
+			get {
+				throw new NotImplementedException ();
+			}
+
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
                 public LineCap LineCap {
 
                         get {
