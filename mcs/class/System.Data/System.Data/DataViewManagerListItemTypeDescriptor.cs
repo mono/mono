@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Jackson Harper  (jackson@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -54,55 +56,47 @@ namespace System.Data
 			return new AttributeCollection (null);
 		}
 
-		[MonoTODO]
 		string ICustomTypeDescriptor.GetClassName ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		string ICustomTypeDescriptor.GetComponentName ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		TypeConverter ICustomTypeDescriptor.GetConverter ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
 		{
-			throw new NotImplementedException ();
+			return new EventDescriptorCollection (null);
 		}
 
-		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (System.Attribute[] attributes)
 		{
-			throw new NotImplementedException ();
+			return new EventDescriptorCollection (null);
 		}
 
-		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
+		public PropertyDescriptorCollection GetProperties ()
 		{
 			DataSet ds = dvm.DataSet;
 			if (ds == null)
@@ -117,16 +111,14 @@ namespace System.Data
 			return new PropertyDescriptorCollection (descriptors);
 		}
 
-		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (System.Attribute[] attributes)
 		{
-			throw new NotImplementedException ();
+			return this.GetProperties ();
 		}
 
-		[MonoTODO]
 		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 	}
 }
