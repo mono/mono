@@ -1,3 +1,6 @@
+2004-01-04 Alon Gazit <along@mainsoft.com>
+	* RangeValidator.cs: Fixed ControlPropertiesValid().
+	
 2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Xml.cs: mono-stylized and removed warnings.

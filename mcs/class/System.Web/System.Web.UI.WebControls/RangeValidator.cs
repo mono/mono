@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls
 				fmt[3] = PropertyConverter.EnumToString(typeof(ValidationDataType), Type);
 				throw new HttpException(HttpRuntime.FormatResourceString("Validator_value_bad_type", fmt));
 			}
-			string min = MaximumValue;
+			string min = MinimumValue;
 			if(!CanConvert(min, Type))
 			{
 				string[] fmt = new string[4];
@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls
 				throw new HttpException(HttpRuntime.FormatResourceString("Validator_value_bad_type", fmt));
 			}
 
-			if(Compare(max, min, ValidationCompareOperator.GreaterThan, ValidationDataType.Double))
+			if(Compare(min,max,  ValidationCompareOperator.GreaterThan, Type))
 			{
 				string[] fmt = new string[3];
 				fmt[0] = min;
