@@ -2904,30 +2904,20 @@ namespace Mono.CSharp {
 		};
 
 		public readonly AType ArgType;
-		public Expression expr;
+		public Expression Expr;
 		
 		public Argument (Expression expr, AType type)
 		{
-			this.expr = expr;
+			this.Expr = expr;
 			this.ArgType = type;
-		}
-
-		public Expression Expr {
-			get {
-				return expr;
-			}
-
-			set {
-				expr = value;
-			}
 		}
 
 		public Type Type {
 			get {
 				if (ArgType == AType.Ref || ArgType == AType.Out)
-					return TypeManager.LookupType (expr.Type.ToString () + "&");
+					return TypeManager.LookupType (Expr.Type.ToString () + "&");
 				else
-					return expr.Type;
+					return Expr.Type;
 			}
 		}
 
@@ -2948,17 +2938,17 @@ namespace Mono.CSharp {
 		
 		public bool Resolve (EmitContext ec, Location loc)
 		{
-			expr = expr.Resolve (ec);
+			Expr = Expr.Resolve (ec);
 
 			if (ArgType == AType.Expression)
-				return expr != null;
+				return Expr != null;
 
-			if (expr.eclass != ExprClass.Variable){
+			if (Expr.eclass != ExprClass.Variable){
 				//
 				// We just probe to match the CSC output
 				//
-				if (expr.eclass == ExprClass.PropertyAccess ||
-				    expr.eclass == ExprClass.IndexerAccess){
+				if (Expr.eclass == ExprClass.PropertyAccess ||
+				    Expr.eclass == ExprClass.IndexerAccess){
 					Report.Error (
 						206, loc,
 						"A property or indexer can not be passed as an out or ref " +
@@ -2971,7 +2961,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 				
-			return expr != null;
+			return Expr != null;
 		}
 
 		public void Emit (EmitContext ec)
@@ -2988,8 +2978,8 @@ namespace Mono.CSharp {
 				if (ArgType == AType.Ref)
 					mode |= AddressOp.Load;
 				
-				if (expr is ParameterReference){
-					ParameterReference pr = (ParameterReference) expr;
+				if (Expr is ParameterReference){
+					ParameterReference pr = (ParameterReference) Expr;
 
 					if (pr.is_ref)
 						pr.EmitLoad (ec);
@@ -2998,9 +2988,9 @@ namespace Mono.CSharp {
 						pr.AddressOf (ec, mode);
 					}
 				} else
-					((IMemoryLocation)expr).AddressOf (ec, mode);
+					((IMemoryLocation)Expr).AddressOf (ec, mode);
 			} else
-				expr.Emit (ec);
+				Expr.Emit (ec);
 		}
 	}
 
@@ -3737,7 +3727,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int count = arguments.Count - idx;
 			Argument a = (Argument) arguments [idx];
-			Type t = a.expr.Type;
+			Type t = a.Expr.Type;
 			string array_type = t.FullName + "[]";
 			LocalBuilder array;
 
@@ -4397,58 +4387,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void Error_NegativeArrayIndex ()
-		{
-			Report.Error (284, loc, "Can not create array with a negative size");
-		}
-		
-		//
-		// Converts `source' to an int, uint, long or ulong.
-		//
-		Expression ExpressionToArrayArgument (EmitContext ec, Expression source)
-		{
-			Expression target;
-			
-			bool old_checked = ec.CheckState;
-			ec.CheckState = true;
-			
-			target = ConvertImplicit (ec, source, TypeManager.int32_type, loc);
-			if (target == null){
-				target = ConvertImplicit (ec, source, TypeManager.uint32_type, loc);
-				if (target == null){
-					target = ConvertImplicit (ec, source, TypeManager.int64_type, loc);
-					if (target == null){
-						target = ConvertImplicit (ec, source, TypeManager.uint64_type, loc);
-						if (target == null)
-							Expression.Error_CannotConvertImplicit (loc, source.Type, TypeManager.int32_type);
-					}
-				}
-			} 
-			ec.CheckState = old_checked;
-
-			//
-			// Only positive constants are allowed at compile time
-			//
-			if (target is Constant){
-				if (target is IntConstant){
-					if (((IntConstant) target).Value < 0){
-						Error_NegativeArrayIndex ();
-						return null;
-					}
-				}
-
-				if (target is LongConstant){
-					if (((LongConstant) target).Value < 0){
-						Error_NegativeArrayIndex ();
-						return null;
-					}
-				}
-				
-			}
-
-			return target;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			int arg_count;
@@ -4468,11 +4406,11 @@ namespace Mono.CSharp {
 					if (!a.Resolve (ec, loc))
 						return null;
 
-					Expression real_arg = ExpressionToArrayArgument (ec, a.expr);
+					Expression real_arg = ExpressionToArrayArgument (ec, a.Expr, loc);
 					if (real_arg == null)
 						return null;
 
-					a.expr = real_arg;
+					a.Expr = real_arg;
 				}
 			}
 			
@@ -4807,8 +4745,11 @@ namespace Mono.CSharp {
 			foreach (Argument a in arguments) {
 				Type atype = a.Type;
 				a.Emit (ec);
-				if (atype == TypeManager.uint64_type || atype == TypeManager.int64_type)
+
+				if (atype == TypeManager.uint64_type)
 					ig.Emit (OpCodes.Conv_Ovf_U4);
+				else if (atype == TypeManager.int64_type)
+					ig.Emit (OpCodes.Conv_Ovf_I4);
 			}
 		}
 		
@@ -5606,6 +5547,26 @@ namespace Mono.CSharp {
 				UnsafeError (ea.loc);
 				return null;
 			}
+
+			foreach (Argument a in ea.Arguments){
+				Type argtype = a.Type;
+
+				if (argtype == TypeManager.int32_type ||
+				    argtype == TypeManager.uint32_type ||
+				    argtype == TypeManager.int64_type ||
+				    argtype == TypeManager.uint64_type)
+					continue;
+
+				//
+				// Mhm.  This is strage, because the Argument.Type is not the same as
+				// Argument.Expr.Type: the value changes depending on the ref/out setting.
+				//
+				// Wonder if I will run into trouble for this.
+				//
+				a.Expr = ExpressionToArrayArgument (ec, a.Expr, ea.loc);
+				if (a.Expr == null)
+					return null;
+			}
 			
 			eclass = ExprClass.Variable;
 
@@ -5737,15 +5698,23 @@ namespace Mono.CSharp {
 		//
 		void LoadArrayAndArguments (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+			
 			if (cached_locations == null){
 				ea.Expr.Emit (ec);
-				foreach (Argument a in ea.Arguments)
+				foreach (Argument a in ea.Arguments){
+					Type argtype = a.Expr.Type;
+					
 					a.Expr.Emit (ec);
+					
+					if (argtype == TypeManager.int64_type)
+						ig.Emit (OpCodes.Conv_Ovf_I);
+					else if (argtype == TypeManager.uint64_type)
+						ig.Emit (OpCodes.Conv_Ovf_I_Un);
+				}
 				return;
 			}
 
-			ILGenerator ig = ec.ig;
-			
 			if (cached_locations [0] == null){
 				cached_locations [0] = new LocalTemporary (ec, ea.Expr.Type);
 				ea.Expr.Emit (ec);
@@ -5755,8 +5724,15 @@ namespace Mono.CSharp {
 				int j = 1;
 				
 				foreach (Argument a in ea.Arguments){
-					cached_locations [j] = new LocalTemporary (ec, a.Expr.Type);
+					Type argtype = a.Expr.Type;
+					
+					cached_locations [j] = new LocalTemporary (ec, TypeManager.intptr_type /* a.Expr.Type */);
 					a.Expr.Emit (ec);
+					if (argtype == TypeManager.int64_type)
+						ig.Emit (OpCodes.Conv_Ovf_I);
+					else if (argtype == TypeManager.uint64_type)
+						ig.Emit (OpCodes.Conv_Ovf_I_Un);
+
 					ig.Emit (OpCodes.Dup);
 					cached_locations [j].Store (ec);
 					j++;

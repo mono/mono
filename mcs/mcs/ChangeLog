@@ -1,5 +1,15 @@
 2002-07-12  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (ArrayCreation.EmitArrayArguments): use
+	Conv.Ovf.U4 for unsigned and Conv.Ovf.I4 for signed.
+
+	(ArrayAccess.LoadArrayAndArguments): Use Conv_Ovf_I and
+	Conv_Ovf_I_Un for the array arguments.  Even if C# allows longs as
+	array indexes, the runtime actually forbids them.
+
+	* ecore.cs (ExpressionToArrayArgument): Move the conversion code
+	for array arguments here.
+
 	* expression.cs (EmitLoadOpcode): System.Char is a U2, use that
 	instead of the default for ValueTypes.
 

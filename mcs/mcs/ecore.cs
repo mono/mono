@@ -2532,6 +2532,59 @@ namespace Mono.CSharp {
 		public void CacheTemporaries (EmitContext ec)
 		{
 		}
+
+		static void Error_NegativeArrayIndex (Location loc)
+		{
+			Report.Error (284, loc, "Can not create array with a negative size");
+		}
+		
+		//
+		// Converts `source' to an int, uint, long or ulong.
+		//
+		public Expression ExpressionToArrayArgument (EmitContext ec, Expression source, Location loc)
+		{
+			Expression target;
+			
+			bool old_checked = ec.CheckState;
+			ec.CheckState = true;
+			
+			target = ConvertImplicit (ec, source, TypeManager.int32_type, loc);
+			if (target == null){
+				target = ConvertImplicit (ec, source, TypeManager.uint32_type, loc);
+				if (target == null){
+					target = ConvertImplicit (ec, source, TypeManager.int64_type, loc);
+					if (target == null){
+						target = ConvertImplicit (ec, source, TypeManager.uint64_type, loc);
+						if (target == null)
+							Expression.Error_CannotConvertImplicit (loc, source.Type, TypeManager.int32_type);
+					}
+				}
+			} 
+			ec.CheckState = old_checked;
+
+			//
+			// Only positive constants are allowed at compile time
+			//
+			if (target is Constant){
+				if (target is IntConstant){
+					if (((IntConstant) target).Value < 0){
+						Error_NegativeArrayIndex (loc);
+						return null;
+					}
+				}
+
+				if (target is LongConstant){
+					if (((LongConstant) target).Value < 0){
+						Error_NegativeArrayIndex (loc);
+						return null;
+					}
+				}
+				
+			}
+
+			return target;
+		}
+		
 	}
 
 	/// <summary>
