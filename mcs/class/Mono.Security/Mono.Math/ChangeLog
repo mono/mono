@@ -1,3 +1,7 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: FxCop-ized. CLS compliance.
+
 2004-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Corrected isProbablePrime by removing the redundant 
