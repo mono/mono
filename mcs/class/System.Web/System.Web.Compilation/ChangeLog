@@ -1,3 +1,7 @@
+2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspTokenizer.cs: moved token numbers above unicode.
+
 2003-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: don't process code render tags inside scripts. Check

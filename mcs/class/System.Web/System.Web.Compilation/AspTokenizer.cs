@@ -16,13 +16,13 @@ namespace System.Web.Compilation
 {
 	class Token
 	{
-		public const int EOF 		= 0;
-		public const int IDENTIFIER 	= 1000;
-		public const int DIRECTIVE 	= 1001;
-		public const int ATTVALUE   	= 1002;
-		public const int TEXT	    	= 1003;
-		public const int DOUBLEDASH 	= 1004;
-		public const int CLOSING 	= 1005;
+		public const int EOF 		= 0x0200000;
+		public const int IDENTIFIER 	= 0x0200001;
+		public const int DIRECTIVE 	= 0x0200002;
+		public const int ATTVALUE   	= 0x0200003;
+		public const int TEXT	    	= 0x0200004;
+		public const int DOUBLEDASH 	= 0x0200005;
+		public const int CLOSING 	= 0x0200006;
 	}
 
 	class AspTokenizer
