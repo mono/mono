@@ -272,8 +272,15 @@ namespace System.Net
 			// release unmanaged resources
 			Stream st = stream;
 			stream = null;
-			if (st != null)
+			if (st != null) {
+				WebConnectionStream wce = st as WebConnectionStream;
+				if (wce != null) {
+					try {
+						wce.ReadAll ();
+					} catch {}
+				}
 				st.Close ();
+			}
 		}
 		
 		private void CheckDisposed () 

@@ -1,3 +1,9 @@
+2003-10-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs:
+	* HttpWebResponse.cs: better abort handling and leave the stream in a
+	stable status on abort.
+
 2003-10-12  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* WebClient.cs: refine reading of local files (like MS.NET).

@@ -647,8 +647,22 @@ namespace System.Net
 		{
 			haveResponse = true;
 			aborted = true;
-			asyncRead = null;
-			asyncWrite = null;
+			if (asyncWrite != null) {
+				WebAsyncResult r = asyncWrite;
+				WebException wexc = new WebException ("Aborted.", WebExceptionStatus.RequestCanceled); 
+				r.SetCompleted (false, wexc);
+				r.DoCallback ();
+				asyncWrite = null;
+			}			
+
+			if (asyncRead != null) {
+				WebAsyncResult r = asyncRead;
+				WebException wexc = new WebException ("Aborted.", WebExceptionStatus.RequestCanceled); 
+				r.SetCompleted (false, wexc);
+				r.DoCallback ();
+				asyncRead = null;
+			}			
+
 			if (abortHandler != null) {
 				try {
 					abortHandler (this, EventArgs.Empty);
@@ -789,9 +803,8 @@ namespace System.Net
 		
 		internal void SetWriteStreamError (WebExceptionStatus status)
 		{
-			if (aborted) {
-				//TODO
-			}
+			if (aborted)
+				return;
 
 			WebAsyncResult r = asyncWrite;
 			if (r == null)
@@ -829,9 +842,8 @@ namespace System.Net
 
 		internal void SetWriteStream (WebConnectionStream stream)
 		{
-			if (aborted) {
-				//TODO
-			}
+			if (aborted)
+				return;
 			
 			writeStream = stream;
 			SendRequestHeaders ();
@@ -854,6 +866,8 @@ namespace System.Net
 				WebException wexc = new WebException ("Error getting response stream", e, status, null); 
 				r.SetCompleted (false, wexc);
 				r.DoCallback ();
+				asyncRead = null;
+				asyncWrite = null;
 			}
 		}
 		
@@ -868,9 +882,10 @@ namespace System.Net
 			webResponse = new HttpWebResponse (actualUri, method, data, (cookieContainer != null));
 			haveResponse = true;
 
-			if (asyncRead != null) {
-				asyncRead.SetCompleted (false, webResponse);
-				asyncRead.DoCallback ();
+			WebAsyncResult r = asyncRead;
+			if (r != null) {
+				r.SetCompleted (false, webResponse);
+				r.DoCallback ();
 			}
 		}
 
@@ -894,6 +909,9 @@ namespace System.Net
 		// Returns true if redirected
 		bool CheckFinalStatus (WebAsyncResult result)
 		{
+			if (result.GotException)
+				throw result.Exception;
+
 			Exception throwMe = result.Exception;
 
 			HttpWebResponse resp = result.Response;
