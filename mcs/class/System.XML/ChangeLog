@@ -1,3 +1,8 @@
+2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources:
+	  added many XQuery implementation internal classes.
+
 2004-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources: added those files:

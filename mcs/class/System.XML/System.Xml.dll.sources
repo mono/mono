@@ -372,3 +372,16 @@ System.Xml.Query/XQueryTokenizer.cs
 System.Xml.Query/XQueryModuleProlog.cs
 System.Xml.Query/XPath2Expression.cs
 System.Xml.Query/XQueryExpression.cs
+System.Xml.Query/XQueryContext.cs
+System.Xml.Query/XQueryStaticContext.cs
+System.Xml.Query/SequenceType.cs
+System.Xml.Query/XPathSequence.cs
+System.Xml.Query/XQueryFunction.cs
+System.Xml.Query/XQueryFunctionTable.cs
+System.Xml.Query/XQueryCliFunction.cs
+System.Xml.Query/XQueryCompileOptions.cs
+System.Xml.Query/XQueryCompileContext.cs
+System.Xml.Query/XQueryASTCompiler.cs
+System.Xml.Query/XQueryCommandImpl.cs
+System.Xml.Query/XQueryFunctionCliImpl.cs
+
