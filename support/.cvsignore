@@ -1,2 +1,7 @@
 Makefile.in
 Makefile
+.deps
+.libs
+libMonoPosixHelper.la
+macros.lo
+map.lo
