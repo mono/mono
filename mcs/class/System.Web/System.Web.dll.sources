@@ -285,6 +285,11 @@ System.Web.UI.WebControls/BaseDataList.cs
 System.Web.UI.WebControls/BaseValidator.cs
 System.Web.UI.WebControls/BorderStyle.cs
 System.Web.UI.WebControls/BoundColumn.cs
+System.Web.UI.WebControls/BulletStyle.cs
+System.Web.UI.WebControls/BulletedList.cs
+System.Web.UI.WebControls/BulletedListDisplayMode.cs
+System.Web.UI.WebControls/BulletedListEventArgs.cs
+System.Web.UI.WebControls/BulletedListEventHandler.cs
 System.Web.UI.WebControls/Button.cs
 System.Web.UI.WebControls/ButtonColumn.cs
 System.Web.UI.WebControls/ButtonColumnType.cs

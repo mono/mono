@@ -1,3 +1,11 @@
+2003-11-02 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* BulletStyle.cs:
+	* BulletedListDisplayMode.cs:
+	* BulletedListEventHandler.cs:
+	* BulletedList.cs:
+	* BulletedListEventArgs.cs: V2 controls (yay!)
+
 2003-10-30 Jackson Harper <jackson@ximian.com>
 
 	* Repeater.cs: Throw an exception if the datasource is set to
