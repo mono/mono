@@ -27,9 +27,9 @@ namespace CIR {
 		public readonly string   Type;
 		public readonly string   Name;
 		public readonly Modifier ModFlags;
-		public readonly ArrayList OptAttributes;
+		public Attributes OptAttributes;
 		
-		public Parameter (string type, string name, Modifier mod, ArrayList attrs)
+		public Parameter (string type, string name, Modifier mod, Attributes attrs)
 		{
 			Name = name;
 			ModFlags = mod;

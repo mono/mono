@@ -385,14 +385,15 @@ opt_attributes
 	: /* empty */ { $$ = null; }
 	| attribute_section opt_attributes
 	  {
-		ArrayList attrs;
+		Attributes attrs;
 		
-		if ($2 != null)
-			attrs = (ArrayList) $2;
-		else
-			attrs = new ArrayList ();
-
-		attrs.Add ($1);
+		if ($2 != null) {
+			attrs = (Attributes) $2;
+			attrs.AddAttribute ((Attribute) $1);
+		} else
+			attrs = new Attributes ((Attribute) $1);
+		
+		$$ = attrs;
 	  }
 	;
 
@@ -520,7 +521,7 @@ struct_declaration
 		Struct new_struct;
 		string full_struct_name = MakeName ((string) $4);
 
-		new_struct = new Struct (rc, current_container, full_struct_name, (int) $2, (ArrayList) $1);
+		new_struct = new Struct (rc, current_container, full_struct_name, (int) $2, (Attributes) $1);
 		current_container = new_struct;
 		current_container.Namespace = current_namespace;
 		tree.RecordStruct (full_struct_name, new_struct);
@@ -590,7 +591,7 @@ constant_declaration
 		foreach (DictionaryEntry constant in (ArrayList) $5){
 			Constant c = new Constant (
 				(string) $4, (string) constant.Key, 
-				(Expression) constant.Value, (int) $2, (ArrayList) $1);
+				(Expression) constant.Value, (int) $2, (Attributes) $1);
 
 			CheckDef (current_container.AddConstant (c), c.Name);
 		}
@@ -630,7 +631,7 @@ field_declaration
 
 		foreach (VariableDeclaration var in (ArrayList) $4){
 			Field field = new Field (type, mod, var.identifier, 
-						 var.expression_or_array_initializer, (ArrayList) $1);
+						 var.expression_or_array_initializer, (Attributes) $1);
 
 			CheckDef (current_container.AddField (field), field.Name);
 		}
@@ -697,7 +698,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ((string) $3, (int) $2, (string) $4, (Parameters) $6, (ArrayList) $1);
+		Method method = new Method ((string) $3, (int) $2, (string) $4, (Parameters) $6, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -709,7 +710,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ("System.Void", (int) $2, (string) $4, (Parameters) $6, (ArrayList) $1);
+		Method method = new Method ("System.Void", (int) $2, (string) $4, (Parameters) $6, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $6;
 		$$ = method;
@@ -774,7 +775,7 @@ fixed_parameter
 	  type
 	  IDENTIFIER
 	  {
-		$$ = new Parameter ((string) $3, (string) $4, (Parameter.Modifier) $2, (ArrayList) $1);
+		$$ = new Parameter ((string) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1);
 	  }
 	;
 
@@ -791,7 +792,7 @@ parameter_modifier
 parameter_array
 	: opt_attributes PARAMS type IDENTIFIER
 	  { 
-		$$ = new Parameter ((string) $3, (string) $4, Parameter.Modifier.PARAMS, (ArrayList) $1);
+		$$ = new Parameter ((string) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
 		note ("type must be a single-dimension array type"); 
 	  }
 	;
@@ -831,7 +832,7 @@ property_declaration
 		if (pair.Value != null)
 			set_block = (Block) pair.Value;
 
-		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block, (ArrayList) $1);
+		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block, (Attributes) $1);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name);
 		implicit_value_parameters = null;
@@ -902,7 +903,7 @@ interface_declaration
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $4);
 
-		new_interface = new Interface (current_container, full_interface_name, (int) $2);
+		new_interface = new Interface (current_container, full_interface_name, (int) $2, (Attributes) $1);
 		if (current_interface != null)
 			error (-2, "Internal compiler error: interface inside interface");
 		current_interface = new_interface;
@@ -999,13 +1000,13 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ((string) $3, (string) $4, (bool) $2, (Parameters) $6);
+		$$ = new InterfaceMethod ((string) $3, (string) $4, (bool) $2, (Parameters) $6, (Attributes) $1);
 	  }
 	| opt_attributes opt_new VOID IDENTIFIER 
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ("System.Void", (string) $4, (bool) $2, (Parameters) $6);
+		$$ = new InterfaceMethod ("System.Void", (string) $4, (bool) $2, (Parameters) $6, (Attributes) $1);
 	  }
 	;
 
@@ -1022,7 +1023,7 @@ interface_property_declaration
 	        int gs = (int) $7;
 
 		$$ = new InterfaceProperty ((string) $3, (string) $4, (bool) $2, 
-					    (gs & 1) == 1, (gs & 2) == 2);
+					    (gs & 1) == 1, (gs & 2) == 2, (Attributes) $1);
 	  }
 	;
 
@@ -1038,7 +1039,7 @@ interface_accesors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new InterfaceEvent ((string) $4, (string) $5, (bool) $2);
+		$$ = new InterfaceEvent ((string) $4, (string) $5, (bool) $2, (Attributes) $1);
 	  }
 	;
 
@@ -1056,7 +1057,7 @@ interface_indexer_declaration
 	  	bool do_get = (a_flags & 1) == 1;
 		bool do_set = (a_flags & 2) == 2;
 
-		$$ = new InterfaceIndexer ((string) $3, (Parameters) $6, do_get, do_set, (bool) $2);
+		$$ = new InterfaceIndexer ((string) $3, (Parameters) $6, do_get, do_set, (bool) $2, (Attributes) $1);
 	  }
 	;
 
@@ -1194,7 +1195,7 @@ constructor_initializer
 destructor_declaration
 	: opt_attributes TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		Method d = new Method ("System.Void", 0, "Finalize", new Parameters (null, null), (ArrayList) $1);
+		Method d = new Method ("System.Void", 0, "Finalize", new Parameters (null, null), (Attributes) $1);
 		  
 		d.Block = (Block) $6;
 		CheckDef (current_container.AddMethod (d), d.Name);
@@ -2143,7 +2144,7 @@ class_declaration
 		Class new_class;
 		string full_class_name = MakeName ((string) $4);
 
-		new_class = new Class (rc, current_container, full_class_name, (int) $2, (ArrayList) $1);
+		new_class = new Class (rc, current_container, full_class_name, (int) $2, (Attributes) $1);
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
 		tree.RecordClass (full_class_name, new_class);
@@ -2965,9 +2966,7 @@ void CheckAttributeTarget (string a)
 		return;
 		
 	default :
-		// FIXME : Find the exact error number !! ;-)
-		error (-4,
-		       "Attribute target can only be one of assembly, field, method, param, property event, return or type");
+		error (658, "Invalid attribute target");
 		break;
 	}
 

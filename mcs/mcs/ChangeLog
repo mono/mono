@@ -1,3 +1,52 @@
+2001-09-05  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (CheckAttributeTarget): Update to use the right error number.
+
+	* ../tests/cs0658.cs : New file to demonstrate error 0658.
+
+	* attribute.cs (Attributes): New class to encapsulate all attributes which were
+	being passed around as an arraylist.
+	(Attributes::AddAttribute): Method to add attribute sections.
+
+	* cs-parser.jay (opt_attributes): Modify actions to use the new Attributes class.
+	(struct_declaration): Update accordingly.
+	(constant_declaration): Update.
+	(field_declaration): Update.
+	(method_header): Update.
+	(fixed_parameter): Update.
+	(parameter_array): Ditto.
+	(property_declaration): Ditto.
+	(destructor_declaration): Ditto.
+	
+	* class.cs (Struct::Struct): Update constructors accordingly.
+	(Class::Class): Ditto.
+	(Field::Field): Ditto.
+	(Method::Method): Ditto.
+	(Property::Property): Ditto.
+	(TypeContainer::OptAttribute): update property's return type.
+	
+	* interface.cs (Interface.opt_attributes): New member.
+	(Interface::Interface): Update to take the extra Attributes argument.
+
+	* parameter.cs (Parameter::Parameter): Ditto.
+
+	* constant.cs (Constant::Constant): Ditto.
+
+	* interface.cs (InterfaceMemberBase): New OptAttributes field.
+	(InterfaceMemberBase::InterfaceMemberBase): Update constructor to take 
+	the attributes as a parameter.
+	(InterfaceProperty): Update constructor call.
+	(InterfaceEvent): Ditto.
+	(InterfaceMethod): Ditto.
+	(InterfaceIndexer): Ditto.
+
+	* cs-parser.jay (interface_indexer_declaration): Update call to constructor to 
+	pass the attributes too.
+	(interface_event_declaration): Ditto.
+	(interface_property_declaration): Ditto.
+	(interface_method_declaration): Ditto.
+	(interface_declaration): Ditto.
+
 2001-09-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Method::Define): Track the "static Main" definition to
@@ -35,6 +84,7 @@
 	
 	* literal.cs (StringLiteral):  Implement Emit.
 
+>>>>>>> 1.37
 2001-09-05  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (error): Add new modifier because we are hiding an inherited

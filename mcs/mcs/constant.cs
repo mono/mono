@@ -10,7 +10,7 @@ namespace CIR {
 		Expression expr;
 		string     constant_type;
 		int        mod_flags;
-		public readonly ArrayList  OptAttributes;
+		public Attributes  OptAttributes;
 
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -19,7 +19,7 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Constant (string constant_type, string name, Expression expr, int mod_flags, ArrayList attrs)
+		public Constant (string constant_type, string name, Expression expr, int mod_flags, Attributes attrs)
 		{
 			this.constant_type = constant_type;
 			this.name = name;

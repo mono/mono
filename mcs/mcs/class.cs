@@ -93,7 +93,7 @@ namespace CIR {
 		readonly public RootContext RootContext;
 
 		// Attributes for this type
-		protected ArrayList attributes;
+		protected Attributes attributes;
 		
 		public TypeContainer (RootContext rc, TypeContainer parent, string name) : base (name)
 		{
@@ -424,7 +424,7 @@ namespace CIR {
 			}
 		}
 
-		public ArrayList OptAttributes {
+		public Attributes OptAttributes {
 			get {
 				return attributes;
 			}
@@ -672,7 +672,7 @@ namespace CIR {
 			Modifiers.ABSTRACT |
 			Modifiers.SEALED;
 
-		public Class (RootContext rc, TypeContainer parent, string name, int mod, ArrayList attrs)
+		public Class (RootContext rc, TypeContainer parent, string name, int mod, Attributes attrs)
 			: base (rc, parent, name)
 		{
 			int accmods;
@@ -708,7 +708,7 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Struct (RootContext rc, TypeContainer parent, string name, int mod, ArrayList attrs)
+		public Struct (RootContext rc, TypeContainer parent, string name, int mod, Attributes attrs)
 			: base (rc, parent, name)
 		{
 			int accmods;
@@ -745,12 +745,12 @@ namespace CIR {
 		public readonly string     Name;
 		public readonly int        ModFlags;
 		public MethodBuilder MethodBuilder;
-		public readonly ArrayList OptAttributes;
+		public readonly Attributes OptAttributes;
 		
 		Block block;
 		
 		// return_type can be "null" for VOID values.
-		public Method (string return_type, int mod, string name, Parameters parameters, ArrayList attrs)
+		public Method (string return_type, int mod, string name, Parameters parameters, Attributes attrs)
 		{
 			Name = name;
 			ReturnType = return_type;
@@ -888,7 +888,7 @@ namespace CIR {
 		public readonly Object Initializer;
 		public readonly string Name;
 		public readonly int    ModFlags;
-		public readonly ArrayList OptAttributes;
+		public readonly Attributes OptAttributes;
 		
 		// <summary>
 		//   Modifiers allowed in a class declaration
@@ -902,7 +902,7 @@ namespace CIR {
 			Modifiers.STATIC |
 			Modifiers.READONLY;
 
-		public Field (string type, int mod, string name, Object expr_or_array_init, ArrayList attrs)
+		public Field (string type, int mod, string name, Object expr_or_array_init, Attributes attrs)
 		{
 			Type = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
@@ -1062,7 +1062,7 @@ namespace CIR {
 		public readonly int    ModFlags;
 		public Block           Get, Set;
 		public PropertyBuilder PropertyBuilder;
-		public readonly ArrayList OptAttributes;
+		public Attributes OptAttributes;
 		
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -1076,7 +1076,7 @@ namespace CIR {
 			Modifiers.ABSTRACT |
 			Modifiers.VIRTUAL;
 		
-		public Property (string type, string name, int mod_flags, Block get_block, Block set_block, ArrayList attrs)
+		public Property (string type, string name, int mod_flags, Block get_block, Block set_block, Attributes attrs)
 		{
 			Type = type;
 			Name = name;

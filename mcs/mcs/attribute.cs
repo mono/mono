@@ -19,13 +19,32 @@ namespace CIR {
 	public class Attribute {
 
 		public readonly string    Target;
-		public readonly ArrayList Attrs;
+		public readonly ArrayList AttrParameters;
 		
 		public Attribute (string target, ArrayList attrs)
 		{
 			Target = target;
-			Attrs  = attrs;
+			AttrParameters  = attrs;
 		}
 
+	}
+
+	public class Attributes {
+
+		ArrayList attributes;
+
+		public Attributes (Attribute a)
+		{
+			attributes = new ArrayList ();
+			attributes.Add (a);
+
+		}
+
+		public void AddAttribute (Attribute a)
+		{
+			if (a != null)
+				attributes.Add (a);
+		}
+		
 	}
 }

@@ -41,6 +41,8 @@ namespace CIR {
 		ArrayList defined_properties;
 
 		TypeContainer parent;
+
+		Attributes OptAttributes;
 		
 		// These will happen after the semantic analysis
 		
@@ -57,10 +59,11 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Interface (TypeContainer parent, string name, int mod) : base (name)
+		public Interface (TypeContainer parent, string name, int mod, Attributes attrs) : base (name)
 		{
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PUBLIC);
 			this.parent = parent;
+			OptAttributes = attrs;
 		}
 
 		public AdditionResult AddMethod (InterfaceMethod imethod)
@@ -384,11 +387,13 @@ namespace CIR {
 	public class InterfaceMemberBase {
 		public readonly string Name;
 		public readonly bool IsNew;
+		public Attributes OptAttributes;
 		
-		public InterfaceMemberBase (string name, bool is_new)
+		public InterfaceMemberBase (string name, bool is_new, Attributes attrs)
 		{
 			Name = name;
 			IsNew = is_new;
+			OptAttributes = attrs;
 		}
 	}
 	
@@ -399,8 +404,8 @@ namespace CIR {
 		public readonly string type;
 		
 		public InterfaceProperty (string type, string name,
-					  bool is_new, bool has_get, bool has_set)
-			: base (name, is_new)
+					  bool is_new, bool has_get, bool has_set, Attributes attrs)
+			: base (name, is_new, attrs)
 		{
 			Type = type;
 			HasGet = has_get;
@@ -411,8 +416,8 @@ namespace CIR {
 	public class InterfaceEvent : InterfaceMemberBase {
 		public readonly string Type;
 		
-		public InterfaceEvent (string type, string name, bool is_new)
-			: base (name, is_new)
+		public InterfaceEvent (string type, string name, bool is_new, Attributes attrs)
+			: base (name, is_new, attrs)
 		{
 			Type = type;
 		}
@@ -422,8 +427,8 @@ namespace CIR {
 		public readonly string     ReturnType;
 		public readonly Parameters Parameters;
 		
-		public InterfaceMethod (string return_type, string name, bool is_new, Parameters args)
-			: base (name, is_new)
+		public InterfaceMethod (string return_type, string name, bool is_new, Parameters args, Attributes attrs)
+			: base (name, is_new, attrs)
 		{
 			this.ReturnType = return_type;
 			this.Parameters = args;
@@ -454,8 +459,9 @@ namespace CIR {
 		public readonly Parameters Parameters;
 		public readonly string Type;
 		
-		public InterfaceIndexer (string type, Parameters args, bool do_get, bool do_set, bool is_new)
-			: base ("", is_new)
+		public InterfaceIndexer (string type, Parameters args, bool do_get, bool do_set, bool is_new,
+					 Attributes attrs)
+			: base ("", is_new, attrs)
 		{
 			Type = type;
 			Parameters = args;
