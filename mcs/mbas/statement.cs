@@ -5565,6 +5565,7 @@ namespace Mono.MonoBASIC {
 				BaseType = RedimTarget.Type.GetElementType();
 				Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);
 				ArrayCreation acExpr = new ArrayCreation (BaseTypeExpr, NewIndexes, "", null, Location.Null); 	
+				// TODO: we are in a foreach we probably can't reuse ReDimExpr, must turn it into an array(list)
 				if (Preserve)
 				{
 					// TODO: Generate call to copying code, which has to make lots of verifications
