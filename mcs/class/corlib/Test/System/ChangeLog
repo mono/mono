@@ -1,3 +1,8 @@
+2003-12-27  Nick Drochak <ndrochak@gol.com>
+
+	* AppDomainSetupTest.cs: Seems that AppDomainSetup's use the temp
+	path, not current directory.
+
 2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* Int32Test.cs:

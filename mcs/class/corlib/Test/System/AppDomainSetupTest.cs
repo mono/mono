@@ -40,7 +40,7 @@ namespace MonoTests.System
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = "lalala";
-			string expected = Path.Combine (curDir, "lalala");
+			string expected = Path.Combine (Path.GetTempPath (), "lalala");
 			AssertEquals ("AB3 #01", expected, setup.ApplicationBase);
 		}
 
