@@ -581,8 +581,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void VerifyUsing ()
 		{
-			EmitContext ec = new EmitContext (null, null, Location.Null, null,
-							  null, 0, false);
+			TypeContainer dummy = new TypeContainer ();
+			EmitContext ec = new EmitContext (
+				dummy, Location.Null, null, null, 0, false);
 
 			if (using_clauses != null){
 				foreach (UsingEntry ue in using_clauses){

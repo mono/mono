@@ -483,6 +483,15 @@ namespace Mono.CSharp {
 
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 			if ((tc != null) && tc.IsGeneric) {
+				if (!IsGeneric) {
+					int tnum = TypeManager.GetNumberOfTypeArguments (t);
+					Report.Error (305, loc,
+						      "Using the generic type `{0}' " +
+						      "requires {1} type arguments",
+						      TypeManager.GetFullName (t), tnum);
+					return null;
+				}
+
 				ConstructedType ctype = new ConstructedType (
 					t, TypeParameters, loc);
 
