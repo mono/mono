@@ -1,3 +1,10 @@
+2005-01-08  Ben Maurer  <bmaurer@ximian.com>
+
+	* object.c (mono_object_get_size): New function to get the size of
+	an object instance.
+
+	* profiler.c (simple_allocation): Use above.
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* appdomain.c: Replaced ves_icall_System_AppDomain_getDomainByID by
