@@ -134,7 +134,8 @@ namespace System.Runtime.Remoting
 		public static string GetObjectUri (MarshalByRefObject obj)
 		{
 			Identity ident = GetObjectIdentity(obj);
-			if (ident != null) return ident.ObjectUri;
+			if (ident is ClientIdentity) return ((ClientIdentity)ident).TargetUri;
+			else if (ident != null) return ident.ObjectUri;
 			else return null;
 		}
 

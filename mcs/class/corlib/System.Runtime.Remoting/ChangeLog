@@ -1,3 +1,8 @@
+2003-07-29  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RemotingServices.cs: GetObjectUri(): For client proxies, return
+	  the target url.
+
 2003-07-26  Duncan Mak  <duncan@ximian.com>
 
 	* SoapServices.cs (XmlNsForClrTypeWithNsAndAssembly):
