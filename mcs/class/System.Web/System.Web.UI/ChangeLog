@@ -1,5 +1,10 @@
 2003-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Control.cs: index the viewstates saved by the control position, not the
+	control name. Fixes bug #47697.
+
+2003-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ControlCollection.cs:
 	* EmptyControlCollection.cs: create a minimum ArrayList for this.
 

@@ -443,8 +443,7 @@ namespace System.Web.UI
 			if (inited)
 				control.InitRecursive (nc);
 
-			
-			if (viewStateLoaded) {
+			if (viewStateLoaded || loaded) {
 				if (pendingVS != null) {
 					object vs = pendingVS [index];
 					if (vs != null) {
@@ -860,7 +859,7 @@ namespace System.Web.UI
 			TrackViewState ();
 			inited = true;
                 }
-                
+
                 internal object SaveViewStateRecursive ()
                 {
 			if (!EnableViewState)
@@ -869,9 +868,11 @@ namespace System.Web.UI
 			ArrayList controlList = null;
 			ArrayList controlStates = null;
 
+			int idx = -1;
 			foreach (Control ctrl in Controls) {
 				object ctrlState = ctrl.SaveViewStateRecursive ();
-				if (ctrlState == null || ctrl.ID == null)
+				idx++;
+				if (ctrlState == null)
 					continue;
 
 				if (controlList == null) {
@@ -879,10 +880,10 @@ namespace System.Web.UI
 					controlStates = new ArrayList ();
 				}
 
-				controlList.Add (ctrl.ID);
+				controlList.Add (idx);
 				controlStates.Add (ctrlState);
 			}
-			
+
 			object thisState = SaveViewState ();
 			if (thisState == null && controlList == null && controlStates == null)
 				return null;
@@ -904,14 +905,15 @@ namespace System.Web.UI
 			ArrayList controlStates = savedInfo.Third as ArrayList;
 			int nControls = controlList.Count;
 			for (int i = 0; i < nControls; i++) {
-				Control c = FindControl ((string) controlList [i]);
-				if (c != null && controlStates != null) {
+				int k = (int) controlList [i];
+				if (k < Controls.Count && controlStates != null) {
+					Control c = Controls [k];
 					c.LoadViewStateRecursive (controlStates [i]);
 				} else {
 					if (pendingVS == null)
 						pendingVS = new Hashtable ();
 
-					pendingVS [i] = controlStates [i];
+					pendingVS [k] = controlStates [i];
 				}
 			}
 
