@@ -1,3 +1,13 @@
+2004-03-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* pending.cs (TypeAndMethods): Add `get_indexer_name' and
+	`set_indexer_name' to the pending bits (one per type).
+
+	We fixed a bug today that was picking the wrong method to
+	override, since for properties the existing InterfaceMethod code
+	basically ignored the method name.  Now we make sure that the
+	method name is one of the valid indexer names.
+
 2004-03-15  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.IndexerPropertyName): Added support

@@ -34,7 +34,7 @@ namespace Mono.CSharp {
 		// Far from ideal, but we want to avoid creating a copy
 		// of methods above.
 		public Type [][]     args;
-		
+
 		//
 		// This flag on the method says `We found a match, but
 		// because it was private, we could not use the match
@@ -45,6 +45,13 @@ namespace Mono.CSharp {
 		// create a proxy for it.  This is used when implementing
 		// an interface's indexer with a different IndexerName.
 		public MethodInfo [] need_proxy;
+
+		//
+		// The name of the indexer (if it exists), precompute set/get, because
+		// they would be recomputed many times inside a loop later on.
+		//
+		public string set_indexer_name;
+		public string get_indexer_name;
 	}
 
 	public class PendingImplementation {
@@ -152,12 +159,16 @@ namespace Mono.CSharp {
 					mi = t.GetMethods ();
 				
 				int count = mi.Length;
-				pending_implementations [i].type = missing.Type;
+				pending_implementations [i].type = t;
 				pending_implementations [i].optional = missing.Optional;
 				pending_implementations [i].methods = mi;
 				pending_implementations [i].args = new Type [count][];
 				pending_implementations [i].found = new bool [count];
 				pending_implementations [i].need_proxy = new MethodInfo [count];
+				string indexer_name = TypeManager.IndexerPropertyName (t);
+
+				pending_implementations [i].set_indexer_name = "set_" + indexer_name;
+				pending_implementations [i].get_indexer_name = "get_" + indexer_name;
 				
 				int j = 0;
 				foreach (MethodInfo m in mi){
@@ -178,6 +189,10 @@ namespace Mono.CSharp {
 				pending_implementations [i].found = new bool [count];
 				pending_implementations [i].args = new Type [count][];
 				pending_implementations [i].type = type_builder;
+
+				string indexer_name = TypeManager.IndexerPropertyName (type_builder);
+				pending_implementations [i].set_indexer_name = "set_" + indexer_name;
+				pending_implementations [i].get_indexer_name = "get_" + indexer_name;
 				
 				int j = 0;
 				foreach (MemberInfo m in abstract_methods){
@@ -314,7 +329,7 @@ namespace Mono.CSharp {
 
 		public void ImplementIndexer (Type t, MethodInfo mi, Type ret_type, Type [] args, bool clear_one) 
 		{
-			InterfaceMethod (t, mi.Name, ret_type, args,
+			InterfaceMethod (t, null, ret_type, args,
 					 clear_one ? Operation.ClearOne : Operation.ClearAll, mi);
 		}
 		
@@ -355,12 +370,18 @@ namespace Mono.CSharp {
 					if (m == null)
 						continue;
 
+					//
 					// `need_proxy' is not null when we're implementing an
 					// interface indexer and this is Clear(One/All) operation.
+					//
 					// If `name' is null, then we do a match solely based on the
 					// signature and not on the name (this is done in the Lookup
 					// for an interface indexer).
-					if ((name != null) && (need_proxy == null) && (name != m.Name))
+					//
+					if (name == null){
+						if (m.Name != tm.get_indexer_name && m.Name != tm.set_indexer_name)
+							continue;
+					} else if ((need_proxy == null) && (name != m.Name))
 						continue;
 
 					if (!TypeManager.IsEqual (ret_type, m.ReturnType)){
@@ -394,7 +415,11 @@ namespace Mono.CSharp {
 						// interface indexer.  In this case, we need to create
 						// a proxy if the implementation's IndexerName doesn't
 						// match the IndexerName in the interface.
-						if ((t == null) && (need_proxy != null) && (name != m.Name))
+						bool name_matches = false;
+						if (name == m.Name || m.Name == tm.get_indexer_name || m.Name == tm.set_indexer_name)
+							name_matches = true;
+						
+						if ((t == null) && (need_proxy != null) && !name_matches)
 							tm.need_proxy [i] = need_proxy;
 						else 
 							tm.methods [i] = null;
