@@ -1,3 +1,16 @@
+2002-08-02  Martin Baulig  <martin@gnome.org>
+
+	* expression.cs (LocalVariableReferenc): Added constructor which
+	takes additional `VariableInfo vi' and `bool is_readonly' arguments.
+	(LocalVariableReference.IsReadOnly): New property.
+	(LocalVariableReference.DoResolveLValue): Report a CS1604 if the
+	variable is readonly, use our own readonly flag to do this; you can
+	use the new constructor to get a writable reference to a read-only
+	variable.
+
+	* cs-parser.jay (foreach_statement, using_statement): Get a writable
+	reference to the local variable.
+
 2002-08-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs (ResolveCore): Also include System.Exception

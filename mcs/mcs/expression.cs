@@ -2774,6 +2774,7 @@ namespace Mono.CSharp {
 		public readonly Block Block;
 		Location loc;
 		VariableInfo variable_info;
+		bool is_readonly;
 		
 		public LocalVariableReference (Block block, string name, Location l)
 		{
@@ -2783,11 +2784,33 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 		}
 
+		// Setting `is_readonly' to false will allow you to create a writable
+		// reference to a read-only variable.  This is used by foreach and using.
+		public LocalVariableReference (Block block, string name, Location l,
+					       VariableInfo variable_info, bool is_readonly)
+			: this (block, name, l)
+		{
+			this.variable_info = variable_info;
+			this.is_readonly = is_readonly;
+		}
+
 		public VariableInfo VariableInfo {
 			get {
-				if (variable_info == null)
+				if (variable_info == null) {
 					variable_info = Block.GetVariableInfo (Name);
+					is_readonly = variable_info.ReadOnly;
+				}
 				return variable_info;
+			}
+		}
+
+		public bool IsReadOnly {
+			get {
+				if (variable_info == null) {
+					variable_info = Block.GetVariableInfo (Name);
+					is_readonly = variable_info.ReadOnly;
+				}
+				return is_readonly;
 			}
 		}
 		
@@ -2825,17 +2848,12 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-#if BROKEN
-			//
-			// Sigh:  this breaks `using' and `fixed'.  Need to review that
-			//
-			if (vi.ReadOnly){
+			if (is_readonly){
 				Report.Error (
 					1604, loc,
 					"cannot assign to `" + Name + "' because it is readonly");
 				return null;
 			}
-#endif
 			
 			return this;
 		}

@@ -3154,14 +3154,15 @@ foreach_statement
 		VariableInfo vi;
 
 		vi = foreach_block.AddVariable ((Expression) $3, (string) $4, current_local_parameters, l);
-		vi.ReadOnly = true;
 		if (vi == null){
 			Report.Error (
 				128, l, "A local variable `" + (string) $4 + "' is already "+
 				"defined in this scope");
 		}
+		vi.ReadOnly = true;
 
-		v = new LocalVariableReference (foreach_block, (string) $4, l);
+		// Get a writable reference to this read-only variable.
+		v = new LocalVariableReference (foreach_block, (string) $4, l, vi, false);
 		current_block = foreach_block;
 
 		oob_stack.Push (v);
@@ -3480,19 +3481,20 @@ using_statement
 			Expression type = (Expression) de.Key;
 			ArrayList var_declarators = (ArrayList) de.Value;
 
-			foreach (VariableDeclaration decl in var_declarators){
-				if (current_block.AddVariable (
-					type, decl.identifier, 
-					current_local_parameters, decl.Location) == null){
-					Report.Error (128, decl.Location, 
-					"A local variable `" + decl.identifier + "' is already" +
-					"defined in this scope");
-				}
-			}
-
 			ArrayList vars = new ArrayList ();
 
 			foreach (VariableDeclaration decl in var_declarators){
+
+				VariableInfo vi	= current_block.AddVariable (
+					type, decl.identifier, 
+					current_local_parameters, decl.Location);
+				if (vi == null){
+					Report.Error (128, decl.Location, 
+					"A local variable `" + decl.identifier + "' is already" +
+					"defined in this scope");
+					continue;
+				}
+				vi.ReadOnly = true;
 
 				Expression expr;
 				if (decl.expression_or_array_initializer is Expression){
@@ -3504,11 +3506,9 @@ using_statement
 				}
 
 				LocalVariableReference var;
-				VariableInfo vi;
 
-				var = new LocalVariableReference (assign_block, decl.identifier, l);
-				vi = var.VariableInfo;
-				vi.ReadOnly = true;
+				// Get a writable reference to this read-only variable.
+				var = new LocalVariableReference (assign_block, decl.identifier, l, vi, false);
 
 				// This is so that it is not a warning on using variables
 				vi.Used = true;
