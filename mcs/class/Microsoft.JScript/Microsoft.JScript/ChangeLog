@@ -1,5 +1,9 @@
 2003-10-22  cesar lopez nataren <cesar@ciencias.unam.mx>
 
+	* statement.cs: added Return class.
+
+	* Throw.cs: Added expression field, constructor and ToString.
+	
 	* jscript-lexer-parser.g: Allow return_stm and throw_stm tree
 	building.  
 	
