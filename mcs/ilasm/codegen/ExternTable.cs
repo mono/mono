@@ -48,9 +48,6 @@ namespace Mono.ILASM {
 
                 PEAPI.PEFile pefile;
                 Hashtable assembly_table;
-                Hashtable type_table;
-                Hashtable method_table;
-                Hashtable member_table;
 
                 public ExternTable (PEAPI.PEFile pefile)
                 {

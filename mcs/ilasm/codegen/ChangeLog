@@ -1,5 +1,9 @@
 2003-03-30 Jackson Harper <jackson@latitudegeo.com>
 
+	* ExternTable.cs: Remove some unsed fields.
+	
+2003-03-30 Jackson Harper <jackson@latitudegeo.com>
+
 	* ExternTable.cs: Add method to lookup classes with a full name,
 	instead of having to have namespace and name seperate.
 	* ClassTable.cs: Make method that seprates full names into
