@@ -116,11 +116,10 @@ elimination and inlining, you can use:
 .fi
 .TP
 .I "--security"
-Activate the security manager (experimental in 1.1). This allows the 
-support for declarative security attributes (e.g. execution of, CAS or 
-non-CAS, security demands). The security manager is OFF by default 
-(experimental). Note that this options is currently not compatible with
-AOT. The security manager will be disabled if AOT (--aot) is specified.
+Activate the security manager (experimental feature in 1.1). This allows 
+mono to support declarative security attributes (e.g. execution of, CAS 
+or non-CAS, security demands). The security manager is OFF by default 
+(experimental).
 .TP
 .I "-V", "--version"
 Prints JIT version information.
@@ -474,10 +473,22 @@ assemblies are located.
 Mono runtime configuration file.  See the mono-config(5) manual page
 for more information.
 .PP
-~/.config/.mono/certs
+~/.config/.mono/certs, /usr/share/.mono/certs
 .PP
-Contains Mono certificate stores. See the certmgr(1) manual page for
-more information.
+Contains Mono certificate stores for users / machine. See the certmgr(1) 
+manual page for more information on managing certificate stores.
+.PP
+~/.config/.mono/keypairs, /usr/share/.mono/keypairs
+.PP
+Contains Mono cryptographic keypairs for users / machine. They can be 
+accessed by using a CspParameters object with DSACryptoServiceProvider
+and RSACryptoServiceProvider classes.
+.PP
+~/.config/.isolatedstorage, ~/.local/share/.isolatedstorage, /usr/share/.isolatedstorage
+.PP
+Contains Mono isolated storage for non-roaming users, roaming users and 
+local machine. Isolated storage can be accessed using the classes from 
+the System.IO.IsolatedStorage namespace.
 .SH MAILING LISTS
 Visit http://lists.ximian.com/mailman/listinfo/mono-list for details.
 .SH WEB SITE
@@ -486,5 +497,3 @@ Visit: http://www.mono-project.com for details
 .BR mcs(1), mint(1), monodis(1), mono-config(5), certmgr(1).
 .PP
 For ASP.NET-related documentation, see the xsp(1) manual page
-
-
