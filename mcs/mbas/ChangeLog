@@ -1,3 +1,18 @@
+2004-08-02  Jambunathan K  <kjambunathan@novell.com>
+	* mb-tokenizer.cs: Fixed a bug where line nos were 
+	failing to get incremented when the line continuation 
+	character was appearing by itself on contiguous lines.
+	
+	* mb-parser.jay: Fixed the #ExternalSource actions
+	so that ExternalSourceDirectivesC4.vb compiles and 
+	reports source & line nos as expected.
+
+	* location.cs: Replaced the existing unintuitive, not
+	so efficient implementation of struct Location {} with 
+	the one available in mcs with one minor difference: The
+	number of bits reserved for a file index in the Token
+	is statically fixed at 8 bits.
+
 2004/08/01  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay : Revised patch from João Viegas for the labeled_statement accepting integer literals as labels
 

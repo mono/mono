@@ -4170,9 +4170,8 @@ pp_directive
 			else {
 	  			in_external_source = true;
 			
-				lexer.ref_name = (string) $4;
-				lexer.ref_line = (int) $6;
-				Mono.MonoBASIC.Location.Push(lexer.ref_name);
+				lexer.EffectiveSource = (string) $4;
+				lexer.EffectiveLine = (int) $6;
 			}
 	  	}
 	  }
@@ -4199,8 +4198,8 @@ pp_directive
 					Report.Error (30578, lexer.Location, "'#End ExternalSource' must be preceded by a matching '#ExternalSource'");
 				else {
 					in_external_source = false;
-					lexer.ref_name = lexer.file_name;
-					lexer.ref_line = lexer.line;
+					lexer.EffectiveSource = lexer.Source;
+					lexer.EffectiveLine = lexer.Line;
 				}
 	  		}
 			else if(($3 as string).ToLower().Equals("region")) {
@@ -4807,7 +4806,7 @@ protected override int parse ()
 		Report.Error(e.code, e.loc, e.Message);
 	}
 	catch (Exception e) {
-		Report.Error (29999, lexer.Location, lexer.location + "\nParsing error in " + lexer.ref_name + "\n" + e.ToString());
+		Report.Error (29999, lexer.Location, lexer.location + "\nParsing error in " + lexer.EffectiveSource + "\n" + e.ToString());
 	}
 
 	RootContext.VerifyImports();

@@ -20,50 +20,64 @@ namespace Mono.MonoBASIC {
 	///
 	/// <remarks>
 	///   This uses a compact representation and a couple of auxiliary
-	///   structures to keep track of tokens to (file,line) mappings.
+	///   structures to keep track of tokens to (line, col, file) mappings.
 	///
-	///   We could probably also keep track of columns by storing those
-	///   in 8 bits (and say, map anything after char 255 to be `255+').
-	/// </remarks>
 	public struct Location {
-		public int token; 
+		const int NUM_ROW_BITS = 16;
+		const int NUM_COL_BITS =  8;
+		const int NUM_FILE_BITS = (32-NUM_ROW_BITS-NUM_COL_BITS);
+		
+		const int NUM_FILE_SHIFTS = 0;
+		const int NUM_ROW_SHIFTS = NUM_FILE_BITS;
+		const int NUM_COL_SHIFTS =  NUM_ROW_BITS+NUM_FILE_BITS;
 
-		static Hashtable map;
+		const int FILE_MASK = (1<<NUM_FILE_BITS)-1;
+		const int ROW_MASK = ((1<<NUM_ROW_BITS)-1)<<NUM_FILE_BITS;
+		const int COL_MASK = ((1<<NUM_COL_BITS)-1)<<(NUM_ROW_BITS+NUM_FILE_BITS);
+		
+		public int token; // ordered triplet: (Row, Col, File Index)
+
+		static ArrayList source_list;
+		static Hashtable source_files;
+		static int source_count;
+		static int current_source;
 		static Hashtable sym_docs;
-		static ArrayList list;
-		static int global_count;
-		static int module_base;
 
 		public readonly static Location Null;
 		
 		static Location ()
 		{
-			map = new Hashtable ();
-			list = new ArrayList ();
+			source_files = new Hashtable ();
+			source_list = new ArrayList ();
+			current_source = 0;
 			sym_docs = new Hashtable ();
-			global_count = 0;
-			module_base = 0;
-			Null.token = -1;
+			Null.token = 0;
 		}
 
-		static public void Push (string name)
+		static public void SetCurrentSource(string name)
 		{
-			map.Remove (global_count);
-			map.Add (global_count, name);
-			list.Add (global_count);
-			module_base = global_count;
+			int index;
+			
+			if (!source_files.Contains (name)) {
+				index = ++source_count;
+				source_files.Add (name, index);
+				source_list.Add (name);
+			}
+			else {
+				index = (int)source_files[name];
+			}
+
+			current_source = index;
 		}
 		
 		public Location (int row, int col)
 		{
 			if (row < 0 || col <  0)
-				token = -1;
+				token = 0;
 			else {
 				if (col > 255)
 					col = 255;
-				token = module_base + (row << 8) + col;
-				if (global_count < token)
-					global_count = token;
+				token = (current_source<<NUM_FILE_SHIFTS) + (row<<NUM_ROW_SHIFTS) + (col<<NUM_COL_SHIFTS);
 			}
 		}
 
@@ -72,56 +86,37 @@ namespace Mono.MonoBASIC {
 			return Name + ": (" + Row + ")";
 		}
 		
-		/// <summary>
-		///   Whether the Location is Null
-		/// </summary>
 		static public bool IsNull (Location l)
 		{
-			return l.token == -1;
+			return l.token == 0;
 		}
 
 		public string Name {
 			get {
-				int best = 0;
-				
-				if (token < 0)
+				if(token == 0)
 					return "Internal";
 
-				foreach (int b in list){
-					if (token > b)
-						best = b;
-				}
-				return (string) map [best];
+				int index = (token & FILE_MASK)>>NUM_FILE_SHIFTS;
+				string file = (string) source_list [index - 1];
+				return file;
 			}
 		}
 
 		public int Row {
 			get {
-				int best = 0;
-				
-				if (token < 0)
+				if (token == 0)
 					return 1;
-				
-				foreach (int b in list){
-					if (token > b)
-						best = b;
-				}
-				return (token - best) >> 8;
+
+				return (token & ROW_MASK)>>NUM_ROW_SHIFTS;
 			}
 		}
 
 		public int Col {
 			get {
-				int best = 0;
-				
-				if (token < 0)
+				if (token == 0)
 					return 1;
 				
-				foreach (int b in list){
-					if (token > b)
-						best = b;
-				}
-				return (token - best) & 0xFF;
+				return (token & COL_MASK)>>NUM_COL_SHIFTS;
 			}
 		}
 
