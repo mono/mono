@@ -9,6 +9,16 @@
 	* DataGridPagerStyle.cs       - Completed. That adds one more missle
 	            in my artillery.
 	* DataKeyCollection.cs        - Completed. Petty small.
+	* Repeater.cs                 - Work started off. This is a quite
+	            heavy class. Hooh!
+	* DataGridItemEventArgs.cs,
+	* DataGridShortCommandEventArgs.cs,
+	* DataListItemEventArgs.cs,
+	* MonthChangedEventArgs.cs,
+	* RepeaterItemEventArgs.cs,
+	* ServerValidateEventArgs.cs
+	                              - Damn, I marked them "*", while they
+	            did not exist.
 
 2002-03-03      Gaurav Vaish <gvaish@iitk.ac.in>
 

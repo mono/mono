@@ -80,7 +80,7 @@ All Classes, Interfaces, Structures, Delegates and Enumerations
 & RadioButtonList
 * RangeValidator
 * RegularExpressionValidator
-Repeater
+& Repeater
 * RepeaterCommandEventArgs
 & RepeaterItem
 * RepeaterItemCollection
