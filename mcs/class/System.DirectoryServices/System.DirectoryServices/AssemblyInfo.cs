@@ -20,7 +20,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 *******************************************************************************/
-
+using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -37,6 +37,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
+[assembly: CLSCompliant(true)]
 
 //
 // Version information for an assembly consists of the following four values:
