@@ -1,3 +1,7 @@
+2004-05-29  Jackson Harper  <jackson@ximian.com>
+
+	* AssemblyInfo.cs: Sign corlib for net_2_0 now too.
+	
 2004-05-26 Jordi Mas <jordi@ximian.com>
 
 	*  AssemblyInfo.cs: fixes CS1024: Preprocessor directive expected
