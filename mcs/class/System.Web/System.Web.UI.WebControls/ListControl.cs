@@ -227,13 +227,6 @@ namespace System.Web.UI.WebControls
 				{
 					items = new ListItemCollection();
 					
-#if NET_2_0
-					if (selectedIndices != null) {
-						Select (selectedIndices);
-						selectedIndices = null;
-					}
-#endif
-					
 					if(IsTrackingViewState)
 					{
 						items.TrackViewState();
@@ -434,6 +427,10 @@ namespace System.Web.UI.WebControls
 				base.LoadViewState(state.First);
 				Items.LoadViewState(state.Second);
 			}
+			if (selectedIndices != null) {
+				Select (selectedIndices);
+				selectedIndices = null;
+			}
 		}
 #endif
 
@@ -595,6 +592,10 @@ namespace System.Web.UI.WebControls
 			object[] state = (object[]) ob;
 			base.LoadControlState (state[0]);
 			selectedIndices = state[1] as ArrayList;
+			if (!EnableViewState) {
+				Select (selectedIndices);
+				selectedIndices = null;
+			}
 		}
 		
 		protected internal override object SaveControlState ()

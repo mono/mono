@@ -1,3 +1,7 @@
+2005-03-16  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ListControl.cs: Load selected indices in the right place. Fixes #73745.
+
 2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Button.cs, ImageButton.cs: Interpret PostBackOptions.ClientSubmit
