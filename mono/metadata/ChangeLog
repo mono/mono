@@ -1,3 +1,9 @@
+2004-04-18  Bernie Solomon <bernard@ugsolutions.com>
+
+	* icall.c (ves_icall_System_Text_Encoding_InternalCodePage):
+	fix test on strstr result not that I can see anything that
+	relies on the result.
+
 2004-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* metadata.c (mono_type_to_unmanaged): Handle MONO_NATIVE_FUNC as well.
