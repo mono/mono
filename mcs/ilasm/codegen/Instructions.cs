@@ -23,7 +23,7 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="ilgen"></param>
-		public override void Emit (ILGenerator ilgen, CodeGen code_gen)
+		public override void Emit (ILGenerator ilgen, Class host)
 		{
 			ilgen.Emit (this.Opcode);
 		}
@@ -48,7 +48,7 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="ilgen"></param>
-		public override void Emit (ILGenerator ilgen, CodeGen code_gen)
+		public override void Emit (ILGenerator ilgen, Class host)
 		{
 			if (operand is string) {
 				ilgen.Emit (Opcode, operand as string);
@@ -76,7 +76,7 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="ilgen"></param>
-		public override void Emit (ILGenerator ilgen, CodeGen code_gen) {
+		public override void Emit (ILGenerator ilgen, Class host) {
 				ilgen.Emit (Opcode, operand);
 		}
 	}
@@ -99,7 +99,7 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="ilgen"></param>
-		public override void Emit (ILGenerator ilgen, CodeGen code_gen) {
+		public override void Emit (ILGenerator ilgen, Class host) {
 			ilgen.Emit (Opcode, operand);
 		}
 	}
@@ -122,7 +122,7 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="ilgen"></param>
-		public override void Emit (ILGenerator ilgen, CodeGen code_gen) {
+		public override void Emit (ILGenerator ilgen, Class host) {
 			if (Opcode.Name.IndexOf (".r4") != -1) {
 				ilgen.Emit (Opcode, (float) operand);
 			} else {
@@ -150,7 +150,7 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="ilgen"></param>
-		public override void Emit (ILGenerator ilgen, CodeGen code_gen) {
+		public override void Emit (ILGenerator ilgen, Class host) {
 			ilgen.Emit (Opcode, operand);
 		}
 	}
@@ -233,12 +233,17 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="ilgen"></param>
-		public override void Emit (ILGenerator ilgen, CodeGen code_gen) {
-			Type type_to_call = code_gen.TypeManager[calling_type];
+		public override void Emit (ILGenerator ilgen, Class host) {
+			Type type_to_call = host.CodeGen.TypeManager[calling_type];
 			MethodInfo calling_method;
 			
-			calling_method = type_to_call.GetMethod (method_name, CreateBindingFlags (), 
-				null, CreateArgsTypeArray (code_gen), null);
+			if (type_to_call == host.TypeBuilder) {
+				calling_method = host.GetMethod (method_name, CreateBindingFlags (), 
+					CreateArgsTypeArray (host.CodeGen));
+			} else {
+				calling_method = type_to_call.GetMethod (method_name, CreateBindingFlags (), 
+					null, CreateArgsTypeArray (host.CodeGen), null);
+			}
 
 			if (calling_method == null) {
 				Console.WriteLine ("Method does not exist: {0}.{1}", type_to_call, method_name);
@@ -268,11 +273,11 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="ilgen"></param>
-		public override void Emit (ILGenerator ilgen, CodeGen code_gen) {
-			Type type_to_call = code_gen.TypeManager[calling_type];
+		public override void Emit (ILGenerator ilgen, Class host) {
+			Type type_to_call = host.CodeGen.TypeManager[calling_type];
 			ConstructorInfo calling_constructor = null;
 
-			calling_constructor = type_to_call.GetConstructor (CreateArgsTypeArray (code_gen));
+			calling_constructor = type_to_call.GetConstructor (CreateArgsTypeArray (host.CodeGen));
 			
 			if (calling_constructor == null) {
 				Console.WriteLine ("Constructor does not exist for: {0}", type_to_call);

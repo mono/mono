@@ -111,7 +111,6 @@ namespace Mono.ILASM {
 			}
 		}
 
-
 		/// <summary>
 		/// </summary>
 		/// <param name="cg"></param>
@@ -119,17 +118,53 @@ namespace Mono.ILASM {
 		{
 			codgen = cg;
 			
+			TypeBuilder.CreateType();
+			cg.TypeManager[name] = TypeBuilder;
+
+			if (methods != null) {
+				foreach (Method m in methods) 
+					m.Resolve (this);
+			}
+
 			if (methods != null) {
 				foreach (Method m in methods) {
 					m.Emit (this);
 					if (m.IsEntryPoint)
-						cg.SetEntryPoint (m.Info);
+						cg.SetEntryPoint (m.Builder);
 				}
-			}
-			
-			TypeBuilder.CreateType();
+			}	
 		}
+		
+		// This can be removed when System.Reflection.Emit.TypeBuilder.GetMethod is implemented
+		// TODO: This function needs allot of work
+		public MethodInfo GetMethod (string method_name, BindingFlags binding_flags,
+			Type[] param_type_list)
+		{
+			foreach (Method method in methods) {
+				if (method.Name != method_name)
+					continue;
+				ParameterInfo[] param_info = method.Builder.GetParameters ();
+				if (param_info == null) {
+					if (param_type_list.Length == 0)
+						return method.Builder;
+					else
+						continue;
+				}
+				
+				int size = param_info.Length;
+				if (param_info.Length != size)
+					continue;
+				for (int i=0; i<size; i++) {
+					if (param_type_list[i] != param_info[i].ParameterType)
+						goto end;	
+				}
 
+				return method.Builder;
+				end: continue;
+			}
+	
+			return null;
+		}
 	}
 }
 

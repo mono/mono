@@ -1,5 +1,15 @@
 2003-02-09 Jackson Harper <jackson@latitudegeo.com>
 
+	* Class.cs: Resolve Methods before emiting
+	* InstrBase.cs: Take a Class instead of CodeGen when emiting
+	* Method.cs: Replace MethodInfo property with MethodBuilder property,
+        	Add resolve method
+	* Instructions.cs: Take Class instead of CodeGen when emitting, 
+	        get member methods from Class.
+	* TypeManager.cs: Add set indexer
+
+2003-02-09 Jackson Harper <jackson@latitudegeo.com>
+
 	* Instructions.cs: Use TypeManager to lookup types
 
 2003-02-08 Jackson Harper <jackson@latitudegeo.com>

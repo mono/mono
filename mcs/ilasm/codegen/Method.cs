@@ -202,8 +202,6 @@ namespace Mono.ILASM {
 			}
 		}
 
-
-
 		/// <summary>
 		/// </summary>
 		/// <returns></returns>
@@ -213,10 +211,16 @@ namespace Mono.ILASM {
 			                      Name, Attrs, CallConv, RetType, InstrCount);
 		}
 
-		public MethodInfo Info {
+		public MethodBuilder Builder {
 			get {
 				return method_builder;
 			}
+		}
+
+		public void Resolve (Class host)
+		{
+			Type return_type = host.CodeGen.TypeManager[RetType];
+			method_builder = host.TypeBuilder.DefineMethod (Name, Attrs, CallConv, return_type, null);
 		}
 
 		/// <summary>
@@ -228,8 +232,6 @@ namespace Mono.ILASM {
 
 			if (IsCtor) {
 			} else {
-				Type rt = host.CodeGen.RefTypes.Lookup (RetType);
-				method_builder = tb.DefineMethod (Name, Attrs, CallConv, rt, null);
 				ILGenerator ilgen = method_builder.GetILGenerator ();
 
 				if (local_list != null) {
@@ -245,7 +247,7 @@ namespace Mono.ILASM {
 
 				if (instructions != null) {
 					foreach (InstrBase instr in instructions)
-						instr.Emit (ilgen, host.CodeGen);
+						instr.Emit (ilgen, host);
 				}
 			}
 		}

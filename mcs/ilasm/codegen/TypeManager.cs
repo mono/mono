@@ -48,9 +48,11 @@ namespace Mono.ILASM {
 				if (return_type == null) {
 					return_type = LoadType (type_name);
 					type_table[type_name] = return_type;
-				}
-				
+				}		
 				return return_type;
+			}
+			set {
+				type_table[type_name] = value;
 			}
 		}
 
