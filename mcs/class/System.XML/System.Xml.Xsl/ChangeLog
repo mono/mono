@@ -1,3 +1,8 @@
+2003-12-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Multiplexer.cs : Now we use managed XSLT engine by default.
+	  Added obsolete attribute to Transform()s without xmlresolver.
+
 2003-12-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XsltException.cs, XsltCompileException.cs : Added locatable .ctor().

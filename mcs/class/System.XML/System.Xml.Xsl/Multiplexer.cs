@@ -26,7 +26,7 @@ namespace System.Xml.Xsl {
 		#region Constructors
 		public XslTransform ()
 		{
-			if (Environment.GetEnvironmentVariable ("MONO_MANAGED_XSLT") != null)
+			if (Environment.GetEnvironmentVariable ("MONO_UNMANAGED_XSLT") == null)
 				impl = new ManagedXslTransform ();
 			else
 				impl = new UnmanagedXslTransform ();
@@ -44,6 +44,9 @@ namespace System.Xml.Xsl {
 		}
 		
 		#region Transform
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args)
 		{
 			return Transform (input.CreateNavigator (), args, xmlResolver);
@@ -58,6 +61,9 @@ namespace System.Xml.Xsl {
 			return Transform (input.CreateNavigator (), args, resolver);
 		}
 
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
 		{
 			return Transform (input, args, xmlResolver);
@@ -75,6 +81,9 @@ namespace System.Xml.Xsl {
 			return new XmlTextReader (stream);
 		}
 
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
 		{
 			Transform (input.CreateNavigator (), args, output, xmlResolver);
@@ -88,6 +97,9 @@ namespace System.Xml.Xsl {
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 		
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output)
 		{
 			Transform (input.CreateNavigator (), args, output, xmlResolver);
@@ -101,6 +113,9 @@ namespace System.Xml.Xsl {
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 		
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
 		{
 			Transform (input.CreateNavigator (), args, output, xmlResolver);
@@ -114,6 +129,9 @@ namespace System.Xml.Xsl {
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
 		{
 			impl.Transform (input, args, output, xmlResolver);
@@ -127,6 +145,9 @@ namespace System.Xml.Xsl {
 			impl.Transform (input, args, output, resolver);
 		}
 
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
 		{
 			impl.Transform (input, args, new XmlTextWriter (output, null), xmlResolver);		
@@ -140,6 +161,9 @@ namespace System.Xml.Xsl {
 			impl.Transform (input, args, new XmlTextWriter (output, null), resolver);
 		}
 
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
 		{
 			impl.Transform (input, args, output, xmlResolver);
@@ -153,6 +177,9 @@ namespace System.Xml.Xsl {
 			impl.Transform (input, args, output, resolver);
 		}
 		
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
 		public void Transform (string inputfile, string outputfile)
 		{ 
 			impl.Transform (inputfile, outputfile, xmlResolver);
