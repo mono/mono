@@ -1,3 +1,7 @@
+2003-05-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.h class.c reflection.c object.c: Added support for field
+	defaults in dynamically generated classes.
 
 Wed May 14 13:35:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
