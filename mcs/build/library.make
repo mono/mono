@@ -26,7 +26,7 @@ test_sourcefile = $(test_lib).sources
 test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
 test_stampfile = $(depsdir)/$(PROFILE)_$(test_lib).stamp
-test_flags = /r:$(the_lib) /r:$(topdir)/class/lib/NUnit.Framework.dll $(TEST_MCS_FLAGS)
+test_flags = /r:$(the_lib) /r:$(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll $(TEST_MCS_FLAGS)
 endif
 
 all-local: $(the_lib)
