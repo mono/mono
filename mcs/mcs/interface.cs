@@ -1061,7 +1061,6 @@ namespace Mono.CSharp {
 			HasSet = has_set;
 			m_get = new PropertyAccessor (get_attrs);
 			m_set = new PropertyAccessor (set_attrs);
-			ReturnType = type;
 		}
 
 		public override EmitContext Emit (TypeContainer tc, DeclSpace ds) {
