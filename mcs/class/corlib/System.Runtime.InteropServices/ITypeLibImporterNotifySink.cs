@@ -38,6 +38,6 @@ namespace System.Runtime.InteropServices {
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface ITypeLibImporterNotifySink {
 		void ReportEvent(ImporterEventKind eventKind, int eventCode, string eventMsg);
-		Assembly ResolveRef(object typeLib);
+		Assembly ResolveRef([MarshalAs(UnmanagedType.Interface)] object typeLib);
 	}
 }

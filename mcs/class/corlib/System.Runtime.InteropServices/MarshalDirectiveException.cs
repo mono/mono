@@ -33,6 +33,7 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
+	[Serializable]
 	public class MarshalDirectiveException : SystemException
 	{
 		private const int ErrorCode = -2146233035; // = 0x80131535

@@ -36,13 +36,13 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIMoniker
 	{
-		void BindToObject (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riidResult, out object ppvResult);
-		void BindToStorage (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riid, out object ppvObj);
+		void BindToObject (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riidResult, [MarshalAs (UnmanagedType.Interface)] out object ppvResult);
+		void BindToStorage (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riid, [MarshalAs (UnmanagedType.Interface)] out object ppvObj);
 		void CommonPrefixWith (UCOMIMoniker pmkOther, out UCOMIMoniker ppmkPrefix);
-		void ComposeWith (UCOMIMoniker pmkRight, bool fOnlyIfNotGeneric, out UCOMIMoniker ppmkComposite);
-		void Enum (bool fForward, out UCOMIEnumMoniker ppenumMoniker);
+		void ComposeWith (UCOMIMoniker pmkRight, [MarshalAs (UnmanagedType.LPWStr)] bool fOnlyIfNotGeneric, out UCOMIMoniker ppmkComposite);
+		void Enum ([MarshalAs(UnmanagedType.Bool)] bool fForward, out UCOMIEnumMoniker ppenumMoniker);
 		void GetClassID (out Guid pClassID);
-		void GetDisplayName (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, out string ppszDisplayName);
+		void GetDisplayName (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [MarshalAs (UnmanagedType.LPWStr)] out string ppszDisplayName);
 		void GetSizeMax (out long pcbSize);
 		void GetTimeOfLastChange (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, out FILETIME pFileTime);
 		void Hash (out int pdwHash);
@@ -52,9 +52,9 @@ namespace System.Runtime.InteropServices
 		void IsRunning (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, UCOMIMoniker pmkNewlyRunning);
 		void IsSystemMoniker (out int pdwMksys);
 		void Load (UCOMIStream pStm);
-		void ParseDisplayName (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, string pszDisplayName, out int pchEaten, out UCOMIMoniker ppmkOut);
+		void ParseDisplayName (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [MarshalAs (UnmanagedType.LPWStr)] string pszDisplayName, out int pchEaten, out UCOMIMoniker ppmkOut);
 		void Reduce (UCOMIBindCtx pbc, int dwReduceHowFar, ref UCOMIMoniker ppmkToLeft, out UCOMIMoniker ppmkReduced);
 		void RelativePathTo (UCOMIMoniker pmkOther, out UCOMIMoniker ppmkRelPath);
-		void Save (UCOMIStream pStm, bool fClearDirty);
+		void Save (UCOMIStream pStm, [MarshalAs (UnmanagedType.Bool)] bool fClearDirty);
 	}
 }

@@ -1,3 +1,33 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ArrayWithOffset.cs: fixed GetOffset to return int instead of
+	object
+	* CONNECTDATA.cs: added missing MarshalAs attribute
+	* EXCEPINFO.cs: added missing MarshalAs attributes
+	* ITypeLibConverter.cs:
+	* ITypeLibImporterNotifySink.cs: 
+	* Marshal.cs: added missing MarshalAs attributues, and missing
+	Out attributes
+	* TypeLibConverter.cs: added missing MarshalAs attributes
+	* UCOMIBindCtx.cs: 
+	* UCOMIConnectionPoint.cs:
+	* UCOMIEnumConnectionPoints.cs:
+	* UCOMIEnumConnections.cs: added missing PreserveSig attributes,
+	added missing MarshalAs attributes
+	* UCOMIEnumMoniker.cs: added missing PreserveSig attributes,
+	added missing MarshalAs attributes
+	* UCOMIEnumString.cs: added missing PreserveSig attributes,
+	added missing MarshalAs attributes
+	* UCOMIMoniker.cs: added missing MarshalAs attributes
+	* UCOMIPersistFile.cs: added missing PreserveSig attribute,
+	added missing MarshalAs attributes
+	* UCOMIRunningObjectTable.cs: added missing MarshalAs attributes
+	* UCOMIStream.cs: added missing MarshalAs attributes
+	* UCOMITypeComp.cs: added missing MarshalAs attributes
+	* UCOMITypeInfo.cs: added missing MarshalAs attributes
+	* UCOMITypeLib.cs: added missing PreserveSig attributes, added
+	missing MarshalAs attributes
+
 2004-05-30  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* SetWin32ContextInIDispatchAttribute.cs: only build

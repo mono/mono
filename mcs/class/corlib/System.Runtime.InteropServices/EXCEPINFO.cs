@@ -35,8 +35,11 @@ namespace System.Runtime.InteropServices
 
 	[ComVisible(false)]
 	public struct EXCEPINFO {
+		[MarshalAs (UnmanagedType.BStr)]
 		public string bstrDescription;
+		[MarshalAs (UnmanagedType.BStr)]
 		public string bstrHelpFile;
+		[MarshalAs (UnmanagedType.BStr)]
 		public string bstrSource;
 		public int dwHelpContext;
 		public IntPtr pfnDeferredFillIn;
