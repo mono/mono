@@ -15,6 +15,7 @@ using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using Mono.Xml.Xsl;
+using Mono.Xml.Xsl.Functions;
 
 namespace Mono.Xml.XPath {
 	public abstract class Pattern {
@@ -70,8 +71,17 @@ namespace Mono.Xml.XPath {
 				return p1;
 			}
 			
-			// TODO: Handle ID/KEY
-			
+			if (e is XPathFunctionId)
+			{
+				ExprLiteral id = ((XPathFunctionId) e).Id as ExprLiteral;
+				return new IdPattern (id.Value);
+			}
+
+			if (e is XsltKey)
+			{
+				return new KeyPattern ((XsltKey) e);
+			}
+
 			throw new Exception ("Invalid Pattern");
 		}
 		

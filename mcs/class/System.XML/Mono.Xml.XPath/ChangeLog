@@ -1,3 +1,10 @@
+2003-11-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* IdPattern.cs,
+	  KeyPattern.cs : Implemented Matches(), overrode DefaultPriority,
+	  modified inheritance.
+	* Pattern.cs : Added id and key pattern support.
+
 2003-11-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTMXPathNavigator.cs : Fixed MoveToNamespace() that might result in
