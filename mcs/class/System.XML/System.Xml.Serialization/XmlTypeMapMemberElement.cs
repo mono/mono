@@ -70,9 +70,8 @@ namespace System.Xml.Serialization
 			else if (_choiceMember != null)
 			{
 				object value = GetValue (ob, _choiceMember);
-				string choiceValue = value is IFormattable ? ((IFormattable) value).ToString (null, CultureInfo.InvariantCulture) : value.ToString();
 				foreach (XmlTypeMapElementInfo elem in _elementInfo)
-					if (elem.ChoiceValue == choiceValue) return elem;
+					if (elem.ChoiceValue != null && elem.ChoiceValue.Equals (value)) return elem;
 			}
 			else
 			{
@@ -83,6 +82,11 @@ namespace System.Xml.Serialization
 					if (elem.TypeData.Type == type) return elem;
 			}
 			return null;
+		}
+		
+		public void SetChoice (object ob, object choice)
+		{
+			SetValue (ob, _choiceMember, choice);
 		}
 
 		public bool IsXmlTextCollector

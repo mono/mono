@@ -101,6 +101,13 @@ namespace System.Xml.Serialization
 			else ((FieldInfo)_member).SetValue (ob, value);
 		}
 
+		public static void SetValue (object ob, string name, object value)
+		{
+			MemberInfo[] mems = ob.GetType().GetMember (name, BindingFlags.Instance|BindingFlags.Public);
+			if (mems[0] is PropertyInfo) ((PropertyInfo)mems[0]).SetValue (ob, value, null);
+			else ((FieldInfo)mems[0]).SetValue (ob, value);
+		}
+
 		void InitMember (Type type)
 		{
 			MemberInfo[] mems = type.GetMember (_name, BindingFlags.Instance|BindingFlags.Public);

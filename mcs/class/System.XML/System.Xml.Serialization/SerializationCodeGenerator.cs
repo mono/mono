@@ -1775,6 +1775,10 @@ namespace System.Xml.Serialization
 							WriteLineUni ("}");
 						}
 						else if (!GenerateReadMemberHook (xmlMapType, info.Member)) {
+							if (info.ChoiceValue != null) {
+								XmlTypeMapMemberElement imem = (XmlTypeMapMemberElement) info.Member;
+								WriteLine (ob + ".@" + imem.ChoiceMember + " = " + GetLiteral(info.ChoiceValue) + ";");
+							}
 							GenerateSetMemberValue (info.Member, ob, GenerateReadObjectElement (info), isValueList);
 							GenerateEndHook ();
 						}

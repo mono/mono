@@ -1,3 +1,14 @@
+2005-03-30  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs: 
+	* XmlSerializationReaderInterpreter.cs: If the element being read is
+	bound to a choice member, set the corresponding value.
+	* XmlTypeMapMember.cs: Added helper SetValue method.
+	* XmlTypeMapElementInfo.cs: Changed the type of ChoiceValue to Object,
+	since now stores the enum value.
+	* XmlReflectionImporter.cs: Properly import choice values.
+	* XmlTypeMapMemberElement.cs: Added setter for the choice.
+
 2005-03-29  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlReflectionImporter.cs: Added support for subclasses of XmlNode.

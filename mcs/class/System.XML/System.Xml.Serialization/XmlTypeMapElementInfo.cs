@@ -43,7 +43,7 @@ namespace System.Xml.Serialization
 		string _namespace = "";
 		XmlSchemaForm _form;
 		XmlTypeMapMember _member;
-		string _choiceValue;
+		object _choiceValue;
 		bool _isNullable;
 		int _nestingLevel;	// Only for array items
 		XmlTypeMapping _mappedType;
@@ -62,7 +62,7 @@ namespace System.Xml.Serialization
 			set { _type = value; }
 		}
 
-		public string ChoiceValue
+		public object ChoiceValue
 		{
 			get { return _choiceValue; }
 			set { _choiceValue = value; }
@@ -158,9 +158,10 @@ namespace System.Xml.Serialization
 			if (_type.XmlType != oinfo._type.XmlType) return false;
 			if (_namespace != oinfo._namespace) return false;
 			if (_form != oinfo._form) return false;
-			if (_choiceValue != oinfo._choiceValue) return false;
 			if (_type != oinfo._type) return false;
 			if (_isNullable != oinfo._isNullable) return false;
+			if (_choiceValue != null && !_choiceValue.Equals (oinfo._choiceValue)) return false;
+			if (_choiceValue != oinfo._choiceValue) return false;
 			return true;
 		}
 

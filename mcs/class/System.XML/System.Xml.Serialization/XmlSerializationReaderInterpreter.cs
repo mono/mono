@@ -402,8 +402,13 @@ namespace System.Xml.Serialization
 								else if (val != null)
 									SetMemberValue (info.Member, ob, val, isValueList);
 							}
-							else 
+							else {
 								SetMemberValue (info.Member, ob, ReadObjectElement (info), isValueList);
+								if (info.ChoiceValue != null) {
+									XmlTypeMapMemberElement imem = (XmlTypeMapMemberElement) info.Member;
+									imem.SetChoice (ob, info.ChoiceValue);
+								}
+							}
 						}
 						else
 							throw new InvalidOperationException ("Unknown member type");

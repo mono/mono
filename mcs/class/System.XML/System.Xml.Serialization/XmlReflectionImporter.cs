@@ -109,7 +109,7 @@ namespace System.Xml.Serialization {
 			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
 			for (int n=0; n<members.Length; n++)
 			{
-				XmlTypeMapMember mapMem = CreateMapMember (members[n], ns);
+				XmlTypeMapMember mapMem = CreateMapMember (null, members[n], ns);
 				mapping[n] = new XmlMemberMapping (members[n].MemberName, ns, mapMem, false);
 			}
 			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, false, mapping);
@@ -280,7 +280,7 @@ namespace System.Xml.Serialization {
 						ns = bmap.XmlTypeNamespace;
 					}
 					
-					XmlTypeMapMember mem = CreateMapMember (rmember, ns);
+					XmlTypeMapMember mem = CreateMapMember (type, rmember, ns);
 					mem.CheckOptionalValueType (type);
 					classMap.AddMember (mem);
 				}
@@ -665,7 +665,7 @@ namespace System.Xml.Serialization {
 			return members;		
 		}
 		
-		private XmlTypeMapMember CreateMapMember (XmlReflectionMember rmember, string defaultNamespace)
+		private XmlTypeMapMember CreateMapMember (Type declaringType, XmlReflectionMember rmember, string defaultNamespace)
 		{
 			XmlTypeMapMember mapMember;
 			XmlAttributes atts = rmember.XmlAttributes;
@@ -748,7 +748,7 @@ namespace System.Xml.Serialization {
 					// TODO: check that it does not have XmlArrayAttribute
 					XmlTypeMapMemberFlatList member = new XmlTypeMapMemberFlatList ();
 					member.ListMap = new ListMap ();
-					member.ListMap.ItemInfo = ImportElementInfo (rmember.MemberName, defaultNamespace, typeData.ListItemType, member, atts);
+					member.ListMap.ItemInfo = ImportElementInfo (declaringType, rmember.MemberName, defaultNamespace, typeData.ListItemType, member, atts);
 					member.ElementInfo = member.ListMap.ItemInfo;
 					mapMember = member;
 				}
@@ -776,7 +776,7 @@ namespace System.Xml.Serialization {
 				// An element
 
 				XmlTypeMapMemberElement member = new XmlTypeMapMemberElement ();
-				member.ElementInfo = ImportElementInfo (rmember.MemberName, defaultNamespace, rmember.MemberType, member, atts);
+				member.ElementInfo = ImportElementInfo (declaringType, rmember.MemberName, defaultNamespace, rmember.MemberType, member, atts);
 				mapMember = member;
 			}
 
@@ -787,11 +787,29 @@ namespace System.Xml.Serialization {
 			return mapMember;
 		}
 
-		XmlTypeMapElementInfoList ImportElementInfo (string defaultName, string defaultNamespace, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts)
+		XmlTypeMapElementInfoList ImportElementInfo (Type cls, string defaultName, string defaultNamespace, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts)
 		{
+			EnumMap choiceEnumMap = null;
+			Type choiceEnumType = null;
+			
 			XmlTypeMapElementInfoList list = new XmlTypeMapElementInfoList();
-
 			ImportTextElementInfo (list, defaultType, member, atts);
+			
+			if (atts.XmlChoiceIdentifier != null) {
+				if (cls == null)
+					throw new InvalidOperationException ("XmlChoiceIdentifierAttribute not supported in this context.");
+					
+				member.ChoiceMember = atts.XmlChoiceIdentifier.MemberName;
+				MemberInfo[] mems = cls.GetMember (member.ChoiceMember, BindingFlags.Instance|BindingFlags.Public);
+				
+				if (mems.Length == 0)
+					throw new InvalidOperationException ("Choice member '" + member.ChoiceMember + "' not found in class '" + cls);
+					
+				if (mems[0] is PropertyInfo) choiceEnumType = ((PropertyInfo)mems[0]).PropertyType;
+				else choiceEnumType = ((FieldInfo)mems[0]).FieldType;
+				
+				choiceEnumMap = (EnumMap) ImportTypeMapping (choiceEnumType).ObjectMap;
+			}
 			
 			if (atts.XmlElements.Count == 0 && list.Count == 0)
 			{
@@ -831,6 +849,12 @@ namespace System.Xml.Serialization {
 				else
 					elem.ElementName = defaultName;
 
+				if (choiceEnumMap != null) {
+					string cname = choiceEnumMap.GetEnumName (elem.ElementName);
+					if (cname == null) throw new InvalidOperationException ("The '" + choiceEnumType + "' enumeration does not have a value for the element '" + elem.ElementName + "'");
+					elem.ChoiceValue = Enum.Parse (choiceEnumType, cname);
+				}
+					
 				list.Add (elem);
 			}
 			return list;
