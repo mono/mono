@@ -1,5 +1,11 @@
 2004-08-11  Sanjay Gupta <gsanjay@novell.com>
 
+	* DetailsViewCommandEventArgs.cs:
+	* FormViewCommandEventArgs.cs:
+	* GridViewCommandEventArgs.cs: Corrected constructor.
+
+2004-08-11  Sanjay Gupta <gsanjay@novell.com>
+
 	* GridViewCancelEditEventArgs.cs:
 	* GridViewCancelEditEventHandler.cs:
 	* GridViewCommandEventArgs.cs:

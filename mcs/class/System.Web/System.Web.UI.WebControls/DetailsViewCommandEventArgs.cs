@@ -35,12 +35,10 @@ namespace System.Web.UI.WebControls
 	public class DetailsViewCommandEventArgs : CommandEventArgs
 	{
 		private object source;
-		private CommandEventArgs arguments;
 		
-		public DetailsViewCommandEventArgs (object source, CommandEventArgs arguments)
+		public DetailsViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
 		{
 			this.source = source;
-			this.arguments = arguments;
 		}
 		
 		public object CommandSource {

@@ -35,20 +35,17 @@ namespace System.Web.UI.WebControls
 	public class GridViewCommandEventArgs : CommandEventArgs
 	{
 		private object source;
-		private CommandEventArgs arguments;
 		private GridViewRow row;
 		
-		public GridViewCommandEventArgs (object source, CommandEventArgs arguments)
+		public GridViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
 		{
 			this.source = source;
-			this.arguments = arguments;
 			this.row = null;
 		}
 		
-		public GridViewCommandEventArgs (GridViewRow row, object source, CommandEventArgs arguments)
+		public GridViewCommandEventArgs (GridViewRow row, object source, CommandEventArgs arguments) : base (arguments)
 		{
 			this.source = source;
-			this.arguments = arguments;
 			this.row = row;
 		}
 		
