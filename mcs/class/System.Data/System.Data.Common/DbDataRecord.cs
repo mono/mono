@@ -154,7 +154,10 @@ namespace System.Data.Common {
 
 		public object GetValue (int i)
 		{
-			return values [i];
+			object value = values [i];
+			if (value == null)
+				value = DBNull.Value;
+			return value;
 		}
 
 		[MonoTODO]

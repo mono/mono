@@ -1,3 +1,7 @@
+2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DbDataRecord.cs: return DbNull.Value in GetValue () if value is null.
+
 2002-10-31  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SchemaInfo.cs: added missing properties to fix mcs build
