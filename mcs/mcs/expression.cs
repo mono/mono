@@ -3146,7 +3146,11 @@ namespace Mono.CSharp {
 	public class StringConcat : Expression {
 		ArrayList operands;
 		bool invalid = false;
-		
+		bool emit_conv_done = false;
+		//
+		// Are we also concating objects?
+		//
+		bool is_strings_only = true;
 		
 		public StringConcat (EmitContext ec, Location loc, Expression left, Expression right)
 		{
@@ -3201,29 +3205,29 @@ namespace Mono.CSharp {
 			MethodInfo concat_method = null;
 			
 			//
-			// Are we also concating objects?
-			//
-			bool is_strings_only = true;
-			
-			//
 			// Do conversion to arguments; check for strings only
 			//
-			for (int i = 0; i < operands.Count; i ++) {
-				Expression e = (Expression) operands [i];
-				is_strings_only &= e.Type == TypeManager.string_type;
-			}
 			
-			for (int i = 0; i < operands.Count; i ++) {
-				Expression e = (Expression) operands [i];
-				
-				if (! is_strings_only && e.Type == TypeManager.string_type) {
-					// need to make sure this is an object, because the EmitParams
-					// method might look at the type of this expression, see it is a
-					// string and emit a string [] when we want an object [];
-					
-					e = Convert.ImplicitConversion (ec, e, TypeManager.object_type, loc);
+			// This can get called multiple times, so we have to deal with that.
+			if (!emit_conv_done) {
+				emit_conv_done = true;
+				for (int i = 0; i < operands.Count; i ++) {
+					Expression e = (Expression) operands [i];
+					is_strings_only &= e.Type == TypeManager.string_type;
 				}
-				operands [i] = new Argument (e, Argument.AType.Expression);
+				
+				for (int i = 0; i < operands.Count; i ++) {
+					Expression e = (Expression) operands [i];
+					
+					if (! is_strings_only && e.Type == TypeManager.string_type) {
+						// need to make sure this is an object, because the EmitParams
+						// method might look at the type of this expression, see it is a
+						// string and emit a string [] when we want an object [];
+						
+						e = new EmptyCast (e, TypeManager.object_type);
+					}
+					operands [i] = new Argument (e, Argument.AType.Expression);
+				}
 			}
 			
 			//
