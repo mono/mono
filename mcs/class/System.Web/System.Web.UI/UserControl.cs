@@ -18,7 +18,7 @@ namespace System.Web.UI
 {
 	[ControlBuilder (typeof (UserControlControlBuilder))]
 	[DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
-	[ToolboxItem (false)]
+	[ToolboxItem (false), ParseChildren (true)]
 	[Designer ("System.Web.UI.Design.UserControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor

@@ -1,3 +1,12 @@
+2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* UserControl.cs: Added attribute
+	* BasePartialCachingControl.cs: New class and paritally implemented
+	* DesignerDataBoundLiteralControl.cs: New class and implemented
+	* DesignTimeTemplateParser.cs:
+	* PartialCachingControl.cs:
+	* StaticPartialCachingControl.cs: New class and paritally implemented
+
 2003-07-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ApplicationFileParser.cs: Fixed signature
