@@ -80,9 +80,8 @@ namespace System.Xml
 		public void WriteAttributeString (string prefix, string localName, string ns, string value)
 		{
 			if ((prefix == "xmlns") || (prefix == "" && localName == "xmlns"))
-			  {
-				ns = value;
-				
+			{
+				if (ns == null)  ns = "http://www.w3.org/2000/xmlns/";
 				if (prefix == "xmlns" && namespaceManager.HasNamespace (localName))
 				  	return;
 			}
@@ -95,11 +94,11 @@ namespace System.Xml
 			{
 				if (prefix == "xmlns")
 				{
-					if (ns == string.Empty) throw new ArgumentException ("Cannot use a prefix with an empty namespace");
-					namespaceManager.AddNamespace (localName, ns);
+					if (value == string.Empty) throw new ArgumentException ("Cannot use a prefix with an empty namespace");
+					namespaceManager.AddNamespace (localName, value);
 				}
 				else
-					namespaceManager.AddNamespace ("", ns);
+					namespaceManager.AddNamespace ("", value);
 			}
 			
 		}

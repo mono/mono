@@ -48,6 +48,7 @@ namespace System.Xml
 		bool openElementNsAdded;
 		bool hasRoot = false;
 		Hashtable writtenAttributes = new Hashtable ();
+		ArrayList newAttributeNamespaces = new ArrayList ();
 		bool checkMultipleAttributes = false;
 
 		#endregion
@@ -221,6 +222,15 @@ namespace System.Xml
 						w.Write(formatXmlns);
 				}
 			}
+
+			for (int n=0; n<newAttributeNamespaces.Count; n++)
+			{
+				string ans = (string)newAttributeNamespaces[n];
+				string aprefix = namespaceManager.LookupPrefix (ans);
+				string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
+				w.Write(formatXmlns);
+			}
+			newAttributeNamespaces.Clear ();
 		}
 
 		private void CheckState ()
@@ -273,6 +283,7 @@ namespace System.Xml
 			attributeWrittenForElement = false;
 			checkMultipleAttributes = false;
 			writtenAttributes.Clear ();
+			newAttributeNamespaces.Clear ();
 		}
 
 		public override void Flush ()
@@ -518,6 +529,9 @@ namespace System.Xml
 			if ((prefix == "xmlns") && (localName.ToLower ().StartsWith ("xml")))
 				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML: " + prefix + ":" + localName);
 
+			if ((prefix == "xmlns") && (ns != "http://www.w3.org/2000/xmlns/"))
+				throw new ArgumentException ("The 'xmlns' attribute is bound to the reserved namespace 'http://www.w3.org/2000/xmlns/'");
+
 			CheckState ();
 
 			if (ws == WriteState.Content)
@@ -532,9 +546,16 @@ namespace System.Xml
 			string formatPrefix = "";
 			string formatSpace = "";
 
-			if (ns != String.Empty) 
+			if (ns != String.Empty && prefix != "xmlns") 
 			{
 				string existingPrefix = namespaceManager.LookupPrefix (ns);
+
+				if (existingPrefix == null) 
+				{
+					newAttributeNamespaces.Add (ns);
+					prefix = "d" + indentLevel + "p" + newAttributeNamespaces.Count;
+					namespaceManager.AddNamespace (prefix, ns);
+				}
 
 				if (prefix == String.Empty && ns != "http://www.w3.org/2000/xmlns/")
 					prefix = (existingPrefix == null) ?
@@ -628,6 +649,7 @@ namespace System.Xml
 			CheckState ();
 			CloseStartElement ();
 			writtenAttributes.Clear ();
+			newAttributeNamespaces.Clear ();
 			checkMultipleAttributes = true;
 
 			if (prefix == null)

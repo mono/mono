@@ -1,3 +1,9 @@
+2003-06-10  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlTextWriter.cs: when adding an attribute with a namespace, a prefix must be automaticaly
+	  generated, and a namespace declaration must be added. 
+	* XmlWriter.cs: the namespace for the prefix xmlns must be http://www.w3.org/2000/xmlns/
+
 2003-06-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* XmlAttribute.cs: Accept a null prefix or namespaceURI.
