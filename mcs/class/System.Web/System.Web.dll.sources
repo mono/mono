@@ -106,6 +106,7 @@ System.Web.Configuration/AuthenticationConfigHandler.cs
 System.Web.Configuration/MachineKeyConfig.cs
 System.Web.Configuration/AuthorizationConfig.cs
 System.Web.Configuration/GlobalizationConfigurationHandler.cs
+System.Web.Configuration/WebControlsSectionHandler.cs
 System.Web.Handlers/TraceHandler.cs
 System.Web.Hosting/AppDomainFactory.cs
 System.Web.Hosting/ApplicationHost.cs

@@ -527,6 +527,9 @@ namespace System.Web {
 			if (s == null)
 				return null;
 
+			if (s == "")
+				return "";
+
 			byte [] bytes = Enc.GetBytes (s);
 			return Encoding.ASCII.GetString (UrlEncodeToBytes (bytes, 0, bytes.Length));
 		}
@@ -536,6 +539,9 @@ namespace System.Web {
 			if (bytes == null)
 				return null;
 
+			if (bytes.Length == 0)
+				return "";
+
 			return Encoding.ASCII.GetString (UrlEncodeToBytes (bytes, 0, bytes.Length));
 		}
 
@@ -543,6 +549,9 @@ namespace System.Web {
 		{
 			if (bytes == null)
 				return null;
+
+			if (bytes.Length == 0)
+				return "";
 
 			return Encoding.ASCII.GetString (UrlEncodeToBytes (bytes, offset, count));
 		}
@@ -557,6 +566,9 @@ namespace System.Web {
 			if (str == null)
 				return null;
 
+			if (str == "")
+				return new byte [0];
+
 			byte [] bytes = e.GetBytes (str);
 			return UrlEncodeToBytes (bytes, 0, bytes.Length);
 		}
@@ -565,6 +577,9 @@ namespace System.Web {
 		{
 			if (bytes == null)
 				return null;
+
+			if (bytes.Length == 0)
+				return new byte [0];
 
 			return UrlEncodeToBytes (bytes, 0, bytes.Length);
 		}
@@ -577,6 +592,9 @@ namespace System.Web {
 				return null;
 
 			int len = bytes.Length;
+			if (len == 0)
+				return new byte [0];
+
 			if (offset < 0 || offset >= len)
 				throw new ArgumentOutOfRangeException("offset");
 
@@ -657,6 +675,9 @@ namespace System.Web {
 			if (str == null)
 				return null;
 
+			if (str == "")
+				return new byte [0];
+
 			return Encoding.ASCII.GetBytes (UrlEncodeUnicode (str));
 		}
 
@@ -667,6 +688,9 @@ namespace System.Web {
 		/// <returns>The decoded text.</returns>
 		public static string HtmlDecode (string s) 
 		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+
 			bool insideEntity = false; // used to indicate that we are in a potential entity
 			string entity = String.Empty;
 			StringBuilder output = new StringBuilder ();
@@ -724,6 +748,9 @@ namespace System.Web {
 		/// <returns>The HTML-encoded text.</returns>
 		public static string HtmlEncode (string s) 
 		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+
 			StringBuilder output = new StringBuilder ();
 			
 			foreach (char c in s) 

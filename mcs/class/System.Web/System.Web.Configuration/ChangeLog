@@ -1,3 +1,8 @@
+2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebControlsSectionHandler.cs: new file to handle <webControls>
+	configuration.
+
 2003-10-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HandlerItem.cs: make it work for file names without wildcards.

@@ -1,3 +1,7 @@
+2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: error checking.
+
 2003-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: small memory usage reduction.
