@@ -1358,7 +1358,7 @@ namespace System.Drawing
 		internal static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);	
 
 		// Some special X11 stuff
-		[DllImport("libX11.so", EntryPoint="XOpenDisplay")]
+		[DllImport("libX11", EntryPoint="XOpenDisplay")]
 		internal extern static IntPtr XOpenDisplay(IntPtr display);	
 
 		// FontCollection

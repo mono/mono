@@ -1,3 +1,8 @@
+2004-11-18  Ravindra  <rkumar@novell.com>
+
+	* gdipFunctions.cs: Removed the .so extension from a DllImport
+	that hooks to X11.
+
 2004-10-27 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* gdipFunctions.cs: calls GdiplusShutdown to propery signal GDI+ 
