@@ -1,3 +1,7 @@
+2003-12-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* dump.c (dump_table_exported): Fix output.
+
 2003-12-08  Jackson Harper <jackson@ximian.com>
 
 	* main.cs: escape module names.
