@@ -1283,7 +1283,7 @@ public class TypeManager {
 	///   our return value will already contain all inherited members and the caller don't need
 	///   to check base classes and interfaces anymore.
 	/// </summary>
-	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+	private static MemberInfo [] MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 							    string name, out bool used_cache)
 	{
 		//
@@ -1316,7 +1316,8 @@ public class TypeManager {
 			}
 
 			// If there is no MemberCache, we need to use the "normal" FindMembers.
-
+			// Note, this is a VERY uncommon route!
+			
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
 			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
@@ -1324,7 +1325,7 @@ public class TypeManager {
 			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = false;
                         
-			return list;
+			return (MemberInfo []) list;
 		}
 
 		//
@@ -2184,7 +2185,7 @@ public class TypeManager {
 	//
 	// The name is assumed to be the same.
 	//
-	public static ArrayList CopyNewMethods (ArrayList target_list, MemberList new_members)
+	public static ArrayList CopyNewMethods (ArrayList target_list, IList new_members)
 	{
 		if (target_list == null){
 			target_list = new ArrayList ();
@@ -2505,8 +2506,14 @@ public class TypeManager {
 			}
 		}
 		
+		// This is from the first time we find a method
+		// in most cases, we do not actually find a method in the base class
+		// so we can just ignore it, and save the arraylist allocation
+		MemberInfo [] first_methods_list = null;
+		bool use_first_members_list = false;
+		
 		do {
-			MemberList list;
+			MemberInfo [] list;
 
 			//
 			// `NonPublic' is lame, because it includes both protected and
@@ -2560,7 +2567,7 @@ public class TypeManager {
 					current_type = TypeManager.object_type;
 			}
 			
-			if (list.Count == 0)
+			if (list.Length == 0)
 				continue;
 
 			//
@@ -2568,8 +2575,8 @@ public class TypeManager {
 			// searches, which means that our above FindMembers will
 			// return two copies of the same.
 			//
-			if (list.Count == 1 && !(list [0] is MethodBase)){
-				return (MemberInfo []) list;
+			if (list.Length == 1 && !(list [0] is MethodBase)){
+				return list;
 			}
 
 			//
@@ -2577,14 +2584,14 @@ public class TypeManager {
 			// name
 			//
 			if (list [0] is PropertyInfo)
-				return (MemberInfo []) list;
+				return list;
 
 			//
 			// We found an event: the cache lookup returns both the event and
 			// its private field.
 			//
 			if (list [0] is EventInfo) {
-				if ((list.Count == 2) && (list [1] is FieldInfo))
+				if ((list.Length == 2) && (list [1] is FieldInfo))
 					return new MemberInfo [] { list [0] };
 
 				// Oooops
@@ -2596,9 +2603,23 @@ public class TypeManager {
 			// mode.
 			//
 
-			method_list = CopyNewMethods (method_list, list);
+			if (first_methods_list != null) {
+				if (use_first_members_list) {
+					method_list = CopyNewMethods (method_list, first_methods_list);
+					use_first_members_list = false;
+				}
+				
+				method_list = CopyNewMethods (method_list, list);
+			} else {
+				first_methods_list = list;
+				use_first_members_list = true;
+			}
+			
 			mt &= (MemberTypes.Method | MemberTypes.Constructor);
 		} while (searching);
+		
+		if (use_first_members_list)
+			return first_methods_list;
 
 		if (method_list != null && method_list.Count > 0)
                         return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
@@ -2841,7 +2862,7 @@ public sealed class TypeHandle : IMemberContainer {
 	public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 				       MemberFilter filter, object criteria)
 	{
-		return member_cache.FindMembers (mt, bf, name, filter, criteria);
+		return new MemberList (member_cache.FindMembers (mt, bf, name, filter, criteria));
 	}
 
 	public MemberCache MemberCache {

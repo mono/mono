@@ -1,3 +1,17 @@
+2004-01-02 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs (MemberCache.FindMembers): now returns a
+	MemberInfo [].
+
+	* typemanager.cs: In general, go with with ^^.
+	(CopyNewMethods): take an IList.
+	(RealMemberLookup): Only allocate an arraylist
+	if we copy from two sets of methods.
+
+	This change basically does two things:
+	1) Fewer array lists allocated due to CopyNewMethods.
+	2) the explicit cast in MemberList costed ALOT.
+
 2004-01-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cs-tokenizer.cs (consume_identifier) driver.cs: Cache identifiers in
