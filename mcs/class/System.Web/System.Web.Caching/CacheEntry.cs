@@ -3,6 +3,8 @@
 //
 // Author:
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// Changes:
+//   Daniel Cazzulino [DHC] (dcazzulino@users.sf.net)
 //
 // (C) Copyright Patrik Torstensson, 2001
 //
@@ -43,6 +45,21 @@ namespace System.Web.Caching
 		private Cache				_objCache;
 
 		/// <summary>
+		/// The item is not placed in a bucket. [DHC]
+		/// </summary>
+		public static readonly byte NoBucketHash = byte.MaxValue;
+		
+		/// <summary>
+		/// The item is not placed in a bucket. [DHC]
+		/// </summary>
+		public static readonly int NoIndexInBucket = int.MaxValue;
+
+		/// <summary>
+		/// Lock for syncronized operations. [DHC]
+		/// </summary>
+		System.Threading.ReaderWriterLock _lock = new System.Threading.ReaderWriterLock();
+
+		/// <summary>
 		/// Constructs a new cache entry
 		/// </summary>
 		/// <param name="strKey">The cache key used to reference the item.</param>
@@ -54,7 +71,7 @@ namespace System.Web.Caching
 		/// <param name="boolPublic">Defines if the item is public or not</param>
 		/// <param name="enumPriority">The relative cost of the object, as expressed by the CacheItemPriority enumeration. The cache uses this value when it evicts objects; objects with a lower cost are removed from the cache before objects with a higher cost.</param>
 		public CacheEntry(	Cache objManager, string strKey, object objItem, CacheDependency objDependency, CacheItemRemovedCallback eventRemove, 
-							System.DateTime dtExpires, System.TimeSpan tsSpan, long longMinHits, bool boolPublic, CacheItemPriority enumPriority )
+			System.DateTime dtExpires, System.TimeSpan tsSpan, long longMinHits, bool boolPublic, CacheItemPriority enumPriority )
 		{
 			if (boolPublic)
 			{
@@ -74,7 +91,12 @@ namespace System.Web.Caching
 			_ticksSlidingExpiration = tsSpan.Ticks;
 
 			// If we have a sliding expiration it overrides the absolute expiration (MS behavior)
-			if (tsSpan.Ticks != System.TimeSpan.Zero.Ticks)
+			// This is because sliding expiration causes the absolute expiration to be 
+			// moved after each period, and the absolute expiration is the value used 
+			// for all expiration calculations.
+			//HACK: [DHC] Use constants defined in Cache.
+			//if (tsSpan.Ticks != System.TimeSpan.Zero.Ticks)
+			if (tsSpan.Ticks != Cache.NoSlidingExpiration.Ticks)
 			{
 				_ticksExpires = System.DateTime.Now.AddTicks(_ticksSlidingExpiration).Ticks;
 			}
@@ -107,7 +129,9 @@ namespace System.Web.Caching
 		/// <param name="enumReason">The reason why the cache entry are going to be removed</param>
 		public void Close(CacheItemRemovedReason enumReason)
 		{	
-			lock(this)
+			//HACK: optimized locks. [DHC]
+			_lock.AcquireWriterLock(0);
+			try
 			{
 				// Check if the item already is removed
 				if (TestFlag(Flags.Removed))
@@ -140,6 +164,10 @@ namespace System.Web.Caching
 					}
 				}
 			}
+			finally
+			{
+				_lock.ReleaseWriterLock();
+			}
 		}
 
 		/// <summary>
@@ -149,15 +177,20 @@ namespace System.Web.Caching
 		/// <returns>Returns true if the flag is set.</returns>
 		public bool TestFlag(Flags oFlag)
 		{
-			lock(this) 
+			_lock.AcquireReaderLock(0);
+			try
 			{
 				if ((_enumFlags & oFlag) != 0)
 				{
 					return true;
 				} 
-
-				return false;
 			}
+			finally
+			{
+				_lock.ReleaseReaderLock();
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -166,9 +199,14 @@ namespace System.Web.Caching
 		/// <param name="oFlag">Flag to set.</param>
 		public void SetFlag(Flags oFlag)
 		{
-			lock (this)
+			_lock.AcquireWriterLock(0);
+			try
 			{
 				_enumFlags |= oFlag;
+			}
+			finally
+			{
+				_lock.ReleaseWriterLock	();
 			}
 		}
 
@@ -194,7 +232,9 @@ namespace System.Web.Caching
 		{
 			get 
 			{ 
-				if (_ticksExpires == System.DateTime.MaxValue.Ticks) 
+				//HACK: [DHC] Use constant defined in Cache.
+				//if (_ticksExpires == System.DateTime.MaxValue.Ticks) 
+				if (_ticksExpires == Cache.NoAbsoluteExpiration.Ticks) 
 				{
 					return false;
 				}
@@ -210,7 +250,9 @@ namespace System.Web.Caching
 		{
 			get 
 			{ 
-				if (_ticksSlidingExpiration == System.TimeSpan.Zero.Ticks) 
+				//HACK: [DHC] Use constants defined in Cache.
+				//if (_ticksSlidingExpiration == System.TimeSpan.Zero.Ticks) 
+				if (_ticksSlidingExpiration == Cache.NoSlidingExpiration.Ticks) 
 				{
 					return false;
 				}
@@ -226,16 +268,26 @@ namespace System.Web.Caching
 		{
 			get 
 			{ 
-				lock (this) 
+				_lock.AcquireReaderLock(0);
+				try
 				{
 					return _byteExpiresBucket; 
+				}
+				finally
+				{
+					_lock.ReleaseReaderLock();
 				}
 			}
 			set 
 			{ 
-				lock (this)
+				_lock.AcquireWriterLock(0);
+				try
 				{
-					_byteExpiresBucket = ExpiresBucket; 
+					_byteExpiresBucket = value; 
+				}
+				finally
+				{
+					_lock.ReleaseWriterLock	();
 				}
 			}
 		}
@@ -247,17 +299,27 @@ namespace System.Web.Caching
 		{
 			get 
 			{ 
-				lock (this)
+				_lock.AcquireReaderLock(0);
+				try
 				{
 					return _intExpiresIndex; 
+				}
+				finally
+				{
+					_lock.ReleaseReaderLock();
 				}
 			}
 			
 			set 
 			{ 
-				lock (this)
+				_lock.AcquireWriterLock(0);
+				try
 				{
-					_intExpiresIndex = ExpiresIndex; 
+					_intExpiresIndex = value; 
+				}
+				finally
+				{
+					_lock.ReleaseWriterLock();
 				}
 			}
 		}
@@ -269,16 +331,26 @@ namespace System.Web.Caching
 		{
 			get 
 			{ 
-				lock (this)
+				_lock.AcquireReaderLock(0);
+				try
 				{
 					return _ticksExpires; 
+				}
+				finally
+				{
+					_lock.ReleaseReaderLock();
 				}
 			}
 			set 
 			{ 
-				lock (this)
+				_lock.AcquireWriterLock(0);
+				try
 				{
-					_ticksExpires = Expires; 
+					_ticksExpires = value; 
+				}
+				finally
+				{
+					_lock.ReleaseWriterLock();
 				}
 			}
 		}
@@ -324,16 +396,26 @@ namespace System.Web.Caching
 			// todo: Could be optimized by using interlocked methods..
 			get 
 			{
-				lock (this)
+				_lock.AcquireReaderLock(0);
+				try
 				{
 					return _longHits; 
+				}
+				finally
+				{
+					_lock.ReleaseReaderLock();
 				}
 			}
 			set 
 			{ 
-				lock (this)
+				_lock.AcquireWriterLock(0);
+				try
 				{
-					_longHits = Hits; 
+					_longHits = value; 
+				}
+				finally
+				{
+					_lock.ReleaseWriterLock();
 				}
 			}
 		}

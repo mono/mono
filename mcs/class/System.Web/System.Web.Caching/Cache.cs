@@ -3,6 +3,8 @@
 //
 // Author:
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// Changes:
+//   Daniel Cazzulino [DHC] (dcazzulino@users.sf.net)
 //
 // (C) Copyright Patrik Torstensson, 2001
 //
@@ -28,7 +30,9 @@ namespace System.Web.Caching
 		// Declarations
 
 		// MS.NET Does only have the cache connected to the HttpRuntime and we don't have the HttpRuntime (yet)
-		static Cache	objSingletonCache = new Cache();
+		// HACK: [DHC] Don't construct a new cache unless it's actually used.
+		//static Cache	objSingletonCache = new Cache();
+		static Cache	objSingletonCache;
 
 		private bool	_boolDisposed;
 
@@ -71,7 +75,9 @@ namespace System.Web.Caching
 			{ 
 				if (objSingletonCache == null)
 				{
-					throw new System.InvalidOperationException();
+					// HACK: [DHC] Create the cache here instead of throwing.
+					//throw new System.InvalidOperationException();
+					objSingletonCache = new Cache();
 				}
 
 				return objSingletonCache;
@@ -95,8 +101,9 @@ namespace System.Web.Caching
 		private System.Collections.IDictionaryEnumerator CreateEnumerator()
 		{
 			System.Collections.Hashtable objTable;
-
-			_lockEntries.AcquireReaderLock(int.MaxValue);
+				
+			//Locking with 0 provides a non-expiring lock.
+			_lockEntries.AcquireReaderLock(0);
 			try 
 			{
 				// Create a new hashtable to return as collection of public items
@@ -225,7 +232,9 @@ namespace System.Web.Caching
 		/// <param name="objItem">The item to be added to the cache.</param>
 		public void Insert(string strKey, object objItem)
 		{
-			Add(strKey, objItem, null, System.DateTime.MaxValue, System.TimeSpan.Zero, CacheItemPriority.Default, CacheItemPriorityDecay.Default, null);
+			//HACK: [DHC] Use constants defined in Cache.
+			//Add(strKey, objItem, null, System.DateTime.MaxValue, System.TimeSpan.Zero, CacheItemPriority.Default, CacheItemPriorityDecay.Default, null);
+			Add(strKey, objItem, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Default, CacheItemPriorityDecay.Default, null);
 		}
 
 		/// <summary>
@@ -236,7 +245,9 @@ namespace System.Web.Caching
 		/// <param name="objDependency">The file or cache key dependencies for the item. When any dependency changes, the object becomes invalid and is removed from the cache. If there are no dependencies, this paramter contains a null reference.</param>
 		public void Insert(string strKey, object objItem, CacheDependency objDependency)
 		{
-			Add(strKey, objItem, objDependency, System.DateTime.MaxValue, System.TimeSpan.Zero, CacheItemPriority.Default, CacheItemPriorityDecay.Default, null);
+			//HACK: [DHC] Use constants defined in Cache.
+			//Add(strKey, objItem, objDependency, System.DateTime.MaxValue, System.TimeSpan.Zero, CacheItemPriority.Default, CacheItemPriorityDecay.Default, null);
+			Add(strKey, objItem, objDependency, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Default, CacheItemPriorityDecay.Default, null);
 		}
 
 		/// <summary>
@@ -357,7 +368,7 @@ namespace System.Web.Caching
 			}
 
 			// TODO: Optimize this method, move out functionality outside the lock
-			_lockEntries.AcquireReaderLock(int.MaxValue);
+			_lockEntries.AcquireReaderLock(0);
 			try 
 			{	
 				if (boolGetItem)
@@ -387,7 +398,7 @@ namespace System.Web.Caching
 				if (boolWrite || (boolOverwrite && !boolExpiried))
 				{
 					// Upgrade our lock to write
-					System.Threading.LockCookie objCookie = _lockEntries.UpgradeToWriterLock(int.MaxValue);
+					System.Threading.LockCookie objCookie = _lockEntries.UpgradeToWriterLock(0);
 					try 
 					{
 						// Check if we going to just modify an existing entry (or add)
@@ -489,7 +500,7 @@ namespace System.Web.Caching
 		{
 			_boolDisposed = true;
 
-			_lockEntries.AcquireReaderLock(int.MaxValue);
+			_lockEntries.AcquireReaderLock(0);
 			try 
 			{
 				foreach(System.Collections.DictionaryEntry objEntry in _arrEntries)
@@ -510,6 +521,8 @@ namespace System.Web.Caching
 						}
 					}
 				}
+				//HACK: dispose the expiring helper.
+				_objExpires.Dispose();
 			}
 			finally
 			{

@@ -1,3 +1,21 @@
+2002-12-27  Daniel Cazzulino <dcazzulino@users.sf.net>
+
+	* CacheEntry.cs: several changes. New constants, use of constants
+	defined in Cache.cs, modified locks to optimize perf. Fixed property
+	sets which weren't using the keyword value to set the new values
+	(don't know how this worked before!).
+
+	* Cache.cs: changed singleton implementation to only create the object
+	when actually used. Changed Insert overloads to use constants
+	defined instead of hard values.
+
+	* ExpiresBuchets: major changes. All locking now uses ReaderWriterLock
+	class. Bucket now efectively reuses free indexes from removed items
+	to avoid unnecessary expansions. Expansion now uses Array.CopyTo to
+	add elements to the new list. Added private Int32Collection to
+	handle int indexes efficiently (thanks Shawn Van Ness). See comments
+	there.
+
 2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Cache.cs: little fixes.

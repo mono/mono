@@ -3,6 +3,8 @@
 //
 // Author:
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// Changes:
+//   Daniel Cazzulino [DHC] (dcazzulino@users.sf.net)
 //
 // (C) Copyright Patrik Torstensson, 2001
 //
@@ -17,7 +19,13 @@ namespace System.Web.Caching
 	public class CacheExpires : System.IDisposable
 	{
 		static int	_intFlush;
+		/// <summary>
+		/// 1 bucket == 1 minute == 10M ticks (1 second) * 60
+		/// </summary>
 		static long _ticksPerBucket = 600000000;
+		/// <summary>
+		/// 1 cycle == 1 hour
+		/// </summary>
 		static long _ticksPerCycle = _ticksPerBucket * 60;
 
 		private ExpiresBucket[] _arrBuckets;
@@ -60,14 +68,12 @@ namespace System.Web.Caching
 		/// <param name="objEntry">Cache entry to add.</param>
 		public void Add(CacheEntry objEntry)
 		{
-			long ticksNow = System.DateTime.Now.Ticks;
-
 			lock(this) 
 			{
 				// If the entry doesn't have a expires time we assume that the entry is due to expire now.
 				if (objEntry.Expires == 0) 
 				{
-					objEntry.Expires = ticksNow;
+					objEntry.Expires = System.DateTime.Now.Ticks;
 				}
 
                 _arrBuckets[GetHashBucket(objEntry.Expires)].Add(objEntry);
@@ -76,14 +82,12 @@ namespace System.Web.Caching
 
 		public void Remove(CacheEntry objEntry)
 		{
-			long ticksNow = System.DateTime.Now.Ticks;
-
 			lock(this) 
 			{
 				// If the entry doesn't have a expires time we assume that the entry is due to expire now.
 				if (objEntry.Expires == 0) 
 				{
-					objEntry.Expires = ticksNow;
+					objEntry.Expires = System.DateTime.Now.Ticks;
 				}
 
 				_arrBuckets[GetHashBucket(objEntry.Expires)].Remove(objEntry);
@@ -92,14 +96,12 @@ namespace System.Web.Caching
 
 		public void Update(CacheEntry objEntry, long ticksExpires)
 		{
-			long ticksNow = System.DateTime.Now.Ticks;
-
 			lock(this) 
 			{
 				// If the entry doesn't have a expires time we assume that the entry is due to expire now.
 				if (objEntry.Expires == 0) 
 				{
-					objEntry.Expires = ticksNow;
+					objEntry.Expires = System.DateTime.Now.Ticks;
 				}
 
 				_arrBuckets[GetHashBucket(objEntry.Expires)].Update(objEntry, ticksExpires);
