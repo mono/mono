@@ -1,4 +1,8 @@
-2005-01-16  Peter Bartok  <pbartok@novell.com>
+2005-01-17  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Clean up resources when we no longer need them
+
+2005-01-17  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs: Added SetCursor(), ShowCursor(),
 	  OverrideCursor(), DefineCursor(), DefineStdCursor(), GetCursorInfo()

@@ -1763,6 +1763,9 @@ namespace System.Windows.Forms {
 
 			cursor = XCreatePixmapCursor(DisplayHandle, cursor_pixmap, mask_pixmap, ref fg, ref bg, xHotSpot, yHotSpot);
 
+			XFreePixmap(DisplayHandle, cursor_pixmap);
+			XFreePixmap(DisplayHandle, mask_pixmap);
+
 			return cursor;
 		}
 
@@ -1802,7 +1805,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void DestroyCursor(IntPtr cursor) {
-			
+			XFreeCursor(DisplayHandle, cursor);
 		}
 
 
@@ -2317,6 +2320,9 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XDefineCursor")]
 		internal extern static int XDefineCursor(IntPtr display, IntPtr window, IntPtr cursor);
 
+		[DllImport ("libX11", EntryPoint="XFreeCursor")]
+		internal extern static int XFreeCursor(IntPtr display, IntPtr cursor);
+
 		[DllImport ("libX11", EntryPoint="XCreateFontCursor")]
 		internal extern static IntPtr XCreateFontCursor(IntPtr display, CursorFontShape shape);
 
@@ -2325,6 +2331,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XCreatePixmapFromBitmapData")]
 		internal extern static IntPtr XCreatePixmapFromBitmapData(IntPtr display, IntPtr drawable, byte[] data, int width, int height, IntPtr fg, IntPtr bg, int depth);
+
+		[DllImport ("libX11", EntryPoint="XFreePixmap")]
+		internal extern static IntPtr XFreePixmap(IntPtr display, IntPtr pixmap);
 
 		[DllImport ("libX11", EntryPoint="XQueryBestCursor")]
 		internal extern static int XQueryBestCursor(IntPtr display, IntPtr drawable, int width, int height, out int best_width, out int best_height);
