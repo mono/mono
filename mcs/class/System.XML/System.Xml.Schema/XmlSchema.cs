@@ -388,7 +388,14 @@ namespace System.Xml.Schema
 						continue;
 					} else {
 						schemaLocationStack.Push (url);
-						includedSchema = XmlSchema.Read (new XmlTextReader (url, stream, nameTable), handler);
+						XmlTextReader xtr = null;
+						try {
+							xtr = new XmlTextReader (url, stream, nameTable);
+							includedSchema = XmlSchema.Read (xtr, handler);
+						} finally {
+							if (xtr != null)
+								xtr.Close ();
+						}
 						includedSchema.schemas = schemas;
 					}
 

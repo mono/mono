@@ -1,3 +1,7 @@
+2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs : Make sure to close url-based XmlTextReader.
+
 2004-06-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs,
