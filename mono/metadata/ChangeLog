@@ -1,5 +1,10 @@
 2002-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* icall.c: added ves_icall_FieldInfo_SetValueInternal.
+	* object.c: added missing MONO_TYPE_ARRAY in mono_runtime_invoke_array.
+
+2002-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* object.c:
 	(mono_print_unhandled_exception): after previous commit, i realized
 	that MS calls ToString on the exception. I changed this function to
