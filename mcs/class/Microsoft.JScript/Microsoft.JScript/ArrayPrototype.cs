@@ -105,7 +105,7 @@ namespace Microsoft.JScript {
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_toString)]
-		public static string ToString (object thisObj)
+		public static string toString (object thisObj)
 		{
 			throw new NotImplementedException ();
 		}
