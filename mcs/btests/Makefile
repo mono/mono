@@ -149,7 +149,7 @@ test-compiler-jit-ngtive_run:
 		echo -n -e "\n========================" >> $$logfile; \
 	        echo UNEXPECTED BEHAVIOUR ; rm -f $$testlogfile ; \
 	    else \
-		echo OK >> $$logfile; \
+		echo -n -e "\n$$i : OK\n" >> $$logfile; \
 		echo OK; \
 	    fi ; \
 	    rm -f ./$$i.exe ; \
