@@ -203,6 +203,9 @@ namespace MonoTests.System {
                 {
                     Fail(tab[i].d.ToString(tab[i].format, nfi) + " (format = '" + tab[i].format + "'): unexpected exception !");
                 }
+		catch (Exception e) {
+			Fail ("Unexpected Exception when i = " + i + ". e = " + e);
+		}
             }      
         }
 
