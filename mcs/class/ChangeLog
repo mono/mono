@@ -1,3 +1,8 @@
+2004-05-02  Duncan Mak  <duncan@ximian.com>
+
+	* Microsoft.Vsa/Assembly/AssemblyInfo.cs: Add assembly-level
+	attributes for versioning (1.0 vs. 1.1 vs. 2.0).
+
 2004-04-22  Martin Baulig  <martin@ximian.com>
 
 	Renamed the `NET_1_2' conditional to `NET_2_0' in all files.

@@ -27,7 +27,6 @@ using System.Runtime.InteropServices;
 	[assembly: SatelliteContractVersion("7.0.3300.0")]
 #endif
 
-
 [assembly: AssemblyTitle("Microsoft.VisualBasic.dll")]
 [assembly: AssemblyDescription("Microsoft.VisualBasic.dll")]
 [assembly: AssemblyCompany("MONO development team")]
