@@ -1,3 +1,9 @@
+2003-08-07  Martin Baulig  <martin@ximian.com>
+
+	* assign.cs (Assign.DoResolve): `target' must either be an
+	IAssignMethod or an EventAccess; report a CS0131 otherwise.  Fixes
+	#37319.
+
 2003-08-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (BinaryMethod): This kind of expression is created by the

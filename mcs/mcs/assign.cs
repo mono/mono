@@ -252,8 +252,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess &&
-			    target.eclass != ExprClass.IndexerAccess && target.eclass != ExprClass.PropertyAccess){
+			if (!(target is IAssignMethod) && (target.eclass != ExprClass.EventAccess)) {
 				Report.Error (131, loc,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");
