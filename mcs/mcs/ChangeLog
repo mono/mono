@@ -1,5 +1,10 @@
 2002-11-14  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (Constructor.Emit): Added the extern/block check.
+	Fixes bug #33678.
+
+2002-11-14  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (IndexerAccess.DoResolve): Do a DeclaredOnly
 	iteration while looking for indexers, this is needed because the
 	indexer may have a different name in our base classes.  Fixed the
