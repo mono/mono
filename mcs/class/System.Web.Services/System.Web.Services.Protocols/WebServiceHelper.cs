@@ -118,6 +118,10 @@ namespace System.Web.Services.Protocols
 
 			// Serialize body
 			xtw.WriteStartElement ("soap", "Body", WebServiceHelper.SoapEnvelopeNamespace);
+			
+			if (methodUse == SoapBindingUse.Encoded)
+				xtw.WriteAttributeString ("encodingStyle", WebServiceHelper.SoapEnvelopeNamespace, "http://schemas.xmlsoap.org/soap/encoding/");
+				
 			bodySerializer.Serialize (xtw, bodyContent);
 
 			xtw.WriteEndElement ();
