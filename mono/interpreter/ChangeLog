@@ -1,3 +1,6 @@
+2002-04-15 	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* interp.c: Using fullnames when adding icall's (array)
 
 Wed Apr 10 16:07:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
