@@ -187,7 +187,7 @@ namespace MonoTests.System.Data
 			DataSet ds = GetDataSet (xml2, null);
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0);
+			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col", dt.Columns [0], "attr", true, false, 0, 1, "attr", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 		}
 
@@ -197,7 +197,7 @@ namespace MonoTests.System.Data
 			DataSet ds = GetDataSet (xml3, null);
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "root", 2, 0, 0, 0);
+			AssertDataTable ("dt", dt, "root", 2, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col", dt.Columns [0], "attr", true, false, 0, 1, "attr", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col", dt.Columns [1], "attr2", true, false, 0, 1, "attr2", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 		}
@@ -208,13 +208,13 @@ namespace MonoTests.System.Data
 			DataSet ds = GetDataSet (xml5, null);
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0);
+			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col", dt.Columns [0], "child", true, false, 0, 1, "child", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 
 			ds = GetDataSet (xml6, null);
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0);
+			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col", dt.Columns [0], "col1", true, false, 0, 1, "col1", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 		}
 
@@ -224,7 +224,7 @@ namespace MonoTests.System.Data
 			DataSet ds = GetDataSet (xml7, null);
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "root", 3, 0, 0, 0);
+			AssertDataTable ("dt", dt, "root", 3, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col", dt.Columns [0], "col1", true, false, 0, 1, "col1", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col2", dt.Columns [1], "col2", true, false, 0, 1, "col2", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 			AssertDataColumn ("col3", dt.Columns [2], "col3", true, false, 0, 1, "col3", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
@@ -236,7 +236,7 @@ namespace MonoTests.System.Data
 			DataSet ds = GetDataSet (xml8, null);
 			AssertDataSet ("ds", ds, "set", 1, 0);
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "tab", 3, 0, 0, 0);
+			AssertDataTable ("dt", dt, "tab", 3, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col", dt.Columns [0], "col1", true, false, 0, 1, "col1", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col2", dt.Columns [1], "col2", true, false, 0, 1, "col2", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 			AssertDataColumn ("col3", dt.Columns [2], "col3", true, false, 0, 1, "col3", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
@@ -251,13 +251,13 @@ namespace MonoTests.System.Data
 			AssertDataSet ("ds", ds, "NewDataSet", 4, 3);
 			DataTable dt = ds.Tables [0];
 
-			AssertDataTable ("dt", dt, "el1", 3, 0, 0, 1);
+			AssertDataTable ("dt", dt, "el1", 3, 0, 0, 1, 1, 1);
 			AssertDataColumn ("el1_Id", dt.Columns ["el1_Id"], "el1_Id", false, true, 0, 1, "el1_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
 			AssertDataColumn ("el1_attr1", dt.Columns ["attr1"], "attr1", true, false, 0, 1, "attr1", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 			AssertDataColumn ("el1_attrA", dt.Columns ["attrA"], "attrA", true, false, 0, 1, "attrA", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
 
 			dt = ds.Tables [1];
-			AssertDataTable ("dt", dt, "el2", 6, 0, 1, 2);
+			AssertDataTable ("dt", dt, "el2", 6, 0, 1, 2, 2, 1);
 			AssertDataColumn ("el2_Id", dt.Columns ["el2_Id"], "el2_Id", false, true, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
 			AssertDataColumn ("el2_col2", dt.Columns ["column2"], "column2", true, false, 0, 1, "column2", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 			AssertDataColumn ("el2_col3", dt.Columns ["column3"], "column3", true, false, 0, 1, "column3", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
@@ -266,14 +266,14 @@ namespace MonoTests.System.Data
 			AssertDataColumn ("el2_el1Id", dt.Columns ["el1_Id"], "el1_Id", true, false, 0, 1, "el1_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 5, String.Empty, false, false);
 
 			dt = ds.Tables [2];
-			AssertDataTable ("dt", dt, "el3", 4, 0, 1, 0);
+			AssertDataTable ("dt", dt, "el3", 4, 0, 1, 0, 1, 0);
 			AssertDataColumn ("el3_attr3", dt.Columns ["attr3"], "attr3", true, false, 0, 1, "attr3", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("el3_attrC", dt.Columns ["attrC"], "attrC", true, false, 0, 1, "attrC", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 			AssertDataColumn ("el3_Text", dt.Columns ["el3_Text"], "el3_Text", true, false, 0, 1, "el3_Text", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
 			AssertDataColumn ("el3_el2Id", dt.Columns ["el2_Id"], "el2_Id", true, false, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
 
 			dt = ds.Tables [3];
-			AssertDataTable ("dt", dt, "el4", 4, 0, 1, 0);
+			AssertDataTable ("dt", dt, "el4", 4, 0, 1, 0, 1, 0);
 			AssertDataColumn ("el3_attr4", dt.Columns ["attr4"], "attr4", true, false, 0, 1, "attr4", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("el4_attrD", dt.Columns ["attrD"], "attrD", true, false, 0, 1, "attrD", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 			AssertDataColumn ("el4_Text", dt.Columns ["el4_Text"], "el4_Text", true, false, 0, 1, "el4_Text", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
@@ -288,7 +288,7 @@ namespace MonoTests.System.Data
 			DataSet ds = GetDataSet (xml10, null);
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0);
+			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col", dt.Columns [0], "b", true, false, 0, 1, "b", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 		}
 
@@ -300,7 +300,7 @@ namespace MonoTests.System.Data
 			DataSet ds = GetDataSet (xml11, null);
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "root", 2, 0, 0, 0);
+			AssertDataTable ("dt", dt, "root", 2, 0, 0, 0, 0, 0);
 			AssertDataColumn ("element", dt.Columns ["child_after_significant_space"], "child_after_significant_space", true, false, 0, 1, "child_after_significant_space", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("xml:space", dt.Columns ["space"], "space", true, false, 0, 1, "space", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, "http://www.w3.org/XML/1998/namespace", 1, "xml", false, false);
 		}
@@ -330,12 +330,12 @@ namespace MonoTests.System.Data
 			AssertDataSet ("ds", ds, "root", 2, 0);
 
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "table1", 2, 0, 0, 0);
+			AssertDataTable ("dt", dt, "table1", 2, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col1_1", dt.Columns [0], "col1_1", true, false, 0, 1, "col1_1", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col1_2", dt.Columns [1], "col1_2", true, false, 0, 1, "col1_2", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 
 			dt = ds.Tables [1];
-			AssertDataTable ("dt", dt, "table2", 2, 0, 0, 0);
+			AssertDataTable ("dt", dt, "table2", 2, 0, 0, 0, 0, 0);
 			AssertDataColumn ("col2_1", dt.Columns [0], "col2_1", true, false, 0, 1, "col2_1", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col2_2", dt.Columns [1], "col2_2", true, false, 0, 1, "col2_2", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 		}
@@ -377,11 +377,11 @@ namespace MonoTests.System.Data
 			AssertDataSet ("ds", ds, "set", 2, 1);
 
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "table", 1, 0, 0, 1);
+			AssertDataTable ("dt", dt, "table", 1, 0, 0, 1, 1, 1);
 			AssertDataColumn ("table_Id", dt.Columns [0], "table_Id", false, true, 0, 1, "table_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
 
 			dt = ds.Tables [1];
-			AssertDataTable ("dt", dt, "col", 2, 0, 1, 0);
+			AssertDataTable ("dt", dt, "col", 2, 0, 1, 0, 1, 0);
 			AssertDataColumn ("another_col", dt.Columns [0], "another_col", true, false, 0, 1, "another_col", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("table_refId", dt.Columns [1], "table_Id", true, false, 0, 1, "table_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 
@@ -398,11 +398,11 @@ namespace MonoTests.System.Data
 			AssertDataSet ("ds", ds, "set", 2, 1);
 
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "table", 1, 0, 0, 1);
+			AssertDataTable ("dt", dt, "table", 1, 0, 0, 1, 1, 1);
 			AssertDataColumn ("table_Id", dt.Columns [0], "table_Id", false, true, 0, 1, "table_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
 
 			dt = ds.Tables [1];
-			AssertDataTable ("dt", dt, "col", 2, 0, 1, 0);
+			AssertDataTable ("dt", dt, "col", 2, 0, 1, 0, 1, 0);
 			AssertDataColumn ("table_refId", dt.Columns [0], "table_Id", true, false, 0, 1, "table_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("another_col", dt.Columns [1], "another_col", true, false, 0, 1, "another_col", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 
@@ -420,11 +420,11 @@ namespace MonoTests.System.Data
 			AssertDataSet ("ds", ds, "set", 2, 1);
 
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "table", 1, 0, 0, 1);
+			AssertDataTable ("dt", dt, "table", 1, 0, 0, 1, 1, 1);
 			AssertDataColumn ("table_Id", dt.Columns [0], "table_Id", false, true, 0, 1, "table_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
 
 			dt = ds.Tables [1];
-			AssertDataTable ("dt", dt, "col", 3, 0, 1, 0);
+			AssertDataTable ("dt", dt, "col", 3, 0, 1, 0, 1, 0);
 			AssertDataColumn ("another_col", dt.Columns [0], "another_col", true, false, 0, 1, "another_col", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("table_refId", dt.Columns [1], "table_Id", true, false, 0, 1, "table_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 			AssertDataColumn ("attr", dt.Columns [2], "attr", true, false, 0, 1, "attr", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);

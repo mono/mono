@@ -93,21 +93,21 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "SimpleTable", xml6,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("xml6", ds.Tables [0], "root", 1, 1, 0, 0);
+			AssertDataTable ("xml6", ds.Tables [0], "root", 1, 1, 0, 0, 0, 0);
 
 			// simple table with 2 columns:
 			ds = new DataSet ();
 			AssertReadXml (ds, "SimpleTable2", xml7,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("xml7", ds.Tables [0], "root", 2, 1, 0, 0);
+			AssertDataTable ("xml7", ds.Tables [0], "root", 2, 1, 0, 0, 0, 0);
 
 			// simple dataset with 1 table:
 			ds = new DataSet ();
 			AssertReadXml (ds, "SimpleDataSet", xml8,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"dataset", 1);
-			AssertDataTable ("xml8", ds.Tables [0], "table", 2, 1, 0, 0);
+			AssertDataTable ("xml8", ds.Tables [0], "table", 2, 1, 0, 0, 0, 0);
 		}
 
 		[Test]
@@ -313,21 +313,21 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "SimpleTable", xml6,
 				XmlReadMode.InferSchema, XmlReadMode.InferSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("xml6", ds.Tables [0], "root", 1, 1, 0, 0);
+			AssertDataTable ("xml6", ds.Tables [0], "root", 1, 1, 0, 0, 0, 0);
 
 			// simple table with 2 columns:
 			ds = new DataSet ();
 			AssertReadXml (ds, "SimpleTable2", xml7,
 				XmlReadMode.InferSchema, XmlReadMode.InferSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("xml7", ds.Tables [0], "root", 2, 1, 0, 0);
+			AssertDataTable ("xml7", ds.Tables [0], "root", 2, 1, 0, 0, 0, 0);
 
 			// simple dataset with 1 table:
 			ds = new DataSet ();
 			AssertReadXml (ds, "SimpleDataSet", xml8,
 				XmlReadMode.InferSchema, XmlReadMode.InferSchema,
 				"dataset", 1);
-			AssertDataTable ("xml8", ds.Tables [0], "table", 2, 1, 0, 0);
+			AssertDataTable ("xml8", ds.Tables [0], "table", 2, 1, 0, 0, 0, 0);
 		}
 
 		[Test]
@@ -482,19 +482,19 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "Fragment", schema1,
 				XmlReadMode.Fragment, XmlReadMode.Fragment,
 				"NewDataSet", 1);
-			AssertDataTable ("fragment", ds.Tables [0], "Root", 1, 0, 0, 0);
+			AssertDataTable ("fragment", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
 
 			ds = new DataSet ();
 			AssertReadXml (ds, "ReadSchema", schema1,
 				XmlReadMode.ReadSchema, XmlReadMode.ReadSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("readschema", ds.Tables [0], "Root", 1, 0, 0, 0);
+			AssertDataTable ("readschema", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
 
 			ds = new DataSet ();
 			AssertReadXml (ds, "Auto", schema1,
 				XmlReadMode.Auto, XmlReadMode.ReadSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("auto", ds.Tables [0], "Root", 1, 0, 0, 0);
+			AssertDataTable ("auto", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
 
 			ds = new DataSet ();
 			AssertReadXml (ds, "DiffGram", schema1,
@@ -523,20 +523,20 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "Fragment", schema2,
 				XmlReadMode.Fragment, XmlReadMode.Fragment,
 				"NewDataSet", 1);
-			AssertDataTable ("fragment", ds.Tables [0], "Root", 1, 0, 0, 0);
+			AssertDataTable ("fragment", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
 
 			// rest ... treated as schema
 			ds = new DataSet ();
 			AssertReadXml (ds, "Auto", schema2,
 				XmlReadMode.Auto, XmlReadMode.ReadSchema,
 				"NewDataSet", 1, ReadState.Interactive);
-			AssertDataTable ("auto", ds.Tables [0], "Root", 1, 0, 0, 0);
+			AssertDataTable ("auto", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
 
 			ds = new DataSet ();
 			AssertReadXml (ds, "DiffGram", schema2,
 				XmlReadMode.DiffGram, XmlReadMode.DiffGram,
 				"NewDataSet", 1, ReadState.Interactive);
-			AssertDataTable ("diffgram", ds.Tables [0], "Root", 1, 0, 0, 0);
+			AssertDataTable ("diffgram", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
 
 			ds = new DataSet ();
 			AssertReadXml (ds, "ReadSchema", schema2,
@@ -557,7 +557,7 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "SimpleTable", xml6,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"root", 1); // not NewDataSet unlike standalone load
-			AssertDataTable ("seq1", ds.Tables [0], "root", 1, 1, 0, 0);
+			AssertDataTable ("seq1", ds.Tables [0], "root", 1, 1, 0, 0, 0, 0);
 		}
 
 		[Test]
@@ -573,7 +573,7 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "SimpleTable2", xml7,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"root", 1); // dataset name will not be overwritten
-			AssertDataTable ("#1", ds.Tables [0], "root", 2, 1, 0, 0);
+			AssertDataTable ("#1", ds.Tables [0], "root", 2, 1, 0, 0, 0, 0);
 
 			// simple table -> simple dataset
 			ds = new DataSet ();
@@ -581,7 +581,7 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "SimpleTable", xml6,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("#2", ds.Tables [0], "root", 1, 1, 0, 0);
+			AssertDataTable ("#2", ds.Tables [0], "root", 1, 1, 0, 0, 0, 0);
 
 			// Return value became IgnoreSchema, since there is
 			// already schema information in the dataset.
@@ -590,7 +590,7 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "SimpleTable2", xml7,
 				XmlReadMode.Auto, XmlReadMode.IgnoreSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("#3", ds.Tables [0], "root", 1, 2, 0, 0);
+			AssertDataTable ("#3", ds.Tables [0], "root", 1, 2, 0, 0, 0, 0);
 
 		}
 

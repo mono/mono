@@ -26,13 +26,15 @@ namespace MonoTests.System.Data
 				AssertEquals (label + ".RelationCount", relCount, ds.Relations.Count);
 		}
 
-		public void AssertDataTable (string label, DataTable dt, string name, int columnCount, int rowCount, int parentRelationCount, int childRelationCount)
+		public void AssertDataTable (string label, DataTable dt, string name, int columnCount, int rowCount, int parentRelationCount, int childRelationCount, int constraintCount, int primaryKeyLength)
 		{
 			AssertEquals (label + ".TableName", name, dt.TableName);
 			AssertEquals (label + ".ColumnCount", columnCount, dt.Columns.Count);
 			AssertEquals (label + ".RowCount", rowCount, dt.Rows.Count);
 			AssertEquals (label + ".ParentRelCount", parentRelationCount, dt.ParentRelations.Count);
 			AssertEquals (label + ".ChildRelCount", childRelationCount, dt.ChildRelations.Count);
+			AssertEquals (label + ".ConstraintCount", constraintCount, dt.Constraints.Count);
+			AssertEquals (label + ".PrimaryKeyLength", primaryKeyLength, dt.PrimaryKey.Length);
 		}
 
 		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount)

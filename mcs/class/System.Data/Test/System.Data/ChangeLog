@@ -1,5 +1,14 @@
 2004-05-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DataSetTest.cs,
+	  DataSetReadXmlTest.cs,
+	  DataSetReadXmlSchemaTest.cs,
+	  DataSetInferXmlSchemaTest.cs,
+	  DataSetAssertion.cs : AssertDataTable() now checks Constraint count
+	  and ParentKey length.
+
+2004-05-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DataSetReadXmlSchemaTest.cs : Added tests for test012.xsd (repeatable
 	  simple element) and test013.xsd (reference to global element;
 	  currently failing).
