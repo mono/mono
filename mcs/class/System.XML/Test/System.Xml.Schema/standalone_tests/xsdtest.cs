@@ -4,75 +4,214 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class Test
+public class XsdTest
 {
-	static char SEP = Path.DirectorySeparatorChar;
+	static readonly char SEP = Path.DirectorySeparatorChar;
+	static ValidationEventHandler noValidateHandler =
+		new ValidationEventHandler (NoValidate);
 
-	public static void Main ()
+	bool verbose;
+	bool stopOnError;
+	bool noResolver;
+	bool reportAsXml;
+	bool reportDetails;
+	bool reportSuccess;
+	bool testAll;
+	bool noValidate;
+	string specificTarget;
+	TextWriter ReportWriter = Console.Out;
+	XmlTextWriter XmlReport;
+
+	public static void Main (string [] args)
 	{
+		new XsdTest ().Run (args);
+	}
+
+	void Usage ()
+	{
+		Console.WriteLine (@"
+USAGE: mono xsdtest.exe options target-pattern
+
+	options:
+	--stoponerr:		stops at unexpected error.
+	--noresolve:		don't resolve external resources.
+	--novalidate:		don't validate and continue reading.
+
+	--verbose:		includes processing status.
+	--xml:			report as XML format.
+	--details:		report stack trace for errors.
+	--reportsuccess:	report successful test as well.
+	--testall:		process NISTTest/SunTest as well as MSXsdTest.
+
+	target-pattern:		Part of the target schema file name.
+				(No Regex support.)
+");
+		return;
+	}
+
+	void Run (string [] args)
+	{
+		foreach (string s in args) {
+			switch (s) {
+			case "--help":
+				Usage ();
+				return;
+			case "--verbose":
+				verbose = true; break;
+			case "--stoponerr":
+				stopOnError = true; break;
+			case "--noresolve":
+				noResolver = true; break;
+			case "--novalidate":
+				noValidate = true; break;
+			case "--xml":
+				reportAsXml = true; break;
+			case "--details":
+				reportDetails = true; break;
+			case "--reportsuccess":
+				reportSuccess = true; break;
+			case "--testall":
+				testAll = true; break;
+			default:
+				if (s.StartsWith ("--report:"))
+					ReportWriter = new StreamWriter (
+						s.Substring (9));
+				else
+					specificTarget = s;
+				break;
+			}
+		}
 		RunTest ("msxsdtest");
-		RunTest ("nisttest");
-		RunTest ("suntest");
+		if (testAll) {
+			RunTest ("suntest");
+			RunTest ("nisttest");
+		}
+		ReportWriter.Close ();
+	}
+
+	static void NoValidate (object o, ValidationEventArgs e)
+	{
 	}
 	
-	static void RunTest (string subdir)
+	void RunTest (string subdir)
 	{
-Console.WriteLine ("Started:  " + DateTime.Now);
 		string basePath = @"Xsd-Test-Suite" + SEP;
 		XmlDocument doc = new XmlDocument ();
 		doc.Load (basePath + subdir + SEP + "tests-all.xml");
+
+		if (reportAsXml) {
+			XmlReport = new XmlTextWriter (ReportWriter);
+			XmlReport.Formatting = Formatting.Indented;
+			XmlReport.WriteStartElement ("test-results");
+		}
+
+		Console.WriteLine ("Started:  " + DateTime.Now);
+
 		foreach (XmlElement test in doc.SelectNodes ("/tests/test")) {
 			// Test schema
 			string schemaFile = test.SelectSingleNode ("@schema").InnerText;
+			if (specificTarget != null &&
+				schemaFile.IndexOf (specificTarget) < 0)
+				continue;
 			if (schemaFile.Length > 2)
 				schemaFile = schemaFile.Substring (2);
+			if (verbose)
+				Report (schemaFile, false, "compiling", "");
 			bool isValidSchema = test.SelectSingleNode ("@out_s").InnerText == "1";
 			XmlSchema schema = null;
 			XmlTextReader sxr = null;
 			try {
 				sxr = new XmlTextReader (basePath + schemaFile);
+				if (noResolver)
+					sxr.XmlResolver = null;
 				schema = XmlSchema.Read (sxr, null);
-				sxr.Close ();
-				schema.Compile (null);
-				if (!isValidSchema) {
-					Console.WriteLine ("Incorrectly Valid   schema  : " + schemaFile);
+				schema.Compile (noValidate ? noValidateHandler : null);
+				if (!isValidSchema && !noValidate) {
+					Report (schemaFile, true, "should fail", "");
 					continue;
 				}
+				if (reportSuccess)
+					Report (schemaFile, true, "OK", "");
 			} catch (XmlSchemaException ex) {
 				if (isValidSchema) {
-					Console.WriteLine ("Incorrectly Invalid schema  : " + schemaFile + " " + ex.Message);
+					Report (schemaFile, true, "should succeed", 
+						reportDetails ?
+						ex.ToString () : ex.Message);
 					continue;
 				}
 			} catch (Exception ex) {
-				Console.WriteLine ("Unexpected Exception on schema: " + schemaFile + " " + ex.Message);
+				if (stopOnError)
+					throw;
+				Report (schemaFile, true, "unexpected",
+						reportDetails ?
+						ex.ToString () : ex.Message);
 				continue;
 			} finally {
-				sxr.Close ();
+				if (sxr != null)
+					sxr.Close ();
 			}
+
 			// Test instances
 			string instanceFile = test.SelectSingleNode ("@instance").InnerText;
 			if (instanceFile.Length == 0)
 				continue;
 			else if (instanceFile.StartsWith ("./"))
 				instanceFile = instanceFile.Substring (2);
+			if (verbose)
+				Report (instanceFile, false, "reading ", "");
 			bool isValidInstance = test.SelectSingleNode ("@out_x").InnerText == "1";
 			XmlValidatingReader xvr = null;
 			try {
 				xvr = new XmlValidatingReader (new XmlTextReader (basePath + "\\" + instanceFile));
+				if (noResolver)
+					xvr.XmlResolver = null;
+				if (noValidate)
+					xvr.ValidationEventHandler += noValidateHandler;
 				xvr.Schemas.Add (schema);
 				while (!xvr.EOF)
 					xvr.Read ();
-				if (!isValidInstance)
-					Console.WriteLine ("Incorrectly Valid   instance: " + schemaFile);
+				if (!isValidInstance && !noValidate)
+					Report (instanceFile, false, "should fail", "");
+				if (reportSuccess)
+					Report (instanceFile, false, "OK", "");
 			} catch (XmlSchemaException ex) {
 				if (isValidInstance)
-					Console.WriteLine ("Incorrectly Invalid instance: " + schemaFile + " " + ex.Message);
+					Report (instanceFile, false, "should succeed",
+						reportDetails ?
+						ex.ToString () : ex.Message);
 			} catch (Exception ex) {
-				Console.WriteLine ("Unexpected Exception on instance: " + schemaFile + " " + ex.Message);
+				if (stopOnError)
+					throw;
+				Report (instanceFile, false, "unexpected",
+					reportDetails ?
+					ex.ToString () : ex.Message);
 			} finally {
-				xvr.Close ();
+				if (xvr != null)
+					xvr.Close ();
 			}
 		}
-Console.WriteLine ("Finished: " + DateTime.Now);
+
+		if (reportAsXml) {
+			XmlReport.WriteEndElement ();
+			XmlReport.Flush ();
+		}
+
+		Console.WriteLine ("Finished: " + DateTime.Now);
+	}
+
+	void Report (string id, bool compile, string category, string s)
+	{
+		string phase = compile ? "compile" : "read";
+		if (reportAsXml) {
+			XmlReport.WriteStartElement ("testresult");
+			XmlReport.WriteAttributeString ("id", id);
+			XmlReport.WriteAttributeString ("phase", phase);
+			XmlReport.WriteAttributeString ("category", category);
+			XmlReport.WriteString (s);
+			XmlReport.WriteEndElement ();
+		}
+		else
+			ReportWriter.WriteLine ("{0}/{1} : {2} {3}",
+				phase, category, id, s);
 	}
 }

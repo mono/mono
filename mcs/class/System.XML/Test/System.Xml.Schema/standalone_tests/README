@@ -3,22 +3,24 @@
 
 ** Small XML Schema validation test system::
 
-This is a small standalone test system using W3C XML Schema test collection.
-http://www.w3.org/2001/05/xmlschema-test-collection.html
+	This is a small standalone test system using W3C XML Schema 
+	test collection.
+	http://www.w3.org/2001/05/xmlschema-test-collection.html
 
-"make" will do what you need (downloading test archive, expanding,
-compiling test runner).
+	"make" will prepare whatever you need to run test (downloading test
+	archive from W3C, expanding, compiling test runner).
 
-"make test" will do the actual tests.
+	"make run-test" will run the tests and reports as TestResult.xml.
 
 
 ** Post Schema Compilation Information comparison test::
 
-This is a test for Post Schema Compilation Information properties.
+	This is a test for Post Schema Compilation Information properties.
 
-xs-pcsi-compare.exe emits properties of schema object model. pcsi-ms-all.zip contains msxsdtest result I got from MS.NET 1.1.
+	xs-pcsi-compare.exe emits properties of schema object model.
+	pcsi-ms-all.zip contains msxsdtest result I got from MS.NET 1.1.
 
-(Currently no other way to compare the results by hands.)
+	(Currently no other way to compare the results by hands.)
 
 As for the result differences, some notes would be required:
 

@@ -1,3 +1,12 @@
+2004-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xsdtest.cs : improved significantly. Enabled reporting to file,
+	  immediate stop on exception, xml reporting, and so on.
+	  Run mono xsdtest.exe --help for details.
+	* Makefile : now "make test" becomes "make run-test" and it generates
+	  TestResult.xml (of my own format).
+	* README : updated info.
+
 2004-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : made "make test" independent of "make" so that extraneous

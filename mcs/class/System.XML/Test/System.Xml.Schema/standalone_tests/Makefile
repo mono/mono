@@ -24,8 +24,9 @@ $(TEST_ARCHIVE) :
 xsd-test-suite:
 	mkdir xsd-test-suite
 
-test :
-	$(RUNTIME) xsdtest.exe
+run-test :
+	$(RUNTIME) xsdtest.exe --xml --reportsuccess --testall --report:TestResult.xml
+	@echo "SUCCESS: `grep -c \"OK\" TestResult.xml` NORMAL FAILURE: `grep -c should TestResult.xml` UNEXPECTED `grep -c unexpected TestResult.xml`"
 
 test-psci : xs-psci-compare.exe
 	$(RUNTIME) xs-psci-compare.exe xsd-test-suite/msxsdtest/tests-all.xml > psci-mono-msxsd.txt
