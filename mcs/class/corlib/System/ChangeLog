@@ -1,3 +1,10 @@
+2001-07-11  Joe Shaw  <joe@ximian.com>
+
+	* Array.cs: Change all instances of trying to access an array with
+	the index operator to calls to GetValue and SetValue, and add
+	InternalGetValue and InternalSetValue which are internal calls into
+	the runtime. Ew.
+
 2001-07-10  Joe Shaw  <joe@ximian.com>
 
 	* Array.cs: Implemented everything but Sort().

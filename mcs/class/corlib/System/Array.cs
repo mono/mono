@@ -67,13 +67,13 @@ namespace System {
 			for (int i = 0; i < length; i++) {
 				int result;
 
-				if (comparer == null && !(array[index + i] is IComparable))
+				if (comparer == null && !(array.GetValue(index + i) is IComparable))
 					throw new ArgumentException ();
 
 				if (comparer == null)
-					result = comparer.Compare(value, array[index + i]);
+					result = comparer.Compare(value, array.GetValue(index + i));
 				else
-					result = value.CompareTo(array[index + i]);
+					result = value.CompareTo(array.GetValue(index + i));
 
 				if (result == 0)
 					return index + i;
@@ -94,12 +94,12 @@ namespace System {
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = 0; i < length; i++) {
-				if (array[index + i] is bool)
-					array[index + i] = false;
-				else if (array[index + i] is ValueType)
-					array[index + i] = 0;
+				if (array.GetValue(index + i) is bool)
+					array.SetValue(index + i, false);
+				else if (array.GetValue(index + i) is ValueType)
+					array.SetValue(index + i, 0);
 				else
-					array[index + i] = null;
+					array.SetValue(index + i, null);
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace System {
 			for (int i = 0; i < this.length; i++) {
 				int index = this.lower_bound + i;
 
-				a[index] = this[index];
+				a.SetValue(index, this.GetValue(index));
 			}
 
 			return a;
@@ -138,9 +138,12 @@ namespace System {
 			for (int i = 0; i < length; i++) {
 				int index = source.lower_bound + i;
 
-				dest[index] = source[index];
+				dest.SetValue(index, source.GetValue(index));
 			}
 		}
+
+		[MethodImplAttribute(InternalCall)]
+		private object InternalGetValue (int index);
 
 		public object GetValue (int index)
 		{
@@ -150,8 +153,23 @@ namespace System {
 			if (index < this.lower_bound ||
 			    index > this.lower_bound + this.length)
 				throw new ArgumentOutOfRangeException ();
+			
+			return InternalGetValue (index);
+		}
 
-			return this[index];
+		[MethodImplAttribute(InternalCall)]
+		private void InternalSetValue (int index, object value);
+
+		public void SetValue (int index, object value)
+		{
+			if (this.rank > 1)
+				throw new ArgumentException ();
+
+			if (index < this.lower_bound ||
+			    index > this.lower_bound + this.length)
+				throw new ArgumentOutOfRangeException ();
+
+			InternalSetValue (index, value);
 		}
 
 		public static int IndexOf (Array array, object value)
@@ -173,7 +191,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = 0; i < length; i++) {
-				if (array[index + i] == value)
+				if (array.GetValue(index + i) == value)
 					return index + i;
 			}
 
@@ -201,7 +219,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = 0; i < length; i++) {
-				if (array[index + i] == value)
+				if (array.GetValue(index + i) == value)
 					occurrance = index + i;
 			}
 
@@ -230,9 +248,9 @@ namespace System {
 			for (int i = 0; i < length/2; i++) {
 				object tmp;
 
-				tmp = array[index + i];
-				array[index + i] = array[index + length - i - 1];
-				array[index + length - i - 1] = tmp;
+				tmp = array.GetValue(index + i);
+				array.SetValue(index + i, array.GetValue(index + length - i - 1));
+				array.SetValue(index + length - i - 1, tmp);
 			}
 		}
 
