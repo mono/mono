@@ -93,7 +93,6 @@ namespace System.Data
 			set { sort = value; }
 		}
 
-		[MonoTODO]
 		[Browsable (false)]
 		public DataTable Table {
 			get { return dataTable; }

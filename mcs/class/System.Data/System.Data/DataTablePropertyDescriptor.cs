@@ -54,9 +54,7 @@ namespace System.Data
 			if (desc == null)
 				return null;
 
-			DataView dv = new DataView (table);
-			dv.dataViewManager = desc.DataViewManager;
-			return dv;
+			return new DataView (table, desc.DataViewManager);
 		}
 
 		public override bool CanResetValue (object component)

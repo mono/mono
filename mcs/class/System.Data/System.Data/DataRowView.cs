@@ -176,10 +176,11 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
-		public override int GetHashCode() {
-			throw new NotImplementedException ();
-		}	
+		// It returns the hash code of the DataRow object.
+		public override int GetHashCode ()
+		{
+			return dataRow.GetHashCode ();
+		}
 
 		#endregion // Properties
 		

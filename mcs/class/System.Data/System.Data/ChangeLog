@@ -1,5 +1,13 @@
 2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataViewSettings.cs : no MonoTODO anymore.
+	* DataViewManager.cs : pass itself to new DataView() (new ctor).
+	* DataRowView.cs : GetHashCode() returns its Row's hash.
+	* DataTablePropertyDescriptor.cs : use new ctor().
+	* DataView.cs : added new ctor()s that accept DataViewManager.
+
+2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataView.cs, DataRowView.cs : AddNew() should not add the row to table
 	  (it is still detached). So handle those rows differntly.
 	  CancelEdit(), EndEdit() and Delete() propagates those events to

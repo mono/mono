@@ -59,17 +59,30 @@ namespace System.Data
 			Open ();
 		}
 
-		public DataView (DataTable table) 
+		public DataView (DataTable table)
+			: this (table, null)
+		{
+		}
+
+		internal DataView (DataTable table, DataViewManager manager)
 		{
 			dataTable = table;
 			rowState = DataViewRowState.CurrentRows;
+			dataViewManager = manager;
 			Open ();
 		}
 
-		public DataView (DataTable table, string RowFilter,
-				string Sort, DataViewRowState RowState) 
+		public DataView (DataTable table, string rowFilter,
+			string sort, DataViewRowState rowState)
+			: this (table, null, rowFilter, sort, rowState)
+		{
+		}
+
+		internal DataView (DataTable table, DataViewManager manager,
+			string RowFilter, string Sort, DataViewRowState RowState)
 		{
 			dataTable = table;
+			dataViewManager = manager;
 			rowState = DataViewRowState.CurrentRows;
 			this.RowFilter = RowFilter;
 			this.Sort = Sort;

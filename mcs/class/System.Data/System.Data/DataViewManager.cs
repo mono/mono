@@ -269,7 +269,7 @@ namespace System.Data
 		public DataView CreateDataView (DataTable table) 
 		{
 			DataViewSetting s = settings [table];
-			return new DataView (table, s.Sort, s.RowFilter, s.RowStateFilter);
+			return new DataView (table, this, s.Sort, s.RowFilter, s.RowStateFilter);
 		}
 
 		[MonoTODO]
