@@ -1,4 +1,8 @@
 
+Tue Oct 2 18:51:25 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: set frame->ip in the leave opcode. Make db_methods static.
+
 Sun Sep 30 11:57:15 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: compiler and ANSI C portability fixes.
