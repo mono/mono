@@ -1,3 +1,7 @@
+2003-10-20 Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* EncryptedKeyTest.cs: New. Unit tests for EncryptedKey.
+
 2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509SecurityTokenTest.cs: New. New. Unit tests for X509SecurityToken.
