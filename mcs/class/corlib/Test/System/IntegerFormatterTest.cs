@@ -85,7 +85,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 							count++;
 						}
@@ -112,7 +112,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 						}
 					}
@@ -129,7 +129,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 							count++;
 						}
@@ -169,7 +169,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 							count++;
 						}
@@ -209,7 +209,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 							count++;
 						}
@@ -249,7 +249,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 							count++;
 						}
@@ -289,7 +289,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 							count++;
 						}
@@ -329,7 +329,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 							count++;
 						}
@@ -369,7 +369,7 @@ namespace System {
 										   n, formats[idx], s1, s2);
 								count++;
 							}
-						} catch (Exception e) {
+						} catch (Exception) {
 							Console.WriteLine ("Exception Caught! Number: {0} Format: {1}", n, formats[idx]);
 							count++;
 						}
