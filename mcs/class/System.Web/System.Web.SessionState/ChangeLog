@@ -1,3 +1,9 @@
+2005-03-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionStateModule.cs:
+	* SessionId.cs: share the same RNG for all the instances of
+	SessionStateModule.
+
 2005-02-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs: hack that makes static files work on sites that

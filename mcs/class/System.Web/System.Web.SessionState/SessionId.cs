@@ -49,8 +49,10 @@ namespace System.Web.SessionState {
 				throw new ArgumentNullException ("rng");
 			
 			byte[] key = new byte [half_len];
-			
-			rng.GetBytes (key);
+
+			lock (rng) {
+				rng.GetBytes (key);
+			}
 			return Encode (key);
 		}
 
