@@ -1,3 +1,7 @@
+2004-11-22  Ravindra  <rkumar@novell.com>
+
+	* SD.csproj: Removed a wrong entry from files list.
+
 2004-09-16  Ravindra <rkumar@novell.com>
 
 	* SD.csproj: Added a VS.NET project file. It can be used to build

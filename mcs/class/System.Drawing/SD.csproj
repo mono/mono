@@ -124,11 +124,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Drawing\create.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Drawing\Font.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
