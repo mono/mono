@@ -791,9 +791,14 @@ namespace System.Windows.Forms
 
 		#region GroupBox
 		public override void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box) {
-			SizeF size;
-			int width, y;
-			Rectangle rect = box.ClientRectangle;
+			StringFormat	text_format;
+			SizeF		size;
+			int		width;
+			int		y;
+			Rectangle	rect;
+
+			rect = box.ClientRectangle;
+
 			// Needed once the Dark/Light code below is enabled again
 			//Color disabled = ColorGrayText;
 			
@@ -805,6 +810,9 @@ namespace System.Windows.Forms
 			//Pen pen_dark = new Pen (ControlPaint.Dark (disabled, 0));
 
 			dc.FillRectangle (ResPool.GetSolidBrush (box.BackColor), rect);
+
+			text_format = new StringFormat();
+			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
 			size = dc.MeasureString (box.Text, box.Font);
 			width = (int) size.Width;
@@ -831,11 +839,12 @@ namespace System.Windows.Forms
 			
 			
 			/* Text */
-			if (box.Enabled)
-				dc.DrawString (box.Text, box.Font, new SolidBrush (box.ForeColor), 10, 0);
-			else
+			if (box.Enabled) {
+				dc.DrawString (box.Text, box.Font, new SolidBrush (box.ForeColor), 10, 0, text_format);
+			} else {
 				CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
-					new RectangleF (10, 0, width,  box.Font.Height), new StringFormat ());					
+					new RectangleF (10, 0, width,  box.Font.Height), text_format);
+			}
 				
 		}
 

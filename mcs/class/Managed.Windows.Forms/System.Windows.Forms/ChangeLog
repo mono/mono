@@ -1,5 +1,12 @@
 2005-02-15  Peter Bartok  <pbartok@novell.com>
 
+	* GroupBox.cs (ProcessMnemonic): Implemented
+	* Label.cs (ProcessMnemonic): Implemented
+	* ThemeWin32Classic.cs (DrawGroupBox): Added stringformat to show
+	  hotkeys
+
+2005-02-15  Peter Bartok  <pbartok@novell.com>
+
 	* RadioButton.cs (ProcessMnemonic): Implemented
 	* CheckBox.cs (ProcessMnemonic): Implemented
 	* Control.cs:

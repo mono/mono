@@ -512,7 +512,15 @@ namespace System.Windows.Forms
 
     		protected override bool ProcessMnemonic (char charCode)
     		{
-    			return base.ProcessMnemonic (charCode);
+			if (IsMnemonic(charCode, Text) == true) {
+				// Select item next in line in tab order
+				if (this.parent != null) {
+					parent.SelectNextControl(this, true, false, false, false);
+				}
+				return true;
+			}
+			
+			return base.ProcessMnemonic (charCode);
     		}
 
     		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
