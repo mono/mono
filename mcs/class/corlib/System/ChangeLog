@@ -1,6 +1,13 @@
 2004-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Fixed ToString(String.Empty) to default ("G").
+	* Int16.cs: Fixed ToString(String.Empty) to default ("G").
+	* Int32.cs: Fixed ToString(String.Empty) to default ("G").
+	* Int64.cs: Fixed ToString(String.Empty) to default ("G").
+	* SByte.cs: Fixed ToString(String.Empty) to default ("G").
+	* UInt16.cs: Fixed ToString(String.Empty) to default ("G").
+	* UInt32.cs: Fixed ToString(String.Empty) to default ("G").
+	* UInt64.cs: Fixed ToString(String.Empty) to default ("G").
 
 2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 

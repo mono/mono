@@ -5,6 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Globalization;
@@ -150,7 +151,8 @@ namespace System
 		{
 			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
 
-			if (format == null)
+			// use "G" when format is null or String.Empty
+			if ((format == null) || (format.Length == 0))
 				format = "G";
 			
 			return IntegerFormatter.NumberToString (format, nfi, m_value);
