@@ -1,4 +1,8 @@
 
+Wed Feb 27 12:35:10 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: Fix typo. Start refactoring of class init code.
+
 Wed Feb 27 12:23:00 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.c: exit with 1 on error.
