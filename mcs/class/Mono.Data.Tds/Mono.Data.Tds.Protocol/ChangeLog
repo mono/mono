@@ -1,3 +1,8 @@
+2005-04-04  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Tds50.cs: Pass parameters to the server. cut & paste from
+	Tds70.cs. To make the parmeters work with SybaseClient.
+
 2005-03-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Tds70.cs: turns out that sp_reset_connection procedure might not be

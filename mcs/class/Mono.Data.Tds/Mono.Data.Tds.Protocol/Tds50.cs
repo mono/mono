@@ -309,8 +309,81 @@ namespace Mono.Data.Tds.Protocol {
 		public override void Execute (string sql, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 		{
 			Parameters = parameters;
-			ExecuteQuery (BuildExec (sql), timeout, wantResults);
+                        string ex = BuildExec (sql);
+			ExecuteQuery (ex, timeout, wantResults);
 		}
+
+		public override void ExecProc (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+		{
+			Parameters = parameters;
+			ExecuteQuery (BuildProcedureCall (commandText), timeout, wantResults);
+		}
+                
+                private string BuildProcedureCall (string procedure)
+		{
+			string exec = String.Empty;
+
+			StringBuilder declare = new StringBuilder ();
+			StringBuilder select = new StringBuilder ();
+			StringBuilder set = new StringBuilder ();
+			
+			int count = 0;
+			if (Parameters != null) {
+				foreach (TdsMetaParameter p in Parameters) {
+					if (p.Direction != TdsParameterDirection.Input) {
+
+						if (count == 0)
+							select.Append ("select ");
+						else
+							select.Append (", ");
+						select.Append (p.ParameterName);
+							
+						declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
+
+						if (p.Direction != TdsParameterDirection.ReturnValue) {
+							if( p.Direction == TdsParameterDirection.InputOutput )
+								set.Append (String.Format ("set {0}\n", FormatParameter(p)));
+							else
+						set.Append (String.Format ("set {0}=NULL\n", p.ParameterName));
+						}
+					
+						count += 1;
+					}
+					
+					if (p.Direction == TdsParameterDirection.ReturnValue) {
+						exec = p.ParameterName + "=";
+					}
+				}
+			}
+                        exec = "exec " + exec;
+                        
+                        string sql = String.Format ("{0}{1}{2}{3} {4}\n{5}", declare.ToString (), 
+                                                    set.ToString (), 
+                                                    exec, procedure, 
+                                                    BuildParameters (), select.ToString ());
+			return sql;
+		}
+
+                
+		private string BuildParameters ()
+		{
+			if (Parameters == null || Parameters.Count == 0)
+				return String.Empty;
+
+			StringBuilder result = new StringBuilder ();
+			foreach (TdsMetaParameter p in Parameters) {
+				if (p.Direction != TdsParameterDirection.ReturnValue) {
+				if (result.Length > 0)
+					result.Append (", ");
+					if (p.Direction == TdsParameterDirection.InputOutput)
+						result.Append (String.Format("{0}={0} output", p.ParameterName));
+					else
+				result.Append (FormatParameter (p));
+			}
+			}
+			return result.ToString ();
+		}
+
 
 		private string FormatParameter (TdsMetaParameter parameter)
 		{
