@@ -1,3 +1,18 @@
+2003-10-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* trace.c, trace.h: New files that implement the new trace option
+	parsing. 
+
+	* driver.c: Document new --trace options.
+
+	* exceptions-ppc.c, exceptions-x86.c, mini-ppc.c, mini-sparc.c,
+	mini-x86.c: Apply:
+
+	-       if (mono_jit_trace_calls)
+	+       if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
+
+	* mini.h: prototypes.
+	
 2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Fix initialization of typedbyref locals.

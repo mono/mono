@@ -168,9 +168,41 @@ breakpoint on the application's main method.
 Inserts a breakpoint on exceptions.  This allows you to debug your
 application with a native debugger when an exception is thrown.
 .TP
-.I "--trace"
-Shows method names as they are invoked.
-
+.I "--trace[=expression]"
+Shows method names as they are invoked.  By default all methods are
+traced. 
+.TP
+The trace can be customized to include or exclude methods, classes or
+assemblies.  A trace expression is a comma separated list of targets,
+each target can be prefixed with a minus sign to turn off a particular
+target.  The words `program' and `all' have special meaning.
+`program' refers to the main program being executed, and `all' means
+all the method calls. 
+.TP
+Assemblies are specified by their name, for example, to trace all
+calls in the System assembly, use:
+.nf
+	mono --trace=System app.exe
+.fi
+Classes are specified with the T: prefix.  For example, to trace all
+calls to the System.String class, use:
+.nf
+	mono --trace=T:System.String app.exe
+.fi
+And individual methods are referenced with the M: prefix, and the
+standar method notation:
+.nf
+	mono --trace=M:System.Console.WriteLine app.exe
+.fi
+As previously noted, various rules can be specified at once:
+.nf
+	mono --trace=T:System.String,T:System.Random app.exe
+.fi
+You can exclude pieces, the next example traces calls to
+System.String except for the System.String:Concat method.
+.nf
+	mono --trace=T:System.String,-M:System.String:Concat
+.fi
 
 .SH ENVIRONMENT VARIABLES
 .TP
