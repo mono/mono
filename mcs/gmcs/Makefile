@@ -45,13 +45,14 @@ all_sources = $(COMPILER_SOURCES) cs-parser.cs
 
 DISTFILES = \
 	$(COMPILER_SOURCES)	\
-	compiler.csproj		\
-	compiler.doc		\
-	compiler.sln		\
 	cs-parser.jay		\
-	gmcs.exe.config		\
-	NOTES			\
-	TODO
+	gmcs.exe.config
+#	compiler.csproj		\
+#	compiler.doc		\
+#	compiler.sln		\
+#	NOTES			\
+#	TODO
+
 #uncomment to enable some debug stuff
 #DEBUG_FLAGS=/define:MCS_DEBUG
 

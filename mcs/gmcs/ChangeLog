@@ -1,3 +1,7 @@
+2004-11-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DISTFILES): Comment out a few missing files.
+
 2004-10-29  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (bootstrap_libs,bootstrap_libfiles): New.
