@@ -1,4 +1,8 @@
 2004-03-03  Sanjay Gupta <gsanjay@novell.com>
+	* gdipFunctions.cs: Added functions for ImageAttributes
+
+2004-03-03  Sanjay Gupta <gsanjay@novell.com>
+	* Icon.cs: Missing function stubs added
 	* Icon.cs: Missing function stubs added
 	* IconConverter.cs: Missing function stubs added
 	* ImageAnimator.cs: Missing function stubs added
