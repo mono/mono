@@ -1,3 +1,6 @@
+2004-07-13 Umadevi S <sumadevi@novell.com>
+	* TriggerAction.cs - Added enum values
+
 2004-07-09 Umadevi S <sumadevi@novell.com>
 	* Modified classes ISqlCommand.cs, ISqlConnection.cs,ISqlExecutionContext.cs, InvalidUdtException.cs,TriggerAction.cs : Added missing methods,properties,constructors
 
