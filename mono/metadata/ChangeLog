@@ -1,3 +1,7 @@
+2002-10-13  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.h: Set version number to 27.
+
 2002-10-11  Martin Baulig  <martin@gnome.org>
 
 	* gc.c: Don't register/unregister NULL pointers as disappearing links.
