@@ -982,13 +982,24 @@ namespace System.Net
 
 		internal void SetResponseError (WebExceptionStatus status, Exception e, string where)
 		{
+			string msg = String.Format ("Error getting response stream ({0}): {1}", where, status);
+			if (webResponse != null) {
+				if (e is WebException)
+					throw e;
+				throw new WebException (msg, e, status, null);
+			}
+			
 			WebAsyncResult r = asyncRead;
 			if (r == null)
 				r = asyncWrite;
 
 			if (r != null) {
-				string msg = String.Format ("Error getting response stream ({0}): {1}", where, status);
-				WebException wexc = new WebException (msg, e, status, null); 
+				WebException wexc;
+				if (e is WebException) {
+					wexc = (WebException) e;
+				} else {
+					wexc = new WebException (msg, e, status, null); 
+				}
 				r.SetCompleted (false, wexc);
 				r.DoCallback ();
 				asyncRead = null;

@@ -90,7 +90,8 @@ namespace System.Net
 		
 		public void WriteAndReadBack (byte [] buffer, int offset, int size, ref int read)
 		{
-			Write (buffer, offset, offset+read);
+			if (offset + read > 0)
+				Write (buffer, offset, offset+read);
 			read = Read (buffer, offset, size);
 		}
 
@@ -199,7 +200,7 @@ namespace System.Net
 				c = (char) buffer [offset++];
 				if (c == '\r') {
 					if (sawCR)
-						throw new ProtocolViolationException ("2 CR found");
+						ThrowProtocolViolation ("2 CR found");
 
 					sawCR = true;
 					continue;
@@ -213,13 +214,32 @@ namespace System.Net
 
 				if (!gotit)
 					saved.Append (c);
+
+				if (saved.Length > 20)
+					ThrowProtocolViolation ("chunk size too long.");
 			}
 
-			if (!sawCR || c != '\n')
+			if (!sawCR || c != '\n') {
+				if (offset < size)
+					ThrowProtocolViolation ("Missing \\n");
+
+				try {
+					if (saved.Length > 0)
+						chunkSize = Int32.Parse (saved.ToString (), NumberStyles.HexNumber);
+				} catch (Exception) {
+					ThrowProtocolViolation ("Cannot parse chunk size.");
+				}
+
 				return State.None;
+			}
 
 			chunkRead = 0;
-			chunkSize = Int32.Parse (saved.ToString (), NumberStyles.HexNumber);
+			try {
+				chunkSize = Int32.Parse (saved.ToString (), NumberStyles.HexNumber);
+			} catch (Exception) {
+				ThrowProtocolViolation ("Cannot parse chunk size.");
+			}
+			
 			if (chunkSize == 0)
 				return State.Trailer;
 
@@ -230,15 +250,15 @@ namespace System.Net
 		{
 			if (!sawCR) {
 				if ((char) buffer [offset++] != '\r')
-					throw new ProtocolViolationException ("Expecting \\r");
+					ThrowProtocolViolation ("Expecting \\r");
 
 				sawCR = true;
 				if (offset == size)
 					return State.BodyFinished;
 			}
 			
-			if ((char) buffer [offset++] != '\n')
-				throw new ProtocolViolationException ("Expecting \\n");
+			if (sawCR && (char) buffer [offset++] != '\n')
+				ThrowProtocolViolation ("Expecting \\n");
 
 			return State.None;
 		}
@@ -277,8 +297,12 @@ namespace System.Net
 				}
 			}
 
-			if (st < 4)
+			if (st < 4) {
+				if (offset <  size)
+					ThrowProtocolViolation ("Error reading trailer.");
+
 				return State.Trailer;
+			}
 
 			StringReader reader = new StringReader (saved.ToString ());
 			string line;
@@ -286,6 +310,12 @@ namespace System.Net
 				headers.Add (line);
 
 			return State.None;
+		}
+
+		static void ThrowProtocolViolation (string message)
+		{
+			WebException we = new WebException (message, null, WebExceptionStatus.ServerProtocolViolation, null);
+			throw we;
 		}
 	}
 }
