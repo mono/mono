@@ -162,6 +162,29 @@ namespace System
 				"Value is not equivalent to either TrueString or FalseString."));
 		}
 
+#if NET_2_0
+		public static bool TryParse (string value, out bool result)
+		{
+			result = false;
+			if (value == null)
+				return false;
+
+			value = value.Trim ();
+
+			if (String.Compare (value, TrueString, true, CultureInfo.InvariantCulture) == 0) {
+				result = true;
+				return true;
+			}
+
+			if (String.Compare (value, FalseString, true, CultureInfo.InvariantCulture) == 0) {
+				// result = false; // already set at false by default
+				return true;
+			}
+
+			return false;
+		}
+#endif
+
 		/// <summary>
 		/// Returns a string representation of this Boolean object.
 		/// </summary>

@@ -1,3 +1,7 @@
+2004-08-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Boolean.cs: Added TryParse static method for NET_2_0 profile.
+
 2004-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : When hour format is "hh", MS.NET (maybe incorrectly)
