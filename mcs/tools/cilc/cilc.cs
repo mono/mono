@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 
 public class cilc
 {
@@ -28,12 +29,45 @@ public class cilc
 
 		ns = "Unnamed";
 
-		if (args.Length == 1)
-			Generate (args[0], Path.GetFileNameWithoutExtension (args[0]));
-		else
+		//by default, generate in temporary directory and invoke make
+		if (args.Length == 1) {
+			//Generate (args[0], Path.GetFileNameWithoutExtension (args[0]));
+			string tmpdir = Path.GetTempPath () + Path.GetTempFileName ();
+			string cwd = Directory.GetCurrentDirectory ();
+			if (Directory.Exists (tmpdir) || File.Exists (tmpdir)) {
+				Console.WriteLine ("Error: Temporary directory " + tmpdir + " already exists.");
+				return 1;
+			}
+			Generate (args[0], tmpdir);
+			Console.Write ("Compiling unmanaged binding");
+			Run ("make", "-C \"" + tmpdir + "\" bundle=true");
+			Console.WriteLine ();
+			Console.Write ("Installing to current directory");
+			Run ("make", "-C \"" + tmpdir + "\" install prefix=\"" + cwd + "\"");
+			Directory.Delete (tmpdir, true);
+			Console.WriteLine ();
+		} else
 			Generate (args[0], args[1]);
 
 		return 0;
+	}
+
+	public static void Run (string cmd, string args)
+	{
+		ProcessStartInfo psi = new ProcessStartInfo (cmd, args);
+		psi.UseShellExecute = false;
+		psi.RedirectStandardOutput = true;
+		psi.RedirectStandardError = true;
+
+		Process p = Process.Start (psi);
+
+		string line;
+		while ((line = p.StandardOutput.ReadLine ()) != null)
+			Console.Write (".");
+
+		Console.WriteLine ();
+
+		Console.Write (p.StandardError.ReadToEnd ());
 	}
 
 	public static void Generate (string assembly, string target)
@@ -55,6 +89,7 @@ public class cilc
 		Console.WriteLine ("References (not followed):");
 		foreach (AssemblyName reference in a.GetReferencedAssemblies ())
 		Console.WriteLine ("  " + reference.Name);
+		Console.WriteLine ();
 
 		dllname = Path.GetFileName (assembly);
 		AssemblyGen (a);
@@ -65,8 +100,11 @@ public class cilc
 		string soname = "lib" + NsToFlat (Path.GetFileNameWithoutExtension (assembly)).ToLower () + ".so";
 
 		//create the static makefile
-		CodeWriter makefile = new CodeWriter (target_dir + "Makefile");
-		makefile.Write (static_makefile);
+		StreamWriter makefile = new StreamWriter (File.Create (target_dir + "Makefile"));
+		StreamReader sr = new StreamReader (Assembly.GetAssembly (typeof(cilc)).GetManifestResourceStream ("res-Makefile"));
+
+		makefile.Write (sr.ReadToEnd ());
+		sr.Close ();
 		makefile.Close ();
 
 		//create makefile defs
@@ -187,9 +225,13 @@ public class cilc
 		Cindex.WriteLine ("return assembly;");
 		Cindex.WriteLine ("}");
 
-
-		foreach (Type t in types)
+		Console.Write ("Generating sources in " + ns);
+		foreach (Type t in types) {
 			TypeGen (t);
+			Console.Write (".");
+		}
+
+		Console.WriteLine ();
 
 		Hindex.WriteLine ();
 		Hindex.WriteLine ("#endif /* " + Hindex_id + " */");
@@ -795,36 +837,6 @@ public class cilc
 
 		return o;
 	}
-
-	const string static_makefile =
-@"include defs.mk
-
-CFLAGS = -static -fpic $(shell pkg-config --cflags glib-2.0 gobject-2.0 mono) -I.
-
-ifdef bundle
-EXTRAOBJS = bundle.o
-CFLAGS += -DCILC_BUNDLE
-EXTRATARGETS = bundle.h
-endif
-
-all: $(SONAME)
-
-$(SONAME): $(EXTRAOBJS) $(OBJS)
-	gcc -Wall -fpic -shared `pkg-config --libs glib-2.0 gobject-2.0 mono` -lpthread $(EXTRAOBJS) $(OBJS) -o $(SONAME)
-
-$(OBJS): $(EXTRATARGETS)
-
-bundle.o bundle.h: $(ASSEMBLY)
-	mkbundle -c -o bundle.c.tmp -oo bundle.o $(ASSEMBLY)
-	rm -f xx*
-	csplit bundle.c.tmp /mono_main/
-	mv xx00 bundle.h
-	rm -f xx*
-	rm -f bundle.c.tmp
-
-clean:
-	rm -rf core *~ *.o *.so bundle.h
-";
 }
 
 class CodeWriter

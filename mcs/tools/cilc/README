@@ -30,5 +30,11 @@ $ ./demo
 Note that you must have Mono's mkbundle tool installed to use the bundle
 feature.
 
+If all you want to do is generate a binding for an assembly, you can simply
+pass the assembly name as a single argument to cilc and cilc will automatically
+generate bindings in a temporary directory, compile them using the bundle
+feature, and install the produced shared library in the current directory and
+the headers in the include/ subdirectory.
+
 -- 
 Alp Toker <alp@atoker.com>

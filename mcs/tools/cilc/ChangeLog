@@ -4,10 +4,17 @@
 	The generated makefile now optionally uses mkbundle to include the assembly
 	into the generated library (when 'bundle' is defined for make).
 	The assembly is automatically copied into the generated directory.
+	Use a resource for the static makefile
+	If only one argument is given, generate sources to a temporary directory,
+	build them (as bundle), and install them to the current directory.
+	Otherwise, the old behaviour applies.
 	* README:
-	Update with details of the new bundle feature.
+	Update with details of the new bundle feature and single-argument operation.
 	* Makefile:
 	We no longer need to copy the assembly to the generated directory manually.
+	Include res-Makefile as a resource for cilc.exe
+	* res-Makefile:
+	The static makefile resource
 
 2004-12-09  Alp Toker  <alp@atoker.com>
 

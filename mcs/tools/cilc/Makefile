@@ -9,9 +9,17 @@ PROGRAM = cilc.exe
 
 CLEAN_FILES = generated Demo.dll Demo.pdb
 
-EXTRA_DISTFILES = demo.c README TODO Test.cs
+OTHER_RES = res-Makefile
+
+RESOURCE_FILES = $(OTHER_RES)
+
+EXTRA_DISTFILES = demo.c README TODO Test.cs $(RESOURCE_FILES)
 
 include ../../build/executable.make
+
+LOCAL_MCS_FLAGS=-r:Mono.Posix.dll $(OTHER_RES:%=-resource:%)
+
+cilc.exe: $(RESOURCE_FILES)
 
 test-local: Demo.dll
 
