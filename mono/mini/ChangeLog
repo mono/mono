@@ -1,5 +1,8 @@
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Fix uninitialized
+	variable not spotted by gcc.
+	
 	* mini-amd64.c inssel-amd64.brg: Applied patch from  
 	Willibald Krenn <Willibald.Krenn@gmx.at>. Clean up usage of 
 	X86_COMPARE_MEMBASE opcodes.
