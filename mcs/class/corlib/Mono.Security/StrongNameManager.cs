@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security;
@@ -92,15 +93,18 @@ namespace Mono.Security {
 					sp.LoadXml (xml);
 				}
 				SecurityElement root = sp.ToXml ();
-				if ((root != null) && (root.Tag == "strongNames")) {
-					SecurityElement mapping  = root.SearchForChildByTag ("pubTokenMapping");
-					if ((mapping != null) && (mapping.Children.Count > 0)) {
-						LoadMapping (mapping);
-					}
+				if ((root != null) && (root.Tag == "configuration")) {
+					SecurityElement strongnames  = root.SearchForChildByTag ("strongNames");
+					if ((strongnames != null) && (strongnames.Children.Count > 0)) {
+						SecurityElement mapping  = strongnames.SearchForChildByTag ("pubTokenMapping");
+						if ((mapping != null) && (mapping.Children.Count > 0)) {
+							LoadMapping (mapping);
+						}
 
-					SecurityElement settings = root.SearchForChildByTag ("verificationSettings");
-					if ((settings != null) && (settings.Children.Count > 0)) {
-						LoadVerificationSettings (settings);
+						SecurityElement settings = strongnames.SearchForChildByTag ("verificationSettings");
+						if ((settings != null) && (settings.Children.Count > 0)) {
+							LoadVerificationSettings (settings);
+						}
 					}
 				}
 			}
@@ -120,6 +124,7 @@ namespace Mono.Security {
 					string token = item.Attribute ("Token");
 					if ((token == null) || (token.Length != 16))
 						continue; // invalid entry
+					token = token.ToUpper (CultureInfo.InvariantCulture);
 
 					string publicKey = item.Attribute ("PublicKey");
 					if (publicKey == null)
@@ -151,6 +156,7 @@ namespace Mono.Security {
 					string token = item.Attribute ("Token");
 					if (token == null)
 						continue;	// bad entry
+					token = token.ToUpper (CultureInfo.InvariantCulture);
 
 					string assembly = item.Attribute ("Assembly");
 					if (assembly == null)

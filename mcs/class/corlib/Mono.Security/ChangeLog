@@ -1,3 +1,10 @@
+2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongName.cs: Added corlib specific code to load configuration
+	from machine.config to allow public key token remapping to work
+	with (for example) gacutil.
+	* StrongNameManager.cs: Now load configuration from machine.config.
+
 2004-05-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS7.cs: In sync with Mono.Security.dll version.
