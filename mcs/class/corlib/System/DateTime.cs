@@ -591,7 +591,7 @@ namespace System
 					       DateTimeFormatInfo dfi,
 					       DateTimeStyles style)
 		{
-			bool useutc = false, use_localtime = true;
+			bool useutc = true, use_localtime = true;
 			bool sloppy_parsing = false;
 
 			if (format.Length == 1)
