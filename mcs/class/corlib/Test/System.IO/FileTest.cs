@@ -16,35 +16,28 @@ using System.Threading;
 
 namespace MonoTests.System.IO
 {
-	public class FileTest : TestCase
+	public class FileTest : Assertion
 	{
-		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
-		public FileTest ()
+		[SetUp]
+		public void SetUp ()
 		{
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 			Directory.CreateDirectory (TempFolder);
-		}			
+		
+                        Thread.CurrentThread.CurrentCulture = new CultureInfo ("EN-us");
+		}
 
-		~FileTest ()
+		[TearDown]
+		public void TearDown ()
 		{
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 		}
 
-		protected override void SetUp ()
-		{
-			if (!Directory.Exists (TempFolder))				
-				Directory.CreateDirectory (TempFolder);
-		
-                        Thread.CurrentThread.CurrentCulture = new CultureInfo ("EN-us");
-		}
-
-		protected override void TearDown ()
-		{
-		}
-
+		[Test]
 		public void TestExists ()
 		{
 			int i = 0;
@@ -68,6 +61,7 @@ namespace MonoTests.System.IO
 			
 		}
 
+		[Test]
 		public void TestCreate ()
 		{
 			FileStream stream;
@@ -132,6 +126,7 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[Test]
 		public void TestCopy ()
 		{
 			/* exception test: File.Copy(null, b) */
@@ -277,6 +272,7 @@ namespace MonoTests.System.IO
 		}
 
 
+		[Test]
 		public void TestDelete ()
 		{
 			string foopath = TempFolder + Path.DirectorySeparatorChar + "foo";
@@ -371,6 +367,7 @@ namespace MonoTests.System.IO
                 	File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder);		
 		}
 
+		[Test]
 		public void TestMove ()
 		{
 			if (!File.Exists (TempFolder + Path.DirectorySeparatorChar + "bar")) {
@@ -384,6 +381,7 @@ namespace MonoTests.System.IO
 			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "baz should exist", File.Exists (TempFolder + Path.DirectorySeparatorChar + "baz"));
 		}
 
+		[Test]
 		public void TestOpen ()
 		{
                         try {
@@ -475,6 +473,7 @@ namespace MonoTests.System.IO
                 	stream.Close ();                				                	
                 }
 
+		[Test]
 		public void TestGetCreationTime ()
 		{
                         string path = TempFolder + Path.DirectorySeparatorChar + "baz";

@@ -13,27 +13,13 @@ using System.Text;
 namespace MonoTests.System.IO
 {
 
-public class StreamReaderTest : TestCase
+public class StreamReaderTest : Assertion
 {
-	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
-	private string _codeFileName;
+	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+	private string _codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 
-	public StreamReaderTest ()
-	{
-		if (!Directory.Exists (TempFolder))				
-			Directory.CreateDirectory (TempFolder);
-
-		_codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
-	}
-
-	~StreamReaderTest ()
-	{
-		if (Directory.Exists (TempFolder))
-			Directory.Delete (TempFolder, true);
-	}
-
-	
- 	protected override void SetUp() 
+	[SetUp]
+ 	public void SetUp ()
 	{	
 		if (!Directory.Exists (TempFolder))				
 			Directory.CreateDirectory (TempFolder);
@@ -42,12 +28,15 @@ public class StreamReaderTest : TestCase
 			File.Create (_codeFileName).Close ();
 	}
 
-	protected override void TearDown() 
+	[TearDown]
+	public void TearDown ()
 	{
+		if (Directory.Exists (TempFolder))
+			Directory.Delete (TempFolder, true);
 	}
 
 
-
+	[Test]
 	public void TestCtor1() {
 		{
 			bool errorThrown = false;
@@ -81,6 +70,8 @@ public class StreamReaderTest : TestCase
 			f.Close();
 		}
 	}
+
+	[Test]
 	public void TestCtor2() {
 		{
 			bool errorThrown = false;
@@ -148,6 +139,8 @@ public class StreamReaderTest : TestCase
 			r.Close();
 		}
 	}
+
+	[Test]
 	public void TestCtor3() {
 		{
 			bool errorThrown = false;
@@ -220,6 +213,8 @@ public class StreamReaderTest : TestCase
 			f.Close();
 		}
 	}
+
+	[Test]
 	public void TestCtor4() {
 		{
 			bool errorThrown = false;
@@ -355,6 +350,7 @@ public class StreamReaderTest : TestCase
 
 	// TODO - Ctor with Encoding
 	
+	[Test]
 	public void TestBaseStream() {
 		string progress = "beginning";
 		try {
@@ -386,6 +382,7 @@ public class StreamReaderTest : TestCase
 	// TODO - Close - annoying spec - won't commit to any exceptions. How to test?
 	// TODO - DiscardBufferedData - I have no clue how to test this function.
 
+	[Test]
 	public void TestPeek() {
 		// FIXME - how to get an IO Exception?
 		{
@@ -414,6 +411,7 @@ public class StreamReaderTest : TestCase
 		}
 	}
 
+	[Test]
 	public void TestRead() {
 		// FIXME - how to get an IO Exception?
 		{
@@ -534,6 +532,7 @@ public class StreamReaderTest : TestCase
 		}
 	}
 
+	[Test]
 	public void TestReadLine() {
 		// TODO Out Of Memory Exc? IO Exc?
 		Byte[] b = new Byte[8];
@@ -571,6 +570,7 @@ public class StreamReaderTest : TestCase
 		AssertEquals("line doesn't match", "", r.ReadToEnd());
 	}
 
+	[Test]
 	public void TestBaseStreamClosed ()
 	{
 		byte [] b = {};

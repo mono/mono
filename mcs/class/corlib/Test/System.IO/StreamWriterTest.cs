@@ -13,45 +13,34 @@ using System.Text;
 namespace MonoTests.System.IO
 {
 
-public class StreamWriterTest : TestCase
+public class StreamWriterTest : Assertion
 {
 
-	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
-	private string _codeFileName;
-	private string _thisCodeFileName;
+	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+	private string _codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+	private string _thisCodeFileName = TempFolder + Path.DirectorySeparatorChar + "StreamWriterTest.temp";
 
-	public StreamWriterTest ()
+	[SetUp]
+	public void SetUp ()
 	{
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 		Directory.CreateDirectory (TempFolder);
-		
-		_thisCodeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
-		_codeFileName = TempFolder + Path.DirectorySeparatorChar + "StreamWriterTest.temp";
-	}
-	
-	~StreamWriterTest ()
-	{
-		if (Directory.Exists (TempFolder))
-			Directory.Delete (TempFolder, true);
-	}
-
-
-	protected override void SetUp() 
-	{
-		if (!Directory.Exists (TempFolder))				
-			Directory.CreateDirectory (TempFolder);
 
 		if (!File.Exists (_thisCodeFileName)) 
 			File.Create (_thisCodeFileName).Close ();
 	}
 
-	protected override void TearDown() 
+	[TearDown]
+	public void TearDown ()
 	{
+		if (Directory.Exists (TempFolder))
+			Directory.Delete (TempFolder, true);
 	}
 
 
 	// TODO - ctors
+	[Test]
 	public void TestCtor1() {
 		{
 			bool errorThrown = false;
@@ -90,6 +79,8 @@ public class StreamWriterTest : TestCase
 			f.Close();
 		}
 	}
+
+	[Test]
 	public void TestCtor2() {
 		{
 			bool errorThrown = false;
@@ -146,6 +137,8 @@ public class StreamWriterTest : TestCase
 			r.Close();
 		}
 	}
+
+	[Test]
 	public void TestCtor3() {
 		{
 			bool errorThrown = false;
@@ -262,6 +255,7 @@ public class StreamWriterTest : TestCase
 	// TODO - ctors with Encoding
 
 	// TODO - AutoFlush
+	[Test]
 	public void TestAutoFlush() {
 		{
 			MemoryStream m = new MemoryStream();
@@ -293,6 +287,7 @@ public class StreamWriterTest : TestCase
 		}		
 	}
 
+	[Test]
 	public void TestBaseStream() {
 		FileStream f = new FileStream(_codeFileName, 
 					      FileMode.Append, 
@@ -303,6 +298,7 @@ public class StreamWriterTest : TestCase
 		f.Close();
 	}
 
+	[Test]
 	public void TestEncoding() {
 		StreamWriter r = new StreamWriter(_codeFileName);
 		AssertEquals("wrong encoding", 
@@ -331,6 +327,7 @@ public class StreamWriterTest : TestCase
 	//}
 
 	// TODO - Flush
+	[Test]
 	public void TestFlush() {
 		{
 			bool errorThrown = false;
