@@ -1,3 +1,14 @@
+2003-11-05  Duncan Mak  <duncan@ximian.com>
+
+	* graphics.c
+	(make_pie, make_ellipse, make_polygon): Add static keyword.
+
+	* gdip_defs.h: Update headers to include DrawBezier, DrawBeziers,
+	DrawEllipse, DrawPie, DrawPolygon, DrawRectangle, FillEllipse,
+	FillPolygon and the RenderingOrigin property.
+
+	* Makefile (install-local): Added missing semi-colons.
+
 2003-11-03  Bernie Solomon <bernard@ugsolutions.com>
 
 	* gdip_main.h, gdip_win32.h, gdip_win32.c:

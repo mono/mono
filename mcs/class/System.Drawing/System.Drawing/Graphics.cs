@@ -458,34 +458,24 @@ namespace System.Drawing
                                 pts [1].X, pts [1].Y);
                 }
 
-		[MonoTODO]
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
 		{
 			GDIPlus.GdipDrawLineI (nativeObject, pen.nativeObject, x1, y1, x2, y2);
 		}
 
-		[MonoTODO]
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
 		{
 			GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject, x1, y1, x2, y2);
 		}
 
-		[MonoTODO]
 		public void DrawLines (Pen pen, PointF [] points)
 		{
-			PointF[] pts = new PointF[points.Length];
-			Array.Copy( points, pts, points.Length);
-			transform.TransformPoints(pts);
-			throw new NotImplementedException ();
+                        GDIPlus.GdipDrawLines (nativeObject, pen.nativeObject, points, points.Length);
 		}
 
-		[MonoTODO]
 		public void DrawLines (Pen pen, Point [] points)
 		{
-			Point[] pts = new Point[points.Length];
-			Array.Copy( points, pts, points.Length);
-			transform.TransformPoints(pts);
-			throw new NotImplementedException ();
+                        GDIPlus.GdipDrawLinesI (nativeObject, pen.nativeObject, points, points.Length);
 		}
 
 		[MonoTODO]
@@ -497,25 +487,25 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawPie (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
 
 		[MonoTODO]
 		public void DrawPie (Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
 
 		[MonoTODO]
 		public void DrawPie (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawPie (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
 
 		[MonoTODO]
 		public void DrawPie (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawPie (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
 
 		public void DrawPolygon (Pen pen, Point [] points)

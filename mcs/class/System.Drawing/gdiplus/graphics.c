@@ -68,7 +68,7 @@ gdip_graphics_detach_bitmap (GpGraphics *graphics, GpBitmap *image)
 
 #define C1 0.552
 
-void 
+static void 
 make_ellipse (GpGraphics *graphics, float x, float y, float width, float height)
 {
         double rx = width / 2;
@@ -100,7 +100,7 @@ make_ellipse (GpGraphics *graphics, float x, float y, float width, float height)
         cairo_close_path (graphics->ct);        
 }
 
-void
+static void
 make_polygon (GpGraphics *graphics, GpPointF *points, int count)
 {
         int i;
@@ -119,7 +119,7 @@ make_polygon (GpGraphics *graphics, GpPointF *points, int count)
         cairo_close_path (graphics->ct);
 }
 
-void
+static void
 make_polygon_from_integers (
         GpGraphics *graphics, GpPoint *points, int count)
 {
@@ -139,7 +139,7 @@ make_polygon_from_integers (
         cairo_close_path (graphics->ct);
 }
 
-void
+static void
 make_pie (GpGraphics *graphics, float x, float y, float width,
                 float height, float startAngle, float sweepAngle)
 {
@@ -180,7 +180,7 @@ make_pie (GpGraphics *graphics, float x, float y, float width,
         cairo_close_path (graphics->ct);
 }
 
-cairo_fill_rule_t
+static cairo_fill_rule_t
 convert_fill_mode (GpFillMode fill_mode)
 {
         if (fill_mode == FillModeAlternate) 
@@ -498,7 +498,6 @@ GdipDrawPieI (GpGraphics *graphics, GpPen *pen, int x, int y,
         
         return gdip_get_status (graphics->ct);
 }
-
 
 GpStatus
 GdipDrawPolygon (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count)

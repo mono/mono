@@ -1,3 +1,9 @@
+2003-11-05  Duncan Mak  <duncan@ximian.com>
+
+	* Graphics.cs (DrawPie): 
+	* gdipFunctions.cs (GdipDrawPie): Add hooks to the implementation
+	in graphics.c.
+	
 2003-10-28  Duncan Mak  <duncan@ximian.com>
 
 	* Graphics.cs (DrawEllipse, DrawLine, DrawPolygon):

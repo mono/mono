@@ -40,9 +40,9 @@ clean-local:
 #	rm -f detect.h detect.libs detect-stamp 
 
 install-local: all-local
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
+	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib; \
 	if test -f $(gdiplus); then \
-		$(INSTALL_LIB) $(gdiplus) $(DESTDIR)$(prefix)/lib \
+		$(INSTALL_LIB) $(gdiplus) $(DESTDIR)$(prefix)/lib; \
 	fi
 
 dist-local: dist-default

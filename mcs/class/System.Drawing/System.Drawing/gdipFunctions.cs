@@ -80,6 +80,18 @@ namespace System.Drawing {
 		static internal extern Status GdipDrawLineI (IntPtr graphics, IntPtr pen, int x1, int y1, int x2, int y2);
 
                 [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawLines (IntPtr graphics, IntPtr pen, PointF [] points, int count);
+
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawLinesI (IntPtr graphics, IntPtr pen, Point [] points, int count);
+
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawPie (IntPtr graphics, IntPtr pen, float x, float y, float width, float height, float startAngle, float sweepAngle);
+                
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawPie (IntPtr graphics, IntPtr pen, int x, int y, int width, int height, float startAngle, float sweepAngle);
+
+                [DllImport ("gdiplus.dll")]
                 static internal extern Status GdipDrawPolygon (IntPtr graphics, IntPtr pen, PointF [] points, int count);
 
                 [DllImport ("gdiplus.dll")]

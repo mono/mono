@@ -97,12 +97,33 @@ GpStatus GdipRestoreGraphics (GpGraphics *graphics, unsigned int graphicsState);
 GpStatus GdipSaveGraphics(GpGraphics *graphics, unsigned int * state);
 GpStatus GdipRotateWorldTransform (GpGraphics *graphics, float angle, int order);
 GpStatus GdipTranslateWorldTransform (GpGraphics *graphics, float dx, float dy, int order);
+GpStatus GdipDrawBezier (GpGraphics *graphics, GpPen *pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
+GpStatus GdipDrawBezierI (GpGraphics *graphics, GpPen *pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
+GpStatus GdipDrawBeziers (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count);
+GpStatus GdipDrawBeziersI (GpGraphics *graphics, GpPen *pen, GpPoint *points, int count);
+GpStatus GdipDrawEllipse (GpGraphics *graphics, GpPen *pen, float x, float y, float width, float height);
 GpStatus GdipDrawLine (GpGraphics *graphics, GpPen *pen, float x1, float y1, float x2, float y2);
 GpStatus GdipDrawLineI (GpGraphics *graphics, GpPen *pen, int x1, int y1, int x2, int y2);
 GpStatus GdipDrawLines (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count);
 GpStatus GdipDrawLinesI (GpGraphics *graphics, GpPen *pen, GpPoint *points, int count);
-
+GpStatus GdipDrawPie (GpGraphics *graphics, GpPen *pen, float x, float y, float width, float height, float startAngle, float sweepAngle);
+GpStatus GdipDrawPieI (GpGraphics *graphics, GpPen *pen, int x, int y, int width, int height, float startAngle, float sweepAngle);
+GpStatus GdipDrawPolygon (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count);
+GpStatus GdipDrawPolygonI (GpGraphics *graphics, GpPen *pen, GpPoint *points, int count);
+GpStatus GdipDrawRectangle (GpGraphics *graphics, GpPen *pen, float x, float y, float width, float height);
+GpStatus GdipDrawRectangleI (GpGraphics *graphics, GpPen *pen, int x, int y, int width, int height);
+GpStatus GdipFillEllipse (GpGraphics *graphics, GpBrush *brush, float x, float y, float width, float height);
+GpStatus GdipFillEllipseI (GpGraphics *graphics, GpBrush *brush, int x, int y, int width, int height);
 GpStatus GdipFillRectangle (GpGraphics *graphics, GpBrush *brush, float x1, float y1, float x2, float y2);
+GpStatus GdipFillPolygon (GpGraphics *graphics, GpBrush *brush, GpPointF *points, int count, GpFillMode fillMode);
+GpStatus GdipFillPolygonI (GpGraphics *graphics, GpBrush *brush, GpPoint *points, int count, GpFillMode fillMode);
+GpStatus GdipFillPolygon2 (GpGraphics *graphics, GpBrush *brush, GpPointF *points, int count);
+GpStatus GdipFillPolygon2I (GpGraphics *graphics, GpBrush *brush, GpPoint *points, int count);
+GpStatus GdipSetRenderingOrigin (GpGraphics *graphics, int x, int y);
+GpStatus GdipGetRenderingOrigin (GpGraphics *graphics, int *x, int *y);
+
+/* Status */
+GpStatus gdip_get_status (cairo_t *ct);
 
 /* Brush */
 GpStatus GdipCloneBrush (GpBrush *brush, GpBrush **clonedBrush);
@@ -134,10 +155,8 @@ GpStatus GdipIsMatrixInvertible (GpMatrix *matrix, int *result);
 GpStatus GdipIsMatrixIdentity (GpMatrix *matrix, int *result);
 GpStatus GdipIsMatrixEqual (GpMatrix *matrix, GpMatrix *matrix2, int *result);
 
-GpStatus gdip_get_status (cairo_t *ct);
-
 /* Memory */
-void * GdipAlloc (int size);
+void *GdipAlloc (int size);
 void GdipFree (void *ptr);
 
 #endif /* _GDIP_DEFS_H */
