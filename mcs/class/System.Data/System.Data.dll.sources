@@ -108,6 +108,7 @@ System.Data/StatementType.cs
 System.Data/StrongTypingException.cs
 System.Data/SyntaxErrorException.cs
 System.Data/TODOAttribute.cs
+System.Data/TypedDataSetGenerator.cs
 System.Data/TypeDataSetGeneratorException.cs
 System.Data/UniqueConstraint.cs
 System.Data/UpdateOptions.cs
