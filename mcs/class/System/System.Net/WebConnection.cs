@@ -237,18 +237,18 @@ namespace System.Net
 				cnc.chunkStream.Write (cnc.buffer, pos, nread);
 			}
 
-			bool more = false;
-			lock (cnc) {
-				more = (cnc.queue.Count > 0);
-				cnc.prevStream = stream;
-			}
-
 			data.stream = stream;
-			if (more)
-				stream.ReadAll ();
-			else
-				stream.CheckComplete ();
-
+			
+			lock (cnc) {
+				if (cnc.queue.Count > 0)
+					stream.ReadAll ();
+				else
+				{
+					cnc.prevStream = stream;
+					stream.CheckComplete ();
+				}
+			}
+			
 			data.request.SetResponseData (data);
 		}
 		

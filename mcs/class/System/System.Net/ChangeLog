@@ -1,3 +1,8 @@
+2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: Yet another fix for WebConnection. This fixes 
+	bug #52169.
+
 2004-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: Data.Init is a bad boy. Lluis realized. He also
