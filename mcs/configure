@@ -3,7 +3,8 @@
 help()
 {
 	echo ""
-	echo "Usage is: configure [--prefix=PREFIX] [--profile=PROFILE]\n"
+	echo "Usage is: configure [--prefix=PREFIX] [--profile=PROFILE]"
+	echo ""
 	echo "Profiles available: "
 	(cd build/profiles; ls *.make | sed -e 's/.make//' -e 's/^/	/')
 }
