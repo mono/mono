@@ -966,7 +966,7 @@ namespace System {
 		
 		public static short ToInt16 (string value, int fromBase)
 		{
-			return (short) ConvertFromBase (value, fromBase);
+			return Convert.ToInt16 (ConvertFromBase (value, fromBase));
 		}
 
 		[CLSCompliant (false)]
@@ -1231,7 +1231,7 @@ namespace System {
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 			
-			return (long) ConvertFromBase (value, fromBase);
+			return ConvertFromBase64 (value, fromBase);
 		}
 
 		[CLSCompliant (false)]
@@ -2274,6 +2274,42 @@ namespace System {
 
 			if (chars == 0)
 				throw new FormatException ("Could not find any digits.");
+
+			if (result > Int32.MaxValue || result < Int32.MinValue)
+				throw new OverflowException ("There is an overflow.");
+			
+			return result;
+		}
+
+		private static long ConvertFromBase64 (string value, int fromBase)
+		{
+			if (NotValidBase (fromBase))
+				throw new ArgumentException ("fromBase is not valid.");
+
+			int chars = 0;
+			int digitValue;
+			long result = 0;
+
+			foreach (char c in value) {
+				if (Char.IsNumber (c))
+					digitValue = c - '0';
+				else if (Char.IsLetter (c))
+					digitValue = Char.ToLower(c) - 'a' + 10;
+				else
+					throw new FormatException ("This is an invalid string: " + value);
+
+				if (digitValue >= fromBase)
+					throw new FormatException ("the digits are invalid.");
+
+				result = (fromBase) * result + digitValue;
+				chars ++;
+			}
+
+			if (chars == 0)
+				throw new FormatException ("Could not find any digits.");
+
+			if (result > Int64.MaxValue || result < Int64.MinValue)
+				throw new OverflowException ("There is an overflow.");
 			
 			return result;
 		}

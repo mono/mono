@@ -1,3 +1,15 @@
+2002-06-02  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs (ToInt16): use Convert.ToInt16 (int) instead of a direct
+	cast from an int so that we throw OverFlowException correctly.
+	
+	(ToInt64): Use a new 64bit version of ConvertToBase.
+	
+	(ConvertToBase): Add checks for overflow (checks Int32.MinValue
+	and Int32.MaxValue).
+
+	(ConvertFromBase64): New 64-bit version of ConvertFromBase.
+
 2002-06-02  Nick Drochak  <ndrochak@gol.com>
 
 	* Convert.cs (ToSByte): Check for special value.
