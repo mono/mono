@@ -1,3 +1,6 @@
+2003-07-30 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Image.cs	InternalImageInfo class improved
+
 2003-07-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* Factories.cs: If the AppDomain key `Mono.Running.Windows.Forms'
