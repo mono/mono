@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace System.Web.UI {
@@ -105,7 +106,7 @@ namespace System.Web.UI {
 			if (openIdx > 0) {
 				property = expr.Substring (0, openIdx);
 				if (property != null && property != String.Empty)
-					container = DataBinder.GetPropertyValue (container, property);
+					container = GetPropertyValue (container, property);
 			}
 
 			Type t = container.GetType ();
@@ -141,24 +142,17 @@ namespace System.Web.UI {
 			if (container == null || propName == null)
 				throw new ArgumentException ();
 
-			Type type = container.GetType ();
-			PropertyInfo prop = type.GetProperty (propName);
+			PropertyDescriptor prop = TypeDescriptor.GetProperties (container).Find (propName, true);
 			if (prop == null) {
 				try {
 					return GetIndexedPropertyValue (container, "[\"" + propName + "\"]");
 				} catch {
 					throw new HttpException ("Property " + propName + " not found in " +
-								 type.ToString ());
+								 container.GetType ());
 				}
 			}
 
-
-			MethodInfo getm = prop.GetGetMethod ();
-			if (getm == null)
-				throw new HttpException ("Cannot find get accessor for " + propName +
-							 " in " + type.ToString ());
-			
-			return getm.Invoke (container, null);
+			return prop.GetValue (container);
 		}
 
 		public static string GetPropertyValue (object container, string propName, string format)
