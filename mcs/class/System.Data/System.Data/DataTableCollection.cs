@@ -134,8 +134,7 @@ namespace System.Data
 		}
 
 		protected override ArrayList List {
-			[MonoTODO]
-			get{
+			get {
 				throw new NotImplementedException ();
 			}
 		}

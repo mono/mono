@@ -7,6 +7,9 @@
 // (C) Ximian, Inc 2002
 //
 
+using System.Collections;
+using System.ComponentModel;
+
 namespace System.Data
 {
 	/// <summary>
