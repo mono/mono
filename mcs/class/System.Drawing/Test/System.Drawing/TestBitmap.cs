@@ -57,6 +57,10 @@ namespace MonoTests.System.Drawing{
 			if (Directory.Exists(sRslt) == 	false) 
 				sRslt = "Test/System.Drawing/" + sSub;							
 			
+			if (sRslt.Length > 0)
+				if (sRslt[sRslt.Length-1] != '\\' && sRslt[sRslt.Length-1] != '/')
+					sRslt += "/";					
+			
 			return sRslt;
 		}
 		

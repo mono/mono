@@ -267,6 +267,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		ImageCodecInfo[] encoders =  ImageCodecInfo.GetImageEncoders();			
 		ImageCodecInfo encoder = null;
 		Guid guid;
+		
+		if (format.Guid.Equals (ImageFormat.MemoryBmp.Guid))
+			format = ImageFormat.Bmp;
 	
 		/* Look for the right encoder for our format*/
 		for (int i = 0; i < encoders.Length; i++) {

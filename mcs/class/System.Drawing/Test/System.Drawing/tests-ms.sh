@@ -8,6 +8,7 @@ if [ $# -eq 0 ]; then
 	exit 1
 fi
 
+export MSNet=Yes
 cp ../../System.Drawing_test.dll .
 topdir=../../../..
 NUNITCONSOLE=$topdir/class/lib/nunit-console.exe

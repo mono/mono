@@ -1,3 +1,7 @@
+2004-04-30  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Image.cs: takes into account MemoryBmp format when saving
+
 2004-04-30  Ravindra <rkumar@novell.com>
 
 	* StringFormat.cs: Added checks for status.
