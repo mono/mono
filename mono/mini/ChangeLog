@@ -1,3 +1,15 @@
+2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Added LinkDemand support and it's special cases for ECMA,
+	APTC and P/Invoke.
+	* declsec.h: Added macros to get/set lazyly initialized security 
+	informations about assemblies. Added new enum for different type of
+	possible LinkDemand violation. Added function to check LinkDemands.
+	* mini.h: Added a field to MonoCompile to hold any security violation
+	detected when JITting a method (so it can be thrown later).
+	* mini.c: Added LinkDemand checks in mono_method_to_ir for CEE_CALL 
+	and CEE_CALLVIRT. Added code to throw exception at the end of
+	mini_method_compile (note: the exception is unhandled right now).
 
 Thu Feb 10 15:49:44 CET 2005 Paolo Molaro <lupus@ximian.com>
 
