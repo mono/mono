@@ -95,7 +95,6 @@ namespace Mono.CSharp.Debugger
 	{
 		public readonly ulong StartAddress;
 		public readonly ulong EndAddress;
-		public readonly ulong TrampolineAddress;
 		public readonly uint[] LineAddresses;
 
 		public static int Size {
@@ -108,7 +107,6 @@ namespace Mono.CSharp.Debugger
 		{
 			StartAddress = reader.ReadUInt64 ();
 			EndAddress = reader.ReadUInt64 ();
-			TrampolineAddress = reader.ReadUInt64 ();
 			LineAddresses = new uint [entry.NumLineNumbers];
 			for (int i = 0; i < entry.NumLineNumbers; i++)
 				LineAddresses [i] = reader.ReadUInt32 ();
@@ -116,8 +114,8 @@ namespace Mono.CSharp.Debugger
 
 		public override string ToString ()
 		{
-			return String.Format ("[Address {0:x}:{1:x}:{2:x}]",
-					      StartAddress, EndAddress, TrampolineAddress);
+			return String.Format ("[Address {0:x}:{1:x}]",
+					      StartAddress, EndAddress);
 		}
 	}
 
