@@ -430,13 +430,9 @@ namespace System
 			return path;
                 }
 
-		/// <summary>
-		/// Returns an array of the logical drives
-		/// </summary>
-		[MonoTODO]
 		public static string[] GetLogicalDrives ()
 		{
-			return(new string[] { "/" });
+			return GetLogicalDrivesInternal ();
 		}
 
 		static internal string GetResourceString (string s) { return ""; }
@@ -447,6 +443,9 @@ namespace System
 		{
 			get { return Path.Combine (Path.Combine (internalGetGacPath (), "mono"), "gac"); }
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string [] GetLogicalDrivesInternal ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetEnvironmentVariableNames ();

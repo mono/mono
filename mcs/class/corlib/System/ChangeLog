@@ -1,3 +1,7 @@
+2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Environment.cs: implemented GetLogicalDrives.
+
 2004-04-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* Applied patch from Atsushi Enomoto that allows Synchronized
@@ -5,9 +9,9 @@
 
 2004-04-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
-	* MonoCustomAttrs.cs, MonoType.cs: Property.GetGetMethod() does not return
-	the method if it is private (it did until now because of a bug). Make sure
-	it works as it worked before the fix.
+	* MonoCustomAttrs.cs, MonoType.cs: Property.GetGetMethod() does not
+	return the method if it is private (it did until now because of a
+	bug). Make sure it works as it worked before the fix.
 	* Type.cs: Implemented FilterAttribute delegate.
 
 2004-04-28  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
