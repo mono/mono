@@ -1,3 +1,7 @@
+2003-03-29 Alan Tam <Tam@SiuLung.com>
+	* ToolboxBitmapAttribute
+		stubbed more constructors and fixed base class
+
 2003-03-01 Alexandre Pigolkine <pigolkine@gmx.de>
 	* SystemBrushes.cs
 			added stubs to compile SWF

@@ -13,9 +13,23 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for ToolboxBitmapAttribute.
 	/// </summary>
-	public class ToolboxBitmapAttribute
+	public class ToolboxBitmapAttribute : Attribute
 	{
-		public ToolboxBitmapAttribute()
+		public ToolboxBitmapAttribute(string imageFile)
+		{
+			//
+			// TODO: Add constructor logic here
+			//
+		}
+		
+		public ToolboxBitmapAttribute(Type t)
+		{
+			//
+			// TODO: Add constructor logic here
+			//
+		}
+		
+		public ToolboxBitmapAttribute(Type t, string name)
 		{
 			//
 			// TODO: Add constructor logic here
