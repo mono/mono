@@ -5,6 +5,10 @@
 	* RC2CryptoServiceProvider.cs: Added globalization to exceptions. 
 	Fixed the KeySize must be equal with EffectiveKeySize to match MS 
 	implementation.
+	* RNGCryptoServiceProvider.cs: Removed TODO and documented them in
+	mono doc. Now call runtime when a seed is provided.
+	* RSA.cs: Added globalization to exceptions. Removed check for 
+	<RSAKeyValue> as it is not checked by MS implementation.
 	* SHA1.cs: Moved XML comments to monodoc.
 	* SHA1CryptoServiceProvider.cs: Moved XML comments to monodoc. Removed
 	CLSCompliance attributes from private fields. 
@@ -13,6 +17,12 @@
 	CLSCompliance attributes from	private fields.
 	* SHA384.cs: Moved XML comments to monodoc.
 	* SHA512.cs: Moved XML comments to monodoc.
+	* SignatureDescription.cs: Moved XML comments to monodoc. Added 
+	globalization to exceptions. Removed TODO and added notes to monodoc.
+	* SymmetricAlgorithm.cs: Moved XML comments to monodoc. Added 
+	globalization to exceptions.
+	* ToBase64Tranform.cs: Added missing exception handling. Moved XML 
+	comments to monodoc.
 	* TripleDES.cs: Added globalization to exceptions.
 	* TripleDESCryptoServiceProvider.cs: Changed Array.Copy to 
 	Buffer.BlockCopy. Zeroize decrypted data.

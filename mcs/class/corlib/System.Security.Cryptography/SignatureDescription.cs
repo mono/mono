@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Thomas Neidhart (tome@sbox.tugraz.at)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 // Notes:
@@ -14,28 +15,33 @@
 // Those 2 classes are returned by CryptoConfig.CreateFromName and used in XMLDSIG
 
 using System;
+using System.Globalization;
 using System.Security;
 
 namespace System.Security.Cryptography {
 	
 public class SignatureDescription {
+
 	private string _DeformatterAlgorithm;
 	private string _DigestAlgorithm;		
 	private string _FormatterAlgorithm;		
 	private string _KeyAlgorithm;		
 
-	public SignatureDescription () {}
+	public SignatureDescription ()
+	{
+	}
 	
 	/// LAMESPEC: ArgumentNullException is thrown (not CryptographicException)
-	[MonoTODO("Parse SecurityElement")]
 	public SignatureDescription (SecurityElement el) 
 	{
 		if (el == null)
-			throw new ArgumentNullException ();
-		// TODO: Parse the SecurityElement 
+			throw new ArgumentNullException ("el");
+
+		// Parse the SecurityElement 
 		// Clearly it must contains Deformatter, Digest, 
 		// Formatter and KeyAlgorithm... 
 		// But what do the SecurityElement looks like ?
+		throw new NotImplementedException (Locale.GetText ("Undocumented feature."));
 	}
 
 	// There are no validation of the property
@@ -78,13 +84,11 @@ public class SignatureDescription {
 		return def;
 	}
 	
-	/// <summary>
-	/// Create the hash algorithm assigned with this object
-	/// </summary>
 	public virtual HashAlgorithm CreateDigest ()
 	{
 		if (_DigestAlgorithm == null)
 			throw new ArgumentNullException ("DigestAlgorithm");
+
 		return (HashAlgorithm) CryptoConfig.CreateFromName (_DigestAlgorithm);
 	}
 
@@ -103,8 +107,7 @@ public class SignatureDescription {
 		fmt.SetKey (key);
 		return fmt;
 	}
-	
-} // SignatureDescription
+}
 
 internal class DSASignatureDescription : SignatureDescription {
 	public DSASignatureDescription () 
@@ -132,4 +135,4 @@ internal class RSAPKCS1SHA1SignatureDescription : SignatureDescription {
 	}
 }
 	
-} // System.Security.Cryptography
+}

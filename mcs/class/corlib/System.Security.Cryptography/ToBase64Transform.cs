@@ -16,9 +16,6 @@ namespace System.Security.Cryptography {
 
 		private bool m_disposed;
 
-		/// <summary>
-		///  Default constructor.
-		/// </summary>
 		public ToBase64Transform ()
 		{
 		}
@@ -34,25 +31,13 @@ namespace System.Security.Cryptography {
 		}
 
 		public virtual bool CanReuseTransform {
-			get { return false; }
+			get { return true; }
 		}
 
-		/// <summary>
-		///  Returns the input block size for the Base64 encoder.
-		/// </summary>
-		/// <remarks>
-		///  The returned value is always 3.
-		/// </remarks>
 		public int InputBlockSize {
 			get { return 3; }
 		}
 
-		/// <summary>
-		///  Returns the output block size for the Base64 encoder.
-		/// </summary>
-		/// <remarks>
-		///  The value returned by this property is always 4.
-		/// </remarks>
 		public int OutputBlockSize {
 			get { return 4; }
 		}
@@ -79,10 +64,20 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		// LAMESPEC: It's not clear from docs what should be happening 
+		// here if inputCount > InputBlockSize. It just "Converts the 
+		// specified region of the specified byte array" and that's all.
 		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 		{
-			if (inputCount != this.InputBlockSize)
-				throw new CryptographicException (Locale.GetText ("Invalid input length"));
+			if (m_disposed)
+				throw new ObjectDisposedException ("TransformBlock");
+			if (inputBuffer == null)
+				throw new ArgumentNullException ("inputBuffer");
+			if (outputBuffer == null)
+				throw new ArgumentNullException ("outputBuffer");
+// To match MS implementation
+//			if (inputCount != this.InputBlockSize)
+//				throw new CryptographicException (Locale.GetText ("Invalid input length"));
 
 			byte[] lookup = Base64Constants.EncodeTable;
 
@@ -98,17 +93,20 @@ namespace System.Security.Cryptography {
 			return this.OutputBlockSize;
 		}
 
-		// LAMESPEC: It's not clear from Beta2 docs what should be
-		// happening here if inputCount > InputBlockSize.
-		// It just "Converts the specified region of the specified
-		// byte array" and that's all.
-		// Beta2 implementation throws some strange (and undocumented)
-		// exception in such case. The exception is thrown by
-		// System.Convert and not the method itself.
-		// Anyhow, this implementation just encodes blocks of any size,
-		// like any usual Base64 encoder.
-
 		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
+		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("TransformFinalBlock");
+			if (inputBuffer == null)
+				throw new ArgumentNullException ("inputBuffer");
+			if (inputCount != this.InputBlockSize)
+				throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid input length"));
+			
+			return InternalTransformFinalBlock (inputBuffer, inputOffset, inputCount);
+		}
+		
+		// Mono System.Convert depends on the ability to process multiple blocks		
+		internal byte[] InternalTransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
 		{
 			int blockLen = this.InputBlockSize;
 			int outLen = this.OutputBlockSize;

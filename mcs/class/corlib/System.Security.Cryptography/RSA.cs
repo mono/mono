@@ -3,13 +3,15 @@
 //
 // Authors:
 //	Dan Lewis (dihlewis@yahoo.co.uk)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Xml;
@@ -28,28 +30,32 @@ namespace System.Security.Cryptography {
 			return (RSA) CryptoConfig.CreateFromName (algName);
 		}
 	
-		public RSA () {}
+		public RSA ()
+		{
+		}
 
 		public abstract byte[] EncryptValue (byte[] rgb);
+
 		public abstract byte[] DecryptValue (byte[] rgb);
 
 		public abstract RSAParameters ExportParameters (bool include);
+
 		public abstract void ImportParameters (RSAParameters parameters);
 
 		internal void ZeroizePrivateKey (RSAParameters parameters)
 		{
 			if (parameters.P != null)
-				Array.Clear(parameters.P, 0, parameters.P.Length);
+				Array.Clear (parameters.P, 0, parameters.P.Length);
 			if (parameters.Q != null)
-				Array.Clear(parameters.Q, 0, parameters.Q.Length);
+				Array.Clear (parameters.Q, 0, parameters.Q.Length);
 			if (parameters.DP != null)
-				Array.Clear(parameters.DP, 0, parameters.DP.Length);
+				Array.Clear (parameters.DP, 0, parameters.DP.Length);
 			if (parameters.DQ != null)
-				Array.Clear(parameters.DQ, 0, parameters.DQ.Length);
+				Array.Clear (parameters.DQ, 0, parameters.DQ.Length);
 			if (parameters.InverseQ != null)
-				Array.Clear(parameters.InverseQ, 0, parameters.InverseQ.Length);
+				Array.Clear (parameters.InverseQ, 0, parameters.InverseQ.Length);
 			if (parameters.D != null)
-				Array.Clear(parameters.D, 0, parameters.D.Length);
+				Array.Clear (parameters.D, 0, parameters.D.Length);
 		}
 
 		private byte[] GetNamedParam (SecurityElement se, string param) 
@@ -63,15 +69,14 @@ namespace System.Security.Cryptography {
 		public override void FromXmlString (string xmlString) 
 		{
 			if (xmlString == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("xmlString");
 
 			RSAParameters rsaParams = new RSAParameters ();
 			try {
 				SecurityParser sp = new SecurityParser ();
 				sp.LoadXml (xmlString);
 				SecurityElement se = sp.ToXml ();
-				if (se.Tag != "RSAKeyValue")
-					throw new Exception ();
+
 				rsaParams.P = GetNamedParam (se, "P");
 				rsaParams.Q = GetNamedParam (se, "Q");
 				rsaParams.D = GetNamedParam (se, "D");
@@ -82,9 +87,10 @@ namespace System.Security.Cryptography {
 				rsaParams.Modulus = GetNamedParam (se, "Modulus");
 				ImportParameters (rsaParams);
 			}
-			catch {
+			catch (Exception e) {
 				ZeroizePrivateKey (rsaParams);
-				throw new CryptographicException ();
+				throw new CryptographicException (
+					Locale.GetText ("Couldn't decode XML"), e);
 			}
 			finally	{
 				ZeroizePrivateKey (rsaParams);

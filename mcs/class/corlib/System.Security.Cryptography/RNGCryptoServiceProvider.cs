@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Mark Crichton (crichton@gimp.org)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 // "In the beginning there was Chaos,
@@ -15,6 +16,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace System.Security.Cryptography {
 	
@@ -23,42 +25,45 @@ namespace System.Security.Cryptography {
 #else
 	public sealed class RNGCryptoServiceProvider : RandomNumberGenerator {
 #endif
-		
-		[MonoTODO]
-		public RNGCryptoServiceProvider () 
+		public RNGCryptoServiceProvider ()
 		{
-			// This will get some meaning when I figure out what the other
-			// three constructors do.
 		}
 		
-		[MonoTODO]
 		public RNGCryptoServiceProvider (byte[] rgb) 
 		{
-			// Ok, not called by app code... someone must call it, though.
+			Seed (rgb);
 		}
 		
-		[MonoTODO]
-		public RNGCryptoServiceProvider (CspParameters cspParams) 
+		public RNGCryptoServiceProvider (CspParameters cspParams)
 		{
-			// Why do I have this feeling this is the MS CryptoAPI...
+			// CSP selection isn't supported
+			// but we still return random (no exception) for compatibility
 		}
 		
-		[MonoTODO]
 		public RNGCryptoServiceProvider (string str) 
 		{
-			// More !application code.  Interesting...
+			Seed (Encoding.UTF8.GetBytes (str));
 		}
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void Seed (byte[] data);
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void InternalGetBytes (byte[] data);
 		
 		public override void GetBytes (byte[] data) 
 		{
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
 			InternalGetBytes (data);
 		}
 		
 		public override void GetNonZeroBytes (byte[] data) 
 		{
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
         		byte[] random = new byte [data.Length * 2];
         		int i = 0;
         		// one pass should be enough but hey this is random ;-)
@@ -73,9 +78,10 @@ namespace System.Security.Cryptography {
         		}
 		}
 		
+		/* Commented as we don't require this right now (and it will perform better that way)
 		~RNGCryptoServiceProvider () 
 		{
 			// in our case we have nothing unmanaged to dispose
-		}
+		}*/
 	}
 }
