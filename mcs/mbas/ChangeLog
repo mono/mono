@@ -1,13 +1,13 @@
+2005/01/17 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : correct handling of /imports command-line option.
+		Patch from Hans Kratz <kratz@omnicore.com>
+
 2005-01-13  Ritvik Mayank  <mritvik@novell.com>
-	
-	* mb-parser.jay: Changed Error Number for Modifiers.PRIVATE to throw the right ExceptionNumber as 31089 . 
-	
+	* mb-parser.jay: Changed Error Number for Modifiers.PRIVATE to throw the right ExceptionNumber as 31089 . 	
 	* mb-parser.jay: Added Modifiers.PROTECTED to throw the right Error Number as 31047 . 
   		  
-2005-01-13  Ritvik Mayank  <mritvik@novell.com>
-	
+2005-01-13  Ritvik Mayank  <mritvik@novell.com>	
 	* ecore.cs: Changed the Error Number for setter as 30526 and getter as 30524 in Expression DoResolveLValue .
-
 	* expression.cs: Changed the Error Number for set == null as 30526 and get == null as 30524 .
 
 2005-01-13  Ritvik Mayank  <mritvik@novell.com>

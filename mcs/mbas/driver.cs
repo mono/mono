@@ -114,10 +114,12 @@ namespace Mono.Languages {
 							
 				case "exe":
 					target = Target.Exe;
+					target_ext = ".exe";
 					break;
 							
 				case "winexe":
 					target = Target.WinExe;
+					target_ext = ".exe";
 					break;
 							
 				case "module":
@@ -226,10 +228,10 @@ namespace Mono.Languages {
 			} 
 		}
 		
-		[Option("Declare global Imports for namespaces in referenced metadata files. {import-list}:namespace,...", "imports")]
-		public WhatToDoNext imports(string importslist)
+		[Option(-1, "Declare global Imports for namespaces in referenced metadata files. {import-list}:namespace,...", "imports")]
+		public WhatToDoNext imports(string import)
 		{
-			Mono.MonoBASIC.Parser.ImportsList.AddRange(importslist.Split(','));
+			Mono.MonoBASIC.Parser.ImportsList.Add(import);
 			return WhatToDoNext.GoAhead;
 		}
 
@@ -291,8 +293,7 @@ namespace Mono.Languages {
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option(@"Specifies the Class or Module that contains Sub Main.
-			It can also be a {class} that inherits from System.Windows.Forms.Form.",
+		[Option("Specifies the {name} of the Class or Module that contains Sub Main or inherits from System.Windows.Forms.Form.",
 			'm', "main")]
 		public string main { set { RootContext.MainClass = value; } }
 
