@@ -50,6 +50,10 @@ namespace Cairo {
                 public static extern void cairo_set_target_image (
                         IntPtr cr, string data, Cairo.Format format, int width, int height, int stride);
 
+                [DllImport (CairoImp)]
+                public static extern void cairo_set_target_drawable (
+								     IntPtr ct, IntPtr display, IntPtr drawable);
+
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_operator (IntPtr cr, Cairo.Operator op);
 
@@ -340,6 +344,7 @@ namespace Cairo {
                 [DllImport (CairoImp)]                                
                 public static extern Cairo.Status cairo_matrix_transform_point (
                         IntPtr matrix, ref double x, ref double y);
+
         }
 
         //

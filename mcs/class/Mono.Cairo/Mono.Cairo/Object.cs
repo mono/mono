@@ -1,9 +1,12 @@
 //
 // Mono.Cairo.Object.cs
 //
-// Author: Duncan Mak
+// Author:
+//   Duncan Mak (duncan@ximian.com)
+//   Miguel de Icaza (miguel@novell.com)
 //
 // (C) Ximian Inc, 2003.
+// (C) Novell Inc, 2003.
 //
 // This is an OO wrapper API for the Cairo API.
 //
@@ -15,28 +18,44 @@ using Cairo;
 
 namespace Cairo {
 
-        public class Object
+        public class Object : IDisposable 
         {
                 IntPtr state;
 
                 public Object ()
-                        : this (Create ())
                 {
-                }
-                
-                internal Object (IntPtr ptr)
-                {
-                        state = ptr;
-                }
-                
-                public static IntPtr Create ()
-                {
-                        return CairoAPI.cairo_create ();
+			state = CairoAPI.cairo_create ();
                 }
 
-                public void Destroy ()
+		private Object (IntPtr state)
+		{
+			this.state = state;
+		}
+		
+		~Object ()
+		{
+			Console.WriteLine ("Cairo not thread safe, you might want to call IDisposable.Dispose on Cairo.Surface");
+
+		}
+
+		void IDisposable.Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+		
+                protected virtual void Dispose (bool disposing)
                 {
+			if (!disposing){
+				Console.WriteLine ("Cairo.Object: called from thread");
+				return;
+			}
+			
+			if (state == (IntPtr) 0)
+				return;
+
                         CairoAPI.cairo_destroy (state);
+			state = (IntPtr) 0;
                 }
 
                 public Cairo.Object Copy ()
@@ -68,7 +87,7 @@ namespace Cairo {
                         }
                 }
 
-                public IntPtr Pointer {
+                public IntPtr Handle {
                         get {
                                 return state;
                         }
@@ -156,7 +175,7 @@ namespace Cairo {
 
                 public Cairo.Surface Pattern {
                         set {
-                                CairoAPI.cairo_set_pattern (state, value.Pointer);
+                                CairoAPI.cairo_set_pattern (state, value.Handle);
                         }
                 }
 
@@ -185,11 +204,11 @@ namespace Cairo {
 
                 public Cairo.Surface TargetSurface {
                         set {
-                                CairoAPI.cairo_set_target_surface (state, value.Pointer);
+                                CairoAPI.cairo_set_target_surface (state, value.Handle);
                         }
 
                         get {
-                                return new Cairo.Surface (
+                                return Cairo.Surface.LookupExternalSurface (
                                         CairoAPI.cairo_current_target_surface (state));
                         }
                 }
@@ -284,6 +303,15 @@ namespace Cairo {
                         CairoAPI.cairo_set_target_image (state, data, format, width, height, stride);
                 }
 
+		public void SetTargetDrawable (IntPtr dpy, IntPtr drawable)
+		{
+			CairoAPI.cairo_set_target_drawable (state, dpy, drawable);
+		}
+
+		public void SetPattern (Surface pattern)
+		{
+			CairoAPI.cairo_set_pattern (state, pattern.Handle);
+		}
 #endregion
 
                 public void Rotate (double angle)
