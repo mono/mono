@@ -27,6 +27,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls {
+	[FlagsAttribute]
         public enum DataControlRowState {
                 Normal = 0,
 		Alternate = 1,

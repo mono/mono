@@ -28,7 +28,7 @@
 #if NET_2_0
 namespace System.Web.UI.WebControls {
         public enum HotSpotMode {
-                Default = 0,
+                NotSet = 0,
 		Navigate = 1,
 		PostBack = 2,
 		Inactive = 3		

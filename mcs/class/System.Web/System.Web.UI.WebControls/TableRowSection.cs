@@ -1,5 +1,5 @@
-//
-// System.Web.UI.WebControls.DataControlRowType.cs
+﻿//
+// System.Web.UI.WebControls.TableRowSection.cs
 //
 // Author: Sanjay Gupta (gsanjay@novell.com)
 //
@@ -27,13 +27,11 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-        public enum DataControlRowType {
-                Header = 0,
-		Footer = 1,
-		DataRow = 2,
-		Separator = 3,
-		Pager = 4,
-		EmptyDataRow = 5				
+	[SerializableAttribute]
+        public enum TableRowSection {
+                TableBody = 0,
+		TableHeader = 1,
+		TableFooter = 2				
         }
 }
 #endif

@@ -27,6 +27,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls {
+	[FlagsAttribute]
         public enum ScrollBars {
                 None = 0,
 		Horizontal = 1,

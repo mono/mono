@@ -1,3 +1,14 @@
+2004-09-30 Sanjay Gupta <gsanjay@novell.com>
+
+	* DataControlRowState.cs: 
+	* ScrollBars.cs:
+	* TreeNodeTypes.cs: Added attribute.
+	* DataControlRowType.cs:
+	* HotSpotMode.cs:
+	* SortDirection.cs: Corrected enumeration values.
+	* TableRowSection.cs: Added new enumeration.
+	* ObjectDataSourceStatusEventHandler.cs: Corrected method name.
+
 2004-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableStyle.cs: don't render empty 'rules' attribute (again).

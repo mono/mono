@@ -27,6 +27,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls {
+	[FlagsAttribute]
         public enum TreeNodeTypes {
                 None = 0,
 		Root = 1,

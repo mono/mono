@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public delegate void ObjectDataSourceStatusObjectEventHandler (object sender, ObjectDataSourceStatusEventArgs e);
+	public delegate void ObjectDataSourceStatusEventHandler (object sender, ObjectDataSourceStatusEventArgs e);
 }
 #endif
