@@ -1,5 +1,13 @@
 2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataViewManager.cs : let's just use StringWriter instead of 
+	  XmlTextWriter (to avoid empty tag string mismatch annoyance.)
+	* DataView.cs : implemented BeginInit() and EndInit(). Don't update
+	  rows during init phase until EndInit() is invoked. During init phase,
+	  just hold properties such as Sort that affects on rows.
+
+2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTableCollection.cs : (RemoveAt) just use IndexOutOfRangeException.
 
 2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>

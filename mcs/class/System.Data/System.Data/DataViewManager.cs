@@ -237,7 +237,6 @@ namespace System.Data
 				s.RowStateFilter = (DataViewRowState)
 					Enum.Parse (typeof (DataViewRowState), 
 					rsf.Trim ());
-
 			reader.Skip ();
 		}
 
@@ -247,23 +246,35 @@ namespace System.Data
 				return String.Empty;
 
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xw = new XmlTextWriter (sw);
-			xw.WriteStartElement (
-				"DataViewSettingCollectionString");
+			sw.Write ('<');
+			sw.Write ("DataViewSettingCollectionString>");
 			foreach (DataViewSetting s in DataViewSettings) {
-				xw.WriteStartElement (XmlConvert.EncodeName (
+				sw.Write ('<');
+				sw.Write (XmlConvert.EncodeName (
 						s.Table.TableName));
-				xw.WriteAttributeString ("Sort", s.Sort);
+				sw.Write (" Sort=\"");
+				sw.Write (Escape (s.Sort));
+				sw.Write ('"');
 				// LAMESPEC: MS.NET does not seem to handle this property as expected.
 				if (s.ApplyDefaultSort)
-					xw.WriteAttributeString ("ApplyDefaultSort", "true");
-				xw.WriteAttributeString ("RowFilter", s.RowFilter);
-				xw.WriteAttributeString ("RowStateFilter", s.RowStateFilter.ToString ());
-				xw.WriteEndElement ();
+					sw.Write (" ApplyDefaultSort=\"true\"");
+				sw.Write (" RowFilter=\"");
+				sw.Write (Escape (s.RowFilter));
+				sw.Write ("\" RowStateFilter=\"");
+				sw.Write (s.RowStateFilter.ToString ());
+				sw.Write ("\"/>");
 			}
-			xw.WriteFullEndElement ();
-			xw.Flush ();
+			sw.Write ("</DataViewSettingCollectionString>");
 			return sw.ToString ();
+		}
+
+		private string Escape (string s)
+		{
+			return s.Replace ("&", "&amp;")
+				.Replace ("\"", "&quot;")
+				.Replace ("\'", "&apos;")
+				.Replace ("<", "&lt;")
+				.Replace (">", "&gt;");
 		}
 
 		public DataView CreateDataView (DataTable table) 

@@ -45,6 +45,15 @@ namespace System.Data
 		UnsortedList addNewCache = new UnsortedList ();
 		OptionalSortedList rowViewPool = new OptionalSortedList ();
 
+		// BeginInit() support
+		bool isInitPhase = false;
+		bool inEndInit = false;
+		DataTable initTable;
+		bool initApplyDefaultSort;
+		string initSort;
+		string initRowFilter;
+		DataViewRowState initRowState;
+
 		bool allowNew = true; 
 		bool allowEdit = true;
 		bool allowDelete = true;
@@ -53,7 +62,6 @@ namespace System.Data
 
 		bool isOpen = false;
 
-		bool bInit = false;
 		bool useDefaultSort = true;
 		
 		DataViewManager dataViewManager = null;
@@ -147,20 +155,19 @@ namespace System.Data
 		public bool ApplyDefaultSort {
 			get { return applyDefaultSort; }
 			set {
+				if (isInitPhase) {
+					initApplyDefaultSort = value;
+					return;
+				}
 				if (applyDefaultSort == value)
 					return;
 
 				applyDefaultSort = value;
-				if (applyDefaultSort == true && (sort == null || sort == string.Empty)) {
-					foreach (Constraint c in dataTable.Constraints)	{
-						if (c is UniqueConstraint) {
-							// FIXME: Compute SortableColumns[] directly.
-							Sort = GetSortString ((UniqueConstraint) c);
-							break;
-						}
-					}
-				}
-				UpdateIndex (true);
+				if (applyDefaultSort == true &&
+					(sort == null || sort == string.Empty))
+					PopulateDefaultSort ();
+				if (!inEndInit)
+					UpdateIndex (true);
 			}
 		}
 		// get the count of rows in the DataView after RowFilter 
@@ -201,8 +208,14 @@ namespace System.Data
 			set {
 				if (value == null)
 					value = String.Empty;
+				if (isInitPhase) {
+					initRowFilter = value;
+					return;
+				}
+
 				if (rowFilter == value)
 					return;
+
 				if (value == String.Empty) 
 					rowFilterExpr = null;
 				else {
@@ -210,7 +223,8 @@ namespace System.Data
 					rowFilterExpr = parser.Compile (value);
 				}
 				rowFilter = value;
-				UpdateIndex (true);
+				if (!inEndInit)
+					UpdateIndex (true);
 			}
 		}
 
@@ -220,10 +234,17 @@ namespace System.Data
 		public DataViewRowState RowStateFilter {
 			get { return rowState; }
 			set {
+				if (isInitPhase) {
+					initRowState = value;
+					return;
+				}
+
 				if (value == rowState)
 					return;
+
 				rowState = value;
-				UpdateIndex (true);
+				if (!inEndInit)
+					UpdateIndex (true);
 			}
 		}
 
@@ -233,6 +254,10 @@ namespace System.Data
 		public string Sort {
 			get { return sort; }
 			set {
+				if (isInitPhase) {
+					initSort = value;
+					return;
+				}
 				if (value == sort)
 					return;
 
@@ -240,16 +265,8 @@ namespace System.Data
 				/* if given value is null useDefaultSort */
 					useDefaultSort = true;
 					/* if ApplyDefault sort is true try appling it */
-					if (ApplyDefaultSort == true) {
-						foreach (Constraint c in dataTable.Constraints) {
-							if (c is UniqueConstraint) {
-								// FIXME: Compute SortableColumns[] directly.
-								Sort = GetSortString ((UniqueConstraint)c);
-								break;
-							}
-						}
-						
-					}
+					if (ApplyDefaultSort == true)
+						PopulateDefaultSort ();
 				}
 				else {	
 					/* else donot useDefaultSort. set it as false */
@@ -258,7 +275,8 @@ namespace System.Data
 					sort = value;
 					sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
 				}
-				UpdateIndex (true);
+				if (!inEndInit)
+					UpdateIndex (true);
 			}
 		}
 
@@ -270,6 +288,11 @@ namespace System.Data
 		public DataTable Table {
 			get { return dataTable; }
 			set {
+				if (isInitPhase) {
+					initTable = value;
+					return;
+				}
+
 				if (value != null && value.TableName.Equals("")) {
 					throw new DataException("Cannot bind to DataTable with no name.");
 				}
@@ -287,7 +310,8 @@ namespace System.Data
 					sortedColumns = null;
 					rowFilter = null;
 					rowFilterExpr = null;
-					UpdateIndex (true);
+					if (!inEndInit)
+						UpdateIndex (true);
 				}
 			}
 		}
@@ -312,11 +336,15 @@ namespace System.Data
 			return rowView;
 		}
 
-		[MonoTODO]
-		public void BeginInit() 
+		public void BeginInit ()
 		{
-			bInit = true; 
-			// FIXME:
+			initTable = Table;
+			initApplyDefaultSort = ApplyDefaultSort;
+			initSort = Sort;
+			initRowFilter = RowFilter;
+			initRowState = RowStateFilter;
+
+			isInitPhase = true;
 		}
 
 		public void CopyTo (Array array, int index) 
@@ -347,11 +375,21 @@ namespace System.Data
 		}
 #endif
 
-		[MonoTODO]
-		public void EndInit() 
+		public void EndInit ()
 		{
-			bInit = false;
-			// FIXME:
+			isInitPhase = false;
+
+			inEndInit = true;
+
+			Table = initTable;
+			ApplyDefaultSort = initApplyDefaultSort;
+			Sort = initSort;
+			RowFilter = initRowFilter;
+			RowStateFilter = initRowState;
+
+			inEndInit = false;
+
+			UpdateIndex (true);
 		}
 
 		internal void CancelEditRowView (DataRowView rowView)
@@ -693,7 +731,7 @@ namespace System.Data
 			/* useDefaultSort is set to false when Sort is set explicitly */
 			if (args.Action == CollectionChangeAction.Add && args.Element is UniqueConstraint) {
 				if (ApplyDefaultSort == true && useDefaultSort == true)
-						Sort = GetSortString ((UniqueConstraint) args.Element);
+					PopulateDefaultSort ((UniqueConstraint) args.Element);
 			}
 
 			// UpdateIndex() is not invoked here.
@@ -1025,14 +1063,31 @@ namespace System.Data
 					return rowViewPool.Count + i;
 			throw new SystemException ("Should not happen.");
 		}
-		
-		private string GetSortString (UniqueConstraint uc)
+
+		private void PopulateDefaultSort ()
 		{
-			string sortKey = null;
-			foreach (DataColumn dc in uc.Columns)
-				sortKey += dc.ColumnName + ", ";
-			sortKey = sortKey.Substring (0,sortKey.Length - 2);
-			return sortKey;
+			sort = "";
+			foreach (Constraint c in dataTable.Constraints) {
+				if (c is UniqueConstraint) {
+					PopulateDefaultSort ((UniqueConstraint) c);
+					break;
+				}
+			}
+		}
+
+		private void PopulateDefaultSort (UniqueConstraint uc)
+		{
+			if (isInitPhase)
+				return;
+
+			sort = "";
+			sortedColumns = new SortableColumn [uc.Columns.Length];
+			int i = 0;
+			foreach (DataColumn dc in uc.Columns) {
+				sort += dc.ColumnName + ", ";
+				sortedColumns [i++] = new SortableColumn (dc, ListSortDirection.Ascending);
+			}
+			sort = sort.Substring (0, sort.Length - 2);
 		}
 		
 		private object [] GetSearchKey (DataRow dr)
