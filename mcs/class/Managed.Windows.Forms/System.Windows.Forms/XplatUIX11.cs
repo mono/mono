@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.8  2004/08/06 23:46:56  pbartok
+// - Implemented GetParent
+//
 // Revision 1.7  2004/08/06 23:17:44  pbartok
 // - Fixed Refresh and Invalidate
 //
@@ -230,7 +233,18 @@ namespace System.Windows.Forms {
 			WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, 0, 0);
 			XMapWindow(DisplayHandle, WindowHandle);
 
-			XSelectInput(DisplayHandle, WindowHandle, 0xffffff);
+			XSelectInput(DisplayHandle, WindowHandle, 
+				EventMask.ButtonPressMask | 
+				EventMask.ButtonReleaseMask | 
+				EventMask.KeyPressMask | 
+				EventMask.KeyReleaseMask | 
+				EventMask.EnterWindowMask | 
+				EventMask.LeaveWindowMask |
+				EventMask.ExposureMask |
+				EventMask.PointerMotionMask | 
+				EventMask.ResizeRedirectMask |
+				EventMask.VisibilityChangeMask |
+				EventMask.StructureNotifyMask);
 			XSetWindowBackground(DisplayHandle, WindowHandle, (uint)this.BackColor.ToArgb());
 			is_visible=true;
 			return(WindowHandle);
@@ -307,8 +321,6 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			XMoveResizeWindow(DisplayHandle, handle, x, y, width, height);
-Console.WriteLine("Set window pos {0}:{1} {2}x{3}", x, y, width, height);
-Where();
 			return;
 		}
 
@@ -325,7 +337,6 @@ Where();
 			xevent.ExposeEvent.window=handle;
 			xevent.ExposeEvent.count=0;
 
-Console.WriteLine("Invalidating, rc={0}, clear={1}", rc, clear);
 			if (clear) {
 				// Need to clear the whole window, so we force a redraw for the whole window
 				XWindowAttributes	attributes=new XWindowAttributes();
@@ -444,11 +455,14 @@ Console.WriteLine("Invalidating, rc={0}, clear={1}", rc, clear);
 				}
 
 				case XEventName.ButtonRelease: {
+					msg.message=Msg.WM_LBUTTONUP;
+					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
 					break;
 				}
 
 				case XEventName.MotionNotify: {
 					msg.message=Msg.WM_MOUSEMOVE;
+					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
 					break;
 				}
 
@@ -517,13 +531,26 @@ Console.WriteLine("Invalidating, rc={0}, clear={1}", rc, clear);
 
 			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
 			XReparentWindow(DisplayHandle, handle, parent, attributes.x, attributes.y);
-Console.WriteLine("Setting parent for window {0} to {1}, border width of window:{2}", handle, parent, attributes.border_width);
 			return IntPtr.Zero;
 		}
 
 		internal override IntPtr GetParent(IntPtr handle) {
-			Console.WriteLine("Getting parent {0}", handle);
-			return IntPtr.Zero;
+			IntPtr	Root;
+			IntPtr	Parent;
+			IntPtr	Children;
+			int	ChildCount;
+
+			Root=IntPtr.Zero;
+			Parent=IntPtr.Zero;
+			Children=IntPtr.Zero;
+			ChildCount=0;
+
+			XQueryTree(DisplayHandle, handle, ref Root, ref Parent, ref Children, ref ChildCount);
+
+			if (Children!=IntPtr.Zero) {
+				XFree(Children);
+			}
+			return Parent;
 		}
 
 		// Santa's little helper
@@ -649,7 +676,7 @@ Console.WriteLine("Setting parent for window {0} to {1}, border width of window:
 		[DllImport ("libX11.so", EntryPoint="XNextEvent")]
 		internal extern static IntPtr XNextEvent(IntPtr display, ref XEvent xevent);
 		[DllImport ("libX11.so", EntryPoint="XSelectInput")]
-		internal extern static IntPtr XSelectInput(IntPtr display, IntPtr window, int mask);
+		internal extern static IntPtr XSelectInput(IntPtr display, IntPtr window, EventMask mask);
 		[DllImport ("libX11.so", EntryPoint="XLookupString")]
 		internal extern static int XLookupString(ref XEvent xevent, IntPtr buffer, int num_bytes, out XKeySym keysym, IntPtr status);
 
@@ -675,6 +702,12 @@ Console.WriteLine("Setting parent for window {0} to {1}, border width of window:
 
 		[DllImport ("libX11.so", EntryPoint="XSendEvent")]
 		internal extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, EventMask event_mask, ref XEvent send_event);
+
+		[DllImport ("libX11.so", EntryPoint="XQueryTree")]
+		internal extern static int XQueryTree(IntPtr display, IntPtr window, ref IntPtr root_return, ref IntPtr parent_return, ref IntPtr children_return, ref int nchildren_return);
+
+		[DllImport ("libX11.so", EntryPoint="XFree")]
+		internal extern static int XFree(IntPtr data);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
