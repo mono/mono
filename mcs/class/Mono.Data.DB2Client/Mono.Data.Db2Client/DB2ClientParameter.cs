@@ -14,19 +14,31 @@ namespace DB2ClientCS
 	/// <summary>
 	/// Parameter object for DB2 client
 	/// </summary>
-	public class DB2ClientParameter
+	public sealed class DB2ClientParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 	{
 		private DbType dbType;
+		private IntPtr db2DataType;
 		private ParameterDirection direction;
-		private bool isNullable;
+		private bool nullable;
 		private string parameterName;
 		private string sourceColumn;
+		private IntPtr paramSize;
+		private IntPtr decimalDigits;
 		private DataRowVersion sourceVersion;
-		private object dataVal;
+		object dataVal;
+		byte[] bDataVal;
+		private int iDataVal;
+//		private IntPtr sqlLen_or_IndPtr;
+		private byte scale, precision;
+		private int size;
 
 		#region Contructors and destructors
 		public DB2ClientParameter()
 		{
+		}
+		public DB2ClientParameter (string name)
+		{
+			parameterName = name;
 		}
 
 		public DB2ClientParameter(string name, DbType type)
@@ -49,6 +61,7 @@ namespace DB2ClientCS
 		{
 			parameterName = name;
 			dbType = inferTypeFromDB2Type(db2Type);
+			db2DataType = new IntPtr(db2Type);
 		}
 		#endregion
 		#region Properties
@@ -92,11 +105,11 @@ namespace DB2ClientCS
 		{
 			get 
 			{
-				return isNullable;
+				return nullable;
 			}
 			set 
 			{
-				isNullable = value;
+				nullable = value;
 			}
 		}
 		#endregion
@@ -145,6 +158,43 @@ namespace DB2ClientCS
 			}
 		}
 		#endregion
+		#region IDbDataParameter properties
+		public byte Precision 
+		{
+			get 
+			{ 
+				return precision; 
+			}
+			set 
+			{ 
+				precision = value; 
+			}
+		}
+		
+		public byte Scale 
+		{
+			get 
+			{ 
+				return scale; 
+			}
+			set 
+			{ 
+				scale = value; 
+			}
+		}
+		
+		public int Size 
+		{
+			get 
+			{ 
+				return size;
+			}
+			set 
+			{ 
+				size = value;
+			}
+		}
+		#endregion
 		#region Value
 		///
 		/// The actual parameter data
@@ -157,8 +207,23 @@ namespace DB2ClientCS
 			}
 			set 
 			{
-				dataVal = value;
+				this.dataVal = value;
 				DbType = inferType(dataVal);
+				// Load buffer with new value
+				if (dbType==DbType.Int32)
+					iDataVal=(int) value;
+				else
+				{
+					// Treat everything else as a string
+					// Init string buffer
+					if (bDataVal==null || bDataVal.Length< (((int)paramSize>20)?(int)paramSize:20) )
+						bDataVal=new byte[((int)paramSize>20)?(int)paramSize:20];
+					else
+						bDataVal.Initialize();
+					// Convert value into string and store into buffer
+					byte[] strValueBuffer=System.Text.Encoding.ASCII.GetBytes(dataVal.ToString());
+					strValueBuffer.CopyTo(bDataVal,0);
+				}
 			}
 		}
 		#endregion
@@ -219,7 +284,6 @@ namespace DB2ClientCS
 				default:
 					throw new SystemException("Value is of unknown data type");
 			}
-
 		}
 		#endregion
 		#region inferTypeFromDB2Type
@@ -250,9 +314,52 @@ namespace DB2ClientCS
 					return DbType.Object;
 				default:
 					throw new SystemException("DB2 Data type is unknown.");
-
 			}
 		}
 		#endregion
+		#region Describe
+		///
+		/// Describe the parameter.  Use at the caller's discretion
+		/// 
+		public short Describe(IntPtr hwndStmt, short paramNum)
+		{
+			IntPtr nullable = IntPtr.Zero;
+			paramSize = IntPtr.Zero;
+			decimalDigits = IntPtr.Zero;
+			IntPtr dataType = IntPtr.Zero;
+			short sqlRet = 0;
+
+			sqlRet = DB2ClientPrototypes.SQLDescribeParam(hwndStmt, paramNum, ref db2DataType, ref paramSize, ref decimalDigits, ref nullable);
+			return sqlRet;
+		}
+		#endregion
+		#region Bind 
+		///
+		/// Bind this parameter
+		/// 
+		public short Bind(IntPtr hwndStmt, short paramNum)
+		{
+			short sqlRet = 0;
+
+			switch ((int)db2DataType) 
+			{
+				case DB2ClientConstants.SQL_DECIMAL:	//These types are treated as SQL_C_CHAR for binding purposes
+				case DB2ClientConstants.SQL_TYPE_DATE:
+				case DB2ClientConstants.SQL_TYPE_TIME:
+				case DB2ClientConstants.SQL_TYPE_TIMESTAMP:
+				case DB2ClientConstants.SQL_VARCHAR:
+				case DB2ClientConstants.SQL_CHAR:
+					sqlRet = DB2ClientPrototypes.SQLBindParameter(hwndStmt, (ushort)paramNum, DB2ClientConstants.SQL_PARAM_INPUT, DB2ClientConstants.SQL_C_DEFAULT, (short)db2DataType,  Convert.ToUInt32((int)paramSize) , 0, bDataVal, 0, 0);
+					break;
+				default:
+					sqlRet = DB2ClientPrototypes.SQLBindParameter(hwndStmt, (ushort)paramNum, DB2ClientConstants.SQL_PARAM_INPUT, DB2ClientConstants.SQL_C_DEFAULT, (short)db2DataType,  Convert.ToUInt32((int)paramSize) , 0, ref iDataVal, 0, 0);							break;
+			}		
+			return sqlRet;
+		}
+		#endregion
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

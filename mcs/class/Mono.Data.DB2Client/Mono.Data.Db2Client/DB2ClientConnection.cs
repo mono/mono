@@ -150,10 +150,10 @@ namespace DB2ClientCS
 		unsafe public void Close()
 		{
 			short sqlRet = 0;
-			DB2ClientUtils util = new DB2ClientUtils();
+//			DB2ClientUtils util = new DB2ClientUtils();
 
 			sqlRet = DB2ClientPrototypes.SQLDisconnect(dbHandle);
-			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_DBC, dbHandle, "Error in Connection->Close: ");
+//			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_DBC, dbHandle, "Error in Connection->Close: ");
 			dbHandle = new IntPtr(DB2ClientConstants.SQL_NULL_HANDLE);
 		}
 		#endregion

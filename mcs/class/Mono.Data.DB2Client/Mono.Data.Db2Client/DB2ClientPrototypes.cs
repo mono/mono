@@ -17,7 +17,7 @@ namespace DB2ClientCS
 	/// <summary>
 	/// DB2CLIPrototypes class is a wrapper for the db2cli.lib, IBM's Call Level Interface to DB2
 	/// </summary>
-	unsafe internal class DB2ClientPrototypes
+	internal class DB2ClientPrototypes
 	{
 		[DllImport("db2cli.dll", EntryPoint = "SQLAllocHandle")]
 			unsafe public static extern short SQLAllocHandle(short handleType, IntPtr inputHandle, ref IntPtr outputHandle);
@@ -55,7 +55,14 @@ namespace DB2ClientCS
 			unsafe public static extern short SQLDescribeParam(IntPtr stmtHandle, short paramNumber,ref IntPtr dataType, ref IntPtr paramSize, ref IntPtr decimalDigits, ref IntPtr nullable);
 		[DllImport("db2cli.dll", EntryPoint = "SQLNumParams")]
 			unsafe public static extern short SQLNumParams(IntPtr stmtHandle, ref IntPtr numParams);
+		[DllImport("db2cli.dll")]
+			internal static extern short SQLBindParameter(IntPtr stmtHandle, ushort paramNumber, 
+			short dataType, short valueType, short paramType, uint colSize, short decDigits, 
+			byte[] dataBufferPtr, int dataBufferLength, int StrLen_or_IndPtr);
 		[DllImport("db2cli.dll", EntryPoint = "SQLBindParameter")]
-			unsafe public static extern short SQLBindParameter(IntPtr stmtHandle, short paramNumber, IntPtr dataType, IntPtr valueType, IntPtr paramType, IntPtr colSize, IntPtr decDigits, [In][Out] IntPtr dataBufferPtr, int dataBufferLength, ref IntPtr StrLen_or_IndPtr);
+			unsafe public static extern short SQLBindParameter(IntPtr stmtHandle, ushort paramNumber, 
+			short dataType, short valueType, short paramType, uint colSize, short decDigits,
+			ref int dataBufferPtr, int dataBufferLength, int StrLen_or_IndPtr);
+
 	}
 }

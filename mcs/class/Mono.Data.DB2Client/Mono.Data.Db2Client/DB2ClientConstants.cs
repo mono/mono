@@ -35,6 +35,7 @@ namespace DB2ClientCS
         public const long  SQL_STILL_EXECUTING   = 2;
         public const long  SQL_ERROR             = -1;
         public const long  SQL_INVALID_HANDLE    = -2;
+		public const int   SQL_NTS				 = -3;
 		public const long  SQL_NULL_HANDLE		 = 0L;
 		public const short SQL_COMMIT			 = 0;
 		public const short SQL_ROLLBACK			 = 1;
@@ -74,6 +75,7 @@ namespace DB2ClientCS
 		public const int  SQL_TYPE_TIMESTAMP	= 93;
 
 		public const int  SQL_C_CHAR			= SQL_CHAR;
+		public const int  SQL_C_DEFAULT			= 99;
 
 		public const int  SQL_USER_DEFINED_TYPE = (-450);
 
@@ -83,6 +85,17 @@ namespace DB2ClientCS
         public const int  SQL_DRIVER_PROMPT     = 2;
 		public const int  SQL_DRIVER_COMPLETE_REQUIRED = 3;
 
-		
+		/* Null settings */
+		public const int  SQL_NO_NULLS			= 0;
+		public const int  SQL_NULLABLE			= 1;
+		public const int  SQL_NULLABLE_UNKNOWN	= 2;
+
+		/* Defines for SQLBindParameter and SQLProcedureColumns */
+		public const int SQL_PARAM_TYPE_UNKNOWN = 0;
+		public const int SQL_PARAM_INPUT		= 1;
+		public const int SQL_PARAM_INPUT_OUTPUT = 2;
+		public const int SQL_RESULT_COL         = 3;
+		public const int SQL_PARAM_OUTPUT       = 4;
+		public const int SQL_RETURN_VALUE       = 5;
 		}
 }

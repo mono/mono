@@ -25,7 +25,7 @@ namespace DB2ClientCS
 		internal IntPtr hwndStmt;		//The statement handle returning the results
 		private int row=-1;				//Row pointer
 		private int numCols=0;
-
+		
 		#region Constructors and destructors
 		/// <summary>
 		/// 
@@ -50,8 +50,7 @@ namespace DB2ClientCS
 
 			PrepareResults(dbVals, sqlLen_or_IndPtr);
 			FetchResults(dbVals, sqlLen_or_IndPtr, rs);
-
-
+			isClosed = false;
 		}
 		/// <summary>
 		/// Constructor for use with prepared statements
@@ -74,6 +73,8 @@ namespace DB2ClientCS
 			IntPtr[] sqlLen_or_IndPtr = new IntPtr[numCols];
 
 			PrepareResults(dbVals, sqlLen_or_IndPtr);
+			FetchResults(dbVals, sqlLen_or_IndPtr, rs);
+			isClosed = false;
 		}
 
 		public void Dispose()
@@ -204,7 +205,7 @@ namespace DB2ClientCS
 				rs.Columns.Add(colName.ToString());
 
 				sqlLen_or_IndPtr[i-1] = new IntPtr();
-				dbVals[i-1] = Marshal.AllocHGlobal(colSize.ToInt32()+1);
+				dbVals[i-1] = Marshal.AllocHGlobal((int)colSize+1);
 
 				try 
 				{
@@ -215,10 +216,10 @@ namespace DB2ClientCS
 						case DB2ClientConstants.SQL_TYPE_TIME:
 						case DB2ClientConstants.SQL_TYPE_TIMESTAMP:
 						case DB2ClientConstants.SQL_VARCHAR:
-							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, DB2ClientConstants.SQL_C_CHAR,  dbVals[i-1],(short)colSize.ToInt32()+1, ref sqlLen_or_IndPtr[i-1]);
+							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, DB2ClientConstants.SQL_C_CHAR,  dbVals[i-1],(short)colSize+1, ref sqlLen_or_IndPtr[i-1]);
 							break;
 						default:
-							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, (short)sqlDataType.ToInt32(), dbVals[i-1],(short)colSize.ToInt32()+1, ref sqlLen_or_IndPtr[i-1]);
+							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, (short)sqlDataType, dbVals[i-1],(short)colSize+1, ref sqlLen_or_IndPtr[i-1]);
 							break;
 					}
 					util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLBindCol");
