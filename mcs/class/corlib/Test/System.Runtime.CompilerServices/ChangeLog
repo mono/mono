@@ -1,3 +1,8 @@
+2003-04-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* RuntimeHelpersTest.cs: Added tests for Equals() and GetHashCode ()
+	methods.
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2

@@ -12,10 +12,20 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Runtime.CompilerServices {
 
-	public class RuntimeHelpersTest : TestCase {
+	[TestFixture]
+	public class RuntimeHelpersTest : Assertion {
 	    struct FooStruct {
 			public int i;
 			public string j;
+
+			public override int GetHashCode () {
+				return 5;
+			}
+
+			public override bool Equals (object o) {
+				Fail ();
+				return false;
+			}
 		}
 
 		class FooClass {
@@ -23,6 +33,15 @@ namespace MonoTests.System.Runtime.CompilerServices {
 
 			static FooClass () {
 				counter = counter + 1;
+			}
+
+			public override int GetHashCode () {
+				return 5;
+			}
+
+			public override bool Equals (object o) {
+				Fail ();
+				return true;
 			}
 		}
 
@@ -67,5 +86,36 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			RuntimeHelpers.RunClassConstructor (typeof(FooClass).TypeHandle);
 			AssertEquals ("", FooClass.counter, 1);
 		}
+
+#if NET_1_1
+		public void TestGetHashCode ()
+		{
+			AssertEquals ("Null has hash code 0", 0, RuntimeHelpers.GetHashCode (null));
+			object o = new object ();
+			AssertEquals ("", o.GetHashCode (), RuntimeHelpers.GetHashCode (o));
+			Assert ("", 5 != RuntimeHelpers.GetHashCode (new FooClass ()));
+		}			
+
+		public void TestEquals ()
+		{
+			Assert (RuntimeHelpers.Equals (null, null));
+			Assert (!RuntimeHelpers.Equals (new object (), null));
+			Assert (!RuntimeHelpers.Equals (null, new object ()));
+
+			FooStruct f1 = new FooStruct ();
+			f1.i = 5;
+			FooStruct f2 = new FooStruct ();
+			f2.i = 5;
+			object o1 = f1;
+			object o2 = o1;
+			object o3 = f2;
+			object o4 = "AAA";
+			Assert (RuntimeHelpers.Equals (o1, o2));
+
+			// This should do a bit-by-bit comparison for valuetypes
+			Assert (RuntimeHelpers.Equals (o1, o3));
+			Assert (!RuntimeHelpers.Equals (o1, o4));
+		}
+#endif
 	}
 }
