@@ -1,3 +1,10 @@
+2004-11-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.dll.sources: Added new files:
+		System.Configuration/TimeSpanConfigurationProperty.cs
+		System.Configuration/TimeSpanPropertyFlags.cs
+		System.Configuration/TimeSpanSerializedFormat.cs
+	
 2004-11-09  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.dll.sources: Added new files:

@@ -374,6 +374,9 @@ System.Configuration/RuntimeOnlySection.cs
 System.Configuration/SectionInfo.cs
 System.Configuration/SectionGroupInfo.cs
 System.Configuration/SingleTagSectionHandler.cs
+System.Configuration/TimeSpanConfigurationProperty.cs
+System.Configuration/TimeSpanPropertyFlags.cs
+System.Configuration/TimeSpanSerializedFormat.cs
 System.Diagnostics/AlphabeticalEnumConverter.cs
 System.Diagnostics/BooleanSwitch.cs
 System.Diagnostics/CounterCreationDataCollection.cs
