@@ -486,6 +486,11 @@ namespace System
 		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)
 		{
 			string[] formats = {
+				// For compatibility with MS's CLR, this format (which
+				// doesn't have a one-letter equivalent) is parsed
+				// too. It's important because it's used in XML
+				// serialization.
+				"yyyy-MM-ddTHH:mm:sszzz",
 				// Full date and time
 				"F", "G", "r", "s", "u", "U",
 				// Full date and time, but no seconds
@@ -987,11 +992,13 @@ namespace System
 
 		public long ToFileTime()
 		{
-			if(ticks.Ticks < w32file_epoch) {
+			DateTime universalTime = ToUniversalTime();
+			
+			if (universalTime.Ticks < w32file_epoch) {
 				throw new ArgumentOutOfRangeException("file time is not valid");
 			}
 			
-			return(ticks.Ticks - w32file_epoch);
+			return(universalTime.Ticks - w32file_epoch);
 		}
 
 		public string ToLongDateString()

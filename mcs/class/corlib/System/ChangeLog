@@ -1,3 +1,11 @@
+2003-02-28  Elan Feingold  <efeingold@mn.rr.com>
+
+	* DateTime.cs: FileTime is expressed in Universal time, and as such must
+	be converted before subtracting the magic offset.
+	* DateTime.cs: Strings in the format "2003-02-27T10:05:03-11:00" (note
+	the timezone at the end) *must* be parsed by DateTime.Parse() for
+	compatibility with Microsoft.
+
 2003-02-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Attribute.cs:
