@@ -1,3 +1,9 @@
+2004-08-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* objects.cs: Add new regalloc test.
+
+	* mini-amd64.c inssel-amd64.brg: Optimize parameter passing.
+
 2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_call_opcode): Refactor this a little.
