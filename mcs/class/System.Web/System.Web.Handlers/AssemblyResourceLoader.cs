@@ -29,10 +29,11 @@ namespace System.Web.Handlers {
 				+ HttpUtility.UrlEncode (resourceName);
 		}
 
-			
+	
 		[MonoTODO ("Substitution not implemented")]
 		private void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
 		{
+#if NET_1_2
 			string resourceName = context.Request.QueryString ["resource"];
 			Assembly assembly = Assembly.Load (context.Request.QueryString ["assembly"]);
 			
@@ -60,6 +61,7 @@ namespace System.Web.Handlers {
 				c = s.Read (buf, 0, 1024);
 				output.Write (buf, 0, c);
 			} while (c > 0);
+#endif
 		}
 		
 		private bool System.Web.IHttpHandler.IsReusable { get { return true; } }
