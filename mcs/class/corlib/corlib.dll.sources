@@ -821,6 +821,7 @@ System.Security/SuppressUnmanagedCodeSecurityAttribute.cs
 System.Security/UnverifiableCodeAttribute.cs
 System.Security/VerificationException.cs
 System.Security/XmlSyntaxException.cs
+System.Security.AccessControl/AccessControlActions.cs
 System.Security.Cryptography/AsymmetricAlgorithm.cs
 System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs
 System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs
@@ -905,6 +906,8 @@ System.Security.Cryptography/ToBase64Transform.cs
 System.Security.Cryptography/TripleDES.cs
 System.Security.Cryptography/TripleDESCryptoServiceProvider.cs
 System.Security.Cryptography.X509Certificates/X509Certificate.cs
+System.Security.Cryptography.X509Certificates/X509ContentType.cs
+System.Security.Cryptography.X509Certificates/X509KeyStorageFlags.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
 System.Security.Permissions/EnvironmentPermission.cs
 System.Security.Permissions/EnvironmentPermissionAccess.cs

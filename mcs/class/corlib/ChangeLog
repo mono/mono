@@ -5,6 +5,9 @@
 		System.Security.Cryptography/RijndaelManagedTransform.cs
 		System.Security.Cryptography/RIPEMD160.cs
 		System.Security.Cryptography/RIPEMD160Managed.cs
+		System.Security.AccessControl/AccessControlActions.cs
+		System.Security.Cryptography.X509Certificates/X509ContentType.cs
+		System.Security.Cryptography.X509Certificates/X509KeyStorageFlags.cs
 	* corlib.dll.sources: Added new tests for CipherMode and 
 	CspProviderFlags.
 
