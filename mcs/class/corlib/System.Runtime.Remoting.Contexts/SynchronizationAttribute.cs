@@ -1,4 +1,4 @@
-pp//
+//
 // System.Runtime.Remoting.Contexts.SynchronizationAttribute..cs
 //
 // Author:
