@@ -35,6 +35,7 @@ internal sealed class Consts
 #if (NET_1_0)
 
 	public const string AssemblySystem_Design = "System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem_Drawing_Design = "System.Drawing.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 	public const string AssemblyMicrosoft_VSDesigner = "Microsoft.VSDesigner, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 
 //#elif (NET_1_1)
@@ -43,6 +44,7 @@ internal sealed class Consts
 	// to ensure we are not breaking the build in this case
 
 	public const string AssemblySystem_Design = "System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem_Drawing_Design = "System.Drawing.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 	public const string AssemblyMicrosoft_VSDesigner = "Microsoft.VSDesigner, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 
 #endif

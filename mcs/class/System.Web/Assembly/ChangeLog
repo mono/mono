@@ -1,3 +1,7 @@
+2003-08-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Consts.cs: Added entry
+
 2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Removed attribute 
