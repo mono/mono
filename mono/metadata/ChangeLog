@@ -1,4 +1,9 @@
 
+Mon Aug 27 20:12:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: Handle Array in mono_class_from_mono_type ().
+	* metadata.c, pedump.c: some endian fixes.
+
 Mon Aug 27 15:23:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, loader.c, loader.h: More types handled in mono_class_from_mono_type ().
