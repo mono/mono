@@ -1,5 +1,8 @@
 2005-01-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-x86.c (x86_magic_trampoline): Avoid calls to 
+	mono_jit_info_table_find () etc. when running under valgrind.
+
 	* inssel.brg: Fix warnings.
 
 	* mini-exceptions.c: Fix warnings.
