@@ -28,6 +28,7 @@ assemblies_DATA =	\
 	NUnitCore_mono.dll					\
 	System.Configuration.Install.dll			\
 	System.Data.dll						\
+	System.Data.OracleClient.dll				\
 	System.dll						\
 	System.Drawing.dll					\
 	System.EnterpriseServices.dll				\
