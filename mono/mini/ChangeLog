@@ -1,4 +1,9 @@
 
+2003-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini.c:
+	(mini_init): don't error out if someone already called g_thread_init.
+
 Tue Dec 9 17:27:14 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-x86.c, exceptions-ppc.c: allow the exception object
