@@ -120,7 +120,63 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO]
 		public static byte[] AESKeyWrapDecrypt (byte[] rgbKey, byte[] rgbEncryptedWrappedKeyData)
 		{
-			throw new NotImplementedException ();
+			SymmetricAlgorithm symAlg = SymmetricAlgorithm.Create ("Rijndael");
+			symAlg.Mode = CipherMode.ECB;
+			symAlg.Key = rgbKey;
+
+			int N = ( rgbEncryptedWrappedKeyData.Length / 8 ) - 1;
+
+			// From RFC 3394 - Advanced Encryption Standard (AES) Key Wrap Algorithm
+			//
+			// Inputs: Ciphertext, (n+1) 64-bit values (C0, C1, ..., Cn), and Key, K (the KEK)
+			// Outputs: Plaintext, n 64-bit values (P1, P2, ..., Pn)
+			//
+			// 1. Initialize variables.
+			//    Set A = C[0] 
+
+			byte[] A = new byte [8];
+			Buffer.BlockCopy (rgbEncryptedWrappedKeyData, 0, A, 0, 8);
+
+			//    For i = 1 to n
+			//    R[i] = C[i]
+
+			byte[] R = new byte [N * 8];
+			Buffer.BlockCopy (rgbEncryptedWrappedKeyData, 8, R, 0, rgbEncryptedWrappedKeyData.Length - 8);
+
+			// 2. Compute intermediate values.
+			//    For j = 5 to 0
+			//       For i = n to 1
+			//          B = AES-1(K, (A^t) | R[i]) where t = n*j+i
+			//          A = MSB (64,B)
+			//          R[i] = LSB (64,B)
+
+			ICryptoTransform transform = symAlg.CreateDecryptor ();
+
+			for (int j = 5; j >= 0; j -= 1) {
+				for (int i = N; i >= 1; i -= 1) {
+					byte[] T = BitConverter.GetBytes ((long) N * j + i);
+					if (BitConverter.IsLittleEndian)
+						Array.Reverse (T);
+
+					byte[] B = new Byte [16];
+					byte[] r = new Byte [8];
+					Buffer.BlockCopy (R, 8 * (i - 1), r, 0, 8);
+					byte[] ciphertext = Concatenate (Xor (A, T), r);
+					transform.TransformBlock (ciphertext, 0, 16, B, 0);
+					A = MSB (B);
+					Buffer.BlockCopy (LSB (B), 0, R, 8 * (i - 1), 8);
+				}
+			}
+
+			// 3. Output results
+			//    If A is an appropriate initial value
+			//    Then
+			//       For i = 1 to n
+			//          P[i] = R[i]
+			//    Else
+			//       Return an error
+
+			return R;
 		}
 
 		[MonoTODO]
@@ -268,15 +324,25 @@ namespace System.Security.Cryptography.Xml {
 
 		private static byte[] MSB (byte[] input)
 		{
-			byte[] output = new byte [8];
-			Buffer.BlockCopy (input, 0, output, 0, 8);
+			return MSB (input, 8);
+		}
+
+		private static byte[] MSB (byte[] input, int bytes)
+		{
+			byte[] output = new byte [bytes];
+			Buffer.BlockCopy (input, 0, output, 0, bytes);
 			return output;
 		}
 
 		private static byte[] LSB (byte[] input)
 		{
-			byte[] output = new byte [8];
-			Buffer.BlockCopy (input, 8, output, 0, 8);
+			return LSB (input, 8);
+		}
+
+		private static byte[] LSB (byte[] input, int bytes)
+		{
+			byte[] output = new byte [bytes];
+			Buffer.BlockCopy (input, bytes, output, 0, bytes);
 			return output;
 		}
 
@@ -289,6 +355,14 @@ namespace System.Security.Cryptography.Xml {
 			byte[] output = new byte [x.Length];
 			for (int i = 0; i < x.Length; i += 1)
 				output [i] = (byte) (x [i] ^ y [i]);
+			return output;
+		}
+
+		private static byte[] Xor (byte[] x, int n)
+		{
+			byte[] output = new Byte [x.Length];
+			for (int i = 0; i < x.Length; i += 1)
+				output [i] = (byte) ((int) x [i] ^ n);
 			return output;
 		}
 	}

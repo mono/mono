@@ -354,21 +354,17 @@ namespace System.Security.Cryptography.Xml {
 			return iv;
 		}
 
-		[MonoTODO]
 		public virtual SymmetricAlgorithm GetDecryptionKey (EncryptedData encryptedData, string symAlgUri)
 		{
 			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
 			symAlg.IV = GetDecryptionIV (encryptedData, encryptedData.EncryptionMethod.KeyAlgorithm);
-
 			KeyInfo keyInfo = encryptedData.KeyInfo;
-
 			foreach (KeyInfoClause clause in keyInfo) {
 				if (clause is KeyInfoEncryptedKey) {
 					symAlg.Key = DecryptEncryptedKey (((KeyInfoEncryptedKey) clause).EncryptedKey);
 					break;
 				}
 			}
-
 			return symAlg;
 		}
 
@@ -383,22 +379,19 @@ namespace System.Security.Cryptography.Xml {
 			return xel;
 		}
 
-		[MonoTODO ("Verify")]
 		public void ReplaceData (XmlElement inputElement, byte[] decryptedData)
 		{
-			XmlDocument owner = inputElement.OwnerDocument;
+			XmlDocument ownerDocument = inputElement.OwnerDocument;
 			XmlTextReader reader = new XmlTextReader (new StringReader (Encoding.GetString (decryptedData, 0, decryptedData.Length)));
 			reader.MoveToContent ();
-			XmlNode node = owner.ReadNode (reader);
-			owner.DocumentElement.ReplaceChild (node, inputElement);
+			XmlNode node = ownerDocument.ReadNode (reader);
+			inputElement.ParentNode.ReplaceChild (node, inputElement);
 		}
 
-		[MonoTODO]
 		public static void ReplaceElement (XmlElement inputElement, EncryptedData encryptedData, bool content)
 		{
-			XmlDocument owner = inputElement.OwnerDocument;
-			owner.DocumentElement.ReplaceChild (encryptedData.GetXml (owner), inputElement);
-			//throw new NotImplementedException ();
+			XmlDocument ownerDocument = inputElement.OwnerDocument;
+			inputElement.ParentNode.ReplaceChild (encryptedData.GetXml (ownerDocument), inputElement);
 		}
 
 		private byte[] Transform (byte[] data, ICryptoTransform transform)

@@ -1,3 +1,7 @@
+2004-08-31  Tim Coleman <tim@timcoleman.com>
+	* EncryptedXml.cs SymmetricKeyWrap.cs: 
+		Get symmetric key wrap to work for AES keys.
+
 2004-08-30  Tim Coleman <tim@timcoleman.com>
 	* EncryptedXml.cs: Implement lots of XML Encryption code.
 	* SymmetricKeyWrap.cs: Fix TripleDES keywrap algorithm.
