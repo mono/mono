@@ -134,6 +134,7 @@ namespace System.Security.Cryptography {
 		}
 
 
+		[MonoTODO]
 		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount)
 		{
 			// TODO: add decryption support
@@ -214,6 +215,7 @@ namespace System.Security.Cryptography {
 
 		// FIXME: Ought to be in DES.cs
 
+		[MonoTODO ("Ought to be in DES.cs")]
 		public /*override*/ byte[] Key {
 			get {
 				return this.key;

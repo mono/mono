@@ -15,6 +15,7 @@ namespace System.Security.Cryptography {
 	/// <summary>
 	/// LAMESPEC: no sdk doc available for this class by the time of beta 2
 	/// </summary>
+	[MonoTODO]
 	public class SignatureDescription {
 		private string _DeformatterAlgorithm;
 		private string _DigestAlgorithm;		
@@ -78,6 +79,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		[MonoTODO]
 		public virtual AsymmetricSignatureDeformatter CreateDeformatter(AsymmetricAlgorithm key) 
 		{
 			// TODO: Implement
@@ -91,7 +93,8 @@ namespace System.Security.Cryptography {
 		{
 			return HashAlgorithm.Create(_DigestAlgorithm);
 		}
-		
+
+		[MonoTODO]
 		public virtual AsymmetricSignatureFormatter CreateFormatter(AsymmetricAlgorithm key)
 		{
 			// TODO: Implement

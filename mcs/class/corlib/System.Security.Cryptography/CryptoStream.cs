@@ -76,22 +76,26 @@ namespace System.Security.Cryptography
 			}
 		}
 
+		[MonoTODO]
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			// TODO: implement
 			return 0;
 		}
-		
+
+		[MonoTODO]
 		public override void Write(byte[] buffer, int offset, int count)
 		{
 			// TODO: implement
 		}
-		
+
+		[MonoTODO]
 		public override void Flush()
 		{
 			// TODO: implement
 		}
-		
+
+		[MonoTODO]
 		public void FlushFinalBlock()
 		{
 			if (_mode != CryptoStreamMode.Write)
@@ -99,7 +103,7 @@ namespace System.Security.Cryptography
 			
 			// TODO: implement
 		}
-		
+
 		public override long Seek(long offset, SeekOrigin origin)
 		{
 			throw new NotSupportedException("cannot seek a CryptoStream");

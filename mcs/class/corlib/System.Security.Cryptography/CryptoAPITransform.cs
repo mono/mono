@@ -20,6 +20,7 @@ namespace System.Security.Cryptography
 		/// <summary>
 		/// Indicates if the Transform object can transform multiple blocks
 		/// </summary>
+		[MonoTODO]
 		public bool CanTransformMultipleBlocks
 		{
 			get 
@@ -29,6 +30,7 @@ namespace System.Security.Cryptography
 			}
 		}
 
+		[MonoTODO]
 		public int InputBlockSize
 		{
 			get {
@@ -36,7 +38,8 @@ namespace System.Security.Cryptography
 				return 0;
 			}
 		}
-		
+
+		[MonoTODO]
 		public IntPtr KeyHandle 
 		{
 			get {
@@ -44,7 +47,8 @@ namespace System.Security.Cryptography
 				return IntPtr.Zero;
 			}
 		}
-		
+
+		[MonoTODO]
 		public int OutputBlockSize 
 		{
 			get {
@@ -52,14 +56,16 @@ namespace System.Security.Cryptography
 				return 0;
 			}
 		}
-		
+
+		[MonoTODO]
 		public int TransformBlock(byte[] inputBuffer, int inputOffset, 
 		                          int inputCount, byte[] outputBuffer, int outputOffset)
 		{
 			// TODO: implement
 			return 0;
 		}
-		
+
+		[MonoTODO]
 		public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
 		{
 			// TODO: implement

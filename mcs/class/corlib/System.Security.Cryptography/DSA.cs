@@ -21,7 +21,8 @@ namespace System.Security.Cryptography
 		{
 			return new DSACryptoServiceProvider();
 		}
-		
+
+		[MonoTODO]
 		public static new DSA Create(string algName)
 		{
 			// TODO: implement
@@ -31,7 +32,8 @@ namespace System.Security.Cryptography
 		public abstract byte[] CreateSignature(byte[] rgbHash);
 		
 		public abstract DSAParameters ExportParameters(bool includePrivateParameters);
-		
+
+		[MonoTODO]
 		public override void FromXmlString(string xmlString) 
 		{
 			if (xmlString == null)

@@ -1,4 +1,14 @@
+2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
+	* CryptoAPITransform.cs, DESCryptoProvider.cs : MonoTODO attribute
+	decoration.
+
+	* HashAlgorithm.cs, MD5.cs, SHA1.cs, SHA256.cs, SHA384.cs : Ditto.
+
+	* SHA512.cs, SymmetricAlgorithm.cs, ToBase64Transform.cs, 
+	AsymmetricAlgorithm.cs, CryptoStream.cs, DSA.cs, DSASignatureDeformatter.cs,
+	DSASignatureFormatter.cs, SignatureDescription.cs : Ditto.
+	
 Wed Nov 14 17:04:30 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* MD5CryptoServiceProvider.cs, SHA1CryptoServiceProvider.cs,

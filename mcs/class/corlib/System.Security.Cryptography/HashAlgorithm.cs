@@ -28,6 +28,7 @@ namespace System.Security.Cryptography {
 		/// FIXME: Always true for hashes?
 		/// Get whether or not the hash can transform multiple blocks at a time.
 		/// </summary>
+		[MonoTODO]
 		public virtual bool CanTransformMultipleBlocks {
 			get {
 				return true;
@@ -57,6 +58,7 @@ namespace System.Security.Cryptography {
 		/// Creates a specific implementation of the general hash idea.
 		/// </summary>
 		/// <param name="st">FIXME: No clue.  Specifies which derived class to create.</param>
+		[MonoTODO]
 		public static HashAlgorithm Create (string st) {
 			return Create ();
 		}
@@ -100,6 +102,7 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// FIXME: Not quire valid for the hashes?  Returns 1?
 		/// </summary>
+		[MonoTODO]
 		public virtual int InputBlockSize {
 			get {
 				return 1;
@@ -109,6 +112,7 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// FIXME: Not quire valid for the hashes?  Returns 1?
 		/// </summary>
+		[MonoTODO]
 		public virtual int OutputBlockSize {
 			get {
 				return 1;

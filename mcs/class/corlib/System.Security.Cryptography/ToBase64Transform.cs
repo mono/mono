@@ -174,7 +174,8 @@ namespace System.Security.Cryptography {
 
 
 
-	// FIXME: Ought to be in a standalone file.
+	
+	[MonoTODO ("Put me in a separate file")]
 	internal sealed class Base64Table {
 
 		// This is the Base64 alphabet as described in RFC 2045

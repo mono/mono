@@ -75,6 +75,7 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Gets or sets the actual Initial Vector
 		/// </summary>
+		[MonoTODO]
 		public virtual byte[] IV {
 			get {
 				if (this.IVValue == null)
@@ -245,6 +246,7 @@ namespace System.Security.Cryptography {
 		/// Creates a specific implementation of the given symmetric algorithm.
 		/// </summary>
 		/// <param name="algName">the given algorithm</param>
+		[MonoTODO]
 		public static SymmetricAlgorithm Create (string algName) {
 			// TODO: Use Reflection to create a new algorithm instance
 			return null;

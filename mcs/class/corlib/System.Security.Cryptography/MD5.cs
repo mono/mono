@@ -35,6 +35,7 @@ namespace System.Security.Cryptography {
 		/// Creates a new derived implementation.
 		/// </summary>
 		/// <param name="st">FIXME: No clue.  Specifies which derived class to create?</param>
+		[MonoTODO]
 		public static new MD5 Create (string st) {
 			return Create();
 		}

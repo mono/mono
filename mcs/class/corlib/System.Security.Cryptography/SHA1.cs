@@ -35,6 +35,7 @@ namespace System.Security.Cryptography {
 		/// Creates a new derived class.
 		/// </summary>
 		/// <param name="st">FIXME: No clue.  Specifies which derived class to create?</param>
+		[MonoTODO]
 		public static new SHA1 Create (string st) {
 			return Create();
 		}

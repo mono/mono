@@ -530,12 +530,14 @@ namespace System.Security.Cryptography {
 		{
 		}
 
+		[MonoTODO]
 		public static new DES Create()
 		{
 			// TODO: implement
 			return null;
 		}
 
+		[MonoTODO]
 		public static new DES Create(string name)
 		{
 			// TODO: implement
