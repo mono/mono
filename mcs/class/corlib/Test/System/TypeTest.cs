@@ -224,6 +224,13 @@ namespace MonoTests.System
 			Type[] t2 = typeof (IFace3).GetInterfaces ();
 			AssertEquals (2, t2.Length);
 		}
+
+		public int AField;
+
+		[Test]
+		public void GetFieldIgnoreCase () {
+			AssertNotNull (typeof (TypeTest).GetField ("afield", BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase));
+		}
 	}
 }
 
