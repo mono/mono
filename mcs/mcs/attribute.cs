@@ -124,20 +124,23 @@ namespace Mono.CSharp {
 		// Given an expression, if the expression is a valid attribute-argument-expression
 		// returns an object that can be used to encode it, or null on failure.
 		//
-		public static object GetAttributeArgumentExpression (Expression e, Location loc)
+		public static bool GetAttributeArgumentExpression (Expression e, Location loc, out object result)
 		{
 			if (e is Constant) {
-				return ((Constant) e).GetValue ();
+				result = ((Constant) e).GetValue ();
+				return true;
 			} else if (e is TypeOf) {
-				return ((TypeOf) e).TypeArg;
+				result = ((TypeOf) e).TypeArg;
+				return true;
 			} else if (e is ArrayCreation){
-				object val =  ((ArrayCreation) e).EncodeAsAttribute ();
-				if (val != null)
-					return val;
+				result =  ((ArrayCreation) e).EncodeAsAttribute ();
+				if (result != null)
+					return true;
 			}
 
+			result = null;
 			Error_AttributeArgumentNotValid (loc);
-			return null;
+			return false;
 		}
 		
 		public CustomAttributeBuilder Resolve (EmitContext ec)
@@ -194,9 +197,10 @@ namespace Mono.CSharp {
 
 				e = a.Expr;
 
-				object val = GetAttributeArgumentExpression (e, Location);
-				if (val == null)
+				object val;
+				if (!GetAttributeArgumentExpression (e, Location, out val))
 					return null;
+				
 				pos_values [i] = val;
 				if (DoCompares){
 					if (UsageAttr)

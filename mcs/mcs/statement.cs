@@ -451,17 +451,17 @@ namespace Mono.CSharp {
 			} else
 				infinite = true;
 
-			if (Increment != null){
-				if (!Increment.Resolve (ec))
-					ok = false;
-			}
-
 			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
 			if (!infinite)
 				ec.CurrentBranching.CreateSibling ();
 
 			if (!Statement.Resolve (ec))
 				ok = false;
+
+			if (Increment != null){
+				if (!Increment.Resolve (ec))
+					ok = false;
+			}
 
 			if (empty)
 				ec.KillFlowBranching ();

@@ -1,5 +1,13 @@
 2003-05-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* attribute.cs (GetAttributeArgumentExpression): Store the result
+	on an out value, and use the return value to indicate failure
+	instead of using null (which is a valid return for Constant.GetValue).
+
+	* statement.cs: Perform the analysis flow for the increment
+	portion after the statement, because this will be the real flow of
+	execution.  Fixes #42385
+
 	* codegen.cs (EmitContext.EmitArgument,
 	EmitContext.EmitStoreArgument): New helper functions when the
 	RemapToProxy flag is set.
