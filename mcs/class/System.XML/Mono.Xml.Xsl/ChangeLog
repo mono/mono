@@ -1,3 +1,9 @@
+2003-09-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Debug.cs: comment out {Enter, Exit}Navigator. Haven't had bugs
+	here for a long time and it hurts thread safty and memory
+	allocation.
+
 2003-09-21 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Compiler.cs: save the parser (will reduce memory allocation when

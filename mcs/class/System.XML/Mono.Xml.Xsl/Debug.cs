@@ -58,20 +58,20 @@ namespace Mono.Xml.Xsl {
 			Console.Error.WriteLine (message);
 		}
 		
-		static Stack eleStack = new Stack ();
+		//static Stack eleStack = new Stack ();
 		
 		[System.Diagnostics.Conditional("DEBUG")]
 		internal static void EnterNavigator (Compiler c)
 		{
-			eleStack.Push (c.Input.Clone ());
+			//eleStack.Push (c.Input.Clone ());
 		}
 		
 		[System.Diagnostics.Conditional("DEBUG")]
 		internal static void ExitNavigator (Compiler c)
 		{
-			XPathNavigator x = (XPathNavigator)eleStack.Pop();
-			if (!x.IsSamePosition (c.Input))
-				throw new Exception ("Position must be the same on enter/exit. Enter node: " + x.Name + " exit node " + c.Input.Name);
+			//XPathNavigator x = (XPathNavigator)eleStack.Pop();
+			//if (!x.IsSamePosition (c.Input))
+			//	throw new Exception ("Position must be the same on enter/exit. Enter node: " + x.Name + " exit node " + c.Input.Name);
 			
 		}
 	}
