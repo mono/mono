@@ -253,25 +253,25 @@ namespace System.Windows.Forms
 		public bool Selected {
 			get { return selected; }
 			set {
-					if (owner != null) {
-						if (owner.CanMultiselect == false &&
-						    owner.SelectedItems.Count > 0) {
-							owner.SelectedItems.Clear ();
-							owner.SelectedIndices.list.Clear ();
-						}
+				if (owner != null) {
+					if (owner.CanMultiselect == false &&
+					    owner.SelectedItems.Count > 0) {
+						owner.SelectedItems.Clear ();
+						owner.SelectedIndices.list.Clear ();
+					}
 
-						selected = value;
-						if (selected) {
-							//do we need !owner.SelectedItems.Contains (this))
-							owner.SelectedItems.list.Add (this);
-							owner.SelectedIndices.list.Add (this.Index);
-						}
-						else {
-							owner.SelectedItems.list.Remove (this);
-							owner.SelectedIndices.list.Remove (this.Index);
-						}
+					selected = value;
+					if (selected) {
+						//do we need !owner.SelectedItems.Contains (this))
+						owner.SelectedItems.list.Add (this);
+						owner.SelectedIndices.list.Add (this.Index);
+					}
+					else {
+						owner.SelectedItems.list.Remove (this);
+						owner.SelectedIndices.list.Remove (this.Index);
 					}
 				}
+			}
 		}
 
 		[DefaultValue (-1)]
