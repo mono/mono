@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.21 $
+// $Revision: 1.22 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.22  2004/08/20 20:02:45  pbartok
+// - Added method for setting the background color
+// - Added handling for erasing the window background
+//
 // Revision 1.21  2004/08/20 19:14:35  jackson
 // Expose functionality to send async messages through the driver
 //
@@ -394,6 +398,54 @@ namespace System.Windows.Forms {
 			IDC_HELP			=32651
 		}
 
+		[Flags]
+		private enum WindowLong {
+			GWL_WNDPROC     		= -4,
+			GWL_HINSTANCE			= -6,
+			GWL_HWNDPARENT      		= -8,
+			GWL_STYLE           		= -16,
+			GWL_EXSTYLE         		= -20,
+			GWL_USERDATA			= -21,
+			GWL_ID				= -12
+		}
+
+		[Flags]
+		private enum LogBrushStyle {
+			BS_SOLID			= 0,
+			BS_NULL             		= 1,
+			BS_HATCHED          		= 2,
+			BS_PATTERN          		= 3,
+			BS_INDEXED          		= 4,
+			BS_DIBPATTERN       		= 5,
+			BS_DIBPATTERNPT     		= 6,
+			BS_PATTERN8X8       		= 7,
+			BS_DIBPATTERN8X8    		= 8,
+			BS_MONOPATTERN      		= 9
+		}
+
+		[Flags]
+		private enum LogBrushHatch {
+			HS_HORIZONTAL			= 0,       /* ----- */
+			HS_VERTICAL         		= 1,       /* ||||| */
+			HS_FDIAGONAL        		= 2,       /* \\\\\ */
+			HS_BDIAGONAL        		= 3,       /* ///// */
+			HS_CROSS            		= 4,       /* +++++ */
+			HS_DIAGCROSS        		= 5,       /* xxxxx */
+		}
+
+		private struct COLORREF {
+			internal byte			B;
+			internal byte			G;
+			internal byte			R;
+			internal byte			A;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct LOGBRUSH {
+			internal LogBrushStyle		lbStyle;
+			internal COLORREF		lbColor;
+			internal LogBrushHatch		lbHatch;
+		}
 		#endregion
 
 		#region Constructor & Destructor
@@ -417,7 +469,7 @@ namespace System.Windows.Forms {
 			wndClass.lpfnWndProc = wnd_proc;
 			wndClass.cbClsExtra = 0;
 			wndClass.cbWndExtra = 0;
-			wndClass.hbrBackground = (IntPtr)(GetSysColorIndex.COLOR_BTNFACE+1);
+			wndClass.hbrBackground = IntPtr.Zero;
 			wndClass.hCursor = Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);
 			wndClass.hIcon = IntPtr.Zero;
 			wndClass.hInstance = IntPtr.Zero;
@@ -447,6 +499,28 @@ namespace System.Windows.Forms {
 		private static IntPtr DefWndProc(IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) {
 			return Win32DefWindowProc(hWnd, msg, wParam, lParam);
 		}
+
+		private void EraseWindowBackground(IntPtr hWnd, IntPtr hDc) {
+			IntPtr		hbr;
+			LOGBRUSH	lb;
+			uint		argb;
+			RECT		rect;
+						
+			//msg.wParam
+			argb = (uint)Win32GetWindowLong(hWnd, WindowLong.GWL_USERDATA);
+			lb = new LOGBRUSH();
+						
+			lb.lbColor.B = (byte)((argb & 0xff0000)>>16);
+			lb.lbColor.G = (byte)((argb & 0xff00)>>8);
+			lb.lbColor.R = (byte)(argb & 0xff);
+
+			lb.lbStyle = LogBrushStyle.BS_SOLID;
+			hbr = Win32CreateBrushIndirect(ref lb);
+			Win32GetClientRect(hWnd, out rect);
+			Win32FillRect(hDc, ref rect, hbr);
+			Win32DeleteObject(hbr);
+		}
+
 		#endregion	// Private Support Methods
 
 		#region Static Properties
@@ -543,6 +617,8 @@ namespace System.Windows.Forms {
 				Win32MessageBox(IntPtr.Zero, "Error : " + error.ToString(), "Failed to create window", 0);
 			}
 
+			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (IntPtr)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
+
 			return WindowHandle;
 		}
 
@@ -574,6 +650,10 @@ namespace System.Windows.Forms {
 			Win32UpdateWindow(handle);
 		}
 
+		internal override void SetWindowBackground(IntPtr handle, Color color) {
+			Win32SetWindowLong(handle, WindowLong.GWL_USERDATA, (IntPtr)color.ToArgb());
+		}
+
 		[MonoTODO("Add support for internal table of windows/DCs for cleanup")]
 		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
 			IntPtr		hdc;
@@ -602,6 +682,10 @@ namespace System.Windows.Forms {
 				// FIXME: Figure out why the rectangle is always 0 size
 				clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
 //				clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
+
+				if (ps.fErase!=0) {
+					EraseWindowBackground(handle, hdc);
+				}
 			} else {
 				hdc = Win32GetDC(handle);
 				// FIXME: Add the DC to internal list
@@ -708,6 +792,11 @@ namespace System.Windows.Forms {
 
 			// We need to fake WM_MOUSE_ENTER/WM_MOUSE_LEAVE
 			switch (msg.message) {
+				case Msg.WM_ERASEBKGND: {
+					EraseWindowBackground(msg.hwnd, msg.wParam);
+					break;
+				}
+
 				case Msg.WM_MOUSEMOVE: {
 					if (msg.hwnd != prev_mouse_hwnd) {
 						TRACKMOUSEEVENT	tme;
@@ -947,6 +1036,21 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="TrackMouseEvent", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32TrackMouseEvent(ref TRACKMOUSEEVENT tme);
+
+		[DllImport ("gdi32.dll", EntryPoint="CreateBrushIndirect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32CreateBrushIndirect(ref LOGBRUSH lb);
+
+		[DllImport ("user32.dll", EntryPoint="FillRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static int Win32FillRect(IntPtr hdc, ref RECT rect, IntPtr hbr);
+
+		[DllImport ("user32.dll", EntryPoint="SetWindowLong", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32SetWindowLong(IntPtr hwnd, WindowLong index, IntPtr value);
+
+		[DllImport ("user32.dll", EntryPoint="GetWindowLong", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetWindowLong(IntPtr hwnd, WindowLong index);
+
+		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32DeleteObject(IntPtr o);
 		#endregion
 
 	}
