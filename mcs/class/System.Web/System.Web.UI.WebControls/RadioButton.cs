@@ -58,6 +58,9 @@ namespace System.Web.UI.WebControls
 
 			if (Checked)
 				writer.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
+			
+			if (!Enabled)
+				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
 
 			if (AutoPostBack){
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick,
