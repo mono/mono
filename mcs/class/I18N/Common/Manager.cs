@@ -51,7 +51,8 @@ public class Manager
 	// Constructor.
 	private Manager()
 			{
-				handlers = new Hashtable();
+				handlers = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+							  CaseInsensitiveComparer.Default);
 				active = new Hashtable(16);
 				assemblies = new Hashtable(8);
 				LoadClassList();
@@ -105,7 +106,11 @@ public class Manager
 				name = Normalize(name);
 
 				// Try to find a class called "ENCname".
-				return (Instantiate("ENC" + name) as Encoding);
+				Encoding e = Instantiate ("ENC" + name) as Encoding;
+				if (e == null)
+					e = Instantiate (name) as Encoding;
+
+				return e;
 			}
 
 	// List of hex digits for use by "GetCulture".
@@ -210,7 +215,7 @@ public class Manager
 					}
 
 					// Look for the class within the region-specific assembly.
-					type = assembly.GetType(region + "." + name);
+					type = assembly.GetType(region + "." + name, false, true);
 					if(type == null)
 					{
 						return null;
@@ -267,10 +272,11 @@ public class Manager
 								.GetFile("I18N-handlers.def");
 					if(stream == null)
 					{
+						LoadInternalClasses();
 						return;
 					}
 				}
-				catch(FileNotFoundException)
+				catch(FileLoadException)
 				{
 					// The file does not exist, or the runtime engine
 					// refuses to implement the necessary semantics.

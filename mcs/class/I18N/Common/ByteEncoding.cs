@@ -306,7 +306,7 @@ public abstract class ByteEncoding : Encoding
 				char[] cvt = toChars;
 				while(count-- > 0)
 				{
-					s.Append(cvt[(int)(bytes[posn])]);
+					s.Append(cvt[(int)(bytes[posn++])]);
 				}
 				return s.ToString();
 			}
