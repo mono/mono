@@ -2836,7 +2836,9 @@ namespace Mono.CSharp {
 					LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
 			} else if (t.IsValueType)
 				ig.Emit (OpCodes.Ldobj, t);
-			else
+			else if (t.IsPointer)
+				ig.Emit (OpCodes.Ldind_I);
+			else 
 				ig.Emit (OpCodes.Ldind_Ref);
 		}
 

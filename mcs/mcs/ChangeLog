@@ -1,5 +1,8 @@
 2003-04-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (Expression.LoadFromPtr): Use ldind_i when loading
+	pointers. 
+
 	* expression.cs (MemberAccess.DoResolve): When we get a type back,
 	check the permissions for it.  Note than in a type-resolution
 	context the check was already present in DeclSpace.ResolveType,
