@@ -7,8 +7,21 @@
 	* class.cs (Operator::Emit): If we are abstract or extern, we don't have
 	a method body.
 
-	* attribute.cs (CheckAttribute, ApplyAttribute): Ensure that treat operators
-	essentially like methods and apply attributes like MethodImplOptions.
+	* attribute.cs (CheckAttribute, ApplyAttribute): Ensure that we treat operators
+	essentially like methods and apply attributes like MethodImplOptions to them too.
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Perform a check on ec.TypeContainer.TypeBuilder
+	not being null.
+
+	* codegen.cs (EmitContext): The constructor now takes in an extra argument specifying the
+	DeclSpace as the distinction is important. We provide sane defaults as usually the TypeContainer
+	is the DeclSpace.
+
+	* Update code everywhere accordingly.
+
+	* ecore.cs : Change references to ec.TypeContainer to ec.DeclSpace where appropriate.
+
+	* cs-parser.jay (enum_declaration): Set the current namespace of the enum.
 
 2002-02-28  Ravi Pratap  <ravi@ximian.com>
 

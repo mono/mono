@@ -142,11 +142,11 @@ namespace Mono.CSharp {
 
 				if (e is SimpleName){
 					SimpleName s = (SimpleName) e;
-					
+
 					Report.Error (
 						      103, s.Location,
 						      "The name `" + s.Name + "' could not be found in `" +
-						      ec.TypeContainer.Name + "'");
+						      ec.DeclSpace.Name + "'");
 					return null;
 				}
 				
@@ -219,7 +219,7 @@ namespace Mono.CSharp {
 					Report.Error (
 						103, s.Location,
 						"The name `" + s.Name + "' could not be found in `" +
-						ec.TypeContainer.Name + "'");
+						ec.DeclSpace.Name + "'");
 					return null;
 				}
 
@@ -2917,7 +2917,7 @@ namespace Mono.CSharp {
 		/// </remarks>
 		Expression SimpleNameResolve (EmitContext ec, bool allow_static)
 		{
-			Expression e;
+			Expression e = null;
 
 			//
 			// Stage 1: Performed by the parser (binding to locals or parameters).
@@ -2926,12 +2926,21 @@ namespace Mono.CSharp {
 			//
 			// Stage 2: Lookup members 
 			//
-			e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, Location);
+
+			//
+			// For enums, the TypeBuilder is not ec.TypeContainer.TypeBuilder
+			// Hence we have two different cases
+			//
+			e = MemberLookup (ec, ec.DeclSpace.TypeBuilder, Name, Location);
+
+			if (e == null && ec.TypeContainer.TypeBuilder != null)
+				e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, Location);
+
 			if (e == null){
 				//
 				// Stage 3: Lookup symbol in the various namespaces. 
 				//
-				DeclSpace ds = ec.TypeContainer;
+				DeclSpace ds = ec.DeclSpace;
 				Type t;
 				string alias_value;
 				
@@ -3010,7 +3019,7 @@ namespace Mono.CSharp {
 				EventExpr ee = (EventExpr) e;
 
 				Expression ml = MemberLookup (
-					ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
+					ec, ec.DeclSpace.TypeBuilder, ee.EventInfo.Name,
 					MemberTypes.Event, AllBindingFlags, Location);
 
 				if (ml != null) {
@@ -3070,7 +3079,7 @@ namespace Mono.CSharp {
 
 			Error (103, Location, "The name `" + Name +
 			       "' does not exist in the class `" +
-			       ec.TypeContainer.Name + "'");
+			       ec.DeclSpace.Name + "'");
 		}
 	}
 	

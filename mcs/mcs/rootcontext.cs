@@ -313,6 +313,7 @@ namespace Mono.CSharp {
 					t = TypeManager.LookupType (current_type.FullName + "+" + name);
 					if (t != null)
 						return t;
+
 					current_type = current_type.BaseType;
 				}
 
@@ -322,7 +323,7 @@ namespace Mono.CSharp {
 			t = NamespaceLookup (ds.Namespace, name);
 			if (t != null)
 				return t;
-			
+
 			if (!silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");
 			

@@ -440,8 +440,6 @@ namespace Mono.CSharp {
 						((EventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder){
 						((ParameterBuilder) builder).SetCustomAttribute (cb);
-						//} else if (kind is Operator) {
-						//((MethodBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Enum) {
 						((TypeBuilder) builder).SetCustomAttribute (cb); 
 

@@ -93,6 +93,7 @@ namespace Mono.CSharp {
 	///   properties bodies, indexer bodies or constructor bodies)
 	/// </summary>
 	public class EmitContext {
+		public DeclSpace DeclSpace;
 		public TypeContainer TypeContainer;
 		public ILGenerator   ig;
 		public bool CheckState;
@@ -164,12 +165,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Location loc;
 		
-		public EmitContext (TypeContainer parent, Location l, ILGenerator ig,
+		public EmitContext (TypeContainer parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
 		{
 			this.ig = ig;
 
 			TypeContainer = parent;
+			DeclSpace = ds;
 			CheckState = RootContext.Checked;
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			ReturnType = return_type;
@@ -178,14 +180,20 @@ namespace Mono.CSharp {
 			ContainerType = parent.TypeBuilder;
 			InUnsafe = ((parent.ModFlags | code_flags) & Modifiers.UNSAFE) != 0;
 			loc = l;
-
+			
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;
 		}
 
-		public EmitContext (TypeContainer parent, Location l, ILGenerator ig,
+		public EmitContext (TypeContainer tc, Location l, ILGenerator ig,
+				    Type return_type, int code_flags, bool is_constructor)
+			: this (tc, tc, l, ig, return_type, code_flags, is_constructor)
+		{
+		}
+
+		public EmitContext (TypeContainer tc, Location l, ILGenerator ig,
 				    Type return_type, int code_flags)
-			: this (parent, l, ig, return_type, code_flags, false)
+			: this (tc, tc, l, ig, return_type, code_flags, false)
 		{
 		}
 

@@ -78,7 +78,7 @@ namespace Mono.CSharp {
 			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
 
 			UnderlyingType = RootContext.TypeManager.LookupType (BaseType);
-
+			
 			if (UnderlyingType != TypeManager.int32_type &&
 			    UnderlyingType != TypeManager.uint32_type &&
 			    UnderlyingType != TypeManager.int64_type &&
@@ -263,7 +263,7 @@ namespace Mono.CSharp {
 					Report.Error (-12, loc, "Definition is circular.");
 					return null;
 				}	
-				
+
 				if (IsValidEnumConstant (val)) {
 					c = (Constant) val;
 					default_value = c.GetValue ();
@@ -312,7 +312,8 @@ namespace Mono.CSharp {
 			if (TypeBuilder == null)
 				return false;
 			
-			EmitContext ec = new EmitContext (parent, Location, null, UnderlyingType, ModFlags);
+			EmitContext ec = new EmitContext (parent, this, Location, null,
+							  UnderlyingType, ModFlags, false);
 			
 			object default_value = 0;
 			

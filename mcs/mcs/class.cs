@@ -1607,7 +1607,7 @@ namespace Mono.CSharp {
 
 			EmitContext ec = new EmitContext (
 						  this, Mono.CSharp.Location.Null, null, null,
-						  ModFlags, false);
+						  ModFlags);
 
 			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
 
@@ -2367,8 +2367,7 @@ namespace Mono.CSharp {
 			else
 				ig = null;
 			
-			ec = new EmitContext (parent, Location, ig,
-					      GetReturnType (parent), ModFlags);
+			ec = new EmitContext (parent, Location, ig, GetReturnType (parent), ModFlags);
 
 			if (OptAttributes != null)
 				Attribute.ApplyAttributes (ec, MethodBuilder, this, OptAttributes, Location);
@@ -2731,7 +2730,8 @@ namespace Mono.CSharp {
 
 		public void Emit (TypeContainer tc)
 		{
-			EmitContext ec = new EmitContext (tc, Location, null, FieldBuilder.FieldType, ModFlags);
+			EmitContext ec = new EmitContext (tc, Location, null,
+							  FieldBuilder.FieldType, ModFlags);
 
 			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes, Location);
 		}

@@ -1617,6 +1617,8 @@ enum_declaration
 				  ev.identifier);
 		}
 
+		e.Namespace = current_namespace;
+
 		CheckDef (current_container.AddEnum (e), name);
 	  }
 	;
