@@ -35,6 +35,8 @@ COMPILER_SOURCES = \
 	tree.cs 		\
 	typemanager.cs
 
+linux: all
+
 all: mbas.exe
 
 test: mbas.exe
