@@ -15,14 +15,13 @@ namespace System.Diagnostics
         /// </summary>
         public class BooleanSwitch : Switch
         {
-                private bool enabled = false;
-
                 /// <summary>
                 /// Initializes a new instance
                 /// </summary>
                 public BooleanSwitch(string displayName, string description)
                         : base(displayName, description)
                 {
+			SwitchSetting = (int)BooleanSwitchSetting.False;
                 }
 
                 // =================== Properties ===================
@@ -34,15 +33,27 @@ namespace System.Diagnostics
                 {
                         get
                         {
-                                return enabled;
+                                if((int)BooleanSwitchSetting.False == SwitchSetting) {
+					return false;
+				}
+				else {
+					return true;
+				}
                         }
                         set
                         {
-                                enabled = value;
+                                if(value) {
+					SwitchSetting = (int)BooleanSwitchSetting.True;
+				}
+				else {
+					SwitchSetting = (int)BooleanSwitchSetting.False;
+				}
                         }
                 }
 
-                // ================= Event Handlers =================
-
+		private enum BooleanSwitchSetting : int {
+			True = 1, False = 0
+		}
         }
+
 }

@@ -1,5 +1,10 @@
 2001-09-09  Nick Drochak <ndrochak@gol.com>
 
+	* BooleanSwitch.cs: Make this class use it's parent class's features.  Namely, use SwitchSetting
+		so that we can get OnSwitchSettingChanged() to fire for free.
+
+2001-09-09  Nick Drochak <ndrochak@gol.com>
+
 	* ChangeLog: added this file
 	
 	* Switch.cs: call OnSwitchSettingChanged() when the switch setting is, yes you gessed it, changed.
