@@ -68,7 +68,7 @@ namespace Mono.Math.Prime.Generator {
 				//
 				// STEP 2.2 Sieve out all numbers divisible by the primes <= DivisionBound
 				//
-				for (int p = 9; p < SmallPrimes.Length && SmallPrimes [p] <= DivisionBound; p++) {
+				for (int p = 10; p < SmallPrimes.Length && SmallPrimes [p] <= DivisionBound; p++) {
 					if (curVal % SmallPrimes [p] == 0)
 						goto biNotPrime;
 				}
@@ -76,20 +76,22 @@ namespace Mono.Math.Prime.Generator {
 				//
 				// STEP 2.3 Is the potential prime acceptable?
 				//
-				if (!IsPrimeAcceptable (curVal, context)) goto biNotPrime;
+				if (!IsPrimeAcceptable (curVal, context))
+					goto biNotPrime;
 
 				//
 				// STEP 2.4 Filter out all primes that pass this step with a primality test
 				//
-				if (PrimalityTest (curVal, Confidence)) return curVal;
-
+				if (PrimalityTest (curVal, Confidence))
+					return curVal;
 
 				//
 				// STEP 2.4
 				//
 			biNotPrime:
 				pMod1 += 2;
-				if (pMod1 >= primeProd1) pMod1 -= primeProd1;
+				if (pMod1 >= primeProd1)
+					pMod1 -= primeProd1;
 				curVal.Incr2 ();
 			}
 		}
