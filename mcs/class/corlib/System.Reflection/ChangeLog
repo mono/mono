@@ -1,3 +1,8 @@
+2004-02-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Binder.cs:
+	(SelectProperty): check the return Type if provided.
+
 2004-02-17  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoGenericInst.GetProperties): Added

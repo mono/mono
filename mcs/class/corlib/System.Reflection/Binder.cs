@@ -303,10 +303,16 @@ namespace System.Reflection
 			{
 				if (match == null)
 					throw new ArgumentNullException ("match");
+
+				bool haveRet = (returnType != null);
 				foreach (PropertyInfo m in match) {
 					ParameterInfo[] args = m.GetIndexParameters ();
 					if (args.Length != indexes.Length)
 						continue;
+
+					if (haveRet && !check_type (m.PropertyType, returnType))
+						continue;
+
 					if (!check_arguments (indexes, args))
 						continue;
 					return m;
