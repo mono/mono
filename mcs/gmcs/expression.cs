@@ -4926,9 +4926,25 @@ namespace Mono.CSharp {
 			if (at_args.Length != pt_args.Length)
 				return false;
 
+			Type[] infered_types = new Type [at_args.Length];
+
 			for (int i = 0; i < at_args.Length; i++)
-				if (!InferType (pt_args [i], at_args [i], ref infered))
+				if (!InferType (pt_args [i], at_args [i], ref infered_types))
 					return false;
+
+			for (int i = 0; i < infered_types.Length; i++)
+				if (infered_types [i] == null)
+					return false;
+
+			for (int i = 0; i < infered_types.Length; i++) {
+				if (infered [i] == null) {
+					infered [i] = infered_types [i];
+					continue;
+				}
+
+				if (infered [i] != infered_types [i])
+					return false;
+			}
 
 			return true;
 		}
