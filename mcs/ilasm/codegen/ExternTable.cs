@@ -30,16 +30,16 @@ namespace Mono.ILASM {
                                 AssemblyRef = pefile.AddExternAssembly (name);
                         }
 
-                        public PEAPI.Class GetType (string name_space, string name)
+                        public PEAPI.ClassRef GetType (string name_space, string name)
                         {
                                 string full_name = String.Format ("{0}.{1}",
                                         name_space, name);
-                                PEAPI.Class klass = type_table[full_name] as PEAPI.Class;
+                                PEAPI.ClassRef klass = type_table[full_name] as PEAPI.ClassRef;
 
                                 if (klass != null)
                                         return klass;
 
-                                klass = AssemblyRef.AddClass (name_space, name);
+                                klass = (PEAPI.ClassRef) AssemblyRef.AddClass (name_space, name);
                                 type_table[full_name] = klass;
 
                                 return klass;
@@ -72,7 +72,7 @@ namespace Mono.ILASM {
                         assembly_table[name] = new ExternAssembly (pefile, name, asmb_name);
                 }
 
-                public PEAPI.Class GetClass (string asmb_name, string name_space, string name)
+                public PEAPI.ClassRef GetClass (string asmb_name, string name_space, string name)
                 {
                         ExternAssembly ext_asmb;
                         ext_asmb = assembly_table[asmb_name] as ExternAssembly;
@@ -83,7 +83,7 @@ namespace Mono.ILASM {
                         return ext_asmb.GetType (name_space, name);
                 }
 
-                public PEAPI.Class GetClass (string asmb_name, string full_name)
+                public PEAPI.ClassRef GetClass (string asmb_name, string full_name)
                 {
                         ExternAssembly ext_asmb;
                         ext_asmb = assembly_table[asmb_name] as ExternAssembly;
@@ -93,9 +93,24 @@ namespace Mono.ILASM {
 
                         string name_space, name;
 
-                        ClassTable.GetNameAndNamespace (full_name, out name_space, out name);
+                        GetNameAndNamespace (full_name, out name_space, out name);
 
                         return ext_asmb.GetType (name_space, name);
+                }
+
+                public static void GetNameAndNamespace (string full_name,
+                        out string name_space, out string name) {
+
+                        int last_dot = full_name.LastIndexOf ('.');
+
+                        if (last_dot < 0) {
+                                name_space = String.Empty;
+                                name = full_name;
+                                return;
+                        }
+
+                        name_space = full_name.Substring (0, last_dot);
+                        name = full_name.Substring (last_dot + 1);
                 }
 
         }

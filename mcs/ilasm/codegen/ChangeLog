@@ -1,5 +1,14 @@
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
 
+	* TypeRef.cs: Rewrite - Typerefs are now resolved after parsing.
+	* TypeManager.cs: Rewrite - Just a simple table for looking up
+	typedefs
+	* ExternTable.cs: Create ClassRef's instead of Classes
+	* Location.cs: Make compile
+	* CodeGen.cs: Use new tree system
+		
+2003-04-17 Jackson Harper <jackson@latitudegeo.com>
+
 	* ExternTypeRef.cs: New file - Represents a reference to a type in
 	an external assembly
 	* FieldDef.cs: New file - Represents a field definition

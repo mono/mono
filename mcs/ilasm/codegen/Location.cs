@@ -11,12 +11,12 @@ using System;
 
 namespace Mono.ILASM {
 
-	/// TODO: This class will eventually store il file location info, 
-	/// like line and col
-	public class Location ()
-	{
+        /// TODO: This class will eventually store il file location info,
+        /// like line and col
+        public class Location
+        {
 
-	}
+        }
 
 }
 

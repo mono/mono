@@ -8,76 +8,51 @@
 //
 
 using System;
-using System.Reflection;
 using System.Collections;
 
 namespace Mono.ILASM {
 
-	public class TypeManager {
+        public class TypeManager {
 
-		private Hashtable type_table;
+                private Hashtable type_table;
+                private CodeGen code_gen;
 
-		public TypeManager ()
-		{
+                public TypeManager (CodeGen code_gen)
+                {
+                        this.code_gen = code_gen;
+                        type_table = new Hashtable ();
+                        Hashtable t = type_table;
+                }
 
-			type_table = new Hashtable ();
-			Hashtable t = type_table;
+                public TypeDef this[string full_name] {
+                        get {
+                                return (TypeDef) type_table[full_name];
+                        }
+                        set {
+                                type_table[full_name] = value;
+                        }
+                }
 
-			// Add the default types
-			t ["object"]  = Type.GetType ("System.Object");
-			t ["string"]  = Type.GetType ("System.String");
-			t ["char"]    = Type.GetType ("System.Char");
-			t ["void"]    = Type.GetType ("System.Void");
-			t ["bool"]    = Type.GetType ("System.Boolean");
-			t ["int8"]    = Type.GetType ("System.Byte");
-			t ["int16"]   = Type.GetType ("System.Int16");
-			t ["int32"]   = Type.GetType ("System.Int32");
-			t ["int64"]   = Type.GetType ("System.Int64");
-			t ["float32"] = Type.GetType ("System.Single");
-			t ["float64"] = Type.GetType ("System.Double");
-			t ["uint8"]   = Type.GetType ("System.SByte");
-			t ["uint16"]  = Type.GetType ("System.UInt16");
-			t ["uint32"]  = Type.GetType ("System.UInt32");
-			t ["uint64"]  = Type.GetType ("System.UInt64");
-		}
+                public PEAPI.Type GetPeapiType (string full_name)
+                {
+                        TypeDef type_def = (TypeDef) type_table[full_name];
 
-		public Type this [string type_name] {
-			get {
-				Type return_type = (Type)type_table[type_name];
-					
-				if (return_type == null) {
-					return_type = LoadType (type_name);
-					type_table[type_name] = return_type;
-				}		
-				return return_type;
-			}
-			set {
-				type_table[type_name] = value;
-			}
-		}
+                        if (type_def == null)
+                                return null;
 
-		/// TODO: Use AssemblyStore, and load types in the same assembly
-		private Type LoadType (string type_name) {
-			string assembly_name;
-			string real_name;
-			Assembly assembly;
-			int bracket_start, bracket_end;
+                        type_def.Define (code_gen);
 
-			bracket_start = type_name.IndexOf ('[');
-			bracket_end = type_name.IndexOf (']');
-			
-			if ((bracket_start == -1) || (bracket_end == -1))
-				return null;
+                        return type_def.PeapiType;
+                }
 
-			assembly_name = type_name.Substring (bracket_start+1, bracket_end-1);
-			real_name = type_name.Substring (bracket_end+1);
+                public void DefineAll ()
+                {
+                        foreach (TypeDef typedef in type_table.Values) {
+                                typedef.Define (code_gen);
+                        }
+                }
 
-			assembly = Assembly.LoadWithPartialName (assembly_name);
-			return assembly.GetType (real_name);
-		
-		}
+        }
 
-	}
-		
 }
 
