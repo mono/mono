@@ -113,13 +113,13 @@ namespace System.Configuration
 			return result.UnWrap () as IDictionary;
 		}
 
-		internal static NameValueCollection GetNameValueCollection (NameValueCollection prev,
+		internal static ConfigNameValueCollection GetNameValueCollection (NameValueCollection prev,
 									    XmlNode region,
 									    string nameAtt,
 									    string valueAtt)
 		{
-			NameValueCollection coll =
-					new NameValueCollection (CaseInsensitiveHashCodeProvider.Default,
+			ConfigNameValueCollection coll =
+					new ConfigNameValueCollection (CaseInsensitiveHashCodeProvider.Default,
 								 CaseInsensitiveComparer.Default);
 
 			if (prev != null)
@@ -130,7 +130,7 @@ namespace System.Configuration
 			if (result == null)
 				return null;
 
-			return result.UnWrap () as NameValueCollection;
+			return result.UnWrap () as ConfigNameValueCollection;
 		}
 
 		private static CollectionWrapper GoGetThem (CollectionWrapper result,
@@ -203,6 +203,40 @@ namespace System.Configuration
 			return result;
 		}
 #endif
+	}
+	
+	internal class ConfigNameValueCollection: NameValueCollection
+	{
+		bool modified;
+		
+		public ConfigNameValueCollection ()
+		{
+		}
+		
+		public ConfigNameValueCollection (ConfigNameValueCollection col)
+		: base (col.Count, col)
+		{
+		}
+		
+		public ConfigNameValueCollection (IHashCodeProvider hashProvider, IComparer comparer)
+			: base(hashProvider, comparer)
+		{
+		}
+		
+		public void ResetModified ()
+		{
+			modified = false;
+		}
+		
+		public bool IsModified {
+			get { return modified; }
+		}
+		
+		public override void Set (string name, string value)
+		{
+			base.Set (name, value);
+			modified = true;
+		}
 	}
 
 }

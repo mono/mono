@@ -1,3 +1,20 @@
+2004-11-09  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AppSettingsSection.cs: Mostly implemented (missing support for
+	file attribute).
+	* ConfigHelper.cs: GetNameValueCollection now returns a 
+	ConfigNameValueCollection instance which is a NameValueCollection with a
+	modification flag.
+	* ConfigInfo.cs: Added XPath property.
+	* Configuration.cs: Implemented AppSettings property. Set the Path property
+	of sections and groups.
+	* ConfigurationElement.cs: Support key serialization. Properly reset
+	nested elements.
+	* ConfigurationElementCollection.cs: Initial implementation.
+	* ConfigurationSection.cs: Impemented Path and GetRuntimeObject.
+	* ConfigurationSectionGroup.cs: Implemented Path.
+	* SectionGroupInfo.cs: Little fix.
+
 2004-11-05  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Configuration.cs: Minor fixes.

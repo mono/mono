@@ -78,9 +78,8 @@ namespace System.Configuration {
 			get { return fileName; }
 		}
 
-		[MonoTODO]
 		public AppSettingsSection AppSettings {
-			get { throw new NotImplementedException (); }
+			get { return Sections ["appSettings"] as AppSettingsSection; }
 		}
 
 		[MonoTODO]
@@ -222,11 +221,13 @@ namespace System.Configuration {
 			object secObj = config.CreateInstance () as ConfigurationSection;
 			if (!(secObj is ConfigurationSection))
 				sec = new RuntimeOnlySection ();
-			else
+			else {
 				sec = (ConfigurationSection) secObj;
+			}
 				
 			ConfigurationSection parentSection = parent != null ? parent.GetSectionInstance (config, true) : null;
 			sec.RawXml = data as string;
+			sec.SetPath (config.XPath);
 			sec.Reset (parentSection, this);
 			
 			if (data != null) {
@@ -271,6 +272,7 @@ namespace System.Configuration {
 			section.FileName = FileName;
 			group.AddChild (section);
 			elementData [section] = sec;
+			sec.SetPath (section.XPath);
 		}
 		
 		internal void CreateSectionGroup (SectionGroupInfo parentGroup, string name, ConfigurationSectionGroup sec)

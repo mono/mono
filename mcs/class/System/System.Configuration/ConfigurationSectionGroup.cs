@@ -35,7 +35,7 @@ namespace System.Configuration
 	public class ConfigurationSectionGroup
 	{
 		bool require_declaration;
-		string name, path, type_name;
+		string name, type_name;
 
 		ConfigurationSectionCollection sections;
 		ConfigurationSectionGroupCollection groups;
@@ -72,9 +72,8 @@ namespace System.Configuration
 			get { return name; }
 		}
 
-		[MonoTODO]
 		public string Path {
-			get { return path; }
+			get { return group.XPath; }
 		}
 
 		public ConfigurationSectionGroupCollection SectionGroups {

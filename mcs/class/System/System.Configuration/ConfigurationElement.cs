@@ -161,7 +161,7 @@ namespace System.Configuration
 			while (reader.MoveToNextAttribute ())
 			{
 				ConfigurationProperty prop = map.Properties [reader.LocalName];
-				if (prop == null) {
+				if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
 					if (!HandleUnrecognizedAttribute (reader.LocalName, reader.Value))
 						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
 					continue;
@@ -192,7 +192,7 @@ namespace System.Configuration
 					}
 					
 					ConfigurationProperty prop = map.Properties [reader.LocalName];
-					if (prop == null) {
+					if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
 						if (!HandleUnrecognizedElement (reader.LocalName, reader))
 							throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
 						continue;
@@ -228,7 +228,6 @@ namespace System.Configuration
 			return false;
 		}
 
-		[MonoTODO]
 		protected internal virtual void InitializeDefault ()
 		{
 			values = null;
@@ -239,21 +238,27 @@ namespace System.Configuration
 			return modified;
 		}
 
-		[MonoTODO]
 		protected internal virtual void ReadXml (XmlReader reader, object context)
 		{
 			Deserialize (reader, false);
 		}
 
-		[MonoTODO]
-		protected internal virtual void Reset (ConfigurationElement parent_element, object context)
+		protected internal virtual void Reset (ConfigurationElement parentElement, object context)
 		{
-			if (parent_element != null) {
+			if (parentElement != null) {
 				if (!map.HasProperties) return;
 				values = null;
 				foreach (ConfigurationProperty prop in map.Properties) {
-					if (parent_element.HasValue (prop.Name))
-						this [prop] = parent_element [prop.Name];
+					if (parentElement.HasValue (prop.Name)) {
+						if (prop.IsElement) {
+							ConfigurationElement parentValue = parentElement [prop.Name] as ConfigurationElement;
+							ConfigurationElement value = Activator.CreateInstance (parentValue.GetType()) as ConfigurationElement;
+							value.Reset (parentValue, context);
+							this [prop] = value;
+						}
+						else
+							this [prop] = parentElement [prop.Name];
+					}
 				}
 			}
 			else

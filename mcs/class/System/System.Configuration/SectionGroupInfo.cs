@@ -53,6 +53,7 @@ namespace System.Configuration
 		
 		public void AddChild (ConfigInfo data)
 		{
+			data.Parent = this;
 			if (data is SectionInfo) {
 				if (sections == null) sections = new ConfigInfoCollection ();
 				sections [data.Name] = data;

@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
 using System.IO;
+using System.Text;
 
 namespace System.Configuration {
 
@@ -40,11 +41,24 @@ namespace System.Configuration {
 		public string TypeName;
 		Type type;
 		public string FileName;
+		public ConfigInfo Parent;
 		
 		public object CreateInstance ()
 		{
 			if (type == null) type = Type.GetType (TypeName);
 			return Activator.CreateInstance (type);
+		}
+		
+		public string XPath {
+			get {
+				StringBuilder path = new StringBuilder (Name);
+				ConfigInfo cinfo = Parent;
+				while (cinfo != null) {
+					path.Insert (0, cinfo.Name + "/");
+					cinfo = cinfo.Parent;
+				}
+				return path.ToString ();
+			}
 		}
 		
 		public abstract bool HasConfigContent (Configuration cfg);

@@ -38,153 +38,165 @@ namespace System.Configuration
 {
 	public abstract class ConfigurationElementCollection : ConfigurationElement, ICollection, IEnumerable
 	{
+		ArrayList list = new ArrayList ();
+		ArrayList removed;
+		bool emitClear;
+		bool modified;
+		
 		#region Constructors
 
-		[MonoTODO]
 		protected ConfigurationElementCollection ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Constructors
 
 		#region Properties
-
-		[MonoTODO]
+		
 		protected virtual ConfigurationElementCollectionType CollectionType {
-			get { throw new NotImplementedException (); }
+			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
 		}
 
-		[MonoTODO]
 		public virtual int Count {
-			get { throw new NotImplementedException (); }
+			get { return list.Count; }
 		}
 
-		[MonoTODO]
 		protected virtual string ElementName {
-			get { throw new NotImplementedException (); }
+			get { return string.Empty; }
 		}
 
-		[MonoTODO]
 		public bool EmitClear {
-			get { throw new NotImplementedException (); }
+			get { return emitClear; }
+			set { emitClear = value; }
 		}
 
-		[MonoTODO]
 		bool ICollection.IsSynchronized {
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
-		[MonoTODO]
 		object ICollection.SyncRoot {
-			get { throw new NotImplementedException (); }
+			get { return this; }
 		}
 
-		[MonoTODO]
 		protected virtual bool ThrowOnDuplicate {
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		protected virtual void BaseAdd (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			BaseAdd (element, ThrowOnDuplicate);
 		}
 
-		[MonoTODO]
 		protected virtual void BaseAdd (ConfigurationElement element, bool throwIfExists)
 		{
-			throw new NotImplementedException ();
+			if (throwIfExists && BaseIndexOf (element) != -1)
+				throw new ConfigurationException ("Duplicate element in collection");
+			list.Add (element);
+			modified = true;
 		}
 
-		[MonoTODO]
 		protected virtual void BaseAdd (int index, ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			if (ThrowOnDuplicate && BaseIndexOf (element) != -1)
+				throw new ConfigurationException ("Duplicate element in collection");
+			list.Insert (index, element);
+			modified = true;
 		}
 
-		[MonoTODO]
 		protected internal void BaseClear ()
 		{
-			throw new NotImplementedException ();
+			list.Clear ();
+			modified = true;
 		}
 
-		[MonoTODO]
 		protected internal ConfigurationElement BaseGet (int index)
 		{
-			throw new NotImplementedException ();
+			return (ConfigurationElement) list [index];
 		}
 
-		[MonoTODO]
 		protected internal ConfigurationElement BaseGet (object key)
 		{
-			throw new NotImplementedException ();
+			int index = IndexOfKey (key);
+			if (index != -1) return (ConfigurationElement) list [index];
+			else return null;
 		}
 
-		[MonoTODO]
 		protected internal string[] BaseGetAllKeys ()
 		{
-			throw new NotImplementedException ();
+			string[] keys = new string [list.Count];
+			for (int n=0; n<list.Count; n++)
+				keys [n] = BaseGetKey (n);
+			return keys;
 		}
 
-		[MonoTODO]
 		protected internal string BaseGetKey (int index)
 		{
-			throw new NotImplementedException ();
+			return GetElementKey ((ConfigurationElement) list[index]).ToString ();
 		}
 
-		[MonoTODO]
 		protected int BaseIndexOf (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return list.IndexOf (element);
+		}
+		
+		int IndexOfKey (object key)
+		{
+			for (int n=0; n<list.Count; n++) {
+				if (CompareKeys (GetElementKey ((ConfigurationElement) list[n]), key))
+					return n;
+			}
+			return -1;
 		}
 
 		[MonoTODO]
 		protected internal bool BaseIsRemoved (object key)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
-		[MonoTODO]
 		protected internal void BaseRemove (object key)
 		{
-			throw new NotImplementedException ();
+			int index = IndexOfKey (key);
+			if (index != -1) {
+				BaseRemoveAt (index);
+				modified = true;
+			}
 		}
 
-		[MonoTODO]
 		protected internal void BaseRemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			ConfigurationElement elem = (ConfigurationElement) list [index];
+			if (!IsElementRemovable (elem))
+				throw new ConfigurationException ("Element can't be removed from element collection");
+			list.RemoveAt (index);
+			modified = true;
 		}
 
-		[MonoTODO]
 		protected virtual bool CompareKeys (object key1, object key2)
 		{
-			throw new NotImplementedException ();
+			return object.Equals (key1, key2);
 		}
 
-		[MonoTODO]
 		public void CopyTo (ConfigurationElement[] array, int index)
 		{
-			throw new NotImplementedException ();
+			list.CopyTo (array, index);
 		}
 		
 		protected abstract ConfigurationElement CreateNewElement ();
 
-		[MonoTODO]
 		protected virtual ConfigurationElement CreateNewElement (string elementName)
 		{
-			throw new NotImplementedException ();
+			return CreateNewElement ();
 		}
 		
 		[MonoTODO]
 		public override bool Equals (object compareTo)
 		{
-			throw new NotImplementedException ();
+			return base.Equals (compareTo);
 		}
 		
 
@@ -193,67 +205,121 @@ namespace System.Configuration
 		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return base.GetHashCode ();
 		}
 		
-		[MonoTODO]
-		protected override bool HandleUnrecognizedElement (string elementName, XmlReader reader)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		void ICollection.CopyTo (Array arr, int index)
 		{
-			throw new NotImplementedException ();
+			list.CopyTo (arr, index);
 		}
 		
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Do something with this")]
 		protected virtual bool IsElementName (string elementName)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
-		[MonoTODO]
 		protected virtual bool IsElementRemovable (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
-		[MonoTODO]
 		protected internal override bool IsModified ()
 		{
-			throw new NotImplementedException ();
+			return modified;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("parentItem.GetType().Name ??")]
 		protected internal override void Reset (ConfigurationElement parentElement, object context)
 		{
-			throw new NotImplementedException ();
+			ConfigurationElementCollection parent = (ConfigurationElementCollection) parentElement;
+			for (int n=0; n<parent.Count; n++)
+			{
+				ConfigurationElement parentItem = parent.BaseGet (n);
+				ConfigurationElement item = CreateNewElement (parentItem.GetType().Name);
+				item.Reset (parentItem, context);
+				BaseAdd (item);
+			}
+			modified = false;
 		}
 
-		[MonoTODO]
 		protected internal override void ResetModified ()
 		{
-			throw new NotImplementedException ();
+			modified = false;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Support for BasicMap. Return value.")]
 		protected internal override bool Serialize (XmlWriter writer, bool serializeCollectionKey)
 		{
-			throw new NotImplementedException ();
+			if (emitClear)
+				writer.WriteElementString ("clear","");
+			
+			if (removed != null)
+				for (int n=0; n<removed.Count; n++) {
+					writer.WriteStartElement ("remove");
+					((ConfigurationElement)removed[n]).Serialize (writer, true);
+					writer.WriteEndElement ();
+				}
+			
+			for (int n=0; n<list.Count; n++) {
+				ConfigurationElement elem = (ConfigurationElement) list [n];
+				elem.SerializeToXmlElement (writer, "add");
+			}
+			return true;
 		}
 
-		[MonoTODO]
+		protected override bool HandleUnrecognizedElement (string elementName, XmlReader reader)
+		{
+			if (elementName == "clear") {
+				BaseClear ();
+				modified = false;
+				return true;
+			}
+			else if (elementName == "remove") {
+				ConfigurationElement elem = CreateNewElement ();
+				elem.Deserialize (reader, true);
+				BaseRemove (GetElementKey (elem));
+				modified = false;
+				return true;
+			}
+			else if (elementName == "add") {
+				ConfigurationElement elem = CreateNewElement ();
+				elem.Deserialize (reader, false);
+				BaseAdd (elem);
+				modified = false;
+				return true;
+			}
+			
+			return false;
+		}
+		
+		[MonoTODO ("CreateNewElement?, serializeCollectionKey?")]
 		protected internal override void UnMerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, bool serializeCollectionKey, object context, ConfigurationUpdateMode updateMode)
 		{
-			throw new NotImplementedException ();
+			ConfigurationElementCollection source = (ConfigurationElementCollection) sourceElement;
+			ConfigurationElementCollection parent = (ConfigurationElementCollection) parentElement;
+			
+			for (int n=0; n<source.Count; n++) {
+				ConfigurationElement sitem = source.BaseGet (n);
+				object key = source.GetElementKey (sitem);
+				ConfigurationElement pitem = parent.BaseGet (key) as ConfigurationElement;
+				if (pitem != null && updateMode != ConfigurationUpdateMode.Full) {
+					ConfigurationElement nitem = CreateNewElement ();
+					nitem.UnMerge (sitem, pitem, serializeCollectionKey, context, ConfigurationUpdateMode.Minimal);
+					if (nitem.HasValues ())
+						BaseAdd (nitem);
+				}
+				else
+					BaseAdd (sitem);
+			}
+			
+			if (updateMode == ConfigurationUpdateMode.Full)
+				EmitClear = true;
 		}
 
 		#endregion // Methods

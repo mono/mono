@@ -31,44 +31,85 @@
 using System;
 using System.Collections.Specialized;
 using System.Xml;
+using System.IO;
 
 namespace System.Configuration {
 
 	public sealed class AppSettingsSection : ConfigurationSection
 	{
+		ConfigNameValueCollection values;
+		bool hasClear;
+		
 		public AppSettingsSection ()
 		{
 		}
 
-		[MonoTODO]
 		protected internal override  bool IsModified ()
 		{
-			throw new NotImplementedException ();
+			return values != null && values.IsModified;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Read file attribute")]
 		protected internal override void ReadXml (XmlReader reader, object context)
 		{
-			throw new NotImplementedException ();
+			XmlDocument doc = new XmlDocument ();
+			XmlNode data = doc.ReadNode (reader);
+			hasClear = ((XmlElement)data)["clear"] != null;
+			values = ConfigHelper.GetNameValueCollection (values, data, "key", "value");
 		}
 
-		[MonoTODO]
-		protected internal override void Reset (ConfigurationElement parent_section, object context)
+		protected internal override void Reset (ConfigurationElement parentSection, object context)
 		{
-			throw new NotImplementedException ();
+			AppSettingsSection sec = parentSection as AppSettingsSection;
+			if (sec != null && sec.Settings != null)
+				values = new ConfigNameValueCollection ((ConfigNameValueCollection) sec.Settings);
+			else
+				values = new ConfigNameValueCollection ();
 		}
 
-		[MonoTODO]
 		protected internal override void ResetModified ()
 		{
-			throw new NotImplementedException ();
+			if (values != null) values.ResetModified ();
 		}
 
-		[MonoTODO]
 		protected internal override string WriteXml (
 			ConfigurationElement parent, object context, string name, ConfigurationUpdateMode mode)
 		{
-			throw new NotImplementedException ();
+			AppSettingsSection sec = parent as AppSettingsSection;
+			NameValueCollection parentValues = sec != null && !hasClear ? sec.Settings : null;
+			
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter writer = new XmlTextWriter (sw);
+			writer.WriteStartElement ("appSettings");
+			
+			if (hasClear) {
+				writer.WriteStartElement ("clear");
+				writer.WriteEndElement ();
+			}
+			
+			foreach (string key in values) {
+				string val = values [key];
+				string parentVal = parentValues != null ? parentValues [key] : null;
+				if (parentVal != val) {
+					writer.WriteStartElement ("add");
+					writer.WriteAttributeString ("key", key);
+					writer.WriteAttributeString ("value", val);
+					writer.WriteEndElement ();
+				}
+			}
+			
+			if (parentValues != null) {
+				foreach (string key in parentValues) {
+					if (values [key] == null) {
+						writer.WriteStartElement ("remove");
+						writer.WriteAttributeString ("key", key);
+						writer.WriteEndElement ();
+					}
+				}
+			}
+			
+			writer.WriteEndElement ();
+			return sw.ToString ();
 		}
 
 		[MonoTODO]
@@ -77,9 +118,12 @@ namespace System.Configuration {
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public NameValueCollection Settings {
-			get { throw new NotImplementedException (); }
+			get {
+				if (values == null)
+					values = new ConfigNameValueCollection();
+				return values;
+			}
 		}
 	}
 }

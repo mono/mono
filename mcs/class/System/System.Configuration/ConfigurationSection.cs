@@ -107,9 +107,13 @@ namespace System.Configuration
 			get { return name; }
 		}
 
-		[MonoTODO]
 		public string Path {
 			get { return path; }
+		}
+		
+		internal void SetPath (string p)
+		{
+			path = p;
 		}
 
 		[MonoTODO]
@@ -139,10 +143,9 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal virtual object GetRuntimeObject ()
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 
 		[MonoTODO]
