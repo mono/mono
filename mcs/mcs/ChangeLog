@@ -1,3 +1,8 @@
+2004-07-30  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (install-local): Remove.  Functionality moved to
+	executable.make.
+
 2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Makefile: Install mcs.exe.config file together with mcs.exe.
