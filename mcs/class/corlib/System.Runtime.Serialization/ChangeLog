@@ -1,5 +1,9 @@
 2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FormatterServices.cs:a implemented GetSerializableMembers ().
+
+2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FormatterServices.cs: New file with some implementation.
 
 2002-08-16  Dietmar Maurer  <dietmar@ximian.com>

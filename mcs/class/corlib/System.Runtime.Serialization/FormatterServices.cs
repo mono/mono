@@ -7,12 +7,18 @@
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.Collections;
 using System.Reflection;
 
 namespace System.Runtime.Serialization
 {
 	public sealed class FormatterServices
 	{
+		private const BindingFlags fieldFlags = BindingFlags.Public |
+							BindingFlags.Instance |
+							BindingFlags.NonPublic |
+							BindingFlags.DeclaredOnly;
+
 		private FormatterServices ()
 		{
 		}
@@ -49,14 +55,30 @@ namespace System.Runtime.Serialization
 			return GetSerializableMembers (type, st);
 		}
 
-		[MonoTODO]
 		public static MemberInfo [] GetSerializableMembers (Type type, StreamingContext context)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			throw new NotImplementedException ();
+			//FIXME: context?
+			ArrayList fields = new ArrayList ();
+			Type t = type;
+			while (t != null) {
+				GetFields (t, fields);
+				t = t.BaseType;
+			}
 
+			MemberInfo [] result = new MemberInfo [fields.Count];
+			fields.CopyTo (result);
+			return result;
+		}
+
+		private static void GetFields (Type type, ArrayList fields)
+		{
+			FieldInfo [] fs = type.GetFields (fieldFlags);
+			foreach (FieldInfo field in fs)
+				if (!(field.IsNotSerialized))
+					fields.Add (member);
 		}
 
 		public static Type GetTypeFromAssembly (Assembly assem, string name)
