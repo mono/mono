@@ -30,7 +30,7 @@ namespace Mono.Data.SqlExpressions {
 			object obj2 = expr2.Eval (row);
 		
 			if (op == Operation.ADD && (obj1 is string || obj2 is string))
-				return obj1.ToString() + obj2.ToString();
+				return (obj1 != null ? obj1.ToString () : String.Empty) + (obj2 != null ? obj2.ToString () : String.Empty);
 		
 			IConvertible o1 = (IConvertible)obj1;
 			IConvertible o2 = (IConvertible)obj2;
