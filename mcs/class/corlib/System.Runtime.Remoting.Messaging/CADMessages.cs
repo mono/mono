@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
@@ -102,7 +103,7 @@ namespace System.Runtime.Remoting.Messaging {
 					
 					// we should check if we can move this..
 					if (objRef.IsPossibleToCAD ()) {
-						return new CADObjRef(new ObjRef(objRef));
+						return new CADObjRef(new ObjRef(objRef, true));
 					}
 				}
 			}
@@ -125,7 +126,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 			CADObjRef objref = arg as CADObjRef;
 			if (null != objref) {
-				return objref.objref.GetInternalObject();
+				return objref.objref.GetRealObject (new StreamingContext (StreamingContextStates.Other));
 			}
 
 			// otherwise the argument is ok just to return

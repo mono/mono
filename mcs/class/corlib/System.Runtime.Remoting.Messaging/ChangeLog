@@ -1,3 +1,7 @@
+2003-02-07  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* CADMessages.cs: Some minor changes that allow reuse of ObjRef methods.
+	
 2003-02-05  Lluis Sanchez Gual <lluis@ideary.com>
 	
 	* ReturnMessage.cs, MethodResponse.cs: OutArgs initialized to an empty array
