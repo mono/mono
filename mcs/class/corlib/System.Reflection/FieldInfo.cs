@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
@@ -113,6 +114,8 @@ namespace System.Reflection {
 
 		public abstract void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
 
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public void SetValue (object obj, object value)
 		{
 			SetValue (obj, value, 0, null, null);

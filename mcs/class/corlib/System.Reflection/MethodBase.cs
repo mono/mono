@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -43,7 +44,9 @@ namespace System.Reflection {
 			
 			return pi.Length;
 		}
-		
+
+		[DebuggerHidden]
+		[DebuggerStepThrough]		
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		virtual
 #endif

@@ -115,6 +115,7 @@ namespace System.Reflection {
 		}
 
 #if NET_1_1
+		[ComVisible (false)]
 		public virtual string ImageRuntimeVersion {
 			get {
 				return InternalImageRuntimeVersion ();

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -27,6 +28,8 @@ namespace System.Reflection {
 			get {return MemberTypes.Constructor;}
 		}
 
+		[DebuggerStepThrough]
+		[DebuggerHidden]
 		public object Invoke (object[] parameters)
 		{
 			if (parameters == null)

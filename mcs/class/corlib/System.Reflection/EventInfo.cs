@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -42,6 +43,8 @@ namespace System.Reflection {
 		protected EventInfo() {
 		}
 
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public void AddEventHandler (object target, Delegate handler)
 		{
 			MethodInfo add = GetAddMethod ();
@@ -64,6 +67,8 @@ namespace System.Reflection {
 		}
 		public abstract MethodInfo GetRemoveMethod( bool nonPublic);
 
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public void RemoveEventHandler (object target, Delegate handler)
 		{
 			MethodInfo remove = GetRemoveMethod ();

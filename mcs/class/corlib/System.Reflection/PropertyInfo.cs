@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -54,6 +55,8 @@ namespace System.Reflection {
 		
 		public abstract MethodInfo GetSetMethod (bool nonPublic);
 		
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public virtual object GetValue (object obj, object[] index)
 		{
 			return GetValue(obj, BindingFlags.Default, null, index, null);
@@ -61,6 +64,8 @@ namespace System.Reflection {
 		
 		public abstract object GetValue (object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 		
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public virtual void SetValue (object obj, object value, object[] index)
 		{
 			SetValue (obj, value, BindingFlags.Default, null, index, null);
