@@ -13,7 +13,6 @@ namespace System.Data {
 			settingList.CopyTo (ar, index);
 		}
 
-		[Serializable]
 		public IEnumerator GetEnumerator () {
 			return settingList.GetEnumerator ();
 		}
@@ -36,10 +35,10 @@ namespace System.Data {
 			}
 		}
 
-		public virtual DataViewSetting this[DataTable dt] {
+		public virtual DataViewSetting this [DataTable dt] {
 			get {
 				for (int i = 0; i < settingList.Count; i++) {
-					DataViewSetting dvs = settingList[i];
+					DataViewSetting dvs = (DataViewSetting) settingList[i];
 					if (dvs.Table == dt)
 						return dvs;
 				}
@@ -53,7 +52,7 @@ namespace System.Data {
 		public virtual DataViewSetting this[string name] {
 			get {
 				for (int i = 0; i < settingList.Count; i++) {
-					DataViewSetting dvs = settingList[i];
+					DataViewSetting dvs = (DataViewSetting) settingList[i];
 					if (dvs.Table.TableName == name)
 						return dvs;
 				}
@@ -63,7 +62,7 @@ namespace System.Data {
 
 		public virtual DataViewSetting this[int index] {
 			get {
-				return settingList[index];
+				return (DataViewSetting) settingList[index];
 			}
 			set {
 				settingList[index] = value;

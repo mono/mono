@@ -15,8 +15,8 @@ namespace System.Data
 	/// <summary>
 	/// Contains a default DataViewSettingCollection for each DataTable in a DataSet.
 	/// </summary>
-	public class DataViewManager : MarshalByValueComponent,
-		IBindingList, IList, ICollection, IEnumerable, ITypedList
+	public class DataViewManager : MarshalByValueComponent
+	// IBindingList, ICollection, IList, ITypedList, IEnumerable
 	{
 		private DataSet dataSet;
 

@@ -14,7 +14,7 @@ namespace System.Data
 	/// </summary>
 	public class DataViewSetting
 	{
-		private ApplyDefaultSort defaultSort;
+		private bool defaultSort;
 		private DataViewManager viewManager;
 		private string rowFilter;
 		private DataViewRowState rowStateFilter;

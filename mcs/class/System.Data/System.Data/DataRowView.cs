@@ -3,6 +3,7 @@
 //
 // Author:
 //    Rodrigo Moya <rodrigo@ximian.com>
+//    Miguel de Icaza <miguel@ximian.com>
 //
 // (C) Ximian, Inc 2002
 //
@@ -18,36 +19,43 @@ namespace System.Data
 	public class DataRowView : ICustomTypeDescriptor, IEditableObject, IDataErrorInfo
 	{
 		[MonoTODO]
-		public void BeginEdit () {
+		public void BeginEdit ()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void CancelEdit () {
+		public void CancelEdit ()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataView CreateChildView (DataRelation relation) {
+		public DataView CreateChildView (DataRelation relation)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataView CreateChildView (string name) {
+		public DataView CreateChildView (string name)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Delete () {
+		public void Delete ()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void EndEdit () {
+		public void EndEdit ()
+		{
 			throw new NotImplementedException ();
 		}
 		
-		public DataView DataView {
+		public DataView DataView
+		{
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
@@ -68,13 +76,19 @@ namespace System.Data
 			}
 		}
 
-		public object this[string column] {
+		public string this[string column] {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
 			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public string Error {
+			get {
 				throw new NotImplementedException ();
 			}
 		}
@@ -102,6 +116,82 @@ namespace System.Data
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+
+		//
+		// ICustomTypeDescriptor implementations
+		//
+
+		[MonoTODO]
+		AttributeCollection ICustomTypeDescriptor.GetAttributes  ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		string ICustomTypeDescriptor.GetClassName ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		string ICustomTypeDescriptor.GetComponentName ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		TypeConverter ICustomTypeDescriptor.GetConverter ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute [] attributes)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute [] attributes)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

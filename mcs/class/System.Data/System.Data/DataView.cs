@@ -18,8 +18,8 @@ namespace System.Data
 	/// a view of a DataTable for editing, filtering,
 	/// navigation, searching, and sorting.
 	/// </summary>
-	public class DataView : MarshalByValueComponent, IBindingList,
-		IList, ICollection, IEnumerable, ITypedList, 
+	public class DataView : MarshalByValueComponent, //IBindingList,
+	IEnumerable, // ITypedList, IList, ICollection, 
 		ISupportInitialize {
 
 		public DataView() {
@@ -207,24 +207,18 @@ namespace System.Data
 			object sender, CollectionChangeEventArgs e) {
 		}
 
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose (bool disposing)
+		{
 		}
 
 		[MonoTODO]
-		public void Dispose() {
+		protected virtual void IndexListChanged(object sender, ListChangedEventArgs e)
+		{
 		}
 
 		[MonoTODO]
-		protected virtual void Dispose(	bool disposing) {
-		}
-
-		[MonoTODO]
-		protected virtual void IndexListChanged(object sender,
-			ListChangedEventArgs e) {
-		}
-
-		[MonoTODO]
-		protected virtual void OnListChanged(ListChangedEventArgs e) {
+		protected virtual void OnListChanged(ListChangedEventArgs e)
+		{
 		}
 
 		[MonoTODO]

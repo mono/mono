@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -167,91 +168,108 @@ namespace System.Data
 
 		#region Public Methods
 
-		[Serializable]
-		public void AcceptChanges() {
+		public void AcceptChanges()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void Clear() {
+		public void Clear()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public virtual DataSet Clone() {
+		public virtual DataSet Clone()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public DataSet Copy() {
+		public DataSet Copy()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public DataSet GetChanges() {
+		public DataSet GetChanges()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public DataSet GetChanges(DataRowState rowStates) {
+		
+		public DataSet GetChanges(DataRowState rowStates)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public string GetXml() {
+		public string GetXml()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public string GetXmlSchema() {
+		public string GetXmlSchema()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public virtual void RejectChanges() {
+		public virtual void RejectChanges()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public virtual void Reset() {
+		public virtual void Reset()
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXml(Stream stream) {
+		public void WriteXml(Stream stream)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXml(string fileName) {
+		public void WriteXml(string fileName)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXml(TextWriter writer) {
+		public void WriteXml(TextWriter writer)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXml(XmlWriter writer) {
+		public void WriteXml(XmlWriter writer)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXml(Stream stream, XmlWriteMode mode) {
+		public void WriteXml(Stream stream, XmlWriteMode mode)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXml(string fileName, XmlWriteMode mode) {
+		public void WriteXml(string fileName, XmlWriteMode mode)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXml(TextWriter writer,	XmlWriteMode mode) {
+		public void WriteXml(TextWriter writer,	XmlWriteMode mode)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXml(XmlWriter writer, XmlWriteMode mode) {
+		public void WriteXml(XmlWriter writer, XmlWriteMode mode)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
-		public void WriteXmlSchema(Stream stream) {
+		public void WriteXmlSchema(Stream stream)
+		{
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		public void WriteXmlSchema(string fileName) {
 		}
 
-		[Serializable]
 		public void WriteXmlSchema(TextWriter writer) {
 		}
 
-		[Serializable]
 		public void WriteXmlSchema(XmlWriter writer) {
 		}
 
@@ -259,7 +277,6 @@ namespace System.Data
 
 		#region Public Events
 
-		[Serializable]
 		public event MergeFailedEventHandler MergeFailed;
 
 		#endregion // Public Events
@@ -271,5 +288,36 @@ namespace System.Data
 
 		#endregion Destructors
 
+		#region IListSource methods
+		IList IListSource.GetList ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		bool IListSource.ContainsListCollection {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		#endregion IListSource methods
+		
+		#region ISupportInitialize methods
+		void ISupportInitialize.BeginInit ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		void ISupportInitialize.EndInit ()
+		{
+			throw new NotImplementedException ();
+		}
+		#endregion
+
+		#region ISerializable
+		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext sc)
+		{
+			throw new NotImplementedException ();
+		}
+		#endregion
 	}
 }
