@@ -145,6 +145,9 @@ namespace System.Data {
 			constraint.ConstraintCollection = this;
 			List.Add(constraint);
 
+			if (constraint is UniqueConstraint) 
+				((UniqueConstraint)constraint).UpdatePrimaryKey();
+
 			OnCollectionChanged( new CollectionChangeEventArgs( CollectionChangeAction.Add, this) );
 		}
 

@@ -22,6 +22,7 @@ namespace System.Data {
 	public class UniqueConstraint : Constraint 
 	{
 		private bool _isPrimaryKey = false;
+		private bool __isPrimaryKey = false;
 		private DataTable _dataTable; //set by ctor except when unique case
 		
 		private DataColumn [] _dataColumns;
@@ -100,12 +101,11 @@ namespace System.Data {
 			//Set Constraint Name
 			base.ConstraintName = name;
 
+			__isPrimaryKey = isPrimaryKey;
+
 			//keep reference 
 			_dataColumns = new DataColumn [] {column};
 			
-			//PK?
-			_isPrimaryKey = isPrimaryKey;
-
 			//Get table reference
 			_dataTable = column.Table;
 		}
@@ -123,7 +123,7 @@ namespace System.Data {
 			_dataColumns = columns;
 
 			//PK?
-			_isPrimaryKey = isPrimaryKey;
+			__isPrimaryKey = isPrimaryKey;
 		}
 		
 		#endregion // Constructors
@@ -170,13 +170,34 @@ namespace System.Data {
 		private void _validateColumn(DataColumn column) {
 	
 			//not null
-			if (null == column) throw new ArgumentNullException();
+			if (null == column)  // FIXME: This is little weird, but here it goes...
+				throw new NullReferenceException("Object reference not set to an instance of an object.");
+
 			
 			//column must belong to a table
 			//LAMESPEC: not in spec
-			if (null == column.Table) 
-				throw new ArgumentException("Column " + column.ColumnName + " must belong to a table.");
+			if (null == column.Table) {
+				string message = "Column ";
+				if (column.ColumnName != string.Empty)
+					message += column.ColumnName + " ";
+				
+				message += "must belong to a table.";
+				
+				throw new ArgumentException(message);
+			}
 			
+		}
+
+		/// <summary>
+		///  If IsPrimaryKey is set to be true, this sets it true
+		/// </summary>
+		internal void UpdatePrimaryKey ()
+		{
+			_isPrimaryKey = __isPrimaryKey;
+			if (_isPrimaryKey) {
+				foreach (DataColumn Col in _dataColumns)
+					Col.SetUnique();
+			}
 		}
 
 		internal static void SetAsPrimaryKey(ConstraintCollection collection, UniqueConstraint newPrimaryKey)
@@ -185,7 +206,7 @@ namespace System.Data {
 			if (null == collection) throw new ArgumentNullException("ConstraintCollection can't be null.");
 			
 			//make sure newPrimaryKey belongs to the collection parm unless it is null
-			if (  collection.IndexOf(newPrimaryKey) < 1 && (null != newPrimaryKey) ) 
+			if (  collection.IndexOf(newPrimaryKey) < 0 && (null != newPrimaryKey) ) 
 				throw new ArgumentException("newPrimaryKey must belong to collection.");
 			
 			//Get existing pk

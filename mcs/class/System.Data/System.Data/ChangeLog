@@ -1,3 +1,9 @@
+2003-03-27  Ville Palo <vi64pa@kolumbus.fi>
+
+	* ConstraintCollection.cs: Little fix.
+	* DataColumn.cs: Added new internal method SetUnique()
+	* UniqueConstraint.cs: some little fixes
+	
 2003-03-26  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DataRowCollection.cs: Bugfixes, implementation,...

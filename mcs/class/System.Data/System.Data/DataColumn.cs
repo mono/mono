@@ -512,6 +512,15 @@ namespace System.Data {
 		}
 */
 
+		/// <summary>
+		///  Sets unique true whithout creating Constraint
+		/// </summary>
+		internal void SetUnique() 
+		{
+			unique = true;
+		}
+
+
 		[MonoTODO]
 		internal void AssertCanAddToCollection()
 		{
