@@ -253,7 +253,7 @@ public class SHA512Managed : SHA512 {
 	// SHA-384 and SHA-512 Constants
 	// Rrepresent the first 64 bits of the fractional parts of the
 	// cube roots of the first sixty-four prime numbers
-	static ulong[] K = {
+	static readonly ulong[] K = {
 		0x428a2f98d728ae22L, 0x7137449123ef65cdL, 0xb5c0fbcfec4d3b2fL, 0xe9b5dba58189dbbcL,
 		0x3956c25bf348b538L, 0x59f111f1b605d019L, 0x923f82a4af194f9bL, 0xab1c5ed5da6d8118L,
 		0xd807aa98a3030242L, 0x12835b0145706fbeL, 0x243185be4ee4b28cL, 0x550c7dc3d5ffb4e2L,

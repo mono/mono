@@ -21,7 +21,7 @@ namespace System.Security.Cryptography {
 
 public abstract class DES : SymmetricAlgorithm {
 
-	private static int blockSizeByte = 8;
+	const int blockSizeByte = 8;
 
 	public DES ()
 	{
@@ -67,7 +67,7 @@ public abstract class DES : SymmetricAlgorithm {
 	}
 
 	// Ek(Ek(m)) = m
-	internal static ulong[] weakKeys = {
+	internal static readonly ulong[] weakKeys = {
 		0x0101010101010101, /* 0000000 0000000 */
 		0xFEFEFEFEFEFEFEFE, /* FFFFFFF FFFFFFF */
 		0x1F1F1F1F0E0E0E0E, /* 0000000 FFFFFFF */
@@ -75,7 +75,7 @@ public abstract class DES : SymmetricAlgorithm {
 	};
 
 	// Ek1(Ek2(m)) = m
-	internal static ulong[] semiweakKeys = {
+	internal static readonly ulong[] semiweakKeys = {
 		0x01FE01FE01FE01FE, 0xFE01FE01FE01FE01,
 		0x1FE01FE00EF10EF1, 0xE01FE01FF10EF10E,
 		0x01E001E001F101F1, 0xE001E001F101F101,

@@ -189,17 +189,14 @@ namespace System.Security.Cryptography {
 	[MonoTODO ("Put me in a separate file")]
 	internal sealed class Base64Table {
 
-		// This is the Base64 alphabet as described in RFC 2045
-		// (Table 1, page 25).
-		private static string ALPHABET =
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-		private static byte[] encodeTable;
-		private static byte[] decodeTable;
-
+		static readonly byte[] encodeTable;
+		static readonly byte[] decodeTable;
 
 		static Base64Table ()
 		{
+			// This is the Base64 alphabet as described in RFC 2045
+			// (Table 1, page 25).
+			const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 			int len = ALPHABET.Length;
 
 			encodeTable = new byte [len];

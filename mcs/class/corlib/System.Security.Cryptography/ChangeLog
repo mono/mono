@@ -1,3 +1,15 @@
+2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* DES.cs:
+	* DESCryptoServiceProvider.cs:
+	* RC2CryptoServiceProvider.cs:
+	* RijndaelManaged.cs:
+	* SHA384Managed.cs:
+	* SHA512Managed.cs:
+	* ToBase64Transform.cs:
+	Readonly/Constify.
+
+
 2004-04-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DES.cs: Removed redundant weak/semi-weak key check in Key property.

@@ -30,7 +30,7 @@ namespace System.Security.Cryptography {
 		private uint[] dwordBuff;
 	
 		// S-boxes from FIPS 46-3, Appendix 1, page 17
-		private static byte [] sBoxes = {
+		private static readonly byte [] sBoxes = {
 						/* S1 */
 			14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7,
 			0, 15,  7,  4, 14,  2, 13,  1, 10,  6, 12, 11,  9,  5,  3,  8,
@@ -82,7 +82,7 @@ namespace System.Security.Cryptography {
 	
 	
 		// P table from page 15, also in Appendix 1, page 18
-		private static byte [] pTab = {	
+		private static readonly byte [] pTab = {	
 			16-1,  7-1, 20-1, 21-1,
 			29-1, 12-1, 28-1, 17-1,
 			1-1, 15-1, 23-1, 26-1,
@@ -96,7 +96,7 @@ namespace System.Security.Cryptography {
 	
 		// Permuted choice 1 table, PC-1, page 19
 		// Translated to zero-based format.
-		private static byte [] PC1 = {
+		private static readonly byte [] PC1 = {
 			57-1, 49-1, 41-1, 33-1, 25-1, 17-1,  9-1,
 			1-1, 58-1, 50-1, 42-1, 34-1, 26-1, 18-1,
 			10-1,  2-1, 59-1, 51-1, 43-1, 35-1, 27-1,
@@ -109,15 +109,15 @@ namespace System.Security.Cryptography {
 		};
 	
 	
-		private static byte [] leftRot = {
+		private static readonly byte [] leftRot = {
 			1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
 		};
 	
-		private static byte [] leftRotTotal;
+		private static readonly byte [] leftRotTotal;
 	
 		// Permuted choice 2 table, PC-2, page 21
 		// Translated to zero-based format.
-		private static byte [] PC2 = {
+		private static readonly byte [] PC2 = {
 			14-1, 17-1, 11-1, 24-1,  1-1,  5-1,
 			3-1, 28-1, 15-1,  6-1, 21-1, 10-1,
 			23-1, 19-1, 12-1,  4-1, 26-1,  8-1,
@@ -131,7 +131,7 @@ namespace System.Security.Cryptography {
 	
 		// Initial permutation IP, page 10.
 		// Transposed to 0-based format.
-		private static byte [] ipBits = {
+		private static readonly byte [] ipBits = {
 			58-1, 50-1, 42-1, 34-1, 26-1, 18-1, 10-1,  2-1,
 			60-1, 52-1, 44-1, 36-1, 28-1, 20-1, 12-1,  4-1,
 			62-1, 54-1, 46-1, 38-1, 30-1, 22-1, 14-1,  6-1,
@@ -145,7 +145,7 @@ namespace System.Security.Cryptography {
 	
 		// Final permutation FP = IP^(-1), page 10.
 		// Transposed to 0-based format.
-		private static byte [] fpBits = {
+		private static readonly byte [] fpBits = {
 			40-1,  8-1, 48-1, 16-1, 56-1, 24-1, 64-1, 32-1,
 			39-1,  7-1, 47-1, 15-1, 55-1, 23-1, 63-1, 31-1,
 			38-1,  6-1, 46-1, 14-1, 54-1, 22-1, 62-1, 30-1,
@@ -156,9 +156,9 @@ namespace System.Security.Cryptography {
 			33-1,  1-1, 41-1,  9-1, 49-1, 17-1, 57-1, 25-1
 		};
 	
-		private static uint [] spBoxes;
-		private static int [] ipTab;
-		private static int [] fpTab;
+		private static readonly uint [] spBoxes;
+		private static readonly int [] ipTab;
+		private static readonly int [] fpTab;
 	
 		static DESTransform ()
 		{
