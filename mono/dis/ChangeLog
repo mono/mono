@@ -1,4 +1,9 @@
 
+Fri Jun 7 19:39:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* get.c: handle typerefs of nested types. Don't print "."
+	with an empty namespace.
+
 Sat Jun 1 13:57:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: print byte values correctly.
