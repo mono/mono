@@ -1,3 +1,9 @@
+2004-02-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c (mono_arch_patch_code): Update after domain->code_mp changes.
+
+	* tramp-sparc.c (mono_arch_create_jump_trampoline): Set ji->method.
+
 2004-02-19  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* helpers.c (mono_disassemble_code): use Sun's dis if not using gcc
