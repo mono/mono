@@ -1,5 +1,8 @@
 2003-03-28  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Conditional.DoResolve): Add support for operator
+	true. Implements the missing functionality from 14.12
+
 	* class.cs (TypeContainer.CheckPairedOperators): Report error for missmatch on
 	operator true/false as required by the spec.
 

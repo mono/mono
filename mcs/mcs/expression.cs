@@ -3147,9 +3147,13 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 			
-			if (expr.Type != TypeManager.bool_type)
-				expr = Expression.ConvertImplicitRequired (
-					ec, expr, TypeManager.bool_type, loc);
+			if (expr.Type != TypeManager.bool_type){
+				expr = Expression.ResolveBoolean (
+					ec, expr, loc);
+				
+				if (expr == null)
+					return null;
+			}
 			
 			trueExpr = trueExpr.Resolve (ec);
 			falseExpr = falseExpr.Resolve (ec);
