@@ -1,3 +1,8 @@
+2004-04-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* io.c (CopyFile): Use 32k buffers to copy the file instead of 2k,
+	use the stack, do not use dynamic memory.
+
 2004-04-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* io.c: Add scandir implementation for platforms which do not have
