@@ -262,7 +262,14 @@ namespace System.Runtime.Remoting.Channels {
 		internal void GetInfoFromMethodCallMessage(IMethodCallMessage mcm) {
 			_serverType = Type.GetType(mcm.TypeName, true);
 			
-			_methodCallInfo = _serverType.GetMethod(mcm.MethodName);
+			if (mcm.MethodSignature != null) 
+				_methodCallInfo = _serverType.GetMethod(mcm.MethodName, 
+														BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, 
+														null, (Type []) mcm.MethodSignature, null);
+			else
+				_methodCallInfo = _serverType.GetMethod(mcm.MethodName, 
+														BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
 			_methodCallParameters = _methodCallInfo.GetParameters();
 		}	
 	

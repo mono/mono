@@ -1,3 +1,8 @@
+﻿2003-12-11  Patrik Torstensson  <p@rxc.se>
+
+	* SoapMessageFormater.cs: Use GetMethod with signature if possible, solves
+          AmbiguousMatchException for bug 51990.
+ 
 2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryServerFormatterSinkProvider.cs: Removed TODO.
