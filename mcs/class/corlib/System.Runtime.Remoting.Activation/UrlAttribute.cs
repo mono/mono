@@ -38,16 +38,14 @@ namespace System.Runtime.Remoting.Activation {
 			return url.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override void GetPropertiesForNewContext (IConstructionCallMessage ctorMsg)
 		{
-			throw new NotImplementedException ();
+			// No new properties
 		}
 
-		[MonoTODO]
 		public override bool IsContextOK (Context ctx, IConstructionCallMessage msg)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 	}
 }

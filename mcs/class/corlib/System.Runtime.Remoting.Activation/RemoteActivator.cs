@@ -19,7 +19,8 @@ namespace System.Runtime.Remoting.Activation
 			if (!RemotingConfiguration.IsActivationAllowed (msg.ActivationType))
 				throw new RemotingException ("The type " + msg.ActivationTypeName + " is not allowed to be client activated");
 
-			MarshalByRefObject newObject = (MarshalByRefObject) Activator.CreateInstance (msg.ActivationType, msg.Args, msg.CallSiteActivationAttributes);
+			object[] activationAttributes = new object[] { new RemoteActivationAttribute (msg.ContextProperties) };
+			MarshalByRefObject newObject = (MarshalByRefObject) Activator.CreateInstance (msg.ActivationType, msg.Args, activationAttributes);
 
 			// The activator must return a ConstructionResponse with an ObjRef as return value.
 			// It avoids the automatic creation of a proxy in the client.

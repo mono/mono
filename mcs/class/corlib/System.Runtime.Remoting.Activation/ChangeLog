@@ -1,3 +1,15 @@
+2003-02-25  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* ActivationServices.cs: Added method for creating a proxy from a list
+	  of activation attributes. This is used by System.Activator.
+	  Added method for creating a ConstructionCall from a list of activation attributes.
+	  This is used from RemotingProxy.
+	* ConstructionLevelActivator.cs: Added. Implements an IActivator that constructs an object.
+	* ContextLevelActivator.cs: Added. Implements an IActivator that constructs a context.
+	* RemoteActivationAttribute.cs: Added.
+	* RemoteActivator.cs: Used RemoteActivationAttribute in the creation of the server object.
+	* UrlAttribute.cs: Removed some "throw new NotImplementedException ()".
+
 2003-02-18  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* RemoteActivator.cs: Instance creation implemented.
