@@ -1,7 +1,9 @@
-//	monostyle.cs
+﻿//	monostyle.cs
 //
 //	Adam Treat (manyoso@yahoo.com)
+//  Ben Maurer (bmaurer@users.sf.net)
 //	(C) 2002 Adam Treat
+//  (C) 2003 Ben Maurer
 //
 //	This program is free software; you can redistribute it and/or modify
 //	it under the terms of the GNU General Public License as published by
@@ -215,8 +217,8 @@ namespace Mono.Util {
 					IsFor(str) ||
 					IsForEach(str) ||
 					IsWhile(str) ||
-					IsSwitch(str) ||
-					IsCase(str) )) {
+					IsSwitch(str)
+					)) {
 				return true;
 			} else {
 				return false;
