@@ -2,11 +2,13 @@ thisdir = errors
 SUBDIRS = 
 include ../build/rules.make
 
+with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+
 ifeq (default, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
 # means we can use --options, yay.
 
-MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
+MCS = $(with_mono_path) $(INTERNAL_MCS)
 endif
 
 GENERICS_COMPILE = $(CSCOMPILE) /target:library
@@ -29,7 +31,7 @@ all-local: CS0118-2-lib.dll CS0122-10-lib.dll CS0534-3-lib.dll CS0534-4-lib.dll 
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
 	CS3005-16-lib.dll CS3013-module.dll
 
-test-local:
+test-local: TestRunner-$(PROFILE).exe
 
 run-test-ondotnet-local:
 
@@ -42,16 +44,26 @@ test-everything:
 	$(MAKE) PROFILE=default run-test
 	$(MAKE) PROFILE=net_2_0 run-test
 
-run-mcs-tests: TestRunner.exe
 ifeq (net_2_0, $(PROFILE))
-	-rm -f generics.log
-	@./do-tests.pl generics '$(GENERICS_COMPILE)' "gcs*.cs"
-
-#	Is disabled until we solve problem with running
-#	$(RUNTIME) TestRunner.exe "2" $(topdir)/class/lib/$(PROFILE)/gmcs.exe know-issues-gmcs
+COMPILER_NAME = gmcs
+COMPILER = $(topdir)/gmcs/gmcs.exe
+TEST_PATTERN = '*cs*.cs'
 else
-	$(RUNTIME) TestRunner.exe "1" $(topdir)/class/lib/$(PROFILE)/mcs.exe know-issues-mcs
+COMPILER_NAME = mcs
+COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
+TEST_PATTERN = 'cs*.cs'
 endif
+
+# ifeq (net_2_0, $(PROFILE))
+# run-mcs-tests:
+# 	-rm -f gmcs.log
+# 	@./do-tests.pl gmcs '$(CSCOMPILE)' "cs*.cs"
+# 	-rm -f generics.log
+# 	@./do-tests.pl generics '$(GENERICS_COMPILE)' "gcs*.cs"
+# else
+run-mcs-tests: TestRunner-$(PROFILE).exe
+	$(with_mono_path) $(RUNTIME) TestRunner-$(PROFILE).exe $(COMPILER_NAME) $(COMPILER) know-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+#endif
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
@@ -66,5 +78,5 @@ install-local uninstall-local:
 %-module.dll: %-module.cs
 	$(BOOTSTRAP_MCS) /target:module /out:$@ $<
 
-TestRunner.exe:
-	$(CSCOMPILE) TestRunner.cs
+TestRunner-$(PROFILE).exe: TestRunner.cs
+	$(CSCOMPILE) /out:$@ TestRunner.cs

@@ -11,40 +11,92 @@
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
+cs0053-2.cs
+cs0108-3.cs NO ERROR
 cs0118.cs
 cs0119.cs
+cs0120-5.cs
+cs0120-6.cs
+cs0120-7.cs
 cs0121-3.cs NO ERROR
+cs0121-4.cs NO ERROR
+cs0122-10.cs
+cs0122-11.cs
 cs0122-12.cs
 cs0128.cs
+cs0131-3.cs
+cs0133-2.cs
+cs0146-2.cs # new in GMCS
 cs0156-2.cs
 cs0157-5.cs NO ERROR
+cs0161-2.cs NO ERROR # new in GMCS
+cs0164.cs   NO ERROR
+cs0176-4.cs # new in GMCS
+cs0187-1.cs NO ERROR
+cs0187-2.cs NO ERROR
 cs0192-2.cs
+cs0200.cs
 cs0201.cs
+cs0202.cs # new in GMCS
 cs0208-3.cs
-cs0229.cs NO ERROR
+cs0217.cs
 cs0229-2.cs
-cs0266.cs
+cs0229.cs NO ERROR
+cs0231.cs # new in GMCS
+cs0239.cs
+cs0249.cs   NO ERROR
+cs0257.cs # new in GMCS
 cs0266-2.cs NO ERROR
 cs0266-3.cs
+cs0266.cs
+cs0269.cs
+cs0407.cs
 cs0428.cs
+cs0525-2.cs
 cs0525.cs
 cs0526.cs
 cs0529.cs
+cs0531-2.cs
+cs0531.cs
+cs0534-3.cs NO ERROR
+cs0534-4.cs NO ERROR
+cs0547-2.cs
 cs0547.cs
+cs0548-2.cs
+cs0548-3.cs
 cs0548-4.cs
 cs0548.cs
+cs0550-2.cs
+cs0550.cs
+cs0551.cs
+cs0557-2.cs
+cs0557.cs
 cs0560.cs
 cs0567.cs
-cs0642.cs NO ERROR
+cs0611-2.cs NO ERROR
+cs0611.cs   NO ERROR
+cs0628-3.cs NO ERROR
 cs0642-2.cs NO ERROR
 cs0642-3.cs
 cs0642-4.cs
 cs0642-5.cs NO ERROR
 cs0642-6.cs NO ERROR
-cs0647.cs NO ERROR # corlib bug #73142
-cs0647-15.cs NO ERROR # corlib bug 73143
+cs0642.cs NO ERROR
+cs0647-12.cs
+cs0647-13.cs
+cs0647-15.cs # corlib bug 73143
+cs0650.cs
 cs0652.cs NO ERROR
-cs0657-17.cs NO ERROR
+cs0681.cs
+cs0683.cs NO ERROR
+cs0686.cs NO ERROR
+cs0712.cs # new in GMCS
+cs0720.cs
+cs1007.cs
+cs1013.cs # new in GMCS
+cs1014.cs
+cs1035.cs   NO ERROR
+cs1041.cs   NO ERROR
 cs1501-5.cs
 cs1513.cs
 cs1518.cs
@@ -52,19 +104,51 @@ cs1525.cs
 cs1527-2.cs NO ERROR
 cs1527-3.cs NO ERROR
 cs1528.cs
+cs1534.cs
 cs1535.cs
+cs1540-2.cs NO ERROR # new in GMCS
+cs1540-3.cs NO ERROR # new in GMCS
+cs1540-4.cs # new in GMCS
+cs1540-5.cs NO ERROR # new in GMCS
+cs1540-6.cs
+cs1540.cs # new in GMCS
 cs1552.cs
 cs1586.cs
+cs1599-2.cs
+cs1599-3.cs NO ERROR
+cs1599.cs
+cs1609.cs
 cs1615.cs
-cs1618-2.cs
+cs1618.cs NO ERROR
 cs1620.cs
-cs1625-2.cs NO ERROR
-cs1626.cs NO ERROR
+cs1622.cs
+cs1625-2.cs
 cs1626-2.cs NO ERROR
+cs1626.cs NO ERROR
+cs1627.cs
+cs1629-2.cs NO ERROR
+cs1629.cs NO ERROR
+cs1633.cs NO ERROR
+cs1634.cs NO ERROR
+cs1635.cs   NO ERROR
 cs1638.cs NO ERROR
 cs1641.cs
+cs1642.cs
+cs1644-3.cs
+cs1646.cs
 cs1656.cs
 cs1657.cs
-cs1666.cs NO ERROR
+cs1663.cs
+cs1665.cs
+cs1666.cs
+cs1670.cs
+cs1671-2.cs
+cs1671.cs
+cs1677-2.cs
+cs1677.cs
+cs1715.cs
 cs2007.cs
 cs2023.cs NO ERROR
+cs3003-5.cs
+gcs0080.cs
+gcs1644-2.cs NO ERROR

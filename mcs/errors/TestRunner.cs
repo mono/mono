@@ -59,6 +59,7 @@ namespace TestRunner {
 			pi.FileName = p_path;
 			pi.CreateNoWindow = true;
 			pi.WindowStyle = ProcessWindowStyle.Hidden;
+			pi.RedirectStandardOutput = true;
 			pi.RedirectStandardError = true;
 			pi.UseShellExecute = false;
 		}
@@ -98,21 +99,44 @@ namespace TestRunner {
 		static ArrayList no_error_list = new ArrayList ();
 		static ArrayList regression = new ArrayList ();
 
+		static StreamWriter log_file;
+
+		static void Log (string msg, params object [] rest)
+		{
+			Console.Write (msg, rest);
+			log_file.Write (msg, rest);
+		}
+
+		static void LogLine ()
+		{
+			Console.WriteLine ();
+			log_file.WriteLine ();
+		}
+
+		static void LogLine (string msg, params object [] rest)
+		{
+			Console.WriteLine (msg, rest);
+			log_file.WriteLine (msg, rest);
+		}
+
 		static int Main(string[] args) {
-			if (args.Length != 3) {
-				Console.WriteLine ("Usage: TestRunner test-pattern compiler know-issues");
+			if (args.Length != 4) {
+				Console.Error.WriteLine ("Usage: TestRunner (test-pattern|compiler-name) compiler know-issues log-file");
 				return 1;
 			}
 
 			string test_pattern = args [0];
 			string mcs = args [1];
 			string issue_file = args [2];
+			string log_fname = args [3];
+
+			log_file = new StreamWriter (log_fname, false);
 
 			// THIS IS BUG #73763 workaround
-			if (test_pattern == "1")
-				test_pattern = "cs*.cs";
-			else
+			if (test_pattern == "gmcs")
 				test_pattern = "*cs*.cs";
+			else
+				test_pattern = "cs*.cs";
 
 			string wrong_errors_file = issue_file;
 			string[] files = Directory.GetFiles (".", test_pattern);
@@ -125,7 +149,7 @@ namespace TestRunner {
 			catch (Exception) {
 				Console.Error.WriteLine ("Switching to command line mode (compiler entry point was not found)");
 				if (!File.Exists (mcs)) {
-					Console.WriteLine ("ERROR: Tested compiler was not found");
+					Console.Error.WriteLine ("ERROR: Tested compiler was not found");
 					return 1;
 				}
 				tester = new ProcessTester (mcs);
@@ -141,7 +165,7 @@ namespace TestRunner {
 					continue;
 				}
 			    
-				Console.Write (filename);
+				Log (filename);
 
 				string[] extra = GetExtraOptions (s);
 				if (extra != null) {
@@ -152,15 +176,21 @@ namespace TestRunner {
 				}
 				test_args [test_args.Length - 1] = s;
 
-				Console.Write ("...\t");
+				Log ("...\t");
 
 				if (ignore_list.Contains (filename)) {
-					Console.WriteLine ("NOT TESTED");
+					LogLine ("NOT TESTED");
 					total--;
 					continue;
 				}
 
 				try {
+					int start_char = 0;
+					while (Char.IsLetter (filename, start_char))
+						++start_char;
+
+					int end_char = filename.IndexOfAny (new char [] { '-', '.' } );
+					string expected = filename.Substring (start_char, end_char - start_char);
 
 					bool result = tester.Invoke (test_args);
 					if (result) {
@@ -168,37 +198,37 @@ namespace TestRunner {
 						continue;
 					}
 
-					int end_char = filename.IndexOfAny (new char [] { '-', '.' } );
-					string expected = filename.Substring (2, end_char - 2);
 					CompilerError result_code = GetCompilerError (expected, tester.Output);
 					if (HandleFailure (filename, result_code)) {
 						success++;
 					} else {
-						Console.WriteLine (tester.Output);
+						LogLine (tester.Output);
 					}
 				}
 				catch (Exception e) {
 					HandleFailure (filename, CompilerError.Missing);
-					Console.WriteLine (e.ToString ());
+					Log (e.ToString ());
 				}
 			}
 
-			Console.WriteLine ("Done" + Environment.NewLine);
-			Console.WriteLine ("{0} correctly detected error cases ({1:.##%})", success, (float) (success) / (float)total);
+			LogLine ("Done" + Environment.NewLine);
+			LogLine ("{0} correctly detected error cases ({1:.##%})", success, (float) (success) / (float)total);
 
 			know_issues.AddRange (no_error_list);
 			if (know_issues.Count > 0) {
-				Console.WriteLine ();
-				Console.WriteLine (issue_file + " contains {0} already fixed issues. Please remove", know_issues.Count);
+				LogLine ();
+				LogLine (issue_file + " contains {0} already fixed issues. Please remove", know_issues.Count);
 				foreach (string s in know_issues)
-					Console.WriteLine (s);
+					LogLine (s);
 			}
 			if (regression.Count > 0) {
-				Console.WriteLine ();
-				Console.WriteLine ("The latest changes caused regression in {0} file(s)", regression.Count);
+				LogLine ();
+				LogLine ("The latest changes caused regression in {0} file(s)", regression.Count);
 				foreach (string s in regression)
-					Console.WriteLine (s);
+					LogLine (s);
 			}
+
+			log_file.Close ();
 
 			return 0;
 		}
@@ -235,47 +265,47 @@ namespace TestRunner {
 			switch (status) {
 				case CompilerError.Expected:
 					if (know_issues.Contains (file) || no_error_list.Contains (file)) {
-						Console.WriteLine ("FIXED ISSUE");
+						LogLine ("FIXED ISSUE");
 						return true;
 					}
-					Console.WriteLine ("OK");
+					LogLine ("OK");
 					return true;
 
 				case CompilerError.Wrong:
 					if (know_issues.Contains (file)) {
-						Console.WriteLine ("KNOW ISSUE");
+						LogLine ("KNOWN ISSUE");
 						know_issues.Remove (file);
 						return false;
 					}
 					if (no_error_list.Contains (file)) {
-						Console.WriteLine ("REGRESSION (NO ERROR -> WRONG ERROR)");
+						LogLine ("REGRESSION (NO ERROR -> WRONG ERROR)");
 						no_error_list.Remove (file);
 					}
 					else {
-						Console.WriteLine ("REGRESSION (CORRECT ERROR -> WRONG ERROR)");
+						LogLine ("REGRESSION (CORRECT ERROR -> WRONG ERROR)");
 					}
 
 					break;
 
 				case CompilerError.Missing:
 					if (no_error_list.Contains (file)) {
-						Console.WriteLine ("KNOW ISSUE");
+						LogLine ("KNOW ISSUE");
 						no_error_list.Remove (file);
 						return false;
 					}
 
 					if (know_issues.Contains (file)) {
-						Console.WriteLine ("REGRESSION (WRONG ERROR -> NO ERROR)");
+						LogLine ("REGRESSION (WRONG ERROR -> NO ERROR)");
 						know_issues.Remove (file);
 					}
 					else {
-						Console.WriteLine ("REGRESSION (CORRECT ERROR -> NO ERROR)");
+						LogLine ("REGRESSION (CORRECT ERROR -> NO ERROR)");
 					}
 
 					break;
 			}
 
-			regression.Add (file);;
+			regression.Add (file);
 			return false;
 		}
 
