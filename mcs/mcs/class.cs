@@ -573,6 +573,12 @@ namespace Mono.CSharp {
 			if (is_static)
 				mods = Modifiers.STATIC;
 
+			//
+			// If the class is abstract, the default constructor is protected
+			//
+			if ((ModFlags & Modifiers.ABSTRACT) != 0)
+				mods |= Modifiers.PROTECTED;
+			
 			c.ModFlags = mods;
 
 			AddConstructor (c);

@@ -2784,6 +2784,11 @@ namespace Mono.CSharp {
 				// is present, so we need to test for this particular case.
 				//
 
+				if (e is Cast){
+					Report.Error (254, loc, "Cast expression not allowed as right hand expression in fixed statement");
+					return false;
+				}
+				
 				//
 				// Case 1: & object.
 				//
@@ -2868,7 +2873,21 @@ namespace Mono.CSharp {
 					data [i].converted = null;
 					data [i].vi = vi;
 					i++;
+					continue;
 				}
+
+				//
+				// For other cases, flag a `this is already fixed expression'
+				//
+				if (e is LocalVariableReference || e is ParameterReference ||
+				    Convert.ImplicitConversionExists (ec, e, vi.VariableType)){
+				    
+					Report.Error (245, loc, "right hand expression is already fixed, no need to use fixed statement ");
+					return false;
+				}
+
+				Report.Error (245, loc, "Fixed statement only allowed on strings, arrays or address-of expressions");
+				return false;
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
@@ -3295,11 +3314,39 @@ namespace Mono.CSharp {
 				i--;
 				
 				ig.BeginFinallyBlock ();
-				
-				var.Emit (ec);
-				ig.Emit (OpCodes.Brfalse, skip);
-				converted_vars [i].Emit (ec);
-				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+
+				if (!var.Type.IsValueType) {
+					var.Emit (ec);
+					ig.Emit (OpCodes.Brfalse, skip);
+					converted_vars [i].Emit (ec);
+					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				} else {
+					Expression ml = Expression.MemberLookup(ec, typeof(IDisposable), var.Type, "Dispose", Mono.CSharp.Location.Null);
+
+					if (!(ml is MethodGroupExpr)) {
+						var.Emit (ec);
+						ig.Emit (OpCodes.Box, var.Type);
+						ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+					} else {
+						MethodInfo mi = null;
+
+						foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
+							if (mk.GetParameters().Length == 0) {
+								mi = mk;
+								break;
+							}
+						}
+
+						if (mi == null) {
+							Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
+							return false;
+						}
+
+						var.AddressOf (ec, AddressOp.Load);
+						ig.Emit (OpCodes.Call, mi);
+					}
+				}
+
 				ig.MarkLabel (skip);
 				ig.EndExceptionBlock ();
 			}
