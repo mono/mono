@@ -7556,7 +7556,7 @@ namespace Mono.CSharp {
 			//Console.WriteLine (new System.Diagnostics.StackTrace ());
 			is_stobj = false;
 			t = TypeManager.TypeToCoreType (t);
-			if (TypeManager.IsEnumType (t) && t != TypeManager.enum_type)
+			if (TypeManager.IsEnumType (t))
 				t = TypeManager.EnumToUnderlying (t);
 			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
