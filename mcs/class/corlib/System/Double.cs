@@ -341,7 +341,6 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-//Console.WriteLine ("calling DoubleFormatter...{0}", fp);
 			if (fp is CultureInfo)
 				return DoubleFormatter.NumberToString(format,
 				((CultureInfo)fp).NumberFormat, value);
