@@ -1258,10 +1258,11 @@ namespace MonoTests.System.Xml
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<root><test>test<foo></foo>string</test><test>string</test></root>");
 			StringWriter sw = new StringWriter ();
+			sw.NewLine = "_";
 			XmlTextWriter xtw = new XmlTextWriter (sw);
 			xtw.Formatting = Formatting.Indented;
 			doc.WriteContentTo (xtw);
-			AssertEquals (@"<root>\n  <test>test<foo></foo>string</test>\n  <test>string</test>\n</root>", sw.ToString ().Replace ("\r\n", "\n"));
+			AssertEquals (@"<root>_  <test>test<foo></foo>string</test>_  <test>string</test>_</root>", sw.ToString ());
 		}
 	}
 }
