@@ -229,7 +229,7 @@ namespace Mono.Xml.Xsl {
 		
 		public XslAvt ParseAvt (string s)
 		{
-			if (s == null) return null;
+			if (s == null || s == string.Empty) return null;
 			return new XslAvt (s, this);
 		}
 		

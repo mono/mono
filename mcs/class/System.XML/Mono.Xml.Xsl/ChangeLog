@@ -1,5 +1,9 @@
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Compiler.cs: Really give null for blank avt's
+
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs: Fixed lre/lre04.
 
 2003-08-19 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
