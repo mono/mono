@@ -1104,7 +1104,7 @@ namespace System.Web.UI.WebControls
 			if (ShowNextPrevMonth) {
 				TableCell nextCell = new TableCell ();
 				nextCell.Width = Unit.Percentage(15);
-				nextCell.HorizontalAlign = HorizontalAlign.Left;
+				nextCell.HorizontalAlign = HorizontalAlign.Right;
 				if (NextPrevFormat == NextPrevFormat.CustomText) {
 					nextContent = NextMonthText;
 				} else {

@@ -1,3 +1,8 @@
+2003-10-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Calendar.cs: render the next month button so that aligns to the
+	right.
+
 2003-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompareValidator.cs: splitted Convert. Fixed bug #49927. The fix
