@@ -1,3 +1,8 @@
+
+Wed Apr 24 21:15:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* GC.cs: implement most of the methods as icalls.
+
 2002-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DecimalFormatter.cs (ToString): return correct value when the
