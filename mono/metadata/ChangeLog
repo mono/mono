@@ -1,6 +1,17 @@
 2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c:
+	* appdomain.h:
+	* icall.c: removed
+	ves_icall_System_AppDomainSetup_InitAppDomainSetup as it's not
+	needed now.
+
+	* object.c: se the application_base only for the domain that runs
+	Main. Fixes bug #59216,
+
+2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
 	* object.c: only the domain in which Main is run have
 	SetupInformation.ConfigurationFile set, so moved a few lines from
 	appdomain.c to object.c.
