@@ -40,6 +40,9 @@ namespace System.Windows.Forms {
 			set { 
 				enabled = value;
 				if ( enabled ) {
+					if ( timerid != 0 )
+						Win32.KillTimer ( IntPtr.Zero , timerid );
+
 					if ( !timerHandle.IsAllocated )
 						timerHandle = GCHandle.Alloc( this );
 

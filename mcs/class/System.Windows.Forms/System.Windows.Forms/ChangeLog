@@ -1,3 +1,6 @@
+2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
+	* Timer.cs: Fixed Enabled property bebavior.
+
 2003-08-30  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Screen.cs 		small fixes and few methods implemented
 
