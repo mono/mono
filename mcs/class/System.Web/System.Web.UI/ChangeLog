@@ -1,3 +1,8 @@
+2004-01-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* KeyedList.cs: 'private' is not allowed on explicit interface 
+	implementations. Fixes 1.2 build.
+
 2003-12-31  Jackson Harper <jackson@ximian.com>
 
 	* TemplateControlParser.cs: When registering tag prefixs make sure

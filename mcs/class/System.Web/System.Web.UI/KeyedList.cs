@@ -65,17 +65,17 @@ namespace System.Web.UI
 			objectList.RemoveAt (idx);
 		}
 
-		private IDictionaryEnumerator IDictionary.GetEnumerator ()
+		IDictionaryEnumerator IDictionary.GetEnumerator ()
 		{
 			return new KeyedListEnumerator (objectList);
 		}
 
-		private IEnumerator IEnumerable.GetEnumerator ()
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new KeyedListEnumerator (objectList);
 		}
 
-		private void IStateManager.LoadViewState (object state)
+		void IStateManager.LoadViewState (object state)
 		{
 			if (state != null)
 			{
@@ -91,7 +91,7 @@ namespace System.Web.UI
 			}
 		}
 
-		private object IStateManager.SaveViewState ()
+		object IStateManager.SaveViewState ()
 		{
 			object[] ret = new object[] { objectList };
 			if (ret[0] == null)
@@ -100,7 +100,7 @@ namespace System.Web.UI
 			return ret;
 		}
 
-		private void IStateManager.TrackViewState ()
+		void IStateManager.TrackViewState ()
 		{
 			trackViewState = true;
 		}
@@ -173,7 +173,8 @@ namespace System.Web.UI
 		}
 
 		private bool trackViewState;
-		private bool IStateManager.IsTrackingViewState {
+
+		bool IStateManager.IsTrackingViewState {
 			get { return trackViewState; }
 		}
 
