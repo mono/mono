@@ -136,12 +136,12 @@ namespace System.Net.Sockets
 		{
 			get {
 				return (bool)client.GetSocketOption(
-					SocketOptionLevel.Socket,
+					SocketOptionLevel.Tcp,
 					SocketOptionName.NoDelay);
 			}
 			set {
 				client.SetSocketOption(
-					SocketOptionLevel.Socket,
+					SocketOptionLevel.Tcp,
 					SocketOptionName.NoDelay, value);
 			}
 		}
