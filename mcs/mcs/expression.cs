@@ -2343,21 +2343,32 @@ namespace Mono.CSharp {
 			if (expr == null || trueExpr == null || falseExpr == null)
 				return null;
 
+			eclass = ExprClass.Value;
 			if (trueExpr.Type == falseExpr.Type)
 				type = trueExpr.Type;
 			else {
 				Expression conv;
+				Type true_type = trueExpr.Type;
+				Type false_type = falseExpr.Type;
 
+				if (trueExpr is NullLiteral){
+					type = false_type;
+					return this;
+				} else if (falseExpr is NullLiteral){
+					type = true_type;
+					return this;
+				}
+				
 				//
 				// First, if an implicit conversion exists from trueExpr
 				// to falseExpr, then the result type is of type falseExpr.Type
 				//
-				conv = ConvertImplicit (ec, trueExpr, falseExpr.Type, loc);
+				conv = ConvertImplicit (ec, trueExpr, false_type, loc);
 				if (conv != null){
 					//
 					// Check if both can convert implicitl to each other's type
 					//
-					if (ConvertImplicit (ec, falseExpr, trueExpr.Type, loc) != null){
+					if (ConvertImplicit (ec, falseExpr, true_type, loc) != null){
 						Report.Error (
 							172, loc,
 							"Can not compute type of conditional expression " +
@@ -2366,10 +2377,10 @@ namespace Mono.CSharp {
 							"' convert implicitly to each other");
 						return null;
 					}
-					type = falseExpr.Type;
+					type = false_type;
 					trueExpr = conv;
-				} else if ((conv = ConvertImplicit(ec, falseExpr,trueExpr.Type,loc))!= null){
-					type = trueExpr.Type;
+				} else if ((conv = ConvertImplicit(ec, falseExpr, true_type,loc))!= null){
+					type = true_type;
 					falseExpr = conv;
 				} else {
 					Error (173, loc, "The type of the conditional expression can " +
@@ -2389,7 +2400,6 @@ namespace Mono.CSharp {
 					return falseExpr;
 			}
 
-			eclass = ExprClass.Value;
 			return this;
 		}
 
