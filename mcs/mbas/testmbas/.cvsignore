@@ -2,3 +2,5 @@
 *.pdb
 *.vbproj
 *.vbproj.user
+*~
+.*~

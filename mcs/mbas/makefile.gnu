@@ -39,9 +39,6 @@ COMPILER_SOURCES = \
 
 all: mbas.exe
 
-test: mbas.exe
-	mono ./mbas.exe @testmbas/filelist
-
 mbas.exe: $(COMPILER_SOURCES)
 	$(MCS) $(MCSFLAGS) /r:Mono.GetOptions.dll /out:mbas.exe $(COMPILER_SOURCES)
 
@@ -56,7 +53,7 @@ install: all
 	$(INSTALL) -m 755 mbas.exe $(prefix)/bin/
 
 test:
-	mono mbas.exe testmbas/WriteOK.vb 
+	mono mbas.exe --main WriteOK testmbas/WriteOK.vb
 
 test-gtk:
 	mono mbas.exe testmbas/gtk.vb -r gtk-sharp
