@@ -58,3 +58,6 @@ SOURCES_EXCLUDE=
 
 all:
 	mcs /out:mddump.exe /unsafe $(SOURCES_INCLUDE)
+
+clean:
+	rm -f mddump.exe
