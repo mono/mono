@@ -1,5 +1,7 @@
 2002-08-01  Miguel de Icaza  <miguel@ximian.com>
 
+	* rootcontext.cs (ResolveCore): Also include System.Exception
+
 	* statement.cs (Block.Emit): Do not emit the dead-code warnings if
 	we reach an EmptyStatement.
 

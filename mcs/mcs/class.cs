@@ -729,7 +729,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			InTransit = true;
-			
+
 			if (this is Class)
 				is_class = true;
 			else
