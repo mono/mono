@@ -80,7 +80,6 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 
 	public bool IsNewSession {
 		get { return _newSession; }
-		set { _newSession=value; }
 	}
 
 	public bool IsReadOnly {
@@ -137,6 +136,11 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 
 	internal SessionDictionary SessionDictionary {
 		get { return _dict; }
+	}
+
+	internal void SetNewSession (bool value)
+	{
+		_newSession = value;
 	}
 
 	public void Abandon ()

@@ -92,7 +92,7 @@ namespace System.Web.SessionState
 				// if we have a session, and it is not expired, set isNew to false and return it.
 				if (container!=null && container.SessionState!=null && !container.SessionState.IsAbandoned) {
 					// Can we do this? It feels safe, but what do I know.
-					container.SessionState.IsNewSession = false;
+					container.SessionState.SetNewSession (false);
 					// update the timestamp.
 					container.Touch ();
 					 // Can we do this? It feels safe, but what do I know.
@@ -119,7 +119,7 @@ namespace System.Web.SessionState
 
 			// and returns it.
 			context.SetSession (container.SessionState);
-			context.Session.IsNewSession = true;
+			context.Session.SetNewSession (true);
 
 			// And we're done!
 			return true;

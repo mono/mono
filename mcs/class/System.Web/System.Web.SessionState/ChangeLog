@@ -1,6 +1,15 @@
+2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSessionState.cs:
+	* SessionInProcHandler.cs: IsNewSession doesn't have a public setter.
+
+	* SessionStateModule.cs: doesn't implement IRequiresSessionState.
+	* StateServerItem.cs: not public.
+
 2004-01-05  Alon Gazit <along@mainsoft.com>
 
-	* SessionDictionary.cs: can't set item's value to null if the item is new.
+	* SessionDictionary.cs: can't set item's value to null if the item is
+	new.
 
 2003-12-25  Jackson Harper <jackson@ximian.com>
 

@@ -16,7 +16,7 @@ using System.Security.Cryptography;
 namespace System.Web.SessionState
 {
 	[MonoTODO]
-	public sealed class SessionStateModule : IHttpModule, IRequiresSessionState
+	public sealed class SessionStateModule : IHttpModule
 	{
 		internal static readonly string CookieName = "ASPSESSION";
 		internal static readonly string HeaderName = "AspFilterSessionId";

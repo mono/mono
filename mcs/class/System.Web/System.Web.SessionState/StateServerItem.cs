@@ -12,7 +12,7 @@ using System;
 namespace System.Web.SessionState {
 
 	[Serializable]
-	public class StateServerItem {
+	class StateServerItem {
 
 		private byte [] dict_data;
 		private byte [] sobjs_data;
