@@ -1262,8 +1262,8 @@ namespace System.Xml
 			if (returnEntityReference && valueBuffer.Length == 0) {
 				SetEntityReferenceProperties ();
 			} else {
-				XmlNodeType nodeType = notWhitespace ?
-					XmlNodeType.Text : XmlNodeType.Whitespace;
+				XmlNodeType nodeType = notWhitespace ? XmlNodeType.Text :
+					this.XmlSpace == XmlSpace.Preserve ? XmlNodeType.SignificantWhitespace : XmlNodeType.Whitespace;
 				SetProperties (
 					nodeType, // nodeType
 					String.Empty, // name
@@ -3057,12 +3057,15 @@ namespace System.Xml
 
 			if (currentState == XmlNodeType.Element && ch != -1 && ch != '<')
 				ReadText (false);
-			else
-				SetProperties (XmlNodeType.Whitespace,
+			else {
+				XmlNodeType nodeType = (this.XmlSpace == XmlSpace.Preserve) ?
+					XmlNodeType.SignificantWhitespace : XmlNodeType.Whitespace;
+				SetProperties (nodeType,
 					       String.Empty,
 					       false,
 					       true,
 					       valueBuffer);
+			}
 
 			return; // (PeekChar () != -1);
 		}
