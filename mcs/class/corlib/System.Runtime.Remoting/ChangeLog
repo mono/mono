@@ -1,3 +1,7 @@
+2003-03-24  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* RemotingServices.cs: Fixed bug #39915
+
 2003-03-20  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Identity.cs: Added support for dynamic properties.

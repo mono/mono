@@ -97,9 +97,23 @@ namespace System.Runtime.Remoting
 		public static bool Disconnect (MarshalByRefObject obj)
 		{
 			if (obj == null) throw new ArgumentNullException ("obj");
-			if (IsTransparentProxy (obj)) throw new ArgumentException ("The obj parameter is a proxy");
 
-			ServerIdentity identity = obj.ObjectIdentity;
+			ServerIdentity identity;
+
+			if (IsTransparentProxy (obj))
+			{
+				// CBOs are always accessed through a proxy, even in the server, so
+				// for server CBOs it is ok to disconnect a proxy
+
+				RealProxy proxy = GetRealProxy(obj);
+				if (proxy.GetProxiedType().IsContextful && (proxy.ObjectIdentity is ServerIdentity))
+					identity = proxy.ObjectIdentity as ServerIdentity;
+				else
+					throw new ArgumentException ("The obj parameter is a proxy");
+			}
+			else
+				identity = obj.ObjectIdentity;
+
 			if (identity == null || !identity.IsConnected)
 				return false;
 			else
