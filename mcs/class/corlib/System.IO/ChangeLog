@@ -1,3 +1,8 @@
+2003-05-08  Ben Maurer <bmaurer@users.sourceforge.net>
+	* Path.cs 
+	(CanonicalizePath) Fixed bug #42631, which duplicated the
+	root part of the path under Windows.
+
 2003-05-08  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileSystemInfo.cs: Added 1.1 properties LastAccessTimeUtc, 
@@ -46,7 +51,7 @@
 	* BinaryReader.cs (Read): make sure the buffer is big enough (fix
 	bug # 40702)
 
-2003-04-24  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-04-24  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* BufferedStream.cs: Test if it's possible to seek in a Stream
 	before access to Position. This prevents the exception thrown when

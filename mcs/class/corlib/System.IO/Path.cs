@@ -308,7 +308,7 @@ namespace System.IO
 			string root = GetPathRoot (path);
 			if (root == path) return path;
 				
-			string dir = GetDirectoryName (path);
+			string dir = GetDirectoryName (path).Substring (path.IndexOfAny (new char [] {DirectorySeparatorChar,	AltDirectorySeparatorChar}) + 1);
 			if (dir == String.Empty) return path;
 			
 			string file = GetFileName (path);
