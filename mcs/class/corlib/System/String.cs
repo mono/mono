@@ -54,10 +54,11 @@ namespace System {
 	    
 			if (null == (Object) str1 || null == (Object) str2)
 				return false;
+
 			if (str1.length != str2.length)
 				return false;
     
-			return Compare(str1, 0, str2, 0, str1.length, false) == 0;
+			return InternalEquals(str1, str2);
 		}
 
 		public static bool operator == (String str1, String str2) {
@@ -75,7 +76,7 @@ namespace System {
 			if (!(obj is String))
 				return false;
 
-			return Compare (this, (String)obj, false) == 0;
+			return InternalEquals(this, (String) obj);
 		}
 
 		public bool Equals(String value) {
@@ -84,7 +85,8 @@ namespace System {
 
 			if (length != value.length)
 				return false;
-			return Compare (this, 0, value, 0, length, false) == 0;
+
+			return InternalEquals(this, value);
 		}
 
 		[IndexerName("Chars")]
@@ -178,7 +180,7 @@ namespace System {
 		}	
 
 		private static readonly char[] WhiteChars = {  (char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD, (char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004, (char) 0x2005,
-																			  (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B, (char) 0x3000, (char) 0xFEFF };
+																	  (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B, (char) 0x3000, (char) 0xFEFF };
 
 		public String Trim(params char[] chars) {
 			if (null == chars || chars.Length == 0)
@@ -418,6 +420,12 @@ namespace System {
 		public int LastIndexOf(String value) {
 			if (null == value) 
 				throw new ArgumentNullException();
+			
+			if (value.length == 0)
+				return 0;
+
+			if (this.length == 0)
+				return -1;
 
 			return InternalLastIndexOf(value, this.length - 1, this.length);
 		}
@@ -431,10 +439,10 @@ namespace System {
 		}
 
 		public int LastIndexOf(char value, int sindex, int count) {
-			if (count < 0 || sindex < 0)
+			if (sindex < 0 || count < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (count > this.length || sindex > this.length)
+			if (sindex >= this.length || sindex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ();
 
 			if (sindex == 0 && this.length == 0)
@@ -450,8 +458,14 @@ namespace System {
 			if (sindex < 0 || sindex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			if (count < 0 || count - sindex <= 0)
+			if (count < 0 || sindex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ();
+
+			if (value.length > sindex)
+				return -1;
+
+			if (value == String.Empty)
+				return sindex;
 
 			if (sindex == 0 && this.length == 0)
 				return -1;
@@ -680,11 +694,11 @@ namespace System {
 		//
 #if !__MonoCS__
 		[CLSCompliant(false)]
-		public static String Concat (Object arg0, Object arg1, Object arg2, Object arg3, __arglist)
-		{
+		public static String Concat (Object arg0, Object arg1, Object arg2, Object arg3, __arglist) {
 			throw new NotImplementedException();
 		}
 #endif
+
 		public static String Concat(String s1, String s2) {
 			if (null == s1) {
 				if (null == s2) { return String.Empty; }
@@ -1066,5 +1080,8 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int InternalCompare(String s1, int i1, String s2, int i2, int length, bool inCase);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static bool InternalEquals(String s1, String s2);
 	}
 }

@@ -1,3 +1,8 @@
+2002-04-23	Patrik Torstensson <patrik.torstensson@labs2.com>
+	
+	* String.cs (LastIndexOf): fixed argument checking.
+	* String.cs (Equals): made internal for performace.
+
 2002-04-23  Nick Drochak  <ndrochak@gol.com>
 
 	* String.cs (Join): check argument and throw exception if needed
