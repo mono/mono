@@ -1,3 +1,8 @@
+2004-10-29  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (install-local): Install .mdb files too.
+	(uninstall-local): Remove them.
+
 2004-10-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* signcode.cs: -i (url) and -n (description) parameters were inverted.

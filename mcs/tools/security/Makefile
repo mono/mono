@@ -28,11 +28,12 @@ install-local: $(SECURITY_PROGRAMS)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	for p in $(SECURITY_PROGRAMS) ; do \
 	    $(INSTALL_BIN) $$p $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
+	    $(INSTALL_BIN) $$p.mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	done
 
 uninstall-local:
 	for p in $(SECURITY_PROGRAMS) ; do \
-	    rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$$p ; \
+	    rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$$p* ; \
 	done
 
 test-local:
