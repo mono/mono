@@ -1,3 +1,27 @@
+2004-11-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c aot.c: Switch to PIC relative AOT code. References to 
+	runtime data/code are now stored in a table similar to the GOT in ELF. 
+	This allows the code itself to be position independent.
+
+	* aot.c: Fix loading of referenced assemblies after the lazy assembly
+	loading changes.
+
+	* aot.c: Attach ELF type (object/function) directives to all global
+	symbols.
+
+	* tramp-amd64.c (amd64_magic_trampoline): Patch RIP relative calls too.
+
+	* inssel.brg (SWITCH): Emit an AOT_CONST in the aot case.
+
+	* mini-amd64.h: Turn on PIC AOT code.
+
+	* mini.h (mono_arch_get_aot_patch_offset): New arch specific function
+	returning the offset within an OP_AOTCONST instruction where the GOT
+	offset needs to be added.
+
+	* mini.h: Bump AOT file format version.
+
 2004-11-25  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): In CEE_CALL, don't allow calling any
