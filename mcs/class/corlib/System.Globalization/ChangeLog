@@ -1,3 +1,10 @@
+2002-02-01  Radek Doulik  <rodo@ximian.com>
+
+	* RegionInfo.cs: started work on RegionInfo
+
+	* CultureInfo.cs: added internal static function,
+	which could be used from RegionInfo.cs
+
 2002-01-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* CultureInfo.cs: Completed the tables.   Now we need to actually

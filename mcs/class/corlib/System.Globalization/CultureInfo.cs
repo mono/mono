@@ -733,13 +733,17 @@ namespace System.Globalization
 			}
 		}
 
+		internal static bool IsIDNeutralCulture (int lcid) {
+			return (lcid & 0xff00) == 0;
+		}
+
 		// <summary>
 		//   Returns whether the current culture is neutral (neutral cultures
 		//   only specify a language, not a country.
 		// </summary>
 		public virtual bool IsNeutralCulture {
 			get {
-				return (lcid & 0xff00) == 0;
+				return IsIDNeutralCulture (lcid);
 			}
 		}
 		// <summary>
