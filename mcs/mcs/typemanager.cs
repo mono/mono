@@ -630,9 +630,6 @@ public class TypeManager {
 	// Total list of known namespaces for the compilation 
 	static string [] namespaces;
 
-	// Only used on the MS runtime: the list of all namespaces, unique.
-	static Hashtable namespaces_hash;
-	
 	static Hashtable AddModuleNamespaces (Hashtable h)
 	{
 		foreach (ModuleBuilder mb in modules){
