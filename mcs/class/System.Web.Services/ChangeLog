@@ -1,3 +1,9 @@
+2002-07-29  Dave Bettin <javabettin@yahoo.com>
+	* list: added new Discovery classes
+	* System.Web.Services.Discovery: added stubs
+	* .cvsignore: added
+	* Mono.System.Web.Services: added VS.net project for assembly
+
 2002-07-25  Tim Coleman <tim@timcoleman.com>
 	* list: add new classes
 
