@@ -797,7 +797,7 @@ namespace Mono.CSharp {
 				}
 				
 				// from an array-type to System.Array
-				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
+				if (expr_type.IsArray && (target_type == TypeManager.array_type))
 					return true;
 				
 				// from any delegate type to System.Delegate
@@ -812,7 +812,8 @@ namespace Mono.CSharp {
 						return true;
 				
 				// from the null type to any reference-type.
-				if (expr is NullLiteral && !target_type.IsValueType)
+				if (expr is NullLiteral && !target_type.IsValueType &&
+				    !TypeManager.IsEnumType (target_type))
 					return true;
 				
 			}
@@ -2454,9 +2455,12 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldind_I1);
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldind_I);
-			else if (TypeManager.IsEnumType (t))
-				LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
-			else if (t.IsValueType)
+			else if (TypeManager.IsEnumType (t)) {
+				if (t == TypeManager.enum_type)
+					ig.Emit (OpCodes.Ldind_Ref);
+				else
+					LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
+			} else if (t.IsValueType)
 				ig.Emit (OpCodes.Ldobj, t);
 			else
 				ig.Emit (OpCodes.Ldind_Ref);
@@ -3309,7 +3313,26 @@ namespace Mono.CSharp {
 				}
 					
 				return e;
-			} 				
+			}
+
+			if (e is PropertyExpr) {
+				PropertyExpr pe = (PropertyExpr) e;
+
+				if (ec.IsStatic){
+					if (allow_static)
+						return e;
+
+					return MemberStaticCheck (e);
+				} else {
+					// If we are not in static code and this
+					// field is not static, set the instance to `this'.
+
+					if (!pe.IsStatic)
+						pe.InstanceExpression = ec.This;
+				}
+
+				return e;
+			}
 
 			if (e is EventExpr) {
 				//
@@ -3744,7 +3767,7 @@ namespace Mono.CSharp {
 			else
 				Accessors = new MethodInfo [2];
 			
-			type = pi.PropertyType;
+			type = TypeManager.TypeToCoreType (pi.PropertyType);
 		}
 
 		//

@@ -230,13 +230,16 @@ namespace Mono.CSharp {
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool  old_inloop = ec.InLoop;
+			bool old_breaks = ec.Breaks;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
 				
 			ig.MarkLabel (loop);
+			ec.Breaks = false;
 			EmbeddedStatement.Emit (ec);
+			bool breaks = ec.Breaks;
 			ig.MarkLabel (ec.LoopBegin);
 
 			//
@@ -255,6 +258,7 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
+			ec.Breaks = old_breaks;
 
 			//
 			// Inform whether we are infinite or not
@@ -263,7 +267,7 @@ namespace Mono.CSharp {
 				BoolConstant bc = (BoolConstant) expr;
 
 				if (bc.Value == true)
-					return true;
+					return breaks == false;
 			}
 			
 			return false;
@@ -296,6 +300,7 @@ namespace Mono.CSharp {
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
+			bool old_breaks = ec.Breaks;
 			Label while_loop = ig.DefineLabel ();
 			bool ret;
 			
@@ -317,13 +322,18 @@ namespace Mono.CSharp {
 					Warning_DeadCodeFound (Statement.loc);
 					ret = false;
 				} else {
+					bool breaks;
+					
+					ec.Breaks = false;
 					Statement.Emit (ec);
+					breaks = ec.Breaks;
 					ig.Emit (OpCodes.Br, ec.LoopBegin);
 					
 					//
-					// Inform that we are infinite (ie, `we return')
+					// Inform that we are infinite (ie, `we return'), only
+					// if we do not `break' inside the code.
 					//
-					ret = true;
+					ret = breaks == false;
 				}
 				ig.MarkLabel (ec.LoopEnd);
 			} else {
@@ -340,6 +350,7 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
+			ec.Breaks = old_breaks;
 
 			return ret;
 		}
@@ -393,6 +404,7 @@ namespace Mono.CSharp {
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
+			bool old_breaks = ec.Breaks;
 			Label loop = ig.DefineLabel ();
 
 			if (InitStatement != null)
@@ -411,8 +423,11 @@ namespace Mono.CSharp {
 			//
 			if (Test != null)
 				EmitBoolExpression (ec, Test, ec.LoopEnd, false);
-		
+
+			ec.Breaks = false;
 			Statement.Emit (ec);
+			bool breaks = ec.Breaks;
+
 			ig.MarkLabel (ec.LoopBegin);
 			if (!(Increment is EmptyStatement))
 				Increment.Emit (ec);
@@ -422,7 +437,8 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
-
+			ec.Breaks = old_breaks;
+			
 			//
 			// Inform whether we are infinite or not
 			//
@@ -431,7 +447,7 @@ namespace Mono.CSharp {
 					BoolConstant bc = (BoolConstant) Test;
 
 					if (bc.Value)
-						return true;
+						return breaks == false;
 				}
 				return false;
 			} else
@@ -739,7 +755,8 @@ namespace Mono.CSharp {
 				Report.Error (139, loc, "No enclosing loop or switch to continue to");
 				return false;
 			}
-			
+
+			ec.Breaks = true;
 			ig.Emit (OpCodes.Br, ec.LoopEnd);
 
 			return false;
@@ -1699,13 +1716,15 @@ namespace Mono.CSharp {
 
 			// fill the key lists
 			int iBlockCurr = 0;
-			kbCurr = (KeyBlock) rgKeyBlocks [0];
-			foreach (object key in rgKeys)
-			{
-				bool fNextBlock = (key is UInt64) ? (ulong) key > (ulong) kbCurr.nLast : Convert.ToInt64 (key) > kbCurr.nLast;
-				if (fNextBlock)
-					kbCurr = (KeyBlock) rgKeyBlocks [++iBlockCurr];
-				kbCurr.rgKeys.Add (key);
+			if (rgKeyBlocks.Count > 0) {
+				kbCurr = (KeyBlock) rgKeyBlocks [0];
+				foreach (object key in rgKeys)
+				{
+					bool fNextBlock = (key is UInt64) ? (ulong) key > (ulong) kbCurr.nLast : Convert.ToInt64 (key) > kbCurr.nLast;
+					if (fNextBlock)
+						kbCurr = (KeyBlock) rgKeyBlocks [++iBlockCurr];
+					kbCurr.rgKeys.Add (key);
+				}
 			}
 
 			// sort the blocks so we can tackle the largest ones first
@@ -1714,8 +1733,11 @@ namespace Mono.CSharp {
 			// okay now we can start...
 			ILGenerator ig = ec.ig;
 			Label lblEnd = ig.DefineLabel ();	// at the end ;-)
-			Label lblDefault = new Label ();
-			Type typeKeys = rgKeys [0].GetType ();	// used for conversions
+			Label lblDefault = ig.DefineLabel ();
+
+			Type typeKeys = null;
+			if (rgKeys.Length > 0)
+				typeKeys = rgKeys [0].GetType ();	// used for conversions
 
 			for (int iBlock = rgKeyBlocks.Count - 1; iBlock >= 0; --iBlock)
 			{

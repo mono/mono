@@ -332,10 +332,6 @@ namespace Mono.CSharp {
 			// These are classes that depends on the core interfaces
 			//
 			string [] classes_second_stage = {
-				"System.String", "System.Enum",
-				"System.Array",  "System.MulticastDelegate",
-				"System.Delegate",
-
 				"System.Reflection.MemberInfo",
 				"System.Type",
 
@@ -357,6 +353,13 @@ namespace Mono.CSharp {
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 			};
+
+			// We must store them here before calling BootstrapCorlib_ResolveDelegate.
+			TypeManager.string_type = BootstrapCorlib_ResolveClass (root, "System.String");
+			TypeManager.enum_type = BootstrapCorlib_ResolveClass (root, "System.Enum");
+			TypeManager.array_type = BootstrapCorlib_ResolveClass (root, "System.Array");
+			TypeManager.multicast_delegate_type = BootstrapCorlib_ResolveClass (root, "System.MulticastDelegate");
+			TypeManager.delegate_type = BootstrapCorlib_ResolveClass (root, "System.Delegate");
 			
 			foreach (string cname in classes_second_stage)
 				BootstrapCorlib_ResolveClass (root, cname);
@@ -634,11 +637,20 @@ namespace Mono.CSharp {
 
 
 			if (type_container_resolve_order != null){
-				foreach (TypeContainer tc in type_container_resolve_order)
+				foreach (TypeContainer tc in type_container_resolve_order) {
+					// When compiling corlib, these types have already been
+					// populated from BootCorlib_PopulateCoreTypes ().
+					if (!RootContext.StdLib &&
+					    ((tc.Name == "System.Object") ||
+					     (tc.Name == "System.Attribute") ||
+					     (tc.Name == "System.ValueType")))
+						continue;
+
 					if ((tc.ModFlags & Modifiers.NEW) == 0)
 						tc.Define (root);
 					else
 						Report1530 (tc.Location);
+				}
 			}
 
 			ArrayList delegates = root.Delegates;
@@ -694,14 +706,12 @@ namespace Mono.CSharp {
 			}
 			
 			if (Unsafe) {
-				ConstructorInfo ci = TypeManager.unverifiable_code_type.GetConstructor (new Type [0]);
-					
-				if (ci == null) {
-					Console.WriteLine ("Internal error !");
+				if (TypeManager.unverifiable_code_ctor == null) {
+					Console.WriteLine ("Internal error ! Cannot set unverifiable code attribute.");
 					return;
 				}
 				
-				CustomAttributeBuilder cb = new CustomAttributeBuilder (ci, new object [0]);
+				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]);
 				CodeGen.ModuleBuilder.SetCustomAttribute (cb);
 			}
 		}
@@ -743,7 +753,7 @@ namespace Mono.CSharp {
 			
 			if (impl_details_class == null)
 				impl_details_class = CodeGen.ModuleBuilder.DefineType (
-					"<PrivateImplementationDetails>", TypeAttributes.NotPublic);
+					"<PrivateImplementationDetails>", TypeAttributes.NotPublic, TypeManager.object_type);
 
 			fb = impl_details_class.DefineInitializedData (
 				"$$field-" + (field_count++), data,

@@ -482,7 +482,7 @@ public Tokenizer Lexer {
 	}
 }		   
 
-public override void parse ()
+public override int parse ()
 {
 	current_namespace = new Namespace (null, "");
 	current_container = RootContext.Tree.Types;
@@ -505,6 +505,8 @@ public override void parse ()
 		Console.WriteLine (lexer.location + "  : Parsing error ");
 		Console.WriteLine (e);
 	}
+	
+	return Report.Errors;
 }
 
 /* end end end */

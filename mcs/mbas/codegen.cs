@@ -268,6 +268,11 @@ namespace Mono.CSharp {
 		///  Whether we are inside an unsafe block
 		/// </summary>
 		public bool InUnsafe;
+
+		/// <summary>
+		///   Whether we break from a loop or not
+		/// </summary>
+		public bool Breaks;
 		
 		/// <summary>
 		///   Location for this EmitContext

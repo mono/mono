@@ -1,3 +1,8 @@
+2002-07-06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged attribute.cs, class.cs, codegen.cs, ecore.cs, expression.cs, 
+	  modifiers.cs, namespace.cs, report.cs, rootcontext.cs, statement.cs and typemanager.cs from mcs/mcs, to resync
+	* changed driver.cs to follow mcs lead on error/warning counting and reporting
+
 2002-06-23  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged attribute.cs, class.cs, ecore.cs, rootcontext.cs, support.cs and typemanager.cs from mcs/mcs, to resync
 	* makefile makes csc reference a copy of Mono.GetOptions.dll (mbas.sln now compiles to mbas dir instead of mbas/bin/Debug)

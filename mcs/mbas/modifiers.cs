@@ -65,7 +65,7 @@ namespace Mono.CSharp {
 
 			return s;
 		}
-
+		
 		public static TypeAttributes TypeAttr (int mod_flags, TypeContainer caller)
 		{
 			TypeAttributes t = 0;
@@ -221,11 +221,15 @@ namespace Mono.CSharp {
 				if ((i & invalid_flags) == 0)
 					continue;
 
-				Report.Error (106, l, "the modifier `" + Name (i) +
-					      "' is not valid for this item");
+				Error_InvalidModifier (l, Name (i));
 			}
 
 			return allowed & mod;
+		}
+
+		public static void Error_InvalidModifier (Location l, string name)
+		{
+			Report.Error (106, l, "the modifier " + name + " is not valid for this item");
 		}
 	}
 }

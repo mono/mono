@@ -795,6 +795,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			// add interfaces that were not added at type creation (weird API issue)
+			if (!is_class && !have_nonstatic_fields && (ifaces != null)) {
+				foreach (Type i in ifaces)
+					TypeBuilder.AddInterfaceImplementation (i);
+			}
+			
 			//
 			// Finish the setup for the EmitContext
 			//
@@ -802,8 +808,9 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
 
-			if (parent == TypeManager.attribute_type ||
-			    parent.IsSubclassOf (TypeManager.attribute_type)) {
+			if ((parent != null) &&
+			    (parent == TypeManager.attribute_type ||
+			     parent.IsSubclassOf (TypeManager.attribute_type))) {
 				RootContext.RegisterAttribute (this);
 				TypeManager.RegisterAttrType (TypeBuilder, this);
 			} else
@@ -1200,7 +1207,6 @@ namespace Mono.CSharp {
 					foreach (Enum en in Enums)
 						if (filter (en.TypeBuilder, criteria) == true)
 							members.Add (en.TypeBuilder);
-				
 			}
 
 			if ((mt & MemberTypes.Constructor) != 0){
@@ -1454,6 +1460,7 @@ namespace Mono.CSharp {
 		public bool MethodModifiersValid (int flags, string n, Location loc)
 		{
 			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
+			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
 			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 			bool ok = true;
 			string name = MakeName (n);
@@ -1466,6 +1473,13 @@ namespace Mono.CSharp {
 					Report.Error (
 						112, loc, "static method " + name + "can not be marked " +
 						"as virtual, abstract or override");
+					ok = false;
+				}
+			}
+
+			if (this is Struct){
+				if ((flags & va) != 0){
+					Modifiers.Error_InvalidModifier (loc, "virtual or abstract");
 					ok = false;
 				}
 			}
@@ -2023,11 +2037,8 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
-					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
-						Report.Error (
-							106, Location, "`public' or `abstract' modifiers "+
-							"are not allowed in explicit interface declarations"
-							);
+					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
+						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
 				}
@@ -2299,7 +2310,8 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldarg_0);
+			if (parent_constructor != null)
+				ec.ig.Emit (OpCodes.Ldarg_0);
 			if (argument_list != null)
 				Invocation.EmitArguments (ec, null, argument_list);
 			if (parent_constructor != null)
@@ -2759,11 +2771,8 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
-					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
-						Report.Error (
-							106, Location, "`public' or `abstract' modifiers "+
-							"are not allowed in explicit interface declarations"
-							);
+					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
+						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
 				}
@@ -2959,7 +2968,10 @@ namespace Mono.CSharp {
 			//
 			if (PropertyBuilder != null)
 				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
-			
+			if (Get != null)
+				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
+			if (Set != null)
+				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
 
 			//
 			// abstract or extern properties have no bodies
@@ -2971,7 +2983,6 @@ namespace Mono.CSharp {
 				ig = GetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, PropertyType, ModFlags);
 
-				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
 				ec.EmitTopBlock (Get.Block, Location);
 			}
 
@@ -2979,7 +2990,6 @@ namespace Mono.CSharp {
 				ig = SetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, null, ModFlags);
 
-				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
 				ec.EmitTopBlock (Set.Block, Location);
 			}
 		}
@@ -3391,12 +3401,8 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
-					if((ModFlags&(Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
-						Report.Error (
-							106, Location,
-							"`public' or `abstract' modifiers are not "+
-							"allowed in explicit interface declarations"
-							);
+					if((ModFlags&(Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
+						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
 				}
@@ -3639,6 +3645,10 @@ namespace Mono.CSharp {
 			if (PropertyBuilder != null)
 				Attribute.ApplyAttributes (
 					ec, PropertyBuilder, this, OptAttributes, Location);
+			if (Get != null)
+				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
+			if (Set != null)
+				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
 
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;

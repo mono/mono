@@ -74,6 +74,22 @@ public class TypeManager {
 
 	static public Type [] NoTypes;
 
+	//
+	// This is only used when compiling corlib
+	//
+	static public Type system_int32_type;
+	static public Type system_array_type;
+	static public Type system_type_type;
+	static public Type system_assemblybuilder_type;
+	static public MethodInfo system_int_array_get_length;
+	static public MethodInfo system_int_array_get_rank;
+	static public MethodInfo system_object_array_clone;
+	static public MethodInfo system_int_array_get_length_int;
+	static public MethodInfo system_int_array_get_lower_bound_int;
+	static public MethodInfo system_int_array_get_upper_bound_int;
+	static public MethodInfo system_void_array_copyto_array_int;
+	static public MethodInfo system_void_set_corlib_type_builders;
+
 	
 	//
 	// Internal, not really used outside
@@ -98,12 +114,19 @@ public class TypeManager {
 	static public MethodInfo delegate_remove_delegate_delegate;
 	static public MethodInfo int_get_offset_to_string_data;
 	static public MethodInfo int_array_get_length;
+	static public MethodInfo int_array_get_rank;
+	static public MethodInfo object_array_clone;
+	static public MethodInfo int_array_get_length_int;
+	static public MethodInfo int_array_get_lower_bound_int;
+	static public MethodInfo int_array_get_upper_bound_int;
+	static public MethodInfo void_array_copyto_array_int;
 	
 	//
 	// The attribute constructors.
 	//
 	static public ConstructorInfo cons_param_array_attribute;
 	static public ConstructorInfo void_decimal_ctor_five_args;
+	static public ConstructorInfo unverifiable_code_ctor;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -602,6 +625,47 @@ public class TypeManager {
 		//
 		obsolete_attribute_type = CoreLookupType ("System.ObsoleteAttribute");
 		conditional_attribute_type = CoreLookupType ("System.Diagnostics.ConditionalAttribute");
+
+		//
+		// When compiling corlib, store the "real" types here.
+		//
+		if (!RootContext.StdLib) {
+			system_int32_type = typeof (System.Int32);
+			system_array_type = typeof (System.Array);
+			system_type_type = typeof (System.Type);
+			system_assemblybuilder_type = typeof (System.Reflection.Emit.AssemblyBuilder);
+
+			Type [] void_arg = {  };
+			system_int_array_get_length = GetMethod (
+				system_array_type, "get_Length", void_arg);
+			system_int_array_get_rank = GetMethod (
+				system_array_type, "get_Rank", void_arg);
+			system_object_array_clone = GetMethod (
+				system_array_type, "Clone", void_arg);
+
+			Type [] system_int_arg = { system_int32_type };
+			system_int_array_get_length_int = GetMethod (
+				system_array_type, "GetLength", system_int_arg);
+			system_int_array_get_upper_bound_int = GetMethod (
+				system_array_type, "GetUpperBound", system_int_arg);
+			system_int_array_get_lower_bound_int = GetMethod (
+				system_array_type, "GetLowerBound", system_int_arg);
+
+			Type [] system_array_int_arg = { system_array_type, system_int32_type };
+			system_void_array_copyto_array_int = GetMethod (
+				system_array_type, "CopyTo", system_array_int_arg);
+
+			Type [] system_type_type_arg = { system_type_type, system_type_type };
+			system_void_set_corlib_type_builders = GetMethod (
+				system_assemblybuilder_type, "SetCorlibTypeBuilders",
+				system_type_type_arg);
+
+			object[] args = new object [2];
+			args [0] = object_type;
+			args [1] = value_type;
+
+			system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
+		}
 	}
 
 	//
@@ -649,6 +713,28 @@ public class TypeManager {
 			runtime_helpers_type, "get_OffsetToStringData", void_arg);
 		int_array_get_length = GetMethod (
 			array_type, "get_Length", void_arg);
+		int_array_get_rank = GetMethod (
+			array_type, "get_Rank", void_arg);
+
+		//
+		// Int32 arguments
+		//
+		Type [] int_arg = { int32_type };
+		int_array_get_length_int = GetMethod (
+			array_type, "GetLength", int_arg);
+		int_array_get_upper_bound_int = GetMethod (
+			array_type, "GetUpperBound", int_arg);
+		int_array_get_lower_bound_int = GetMethod (
+			array_type, "GetLowerBound", int_arg);
+
+		//
+		// System.Array methods
+		//
+		object_array_clone = GetMethod (
+			array_type, "Clone", void_arg);
+		Type [] array_int_arg = { array_type, int32_type };
+		void_array_copyto_array_int = GetMethod (
+			array_type, "CopyTo", array_int_arg);
 		
 		//
 		// object arguments
@@ -667,7 +753,6 @@ public class TypeManager {
 		//
 		// Array functions
 		//
-		Type [] int_arg = { int32_type };
 		int_getlength_int = GetMethod (
 			array_type, "GetLength", int_arg);
 
@@ -683,6 +768,9 @@ public class TypeManager {
 		//
 		cons_param_array_attribute = GetConstructor (
 			param_array_type, void_arg);
+
+		unverifiable_code_ctor = GetConstructor (
+			unverifiable_code_type, void_arg);
 		
 	}
 
@@ -1201,7 +1289,22 @@ public class TypeManager {
 		t = t.UnderlyingSystemType;
 		if (!TypeManager.IsEnumType (t))
 			return t;
-		
+	
+		if (t is TypeBuilder) {
+			// slow path needed to compile corlib
+			if (t == TypeManager.bool_type ||
+					t == TypeManager.byte_type ||
+					t == TypeManager.sbyte_type ||
+					t == TypeManager.char_type ||
+					t == TypeManager.short_type ||
+					t == TypeManager.ushort_type ||
+					t == TypeManager.int32_type ||
+					t == TypeManager.uint32_type ||
+					t == TypeManager.int64_type ||
+					t == TypeManager.uint64_type)
+				return t;
+			throw new Exception ("Unhandled typecode in enum " + " from " + t.AssemblyQualifiedName);
+		}
 		TypeCode tc = Type.GetTypeCode (t);
 
 		switch (tc){
@@ -1226,7 +1329,7 @@ public class TypeManager {
 		case TypeCode.UInt64:
 			return TypeManager.uint64_type;
 		}
-		throw new Exception ("Unhandled typecode in enum" + tc);
+		throw new Exception ("Unhandled typecode in enum " + tc + " from " + t.AssemblyQualifiedName);
 	}
 
 	//
@@ -1235,7 +1338,7 @@ public class TypeManager {
 	//
 	public static Type TypeToCoreType (Type t)
 	{
-		if (RootContext.StdLib)
+		if (RootContext.StdLib || (t is TypeBuilder))
 			return t;
 
 		TypeCode tc = Type.GetTypeCode (t);
@@ -1282,6 +1385,11 @@ public class TypeManager {
 			//
 			return true;
 		}
+
+		if (!RootContext.StdLib && (t == TypeManager.decimal_type))
+			// We need this explicit check here to make it work when
+			// compiling corlib.
+			return true;
 
 		Report.Error (
 			208, loc,

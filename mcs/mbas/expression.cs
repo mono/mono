@@ -537,7 +537,7 @@ namespace Mono.CSharp {
 		public Indirection (Expression expr)
 		{
 			this.expr = expr;
-			this.type = expr.Type.GetElementType ();
+			this.type = TypeManager.TypeToCoreType (expr.Type.GetElementType ());
 			eclass = ExprClass.Variable;
 		}
 
@@ -3767,7 +3767,7 @@ namespace Mono.CSharp {
 
 			array = ig.DeclareLocal (Type.GetType (array_type));
 			IntConstant.EmitInt (ig, count);
-			ig.Emit (OpCodes.Newarr, t);
+			ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
 			ig.Emit (OpCodes.Stloc, array);
 
 			int top = arguments.Count;
@@ -3790,7 +3790,7 @@ namespace Mono.CSharp {
 		///   The MethodBase argument might be null if the
 		///   emission of the arguments is known not to contain
 		///   a `params' field (for example in constructors or other routines
-		///   that keep their arguments in this structure
+		///   that keep their arguments in this structure)
 		/// </summary>
 		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments)
 		{
@@ -3861,6 +3861,25 @@ namespace Mono.CSharp {
 			bool struct_call = false;
 
 			Type decl_type = method.DeclaringType;
+
+			if (!RootContext.StdLib) {
+				// Replace any calls to the system's System.Array type with calls to
+				// the newly created one.
+				if (method == TypeManager.system_int_array_get_length)
+					method = TypeManager.int_array_get_length;
+				else if (method == TypeManager.system_int_array_get_rank)
+					method = TypeManager.int_array_get_rank;
+				else if (method == TypeManager.system_object_array_clone)
+					method = TypeManager.object_array_clone;
+				else if (method == TypeManager.system_int_array_get_length_int)
+					method = TypeManager.int_array_get_length_int;
+				else if (method == TypeManager.system_int_array_get_lower_bound_int)
+					method = TypeManager.int_array_get_lower_bound_int;
+				else if (method == TypeManager.system_int_array_get_upper_bound_int)
+					method = TypeManager.int_array_get_upper_bound_int;
+				else if (method == TypeManager.system_void_array_copyto_array_int)
+					method = TypeManager.void_array_copyto_array_int;
+			}
 
 			//
 			// This checks the `ConditionalAttribute' on the method, and the
@@ -4088,12 +4107,14 @@ namespace Mono.CSharp {
 								     Arguments, loc);
 				
 			}
-			
-			if (method == null && !is_struct) {
-				Error (1501, loc,
-				       "New invocation: Can not find a constructor for " +
-				       "this argument list");
-				return null;
+
+			if (method == null) { 
+                                if (!is_struct || Arguments.Count > 0) {
+        				Error (1501, loc,
+	        			       "New invocation: Can not find a constructor for " +
+		        		       "this argument list");
+			        	return null;
+                                }
 			}
 			return this;
 		}
@@ -4805,8 +4826,14 @@ namespace Mono.CSharp {
 
 		void EmitArrayArguments (EmitContext ec)
 		{
-			foreach (Argument a in arguments)
+			ILGenerator ig = ec.ig;
+			
+			foreach (Argument a in arguments) {
+				Type atype = a.Type;
 				a.Emit (ec);
+				if (atype == TypeManager.uint64_type || atype == TypeManager.int64_type)
+					ig.Emit (OpCodes.Conv_Ovf_U4);
+			}
 		}
 		
 		void DoEmit (EmitContext ec, bool is_statement)
@@ -4891,13 +4918,25 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldarg_0);
+			ILGenerator ig = ec.ig;
+			
+			ig.Emit (OpCodes.Ldarg_0);
+			if (ec.TypeContainer is Struct)
+				ig.Emit (OpCodes.Ldobj, type);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			source.Emit (ec);
-			ec.ig.Emit (OpCodes.Starg, 0);
+			ILGenerator ig = ec.ig;
+			
+			if (ec.TypeContainer is Struct){
+				ig.Emit (OpCodes.Ldarg_0);
+				source.Emit (ec);
+				ig.Emit (OpCodes.Stobj, type);
+			} else {
+				source.Emit (ec);
+				ig.Emit (OpCodes.Starg, 0);
+			}
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -5267,7 +5306,7 @@ namespace Mono.CSharp {
 		{
 			//
 			// We are the sole users of ResolveWithSimpleName (ie, the only
-			// ones that can cope with it
+			// ones that can cope with it)
 			//
 			Expression original = expr;
 			expr = expr.ResolveWithSimpleName (ec);
@@ -5637,7 +5676,7 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stelem_I);
 			else if (t.IsValueType)
-				ig.Emit (OpCodes.Stobj, t);
+				ig.Emit (OpCodes.Stobj, TypeManager.TypeToCoreType (t));
 			else
 				ig.Emit (OpCodes.Stelem_Ref);
 		}

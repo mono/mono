@@ -187,8 +187,25 @@ Options:
 			Options.AddAbout(' ',"about", "About the MonoBASIC compiler");
 			Options.AddBooleanSwitch('v',"verbose", "Verbose parsing (for debugging the parser)", new OptionFound(SetVerboseParsing) );
 			Options.AddSymbolAdder('m',"main", "Specifies CLASS as main (starting) class", "CLASS", new OptionFound(SetMainClass) );
-			MainDriver(args);	
-			return (error_count + Report.Errors) != 0 ? 1 : 0;
+
+			bool ok = MainDriver (args);
+			
+			if (ok && Report.Errors == 0) 
+			{
+				Console.Write("Compilation succeeded");
+				if (Report.Warnings > 0) 
+				{
+					Console.Write(" - {0} warning(s)", Report.Warnings);
+				} 
+				Console.WriteLine();
+				return 0;
+			} 
+			else 
+			{
+				Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
+					Report.Errors, Report.Warnings);
+				return 1;
+			}
 		}
 
 		static public int LoadAssembly (string assembly, bool soft)
@@ -326,7 +343,6 @@ Options:
 		static bool AddFiles (string spec, bool recurse)
 		{
 			string path, pattern;
-			int errors = 0;
 
 			SplitPathAndPattern (spec, out path, out pattern);
 			if (pattern.IndexOf ("*") == -1){
@@ -417,11 +433,11 @@ Options:
 		///    TODO: Mostly structured to debug the compiler
 		///    now, needs to be turned into a real driver soon.
 		/// </remarks>
-		static void MainDriver (string [] args)
+		static bool MainDriver (string [] args)
 		{
-			int errors = 0, i;
+			int errors = 0;//, i;
 			string output_file = null;
-			bool parsing_options = true;
+			//bool parsing_options = true;
 			
 			references = new ArrayList ();
 			soft_references = new ArrayList ();
@@ -437,242 +453,242 @@ Options:
 			link_paths.Add (GetSystemDir ());
 
 			if (!Options.ProcessArgs(args))
-				return;
+				return false;
 
-/*			int argc = args.Length;
-			for (i = 0; i < argc; i++){
-				string arg = args [i];
-				//
-				// Prepare to recurse
-				//
+			/*			int argc = args.Length;
+						for (i = 0; i < argc; i++){
+							string arg = args [i];
+							//
+							// Prepare to recurse
+							//
 				
-				if (parsing_options && (arg.StartsWith ("-"))){
-					switch (arg){
+							if (parsing_options && (arg.StartsWith ("-"))){
+								switch (arg){
 
-					case "--":
-						parsing_options = false;
-						continue;
+								case "--":
+									parsing_options = false;
+									continue;
 
-					case "--parse":
-						parse_only = true;
-						continue;
+								case "--parse":
+									parse_only = true;
+									continue;
 
-					case "--unsafe":
-						RootContext.Unsafe = true;
-						continue;
+								case "--unsafe":
+									RootContext.Unsafe = true;
+									continue;
 
-					case "/?": case "/h": case "/help":
-					case "--help":
-						Usage (false);
-						return;
+								case "/?": case "/h": case "/help":
+								case "--help":
+									Usage (false);
+									return false;
 
-					case "--define":
-						if ((i + 1) >= argc){
-							Usage (true);
-							return;
-						}
-						defines.Add (args [++i]);
-						continue;
+								case "--define":
+									if ((i + 1) >= argc){
+										Usage (true);
+										return false;
+									}
+									defines.Add (args [++i]);
+									continue;
 						
-					case "--probe": {
-						int code = 0;
+								case "--probe": {
+									int code = 0;
 
-						try {
-							code = Int32.Parse (
-								args [++i], NumberStyles.AllowLeadingSign);
-							Report.SetProbe (code);
-						} catch {
-							Report.Error (-14, "Invalid number specified");
-						} 
-						continue;
-					}
+									try {
+										code = Int32.Parse (
+											args [++i], NumberStyles.AllowLeadingSign);
+										Report.SetProbe (code);
+									} catch {
+										Report.Error (-14, "Invalid number specified");
+									} 
+									continue;
+								}
 
-					case "--tokenize": {
-						tokenize = true;
-						continue;
-					}
+								case "--tokenize": {
+									tokenize = true;
+									continue;
+								}
 					
-					case "-o": 
-					case "--output":
-						if ((i + 1) >= argc){
-							Usage (true);
-							return;
-						}
-						output_file = args [++i];
-						string bname = CodeGen.Basename (output_file);
-						if (bname.IndexOf (".") == -1)
-							output_file += ".exe";
-						continue;
+								case "-o": 
+								case "--output":
+									if ((i + 1) >= argc){
+										Usage (true);
+										return false;
+									}
+									output_file = args [++i];
+									string bname = CodeGen.Basename (output_file);
+									if (bname.IndexOf (".") == -1)
+										output_file += ".exe";
+									continue;
 
-					case "--checked":
-						RootContext.Checked = true;
-						continue;
+								case "--checked":
+									RootContext.Checked = true;
+									continue;
 
-					case "--stacktrace":
-						Report.Stacktrace = true;
-						continue;
+								case "--stacktrace":
+									Report.Stacktrace = true;
+									continue;
 
-					case "--target":
-						if ((i + 1) >= argc){
-							Usage (true);
-							return;
-						}
+								case "--target":
+									if ((i + 1) >= argc){
+										Usage (true);
+										return false;
+									}
 
-						string type = args [++i];
-						switch (type){
-						case "library":
-							target = Target.Library;
-							target_ext = ".dll";
-							break;
+									string type = args [++i];
+									switch (type){
+									case "library":
+										target = Target.Library;
+										target_ext = ".dll";
+										break;
 							
-						case "exe":
-							target = Target.Exe;
-							break;
+									case "exe":
+										target = Target.Exe;
+										break;
 							
-						case "winexe":
-							target = Target.WinExe;
-							break;
+									case "winexe":
+										target = Target.WinExe;
+										break;
 							
-						case "module":
-							target = Target.Module;
-							target_ext = ".dll";
-							break;
-						default:
-							Usage (true);
-							return;
-						}
-						continue;
+									case "module":
+										target = Target.Module;
+										target_ext = ".dll";
+										break;
+									default:
+										Usage (true);
+										return false;
+									}
+									continue;
 
-					case "-r":
-						if ((i + 1) >= argc){
-							Usage (true);
-							return;
-						}
+								case "-r":
+									if ((i + 1) >= argc){
+										Usage (true);
+										return false;
+									}
 						
-						references.Add(args [++i]);
-						continue;
+									references.Add(args [++i]);
+									continue;
 					
-					case "--resource":
-						if ((i + 1) >= argc)
-						{
-							Usage (true);
-							Console.WriteLine("Missing argument to --resource"); 
-							return;
-						}
+								case "--resource":
+									if ((i + 1) >= argc)
+									{
+										Usage (true);
+										Console.WriteLine("Missing argument to --resource"); 
+										return false;
+									}
 						
-						resources.Add(args [++i]);
-						continue;
+									resources.Add(args [++i]);
+									continue;
 					
 					
-					case "-L":
-						if ((i + 1) >= argc){
-							Usage (true);
-							return;
-						}
-						link_paths.Add (args [++i]);
-						continue;
+								case "-L":
+									if ((i + 1) >= argc){
+										Usage (true);
+										return false;
+									}
+									link_paths.Add (args [++i]);
+									continue;
 						
-					case "--nostdlib":
-						RootContext.StdLib = false;
-						continue;
+								case "--nostdlib":
+									RootContext.StdLib = false;
+									continue;
 						
-					case "--fatal":
-						Report.Fatal = true;
-						continue;
+								case "--fatal":
+									Report.Fatal = true;
+									continue;
 
-					case "--werror":
-						Report.WarningsAreErrors = true;
-						continue;
+								case "--werror":
+									Report.WarningsAreErrors = true;
+									continue;
 
-					case "--nowarn":
-						if ((i + 1) >= argc){
-							Usage (true);
-							return;
-						}
-						int warn;
+								case "--nowarn":
+									if ((i + 1) >= argc){
+										Usage (true);
+										return false;
+									}
+									int warn;
 						
-						try {
-							warn = Int32.Parse (args [++i]);
-						} catch {
-							Usage (true);
-							return;
-						}
-						Report.SetIgnoreWarning (warn);
-						continue;
+									try {
+										warn = Int32.Parse (args [++i]);
+									} catch {
+										Usage (true);
+										return false;
+									}
+									Report.SetIgnoreWarning (warn);
+									continue;
 
-					case "--wlevel":
-						if ((i + 1) >= argc){
-							Report.Error (
-								1900,
-								"--wlevel requires an value from 0 to 4");
-							error_count++;
-							return;
-						}
-						int level;
+								case "--wlevel":
+									if ((i + 1) >= argc){
+										Report.Error (
+											1900,
+											"--wlevel requires an value from 0 to 4");
+										error_count++;
+										return false;
+									}
+									int level;
 						
-						try {
-							level = Int32.Parse (args [++i]);
-						} catch {
-							Report.Error (
-								1900,
-								"--wlevel requires an value from 0 to 4");
-							return;
-						}
-						if (level < 0 || level > 4){
-							Report.Error (1900, "Warning level must be 0 to 4");
-							return;
-						} else
-							RootContext.WarningLevel = level;
-						continue;
+									try {
+										level = Int32.Parse (args [++i]);
+									} catch {
+										Report.Error (
+											1900,
+											"--wlevel requires an value from 0 to 4");
+										return false;
+									}
+									if (level < 0 || level > 4){
+										Report.Error (1900, "Warning level must be 0 to 4");
+										return false;
+									} else
+										RootContext.WarningLevel = level;
+									continue;
 						
-					case "--about":
-						About ();
-						return;
+								case "--about":
+									About ();
+									return false;
 
-					case "--recurse":
-						if ((i + 1) >= argc){
-							Console.WriteLine ("--recurse requires an argument");
-							error_count++;
-							return;
-						}
-						AddFiles (args [++i], true);
-						continue;
+								case "--recurse":
+									if ((i + 1) >= argc){
+										Console.WriteLine ("--recurse requires an argument");
+										error_count++;
+										return false;
+									}
+									AddFiles (args [++i], true);
+									continue;
 						
-					case "--timestamp":
-						timestamps = true;
-						last_time = DateTime.Now;
-						debug_arglist.Add("timestamp");
- 						continue;
+								case "--timestamp":
+									timestamps = true;
+									last_time = DateTime.Now;
+									debug_arglist.Add("timestamp");
+									continue;
 
-					case "--debug": case "-g":
-						want_debugging_support = true;
-						continue;
+								case "--debug": case "-g":
+									want_debugging_support = true;
+									continue;
 
-					case "--debug-args":
-						if ((i + 1) >= argc){
-							Console.WriteLine ("--debug-args requires an argument");
-							error_count++;
-							return;
+								case "--debug-args":
+									if ((i + 1) >= argc){
+										Console.WriteLine ("--debug-args requires an argument");
+										error_count++;
+										return false;
+									}
+									char[] sep = { ',' };
+									debug_arglist.AddRange (args [++i].Split (sep));
+									continue;
+
+								case "--noconfig":
+									load_default_config = false;
+									continue;
+
+								default:
+									Console.WriteLine ("Unknown option: " + arg);
+									errors++;
+									continue;
+								}
+							}
+
+							// Rafael: Does not compile them yet!!!
+							errors += AddFiles(arg, false); 
 						}
-						char[] sep = { ',' };
-						debug_arglist.AddRange (args [++i].Split (sep));
-						continue;
-
-					case "--noconfig":
-						load_default_config = false;
-						continue;
-
-					default:
-						Console.WriteLine ("Unknown option: " + arg);
-						errors++;
-						continue;
-					}
-				}
-
-				// Rafael: Does not compile them yet!!!
-				errors += AddFiles(arg, false); 
-			}
-*/
+			*/
 			//Rafael: Compile all source files!!!
 			foreach(string filename in source_files.Values)
 				errors += ProcessSourceFile(filename);
@@ -680,17 +696,17 @@ Options:
 			if (first_source == null)
 			{
 				Report.Error (2008, "No files to compile were specified");
-				return;
+				return false;
 			}
 
 			if (tokenize)
-				return;
+				return true;
 			
 			if (Report.Errors > 0)
-				return;
+				return false;
 			
 			if (parse_only)
-				return;
+				return true;
 			
 			//
 			// Load Core Library for default compilation
@@ -701,9 +717,10 @@ Options:
 			if (load_default_config)
 				DefineDefaultConfig ();
 
-			if (errors > 0){
+			if (errors > 0)
+			{
 				error ("Parsing failed");
-				return;
+				return false;
 			}
 
 			//
@@ -715,9 +732,10 @@ Options:
 			if (timestamps)
 				ShowTime ("   References loaded");
 			
-			if (errors > 0){
+			if (errors > 0)
+			{
 				error ("Could not load one or more assemblies");
-				return;
+				return false;
 			}
 
 			error_count = errors;
@@ -725,7 +743,8 @@ Options:
 			//
 			// Quick hack
 			//
-			if (output_file == null){
+			if (output_file == null)
+			{
 				int pos = first_source.LastIndexOf (".");
 
 				if (pos > 0)
@@ -747,10 +766,11 @@ Options:
 			//
 			if (timestamps)
 				ShowTime ("Initializing Core Types");
-			if (!RootContext.StdLib){
+			if (!RootContext.StdLib)
+			{
 				RootContext.ResolveCore ();
 				if (Report.Errors > 0)
-					return;
+					return false;
 			}
 			
 			TypeManager.InitCoreTypes ();
@@ -766,9 +786,10 @@ Options:
 			if (timestamps)
 				ShowTime ("Populate tree");
 
-			if (Report.Errors > 0){
+			if (Report.Errors > 0)
+			{
 				error ("Compilation failed");
-				return;
+				return false;
 			}
 
 			if (!RootContext.StdLib)
@@ -777,9 +798,10 @@ Options:
 			
 			TypeManager.InitCodeHelpers ();
 				
-			if (Report.Errors > 0){
+			if (Report.Errors > 0)
+			{
 				error ("Compilation failed");
-				return;
+				return false;
 			}
 			
 			//
@@ -791,9 +813,10 @@ Options:
 			if (timestamps)
 				ShowTime ("   done");
 
-			if (Report.Errors > 0){
+			if (Report.Errors > 0)
+			{
 				error ("Compilation failed");
-				return;
+				return false;
 			}
 
 			if (timestamps)
@@ -801,31 +824,32 @@ Options:
 			
 			RootContext.CloseTypes ();
 
-//			PEFileKinds k = PEFileKinds.ConsoleApplication;
-//				
-//			if (target == Target.Library || target == Target.Module)
-//				k = PEFileKinds.Dll;
-//			else if (target == Target.Exe)
-//				k = PEFileKinds.ConsoleApplication;
-//			else if (target == Target.WinExe)
-//				k = PEFileKinds.WindowApplication;
-//
-//			if (target == Target.Exe || target == Target.WinExe){
-//				MethodInfo ep = RootContext.EntryPoint;
-//
-//				if (ep == null){
-//					Report.Error (5001, "Program " + output_file +
-//							      " does not have an entry point defined");
-//					return;
-//				}
-//				
-//				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
-//			}
+			//			PEFileKinds k = PEFileKinds.ConsoleApplication;
+			//				
+			//			if (target == Target.Library || target == Target.Module)
+			//				k = PEFileKinds.Dll;
+			//			else if (target == Target.Exe)
+			//				k = PEFileKinds.ConsoleApplication;
+			//			else if (target == Target.WinExe)
+			//				k = PEFileKinds.WindowApplication;
+			//
+			//			if (target == Target.Exe || target == Target.WinExe){
+			//				MethodInfo ep = RootContext.EntryPoint;
+			//
+			//				if (ep == null){
+			//					Report.Error (5001, "Program " + output_file +
+			//							      " does not have an entry point defined");
+			//					return;
+			//				}
+			//				
+			//				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+			//			}
 
 			//
 			// Add the resources
 			//
-			if (resources != null){
+			if (resources != null)
+			{
 				foreach (string file in resources)
 					CodeGen.AssemblyBuilder.AddResourceFile (file, file);
 			}
@@ -834,19 +858,20 @@ Options:
 			if (timestamps)
 				ShowTime ("Saved output");
 
-			if (want_debugging_support) {
+			if (want_debugging_support) 
+			{
 				CodeGen.SaveSymbols ();
 				if (timestamps)
 					ShowTime ("Saved symbols");
 			}
 
-			if (Report.Errors > 0){
-				error ("Compilation failed");
-				return;
-			} else if (Report.ProbeCode != 0){
-				error ("Failed to report code " + Report.ProbeCode);
-				Environment.Exit (124);
+			if (Report.ExpectedError != 0)
+			{
+				Console.WriteLine("Failed to report expected error " + Report.ExpectedError);
+				Environment.Exit (1);
+				return false;
 			}
+			return (Report.Errors == 0);
 		}
 
 	}

@@ -45,12 +45,12 @@ namespace Mono.CSharp {
 		static public bool Stacktrace;
 		
 		//
-		// If the error code is reported on the given line,
-		// then the process exits with a unique error code.
+		// If the 'expected' error code is reported then the
+                // compilation succeeds.
 		//
 		// Used for the test suite to excercise the error codes
 		//
-		static int probe_error = 0;
+		static int expected_error = 0;
 
 		//
 		// Keeps track of the warnings that we are ignoring
@@ -59,11 +59,11 @@ namespace Mono.CSharp {
 		
 		static void Check (int code)
 		{
-			if (code == probe_error){
+			if (code == expected_error){
 				if (Fatal)
 					throw new Exception ();
 				
-				Environment.Exit (123);
+				Environment.Exit (0);
 			}
 		}
 		
@@ -147,16 +147,14 @@ namespace Mono.CSharp {
 			warning_ignore_table [code] = true;
 		}
 		
-		static public void SetProbe (int code)
-		{
-			probe_error = code;
-		}
-
-		static public int ProbeCode {
-			get {
-				return probe_error;
-			}
-		}
+                static public int ExpectedError {
+                        set {
+                                expected_error = value;
+                        }
+                        get {
+                                return expected_error;
+                        }
+                }
 	}
 
 	public class Message {
