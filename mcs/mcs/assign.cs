@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Martin Baulig (martin@gnome.org)
 //
 // (C) 2001, 2002 Ximian, Inc.
 //
@@ -104,14 +105,23 @@ namespace Mono.CSharp {
 	///   the expression represented by target. 
 	/// </summary>
 	public class Assign : ExpressionStatement {
-		protected Expression target, source;
+		protected Expression target, source, real_source;
+		protected LocalTemporary temp = null, real_temp = null;
+		protected Assign embedded = null;
+		protected bool is_embedded = false;
 		public Location l;
 
 		public Assign (Expression target, Expression source, Location l)
 		{
 			this.target = target;
-			this.source = source;
+			this.source = this.real_source = source;
 			this.l = l;
+		}
+
+		protected Assign (Assign embedded, Location l)
+			: this (embedded.target, embedded.source, l)
+		{
+			this.is_embedded = true;
 		}
 
 		public Expression Target {
@@ -146,19 +156,53 @@ namespace Mono.CSharp {
 		//
 		public override Expression DoResolve (EmitContext ec)
 		{
-			source = source.Resolve (ec);
+			// Create an embedded assignment if our source is an assignment.
+			if (source is Assign)
+				source = embedded = new Assign ((Assign) source, l);
+
+			real_source = source = source.Resolve (ec);
 			if (source == null)
 				return null;
 
+			//
+			// This is used in an embedded assignment.
+			// As an example, consider the statement "A = X = Y = Z".
+			//
+			if (is_embedded) {
+				// If this is the innermost assignment (the "Y = Z" in our example),
+				// create a new temporary local, otherwise inherit that variable
+				// from our child (the "X = (Y = Z)" inherits the local from the
+				// "Y = Z" assignment).
+				if (embedded == null)
+					real_temp = temp = new LocalTemporary (ec, source.Type);
+				else
+					real_temp = temp = embedded.temp;
+
+				// Set the source to the new temporary variable.
+				// This means that the following target.ResolveLValue () will tell
+				// the target to read it's source value from that variable.
+				source = temp;
+			}
+
+			// If we have an embedded assignment, use the embedded assignment's temporary
+			// local variable as source.
+			if (embedded != null)
+				source = embedded.temp;
+
 			target = target.ResolveLValue (ec, source);
-			
+
 			if (target == null)
 				return null;
 
 			Type target_type = target.Type;
-			Type source_type = source.Type;
+			Type source_type = real_source.Type;
 
-			type = target_type;
+			// If we're an embedded assignment, our parent will reuse our source as its
+			// source, it won't read from our target.
+			if (is_embedded)
+				type = source_type;
+			else
+				type = target_type;
 			eclass = ExprClass.Value;
 
 			//
@@ -180,12 +224,13 @@ namespace Mono.CSharp {
 				//
 				if (!property_assign.VerifyAssignable ())
 					return null;
-				
+
 				return this;
 			}
 
-			if (target is IndexerAccess)
+			if (target is IndexerAccess) {
 				return this;
+			}
 
 			if (target is EventExpr) {
 
@@ -278,7 +323,52 @@ namespace Mono.CSharp {
 			if (source == null)
 				return null;
 
+			// If we're an embedded assignment, we need to create a new temporary variable
+			// for the converted value.  Our parent will use this new variable as its source.
+			// The same applies when we have an embedded assignment - in this case, we need
+			// to convert our embedded assignment's temporary local variable to the correct
+			// type and store it in a new temporary local.
+			if (is_embedded || embedded != null) {
+				type = target_type;
+				temp = new LocalTemporary (ec, type);
+			}
+			
 			return this;
+		}
+
+		LocalTemporary EmitEmbedded (EmitContext ec)
+		{
+			// Emit an embedded assignment.
+			
+			if (embedded == null) {
+				// If we're the innermost assignment, `real_source' is the right-hand
+				// expression which gets assigned to all the variables left of it.
+				// Emit this expression and store its result in real_temp.
+				real_source.Emit (ec);
+				real_temp.Store (ec);
+			} else
+				embedded.EmitEmbedded (ec);
+
+			// This happens when we've done a type conversion, in this case source will be
+			// the expression which does the type conversion from real_temp.
+			// So emit it and store the result in temp; this is the var which will be read
+			// by our parent.
+			if (temp != real_temp) {
+				source.Emit (ec);
+				temp.Store (ec);
+			}
+			((IAssignMethod) target).EmitAssign (ec, temp);
+			return temp;
+		}
+
+		void ReleaseEmbedded (EmitContext ec)
+		{
+			if (embedded != null)
+				embedded.ReleaseEmbedded (ec);
+
+			if (real_temp != temp)
+				real_temp.Release (ec);
+			temp.Release (ec);
 		}
 
 		void Emit (EmitContext ec, bool is_statement)
@@ -297,19 +387,37 @@ namespace Mono.CSharp {
 			if (this is CompoundAssign){
 				am.CacheTemporaries (ec);
 			}
-			
+
+			Expression temp_source;
+			if (embedded != null) {
+				temp_source = embedded.EmitEmbedded (ec);
+
+				if (temp != null) {
+					source.Emit (ec);
+					temp.Store (ec);
+					temp_source = temp;
+				}
+			} else
+				temp_source = source;
+
 			if (is_statement)
-				am.EmitAssign (ec, source);
+				am.EmitAssign (ec, temp_source);
 			else {
 				LocalTemporary tempo;
-				
+
 				tempo = new LocalTemporary (ec, source.Type);
-				
-				source.Emit (ec);
+
+				temp_source.Emit (ec);
 				tempo.Store (ec);
 				am.EmitAssign (ec, tempo);
 				tempo.Emit (ec);
 				tempo.Release (ec);
+			}
+
+			if (embedded != null) {
+				if (temp != null)
+					temp.Release (ec);
+				embedded.ReleaseEmbedded (ec);
 			}
 		}
 		

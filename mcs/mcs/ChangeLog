@@ -1,3 +1,10 @@
+2002-07-21  Martin Baulig  <martin@gnome.org>
+
+	* assign.cs: Improved the Assign class so it can now handle embedded
+	assignments (X = Y = Z = something).  As a side-effect this'll now also
+	consume less local variables.  test-38.cs now passes with MCS, added
+	a few new test cases to that test.
+
 2002-07-20  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (Binary.EmitBranchable): Emit correct unsigned branch
