@@ -1,4 +1,8 @@
 
+2003-05-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* marshal.c: revert last patch.
+
 Mon May 26 20:21:52 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: updates for new mono_class_vtable() not calling
