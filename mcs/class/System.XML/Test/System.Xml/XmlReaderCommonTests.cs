@@ -259,6 +259,8 @@ namespace MonoTests.System.Xml
 			Assertion.AssertEquals ("initial.ReadState", ReadState.Interactive, reader.ReadState);
 			Assertion.AssertEquals ("initial.EOF", false, reader.EOF);
 			Assertion.AssertEquals ("initial.NodeType", XmlNodeType.Element, reader.NodeType);
+			string s = reader.ReadInnerXml ();
+			Assertion.AssertEquals ("read_all", "test of <b>mixed</b> string.", s);
 		}
 
 
@@ -883,6 +885,527 @@ namespace MonoTests.System.Xml
 			);
 
 			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void PredefinedEntitiesInAttribute ()
+		{
+			string xml = "<foo bar='&lt;&gt;&amp;&apos;&quot;'/>";
+			RunTest (xml, new TestMethod (PredefinedEntitiesInAttribute ));
+		}
+
+		public void PredefinedEntitiesInAttribute (XmlReader xmlReader)
+		{
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
+				"<>&'\"" // value
+			);
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void CharacterReferencesInAttribute ()
+		{
+			string xml = "<foo bar='&#70;&#x4F;&#x4f;'/>";
+			RunTest (xml, new TestMethod (CharacterReferencesInAttribute));
+		}
+
+		public void CharacterReferencesInAttribute (XmlReader xmlReader)
+		{
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
+				"FOO" // value
+			);
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void CDATA ()
+		{
+			string xml = "<foo><![CDATA[<>&]]></foo>";
+			RunTest (xml, new TestMethod (CDATA));
+		}
+
+		public void CDATA (XmlReader xmlReader)
+		{
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.CDATA, // nodeType
+				1, //depth
+				false, // isEmptyElement
+				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
+				String.Empty, // namespaceURI
+				"<>&", // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EndElement, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void EmptyElementInDefaultNamespace ()
+		{
+			string xml = @"<foo xmlns='http://foo/' />";
+			RunTest (xml, new TestMethod (EmptyElementInDefaultNamespace));
+		}
+
+		public void EmptyElementInDefaultNamespace (XmlReader xmlReader)
+		{
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, // depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				"http://foo/", // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"xmlns", // name
+				String.Empty, // prefix
+				"xmlns", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://foo/" // value
+			);
+
+			Assertion.AssertEquals ("http://foo/", xmlReader.LookupNamespace (String.Empty));
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void ChildElementInNamespace ()
+		{
+			string xml = @"<foo:bar xmlns:foo='http://foo/'><baz:quux xmlns:baz='http://baz/' /></foo:bar>";
+			RunTest (xml, new TestMethod (ChildElementInNamespace));
+		}
+
+		public void ChildElementInNamespace (XmlReader xmlReader)
+		{
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, // depth
+				false, // isEmptyElement
+				"foo:bar", // name
+				"foo", // prefix
+				"bar", // localName
+				"http://foo/", // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"xmlns:foo", // name
+				"xmlns", // prefix
+				"foo", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://foo/" // value
+			);
+
+			Assertion.AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				1, // depth
+				true, // isEmptyElement
+				"baz:quux", // name
+				"baz", // prefix
+				"quux", // localName
+				"http://baz/", // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"xmlns:baz", // name
+				"xmlns", // prefix
+				"baz", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://baz/" // value
+			);
+
+			Assertion.AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assertion.AssertEquals ("http://baz/", xmlReader.LookupNamespace ("baz"));
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EndElement, // nodeType
+				0, // depth
+				false, // isEmptyElement
+				"foo:bar", // name
+				"foo", // prefix
+				"bar", // localName
+				"http://foo/", // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			Assertion.AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assertion.AssertNull (xmlReader.LookupNamespace ("baz"));
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void ChildElementInDefaultNamespace ()
+		{
+			string xml = @"<foo:bar xmlns:foo='http://foo/'><baz xmlns='http://baz/' /></foo:bar>";
+			RunTest (xml, new TestMethod (ChildElementInDefaultNamespace));
+		}
+
+		public void ChildElementInDefaultNamespace (XmlReader xmlReader)
+		{
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, // depth
+				false, // isEmptyElement
+				"foo:bar", // name
+				"foo", // prefix
+				"bar", // localName
+				"http://foo/", // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"xmlns:foo", // name
+				"xmlns", // prefix
+				"foo", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://foo/" // value
+			);
+
+			Assertion.AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				1, // depth
+				true, // isEmptyElement
+				"baz", // name
+				String.Empty, // prefix
+				"baz", // localName
+				"http://baz/", // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"xmlns", // name
+				String.Empty, // prefix
+				"xmlns", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://baz/" // value
+			);
+
+			Assertion.AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assertion.AssertEquals ("http://baz/", xmlReader.LookupNamespace (String.Empty));
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EndElement, // nodeType
+				0, // depth
+				false, // isEmptyElement
+				"foo:bar", // name
+				"foo", // prefix
+				"bar", // localName
+				"http://foo/", // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			Assertion.AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void AttributeInNamespace ()
+		{
+			string xml = @"<foo bar:baz='quux' xmlns:bar='http://bar/' />";
+			RunTest (xml, new TestMethod (AttributeInNamespace));
+		}
+
+		public void AttributeInNamespace (XmlReader xmlReader)
+		{
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, // depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				2 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"bar:baz", // name
+				"bar", // prefix
+				"baz", // localName
+				"http://bar/", // namespaceURI
+				"quux" // value
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"xmlns:bar", // name
+				"xmlns", // prefix
+				"bar", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://bar/" // value
+			);
+
+			Assertion.AssertEquals ("http://bar/", xmlReader.LookupNamespace ("bar"));
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void MoveToElementFromAttribute ()
+		{
+			string xml = @"<foo bar=""baz"" />";
+			RunTest (xml, new TestMethod (MoveToElementFromAttribute));
+		}
+
+		public void MoveToElementFromAttribute (XmlReader xmlReader)
+		{
+			Assertion.Assert (xmlReader.Read ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assertion.Assert (xmlReader.MoveToFirstAttribute ());
+			Assertion.AssertEquals (XmlNodeType.Attribute, xmlReader.NodeType);
+			Assertion.Assert (xmlReader.MoveToElement ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+		}
+
+		[Test]
+		public void MoveToElementFromElement ()
+		{
+			string xml = @"<foo bar=""baz"" />";
+			RunTest (xml, new TestMethod (MoveToElementFromElement));
+		}
+
+		public void MoveToElementFromElement (XmlReader xmlReader)
+		{
+			Assertion.Assert (xmlReader.Read ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assertion.Assert (!xmlReader.MoveToElement ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+		}
+
+		[Test]
+		public void MoveToFirstAttributeWithNoAttributes ()
+		{
+			string xml = @"<foo />";
+			RunTest (xml, new TestMethod (MoveToFirstAttributeWithNoAttributes));
+		}
+
+		public void MoveToFirstAttributeWithNoAttributes (XmlReader xmlReader)
+		{
+			Assertion.Assert (xmlReader.Read ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assertion.Assert (!xmlReader.MoveToFirstAttribute ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+		}
+
+		[Test]
+		public void MoveToNextAttributeWithNoAttributes ()
+		{
+			string xml = @"<foo />";
+			RunTest (xml, new TestMethod (MoveToNextAttributeWithNoAttributes));
+		}
+
+		public void MoveToNextAttributeWithNoAttributes (XmlReader xmlReader)
+		{
+			Assertion.Assert (xmlReader.Read ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assertion.Assert (!xmlReader.MoveToNextAttribute ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+		}
+
+		[Test]
+		public void MoveToNextAttribute()
+		{
+			string xml = @"<foo bar=""baz"" quux='quuux'/>";
+			RunTest (xml, new TestMethod (MoveToNextAttribute));
+		}
+
+		public void MoveToNextAttribute (XmlReader xmlReader)
+		{
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				2 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
+				"baz" // value
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"quux", // name
+				String.Empty, // prefix
+				"quux", // localName
+				String.Empty, // namespaceURI
+				"quuux" // value
+			);
+
+			Assertion.Assert (xmlReader.MoveToNextAttribute ());
+			Assertion.Assert ("bar" == xmlReader.Name || "quux" == xmlReader.Name);
+			Assertion.Assert ("baz" == xmlReader.Value || "quuux" == xmlReader.Value);
+
+			Assertion.Assert (xmlReader.MoveToNextAttribute ());
+			Assertion.Assert ("bar" == xmlReader.Name || "quux" == xmlReader.Name);
+			Assertion.Assert ("baz" == xmlReader.Value || "quuux" == xmlReader.Value);
+
+			Assertion.Assert (!xmlReader.MoveToNextAttribute ());
+
+			Assertion.Assert (xmlReader.MoveToElement ());
+
+			AssertNodeValues (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				2 // attributeCount
+			);
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void AttributeOrder ()
+		{
+			string xml = @"<foo _1='1' _2='2' _3='3' />";
+			RunTest (xml, new TestMethod (AttributeOrder));
+		}
+
+		public void AttributeOrder (XmlReader xmlReader)
+		{
+			Assertion.Assert (xmlReader.Read ());
+			Assertion.AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+
+			Assertion.Assert (xmlReader.MoveToFirstAttribute ());
+			Assertion.AssertEquals ("_1", xmlReader.Name);
+			Assertion.Assert (xmlReader.MoveToNextAttribute ());
+			Assertion.AssertEquals ("_2", xmlReader.Name);
+			Assertion.Assert (xmlReader.MoveToNextAttribute ());
+			Assertion.AssertEquals ("_3", xmlReader.Name);
+
+			Assertion.Assert (!xmlReader.MoveToNextAttribute ());
 		}
 
 	}

@@ -1,3 +1,8 @@
+2003-04-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlReaderCommonTests.cs,
+	  XmlTextReaderTests.cs : Moved many tests to CommonTests.
+
 2003-04-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlWriterTests.cs : added some WriteNode() related testcases.
