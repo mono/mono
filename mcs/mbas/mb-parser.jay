@@ -2216,38 +2216,40 @@ opt_formal_parameter_list
 	;
 	
 formal_parameter_list
-	: fixed_parameters		
+	: parameters		
 	  { 
 		ArrayList pars_list = (ArrayList) $1;
-
-		Parameter [] pars = new Parameter [pars_list.Count];
-		pars_list.CopyTo (pars);
-	  	$$ = new Parameters (pars, null, lexer.Location); 
+		Parameter [] pars = null; 
+		Parameter array_parameter = null;
+		int non_array_count = pars_list.Count;
+		if (pars_list.Count > 0 && (((Parameter) pars_list [pars_list.Count - 1]).ModFlags & Parameter.Modifier.PARAMS) != 0) {
+			array_parameter = (Parameter) pars_list [pars_list.Count - 1];
+			non_array_count = pars_list.Count - 1;
+		}
+		foreach (Parameter par in pars_list)
+			if (par != array_parameter && (par.ModFlags & Parameter.Modifier.PARAMS) != 0) {
+		  		Report.Error (30192, lexer.Location, "ParamArray parameters must be last");
+			  	non_array_count = 0; 
+				array_parameter = null;
+				break;
+			}
+		if (non_array_count > 0) {
+			pars = new Parameter [non_array_count];
+			pars_list.CopyTo (pars);
+		}
+	  	$$ = new Parameters (pars, array_parameter, lexer.Location); 
 	  } 
-	| fixed_parameters COMMA parameter_array
-	  {
-		ArrayList pars_list = (ArrayList) $1;
-
-		Parameter [] pars = new Parameter [pars_list.Count];
-		pars_list.CopyTo (pars);
-
-		$$ = new Parameters (pars, (Parameter) $3, lexer.Location); 
-	  }
-	| parameter_array 
-	  {
-		$$ = new Parameters (null, (Parameter) $1, lexer.Location);
-	  }
 	;
 
-fixed_parameters
-	: fixed_parameter	
+parameters
+	: parameter	
 	  {
 		ArrayList pars = new ArrayList ();
 
 		pars.Add ($1);
 		$$ = pars;
 	  }
-	| fixed_parameters COMMA fixed_parameter
+	| parameters COMMA parameter
 	  {
 		ArrayList pars = (ArrayList) $1;
 
@@ -2256,7 +2258,7 @@ fixed_parameters
 	  }
 	;
 
-fixed_parameter
+parameter
 	: opt_attributes
 	  opt_parameter_modifier
 	  identifier opt_type_character opt_rank_specifiers opt_type_with_ranks opt_variable_initializer
@@ -2266,7 +2268,12 @@ fixed_parameter
 	  	Expression ptype;
 	  	
 	  	if (opt_parm && ($7 == null))
-	  		Report.Error (30812, "Optional parameters must have a default value");
+	  		Report.Error (30812, lexer.Location, "Optional parameters must have a default value");
+
+	  	if ((pm & Parameter.Modifier.PARAMS) != 0) {
+		  	if ((pm & ~Parameter.Modifier.PARAMS) != 0)
+	  			Report.Error (30667, lexer.Location, "ParamArray parameters must be ByVal");
+		}
 	  	
 	  	if (opt_parm) {
 	  		if ((pm & Parameter.Modifier.REF) !=0)
@@ -2280,35 +2287,17 @@ fixed_parameter
 
 		ptype = (Expression)(($6 == null) ? (($4 == null) ? TypeManager.system_object_expr : $4) : $6);
 		if ($5 != null)	{
-	  		string t = ptype.ToString();
+	  		string t = ptype.ToString ();
 	  		if (t.IndexOf('[') >= 0)
 				Report.Error (31087, lexer.Location, "Array types specified in too many places");
 			else	
 	  			ptype = DecomposeQI (t + VariableDeclaration.BuildRanks ((ArrayList) $5, true, lexer.Location), lexer.Location);
-	  	}			
+	  	}
+		if ((pm & Parameter.Modifier.PARAMS) != 0 && ptype.ToString ().IndexOf('[') < 0)
+	  		Report.Error (30050, lexer.Location, "ParamArray parameters must be an array type");
 		$$ = new Parameter (ptype, (string) $3, pm,
 					(Attributes) $1, (Expression) $7, opt_parm);
 	  }
-	;
-	
-parameter_array
-	: PARAM_ARRAY identifier opt_parens AS type 
-	  { 
-	  	string s_patype = ((Expression) $5).ToString();
-	  	if ((bool) $3)
-	  		s_patype += "[]";
-	  		
-	  	Expression patype = DecomposeQI (s_patype, Location.Null);
-		$$ = new Parameter (patype, (string) $2, Parameter.Modifier.PARAMS, null);
-		// note  ("type must be a single-dimension array type"); 
-	  }
-	;
-		
-opt_parens
-	: /* empty */
-	  {	$$ = false;	}
-	| OPEN_PARENS CLOSE_PARENS
-	  {	$$ = true;	}
 	;
 	
 opt_parameter_modifier
@@ -2325,6 +2314,7 @@ parameter_modifier
 	: BYREF			{ $$ = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF; }
 	| BYVAL			{ $$ = Parameter.Modifier.VAL; }
 	| OPTIONAL		{ $$ = Parameter.Modifier.OPTIONAL; } 
+	| PARAM_ARRAY		{ $$ = Parameter.Modifier.PARAMS; } 
 	;	
 
 opt_statement_list

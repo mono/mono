@@ -1,3 +1,6 @@
+2004-08-26 Bernie Solomon <bernard@ugsolutions.com>
+	* mb-parser.jay: rework parsing of ParamArray parameters
+
 2004-08-23 Bernie Solomon <bernard@ugsolutions.com>
 	* mb-parser.jay: cope with more varieties of array declarations
 
