@@ -1,4 +1,11 @@
 
+Wed Jul 30 17:52:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, cpu-sparc.md, exceptions-sparc.c, mini-sparc.c,
+	mini-sparc.h, tramp-sparc.c: Beginning of sparc support
+	from Mark Crichton <crichton@gimp.org> and Christopher Taylor
+	(ct@gentoo.org).
+
 Tue Jul 29 12:43:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: more opcodes implemented and better support for generics.
