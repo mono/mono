@@ -1,5 +1,15 @@
 2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c 
+	(reflection_methodbuilder_from_method_builder):
+	(reflection_methodbuilder_from_ctor_builder): New helper functions to 
+	initialize a ReflectionMethodBuilder structure.
+	(mono_image_get_methodbuilder_token):
+	(mono_image_get_ctorbuilder_token): New functions to emit memberref
+	tokens which point to types in another module inside the same assembly.
+
+	* reflection.c: Use the new helper functions.
+	
 	* reflection.c (mono_image_basic_init): Initialize basedir and culture.
 
 	* icall.c loader.c reflection.c: Use ModuleBuilder->dynamic_image 
