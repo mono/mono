@@ -1,3 +1,4 @@
+// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // StringBuilderTest.dll - NUnit Test Cases for the System.Text.StringBuilder class
 // 
@@ -144,6 +145,15 @@ namespace MonoTests.System.Text {
 		AssertEquals( expected, sb.ToString());
 	}
 
+	public void TestConstructor11 () {
+		try {
+			new StringBuilder (-1);
+			Fail ("capacity can be negative");
+		}
+		catch (ArgumentException ex) {
+		}
+	}
+		
 	public void TestAppend() {
                 StringBuilder sb = new StringBuilder( "Foo" );
                 sb.Append( "Two" );
