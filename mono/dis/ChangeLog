@@ -1,3 +1,7 @@
+2001-07-31  Dietmar Maurer  <dietmar@ximian.com>
+
+	* main.c (pinvoke_flags): impl.
+
 Mon Jul 30 20:08:37 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c, dis-cil.h, main.c: changes to disassemble also
