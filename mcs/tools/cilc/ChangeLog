@@ -1,6 +1,6 @@
 2004-12-06  Alp Toker  <alp@atoker.com>
 
-	* cilc.cs: Update to new embedding API: use mono_class_from_name()
+	* cilc.cs: Update to new embedding API: use mono_assembly_get_image()
 
 2004-06-09  Raja R Harinath  <rharinath@novell.com>
 
