@@ -1,5 +1,10 @@
 2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs : no, it was very easy. But to avoid
+	  state-changeful property, it is now bool Emptiable().
+
+2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngValidatingReader.cs : reverted IsEmptiable. It was not ready.
 
 2004-12-05  Atsushi Enomoto <atsushi@ximian.com>

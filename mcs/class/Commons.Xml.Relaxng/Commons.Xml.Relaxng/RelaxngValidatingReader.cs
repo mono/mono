@@ -85,6 +85,12 @@ namespace Commons.Xml.Relaxng
 			vState.GetLabels (elements, attributes);
 		}
 
+		public bool Emptiable ()
+		{
+			PrepareState ();
+			return !(vState.EndTagDeriv () is RdpNotAllowed);
+		}
+
 		private RelaxngException createValidationError (string message)
 		{
 			IXmlLineInfo li = reader as IXmlLineInfo;
