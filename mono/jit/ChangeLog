@@ -1,3 +1,7 @@
+2003-01-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: removed duplicated CONV_OVF_I4
+
 2003-01-17  Martin Baulig  <martin@ximian.com>
 
 	* debug.c: Don't use mono_once here.  Reworked the API a bit to
