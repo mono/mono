@@ -1,3 +1,29 @@
+2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* string-icalls.c : String does now passes unit tests without any 
+	errors, the following changes has been made:
+	
+	Implemented replace methods.
+	Renaming of methods to (try) follow the standard.
+	Fixed compare ordinal
+	Made all memory allocated directly to function instead of via icall function.
+	Small performance fix in is_in_array function
+			
+ (2002-04-23) Changes from Duncan Mak <duncan@ximian.com>
+
+	c (mono_string_Internal_ctor_charp_int_int):
+	(mono_string_Internal_ctor_sbytep_int_int):  Removed check for
+	sindex < 0, throw ArgumentOutOfRangeException instead of
+	ArgumentNullException.
+
+	Added new check for length == 0, however
+	I need to make it return String.Empty from the C code.
+	
+	(mono_string_Internal_ctor_sbytep): Use mono_string_new, and let
+	that calculate the length for us here.
+	
+	(mono_string_Internal_ctor_sbytep_int_int): Replaced
+	mono_string_new_utf16 with mono_string_new, since value is utf8.
 
 Wed Apr 24 18:43:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
