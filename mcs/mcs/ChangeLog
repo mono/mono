@@ -24,6 +24,8 @@
 	(Interface.FindMembers): Added support for interface events.
 	(Interface.PopluateEvent): Implemented.
 
+	Added test-149.cs for this.  This also fixes bugs #26067 and #24256.
+
 2002-07-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer.AddMethod): Adding methods do not use IsValid,
