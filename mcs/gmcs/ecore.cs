@@ -1024,7 +1024,7 @@ namespace Mono.CSharp {
 				}
 
 				s = v.ToString ();
-			} else if (c is	UIntConstant){
+			} else if (c is UIntConstant){
 				uint v = ((UIntConstant) c).Value;
 
 				if (target_type == TypeManager.int32_type){
@@ -1050,7 +1050,7 @@ namespace Mono.CSharp {
 			        else if (target_type == TypeManager.uint64_type)
 					return (ulong) v;
 				s = v.ToString ();
-			} else if (c is	LongConstant){ 
+			} else if (c is LongConstant){ 
 				long v = ((LongConstant) c).Value;
 
 				if (target_type == TypeManager.int32_type){
@@ -1079,7 +1079,7 @@ namespace Mono.CSharp {
 						return (ulong) v;
 				}
 				s = v.ToString ();
-			} else if (c is	ULongConstant){
+			} else if (c is ULongConstant){
 				ulong v = ((ULongConstant) c).Value;
 
 				if (target_type == TypeManager.int32_type){

@@ -1,3 +1,27 @@
+2005-01-06  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.ResolveType): Remove.
+	(DeclSpace.ResolveBaseTypeExpr): Rename from ResolveTypeExpr.
+	Merge in code from ...
+	(DeclSpace.GetTypeResolvingEmitContext): ... here.  Remove.
+	* class.cs, enum.cs: Update to changes.
+
+2005-01-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* anonymous.cs: Ensure that we init the scope of our parent if it
+	has not been initialized yet.
+
+2004-12-30  Duncan Mak  <duncan@ximian.com>
+
+	* typemanager.cs (TypeManager.CheckStructCycles): Don't crash here
+	if field.FieldBuilder is null. Fixes #70758.
+
+	* convert.cs: Fixed some typos and updated some of the comments.
+	(ImplicitStandardConversionExists):
+	(TryImplicitIntConversion): If `target_type' is an interface and
+	the type of `ic' implements this interface, return true or a new
+	BoxedCast instead of null. This fixes #70468.
+
 2004-12-29  Duncan Mak  <duncan@ximian.com>
 
 	* expression.cs (Argument.Emit): Check that Expr is

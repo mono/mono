@@ -225,11 +225,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeExpr texpr = ResolveTypeExpr (BaseType, Location);
-			if (texpr == null)
+			TypeExpr ute = ResolveBaseTypeExpr (BaseType, false, Location);
+			if (ute == null)
 				return null;
 
-			UnderlyingType = texpr.Type;
+			UnderlyingType = ute.Type;
 
 			if (UnderlyingType != TypeManager.int32_type &&
 			    UnderlyingType != TypeManager.uint32_type &&

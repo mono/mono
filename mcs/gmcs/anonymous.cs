@@ -599,6 +599,9 @@ namespace Mono.CSharp {
 			}
 			
 			if (ParentScope != null){
+				if (!ParentScope.inited)
+					ParentScope.EmitInitScope (ec);
+				
 				//
 				// Only emit initialization in our capturecontext world
 				//

@@ -2081,7 +2081,7 @@ public partial class TypeManager {
 			return true;
 
 		foreach (Field field in tc.Fields) {
-			if (field.FieldBuilder.IsStatic)
+			if (field.FieldBuilder == null || field.FieldBuilder.IsStatic)
 				continue;
 
 			Type ftype = field.FieldBuilder.FieldType;
