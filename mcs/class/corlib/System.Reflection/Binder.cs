@@ -202,7 +202,7 @@ namespace System.Reflection
 					if (to == typeof (object) && from.IsValueType)
 						return true;
 
-					return to.IsAssignableFrom (from)
+					return to.IsAssignableFrom (from);
 				}
 			}
 
