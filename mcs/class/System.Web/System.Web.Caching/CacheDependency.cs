@@ -95,7 +95,7 @@ namespace System.Web.Caching
 			}
 
 			this.filenames = filenames;
-			
+
 			if (cachekeys == null)
 				cachekeys = noStrings;
 
@@ -114,15 +114,24 @@ namespace System.Web.Caching
 
 			int nentries = cachekeys.Length + ((dependency.entries == null) ? 0 :
 								  dependency.entries.Length);
+
 			if (nentries != 0) {
 				this.removedDelegate = new CacheItemRemovedCallback (CacheItemRemoved);
 				this.entries = new CacheEntry [nentries];
+				
+				int i = 0;
 				if (dependency.entries != null) {
-					int i = 0;
 					foreach (CacheEntry entry in dependency.entries) {
 						entry._onRemoved += removedDelegate;
-						i++;
+						entries [i++] = entry;
 					}
+				}
+
+				Cache cache = HttpRuntime.Cache;
+				for (int c=0; c<cachekeys.Length; c++) {
+					CacheEntry entry = cache.GetEntry (cachekeys [c]);
+					entry._onRemoved += removedDelegate;
+					entries [i++] = entry;
 				}
 			}
 
