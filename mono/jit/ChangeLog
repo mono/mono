@@ -1,3 +1,7 @@
+2003-03-07  Martin Baulig  <martin@ximian.com>
+
+	* debug-jit.c: #include <config.h>.
+
 2003-03-05  Martin Baulig  <martin@ximian.com>
 
 	* debug-jit.c, debug-jit.h: New files.  Moved all JIT-specific
