@@ -1,3 +1,7 @@
+2003-06-25  Nick Drochak <ndrochak@gol.com>
+
+	* ByteTest.cs: Culture settings can affect where it puts the '%'.
+
 2003-06-23  Nick Drochak <ndrochak@gol.com>
 
 	* ConvertTest.cs: Ignore and report bug in bugzilla #45286.

@@ -13,7 +13,8 @@ using System.Threading;
 namespace MonoTests.System
 {
 
-public class ByteTest : TestCase
+[TestFixture]
+public class ByteTest : Assertion
 {
 	private const Byte MyByte1 = 42;
 	private const Byte MyByte2 = 0;
@@ -40,8 +41,12 @@ public class ByteTest : TestCase
 	
 	public ByteTest() {}
 
-	protected override void SetUp() 
+	[SetUp]
+	public void SetUp() 
 	{
+                CultureInfo EnUs = new CultureInfo ("en-us", false);
+                Thread.CurrentThread.CurrentCulture = EnUs;
+
 		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
 		string sep = NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator;
 		string csym = NumberFormatInfo.CurrentInfo.CurrencySymbol;
@@ -75,9 +80,6 @@ public class ByteTest : TestCase
 		Results2[5] = "255" + sep + "00000";
 		string gsep = NumberFormatInfo.CurrentInfo.NumberGroupSeparator;
 		Results2[6] = "25" + gsep + "500" + sep + "00000 %";
-	}
-
-        protected override void TearDown () {
 	}
 
 	public void TestMinMax()
