@@ -29,16 +29,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
-using System.Security.Permissions;
-using System.Security;
+using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Security {
 
 	[Serializable]
 	public class PermissionSet: ISecurityEncodable, ICollection, IEnumerable, IStackWalk, IDeserializationCallback {
+
+		private static string tagName = "PermissionSet";
+		private const int version = 1;
 
 		private PermissionState state;
 		private ArrayList list;
@@ -80,9 +83,24 @@ namespace System.Security {
 			if (perm == null)
 				return null;
 
-			IPermission existing = GetPermission (perm.GetType ());
-			if (existing != null)
+			// we don't add to an unrestricted permission set unless...
+			if (state == PermissionState.Unrestricted) {
+				// we're adding identity permission as they don't support unrestricted
+				if (perm is IUnrestrictedPermission) {
+					// we return the union of the permission with unrestricted
+					// which results in a permission of the same type initialized 
+					// with PermissionState.Unrestricted
+					object[] args = new object [1] { PermissionState.Unrestricted };
+					return (IPermission) Activator.CreateInstance (perm.GetType (), args);
+				}
+			}
+
+			// we can't add two permissions of the same type in a set
+			// so we remove an existing one, union with it and add it back
+			IPermission existing = Remove (perm.GetType ());
+			if (existing != null) {
 				perm = perm.Union (existing);
+			}
 
 			list.Add (perm);
 			return perm;
@@ -106,17 +124,63 @@ namespace System.Security {
 		public virtual void CopyTo (Array array, int index)
 		{
 			if (null == array)
-				throw new System.ArgumentNullException ("array"); // array is null.
-			if (array.Rank > 1)
-				throw new System.ArgumentException("Array has more than one dimension"); // array has more than one dimension.
-			if (index < 0 || index >= array.Length)
-				throw new System.IndexOutOfRangeException(); // index is outside the range of allowable values for array.
-			list.CopyTo (array, index);
+				throw new ArgumentNullException ("array");
+
+			if (list.Count > 0) {
+				if (array.Rank > 1) {
+					throw new ArgumentException (Locale.GetText (
+						"Array has more than one dimension"));
+				}
+				if (index < 0 || index >= array.Length) {
+					throw new IndexOutOfRangeException ("index");
+				}
+
+				list.CopyTo (array, index);
+			}
 		}
 
-		[MonoTODO()]
+		[MonoTODO ("Assert, Deny and PermitOnly aren't yet supported")]
 		public virtual void Demand ()
 		{
+			if (!SecurityManager.SecurityEnabled)
+				return;
+
+			// non CAS permissions (e.g. PrincipalPermission) do not requires a stack walk
+			PermissionSet cas = this.Copy ();
+			foreach (IPermission p in list) {
+				Type t = p.GetType ();
+				if (!t.IsSubclassOf (typeof (CodeAccessPermission))) {
+					p.Demand ();
+					// we wont have to process this one in the stack walk
+					cas.Remove (t);
+				}
+			}
+			// don't start the walk if the permission set only contains non CAS permissions
+			if (cas.Count == 0)
+				return;
+
+			Assembly a = null;
+			StackTrace st = new StackTrace (1); // skip ourself
+			StackFrame[] frames = st.GetFrames ();
+			foreach (StackFrame sf in frames) {
+				MethodBase mb = sf.GetMethod ();
+				// declarative security checks, when present, must be checked
+				// for each stack frame
+				if ((MethodAttributes.HasSecurity & mb.Attributes) == MethodAttributes.HasSecurity) {
+					// TODO
+				}
+				// however the "final" grant set is resolved by assembly, so
+				// there's no need to check it every time (just when we're 
+				// changing assemblies between frames).
+				Assembly af = mb.ReflectedType.Assembly;
+				if (a != af) {
+					a = af;
+					if (!a.Demand (cas)) {
+						// TODO add more details
+						throw new SecurityException ("Demand failed");
+					}
+				}
+			}
 		}
 
 		[MonoTODO()]
@@ -129,27 +193,32 @@ namespace System.Security {
 		{
 			if (et == null)
 				throw new ArgumentNullException ("et");
-			if (et.Tag != "PermissionSet")
-				throw new ArgumentException ("not PermissionSet");
-			if (!(et.Attributes ["class"] as string).EndsWith (className))
-				throw new ArgumentException ("not " + className);
+			if (et.Tag != tagName) {
+				string msg = String.Format ("Invalid tag {0} expected {1}", et.Tag, tagName);
+				throw new ArgumentException (msg, "et");
+			}
+//			if (!et.Attribute ("class").EndsWith (className))
+//				throw new ArgumentException ("not " + className);
 // version isn't checked
-//			if ((et.Attributes ["version"] as string) != "1")
+//			if (et.Attribute ("version") != "1")
 //				throw new ArgumentException ("wrong version");
 
-			if ((et.Attributes ["Unrestricted"] as string) == "true")
+			if (CodeAccessPermission.IsUnrestricted (et))
 				state = PermissionState.Unrestricted;
 			else
 				state = PermissionState.None;
 		}
 
+		[MonoTODO ("adjust class version with current runtime")]
 		public virtual void FromXml (SecurityElement et)
 		{
 			list.Clear ();
-			FromXml (et, "PermissionSet");
+			FromXml (et, tagName);
 			if (et.Children != null) {
 				foreach (SecurityElement se in et.Children) {
-					string className = (se.Attributes ["class"] as string);
+					string className = se.Attribute ("class");
+					// TODO: adjust class version with current runtime
+					// http://blogs.msdn.com/shawnfa/archive/2004/08/05/209320.aspx
 					Type classType = Type.GetType (className);
 					object [] psNone = new object [1] { PermissionState.None };
 					IPermission p = (IPermission) Activator.CreateInstance (classType, psNone);
@@ -169,9 +238,16 @@ namespace System.Security {
 			// if target is empty we must be empty too
 			if ((target == null) || (target.IsEmpty ()))
 				return this.IsEmpty ();
-			// if we're unrestricted then target must also be unrestricted
-			if (this.IsUnrestricted () && target.IsUnrestricted ())
+
+			// TODO - non CAS permissions must be evaluated for unrestricted
+
+			// if target is unrestricted then we are a subset
+			if (!this.IsUnrestricted () && target.IsUnrestricted ())
 				return true;
+			// else target isn't unrestricted.
+			// so if we are unrestricted, the we can't be a subset
+			if (this.IsUnrestricted () && !target.IsUnrestricted ())
+				return false;
 
 			// if each of our permission is (a) present and (b) a subset of target
 			foreach (IPermission p in list) {
@@ -193,17 +269,47 @@ namespace System.Security {
 		public bool ContainsNonCodeAccessPermissions () 
 		{
 			foreach (IPermission p in list) {
-				if (! p.GetType ().IsSubclassOf (typeof(CodeAccessPermission)))
+				if (! p.GetType ().IsSubclassOf (typeof (CodeAccessPermission)))
 					return true;
 			}
 			return false;
 		}
 
-		// undocumented behavior
-		[MonoTODO()]
+		[MonoTODO ("little documentation in Fx 2.0 beta 1")]
 		public static byte[] ConvertPermissionSet (string inFormat, byte[] inData, string outFormat) 
 		{
-			return null;
+			if (inFormat == null)
+				throw new ArgumentNullException ("inFormat");
+			if (outFormat == null)
+				throw new ArgumentNullException ("outFormat");
+			if (inData == null)
+				return null;
+
+			if (inFormat == outFormat)
+				return inData;
+
+			if (inFormat == "BINARY") {
+				if (outFormat.StartsWith ("XML")) {
+					// TODO - convert from binary format
+					return inData;
+				}
+			}
+			else if (inFormat.StartsWith ("XML")) {
+				if (outFormat == "BINARY") {
+					// TODO - convert to binary format
+					return inData;
+				}
+				else if (outFormat.StartsWith ("XML")) {
+					string msg = String.Format (Locale.GetText ("Can't convert from {0} to {1}"), inFormat, outFormat);
+					throw new XmlSyntaxException (msg);
+				}
+			}
+			else {
+				// unknown inFormat, returns null
+				return null;
+			}
+			// unknown outFormat, throw
+			throw new SerializationException (String.Format (Locale.GetText ("Unknown output format {0}."), outFormat));
 		}
 
 		public virtual IPermission GetPermission (Type permClass) 
@@ -212,6 +318,7 @@ namespace System.Security {
 				if (o.GetType ().Equals (permClass))
 					return (IPermission) o;
 			}
+			// it's normal to return null for unrestricted sets
 			return null;
 		}
 
@@ -219,17 +326,25 @@ namespace System.Security {
 		{
 			// no intersection possible
 			if ((other == null) || (other.IsEmpty ()) || (this.IsEmpty ()))
-				return new PermissionSet (PermissionState.None);
-			// intersections with unrestricted
-			if (this.IsUnrestricted ())
-				return other.Copy ();
+				return null;
+
+			// FIXME: in this case this optimization IS BAD because some permissions, like identity
+			// permissions, do not implement the IUnrestrictedPermission interface. This can results
+			// in case where (a N b) != (b N a)
+			// MS has the same "bad optimization" - reported as FDBK14612
 			if (other.IsUnrestricted ())
 				return this.Copy ();
+			if (this.IsUnrestricted ())
+				return other.Copy ();
 
-			PermissionSet interSet = new PermissionSet (PermissionState.None);
+			PermissionState state = PermissionState.None;
+			if (this.IsUnrestricted () && other.IsUnrestricted ())
+				state = PermissionState.Unrestricted;
+
+			PermissionSet interSet = new PermissionSet (state);
 			foreach (IPermission p in other.list) {
 				// for every type in both list
-				IPermission i = interSet.GetPermission (p.GetType ());
+				IPermission i = this.GetPermission (p.GetType ());
 				if (i != null) {
 					// add intersection for this type
 					interSet.AddPermission (p.Intersect (i));
@@ -254,6 +369,21 @@ namespace System.Security {
 
 		public virtual IPermission RemovePermission (Type permClass) 
 		{
+			// FIXME: this is *not right* because we can't remove permissions not implementing
+			// IUnrestrictedPermission interface (e.g. identity permissions) but compatible 
+			// with MS (FDBK14622)
+			// Note: it also makes it unusable within the class (e.g. SetPermission)
+			if (IsUnrestricted ())
+				return null;
+
+			return Remove (permClass);
+		}
+
+		internal IPermission Remove (Type permClass)
+		{
+			if (permClass == null)
+				return null;
+
 			foreach (object o in list) {
 				if (o.GetType ().Equals (permClass)) {
 					list.Remove (o);
@@ -267,7 +397,7 @@ namespace System.Security {
 		{
 			if (perm is IUnrestrictedPermission)
 				state = PermissionState.None;
-			RemovePermission (perm.GetType ());
+			Remove (perm.GetType ());
 			list.Add (perm);
 			return perm;
 		}
@@ -279,9 +409,9 @@ namespace System.Security {
 
 		public virtual SecurityElement ToXml ()
 		{
-			SecurityElement se = new SecurityElement ("PermissionSet");
+			SecurityElement se = new SecurityElement (tagName);
 			se.AddAttribute ("class", GetType ().FullName);
-			se.AddAttribute ("version", "1");
+			se.AddAttribute ("version", version.ToString ());
 			if (state == PermissionState.Unrestricted)
 				se.AddAttribute ("Unrestricted", "true");
 			else {
@@ -295,12 +425,27 @@ namespace System.Security {
 		{
 			if (other == null)
 				return this.Copy ();
-			if (this.IsUnrestricted () || other.IsUnrestricted ())
-				return new PermissionSet (PermissionState.Unrestricted);
-			
+
 			PermissionSet copy = this.Copy ();
-			foreach (IPermission p in other.list) {
-				copy.AddPermission (p);
+			if (this.IsUnrestricted () || other.IsUnrestricted ()) {
+				// so we keep the "right" type
+				copy.Clear ();
+				copy.state = PermissionState.Unrestricted;
+				// copy all permissions that do not implement IUnrestrictedPermission
+				foreach (IPermission p in this.list) {
+					if (!(p is IUnrestrictedPermission))
+						copy.AddPermission (p);
+				}
+				foreach (IPermission p in other.list) {
+					if (!(p is IUnrestrictedPermission))
+						copy.AddPermission (p);
+				}
+			}
+			else {
+				// PermissionState.None -> copy all permissions
+				foreach (IPermission p in other.list) {
+					copy.AddPermission (p);
+				}
 			}
 			return copy;
 		}
@@ -318,7 +463,7 @@ namespace System.Security {
 		}
 
 		public virtual object SyncRoot {
-			get { return list.SyncRoot; }
+			get { return this; }
 		}
 
 		[MonoTODO()]
@@ -353,6 +498,9 @@ namespace System.Security {
 
 		public override int GetHashCode ()
 		{
+			if (list.Count == 0)
+				return (int) state;
+
 			if (_hashcode == 0) {
 				_hashcode = state.GetHashCode ();
 				foreach (IPermission p in list)	{

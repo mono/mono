@@ -1,3 +1,17 @@
+2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NamedPermissionSet.cs: Fixed Description in copies, GetHashCode and
+	Equals (for NET_2_0). Fixed handling of null Name when deserialized 
+	from XML.
+	* PermissionSet.cs: AddPermission now unions permissions of the same
+	type. CopyTo throw (most) exceptions only if there are items in the
+	set. Implemented Demand (but without support for Assert, Deny and 
+	PermitOnly). Fixed deserialized from XML when no class is specified.
+	Started implementation of ConvertPermissionSet (error cases). Fixed
+	Intersect to be compatible (including bugs like FDBK14612) with MS.
+	RemovePermission now compatible with MS (bug? FDBK14622). Fixed Union
+	to work with permissions that do not implement IUnrestrictedPermission.
+
 2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityElement.cs: Fixed the new Copy() in Fx 2.0 as it isn't a 

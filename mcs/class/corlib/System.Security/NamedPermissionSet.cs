@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Security.Permissions;
 
 namespace System.Security {
@@ -41,7 +40,8 @@ namespace System.Security {
 		private string description;
 
 		// for PolicyLevel (to avoid validation duplication)
-		internal NamedPermissionSet () : base ()
+		internal NamedPermissionSet ()
+			: base ()
 		{
 		}
 
@@ -58,8 +58,10 @@ namespace System.Security {
 		}
 
 		public NamedPermissionSet (NamedPermissionSet set) 
-			: this (set.name, set)
+			: base (set)
 		{
+			name = set.name; // name can be null here
+			description = set.description;
 		}
 
 		public NamedPermissionSet (string name) 
@@ -77,11 +79,14 @@ namespace System.Security {
 		public string Name {
 			get { return name; }
 			set { 
-				if ((value == null) || (value == String.Empty)) 
-					throw new ArgumentException ("invalid name");
+				if ((value == null) || (value == String.Empty)) {
+					throw new ArgumentException (Locale.GetText ("invalid name"));
+				}
 				name = value; 
 			}
 		}
+
+		// methods
 
 		public override PermissionSet Copy () 
 		{
@@ -91,15 +96,16 @@ namespace System.Security {
 		public NamedPermissionSet Copy (string name) 
 		{
 			NamedPermissionSet nps = new NamedPermissionSet (this);
-			nps.Name = name;
+			nps.Name = name;		// get the new name
 			return nps;
 		}
 
 		public override void FromXml (SecurityElement e) 
 		{
 			FromXml (e, "NamedPermissionSet");
-			Name = (e.Attributes ["Name"] as string);
-			description = (e.Attributes ["Description"] as string);
+			// strangely it can import a null Name (bypassing property setter)
+			name = e.Attribute ("Name");
+			description = e.Attribute ("Description");
 			if (description == null)
 				description = String.Empty;
 		}
@@ -122,16 +128,18 @@ namespace System.Security {
 			NamedPermissionSet nps = (obj as NamedPermissionSet);
 			if (nps == null)
 				return false;
-
-			return ((name == nps.Name) && (description == nps.Description) && base.Equals (obj));
+			// description isn't part of the comparaison
+			return ((name == nps.Name) && base.Equals (obj));
 		}
 
 		public override int GetHashCode ()
 		{
-			int hashcode = base.GetHashCode () ^ name.GetHashCode ();
-			if (description != null)
-				hashcode ^= description.GetHashCode ();
-			return hashcode;
+			int hc = base.GetHashCode ();
+			// name is part of the hash code (except when null)
+			if (name != null)
+				hc ^= name.GetHashCode ();
+			// description is never part of the hash code
+			return hc;
 		}
 #endif
 	}
