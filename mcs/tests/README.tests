@@ -31,7 +31,7 @@ Test cases listed by Category:
 
 * Member Access & Simple Names
 
-  test-151.cs test-159.cs test-160.cs
+  test-151.cs test-159.cs test-160.cs test-161.cs
 
 * Invocation
 
@@ -117,6 +117,11 @@ SimpleNameLookup: Cast to `A.Iface' type when there's a parameter called `A'.
 test-160.cs
 -----------
 ResolveMemberLookup: `B look; return look.s.a' must work in static context.
+
+test-161.cs
+-----------
+ResolveMemberLookup: Field initializer references `DateTime.Now' when there's
+an instance property/field `DateTime'.
 
 verify-1.cs
 -----------

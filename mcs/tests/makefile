@@ -24,7 +24,8 @@ TEST_SOURCES = \
 	test-121          test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
 	test-131                   test-134 test-135 test-136 test-137 test-138 test-139 test-140 \
 	test-141 test-142 test-143 test-144 test-145 test-146 test-147 test-148 test-149 test-150 \
-	                  test-153 test-154 test-155 test-156 test-157 test-158 test-159 test-160
+	                  test-153 test-154 test-155 test-156 test-157 test-158 test-159 test-160 \
+	test-161
 
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2 unsafe-3 test-58.cs
