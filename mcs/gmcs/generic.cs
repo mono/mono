@@ -1363,6 +1363,11 @@ namespace Mono.CSharp {
 			return type == cobj.type;
 		}
 
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
 		public string Basename {
 			get {
 				int pos = name.LastIndexOf ('`');
