@@ -1012,6 +1012,8 @@ namespace System {
 
 		public virtual Type MakeArrayType (int rank)
 		{
+			if (rank < 1)
+				throw new IndexOutOfRangeException ();
 			return make_array_type (rank);
 		}
 #endif

@@ -1,3 +1,7 @@
+2003-12-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs (MakeArrayType): Add argument checking.
+
 2003-12-06  Dick Porter  <dick@ximian.com>
 
 	* String.cs: Don't use CompareInfo for non-culture-sensitive
