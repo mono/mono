@@ -1,3 +1,10 @@
+2004-08-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttribute.cs : some property getters threw NullReferenceException
+	  when the attribute is not added to an element.
+	* XmlNode.cs : When a node is not appended to another node, BaseURI
+	  is empty. Bug #64120 is fixed.
+
 2004-08-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : In CheckState(), don't create indentation string

@@ -71,7 +71,7 @@ namespace System.Xml
 			get {
 				// Isn't it conformant to W3C XML Base Recommendation?
 				// As far as I tested, there are not...
-				return (ParentNode != null) ? ParentNode.BaseURI : OwnerDocument.BaseURI;
+				return (ParentNode != null) ? ParentNode.BaseURI : String.Empty;
 			}
 		}
 
