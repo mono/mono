@@ -1,4 +1,8 @@
 
+Sat Jan 5 15:51:06 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: handle short integer return types.
+
 Thu Dec 20 20:13:07 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: fix create_method_pointer() to pass the arguments

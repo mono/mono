@@ -1,4 +1,10 @@
 
+Sat Jan 5 15:45:14 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: allow classname:method name in --debug argument.
+	Fix box opcode for valuetypes. Fix a few opcode to take a 16 bit
+	index instead of 32 (stloc, ldloc, starg, etc.).
+
 Thu Jan 3 23:19:27 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: temporary mul.ovf, mul.ovf.un, add.ovf.un implementations
