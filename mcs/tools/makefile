@@ -10,4 +10,8 @@ verifier.exe: verifier.cs
 clean:
 	if test -e verifier.exe; then \
 		rm verifier.exe;  \
-	fi;
+	fi; \
+		\
+  if test -e verifier.pdb; then \
+		rm verifier.pdb;  \
+	fi
