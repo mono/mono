@@ -267,7 +267,18 @@ namespace System.Net
 				base.Set (name, value);	
 			}
 		}
-		
+
+		internal void RemoveAndAdd (string name, string value)
+		{
+			if (value == null)
+				value = String.Empty;
+			else
+				value = value.Trim ();
+
+			base.Remove (name);
+			base.Set (name, value);
+		}
+
 		internal void RemoveInternal (string name)
 		{
 			if (name == null)

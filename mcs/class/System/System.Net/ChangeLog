@@ -1,3 +1,9 @@
+2004-10-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: use RemoveAndAdd for headers multivalue headers.
+	* WebHeaderCollection.cs: added RemoveAndAdd that behaves like the old
+	SetInternal.
+
 2004-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: ProxyQuery returns true when we use a proxy without
