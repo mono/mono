@@ -62,7 +62,7 @@ IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	$(CSC) $(CSCFLAGS) /out:IFaceDisco.exe IFaceDisco.cs XMLUtil.cs
 
 ./security/secutil.exe: dummy
-	(cd security; make CSC=$(CSC))
+	(cd security; make)
 
 clean:
 	(cd corcompare; make clean)
