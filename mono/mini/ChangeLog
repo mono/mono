@@ -1,3 +1,7 @@
+2004-07-12  Ben Maurer  <bmaurer@ximian.com>
+
+	* mini-x86.c (OP_CHECK_THIS): cmp DWORD PTR [eax], eax
+	is one byte shorter than cmp DWORD PTR [eax], 0.
 
 Mon Jul 12 17:47:00 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
