@@ -1,3 +1,13 @@
+2005-01-11  Dick Porter  <dick@ximian.com>
+
+	* image.c (mono_pe_file_open): New variant on mono_image_open()
+	that does not set up the CLI metadata; used for FileVersionInfo so
+	it can get the data for windows binaries too.
+	
+	* process.c (process_read_string_block): Don't read off the end of
+	the StringTable block.
+
+	These both fix bug 70766.
 
 Tue Jan 11 15:26:00 CET 2005 Paolo Molaro <lupus@ximian.comt>
 
