@@ -49,6 +49,7 @@ namespace MonoTests.System.Data.OleDb {
 			Assert.AreEqual (String.Empty, a.ConnectionString, "ConnectionString");
 			Assert.AreEqual (KeyRestrictionBehavior.AllowOnly, a.KeyRestrictionBehavior, "KeyRestrictionBehavior");
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "KeyRestrictions");
+			Assert.AreEqual (String.Empty, a.Provider, "Provider");
 #if NET_2_0
 			Assert.IsFalse (a.ShouldSerializeConnectionString (), "ShouldSerializeConnectionString");
 			Assert.IsFalse (a.ShouldSerializeKeyRestrictions (), "ShouldSerializeConnectionString");
@@ -163,6 +164,34 @@ namespace MonoTests.System.Data.OleDb {
 			Assert.AreEqual ("Mono", a.KeyRestrictions, "Mono");
 			a.KeyRestrictions = null;
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "Empty(null)");
+		}
+
+		[Test]
+		public void Provider ()
+		{
+			OleDbPermissionAttribute a = new OleDbPermissionAttribute (SecurityAction.Assert);
+			a.Provider = String.Empty;
+			Assert.AreEqual (String.Empty, a.Provider, "Empty");
+			a.Provider = "Mono";
+			Assert.AreEqual ("Mono", a.Provider, "Mono");
+			a.Provider = null;
+			Assert.AreEqual (String.Empty, a.Provider, "Empty(null)");
+		}
+
+		[Test]
+		public void CreatePermission_Provider ()
+		{
+			OleDbPermissionAttribute a = new OleDbPermissionAttribute (SecurityAction.Assert);
+			a.Provider = "Mono";
+			Assert.AreEqual ("Mono", a.Provider, "Mono");
+
+			OleDbPermission odp = (OleDbPermission) a.CreatePermission ();
+#if NET_2_0
+			// provider isn't even supplied to permission in fx 2.0
+			Assert.AreEqual (String.Empty, odp.Provider, "CreatePermission.Provider");
+#else
+			Assert.AreEqual ("Mono", odp.Provider, "CreatePermission.Provider");
+#endif
 		}
 
 		[Test]
