@@ -1,6 +1,23 @@
+2002-03-05  Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* System.Web.Security: Added directory.
+
+2002-03-04  Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* System.Web.UI.WebContorls: Virtually complete. See
+	  System.Web.UI.WebControls/ChangeLog for a comprehensensive
+	  description of what's left and where. But, don't go for
+	  a build at this stage. There are a few classes left in
+	  System.Web namespace that need to be filled-up, though
+	  I will try to fix up the current state to be able to make
+	  a build.
+
 2001-12-20  Gaurav Vaish <gvaish@iitk.ac.in>
 
-       Did first successful build of System.Web.dll that included System.Web.UI.WebControls namespace. Though, not updating the System.Web.build file, since with the changes that followed, the build again fails :( 
+       Did first successful build of System.Web.dll that included
+	 System.Web.UI.WebControls namespace. Though, not updating
+	 the System.Web.build file, since with the changes that
+	 followed, the build again fails :( 
 
 2001-11-30  Gaurav Vaish <gvaish@iitk.ac.in>
 
