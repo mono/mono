@@ -1,5 +1,8 @@
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_type_is_subtype_of): Fix this for byref types.
+	(ves_icall_type_is_assignable_from): Ditto. Fixes #68582.
+
 	* gc.c (finalize_domain_objects): Call GC_invoke_finalizers () so
 	pending finalizers are not invoked after the appdomain has been 
 	unloaded. Fixes #67862.
