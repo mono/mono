@@ -1,5 +1,9 @@
 2004-10-21  Chris Toshok  <toshok@ximian.com>
 
+	* debug-helpers.c (append_class_name): argh, revert last patch.
+	
+2004-10-21  Chris Toshok  <toshok@ximian.com>
+
 	* debug-helpers.c (append_class_name): use '+' as the delimiter,
 	not '/', so that it matches what the debugger uses to look up
 	methods.
