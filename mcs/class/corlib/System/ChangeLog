@@ -1,3 +1,8 @@
+2001-11-27  Derek Holden  <dholden@draper.com>
+
+	* IntegerFormatter.cs: Formatting of type "Number" was not
+	using NumberFormatInfo.NumberNegativePattern.
+
 2001-11-26  Dick Porter  <dick@ximian.com>
 
 	* LocalDataStoreSlot.cs: No need to delete a system TLS slot in

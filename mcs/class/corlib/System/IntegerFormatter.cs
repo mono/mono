@@ -37,6 +37,10 @@
 //   }
 // }
 //
+// There is a property in NumberFormatInfo for NegativeSign, though the 
+// definition of IFormattable just uses '-' in context. So all the 
+// hardcoded uses of '-' in here may need to be changed to nfi.NegativeSign
+//
 // For every integral type.
 //
 // Before every Format<Format Type> block there is a small paragraph
@@ -2313,12 +2317,33 @@ namespace System {
 			int[] groupSizes = nfi.NumberGroupSizes;
 
 			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
+			int pattern = nfi.NumberNegativePattern;
 			int size = maxIntLength + (maxIntLength * groupSeparator.Length) + padding +
-			decimalSeparator.Length + 2;
+			decimalSeparator.Length + 4;
 			char[] buffy = new char[size];
 			int position = size;
 			bool negative = (value < 0);
 			
+			// pattern for negative values, defined in NumberFormatInfo
+			if (negative) {
+				switch (pattern) {
+				case 0: // (nnn)
+					buffy[--position] = ')'; 
+					break;
+				// case 1: // -nnn
+				//	break;
+				// case 2: // - nnn
+				//	break;
+				case 3: // nnn-
+					buffy[--position] = '-'; 
+					break;
+				case 4:	// nnn -
+					buffy[--position] = '-'; 
+					buffy[--position] = ' '; 
+					break;
+				}
+			}
+
 			// right pad it w/ precision 0's
 			while (padding-- > 0)
 				buffy[--position] = '0';
@@ -2371,8 +2396,25 @@ namespace System {
 
 			buffy[--position] = digitLowerTable[value];
 
-			if (negative)
-				buffy[--position] = '-';
+			// pattern for negative values, defined in NumberFormatInfo
+			if (negative) {
+				switch (pattern) {
+				case 0: // (nnn)
+					buffy[--position] = '('; 
+					break;
+				case 1: // -nnn
+					buffy[--position] = '-'; 
+					break;
+				case 2: // - nnn
+					buffy[--position] = ' '; 
+					buffy[--position] = '-'; 
+					break;
+				// case 3: // nnn-
+				//	break;
+				// case 4: // nnn -
+				//	break;
+				}
+			}
 			
 			return new string (buffy, position, (size - position));
 		}
@@ -2385,12 +2427,33 @@ namespace System {
 			int[] groupSizes = nfi.NumberGroupSizes;
 
 			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
+			int pattern = nfi.NumberNegativePattern;
 			int size = maxLongLength + (maxLongLength * groupSeparator.Length) + padding +
-			decimalSeparator.Length + 2;
+			decimalSeparator.Length + 4;
 			char[] buffy = new char[size];
 			int position = size;
 			bool negative = (value < 0);
 			
+			// pattern for negative values, defined in NumberFormatInfo
+			if (negative) {
+				switch (pattern) {
+				case 0: // (nnn)
+					buffy[--position] = ')'; 
+					break;
+				// case 1: // -nnn
+				//	break;
+				// case 2: // - nnn
+				//	break;
+				case 3: // nnn-
+					buffy[--position] = '-'; 
+					break;
+				case 4:	// nnn -
+					buffy[--position] = '-'; 
+					buffy[--position] = ' '; 
+					break;
+				}
+			}
+
 			// right pad it w/ precision 0's
 			while (padding-- > 0)
 				buffy[--position] = '0';
@@ -2443,8 +2506,25 @@ namespace System {
 
 			buffy[--position] = digitLowerTable[value];
 
-			if (negative)
-				buffy[--position] = '-';
+			// pattern for negative values, defined in NumberFormatInfo
+			if (negative) {
+				switch (pattern) {
+				case 0: // (nnn)
+					buffy[--position] = '('; 
+					break;
+				case 1: // -nnn
+					buffy[--position] = '-'; 
+					break;
+				case 2: // - nnn
+					buffy[--position] = ' '; 
+					buffy[--position] = '-'; 
+					break;
+				// case 3: // nnn-
+				//	break;
+				// case 4: // nnn -
+				//	break;
+				}
+			}
 			
 			return new string (buffy, position, (size - position));
 		}
