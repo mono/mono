@@ -67,17 +67,19 @@ gac_assemblies_list = \
 	System.Xml
 
 if PLATFORM_WIN32
-gac_assemblies = 
+gac_assemblies =
+mdb_files =
 local_mscorlib =
 else
 gac_assemblies = $(gac_assemblies_list:=.dll)
+mdb_files = $(gac_assemblies:=.mdb)
 local_mscorlib = mscorlib.dll
 endif
 
 corlibdir = $(libdir)/mono/$(framework_version)
 corlib_DATA = $(local_mscorlib)
 
-EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
+EXTRA_DIST = $(gac_assemblies) $(corlib_DATA) $(mdb_files)
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
 mscorlib.dll $(gac_assemblies):

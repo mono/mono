@@ -74,11 +74,12 @@ gac_assemblies_list = \
 	System.Xml
 
 gac_assemblies = $(gac_assemblies_list:=.dll)
+mdb_files = $(gac_assemblies:=.mdb)
 
 corlibdir = $(libdir)/mono/$(framework_version)
 corlib_DATA = mscorlib.dll
 
-EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
+EXTRA_DIST = $(gac_assemblies) $(corlib_DATA) $(mdb_files)
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
 mscorlib.dll $(gac_assemblies):
