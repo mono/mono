@@ -11,6 +11,7 @@
 
 
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms {
 
@@ -20,8 +21,37 @@ namespace System.Windows.Forms {
 	
 	[MonoTODO]
 	public sealed class ControlPaint {
+		static int		RGBMax=255;
+		static int		HLSMax=255;
+		static Color	colorHighlight;
+		static Color	colorLight;
+		static Color	colorShadow;
+		static Color	colorDarkShadow;
+		static Color	colorSurface;
+		static Pen		penHighlight;
+		static Pen		penLight;
+		static Pen		penShadow;
+		static Pen		penDarkShadow;
 
-		private ControlPaint(){//For signiture compatablity. Prevents the auto creation of public constructor
+		static ControlPaint() {
+			colorHighlight=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DHIGHLIGHT));
+			colorLight=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DLIGHT));
+			colorShadow=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DSHADOW));
+			colorDarkShadow=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DDKSHADOW));
+			colorSurface=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DFACE));
+
+			penHighlight=new Pen(colorHighlight);
+			penLight=new Pen(colorLight);
+			penShadow=new Pen(colorShadow);
+			penDarkShadow= new Pen(colorDarkShadow);
+		}
+
+		private static Color Win32ToColor(int Win32Color) {
+			return(Color.FromArgb(
+				(int)(Win32Color) & 0xff0000 >> 16,		// blue
+				(int)(Win32Color) & 0xff00 >> 8,			// green
+				(int)(Win32Color) & 0xff					// red
+			));
 		}
 
 		#region Properties
@@ -33,104 +63,110 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Helpers
-		/*
-		internal static HISColorCheck() {		
-			Color[] cArr = new Color[] { SystemColors.ControlText, SystemColors.Control, SystemColors.GrayText};
-			foreach( Color c in cArr) {
-				double H1 = c.GetHue();
-				double I1 = c.GetBrightness();
-				double S1 = c.GetSaturation();
-				double H2, I2, S2;
-				ControlPaint.Color2HIS(c, out H2, out I2, out S2);
+		internal static void Color2HBS(Color color, out int h, out int l, out int s) {
+			int	r;
+			int	g;
+			int	b;
+			int	cMax;
+			int	cMin;
+			int	rDelta;
+			int	gDelta;
+			int	bDelta;
+	
+			r=color.R;
+			g=color.G;
+			b=color.B;
 
-				Color c2 = ControlPaint.HIS2Color( H2, I2, S2);
+			cMax = Math.Max(Math.Max(r, g), b);
+			cMin = Math.Min(Math.Min(r, g), b);
+
+			l = (((cMax+cMin)*HLSMax)+RGBMax)/(2*RGBMax);
+
+			if (cMax==cMin) {		// Achromatic
+				h=0;					// h undefined
+				s=0;
+				l=r;
+				return;
+			}
+
+			/* saturation */
+			if (l<=(HLSMax/2)) {
+				s=(((cMax-cMin)*HLSMax)+((cMax+cMin)/2))/(cMax+cMin);
+			} else {
+				s=(((cMax-cMin)*HLSMax)+((2*RGBMax-cMax-cMin)/2))/(2*RGBMax-cMax-cMin);
+			}
+
+			/* hue */
+			rDelta=(((cMax-r)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
+			gDelta=(((cMax-g)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
+			bDelta=(((cMax-b)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
+
+			if (r == cMax) {
+				h=bDelta - gDelta;
+			} else if (g == cMax) {
+				h=(HLSMax/3) + rDelta - bDelta;
+			} else { /* B == cMax */
+				h=((2*HLSMax)/3) + gDelta - rDelta;
+			}
+
+			if (h<0) {
+				h+=HLSMax;
+			}
+
+			if (h>HLSMax) {
+				h-=HLSMax;
 			}
 		}
-		*/				
-		internal static void Color2HIS(Color col, out double Hue, out double Intensity, out double Saturation) {
-			Hue = 0.0;
-			Saturation = 0.0;
 
-			double red = (double)col.R / 255.0;
-			double green = (double)col.G / 255.0;
-			double blue = (double)col.B / 255.0;
+		private static int HueToRGB(int n1, int n2, int hue) {
+			if (hue<0) {
+				hue+=HLSMax;
+			}
 
-			Intensity = Math.Max(red, green);
-			Intensity = Math.Max(Intensity, blue);
+			if (hue>HLSMax) {
+				hue -= HLSMax;
+			}
 
-			if( Intensity != 0.0) {
-				double IntensityDiff = Intensity - Math.Min( Math.Min( red, green), blue);
-				if( IntensityDiff != 0.0) {
-					Saturation = IntensityDiff / Intensity;
-					if( Intensity == red) {
-						double b = ( Intensity - blue) / IntensityDiff;
-						double g = ( Intensity - green) / IntensityDiff;
-						Hue = 10.0 * ( b - g);
-					}
-					else if( Intensity == green) {
-						double r = ( Intensity - red) / IntensityDiff;
-						double b = ( Intensity - blue) / IntensityDiff;
-						Hue = 10.0 * ( 2 + r - b);
-					}
-					else {
-						double g = ( Intensity - green) / IntensityDiff;
-						double r = ( Intensity - red) / IntensityDiff;
-						Hue = 10.0 * ( 4 + g - r);
-					}
-					Hue = Hue * 60.0;
-					Hue = Math.Round(Hue);
+			/* return r,g, or b value from this tridrant */ 
+			if (hue<(HLSMax/6)) {
+				return(n1+(((n2-n1)*hue+(HLSMax/12))/(HLSMax/6)));
+			}
+
+			if (hue<(HLSMax/2)) {
+				return(n2);
+			}
+
+			if (hue<((HLSMax*2)/3)) {
+				return(n1+(((n2-n1)*(((HLSMax*2)/3)-hue)+(HLSMax/12))/(HLSMax/6)));
+			} else {
+				return(n1);
+			}
+		}
+
+		private static Color HBS2Color(int hue, int lum, int sat) {
+			int	R;
+			int	G;
+			int	B;
+			int	Magic1;
+			int	Magic2;
+
+			if (sat == 0) {            /* Achromatic */ 
+				R=G=B=(lum*RGBMax)/HLSMax;
+				// FIXME : Should throw exception if hue!=0
+			} else {
+				if (lum<=(HLSMax/2)) {
+					Magic2=(lum*(HLSMax+sat)+(HLSMax/2))/HLSMax;
+				} else {
+					Magic2=sat+lum-((sat*lum)+(HLSMax/2))/HLSMax;
 				}
+				Magic1=2*lum-Magic2;
+				
+				R = Math.Min(255, (HueToRGB(Magic1,Magic2,hue+(HLSMax/3))*RGBMax+(HLSMax/2))/HLSMax);
+				G = Math.Min(255, (HueToRGB(Magic1,Magic2,hue)*RGBMax+(HLSMax/2))/HLSMax);
+				B = Math.Min(255, (HueToRGB(Magic1,Magic2,hue-(HLSMax/3))*RGBMax+(HLSMax/2))/HLSMax);
 			}
+			return(Color.FromArgb(R, G, B));
 		}
-
-		internal static Color HIS2Color(double Hue, double Intensity, double Saturation) {
-			double R = Intensity, G = Intensity, B = Intensity;
-			if( Saturation != 0) {
-				double Hue1 = (Hue * 60.0) / 360.0;
-				double X = Hue1 / 10.0;
-				double h = Math.Floor(X);
-				double P = Intensity * ( 1 - Saturation);
-				double Q = Intensity * ( Saturation - ( X - h));
-				double T = Intensity * ( 1 - Saturation * ( 1 - X + h));
-				switch( (int)Math.Round(h)) {
-					case 0:
-						R = Intensity;
-						G = T;
-						B = P;
-						break;
-					case 1:
-						R = Q;
-						G = Intensity;
-						B = P;
-						break;
-					case 2:
-						R = P;
-						G = Intensity;
-						B = T;
-						break;
-					case 3:
-						R = P;
-						G = Q;
-						B = Intensity;
-						break;
-					case 4:
-						R = T;
-						G = P;
-						B = Intensity;
-						break;
-					case 5:
-						R = Intensity;
-						G = P;
-						B = Q;
-						break;
-				}
-			}
-			int red = (int)(R * 255.0);
-			int gree = (int)(G * 255.0);
-			int blue = (int)(B * 255.0);
-			return Color.FromArgb(red, gree, blue);
-		}
-
 		#endregion
 
 		#region Methods
@@ -151,35 +187,35 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static Color Dark(Color baseColor) {
 			return Dark(baseColor, 10.0f);
 		}
 		
-		[MonoTODO]
 		public static Color Dark(Color baseColor,float percOfDarkDark) {
-			double H, I, S;
-			ControlPaint.Color2HIS(baseColor, out H, out I, out S);
-			double NewIntensity = Math.Max( 0.0, I - (percOfDarkDark / 100.0));
-			return ControlPaint.HIS2Color(H, NewIntensity, S);
+			int H, I, S;
+			ControlPaint.Color2HBS(baseColor, out H, out I, out S);
+			int NewIntensity = Math.Max(0, I - ((255*(int)percOfDarkDark) / 100));
+			return ControlPaint.HBS2Color(H, NewIntensity, S);
 		}
 		
-		[MonoTODO]
 		public static Color DarkDark(Color baseColor) {
 			return Dark(baseColor, 20.0f);
 		}
 		
-		[MonoTODO]
 		public static void DrawBorder(Graphics graphics, Rectangle bounds, Color color, ButtonBorderStyle style) {
 			DrawBorder(graphics, bounds, color, 1, style, color, 1, style, color, 1, style, color, 1, style);
 		}
 		
-		[MonoTODO]
 		public static void DrawBorder( Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
 			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
 			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor, int bottomWidth,
 			ButtonBorderStyle bottomStyle) {
 
+			DrawBorderInternal(graphics, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom-1, leftWidth, leftColor, leftStyle, Border3DSide.Left);
+			DrawBorderInternal(graphics, bounds.Left, bounds.Top, bounds.Right-1, bounds.Top, topWidth, topColor, topStyle, Border3DSide.Top);
+			DrawBorderInternal(graphics, bounds.Right-1, bounds.Top, bounds.Right-1, bounds.Bottom-1, rightWidth, rightColor, rightStyle, Border3DSide.Right);
+			DrawBorderInternal(graphics, bounds.Left, bounds.Bottom-1, bounds.Right-1, bounds.Bottom-1, bottomWidth, bottomColor, bottomStyle, Border3DSide.Bottom);
+#if false
 			IntPtr hdc = graphics.GetHdc();
 
 			RECT rc = new RECT();
@@ -209,57 +245,329 @@ namespace System.Windows.Forms {
 			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
 
 			graphics.ReleaseHdc(hdc);
+#endif
+		}
+
+		private static void DrawBorderInternal(Graphics graphics, int startX, int startY, int endX, int endY, 
+			int width, Color color, ButtonBorderStyle style, Border3DSide side) {
+
+			Pen	pen=new Pen(color, 1);
+
+			switch(style) {
+				case ButtonBorderStyle.Solid: {
+					pen.DashStyle=DashStyle.Solid;
+					break;
+				}
+
+				case ButtonBorderStyle.Dashed: {
+					pen.DashStyle=DashStyle.Dash;
+					break;
+				}
+
+				case ButtonBorderStyle.Dotted: {
+					pen.DashStyle=DashStyle.Dot;
+					break;
+				}
+
+				case ButtonBorderStyle.Inset: {
+					pen.DashStyle=DashStyle.Solid;
+					break;
+				}
+
+				case ButtonBorderStyle.Outset: {
+					pen.DashStyle=DashStyle.Solid;
+					break;
+				}
+
+				default:
+				case ButtonBorderStyle.None: {
+					pen.Dispose();
+					return;
+				}
+			}
+
+
+			switch(style) {
+				case ButtonBorderStyle.Outset: {
+					Color		colorGrade;
+					int		hue, brightness, saturation;
+					int		brightnessSteps;
+					int		brightnessDownSteps;
+
+					Color2HBS(color, out hue, out brightness, out saturation);
+
+					brightnessDownSteps=brightness/width;
+					if (brightness>127) {
+						brightnessSteps=Math.Max(6, (160-brightness)/width);
+					} else {
+						brightnessSteps=(127-brightness)/width;
+					}
+					
+					for (int i=0; i<width; i++) {
+						switch(side) {
+							case Border3DSide.Left:	{
+								pen.Dispose();
+								colorGrade=HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
+								pen=new Pen(colorGrade, 1);
+								graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
+								break;
+							}
+						
+							case Border3DSide.Right: {
+								pen.Dispose();
+								colorGrade=HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
+								pen=new Pen(colorGrade, 1);
+								graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
+								break;
+							}
+
+							case Border3DSide.Top: {
+								pen.Dispose();
+								colorGrade=HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
+								pen=new Pen(colorGrade, 1);
+								graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
+								break;
+							}
+					
+							case Border3DSide.Bottom: {
+								pen.Dispose();
+								colorGrade=HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
+								pen=new Pen(colorGrade, 1);
+								graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
+								break;
+							}
+						}
+					}
+					break;
+				}
+
+				case ButtonBorderStyle.Inset: {
+					Color		colorGrade;
+					int		hue, brightness, saturation;
+					int		brightnessSteps;
+					int		brightnessDownSteps;
+
+					Color2HBS(color, out hue, out brightness, out saturation);
+
+					brightnessDownSteps=brightness/width;
+					if (brightness>127) {
+						brightnessSteps=Math.Max(6, (160-brightness)/width);
+					} else {
+						brightnessSteps=(127-brightness)/width;
+					}
+					
+					for (int i=0; i<width; i++) {
+						switch(side) {
+							case Border3DSide.Left:	{
+								pen.Dispose();
+								colorGrade=HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
+								pen=new Pen(colorGrade, 1);
+								graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
+								break;
+							}
+						
+							case Border3DSide.Right: {
+								pen.Dispose();
+								colorGrade=HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
+								pen=new Pen(colorGrade, 1);
+								graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
+								break;
+							}
+
+							case Border3DSide.Top: {
+								pen.Dispose();
+								colorGrade=HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
+								pen=new Pen(colorGrade, 1);
+								graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
+								break;
+							}
+					
+							case Border3DSide.Bottom: {
+								pen.Dispose();
+								colorGrade=HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
+								pen=new Pen(colorGrade, 1);
+								graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
+								break;
+							}
+						}
+					}
+					break;
+				}
+
+				/*
+					I decided to have the for-loop duplicated for speed reasons; 
+					that way we only have to switch once (as opposed to have the 
+					for-loop around the switch)
+				*/
+				default: {
+					switch(side) {
+						case Border3DSide.Left:	{
+							for (int i=0; i<width; i++) {
+								graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
+							}
+							break;
+						}
+						
+						case Border3DSide.Right: {
+							for (int i=0; i<width; i++) {
+								graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
+							}
+							break;
+						}
+
+						case Border3DSide.Top: {
+							for (int i=0; i<width; i++) {
+								graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
+							}
+							break;
+						}
+					
+						case Border3DSide.Bottom: {
+							for (int i=0; i<width; i++) {
+								graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
+							}
+							break;
+						}
+					}
+					break;
+				}
+			}
+			pen.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawBorder3D(Graphics graphics, Rectangle rectangle) {
 			DrawBorder3D(graphics, rectangle, Border3DStyle.Etched, Border3DSide.All);
 		}
 		
-		[MonoTODO]
 		public static void DrawBorder3D(Graphics graphics, Rectangle rectangle, Border3DStyle style) {
 			DrawBorder3D(graphics, rectangle, style, Border3DSide.All);
 		}
 		
-		[MonoTODO]
-		public static void DrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {
-			RECT rc = new RECT();
-			rc.left = rectangle.Left;
-			rc.top = rectangle.Top;
-			rc.right = rectangle.Right;
-			rc.bottom = rectangle.Bottom;
-			IntPtr hdc = graphics.GetHdc();
-			int res = Win32.DrawEdge( hdc, ref rc, style, sides);
-			graphics.ReleaseHdc(hdc);
+		public static void DrawBorder3D(Graphics graphics, int x, int y, int width, int height) {
+			DrawBorder3D(graphics, new Rectangle(x, y, width, height), Border3DStyle.Etched, Border3DSide.All);
 		}
 
-		[MonoTODO]
-		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height) {
-			DrawBorder3D( graphics, new Rectangle(x, y, width, height));
-		}
-
-		[MonoTODO]
 		public static void DrawBorder3D(Graphics graphics, int x, int y, int width, int height, Border3DStyle style) {
-			DrawBorder3D( graphics, new Rectangle(x, y, width, height), style);
+			DrawBorder3D(graphics, new Rectangle(x, y, width, height), style, Border3DSide.All);
 		}
 
-		[MonoTODO]
-		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height,
-			Border3DStyle style,Border3DSide sides) {
+		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height, Border3DStyle style,Border3DSide sides) {
 			DrawBorder3D( graphics, new Rectangle(x, y, width, height), style, sides);
+		}
+
+		public static void DrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {
+			Pen			penTopLeft;
+			Pen			penTopLeftInner;
+			Pen			penBottomRight;
+			Pen			penBottomRightInner;
+			Rectangle	rect= new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			bool			doInner = false;
+
+			if ((style & Border3DStyle.Adjust)!=0) {
+				rect.Y-=2;
+				rect.X-=2;
+				rect.Width+=4;
+				rect.Height+=4;
+			}
+
+			/* default to flat */
+			penTopLeft=penShadow;
+			penTopLeftInner=penShadow;
+			penBottomRight=penShadow;
+			penBottomRightInner=penShadow;
+
+			if ((style & Border3DStyle.RaisedOuter)!=0) {
+				penTopLeft=penLight;
+				penBottomRight=penDarkShadow;
+				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
+					doInner=true;
+				}
+			} else if ((style & Border3DStyle.SunkenOuter)!=0) {
+				penTopLeft=penShadow;
+				penBottomRight=penHighlight;
+				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
+					doInner=true;
+				}
+			}
+
+			if ((style & Border3DStyle.RaisedInner)!=0) {
+				if (doInner) {
+					penTopLeftInner=penHighlight;
+					penBottomRightInner=penShadow;
+				} else {
+					penTopLeft=penHighlight;
+					penBottomRight=penShadow;
+				}
+			} else if ((style & Border3DStyle.SunkenInner)!=0) {
+				if (doInner) {
+					penTopLeftInner=penDarkShadow;
+					penBottomRightInner=penLight;
+				} else {
+					penTopLeft=penDarkShadow;
+					penBottomRight=penLight;
+				}
+			}
+
+			if ((sides & Border3DSide.Middle)!=0) {
+				SolidBrush	sb = new SolidBrush(colorSurface);
+				graphics.FillRectangle(sb, rect);
+				sb.Dispose();
+			}
+
+			if ((sides & Border3DSide.Left)!=0) {
+				graphics.DrawLine(penTopLeft, rect.Left, rect.Bottom-1, rect.Left, rect.Top);
+				if (doInner) {
+					graphics.DrawLine(penTopLeftInner, rect.Left+1, rect.Bottom-1, rect.Left+1, rect.Top);
+				}
+			}
+
+			if ((sides & Border3DSide.Top)!=0) {
+				graphics.DrawLine(penTopLeft, rect.Left, rect.Top, rect.Right-1, rect.Top);
+
+				if (doInner) {
+					if ((sides & Border3DSide.Left)!=0) {
+						graphics.DrawLine(penTopLeftInner, rect.Left+1, rect.Top+1, rect.Right-1, rect.Top+1);
+					} else {
+						graphics.DrawLine(penTopLeftInner, rect.Left, rect.Top+1, rect.Right-1, rect.Top+1);
+					}
+				}
+			}
+
+			if ((sides & Border3DSide.Right)!=0) {
+				graphics.DrawLine(penBottomRight, rect.Right-1, rect.Top, rect.Right-1, rect.Bottom-1);
+
+				if (doInner) {
+					if ((sides & Border3DSide.Top)!=0) {
+						graphics.DrawLine(penBottomRightInner, rect.Right-2, rect.Top+1, rect.Right-2, rect.Bottom-1);
+					} else {
+						graphics.DrawLine(penBottomRightInner, rect.Right-2, rect.Top, rect.Right-2, rect.Bottom-1);
+					}
+				}
+			}
+
+			if ((sides & Border3DSide.Bottom)!=0) {
+				int	left=rect.Left;
+
+				if ((sides & Border3DSide.Left)!=0) {
+					left+=1;
+				}
+
+				graphics.DrawLine(penBottomRight, rect.Left, rect.Bottom-1, rect.Right-1, rect.Bottom-1);
+
+				if (doInner) {
+					if ((sides & Border3DSide.Right)!=0) {
+						graphics.DrawLine(penBottomRightInner, left, rect.Bottom-2, rect.Right-2, rect.Bottom-2);
+					} else {
+						graphics.DrawLine(penBottomRightInner, left, rect.Bottom-2, rect.Right-1, rect.Bottom-2);
+					}
+				}
+			}
 		}
 
 		[MonoTODO]
 		public static void DrawButton( Graphics graphics, Rectangle rectangle, ButtonState state) {
-			RECT rc = new RECT();
-			rc.left = rectangle.Left;
-			rc.top = rectangle.Top;
-			rc.right = rectangle.Right;
-			rc.bottom = rectangle.Bottom;
-			IntPtr hdc = graphics.GetHdc();
-			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON,
-				(uint)state | (uint)DrawFrameControl.DFCS_BUTTONPUSH);
-			graphics.ReleaseHdc(hdc);
+			DrawFrameControl( graphics, rectangle, (uint)DrawFrameControlTypes.DFC_BUTTON,
+				(uint)state | (uint)DrawFrameControlStates.DFCS_BUTTONPUSH);
 		}
 
 		[MonoTODO]
@@ -280,7 +588,7 @@ namespace System.Windows.Forms {
 		}
 
 		public static void DrawCheckBox( Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawFrameControlHelper (graphics, rectangle, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONCHECK);
+			DrawFrameControl (graphics, rectangle, (uint)DrawFrameControlTypes.DFC_BUTTON, (uint)state | (uint)DrawFrameControlStates.DFCS_BUTTONCHECK);
 		}
 		
 		[MonoTODO]
@@ -438,6 +746,27 @@ namespace System.Windows.Forms {
 			Win32.DeleteObject (maskBmp);
 		}
 
+		internal static void DrawFrameControl(Graphics graphics, Rectangle rectangle, uint Type, uint State) {
+			switch(Type) {
+				case (uint)DrawFrameControlTypes.DFC_BUTTON: {
+					graphics.DrawLine(penHighlight, rectangle.Left, rectangle.Y, rectangle.Right, rectangle.Y);
+					break;
+				}
+
+				case (uint)DrawFrameControlTypes.DFC_CAPTION: {
+					break;
+				}
+
+				case (uint)DrawFrameControlTypes.DFC_MENU: {
+					break;
+				}
+
+				case (uint)DrawFrameControlTypes.DFC_SCROLL: {
+					break;
+				}
+			}
+		}
+	
 		internal static void DrawFrameControlHelper (Graphics graphics, Rectangle rectangle, uint type, uint state) {
 
 			IntPtr targetDC = graphics.GetHdc ();
@@ -468,7 +797,7 @@ namespace System.Windows.Forms {
 		}
 
 		public static void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawFrameControlHelper (graphics,  rectangle, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONRADIO);
+			DrawFrameControl (graphics,  rectangle, (uint)DrawFrameControlTypes.DFC_BUTTON, (uint)state | (uint)DrawFrameControlStates.DFCS_BUTTONRADIO);
 		}
 		
 		[MonoTODO]
@@ -589,19 +918,18 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		
-		[MonoTODO]
 		public static Color Light(Color baseColor) {
 			return Light( baseColor, 10.0f);
 		}
 		
-		[MonoTODO]
 		public static Color Light(Color baseColor,float percOfLightLight) {
-			double H, I, S;
-			ControlPaint.Color2HIS(baseColor, out H, out I, out S);
-			double NewIntensity = Math.Min( 1.0, I + (percOfLightLight / 100.0));
-			return ControlPaint.HIS2Color(H, NewIntensity, S);
+			int H, I, S;
+
+			ControlPaint.Color2HBS(baseColor, out H, out I, out S);
+			int NewIntensity = Math.Min( 255, I + ((255*(int)percOfLightLight)/100));
+			return ControlPaint.HBS2Color(H, NewIntensity, S);
 		}
-		[MonoTODO]
+
 		public static Color LightLight(Color baseColor) {
 			return Light( baseColor, 20.0f);
 		}
