@@ -1,3 +1,7 @@
+2002-03-25  Martin Baulig  <martin@gnome.org>
+
+	* debug.h (mono_debug_make_symbols): Documented this function.
+
 2002-03-24  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_add_method): Include the `this' offset in
