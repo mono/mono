@@ -1,3 +1,11 @@
+2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DirectoryCas.cs: New. Very limited permission tests for Directory.
+	Actually it's only there to support tests for System.Environment.
+	* FileLoadExceptionCas.cs: New. Permission tests for FileLoadException
+	* FileNotFoundExceptionCas.cs: New. Permission tests for 
+	FileNotFoundException.
+
 2005-01-19  Nick Drochak <ndrochak@gol.com>
 
 	* FileStreamTest.cs: Fix test regression on .NET. Need to close
