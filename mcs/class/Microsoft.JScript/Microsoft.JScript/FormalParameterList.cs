@@ -105,5 +105,13 @@ namespace Microsoft.JScript {
 		internal int size {
 			get { return ids.Count; }
 		}
+
+		internal FormalParam get_element (int i)
+		{
+			if (i >= 0 && i < size)
+				return (FormalParam) ids [i];
+			else
+				throw new IndexOutOfRangeException ();
+		}
 	}
 }
