@@ -64,6 +64,7 @@ namespace System.Timers
 				enabled = value;
 				if (value) {
 					Thread t = new Thread (new ThreadStart (StartTimer));
+					t.IsBackground = true;
 					t.Start ();
 				} else {
 					StopTimer ();
