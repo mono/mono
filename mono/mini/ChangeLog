@@ -1,3 +1,8 @@
+2004-08-25  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* inssel.brg (mini_emit_memcpy): use 
+	NO_UNALIGNED_ACCESS to disable memcpy optimization
+
 2004-08-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c: Handle generic types in various places.
