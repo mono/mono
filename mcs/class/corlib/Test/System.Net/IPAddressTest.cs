@@ -17,25 +17,12 @@ namespace MonoTests.System.Net
 
 public class IPAddressTest : TestCase
 {
-	[StructLayout(LayoutKind.Explicit)]
-	private struct EndianTest
-	{
-		[FieldOffset (0)] public byte b0;
-		[FieldOffset (0)] public short s0;
-	}
-
-	private bool isLittleEndian = false;
-
 	public IPAddressTest () : 
 		base ("[MonoTests.System.Net.IPAddressTest]") {}
 
 	public IPAddressTest (string name) : base (name) {}
 
-	protected override void SetUp () {
-		EndianTest typeEndian = new EndianTest ();
-		typeEndian.s0 = 1;
-		isLittleEndian = typeEndian.b0 == 1;
-	}
+	protected override void SetUp () {}
 	
 	protected override void TearDown() {}
 
@@ -147,7 +134,7 @@ public class IPAddressTest : TestCase
 		long [] expectedLE = new long [] {0, 256, 16777216, ((long) 1) << 56 };
 		long [] expected;
 		
-		expected = isLittleEndian ? expectedLE : tested;
+		expected = BitConverter.IsLittleEndian ? expectedLE : tested;
 
 		short short0 = IPAddress.NetworkToHostOrder ((short) tested [0]);
 		AssertEquals ("NetworkToHostOrder #1", short0, (short) expected [0]);
