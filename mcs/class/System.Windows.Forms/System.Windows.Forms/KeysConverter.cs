@@ -33,7 +33,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type type)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return CanConvertFrom(context,type);
 		}
 		[MonoTODO]
 		public bool CanCompareTo(Type type)
@@ -52,15 +53,17 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object o)
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ConvertFrom(context,culture, value);
 		}
 
 		[MonoTODO]
-		public override object ConvertTo( ITypeDescriptorContext context, CultureInfo culture, object o, Type t)
+		public override object ConvertTo( ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 
 		[MonoTODO]

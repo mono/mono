@@ -72,13 +72,8 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException();
+				//FIXME:
 			}
 		}
-
-		//
-		// -- protected Properties
-		//
-
 	}
 }

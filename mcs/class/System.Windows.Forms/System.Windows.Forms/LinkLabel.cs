@@ -36,7 +36,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -54,7 +54,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -63,7 +63,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -72,7 +72,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -87,7 +87,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -96,7 +96,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -115,121 +115,31 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
-		//
-		//  --- Public Methods
-		//
-		//public IAsyncResult BeginInvoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public IAsyncResult BeginInvoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-		//public void Invalidate()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Region reg)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout(Control ctl, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val1, float val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public override void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public override void Select(bool directed, bool forward)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int b1, int b2, int b3, int b4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int b1, int b2, int b3, int b4, int b5, int b6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		
+	
 		// --- IButtonControl members:
 		DialogResult IButtonControl.DialogResult {
-			[MonoTODO] get { throw new NotImplementedException (); }
-			[MonoTODO] set { throw new NotImplementedException (); }
+			[MonoTODO] get {
+						   throw new NotImplementedException ();
+					   }
+			[MonoTODO] set {
+						   //FIXME:
+					   }
 		}
 
 		[MonoTODO]
 		void IButtonControl.NotifyDefault(bool value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		void IButtonControl.PerformClick() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		// --- end of IButtonControl members
 
@@ -245,7 +155,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return DefaultImeMode;
 			}
 		}
 
@@ -255,7 +166,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return CreateAccessibilityInstance();
 		}
 		[MonoTODO]
 		protected override void CreateHandle()
@@ -264,102 +176,99 @@ namespace System.Windows.Forms {
 			base.CreateHandle();
 		}
 
-		//inherited
-		//protected override virtual void Dispose(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnEnabledChanged(e);
 		}
 		[MonoTODO]
 		protected override void OnFontChanged( EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnFontChanged(e);
 		}
 		[MonoTODO]
 		protected override void OnGotFocus( EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnGotFocus(e);
 		}
 		[MonoTODO]
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnKeyDown(e);
 		}
 		[MonoTODO]
 		protected override void OnLostFocus (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnLostFocus(e);
 		}
 		[MonoTODO]
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnMouseDown(e);
 		}
 		// I think that this should be 'MouseEventArgs' 
 		// but the documentation says EventArgs.
 		[MonoTODO]
 		protected override void OnMouseLeave(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnMouseLeave(e);
 		}
 		[MonoTODO]
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnMouseMove(e);
 		}
 		[MonoTODO]
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnMouseUp(e);
 		}
 		[MonoTODO]
 		protected override void OnPaint (PaintEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnPaint(e);
 		}
 		[MonoTODO]
 		protected override void OnPaintBackground(PaintEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnPaint(e);
 		}
 		[MonoTODO]
 		protected override void OnTextAlignChanged( EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnTabIndexChanged(e);
 		}
 		[MonoTODO]
 		protected override void OnTextChanged( EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnTabIndexChanged(e);
 		}
 
 		[MonoTODO]
 		protected override bool ProcessDialogKey(Keys keyData)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessDialogKey(keyData);
 		}
-		//protected ContentAlignment RtlTranslateAlignment(ContentAlignment align)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected HorizontalAlignment RtlTranslateAlignment( HorizontalAlignment align)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected LeftRightAlignment RtlTranslateAlignment( LeftRightAlignment align)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
-		protected override void Select(bool val1, bool val2)
+		protected override void Select(bool directed, bool forward)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.Select(directed, forward);
 		}
 		[MonoTODO]
 		protected override void SetBoundsCore(
@@ -369,28 +278,15 @@ namespace System.Windows.Forms {
 			int height, 
 			BoundsSpecified specified) {
 
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetBoundsCore(x, y, width, height, specified);
 		}
-		//protected void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		protected override void WndProc(ref Message msg)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref msg);
 		}
-
-		
-		
 		
 		/// System.Windows.Forms.LinkLabel.Link
 		/// <summary>Represents a link within a LinkLabel control.</summary>
@@ -440,8 +336,6 @@ namespace System.Windows.Forms {
 //
 
 			// <summary>
-			//	This is only a template.  Nothing is implemented yet.
-			//
 			// </summary>
 
 		public class LinkCollection :  IList, ICollection, IEnumerable {
@@ -452,7 +346,7 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public LinkCollection(LinkLabel owner)
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 
 			//
@@ -476,7 +370,7 @@ namespace System.Windows.Forms {
 					throw new NotImplementedException ();
 				}
 				set {
-					throw new NotImplementedException ();
+					//FIXME:
 				}
 			}
 
@@ -496,28 +390,9 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public virtual void Clear()
 			{
-				throw new NotImplementedException ();
-			}
-			// Inherited
-			//public override bool Contains(LinkLabel.Link link)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			[MonoTODO]
-			public override bool Equals(object o)
-			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 
-			//public static bool Equals(object o1, object o2)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			[MonoTODO]
-			public override int GetHashCode() {
-				//FIXME add our proprities
-				return base.GetHashCode();
-			}
 			[MonoTODO]
 			public IEnumerator GetEnumerator()
 			{
@@ -531,12 +406,12 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public void Remove(LinkLabel.Link value)
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			[MonoTODO]
 			public void RemoveAt(int index)
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			/// --- LinkLabel.IList properties ---
@@ -544,20 +419,27 @@ namespace System.Windows.Forms {
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
+			[MonoTODO]
 			object IList.this[int index] {
-
-				[MonoTODO] get { throw new NotImplementedException (); }
-				[MonoTODO] set { throw new NotImplementedException (); }
+				get {
+					throw new NotImplementedException ();
+				}
+				set {
+					//FIXME:
+				}
 			}
-	
+			[MonoTODO] 
 			object ICollection.SyncRoot {
-
-				[MonoTODO] get { throw new NotImplementedException (); }
+				get {
+					throw new NotImplementedException ();
+				}
 			}
 	
+			[MonoTODO]
 			bool ICollection.IsSynchronized {
-
-				[MonoTODO] get { throw new NotImplementedException (); }
+				get {
+					throw new NotImplementedException ();
+				}
 			}
 			
 			[MonoTODO]
@@ -588,13 +470,13 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			void IList.Insert(int index,object value) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		
 			[MonoTODO]
 			void IList.Remove(object control) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}//End of subclass
 	}// End of Class

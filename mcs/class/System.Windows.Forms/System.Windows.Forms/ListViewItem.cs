@@ -26,31 +26,37 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public ListViewItem(string str)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public ListViewItem(string[] strings)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public ListViewItem(ListViewItem.ListViewSubItem[] subItems)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public ListViewItem(string str, int val)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public ListViewItem(string[] strings, int val)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public ListViewItem(string[] strings, int val,  Color color1, Color color2, Font font)
 		{
@@ -66,49 +72,54 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
+
 		[MonoTODO]
 		public Rectangle Bounds {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public bool Checked {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
+
 		[MonoTODO]
 		public bool Focused {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
+
 		[MonoTODO]
 		public Font Font {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
+
 		[MonoTODO]
 		public Color Forecolor {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -117,7 +128,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -144,7 +155,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -153,7 +164,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -168,7 +179,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -177,7 +188,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -186,7 +197,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -196,7 +207,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void BeginEdit()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public object Clone()
@@ -206,18 +217,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public virtual void EnsureVisible()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
-		public override bool Equals(object o)
+		public override bool Equals(object obj)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.Equals(obj);
 		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override int GetHashCode() {
 			//FIXME add our proprities
@@ -231,12 +238,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Remove()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 
 		//
@@ -245,12 +253,12 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void Deserialize(SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void Serialize(SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		// ISerializable.method:
@@ -270,8 +278,6 @@ namespace System.Windows.Forms {
 		// (C) 2002 Ximian, Inc
 		//
 		// <summary>
-		//	This is only a template.  Nothing is implemented yet.
-		//
 		// </summary>
 		[MonoTODO]
 		[Serializable]
@@ -280,7 +286,7 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public ListViewSubItemCollection(ListViewItem owner) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			
@@ -298,7 +304,9 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public ListViewSubItem this[int index] {
 				get { throw new NotImplementedException (); }
-				set { throw new NotImplementedException (); }
+				set {
+					//FIXME:
+				}
 			}
 			
 			
@@ -346,13 +354,13 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public void AddRange(ListViewItem.ListViewSubItem[] items) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			[MonoTODO]
 			public void AddRange(string[] items) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			[MonoTODO]
@@ -362,13 +370,13 @@ namespace System.Windows.Forms {
 				Color backColor,
 				Font font) {
 
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			[MonoTODO]
 			public void Clear() 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			[MonoTODO]
@@ -410,13 +418,13 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			void IList.Insert(int index,object item) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			[MonoTODO]
 			void IList.Remove(object item) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			[MonoTODO]
@@ -428,19 +436,19 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public void Insert(int index,ListViewItem.ListViewSubItem item) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			[MonoTODO]
 			public void Remove(ListViewItem.ListViewSubItem item) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			
 			[MonoTODO]
 			public void RemoveAt(int index) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 	//
@@ -452,8 +460,6 @@ namespace System.Windows.Forms {
 	// (C) 2002 Ximian, Inc
 	//
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
 	public class ListViewSubItem {
@@ -464,17 +470,16 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ListViewSubItem()
 		{
-			throw new NotImplementedException ();
 		}
 		[MonoTODO]
 		public ListViewSubItem(ListViewItem item, string str)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public ListViewSubItem(ListViewItem item, string str, Color color1, Color color2, Font font)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	
 		//
@@ -486,7 +491,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -495,7 +500,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -504,7 +509,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -513,7 +518,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -521,15 +526,11 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		[MonoTODO]
-		public override bool Equals(object o)
+		public override bool Equals(object obj)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.Equals(obj);
 		}
-		//inherited
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override int GetHashCode() {
 			//FIXME add our proprities
@@ -538,12 +539,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void ResetStyle()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		}
 	}

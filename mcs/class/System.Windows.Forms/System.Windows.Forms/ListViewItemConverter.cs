@@ -22,7 +22,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ListViewItemConverter()
 		{
-			throw new NotImplementedException ();
 		}
 
 		//

@@ -21,7 +21,6 @@ using System.Text;
 namespace System.Windows.Forms {
 
 	/// <summary>
-	/// ToDo note:
 	/// </summary>
 
 	public class MenuItem : Menu {

@@ -41,7 +41,7 @@ namespace System.Windows.Forms  {
 
 		[MonoTODO]
 		public virtual void MergeMenu(Menu menuSrc) {
-			throw new NotImplementedException();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -56,7 +56,7 @@ namespace System.Windows.Forms  {
 		//
 
 		protected void CloneMenu(Menu menuSrc) {
-			throw new NotImplementedException();
+			//FIXME:
 		}
 
 		protected Menu( MenuItem[] items) {
@@ -133,7 +133,6 @@ namespace System.Windows.Forms  {
 			}
 		}
 
-
 		// Library interface
 
 		// Recursively searches for specified item in menu.
@@ -206,32 +205,9 @@ namespace System.Windows.Forms  {
 			BuildMenuStructure();
 		}
 
-		//inherited
-		//public virtual ISite Site {
-		//	get {
-		//		throw new NotImplementedException();
-		//	}
-		//	set {
-		//		throw new NotImplementedException();
-		//	}
-		//}
-
 		//
 		// -- Protected Properties
 		//
-
-		//inherited
-		//protected bool DesignMode {
-		//	get {
-		//		throw new NotImplementedException();
-		//	}
-		//}
-		//protected EventHandlerList Events {
-		//	get {
-		//		throw new NotImplementedException();
-		//	}
-		//}
-
 
 		//
 		// System.Windows.Forms.Menu.MenuItemCollection.cs
@@ -242,8 +218,6 @@ namespace System.Windows.Forms  {
 		// (C) 2002 Ximian, Inc
 		//
 		/// <summary>
-		/// ToDo note:
-		///  - Nothing is implemented
 		/// </summary>
 
 		public class MenuItemCollection : IList, ICollection, IEnumerable {
@@ -371,16 +345,6 @@ namespace System.Windows.Forms  {
 				}
 			}
 
-			public override bool Equals(object o) {
-				return base.Equals(o);
-			}
-
-			[MonoTODO]
-			public override int GetHashCode() {
-				//FIXME add our proprities
-				return base.GetHashCode();
-			}
-
 			public IEnumerator GetEnumerator() {
 				return items_.GetEnumerator();
 			}
@@ -404,23 +368,6 @@ namespace System.Windows.Forms  {
 			public virtual void RemoveAt(int i) {
 				Remove(items_[i] as MenuItem);
 			}
-
-			public override string ToString() {
-				throw new NotImplementedException ();
-			}
-
-			//
-			// -- Protected Methods
-			//
-
-			~MenuItemCollection() {
-				Clear();
-			}
-
-			//inherited
-			//protected object MemberwiseClone() {
-			//	throw new NotImplementedException ();
-			//}
 
 			//
 			// -- Public Properties
@@ -456,19 +403,19 @@ namespace System.Windows.Forms  {
 				}
 			}
 
-			//[MonoTODO]
+			[MonoTODO]
 			object IList.this[int index]{
 				get{
 					throw new NotImplementedException ();
 				}
 				set{
-					throw new NotImplementedException ();
+					//FIXME:
 				}
 			}
 		
 			[MonoTODO]
 			void IList.Clear(){
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		
 			[MonoTODO]
@@ -488,17 +435,17 @@ namespace System.Windows.Forms  {
 
 			[MonoTODO]
 			void IList.Insert(int index, object value){
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 
 			[MonoTODO]
 			void IList.Remove( object value){
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 
 			[MonoTODO]
 			void IList.RemoveAt( int index){
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			// End of IList interface
 			/// <summary>

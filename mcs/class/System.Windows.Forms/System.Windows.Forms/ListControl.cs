@@ -27,7 +27,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -36,25 +36,19 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
 		public abstract int SelectedIndex {get;set;}
-//			get {
-//				//throw new NotImplementedException ();
-//			}
-//			set {
-//				//throw new NotImplementedException ();
-//			}
-//		}
+
 		[MonoTODO]
 		public object SelectedValue {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -63,7 +57,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -71,17 +65,6 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
 		[MonoTODO]
 		public string GetItemText(object Item)
 		{
@@ -121,32 +104,34 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.IsInputKey(keyData);
 		}
 		[MonoTODO]
 		protected virtual void OnDataSourceChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnDisplayMemberChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected virtual void OnSelectedIndexChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}		
 		
 		[MonoTODO]
 		protected virtual void OnSelectedValueChanged(EventArgs e){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		
 		[MonoTODO]
 		protected override void OnBindingContextChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnBindingContextChanged(e);
 		}
 
 		[MonoTODO]

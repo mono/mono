@@ -617,6 +617,7 @@
     
     			if (IsHandleCreated)
     				OnHandleCreated (new EventArgs());
+					OnLoad(new EventArgs());
     		}
     
     		protected override void DefWndProc (ref Message m)
@@ -819,97 +820,99 @@
     			base.SetVisibleCore (value);
     		}
 
-    		protected override void WndProc (ref Message m)
-    		{
-    			base.WndProc (ref m);
+			protected override void WndProc (ref Message m) {
+				base.WndProc (ref m);
+				if((int)m.Msg == (int)Msg.WM_MBUTTONDBLCLK){
+					OnDoubleClick(new EventArgs());
+				}
     
-    			switch (m.Msg) {
-    			case Msg.WM_CLOSE:
-    				EventArgs closeArgs = new EventArgs();
-    				OnClosed (closeArgs);
-    				break;
-    				//case ?:
-    				//OnCreateControl()
-    				//break;
-    			case Msg.WM_FONTCHANGE:
-    				EventArgs fontChangedArgs = new EventArgs();
-    				OnFontChanged (fontChangedArgs);
-    				break;
-    			case Msg.WM_CREATE:
-    				EventArgs handleCreatedArgs = new EventArgs(); 
-    				OnHandleCreated (handleCreatedArgs);
-    				break;
-    			case Msg.WM_DESTROY:
-    				EventArgs destroyArgs = new EventArgs();
-    				OnHandleDestroyed (destroyArgs);
-    				break;
-    			case Msg.WM_INPUTLANGCHANGE:
-    				//InputLanguageChangedEventArgs ilChangedArgs =
-    				//	new InputLanguageChangedEventArgs();
-    				//OnInputLanguageChanged (ilChangedArgs);
-    				break;
-    			case Msg.WM_INPUTLANGCHANGEREQUEST:
-    				//InputLanguageChangingEventArgs ilChangingArgs =
-    				//	new InputLanguageChangingEventArgs();
-    				//OnInputLanguagedChanging (ilChangingArgs);
-    				break;
-    				/*
-    				  case Win32.WM_SHOWWINDOW:
-    				  EventArgs e;
-    				  OnLoad (e);
-    				  break;
-    				*/
-    				// case ?:
-    				// OnMaximizedBoundsChanged(EventArgs e)
-    				// break;
-    				// case ?:
-    				// OnMaximumSizedChanged(EventArgs e)
-    				//break;
-    			case Msg.WM_MDIACTIVATE:
-    				EventArgs mdiActivateArgs = new EventArgs();
-    				OnMdiChildActivate (mdiActivateArgs);
-    				break;
-    			case Msg.WM_EXITMENULOOP:
-    				EventArgs menuCompleteArgs = new EventArgs();
-    				OnMenuComplete (menuCompleteArgs);
-    				break;
-    			case Msg.WM_ENTERMENULOOP:
-    				EventArgs enterMenuLoopArgs = new EventArgs();
-    				OnMenuStart (enterMenuLoopArgs);
-    				break;
-    				// case ?:
-    				// OnMinimumSizeChanged(EventArgs e)
-    				// break;
-    			case Msg.WM_PAINT:
-    				//PaintEventArgs paintArgs = new PaintEventArgs();
-    				//OnPaint (paintArgs);
-    				break;
-    			case Msg.WM_SIZE:
-    				EventArgs resizeArgs = new EventArgs();
-    				OnResize (resizeArgs);
-    				break;
-    				//case ?:
-    				//OnStyleChanged(EventArgs e)
-    				//break;
-    			case Msg.WM_SETTEXT:
-    				EventArgs textChangedArgs = new EventArgs();
-    				OnTextChanged (textChangedArgs);
-    				break;
-    			case Msg.WM_SHOWWINDOW:
-    				EventArgs visibleChangedArgs = new EventArgs();
-    				OnVisibleChanged (visibleChangedArgs);
-    				break;
-    			case Msg.WM_COMMAND:
-    				OnWmCommand (ref m);
-    				break;
+				switch (m.Msg) {
+					case Msg.WM_CLOSE:
+						EventArgs closeArgs = new EventArgs();
+						OnClosed (closeArgs);
+						break;
+						//case ?:
+						//OnCreateControl()
+						//break;
+					case Msg.WM_FONTCHANGE:
+						EventArgs fontChangedArgs = new EventArgs();
+						OnFontChanged (fontChangedArgs);
+						break;
+					case Msg.WM_CREATE:
+						EventArgs handleCreatedArgs = new EventArgs(); 
+						OnHandleCreated (handleCreatedArgs);
+						break;
+					case Msg.WM_DESTROY:
+						EventArgs destroyArgs = new EventArgs();
+						OnHandleDestroyed (destroyArgs);
+						break;
+					case Msg.WM_INPUTLANGCHANGE:
+						//InputLanguageChangedEventArgs ilChangedArgs =
+						//	new InputLanguageChangedEventArgs();
+						//OnInputLanguageChanged (ilChangedArgs);
+						break;
+					case Msg.WM_INPUTLANGCHANGEREQUEST:
+						//InputLanguageChangingEventArgs ilChangingArgs =
+						//	new InputLanguageChangingEventArgs();
+						//OnInputLanguagedChanging (ilChangingArgs);
+						break;
+						/*
+						  case Win32.WM_SHOWWINDOW:
+						  EventArgs e;
+						  OnLoad (e);
+						  break;
+						*/
+						// case ?:
+						// OnMaximizedBoundsChanged(EventArgs e)
+						// break;
+						// case ?:
+						// OnMaximumSizedChanged(EventArgs e)
+						//break;
+					case Msg.WM_MDIACTIVATE:
+						EventArgs mdiActivateArgs = new EventArgs();
+						OnMdiChildActivate (mdiActivateArgs);
+						break;
+					case Msg.WM_EXITMENULOOP:
+						EventArgs menuCompleteArgs = new EventArgs();
+						OnMenuComplete (menuCompleteArgs);
+						break;
+					case Msg.WM_ENTERMENULOOP:
+						EventArgs enterMenuLoopArgs = new EventArgs();
+						OnMenuStart (enterMenuLoopArgs);
+						break;
+						// case ?:
+						// OnMinimumSizeChanged(EventArgs e)
+						// break;
+					case Msg.WM_PAINT:
+						//FXIME:
+						//PaintEventArgs paintArgs = new PaintEventArgs(graphics, clipRectange);
+						//OnPaint (paintArgs);
+						break;
+					case Msg.WM_SIZE:
+						OnResize (new EventArgs());
+						break;
+						//case ?:
+						//OnStyleChanged(EventArgs e)
+						//break;
+					case Msg.WM_SETTEXT:
+						EventArgs textChangedArgs = new EventArgs();
+						OnTextChanged (textChangedArgs);
+						break;
+					case Msg.WM_SHOWWINDOW:
+						EventArgs visibleChangedArgs = new EventArgs();
+						OnVisibleChanged (visibleChangedArgs);
+						break;
+					case Msg.WM_COMMAND:
+						OnWmCommand (ref m);
+						break;
 					case Msg.WM_INITMENU:
 						OnWmInitMenu (ref m);
 						break;
 					case Msg.WM_INITMENUPOPUP:
 						OnWmInitMenuPopup (ref m);
 						break;
-    			}
-    		}
+				}
+			}
 			#region new 11.26.2002 from Alexandre Pigolkine (pigolkine@gmx.de)
 			protected virtual void OnWmInitMenu (ref Message m) {
 				Menu mn = System.Windows.Forms.Menu.GetMenuByHandle( m.WParam);
@@ -936,8 +939,6 @@
     		//
     		//
     		// <summary>
-    		//	This is only a template.  Nothing is implemented yet.
-    		//
     		// </summary>
     		// TODO: implement support classes and derive from 
     		// proper classes

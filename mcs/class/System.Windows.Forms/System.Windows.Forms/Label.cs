@@ -124,8 +124,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -226,13 +226,14 @@
     				return renderTransparent;
     			}
     			set {
-    				renderTransparent = value;
-    			}
+					//FIXME:
+				}
     		}
     
     		protected override ImeMode DefaultImeMode {
     			get {
-    				return defaultImeMode;
+					//FIXME:
+					return defaultImeMode;
     			}
     		}
     
@@ -242,7 +243,8 @@
 
     		public new void Select()
     		{
-    			base.Select ();
+				//FIXME:
+				base.Select ();
     		}
     
   		//Compact Framework
@@ -255,9 +257,9 @@
     		//
     		//  --- Public Events
     		// 
-    		public event EventHandler AutoSizeChanged; // {
+    		public event EventHandler AutoSizeChanged;
    
-    		public event EventHandler TextAlignChanged; // {
+    		public event EventHandler TextAlignChanged;
     
     		//
     		//  --- Protected Methods
@@ -272,36 +274,38 @@
       		[MonoTODO]
       		protected  override AccessibleObject CreateAccessibilityInstance()
       		{
-      			throw new NotImplementedException ();
+				//FIXME:
+				return base.CreateAccessibilityInstance();
       		}
 
     		[MonoTODO]
     		protected  void DrawImage (Graphics g, Image img, 
     					   Rectangle r, ContentAlignment align)
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     
     		protected virtual void OnAutoSizeChanged (EventArgs e) {
-    			if (AutoSizeChanged != null)
-    				AutoSizeChanged (this, e);
-    
+    			if (AutoSizeChanged != null) AutoSizeChanged (this, e);
     		}
     
     		protected override void OnEnabledChanged (EventArgs e)
     		{
-    			base.OnEnabledChanged (e);
+				//FIXME:
+				base.OnEnabledChanged (e);
     		}
     
     		protected override void OnFontChanged (EventArgs e)
     		{
-    			base.OnFontChanged (e);
+				//FIXME:
+				base.OnFontChanged (e);
     		}
     
     		protected override void OnPaint (PaintEventArgs e)
     		{
-    
-    		}
+				//FIXME:
+				base.OnPaint(e);
+			}
     
   			//Compact Framework
     		protected override void OnParentChanged (EventArgs e)
@@ -310,13 +314,13 @@
     		}
     
     		protected virtual void OnTextAlignChanged (EventArgs e) {
-    			if (TextAlignChanged != null)
-    				TextAlignChanged (this, e);
+    			if (TextAlignChanged != null) TextAlignChanged (this, e);
     		}
     
  			//Compact Framework
     		protected override void OnTextChanged (EventArgs e) {
-    			base.OnTextChanged (e);
+				//FIXME:
+				base.OnTextChanged (e);
     		}
     
     		protected override void OnVisibleChanged (EventArgs e)
@@ -353,8 +357,8 @@
     		[MonoTODO]
     		protected new virtual void Select (bool directed, bool forward)
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     
     		protected override void SetBoundsCore (
     			int x, int y, int width, int height,
