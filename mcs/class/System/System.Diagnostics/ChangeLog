@@ -6,7 +6,7 @@
 2004-05-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs: redirecting I/O is not permitted if UseShellExecute is
-	false. Also throw if FileName is null.
+	true. Also throw if FileName is null.
 
 2004-04-06  Lluis Sanchez Gual  <lluis@ximian.com>
 

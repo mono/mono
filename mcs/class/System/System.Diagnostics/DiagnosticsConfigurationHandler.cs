@@ -12,7 +12,8 @@
 //
 using System;
 using System.Collections;
-using System.Configuration;#if (XML_DEP)
+using System.Configuration;
+#if (XML_DEP)
 using System.Xml;
 #endif
 namespace System.Diagnostics
@@ -36,7 +37,7 @@ namespace System.Diagnostics
 			}
 		}
 	}
-#if (XML_DEP)
+#if (XML_DEP)
 	public class DiagnosticsConfigurationHandler : IConfigurationSectionHandler
 	{
 		delegate void ElementHandler (IDictionary d, XmlNode node);
