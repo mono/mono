@@ -1,57 +1,71 @@
 //
-// System.Runtime.Serialization.SerializationEnumerator.cs
+// System.Runtime.Serialization.SerializationInfoEnumerator.cs
 //
-// Author:
-//   Dan Lewis (dihlewis@yahoo.co.uk)
+// Author: Duncan Mak (duncan@ximian.com)
 //
-// (C) 2002
-//
-// Stub file. Fix when SerializationInfo is implemented.
+// (C) Ximian, Inc.
 //
 
+using System;
 using System.Collections;
+using System.Runtime.Serialization;
 
-namespace System.Runtime.Serialization {
+namespace System.Runtime.Serialization
+{
+	public sealed class SerializationInfoEnumerator : IEnumerator
+	{
+		IDictionaryEnumerator ide;
 
-	[MonoTODO]
-	public sealed class SerializationInfoEnumerator : IEnumerator {
-		public SerializationEntry Current {
-			get { return new SerializationEntry (); }
+		// Constructor
+		internal SerializationInfoEnumerator (Hashtable collection)
+		{
+			ide = collection.GetEnumerator ();
+		}
+		
+		// Properties
+		public SerializationEntry Current
+		{
+			get {				
+				SerializationEntry entry = (SerializationEntry) ide.Value;
+								
+				return new SerializationEntry (entry.Name, entry.ObjectType, entry.Value);
+			}
 		}
 
-		public string Name {
-			get { return null; }
+		object IEnumerator.Current
+		{			
+			get { 				
+				SerializationEntry entry = (SerializationEntry) ide.Value;
+				
+				return new SerializationEntry (entry.Name, entry.ObjectType, entry.Value);
+			}
 		}
 
-		public Type ObjectType {
-			get { return null; }
+		public string Name
+		{
+			get { return this.Current.Name; }
 		}
 
-		public object Value {
-			get { return null; }
+		public Type ObjectType
+		{
+			get  { return this.Current.ObjectType; }
 		}
 
-		// IEnumerator
-
-		object IEnumerator.Current {
-			get { return null; }
+		public object Value
+		{			
+			get { return this.Current.Value; }
 		}
 
-		public bool MoveNext () {
-			return false;
+		// Methods
+		public bool MoveNext ()
+		{
+			return ide.MoveNext ();
 		}
 
-		public void Reset () {
+		public void Reset ()
+		{
+			ide.Reset ();
 		}
-
-		// internal
-
-		internal SerializationInfoEnumerator (SerializationInfo info) {
-			this.info = info;
-		}
-
-		// private
-	
-		private SerializationInfo info;
 	}
+	
 }

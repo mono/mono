@@ -29,5 +29,12 @@ namespace System.Runtime.Serialization
 		{
 			get { return value; }
 		}
+
+		internal SerializationEntry (string name, Type type, object value)
+		{
+			this.name = name;
+			this.objectType = type;
+			this.value = value;
+		}
 	}
 }
