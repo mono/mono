@@ -10,16 +10,15 @@
 using System;
 using System.Globalization;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
 	[Serializable]
 	public abstract class MethodBase: MemberInfo {
 
-		public static MethodBase GetCurrentMethod()
-		{
-			return null;
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static MethodBase GetCurrentMethod ();
 
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle)
 		{

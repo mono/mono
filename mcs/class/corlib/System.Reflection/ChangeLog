@@ -1,4 +1,10 @@
 
+Wed Jul 24 13:08:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MethodBase.cs: implemented GetCurrentMethod.
+	* Assembly.cs: implemented GetExecutingAssembly and
+	GetCallingassembly.
+
 Mon Jul 1 18:01:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoProperty.cs: handle properties with only a set method.

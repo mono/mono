@@ -261,10 +261,11 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-		public static Assembly GetExecutingAssembly ()
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static Assembly GetExecutingAssembly ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static Assembly GetCallingAssembly ();
 
 		public AssemblyName[] GetReferencedAssemblies ()
 		{
