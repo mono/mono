@@ -48,7 +48,7 @@ namespace Microsoft.JScript {
 		}
 
 		public override Object InvokeMember (string name, BindingFlags invokeAttr,
-						     Binder binder, Object target, Object [] args,
+						     System.Reflection.Binder binder, Object target, Object [] args,
 						     ParameterModifier [] modifiers, CultureInfo cultInfo,
 						     string [] namedParams)
 		{

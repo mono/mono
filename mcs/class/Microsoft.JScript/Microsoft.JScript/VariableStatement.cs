@@ -62,6 +62,14 @@ namespace Microsoft.JScript {
 			return sb.ToString ();
 		}
 
+		internal void EmitVariableDecls (EmitContext ec)
+		{
+			int n = var_decls.Count;
+			
+			for (int i = 0; i < n; i++)
+				((VariableDeclaration) var_decls [i]).EmitDecl (ec);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			int i, size = var_decls.Count;
@@ -70,13 +78,24 @@ namespace Microsoft.JScript {
 				((VariableDeclaration) var_decls [i]).Emit (ec);
 		}
 
+		internal void PopulateContext (IdentificationTable context)
+		{
+			VariableDeclaration tmp_decl;
+			int n = var_decls.Count;
+
+			for (int i = 0; i < n; i++) {
+				tmp_decl = (VariableDeclaration) var_decls [i];
+				context.Enter (Symbol.CreateSymbol (tmp_decl.id), tmp_decl);
+			}
+		}
+
 		internal override bool Resolve (IdentificationTable context)
 		{
 			VariableDeclaration tmp_decl;
-			int i, n = var_decls.Count;
+			int n = var_decls.Count;
 			bool r = true;
 
-			for (i = 0; i < n; i++) {
+			for (int i = 0; i < n; i++) {
 				tmp_decl = (VariableDeclaration) var_decls [i];
 				r &= tmp_decl.Resolve (context);
 			}

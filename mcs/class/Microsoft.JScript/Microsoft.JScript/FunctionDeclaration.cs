@@ -5,6 +5,7 @@
 //	 Cesar Octavio Lopez Nataren
 //
 // (C) 2003, 2004 Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2005 Novell Inc.
 //
 
 //
@@ -39,9 +40,20 @@ namespace Microsoft.JScript {
 	
 	public class FunctionDeclaration : Function {
 
+		internal FunctionDeclaration ()
+		{
+		}
+
 		internal FunctionDeclaration (AST parent, string name)
 			: this (parent, name, null, String.Empty, null)
 		{
+		}
+
+		internal void Init (AST parent, string name, FormalParameterList p, string return_type, Block body)
+		{
+			this.parent = parent;
+			set_prefix ();
+			func_obj = new FunctionObject (name, p, return_type, body);
 		}
 		
 		internal FunctionDeclaration (AST parent, string name, 
@@ -70,7 +82,7 @@ namespace Microsoft.JScript {
 		}
 
 		internal override void Emit (EmitContext ec)
-		{			
+		{
 			string name = func_obj.name;
 			string full_name;
 			TypeBuilder type = ec.type_builder;
@@ -129,8 +141,7 @@ namespace Microsoft.JScript {
 
 		internal void build_local_fields (ILGenerator ig)
 		{
-			DictionaryEntry e;
-			object v;		      
+			AST e;
 			int n;
 
 			if (locals == null)
@@ -152,16 +163,15 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Ldc_I4, i);
 				e = locals [i];
-				ig.Emit (OpCodes.Ldstr, (string) e.Key);
-				v = e.Value;
+				ig.Emit (OpCodes.Ldstr, GetName (e));
 
-				if (v is VariableDeclaration)
-					ig.Emit (OpCodes.Ldtoken, ((VariableDeclaration) v).type);
-				else if (v is FormalParam)
-					ig.Emit (OpCodes.Ldtoken, ((FormalParam) v).type);
-				else if (v is FunctionDeclaration)
+				if (e is VariableDeclaration)
+					ig.Emit (OpCodes.Ldtoken, ((VariableDeclaration) e).type);
+				else if (e is FormalParam)
+					ig.Emit (OpCodes.Ldtoken, ((FormalParam) e).type);
+				else if (e is FunctionDeclaration)
 					ig.Emit (OpCodes.Ldtoken, typeof (ScriptFunction));
-				else if (v is FunctionExpression)
+				else if (e is FunctionExpression)
 					ig.Emit (OpCodes.Ldtoken, typeof (object));
 
 				ig.Emit (OpCodes.Ldc_I4, i);
@@ -176,19 +186,29 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			set_function_type ();
-			context.Enter (func_obj.name, this);
-			context.OpenBlock ();
+
+			//
+			// outer scope has already added the symbol to the
+			// table but not the correct binding.
+			//
+			FunctionDeclaration func_decl = (FunctionDeclaration) context.Get (Symbol.CreateSymbol (func_obj.name));
+			func_decl.Init (this.parent, this.func_obj.name, this.func_obj.parameters, this.func_obj.type_annot, this.func_obj.body);
+
+			context.BeginScope ();
+			
 			FormalParameterList p = func_obj.parameters;
 
 			if (p != null)
 				p.Resolve (context);
 
 			Block body = func_obj.body;
+
 			if (body != null)
 				body.Resolve (context);
 
-			locals = context.current_locals;
-			context.CloseBlock ();		
+			locals = context.CurrentLocals;
+			
+			context.EndScope ();
 			return true;
 		}		
 	}

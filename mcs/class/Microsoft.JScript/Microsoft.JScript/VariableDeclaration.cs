@@ -73,7 +73,22 @@ namespace Microsoft.JScript {
 			if (val != null)
 				sb.Append (val.ToString ());
 
-			return sb.ToString ();
+			return "var " + sb.ToString ();
+		}
+
+		internal void EmitDecl (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			if (parent == null || (parent.GetType () != typeof (FunctionDeclaration)
+					       && parent.GetType () != typeof (FunctionExpression))) {
+				FieldBuilder field_builder;
+				TypeBuilder type_builder  = ec.type_builder;
+				
+				field_builder = type_builder.DefineField (id, this.type, FieldAttributes.Public | FieldAttributes.Static);
+				field_info = field_builder;
+			} else
+				local_builder = ig.DeclareLocal (type);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -82,19 +97,11 @@ namespace Microsoft.JScript {
 
 			if (parent == null || (parent.GetType () != typeof (FunctionDeclaration)
 					       && parent.GetType () != typeof (FunctionExpression))) {
-				FieldBuilder field_builder;
-				TypeBuilder type  = ec.type_builder;
-				
-				field_builder = type.DefineField (id, this.type, FieldAttributes.Public | FieldAttributes.Static);
-				field_info = field_builder;
-
 				if (val != null) {
 					val.Emit (ec);
-					ig.Emit (OpCodes.Stsfld, field_builder);
+					ig.Emit (OpCodes.Stsfld, field_info);
 				}
 			} else {
-				local_builder = ig.DeclareLocal (type);
-				
 				if (val != null) {
 					val.Emit (ec);
 					ig.Emit (OpCodes.Stloc, local_builder);
@@ -102,12 +109,12 @@ namespace Microsoft.JScript {
 			}
 		}
 
+
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;
-			if (val != null)
-				r = val.Resolve (context);
-			context.Enter (id, this);
+ 			if (val != null)
+ 				r = val.Resolve (context);
 			return r;
 		}
 	}

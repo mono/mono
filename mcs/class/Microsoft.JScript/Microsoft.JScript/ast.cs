@@ -106,7 +106,7 @@ namespace Microsoft.JScript {
 		internal FunctionObject func_obj;
 		internal JSFunctionAttributeEnum func_type;
 
-		internal DictionaryEntry [] locals;
+		internal AST [] locals;
 		internal LocalBuilder local_func;
 
 		protected bool not_void_return = false;
@@ -124,6 +124,10 @@ namespace Microsoft.JScript {
 		internal bool RequiresActivation {
 			get { return requires_activation; }
 			set { requires_activation = value; }
+		}
+
+		internal int NumOfArgs {
+			get { return func_obj.parameters.size; }
 		}
 
 		public  void Init (Block body, FormalParameterList p)
@@ -188,6 +192,17 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldc_I4, n);
 			ig.Emit (OpCodes.Newobj, ctr_info);
 			ig.Emit (OpCodes.Stelem_Ref);
+		}
+
+		internal string GetName (object ast)
+		{
+			if (ast is VariableDeclaration)
+				return ((VariableDeclaration) ast).id;
+			else if (ast is FormalParam)
+				return ((FormalParam) ast).id;
+			else if (ast is FunctionDeclaration || ast is FunctionExpression)
+				return ((Function) ast).func_obj.name;
+			else throw new Exception ("GetName unknown type");
 		}
 	}
 }

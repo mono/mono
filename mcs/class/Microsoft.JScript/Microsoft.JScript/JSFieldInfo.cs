@@ -110,7 +110,7 @@ namespace Microsoft.JScript {
 
 
 		public override void SetValue (object obj, object value, BindingFlags invokeAttr,
-					       Binder binder, CultureInfo culture)
+					       System.Reflection.Binder binder, CultureInfo culture)
 		{
 			throw new NotImplementedException ();
 		}

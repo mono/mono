@@ -1,10 +1,14 @@
 //
-// ExecutionContext.cs: The stack of possible executions environments.
+// Table.cs: Implementation of environments for jscript. Using a
+// modified version of the algorithm and date structure presented by
+// Andrew W. Appel in his book Modern compiler implementation in Java,
+// second edition.
 //
 // Author:
-//	Cesar Lopez Nataren
+//	Cesar Lopez Nataren (cnataren@novell.com)
 //
 // (C) 2003, Cesar Lopez Nataren
+// (C) 2005 Novell Inc.
 //
 
 //
@@ -28,76 +32,268 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Reflection;
 using System.Collections;
-using System.Text;
 
 namespace Microsoft.JScript {
+	/// <summary>
+	/// Class that encapsulates a string id for faster hashing purposes.
+	/// </summary>
+	internal class Symbol {
+		private string name;
+		private static Hashtable dict = new Hashtable ();
 
-	internal class IdentificationTable {
-
-		internal Stack stack;
-
-		internal IdentificationTable ()
-		{
-			stack = new Stack ();
-			stack.Push (new SymbolTable (null));
-		}
-		
-		internal void OpenBlock ()
-		{
-			SymbolTable parent = (SymbolTable) stack.Peek ();
-			stack.Push (new SymbolTable (parent));
+		internal string Value {
+			get { return name; }
 		}
 
-		internal void CloseBlock ()
+		private Symbol (string name)
 		{
-			stack.Pop ();
-		}
-
-		internal void Enter (string id, object decl)
-		{			
-			((SymbolTable) stack.Peek ()).Add (id , decl);
-		}
-
-		internal void Remove (string id)
-		{
-			((SymbolTable) stack.Peek ()).Remove (id);
-		}
-		//
-		// It'll return the object asociated with the 'id', if found.
-		//
-		internal object Contains (string id)
-		{
-			SymbolTable parent, current_scope = (SymbolTable) stack.Peek ();
-			object found = current_scope.Contains (id);
-
-			if (found == null) {
-				parent = current_scope.parent;
-
-				if (parent != null)
-					found = parent.Contains (id);
-			}
-			return found;
+			this.name = name;
 		}
 
 		public override string ToString ()
 		{
-			StringBuilder sb = new StringBuilder ();
-
-			int i, size = stack.Count;
-
-			for (i = 0; i < size; i++)
-				sb.Append (stack.Pop ().ToString ());
-
-			return sb.ToString ();
+			return name;
 		}
 
-		internal int num_of_locals {
-			get { return  ((SymbolTable) stack.Peek ()).size; }
+		/// <summary>
+		/// Return the unique symbol associated with a
+		/// string. Repeated calls to CreateSymbol will return the
+		/// same Symbol. 
+		/// </summary>
+		internal static Symbol CreateSymbol (string n)
+		{
+			string u = String.Intern (n);
+			Symbol s = (Symbol) dict [u];
+		
+			if (s == null) {
+				s = new Symbol (u);
+				dict [u] = s;
+			}
+			return s;
+		}
+	}
+
+	/// <summary>
+	/// Associates a symbol to its declaring object.
+	/// </summary>
+	internal class Binder {
+		AST value;
+		Symbol prev_top;
+
+		/// <remarks>
+		/// If the symbol is already in the environment, resolves
+		/// collisions with external chaining. 
+		/// </remarks>
+		Binder tail;
+
+		internal AST Value {
+			get { return value; }
+			set { this.value = value; }
 		}
 
-		internal DictionaryEntry [] current_locals {
-			get { return  ((SymbolTable) stack.Peek ()).current_symbols; }
+		internal Binder Tail {
+			get { return tail; }
+		}
+
+		internal Symbol PrevTop {
+			get { return prev_top; }
+		}
+
+		internal Binder (AST value, Symbol prev_top, Binder tail)
+		{
+			this.value = value;
+			this.prev_top = prev_top;
+			this.tail = tail;
+		}
+	}
+
+	/// <summary>
+	/// Environment implementation, each key must be a Symbol and we take
+	/// care of scoping. 
+	/// </summary>
+	internal class IdentificationTable {
+		private Hashtable dict = new Hashtable ();
+		private Symbol top;
+		private Binder marks;
+
+		internal IdentificationTable ()
+		{
+		}
+
+		internal bool Contains (Symbol key)
+		{
+			Binder e = (Binder) dict [key];
+			return e != null;
+		}
+
+		/// <summary>
+		/// Gets the object associated to the symbol in the table
+		/// </summary>
+		internal AST Get (Symbol key)
+		{
+			Binder e = (Binder) dict [key];
+
+			if (e == null)
+				return null;
+			else
+				return e.Value;
+		}
+
+		/// <summary>
+		/// Bind a key
+		/// </summary>
+		internal void Enter (Symbol key, AST value)
+		{	
+ 			Binder e = (Binder) dict [key];
+
+			/// <remarks>
+			/// If a Binder's Value is null means that it
+			/// represents a in-transit binding, we must
+			/// set its value to something useful.
+			/// </remarks>
+ 			if (e != null && e.Value == null)
+ 				e.Value = value;
+			else {
+				//
+				// If 'key' is already on the table we form a
+				// Binder's chain, otherwise we include the new key 
+				// represented with its association object.
+				//
+				dict [key] = new Binder (value, top, (Binder) dict [key]);
+
+				// 
+				// make 'key' the most recent symbol bound
+				//
+				top = key;					
+			}
+		}
+
+		/// <summary>
+		/// Delete symbol from the table
+		/// </summary>
+		internal void Remove (Symbol key)
+		{			
+			Binder e = (Binder) dict [key];
+			if (e != null)
+				if (e.Tail != null)
+					dict [key] = e.Tail;
+				else
+					dict.Remove (key);
+		}
+
+		/// <summary>
+		/// Remembers the current state of the table
+		/// </summary>
+		internal void BeginScope ()
+		{
+			marks = new Binder (null, top, marks);
+			top = null;
+		}
+
+		/// <summary>
+		/// Restores the table to what it was at the most recent BeginScope
+		/// that has not already been ended
+		/// </summary>
+		internal void EndScope ()
+		{
+			//
+			// Delete all the elements until we find 
+			// that top is null, that occurs when we find 
+			// the scope marker.
+			//
+			while (top != null) {
+				Binder e = (Binder) dict [top];
+
+				//
+				// If there's a chain we delete the first
+				// element of it, otherwise remove the symbol
+				// from the table.
+				//
+				if (e.Tail != null)
+					dict [top] = e.Tail;
+				else
+					dict.Remove (top);
+
+				top = e.PrevTop;
+			}
+
+			//
+			// marks.PrevTop always contains the latest symbol 
+			// which was bound before the new scope was created.
+			// 
+			top = marks.PrevTop;
+
+			//
+			// delete the latest scope mark
+			//
+			marks = marks.Tail;
+		}
+
+		internal AST [] CurrentLocals {
+			get {
+				Stack stack = new Stack ();
+				Symbol _top = top;
+
+				while (_top != null) {
+					Binder e = (Binder) dict [_top];
+					stack.Push (e.Value);
+					_top = e.PrevTop;
+				}
+				if (stack.Count == 0)
+					return null;
+				AST [] locals = new AST [stack.Count];
+				stack.CopyTo (locals, 0);
+				return locals;
+			}
+		}
+
+		internal void BuildGlobalEnv ()
+		{
+			//
+			// built in print function
+			//
+			if (SemanticAnalyser.print)
+				Enter (Symbol.CreateSymbol ("print"), new BuiltIn ("print", false, true));
+
+			/* value properties of the Global Object */
+			Enter (Symbol.CreateSymbol ("NaN"), new BuiltIn ("NaN", false, false));
+			Enter (Symbol.CreateSymbol ("Infinity"), new BuiltIn ("Infinity", false, false));
+ 			Enter (Symbol.CreateSymbol ("undefined"), new BuiltIn ("undefined", false, false));
+			Enter (Symbol.CreateSymbol ("null"), new BuiltIn ("null", false, false));
+			
+ 			/* function properties of the Global Object */
+			object [] custom_attrs;
+			Type global_object = typeof (GlobalObject);
+			MethodInfo [] methods = global_object.GetMethods (BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
+			foreach (MethodInfo mi in methods) {
+				custom_attrs = mi.GetCustomAttributes (typeof (JSFunctionAttribute), false);
+				foreach (JSFunctionAttribute attr in custom_attrs)
+					if (attr.IsBuiltIn)
+ 						Enter (Symbol.CreateSymbol (mi.Name), new BuiltIn (SemanticAnalyser.ImplementationName (attr.BuiltIn.ToString ()), false, true));
+ 			}
+
+ 			/* built in objects */
+			Enter (Symbol.CreateSymbol ("Object"), new BuiltIn ("Object", true, true));
+			Enter (Symbol.CreateSymbol ("Function"), new BuiltIn ("Function", true, true));
+			Enter (Symbol.CreateSymbol ("Array"), new BuiltIn ("Array", true, true));
+			Enter (Symbol.CreateSymbol ("String"), new BuiltIn ("String", true, true));
+			Enter (Symbol.CreateSymbol ("Boolean"), new BuiltIn ("Boolean", true, true));
+			Enter (Symbol.CreateSymbol ("Number"), new BuiltIn ("Number", true, true));
+			Enter (Symbol.CreateSymbol ("Math"), new BuiltIn ("Math", false, false));
+			Enter (Symbol.CreateSymbol ("Date"), new BuiltIn ("Date", true, true));
+			Enter (Symbol.CreateSymbol ("RegExp"), new BuiltIn ("RegExp", true, true));
+
+ 			/* built in Error objects */
+			Enter (Symbol.CreateSymbol ("Error"), new BuiltIn ("Error", true, true));
+			Enter (Symbol.CreateSymbol ("EvalError"), new BuiltIn ("EvalError", true, true));
+			Enter (Symbol.CreateSymbol ("RangeError"), new BuiltIn ("RangeError", true, true));
+			Enter (Symbol.CreateSymbol ("ReferenceError"), new BuiltIn ("ReferenceError", true, true));
+			Enter (Symbol.CreateSymbol ("SyntaxError"), new BuiltIn ("SyntaxError", true, true));
+			Enter (Symbol.CreateSymbol ("TypeError"), new BuiltIn ("TypeError", true, true));
+			Enter (Symbol.CreateSymbol ("URIError"), new BuiltIn ("URIError", true, true));
 		}
 	}
 }

@@ -75,12 +75,33 @@ namespace Microsoft.JScript {
 		{
 			int i, n = elems.Count;
 			object e;
+
+			//
+			// Emit variable declarations first
+			// because of posible free occurrences inside
+			// a method. 
+			//
+			for (i = 0; i < n; i++) {
+				e = elems [i];
+				if (e is VariableStatement)
+					((VariableStatement) e).EmitVariableDecls (ec);
+			}
 			
+			//
+			// Emit the function declarations before any
+			// expression because the ScriptFunction and
+			// field created must be set properly before
+			// any use.
+			//			
 			for (i = 0; i < n; i++) {
 				e = elems [i];
 				if (e is FunctionDeclaration)
 					((FunctionDeclaration) e).Emit (ec);
 			}
+			
+			//
+			// Emit the rest of expressions and statements.
+			//
 			for (i = 0; i < n; i++) {
 				e = elems [i];
 				if (!(e is FunctionDeclaration))
@@ -102,6 +123,32 @@ namespace Microsoft.JScript {
 
 			for (i = 0; i < n; i++) {
 				e = (AST) elems [i];
+				//
+				// Add the variables to the symbol
+				// tables. If a variable declaration
+				// has an initializer we postpone the
+				// resolve process of the initializer
+				// until we have collected all the
+				// variable declarations. 
+				//
+				if (e is VariableStatement)
+					(e as VariableStatement).PopulateContext (context);
+				else if (e is FunctionDeclaration) {
+					//
+					// In the case of function
+					// declarations we add
+					// function's name to the
+					// table but we resolve its
+					// body until later, as free
+					// variables can be referenced
+					// in function's body.
+					//
+					context.Enter (Symbol.CreateSymbol (((FunctionDeclaration) e).func_obj.name), new FunctionDeclaration ());
+				}
+			}
+
+			for (i = 0; i < n; i++) {
+				e = (AST) elems [i];
 				if (e is Exp) 
 					r &= ((Exp) e).Resolve (context, no_effect);
 				else
@@ -111,4 +158,3 @@ namespace Microsoft.JScript {
 		}
 	}
 }
-	

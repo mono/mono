@@ -71,10 +71,10 @@ namespace Microsoft.JScript {
 			
 			if (catch_blocks != null && catch_blocks.Count > 0) {
 				foreach (Catch c in catch_blocks) {
-					context.OpenBlock ();
-					context.Enter (c.id, c);
+					context.BeginScope ();
+					context.Enter (Symbol.CreateSymbol (c.id), c);
 					r &= c.Resolve (context);
-					context.CloseBlock ();
+					context.EndScope ();
 				}
 			}
 			if (finally_block != null)

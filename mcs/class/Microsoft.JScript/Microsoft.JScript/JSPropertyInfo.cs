@@ -103,7 +103,7 @@ namespace Microsoft.JScript {
 		}
 
 		public override object GetValue (object obj, BindingFlags invokeAttr, 
-					 Binder binder, object [] index, CultureInfo culture)
+					 System.Reflection.Binder binder, object [] index, CultureInfo culture)
 		{
 			throw new NotImplementedException ();
 		}
@@ -126,7 +126,7 @@ namespace Microsoft.JScript {
 		}
 
 		public override void SetValue (object obj, object value, BindingFlags invokeAttr,
-				       Binder binder, object [] index, CultureInfo culture)
+				       System.Reflection.Binder binder, object [] index, CultureInfo culture)
 		{
 			throw new NotImplementedException ();
 		}

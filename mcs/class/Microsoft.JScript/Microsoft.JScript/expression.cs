@@ -1,10 +1,11 @@
 //
-// Expression.cs: Everything related to expressions
+// expression.cs: Everything related to expressions
 //
 // Author:
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, 2004 Cesar Lopez Nataren
+// (C) 2005, Novell Inc.
 //
 
 //
@@ -101,14 +102,14 @@ namespace Microsoft.JScript {
 
 	internal class Binary : BinaryOp, IAssignable {
 
-		bool assign;
+		bool assign, late_bind = false;
 		AST right_side;
 
 		internal Binary (AST parent, AST left, JSToken op)
 			: this (parent, left, null, op)
 		{
 		}
-
+		
 		internal Binary (AST parent, AST left, AST right, JSToken op)
 			: base (left, right, op)
 		{
@@ -129,15 +130,21 @@ namespace Microsoft.JScript {
 			return sb.ToString ();
 		}
 
+		internal bool AccessField {
+			get { return op == JSToken.AccessField; }
+		}
+
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;
 			if (left != null)
 				r &= left.Resolve (context);
 			if (right != null) 
-				if (op == JSToken.AccessField && right is IAccesible)
+				if (op == JSToken.AccessField && right is IAccesible) {
 					r &= ((IAccesible) right).ResolveFieldAccess (left);
-				else
+					if (!r)
+						late_bind = true;
+				} else
 					r &= right.Resolve (context);
 			return r;
 		}
@@ -159,6 +166,12 @@ namespace Microsoft.JScript {
 				throw new Exception ("error JS5008: Illegal assignment");
 		}
 
+		internal MemberInfo Binding {
+			get { 
+				return SemanticAnalyser.get_member (left, right);
+			}
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;			
@@ -172,65 +185,12 @@ namespace Microsoft.JScript {
 					get_default_this (ig);
 				if (left != null)
 					left.Emit (ec);
-				emit_access (ec);				
+				emit_array_access (ec);				
 			} else if (op == JSToken.AccessField) {
-				if (left is Identifier) {
-					Identifier parent = left as Identifier;
-					switch (parent.name) {
-					case "Math": {
-						Type math_obj_type = typeof (MathObject);
-						Identifier property = right as Identifier;
-						double v = 0;
-						switch (property.name) {
-						/* value properties of the math object */
-						case "E":
-							v = MathObject.E;
-							break;
-						case "LN10":
-							v = MathObject.LN10;
-							break;
-						case "LN2":
-							v = MathObject.LN2;
-							break;
-						case "LOG2E":
-							v = MathObject.LOG2E;
-							break;
-						case "LOG10E":
-							v = MathObject.LOG10E;
-							break;
-						case "PI":
-							v = MathObject.PI;
-							break;
-						case "SQRT1_2":
-							v = MathObject.SQRT1_2;
-							break;
-						case "SQRT2":
-							v = MathObject.SQRT2;
-							break;
-						
-						/* function properties of the math object */
-						case "abs":
-						case "acos":
-						case "asin":
-						case "atan":
-						case "atan2":
-						case "sin":
-						case "cos":
-							ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
-							ig.Emit (OpCodes.Call, math_obj_type.GetMethod (property.name));
-							ig.Emit (OpCodes.Box, typeof (double));
-							return;
-						}
-						ig.Emit (OpCodes.Ldc_R8, v);
-						ig.Emit (OpCodes.Box, typeof (Double));
-						break;
-						}
-					default:
-						if (right is Identifier)
-							emit_late_binding (ec);
-						break;
-					}
-				}
+				if (late_bind)
+					emit_late_binding (ec);
+				else
+					emit_access (left, right, ec);
 			} else {
 				emit_operator (ig);
 				if (left != null)
@@ -241,6 +201,40 @@ namespace Microsoft.JScript {
 			}
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);
+		}
+
+		void emit_access (AST obj, AST prop_name, EmitContext ec)
+		{
+			MemberInfo minfo = SemanticAnalyser.get_member (obj, prop_name);	
+			ILGenerator ig = ec.ig;
+			MemberTypes minfo_type = minfo.MemberType;
+
+			switch (minfo_type) {
+			case MemberTypes.Field:
+				FieldInfo finfo = (FieldInfo) minfo;
+				object value = finfo.GetValue (finfo);
+				Type type = value.GetType ();
+				if (type == typeof (double))
+					ig.Emit (OpCodes.Ldc_R8, (double) value);
+				break;
+			default:
+				throw new NotImplementedException ();
+			}
+			emit_box (ig, minfo);
+		}
+
+		void emit_box (ILGenerator ig, MemberInfo info)
+		{
+			MemberTypes member_type = info.MemberType;
+			Type type = null;
+
+			switch (member_type) {
+			case MemberTypes.Field:
+				type = ((FieldInfo) info).FieldType;
+				break;
+			}
+			if (type != null)
+				ig.Emit (OpCodes.Box, type);
 		}
 
 		void emit_late_binding (EmitContext ec)			
@@ -256,7 +250,7 @@ namespace Microsoft.JScript {
 
 			LocalBuilder local = ig.DeclareLocal (lb_type);
 			
-			string prop_name = (right as Identifier).name;
+			string prop_name = (right as Identifier).name.Value;
 			ig.Emit (OpCodes.Ldstr, prop_name);
 			ig.Emit (OpCodes.Newobj, lb_type.GetConstructor (new Type [] {typeof (string)}));
 			ig.Emit (OpCodes.Stloc, local);			
@@ -302,7 +296,7 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
 		}
 
-		internal void emit_access (EmitContext ec)
+		internal void emit_array_access (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			ig.Emit (OpCodes.Ldc_I4_1);
@@ -497,6 +491,8 @@ namespace Microsoft.JScript {
 		
 		internal AST member_exp;		
 		internal Args args;
+		internal object binding;
+		internal Type bind_type;
 
 		internal Call (AST parent, AST exp)
 		{
@@ -524,22 +520,46 @@ namespace Microsoft.JScript {
 		{
 			bool r = true;
 			int n = -1;
+
 			if (member_exp != null) {
-				BuiltIn binding = (BuiltIn) SemanticAnalyser.ObjectSystemContains (member_exp.ToString ());
-				if (binding != null) {
-					if (!binding.IsFunction)
-						throw new Exception ("error JS5002: function expected.");
-					if (!binding.IsConstructor)
-						n = binding.NumOfArgs;
+				if (member_exp is Identifier) {
+					member_exp.Resolve (context);
+					binding = context.Get ((member_exp as Identifier).name);
+					bind_type = binding.GetType ();
+
+					if (bind_type == typeof (BuiltIn)) {
+						BuiltIn built_in = binding as BuiltIn;
+						if (!built_in.IsFunction)
+							throw new Exception ("error JS5002 A: function expected.");
+						if (IsGlobalObjectMethod (built_in)) {
+							args.params_info = built_in.Parameters;
+							n = built_in.NumOfArgs;
+						}
+					} else if (bind_type == typeof (FunctionDeclaration) || bind_type == typeof (FunctionExpression)) {
+						n = (binding as Function).NumOfArgs;
+					}
+				} else if (member_exp is Binary) {
+					member_exp.Resolve (context);
+					Binary bin = (Binary) member_exp;
+					if (bin.AccessField)
+						binding = bin.Binding;
+					if (binding is MethodInfo) {
+						MethodInfo method_info = (MethodInfo) binding;
+						args.has_var_args (method_info);
+						args.params_info = method_info.GetParameters ();
+						if (args.params_info != null)
+							n = args.params_info.Length;
+						else n = 0;
+					}
+				} else
+					r &= member_exp.Resolve (context);
+				
+				if (args != null) {
+					args.DesiredNumOfArgs = n;
+					r &= args.Resolve (context);
 				}
-				r &= member_exp.Resolve (context);
-			}
-			if (args != null) {
-				args.DesiredNumOfArgs = n;
-				if (member_exp.ToString () == "print")
-					args.IsPrint = true;
-				r &= args.Resolve (context);
-			}
+			} else
+				throw new Exception ("Call.Resolve, member_exp can't be null");
 			return r;
 		}
 
@@ -551,64 +571,79 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			if (member_exp.ToString () == "print") {				
-				AST ast;
-				int n = args.Size - 1;
-				
-				if (n == -1) { // no args
-					ig.Emit (OpCodes.Ldstr, "");
-					ig.Emit (OpCodes.Call, typeof (ScriptStream).GetMethod ("WriteLine"));
+			if (bind_type == typeof (BuiltIn)) {
+				BuiltIn b = binding as BuiltIn;
+				if (b.IsPrint) {
+					emit_print_stm (ec);
 					return;
-				}
-
-				Type script_stream = typeof (ScriptStream);
-				MethodInfo write = script_stream.GetMethod ("Write");
-				MethodInfo writeline = script_stream.GetMethod ("WriteLine");
-				MethodInfo to_string = typeof (Convert).GetMethod ("ToString",
-										   new Type [] { typeof (object), typeof (bool) });
-				for (int i = 0; i <= n; i++) {
-					ast = args.get_element (i);				
-					ast.Emit (ec);
-
-					if (ast is StringLiteral)
-						;
-					else {
-						ig.Emit (OpCodes.Ldc_I4_1);
-						ig.Emit (OpCodes.Call, to_string);
-					}
-					
-					if (i == n)
-						ig.Emit (OpCodes.Call, writeline);
-					else
-						ig.Emit (OpCodes.Call, write);
-				}
-			} else {
-				object binding = SemanticAnalyser.ObjectSystemContains (member_exp.ToString ());
-
-				if (binding == null)
-					binding = TypeManager.GetMethod (member_exp.ToString ());
-
-				if (binding == null) {
-					emit_late_call (ec);
-					return;
-				} 
-
-				if (IsGlobalObjectMethod (binding)) {
+				} else if (IsGlobalObjectMethod (binding)) {
 					args.Emit (ec);
 					member_exp.Emit (ec);
 				} else if (IsConstructorProperty (binding)) {
-					member_exp.Emit (ec);
-					EmitBuiltInArgs (ec);
-					EmitInvoke (ec);
-				} else if (binding is MethodBuilder) {
-					emit_func_call ((MethodBuilder) binding, ec);
-					return;
+ 					member_exp.Emit (ec);
+ 					EmitBuiltInArgs (ec);
+ 					EmitInvoke (ec);					
 				}
+			} else if (bind_type == typeof (FunctionDeclaration) || bind_type == typeof (FunctionExpression)) {
+				MethodBuilder method = TypeManager.GetMethod ((binding as Function).func_obj.name);
+				emit_func_call (method, ec);
+				return;
+			} else if (binding is MemberInfo) {
+				MemberInfo minfo = (MemberInfo) binding;
+				MemberTypes member_type = minfo.MemberType;
+				ILGenerator ig = ec.ig;				
+				
+				if (member_type == MemberTypes.Method) {
+					args.Emit (ec);
+					MethodInfo method = (MethodInfo) minfo;
+					ig.Emit (OpCodes.Call, method);
+					Type return_type = method.ReturnType;
+					if (return_type != typeof (void))
+						ig.Emit (OpCodes.Box, return_type);
+				} else
+					throw new NotImplementedException ();
+			} else
+				emit_late_call (ec);
+			
+			if (no_effect)
+				ec.ig.Emit (OpCodes.Pop);			
+		}
 
-				if (no_effect)
-					ec.ig.Emit (OpCodes.Pop);
+		internal void emit_print_stm (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			if (args == null || args.Size == 0) {
+				ig.Emit (OpCodes.Ldstr, "");
+				ig.Emit (OpCodes.Call, typeof (ScriptStream).GetMethod ("WriteLine"));
+				return;
 			}
+
+			Type script_stream = typeof (ScriptStream);
+			MethodInfo write = script_stream.GetMethod ("Write");
+			MethodInfo writeline = script_stream.GetMethod ("WriteLine");
+			MethodInfo to_string = typeof (Convert).GetMethod ("ToString",
+									   new Type [] { typeof (object), typeof (bool) });
+			AST ast;
+			int n = args.Size - 1;
+
+			for (int i = 0; i <= n; i++) {
+				ast = args.get_element (i);				
+				ast.Emit (ec);
+				
+				if (ast is StringLiteral)
+					;
+				else {
+					ig.Emit (OpCodes.Ldc_I4_1);
+					ig.Emit (OpCodes.Call, to_string);
+				}
+					
+				if (i == n)
+					ig.Emit (OpCodes.Call, writeline);
+				else
+					ig.Emit (OpCodes.Call, write);
+			}
+			
 		}
 
 		void emit_late_call (EmitContext ec)
@@ -623,7 +658,7 @@ namespace Microsoft.JScript {
 				
 					LocalBuilder lb = ig.DeclareLocal (lb_type);
 
-					ig.Emit (OpCodes.Ldstr, rside.name);
+					ig.Emit (OpCodes.Ldstr, rside.name.Value);
 					ig.Emit (OpCodes.Newobj , lb_type.GetConstructor (new Type [] {typeof (string)}));
 					ig.Emit (OpCodes.Stloc, lb);
 					init_late_binding (ec, lb);
@@ -641,8 +676,6 @@ namespace Microsoft.JScript {
 				setup_late_call_args (ec);
 				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 			}
-			if (no_effect)
-				ec.ig.Emit (OpCodes.Pop);
 		}
 
 		internal void get_global_scope_or_this (ILGenerator ig)
@@ -735,9 +768,12 @@ namespace Microsoft.JScript {
 
 		void EmitBuiltInArgs (EmitContext ec)
 		{
+			if (member_exp.ToString () == "Date")
+				return;
+
 			ILGenerator ig = ec.ig;
 			int n = args.Size;
-
+			
 			if (n >= 1 && (member_exp.ToString () == "String" || member_exp.ToString () == "Boolean" || member_exp.ToString () == "Number")) {
 				args.get_element (0).Emit (ec);
 				return;
@@ -830,7 +866,9 @@ namespace Microsoft.JScript {
 			case "decodeURI":
 			case "decodeURIComponent":
 			case "encodeURI":
-			case "encodeURIComponent":				
+			case "encodeURIComponent":
+			case "escape":
+			case "unescape":
 				return true;
 			default:
 				return false;
@@ -843,8 +881,8 @@ namespace Microsoft.JScript {
 	}
 
 	internal class Identifier : Exp, IAssignable, IAccesible {
-
-		internal string name;
+		
+		internal Symbol name;
 		internal AST binding;
 		internal bool assign;
 		AST right_side;
@@ -853,26 +891,21 @@ namespace Microsoft.JScript {
 		internal Identifier (AST parent, string id)
 		{
 			this.parent = parent;
-			this.name = id;
+			this.name = Symbol.CreateSymbol (id);
 		}
 
 		public override string ToString ()
 		{
-			return name;
+			return name.Value;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			if (name == "print")
-				return SemanticAnalyser.print;
-			else if (name == "null")
-				return true;
-			object bind = context.Contains (name);			
-			if (bind == null) 
-				bind = SemanticAnalyser.ObjectSystemContains (name);
-			if (bind == null)
+			bool contained = context.Contains (this.name);
+			if (contained)
+				binding = (AST) context.Get (this.name);
+			else
 				throw new Exception ("variable not found: " +  name);
-			binding = bind as AST;
 			return true;
 		}
 
@@ -887,45 +920,54 @@ namespace Microsoft.JScript {
 			this.assign = true;
 			this.no_effect = false;
 			this.right_side = right_side;
-			if (name != String.Empty)			
+			if (name.Value != String.Empty)			
 				return Resolve (context);
 			return true;
 		}
 
+		//
+		// Throws an exception if parent is a native object
+		// and does not contains name as member.
+		// Returns true if parent contains name as member. 
+		// Returns false if parent is not a native object,
+		// this indicate that late binding code must get generated.
+		//
 		public bool ResolveFieldAccess (AST parent)
 		{
 			if (parent is Identifier) {
 				Identifier p = parent as Identifier;
-				
-				AST binding = (AST) SemanticAnalyser.ObjectSystemContains (p.name);
-				if (binding != null && binding is BuiltIn)
-					return IsBuiltInObjectProperty (p.name, name);
+				return is_static_property (p.name.Value, name.Value);
 			}
-			return true;
+			//
+			// Return false so late binding will take place
+			//
+			return false;
 		}
 
-		bool IsBuiltInObjectProperty (string obj_name, string prop_name)
+		//
+		// If obj_name is a native object, search in its
+		// constructor if contains a prop_name, otherwise return
+		// false letting late binding taking place
+		//
+		bool is_static_property (string obj_name, string prop_name)
 		{
-			Type type;
-			if (obj_name == "Math") {
-				type = typeof (MathObject);
-				members = type.FindMembers (MemberTypes.Field | MemberTypes.Method,
-							    BindingFlags.Public | BindingFlags.Static,
-							    Type.FilterName, prop_name);
-				if (members != null && members.Length > 0)
-					return true;
-				else
-					throw new Exception ("error: JS0438: Object doesn't support this property or method");
-			}
-			return false;
+			bool native_obj = SemanticAnalyser.is_js_object (obj_name);
+
+			if (!native_obj)
+				return false;
+
+			bool contains_method;
+			contains_method = SemanticAnalyser.object_contains_method (
+					   SemanticAnalyser.map_to_ctr (obj_name), prop_name);
+			if (!contains_method)
+				throw new Exception ("error: JS0438: Object doesn't support this property or method");
+			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			if (name == "null")
-				ig.Emit (OpCodes.Ldsfld, typeof (DBNull).GetField ("Value"));
-			else if (assign && right_side != null)
+			if (assign && right_side != null)
 				right_side.Emit (ec);
 			if (binding is FormalParam) {
 				FormalParam f = binding as FormalParam;
@@ -949,9 +991,8 @@ namespace Microsoft.JScript {
 				binding.Emit (ec);
 			else if (binding is FunctionDeclaration)
 				load_script_func (ec, (FunctionDeclaration) binding);
-			else
-				//Console.WriteLine ("class Identifier, binding = {0}, method Emit, DID NOT EMIT ANYTHING, binding.GetType = {1}", binding, binding.GetType ());
-
+			else if (binding == null) // it got referenced before was declared and initialized
+				Console.WriteLine ("Identifier.Emit, binding == null? {0}", binding == null);
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
 		}
@@ -994,7 +1035,10 @@ namespace Microsoft.JScript {
 		internal ArrayList elems;
 		int num_of_args = -1;
 		internal bool is_print;
-
+		internal ParameterInfo [] params_info;
+		internal bool late_bind = false;
+		internal bool var_args = false;
+		
 		internal Args ()
 		{
 			elems = new ArrayList ();
@@ -1016,15 +1060,28 @@ namespace Microsoft.JScript {
 			set { is_print = value; }
 		}
 
+		internal void has_var_args (MethodInfo minfo)
+		{
+			JSFunctionAttribute [] custom_attrs = (JSFunctionAttribute []) 
+				minfo.GetCustomAttributes (typeof (JSFunctionAttribute), true);
+
+			foreach (JSFunctionAttribute attr in custom_attrs)
+				if (attr.GetAttributeValue () == JSFunctionAttributeEnum.HasVarArgs) {
+					var_args = true;
+					return;
+				}
+			var_args = false;
+		}
+
 		internal override bool Resolve (IdentificationTable context)
 		{
-			int i, n = elems.Count;
+			int n = elems.Count;
 			AST tmp;
 			bool r = true;
 
-			if (!is_print && num_of_args >= 0 && n > num_of_args)
+			if (!is_print && !var_args &&  num_of_args >= 0 && n > num_of_args)
 				Console.WriteLine ("warning JS1148: There are too many arguments. The extra arguments will be ignored");
-			for (i = 0; i < n; i++) {
+			for (int i = 0; i < n; i++) {
 				tmp = (AST) elems [i];
 				r &= tmp.Resolve (context);
 			}
@@ -1045,21 +1102,54 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			int i = 0, n = elems.Count;
-			AST ast;
+			int n;
+			ILGenerator ig = ec.ig;
 
-			do {
-				ast = get_element (i);
-				if (ast != null)
+			if (var_args) {
+				n = elems.Count;
+				ig.Emit (OpCodes.Ldc_I4, n);
+				ig.Emit (OpCodes.Newarr, typeof (object));
+				for (int i = 0; i < n; i++) {
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Ldc_I4, i);
+					get_element (i).Emit (ec);
+					ig.Emit (OpCodes.Stelem_Ref);
+				}
+			} else {
+				n = elems.Count;
+				AST ast;
+				for (int j = 0; j < n && j < num_of_args; j++) {
+					ast = get_element (j);
 					ast.Emit (ec);
-				i++;
-			} while (i < n || i < num_of_args);
-
-			if (num_of_args > n) {
-				ILGenerator ig = ec.ig;
-				for (int j = 0; j < num_of_args - 1; j++)
-					ig.Emit (OpCodes.Ldsfld, typeof (Missing).GetField ("Value"));;
+					if (!late_bind && params_info != null)
+						force_strong_type (ig, ast, params_info [j]);
+				}
+				int missing = num_of_args - n;
+				for (int k = 0; k < missing; k++)
+					ig.Emit (OpCodes.Ldsfld, typeof (DBNull).GetField ("Value"));
 			}
+		}
+
+		internal void force_strong_type (ILGenerator ig, AST ast, ParameterInfo pinfo)
+		{
+			Type param_type = pinfo.ParameterType;
+			if (ast.GetType () == typeof (NumericLiteral)) {
+				if (param_type == typeof (double))
+					ig.Emit (OpCodes.Conv_R8);
+				else if (param_type == typeof (object))
+					;
+				else throw new NotImplementedException ();
+			} else {
+
+				if (param_type == typeof (double))
+					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] {typeof (object)}));
+				else if (param_type == typeof (string)) {
+					ig.Emit (OpCodes.Ldc_I4_1);
+					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToString", new Type [] {typeof (object), typeof (bool)}));
+				} else if (param_type == typeof (object))
+					;
+				else throw new NotImplementedException ();
+			}			
 		}
 	}
 
@@ -1242,7 +1332,7 @@ namespace Microsoft.JScript {
 			if (exp is Identifier) {
 				ILGenerator ig = ec.ig;
 				Type type = null;
-				switch ((exp as Identifier).name) {
+				switch ((exp as Identifier).name.Value) {
 				case "Array":					
 					type = typeof (ArrayConstructor);
 					break;
@@ -1292,13 +1382,13 @@ namespace Microsoft.JScript {
 
 	internal class BuiltIn : AST {
 		string name;
-		bool allowed_as_const;
+		bool allowed_as_ctr;
 		bool allowed_as_func;
 
-		internal BuiltIn (string name, bool allowed_as_const, bool allowed_as_func)
+		internal BuiltIn (string name, bool allowed_as_ctr, bool allowed_as_func)
 		{
 			this.name = name;
-			this.allowed_as_const = allowed_as_const;
+			this.allowed_as_ctr = allowed_as_ctr;
 			this.allowed_as_func = allowed_as_func;
 		}
 
@@ -1312,18 +1402,31 @@ namespace Microsoft.JScript {
 		}
 		
 		internal bool IsConstructor {
-			get { return allowed_as_const; }
+			get { return allowed_as_ctr; }
 		}
 
 		internal bool IsFunction {
 			get { return allowed_as_func; }
 		}
-		
+
+		internal bool IsPrint {
+			get { return String.Equals (name, "print"); }
+		}
 		internal int NumOfArgs {
 			get {
+				if (name == "print")
+					return -1;
+
 				Type global_object = typeof (GlobalObject);
 				MethodInfo method = global_object.GetMethod (name);
 				return method.GetParameters ().Length;
+			}
+		}
+
+		internal ParameterInfo [] Parameters {
+			get {
+				Type global_obj = typeof (GlobalObject);
+				return global_obj.GetMethod (name).GetParameters ();
 			}
 		}
 
@@ -1345,6 +1448,10 @@ namespace Microsoft.JScript {
 			case "undefined":
 				ig.Emit (OpCodes.Ldnull);
 				break;
+			case "null":
+				ig.Emit (OpCodes.Ldsfld, typeof (DBNull).GetField ("Value"));
+				break;
+				
 			/* function properties of the Global Object */
 			case "eval":
 				throw new NotImplementedException ();
@@ -1376,7 +1483,13 @@ namespace Microsoft.JScript {
 				break;
 			case "encodeURIComponent":
 				ig.Emit (OpCodes.Call, go.GetMethod ("encodeURIComponent"));
-				break;				
+				break;
+			case "escape":
+				ig.Emit (OpCodes.Call, go.GetMethod ("escape"));
+				break;
+			case "unescape":
+				ig.Emit (OpCodes.Call, go.GetMethod ("unescape"));
+				break;
 			/* constructor properties of the Global object */
 			case "Object":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Object").GetGetMethod ());

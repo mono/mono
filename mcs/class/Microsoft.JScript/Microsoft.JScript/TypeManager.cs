@@ -28,9 +28,9 @@ namespace Microsoft.JScript {
 			methods.Add (name, builder);
 		}
 
-		internal static MethodInfo GetMethod (string name)
+		internal static MethodBuilder GetMethod (string name)
 		{
-			return (MethodInfo) methods [name];
+			return (MethodBuilder) methods [name];
 		}
 	}
 }

@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren
 //
 // (C) 2003, 2004 Cesar Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2005, Novell Inc.
 //
 
 //
@@ -38,70 +39,36 @@ namespace Microsoft.JScript {
 
 		internal static bool print = true;
 		public static bool allow_member_expr_as_function_name;
-		static Hashtable global_env = new Hashtable ();
 		static IdentificationTable context;
 		static IdentificationTable label_set;
+
+		private static Hashtable obj_ctrs;
+		//
+		// Type to GlobalObject
+		//
+		private static Type global_obj = typeof (GlobalObject);
 
 		static SemanticAnalyser ()
 		{
 			label_set = new IdentificationTable ();
-			BuildGlobalEnv ();
-		}
-
-		static void BuildGlobalEnv ()
-		{
-			/* value properties of the Global Object */
-			global_env.Add ("NaN", new BuiltIn ("NaN", false, false));
-			global_env.Add ("Infinity", new BuiltIn ("Infinity", false, false));
-			global_env.Add ("undefined", new BuiltIn ("undefined", false, false));
 			
-			/* function properties of the Global Object */
-			object [] custom_attrs;
-			Type global_object = typeof (GlobalObject);
-			MethodInfo [] methods = global_object.GetMethods (BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
-			foreach (MethodInfo mi in methods) {
-				custom_attrs = mi.GetCustomAttributes (typeof (JSFunctionAttribute), false);
-				foreach (JSFunctionAttribute attr in custom_attrs)
-					if (attr.IsBuiltIn)
-						global_env.Add (mi.Name, new BuiltIn (ImplementationName (attr.BuiltIn.ToString ()), false, true));
-			}
-
-			/* built in objects */
-			global_env.Add ("Object", new BuiltIn ("Object", true, true));
-			global_env.Add ("Function", new BuiltIn ("Function", true, true));
-			global_env.Add ("Array", new BuiltIn ("Array", true, true));
-			global_env.Add ("String", new BuiltIn ("String", true, true));
-			global_env.Add ("Boolean", new BuiltIn ("Boolean", true, true));
-			global_env.Add ("Number", new BuiltIn ("Number", true, true));
-			global_env.Add ("Math", new BuiltIn ("Math", false, false));
-			global_env.Add ("Date", new BuiltIn ("Date", true, true));
-			global_env.Add ("RegExp", new BuiltIn ("RegExp", true, true));
-
-			/* built in Error objects */
-			global_env.Add ("Error", new BuiltIn ("Error", true, true));
-			global_env.Add ("EvalError", new BuiltIn ("EvalError", true, true));
-			global_env.Add ("RangeError", new BuiltIn ("RangeError", true, true));
-			global_env.Add ("ReferenceError", new BuiltIn ("ReferenceError", true, true));
-			global_env.Add ("SyntaxError", new BuiltIn ("SyntaxError", true, true));
-			global_env.Add ("TypeError", new BuiltIn ("TypeError", true, true));
-			global_env.Add ("URIError", new BuiltIn ("URIError", true, true));
+			obj_ctrs = new Hashtable ();
+			obj_ctrs.Add ("Date", typeof (DateConstructor));
+			obj_ctrs.Add ("Math", typeof (MathObject));
+			obj_ctrs.Add ("Number", typeof (NumberConstructor));
+			obj_ctrs.Add ("String", typeof (StringConstructor));
 		}
 
-		static string ImplementationName (string name)
+		internal static string ImplementationName (string name)
 		{
 			int i = name.LastIndexOf ('_');
 			return name.Substring (i + 1);
 		}
 
-		internal static object ObjectSystemContains (string x)
-		{
-			return global_env [x];
-		}
-
 		public static bool Run (ScriptBlock prog)
 		{
 			context = new IdentificationTable ();
-
+			context.BuildGlobalEnv ();
 			return prog.Resolve (context);
 		}
 
@@ -124,29 +91,74 @@ namespace Microsoft.JScript {
 
 		internal static void AddLabel (string name, AST binding)
 		{
-			label_set.Enter (name, binding);
+			label_set.Enter (Symbol.CreateSymbol (name), binding);
 		}
 		
 		internal static bool ContainsLabel (string name)
 		{
-			object r = label_set.Contains (name);
+			object r = label_set.Get (Symbol.CreateSymbol (name));
 			return r != null;
 		}
 
 		internal static object GetLabel (string name) 
 		{
-			return label_set.Contains (name);
+			return label_set.Get (Symbol.CreateSymbol (name));
 		}
 
 		internal static void RemoveLabel (string name)
 		{
-			label_set.Remove (name);
+			label_set.Remove (Symbol.CreateSymbol (name));
 		}
+
 
 		internal static void assert_type (object thisObj, Type expType)
 		{
 			if (thisObj == null || thisObj.GetType () != expType)
 				throw new Exception ("Type error");
+		}
+
+		internal static bool contains (Type target_type, string name, BindingFlags flags)
+		{
+			MemberInfo [] type_props = target_type.GetMembers (flags);
+			foreach (MemberInfo mi in type_props)
+				if (mi.Name == name)
+					return true;
+			return false;
+		}
+
+		internal static bool is_js_object (string name)
+		{			
+			return contains (global_obj, name, BindingFlags.Static | BindingFlags.Public | BindingFlags.GetProperty);
+		}
+		
+		//
+		// We assume type is a valid native object
+		// type. Search for method name.
+		//
+		internal static bool object_contains_method (Type type, string name)
+		{
+			return contains (type, name, BindingFlags.Public | BindingFlags.Static);
+		}
+
+		internal static Type map_to_ctr (string type_name)
+		{
+			return (Type) obj_ctrs [type_name];
+		}
+
+		internal static MemberInfo get_member (AST left, AST right)
+		{
+			if (left != null && right != null && left is Identifier && right is Identifier) {
+				string obj =  ((Identifier) left).name.Value;
+				string prop_name = ((Identifier) right).name.Value;
+				Type target_type = SemanticAnalyser.map_to_ctr (obj);
+
+				if (target_type != null) {
+					MemberInfo [] members = target_type.GetMember (prop_name);
+					if (members != null && members.Length > 0)
+						return members [0];
+				}
+			}
+			return null;
 		}
 	}
 }

@@ -68,8 +68,8 @@ namespace Microsoft.JScript {
 		{
 			set_function_type ();
 			if (func_obj.name != null && func_obj.name != String.Empty)
-				context.Enter (func_obj.name, this);
-			context.OpenBlock ();
+				context.Enter (Symbol.CreateSymbol (func_obj.name), this);
+			context.BeginScope ();
 			FormalParameterList p = func_obj.parameters;
 
 			if (p != null)
@@ -79,8 +79,8 @@ namespace Microsoft.JScript {
 			if (body != null)
 				body.Resolve (context);
 
-			locals = context.current_locals;
-			context.CloseBlock ();		
+			locals = context.CurrentLocals;
+			context.EndScope ();
 			return true;
 		}
 
@@ -181,8 +181,7 @@ namespace Microsoft.JScript {
 
 		internal void build_local_fields (ILGenerator ig)
 		{
-			DictionaryEntry e;
-			object v;		      
+			AST e;
 			int n;
 
 			if (locals == null)
@@ -204,16 +203,15 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Ldc_I4, i);
 				e = locals [i];
-				ig.Emit (OpCodes.Ldstr, (string) e.Key);
-				v = e.Value;
+				ig.Emit (OpCodes.Ldstr, GetName (e));
 
-				if (v is VariableDeclaration)
-					ig.Emit (OpCodes.Ldtoken, ((VariableDeclaration) v).type);
-				else if (v is FormalParam)
-					ig.Emit (OpCodes.Ldtoken, ((FormalParam) v).type);
-				else if (v is FunctionDeclaration)
+				if (e is VariableDeclaration)
+					ig.Emit (OpCodes.Ldtoken, ((VariableDeclaration) e).type);
+				else if (e is FormalParam)
+					ig.Emit (OpCodes.Ldtoken, ((FormalParam) e).type);
+				else if (e is FunctionDeclaration)
 					ig.Emit (OpCodes.Ldtoken, typeof (ScriptFunction));
-				else if (v is FunctionExpression)
+				else if (e is FunctionExpression)
 					ig.Emit (OpCodes.Ldtoken, typeof (object));
 				
 				ig.Emit (OpCodes.Ldc_I4, i);

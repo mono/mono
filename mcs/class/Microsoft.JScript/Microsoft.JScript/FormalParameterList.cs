@@ -64,7 +64,7 @@ namespace Microsoft.JScript {
 	
 		internal override bool Resolve (IdentificationTable context)
 		{
-			context.Enter (id, this);
+			context.Enter (Symbol.CreateSymbol (id), this);
 			return true;
 		}
 	}

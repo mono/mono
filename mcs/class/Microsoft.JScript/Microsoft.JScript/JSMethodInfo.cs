@@ -94,8 +94,8 @@ namespace Microsoft.JScript {
 		}
 
 
-		public override object Invoke (object obj, BindingFlags options, Binder binder,
-					       object [] parameters, CultureInfo culture)
+		public override object Invoke (object obj, BindingFlags options, System.Reflection.Binder binder, 
+				       object [] parameters, CultureInfo culture)
 		{
 			throw new NotImplementedException ();
 		}

@@ -58,7 +58,7 @@ namespace Microsoft.JScript {
 		}
 
 		public MethodInfo GetMethod (string name, BindingFlags bindFlags, 
-					     Binder binder, Type [] types, ParameterModifier [] modifiers)
+					     System.Reflection.Binder binder, Type [] types, ParameterModifier [] modifiers)
 		{
 			throw new NotImplementedException ();
 		}
@@ -84,7 +84,7 @@ namespace Microsoft.JScript {
 		}
 
 		public PropertyInfo GetProperty (string name, BindingFlags bindFlags,
-						 Binder binder, Type returnType, Type [] types,
+						 System.Reflection.Binder binder, Type returnType, Type [] types,
 						 ParameterModifier [] modifiers)
 		{
 			throw new NotImplementedException ();
@@ -96,7 +96,7 @@ namespace Microsoft.JScript {
 		}
 
 		public virtual Object InvokeMember (string name,  BindingFlags invokeAttr, 
-						    Binder binder, Object target,
+						    System.Reflection.Binder binder, Object target,
 						    Object[] args, ParameterModifier [] modifiers, 
 						    CultureInfo locale, string[] namedParameters)
 		{

@@ -122,7 +122,6 @@ namespace Microsoft.JScript {
 		internal Continue (AST parent, string label, int line_number)
 		{
 			this.parent = parent;
-			Console.WriteLine ("Continue.parent = {0}", this.parent);
 			this.label += label;
 			this.line_number = line_number;
 		}
@@ -151,7 +150,6 @@ namespace Microsoft.JScript {
 		internal Break (AST parent, string label, int line_number)
 		{
 			this.parent = parent;
-			Console.WriteLine ("Break.parent = {0}", this.parent);
 			this.label += label;
 			this.line_number = line_number;
 		}
@@ -247,7 +245,6 @@ namespace Microsoft.JScript {
 		internal void Init (AST parent, AST stm, AST exp, int line_number)
 		{
 			this.parent = parent;
-			Console.WriteLine ("DoWhile.parent = {0}", this.parent);
 			this.stm = stm;
 			this.exp = exp;
 			this.line_number = line_number;
@@ -370,8 +367,11 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;
+
 			foreach (AST ast in exprs)
-				if (ast != null)
+				if (ast is VariableStatement)
+					((VariableStatement) ast).PopulateContext (context);
+				else
 					r &= ast.Resolve (context);
 			if (stms != null)
 				r &= stms.Resolve (context);
@@ -390,9 +390,13 @@ namespace Microsoft.JScript {
 
 			/* emit init expr */
 			tmp = exprs [0];
-			if (tmp != null)
+			if (tmp != null) {
+				if (tmp is VariableStatement) {
+					VariableStatement stm = (VariableStatement) tmp;
+					stm.EmitVariableDecls (ec);
+				}
 				tmp.Emit (ec);
-
+			}
                         ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			
@@ -646,7 +650,6 @@ namespace Microsoft.JScript {
 		internal void Init (AST parent, string name, AST stm, int line_number)
 		{
 			this.parent = parent;
-			Console.WriteLine ("labelled.parent = {0}", this.parent);
 			this.name = name;
 			this.stm = stm;
 			this.line_number = line_number;

@@ -49,7 +49,7 @@ namespace Microsoft.JScript {
 		}
 
 		public override void SetValue (Object obj, Object value, BindingFlags invokeAttr,
-				       Binder binder, CultureInfo locale)
+				       System.Reflection.Binder binder, CultureInfo locale)
 		{
 			throw new NotImplementedException ();
 		}
