@@ -70,6 +70,12 @@ namespace System.Text.RegularExpressions {
 			get { return pattern[0]; }
 		}
 
+		public IDictionary Mapping {
+			get { return mapping; }
+			set { mapping = value; }
+		}
+
+		private IDictionary mapping;
 		private ushort[] pattern;
 	}
 

@@ -168,9 +168,11 @@ namespace System.Text.RegularExpressions {
 				// install machine factory and add to pattern cache
 
 				this.factory = cmp.GetMachineFactory ();
+				this.factory.Mapping = mapping;
 				cache.Add (pattern, options, this.factory);
 			} else {
 				this.group_count = this.factory.GroupCount;
+				this.mapping = this.factory.Mapping;
 			}
 		}
 

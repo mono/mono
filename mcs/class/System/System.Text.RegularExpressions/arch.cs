@@ -7,6 +7,7 @@
 // 		(c) 2002
 
 using System;
+using System.Collections;
 
 namespace System.Text.RegularExpressions {
 
@@ -81,6 +82,7 @@ namespace System.Text.RegularExpressions {
 
 	interface IMachineFactory {
 		IMachine NewInstance ();
+		IDictionary Mapping { get; set; }
 		int GroupCount { get; }
 	}
 
