@@ -9,24 +9,43 @@
 
 using System;
 using System.Text;
+using System.Reflection;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
 	public class FunctionObject : ScriptFunction {
 
+		internal MethodAttributes attr;
 		internal string name;
-		internal string return_type;
+		internal string type_annot;
+		internal Type return_type;
 		internal FormalParameterList parameters;
 		internal Block body;
 
 		internal FunctionObject (string name,
 					 FormalParameterList p,
-					 string return_type,
+					 string ret_type,
 					 Block body)
 		{
+			//
+			// FIXME: 
+			// 1) Must collect the attributes given.
+			// 2) Check if they are semantically correct.
+			// 3) Assign those values to 'attr'.
+			//
+			this.attr = MethodAttributes.Public | MethodAttributes.Static;
+
 			this.name = name;
 			this.parameters = p;
-			this.return_type = return_type;
+
+			this.type_annot = ret_type;
+			//
+			// FIXME: Must check that return_type it's a valid type,
+			// and assign that to 'return_type' field.
+			//
+			this.return_type = typeof (Object);
+
 			this.body = body;
 		}
 	    
@@ -57,6 +76,24 @@ namespace Microsoft.JScript {
 			sb.Append ("}");
 
 			return sb.ToString ();		
+		}
+
+		internal Type [] params_types ()
+		{		
+			int i, size;
+			ArrayList p = parameters.ids;
+
+			size = p.Count + 2;
+
+			Type [] types = new Type [size];
+
+			types [0] = typeof (Object);
+			types [1] = typeof (Microsoft.JScript.Vsa.VsaEngine);
+
+			for (i = 2; i < size; i++)
+				types [i] = ((FormalParam) p [i - 2]).type;
+
+			return types;
 		}
 	}
 }
