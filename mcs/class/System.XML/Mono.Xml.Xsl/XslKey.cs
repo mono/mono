@@ -111,35 +111,26 @@ namespace Mono.Xml.Xsl
 			}
 		}
 
-		internal void CollectTable (XPathNavigator doc)
+		private void CollectTable (XPathNavigator doc)
 		{
 			XPathNavigator nav = doc.Clone ();
 			nav.MoveToRoot ();
-			CollectRelativeMatchNodes (nav);
-		}
 
-		private void CollectAbsoluteMatchNodes (XPathNavigator nav)
-		{
-			XPathNodeIterator iter = nav.Select (MatchPattern);
-			while (iter.MoveNext ())
-				CollectIndex (iter.Current);
-		}
-
-		private void CollectRelativeMatchNodes (XPathNavigator nav)
-		{
 			do {
-				if (nav.NodeType != XPathNodeType.Root)
-					while (!nav.MoveToNext ())
-						if (!nav.MoveToParent ())
-							// finished
-							return;
-				do {
-					do {
-						if (nav.Matches (MatchPattern))
-							CollectIndex (nav);
-					} while (nav.MoveToFirstChild ());
-				} while (nav.MoveToNext ());
+				if (nav.Matches (MatchPattern))
+					CollectIndex (nav);
+			} while (MoveNavigatorToNext (nav));
+		}
+
+		private bool MoveNavigatorToNext (XPathNavigator nav)
+		{
+			if (nav.MoveToFirstChild ())
+				return true;
+			do {
+				if (nav.MoveToNext ())
+					return true;
 			} while (nav.MoveToParent ());
+			return false;
 		}
 
 		private void CollectIndex (XPathNavigator nav)
@@ -185,7 +176,7 @@ namespace Mono.Xml.Xsl
 				mappedDocuments = new Hashtable ();
 				map = new Hashtable ();
 			}
-			if (mappedDocuments [nav.BaseURI] == null) {
+			if (!mappedDocuments.ContainsKey (nav.BaseURI)) {
 				mappedDocuments.Add (nav.BaseURI, nav.BaseURI);
 				MatchPattern.SetContext (nsmgr);
 				UsePattern.SetContext (nsmgr);

@@ -1,5 +1,10 @@
 2005-03-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslKey.cs : fixed node iteration on collecting key indices which
+	  could have resulted in an infinite loop.
+
+2005-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslDecimalFormat.cs : in some cases it does not throw format
 	  exception.
 
