@@ -1127,10 +1127,10 @@ namespace System.Data {
 		{
 			DataRow[] rows = new DataRow [table.Rows.Count];
 			table.Rows.CopyTo (rows, 0);
-			WriteTable (writer, rows, mode, version);
+			WriteTable (writer, rows, mode, version, true);
 		}
 
-		private void WriteTable (XmlWriter writer, DataRow[] rows, XmlWriteMode mode, DataRowVersion version)
+		private void WriteTable (XmlWriter writer, DataRow[] rows, XmlWriteMode mode, DataRowVersion version, bool skipIfNested)
 		{
 			//The columns can be attributes, hidden, elements, or simple content
 			//There can be 0-1 simple content cols or 0-* elements
@@ -1147,24 +1147,26 @@ namespace System.Data {
 			DataRelation oneRel = relationCount == 1 ? table.ParentRelations [0] : null;
 
 			foreach (DataRow row in rows) {
-				// Skip rows that is a child of any tables.
-				switch (relationCount) {
-				case 0:
-					break;
-				case 1:
-					if (row.GetParentRow (oneRel) != null)
-						continue;
-					break;
-				case 2:
-					bool skip = false;
-					for (int i = 0; i < table.ParentRelations.Count; i++)
-						if (row.GetParentRow (table.ParentRelations [i]) != null) {
-							skip = true;
+				if (skipIfNested) {
+					// Skip rows that is a child of any tables.
+					switch (relationCount) {
+					case 0:
+						break;
+					case 1:
+						if (row.GetParentRow (oneRel) != null)
 							continue;
-						}
-					if (skip)
-						continue;
-					break;
+						break;
+					case 2:
+						bool skip = false;
+						for (int i = 0; i < table.ParentRelations.Count; i++)
+							if (row.GetParentRow (table.ParentRelations [i]) != null) {
+								skip = true;
+								continue;
+							}
+						if (skip)
+							continue;
+						break;
+					}
 				}
 
 				if (!row.HasVersion(version) || 
@@ -1205,7 +1207,7 @@ namespace System.Data {
 				
 				foreach (DataRelation relation in table.ChildRelations) {
 					if (relation.Nested) {
-						WriteTable (writer, row.GetChildRows (relation), mode, version);
+						WriteTable (writer, row.GetChildRows (relation), mode, version, false);
 					}
 				}
 				
@@ -1302,6 +1304,7 @@ namespace System.Data {
 			}
 			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
 		}
+		
 
 		private void CheckNamespace (string prefix, string ns, XmlNamespaceManager nsmgr, XmlSchema schema)
 		{
