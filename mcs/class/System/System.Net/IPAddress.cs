@@ -7,10 +7,6 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-//
-// Note: the address is stored in host order
-
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -45,6 +41,8 @@ namespace System.Net {
 	public class IPAddress {
 		// Don't change the name of this field without also
 		// changing socket-io.c in the runtime
+		// The IP address is stored in little-endian order inside the int, 
+		// meaning the lower order bytes contain the netid
 		private long address;
 		private AddressFamily _family = AddressFamily.InterNetwork;
 		private ushort[] _numbers = new ushort[8];	/// ip6 Stored in network order (as ip4)
@@ -131,8 +129,8 @@ namespace System.Net {
 		}
 		
 		/// <summary>
-		///   Constructor from a 32-bit constant with its bytes 
-		///   in network order.
+		///   Constructor from a 32-bit constant with the address bytes in
+		///   little-endian order (the lower order bytes contain the netid)
 		/// </summary>
 		public IPAddress (long addr)
 		{

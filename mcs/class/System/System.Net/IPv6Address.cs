@@ -53,10 +53,6 @@ namespace System.Net {
 		public static readonly IPv6Address Loopback = IPv6Address.Parse ("::1");
 		public static readonly IPv6Address Unspecified = IPv6Address.Parse ("::");
 
-		/// <summary>
-		///   Constructor from a 32-bit constant with its bytes 
-		///   in network order.
-		/// </summary>
 		public IPv6Address (ushort [] addr)
 		{
 			if (addr == null)
@@ -249,12 +245,24 @@ namespace System.Net {
 			        (addr.address [7] == 1));
 		}
 		
+
+		private static ushort SwapUShort (ushort number)
+		{
+			return (ushort) ( ((number >> 8) & 0xFF) + ((number << 8) & 0xFF00) );
+		}
+
+		// Convert the address into a format expected by the IPAddress (long) ctor
+		private int AsIPv4Int ()
+		{
+			return (SwapUShort (address [7]) << 16) + SwapUShort (address [6]);
+		}			
+
 		public bool IsIPv4Compatible ()
 		{
 			for (int i = 0; i < 6; i++) 
 				if (address [i] != 0)
 					return false;
-			return ( (IPAddress.NetworkToHostOrder(address[7]) << 16) | IPAddress.NetworkToHostOrder(address[6])) > 1;
+			return (AsIPv4Int () > 1);
 		}
 		
 		public bool IsIPv4Mapped ()
@@ -281,7 +289,7 @@ namespace System.Net {
 				if(IsIPv4Mapped())
 					s.Append("ffff:");
 
-				s.Append(new IPAddress( IPAddress.NetworkToHostOrder(address[6]<<16) + IPAddress.NetworkToHostOrder(address[7])).ToString());
+				s.Append(new IPAddress( AsIPv4Int ()).ToString ());
 
 				return s.ToString ();
 			}
