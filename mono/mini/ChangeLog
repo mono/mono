@@ -1,9 +1,12 @@
+2004-10-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* trace.c (is_filenamechar): Add '_'.
+
 2004-10-29  Neale Ferguson  <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* mini-s390.c: Fix prolog length to allow for large trace requirements.
 
 	* exceptions-s390.c: Remove dwarf unwinding stuff that was unused.
-
 
 2004-10-29  Zoltan Varga  <vargaz@freemail.hu>
 
