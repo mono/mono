@@ -542,16 +542,15 @@ namespace System.Runtime.Remoting
 			byte[] data = null;
 
 			Context currentContext = Thread.CurrentContext;
-			AppDomain currentDomain = AppDomain.InternalSetDomain (domain);
-			try 
+
+			try
 			{
-				data = domain.GetMarshalledDomainObjRef ();
+				data = (byte[])AppDomain.InvokeInDomain (domain, typeof (AppDomain).GetMethod ("GetMarshalledDomainObjRef", BindingFlags.Instance|BindingFlags.NonPublic), domain, null);
 			}
-			finally 
+			finally
 			{
-				AppDomain.InternalSetDomain (currentDomain);
 				AppDomain.InternalSetContext (currentContext);
-			}
+			}				
 
 			MemoryStream stream = new MemoryStream (data);
 			ObjRef appref = (ObjRef) CADSerializer.DeserializeObject (stream);

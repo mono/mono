@@ -1,3 +1,8 @@
+2003-11-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* RemotingServices.cs (GetDomainProxy): Use the new InvokeInDomain 
+	function instead of calling SetDomain.
+
 2003-10-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingServices.cs: Do not create an identity for an object if it
