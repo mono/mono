@@ -44,11 +44,21 @@ namespace System.Web.Handlers
 #endif
 	class TraceNotAvailableException : HttpException
 	{
-		public TraceNotAvailableException () :
-			base ("Trace Error") {}
+		bool notLocal;
+
+		public TraceNotAvailableException (bool notLocal) :
+			base (notLocal ? 403 : 500, "Trace Error")
+		{
+			this.notLocal = notLocal;
+		}
 
 		internal override string Description {
-			get { return "Trace.axd is not enabled in the configuration file for this application."; }
+			get {
+				if (notLocal)
+					return "Trace is not enabled for remote clients.";
+
+				return "Trace.axd is not enabled in the configuration file for this application.";
+			}
 		}
 	}
 
@@ -58,9 +68,8 @@ namespace System.Web.Handlers
 		{
 			TraceManager manager = HttpRuntime.TraceManager;
 
-			if (!manager.Enabled || manager.LocalOnly && !context.Request.IsLocal) {
-				throw new TraceNotAvailableException ();
-			}
+			if (!manager.Enabled || manager.LocalOnly && !context.Request.IsLocal)
+				throw new TraceNotAvailableException (manager.Enabled);
 				
 			HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 

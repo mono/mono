@@ -1,3 +1,8 @@
+2004-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TraceHandler.cs: error code is 403 and the message different when
+	trace is enabled but not for remote clients.
+
 2004-07-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceHandler.cs: check that trace is enabled or throw.
