@@ -1,3 +1,7 @@
+2003-08-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (ves_exec_method): Handle non-valuetypes in CEE_STOBJ.
+	Fixes #46781.
 
 Fri Jul 25 19:06:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
