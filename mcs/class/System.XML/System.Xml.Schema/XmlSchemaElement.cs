@@ -235,25 +235,30 @@ namespace System.Xml.Schema
 
 		#endregion
 
-		/*
+		private XmlSchemaParticle substChoice;
+
+//		/*
 		// FIXME: using this causes stack overflow...
-		internal override XmlSchemaParticle ActualParticle {
+		internal XmlSchemaParticle SubstitutingChoice {
 			get {
-				if (this.SubstitutingElements != null && this.SubstitutingElements.Count > 0) {
+				if (substChoice != null)
+					return substChoice;
+				else if (this.SubstitutingElements != null && this.SubstitutingElements.Count > 0) {
 					XmlSchemaChoice choice = new XmlSchemaChoice ();
+					substChoice = choice;
 					choice.Compile (null, schema); // compute Validated Min/Max Occurs.
 					choice.CompiledItems.Add (this);
 					for (int i = 0; i < SubstitutingElements.Count; i++) {
 						XmlSchemaElement se = SubstitutingElements [i] as XmlSchemaElement;
 						choice.CompiledItems.Add (se);
 					}
-					return choice;
 				}
 				else
-					return this;
+					substChoice= this;
+				return substChoice;
 			}
 		}
-		*/
+//		*/
 
 		/// <remarks>
 		/// a) If Element has parent as schema:
@@ -718,9 +723,9 @@ namespace System.Xml.Schema
 		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
 		{
 			XmlSchemaComplexType ct = this.ElementType as XmlSchemaComplexType;
-			if (ct == null || ct.ContentTypeParticle == null)
+			if (ct == null || ct.Particle == null)
 				return;
-			ct.ContentTypeParticle.CheckRecursion (depth + 1, h, schema);
+			ct.Particle.CheckRecursion (depth + 1, h, schema);
 		}
 
 		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,

@@ -87,7 +87,7 @@ BUGS in MS Implementation of XmlSchema:
 	</xsd:choice>
 	</xsd:complexType>
 
-	Related msxsdtest is mgH014.xsd.
+	Related msxsdtest is groupG001.xsd and mgH014.xsd.
 
 009. derived list incorrectly allowed
 

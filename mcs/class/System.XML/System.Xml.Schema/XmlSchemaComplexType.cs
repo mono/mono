@@ -55,11 +55,12 @@ namespace System.Xml.Schema
 
 		internal static readonly XmlQualifiedName AnyTypeName = new XmlQualifiedName ("anyType", XmlSchema.Namespace);
 
-		public XmlSchemaComplexType()
+		public XmlSchemaComplexType ()
 		{
 			attributes = new XmlSchemaObjectCollection();
 			block = XmlSchemaDerivationMethod.None;
 			attributeUses = new XmlSchemaObjectTable();
+			contentTypeParticle = XmlSchemaParticle.Empty;
 		}
 
 		#region Attributes
@@ -405,7 +406,7 @@ namespace System.Xml.Schema
 				ValidateContentModel (h, schema);
 			else {
 				if (particle != null)
-					ValidateParticle (h, schema);
+					ValidateImmediateParticle (h, schema);
 				// contentModel never has them.
 				ValidateImmediateAttributes (h, schema);
 			}
@@ -446,7 +447,7 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		private void ValidateParticle (ValidationEventHandler h, XmlSchema schema)
+		private void ValidateImmediateParticle (ValidationEventHandler h, XmlSchema schema)
 		{
 			// {content type} as a particle.
 			errorCount += particle.Validate (h, schema);
@@ -791,7 +792,7 @@ namespace System.Xml.Schema
 			// 1.4.2.2.1
 			if (baseComplexType.ContentType != XmlSchemaContentType.Empty) {
 				// 1.4.2.2.2.1
-				if (this.GetContentType () != baseComplexType.ContentType)
+				if (this.GetContentType () != baseComplexType.GetContentType ())
 					error (h, "Base complex type has different content type " + baseComplexType.ContentType + ".");
 				// 1.4.2.2.2.2 => 3.9.6 Particle Valid (Extension)
 				else if (this.contentTypeParticle == null ||

@@ -49,7 +49,6 @@ namespace System.Xml.Schema
 		}
 
 
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -76,7 +75,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))
@@ -95,6 +93,9 @@ namespace System.Xml.Schema
 		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
 			ValidationEventHandler h, XmlSchema schema)
 		{
+			if (this == baseParticle) // quick check
+				return;
+
 			XmlSchemaElement el = baseParticle as XmlSchemaElement;
 			if (el != null) {
 				// Forbidden
@@ -156,12 +157,6 @@ namespace System.Xml.Schema
 		internal override decimal GetMinEffectiveTotalRange ()
 		{
 			return GetMinEffectiveTotalRangeAllAndSequence ();
-		}
-
-		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
-		{
-			foreach (XmlSchemaParticle p in this.Items)
-				p.CheckRecursion (depth, h, schema);
 		}
 
 		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,

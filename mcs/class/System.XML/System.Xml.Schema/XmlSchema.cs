@@ -49,7 +49,6 @@ namespace System.Xml.Schema
 		private XmlSchemaCollection schemas;
 
 		private XmlNameTable nameTable;
-		private XmlResolver resolver;
 
 		internal bool missedSubComponents;
 
@@ -255,19 +254,27 @@ namespace System.Xml.Schema
                 ///             5. version should be a normalizedString
                 ///             6. xml:lang should be a language
                 /// </remarks>
-                [MonoTODO]
-                public void Compile(ValidationEventHandler handler)
+                public void Compile (ValidationEventHandler handler)
 		{
-			Compile (handler, new Stack (), this, null);
+			Compile (handler, new XmlUrlResolver ());
+		}
+
+#if NET_1_0
+                internal void Compile (ValidationEventHandler handler, XmlResolver resolver)
+#else
+                public void Compile (ValidationEventHandler handler, XmlResolver resolver)
+#endif
+		{
+			Compile (handler, new Stack (), this, null, resolver);
 			isCompiled = true;
 		}
 
-		internal void Compile (ValidationEventHandler handler, XmlSchemaCollection col)
+		internal void Compile (ValidationEventHandler handler, XmlSchemaCollection col, XmlResolver resolver)
 		{
-			Compile (handler, new Stack (), this, col);
+			Compile (handler, new Stack (), this, col, resolver);
 		}
 
-		private void Compile (ValidationEventHandler handler, Stack schemaLocationStack, XmlSchema rootSchema, XmlSchemaCollection col)
+		private void Compile (ValidationEventHandler handler, Stack schemaLocationStack, XmlSchema rootSchema, XmlSchemaCollection col, XmlResolver resolver)
                 {
 			if (rootSchema != this) {
 				CompilationId = rootSchema.CompilationId;
@@ -277,19 +284,19 @@ namespace System.Xml.Schema
 				schemas = col;
 				if (schemas == null) {
 					schemas = new XmlSchemaCollection ();
-					schemas.CompilationId = Guid.NewGuid ();
+					schemas.SchemaSet.CompilationId = Guid.NewGuid ();
 				}
-				CompilationId = schemas.CompilationId;
+				CompilationId = schemas.SchemaSet.CompilationId;
 				this.idCollection.Clear ();
 			}
 			schemas.Add (this);
 
-			attributeGroups = new XmlSchemaObjectTable ();
-			attributes = new XmlSchemaObjectTable ();
-			elements = new XmlSchemaObjectTable ();
-			groups = new XmlSchemaObjectTable ();
-			notations = new XmlSchemaObjectTable ();
-			schemaTypes = new XmlSchemaObjectTable ();
+			attributeGroups.Clear ();
+			attributes.Clear ();
+			elements.Clear ();
+			groups.Clear ();
+			notations.Clear ();
+			schemaTypes.Clear ();
 
 			//1. Union and List are not allowed in block default
                         if(BlockDefault != XmlSchemaDerivationMethod.All)
@@ -340,20 +347,21 @@ namespace System.Xml.Schema
                                 {
 					if (ext.SchemaLocation == null) 
 						continue;
-					string url = GetResolvedUri (ext.SchemaLocation);
 					Stream stream = null;
-					if (schemaLocationStack.Contains (url)) {
-						error(handler, "Nested inclusion was found: " + url);
-						// must skip this inclusion
-						continue;
-					}
-					try {
-						if (resolver == null)
-							resolver = new XmlUrlResolver ();
-						stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
-					} catch (Exception) {
-						// FIXME: This is not good way to handle errors.
-						stream = null;
+					string url = null;
+					if (resolver != null) {
+						url = GetResolvedUri (resolver, ext.SchemaLocation);
+						if (schemaLocationStack.Contains (url)) {
+							error(handler, "Nested inclusion was found: " + url);
+							// must skip this inclusion
+							continue;
+						}
+						try {
+							stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
+						} catch (Exception) {
+						// LAMESPEC: This is not good way to handle errors, but since we cannot know what kind of XmlResolver will come, so there are no mean to avoid this ugly catch.
+							stream = null;
+						}
 					}
 
 					// Process redefinition children in advance.
@@ -405,7 +413,7 @@ namespace System.Xml.Schema
 
 					// Compile included schema.
 					includedSchema.idCollection = this.IDCollection;
-					includedSchema.Compile (handler, schemaLocationStack, rootSchema, col);
+					includedSchema.Compile (handler, schemaLocationStack, rootSchema, col, resolver);
 					schemaLocationStack.Pop ();
 
 					if (import != null)
@@ -445,6 +453,8 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
+						if (!attr.IsComplied (this.CompilationId))
+							schemas.SchemaSet.GlobalAttributes.Add (attr.QualifiedName, attr);
                                                 XmlSchemaUtil.AddToTable (Attributes, attr, attr.QualifiedName, handler);
                                         }
                                 }
@@ -466,6 +476,8 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
+						if (!ctype.IsComplied (this.CompilationId))
+	                                                schemas.SchemaSet.GlobalTypes.Add (ctype.QualifiedName, ctype);
                                                 XmlSchemaUtil.AddToTable (schemaTypes, ctype, ctype.QualifiedName, handler);
                                         }
                                 }
@@ -477,6 +489,8 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
+						if (!stype.IsComplied (this.CompilationId))
+	                                                schemas.SchemaSet.GlobalTypes.Add (stype.QualifiedName, stype);
                                                 XmlSchemaUtil.AddToTable (SchemaTypes, stype, stype.QualifiedName, handler);
                                         }
                                 }
@@ -488,6 +502,8 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
+						if (!elem.IsComplied (this.CompilationId))
+							schemas.SchemaSet.GlobalElements.Add (elem.QualifiedName, elem);
                                                 XmlSchemaUtil.AddToTable (Elements, elem, elem.QualifiedName, handler);
                                         }
                                 }
@@ -524,12 +540,12 @@ namespace System.Xml.Schema
 				Validate(handler);
 		}
 
-		private string GetResolvedUri (string relativeUri)
+		private string GetResolvedUri (XmlResolver resolver, string relativeUri)
 		{
 			Uri baseUri = null;
 			if (this.SourceUri != null && this.SourceUri != String.Empty)
 				baseUri = new Uri (this.SourceUri);
-			return new XmlUrlResolver ().ResolveUri (baseUri, relativeUri).ToString ();
+			return resolver.ResolveUri (baseUri, relativeUri).ToString ();
 		}
 
 		internal bool IsNamespaceAbsent (string ns)
@@ -539,7 +555,6 @@ namespace System.Xml.Schema
 
                 #endregion
 
-                [MonoTODO]
                 private void Validate(ValidationEventHandler handler)
                 {
 			ValidationId = CompilationId;
@@ -572,28 +587,19 @@ namespace System.Xml.Schema
 
                 #region Read
 
-                public static XmlSchema Read(TextReader reader, ValidationEventHandler validationEventHandler)
+		// We cannot use xml deserialization, since it does not provide line info, qname context, and so on.
+                public static XmlSchema Read (TextReader reader, ValidationEventHandler validationEventHandler)
                 {
-                        return Read(new XmlTextReader(reader),validationEventHandler);
+                        return Read (new XmlTextReader (reader),validationEventHandler);
                 }
-                public static XmlSchema Read(Stream stream, ValidationEventHandler validationEventHandler)
+                public static XmlSchema Read (Stream stream, ValidationEventHandler validationEventHandler)
                 {
-                        return Read(new XmlTextReader(stream),validationEventHandler);
+                        return Read (new XmlTextReader (stream),validationEventHandler);
                 }
 
-		[MonoTODO ("Use ValidationEventHandler")]
-                public static XmlSchema Read(XmlReader rdr, ValidationEventHandler validationEventHandler)
+                public static XmlSchema Read (XmlReader rdr, ValidationEventHandler validationEventHandler)
                 {
-/*
-			string baseURI = rdr.BaseURI;
-                        XmlSerializer xser = new XmlSerializer (typeof (XmlSchema));
-                        XmlSchema schema = (XmlSchema) xser.Deserialize (rdr);
-			schema.SourceUri = baseURI;
-			schema.Compile (validationEventHandler);
-			schema.nameTable = rdr.NameTable;
-			return schema;
-*/
-			XmlSchemaReader reader = new XmlSchemaReader(rdr, validationEventHandler);
+			XmlSchemaReader reader = new XmlSchemaReader (rdr, validationEventHandler);
 
 			if (reader.ReadState == ReadState.Initial)
 				reader.ReadNextElement ();
@@ -604,42 +610,43 @@ namespace System.Xml.Schema
                         {
                                 switch(reader.NodeType)
                                 {
-                                        case XmlNodeType.Element:
-                                                if(reader.LocalName == "schema")
-                                                {
-                                                        XmlSchema schema = new XmlSchema();
-							schema.nameTable = rdr.NameTable;
+                                case XmlNodeType.Element:
+					if(reader.LocalName == "schema")
+					{
+						XmlSchema schema = new XmlSchema ();
+						schema.nameTable = rdr.NameTable;
 
-                                                        schema.LineNumber = reader.LineNumber;
-                                                        schema.LinePosition = reader.LinePosition;
-                                                        schema.SourceUri = reader.BaseURI;
+						schema.LineNumber = reader.LineNumber;
+						schema.LinePosition = reader.LinePosition;
+						schema.SourceUri = reader.BaseURI;
 
-                                                        ReadAttributes(schema, reader, validationEventHandler);
-                                                        //IsEmptyElement does not behave properly if reader is
-                                                        //positioned at an attribute.
-                                                        reader.MoveToElement();
-                                                        if(!reader.IsEmptyElement)
-                                                        {
-                                                                ReadContent(schema, reader, validationEventHandler);
-                                                        }
-														else
-															rdr.Skip ();
-															
-							if (rdr.NodeType == XmlNodeType.EndElement)
-								rdr.Read ();
-                                                        return schema;
-                                                }
-                                                else
-                                                {
-                                                        //Schema can't be generated. Throw an exception
-                                                        throw new XmlSchemaException("The root element must be schema", null);
-                                                }
-                                        default:
-                                                error(validationEventHandler, "This should never happen. XmlSchema.Read 1 ",null);
-                                                break;
+						ReadAttributes(schema, reader, validationEventHandler);
+						//IsEmptyElement does not behave properly if reader is
+						//positioned at an attribute.
+						reader.MoveToElement();
+						if(!reader.IsEmptyElement)
+						{
+							ReadContent(schema, reader, validationEventHandler);
+						}
+						else
+							rdr.Skip ();
+
+						if (rdr.NodeType == XmlNodeType.EndElement)
+							rdr.Read ();
+						return schema;
+					}
+					else
+						//Schema can't be generated. Throw an exception
+						error (validationEventHandler, "The root element must be schema", null);
+					break;
+                                default:
+					error(validationEventHandler, "This should never happen. XmlSchema.Read 1 ",null);
+					break;
                                 }
                         } while(reader.Depth > startDepth && reader.ReadNextElement());
-                        throw new XmlSchemaException("The top level schema must have namespace "+XmlSchema.Namespace, null);
+
+			// This is thrown regardless of ValidationEventHandler existence.
+			throw new XmlSchemaException ("The top level schema must have namespace " + XmlSchema.Namespace, null);
                 }
 
 		private static void ReadAttributes(XmlSchema schema, XmlSchemaReader reader, ValidationEventHandler h)

@@ -47,8 +47,7 @@ namespace System.Xml.Schema
 		{
 			if (table.ContainsKey (name))
 				throw new XmlSchemaException (
-					"Schema object for the name " + name + " already exists in this table.",
-					0, 0, value, null, null);
+					"Schema object for the name " + name + " already exists in this table.", value, null);
 			table [name] = value;
 		}
 

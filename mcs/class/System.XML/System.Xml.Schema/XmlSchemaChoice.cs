@@ -21,7 +21,7 @@ namespace System.Xml.Schema
 		private static string xmlname = "choice";
 		private decimal minEffectiveTotalRange = -1;
 
-		public XmlSchemaChoice()
+		public XmlSchemaChoice ()
 		{
 			items = new XmlSchemaObjectCollection();
 		}
@@ -47,7 +47,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -74,7 +73,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))
@@ -133,12 +131,6 @@ namespace System.Xml.Schema
 			}
 			minEffectiveTotalRange = product;
 			return product;
-		}
-
-		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
-		{
-			foreach (XmlSchemaParticle p in this.Items)
-				p.CheckRecursion (depth, h, schema);
 		}
 
 		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,

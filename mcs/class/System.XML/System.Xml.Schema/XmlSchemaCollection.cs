@@ -18,45 +18,39 @@ namespace System.Xml.Schema
 	public sealed class XmlSchemaCollection : ICollection, IEnumerable
 	{
 		//private fields
-		private Hashtable htable;
-		private Hashtable uriTable;
-		private XmlNameTable ntable;
-		internal Guid CompilationId;
+		private XmlSchemaSet schemaSet;
 
-		public XmlSchemaCollection()
+		public XmlSchemaCollection ()
 			: this (new NameTable ())
 		{
 		}
 
-		public XmlSchemaCollection(XmlNameTable nametable)
+		public XmlSchemaCollection (XmlNameTable nameTable)
+			: this (new XmlSchemaSet (nameTable))
 		{
-			htable = new Hashtable();
-			uriTable = new Hashtable ();
-			ntable = nametable;
-			CompilationId = Guid.NewGuid ();
+			this.schemaSet.SchemaCollection = this;
+		}
+
+		internal XmlSchemaCollection (XmlSchemaSet schemaSet)
+		{
+			this.schemaSet = schemaSet;
 		}
 
 		//properties
-		public int Count 
-		{ 
-			get
-			{ 
-				return this.htable.Count; 
-			}
+		internal XmlSchemaSet SchemaSet {
+			get { return schemaSet; }
 		}
-		public XmlNameTable NameTable 
-		{ 
-			get
-			{
-				return this.ntable;
-			}
+
+		public int Count {
+			get { return schemaSet.Count; }
 		}
-		public XmlSchema this[ string ns ] 
-		{ 
-			get
-			{
-				return (XmlSchema) this.htable[GetSafeNs(ns)];
-			}
+
+		public XmlNameTable NameTable { 
+			get { return schemaSet.NameTable; }
+		}
+
+		public XmlSchema this [ string ns ] { 
+			get { return schemaSet.Get (ns); }
 		}
 
 		// Events
@@ -65,138 +59,117 @@ namespace System.Xml.Schema
 		// Methods
 		public XmlSchema Add (string ns, XmlReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException ("reader");
-
-			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
-			return Add (schema);
+			return Add (ns, reader, new XmlUrlResolver ());
 		}
 
-		public XmlSchema Add(string ns, string uri)
+#if NET_1_0
+		internal XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
+#else
+		public XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
+#endif
 		{
-			return Add (ns, new XmlTextReader (uri));
+			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
+			schema.Compile (ValidationEventHandler, this, resolver);
+			return schemaSet.Add (schema);
 		}
 
-		public XmlSchema Add(XmlSchema schema)
+		public XmlSchema Add (string ns, string uri)
+		{
+			return schemaSet.Add (ns, uri);
+		}
+
+		public XmlSchema Add (XmlSchema schema)
+		{
+			return Add (schema, new XmlUrlResolver ());
+		}
+
+		public XmlSchema Add (XmlSchema schema, XmlResolver resolver)
 		{
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
+			// XmlSchemaCollection.Add() compiles, while XmlSchemaSet.Add() does not
 			if (!schema.IsCompiled)
-				schema.Compile (null, this);
-			/*
-			// This is requried to complete maybe missing sub components.
-			foreach (XmlSchema existing in htable.Values)
-				if (existing.CompilationId != this.CompilationId)
-					existing.Compile (null, this);
-			*/
+				schema.Compile (ValidationEventHandler, this, resolver);
 
-			htable [GetSafeNs(schema.TargetNamespace)] = schema;
-			return schema;
+			return schemaSet.Add (schema);
 		}
 
-		public void Add(XmlSchemaCollection schema)
+		public void Add (XmlSchemaCollection schema)
 		{
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
 			foreach (XmlSchema s in schema)
-				Add (s);
+				schemaSet.Add (s);
 		}
 
-		string GetSafeNs (string ns)
+		public bool Contains (string ns)
 		{
-			return ns == null ? "" : ns;
+			return schemaSet.Contains (ns);
 		}
 
-		public bool Contains(string ns)
+		public bool Contains (XmlSchema schema)
 		{
-			return this.htable.Contains(GetSafeNs(ns));
-		}
-		public bool Contains(XmlSchema schema)
-		{
-			return this.htable.Contains(GetSafeNs(schema.TargetNamespace)); 
-		}
-		public void CopyTo(XmlSchema[] array, int index)
-		{
-			((ICollection) this).CopyTo (array, index);
+			return schemaSet.Contains (schema);
 		}
 
-		public XmlSchemaCollectionEnumerator GetEnumerator()
+		public void CopyTo (XmlSchema[] array, int index)
 		{
-			return new XmlSchemaCollectionEnumerator(this);
+			schemaSet.CopyTo (array, index);
+		}
+
+		public XmlSchemaCollectionEnumerator GetEnumerator ()
+		{
+			return new XmlSchemaCollectionEnumerator (this);
 		}
 		
 		// interface Methods
-		void ICollection.CopyTo(Array array, int index)
+		void ICollection.CopyTo (Array array, int index)
 		{
-			htable.Values.CopyTo (array, index);
+			schemaSet.CopyTo (array, index);
 		}
+
+		[MonoTODO]
 		bool ICollection.IsSynchronized
 		{
-			get { return false; }
+			get { throw new NotImplementedException (); }
 		}
-		IEnumerator IEnumerable.GetEnumerator()
+
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return this.htable.GetEnumerator();
+			return schemaSet.GetEnumerator ();
 		}
+
+		[MonoTODO]
 		Object ICollection.SyncRoot
 		{
-			get { return this; }
+			get { throw new NotImplementedException (); }
 		}
 
 		// Internal Methods
 		internal XmlSchemaAttribute FindAttribute (XmlQualifiedName qname)
 		{
-			XmlSchemaAttribute found = null;
-			XmlSchema target = this [qname.Namespace];
-			if (target != null)
-				found = target.Attributes [qname] as XmlSchemaAttribute;
-			if (found != null)
-				return found;
-			foreach (XmlSchema schema in htable.Values) {
-				found = schema.Attributes [qname] as XmlSchemaAttribute;
-				if (found != null)
-					return found;
-			}
-			return null;
+			return (XmlSchemaAttribute) schemaSet.GlobalAttributes [qname];
 		}
 
 		internal XmlSchemaElement FindElement (XmlQualifiedName qname)
 		{
-			XmlSchemaElement found = null;
-			XmlSchema target = this [qname.Namespace];
-			if (target != null)
-				found = target.Elements [qname] as XmlSchemaElement;
-			if (found != null)
-				return found;
-			foreach (XmlSchema schema in htable.Values) {
-				found = schema.Elements [qname] as XmlSchemaElement;
-				if (found != null)
-					return found;
-			}
-			return null;
+			return (XmlSchemaElement) schemaSet.GlobalElements [qname];
 		}
 
 		internal object FindSchemaType (XmlQualifiedName qname)
 		{
-			if (qname == XmlSchemaComplexType.AnyTypeName)
-				return XmlSchemaComplexType.AnyType;
-			else if (qname.Namespace == XmlSchema.Namespace)
-				return XmlSchemaDatatype.FromName (qname);
-
-			XmlSchemaType found = null;
-			XmlSchema target = this [qname.Namespace];
-			if (target != null)
-				found = target.SchemaTypes [qname] as XmlSchemaType;
-			if (found != null)
-				return found;
-			foreach (XmlSchema schema in htable.Values) {
-				found = schema.SchemaTypes [qname] as XmlSchemaType;
-				if (found != null)
-					return found;
-			}
-			return null;
+			return schemaSet.GlobalTypes [qname];
 		}
+
+		internal void OnValidationError (object o, ValidationEventArgs e)
+		{
+			if (ValidationEventHandler != null)
+				ValidationEventHandler (o, e);
+			else
+				throw e.Exception;
+		}
+
 	}
 }

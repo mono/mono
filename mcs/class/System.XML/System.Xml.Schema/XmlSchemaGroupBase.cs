@@ -1,18 +1,20 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// XmlSchemaGroupBase.cs
+//
+// Authors:
+//	Dwivedi, Ajay kumar Adwiv@Yahoo.com
+//	Atsushi Enomoto atsushi@ximian.com
+//
 using System;
 using System.Xml.Serialization;
 
 namespace System.Xml.Schema
 {
-	/// <summary>
-	/// Summary description for XmlSchemaGroupBase.
-	/// </summary>
 	public abstract class XmlSchemaGroupBase : XmlSchemaParticle
 	{
 		private XmlSchemaObjectCollection compiledItems;
 
-		protected XmlSchemaGroupBase()
+		protected XmlSchemaGroupBase ()
 		{
 			compiledItems = new XmlSchemaObjectCollection ();
 		}
@@ -47,6 +49,12 @@ namespace System.Xml.Schema
 			return true;
 		}
 
+		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		{
+			foreach (XmlSchemaParticle p in this.Items)
+				p.CheckRecursion (depth, h, schema);
+		}
+
 		internal void ValidateNSRecurseCheckCardinality (XmlSchemaAny any,
 			ValidationEventHandler h, XmlSchema schema)
 		{
@@ -60,32 +68,45 @@ namespace System.Xml.Schema
 		{
 			int index = 0;
 			for (int i = 0; i < baseGroup.CompiledItems.Count; i++) {
-				XmlSchemaParticle pb = baseGroup.CompiledItems [i] as XmlSchemaParticle;
-				if (pb.ActualParticle == XmlSchemaParticle.Empty)
+				XmlSchemaParticle pb = ((XmlSchemaParticle) baseGroup.CompiledItems [i]).ActualParticle;
+				if (pb == XmlSchemaParticle.Empty)
 					continue;
 				XmlSchemaParticle pd = null;
 				while (this.CompiledItems.Count > index) {
-					pd = this.CompiledItems [index] as XmlSchemaParticle;
+					pd = ((XmlSchemaParticle) this.CompiledItems [index]).ActualParticle;
 					index++;
-					if (pd.ActualParticle != XmlSchemaParticle.Empty)
+					if (pd != XmlSchemaParticle.Empty)
 						break;
 				}
-				if (pd != null) {
-					try {
-						pd.ActualParticle.ValidateDerivationByRestriction (pb.ActualParticle, h, schema);
-					} catch (XmlSchemaException ex) {
-						if (!pb.ValidateIsEmptiable ())
-							error (h, "Invalid particle derivation by restriction was found. Invalid sub-particle derivation was found.", ex);
-						else
-							index--; // try the same derived particle and next base particle.
-					}
-				} else if (!pb.ValidateIsEmptiable ()) {
-					error (h, "Invalid particle derivation by restriction was found. Base schema particle has non-emptiable sub particle that is not mapped to the derived particle.");
-					return;
-				}
+				ValidateParticleSection (ref index, pd, pb, h, schema);
 			}
-			if (index != this.CompiledItems.Count)
+			if (this.compiledItems.Count > 0 && index != this.CompiledItems.Count)
 				error (h, "Invalid particle derivation by restriction was found. Extraneous derived particle was found.");
+		}
+
+		private void ValidateParticleSection (ref int index, XmlSchemaParticle pd, XmlSchemaParticle pb, ValidationEventHandler h, XmlSchema schema)
+		{
+			if (pd == pb) // they are same particle
+				return;
+
+			if (pd != null) {
+				try {
+					XmlSchemaElement el = pd as XmlSchemaElement;
+					XmlSchemaParticle pdx = pd;
+					if (el != null && el.SubstitutingElements.Count > 0)
+						pdx = el.SubstitutingChoice;
+
+					pdx.ValidateDerivationByRestriction (pb, h, schema);
+				} catch (XmlSchemaException ex) {
+					if (!pb.ValidateIsEmptiable ())
+						error (h, "Invalid particle derivation by restriction was found. Invalid sub-particle derivation was found.", ex);
+					else
+						index--; // try the same derived particle and next base particle.
+				}
+			} else if (!pb.ValidateIsEmptiable ()) {
+				error (h, "Invalid particle derivation by restriction was found. Base schema particle has non-emptiable sub particle that is not mapped to the derived particle.");
+				return;
+			}
 		}
 	}
 }

@@ -53,7 +53,6 @@ namespace System.Xml.Schema
 		/// 1. MaxOccurs must be one. (default is also one)
 		/// 2. MinOccurs must be zero or one.
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -90,7 +89,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))
@@ -139,12 +137,6 @@ namespace System.Xml.Schema
 		internal override decimal GetMinEffectiveTotalRange ()
 		{
 			return GetMinEffectiveTotalRangeAllAndSequence ();
-		}
-
-		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
-		{
-			foreach (XmlSchemaElement el in this.Items)
-				el.CheckRecursion (depth, h, schema);
 		}
 
 		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,
