@@ -1,3 +1,8 @@
+2005-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fixed a padding bug affecting that can	occurs
+	when no padding is used.
+
 2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSAManaged.cs: PublicOnly now reports false when a key hasn't yet 
