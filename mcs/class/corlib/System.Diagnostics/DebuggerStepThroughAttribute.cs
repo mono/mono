@@ -10,8 +10,9 @@ using System;
 
 namespace System.Diagnostics
 {
-	[AttributeUsage (AttributeTargets.Constructor |
-			 AttributeTargets.Method | AttributeTargets.Property)]
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct |
+                         AttributeTargets.Constructor |
+			 AttributeTargets.Method)]
 	[Serializable]
 	public sealed class DebuggerStepThroughAttribute : Attribute
 	{
