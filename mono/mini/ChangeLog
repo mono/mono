@@ -1,5 +1,7 @@
 2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* inssel-x86.brg: more burg love
+
 	* inssel.brg: more cleanup
 
 	* inssel-x86.brg, inssel-long32.brg: burg cleanup.
