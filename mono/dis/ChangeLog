@@ -1,3 +1,11 @@
+2004-12-09  Martin Baulig  <martin@ximian.com>
+
+	* get.c (get_generic_param): Take a `MonoGenericContainer *' and
+	use it to print things instead of manually parsing the metadata.
+
+	* main.c (dis_generic_param_and_constraints): Removed, use
+	get_generic_param() instead.
+	(dis_method_list): Added `MonoGenericContext *' argument.
 
 Mon Dec 6 13:31:48 CET 2004 Paolo Molaro <lupus@ximian.com>
 
