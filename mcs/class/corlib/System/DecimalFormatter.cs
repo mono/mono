@@ -109,6 +109,9 @@ namespace System
             }
 #endif
 
+	    if (sb.ToString () == String.Empty && decPos > 0 && sign == 0)
+		    sb.Append ('0');
+
             // now build the format
             switch (specifier)
             {

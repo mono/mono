@@ -1,3 +1,8 @@
+2002-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DecimalFormatter.cs (ToString): return correct value when the
+	decimal number is 0.
+
 2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
 	
 	* Type.cs (GetProperty): fixed call syntax (needs an empty array not null)
