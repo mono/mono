@@ -400,6 +400,8 @@ namespace System.Data.OracleClient {
 			AssertCommandTextIsSet ();
 			AssertNoDataReader ();
 			bool hasRows = false;
+
+                        this.behavior = behavior;
 				
 			if (Transaction != null) 
 				Transaction.AttachToServiceContext ();
