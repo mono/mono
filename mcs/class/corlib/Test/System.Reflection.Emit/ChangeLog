@@ -1,5 +1,7 @@
 2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* EventBuilderTest.cs: New file.
+
 	* PropertyBuilderTest.cs: New file.
 
 2003-05-28  Nick Drochak <ndrochak@gol.com>
