@@ -984,7 +984,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_InvalidFileHandle () 
 		{
-			new FileStream ((IntPtr)(-1), FileAccess.Read);
+			new FileStream ((IntPtr)(-1L), FileAccess.Read);
 		}
 
 		[Test]

@@ -1,3 +1,8 @@
+2005-03-02  Raja R Harinath  <rharinath@novell.com>
+
+	* FileStreamTest.cs (Constructor_InvalidFileHandle): Fix to work
+	on 64-bit platforms.
+
 2005-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileTest.cs: test for invalid characters in file names.
