@@ -294,6 +294,26 @@ namespace System {
 			cursorTop = row;
 		}
 
+		public int BufferHeight {
+			get {
+				GetWindowDimensions ();
+				return bufferHeight;
+			}
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+
+		public int BufferWidth {
+			get {
+				GetWindowDimensions ();
+				return bufferWidth;
+			}
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+
 		public int CursorLeft {
 			get {
 				Init ();

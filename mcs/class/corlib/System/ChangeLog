@@ -1,6 +1,13 @@
 2005-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConsoleDriver.cs:
+	* TermInfoDriver.cs:
+	* IConsoleDriver.cs:
+	* Console.cs: added BufferWidth and BufferHeight.
+
+2005-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConsoleDriver.cs:
 	* Console.cs:
 	* TermInfoDriver.cs:
 	* IConsoleDriver.cs: added a few more properties and fixed cursor

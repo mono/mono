@@ -63,8 +63,16 @@ namespace System {
 			}
 		}
 
-		//int BufferHeight { get; set; }
-		//int BufferWidth { get; set; }
+		public static int BufferHeight {
+			get { return driver.BufferHeight; }
+			set { driver.BufferHeight = value; }
+		}
+
+		public static int BufferWidth {
+			get { return driver.BufferWidth; }
+			set { driver.BufferWidth = value; }
+		}
+
 		//bool CapsLock { get; }
 
 		public static int CursorLeft {

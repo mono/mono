@@ -433,6 +433,16 @@ namespace System
 			set { ConsoleDriver.BackgroundColor = value; }
 		}
 
+		public static int BufferHeight {
+			get { return ConsoleDriver.BufferHeight; }
+			set { ConsoleDriver.BufferHeight = value; }
+		}
+
+		public static int BufferWidth {
+			get { return ConsoleDriver.BufferWidth; }
+			set { ConsoleDriver.BufferWidth = value; }
+		}
+
 		public static int CursorLeft {
 			get { return ConsoleDriver.CursorLeft; }
 			set { ConsoleDriver.CursorLeft = value; }

@@ -30,8 +30,8 @@
 namespace System {
 	interface IConsoleDriver {
 		ConsoleColor BackgroundColor { get; set; }
-		//int BufferHeight { get; set; }
-		//int BufferWidth { get; set; }
+		int BufferHeight { get; set; }
+		int BufferWidth { get; set; }
 		//bool CapsLock { get; }
 		int CursorLeft { get; set; } 
 		//int CursorSize { get; set; } 
