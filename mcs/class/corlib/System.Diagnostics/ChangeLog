@@ -1,3 +1,10 @@
+2002-04-08  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Debugger.cs: Added [MonoTODO] attribute to methods; modified IsLogging() 
+		and Log() so that System.Diagnostics.DefaultTraceListener could use them
+		without having NotImplementedException's thrown, as the functionality
+		DefaultTraceListener is using is non-critical.
+
 2002-04-08  Nick Drochak  <ndrochak@gol.com>
 
 	* ConditionalAttribute.cs: Add AttributeUsage attribute for methods.
