@@ -65,6 +65,18 @@ namespace System.Drawing
 			}
 		}
 
+		public static Brush ControlDark {
+			get {
+				return new SolidBrush(SystemColors.ControlDark);
+			}
+		}
+		
+		public static Brush ControlDarkDark {
+			get {
+				return new SolidBrush(SystemColors.ControlDarkDark);
+			}
+		}
+
 		public static Brush ControlText {
 			get {
 				return new SolidBrush(SystemColors.ControlText);
