@@ -44,6 +44,10 @@ namespace System.IO
 
 			MonoIOError error;
 			MonoFileType ftype = MonoIO.GetFileType (handle, out error);
+
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				throw MonoIO.GetException (name, error);
+			}
 			
 			if (ftype == MonoFileType.Unknown) {
 				throw new IOException ("Invalid handle.");
@@ -224,8 +228,15 @@ namespace System.IO
 				FlushBufferIfDirty ();
 
 				MonoIOError error;
+				long length;
 				
-				return MonoIO.GetLength (handle, out error);
+				length = MonoIO.GetLength (handle, out error);
+				if (error != MonoIOError.ERROR_SUCCESS) {
+					throw MonoIO.GetException (name,
+								   error);
+				}
+
+				return(length);
 			}
 		}
 
@@ -488,6 +499,11 @@ namespace System.IO
 				FlushBuffer ();
 
 				MonoIO.Write (handle, src, src_offset, count, out error);
+				if (error != MonoIOError.ERROR_SUCCESS) {
+					throw MonoIO.GetException (name,
+								   error);
+				}
+				
 				buf_start += count;
 			} else {
 
@@ -666,6 +682,10 @@ namespace System.IO
 			buf_start = MonoIO.Seek (handle, pos,
 						 SeekOrigin.Begin,
 						 out error);
+
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				throw MonoIO.GetException (name, error);
+			}
 			
 			return(buf_start);
 		}
@@ -689,6 +709,9 @@ namespace System.IO
 			MonoIOError error;
 			
 			MonoIO.SetLength (handle, length, out error);
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				throw MonoIO.GetException (name, error);
+			}
 		}
 
 		public override void Flush ()
@@ -711,16 +734,41 @@ namespace System.IO
 			GC.SuppressFinalize (this);	// remove from finalize queue
 		}
 
-		[MonoTODO]
 		public virtual void Lock (long position, long length)
 		{
-			throw new NotImplementedException ();
+			if (position < 0) {
+				throw new ArgumentOutOfRangeException ("position must not be negative");
+			}
+			if (length < 0) {
+				throw new ArgumentOutOfRangeException ("length must not be negative");
+			}
+			if (handle == MonoIO.InvalidHandle) {
+				throw new ObjectDisposedException ("Stream has been closed");
+			}
+				
+			MonoIOError error;
+
+			MonoIO.Lock (handle, position, length, out error);
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				throw MonoIO.GetException (name, error);
+			}
 		}
 
-		[MonoTODO]
 		public virtual void Unlock (long position, long length)
 		{
-			throw new NotImplementedException ();
+			if (position < 0) {
+				throw new ArgumentOutOfRangeException ("position must not be negative");
+			}
+			if (length < 0) {
+				throw new ArgumentOutOfRangeException ("length must not be negative");
+			}
+				
+			MonoIOError error;
+
+			MonoIO.Unlock (handle, position, length, out error);
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				throw MonoIO.GetException (name, error);
+			}
 		}
 
 		// protected
@@ -738,6 +786,9 @@ namespace System.IO
 					MonoIOError error;
 				
 					MonoIO.Close (handle, out error);
+					if (error != MonoIOError.ERROR_SUCCESS) {
+						throw MonoIO.GetException (name, error);
+					}
 
 					handle = MonoIO.InvalidHandle;
 				}
@@ -803,6 +854,9 @@ namespace System.IO
 					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
 						     out error);
+					if (error != MonoIOError.ERROR_SUCCESS) {
+						throw MonoIO.GetException (name, error);
+					}
 				}
 				st.Write (buf, 0, buf_length);
 			}
@@ -821,9 +875,16 @@ namespace System.IO
 					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
 						     out error);
+					if (error != MonoIOError.ERROR_SUCCESS) {
+						throw MonoIO.GetException (name, error);
+					}
 				}
 				MonoIO.Write (handle, buf, 0,
 					      buf_length, out error);
+
+				if (error != MonoIOError.ERROR_SUCCESS) {
+					throw MonoIO.GetException (name, error);
+				}
 			}
 
 			buf_start += buf_offset;
@@ -854,6 +915,9 @@ namespace System.IO
 			/* when async == true, if we get here we don't suport AIO or it's disabled
 			 * and we're using the threadpool */
 			amount = MonoIO.Read (handle, buf, offset, count, out error);
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				throw MonoIO.GetException (name, error);
+			}
 			
 			/* Check for read error */
 			if(amount == -1) {

@@ -59,7 +59,8 @@ namespace System.IO {
 				if (!MonoIO.SetFileAttributes (FullName,
 							       value,
 							       out error))
-					throw MonoIO.GetException (error);
+					throw MonoIO.GetException (FullName,
+								   error);
 				Refresh (true);
 			}
 		}
@@ -77,7 +78,8 @@ namespace System.IO {
 				
 				if (!MonoIO.SetFileTime (FullName, filetime,
 							 -1, -1, out error))
-					throw MonoIO.GetException (error);
+					throw MonoIO.GetException (FullName,
+								   error);
 				Refresh (true);
 			}
 		}
@@ -107,7 +109,8 @@ namespace System.IO {
 				if (!MonoIO.SetFileTime (FullName, -1,
 							 filetime, -1,
 							 out error))
-					throw MonoIO.GetException (error);
+					throw MonoIO.GetException (FullName,
+								   error);
 				Refresh (true);
 			}
 		}
@@ -137,7 +140,8 @@ namespace System.IO {
 				
 				if (!MonoIO.SetFileTime (FullName, -1, -1,
 							 filetime, out error))
-					throw MonoIO.GetException (error);
+					throw MonoIO.GetException (FullName,
+								   error);
 				Refresh (true);
 			}
 		}
@@ -195,6 +199,11 @@ namespace System.IO {
 			MonoIOError error;
 			
 			MonoIO.GetFileStat (FullName, out stat, out error);
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				throw MonoIO.GetException (FullName,
+							   error);
+			}
+			
 			valid = true;
 			
 			InternalRefresh ();

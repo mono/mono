@@ -101,7 +101,8 @@ namespace System.IO
 				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) 
 					throw new DirectoryNotFoundException ("Directory '" + path + "' doesnt exists.");
 				else
-					throw MonoIO.GetException (error);
+					throw MonoIO.GetException (path,
+								   error);
 			}
 		}
 
@@ -134,8 +135,15 @@ namespace System.IO
 				return false;
 				
 			MonoIOError error;
+			bool exists;
 			
-			return MonoIO.ExistsDirectory (path, out error);
+			exists = MonoIO.ExistsDirectory (path, out error);
+			if (error != MonoIOError.ERROR_SUCCESS &&
+			    error != MonoIOError.ERROR_PATH_NOT_FOUND) {
+				throw MonoIO.GetException (path, error);
+			}
+
+			return(exists);
 		}
 
 		public static DateTime GetLastAccessTime (string path)

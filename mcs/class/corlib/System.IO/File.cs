@@ -140,8 +140,15 @@ namespace System.IO
 			}
 
 			MonoIOError error;
+			bool exists;
 			
-			return MonoIO.ExistsFile (path, out error);
+			exists = MonoIO.ExistsFile (path, out error);
+			if (error != MonoIOError.ERROR_SUCCESS &&
+			    error != MonoIOError.ERROR_FILE_NOT_FOUND) {
+				throw MonoIO.GetException (path, error);
+			}
+
+			return(exists);
 		}
 
 		public static FileAttributes GetAttributes (string path)
@@ -159,8 +166,14 @@ namespace System.IO
 			}
 
 			MonoIOError error;
+			FileAttributes attrs;
 			
-			return MonoIO.GetFileAttributes (path, out error);
+			attrs = MonoIO.GetFileAttributes (path, out error);
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				throw MonoIO.GetException (path, error);
+			}
+
+			return(attrs);
 		}
 
 		public static DateTime GetCreationTime (string path)

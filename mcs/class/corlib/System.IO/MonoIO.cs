@@ -236,6 +236,16 @@ namespace System.IO
 			return result;
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static void Lock (IntPtr handle,
+						long position, long length,
+						out MonoIOError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static void Unlock (IntPtr handle,
+						  long position, long length,
+						  out MonoIOError error);
+
 		// console handles
 
 		public extern static IntPtr ConsoleOutput {

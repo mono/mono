@@ -1,3 +1,14 @@
+2004-05-27  Dick Porter  <dick@ximian.com>
+
+	* MonoIO.cs: Define icalls for Lock() and Unlock()
+	
+	* FileStream.cs: Implement Lock() and Unlock().  Also improve IO
+	error reporting.
+
+	* FileSystemInfo.cs:
+	* File.cs:
+	* Directory.cs: Improve IO error reporting
+
 2004-05-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: delay seeking to the end when FileMode.Append is
