@@ -1239,11 +1239,11 @@ namespace MonoTests.System.Xml
 			Assertion.AssertEquals ("initial.NodeType", XmlNodeType.None, reader.NodeType);
 		}
 
-		[Test]
-		public void TestExternalDocument ()
-		{
-			XmlDocument doc = new XmlDocument ();
-			doc.Load ("xmlfiles/encoding/utf-7.xml");
-		}
+//		[Test] Comment out in the meantime.
+//		public void TestExternalDocument ()
+//		{
+//			XmlDocument doc = new XmlDocument ();
+//			doc.Load ("xmlfiles/encoding/utf-7.xml");
+//		}
 	}
 }

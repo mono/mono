@@ -1,3 +1,9 @@
+2003-04-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReaderTests.cs: quick fix to comment out TestExternalDocument.
+	* XmlDocumentTests.cs : quick fix to comment out LoadExternalUri and
+	  LoadDocumentWithIgnoreSection.
+
 2003-04-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added this file as a new entry.
