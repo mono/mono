@@ -1,5 +1,12 @@
 2004-11-05  Ben Maurer  <bmaurer@ximian.com>
 
+	* ssa.c: allocate MonoMethodVar.uses from the mempool. First, this
+	prevents another huge leak when compiling with ssa. Secondly, the
+	performance of doing this rather than freeing the lists is much
+	better. GList does a lock every time you allocate a list link,
+	so that it can use a memory pool. So, it is better to just use
+	a memory pool of our own.
+	
 	* ssa.c, linear-scan.c: replace g_list_remove_link with
 	g_list_delete.  The remove one does not free the GList, so we were
 	leaking memory. On -O=all --compile-all with corlib, this cut down
