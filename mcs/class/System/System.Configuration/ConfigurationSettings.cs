@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -99,14 +100,12 @@ namespace System.Configuration
 				}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern private static string get_machine_config_path ();
+
 		private static string GetMachineConfigPath ()
 		{
-			string location = typeof (string).Assembly.Location;
-			// Workaround for bug #31730
-			int index = location.IndexOf ("install");
-			location = Path.Combine (location.Substring (0, index + 7), "lib");
-			// 
-			return Path.Combine (location, "machine.config");
+			return get_machine_config_path ();
 		}
 
 		private static string GetAppConfigPath ()
