@@ -37,7 +37,7 @@ TEST_SOURCES = \
 		 test-172 test-173 test-174 test-175 test-176 test-177 test-178 test-179 test-180 \
 	test-181 test-182 test-183 test-184 test-185 test-186 test-187 test-188          test-190 \
 	test-191 test-192 test-193 test-194 test-195 test-196 test-197 test-198 test-199 test-200 \
-	test-201 test-202 test-203 test-204 test-205 test-206
+	test-201 test-202 test-203 test-204 test-205 test-206 test-207 test-208
 
 
 UNSAFE_SOURCES = \
