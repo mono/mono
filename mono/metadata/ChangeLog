@@ -1,3 +1,12 @@
+2003-09-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c (mono_metadata_custom_attrs_from_index): New function to
+	obtain the first custom attribute for a given index. Depends on the
+	CustomAttribute table being sorted by the parent field.
+
+	* reflection.c (mono_custom_attrs_from_index): Use the new function 
+	for better performance.
+
 2003-09-07  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_init): If we're a generic instance, inflate
@@ -8,6 +17,7 @@
 
 	* mono-debug-debugger.c: Added support for constructors.
 
+>>>>>>> 1.1094
 2003-09-06  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_TypeBuilder_get_IsUnboundGenericParameter):
