@@ -1,4 +1,8 @@
 
+Thu Mar 21 18:08:37 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: set stack trace info when throwing an exception.
+
 Thu Mar 21 17:32:46 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: intern strings before executing a method (and don't 
