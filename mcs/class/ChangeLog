@@ -1,3 +1,7 @@
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* makefile.gnu: Add PEAPI to the build
+
 2003-03-06  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* library.build: added Mono.Security to build, test and clean. 
