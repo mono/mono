@@ -120,7 +120,12 @@ namespace System.Text.RegularExpressions {
 
 			object o = tail.value;
 			tail = tail.next;
-			tail.previous = null;
+
+			if (tail == null)
+				head = null;
+			else
+				tail.previous = null;
+
 			return o;
 		}
 

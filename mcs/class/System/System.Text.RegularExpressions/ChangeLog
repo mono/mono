@@ -1,0 +1,5 @@
+2002-04-03  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* ChangeLog: Added changelog.
+
+	* cache.cs: Fixed bug in MRUList.Evict.
