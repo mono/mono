@@ -692,7 +692,7 @@
 			}
 
 			//  --- Public Events
-    		
+
 			public event EventHandler Activated;
     		
 			public event EventHandler Closed;
@@ -1118,6 +1118,13 @@
 						//case ?:
 						//OnCreateControl()
 						//break;
+
+					case Msg.WM_ACTIVATE: {
+						EventArgs activateEventArgs = new EventArgs();
+						OnActivated(activateEventArgs);
+						break;
+					}
+
 					case Msg.WM_FONTCHANGE:
 						EventArgs fontChangedArgs = new EventArgs();
 						OnFontChanged (fontChangedArgs);
