@@ -33,7 +33,6 @@
 //
 using System.Collections;
 using System.IO;
-using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
 using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
@@ -42,13 +41,12 @@ using Mono.Xml; // only required for NET_2_0
 namespace System.Xml
 {
 #if NET_2_0
-	public abstract class XmlReader : IDisposable, IXmlDataEvidence
+	public abstract class XmlReader : IDisposable
 #else
 	public abstract class XmlReader
 #endif
 	{
 		private StringBuilder readStringBuffer;
-		private Evidence evidence;
 #if NET_2_0
 		private XmlReaderSettings settings;
 #endif
@@ -57,7 +55,6 @@ namespace System.Xml
 
 		protected XmlReader ()
 		{
-			evidence = new Evidence ();
 		}
 
 		#endregion
@@ -76,13 +73,6 @@ namespace System.Xml
 		public abstract int Depth { get; }
 
 		public abstract bool EOF { get; }
-
-#if NET_2_0
-		[MonoTODO]
-		public virtual Evidence Evidence {
-			get { return evidence; }
-		}
-#endif
 
 		public virtual bool HasAttributes
 		{

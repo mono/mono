@@ -43,6 +43,9 @@ using System.Xml.XPath;
 using System.Diagnostics;
 using System.Collections;
 using Mono.Xml;
+#if NET_2_0
+using Mono.Xml.XPath;
+#endif
 
 namespace System.Xml
 {
@@ -356,7 +359,11 @@ namespace System.Xml
 
 		protected internal virtual XPathNavigator CreateNavigator (XmlNode node)
 		{
+#if NET_2_0
+			return new XPathEditableDocument (node).CreateNavigator ();
+#else
 			return new XmlDocumentNavigator (node);
+#endif
 		}
 
 		public virtual XmlNode CreateNode (

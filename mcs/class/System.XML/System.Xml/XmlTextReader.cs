@@ -42,7 +42,6 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
-using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
@@ -203,13 +202,6 @@ namespace System.Xml
 		public override bool EOF {
 			get { return readState == ReadState.EndOfFile; }
 		}
-
-#if NET_2_0
-		[MonoTODO]
-		public override Evidence Evidence {
-			get { return base.Evidence; }
-		}
-#endif
 
 		public override bool HasValue {
 			get { return cursorToken.Value != null; }
@@ -917,7 +909,7 @@ namespace System.Xml
 						LocalName = Name;
 					} else {
 						// This improves speed by at least nearly 5%, but eats more memory at least nearly 0.3%
-						// However, this might be reverted if NameTable is got improved.
+						// However, this might be reverted if NameTable got improved.
 						char [] nameArr = Name.ToCharArray ();
 						Prefix = Reader.NameTable.Add (nameArr, 0, indexOfColon);
 						LocalName = Reader.NameTable.Add (nameArr, indexOfColon + 1, nameArr.Length - indexOfColon - 1);

@@ -32,7 +32,6 @@
 
 using System.Collections;
 using System.IO;
-using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
@@ -128,13 +127,6 @@ namespace System.Xml
 		public override bool EOF { 
 			get { return validatingReader == null ? false : validatingReader.EOF; }
 		}
-
-#if NET_2_0
-		[MonoTODO]
-		public override Evidence Evidence {
-			get { return validatingReader == null ? sourceReader.Evidence : validatingReader.Evidence; }
-		}
-#endif
 
 #if DTD_HANDLE_EVENTS
 		internal bool HasValidationEvent {

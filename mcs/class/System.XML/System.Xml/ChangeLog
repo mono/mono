@@ -1,3 +1,10 @@
+2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocument.cs :
+	  For net_2_0, CreateNavigator() returns editable XPathNavigator.
+	* XmlReader.cs, XmlTextReader.cs, XmlValidatingReader.cs :
+	  They do not implement IXmlDataEvidence anymore.
+
 2004-10-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs :
