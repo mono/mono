@@ -193,6 +193,7 @@ System.Windows.Forms/ToolBar.cs
 System.Windows.Forms/ToolBarTextAlign.cs
 System.Windows.Forms/ToolTip.cs
 System.Windows.Forms/TrackBar.cs
+System.Windows.Forms/TreeViewImageIndexConverter.cs
 System.Windows.Forms/UICues.cs
 System.Windows.Forms/UICuesEventArgs.cs
 System.Windows.Forms/UICuesEventHandler.cs
