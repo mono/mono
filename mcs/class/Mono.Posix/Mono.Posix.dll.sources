@@ -1,3 +1,5 @@
+./Assembly/AssemblyInfo.cs
+./Assembly/Locale.cs
 ./Mono.Posix/UnixEndPoint.cs
 ./Mono.Posix/Syscall.cs
 ./Mono.Posix/MapAttribute.cs
