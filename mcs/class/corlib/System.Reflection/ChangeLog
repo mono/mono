@@ -1,3 +1,9 @@
+2004-06-08  Jacson Harper  <jackson@ximian.com>
+
+	* AssemblyName.cs (GetAssemblyName): Send a fullpath to the
+	runtime. This way the codebase is set properly. The codebase is
+	using g_filename_to_uri which expects a full path.
+	
 2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Binder.cs: don't crash when we have a 'null' argument Type array.
