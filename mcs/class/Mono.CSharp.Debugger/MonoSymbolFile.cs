@@ -172,7 +172,7 @@ namespace Mono.CSharp.Debugger
 
 	public class MonoDebuggerSupport
 	{
-		static MethodInfo get_token;
+		static MethodInfo get_type;
 		static MethodInfo get_method_token;
 		static MethodInfo get_method;
 		static MethodInfo local_type_from_sig;
@@ -180,6 +180,13 @@ namespace Mono.CSharp.Debugger
 		static MonoDebuggerSupport ()
 		{
 			Type type = typeof (Assembly);
+			get_type = type.GetMethod ("MonoDebugger_GetType",
+						   BindingFlags.Instance |
+						   BindingFlags.NonPublic);
+			if (get_type == null)
+				throw new Exception (
+					"Can't find Assembly.MonoDebugger_GetType");
+
 			get_method_token = type.GetMethod ("MonoDebugger_GetMethodToken",
 							   BindingFlags.Instance |
 							   BindingFlags.NonPublic);
@@ -200,6 +207,12 @@ namespace Mono.CSharp.Debugger
 			if (local_type_from_sig == null)
 				throw new Exception (
 					"Can't find Assembly.MonoDebugger_GetLocalTypeFromSignature");
+		}
+
+		public static Type GetType (Assembly assembly, int token)
+		{
+			object[] args = new object[] { token };
+			return (Type) get_type.Invoke (assembly, args);
 		}
 
 		public static int GetMethodToken (MethodBase method)
