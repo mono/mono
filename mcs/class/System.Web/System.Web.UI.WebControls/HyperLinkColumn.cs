@@ -169,23 +169,27 @@ namespace System.Web.UI.WebControls
 		private void OnDataBindHyperLinkColumn (object sender, EventArgs e)
 		{
 			HyperLink link = (HyperLink) sender;
-			object item    = ((DataGridItem) link.NamingContainer).DataItem;
+			object item = ((DataGridItem) link.NamingContainer).DataItem;
 
-			if (textFieldDescriptor == null && urlFieldDescriptor == null) {
-				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (item);
+			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (item);
+			if (textFieldDescriptor == null)
 				textFieldDescriptor = properties.Find (DataTextField, true);
-				if (textFieldDescriptor == null && !DesignMode)
-					throw new HttpException (HttpRuntime.FormatResourceString (
-									"Field_Not_Found", DataTextField));
 
+			if (urlFieldDescriptor == null)
 				urlFieldDescriptor = properties.Find (DataNavigateUrlField, true);
-				if (urlFieldDescriptor == null && !DesignMode)
-					throw new HttpException (HttpRuntime.FormatResourceString (
-									"Field_Not_Found", DataNavigateUrlField));
-			}
+
+			if (DataTextField.Length > 0 && textFieldDescriptor == null && !DesignMode)
+				throw new HttpException (HttpRuntime.FormatResourceString (
+								"Field_Not_Found", DataTextField));
+
+			if (DataNavigateUrlField.Length > 0 && urlFieldDescriptor == null && !DesignMode)
+				throw new HttpException (HttpRuntime.FormatResourceString (
+								"Field_Not_Found", DataNavigateUrlField));
 
 			if (textFieldDescriptor != null) {
 				link.Text = FormatDataTextValue (textFieldDescriptor.GetValue (item));
+			} else if ( Text != String.Empty ) {
+				link.Text = Text;
 			} else {
 				link.Text = "Sample_DataBound_Text";
 			}

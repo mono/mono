@@ -1,3 +1,9 @@
+2003-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HyperLinkColumn.cs: patch from David Pickens <dsp@rci.rutgers.edu>
+	that fixes databinding when only DataTextField or DataNavigateUrlField
+	is set.
+
 2003-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListControl.cs: patch sent by Yaacov Akiba Slama <ya@slamail.org> on
