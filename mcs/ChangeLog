@@ -1,3 +1,8 @@
+2002-11-16  Martin Baulig  <martin@ximian.com>
+
+	* makefile.gnu: `binary-snapshot' is now an alias for `dist'.
+	Please update your scripts, the `dist' target will disappear soon.
+
 2002-11-09  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile: have test target be smart about windows/linux

@@ -30,6 +30,9 @@ clean:
 		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
 	done
 
+# Please do only use `binary-snapshot', the `dist' target will disappear really soon !
+binary-snapshot: dist
+
 dist: all
 	mkdir $(DIST)
 	for i in $(DIRS) ; do \
