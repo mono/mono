@@ -1,3 +1,7 @@
+2002-10-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Also allow \r in comments as a line separator.
+
 2002-10-20  Mark Crichton  <crichton@gimp.org>
 
         * cfold.cs: Fixed compile blocker.  Really fixed it this time.

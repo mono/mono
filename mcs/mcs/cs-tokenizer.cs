@@ -1492,11 +1492,13 @@ namespace Mono.CSharp
 				
 					if (d == '/'){
 						getChar ();
-						while ((d = getChar ()) != -1 && (d != '\n'))
+						while ((d = getChar ()) != -1 && (d != '\n') && d != '\r')
 							col++;
-						line++;
-						ref_line++;
-						col = 0;
+						if (d == '\n'){
+							line++;
+							ref_line++;
+							col = 0;
+						}
 						any_token_seen |= tokens_seen;
 						tokens_seen = false;
 						continue;
