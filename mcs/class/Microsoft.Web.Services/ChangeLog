@@ -1,5 +1,9 @@
 2003-10-08  Todd Berman <tberman@gentoo.org>
 
+	* Microsoft.Web.Services.dll2.sources: Added RelatesTo.cs
+
+2003-10-08  Todd Berman <tberman@gentoo.org>
+
 	* Microsoft.Web.Services.dll.2.sources: Added FaultTo.cs
 	* Microsoft.Web.Services.dll.2.sources: Added From.cs
 	* Microsoft.Web.Services.dll.2.sources: Added MessageID.cs
