@@ -43,6 +43,7 @@ namespace System.Data.SqlClient {
 		SqlConnection connection;
 		IsolationLevel isolationLevel;
 		bool isOpen;
+		bool isRolledBack = false;
 
 		#endregion
 
@@ -111,10 +112,14 @@ namespace System.Data.SqlClient {
 
 		public void Rollback (string transactionName)
 		{
-			if (!isOpen)
-				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.Execute (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
-			isOpen = false;
+			if (!isRolledBack) {
+				if (!isOpen)
+					throw new InvalidOperationException ("The Transaction was not open.");
+				connection.Tds.Execute (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
+				isRolledBack = true;
+				isOpen = false;
+			}
+				
 		}
 
 		public void Save (string savePointName)
