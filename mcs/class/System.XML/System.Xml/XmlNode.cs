@@ -516,9 +516,7 @@ namespace System.Xml
 
 		public virtual void Normalize ()
 		{
-//			if (tmpBuilder == null)
-				tmpBuilder = new StringBuilder ();
-//			tmpBuilder.Length = 0;
+			StringBuilder tmpBuilder = new StringBuilder ();
 			int count = this.ChildNodes.Count;
 			int start = 0;
 			for (int i = 0; i < count; i++) {
@@ -531,20 +529,18 @@ namespace System.Xml
 					break;
 				default:
 					c.Normalize ();
-					NormalizeRange (start, i);
+					NormalizeRange (start, i, tmpBuilder);
 					// Continue to normalize from next node.
 					start = i + 1;
 					break;
 				}
 			}
 			if (start < count) {
-				NormalizeRange (start, count);
+				NormalizeRange (start, count, tmpBuilder);
 			}
-
-			tmpBuilder = null;
 		}
 
-		private void NormalizeRange (int start, int i)
+		private void NormalizeRange (int start, int i, StringBuilder tmpBuilder)
 		{
 			int keepPos = -1;
 			// If Texts and Whitespaces are mixed, Text takes precedence to remain.
@@ -559,18 +555,20 @@ namespace System.Xml
 					keepPos = j;
 					// but don't break up to find Text nodes.
 			}
-			// But if no Texts and one or more Whitespaces, then the first
-			if (keepPos < 0 && i > start)
-					keepPos = 0;
 
 			if (keepPos >= 0) {
 				for (int del = start; del < keepPos; del++)
-					RemoveChild (ChildNodes [del]);
-				for (int del = keepPos + 1; del < i; del++)
-					RemoveChild (ChildNodes [del]);
+					RemoveChild (ChildNodes [start]);
+				int rest = i - keepPos - 1;
+				for (int del = 0; del < rest; del++) {
+					RemoveChild (ChildNodes [start + 1]);
+}
 			}
 
-			ChildNodes [keepPos].Value = tmpBuilder.ToString ();
+			if (keepPos >= 0)
+				ChildNodes [start].Value = tmpBuilder.ToString ();
+			// otherwise nothing to be normalized
+
 			tmpBuilder.Length = 0;
 		}
 
@@ -609,6 +607,8 @@ namespace System.Xml
 
 		internal XmlNode RemoveChild (XmlNode oldChild, bool checkNodeType)
 		{
+			if (oldChild == null)
+				throw new NullReferenceException ();
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 			if(oldChild.ParentNode != this)
 				throw new ArgumentException ("The node to be removed is not a child of this node.");
