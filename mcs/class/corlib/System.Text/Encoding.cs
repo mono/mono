@@ -12,50 +12,51 @@
 namespace System.Text {
 
         public abstract class Encoding {
-        
-                private static ASCIIEncoding asciiEncoding;
-                private static UnicodeEncoding bigEndianUnicode;
-                private static UnicodeEncoding unicodeEncoding;
-                private static UTF7Encoding utf7Encoding;
-                private static UTF8Encoding utf8Encoding;
+                private static ASCIIEncoding ascii_encoding;
+                private static UnicodeEncoding big_endian_unicode;
+                private static UnicodeEncoding unicode_encoding;
+                private static Utf7_Encoding utf7_encoding;
+                private static UTF8Encoding utf8_encoding;
 
-                private int m_codepage;
-                protected string m_bodyName;
-                protected string m_encodingName;
-                protected string m_headerName;
+                private int codepage;
+                protected string body_name;
+                protected string encoding_name;
+                protected string header_name;
 
-                protected Encoding() {
+                protected Encoding()
+		{
                 }
 
-                protected Encoding(int codepage) {
-                        this.m_codepage = codepage;
+                protected Encoding (int codepage)
+		{
+                        this.codepage = codepage;
                 }
 
                 public static Encoding ASCII {
                         get {
-                                if (asciiEncoding == null)
-                                        asciiEncoding = new ASCIIEncoding ();
-                                return asciiEncoding;
+                                if (ascii_encoding == null)
+                                        ascii_encoding = new ASCIIEncoding ();
+                                return ascii_encoding;
                         }
                 }
 
                 public static Encoding BigEndianUnicode {
                         get {
-                                if (bigEndianUnicode == null)
-                                        bigEndianUnicode = new UnicodeEncoding (true, true);
-                                return bigEndianUnicode;
+                                if (big_endian_unicode == null)
+                                        big_endian_unicode = new UnicodeEncoding (true, true);
+                                return big_endian_unicode;
                         }
                 }
 
                 public virtual string BodyName {
                         get {
-                                return m_bodyName;
+                                return body_name;
                         }
                 }
 
                 public virtual int CodePage {
                         get {
-                                return m_codepage;
+                                return codepage;
                         }
                 }
 
@@ -67,13 +68,13 @@ namespace System.Text {
 
                 public virtual string EncodingName {
                         get {
-                                return m_encodingName;
+                                return encoding_name;
                         }
                 }
 
                 public virtual string HeaderName {
                         get {
-                                return m_headerName;
+                                return header_name;
                         }
                 }
 
@@ -107,28 +108,28 @@ namespace System.Text {
 
                 public static Encoding Unicode {
                         get {
-                                if (unicodeEncoding == null) {
-                                        unicodeEncoding = new UnicodeEncoding();
+                                if (unicode_encoding == null) {
+                                        unicode_encoding = new UnicodeEncoding();
                                 }
-                                return unicodeEncoding;
+                                return unicode_encoding;
                         }
                 }
 
                 public static Encoding UTF7 {
                         get {
-                                if (utf7Encoding == null) {
-                                        utf7Encoding = new UTF7Encoding();
+                                if (utf7_encoding == null) {
+                                        utf7_encoding = new Utf7_Encoding();
                                 }
-                                return utf7Encoding;
+                                return utf7_encoding;
                         }
                 }
 
                 public static Encoding UTF8 {
                         get {
-                                if (utf8Encoding == null) {
-                                        utf8Encoding = new UTF8Encoding();
+                                if (utf8_encoding == null) {
+                                        utf8_encoding = new UTF8Encoding();
                                 }
-                                return utf8Encoding;
+                                return utf8_encoding;
                         }
                 }
 
@@ -146,116 +147,156 @@ namespace System.Text {
                         }
                 }
 
-                public static byte[] Convert(Encoding srcEncoding, Encoding dstEncoding, byte[] bytes) {
+                public static byte[] Convert(Encoding srcEncoding, Encoding dstEncoding, byte[] bytes)
+		{
                         // FIXME
                         return null;
                 }
 
-                public static byte[] Convert(Encoding srcEncoding, Encoding dstEncoding, byte[] bytes, int index, int count) {
+                public static byte[] Convert(Encoding srcEncoding, Encoding dstEncoding,
+					     byte[] bytes, int index, int count)
+		{
                         // FIXME
                         return null;
                 }
 
-                public override bool Equals(object value) {
-                        // FIXME
-                        return false;
+                public override bool Equals (object value)
+		{
+			if (!(value is Encoding))
+				return false;
+
+			Encoding e = (Encoding) value;
+
+			if (e.codepage != codepage)
+				return false;
+
+			if (e.body_name != body_name)
+				return false;
+
+			if (e.encoding_name != encoding_name)
+				return false;
+
+			if (e.header_name != header_name)
+				return false;
+			
+                        return true;
                 }
 
-                public virtual int GetByteCount(char[] chars) {
+                public virtual int GetByteCount(char[] chars)
+		{
                         // FIXME
                         return 0;
                 }
 
-                public virtual int GetByteCount(string s) {
+                public virtual int GetByteCount(string s)
+		{
                         // FIXME
                         return 0;
                 }
 
-                public abstract int GetByteCount(char[] chars, int index, int count);
+                public abstract int GetByteCount (char[] chars, int index, int count);
 
-                public virtual byte[] GetBytes(char[] chars) {
+                public virtual byte[] GetBytes(char[] chars)
+		{
                         // FIXME
                         return null;
                 }
 
-                public virtual byte[] GetBytes(string s) {
+                public virtual byte[] GetBytes(string s)
+		{
                         // FIXME
                         return null;
                 }
 
-                public virtual byte[] GetBytes(char[] chars, int index, int count) {
+                public virtual byte[] GetBytes(char[] chars, int index, int count)
+		{
                         // FIXME
                         return null;
                 }
 
-                public abstract int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex);
+                public abstract int GetBytes (char[] chars, int charIndex, int charCount,
+					      byte[] bytes, int byteIndex);
 
-                public virtual int GetBytes(string s, int charIndex, int charCount, byte[] bytes, int byteIndex) {
+                public virtual int GetBytes(string s, int charIndex, int charCount,
+					    byte[] bytes, int byteIndex)
+		{
                         // FIXME
                         return 0;
                 }
 
-                public virtual int GetCharCount(byte[] bytes) {
+                public virtual int GetCharCount (byte[] bytes)
+		{
                         // FIXME
                         return 0;
                 }
 
-                public virtual int GetCharCount(byte[] bytes, int index, int count) {
+                public virtual int GetCharCount (byte[] bytes, int index, int count)
+		{
                         // FIXME
                         return 0;
                 }
 
-                public virtual char[] GetChars(byte[] bytes) {
+                public virtual char[] GetChars (byte[] bytes)
+		{
                         // FIXME
                         return null;
                 }
 
-                public virtual char[] GetChars(byte[] bytes, int index, int count) {
+                public virtual char[] GetChars (byte[] bytes, int index, int count)
+		{
                         // FIXME
                         return null;
                 }
 
                 public abstract int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);
 
-                public virtual Decoder GetDecoder() {
+                public virtual Decoder GetDecoder()
+		{
                         // FIXME
                         return null;
                 }
 
-                public virtual Encoder GetEncoder() {
+                public virtual Encoder GetEncoder() 
+		{
                         // FIXME
                         return null;
                 }
 
-                public virtual Encoding GetEncoding(int codepage) {
+                public virtual Encoding GetEncoding (int codepage)
+		{
                         // FIXME
                         return null;
                 }
 
-                public virtual Encoding GetEncoding(string name) {
+                public virtual Encoding GetEncoding (string name)
+		{
                         return null;
                 }
 
-                public override int GetHashCode() {
+                public override int GetHashCode()
+		{
                         // FIXME
                         return 0;
                 }
 
-                public abstract int GetMaxByteCount(int charCount);
+                public abstract int GetMaxByteCount (int charCount);
 
-                public abstract int GetMaxCharCount(int byteCount);
+                public abstract int GetMaxCharCount (int byteCount);
 
-                public virtual byte[] GetPreamble() {
+                public virtual byte[] GetPreamble()
+		{
                         // FIXME
                         return null;
                 }
 
-                public virtual string GetString(byte[] bytes) {
+                public virtual string GetString(byte[] bytes)
+		{
                         // FIXME
                         return null;
                 }
 
-                public virtual string GetString(byte[] bytes, int index, int count) {
+                public virtual string GetString(byte[] bytes, int index, int count)
+		{
                         // FIXME
                         return null;
                 }
