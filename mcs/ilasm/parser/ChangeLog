@@ -1,3 +1,8 @@
+2003-05-22 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Comment out K_IMF and K_NAN these are not used in
+	the grammar.
+		
 2003-05-21 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Add ldc.r4 to INSTR_R int also fix cast to double.
