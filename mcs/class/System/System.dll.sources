@@ -442,6 +442,7 @@ System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
 System.Net/NetworkAccess.cs
 System.Net/NetworkCredential.cs
+System.Net/NtlmClient.cs
 System.Net/ProtocolViolationException.cs
 System.Net/SecurityProtocolType.cs
 System.Net/ServicePoint.cs
