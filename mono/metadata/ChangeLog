@@ -1,3 +1,7 @@
+2002-03-28  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c (mono_debug_class_get): Don't look in referenced assemblies.
+	(mono_debug_update_symbol_file): Initialize classes if necessary.
 
 Thu Mar 28 15:58:43 CET 2002 Paolo Molaro <lupus@ximian.com>
 
