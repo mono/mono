@@ -1,3 +1,8 @@
+2004-07-08  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Lock.Resolve): Set ec.NeedReturnLabel() if we do
+	not always return, just like we're doing in Using.Resolve().
+
 2004-07-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay (fixed_statement): flag this as Pinned.
