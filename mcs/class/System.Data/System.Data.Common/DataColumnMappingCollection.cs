@@ -47,6 +47,7 @@ namespace System.Data.Common {
 
 		[Browsable (false)]
 		[DataSysDescription ("The specified DataColumnMapping object.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataColumnMapping this [int index] {
 			get { return (DataColumnMapping)(list[index]); }
 			set { 
@@ -57,6 +58,9 @@ namespace System.Data.Common {
 			}
 		}
 
+		[Browsable (false)]
+                [DataSysDescription ("DataTableMappings_Item")]
+                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataColumnMapping this [string sourceColumn] {
 			get {
 				if (!Contains(sourceColumn)) {

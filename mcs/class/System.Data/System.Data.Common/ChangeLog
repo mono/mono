@@ -1,3 +1,7 @@
+2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
+       * DataColumnMappingCollection.cs: added missing attributes on
+       indexers
+
 2004-05-27  Boris Kirzner  <borisk@mainsoft.com>
 	* DataContainer.cs : Bug fixes in BitDataContainer.get_Item and StringDataContainer.SetValue .
 
