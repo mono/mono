@@ -65,6 +65,9 @@ namespace Mono.CSharp {
 		CS0642_Possible_mistaken_empty_statement = 642,
 		CS0649_Field_is_never_assigned_to_and_will_always_have_its_default_value = 649,
 		CS0657_is_not_a_valid_attribute_location_for_this_declaration = 657,
+		CS0659_overrides_Equals_but_does_not_override_GetHashCode = 659,
+		CS0660_defines_operator_but_does_not_override_Equals = 660,
+		CS0661_defines_operator_but_does_not_override_GetHashCode = 661,
 		CS0672_Member_overrides_obsolete_member = 672,
 		CS1030_warning = 1030,
 		CS1555_Could_not_find_specified_for_Main_method = 1555,
@@ -301,6 +304,9 @@ namespace Mono.CSharp {
 				case 0642: return new WarningData (3, "Possible mistaken empty statement");
 				case 0649: return new WarningData (4, "Field '{0}' is never assigned to, and will always have its default value '{1}'");
 				case 0657: return new ErrorData ("'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'");
+				case 0659: return new WarningData (3, "'{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()");
+				case 0660: return new WarningData (3, "'{0}' defines operator == or operator != but does not override Object.Equals(object o)");
+				case 0661: return new WarningData (3, "'{0}' defines operator == or operator != but does not override Object.GetHashCode()");
 				case 0672: return new WarningData (1, "Member '{0}' overrides obsolete member. Add the Obsolete attribute to '{0}'");
 				case 1030: return new WarningData (1, "#warning: '{0}'");
 				case 1555: return new ErrorData ("Could not find '{0}' specified for Main method");

@@ -53,6 +53,241 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class TypeContainer : DeclSpace, IMemberContainer {
 
+ 		public class MemberCoreArrayList: ArrayList
+ 		{
+			/// <summary>
+			///   Defines the MemberCore objects that are in this array
+			/// </summary>
+			public virtual void DefineContainerMembers ()
+			{
+				foreach (MemberCore mc in this) {
+					mc.Define ();
+				}
+			}
+ 		}
+
+ 		public class MethodArrayList: MemberCoreArrayList
+ 		{
+ 			[Flags]
+ 			enum CachedMethods {
+ 				Equals			= 1,
+ 				GetHashCode		= 1 << 1
+ 			}
+ 
+ 			CachedMethods cached_method;
+			TypeContainer container;
+
+			public MethodArrayList (TypeContainer container)
+			{
+				this.container = container;
+			}
+ 
+ 			/// <summary>
+ 			/// Method container contains Equals method
+ 			/// </summary>
+ 			public bool HasEquals {
+ 				set {
+ 					cached_method |= CachedMethods.Equals;
+ 				}
+ 
+ 				get {
+ 					return (cached_method & CachedMethods.Equals) != 0;
+ 				}
+ 			}
+ 
+ 			/// <summary>
+ 			/// Method container contains GetHashCode method
+ 			/// </summary>
+ 			public bool HasGetHashCode {
+ 				set {
+ 					cached_method |= CachedMethods.GetHashCode;
+ 				}
+ 
+ 				get {
+ 					return (cached_method & CachedMethods.GetHashCode) != 0;
+ 				}
+ 			}
+ 
+ 			public override void DefineContainerMembers ()
+ 			{
+ 				base.DefineContainerMembers ();
+ 
+ 				if (HasEquals && !HasGetHashCode) {
+ 					Report.Warning (Message.CS0659_overrides_Equals_but_does_not_override_GetHashCode, container.Location, container.GetSignatureForError ());
+ 				}
+ 			}
+ 
+ 		}
+
+ 		public class OperatorArrayList: MemberCoreArrayList
+		{
+			TypeContainer container;
+
+			public OperatorArrayList (TypeContainer container)
+			{
+				this.container = container;
+			}
+
+			//
+			// Operator pair checking
+			//
+			class OperatorEntry
+			{
+				public int flags;
+				public Type ret_type;
+				public Type type1, type2;
+				public Operator op;
+				public Operator.OpType ot;
+				
+				public OperatorEntry (int f, Operator o)
+				{
+					flags = f;
+
+					ret_type = o.OperatorMethod.GetReturnType ();
+					Type [] pt = o.OperatorMethod.ParameterTypes;
+					type1 = pt [0];
+					type2 = pt [1];
+					op = o;
+					ot = o.OperatorType;
+				}
+
+				public override int GetHashCode ()
+				{	
+					return ret_type.GetHashCode ();
+				}
+
+				public override bool Equals (object o)
+				{
+					OperatorEntry other = (OperatorEntry) o;
+
+					if (other.ret_type != ret_type)
+						return false;
+					if (other.type1 != type1)
+						return false;
+					if (other.type2 != type2)
+						return false;
+					return true;
+				}
+			}
+				
+			//
+			// Checks that some operators come in pairs:
+			//  == and !=
+			// > and <
+			// >= and <=
+			// true and false
+			//
+			// They are matched based on the return type and the argument types
+			//
+			void CheckPairedOperators ()
+			{
+				Hashtable pairs = new Hashtable (null, null);
+				Operator true_op = null;
+				Operator false_op = null;
+				bool has_equality_or_inequality = false;
+				
+				// Register all the operators we care about.
+				foreach (Operator op in this){
+					int reg = 0;
+					
+					switch (op.OperatorType){
+					case Operator.OpType.Equality:
+						reg = 1;
+						has_equality_or_inequality = true;
+						break;
+					case Operator.OpType.Inequality:
+						reg = 2;
+						has_equality_or_inequality = true;
+						break;
+
+					case Operator.OpType.True:
+						true_op = op;
+						break;
+					case Operator.OpType.False:
+						false_op = op;
+						break;
+						
+					case Operator.OpType.GreaterThan:
+						reg = 1; break;
+					case Operator.OpType.LessThan:
+						reg = 2; break;
+						
+					case Operator.OpType.GreaterThanOrEqual:
+						reg = 1; break;
+					case Operator.OpType.LessThanOrEqual:
+						reg = 2; break;
+					}
+					if (reg == 0)
+						continue;
+
+					OperatorEntry oe = new OperatorEntry (reg, op);
+
+					object o = pairs [oe];
+					if (o == null)
+						pairs [oe] = oe;
+					else {
+						oe = (OperatorEntry) o;
+						oe.flags |= reg;
+					}
+				}
+
+				if (true_op != null){
+					if (false_op == null)
+						Report.Error (216, true_op.Location, "operator true requires a matching operator false");
+				} else if (false_op != null)
+					Report.Error (216, false_op.Location, "operator false requires a matching operator true");
+				
+				//
+				// Look for the mistakes.
+				//
+				foreach (DictionaryEntry de in pairs){
+					OperatorEntry oe = (OperatorEntry) de.Key;
+
+					if (oe.flags == 3)
+						continue;
+
+					string s = "";
+					switch (oe.ot){
+					case Operator.OpType.Equality:
+						s = "!=";
+						break;
+					case Operator.OpType.Inequality: 
+						s = "==";
+						break;
+					case Operator.OpType.GreaterThan: 
+						s = "<";
+						break;
+					case Operator.OpType.LessThan:
+						s = ">";
+						break;
+					case Operator.OpType.GreaterThanOrEqual:
+						s = "<=";
+						break;
+					case Operator.OpType.LessThanOrEqual:
+						s = ">=";
+						break;
+					}
+					Report.Error (216, oe.op.Location,
+							"The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
+				}
+
+ 				if (has_equality_or_inequality && container.Methods == null && (RootContext.WarningLevel > 2)) {
+ 					if (!container.Methods.HasEquals)
+ 						Report.Warning (Message.CS0660_defines_operator_but_does_not_override_Equals, container.Location, container.GetSignatureForError ());
+ 
+ 					if (!container.Methods.HasGetHashCode)
+ 						Report.Warning (Message.CS0661_defines_operator_but_does_not_override_GetHashCode, container.Location, container.GetSignatureForError ());
+ 				}
+			}
+
+	 		public override void DefineContainerMembers ()
+	 		{
+	 			base.DefineContainerMembers ();
+	 			CheckPairedOperators ();
+			}
+		}
+
+
 		// Whether this is a struct, class or interface
 		public readonly Kind Kind;
 
@@ -60,19 +295,19 @@ namespace Mono.CSharp {
 		ArrayList types;
 
 		// Holds the list of properties
-		ArrayList properties;
+		MemberCoreArrayList properties;
 
 		// Holds the list of enumerations
-		ArrayList enums;
+		MemberCoreArrayList enums;
 
 		// Holds the list of delegates
-		ArrayList delegates;
+		MemberCoreArrayList delegates;
 		
 		// Holds the list of constructors
-		ArrayList instance_constructors;
+		MemberCoreArrayList instance_constructors;
 
 		// Holds the list of fields
-		ArrayList fields;
+		MemberCoreArrayList fields;
 
 		// Holds a list of fields that have initializers
 		ArrayList initialized_fields;
@@ -81,22 +316,22 @@ namespace Mono.CSharp {
 		ArrayList initialized_static_fields;
 
 		// Holds the list of constants
-		ArrayList constants;
+		MemberCoreArrayList constants;
 
 		// Holds the list of
-		ArrayList interfaces;
+		MemberCoreArrayList interfaces;
 
 		// Holds the methods.
-		ArrayList methods;
+		MethodArrayList methods;
 
 		// Holds the events
-		ArrayList events;
+		MemberCoreArrayList events;
 
 		// Holds the indexers
 		ArrayList indexers;
 
 		// Holds the operators
-		ArrayList operators;
+		MemberCoreArrayList operators;
 
 		// Holds the iterators
 		ArrayList iterators;
@@ -212,7 +447,7 @@ namespace Mono.CSharp {
 				return res;
 			
 			if (constants == null)
-				constants = new ArrayList ();
+				constants = new MemberCoreArrayList ();
 
 			constants.Add (constant);
 			DefineName (fullname, constant);
@@ -228,7 +463,7 @@ namespace Mono.CSharp {
 				return res;
 
 			if (enums == null)
-				enums = new ArrayList ();
+				enums = new MemberCoreArrayList ();
 
 			enums.Add (e);
 			DefineName (e.Name, e);
@@ -273,7 +508,7 @@ namespace Mono.CSharp {
 				return res;
 
 			if (delegates == null)
-				delegates = new ArrayList ();
+				delegates = new MemberCoreArrayList ();
 			
 			DefineName (d.Name, d);
 			delegates.Add (d);
@@ -295,7 +530,7 @@ namespace Mono.CSharp {
 				return AdditionResult.EnclosingClash;
 
 			if (methods == null)
-				methods = new ArrayList ();
+				methods = new MethodArrayList (this);
 
 			if (method.Name.IndexOf ('.') != -1)
 				methods.Insert (0, method);
@@ -329,7 +564,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (instance_constructors == null)
-					instance_constructors = new ArrayList ();
+					instance_constructors = new MemberCoreArrayList ();
 				
 				instance_constructors.Add (c);
 			}
@@ -346,7 +581,7 @@ namespace Mono.CSharp {
 				return res;
 			
 			if (interfaces == null)
-				interfaces = new ArrayList ();
+				interfaces = new MemberCoreArrayList ();
 			interfaces.Add (iface);
 			DefineName (iface.Name, iface);
 			
@@ -363,7 +598,7 @@ namespace Mono.CSharp {
 				return res;
 			
 			if (fields == null)
-				fields = new ArrayList ();
+				fields = new MemberCoreArrayList ();
 			
 			fields.Add (field);
 			
@@ -407,7 +642,7 @@ namespace Mono.CSharp {
 			}
 
 			if (properties == null)
-				properties = new ArrayList ();
+				properties = new MemberCoreArrayList ();
 
 			if (prop.Name.IndexOf ('.') != -1)
 				properties.Insert (0, prop);
@@ -440,7 +675,7 @@ namespace Mono.CSharp {
 				return res;
 
 			if (events == null)
-				events = new ArrayList ();
+				events = new MemberCoreArrayList ();
 			
 			events.Add (e);
 			DefineName (fullname, e);
@@ -462,7 +697,7 @@ namespace Mono.CSharp {
 		public AdditionResult AddOperator (Operator op)
 		{
 			if (operators == null)
-				operators = new ArrayList ();
+				operators = new OperatorArrayList (this);
 
 			operators.Add (op);
 
@@ -522,7 +757,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Methods {
+		public MethodArrayList Methods {
 			get {
 				return methods;
 			}
@@ -565,10 +800,6 @@ namespace Mono.CSharp {
 		public ArrayList Fields {
 			get {
 				return fields;
-			}
-
-			set {
-				fields = value;
 			}
 		}
 
@@ -1084,21 +1315,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		/// <summary>
-		///   Defines the MemberCore objects that are in the `list' Arraylist
-		/// </summary>
-		static ArrayList remove_list = new ArrayList ();
-		void DefineContainerMembers (ArrayList list)
-		{
-			remove_list.Clear ();
-  
-			foreach (MemberCore mc in list){
-				if (!mc.Define ()){
-					remove_list.Add (mc);
-				}
-			}
-		}
-
 		//
 		// Defines the indexers, and also verifies that the IndexerNameAttribute in the
 		// class is consistent.  Either it is `Item' or it is the name defined by all the
@@ -1205,10 +1421,10 @@ namespace Mono.CSharp {
   			}
 
 			if (constants != null)
-				DefineContainerMembers (constants);
+				constants.DefineContainerMembers ();
 
 			if (fields != null)
-				DefineContainerMembers (fields);
+				fields.DefineContainerMembers ();
 
 			if ((Kind == Kind.Class) && !(this is ClassPart)){
 				if (instance_constructors == null){
@@ -1247,34 +1463,31 @@ namespace Mono.CSharp {
 			// Constructors are not in the defined_names array
 			//
 			if (instance_constructors != null)
-				DefineContainerMembers (instance_constructors);
+				instance_constructors.DefineContainerMembers ();
 		
 			if (default_static_constructor != null)
 				default_static_constructor.Define ();
 			
 			if (methods != null)
-				DefineContainerMembers (methods);
+				methods.DefineContainerMembers ();
 
 			if (properties != null)
-				DefineContainerMembers (properties);
+				properties.DefineContainerMembers ();
 
 			if (events != null)
-				DefineContainerMembers (events);
+				events.DefineContainerMembers ();
 
 			if (indexers != null)
 				DefineIndexers ();
 
-			if (operators != null){
-				DefineContainerMembers (operators);
-
-				CheckPairedOperators ();
-			}
+			if (operators != null)
+				operators.DefineContainerMembers ();
 
 			if (enums != null)
-				DefineContainerMembers (enums);
+				enums.DefineContainerMembers ();
 			
 			if (delegates != null)
-				DefineContainerMembers (delegates);
+				delegates.DefineContainerMembers ();
 
 #if CACHE
 			if (!(this is ClassPart))
@@ -2255,177 +2468,7 @@ namespace Mono.CSharp {
 			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
 		}
 
-		//
-		// Operator pair checking
-		//
 
-		class OperatorEntry {
-			public int flags;
-			public Type ret_type;
-			public Type type1, type2;
-			public Operator op;
-			public Operator.OpType ot;
-			
-			public OperatorEntry (int f, Operator o)
-			{
-				flags = f;
-
-				ret_type = o.OperatorMethod.GetReturnType ();
-				Type [] pt = o.OperatorMethod.ParameterTypes;
-				type1 = pt [0];
-				type2 = pt [1];
-				op = o;
-				ot = o.OperatorType;
-			}
-
-			public override int GetHashCode ()
-			{	
-				return ret_type.GetHashCode ();
-			}
-
-			public override bool Equals (object o)
-			{
-				OperatorEntry other = (OperatorEntry) o;
-
-				if (other.ret_type != ret_type)
-					return false;
-				if (other.type1 != type1)
-					return false;
-				if (other.type2 != type2)
-					return false;
-				return true;
-			}
-		}
-				
-		//
-		// Checks that some operators come in pairs:
-		//  == and !=
-		// > and <
-		// >= and <=
-		// true and false
-		//
-		// They are matched based on the return type and the argument types
-		//
-		void CheckPairedOperators ()
-		{
-			Hashtable pairs = new Hashtable (null, null);
-			Operator true_op = null;
-			Operator false_op = null;
-			bool has_equality_or_inequality = false;
-			
-			// Register all the operators we care about.
-			foreach (Operator op in operators){
-				int reg = 0;
-				
-				switch (op.OperatorType){
-				case Operator.OpType.Equality:
-					reg = 1;
-					has_equality_or_inequality = true;
-					break;
-				case Operator.OpType.Inequality:
-					reg = 2;
-					has_equality_or_inequality = true;
-					break;
-
-				case Operator.OpType.True:
-					true_op = op;
-					break;
-				case Operator.OpType.False:
-					false_op = op;
-					break;
-					
-				case Operator.OpType.GreaterThan:
-					reg = 1; break;
-				case Operator.OpType.LessThan:
-					reg = 2; break;
-					
-				case Operator.OpType.GreaterThanOrEqual:
-					reg = 1; break;
-				case Operator.OpType.LessThanOrEqual:
-					reg = 2; break;
-				}
-				if (reg == 0)
-					continue;
-
-				OperatorEntry oe = new OperatorEntry (reg, op);
-
-				object o = pairs [oe];
-				if (o == null)
-					pairs [oe] = oe;
-				else {
-					oe = (OperatorEntry) o;
-					oe.flags |= reg;
-				}
-			}
-
-			if (true_op != null){
-				if (false_op == null)
-					Report.Error (216, true_op.Location, "operator true requires a matching operator false");
-			} else if (false_op != null)
-				Report.Error (216, false_op.Location, "operator false requires a matching operator true");
-			
-			//
-			// Look for the mistakes.
-			//
-			foreach (DictionaryEntry de in pairs){
-				OperatorEntry oe = (OperatorEntry) de.Key;
-
-				if (oe.flags == 3)
-					continue;
-
-				string s = "";
-				switch (oe.ot){
-				case Operator.OpType.Equality:
-					s = "!=";
-					break;
-				case Operator.OpType.Inequality: 
-					s = "==";
-					break;
-				case Operator.OpType.GreaterThan: 
-					s = "<";
-					break;
-				case Operator.OpType.LessThan:
-					s = ">";
-					break;
-				case Operator.OpType.GreaterThanOrEqual:
-					s = "<=";
-					break;
-				case Operator.OpType.LessThanOrEqual:
-					s = ">=";
-					break;
-				}
-				Report.Error (216, oe.op.Location,
-					      "The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
-			}
-
-			if ((has_equality_or_inequality) && (RootContext.WarningLevel >= 2)) {
-				MethodSignature equals_ms = new MethodSignature (
-					"Equals", TypeManager.bool_type, new Type [] { TypeManager.object_type });
-				MethodSignature hash_ms = new MethodSignature (
-					"GetHashCode", TypeManager.int32_type, new Type [0]);
-
-				MemberList equals_ml = FindMembers (MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance |
-								    BindingFlags.DeclaredOnly, MethodSignature.method_signature_filter,
-								    equals_ms);
-				MemberList hash_ml = FindMembers (MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance |
-								  BindingFlags.DeclaredOnly, MethodSignature.method_signature_filter,
-								  hash_ms);
-
-				bool equals_ok = false;
-				if ((equals_ml != null) && (equals_ml.Count == 1))
-					equals_ok = equals_ml [0].DeclaringType == TypeBuilder;
-				bool hash_ok = false;
-				if ((hash_ml != null) && (hash_ml.Count == 1))
-					hash_ok = hash_ml [0].DeclaringType == TypeBuilder;
-
-				if (!equals_ok)
-					Report.Warning (660, Location, "`" + Name + "' defines operator == or operator != but does " +
-							"not override Object.Equals (object o)");
-				if (!hash_ok)
-					Report.Warning (661, Location, "`" + Name + "' defines operator == or operator != but does " +
-							"not override Object.GetHashCode ()");
-			}
-		}
 	}
 
 	public class PartialContainer : TypeContainer {
@@ -2942,6 +2985,13 @@ namespace Mono.CSharp {
 							"change return type when overriding inherited member");
 						return false;
 					}
+				}
+
+				if (RootContext.WarningLevel > 2) {
+					if (Name == "Equals" && parameter_types.Length == 1 && parameter_types [0] == TypeManager.object_type)
+						Parent.Methods.HasEquals = true;
+					else if (Name == "GetHashCode" && parameter_types.Length == 0)
+						Parent.Methods.HasGetHashCode = true;
 				}
 
 				ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (parent_method);

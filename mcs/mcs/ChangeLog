@@ -1,3 +1,11 @@
+2004-08-04  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #59760
+	* class.cs (TypeContainer ): New inner classes MethodArrayList, 
+	OperatorArrayList, MethodCoreArrayList for typecontainer
+	containers. Changed class member types to these new types.
+	(MethodArrayList.DefineMembers): Added test for CS0659.
+
 2004-08-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: Revert patch from Raja, it introduced a regression
