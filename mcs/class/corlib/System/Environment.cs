@@ -29,8 +29,10 @@ namespace System
 		 * of classes the runtime knows about, changing icall semantics etc),
 		 * increment this variable. Also increment the
 		 * pair of this variable in the runtime in metadata/appdomain.c.
+		 * Changes which are already detected at runtime, like the addition
+		 * of icalls, do not require an increment.
 		 */
-		private const int mono_corlib_version = 17;
+		private const int mono_corlib_version = 18;
 
 		private Environment ()
 		{
