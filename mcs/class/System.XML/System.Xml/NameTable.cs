@@ -29,6 +29,9 @@ namespace System.Xml
 			if (table.Contains (key))
 				return (string) table [key];
 			else {
+				// We don't have to check IsInterned since the implementation
+				// of String.Intern is mono_string_is_interned_lookup.
+				String.Intern (key);
 				table.Add (key, key);
 				return key;
 			}

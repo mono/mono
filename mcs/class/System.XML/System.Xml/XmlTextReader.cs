@@ -20,10 +20,6 @@
 //   Some thought needs to be given to performance. There's too many
 //   strings being allocated.
 //
-//   Some of the MoveTo methods haven't been implemented yet.
-//
-//   xml:space, xml:lang aren't being tracked.
-//
 
 using System;
 using System.Collections;
@@ -117,7 +113,7 @@ namespace System.Xml
 		// but it might not be TODO of the constructors...
 		XmlTextReader (string url, TextReader fragment, XmlNodeType fragType, XmlParserContext context)
 		{
-			this.Initialize (url, context, fragment, fragType);
+			InitializeContext (url, context, fragment, fragType);
 		}
 
 		#endregion
@@ -279,10 +275,9 @@ namespace System.Xml
 			set { whitespaceHandling = value; }
 		}
 
-		[MonoTODO]
 		public override string XmlLang
 		{
-			get { throw new NotImplementedException (); }
+			get { return parserContext.XmlLang; }
 		}
 
 		public XmlResolver XmlResolver
@@ -290,10 +285,9 @@ namespace System.Xml
 			set { resolver = value; }
 		}
 
-		[MonoTODO]
 		public override XmlSpace XmlSpace
 		{
-			get { throw new NotImplementedException (); }
+			get { return parserContext.XmlSpace; }
 		}
 
 		#endregion
@@ -316,10 +310,12 @@ namespace System.Xml
 				return UnescapeAttributeValue (attributes [orderedAttributes [i]] as string);
 		}
 
+		// MS.NET 1.0 documentation says that this method returns String.Empty for
+		// not-exist attribute, but in fact it returns null.
+		// That description is corrected in MS.NET 1.1 documentation.
 		public override string GetAttribute (string name)
 		{
-			return attributes.ContainsKey (name) ?
-				UnescapeAttributeValue (attributes [name] as string) : String.Empty;
+			return UnescapeAttributeValue (attributes [name] as string);
 		}
 
 		private int GetIndexOfQualifiedAttribute (string localName, string namespaceURI)
@@ -514,14 +510,8 @@ namespace System.Xml
 			// local 'refPosition' holds the position on the 
 			// attributeString which may be used next time.
 
-			if (attributeValuePos < 0) {
-//				SetProperties (XmlNodeType.None,
-//					String.Empty,
-//					false,
-//					String.Empty,
-//					false);
+			if (attributeValuePos < 0)
 				return false;
-			}
 
 			// If not started, then initialize attributeString when parsing is at start.
 			if (attributeValuePos == 0)
@@ -688,43 +678,6 @@ namespace System.Xml
 		#region Internals
 		// Parsed DTD Objects
 		internal DTDObjectModel currentSubset;
-
-		internal void Initialize (string url, XmlParserContext context, TextReader fragment, XmlNodeType fragType)
-		{
-			parserContext = context;
-			if (context == null) {
-				XmlNameTable nt = new NameTable ();
-				parserContext = new XmlParserContext (nt,
-					new XmlNamespaceManager (nt),
-					String.Empty,
-					XmlSpace.None);
-			}
-
-			if (url != null && url != String.Empty) {
-				string path = Path.GetFullPath (".");
-				UriBuilder ub = new UriBuilder (path);
-				ub.Scheme = "file";
-				parserContext.BaseURI = new Uri (ub.Uri, url).ToString ();
-			}
-
-			Init ();
-
-			switch (fragType) {
-			case XmlNodeType.Attribute:
-				value = String.Format ("{0}{1}{0}", "'", fragment.ReadToEnd ().Replace ("'", "&apos;"));
-				break;
-			case XmlNodeType.Element:
-				allowMultipleRoot = true;
-				break;
-			case XmlNodeType.Document:
-				break;
-			default:
-				throw new XmlException (String.Format ("NodeType {0} is not allowed to create XmlTextReader.", fragType));
-			}
-
-			this.currentInput = new XmlParserInput (fragment, url);
-			StreamReader sr = fragment as StreamReader;
-		}
 		#endregion
 
 		#region Privates
@@ -741,7 +694,6 @@ namespace System.Xml
 
 		private bool popScope;
 		private Stack elementStack;
-		private Stack baseURIStack;
 		private bool haveEnteredDocument;
 		private bool allowMultipleRoot = false;
 
@@ -812,7 +764,6 @@ namespace System.Xml
 
 			popScope = false;
 			elementStack = new Stack();
-			baseURIStack = new Stack();
 			haveEnteredDocument = false;
 
 			nodeType = XmlNodeType.None;
@@ -836,6 +787,43 @@ namespace System.Xml
 			valueBuffer = new char [initialValueCapacity];
 			valueLength = 0;
 			valueCapacity = initialValueCapacity;
+		}
+
+		private void InitializeContext (string url, XmlParserContext context, TextReader fragment, XmlNodeType fragType)
+		{
+			parserContext = context;
+			if (context == null) {
+				XmlNameTable nt = new NameTable ();
+				parserContext = new XmlParserContext (nt,
+					new XmlNamespaceManager (nt),
+					String.Empty,
+					XmlSpace.None);
+			}
+
+			if (url != null && url != String.Empty) {
+				string path = Path.GetFullPath (".");
+				UriBuilder ub = new UriBuilder (path);
+				ub.Scheme = "file";
+				parserContext.BaseURI = new Uri (ub.Uri, url).ToString ();
+			}
+
+			Init ();
+
+			switch (fragType) {
+			case XmlNodeType.Attribute:
+				value = String.Format ("{0}{1}{0}", "'", fragment.ReadToEnd ().Replace ("'", "&apos;"));
+				break;
+			case XmlNodeType.Element:
+				allowMultipleRoot = true;
+				break;
+			case XmlNodeType.Document:
+				break;
+			default:
+				throw new XmlException (String.Format ("NodeType {0} is not allowed to create XmlTextReader.", fragType));
+			}
+
+			this.currentInput = new XmlParserInput (fragment, url);
+			StreamReader sr = fragment as StreamReader;
 		}
 
 		// Use this method rather than setting the properties
@@ -1055,8 +1043,22 @@ namespace System.Xml
 			else {
 				depthUp = true;
 				elementStack.Push (name);
-				baseURIStack.Push (attributes ["xml:base"] != null ?
-					attributes ["xml:base"] : BaseURI);
+				string baseUri = GetAttribute ("xml:base");
+				if (baseUri != null)
+					parserContext.BaseURI = baseUri;
+				string xmlLang = GetAttribute ("xml:lang");
+				if (xmlLang != null)
+					parserContext.XmlLang = xmlLang;
+				string xmlSpaceAttr = GetAttribute ("xml:space");
+				if (xmlSpaceAttr != null) {
+					if (xmlSpaceAttr == "preserve")
+						parserContext.XmlSpace = XmlSpace.Preserve;
+					else if (xmlSpaceAttr == "default")
+						parserContext.XmlSpace = XmlSpace.Default;
+					else
+						throw this.ReaderError (String.Format ("Invalid xml:space value: {0}", xmlSpaceAttr));
+				}
+				parserContext.PushScope ();
 			}
 
 			Expect ('>');
@@ -1080,7 +1082,7 @@ namespace System.Xml
 			string expected = (string)elementStack.Pop();
 			if (expected != name)
 				throw ReaderError(String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
-			baseURIStack.Pop ();
+			parserContext.PopScope ();
 
 			SkipWhitespace ();
 			Expect ('>');
@@ -1574,8 +1576,17 @@ namespace System.Xml
 
 		private void pushParserInput (string url)
 		{
-			string absPath = null;
-#if NetworkEnabled
+#if true
+			Uri baseUri = null;
+			try {
+				baseUri = new Uri (BaseURI);
+			} catch (UriFormatException) {
+			}
+
+			Uri absUri = resolver.ResolveUri (baseUri, url);
+			string absPath = absUri.ToString ();
+#else
+#if !NetworkDisabled
 			try {
 				Uri baseUrl = new Uri (BaseURI);
 				absPath = resolver.ResolveUri (baseUrl, url).ToString ();
@@ -1595,20 +1606,21 @@ namespace System.Xml
 			else
 				absPath = url;
 #endif
+#endif
 			foreach (XmlParserInput i in parserInputStack.ToArray ()) {
-				if (i.BaseURI == url)
+				if (i.BaseURI == absPath)
 					this.ReaderError ("Nested inclusion is not allowed: " + url);
 			}
 			parserInputStack.Push (currentInput);
-			currentInput = new XmlParserInput (new XmlStreamReader (absPath, false), absPath);
-			baseURIStack.Push (BaseURI);
+			currentInput = new XmlParserInput (new XmlStreamReader (absUri.ToString (), false), absPath);
+			parserContext.PushScope ();
 			parserContext.BaseURI = absPath;
 		}
 
 		private void popParserInput ()
 		{
 			currentInput = parserInputStack.Pop () as XmlParserInput;
-			parserContext.BaseURI = this.baseURIStack.Pop () as string;
+			parserContext.PopScope ();
 		}
 
 		private enum DtdInputState

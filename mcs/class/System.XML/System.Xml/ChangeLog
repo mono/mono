@@ -1,3 +1,12 @@
+2003-05-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* NameTable.cs : Add() sets the given name string interned.
+	* XmlParserContext.cs : added internal PushScope() and PopScope() to
+	  hold stacks of xml:base, xml:lang and xml:space.
+	* XmlTextReader.cs : implemented XmlLang and XmlSpace (only as a
+	  property for stacked attributes). Renamed Initialize() to Initialize-
+	  Context(). Modified to use XmlParserContext.PushScope()/PopScope().
+
 2003-05-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlReader.cs: Little fix to WriteAttributeString()
