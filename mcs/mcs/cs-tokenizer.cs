@@ -6,7 +6,7 @@
 //
 // Licensed under the terms of the GNU GPL
 //
-// (C) 2001 Ximian, Inc (http://www.ximian.com)
+// (C) 2001, 2002 Ximian, Inc (http://www.ximian.com)
 //
 
 /*
@@ -186,7 +186,7 @@ namespace Mono.CSharp
 				return col;
 			}
 		}
-		
+
 		static void InitTokens ()
 		{
 			keywords = new Hashtable ();
@@ -297,7 +297,7 @@ namespace Mono.CSharp
 				return -1;
 			
 			int res = (int) o;
-			
+
 			if (handle_get_set == false && (res == Token.GET || res == Token.SET))
 				return -1;
 			if (handle_remove_add == false && (res == Token.REMOVE || res == Token.ADD))
@@ -899,13 +899,19 @@ namespace Mono.CSharp
 		{
 			if (putback_char != -1)
 				return putback_char;
-			return reader.Peek ();
+			putback_char = reader.Read ();
+			return putback_char;
 		}
 
 		void putback (int c)
 		{
-			if (putback_char != -1)
+			if (putback_char != -1){
+				Console.WriteLine ("Col: " + col);
+				Console.WriteLine ("Row: " + line);
+				Console.WriteLine ("Name: " + ref_name);
+				Console.WriteLine ("Current [{0}] putting back [{1}]  ", putback_char, c);
 				throw new Exception ("This should not happen putback on putback");
+			}
 			putback_char = c;
 		}
 
@@ -1440,12 +1446,15 @@ namespace Mono.CSharp
 
 			id_builder.Append ((char) c);
 					
-			while ((c = peekChar ()) != -1) {
+			while ((c = reader.Read ()) != -1) {
 				if (is_identifier_part_character ((char) c)){
-					id_builder.Append ((char)getChar ());
+					id_builder.Append ((char)c);
+					putback_char = -1;
 					col++;
-				} else 
+				} else {
+					putback_char = c;
 					break;
+				}
 			}
 					
 			string ids = id_builder.ToString ();
@@ -1473,22 +1482,11 @@ namespace Mono.CSharp
 			val = null;
 			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
-				if (is_identifier_start_character ((char)c)){
-					tokens_seen = true;
-					return consume_identifier (c, false);
-				}
-
-				if (c == '.'){
-					tokens_seen = true;
-					int peek = peekChar ();
-					if (peek >= '0' && peek <= '9')
-						return is_number (c);
-					return Token.DOT;
-				}
-				
-				if (c >= '0' && c <= '9'){
-					tokens_seen = true;
-					return is_number (c);
+				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r' || c == 0xa0){
+					
+					if (c == '\t')
+						col = (((col + 8) / 8) * 8) - 1;
+					continue;
 				}
 
 				// Handle double-slash comments.
@@ -1526,8 +1524,48 @@ namespace Mono.CSharp
 						}
 						continue;
 					}
+					goto is_punct_label;
 				}
 
+				
+				if (is_identifier_start_character ((char)c)){
+					tokens_seen = true;
+					return consume_identifier (c, false);
+				}
+
+			is_punct_label:
+				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
+					tokens_seen = true;
+					if (doread){
+						getChar ();
+						col++;
+					}
+					return t;
+				}
+
+				// white space
+				if (c == '\n'){
+					line++;
+					ref_line++;
+					col = 0;
+					any_token_seen |= tokens_seen;
+					tokens_seen = false;
+					continue;
+				}
+
+				if (c >= '0' && c <= '9'){
+					tokens_seen = true;
+					return is_number (c);
+				}
+
+				if (c == '.'){
+					tokens_seen = true;
+					int peek = peekChar ();
+					if (peek >= '0' && peek <= '9')
+						return is_number (c);
+					return Token.DOT;
+				}
+				
 				/* For now, ignore pre-processor commands */
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
@@ -1565,18 +1603,8 @@ namespace Mono.CSharp
 					continue;
 				}
 				
-				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
-					tokens_seen = true;
-					if (doread){
-						getChar ();
-						col++;
-					}
-					return t;
-				}
-				
-				if (c == '"') {
+				if (c == '"') 
 					return consume_string (false);
-				}
 
 				if (c == '\''){
 					c = getChar ();
@@ -1613,22 +1641,6 @@ namespace Mono.CSharp
 					return Token.LITERAL_CHARACTER;
 				}
 				
-				// white space
-				if (c == '\n'){
-					line++;
-					ref_line++;
-					col = 0;
-					any_token_seen |= tokens_seen;
-					tokens_seen = false;
-					continue;
-				}
-
-				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r' || c == 0xa0){
-					if (c == '\t')
-						col = (((col + 8) / 8) * 8) - 1;
-					continue;
-				}
-
 				if (c == '@') {
 					c = getChar ();
 					if (c == '"') {

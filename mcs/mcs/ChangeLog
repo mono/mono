@@ -1,7 +1,38 @@
 2002-11-30  Miguel de Icaza  <miguel@ximian.com>
 
-	* cs-tokenizer.cs: Handle 0xa0 as whitespace (#34752)
+	* cs-tokenizer.cs (consume_identifier): use read directly, instead
+	of calling getChar/putback, uses internal knowledge of it.    
 
+	(xtoken): Reorder tokenizer so most common patterns are checked
+	first.  This reduces the compilation time in another 5% (from 8.11s
+	average to 7.73s for bootstrapping mcs on my Mobile p4/1.8ghz).
+
+	The parsing time is 22% of the compilation in mcs, and from that
+	64% is spent on the tokenization process.  
+
+	I tried using a binary search for keywords, but this is slower
+	than the hashtable.  Another option would be to do a couple of
+	things:
+
+		* Not use a StringBuilder, instead use an array of chars,
+		  with a set value.  Notice that this way we could catch
+		  the 645 error without having to do it *afterwards*.
+
+		* We could write a hand-parser to avoid the hashtable
+		  compares altogether.
+
+	The identifier consumption process takes 37% of the tokenization
+	time.  Another 15% is spent on is_number.  56% of the time spent
+	on is_number is spent on Int64.Parse:
+
+		* We could probably choose based on the string length to
+		  use Int32.Parse or Int64.Parse and avoid all the 64-bit
+		  computations. 
+
+	Another 3% is spend on wrapping `xtoken' in the `token' function.
+
+	Handle 0xa0 as whitespace (#34752)
+	
 2002-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (IsCLRType): New routine to tell whether a type
