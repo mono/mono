@@ -1,5 +1,10 @@
 2004-01-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): Catch the 
+	operator + (E x, E y) error earlier, and later allow for implicit
+	conversions in operator +/- (E e, U x) from U to the underlying
+	type of E.
+
 	* class.cs (TypeContainer.DefineDefaultConstructor): Fix bug
 	52596, if the container class is abstract, the default constructor
 	is protected otherwise its public (before, we were always public).

@@ -2553,11 +2553,13 @@ namespace Mono.CSharp {
 				Expression temp;
 
 				// U operator - (E e, E f)
-				if (lie && rie && oper == Operator.Subtraction){
-					if (l == r){
-						type = TypeManager.EnumToUnderlying (l);
-						return this;
-					} 
+				if (lie && rie){
+					if (oper == Operator.Subtraction){
+						if (l == r){
+							type = TypeManager.EnumToUnderlying (l);
+							return this;
+						}
+					}
 					Error_OperatorCannotBeApplied ();
 					return null;
 				}
@@ -2570,9 +2572,18 @@ namespace Mono.CSharp {
 					Type enum_type = lie ? l : r;
 					Type other_type = lie ? r : l;
 					Type underlying_type = TypeManager.EnumToUnderlying (enum_type);
-;
 					
 					if (underlying_type != other_type){
+						temp = Convert.ImplicitConversion (ec, lie ? right : left, underlying_type, loc);
+						if (temp != null){
+							if (lie)
+								right = temp;
+							else
+								left = temp;
+							type = enum_type;
+							return this;
+						}
+							
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
