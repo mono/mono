@@ -1,3 +1,9 @@
+
+Tue Apr 27 15:55:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* locales.c: put back string_invariant_tolower () and
+	string_invariant_toupper ().
+
 2004-04-26 David Waite <mass@akuma.org>
 
 	* file-io.h:
