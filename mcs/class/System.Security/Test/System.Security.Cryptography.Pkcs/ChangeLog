@@ -1,3 +1,7 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ContentInfoTest.cs: Adjusted for changes in Mono.Security.
+
 2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ContentInfoTest.cs: Changed test for GetContentType.

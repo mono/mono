@@ -89,7 +89,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			// ContentInfo ::= SEQUENCE {
 			ASN1 contentInfo = new ASN1 (0x30);
 			// contentType ContentType, -> ContentType ::= OBJECT IDENTIFIER
-			contentInfo.Add (ASN1Convert.FromOID (defaultOid));
+			contentInfo.Add (ASN1Convert.FromOid (defaultOid));
 			// content [0] EXPLICIT ANY DEFINED BY contentType OPTIONAL 
 			contentInfo.Add (new ASN1 (asnNull));
 			
