@@ -382,6 +382,15 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void SetAttributeXmlns ()
+		{
+			// should not affect Element node's xmlns
+			XmlElement el = document.CreateElement ("root");
+			el.SetAttribute ("xmlns", "urn:foo");
+			AssertEquals (String.Empty, el.NamespaceURI);
+		}
+
+		[Test]
 		public void InnerTextAndEvent ()
 		{
 			XmlDocument doc = new XmlDocument ();

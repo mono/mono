@@ -1109,10 +1109,12 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument ();
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("xmlns", "probe");
+			AssertEquals (String.Empty, xtw.LookupPrefix ("probe"));
 			xtw.WriteStartElement ("b");
-			xtw.WriteStartElement (null, "b2", null);
+			AssertEquals (String.Empty, xtw.LookupPrefix ("probe"));
+			xtw.WriteStartElement (null, "b2", null); // *Don't* output xmlns=""
 			xtw.WriteEndElement (); // b2
-			xtw.WriteStartElement (null, "b2", "");
+			xtw.WriteStartElement (null, "b2", ""); // *Do* output xmlns=""
 			xtw.WriteEndElement (); // b2
 			xtw.WriteEndElement (); // b
 			xtw.WriteEndElement (); // foo
@@ -1120,6 +1122,28 @@ namespace MonoTests.System.Xml
 			xtw.Close ();
 
 			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo xmlns='probe'><b><b2 /><b2 xmlns='' /></b></foo>", StringWriterText);
+		}
+
+		[Test]
+		public void DontOutputRemovalDefaultNSDeclaration2 ()
+		{
+			xtw.WriteStartDocument ();
+			// IMPORTANT DIFFERENCE!! ns = "", not null
+			xtw.WriteStartElement ("foo", "");
+			xtw.WriteAttributeString ("xmlns", "probe");
+			AssertNull (xtw.LookupPrefix ("probe"));
+			xtw.WriteStartElement ("b");
+			AssertNull (xtw.LookupPrefix ("probe"));
+			xtw.WriteStartElement (null, "b2", null); // *Don't* output xmlns=""
+			xtw.WriteEndElement (); // b2
+			xtw.WriteStartElement (null, "b2", ""); // *Do* output xmlns=""
+			xtw.WriteEndElement (); // b2
+			xtw.WriteEndElement (); // b
+			xtw.WriteEndElement (); // foo
+			xtw.WriteEndDocument ();
+			xtw.Close ();
+
+			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo xmlns='probe'><b><b2 /><b2 /></b></foo>", StringWriterText);
 		}
 
 		[Test]
@@ -1131,8 +1155,93 @@ namespace MonoTests.System.Xml
 			doc.CreateElement ("hola").WriteTo (xtw);
 			// This means, WriteTo never passes null NamespaceURI argument to XmlWriter.
 			xtw.WriteEndElement ();
+			xtw.Close ();
 
 			AssertEquals ("<docelem xmlns='a-namespace'><hola xmlns='' /></docelem>", StringWriterText);
+		}
+
+		[Test]
+		public void WriteAttributeTakePrecedenceOnXmlns ()
+		{
+			xtw.WriteStartElement ("root", "urn:foo");
+			xtw.WriteAttributeString ("xmlns", "urn:bar");
+			xtw.WriteEndElement ();
+			xtw.Close ();
+			AssertEquals ("<root xmlns='urn:bar' />", StringWriterText);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LookupPrefixNull ()
+		{
+			xtw.LookupPrefix (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LookupPrefixEmpty ()
+		{
+			xtw.LookupPrefix (String.Empty);
+		}
+
+		[Test]
+		public void LookupPrefixIgnoresXmlnsAttribute ()
+		{
+			AssertNull (xtw.LookupPrefix ("urn:foo"));
+			xtw.WriteStartElement ("root");
+			AssertNull (xtw.LookupPrefix ("urn:foo"));
+			xtw.WriteAttributeString ("xmlns", "urn:foo");
+			// Surprisingly to say, it is ignored!!
+			AssertEquals (String.Empty, xtw.LookupPrefix ("urn:foo"));
+			xtw.WriteStartElement ("hoge");
+			// (still after flushing previous start element.)
+			AssertEquals (String.Empty, xtw.LookupPrefix ("urn:foo"));
+			xtw.WriteStartElement ("fuga", "urn:foo");
+			// Is this testing on the correct way? Yes, here it is.
+			AssertEquals (String.Empty, xtw.LookupPrefix ("urn:foo"));
+		}
+
+		[Test]
+		public void WriteInvalidNames ()
+		{
+			xtw.WriteStartElement ("foo<>");
+			xtw.WriteAttributeString ("ho<>ge", "value");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AttributeWriteStartAttributePrefixWithoutNS ()
+		{
+			xtw.WriteStartAttribute ("some", "foo", null);
+		}
+
+		[Test]
+		public void AttributeWriteStartAttributeXmlnsNullNS ()
+		{
+			xtw.WriteStartAttribute ("xmlns", "foo", null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AttributeWriteEndAttributeXmlnsNullNs ()
+		{
+			// Compare with the test AttributeWriteStartAttributeXmlnsNullNS().
+			xtw.WriteStartAttribute ("xmlns", "foo", null);
+			xtw.WriteEndAttribute ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AttributeWriteStartAttributePrefixXmlnsNonW3CNS ()
+		{
+			xtw.WriteStartAttribute ("xmlns", "foo", "urn:foo");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AttributeWriteStartAttributeLocalXmlnsNonW3CNS ()
+		{
+			xtw.WriteStartAttribute ("", "xmlns", "urn:foo");
 		}
 	}
 }
