@@ -1,3 +1,14 @@
+2004-06-09  Raja R Harinath  <rharinath@novell.com>
+
+	Do away with stampfiles.
+	* executable.make (stampfile): Remove.
+	(clean-local): Remove mention of $(stampfile).
+	(test-local, run-test-local, run-test-ondotnet-local):
+	Make unconditional.  Add dummy rule to prevent other makefiles
+	from defining rules on these.
+	($(PROGRAM)): Depend directly on $(BUILT_SOURCES).
+	($(makefrag)): Simplify.
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* README.makefiles : added description for run-test-ondotnet.

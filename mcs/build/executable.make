@@ -13,7 +13,6 @@ response = $(depsdir)/$(base_prog).response
 else
 response = $(sourcefile)
 endif
-stampfile = $(depsdir)/$(base_prog).stamp
 makefrag = $(depsdir)/$(base_prog).makefrag
 pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
 
@@ -31,18 +30,17 @@ uninstall-local:
 	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog)
 
 clean-local:
-	-rm -f *.exe $(BUILT_SOURCES) $(CLEAN_FILES) $(pdb) $(stampfile) $(makefrag)
+	-rm -f *.exe $(BUILT_SOURCES) $(CLEAN_FILES) $(pdb) $(makefrag)
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 	-rm -f $(response)
 endif
 
-ifndef HAS_TEST
 test-local: $(PROGRAM)
-
+	@:
 run-test-local:
-
+	@:
 run-test-ondotnet-local:
-endif
+	@:
 
 DISTFILES = $(sourcefile) $(EXTRA_DISTFILES)
 
@@ -52,25 +50,16 @@ dist-local: dist-default
 	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
 	done
 
-# Changing makefile probably means changing the
-# sources, so let's be safe and add a Makefile dep
-
 ifndef PROGRAM_COMPILE
 PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
-$(PROGRAM): $(makefrag) $(response) $(stampfile)
+$(PROGRAM): $(makefrag) $(BUILT_SOURCES) $(response)
 	$(PROGRAM_COMPILE) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
-# warning: embedded tab in the 'echo touch' line
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
-	@echo "HAVE_MAKEFRAG = yes" >$@.new
-	@echo "$(stampfile): $(BUILT_SOURCES) \\" >>$@.new
-	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
-	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo "	touch \$$@" >>$@
-	@rm -rf $@.new
+	@sed 's,^,$(PROGRAM): ,' $< > $@
 
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 $(response): $(sourcefile)
@@ -79,9 +68,3 @@ $(response): $(sourcefile)
 endif
 
 -include $(makefrag)
-
-ifndef HAVE_MAKEFRAG
-$(stampfile):
-	touch $@
-endif
-
