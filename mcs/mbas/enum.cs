@@ -464,7 +464,8 @@ namespace Mono.CSharp {
 				if (val is EnumConstant){
 					Type etype = TypeManager.EnumToUnderlying (c.Type);
 					
-					if (!ImplicitConversionExists (etype, UnderlyingType)){
+					if ( (!ImplicitConversionExists (etype, UnderlyingType)) &&
+						(!Expression.RuntimeConversionExists (ec, val, UnderlyingType)) ){
 						Expression.Error_CannotConvertImplicit (
 							loc, c.Type, UnderlyingType);
 						return null;
