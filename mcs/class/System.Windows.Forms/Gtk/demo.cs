@@ -142,6 +142,7 @@ namespace demo
 		}
 
 		private void button1_Click(object sender, EventArgs e){ 
+		
 			pbox.File = fdialog.OpenFile;
 				if (this.opt2.Checked) { 
 					this.pbox.SizeMode = PictureBoxSizeMode.StretchImage;

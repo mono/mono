@@ -307,7 +307,7 @@ namespace System.Windows.Forms {
 			if (LocationChanged != null)
 				LocationChanged (this, e);
 		}
-
+		
 		public event EventHandler Click;
 
 		protected virtual void OnClick (EventArgs e) {

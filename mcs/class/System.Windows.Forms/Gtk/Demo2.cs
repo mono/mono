@@ -46,8 +46,9 @@ namespace demo2
 			menuItem2.Text = "Exit";
 			menuItem3.Text = "Edit";
 			menuItem4.Text = "&Stop";
-			menuItem4.Shortcut = Shortcut.CtrlN;
-			menuItem5.Text = "&Start";
+			menuItem4.Click += new EventHandler(this.menuItem4_Click);
+			menuItem4.Shortcut = Shortcut.CtrlS;
+			menuItem5.Text = "S&tart";
 			menuItem5.Checked = true;
 			menuItem1.MenuItems.Add(menuItem2);
 			menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {menuItem4,
@@ -86,6 +87,10 @@ namespace demo2
 			combo1.BeginUpdate();
 			for (int i = 1; i < 5; i++) {combo1.Items.Add("Joel");}
 			combo1.EndUpdate();	
+  		}
+		
+		private void menuItem4_Click(object sender, EventArgs e){
+    		MessageBox.Show("You clicked Start");
   		}
 
 	 }
