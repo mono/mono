@@ -22,11 +22,20 @@ function Menu_OverItem (menuId, itemId, parentId) {
 			Menu_Reposition (item, subm, item.offsetWidth + offx, offy);
 		else
 			Menu_Reposition (item, subm, offx, item.offsetHeight + offy);
+			
+		subm.initialLeft = subm.style.left;
+		subm.initialTop = subm.style.top;
+		subm.initialContentHeight = getMenuScrollBox (menuId, itemId, "b").offsetHeight;
+		subm.scrollButtonsHeight = subm.offsetHeight - subm.initialContentHeight;
+		var submMargin = subm.offsetHeight - subm.clientHeight;
+		subm.initialOffsetHeight = subm.offsetHeight - subm.scrollButtonsHeight + submMargin;
 		subm.firstShown = true;
 	}
 	
 	Menu_SetActive (menu, subm);
 	Menu_ShowMenu (subm);
+	Menu_Resize (subm, menuId, itemId);
+
 	if (parentId != null && menu.dynamicHover != null)
 		Menu_HilighItem (menuId, itemId, menu.dynamicHover);
 	else if (parentId == null && menu.staticHover != null)
@@ -69,6 +78,32 @@ function Menu_OutItem (menuId, itemId, parentId) {
 		item.className = item.normalClass;
 }
 
+function Menu_OverScrollBtn (menuId, parentId, updown) {
+	var menu = getMenu (menuId);
+	var subm = getSubMenu (menuId, parentId);
+	Menu_SetActive (menu, subm);
+	Menu_ShowMenu (subm);
+	if (subm.scrollThread != null)
+		clearInterval (subm.scrollThread);
+	var box = getMenuScrollBox (menuId, parentId, "b");
+	subm.scrollThread = setInterval ("Menu_ScrollMenu ('" + box.id + "','" + updown + "')", 60);
+}
+
+function Menu_OutScrollBtn (menuId, parentId, updown) {
+	var menu = getMenu (menuId);
+	var subm = getSubMenu (menuId, parentId);
+	if (subm.scrollThread != null)
+		clearInterval (subm.scrollThread);
+	Menu_HideMenu (menu, subm, menu.disappearAfter);
+}
+
+function Menu_ScrollMenu (boxId, updown) {
+	var box = document.getElementById (boxId);
+	if (updown == "u") box.scrollTop -= 5;
+	else box.scrollTop += 5;
+}
+
+
 function Menu_SetActive (menu, subm) {
 	if (menu.active != null && subm != menu.active)
 		Menu_HideMenu (menu, menu.active, 0);
@@ -88,7 +123,6 @@ function Menu_HideMenu (menu, subm, time)
 function Menu_HideMenuCallback (spanId)
 {
 	var subm = document.getElementById (spanId);
-//	subm.style.display = "none";
 	subm.style.visibility = "hidden";
 }
 
@@ -97,7 +131,6 @@ function Menu_ShowMenu (subm)
 	if (subm.timer != null)
 		clearTimeout (subm.timer);
 		
-//	subm.style.display = "block";
 	subm.style.visibility = "visible";
 
 	if (subm.parentMenu != null)
@@ -117,7 +150,41 @@ function Menu_Reposition (it, elem, offx, offy)
 	elem.style.top = (to + offy) + "px";
 }
 
+function Menu_Resize (subm, menuId, itemId)
+{
+	subm.style.top = subm.initialTop;
+	var parent = subm.offsetParent;
+	var box = getMenuScrollBox (menuId, itemId, "b");
+	box.scrollTop = 0;
+	var bottom = subm.offsetTop + subm.initialOffsetHeight - parent.scrollTop;
+	var displayScroll;
+	
+	if (bottom > parent.clientHeight /* && parent.scrollHeight > parent.clientHeight*/) {
+		var overflow = bottom - parent.clientHeight;
+		var freeTop = subm.offsetTop - parent.scrollTop;
+		if (overflow <= freeTop) {
+			subm.style.top = (subm.offsetTop - overflow) + "px";
+			displayScroll = "none";
+			box.style.height = subm.initialContentHeight + "px";
+		} else {
+			subm.style.top = (subm.offsetTop - freeTop) + "px";
+			var bh = (parent.clientHeight - subm.offsetTop + parent.scrollTop) - subm.scrollButtonsHeight;
+			box.style.overflow = "hidden";
+			box.style.height = bh + "px";
+			displayScroll = "block";
+		}
+	} else {
+		displayScroll = "none";
+		box.style.height = subm.initialContentHeight + "px";
+	}
+	var btn = getMenuScrollBox (menuId, itemId, "u");
+	btn.style.display = displayScroll;
+	btn = getMenuScrollBox (menuId, itemId, "d");
+	btn.style.display = displayScroll;
+}
+
 function getMenu (menuId) { return eval (menuId + "_data"); }
 function getSubMenu (menuId, itemId) { return document.getElementById (menuId + "_" + itemId + "s"); }
 function getMenuItem (menuId, itemId) { return document.getElementById (menuId + "_" + itemId + "i"); }
+function getMenuScrollBox (menuId, itemId, btn) { return document.getElementById (menuId + "_" + itemId + "c" + btn); }
 

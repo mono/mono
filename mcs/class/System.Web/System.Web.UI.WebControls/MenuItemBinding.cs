@@ -262,6 +262,60 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public string PopOutImageUrl {
+			get {
+				object o = ViewState ["PopOutImageUrl"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["PopOutImageUrl"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
+		public string PopOutImageUrlField {
+			get {
+				object o = ViewState ["PopOutImageUrlField"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["PopOutImageUrlField"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public string SeparatorImageUrl {
+			get {
+				object o = ViewState ["SeparatorImageUrl"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["SeparatorImageUrl"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
+		public string SeparatorImageUrlField {
+			get {
+				object o = ViewState ["SeparatorImageUrlField"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["SeparatorImageUrlField"] = value;
+			}
+		}
+
 		void IStateManager.LoadViewState (object savedState)
 		{
 			ViewState.LoadViewState (savedState);

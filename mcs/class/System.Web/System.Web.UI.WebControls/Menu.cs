@@ -41,19 +41,23 @@ using System.IO;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent ("MenuItemClick")]
+	[ControlValueProperty ("SelectedValue")]
 	public class Menu : HierarchicalDataBoundControl, IPostBackEventHandler, INamingContainer
 	{
 		MenuItemStyle dynamicMenuItemStyle;
-		MenuItemStyle dynamicMenuStyle;
+		SubMenuStyle dynamicMenuStyle;
 		MenuItemStyle dynamicSelectedStyle;
 		MenuItemStyle staticMenuItemStyle;
-		MenuItemStyle staticMenuStyle;
+		SubMenuStyle staticMenuStyle;
 		MenuItemStyle staticSelectedStyle;
 		Style staticHoverStyle;
 		Style dynamicHoverStyle;
 
 		MenuItemStyleCollection levelMenuItemStyles;
 		MenuItemStyleCollection levelSelectedStyles;
+		ITemplate staticItemTemplate;
+		ITemplate dynamicItemTemplate;
 		
 		MenuItemCollection items;
 		MenuItemBindingCollection dataBindings;
@@ -90,6 +94,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (500)]
+		[ThemeableAttribute (false)]
 		public virtual int DisappearAfter {
 			get {
 				object o = ViewState ["DisappearAfter"];
@@ -101,9 +106,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[ThemeableAttribute (false)]
 		[DefaultValue ("")]
 		[UrlProperty]
-		[WebCategory ("Appearance")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public virtual string DynamicBottomSeparatorImageUrl {
 			get {
@@ -174,6 +179,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (1)]
+		[ThemeableAttribute (false)]
 		public virtual int StaticDisplayLevels {
 			get {
 				object o = ViewState ["StaticDisplayLevels"];
@@ -187,6 +193,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("16px")]
+		[ThemeableAttribute (false)]
 		public Unit StaticSubMenuIndent {
 			get {
 				object o = ViewState ["StaticSubMenuIndent"];
@@ -198,6 +205,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[ThemeableAttribute (false)]
 		[DefaultValue (3)]
 		public virtual int MaximumDynamicDisplayLevels {
 			get {
@@ -331,10 +339,10 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual MenuItemStyle DynamicMenuStyle {
+		public virtual SubMenuStyle DynamicMenuStyle {
 			get {
 				if (dynamicMenuStyle == null) {
-					dynamicMenuStyle = new MenuItemStyle ();
+					dynamicMenuStyle = new SubMenuStyle ();
 					if (IsTrackingViewState)
 						dynamicMenuStyle.TrackViewState();
 				}
@@ -376,10 +384,10 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual MenuItemStyle StaticMenuStyle {
+		public virtual SubMenuStyle StaticMenuStyle {
 			get {
 				if (staticMenuStyle == null) {
-					staticMenuStyle = new MenuItemStyle ();
+					staticMenuStyle = new SubMenuStyle ();
 					if (IsTrackingViewState)
 						staticMenuStyle.TrackViewState();
 				}
@@ -443,10 +451,124 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public virtual string ScrollDownImageUrl {
+			get {
+				object o = ViewState ["sdiu"];
+				if (o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState["sdiu"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public virtual string ScrollUpImageUrl {
+			get {
+				object o = ViewState ["suiu"];
+				if (o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState["suiu"] = value;
+			}
+		}
+
+		[Localizable (true)]
+		public virtual string ScrollDownText {
+			get {
+				object o = ViewState ["ScrollDownText"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState["ScrollDownText"] = value;
+			}
+		}
+
+		[Localizable (true)]
+		public virtual string ScrollUpText {
+			get {
+				object o = ViewState ["ScrollUpText"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState["ScrollUpText"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public virtual string DynamicPopOutImageUrl {
+			get {
+				object o = ViewState ["dpoiu"];
+				if (o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState["dpoiu"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public virtual string StaticPopOutImageUrl {
+			get {
+				object o = ViewState ["spoiu"];
+				if (o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState["spoiu"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		public virtual string Target {
+			get {
+				object o = ViewState ["Target"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState["Target"] = value;
+			}
+		}
+
+		[DefaultValue (null)]
+		[TemplateContainer (typeof(MenuItemTemplateContainer), BindingDirection.OneWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		public ITemplate StaticItemTemplate {
+			get { return staticItemTemplate; }
+			set { staticItemTemplate = value; }
+		}
+		
+		[DefaultValue (null)]
+		[TemplateContainer (typeof(MenuItemTemplateContainer), BindingDirection.OneWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		public ITemplate DynamicItemTemplate {
+			get { return dynamicItemTemplate; }
+			set { dynamicItemTemplate = value; }
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public MenuItem SelectedItem {
 			get { return selectedItem; }
+		}
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public string SelectedValue {
+			get { return selectedItem != null ? selectedItem.Value : null; }
 		}
 
 		internal void SetSelectedItem (MenuItem item)
@@ -538,6 +660,10 @@ namespace System.Web.UI.WebControls
 				}
 			}
 			return item;
+		}
+		
+		protected override HtmlTextWriterTag TagKey {
+			get { return HtmlTextWriterTag.Table; }
 		}
 		
 		protected override void TrackViewState()
@@ -715,16 +841,60 @@ namespace System.Web.UI.WebControls
 			
 			for (int n=0; n<dynamicMenus.Count; n++) {
 				MenuItem item = (MenuItem) dynamicMenus [n];
+				
+				if (dynamicMenuStyle != null)
+					writer.AddAttribute ("class", dynamicMenuStyle.RegisteredCssClass);
+				
 				writer.AddStyleAttribute ("visibility", "hidden");
 				writer.AddStyleAttribute ("position", "absolute");
 				writer.AddStyleAttribute ("left", "0px");
 				writer.AddStyleAttribute ("top", "0px");
 				writer.AddAttribute ("id", GetItemClientId (item, "s"));
 				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+
+				// Up button
+				writer.AddAttribute ("id", GetItemClientId (item, "cu"));
+				writer.AddStyleAttribute ("display", "block");
+				writer.AddStyleAttribute ("text-align", "center");
+				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
+				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
+				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+				
+				string src = ScrollUpImageUrl != "" ? ScrollUpImageUrl : Page.GetWebResourceUrl (typeof(Menu), "arrow_up.gif");
+				writer.AddAttribute ("src", src);
+				writer.AddAttribute ("alt", ScrollUpText);
+				writer.RenderBeginTag (HtmlTextWriterTag.Img);
+				writer.RenderEndTag ();	// IMG
+				
+				writer.RenderEndTag ();	// DIV scroll button
+			
+				writer.AddAttribute ("id", GetItemClientId (item, "cb"));	// Scroll container
+				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+				writer.AddAttribute ("id", GetItemClientId (item, "cc"));	// Content
+				writer.RenderBeginTag (HtmlTextWriterTag.Div);
 				
 				RenderMenu (writer, item.ChildItems, true, dynamicMenus, true);
 				
-				writer.RenderEndTag ();	// DIV
+				writer.RenderEndTag ();	// DIV Content
+				writer.RenderEndTag ();	// DIV Scroll container
+
+				// Down button
+				writer.AddAttribute ("id", GetItemClientId (item, "cd"));
+				writer.AddStyleAttribute ("display", "block");
+				writer.AddStyleAttribute ("text-align", "center");
+				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
+				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
+				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+				
+				src = ScrollDownImageUrl != "" ? ScrollDownImageUrl : Page.GetWebResourceUrl (typeof(Menu), "arrow_down.gif");
+				writer.AddAttribute ("src", src);
+				writer.AddAttribute ("alt", ScrollDownText);
+				writer.RenderBeginTag (HtmlTextWriterTag.Img);
+				writer.RenderEndTag ();	// IMG
+				
+				writer.RenderEndTag ();	// DIV scroll button
+				
+				writer.RenderEndTag ();	// DIV menu
 			}
 		}
 		
@@ -733,9 +903,7 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
 
-			if (dynamic && dynamicMenuStyle != null)
-				writer.AddAttribute ("class", dynamicMenuStyle.RegisteredCssClass);
-			else if (!dynamic && staticMenuStyle != null)
+			if (!dynamic && staticMenuStyle != null)
 				writer.AddAttribute ("class", staticMenuStyle.RegisteredCssClass);
 				
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
@@ -821,7 +989,7 @@ namespace System.Web.UI.WebControls
 			
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
 
-			// Bottom separator image
+			// Top separator image
 
 			if (isDynamicItem && DynamicTopSeparatorImageUrl != "") {
 				writer.AddAttribute ("src", DynamicTopSeparatorImageUrl);
@@ -872,29 +1040,24 @@ namespace System.Web.UI.WebControls
 			RenderItemHref (writer, item);
 			writer.AddStyleAttribute ("text-decoration", "none");
 			writer.RenderBeginTag (HtmlTextWriterTag.A);
-			writer.Write (item.Text);
+			RenderItemContent (writer, item, isDynamicItem);
 			writer.RenderEndTag ();	// A
 			
 			writer.RenderEndTag ();	// TD
 			
 			// Popup image
 			
-			if (dynamicChildren && ((isDynamicItem && DynamicEnableDefaultPopOutImage) || (!isDynamicItem && StaticEnableDefaultPopOutImage) || item.PopOutImageUrl != ""))
-			{
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-
-				string src;
-				if (item.PopOutImageUrl != "")
-					src = item.PopOutImageUrl;
-				else
-					src = AssemblyResourceLoader.GetResourceUrl (typeof(Menu), "arrow_plus.gif");
-
-				writer.AddAttribute ("src", src);
-				writer.AddAttribute ("border", "0");
-				writer.RenderBeginTag (HtmlTextWriterTag.Img);
-				writer.RenderEndTag ();	// IMG
-				
-				writer.RenderEndTag ();	// TD
+			if (dynamicChildren) {
+				string popOutImage = GetPopOutImage (item, isDynamicItem);
+				if (popOutImage != null)
+				{
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
+					writer.AddAttribute ("src", popOutImage);
+					writer.AddAttribute ("border", "0");
+					writer.RenderBeginTag (HtmlTextWriterTag.Img);
+					writer.RenderEndTag ();	// IMG
+					writer.RenderEndTag ();	// TD
+				}
 			}
 			
 			writer.RenderEndTag ();	// TR
@@ -902,16 +1065,17 @@ namespace System.Web.UI.WebControls
 			
 			// Bottom separator image
 				
-			if (isDynamicItem && DynamicBottomSeparatorImageUrl != "") {
-				writer.AddAttribute ("src", DynamicBottomSeparatorImageUrl);
-				writer.RenderBeginTag (HtmlTextWriterTag.Img);
-				writer.RenderEndTag ();	// IMG
-			} else  if (!isDynamicItem && StaticBottomSeparatorImageUrl != "") {
-				writer.AddAttribute ("src", StaticBottomSeparatorImageUrl);
+			string separatorImg = item.SeparatorImageUrl;
+			if (separatorImg.Length == 0) { 
+				if (isDynamicItem) separatorImg = DynamicBottomSeparatorImageUrl;
+				else separatorImg = StaticBottomSeparatorImageUrl;
+			}
+			if (separatorImg.Length > 0) {
+				writer.AddAttribute ("src", separatorImg);
 				writer.RenderBeginTag (HtmlTextWriterTag.Img);
 				writer.RenderEndTag ();	// IMG
 			}
-			
+				
 			// Submenu
 				
 			if (vertical) {
@@ -937,6 +1101,21 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		void RenderItemContent (HtmlTextWriter writer, MenuItem item, bool isDynamicItem)
+		{
+			if (isDynamicItem && dynamicItemTemplate != null) {
+				MenuItemTemplateContainer cter = new MenuItemTemplateContainer (item.Index, item);
+				dynamicItemTemplate.InstantiateIn (cter);
+				cter.Render (writer);
+			} else if (!isDynamicItem && staticItemTemplate != null) {
+				MenuItemTemplateContainer cter = new MenuItemTemplateContainer (item.Index, item);
+				staticItemTemplate.InstantiateIn (cter);
+				cter.Render (writer);
+			} else {
+				writer.Write (item.Text);
+			}
+		}
+			
 		int GetItemSpacing (MenuItem item, bool dynamic)
 		{
 			int itemSpacing;
@@ -956,17 +1135,49 @@ namespace System.Web.UI.WebControls
 				itemSpacing = levelMenuItemStyles [item.Depth].ItemSpacing;
 				if (itemSpacing != 0) return itemSpacing;
 			}
-				
+			
 			if (dynamic) return DynamicMenuItemStyle.ItemSpacing;
 			else return StaticMenuItemStyle.ItemSpacing;
 		}
 		
+		
+		string GetItemSeparatorImage (MenuItem item, bool isDynamicItem)
+		{
+			if (item.SeparatorImageUrl != "") return item.SeparatorImageUrl;
+			if (isDynamicItem && DynamicTopSeparatorImageUrl != "")
+				return DynamicTopSeparatorImageUrl;
+			else  if (!isDynamicItem && StaticTopSeparatorImageUrl != "")
+				return StaticTopSeparatorImageUrl;
+			return null;
+		}
+			
+		string GetPopOutImage (MenuItem item, bool isDynamicItem)
+		{
+			if (item.PopOutImageUrl != "")
+				return item.PopOutImageUrl;
+
+			if (isDynamicItem) {
+				if (DynamicPopOutImageUrl != "")
+					return DynamicPopOutImageUrl;
+				if (DynamicEnableDefaultPopOutImage)
+					return AssemblyResourceLoader.GetResourceUrl (typeof(Menu), "arrow_plus.gif");
+			} else {
+				if (StaticPopOutImageUrl != "")
+					return StaticPopOutImageUrl;
+				if (StaticEnableDefaultPopOutImage)
+					return AssemblyResourceLoader.GetResourceUrl (typeof(Menu), "arrow_plus.gif");
+			}
+			return null;
+		}
+			
 		void RenderItemHref (HtmlTextWriter writer, MenuItem item)
 		{
 			if (item.NavigateUrl != "") {
 				writer.AddAttribute ("href", item.NavigateUrl);
-				if (item.Target != null)
+				if (item.Target != "")
 					writer.AddAttribute ("target", item.Target);
+				else if (Target != "")
+					writer.AddAttribute ("target", Target);
 			}
 			else {
 				writer.AddAttribute ("href", GetClientEvent (item));

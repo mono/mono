@@ -77,6 +77,14 @@ namespace System.Web.UI.WebControls
 			ImageUrl = imageUrl;
 		}
 		
+		public MenuItem (string text, string value, string imageUrl, string navigateUrl)
+		{
+			Text = text;
+			Value = value;
+			ImageUrl = imageUrl;
+			NavigateUrl = navigateUrl;
+		}
+		
 		public MenuItem (string text, string value, string imageUrl, string navigateUrl, string target)
 		{
 			Text = text;
@@ -215,6 +223,14 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["PopOutImageUrl"];
 				if (o != null) return (string)o;
+				if (DataBound) {
+					MenuItemBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.PopOutImageUrlField != "")
+							return (string) GetBoundPropertyValue (bin.PopOutImageUrlField);
+						return bin.PopOutImageUrl;
+					}
+				}
 				return "";
 			}
 			set {
@@ -316,7 +332,30 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public string SeparatorImageUrl {
+			get {
+				object o = ViewState ["SeparatorImageUrl"];
+				if (o != null) return (string)o;
+				if (DataBound) {
+					MenuItemBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.SeparatorImageUrlField != "")
+							return (string) GetBoundPropertyValue (bin.SeparatorImageUrlField);
+						return bin.SeparatorImageUrl;
+					}
+				}
+				return "";
+			}
+			set {
+				ViewState ["SeparatorImageUrl"] = value;
+			}
+		}
+
 		[DefaultValue (false)]
+		[Browsable (false)]
 		public bool Selected {
 			get {
 				return SelectedFlag;

@@ -1,3 +1,13 @@
+2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Menu.cs: Implemented most of missing properties. Added support for
+	item templates. Implemented menu scrolling.
+	* MenuItemBinding.cs: Implemented most of missing properties.
+	* MenuItem.cs: Implemented most of missing properties.
+	* Menu.js: Implemented scrolling and menu reposition into screen.
+	* MenuItemTemplateContainer.cs: Implemented.
+	* SubMenuStyle.cs: Implemented.
+
 2004-12-20 Lluis Sanchez Gual <lluis@novell.com>
 
 	* Style.cs: Implemented RegisteredCssClass property. Added
