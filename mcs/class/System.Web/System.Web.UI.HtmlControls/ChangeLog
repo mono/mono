@@ -1,3 +1,7 @@
+2005-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlForm.cs: submitStatements holds Hashtables.
+
 2004-12-20  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HtmlHead.cs: Implemented.

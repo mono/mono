@@ -41,8 +41,11 @@ namespace System.Web.UI.HtmlControls{
  					Attributes.Remove ("onsubmit");
  				}
 
-				foreach (string s in onSubmit.Values)
-					sb.Append (s);
+				foreach (Hashtable hash in onSubmit.Values) {
+					foreach (string s in hash.Values) {
+						sb.Append (s);
+					}
+				}
 
  				writer.WriteAttribute ("language", "javascript");
  				writer.WriteAttribute ("onsubmit", sb.ToString ());
