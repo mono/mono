@@ -40,10 +40,10 @@ btest: mcs2.exe mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
 mcs2.exe: mcs.exe
-	$(TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
+	$(TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 
 mcs3.exe: mcs2.exe
-	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
+	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 
 wc:
 	wc -l $(BUILT_SOURCES) `cat $(sourcefile)`

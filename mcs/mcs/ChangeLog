@@ -1,3 +1,7 @@
+2004-07-30  Duncan Mak  <duncan@ximian.com>
+
+	* Makefile (mcs2.exe, mcs3.exe): add $(EXTRA_SOURCES).
+
 2004-07-30  Martin Baulig  <martin@ximian.com>
 
 	* Makefile (EXTRA_SOURCES): List the symbol writer's sources here.
