@@ -1,5 +1,11 @@
 2005-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XsltCompiledContext.cs,
+	  XslStylesheet.cs : Fixed significant performance loss on whitespace
+	  handling.
+
+2005-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslKey.cs : removed unused NeedAbsoluteMatching.
 	* XslFunctions.cs : Added Peer (for peer & subtree optimization).
 	  Added some missing ToString() overrides.

@@ -183,32 +183,54 @@ namespace Mono.Xml.Xsl {
 
 		bool countedSpaceControlExistence;
 		bool cachedHasSpaceControls;
+		static readonly QName allMatchName = new QName ("*");
+
 		public bool HasSpaceControls {
 			get {
 				if (!countedSpaceControlExistence) {
 					countedSpaceControlExistence = true;
-					if (this.spaceControls.Count > 0)
-						cachedHasSpaceControls = true;
-					else if (imports.Count == 0)
-						cachedHasSpaceControls = false;
-					else {
-						for (int i = 0; i < imports.Count; i++)
-							if (((XslStylesheet) imports [i]).spaceControls.Count > 0)
-								countedSpaceControlExistence = true;
-						cachedHasSpaceControls = false;
-					}
+					cachedHasSpaceControls =
+						ComputeHasSpaceControls ();
 				}
 				return cachedHasSpaceControls;
 			}
 		}
 
-		QName allMatchName = new QName ("*");
+		private bool ComputeHasSpaceControls ()
+		{
+			if (this.spaceControls.Count > 0
+				&& HasStripSpace (spaceControls))
+				return true;
+
+			if (imports.Count == 0)
+				return false;
+
+			for (int i = 0; i < imports.Count; i++) {
+				XslStylesheet s = (XslStylesheet) imports [i];
+				if (s.spaceControls.Count > 0 &&
+					HasStripSpace (s.spaceControls))
+					return true;
+			}
+			return false;
+		}
+
+		private bool HasStripSpace (IDictionary table)
+		{
+			foreach (XmlSpace space in table.Values)
+				if (space == XmlSpace.Default)
+					return true;
+			return false;
+		}
 
 		public bool GetPreserveWhitespace (XPathNavigator nav)
 		{
 			if (!HasSpaceControls)
 				return true;
+			return GetPreserveWhitespaceInternal (nav.Clone ());
+		}
 
+		private bool GetPreserveWhitespaceInternal (XPathNavigator nav)
+		{
 			string localName = nav.LocalName;
 			string ns = nav.NamespaceURI;
 
