@@ -189,7 +189,7 @@ namespace System.Reflection.Emit {
 
 		public void Save (string assemblyFileName)
 		{
-			byte[] buf = new byte [65536];
+			byte[] buf = new byte [1024000];
 			FileStream file;
 			int count;
 
@@ -198,8 +198,11 @@ namespace System.Reflection.Emit {
 			count = getDataChunk (this, 0, buf);
 			if (count != 0) {
 				file.Write (buf, 0, count);
-				count = getDataChunk (this, 1, buf); /* may be a too small buffer */
-				file.Write (buf, 0, count);
+				int offset = 1;
+				while ((count = getDataChunk (this, offset, buf)) != 0) {
+					file.Write (buf, 0, count);
+					offset += count;
+				}
 			}
 
 			file.Close ();

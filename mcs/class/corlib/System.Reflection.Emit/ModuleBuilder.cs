@@ -10,6 +10,7 @@
 
 using System;
 using System.Reflection;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -19,12 +20,14 @@ namespace System.Reflection.Emit {
 		private CustomAttributeBuilder[] cattrs;
 		private int table_idx;
 		private AssemblyBuilder assemblyb;
+		Hashtable name_cache;
 
 		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
 			table_idx = get_next_table_index (0x00, true);
+			name_cache = new Hashtable ();
 		}
 	
 		public override string FullyQualifiedName {get { return fqname;}}
@@ -54,6 +57,7 @@ namespace System.Reflection.Emit {
 				types = new TypeBuilder [1];
 				types [0] = res;
 			}
+			name_cache.Add (name, res);
 			return res;
 		}
 
@@ -88,6 +92,8 @@ namespace System.Reflection.Emit {
 
 		private TypeBuilder search_in_array (TypeBuilder[] arr, string className, bool ignoreCase) {
 			int i;
+			if (arr == types && !ignoreCase)
+				return (TypeBuilder)name_cache [className];
 			for (i = 0; i < arr.Length; ++i) {
 				if (String.Compare (className, arr [i].FullName, ignoreCase) == 0) {
 					return arr [i];

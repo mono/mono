@@ -380,20 +380,11 @@ namespace System.Reflection.Emit {
 		
 		public override Type[] GetInterfaces () {
 			if (interfaces != null) {
-				Type [] pi;
-				if (parent != null)
-					pi = parent.GetInterfaces ();
-				else
-					pi = Type.EmptyTypes;
-				Type[] ret = new Type [interfaces.Length + pi.Length];
+				Type[] ret = new Type [interfaces.Length];
 				interfaces.CopyTo (ret, 0);
-				pi.CopyTo (ret, interfaces.Length);
 				return ret;
 			} else {
-				if (parent != null)
-					return parent.GetInterfaces ();
-				else
-					return Type.EmptyTypes;
+				return Type.EmptyTypes;
 			}
 		}
 

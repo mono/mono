@@ -96,6 +96,11 @@ namespace System.Reflection.Emit {
 		}
 	}
 	
+	internal struct ILTokenInfo {
+		public MemberInfo member;
+		public int code_pos;
+	}
+
 	public class ILGenerator: Object {
 		private struct LabelFixup {
 			public int size;
@@ -109,6 +114,8 @@ namespace System.Reflection.Emit {
 		private int cur_stack;
 		private LocalBuilder[] locals;
 		private ILExceptionInfo[] ex_handlers;
+		private int num_token_fixups;
+		private ILTokenInfo[] token_fixups;
 		private int[] label_to_addr;
 		private int num_labels;
 		private LabelFixup[] fixups;
@@ -127,11 +134,23 @@ namespace System.Reflection.Emit {
 			num_fixups = num_labels = 0;
 			label_to_addr = new int [16];
 			fixups = new LabelFixup [16];
+			token_fixups = new ILTokenInfo [16];
+			num_token_fixups = 0;
 			if (mb is MethodBuilder) {
 				abuilder = (AssemblyBuilder)((MethodBuilder)mb).TypeBuilder.Module.Assembly;
 			} else if (mb is ConstructorBuilder) {
 				abuilder = (AssemblyBuilder)((ConstructorBuilder)mb).TypeBuilder.Module.Assembly;
 			}
+		}
+
+		private void add_token_fixup (MemberInfo mi) {
+			if (num_token_fixups == token_fixups.Length) {
+				ILTokenInfo[] ntf = new ILTokenInfo [num_token_fixups * 2];
+				token_fixups.CopyTo (ntf, 0);
+				token_fixups = ntf;
+			}
+			token_fixups [num_token_fixups].member = mi;
+			token_fixups [num_token_fixups++].code_pos = code_len;
 		}
 
 		private void make_room (int nbytes) {
@@ -311,6 +330,8 @@ namespace System.Reflection.Emit {
 			int token = abuilder.GetToken (constructor);
 			make_room (6);
 			ll_emit (opcode);
+			if (constructor is ConstructorBuilder)
+				add_token_fixup (constructor);
 			emit_int (token);
 		}
 		public virtual void Emit (OpCode opcode, Double val) {
@@ -324,6 +345,8 @@ namespace System.Reflection.Emit {
 			int token = abuilder.GetToken (field);
 			make_room (6);
 			ll_emit (opcode);
+			if (field is FieldBuilder)
+				add_token_fixup (field);
 			emit_int (token);
 		}
 		public virtual void Emit (OpCode opcode, Int16 val) {
@@ -396,6 +419,8 @@ namespace System.Reflection.Emit {
 			int token = abuilder.GetToken (method);
 			make_room (6);
 			ll_emit (opcode);
+			if (method is MethodBuilder)
+				add_token_fixup (method);
 			emit_int (token);
 		}
 		[CLSCompliant(false)]

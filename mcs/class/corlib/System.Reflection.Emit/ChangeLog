@@ -1,4 +1,15 @@
 
+Thu Mar 7 17:10:42 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: allow saving bigger assemblies.
+	* ILGenerator.cs: add fixup table for fields and methods, since
+	at the end of the compile they may end up with a different table
+	index.
+	* ModuleBuilder.cs: add cache for type names to speed up the type
+	lookups from the compiler.
+	* TypeBuilder.cs: GetInterfaces () returns only interfaces in the
+	current type, not in parents (the docs are wrong).
+
 Tue Mar 5 18:09:34 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* EventBuilder.cs: implemented.
