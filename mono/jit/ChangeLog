@@ -1,3 +1,7 @@
+2001-09-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c (mono_compile_method): implemented POP
+
 2001-09-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* testjit.c (usage): Added a couple of more usage options.
