@@ -1,4 +1,9 @@
 
+Fri Apr 5 18:29:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, object.c, reflection.c: documented the exported
+	functions.
+
 Fri Apr 5 15:42:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: simpler code to pass the assembly builder data to corlib.
