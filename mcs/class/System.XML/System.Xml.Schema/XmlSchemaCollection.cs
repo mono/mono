@@ -142,11 +142,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-		private string GetSafeNs (string ns)
-		{
-			return ns != null ? ns : String.Empty;
-		}
-
 		public void Add (XmlSchemaCollection schema)
 		{
 			if (schema == null)
