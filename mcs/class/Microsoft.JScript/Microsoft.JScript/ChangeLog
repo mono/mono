@@ -1,3 +1,11 @@
+2003-11-08 cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: Allow the building of numeric_literal and DECIMAL_LITERAL,
+	this is temporal in order to get Factorial compiled by mjs (must
+	build the types according to Ecma-262 spec).
+
+	* Literal.cs: Added NumericLiteral class.
+
 2003-11-06 cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* FunctionDeclaration.cs: Build a ScriptFunction local variable,
