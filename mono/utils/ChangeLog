@@ -1,3 +1,7 @@
+2003-12-02  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mono-math.c: fix for older C compilers and big endian machines
+
 2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-math.h mono-math.c: New file which contains implementations of
