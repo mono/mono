@@ -1,12 +1,12 @@
 //
 // AssemblyInfo.cs
 //
-// Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// Authors:
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 // General Information about the system assembly
 
@@ -47,15 +48,23 @@ using System.Runtime.InteropServices;
 	[assembly: SatelliteContractVersion ("1.0.5000.0")]
 #endif
 
-//[assembly: AssemblyCompany ("MONO development team")]
-//[assembly: AssemblyCopyright ("(c) 2003-2004 Various Authors")]
-//[assembly: AssemblyDescription ("System.Security.dll")]
-//[assembly: AssemblyProduct ("MONO CLI")]
-//[assembly: AssemblyTitle ("System.Security.dll")]
-
 [assembly: CLSCompliant (true)]
 [assembly: ComVisible (false)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../msfinal.pub")]
+
+#if NET_2_0
+[assembly: AssemblyCompany ("MONO development team")]
+[assembly: AssemblyCopyright ("Copyright (C) 2002-2004 Various Authors")]
+[assembly: AssemblyDefaultAlias ("")]
+[assembly: AssemblyDescription ("System.Security.dll")]
+[assembly: AssemblyFileVersion ("")]
+[assembly: AssemblyInformationalVersion ("")]
+[assembly: AssemblyProduct ("MONO CLI")]
+[assembly: AssemblyTitle ("System.Security.dll")]
+[assembly: AllowPartiallyTrustedCallers ()]
+
+[module: CompilationRelaxations (0)]
+#endif
