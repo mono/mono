@@ -265,12 +265,14 @@ namespace System.Security.Cryptography {
 
 		// LAMESPEC: str is not the hash name but an OID
 		// NOTE: this method is LIMITED to SHA1 and MD5 like the MS framework 1.0 
-		// and 1.1 because there's no mathod to get a hash algorithm from an OID. 
+		// and 1.1 because there's no method to get a hash algorithm from an OID. 
 		// However there's no such limit when using the [De]Formatter class.
 		public byte[] SignHash (byte[] rgbHash, string str) 
 		{
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
+			if (str == null)
+				throw new CryptographicException (Locale.GetText ("No OID specified"));
 	
 			HashAlgorithm hash = HashAlgorithm.Create (GetHashNameFromOID (str));
 			return PKCS1.Sign_v15 (this, hash, rgbHash);

@@ -7,6 +7,7 @@
 	* ICryptoTransform.cs: Moved XML comments to monodoc.
 	* PasswordDeriveBytes.cs: Changed Array.Copy to Buffer.BlockCopy.
 	* FromBase64Transform.cs: Moved XML comments to monodoc.
+	* RSACryptoServiceProvider.cs: Fixed OID related exception in SignData.
 	* ToBase64Transform.cs: Input block may be smaller than a full block
 	when calling TransformFinalBlock (fix 2 CryptoStream unit tests).
 
