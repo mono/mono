@@ -16,6 +16,7 @@
 //
 //
 using System.Text;
+using System.IO;
 using System;
 
 namespace Mono.CSharp
@@ -3862,17 +3863,16 @@ public Tokenizer Lexer {
 	}
 }		   
 
-public CSharpParser (string name, System.IO.Stream input, ArrayList defines)
+public CSharpParser (StreamReader reader, string name, ArrayList defines)
 {
 	current_namespace = new Namespace (null, "");
 	this.name = name;
-	this.input = input;
 	current_container = RootContext.Tree.Types;
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();
 	switch_stack = new Stack ();
 
-	lexer = new Tokenizer (input, name, defines);
+	lexer = new Tokenizer (reader, name, defines);
 }
 
 public override void parse ()

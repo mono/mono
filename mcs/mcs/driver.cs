@@ -89,6 +89,17 @@ namespace Mono.CSharp
 		// Last time we took the time
 		//
 		static DateTime last_time, first_time;
+
+		//
+		// Encoding: ISO-Latin1 is 28591
+		//
+		static Encoding encoding = Encoding.GetEncoding (28591);
+
+		//
+		// Whether the user has specified a different encoder manually
+		//
+		static bool using_default_encoder = true;
+		
 		public static void ShowTime (string msg)
 		{
 			if (!timestamps)
@@ -129,7 +140,8 @@ namespace Mono.CSharp
 			}
 
 			using (input){
-				Tokenizer lexer = new Tokenizer (input, input_file, defines);
+				StreamReader reader = new StreamReader (input, encoding, using_default_encoder);
+				Tokenizer lexer = new Tokenizer (reader, input_file, defines);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -157,7 +169,9 @@ namespace Mono.CSharp
 				return;
 			}
 
-			parser = new CSharpParser (input_file, input, defines);
+			StreamReader reader = new StreamReader (input, encoding, using_default_encoder);
+				
+			parser = new CSharpParser (reader, input_file, defines);
 			parser.yacc_verbose = yacc_verbose;
 			try {
 				parser.parse ();
@@ -175,6 +189,7 @@ namespace Mono.CSharp
 				"mcs [options] source-files\n" +
 				"   --about            About the Mono C# compiler\n" +
 				"   -checked[+|-]      Set default context to checked\n" +
+				"   -codepage:ID       Sets code page to the one in ID (numer, `utf8' or `reset')" +
 				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
 				"   -debug[+-]         Generate debugging information\n" + 
 				"   -g                 Generate debugging information\n" +
@@ -998,6 +1013,33 @@ namespace Mono.CSharp
 
 			case "/nostdlib-":
 				RootContext.StdLib = true;
+				return true;
+
+			case "/codepage":
+				int cp = -1;
+
+				if (value == "utf8")
+					cp = UTF8Encoding.WindowsCodePage;
+				if (value == "reset"){
+					cp = 28591;
+					using_default_encoder = true;
+				}
+				
+				try {
+					cp = Int32.Parse (value);
+				} catch { }
+				
+				if (cp == -1){
+					Console.WriteLine ("Invalid code-page requested");
+					Usage ();
+				}
+
+				try {
+					encoding = Encoding.GetEncoding (cp);
+					using_default_encoder = false;
+				} catch {
+					Console.WriteLine ("Code page: {0} not supported", cp);
+				}
 				return true;
 
 			}

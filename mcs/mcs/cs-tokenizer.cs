@@ -324,10 +324,11 @@ namespace Mono.CSharp
 			defines [def] = true;
 		}
 		
-		public Tokenizer (System.IO.Stream input, string fname, ArrayList defs)
+		public Tokenizer (StreamReader input, string fname, ArrayList defs)
 		{
 			this.ref_name = fname;
-			reader = new System.IO.StreamReader (input);
+			reader = input;
+			
 			putback_char = -1;
 
 			if (defs != null){
