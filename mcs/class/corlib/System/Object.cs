@@ -108,7 +108,5 @@ namespace System {
 		{
 			return (a == b);
 		}
-
-		
 	}
 }
