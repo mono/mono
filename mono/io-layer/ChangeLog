@@ -1,3 +1,11 @@
+2002-12-11  Juli Mallett  <jmallett@FreeBSD.org>
+
+	* daemon.c, handles-private.h, handles.c, wapi-private.h:
+	Check for an implementation which says it supports
+	_POSIX_THREAD_PROCESS_SHARED, rather than just one that
+	defines the symbol.  Defined but with a value of -1 still
+	means that it is unsupported.
+
 2002-12-08  Martin Baulig  <martin@ximian.com>
 
 	* handles.c (_wapi_handle_new): Create new non-shared handles with
