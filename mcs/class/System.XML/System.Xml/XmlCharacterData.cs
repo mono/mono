@@ -47,7 +47,11 @@ namespace System.Xml
 		}
 
 		public override string Value {
-			get { return data; }
+			get {
+				if (IsReadOnly)
+					throw new ArgumentException ("Node is read-only.");
+				
+				return data; }
 
 			set { data = value; }
 		}

@@ -1,3 +1,8 @@
+2002-06-12  Duncan Mak  <duncan@ximian.com>
+
+	* XmlCharacterData.cs (Value): Throw an ArgumentException if the
+	node is read-only.
+
 2002-06-10  Ajay kumar Dwivedi <adwiv@yahoo.com>
 	* XmlConstruct.cs : New Internal class with Helper methods for
 	Checking XmlConstructs
