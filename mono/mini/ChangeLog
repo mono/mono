@@ -1,4 +1,12 @@
 
+Thu Aug 21 19:10:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: 64bit fixes from Laurent Morichetti <l_m@pacbell.net>.
+	* linear-scan.c, mini-ppc.h, mini-sparc.h, mini-x86.h, mini.h,
+	regalloc.c, regalloc.h: specify available registers in arch-specific
+	code and support floats in the regallocator (patch by Laurent Morichetti 
+	<l_m@pacbell.net>)
+
 Wed Aug 20 19:02:22 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: mono_thread_current() can be called only after
