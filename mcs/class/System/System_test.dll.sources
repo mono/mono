@@ -52,6 +52,7 @@ System.Net/WebRequestTest.cs
 System.Net.Sockets/TcpClientTest.cs
 System.Net.Sockets/TcpListenerTest.cs
 System.Net.Sockets/SocketTest.cs
+System.Net.Sockets/UdpClientTest.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollectionTest.cs
 System.Security.Permissions/ResourcePermissionBaseEntryTest.cs
 System.Security.Permissions/ResourcePermissionBaseTest.cs
