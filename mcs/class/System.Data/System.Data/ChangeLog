@@ -1,12 +1,16 @@
 2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
 
-	* DataRowCollection.cs : Removed onColumnRemoved since it iss not in use.
+	* ChangeLog : Fix for misspelled words.
+
+2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
+
+	* DataRowCollection.cs : Removed onColumnRemoved since it is not in use.
 	
 2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
 
 	* DataTable.cs :
-	  - Table stores default values for columns in soecial default values row. 
-	  It is allocated once (in NewRow)
+	  - Table stores default values for columns in special default values row. 
+	  It is allocated once (in NewRow).
 	  - DataTable.Copy rewrited. It works with uninitialized rows for better perfomance.
 	  - OnRemoveColumn has nothing to perform by now.
 
