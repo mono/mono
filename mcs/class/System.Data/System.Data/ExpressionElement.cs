@@ -386,7 +386,7 @@ namespace System.Data
 			int len2 = operand2.Length;
 			int startIndex = 0;
 			while ((startIndex + len2) <= operand1.Length) {
-				if (String.Compare (operand1.Substring (0, len2), operand2, !Row.Table.CaseSensitive) == 0)
+				if (String.Compare (operand1.Substring (startIndex, len2), operand2, !Row.Table.CaseSensitive) == 0)
 					return true;
 				startIndex++;
 			}
