@@ -1,3 +1,7 @@
+2003-03-16 Jackson Harper <jackson@latitudegeo.com>
+
+	* MethodTable.cs: Fire events when methods are defined and referenced
+
 2003-03-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* ClassTable.cs: Classes now store field tables

@@ -14,6 +14,57 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
+
+	public delegate void MethodDefinedEvent (object sender, MethodDefinedEventArgs args);
+	public delegate void MethodReferencedEvent (object sender, MethodReferencedEventArgs args);
+
+	public class MethodEventArgs : EventArgs {
+		
+		public readonly string Signature;
+		public readonly string Name;
+		public readonly TypeRef ReturnType;
+		public readonly Param[] ParamList;
+		public readonly bool IsInTable;
+
+		public MethodEventArgs (string signature, string name,
+			TypeRef return_type, Param[] param_list, bool is_in_table) 
+		{
+			Signature = signature;
+			Name = name;
+			ReturnType = return_type;
+			ParamList = param_list;
+			IsInTable = is_in_table;
+		}
+	}
+
+	public class MethodDefinedEventArgs : MethodEventArgs {
+
+		public readonly MethAttr MethodAttributes;
+		public readonly ImplAttr ImplAttributes;
+		public readonly CallConv CallConv;
+		
+		public MethodDefinedEventArgs (string signature, string name, 
+			TypeRef return_type, Param[] param_list, bool is_in_table, MethAttr method_attr, 
+			ImplAttr impl_attr, CallConv call_conv) : base (signature, name, 
+			return_type, param_list, is_in_table)
+		{
+			MethodAttributes = method_attr;
+			ImplAttributes = impl_attr;
+			CallConv = call_conv;
+		}
+	}
+
+	public class MethodReferencedEventArgs : MethodEventArgs {
+		
+		public MethodReferencedEventArgs (string signature, string name, 
+			TypeRef return_type, Param[] param_list, bool is_in_table) : base (signature, name, 
+			return_type, param_list, is_in_table)
+		{
+
+		}
+	}
+
+
 	public class MethodTable {
 
 		private class MethodTableItem {
@@ -47,6 +98,9 @@ namespace Mono.ILASM {
 		protected Hashtable table;
 		protected ClassDef parent_class;
 		
+		public static event MethodReferencedEvent MethodReferencedEvent;
+		public static event MethodDefinedEvent MethodDefinedEvent;
+
 		public MethodTable (ClassDef parent_class)
 		{
 			this.parent_class = parent_class;
@@ -57,6 +111,10 @@ namespace Mono.ILASM {
 			Param[] param_list, TypeRef[] param_type_list, Location location)
 		{
 			string signature = GetSignature (name, return_type, param_type_list);
+
+			if (MethodReferencedEvent != null)
+				MethodReferencedEvent (this, new MethodReferencedEventArgs (signature, name,
+					return_type, param_list, table.Contains (signature)));
 
 			MethodTableItem item = table[signature] as MethodTableItem;
 			
@@ -78,6 +136,11 @@ namespace Mono.ILASM {
 			TypeRef[] param_type_list, Location location) 
 		{
 			string signature = GetSignature (name, return_type, param_type_list);
+
+			if (MethodDefinedEvent != null)
+				MethodDefinedEvent (this, new MethodDefinedEventArgs (signature, name,
+					return_type, param_list, table.Contains (signature), method_attr, 
+					impl_attr, call_conv));
 
 			CheckExists (signature);
 
