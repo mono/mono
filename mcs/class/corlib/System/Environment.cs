@@ -457,7 +457,7 @@ namespace System
 			get {
 				if ((int) Platform != 128) {
 					/* On windows, we don't know the path where mscorlib.dll will be installed */
-					string corlibDir = Path.GetDirectoryName (typeof (int).Assembly.Location);
+					string corlibDir = new DirectoryInfo (Path.GetDirectoryName (typeof (int).Assembly.Location)).Parent.Parent.FullName;
 					return Path.Combine (Path.Combine (corlibDir, "mono"), "gac");
 				}
 
