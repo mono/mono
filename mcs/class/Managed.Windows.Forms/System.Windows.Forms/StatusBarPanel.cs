@@ -119,11 +119,6 @@ namespace System.Windows.Forms {
 			return "StatusBarPanel: {" + Text +"}";
 		}
 
-		public virtual void Dispose ()
-		{
-			Dispose (true);
-		}
-
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
