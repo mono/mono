@@ -1,5 +1,13 @@
 2003-02-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (MemberBase.CheckParameters): Also check that the type
+	is unmanaged if it is a pointer.
+
+	* expression.cs (SizeOf.Resolve): Add location information.
+
+	* statement.cs (Block.EmitMeta): Flag error (208) if a pointer to
+	a managed type is declared.
+
 	* expression.cs (Invocation.VerifyArgumentsCompat): Check for the
 	parameter modifiers as well.  Fixes bug 38606
 

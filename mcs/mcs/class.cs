@@ -3279,8 +3279,12 @@ namespace Mono.CSharp {
 			bool error = false;
 
 			foreach (Type partype in parameters){
-				if (partype.IsPointer && !UnsafeOK (parent))
-					error = true;
+				if (partype.IsPointer){
+					if (!UnsafeOK (parent))
+						error = true;
+					if (!TypeManager.VerifyUnManaged (partype.GetElementType (), Location))
+						error = true;
+				}
 
 				if (parent.AsAccessible (partype, ModFlags))
 					continue;

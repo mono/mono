@@ -5890,8 +5890,9 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (!ec.InUnsafe) {
-				Error (233, "Sizeof may only be used in an unsafe context " +
-				       "(consider using System.Runtime.InteropServices.Marshal.Sizeof");
+				Report.Error (
+					233, loc, "Sizeof may only be used in an unsafe context " +
+					"(consider using System.Runtime.InteropServices.Marshal.Sizeof");
 				return null;
 			}
 				
@@ -5900,7 +5901,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (!TypeManager.IsUnmanagedType (type_queried)){
-				Report.Error (208, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
+				Report.Error (208, loc, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
 				return null;
 			}
 			
