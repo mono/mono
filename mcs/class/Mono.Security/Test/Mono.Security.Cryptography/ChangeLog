@@ -1,3 +1,8 @@
+2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPersistanceTest.cs: Merge fixes from HEAD when machine store
+	isn't created (and can't be created by the current user).
+
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ARC4ManagedTest.cs: Added unit tests for exceptions coming from 
