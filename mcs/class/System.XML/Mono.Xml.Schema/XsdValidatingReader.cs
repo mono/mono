@@ -23,7 +23,7 @@ namespace Mono.Xml.Schema
 {
 	public class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext
 	{
-		char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
+		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
 		XmlReader reader;
 		XmlValidatingReader xvReader;
@@ -435,9 +435,9 @@ namespace Mono.Xml.Schema
 		private XmlSchemaElement FindElement (string name, string ns)
 		{
 			foreach (XmlSchema target in schemas) {
-				XmlSchema matches = target.Schemas [reader.NamespaceURI];
+				XmlSchema matches = target.Schemas [ns];
 				if (matches != null) {
-					XmlSchemaElement result = target.Elements [new XmlQualifiedName (reader.LocalName, reader.NamespaceURI)] as XmlSchemaElement;
+					XmlSchemaElement result = target.Elements [new XmlQualifiedName (name, ns)] as XmlSchemaElement;
 					if (result != null)
 						return result;
 				}
@@ -1465,7 +1465,7 @@ namespace Mono.Xml.Schema
 						Uri absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), tmp [i + 1]);
 						XmlTextReader xtr = new XmlTextReader (absUri.ToString ());
 						schema = XmlSchema.Read (xtr, null);
-					} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
+					} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
 						continue;
 					}
 					if (schema.TargetNamespace == null)
@@ -1488,7 +1488,7 @@ namespace Mono.Xml.Schema
 					Uri absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), noNsSchemaLocation);
 					XmlTextReader xtr = new XmlTextReader (absUri.ToString ());
 					schema = XmlSchema.Read (xtr, null);
-				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
+				} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
 				}
 				if (schema != null && schema.TargetNamespace != null)
 					HandleError ("Specified schema has different target namespace.");
