@@ -1,3 +1,6 @@
+2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* icall.c (ves_icall_MonoMethodMessage_InitMessage): moved from message.c
 
 Thu Mar 28 12:32:00 CET 2002 Paolo Molaro <lupus@ximian.com>
 
