@@ -139,7 +139,7 @@ namespace MonoTests.System.IO
 		public void CtorArgumentOutOfRangeException1 ()
 		{
 			FileStream stream = null;
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
 			DeleteFile (path);
                 	try {
                 		stream = new FileStream (path, FileMode.Append | FileMode.CreateNew);
@@ -155,7 +155,7 @@ namespace MonoTests.System.IO
 		public void CtorArgumentOutOfRangeException2 ()
 		{
 			FileStream stream = null;
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
 			DeleteFile (path);
                 	try {
                 		stream = new FileStream ("test.test.test", FileMode.Append | FileMode.Open);
@@ -227,7 +227,7 @@ namespace MonoTests.System.IO
 		{
                		// FileMode.CreateNew && FileAccess.Read
 
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
                 	FileStream stream = null;
 
 			DeleteFile (path);
@@ -247,7 +247,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void CtorArgumentOutOfRangeException5 ()
 		{
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
 			DeleteFile (path);
 
 			FileStream stream = null;
@@ -265,7 +265,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void CtorArgumentException3 ()
 		{
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
                 	FileStream stream = null;
 
 			DeleteFile (path);
@@ -579,7 +579,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof(NotSupportedException))]
 		public void TestWriteVerifyAccessMode ()
 		{
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
 			DeleteFile (path);
 
 			FileStream stream = null;
@@ -605,7 +605,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestWriteByteVerifyAccessMode ()
 		{
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
 			DeleteFile (path);
 
 			FileStream stream = null;
@@ -629,7 +629,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestReadVerifyAccessMode ()
 		{
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
 			DeleteFile (path);
 
 			FileStream stream = null;
@@ -653,7 +653,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestReadByteVerifyAccessMode ()
 		{
-			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
 			DeleteFile (path);
 
 			FileStream stream = null;

@@ -1,5 +1,9 @@
 2003-05-15  Ville Palo <vi64pa@kolumbus.fi>
 
+	* FileStreamTest.cs: more cleaning
+	
+2003-05-15  Ville Palo <vi64pa@kolumbus.fi>
+
 	* StreamReaderTest.cs:
 	* StreamWriterTest.cs: now use temp-dir
 	
