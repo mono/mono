@@ -564,7 +564,13 @@
     		
     		protected override CreateParams CreateParams {
     			get {
-    				return base.CreateParams;
+				CreateParams pars = base.CreateParams;
+				pars.Style |= (int)( WindowStyles.WS_OVERLAPPEDWINDOW | 
+							WindowStyles.WS_CLIPSIBLINGS /* |
+							WindowStyles.WS_CLIPCHILDREN */);
+				// should have WS_CLIPCHILDREN style but there are
+				// problems with GroupBox at the moment
+				return pars;
     			}
     		}
     
@@ -917,10 +923,6 @@
 					break;
 				case Msg.WM_CTLCOLORLISTBOX:
 					Control.ReflectMessage( m.LParam, ref m);
-					break;
-				case Msg.WM_HSCROLL:
-				case Msg.WM_VSCROLL:
-					Control.ReflectMessage( m.LParam, ref m );
 					break;
 				default:
 					base.WndProc (ref m);

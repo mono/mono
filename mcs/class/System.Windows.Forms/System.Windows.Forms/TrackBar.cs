@@ -332,8 +332,10 @@ namespace System.Windows.Forms {
 				if ( ValueChanged != null )
 					ValueChanged (this, new EventArgs() );
 			break;
+			default:
+				base.WndProc(ref m);
+			break;
 			}
-			base.WndProc(ref m);
 		}
 
 		[MonoTODO]

@@ -1,3 +1,14 @@
+2003-03-20 Alexandre Pigolkine <pigolkine@gmx.de
+	* Control.cs
+	* Form.cs
+	* GroupBox.cs
+	* Label.cs
+	* Panel.cs
+	* TrackBar.cs
+	* win32functions.cs
+		checkin for Aleksey Ryabchuk <ryabchuk@yahoo.com>
+		implementation of Timer class and small modifications to other files
+
 2003-03-18 Alexandre Pigolkine <pigolkine@gmx.de>
 	* monowinehooks.c
 	* runwine

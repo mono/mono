@@ -1090,15 +1090,13 @@
   			//Compact Framework
     		public bool Visible {
     			get {
-    				throw new NotImplementedException ();
+				return visible;
     			}
     			set {
-    				if (value)
-    					Win32.ShowWindow (
-    						Handle, ShowWindowStyles.SW_SHOW);
-    				else
-    					Win32.ShowWindow (
-    						Handle, ShowWindowStyles.SW_HIDE);
+				visible = value;
+				if ( visible ) 
+					 Show();
+				else	 Hide ();
     			}
     		}
     		
@@ -2247,7 +2245,8 @@
  			//Compact Framework
     		public void Show () 
     		{
-    			Win32.ShowWindow (Handle, ShowWindowStyles.SW_SHOW);
+			if (IsHandleCreated)
+	    			Win32.ShowWindow (Handle, ShowWindowStyles.SW_SHOW);
     		}
     		
     		[MonoTODO]
@@ -2544,6 +2543,10 @@
 					break;
 				case Msg.WM_DRAWITEM:
 					Control.ReflectMessage( m.WParam, ref m);
+					break;
+				case Msg.WM_HSCROLL:
+				case Msg.WM_VSCROLL:
+					Control.ReflectMessage( m.LParam, ref m );
 					break;
 				default:
 					CallControlWndProc(ref m);

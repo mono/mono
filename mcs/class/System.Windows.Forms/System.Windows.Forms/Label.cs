@@ -198,10 +198,6 @@
 					if( Parent != null) {
 						CreateParams createParams = new CreateParams ();
 
-						if(window == null) {
-							window = new ControlNativeWindow (this);
-						}
-		 
 						createParams.Caption = Text;
 						createParams.ClassName = "Static";
 						createParams.X = Left;
@@ -215,8 +211,10 @@
 						createParams.Style = (int) (
 							(int)WindowStyles.WS_CHILD | 
 							(int)WindowStyles.WS_VISIBLE | 
-							(int)SS_Static_Control_Types.SS_LEFT );
-						window.CreateHandle (createParams);
+							(int)SS_Static_Control_Types.SS_LEFT |
+							(int)WindowStyles.WS_CLIPCHILDREN |
+							(int)WindowStyles.WS_CLIPSIBLINGS );
+
 						return createParams;
 					}
 					return null;

@@ -489,6 +489,11 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal static extern int GetSysColor( GetSysColorIndex color);
 
+		internal delegate void TimerProc(IntPtr hWnd, uint uMsg, uint idEvent, int dwTime);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern uint SetTimer (IntPtr hWnd, uint nIDEvent, uint uElapse, TimerProc lpTimerFunc);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern bool KillTimer (IntPtr hWnd, uint nIDEvent);
 		#endregion
 
 		#region Shell32.dll functions

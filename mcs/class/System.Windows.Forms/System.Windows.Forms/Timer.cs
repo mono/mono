@@ -2,85 +2,108 @@
 // System.Windows.Forms.Timer
 //
 // Author:
-//   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //	Dennis Hayes (dennish@raytek.com)
+//	Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
 
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Collections;
+
 namespace System.Windows.Forms {
 
 	// <summary>
+	//	Represents a timer that raises an event at user-defined intervals.
 	// </summary>
-using System.ComponentModel;
-    public class Timer : Component {
+	public class Timer : Component {
 
-		//
-		//  --- Public Constructors
-		//
-		[MonoTODO]
-		public Timer()
-		{
-			
+		private bool enabled = false;
+		private int  interval = 100;
+		private uint timerid = 0;
+		private GCHandle timerHandle;
+		private Win32.TimerProc proc;
+
+		public Timer(){
 		}
-		[MonoTODO]
-		public Timer(IContainer container)
-		{
-			
+
+		public Timer( IContainer container ) {
+			container.Add ( this );
 		}
-		//
-		// --- Public Properties
-		//
-		[MonoTODO]
+
 		public virtual bool Enabled {
-			get {
-				throw new NotImplementedException ();
+			get { 
+				return enabled;
 			}
-			set {
-				//FIXME:
+			set { 
+				enabled = value;
+				if ( enabled ) {
+					if ( !timerHandle.IsAllocated )
+						timerHandle = GCHandle.Alloc( this );
+
+					if ( proc == null )
+						proc = new Win32.TimerProc( this.TimeProc );
+					
+					timerid = Win32.SetTimer( IntPtr.Zero,	0, (uint)Interval, proc );
+				}
+				else {
+					if ( timerid != 0 )
+						Win32.KillTimer ( IntPtr.Zero , timerid );
+
+					timerid = 0;
+
+					if ( timerHandle.IsAllocated )
+						timerHandle.Free();
+				}
 			}
 		}
-		[MonoTODO]
+
 		public int Interval {
 			get {
-				throw new NotImplementedException ();
+				return interval;
 			}
 			set {
-				//FIXME:
+				if ( value <= 0 )
+					throw new ArgumentException (
+					string.Format (" '{0}' is not a valid value for Interval. Interval must be greater than 0.",
+							value ) );
+				interval = value;
+				if ( Enabled )
+					Enabled = true; // restart
 			}
 		}
-		//
-		// --- Public Methods
-		//
-		[MonoTODO]
-		public void Start() 
-		{
-			//FIXME:
+
+		public void Start() {
+			Enabled = true;
 		}
-		[MonoTODO]
-		public void Stop() 
-		{
-			//FIXME:
+
+		public void Stop() {
+			Enabled = false;
 		}
-		[MonoTODO]
+
 		public override string ToString() 
 		{
-			//FIXME:
-			return base.ToString();
+			return "[" + GetType().FullName.ToString() + "], Interval: " + Interval;
 		}
-		//
-		// --- Public Events
-		//
-		[MonoTODO]
-		public event EventHandler Tick;
-		//
-		// --- Protected Methods
-		//
 
-		[MonoTODO]
+		public event EventHandler Tick;
+
 		protected virtual void OnTick(EventArgs e) 
 		{
-			//FIXME:
+			if ( Tick != null )
+				Tick ( this, e );
+		}
+
+		private void TimeProc( IntPtr hwnd, uint uMsg, uint idEvent, int dwTime )
+		{
+			OnTick ( EventArgs.Empty );
+		}  
+		
+		protected override void Dispose( bool disposing	) {
+			Enabled = false;
+			base.Dispose ( disposing );
 		}
 	}
 }

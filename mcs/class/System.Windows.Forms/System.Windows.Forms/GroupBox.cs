@@ -77,9 +77,6 @@ namespace System.Windows.Forms {
 			get {
 				if( Parent != null) {
 					CreateParams createParams = new CreateParams ();
-					if( window == null) {
-						window = new ControlNativeWindow (this);
-					}
 	 
 					createParams.Caption = Text;
 					createParams.ClassName = "BUTTON";
@@ -92,10 +89,13 @@ namespace System.Windows.Forms {
 					createParams.Param = 0;
 					createParams.Parent = Parent.Handle;
 					createParams.Style = (int) (
-						(int)WindowStyles.WS_CHILD | 
-						(int)WindowStyles.WS_VISIBLE | 
+						(int)WindowStyles.WS_CHILDWINDOW | 
 						(int)ButtonStyles.BS_GROUPBOX |
-						(int)SS_Static_Control_Types.SS_LEFT );
+						(int)SS_Static_Control_Types.SS_LEFT |
+						(int)WindowStyles.WS_CLIPCHILDREN |
+						(int)WindowStyles.WS_CLIPSIBLINGS |
+						(int)WindowStyles.WS_OVERLAPPED);
+					
 					return createParams;
 				}
 				return null;
