@@ -1,3 +1,10 @@
+2004-12-12  Alp Toker  <alp@atoker.com>
+
+  * cilc.cs:
+	* Test.cs:
+	* demo.c:
+	First stab at return values, and associated updates to the demo.
+
 2004-12-11  Alp Toker  <alp@atoker.com>
 
 	* cilc.cs:

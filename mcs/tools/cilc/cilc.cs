@@ -30,6 +30,9 @@ public class cilc
 
 		ns = "Unnamed";
 
+		RegisterByVal (typeof (uint));
+		RegisterByVal (typeof (int));
+
 		if (args.Length == 1) {
 			SmartBind (args[0]);
 		} else if (args.Length == 2) {
@@ -471,8 +474,8 @@ public class cilc
 		Hdecls.WriteLine ();
 		C.WriteLine ("{ 0, NULL, NULL }");
 		C.WriteLine ("};");
+		C.WriteLine ("etype = g_enum_register_static (\"" + gname + "\", values);");
 		C.WriteLine ("}");
-		C.WriteLine ("etype = g_enum_register_static (\"" + gname + "\", NULL);");
 		C.WriteLine ("return etype;");
 		C.WriteLine ("}");
 	}
@@ -824,6 +827,9 @@ public class cilc
 		if (IsRegisteredByVal (t))
 			return CsTypeToFlat (t) + " ";
 
+		if (t == typeof (void))
+			return "void ";
+
 		return CsTypeToG (t) + " *";
 	}
 
@@ -876,42 +882,30 @@ public class cilc
 	static void FunctionGen (ParameterInfo[] parameters, MethodBase m, Type t, Type ret_type, bool ctor)
 	{
 		string myargs = "";
+		bool has_return = !ctor && ret_type != null && ret_type != typeof (void);
+		bool stat = m.IsStatic;
 
-		bool has_return = false;
-		bool stat = false;
-		bool inst = false;
+		string mytype, rettype;
+		mytype = CurType + " *";
 
 		if (ctor) {
 			has_return = true;
+			rettype = mytype;
 			stat = true;
-		}
-		else {
-			stat = m.IsStatic;
-		}
-
-		inst = !stat;
-
-		string mytype;
-		mytype = CurType + " *";
-
-		/*
-			 Console.WriteLine (ret_type);
-			 if (ret_type != null && ret_type != typeof (Void)) {
-			 has_return = true;
-		//TODO: return simple gint or gchar if possible
-		mytype = "MonoObject *";
-		}
-		*/
+		} else
+				rettype = CsTypeToC (ret_type);
 
 		string params_arg = "NULL";
 		if (parameters.Length != 0)
 			params_arg = "_mono_params";
 
 		string instance = "thiz";
-		string instance_arg = instance + "->priv->mono_object";
+		string instance_arg = "NULL";
+	 
+		if (ctor || !stat)
+			instance_arg = instance + "->priv->mono_object";
 
-		//TODO: also check, !static
-		if (inst) {
+		if (!stat) {
 			myargs = mytype + instance;
 			if (parameters.Length > 0) myargs += ", ";
 		}
@@ -963,12 +957,13 @@ public class cilc
 			}
 		}
 
-		if (myargs == "") myargs = "void";
+		if (myargs == "")
+			myargs = "void";
 
 		C.WriteLine ();
 
 		if (has_return)
-			C.WriteLine (mytype + myname + " (" + myargs + ")", H, ";");
+			C.WriteLine (rettype + myname + " (" + myargs + ")", H, ";");
 		else
 			C.WriteLine ("void " + myname + " (" + myargs + ")", H, ";");
 
@@ -1002,23 +997,35 @@ public class cilc
 			ParameterInfo p = parameters[i];
 			C.WriteLine  (params_arg + "[" + i + "] = " + GetMonoVal (p.Name, p.ParameterType.ToString ()) + ";");
 		}
-		if (parameters.Length != 0) C.WriteLine ();
 
-		if (ctor) C.WriteLine (instance_arg + " = (MonoObject*) mono_object_new ((MonoDomain*) " + NsToC (ns) + "_get_mono_domain ()" + ", " + cur_type + "_get_mono_class ());");
+		if (parameters.Length != 0)
+			C.WriteLine ();
+
+		if (ctor)
+			C.WriteLine (instance_arg + " = (MonoObject*) mono_object_new ((MonoDomain*) " + NsToC (ns) + "_get_mono_domain ()" + ", " + cur_type + "_get_mono_class ());");
 
 		//delegates are a special case as we want their constructor to take a function pointer
 		if (ctor && t.IsSubclassOf (typeof (MulticastDelegate))) {
 			C.WriteLine ("mono_delegate_ctor (" + instance_arg + ", object, method);");
 		} else {
-			//invoke the method
+			//code to invoke the method
 
-			if (ctor || inst)
-				C.WriteLine ("mono_runtime_invoke (_mono_method, " + instance_arg + ", " + params_arg + ", NULL);");
+			if (!ctor && has_return)
+				if (IsRegisteredByVal (ret_type)) {
+					C.WriteLine ("{");
+					C.WriteLine (rettype + "* retval = (" + rettype + "*) mono_object_unbox (mono_runtime_invoke (_mono_method, " + instance_arg + ", " + params_arg + ", NULL));");
+					C.WriteLine ("return (" + rettype + ") *retval;");
+					C.WriteLine ("}");
+				} else {
+					//TODO: this isn't right
+					C.WriteLine ("return (" + rettype + ") mono_runtime_invoke (_mono_method, " + instance_arg + ", " + params_arg + ", NULL);");
+				}
 			else
-				C.WriteLine ("mono_runtime_invoke (_mono_method, " + "NULL" + ", " + params_arg + ", NULL);");
+				C.WriteLine ("mono_runtime_invoke (_mono_method, " + instance_arg + ", " + params_arg + ", NULL);");
 		}
 
-		if (ctor) C.WriteLine ("return " + instance + ";");
+		if (ctor)
+			C.WriteLine ("return " + instance + ";");
 
 		C.WriteLine ("}");
 	}

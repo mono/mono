@@ -1,7 +1,13 @@
+#include <glib.h>
+#include <glib/gprintf.h>
 #include "demo.h"
 
 int main () {
   DemoTest *my_test;
+	//gchar *tmp;
+	int num;
+	DemoDrink drink;
+	//GEnumClass *enum_class;
   
   //run a static method
   demo_test_static_method ();
@@ -21,10 +27,19 @@ int main () {
   //run a property set accessor
   demo_test_set_title (my_test, "set property from c");
   
+	//run a property set accessor
+  //tmp = demo_test_get_title (my_test);
+	//g_print (tmp);
+  num = demo_test_get_value (my_test);
+	g_printf ("The counter's value is %d\n", num);
+  
+	drink = demo_test_pick_drink ();
+	//enum_class = g_type_class_peek (demo_drink_get_type ());
+	//g_enum_get_value (enum_class, drink);
+	//g_printf ("%d\n", drink);
+  
   //TODO: return value
   //g_printf ("returned string: %s\n", demo_test_get_title (my_test));
 
-  //TODO: gobject-style DEMO_IS_TEST etc. macros
-
-  return 1;
+  return 0;
 }

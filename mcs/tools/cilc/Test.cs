@@ -49,6 +49,16 @@ namespace Demo
 			Console.WriteLine ("Instance method with an argument invoked: " + num + " added to value, making it " + counter);
 		}
 
+		public int GetValue ()
+		{
+			return counter;
+		}
+
+		public static Drink PickDrink ()
+		{
+			return Drink.Water;
+		}
+
 		public string Title
 		{
 			get { return title; }
@@ -69,5 +79,12 @@ namespace Demo
 		{
 			Console.WriteLine ("c# method with an unusual name invoked");
 		}
+	}
+
+	public enum Drink
+	{
+		Water,
+		Juice,
+		Cola
 	}
 }
