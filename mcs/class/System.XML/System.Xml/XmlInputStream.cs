@@ -20,6 +20,16 @@ namespace System.Xml
 			: base (input, input.ActualEncoding != null ? input.ActualEncoding : Encoding.UTF8)
 		{
 		}
+
+		public XmlStreamReader (Stream stream)
+			: this (new XmlInputStream (stream))
+		{
+		}
+
+		public XmlStreamReader (string url)
+			: this (new XmlInputStream (url))
+		{
+		}
 	}
 	#endregion
 
@@ -33,9 +43,17 @@ namespace System.Xml
 
 		static XmlException encodingException = new XmlException ("invalid encoding specification.");
 
-		public XmlInputStream (string uri)
+		public XmlInputStream (string url)
 		{
-			Initialize (new System.Net.WebClient ().OpenRead (uri));
+			Stream stream = null;
+			try {
+				Uri uriObj = new Uri (url);
+				stream = new System.Net.WebClient ().OpenRead (url);
+			} catch (UriFormatException) {
+			}
+			if (stream == null)
+				stream = File.OpenRead (url);
+			Initialize (stream);
 		}
 
 		public XmlInputStream (Stream stream)
@@ -114,8 +132,8 @@ namespace System.Xml
 					if (c == 'e') {
 						ms.WriteByte ((byte)'e');
 						size = stream.Read (buffer, 0, 7);
-						ms.Write (buffer, 0, 7);
-						if (Encoding.ASCII.GetString(buffer, 0, 7) == "ncoding") {
+						ms.Write (buffer, 0, size);
+						if (size == 7 && Encoding.ASCII.GetString(buffer, 0, 7) == "ncoding") {
 							c = this.SkipWhitespace(ms);
 							if (c != '=')
 								throw encodingException;
@@ -138,12 +156,14 @@ namespace System.Xml
 							ms.WriteByte ((byte)quoteChar);
 							enc = Encoding.GetEncoding (encodingName);
 						}
-						else
-							ms.Write (buffer, 0, size);
 					}
 					else
 						ms.WriteByte ((byte)c);
 				}
+
+				if (enc == null)
+					enc = Encoding.Default;
+
 				buffer = ms.ToArray ();
 				bufLength = buffer.Length;
 				bufPos = 0;
@@ -188,7 +208,7 @@ namespace System.Xml
 		}
 
 		public override bool CanSeek {
-			get { return false; } //stream.CanSeek; }
+			get { return stream.CanSeek; }
 		}
 
 		public override bool CanWrite {

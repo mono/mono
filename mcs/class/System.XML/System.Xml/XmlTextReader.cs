@@ -48,7 +48,7 @@ namespace System.Xml
 		}
 
 		public XmlTextReader (Stream input)
-			: this (new StreamReader (input))
+			: this (new XmlStreamReader (input))
 		{
 		}
 
@@ -68,12 +68,12 @@ namespace System.Xml
 		}
 
 		public XmlTextReader (Stream input, XmlNameTable nt)
-			: this(new StreamReader (input), nt)
+			: this(new XmlStreamReader (input), nt)
  		{
 		}
 
 		public XmlTextReader (string url, Stream input)
-			: this (url, new StreamReader (input))
+			: this (url, new XmlStreamReader (input))
 		{
 		}
 
@@ -84,13 +84,12 @@ namespace System.Xml
 
 		[MonoTODO("Non-filename-url must be supported. Waiting for WebClient")]
 		public XmlTextReader (string url, XmlNameTable nt)
-			// : this(url, new StreamReader ((Stream)new XmlUrlResolver ().GetEntity (new Uri (url), null, typeof(Stream))), nt)
-			: this (url, new StreamReader (url), nt)
+			: this (url, new XmlStreamReader (url), nt)
 		{
 		}
 
 		public XmlTextReader (TextReader input, XmlNameTable nt)
-			: this(String.Empty, input, nt)
+			: this (String.Empty, input, nt)
 		{
 		}
 
@@ -100,7 +99,7 @@ namespace System.Xml
 		}
 
 		public XmlTextReader (string url, Stream input, XmlNameTable nt)
-			: this (url, new StreamReader (input), nt)
+			: this (url, new XmlStreamReader (input), nt)
 		{
 		}
 
@@ -599,7 +598,8 @@ namespace System.Xml
 					endname = this.Name;
 				}
 
-				xmlBuffer.Replace (currentTag.ToString (), "");
+				if (currentTag.Length > 0)
+					xmlBuffer.Replace (currentTag.ToString (), "");
 				saveToXmlBuffer = false;
 				string InnerXml = xmlBuffer.ToString ();
 				xmlBuffer.Length = 0;
