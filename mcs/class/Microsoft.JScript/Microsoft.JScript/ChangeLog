@@ -1,5 +1,11 @@
 2003-09-20    <cesar@ciencias.unam.mx>
 
+	* driver.cs: Deleted the Jsc class. We are not generating code
+	now. I'm moving to provide something like mcs's EmitContext
+	instead of the CodeGenerator class having the Reflection.Emit
+	builders and ILGenerator. This driver is just for Lexical and
+	Parsing phases testing.
+
 	* driver.cs: Now we are using the Microsoft.JScript public API
 	functions to load the lexer and parser.
 
