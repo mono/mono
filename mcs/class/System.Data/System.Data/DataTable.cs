@@ -1699,7 +1699,7 @@ namespace System.Data {
 		// to parse the sort string for DataTable:Select(expression,sort)
 		// into sortable columns (think ORDER BY, 
 		// such as, "customer ASC, price DESC" )
-		private SortableColumn[] ParseTheSortString (string sort) 
+		internal SortableColumn[] ParseTheSortString (string sort) 
 		{
 			SortableColumn[] sortColumns = null;
 			ArrayList columns = null;
@@ -1747,7 +1747,7 @@ namespace System.Data {
 			return sortColumns;
 		}
 	
-		private class SortableColumn 
+		internal class SortableColumn 
 		{
 			private DataColumn col;
 			private ListSortDirection dir;

@@ -1,3 +1,9 @@
+2004-08-18 Umadevi S <sumadevi@novell.com>
+	* DataView.cs - Completed most of the event handling. 
+	Thanks to Punit Todi <punit_todi@da-iict.org> for implementing most of it.
+	Thanks to Boris Kirzner <borisk@mainsoft.com> for commenting and suggesting changes to the implementation.
+	* DataTable.cs - Changed Access modifiers of class/methods since it was used by DataView.
+
 2004-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : DataSet's ExtendedProperties were not XmlConverted.

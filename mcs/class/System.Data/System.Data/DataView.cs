@@ -4,34 +4,10 @@
 // Author:
 //    Daniel Morgan <danmorg@sc.rr.com>
 //    Tim Coleman (tim@timcoleman.com)
-//
+//    Punit Todi (punits_mailbox@yahoo.com)
 // Copyright (C) Daniel Morgan, 2002, 2003
 // (C) Ximian, Inc 2002
-// Copyright (C) Tim Coleman, 2002-2003
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
+// Copyright (C) Tim Coleman, 2002-2003		
 
 using System;
 using System.Collections;
@@ -59,7 +35,7 @@ namespace System.Data
 		DataViewRowState rowState;
 		DataRowView[] rowCache = null;
 		
-		// FIXME: what are the default values?
+		
 		bool allowNew = true; 
 		bool allowEdit = true;
 		bool allowDelete = true;
@@ -69,12 +45,12 @@ namespace System.Data
 		bool isOpen = false;
 
 		bool bInit = false;
+		bool useDefaultSort = true;
 		
 		internal DataViewManager dataViewManager = null;
-
+		#region Constructors
 		public DataView () 
 		{
-			dataTable = new DataTable ();
 			rowState = DataViewRowState.CurrentRows;
 			Open ();
 		}
@@ -96,7 +72,8 @@ namespace System.Data
 			rowState = RowState;
 			Open();
 		}
-
+		#endregion // Constructors
+		#region PublicProperties
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows deletes.")]
 		[DefaultValue (true)]
@@ -147,14 +124,18 @@ namespace System.Data
 			[MonoTODO]
 			set {
 				applyDefaultSort = value;
-				// FIXME: update the index cache to the DataTable, and 
-				//        only refresh the index when the DataTable
-				//        has changes via column, row, or constraint
-				//        changed events
+				if (applyDefaultSort == true && (sort == null || sort == string.Empty)) {
+					foreach (Constraint c in dataTable.Constraints)	{
+						if (c is UniqueConstraint) {
+							sort = GetSortString ((UniqueConstraint) c);
+							break;
+						}
+					}
+				}
 				UpdateIndex ();
+				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset,-1,-1));
 			}
 		}
-
 		// get the count of rows in the DataView after RowFilter 
 		// and RowStateFilter have been applied
 		[Browsable (false)]
@@ -162,11 +143,7 @@ namespace System.Data
 		public int Count {
 			[MonoTODO]
 			get {
-				// FIXME: remove this line once collection change
-				//        events from the DataTable are handled
-				UpdateIndex ();
-
-				return rowCache.Length;;
+				return rowCache.Length;
 			}
 		}
 
@@ -186,14 +163,7 @@ namespace System.Data
 		public DataRowView this[int recordIndex] {
 			[MonoTODO]
 			get {
-				// FIXME: use index cache to the DataTable, and 
-				//        only refresh the index when the DataTable
-				//        has changes via column, row, or constraint
-				//        changed events
-				// Remove this line once changed events are handled
-				UpdateIndex ();
-				
-				return rowCache[recordIndex];
+				return rowCache [recordIndex];
 			}
 		}
 
@@ -209,11 +179,8 @@ namespace System.Data
 			[MonoTODO]
 			set {
 				rowFilter = value;
-				// FIXME: update the index cache to the DataTable, and 
-				//        only refresh the index when the DataTable
-				//        has changes via column, row, or constraint
-				//        changed events
 				UpdateIndex ();
+				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
 
@@ -229,11 +196,8 @@ namespace System.Data
 			[MonoTODO]
 			set {
 				rowState = value;
-				// FIXME: update the index cache to the DataTable, and 
-				//        only refresh the index when the DataTable
-				//        has changes via column, row, or constraint
-				//        changed events
 				UpdateIndex ();
+				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
 
@@ -248,11 +212,26 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
-				sort = value;
-				// FIXME: update the index cache to the DataTable, and 
-				//        only refresh the index when the DataTable
-				//        has changes via column, row, or constraint
-				//        changed events
+				if (value == null) {	
+				/* if given value is null useDefaultSort */
+					useDefaultSort = true;
+					/* if ApplyDefault sort is true try appling it */
+					if (ApplyDefaultSort == true) {
+						foreach (Constraint c in dataTable.Constraints) {
+							if (c is UniqueConstraint) {
+								sort = GetSortString ((UniqueConstraint)c);
+								break;
+							}
+						}
+						
+					}
+				}
+				else {	
+					/* else donot useDefaultSort. set it as false */
+					/* sort is set to value specified */
+					useDefaultSort = false;
+					sort = value;
+				}
 				UpdateIndex ();
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
@@ -262,7 +241,6 @@ namespace System.Data
 		[DataSysDescription ("Indicates the table this DataView uses to get data.")]
 		[DefaultValue (null)]
 		[RefreshProperties (RefreshProperties.All)]
-		[TypeConverter (typeof(DataTableTypeConverter))]
 		public DataTable Table {
 			[MonoTODO]
 			get {
@@ -271,15 +249,26 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				if (value != null && value.TableName.Equals("")) {
+					throw new DataException("Cannot bind to DataTable with no name.");
+				}
+
+				if (dataTable != null) {
+					UnregisterEventHandlers();
+				}
+
 				dataTable = value;
-				// FIXME: update the index cache to the DataTable, and 
-				//        only refresh the index when the DataTable
-				//        has changes via column, row, or constraint
-				//        changed events
-				UpdateIndex ();
+
+				if (dataTable != null) {
+					RegisterEventHandlers();
+					UpdateIndex ();
+					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
+				}
 			}
 		}
-
+		#endregion // PublicProperties
+		
+		#region	PublicMethods
 		[MonoTODO]
 		public virtual DataRowView AddNew() 
 		{
@@ -289,12 +278,11 @@ namespace System.Data
 				throw new DataException ("Cannot call AddNew on a DataView where AllowNew is false.");
 			
 			DataRow row = dataTable.NewRow ();
+			if (row == null)
+				throw new Exception ("Row not created");
 			DataRowView rowView = new DataRowView (this, row, true);
 			
 			dataTable.Rows.Add (row);
-
-			UpdateIndex ();
-			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, rowCache.Length - 1,-1));
 			return rowView;
 		}
 
@@ -308,20 +296,9 @@ namespace System.Data
 		[MonoTODO]
 		public void CopyTo (Array array, int index) 
 		{
-			// FIXME: use index cache to the DataTable, and 
-			//        only refresh the index when the DataTable
-			//        has changes via column, row, or constraint
-			//        changed events
-			UpdateIndex ();
-			
 			int row = 0;
 			for (; row < rowCache.Length && row < array.Length; row++) {
 				array.SetValue (rowCache[row], index + row);
-			}
-			if (row < array.Length) {
-				for (int r = 0; r < array.Length; r++) {
-					array.SetValue (null, index + r);
-				}
 			}
 		}
 
@@ -332,16 +309,11 @@ namespace System.Data
 			if (!AllowDelete)
 				throw new DataException ("Cannot delete on a DataSource where AllowDelete is false.");
 			
-			UpdateIndex ();
-
 			if (index > rowCache.Length)
 				throw new IndexOutOfRangeException ("There is no row at " +
 						"position: " + index + ".");
-			
 			DataRowView row = rowCache [index];
 			row.Row.Delete ();
-
-			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index));
 		}
 
 #if NET_2_0
@@ -359,28 +331,38 @@ namespace System.Data
 			// FIXME:
 		}
 
-		[MonoTODO]
 		public int Find(object key) 
 		{
-			// FIXME: use index cache to the DataTable, and 
-			//        only refresh the index when the DataTable
-			//        has changes via column, row, or constraint
-			//        changed events
-
-			throw new NotImplementedException ();
+			object [] keys = new object[1];
+			keys[0] = key;
+			return Find(keys);
 		}
-
-		[MonoTODO]
+		
 		public int Find(object[] key) 
 		{
-			// FIXME: use an index cache to the DataTable, and 
-			//        only refresh the index when the DataTable
-			//        has changes via column, row, or constraint
-			//        changed events
-
-			throw new NotImplementedException ();
+			int index; 
+			if (sort == null || sort == string.Empty)
+				throw new ArgumentException ("Find finds a row based on a Sort order, and no Sort order is specified");
+			else {
+				DataTable.SortableColumn [] sortedColumns = null;
+				sortedColumns = dataTable.ParseTheSortString (sort);
+				if (sortedColumns == null)
+					throw new Exception ("sort expression result is null");
+				if (sortedColumns.Length == 0)
+					throw new Exception ("sort expression result is 0");
+				if (sortedColumns.Length != key.Length)
+					throw new ArgumentException ("Expecting " + sortedColumns.Length +
+						" value(s) from the key being indexed, but recieved "+
+						key.Length+" value(s).");
+				RowComparer rowComparer = new RowComparer (dataTable,sortedColumns);
+				int searchResult = Array.BinarySearch (rowCache,key,rowComparer);
+				if (searchResult < 0)
+					return -1;
+				else
+					return searchResult;
+			}
 		}
-
+		
 		[MonoTODO]
 		public DataRowView[] FindRows(object key) 
 		{
@@ -406,22 +388,15 @@ namespace System.Data
 		[MonoTODO]
 		public IEnumerator GetEnumerator() 
 		{
-			// FIXME: use an index cache to the DataTable, and 
-			//        only refresh the index when the DataTable
-			//        has changes via column, row, or constraint
-			//        changed events
-			UpdateIndex ();					
-
 			return new DataViewEnumerator (rowCache);
 		}
+		#endregion // PublicMethods
 		
 		[MonoTODO]
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the data returned by this DataView has somehow changed.")]
 		public event ListChangedEventHandler ListChanged;
 
-		[Browsable (false)]
-		[DataSysDescription ("DataViewIsOpenDescr")]
 		protected bool IsOpen {
 			[MonoTODO]
 			get {
@@ -494,8 +469,96 @@ namespace System.Data
 			//        Otherwise, if getting a/the DataRowView(s),
 			//        Count, or other properties, then just use the
 			//        index cache.
-			UpdateIndex (true);
+			//		dataTable.ColumnChanged  += new DataColumnChangeEventHandler(OnColumnChanged);
+			if (dataTable != null) {
+				RegisterEventHandlers();
+				UpdateIndex (true);
+			}
 			isOpen = true;
+		}
+		
+		private void RegisterEventHandlers()
+		{
+			dataTable.RowChanged     += new DataRowChangeEventHandler(OnRowChanged);
+			dataTable.RowDeleted     += new DataRowChangeEventHandler(OnRowDeleted);
+			dataTable.Columns.CollectionChanged += new CollectionChangeEventHandler(OnColumnCollectionChanged);
+			dataTable.Constraints.CollectionChanged += new CollectionChangeEventHandler(OnConstraintCollectionChanged);
+		}
+
+		private void UnregisterEventHandlers()
+		{
+			dataTable.RowChanged     -= new DataRowChangeEventHandler(OnRowChanged);
+			dataTable.RowDeleted     -= new DataRowChangeEventHandler(OnRowDeleted);
+			dataTable.Columns.CollectionChanged -= new CollectionChangeEventHandler(OnColumnCollectionChanged);
+			dataTable.Constraints.CollectionChanged -= new CollectionChangeEventHandler(OnConstraintCollectionChanged);
+		}
+		
+		private void OnColumnChanged(object sender, DataColumnChangeEventArgs args)
+		{	/* not used */
+			UpdateIndex(true);
+		}
+		
+		private void OnRowChanged(object sender, DataRowChangeEventArgs args)
+		{
+			int oldIndex,newIndex;
+			oldIndex = newIndex = -1;
+			oldIndex = IndexOf (args.Row);
+			UpdateIndex (true);
+			newIndex = IndexOf (args.Row);
+
+			/* ItemAdded */
+			if(args.Action == DataRowAction.Add)
+			{	
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, newIndex, -1));
+			}
+				
+			/* ItemChanged or ItemMoved */
+			if (args.Action == DataRowAction.Change) { 
+				if (oldIndex == newIndex)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, newIndex, -1)); 
+				else
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, oldIndex)); 
+			}
+		}
+		
+		private void OnRowDeleted (object sender, DataRowChangeEventArgs args)
+		{
+			/* ItemDeleted */
+			int newIndex;
+			newIndex = IndexOf (args.Row);
+			UpdateIndex (true);
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, -1));
+		}
+		
+		private void OnColumnCollectionChanged (object sender, CollectionChangeEventArgs args)
+		{
+			UpdateIndex (true);
+			/* PropertyDescriptor Add */
+			if (args.Action == CollectionChangeAction.Add)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorAdded,0,0));
+			/* PropertyDescriptor Removed */
+			if (args.Action == CollectionChangeAction.Remove)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorDeleted,0,0));
+			/* FIXME: PropertyDescriptor Changed ???*/
+			if (args.Action == CollectionChangeAction.Refresh)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged,0,0));
+		}
+		private void OnConstraintCollectionChanged(object sender, CollectionChangeEventArgs args)
+		{
+			//	The Sort variable is set to the UniqueConstraint column.
+			//  if ApplyDefault Sort is true and Sort is null or is not set Explicitly
+			
+			// FIXME: The interal cache may change as result of change in Constraint collection
+			// one such scenerio is taken care.
+			// There may be more. I dont know what else can be done.
+			/* useDefaultSort is set to false when Sort is set explicitly */
+			if (args.Action == CollectionChangeAction.Add && args.Element is UniqueConstraint) {
+				if (ApplyDefaultSort == true && useDefaultSort == true)
+						Sort = GetSortString ((UniqueConstraint) args.Element);
+			}
+			UpdateIndex (true);
+			/* ItemReset */
+			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset,-1,-1));
 		}
 
 		// internal use by Mono
@@ -505,7 +568,7 @@ namespace System.Data
 			Close ();
 			rowCache = null;
 			Open ();
-			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
+			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1 ));
 		}
 
 #if NET_2_0
@@ -554,25 +617,20 @@ namespace System.Data
 		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor[] listAccessors) 
 		{
 			// FIXME: use listAccessors somehow
-
-			DataColumnPropertyDescriptor[] descriptors = 
-				new DataColumnPropertyDescriptor[dataTable.Columns.Count];
+			DataColumnPropertyDescriptor [] descriptors = 
+				new DataColumnPropertyDescriptor [dataTable.Columns.Count];
 
 			DataColumnPropertyDescriptor descriptor;
 			DataColumn dataColumn;
-			for (int col = 0; col < dataTable.Columns.Count; col ++)
-			{
+			for (int col = 0; col < dataTable.Columns.Count; col ++) {
 				dataColumn = dataTable.Columns[col];
-				
 				descriptor = new DataColumnPropertyDescriptor(
 					dataColumn.ColumnName, col, null);
 				descriptor.SetComponentType (typeof (System.Data.DataRowView));
 				descriptor.SetPropertyType (dataColumn.DataType);
 				descriptor.SetReadOnly (dataColumn.ReadOnly);
-
-				descriptors[col] = descriptor;
+				descriptors [col] = descriptor;
 			}
-
 			return new PropertyDescriptorCollection (descriptors);
 		}
 
@@ -780,13 +838,44 @@ namespace System.Data
 		}
 
 		#endregion // IBindingList implementation
+		private int IndexOf(DataRow dr)
+		{
+			for (int i=0; i < rowCache.Length; i++)
+				if (dr.Equals (rowCache [i].Row))
+					return i;
+			return -1;
+		}
+		
+		private string GetSortString (UniqueConstraint uc)
+		{
+			string sortKey = null;
+			foreach (DataColumn dc in uc.Columns)
+				sortKey += dc.ColumnName + ", ";
+			sortKey = sortKey.Substring (0,sortKey.Length - 2);
+			return sortKey;
+		}
+		
+		private object [] GetSearchKey (DataRow dr)
+		{
+			DataTable.SortableColumn [] sortedColumns = null;
+			sortedColumns = dataTable.ParseTheSortString (sort);
+			if (sortedColumns == null) 
+				return null;
+			object [] keys = new object [sortedColumns.Length];
+			int i = 0;
+			foreach (DataTable.SortableColumn sc in sortedColumns) {
+				keys [i] = dr [sc.Column];
+				i++;
+			}
+			return keys;
+		}
 
 		private class DataViewEnumerator : IEnumerator 
 		{
-			private DataRowView[] rows;
+			private DataRowView [] rows;
 			int on = -1;
 
-			internal DataViewEnumerator (DataRowView[] dataRowViews) 
+			internal DataViewEnumerator (DataRowView [] dataRowViews) 
 			{
 				rows = dataRowViews;
 			}
@@ -795,7 +884,7 @@ namespace System.Data
 				get {
 					if (on == -1 || on >= rows.Length)
 						throw new InvalidOperationException ();
-					return rows[on];
+					return rows [on];
 				}
 			}
 
@@ -816,6 +905,75 @@ namespace System.Data
 				on = -1;
 			}
 		}
+		
+		private class RowComparer : IComparer 
+		{
+			private DataTable.SortableColumn [] sortColumns;
+			private DataTable table;
+			public RowComparer(DataTable table, DataTable.SortableColumn[] sortColumns) 
+			{
+				this.table = table;			
+				this.sortColumns = sortColumns;
+			}
+
+			public DataTable.SortableColumn[] SortedColumns {
+				get {
+					return sortColumns;
+				}
+			}
+			
+			int IComparer.Compare (object x, object y) 
+			{
+				if(x == null)
+					throw new Exception ("Object to compare is null: x");
+				if(y == null)
+					throw new Exception ("Object to compare is null: y");
+				DataRowView rowView = (DataRowView) y;
+				object [] keys = (object [])x;
+				for(int i = 0; i < sortColumns.Length; i++) {
+					DataTable.SortableColumn sortColumn = sortColumns [i];
+					DataColumn dc = sortColumn.Column;
+
+					IComparable row = (IComparable) rowView.Row [dc];
+					object key = keys [i];
+					
+					int result = CompareObjects (key,row);
+					if (result != 0) {
+						if (sortColumn.SortDirection == ListSortDirection.Ascending)
+							return result;
+						else 
+							return -result;
+					}
+				}
+				return 0;
+			}
+
+			private int CompareObjects (object a, object b) 
+			{
+				if (a == b)
+					return 0;
+				else if (a == null)
+					return -1;
+				else if (a == DBNull.Value)
+					return -1;
+				else if (b == null)
+					return 1;
+				else if (b == DBNull.Value)
+					return 1;
+
+				if((a is string) && (b is string)) {
+					a = ((string) a).ToUpper (table.Locale);
+					b = ((string) b).ToUpper (table.Locale);			
+				}
+
+				if (a is IComparable)
+					return ((a as IComparable).CompareTo (b));
+				else if (b is IComparable)
+					return -((b as IComparable).CompareTo (a));
+
+				throw new ArgumentException ("Neither a nor b IComparable");
+			}
+		}
+
 	}
 }
-
