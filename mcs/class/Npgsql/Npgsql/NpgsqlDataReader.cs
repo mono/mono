@@ -70,7 +70,7 @@ namespace Npgsql
 
         private Boolean CanRead()
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CanRead");
+            //NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CanRead");
             /*if (_currentResultset == null)
             	return false;*/
             return ((_currentResultset != null) && (_currentResultset.Count > 0));
