@@ -1,3 +1,9 @@
+
+Fri Aug 2 13:00:41 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c, interp.h: implemented exception trap for runtime_invoke
+	and handle exceptions across managed/unmanaged boundaries.
+
 2002-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (stackval_from_data): add pinvoke argument
