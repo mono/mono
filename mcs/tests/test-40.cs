@@ -11,7 +11,7 @@ public class Blah {
 	
 	public enum MyEnum : byte {
 		Foo = 254,
-		Bar = B.y
+		Bar = (byte) B.y
 	}
 
 	enum A {
@@ -27,7 +27,7 @@ public class Blah {
 
 	const int myconstant = 30;
 
-	enum Compute { two = AA.b + BB.y }
+	enum Compute { two = AA.b + B.y }
 	
 	public static int Main ()
 	{
@@ -43,7 +43,7 @@ public class Blah {
 		int k = (int) A.c;
 		int l = (int) AA.b + 1;
 
-		if (Compute.two != 2)
+		if ((int) Compute.two != 2)
 			return 10;
 		if (i != j)
 			return 1;
