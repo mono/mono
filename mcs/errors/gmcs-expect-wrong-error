@@ -166,3 +166,17 @@ cs1611.cs
 cs1677.cs
 cs2023.cs
 cs3005-19.cs
+
+
+#
+# These bugs are new in gmcs
+#
+cs0071-2.cs
+cs0071.cs
+cs0111-8.cs
+cs0146-2.cs
+cs0660.cs
+cs0661.cs
+cs1540-2.cs
+cs1540-4.cs
+cs1540.cs

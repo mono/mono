@@ -1,5 +1,13 @@
 2004-08-27  Martin Baulig  <martin@ximian.com>
 
+	* gmcs-ignore-tests: New file.  This file lists tests which should
+	not be run at all because they make the compiler hang.
+
+	* gmcs-expect-no-error, gmcs-expect-wrong-error: Updated.
+	* generics-expect-no-error: Updated.
+
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
 	* Makefile
 	(run-gmcs-tests): New target to run the cs*.cs tests with gmcs.
 	(run-generics-tests): New target to run the gcs*.cs tests.

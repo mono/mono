@@ -25,3 +25,13 @@ cs0647-3.cs #64225
 cs1017.cs   #64226
 
 cs0111-8.cs
+
+#
+# These bugs are new in gmcs
+#
+
+cs0134.cs
+cs0161-2.cs
+cs1540-3.cs
+cs1540-5.cs
+cs8201.cs

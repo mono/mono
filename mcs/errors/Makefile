@@ -30,7 +30,7 @@ test-local:
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
 
-run-test-local: run-mcs-tests run-gmcs-tests run-generics-local
+run-test-local: run-mcs-tests run-gmcs-tests run-generics-tests
 
 run-mcs-tests:
 	@ ./do-tests.pl mcs "$(CSCOMPILE)" "cs*.cs"
@@ -38,7 +38,7 @@ run-mcs-tests:
 run-gmcs-tests:
 	@ ./do-tests.pl gmcs "$(GMCS_COMPILE)" "cs*.cs"
 
-run-generics-local:
+run-generics-tests:
 	@ ./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs"
 
 test-multi-local:

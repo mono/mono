@@ -11,6 +11,7 @@ unless ($#ARGV == 2) {
 my $EXPECTING_WRONG_ERROR = 1;
 my $EXPECTING_NO_ERROR    = 2;
 my %expecting_map = ();
+my %ignore_map = ();
 
 my $profile = $ARGV [0];
 my $compile = $ARGV [1];
@@ -39,6 +40,19 @@ if (open (EXPECT_NO, "<$profile-expect-no-error")) {
 	
 	close EXPECT_NO;
 }
+
+if (open (IGNORE, "<$profile-ignore-tests")) {
+	$ignore_map{$_} = 1
+	foreach map {
+		chomp,                     # remove trailing \n
+		s/\#.*//g,                 # remove # style comments
+		s/ //g;                    # remove whitespace
+		$_ eq "" ? () : $_;        # now copy over non empty stuff
+	} <IGNORE>;
+	
+	close IGNORE;
+}
+
 my $RESULT_UNEXPECTED_CORRECT_ERROR     = 1;
 my $RESULT_CORRECT_ERROR                = 2;
 my $RESULT_UNEXPECTED_INCORRECT_ERROR   = 3;
@@ -75,6 +89,8 @@ foreach (glob ($files)) {
 	my $options = `sed -n 's,^// Compiler options:,,p' $_`;
 	chomp $options;
 	print "...";
+
+	next if exists $ignore_map {$_};
 
 	my $testlogfile="$_.log";
 	system "$compile --expect-error $error_number $options $_ > $testlogfile 2>&1";

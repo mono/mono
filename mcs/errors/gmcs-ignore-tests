@@ -1,0 +1,7 @@
+#
+# These tests are ignored and not run at all.
+#
+# Only list tests here which make the compiler hang.
+#
+
+cs0146.cs #64394
