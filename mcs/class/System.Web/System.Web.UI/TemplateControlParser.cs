@@ -91,6 +91,7 @@ namespace System.Web.UI
 				Type type = UserControlParser.GetCompiledType (BaseVirtualDir, src, Context);
 				AddAssembly (type.Assembly, true);
 				RootBuilder.Foundry.RegisterFoundry (tagprefix, tagname, type);
+				return;
 			}
 
 			cmp = String.Compare ("Reference", directive, true);
