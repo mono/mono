@@ -635,11 +635,22 @@ namespace System.Windows.Forms {
 		}
 
 		[DllImport ("libX11")]
-		internal extern static int XLookupString(ref XEvent xevent, IntPtr buffer,
-				int num_bytes, out XKeySym keysym, IntPtr status);
+		internal extern static int XLookupString(ref XEvent xevent, IntPtr buffer, int num_bytes, out IntPtr keysym, IntPtr status);
+		internal static int XLookupString (ref XEvent xevent, IntPtr buffer, int num_bytes, out XKeySym keysym, IntPtr status) {
+			IntPtr	keysym_ret;
+			int	ret;
 
-		[DllImport ("libX11")]
-		private static extern XKeySym XLookupKeysym (ref XEvent xevent, int index);
+			ret = XLookupString (ref xevent, buffer, num_bytes, out keysym_ret, status);
+			keysym = (XKeySym)keysym_ret.ToInt32();
+
+			return ret;
+		}
+
+		[DllImport ("libX11", EntryPoint="XLookupKeysym")]
+		private static extern IntPtr XLookupKeysymX11(ref XEvent xevent, int index);
+		private static XKeySym XLookupKeysym(ref XEvent xevent, int index) {
+			return (XKeySym)XLookupKeysymX11(ref xevent, index).ToInt32();
+		}
 
 		[DllImport ("libX11")]
 		private static extern IntPtr XGetKeyboardMapping (IntPtr display, byte first_keycode, int keycode_count, 
@@ -648,11 +659,17 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11")]
 		private static extern void XDisplayKeycodes (IntPtr display, out int min, out int max);
 
-		[DllImport ("libX11")]
-		private static extern XKeySym XKeycodeToKeysym (IntPtr display, int keycode, int index);
+		[DllImport ("libX11", EntryPoint="XKeycodeToKeysym")]
+		private static extern IntPtr XKeycodeToKeysymX11(IntPtr display, int keycode, int index);
+		private static XKeySym XKeycodeToKeysym(IntPtr display, int keycode, int index) {
+			return (XKeySym)XKeycodeToKeysymX11(display, keycode, index).ToInt32();
+		}
 
 		[DllImport ("libX11")]
-		private static extern int XKeysymToKeycode (IntPtr display, int keysym);
+		private static extern int XKeysymToKeycode (IntPtr display, IntPtr keysym);
+		private static int XKeysymToKeycode (IntPtr display, int keysym) {
+			return XKeysymToKeycode(display, (IntPtr)keysym);
+		}
 
 		[DllImport ("libX11")]
 		internal extern static IntPtr XGetModifierMapping (IntPtr display);

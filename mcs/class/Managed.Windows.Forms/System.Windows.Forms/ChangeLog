@@ -1,5 +1,9 @@
 2005-02-26  Peter Bartok  <pbartok@novell.com>
 
+	* X11Keyboard.cs: Fixes to work on 64bit systems
+
+2005-02-26  Peter Bartok  <pbartok@novell.com>
+
 	* Control.cs: 
 	  - Now calling OnHandleDestroyed from DestroyHandle()
 	    instead of Dispose()
