@@ -1,3 +1,8 @@
+2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* expression.cs: save/restore context when resolving an unchecked
+	expression.
+
 2003-03-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* cfold.cs: Catch division by zero in modulus operator during
