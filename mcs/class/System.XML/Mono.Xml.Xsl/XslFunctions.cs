@@ -624,8 +624,7 @@ namespace Mono.Xml.Xsl
 			XmlEntity ent = doctype.Entities.GetNamedItem (arg0.EvaluateString (iter)) as XmlEntity;
 			if (ent == null)
 				return String.Empty;
-			else
-				return ent.BaseURI;
+			return ent.SystemId != null ? ent.SystemId : String.Empty;
 		}
 	}
 

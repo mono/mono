@@ -191,10 +191,10 @@ namespace System.Xml
 					switch (n.NodeType) {
 					case XmlNodeType.SignificantWhitespace:
 						sw = true;
-						n = GetNextSibling (node);
+						n = GetNextSibling (n);
 						break;
 					case XmlNodeType.Whitespace:
-						n = GetNextSibling (node);
+						n = GetNextSibling (n);
 						break;
 					case XmlNodeType.Text:
 					case XmlNodeType.CDATA:

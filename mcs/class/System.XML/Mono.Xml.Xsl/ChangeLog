@@ -1,3 +1,8 @@
+2005-02-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslFunctions.cs : unparsed-entity-uri() should return SYSTEM ID
+	  instead of BaseURI.
+
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslTemplate.cs : According to the spec 5.7, it is an error for 

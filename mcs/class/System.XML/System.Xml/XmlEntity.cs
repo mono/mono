@@ -106,21 +106,11 @@ namespace System.Xml
 		}
 
 		public string PublicId {
-			get {
-				if (publicId == null)
-					return null;
-				else
-					return publicId;
-			}
+			get { return publicId; }
 		}
 
 		public string SystemId {
-			get {
-				if (publicId == null)
-					return null;
-				else
-					return systemId;
-			}
+			get { return systemId; }
 		}
 		#endregion
 

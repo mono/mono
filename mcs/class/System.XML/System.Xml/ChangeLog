@@ -1,3 +1,10 @@
+2005-02-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlEntity.cs : it was not returning SYSTEM ID when there is no
+	  PUBLIC ID.
+	* XmlDocumentNavigator.cs : On Whitespace followed by DocumentType,
+	  get_NodeType() resulted in loop.
+
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlComment.cs, XmlNode.cs, XmlText.cs, XmlProcessingInstruction.cs,
