@@ -918,6 +918,7 @@ namespace Microsoft.VisualBasic
 		{
 			if (Start <= 0)
 				throw new System.ArgumentException("Argument 'Start' must be greater than zero.", "Start");
+
 			if ((Str == null) || (Str.Length == 0))
 				return String.Empty; // VB.net does this.
 
@@ -978,6 +979,14 @@ namespace Microsoft.VisualBasic
 		{
 			if (Length < 0)
 				throw new ArgumentException("Argument 'Length' must be greater or equal to zero.", "Length");
+
+			// Fixing Bug #49660 - Start
+			if ((Str == null) || (Str.Length == 0))
+				return String.Empty; // VB.net does this.
+
+			if (Length >= Str.Length)
+				return Str;
+			// Fixing Bug #49660 - End
 
 			return Str.Substring (Str.Length - Length);
 		}
