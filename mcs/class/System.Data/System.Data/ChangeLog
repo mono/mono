@@ -1,3 +1,7 @@
+2003-02-28  Ville Palo <vi64pa@kolumbus.fi>
+
+	* ExpressionElement.cs: More implementation. 
+	
 2003-02-28  Alan Tam <Tam@SiuLung.com>
 
 	* DataSet.cs: Changed WriteTable so that it now calls the newly written
