@@ -1,3 +1,8 @@
+2002-02-25  Sergey Chaban  <serge@wildwestsoftware.com>
+
+	* arm: added ARM support code.
+	* Makefile.am: added arm to DIST_SUBDIRS.
+
 2002-02-24  Radek Doulik  <rodo@ximian.com>
 
 	* ppc/tramp.c (mono_create_method_pointer): basic delegates
