@@ -42,7 +42,10 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]	
 		public new BooleanObject CreateInstance (params Object [] args)
 		{
-			throw new NotImplementedException ();
+			if (args == null || args.Length == 0)
+				return new BooleanObject ();
+			else
+				return new BooleanObject (args [0]);
 		}
 
 		public bool Invoke (Object arg)
