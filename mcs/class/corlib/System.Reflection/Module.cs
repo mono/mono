@@ -263,7 +263,6 @@ namespace System.Reflection {
 				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
 		}
 
-		[MonoTODO]
 		public MemberInfo ResolveMember (int metadataToken) {
 			ResolveTokenError error;
 

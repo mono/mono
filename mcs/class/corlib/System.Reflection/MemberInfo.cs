@@ -59,6 +59,14 @@ namespace System.Reflection {
 			get;
 		}
 
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		public virtual Module Module {
+			get {
+				return DeclaringType.Module;
+			}
+		}
+#endif
+
 		public abstract bool IsDefined (Type attribute_type, bool inherit);
 
 		public abstract object [] GetCustomAttributes (bool inherit);
