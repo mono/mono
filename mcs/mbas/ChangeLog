@@ -1,3 +1,6 @@
+2002-08-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged expression.cs from mcs/mcs, to resync
+
 2002-08-29  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged assign.cs, attribute.cs, class.cs, codegen.cs, const.cs, decl.cs, delegate.cs, ecore.cs, enum.cs,
         expression.cs, interface.cs, pending.cs, report.cs, rootcontext.cs, statement.cs, support.cs and 
