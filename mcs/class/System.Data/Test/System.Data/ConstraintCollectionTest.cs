@@ -4,9 +4,11 @@
 // Authors:
 //   Franklin Wise (gracenote@earthlink.net)
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Roopa Wilson (rowilson@novell.com)	
 //
 // (C) Franklin Wise
 // (C) 2003 Martin Willemoes Hansen
+// (C) Novell,Inc	
 // 
 
 
@@ -287,18 +289,62 @@ namespace MonoTests.System.Data
 //		}
 
 		[Test]
+                //Tests AddRange (), CanRemove (), RemoveAt (), Remove (), Exceptions of  Remove(), and Clear ()
+                public void AddRemoveTest ()
+                {
+                        AddRange ();
+                        CanRemove ();
+                        Remove ();
+                        RemoveAt ();
+                        RemoveExceptions ();
+                        Clear ();
+                }
+
+		[Test]
 		public void AddRange()
 		{
+			_constraint1.ConstraintName = "UK1";
+                        _constraint2.ConstraintName = "UK12";
+                                                                                                    
+                        ForeignKeyConstraint _constraint3 = new ForeignKeyConstraint ("FK2", _table.Columns [0],
+                                        _table2.Columns [0]);
+                        UniqueConstraint _constraint4=new UniqueConstraint("UK2", _table2.Columns [1]);
+                                                                                                    
+                        // Add the constraints.
+                        Constraint [] constraints = {_constraint1, _constraint2};
+                        _table.Constraints.AddRange (constraints);
+                                                                                                                                                                                                         
+                        Constraint [] constraints1 = {_constraint3, _constraint4};
+                        _table2.Constraints.AddRange (constraints1);
+                                                                                                    
+                        AssertEquals ("A1", "UK1", _table.Constraints [0].ConstraintName);
+                        AssertEquals ("A2", "UK12", _table.Constraints [1].ConstraintName);
+                                                                                                    
+                        AssertEquals ("A3", "FK2", _table2.Constraints [0].ConstraintName);
+                        AssertEquals ("A4", "UK2", _table2.Constraints [1].ConstraintName);
+
 		}
 
 		[Test]
 		public void Clear()
 		{
+ 			try {
+                               _table.Constraints.Clear (); //Clear all constraints
+                                AssertEquals ("A1", 0, _table.Constraints.Count); //No constraints should remain
+                                _table2.Constraints.Clear ();
+                                AssertEquals ("A2", 0, _table2.Constraints.Count);
+                        }
+                        catch (Exception e) {
+                                Console.WriteLine (e);
+                        }
+
 		}
 
 		[Test]
 		public void CanRemove()
 		{
+			AssertEquals ("A1", false, _table.Constraints.CanRemove (_table.Constraints [0]));
+
 		}
 
 		[Test]
@@ -309,16 +355,41 @@ namespace MonoTests.System.Data
 		[Test]
 		public void RemoveAt()
 		{
+			 _table2.Constraints.RemoveAt (1); //Remove constraint and again add it
+                         AssertEquals ("A1", 1, _table2.Constraints.Count);                                                  UniqueConstraint _constraint4  = new UniqueConstraint ("UK2", _table2.Columns [1]);
+                         // Add the constraints.
+                         Constraint [] constraints = {_constraint4};
+                         _table.Constraints.AddRange (constraints);
+
 		}
 
 		[Test]
 		public void Remove()
 		{
+			_table2.Constraints.Remove (_table2.Constraints [1]); //Remove constraint and again add it
+                        AssertEquals ("A1", 1, _table2.Constraints.Count);                      
+                        UniqueConstraint _constraint4 = new UniqueConstraint ("UK2", _table2.Columns [1]);                                                                               
+                        // Add the constraints.
+                        Constraint [] constraints = {_constraint4};
+                        _table2.Constraints.AddRange (constraints);
 		}
 
 		[Test]
 		public void RemoveExceptions()
 		{
-		}
+			try {
+                                //Remove constraint that cannot be removed
+                                _table.Constraints.Remove (_table.Constraints [0]);
+                                Fail ("A1");
+                        }
+                        catch (Exception e) {
+                                if (e.GetType ()!= typeof (AssertionException)) {
+                                        AssertEquals ("A2",
+                                                "Cannot remove UniqueConstraint because the ForeignKeyConstraint FK2 exists",e.Message);
+                                }
+                        }
+                }
+
 	}
+	
 }
