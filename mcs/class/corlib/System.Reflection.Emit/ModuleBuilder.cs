@@ -52,16 +52,21 @@ namespace System.Reflection.Emit {
 			if (type == null)
 				return;
 
+			if (assemblyb.methods == null)
+				assemblyb.methods = new ArrayList ();
+
 			// First get the constructor.
 			{
-				Type[] arg_types = new Type [2];
+				Type[] arg_types = new Type [3];
 				arg_types [0] = typeof (ModuleBuilder);
 				arg_types [1] = typeof (string);
+				arg_types [2] = typeof (ArrayList);
 				ConstructorInfo constructor = type.GetConstructor (arg_types);
 
-				object[] args = new object [2];
+				object[] args = new object [3];
 				args [0] = this;
 				args [1] = filename;
+				args [2] = assemblyb.methods;
 
 				if (constructor == null)
 					return;

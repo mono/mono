@@ -27,7 +27,7 @@ namespace System.Reflection.Emit {
 		private string dir;
 		private CustomAttributeBuilder[] cattrs;
 		private int[] table_indexes;
-		private ArrayList methods;
+		internal ArrayList methods;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -35,7 +35,6 @@ namespace System.Reflection.Emit {
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access) {
 			name = n.Name;
 			dir = directory;
-			methods = new ArrayList ();
 			basic_init (this);
 		}
 
@@ -49,7 +48,7 @@ namespace System.Reflection.Emit {
 			}
 			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
 			if (inc) {
-				if (table == 0x06)
+				if ((table == 0x06) && (methods != null))
 					methods.Add (obj);
 				return table_indexes [table]++;
 			}
