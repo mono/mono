@@ -12,9 +12,12 @@ using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace System.Reflection {
-	internal struct MonoMethodInfo {
+	
+	internal struct MonoMethodInfo 
+	{
 		internal Type parent;
 		internal Type ret;
 		internal MethodAttributes attrs;
@@ -31,7 +34,9 @@ namespace System.Reflection {
 	 * Note: most of this class needs to be duplicated for the contructor, since
 	 * the .NET reflection class hierarchy is so broken.
 	 */
-	internal class MonoMethod : MethodInfo {
+	[Serializable()]
+	internal class MonoMethod : MethodInfo, ISerializable
+	{
 		internal IntPtr mhandle;
 		string name;
 		Type reftype;
@@ -78,7 +83,7 @@ namespace System.Reflection {
 				throw new ArgumentException ("parameters");
 			try {
 				return InternalInvoke (obj, parameters);
-			} catch (TargetException e) {
+			} catch (TargetException) {
 				throw;
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
@@ -135,9 +140,17 @@ namespace System.Reflection {
 			}
 			return ReturnType.Name+" "+Name+"("+parms+")";
 		}
+
+	
+		// ISerializable
+		public void GetObjectData(SerializationInfo info, StreamingContext context) 
+		{
+			ReflectionSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method);
+		}
 	}
 	
-	internal class MonoCMethod : ConstructorInfo {
+	internal class MonoCMethod : ConstructorInfo, ISerializable
+	{
 		internal IntPtr mhandle;
 		string name;
 		Type reftype;
@@ -167,7 +180,7 @@ namespace System.Reflection {
 				throw new ArgumentException ("parameters");
 			try {
 				return InternalInvoke (obj, parameters);
-			} catch (TargetException e) {
+			} catch (TargetException) {
 				throw;
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
@@ -228,6 +241,12 @@ namespace System.Reflection {
 				parms = parms + p [i].ParameterType.Name;
 			}
 			return "Void "+Name+"("+parms+")";
+		}
+
+		// ISerializable
+		public void GetObjectData(SerializationInfo info, StreamingContext context) 
+		{
+			ReflectionSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Constructor);
 		}
 	}
 }
