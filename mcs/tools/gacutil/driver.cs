@@ -2,7 +2,7 @@
 // Mono.Tools.GacUtil
 //
 // Author(s):
-//  Tood Berman <tberman@sevenl.net>
+//  Todd Berman <tberman@sevenl.net>
 //  Jackson Harper <jackson@ximian.com>
 //
 // Copyright 2003, 2004 Todd Berman 
