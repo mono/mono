@@ -61,12 +61,12 @@ namespace System.Data.OleDb
 			get { return connection; }
 		}
 
-		public IsolationLevel IsolationLevel {
-			get { return isolationLevel; }
-		}
-
 		IDbConnection IDbTransaction.Connection {
 			get { return connection; }
+		}
+		
+		public IsolationLevel IsolationLevel {
+			get { return isolationLevel; }
 		}
 
 		#endregion // Properties

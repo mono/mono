@@ -1,3 +1,18 @@
+2002-07-28  Rodrigo Moya <rodrigo@ximian.com>
+
+	* OleDbCommand.cs (ExecuteReader):
+	(CreateParameter): implemented IDbCommand methods.
+	(CommandText): don't create many GdaCommand's, only one is needed.
+	(ExecuteNonQuery): set up the internal GDA command object.
+	(ExecuteReader): use correctly the unique GDA command object.
+
+	* libgda.cs: added new libgda calls.
+
+2002-07-27  Rodrigo Moya <rodrigo@ximian.com>
+
+	* OleDbConnection.cs (CreateCommand):
+	(BeginTransaction): implemented IDbConnection methods.
+
 2002-07-11  Rodrigo Moya <rodrigo@ximian.com>
 
 	* libgda.cs: added new libgda functions and some enumerations.

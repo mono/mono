@@ -101,12 +101,21 @@ namespace System.Data.OleDb
 		public static extern bool gda_connection_rollback_transaction (IntPtr cnc, IntPtr xaction);
 
 		[DllImport("gda-2")]
+		public static extern IntPtr gda_connection_execute_command (IntPtr cnc, IntPtr cmd, IntPtr parameterList);
+		
+		[DllImport("gda-2")]
 		public static extern int gda_connection_execute_non_query (IntPtr cnc, IntPtr command, IntPtr parameterList);
 
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_connection_execute_single_command (IntPtr cnc, IntPtr command, IntPtr parameterList);
 
 		[DllImport("gda-2")]
-		public static extern IntPtr gda_command_new (string text, int type, int options);
+		public static extern IntPtr gda_command_new (string text, GdaCommandType type, GdaCommandOptions options);
+
+		[DllImport("gda-2")]
+		public static extern void gda_command_set_text (IntPtr cmd, string text);
+
+		[DllImport("gda-2")]
+		public static extern void gda_command_set_command_type (IntPtr cmd, GdaCommandType type);
 	}
 }

@@ -32,7 +32,7 @@ namespace System.Data.OleDb
 		bool designTimeVisible;
 		OleDbDataReader dataReader;
 		CommandBehavior behavior;
-		ArrayList gdaCommands;
+		IntPtr gdaCommand;
 		ArrayList gdaResults;
 
 		#endregion // Fields
@@ -50,7 +50,7 @@ namespace System.Data.OleDb
 			designTimeVisible = false;
 			dataReader = null;
 			behavior = CommandBehavior.Default;
-			gdaCommands = new ArrayList ();
+			gdaCommand = IntPtr.Zero;
 			gdaResults = new ArrayList ();
 		}
 
@@ -80,13 +80,7 @@ namespace System.Data.OleDb
 		{
 			get { return commandText; }
 			set { 
-				string[] queries = value.Split (new Char[] {';'});
-				gdaCommands.Clear ();
-
-				foreach (string query in queries) 
-					gdaCommands.Add (libgda.gda_command_new (query, 0, 0));
-
-				commandText = value; 
+				commandText = value;
 			}
 		}
 
@@ -160,12 +154,44 @@ namespace System.Data.OleDb
 			return new OleDbParameter ();
 		}
 
+		IDbDataParameter IDbCommand.CreateParameter ()
+		{
+			return CreateParameter ();
+		}
+		
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
 			throw new NotImplementedException ();
 		}
 
+		private void SetupGdaCommand ()
+		{
+			GdaCommandType type;
+			
+			switch (commandType) {
+			case CommandType.TableDirect :
+				type = GdaCommandType.Table;
+				break;
+			case CommandType.StoredProcedure :
+				type = GdaCommandType.Procedure;
+				break;
+			case CommandType.Text :
+			default :
+				type = GdaCommandType.Sql;
+				break;
+			}
+			
+			if (gdaCommand != IntPtr.Zero) {
+				libgda.gda_command_set_text (gdaCommand, commandText);
+				libgda.gda_command_set_command_type (gdaCommand, type);
+			} else {
+				gdaCommand = libgda.gda_command_new (commandText, type, 0);
+			}
+
+			//libgda.gda_command_set_transaction 
+		}
+		
 		public int ExecuteNonQuery ()
 		{
 			if (connection == null)
@@ -177,12 +203,18 @@ namespace System.Data.OleDb
 			IntPtr gdaConnection = connection.GdaConnection;
 			IntPtr gdaParameterList = parameters.GdaParameterList;
 
-			return libgda.gda_connection_execute_non_query (gdaConnection, (IntPtr) gdaCommands[0], gdaParameterList);
+			SetupGdaCommand ();
+			return libgda.gda_connection_execute_non_query (gdaConnection, (IntPtr) gdaCommand, gdaParameterList);
 		}
 
 		public OleDbDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
+		}
+
+		IDataReader IDbCommand.ExecuteReader ()
+		{
+			return ExecuteReader ();
 		}
 
 		public OleDbDataReader ExecuteReader (CommandBehavior behavior)
@@ -195,16 +227,24 @@ namespace System.Data.OleDb
 			IntPtr gdaConnection = connection.GdaConnection;
 			IntPtr gdaParameterList = parameters.GdaParameterList;
 
-			foreach (IntPtr gdaCommand in gdaCommands) 
-				GdaResults.Add (libgda.gda_connection_execute_single_command (gdaConnection, gdaCommand, gdaParameterList));
+			/* FIXME: split all returned resultsets into
+			   our internal GdaResults */
+			GdaResults.Add (libgda.gda_connection_execute_command (
+						gdaConnection,
+						gdaCommand,
+						gdaParameterList));
 
 			dataReader = new OleDbDataReader (this);
-
 			dataReader.NextResult ();
 
 			return dataReader;
 		}
 
+		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
+		{
+			return ExecuteReader (behavior);
+		}
+		
 		[MonoTODO]
 		public object ExecuteScalar ()
 		{
@@ -213,24 +253,6 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		object ICloneable.Clone ()
-		{
-			throw new NotImplementedException ();	
-		}
-
-		[MonoTODO]
-		IDbDataParameter IDbCommand.CreateParameter ()
-		{
-			throw new NotImplementedException ();	
-		}
-
-		[MonoTODO]
-		IDataReader IDbCommand.ExecuteReader ()
-		{
-			throw new NotImplementedException ();	
-		}
-
-		[MonoTODO]
-		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
 		{
 			throw new NotImplementedException ();	
 		}
