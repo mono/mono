@@ -1,3 +1,7 @@
+2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added CodeGeneratorIdentifierTest.cs.
+
 2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Test/Microsoft.CSharp/CodeGeneratorFromCompileUnitTest.cs: don't
