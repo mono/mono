@@ -3557,9 +3557,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
-			
-		
-			
+
 			return true;
 		}
 		

@@ -118,7 +118,8 @@ namespace Mono.CSharp {
 			}
 
 			EnumBuilder.DefineField ("value__", UnderlyingType,
-						 FieldAttributes.Public | FieldAttributes.SpecialName);
+						 FieldAttributes.Public | FieldAttributes.SpecialName
+						 | FieldAttributes.RTSpecialName);
 
 			RootContext.TypeManager.AddEnumType (Name, EnumBuilder, this);
 
@@ -273,7 +274,7 @@ namespace Mono.CSharp {
 					
 				} else {
 					Report.Error (1008, loc,
-						      "Type byte, sbyte, short, ushort, int, uint, long, or ulong expected");
+					       "Type byte, sbyte, short, ushort, int, uint, long, or ulong expected");
 					return null;
 				}
 			}
@@ -317,8 +318,6 @@ namespace Mono.CSharp {
 
 			
 			foreach (string name in ordered_enums) {
-				Expression val;
-
 				//
 				// Have we already been defined, thanks to some cross-referencing ?
 				// 
@@ -350,8 +349,6 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					val = Expression.Literalize (default_value, UnderlyingType);
-					
 					fb.SetConstant (default_value);
 					field_builders.Add (fb);
 					member_to_value [name] = default_value;

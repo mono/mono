@@ -1,3 +1,11 @@
+2001-12-20  Ravi Pratap  <ravi@ximian.com>
+
+	* rootcontext.cs (LookupType): Concatenate type names with
+	a '.' instead of a '+' The test suite passes again.
+
+	* enum.cs (Enum.DefineEnum): Set RTSpecialName on the 'value__'
+	field of the enumeration.
+
 2001-12-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Indexer.Define): Fix bug, we were setting both Get/Set

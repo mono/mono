@@ -21,6 +21,7 @@ namespace Mono.CSharp {
 		public Expression Expr;
 		public Attributes  OptAttributes;
 		public FieldBuilder FieldBuilder;
+
 		object ConstantValue = null;
 		Type type;
 
@@ -103,9 +104,9 @@ namespace Mono.CSharp {
 				Report.Error (150, Location, "A constant value is expected");
 				return null;
 			}
-			
-			Expr = Expression.Reduce (ec, Expr);
 
+			Expr = Expression.Reduce (ec, Expr);
+			
 			if (!(Expr is Literal)) {
 				Report.Error (150, Location, "A constant value is expected");
 				return null;
