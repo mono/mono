@@ -1,3 +1,8 @@
+2002-05-12  Lawrence Pit <loz@cable.a2000.nl>
+
+	* Uri.LocalPath and Uri.AbsoluteUri modified to support both w32 
+	and *nix filepaths
+
 2002-05-09  Lawrence Pit <loz@cable.a2000.nl>
 
 	* Uri.GetLeftPart fixed for mailto and news schemes.

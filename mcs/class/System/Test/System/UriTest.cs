@@ -7,6 +7,7 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
 
 namespace MonoTests.System
 {
@@ -128,6 +129,38 @@ namespace MonoTests.System
 				uri = new Uri ("http://www.contoso.com:12345678/foo/bar/");
 				Fail ("#o1 should have failed because of invalid port");
 			} catch (UriFormatException) { }			
+		}
+		
+		public void TestLocalPath ()
+		{
+			bool isWin32 = (Path.DirectorySeparatorChar == '\\');
+			
+			Uri uri = new Uri ("c:\\tmp\\hello.txt");
+			AssertEquals ("#1a", "file:///c:/tmp/hello.txt", uri.ToString ());
+			AssertEquals ("#1b", "c:\\tmp\\hello.txt", uri.LocalPath);
+			AssertEquals ("#1c", "file", uri.Scheme);
+			AssertEquals ("#1d", "", uri.Host);
+			AssertEquals ("#1e", "c:/tmp/hello.txt", uri.AbsolutePath);
+					
+			uri = new Uri ("file:////////cygwin/tmp/hello.txt");
+			AssertEquals ("#3a", "file://cygwin/tmp/hello.txt", uri.ToString ());
+			if (isWin32)
+				AssertEquals ("#3b win32", "\\\\cygwin\\tmp\\hello.txt", uri.LocalPath);
+			else
+				AssertEquals ("#3b *nix", "//cygwin/tmp/hello.txt", uri.LocalPath);
+			AssertEquals ("#3c", "file", uri.Scheme);
+			AssertEquals ("#3d", "cygwin", uri.Host);
+			AssertEquals ("#3e", "/tmp/hello.txt", uri.AbsolutePath);
+
+			uri = new Uri ("file://mymachine/cygwin/tmp/hello.txt");
+			AssertEquals ("#4a", "file://mymachine/cygwin/tmp/hello.txt", uri.ToString ());
+			if (isWin32)
+				AssertEquals ("#4b win32", "\\\\mymachine\\cygwin\\tmp\\hello.txt", uri.LocalPath);
+			else
+				AssertEquals ("#4b *nix", "//mymachine/cygwin/tmp/hello.txt", uri.LocalPath);
+			AssertEquals ("#4c", "file", uri.Scheme);
+			AssertEquals ("#4d", "mymachine", uri.Host);
+			AssertEquals ("#4e", "/cygwin/tmp/hello.txt", uri.AbsolutePath);
 		}
 		
 		public void TestUnc ()

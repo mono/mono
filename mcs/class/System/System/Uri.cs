@@ -111,6 +111,8 @@ namespace System
 					StringBuilder s = new StringBuilder ();
 					s.Append (scheme);
 					s.Append (GetSchemeDelimiter (scheme));
+					if (path.Length > 1 && path [1] == ':' && "file".Equals (scheme)) 
+						s.Append ('/');  // win32 file
 					if (userinfo.Length > 0) 
 						s.Append (userinfo).Append ('@');
 					s.Append (host);
@@ -183,7 +185,15 @@ namespace System
 			get { 
 				if (!IsUnc)
 					return path;				
-				return "\\\\" + host + path.Replace ('/', '\\');
+				
+				// support *nix and W32 styles
+				if (path.Length > 1 && path [1] == ':')
+					return path.Replace ('/', '\\');
+					
+				if (System.IO.Path.DirectorySeparatorChar == '\\')
+					return "\\\\" + host + path.Replace ('/', '\\');
+				else 
+					return "/" + host + path;
 			} 
 		}
 
@@ -533,17 +543,27 @@ namespace System
 			}
 
 			// 2 scheme
-			if (c == ':') {
+			if (c == ':') {				
+				if (pos == 1) {
+					// a windows filepath
+					scheme = "file";
+					path = uriString.Replace ('\\', '/');
+					return;
+				}
+					
 				scheme = uriString.Substring (0, pos).ToLower ();
 				uriString = uriString.Remove (0, pos + 1);
 			} else 
-				scheme = "file";				
-			
+				scheme = "file";			
+						
 			// 3
 			if ((uriString.Length >= 2) && 
 			    ((uriString [0] == '/') || (uriString [0] == '\\')) &&
 			    ((uriString [1] == '/') || (uriString [1] == '\\'))) 
-			    	uriString = uriString.Remove (0, 2);
+				if ("file".Equals (scheme)) 
+					uriString = uriString.TrimStart (new char [] {'/', '\\'});			    	
+				else
+				    	uriString = uriString.Remove (0, 2);
 			    	
 			// 8 fragment
 			pos = uriString.IndexOf ('#');
