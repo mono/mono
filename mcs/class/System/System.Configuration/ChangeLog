@@ -1,5 +1,9 @@
 2004-08-16  Duncan Mak  <duncan@ximian.com>
 
+	* ConfigurationSection.cs: Use XML_DEP.
+
+2004-08-16  Duncan Mak  <duncan@ximian.com>	
+
 	* ConfigurationElement.cs (InitializeDefault): Made virtual.
 
 	* AppSettingsSection.cs:
