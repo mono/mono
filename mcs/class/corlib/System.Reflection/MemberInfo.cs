@@ -38,7 +38,9 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class MemberInfo : ICustomAttributeProvider {
 
-		internal MemberInfo () {}
+		protected MemberInfo ()
+		{
+		}
 		
 		public abstract Type DeclaringType {
 			get;
