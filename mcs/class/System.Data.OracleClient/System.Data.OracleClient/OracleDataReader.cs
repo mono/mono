@@ -283,10 +283,11 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public OracleLob GetOracleLob (int i)
 		{
-			throw new NotImplementedException ();
+			OracleLob output = ((OciDefineHandle) statement.Values [i]).GetOracleLob ();
+			output.connection = command.Connection;
+			return output;
 		}
 
 		public OracleNumber GetOracleNumber (int i)

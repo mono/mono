@@ -178,7 +178,10 @@ namespace System.Data.OracleClient
 
 		public void Close () 
 		{
-			oci.Disconnect();
+			if (transaction != null)
+				transaction.Rollback ();
+
+			oci.Disconnect ();
 			state = ConnectionState.Closed;
 		}
 

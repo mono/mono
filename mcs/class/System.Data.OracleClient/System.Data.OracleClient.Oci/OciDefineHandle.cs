@@ -35,6 +35,7 @@ namespace System.Data.OracleClient.Oci {
 		int rlenp;
 		sbyte scale;
 
+		OciStatementHandle statement;
 		OciLobLocator lobLocator;
 	
 		#endregion // Fields
@@ -45,6 +46,8 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int ociTypeInt;
 			int status = 0;
+
+			this.statement = statement;
 
 			IntPtr parameterHandle = statement.CreateParameterHandle (position);
 
@@ -82,42 +85,7 @@ namespace System.Data.OracleClient.Oci {
 			}
 			definedType = (OciDataType) ociTypeInt;
 
-			switch (definedType) {
-			case OciDataType.Number:
-				ociType = OciDataType.Char;
-				break;
-			case OciDataType.Date:
-				ociType = OciDataType.Char;
-				definedSize = 20;
-				break;
-			case OciDataType.Clob:
-				lobLocator = (OciLobLocator) statement.Environment.AllocateDescriptor (OciDescriptorType.LobLocator);
-				value = lobLocator.Handle;
-				ociType = definedType;
-				break;
-			default:
-				ociType = definedType;
-				break;
-			}
-
-			value = Marshal.AllocHGlobal (definedSize);
-
-			status = OCIDefineByPos (statement.Handle,
-							out handle,
-							statement.ErrorHandle.Handle,
-							position,
-							value,
-							definedSize,
-							ociType,
-							ref indicator,
-							ref rlenp,
-							IntPtr.Zero,
-							0);
-
-			if (status != 0) {
-				OciErrorInfo info = statement.ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
+			Define (position);
 
 			statement.FreeParameterHandle (parameterHandle);
 		}
@@ -176,6 +144,96 @@ namespace System.Data.OracleClient.Oci {
 							IntPtr rcodep,
 							uint mode);
 
+		[DllImport ("oci", EntryPoint="OCIDefineByPos")]
+		public static extern int OCIDefineByPosPtr (IntPtr stmtp,
+							out IntPtr defnpp,
+							IntPtr errhp,
+							[MarshalAs (UnmanagedType.U4)] int position,
+							ref IntPtr valuep,
+							int value_sz,
+							[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+							ref short indp,
+							ref int rlenp,
+							IntPtr rcodep,
+							uint mode);
+
+		void Define (int position)
+		{
+			switch (definedType) {
+			case OciDataType.Date:
+				definedSize = 20;
+				DefineChar (position); // HANDLE AS CHAR FOR NOW
+				return;
+			case OciDataType.Clob:
+			case OciDataType.Blob:
+				definedSize = -1;
+				DefineLob (position, definedType);
+				return;
+			default:
+				DefineChar (position); // HANDLE ALL OTHERS AS CHAR FOR NOW
+				return;
+			}
+		}
+
+		void DefineChar (int position)
+		{
+			ociType = OciDataType.Char;
+			value = Marshal.AllocHGlobal (definedSize);
+
+			int status = 0;
+
+			status = OCIDefineByPos (statement.Handle,
+							out handle,
+							statement.ErrorHandle.Handle,
+							position,
+							value,
+							definedSize,
+							ociType,
+							ref indicator,
+							ref rlenp,
+							IntPtr.Zero,
+							0);
+
+			if (status != 0) {
+				OciErrorInfo info = statement.ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+
+		void DefineLob (int position, OciDataType type)
+		{
+			ociType = type;
+			int status = 0;
+
+			definedSize = -1;
+
+			lobLocator = (OciLobLocator) statement.Environment.AllocateDescriptor (OciDescriptorType.LobLocator);
+			if (lobLocator == null) {
+				OciErrorInfo info = statement.Environment.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+			value = lobLocator.Handle;
+			lobLocator.ErrorHandle = statement.ErrorHandle;
+			lobLocator.Service = statement.Service;
+
+			status = OCIDefineByPosPtr (statement.Handle,
+							out handle,
+							statement.ErrorHandle.Handle,
+							position,
+							ref value,
+							definedSize,
+							ociType,
+							ref indicator,
+							ref rlenp,
+							IntPtr.Zero,
+							0);
+
+			if (status != 0) {
+				OciErrorInfo info = statement.ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+
 		public void Dispose ()
 		{
 			Marshal.FreeHGlobal (value);
@@ -183,7 +241,7 @@ namespace System.Data.OracleClient.Oci {
 
 		public OracleLob GetOracleLob ()
 		{
-			return new OracleLob (lobLocator);
+			return new OracleLob (lobLocator, ociType);
 		}
 
 		public object GetValue ()

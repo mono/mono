@@ -21,9 +21,11 @@
 //    3 new rows where ENAME being: 'conn3', 'conn9', and 'conn1'
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Data;
 using System.Data.OracleClient;
+using System.Text;
 
 namespace Test.OracleClient
 {
@@ -276,23 +278,58 @@ namespace Test.OracleClient
 
 			OracleCommand insert = connection.CreateCommand ();
 			insert.Transaction = transaction;
-			insert.CommandText = "INSERT INTO LOBTEST VALUES ('1234')";
+			insert.CommandText = "INSERT INTO LOBTEST VALUES (EMPTY_CLOB())";
 			insert.ExecuteNonQuery ();
 
 			OracleCommand select = connection.CreateCommand ();
 			select.Transaction = transaction;
-			select.CommandText = "SELECT CLOB_COLUMN FROM LOBTEST";
+			select.CommandText = "SELECT CLOB_COLUMN FROM LOBTEST FOR UPDATE";
 			Console.WriteLine ("SELECTING A CLOB (CHARACTER) VALUE FROM CLOBTEST");
 
 			OracleDataReader reader = select.ExecuteReader ();
 			if (!reader.Read ())
 				Console.WriteLine ("ERROR: RECORD NOT FOUND");
 
+			Console.WriteLine ("TESTING OracleLob OBJECT ...");
+			OracleLob lob = reader.GetOracleLob (0);
+			Console.WriteLine ("LENGTH: {0}", lob.Length);
+			Console.WriteLine ("CHUNK SIZE: {0}", lob.ChunkSize);
+			//Console.WriteLine ("ABOUT TO READ VALUE ... SHOULD BE ''");
+
+			UnicodeEncoding encoding = new UnicodeEncoding ();
+
+			byte[] value = new byte [lob.Length * 2];
+			//lob.Read (value, 0, (int) lob.Length * 2);
+			//Console.WriteLine ("VALUE: {0}", encoding.GetString (value));
+
+			Console.WriteLine ("CURRENT POSITION: {0}", lob.Position);
+			Console.WriteLine ("UPDATING VALUE TO 'TEST ME!'");
+			value = encoding.GetBytes ("TEST ME!");
+			lob.Write (value, 0, value.Length);
+
+			Console.WriteLine ("CURRENT POSITION: {0}", lob.Position);
+			Console.WriteLine ("RE-READ VALUE...");
+			lob.Seek (1, SeekOrigin.Begin);
+
+			Console.WriteLine ("CURRENT POSITION: {0}", lob.Position);
+			value = new byte [lob.Length * 2];
+			lob.Read (value, 0, value.Length);
+			Console.WriteLine ("VALUE: {0}", encoding.GetString (value));
+			Console.WriteLine ("CURRENT POSITION: {0}", lob.Position);
+
+			Console.WriteLine ("CLOSE OracleLob...");
+			lob.Close ();
+
+			Console.WriteLine ("CLOSING READER...");
 			reader.Close ();
+			transaction.Commit ();
 
-			Console.WriteLine ("ROLLBACK TRANSACTION ...");
+			Console.WriteLine ("DROP TABLE...");
 
-			transaction.Rollback ();
+			OracleCommand command = connection.CreateCommand ();
+			command.CommandText = "DROP TABLE LOBTEST";
+			command.ExecuteNonQuery ();
+
 		}
 
 		static void Wait(string msg) 
@@ -345,6 +382,7 @@ namespace Test.OracleClient
 			Console.WriteLine ("LOB Test BEGIN...");
 			LOBTest (con1);
 			Console.WriteLine ("LOB Test END.");
+			Wait ("Press enter to continue ...");
 
 			Console.WriteLine ("Read Simple Test BEGIN...");
                         ReadSimpleTest(con1);

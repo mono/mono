@@ -108,6 +108,7 @@ namespace System.Data.OracleClient.Oci {
 						type,
 						0,
 						IntPtr.Zero);
+
 			if (status != 0 && status != 1) 
 				return null;
 
@@ -141,8 +142,10 @@ namespace System.Data.OracleClient.Oci {
 						type,
 						0,
 						IntPtr.Zero);
+
 			if (status != 0 && status != 1) 
 				return null;
+
 			switch (type) {
 				case OciDescriptorType.LobLocator:
 					return new OciLobLocator (this, newHandle);

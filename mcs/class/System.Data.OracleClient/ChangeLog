@@ -1,3 +1,23 @@
+2003-02-26  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OracleConnection.cs:
+		Rollback transactions when connection closes if they
+		are open.
+	* System.Data.OracleClient/OracleDataReader.cs:
+		Implement GetOracleLob ()
+	* System.Data.OracleClient/OracleLob.cs:
+		Implement some of the details, like Read/Write/Seek
+	* System.Data.OracleClient.Oci/OciBindHandle.cs:
+		Remove debug message.
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+		Add LOB support.
+	* System.Data.OracleClient.Oci/OciEnvironmentHandle.cs:
+		Minor formatting changes
+	* System.Data.OracleClient.Oci/OciLobLocator.cs:
+		Huge amounts of code to make it work.  Lots of ugly
+		OCI P/Invoke code.
+	* Test/TestOracleClient.cs:
+		Improve the LOBTest.
+
 2003-02-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Data.OracleClient/OracleMonthSpan.cs: fixed compilation.

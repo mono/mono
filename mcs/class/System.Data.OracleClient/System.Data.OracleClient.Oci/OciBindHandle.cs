@@ -97,7 +97,6 @@ namespace System.Data.OracleClient.Oci {
 
 		public void Bind (OciStatementHandle statement, object val)
 		{
-			Console.WriteLine ("IN BIND");
 			handle = IntPtr.Zero;
 
 			this.statement = statement;
