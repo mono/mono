@@ -1,3 +1,7 @@
+2003-09-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslCopyOf.cs: handle attributes.
+
 2003-09-15 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslLiteralElement.cs: must evaluate used attr sets *BEFORE*

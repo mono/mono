@@ -62,8 +62,11 @@ namespace Mono.Xml.Xsl.Operations {
 				
 				outputter.WriteEndElement ();
 				break;
-			case XPathNodeType.Whitespace:                                                     
-
+				
+			case XPathNodeType.Attribute:
+				outputter.WriteAttributeString (nav.Prefix, nav.LocalName, nav.NamespaceURI, nav.Value);
+				break;
+			case XPathNodeType.Whitespace:
 			case XPathNodeType.SignificantWhitespace:
 			case XPathNodeType.Text:
 				outputter.WriteString (nav.Value);
