@@ -238,6 +238,13 @@ public class Int64Test : TestCase
 		Assert(typeof(OverflowException) == e.GetType());
 	}
 	try {
+		Int64.Parse("10000000000000000", NumberStyles.HexNumber);
+		Fail("Should raise a System.OverflowException");
+	}
+	catch (Exception e) {
+		Assert(typeof(OverflowException) == e.GetType());
+	}
+	try {
 		double OverInt = (double)Int64.MaxValue + 1;
 		Int64.Parse(OverInt.ToString(), NumberStyles.Integer);
 		Fail("Should raise a System.FormatException");

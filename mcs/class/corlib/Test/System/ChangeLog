@@ -1,3 +1,8 @@
+2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* Int32Test.cs:
+          Int64Test.cs: Add checks for overflow on hex parse.
+ 
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs (GetMethodImpl): New test for overload resolution.

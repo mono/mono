@@ -180,6 +180,13 @@ public class Int32Test : TestCase
 		} catch (Exception e){
 			Assert ("#C31", typeof (FormatException) == e.GetType ());
 		}
+		AssertEquals ("#C32", -123, Int32.Parse ("ffffff85", NumberStyles.HexNumber, Nfi));
+		try {
+			Int32.Parse ("100000000", NumberStyles.HexNumber, Nfi);
+			Fail ("#C33: Should raise OverflowException");
+		} catch (Exception e){
+			Assert ("#C34", typeof (OverflowException) == e.GetType ());
+		}
 	}
 	
 	public void TestToString()
