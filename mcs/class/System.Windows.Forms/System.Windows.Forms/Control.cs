@@ -393,7 +393,7 @@
     		public string CompanyName {
     			get {
 					//Better than throwing an execption
-    				return "Comapny Name";
+    				return "Company Name";
     			}
     		}
     		
