@@ -1,3 +1,8 @@
+2002-04-16  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.Common/DataColumnMappingCollection.cs: added basic
+	implementation. Still missing some stuff.
+
 2002-04-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data/SqlConnection.cs: modified - got to compile,
