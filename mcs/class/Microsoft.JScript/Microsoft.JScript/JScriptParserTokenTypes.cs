@@ -1,4 +1,6 @@
-// $ANTLR 2.7.2: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
+// $ANTLR 2.7.3: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
+
+	using System.Collections;
 
 namespace Microsoft.JScript
 {

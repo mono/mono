@@ -1,5 +1,7 @@
 // $ANTLR 2.7.3: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
 
+	using System.Collections;
+
 namespace Microsoft.JScript
 {
 	// Generate the header common to all output files.
@@ -330,7 +332,7 @@ _loop4_breakloop:			;
 		}
 		case LITERAL_switch:
 		{
-			switch_stm(parent);
+			stm=switch_stm(parent);
 			break;
 		}
 		case LITERAL_throw:
@@ -886,23 +888,39 @@ _loop15_breakloop:			;
 		if (0==inputState.guessing)
 		{
 			
-					  with = new With (exp, stm);  
+					  with = new With (parent, exp, stm);  
 				
 		}
 		return with;
 	}
 	
-	public void switch_stm(
+	public Switch  switch_stm(
 		AST parent
 	) //throws RecognitionException, TokenStreamException
 {
+		Switch sw;
+		
+		
+			sw = new Switch (parent);
+			AST exp = null;
+			ArrayList [] clauses = null;
 		
 		
 		match(LITERAL_switch);
 		match(OPEN_PARENS);
-		expr(parent);
+		exp=expr(parent);
 		match(CLOSE_PARENS);
-		case_block();
+		clauses=case_block(parent);
+		if (0==inputState.guessing)
+		{
+			
+					  sw.exp = exp;
+					  sw.case_clauses = clauses [0];
+					  sw.default_clauses = clauses [1];
+					  sw.sec_case_clauses = clauses [2];
+				
+		}
+		return sw;
 	}
 	
 	public AST  throw_stm(
@@ -1215,19 +1233,43 @@ _loop69_breakloop:			;
 		return e;
 	}
 	
-	public void case_block() //throws RecognitionException, TokenStreamException
+	public ArrayList []  case_block(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
+		ArrayList [] clauses;
+		
+		
+			clauses = new ArrayList [3]; 
+			ArrayList c1_clauses, def_clauses, c2_clauses;
+			c1_clauses = def_clauses = c2_clauses = null;
 		
 		
 		match(OPEN_BRACE);
-		case_clauses();
-		default_clause();
-		case_clauses();
+		c1_clauses=case_clauses(parent);
+		def_clauses=default_clause(parent);
+		c2_clauses=case_clauses(parent);
 		match(CLOSE_BRACE);
+		if (0==inputState.guessing)
+		{
+			
+					  clauses [0] = c1_clauses;
+					  clauses [1] = def_clauses;
+					  clauses [2] = c2_clauses;
+				
+		}
+		return clauses;
 	}
 	
-	public void case_clauses() //throws RecognitionException, TokenStreamException
+	public ArrayList  case_clauses(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
+		ArrayList clauses;
+		
+		
+			clauses = new ArrayList (); 
+			Clause clause = null;
 		
 		
 		{    // ( ... )*
@@ -1235,7 +1277,11 @@ _loop69_breakloop:			;
 			{
 				if ((LA(1)==LITERAL_case))
 				{
-					case_clause();
+					clause=case_clause(parent);
+					if (0==inputState.guessing)
+					{
+						if (clause != null) clauses.Add (clause);
+					}
 				}
 				else
 				{
@@ -1245,19 +1291,31 @@ _loop69_breakloop:			;
 			}
 _loop32_breakloop:			;
 		}    // ( ... )*
+		return clauses;
 	}
 	
-	public void default_clause() //throws RecognitionException, TokenStreamException
+	public ArrayList  default_clause(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
+		ArrayList def_clause;
 		
 		
 		match(LITERAL_default);
 		match(COLON);
-		statement_list();
+		def_clause=statement_list(parent);
+		return def_clause;
 	}
 	
-	public void statement_list() //throws RecognitionException, TokenStreamException
+	public ArrayList  statement_list(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
+		ArrayList stms;
+		
+		
+			stms = new ArrayList ();
+			AST stm = null;
 		
 		
 		{    // ( ... )*
@@ -1265,7 +1323,11 @@ _loop32_breakloop:			;
 			{
 				if ((tokenSet_2_.member(LA(1))))
 				{
-					statement(null);
+					stm=statement(null);
+					if (0==inputState.guessing)
+					{
+						if (stm != null) stms.Add (stm);
+					}
 				}
 				else
 				{
@@ -1275,16 +1337,34 @@ _loop32_breakloop:			;
 			}
 _loop66_breakloop:			;
 		}    // ( ... )*
+		return stms;
 	}
 	
-	public void case_clause() //throws RecognitionException, TokenStreamException
+	public Clause  case_clause(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
+		Clause clause;
+		
+		
+			clause = new Clause (parent);
+			AST exp = null;
+			ArrayList stm_list = null;
 		
 		
 		match(LITERAL_case);
-		expr(null);
+		exp=expr(parent);
+		if (0==inputState.guessing)
+		{
+			clause.exp = exp;
+		}
 		match(COLON);
-		statement_list();
+		stm_list=statement_list(parent);
+		if (0==inputState.guessing)
+		{
+			clause.stm_list = stm_list;
+		}
+		return clause;
 	}
 	
 	public AST []  inside_for(
@@ -1294,10 +1374,10 @@ _loop66_breakloop:			;
 		AST [] exprs;
 		
 		
-			// for parts
 			AST exp1, exp2, exp3;
 			exprs = null;
 			exp1 = exp2 = exp3 = null;
+			VariableStatement v_stm = new VariableStatement ();
 		
 		
 		switch ( LA(1) )
@@ -1453,7 +1533,7 @@ _loop66_breakloop:			;
 		{
 			match(LITERAL_var);
 			{
-				var_decl_list(null, null);
+				var_decl_list(v_stm, parent);
 				{
 					switch ( LA(1) )
 					{
@@ -1485,7 +1565,7 @@ _loop66_breakloop:			;
 							case DECIMAL_LITERAL:
 							case HEX_INTEGER_LITERAL:
 							{
-								expr(parent);
+								exp2=expr(parent);
 								break;
 							}
 							case SEMI_COLON:
@@ -1524,7 +1604,7 @@ _loop66_breakloop:			;
 							case DECIMAL_LITERAL:
 							case HEX_INTEGER_LITERAL:
 							{
-								expr(parent);
+								exp3=expr(parent);
 								break;
 							}
 							case CLOSE_PARENS:
@@ -1537,12 +1617,18 @@ _loop66_breakloop:			;
 							}
 							 }
 						}
+						if (0==inputState.guessing)
+						{
+							
+									  exprs = new AST [] {v_stm, exp2, exp3};
+								
+						}
 						break;
 					}
 					case IN:
 					{
 						match(IN);
-						expr(parent);
+						exp3=expr(parent);
 						break;
 					}
 					default:

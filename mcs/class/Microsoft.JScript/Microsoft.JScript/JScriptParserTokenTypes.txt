@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: jscript-lexer-parser.g -> JScriptParserTokenTypes.txt$
+// $ANTLR 2.7.3: jscript-lexer-parser.g -> JScriptParserTokenTypes.txt$
 JScriptParser    // output token vocab name
 LITERAL_function="function"=4
 IDENTIFIER=5

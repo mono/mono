@@ -1,5 +1,7 @@
 // $ANTLR 2.7.3: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
 
+	using System.Collections;
+
 namespace Microsoft.JScript
 {
 	// Generate header specific to lexer CSharp file
@@ -175,7 +177,7 @@ namespace Microsoft.JScript
 			literals.Add("with", 20);
 		}
 		
-		public Token nextToken()			//throws TokenStreamException
+		 public Token nextToken()			//throws TokenStreamException
 		{
 			Token theRetToken = null;
 tryAgain:
