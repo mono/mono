@@ -1,3 +1,7 @@
+2003-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Timer.cs: Elapsed is an event. Added a few attributes.
+
 2002-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChangeLog:

@@ -24,8 +24,9 @@ namespace System.Timers
 		ISynchronizeInvoke so;
 		ManualResetEvent wait;
 
+		[Category("Behavior")]
 		[TimersDescription("Occurs when the Interval has elapsed.")]
-		public ElapsedEventHandler Elapsed;
+		public event ElapsedEventHandler Elapsed;
 
 		public Timer () : this (100)
 		{
@@ -41,6 +42,7 @@ namespace System.Timers
 		}
 
 
+		[Category("Behavior")]
 		[DefaultValue(true)]
 		[TimersDescription("Indicates whether the timer will be restarted when it is enabled.")]
 		public bool AutoReset
@@ -49,6 +51,7 @@ namespace System.Timers
 			set { autoReset = value; }
 		}
 
+		[Category("Behavior")]
 		[DefaultValue(false)]
 		[TimersDescription("Indicates whether the timer is enabled to fire events at a defined interval.")]
 		public bool Enabled
@@ -60,8 +63,6 @@ namespace System.Timers
 
 				enabled = value;
 				if (value) {
-					// May be we can use ThreadPool for these once i figure out how to finalize
-					// the ThreadPool main thread on program termination.
 					Thread t = new Thread (new ThreadStart (StartTimer));
 					t.Start ();
 				} else {
@@ -70,6 +71,7 @@ namespace System.Timers
 			}
 		}
 
+		[Category("Behavior")]
 		[DefaultValue(100)]
 		[RecommendedAsConfigurable(true)]
 		[TimersDescription( "The number of milliseconds between timer events.")]
