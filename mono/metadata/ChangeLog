@@ -1,5 +1,7 @@
 2005-02-05  Ben Maurer  <bmaurer@ximian.com>
 
+	* mono-debug-debugger.c: use iters
+
 	* class.c, class-internals.h: mono_class_setup_events is static
 	now
 
