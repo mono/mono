@@ -377,6 +377,7 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipAddPathBezierI (IntPtr path, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 
+				[DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipAddPathBeziersI (IntPtr path, IntPtr points, int count);
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipAddPathCurveI (IntPtr path, IntPtr points, int count);
