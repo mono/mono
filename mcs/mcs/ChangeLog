@@ -1,3 +1,8 @@
+2002-10-16  Nick Drochak  <ndrochak@gol.com>
+
+	* typemanager.cs: Remove unused private member.  Also reported mcs
+	bug to report this as a warning like csc.
+
 2002-10-15  Martin Baulig  <martin@gnome.org>
 
 	* statement.cs (Statement.Emit): Made this a virtual method; emits

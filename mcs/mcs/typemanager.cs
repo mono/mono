@@ -1096,7 +1096,6 @@ public class TypeManager {
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
 	//
-	Hashtable managed_types;
 	public static bool IsUnmanagedType (Type t)
 	{
 		if (IsBuiltinType (t) && t != TypeManager.string_type)
