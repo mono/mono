@@ -5165,9 +5165,41 @@ namespace Mono.CSharp {
 				}
 			}
 
+			//
+			// This checks the defined operators;  Notice that this is done
+			// using the order of declaration, so the loop will be broken the
+			// moment we reach our definition.
+			//
+			// Check for duplicates
+			//
+			ArrayList operators = container.Operators;
+			int c = operators.Count;
+			if (c > 1){
+				
+				for (int i = 0; i < c; i++){
+					Operator op = (Operator) operators [i];
+
+					if (op == this)
+						break;
+					
+					if (op.OperatorType != OperatorType)
+						continue;
+					
+					if (op.FirstArgType.Type != FirstArgType.Type)
+						continue;
+					
+					if (op.SecondArgType.Type != SecondArgType.Type)
+						continue;
+					
+					Report.Error (111, Location,
+						      "There is an existing operator declaration " +
+						      "with the same parameter definition");
+					return false;
+				}
+			}
 			return true;
 		}
-		
+
 		public void Emit (TypeContainer container)
 		{
 			//
