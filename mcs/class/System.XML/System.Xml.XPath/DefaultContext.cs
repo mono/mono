@@ -431,7 +431,7 @@ namespace System.Xml.XPath
 			string str1 = (string) args [0];
 			string str2 = (string) args [1];
 			int ich = str1.IndexOf (str2);
-			if (ich <= 0)
+			if (ich < 0)
 				return "";
 			return str1.Substring (ich + str2.Length);
 		}
