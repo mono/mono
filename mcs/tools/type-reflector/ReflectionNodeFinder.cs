@@ -55,8 +55,10 @@ namespace Mono.TypeReflector.Finders
 
 		protected override void AddTypeChildren (NodeInfoCollection c, NodeInfo parent, Type type)
 		{
+			object instance = parent.ReflectionInstance;
+
 			foreach (MemberInfo mi in GetMembers (type)) {
-				AddNode (c, parent, mi, mi);
+				AddNode (c, parent, mi, instance);
 			}
 		}
 

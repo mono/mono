@@ -24,6 +24,10 @@ namespace Mono.TypeReflector.Formatters
 
 		protected override string LineComment       {get {return "'";}}
 
+		protected override string PropertyFormat    {get {return "Property {1} As {0}\n{2}{3}End Property";}}
+		protected override string PropertyGetFormat {get {return "\tGet\n\t\t' Return {0}\n\tEnd Get\n";}}
+		protected override string PropertySet       {get {return "\tSet\n\tEnd Set\n";}}
+
 		protected override string KeywordClass      {get {return "Class";}}
 		protected override string KeywordEnum       {get {return "Enum";}}
 		protected override string KeywordValueType  {get {return "Struct";}}
