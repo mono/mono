@@ -10,7 +10,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 
 
-namespace System.Xml {
+namespace System.Xml.XPath {
 
 
 	/// <summary>

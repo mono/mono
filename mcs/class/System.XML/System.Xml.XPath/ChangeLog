@@ -1,3 +1,7 @@
+2002-06-24  Dick Porter <dick@ximian.com>
+
+	* XmlCaseOrder.cs: Fix namespace
+
 2002-06-23  Piers Haken <piersh@friskit.com>
 
 	* DefaultContext.cs: implemented XPathFUnctionId
