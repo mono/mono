@@ -30,6 +30,7 @@
 
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Data;
 using System.Text;
@@ -43,6 +44,7 @@ namespace MonoTests.System.Data
 	{
 		public string GetNormalizedSchema (string source)
 		{
+/*
 			// Due to the implementation difference, we must have
 			// one more step to reorder attributes. Here, read
 			// schema document into XmlSchema once, and compare
@@ -52,6 +54,44 @@ namespace MonoTests.System.Data
 			StringWriter writer = new StringWriter ();
 			xs.Write (writer);
 			return writer.ToString ();
+*/
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (source);
+			SortAttributes (doc.DocumentElement);
+			StringWriter writer = new StringWriter ();
+			doc.Save (writer);
+			return writer.ToString ();
+		}
+
+		private void SortAttributes (XmlElement el)
+		{
+			SortAttributesAttributes (el);
+			ArrayList al = new ArrayList ();
+			foreach (XmlNode n in el.ChildNodes) {
+				if (n.NodeType == XmlNodeType.Element)
+					SortAttributes (n as XmlElement);
+				if (n.NodeType == XmlNodeType.Comment)
+					al.Add (n);
+			}
+			foreach (XmlNode n in al)
+				el.RemoveChild (n);
+		}
+
+		private void SortAttributesAttributes (XmlElement el)
+		{
+			ArrayList al = new ArrayList ();
+			foreach (XmlAttribute a in el.Attributes)
+				al.Add (a.Name);
+			al.Sort ();
+			string [] names = (string []) al.ToArray (typeof (string));
+			al.Clear ();
+			foreach (string name in names)
+				al.Add (el.RemoveAttributeNode (
+					el.GetAttributeNode (name)));
+			foreach (XmlAttribute a in al)
+				// Exclude xmlns="" here.
+				if (a.Name != "xmlns" || a.Value != String.Empty)
+					el.SetAttributeNode (a);
 		}
 
 		public void AssertDataSet (string label, DataSet ds, string name, int tableCount, int relCount)
@@ -75,16 +115,26 @@ namespace MonoTests.System.Data
 
 		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount)
 		{
-			AssertReadXml (ds, label, xml, readMode, resultMode, datasetName, tableCount, ReadState.EndOfFile);
+			AssertReadXml (ds, label, xml, readMode, resultMode, datasetName, tableCount, ReadState.EndOfFile, null, null);
+		}
+
+		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount, ReadState state)
+		{
+			AssertReadXml (ds, label, xml, readMode, resultMode, datasetName, tableCount, state, null, null);
 		}
 
 		// a bit detailed version
-		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount, ReadState state)
+		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount, ReadState state, string readerLocalName, string readerNS)
 		{
 			XmlReader xtr = new XmlTextReader (xml, XmlNodeType.Element, null);
 			AssertEquals (label + ".return", resultMode, ds.ReadXml (xtr, readMode));
 			AssertDataSet (label + ".dataset", ds, datasetName, tableCount, -1);
 			AssertEquals (label + ".readstate", state, xtr.ReadState);
+			if (readerLocalName != null)
+				AssertEquals (label + ".reader-localName",
+					readerLocalName, xtr.LocalName);
+			if (readerNS != null)
+				AssertEquals (label + ".reader-ns", readerNS, xtr.NamespaceURI);
 		}
 
 		public void AssertDataRelation (string label, DataRelation rel, string name, bool nested,

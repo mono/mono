@@ -197,7 +197,7 @@ namespace MonoTests.System.Data
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#02", "<xs:schema id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema id=\"test_dataset\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -229,7 +229,7 @@ namespace MonoTests.System.Data
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#09", "              <xs:element name=\"first\" msdata:Caption=\"test\" default=\"test_default_value\" minOccurs=\"0\">", substring);
-			AssertEquals ("test#09", "              <xs:element msdata:Caption=\"test\" minOccurs=\"0\" default=\"test_default_value\" name=\"first\">", substring);
+			AssertEquals ("test#09", "              <xs:element default=\"test_default_value\" minOccurs=\"0\" msdata:Caption=\"test\" name=\"first\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -259,7 +259,7 @@ namespace MonoTests.System.Data
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#16", "              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring);
-			AssertEquals ("test#16", "              <xs:element msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" minOccurs=\"0\" name=\"second\" type=\"xs:string\" />", substring);
+			AssertEquals ("test#16", "              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring);
 			if (substring.IndexOf ("<xs:element") < 0)
 				Fail ("test#16: " + substring);
 			if (substring.IndexOf ("name=\"second\"") < 0)
@@ -299,7 +299,7 @@ namespace MonoTests.System.Data
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#23", "              <xs:element name=\"second_first\" default=\"default_value\" minOccurs=\"0\">", substring);
-			AssertEquals ("test#23", "              <xs:element minOccurs=\"0\" default=\"default_value\" name=\"second_first\">", substring);
+			AssertEquals ("test#23", "              <xs:element default=\"default_value\" minOccurs=\"0\" name=\"second_first\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -545,7 +545,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -633,7 +633,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"NewDataSet\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -647,7 +647,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			AssertEquals ("test#05", "      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"book\" type=\"bookType\" />", substring);
+			AssertEquals ("test#05", "      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"book\" type=\"bookType\" />", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -682,7 +682,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			AssertEquals ("test#12", "      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"author\" type=\"authorName\" />", substring);
+			AssertEquals ("test#12", "      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"author\" type=\"authorName\" />", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -787,7 +787,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -801,7 +801,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			AssertEquals ("test#05", "      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"book\" type=\"bookType\" />", substring);
+			AssertEquals ("test#05", "      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"book\" type=\"bookType\" />", substring);
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -835,7 +835,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			AssertEquals ("test#12", "      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"author\" type=\"authorName\" />", substring);
+			AssertEquals ("test#12", "      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"author\" type=\"authorName\" />", substring);
 	
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -971,15 +971,16 @@ namespace MonoTests.System.Data
 */
 
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:mstns='urn:bar' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-  <xs:import schemaLocation='_app1.xsd' namespace='urn:baz' />
-  <xs:import schemaLocation='_app2.xsd' namespace='urn:foo' />
+<xs:schema attributeFormDefault='qualified' elementFormDefault='qualified' id='NewDataSet' targetNamespace='urn:bar' xmlns='urn:bar' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:import namespace='urn:baz' schemaLocation='_app1.xsd' />
+  <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
   <xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='NewDataSet'>
     <xs:complexType>
       <xs:choice maxOccurs='unbounded'>
         <xs:element ref='app2:NS1Table' />
         <xs:element name='NS2Table'>
-          <xs:complexType />
+          <xs:complexType>
+          </xs:complexType>
         </xs:element>
       </xs:choice>
     </xs:complexType>
@@ -1420,14 +1421,14 @@ namespace MonoTests.System.Data
 </xs:schema>";
 */
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:mstns='NetFrameWork' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns='NetFrameWork' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='NetFrameWork' id='myDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+<xs:schema attributeFormDefault='qualified' elementFormDefault='qualified' id='myDataSet' targetNamespace='NetFrameWork' xmlns='NetFrameWork' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='NetFrameWork' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
   <xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='myDataSet'>
     <xs:complexType>
       <xs:choice maxOccurs='unbounded'>
         <xs:element name='myTable'>
           <xs:complexType>
             <xs:sequence>
-              <xs:element msdata:AutoIncrement='true' minOccurs='0' name='id' type='xs:int' />
+              <xs:element minOccurs='0' msdata:AutoIncrement='true' name='id' type='xs:int' />
               <xs:element minOccurs='0' name='item' type='xs:string' />
             </xs:sequence>
           </xs:complexType>
@@ -1501,7 +1502,7 @@ namespace MonoTests.System.Data
 </xs:schema>";
 */
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
-<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" id=""ExampleDataSet"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+<xs:schema id=""ExampleDataSet"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
   <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""ExampleDataSet"">
     <xs:complexType>
       <xs:choice maxOccurs=""unbounded"">
@@ -1545,6 +1546,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void WriteXmlSchema4 ()
 		{
+			// This is the MS output of WriteXmlSchema().
 /*
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
@@ -1563,7 +1565,7 @@ namespace MonoTests.System.Data
 </xs:schema>";
 */
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
-<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" id=""Example"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+<xs:schema id=""Example"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
   <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""Example"">
     <xs:complexType>
       <xs:choice maxOccurs=""unbounded"">
@@ -1606,6 +1608,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void WriteXmlSchema5 ()
 		{
+			// This is the MS output of WriteXmlSchema().
 /*
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
@@ -1650,7 +1653,7 @@ namespace MonoTests.System.Data
 </xs:schema>";
 */
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
-<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" id=""Example"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+<xs:schema id=""Example"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
   <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""Example"">
     <xs:complexType>
       <xs:choice maxOccurs=""unbounded"">
@@ -1759,6 +1762,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void WriteXmlSchema6 ()
 		{
+			// This is the MS output of WriteXmlSchema().
 /*
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
@@ -1782,7 +1786,7 @@ namespace MonoTests.System.Data
 </xs:schema>";
 */
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
-<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" id=""Example"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+<xs:schema id=""Example"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
   <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""Example"">
     <xs:complexType>
       <xs:choice maxOccurs=""unbounded"">
@@ -1841,26 +1845,41 @@ namespace MonoTests.System.Data
 		[Test]
 		public void WriteXmlExtendedProperties ()
 		{
-			string xml = @"<NewDataSet>
-  <xs:schema id=""NewDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:msprop=""urn:schemas-microsoft-com:xml-msprop"">
-    <xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" msprop:version=""version 2.1"">
-      <xs:complexType>
-        <xs:choice maxOccurs=""unbounded"">
-          <xs:element name=""Foo"">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name=""col1"" type=""xs:string"" minOccurs=""0"" />
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:choice>
-      </xs:complexType>
-    </xs:element>
-  </xs:schema>
-  <Foo>
-    <col1>foo</col1>
-  </Foo>
-</NewDataSet>";
+			// This is the MS output of WriteXmlSchema().
+/*
+			string xml = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema id=""NewDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:msprop=""urn:schemas-microsoft-com:xml-msprop"">
+  <xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" msprop:version=""version 2.1"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""Foo"">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name=""col1"" type=""xs:string"" minOccurs=""0"" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+*/
+			string xml = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema id=""NewDataSet"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:msprop=""urn:schemas-microsoft-com:xml-msprop"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+  <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" msprop:version=""version 2.1"" name=""NewDataSet"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""Foo"">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element minOccurs=""0"" name=""col1"" type=""xs:string"" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
 			DataSet ds = new DataSet ();
 			ds.ExtendedProperties ["version"] = "version 2.1";
 			DataTable dt = new DataTable ("Foo");
@@ -1869,9 +1888,10 @@ namespace MonoTests.System.Data
 			ds.Tables.Add (dt);
 
 			StringWriter sw = new StringWriter ();
-			ds.WriteXml(sw, XmlWriteMode.WriteSchema);
+			ds.WriteXmlSchema (sw);
 
-			string result = sw.ToString ();
+//			string result = sw.ToString ();
+			string result = GetNormalizedSchema (sw.ToString ());
 
 			AssertEquals (xml, result.Replace ("\r\n", "\n"));
 		}

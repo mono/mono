@@ -1,5 +1,12 @@
 2005-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSetTest.cs,
+	  DataSetAssertionTest.cs : In GetNormalizedSchema(), use manual
+	  sorting using dom  so that it can ignore XmlSerializer difference.
+	  Added some new assertion methods.
+
+2005-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataRowTest.cs : no need to gather 3 individual tests as RowEditTest.
 	  Let's not output to Console.
 
