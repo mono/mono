@@ -1,0 +1,18 @@
+System.Windows.Forms wine-patch README
+
+After applying the patch to wine, run ./configure in the wine directory and 
+'make && make depend && make install'.
+For now the patch assumes that the prefix_dir is /usr/local.
+
+Also, once the install is done you will need to create symbolic links for
+all the dlls you plan on using in System.Windows.Forms:
+ln -s /usr/local/lib/wine/kernel32.dll.so /usr/local/lib/libkernel32.dll.so
+ln -s /usr/local/lib/wine/user32.dll.so /usr/local/lib/libuser32.dll.so
+ln -s /usr/local/lib/wine/gdi32.dll.so /usr/local/lib/libgdi32.dll.so
+ln -s /usr/local/lib/wine/advapi32.dll.so /usr/local/lib/libgdi32.dll.so
+
+I still need to work out how to teach mono to load the libs from the wine 
+directory and without the lib prefix.
+
+Peter
+pbartok@novell.com
