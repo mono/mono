@@ -1,3 +1,8 @@
+2004-07-26  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapMessageFormater.cs: In BuildSoapMessageFromMethodResponse, add the
+	  return value to the SoapMessage even if it is null. This fixes bug #61837.
+
 2004-07-06  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapMessageFormatter.cs: In BuildMethodCallFromSoapMessage, set get the
