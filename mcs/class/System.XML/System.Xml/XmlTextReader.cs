@@ -649,6 +649,7 @@ namespace System.Xml
 		}
 
 #if NET_1_0
+		StringBuilder innerXmlBuilder;
 		public override string ReadInnerXml ()
 		{
 			if (readState != ReadState.Interactive)
@@ -656,7 +657,7 @@ namespace System.Xml
 
 			switch (NodeType) {
 			case XmlNodeType.Attribute:
-				return value.Substring (1, value.Length - 2);
+				return Value;
 			case XmlNodeType.Element:
 				if (IsEmptyElement)
 					return String.Empty;

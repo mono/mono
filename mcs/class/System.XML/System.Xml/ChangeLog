@@ -1,3 +1,7 @@
+2003-11-22  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReader.cs : Fixed ReadInnerXml(). This fixes bug #51267.
+
 2003-11-20 Eran Domb <erand@mainsoft.com>
 
 	* XmlTextWriter.cs (WriteStartAttribute) : Check if the ket already exists in the newAttributeNamespaces table 
