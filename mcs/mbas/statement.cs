@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Martin Baulig (martin@gnome.org)
+//	 Anirban Bhattacharjee (banirban@novell.com)
 //
 // (C) 2001, 2002 Ximian, Inc.
 //
@@ -1032,7 +1033,8 @@ namespace Mono.MonoBASIC {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (type != ExitType.SUB && type != ExitType.FUNCTION && type != ExitType.PROPERTY) {
+			if (type != ExitType.SUB && type != ExitType.FUNCTION && 
+				type != ExitType.PROPERTY && type != ExitType.TRY) {
 				if (ec.InLoop == false && ec.Switch == null){
 					Report.Error (139, loc, "No enclosing loop or switch to exit from");
 					return false;
