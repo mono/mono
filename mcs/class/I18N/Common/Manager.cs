@@ -211,7 +211,10 @@ public class Manager
 					{
 						try
 						{
-							assembly = Assembly.Load(region);
+							// we use the same strong name as I18N.dll except the assembly name
+							AssemblyName myName = typeof(Manager).Assembly.GetName();
+							myName.Name = region;
+							assembly = Assembly.Load(myName);
 						}
 						catch(SystemException)
 						{
