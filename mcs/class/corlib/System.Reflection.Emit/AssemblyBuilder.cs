@@ -45,6 +45,7 @@ namespace System.Reflection.Emit {
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
+		internal Type corlib_void_type = typeof (void);
 		private int[] table_indexes;
 		Hashtable us_string_cache = new Hashtable ();
 
@@ -395,6 +396,12 @@ namespace System.Reflection.Emit {
 			this.corlib_object_type = corlib_object_type;
 			this.corlib_value_type = corlib_value_type;
 			this.corlib_enum_type = corlib_enum_type;
+		}
+
+		public void SetCorlibTypeBuilders (Type corlib_object_type, Type corlib_value_type, Type corlib_enum_type, Type corlib_void_type)
+		{
+			SetCorlibTypeBuilders (corlib_object_type, corlib_value_type, corlib_enum_type);
+			this.corlib_void_type = corlib_void_type;
 		}
 
 		private Exception not_supported () {

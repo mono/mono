@@ -1,3 +1,11 @@
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
+	* AssemblyBuilder.cs (corlib_void_type): New internal field.
+	(SetCorlibTypeBuilders): Added overloaded version which takes 4
+	arguments to set the `corlib_void_type'.
+
+	* TypeBuilder.cs: Use `pmodule.assemblyb.corlib_void_type' instead
+	of `typeof (void)' to make this work when compiling corlib.
 
 Thu May 15 19:16:54 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

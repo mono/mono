@@ -355,7 +355,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException ("attributes", "Interface method must be abstract and virtual.");
 
 			if (returnType == null)
-				returnType = typeof (void);
+				returnType = pmodule.assemblyb.corlib_void_type;
 			MethodBuilder res = new MethodBuilder (this, name, attributes, callingConvention, returnType, parameterTypes);
 			append_method (res);
 			return res;
