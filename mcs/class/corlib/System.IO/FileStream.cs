@@ -267,7 +267,12 @@ namespace System.IO
 			if (!CanRead)
 				throw new NotSupportedException ("Stream does not support reading");
 			
-			if (buf_offset >= buf_length) {
+			if (buf_size == 0) {
+				int n = ReadData (handle, buf, 0, 1);
+				if (n == 0) return -1;
+				else return buf[0];
+			}
+			else if (buf_offset >= buf_length) {
 				RefillBuffer ();
 
 				if (buf_length == 0)
@@ -865,16 +870,20 @@ namespace System.IO
 				
 		private void InitBuffer (int size, bool noBuffering)
 		{
-			if (noBuffering)
+			if (noBuffering) {
 				size = 0;
+				// We need a buffer for the ReadByte method. This buffer won't
+				// be used for anything else since buf_size==0.
+				buf = new byte [1];
+			}
 			else {
 				if (size <= 0)
 					throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
 				if (size < 8)
 					size = 8;
+				buf = new byte [size];
 			}
 					
-			buf = new byte [size];
 			buf_size = size;
 			buf_start = 0;
 			buf_offset = buf_length = 0;
