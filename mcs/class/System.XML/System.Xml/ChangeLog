@@ -1,3 +1,7 @@
+2002-10-12  A.Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs (ImportNode): Implemented
+
 2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlDocument.cs: one more Load method implemented.

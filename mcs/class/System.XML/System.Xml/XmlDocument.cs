@@ -395,7 +395,79 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual XmlNode ImportNode (XmlNode node, bool deep)
 		{
-			throw new NotImplementedException ();
+			switch(node.NodeType)
+			{
+				case XmlNodeType.Attribute:
+					XmlAttribute a = node as XmlAttribute;
+					return this.CreateAttribute(a.Prefix, a.LocalName, a.NamespaceURI);
+
+				case XmlNodeType.CDATA:
+					return this.CreateCDataSection(node.Value);
+
+				case XmlNodeType.Comment:
+					return this.CreateComment(node.Value);
+
+				case XmlNodeType.Document:
+					throw new XmlException("Document cannot be imported.");
+
+				case XmlNodeType.DocumentFragment:
+					XmlDocumentFragment df = this.CreateDocumentFragment();
+					if(deep)
+					{
+						foreach(XmlNode n in node.ChildNodes)
+						{
+							df.AppendChild(this.ImportNode(n, deep));
+						}
+					}
+					return df;
+
+				case XmlNodeType.DocumentType:
+					throw new XmlException("DocumentType cannot be imported.");
+
+				case XmlNodeType.Element:
+					XmlElement src = node as XmlElement;
+					XmlElement dst = this.CreateElement(src.Prefix, src.LocalName, src.NamespaceURI);
+					if(deep)
+					{
+						foreach(XmlNode n in src.ChildNodes)
+							dst.AppendChild(this.ImportNode(n, deep));
+					}
+					return dst;
+
+				//case XmlNodeType.EndElement:
+				//	throw new NotImplementedException ();
+				//case XmlNodeType.EndEntity:
+				//	throw new NotImplementedException ();
+				//case XmlNodeType.Entity:
+				//	throw new NotImplementedException ();
+
+				case XmlNodeType.EntityReference:
+					return this.CreateEntityReference(node.Name);
+
+				//case XmlNodeType.None:
+				//	throw new NotImplementedException ();
+				//case XmlNodeType.Notation:
+				//	throw new NotImplementedException ();
+
+				case XmlNodeType.ProcessingInstruction:
+					XmlProcessingInstruction pi = node as XmlProcessingInstruction;
+					return this.CreateProcessingInstruction(pi.Target, pi.Data);
+
+				case XmlNodeType.SignificantWhitespace:
+					return this.CreateSignificantWhitespace(node.Value);
+
+				case XmlNodeType.Text:
+					return this.CreateTextNode(node.Value);
+
+				case XmlNodeType.Whitespace:
+					return this.CreateWhitespace(node.Value);
+
+				//case XmlNodeType.XmlDeclaration:
+				//	throw new NotImplementedException ();
+
+				default:
+					throw new NotImplementedException ();
+			}
 		}
 
 		public virtual void Load (Stream inStream)
