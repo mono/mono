@@ -367,6 +367,8 @@ namespace Mono.CSharp {
 		public Type ResolveType (Expression e, bool silent, Location loc)
 		{
 			TypeExpr d = ResolveTypeExpr (e, silent, loc);
+			if (d == null)
+				return null;
 
 			if (!d.CheckAccessLevel (this)) {
 				Report.	Error (122, loc,  "`" + d.Name + "' " +
