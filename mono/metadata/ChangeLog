@@ -1,3 +1,9 @@
+2005-01-07  Dick Porter  <dick@ximian.com>
+
+	* threads.c: 
+	* monitor.c: Update thread state during Monitor and WaitHandle
+	waits.  Fixes bug 71031.
+
 2005-01-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (property_encode_signature): Correctly handle when the
