@@ -10,7 +10,6 @@
 using System;
 using System.Reflection;
 using System.Resources;
-using System.Security;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -39,7 +38,6 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: ComVisible(false)]
-[assembly: AllowPartiallyTrustedCallers]
 
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("")]
+[assembly: AssemblyDelaySign(true)]
+//[assembly: AssemblyKeyFile("..\\..\\MonoKey.snk")]
