@@ -440,7 +440,7 @@ namespace System.Web.Compilation
 				build.Parameters.Add (new CodeArgumentReferenceExpression("__ctrl"));
 				build.Parameters.Add (new CodePrimitiveExpression (child.ID));
 				if (pca.Shared)
-					build.Parameters.Add (new CodePrimitiveExpression (child.ControlType.GetHashCode ()));
+					build.Parameters.Add (new CodePrimitiveExpression (child.ControlType.GetHashCode ().ToString ()));
 				else
 					build.Parameters.Add (new CodePrimitiveExpression (Guid.NewGuid ().ToString ()));
 				build.Parameters.Add (new CodePrimitiveExpression (pca.Duration));
