@@ -1,5 +1,18 @@
 2004-06-09  Raja R Harinath  <rharinath@novell.com>
 
+	Do away with stampfiles.
+	Introduce support for VB test cases.
+	* library.make (HAVE_CS_TESTS, HAVE_VB_TESTS): New auto-detecting
+	defines.
+	(stampfile, test_stampfile): Remove.
+	(clean-local): Don't mention them.
+	(test-local, run-test-local, run-test-ondotnet-local):
+	Make unconditional.
+	($(makefrag), $(test_makefrag)): Simplify.
+	($(btest_lib)): New.  Support for VB testcases.
+
+2004-06-09  Raja R Harinath  <rharinath@novell.com>
+
 	Partial support for writing Visual Basic source files.
 	* rules.make (USE_MBAS_FLAGS,BASCOMPILE,INTERNAL_MBAS): New.
 	* config-default.make (MBAS_FLAGS, DEFAULT_MBAS_FLAGS): New.
