@@ -1,3 +1,9 @@
+2004-06-24  Jambunathan K  <kjambunathan@novell.com>
+	* RandomVBFile.cs: Fixed FileGet() for Date and Decimal types
+	* FileSystem.cs: Fixed ChDir, FileCopy
+	* ControlChars.cs:  corcompare based fixes
+	
+
 2004-06-24 Anirban Bhattacharjee <banirban@novell.com>
 	* Strings.cs: Enabled case insensitive search in InStr aand InStrRev functions
 		      Fixed Filter method

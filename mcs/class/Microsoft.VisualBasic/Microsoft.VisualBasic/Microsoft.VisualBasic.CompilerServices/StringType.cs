@@ -328,7 +328,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			// return StringStaticWrapper.CompareOrdinal(sLeft, sRight);
 		}
 
-		public static string ToHalfwidthNumbers(string s) {
+		internal static string ToHalfwidthNumbers(string s) {
 			return s;
 		}
 
@@ -378,7 +378,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return true if <code>Value<\code> can be parse into integer Value.
 		 * the result of parsing is located in the <code>res[0]<\code>.
 		 */
-		public static bool IsHexOrOctValue(string Value, long[] res) {
+		internal static bool IsHexOrOctValue(string Value, long[] res) {
 			try {
 				// if the string starts with '&h' or '&H' it represents an Hex number
 				if (Value.StartsWith("&H") || Value.StartsWith("&h"))

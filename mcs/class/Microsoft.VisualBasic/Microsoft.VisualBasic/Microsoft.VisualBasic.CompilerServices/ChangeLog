@@ -1,3 +1,7 @@
+2004-06-24  Jambunathan K  <kjambunathan@novell.com>
+	* Utils.cs: 
+	* StringType.cs: corcompare based fixes
+
 2004-06-23  Jambunathan K  <kjambunathan@novell.com>
 	* ExceptionUtils.cs: 
 	* FlowControl.cs: 

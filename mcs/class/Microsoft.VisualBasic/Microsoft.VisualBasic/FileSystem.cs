@@ -589,6 +589,8 @@ namespace Microsoft.VisualBasic
 
 		public static void FileCopy(String source, String destination)
 		{
+			DirectoryInfo dir;
+
 			if ((source == null) || (source.Length == 0))
 			{
 				ExceptionUtils.VbMakeException(VBErrors.BadFileNameOrNumber);
@@ -610,8 +612,13 @@ namespace Microsoft.VisualBasic
 			if (_fileNameIdMap[source] != null)
 				throw (IOException) ExceptionUtils.VbMakeException(
 										   VBErrors.FileAlreadyOpen);
-			int lastIndex = destination.LastIndexOf('\\');
-			DirectoryInfo dir = new DirectoryInfo(destination.Substring(0,lastIndex));
+			int lastIndex = destination.LastIndexOf('/');
+
+			if(lastIndex == -1)
+				dir = new DirectoryInfo(".");
+			else
+				dir = new DirectoryInfo(destination.Substring(0,lastIndex));
+
 			if (!dir.Exists)
 			{
 				ExceptionUtils.VbMakeException(VBErrors.FileAlreadyOpen);
@@ -871,7 +878,7 @@ namespace Microsoft.VisualBasic
 		}
 
 
-		public static String SPC(int count)
+		internal static String SPC(int count)
 		{
 			StringBuilder sb = new StringBuilder(count);
 			for (int i = 0; i < count; i++)
@@ -926,30 +933,19 @@ namespace Microsoft.VisualBasic
 			return !_openFilesMap.ContainsKey(fileNumber);
 		}
 
-		public static void ChDir(String Path)
+		[MonoTODO("If path is another drive, it should change the default folder for that drive, but not switch to it.")]
+		public static void ChDir (string Path) 
 		{
-			Path = Strings.RTrim(Path);
-			if (Path == null || Path.Length == 0)
-			{
-				string errStr = Utils.GetResourceString("Argument_PathNullOrEmpty");
-				
-				throw (ArgumentException)ExceptionUtils.VbMakeException(new ArgumentException(errStr), 52);
+			if ((Path=="") || (Path==null))
+				throw new ArgumentException (Utils.GetResourceString ("Argument_PathNullOrEmpty")); 
+			try {
+				Environment.CurrentDirectory = Path;
 			}
-			if (StringType.StrCmp(Path, "\\", false) == 0)
-			{
-				//Path = Directory.GetDirectoryRoot(Directory.GetCurrentDirectory());
-			}
-			try
-			{
-				//Directory.SetCurrentDirectory(Path);
-				return;
-			}
-			catch (Exception e)
-			{
-				string errStr = Utils.GetResourceString("FileSystem_PathNotFound1", Path);
-				throw (FileNotFoundException)ExceptionUtils.VbMakeException(new FileNotFoundException(errStr),76);
+			catch { 
+				throw new FileNotFoundException (Utils.GetResourceString ("FileSystem_PathNotFound1", Path));
 			}
 		}
+
 
 		public static void ChDrive(char Drive)
 		{
@@ -970,7 +966,7 @@ namespace Microsoft.VisualBasic
 
 		public static String CurDir()
 		{
-			return Directory.GetCurrentDirectory();
+			return Environment.CurrentDirectory;
 		}
 
 		public static String CurDir(char Drive)
@@ -1321,10 +1317,6 @@ namespace Microsoft.VisualBasic
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			return (OpenMode) vbFile.getMode();
-		}
-
-		public static void main(String[] args)
-		{
 		}
 	}
 

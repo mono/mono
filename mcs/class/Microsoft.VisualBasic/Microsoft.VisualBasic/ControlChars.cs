@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace Microsoft.VisualBasic {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute]
 	sealed public class ControlChars {
 		// Declarations
 		public const System.String CrLf = "\n\r";

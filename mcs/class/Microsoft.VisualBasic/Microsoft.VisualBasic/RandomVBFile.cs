@@ -127,7 +127,23 @@ public class RandomVBFile : BaseVBFile
 		double tmp = _binaryReader.ReadDouble();
 		return tmp;
 	}
-    
+
+	protected Decimal getDecimal(long recordNumber,bool isSetRecord)
+	{
+		if (isSetRecord)
+			setRecord(recordNumber);
+		Decimal tmp = _binaryReader.ReadDecimal();
+		return tmp;
+	}
+
+	protected DateTime getDateTime(long recordNumber,bool isSetRecord)
+	{
+		if (isSetRecord)
+			setRecord(recordNumber);
+
+		double tmp = _binaryReader.ReadDouble();       
+		return DateTime.FromOADate(tmp);
+	}
    
 	public override void get(out bool value,long recordNumber)
 	{
@@ -180,14 +196,13 @@ public class RandomVBFile : BaseVBFile
 	public override void get(out DateTime value,long recordNumber)
 	{
 		checkReadPermision();
-		double tmp = _binaryReader.ReadDouble();       
-		value = DateTime.FromOADate(tmp);
+		value = getDateTime(recordNumber,true);
 	}
     
 	public override void get(out Decimal value,long recordNumber)
 	{
 		checkReadPermision();
-		Decimal tmp = _binaryReader.ReadDecimal();       
+		Decimal tmp = getDecimal(recordNumber,true);       
 		value = tmp;
 	}
 

@@ -219,7 +219,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			 return VBFriendlyNameOfTypeName(type.Name);
 		 }
     
-		 public static string VBFriendlyName (Type type, object obj) 
+		 internal static string VBFriendlyName (Type type, object obj) 
 		 {
 			
 			 //if (StringStaticWrapper.CompareOrdinal(type.FullName, "System.__ComObject") //java code
