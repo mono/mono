@@ -22,6 +22,10 @@
 	* class.cs (TypeContainer.DoDefineMembers): Setup cache for
 	interfaces too.
 
+2004-11-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* statement.cs: Avoid adding bools to a hashtable.
+
 2004-11-15  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberName.GetPartialName): Removed, use GetTypeName() instead.
