@@ -252,8 +252,8 @@ namespace System.IO
 				throw new ArgumentException ("The Path do not have a valid format");
 
 			// return null if the path is the root directory
-			if ((Path.DirectorySeparatorChar == "/" && path == "/") || 
-				(Path.DirectorySeparatorChar == "\\" && path == "C:\\"))
+			if ((Path.DirectorySeparatorChar == '/' && path == "/") || 
+				(Path.DirectorySeparatorChar == '\\' && path == "C:\\"))
 				return null;
 			
 			return new DirectoryInfo (Path.GetDirectoryName (path));
