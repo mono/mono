@@ -928,6 +928,7 @@ namespace System.Data
 			c.Attributes = MemberAttributes.Assembly;
 			c.BaseConstructorArgs.Add (Const (dt.TableName));
 			c.Statements.Add (Eval (MethodInvoke ("InitializeClass")));
+			c.Statements.Add (Eval (MethodInvoke ("InitializeFields")));
 			return c;
 		}
 
@@ -957,7 +958,10 @@ namespace System.Data
 				m.Statements.Add (Eval (MethodInvoke (
 					PropRef ("Columns"),
 					"Add",
-					New (typeof (DataColumn), Const (col.ColumnName)))));
+					New (typeof (DataColumn),
+						Const (col.ColumnName),
+						new CodeTypeOfExpression (col.DataType)
+						))));
 			}
 			return m;
 		}
