@@ -1,3 +1,8 @@
+2003-08-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CollectionBase.cs: applied patch from Carlos Barcenilla
+	(barce@frlp.utn.edu.ar).
+
 2003-08-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ArrayList.cs: added / so that gvim syntax highlight doesn't go crazy.

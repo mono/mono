@@ -146,7 +146,12 @@ namespace System.Collections {
 				
 				OnSet(index, oldValue, value);
 				InnerList[index] = value;
-				OnSetComplete(index, oldValue, value);
+				try {
+					OnSetComplete(index, oldValue, value);
+				} catch {
+					InnerList[index] = oldValue;
+					throw;
+				}
 			}
 		}
 	}
