@@ -1,10 +1,10 @@
 //
-// System.Web.UI.UserControlParser
+// System.Web.UI.MasterPageParser
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2005 Novell, Inc.
 //
 
 //
@@ -27,6 +27,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if NET_2_0
+
 using System;
 using System.Collections;
 using System.IO;
@@ -36,51 +39,31 @@ using System.Web.Util;
 
 namespace System.Web.UI
 {
-	internal class UserControlParser : TemplateControlParser
+	internal sealed class MasterPageParser: UserControlParser
 	{
-		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
-		: this (virtualPath, inputFile, context, null)
+		internal MasterPageParser (string virtualPath, string inputFile, HttpContext context)
+		: base (virtualPath, inputFile, context, "System.Web.UI.MasterPage")
 		{
 		}
 		
-		internal UserControlParser (string virtualPath, string inputFile, HttpContext context, string type)
+		public static MasterPage GetCompiledMasterInstance (string virtualPath, string inputFile, HttpContext context)
 		{
-			if (type == null) type = PagesConfig.UserControlBaseType;
-			Context = context;
-			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
-			InputFile = inputFile;
-			SetBaseType (type);
-			AddApplicationAssembly ();
-		}
-		
-		public static Type GetCompiledType (string virtualPath, string inputFile, HttpContext context)
-		{
-			UserControlParser ucp = new UserControlParser (virtualPath, inputFile, context);
-			return ucp.CompileIntoType ();
+			MasterPageParser mpp = new MasterPageParser (virtualPath, inputFile, context);
+			return (MasterPage) mpp.GetCompiledInstance ();
 		}
 
-		protected override Type CompileIntoType ()
-		{
-			AspGenerator generator = new AspGenerator (this);
-			return generator.GetCompiledType ();
-		}
-
-		internal override void ProcessMainAttributes (Hashtable atts)
-		{
-			base.ProcessMainAttributes (atts);
-		}
-		
 		internal override Type DefaultBaseType {
-			get { return typeof (UserControl); }
+			get { return typeof (MasterPage); }
 		}
 
 		internal override string DefaultBaseTypeName {
-			get { return "System.Web.UI.UserControl"; }
+			get { return "System.Web.UI.MasterPage"; }
 		}
 
 		internal override string DefaultDirectiveName {
-			get { return "control"; }
+			get { return "master"; }
 		}
 	}
 }
 
+#endif

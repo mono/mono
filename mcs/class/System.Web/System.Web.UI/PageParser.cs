@@ -58,6 +58,10 @@ namespace System.Web.UI
 		string clientTarget;
 		Type baseType = typeof (Page);
 
+#if NET_2_0
+		string masterPage;
+#endif
+
 		public PageParser ()
 		{
 		}
@@ -236,7 +240,10 @@ namespace System.Web.UI
 			}
 
 			notBuffer = !GetBool (atts, "Buffer", true);
-
+			
+#if NET_2_0
+			masterPage = GetString (atts, "MasterPageFile", null);
+#endif
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
 			GetString (atts, "SmartNavigation", null);
@@ -331,6 +338,12 @@ namespace System.Web.UI
 		internal bool NotBuffer {
 			get { return notBuffer; }
 		}
+
+#if NET_2_0
+		internal string MasterPageFile {
+			get { return masterPage; }
+		}
+#endif
 	}
 }
 

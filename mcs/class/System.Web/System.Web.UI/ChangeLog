@@ -1,3 +1,12 @@
+2005-01-21  Lluis Sanchez Gual <lluis@novell.com>
+
+	* PageParser.cs: Read the MasterPageFile attribute.
+	* UserControlParser.cs: Not sealed any more since we need to inherit from
+	it. Added new constructor with an additional "type" parameter.
+	* MasterPageParser.cs: Parser for master pages.
+	* Page.cs: Added support for master pages.
+	* MasterPage.cs: Implemented.
+
 2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
 	
 	* TemplateBuilder.cs: Added a special constructor that takes an

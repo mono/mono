@@ -89,6 +89,9 @@ public class Page : TemplateControl, IHttpHandler
 	private const string callbackSourceID = "__CALLBACKTARGET";
 	
 	IPageHeader htmlHeader;
+	
+	MasterPage masterPage;
+	string masterPageFile;
 #endif
 
 	#region Constructor
@@ -687,7 +690,14 @@ public class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
 		Trace.Write ("aspx.page", "End Init");
-	      
+
+#if NET_2_0
+		if (masterPageFile != null) {
+			Controls.Add (Master);
+			Master.FillPlaceHolders ();
+		}
+#endif
+			
 		renderingForm = false;	
 		if (IsPostBack) {
 			Trace.Write ("aspx.page", "Begin LoadViewState");
@@ -1044,6 +1054,19 @@ public class Page : TemplateControl, IHttpHandler
 	internal void SetHeader (IPageHeader header)
 	{
 		htmlHeader = header;
+	}
+	
+	public string MasterPageFile {
+		get { return masterPageFile; }
+		set { masterPageFile = value; masterPage = null; }
+	}
+	
+	public MasterPage Master {
+		get {
+			if (masterPage == null)
+				masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile, Server.MapPath (masterPageFile), Context);
+			return masterPage;
+		}
 	}
 
 	#endif
