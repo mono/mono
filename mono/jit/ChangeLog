@@ -1,3 +1,8 @@
+2001-11-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (INITOBJ): bug fix: initialize data before use,
+	simplified the code.
+
 2001-11-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* testjit.c (mono_analyze_stack): Remove compiler warning by
