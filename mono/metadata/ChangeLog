@@ -1,3 +1,13 @@
+2004-12-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object-internals.h (MonoThread): Change culture_info and 
+	ui_culture_info into an array.
+
+	* threads.c: Cache culture info objects from more than one appdomain.
+
+	* threads.c threads-types.h icall.c: Add icalls for manipulating the 
+	current UI culture.
+
 2004-12-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.h threads.c appdomain.c: Clear the culture_info field of
