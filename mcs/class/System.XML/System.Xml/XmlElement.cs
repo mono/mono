@@ -65,8 +65,10 @@ namespace System.Xml
 				if (attlist != null) {
 					for (int i = 0; i < attlist.Definitions.Count; i++) {
 						DTDAttributeDefinition def = attlist [i];
-						if (def.DefaultValue != null)
+						if (def.DefaultValue != null) {
 							SetAttribute (def.Name, def.DefaultValue);
+							attributes [def.Name].SetDefault ();
+						}
 					}
 				}
 			}
