@@ -1,3 +1,8 @@
+2004-06-24  Raja R Harinath  <rharinath@novell.com>
+
+	* AssemblyInfo.cs (AssemblyVersion): Set different version for the
+	net_2_0 profile.
+
 2004-05-28  Duncan Mak  <duncan@ximian.com>
 
 	* AssemblyInfo.cs: Use the new SharpZipLib.pub.

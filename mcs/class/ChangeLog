@@ -1,3 +1,7 @@
+2004-06-24  Raja R Harinath  <rharinath@novell.com>
+
+	* IBM.Data.DB2/Makefile: Disable for 'net_2_0'.
+
 2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile: enabled Mono.CSharp.Debugger on windows.
