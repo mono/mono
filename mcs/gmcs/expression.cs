@@ -4915,15 +4915,15 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldloc, array);
 				IntConstant.EmitInt (ig, j - idx);
 
-				bool is_stobj;
-				OpCode op = ArrayAccess.GetStoreOpcode (t, out is_stobj);
+				bool is_stobj, has_type_arg;
+				OpCode op = ArrayAccess.GetStoreOpcode (t, out is_stobj, out has_type_arg);
 				if (is_stobj)
 					ig.Emit (OpCodes.Ldelema, t);
 
 				a.Emit (ec);
 
-				if (is_stobj)
-					ig.Emit (OpCodes.Stobj, t);
+				if (has_type_arg)
+					ig.Emit (op, t);
 				else
 					ig.Emit (op);
 			}
@@ -7243,7 +7243,9 @@ namespace Mono.CSharp {
 			else if (type.IsValueType){
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
-			} else 
+			} else if (type.IsGenericParameter)
+				ig.Emit (OpCodes.Ldelem_Any, type);
+			else
 				ig.Emit (OpCodes.Ldelem_Ref);
 		}
 
@@ -7253,10 +7255,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void EmitStoreOpcode (ILGenerator ig, Type t)
 		{
-			bool is_stobj;
-			OpCode op = GetStoreOpcode (t, out is_stobj);
-			if (is_stobj)
-				ig.Emit (OpCodes.Stobj, t);
+			bool is_stobj, has_type_arg;
+			OpCode op = GetStoreOpcode (t, out is_stobj, out has_type_arg);
+			if (has_type_arg)
+				ig.Emit (op, t);
 			else
 				ig.Emit (op);
 		}
@@ -7265,10 +7267,10 @@ namespace Mono.CSharp {
 		///    Returns the right opcode to store an object of Type `t'
 		///    from an array of T.  
 		/// </summary>
-		static public OpCode GetStoreOpcode (Type t, out bool is_stobj)
+		static public OpCode GetStoreOpcode (Type t, out bool is_stobj, out bool has_type_arg)
 		{
 			//Console.WriteLine (new System.Diagnostics.StackTrace ());
-			is_stobj = false;
+			has_type_arg = false; is_stobj = false;
 			t = TypeManager.TypeToCoreType (t);
 			if (TypeManager.IsEnumType (t) && t != TypeManager.enum_type)
 				t = TypeManager.EnumToUnderlying (t);
@@ -7287,11 +7289,16 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.double_type)
 				return OpCodes.Stelem_R8;
 			else if (t == TypeManager.intptr_type) {
-                                is_stobj = true;
+                                has_type_arg = true;
+				is_stobj = true;
                                 return OpCodes.Stobj;
 			} else if (t.IsValueType) {
+				has_type_arg = true;
 				is_stobj = true;
 				return OpCodes.Stobj;
+			} else if (t.IsGenericParameter) {
+				has_type_arg = true;
+				return OpCodes.Stelem_Any;
 			} else
 				return OpCodes.Stelem_Ref;
 		}
