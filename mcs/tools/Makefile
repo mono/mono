@@ -1,12 +1,13 @@
 thisdir = tools
-SUBDIRS = al cilc corcompare ictool mono-xsd security wsdl genxs SqlSharp disco soapsuds browsercaps-updater monop
+SUBDIRS = al cilc corcompare ictool mono-xsd security wsdl genxs SqlSharp disco soapsuds browsercaps-updater monop gacutil
 include ../build/rules.make
 
 MONO_TOOLS = \
 	monostyle.exe 		\
 	GenerateDelegate.exe 	\
 	EnumCheck.exe 		\
-	IFaceDisco.exe
+	IFaceDisco.exe		\
+	gacutil.exe
 
 DISTFILES = \
 	assemblies.xml			\
