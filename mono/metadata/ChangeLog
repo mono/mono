@@ -1,10 +1,22 @@
+2002-04-13  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.h (MonoDebugLocalInfo): Renamed to MonoDebugVarInfo.
+	(MonoDebugVarInfo): Added `index' field for register based addresses.
+	(MONO_DEBUG_SYMBOL_FILE_VERSION): Increased to 9.
+	(MonoDebugMethodInfo): Replaced `guint32 *param_offsets' with
+	`MonoDebugVarInfo *params' and `guint32 this_offset' with
+	`MonoDebugVarInfo *this_var'.
+
+	* debug-symfile.c (relocate_variable): New static function to write
+	a location description for a local variable or method parameter.
+
 2002-04-12  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.h (MonoDebugLocalInfo): New type. This contains the
 	stack offset and begin/end scope address of a local variable.
 	(MonoDebugMethodInfo): Replaced `guint32 *local_offsets' with
 	'MonoDebugLocalInfo *locals', added `prologue_end' and `epilogue_begin'.
-	(MONO_DEBUG_SYMBOL_FILE_VERSION): Increase to 8.
+	(MONO_DEBUG_SYMBOL_FILE_VERSION): Increased to 8.
 
 	* debug-symfile.c (MRT_variable_start_scope, MRT_variable_end_scope):
 	Added new relocation types for start/end scope of a local variable.
