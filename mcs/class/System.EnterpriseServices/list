@@ -60,6 +60,7 @@
 ./System.EnterpriseServices/TransactionOption.cs
 ./System.EnterpriseServices/TransactionVote.cs
 ./System.EnterpriseServices/XACTTRANSINFO.cs
+./System.EnterpriseServices.CompensatingResourceManager/ApplicationCrmEnabledAttribute.cs
 ./System.EnterpriseServices.CompensatingResourceManager/Clerk.cs
 ./System.EnterpriseServices.CompensatingResourceManager/Compensator.cs
 ./System.EnterpriseServices.CompensatingResourceManager/CompensatorOptions.cs
