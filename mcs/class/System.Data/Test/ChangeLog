@@ -1,3 +1,6 @@
+2003-05-26  Ben Maurer <bmaurer@users.sourceforge.net>
+	* data_linux_test.args: Updated for new test in System.Data
+
 2003/04/15  Nick Drochak <ndrochak@gol.com>
 
 	* System.Data_test.build: Use nunit version 2.
