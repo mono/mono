@@ -153,7 +153,7 @@ namespace Mono.Xml.XPath
 		int currentAttr;
 		int currentNs;
 
-		StringBuilder valueBuilder = new StringBuilder ();
+		StringBuilder valueBuilder;
 
 #region Ctor
 
@@ -250,6 +250,11 @@ namespace Mono.Xml.XPath
 				case XPathNodeType.SignificantWhitespace:
 					return value_ [currentNode];
 				}
+				if (valueBuilder == null)
+					valueBuilder = new StringBuilder ();
+				else
+					valueBuilder.Length = 0;
+				
 				int iter = firstChild_ [currentNode];
 				while (iter != 0 && iter < depth_.Length && depth_ [iter] > depth_ [currentNode]) {
 					switch (nodeType_ [iter]) {
@@ -262,9 +267,8 @@ namespace Mono.Xml.XPath
 					}
 					iter++;
 				}
-				string result = valueBuilder.ToString ();
-				valueBuilder.Length = 0;
-				return result;
+				
+				return valueBuilder.ToString ();
 			}
 		}
 

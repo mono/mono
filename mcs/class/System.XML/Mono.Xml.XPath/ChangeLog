@@ -1,3 +1,7 @@
+2003-08-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* DTMXPathNavigator.cs: Allocate valueBuilder on first use.
+
 2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTMXPathDocument.cs,
