@@ -1066,9 +1066,11 @@ namespace Mono.CSharp {
 
 		public override EmitContext Emit (TypeContainer tc, DeclSpace ds) {
 			EmitContext ec = base.Emit (tc, ds);
+			if (ec == null)
+				ec = new EmitContext (tc, ds, Location, null, null, ModFlags, false);
+
 			m_get.Emit (ec);
 			m_set.Emit (ec);
-
 			return ec;
 		}
 
