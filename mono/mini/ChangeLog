@@ -1,10 +1,14 @@
-2005-1-20  Massimiliano Mantione  <massi@ximian.com>
+2005-2-1  Massimiliano Mantione  <massi@ximian.com>
+
+	* driver.c: Re-enabled SSAPRE.
+
+2005-2-1  Massimiliano Mantione  <massi@ximian.com>
 
 	* ssapre.c: Fixed an issue with down safety (this allows IronPython
 	to succesfully execute parrotbench).
 	* ssapre.h: Likewise.
 
-2005-1-20  Massimiliano Mantione  <massi@ximian.com>
+2005-2-1  Massimiliano Mantione  <massi@ximian.com>
 
 	* ssa.c: In mono_ssa_rename_vars, forced the creation of a new SSA
 	variable for stores to method arguments (fixes a SSAPRE issue).
