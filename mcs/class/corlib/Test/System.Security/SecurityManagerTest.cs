@@ -196,7 +196,7 @@ namespace MonoTests.System.Security {
 			PermissionSet granted = SecurityManager.ResolvePolicy (CurrentEvidence, null, null, deny, out denied);
 			// doing this we denied the Execution right
 #if !NET_2_0
-			Assert.IsNull (denied, "denied");
+			Assert.AreEqual (0, denied.Count, "Denied");
 			Assert.IsTrue (granted.IsUnrestricted (), "Granted.IsUnrestricted");
 #endif
 		}
