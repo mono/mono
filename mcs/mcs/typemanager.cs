@@ -2249,9 +2249,6 @@ public class MemberCache {
 		Timer.IncrementCounter (CounterType.MemberCache);
 		Timer.StartTimer (TimerType.CacheInit);
 
-		if (Container == null)
-			throw new Exception ("FUCK");
-
 		IMemberContainer current = Container;
 		do {
 			AddMembers (current);
