@@ -82,6 +82,7 @@ namespace System.Data.SqlClient {
 
 		// Connection parameters
 		TdsConnectionParameters parms = new TdsConnectionParameters ();
+                NameValueCollection connStringParameters = null;
 		bool connectionReset;
 		bool pooling;
 		string dataSource;
@@ -111,7 +112,11 @@ namespace System.Data.SqlClient {
 	
 		public SqlConnection (string connectionString)
 		{
-			ConnectionString = connectionString;
+                        connectionTimeout       = 15; // default timeout
+                        dataSource              = ""; // default datasource
+                        packetSize              = 8192; // default packetsize
+
+			ConnectionString        = connectionString;
 		}
 
 		#endregion // Constructors
@@ -151,7 +156,11 @@ namespace System.Data.SqlClient {
 		override
 #endif // NET_2_0
                 string Database	{
-			get { return tds.Database; }
+			get { 
+                                if (State == ConnectionState.Open)
+                                        return tds.Database; 
+                                return GetConnStringKeyValue ("DATABASE", "INITIAL CATALOG");
+                        }
 		}
 		
 		internal SqlDataReader DataReader {
@@ -250,6 +259,20 @@ namespace System.Data.SqlClient {
 		#endregion // Delegates
 
 		#region Methods
+                
+                internal string GetConnStringKeyValue (params string [] keys)
+                {
+                        if (connStringParameters == null || connStringParameters.Count == 0)
+                                return "";
+                        foreach (string key in keys) {
+                                string value = connStringParameters [key];
+                                if (value != null)
+                                        return value;
+                        }
+                        
+                        return "";
+                }
+                
 
 		public new SqlTransaction BeginTransaction ()
 		{
@@ -333,10 +356,10 @@ namespace System.Data.SqlClient {
 				xmlReader = null;
 			}
 
-			if (pooling)
-				if(pool != null) pool.ReleaseConnection (tds);
-			else
-				if(tds != null) tds.Disconnect ();
+			if (pooling) {
+                                if(pool != null) pool.ReleaseConnection (tds);
+			}else
+                                if(tds != null) tds.Disconnect ();
 
 			if(tds != null) {
 				tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
@@ -366,14 +389,19 @@ namespace System.Data.SqlClient {
 		protected override void Dispose (bool disposing) 
 		{
 			if (!disposed) { 
-				if (disposing) {
-					if (State == ConnectionState.Open) 
-						Close ();
-					parms = null;
-					dataSource = null;
-				}
-				base.Dispose (disposing);
-				disposed = true;
+                                try {
+                                        if (disposing) {
+                                                if (State == ConnectionState.Open) 
+                                                        Close ();
+                                                parms.Reset ();
+                                                dataSource = ""; // default dataSource
+                                                ConnectionString = null;
+                                        }
+                                        disposed = true;
+                                } finally {
+                                        base.Dispose (disposing);
+                                }
+                                
 			}
 		}
 
@@ -463,7 +491,7 @@ namespace System.Data.SqlClient {
 			else if (connectionReset)
 				tds.ExecProc ("sp_reset_connection");
 			*/
-				
+                        disposed = false; // reset this, so using () would call Close ().
 			ChangeState (ConnectionState.Open);
 		}
 
@@ -471,7 +499,8 @@ namespace System.Data.SqlClient {
 		{
 			theServerName = "";
 			string theInstanceName = "";
-			if ((theDataSource == null) || (theServerName == null))
+			if ((theDataSource == null) || (theServerName == null) 
+                            || theDataSource == "")
 				throw new ArgumentException("Format of initialization string doesnot conform to specifications");
 				
 			thePort = 1433; // default TCP port for SQL Server
@@ -552,11 +581,15 @@ namespace System.Data.SqlClient {
 
 		void SetConnectionString (string connectionString)
 		{
-			NameValueCollection parameters = new NameValueCollection ();
-
-			if (( connectionString == null)||( connectionString.Length == 0)) 
+			if (( connectionString == null)||( connectionString.Length == 0)) {
+                                this.connectionString = null;
 				return;
-			connectionString += ";";
+                        }
+                        
+                        NameValueCollection parameters = new NameValueCollection ();
+                        connectionString += ";";
+
+                        SetDefaultConnectionParameters (parameters);
 
 			bool inQuote = false;
 			bool inDQuote = false;
@@ -633,15 +666,11 @@ namespace System.Data.SqlClient {
 					break;
 				}
 			}
-
-			if (this.ConnectionString == null)
-			{
-				SetDefaultConnectionParameters (parameters);
-			}
-
+                        
 			SetProperties (parameters);
 
 			this.connectionString = connectionString;
+                        this.connStringParameters = parameters;
 		}
 
 		void SetDefaultConnectionParameters (NameValueCollection parameters)
