@@ -14,6 +14,7 @@ namespace MonoTests {
 			get {
 				TestSuite suite = new TestSuite ();
 				suite.AddTest (System.Data.SqlTypes.AllTests.Suite);
+				suite.AddTest (System.Data.Xml.AllTests.Suite);
 				return suite;
 			}
 		}

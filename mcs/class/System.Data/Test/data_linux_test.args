@@ -18,4 +18,6 @@ System.Data.SqlTypes/SqlDateTimeTest.cs
 System.Data.SqlTypes/SqlGuidTest.cs
 System.Data.SqlTypes/SqlDecimalTest.cs
 System.Data.SqlTypes/SqlStringTest.cs
+System.Xml/XmlDataDocumentTest.cs
+System.Xml/AllTests.cs
 AllTests.cs
