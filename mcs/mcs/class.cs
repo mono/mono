@@ -2182,8 +2182,6 @@ namespace Mono.CSharp {
 			if (mb == null || method_attrs == null)
 				return;
 
-		 	ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");
-
 			foreach (AttributeSection asec in method_attrs.AttributeSections) {
 
 				if (asec.Target != "return")
@@ -2195,7 +2193,16 @@ namespace Mono.CSharp {
 					ret_attrs.AddAttributeSection (asec);
 			}
 
-			Attribute.ApplyAttributes (ec, ret_pb, ret_pb, ret_attrs);
+			if (ret_attrs != null) {
+				try {
+				 	ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");
+					Attribute.ApplyAttributes (ec, ret_pb, ret_pb, ret_attrs);
+				} catch (ArgumentOutOfRangeException) {
+					Report.Warning (
+						-24, Location,
+						".NET SDK 1.0 does not permit to set custom attributes to the return type of a method");
+				}
+			}
 		}
 	}
 	
