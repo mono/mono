@@ -20,8 +20,8 @@ EXTRA_DISTFILES = \
 	$(wildcard Test/standalone_tests/*.cs)
 
 
-Commons.Xml.Relaxng.Rnc/RncParser.cs : Commons.Xml.Relaxng.Rnc/RncParser.jay
-	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs Commons.Xml.Relaxng.Rnc/RncParser.jay > Commons.Xml.Relaxng.Rnc/RncParser.cs;
+Commons.Xml.Relaxng.Rnc/RncParser.cs: Commons.Xml.Relaxng.Rnc/RncParser.jay $(topdir)/jay/skeleton.cs
+	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs Commons.Xml.Relaxng.Rnc/RncParser.jay > Commons.Xml.Relaxng.Rnc/RncParser.cs
 
 CLEAN_FILES = Commons.Xml.Relaxng.Rnc/RncParser.cs
 
