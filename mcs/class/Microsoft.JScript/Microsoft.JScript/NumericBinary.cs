@@ -41,9 +41,61 @@ namespace Microsoft.JScript {
 
 		public object EvaluateNumericBinary (object v1, object v2)
 		{
-			return new object ();
-		}
+			IConvertible ic1 = v1 as IConvertible;
+			IConvertible ic2 = v2 as IConvertible;
 
+			TypeCode tc1 = Convert.GetTypeCode (v1, ic1);
+			TypeCode tc2 = Convert.GetTypeCode (v2, ic2);
+
+			switch (op) {
+			case JSToken.Minus:
+				switch (tc1) {
+				case TypeCode.Boolean:
+				case TypeCode.Double:
+				case TypeCode.String:
+					switch (tc2) {
+					case TypeCode.Boolean:
+					case TypeCode.Double:
+					case TypeCode.String:
+						return ic1.ToDouble (null) - ic2.ToDouble (null);
+					}
+					break;
+				}
+				break;
+
+			case JSToken.Multiply:
+				switch (tc1) {
+				case TypeCode.Boolean:
+				case TypeCode.Double:
+				case TypeCode.String:
+					switch (tc2) {
+					case TypeCode.Boolean:
+					case TypeCode.Double:
+					case TypeCode.String:
+						return ic1.ToDouble (null) * ic2.ToDouble (null);
+					}
+					break;
+				}
+				break;
+
+			case JSToken.Divide:
+				switch (tc1) {
+				case TypeCode.Boolean:
+				case TypeCode.Double:
+				case TypeCode.String:
+					switch (tc2) {
+					case TypeCode.Boolean:
+					case TypeCode.Double:
+					case TypeCode.String:
+						return ic1.ToDouble (null) / ic2.ToDouble (null);
+					}
+					break;
+				}
+				break;
+			}
+			Console.WriteLine ("v1 = {0}, tc1 = {1}, v2 = {2}, tc2 = {3}", v1, tc1, v2, tc2);
+			throw new NotImplementedException ();
+		}
 
 		public static object DoOp (object v1, object v2, JSToken operatorTok)
 		{
