@@ -141,11 +141,14 @@ Treat warnings as errors.
 Sets the warning level.  0 is the lowest warning level, and 4 is the
 highest.  The default is 2.
 .TP
-.I -r:ASSEMBLY, \-r ASSEMBLY
-Reference the named assembly.  Use this to use classes from the named
+.I -r:ASSEMBLY1[,ASSEMBLY2], \-r ASSEMBLY1[,ASSEMBLY2]
+Reference the named assemblies.  Use this to use classes from the named
 assembly in your program.  The assembly will be loaded from either the
 system directory where all the assemblies live, or from the path
 explicitly given with the -L option.
+.PP
+You can also use a semicolon to separate the assemblies instead of a
+comma. 
 .TP
 .I \-v 
 Debugging. Turns on verbose yacc parsing.
