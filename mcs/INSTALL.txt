@@ -53,3 +53,47 @@ place your configuration options in build/config.make
 
 A list of variables that control the build are listed in the
 build/config-default.make
+
+The Build System
+----------------
+
+        * Unified build system for Windows and Linux. Windows is still
+	  fairly untested, but "should work." Unfortunately I don't
+	  have a Windows machine to test on, but Gonzalo can get
+	  corlib to build I think and that's about as complicated as
+	  it gets.
+
+        * Profile support. 'make PROFILE=profilename' or 'export
+	  PROFILE=profilename ; make' will work. Profiles are defined
+	  in build/profiles/profilename.make ; right now there isn't
+	  too much going on. The 'bootstrap' profile will build the
+	  way makefile.gnu did on Linux, by setting MONO_PATH and
+	  using mcs/mcs.exe; the default profile will build against
+	  the existing system libraries and compile with 'mcs', which
+	  should reduce a lot of 'corlib out of sync' warnings.
+
+        * Important variables are shared among makefiles now; you can
+	  edit build/config.make (see build/config-default.make for a
+	  template) and give global settings, or just have a much
+	  saner time of writing new makefiles.
+
+        * Response files, stamps, and other build trivia now all land
+	  in build/deps/, making the library build directories
+	  cleaner.
+
+        * Test libraries now live in class/Library/Library_test.dll,
+	  not class/Library/Test. 'make test' will build the test DLL,
+	  'make run-test' will actually run the nunit tests. Set the
+	  variable TEST_HARNESS to run with a program other than
+	  nunit-console (for example, nunit-gtk).
+
+        * Standardized recursive targets: all, clean, install, test,
+	  run-test.  Read build/README.makefiles for definitions of
+	  what they should do
+
+        * (Relatively) sane 'make dist' target; 'make distcheck'
+	  support; cute 'make monocharge' and 'make monocharge-lite'
+	  targets. They're made possible because 'make install' now
+	  supports DESTDIR a la automake, which I'm sure someone cares
+	  about.
+
