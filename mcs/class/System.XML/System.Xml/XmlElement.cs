@@ -21,7 +21,6 @@ namespace System.Xml
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
-		private string node_value;
 
 		#endregion
 
@@ -111,16 +110,6 @@ namespace System.Xml
 		public override string Prefix {
 			get { 
 				return prefix; 
-			}
-		}
-
-		public override string Value {
-			get {
-				return node_value;
-			}
-
-			set {
-				node_value = value;
 			}
 		}
 
