@@ -1,3 +1,10 @@
+
+Tue Mar 5 17:34:14 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* SByte.cs, UInt64.cs: implement IConvertible interface. Nobody wants
+	to do this dirty work, but someone has to do it (and I need it to pass
+	the "200 sample tests compiled on linux" mark).
+
 2002-03-06  Nick Drochak  <ndrochak@gol.com>
 
 	* Attribute.cs
