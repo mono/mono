@@ -1,3 +1,19 @@
+2004-04-30  Todd Berman  <tberman@sevenl.net>
+
+	* gacutil.cs: Change the way of handling the /prefix stuff.
+	Now all gacbased operations will work with /prefix or --root. This
+	*MUST* be at the end of the commandline for it to work.
+	Also note, that in a Makefile changing /i to /u will not work, as the
+	gac uninstalls based on AssemblyName.Name, so forexample:
+
+	gacutil /i some/path/blah/System.dll --root /usr/lib/somefakegac
+
+	will install and
+
+	gacutil /u System --root /usr/lib/somefakegac
+
+	will uninstall.
+
 2004-04-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* gacutil.cs: Rename /prefix with /libdir,  Append mono/gac to

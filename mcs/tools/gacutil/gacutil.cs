@@ -43,6 +43,14 @@ namespace Mono.Tools
 				Array.Copy (args, 1, stripped, 0, args.Length - 1);
 				args = stripped;
 			}
+
+			if (args[args.Length - 2] == "/prefix" || args[args.Length - 2] == "--root") {
+				gac_path = Path.Combine (Path.Combine (args[args.Length - 1], "mono"), "gac");
+				gac_path += Path.DirectorySeparatorChar;
+
+				string[] stripped = new string[args.Length - 2];				Array.Copy (args, 0, stripped, 0, args.Length - 2);
+				args = stripped;
+			}
 	
 
 			string[] remainder_args = new string[args.Length - 1];
@@ -50,7 +58,7 @@ namespace Mono.Tools
 			if (args.Length >= 2) {
 				Array.Copy (args, 1, remainder_args, 0, args.Length - 1);
 			}
-			
+	
 			switch (args[0]) {
 			case "/?":
 			case "--help":
@@ -269,21 +277,8 @@ namespace Mono.Tools
 
 			bool force = false;
 
-			for (int idx = 1; idx < args.Length; idx++){
-				switch (args [idx]){
-				case "-f":
-				case "/f":
-				case "--force":
-					force = true;
-					break;
-
-				case "/root":
-				case "-root":
-					if (idx + 1 < args.Length){
-						gac_path = Path.Combine (args [3], Path.Combine ("lib", Path.Combine ("mono", "gac")));
-					}
-					break;
-				}
+			if (args.Length == 2 && (args[1] == "-f" || args[1] == "--force" || args[1] == "/f")) {
+				force = true;
 			}
 			
 			string version_token = an.Version + "_" +
@@ -318,7 +313,7 @@ namespace Mono.Tools
 
 			WriteAssemblyInfo (fullPath + "__AssemblyInfo__", info);
 
-			Console.WriteLine ("{0} installed into the gac ({1}/lib/mono/gac)", an.Name, gac_path);
+			Console.WriteLine ("{0} installed into the gac ({1})", an.Name, gac_path);
 			return 0;
 		}
 
