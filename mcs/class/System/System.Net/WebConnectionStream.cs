@@ -260,9 +260,11 @@ namespace System.Net
 			if (size < 0 || offset < 0 || length < offset || length - offset < size)
 				throw new ArgumentOutOfRangeException ();
 
-			lock (this) {
-				pendingWrites++;
-				pending.Reset ();
+			if (sendChunked) {
+				lock (this) {
+					pendingWrites++;
+					pending.Reset ();
+				}
 			}
 
 			WebAsyncResult result = new WebAsyncResult (cb, state);
@@ -313,10 +315,12 @@ namespace System.Net
 			if (sendChunked)
 				cnc.EndWrite (result.ChunkAsyncResult);
 
-			lock (this) {
-				pendingWrites--;
-				if (pendingWrites == 0)
-					pending.Set ();
+			if (sendChunked) {
+				lock (this) {
+					pendingWrites--;
+					if (pendingWrites == 0)
+						pending.Set ();
+				}
 			}
 		}
 		

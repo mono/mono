@@ -1,5 +1,9 @@
 2004-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebConnectionStream.cs: fixed nullrefs in BeginWrite/EndWrite.
+
+2004-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebRequest.cs: on second and sucesive tries when authenticating,
 	don't use chunked encoding for POST, as we know the content length and
 	have the body. Nullify bodyBuffer always in CheckFinalStatus.
