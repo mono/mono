@@ -1,3 +1,8 @@
+
+Wed Feb 16 16:28:15 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: ensure the GC handles never have 0 as a value.
+
 2005-02-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_ptr): Raise an exception if trying to pass
