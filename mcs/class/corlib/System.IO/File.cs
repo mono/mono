@@ -213,6 +213,8 @@ namespace System.IO
 
 		public static void Move (string src, string dest)
 		{
+			MonoIOError error;
+
 			if (src == null)
 				throw new ArgumentNullException ("src");
 			if (dest == null)
@@ -221,9 +223,9 @@ namespace System.IO
 				throw new ArgumentException ("src");
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("dest");
-			if (!Exists (src))
+			if (!MonoIO.Exists (src, out error))
 				throw new FileNotFoundException (src + " does not exist");
-			if (Exists (dest) && ((GetAttributes(dest) & FileAttributes.Directory) == FileAttributes.Directory))
+			if (MonoIO.ExistsDirectory (dest, out error))
 					throw new ArgumentException(dest + " is a directory");	
 
 			string DirName;
@@ -234,8 +236,6 @@ namespace System.IO
 			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 
-			MonoIOError error;
-			
 			if (!MonoIO.MoveFile (src, dest, out error))
 				throw MonoIO.GetException (error);
 		}
