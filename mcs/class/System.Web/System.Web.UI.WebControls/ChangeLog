@@ -1,3 +1,8 @@
+2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: set the title class attribute if we have it. Fixes bug
+	53671.
+
 2004-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Style.cs: added SetBit.

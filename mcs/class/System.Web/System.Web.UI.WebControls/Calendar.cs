@@ -1156,6 +1156,10 @@ namespace System.Web.UI.WebControls
 				table.ForeColor = ForeColor;
 			}
 
+			if (style.CssClass != "") {
+				cell.CssClass = style.CssClass;
+			}
+
 			table.Font.CopyFrom(style.Font);
 			table.Font.MergeWith(Font);
 		}
