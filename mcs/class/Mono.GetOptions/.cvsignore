@@ -1,6 +1,7 @@
 *.pdb
 *.dll
 *.csproj.user
-.makefrag
-.response
+*.prj
+*.pws
+.*
 library-deps.stamp
