@@ -1,5 +1,10 @@
 2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : Performance fix. ParseExact() implementation should
+	  avoid s = s.Substring(1).
+
+2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : When it it not exact parse, 'Z' is allowed as a suffix
 	  of m/s/t/z. This fixes bug 66723.
 
