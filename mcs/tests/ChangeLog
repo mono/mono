@@ -1,3 +1,10 @@
+2003-10-17  Martin Baulig  <martin@ximian.com>
+
+	* gen-test.sh: Removed.
+
+	* gen-test.pl: New file; this is a perl script which runs all the
+	generics tests.
+
 2003-10-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-49.cs: Improved test with input from bug #48761
