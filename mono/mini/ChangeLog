@@ -1,5 +1,8 @@
 2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* inssel-x86.brg: c&p rules for compare (base, regvar) and
+	compare (regvar, base)
+
 	* inssel-x86.brg: more burg love
 
 	* inssel.brg: more cleanup
