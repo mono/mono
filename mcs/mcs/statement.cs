@@ -2042,7 +2042,8 @@ namespace Mono.CSharp {
 		{
 			FlowReturns returns = CurrentUsageVector.MergeChildren (child, child.Siblings);
 
-			if (child.Type != FlowBranchingType.LOOP_BLOCK)
+			if ((child.Type != FlowBranchingType.LOOP_BLOCK) &&
+			    (child.Type != FlowBranchingType.SWITCH_SECTION))
 				MayLeaveLoop |= child.MayLeaveLoop;
 			else
 				MayLeaveLoop = false;
