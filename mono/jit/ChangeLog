@@ -1,3 +1,10 @@
+2002-10-15  Martin Baulig  <martin@gnome.org>
+
+	* jit.cs (PUSH_TREE): Always set t->cli_addr here.
+
+	* debug.c (generate_line_number): Small fix to make this actually
+	work for more complex things.
+
 2002-10-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (freg): use fprem instead of fprem1
