@@ -1,3 +1,9 @@
+
+Thu Nov 29 12:32:01 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* debug.c: fix type handling. Position function position at start of
+	IL code. Output more fine-grained stepping information.
+
 2001-11-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (LDIND_I1, LDIND_I2): use x86_widen_ instead of x86_mov_
