@@ -57,8 +57,10 @@ GENERIC_SOURCES = \
 	gen-41  gen-42  gen-43  gen-44  gen-45  gen-46          gen-48  gen-49  gen-50 \
 	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60 \
 	        gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70 \
-	gen-71          gen-73
+	gen-71  gen-72  gen-73  gen-74
 
+GENERIC_MULTI_SOURCES = \
+	gen-13  gen-17  gen-47
 
 #
 # C# 2.0 tests 
@@ -151,9 +153,51 @@ test-compiler-jit-real:
 		    echo "FAIL: $$i" >> $$logfile ; \
 	            echo FAILED ; cat $$testlogfile ; \
 		fi ; \
+	    fi ; \
+	done ; \
+	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
+
+test-compiler-jit-multi:
+	@rm -f *.exe *.dll $(TEST_TAG).log $(TEST_TAG)-*.log ; \
+	logfile="$(TEST_TAG).log" ; \
+	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
+	for i in $(TEST_SOURCES) ; do \
+	    options=`sed -n 's,^// Compiler options:,,p' $$i-dll.cs`; \
+	    testlogfile="$(TEST_TAG)-$$i-dll.log" ; \
+	    echo -n "$$i: "; \
+	    echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options /target:library $$i-dll.cs" > $$testlogfile ; \
+	    if $(INTERNAL_MCS) $$options /target:library $$i-dll.cs >> $$testlogfile 2>&1 ; then \
+		: ; \
 	    else \
-		echo "PASS: $$i: compilation" >> $$logfile ; \
-		echo OK ; rm -f $$testlogfile ; \
+		echo "Exit code: $$?" >> $$testlogfile ; \
+		failed="$$failed $$i" ; \
+		echo "FAIL: $$i: compilation" >> $$logfile ; \
+	        echo FAILED COMPILATION ; cat $$testlogfile ; \
+	    fi ; \
+	    if test -f $$i-dll.dll; then \
+		options=`sed -n 's,^// Compiler options:,,p' $$i-exe.cs`; \
+		testlogfile="$(TEST_TAG)-$$i-exe.log" ; \
+		echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options /r:$$i-dll.dll $$i-exe.cs" > $$testlogfile ; \
+		if $(INTERNAL_MCS) $$options /r:$$i-dll.dll $$i-exe.cs >> $$testlogfile 2>&1 ; then \
+		    : ; \
+		else \
+		    echo "Exit code: $$?" >> $$testlogfile ; \
+		    failed="$$failed $$i" ; \
+		    echo "FAIL: $$i: compilation" >> $$logfile ; \
+		    echo FAILED COMPILATION ; cat $$testlogfile ; \
+		fi ; \
+	    fi ; \
+	    if test -f $$i-exe.exe; then \
+	        echo "*** $(TEST_RUNTIME) ./$$i-exe.exe" >> $$testlogfile ; \
+	        if $(TEST_RUNTIME) ./$$i-exe.exe >> $$testlogfile 2>&1 ; then \
+		    echo "PASS: $$i" >> $$logfile ; \
+	            echo OK ; rm -f $$testlogfile ; \
+	        else \
+		    echo "Exit code: $$?" >> $$testlogfile ; \
+		    failed="$$failed $$i" ; \
+		    echo "FAIL: $$i" >> $$logfile ; \
+	            echo FAILED ; cat $$testlogfile ; \
+		fi ; \
 	    fi ; \
 	done ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
@@ -163,7 +207,7 @@ GENERIC_KNOWN_FAILURES = test-55
 # 
 # Tests the generics compiler, and excludes GENERIC_KNOWN_FAILURES from the build
 #
-test-generic: test-generic-1 test-generic-2 test-generic-3
+test-generic: test-generic-1 test-generic-2 test-generic-3 test-generic-4
 
 test-generic-1:
 	sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
@@ -174,6 +218,9 @@ test-generic-2:
 
 test-generic-3:
 	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$(GENERIC_SOURCES)" TEST_TAG=gmcs-v3
+
+test-generic-4:
+	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-multi TEST_SOURCES="$(GENERIC_MULTI_SOURCES)" TEST_TAG=gmcs-v4
 
 #
 # Tests the 2.0 features

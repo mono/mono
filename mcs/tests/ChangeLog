@@ -1,5 +1,10 @@
 2004-09-02  Martin Baulig  <martin@ximian.com>
 
+	* Makefile (test-generic-4): New target to run the multi-file
+	generic tests.
+
+2004-09-02  Martin Baulig  <martin@ximian.com>
+
 	* Makefile (test-generic): Renamed to test-generic-1.
 	(test-generic): New target, runs test-generic-1, test-generic-2
 	and test-generic-3.
