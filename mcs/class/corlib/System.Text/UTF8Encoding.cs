@@ -425,7 +425,31 @@ public class UTF8Encoding : Encoding
 						// We have a complete character now.
 						if (leftBits < (uint)0x10000) {
 							if (leftBits != (uint)0xFEFF) {
-								++length;
+								// is it an overlong ?
+								bool overlong = false;
+								switch (leftSize) {
+								case 2:
+									overlong = (leftBits <= 0x7F);
+									break;
+								case 3:
+									overlong = (leftBits <= 0x07FF);
+									break;
+								case 4:
+									overlong = (leftBits <= 0xFFFF);
+									break;
+								case 5:
+									overlong = (leftBits <= 0x1FFFFF);
+									break;
+								case 6:
+									overlong = (leftBits <= 0x03FFFFFF);
+									break;
+								}
+								if (overlong) {
+									if (throwOnInvalid)
+										throw new ArgumentException (_("Overlong"), leftBits.ToString ());
+								}
+								else
+									++length;
 							}
 						} else if (leftBits < (uint)0x110000) {
 							length += 2;

@@ -1,5 +1,9 @@
 2004-06-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : Added Overlong check to InternalGetCharCount().
+
+2004-06-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF8Encoding.cs : Throw overlongs error only when throwOnInvalid is
 	  true. Otherwise just ignore them.
 
