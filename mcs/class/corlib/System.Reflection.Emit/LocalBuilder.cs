@@ -48,7 +48,7 @@ namespace System.Reflection.Emit {
 		#region Sync with reflection.h
 		private Type type;
 		private string name;
-		private bool is_pinned;
+		internal bool is_pinned;
 		#endregion
 		
 		//
@@ -87,11 +87,6 @@ namespace System.Reflection.Emit {
 			get {
 				return type;
 			}
-		}
-		
-		internal void MakePinned ()
-		{
-			is_pinned = true;
 		}
 	}
 }

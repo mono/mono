@@ -393,7 +393,20 @@ namespace System.Reflection.Emit {
 		
 		public LocalBuilder DeclareLocal (Type localType)
 		{
+			return DeclareLocal (localType, false);
+		}
+
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		LocalBuilder DeclareLocal (Type localType, bool pinned)
+		{
 			LocalBuilder res = new LocalBuilder (localType, this);
+			res.is_pinned = pinned;
+			
 			if (locals != null) {
 				LocalBuilder[] new_l = new LocalBuilder [locals.Length + 1];
 				System.Array.Copy (locals, new_l, locals.Length);
