@@ -1,5 +1,10 @@
 2003-06-08 Jackson Harper <jackson@latitudegeo.com>
 
+	* TypeDef.cs: Add properties to types.
+	* PropertyDef.cs: New file - Implementation of a type property feature
+		
+2003-06-08 Jackson Harper <jackson@latitudegeo.com>
+
 	* TypeDef.cs: Fix silly null reference bug.
 		
 2003-06-08 Jackson Harper <jackson@latitudegeo.com>

@@ -28,10 +28,12 @@ namespace Mono.ILASM {
                 private ArrayList data_list;
                 private ArrayList customattr_list;
                 private ArrayList event_list;
+                private ArrayList property_list;
                 private ArrayList typar_list;
                 private TypeDef outer;
 
                 private EventDef current_event;
+                private PropertyDef current_property;
 
                 private int size;
                 private int pack;
@@ -88,6 +90,10 @@ namespace Mono.ILASM {
                         get { return current_event; }
                 }
 
+                public PropertyDef CurrentProperty {
+                        get { return current_property; }
+                }
+
                 public void SetSize (int size)
                 {
                         this.size = size;
@@ -128,6 +134,23 @@ namespace Mono.ILASM {
 
                         event_list.Add (current_event);
                         current_event = null;
+                }
+
+                public void BeginPropertyDef (PropertyDef property_def)
+                {
+                        if (current_property != null)
+                                throw new Exception ("A property definition was not closed.");
+
+                        current_property = property_def;
+                }
+
+                public void EndPropertyDef ()
+                {
+                        if (property_list == null)
+                                property_list = new ArrayList ();
+
+                        property_list.Add (current_property);
+                        current_property = null;
                 }
 
                 public void AddCustomAttribute (CustomAttr customattr)
@@ -233,6 +256,13 @@ namespace Mono.ILASM {
                                 foreach (EventDef eventdef in event_list) {
                                         eventdef.Define (code_gen, classdef);
                                 }
+                        }
+
+                        if (property_list != null) {
+                                foreach (PropertyDef propdef in property_list) {
+                                        propdef.Define (code_gen, classdef);
+                                }
+
                         }
 
                         if (customattr_list != null) {
