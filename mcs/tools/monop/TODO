@@ -1,6 +1,0 @@
-TODO
-----
-
-	* handle explicit vs. implicit interfaces
-	* handle ~ based paths (ex -r:~/foo.dll)
-	* improve commandline handling

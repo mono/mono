@@ -1,3 +1,0 @@
-The plans:
-
-    Currently types and base classes are being registered.

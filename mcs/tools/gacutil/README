@@ -1,3 +1,0 @@
-The gacutil.exe is mostly feature complete with the ms.net impl.
-
-NOTE: not all exceptions are caught, if you get one, file a bug and I will fix it.
