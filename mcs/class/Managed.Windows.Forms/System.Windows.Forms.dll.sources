@@ -73,6 +73,7 @@ System.Windows.Forms/MouseButtons.cs
 System.Windows.Forms/MouseEventArgs.cs
 System.Windows.Forms/MouseEventHandler.cs
 System.Windows.Forms/NativeWindow.cs
+System.Windows.Forms/Panel.cs
 System.Windows.Forms/PaintEventArgs.cs
 System.Windows.Forms/PaintEventHandler.cs
 System.Windows.Forms/ProgressBar.cs
