@@ -1,3 +1,15 @@
+2002-10-17  Tim Coleman (tim@timcoleman.com)
+	* IsolationLevel.cs:
+		Removed, as we now use IsolationLevel from System.Data
+	* TdsCommand.cs:
+	* TdsConnection.cs:
+	* TdsTransaction.cs:
+		These classes are now just wrappers for the 
+		Mono.Data.TdsClient.Internal classes.
+	* TdsServerType.cs:
+		Slight modification
+		
+
 2002-10-16  Tim Coleman (tim@timcoleman.com)
 	* ChangeLog:
 		New ChangeLog

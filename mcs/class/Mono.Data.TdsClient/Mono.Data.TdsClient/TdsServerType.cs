@@ -8,7 +8,7 @@
 //
 
 namespace Mono.Data.TdsClient {
-        public enum TdsServerType 
+        public enum TdsServerType
 	{
 		SqlServer, // use TDS version 4.2, 7.0, 8.0
 		Sybase     // use TDS version 4,2, 5.0
