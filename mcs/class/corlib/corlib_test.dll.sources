@@ -47,6 +47,7 @@ System/UInt64Test.cs
 System/VersionTest.cs
 System/TypeTest.cs
 System.Collections/ArrayListTest.cs
+System.Collections/NewArrayListTest.cs
 System.Collections/BitArrayTest.cs
 System.Collections/CaseInsensitiveComparerTest.cs
 System.Collections/CaseInsensitiveHashCodeProviderTest.cs
