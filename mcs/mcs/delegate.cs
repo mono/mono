@@ -451,18 +451,37 @@ namespace Mono.CSharp {
 
 			int pd_count = pd.Count;
 
-			bool not_params_method = (pd_count == 0) ||
-				(pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS);
+			bool params_method = (pd_count != 0) &&
+				(pd.ParameterModifier (pd_count - 1) == Parameter.Modifier.PARAMS);
 
-			if (not_params_method && pd_count != arg_count) {
+			if (!params_method && pd_count != arg_count) {
 				Report.Error (1593, loc,
 					      "Delegate '" + delegate_type.ToString ()
 					      + "' does not take '" + arg_count + "' arguments");
 				return false;
 			}
 
-			return Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, !not_params_method,
-								 delegate_type, loc);
+			//
+			// Consider the case:
+			//   delegate void FOO(param object[] args);
+			//   FOO f = new FOO(...);
+			//   f(new object[] {1, 2, 3});
+			//
+			// This should be treated like f(1,2,3).  This is done by ignoring the 
+			// 'param' modifier for that invocation.  If that fails, then the
+			// 'param' modifier is considered.
+			//
+			// One issue is that 'VerifyArgumentsCompat' modifies the elements of
+			// the 'args' array.  However, the modifications appear idempotent.
+			// Normal 'Invocation's also have the same behaviour, implicitly.
+			//
+
+			bool ans = false;
+			if (arg_count == pd_count)
+				ans = Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, false, delegate_type, loc);
+			if (!ans && params_method)
+				ans = Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, true,  delegate_type, loc);
+			return ans;
 		}
 		
 		/// <summary>

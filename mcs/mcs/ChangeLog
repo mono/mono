@@ -1,3 +1,11 @@
+2004-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* delegate.cs (Delegate.VerifyApplicability): If the number of
+	arguments are the same as the number of parameters, first try to
+	verify applicability ignoring  any 'params' modifier on the last
+	parameter.
+	Fixes #56442.
+
 2004-04-16  Raja R Harinath  <rharinath@novell.com>
 
 	* class.cs (TypeContainer.AddIndexer): Use
@@ -10,7 +18,7 @@
 	(TypeContainer.Emit): Emit DefaultMember attribute only if
 	IndexerName is initialized.
 	Fixes #56300.
-	
+
 2004-04-15  Benjamin Jemlich  <pcgod@gmx.net>
 
 	* enum.cs (Enum.DefineType): Don't allow char as type for enum.
