@@ -4018,7 +4018,7 @@ namespace Mono.CSharp {
 
 			if (type.IsInterface || type.IsAbstract){
 				Report.Error (
-					144, "It is not possible to create instances of interfaces " +
+					144, loc, "It is not possible to create instances of interfaces " +
 					"or abstract classes");
 				return null;
 			}
