@@ -180,7 +180,8 @@ namespace System.Web.UI.WebControls
 					if (!currentValidator.IsValid)
 					{
 						showSummary = true;
-						if (currentValidator.ErrorMessage.Length != 0)
+						if (currentValidator.ErrorMessage != null &&
+						    currentValidator.ErrorMessage.Length != 0)
 							numOfMsg++;
 					}
 				}
@@ -188,13 +189,14 @@ namespace System.Web.UI.WebControls
 				if (numOfMsg != 0)
 				{
 					messages = new string[(int)numOfMsg];
+					int cur_msg = 0;
 					for (int i = 0; i < base.Page.Validators.Count; i++)
 					{
 						IValidator currentValidator = base.Page.Validators[i];
 						if (!currentValidator.IsValid &&
 						     currentValidator.ErrorMessage != null &&
-						     currentValidator.ErrorMessage.Length != 0)
-							messages[i] = String.Copy(currentValidator.ErrorMessage);
+						     currentValidator.ErrorMessage.Length != 0) 
+							messages[cur_msg++] = String.Copy(currentValidator.ErrorMessage);
 					}
 				}
 	

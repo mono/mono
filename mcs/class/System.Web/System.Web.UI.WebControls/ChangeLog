@@ -1,3 +1,7 @@
+2003-11-22  Jackson Harper <jackson@ximian.com>
+
+	* ValidationSummary.cs: Fix number of messages and message array computation.
+	
 2003-11-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Xml.cs: Corrected attribute
