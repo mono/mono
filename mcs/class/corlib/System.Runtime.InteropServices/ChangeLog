@@ -1,3 +1,9 @@
+2003-01-05  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* COMException.cs: New. Minimal (incomplete - i'm not using COM)
+	implementation because this is thrown when dealing with Software 
+	Publisher Certificates (SPC) in X509Certificate.
+
 2002-08-22  Nick Drochak  <ndrochak@gol.com>
 
 	* OutAttribute.cs: TypeID isn't overriden from Attribute here.
