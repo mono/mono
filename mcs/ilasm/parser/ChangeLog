@@ -1,3 +1,7 @@
+2003-06-14 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Add set imagebase, subsystem, and corflags.
+		
 2003-06-14 Jackson Harper <jackson@latitidegeo.com>
 
 	* ILParser.jay: Implement custom modified types.

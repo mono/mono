@@ -118,6 +118,7 @@ namespace Mono.ILASM {
 %token D_CLASS
 %token D_COMTYPE
 %token D_CONFIG
+%token D_IMAGEBASE
 %token D_CORFLAGS
 %token D_CTOR
 %token D_CUSTOM
@@ -384,9 +385,18 @@ decl			: class_all
 			| sec_decl
 			| customattr_decl
 			| D_SUBSYSTEM int32
+                          {
+                                codegen.SetSubSystem ((int) $2);
+                          }
 			| D_CORFLAGS int32
+                          {
+                                codegen.SetCorFlags ((int) $2);
+                          }
 			| D_FILE K_ALIGNMENT int32
-		/*	| D_IMAGEBASE int64	*/
+			| D_IMAGEBASE int64
+                          {
+                                codegen.SetImageBase ((long) $2);
+                          }
 			| extsource_spec
 			| language_decl
 			;
