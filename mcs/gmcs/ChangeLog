@@ -1,5 +1,15 @@
 2004-03-23  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (MethodGroupExpr.Name): Use
+	TypeManager.CSharpSignature() instead of just the name.
+
+	* expression.cs (Invocation.OverloadResolve): Provide better error
+	reporting.
+	(Invocation.DoResolve): OverloadResolve() never returns null
+	without reporting an error, so removed the error -6 reporting here.
+
+2004-03-23  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.GetMethodFlags): Fixed the FIXME for
 	generic methods.
 

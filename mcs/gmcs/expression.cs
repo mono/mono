@@ -4663,6 +4663,8 @@ namespace Mono.CSharp {
                         }
 
 			if (method == null) {
+				int errors = Report.Errors;
+
 				//
 				// Okay so we have failed to find anything so we
 				// return by providing info about the closest match
@@ -4677,18 +4679,44 @@ namespace Mono.CSharp {
 					if (pd.Count != argument_count)
 						continue;
 
-					VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
-							       null, loc);
+					if (!InferTypeArguments (ec, Arguments, ref c))
+						continue;
+
+					VerifyArgumentsCompat (ec, Arguments, argument_count,
+							       c, false, null, loc);
                                         break;
 				}
 
-                                if (!Location.IsNull (loc)) {
-                                        string report_name = me.Name;
-                                        if (report_name == ".ctor")
-                                                report_name = me.DeclaringType.ToString ();
+				if (Report.Errors > errors)
+					return null;
+
+				string report_name = me.Name;
+				if (report_name == ".ctor")
+					report_name = me.DeclaringType.ToString ();
                                         
-                                        Error_WrongNumArguments (loc, report_name, argument_count);
-                                }
+				for (int i = 0; i < methods.Length; ++i) {
+
+					MethodBase c = methods [i];
+					if (c == null)
+						continue;
+
+					ParameterData pd = GetParameterData (c);
+					if (pd.Count != argument_count)
+						continue;
+
+					if (InferTypeArguments (ec, Arguments, ref c))
+						continue;
+
+					Report.Error (411, loc, "The type arguments for " +
+						      "method `{0}' cannot be infered from " +
+						      "the usage. Try specifying the type " +
+						      "arguments explicitly.", report_name);
+                                        break;
+				}
+
+                                if (errors == Report.Errors)
+                                        Error_WrongNumArguments (loc, report_name,
+								 argument_count);
                                 
 				return null;
 			}
@@ -5058,11 +5086,8 @@ namespace Mono.CSharp {
 			MethodGroupExpr mg = (MethodGroupExpr) expr;
 			method = OverloadResolve (ec, mg, Arguments, loc);
 
-			if (method == null){
-				Error (-6,
-				       "Could not find any applicable function for this argument list");
+			if (method == null)
 				return null;
-			}
 
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
