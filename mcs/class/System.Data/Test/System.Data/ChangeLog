@@ -1,4 +1,8 @@
-2005-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetTest.cs : use more normalized schema comparison.
+
+2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetTest.cs,
 	  DataSetAssertionTest.cs : In GetNormalizedSchema(), use manual

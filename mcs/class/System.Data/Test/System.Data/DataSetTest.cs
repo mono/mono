@@ -1035,16 +1035,24 @@ namespace MonoTests.System.Data
 			// see GetReady() for current culture
 
 			// This is original DataSet.WriteXmlSchema() output
-			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
+//			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
+			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='DS'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' /></DataSet>";
 			DataSet ds = new DataSet ();
 			ds.DataSetName = "DS";
 			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter xw = new XmlTextWriter (sw);
 			xw.QuoteChar = '\'';
-			ser.Serialize (xw, ds);
+			ser.Serialize (sw, ds);
 
-			AssertEquals (xml, sw.ToString ());
+//			string result = sw.ToString ();
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (GetNormalizedSchema (sw.ToString ()));
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			string result = doc.OuterXml.Replace ('"', '\'');
+
+			AssertEquals (xml, result.Replace ("\r\n", "\n"));
 		}
 
 		// bug #70961
@@ -1899,6 +1907,8 @@ namespace MonoTests.System.Data
 		[Test]
 		public void WriteXmlModeSchema ()
 		{
+			// This is the MS output of WriteXmlSchema().
+/*
 			string xml = @"<Example>
   <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
     <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
@@ -1926,6 +1936,76 @@ namespace MonoTests.System.Data
         <xs:field xpath=""Number"" />
       </xs:unique>
       <xs:unique name=""PK_Element"" msdata:PrimaryKey=""true"">
+        <xs:selector xpath="".//Element"" />
+        <xs:field xpath=""Dimension"" />
+        <xs:field xpath=""Number"" />
+      </xs:unique>
+      <xs:keyref name=""FK_Element_To_Dimension"" refer=""PK_Dimension"">
+        <xs:selector xpath="".//Element"" />
+        <xs:field xpath=""Dimension"" />
+      </xs:keyref>
+    </xs:element>
+  </xs:schema>
+  <Dimension>
+    <Number>0</Number>
+  </Dimension>
+  <Dimension>
+    <Number>1</Number>
+  </Dimension>
+  <Element>
+    <Dimension>0</Dimension>
+    <Number>0</Number>
+  </Element>
+  <Element>
+    <Dimension>0</Dimension>
+    <Number>1</Number>
+  </Element>
+  <Element>
+    <Dimension>0</Dimension>
+    <Number>2</Number>
+  </Element>
+  <Element>
+    <Dimension>0</Dimension>
+    <Number>3</Number>
+  </Element>
+  <Element>
+    <Dimension>1</Dimension>
+    <Number>0</Number>
+  </Element>
+  <Element>
+    <Dimension>1</Dimension>
+    <Number>1</Number>
+  </Element>
+</Example>";
+*/
+			string xml = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<Example>
+  <xs:schema id=""Example"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+    <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""Example"">
+      <xs:complexType>
+        <xs:choice maxOccurs=""unbounded"">
+          <xs:element name=""Dimension"">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name=""Number"" type=""xs:int"" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name=""Element"">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name=""Dimension"" type=""xs:int"" />
+                <xs:element name=""Number"" type=""xs:int"" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+      <xs:unique msdata:PrimaryKey=""true"" name=""PK_Dimension"">
+        <xs:selector xpath="".//Dimension"" />
+        <xs:field xpath=""Number"" />
+      </xs:unique>
+      <xs:unique msdata:PrimaryKey=""true"" name=""PK_Element"">
         <xs:selector xpath="".//Element"" />
         <xs:field xpath=""Dimension"" />
         <xs:field xpath=""Number"" />
@@ -2027,7 +2107,8 @@ namespace MonoTests.System.Data
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml(sw, XmlWriteMode.WriteSchema);
 
-			string result = sw.ToString ();
+//			string result = sw.ToString ();
+			string result = GetNormalizedSchema (sw.ToString ());
 
 			AssertEquals (xml, result.Replace ("\r\n", "\n"));
 		}
