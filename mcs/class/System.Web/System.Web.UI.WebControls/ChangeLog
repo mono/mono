@@ -1,3 +1,24 @@
+2004-08-10  Sanjay Gupta <gsanjay@novell.com>
+
+	* DetailsViewCommandEventArgs.cs:
+	* DetailsViewCommandEventHandler.cs:
+	* DetailsViewDeletedEventArgs.cs:
+	* DetailsViewDeletedEventHandler.cs:
+	* DetailsViewDeleteEventArgs.cs:
+	* DetailsViewDeleteEventHandler.cs:
+	* DetailsViewInsertedEventArgs.cs:
+	* DetailsViewInsertedEventHandler.cs:
+	* DetailsViewInsertEventArgs.cs:
+	* DetailsViewInsertEventHandler.cs:
+	* DetailsViewModeEventArgs.cs:
+	* DetailsViewModeEventHandler.cs:
+	* DetailsViewPageEventArgs.cs:
+	* DetailsViewPageEventHandler.cs:
+	* DetailsViewUpdatedEventArgs.cs:
+	* DetailsViewUpdatedEventHandler.cs:
+	* DetailsViewUpdateEventArgs.cs:
+	* DetailsViewUpdateEventHandler.cs: Added new delegates.
+
 2004-08-09  Sanjay Gupta <gsanjay@novell.com>
 
 	* AuthenticateEventArgs.cs:
