@@ -1,3 +1,18 @@
+2001-11-30  Radek Doulik  <rodo@ximian.com>
+
+	* mono-endian.h: reverted last change
+	added function prototypes
+
+	* Makefile.am (libmetadata_a_SOURCES): reverted my last change and
+	add mono-endian.c back
+
+	* mono-endian.c: returned back, as Paolo pointed out, it's needed
+	for unaligned access, I've mistaked it with endianess. I am
+	sorry.
+	(mono_read16): fix reverted endianess
+	(mono_read64): ditto
+	(mono_read32): ditto
+
 2001-11-30  Dick Porter  <dick@ximian.com>
 
 	* exception.c: Implement mono_exception_from_name()
