@@ -660,6 +660,7 @@ namespace Mono.CSharp {
 
 			while (containing_ds != null){
 				Type current_type = containing_ds.TypeBuilder;
+				Type container_type = current_type;
 
 				while (current_type != null) {
 					string pre = current_type.FullName;
@@ -668,19 +669,19 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 				
-					if (t != null) 
+					if ((t != null) && TypeManager.IsAccessibleFrom (container_type, t))
 						return t;
 
 					current_type = current_type.BaseType;
 				}
 				containing_ds = containing_ds.Parent;
 			}
-			
+
 			//
 			// Attempt to lookup the class on our namespace and all it's implicit parents
 			//
-			for (string ns = Namespace.Name; ns != null; ns = RootContext.ImplicitParent (ns)) {
-				t = LookupInterfaceOrClass (ns, name, out error);
+			for (NamespaceEntry ns = Namespace; ns != null; ns = ns.ImplicitParent) {
+				t = LookupInterfaceOrClass (ns.Name, name, out error);
 				if (error)
 					return null;
 				
@@ -723,8 +724,11 @@ namespace Mono.CSharp {
 
 					if (match != null && CheckAccessLevel (match)){
 						if (t != null){
-							Error_AmbiguousTypeReference (loc, name, t, match);
-							return null;
+							if (TypeManager.IsAccessibleFrom (t, match)) {
+								Error_AmbiguousTypeReference (loc, name, t, match);
+								return null;
+							}
+							continue;
 						}
 						
 						t = match;

@@ -8,6 +8,17 @@
 
 2003-07-08  Martin Baulig  <martin@ximian.com>
 
+	* rootcontext.cs (RootContext.NamespaceLookup): Ignore
+	inaccessible types.  Fixes #36313.
+
+	* decl.cs (DeclSpace.FindType): Ignore inaccessible types.
+
+	* namespace.cs (NamespaceEntry): Create implicit entries for all
+	namespaces; ie. if we have `namespace N1.N2.N3 { ... }', we create
+	implicit entries for N1.N2 and N1.
+
+2003-07-08  Martin Baulig  <martin@ximian.com>
+
 	Rewrote the handling of namespaces to fix a lot of the issues
 	wrt. `using' aliases etc.
 

@@ -129,14 +129,17 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return String.Format ("Namespace ({0})", Name);
+			if (this == Root)
+				return "Namespace (<root>)";
+			else
+				return String.Format ("Namespace ({0})", Name);
 		}
 	}
 
 	public class NamespaceEntry
 	{
 		Namespace ns;
-		NamespaceEntry parent;
+		NamespaceEntry parent, implicit_parent;
 		SourceFile file;
 		int symfile_id;
 		Hashtable aliases;
@@ -220,11 +223,17 @@ namespace Mono.CSharp {
 				return resolved;
 			}
 		}
-		
+
 		public NamespaceEntry (NamespaceEntry parent, SourceFile file, string name)
+			: this (parent, file, name, false)
+		{ }
+
+		protected NamespaceEntry (NamespaceEntry parent, SourceFile file, string name, bool is_implicit)
 		{
 			this.parent = parent;
 			this.file = file;
+			this.IsImplicit = is_implicit;
+			this.ID = ++next_id;
 
 			if (parent != null)
 				ns = parent.NS.GetNamespace (name, true);
@@ -233,7 +242,16 @@ namespace Mono.CSharp {
 			else
 				ns = Namespace.Root;
 			ns.AddNamespaceEntry (this);
+
+			if ((parent != null) && (parent.NS != ns.Parent))
+				implicit_parent = new NamespaceEntry (parent, file, ns.Parent.Name, true);
+			else
+				implicit_parent = parent;
 		}
+
+		static int next_id = 0;
+		public readonly int ID;
+		public readonly bool IsImplicit;
 
 		public string Name {
 			get {
@@ -250,6 +268,12 @@ namespace Mono.CSharp {
 		public NamespaceEntry Parent {
 			get {
 				return parent;
+			}
+		}
+
+		public NamespaceEntry ImplicitParent {
+			get {
+				return implicit_parent;
 			}
 		}
 
@@ -468,7 +492,10 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return String.Format ("NamespaceEntry ({0})", Name);
+			if (NS == Namespace.Root)
+				return "NamespaceEntry (<root>)";
+			else
+				return String.Format ("NamespaceEntry ({0},{1},{2})", Name, IsImplicit, ID);
 		}
 	}
 }

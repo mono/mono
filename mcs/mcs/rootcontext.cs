@@ -467,8 +467,12 @@ namespace Mono.CSharp {
 			//
 			// Try in the current namespace and all its implicit parents
 			//
-			for (string ns = curr_ns.Name; ns != null; ns = ImplicitParent (ns)) {
-				t = TypeManager.LookupType (MakeFQN (ns, name));
+			for (NamespaceEntry ns = curr_ns; ns != null; ns = ns.ImplicitParent) {
+				t = TypeManager.LookupType (MakeFQN (ns.Name, name));
+				if (t != null) {
+					if (!TypeManager.IsAccessibleFrom (CodeGen.AssemblyBuilder, t))
+						t = null;
+				}
 				if (t != null)
 					return t;
 			}
@@ -501,6 +505,10 @@ namespace Mono.CSharp {
 				// Look in the namespace ns
 				//
 				t = TypeManager.LookupType (MakeFQN (ns.Name, name));
+				if (t != null) {
+					if (!TypeManager.IsAccessibleFrom (CodeGen.AssemblyBuilder, t))
+						t = null;
+				}
 				if (t != null)
 					return t;
 				
@@ -516,8 +524,6 @@ namespace Mono.CSharp {
 							DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
 							return null;
 						}
-
-						t = match;
 					}
 				}
 
