@@ -32,6 +32,7 @@
 		<nant basedir="Mono.Directory.LDAP" target="build" buildfile="Mono.Directory.LDAP/Mono.Directory.LDAP.build"/> 
 		<nant basedir="Mono.GetOptions" target="build" buildfile="Mono.GetOptions/Mono.GetOptions.build"/>
 		<nant basedir="Mono.PEToolkit" target="build" buildfile="Mono.PEToolkit/PEToolkit.build"/>
+		<nant basedir="Mono.Security" target="build" buildfile="Mono.Security/Mono.Security.build"/>
 		<nant basedir="Mono.Security.Win32" target="build" buildfile="Mono.Security.Win32/Mono.Security.Win32.build"/>
 		<nant basedir="System" target="build" buildfile="System/System.build"/>
 		<nant basedir="System.Configuration.Install" target="build" buildfile="System.Configuration.Install/System.Configuration.Install.build"/>
@@ -61,6 +62,7 @@
 		<nant basedir="Microsoft.VisualBasic" target="test"/>
 		<nant basedir="System.Configuration.Install" target="test"/>
 		<nant basedir="System.Security" target="test"/>
+		<nant basedir="Mono.Security" target="test"/>
 		<nant basedir="Mono.Security.Win32" target="test"/>
 	</target>
 
@@ -97,6 +99,7 @@
 		<nant basedir="Mono.PEToolkit" target="clean"/>
 		<nant basedir="System.Security" target="clean"/>
 		<nant basedir="Mono.Posix" target="clean"/>
+		<nant basedir="Mono.Security" target="clean"/>
 		<nant basedir="Mono.Security.Win32" target="clean"/>
 		<nant basedir="System.Management" target="clean"/>
 	</target>

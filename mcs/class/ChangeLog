@@ -1,3 +1,7 @@
+2003-03-06  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* library.build: added Mono.Security to build, test and clean. 
+
 2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* class/library.build:
