@@ -1,3 +1,8 @@
+2004-05-18 Ravindra <rkumar@novell.com>
+
+	* TestHatchBrush.cs: Removed. Now, we have a better test for HatchBrush
+	this under Test/System.Drawing.Drawing2D directory.
+
 2004-05-17 Sanjay Gupta <gsanjay@novell.com>
                                                                                                          
         * TestIcon.cs: Added.
@@ -5,7 +10,7 @@
         * bitmaps/VisualPng1.ico: Added
 
 2004-05-14 Sanjay Gupta <gsanjay@novell.com>
-                                                                                                         
+
         * TestBitmap.cs: Modified method signature to static to be used in other file.
         * TestImageConverter.cs: Added.
         * TestImageFormatConverter.cs: Added
