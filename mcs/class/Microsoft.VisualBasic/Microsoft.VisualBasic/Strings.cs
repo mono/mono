@@ -7,9 +7,11 @@
 //   Francesco Delfino (pluto@tipic.com)
 //   Daniel Campos (danielcampos@netcourrier.com)
 //   Rafael Teixeira (rafaelteixeirabr@hotmail.com)
+//   Jochen Wezel (jwezel@compumaster.de)
 //
 // (C) 2002 Ximian Inc.
 //     2002 Tipic, Inc. (http://www.tipic.com)
+//     2003 CompuMaster GmbH (http://www.compumaster.de)
 //
 
 using System;
@@ -43,6 +45,14 @@ namespace Microsoft.VisualBasic
 		public static int Asc(char String) 
 		{
 			//FIXME: Check the docs, it says something about Locales, DBCS, etc.
+
+			//2003-12-29 JW
+			//TODO: for some ideas/further documentation (currently not much), see the Strings test unit
+			//		1. Byte count (switching of CurrentCulture isn't relevant but current machine's setting)
+			//		2. Little or big endian
+			//Tipp: use a western OS and at least a japanese Windows to do the testings!
+			//
+
 			return (int)String;
 		}
 
@@ -817,10 +827,9 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(decimal Expression) 
 		{
-			return 16; //sizeof(decimal)
+			return 8; //sizeof(decimal)
 		}
 
 		/// <summary>

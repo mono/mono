@@ -1,3 +1,8 @@
+2003-12-29  Jochen Wezel <jwezel@compumaster.de>
+
+	* Strings.cs:
+		Fixed bug in Len(Decimal)
+
 2002-08-15  Tim Coleman <tim@timcoleman.com>
 	* ChangeLog:
 		Added a ChangeLog
