@@ -1,5 +1,8 @@
 2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_managed_wrapper): Handle returning
+	delegates from a delegate. Fixes #61033.
+	
 	* marshal.c: Fix managed->native stringbuilder marshalling. Implement
 	marshalling of stringbuilder arrays. Fixes #59900.
 
