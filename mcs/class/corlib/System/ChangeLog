@@ -1,3 +1,8 @@
+2004-11-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GC.cs : Collect(generation) actually does not throw an exception
+	  even if generation > MaxGeneration (MS document bug).
+
 2004-11-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BitConverter.cs: Added support for special case when ToString is 
