@@ -1,5 +1,13 @@
 2002-04-13  Martin Baulig  <martin@gnome.org>
 
+	* debug-dwarf2.c (dwarf2_write_variable_location): New static func to write
+	the location of a variable.
+	(dwarf2_write_variable, dwarf2_write_parameter): Take a MonoDebugVarInfo
+	instead of a stack offset and use dwarf2_write_variable_location() to write
+	the location.
+
+2002-04-13  Martin Baulig  <martin@gnome.org>
+
 	* debug.c, debug-stabs.c, debug-dwarf2.c: Reflect latest debug-symfile.h
 	API changes.
 
