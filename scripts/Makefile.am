@@ -21,6 +21,7 @@ bin_SCRIPTS = \
 	mono-find-requires	\
 	monop			\
 	monoresgen		\
+	permview		\
 	resgen			\
 	secutil			\
 	setreg			\
