@@ -75,13 +75,13 @@ namespace System.Web.Services.Protocols {
 			{
 				writer.Write (HttpUtility.UrlEncode (name, requestEncoding));
 				writer.Write ("=");
-				writer.Write (HttpUtility.UrlEncode (value.ToString(), requestEncoding));
+				writer.Write (HttpUtility.UrlEncode (ObjToString (value), requestEncoding));
 			}
 			else
 			{
 				writer.Write (HttpUtility.UrlEncode (name));
 				writer.Write ("=");
-				writer.Write (HttpUtility.UrlEncode (value.ToString()));
+				writer.Write (HttpUtility.UrlEncode (ObjToString (value)));
 			}
 				
 		}
