@@ -790,7 +790,7 @@ namespace System.Net
 
 			HttpWebResponse resp = result.Response;
 			WebExceptionStatus protoError = WebExceptionStatus.ProtocolError;
-			HttpStatusCode code;
+			HttpStatusCode code = 0;
 			if (throwMe == null && webResponse != null) {
 				code  = webResponse.StatusCode;
 				if ((int) code >= 400 ) {
