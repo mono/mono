@@ -1,5 +1,8 @@
 2002-10-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* delegate.cs (NewDelegate.DoResolve): Catch creation of unsafe
+	delegates as well.
+
 	* driver.cs: Change the extension for modules to `netmodule'
 
 	* cs-parser.jay: Improved slightly the location tracking for

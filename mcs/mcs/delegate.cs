@@ -572,7 +572,7 @@ namespace Mono.CSharp {
 				Expression.AllBindingFlags, loc);
 
 			if (invoke_method == null) {
-				Report.Error (-200, loc, "Internal error ! COuld not find Invoke method!");
+				Report.Error (-200, loc, "Internal error ! Could not find Invoke method!");
 				return null;
 			}
 
@@ -601,6 +601,21 @@ namespace Mono.CSharp {
 						      "match delegate '" + delegate_desc + "'");
 
 					return null;
+				}
+
+				//
+				// Check safe/unsafe of the delegate
+				//
+				if (!ec.InUnsafe){
+					ParameterData param = Invocation.GetParameterData (delegate_method);
+					int count = param.Count;
+					
+					for (int i = 0; i < count; i++){
+						if (param.ParameterType (i).IsPointer){
+							Expression.UnsafeError (loc);
+							return null;
+						}
+					}
 				}
 						
 				if (mg.InstanceExpression != null)
@@ -638,7 +653,7 @@ namespace Mono.CSharp {
 			}
 				
 			delegate_instance_expr = e;
-			delegate_method        = ((MethodGroupExpr) invoke_method).Methods [0];
+			delegate_method = ((MethodGroupExpr) invoke_method).Methods [0];
 			
 			eclass = ExprClass.Value;
 			return this;
