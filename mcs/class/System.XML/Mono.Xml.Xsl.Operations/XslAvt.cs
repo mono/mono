@@ -59,7 +59,8 @@ namespace Mono.Xml.Xsl.Operations {
 							sb.Append (c);
 							while ((c = (char)r.Read ()) != unq) {
 								sb.Append (c);
-								if (r.Peek () == -1) throw new Exception ("unexpected end of AVT");
+								if (r.Peek () == -1)
+									throw new XsltCompileException ("unexpected end of AVT", null, comp.Input);
 							}
 								
 							
@@ -70,7 +71,7 @@ namespace Mono.Xml.Xsl.Operations {
 							sb.Append (c);
 							break;
 						}
-						if (r.Peek () == -1) throw new Exception ("unexpected end of AVT");
+						if (r.Peek () == -1) throw new XsltCompileException ("unexpected end of AVT", null, comp.Input);
 					}
 					
 						
@@ -80,7 +81,7 @@ namespace Mono.Xml.Xsl.Operations {
 				case '}':
 					c = (char)r.Read ();
 					if (c != '}')
-						throw new Exception ("Braces must be escaped");
+						throw new XsltCompileException ("Braces must be escaped", null, comp.Input);
 					goto default;
 				default:
 					sb.Append (c);

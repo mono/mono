@@ -1,3 +1,16 @@
+2004-03-22 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslApplyTemplates.cs,
+	  XslAvt.cs,
+	  XslCallTemplate.cs,
+	  XslChoose.cs,
+	  XslIf.cs,
+	  XslMessage.cs,
+	  XslNumber.cs,
+	  XslVariable.cs :
+	  Throw XsltCompileException instead of Exception.
+	* XslVariable.cs : Reject invalid attributes.
+
 2004-02-13 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslVariable.cs : Replaced XmlNodeWriter with DTMXPathDocumentWriter.

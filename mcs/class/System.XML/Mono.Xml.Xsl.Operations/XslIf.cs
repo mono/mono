@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 namespace Mono.Xml.Xsl.Operations {
 	// also applicable to xsl:when
 	public class XslIf : XslCompiledElement {
-		XPathExpression test;
+		CompiledExpression test;
 		XslOperation children;
 		
 		public XslIf (Compiler c) : base (c) {}
@@ -26,7 +26,19 @@ namespace Mono.Xml.Xsl.Operations {
 		protected override void Compile (Compiler c)
 		{
 			c.AssertAttribute ("test");
-			test = c.CompileExpression (c.GetAttribute ("test"));
+			c.Input.MoveToFirstAttribute ();
+			do {
+				if (c.Input.NamespaceURI != String.Empty)
+					continue;
+				switch (c.Input.LocalName) {
+				case "test":
+					test = c.CompileExpression (c.Input.Value);
+					break;
+				default:
+					throw new XsltCompileException ("Invalid attribute was found: " + c.Input.Name, null, c.Input);
+				}
+			} while (c.Input.MoveToNextAttribute ());
+			c.Input.MoveToParent ();
 
 			if (!c.Input.MoveToFirstChild ()) return;
 			children = c.CompileTemplateContent ();

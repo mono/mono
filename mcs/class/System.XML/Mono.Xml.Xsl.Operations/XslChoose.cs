@@ -24,14 +24,15 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
-			if (!c.Input.MoveToFirstChild ()) throw new Exception ("Expecting non-empty element");
+			if (!c.Input.MoveToFirstChild ())
+				throw new XsltCompileException ("Expecting non-empty element", null, c.Input);
 			
 			do {
 				if (c.Input.NodeType != XPathNodeType.Element) continue;
 				if (c.Input.NamespaceURI != XsltNamespace) continue;
 				
 				if (defaultChoice != null)
-					throw new Exception ("otherwise attribute must be last");
+					throw new XsltCompileException ("otherwise attribute must be last", null, c.Input);
 
 				switch (c.Input.LocalName) {
 				case "when":
@@ -55,7 +56,7 @@ namespace Mono.Xml.Xsl.Operations {
 			c.Input.MoveToParent ();
 			
 			if (conditions.Count == 0)
-				throw new Exception ("Choose must have 1 or ore when elements");
+				throw new XsltCompileException ("Choose must have 1 or ore when elements", null, c.Input);
 		}
 
 		public override void Evaluate (XslTransformProcessor p)

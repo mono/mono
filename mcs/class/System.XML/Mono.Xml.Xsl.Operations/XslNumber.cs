@@ -126,7 +126,7 @@ namespace Mono.Xml.Xsl.Operations {
 				hit = NumberAny (p);
 				return nf.Format (hit, hit != 0);
 			default:
-				throw new Exception ("Should not get here");
+				throw new XsltException ("Should not get here", null, p.CurrentNode);
 			}
 		}
 		
@@ -156,8 +156,8 @@ namespace Mono.Xml.Xsl.Operations {
 				
 			int [] ret = new int [nums.Count];
 			int pos = nums.Count;
-			foreach (int num in nums)
-				ret [--pos] = num;
+			for (int i = 0; i < nums.Count; i++)
+				ret [--pos] = (int) nums [i];
 			
 			return ret;
 		}

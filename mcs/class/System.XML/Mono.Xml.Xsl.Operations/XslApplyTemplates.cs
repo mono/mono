@@ -38,12 +38,13 @@ namespace Mono.Xml.Xsl.Operations {
 						continue;
 					case XPathNodeType.Element:
 						if (c.Input.NamespaceURI != XsltNamespace)
-							throw new Exception ("unexptected element"); // TODO: fwd compat
+							throw new XsltCompileException ("unexptected element", null, c.Input); // TODO: fwd compat
 						
 						switch (c.Input.LocalName)
 						{
 							case "with-param":
-								if (withParams == null) withParams = new ArrayList ();
+								if (withParams == null)
+									withParams = new ArrayList ();
 								withParams.Add (new XslVariableInformation (c));
 								break;
 								
@@ -53,11 +54,11 @@ namespace Mono.Xml.Xsl.Operations {
 								c.AddSort (select, new Sort (c));
 								break;
 							default:
-								throw new Exception ("unexptected element"); // todo forwards compat
+								throw new XsltCompileException ("unexptected element", null, c.Input); // todo forwards compat
 						}
 						break;
 					default:
-						throw new Exception ("unexpected node type " + c.Input.NodeType);	// todo forwards compat
+						throw new XsltCompileException ("unexpected node type " + c.Input.NodeType, null, c.Input);	// todo forwards compat
 					}
 				} while (c.Input.MoveToNext ());
 				c.Input.MoveToParent ();

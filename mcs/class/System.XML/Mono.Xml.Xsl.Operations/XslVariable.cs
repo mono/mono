@@ -29,13 +29,27 @@ namespace Mono.Xml.Xsl.Operations {
 		public XslVariableInformation (Compiler c)
 		{
 			c.AssertAttribute ("name");
+			c.Input.MoveToFirstAttribute ();
+			do {
+				if (c.Input.NamespaceURI != String.Empty)
+					continue;
+				switch (c.Input.LocalName) {
+				case "name":
+				case "select":
+					break;
+				default:
+					throw new XsltCompileException ("Invalid attribute " + c.Input.Name, null, c.Input);
+				}
+			} while (c.Input.MoveToNextAttribute ());
+			c.Input.MoveToParent ();
+
 			name = c.ParseQNameAttribute ("name");
 			try {
 				XmlConvert.VerifyName (name.Name);
 			} catch (XmlException ex) {
 				throw new XsltCompileException ("Variable name is not qualified name.", ex, c.Input);
 			}
-			
+
 			string sel = c.GetAttribute ("select");
 			if (sel != null && sel != "" ) {
 				select = c.CompileExpression (c.GetAttribute ("select"));
@@ -108,7 +122,7 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			if (varInfo.Contains (this)) {
 				if (varInfo [this] == busyObject)
-					throw new Exception ("Circular Dependency");
+					throw new XsltException ("Circular dependency was detected.", null, p.CurrentNode);
 				return;
 			}
 			
@@ -178,7 +192,8 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{		
-			if (p.GetStackItem (slot) != null) return; // evaluated already
+			if (p.GetStackItem (slot) != null)
+				return; // evaluated already
 				
 			base.Evaluate (p);
 		}
