@@ -1,5 +1,8 @@
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
+	* glob.c (mono_glob_compile): Make the glob expression contain ^
+	and $ at the beginning and end respectively.
+
 	* genwrapper.pl: Added wrappers for the mono_glob functions.
 
 	* glob.c: New file, with globing functions used by the Directory
