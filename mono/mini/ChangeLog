@@ -1,3 +1,9 @@
+2004-12-12  Duncan Mak  <duncan@ximian.com>
+
+	* mini-ppc.c (mono_arch_patch_code): Hopefully made this build
+	again. `patch_info->table_size' is no longer valid after Zoltan's
+	commit #37636.
+
 2004-12-12  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): Only call mono_debug_init_method()
