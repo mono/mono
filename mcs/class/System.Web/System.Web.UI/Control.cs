@@ -650,6 +650,9 @@ namespace System.Web.UI
 			if (_visible) {
 				EnsureChildControls ();
 				OnPreRender (EventArgs.Empty);
+				if (_controls == null)
+					return;
+
 				foreach (Control c in _controls)
 					c.PreRenderRecursiveInternal ();
 			}
