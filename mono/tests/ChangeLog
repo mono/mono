@@ -1,3 +1,7 @@
+2004-12-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* delegate.cs: Add test for unboxing and delegates.
+
 2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain-unload.cs: Add tests for unloading an appdomain from inside
