@@ -4,9 +4,7 @@
 // Author:
 //   Duco Fijma (duco@lorentz.xs4all.nl)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +27,7 @@
 //
 
 using System.Security;
+using System.Security.Permissions;
 using System.Security.Policy;
 using System.Security.Principal;
 using System.Reflection;
@@ -51,8 +50,13 @@ namespace System
 		string RelativeSearchPath {get; }
 		bool ShadowCopyFiles {get; }
 
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void AppendPrivatePath (string path);
+
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void ClearPrivatePath ();
+
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void ClearShadowCopyPath ();
 
 		ObjectHandle CreateInstance (string assemblyName, string typeName);
@@ -95,8 +99,13 @@ namespace System
 		Assembly[] GetAssemblies ();
 		object GetData (string name);
 		int GetHashCode();
+
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		object GetLifetimeService ();
+
 		Type GetType ();
+
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		object InitializeLifetimeService ();
 
 		Assembly Load (AssemblyName assemblyRef);
@@ -107,14 +116,27 @@ namespace System
 		Assembly Load (string assemblyString, Evidence assemblySecurity);
 		Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence);
 
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void SetAppDomainPolicy (PolicyLevel domainPolicy);
+
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void SetCachePath (string s);
+
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void SetData (string name, object data);
+
 		void SetPrincipalPolicy (PrincipalPolicy policy);
+
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void SetShadowCopyPath (string s);
+
 		void SetThreadPrincipal (IPrincipal principal);
 		string ToString ();
 
+#if BOOTSTRAP_WITH_OLDLIB
+		// older MCS/corlib returns:
+		// _AppDomain.cs(138) error CS0592: Attribute 'SecurityPermission' is not valid on this declaration type.
+		// It is valid on 'assembly' 'class' 'constructor' 'method' 'struct'  declarations only.
 		event AssemblyLoadEventHandler AssemblyLoad;
 		event ResolveEventHandler AssemblyResolve;
 		event EventHandler DomainUnload;
@@ -122,5 +144,27 @@ namespace System
 		event ResolveEventHandler ResourceResolve;
 		event ResolveEventHandler TypeResolve;
 		event UnhandledExceptionEventHandler UnhandledException;
+#else
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		event AssemblyLoadEventHandler AssemblyLoad;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		event ResolveEventHandler AssemblyResolve;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		event EventHandler DomainUnload;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		event EventHandler ProcessExit;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		event ResolveEventHandler ResourceResolve;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		event ResolveEventHandler TypeResolve;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		event UnhandledExceptionEventHandler UnhandledException;
+#endif
 	}
 }

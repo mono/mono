@@ -1,3 +1,12 @@
+2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* _AppDomain.cs: Add security checks to the interface. Declarative 
+	security on events requires BOOTSTRAP_WITH_OLDLIB to work properly 
+	with older MCS.
+	* AppDomain.cs: Add some (not complete) security checks. Bug#74411 is
+	blocking some cases from working properly. Declarative security on 
+	events requires BOOTSTRAP_WITH_OLDLIB to work properly with older MCS.
+
 2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Use the PolicyLevel to resolve the granted permissions

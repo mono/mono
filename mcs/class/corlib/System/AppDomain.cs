@@ -67,7 +67,6 @@ namespace System
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
-		internal PermissionSet _refused;
 
 		// non-CAS
 		private PrincipalPolicy _principalPolicy;
@@ -95,21 +94,38 @@ namespace System
 
 		public string BaseDirectory {
 			get {
-				return SetupInformationNoCopy.ApplicationBase;
+				string path = SetupInformationNoCopy.ApplicationBase;
+				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
+					// we cannot divulge local file informations
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
+				}
+				return path;
 			}
 		}
 
 		public string RelativeSearchPath {
 			get {
-				return SetupInformationNoCopy.PrivateBinPath;
+				string path = SetupInformationNoCopy.PrivateBinPath;
+				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
+					// we cannot divulge local file informations
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
+				}
+				return path;
 			}
 		}
 
 		public string DynamicDirectory {
 			get {
 				AppDomainSetup setup = SetupInformationNoCopy;
-				if (setup.DynamicBase == null) return null;
-				return Path.Combine (setup.DynamicBase, setup.ApplicationName);
+				if (setup.DynamicBase == null)
+					return null;
+
+				string path = Path.Combine (setup.DynamicBase, setup.ApplicationName);
+				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
+					// we cannot divulge local file informations
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
+				}
+				return path;
 			}
 		}
 
@@ -191,6 +207,7 @@ namespace System
 #if NET_2_0
 		[Obsolete ("")]
 #endif
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void AppendPrivatePath (string path)
 		{
 			if (path == null || path.Length == 0)
@@ -214,11 +231,13 @@ namespace System
 #if NET_2_0
 		[Obsolete ("")]
 #endif
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void ClearPrivatePath ()
 		{
 			SetupInformationNoCopy.PrivateBinPath = String.Empty;
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void ClearShadowCopyPath ()
 		{
 			SetupInformationNoCopy.ShadowCopyDirectories = String.Empty;
@@ -544,12 +563,13 @@ namespace System
 			_granted = ps.PermissionSet;
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetCachePath (string path)
 		{
 			SetupInformationNoCopy.CachePath = path;
 		}
 
-		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal = true)]
 		public void SetPrincipalPolicy (PrincipalPolicy policy)
 		{
 			if (IsFinalizingForUnload ())
@@ -559,17 +579,19 @@ namespace System
 			_principal = null;
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetShadowCopyFiles()
 		{
 			SetupInformationNoCopy.ShadowCopyFiles = "true";
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetShadowCopyPath (string path)
 		{
 			SetupInformationNoCopy.ShadowCopyDirectories = path;
 		}
 
-		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal = true)]
 		public void SetThreadPrincipal (IPrincipal principal)
 		{
 			if (principal == null)
@@ -676,6 +698,7 @@ namespace System
 		private static extern AppDomain createDomain (string friendlyName, AppDomainSetup info);
 
 		[MonoTODO ("allow setup in the other domain")]
+		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
 		{
 			if (friendlyName == null)
@@ -743,6 +766,7 @@ namespace System
 			return Thread.GetDomainID ();
 		}
 
+		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
 		public static void Unload (AppDomain domain)
 		{
 			if (domain == null)
@@ -752,8 +776,10 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public extern void SetData (string name, object data);
 
+		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetDynamicBase (string path)
 		{
 			SetupInformationNoCopy.DynamicBase = path;
@@ -900,6 +926,10 @@ namespace System
 
 		// End of methods called from the runtime
 		
+#if BOOTSTRAP_WITH_OLDLIB
+		// older MCS/corlib returns:
+		// _AppDomain.cs(138) error CS0592: Attribute 'SecurityPermission' is not valid on this declaration type.
+		// It is valid on 'assembly' 'class' 'constructor' 'method' 'struct'  declarations only.
 		public event AssemblyLoadEventHandler AssemblyLoad;
 
 		public event ResolveEventHandler AssemblyResolve;
@@ -913,6 +943,28 @@ namespace System
 		public event ResolveEventHandler TypeResolve;
 
 		public event UnhandledExceptionEventHandler UnhandledException;
+#else
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		public event AssemblyLoadEventHandler AssemblyLoad;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		public event ResolveEventHandler AssemblyResolve;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		public event EventHandler DomainUnload;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		public event EventHandler ProcessExit;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		public event ResolveEventHandler ResourceResolve;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		public event ResolveEventHandler TypeResolve;
+
+		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+		public event UnhandledExceptionEventHandler UnhandledException;
+#endif
 
 		/* Avoid warnings for events used only by the runtime */
 		private void DummyUse () {
