@@ -31,7 +31,7 @@ namespace System.Xml
 		XmlNameTable nameTable;
 		string baseURI = String.Empty;
 		XmlImplementation implementation;
-		bool preserveWhitespace = true;	// Its true initial value is false.
+		bool preserveWhitespace = false;
 		WeakReference reusableXmlTextReader;
 
 		#endregion
