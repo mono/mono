@@ -1,3 +1,13 @@
+2002-12-27  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ASN1.cs: New. Classes to manipulate Abstract Syntax Notation 1
+	structures.
+	* cert2spc.cs: New tool to generate Software Publisher Certificate
+	(SPC) from a list of X509 certificate and CRL.
+	* secutils.cs: Changed copyright notice.
+	* makefile: Added cert2spc.exe to Windows build.
+	* makefile.gnu: Added cert2spc.exe to Linux build.
+
 2002-12-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* secutils.cs: New tool to extract strongname and X509 certificate
