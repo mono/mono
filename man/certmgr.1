@@ -1,6 +1,6 @@
 .\" 
 .\" certmgr manual page.
-.\" Copyright 2004 Novell
+.\" Copyright 2004-2005 Novell
 .\" Author:
 .\"   Sebastien Pouliot <sebastien@ximian.com>
 .\"
@@ -13,17 +13,25 @@ certmgr \- Mono Certificate Manager (CLI version)
 or
 .B certmgr -ssl [options] url
 .SH DESCRIPTION
-This tool allow to add, remove or extract certificates, certificate revocation 
-lists (CRL) or certificate trust lists (CTL) to/from a certificate store. 
-Certificate stores are used to build and validate certificate chains for 
-Authenticode(r) code signing validation and SSL server certificates.
+This tool allow to list, add, remove or extract certificates, certificate 
+revocation lists (CRL) or certificate trust lists (CTL) to/from a 
+certificate store. Certificate stores are used to build and validate 
+certificate chains for Authenticode(r) code signing validation and SSL 
+server certificates.
 .SH ACTIONS
+.TP
+.I "-list"
+List the certificates, CTL or CTL in the specified store.
 .TP
 .I "-add"
 Add a certificate, CRL or CTL to specified store.
 .TP
 .I "-del"
-Remove a certificate, CRL or CTL from specified store.
+Remove a certificate, CRL or CTL from specified store. You must specify the 
+object to be removed with it's hash value (and not a filename). This hash 
+value is shown when doing a 
+.B -list
+on the store.
 .TP
 .I "-put"
 Copy a certificate, CRL or CTL from a store to a file.
@@ -83,6 +91,19 @@ The rest of the filename is the base64-encoded value (tbp or ski).
 
 .SH EXAMPLES
 .TP
+.B mono certmgr.exe -list -c -m Trust
+List all certificates in the machine Trust store. This will display the hash
+value for each certificate. This value can be used to identify uniquely a 
+certificate for some operations (e.g. delete). E.g.
+.B Unique Hash:   FFA3AC0084DA1673B5A031EBB2156B3E8FBBF6D8
+.TP
+.B mono certmgr.exe -del -c -m Trust FFA3AC0084DA1673B5A031EBB2156B3E8FBBF6D8
+Remove the certificate, represented by the hash value, from the machine Trust
+store. Note that the machine store is normally restricted. The following
+error message will appear if the current user doesn't have the minimum access
+rights to remove the certificate: 
+.B Access to the machine 'Trust' certificate store has been denied.
+.TP
 .B certmgr -ssl https://www.verisign.com
 Import certificates from www.verisign.com used for HTTP over SSL. See KNOWN 
 ISSUES (MD2) if you're downloading from www.verisign.com.
@@ -120,7 +141,7 @@ element of your machine.config file.
 .SH AUTHOR
 Written by Sebastien Pouliot
 .SH COPYRIGHT
-Copyright (C) 2004 Novell.
+Copyright (C) 2004-2005 Novell.
 .SH MAILING LISTS
 Visit http://lists.ximian.com/mailman/listinfo/mono-list for details.
 .SH WEB SITE
