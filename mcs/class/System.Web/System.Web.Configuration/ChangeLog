@@ -1,3 +1,8 @@
+2003-12-08  Jackson Harper <jackson@ximian.com>
+
+	* GlobalizationConfigurationHandler.cs: Handle creating some the unicode
+	encodings here so we can create ones without BOMs.
+	
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GlobalizationConfiguration.cs: return null when the configuration is

@@ -66,10 +66,32 @@ namespace System.Web.Configuration
 		{
 			Encoding encoding = null;
 			try {
-				encoding = Encoding.GetEncoding (enc);
+				switch (enc) {
+				case "UTF-16LE":
+				case "utf-16":
+				case "ucs-2":
+				case "unicode":
+				case "ISO-10646-UCS-2":
+					encoding = new UnicodeEncoding (false, true);
+					break;
+				case "UTF-16BE":
+				case "unicodeFFFE":
+					encoding = new UnicodeEncoding (true, true);
+                                        break;
+				case "utf-8":
+				case "unicode-1-1-utf-8":
+				case "unicode-2-0-utf-8":
+				case "x-unicode-1-1-utf-8":
+				case "x-unicode-2-0-utf-8":
+					encoding = new UTF8Encoding (false, false);
+					break;
+				default:
+					encoding = Encoding.GetEncoding (enc);
+					break;
+				}
 			} catch {
 				EncodingFailed (section, att, enc);
-				encoding = new UTF8Encoding ();
+				encoding = new UTF8Encoding (false, false);
 			}
 
 			return encoding;
