@@ -30,9 +30,12 @@
 //	- Change the cursor to a hand cursor when you are over a link (when cursors are available)
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: LinkLabel.cs,v $
+// Revision 1.6  2004/08/10 15:24:35  jackson
+// Let Control handle buffering.
+//
 // Revision 1.5  2004/08/08 17:52:12  jordi
 // *** empty log message ***
 //
@@ -430,10 +433,10 @@ namespace System.Windows.Forms
 
 			Region[] charRegions = new Region [pieces.Length];
 			string_format.SetMeasurableCharacterRanges (charRanges);
-			charRegions = dc_mem.MeasureCharacterRanges (Text, Font, paint_area, string_format);
+			charRegions = DeviceContext.MeasureCharacterRanges (Text, Font, paint_area, string_format);
 
 			for (int i = 0; i < pieces.Length; i++)
-				pieces[i].rect = charRegions[i].GetBounds (dc_mem);
+				pieces[i].rect = charRegions[i].GetBounds (DeviceContext);
 
 			if (Visible && IsHandleCreated)
 				Refresh ();
@@ -475,11 +478,11 @@ namespace System.Windows.Forms
 
 			if (Links.Count == 0 || pieces == null) {
 
-				ThemeEngine.Current.DrawLabel (dc_mem, paint_area, BorderStyle, Text,
+				ThemeEngine.Current.DrawLabel (DeviceContext, paint_area, BorderStyle, Text,
 					color, BackColor, link_font, string_format,
 					true /* We paint ourselfs the disabled status*/);
 
-				DrawImage (dc_mem, Image, paint_area, image_align);
+				DrawImage (DeviceContext, Image, paint_area, image_align);
 				return;
 			}
 
@@ -487,14 +490,14 @@ namespace System.Windows.Forms
 			for (int i = 0; i < pieces.Length; i++)	{
 
 				if (pieces[i].link == null)
-					dc_mem.DrawString (pieces[i].text, Font, new SolidBrush (Color.Black),
+					DeviceContext.DrawString (pieces[i].text, Font, new SolidBrush (Color.Black),
 						pieces[i].rect.X, pieces[i].rect.Y, string_format);
 				else
-					dc_mem.DrawString (pieces[i].text, link_font, new SolidBrush (color),
+					DeviceContext.DrawString (pieces[i].text, link_font, new SolidBrush (color),
 						pieces[i].rect.X, pieces[i].rect.Y, string_format);
 			}
 
-			DrawImage (dc_mem, Image, paint_area, image_align);
+			DrawImage (DeviceContext, Image, paint_area, image_align);
 		}
 
 		private void CreateLinkFont ()

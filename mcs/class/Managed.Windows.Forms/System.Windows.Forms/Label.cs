@@ -31,9 +31,12 @@
 //	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.8  2004/08/10 15:24:35  jackson
+// Let Control handle buffering.
+//
 // Revision 1.7  2004/08/08 19:47:41  jordi
 // add cvs header info
 //
@@ -61,8 +64,6 @@ namespace System.Windows.Forms
     		private bool use_mnemonic;
     		private int image_index = -1;
     		private ImageList image_list;
-    		protected Bitmap bmp_mem;
-		protected Graphics dc_mem;
 		protected Rectangle paint_area;
 		protected ContentAlignment image_align;
 		protected StringFormat string_format;    		
@@ -81,8 +82,6 @@ namespace System.Windows.Forms
 			string_format = new StringFormat();
 			TextAlign = ContentAlignment.TopLeft;
 			image = null;
-			bmp_mem = null;
-			dc_mem = null;
 			UseMnemonic = true;		
 			image_list = null;
 			paint_area = new Rectangle ();
@@ -246,7 +245,7 @@ namespace System.Windows.Forms
 			}
 
 			SizeF size;    			
-    		 	size = dc_mem.MeasureString (Text, Font, new SizeF (paint_area.Width,
+    		 	size = DeviceContext.MeasureString (Text, Font, new SizeF (paint_area.Width,
     		 		paint_area.Height), string_format);
     		 	
     		 	preferred_width = Size.Width;
@@ -451,7 +450,7 @@ namespace System.Windows.Forms
     				return;    			   	
     			
     			SizeF size;    			
-    		 	size = dc_mem.MeasureString (Text, Font, new SizeF (paint_area.Width,
+    		 	size = DeviceContext.MeasureString (Text, Font, new SizeF (paint_area.Width,
     		 		paint_area.Height), string_format);
     		 	
     		 	Width = Size.Width;
@@ -464,10 +463,10 @@ namespace System.Windows.Forms
 
     		protected virtual void Draw ()
 		{
-			ThemeEngine.Current.DrawLabel (dc_mem, paint_area, BorderStyle, Text, 
+			ThemeEngine.Current.DrawLabel (DeviceContext, paint_area, BorderStyle, Text, 
 				ForeColor, BackColor, Font, string_format, Enabled);
 				
-			DrawImage (dc_mem, Image, paint_area, image_align);
+			DrawImage (DeviceContext, Image, paint_area, image_align);
 		}
 		
 		private void set_usemnemonic (bool use)
@@ -487,7 +486,7 @@ namespace System.Windows.Forms
 			/* Copies memory drawing buffer to screen*/
 			UpdateArea ();
 			Draw ();
-			pevent.Graphics.DrawImage (bmp_mem, 0, 0);
+			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
 
 		}
 
@@ -525,9 +524,7 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("OnHandleCreated");
 
 			UpdateArea ();
-
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);
-			dc_mem = Graphics.FromImage (bmp_mem);
+			CreateBuffers (Width, Height);
 			
 			if (AutoSize)
 				CalcAutoSize ();
@@ -552,8 +549,7 @@ namespace System.Windows.Forms
     			UpdateArea ();
 
 			/* Area for double buffering */
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);
-			dc_mem = Graphics.FromImage (bmp_mem);
+			CreateBuffers (Width, Height);
     		}
 
 
