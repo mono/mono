@@ -29,6 +29,7 @@ namespace System.Web.Services.Description {
 		ServiceDescriptionImportStyle style;
 		CodeIdentifiers classIds;
 		XmlSchemaImporter schemaImporter;
+		SoapSchemaImporter soapSchemaImporter;
 		XmlCodeExporter codeExporter;
 		
 		CodeNamespace codeNamespace;
@@ -104,6 +105,7 @@ namespace System.Web.Services.Description {
 			warnings = (ServiceDescriptionImportWarnings) 0;
 			
 			schemaImporter = new XmlSchemaImporter (schemas);
+			soapSchemaImporter = new SoapSchemaImporter (schemas);
 			codeExporter = new XmlCodeExporter (codeNamespace, codeCompileUnit);
 			
 			this.codeNamespace = codeNamespace;
@@ -197,12 +199,10 @@ namespace System.Web.Services.Description {
 
 				SoapBodyBinding isbb = oper.Input.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
 				if (isbb == null) throw new Exception ("Soap body binding not found in operation " + oper.Name);
-				if (isbb.Use != SoapBindingUse.Literal) throw new Exception ("Soap binding use not supported");
 				string iname = (oper.Input.Name != "") ? oper.Input.Name : oper.Name;
 				
 				SoapBodyBinding osbb = oper.Output.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
 				if (osbb == null) throw new Exception ("Soap body binding not found in operation " + oper.Name);
-				if (osbb.Use != SoapBindingUse.Literal) throw new Exception ("Soap binding use not supported");
 				string oname = (oper.Output.Name != "") ? oper.Output.Name : oper.Name;
 				
 				Operation ptoper = FindPortOperation (portType, oper.Name, iname, oname);
@@ -213,18 +213,16 @@ namespace System.Web.Services.Description {
 	
 				foreach (OperationMessage omsg in ptoper.Messages)
 				{
-					Message msg = serviceDescriptions.GetMessage (omsg.Message);
-					if (msg == null) throw new Exception ("Message not found: " + omsg.Message);
-					
-					XmlMembersMapping mems = ImportMembersMapping (msg);
-					if (omsg is OperationInput) inputMembers = mems;
-					else outputMembers = mems;
+					if (omsg is OperationInput)
+						inputMembers = ImportMembersMapping (omsg, ptoper, isbb, soapOper);
+					else
+						outputMembers = ImportMembersMapping (omsg, ptoper, osbb, soapOper);
 				}
 				
 				if (inputMembers == null) throw new Exception ("Input message not declared in operation " + oper.Name);
 				if (outputMembers == null) throw new Exception ("Output message not declared in operation " + oper.Name);
 				
-				GenerateMethod (codeClass, memberIds, ptoper, soapOper, inputMembers, outputMembers);
+				GenerateMethod (codeClass, memberIds, ptoper, soapOper, isbb, inputMembers, outputMembers);
 				
 				codeExporter.ExportMembersMapping (inputMembers);
 				codeExporter.ExportMembersMapping (outputMembers);
@@ -236,26 +234,53 @@ namespace System.Web.Services.Description {
 			}
 		}
 		
-		XmlMembersMapping ImportMembersMapping (Message msg)
+		XmlMembersMapping ImportMembersMapping (OperationMessage omsg, Operation ptoper, SoapBodyBinding sbb, SoapOperationBinding soapOper)
 		{
+			Message msg = serviceDescriptions.GetMessage (omsg.Message);
+			if (msg == null) throw new Exception ("Message not found: " + omsg.Message);
+
 			XmlQualifiedName elem = null;
 			if (msg.Parts.Count == 1 && msg.Parts[0].Name == "parameters")
 			{
 				// Wrapped parameter style
-				return schemaImporter.ImportMembersMapping (msg.Parts[0].Element);				
+				
+				MessagePart part = msg.Parts[0];
+				if (sbb.Use == SoapBindingUse.Encoded)
+				{
+					SoapSchemaMember ssm = new SoapSchemaMember ();
+					ssm.MemberName = part.Name;
+					ssm.MemberType = part.Type;
+					return soapSchemaImporter.ImportMembersMapping (ptoper.Name, omsg.Message.Namespace, ssm);
+				}
+				else
+					return schemaImporter.ImportMembersMapping (part.Element);				
 			}
 			else
 			{
-				XmlQualifiedName[] pnames = new XmlQualifiedName [msg.Parts.Count];
-				for (int n=0; n<pnames.Length; n++)
-					pnames[n] = msg.Parts[n].Element;
-				
-				return schemaImporter.ImportMembersMapping (pnames);
+				if (sbb.Use == SoapBindingUse.Encoded)
+				{
+					SoapSchemaMember[] mems = new SoapSchemaMember [msg.Parts.Count];
+					for (int n=0; n<mems.Length; n++)
+					{
+						SoapSchemaMember mem = new SoapSchemaMember();
+						mem.MemberName = msg.Parts[n].Name;
+						mem.MemberType = msg.Parts[n].Type;
+						mems[n] = mem;
+					}
+					return soapSchemaImporter.ImportMembersMapping (ptoper.Name, omsg.Message.Namespace, mems);
+				}
+				else
+				{
+					XmlQualifiedName[] pnames = new XmlQualifiedName [msg.Parts.Count];
+					for (int n=0; n<pnames.Length; n++)
+						pnames[n] = msg.Parts[n].Element;
+					return schemaImporter.ImportMembersMapping (pnames);
+				}
 			}
 		}
 		
 		
-		void GenerateMethod (CodeTypeDeclaration codeClass, CodeIdentifiers memberIds, Operation oper, SoapOperationBinding soapOper, XmlMembersMapping inputMembers, XmlMembersMapping outputMembers)
+		void GenerateMethod (CodeTypeDeclaration codeClass, CodeIdentifiers memberIds, Operation oper, SoapOperationBinding soapOper, SoapBodyBinding bodyBinding, XmlMembersMapping inputMembers, XmlMembersMapping outputMembers)
 		{
 			CodeIdentifiers pids = new CodeIdentifiers ();
 			CodeMemberMethod method = new CodeMemberMethod ();
@@ -407,7 +432,7 @@ namespace System.Web.Services.Description {
 			else
 				att.Arguments.Add (GetEnumArg ("ParameterStyle", "System.Web.Services.Protocols.SoapParameterStyle", "Bare"));
 				
-			att.Arguments.Add (GetEnumArg ("Use", "System.Web.Services.Description.SoapBindingUse", "Literal"));
+			att.Arguments.Add (GetEnumArg ("Use", "System.Web.Services.Description.SoapBindingUse", bodyBinding.Use.ToString()));
 			AddCustomAttribute (method, att, true);
 			
 			att = new CodeAttributeDeclaration ("System.Web.Services.WebMethodAttribute");

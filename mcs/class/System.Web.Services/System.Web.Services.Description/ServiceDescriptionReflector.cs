@@ -206,7 +206,9 @@ namespace System.Web.Services.Description {
 			{
 				MessagePart part = new MessagePart ();
 				part.Name = "parameters";
-				part.Element = new XmlQualifiedName (members.ElementName, members.Namespace);
+				XmlQualifiedName qname = new XmlQualifiedName (members.ElementName, members.Namespace);
+				if (method.Use == SoapBindingUse.Literal) part.Element = qname;
+				else part.Type = qname;
 				msg.Parts.Add (part);
 			}
 			else
@@ -215,7 +217,9 @@ namespace System.Web.Services.Description {
 				{
 					MessagePart part = new MessagePart ();
 					part.Name = members[n].MemberName;
-					part.Element = new XmlQualifiedName (members[n].ElementName, members.Namespace);
+					XmlQualifiedName qname = new XmlQualifiedName (members.ElementName, members.Namespace);
+					if (method.Use == SoapBindingUse.Literal) part.Element = qname;
+					else part.Type = qname;
 					msg.Parts.Add (part);
 				}
 			}

@@ -1,3 +1,8 @@
+2003-09-11  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ServiceDescriptionImporter.cs, ServiceDescriptionReflector.cs: Added
+	  first bits of encoded format support.
+
 2003-09-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ServiceDescription.cs: minor fixes.
