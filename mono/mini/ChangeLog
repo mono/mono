@@ -1,3 +1,10 @@
+2004-07-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Add SPARC64 support. Reorganize patch table to fix alignment
+	problems.
+
+	* mini.h: Bump AOT file version. Some 64 bit fixes.
+
 2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-sparc.brg: Add new rule to avoid register moves.
