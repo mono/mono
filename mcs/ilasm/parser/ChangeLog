@@ -1,5 +1,9 @@
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Define data, fix repeat_opt allways being set.
+		
+2003-04-17 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Add external types to the extern type table.
 		
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>

@@ -1006,10 +1006,10 @@ field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
                                 if ($6 != null) {
                                         field_def.AddDataValue ((DataConstant) $6);
                                 }
-                                if ($7 != null) {
-                                        field_def.AddValue ((Constant) $7);
-                                }
                                 */
+                                if ($7 != null) {
+                                        field_def.SetValue ((Constant) $7);
+                                }
                           }
 			;
 
@@ -1153,14 +1153,44 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
 			;
 
 data_decl		: data_head data_body
+                          {
+                                /*
+                                Console.WriteLine ("Creating data decl: '{0}' '{1}'", $1, $2);
+
+                                DataDef datadef = (DataDef) $1;
+                                
+                                if ($2 is ArrayList) {
+                                        ArrayList const_list = (ArrayList) $2;
+                                        DataConstant[] const_arr = new DataConstant[const_list.Count];
+                                        
+                                        for (int i=0; i<const_arr.Length; i++)
+                                                const_arr[i] = (DataConstant) const_list[i];
+
+                                        datadef.PeapiConstant = new ArrayConstant (const_arr);
+                                } else {
+                                        datadef.PeapiConstant = (PEAPI.Constant) $2;
+                                }
+                                */
+                          }
 			;
 
-data_head		: D_DATA tls id ASSIGN 
+data_head		: D_DATA tls id ASSIGN
+                          {
+                                
+                                $$ = new DataDef ((string) $3, (bool)
+                          $2);
+                               
+                          } 
 			| D_DATA tls
+                          {
+                                
+                                $$ = new DataDef (String.Empty, (bool) $2);
+                                
+                          }
 			;
 
-tls			: /* EMPTY */
-			| K_TLS
+tls			: /* EMPTY */   { $$ = false; }
+			| K_TLS         { $$ = true; }
 			;
 
 data_body		: OPEN_BRACE dataitem_list CLOSE_BRACE
@@ -1185,66 +1215,117 @@ dataitem		: K_CHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
 			| K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS repeat_opt
                           {
                                 FloatConst float_const = new FloatConst ((float) $3);
-                                $$ = new RepeatedConstant (float_const, (int) $5);
+
+                                if ($5 != null)
+                                        $$ = new RepeatedConstant (float_const, (int) $5);
+                                else
+                                        $$ = float_const;
                           }
 			| K_FLOAT64 OPEN_PARENS float64 CLOSE_PARENS repeat_opt
                           {
                                 DoubleConst double_const = new DoubleConst ((double) $3);
-                                $$ = new RepeatedConstant (double_const, (int) $5);
+
+                                if ($5 != null)
+                                        $$ = new RepeatedConstant (double_const, (int) $5);
+                                else
+                                        $$ = double_const;
                           }
 			| K_INT64 OPEN_PARENS int64 CLOSE_PARENS repeat_opt
                           {
                                 IntConst int_const = new IntConst ((long) $3);
-                                $$ = new RepeatedConstant (int_const, (int) $5);
+
+                                if ($5 != null)
+                                        $$ = new RepeatedConstant (int_const, (int) $5);
+                                else
+                                        $$ = int_const;
                           }
 			| K_INT32 OPEN_PARENS int32 CLOSE_PARENS repeat_opt
                           {
                                 IntConst int_const = new IntConst ((int) $3);
-                                $$ = new RepeatedConstant (int_const, (int) $5);
+
+                                if ($5 != null)
+                                        $$ = new RepeatedConstant (int_const, (int) $5);
+                                else
+                                        $$ = int_const;
                           }
 			| K_INT16 OPEN_PARENS int32 CLOSE_PARENS repeat_opt
                           {
                                 IntConst int_const = new IntConst ((short) $3);
-                                $$ = new RepeatedConstant (int_const, (int) $5);
+
+                                if ($5 != null)
+                                        $$ = new RepeatedConstant (int_const, (int) $5);
+                                else
+                                        $$ = int_const;
                           }
 			| K_INT8 OPEN_PARENS int32 CLOSE_PARENS repeat_opt
                           {
                                 IntConst int_const = new IntConst ((sbyte) $3);
-                                $$ = new RepeatedConstant (int_const, (int) $5);
+
+                                if ($5 != null)
+                                        $$ = new RepeatedConstant (int_const, (int) $5);
+                                else
+                                        $$ = int_const;
                           }
 			| K_FLOAT32 repeat_opt
                           {
                                 FloatConst float_const = new FloatConst (0F);
-                                $$ = new RepeatedConstant (float_const, (int) $2);
+
+                                if ($2 != null)
+                                        $$ = new RepeatedConstant (float_const, (int) $2);
+                                else
+                                        $$ = float_const;
                           }
 			| K_FLOAT64 repeat_opt
                           {
                                 DoubleConst double_const = new DoubleConst (0);
-                                $$ = new RepeatedConstant (double_const, (int) $2);
+
+                                if ($2 != null)
+                                        $$ = new RepeatedConstant (double_const, (int) $2);
+                                else
+                                        $$ = double_const;
                           }
 			| K_INT64 repeat_opt
                           {
                                 IntConst int_const = new IntConst ((long) 0);
-                                $$ = new RepeatedConstant (int_const, (int) $2);
+
+                                if ($2 != null)
+                                        $$ = new RepeatedConstant (int_const, (int) $2);
+                                else
+                                        $$ = int_const;
                           }
 			| K_INT32 repeat_opt
                           {
                                 IntConst int_const = new IntConst ((int) 0);
-                                $$ = new RepeatedConstant (int_const, (int) $2);
+
+                                if ($2 != null)
+                                        $$ = new RepeatedConstant (int_const, (int) $2);
+                                else
+                                        $$ = int_const;
                           }
 			| K_INT16 repeat_opt
                           {
                                 IntConst int_const = new IntConst ((short) 0);
-                                $$ = new RepeatedConstant (int_const, (int) $2);
+
+                                if ($2 != null)
+                                        $$ = new RepeatedConstant (int_const, (int) $2);
+                                else
+                                        $$ = int_const;
                           }
 			| K_INT8 repeat_opt
                           {
                                 IntConst int_const = new IntConst ((sbyte) 0);
-                                $$ = new RepeatedConstant (int_const, (int) $2);
+
+                                if ($2 != null)
+                                        $$ = new RepeatedConstant (int_const, (int) $2);
+                                else
+                                        $$ = int_const;
                           }
 			;
 
 method_all		: method_head OPEN_BRACE method_decls CLOSE_BRACE
+                          {
+                                codegen.EndMethodDef ();
+                          }
 			;
 
 method_head		: D_METHOD meth_attr call_conv param_attr type method_name
