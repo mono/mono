@@ -2,9 +2,29 @@
 // MonoTests.System.Security.Policy.NetCodeGroupTest
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -34,8 +54,13 @@ namespace MonoTests.System.Security.Policy {
 			AssertNull ("PolicyStatement", cg.PolicyStatement);
 			// documented as always null
 			AssertNull ("AttributeString", cg.AttributeString);
+#if NET_2_0
+			// seems it's easier to change code than to change code ;)
+			AssertEquals ("PermissionSetName", "Same site Web", cg.PermissionSetName);
+#else
 			// documented as always "Same site Web" but it's "Same site Web." (missing .)
 			AssertEquals ("PermissionSetName", "Same site Web.", cg.PermissionSetName);
+#endif
 		}
 
 		[Test]

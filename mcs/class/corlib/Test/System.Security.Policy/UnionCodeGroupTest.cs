@@ -51,6 +51,11 @@ namespace MonoTests.System.Security.Policy {
 		{
 			// legal
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), null);
+			Assert.IsNull (cg.AttributeString, "AttributeString");
+			Assert.IsNull (cg.Description, "Description");
+			Assert.IsNotNull (cg.MembershipCondition, "MembershipCondition");
+			Assert.IsNull (cg.Name, "Name");
+			Assert.IsNull (cg.PermissionSetName, "PermissionSetName");
 			Assert.IsNull (cg.PolicyStatement, "PolicyStatement");
 		}
 
@@ -58,8 +63,12 @@ namespace MonoTests.System.Security.Policy {
 		public void Constructor () 
 		{
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
-			Assert.IsNotNull (cg.PolicyStatement, "PolicyStatement");
+			Assert.AreEqual (String.Empty, cg.AttributeString, "AttributeString");
+			Assert.IsNull (cg.Description, "Description");
 			Assert.IsNotNull (cg.MembershipCondition, "MembershipCondition");
+			Assert.IsNull (cg.Name, "Name");
+			Assert.IsNull (cg.PermissionSetName, "PermissionSetName");
+			Assert.IsNotNull (cg.PolicyStatement, "PolicyStatement");
 		}
 
 		[Test]

@@ -3,10 +3,30 @@
 //
 // Authors:
 //	Jackson Harper (Jackson@LatitudeGeo.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Jackson Harper, All rights reserved.
 // Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using System;
@@ -52,6 +72,20 @@ namespace MonoTests.System.Security.Policy {
 			Evidence evidence2 = new Evidence (evidence1);
 			
 			AssertEquals("Copy constructor counts do not match", evidence1.Count, evidence2.Count);
+		}
+
+		[Test]
+		public void Constructor_Null ()
+		{
+			Evidence e = new Evidence (null);
+			AssertEquals ("Count-Empty", 0, e.Count);
+		}
+
+		[Test]
+		public void Constructor_NullNull ()
+		{
+			Evidence e = new Evidence (null, null);
+			AssertEquals ("Count-Empty", 0, e.Count);
 		}
 
 		[Test]
@@ -200,7 +234,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void CopyToNoException() 
 		{
-			Evidence evidence = new Evidence ();;
+			Evidence evidence = new Evidence ();
 			evidence.CopyTo (null, 100);
 		}
 
@@ -228,6 +262,7 @@ namespace MonoTests.System.Security.Policy {
 			Evidence evidence = new Evidence (null, null);
 			Evidence evidence2 = new Evidence ();
 			evidence2.Merge (evidence);
+			AssertEquals ("Count", evidence.Count, evidence2.Count);
 		}
 
 		[Test]
@@ -236,6 +271,16 @@ namespace MonoTests.System.Security.Policy {
 			Evidence evidence = new Evidence (new object[10], new object[10]);
 		  	Evidence evidence2 = new Evidence ();
 			evidence2.Merge (evidence);
+			AssertEquals ("Count", evidence.Count, evidence2.Count);
+		}
+
+		[Test]
+		public void Merge_Null ()
+		{
+			Evidence evidence = new Evidence ();
+			evidence.Merge (null);
+			// no exception!
+			AssertEquals ("Count", 0, evidence.Count);
 		}
 
 		[Test]
@@ -244,10 +289,67 @@ namespace MonoTests.System.Security.Policy {
 			Evidence e = new Evidence ();
 			AssertEquals ("Count", 0, e.Count);
 			Assert ("IsReadOnly", !e.IsReadOnly);
+#if NET_2_0
+			Assert ("IsSynchronized", !e.IsSynchronized);
+#else
 			// LAMESPEC: Always TRUE (not FALSE)
 			Assert ("IsSynchronized", e.IsSynchronized);
+#endif
 			Assert ("Locked", !e.Locked);
 			AssertNotNull ("SyncRoot", e.SyncRoot);
 		}
+
+#if NET_2_0
+		[Test]
+		public void Equals_GetHashCode () 
+		{
+			Evidence e1 = new Evidence ();
+			Evidence e2 = new Evidence ();
+			AssertEquals ("GetHashCode-1", e1.GetHashCode (), e2.GetHashCode ());
+			Assert ("e1.Equals(e2)", e1.Equals (e2));
+			e1.AddAssembly (String.Empty);
+			e2.AddAssembly (String.Empty);
+			AssertEquals ("GetHashCode-2", e1.GetHashCode (), e2.GetHashCode ());
+			e1.AddHost (String.Empty);
+			e2.AddHost (String.Empty);
+			AssertEquals ("GetHashCode-3", e1.GetHashCode (), e2.GetHashCode ());
+			Assert ("e2.Equals(e1)", e2.Equals (e1));
+		}
+
+		[Test]
+		public void Clear () 
+		{
+			Evidence e = new Evidence ();
+			AssertEquals ("Count-Empty", 0, e.Count);
+			e.AddAssembly (new object ());
+			AssertEquals ("Count+Assembly", 1, e.Count);
+			e.AddHost (new object ());
+			AssertEquals ("Count+Host", 2, e.Count);
+			e.Clear ();
+			AssertEquals ("Count-Cleared", 0, e.Count);
+		}
+
+		[Test]
+		public void RemoveType ()
+		{
+			Evidence e = new Evidence ();
+			AssertEquals ("Count-Empty", 0, e.Count);
+			e.AddAssembly (new object ());
+			e.AddHost (new object ());
+			AssertEquals ("Count", 2, e.Count);
+			e.RemoveType (typeof (object));
+			AssertEquals ("Count-RemoveType(object)", 0, e.Count);
+		}
+#else
+		[Test]
+		public void Equals_GetHashCode () 
+		{
+			Evidence e1 = new Evidence ();
+			Evidence e2 = new Evidence ();
+			Assert ("GetHashCode", e1.GetHashCode () != e2.GetHashCode ());
+			Assert ("!e1.Equals(e2)", !e1.Equals (e2));
+			Assert ("!e2.Equals(e1)", !e2.Equals (e1));
+		}
+#endif
 	}
 }

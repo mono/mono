@@ -1,3 +1,22 @@
+2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationDirectoryTest.cs: New. For NET_2_0 profile.
+	* EvidenceTest.cs: Added more tests for 1.1 and new tests for 2.0.
+	* FileCodeGroupTest.cs: Added more tests for Resolve,
+	ResolveMatchingCodeGroups and new Fx 2.0 Scope property.
+	* HashMembershipConditionTest.cs: New. Unit tests for hash membership.
+	* HashTest.cs: New. Unit tests for hash.
+	* IBuiltInEvidenceTest.cs: New. Unit tests for the internal 
+	IBuiltInEvidence interface. All tests are [Ignore]d for the 
+	* NetCodeGroupTest.cs: Ajusted PermissionSetName for Fx 2.0.
+	* PermissionRequestEvidenceTest.cs: Ajusted existing tests for 2.0. 
+	Converted tests to NUnit 2.2 format. Converted to UNIX line endings.
+	Added test to see that the original permission sets are copied but
+	the instance copy can be changed (not copied on output).
+	* PolicyLevelTest.cs: Added more tests for Resolve and
+	ResolveMatchingCodeGroups.
+	* UnionCodeGroupTest.cs: Added more properties validation in tests.
+
 2004-08-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AllMembershipConditionTest.cs: Renamed GetHashCode and 

@@ -5,6 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
+
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -462,7 +463,6 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-//		[Ignore ("not yet implement in Mono - CAS related")]
 		public void Reset () 
 		{
 			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
@@ -489,6 +489,18 @@ namespace MonoTests.System.Security.Policy {
 		{
 			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
 			pl.Resolve (null);
+		}
+
+		[Test]
+		public void Resolve_Empty ()
+		{
+			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
+			PolicyStatement result = pl.Resolve (new Evidence ());
+			Assert.IsNotNull (result, "PolicyStatement");
+			Assert.AreEqual (PolicyStatementAttribute.Nothing, result.Attributes, "Attributes");
+			Assert.AreEqual (String.Empty, result.AttributeString, "AttributeString");
+			Assert.IsTrue (result.PermissionSet.IsUnrestricted (), "IsUnrestricted");
+			Assert.AreEqual (0, result.PermissionSet.Count, "Count");
 		}
 
 		private void Resolve_Zone (PolicyLevel level, SecurityZone z, PolicyStatementAttribute attr, bool unrestricted, int count)
@@ -556,6 +568,26 @@ namespace MonoTests.System.Security.Policy {
 			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.Exclusive);
 			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.LevelFinal);
 			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.All);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ResolveMatchingCodeGroups_Null ()
+		{
+			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
+			pl.ResolveMatchingCodeGroups (null);
+		}
+
+		[Test]
+		public void ResolveMatchingCodeGroups_Empty ()
+		{
+			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
+			CodeGroup result = pl.ResolveMatchingCodeGroups (new Evidence ());
+			Assert.IsNotNull (result, "CodeGroup");
+			Assert.AreEqual (String.Empty, result.AttributeString, "AttributeString");
+			Assert.AreEqual (0, result.Children.Count, "Count");
+			Assert.AreEqual ("Union", result.MergeLogic, "MergeLogic");
+			Assert.IsTrue (result.PolicyStatement.PermissionSet.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
