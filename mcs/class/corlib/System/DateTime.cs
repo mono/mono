@@ -52,9 +52,6 @@ namespace System
 			// too. It's important because it's used in XML
 			// serialization.
 			"yyyy-MM-ddTHH:mm:sszzz",
-			// Invariant ShortDatePattern but with '-' as the
-			// separator
-			"MM-dd-yyyy",
 			// Full date and time
 			"F", "G", "r", "s", "u", "U",
 			// Full date and time, but no seconds
@@ -928,8 +925,27 @@ namespace System
 					}
 					break;
 				case '/':
-					if (!_ParseString (s, 0, dfi.DateSeparator, out num_parsed))
-						return false;
+					/* Accept any character for
+					 * DateSeparator, except
+					 * TimeSeparator, a digit or a
+					 * letter.  Not documented,
+					 * but seems to be MS
+					 * behaviour here.  See bug
+					 * 54047.
+					 */
+					if (_ParseString (s, 0,
+							  dfi.TimeSeparator,
+							  out num_parsed) ||
+					    Char.IsDigit (s[0]) ||
+					    Char.IsLetter (s[0])) {
+						return(false);
+					}
+
+					num = 0;
+					if (num_parsed <= 0) {
+						num_parsed = 1;
+					}
+					
 					break;
 				default:
 					if (s[0] != chars[pos])

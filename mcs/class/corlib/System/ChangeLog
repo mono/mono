@@ -6,6 +6,12 @@
 	  
 2004-03-23  Dick Porter  <dick@ximian.com>
 
+	* DateTime.cs: Allow any character for DateSeparator when parsing,
+	except TimeSeparator, a digit or a letter.  Fixes bug 54047.  Also
+	deleted the previous fix for 54721, because this covers it too.
+	
+2004-03-23  Dick Porter  <dick@ximian.com>
+
 	* DateTime.cs: Check the date string for too many digits when
 	parsing.  Fixes bugs 53023 and 53025.
 
