@@ -1,4 +1,11 @@
+2003-06-05  Dick Porter  <dick@ximian.com>
 
+	* driver.c: Set the glib log levels to not abort if g_message
+	recurses.
+
+	g_set_prgname() has to happen before mini_init() so that the
+	process handle gets the info.
+	
 Thu Jun 5 20:11:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: add intrins to the default optimizations to get wider
