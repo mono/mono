@@ -1,3 +1,9 @@
+
+Wed Aug 29 12:43:41 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: help the compiler generate better code for
+	mono_class_from_mono_type ().
+
 2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_metadata_init): delayed computing of the
