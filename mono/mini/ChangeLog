@@ -1,6 +1,7 @@
 2004-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c mini-*.h: Get rid of MONO_ARCH_HAVE_RETHROW since all architectures support it now.
+	(mini_init): Get rid of it from here too.
 
 Thu Nov 11 20:17:17 CET 2004 Paolo Molaro <lupus@ximian.com>
 
