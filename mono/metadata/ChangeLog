@@ -14,6 +14,7 @@ Wed Jul 17 18:21:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	(ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf): impl.
 	(ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi): impl.
 	(ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni): impl.
+	(ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure): impl.
 
 Tue Jul 16 19:00:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
