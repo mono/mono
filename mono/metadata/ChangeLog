@@ -1,5 +1,8 @@
 2002-08-21  Dietmar Maurer  <dietmar@ximian.com>
 
+	* icall.c (ves_icall_get_method_info): s/MonoMethod/MonoReflectionMethod/
+	(ves_icall_get_parameter_info): s/MonoMethod/MonoReflectionMethod/
+
 	* marshal.c (mono_marshal_get_remoting_invoke): save lmf, because
 	we call unmanaged code which throws exceptions.
 
