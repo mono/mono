@@ -80,6 +80,26 @@ namespace Mono.CSharp
 			Unreachable
 		}
 
+		public sealed class Reachability
+		{
+			public readonly FlowReturns Returns;
+			public readonly FlowReturns Breaks;
+			public readonly FlowReturns Reachable;
+
+			public Reachability (FlowReturns returns, FlowReturns breaks, FlowReturns reachable)
+			{
+				this.Returns = returns;
+				this.Breaks = breaks;
+				this.Reachable = reachable;
+			}
+
+			public override string ToString ()
+			{
+				return String.Format ("Reachability({0}:{1}:{2})",
+						      Returns, Breaks, Reachable);
+			}
+		}
+
 		public static FlowBranching CreateBranching (FlowBranching parent, BranchingType type, Block block, Location loc)
 		{
 			switch (type) {
@@ -405,15 +425,14 @@ namespace Mono.CSharp
 			//   Merges a child branching.
 			// </summary>
 			public FlowReturns MergeChild (MyBitVector new_params, MyBitVector new_locals,
-						       FlowReturns new_returns, FlowReturns new_breaks,
-						       FlowReturns new_reachable)
+						       Reachability new_reachability)
 			{
-				Report.Debug (2, "MERGING CHILD", this, new_params, new_locals, new_returns, new_breaks,
-					      new_reachable);
+				Report.Debug (2, "MERGING CHILD", this, new_params, new_locals,
+					      new_reachability);
 
-				RealReturns = new_returns;
-				RealBreaks = new_breaks;
-				RealReachable = new_reachable;
+				RealReturns = new_reachability.Returns;
+				RealBreaks = new_reachability.Breaks;
+				RealReachable = new_reachability.Reachable;
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -423,8 +442,6 @@ namespace Mono.CSharp
 				// parameters as initialized which have been initialized in all branches
 				// we need to look at (see above).
 				//
-
-				Report.Debug (2, "MERGING CHILD #1", this, Returns, Breaks, Reachable, new_locals, new_params);
 
 				if ((Reachable == FlowReturns.Always) || (Reachable == FlowReturns.Sometimes) ||
 				    (Reachable == FlowReturns.Never)) {
@@ -690,19 +707,15 @@ namespace Mono.CSharp
 		{
 			public MyBitVector Parameters;
 			public MyBitVector Locals;
-			public FlowReturns Returns;
-			public FlowReturns Breaks;
-			public FlowReturns Reachable;
+			public Reachability Reachability;
 			public bool MayLeaveLoop;
 
-			public MergeResult (MyBitVector parameters, MyBitVector locals, FlowReturns returns, FlowReturns breaks,
-					    FlowReturns reachable, bool may_leave_loop)
+			public MergeResult (MyBitVector parameters, MyBitVector locals,
+					    Reachability reachability, bool may_leave_loop)
 			{
 				this.Parameters = parameters;
 				this.Locals = locals;
-				this.Returns = returns;
-				this.Breaks = breaks;
-				this.Reachable = reachable;
+				this.Reachability = reachability;
 				this.MayLeaveLoop = may_leave_loop;
 			}
 		}
@@ -804,7 +817,8 @@ namespace Mono.CSharp
 			if (breaks == FlowReturns.Undefined)
 				breaks = FlowReturns.Never;
 
-			return new MergeResult (parameters, locals, returns, breaks, reachable, MayLeaveLoop);
+			Reachability reachability = new Reachability (returns, breaks, reachable);
+			return new MergeResult (parameters, locals, reachability, MayLeaveLoop);
 		}
 
 		protected abstract MergeResult Merge ();
@@ -817,15 +831,15 @@ namespace Mono.CSharp
 			MergeResult result = child.Merge ();
 
 			CurrentUsageVector.MergeChild (
-				result.Parameters, result.Locals, result.Returns, result.Breaks, result.Reachable);
+				result.Parameters, result.Locals, result.Reachability);
 
 			if ((child.Type != BranchingType.LoopBlock) && (child.Type != BranchingType.SwitchSection))
 				MayLeaveLoop |= child.MayLeaveLoop;
 
-			if (result.Reachable == FlowReturns.Exception)
+			if (result.Reachability.Reachable == FlowReturns.Exception)
 				return FlowReturns.Exception;
 			else
-				return result.Returns;
+				return result.Reachability.Returns;
  		}
 
 		// <summary>
@@ -840,14 +854,14 @@ namespace Mono.CSharp
 				SiblingType.Conditional, null, Location, param_map.Length, local_map.Length);
 
 			MergeResult result = Merge ();
-			vector.MergeChild (result.Parameters, result.Locals, result.Returns, result.Breaks, result.Reachable);
+			vector.MergeChild (result.Parameters, result.Locals, result.Reachability);
 
 			if (vector.Reachable != FlowReturns.Exception)
 				CheckOutParameters (vector.Parameters, Location);
 			else
 				return FlowReturns.Exception;
 
-			return result.Returns;
+			return result.Reachability.Returns;
 		}
 
 		public virtual bool InTryBlock ()

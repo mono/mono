@@ -1,3 +1,9 @@
+2003-12-09  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.Reachability): New sealed class.
+	(FlowBranching.MergeResult): Replaced the `Returns', `Breaks' and
+	`Reachable' fields with a single `Reachability' one.
+
 2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* class.cs (FindMembers): Remove foreach's.
