@@ -968,7 +968,7 @@ namespace Mono.CSharp {
 		enum Flags : byte {
 			Used = 1,
 			ReadOnly = 2,
-			Fixed = 4
+			Pinned = 4
 		}
 
 		Flags flags;
@@ -1028,15 +1028,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void MakePinned ()
-		{
-			TypeManager.MakePinned (LocalBuilder);
-			flags |= Flags.Fixed;
-		}
-
+		//
+		// Whether the variable is Fixed (because its Pinned or its a value type)
+		//
 		public bool IsFixed {
 			get {
-				if (((flags & Flags.Fixed) != 0) || TypeManager.IsValueType (VariableType))
+				if (((flags & Flags.Pinned) != 0) || TypeManager.IsValueType (VariableType))
 					return true;
 
 				return false;
@@ -1067,8 +1064,18 @@ namespace Mono.CSharp {
 			}
 		}
 
-		
-		
+		//
+		// Whether the variable is pinned, if Pinned the variable has been 
+		// allocated in a pinned slot with DeclareLocal.
+		//
+		public bool Pinned {
+			get {
+				return (flags & Flags.Pinned) != 0;
+			}
+			set {
+				flags = value ? (flags | Flags.Pinned) : (flags & ~Flags.Pinned);
+			}
+		}
 	}
 		
 	/// <summary>
@@ -1675,8 +1682,16 @@ namespace Mono.CSharp {
 
 					if (remap_locals)
 						vi.FieldBuilder = ec.MapVariable (name, vi.VariableType);
-					else
-						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+					else {
+						//
+						// This is needed to compile on both .NET 1.x and .NET 2.x
+						// the later introduced `DeclareLocal (Type t, bool pinned)'
+						//
+						if (vi.Pinned)
+							vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
+						else 
+							vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+					}
 
 					if (constants == null)
 						continue;
@@ -2950,7 +2965,6 @@ namespace Mono.CSharp {
 				if (e is Unary && ((Unary) e).Oper == Unary.Operator.AddressOf){
 					Expression child = ((Unary) e).Expr;
 
-					vi.MakePinned ();
 					if (child is ParameterReference || child is LocalVariableReference){
 						Report.Error (
 							213, loc, 
@@ -2992,7 +3006,6 @@ namespace Mono.CSharp {
 				if (e.Type.IsArray){
 					Type array_type = TypeManager.GetElementType (e.Type);
 					
-					vi.MakePinned ();
 					//
 					// Provided that array_type is unmanaged,
 					//
@@ -3098,8 +3111,7 @@ namespace Mono.CSharp {
 				// Case 3: string
 				//
 				if (data [i].expr.Type == TypeManager.string_type){
-					LocalBuilder pinned_string = ig.DeclareLocal (TypeManager.string_type);
-					TypeManager.MakePinned (pinned_string);
+					LocalBuilder pinned_string = TypeManager.DeclareLocalPinned (ig, TypeManager.string_type);
 					clear_list [i] = pinned_string;
 					
 					data [i].expr.Emit (ec);

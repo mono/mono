@@ -1,3 +1,17 @@
+2004-07-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (fixed_statement): flag this as Pinned.
+
+2004-07-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (TypeManager): Removed MakePinned method, this
+	mechanism is replaced with the .NET 2.x compatible mechanism of
+	calling `ILGenerator.DeclareLocal (Type t, bool pinned)'.
+
+	* statement.cs (LocalInfo): Remove MakePinned, add Pinned property 
+	Rename `Fixed' to `Pinned' as a flag, to distinguish from the
+	`IsFixed' property which has a different meaning.
+
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (DoSimpleNameResolve): Expand CS0038 check to all names

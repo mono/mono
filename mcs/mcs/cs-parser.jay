@@ -3831,7 +3831,9 @@ fixed_statement
 			v = current_block.AddVariable (type, (string) p.First,current_local_parameters, l);
 			if (v == null)
 				continue;
+
 			v.ReadOnly = true;
+			v.Pinned = true;
 			p.First = v;
 			list [i] = p;
 		}

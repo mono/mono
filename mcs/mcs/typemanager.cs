@@ -2288,23 +2288,27 @@ public class TypeManager {
 		return "Item";
 	}
 
-	static MethodInfo pinned_method = null;
-	public static void MakePinned (LocalBuilder builder)
+	static MethodInfo declare_local_method = null;
+	
+	public static LocalBuilder DeclareLocalPinned (ILGenerator ig, Type t)
 	{
-		if (pinned_method == null) {
-			pinned_method = typeof (LocalBuilder).GetMethod ("MakePinned", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (pinned_method == null) {
-				Report.Warning (-24, new Location (-1), "Microsoft.NET does not support making pinned variables." +
-					"This code may cause errors on a runtime with a moving GC");
-				
-				return;
+		if (declare_local_method == null){
+			declare_local_method = typeof (ILGenerator).GetMethod (
+				"DeclareLocal",
+				BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+				null, 
+				new Type [] { typeof (Type), typeof (bool)},
+				null);
+			if (declare_local_method == null){
+				Report.Warning (-24, new Location (-1),
+						"This version of the runtime does not support making pinned local variables.  " +
+						"This code may cause errors on a runtime with a moving GC");
+				return ig.DeclareLocal (t);
 			}
 		}
-		
-		pinned_method.Invoke (builder, null);
+		return (LocalBuilder) declare_local_method.Invoke (ig, new object [] { t, true });
 	}
-
-
+	
 	//
 	// Returns whether the array of memberinfos contains the given method
 	//
