@@ -91,7 +91,7 @@ namespace System.Web.Security
 									(values [4] == "1"),
 									values [5],
 									values [6]);
-			} catch (Exception e) {
+			} catch (Exception) {
 				ticket = null;
 			}
 

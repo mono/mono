@@ -14,7 +14,8 @@ namespace System.Web.UI.HtmlControls{
 	
 	public class HtmlForm : HtmlContainerControl{
 		
-		private static string SmartNavIncludeScriptKey  = "SmartNavIncludeScript";
+		// Unused
+		//private static string SmartNavIncludeScriptKey  = "SmartNavIncludeScript";
 		
 		public HtmlForm(): base("form"){}
 				

@@ -244,9 +244,6 @@ public virtual void AddStyleAttribute(string name, string value){
 }
 
 protected virtual void AddStyleAttribute(string name, string value, HtmlTextWriterStyle key){
-	RenderStyle[] tagRender;
-	RenderStyle beforeTag;
-
 	if (_styleCount >= (int) _styleList.Length) {
 		RenderStyle[] rAttrArr = new RenderStyle[_styleList.Length * 2];
 		System.Array.Copy(_styleList, rAttrArr, (int) _styleList.Length);

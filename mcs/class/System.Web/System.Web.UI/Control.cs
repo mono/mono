@@ -35,7 +35,6 @@ namespace System.Web.UI
 		private string uniqueID;
                 private string _userId;
 		private bool id_set;
-                private string _cachedClientId;
                 private ControlCollection _controls;
                 private bool _enableViewState = true;
                 private IDictionary _childViewStates; //TODO: Not sure datatype. Placeholder guess.

@@ -358,7 +358,6 @@ namespace System.Web.Compilation
 
 			ControlBuilder parent = stack.Builder;
 			ControlBuilder builder = null;
-			BuilderLocation bl = null;
 			Hashtable htable = (atts != null) ? atts.GetDictionary (null) : emptyHash;
 			if (stack.Count > 1) {
 				try {

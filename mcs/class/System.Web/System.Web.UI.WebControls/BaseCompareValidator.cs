@@ -336,7 +336,7 @@ namespace System.Web.UI.WebControls
 				case  ValidationDataType.Currency:
 					return ConvertCurrency (text, type, ref convertedValue);
 				}
-			} catch (Exception e) {
+			} catch (Exception) {
 				convertedValue = null;
 			}
 

@@ -157,7 +157,7 @@ namespace System.Web
 				path = Path.Combine (path, "browscap.ini");
 				try {
 					LoadFile (path);
-				} catch (Exception e) { }
+				} catch (Exception) { }
 
 				loaded = true;
 			}

@@ -54,7 +54,7 @@ namespace System.Web.UI.HtmlControls{
 					try{
 						attr = ResolveUrl(attr);
 					}
-					catch (Exception e) {
+					catch (Exception) {
 						throw new HttpException(attribName + " property had malformed url");
 					}
 					writer.WriteAttribute(attribName, attr);

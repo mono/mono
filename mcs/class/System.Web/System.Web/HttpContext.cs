@@ -164,7 +164,7 @@ namespace System.Web
 				CustomErrorsConfig cfg;
 				try {
 					cfg = (CustomErrorsConfig) GetConfig ("system.web/customErrors");
-				} catch (Exception e) {
+				} catch (Exception) {
 					return false;
 				}
 				

@@ -548,7 +548,7 @@ namespace System.Web {
 					_sFilePath = _WorkerRequest.GetFilePath();
 					try {
 						_sFilePath = UrlUtils.Reduce (_sFilePath);
-					} catch (Exception e) {
+					} catch (Exception) {
 						throw new HttpException (403, "Forbidden");
 					}
 				}

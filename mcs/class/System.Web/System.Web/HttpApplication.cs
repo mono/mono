@@ -750,9 +750,9 @@ namespace System.Web
 				IHttpHandlerFactory factory = (IHttpHandlerFactory) result;
 				try {
 					return factory.GetHandler (context, type, file, path);
-				} catch (DirectoryNotFoundException e) {
+				} catch (DirectoryNotFoundException) {
 					throw new HttpException (404, "Cannot find '" + file + "'.");
-				} catch (FileNotFoundException e2) {
+				} catch (FileNotFoundException) {
 					throw new HttpException (404, "Cannot find '" + file + "'.");
 				}
 			}
