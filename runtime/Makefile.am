@@ -33,6 +33,8 @@ monobins_DATA = \
 
 EXTRA_DIST= $(monobins_DATA)
 
+MAINTAINERCLEANFILES = $(EXTRA_DIST)
+
 #
 # Keep in sync with mono/mono/metadata/Makefile.am
 #

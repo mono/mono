@@ -70,7 +70,7 @@ corlibdir = $(libdir)/net_2_0
 corlib_DATA = mscorlib.dll
 
 EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
-CLEANFILES = $(EXTRA_DIST)
+MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
 #
 # Keep in sync with mono/mono/metadata/Makefile.am
