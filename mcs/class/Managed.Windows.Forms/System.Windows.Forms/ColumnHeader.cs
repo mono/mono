@@ -38,7 +38,7 @@ namespace System.Windows.Forms
 	public class ColumnHeader : Component, ICloneable
 	{
 		#region Instance Variables
-		private StringFormat format;
+		private StringFormat format = new StringFormat ();
 		private string text = "ColumnHeader";
 		private HorizontalAlignment text_alignment = HorizontalAlignment.Left;
 		private int width = ThemeEngine.Current.ListViewDefaultColumnWidth;
@@ -102,8 +102,7 @@ namespace System.Windows.Forms
 		}
 
 		internal void CalcColumnHeader ()
-		{
-			format = new StringFormat ();
+		{			
 			if (text_alignment == HorizontalAlignment.Center)
 				format.Alignment = StringAlignment.Center;
 			else if (text_alignment == HorizontalAlignment.Right)
@@ -118,9 +117,9 @@ namespace System.Windows.Forms
 			if (width >= 0) {
 				this.column_rect.Width = width;
 				if (owner != null)
-					this.column_rect.Height = owner.Font.Height;
+					this.column_rect.Height = owner.Font.Height + 5 ;
 				else
-					this.column_rect.Height = ThemeEngine.Current.DefaultFont.Height;
+					this.column_rect.Height = ThemeEngine.Current.DefaultFont.Height + 5;
 			}
 			else if (this.Index != -1)
 				this.column_rect.Size = owner.GetChildColumnSize (this.Index);

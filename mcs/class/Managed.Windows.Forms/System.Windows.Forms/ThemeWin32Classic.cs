@@ -575,11 +575,8 @@ namespace System.Windows.Forms
 			
 			
 			// Start drawing
-
-			sb=new SolidBrush(checkbox.BackColor);
-			dc.FillRectangle(sb, checkbox.ClientRectangle);
-			sb.Dispose();
 			
+			dc.FillRectangle (ResPool.GetSolidBrush (checkbox.BackColor), checkbox.ClientRectangle);			
 			// render as per normal button
 			if (checkbox.appearance==Appearance.Button) {
 				if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
@@ -618,9 +615,9 @@ namespace System.Windows.Forms
 
 			if (checkbox.Focused) {
 				if (checkbox.FlatStyle != FlatStyle.Flat) {
-					DrawInnerFocusRectangle (dc, Rectangle.Inflate (client_rectangle, -4, -4), checkbox.BackColor);
+					DrawInnerFocusRectangle (dc, Rectangle.Inflate (text_rectangle, -1, -1), checkbox.BackColor);
 				} else {
-					dc.DrawRectangle (ResPool.GetPen (checkbox.ForeColor), Rectangle.Inflate (client_rectangle, -4, -4));
+					dc.DrawRectangle (ResPool.GetPen (checkbox.ForeColor), Rectangle.Inflate (text_rectangle, -1, -1));
 				}
 			}
 		}
@@ -833,6 +830,7 @@ namespace System.Windows.Forms
 			Color back_color, fore_color;
 			Rectangle text_draw = e.Bounds;
 			StringFormat string_format = new StringFormat ();
+			string_format.FormatFlags = StringFormatFlags.LineLimit;
 			
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
 				back_color = ThemeEngine.Current.ColorHilight;
@@ -1087,7 +1085,7 @@ namespace System.Windows.Forms
 			// border is drawn directly in the Paint method
 			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {
 				dc.FillRectangle (ResPool.GetSolidBrush (SystemColors.Control),
-						  0, 0, control.TotalWidth, control.Font.Height);
+						  0, 0, control.TotalWidth, control.Font.Height + 5);
 				if (control.Columns.Count > 0) {
 					if (control.HeaderStyle == ColumnHeaderStyle.Clickable) {
 						foreach (ColumnHeader col in control.Columns) {
@@ -1095,7 +1093,7 @@ namespace System.Windows.Forms
 									   (col.Pressed ?
 									    ButtonState.Pushed :
 									    ButtonState.Normal));
-							dc.DrawString (col.Text, control.Font,
+							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorButtonText),
 								       col.Rect, col.Format);
@@ -1105,7 +1103,7 @@ namespace System.Windows.Forms
 					else {
 						foreach (ColumnHeader col in control.Columns) {
 							this.CPDrawButton (dc, col.Rect, ButtonState.Flat);
-							dc.DrawString (col.Text, control.Font,
+							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorButtonText),
 								       col.Rect, col.Format);

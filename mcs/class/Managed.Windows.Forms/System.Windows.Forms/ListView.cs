@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
-// Author:
-//	Ravindra (rkumar@novell.com)
+// Authors:
+//	Ravindra Kumar (rkumar@novell.com)
+//	Jordi Mas i Hernandez, jordi@ximian.com
 //
 // TODO:
 //   - Keys to be handled ENTER/PAGE UP/PAGE DOWN/HOME/END/ARROWS/CTRL/SHIFT
@@ -28,6 +29,11 @@
 //   - Column resizing/reodering
 //   - Feedback for item activation, change in cursor types as mouse moves.
 //   - HideSelection
+//   - Focused item (broken and not drawn)
+//   - LabelEdit
+//   - Manual column resizing
+//   - Drag and drop
+//   - Clipping 
 
 
 // NOT COMPLETE
@@ -150,6 +156,8 @@ namespace System.Windows.Forms
 			base.MouseUp += new MouseEventHandler(ListView_MouseUp);
 			base.MouseMove += new MouseEventHandler(ListView_MouseMove);
 			base.Paint += new PaintEventHandler (ListView_Paint);
+			
+			this.SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 		}
 		#endregion	// Public Constructors
 
@@ -191,7 +199,15 @@ namespace System.Windows.Forms
 		[DefaultValue (ItemActivation.Standard)]
 		public ItemActivation Activation {
 			get { return activation; }
-			set { activation = value; }
+			set { 
+				if (value != ItemActivation.Standard && value != ItemActivation.OneClick && 
+					value != ItemActivation.TwoClick) {
+					throw new InvalidEnumArgumentException (string.Format
+						("Enum argument value '{0}' is not valid for Activation", value));
+				}
+				  
+				activation = value;
+			}
 		}
 
 		[DefaultValue (ListViewAlignment.Top)]
@@ -199,6 +215,12 @@ namespace System.Windows.Forms
 		public ListViewAlignment Alignment {
 			get { return alignment; }
 			set {
+				if (value != ListViewAlignment.Default && value != ListViewAlignment.Left && 
+					value != ListViewAlignment.SnapToGrid && value != ListViewAlignment.Top) {
+					throw new InvalidEnumArgumentException (string.Format 
+						("Enum argument value '{0}' is not valid for Alignment", value));
+				}
+				
 				if (this.alignment != value) {
 					alignment = value;
 					// alignment does not matter in Details/List views
@@ -264,9 +286,15 @@ namespace System.Windows.Forms
 		public BorderStyle BorderStyle {
 			get { return border_style; }
 			set {
+				if (value != BorderStyle.Fixed3D && value != BorderStyle.FixedSingle  && 
+					value != BorderStyle.None) {
+					throw new InvalidEnumArgumentException (string.Format 
+						("Enum argument value '{0}' is not valid for BorderStyle", value));
+				}
+				
 				if (border_style != value) {
 					border_style = value;
-					this.Redraw (false);
+					this.Redraw (true);
 				}
 			}
 		}
@@ -338,6 +366,12 @@ namespace System.Windows.Forms
 		public ColumnHeaderStyle HeaderStyle {
 			get { return header_style; }
 			set {
+				if (value != ColumnHeaderStyle.Clickable && value != ColumnHeaderStyle.Nonclickable  && 
+					value != ColumnHeaderStyle.None) {
+					throw new InvalidEnumArgumentException (string.Format 
+						("Enum argument value '{0}' is not valid for ColumnHeaderStyle", value));
+				}
+				
 				if (header_style != value) {
 					header_style = value;
 					// header style matters only in Details view
@@ -446,7 +480,18 @@ namespace System.Windows.Forms
 		[DefaultValue (SortOrder.None)]
 		public SortOrder Sorting {
 			get { return sort_order; }
-			set { sort_order = value; }
+			set { 
+				if (value != SortOrder.Ascending && value != SortOrder.Descending  && 
+					value != SortOrder.None) {
+					throw new InvalidEnumArgumentException (string.Format
+						("Enum argument value '{0}' is not valid for Sorting", value));
+				}
+				
+				if (sort_order != value)  {			
+					sort_order = value; 
+					this.Redraw (false);
+				}
+			}
 		}
 
 		[DefaultValue (null)]
@@ -500,7 +545,18 @@ namespace System.Windows.Forms
 		[DefaultValue (View.LargeIcon)]
 		public View View {
 			get { return view; }
-			set { view = value; }
+			set { 
+				if (value != View.Details && value != View.LargeIcon  && 
+					value != View.List  && value != View.SmallIcon  ) {
+					throw new InvalidEnumArgumentException (string.Format
+						("Enum argument value '{0}' is not valid for View", value));
+				}
+				
+				if (view != value) {
+					view = value; 
+					Redraw (true);
+				}
+			}
 		}
 		#endregion	// Public Instance Properties
 
@@ -653,7 +709,7 @@ namespace System.Windows.Forms
 			case View.Details:
 				// ColumnHeaders are not drawn if headerstyle is none
 				int ht = (this.header_style == ColumnHeaderStyle.None) ? 
-					2 : this.Font.Height + 2;
+					2 : this.Font.Height + 5;
 				if (columns.Count > 0) {
 					foreach (ColumnHeader col in columns) {
 						col.X = current_pos_x;
@@ -873,7 +929,8 @@ namespace System.Windows.Forms
 				this.h_scroll.Visible = false;
 				this.v_scroll.Visible = false;
 			}
-		}
+		}		
+		
 
 		// Event Handlers
 		private void ListView_DoubleClick (object sender, EventArgs e)
@@ -897,7 +954,7 @@ namespace System.Windows.Forms
 				this.ctrl_pressed = true;
 				break;
 
-			case Keys.Down:
+			case Keys.Down:				
 				// FIXME:TODO
 				break;
 
@@ -942,7 +999,7 @@ namespace System.Windows.Forms
 				this.shift_pressed = true;
 				break;
 
-			case Keys.Up:
+			case Keys.Up:				
 				// FIXME:TODO
 				break;
 
@@ -1031,6 +1088,9 @@ namespace System.Windows.Forms
 					}
 				}
 			}
+			
+			// set the FocusedItem to be the current clicked_item
+			this.focused_item = this.clicked_item;
 
 			if (this.clicked_item != null) {
 				this.clicked_item.Selected = true;
@@ -1038,10 +1098,7 @@ namespace System.Windows.Forms
 				this.OnSelectedIndexChanged (new EventArgs ());
 
 				this.Redraw (false);
-			}
-
-			// set the FocusedItem to be the current clicked_item
-			this.focused_item = this.clicked_item;
+			}		
 		}
 
 		private void ListView_MouseHover (object sender, EventArgs e)
@@ -1141,6 +1198,8 @@ namespace System.Windows.Forms
 
 		private void ListView_Paint (object sender, PaintEventArgs pe)
 		{
+			Console.WriteLine ("ListView_Paint {0} {1}", this.TotalWidth, this.TotalHeight);
+			
 			if (this.Width <= 0 || this.Height <=  0 ||
 			    this.Visible == false || this.updating == true)
 				return;
@@ -1182,7 +1241,7 @@ namespace System.Windows.Forms
 			if (this.view == View.Details &&
 			    this.Columns.Count > 0 &&
 			    this.header_style != ColumnHeaderStyle.None &&
-			    v_marker > 0) {
+			    v_marker > 0 ) {
 
 				int col_ht = this.Columns [0].Ht;
 
@@ -1249,7 +1308,7 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{
-			// FIXME: TODO
+			base.Dispose (disposing);
 		}
 
 		protected override bool IsInputKey (Keys keyData)
@@ -1283,15 +1342,14 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
+			Redraw (true);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
 			this.Controls.Add (this.v_scroll);
-			this.Controls.Add (this.h_scroll);
-			this.SetStyle (ControlStyles.UserPaint |
-				       ControlStyles.AllPaintingInWmPaint, true);
+			this.Controls.Add (this.h_scroll);			
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -1731,27 +1789,34 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual int Add (ColumnHeader value)
 			{
+				int idx;
 				value.owner = this.owner;
-				return list.Add (value);
+				idx = list.Add (value);
+				owner.Redraw (true); 
+				return idx;
 			}
 
 			public virtual ColumnHeader Add (string str, int width, HorizontalAlignment textAlign)
 			{
 				ColumnHeader colHeader = new ColumnHeader (this.owner, str, textAlign, width);
-				this.Add (colHeader);
-
+				this.Add (colHeader);									
 				return colHeader;
 			}
 
 			public virtual void AddRange (ColumnHeader [] values)
 			{
-				foreach (ColumnHeader colHeader in values)
-					this.Add (colHeader);
+				foreach (ColumnHeader colHeader in values) {
+					colHeader.owner = this.owner;
+					Add (colHeader);
+				}
+				
+				owner.Redraw (true); 
 			}
 
 			public virtual void Clear ()
 			{
 				list.Clear ();
+				owner.Redraw (true);
 			}
 
 			public bool Contains (ColumnHeader value)
@@ -1826,6 +1891,7 @@ namespace System.Windows.Forms
 
 				value.owner = this.owner;
 				list.Insert (index, value);
+				owner.Redraw (true);
 			}
 
 			public void Insert (int index, string str, int width, HorizontalAlignment textAlign)
@@ -1836,7 +1902,9 @@ namespace System.Windows.Forms
 
 			public virtual void Remove (ColumnHeader column)
 			{
+				// TODO: Update Column internal index ?
 				list.Remove (column);
+				owner.Redraw (true);
 			}
 
 			public virtual void RemoveAt (int index)
@@ -1844,9 +1912,12 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= list.Count)
 					throw new ArgumentOutOfRangeException ("Index out of range.");
 
+				// TODO: Update Column internal index ?
 				list.RemoveAt (index);
+				owner.Redraw (true);
 			}
 			#endregion	// Public Methods
+			
 
 		}	// ColumnHeaderCollection
 

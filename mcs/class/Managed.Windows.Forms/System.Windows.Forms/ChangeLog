@@ -1,3 +1,19 @@
+2005-03-03  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ColumnHeader.cs:
+	  - Fixes null string format
+	  
+	* ListView.cs:
+	  - Adds enum type checks
+	  - Fixes redrawing and recalc need after changing some properties
+	  - Fixes on focus_item set after the event
+	  - Fixes adding columns after the control has been created
+	  
+	* ThemeWin32Classic.cs:
+	  - Fixes CheckBox focus rectangle
+	  - Fixes ColumnHeader drawing 	  
+
+
 2005-03-03  Jackson Harper  <jackson@ximian.com>
 
 	* Binding.cs: Bind to <Property>Changed events so we can detect
