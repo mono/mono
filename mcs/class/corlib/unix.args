@@ -6,6 +6,11 @@ Microsoft.Win32/Registry.cs
 Microsoft.Win32/RegistryHive.cs
 Mono/Runtime.cs
 Mono.Math/BigInteger.cs
+Mono.Math.Prime/ConfidenceFactor.cs
+Mono.Math.Prime/PrimalityTests.cs
+Mono.Math.Prime.Generator/NextPrimeFinder.cs
+Mono.Math.Prime.Generator/PrimeGeneratorBase.cs
+Mono.Math.Prime.Generator/SequentialSearchPrimeGeneratorBase.cs
 Mono.Security/ASN1.cs
 Mono.Security/ASN1Convert.cs
 Mono.Security.Cryptography/CryptoTools.cs
