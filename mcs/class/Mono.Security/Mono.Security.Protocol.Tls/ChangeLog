@@ -1,3 +1,8 @@
+2004-11-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CipherSuiteFactory.cs, Context.cs, RecordProtocol.cs: Merge from 
+	HEAD to add support for ClientHelloV2.
+
 2004-10-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslClientStream.cs: Changed InputBuffer to internal (was protected).
