@@ -1,3 +1,7 @@
+2004-08-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* debug-helpers.c: Handle MONO_TYPE_GENERICINST.
+
 2004-08-24  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (mono_class_is_subclass_of): Like an interface, a
