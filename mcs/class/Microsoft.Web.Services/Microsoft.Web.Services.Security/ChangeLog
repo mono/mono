@@ -8,3 +8,4 @@
 	the class (in WSE) to fixed some issues.
 	* TransformChain.cs: Copied from System.Security assembly as MS duplicate 
 	the class (in WSE) to fixed some issues.
+	* XmlSignature.cs: Added missing string used in System.Security.

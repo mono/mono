@@ -12,6 +12,7 @@ using System.Collections;
 using System.Xml;
 
 #if (WSE1 || WSE2)
+using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 
 namespace Microsoft.Web.Services.Security {

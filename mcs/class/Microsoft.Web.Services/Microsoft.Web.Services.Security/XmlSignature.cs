@@ -43,7 +43,28 @@ namespace Microsoft.Web.Services.Security {
 			// LAMESPEC: public const string Username = "";
 			// LAMESPEC: public const string UsernameToken = "";
 
+			// to be compatible with Mono implementation of System.Security
+			internal const string CanonicalizationMethod = "CanonicalizationMethod";
+			internal const string HMACOutputLength = "HMACOutputLength";
+			internal const string Reference = "Reference";
+			internal const string SignatureMethod = "SignatureMethod";
+			internal const string SignedInfo = "SignedInfo";
+			internal const string Transform = "Transform";
+			internal const string Transforms = "Transforms";
+			internal const string DigestMethod = "DigestMethod";
+			internal const string DigestValue = "DigestValue";
+
 			public ElementNames () {}
+		}
+
+		internal class AttributeNames {
+
+			internal const string Algorithm = "Algorithm";
+			internal const string Id = "Id";
+			internal const string URI = "URI";
+			internal const string Type = "Type";
+
+			public AttributeNames () {}
 		}
 
 		public const string NamespaceURI = "http://www.w3.org/2000/09/xmldsig#";

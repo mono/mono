@@ -7,6 +7,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml;
