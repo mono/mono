@@ -612,7 +612,8 @@ namespace System.Collections {
 					} else {
 						// Handle Add ():
 						// An entry with the same key already exists in the Hashtable.
-						throw new ArgumentException ("Key duplication");
+						throw new ArgumentException (
+								"Key duplication when adding: " + key);
 					}
 					return;
 				}

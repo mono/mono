@@ -1,3 +1,8 @@
+2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Hashtable.cs: add the key when to the error mesagge when
+	'key duplication'.
+
 2002-10-15  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* Queue.cs: update new capacity in grow(), preventing queue from
