@@ -36,6 +36,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Drawing.Text;
+using System.ComponentModel.Design.Serialization;
+using System.Reflection;
 
 namespace System.Drawing
 {
@@ -56,6 +58,9 @@ namespace System.Drawing
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
 			if (destinationType == typeof (String))
+				return true;
+
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 
 			return base.CanConvertTo (context, destinationType);
@@ -104,6 +109,17 @@ namespace System.Drawing
 				return sb.ToString ();
 			}
 
+			if ((destinationType == typeof (InstanceDescriptor)) && (value is Font)) {
+				Font font = (Font) value;
+				ConstructorInfo met = typeof(Font).GetConstructor (new Type[] {typeof(string), typeof(float), typeof(FontStyle), typeof(GraphicsUnit)});
+				object[] args = new object[4];
+				args [0] = font.Name;
+				args [1] = font.Size;
+				args [2] = font.Style;
+				args [3] = font.Unit;
+				return new InstanceDescriptor (met, args);
+			}
+			
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 

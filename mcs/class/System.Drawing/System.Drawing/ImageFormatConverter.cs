@@ -35,6 +35,8 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Drawing.Imaging;
+using System.ComponentModel.Design.Serialization;
+using System.Reflection;
 
 namespace System.Drawing
 {
@@ -51,16 +53,19 @@ namespace System.Drawing
 		{
 			if (srcType == typeof (string))
 				return true;
-			else
-				return false;
+				
+			return base.CanConvertFrom (context, srcType);
 		}
 
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destType)
 		{
 			if (destType == typeof (string))
 				return true;
-			else
-				return false; 
+				
+			if (destType == typeof (InstanceDescriptor))
+				return true;
+
+			return base.CanConvertTo (context, destType);
 		}
 		
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object val)
@@ -89,8 +94,8 @@ namespace System.Drawing
 				return ImageFormat.Tiff;
 			else if (strFormat.Equals (ImageFormat.Wmf.ToString ()))
 				return ImageFormat.Wmf;
-			else
-				throw new NotSupportedException ("ImageFormatConverter cannot convert from " + val.GetType ());
+				
+			return base.ConvertFrom (context, culture, val);
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
@@ -98,7 +103,40 @@ namespace System.Drawing
 			if ((val is ImageFormat) && (destType == typeof (string)))
 				return val.ToString ();
 			
-			throw new NotSupportedException ("ImageFormatConverter can not convert from " + val.GetType ());
+			if (destType == typeof (InstanceDescriptor) && val is ImageFormat) {
+				ImageFormat c = (ImageFormat) val;
+
+				string prop = null;
+				if (c.Guid.Equals (ImageFormat.Bmp.Guid))
+					prop = "Bmp";
+				else if (c.Guid.Equals (ImageFormat.Emf.Guid))
+					prop = "Emf";
+				else if (c.Guid.Equals (ImageFormat.Exif.Guid))
+					prop = "Exif";
+				else if (c.Guid.Equals (ImageFormat.Gif.Guid))
+					prop = "Gif";
+				else if (c.Guid.Equals (ImageFormat.Icon.Guid))
+					prop = "Icon";
+				else if (c.Guid.Equals (ImageFormat.Jpeg.Guid))
+					prop = "Jpeg";
+				else if (c.Guid.Equals (ImageFormat.MemoryBmp.Guid))
+					prop = "MemoryBmp";
+				else if (c.Guid.Equals (ImageFormat.Png.Guid))
+					prop = "Png";
+				else if (c.Guid.Equals (ImageFormat.Tiff.Guid))
+					prop = "Tiff";
+				else if (c.Guid.Equals (ImageFormat.Wmf.Guid))
+					prop = "Wmf";
+				
+				if (prop != null){
+					return new InstanceDescriptor (typeof (ImageFormat).GetProperty (prop), null);
+				} else {
+					ConstructorInfo ctor = typeof(ImageFormat).GetConstructor (new Type[] {typeof(Guid)} );
+					return new InstanceDescriptor (ctor, new object[] {c.Guid});
+				}
+			}
+			
+			return base.ConvertTo (context, culture, val, destType);
 		}
 
 		[MonoTODO ("Implement")]

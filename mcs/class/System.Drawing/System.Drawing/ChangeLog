@@ -1,3 +1,9 @@
+2005-01-27  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* PointConverter.cs, ImageFormatConverter.cs, RectangleConverter.cs,
+	SizeConverter.cs, ColorConverter.cs, FontConverter.cs
+	: Implemented support for InstanceDescriptor.
+
 2005-01-26  Peter Bartok  <pbartok@novell.com>
 
 	* Icon.cs (ToBitmap): Now sets transparency in according to

@@ -38,6 +38,8 @@ using System.ComponentModel;
 using System.Collections;
 using System.Globalization;
 using System.Text;
+using System.ComponentModel.Design.Serialization;
+using System.Reflection;
 
 namespace System.Drawing
 {
@@ -63,6 +65,9 @@ namespace System.Drawing
 						   Type destinationType)
 		{
 			if (destinationType == typeof (string))
+				return true;
+
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 
 			return base.CanConvertTo (context, destinationType);
@@ -108,6 +113,12 @@ namespace System.Drawing
 				return sb.ToString ();
 			}
 			
+			if (destinationType == typeof (InstanceDescriptor) && value is Rectangle) {
+				Rectangle c = (Rectangle) value;
+				ConstructorInfo ctor = typeof(Rectangle).GetConstructor (new Type[] {typeof(int), typeof(int), typeof(int), typeof(int)} );
+				return new InstanceDescriptor (ctor, new object[] {c.X, c.Y, c.Width, c.Height});
+			}
+
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 

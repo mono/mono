@@ -33,6 +33,8 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.ComponentModel.Design.Serialization;
+using System.Reflection;
 
 namespace System.Drawing
 {
@@ -56,6 +58,9 @@ namespace System.Drawing
 						   Type destinationType)
 		{
 			if (destinationType == typeof (string))
+				return true;
+
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 
 			return base.CanConvertTo (context, destinationType);
@@ -92,6 +97,12 @@ namespace System.Drawing
 			if ((destinationType == typeof (string)) && (value is Point))
 				return ((Point) value).X + ", " + ((Point) value).Y;
 			
+			if (destinationType == typeof (InstanceDescriptor) && value is Point) {
+				Point c = (Point)value;
+				ConstructorInfo ctor = typeof(Point).GetConstructor (new Type[] {typeof(int), typeof(int)} );
+				return new InstanceDescriptor (ctor, new object[] {c.X, c.Y });
+			}
+
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 

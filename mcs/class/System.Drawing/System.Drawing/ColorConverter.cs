@@ -37,6 +37,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;
+using System.ComponentModel.Design.Serialization;
+using System.Reflection;
 
 namespace System.Drawing
 {
@@ -58,6 +60,9 @@ namespace System.Drawing
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
 			if (destinationType == typeof (String))
+				return true;
+
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 
 			return base.CanConvertTo (context, destinationType);
@@ -137,6 +142,16 @@ namespace System.Drawing
 				sb.Append (color.G); sb.Append (", ");
 				sb.Append (color.B);
 				return sb.ToString ();
+			}
+			
+			if (destinationType == typeof (InstanceDescriptor) && value is Color) {
+				Color c = (Color)value;
+				if (c.IsKnownColor){
+					return new InstanceDescriptor (typeof (SystemColors).GetProperty (c.Name), null);
+				} else {
+					MethodInfo met = typeof(Color).GetMethod ("FromArgb", new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) } );
+					return new InstanceDescriptor (met, new object[] {c.A, c.R, c.G, c.B });
+				}
 			}
 
 			return base.ConvertTo (context, culture, value, destinationType);
