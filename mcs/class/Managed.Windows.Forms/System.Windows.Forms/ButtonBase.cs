@@ -23,6 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.8  2004/09/02 22:24:35  pbartok
+// - Fixed selection of text color
+// - Fixed handling of resize event; now properly recreates double buffering
+//   bitmap
+// - Added missing assignment of TextAlignment
+// - Added proper default for TextAlignment
+//
 // Revision 1.7  2004/09/01 02:07:37  pbartok
 // - Enabled display of strings
 //
@@ -58,7 +65,6 @@ using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Windows.Forms {
-	[MonoTODO("Need to register for SizeChanged and force regen of button, need to add algorithm to determen when to redraw")]
 	public abstract class ButtonBase : Control {
 		#region Local Variables
 		private FlatStyle		flat_style;
@@ -226,8 +232,9 @@ namespace System.Windows.Forms {
 				}
 
 				if (is_enabled) {
-					SolidBrush	b = new SolidBrush(ThemeEngine.Current.ColorButtonText);
+					SolidBrush	b = new SolidBrush(this.ForeColor);
 					this.DeviceContext.DrawString(text, this.Font, b, text_rect, text_format);
+					b.Dispose();
 				} else {
 					ThemeEngine.Current.DrawStringDisabled(this.DeviceContext, text, this.Font, ThemeEngine.Current.ColorButtonText, text_rect, text_format);
 				}
@@ -236,6 +243,11 @@ namespace System.Windows.Forms {
 		}
 
 		private void RedrawEvent(object sender, System.EventArgs e) {
+			Redraw();
+		}
+
+		private void SizeEvent(object sender, System.EventArgs e) {
+			this.CreateBuffers(this.client_size.Width, this.client_size.Height);
 			Redraw();
 		}
 		#endregion	// Private Properties and Methods
@@ -254,8 +266,10 @@ namespace System.Windows.Forms {
 			is_pressed	= false;
 			has_focus	= false;
 			text_format	= new StringFormat();
+			text_format.Alignment = StringAlignment.Center;
+			text_format.LineAlignment = StringAlignment.Center;
 
-			SizeChanged+=new System.EventHandler(RedrawEvent);
+			SizeChanged+=new System.EventHandler(SizeEvent);
 			TextChanged+=new System.EventHandler(RedrawEvent);
 			ForeColorChanged+=new EventHandler(RedrawEvent);
 			BackColorChanged+=new System.EventHandler(RedrawEvent);
@@ -351,6 +365,7 @@ namespace System.Windows.Forms {
 
 			set {
 				if (text_alignment != value) {
+					text_alignment = value;
 					switch(text_alignment) {
 						case ContentAlignment.TopLeft: {
 							text_format.Alignment=StringAlignment.Near;
