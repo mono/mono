@@ -148,7 +148,13 @@ namespace System.Net.Sockets
 		[MonoTODO]
 		public void Start ()
 		{
-			server.Listen(-1);	//TODO: How big a backlog should we specify?  -1 == MAX?
+			server.Listen(5);	// According to the
+						// man page some BSD
+						// and BSD-derived
+						// systems limit the
+						// backlog to 5.  This
+						// should really be
+						// configurable though
 			active = true;
 		}
 		

@@ -1,3 +1,8 @@
+2002-04-02  Dick Porter  <dick@ximian.com>
+
+	* TcpListener.cs: in Start(), set the socket listen backlog value
+	to a sane value (noticed by Jonathan Stowe <gellyfish@gellyfish.com>)
+
 2002-02-13  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Implemenent Select, Blocking, Connected,
