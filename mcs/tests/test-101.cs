@@ -18,6 +18,11 @@ namespace Test {
 			ival = blah;
 		}
 	}
+
+	[Flags, ]
+	enum X {
+		A, B
+	}
 	
 	[My("testclass")]
 	[My2("testclass", 22)]
