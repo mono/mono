@@ -4127,34 +4127,48 @@ namespace Mono.CSharp {
 			}
 			
 			if (FieldInfo.IsStatic){
-				if (is_volatile)
-					ig.Emit (OpCodes.Volatile);
+				if (ec.RemapToProxy){
+					ec.EmitThis ();
+					if (is_volatile)
+						ig.Emit (OpCodes.Volatile);
 				
-				ig.Emit (OpCodes.Ldsfld, FieldInfo);
-			} else {
-				if (instance_expr.Type.IsValueType){
-					IMemoryLocation ml;
-					LocalTemporary tempo = null;
-
-					if (!(instance_expr is IMemoryLocation)){
-						tempo = new LocalTemporary (
-							ec, instance_expr.Type);
-
-						InstanceExpression.Emit (ec);
-						tempo.Store (ec);
-						ml = tempo;
-					} else
-						ml = (IMemoryLocation) instance_expr;
-
-					ml.AddressOf (ec, AddressOp.Load);
-				} else 
-					instance_expr.Emit (ec);
-
-				if (is_volatile)
-					ig.Emit (OpCodes.Volatile);
+					ig.Emit (OpCodes.Ldfld, FieldInfo);
+				} else {
+					if (is_volatile)
+						ig.Emit (OpCodes.Volatile);
 				
-				ig.Emit (OpCodes.Ldfld, FieldInfo);
+					ig.Emit (OpCodes.Ldsfld, FieldInfo);
+				}
+				return;
 			}
+			
+			if (instance_expr.Type.IsValueType){
+				IMemoryLocation ml;
+				LocalTemporary tempo = null;
+				
+				if (!(instance_expr is IMemoryLocation)){
+					tempo = new LocalTemporary (ec, instance_expr.Type);
+					
+					if (ec.RemapToProxy)
+						ec.EmitThis ();
+			
+					InstanceExpression.Emit (ec);
+					tempo.Store (ec);
+					ml = tempo;
+				} else
+					ml = (IMemoryLocation) instance_expr;
+				
+				ml.AddressOf (ec, AddressOp.Load);
+			} else {
+				if (ec.RemapToProxy)
+					ec.EmitThis ();
+				else
+					instance_expr.Emit (ec);
+			}
+			if (is_volatile)
+				ig.Emit (OpCodes.Volatile);
+			
+			ig.Emit (OpCodes.Ldfld, FieldInfo);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)
@@ -4182,9 +4196,14 @@ namespace Mono.CSharp {
 								     instance.Type +
 								     " represents a ValueType and does " +
 								     "not implement IMemoryLocation");
-				} else
-					instance.Emit (ec);
+				} else {
+					if (ec.RemapToProxy)
+						ec.EmitThis ();
+					else
+						instance.Emit (ec);
+				}
 			}
+
 			source.Emit (ec);
 
 			if (FieldInfo is FieldBuilder){
@@ -4193,11 +4212,15 @@ namespace Mono.CSharp {
 				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					ig.Emit (OpCodes.Volatile);
 			}
-			
-			if (is_static)
-				ig.Emit (OpCodes.Stsfld, FieldInfo);
-			else 
+
+			if (ec.RemapToProxy)
 				ig.Emit (OpCodes.Stfld, FieldInfo);
+			else {
+				if (is_static)
+					ig.Emit (OpCodes.Stsfld, FieldInfo);
+				else 
+					ig.Emit (OpCodes.Stfld, FieldInfo);
+			}
 
 			if (FieldInfo is FieldBuilder){
 				FieldBase f = TypeManager.GetField (FieldInfo);

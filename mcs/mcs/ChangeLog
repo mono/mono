@@ -1,4 +1,18 @@
+2003-04-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs: (FieldExpr): Handle field remapping here.
+
+	* iteratators.cs: Pass the instance variable (if the method is an
+	instance method) to the constructors, so we can access the field
+	variables on the class.
+
+	TODO: Test this with structs.  I think the THIS variable on
+	structs might have to be a pointer, and not a refenrece
+
 2003-04-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (EmitContext.Mapvariable): Adds a mechanism to map
+	local variables to fields in a proxy class.
 
 	* iterators.cs (PopulateProxy): Rename our internal fields to
 	<XXX>.  

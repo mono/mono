@@ -3013,7 +3013,7 @@ namespace Mono.CSharp {
 
 			bool old_check_state = ec.ConstantCheckState;
 			ec.ConstantCheckState = (flags & Flags.Unchecked) == 0;
-			bool remap_locals = ec.RemapLocals;
+			bool remap_locals = ec.RemapToProxy;
 				
 			//
 			// Process this block variables
@@ -4224,7 +4224,7 @@ namespace Mono.CSharp {
 			if (expr_type == null)
 				return false;
 
-			if (ec.RemapLocals){
+			if (ec.RemapToProxy){
 				Report.Error (-210, loc, "Fixed statement not allowed in iterators");
 				return false;
 			}

@@ -223,10 +223,10 @@ namespace Mono.CSharp {
 		public bool InIterator;
 		
 		/// <summary>
-		///   Whether remapping of local variables is turned on.
+		///   Whether remapping of locals, parameters and fields is turned on.
 		///   Used by iterators and anonymous methods.
 		/// </summary>
-		public bool RemapLocals;
+		public bool RemapToProxy;
 
 		/// <summary>
 		///   Whether we are in a Catch block
@@ -279,7 +279,7 @@ namespace Mono.CSharp {
 			
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;
-			RemapLocals = InIterator;
+			RemapToProxy = InIterator;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
@@ -612,6 +612,7 @@ namespace Mono.CSharp {
 		public void EmitThis ()
 		{
 			ig.Emit (OpCodes.Ldarg_0);
+
 			if (!IsStatic){
 				if (InIterator)
 					ig.Emit (OpCodes.Ldfld, IteratorHandler.Current.this_field);

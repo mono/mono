@@ -152,6 +152,7 @@ namespace Mono.CSharp {
 		// Used to reference fields on the container class (instance methods)
 		//
 		public FieldBuilder this_field;
+		public FieldBuilder enumerable_this_field;
 
 		//
 		// The state as we generate the iterator
@@ -319,10 +320,21 @@ namespace Mono.CSharp {
 
 			enumerable_proxy_class.DefineMethodOverride  (getenumerator_method, TypeManager.ienumerable_getenumerator_void);
 			ILGenerator ig = getenumerator_method.GetILGenerator ();
+
+			if (enumerable_this_field != null){
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, enumerable_this_field);
+			}
 			ig.Emit (OpCodes.Newobj, (ConstructorInfo) enumerator_proxy_constructor);
 			ig.Emit (OpCodes.Ret);
 		}
 
+		void LoadArgs (ILGenerator ig)
+		{
+			if (this_field != null)
+				ig.Emit (OpCodes.Ldarg_0);
+		}
+		
 		//
 		// Called back from Yield
 		//
@@ -368,20 +380,54 @@ namespace Mono.CSharp {
 				TypeManager.object_type, proxy_base_interfaces);
 
 			TypeManager.RegisterBuilder (enumerator_proxy_class, proxy_base_interfaces);
+
+			//
+			// Define our fields
+			//
+			pc_field = enumerator_proxy_class.DefineField ("PC", TypeManager.int32_type, FieldAttributes.Private);
+			current_field = enumerator_proxy_class.DefineField ("current", IteratorType, FieldAttributes.Private);
+			if ((modifiers & Modifiers.STATIC) == 0)
+				this_field = enumerator_proxy_class.DefineField ("THIS", container.TypeBuilder, FieldAttributes.Private);
+
 			//
 			// Define a constructor 
 			//
 			// FIXME: currently its parameterless
+			Type [] constructor_types;
+			Parameters constructor_parameters;
+			
+			if (this_field == null){
+				constructor_types = TypeManager.NoTypes;
+				constructor_parameters = Parameters.EmptyReadOnlyParameters;
+			} else {
+				constructor_types = new Type [1];
+				constructor_types [0] = container.TypeBuilder;
+
+				Parameter THIS = new Parameter (new TypeExpr (container.TypeBuilder, loc), "this", Parameter.Modifier.NONE, null);
+				Parameter [] pars = new Parameter [1];
+				pars [0] = THIS;
+				constructor_parameters = new Parameters (pars, null, loc);
+			}
+			
 			enumerator_proxy_constructor = enumerator_proxy_class.DefineConstructor (
 				MethodAttributes.Public | MethodAttributes.HideBySig |
 				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-				CallingConventions.HasThis, TypeManager.NoTypes);
-			InternalParameters parameter_info = new InternalParameters (TypeManager.NoTypes, Parameters.EmptyReadOnlyParameters);
-			TypeManager.RegisterMethod (enumerator_proxy_constructor, parameter_info, TypeManager.NoTypes);
+				CallingConventions.HasThis, constructor_types);
+			InternalParameters parameter_info = new InternalParameters (constructor_types, constructor_parameters);
+			TypeManager.RegisterMethod (enumerator_proxy_constructor, parameter_info, constructor_types);
 
+			//
+			// Our constructor
+			//
 			ILGenerator ig = enumerator_proxy_constructor.GetILGenerator ();
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Call, TypeManager.object_ctor);
+
+			if (this_field != null){
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldarg_1);
+				ig.Emit (OpCodes.Stfld, this_field);
+			}
 			ig.Emit (OpCodes.Ret);
 		}
 
@@ -404,16 +450,40 @@ namespace Mono.CSharp {
 			//
 			// Constructor
 			//
+			Type [] constructor_types;
+			Parameters constructor_parameters;
+				
+			if ((modifiers & Modifiers.STATIC) != 0){
+				constructor_types = TypeManager.NoTypes;
+				constructor_parameters = Parameters.EmptyReadOnlyParameters;
+			} else {
+				enumerable_this_field = enumerable_proxy_class.DefineField (
+					"THIS", container.TypeBuilder, FieldAttributes.Private);
+				
+				constructor_types = new Type [1];
+				constructor_types [0] = container.TypeBuilder;
+
+				Parameter THIS = new Parameter (new TypeExpr (container.TypeBuilder, loc), "this", Parameter.Modifier.NONE, null);
+				Parameter [] pars = new Parameter [1];
+				pars [0] = THIS;
+				constructor_parameters = new Parameters (pars, null, loc);
+			}
+			
 			enumerable_proxy_constructor = enumerable_proxy_class.DefineConstructor (
 				MethodAttributes.Public | MethodAttributes.HideBySig |
 				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-				CallingConventions.HasThis, TypeManager.NoTypes);
-			InternalParameters parameter_info = new InternalParameters (TypeManager.NoTypes, Parameters.EmptyReadOnlyParameters);
-			TypeManager.RegisterMethod (enumerable_proxy_constructor, parameter_info, TypeManager.NoTypes);
+				CallingConventions.HasThis, constructor_types);
+			InternalParameters parameter_info = new InternalParameters (constructor_types, constructor_parameters);
+			TypeManager.RegisterMethod (enumerable_proxy_constructor, parameter_info, constructor_types);
 			
 			ILGenerator ig = enumerable_proxy_constructor.GetILGenerator ();
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Call, TypeManager.object_ctor);
+			if (enumerable_this_field != null){
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldarg_1);
+				ig.Emit (OpCodes.Stfld, enumerable_this_field);
+			}
 			ig.Emit (OpCodes.Ret);
 		}
 
@@ -422,11 +492,6 @@ namespace Mono.CSharp {
 		//
 		void PopulateProxy ()
 		{
-			pc_field = enumerator_proxy_class.DefineField ("PC", TypeManager.int32_type, FieldAttributes.Private);
-			current_field = enumerator_proxy_class.DefineField ("current", IteratorType, FieldAttributes.Private);
-			if ((modifiers & Modifiers.STATIC) == 0)
-				this_field = enumerator_proxy_class.DefineField ("THIS", container.TypeBuilder, FieldAttributes.Private);
-			
 			RootContext.RegisterHelperClass (enumerator_proxy_class);
 			
 			Create_MoveNext ();
@@ -502,6 +567,8 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
+				handler.LoadArgs (ec.ig);
+				
 				if (handler.return_type == TypeManager.ienumerable_type)
 					ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) handler.enumerable_proxy_constructor);
 				else 

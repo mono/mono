@@ -3381,7 +3381,6 @@ namespace Mono.CSharp {
 
 			vi.Assigned = true;
 
-
 			if (vi.LocalBuilder == null){
 				ec.EmitThis ();
 				source.Emit (ec);
