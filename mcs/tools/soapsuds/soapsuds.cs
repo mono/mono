@@ -16,6 +16,17 @@ using System.IO;
 
 public class Driver
 {
+	static void Main (string[] args)
+	{
+		Runner run = new Runner (args);
+		AppDomain domain = AppDomain.CreateDomain ("runner", null, Directory.GetCurrentDirectory(), "", false);
+		domain.DoCallBack (new CrossAppDomainDelegate (run.Main));
+	}
+}
+
+[Serializable]
+class Runner
+{
 	static bool logo = true;
 	static string inputUrl = null;
 	static string inputTypes = null;
@@ -39,7 +50,14 @@ public class Driver
 	static string httpProxyName = null;
 	static string httpProxyPort = null;
 	
-	static void Main (string[] args)
+	string[] args;
+	
+	public Runner (string[] args)
+	{
+		this.args = args;
+	}
+	
+	public void Main ()
 	{
 		try
 		{
