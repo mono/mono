@@ -53,6 +53,8 @@ namespace System.Web.UI
                 private static readonly object LoadEvent = new object();
                 private static readonly object PreRenderEvent = new object();
                 private static readonly object UnloadEvent = new object();
+                private static string[] defaultNameArray;
+		private string _templateSourceDir;
 		private string uniqueID;
                 private string _userId;
 		private bool id_set;
@@ -85,6 +87,13 @@ namespace System.Web.UI
  
 		DataBindingCollection dataBindings;
 		Hashtable pendingVS; // may hold unused viewstate data from child controls
+		
+		static Control()
+		{
+			defaultNameArray = new string[100];
+			for (int i = 0 ; i < 100 ; i++)
+				defaultNameArray[i] = "_ctrl"+i;
+		}
 
                 public Control()
                 {
@@ -224,7 +233,14 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[WebSysDescription ("A virtual directory containing the parent of the control.")]
                 public virtual string TemplateSourceDirectory {
-                        get { return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; }
+                        get 
+			{ 
+				if (_templateSourceDir == null)
+				{
+					_templateSourceDir =(_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; 
+				}
+				return _templateSourceDir;
+			}
                 }
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -377,7 +393,14 @@ namespace System.Web.UI
 		
 		string GetDefaultName ()
 		{
-			return "_ctrl" + defaultNumberID++;
+			string defaultName;
+			if (defaultNumberID >99)
+				defaultName = "_ctrl" + defaultNumberID++;
+			else
+			{
+				defaultName = defaultNameArray[defaultNumberID++];
+			}
+			return defaultName;
 		}
 		
 		void NullifyUniqueID ()
@@ -608,9 +631,15 @@ namespace System.Web.UI
                 {
                         if (_renderMethodDelegate != null)
                                 _renderMethodDelegate(writer, this);
-                        else if (_controls != null)
-                                foreach (Control c in _controls)
-                                        c.RenderControl(writer);
+			else if (HasChildren)
+			{
+				int len = Controls.Count;
+				for (int i=0;i<len;i++)
+				{
+					Control c = Controls[i];
+					c.RenderControl(writer);
+				}
+			}
                 }
 
                 protected virtual object SaveViewState ()
@@ -756,11 +785,15 @@ namespace System.Web.UI
 		
 		void DataBindChildren ()
 		{
-			if (_controls == null)
+			if (!HasChildren)
 				return;
 			
-			foreach (Control c in _controls)
+			int len = Controls.Count;
+			for (int i=0;i<len;i++)
+			{
+				Control c = Controls[i];
 				c.DataBind();
+			}
 		}
 
 
@@ -806,18 +839,26 @@ namespace System.Web.UI
                 internal void LoadRecursive()
                 {
                         OnLoad (EventArgs.Empty);
-                        if (_controls != null) {
-				foreach (Control c in _controls)
+                        if (HasChildren) {
+				int len = Controls.Count;
+				for (int i=0;i<len;i++)
+				{
+					Control c = Controls[i];
 					c.LoadRecursive ();
+				}
 			}
 			loaded = true;
                 }
 
                 internal void UnloadRecursive(Boolean dispose)
                 {
-                        if (_controls != null) {
-				foreach (Control c in _controls)
+			if (HasChildren) {
+				int len = Controls.Count;
+				for (int i=0;i<len;i++)
+				{
+					Control c = Controls[i];					
 					c.UnloadRecursive (dispose);
+				}
 			}
 
                         OnUnload (EventArgs.Empty);
@@ -830,11 +871,15 @@ namespace System.Web.UI
 			if (_visible) {
 				EnsureChildControls ();
 				OnPreRender (EventArgs.Empty);
-				if (_controls == null)
+				if (!HasChildren)
 					return;
-
-				foreach (Control c in _controls)
+				
+				int len = Controls.Count;
+				for (int i=0;i<len;i++)
+				{
+					Control c = Controls[i];
 					c.PreRenderRecursiveInternal ();
+				}
 			}
 			prerendered = true;
                 }
@@ -850,13 +895,15 @@ namespace System.Web.UI
 				    namingContainer.autoID)
 					namingContainer._userId = namingContainer.GetDefaultName () + "b";
 
-				foreach (Control c in _controls) {
+				int len = Controls.Count;
+				for (int i=0;i<len;i++)
+				{
+					Control c = Controls[i];
 					c._page = Page;
 					c._namingContainer = namingContainer;
 					if (namingContainer != null && c._userId == null && c.autoID)
 						c._userId = namingContainer.GetDefaultName () + "c";
-
-					c.InitRecursive (namingContainer);
+					c.InitRecursive (namingContainer);	
 				}
 			}
 
@@ -876,19 +923,26 @@ namespace System.Web.UI
 			ArrayList controlStates = null;
 
 			int idx = -1;
-			foreach (Control ctrl in Controls) {
-				object ctrlState = ctrl.SaveViewStateRecursive ();
-				idx++;
-				if (ctrlState == null)
-					continue;
+			if (HasChildren)
+			{
+				int len = Controls.Count;
+				for (int i=0;i<len;i++)
+				{
+					Control ctrl = Controls[i];
+					object ctrlState = ctrl.SaveViewStateRecursive ();
+					idx++;
+					if (ctrlState == null)
+						continue;
 
-				if (controlList == null) {
-					controlList = new ArrayList ();
-					controlStates = new ArrayList ();
+					if (controlList == null) 
+					{
+						controlList = new ArrayList ();
+						controlStates = new ArrayList ();
+					}
+
+					controlList.Add (idx);
+					controlStates.Add (ctrlState);
 				}
-
-				controlList.Add (idx);
-				controlStates.Add (ctrlState);
 			}
 
 			object thisState = SaveViewState ();

@@ -1,5 +1,11 @@
 2004-07-27 Alon Gazit <along@mainsoft.com>
 
+	* Control.cs: Changed the implementation of TemplateSourceDirectory
+	and GetDefaultName(). replaced foreach statements with for statements, 
+	in order to improve performence.
+
+2004-07-27 Alon Gazit <along@mainsoft.com>
+
 	* Page.cs: changed the implementation of GetViewStateString().
 	if the view state object is null there is no need to perform 
 	Serialization.
