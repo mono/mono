@@ -39,7 +39,7 @@ Test cases listed by Category:
 
 * Flow Analysis
 
-  test-154.cs test-162.cs
+  test-154.cs test-162.cs test-185.cs
 
 * Type Containers
 
@@ -169,6 +169,10 @@ test-175.cs
 -----------
 Check for user-defined implicit conversions if both arguments of a
 binary operator are of a user-defined type.  Bug #30443.
+
+test-185.cs
+-----------
+Flow analysis wrt. infinite loops.  Bug #37708.
 
 verify-1.cs
 -----------
