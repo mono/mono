@@ -1,5 +1,7 @@
 2005-01-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c cpu-pentium.md: More fixes for usage of global registers.
+
 	* mini-amd64.c (mono_arch_local_regalloc): Port some regalloc fixes 
 	related to global registers from the amd64 port.
 
