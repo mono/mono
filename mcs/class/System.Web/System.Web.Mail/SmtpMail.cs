@@ -3,7 +3,7 @@
 //
 // Author:
 //    Lawrence Pit (loz@cable.a2000.nl)
-//
+//    Per Arneng (pt99par@student.bth.se) (SmtpMail.Send)
 //
 
 using System;
