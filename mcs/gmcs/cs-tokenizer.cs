@@ -2041,6 +2041,7 @@ namespace Mono.CSharp
 					col = 0;
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
+					comments_seen = false;
 					continue;
 				}
 
@@ -2069,6 +2070,7 @@ namespace Mono.CSharp
 						}
 						any_token_seen |= tokens_seen;
 						tokens_seen = false;
+						comments_seen = false;
 						continue;
 					} else if (d == '*'){
 						getChar ();
@@ -2108,6 +2110,11 @@ namespace Mono.CSharp
 								col = 0;
 								any_token_seen |= tokens_seen;
 								tokens_seen = false;
+								// 
+								// Reset 'comments_seen' just to be consistent.
+								// It doesn't matter either way, here.
+								//
+								comments_seen = false;
 							}
 						}
 						if (docAppend)
