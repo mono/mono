@@ -1,5 +1,8 @@
 2004-08-14  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.c (mono_main): Call mono_trace_parse_options earlier so it
+	can trace methods compiled during mini_init () too.
+
 	* cpu-amd64.md mini-amd64.c (mono_arch_output_basic_block): Handle 
 	CEE_CONV_U4.
 
