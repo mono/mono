@@ -501,10 +501,10 @@ namespace System
 				throw new ArgumentOutOfRangeException ("length");
 
 			if (source_idx < 0)
-				throw new ArgumentException ("source_idx");
+				throw new ArgumentOutOfRangeException ("source_idx");
 
 			if (dest_idx < 0)
-				throw new ArgumentException ("dest_idx");
+				throw new ArgumentOutOfRangeException ("dest_idx");
 
 			if (FastCopy (source, source_idx, dest, dest_idx, length))
 				return;

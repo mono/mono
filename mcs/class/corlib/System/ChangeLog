@@ -1,4 +1,9 @@
 
+Wed Jun 18 18:11:30 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Array.cs: throw ArgumentOutOfRangeException in Copy if needed
+	(patch by tum@veridicus.com (Thong (Tum) Nguyen)).
+
 2003-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoType.cs: don't throw nullref when the return type for a property
