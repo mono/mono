@@ -69,11 +69,12 @@ namespace Mono.Xml.Native
 		public void InsertParameterEntityBuffer (string value)
 		{
 			this.peBuffer.Insert (0, ' ' + value + ' ');
+			peStored = true;
 		}
 
 		public int PeekChar ()
 		{
-			if (peBuffer.Length > 0)
+			if (peStored)
 				return peBuffer [0];
 
 			if (can_seek)
@@ -91,9 +92,10 @@ namespace Mono.Xml.Native
 		{
 			int ch;
 
-			if (peBuffer.Length > 0) {
+			if (peStored) {
 				ch = peBuffer [0];
 				peBuffer.Remove (0, 1);
+				peStored = peBuffer.Length > 0;
 				// I decided not to add character to currentTag with respect to PERef value
 				return ch;
 			}
@@ -128,7 +130,7 @@ namespace Mono.Xml.Native
 		private char [] wsChars = new char [] {' ', '\r', '\n', '\t'};
 		public bool HasPEBuffer {
 			get {
-				if (peBuffer.Length == 0)
+				if (!peStored)
 					return false;
 				else if (peBuffer.ToString ().Trim (wsChars).Length == 0)
 					return false;
@@ -194,6 +196,7 @@ namespace Mono.Xml.Native
 		int parsedValueEnd;
 		StringBuilder peBuffer = new StringBuilder ();
 		string baseURI;
+		bool peStored = false;
 
 		private int ParseCharReference (string name)
 		{
