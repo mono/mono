@@ -1,3 +1,8 @@
+2003-12-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TableItemStyle.cs: merge TableItemStyle properties when Style is
+	empty. Fixes bug #51689. Patch by Alon Gazit <along@mainsoft.com>.
+
 2003-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RadioButtonList.cs: render tabindex attribute if needed. Fixes bug

@@ -128,8 +128,8 @@ namespace System.Web.UI.WebControls
 		{
 			if(s!=null && !s.IsEmpty)
 			{
-				if (base.IsEmpty) {
-					base.CopyFrom (s);
+				if (IsEmpty) {
+					CopyFrom (s);
 					return;
 				}
 				base.MergeWith(s);
