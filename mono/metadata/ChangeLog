@@ -1,5 +1,8 @@
 2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (build_compressed_metadata): Fix invalid memory read 
+	detected by valgrind.
+	
 	* reflection.c (mono_reflection_get_type): Avoid triggering a 
 	TypeResolve multiple times for the same type. Fixes #65577.
 
