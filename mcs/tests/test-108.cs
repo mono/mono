@@ -9,6 +9,14 @@ class X {
 			return 1;
 		}
 
+		if (true)
+			i = 2;
+		else
+			i = 3;
+
+		if (i != 2)
+			return 5;
+		
 		while (true){
 			i++;
 			if (i == 10)
