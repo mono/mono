@@ -205,6 +205,79 @@ namespace Mono.Data.TdsClient.Internal {
 			return isOkay;
 		}
 
+		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
+		{
+			int precision;
+			int scale;
+			int totalLength = comm.GetTdsShort ();
+			int bytesRead = 0;
+
+			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
+
+			while (bytesRead < totalLength) {
+				scale = -1;
+				precision = -1;
+
+				int bufLength = -1;
+				//int dispSize = -1;
+				byte[] flagData = new byte[4];
+				for (int i = 0; i < 4; i += 1) {
+					flagData[i] = comm.GetByte ();
+					bytesRead += 1;
+				}
+				bool nullable = (flagData[2] & 0x01) > 0;
+				bool caseSensitive = (flagData[2] & 0x02) > 0;
+				bool writable = (flagData[2] & 0x0c) > 0;
+				bool autoIncrement = (flagData[2] & 0x10) > 0;
+
+				string tableName = String.Empty;
+				TdsColumnType columnType = (TdsColumnType) comm.GetByte ();
+
+				bytesRead += 1;
+
+				if (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image) {
+					comm.Skip (4);
+					bytesRead += 4;
+
+					int tableNameLength = comm.GetTdsShort ();
+					bytesRead += 2;
+					tableName = comm.GetString (tableNameLength);
+					bytesRead += tableNameLength;
+					bufLength = 2 << 31 - 1;
+				}
+				else if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
+					bufLength = comm.GetByte ();
+					bytesRead += 1;
+					precision = comm.GetByte ();
+					bytesRead += 1;
+					scale = comm.GetByte ();
+					bytesRead += 1;
+				}
+				else if (IsFixedSizeColumn (columnType))
+					bufLength = LookupBufferSize (columnType);
+				else {
+					bufLength = (int) comm.GetByte () & 0xff;
+					bytesRead += 1;
+				}
+
+				int index = result.Add (new TdsColumnSchema ());
+				result[index].NumericPrecision = precision;
+				result[index].NumericScale = scale;
+				result[index].ColumnSize = bufLength;
+				result[index].ColumnName = columnNames[index];
+				result[index].ColumnType = columnType;
+				result[index].TableName = tableName;
+				result[index].Nullable = nullable;
+				result[index].Writable = writable;
+			}
+
+			//int skipLength = totalLength - bytesRead;
+			//if (skipLength != 0)
+				//throw new TdsException ("skipping");
+
+			return result;
+		}
+
 		#endregion // Methods
 	}
 }

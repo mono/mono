@@ -1,3 +1,25 @@
+2002-10-28  Tim Coleman (tim@timcoleman.com)
+	* Tds.cs:
+		Add much handling to get the following types
+		working in queries: string, int, decimal
+		All sorts of other bug fixing and general
+		purpose hackery.
+	* Tds42.cs:
+	* Tds50.cs:
+	* Tds70.cs:
+		ProcessColumnInfo was abstracted in Tds.cs
+		and subclassed, because 7.0 provides the information
+		in a different format.
+	* TdsColumnSchema.cs:
+		Added size, precision, scale
+	* TdsComm.cs:
+		Fixed GetString because it wasn't working properly
+		with TDS 7.0.
+	* TdsMessage.cs:
+		Change state and severity to byte instead of int
+		because that is more consitent.
+		
+
 2002-10-25  Tim Coleman (tim@timcoleman.com)
 	* TdsPacketErrorResultCollection.cs:
 		New class added for exporting errors

@@ -16,8 +16,8 @@ namespace Mono.Data.TdsClient.Internal {
 		#region Fields
 
 		int number = 0;
-		int state = 0;
-		int severity = 0;
+		byte state = 0;
+		byte severity = 0;
 		string message = String.Empty;
 		string server = String.Empty;
 		string procName = String.Empty;
@@ -47,7 +47,7 @@ namespace Mono.Data.TdsClient.Internal {
 			set { procName = value; }
 		}
 
-		public int State {
+		public byte State {
 			get { return state; }
 			set { state = value; }
 		}
@@ -57,7 +57,7 @@ namespace Mono.Data.TdsClient.Internal {
 			set { server = value; }
 		}
 
-		public int Severity {
+		public byte Severity {
 			get { return severity; }
 			set { severity = value; }
 		}

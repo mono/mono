@@ -19,6 +19,9 @@ namespace Mono.Data.TdsClient.Internal {
 		bool nullable;
 		bool writable;
 		int ordinal;
+		int size;
+		byte precision;
+		byte scale;
 
 		#endregion // Fields
 
@@ -40,6 +43,21 @@ namespace Mono.Data.TdsClient.Internal {
 		public int ColumnOrdinal {
 			get { return ordinal; }
 			set { ordinal = value; }
+		}
+
+		public byte NumericPrecision {
+			get { return precision; }
+			set { precision = value; }
+		}
+
+		public byte NumericScale {
+			get { return scale; }
+			set { scale = value; }
+		}
+
+		public int ColumnSize {
+			get { return size; }
+			set { size = value; }
 		}
 
 		public string ColumnName {

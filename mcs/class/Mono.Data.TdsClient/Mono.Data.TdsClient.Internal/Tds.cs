@@ -210,13 +210,15 @@ namespace Mono.Data.TdsClient.Internal {
 			bool done = false;
 			do {
 				result = ProcessSubPacket ();
-				switch (result.GetType ().ToString ()) {
-				case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
-					currentRow = (TdsPacketRowResult) result;
-					return true;
-				case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
-					done = !((TdsPacketEndTokenResult) result).MoreResults;
-					break;
+				if (result != null) {
+					switch (result.GetType ().ToString ()) {
+					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
+						currentRow = (TdsPacketRowResult) result;
+						return true;
+					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
+						done = !((TdsPacketEndTokenResult) result).MoreResults;
+						break;
+					}
 				}
 			} while (!done);
 
@@ -230,19 +232,21 @@ namespace Mono.Data.TdsClient.Internal {
 			do {
 				result = ProcessSubPacket ();
 
-				switch (result.GetType ().ToString ()) {
-				case "Mono.Data.TdsClient.Internal.TdsPacketColumnNamesResult" :
-					columnNames = (TdsPacketColumnNamesResult) result;
-					break;
-				case "Mono.Data.TdsClient.Internal.TdsPacketColumnInfoResult" :
-					columnInfo = (TdsPacketColumnInfoResult) result;
-					return true;
-				case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
-					currentRow = (TdsPacketRowResult) result;
-					break;
-				case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
-					done = !((TdsPacketEndTokenResult) result).MoreResults;
-					break;
+				if (result != null) {
+					switch (result.GetType ().ToString ()) {
+					case "Mono.Data.TdsClient.Internal.TdsPacketColumnNamesResult" :
+						columnNames = (TdsPacketColumnNamesResult) result;
+						break;
+					case "Mono.Data.TdsClient.Internal.TdsPacketColumnInfoResult" :
+						columnInfo = (TdsPacketColumnInfoResult) result;
+						return true;
+					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
+						currentRow = (TdsPacketRowResult) result;
+						break;
+					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
+						done = !((TdsPacketEndTokenResult) result).MoreResults;
+						break;
+					}
 				}
 			} while (!done);
 
@@ -262,7 +266,7 @@ namespace Mono.Data.TdsClient.Internal {
 				if (wideChars)
 					result = comm.GetString (len / 2);
 				else
-					result = comm.GetString (len);
+					result = comm.GetString (len, false);
 
 				if (tdsVersion < TdsVersion.tds70 && ((string) result).Equals (" "))
 					result = "";
@@ -272,9 +276,20 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		private object GetDecimalValue (int scale)
+		private object GetDecimalValue (byte scale)
 		{
-			throw new NotImplementedException ();
+			int[] bits = new int[3] {0,0,0};
+
+			int len = (comm.GetByte() & 0xff) - 1;
+			bool positive = (comm.GetByte () == 1);
+
+			if (len > 16)
+				throw new OverflowException ();
+
+			for (int i = 0, index = 0; i < len && i < 12; i += 4, index += 1) 
+				bits[index] = comm.GetTdsInt ();
+
+			return new Decimal (bits[0], bits[1], bits[2], !positive, scale);
 		}
 
 		private object GetDateTimeValue (TdsColumnType type)
@@ -388,7 +403,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		private bool IsFixedSizeColumn (TdsColumnType columnType)
+		protected bool IsFixedSizeColumn (TdsColumnType columnType)
 		{
 			switch (columnType) {
 				case TdsColumnType.Int1 :
@@ -496,75 +511,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		private TdsPacketColumnInfoResult ProcessColumnInfo ()
-		{
-			int precision;
-			int scale;
-			int totalLength = comm.GetTdsShort ();
-			int bytesRead = 0;
-
-			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
-
-			while (bytesRead < totalLength) {
-				scale = -1;
-				precision = -1;
-
-				int bufLength = -1;
-				//int dispSize = -1;
-				byte[] flagData = new byte[4];
-				for (int i = 0; i < 4; i += 1) {
-					flagData[i] = comm.GetByte ();
-					bytesRead += 1;
-				}
-				bool nullable = (flagData[2] & 0x01) > 0;
-				bool caseSensitive = (flagData[2] & 0x02) > 0;
-				bool writable = (flagData[2] & 0x0c) > 0;
-				bool autoIncrement = (flagData[2] & 0x10) > 0;
-
-				string tableName = String.Empty;
-				TdsColumnType columnType = (TdsColumnType) comm.GetByte ();
-
-				bytesRead += 1;
-
-				if (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image) {
-					comm.Skip (4);
-					bytesRead += 4;
-
-					int tableNameLength = comm.GetTdsShort ();
-					bytesRead += 2;
-					tableName = comm.GetString (tableNameLength);
-					bytesRead += tableNameLength;
-					bufLength = 2 << 31 - 1;
-				}
-				else if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
-					bufLength = comm.GetByte ();
-					bytesRead += 1;
-					precision = comm.GetByte ();
-					bytesRead += 1;
-					scale = comm.GetByte ();
-					bytesRead += 1;
-				}
-				else if (IsFixedSizeColumn (columnType))
-					bufLength = LookupBufferSize (columnType);
-				else {
-					bufLength = (int) comm.GetByte () & 0xff;
-					bytesRead += 1;
-				}
-
-				int index = result.Add (new TdsColumnSchema ());
-				result[index].ColumnName = columnNames[index];
-				result[index].ColumnType = columnType;
-				result[index].TableName = tableName;
-				result[index].Nullable = nullable;
-				result[index].Writable = writable;
-			}
-
-			//int skipLength = totalLength - bytesRead;
-			//if (skipLength != 0)
-				//throw new TdsException ("skipping");
-
-			return result;
-		}
+		protected abstract TdsPacketColumnInfoResult ProcessColumnInfo ();
 
 		[MonoTODO]
 		private TdsPacketEndTokenResult ProcessEndToken (TdsPacketSubType type)
@@ -705,8 +652,11 @@ namespace Mono.Data.TdsClient.Internal {
 		{
 			TdsPacketRowResult result = new TdsPacketRowResult (context);
 
-			foreach (TdsColumnSchema info in columnInfo) 
-				result.Add (GetColumnValue (info.ColumnType));
+			int i = 0;
+			foreach (TdsColumnSchema info in columnInfo) {
+				result.Add (GetColumnValue (info.ColumnType, false, i));
+				i += 1;
+			}
 
 			return result;
 		}
@@ -718,17 +668,23 @@ namespace Mono.Data.TdsClient.Internal {
 			comm.Skip (5);
 
 			TdsColumnType colType = (TdsColumnType) comm.GetByte ();
-			return new TdsPacketOutputParam (GetColumnValue (colType));
+			return new TdsPacketOutputParam (GetColumnValue (colType, true));
 		}
 
-		private object GetColumnValue (TdsColumnType colType)
+		private object GetColumnValue (TdsColumnType colType, bool outParam)
+		{
+			return GetColumnValue (colType, outParam, -1);
+		}
+
+		private object GetColumnValue (TdsColumnType colType, bool outParam, int ordinal)
 		{
 			int len;
 			object element = null;
 
 			switch (colType) {
 			case TdsColumnType.IntN :
-				comm.GetByte ();
+				if (outParam)
+					comm.GetByte (); // column size
 				element = GetIntValue (colType);
 				break;
 			case TdsColumnType.Int1 :
@@ -750,9 +706,9 @@ namespace Mono.Data.TdsClient.Internal {
 				break;
 			case TdsColumnType.Char :
 			case TdsColumnType.VarChar :
-				if (comm.Peek () == 0xd1)
-					comm.Skip (1);
-				element = GetStringValue (false, true);
+				if (outParam)
+					comm.GetByte (); // column size
+				element = GetStringValue (false, false);
 				break;
 			case TdsColumnType.BigVarBinary :
 				comm.GetTdsShort ();
@@ -766,7 +722,7 @@ namespace Mono.Data.TdsClient.Internal {
 			case TdsColumnType.NChar :
 			case TdsColumnType.NVarChar :
 				comm.GetByte ();
-				element = GetStringValue (true, true);
+				element = GetStringValue (true, false);
 				break;
 			case TdsColumnType.Real :
 				element = ReadFloatN (4);
@@ -782,14 +738,21 @@ namespace Mono.Data.TdsClient.Internal {
 			case TdsColumnType.SmallMoney :
 			case TdsColumnType.Money :
 			case TdsColumnType.MoneyN :
-				comm.GetByte ();
+				if (outParam)
+					comm.GetByte (); // column size
 				element = GetMoneyValue (colType);
 				break;
 			case TdsColumnType.Numeric :
 			case TdsColumnType.Decimal :
-				comm.GetByte ();
-				comm.GetByte ();
-				int scale = comm.GetByte ();
+				byte scale;
+				if (outParam) {
+					comm.GetByte (); // column size
+					comm.GetByte (); // precision
+					scale = comm.GetByte ();
+				}
+				else 
+					scale = columnInfo[ordinal].NumericScale;
+
 				element = GetDecimalValue (scale);
 				break;
 			case TdsColumnType.DateTimeN :
@@ -878,6 +841,7 @@ namespace Mono.Data.TdsClient.Internal {
 				result = ProcessColumnNames ();
 				break;
 			case TdsPacketSubType.ColumnInfoToken :
+			case TdsPacketSubType.ColumnMetadata :
 				result = ProcessColumnInfo ();
 				break;
 			case TdsPacketSubType.Unknown0xA5 :
@@ -887,7 +851,6 @@ namespace Mono.Data.TdsClient.Internal {
 				result = new TdsPacketUnknown (subType);
 				break;
 			case TdsPacketSubType.TableName :
-				Console.WriteLine ("Process table name");
 				result = ProcessTableName ();
 				break;
 			case TdsPacketSubType.Order :
@@ -901,9 +864,6 @@ namespace Mono.Data.TdsClient.Internal {
 			case TdsPacketSubType.Row :
 				result = LoadRow (null);
 				break;
-			case TdsPacketSubType.ColumnMetadata :
-				result = ProcessTds7Result ();
-				break;
 			default:
 				return null;
 			}
@@ -916,15 +876,6 @@ namespace Mono.Data.TdsClient.Internal {
 			int totalLength = comm.GetTdsShort ();
 			comm.Skip (totalLength);
 			return new TdsPacketTableNameResult ();
-		}
-
-		[MonoTODO ("complete")]
-		private TdsPacketResult ProcessTds7Result ()
-		{
-			int numColumns = comm.GetTdsShort ();
-
-			return null;
-
 		}
 
 		private object ReadFloatN (int len)

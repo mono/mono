@@ -289,7 +289,15 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public string GetString (int len)
 		{
-			if (tdsVersion == TdsVersion.tds70) {
+			if (tdsVersion == TdsVersion.tds70) 
+				return GetString (len, true);
+			else
+				return GetString (len, false);
+		}
+
+		public string GetString (int len, bool wide)
+		{
+			if (wide) {
 				char[] chars = new char[len];
 				for (int i = 0; i < len; ++i) {
 					int lo = ((byte) GetByte ()) & 0xFF;

@@ -36,13 +36,13 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public override bool Connect (TdsConnectionParameters connectionParameters)
 		{
-Console.WriteLine ("Connecting...");
 			if (IsConnected)
 				throw new InvalidOperationException ("The connection is already open.");
 
 			bool isOkay = true;
 
 			SetLanguage (connectionParameters.Language);
+			SetCharset ("utf-8");
 
 			byte[] empty = new byte[0];
 			byte pad = (byte) 0;
@@ -172,6 +172,82 @@ Console.WriteLine ("Connecting...");
 			}
 
 			return new String (chars);
+		}
+
+                private bool IsBlobType (TdsColumnType columnType)
+		{
+			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText);
+		}
+
+                private bool IsLargeType (TdsColumnType columnType)
+		{
+			return (columnType == TdsColumnType.NChar || (byte) columnType > 128);
+		}
+
+		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
+		{
+			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
+			int numColumns = comm.GetTdsShort ();
+
+			for (int i = 0; i < numColumns; i += 1) {
+				byte[] flagData = new byte[4];
+				for (int j = 0; j < 4; j += 1) 
+					flagData[j] = comm.GetByte ();
+
+				bool nullable = (flagData[2] & 0x01) > 0;
+				bool caseSensitive = (flagData[2] & 0x02) > 0;
+				bool writable = (flagData[2] & 0x0c) > 0;
+				bool autoIncrement = (flagData[2] & 0x10) > 0;
+
+				TdsColumnType columnType = (TdsColumnType) (comm.GetByte () & 0xff);
+				if ((byte) columnType == 0xef)
+					columnType = TdsColumnType.NChar;
+			
+				byte xColumnType = 0;
+				if (IsLargeType (columnType)) {
+					xColumnType = (byte) columnType;
+					if (columnType != TdsColumnType.NChar)
+						columnType -= 128;
+				}
+
+				int dispSize = -1;
+				int bufLength;
+				string tableName = "";
+
+				if (IsBlobType (columnType)) {
+					bufLength = comm.GetTdsInt ();
+					tableName = comm.GetString (comm.GetTdsShort ());
+				}
+				else if (IsFixedSizeColumn (columnType))
+					bufLength = LookupBufferSize (columnType);
+				else if (IsLargeType ((TdsColumnType) xColumnType))
+					bufLength = comm.GetTdsShort ();
+				else
+					bufLength = comm.GetByte () & 0xff;
+
+				byte precision = 0;
+				byte scale = 0;
+
+				if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
+					precision = comm.GetByte ();
+					scale = comm.GetByte ();
+				}
+
+				int colNameLength = comm.GetByte ();
+				string columnName = comm.GetString (colNameLength);
+
+				int index = result.Add (new TdsColumnSchema ());
+				result[index].NumericPrecision = precision;
+				result[index].NumericScale = scale;
+				result[index].ColumnSize = bufLength;
+				result[index].ColumnName = columnName;
+				result[index].ColumnType = columnType;
+				result[index].TableName = tableName;
+				result[index].Nullable = nullable;
+				result[index].Writable = writable;
+			}
+
+			return result;
 		}
 
 		#endregion // Methods
