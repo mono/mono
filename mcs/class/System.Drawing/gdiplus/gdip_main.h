@@ -30,8 +30,7 @@
 
 #include <cairo.h>
 #include <cairo-xlib.h>
-#include <mono/jit/jit.h>
-#include <mono/metadata/object.h>
+#include <mono/io-layer/uglify.h>
 
 typedef struct {
 	unsigned int Width;

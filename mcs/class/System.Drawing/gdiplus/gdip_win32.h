@@ -10,7 +10,7 @@
 
 #include <cairo.h>
 #include <cairo-xlib.h>
-#include <mono/jit/jit.h>
+#include <mono/io-layer/uglify.h>
 
 /* sizeof (GDIOBJHDR) = 12 (2 + 2 + 4 + 4) */
 /* offsetof (DC, physDev) = 20 (12 + 4 + 4) */
@@ -69,7 +69,9 @@ typedef struct {
 	RGBQUAD	bmiColors[1];
 } BITMAPINFO, *PBITMAPINFO, *LPBITMAPINFO;
 
+#ifdef __GNUC__
 #    pragma pack(2)
+#endif
 typedef struct
 {
     WORD    bfType;
@@ -78,12 +80,17 @@ typedef struct
     WORD    bfReserved2;
     DWORD   bfOffBits;
 } BITMAPFILEHEADER, *PBITMAPFILEHEADER, *LPBITMAPFILEHEADER;
+#ifdef __GNUC__
 #    pragma pack()
+#endif
 
 #define BFT_BITMAP 0x4d42
 
-
+#ifdef __GNUC__
 #  define __stdcall __attribute__((__stdcall__))
+#else
+#  define __stdcall 
+#endif
 
 extern void* (__stdcall *CreateCompatibleDC_pfn) (void * hdc);
 extern void* (__stdcall *CreateCompatibleBitmap_pfn) (void * hdc, int width, int height);

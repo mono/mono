@@ -176,5 +176,5 @@ DC *_get_DC_by_HDC (int hDC)
 
 void _release_hdc (int hdc)
 {
-	return GDI_ReleaseObj_pfn (hdc);
+	GDI_ReleaseObj_pfn (hdc);
 }

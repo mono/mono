@@ -1,3 +1,8 @@
+2003-11-03  Bernie Solomon <bernard@ugsolutions.com>
+
+	* gdip_main.h, gdip_win32.h, gdip_win32.c:
+	fixes for non-GCC compilers
+
 2003-11-02  Alexandre Pigolkine <pigolkine@gmx.de>
 
 	* bitmap.c 		convert 24/32 bpp images in LockBits
