@@ -1,3 +1,15 @@
+2002-09-26  Martin Baulig  <martin@gnome.org>
+
+	* assembly.c (mono_install_open_assembly_hook): New global
+	function to install a function to be invoked each time a new
+	assembly is loaded.
+	(mono_assembly_open): Run this callback function if set.
+
+	* debug-mono-symfile.c: Put back line numbers for the dynamic
+	symbol file and also record the .il file as source file.  This
+	allows us to install the temporary symbol file as `file.dbg' just
+	like a compiler-generated one.
+
 2002-09-26  Nick Zigarovich <nick@chemlab.org>
 
 	* Corrected typo in gc.c (BOHEM vs BOEHM).
