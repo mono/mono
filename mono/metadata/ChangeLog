@@ -1,3 +1,12 @@
+2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: added 2 new async calls for Socket.
+
+	* socket-io.[ch]: fixed some warnings. Added support for asynchronous
+	IO on *nix systems.
+
+	* threadpool.c: removed unused variable.
+
 2004-04-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c: Handle null properly in PtrToString* icalls. Fixes #57706.

@@ -1,3 +1,12 @@
+2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: fixed leak in async_notifier().
+
+	* sockets.[ch]: added AIO support for sockets and fixed WSAIoctl
+	declaration.
+
+	* threads.c: removed old comment.
+
 2004-04-26  David Waite  <mass@akuma.org>
 
 	* daemon-messages.h:
