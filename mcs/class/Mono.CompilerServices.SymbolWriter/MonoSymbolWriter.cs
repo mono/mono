@@ -81,10 +81,6 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		private SourceMethod current_method = null;
 
-		//
-		// Interface IMonoSymbolWriter
-		//
-
 		public MonoSymbolWriter (string filename)
 		{
 			this.methods = new ArrayList ();
