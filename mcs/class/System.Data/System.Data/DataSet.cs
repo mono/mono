@@ -1767,7 +1767,13 @@ namespace System.Data {
 					// FIXME: Handle prefix mapping correctly.
 					schemaToAdd.Namespaces.Add (prefix, col.Namespace);
 				}
-				att.SchemaTypeName = MapType (col.DataType);
+				if (!col.AllowDBNull)
+					att.Use = XmlSchemaUse.Required;
+
+				if (col.MaxLength > -1)
+					att.SchemaType = GetTableSimpleType (doc, col);
+				else
+					att.SchemaTypeName = MapType (col.DataType);
 				// FIXME: what happens if extended properties are set on attribute columns??
 				schemaAttributes.Add (att);
 			}
