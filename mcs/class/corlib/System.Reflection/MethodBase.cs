@@ -47,7 +47,11 @@ namespace System.Reflection {
 		public extern static MethodBase GetCurrentMethod ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle);
+		private extern static MethodBase GetMethodFromHandleInternal(IntPtr handle);
+
+		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle) {
+			return GetMethodFromHandleInternal (handle.Value);
+		}
 
 		public abstract MethodImplAttributes GetMethodImplementationFlags();
 
