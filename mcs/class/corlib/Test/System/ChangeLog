@@ -1,3 +1,7 @@
+2003-12-08  Patrik Torstensson <p@rxc.se>
+
+	* TypeTest.cs: Added basic tests for GetMethodImpl and GetPropertyImpl
+
 2003-12-08  Nick Drochak <ndrochak@gol.com>
 
 	* DateTimeTest.cs: Little build fix for csc. It doesn't like the

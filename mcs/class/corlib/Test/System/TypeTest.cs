@@ -2,6 +2,7 @@
 //
 // Authors:
 // 	Zoltan Varga (vargaz@freemail.hu)
+//  Patrik Torstensson
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 // 
@@ -9,6 +10,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace MonoTests.System
 {
@@ -21,6 +23,29 @@ namespace MonoTests.System
 	}
 
 	enum TheEnum { A, B, C };
+
+	abstract class Base {
+		public int level;
+
+		public abstract int this [byte i] { get; }
+		public abstract int this [int i] { get; }
+		public abstract void TestVoid();
+		public abstract void TestInt(int i);
+	}
+
+	class DeriveVTable : Base {
+		public override int this [byte i] { get { return 1; } }
+		public override int this [int i] { get { return 1; } }
+		public override void TestVoid() { level = 1; }
+		public override void TestInt(int i) { level = 1; }
+	}
+
+	class NewVTable : DeriveVTable {
+		public new int this [byte i] { get { return 2; } }
+		public new int this [int i] { get { return 2; } }
+		public new void TestVoid() { level = 2; }
+		public new void TestInt(int i) { level = 2; }
+	}
 
 	[TestFixture]
 	public class TypeTest : Assertion
@@ -76,6 +101,26 @@ namespace MonoTests.System
 		[Test]
 		public void TestIsSubclassOf () {
 			Assert (typeof (ICloneable).IsSubclassOf (typeof (object)));
+		}
+
+		[Test]
+		public void TestGetMethodImpl() {
+			// Test binding of new slot methods (using no types)
+			AssertEquals(typeof (Base), typeof (Base).GetMethod("TestVoid").DeclaringType);
+			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetMethod("TestVoid").DeclaringType);
+
+			// Test binding of new slot methods (using types)
+			AssertEquals(typeof (Base), typeof (Base).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
+			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
+		}
+
+		[Test]
+		public void TestGetPropertyImpl() {
+			// Test getting property that is exact
+			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int32) }).DeclaringType);
+
+			// Test getting property that is not exact
+			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int16) }).DeclaringType);
 		}
 	}
 }
