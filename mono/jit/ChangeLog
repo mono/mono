@@ -1,6 +1,8 @@
 2001-09-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* testjit.c (tree_get_address): impl. to fix address bug
+	(tree_get_address): make sure that we can only jump to the first
+	instruction of a tree.
 
 	* x86.brg: emit real code for calls
 
