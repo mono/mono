@@ -1,3 +1,9 @@
+2005-01-12  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70749
+	* attribute.cs (ExtractSecurityPermissionSet): Don't report error
+	for non-CAS & merge permission sets properly.
+
 2005-01-11  Raja R Harinath  <rharinath@novell.com>
 
 	Improve standard-compliance of simple name and member access 

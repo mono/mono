@@ -812,13 +812,11 @@ namespace Mono.CSharp {
 			}
 
 			IPermission perm = sa.CreatePermission ();
-			SecurityAction action;
+			SecurityAction action = GetSecurityActionValue ();
 
 			// IS is correct because for corlib we are using an instance from old corlib
-			if (perm is System.Security.CodeAccessPermission) {
-				action = GetSecurityActionValue ();
-			} else {
-				switch (GetSecurityActionValue ()) {
+			if (!(perm is System.Security.CodeAccessPermission)) {
+				switch (action) {
 					case SecurityAction.Demand:
 						action = (SecurityAction)13;
 						break;
@@ -828,18 +826,18 @@ namespace Mono.CSharp {
 					case SecurityAction.InheritanceDemand:
 						action = (SecurityAction)15;
 						break;
-					default:
-						Error_AttributeEmitError ("Invalid SecurityAction for non-Code Access Security permission");
-						return;
 				}
 			}
 
 			PermissionSet ps = (PermissionSet)permissions [action];
 			if (ps == null) {
-				ps = new PermissionSet (PermissionState.None);
+				ps = new PermissionSet (sa.Unrestricted ? PermissionState.Unrestricted : PermissionState.None);
 				permissions.Add (action, ps);
+			} else if (!ps.IsUnrestricted () && sa.Unrestricted) {
+				ps = ps.Union (new PermissionSet (PermissionState.Unrestricted));
+				permissions [action] = ps;
 			}
-			ps.AddPermission (sa.CreatePermission ());
+			ps.AddPermission (perm);
 		}
 
 		object GetValue (object value)
