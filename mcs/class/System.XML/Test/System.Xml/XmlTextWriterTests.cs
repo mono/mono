@@ -1251,5 +1251,17 @@ namespace MonoTests.System.Xml
 			xtw.WriteRaw ("");
 			AssertEquals (WriteState.Prolog, xtw.WriteState);
 		}
+
+		[Test]
+		public void Indent ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root><test>test<foo></foo>string</test><test>string</test></root>");
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.Formatting = Formatting.Indented;
+			doc.WriteContentTo (xtw);
+			AssertEquals (@"<root>\n  <test>test<foo></foo>string</test>\n  <test>string</test>\n</root>", sw.ToString ().Replace ("\r\n", "\n"));
+		}
 	}
 }
