@@ -1,3 +1,9 @@
+2002-03-07  Nick Drochak  <ndrochak@gol.com>
+
+	* .cvsignore: ignore *.pdb files
+	* nunit.build: Build a version of NUnitCore.dll and NUnitConsole.exe
+	using mono's corlib. Use this to test on Linux under mint and mono.
+
 2002-03-06  Nick Drochak  <ndrochak@gol.com>
 
 	* nunit.build: Exclude obsolete class from build. Probably should
