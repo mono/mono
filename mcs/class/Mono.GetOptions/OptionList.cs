@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace Mono.GetOptions
 {
@@ -189,10 +190,17 @@ namespace Mono.GetOptions
 		{
 			ShowTitleLines();
 			Console.WriteLine(appAboutDetails); 
-			Console.WriteLine();
-			Console.WriteLine("Authors:");
+			StringBuilder sb = new StringBuilder("Authors: ");
+			bool first = true;
 			foreach(string s in appAuthors)
-				Console.WriteLine ("\t" + s);
+			{
+				if (first)
+					first = false;
+				else
+					sb.Append(", ");
+				sb.Append(s);
+			}
+			Console.WriteLine(sb.ToString());
 		}
 
 		private void ShowHelp()
@@ -229,7 +237,7 @@ namespace Mono.GetOptions
 		internal WhatToDoNext DoAbout()
 		{
 			ShowAbout();
-			return WhatToDoNext.GoAhead;
+			return WhatToDoNext.AbandonProgram;
 		}
 
 		internal WhatToDoNext DoHelp()
