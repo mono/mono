@@ -722,7 +722,9 @@ emit_ptr_to_str_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv con
 	case MONO_MARSHAL_CONV_STR_BYVALWSTR:
 		mono_mb_emit_byte (mb, CEE_LDLOC_1);
 		mono_mb_emit_byte (mb, CEE_LDLOC_0);
-		mono_mb_emit_icall (mb, mono_string_from_utf16);
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_FUNC1);
+		mono_mb_emit_byte (mb, MONO_MARSHAL_CONV_LPWSTR_STR);
 		mono_mb_emit_byte (mb, CEE_STIND_I);		
 		break;		
 	case MONO_MARSHAL_CONV_STR_LPTSTR:

@@ -1,5 +1,7 @@
 2005-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_ptr_to_str_conv): Fix 1.0 build.
+	
 	* marshal.c (emit_ptr_to_str_conv): Add support for 
 	ByValTStr -> string conversion. Fixes #71015.
 
