@@ -16,7 +16,18 @@ namespace System {
 		
 		public Version (string version)
 		{
+			int n;
+			string [] vals = version.Split (new Char [] {'.'});
 			
+			n = vals.Length;
+			if (n > 0)
+				major = int.Parse (vals [0]);
+			if (n > 1)
+				minor = int.Parse (vals [1]);
+			if (n > 2)
+				build = int.Parse (vals [2]);
+			if (n > 3)
+				build = int.Parse (vals [3]);
 		}
 		
 		public Version (int major, int minor)
