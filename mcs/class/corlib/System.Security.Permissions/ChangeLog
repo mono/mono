@@ -1,5 +1,10 @@
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* ZoneIdentityPermission.cs: Update to use the common template. Now 
+	pass all unit tests.
+
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* DataProtectionPermission.cs: New permission for NET_2_0. Use common
 	permission template.
 	* DataProtectionPermissionAttribute.cs: New security attribute for 
