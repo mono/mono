@@ -1,8 +1,0 @@
-Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
-Mono.Data.SqliteClient/SqliteCommand.cs
-Mono.Data.SqliteClient/SqliteConnection.cs
-Mono.Data.SqliteClient/SqliteDataReader.cs
-Mono.Data.SqliteClient/SqliteParameter.cs
-Mono.Data.SqliteClient/SqliteParameterCollection.cs
-Mono.Data.SqliteClient/SqliteTransaction.cs

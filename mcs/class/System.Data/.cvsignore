@@ -1,8 +1,0 @@
-.makefrag
-.response
-System.Data.dll
-System.Data_test.dll
-System.Data_test.pdb
-library-deps.stamp
-Temp
-tmp

@@ -1,9 +1,0 @@
-2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* X509ChainElementCollectionTest.cs: New. Unit tests for 
-	X509ChainElementCollection.
-	* X509ChainElementEnumeratorTest.cs: New. Unit tests for 
-	X509ChainElementEnumerator.
-	* X509ChainPolicyTest.cs: New. Unit tests for X509ChainPolicy.
-	* X509ChainTest.cs: New. (Incomplete) Unit tests for X509Chain. 
-	* X509StoreTest.cs: New. (Incomplete) Unit tests for X509Store. 

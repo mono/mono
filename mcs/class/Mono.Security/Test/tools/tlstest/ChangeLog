@@ -1,9 +1,0 @@
-2004-02-25  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* tlstest.cs: Updated to support Basic and Digest authentication. Also
-	support ICertificatePolicy for WebRequests.
-
-2004-02-23  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* tlstest.cs: New. Tool to test for SSLv3 and TLSv1 stream 
-	implementation.

@@ -1,6 +1,0 @@
-2003-01-18  Daniel Morgan <danmorg@sc.rr.com>
-
-	* TestDB2Conn.cs: use a different connection string 
-	which uses the format
-	"DSN=database;UID=userid;PWD=password"
-	

@@ -1,7 +1,0 @@
-2003-12-19  Dick Porter  <dick@ximian.com>
-
-	* CompareInfoTest.cs: Added some Compare tests
-
-2002-12-21  Nick Drochak <ndrochak@gol.com>
-
-	* all: make tests build and run under nunit2

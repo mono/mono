@@ -1,8 +1,0 @@
-2003-06-28  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
-
-	* ContextStack.cs: Redone based on a stack and completely implemented
-	* DesignerLoader.cs: Removed unneeded members
-	* DesignerSerializerAttribute.cs: Implemented, fixed AttributeUsage
-	* ResolveNameEventArgs.cs: Visibility bug fixed
-	* RootDesignerSerializerAttribute.cs: Fixed and implemented, fixed AttributeUsage
-	* InstanceDescriptor.cs: Completely Implemented

@@ -1,5 +1,0 @@
-2004-05-27  Duncan Mak  <duncan@ximian.com>
-
-	* mono-find-provides.cs 
-	* mono-find-requires.cs: Added. These are
-	helper tools to help RPM packaging.

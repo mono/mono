@@ -1,7 +1,0 @@
-*~
-*.pdb
-*.dll
-*.csproj.user
-.makefrag
-.response
-library-deps.stamp

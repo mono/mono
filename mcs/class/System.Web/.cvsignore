@@ -1,6 +1,0 @@
-Temp.build
-*.dll
-lib
-.makefrag
-.response
-library-deps.stamp

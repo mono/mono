@@ -1,5 +1,0 @@
-2004-04-13  Sebastien Pouliot <sebastien@ximian.com>
-
-	* AssemblyInfo.cs: New. Copied and ajusted from System.Security.
-	* Locale.cs: New. Copied (verbatim) from System.Security.
-	* ChangeLog: New.

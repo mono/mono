@@ -1,8 +1,0 @@
-2004-05-22  Todd Berman  <tberman@sevenl.net>
-
-	* Runtime.cs: Add this back, gnome# needs it. Mark everything internal.
-
-2002-10-08  Miguel de Icaza  <miguel@ximian.com>
-
-	* Runtime.cs: New file.
-

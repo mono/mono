@@ -1,9 +1,0 @@
-2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* AssemblyInfo.cs: Removed AllowPartiallyTrustedCallers
-
-2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* AssemblyInfo.cs: Added. Copied from corlib and ajusted for WSE.
-	* Locale.cs: Added. Copied from corlib.
-	* ChangeLog: Added

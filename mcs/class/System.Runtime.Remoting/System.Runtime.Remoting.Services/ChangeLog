@@ -1,4 +1,0 @@
-2004-05-13  Lluis Sanchez Gual <lluis@ximian.com>
-
-	* RemotingClientProxy.cs, RemotingService.cs: Added.
-

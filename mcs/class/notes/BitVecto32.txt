@@ -1,6 +1,0 @@
-* Why does CreateSection take a short for the range number?
-
-  It would seem like it should be possible to have numbers between 0
-  and UInt32.MaxValue in there.   Why is the API limiting things to 16
-  bits?
-
