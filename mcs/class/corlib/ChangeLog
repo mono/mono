@@ -5,6 +5,8 @@
 		System.Security.Cryptography/RijndaelManagedTransform.cs
 		System.Security.Cryptography/RIPEMD160.cs
 		System.Security.Cryptography/RIPEMD160Managed.cs
+	* corlib.dll.sources: Added new tests for CipherMode and 
+	CspProviderFlags.
 
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 

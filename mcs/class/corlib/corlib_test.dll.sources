@@ -107,8 +107,10 @@ System/SByteTest.cs
 System.Security/CodeAccessPermissionTest.cs
 System.Security.Cryptography/AllTests2.cs
 System.Security.Cryptography/AsymmetricAlgorithmTest.cs
+System.Security.Cryptography/CipherModeTest.cs
 System.Security.Cryptography/CryptoConfigTest.cs
 System.Security.Cryptography/CryptoStreamTest.cs
+System.Security.Cryptography/CspProviderFlagsTest.cs
 System.Security.Cryptography/DESCryptoServiceProviderTest.cs
 System.Security.Cryptography/DESTest.cs
 System.Security.Cryptography/DSACryptoServiceProviderTest.cs
