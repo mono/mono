@@ -1787,8 +1787,6 @@ namespace Mono.CSharp {
 					type = TypeManager.uint32_type;
 				} 
 			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
-				Expression tmp;
-				
 				if (l != TypeManager.decimal_type)
 					left = ConvertImplicit (ec, left, TypeManager.decimal_type, loc);
 
@@ -1796,8 +1794,6 @@ namespace Mono.CSharp {
 					right = ConvertImplicit (ec, right, TypeManager.decimal_type, loc);
 				type = TypeManager.decimal_type;
 			} else {
-				Expression l_tmp, r_tmp;
-
 				left = ForceConversion (ec, left, TypeManager.int32_type);
 				right = ForceConversion (ec, right, TypeManager.int32_type);
 
