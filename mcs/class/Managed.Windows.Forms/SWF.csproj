@@ -319,6 +319,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DateRangeEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DateRangeEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\Day.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DialogResult.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -764,6 +779,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\MonthCalendar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\MouseButtons.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -781,6 +801,11 @@
                 <File
                     RelPath = "System.Windows.Forms\NativeWindow.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\NumericUpDown.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -894,6 +919,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\SelectionRange.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\Shortcut.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -955,6 +985,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\StructFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SystemInformation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1086,6 +1121,11 @@
                 <File
                     RelPath = "System.Windows.Forms\UICuesEventHandler.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\UpDownBase.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File

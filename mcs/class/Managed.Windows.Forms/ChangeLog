@@ -1,3 +1,7 @@
+2004-11-24  Ravindra  <rkumar@novell.com>
+
+	* SWF.csproj: Updated project.
+
 2004-11-23  John BouAntoun <jba-mono@optusnet.com.au>
 
 	* System.Windows.Forms.dll.sources: added MonthCalendar files
