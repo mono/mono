@@ -1,5 +1,7 @@
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.h: Add missing function to fix build.
+
 	* marshal.c (mono_marshal_get_native_wrapper): Add support for 
 	the SetLastError pinvoke attribute.
 
