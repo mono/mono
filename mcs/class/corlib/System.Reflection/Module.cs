@@ -29,6 +29,9 @@ namespace System.Reflection {
 		internal string scopename;
 		internal bool is_resource;
 	
+		const BindingFlags defaultBindingFlags = 
+			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
+		
 		internal Module () { }
 
 		~Module () {
@@ -51,10 +54,14 @@ namespace System.Reflection {
 			get { return scopename; }
 		}
 	
-		[MonoTODO]
 		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 
 		{
-			return null;
+			System.Collections.ArrayList filtered = new System.Collections.ArrayList ();
+			Type[] types = GetTypes ();
+			foreach (Type t in types)
+				if (filter (t, filterCriteria))
+					filtered.Add (t);
+			return (Type[])filtered.ToArray (typeof(Type));
 		}
 	
 		public virtual object[] GetCustomAttributes(bool inherit) 
@@ -91,54 +98,40 @@ namespace System.Reflection {
 			return GetGlobalType ().GetFields (BindingFlags.Public | BindingFlags.Static);
 		}
 	
-		[MonoTODO]
 		public MethodInfo GetMethod (string name) 
 		{
-			if (IsResource ())
-				return null;
-
-			return null;
+			return GetMethodImpl (name, defaultBindingFlags, null, CallingConventions.Any, Type.EmptyTypes, null);
 		}
 	
-		[MonoTODO]
 		public MethodInfo GetMethod (string name, Type[] types) 
 		{
-			if (IsResource ())
-				return null;
-
-			return null;
+			return GetMethodImpl (name, defaultBindingFlags, null, CallingConventions.Any, types, null);
 		}
 	
-		[MonoTODO]
 		public MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
 		{
-			if (IsResource ())
-				return null;
-
-			return null;
+			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 	
-		[MonoTODO]
 		protected virtual MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
 		{
 			if (IsResource ())
 				return null;
 
-			return null;
+			return GetGlobalType ().GetMethod (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 	
-		[MonoTODO]
 		public MethodInfo[] GetMethods () 
 		{
 			if (IsResource ())
 				return new MethodInfo [0];
 
-			return null;
+			return GetGlobalType ().GetMethods ();
 		}
 	
-		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
+			UnitySerializationHolder.GetModuleData (this, info, context);
 		}
 	
 		public X509Certificate GetSignerCertificate ()

@@ -2,6 +2,7 @@
 // System.Reflection.AssemblyNameProxy.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) Ximian, Inc. http://www.ximian.com
 //
@@ -18,10 +19,9 @@ namespace System.Reflection
 		}
 
 		// Method
-		[MonoTODO]
 		public AssemblyName GetAssemblyName (string assemblyFile)
 		{
-			return null;
+			return AssemblyName.GetAssemblyName (assemblyFile);
 		}
 	}
 }

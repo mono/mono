@@ -1,3 +1,10 @@
+2004-04-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Assembly.cs: Removed TODO for CreateQualifiedName.
+	* AssemblyName.cs: Fixed serialization code.
+	* AssemblyNameProxy.cs: Implemented.
+	* Module.cs: Implemented GetMethod() methods, FindTypes() and GetObjectData.
+
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoGenericParam): Removed.

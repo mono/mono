@@ -37,6 +37,7 @@ namespace System.Reflection {
 		byte[] publicKey;
 		byte[] keyToken;
 		AssemblyVersionCompatibility versioncompat;
+		Version version;
 		
 		public AssemblyName ()
 		{
@@ -48,7 +49,7 @@ namespace System.Reflection {
 		{
 			name = si.GetString ("_Name");
 			codebase = si.GetString ("_CodeBase");
-			Version = (Version)si.GetValue ("_Version", typeof (Version));
+			version = (Version)si.GetValue ("_Version", typeof (Version));
 		}
 
 		public string Name {
@@ -123,15 +124,19 @@ namespace System.Reflection {
 
 		public Version Version {
 			get {
+				if (version != null) return version;
+				
 				if (name == null)
 					return null;
 				if (build == -1)
-					return new Version (major, minor);
+					version = new Version (major, minor);
 				else
 					if (revision == -1)
-						return new Version (major, minor, build);
+						version = new Version (major, minor, build);
 				else
-					return new Version (major, minor, build, revision);
+					version = new Version (major, minor, build, revision);
+
+				return version;
 			}
 
 			set {
@@ -139,6 +144,7 @@ namespace System.Reflection {
 				minor = value.Minor;
 				build = value.Build;
 				revision = value.Revision;
+				version = value;
 			}
 		}
 
@@ -208,17 +214,28 @@ namespace System.Reflection {
 			info.AddValue ("_Version", Version);
 		}
 
-		// required to implement ICloneable
-		[MonoTODO()]
 		public object Clone() 
 		{
-			return null;
+			AssemblyName an = new AssemblyName ();
+			an.name = name;
+			an.codebase = codebase;
+			an.major = major;
+			an.minor = minor;
+			an.build = build;
+			an.revision = revision;
+			an.cultureinfo = cultureinfo;
+			an.flags = flags;
+			an.hashalg = hashalg;
+			an.keypair = keypair;
+			an.publicKey = publicKey;
+			an.keyToken = keyToken;
+			an.versioncompat = versioncompat;
+			return an;
 		}
 
-		// required to implement IDeserializationCallback
-		[MonoTODO()]
 		public void OnDeserialization (object sender) 
 		{
+			Version = version;
 		}
 
 		public static AssemblyName GetAssemblyName (string assemblyFile) 

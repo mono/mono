@@ -82,6 +82,7 @@ namespace System.Reflection {
 			}
 		}
 
+		[MonoTODO]
 		public bool GlobalAssemblyCache {
 			get {
 				//TODO: if we ever have a GAC, fix this.
@@ -264,10 +265,9 @@ namespace System.Reflection {
 			return GetName ().Name;
 		}
 
-		[MonoTODO]
 		public static String CreateQualifiedName (String assemblyName, String typeName) 
 		{
-			return typeName + "," + assemblyName;
+			return typeName + ", " + assemblyName;
 		}
 
 		public static Assembly GetAssembly (Type type)
