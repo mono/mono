@@ -17,6 +17,7 @@
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace System.Windows.Forms {
 
@@ -24,7 +25,6 @@ namespace System.Windows.Forms {
 	/// Provides methods used to paint common Windows controls and their elements.
 	/// </summary>
 	
-	[MonoTODO]
 	public sealed class ControlPaint {
 		static int		RGBMax=255;
 		static int		HLSMax=255;
@@ -153,17 +153,14 @@ namespace System.Windows.Forms {
 		#region Methods
 		/// following methods were not stubbed out, because they only support .NET framework:
 		
-		[MonoTODO]
 		public static IntPtr CreateHBitmap16Bit(Bitmap bitmap,Color background){
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public static IntPtr CreateHBitmapColorMask(Bitmap bitmap,IntPtr monochromeMask){
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public static IntPtr CreateHBitmapTransparencyMask(Bitmap bitmap){
 			throw new NotImplementedException ();
 		}
@@ -863,24 +860,133 @@ namespace System.Windows.Forms {
 			pen.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawGrabHandle(Graphics graphics, Rectangle rectangle, bool primary, bool enabled) {
-			//FIXME:
+			SolidBrush	sb;
+			Pen			pen;
+
+			if (primary==true) {
+				pen=new Pen(Color.Black, 1);
+				if (enabled==true) {
+					sb=new SolidBrush(Color.White);
+				} else {
+					sb=new SolidBrush(SystemColors.Control);
+				}
+			} else {
+				pen=new Pen(Color.White, 1);
+				if (enabled==true) {
+					sb=new SolidBrush(Color.Black);
+				} else {
+					sb=new SolidBrush(SystemColors.Control);
+				}
+			}
+			graphics.FillRectangle(sb, rectangle);
+			graphics.DrawRectangle(pen, rectangle);
+			sb.Dispose();
+			pen.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawGrid(Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor) {
-			//FIXME:
+			Color	foreColor;
+			int	h;
+			int	b;
+			int	s;
+
+			Color2HBS(backColor, out h, out b, out s);
+
+			if (b>127) {
+				foreColor=Color.Black;
+			} else {
+				foreColor=Color.White;
+			}
+
+#if false
+			/* Commented out until I take the time and figure out 
+				which HatchStyle will match requirements. The code below
+				is only correct for Percent50.
+			*/
+			if (pixelsBetweenDots.Width==pixelsBetweenDots.Height) {
+				HatchBrush	brush=null;
+
+				switch(pixelsBetweenDots.Width) {
+					case 2: brush=new HatchBrush(HatchStyle.Percent50, foreColor, backColor); break;
+					case 4: brush=new HatchBrush(HatchStyle.Percent25, foreColor, backColor); break;
+					case 5: brush=new HatchBrush(HatchStyle.Percent20, foreColor, backColor); break;
+					default: {
+						/* Have to do it the slow way */
+						break;
+					}
+				}
+				if (brush!=null) {
+					graphics.FillRectangle(brush, area);
+					pen.Dispose();
+					brush.Dispose();
+					return;
+				}
+			}
+#endif
+			/* Slow method */
+
+			Bitmap bitmap = new Bitmap(area.Width, area.Height, graphics);
+
+			for (int x=0; x<area.Width; x+=pixelsBetweenDots.Width) {
+				for (int y=0; y<area.Height; y+=pixelsBetweenDots.Height) {
+					bitmap.SetPixel(x, y, foreColor);
+				}
+			}
+			graphics.DrawImage(bitmap, area.X, area.Y, area.Width, area.Height);
+			bitmap.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawImageDisabled(Graphics graphics, Image image, int x, int y, Color background) {
-			//FIXME:
+			/*
+				Microsoft seems to ignore the background and simply make 
+				the image grayscale. At least when having > 256 colors on 
+				the display.
+			*/
+
+			ImageAttributes	imageAttributes=new ImageAttributes();
+			ColorMatrix			colorMatrix=new ColorMatrix(new float[][] {
+// This table would create a perfect grayscale image, based on luminance
+//				new float[]{0.3f,0.3f,0.3f,0,0},
+//				new float[]{0.59f,0.59f,0.59f,0,0},
+//				new float[]{0.11f,0.11f,0.11f,0,0},
+//				new float[]{0,0,0,1,0,0},
+//				new float[]{0,0,0,0,1,0},
+//				new float[]{0,0,0,0,0,1}
+
+// This table generates a image that is grayscaled and then 
+// brightened up. Seems to match MS close enough.
+				new float[]{0.2f,0.2f,0.2f,0,0},
+				new float[]{0.41f,0.41f,0.41f,0,0},
+				new float[]{0.11f,0.11f,0.11f,0,0},
+				new float[]{0.15f,0.15f,0.15f,1,0,0},
+				new float[]{0.15f,0.15f,0.15f,0,1,0},
+				new float[]{0.15f,0.15f,0.15f,0,0,1}
+			});
+	
+			imageAttributes.SetColorMatrix(colorMatrix);
+			graphics.DrawImage(image, new Rectangle(x, y, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imageAttributes);
+			imageAttributes.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawLockedFrame(Graphics graphics, Rectangle rectangle, bool primary) {
-			//FIXME:
+			Pen	penBorder;
+			Pen	penInside;
+
+			if (primary) {
+				penBorder=new Pen(Color.White, 2);
+				penInside=new Pen(Color.Black, 1);
+			} else {
+				penBorder=new Pen(Color.Black, 2);
+				penInside=new Pen(Color.White, 1);
+			}
+			penBorder.Alignment=PenAlignment.Inset;
+			penInside.Alignment=PenAlignment.Inset;
+
+			graphics.DrawRectangle(penBorder, rectangle);
+			graphics.DrawRectangle(penInside, new Rectangle(rectangle.X+2, rectangle.Y+2, rectangle.Width-5, rectangle.Height-5));
+			penBorder.Dispose();
+			penInside.Dispose();
 		}
 		
 		[MonoTODO]
