@@ -587,7 +587,7 @@ namespace System.Diagnostics {
 			}
 		}
 
-		public void Dispose() {
+		public new void Dispose() {
 			Dispose(true);
 			// Take yourself off the Finalization queue
 			GC.SuppressFinalize(this);
