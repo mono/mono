@@ -181,7 +181,6 @@ namespace System.Windows.Forms {
 				if (selected_index != -1)
 					Controls [selected_index].Visible = false;
 				selected_index = value;
-				Console.WriteLine ("selected index:  " + selected_index);
 				if (selected_index != -1) 
 					Controls [selected_index].Visible = true;
 				ResumeLayout ();
@@ -429,11 +428,11 @@ namespace System.Windows.Forms {
 				}
 
 				page.TabBounds = new Rectangle (xpos, ypos, width, item_size.Height);
-				xpos += width + 1 + spacing.Width;
 				
-				if (i == SelectedIndex) {
-					 ExpandSelected (page, xpos == 4, row_width);
-				}
+				if (i == SelectedIndex)
+					 ExpandSelected (page, xpos == 4 || xpos == row_width, row_width);
+
+				xpos += width + 1 + spacing.Width;
 			}
 		}
 
