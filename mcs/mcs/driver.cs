@@ -1198,15 +1198,15 @@ namespace Mono.CSharp
 
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
-#if DEBUGME
+#if false
 			DateTime start = DateTime.Now;
-			TypeManager.GetNamespaces ();
+			TypeManager.GetAssemblyNamespaces (output_file);
 			DateTime end = DateTime.Now;
-			Console.WriteLine ("Loading namespaces: " + (end - start));
+			//Console.WriteLine ("Loading namespaces: " + (end - start));
 			start = DateTime.Now;
-			TypeManager.GetAllTypes ();
+			//TypeManager.GetAllTypes ();
 			end = DateTime.Now;
-			Console.WriteLine ("Getting Types: " + (end - start));
+			//Console.WriteLine ("Getting Types: " + (end - start));
 #endif
 			
 			//

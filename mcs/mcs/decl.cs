@@ -384,9 +384,9 @@ namespace Mono.CSharp {
 
 		public static string MakeFQN (string nsn, string name)
 		{
-			string prefix = (nsn == "" ? "" : nsn + ".");
-
-			return prefix + name;
+			if (nsn == "")
+				return name;
+			return String.Concat (nsn, ".", name);
 		}
 
 		EmitContext type_resolve_ec;

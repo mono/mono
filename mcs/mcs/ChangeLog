@@ -1,3 +1,22 @@
+2002-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (IsCLRType): New routine to tell whether a type
+	is one of the builtin types.  
+
+	Maybe it needs to use TypeCodes to be faster.  Maybe we could use
+	typecode in more places instead of doing pointer comparissions.
+	We could leverage some knowledge about the way the typecodes are
+	laid out.
+
+	New code to cache namespaces in assemblies, it is currently not
+	invoked, to be used soon.
+
+	* decl.cs (DeclSpace.MakeFQN): Simple optimization.
+
+	* expression.cs (Binary.ResolveOperator): specially handle
+	strings, and do not perform user-defined operator overloading for
+	built-in types.
+
 2002-11-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Avoid calling Char.IsDigit which is an
