@@ -81,6 +81,12 @@ public class cilc
 
 		Directory.CreateDirectory (target_dir);
 
+		//register handled primitive types
+		RegisterCsType (typeof (string));
+		RegisterCsType (typeof (int));
+		RegisterCsType (typeof (bool));
+		RegisterCsType (typeof (IntPtr));
+		
 		//TODO: parse given .h files here and register the type names
 
 		Assembly a = Assembly.LoadFrom (assembly);
@@ -116,6 +122,15 @@ public class cilc
 		makefile_defs.Close ();
 
 		Console.WriteLine ();
+
+		//identify hits on types that were registered too late
+		foreach (Type rtype in registered_types) {
+			string tname = rtype.FullName + " (type)";
+			if (registry_hits.Contains (tname)) {
+				Console.WriteLine ("Warning: " + tname + " was incorrectly registered after it was needed instead of before. Consider re-ordering.");
+			}
+		}
+
 		MakeReport (registry_hits, "Type registry missed hits", 20);
 		Console.WriteLine ();
 		Console.WriteLine (registered_types.Count + " types generated in " + namespaces.Length + " namespaces; " + warnings_ignored + " types ignored");
@@ -147,7 +162,7 @@ public class cilc
 		foreach (Type t in types) {
 			if (t.IsNotPublic) {
 				//Console.WriteLine ("Ignoring non-public type: " + t.Name);
-				warnings_ignored++;
+				//warnings_ignored++;
 				continue;
 			}
 
@@ -271,15 +286,11 @@ public class cilc
 
 		H.WriteLine ("#include <glib.h>");
 		H.WriteLine ("#include <glib-object.h>");
-		H.WriteLine ("#include <mono/metadata/object.h>");
-		H.WriteLine ("#include <mono/metadata/debug-helpers.h>");
-		H.WriteLine ("#include <mono/metadata/appdomain.h>");
 		H.WriteLine ();
 		
 		if (IsRegistered (t.BaseType))
 			H.WriteLine ("#include \"" + NsToFlat (t.BaseType.Namespace).ToLower () + t.BaseType.Name.ToLower () + ".h\"");
 
-		//H.WriteLine ("#include \"" + NsToFlat (t.Namespace).ToLower () + "-decls.h\"");
 		foreach (string ext_ns in namespaces)
 			H.WriteLine ("#include \"" + NsToFlat (ext_ns).ToLower () + "-decls.h\"");
 
@@ -291,6 +302,9 @@ public class cilc
 		H.WriteLine ();
 
 		C.WriteLine ("#include \"" + fname + ".h" + "\"");
+		C.WriteLine ("#include <mono/metadata/object.h>");
+		C.WriteLine ("#include <mono/metadata/debug-helpers.h>");
+		C.WriteLine ("#include <mono/metadata/appdomain.h>");
 		C.WriteLine ();
 
 		if (t.IsClass)
@@ -371,7 +385,6 @@ public class cilc
 		else
 			ParentName = "GObject";
 
-		//H.WriteLine ("GObject parent_instance;");
 		H.WriteLine (ParentName + " parent_instance;");
 		H.WriteLine (CurType + "Private *priv;");
 		H.WriteLine ("};");
@@ -521,11 +534,14 @@ public class cilc
 
 	static bool IsRegistered (Type t)
 	{
+		return IsRegistered (t, true);
+	}
+
+	static bool IsRegistered (Type t, bool log_hits)
+	{
 		bool isreg = registered_types.Contains (t);
 
-		//TODO: use our list of supported primitive types instead
-		if (!isreg && !t.IsPrimitive) {
-
+		if (!isreg && log_hits) {
 			if (t.Namespace != null && t.Namespace != "")
 				HitRegistry (t.Namespace + " (namespace)");
 
@@ -547,7 +563,8 @@ public class cilc
 
 	static void RegisterCsType (Type t)
 	{
-		if (IsRegistered (t))
+		//if (t.IsPrimitive || IsRegistered (t))
+		if (IsRegistered (t, false))
 			return;
 
 		registered_types.Add (t);
@@ -557,24 +574,30 @@ public class cilc
 	{
 		//TODO: use this method everywhere
 
-		//if (t.Namespace == ns)
-		if (IsRegistered (t))
-			return NsToFlat (t.Namespace) + t.Name + " *";
-		
-		string ptype = "MonoClass *";
-
 		switch (t.FullName)
 		{
 			case "System.String":
-				ptype = "const gchar *";
-			break;
+				return "const gchar *";
 
 			case "System.Int32":
-				ptype = "gint ";
-			break;
+				return "gint ";
+
+			case "System.Boolean":
+				return "gboolean ";
+
+			case "System.IntPtr":
+				return "gpointer ";
+
+			//questionable
+			case "System.EventHandler":
+			case "System.MulticastDelegate":
+				return "GCallback ";
 		}
 
-		return ptype;
+		if (IsRegistered (t))
+			return NsToFlat (t.Namespace) + t.Name + " *";
+
+		return "GObject *";
 	}
 
 	static void EventGen (EventInfo ei, Type t)
