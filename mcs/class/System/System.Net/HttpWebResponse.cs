@@ -22,7 +22,7 @@ namespace System.Net
 	{
 		Uri uri;
 		WebHeaderCollection webHeaders;
-		CookieCollection cookieCollection = null;
+		CookieCollection cookieCollection;
 		string method;
 		Version version;
 		HttpStatusCode statusCode;
@@ -36,7 +36,7 @@ namespace System.Net
 		
 		// Constructors
 		
-		internal HttpWebResponse (Uri uri, string method, WebConnectionData data)
+		internal HttpWebResponse (Uri uri, string method, WebConnectionData data, bool cookiesSet)
 		{
 			this.uri = uri;
 			this.method = method;
@@ -45,7 +45,12 @@ namespace System.Net
 			statusCode = (HttpStatusCode) data.StatusCode;
 			statusDescription = data.StatusDescription;
 			stream = data.stream;
-			FillCookies ();
+			if (cookiesSet) {
+				FillCookies ();
+			} else if (webHeaders != null) {
+				webHeaders.RemoveInternal ("Set-Cookie");
+				webHeaders.RemoveInternal ("Set-Cookie2");
+			}
 		}
 
 		[MonoTODO("Check this out and update if needed")] //Gon

@@ -803,7 +803,7 @@ namespace System.Net
 				return;
 			}
 			
-			webResponse = new HttpWebResponse (actualUri, method, data);
+			webResponse = new HttpWebResponse (actualUri, method, data, (cookieContainer != null));
 			haveResponse = true;
 
 			if (asyncRead != null) {
