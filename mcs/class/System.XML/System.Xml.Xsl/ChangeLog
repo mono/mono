@@ -1,3 +1,10 @@
+2004-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Multiplexer.cs : Pass stream parameters as is (to handle
+	  encoding correctly). Patch by Dariusz Olszewski. Bug #52913 fixed.
+	* ManagedXslTransform.cs : In ctor() with stream, pass encoding 
+	  parameter also for managed transformer.
+
 2004-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ManagedXslTransform.cs : Pass TextReader's encoding for outputter.

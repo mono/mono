@@ -54,10 +54,7 @@ namespace System.Xml.Xsl {
 		public override void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
 		{
 			XslOutput xslOutput = (XslOutput)s.Outputs[String.Empty];
-			if (xslOutput == null)
-				Transform (input, args, new StreamWriter (output), resolver);
-			else
-				Transform (input, args, new StreamWriter (output, xslOutput.Encoding), resolver);
+			Transform (input, args, new XmlTextWriter (output, xslOutput.Encoding), resolver);
 		}
 	}
 }

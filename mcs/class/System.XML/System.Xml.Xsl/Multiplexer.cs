@@ -150,7 +150,7 @@ namespace System.Xml.Xsl {
 #endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
 		{
-			impl.Transform (input, args, new XmlTextWriter (output, null), xmlResolver);		
+			impl.Transform (input, args, output, xmlResolver);		
 		}
 #if NET_1_1
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
@@ -158,7 +158,7 @@ namespace System.Xml.Xsl {
 		void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
 #endif
 		{
-			impl.Transform (input, args, new XmlTextWriter (output, null), resolver);
+			impl.Transform (input, args, output, resolver);
 		}
 
 #if NET_1_1
