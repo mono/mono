@@ -77,6 +77,14 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		public void TransformFinalBlock_SmallLength () 
+		{
+			byte[] input = new byte [2]; // smaller than InputBlockSize
+			ToBase64Transform t = new ToBase64Transform ();
+			t.TransformFinalBlock (input, 0, 2);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void TransformFinalBlock_WrongLength () 
 		{

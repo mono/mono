@@ -1,3 +1,8 @@
+2004-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ToBase64TransformTest.cs: Added a (legal) test where the final 
+	transform receive data smaller than it's input block (padding).
+
 2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RC2Test.cs: Converted to NUnit 2. Uncommented some tests that throw 
