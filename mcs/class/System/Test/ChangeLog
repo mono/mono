@@ -1,0 +1,5 @@
+2001-09-23  Mads Pultz <mpultz@get2net.dk>
+
+	* DnsTest.cs: Initial work submitted to repository.
+	* IPHostEntryTest.cs: Initial work submitted to repository.
+
