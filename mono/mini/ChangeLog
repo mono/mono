@@ -1,5 +1,7 @@
 2004-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions.cs: Add more tests for double->int conversion.
+
 	* jit-icalls.c (mono_fconv_ovf_i8): Call truncl before comparison, so
 	we don't throw exceptions when converting 1.1 to a long. Fixes #53250.
 
