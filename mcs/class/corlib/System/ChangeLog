@@ -1,5 +1,9 @@
 2003-08-04  Duncan Mak  <duncan@ximian.com>
 
+	* FloatingPointFormatter.cs (Normalize): Apply a patch from Aleksey
+	Demakov <avd@openlinksw.com> to fix formatting for Big power of 10
+	floating point values. This fixes bug #46175.
+
 	* Convert.cs (ToUInt16): Throw an OverflowException correctly, as
 	noted by c5n4kh6u02@sneakemail.com in
 	http://bugzilla.ximian.com/show_bug.cgi?id=43098.

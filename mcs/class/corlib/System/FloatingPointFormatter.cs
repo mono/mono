@@ -172,8 +172,8 @@ namespace System {
 				Double.IsNaN(value)) {
 				return;
 			}
-			if (value > p10) {
-				while (value > p10) {
+			if (value >= p10) {
+				while (value >= p10) {
 					value /= 10;
 					exponent++;
 				}
