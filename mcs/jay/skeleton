@@ -71,14 +71,14 @@ t  protected jay.yydebug.yyDebug yydebug;
 .
  debug			## tables for debugging support
 .
-.  /** index-checked interface to yyName[].
+.  /** index-checked interface to yyNames[].
 .      @param token single character or %token value.
 .      @return token name or [illegal] or [unknown].
 .    */
 t  public static final String yyname (int token) {
-t    if (token < 0 || token > yyName.length) return "[illegal]";
+t    if (token < 0 || token > yyNames.length) return "[illegal]";
 t    String name;
-t    if ((name = yyName[token]) != null) return name;
+t    if ((name = yyNames[token]) != null) return name;
 t    return "[unknown]";
 t  }
 .
@@ -88,26 +88,26 @@ t  }
 .    */
 .  protected String[] yyExpecting (int state) {
 .    int token, n, len = 0;
-.    boolean[] ok = new boolean[yyName.length];
+.    boolean[] ok = new boolean[yyNames.length];
 .
 .    if ((n = yySindex[state]) != 0)
 .      for (token = n < 0 ? -n : 0;
-.           token < yyName.length && n+token < yyTable.length; ++ token)
-.        if (yyCheck[n+token] == token && !ok[token] && yyName[token] != null) {
+.           token < yyNames.length && n+token < yyTable.length; ++ token)
+.        if (yyCheck[n+token] == token && !ok[token] && yyNames[token] != null) {
 .          ++ len;
 .          ok[token] = true;
 .        }
 .    if ((n = yyRindex[state]) != 0)
 .      for (token = n < 0 ? -n : 0;
-.           token < yyName.length && n+token < yyTable.length; ++ token)
-.        if (yyCheck[n+token] == token && !ok[token] && yyName[token] != null) {
+.           token < yyNames.length && n+token < yyTable.length; ++ token)
+.        if (yyCheck[n+token] == token && !ok[token] && yyNames[token] != null) {
 .          ++ len;
 .          ok[token] = true;
 .        }
 .
 .    String result[] = new String[len];
 .    for (n = token = 0; n < len;  ++ token)
-.      if (ok[token]) result[n++] = yyName[token];
+.      if (ok[token]) result[n++] = yyNames[token];
 .    return result;
 .  }
 .

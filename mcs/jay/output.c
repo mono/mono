@@ -911,9 +911,9 @@ output_debug()
 	if (symbol_value[i] > max)
 	    max = symbol_value[i];
 
-	/* need yyName for yyExpecting() */
+	/* need yyNames for yyExpecting() */
 
-      printf("  protected static %s string [] yyName = {", csharp ? "" : "final");
+      printf("  protected static %s string [] yyNames = {", csharp ? "" : "final");
       symnam = (char **) MALLOC((max+1)*sizeof(char *));
       if (symnam == 0) no_space();
   

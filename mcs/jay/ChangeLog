@@ -1,3 +1,8 @@
+2003-10-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* output.c, skelton, skelton.cs : Renamed yyName[] to yyNames[]
+	to make output CLS-compliant.
+
 2003-05-16  Peter Williams  <peterw@ximian.com>
 
 	* main.c (print_skel_dir): New function called when jay is

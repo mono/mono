@@ -40,14 +40,14 @@ t  protected yydebug.yyDebug debug;
 .
  debug			## tables for debugging support
 .
-.  /** index-checked interface to yyName[].
+.  /** index-checked interface to yyNames[].
 .      @param token single character or %token value.
 .      @return token name or [illegal] or [unknown].
 .    */
 t  public static string yyname (int token) {
-t    if ((token < 0) || (token > yyName.Length)) return "[illegal]";
+t    if ((token < 0) || (token > yyNames.Length)) return "[illegal]";
 t    string name;
-t    if ((name = yyName[token]) != null) return name;
+t    if ((name = yyNames[token]) != null) return name;
 t    return "[unknown]";
 t  }
 .
@@ -57,26 +57,26 @@ t  }
 .    */
 .  protected string[] yyExpecting (int state) {
 .    int token, n, len = 0;
-.    bool[] ok = new bool[yyName.Length];
+.    bool[] ok = new bool[yyNames.Length];
 .
 .    if ((n = yySindex[state]) != 0)
 .      for (token = n < 0 ? -n : 0;
-.           (token < yyName.Length) && (n+token < yyTable.Length); ++ token)
-.        if (yyCheck[n+token] == token && !ok[token] && yyName[token] != null) {
+.           (token < yyNames.Length) && (n+token < yyTable.Length); ++ token)
+.        if (yyCheck[n+token] == token && !ok[token] && yyNames[token] != null) {
 .          ++ len;
 .          ok[token] = true;
 .        }
 .    if ((n = yyRindex[state]) != 0)
 .      for (token = n < 0 ? -n : 0;
-.           (token < yyName.Length) && (n+token < yyTable.Length); ++ token)
-.        if (yyCheck[n+token] == token && !ok[token] && yyName[token] != null) {
+.           (token < yyNames.Length) && (n+token < yyTable.Length); ++ token)
+.        if (yyCheck[n+token] == token && !ok[token] && yyNames[token] != null) {
 .          ++ len;
 .          ok[token] = true;
 .        }
 .
 .    string [] result = new string[len];
 .    for (n = token = 0; n < len;  ++ token)
-.      if (ok[token]) result[n++] = yyName[token];
+.      if (ok[token]) result[n++] = yyNames[token];
 .    return result;
 .  }
 .
