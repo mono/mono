@@ -504,7 +504,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);                      				
 		}		
 		
-		[ComVisible (false)]
 		public Region Clone()
 		{
                         IntPtr cloned;

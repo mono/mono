@@ -382,6 +382,8 @@ namespace System.Drawing {
 		}
 
 		private float _sizeInPoints;
+
+		[Browsable (false)]
 		public float SizeInPoints {
 			get {
 				return _sizeInPoints;

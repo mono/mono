@@ -1,3 +1,8 @@
+2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Font.cs: Added missing Browsable attribute on SizeInPoints.
+	* Region.cs: Removed extra ComVisible attribute from Clone().
+
 2004-06-01  Ravindra <rkumar@novell.com>
 
 	* Pen.cs: Added a note on Dispose method.
