@@ -2,9 +2,9 @@
 // jscript-lexer-parser.g: EcmaScript Grammar written on antlr.
 //
 // Author:
-//	 Cesar Octavio Lopez Nataren
+//	 Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2003, Cesar Lopez Nataren
 //
 
 
@@ -42,10 +42,20 @@ source_element returns [AST ast]
 	stm = statement
 	{ ast = stm; }
     |
-	fd = function_declaration
-	{ ast = fd; }			
+	fd = global_function_declaration
+	{ ast = fd; }
     ;
 
+
+global_function_declaration returns [FunctionDeclaration fd]
+{ fd = new FunctionDeclaration (); }
+    :
+   	"function" 
+   	id:IDENTIFIER
+   	LPAREN (formal_parameter_list [fd.parameters] | ) RPAREN 
+   	(COLON IDENTIFIER | ) 
+   	LBRACE (function_body [fd.funcBody] | ) RBRACE
+       ;
 
 // Statement, see section 12 from Ecma-262, page 61.
 statement returns [Statement stm]
@@ -56,12 +66,20 @@ statement returns [Statement stm]
     : 
 	block	    
     |
-        varStm = variable_statement
-	{ stm = (Statement) varStm; }
+	modifiers ( class_statement
+		  | const_statement
+		  | enum_statement
+		  | interface_statement
+                  | varStm = variable_statement { stm = (Statement) varStm; }
+		  )			
     |
 	empty_statement
     |
+	debugger_statement
+    |
 	if_statement	    
+    |
+	import_statement
     |
 	iteration_statement
     |
@@ -69,9 +87,13 @@ statement returns [Statement stm]
     |
 	break_statement
     |
+	package_statement
+    |
 	return_statement
     |
 	with_statement
+    |
+	super_statement
     |
 	switch_statement
     |
@@ -87,6 +109,55 @@ block: LBRACE (statement_list | ) RBRACE
     ;
 
 
+// FIXME: find out to what other values can be assigned to it.
+const_statement:	 
+	"const" name:IDENTIFIER (COLON type:IDENTIFIER | ) 
+	ASSIGNMENT
+	numeric_literal
+	SEMI_COLON
+	;
+
+
+class_statement: 
+	"class" 
+	classname:IDENTIFIER
+	("extends" baseclass:IDENTIFIER | ) 
+	("implements" interfaces_list | )
+	LBRACE class_members RBRACE
+	;
+
+
+interfaces_list: IDENTIFIER (COMMA IDENTIFIER)* ;
+
+
+class_members:
+	((static_statement)=> static_statement 
+	    		| (modifiers
+			        ( type_function_declaration
+				| const_statement
+				| variable_statement
+				| enum_statement					
+				| class_statement
+				)
+			       )
+	)*
+    ;
+
+
+type_function_declaration returns [FunctionDeclaration fd]
+{ fd = new FunctionDeclaration (); }
+      :
+   	"function"
+   	("get" | "set" | ) // If present, denotes a property declaration.
+   	functionName:IDENTIFIER { fd.id = functionName.getText (); }
+   	LPAREN (formal_parameter_list [fd.parameters] | ) RPAREN
+   	(COLON type:IDENTIFIER | )
+	(LBRACE (function_body [fd.funcBody] | ) RBRACE | SEMI_COLON)
+   	;
+
+debugger_statement: "debugger" ;
+
+
 empty_statement: SEMI_COLON ;
 
 
@@ -94,6 +165,20 @@ if_statement
     :
 	"if" LPAREN expression RPAREN statement (("else")=> "else" statement)?    
     ;
+
+
+import_statement: "import" IDENTIFIER SEMI_COLON ;
+
+
+interface_statement: 
+	"interface" 
+	intfName:IDENTIFIER 
+	("implements" IDENTIFIER | )
+	LBRACE interface_members RBRACE
+	;
+
+
+interface_members: (modifiers type_function_declaration)* ;
 
 
 // See, Ecma-262 3d. Edition, page 64.
@@ -118,6 +203,14 @@ continue_statement: "continue" (IDENTIFIER | ) SEMI_COLON ;
 break_statement: "break" (IDENTIFIER | ) SEMI_COLON ;
 
 
+package_statement: "package" IDENTIFIER LBRACE package_members RBRACE;
+
+
+package_members: (package_member)* ;
+
+package_member: (modifiers (class_statement | interface_statement | enum_statement)) ;
+
+
 // ReturnStatement, Ecma-262, section 12.9
 // FIXME: Make sure that no LineSeparator appears between the return keyword and the identifier or semicolon
 return_statement: "return" (expression | ) SEMI_COLON ;
@@ -128,6 +221,10 @@ with_statement
     : 
 	"with" LPAREN expression RPAREN statement 
     ;
+
+
+// FIXME: we are missing the super.member rule.
+super_statement: "super" (arguments) ;
 
 
 switch_statement
@@ -156,10 +253,23 @@ default_clause
     ;
 
 
+enum_statement: 
+	"enum" IDENTIFIER (COLON IDENTIFIER | ) 
+	LBRACE
+	(IDENTIFIER (ASSIGNMENT numeric_literal | ))
+	(COMMA IDENTIFIER (ASSIGNMENT numeric_literal | ))*
+	RBRACE
+	;
+
+
 labelled_statement
     :
 	IDENTIFIER COLON statement
     ;
+
+
+// FIXME: what does [body] means? ([body] must be between LBRACE and RBRACE)
+static_statement: "static" IDENTIFIER LBRACE RBRACE ;
 
 
 // ThrowStatement, Ecma-262, section 12.13
@@ -203,7 +313,8 @@ variable_declaration_list [VariableStatement varStm]
 variable_declaration returns [VariableDeclaration varDecl]
 { varDecl = new VariableDeclaration (); }
     :
-	id:IDENTIFIER { varDecl.Id = id.getText (); } (initialiser | )
+	id:IDENTIFIER { varDecl.Id = id.getText (); } 
+        (COLON type:IDENTIFIER | ) (initialiser | )
     ;
     
 
@@ -219,7 +330,7 @@ assignment_expression
     :
         conditional_expression
 //    |
-//        left_hand_side_expression assignment_operator assignment_expression
+//	left_hand_side_expression assignment_operator assignment_expression
     ;
 
         
@@ -419,6 +530,8 @@ literal
     :
 	boolean_literal
     |
+	numeric_literal
+    |
 	null_literal
     |
 	STRING_LITERAL
@@ -461,15 +574,6 @@ property_name
 expression: assignment_expression (COMMA  expression | ) ;
 
 
-// Function definition, see Section 13 from Ecma-262, page 71.
-function_declaration returns [FunctionDeclaration fd]
-{ fd = new FunctionDeclaration (); }
-    :
-        "function" id:IDENTIFIER { fd.id = id.getText (); } LPAREN (formal_parameter_list [fd.parameters] | ) RPAREN LBRACE function_body [fd.funcBody] RBRACE
-    ;
-
-
-
 function_expression
     :
 	"function" (IDENTIFIER | ) LPAREN (formal_parameter_list [null] | ) RPAREN LBRACE function_body [null] RBRACE
@@ -499,6 +603,31 @@ null_literal
     :
 	"null"
     ;
+
+
+numeric_literal
+    : DECIMAL_LITERAL
+    | HEX_INTEGER_LITERAL
+    ;
+
+
+modifiers: (modifier)* ;
+
+modifier
+    : "public" 
+    | "private"
+    | "protected"
+    | "internal"
+    | "expando"
+    | "static"
+    | "abstract"
+    | "final"
+    ;
+
+version_modifiers
+    : "hide"
+    | "override"
+    ;	
 
 // Lexer
 class JScriptLexer extends Lexer;
@@ -672,6 +801,13 @@ DIVISION: '/' ;
 
 DIVISION_ASSIGN: "/=" ;
 
+
+// literals
+DECIMAL_LITERAL: ('0'  | ('1'..'9')('0'..'9')*) (DOT ('0'..'9')* | ) (('e' | 'E') (('+' | '-' | ) ('0'..'9')+) | )
+    ;
+
+HEX_INTEGER_LITERAL: '0' 'x' ('0'..'9' | 'a'..'f' | 'A'..'F')+
+    ;
 
 // FIXME: this just temporal, in order to get into parsing
 STRING_LITERAL
