@@ -1,5 +1,11 @@
 2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* image.h (MonoImage): Add 'field_cache' field.
+
+	* loader.c (mono_field_from_token): Cache field lookups.
+	
+	* reflection.c (mono_module_get_object): Fix name property.
+
 	* icall.c (ves_icall_get_enum_info): Update after changes to 
 	mono_metadata_get_constant_index ().
 
