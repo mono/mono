@@ -304,6 +304,7 @@ namespace System.Web
                 	mimeTypes.Add ("roff", "application/x-troff");
                 	mimeTypes.Add ("rp ", "image/vnd.rn-realpix");
                 	mimeTypes.Add ("rpm", "audio/x-pn-realaudio-plugin");
+                	mimeTypes.Add ("rss", "text/xml");
                 	mimeTypes.Add ("rt", "text/richtext");
                 	mimeTypes.Add ("rtf", "text/richtext");
                 	mimeTypes.Add ("rtx", "text/richtext");
