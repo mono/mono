@@ -99,7 +99,7 @@ namespace Mono.CSharp.Debugger
 
 		public static int Size {
 			get {
-				return 3 * sizeof (ulong);
+				return 3 * 8;
 			}
 		}
 

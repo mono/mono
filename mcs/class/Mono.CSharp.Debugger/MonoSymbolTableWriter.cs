@@ -75,7 +75,7 @@ namespace Mono.CSharp.Debugger
 				uint pos = (uint) bw.BaseStream.Position;
 
 				uint address_table_offset = address_table_size;
-				uint my_size = (uint) (MethodAddress.Size + count * sizeof (long));
+				uint my_size = (uint) (MethodAddress.Size + count * 8);
 				address_table_size += my_size;
 
 				for (int i = 0; i < count; i++) {
