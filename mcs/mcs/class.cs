@@ -877,22 +877,27 @@ namespace Mono.CSharp {
 			remove_list.Clear ();
 
 			foreach (MemberCore mc in list){
-				if (!mc.Define (this)){
-					remove_list.Add (mc);
-					continue;
-				}
-						
-				if (defined_names == null)
-					continue;
 
-				idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
+				if (defined_names != null)
+					idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
+				else
+					idx = -1;
+
 				if (idx < 0){
 					if (RootContext.WarningLevel >= 4){
 						if ((mc.ModFlags & Modifiers.NEW) != 0)
 							Warning_KewywordNewNotRequired (mc.Location, mc);
 					}
+				} else if (mc is MethodCore)
+					((MethodCore) mc).OverridesSomething = true;
+
+				if (!mc.Define (this)){
+					remove_list.Add (mc);
 					continue;
 				}
+						
+				if (idx < 0)
+					continue;
 
 				MemberInfo match = defined_names [idx];
 
@@ -2170,6 +2175,11 @@ namespace Mono.CSharp {
 		protected InternalParameters parameter_info;
 		protected Type [] parameter_types;
 
+		// <summary>
+		//   This is set from TypeContainer.DefineMembers if this method overrides something.
+		// </summary>
+		public bool OverridesSomething;
+
 		public MethodCore (Expression type, int mod, int allowed_mod, string name,
 				   Attributes attrs, Parameters parameters, Location loc)
 			: base (type, mod, allowed_mod, name, attrs, loc)
@@ -2499,7 +2509,7 @@ namespace Mono.CSharp {
 						}
 					}
 				} else {
-					if ((ModFlags & Modifiers.NEW) != 0)
+					if (!OverridesSomething && ((ModFlags & Modifiers.NEW) != 0))
 						WarningNotHiding (container);
 
 					if ((ModFlags & Modifiers.OVERRIDE) != 0){

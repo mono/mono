@@ -1,3 +1,9 @@
+2003-07-25  Martin Baulig  <martin@ximian.com>
+
+	* MethodCore.cs (OverridesSomething): New public field; it's set
+	from TypeContainer.DefineMembers if this method overrides
+	something (which doesn't need to be a method).  Fix #39462.
+
 2003-07-25  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (GetMembers): Ensure that the list of members is
