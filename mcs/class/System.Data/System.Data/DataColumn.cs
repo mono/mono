@@ -2,10 +2,12 @@
 // System.Data.DataColumn.cs
 //
 // Author:
+//   Franklin Wise (gracenote@earthlink.net)
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //
+// (C) Copyright 2002, Franklin Wise
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
 //
@@ -38,14 +40,14 @@ namespace System.Data
 		
 		#region Fields
 
-		private bool allowDBNull = true;
-		private bool autoIncrement = false;
-		private long autoIncrementSeed = 0;
-		private long autoIncrementStep = 1;
-		private string caption = null;
-		private MappingType columnMapping = MappingType.Element;
-		private string columnName = null;
-		private Type dataType = null;
+		private bool _allowDBNull = true;
+		private bool _autoIncrement = false;
+		private long _autoIncrementSeed = 0;
+		private long _autoIncrementStep = 1;
+		private string _caption = null;
+		private MappingType _columnMapping = MappingType.Element;
+		private string _columnName = null;
+		private Type _dataType = null;
 		private object defaultValue = null;
 		private string expression = null;
 		private PropertyCollection extendedProperties = null;
@@ -65,6 +67,7 @@ namespace System.Data
 		{
 		}
 
+		//TODO: Ctor init vars directly
 		public DataColumn(string columnName): this()
 		{
 			ColumnName = columnName;
@@ -73,7 +76,7 @@ namespace System.Data
 		public DataColumn(string columnName, Type dataType): this(columnName)
 		{
 			if(dataType == null) {
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("dataType can't be null.");
 			}
 			
 			DataType = dataType;
@@ -98,10 +101,29 @@ namespace System.Data
 		public bool AllowDBNull
 		{
 			get {
-				return allowDBNull;
+				return _allowDBNull;
 			}
 			set {
-				allowDBNull = value;
+				//TODO: If we are a part of the table and this value changes
+				//we need to validate that all the existing values conform to the new setting
+
+				if (true == value)
+				{
+					_allowDBNull = true;
+					return;
+				}
+				
+				//if Value == false case
+				if (null != _table)
+				{
+					if (_table.Rows.Count > 0)
+					{
+						//TODO: Validate no null values exist
+						//do we also check different versions of the row??
+					}
+				}
+					
+				_allowDBNull = value;
 			}
 		}
         
@@ -117,92 +139,104 @@ namespace System.Data
 		public bool AutoIncrement
 		{
 			get {
-				return autoIncrement;
+				return _autoIncrement;
 			}
 			set {
-				autoIncrement = value;
-				if(autoIncrement == true)
+				if(value == true)
 				{
+					//Can't be true if this is a computed column
 					if(Expression != null)
 					{
-						throw new Exception();
+						throw new ArgumentException("Can't Auto Increment a computed column."); 
 					}
-					if(Type.GetTypeCode(dataType) != TypeCode.Int16 && 
-					   Type.GetTypeCode(dataType) != TypeCode.Int32 && 
-					   Type.GetTypeCode(dataType) != TypeCode.Int64)
+
+					//If the DataType of this Column isn't an Int
+					//Make it an int
+					if(Type.GetTypeCode(_dataType) != TypeCode.Int16 && 
+					   Type.GetTypeCode(_dataType) != TypeCode.Int32 && 
+					   Type.GetTypeCode(_dataType) != TypeCode.Int64)
 					{
-						Int32 dtInt = new Int32();
-						dataType = dtInt.GetType();
+						_dataType = typeof(Int32); 
 					}
 				}
+				_autoIncrement = value;
 			}
 		}
 
 		public long AutoIncrementSeed
 		{
 			get {
-				return autoIncrementSeed;
+				return _autoIncrementSeed;
 			}
 			set {
-				autoIncrementSeed = value;
+				_autoIncrementSeed = value;
 			}
 		}
 
 		public long AutoIncrementStep
 		{
 			get {
-				return autoIncrementStep;
+				return _autoIncrementStep;
 			}
 			set {
-				autoIncrementStep = value;
+				_autoIncrementStep = value;
 			}
 		}
 
 		public string Caption 
 		{
 			get {
-				if(caption == null)
-					return columnName;
+				if(_caption == null)
+					return ColumnName;
 				else
-					return caption;
+					return _caption;
 			}
 			set {
-				caption = value;
+				_caption = value;
 			}
 		}
 
 		public virtual MappingType ColumnMapping
 		{
 			get {
-				return columnMapping;
+				return _columnMapping;
 			}
 			set {
-				columnMapping = value;
+				_columnMapping = value;
 			}
 		}
 
 		public string ColumnName
 		{
 			get {
-				return columnName;
+				return "" + _columnName;
 			}
 			set {
-				columnName = value;
+				//Both are checked after the column is part of the collection
+				//TODO: Check Name duplicate
+				//TODO: check Name != null
+				_columnName = value;
 			}
 		}
 
 		public Type DataType
 		{
 			get {
-				return dataType;
+				return _dataType;
 			}
 			set {
+				//TODO: check if data already exists can we change the datatype
+
+				//TODO: we want to check that the datatype is supported?
+				
+				//Check AutoIncrement status, make compatible datatype
+				//TODO: Check for other int values i.e. Int16 etc
 				if(AutoIncrement == true && 
 				   Type.GetTypeCode(value) != TypeCode.Int32)
 				{
-					throw new Exception();
+					throw new Exception(); //TODO: correction exception type
 				}
-				dataType = value;
+				_dataType = value;
 			}
 		}
 
@@ -220,13 +254,15 @@ namespace System.Data
 			}
 		}
 
+		[MonoTODO]
 		public string Expression
 		{
 			get {
 				return expression;
 			}
 			set {
-				expression = value;
+				//TODO: validation of the expression
+				expression = value;  //Check?
 			}
 		}
 
@@ -292,12 +328,16 @@ namespace System.Data
 			}
 		}
 
+		[MonoTODO]
 		public bool Unique
 		{
 			get {
 				return unique;
 			}
 			set {
+				//TODO: create UniqueConstraint
+				//if Table == null then the constraint is 
+				//created on addition to the collection
 				unique = value;
 			}
 		}
@@ -305,7 +345,8 @@ namespace System.Data
 		#endregion // Properties
 
 		#region Methods
-
+		
+/* ??
 		[MonoTODO]
 		protected internal void CheckNotAllowNull() {
 		}
@@ -313,7 +354,14 @@ namespace System.Data
 		[MonoTODO]
 		protected void CheckUnique() {
 		}
+*/
 
+		[MonoTODO]
+		internal void AssertCanAddToCollection()
+		{
+			//Check if Default Value is set and AutoInc is set
+		}
+		
 		[MonoTODO]
 		protected internal virtual void 
 		OnPropertyChanging (PropertyChangedEventArgs pcevent) {
@@ -334,13 +382,13 @@ namespace System.Data
 			if (expression != null)
 				return expression;
 			
-			return columnName;
+			return ColumnName;
 		}
 
 		[MonoTODO]
 		internal void SetTable(DataTable table) {
 			_table = table; 
-			// FIXME: this will get called by DataTable 
+			// this will get called by DataTable 
 			// and DataColumnCollection
 		}
 

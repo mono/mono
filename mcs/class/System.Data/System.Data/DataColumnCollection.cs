@@ -18,6 +18,9 @@ namespace System.Data
 	/// </summary>
 	public class DataColumnCollection : InternalDataCollectionBase
 	{
+		
+
+		
 		// The defaultNameIndex is used to create a default name for a column if one wasn't given.
 		private int defaultNameIndex;
 
@@ -76,12 +79,26 @@ namespace System.Data
 			}
 		}
 
+
+		//Add Logic
+		//
+		//Changing Event
+		//DefaultValue set and AutoInc set check
+		//?Validate Expression??
+		//Name check and creation
+		//Set Table
+		//Check Unique if true then add a unique constraint
+		//?Notify Rows of new column ?
+		//Add to collection
+		//Changed Event
+
 		/// <summary>
 		/// Creates and adds a DataColumn object to the DataColumnCollection.
 		/// </summary>
 		/// <returns></returns>
 		public virtual DataColumn Add()
 		{
+			//FIXME:
 			DataColumn column = new DataColumn("Column" + defaultNameIndex.ToString());
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 			
@@ -97,7 +114,8 @@ namespace System.Data
 		/// </summary>
 		/// <param name="column">The DataColumn to add.</param>
 		public void Add(DataColumn column)
-		{
+		{	
+			//FIXME:
 			if(Contains(column.ColumnName))
 			{
 				throw new DuplicateNameException("A column named " + column.ColumnName + " already belongs to this DataTable.");
@@ -121,6 +139,8 @@ namespace System.Data
 		public virtual DataColumn Add(string columnName)
 		{
 			
+			//FIXME: this wont work.  If the user decides to add a column named
+			//"ColumnXX" where XX is a number these two will conflict.
 			if (columnName == null || columnName == String.Empty)
 			{
 				columnName = "Column" + defaultNameIndex.ToString();
@@ -153,6 +173,8 @@ namespace System.Data
 		{
 			if (columnName == null || columnName == "")
 			{
+				//FIXME: this wont work.  If the user decides to add a column named
+				//"ColumnXX" where XX is a number these two will conflict.
 				columnName = "Column" + defaultNameIndex.ToString();
 				defaultNameIndex++;
 			}
@@ -181,6 +203,7 @@ namespace System.Data
 		/// <returns>The newly created DataColumn.</returns>
 		public virtual DataColumn Add(string columnName, Type type,	string expression)
 		{
+			//FIXME: See Add Logic
 			if (columnName == null || columnName == "")
 			{
 				columnName = "Column" + defaultNameIndex.ToString();
@@ -289,6 +312,7 @@ namespace System.Data
 				}
 			}
 			
+			//TODO: check constraints
 
 			return true;
 		}
@@ -352,7 +376,6 @@ namespace System.Data
 		{
 			if (CollectionChanged != null) 
 			{
-				// Invokes the delegate. 
 				CollectionChanged(this, ccevent);
 			}
 		}
@@ -365,8 +388,9 @@ namespace System.Data
 		{
 			if (CollectionChanged != null) 
 			{
-				// Invokes the delegate. 
-				CollectionChanged(this, ccevent);
+				//FIXME: this is not right
+				//CollectionChanged(this, ccevent);
+				throw new NotImplementedException();
 			}
 		}
 
@@ -376,6 +400,8 @@ namespace System.Data
 		/// <param name="column">The DataColumn to remove.</param>
 		public void Remove(DataColumn column)
 		{
+			//TODO: can remove first with exceptions
+			//and OnChanging Event
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
 			base.List.Remove(column);
 			OnCollectionChanged(e);
@@ -388,6 +414,8 @@ namespace System.Data
 		/// <param name="name">The name of the column to remove.</param>
 		public void Remove(string name)
 		{
+			//TODO: can remove first with exceptions
+			//and OnChanging Event
 			DataColumn column = this[name];
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
 			base.List.Remove(column);
@@ -401,6 +429,8 @@ namespace System.Data
 		/// <param name="index">The index of the column to remove.</param>
 		public void RemoveAt(int index)
 		{
+			//TODO: can remove first with exceptions
+			//and OnChanging Event
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
 			base.List.RemoveAt(index);
 			OnCollectionChanged(e);

@@ -289,16 +289,41 @@ namespace System.Data
 		/// Gets or sets an array of columns that function as 
 		/// primary keys for the data table.
 		/// </summary>
-		[MonoTODO]
 		public DataColumn[] PrimaryKey
 		{
 			get {
-				//TODO: compute PrimaryKey
-				if (null == _primaryKey) return new DataColumn[]{};
-				return _primaryKey;
+				UniqueConstraint uc = UniqueConstraint.GetPrimaryKeyConstraint( Constraints);
+				if (null == uc) return new DataColumn[] {};
+				return uc.Columns;
 			}
 			set {
-				_primaryKey = value;
+
+				//YUK: msft removes a previous unique constraint if it is flagged as a pk  
+				//when a new pk is set 
+
+				//clear Primary Key if value == null
+				if (null == value)
+				{
+					UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
+					return;
+				}
+			
+
+				//Does constraint exist for these columns
+				UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(
+						this.Constraints, (DataColumn[]) value);
+
+				//if constraint doesn't exist for columns
+				//create new unique primary key constraint
+				if (null == uc)
+				{
+					uc = new UniqueConstraint( (DataColumn[]) value, true);
+				}
+				else //set existing constraint as the new primary key
+				{
+					UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
+				}
+				
 			}
 		}
 
@@ -557,77 +582,6 @@ namespace System.Data
 	
 
 		/// <summary>
-		/// Raises the ColumnChanged event.
-		/// </summary>
-		[MonoTODO]
-		protected virtual void OnColumnChanged(DataColumnChangeEventArgs e)
-		{
-		}
-
-		/// <summary>
-		/// Raises the ColumnChanging event.
-		/// </summary>
-		
-		[MonoTODO]
-		protected virtual void OnColumnChanging(DataColumnChangeEventArgs e)
-		{
-		}
-
-		/// <summary>
-		/// Raises the PropertyChanging event.
-		/// </summary>
-		
-		[MonoTODO]
-		protected internal virtual void OnPropertyChanging(PropertyChangedEventArgs pcevent)
-		{
-		}
-
-		/// <summary>
-		/// Notifies the DataTable that a DataColumn is being removed.
-		/// </summary>
-		
-		[MonoTODO]
-		protected internal virtual void OnRemoveColumn(DataColumn column)
-		{
-		}
-
-		/// <summary>
-		/// Raises the RowChanged event.
-		/// </summary>
-		
-		[MonoTODO]
-		protected virtual void OnRowChanged(DataRowChangeEventArgs e)
-		{
-		}
-
-		/// <summary>
-		/// Raises the RowChanging event.
-		/// </summary>
-		
-		[MonoTODO]
-		protected virtual void OnRowChanging(DataRowChangeEventArgs e)
-		{
-		}
-
-		/// <summary>
-		/// Raises the RowDeleted event.
-		/// </summary>
-		
-		[MonoTODO]
-		protected virtual void OnRowDeleted(DataRowChangeEventArgs e)
-		{
-		}
-
-		/// <summary>
-		/// Raises the RowDeleting event.
-		/// </summary>
-		
-		[MonoTODO]
-		protected virtual void OnRowDeleting(DataRowChangeEventArgs e)
-		{
-		}
-
-		/// <summary>
 		/// Rolls back all changes that have been made to the 
 		/// table since it was loaded, or the last time AcceptChanges
 		///  was called.
@@ -677,7 +631,6 @@ namespace System.Data
 		/// match the filter criteria, in the the 
 		/// specified sort order.
 		/// </summary>
-		
 		[MonoTODO]
 		public DataRow[] Select(string filterExpression, string sort)
 		{
@@ -690,7 +643,6 @@ namespace System.Data
 		/// the filter in the order of the sort, that match 
 		/// the specified state.
 		/// </summary>
-		
 		[MonoTODO]
 		public DataRow[] Select(string filterExpression, string sort, DataViewRowState recordStates)
 		{
@@ -702,11 +654,106 @@ namespace System.Data
 		/// Gets the TableName and DisplayExpression, if 
 		/// there is one as a concatenated string.
 		/// </summary>
-		
-		[MonoTODO]
 		public override string ToString()
 		{
-			return "";
+			//LAMESPEC: spec says concat the two. impl puts a 
+			//plus sign infront of DisplayExpression
+			return TableName + " " + DisplayExpression;
+		}
+
+		
+		#region Events /////////////////
+		
+		/// <summary>
+		/// Raises the ColumnChanged event.
+		/// </summary>
+		protected virtual void OnColumnChanged(DataColumnChangeEventArgs e)
+		{
+			if (null != ColumnChanged)
+			{
+				ColumnChanged(this, e);
+			}
+		}
+
+		/// <summary>
+		/// Raises the ColumnChanging event.
+		/// </summary>
+		protected virtual void OnColumnChanging(DataColumnChangeEventArgs e)
+		{
+			if (null != ColumnChanging)
+			{
+				ColumnChanging(this, e);
+			}
+		}
+
+		/// <summary>
+		/// Raises the PropertyChanging event.
+		/// </summary>
+		[MonoTODO]
+		protected internal virtual void OnPropertyChanging(PropertyChangedEventArgs pcevent)
+		{
+//			if (null != PropertyChanging)
+//			{
+//				PropertyChanging(this, e);
+//			}
+		}
+
+		/// <summary>
+		/// Notifies the DataTable that a DataColumn is being removed.
+		/// </summary>
+		[MonoTODO]
+		protected internal virtual void OnRemoveColumn(DataColumn column)
+		{
+//			if (null != RemoveColumn)
+//			{
+//				RemoveColumn(this, e);
+//			}
+		}
+
+		/// <summary>
+		/// Raises the RowChanged event.
+		/// </summary>
+		
+		protected virtual void OnRowChanged(DataRowChangeEventArgs e)
+		{
+			if (null != RowChanged)
+			{
+				RowChanged(this, e);
+			}
+		}
+
+		/// <summary>
+		/// Raises the RowChanging event.
+		/// </summary>
+		
+		protected virtual void OnRowChanging(DataRowChangeEventArgs e)
+		{
+			if (null != RowChanging)
+			{
+				RowChanging(this, e);
+			}
+		}
+
+		/// <summary>
+		/// Raises the RowDeleted event.
+		/// </summary>
+		protected virtual void OnRowDeleted(DataRowChangeEventArgs e)
+		{
+			if (null != RowDeleted)
+			{
+				RowDeleted(this, e);
+			}
+		}
+
+		/// <summary>
+		/// Raises the RowDeleting event.
+		/// </summary>
+		protected virtual void OnRowDeleting(DataRowChangeEventArgs e)
+		{
+			if (null != RowDeleting)
+			{
+				RowDeleting(this, e);
+			}
 		}
 
 		/// <summary>
@@ -746,5 +793,8 @@ namespace System.Data
 		/// </summary>
 		
 		public event DataRowChangeEventHandler RowDeleting;
+		
+		#endregion //Events
 	}
+
 }

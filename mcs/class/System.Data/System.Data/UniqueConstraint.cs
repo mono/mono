@@ -124,7 +124,7 @@ namespace System.Data
 			base.ConstraintName = name;
 
 			//set unique
-			_setColumnsUnique (columns);
+			if (columns.Length == 1) columns[0].Unique = true;
 
 			//keep reference
 			_dataColumns = columns;
@@ -137,12 +137,6 @@ namespace System.Data
 		#endregion // Constructors
 
 		#region Helpers
-		private void _setColumnsUnique(DataColumn [] columns) {
-			if (null == columns) return;
-			foreach (DataColumn col in columns) {
-				col.Unique = true;
-			}
-		}
 		
 		private void _validateColumns(DataColumn [] columns)
 		{
@@ -193,9 +187,50 @@ namespace System.Data
 			
 		}
 
+		internal static void SetAsPrimaryKey(ConstraintCollection collection, UniqueConstraint newPrimaryKey)
+		{
+			//not null
+			if (null == collection) throw new ArgumentNullException("ConstraintCollection can't be null.");
+			
+			//make sure newPrimaryKey belongs to the collection parm unless it is null
+			if (  collection.IndexOf(newPrimaryKey) < 1 && (null != newPrimaryKey) ) 
+				throw new ArgumentException("newPrimaryKey must belong to collection.");
+			
+			//Get existing pk
+			UniqueConstraint uc = GetPrimaryKeyConstraint(collection);
+			
+			//clear existing
+			if (null != uc) uc._isPrimaryKey = false;
+
+			//set new key
+			if (null != newPrimaryKey) newPrimaryKey._isPrimaryKey = true;
+			
+			
+		}
+
+		internal static UniqueConstraint GetPrimaryKeyConstraint(ConstraintCollection collection)
+		{
+			if (null == collection) throw new ArgumentNullException("Collection can't be null.");
+
+			UniqueConstraint uc;
+			IEnumerator enumer = collection.GetEnumerator();
+			while (enumer.MoveNext())
+			{
+				uc = enumer.Current as UniqueConstraint;
+				if (null == uc) continue;
+				
+				if (uc.IsPrimaryKey) return uc;	
+			}
+
+			//if we got here there was no pk
+			return null;
+			
+		}
+
 		internal static UniqueConstraint GetUniqueConstraintForColumnSet(ConstraintCollection collection,
 				DataColumn[] columns)
 		{
+			if (null == collection) throw new ArgumentNullException("Collection can't be null.");
 			if (null == columns ) return null;
 			
 			UniqueConstraint uniqueConstraint;
@@ -269,6 +304,14 @@ namespace System.Data
 			UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(collection, this.Columns);	
 			if (null != uc) throw new ArgumentException("Unique constraint already exists for these" +
 					" columns. Existing ConstraintName is " + uc.ConstraintName);
+
+			//Allow only one primary key
+			if (this.IsPrimaryKey)
+			{
+				uc = GetPrimaryKeyConstraint(collection);
+				if (null != uc) uc._isPrimaryKey = false;
+
+			}
 					
 			AssertConstraint();
 		}

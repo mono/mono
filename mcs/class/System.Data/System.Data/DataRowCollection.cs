@@ -52,6 +52,8 @@ namespace System.Data
 		/// </summary>
 		public void Add (DataRow row) 
 		{
+			//TODO: AutoIncrement
+			//TODO: validation
 			list.Add (row);
 		}
 

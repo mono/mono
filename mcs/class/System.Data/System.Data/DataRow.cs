@@ -23,15 +23,15 @@ namespace System.Data
 	{
 		#region Fields
 
-		DataTable table;
+		private DataTable _table;
 
-		object[] original;
-		object[] proposed;
-		object[] current;
+		private object[] original;
+		private object[] proposed;
+		private object[] current;
 
-		string[] columnErrors;
-		string rowError;
-		DataRowState rowState;
+		private string[] columnErrors;
+		private string rowError;
+		private DataRowState rowState;
 
 		#endregion
 
@@ -43,13 +43,13 @@ namespace System.Data
 		/// </summary>
 		protected internal DataRow (DataRowBuilder builder)
 		{
-			table = builder.Table;
+			_table = builder.Table;
 
 			original = null; 
 			proposed = null;
-			current = new object[table.Columns.Count];
+			current = new object[_table.Columns.Count];
 
-			columnErrors = new string[table.Columns.Count];
+			columnErrors = new string[_table.Columns.Count];
 			rowError = String.Empty;
 
 			rowState = DataRowState.Unchanged;
@@ -77,7 +77,7 @@ namespace System.Data
 			get { return this[columnName, DataRowVersion.Current]; }
 			[MonoTODO]
 			set {
-				DataColumn column = table.Columns[columnName];
+				DataColumn column = _table.Columns[columnName];
 				if (column == null) 
 					throw new IndexOutOfRangeException ();
 				this[column] = value;
@@ -96,7 +96,7 @@ namespace System.Data
 				bool objIsDBNull = value.Equals(DBNull.Value);
 				if (column == null)
 					throw new ArgumentNullException ();
-				int columnIndex = table.Columns.IndexOf (column);
+				int columnIndex = _table.Columns.IndexOf (column);
 				if (columnIndex == -1)
 					throw new ArgumentException ();
 				if(column.DataType != value.GetType ()) {
@@ -125,7 +125,7 @@ namespace System.Data
 			get { return this[columnIndex, DataRowVersion.Current]; }
 			[MonoTODO]
 			set {
-				DataColumn column = table.Columns[columnIndex]; //FIXME: will throw
+				DataColumn column = _table.Columns[columnIndex]; //FIXME: will throw
 				if (column == null)  
 					throw new IndexOutOfRangeException ();
 				this[column] = value;
@@ -138,7 +138,7 @@ namespace System.Data
 		public object this[string columnName, DataRowVersion version] {
 			[MonoTODO]
 			get {
-				DataColumn column = table.Columns[columnName]; //FIXME: will throw
+				DataColumn column = _table.Columns[columnName]; //FIXME: will throw
 				if (column == null) 
 					throw new IndexOutOfRangeException ();
 				return this[column, version];
@@ -153,7 +153,7 @@ namespace System.Data
 				if (column == null)
 					throw new ArgumentNullException ();	
 
-				int columnIndex = table.Columns.IndexOf (column);
+				int columnIndex = _table.Columns.IndexOf (column);
 
 				if (columnIndex == -1)
 					throw new ArgumentException ();
@@ -185,7 +185,7 @@ namespace System.Data
 		public object this[int columnIndex, DataRowVersion version] {
 			[MonoTODO]
 			get {
-				DataColumn column = table.Columns[columnIndex]; //FIXME: throws
+				DataColumn column = _table.Columns[columnIndex]; //FIXME: throws
 				if (column == null) 
 					throw new IndexOutOfRangeException ();
 				return this[column, version];
@@ -199,25 +199,25 @@ namespace System.Data
 		public object[] ItemArray {
 			get { return current; }
 			set {
-				if (value.Length > table.Columns.Count)
+				if (value.Length > _table.Columns.Count)
 					throw new ArgumentException ();
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 
 				for (int i = 0; i < value.Length; i += 1)
 				{
-					if (table.Columns[i].ReadOnly && value[i] != this[i])
+					if (_table.Columns[i].ReadOnly && value[i] != this[i])
 						throw new ReadOnlyException ();
 
 					if (value[i] == null)
 					{
-						if (!table.Columns[i].AllowDBNull)
+						if (!_table.Columns[i].AllowDBNull)
 							throw new NoNullAllowedException ();
 						continue;
 					}
 						
 					//FIXME: int strings can be converted to ints
-					if (table.Columns[i].DataType != value[i].GetType())
+					if (_table.Columns[i].DataType != value[i].GetType())
 						throw new InvalidCastException ();
 				}
 
@@ -249,7 +249,7 @@ namespace System.Data
 		/// Gets the DataTable for which this row has a schema.
 		/// </summary>
 		public DataTable Table {
-			get { return table; }
+			get { return _table; }
 		}
 
 		#endregion
@@ -274,7 +274,7 @@ namespace System.Data
 					rowState = DataRowState.Unchanged;
 					break;
 				case DataRowState.Deleted:
-					table.Rows.Remove (this); //FIXME: this should occur in end edit
+					_table.Rows.Remove (this); //FIXME: this should occur in end edit
 					break;
 			}
 
@@ -292,16 +292,16 @@ namespace System.Data
 
 			if (!HasVersion (DataRowVersion.Proposed))
 			{
-				proposed = new object[table.Columns.Count];
-				Array.Copy (current, proposed, table.Columns.Count);
+				proposed = new object[_table.Columns.Count];
+				Array.Copy (current, proposed, _table.Columns.Count);
 			}
 			//TODO: Suspend validation
 
 			//FIXME: this doesn't happen on begin edit
 			if (!HasVersion (DataRowVersion.Original))
 			{
-				original = new object[table.Columns.Count];
-				Array.Copy (current, original, table.Columns.Count);
+				original = new object[_table.Columns.Count];
+				Array.Copy (current, original, _table.Columns.Count);
 			}
 		}
 
@@ -328,7 +328,7 @@ namespace System.Data
 		public void ClearErrors () 
 		{
 			rowError = String.Empty;
-			columnErrors = new String[table.Columns.Count];
+			columnErrors = new String[_table.Columns.Count];
 		}
 
 		/// <summary>
@@ -354,7 +354,7 @@ namespace System.Data
 			{
 				rowState = DataRowState.Modified;
 				//TODO: Validate Constraints, Events
-				Array.Copy (proposed, current, table.Columns.Count);
+				Array.Copy (proposed, current, _table.Columns.Count);
 				proposed = null;
 			}
 		}
@@ -403,7 +403,7 @@ namespace System.Data
 		/// </summary>
 		public string GetColumnError (DataColumn column) 
 		{
-			return GetColumnError (table.Columns.IndexOf(column));
+			return GetColumnError (_table.Columns.IndexOf(column));
 		}
 
 		/// <summary>
@@ -422,7 +422,7 @@ namespace System.Data
 		/// </summary>
 		public string GetColumnError (string columnName) 
 		{
-			return GetColumnError (table.Columns.IndexOf(columnName));
+			return GetColumnError (_table.Columns.IndexOf(columnName));
 		}
 
 		/// <summary>
@@ -435,7 +435,7 @@ namespace System.Data
 			for (int i = 0; i < columnErrors.Length; i += 1)
 			{
 				if (columnErrors[i] != String.Empty)
-					dataColumns.Add (table.Columns[i]);
+					dataColumns.Add (_table.Columns[i]);
 			}
 
 			return (DataColumn[])(dataColumns.ToArray ());
@@ -581,12 +581,12 @@ namespace System.Data
 			// was last called.  We have no "original" to go back to.
 			if (original != null)
 			{
-				Array.Copy (original, current, table.Columns.Count);
+				Array.Copy (original, current, _table.Columns.Count);
 				CancelEdit ();
 				switch (rowState)
 				{
 					case DataRowState.Added:
-						table.Rows.Remove (this);
+						_table.Rows.Remove (this);
 						break;
 					case DataRowState.Modified:
 						rowState = DataRowState.Unchanged;
@@ -603,7 +603,7 @@ namespace System.Data
 		/// </summary>
 		public void SetColumnError (DataColumn column, string error) 
 		{
-			SetColumnError (table.Columns.IndexOf (column), error);
+			SetColumnError (_table.Columns.IndexOf (column), error);
 		}
 
 		/// <summary>
@@ -621,7 +621,7 @@ namespace System.Data
 		/// </summary>
 		public void SetColumnError (string columnName, string error) 
 		{
-			SetColumnError (table.Columns.IndexOf (columnName), error);
+			SetColumnError (_table.Columns.IndexOf (columnName), error);
 		}
 
 		/// <summary>

@@ -35,24 +35,37 @@ namespace MonoTests.System.Data
 			DataTable dt = new DataTable();
 
 			Assertion.AssertEquals("CaseSensitive must be false." ,false,dt.CaseSensitive);
-			Assertion.Assert(dt.Columns != null);
+			Assertion.Assert("Col",dt.Columns != null);
 			//Assertion.Assert(dt.ChildRelations != null);
-			Assertion.Assert(dt.Constraints != null);
-			Assertion.Assert(dt.DataSet == null); 
-			Assertion.Assert(dt.DefaultView != null);
-			Assertion.Assert(dt.DisplayExpression == "");
-			Assertion.Assert(dt.ExtendedProperties != null);
-			Assertion.Assert(dt.HasErrors == false);
-			Assertion.Assert(dt.Locale != null);
-			Assertion.Assert(dt.MinimumCapacity == 50); //LAMESPEC:
-			Assertion.Assert(dt.Namespace == "");
+			Assertion.Assert("Const", dt.Constraints != null);
+			Assertion.Assert("ds", dt.DataSet == null); 
+			Assertion.Assert("dv", dt.DefaultView != null);
+			Assertion.Assert("de", dt.DisplayExpression == "");
+			Assertion.Assert("ep", dt.ExtendedProperties != null);
+			Assertion.Assert("he", dt.HasErrors == false);
+			Assertion.Assert("lc", dt.Locale != null);
+			Assertion.Assert("mc", dt.MinimumCapacity == 50); //LAMESPEC:
+			Assertion.Assert("ns", dt.Namespace == "");
 			//Assertion.Assert(dt.ParentRelations != null);
-			Assertion.Assert(dt.Prefix == "");
-			Assertion.Assert(dt.PrimaryKey != null);
-			Assertion.Assert(dt.Rows != null);
-			Assertion.Assert(dt.Site == null);
-			Assertion.Assert(dt.TableName == "");
+			Assertion.Assert("pf", dt.Prefix == "");
+			Assertion.Assert("pk", dt.PrimaryKey != null);
+			Assertion.Assert("rows", dt.Rows != null);
+			Assertion.Assert("Site", dt.Site == null);
+			Assertion.Assert("tname", dt.TableName == "");
 			
+		}
+
+		public void TestToString()
+		{
+			DataTable dt = new DataTable();
+			dt.Columns.Add("Col1",typeof(int));
+			
+			dt.TableName = "Myzable";
+			dt.DisplayExpression = "Col1";
+			
+			
+			string cmpr = dt.TableName + " " + dt.DisplayExpression;
+			Assertion.AssertEquals(cmpr,dt.ToString());
 		}
 	}
 }
