@@ -1,3 +1,9 @@
+2002-06-28  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (debug_generate_method_lines, mono_debug_add_method): Make methods
+	start on the nop instruction to make single-stepping into an already-JITed
+	method work.
+
 2002-06-26  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_source_location_from_address): Added
