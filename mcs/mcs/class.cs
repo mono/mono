@@ -98,7 +98,8 @@ namespace CIR {
 		// Attributes for this type
 		protected Attributes attributes;
 
-		public TypeContainer (RootContext rc, TypeContainer parent, string name) : base (name)
+		public TypeContainer (RootContext rc, TypeContainer parent, string name, Location l)
+			: base (name, l)
 		{
 			string n;
 			types = new ArrayList ();
@@ -539,7 +540,8 @@ namespace CIR {
 			int mods = 0;
 
 			c = new Constructor (Name, new Parameters (null, null),
-					     new ConstructorBaseInitializer (null, new Location ("", 0, 0)));
+					     new ConstructorBaseInitializer (null, new Location ("", 0, 0)),
+					     new Location ("Internal", 1, 1));
 			AddConstructor (c);
 			c.Block = new Block (null);
 			
@@ -547,6 +549,18 @@ namespace CIR {
 				mods = Modifiers.STATIC;
 
 			c.ModFlags = mods;	
+		}
+
+		public void ReportStructInitializedInstanceError ()
+		{
+			string n = TypeBuilder.FullName;
+			
+			foreach (Field f in initialized_fields){
+				RootContext.Report.Error (
+					573, Location,
+					"`" + n + "." + f.Name + "': can not have " +
+					"instance field initializers in structs");
+			}
 		}
 
 		//
@@ -564,19 +578,36 @@ namespace CIR {
 					f.Define (this);
 			}
 
-			if (default_constructor == null) 
-				DefineDefaultConstructor (false);
+			if (this is Class){
+				if (default_constructor == null) 
+					DefineDefaultConstructor (false);
 
-			if (initialized_static_fields != null && default_static_constructor == null)
-				DefineDefaultConstructor (true);
+				if (initialized_static_fields != null &&
+				    default_static_constructor == null)
+					DefineDefaultConstructor (true);
+			}
 
+			if (this is Struct){
+				//
+				// Structs can not have initialized instance
+				// fields
+				//
+				if (initialized_static_fields != null &&
+				    default_static_constructor == null)
+					DefineDefaultConstructor (true);
+
+				if (initialized_fields != null)
+					ReportStructInitializedInstanceError ();
+			}
 			
 			if (Constructors != null){
 				foreach (Constructor c in Constructors){
 					c.Define (this);
 					if (method_builders_to_methods == null)
 						method_builders_to_methods = new Hashtable ();
-					method_builders_to_methods.Add (c.ConstructorBuilder, c);
+					object key = c.ConstructorBuilder;
+					if (key != null)
+						method_builders_to_methods.Add (key, c);
 				}
 			} 
 
@@ -678,9 +709,23 @@ namespace CIR {
 			return RootContext.LookupType (this, name, silent);
 		}
 
-		bool AlwaysAccept (MemberInfo m, object filterCriteria)
+		//
+		// This function is based by a delegate to the FindMembers routine
+		//
+		static bool AlwaysAccept (MemberInfo m, object filterCriteria)
 		{
 			return true;
+		}
+		
+		//
+		// This filter is used by FindMembers, and we just keep
+		// a global for the filter to `AlwaysAccept'
+		//
+		static MemberFilter accepting_filter;
+		
+		static TypeContainer ()
+		{
+			accepting_filter = new MemberFilter (AlwaysAccept);
 		}
 		
 		// <summary>
@@ -694,7 +739,7 @@ namespace CIR {
 			ArrayList members = new ArrayList ();
 
 			if (filter == null)
-				filter = new MemberFilter (AlwaysAccept);
+				filter = accepting_filter; 
 			
 			if ((mt & MemberTypes.Field) != 0 && Fields != null) {
 				foreach (Field f in Fields) {
@@ -775,8 +820,9 @@ namespace CIR {
 			Modifiers.ABSTRACT |
 			Modifiers.SEALED;
 
-		public Class (RootContext rc, TypeContainer parent, string name, int mod, Attributes attrs)
-			: base (rc, parent, name)
+		public Class (RootContext rc, TypeContainer parent, string name, int mod,
+			      Attributes attrs, Location l)
+			: base (rc, parent, name, l)
 		{
 			int accmods;
 
@@ -811,8 +857,9 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Struct (RootContext rc, TypeContainer parent, string name, int mod, Attributes attrs)
-			: base (rc, parent, name)
+		public Struct (RootContext rc, TypeContainer parent, string name, int mod,
+			       Attributes attrs, Location l)
+			: base (rc, parent, name, l)
 		{
 			int accmods;
 			
@@ -848,16 +895,18 @@ namespace CIR {
 		public readonly string Name;
 		public int ModFlags;
 		Block block;
+		public readonly Location Location;
 		
 		//
 		// Parameters, cached for semantic analysis.
 		//
 		InternalParameters parameter_info;
 		
-		public MethodCore (string name, Parameters parameters)
+		public MethodCore (string name, Parameters parameters, Location l)
 		{
 			Name = name;
 			Parameters = parameters;
+			Location = l;
 		}
 		
 		//
@@ -936,8 +985,8 @@ namespace CIR {
 		
 		// return_type can be "null" for VOID values.
 		public Method (string return_type, int mod, string name, Parameters parameters,
-			       Attributes attrs)
-			: base (name, parameters)
+			       Attributes attrs, Location l)
+			: base (name, parameters, l)
 		{
 			ReturnType = return_type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
@@ -1106,8 +1155,8 @@ namespace CIR {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (string name, Parameters args, ConstructorInitializer init)
-			: base (name, args)
+		public Constructor (string name, Parameters args, ConstructorInitializer init, Location l)
+			: base (name, args, l)
 		{
 			Initializer = init;
 		}
@@ -1129,8 +1178,16 @@ namespace CIR {
 		{
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
+
 			Type [] parameters = ParameterTypes (parent);
-			
+
+			if (parent is Struct && parameters == null){
+				parent.RootContext.Report.Error (
+					568, Location, 
+					"Structs can not contain explicit parameterless constructors");
+				return;
+			}
+
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ca |= MethodAttributes.Static;
 
@@ -1146,20 +1203,27 @@ namespace CIR {
 		//
 		public void Emit (TypeContainer parent)
 		{
-			if (Initializer != null)
+			if (parent is Class){
+				if (Initializer == null)
+					Initializer = new ConstructorBaseInitializer (null, parent.Location);
 				if (!Initializer.Resolve (parent))
 					return;
+			}
 
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, ig);
 
-			if ((ModFlags & Modifiers.STATIC) == 0)
-				Initializer.Emit (ec);
+			//
+			// Classes can have base initializers and instance field initializers.
+			//
+			if (parent is Class){
+				if ((ModFlags & Modifiers.STATIC) == 0)
+					Initializer.Emit (ec);
+				parent.EmitFieldInitializers (ec, false);
+			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				parent.EmitFieldInitializers (ec, true);
-			else
-				parent.EmitFieldInitializers (ec, false);
 
 			ec.EmitTopBlock (Block);
 		}
@@ -1507,7 +1571,8 @@ namespace CIR {
 							       Parameter.Modifier.NONE, null);
 			
 			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
-						     new Parameters (param_list, null), OptAttributes);
+						     new Parameters (param_list, null),
+						     OptAttributes, null);
 			
 			OperatorMethod.Define (parent);
 			OperatorMethodBuilder = OperatorMethod.MethodBuilder;

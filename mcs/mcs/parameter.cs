@@ -157,7 +157,7 @@ namespace CIR {
 		public Parameter GetParameterByName (string name, out int idx)
 		{
 			idx = 0;
-			
+
 			if (FixedParameters == null)
 				return null;
 

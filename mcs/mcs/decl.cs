@@ -28,6 +28,11 @@ namespace CIR {
 		//   created with System.Reflection.Emit
 		// </summary>
 		TypeBuilder definition;
+
+		// <summary>
+		//   Location where this declaration happens
+		// </summary>
+		public readonly Location Location;
 		
 		string name, basename;
 		
@@ -81,11 +86,12 @@ namespace CIR {
 		// </summary>
 		protected Hashtable defined_names;
 
-		public DeclSpace (string name)
+		public DeclSpace (string name, Location l)
 		{
 			this.name = name;
 			this.basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();
+			Location = l;
 		}
 
 		// <summary>
@@ -138,5 +144,12 @@ namespace CIR {
 				definition = value;
 			}
 		}
+
 	}
 }
+
+
+
+
+
+

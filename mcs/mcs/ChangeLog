@@ -1,3 +1,51 @@
+2001-09-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Only add constructor to hashtable if it is non-null
+	(as now constructors can fail on define).
+
+	(TypeManager, Class, Struct): Take location arguments.
+
+	Catch field instance initialization in structs as errors.
+
+	accepting_filter: a new filter for FindMembers that is static so
+	that we dont create an instance per invocation.
+
+	(Constructor::Define): Catch errors where a struct constructor is
+	parameterless 
+
+	* cs-parser.jay: Pass location information for various new
+	constructs. 
+	
+	* delegate.cs (Delegate): take a location argument.
+
+	* driver.cs: Do not call EmitCode if there were problesm in the
+	Definition of the types, as many Builders wont be there. 
+
+	* decl.cs (Decl::Decl): Require a location argument.
+
+	* cs-tokenizer.cs: Handle properly hex constants that can not fit
+	into integers, and find the most appropiate integer for it.
+
+	* literal.cs: Implement ULongLiteral.
+
+	* rootcontext.cs: Provide better information about the location of
+	failure when CreateType fails.
+	
+2001-09-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs (RootContext::PopulateTypes): Populates structs
+	as well.
+
+	* expression.cs (Binary::CheckShiftArguments): Add missing type
+	computation.
+	(Binary::ResolveOperator): Add type to the logical and and logical
+	or, Bitwise And/Or and Exclusive Or code paths, it was missing
+	before.
+
+	(Binary::DoNumericPromotions): In the case where either argument
+	is ulong (and most signed types combined with ulong cause an
+	error) perform implicit integer constant conversions as well.
+
 2001-09-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (UserImplicitCast): Method should always be

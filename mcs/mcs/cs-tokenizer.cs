@@ -558,10 +558,27 @@ namespace CIR
 
 			if (Char.IsDigit ((char)c)){
 				if (c == '0' && peekChar () == 'x' || peekChar () == 'X'){
+					ulong ul;
 					getChar ();
 					hex_digits (-1);
-					val = new System.Int32 ();
-					val = System.Int32.Parse (number.ToString (), NumberStyles.HexNumber);
+
+					string s = number.ToString ();
+
+					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
+					if ((ul & 0xffffffff00000000) == 0){
+						uint ui = (uint) ul;
+						
+						if ((ui & 0x80000000) != 0)
+							val = ui;
+						else
+							val = (int) ui;
+					} else {
+						if ((ul & 0x8000000000000000) != 0)
+							val = ul;
+						else
+							val = (long) ul;
+					}
+
 					return integer_type_suffix (peekChar ());
 				}
 				decimal_digits (c);

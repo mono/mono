@@ -506,7 +506,12 @@ namespace CIR {
 		public void CloseTypes ()
 		{
 			foreach (TypeBuilder t in TypeManager.UserTypes){
-				t.CreateType ();
+				try {
+					t.CreateType ();
+				} catch (Exception e){
+					Console.WriteLine ("Caught Exception while creating type for " + t);
+					Console.WriteLine (e);
+				}
 			}
 		}
 
@@ -577,7 +582,7 @@ namespace CIR {
 		// have been defined through `ResolveTree' 
 		public void PopulateTypes ()
 		{
-			Hashtable ifaces, classes;
+			Hashtable ifaces, classes, structs;
 			
 			if ((ifaces = tree.Interfaces) != null){
 				foreach (DictionaryEntry de in ifaces){
@@ -594,14 +599,30 @@ namespace CIR {
 					tc.Populate ();
 				}
 			}
+
+			if ((structs = tree.Structs) != null){
+				foreach (DictionaryEntry de in structs){
+					TypeContainer tc = (TypeContainer) de.Value;
+
+					tc.Populate ();
+				}
+			}
 		}
 
 		public void EmitCode ()
 		{
-			Hashtable classes;
+			Hashtable classes, structs;
 			
 			if ((classes = tree.Classes) != null){
 				foreach (DictionaryEntry de in classes){
+					TypeContainer tc = (TypeContainer) de.Value;
+
+					tc.Emit ();
+				}
+			}
+
+			if ((structs = tree.Structs) != null){
+				foreach (DictionaryEntry de in structs){
 					TypeContainer tc = (TypeContainer) de.Value;
 
 					tc.Emit ();

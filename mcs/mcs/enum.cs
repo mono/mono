@@ -31,7 +31,8 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (string type, int mod_flags, string name, Attributes attrs) : base (name)
+		public Enum (string type, int mod_flags, string name, Attributes attrs, Location l)
+			: base (name, l)
 		{
 			this.type = type;
 			this.name = name;

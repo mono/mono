@@ -59,7 +59,8 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Interface (TypeContainer parent, string name, int mod, Attributes attrs) : base (name)
+		public Interface (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
+			: base (name, l)
 		{
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PUBLIC);
 			this.parent = parent;

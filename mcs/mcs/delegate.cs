@@ -33,7 +33,7 @@ namespace CIR {
 			Modifiers.PRIVATE;
 
 		public Delegate (string type, int mod_flags, string name, Parameters param_list,
-				 Attributes attrs) : base (name)
+				 Attributes attrs, Location l) : base (name, l)
 		{
 			this.name       = name;
 			this.type       = type;

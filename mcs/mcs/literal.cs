@@ -285,6 +285,34 @@ namespace CIR {
 		}
 	}
 
+	public class ULongLiteral : Literal {
+		public readonly ulong Value;
+
+		public ULongLiteral (ulong l)
+		{
+			Value = l;
+		}
+
+		override public string AsString ()
+		{
+			return Value.ToString ();
+		}
+
+		public override Expression DoResolve (TypeContainer tc)
+		{
+			type = TypeManager.uint64_type;
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			LongLiteral.EmitLong (ig, unchecked ((long) Value));
+		}
+	}
+	
 	public class FloatLiteral : Literal {
 		public readonly float Value;
 

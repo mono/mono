@@ -524,7 +524,8 @@ struct_declaration
 		Struct new_struct;
 		string full_struct_name = MakeName ((string) $4);
 
-		new_struct = new Struct (rc, current_container, full_struct_name, (int) $2, (Attributes) $1);
+		new_struct = new Struct (rc, current_container, full_struct_name, (int) $2, 
+					 (Attributes) $1, lexer.Location);
 		current_container = new_struct;
 		current_container.Namespace = current_namespace;
 		tree.RecordStruct (full_struct_name, new_struct);
@@ -698,7 +699,8 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ((string) $3, (int) $2, (string) $4, (Parameters) $6, (Attributes) $1);
+		Method method = new Method ((string) $3, (int) $2, (string) $4, 
+					    (Parameters) $6, (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -710,7 +712,8 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ("System.Void", (int) $2, (string) $4, (Parameters) $6, (Attributes) $1);
+		Method method = new Method ("System.Void", (int) $2, (string) $4, 
+					    (Parameters) $6, (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 		$$ = method;
@@ -903,7 +906,8 @@ interface_declaration
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $4);
 
-		new_interface = new Interface (current_container, full_interface_name, (int) $2, (Attributes) $1);
+		new_interface = new Interface (current_container, full_interface_name, (int) $2, 
+					       (Attributes) $1, lexer.Location);
 		if (current_interface != null) {
 			Location l = lexer.Location;
 			rc.Report.Error (-2, l, "Internal compiler error: interface inside interface");
@@ -1164,10 +1168,7 @@ constructor_declaration
 				Location l = lexer.Location;
 				rc.Report.Error (103, l, "Static constructors should not have parameters");
 			}
-		} else {
-			if (c.Initializer == null)
-				c.Initializer = new ConstructorBaseInitializer (null, lexer.Location);
-		}
+		} 
 		
 		CheckDef (current_container.AddConstructor (c), c.Name);
 
@@ -1180,7 +1181,9 @@ constructor_declarator
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  opt_constructor_initializer
 	  {
-		$$ = new Constructor ((string) $1, (Parameters) $3, (ConstructorInitializer) $5);
+		Location l = lexer.Location;
+
+		$$ = new Constructor ((string) $1, (Parameters) $3, (ConstructorInitializer) $5, l);
 	
 		current_local_parameters = (Parameters) $3;
 	  }
@@ -1205,7 +1208,8 @@ constructor_initializer
 destructor_declaration
 	: opt_attributes TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		Method d = new Method ("System.Void", 0, "Finalize", new Parameters (null, null), (Attributes) $1);
+		Method d = new Method ("System.Void", 0, "Finalize", 
+				       new Parameters (null, null), (Attributes) $1, lexer.Location);
 		  
 		d.Block = (Block) $6;
 		CheckDef (current_container.AddMethod (d), d.Name);
@@ -1336,7 +1340,7 @@ enum_declaration
 	  opt_semicolon
 	  { 
 		string name = (string) $4;
-		Enum e = new Enum ((string) $5, (int) $2, name, (Attributes) $1);
+		Enum e = new Enum ((string) $5, (int) $2, name, (Attributes) $1, lexer.Location);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
 			CheckDef (e.AddEnumMember (ev.identifier, 
@@ -1403,7 +1407,8 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		Delegate del = new Delegate ((string) $4, (int) $2, (string) $5, (Parameters) $7, (Attributes) $1);
+		Delegate del = new Delegate ((string) $4, (int) $2, (string) $5, (Parameters) $7, 
+					     (Attributes) $1, lexer.Location);
 
 		CheckDef (current_container.AddDelegate (del), del.Name);
 	  }	
@@ -1415,7 +1420,8 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		Delegate del = new Delegate (null, (int) $2, (string) $5, (Parameters) $7, (Attributes) $1);
+		Delegate del = new Delegate (null, (int) $2, (string) $5, (Parameters) $7, 
+					     (Attributes) $1, lexer.Location);
 
 		CheckDef (current_container.AddDelegate (del), del.Name);
 	  }
@@ -1548,7 +1554,24 @@ real_literal
 	;
 
 integer_literal
-	: LITERAL_INTEGER       { $$ = new IntLiteral ((Int32) lexer.Value); }
+	: LITERAL_INTEGER       { 
+		object v = lexer.Value;
+
+		// 
+		// FIXME: Possible optimization would be to 
+		// compute the *Literal objects directly in the scanner
+		//
+		if (v is int)
+			$$ = new IntLiteral ((Int32) v); 
+		else if (v is uint)
+			$$ = new UIntLiteral ((UInt32) v);
+		else if (v is long)
+			$$ = new LongLiteral ((Int64) v);
+		else if (v is ulong)
+			$$ = new ULongLiteral ((UInt64) v);
+		else
+			Console.WriteLine ("OOPS.  Unexpected result from scanner");
+	  }
 	;
 
 boolean_literal
@@ -2169,7 +2192,8 @@ class_declaration
 		Class new_class;
 		string full_class_name = MakeName ((string) $4);
 
-		new_class = new Class (rc, current_container, full_class_name, (int) $2, (Attributes) $1);
+		new_class = new Class (rc, current_container, full_class_name, (int) $2, 
+				       (Attributes) $1, lexer.Location);
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
 		tree.RecordClass (full_class_name, new_class);

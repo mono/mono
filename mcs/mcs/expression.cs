@@ -1873,17 +1873,29 @@ namespace CIR {
 					left = ConvertImplicit (tc, left, TypeManager.float_type, location);
 				type = TypeManager.float_type;
 			} else if (l == TypeManager.uint64_type || r == TypeManager.uint64_type){
+				Expression e;
+				Type other;
 				//
 				// If either operand is of type ulong, the other operand is
 				// converted to type ulong.  or an error ocurrs if the other
 				// operand is of type sbyte, short, int or long
 				//
-				Type other = null;
 				
-				if (l == TypeManager.uint64_type)
-					other = r;
-				else if (r == TypeManager.uint64_type)
-					other = l;
+				if (l == TypeManager.uint64_type){
+					if (r != TypeManager.uint64_type && right is IntLiteral){
+						e = TryImplicitIntConversion (l, (IntLiteral) right);
+						if (e != null)
+							right = e;
+					}
+					other = right.Type;
+				} else {
+					if (left is IntLiteral){
+						e = TryImplicitIntConversion (r, (IntLiteral) left);
+						if (e != null)
+							left = e;
+					}
+					other = left.Type;
+				}
 
 				if ((other == TypeManager.sbyte_type) ||
 				    (other == TypeManager.short_type) ||
@@ -1891,7 +1903,7 @@ namespace CIR {
 				    (other == TypeManager.int64_type)){
 					string oper = OperName ();
 					
-					Error (tc, 34, "Operator `" + OperName ()
+					Error (tc, 34, location, "Operator `" + OperName ()
 					       + "' is ambiguous on operands of type `"
 					       + TypeManager.CSharpName (l) + "' "
 					       + "and `" + TypeManager.CSharpName (r)
@@ -1934,7 +1946,7 @@ namespace CIR {
 					// operand is converd to type uint
 					//
 					left = ForceConversion (tc, left, TypeManager.uint32_type);
-					right = ForceConversion (tc, left, TypeManager.uint32_type);
+					right = ForceConversion (tc, right, TypeManager.uint32_type);
 					type = TypeManager.uint32_type;
 				} 
 			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
@@ -1980,6 +1992,7 @@ namespace CIR {
 			    ((e = ConvertImplicit (tc, left, TypeManager.int64_type, loc)) != null) ||
 			    ((e = ConvertImplicit (tc, left, TypeManager.uint64_type, loc)) != null)){
 				left = e;
+				type = e.Type;
 
 				return this;
 			}
@@ -2073,6 +2086,7 @@ namespace CIR {
 				if (l != TypeManager.bool_type || r != TypeManager.bool_type)
 					error19 (tc);
 
+				type = TypeManager.bool_type;
 				return this;
 			} 
 
@@ -2095,6 +2109,7 @@ namespace CIR {
 					error19 (tc);
 					return null;
 				}
+				type = l;
 			}
 
 			if (oper == Operator.Equality ||
@@ -2118,9 +2133,13 @@ namespace CIR {
 				return null;
 
 			if (left.Type == null)
-				throw new Exception ("Resolve returned non null, but did not set the type!");
+				throw new Exception (
+					"Resolve returned non null, but did not set the type! (" +
+					left + ")");
 			if (right.Type == null)
-				throw new Exception ("Resolve returned non null, but did not set the type!");
+				throw new Exception (
+					"Resolve returned non null, but did not set the type! (" +
+					right + ")");
 
 			eclass = ExprClass.Value;
 

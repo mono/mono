@@ -373,6 +373,11 @@ namespace CIR
 			//
 			context.TypeManager.InitCoreTypes ();
 
+			if (context.Report.Errors > 0){
+				error ("Compilation failed");
+				return;
+			}
+			
 			//
 			// The code generator
 			//
