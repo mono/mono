@@ -1,3 +1,9 @@
+2004-11-26  Martin Baulig  <martin@ximian.com>
+
+	* ConsoleUI.cs (ConsoleUI.Execute): Print a short summary (number
+	of tests run, ignored, failed) to the console, honor the /output
+	argument for the detailed summary.	
+
 2004-11-23  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (NO_INSTALL): Don't install nunit-console.exe.
