@@ -89,20 +89,21 @@ TEST_EXCLUDES_common =
 TEST_SOURCES_default = $(NEW_TEST_SOURCES_common)
 
 TEST_SOURCES_net_2_0 = \
-	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-47-dll gen-47-exe	       \
+	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-31-dll gen-31-exe		\
+	gen-47-dll gen-47-exe	       \
 	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10 \
 	gen-11  gen-12          gen-14  gen-15  gen-16          gen-18  gen-19  gen-20 \
 	gen-21  gen-22  gen-23  gen-24  gen-25  gen-26  gen-27  gen-28  gen-29  gen-30 \
 	        gen-32  gen-33  gen-34  gen-35  gen-36  gen-37  gen-38  gen-39  gen-40 \
 	gen-41  gen-42  gen-43  gen-44  gen-45  gen-46          gen-48  gen-49  gen-50 \
 	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60 \
-	        gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70 \
+	gen-61  gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70 \
 	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78  gen-79  gen-80 \
 	gen-81  gen-82  gen-83  gen-84  gen-85  gen-86  gen-87  gen-88  gen-89  gen-90 \
 	gen-91  gen-92  gen-93  gen-94  gen-95  gen-96  gen-97  gen-98  gen-99  gen-100 \
 	gen-101
 
-TEST_EXCLUDES_net_2_0 = test-55 test-289 gen-77
+TEST_EXCLUDES_net_2_0 =
 
 TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
 	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
