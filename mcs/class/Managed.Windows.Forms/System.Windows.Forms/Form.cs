@@ -61,147 +61,20 @@ namespace System.Windows.Forms {
 		private FormStartPosition	start_position;
 		private Form			owner;
 		private Form.ControlCollection	owned_forms;
+		private MdiClient		mdi_container;
+		private Form			mdi_parent;
 		private bool			key_preview;
 		private MainMenu		menu;
 		private	Icon			icon;
 		private Size			maximum_size;
 		private Size			minimum_size;
+		private SizeGripStyle		size_grip_style;
+		private Rectangle		maximized_bounds;
+		private Rectangle		default_maximized_bounds;
 		#endregion	// Local Variables
 
-		#region Private Classes
-#if no
-		// This class will take over for the client area
-		internal class FormParentWindow : Control {
-			#region FormParentWindow Class Local Variables
-			internal Form	owner;
-			#endregion	// FormParentWindow Class Local Variables
-
-			#region FormParentWindow Class Constructor
-			internal FormParentWindow(Form owner) : base() {
-				this.owner = owner;
-
-				this.Width = 250;
-				this.Height = 250;
-
-				BackColor = owner.BackColor;
-				Text = "FormParent";
-				this.Dock = DockStyle.Fill;
-				this.is_visible = false;
-
-				// We must set this via the internal var, the SetTopLevel method will too much stuff
-				is_toplevel = true;
-
-				MouseDown += new MouseEventHandler (OnMouseDownForm); 
-				MouseMove += new MouseEventHandler (OnMouseMoveForm); 
-				owner.TextChanged += new EventHandler(OnFormTextChanged);
-				CreateControl();		// Create us right away, we have code referencing this.window
-			}
-			#endregion	// FormParentWindow Class Constructor
-
-			#region FormParentWindow Class Protected Instance Methods
-			protected override void OnResize(EventArgs e) {
-				base.OnResize(e);
-
-				if (owner.menu == null) {
-					owner.SetBoundsCore(0, 0, ClientSize.Width, ClientSize.Height, BoundsSpecified.All);
-				} else {
-					int menu_height;
-
-					menu_height = MenuAPI.MenuBarCalcSize(DeviceContext, owner.Menu.menu_handle, ClientSize.Width);
-					Invalidate (new Rectangle (0, 0, ClientSize.Width, menu_height));					
-					owner.SetBoundsCore(0, menu_height, ClientSize.Width, ClientSize.Height-menu_height, BoundsSpecified.All);
-				}
-			}
-
-			protected override void OnPaint(PaintEventArgs pevent) {
-				OnDrawMenu (pevent.Graphics);
-			}
-
-			protected override void Select(bool directed, bool forward) {
-				base.Select (directed, forward);
-			}
-
-			protected override void WndProc(ref Message m) {
-				switch((Msg)m.Msg) {
-					case Msg.WM_CLOSE: {
-						CancelEventArgs args = new CancelEventArgs();
-
-						owner.OnClosing(args);
-
-						if (!args.Cancel) {
-							owner.OnClosed(EventArgs.Empty);
-							owner.closing = true;
-							base.WndProc(ref m);
-							break;
-						}
-						return;
-					}
-
-					case Msg.WM_ACTIVATE: {
-						if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
-							owner.OnActivated(EventArgs.Empty);
-						} else {
-							owner.OnDeactivate(EventArgs.Empty);
-						}
-						return;
-					}
-
-#if topmost_workaround
-					case Msg.WM_ACTIVATE: {
-							if (this.OwnedForms.Length>0) {
-								XplatUI.SetZOrder(this.OwnedForms[0].window.Handle, this.window.Handle, false, false);
-							}
-						break;
-					}
-#endif
-
-					case Msg.WM_SETFOCUS: {
-						owner.WndProc(ref m);
-						return;
-					}
-
-					case Msg.WM_KILLFOCUS: {
-						owner.WndProc(ref m);
-						return;
-					}
-
-					default: {
-						base.WndProc (ref m);
-						return;
-					}
-				}
-			}
-			#endregion	// FormParentWindow Class Protected Instance Methods
-
-			#region FormParentWindow Class Private & Internal Methods
-			internal void MenuChanged() {
-				OnResize(EventArgs.Empty);
-			}
-
-			private void OnMouseDownForm (object sender, MouseEventArgs e) {			
-				if (owner.menu != null)
-					owner.menu.OnMouseDown (owner, e);
-			}
-
-			private void OnMouseMoveForm (object sender, MouseEventArgs e) {			
-				if (owner.menu != null)
-					owner.menu.OnMouseMove (owner, e);
-			}
-		
-		
-			private void OnDrawMenu (Graphics dc) {
-								
-				if (owner.menu != null) {
-					MenuAPI.DrawMenuBar (owner.menu);
-				}
-			}
-			private void OnFormTextChanged(object sender, EventArgs e) {
-				this.Text = ((Control)sender).Text;
-			}
-			#endregion	// FormParentWindow Class Private & Internal Methods
-		}
-#endif
-		#endregion	// Private Classes
+		#region Private & Internal Methods
+		#endregion	// Private & Internal Methods
 
 		#region Public Classes
 		public new class ControlCollection : Control.ControlCollection {
@@ -228,7 +101,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion	// Public Classes
-			
+
 		#region Public Constructor & Destructor
 		public Form() {
 			closing = false;
@@ -250,10 +123,12 @@ namespace System.Windows.Forms {
 			ime_mode = ImeMode.NoControl;
 			is_visible = false;
 			is_toplevel = true;
+			size_grip_style = SizeGripStyle.Auto;
+			maximized_bounds = Rectangle.Empty;
+			default_maximized_bounds = Rectangle.Empty;
 			owned_forms = new Form.ControlCollection(this);
 		}
 		#endregion	// Public Constructor & Destructor
-
 
 		#region Public Static Properties
 
@@ -285,6 +160,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
+		[DefaultValue(null)]
 		public IButtonControl AcceptButton {
 			get {
 				return accept_button;
@@ -294,7 +170,20 @@ namespace System.Windows.Forms {
 				accept_button = value;
 			}
 		}
+
+		[MonoTODO("Figure out a way for transparency support in windows")]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool AllowTransparency {
+			get {
+				return false;
+			}
+
+			set {
+			}
+		}
 			
+		[DefaultValue(true)]
 		public bool AutoScale {
 			get {
 				return autoscale;
@@ -305,6 +194,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual Size AutoScaleBaseSize {
 			get {
 				return autoscale_base_size;
@@ -315,6 +207,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		public override bool AutoScroll {
+			get {
+				return base.AutoScroll;
+			}
+			set {
+				base.AutoScroll = value;
+			}
+		}
+
+		public override Color BackColor {
+			get {
+				return base.BackColor;
+			}
+			set {
+				base.BackColor = value;
+			}
+		}
+
+		[DefaultValue(null)]
 		public IButtonControl CancelButton {
 			get {
 				return cancel_button;
@@ -325,6 +237,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[Localizable(true)]
 		public Size ClientSize {
 			get {
 				return base.ClientSize;
@@ -335,6 +249,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool ControlBox {
 			get {
 				return control_box;
@@ -348,7 +263,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("make sure we return screen coords")]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Rectangle DesktopBounds {
 			get {
 				return new Rectangle(Location, Size);
@@ -359,7 +275,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("make sure we return screen coords")]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Point DesktopLocation {
 			get {
 				return Location;
@@ -370,6 +287,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DialogResult DialogResult {
 			get {
 				return dialog_result;
@@ -384,16 +303,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(FormBorderStyle.Sizable)]
+		[DispId(-504)]
 		public FormBorderStyle FormBorderStyle {
 			get {
 				return formBorderStyle;
 			}
 			set {
 				formBorderStyle = value;
-				Invalidate ();
+				UpdateStyles();
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool HelpButton {
 			get {
 				return help_button;
@@ -407,6 +329,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[AmbientValue(null)]
 		public Icon Icon {
 			get {
 				return icon;
@@ -415,16 +339,46 @@ namespace System.Windows.Forms {
 			set {
 				if (icon != value) {
 					icon = value;
+
+					XplatUI.SetIcon(window.Handle, icon);
 				}
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool IsMdiChild {
+			get {
+				return mdi_parent != null;
+			}
+		}
+
+		[DefaultValue(false)]
+		public bool IsMdiContainer {
+			get {
+				return mdi_container != null;
+			}
+
+			set {
+				if (value && mdi_container == null) {
+					mdi_container = new MdiClient();
+					Controls.Add(mdi_container);
+				} else if (!value && mdi_container != null) {
+					Controls.Remove(mdi_container);
+					mdi_container.Dispose();
+				}
+			}
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public bool IsRestrictedWindow {
 			get {
 				return false;
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool KeyPreview {
 			get {
 				return key_preview;
@@ -435,6 +389,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool MaximizeBox {
 			get {
 				return maximize_box;
@@ -447,6 +402,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(typeof(Size), "{Width=0, Height=0}")]
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public Size MaximumSize {
 			get {
 				return maximum_size;
@@ -455,10 +413,50 @@ namespace System.Windows.Forms {
 			set {
 				if (maximum_size != value) {
 					maximum_size = value;
+					OnMaximumSizeChanged(EventArgs.Empty);
 				}
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Form[] MdiChildren {
+			get {
+				if (mdi_container != null) {
+					Form[] form_list;
+
+					form_list = new Form[mdi_container.Controls.Count];
+					for (int i = 0; i < mdi_container.Controls.Count; i++) {
+						form_list[i] = (Form)mdi_container.Controls[i];
+					}
+					return form_list;
+				} else {
+					return new Form[0];
+				}
+			}
+		}
+
+		[MonoTODO("Finish setter")]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Form MdiParent {
+			get {
+				return mdi_parent;
+			}
+
+			set {
+				if (mdi_parent != null) {
+					mdi_parent.Controls.Remove(this);
+				}
+
+				mdi_parent = value;
+				if (mdi_parent != null) {
+					mdi_parent.Controls.Add(this);
+				}
+			}
+		}
+
+		[DefaultValue(null)]
 		public MainMenu Menu {
 			get {
 				return menu;
@@ -481,6 +479,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool MinimizeBox {
 			get {
 				return minimize_box;
@@ -493,6 +492,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(typeof(Size), "{Width=0, Height=0}")]
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public Size MinimumSize {
 			get {
 				return minimum_size;
@@ -501,16 +503,21 @@ namespace System.Windows.Forms {
 			set {
 				if (minimum_size != value) {
 					minimum_size = value;
+					OnMinimumSizeChanged(EventArgs.Empty);
 				}
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Modal  {
 			get {
 				return is_modal;
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Form[] OwnedForms {
 			get {
 				Form[] form_list;
@@ -525,6 +532,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Form Owner {
 			get {
 				return owner;
@@ -546,6 +555,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool ShowInTaskbar {
 			get {
 				return show_in_taskbar;
@@ -558,6 +568,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Localizable(false)]
 		public Size Size {
 			get {
 				return Size;
@@ -568,6 +580,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO("Trigger something when GripStyle is set")]
+		[DefaultValue(SizeGripStyle.Auto)]
+		public SizeGripStyle SizeGripStyle {
+			get {
+				return size_grip_style;
+			}
+
+			set {
+				size_grip_style = value;
+			}
+		}
+
+		[DefaultValue(FormStartPosition.WindowsDefaultLocation)]
+		[Localizable(true)]
 		public FormStartPosition StartPosition {
 			get {
 				return start_position;
@@ -579,19 +605,12 @@ namespace System.Windows.Forms {
 					if (IsHandleCreated) {
 						switch(start_position) {
 							case FormStartPosition.CenterParent: {
-								if (Parent!=null && Width>0 && Height>0) {
-									this.Location = new Point(Parent.Size.Width/2-Width/2, Parent.Size.Height/2-Height/2);
-								}
+								CenterToParent();
 								break;
 							}
 
 							case FormStartPosition.CenterScreen: {
-								if (Width>0 && Height>0) {
-									Size	DisplaySize;
-
-									XplatUI.GetDisplaySize(out DisplaySize);
-									this.Location = new Point(DisplaySize.Width/2-Width/2, DisplaySize.Height/2-Height/2);
-								}
+								CenterToScreen();
 								break;
 							}
 
@@ -604,6 +623,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public int TabIndex {
+			get {
+				return base.TabIndex;
+			}
+
+			set {
+				base.TabIndex = value;
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public bool TopLevel {
 			get {
 				return GetTopLevel();
@@ -614,6 +649,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool TopMost {
 			get {
 				return topmost;
@@ -627,6 +663,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(FormWindowState.Normal)]
 		public FormWindowState WindowState {
 			get {
 				return XplatUI.GetWindowState(window.Handle);
@@ -648,10 +685,10 @@ namespace System.Windows.Forms {
 				cp = new CreateParams();
 
 				cp.Caption = "FormWindow";
-				cp.ClassName=XplatUI.DefaultClassName;
+				cp.ClassName = XplatUI.DefaultClassName;
 				cp.ClassStyle = 0;
-				cp.ExStyle=0;
-				cp.Param=0;
+				cp.ExStyle = 0;
+				cp.Param = 0;
 				cp.Parent = IntPtr.Zero;
 //				if (start_position == FormStartPosition.WindowsDefaultLocation) {
 					cp.X = unchecked((int)0x80000000);
@@ -663,9 +700,45 @@ namespace System.Windows.Forms {
 				cp.Width = Width;
 				cp.Height = Height;
 				
-				cp.Style = (int)(WindowStyles.WS_OVERLAPPEDWINDOW | 
-					WindowStyles.WS_CLIPSIBLINGS | 
-					WindowStyles.WS_CLIPCHILDREN);
+				cp.Style = (int)(WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN);
+
+				switch (FormBorderStyle) {
+					case FormBorderStyle.Fixed3D: {
+						cp.Style |= (int)WindowStyles.WS_CAPTION;
+						cp.ExStyle |= (int)WindowStyles.WS_EX_OVERLAPPEDWINDOW;
+						break;
+					}
+
+					case FormBorderStyle.FixedDialog: {
+						cp.Style |= (int)WindowStyles.WS_CAPTION;
+						cp.ExStyle |= (int)(WindowStyles.WS_EX_DLGMODALFRAME | WindowStyles.WS_EX_WINDOWEDGE);
+						break;
+					}
+
+					case FormBorderStyle.FixedSingle: {
+						cp.Style |= (int)WindowStyles.WS_CAPTION;
+						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE);
+						break;
+					}
+
+					case FormBorderStyle.FixedToolWindow: {
+						cp.Style |= (int)WindowStyles.WS_CAPTION;
+						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_TOOLWINDOW);
+						break;
+					}
+
+					case FormBorderStyle.Sizable: {
+						cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
+						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE);
+						break;
+					}
+
+					case FormBorderStyle.SizableToolWindow: {
+						cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
+						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_TOOLWINDOW);
+						break;
+					}
+				}
 
 				if (ShowInTaskbar) {
 					cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
@@ -690,21 +763,44 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		protected override ImeMode DefaultImeMode {
+			get {
+				return ImeMode.NoControl;
+			}
+		}
+
 		protected override Size DefaultSize {
 			get {
 				return new Size (250, 250);
 			}
 		}		
 
-		protected override void OnPaint (PaintEventArgs pevent)
-		{
-			base.OnPaint (pevent);
-		}		
-		
+		protected Rectangle MaximizedBounds {
+			get {
+				if (maximized_bounds != Rectangle.Empty) {
+					return maximized_bounds;
+				}
+				return default_maximized_bounds;
+			}
+
+			set {
+				maximized_bounds = value;
+				OnMaximizedBoundsChanged(EventArgs.Empty);
+			}
+		}
 		#endregion	// Protected Instance Properties
 
-
 		#region Public Static Methods
+		[MonoTODO("Figure out the math")]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public static SizeF GetAutoScaleSize(Font font) {
+			SizeF	result;
+
+			result = new SizeF(250, 250);
+			result.Width *= font.SizeInPoints / 12;
+			result.Height *= font.SizeInPoints / 12;
+			return result;
+		}
 		#endregion	// Public Static Methods
 
 		#region Public Instance Methods
@@ -720,6 +816,22 @@ namespace System.Windows.Forms {
 
 		public void AddOwnedForm(Form ownedForm) {
 			owned_forms.Add(ownedForm);
+		}
+
+		public void Close () {
+			CancelEventArgs args = new CancelEventArgs ();
+			OnClosing (args);
+			if (!args.Cancel) {
+				OnClosed (EventArgs.Empty);
+				closing = true;
+				return;
+			}
+		}
+
+		public void LayoutMdi(MdiLayout value) {
+			if (mdi_container != null) {
+				mdi_container.LayoutMdi(value);
+			}
 		}
 
 		public void RemoveOwnedForm(Form ownedForm) {
@@ -788,24 +900,119 @@ namespace System.Windows.Forms {
 			return DialogResult;
 		}
 
-		public void Close ()
-		{
-			CancelEventArgs args = new CancelEventArgs ();
-			OnClosing (args);
-			if (!args.Cancel) {
-				OnClosed (EventArgs.Empty);
-				closing = true;
-				return;
-			}
+		public override string ToString() {
+			return GetType().FullName.ToString() + ", Text: " + Text;
 		}
-
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		[MonoTODO("Finish when MDI is more complete")]
+		protected void ActivateMdiChild(Form form) {
+			OnMdiChildActivate(EventArgs.Empty);
+			throw new NotImplementedException();
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void AdjustFormScrollbars(bool displayScrollbars) {
+			base.AdjustFormScrollbars (displayScrollbars);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected void ApplyAutoScaling() {
+			// Hm, not sure what this does
+		}
+
+		protected void CenterToParent() {
+			Control	ctl;
+			int	w;
+			int	h;
+
+			if (Width > 0) {
+				w = Width;
+			} else {
+				w = DefaultSize.Width;
+			}
+
+			if (Height > 0) {
+				h = Height;
+			} else {
+				h = DefaultSize.Height;
+			}
+
+			ctl = null;
+			if (parent != null) {
+				ctl = parent;
+			} else if (owner != null) {
+				ctl = owner;
+			}
+
+			if (owner != null) {
+				this.Location = new Point(ctl.Left + ctl.Width / 2 - w /2, ctl.Top + ctl.Height / 2 - h / 2);
+			}
+		}
+
+		protected void CenterToScreen() {
+			Size	DisplaySize;
+			int	w;
+			int	h;
+
+			if (Width > 0) {
+				w = Width;
+			} else {
+				w = DefaultSize.Width;
+			}
+
+			if (Height > 0) {
+				h = Height;
+			} else {
+				h = DefaultSize.Height;
+			}
+
+			XplatUI.GetDisplaySize(out DisplaySize);
+			this.Location = new Point(DisplaySize.Width / 2 - w / 2, DisplaySize.Height / 2 - h / 2);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override Control.ControlCollection CreateControlsInstance() {
+			return base.CreateControlsInstance ();
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void CreateHandle() {
 			base.CreateHandle ();
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void DefWndProc(ref Message m) {
+			base.DefWndProc (ref m);
+		}
+
+		protected override void Dispose(bool disposing) {
+			base.Dispose (disposing);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnActivated(EventArgs e) {
+			if (Activated != null) {
+				Activated(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnClosed(EventArgs e) {
+			if (Closed != null) {
+				Closed(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnClosing(System.ComponentModel.CancelEventArgs e) {
+			if (Closing != null) {
+				Closing(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnCreateControl() {
 			base.OnCreateControl ();
 			if (this.ActiveControl == null) {
@@ -819,17 +1026,114 @@ namespace System.Windows.Forms {
 			OnLocationChanged(EventArgs.Empty);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnDeactivate(EventArgs e) {
+			if (Deactivate != null) {
+				Deactivate(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void OnFontChanged(EventArgs e) {
+			base.OnFontChanged (e);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated (e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnHandleDestroyed(EventArgs e) {
 			base.OnHandleDestroyed (e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnInputLanguageChanged(InputLanguageChangedEventArgs e) {
+			if (InputLanguageChanged!=null) {
+				InputLanguageChanged(this, e);
+			}
+		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnInputLanguageChanging(InputLanguageChangingEventArgs e) {
+			if (InputLanguageChanging!=null) {
+				InputLanguageChanging(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnLoad(EventArgs e) {
+			if (Load != null) {
+				Load(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnMaximizedBoundsChanged(EventArgs e) {
+			if (MaximizedBoundsChanged != null) {
+				MaximizedBoundsChanged(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnMaximumSizeChanged(EventArgs e) {
+			if (MaximumSizeChanged != null) {
+				MaximumSizeChanged(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnMdiChildActivate(EventArgs e) {
+			if (MdiChildActivate != null) {
+				MdiChildActivate(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnMenuComplete(EventArgs e) {
+			if (MenuComplete != null) {
+				MenuComplete(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnMenuStart(EventArgs e) {
+			if (MenuStart != null) {
+				MenuStart(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnMinimumSizeChanged(EventArgs e) {
+			if (MinimumSizeChanged != null) {
+				MinimumSizeChanged(this, e);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void OnPaint (PaintEventArgs pevent) {
+			base.OnPaint (pevent);
+		}		
+		
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void OnStyleChanged(EventArgs e) {
+			base.OnStyleChanged (e);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void OnTextChanged(EventArgs e) {
+			base.OnTextChanged (e);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void OnVisibleChanged(EventArgs e) {
+			base.OnVisibleChanged (e);
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -843,6 +1147,11 @@ namespace System.Windows.Forms {
 			}
 
 			return false;
+		}
+
+		// LAMESPEC - Not documented that Form overrides ProcessDialogChar; class-status showed
+		protected override bool ProcessDialogChar(char charCode) {
+			return base.ProcessDialogChar (charCode);
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
@@ -867,6 +1176,36 @@ namespace System.Windows.Forms {
 			return base.ProcessKeyPreview (ref msg);
 		}
 
+		protected override bool ProcessTabKey(bool forward) {
+			return SelectNextControl(ActiveControl, forward, true, true, true);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void ScaleCore(float dx, float dy) {
+			base.ScaleCore (dx, dy);
+		}
+
+		protected override void Select(bool directed, bool forward) {
+			Form	parent;
+
+			if (directed) {
+				base.SelectNextControl(null, forward, true, true, true);
+			}
+
+			parent = this.ParentForm;
+			if (parent != null) {
+				parent.ActiveControl = this;
+			}
+
+			Activate();
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			base.SetBoundsCore (x, y, width, height, specified);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void SetClientSizeCore(int x, int y) {
 			if ((minimum_size.Width != 0) && (x < minimum_size.Width)) {
 				x = minimum_size.Width;
@@ -883,7 +1222,16 @@ namespace System.Windows.Forms {
 			base.SetClientSizeCore (x, y);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void SetVisibleCore(bool value) {
+			base.SetVisibleCore (value);
+		}
 
+		protected override void UpdateDefaultButton() {
+			base.UpdateDefaultButton ();
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 			switch((Msg)m.Msg) {
 				case Msg.WM_CLOSE: {
@@ -965,6 +1313,22 @@ Console.WriteLine("This should be the origin for the menu: {0}, and the width:{1
 					break;
 				}
 
+				case Msg.WM_GETMINMAXINFO: {
+					XplatUIWin32.MINMAXINFO	mmi;
+
+					if (m.LParam != IntPtr.Zero) {
+						mmi = (XplatUIWin32.MINMAXINFO)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.MINMAXINFO));
+						default_maximized_bounds = new Rectangle(mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMaxSize.x, mmi.ptMaxSize.y);
+						if (maximized_bounds != Rectangle.Empty) {
+							mmi.ptMaxSize.x = maximized_bounds.Width;
+							mmi.ptMaxSize.y = maximized_bounds.Height;
+						}
+
+						Marshal.StructureToPtr(mmi, m.LParam, false);
+					}
+					break;
+				}
+
 				default: {
 					base.WndProc (ref m);
 					break;
@@ -974,84 +1338,6 @@ Console.WriteLine("This should be the origin for the menu: {0}, and the width:{1
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		protected virtual void OnActivated(EventArgs e) {
-			if (Activated != null) {
-				Activated(this, e);
-			}
-		}
-
-		protected virtual void OnClosed(EventArgs e) {
-			if (Closed != null) {
-				Closed(this, e);
-			}
-		}
-
-		protected virtual void OnClosing(System.ComponentModel.CancelEventArgs e) {
-			if (Closing != null) {
-				Closing(this, e);
-			}
-		}
-
-		protected virtual void OnDeactivate(EventArgs e) {
-			if (Deactivate != null) {
-				Deactivate(this, e);
-			}
-		}
-
-		protected virtual void OnInputLanguageChanged(InputLanguageChangedEventArgs e) {
-			if (InputLanguageChanged!=null) {
-				InputLanguageChanged(this, e);
-			}
-		}
-
-		protected virtual void OnInputLanguageChanging(InputLanguageChangingEventArgs e) {
-			if (InputLanguageChanging!=null) {
-				InputLanguageChanging(this, e);
-			}
-		}
-
-		protected virtual void OnLoad(EventArgs e) {
-			if (Load != null) {
-				Load(this, e);
-			}
-		}
-
-		protected virtual void OnMaximizedBoundsChanged(EventArgs e) {
-			if (MaximizedBoundsChanged != null) {
-				MaximizedBoundsChanged(this, e);
-			}
-		}
-
-		protected virtual void OnMaximumSizeChanged(EventArgs e) {
-			if (MaximumSizeChanged != null) {
-				MaximumSizeChanged(this, e);
-			}
-		}
-
-		protected virtual void OnMdiChildActivate(EventArgs e) {
-			if (MdiChildActivate != null) {
-				MdiChildActivate(this, e);
-			}
-		}
-
-		protected virtual void OnMenuComplete(EventArgs e) {
-			if (MenuComplete != null) {
-				MenuComplete(this, e);
-			}
-		}
-
-		protected virtual void OnMenuStart(EventArgs e) {
-			if (MenuStart != null) {
-				MenuStart(this, e);
-			}
-		}
-
-		protected virtual void OnMinimumSizeChanged(EventArgs e) {
-			if (MinimumSizeChanged != null) {
-				MinimumSizeChanged(this, e);
-			}
-		}
-
 		public event EventHandler Activated;
 		public event EventHandler Closed;
 		public event CancelEventHandler Closing;

@@ -47,6 +47,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -591,6 +592,28 @@ namespace System.Windows.Forms {
 
 				XSetWMProtocols(DisplayHandle, hwnd.whole_window, atoms, atom_count);
 			}
+		}
+
+		private void SetIcon(Hwnd hwnd, Icon icon) {
+			Bitmap		bitmap;
+			int		size;
+			uint[]		data;
+			int		index;
+
+			bitmap = icon.ToBitmap();
+			index = 0;
+			size = bitmap.Width * bitmap.Height + 2;
+			data = new uint[size];
+
+			data[index++] = (uint)bitmap.Width;
+			data[index++] = (uint)bitmap.Height;
+
+			for (int y = 0; y < bitmap.Height; y++) {
+				for (int x = 0; x < bitmap.Width; x++) {
+					data[index++] = (uint)bitmap.GetPixel(x, y).ToArgb();
+				}
+			}
+			XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_ICON], Atom.XA_CARDINAL, 32, PropertyMode.Replace, data, size);
 		}
 
 		private void WakeupMain () {
@@ -2591,6 +2614,15 @@ namespace System.Windows.Forms {
 			WakeupMain ();
 		}
 
+		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			hwnd.border_style = border_style;
+
+			// FIXME - do we need to trigger some resize?
+		}
+
 		internal override void SetCaretPos(IntPtr handle, int x, int y) {
 			if (Caret.Hwnd == handle) {
 				Caret.Timer.Stop();
@@ -2659,6 +2691,24 @@ namespace System.Windows.Forms {
 			FocusWindow = handle;
 
 			//XSetInputFocus(DisplayHandle, Hwnd.ObjectFromHandle(handle).client_window, RevertTo.None, IntPtr.Zero);
+		}
+
+		internal override void SetIcon(IntPtr handle, Icon icon) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd != null) {
+				SetIcon(hwnd, icon);
+			}
+		}
+
+		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			hwnd.menu_handle = menu_handle;
+
+			// FIXME - do we need to trigger some resize?
 		}
 
 		internal override void SetModal(IntPtr handle, bool Modal) {
@@ -2758,24 +2808,6 @@ namespace System.Windows.Forms {
 				XSetWindowBackground(DisplayHandle, hwnd.client_window, xcolor.pixel);
 				XClearWindow(DisplayHandle, hwnd.client_window);
 			}
-		}
-
-		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-			hwnd.border_style = border_style;
-
-			// FIXME - do we need to trigger some resize?
-		}
-
-		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-			hwnd.menu_handle = menu_handle;
-
-			// FIXME - do we need to trigger some resize?
 		}
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
@@ -3181,6 +3213,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, IntPtr atoms, int nelements);
+
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, IntPtr atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XDeleteProperty")]
 		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, int property);

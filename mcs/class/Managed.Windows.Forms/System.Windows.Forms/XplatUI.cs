@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 40575; built: 2005/1/13 1:47:46]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 41586; built: 2005/2/9 1:7:30]");
 
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
@@ -547,6 +547,13 @@ namespace System.Windows.Forms {
 				Console.WriteLine("SetFocus({0:X}): Called", handle.ToInt32());
 			#endif
 			driver.SetFocus(handle);
+		}
+
+		internal static void SetIcon(IntPtr handle, Icon icon) {
+			#if DriverDebug
+				Console.WriteLine("SetIcon({0:X}, {1}): Called", handle.ToInt32(), icon);
+			#endif
+			driver.SetIcon(handle, icon);
 		}
 
 		internal static void SetMenu(IntPtr handle, IntPtr menu_handle) {

@@ -2984,6 +2984,7 @@ namespace System.Windows.Forms
 			} else {
 				control_style &= ~flag;
 			}
+			OnStyleChanged(EventArgs.Empty);
 		}
 
 		protected void SetTopLevel(bool value) {

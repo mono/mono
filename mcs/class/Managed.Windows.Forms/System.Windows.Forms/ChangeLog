@@ -1,3 +1,28 @@
+2005-03-11  Peter Bartok  <pbartok@novell.com>
+
+	* Form.cs:
+	  - Rudimentary Mdi support
+	  - Removed outdated FormParent code
+	  - Implemented lots of missing properties and methods, still missing
+	    transparency support
+	  - Added missing attributes
+	  - Implemented support for MaximumBounds
+	  - Added firing of various events
+	* XplatUI.cs: Added SetIcon() method
+	* XplatUIDriver.cs: Added SetIcon() abstract
+	* XplatUIOSX.cs: Stubbed out SetIcon() method
+	* XplatUIX11.cs: 
+	  - Implemented SetIcon() support
+	  - Moved SetMenu() and SetBorderStyle() to proper alphabetical pos
+	  - Switched to unix line endings
+	* XplatUIWin32.cs:
+	  - Made POINT internal so for can access it as part of MINMAX
+	  - Implemented SetIcon() support
+	  - Implemented support for CLIENTCREATESTRUCT (but might have to drop
+	    native Mdi support again, might have to go managed)
+	* Control.cs: Now fires the StyleChanged event
+	* MdiClient.cs: Added; still mostly empty
+
 2005-03-10  Peter Bartok  <pbartok@novell.com>
 
 	* SaveFileDialog.cs: Added emtpy file

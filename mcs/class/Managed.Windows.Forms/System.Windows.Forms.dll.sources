@@ -179,6 +179,7 @@ System.Windows.Forms/ListViewAlignment.cs
 System.Windows.Forms/ListViewItem.cs
 System.Windows.Forms/ListViewItemConverter.cs
 System.Windows.Forms/MainMenu.cs
+System.Windows.Forms/MdiClient.cs
 System.Windows.Forms/MdiLayout.cs
 System.Windows.Forms/MeasureItemEventHandler.cs
 System.Windows.Forms/MeasureItemEventArgs.cs

@@ -192,6 +192,8 @@ namespace System.Windows.Forms {
 		internal abstract Point GetMenuOrigin(IntPtr hwnd);
 		internal abstract void ReleaseMenuDC(IntPtr hwnd, Graphics dc);
 
+		internal abstract void SetIcon(IntPtr handle, Icon icon);
+
 		// System information
 
 		internal abstract int KeyboardSpeed { get; } 

@@ -1447,6 +1447,12 @@ namespace System.Windows.Forms {
 			PostMessage(handle, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
 			FocusWindow = handle;
 		}
+
+		[MonoTODO]
+		internal override void SetIcon(IntPtr handle, Icon icon) {
+			throw new NotImplementedException();
+		}
+
 		
 		internal override void SetModal(IntPtr handle, bool Modal) {
 			IntPtr hWnd = GetControlOwner (Hwnd.ObjectFromHandle (handle).WholeWindow);

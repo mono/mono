@@ -83,7 +83,7 @@ namespace System.Windows.Forms {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		private struct POINT {
+		internal struct POINT {
 			internal int		x;
 			internal int		y;
 		}
@@ -472,6 +472,35 @@ namespace System.Windows.Forms {
 			DCX_USESTYLE			= 0x00010000,
 			DCX_VALIDATE         		= 0x00200000
 		}
+
+		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+		internal struct CLIENTCREATESTRUCT {
+			internal IntPtr			hWindowMenu;
+			internal uint			idFirstChild;
+		}
+
+		private enum ClassLong : int {
+			GCL_MENUNAME			= -8,
+			GCL_HBRBACKGROUND		= -10,
+			GCL_HCURSOR         		= -12,
+			GCL_HICON            		= -14,
+			GCL_HMODULE          		= -16,
+			GCL_CBWNDEXTRA       		= -18,
+			GCL_CBCLSEXTRA       		= -20,
+			GCL_WNDPROC          		= -24,
+			GCL_STYLE            		= -26,
+			GCW_ATOM             		= -32,
+			GCL_HICONSM			= -34
+		}
+
+		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+		internal struct MINMAXINFO {
+			internal POINT			ptReserved;
+			internal POINT			ptMaxSize;
+			internal POINT			ptMaxPosition;
+			internal POINT			ptMinTrackSize;
+			internal POINT			ptMaxTrackSize;
+		}
 		#endregion
 
 		#region Constructor & Destructor
@@ -773,6 +802,7 @@ namespace System.Windows.Forms {
 			IntPtr	WindowHandle;
 			IntPtr	ParentHandle;
 			Hwnd	hwnd;
+			IntPtr	lParam;
 
 			hwnd = new Hwnd();
 
@@ -782,7 +812,18 @@ namespace System.Windows.Forms {
 				// We need to use our foster parent window until this poor child gets it's parent assigned
 				ParentHandle=FosterParent;
 			}
-			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+
+			lParam = IntPtr.Zero;
+			if (cp.Param != null && cp.Param is CLIENTCREATESTRUCT) {
+				lParam = Marshal.AllocHGlobal(Marshal.SizeOf(cp.Param));
+				Marshal.StructureToPtr(cp.Param, lParam, false);
+			}
+
+			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, lParam);
+
+			if (lParam != IntPtr.Zero) {
+				Marshal.FreeHGlobal(lParam);
+			}
 
 			if (WindowHandle==IntPtr.Zero) {
 				uint error = Win32GetLastError();
@@ -1542,8 +1583,11 @@ namespace System.Windows.Forms {
 
 
 		internal override void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
-			
 			dc.Dispose();
+		}
+
+		internal override void SetIcon(IntPtr hwnd, Icon icon) {
+			Win32SendMessage(hwnd, Msg.WM_SETICON, (IntPtr)1, icon.Handle);	// 1 = large icon (0 would be small)
 		}
 
 		internal override int KeyboardSpeed {
@@ -1805,6 +1849,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="IsWindowVisible", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool IsWindowVisible(IntPtr hwnd);
+
+		[DllImport ("user32.dll", EntryPoint="SetClassLong", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32SetClassLong(IntPtr hwnd, ClassLong nIndex, IntPtr dwNewLong);
+
+		[DllImport ("user32.dll", EntryPoint="SendMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32SendMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
 		#endregion
 	}
 }
