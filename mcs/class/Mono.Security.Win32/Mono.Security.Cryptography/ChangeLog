@@ -1,3 +1,8 @@
+2003-12-09  Patrik Torstensson  <p@rxc.se>
+
+	* CryptAPI.cs: Added stdcall callconv to all Win32
+	  calls, default in Mono is CDECL
+
 2003-02-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CapiContext.cs: New. Class to acquire and release an
