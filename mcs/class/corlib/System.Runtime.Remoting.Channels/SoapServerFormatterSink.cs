@@ -39,13 +39,15 @@ namespace System.Runtime.Remoting.Channels {
 
 		[MonoTODO]
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
-					  ITransportHeaders headers, Stream stream)
+						  IMessage msg, ITransportHeaders headers, Stream stream)
+						  
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public Stream GetReponseStream (IMessage msg, ITransportHeaders headers)
+		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
+						IMessage msg, ITransportHeaders headers)
 		{
 			throw new NotImplementedException ();
 		}

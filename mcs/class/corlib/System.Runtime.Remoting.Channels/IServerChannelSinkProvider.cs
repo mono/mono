@@ -12,7 +12,7 @@ namespace System.Runtime.Remoting.Channels {
 	{
 		IServerChannelSinkProvider Next { get;  set; }
 
-		IServerChannelSink CreateSink (IChannelReceiver channel)
+		IServerChannelSink CreateSink (IChannelReceiver channel);
 
 		void GetChannelData (IChannelDataStore channelData);
 	}
