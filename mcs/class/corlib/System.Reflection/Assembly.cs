@@ -85,14 +85,27 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern object GetFilesInternal (String name);
+
 		public virtual FileStream[] GetFiles ()
 		{
-			throw new NotImplementedException ();
+			string[] names = (string[])GetFilesInternal (null);
+			FileStream[] res = new FileStream [names.Length];
+			for (int i = 0; i < names.Length; ++i)
+				res [i] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			return res;
 		}
 
 		public virtual FileStream GetFile (String name)
 		{
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			string filename = (string)GetFilesInternal (name);
+			if (filename != null)
+				return new FileStream (filename, FileMode.Open, FileAccess.Read);
+			else
+				return null;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -100,8 +113,12 @@ namespace System.Reflection {
 
 		public virtual Stream GetManifestResourceStream (String name)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
 			object data = GetManifestResourceInternal (name);
 			string filename = data as string;
+			if (data == null)
+				return null;
 			if (filename != null) {
 				return new FileStream (filename, FileMode.Open, FileAccess.Read);
 			} else {

@@ -1,4 +1,8 @@
 
+Thu Aug 8 13:05:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Assembly.cs: implemented GetFile() and GetFiles().
+
 Mon Aug 5 21:19:41 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Assembly.cs: implemented EntryPoint and a few 
