@@ -1,3 +1,9 @@
+
+Mon Jul 12 17:47:00 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-ppc.brg: arguments on the stack are always
+	relative to the stack pointer (spotted by Neale Ferguson).
+
 2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
  
  	* exceptions-x86.c: delay appending the method name to the trace until
