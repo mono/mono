@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.9  2004/08/20 19:35:33  jackson
+// Use the SWF timer so callbacks are run in the correct thread
+//
 // Revision 1.8  2004/08/20 19:34:26  jackson
 // Use the SWF timer so callbacks are run in the correct thread
 //
@@ -107,8 +110,8 @@ namespace System.Windows.Forms
 			ValueChanged = null;			
 
 
-			holdclick_timer = new Timer (this);
-			firstclick_timer = new Timer (this);
+			holdclick_timer = new Timer ();
+			firstclick_timer = new Timer ();
 			holdclick_timer.Tick += new EventHandler (OnHoldClickTimer);
 			firstclick_timer.Tick += new EventHandler (OnFirstClickTimer);
 
