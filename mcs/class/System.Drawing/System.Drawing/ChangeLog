@@ -1,3 +1,8 @@
+2004-09-10  Ravindra <rkumar@novell.com>
+
+	* Font.cs: Fixed Height property and GetHeight method.
+	* Graphics.cs: Fixed DrawImageUnscaled method.
+
 2004-07-02 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* gdipFunctions.cs: fixes bug 61050
