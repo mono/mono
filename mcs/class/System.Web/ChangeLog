@@ -1,3 +1,7 @@
+2004-12-02  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Makefile: Added more TreeView resources.
+
 2004-11-30  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (RESOURCE_FILES): Make sure that we distribute these,
