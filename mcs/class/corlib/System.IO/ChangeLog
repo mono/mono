@@ -1,3 +1,8 @@
+2002-01-19  Duncan Mak  <duncan@ximian.com>
+
+	* PathTooLongException.cs: 
+	* EndOfStreamException.cs: Added to CVS.
+
 Thu Jan 10 12:06:46 MST 2002 Matt Kimball <matt@kimball.net>
 
 	* BufferedStream.cs: Initial implemenation.  The synchronous
