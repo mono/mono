@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.6  2004/09/02 16:32:54  jordi
+// implements resource pool for pens, brushes, and hatchbruses
+//
 // Revision 1.5  2004/08/25 20:04:40  ravindra
 // Added the missing divider code and grip for ToolBar Control.
 //
@@ -46,15 +49,66 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Collections;
 
 namespace System.Windows.Forms
 {
-	internal abstract class Theme
+	
+	
+	// Implements a pool of system resources	
+	internal class SystemResPool
 	{
+		private Hashtable pens = new Hashtable ();
+		private Hashtable solidbrushes = new Hashtable ();
+		private Hashtable hatchbrushes = new Hashtable ();
+		
+		public SystemResPool () {}
+		
+		public Pen GetPen (Color color)
+		{
+			string hash = color.ToString();			
+			
+			if (pens.Contains (hash))
+				return (Pen) pens[hash];				
+			
+			Pen pen = new Pen (color);
+			pens.Add (hash, pen);
+			return pen;
+		}		
+		
+		public SolidBrush GetSolidBrush (Color color)
+		{
+			string hash = color.ToString ();
+						
+			if (solidbrushes.Contains (hash))
+				return (SolidBrush) solidbrushes[hash];							
+			
+			SolidBrush brush = new SolidBrush (color);
+			solidbrushes.Add (hash, brush);
+			return brush;
+		}		
+		
+		public HatchBrush GetHatchBrush (HatchStyle hatchStyle, Color foreColor, Color backColor)
+		{
+			string hash = hatchStyle.ToString () + foreColor.ToString () + backColor.ToString ();			
+						
+			if (hatchbrushes.Contains (hash))
+				return (HatchBrush) hatchbrushes[hash];							
+			
+			HatchBrush brush = new HatchBrush (hatchStyle, foreColor, backColor);
+			hatchbrushes.Add (hash, brush);
+			return brush;
+		}
+		
+	}
+
+	internal abstract class Theme
+	{		
 		protected Array syscolors;
 		protected Font default_font;
 		protected Color defaultWindowBackColor;
-		protected Color defaultWindowForeColor;	
+		protected Color defaultWindowForeColor;		
+		static protected SystemResPool ResPool = new SystemResPool ();
 	
 		/* Default properties */		
 		public virtual Color ColorScrollbar {
@@ -170,7 +224,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual Color DefaultWindowBackColor {
-			get { return defaultWindowBackColor; }
+			get { return defaultWindowBackColor; }			
 		}
 
 		public virtual Color DefaultWindowForeColor {

@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.31 $
+// $Revision: 1.32 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.32  2004/09/02 16:32:54  jordi
+// implements resource pool for pens, brushes, and hatchbruses
+//
 // Revision 1.31  2004/08/25 20:04:40  ravindra
 // Added the missing divider code and grip for ToolBar Control.
 //
@@ -161,46 +164,22 @@ namespace System.Windows.Forms
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INFOTEXT,			0xff000000,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INFOBK,			0xffffffff,
 		  
-		};
-
+		};		
 		
-		static protected Pen pen_ticks;
-		static protected Pen pen_disabled;
-		static protected SolidBrush br_arrow;		
-		static protected HatchBrush br_focus;		
+		static protected Pen pen_ticks;		
+		static protected SolidBrush br_arrow;
 		static protected SolidBrush br_progressbarblock;		
 		static protected Pen pen_arrow;
-
-		static protected SolidBrush br_buttonface;
-		static protected SolidBrush br_buttonshadow;
-		static protected SolidBrush br_buttondkshadow;
-		static protected SolidBrush br_buttonhilight;
-		static protected SolidBrush br_buttontext;
-		static protected SolidBrush br_menutext;
-
-		static protected Pen pen_buttonshadow;
-		static protected Pen pen_buttondkshadow;
-		static protected Pen pen_buttonhilight;
-		static protected Pen pen_buttonface;
-		static protected Pen pen_buttontext;
-		static protected Pen pen_windowframe;
-
-		
+				
 
 		/* Cache */
 		protected SolidBrush label_br_fore_color;
 		protected SolidBrush label_br_back_color;		
-		protected HatchBrush br_scrollbar_backgr;
-		protected HatchBrush br_trackbar_thumbhili;
-		protected SolidBrush br_trackbarbg;
 
 		public ThemeWin32Classic ()
 		{
 			label_br_fore_color = null;
-			label_br_back_color = null;
-			br_scrollbar_backgr = null;
-			br_trackbarbg = null;
-			br_trackbar_thumbhili = null;
+			label_br_back_color = null;						
 
 			/* Init Default colour array*/
 			syscolors =  Array.CreateInstance (typeof (Color), (uint) XplatUIWin32.GetSysColorIndex.COLOR_MAXVALUE+1);
@@ -209,23 +188,9 @@ namespace System.Windows.Forms
 				syscolors.SetValue (Color.FromArgb ((int)theme_colors[i+1]), (int) theme_colors[i]);
  
 			pen_ticks = new Pen (Color.Black);			
-			br_arrow = new SolidBrush (Color.Black);			
-			br_focus = new HatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black);
+			br_arrow = new SolidBrush (Color.Black);
 			pen_arrow = new Pen (Color.Black);
-			br_progressbarblock = new SolidBrush (Color.FromArgb (255, 0, 0, 128));
-
-			br_buttonface = new SolidBrush (ColorButtonFace);
-			br_buttonshadow = new SolidBrush (ColorButtonShadow);
-			br_buttondkshadow = new SolidBrush (ColorButtonDkShadow);
-			br_buttonhilight = new SolidBrush (ColorButtonHilight);
-			br_buttontext = new SolidBrush (ColorButtonText);
-			pen_buttonshadow = new Pen (ColorButtonShadow);
-			pen_buttondkshadow = new Pen (ColorButtonDkShadow);
-			pen_buttonhilight = new Pen (ColorButtonHilight);
-			pen_buttonface = new Pen (ColorButtonFace);
-			pen_buttontext = new Pen (ColorButtonText);
-			pen_windowframe = new Pen (ColorWindowFrame);
-			pen_disabled = new Pen (ColorGrayText);			
+			br_progressbarblock = new SolidBrush (Color.FromArgb (255, 0, 0, 128));			
 
 			defaultWindowBackColor = Color.FromArgb (255, 10, 10, 10);
 			defaultWindowForeColor = ColorButtonText;
@@ -574,9 +539,7 @@ namespace System.Windows.Forms
 			Rectangle		rect;
 
 			if ((state & ButtonState.Checked)!=0) {
-				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, ColorButtonHilight);
-				graphics.FillRectangle(hatchBrush,rectangle);
-				hatchBrush.Dispose();
+				graphics.FillRectangle(ResPool.GetHatchBrush (HatchStyle.Percent50, SystemColors.ControlLight, ColorButtonHilight),rectangle);				
 			}
 
 			if ((state & ButtonState.Flat)!=0) {
@@ -633,13 +596,13 @@ namespace System.Windows.Forms
 
 		public override void DrawContainerGrabHandle (Graphics graphics, Rectangle bounds)
 		{
-			SolidBrush	sb		= br_buttontext;
+			
 			Pen			pen	= new Pen(Color.Black, 1);
 			Rectangle	rect	= new Rectangle(bounds.X, bounds.Y, bounds.Width-1, bounds.Height-1);	// Dunno why, but MS does it that way, too
 			int			X;
 			int			Y;
 
-			graphics.FillRectangle(sb, rect);
+			graphics.FillRectangle(ResPool.GetSolidBrush (ColorButtonText), rect);
 			graphics.DrawRectangle(pen, rect);
 
 			X=rect.X+rect.Width/2;
@@ -689,16 +652,16 @@ namespace System.Windows.Forms
 			if (primary==true) {
 				pen=new Pen(Color.Black, 1);
 				if (enabled==true) {
-					sb=br_buttontext;
+					sb=ResPool.GetSolidBrush (ColorButtonText);
 				} else {
-					sb=br_buttonface;
+					sb=ResPool.GetSolidBrush (ColorButtonFace);
 				}
 			} else {
 				pen=new Pen(Color.White, 1);
 				if (enabled==true) {
 					sb=new SolidBrush(Color.Black);
 				} else {
-					sb=br_buttonface;
+					sb=ResPool.GetSolidBrush (ColorButtonFace);
 				}
 			}
 			graphics.FillRectangle(sb, rectangle);
@@ -823,7 +786,7 @@ namespace System.Windows.Forms
 			int			lineWidth;
 
 			// MS seems to draw the background white
-			graphics.FillRectangle(br_buttontext, rectangle);
+			graphics.FillRectangle(ResPool.GetSolidBrush (ColorButtonText), rectangle);
 
 			switch(glyph) {
 				case MenuGlyph.Arrow: {
@@ -864,7 +827,7 @@ namespace System.Windows.Forms
 					lineWidth=Math.Max(2, rectangle.Width/3);
 					rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
 
-					sb=br_buttontext;
+					sb=ResPool.GetSolidBrush (ColorButtonText);
 					graphics.FillEllipse(sb, rect);
 					sb.Dispose();
 					return;
@@ -942,7 +905,7 @@ namespace System.Windows.Forms
 					if (enabled)
 						dc.DrawLine (pen_arrow, x + i, y - i, x + i + 6 - 2*i, y - i);
 					else
-						dc.DrawLine (pen_disabled, x + i, y - i, x + i + 6 - 2*i, y - i);
+						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y - i, x + i + 6 - 2*i, y - i);
 
 				
 				dc.FillRectangle (br_arrow, x + 3, area.Y + 6, 1, 1);				
@@ -957,7 +920,7 @@ namespace System.Windows.Forms
 					if (enabled)
 						dc.DrawLine (pen_arrow, x + i, y + i, x + i + 8 - 2*i, y + i);
 					else
-						dc.DrawLine (pen_disabled, x + i, y + i, x + i + 8 - 2*i, y + i);
+						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y + i, x + i + 8 - 2*i, y + i);
 
 				
 				dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);
@@ -973,7 +936,7 @@ namespace System.Windows.Forms
 					if (enabled)
 						dc.DrawLine (pen_arrow, x - i, y + i, x - i, y + i + 6 - 2*i);
 					else
-						dc.DrawLine (pen_disabled, x - i, y + i, x - i, y + i + 6 - 2*i);
+						dc.DrawLine (ResPool.GetPen (ColorGrayText), x - i, y + i, x - i, y + i + 6 - 2*i);
 
 				dc.FillRectangle (br_arrow, x - 3, y + 3, 1, 1);
 				break;
@@ -988,7 +951,7 @@ namespace System.Windows.Forms
 					if (enabled)
 						dc.DrawLine (pen_arrow, x + i, y + i, x + i, y + i + 8 - 2*i);
 					else
-						dc.DrawLine (pen_disabled, x + i, y + i, x + i, y + i + 8 - 2*i);
+						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y + i, x + i, y + i + 8 - 2*i);
 
 				dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);				
 				break;
@@ -1012,17 +975,17 @@ namespace System.Windows.Forms
 		{
 			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 1);
 
-			dc.DrawLine (pen_buttonface, pt.X - 12, pt.Y, pt.X, pt.Y);
-			dc.DrawLine (pen_buttonface, pt.X, pt.Y, pt.X, pt.Y - 13);
+			dc.DrawLine (ResPool.GetPen (ColorButtonFace), pt.X - 12, pt.Y, pt.X, pt.Y);
+			dc.DrawLine (ResPool.GetPen (ColorButtonFace), pt.X, pt.Y, pt.X, pt.Y - 13);
 
 			// diagonals
 			for (int i = 0; i < 11; i += 4) {
-				dc.DrawLine (pen_buttonshadow, pt.X - i, pt.Y, pt.X + 1, pt.Y - i - 2);
-				dc.DrawLine (pen_buttonshadow, pt.X - i - 1, pt.Y, pt.X + 1, pt.Y - i - 2);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), pt.X - i, pt.Y, pt.X + 1, pt.Y - i - 2);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), pt.X - i - 1, pt.Y, pt.X + 1, pt.Y - i - 2);
 			}
 
 			for (int i = 3; i < 13; i += 4)
-				dc.DrawLine (pen_buttonhilight, pt.X - i, pt.Y, pt.X + 1, pt.Y - i - 1);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), pt.X - i, pt.Y, pt.X + 1, pt.Y - i - 1);
 		}
 
 
@@ -1055,9 +1018,7 @@ namespace System.Windows.Forms
 			ref int scrollbutton_height, bool vert)
 		{
 
-			if (br_scrollbar_backgr == null)
-				br_scrollbar_backgr = new HatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
-
+			
 			if (vert) {		
 
 				first_arrow_area.X = first_arrow_area. Y = 0;
@@ -1075,8 +1036,8 @@ namespace System.Windows.Forms
 				DrawScrollButton (dc, second_arrow_area, ScrollButton.Down, second_arrow);				
 
 				/* Background */
-				dc.FillRectangle (br_scrollbar_backgr, 0,  scrollbutton_height, area.Width,
-					area.Height - (scrollbutton_height * 2));
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), 0,  
+					scrollbutton_height, area.Width, area.Height - (scrollbutton_height * 2));
 			}
 			else {
 				
@@ -1095,8 +1056,8 @@ namespace System.Windows.Forms
 				DrawScrollButton (dc, second_arrow_area, ScrollButton.Right, second_arrow);
 
 				/* Background */
-				dc.FillRectangle (br_scrollbar_backgr, scrollbutton_width, 0, area.Width - (scrollbutton_width * 2),
-				 	area.Height);
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width, 
+					0, area.Width - (scrollbutton_width * 2), area.Height);
 			}
 
 			/* Thumbail */
@@ -1154,13 +1115,13 @@ namespace System.Windows.Forms
 			thumb_area.Width = 4;
 
 			/* Draw channel */
-			dc.FillRectangle (br_buttonshadow, channel_startpoint.X, channel_startpoint.Y,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonShadow), channel_startpoint.X, channel_startpoint.Y,
 				1, thumb_area.Height);
 			
-			dc.FillRectangle (br_buttondkshadow, channel_startpoint.X + 1, channel_startpoint.Y,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonDkShadow), channel_startpoint.X + 1, channel_startpoint.Y,
 				1, thumb_area.Height);
 
-			dc.FillRectangle (br_buttonhilight, channel_startpoint.X + 3, channel_startpoint.Y,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonHilight), channel_startpoint.X + 3, channel_startpoint.Y,
 				1, thumb_area.Height);
 
 			pixel_len = thumb_area.Height - 11;
@@ -1192,15 +1153,15 @@ namespace System.Windows.Forms
 			{
 				thumb_pos.X = channel_startpoint.X - 8;
 
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
 				
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X +1, thumb_pos.Y + 9, thumb_pos.X +15, thumb_pos.Y  +9);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X +16 + 4, thumb_pos.Y  +9 - 4);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X +1, thumb_pos.Y + 9, thumb_pos.X +15, thumb_pos.Y  +9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X +16 + 4, thumb_pos.Y  +9 - 4);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y  + 10, thumb_pos.X +16, thumb_pos.Y +10);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 16, thumb_pos.Y  + 10, thumb_pos.X  +16 + 5, thumb_pos.Y +10 - 5);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y  + 10, thumb_pos.X +16, thumb_pos.Y +10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 16, thumb_pos.Y  + 10, thumb_pos.X  +16 + 5, thumb_pos.Y +10 - 5);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 16, 8);
 				dc.FillRectangle (br_thumb, thumb_pos.X + 17, thumb_pos.Y + 2, 1, 6);
@@ -1213,16 +1174,16 @@ namespace System.Windows.Forms
 			{
 				thumb_pos.X = channel_startpoint.X - 10;
 
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X  + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16 , thumb_pos.Y+ 9);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X, thumb_pos.Y + 5);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X  + 19, thumb_pos.Y + 9, thumb_pos.X  +19 , thumb_pos.Y+ 1);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16 , thumb_pos.Y+ 9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X, thumb_pos.Y + 5);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 19, thumb_pos.Y + 9, thumb_pos.X  +19 , thumb_pos.Y+ 1);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X  + 4, thumb_pos.Y+ 10, thumb_pos.X  + 4 + 16, thumb_pos.Y+ 10);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X  + 4, thumb_pos.Y + 10, thumb_pos.X  -1, thumb_pos.Y+ 5);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X+ 20, thumb_pos.Y + 10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 4, thumb_pos.Y+ 10, thumb_pos.X  + 4 + 16, thumb_pos.Y+ 10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 4, thumb_pos.Y + 10, thumb_pos.X  -1, thumb_pos.Y+ 5);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X+ 20, thumb_pos.Y + 10);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 15, 8);
 				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 1, 6);
@@ -1235,14 +1196,14 @@ namespace System.Windows.Forms
 			case TickStyle.Both:
 			{
 				thumb_pos.X = area.X + 10;
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X+ 19, thumb_pos.Y  + 9);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X  + 10, thumb_pos.Y+ 1, thumb_pos.X + 19, thumb_pos.Y  + 8);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X+ 19, thumb_pos.Y  + 9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 10, thumb_pos.Y+ 1, thumb_pos.X + 19, thumb_pos.Y  + 8);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X+ 20, thumb_pos.Y  +10);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X  + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y+ 9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X+ 20, thumb_pos.Y  +10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y+ 9);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 18, 8);
 
@@ -1343,13 +1304,13 @@ namespace System.Windows.Forms
 			thumb_area.Height = 4;
 			
 			/* Draw channel */
-			dc.FillRectangle (br_buttonshadow, channel_startpoint.X, channel_startpoint.Y,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonShadow), channel_startpoint.X, channel_startpoint.Y,
 				thumb_area.Width, 1);
 			
-			dc.FillRectangle (br_buttondkshadow, channel_startpoint.X, channel_startpoint.Y + 1,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonDkShadow), channel_startpoint.X, channel_startpoint.Y + 1,
 				thumb_area.Width, 1);
 
-			dc.FillRectangle (br_buttonhilight, channel_startpoint.X, channel_startpoint.Y +3,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonHilight), channel_startpoint.X, channel_startpoint.Y +3,
 				thumb_area.Width, 1);
 
 			pixel_len = thumb_area.Width - 11;
@@ -1380,15 +1341,15 @@ namespace System.Windows.Forms
 			{
 				thumb_pos.Y = channel_startpoint.Y - 8;
 
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X +9, thumb_pos.Y +15);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X +9 - 4, thumb_pos.Y +16 + 4);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X +9, thumb_pos.Y +15);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X +9 - 4, thumb_pos.Y +16 + 4);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y +16);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X +10 - 5, thumb_pos.Y +16 + 5);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y +16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X +10 - 5, thumb_pos.Y +16 + 5);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 16);
 				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 17, 6, 1);
@@ -1399,16 +1360,16 @@ namespace System.Windows.Forms
 			case TickStyle.TopLeft:	{
 				thumb_pos.Y = channel_startpoint.Y - 10;
 
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1 , thumb_pos.Y +19);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1 , thumb_pos.Y +19);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 10, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y -1);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 10, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y -1);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 8, 15);
 				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 6, 1);
@@ -1419,14 +1380,14 @@ namespace System.Windows.Forms
 
 			case TickStyle.Both: {
 				thumb_pos.Y = area.Y + 10;
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 20);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 20);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 18);
 
@@ -1475,31 +1436,24 @@ namespace System.Windows.Forms
 		{
 			Brush br_thumb;			
 
-			if (highli_thumb == true) {
-				if (br_trackbar_thumbhili == null)
-					br_trackbar_thumbhili = new HatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
-
-				br_thumb = (Brush) br_trackbar_thumbhili;
-			}
+			if (highli_thumb == true)
+				br_thumb = (Brush) ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
 			else
-				br_thumb = br_buttonface;
+				br_thumb = ResPool.GetSolidBrush (ColorButtonFace);
 
 			
 			/* Control Background */
 			if (tb.BackColor == DefaultControlBackColor)
-				dc.FillRectangle (br_buttonface, area);
-			else 	{
-				if (br_trackbarbg == null || br_trackbarbg.Color != tb.BackColor)
-					br_trackbarbg = new SolidBrush (tb.BackColor);
-
-				dc.FillRectangle (br_trackbarbg, area);
-			}
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area);
+			else
+				dc.FillRectangle (ResPool.GetSolidBrush (tb.BackColor), area);
+			
 
 			if (tb.Focused) {
-				dc.FillRectangle (br_focus, area.X, area.Y, area.Width - 1, 1);
-				dc.FillRectangle (br_focus, area.X, area.Y + area.Height - 1, area.Width - 1, 1);
-				dc.FillRectangle (br_focus, area.X, area.Y, 1, area.Height - 1);
-				dc.FillRectangle (br_focus, area.X + area.Width - 1, area.Y, 1, area.Height - 1);
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y, area.Width - 1, 1);
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y + area.Height - 1, area.Width - 1, 1);
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y, 1, area.Height - 1);
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X + area.Width - 1, area.Y, 1, area.Height - 1);
 			}
 
 			if (tb.Orientation == Orientation.Vertical) 
@@ -1698,7 +1652,7 @@ namespace System.Windows.Forms
 			DrawBorderStyle (dc, paint_area, control.BorderStyle);
 
 			if (control.Divider)
-				dc.DrawLine (pen_buttonhilight, 0, 0, paint_area.Width, 0);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), 0, 0, paint_area.Width, 0);
 
 			foreach (ToolBarButton button in control.Buttons) {
 
@@ -1756,9 +1710,9 @@ namespace System.Windows.Forms
 							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter,
 										   Border3DSide.All);
 						else if (button.Hilight) {
-							dc.DrawRectangle (pen_buttontext, buttonArea);
+							dc.DrawRectangle (ResPool.GetPen (ColorButtonText), buttonArea);
 							if (! ddRect.IsEmpty) {
-								dc.DrawLine (pen_buttontext, ddRect.X, ddRect.Y, ddRect.X, 
+								dc.DrawLine (ResPool.GetPen (ColorButtonText), ddRect.X, ddRect.Y, ddRect.X, 
 									     ddRect.Y + ddRect.Height);
 								buttonArea.Width -= this.ToolBarDropDownWidth;
 							}
@@ -1806,16 +1760,16 @@ namespace System.Windows.Forms
 			case ToolBarButtonStyle.Separator:
 				// separator is drawn only in the case of flat appearance
 				if (flat) {
-					dc.DrawLine (pen_buttonshadow, buttonArea.X + 1, buttonArea.Y, 
+					dc.DrawLine (ResPool.GetPen (ColorButtonShadow), buttonArea.X + 1, buttonArea.Y, 
 						     buttonArea.X + 1, buttonArea.Height);
-					dc.DrawLine (pen_buttonhilight, buttonArea.X + 1 + (int) pen_buttonface.Width,
-						     buttonArea.Y, buttonArea.X + 1 + (int) pen_buttonface.Width, buttonArea.Height);
+					dc.DrawLine (ResPool.GetPen (ColorButtonHilight), buttonArea.X + 1 + (int) ResPool.GetPen (ColorButtonFace).Width,
+						     buttonArea.Y, buttonArea.X + 1 + (int) ResPool.GetPen (ColorButtonFace).Width, buttonArea.Height);
 					/* draw a horizontal separator */
 					if (button.Wrapper) {
 						int y = buttonArea.Height + this.ToolBarSeparatorWidth / 2;
-						dc.DrawLine (pen_buttonshadow, 0, y, controlArea.Width, y);
-						dc.DrawLine (pen_buttonhilight, 0, y + 1 + (int) pen_buttonface.Width, controlArea.Width,
-							     y + 1 + (int) pen_buttonface.Width);
+						dc.DrawLine (ResPool.GetPen (ColorButtonShadow), 0, y, controlArea.Width, y);
+						dc.DrawLine (ResPool.GetPen (ColorButtonHilight), 0, y + 1 + (int) ResPool.GetPen (ColorButtonFace).Width, controlArea.Width,
+							     y + 1 + (int) ResPool.GetPen (ColorButtonFace).Width);
 					}
 				}
 				break;
@@ -2247,7 +2201,7 @@ namespace System.Windows.Forms
 
 		[MonoTODO("Finish drawing code for Caption, Menu and Scroll")]
 		private void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) 
-{
+		{
 			switch(Type) {
 				case DrawFrameControlTypes.Button: {
 					if ((State & DrawFrameControlStates.ButtonPush)!=0) {
@@ -2360,13 +2314,13 @@ namespace System.Windows.Forms
 		}
 
 		/* Generic scroll button */
-		static public void DrawScrollButtonPrimitive (Graphics dc, Rectangle area, ButtonState state)
+		public void DrawScrollButtonPrimitive (Graphics dc, Rectangle area, ButtonState state)
 		{
 			if ((state & ButtonState.Pushed) == ButtonState.Pushed) {
-				dc.FillRectangle (br_buttonface, area.X + 1,
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X + 1,
 					area.Y + 1, area.Width - 2 , area.Height - 2);
 
-				dc.DrawRectangle (pen_buttonshadow, area.X,
+				dc.DrawRectangle (ResPool.GetPen (ColorButtonShadow), area.X,
 					area.Y, area.Width, area.Height);
 
 				return;
@@ -2374,26 +2328,26 @@ namespace System.Windows.Forms
 
 			dc.FillRectangle (new SolidBrush (Color.Blue), area);
 			
-			dc.FillRectangle (br_buttonface, area.X, area.Y, area.Width, 1);
-			dc.FillRectangle (br_buttonface, area.X, area.Y, 1, area.Height);
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X, area.Y, area.Width, 1);
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X, area.Y, 1, area.Height);
 
-			dc.FillRectangle (br_buttonhilight, area.X + 1, area.Y + 1, area.Width - 1, 1);
-			dc.FillRectangle (br_buttonhilight, area.X + 1, area.Y + 2, 1,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonHilight), area.X + 1, area.Y + 1, area.Width - 1, 1);
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonHilight), area.X + 1, area.Y + 2, 1,
 				area.Height - 4);
 
-			dc.FillRectangle (br_buttonshadow, area.X + 1, area.Y + area.Height - 2,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonShadow), area.X + 1, area.Y + area.Height - 2,
 				area.Width - 2, 1);
 
-			dc.FillRectangle (br_buttondkshadow, area.X, area.Y + area.Height -1,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonDkShadow), area.X, area.Y + area.Height -1,
 				area.Width , 1);
 
-			dc.FillRectangle (br_buttonshadow, area.X + area.Width - 2,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonShadow), area.X + area.Width - 2,
 				area.Y + 1, 1, area.Height -3);
 
-			dc.FillRectangle (br_buttondkshadow, area.X + area.Width -1,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonDkShadow), area.X + area.Width -1,
 				area.Y, 1, area.Height - 1);
 
-			dc.FillRectangle (br_buttonface, area.X + 2,
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X + 2,
 				area.Y + 2, area.Width - 4, area.Height - 4);
 			
 		}
@@ -2403,15 +2357,15 @@ namespace System.Windows.Forms
 		{
 			switch (border_style){
 			case BorderStyle.Fixed3D:				
-				dc.DrawLine (pen_buttonshadow, area.X, area.Y, area.X +area.Width, area.Y);
-				dc.DrawLine (pen_buttonshadow, area.X, area.Y, area.X, area.Y + area.Height);
-				dc.DrawLine (pen_buttonhilight, area.X , area.Y + area.Height - 1, area.X + area.Width , 
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), area.X, area.Y, area.X +area.Width, area.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), area.X, area.Y, area.X, area.Y + area.Height);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), area.X , area.Y + area.Height - 1, area.X + area.Width , 
 					area.Y + area.Height - 1);
-				dc.DrawLine (pen_buttonhilight, area.X + area.Width -1 , area.Y, area.X + area.Width -1, 
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), area.X + area.Width -1 , area.Y, area.X + area.Width -1, 
 					area.Y + area.Height);
 				break;
 			case BorderStyle.FixedSingle:
-				dc.DrawRectangle (pen_windowframe, area.X, area.Y, area.Width - 1, area.Height - 1);
+				dc.DrawRectangle (ResPool.GetPen (ColorWindowFrame), area.X, area.Y, area.Width - 1, area.Height - 1);
 				break;
 			case BorderStyle.None:
 			default:
@@ -2423,14 +2377,14 @@ namespace System.Windows.Forms
 		protected SolidBrush GetControlBackBrush (Color c)
 		{
 			if (c == DefaultControlBackColor)
-				return br_buttonface;
+				return ResPool.GetSolidBrush (ColorButtonFace);
 			return new SolidBrush (c);
 		}
 
 		protected SolidBrush GetControlForeBrush (Color c)
 		{
 			if (c == DefaultControlForeColor)
-				return br_buttontext;
+				return ResPool.GetSolidBrush (ColorButtonText);
 			return new SolidBrush (c);
 		}
 

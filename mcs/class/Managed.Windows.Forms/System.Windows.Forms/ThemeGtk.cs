@@ -37,9 +37,12 @@
 //		- GTK paints controls into a window no a device context. We should inverstigate if we 
 //		we can encapsulate a dc in a gtkwindow.
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ThemeGtk.cs,v $
+// Revision 1.5  2004/09/02 16:32:54  jordi
+// implements resource pool for pens, brushes, and hatchbruses
+//
 // Revision 1.4  2004/08/24 18:37:02  jordi
 // fixes formmating, methods signature, and adds missing events
 //
@@ -203,6 +206,8 @@ namespace System.Windows.Forms
 		static protected IntPtr gdkdisplay;
 		static protected IntPtr widget;
 		static protected IntPtr style;
+		static protected SolidBrush br_buttonface;
+		static protected SolidBrush br_buttontext;
 
 		public static void InitGtk ()
 		{	
