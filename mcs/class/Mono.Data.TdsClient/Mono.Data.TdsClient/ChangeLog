@@ -1,0 +1,9 @@
+2002-10-16  Tim Coleman (tim@timcoleman.com)
+	* ChangeLog:
+		New ChangeLog
+	* IsolationLevel.cs:
+	* TdsCommand.cs:
+	* TdsConnection.cs:
+	* TdsServerType.cs:
+	* TdsTransaction.cs:
+		Added skeletons to get started.
