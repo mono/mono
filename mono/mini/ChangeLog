@@ -1,3 +1,8 @@
+2004-08-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md mini-amd64.c (mono_arch_output_basic_block): Handle 
+	CEE_CONV_U4.
+
 2004-08-14 Ben Maurer  <bmaurer@ximian.com>
 
 	* Makefile.am: static link on x86 (r=zoltan)
