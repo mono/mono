@@ -1,3 +1,8 @@
+2002-05-16  Nick Drochak  <ndrochak@gol.com>
+
+	* BitConverter.cs (ToString): Add parameter check for invalid start 
+	index.
+
 2002-05-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* Double.cs: Oops.  Also handle exponents without finding a dot.

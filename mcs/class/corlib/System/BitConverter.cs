@@ -216,9 +216,10 @@ namespace System {
 
 		public static string ToString(byte[] value, int start_index)
 		{
-			if (value == null) {
-				throw new ArgumentNullException();
-			}
+			if (value == null)
+				throw new ArgumentNullException("value");
+			if (start_index < 0 || start_index > value.Length - 1) 
+				throw new ArgumentOutOfRangeException("start_index");
 
 			return ToString(value, start_index, value.Length - start_index);
 		}
@@ -236,7 +237,6 @@ namespace System {
 			if (start_index < 0 || length < 0 || start_index + length > value.Length || start_index >= value.Length) {
 				throw new ArgumentOutOfRangeException();
 			}
-
 			string ret = "";
 			int end = start_index + length;
 
