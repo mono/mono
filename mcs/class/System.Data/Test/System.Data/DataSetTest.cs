@@ -195,7 +195,7 @@ namespace MonoTests.System.Data
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// FIXME: modified attributes based on XmlSchema.Write difference
 //			AssertEquals ("test#02", "<xs:schema id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -551,7 +551,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// FIXME: modified attributes based on XmlSchema.Write difference
 //			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -641,7 +641,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// FIXME: modified attributes based on XmlSchema.Write difference
 //			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"NewDataSet\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -784,7 +784,7 @@ namespace MonoTests.System.Data
 			// FIXME: modified attributes based on XmlSchema.Write difference
 //			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
 #if MS_NET // MS System.XML.dll + Mono System.Data.dll
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 #else
 			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 #endif
@@ -957,7 +957,7 @@ namespace MonoTests.System.Data
 			 */
 #if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:mstns='urn:bar' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+<xs:schema xmlns:mstns='urn:bar' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
   <xs:import schemaLocation='_app1.xsd' namespace='urn:baz' />
   <xs:import schemaLocation='_app2.xsd' namespace='urn:foo' />
   <xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='NewDataSet'>
@@ -973,7 +973,7 @@ namespace MonoTests.System.Data
 </xs:schema>";
 #else
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' id='NewDataSet' elementFormDefault='qualified' attributeFormDefault='qualified' targetNamespace='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns='urn:bar'>
+<xs:schema xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' id='NewDataSet' elementFormDefault='qualified' attributeFormDefault='qualified' targetNamespace='urn:bar' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns='urn:bar'>
   <!--ATTENTION: This schema contains references to other imported schemas-->
   <xs:import namespace='urn:baz' schemaLocation='_app1.xsd' />
   <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
@@ -1037,9 +1037,9 @@ namespace MonoTests.System.Data
 //			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 			// Modified attribute order from MS result
 #if MS_NET // MS System.XML.dll + Mono System.Data.dll
-			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='DS'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
+			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='DS'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 #else
-			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
+			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 #endif
 			DataSet ds = new DataSet ();
 			ds.DataSetName = "DS";
