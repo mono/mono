@@ -1,3 +1,7 @@
+2003-12-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TODO: Add/remove some todo entries.
+
 2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.c (mono_main): Call mono_verify_corlib.
