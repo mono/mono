@@ -3,26 +3,6 @@ using System.Collections;
 
 namespace System.Data
 {
-	internal class Node
-	{
-		public Node (DataRow row) {
-		}
-
-		public Node Parent;
-		public Node Left;
-		public Node Right;
-		public DataRow Row;
-		public int GetBalance () { return 0; }
-		public void SetBalance (int i) { }
-		public bool From () { return false; }
-		public void Delete () {}
-	}
-
-	internal class DBComparerFactory
-	{
-		public static IComparer GetComparer (Type t, bool b) { return null; }
-	}
-
 	/// <summary>
 	/// Summary description for Index.
 	/// </summary>
