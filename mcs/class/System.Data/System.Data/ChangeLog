@@ -1,3 +1,7 @@
+2003-02-08  Ville Palo <vi64pa@koti.soon.fi>
+
+	* ExpressionElement.cs: More implementation
+	
 2003-02-05  Alan Tam <Tam@SiuLung.com>
 
 	* DataSet.cs: Added framework for DataSet.Update Implemented missing 
@@ -12,13 +16,6 @@
 	* DataSet.cs: Implemented private method MapType for 
 	mapping datatypes for XmlSchema
 	
-2003-02-03  gonzalo  <gonzalo@localhost.localdomain>
-
-	* ChangeLog, DataView.cs:
-	2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-		* DataView.cs: implemented Dispose.
-
 2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataView.cs: implemented Dispose.
