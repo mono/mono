@@ -1,3 +1,9 @@
+2005-01-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsnEncodedData.cs: Added "internal" support for SubjectAltName 
+	extension as it is required for SSL support.
+	* Oid.cs: Added Oid / FriendlyName definitions for SubjectAltName.
+
 2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsnEncodedData.cs: Added more decoding/formatting code as this class

@@ -100,6 +100,8 @@ namespace System.Security.Cryptography {
 		internal const string name3Des = "3des";
 		internal const string oidSha1 = "1.3.14.3.2.26";
 		internal const string nameSha1 = "sha1";
+		internal const string oidSubjectAltName = "2.5.29.17";
+		internal const string nameSubjectAltName = "Subject Alternative Name";
 		internal const string oidNetscapeCertType = "2.16.840.1.113730.1.1";
 		internal const string nameNetscapeCertType = "Netscape Cert Type";
 
@@ -127,6 +129,8 @@ namespace System.Security.Cryptography {
 					return X509EnhancedKeyUsageExtension.friendlyName;
 				case X509SubjectKeyIdentifierExtension.oid:
 					return X509SubjectKeyIdentifierExtension.friendlyName;
+				case oidSubjectAltName:
+					return nameSubjectAltName;
 				case oidNetscapeCertType:
 					return nameNetscapeCertType;
 				case oidMd5:
@@ -162,6 +166,8 @@ namespace System.Security.Cryptography {
 					return X509EnhancedKeyUsageExtension.oid;
 				case X509SubjectKeyIdentifierExtension.friendlyName:
 					return X509SubjectKeyIdentifierExtension.oid;
+				case nameSubjectAltName:
+					return oidSubjectAltName;
 				case nameNetscapeCertType:
 					return oidNetscapeCertType;
 				case nameMd5:

@@ -32,6 +32,9 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
+using Mono.Security;
+using Mono.Security.Cryptography;
+
 namespace System.Security.Cryptography {
 
 	internal enum AsnDecodeStatus {
@@ -143,6 +146,8 @@ namespace System.Security.Cryptography {
 				return SubjectKeyIdentifierExtension (multiLine);
 			// other known objects (i.e. supported structure) - 
 			// but without any corresponding framework class
+			case Oid.oidSubjectAltName:
+				return SubjectAltName (multiLine);
 			case Oid.oidNetscapeCertType:
 				return NetscapeCertType (multiLine);
 			default:
@@ -208,6 +213,50 @@ namespace System.Security.Cryptography {
 		}
 
 		// Indirectly (undocumented but) supported extensions
+
+		internal string SubjectAltName (bool multiLine)
+		{
+			if (_raw.Length < 5)
+				return "Information Not Available";
+
+			try {
+				ASN1 ex = new ASN1 (_raw);
+				StringBuilder sb = new StringBuilder ();
+				for (int i=0; i < ex.Count; i++) {
+					ASN1 el = ex [i];
+
+					string type = null;
+					string name = null;
+
+					switch (el.Tag) {
+					case 0x81:
+						type = "RFC822 Name=";
+						name = Encoding.ASCII.GetString (el.Value);
+						break;
+					case 0x82:
+						type = "DNS Name=";
+						name = Encoding.ASCII.GetString (el.Value);
+						break;
+					default:
+						type = String.Format ("Unknown ({0})=", el.Tag);
+						name = CryptoConvert.ToHex (el.Value);
+						break;
+					}
+
+					sb.Append (type);
+					sb.Append (name);
+					if (multiLine) {
+						sb.Append (Environment.NewLine);
+					} else if (i < ex.Count - 1) {
+						sb.Append (", ");
+					}
+				}
+				return sb.ToString ();
+			}
+			catch {
+				return String.Empty;
+			}
+		}
 
 		internal string NetscapeCertType (bool multiLine)
 		{
