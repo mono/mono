@@ -1,3 +1,8 @@
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* corlib_linux_test.args: Removed file.
+	* corlib_test.args: Removed file.
+
 2003-08-11  Duncan Mak  <duncan@ximian.com>
 
 	* corlib_linux_test.args: Add DictionaryBaseTest.cs by Carlos

@@ -1,3 +1,7 @@
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ValueTypeTest.cs: New tests.
+
 2003-11-14  Nick Drochak <ndrochak@gol.com>
 
 	* ArrayTest.cs: Fix a few tests where NullReferenceException 

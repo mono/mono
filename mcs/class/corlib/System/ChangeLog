@@ -1,5 +1,12 @@
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ValueType.cs:
+	(Equals): compare the fields of structs too.
+	(GetHashCode): combine the hash code of all the fields.
+	Fixes bug #50901 (will remove the icall in a couple of days).
+
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Array.cs: fixed Clear for non-zero bounded arrays. Fixes bug #50968.
 
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
