@@ -11,6 +11,11 @@
  * (C) Gaurav Vaish (2001)
  */
 
+using System;
+using System.Web;
+using System.Web.UI;
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("Text")]

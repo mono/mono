@@ -15,7 +15,7 @@ using System;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
-using Sytem.ComponentModel;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {

@@ -14,6 +14,7 @@
 using System;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
@@ -25,7 +26,7 @@ namespace System.Web.UI.WebControls
 		public Literal(): base()
 		{
 		}
-		
+
 		public string Text
 		{
 			get
@@ -40,12 +41,12 @@ namespace System.Web.UI.WebControls
 				ViewState["Text"] = value;
 			}
 		}
-		
+
 		protected override ControlCollection CreateControlCollection()
 		{
 			return new EmptyControlCollection(this);
 		}
-		
+
 		protected override void AddParsedSubObject(object obj)
 		{
 			if(obj is LiteralControl)
@@ -55,7 +56,7 @@ namespace System.Web.UI.WebControls
 			}
 			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "Literal", obj.GetType().Name.ToString()));
 		}
-		
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			if(Text.Length > 0)

@@ -1,5 +1,10 @@
 2002-03-16  Gaurav Vaish  <gavish@iitk.ac.in>
 
+	* WebCategoryAttribute.cs
+	                       : Added private attribute.
+
+2002-03-16  Gaurav Vaish  <gavish@iitk.ac.in>
+
 	* HttpRuntime.cs       : Stubbed methods for
 	          FormatStringResource(...) in agreement with the various
 	          overloads available at String.Format(...)

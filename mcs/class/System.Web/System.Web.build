@@ -10,6 +10,9 @@
 		<csc target="library" output="../lib/System.Web.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
 			<arg value="/nowarn:0169"/>
+			<arg value="/nowarn:0679"/> <!-- internal virual -->
+			<arg value="/nowarn:0168"/> <!-- never used variable -->
+			<arg value="/nowarn:0162"/> <!-- unreachable code -->
 			<arg value="/unsafe"/>
 			<arg value="/r:System.dll"/>
 			<sources>
@@ -20,7 +23,6 @@
 				<!--<excludes name="System.Web.UI/**"/>-->
 				<excludes name="System.Web/IHttpModule.cs"/>
 				<excludes name="System.Web.UI.HtmlControls/**"/>
-				<excludes name="System.Web.Security/**"/>
 				<!--<excludes name="System.Web.UI.WebControls/**"/>-->
 				<excludes name="System.Web/IHttpHandlerFactory.cs"/>
 				<excludes name="System.Web/HttpCacheValidateHandler.cs"/>

@@ -15,11 +15,12 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
 	[TypeConverter(typeof(ExpandableObjectConverter))]
-	[ContolBuilder(typeof(ListItemControlBuilder))]
+	[ControlBuilder(typeof(ListItemControlBuilder))]
 	public sealed class ListItem : IStateManager, IParserAccessor, IAttributeAccessor
 	{
 		private static int MARKED   = (0x01 << 0);

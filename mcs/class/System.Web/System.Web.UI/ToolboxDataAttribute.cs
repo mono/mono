@@ -18,11 +18,11 @@ namespace System.Web.UI
 	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class ToolboxDataAttribute : Attribute
 	{
-		public static readonly ToolboxDataAttrubute Default = new ToolboxDataAttrubute("");
+		public static readonly ToolboxDataAttribute Default = new ToolboxDataAttribute("");
 
 		private string data;
 
-		public ToolboxDataAttrubute(string data)
+		public ToolboxDataAttribute(string data)
 		{
 			this.data = data;
 		}
@@ -42,7 +42,7 @@ namespace System.Web.UI
 
 		public override bool Equals(object obj)
 		{
-			if(objs != null && obj is ToolboxDataAttribute)
+			if(obj != null && obj is ToolboxDataAttribute)
 			{
 				ToolboxDataAttribute tda = (ToolboxDataAttribute)obj;
 				return (tda.Data == Data);

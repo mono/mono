@@ -14,7 +14,7 @@
 namespace System.Web.UI.WebControls
 {
 	[ToolboxData("<{0}:RequiredFieldValidator runat=\"server\" "
-	           + "ErrorMessage=\"RequiredFieldValidator\">""
+	           + "ErrorMessage=\"RequiredFieldValidator\">"
 	           + "</{0}:RequiredFieldValidator>")]
 	public class RequiredFieldValidator : BaseValidator
 	{

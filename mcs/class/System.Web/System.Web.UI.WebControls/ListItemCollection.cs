@@ -20,21 +20,21 @@ using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
-	[DefaultMember("Item")]
+	//[DefaultMember("Item")] I need the this[...] thing...
 	//[Editor("??", typeof(Design.WebControls.ListItemCollectionEditor))]
 	public class ListItemCollection : IList, ICollection, IEnumerable, IStateManager
 	{
 		private ArrayList items;
 		private bool      saveAll;
 		private bool      marked;
-		
+
 		public ListItemCollection()
 		{
 			items   = new ArrayList();
 			saveAll = false;
 			marked  = false;
 		}
-		
+
 		public int Capacity
 		{
 			get
@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls
 				items.Capacity = value;
 			}
 		}
-		
+
 		public int Count
 		{
 			get
@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 				return items.Count;
 			}
 		}
-		
+
 		public bool IsReadOnly
 		{
 			get
@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls
 				return items.IsReadOnly;
 			}
 		}
-		
+
 		public bool IsSynchronized
 		{
 			get
@@ -70,7 +70,7 @@ namespace System.Web.UI.WebControls
 				return items.IsSynchronized;
 			}
 		}
-		
+
 		public ListItem this[int index]
 		{
 			get
@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls
 					items[index] = value;
 			}
 		}
-		
+
 		public object SyncRoot
 		{
 			get
@@ -93,7 +93,7 @@ namespace System.Web.UI.WebControls
 				return this;
 			}
 		}
-		
+
 		public void Add(ListItem item)
 		{
 			items.Add(item);
@@ -114,24 +114,24 @@ namespace System.Web.UI.WebControls
 					Add(item);
 			}
 		}
-		
+
 		public void Clear()
 		{
 			items.Clear();
 			if(marked)
 				saveAll = true;
 		}
-		
+
 		public bool Contains(ListItem item)
 		{
 			return items.Contains(item);
 		}
-		
+
 		public void CopyTo(Array array, int index)
 		{
 			items.CopyTo(array, index);
 		}
-		
+
 		public ListItem FindByText(string text)
 		{
 			int i=-1;
@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls
 			}
 			return (i==-1 ? null : (ListItem)items[i]);
 		}
-		
+
 		public ListItem FindByValue(string value)
 		{
 			foreach(ListItem current in items)
@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls
 			}
 			return null;
 		}
-		
+
 		internal int FindByValueInternal(string value)
 		{
 			int i = -1;
@@ -169,29 +169,29 @@ namespace System.Web.UI.WebControls
 			}
 			return -1;
 		}
-		
+
 		public IEnumerator GetEnumerator()
 		{
 			return items.GetEnumerator();
 		}
-		
+
 		public int IndexOf(ListItem item)
 		{
 			return items.IndexOf(item);
 		}
-		
+
 		public void Insert(int index, ListItem item)
 		{
 			items.Insert(index, item);
 			if(marked)
 				saveAll = true;
 		}
-		
+
 		public void Insert(int index, string item)
 		{
 			Insert(index, new ListItem(item));
 		}
-		
+
 		public void RemoveAt(int index)
 		{
 			if(index < 0 || index >= items.Count)
@@ -200,17 +200,17 @@ namespace System.Web.UI.WebControls
 			if(marked)
 				saveAll = true;
 		}
-		
+
 		public void Remove(ListItem item)
 		{
 			RemoveAt(IndexOf(item));
 		}
-		
+
 		public void Remove(string item)
 		{
 			RemoveAt(IndexOf(ListItem.FromString(item)));
 		}
-		
+
 		internal object SaveViewState()
 		{
 			if(saveAll)
@@ -240,7 +240,7 @@ namespace System.Web.UI.WebControls
 				return new Pair(indices, states);
 			return null;
 		}
-		
+
 		internal void LoadViewState(object savedState)
 		{
 			if(savedState!=null)
@@ -273,14 +273,14 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		internal void TrackViewState()
 		{
 			marked = true;
 			foreach(ListItem current in this)
 				current.TrackViewState();
 		}
-		
+
 		bool IList.IsFixedSize
 		{
 			get
@@ -311,27 +311,27 @@ namespace System.Web.UI.WebControls
 				((ListItem)item).Dirty = true;
 			return index;
 		}
-		
+
 		bool IList.Contains(object item)
 		{
 			if(item is ListItem)
 				return Contains((ListItem)item);
 			return false;
 		}
-		
+
 		int IList.IndexOf(object item)
 		{
 			if(item is ListItem)
 				return IndexOf((ListItem)item);
 			return -1;
 		}
-		
+
 		void IList.Insert(int index, object item)
 		{
 			if(item is ListItem)
 				Insert(index, (ListItem)item);
 		}
-		
+
 		void IList.Remove(object item)
 		{
 			if(item is string)
@@ -339,7 +339,7 @@ namespace System.Web.UI.WebControls
 			if(item is ListItem)
 				Remove((ListItem)item);
 		}
-		
+
 		bool IStateManager.IsTrackingViewState
 		{
 			get
@@ -347,17 +347,17 @@ namespace System.Web.UI.WebControls
 				return marked;
 			}
 		}
-		
+
 		void IStateManager.LoadViewState(object state)
 		{
 			LoadViewState(state);
 		}
-		
+
 		object IStateManager.SaveViewState()
 		{
 			return SaveViewState();
 		}
-		
+
 		void IStateManager.TrackViewState()
 		{
 			TrackViewState();

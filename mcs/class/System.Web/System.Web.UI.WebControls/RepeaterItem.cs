@@ -13,6 +13,7 @@
 using System;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
@@ -63,7 +64,9 @@ namespace System.Web.UI.WebControls
 			{
 				RepeaterCommandEventArgs rcea = new RepeaterCommandEventArgs(this, source, (CommandEventArgs)e);
 				RaiseBubbleEvent(source, rcea);
+				return true;
 			}
+			return false;
 		}
 	}
 }
