@@ -1,3 +1,7 @@
+2002-09-14  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.h (MonoSymbolFile): Added method range table for
+	fast method lookup.
 
 Fri Sep 13 16:04:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
