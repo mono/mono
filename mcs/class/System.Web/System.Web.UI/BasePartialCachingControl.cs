@@ -3,11 +3,15 @@
 //
 // Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Jackson Harper (jackson@ximian.com)
 //
 // (C) 2003 Andreas Nahr
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 using System;
+using System.IO;
+using System.Text;
 using System.ComponentModel;
 using System.Web.Caching;
 
@@ -17,34 +21,109 @@ namespace System.Web.UI
 	public abstract class BasePartialCachingControl : Control
 	{
 		private CacheDependency dependency;
+		private string ctrl_id;
+		private string guid;
+		private int duration;
+		private string varyby_params;
+		private string varyby_controls;
+		private string varyby_custom;
 
+		private Control control;
+		
 		protected BasePartialCachingControl()
 		{
 		}
 
+		internal string CtrlID {
+			get { return ctrl_id; }
+			set { ctrl_id = value; }
+		}
+
+		internal string Guid {
+			get { return guid; }
+			set { guid = value; }
+		}
+
+		internal int Duration {
+			get { return duration; }
+			set { duration = value; }
+		}
+
+		internal string VaryByParams {
+			get { return varyby_params; }
+			set { varyby_params = value; }
+		}
+
+		internal string VaryByControls {
+			get { return varyby_controls; }
+			set { varyby_controls = value; }
+		}
+
+		internal string VaryByCustom {
+			get { return varyby_custom; }
+			set { varyby_custom = value; }
+		}
+
 		internal abstract Control CreateControl ();
 
-		[MonoTODO]
 		public override void Dispose ()
 		{
-			throw new NotImplementedException ();
+			if (dependency != null) {
+				dependency.Dispose ();
+				dependency = null;
+			}
 		}
 
-		[MonoTODO]
 		protected override void OnInit (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			control = CreateControl ();
+			Controls.Add (control);
 		}
 
-		[MonoTODO]
 		protected override void Render (HtmlTextWriter output)
 		{
-			throw new NotImplementedException ();
+			Cache cache = HttpRuntime.Cache;
+			string key = CreateKey ();
+			string data = cache [key] as string;
+			
+			if (data != null) {
+				output.Write (data);
+				return;
+			}
+
+			HttpContext context = HttpContext.Current;
+			StringWriter writer = new StringWriter ();
+			TextWriter prev = context.Response.SetTextWriter (writer);
+			HtmlTextWriter txt_writer = new HtmlTextWriter (writer);
+			string text;
+			try {
+				control.RenderControl (txt_writer);
+			} finally {
+				text = writer.ToString ();
+				context.Response.SetTextWriter (prev);
+				output.Write (text);
+			}
+
+			context.Cache.InsertPrivate (key, text, dependency,
+						DateTime.Now.AddSeconds (duration),
+						Cache.NoSlidingExpiration,
+						CacheItemPriority.Normal, null);
 		}
 
 		public CacheDependency Dependency {
 			get {return dependency;}
 			set {dependency = value;}
+		}
+
+		private string CreateKey ()
+		{
+			StringBuilder builder = new StringBuilder ();
+
+			builder.Append ("PartialCachingControl\n");
+			builder.Append ("CID: " + ctrl_id + "\n");
+			builder.Append ("GUID: " + guid + "\n");
+
+			return builder.ToString ();
 		}
 	}
 }

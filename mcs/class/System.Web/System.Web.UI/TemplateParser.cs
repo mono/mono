@@ -39,7 +39,8 @@ namespace System.Web.UI
 		string language;
 		bool output_cache;
 		int oc_duration;
-		string oc_header, oc_custom, oc_param;
+		string oc_header, oc_custom, oc_param, oc_controls;
+		bool oc_shared;
 		OutputCacheLocation oc_location;
 		Assembly srcAssembly;
                 
@@ -510,6 +511,14 @@ namespace System.Web.UI
 			get { return oc_custom; }
 		}
 
+		internal string OutputCacheVaryByControls {
+			get { return oc_controls; }
+		}
+		
+		internal bool OutputCacheShared {
+			get { return oc_shared; }
+		}
+		
 		internal OutputCacheLocation OutputCacheLocation {
 			get { return oc_location; }
 		}

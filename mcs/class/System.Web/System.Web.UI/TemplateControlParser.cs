@@ -136,7 +136,6 @@ namespace System.Web.UI
 				return;
 			}
 
-			atts.Remove ("OutputCache"); // ignored
 			base.AddDirective (directive, atts);
 		}
 

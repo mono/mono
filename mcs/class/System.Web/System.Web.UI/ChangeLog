@@ -1,3 +1,14 @@
+2004-01-13  Jackson Harper <jackson@ximian.com>
+
+	* TemplateParser.cs: Add VaryByControls and Shared output cache
+	properties. These are not assigned yet.
+	* TemplateControlParser.cs: Do not ignore the OutputCache
+	attribute.
+	* BasePartialCachingControl.cs: Initial implementation. Keys are
+	still not created properly.
+	* StaticPartialCachingControl.cs: Assign properties in base class,
+	implement CreateControl.
+	
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationFileParser.cs: adde DefaultBaseTypeName property.
