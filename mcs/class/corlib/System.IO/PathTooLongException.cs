@@ -1,5 +1,5 @@
 //	
-// System.PathTooLongException.cs
+// System.IO.PathTooLongException.cs
 //
 // Author:
 //	Duncan Mak (duncan@ximian.com)

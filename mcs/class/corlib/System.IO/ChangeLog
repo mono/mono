@@ -1,6 +1,7 @@
 2002-02-12  Nick Drochak  <ndrochak@gol.com>
 
 	* PathTooLongException.cs: put it in the correct namespace
+	* EndOfStreamException.cs: put it in the correct namespace
 
 Thu Jan 31 17:32:32 CET 2002 Paolo Molaro <lupus@ximian.com>
 
