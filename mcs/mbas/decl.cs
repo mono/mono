@@ -396,9 +396,11 @@ namespace Mono.CSharp {
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 			type_resolve_ec.loc = loc;
+
+			int errors = Report.Errors;
 			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
 			if (d == null || d.eclass != ExprClass.Type){
-				if (!silent){
+				if (!silent && errors == Report.Errors){
 					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
 				}
 				return null;
@@ -445,13 +447,20 @@ namespace Mono.CSharp {
 			
 			t = parent.DefineType ();
 			if (t == null){
-				Report.Error (146, "Class definition is circular: `"+name+"'");
+				Report.Error (146, Location, "Class definition is circular: `"+name+"'");
 				error = true;
 				return null;
 			}
 			return t;
 		}
-		
+
+		public static void Error_AmbiguousTypeReference (Location loc, string name, Type t1, Type t2)
+		{
+			Report.Error (104, loc,
+				      String.Format ("`{0}' is an ambiguous reference ({1} or {2}) ", name,
+						     t1.FullName, t2.FullName));
+		}
+
 		/// <summary>
 		///   GetType is used to resolve type names at the DeclSpace level.
 		///   Use this to lookup class/struct bases, interface bases or 
@@ -464,7 +473,7 @@ namespace Mono.CSharp {
 		///   during the tree resolution process and potentially define
 		///   recursively the type
 		/// </remarks>
-		public Type FindType (string name)
+		public Type FindType (Location loc, string name)
 		{
 			Type t;
 			bool error;
@@ -538,17 +547,24 @@ namespace Mono.CSharp {
 				if (using_list == null)
 					continue;
 
+				Type match = null;
 				foreach (Namespace.UsingEntry ue in using_list){
-					t = LookupInterfaceOrClass (ue.Name, name, out error);
+					match = LookupInterfaceOrClass (ue.Name, name, out error);
 					if (error)
 						return null;
 
-					if (t != null){
+					if (match != null){
+						if (t != null){
+							Error_AmbiguousTypeReference (loc, name, t, match);
+							return null;
+						}
+						
+						t = match;
 						ue.Used = true;
-						return t;
 					}
 				}
-				
+				if (t != null)
+					return t;
 			}
 
 			//Report.Error (246, Location, "Can not find type `"+name+"'");
@@ -798,6 +814,7 @@ namespace Mono.CSharp {
 		public readonly IMemberContainer Container;
 		protected Hashtable member_hash;
 		protected Hashtable method_hash;
+		protected Hashtable interface_hash;
 
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
@@ -808,6 +825,8 @@ namespace Mono.CSharp {
 
 			Timer.IncrementCounter (CounterType.MemberCache);
 			Timer.StartTimer (TimerType.CacheInit);
+
+			interface_hash = new Hashtable ();
 
 			// If we have a parent class (we have a parent class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
@@ -847,6 +866,14 @@ namespace Mono.CSharp {
 			return hash;
 		}
 
+		void AddInterfaces (MemberCache parent)
+		{
+			foreach (Type iface in parent.interface_hash.Keys) {
+				if (!interface_hash.Contains (iface))
+					interface_hash.Add (iface, true);
+			}
+		}
+
 		/// <summary>
 		///   Add the contents of `new_hash' to `hash'.
 		/// </summary>
@@ -873,11 +900,16 @@ namespace Mono.CSharp {
 			Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
 
 			foreach (Type iface in ifaces) {
+				if (interface_hash.Contains (iface))
+					continue;
+				interface_hash.Add (iface, true);
+
 				IMemberContainer iface_container =
 					TypeManager.LookupMemberContainer (iface);
 
 				MemberCache iface_cache = iface_container.MemberCache;
 				AddHashtable (hash, iface_cache.member_hash);
+				AddInterfaces (iface_cache);
 			}
 
 			return hash;

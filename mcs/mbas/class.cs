@@ -215,9 +215,9 @@ namespace Mono.CSharp {
 
 		public AdditionResult AddMethod (Method method)
 		{
-			string name = method.Name;
+			string name = Name + "." + method.Name;
 			Object value = defined_names [name];
-			
+
 			if (value != null && (!(value is Method)))
 				return AdditionResult.NameExists;
 
@@ -232,7 +232,7 @@ namespace Mono.CSharp {
 			else 
 				methods.Add (method);
 			
-			if (value != null)
+			if (value == null)
 				DefineName (name, method);
 
 			return AdditionResult.Success;
@@ -772,46 +772,25 @@ namespace Mono.CSharp {
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
+				TypeBuilder = builder.DefineType (
+					Name, type_attributes, parent, ifaces);
 				
-				//
-				// Structs with no fields need to have a ".size 1"
-				// appended
-				//
-
-				if (!is_class && !have_nonstatic_fields)
-					TypeBuilder = builder.DefineType (Name,
-									  type_attributes,
-									  parent, 
-									  PackingSize.Unspecified, 1);
-				else
-				//
-				// classes or structs with fields
-				//
-					TypeBuilder = builder.DefineType (Name,
-									  type_attributes,
-									  parent,
-									  ifaces);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
+				TypeBuilder = builder.DefineNestedType (
+					Basename, type_attributes, parent, ifaces);
+			}
 				
-				//
-				// Structs with no fields need to have a ".size 1"
-				// appended
-				//
-				if (!is_class && !have_nonstatic_fields)
-					TypeBuilder = builder.DefineNestedType (Basename,
-										type_attributes,
-										parent, 
-										PackingSize.Unspecified);
-				else {
-					//
-					// classes or structs with fields
-					//
-					TypeBuilder = builder.DefineNestedType (Basename,
-										type_attributes,
-										parent,
-										ifaces);
-				}
+			//
+			// Structs with no fields need to have at least one byte.
+			// The right thing would be to set the PackingSize in a DefineType
+			// but there are no functions that allow interfaces *and* the size to
+			// be specified.
+			//
+
+			if (!is_class && !have_nonstatic_fields){
+				TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
+							 FieldAttributes.Private);
 			}
 
 			// add interfaces that were not added at type creation (weird API issue)
@@ -952,7 +931,7 @@ namespace Mono.CSharp {
 			IndexerName = class_indexer_name;
 		}
 
-		static void Report1530 (Location loc)
+		static void Error_KeywordNotAllowed (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
 		}
@@ -969,7 +948,7 @@ namespace Mono.CSharp {
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
 						iface.DefineMembers (this);
 					else
-						Report1530 (iface.Location);
+						Error_KeywordNotAllowed (iface.Location);
 			}
 
 			if (RootContext.WarningLevel > 1){
@@ -1045,8 +1024,11 @@ namespace Mono.CSharp {
 			} else
 				IndexerName = "Item";
 
-			if (operators != null)
+			if (operators != null){
 				DefineMembers (operators, null);
+
+				CheckPairedOperators ();
+			}
 
 			if (enums != null)
 				DefineMembers (enums, defined_names);
@@ -1821,6 +1803,131 @@ namespace Mono.CSharp {
 		{
 			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
 		}
+
+		//
+		// Operator pair checking
+		//
+
+		class OperatorEntry {
+			public int flags;
+			public Type ret_type;
+			public Type type1, type2;
+			public Operator op;
+			public Operator.OpType ot;
+			
+			public OperatorEntry (int f, Operator o)
+			{
+				flags = f;
+
+				ret_type = o.OperatorMethod.GetReturnType ();
+				Type [] pt = o.OperatorMethod.ParameterTypes;
+				type1 = pt [0];
+				type2 = pt [1];
+				op = o;
+				ot = o.OperatorType;
+			}
+
+			public override int GetHashCode ()
+			{	
+				return ret_type.GetHashCode ();
+			}
+
+			public override bool Equals (object o)
+			{
+				OperatorEntry other = (OperatorEntry) o;
+
+				if (other.ret_type != ret_type)
+					return false;
+				if (other.type1 != type1)
+					return false;
+				if (other.type2 != type2)
+					return false;
+				return true;
+			}
+		}
+				
+		//
+		// Checks that some operators come in pairs:
+		//  == and !=
+		// > and <
+		// >= and <=
+		//
+		// They are matched based on the return type and the argument types
+		//
+		void CheckPairedOperators ()
+		{
+			Hashtable pairs = new Hashtable (null, null);
+
+			// Register all the operators we care about.
+			foreach (Operator op in operators){
+				int reg = 0;
+				
+				switch (op.OperatorType){
+				case Operator.OpType.Equality:
+					reg = 1; break;
+				case Operator.OpType.Inequality:
+					reg = 2; break;
+					
+				case Operator.OpType.GreaterThan:
+					reg = 1; break;
+				case Operator.OpType.LessThan:
+					reg = 2; break;
+					
+				case Operator.OpType.GreaterThanOrEqual:
+					reg = 1; break;
+				case Operator.OpType.LessThanOrEqual:
+					reg = 2; break;
+				}
+				if (reg == 0)
+					continue;
+
+				OperatorEntry oe = new OperatorEntry (reg, op);
+
+				object o = pairs [oe];
+				if (o == null)
+					pairs [oe] = oe;
+				else {
+					oe = (OperatorEntry) o;
+					oe.flags |= reg;
+				}
+			}
+
+			//
+			// Look for the mistakes.
+			//
+			foreach (DictionaryEntry de in pairs){
+				OperatorEntry oe = (OperatorEntry) de.Key;
+
+				if (oe.flags == 3)
+					continue;
+
+				string s = "";
+				switch (oe.ot){
+				case Operator.OpType.Equality:
+					s = "!=";
+					break;
+				case Operator.OpType.Inequality: 
+					s = "==";
+					break;
+				case Operator.OpType.GreaterThan: 
+					s = "<";
+					break;
+				case Operator.OpType.LessThan:
+					s = ">";
+					break;
+				case Operator.OpType.GreaterThanOrEqual:
+					s = "<=";
+					break;
+				case Operator.OpType.LessThanOrEqual:
+					s = ">=";
+					break;
+				}
+				Report.Error (216, oe.op.Location,
+					      "The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
+			}
+		}
+		
+		
 	}
 
 	public class Class : TypeContainer {
@@ -2065,7 +2172,7 @@ namespace Mono.CSharp {
 		// function.  Provides a nice cache.  (used between semantic analysis
 		// and actual code generation
 		//
-		public Type GetReturnType (TypeContainer parent)
+		public Type GetReturnType ()
 		{
 			return MemberType;
 		}
@@ -2335,12 +2442,12 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			if (parent_constructor != null)
-				ec.ig.Emit (OpCodes.Ldarg_0);
-			if (argument_list != null)
-				Invocation.EmitArguments (ec, null, argument_list);
-			if (parent_constructor != null)
-				ec.ig.Emit (OpCodes.Call, parent_constructor);
+			if (parent_constructor != null){
+				if (ec.IsStatic)
+					Invocation.EmitCall (ec, true, true, null, parent_constructor, argument_list, loc);
+				else
+					Invocation.EmitCall (ec, true, false, ec.This, parent_constructor, argument_list, loc);
+			}
 		}
 	}
 
@@ -2366,12 +2473,13 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Modifiers allowed for a constructor.
 		// </summary>
-		const int AllowedModifiers =
+		public const int AllowedModifiers =
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
 			Modifiers.STATIC |
 			Modifiers.UNSAFE |
+			Modifiers.EXTERN |		
 			Modifiers.PRIVATE;
 
 		//
@@ -2424,8 +2532,8 @@ namespace Mono.CSharp {
 				}
 				ca |= MethodAttributes.HideBySig;
 
-				if ((ModFlags & Modifiers.PRIVATE) != 0)
-					ca |= MethodAttributes.Private;
+				if ((ModFlags & Modifiers.PUBLIC) != 0)
+					ca |= MethodAttributes.Public;
 				else if ((ModFlags & Modifiers.PROTECTED) != 0){
 					if ((ModFlags & Modifiers.INTERNAL) != 0)
 						ca |= MethodAttributes.FamORAssem;
@@ -2433,8 +2541,10 @@ namespace Mono.CSharp {
 						ca |= MethodAttributes.Family;
 				} else if ((ModFlags & Modifiers.INTERNAL) != 0)
 					ca |= MethodAttributes.Assembly;
-				else
+				else if (IsDefault ())
 					ca |= MethodAttributes.Public;
+				else
+					ca |= MethodAttributes.Private;
 			}
 
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
@@ -2745,7 +2855,7 @@ namespace Mono.CSharp {
 			else
 				name = member.ShortName;
 			method_name = prefix + name;
-				
+
 			if (parent.Pending != null){
 				if (member is Indexer)
 					implementing = parent.Pending.IsInterfaceIndexer (
@@ -3370,7 +3480,24 @@ namespace Mono.CSharp {
 			if (!DoDefineParameters (parent))
 				return false;
 
-			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
+			if (IsExplicitImpl)
+				return true;
+
+			string report_name;
+			MethodSignature ms, base_ms;
+			if (this is Indexer) {
+				string name, base_name;
+
+				report_name = "this";
+				name = TypeManager.IndexerPropertyName (parent.TypeBuilder);
+				ms = new MethodSignature (name, null, ParameterTypes);
+				base_name = TypeManager.IndexerPropertyName (parent.TypeBuilder.BaseType);
+				base_ms = new MethodSignature (base_name, null, ParameterTypes);
+			} else {
+				report_name = Name;
+				ms = base_ms = new MethodSignature (Name, null, ParameterTypes);
+			}
+
 			MemberList props_this;
 
 			props_this = TypeContainer.FindMembers (
@@ -3382,7 +3509,7 @@ namespace Mono.CSharp {
 
 			if (props_this.Count > 0) {
 				Report.Error (111, Location, "Class `" + parent.Name + "' " +
-					      "already defines a member called `" + Name + "' " +
+					      "already defines a member called `" + report_name + "' " +
 					      "with the same parameter types");
 				return false;
 			}
@@ -3394,13 +3521,13 @@ namespace Mono.CSharp {
 			MemberList props_static = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
-				MethodSignature.inheritable_property_signature_filter, ms);
+				MethodSignature.inheritable_property_signature_filter, base_ms);
 
 			MemberList props_instance = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
 				MethodSignature.inheritable_property_signature_filter,
-				ms);
+				base_ms);
 
 			//
 			// Find if we have anything
@@ -3424,7 +3551,7 @@ namespace Mono.CSharp {
 					inherited_set : inherited_get;
 				
 				if (reference != null) {
-					string name = reference.DeclaringType.Name + "." + Name;
+					string name = reference.DeclaringType.Name + "." + report_name;
 
 					if (!CheckMethodAgainstBase (parent, flags, reference, name))
 						return false;
@@ -4177,7 +4304,7 @@ namespace Mono.CSharp {
 
 			Type [] param_types = OperatorMethod.ParameterTypes;
 			Type declaring_type = OperatorMethodBuilder.DeclaringType;
-			Type return_type = OperatorMethod.GetReturnType (parent);
+			Type return_type = OperatorMethod.GetReturnType ();
 			Type first_arg_type = param_types [0];
 
 			// Rules for conversion operators
@@ -4286,6 +4413,84 @@ namespace Mono.CSharp {
 			
 			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (parent);
+		}
+
+		public static string GetName (OpType ot)
+		{
+			switch (ot){
+			case OpType.LogicalNot:
+				return "!";
+			case OpType.OnesComplement:
+				return "~";
+			case OpType.Increment:
+				return "++";
+			case OpType.Decrement:
+				return "--";
+			case OpType.True:
+				return "true";
+			case OpType.False:
+				return "false";
+			case OpType.Addition:
+				return "+";
+			case OpType.Subtraction:
+				return "-";
+			case OpType.UnaryPlus:
+				return "+";
+			case OpType.UnaryNegation:
+				return "-";
+			case OpType.Multiply:
+				return "*";
+			case OpType.Division:
+				return "/";
+			case OpType.Modulus:
+				return "%";
+			case OpType.BitwiseAnd:
+				return "&";
+			case OpType.BitwiseOr:
+				return "|";
+			case OpType.ExclusiveOr:
+				return "^";
+			case OpType.LeftShift:
+				return "<<";
+			case OpType.RightShift:
+				return ">>";
+			case OpType.Equality:
+				return "==";
+			case OpType.Inequality:
+				return "!=";
+			case OpType.GreaterThan:
+				return ">";
+			case OpType.LessThan:
+				return "<";
+			case OpType.GreaterThanOrEqual:
+				return ">=";
+			case OpType.LessThanOrEqual:
+				return "<=";
+			case OpType.Implicit:
+				return "implicit";
+			case OpType.Explicit:
+				return "explicit";
+			default: return "";
+			}
+		}
+		
+		public override string ToString ()
+		{
+			Type return_type = OperatorMethod.GetReturnType();
+			Type [] param_types = OperatorMethod.ParameterTypes;
+			
+			if (SecondArgType == null)
+				return String.Format (
+					"{0} operator {1}({2})",
+					TypeManager.CSharpName (return_type),
+					GetName (OperatorType),
+					param_types [0]);
+			else
+				return String.Format (
+					"{0} operator {1}({2}, {3})",
+					TypeManager.CSharpName (return_type),
+					GetName (OperatorType),
+					param_types [0], param_types [1]);
 		}
 	}
 

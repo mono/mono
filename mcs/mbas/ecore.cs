@@ -668,8 +668,12 @@ namespace Mono.CSharp {
 
 				expr.Emit (null);
 			}
-			
-			if (target_type == TypeManager.object_type) {
+
+			//
+			// notice that it is possible to write "ValueType v = 1", the ValueType here
+			// is an abstract class, and not really a value type, so we apply the same rules.
+			//
+			if (target_type == TypeManager.object_type || target_type == TypeManager.value_type) {
 				//
 				// A pointer type cannot be converted to object
 				// 
@@ -680,9 +684,9 @@ namespace Mono.CSharp {
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface)
 					return new EmptyCast (expr, target_type);
-			} else if (expr_type.IsSubclassOf (target_type)) {
+			} else if (expr_type.IsSubclassOf (target_type)) 
 				return new EmptyCast (expr, target_type);
-			} else {
+			else {
 
 				// This code is kind of mirrored inside StandardConversionExists
 				// with the small distinction that we only probe there
@@ -694,16 +698,17 @@ namespace Mono.CSharp {
 					return new EmptyCast (expr, target_type);
 
 				// from any class-type S to any interface-type T.
-				if (expr_type.IsClass && target_type.IsInterface) {
-					if (TypeManager.ImplementsInterface (expr_type, target_type))
-						return new EmptyCast (expr, target_type);
-					else
-						return null;
+				if (target_type.IsInterface) {
+					if (TypeManager.ImplementsInterface (expr_type, target_type)){
+						if (expr_type.IsClass)
+							return new EmptyCast (expr, target_type);
+						else if (expr_type.IsValueType)
+							return new BoxedCast (expr);
+					}
 				}
 
 				// from any interface type S to interface-type T.
 				if (expr_type.IsInterface && target_type.IsInterface) {
-
 					if (TypeManager.ImplementsInterface (expr_type, target_type))
 						return new EmptyCast (expr, target_type);
 					else
@@ -749,21 +754,6 @@ namespace Mono.CSharp {
 			}
 			
 			return null;
-		}
-
-		/// <summary>
-		///   Handles expressions like this: decimal d; d = 1;
-		///   and changes them into: decimal d; d = new System.Decimal (1);
-		/// </summary>
-		static Expression InternalTypeConstructor (EmitContext ec, Expression expr, Type target)
-		{
-			ArrayList args = new ArrayList ();
-
-			args.Add (new Argument (expr, Argument.AType.Expression));
-
-			Expression ne = new New (new TypeExpr (target, Location.Null), args, Location.Null);
-
-			return ne.Resolve (ec);
 		}
 
 		/// <summary>
@@ -814,8 +804,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.short_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double
@@ -834,8 +822,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.short_type){
 				//
 				// From short to int, long, float, double
@@ -848,8 +834,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.ushort_type){
 				//
 				// From ushort to int, uint, long, ulong, float, double
@@ -867,8 +851,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to long, float, double
@@ -879,8 +861,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to long, ulong, float, double
@@ -895,8 +875,6 @@ namespace Mono.CSharp {
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long/ulong to float, double
@@ -905,8 +883,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);	
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.uint64_type){
 				//
 				// From ulong to float, double
@@ -917,8 +893,6 @@ namespace Mono.CSharp {
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);	
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to ushort, int, uint, long, ulong, float, double
@@ -935,8 +909,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// float to double
@@ -973,7 +945,7 @@ namespace Mono.CSharp {
 				// from ImplicitReferenceConversion so make sure code remains in sync
 				
 				// from any class-type S to any interface-type T.
-				if (expr_type.IsClass && target_type.IsInterface) {
+				if (target_type.IsInterface) {
 					if (TypeManager.ImplementsInterface (expr_type, target_type))
 						return true;
 				}
@@ -1217,6 +1189,9 @@ namespace Mono.CSharp {
 					return true;
 			}
 
+			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
+				return true;
+
 			return false;
 		}
 
@@ -1296,7 +1271,7 @@ namespace Mono.CSharp {
 		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
 		///   for explicit and implicit conversion operators.
 		/// </summary>
-		static public Type FindMostSpecificSource (MethodGroupExpr me, Type source_type,
+		static public Type FindMostSpecificSource (MethodGroupExpr me, Expression source,
 							   bool apply_explicit_conv_rules,
 							   Location loc)
 		{
@@ -1304,10 +1279,11 @@ namespace Mono.CSharp {
 			
 			if (priv_fms_expr == null)
 				priv_fms_expr = new EmptyExpression ();
-			
+
 			//
 			// If any operator converts from S then Sx = S
 			//
+			Type source_type = source.Type;
 			foreach (MethodBase mb in me.Methods){
 				ParameterData pd = Invocation.GetParameterData (mb);
 				Type param_type = pd.ParameterType (0);
@@ -1328,16 +1304,14 @@ namespace Mono.CSharp {
 					if (StandardConversionExists (priv_fms_expr, source_type))
 						src_types_set.Add (param_type);
 					else {
-						priv_fms_expr.SetType (source_type);
-						if (StandardConversionExists (priv_fms_expr, param_type))
+						if (StandardConversionExists (source, param_type))
 							src_types_set.Add (param_type);
 					}
 				} else {
 					//
 					// Only if S is encompassed by param_type
 					//
-					priv_fms_expr.SetType (source_type);
-					if (StandardConversionExists (priv_fms_expr, param_type))
+					if (StandardConversionExists (source, param_type))
 						src_types_set.Add (param_type);
 				}
 			}
@@ -1349,9 +1323,7 @@ namespace Mono.CSharp {
 				ArrayList candidate_set = new ArrayList ();
 
 				foreach (Type param_type in src_types_set){
-					priv_fms_expr.SetType (source_type);
-					
-					if (StandardConversionExists (priv_fms_expr, param_type))
+					if (StandardConversionExists (source, param_type))
 						candidate_set.Add (param_type);
 				}
 
@@ -1444,7 +1416,7 @@ namespace Mono.CSharp {
 			//
 			if (apply_explicit_conv_rules)
 				return FindMostEncompassedType (tgt_types_set);
-			else
+			else 
 				return FindMostEncompassingType (tgt_types_set);
 		}
 		
@@ -1566,14 +1538,14 @@ namespace Mono.CSharp {
 			}
 #endif
 			
-			most_specific_source = FindMostSpecificSource (union, source_type, look_for_explicit, loc);
+			most_specific_source = FindMostSpecificSource (union, source, look_for_explicit, loc);
 			if (most_specific_source == null)
 				return null;
 
 			most_specific_target = FindMostSpecificTarget (union, target, look_for_explicit, loc);
 			if (most_specific_target == null) 
 				return null;
-			
+
 			int count = 0;
 
 			foreach (MethodBase mb in union.Methods){
@@ -1741,9 +1713,21 @@ namespace Mono.CSharp {
 					return new ULongConstant ((ulong) value);
 			}
 			
-			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type))
-				return new EnumConstant (ic, target_type);
+			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type)){
+				Type underlying = TypeManager.EnumToUnderlying (target_type);
+				Constant e = (Constant) ic;
+				
+				//
+				// Possibly, we need to create a different 0 literal before passing
+				// to EnumConstant
+				//n
+				if (underlying == TypeManager.int64_type)
+					e = new LongLiteral (0);
+				else if (underlying == TypeManager.uint64_type)
+					e = new ULongLiteral (0);
 
+				return new EnumConstant (e, target_type);
+			}
 			return null;
 		}
 
@@ -1775,7 +1759,7 @@ namespace Mono.CSharp {
 					      "Double literal cannot be implicitly converted to " +
 					      "float type, use F suffix to create a float literal");
 			}
-			
+
 			Error_CannotConvertImplicit (loc, source.Type, target_type);
 
 			return null;
@@ -1784,7 +1768,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Performs the explicit numeric conversions
 		/// </summary>
-		static Expression ConvertNumericExplicit (EmitContext ec, Expression expr, Type target_type)
+		static Expression ConvertNumericExplicit (EmitContext ec, Expression expr, Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
 
@@ -1798,8 +1782,13 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEnumType (real_target_type))
 				real_target_type = TypeManager.EnumToUnderlying (real_target_type);
 
-			if (StandardConversionExists (expr, real_target_type))
- 				return new EmptyCast (expr, target_type);
+			if (StandardConversionExists (expr, real_target_type)){
+ 				Expression ce = ConvertImplicitStandard (ec, expr, real_target_type, loc);
+
+				if (real_target_type != target_type)
+					return new EmptyCast (ce, target_type);
+				return ce;
+			}
 			
 			if (expr_type == TypeManager.sbyte_type){
 				//
@@ -1959,8 +1948,6 @@ namespace Mono.CSharp {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U8);
 				if (real_target_type == TypeManager.char_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_CH);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.double_type){
 				//
 				// From double to byte, byte, short,
@@ -1987,8 +1974,6 @@ namespace Mono.CSharp {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_CH);
 				if (real_target_type == TypeManager.float_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} 
 
 			// decimal is taken care of by the op_Explicit methods.
@@ -2201,7 +2186,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			ne = ConvertNumericExplicit (ec, expr, target_type);
+			ne = ConvertNumericExplicit (ec, expr, target_type, loc);
 			if (ne != null)
 				return ne;
 
@@ -2232,7 +2217,7 @@ namespace Mono.CSharp {
 				if (t != null)
 					return t;
 				
-				return ConvertNumericExplicit (ec, e, target_type);
+				return ConvertNumericExplicit (ec, e, target_type, loc);
 			}
 			
 			ne = ConvertReferenceExplicit (expr, target_type);
@@ -2271,7 +2256,7 @@ namespace Mono.CSharp {
 						if (ci != null)
 							return ci;
 
-						ce = ConvertNumericExplicit (ec, e, target_type);
+						ce = ConvertNumericExplicit (ec, e, target_type, loc);
 						if (ce != null)
 							return ce;
 						//
@@ -2303,7 +2288,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			ne = ConvertNumericExplicit (ec, expr, target_type);
+			ne = ConvertNumericExplicit (ec, expr, target_type, l);
 			if (ne != null)
 				return ne;
 
@@ -2718,7 +2703,7 @@ namespace Mono.CSharp {
 		//
 		public static void StoreFromPtr (ILGenerator ig, Type type)
 		{
-			if (type.IsEnum)
+			if (TypeManager.IsEnumType (type))
 				type = TypeManager.EnumToUnderlying (type);
 			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
 				ig.Emit (OpCodes.Stind_I4);
@@ -2764,6 +2749,8 @@ namespace Mono.CSharp {
 				 t == TypeManager.char_type ||
 				 t == TypeManager.ushort_type)
 				return 2;
+			else if (t == TypeManager.decimal_type)
+				return 16;
 			else
 				return 0;
 		}
@@ -3436,9 +3423,20 @@ namespace Mono.CSharp {
 			Type t;
 			string alias_value;
 
+			if (ec.ResolvingTypeTree){
+				int errors = Report.Errors;
+				Type dt = ec.DeclSpace.FindType (loc, Name);
+				if (Report.Errors != errors)
+					return null;
+				
+				if (dt != null)
+					return new TypeExpr (dt, loc);
+			}
+
 			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
 				return new TypeExpr (t, loc);
 				
+
 			//
 			// Stage 2 part b: Lookup up if we are an alias to a type
 			// or a namespace.
@@ -3457,12 +3455,6 @@ namespace Mono.CSharp {
 				return new SimpleName (alias_value, loc);
 			}
 				
-			if (ec.ResolvingTypeTree){
-				Type dt = ec.DeclSpace.FindType (Name);
-				if (dt != null)
-					return new TypeExpr (dt, loc);
-			}
-
 			// No match, maybe our parent can compose us
 			// into something meaningful.
 			return this;
@@ -3780,6 +3772,12 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
+			if (instance_expression != null) {
+				instance_expression = instance_expression.DoResolve (ec);
+				if (instance_expression == null)
+					return null;
+			}
+
 			return this;
 		}
 
@@ -4188,6 +4186,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (instance_expr != null) {
+				instance_expr = instance_expr.DoResolve (ec);
+				if (instance_expr == null)
+					return null;
+			}
+
 			return this;
 		}
 
@@ -4199,6 +4203,12 @@ namespace Mono.CSharp {
 					      "' can not be used in " +
 					      "this context because it lacks a set accessor");
 				return null;
+			}
+
+			if (instance_expr != null) {
+				instance_expr = instance_expr.DoResolve (ec);
+				if (instance_expr == null)
+					return null;
 			}
 
 			return this;
@@ -4313,13 +4323,18 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			// We are born fully resolved
+			if (instance_expr != null) {
+				instance_expr = instance_expr.DoResolve (ec);
+				if (instance_expr == null)
+					return null;
+			}
+
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Should not happen I think");
+			Report.Error (70, loc, "The event `" + Name + "' can only appear on the left hand side of += or -= (except on the defining type)");
 		}
 
 		public void EmitAddOrRemove (EmitContext ec, Expression source)

@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static Type NamespaceLookup (Namespace curr_ns, string name)
+		static Type NamespaceLookup (Namespace curr_ns, string name, Location loc)
 		{
 			Type t;
 			
@@ -492,13 +492,21 @@ namespace Mono.CSharp {
 				if (using_list == null)
 					continue;
 
+				Type match = null;
 				foreach (Namespace.UsingEntry ue in using_list) {
-					t = TypeManager.LookupType (MakeFQN (ue.Name, name));
-					if (t != null){
+					match = TypeManager.LookupType (MakeFQN (ue.Name, name));
+					if (match != null){
+						if (t != null){
+							DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
+							return null;
+						}
+						
+						t = match;
 						ue.Used = true;
-						return t;
 					}
 				}
+				if (t != null)
+					return t;
 
 				//
 				// Try with aliases
@@ -547,7 +555,7 @@ namespace Mono.CSharp {
 						//
 						// nested class
 						//
-						t = TypeManager.LookupType (current_type.FullName + "+" + name);
+						t = TypeManager.LookupType (current_type.FullName + "." + name);
 						if (t != null){
 							ds.Cache [name] = t;
 							return t;
@@ -559,7 +567,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds.Namespace, name);
+				t = NamespaceLookup (ds.Namespace, name, loc);
 				if (t != null){
 					ds.Cache [name] = t;
 					return t;

@@ -251,7 +251,7 @@ namespace Mono.CSharp {
 			expr = ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				ok = false;
-			
+
 			return ok;
 		}
 		
@@ -664,6 +664,7 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
+			ec.Breaks = true;
 			Label l = label.LabelTarget (ec);
 			ec.ig.Emit (OpCodes.Br, l);
 			
@@ -764,6 +765,7 @@ namespace Mono.CSharp {
 				Report.Error (159, loc, "No default target on switch statement");
 				return false;
 			}
+			ec.Breaks = true;	
 			ec.ig.Emit (OpCodes.Br, ec.Switch.DefaultTarget);
 			return false;
 		}
@@ -821,6 +823,7 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
+			ec.Breaks = true;
 			ec.ig.Emit (OpCodes.Br, label);
 			return true;
 		}
@@ -868,6 +871,7 @@ namespace Mono.CSharp {
 			
 		public override bool Emit (EmitContext ec)
 		{
+			ec.Breaks = true;
 			if (expr == null){
 				if (ec.InCatch)
 					ec.ig.Emit (OpCodes.Rethrow);
@@ -953,6 +957,7 @@ namespace Mono.CSharp {
 			// From:
 			// try {} catch { while () { continue; }}
 			//
+			ec.Breaks = true;
 			if (ec.TryCatchLevel > ec.LoopBeginTryCatchLevel)
 				ec.ig.Emit (OpCodes.Leave, begin);
 			else if (ec.TryCatchLevel < ec.LoopBeginTryCatchLevel)
@@ -1319,7 +1324,7 @@ namespace Mono.CSharp {
 			//
 			MyBitVector locals, parameters;
 			FlowReturns real_returns, real_breaks;
-			bool returns_set, breaks_set, is_finally;
+			bool breaks_set, is_finally;
 
 			static int next_id = 0;
 			int id;
@@ -1428,7 +1433,6 @@ namespace Mono.CSharp {
 
 				set {
 					real_returns = value;
-					returns_set = true;
 				}
 			}
 
@@ -1537,7 +1541,11 @@ namespace Mono.CSharp {
 					// Here, `a' is initialized in line 3 and we must not look at
 					// line 5 since it always returns.
 					// 
-					if (!breaks) {
+					if (child.is_finally) {
+						if (new_locals == null)
+							new_locals = locals.Clone ();
+						new_locals.Or (child.locals);
+					} else if (!breaks) {
 						if (new_locals != null)
 							new_locals.And (child.locals);
 						else {
@@ -1567,12 +1575,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				// Set new `Returns' status.
-				if (!returns_set) {
-					Returns = new_returns;
-					returns_set = true;
-				} else
-					Returns = AndFlowReturns (Returns, new_returns);
+				Returns = new_returns;
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -2954,6 +2957,7 @@ namespace Mono.CSharp {
 					if (is_ret && !warning_shown && !(s is EmptyStatement)){
 						warning_shown = true;
 						Warning_DeadCodeFound (s.loc);
+						continue;
 					}
 					this_ret = s.Emit (ec);
 					if (this_ret)
@@ -2966,6 +2970,7 @@ namespace Mono.CSharp {
 					if (is_ret && !warning_shown && !(s is EmptyStatement)){
 						warning_shown = true;
 						Warning_DeadCodeFound (s.loc);
+						continue;
 					}
 					this_ret = s.Emit (ec);
 					if (this_ret)
@@ -3580,7 +3585,13 @@ namespace Mono.CSharp {
 						fFoundDefault = true;
 					}
 				}
-				fAllReturn &= ss.Block.Emit (ec);
+				ec.Breaks = false;
+				bool returns = ss.Block.Emit (ec);
+				if (!ec.Breaks && !returns)
+					Report.Error (163, ((SwitchLabel) ss.Labels [0]).loc,
+						      "Control cannot fall through from one " +
+						      "case label to another");
+				fAllReturn &= returns;
 				//ig.Emit (OpCodes.Br, lblEnd);
 			}
 			
@@ -3691,7 +3702,14 @@ namespace Mono.CSharp {
 				ig.MarkLabel (sec_begin);
 				foreach (SwitchLabel sl in ss.Labels)
 					ig.MarkLabel (sl.ILLabelCode);
-				if (ss.Block.Emit (ec))
+
+				ec.Breaks = false;
+				bool returns = ss.Block.Emit (ec);
+				if (!ec.Breaks && !returns)
+					Report.Error (163, ((SwitchLabel) ss.Labels [0]).loc,
+						      "Control cannot fall through from one " +
+						      "case label to another");
+				if (returns)
 					pending_goto_end = false;
 				else {
 					all_return = false;
@@ -4287,6 +4305,8 @@ namespace Mono.CSharp {
 				}
 			}
 
+			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
+
 			if (General != null){
 				ec.CurrentBranching.CreateSibling ();
 				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
@@ -4307,10 +4327,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.CurrentBranching.CreateSiblingForFinally ();
-			Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
+			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
 
 			if (Fini != null) {
+				ec.CurrentBranching.CreateSiblingForFinally ();
+				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
+
 				bool old_in_finally = ec.InFinally;
 				ec.InFinally = true;
 
@@ -4653,7 +4675,7 @@ namespace Mono.CSharp {
 			// out to return values in ExprClass?  I think they should.
 			//
 			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
-			      expr.eclass == ExprClass.PropertyAccess)){
+			      expr.eclass == ExprClass.PropertyAccess || expr.eclass == ExprClass.IndexerAccess)){
 				error1579 (expr.Type);
 				return false;
 			}

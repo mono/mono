@@ -520,11 +520,15 @@ namespace Mono.CSharp {
 					}
 
 					cfb = (FlowBranching) FlowStack.Pop ();
-					cfb.MergeTopBlock ();
+					FlowReturns returns = cfb.MergeTopBlock ();
 
 					DoFlowAnalysis = old_do_flow_analysis;
 
 					has_ret = block.Emit (this);
+
+					if ((returns == FlowReturns.ALWAYS) ||
+					    (returns == FlowReturns.EXCEPTION))
+						has_ret = true;
 
 					if (Report.Errors == errors){
 						if (RootContext.WarningLevel >= 3)

@@ -1205,6 +1205,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is SByteConstant){
 				sbyte v = ((SByteConstant) expr).Value;
@@ -1229,6 +1231,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is ShortConstant){
 				short v = ((ShortConstant) expr).Value;
@@ -1253,6 +1257,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is UShortConstant){
 				ushort v = ((UShortConstant) expr).Value;
@@ -1277,6 +1283,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is IntConstant){
 				int v = ((IntConstant) expr).Value;
@@ -1301,6 +1309,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is UIntConstant){
 				uint v = ((UIntConstant) expr).Value;
@@ -1325,6 +1335,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is LongConstant){
 				long v = ((LongConstant) expr).Value;
@@ -1349,6 +1361,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is ULongConstant){
 				ulong v = ((ULongConstant) expr).Value;
@@ -1373,6 +1387,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is FloatConstant){
 				float v = ((FloatConstant) expr).Value;
@@ -1397,6 +1413,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is DoubleConstant){
 				double v = ((DoubleConstant) expr).Value;
@@ -1421,6 +1439,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 
 			return null;
@@ -1713,7 +1733,7 @@ namespace Mono.CSharp {
 					left = ConvertImplicit (ec, left, TypeManager.int64_type, loc);
 				if (r != TypeManager.int64_type)
 					right = ConvertImplicit (ec, right, TypeManager.int64_type, loc);
-
+				
 				type = TypeManager.int64_type;
 			} else if (l == TypeManager.uint32_type || r == TypeManager.uint32_type){
 				//
@@ -1769,28 +1789,18 @@ namespace Mono.CSharp {
 			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
 				if (l != TypeManager.decimal_type)
 					left = ConvertImplicit (ec, left, TypeManager.decimal_type, loc);
+
 				if (r != TypeManager.decimal_type)
 					right = ConvertImplicit (ec, right, TypeManager.decimal_type, loc);
-
 				type = TypeManager.decimal_type;
 			} else {
-				Expression l_tmp, r_tmp;
+				left = ForceConversion (ec, left, TypeManager.int32_type);
+				right = ForceConversion (ec, right, TypeManager.int32_type);
 
-				l_tmp = ForceConversion (ec, left, TypeManager.int32_type);
-				if (l_tmp == null)
-					return false;
-				
-				r_tmp = ForceConversion (ec, right, TypeManager.int32_type);
-				if (r_tmp == null)
-					return false;
-
-				left = l_tmp;
-				right = r_tmp;
-				
 				type = TypeManager.int32_type;
 			}
 
-			return true;
+			return (left != null) && (right != null);
 		}
 
 		static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
@@ -2195,13 +2205,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!DoNumericPromotions (ec, l, r)){
-				Error_OperatorCannotBeApplied ();
+			//
+			// This will leave left or right set to null if there is an error
+			//
+			DoNumericPromotions (ec, l, r);
+			if (left == null || right == null){
+				Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 				return null;
 			}
-
-			if (left == null || right == null)
-				return null;
 
 			//
 			// reload our cached types if required
@@ -2757,8 +2768,7 @@ namespace Mono.CSharp {
 			Label false_target = ig.DefineLabel ();
 			Label end_target = ig.DefineLabel ();
 
-			expr.Emit (ec);
-			ig.Emit (OpCodes.Brfalse, false_target);
+			Statement.EmitBoolExpression (ec, expr, false_target, false);
 			trueExpr.Emit (ec);
 			ig.Emit (OpCodes.Br, end_target);
 			ig.MarkLabel (false_target);
@@ -3872,7 +3882,7 @@ namespace Mono.CSharp {
 
 				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
 				    chose_params_expanded)
-					parameter_type = parameter_type.GetElementType ();
+					parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
 
 				if (a.Type != parameter_type){
 					Expression conv;
@@ -4533,7 +4543,7 @@ namespace Mono.CSharp {
 			return new ComposedCast (base_type, sb.ToString (), loc);
 		}
 
-		void error178 ()
+		void Error_IncorrectArrayInitializer ()
 		{
 			Error (178, "Incorrectly structured array initializer");
 		}
@@ -4554,19 +4564,34 @@ namespace Mono.CSharp {
 				int value = (int) ((Constant) a.Expr).GetValue ();
 				
 				if (value != probe.Count) {
-					error178 ();
+					Error_IncorrectArrayInitializer ();
 					return false;
 				}
 				
 				bounds [idx] = value;
 			}
-			
+
+			int child_bounds = -1;
 			foreach (object o in probe) {
 				if (o is ArrayList) {
+					int current_bounds = ((ArrayList) o).Count;
+					
+					if (child_bounds == -1) 
+						child_bounds = current_bounds;
+
+					else if (child_bounds != current_bounds){
+						Error_IncorrectArrayInitializer ();
+						return false;
+					}
 					bool ret = CheckIndices (ec, (ArrayList) o, idx + 1, specified_dims);
 					if (!ret)
 						return false;
 				} else {
+					if (child_bounds != -1){
+						Error_IncorrectArrayInitializer ();
+						return false;
+					}
+					
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
 					if (tmp == null)
@@ -4652,7 +4677,7 @@ namespace Mono.CSharp {
 				UpdateIndices (ec);
 				
 				if (arguments.Count != dimensions) {
-					error178 ();
+					Error_IncorrectArrayInitializer ();
 					return false;
 				}
 
@@ -4854,10 +4879,10 @@ namespace Mono.CSharp {
 
 			if (underlying_type.IsEnum)
 				underlying_type = TypeManager.EnumToUnderlying (underlying_type);
-
+			
 			factor = GetTypeSize (underlying_type);
 			if (factor == 0)
-				throw new Exception ("Unrecognized type in MakeByteBlob");
+				throw new Exception ("unrecognized type in MakeByteBlob: " + underlying_type);
 
 			data = new byte [(count * factor + 4) & ~3];
 			int idx = 0;
@@ -4961,8 +4986,20 @@ namespace Mono.CSharp {
 						bool val = (bool) v;
 						data [idx] = (byte) (val ? 1 : 0);
 					}
+				} else if (underlying_type == TypeManager.decimal_type){
+					if (!(v is Expression)){
+						int [] bits = Decimal.GetBits ((decimal) v);
+						int p = idx;
+						
+						for (int j = 0; j < 4; j++){
+							data [p++] = (byte) (bits [j] & 0xff);
+							data [p++] = (byte) ((bits [j] >> 8) & 0xff);
+							data [p++] = (byte) ((bits [j] >> 16) & 0xff);
+							data [p++] = (byte) (bits [j] >> 24);
+						}
+					}
 				} else
-					throw new Exception ("Unrecognized type in MakeByteBlob");
+					throw new Exception ("Unrecognized type in MakeByteBlob: " + underlying_type);
 
                                 idx += factor;
 			}
@@ -5046,10 +5083,8 @@ namespace Mono.CSharp {
 						
 						ig.Emit (OpCodes.Ldloc, temp);
 
-						for (int idx = dims; idx > 0; ) {
-							idx--;
+						for (int idx = 0; idx < dims; idx++) 
 							IntConstant.EmitInt (ig, current_pos [idx]);
-						}
 
 						//
 						// If we are dealing with a struct, get the
@@ -5084,7 +5119,7 @@ namespace Mono.CSharp {
 				//
 				// Advance counter
 				//
-				for (int j = 0; j < dims; j++){
+				for (int j = dims - 1; j >= 0; j--){
 					current_pos [j]++;
 					if (current_pos [j] < (int) bounds [j])
 						break;
@@ -5332,6 +5367,11 @@ namespace Mono.CSharp {
 			if (type_queried == null)
 				return null;
 
+			if (!TypeManager.IsUnmanagedType (type_queried)){
+				Report.Error (208, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
+				return null;
+			}
+			
 			type = TypeManager.int32_type;
 			eclass = ExprClass.Value;
 			return this;
@@ -5441,6 +5481,12 @@ namespace Mono.CSharp {
 						o = fi.GetValue (fi);
 					
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
+						if (left_is_explicit && !left_is_type &&
+						    !IdenticalNameAndTypeName (ec, left_original, loc)) {
+							error176 (loc, fe.FieldInfo.Name);
+							return null;
+						}					
+						
 						Expression enum_member = MemberLookup (
 							ec, decl_type, "value__", MemberTypes.Field,
 							AllBindingFlags, loc); 
@@ -6033,6 +6079,8 @@ namespace Mono.CSharp {
 		static public void EmitStoreOpcode (ILGenerator ig, Type t)
 		{
 			t = TypeManager.TypeToCoreType (t);
+			if (TypeManager.IsEnumType (t) && t != TypeManager.enum_type)
+				t = TypeManager.EnumToUnderlying (t);
 			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
 				ig.Emit (OpCodes.Stelem_I1);
@@ -6048,9 +6096,9 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stelem_R8);
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stelem_I);
-			else if (t.IsValueType)
+			else if (t.IsValueType){
 				ig.Emit (OpCodes.Stobj, t);
-			else
+			} else
 				ig.Emit (OpCodes.Stelem_Ref);
 		}
 
@@ -6199,7 +6247,7 @@ namespace Mono.CSharp {
 			// pair
 			//
 			if (rank == 1){
-				if (t.IsValueType && !TypeManager.IsBuiltinType (t))
+				if (t.IsSubclassOf (TypeManager.value_type) && (!TypeManager.IsBuiltinType (t) || t == TypeManager.decimal_type))
 					ig.Emit (OpCodes.Ldelema, t);
 			}
 			
@@ -6334,22 +6382,44 @@ namespace Mono.CSharp {
 		//
 		// Points to our "data" repository
 		//
-		ElementAccess ea;
 		MethodInfo get, set;
 		Indexers ilist;
 		ArrayList set_arguments;
+		bool is_base_indexer;
+
+		protected Type indexer_type;
+		protected Type current_type;
+		protected Expression instance_expr;
+		protected ArrayList arguments;
 		
-		public IndexerAccess (ElementAccess ea_data, Location l)
+		public IndexerAccess (ElementAccess ea, Location loc)
+			: this (ea.Expr, false, loc)
 		{
-			ea = ea_data;
-			eclass = ExprClass.Value;
-			loc = l;
+			this.arguments = ea.Arguments;
+		}
+
+		protected IndexerAccess (Expression instance_expr, bool is_base_indexer,
+					 Location loc)
+		{
+			this.instance_expr = instance_expr;
+			this.is_base_indexer = is_base_indexer;
+			this.eclass = ExprClass.Value;
+			this.loc = loc;
+		}
+
+		protected virtual bool CommonResolve (EmitContext ec)
+		{
+			indexer_type = instance_expr.Type;
+			current_type = ec.ContainerType;
+
+			return true;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Type indexer_type = ea.Expr.Type;
-			
+			if (!CommonResolve (ec))
+				return null;
+
 			//
 			// Step 1: Query for all `Item' *properties*.  Notice
 			// that the actual methods are pointed from here.
@@ -6358,28 +6428,24 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					ec.ContainerType, indexer_type, ea.Location);
-
+					current_type, indexer_type, loc);
 
 			//
 			// Step 2: find the proper match
 			//
-			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0){
-				Location loc = ea.Location;
-				
+			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0)
 				get = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (ilist.getters, loc), ea.Arguments, loc);
-			}
+					ec, new MethodGroupExpr (ilist.getters, loc), arguments, loc);
 
 			if (get == null){
-				ea.Error (154, "indexer can not be used in this context, because " +
-					  "it lacks a `get' accessor");
+				Error (154, "indexer can not be used in this context, because " +
+				       "it lacks a `get' accessor");
 				return null;
 			}
 
 			type = get.ReturnType;
 			if (type.IsPointer && !ec.InUnsafe){
-				UnsafeError (ea.Location);
+				UnsafeError (loc);
 				return null;
 			}
 			
@@ -6389,17 +6455,17 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			Type indexer_type = ea.Expr.Type;
+			if (!CommonResolve (ec))
+				return null;
+
 			Type right_type = right_side.Type;
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					ec.ContainerType, indexer_type, ea.Location);
+					current_type, indexer_type, loc);
 
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
-				Location loc = ea.Location;
-				
-				set_arguments = (ArrayList) ea.Arguments.Clone ();
+				set_arguments = (ArrayList) arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
 
 				set = (MethodInfo) Invocation.OverloadResolve (
@@ -6407,8 +6473,8 @@ namespace Mono.CSharp {
 			}
 			
 			if (set == null){
-				ea.Error (200, "indexer X.this [" + TypeManager.CSharpName (right_type) +
-					  "] lacks a `set' accessor");
+				Error (200, "indexer X.this [" + TypeManager.CSharpName (right_type) +
+				       "] lacks a `set' accessor");
 				return null;
 			}
 
@@ -6419,7 +6485,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, false, false, ea.Expr, get, ea.Arguments, ea.Location);
+			Invocation.EmitCall (ec, false, false, instance_expr, get, arguments, loc);
 		}
 
 		//
@@ -6429,7 +6495,7 @@ namespace Mono.CSharp {
 		//
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			Invocation.EmitCall (ec, false, false, ea.Expr, set, set_arguments, ea.Location);
+			Invocation.EmitCall (ec, false, false, instance_expr, set, set_arguments, loc);
 		}
 	}
 
@@ -6494,38 +6560,28 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   The base indexer operator
 	/// </summary>
-	public class BaseIndexerAccess : Expression {
-		ArrayList Arguments;
-		
-		public BaseIndexerAccess (ArrayList args, Location l)
+	public class BaseIndexerAccess : IndexerAccess {
+		public BaseIndexerAccess (ArrayList args, Location loc)
+			: base (null, true, loc)
 		{
-			Arguments = args;
-			loc = l;
+			arguments = new ArrayList ();
+			foreach (Expression tmp in args)
+				arguments.Add (new Argument (tmp, Argument.AType.Expression));
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		protected override bool CommonResolve (EmitContext ec)
 		{
-			Type current_type = ec.ContainerType;
-			Type base_type = current_type.BaseType;
-			Expression member_lookup;
+			instance_expr = ec.This;
 
-			if (ec.IsStatic){
-				Error (1511,
-					      "Keyword base is not allowed in static method");
-				return null;
+			current_type = ec.ContainerType.BaseType;
+			indexer_type = current_type;
+
+			foreach (Argument a in arguments){
+				if (!a.Resolve (ec, loc))
+					return false;
 			}
-			
-			member_lookup = MemberLookup (ec, base_type, base_type, "get_Item",
-						      MemberTypes.Method, AllBindingFlags, loc);
-			if (member_lookup == null)
-				return null;
 
-			return MemberAccess.ResolveMemberAccess (ec, member_lookup, ec.This, loc, null);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Should never be called");
+			return true;
 		}
 	}
 	
@@ -6633,10 +6689,25 @@ namespace Mono.CSharp {
 			if (ltype == null)
 				return null;
 
-			type = RootContext.LookupType (
-				ec.DeclSpace, ltype.FullName + dim, false, loc);
-			if (type == null)
-				return null;
+			//
+			// ltype.Fullname is already fully qualified, so we can skip
+			// a lot of probes, and go directly to TypeManager.LookupType
+			//
+			string cname = ltype.FullName + dim;
+			type = TypeManager.LookupTypeDirect (cname);
+			if (type == null){
+				//
+				// For arrays of enumerations we are having a problem
+				// with the direct lookup.  Need to investigate.
+				//
+				// For now, fall back to the full lookup in that case.
+				//
+				type = RootContext.LookupType (
+					ec.DeclSpace, cname, false, loc);
+
+				if (type == null)
+					return null;
+			}
 
 			if (!ec.ResolvingTypeTree){
 				//

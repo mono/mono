@@ -54,17 +54,6 @@ namespace Mono.CSharp {
 			return parameter_type != null;
 		}
 
-		// <summary>
-		//   ResolveAndDefine is used by delegate declarations, because
-		//   they happen during the initial tree resolution process
-		// </summary>
-		public bool ResolveAndDefine (DeclSpace ds)
-		{
-			// FIXME: Should use something else instead of Location.Null
-			parameter_type = ds.ResolveType (TypeName, true, Location.Null);
-			return parameter_type != null;
-		}
-		
 		public Type ExternalType (DeclSpace ds, Location l)
 		{
 			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
@@ -86,7 +75,8 @@ namespace Mono.CSharp {
 		
 		public ParameterAttributes Attributes {
 			get {
-				switch (ModFlags){
+				int flags = ((int) ModFlags) & ~((int) Parameter.Modifier.ISBYREF);
+				switch ((Modifier) flags) {
 				case Modifier.NONE:
 					return ParameterAttributes.None;
 				case Modifier.REF:
@@ -322,7 +312,7 @@ namespace Mono.CSharp {
 				foreach (Parameter p in FixedParameters){
 					Type t = null;
 					
-					if (p.ResolveAndDefine (ds))
+					if (p.Resolve (ds, loc))
 						t = p.ExternalType (ds, loc);
 					else
 						ok_flag = false;
@@ -333,7 +323,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (extra > 0){
-				if (ArrayParameter.ResolveAndDefine (ds))
+				if (ArrayParameter.Resolve (ds, loc))
 					types [i] = ArrayParameter.ExternalType (ds, loc);
 				else
 					ok_flag = false;

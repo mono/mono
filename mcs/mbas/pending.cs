@@ -206,6 +206,7 @@ namespace Mono.CSharp {
 			// TypeBuilder.
 			//
 			ifaces = type_builder.GetInterfaces ();
+
 #if DEBUG
 			{
 				Type x = type_builder;

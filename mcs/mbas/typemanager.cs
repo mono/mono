@@ -456,8 +456,54 @@ public class TypeManager {
 		modules = n;
 	}
 
+	//
+	// Low-level lookup, cache-less
+	//
+	static Type LookupTypeReflection (string name)
+	{
+		Type t;
+
+		foreach (Assembly a in assemblies){
+			t = a.GetType (name);
+			if (t != null)
+				return t;
+		}
+
+		foreach (ModuleBuilder mb in modules) {
+			t = mb.GetType (name);
+			if (t != null){
+				return t;
+			}
+		}
+		return null;
+	}
+
+	//
+	// This function is used when you want to avoid the lookups, and want to go
+	// directly to the source.  This will use the cache.
+	//
+	// Notice that bypassing the cache is bad, because on Microsoft.NET runtime
+	// GetType ("DynamicType[]") != GetType ("DynamicType[]"), and there is no
+	// way to test things other than doing a fullname compare
+	//
+	public static Type LookupTypeDirect (string name)
+	{
+		Type t = (Type) types [name];
+		if (t != null)
+			return t;
+
+		t = LookupTypeReflection (name);
+		if (t == null)
+			return null;
+
+		types [name] = t;
+		return t;
+	}
+	
 	/// <summary>
-	///   Returns the Type associated with @name
+	///   Returns the Type associated with @name, takes care of the fact that
+	///   reflection expects nested types to be separated from the main type
+	///   with a "+" instead of a "."
 	/// </summary>
 	public static Type LookupType (string name)
 	{
@@ -471,23 +517,35 @@ public class TypeManager {
 		if (t != null)
 			return t;
 
-		foreach (Assembly a in assemblies){
-			t = a.GetType (name);
-			if (t != null){
-				types [name] = t;
-
-				return t;
-			}
-		}
-
-		foreach (ModuleBuilder mb in modules) {
-			t = mb.GetType (name);
-			if (t != null) {
-				types [name] = t;
-				return t;
-			}
-		}
+		//
+		// Optimization: ComposedCast will work with an existing type, and might already have the
+		// full name of the type, so the full system lookup can probably be avoided.
+		//
 		
+		string [] elements = name.Split ('.');
+		int count = elements.Length;
+
+		for (int n = 1; n <= count; n++){
+			string top_level_type = String.Join (".", elements, 0, n);
+
+			t = (Type) types [top_level_type];
+			if (t == null){
+				t = LookupTypeReflection (top_level_type);
+				if (t == null)
+					continue;
+			}
+			
+			if (count == n){
+				types [name] = t;
+				return t;
+			} 
+			
+			string newt = top_level_type + "+" + String.Join ("+", elements, n, count - n);
+			t = LookupTypeDirect (newt);
+			if (t != null)
+				types [newt] = t;
+			return t;
+		}
 		return null;
 	}
 
@@ -1034,7 +1092,30 @@ public class TypeManager {
 		else
 			return false;
 	}
-	
+
+	//
+	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
+	//
+	public static bool IsUnmanagedType (Type t)
+	{
+		if (IsBuiltinType (t))
+			return true;
+		if (IsEnumType (t))
+			return true;
+		if (t.IsPointer)
+			return true;
+
+		if (IsValueType (t)){
+			//
+			// FIXME: Check that every field in the struct is Unmanaged
+			//
+
+			return true;
+		}
+		
+		return false;
+	}
+		
 	public static bool IsValueType (Type t)
 	{
 		if (t.IsSubclassOf (TypeManager.value_type))
@@ -1074,7 +1155,10 @@ public class TypeManager {
 	//
 	public static bool IsNestedChildOf (Type type, Type parent)
 	{
-		return IsSubclassOrNestedChildOf (type, parent) && !type.IsSubclassOf (parent);
+		if ((type == parent) || type.IsSubclassOf (parent))
+			return false;
+		else
+			return IsSubclassOrNestedChildOf (type, parent);
 	}
 
 	/// <summary>

@@ -461,11 +461,14 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if ((val is EnumConstant) &&
-				    !ImplicitConversionExists (default_value.GetType (), UnderlyingType)) {
-					Expression.Error_CannotConvertImplicit (
-						loc, default_value.GetType (), UnderlyingType);
-					return null;
+				if (val is EnumConstant){
+					Type etype = TypeManager.EnumToUnderlying (c.Type);
+					
+					if (!ImplicitConversionExists (etype, UnderlyingType)){
+						Expression.Error_CannotConvertImplicit (
+							loc, c.Type, UnderlyingType);
+						return null;
+					}
 				}
 			}
 

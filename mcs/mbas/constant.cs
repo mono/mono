@@ -682,7 +682,7 @@ namespace Mono.CSharp {
 		{
 			if ((l >> 32) == 0){
 				IntLiteral.EmitInt (ig, unchecked ((int) l));
-				ig.Emit (OpCodes.Conv_I8);
+				ig.Emit (OpCodes.Conv_U8);
 			} else {
 				ig.Emit (OpCodes.Ldc_I8, l);
 			}
