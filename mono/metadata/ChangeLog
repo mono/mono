@@ -1,3 +1,9 @@
+2004-10-20  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mono-debug-debugger.c
+	(mono_debugger_handle_exception): Remove
+	bogus return value for fussy compilers.
+
 2004-10-20  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c
