@@ -1,3 +1,7 @@
+2004-02-13 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslVariable.cs : Replaced XmlNodeWriter with DTMXPathDocumentWriter.
+
 2004-01-27 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslIf.cs : When content is empty, skip content evaluation.

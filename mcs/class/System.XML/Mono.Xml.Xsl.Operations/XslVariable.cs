@@ -14,6 +14,7 @@ using System.Collections;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using Mono.Xml.XPath;
 
 using QName = System.Xml.XmlQualifiedName;
 
@@ -50,12 +51,14 @@ namespace Mono.Xml.Xsl.Operations {
 			if (select != null) {
 				return p.Evaluate (select);
 			} else if (content != null) {
-				XmlNodeWriter w = new XmlNodeWriter (false);
+//				XmlNodeWriter w = new XmlNodeWriter (false);
+				DTMXPathDocumentWriter w = new DTMXPathDocumentWriter (p.CurrentNode.NameTable, 200);
 				Outputter outputter = new GenericOutputter(w, p.Outputs, null, true);
 				p.PushOutput (outputter);
 				content.Evaluate (p);
 				p.PopOutput ();
-				return w.Document.CreateNavigator ().SelectChildren (XPathNodeType.All);
+//				return w.Document.CreateNavigator ().SelectChildren (XPathNodeType.All);
+				return w.CreateDocument ().CreateNavigator ().SelectChildren (XPathNodeType.All);
 			} else {
 				return "";
 			}
