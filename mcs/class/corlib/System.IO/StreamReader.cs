@@ -130,7 +130,7 @@ namespace System.IO {
 		private bool ReadBuffer (int count)
 		{
 			// There are still enough bytes in the buffer.
-			if ((buffer != null) && (pos + count < buffer.Length))
+			if ((buffer != null) && (pos + count <= buffer.Length))
 				return true;
 
 			// Number of bytes remaining in the buffer.
@@ -147,11 +147,11 @@ namespace System.IO {
 			int bufcnt = decoder.GetCharCount (bytes, 0, cnt);
 			char[] newbuffer = new char [remaining + bufcnt];
 			if (remaining > 0)
-				Array.Copy (buffer, newbuffer, remaining);
+				Array.Copy (buffer, pos, newbuffer, 0, remaining);
 			buffer = newbuffer;
 
 			bufcnt = decoder.GetChars (bytes, 0, cnt, buffer, remaining);
-			pos = remaining;
+			pos = 0;
 
 			return true;
 		}
