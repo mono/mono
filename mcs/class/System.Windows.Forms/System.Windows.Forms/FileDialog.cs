@@ -32,12 +32,8 @@ namespace System.Windows.Forms {
 		string initialDirectory;
 		bool restoreDirectory;
 		bool validateNames;
-		
-		internal bool createPrompt = false;		
 		internal bool isSave = false;
-		internal bool overwritePrompt = true;
 		
-
 		protected static readonly object EventFileOk;
 		internal FileDialog ( )
 		{
@@ -181,22 +177,38 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected  override bool RunDialog( IntPtr hWndOwner )
 		{
-			OPENFILENAME opf = new OPENFILENAME (  );
+			OPENFILENAME opf = new OPENFILENAME();
 			opf.hwndOwner = hWndOwner;
 
 			initOpenFileName ( ref opf );
-
+			
 			bool res;
+			uint error = 0;
 			
 			if (isSave)
 			 	res = Win32_WineLess.GetSaveFileName ( ref opf );
 			else
 			 	res = Win32_WineLess.GetOpenFileName ( ref opf );
+			 	
+			if (!res)
+			{
+				error = Win32_WineLess.CommDlgExtendedError();
+				
+				if (error==(uint)CommonDlgErrorCode.CDERR_STRUCTSIZE)	// This system does not support the place bar
+				{								
+					initOpenFileName ( ref opf );
+					opf.lStructSize  = (uint)Marshal.SizeOf(new OPENFILENAME_PREWIN50());		
+					//  Try with the struct for older Systems
+					if (isSave)
+					 	res = Win32_WineLess.GetSaveFileName ( ref opf );
+					else
+					 	res = Win32_WineLess.GetOpenFileName ( ref opf );					
+				}								
+			}				 					
 			
 			if ( res )
 				FileName = Win32.wine_get_unix_file_name(opf.lpstrFile);
-			else {
-				uint error = Win32_WineLess.CommDlgExtendedError ( );
+			else {				
 				if ( error != 0 ) {
 					string errorMes = string.Empty;
 					switch ( error ) {
@@ -214,7 +226,7 @@ namespace System.Windows.Forms {
 		}
 
 		//protected virtual IntPtr Instance{}
-		//protected virtual int Optiions{}
+		//protected virtual int Options{}
 
 		internal protected virtual void initOpenFileName ( ref OPENFILENAME opf ) 
 		{
@@ -223,7 +235,7 @@ namespace System.Windows.Forms {
 			opf.lpstrFile = new string( FileNameBuffer );
 			opf.nMaxFile = (uint) opf.lpstrFile.Length;
 			opf.lpfnHook = new Win32.FnHookProc ( this.HookProc );
-			opf.Flags = (int) ( OpenFileDlgFlags.OFN_ENABLEHOOK | OpenFileDlgFlags.OFN_EXPLORER );
+			opf.Flags = (int) ( OpenFileDlgFlags.OFN_ENABLEHOOK | OpenFileDlgFlags.OFN_EXPLORER | OpenFileDlgFlags.OFN_ENABLESIZING);
 
 			// convert filter to the proper format accepted by GetOpenFileName
 			int FilterLength =  Filter.Length;
@@ -257,16 +269,7 @@ namespace System.Windows.Forms {
 			if ( RestoreDirectory )
 				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_NOCHANGEDIR );
 			if ( !ValidateNames )
-				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_NOVALIDATE );
-				
-			if (isSave)
-			{
-				if (createPrompt)
-					opf.Flags |= (int) (OpenFileDlgFlags.OFN_CREATEPROMPT);
-				
-				if (overwritePrompt)
-					opf.Flags |= (int) (OpenFileDlgFlags.OFN_OVERWRITEPROMPT);
-			}
+				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_NOVALIDATE );			
 		}
 
 		private int getSeparatorsCount ( string filter )

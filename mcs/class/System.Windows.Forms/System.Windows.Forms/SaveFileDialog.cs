@@ -16,6 +16,9 @@ namespace System.Windows.Forms {
 	// </summary>
 
     public sealed class SaveFileDialog : FileDialog {    	    	
+    	
+    	private bool createPrompt = false;				
+		private bool overwritePrompt = true;
 
 		//
 		//  --- Constructor
@@ -42,6 +45,17 @@ namespace System.Windows.Forms {
 		//		
 		public Stream OpenFile(){						
 			return new FileStream(FileName, FileMode.OpenOrCreate);
+		}
+		
+		internal protected override void initOpenFileName ( ref OPENFILENAME opf )
+		{
+			base.initOpenFileName ( ref opf );
+
+			if (createPrompt)
+				opf.Flags |= (int) (OpenFileDlgFlags.OFN_CREATEPROMPT);
+			
+			if (overwritePrompt)
+				opf.Flags |= (int) (OpenFileDlgFlags.OFN_OVERWRITEPROMPT);
 		}
 		
 		public override void Reset(){

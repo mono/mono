@@ -837,7 +837,7 @@ namespace System.Windows.Forms
 	}
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public  struct OPENFILENAME {
+	public  struct OPENFILENAME_PREWIN50 {
 		internal uint          lStructSize; 
 		internal IntPtr        hwndOwner; 
 		internal IntPtr        hInstance; 
@@ -858,6 +858,38 @@ namespace System.Windows.Forms
 		internal int           lCustData; 
 		internal Win32.FnHookProc lpfnHook; 
 		internal string        lpTemplateName; 
+	}
+	
+	
+	//
+	// This the new OPENFILENAME struct included in the most
+	// recent Plataforms SDK.  
+	//
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+		public  struct OPENFILENAME {
+			internal uint          lStructSize; 
+			internal IntPtr        hwndOwner; 
+			internal IntPtr        hInstance; 
+			internal string        lpstrFilter; 
+			internal string	       lpstrCustomFilter; 
+			internal uint          nMaxCustFilter; 
+			internal uint          nFilterIndex; 
+			internal string	       lpstrFile; 
+			internal uint          nMaxFile; 
+			internal string	       lpstrFileTitle; 
+			internal uint          nMaxFileTitle; 
+			internal string        lpstrInitialDir; 
+			internal string        lpstrTitle; 
+			internal uint          Flags; 
+			internal short         nFileOffset; 
+			internal short         nFileExtension; 
+			internal string        lpstrDefExt; 
+			internal int           lCustData; 
+			internal Win32.FnHookProc lpfnHook; 
+			internal string        lpTemplateName; 			
+			internal IntPtr		   pvReserved;	//#if (_WIN32_WINNT >= 0x0500)			
+			internal uint 	       dwReserved;
+			internal uint 		   FlagsEx;			
 	}
 	
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
