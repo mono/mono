@@ -37,6 +37,7 @@ COMPILER_SOURCES = \
 	typemanager.cs
 
 linux: all
+windows: all
 
 all: mbas.exe
 
