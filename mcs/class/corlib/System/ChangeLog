@@ -1,3 +1,11 @@
+2002-05-22  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs (ConvertToBase): Add new 64bit version.
+	(BuildConvertedString64): New 64bit version of
+	BuildConvertedString.
+
+	This fixes bug 25068.
+
 2002-05-21  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ToType): Rearranged to fit the new layout of

@@ -1651,7 +1651,7 @@ namespace System {
 			if (NotValidBase (toBase))
 				throw new ArgumentException ("toBase is not valid.");
 			
-			return ConvertToBase ((int) value, toBase);
+			return ConvertToBase (value, toBase);
 		}
 
 		public static string ToString (long value, IFormatProvider provider) 
@@ -2280,6 +2280,14 @@ namespace System {
 			return sb.ToString ();
 		}
 
+		private static string ConvertToBase (long value, int toBase)
+		{
+			StringBuilder sb = new StringBuilder ();
+			BuildConvertedString64 (sb, value, toBase);
+			return sb.ToString ();
+		}
+		
+
 		internal static void BuildConvertedString (StringBuilder sb, int value, int toBase)
 		{
 			int divided = value / toBase;
@@ -2287,6 +2295,20 @@ namespace System {
 
 			if (divided > 0)
 				BuildConvertedString (sb, divided, toBase);
+		
+			if (reminder >= 10)
+				sb.Append ((char) (reminder + 'a' - 10));
+			else
+				sb.Append ((char) (reminder + '0'));
+		}
+
+		internal static void BuildConvertedString64 (StringBuilder sb, long value, int toBase)
+		{
+			long divided = value / toBase;
+			long reminder = value % toBase;		
+
+			if (divided > 0)
+				BuildConvertedString64 (sb, divided, toBase);
 		
 			if (reminder >= 10)
 				sb.Append ((char) (reminder + 'a' - 10));
