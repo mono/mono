@@ -54,6 +54,11 @@ namespace Mono.CSharp
 
 		static Hashtable response_file_list;
 		static Hashtable source_files = new Hashtable ();
+
+		//
+		// A list of resource files
+		//
+		static ArrayList resources;
 		
 		//
 		// An array of the defines from the command line
@@ -140,7 +145,6 @@ namespace Mono.CSharp
 				"   --checked       Set default context to checked\n" +
 				"   --define SYM    Defines the symbol SYM\n" + 
 				"   --fatal         Makes errors fatal\n" +
-				"   --stacktrace    Shows stack trace at error location\n" +
 				"   -L PATH         Adds PATH to the assembly link path\n" +
 				"   --nostdlib      Does not load core libraries\n" +
 				"   --nowarn XXX    Ignores warning number XXX\n" +
@@ -148,6 +152,8 @@ namespace Mono.CSharp
 				"   --optimize      Optimizes\n" +
 				"   --parse         Only parses the source file\n" +
 				"   --probe X       Probes for the source to generate code X on line L\n" +
+				"   --resource FILE Addds FILE as a resource\n" + 
+				"   --stacktrace    Shows stack trace at error location\n" +
 				"   --target KIND   Specifies the target (KIND is one of: exe, winexe, " +
 				                    "library, module)\n" +
 				"   --timestamp     Displays time stamps of various compiler events\n" +
@@ -493,7 +499,19 @@ namespace Mono.CSharp
 					case "--stacktrace":
 						Report.Stacktrace = true;
 						continue;
+
+					case "--resource":
+						if ((i + 1) >= argc){
+							Usage (true);
+							Console.WriteLine("Missing argument to --resource"); 
+							return;
+						}
+						if (resources == null)
+							resources = new ArrayList ();
 						
+						resources.Add (args [++i]);
+						continue;
+							
 					case "--target":
 						if ((i + 1) >= argc){
 							Usage (true);
@@ -748,6 +766,14 @@ namespace Mono.CSharp
 				}
 				
 				RootContext.CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+			}
+
+			//
+			// Add the resources
+			//
+			if (resources != null){
+				foreach (string file in resources)
+					RootContext.CodeGen.AssemblyBuilder.AddResourceFile (file, file);
 			}
 			
 			RootContext.CodeGen.Save (output_file);

@@ -3851,8 +3851,13 @@ namespace Mono.CSharp {
 		string Rank;
 		ArrayList Initializers;
 		Location  loc;
+
+		//
+		// The list of Argument types.
+		// This is used to constrcut the `newarray' or constructor signature
+		//
 		ArrayList Arguments;
-		
+
 		MethodBase method = null;
 		Type array_element_type;
 		bool IsOneDimensional = false;
@@ -4074,12 +4079,26 @@ namespace Mono.CSharp {
 				arg_count = 0;
 			else {
 				arg_count = Arguments.Count;
-				for (int i = arg_count; i > 0;){
-					--i;
+				for (int i = 0; i < arg_count; i++){
 					Argument a = (Argument) Arguments [i];
 					
 					if (!a.Resolve (ec, loc))
 						return null;
+
+					//
+					// Now, convert that to an integer
+					//
+					Expression real_arg;
+					bool old_checked = ec.CheckState;
+					ec.CheckState = true;
+			
+					real_arg = ConvertExplicit (
+						ec, a.expr, TypeManager.uint32_type, loc);
+					ec.CheckState = old_checked;
+					if (real_arg == null)
+						return null;
+
+					a.expr = real_arg;
 				}
 			}
 			
@@ -4141,12 +4160,12 @@ namespace Mono.CSharp {
 						--i;
 						Argument a = (Argument) Arguments [i];
 						
-						args.Add (a.Type);
+						args.Add (TypeManager.int32_type);
 					}
 				}
 				
 				Type [] arg_types = null;
-				
+
 				if (args.Count > 0)
 					arg_types = new Type [args.Count];
 				
@@ -4390,17 +4409,20 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldloc, temp);
 		}
 
+		void EmitArrayArguments (EmitContext ec)
+		{
+			foreach (Argument a in Arguments)
+				a.Emit (ec);
+		}
+		
 		void DoEmit (EmitContext ec, bool is_statement)
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (IsOneDimensional) {
-				Invocation.EmitArguments (ec, null, Arguments);
+			EmitArrayArguments (ec);
+			if (IsOneDimensional)
 				ig.Emit (OpCodes.Newarr, array_element_type);
-				
-			} else {
-				Invocation.EmitArguments (ec, null, Arguments);
-
+			else {
 				if (IsBuiltinType) 
 					ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 				else 
@@ -5209,13 +5231,14 @@ namespace Mono.CSharp {
 		MethodInfo FetchGetMethod ()
 		{
 			ModuleBuilder mb = RootContext.ModuleBuilder;
-			Type [] args = new Type [ea.Arguments.Count];
+			int arg_count = ea.Arguments.Count;
+			Type [] args = new Type [arg_count];
 			MethodInfo get;
 			
-			int i = 0;
-				
-			foreach (Argument a in ea.Arguments)
-				args [i++] = a.Type;
+			for (int i = 0; i < arg_count; i++){
+				//args [i++] = a.Type;
+				args [i] = TypeManager.int32_type;
+			}
 			
 			get = mb.GetArrayMethod (
 				ea.Expr.Type, "Get",
@@ -5229,11 +5252,11 @@ namespace Mono.CSharp {
 		MethodInfo FetchAddressMethod ()
 		{
 			ModuleBuilder mb = RootContext.ModuleBuilder;
-			Type [] args = new Type [ea.Arguments.Count];
+			int arg_count = ea.Arguments.Count;
+			Type [] args = new Type [arg_count];
 			MethodInfo address;
 			string ptr_type_name;
 			Type ret_type;
-			int i = 0;
 			
 			ptr_type_name = type.FullName + "&";
 			ret_type = Type.GetType (ptr_type_name);
@@ -5244,9 +5267,11 @@ namespace Mono.CSharp {
 			if (ret_type == null){
 				ret_type = mb.GetType (ptr_type_name);
 			}
-			
-			foreach (Argument a in ea.Arguments)
-				args [i++] = a.Type;
+
+			for (int i = 0; i < arg_count; i++){
+				//args [i++] = a.Type;
+				args [i] = TypeManager.int32_type;
+			}
 			
 			address = mb.GetArrayMethod (
 				ea.Expr.Type, "Address",
@@ -5305,15 +5330,16 @@ namespace Mono.CSharp {
 				EmitStoreOpcode (ig, t);
 			else {
 				ModuleBuilder mb = RootContext.ModuleBuilder;
-				Type [] args = new Type [ea.Arguments.Count + 1];
+				int arg_count = ea.Arguments.Count;
+				Type [] args = new Type [arg_count + 1];
 				MethodInfo set;
 				
-				int i = 0;
-				
-				foreach (Argument a in ea.Arguments)
-					args [i++] = a.Type;
+				for (int i = 0; i < arg_count; i++){
+					//args [i++] = a.Type;
+					args [i] = TypeManager.int32_type;
+				}
 
-				args [i] = type;
+				args [arg_count] = type;
 				
 				set = mb.GetArrayMethod (
 					ea.Expr.Type, "Set",

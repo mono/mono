@@ -1,5 +1,22 @@
 2002-03-15  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Add support for --resources.
+
+	* expression.cs: (FetchGetMethod, FetchAddressMethod, EmitAssign):
+	Make all types for the various array helper methods be integer.
+
+	* ecore.cs (Expression.ConvertNumericExplicit): Pass the
+	CheckState to ConvCast.
+
+	(ConvCast): Now it takes a `checked' state argument, to avoid
+	depending on the emit context for the conversion, and just using
+	the resolve time setting.
+
+	* expression.cs (ArrayCreation.EmitArrayArguments): New function,
+	instead of Invocation.EmitArguments.  We do not emit the original
+	arguments, instead we emit those which have been converted to
+	unsigned int expressions.
+
 	* statement.cs (Block.EmitMeta): Drop tracking of indexes.
 
 	* codegen.cs: ditto.
