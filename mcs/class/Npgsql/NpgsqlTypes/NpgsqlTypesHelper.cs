@@ -539,6 +539,7 @@ namespace NpgsqlTypes
         {
             ni = new CultureInfo("en-US").NumberFormat;
             ni.NumberGroupSeparator = "";
+            ni.NumberDecimalDigits = 15;
         }
 
         /// <summary>
@@ -627,7 +628,7 @@ namespace NpgsqlTypes
                 else if (NativeData is Decimal) 
                 {
                     return QuoteString(((Decimal)NativeData).ToString("N", ni).Replace("'", "''").Replace("\\", "\\\\"));
-                } 
+                }
                 // Do special handling of strings when in simple query. Escape quotes and backslashes.
                 return QuoteString(NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\"));
                 

@@ -1,3 +1,19 @@
+
+2005-02-08 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * NpgsqlTypes/NpgsqlTypesHelper.cs: Fixed float precision rounding. Now all float values are sent with 15 precision scale.
+    * Npgsql/NpgsqlCommand.cs: Fixed problem when setting a new connection and a running transaction existed. Now, the transaction can be removed and later the connection can be replaced. Thanks Mike Griffin (mike.griffin at mygenerationsoftware dot com) for heads up.
+
+2005-02-06  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * NpgsqlTypes/NpgsqlTypeConverters.cs: Fixed datetime precision when sending values to backend. It was sending just the first 3 decimal values of time. Now it sends all the 6 digits. Thanks Martin Susil (spam at susil dot net) for heads up.
+
+2005-01-29  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * Npgsql/NpgsqlCommand.cs: Added support for updating output parameters when calling executereader().
+    Thanks Mike Griffin (mike dot griffin at mygenerationsoftware dot com) for heads up. 
+    Fixed internal constructor to initialize Parameters collection and timeout.
+
 2005-01-27  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
     * Npgsql/NpgsqlParameter.cs,

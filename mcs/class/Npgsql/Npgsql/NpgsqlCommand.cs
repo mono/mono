@@ -108,6 +108,8 @@ namespace Npgsql
             type = CommandType.Text;
             this.Transaction = transaction;
             commandBehavior = CommandBehavior.Default;
+            
+            
         }
 
         /// <summary>
@@ -123,6 +125,9 @@ namespace Npgsql
             this.connector = connector;
             type = CommandType.Text;
             commandBehavior = CommandBehavior.Default;
+            
+            parameters = new NpgsqlParameterCollection();
+            timeout = 20;
         }
 
         // Public properties.
@@ -223,13 +228,15 @@ namespace Npgsql
                 if (this.Connection == value)
                     return;
 
-                if (this.transaction != null && this.transaction.Connection == null)
-                    this.transaction = null;
-                if (this.connection != null && this.Connector.Transaction != null)
+                //if (this.transaction != null && this.transaction.Connection == null)
+                  //  this.transaction = null;
+                                    
+                if (this.transaction != null && this.connection != null && this.Connector.Transaction != null)
                     throw new InvalidOperationException(resman.GetString("Exception_SetConnectionInTransaction"));
 
 
                 this.connection = value;
+                Transaction = null;
                 if (this.connection != null)
                     connector = this.connection.Connector;
 
@@ -443,6 +450,7 @@ namespace Npgsql
         private void UpdateOutputParameters()
         {
             // Check if there was some resultset returned. If so, put the result in output parameters.
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "UpdateOutputParameters");
             
             // Get ResultSets.
             ArrayList resultSets = Connector.Mediator.ResultSets;
@@ -569,6 +577,8 @@ namespace Npgsql
             commandBehavior = cb;
 
             ExecuteCommand();
+            
+            UpdateOutputParameters();
 
             // Get the resultsets and create a Datareader with them.
             return new NpgsqlDataReader(Connector.Mediator.ResultSets, Connector.Mediator.CompletedResponses, connection, cb);

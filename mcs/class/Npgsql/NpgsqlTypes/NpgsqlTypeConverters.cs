@@ -223,7 +223,7 @@ namespace NpgsqlTypes
         /// </summary>
         internal static String ToDateTime(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
         {
-            return ((DateTime)NativeData).ToString("yyyy-MM-dd HH:mm:ss.fff", DateTimeFormatInfo.InvariantInfo);
+            return ((DateTime)NativeData).ToString("yyyy-MM-dd HH:mm:ss.ffffff", DateTimeFormatInfo.InvariantInfo);
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace NpgsqlTypes
         /// </summary>
         internal static String ToTime(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
         {
-            return ((DateTime)NativeData).ToString("HH:mm:ss.fff", DateTimeFormatInfo.InvariantInfo);
+            return ((DateTime)NativeData).ToString("HH:mm:ss.ffffff", DateTimeFormatInfo.InvariantInfo);
         }
 
         /// <summary>
