@@ -1,5 +1,13 @@
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.h: Bumped version number to 47.
+
+	* mono-debug-debugger.c
+	(mono_debugger_event_handler, mono_debugger_event): Take two
+	guint64 arguments insteed of a gpointer and a guint32.	
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
 	* debug-mono-symfile.h
 	(MonoDebugLineNumberEntry): Renamed `offset' to `il_offset' and
 	`address' to `native_offset'.
