@@ -1,3 +1,7 @@
+2003-11-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: provide the path when getting the IOException.
+
 2003-11-18  John Luke  <jluke@cfl.rr.com>
 
 	* CheckArgument.cs:

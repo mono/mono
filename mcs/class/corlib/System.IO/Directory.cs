@@ -57,7 +57,7 @@ namespace System.IO
 			MonoIOError error;
 			if (!MonoIO.CreateDirectory (path, out error)) {
 				if (error != MonoIOError.ERROR_ALREADY_EXISTS)
-					throw MonoIO.GetException (error);
+					throw MonoIO.GetException (path, error);
 			}
 
 			return info;
