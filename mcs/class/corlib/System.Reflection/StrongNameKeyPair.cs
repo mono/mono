@@ -114,7 +114,11 @@ public class StrongNameKeyPair
 
 	internal StrongName StrongName () 
 	{
-		return new StrongName (rsa);
+		if (rsa != null)
+			return new StrongName (rsa);
+		if (publicKey != null)
+			return new StrongName (publicKey);
+		return null;
 	}
 }
 

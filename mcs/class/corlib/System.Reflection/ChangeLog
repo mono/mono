@@ -1,6 +1,7 @@
 2004-04-06  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* StrongNameKeyPair.cs: Added support for ECMA "key".
+	* StrongNameKeyPair.cs: Added support for ECMA "key". Now returns a
+	correct StrongName instance when the ECMA "key" is used.
 
 2004-04-02  Martin Baulig  <martin@ximian.com>
 
