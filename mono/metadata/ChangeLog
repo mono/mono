@@ -1,3 +1,9 @@
+2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_load_remote_field_new): Fix returning uninitialized
+	memory when the remoting callback does not sets the out arguments.
+	Fixes #73007.
+
 2005-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_runtime_get_main_args): Fix stupid typo.
