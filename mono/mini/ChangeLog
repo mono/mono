@@ -1,3 +1,7 @@
+2005-03-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_aot_load_method): Get rid of bogus make_writable call.
+
 2005-03-09  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c (mono_codegen): Don't leak here, to help people running
