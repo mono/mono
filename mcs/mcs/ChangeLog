@@ -1,5 +1,21 @@
 2002-03-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (NoTypes): Move the definition for the empty Type
+	array here. 
+
+	* class.cs (TypeContainer.FindMembers): Also look for methods defined by
+	properties. 
+	(TypeContainer.DefineProxy): New function used to proxy to parent
+	implementations when implementing interfaces.
+	(TypeContainer.ParentImplements): used to lookup if our parent
+	implements a public function that is required by an interface.
+	(TypeContainer.VerifyPendingMethods): Hook this up.
+
+	* typemanager.cs (TypeManager, AddModule, AddAssembly): Make the
+	`modules' and `assemblies' arraylists into arrays.  We only grow
+	these are the very early start up of the program, so this improves
+	the speedof LookupType (nicely measured).
+
 	* expression.cs (MakeByteBlob): Replaced unsafe code with
 	BitConverter, as suggested by Paolo.
 

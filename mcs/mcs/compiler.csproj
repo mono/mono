@@ -21,7 +21,7 @@
             >
                 <Config
                     Name = "Debug"
-                    AllowUnsafeBlocks = "true"
+                    AllowUnsafeBlocks = "false"
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
@@ -84,6 +84,11 @@
                 />
                 <File
                     RelPath = "attribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "cfold.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

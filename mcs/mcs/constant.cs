@@ -17,12 +17,6 @@ namespace Mono.CSharp {
 	///   Base class for constants and literals.
 	/// </summary>
 	public abstract class Constant : Expression {
-
-		protected Constant ()
-		{
-			eclass = ExprClass.Value;
-		}
-
 		/// <remarks>
 		///   This is different from ToString in that ToString
 		///   is supposed to be there for debugging purposes,
@@ -160,6 +154,7 @@ namespace Mono.CSharp {
 		public BoolConstant (bool val)
 		{
 			type = TypeManager.bool_type;
+			eclass = ExprClass.Value;
 
 			Value = val;
 		}
@@ -190,6 +185,7 @@ namespace Mono.CSharp {
 		public ByteConstant (byte v)
 		{
 			type = TypeManager.byte_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -245,6 +241,7 @@ namespace Mono.CSharp {
 		public CharConstant (char v)
 		{
 			type = TypeManager.char_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -329,6 +326,7 @@ namespace Mono.CSharp {
 		public SByteConstant (sbyte v)
 		{
 			type = TypeManager.sbyte_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -387,6 +385,7 @@ namespace Mono.CSharp {
 		public ShortConstant (short v)
 		{
 			type = TypeManager.short_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -442,6 +441,7 @@ namespace Mono.CSharp {
 		public UShortConstant (ushort v)
 		{
 			type = TypeManager.ushort_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -497,6 +497,7 @@ namespace Mono.CSharp {
 		public IntConstant (int v)
 		{
 			type = TypeManager.int32_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -610,6 +611,7 @@ namespace Mono.CSharp {
 		public UIntConstant (uint v)
 		{
 			type = TypeManager.uint32_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -665,6 +667,7 @@ namespace Mono.CSharp {
 		public LongConstant (long v)
 		{
 			type = TypeManager.int64_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -730,6 +733,7 @@ namespace Mono.CSharp {
 		public ULongConstant (ulong v)
 		{
 			type = TypeManager.uint64_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -787,6 +791,7 @@ namespace Mono.CSharp {
 		public FloatConstant (float v)
 		{
 			type = TypeManager.float_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -837,6 +842,7 @@ namespace Mono.CSharp {
 		public DoubleConstant (double v)
 		{
 			type = TypeManager.double_type;
+			eclass = ExprClass.Value;
 			Value = v;
 		}
 
@@ -892,6 +898,7 @@ namespace Mono.CSharp {
 		public DecimalConstant (decimal d)
 		{
 			type = TypeManager.decimal_type;
+			eclass = ExprClass.Value;
 			Value = d;
 		}
 
@@ -917,6 +924,7 @@ namespace Mono.CSharp {
 		public StringConstant (string s)
 		{
 			type = TypeManager.string_type;
+			eclass = ExprClass.Value;
 			Value = s;
 		}
 

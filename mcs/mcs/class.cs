@@ -1301,6 +1301,20 @@ namespace Mono.CSharp {
 							members.Add (ob);
 					}
 				}
+
+				if (properties != null){
+					foreach (Property p in properties){
+						MethodBuilder b;
+
+						b = p.GetBuilder;
+						if (b != null && filter (b, criteria) == true)
+							members.Add (b);
+
+						b = p.SetBuilder;
+						if (b != null && filter (b, criteria) == true)
+							members.Add (b);
+					}
+				}
 			}
 
 			if ((mt & MemberTypes.Event) != 0) {
@@ -1506,6 +1520,75 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		///   C# allows this kind of scenarios:
+		///   interface I { void M (); }
+		///   class X { public void M (); }
+		///   class Y : X, I { }
+		///
+		///   For that case, we create an explicit implementation function
+		///   I.M in Y.
+		/// </summary>
+		void DefineProxy (Type iface, MethodInfo parent_method, MethodInfo iface_method,
+				  Type [] args)
+		{
+			MethodBuilder proxy;
+
+			string proxy_name = iface.Name + "." + iface_method.Name;
+
+			proxy = TypeBuilder.DefineMethod (
+				proxy_name,
+				MethodAttributes.HideBySig |
+				MethodAttributes.NewSlot |
+				MethodAttributes.Virtual,
+				CallingConventions.Standard | CallingConventions.HasThis,
+				parent_method.ReturnType, args);
+
+			int top = args.Length;
+			ILGenerator ig = proxy.GetILGenerator ();
+
+			ig.Emit (OpCodes.Ldarg_0);
+			for (int i = 0; i < top; i++){
+				switch (i){
+				case 0:
+					ig.Emit (OpCodes.Ldarg_1); break;
+				case 1:
+					ig.Emit (OpCodes.Ldarg_2); break;
+				case 2:
+					ig.Emit (OpCodes.Ldarg_3); break;
+				default:
+					ig.Emit (OpCodes.Ldarg, i - 1); break;
+				}
+			}
+			ig.Emit (OpCodes.Call, parent_method);
+			ig.Emit (OpCodes.Ret);
+
+			TypeBuilder.DefineMethodOverride (proxy, iface_method);
+		}
+		
+		/// <summary>
+		///   This function tells whether one of our parent classes implements
+		///   the given method (which turns out, it is valid to have an interface
+		///   implementation in a parent
+		/// </summary>
+		bool ParentImplements (Type iface_type, MethodInfo mi)
+		{
+			MethodSignature ms;
+			
+			Type [] args = TypeManager.GetArgumentTypes (mi);
+			ms = new MethodSignature (mi.Name, mi.ReturnType, args);
+			MemberInfo [] list = FindMembers (
+				TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
+				BindingFlags.Public | BindingFlags.Instance,
+				Method.method_signature_filter, ms);
+
+			if (list == null)
+				return false;
+			
+			DefineProxy (iface_type, (MethodInfo) list [0], mi, args);
+			return true;
+		}
+		
+		/// <summary>
 		///   Verifies that any pending abstract methods or interface methods
 		///   were implemented.
 		/// </summary>
@@ -1524,6 +1607,9 @@ namespace Mono.CSharp {
 						continue;
 
 					if (type.IsInterface){
+						if (ParentImplements (type, mi))
+							continue;
+ 
 						string extra = "";
 						
 						if (pending_implementations [i].found [j])
@@ -1905,11 +1991,10 @@ namespace Mono.CSharp {
 		//  Returns the System.Type array for the parameters of this method
 		//
 		Type [] parameter_types;
-		static Type [] no_types = new Type [0];
 		public Type [] ParameterTypes (TypeContainer parent)
 		{
 			if (Parameters == null)
-				return no_types;
+				return TypeManager.NoTypes;
 			
 			if (parameter_types == null)
 				parameter_types = Parameters.GetParameterInfo (parent);
@@ -2080,7 +2165,7 @@ namespace Mono.CSharp {
 		///    This delegate is used to extract methods which have the
 		///    same signature as the argument
 		/// </summary>
-		static MemberFilter method_signature_filter;
+		public static MemberFilter method_signature_filter;
 		
 		static Method ()
 		{
@@ -2742,7 +2827,7 @@ namespace Mono.CSharp {
 		public Block           Get, Set;
 		public PropertyBuilder PropertyBuilder;
 		public Attributes OptAttributes;
-		MethodBuilder GetBuilder, SetBuilder;
+		public MethodBuilder GetBuilder, SetBuilder;
 
 		//
 		// The type, once we compute it.
@@ -3927,7 +4012,11 @@ namespace Mono.CSharp {
 		{
 			Name = name;
 			RetType = ret_type;
-			Parameters = parameters;
+
+			if (parameters == null)
+				Parameters = TypeManager.NoTypes;
+			else
+				Parameters = parameters;
 		}
 		
 		public override int GetHashCode ()

@@ -60,6 +60,8 @@ public class TypeManager {
 	static public Type methodimpl_attr_type;
 	static public Type param_array_type;
 	static public Type void_ptr_type;
+
+	static public Type [] NoTypes;
 	
 	//
 	// Internal, not really used outside
@@ -94,13 +96,13 @@ public class TypeManager {
 	//   (either because it is the default or the user used the
 	//   -r command line option)
 	// </remarks>
-	ArrayList assemblies;
+	Assembly [] assemblies;
 
 	// <remarks>
 	//  Keeps a list of module builders. We used this to do lookups
 	//  on the modulebuilder using GetType -- needed for arrays
 	// </remarks>
-	ArrayList modules;
+	ModuleBuilder [] modules;
 
 	// <remarks>
 	//   This is the type_cache from the assemblies to avoid
@@ -159,8 +161,8 @@ public class TypeManager {
 
 	public TypeManager ()
 	{
-		assemblies = new ArrayList ();
-		modules = new ArrayList ();
+		assemblies = null;
+		modules = null;
 		user_types = new ArrayList ();
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
@@ -176,6 +178,7 @@ public class TypeManager {
 		method_internal_params = new PtrHashtable ();
 		builder_to_container = new PtrHashtable ();
 		type_interface_cache = new PtrHashtable ();
+		NoTypes = new Type [0];
 	}
 
 	public void AddUserType (string name, TypeBuilder t)
@@ -248,7 +251,13 @@ public class TypeManager {
 	/// </summary>
 	public void AddAssembly (Assembly a)
 	{
-		assemblies.Add (a);
+		int top = assemblies != null ? assemblies.Length : 0;
+		Assembly [] n = new Assembly [top + 1];
+
+		if (assemblies != null)
+			assemblies.CopyTo (n, 0);
+		n [top] = a;
+		assemblies = n;
 	}
 
 	/// <summary>
@@ -256,7 +265,13 @@ public class TypeManager {
 	/// </summary>
 	public void AddModule (ModuleBuilder mb)
 	{
-		modules.Add (mb);
+		int top = modules != null ? modules.Length : 0;
+		ModuleBuilder [] n = new ModuleBuilder [top + 1];
+
+		if (modules != null)
+			modules.CopyTo (n, 0);
+		n [top] = mb;
+		modules = n;
 	}
 
 	/// <summary>
@@ -650,6 +665,9 @@ public class TypeManager {
 	/// </remarks>
 	static public bool RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
 	{
+		if (args == null)
+			args = NoTypes;
+				
 		method_arguments.Add (mb, args);
 		method_internal_params.Add (mb, ip);
 		

@@ -36,6 +36,7 @@ namespace Mono.CSharp {
 		{
 			if (Null != null)
 				throw new Exception ("More than one null has been created!");
+			eclass = ExprClass.Value;
 		}
 		
 		override public string AsString ()
