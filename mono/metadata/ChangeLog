@@ -1,5 +1,7 @@
 2004-09-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c: More refactoring.
+	
 	* marshal.c: Refactor the mono_marshal_get_native_wrapper function into
 	smaller functions.
 
