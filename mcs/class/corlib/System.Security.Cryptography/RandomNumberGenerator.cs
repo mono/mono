@@ -13,7 +13,7 @@ namespace System.Security.Cryptography {
 	
 public abstract class RandomNumberGenerator  {
 	
-	RandomNumberGenerator () {
+	public RandomNumberGenerator () {
 	}
 
 	public static RandomNumberGenerator Create () {
