@@ -62,7 +62,7 @@ namespace CIR {
 		ArrayList operators;
 
 		// Maps MethodBuilders to Methods
-		static Hashtable method_builders_to_methods;
+		static Hashtable method_builders_to_parameters;
 		
 		//
 		// Pointers to the default constructor and the default static constructor
@@ -922,8 +922,8 @@ namespace CIR {
 
 			if (constructors != null || methods != null ||
 			    properties != null || operators != null){
-				if (method_builders_to_methods == null)
-					method_builders_to_methods = new Hashtable ();
+				if (method_builders_to_parameters == null)
+					method_builders_to_parameters = new Hashtable ();
 			}
 			
 			if (constructors != null){
@@ -932,8 +932,11 @@ namespace CIR {
 					
 					if (builder == null)
 						remove_list.Add (c);
-					else
-						method_builders_to_methods.Add (MakeKey (builder), c);
+					else {
+						InternalParameters ip = c.ParameterInfo;
+						
+						method_builders_to_parameters.Add (MakeKey (builder), ip);
+					}
 				}
 
 				foreach (object o in remove_list)
@@ -955,8 +958,10 @@ namespace CIR {
 					
 					if (key == null)
 						remove_list.Add (m);
-					else
-						method_builders_to_methods.Add (MakeKey (key), m);
+					else {
+						InternalParameters ip = m.ParameterInfo;
+						method_builders_to_parameters.Add (MakeKey (key), ip);
+					}
 				}
 				foreach (object o in remove_list)
 					methods.Remove (o);
@@ -987,9 +992,11 @@ namespace CIR {
 			if (Operators != null) {
 				foreach (Operator o in Operators) {
 					o.Define (this);
+
+					InternalParameters ip = o.OperatorMethod.ParameterInfo;
 					
-					method_builders_to_methods.Add (
-						MakeKey (o.OperatorMethodBuilder), o.OperatorMethod);
+					method_builders_to_parameters.Add (
+						MakeKey (o.OperatorMethodBuilder), ip);
 				}
 			}
 
@@ -1005,14 +1012,24 @@ namespace CIR {
 			
 		}
 
-		//
-		// the `mb' must be a MethodBuilder or a
-		// ConstructorBuilder, we return the method that
-		// defines it.
-		// 
-		static public MethodCore LookupMethodByBuilder (MethodBase mb)
+		// <summary>
+		//   Since System.Reflection.Emit can not retrieve parameter information
+		//   from methods that are dynamically defined, we have to look those
+		//   up ourselves using this
+		// </summary>
+		static public ParameterData LookupParametersByBuilder (MethodBase mb)
 		{
-			return (MethodCore) method_builders_to_methods [MakeKey (mb)];
+			return (ParameterData) method_builders_to_parameters [MakeKey (mb)];
+		}
+
+		// <summary>
+		//   Indexers and properties can register more than one method at once,
+		//   so we need to provide a mechanism for those to register their
+		//   various methods to parameter info mappers.
+		// </summary>
+		static public void RegisterParameterForBuilder (MethodBase mb, InternalParameters pi)
+		{
+			method_builders_to_parameters.Add (MakeKey (mb), pi);
 		}
 		
 		public Type LookupType (string name, bool silent)
@@ -1111,11 +1128,18 @@ namespace CIR {
 				//}
 			}
 
-			if ((mt & MemberTypes.Property) != 0 && Properties != null) {
-				foreach (Property p in Properties) {
-					if (filter (p.PropertyBuilder, criteria) == true)
-						members.Add (p.PropertyBuilder);
-				}
+			if ((mt & MemberTypes.Property) != 0){
+				if (Properties != null)
+					foreach (Property p in Properties) {
+						if (filter (p.PropertyBuilder, criteria) == true)
+							members.Add (p.PropertyBuilder);
+					}
+
+				if (Indexers != null)
+					foreach (Indexer ix in Indexers){
+						if (filter (ix.PropertyBuilder, criteria) == true)
+							members.Add (ix.PropertyBuilder);
+					}
 			}
 			
 			if ((mt & MemberTypes.NestedType) != 0 && Types != null) {
@@ -2178,6 +2202,15 @@ namespace CIR {
 		
 	}
 
+	//
+	// FIXME: This does not handle:
+	//
+	//   int INTERFACENAME [ args ]
+	//
+	// Only:
+	// 
+	// int this [ args ]
+ 
 	public class Indexer {
 
 		const int AllowedModifiers =
@@ -2198,10 +2231,11 @@ namespace CIR {
 		public readonly Block      Get;
 		public readonly Block      Set;
 		public Attributes          OptAttributes;
-		public MethodBuilder GetMethodBuilder;
-		public MethodBuilder SetMethodBuilder;
-		
-
+		public MethodBuilder       GetBuilder;
+		public MethodBuilder       SetBuilder;
+		public PropertyBuilder PropertyBuilder;
+	        public Type IndexerType;
+			
 		public Indexer (string type, string int_type, int flags, Parameters parms,
 				Block get_block, Block set_block, Attributes attrs)
 		{
@@ -2218,37 +2252,86 @@ namespace CIR {
 		public void Define (TypeContainer parent)
 		{
 			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
+			PropertyAttributes prop_attr =
+				PropertyAttributes.RTSpecialName |
+				PropertyAttributes.SpecialName;
 			
-			Type ret_type = parent.LookupType (Type, false);
+			Type IndexerType = parent.LookupType (Type, false);
 			Type [] parameters = FormalParameters.GetParameterInfo (parent);
 
-			GetMethodBuilder = parent.TypeBuilder.DefineMethod (
-				"get_Item", attr, ret_type, parameters);
-			SetMethodBuilder = parent.TypeBuilder.DefineMethod (
-				"set_Item", attr, ret_type, parameters);
+			PropertyBuilder = parent.TypeBuilder.DefineProperty (
+				TypeManager.IndexerPropertyName (parent.TypeBuilder),
+				prop_attr, IndexerType, parameters);
+				
+			if (Get != null){
+				GetBuilder = parent.TypeBuilder.DefineMethod (
+					"get_Item", attr, IndexerType, parameters);
+				TypeManager.RegisterMethod (GetBuilder, parameters);
+				TypeContainer.RegisterParameterForBuilder (
+					GetBuilder, new InternalParameters (parameters));
+			}
+			
+			if (Set != null){
+				int top = parameters.Length;
+				Type [] set_pars = new Type [top + 1];
+				parameters.CopyTo (set_pars, 0);
+				set_pars [top] = IndexerType;
+				
+				SetBuilder = parent.TypeBuilder.DefineMethod (
+					"set_Item", attr, null, set_pars);
+				TypeManager.RegisterMethod (SetBuilder, set_pars);
+				TypeContainer.RegisterParameterForBuilder (
+					SetBuilder, new InternalParameters (set_pars));
+			}
 
-			//
-			// HACK because System.Reflection.Emit is lame
-			//
-			TypeManager.RegisterMethod (GetMethodBuilder, parameters);
-			TypeManager.RegisterMethod (SetMethodBuilder, parameters);
-
+			PropertyBuilder.SetGetMethod (GetBuilder);
+			PropertyBuilder.SetSetMethod (SetBuilder);
+			
 			Parameter [] p = FormalParameters.FixedParameters;
 
 			if (p != null) {
 				int i;
 				
 				for (i = 0; i < p.Length; ++i) {
-					GetMethodBuilder.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
-					SetMethodBuilder.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
+					if (Get != null)
+						GetBuilder.DefineParameter (
+							i + 1, p [i].Attributes, p [i].Name);
+
+					if (Set != null)
+						SetBuilder.DefineParameter (
+							i + 1, p [i].Attributes, p [i].Name);
 				}
-				
+
+				if (Set != null)
+					SetBuilder.DefineParameter (
+						i + 1, ParameterAttributes.None, "value");
+					
 				if (i != parameters.Length)
 					Console.WriteLine ("Implement type definition for params");
 			}
 
+			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
 		}
-		
+
+		public void Emit (TypeContainer tc)
+		{
+			ILGenerator ig;
+			EmitContext ec;
+
+			if (Get != null){
+				ig = GetBuilder.GetILGenerator ();
+				ec = new EmitContext (tc, ig, IndexerType, ModFlags);
+				
+				ec.EmitTopBlock (Get);
+			}
+
+			if (Set != null){
+				ig = SetBuilder.GetILGenerator ();
+				ec = new EmitContext (tc, ig, null, ModFlags);
+				
+				ec.EmitTopBlock (Set);
+			}
+		}
 	}
 
 	public class Operator {

@@ -428,7 +428,7 @@ public class TypeManager {
 	{
 		if (properties == null)
 			properties = new Hashtable ();
-		
+
 		properties.Add (pb, new DictionaryEntry (get, set));
 	}
 	
@@ -447,7 +447,33 @@ public class TypeManager {
 		} else
 			return pi.GetAccessors ();
 	}
+
+	// <summary>
+	//   Returns the name of the indexer in a given type.  The default
+	//   is not always `Item'.  The user can change this behaviour by
+	//   using the DefaultMemberAttribute in the class.
+	//
+	//   For example, the String class indexer is named `Chars' not `Item' 
+	// </summary>
+	public static string IndexerPropertyName (Type t)
+	{
+		System.Attribute attr;
 		
+		//
+		// FIXME: Replace with something that works around S.R.E failure
+		//
+#if FIXME
+		attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
+		
+		if (attr != null)
+			{
+				DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
+				
+				return dma.MemberName;
+			}
+#endif
+		return "Item";
+	}
 
 }
 

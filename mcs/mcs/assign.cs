@@ -66,7 +66,10 @@ namespace CIR {
 			//
 			if (target is PropertyExpr){
 				PropertyExpr property_assign = (PropertyExpr) target;
-				
+
+				//
+				// FIXME: Maybe handle this in the LValueResolve
+				//
 				if (!property_assign.VerifyAssignable ())
 					return null;
 				
@@ -75,9 +78,6 @@ namespace CIR {
 
 			if (target is IndexerAccess){
 				IndexerAccess ia = (IndexerAccess) target;
-
-				if (!ia.VerifyAssignable (source))
-					return null;
 
 				return this;
 			}
@@ -148,8 +148,21 @@ namespace CIR {
 					tempo.Emit (ec);
 				}
 			} else if (eclass == ExprClass.IndexerAccess){
-				
-				throw new Exception ("Can not assign to indexers yet");
+				IndexerAccess ia = (IndexerAccess) target;
+
+				if (is_statement)
+					ia.EmitSet (ec, source);
+				else {
+					LocalTemporary tempo;
+					
+					tempo = new LocalTemporary (ec, source.Type);
+
+					source.Emit (ec);
+					tempo.Store (ec);
+					ia.EmitSet (ec, source);
+
+					tempo.Emit (ec);
+				}
 			}
 		}
 		

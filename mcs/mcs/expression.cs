@@ -3590,14 +3590,14 @@ namespace CIR {
 		public static ParameterData GetParameterData (MethodBase mb)
 		{
 			object pd = method_parameter_cache [mb];
-
+			object ip;
+			
 			if (pd != null)
 				return (ParameterData) pd;
 
-			if (mb is MethodBuilder || mb is ConstructorBuilder){
-				MethodCore mc = TypeContainer.LookupMethodByBuilder (mb);
-
-				InternalParameters ip = mc.ParameterInfo;
+			
+			ip = TypeContainer.LookupParametersByBuilder (mb);
+			if (ip != null){
 				method_parameter_cache [mb] = ip;
 
 				return (ParameterData) ip;
@@ -5150,52 +5150,29 @@ namespace CIR {
 		Indexers (MemberInfo [] mi)
 		{
 			foreach (PropertyInfo property in mi){
-				MethodInfo [] accessors;
+				MethodInfo get, set;
+				
+				get = property.GetGetMethod (true);
+				if (get != null){
+					if (getters == null)
+						getters = new ArrayList ();
 
-				accessors = TypeManager.GetAccessors (property);
-				if (accessors != null){
-					int idx = 0;
-					
-					if (property.CanRead){
-						if (getters == null)
-							getters = new ArrayList ();
-						
-						getters.Add (accessors [idx++]);
-					}
-					if (property.CanWrite){
-						if (setters == null)
-							setters = new ArrayList ();
-						
-						setters.Add (accessors [idx++]);
-					}
+					getters.Add (get);
+				}
+				
+				set = property.GetSetMethod (true);
+				if (set != null){
+					if (setters == null)
+						setters = new ArrayList ();
+					setters.Add (set);
 				}
 			}
 		}
 		
-		static string IndexerPropertyName (Type t)
-		{
-			System.Attribute attr;
-
-			//
-			// FIXME: Replace with something that works around S.R.E failure
-			//
-#if FIXME
-			attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
-
-			if (attr != null)
-			{
-				DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
-				
-				return dma.MemberName;
-			}
-#endif
-			return "Item";
-		}
-
 		static public Indexers GetIndexersForType (Type t, TypeManager tm, Location loc) 
 		{
 			Indexers ix = (Indexers) map [t];
-			string p_name = IndexerPropertyName (t);
+			string p_name = TypeManager.IndexerPropertyName (t);
 			
 			if (ix != null)
 				return ix;
@@ -5253,7 +5230,7 @@ namespace CIR {
 				ilist = Indexers.GetIndexersForType (
 					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
 			
-			if (ilist.getters != null && ilist.getters.Count > 0)
+			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0)
 				get = (MethodInfo) Invocation.OverloadResolve (
 					ec, new MethodGroupExpr (ilist.getters), ea.Arguments, ea.loc);
 
@@ -5278,12 +5255,18 @@ namespace CIR {
 				ilist = Indexers.GetIndexersForType (
 					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
 
+			Console.WriteLine ("ilist = " + ilist);
+			if (ilist != null){
+				Console.WriteLine ("ilist.setters = " + ilist.setters);
+				if (ilist.setters != null)
+					Console.WriteLine ("count = " + ilist.setters.Count);
+			}
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
 				set_arguments = (ArrayList) ea.Arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
 
 				set = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (ilist.getters), set_arguments, ea.loc);
+					ec, new MethodGroupExpr (ilist.setters), set_arguments, ea.loc);
 			}
 			
 			if (set == null){
@@ -5292,8 +5275,8 @@ namespace CIR {
 					      "] lacks a `set' accessor");
 					return null;
 			}
-				
-			type = set.ReturnType;
+
+			type = TypeManager.void_type;
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -5301,6 +5284,11 @@ namespace CIR {
 		public override void Emit (EmitContext ec)
 		{
 			Invocation.EmitCall (ec, false, ea.Expr, get, ea.Arguments);
+		}
+
+		public void EmitSet (EmitContext ec, Expression expr)
+		{
+			throw new Exception ("Implement me!");
 		}
 	}
 	
