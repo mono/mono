@@ -143,8 +143,11 @@ namespace System.Web.UI
                         }
                 }
 
-		[DefaultValue (true), WebCategory ("FIXME")]
+		[DefaultValue (true), WebCategory ("Behaviour")]
 		[WebSysDescription ("An Identification of the control that is rendered.")]
+#if NET_2_0
+		[Themeable (true)]
+#endif                
                 public virtual bool EnableViewState //DIT
                 {
                         get
@@ -159,6 +162,10 @@ namespace System.Web.UI
 		
 		[MergableProperty (false), ParenthesizePropertyName (true)]
 		[WebSysDescription ("The name of the control that is rendered.")]
+#if NET_2_0
+		[Filterable (true), Themeable (true)]
+#endif                
+
                 public virtual string ID {
                         get {
 				return (id_set ? _userId : null);
@@ -195,7 +202,10 @@ namespace System.Web.UI
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("The webpage that this control resides on.")]
-                public virtual Page Page //DIT
+#if NET_2_0
+		[Bindable (true)]
+#endif                
+		public virtual Page Page //DIT
                 {
                         get
                         {
@@ -267,8 +277,11 @@ namespace System.Web.UI
                         }
                 }
 
-		[DefaultValue (true), Bindable (true), WebCategory ("FIXME")]
+		[DefaultValue (true), Bindable (true), WebCategory ("Behaviour")]
 		[WebSysDescription ("Visiblity state of the control.")]
+#if NET_2_0
+		[Localizable (true)]		
+#endif
                 public virtual bool Visible {
                         get {
 				if (_visible == false)
@@ -1064,6 +1077,13 @@ namespace System.Web.UI
 				return (expressionBindings != null && expressionBindings.Count > 0);
 			}
 		}
+
+		[MonoTODO]
+		public virtual void Focus()
+		{
+			throw new NotImplementedException();
+		}
+
 #endif
         }
 }
