@@ -92,7 +92,7 @@ namespace System.Web
 				if (_arrExceptions == null || _arrExceptions.Count == 0)
 					return null;
 
-				return (Exception []) _arrExceptions.ToArray (typeof (Exception));;
+				return (Exception []) _arrExceptions.ToArray (typeof (Exception));
 			}
 		}
 

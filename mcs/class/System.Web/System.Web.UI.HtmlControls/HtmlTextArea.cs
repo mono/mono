@@ -43,7 +43,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["rows"];
 				if (attr != null){
-					return Int32.Parse(attr, CultureInfo.InvariantCulture);;
+					return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				}
 				return -1;
 			}
