@@ -1,3 +1,7 @@
+2004-11-17  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (clean-local): Rename from 'clean'.
+
 2004-11-15  Nelae Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* mini.c, mini-x86.c, mini-amd64.c, exceptions-s390.c: Add siginfo_t parameter
