@@ -1,3 +1,7 @@
+2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-tables.h: reflecting locale-builder updates.
+
 2004-06-08  Dick Porter  <dick@ximian.com>
 
 	* object.h:
