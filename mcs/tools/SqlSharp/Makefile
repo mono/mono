@@ -38,7 +38,7 @@ linux:
 	mcs @unix.args
 
 clean:
-	rm -f *.exe *.pdb *.dll *~
+	rm -f *.exe *.pdb *.dbg *.dll *~
 
 linecount:
 	wc -l $(PROGRAM_FILES)

@@ -1,3 +1,7 @@
+2002-12-06  Duncan Mak  <duncan@ximian.com>
+
+	* Makefile (clean): Remove *.dbg files.
+
 2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
 
 	* README: updated to include directions on

@@ -26,7 +26,7 @@ install: all
 
 monostyle.exe: monostyle.cs
 	$(CSC) $(CSCFLAGS) monostyle.cs
-	
+
 GenerateDelegate.exe: GenerateDelegate.cs
 	$(CSC) $(CSCFLAGS) /out:$@ $<
 
@@ -64,7 +64,7 @@ clean:
 	(cd corcompare; make clean)
 	(cd type-reflector; make clean)
 	(cd SqlSharp; make clean)
-	rm -f *.exe *.pdb *.dll
+	rm -f *.exe *.pdb *.dbg *.dll
 	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in
 
