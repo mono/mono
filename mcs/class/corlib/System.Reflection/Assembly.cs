@@ -66,7 +66,7 @@ namespace System.Reflection {
 		//
 		public event ModuleResolveEventHandler ModuleResolve {
 			add {
-				resolve_event_holder.ModuleResolve -= value;
+				resolve_event_holder.ModuleResolve += value;
 			}
 			remove {
 				resolve_event_holder.ModuleResolve -= value;

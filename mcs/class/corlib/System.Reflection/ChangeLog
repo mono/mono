@@ -1,3 +1,6 @@
+2005-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Fixed add for ModuleResolve.
 
 Sat Jul 10 15:48:34 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
