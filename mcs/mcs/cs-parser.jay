@@ -475,7 +475,7 @@ class_member_declaration
 	| property_declaration			// done
 	| event_declaration			// done
 	| indexer_declaration			// done
-	| operator_declaration			// finishme
+	| operator_declaration			// done
 	| constructor_declaration		// done
 	| destructor_declaration		// done
 	| type_declaration
@@ -1032,60 +1032,77 @@ interface_indexer_declaration
 operator_declaration
 	: opt_attributes opt_modifiers operator_declarator block
 	  {
-		// FIXME: validate that opt_modifiers is exactly: PUBLIC and STATIC
+		OperatorDeclaration decl = (OperatorDeclaration) $3;
+		
+		Operator op = new Operator (decl.optype, decl.ret_type, (int) $2, decl.arg1type, decl.arg1name,
+					    decl.arg2type, decl.arg2name, (Block) $4);
+
+		// Note again, checking is done in semantic analysis
+		current_container.AddOperator (op);
 	  }
 	;
 
 operator_declarator
 	: type OPERATOR overloadable_operator 
 	  OPEN_PARENS type IDENTIFIER CLOSE_PARENS
-	  {
-		// FIXME: since reduce/reduce on this
-	 	// rule, validate overloadable_operator is unary
-	  }
+	{
+		Operator.CheckUnaryOperator ((Operator.OpType) $3);
+
+		$$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6, null, null);
+	}
 	| type OPERATOR overloadable_operator
 	  OPEN_PARENS 
 		type IDENTIFIER COMMA
 	  	type IDENTIFIER 
 	  CLOSE_PARENS
-	  {
-		// FIXME: because of the reduce/reduce on PLUS and MINUS
-		// validate overloadable_operator is binary
-	  }
+        {
+	       Operator.CheckBinaryOperator ((Operator.OpType) $3);
+	       
+	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6,
+					     (string) $8, (string) $9);
+        }
 	| conversion_operator_declarator
 	;
 
 overloadable_operator
 // Unary operators:
-	: BANG
-	| TILDE
-	| OP_INC
-	| OP_DEC
-	| TRUE
-	| FALSE
+	: BANG   { $$ = Operator.OpType.Bang; }
+        | TILDE  { $$ = Operator.OpType.Tilde; }  
+        | OP_INC { $$ = Operator.OpType.Increment; }
+        | OP_DEC { $$ = Operator.OpType.Decrement; }
+        | TRUE   { $$ = Operator.OpType.True; }
+        | FALSE  { $$ = Operator.OpType.False; }
 // Unary and binary:
-	| PLUS 
-	| MINUS
+        | PLUS { $$ = Operator.OpType.Plus; }
+        | MINUS { $$ = Operator.OpType.Minus; }
 // Binary:
-	| STAR 
-	| DIV 
-	| PERCENT 
-	| BITWISE_AND 
-	| BITWISE_OR 
-	| CARRET 
-	| OP_SHIFT_LEFT
-	| OP_SHIFT_RIGHT
-	| OP_EQ
-	| OP_NE
-	| OP_GT
-	| OP_LT
-	| OP_GE
-	| OP_LE
+        | STAR { $$ = Operator.OpType.Star; }
+        | DIV {  $$ = Operator.OpType.Div; }
+        | PERCENT { $$ = Operator.OpType.Percent; }
+        | BITWISE_AND { $$ = Operator.OpType.BitAnd; }
+        | BITWISE_OR { $$ = Operator.OpType.BitOr; }
+        | CARRET { $$ = Operator.OpType.Carret; }
+        | OP_SHIFT_LEFT { $$ = Operator.OpType.ShiftLeft; }
+        | OP_SHIFT_RIGHT { $$ = Operator.OpType.ShiftRight; }
+        | OP_EQ { $$ = Operator.OpType.Eq; }
+        | OP_NE { $$ = Operator.OpType.NotEq; }
+        | OP_GT { $$ = Operator.OpType.GreaterThan; }
+        | OP_LT { $$ = Operator.OpType.LesserThan; }
+        | OP_GE { $$ = Operator.OpType.GreaterOrEq; }
+        | OP_LE { $$ = Operator.OpType.LesserOrEq; }
 	;
 
 conversion_operator_declarator
 	: IMPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
+	  {
+		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (string) $3, (string) $5, (string) $6,
+					      null, null);
+	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
+	  {
+		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (string) $3, (string) $5, (string) $6,
+					      null, null);
+	  }
 	;
 
 constructor_declaration
@@ -1250,6 +1267,8 @@ indexer_declaration
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis
+		
+		current_container.AddIndexer (indexer);
 		
 		current_local_parameters = null;
 	  }
@@ -2789,6 +2808,30 @@ public class IndexerDeclaration {
 	}
 }
 
+// <summary>
+//  A class used to hold info about an operator declarator
+// </summary>
+
+public class OperatorDeclaration {
+	public Operator.OpType optype;
+	public string ret_type;
+	public string arg1type;
+	public string arg1name;
+	public string arg2type;
+	public string arg2name;
+
+	public OperatorDeclaration (Operator.OpType op, string ret_type, string arg1type, string arg1name,
+				    string arg2type, string arg2name)
+	{
+		optype = op;
+		this.ret_type = ret_type;
+		this.arg1type = arg1type;
+		this.arg1name = arg1name;
+		this.arg2type = arg2type;
+		this.arg2name = arg2name;
+	}
+
+}
 
 // <summary>
 //   Given the @class_name name, it creates a fully qualified name

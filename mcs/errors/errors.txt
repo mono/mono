@@ -13,3 +13,7 @@ numbers to match the Microsoft numbers:
 -3      Constant type is not one of sbyte, byte, short, ushort, int,
 	uint, long, ulong, char, float, double, decimal, bool, string, enum
 	or null type. 
+
+-4	Operator should be unary
+
+-5 	Operator should be binary

@@ -55,6 +55,9 @@ namespace CIR {
 		// Holds the indexers
 		ArrayList indexers;
 
+		// Holds the operators
+		ArrayList operators;
+		
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -302,6 +305,16 @@ namespace CIR {
 				indexers = new ArrayList ();
 
 			indexers.Add (i);
+
+			return AdditionResult.Success;
+		}
+
+		public AdditionResult AddOperator (Operator op)
+		{
+			if (operators == null)
+				operators = new ArrayList ();
+
+			operators.Add (op);
 
 			return AdditionResult.Success;
 		}
@@ -1096,6 +1109,109 @@ namespace CIR {
 			Get = get_block;
 			Set = set_block;
 		}
+	}
+
+	public class Operator {
+
+		const int AllowedModifiers =
+			Modifiers.PUBLIC |
+			Modifiers.STATIC;
+
+		public enum OpType {
+
+			// Unary operators
+			Bang,
+			Tilde,
+			Increment,
+			Decrement,
+			True,
+			False,
+
+			// Unary and Binary operators
+			Plus,
+			Minus,
+			
+			// Binary operators
+			Star,
+			Div,
+			Percent,
+			BitAnd,
+			BitOr,
+			Carret,
+			ShiftLeft,
+			ShiftRight,
+			Eq,
+			NotEq,
+			GreaterThan,
+			LesserThan,
+			GreaterOrEq,
+			LesserOrEq,
+
+			// Implicit and Explicit
+			Implicit,
+			Explicit
+		};
+
+		public readonly OpType OperatorType;
+		public readonly string ReturnType;
+		public readonly string FirstArgType;
+		public readonly string FirstArgName;
+		public readonly string SecondArgType;
+		public readonly string SecondArgName;
+		public readonly int    ModFlags;
+		public readonly Block  Block;
+
+		public Operator (OpType type, string ret_type, int flags, string arg1type, string arg1name,
+				 string arg2type, string arg2name, Block block)
+		{
+			OperatorType = type;
+			ReturnType = ret_type;
+			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PUBLIC);
+			FirstArgType = arg1type;
+			FirstArgName = arg1name;
+			SecondArgType = arg2type;
+			SecondArgName = arg2name;
+			Block = block;
+		}
+			      
+		public static void CheckUnaryOperator (OpType op)
+		{
+			switch (op) {
+
+			case OpType.Bang : case OpType.Tilde : case OpType.Increment : case OpType.Decrement :
+			case OpType.True : case OpType.False : case OpType.Plus : case OpType.Minus :
+
+				break;
+				
+			default :
+				// We have an error
+				
+				CSharpParser.error (-4, "Overloaded operator should be unary"); 
+				break;
+				
+			}
+		}
+
+		public static void CheckBinaryOperator (OpType op)
+		{
+			switch (op) {
+
+			case OpType.Plus : case OpType.Minus : case OpType.Star : case OpType.Div :
+			case OpType.Percent : case OpType.BitAnd : case OpType.BitOr : case OpType.Carret :
+			case OpType.ShiftLeft : case OpType.ShiftRight : case OpType.Eq : case OpType.NotEq :
+			case OpType.GreaterThan : case OpType.LesserThan : case OpType.GreaterOrEq :
+			case OpType.LesserOrEq :
+
+				break;
+
+			default :
+
+				CSharpParser.error (-5, "Overloaded operator should be binary");
+				break;
+			}
+
+		}
+
 	}
 }
 

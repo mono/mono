@@ -1,3 +1,26 @@
+2001-08-31  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* cs-parser.jay (overloadable_operator): The semantic value is an
+	enum of the Operator class.
+	(operator_declarator): Implement actions.
+	(operator_declaration): Implement.
+
+	* class.cs (Operator::CheckUnaryOperator): New static method to help in checking
+	validity of definitions.
+	(Operator::CheckBinaryOperator): Static method to check for binary operators
+	(TypeContainer::AddOperator): New method to add an operator to a type.
+
+	* cs-parser.jay (indexer_declaration): Added line to actually call the
+	AddIndexer method so it gets added ;-)
+
+	* ../errors/errors.txt : Update to include new error numbers. Are these numbers 
+	already taken care of by the MS compiler ?  
+
+2001-08-29  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* class.cs (Operator): New class for operator declarations.
+	(Operator::OpType): Enum for the various operators.
+
 2001-08-29  Ravi Pratap  <ravi@che.iitm.ac.in>
 
 	* class.cs (TypeContainer::AddIndexer): Remove FIXME comment. We

@@ -435,6 +435,7 @@ namespace CIR {
 	}
 
 	public class New : Expression {
+
 		public enum NType {
 			Object,
 			Array
