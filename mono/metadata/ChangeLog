@@ -1,4 +1,20 @@
 
+Mon Oct 8 16:12:38 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata.h: use MonoArrayType to describe the shape of an array.
+	Guard against calling bsearch with a NULL pointer (pointed out by Laurent Rioux, smoux).
+	* image.c: endian fixes by Laurent Rioux.
+	* object.h, object.c: rename MonoStringObject to MonoString and
+	MonoArrayObject to MonoArray. Change some function names to conform to
+	the style mono_<object>_<action>. mono_string_new_utf16 () takes a
+	guint16* as first argument, so don't use char*.
+	Provide macros to do the interesting things on arrays in a portable way.
+	* threads-pthread.c: updates for the API changes and #include <sched.h>
+	(required for sched_yield()).
+	* icall.c: updates for the API changes above.
+	* Makefile.am, mono-endian.c. mono-endian.h: include unaligned read routines for
+	platforms that need them.
+
 Mon Oct 8 10:43:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: set the correct type for all the fundamental

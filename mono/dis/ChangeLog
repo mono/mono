@@ -1,4 +1,10 @@
 
+Mon Oct 8 16:13:55 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* get.c, get.h: MonoArray changed in MonoArrayType.
+	* main.c: guard against calling bsearch with a NULL pointer
+	(pointed out by Laurent Rioux, smoux).
+
 Thu Oct 4 19:05:56 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c: fix printing of exception stuff.

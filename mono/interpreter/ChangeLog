@@ -1,4 +1,10 @@
 
+Mon Oct 8 16:14:40 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: use the accessors provided in object.h to deal with
+	MonoArrays. Updates for API renames in metadata. Throw exception
+	in ldelema if index is out of bounds.
+
 Mon Oct 8 10:44:25 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fixes for changes in metadata.

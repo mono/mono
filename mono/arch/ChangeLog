@@ -1,4 +1,9 @@
 
+Mon Oct 8 16:13:07 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: remove mono_get_ansi_string () and use
+	mono_string_to_utf8 () instead.
+
 Thu Oct 4 19:09:13 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: allow marshalling valuetypes if they are
