@@ -1756,7 +1756,17 @@ namespace Mono.MonoBASIC {
 				case TypeCode.Byte:
 					// Ok, this *is* broken
 					e = RTConversionExpression(ec, "ByteType.FromObject", expr, loc);
-					break;																			
+					break;	
+				case TypeCode.DateTime:	
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "DateType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "DateType.FromObject", expr, loc);
+							break;											
+					}
+					break;														
 			}
 			
 			// We must examine separately some types that
