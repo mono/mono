@@ -1,3 +1,7 @@
+2005-02-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Allocate a GOT var for THROW and RETHROW. 
+
 2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-amd64.md: Fix lengths of atomic opcodes.
