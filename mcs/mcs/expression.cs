@@ -5321,6 +5321,12 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (!ec.InUnsafe) {
+				Error (233, "Sizeof may only be used in an unsafe context " +
+				       "(consider using System.Runtime.InteropServices.Marshal.Sizeof");
+				return null;
+			}
+				
 			type_queried = ec.DeclSpace.ResolveType (QueriedType, false, loc);
 			if (type_queried == null)
 				return null;

@@ -1,3 +1,11 @@
+2002-09-09  Martin Baulig  <martin@gnome.org>
+
+	* expression.cs (SizeOf.DoResolve): Sizeof is only allowed in unsafe
+	context.  Fixes bug #30027.
+
+	* delegate.cs (NewDelegate.Emit): Use OpCodes.Ldvirtftn for
+	virtual functions.  Fixes bug #30043, added test-164.cs.
+
 2002-09-08  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs : Fix a small NullRef crash thanks to my stupidity.
