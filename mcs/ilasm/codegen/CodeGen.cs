@@ -232,8 +232,8 @@ namespace Mono.ILASM {
 
                 private string CacheName (string name)
                 {
-                        if (current_namespace != null &&
-                                        current_namespace != String.Empty)
+                        if (current_namespace == null ||
+                                        current_namespace == String.Empty)
                                 return name;
 
                         return current_namespace + "." + name;

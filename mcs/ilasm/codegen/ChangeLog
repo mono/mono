@@ -1,3 +1,8 @@
+2003-06-15 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Fix buglet in cache name creating (I will claim this
+	was a typo). 
+		
 2003-06-14 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeGen.cs: When creating nested types cache their names using
