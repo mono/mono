@@ -30,7 +30,6 @@ namespace System.Net.Sockets
 
 			public SocketAsyncResult(object state) {
 				this.state=state;
-				waithandle=new ManualResetEvent(false);
 				completed_sync=completed=false;
 			}
 
