@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Globalization;
 
 namespace System.Security.Permissions {
@@ -37,62 +38,199 @@ namespace System.Security.Permissions {
 		private const int version = 1;
 		static private Version defaultVersion = new Version (0, 0);
 
-		private StrongNamePublicKeyBlob publickey;
-		private string name;
-		private Version assemblyVersion;
-	
+		private struct SNIP {
+			public StrongNamePublicKeyBlob PublicKey;
+			public string Name;
+			public Version AssemblyVersion;
+
+			internal SNIP (StrongNamePublicKeyBlob pk, string name, Version version)
+			{
+				PublicKey = pk;
+				Name = name;
+				AssemblyVersion = version;
+			}
+
+			internal static SNIP CreateDefault ()
+			{
+				return new SNIP (null, String.Empty, (Version) defaultVersion.Clone ());
+			}
+
+			internal bool IsNameSubsetOf (string target) 
+			{
+				if (Name == null)
+					return (target == null);
+				if (target == null)
+					return true;
+
+				int wildcard = Name.LastIndexOf ('*');
+				if (wildcard == 0)
+					return true;		// *
+				if (wildcard == -1)
+					wildcard = Name.Length;	// exact match
+
+				return (String.Compare (Name, 0, target, 0, wildcard, true, CultureInfo.InvariantCulture) == 0);
+			}
+
+			internal bool IsSubsetOf (SNIP target)
+			{
+				if ((PublicKey != null) && PublicKey.Equals (target.PublicKey))
+					return true;
+
+				if (!IsNameSubsetOf (target.Name))
+					return false;
+				if ((AssemblyVersion != null) && !AssemblyVersion.Equals (target.AssemblyVersion))
+					return false;
+				// in case PermissionState.None was used in the constructor
+				if (PublicKey == null)
+					return (target.PublicKey == null);
+				return false;
+			}
+		}
+
+#if NET_2_0
+		private PermissionState _state;
+		private ArrayList _list;
+
+		public StrongNameIdentityPermission (PermissionState state) 
+		{
+			// Identity Permissions can be unrestricted in Fx 2.0
+			_state = CheckPermissionState (state, true);
+			// default values
+			_list = new ArrayList ();
+			_list.Add (SNIP.CreateDefault ());
+		}
+
+		public StrongNameIdentityPermission (StrongNamePublicKeyBlob blob, string name, Version version) 
+		{
+			if (blob == null)
+				throw new ArgumentNullException ("blob");
+			if ((name != null) && (name.Length == 0))
+				throw new ArgumentException ("name");
+
+			_state = PermissionState.None;
+			_list = new ArrayList ();
+			_list.Add (new SNIP (blob, name, version));
+		}
+
+		internal StrongNameIdentityPermission (StrongNameIdentityPermission snip) 
+		{
+			_state = snip._state;
+			_list = new ArrayList (snip._list.Count);
+			foreach (SNIP e in snip._list) {
+				_list.Add (new SNIP (e.PublicKey, e.Name, e.AssemblyVersion));
+			}
+		}
+#else
+		private SNIP _single;
+
 		public StrongNameIdentityPermission (PermissionState state) 
 		{
 			// false == do not allow Unrestricted for Identity Permissions
 			CheckPermissionState (state, false);
 			// default values
-			name = String.Empty;
-			assemblyVersion = (Version) defaultVersion.Clone ();
+			_single = SNIP.CreateDefault ();
 		}
-	
+
 		public StrongNameIdentityPermission (StrongNamePublicKeyBlob blob, string name, Version version) 
 		{
 			if (blob == null)
 				throw new ArgumentNullException ("blob");
 
-			Name = name;
-			publickey = blob;
-			assemblyVersion = version;
+			_single = new SNIP (blob, name, version);
 		}
-	
-		public string Name { 
-			get { return name; }
-			set { 
+
+		internal StrongNameIdentityPermission (StrongNameIdentityPermission snip) 
+			: this (snip.PublicKey, snip.Name, snip.Version)
+		{
+		}
+#endif
+
+		// Properties
+
 #if NET_2_0
+		public string Name { 
+			get {
+				if (_list.Count > 1)
+					throw new NotSupportedException ();
+				return ((SNIP)_list [0]).Name;
+			}
+			set { 
 				if ((value != null) && (value.Length == 0))
 					throw new ArgumentException ("name");
-#endif
-				name = value;
+				if (_list.Count > 1)
+					ResetToDefault ();
+				SNIP snip = (SNIP) _list [0];
+				snip.Name = value;
+				_list [0] = snip;
 			}
 		}
-	
+
 		public StrongNamePublicKeyBlob PublicKey { 
-			get { return publickey; }
+			get {
+				if (_list.Count > 1)
+					throw new NotSupportedException ();
+				return ((SNIP)_list [0]).PublicKey;
+			}
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");
-				publickey = value;
+				if (_list.Count > 1)
+					ResetToDefault ();
+				SNIP snip = (SNIP) _list [0];
+				snip.PublicKey = value;
+				_list [0] = snip;
 			}
 		}
 	
 		public Version Version { 
-			get { return assemblyVersion; }
-			set { assemblyVersion = value; }
+			get {
+				if (_list.Count > 1)
+					throw new NotSupportedException ();
+				return ((SNIP)_list [0]).AssemblyVersion;
+			}
+			set {
+				if (_list.Count > 1)
+					ResetToDefault ();
+				SNIP snip = (SNIP) _list [0];
+				snip.AssemblyVersion = value;
+				_list [0] = snip;
+			}
 		}
+
+		internal void ResetToDefault ()
+		{
+			_list.Clear ();
+			_list.Add (SNIP.CreateDefault ());
+		}
+#else
+		public string Name { 
+			get { return _single.Name; }
+			set { _single.Name = value; }
+		}
+
+		public StrongNamePublicKeyBlob PublicKey { 
+			get { return _single.PublicKey; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				_single.PublicKey = value;
+			}
+		}
+	
+		public Version Version { 
+			get { return _single.AssemblyVersion; }
+			set { _single.AssemblyVersion = value; }
+		}
+#endif
+
+		// Methods
 	
 		public override IPermission Copy () 
 		{
 			if (IsEmpty ())
 				return new StrongNameIdentityPermission (PermissionState.None);
 			else
-				return new StrongNameIdentityPermission (publickey, name, assemblyVersion);
-			// Note: this will throw an ArgumentException if Name is still equals to String.Empty
-			// but MS implementation has the same bug/design issue
+				return new StrongNameIdentityPermission (this);
 		}
 	
 		public override void FromXml (SecurityElement e) 
@@ -101,32 +239,51 @@ namespace System.Security.Permissions {
 			CheckSecurityElement (e, "e", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
-
-			name = e.Attribute ("Name");
-			publickey = StrongNamePublicKeyBlob.FromString (e.Attribute ("PublicKeyBlob"));
-			string v = e.Attribute ("AssemblyVersion");
-			assemblyVersion = (v == null) ? null : new Version (v);
+#if NET_2_0
+			_list.Clear ();
+			if ((e.Children != null) && (e.Children.Count > 0)) {
+				foreach (SecurityElement se in e.Children) {
+					_list.Add (FromSecurityElement (se));
+				}
+			} else {
+				_list.Add (FromSecurityElement (e));
+			}
+#else
+			_single = FromSecurityElement (e);
+#endif
 		}
-	
+
+		private SNIP FromSecurityElement (SecurityElement se)
+		{
+			string name = se.Attribute ("Name");
+			StrongNamePublicKeyBlob publickey = StrongNamePublicKeyBlob.FromString (se.Attribute ("PublicKeyBlob"));
+			string v = se.Attribute ("AssemblyVersion");
+			Version assemblyVersion = (v == null) ? null : new Version (v);
+
+			return new SNIP (publickey, name, assemblyVersion);
+		}
+#if NET_2_0
 		public override IPermission Intersect (IPermission target) 
 		{
+			if (target == null)
+				return null;
 			StrongNameIdentityPermission snip = (target as StrongNameIdentityPermission);
-			if ((snip == null) || IsEmpty ())
+			if (snip == null) 
+				throw new ArgumentException (Locale.GetText ("Wrong permission type."));
+			if (IsEmpty () || snip.IsEmpty ())
 				return null;
-			if (snip.IsEmpty ())
-				return new StrongNameIdentityPermission (PermissionState.None);
-			if (!Match (snip.name))
-				return null;
-
-			string n = ((name.Length < snip.name.Length) ? name : snip.name);
-			if (!assemblyVersion.Equals (snip.assemblyVersion))
-				return null;
-			if (!publickey.Equals (snip.publickey))
+			if (!Match (snip.Name))
 				return null;
 
-			return new StrongNameIdentityPermission (publickey, n, assemblyVersion);
+			string n = ((Name.Length < snip.Name.Length) ? Name : snip.Name);
+			if (!Version.Equals (snip.Version))
+				return null;
+			if (!PublicKey.Equals (snip.PublicKey))
+				return null;
+
+			return new StrongNameIdentityPermission (this.PublicKey, n, this.Version);
 		}
-	
+
 		public override bool IsSubsetOf (IPermission target) 
 		{
 			StrongNameIdentityPermission snip = Cast (target);
@@ -135,30 +292,83 @@ namespace System.Security.Permissions {
 
 			if (IsEmpty ())
 				return true;
+			if (IsUnrestricted ())
+				return snip.IsUnrestricted ();
+			else if (snip.IsUnrestricted ())
+				return true;
 
-			if ((name != null) && (name.Length > 0) && !IsNameSubsetOf (snip.Name))
-				return false;
-			if ((assemblyVersion != null) && !assemblyVersion.Equals (snip.assemblyVersion))
-				return false;
-			// in case PermissionState.None was used in the constructor
-			if (publickey == null)
-				return (snip.publickey == null);
-			else
-				return publickey.Equals (snip.publickey);
+			foreach (SNIP e in _list) {
+				foreach (SNIP t in snip._list) {
+					if (!e.IsSubsetOf (t))
+						return false;
+				}
+			}
+			return true;
 		}
+#else
+		public override IPermission Intersect (IPermission target) 
+		{
+			StrongNameIdentityPermission snip = (target as StrongNameIdentityPermission);
+			if ((snip == null) || IsEmpty ())
+				return null;
+			if (snip.IsEmpty ())
+				return new StrongNameIdentityPermission (PermissionState.None);
+			if (!Match (snip.Name))
+				return null;
+
+			string n = ((Name.Length < snip.Name.Length) ? Name : snip.Name);
+			if (!Version.Equals (snip.Version))
+				return null;
+			if (!PublicKey.Equals (snip.PublicKey))
+				return null;
+
+			return new StrongNameIdentityPermission (this.PublicKey, n, this.Version);
+		}
+
+		public override bool IsSubsetOf (IPermission target) 
+		{
+			StrongNameIdentityPermission snip = Cast (target);
+			if (snip == null)
+				return IsEmpty ();
+			if (IsEmpty ())
+				return true;
+
+			return _single.IsSubsetOf (snip._single);
+		}
+#endif
 	
 		public override SecurityElement ToXml () 
 		{
 			SecurityElement se = Element (version);
-			if (publickey != null)
-				se.AddAttribute ("PublicKeyBlob", publickey.ToString ());
-			if (name != null)
-				se.AddAttribute ("Name", name);
-			if (assemblyVersion != null)
-				se.AddAttribute ("AssemblyVersion", assemblyVersion.ToString ());
+#if NET_2_0
+			if (_list.Count > 1) {
+				foreach (SNIP snip in _list) {
+					SecurityElement child = new SecurityElement ("StrongName");
+					ToSecurityElement (child, snip);
+					se.AddChild (child);
+				}
+			} else if (_list.Count == 1) {
+				SNIP snip = (SNIP)_list [0];
+				if (!IsEmpty (snip))
+					ToSecurityElement (se, snip);
+			}
+#else
+			ToSecurityElement (se, _single);
+#endif
 			return se;
 		}
-	
+
+		private void ToSecurityElement (SecurityElement se, SNIP snip)
+		{
+			if (snip.PublicKey != null)
+				se.AddAttribute ("PublicKeyBlob", snip.PublicKey.ToString ());
+			if (snip.Name != null)
+				se.AddAttribute ("Name", snip.Name);
+			if (snip.AssemblyVersion != null)
+				se.AddAttribute ("AssemblyVersion", snip.AssemblyVersion.ToString ());
+		}
+
+#if NET_2_0
 		public override IPermission Union (IPermission target) 
 		{
 			StrongNameIdentityPermission snip = Cast (target);
@@ -168,46 +378,50 @@ namespace System.Security.Permissions {
 			if (IsEmpty ())
 				return snip.Copy ();
 
-			if (!publickey.Equals (snip.publickey)) {
-#if NET_2_0
-				string msg = Locale.GetText ("Permissions have different public keys.");
-				throw new ArgumentException (msg, "target");
-#else
-				return null;
-#endif
+			StrongNameIdentityPermission union = (StrongNameIdentityPermission) Copy ();
+			foreach (SNIP e in snip._list) {
+				if (!IsEmpty (e) && !Contains (e)) {
+					union._list.Add (e);
+				}
 			}
-
-			string n = name;
-			if ((n == null) || (n.Length == 0)) {
-				n = snip.name;
-			}
-			else if (Match (snip.name)) {
-				n = ((name.Length > snip.name.Length) ? name : snip.name);
-			}
-			else if ((snip.name != null) && (snip.name.Length > 0) && (n != snip.name)) {
-#if NET_2_0
-				string msg = String.Format (Locale.GetText ("Name mismatch: '{0}' versus '{1}'"), n, snip.Name);
-				throw new ArgumentException (msg, "target");
-#else
-				return null;
-#endif
-			}
-
-			Version v = assemblyVersion;
-			if (v == null) {
-				v = snip.assemblyVersion;
-			}
-			else if ((snip.assemblyVersion != null) && (v != snip.assemblyVersion)) {
-#if NET_2_0
-				string msg = String.Format (Locale.GetText ("Version mismatch: '{0}' versus '{1}'"), v, snip.assemblyVersion);
-				throw new ArgumentException (msg, "target");
-#else
-				return null;
-#endif
-			}
-
-			return new StrongNameIdentityPermission (publickey, n, v);
+			return union;
 		}
+#else
+		public override IPermission Union (IPermission target) 
+		{
+			StrongNameIdentityPermission snip = Cast (target);
+			if ((snip == null) || snip.IsEmpty ())
+				return Copy ();
+
+			if (IsEmpty ())
+				return snip.Copy ();
+
+			if (!PublicKey.Equals (snip.PublicKey)) {
+				return null;
+			}
+
+			string n = Name;
+			if ((n == null) || (n.Length == 0)) {
+				n = snip.Name;
+			}
+			else if (Match (snip.Name)) {
+				n = ((Name.Length > snip.Name.Length) ? Name : snip.Name);
+			}
+			else if ((snip.Name != null) && (snip.Name.Length > 0) && (n != snip.Name)) {
+				return null;
+			}
+
+			Version v = Version;
+			if (v == null) {
+				v = snip.Version;
+			}
+			else if ((snip.Version != null) && (v != snip.Version)) {
+				return null;
+			}
+
+			return new StrongNameIdentityPermission (PublicKey, n, v);
+		}
+#endif
 	
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
@@ -217,13 +431,48 @@ namespace System.Security.Permissions {
 
 		// helpers
 
+#if NET_2_0
+		private bool IsUnrestricted ()
+		{
+			return (_state == PermissionState.Unrestricted);
+		}
+
+		private bool Contains (SNIP snip)
+		{
+			foreach (SNIP e in _list) {
+				bool pk = (((e.PublicKey == null) && (snip.PublicKey == null)) ||
+					((e.PublicKey != null) && e.PublicKey.Equals (snip.PublicKey)));
+				bool name = e.IsNameSubsetOf (snip.Name);
+				bool version = (((e.AssemblyVersion == null) && (snip.AssemblyVersion == null)) ||
+					((e.AssemblyVersion != null) && e.AssemblyVersion.Equals (snip.AssemblyVersion)));
+
+				if (pk && name && version)
+					return true;
+			}
+			return false;
+		}
+
+		private bool IsEmpty (SNIP snip)
+		{
+			if (PublicKey != null)
+				return false;
+			if ((Name != null) && (Name.Length > 0))
+				return false;
+			return ((Version == null) || defaultVersion.Equals (Version));
+		}
+
+#endif
 		private bool IsEmpty ()
 		{
-			if (publickey != null)
+#if NET_2_0
+			if (IsUnrestricted () || (_list.Count > 1))
 				return false;
-			if ((name != null) && (name.Length > 0))
+#endif
+			if (PublicKey != null)
 				return false;
-			return ((assemblyVersion == null) || defaultVersion.Equals (assemblyVersion));
+			if ((Name != null) && (Name.Length > 0))
+				return false;
+			return ((Version == null) || defaultVersion.Equals (Version));
 		}
 
 		private StrongNameIdentityPermission Cast (IPermission target)
@@ -239,29 +488,18 @@ namespace System.Security.Permissions {
 			return snip;
 		}
 
-		private bool IsNameSubsetOf (string target) 
-		{
-			int wildcard = name.LastIndexOf ('*');
-			if (wildcard == 0)
-				return true;		// *
-			if (wildcard == -1)
-				wildcard = name.Length;	// exact match
-
-			return (String.Compare (name, 0, target, 0, wildcard, true, CultureInfo.InvariantCulture) == 0);
-		}
-
 		private bool Match (string target) 
 		{
-			if ((name == null) || (target == null))
+			if ((Name == null) || (target == null))
 				return false;
 
-			int wcu = name.LastIndexOf ('*');
+			int wcu = Name.LastIndexOf ('*');
 			int wct = target.LastIndexOf ('*');
 			int length = Int32.MaxValue;
 
 			if ((wcu == -1) && (wct == -1)) {
 				// no wildcard, this is an exact match
-				length = Math.Max (name.Length, target.Length);
+				length = Math.Max (Name.Length, target.Length);
 			}
 			else if (wcu == -1) {
 				// only "target" has a wildcard, use it
@@ -276,7 +514,7 @@ namespace System.Security.Permissions {
 				length = Math.Min (wcu, wct);
 			}
 
-			return (String.Compare (name, 0, target, 0, length, true, CultureInfo.InvariantCulture) == 0);
+			return (String.Compare (Name, 0, target, 0, length, true, CultureInfo.InvariantCulture) == 0);
 		}
 	} 
 }

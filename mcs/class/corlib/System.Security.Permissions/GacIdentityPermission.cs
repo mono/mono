@@ -69,7 +69,7 @@ namespace System.Security.Permissions {
 
 		public override IPermission Union (IPermission target)
 		{
-			GacIdentityPermission gip = Cast (target);
+			Cast (target);
 			return Copy ();
 		}
 

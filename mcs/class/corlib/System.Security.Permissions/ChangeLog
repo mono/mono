@@ -1,3 +1,9 @@
+2005-02-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GacIdentityPermission.cs: Fixed warning.
+	* StrongNameIdentityPermission.cs: Added support for multiple entries
+	for NET_2_0 profile (required for SecurityAction.*DemandChoice).
+
 2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermission.cs: Removed old commented code and a LAMESPEC (as 
