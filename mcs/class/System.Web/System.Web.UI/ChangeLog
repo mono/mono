@@ -1,3 +1,8 @@
+2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: ensure bin directory exists before trying to access
+	it. Fixes bug #65446 (not closed yet due to dependencies).
+
 2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleWebHandlerParser.cs: correctly cache Type instead of the
