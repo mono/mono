@@ -27,8 +27,11 @@
 //
 
 #if NET_2_0
+using System.Runtime.InteropServices;
 namespace System.Runtime.Reliability
 {
+		[Serializable]
+		[ComVisible (false)]
         public enum CER
         {
                 MayFail = 1,

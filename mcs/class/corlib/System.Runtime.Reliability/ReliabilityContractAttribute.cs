@@ -27,8 +27,14 @@
 //
 
 #if NET_2_0
+using System.Runtime.InteropServices;
 namespace System.Runtime.Reliability
 {
+		[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
+			AttributeTargets.Struct | AttributeTargets.Constructor |
+			AttributeTargets.Method | AttributeTargets.Interface, Inherited = false)]
+		[ComVisible (false)]
+		[Obsolete]
         public sealed class ReliabilityContractAttribute : Attribute
         {
                 Consistency consistency;
@@ -46,6 +52,7 @@ namespace System.Runtime.Reliability
 
                 public CER CER {
                         get { return cer; }
+						set { cer = value;}
                 }
 
                 public Consistency ConsistencyGuarantee {

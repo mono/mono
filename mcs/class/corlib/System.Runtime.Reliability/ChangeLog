@@ -1,3 +1,10 @@
+2005-03-04  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* CER.cs:
+	* Consistency.cs:
+	* PrePrepareMethodAttribute.cs:
+	* ReliabilityContractAttribute.cs: Added missing attributes.
+
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CriticialFinalizerObject.cs: Moved to System.Runtime.

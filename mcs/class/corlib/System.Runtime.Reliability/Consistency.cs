@@ -27,8 +27,11 @@
 //
 
 #if NET_2_0
+using System.Runtime.InteropServices;
 namespace System.Runtime.Reliability
 {
+		[ComVisible (false)]
+		[Serializable]
         public enum Consistency
         {
                 MayCorruptAppDomain = 1,
