@@ -1,3 +1,8 @@
+2003-12-08  Atsushi Enomoto  <atsushi@novell.com>
+
+	* Added uri-test-generator.cs, test-uri-list.txt, test-uri-props.txt
+	  and UriTest2.cs. They are test generator files.
+
 2003-12-08  Ravindra  <rkumar@novell.com>
 
 	* UriTest.cs: Added IsUnc tests for local file paths.
