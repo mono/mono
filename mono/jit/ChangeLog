@@ -1,3 +1,8 @@
+2003-02-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (mono_arch_find_jit_info): better way to handle
+	situations where we have no MonoJitInfo
+
 2003-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* trampoline.c (arch_create_jit_trampoline): This function should 
