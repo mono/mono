@@ -146,7 +146,6 @@ namespace System.Runtime.Remoting {
 			}
 		}
 		
-		[MonoTODO]
 		public virtual IEnvoyInfo EnvoyInfo {
 			get {
 				return envoyInfo;
@@ -156,7 +155,6 @@ namespace System.Runtime.Remoting {
 			}
 		}
 		
-		[MonoTODO]
 		public virtual IRemotingTypeInfo TypeInfo {
 			get {
 				return typeInfo;

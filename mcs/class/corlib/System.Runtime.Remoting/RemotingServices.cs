@@ -54,7 +54,7 @@ namespace System.Runtime.Remoting
 		{
 			ReturnMessage result;
 			
-			MonoMethod method = (MonoMethod)reqMsg.MethodBase;
+			MonoMethod method = (MonoMethod) target.GetType().GetMethod(reqMsg.MethodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, (Type[]) reqMsg.MethodSignature, null);
 
 			try {
 				object [] out_args;
@@ -85,13 +85,13 @@ namespace System.Runtime.Remoting
 		public static object Connect (Type classToProxy, string url)
 		{
 			ObjRef objRef = new ObjRef (classToProxy, url, null);
-			return GetRemoteObject(objRef);
+			return GetRemoteObject (objRef, classToProxy);
 		}
 
 		public static object Connect (Type classToProxy, string url, object data)
 		{
 			ObjRef objRef = new ObjRef (classToProxy, url, data);
-			return GetRemoteObject(objRef);
+			return GetRemoteObject (objRef, classToProxy);
 		}
 
 		public static bool Disconnect (MarshalByRefObject obj)
@@ -126,25 +126,27 @@ namespace System.Runtime.Remoting
 
 		public static object Unmarshal (ObjRef objref)
 		{
-			return Unmarshal(objref, false);
+			return Unmarshal(objref, true);
 		}
 
 		public static object Unmarshal (ObjRef objref, bool fRefine)
 		{
 			// FIXME: use type name when fRefine==true
 
+			Type classToProxy = fRefine ? objref.ServerType : typeof (MarshalByRefObject);
+
 			if (objref.IsReferenceToWellKnow)
-				return GetRemoteObject(objref);
+				return GetRemoteObject(objref, classToProxy);
 			else
 			{
-				if (objref.ServerType.IsContextful)
+				if (classToProxy.IsContextful)
 				{
 					// Look for a ProxyAttribute
-					ProxyAttribute att = (ProxyAttribute) Attribute.GetCustomAttribute (objref.ServerType, typeof(ProxyAttribute),true);
+					ProxyAttribute att = (ProxyAttribute) Attribute.GetCustomAttribute (classToProxy, typeof(ProxyAttribute),true);
 					if (att != null)
-						return att.CreateProxy (objref, objref.ServerType, null, null).GetTransparentProxy();
+						return att.CreateProxy (objref, classToProxy, null, null).GetTransparentProxy();
 				}
-				return GetProxyForRemoteObject (objref, fRefine);
+				return GetProxyForRemoteObject (objref, classToProxy);
 			}
 		}
 
@@ -339,7 +341,7 @@ namespace System.Runtime.Remoting
 				return obj.ObjectIdentity;
 		}
 
-		internal static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef, RealProxy proxyToAttach)
+		internal static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef, Type proxyType)
 		{
 			// This method looks for an identity for the given url. 
 			// If an identity is not found, it creates the identity and 
@@ -367,8 +369,11 @@ namespace System.Runtime.Remoting
 				identity = new ClientIdentity (objectUri, objRef);
 				identity.ChannelSink = sink;
 
-				if (proxyToAttach == null) proxyToAttach = new RemotingProxy (objRef.ServerType, identity);
-				identity.ClientProxy = (MarshalByRefObject) proxyToAttach.GetTransparentProxy();
+				if (proxyType != null)
+				{
+					RemotingProxy proxy = new RemotingProxy (proxyType, identity);
+					identity.ClientProxy = (MarshalByRefObject) proxy.GetTransparentProxy();
+				}
 
 				// Registers the identity
 				uri_hash [objRef.URI] = identity;
@@ -435,16 +440,16 @@ namespace System.Runtime.Remoting
 			}
 		}
 
-		internal static object GetProxyForRemoteObject (ObjRef objref, bool fRefine)
+		internal static object GetProxyForRemoteObject (ObjRef objref, Type classToProxy)
 		{
 			ClientActivatedIdentity identity = uri_hash [objref.URI] as ClientActivatedIdentity;
 			if (identity != null) return identity.GetServerObject ();
-			else return GetRemoteObject (objref);
+			else return GetRemoteObject (objref, classToProxy);
 		}
 
-		internal static object GetRemoteObject(ObjRef objRef)
+		internal static object GetRemoteObject(ObjRef objRef, Type proxyType)
 		{
-			ClientIdentity id = GetOrCreateClientIdentity (objRef, null);
+			ClientIdentity id = GetOrCreateClientIdentity (objRef, proxyType);
 			return id.ClientProxy;
 		}
 

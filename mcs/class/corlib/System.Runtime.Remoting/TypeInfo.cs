@@ -19,32 +19,41 @@ namespace System.Runtime.Remoting
 
 		public TypeInfo(Type type)
 		{
-			serverType = type.AssemblyQualifiedName;
-
-			// base class info
-
-			int baseCount = 0;
-			Type baseType = type.BaseType;
-			while (baseType != typeof (MarshalByRefObject) && baseType != typeof(object))
+			if (type.IsInterface)
 			{
-				baseType = baseType.BaseType;
-				baseCount++;
+				serverType = typeof (MarshalByRefObject).AssemblyQualifiedName;
+				serverHierarchy = new string[0];
+				interfacesImplemented = new string[] { type.AssemblyQualifiedName };
 			}
-
-			serverHierarchy = new string[baseCount];
-			baseType = type.BaseType;
-			for (int n=0; n<baseCount; n++) 
+			else
 			{
-				serverHierarchy[n] = baseType.AssemblyQualifiedName;
-				baseType = baseType.BaseType;
+				serverType = type.AssemblyQualifiedName;
+
+				// base class info
+
+				int baseCount = 0;
+				Type baseType = type.BaseType;
+				while (baseType != typeof (MarshalByRefObject) && baseType != typeof(object))
+				{
+					baseType = baseType.BaseType;
+					baseCount++;
+				}
+
+				serverHierarchy = new string[baseCount];
+				baseType = type.BaseType;
+				for (int n=0; n<baseCount; n++) 
+				{
+					serverHierarchy[n] = baseType.AssemblyQualifiedName;
+					baseType = baseType.BaseType;
+				}
+
+				// Interfaces info
+
+				Type[] interfaces = type.GetInterfaces();
+				interfacesImplemented = new string[interfaces.Length];
+				for (int n=0; n<interfaces.Length; n++)
+					interfacesImplemented[n] = interfaces[n].AssemblyQualifiedName;
 			}
-
-			// Interfaces info
-
-			Type[] interfaces = type.GetInterfaces();
-			interfacesImplemented = new string[interfaces.Length];
-			for (int n=0; n<interfaces.Length; n++)
-				interfacesImplemented[n] = interfaces[n].AssemblyQualifiedName;
 		}
 
 		public string TypeName 

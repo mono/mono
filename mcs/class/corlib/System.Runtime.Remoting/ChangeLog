@@ -1,3 +1,10 @@
+2003-03-20  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Identity.cs: Added support for dynamic properties.
+	* ObjRef.cs: Removed some [MonoTODO]
+	* TypeInfo.cs: Added support for interfaces.
+	* RemotingServices.cs: Several fixes to support interfaces in proxies.
+
 2003-03-15  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* RemotingServices.cs: fixes bugs #39380 and #39331.

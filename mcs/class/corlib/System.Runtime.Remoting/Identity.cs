@@ -31,6 +31,9 @@ namespace System.Runtime.Remoting
 
 		protected IMessageSink _envoySink = null;
 
+		DynamicPropertyCollection _clientDynamicProperties;
+		DynamicPropertyCollection _serverDynamicProperties;
+
 		// The ObjRef 
 		protected ObjRef _objRef;
 
@@ -75,6 +78,44 @@ namespace System.Runtime.Remoting
 		public bool IsConnected
 		{
 			get { return _objectUri != null; }
+		}
+
+		public DynamicPropertyCollection ClientDynamicProperties
+		{
+			get { 
+				if (_clientDynamicProperties == null) _clientDynamicProperties = new DynamicPropertyCollection();
+				return _clientDynamicProperties; 
+			}
+		}
+
+		public DynamicPropertyCollection ServerDynamicProperties
+		{
+			get { 
+				if (_serverDynamicProperties == null) _serverDynamicProperties = new DynamicPropertyCollection();
+				return _serverDynamicProperties; 
+			}
+		}
+
+		public bool HasClientDynamicSinks
+		{
+			get { return (_clientDynamicProperties != null && _clientDynamicProperties.HasProperties); }
+		}
+
+		public bool HasServerDynamicSinks
+		{
+			get { return (_serverDynamicProperties != null && _serverDynamicProperties.HasProperties); }
+		}
+
+		public void NotifyClientDynamicSinks  (bool start, IMessage req_msg, bool client_site, bool async)
+		{
+			if (_clientDynamicProperties != null && _clientDynamicProperties.HasProperties) 
+				_clientDynamicProperties.NotifyMessage (start, req_msg, client_site, async);
+		}
+
+		public void NotifyServerDynamicSinks  (bool start, IMessage req_msg, bool client_site, bool async)
+		{
+			if (_serverDynamicProperties != null && _serverDynamicProperties.HasProperties) 
+				_serverDynamicProperties.NotifyMessage (start, req_msg, client_site, async);
 		}
 	}
 
