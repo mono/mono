@@ -1,3 +1,11 @@
+2004-04-14  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* expression.cs (Binary.Emit): treat boolean operator
+	specially. Added emit_jumping_code.
+	* CodeGenerator.cs: Added emit_to_boolean. Added fall_true and
+	fall_false, which will express all boolean expressions and control
+	flow conditions. 
+
 2004-04-02  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Equality.cs: Moved the Emit and Resolve code here.
