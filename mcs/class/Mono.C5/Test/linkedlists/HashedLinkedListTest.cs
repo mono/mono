@@ -955,7 +955,6 @@ namespace nunit.linkedlists.hashed
 			}
 
 
-#if FIXME
 			[Test]
 			public void InsertBefore()
 			{
@@ -973,7 +972,6 @@ namespace nunit.linkedlists.hashed
 				Assert.IsTrue(lst.Check());
 				Assert.IsTrue(IC.eq(lst, 7, 2, 8, 3, 4, 9, 5));
 			}
-#endif
 
 
 			[Test]
@@ -988,7 +986,6 @@ namespace nunit.linkedlists.hashed
 			}
 
 
-#if FIXME
 			[Test]
 			public void InsertAfter()
 			{
@@ -1007,7 +1004,6 @@ namespace nunit.linkedlists.hashed
 				Assert.IsTrue(lst.Check());
 				Assert.IsTrue(IC.eq(lst, 1, 8, 2, 7, 3, 4, 5, 9));
 			}
-#endif
 
 
 			[Test]
