@@ -1,3 +1,8 @@
+Thu Jul 26 13:22:28 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c, dump.c, get.c, main.c: updates to match changes in metadata.
+	Removed dead code.
+
 2001-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c (usage): Print out all the arguments.

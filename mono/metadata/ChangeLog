@@ -1,3 +1,20 @@
+Thu Jul 26 13:03:27 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, cil-coff.h, image.c, image.h, pedump.c, typedef.c:
+	Move metadata_t info from cli_image_info_t to MonoImage, where
+	it's easily accessible. Changed all the uses accordingly.
+	Added the method and class caches to MonoImage.
+	* metadata.c, metadata.h: Changed mono_metadata_decode_blob_size ()
+	and mono_metadata_decode_value () signature to be more consistent
+	with the other parse functions (and simplify code). Taken advantage
+	of zero-length array allocation with GCC. Removed reduntant (and
+	wrong) MonoFieldType struct and use MonoParam instead. Changed
+	mono_metadata_parse_field_type () to use common code for parsing.
+	Added mono_metadata_typedef_from_field () and
+	mono_metadata_typedef_from_method () to lookup a typedef index from a
+	field or method token.
+	Pack the MonoRetType structure more tightly (fits in 8 bytes now).
+
 2001-07-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* metadata.c (mono_metadata_parse_field_type): Implement. 

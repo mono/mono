@@ -1,3 +1,11 @@
+Thu Jul 26 13:17:22 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: updates to match changes in metadata.
+	Fix off by one errors. Implement creation of classes by typeref.
+	Remove custom cache and use the class cache in MonoImage.
+	* cli.h, loader.c: add MonoImage field to MonoMethod. Fill method cache
+	in MonoImage. Updates to match changes in metadata.
+	
 2001-07-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.c (mono_class_create_from_typedef): Take into account

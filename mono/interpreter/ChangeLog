@@ -1,3 +1,12 @@
+Thu Jul 26 13:24:51 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: ves_exec_method () doesn't take a MonoImage arg
+	anymore. Use the method cache in MonoImage. Updates to
+	mache recent changes in metadata. 
+	Fix newobj code to use new metadata features. Call the class
+	constructor after allocationg the object. Implemented load field
+	and store field opcodes (the support functions need to be finished).
+	
 Tue Jul 24 16:51:09 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c, hacks.h: moved a few ugly macros out of the code.
