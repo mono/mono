@@ -1,3 +1,8 @@
+2003-09-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Expression.cs: in NodeTypeTest dont throw an exception if it is
+	an unknown node type (allows for better Pattern debugging).
+
 2003-09-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* DefaultContext.cs: implement sum () and translate ().

@@ -1049,7 +1049,7 @@ namespace System.Xml.XPath
 				case XPathNodeType.Namespace:
 					return "node";
 				default:
-					throw new NotImplementedException ();
+					return "node-type [" + type.ToString () + "]";
 			}
 		}
 		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
