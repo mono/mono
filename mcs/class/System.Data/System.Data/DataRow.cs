@@ -423,7 +423,7 @@ namespace System.Data {
 				throw new DeletedRowInaccessibleException ();
 			if (!HasVersion (DataRowVersion.Proposed)) {
 				proposed = new object[_table.Columns.Count];
-				Array.Copy (current, proposed, _table.Columns.Count);
+				Array.Copy (current, proposed, current.Length);
 			}
 			//TODO: Suspend validation
 			editing = true;
@@ -489,8 +489,7 @@ namespace System.Data {
 				//Calling next method validates UniqueConstraints
 				//and ForeignKeys.
 				_table.Rows.ValidateDataRowInternal(this);
-				
-				Array.Copy (proposed, current, _table.Columns.Count);
+				current = proposed;
 				proposed = null;
 			}
 		}

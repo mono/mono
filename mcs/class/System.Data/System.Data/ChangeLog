@@ -1,3 +1,10 @@
+2003-03-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataRow.cs:
+	(BeginEdit): fixed array bound problem when a column has been added.
+	(EndEdit): just assign proposed to current as proposed is set to null.
+	This also fixes another array boudn problem.
+
 2003-03-21  Alan Tam <Tam@SiuLung.com>
 
 	* DataRow.cs: Fixed problems in accessers, BeginEdit, CancelEdit,
