@@ -18,6 +18,7 @@ System.Xml/XmlNodeListTests.cs
 System.Xml/XmlNodeReaderTests.cs
 System.Xml/XmlNodeTests.cs
 System.Xml/XmlProcessingInstructionTests.cs
+System.Xml/XmlSecureResolverTests.cs
 System.Xml/XmlSignificantWhitespaceTests.cs
 System.Xml/XmlTextReaderTests.cs
 System.Xml/XmlTextTests.cs
@@ -28,6 +29,17 @@ System.Xml/XmlWhiteSpaceTests.cs
 System.Xml/XmlWriterTests.cs
 System.Xml/XsdParticleValidationTests.cs
 System.Xml/XsdValidatingReaderTests.cs
+System.Xml/nist_dom/ITest.cs
+System.Xml/nist_dom/util.cs
+System.Xml/nist_dom/fundamental/Attr/Attr.cs
+System.Xml/nist_dom/fundamental/CharacterData/CharacterData.cs
+System.Xml/nist_dom/fundamental/Comment/Comment.cs
+System.Xml/nist_dom/fundamental/Document/Document.cs
+System.Xml/nist_dom/fundamental/DOMImplementation/DOMImplementation.cs
+System.Xml/nist_dom/fundamental/Element/Element.cs
+System.Xml/nist_dom/fundamental/NamedNodeMap/NamedNodeMap.cs
+System.Xml/nist_dom/fundamental/NodeList/NodeList.cs
+System.Xml/nist_dom/fundamental/Text/Text.cs
 System.Xml.Schema/XmlSchemaTests.cs
 System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Serialization/ComplexDataStructure.cs
@@ -35,6 +47,7 @@ System.Xml.Serialization/DeserializeTests.cs
 System.Xml.Serialization/XmlAttributesTests.cs
 System.Xml.Serialization/XmlReflectionImporterTests.cs
 System.Xml.Serialization/XmlSerializationWriterTests.cs
+System.Xml.Schema/XmlSchemaAssertion.cs
 System.Xml.Schema/XmlSchemaBuiltInDatatypeTests.cs
 System.Xml.Serialization/XmlSerializerTests.cs
 System.Xml.Serialization/XmlSerializerTestClasses.cs
@@ -44,3 +57,5 @@ System.Xml.XPath/XPathNavigatorMatchesTests.cs
 System.Xml.XPath/XPathNavigatorTests.cs
 System.Xml.XPath/XPathNavigatorCommonTests.cs
 System.Xml.Xsl/XslTransformTests.cs
+System.Xml.Xsl/MsxslScriptTests.cs
+

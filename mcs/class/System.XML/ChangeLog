@@ -1,3 +1,9 @@
+2004-03-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml_test.dll.sources :
+	  Added new test files: nist_dom stuff, XmlSecureResolverTests.cs,
+	  XmlSchemaAssertion.cs, MsxslScriptTests.cs.
+
 2004-03-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.Xml_test.dll.sources: Added 
