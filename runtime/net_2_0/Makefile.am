@@ -71,7 +71,8 @@ non_gac_assemblies = \
 corlibdir = $(libdir)/net_2_0
 dist_corlib_DATA = mscorlib.dll
 
-EXTRA_DIST = $(gac_assemblies)
+EXTRA_DIST = $(gac_assemblies) $(non_gac_assemblies)
+CLEANFILES = $(EXTRA_DIST)
 
 #
 # Keep in sync with mono/mono/metadata/Makefile.am
@@ -93,9 +94,9 @@ all-local: $(gac_assemblies)
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
-	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) $(gacutil) /i $(srcdir)/$$i /f /prefix $(DESTDIR)$(libdir)/mono/gac" ; \
+	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) $(gacutil) -i $(srcdir)/$$i /f /root $(DESTDIR)" ; \
 	    MONO_PATH=$(srcdir)/../net_1_1 \
-	      $(mono_runtime) $(gacutil) /i $(srcdir)/$$i /f /prefix $(DESTDIR)$(libdir)/mono/gac || exit 1 ; \
+	      $(mono_runtime) $(gacutil) -i $(srcdir)/$$i /f /root $(DESTDIR) || exit 1 ; \
 	  done; fi
 
 uninstall-local:
