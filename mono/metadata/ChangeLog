@@ -1,3 +1,12 @@
+
+Mon Dec 3 17:02:01 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: init enum types right away and register the
+	token->MonoClass map in mono_class_create_from_typedef ().
+	* verify.h, verify.c: first cut of the verifier.
+	* pedump.c: add --verify switch to verify metadata tables.
+	* tabledefs.h: add some missing enums.
+
 2001-11-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_install_runtime_class_init): impl.

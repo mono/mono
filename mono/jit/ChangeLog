@@ -1,3 +1,8 @@
+
+Mon Dec 3 17:16:36 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: call mono_init() after registering internal calls.
+
 2001-11-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (tree_preallocate_regs): improved register allocation
