@@ -301,7 +301,7 @@ using_alias_directive
 using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
-		current_namespace.Using ((string) $2);
+		current_namespace.Using ((string) $2, lexer.Location);
           }
 	;
 
@@ -398,6 +398,7 @@ namespace_member_declaration
 				"Namespace elements cant be explicitly " +
 			        "declared private or protected in `" + name + "'");
 		}
+		current_namespace.DeclarationFound = true;
 	  }
 	| namespace_declaration
 	;

@@ -1,5 +1,12 @@
 2002-07-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Checked): Set the CheckedState during the resolve
+	process too, as the ConvCast operations track the checked state on
+	the resolve process, and not emit.
+
+	* cs-parser.jay (namespace_member_declaration): Flag that we have
+	found a declaration when we do.  This is used to flag error 1529
+
 	* driver.cs: Report ok when we display the help only.
 
 2002-07-06  Andrew Birkett  <adb@tardis.ed.ac.uk>
