@@ -1,5 +1,10 @@
 2002-11-16  Martin Baulig  <martin@ximian.com>
 
+	* support.cs (InternalParameters): Don't crash if we don't have
+	any fixed parameters.  Fixes #33532.
+
+2002-11-16  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (MemberCache.AddMethods): Use BindingFlags.FlattenHierarchy
 	when looking up static methods to make this work on Windows.
 	Fixes #33773.

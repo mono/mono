@@ -142,43 +142,36 @@ namespace Mono.CSharp {
 			}
 		}
 
+		Parameter GetParameter (int pos)
+		{
+			Parameter [] fixed_pars = Parameters.FixedParameters;
+			if (fixed_pars != null){
+				int len = fixed_pars.Length;
+				if (pos < len)
+					return Parameters.FixedParameters [pos];
+			}
+
+			return Parameters.ArrayParameter;
+		}
+
 		public Type ParameterType (int pos)
 		{
 			if (param_types == null)
 				return null;
 
-			Parameter [] fixed_pars = Parameters.FixedParameters;
-			if (fixed_pars != null){
-				int len = fixed_pars.Length;
-				if (pos < len)
-					return Parameters.FixedParameters [pos].ParameterType;
-				else 
-					return Parameters.ArrayParameter.ParameterType;
-			} else
-				return Parameters.ArrayParameter.ParameterType;
+			return GetParameter (pos).ParameterType;
 		}
+
 
 		public string ParameterName (int pos)
 		{
-			Parameter p;
-
-			if (pos >= Parameters.FixedParameters.Length)
-				p = Parameters.ArrayParameter;
-			else
-				p = Parameters.FixedParameters [pos];
-
-			return p.Name;
+			return GetParameter (pos).Name;
 		}
 
 		public string ParameterDesc (int pos)
 		{
 			string tmp = String.Empty;
-			Parameter p;
-
-			if (pos >= Parameters.FixedParameters.Length)
-				p = Parameters.ArrayParameter;
-			else
-				p = Parameters.FixedParameters [pos];
+			Parameter p = GetParameter (pos);
 
 			//
 			// We need to and for REF/OUT, because if either is set the
@@ -198,17 +191,7 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			Parameter.Modifier mod;
-
-			if (Parameters.FixedParameters == null) {
-				if (Parameters.ArrayParameter != null) 
-					mod = Parameters.ArrayParameter.ModFlags;
-				else
-					mod = Parameter.Modifier.NONE;
-			} else if (pos >= Parameters.FixedParameters.Length)
-				mod = Parameters.ArrayParameter.ModFlags;
-			else
-				mod = Parameters.FixedParameters [pos].ModFlags;
+			Parameter.Modifier mod = GetParameter (pos).ModFlags;
 
 			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)
 				mod |= Parameter.Modifier.ISBYREF;
