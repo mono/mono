@@ -1222,9 +1222,10 @@ interface_member_declaration
           }
 	| interface_event_declaration 
           { 
-		InterfaceEvent e = (InterfaceEvent) $1;
-
-		CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
+		if ($1 != null){
+			InterfaceEvent e = (InterfaceEvent) $1;
+			CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
+		}
 	  }
 	| interface_indexer_declaration
 	  { 
@@ -1301,8 +1302,20 @@ interface_event_declaration
 		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
 					 lexer.Location);
 	  }
+
+	//
+	// Catch a few mistakes
+	//
 	| opt_attributes opt_new EVENT type error {
 		CheckIdentifierToken (yyToken);
+		$$ = null;
+	  }
+	| opt_attributes opt_new EVENT type IDENTIFIER ASSIGN  {
+		Report.Error (68, lexer.Location, "Event declarations on interfaces can not be initialized.");
+		$$ = null;
+	  }
+	| opt_attributes opt_new EVENT type IDENTIFIER event_accessor_declarations {
+		Report.Error (69, lexer.Location, "Event accessors not valid on interfaces");
 		$$ = null;
 	  }
 	;

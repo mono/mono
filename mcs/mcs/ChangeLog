@@ -1,5 +1,8 @@
 2004-01-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay (interface_event_declaration): Catch
+	initialization of events. 
+
 	* expression.cs (Binary.ResolveOperator): My previous bug fix had
 	the error reporting done in the wrong place.  Fix.
 
