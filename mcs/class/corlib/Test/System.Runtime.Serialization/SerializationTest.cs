@@ -43,6 +43,7 @@ namespace MonoTests.System.Runtime.Serialization
 			StreamingContext context = new StreamingContext (StreamingContextStates.Other);
 			SurrogateSelector sel = new SurrogateSelector();
 			sel.AddSurrogate (typeof (Point), context, new PointSurrogate());
+			sel.AddSurrogate (typeof (FalseISerializable), context, new FalseISerializableSurrogate());
 
 			List list = CreateTestData();
 			BinderTester_A bta = CreateBinderTestData();
@@ -61,6 +62,7 @@ namespace MonoTests.System.Runtime.Serialization
 			StreamingContext context = new StreamingContext (StreamingContextStates.Other);
 			SurrogateSelector sel = new SurrogateSelector();
 			sel.AddSurrogate (typeof (Point), context, new PointSurrogate());
+			sel.AddSurrogate (typeof (FalseISerializable), context, new FalseISerializableSurrogate());
 
 			BinaryFormatter f = new BinaryFormatter (sel, context);
 
@@ -371,6 +373,41 @@ namespace MonoTests.System.Runtime.Serialization
 	}
 
 	[Serializable]
+	public class FalseISerializable : ISerializable
+	{
+		public int field;
+		
+		public FalseISerializable (int n)
+		{
+			field = n;
+		}
+		
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			throw new InvalidOperationException ("Serialize:We should not pass here.");
+		}
+		
+		public FalseISerializable (SerializationInfo info, StreamingContext context)
+		{
+			throw new InvalidOperationException ("Deserialize:We should not pass here.");
+		}
+	}
+	
+	public class FalseISerializableSurrogate : ISerializationSurrogate
+	{
+		public void GetObjectData (object obj, SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("field", Convert.ToString (((FalseISerializable)obj).field));
+		}
+		
+		public object SetObjectData (object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+		{
+			((FalseISerializable)obj).field = Convert.ToInt32 (info.GetValue("field", typeof(string)));
+			return obj;
+		}
+	}
+
+	[Serializable]
 	public class SimpleClass
 	{
 		public SimpleClass (char v) { val = v; }
@@ -454,6 +491,8 @@ namespace MonoTests.System.Runtime.Serialization
 		SimpleClass _shared1;
 		SimpleClass _shared2;
 		SimpleClass _shared3;
+		
+		FalseISerializable _falseSerializable;
 
 		public void Init()
 		{
@@ -516,6 +555,8 @@ namespace MonoTests.System.Runtime.Serialization
 			_shared1 = new SimpleClass('A');
 			_shared2 = new SimpleClass('A');
 			_shared3 = _shared1;
+			
+			_falseSerializable = new FalseISerializable (2);
 		}
 
 		public int SampleCall (string str, SomeValues sv, ref int acum)
@@ -610,6 +651,8 @@ namespace MonoTests.System.Runtime.Serialization
 			_shared1.val = 'B';
 			SerializationTest.AssertEquals ("SomeValues._shared2", _shared2.val, 'A');
 			SerializationTest.AssertEquals ("SomeValues._shared3", _shared3.val, 'B');
+			
+			SerializationTest.AssertEquals ("SomeValues._falseSerializable", _falseSerializable.field, 2);
 		}
 	}
 
