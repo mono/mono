@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.4  2004/08/06 23:18:06  pbartok
+// - Fixed some rounding issues with float/int
+//
 // Revision 1.3  2004/07/27 15:53:02  jordi
 // fixes trackbar events, def classname, methods signature
 //
@@ -46,6 +49,8 @@
 // Horizontal and Vertical TrackBar control implementation
 //
 //
+
+// NOT COMPLETE
 
 using System.ComponentModel;
 using System.Drawing;
