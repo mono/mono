@@ -169,6 +169,7 @@ namespace Npgsql {
 					NpgsqlParameter aux = new NpgsqlParameter("param_" + column.ColumnName, row[column]);
 					aux.Direction = ParameterDirection.Input;
 					aux.SourceColumn = column.ColumnName;
+					aux.SourceVersion = DataRowVersion.Original;
 					cmdaux.Parameters.Add(aux);
 				}
 				delete_command = cmdaux;

@@ -17,7 +17,7 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
 		-resource:Npgsql/NpgsqlCommand.bmp,Npgsql.NpgsqlCommand.bmp \
 		-resource:Npgsql/NpgsqlDataAdapter.bmp,Npgsql.NpgsqlDataAdapter.bmp \
 		-resource:Npgsql/NpgsqlState.resources,Npgsql.NpgsqlState.resources \
-		-resource:Npgsql/NpgsqlClosedState.resources,Npgsql./NpgsqlClosedState.resources \
+		-resource:Npgsql/NpgsqlClosedState.resources,Npgsql.NpgsqlClosedState.resources \
 		-resource:Npgsql/NpgsqlParameterCollection.resources,Npgsql.NpgsqlParameterCollection.resources \
 		-resource:Npgsql/NpgsqlParameter.resources,Npgsql.NpgsqlParameter.resources \
 		-resource:Npgsql/NpgsqlCommand.resources,Npgsql.NpgsqlCommand.resources \
