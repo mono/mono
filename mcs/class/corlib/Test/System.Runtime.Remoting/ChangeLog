@@ -1,3 +1,7 @@
+2004-01-08  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* SynchronizationAttributeTest.cs: Improved test.
+	
 2003-11-26  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* SoapServicesTest.cs: New test added.

@@ -126,6 +126,7 @@ namespace MonoTests.System.Runtime.Remoting
 		SincroNotSupported notsup = new SincroNotSupported ();
 		SincroRequiresNewReentrant reentrant = new SincroRequiresNewReentrant ();
 		SincroRequiresNew notreentrant = new SincroRequiresNew ();
+		bool otResult;
 
 		[Test]
 		public void TestSynchronization ()
@@ -134,12 +135,14 @@ namespace MonoTests.System.Runtime.Remoting
 			tr.Start ();
 			Thread.Sleep (200);
 			SecondSyncThread ();
+			
+			tr.Join ();
+			Assert ("Concurrency detected in FirstSyncThread", !otResult);
 		}
 
 		void FirstSyncThread ()
 		{
-			bool concurrent = sincob.CheckConcurrency ();
-			Assert ("Concurrency detected", !concurrent);
+			otResult = sincob.CheckConcurrency ();
 		}
 
 		void SecondSyncThread ()
@@ -204,6 +207,9 @@ namespace MonoTests.System.Runtime.Remoting
 			tr.Start ();
 			Thread.Sleep (200);
 			SecondSyncThread ();
+			
+			tr.Join ();
+			Assert ("Concurrency detected in FirstSyncThread", !otResult);
 		}
 
 		[Test]
@@ -213,12 +219,14 @@ namespace MonoTests.System.Runtime.Remoting
 			tr.Start ();
 			Thread.Sleep (200);
 			SecondNotSyncThread ();
+			
+			tr.Join ();
+			Assert ("Concurrency not detected in FirstReentryThread", otResult);
 		}
 
 		void FirstNotSyncThread ()
 		{
-			bool concurrent = sincob.CheckUnlockedConcurrency ();
-			Assert ("Concurrency not detected", concurrent);
+			otResult = sincob.CheckUnlockedConcurrency ();
 		}
 
 		void SecondNotSyncThread ()
@@ -253,12 +261,14 @@ namespace MonoTests.System.Runtime.Remoting
 			tr.Start ();
 			Thread.Sleep (200);
 			SecondReentryThread ();
+			
+			tr.Join ();
+			Assert ("Concurrency not detected in FirstReentryThread", otResult);
 		}
 
 		void FirstReentryThread ()
 		{
-			bool concurrent = reentrant.CheckCalloutConcurrency (notsup);
-			Assert ("Concurrency not detected", concurrent);
+			otResult = reentrant.CheckCalloutConcurrency (notsup);
 		}
 
 		void SecondReentryThread ()
@@ -274,12 +284,14 @@ namespace MonoTests.System.Runtime.Remoting
 			tr.Start ();
 			Thread.Sleep (200);
 			SecondNoReentryThread ();
+			
+			tr.Join ();
+			Assert ("Concurrency detected in FirstNoReentryThread", !otResult);
 		}
 
 		void FirstNoReentryThread ()
 		{
-			bool concurrent = notreentrant.CheckCalloutConcurrency (notsup);
-			Assert ("Concurrency detected", !concurrent);
+			otResult = notreentrant.CheckCalloutConcurrency (notsup);
 		}
 
 		void SecondNoReentryThread ()
@@ -297,12 +309,14 @@ namespace MonoTests.System.Runtime.Remoting
 			bool concurrent = notreentrant.CheckConcurrency ();
 			Assert ("Concurrency detected", !concurrent);
 			notreentrant.CheckContext (Thread.CurrentContext);
+			
+			tr.Join ();
+			Assert ("Concurrency detected in CallbackThread", !otResult);
 		}
 
 		void CallbackThread ()
 		{
-			bool concurrent = notreentrant.TestCallback ();
-			Assert ("Concurrency detected", !concurrent);
+			otResult = notreentrant.TestCallback ();
 		}
 	}
 }
