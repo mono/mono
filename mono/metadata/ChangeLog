@@ -1,3 +1,7 @@
+2003-05-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): cleanups
+
 2003-05-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gc.c (finalizer_thread): Work around a GC bug.
