@@ -12,11 +12,6 @@
 	(MONO_EMIT_BOUNDS_CHECK_IMM): the same
 	(CEE_LDELEMA): use the above.
 
-2004-04-05  Martin Baulig  <martin@ximian.com>
-
-	* mini-x86.c (mono_arch_setup_jit_tls_data): Reverted Zoltan's
-	last commit to make it build again.
-
 2004-04-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-long32.brg (CEE_CONV_OVF_I8): Sign extend the i4 value to i8.
