@@ -602,10 +602,13 @@ namespace System.Data {
 		[MonoTODO]
 		public void RejectChanges()
 		{
-			foreach(DataRow myRow in _rows)
-			{
-				if (myRow.RowState != DataRowState.Unchanged)
-					myRow.RejectChanges();
+			
+			//foreach(DataRow myRow in _rows)
+			//{
+			for (int i = _rows.Count - 1; i >= 0; i--) {
+				DataRow row = _rows [i];
+				if (row.RowState != DataRowState.Unchanged)
+					_rows [i].RejectChanges ();
 			}
 		}
 

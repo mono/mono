@@ -97,7 +97,7 @@ namespace System.Data {
 								
 			[MonoTODO]
 			set {
-				value = (value == null) ? DBNull.Value : value;		
+				value = (value == null) ? DBNull.Value : value;
 				bool objIsDBNull = value.Equals(DBNull.Value);
 				if (column == null)
 					throw new ArgumentNullException ();
@@ -141,7 +141,7 @@ namespace System.Data {
 				//but it fixes my test. I believe the MS docs only say this
 				//method is implicitly called when calling AcceptChanges()
 
-				// EndEdit (); // is this the right thing to do?
+				//EndEdit (); // is this the right thing to do?
 
 			}
 		}
@@ -655,6 +655,8 @@ namespace System.Data {
 			if (original != null)
 			{
 				Array.Copy (original, current, _table.Columns.Count);
+			       
+				_table.ChangedDataRow (this, DataRowAction.Rollback);
 				CancelEdit ();
 				switch (rowState)
 				{
@@ -667,9 +669,17 @@ namespace System.Data {
 					case DataRowState.Deleted:
 						rowState = DataRowState.Unchanged;
 						break;
-				}
+				} 
 				
-				_table.ChangedDataRow (this, DataRowAction.Rollback);
+			} 			
+			else {
+				// If rows are just loaded via Xml the original values are null.
+				// So in this case we have to remove all columns.
+				// FIXME: I'm not realy sure, does this break something else, but
+				// if so: FIXME ;)
+				
+				if ((rowState & DataRowState.Added) > 0)
+					_table.Rows.Remove (this);
 			}
 		}
 

@@ -35,7 +35,7 @@ namespace System.Data {
 		private string _namespace;
 		private string prefix;
 		private bool caseSensitive;
-		private bool enforceConstraints;
+		private bool enforceConstraints = true;
 		private DataTableCollection tableCollection;
 		// private DataTableRelationCollection relationCollection;
 		private PropertyCollection properties;
@@ -297,9 +297,7 @@ namespace System.Data {
 
 		public void WriteXml(XmlWriter writer, XmlWriteMode mode)
 		{
-			writer.WriteStartDocument();
-			
-						
+
 			WriteStartElement( writer, mode, Namespace, Prefix, DataSetName );
 			
 			if( mode == XmlWriteMode.WriteSchema )
@@ -459,7 +457,7 @@ namespace System.Data {
 			{
 				//sort out the namespacing
 				string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
-								
+
 				WriteStartElement( writer, mode, nspc, table.Prefix, table.TableName );
 				
 				foreach( DataColumn col in atts )
@@ -708,6 +706,8 @@ namespace System.Data {
 		private void DoReadXmlSchema(XmlReader reader)
 		{
 			DataTable dt = new DataTable ();
+
+			// FIXME: add OnXmlSchemaValidation when ready.
 			XmlSchema schema = XmlSchema.Read (reader, null);
 			XmlSchemaObjectCollection SimpleTypes = new XmlSchemaObjectCollection ();
 			XmlSchemaObjectCollection ComplexTypes = new XmlSchemaObjectCollection ();
@@ -734,8 +734,10 @@ namespace System.Data {
 				if ((element = schema.Items [i] as XmlSchemaElement) != null) {
 
 				        // does element have type defined
-					if (!element.SchemaTypeName.IsEmpty)
+					if (!element.SchemaTypeName.IsEmpty) {
+						dataSetName = element.Name;
 						ReadTypeElement (element, ComplexTypes, ref dt);
+					}
 					else if ((complexType = element.SchemaType as XmlSchemaComplexType) != null) {
 						dataSetName = element.Name;
 						ReadColumnsFromSchema (complexType, ComplexTypes, ref dt);
