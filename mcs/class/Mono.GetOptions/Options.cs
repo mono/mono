@@ -29,7 +29,7 @@ namespace Mono.GetOptions
 			return optionParser.DoHelp();
 		}
 
-		[Option("Display version and licensing information", 'V',"version")]
+		[Option("Display version and licensing information", 'V', "version")]
 		public virtual WhatToDoNext DoAbout()
 		{
 			return optionParser.DoAbout();

@@ -242,54 +242,94 @@ namespace Mono.GetOptions
 
 		#region Arguments Processing
 
+		public string[] ExpandResponseFiles(string[] args)
+		{
+			ArrayList result = new ArrayList();
+
+			foreach(string arg in args)
+			{
+				if (arg.StartsWith("@"))
+				{
+					try 
+					{
+						StreamReader tr = new StreamReader(arg.Substring(1));
+						string line;
+						while ((line = tr.ReadLine()) != null)
+						{
+							result.AddRange(line.Split());
+						}
+						tr.Close(); 
+					}
+					catch (FileNotFoundException exception)
+					{
+						Console.WriteLine("Could not find response file: " + arg.Substring(1));
+						continue;
+					}
+					catch (Exception exception)
+					{
+						Console.WriteLine("Error trying to read response file: " + arg.Substring(1));
+						Console.WriteLine(exception.Message);
+						continue;
+					}
+				}
+				else
+					result.Add(arg);
+			}
+
+			return (string[])result.ToArray(typeof(string));
+		}
+
 		public string[] NormalizeArgs(string[] args)
 		{
 			bool ParsingOptions = true;
 			ArrayList result = new ArrayList();
 
-			foreach(string arg in args)
+			foreach(string arg in ExpandResponseFiles(args))
 			{
-				if (ParsingOptions)
+				if (arg.Length > 0)
 				{
-					if (endOptionProcessingWithDoubleDash && (arg == "--"))
+					if (ParsingOptions)
 					{
-						ParsingOptions = false;
+						if (endOptionProcessingWithDoubleDash && (arg == "--"))
+						{
+							ParsingOptions = false;
+							continue;
+						}
+
+						if ((parsingMode & OptionsParsingMode.Windows) > 0)
+						{
+							if ((arg.Length == 2) && (arg[0] == '/')) // Windows options only come in this fashion
+							{
+								result.Add("-" + arg[1]); // translate to Linux style
+								continue;
+							}
+						}
+
+						if ((parsingMode & OptionsParsingMode.Linux) > 0)
+						{
+							if ((arg[0] == '-') && (arg[1] != '-'))
+							{
+								foreach(char c in arg.Substring(1)) // many single-letter options
+									result.Add("-" + c); // expand into individualized options
+								continue;
+							}
+
+							if (arg.StartsWith("--"))
+							{
+								result.AddRange(arg.Split('='));  // put in the same form of one-letter options with a parameter
+								continue;
+							}
+						}
+					}
+					else
+					{
+						argumentsTail.Add(arg);
 						continue;
 					}
 
-					if ((parsingMode & OptionsParsingMode.Windows) > 0)
-					{
-						if ((arg.Length == 2) && (arg[0] == '/')) // Windows options only come in this fashion
-						{
-							result.Add("-" + arg[1]); // translate to Linux style
-							continue;
-						}
-					}
-
-					if ((parsingMode & OptionsParsingMode.Linux) > 0)
-					{
-						if ((arg[0] == '-') && (arg[1] != '-'))
-						{
-							foreach(char c in arg.Substring(1)) // many single-letter options
-								result.Add("-" + c); // expand into individualized options
-							continue;
-						}
-
-						if (arg.StartsWith("--"))
-						{
-							result.AddRange(arg.Split('='));  // put in the same form of one-letter options with a parameter
-							continue;
-						}
-					}
+					// if nothing else matches then it get here
+					result.Add(arg);
 				}
-				else
-				{
-					argumentsTail.Add(arg);
-					continue;
-				}
-
-				// if nothing else matches then it get here
-				result.Add(arg);
 			}
 
 			return (string[])result.ToArray(typeof(string));
