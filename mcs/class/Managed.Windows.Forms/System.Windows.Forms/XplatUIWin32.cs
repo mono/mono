@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.14  2004/08/12 22:59:03  pbartok
+// - Implemented method to get current mouse position
+//
 // Revision 1.13  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -117,6 +120,12 @@ namespace System.Windows.Forms {
 			internal int		top;
 			internal int		right;
 			internal int		bottom;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct POINT {
+			internal int		x;
+			internal int		y;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -546,7 +555,7 @@ namespace System.Windows.Forms {
 			x = rect.left;
 			y = rect.top;
 
-			Win32GetClientRect(handle, out rect);
+			//Win32GetClientRect(handle, out rect);
 			width = rect.right - rect.left;
 			height = rect.bottom - rect.top;
 			return;
@@ -652,6 +661,27 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override void GetCursorPos(IntPtr handle, ref int x, ref int y) {
+			POINT	pt;
+
+			Win32GetCursorPos(out pt);
+
+			if (handle!=IntPtr.Zero) {
+				RECT	rect;
+
+				rect.left=pt.x;
+				rect.top=pt.y;
+				rect.right=pt.x;
+				rect.bottom=pt.y;
+				Win32ScreenToClient(handle, ref rect);
+				pt.x=rect.left;
+				pt.y=rect.top;
+			}
+
+			x=pt.x;
+			y=pt.y;
+		}
+
 		// Santa's little helper
 		static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
@@ -751,6 +781,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="AdjustWindowRectEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32AdjustWindowRectEx(ref RECT lpRect, int dwStyle, bool bMenu, int dwExStyle);
+
+		[DllImport ("user32.dll", EntryPoint="GetCursorPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32GetCursorPos(out POINT lpPoint);
 		#endregion
 
 	}

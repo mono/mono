@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.11  2004/08/12 22:59:03  pbartok
+// - Implemented method to get current mouse position
+//
 // Revision 1.10  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -269,6 +272,11 @@ namespace System.Windows.Forms {
 		internal static bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
 			return driver.CalculateWindowRect(hWnd, ref ClientRect, Style, HasMenu, out WindowRect);
 		}
+
+		internal static void GetCursorPos(IntPtr handle, ref int x, ref int y) {
+			driver.GetCursorPos(handle, ref x, ref y);
+		}
+
 
 		// Santa's little helper
 		internal static void Where() {

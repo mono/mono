@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.11  2004/08/12 22:59:03  pbartok
+// - Implemented method to get current mouse position
+//
 // Revision 1.10  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -152,6 +155,8 @@ namespace System.Windows.Forms {
 		internal abstract bool DispatchMessage(ref MSG msg);
 
 		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);
+
+		internal abstract void GetCursorPos(IntPtr handle, ref int x, ref int y);
 
 		internal abstract void GrabWindow(IntPtr hWnd);
 		internal abstract void ReleaseWindow(IntPtr hWnd);

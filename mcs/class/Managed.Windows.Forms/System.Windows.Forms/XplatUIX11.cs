@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.19 $
+// $Revision: 1.20 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.20  2004/08/12 22:59:03  pbartok
+// - Implemented method to get current mouse position
+//
 // Revision 1.19  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -113,6 +116,7 @@ namespace System.Windows.Forms {
 		private static bool		themes_enabled;
 
 		private static IntPtr		DisplayHandle;		// X11 handle to display
+		private static IntPtr		root_window;		// Handle of the root window for the screen/display
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static int		wm_protocols;		// X Atom
 		private static int		wm_delete_window;	// X Atom
@@ -159,14 +163,15 @@ namespace System.Windows.Forms {
 			ref_count=0;
 
 			// Now regular initialization
-			DisplayHandle=XOpenDisplay(IntPtr.Zero);
-			key_state=Keys.None;
-			mouse_state=MouseButtons.None;
-			mouse_position=Point.Empty;
-			paint_area=new Rectangle(0, 0, 0, 0);
+			DisplayHandle = XOpenDisplay(IntPtr.Zero);
+			key_state = Keys.None;
+			mouse_state = MouseButtons.None;
+			mouse_position = Point.Empty;
+			paint_area = new Rectangle(0, 0, 0, 0);
+			root_window = XRootWindow(DisplayHandle, 0);
 
 			// Create the foster parent
-			FosterParent=XCreateSimpleWindow(DisplayHandle, XRootWindow(DisplayHandle, 0), 0, 0, 1, 1, 4, 0, 0);
+			FosterParent=XCreateSimpleWindow(DisplayHandle, root_window, 0, 0, 1, 1, 4, 0, 0);
 			if (FosterParent==IntPtr.Zero) {
 				Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 			}
@@ -743,6 +748,25 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override void GetCursorPos(IntPtr handle, ref int x, ref int y) {
+			IntPtr	root;
+			IntPtr	child;
+			int	root_x;
+			int	root_y;
+			int	win_x;
+			int	win_y;
+			int	keys_buttons;
+
+			XQueryPointer(DisplayHandle, (handle!=IntPtr.Zero) ? handle : root_window, out root, out child, out root_x, out root_y, out win_x, out win_y, out keys_buttons);
+			if (handle != IntPtr.Zero) {
+				x = win_x;
+				y = win_y;
+			} else {
+				x = root_x;
+				y = root_y;
+			}
+		}
+
 		// Santa's little helper
 		static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
@@ -857,6 +881,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11.so", EntryPoint="XUngrabPointer")]
 		internal extern static int XUngrabPointer(IntPtr display, uint timestamp);
+
+		[DllImport ("libX11.so", EntryPoint="XQueryPointer")]
+		internal extern static bool XQueryPointer(IntPtr display, IntPtr window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
