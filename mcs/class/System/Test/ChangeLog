@@ -1,3 +1,7 @@
+2002-12-23  Nick Drochak  <ndrochak@gol.com>
+
+	* System_test.build: Fix build.  Need to link with System.Xml.dll
+
 2002-12-20 Jonathan Pryor <jonpryor@vt.edu>
 
 	* makefile.gnu: Add System.Xml.dll to list of referenced assemblies

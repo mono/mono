@@ -20,8 +20,9 @@
 				<includes name="NUnitCore_mono.dll"/>
 			</references>
 
-			<arg value="/r:.\System.dll"/>
+			<arg value="/r:..\..\lib\System.dll"/>
 			<arg value="/r:..\..\lib\corlib.dll"/>
+			<arg value="/r:..\..\lib\System.Xml.dll"/>
 			<arg value="/nowarn:1595"/>
 			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
 			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
@@ -36,7 +37,8 @@
 			</references>
 
 			<arg value="/noconfig"/>
-			<arg value="/r:.\System.dll"/>
+			<arg value="/r:..\..\lib\System.dll"/>
+			<arg value="/r:..\..\lib\System.Xml.dll"/>
 		</csc>
 
 	</target>
