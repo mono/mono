@@ -92,8 +92,8 @@ namespace Mono.ILASM {
                 {
                         use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeCustomModified);
-                        conversion_list.Add (klass);
                         conversion_list.Add (modifier);
+                        conversion_list.Add (klass);
                 }
 
                 public void MakePinned ()

@@ -1,3 +1,8 @@
+2003-12-08  Jackson Harper <jackson@ximian.com>
+
+	* ModifiableType.cs: Put modifier and class in the list in the
+	correct order.
+	
 2003-11-18  Jackson Harper <jackson@ximian.com>
 
 	* MethodDef.cs: Add support for .zeroinit. This is just another
