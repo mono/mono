@@ -77,6 +77,13 @@ namespace System.Xml.XPath
 			return m_rgchInput [m_ich++];
 		}
 
+		private int PutBack ()
+		{
+			if (m_ich == 0)
+				throw new Exception ();	// TODO: better description
+			return m_rgchInput [--m_ich];
+		}
+
 		private void SkipWhitespace ()
 		{
 			while (IsWhitespace (Peek ()))
@@ -165,7 +172,8 @@ namespace System.Xml.XPath
 
 		int ParseToken ()
 		{
-			switch (Peek ())
+			int ch = Peek ();
+			switch (ch)
 			{
 				case -1:
 					return Token.EOF;
@@ -186,8 +194,9 @@ namespace System.Xml.XPath
 						GetChar ();
 						return Token.DOT2;
 					}
-					else if (Peek () >= '0' && Peek () <= '9')
+					else if (IsDigit (Peek ()))
 					{
+						PutBack ();
 						return ParseNumber ();
 					}
 					return Token.DOT;
@@ -284,7 +293,7 @@ namespace System.Xml.XPath
 
 				default:
 					{
-						if (IsDigit (Peek ()))
+						if (IsDigit (ch))
 						{
 							return ParseNumber ();
 						}

@@ -137,7 +137,7 @@ namespace System.Xml.XPath
 			if (arg is bool)
 				return ((bool) arg) ? "true" : "false";
 			if (arg is double)
-				return (string) XmlConvert.ToString ((double) arg);	// TODO: spec? convert number to string
+				return ((double) arg).ToString ("R", System.Globalization.NumberFormatInfo.InvariantInfo);
 			if (arg is BaseIterator)
 			{
 				BaseIterator iter = (BaseIterator) arg;

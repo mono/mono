@@ -1,5 +1,10 @@
 2002-09-12  Piers Haken <piersh@friskit.com>
 
+	* Tokenizer.cs: fix parsing numbers that start with '.'
+	* DefaultContext.cs: use MS-compatible formatting of doubles
+
+2002-09-12  Piers Haken <piersh@friskit.com>
+
 	* Iterator.cs: added NullIterator to handle unspecified contexts
 	* XPathNavigator.cs: use NullIterator insted of SelfIterator when context is unspecified.
 	* XPathNodeIterator.cs: change default _count to -1 to prevent recalculations for NullIterators
