@@ -44,6 +44,8 @@ namespace System.Data
 
 	internal class TableMapping
 	{
+		private bool existsInDataSet;
+
 		public DataTable Table;
 		public ArrayList Elements = new ArrayList ();
 		public ArrayList Attributes = new ArrayList ();
@@ -64,6 +66,7 @@ namespace System.Data
 
 		public TableMapping (DataTable dt)
 		{
+			existsInDataSet = true;
 			Table = dt;
 			foreach (DataColumn col in dt.Columns) {
 				switch (col.ColumnMapping) {
@@ -78,6 +81,10 @@ namespace System.Data
 					break;
 				}
 			}
+		}
+
+		public bool ExistsInDataSet {
+			get { return existsInDataSet; }
 		}
 
 		public bool ContainsColumn (string name)
@@ -168,6 +175,8 @@ namespace System.Data
 			}
 
 			foreach (TableMapping map in tables) {
+				if (map.ExistsInDataSet)
+					continue;
 				if (map.PrimaryKey != null)
 					map.Table.Columns.Add (map.PrimaryKey);
 				foreach (DataColumn col in map.Elements)
