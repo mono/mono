@@ -28,7 +28,7 @@ class MonoP {
 		
 		o.Write ("public class {0}", t.Name);
 		
-		Type [] interfaces = (Type []) MemberInfoComparer.Sort (t.GetInterfaces ());
+		Type [] interfaces = (Type []) Comparer.Sort (t.GetInterfaces ());
 		Type parent = t.BaseType;
 		
 		if ((parent != null && parent != typeof (object))|| interfaces.Length != 0) {
@@ -55,7 +55,7 @@ class MonoP {
 		
 		o.WriteLine ();
 		
-		foreach (MethodInfo m in MemberInfoComparer.Sort (t.GetMethods ())) {
+		foreach (MethodInfo m in Comparer.Sort (t.GetMethods ())) {
 			if ((m.Attributes & MethodAttributes.SpecialName) != 0)
 				continue;
 			
@@ -64,8 +64,12 @@ class MonoP {
 		
 		o.WriteLine ();
 		
-		foreach (PropertyInfo pi in MemberInfoComparer.Sort (t.GetProperties ())) {
+		foreach (PropertyInfo pi in Comparer.Sort (t.GetProperties ())) {
 			ParameterInfo [] idxp = pi.GetIndexParameters ();
+			
+			if ((pi.CanRead ? pi.GetGetMethod () : pi.GetSetMethod ()).IsStatic)
+				o.Write ("static ");
+			
 			o.Write (PName (pi.PropertyType));
 			o.Write (" ");
 			
@@ -102,7 +106,7 @@ class MonoP {
 	
 	public static string PPMethod (MethodInfo mi) {
 		
-		return PName (mi.ReturnType) + " " + mi.Name + " (" + PPParams (mi.GetParameters ()) + ");";
+		return (mi.IsStatic ? "static " : "") + PName (mi.ReturnType) + " " + mi.Name + " (" + PPParams (mi.GetParameters ()) + ");";
 	}
 
 	
@@ -151,16 +155,76 @@ class MonoP {
 	}
 }
 
-public class MemberInfoComparer : IComparer  {
-	static MemberInfoComparer Value = new MemberInfoComparer ();
+public delegate int ComparerFunc (object a, object b);
+	
+public class Comparer : IComparer  {
+	ComparerFunc cmp;
+	
+	public Comparer (ComparerFunc f)
+	{
+		this.cmp = f;
+	}
+	
 	public int Compare (object a, object b)
+	{
+		return cmp (a, b);
+	}
+	
+	static int CompareMemberInfo (object a, object b)
 	{
 		return string.Compare (((MemberInfo) a).Name, ((MemberInfo) b).Name);
 	}
 	
+	static Comparer MemberInfoComparer = new Comparer (new ComparerFunc (CompareMemberInfo));
+	
 	public static MemberInfo [] Sort (MemberInfo [] inf)
 	{
-		Array.Sort (inf, Value);
+		Array.Sort (inf, MemberInfoComparer);
+		return inf;
+	}
+	
+	static int CompareMethodBase (object a, object b)
+	{
+		MethodBase aa = (MethodBase) a, bb = (MethodBase) b;
+		
+		if (aa.IsStatic == bb.IsStatic)
+			return CompareMemberInfo (a, b);
+		
+		if (aa.IsStatic)
+			return -1;
+		
+		return 1;
+	}
+	
+	static Comparer MethodBaseComparer = new Comparer (new ComparerFunc (CompareMethodBase));
+	
+	public static MethodBase [] Sort (MethodBase [] inf)
+	{
+		Array.Sort (inf, MethodBaseComparer);
+		return inf;
+	}
+	
+	static int ComparePropertyInfo (object a, object b)
+	{
+		PropertyInfo aa = (PropertyInfo) a, bb = (PropertyInfo) b;
+		
+		bool astatic = (aa.CanRead ? aa.GetGetMethod () : aa.GetSetMethod ()).IsStatic;
+		bool bstatic = (bb.CanRead ? bb.GetGetMethod () : bb.GetSetMethod ()).IsStatic;
+		
+		if (astatic == bstatic)
+			return CompareMemberInfo (a, b);
+		
+		if (astatic)
+			return -1;
+		
+		return 1;
+	}
+	
+	static Comparer PropertyInfoComparer = new Comparer (new ComparerFunc (ComparePropertyInfo));
+	
+	public static PropertyInfo [] Sort (PropertyInfo [] inf)
+	{
+		Array.Sort (inf, PropertyInfoComparer);
 		return inf;
 	}
 }

@@ -1,5 +1,10 @@
 2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* monop.cs: show `static' when it applies. Static members
+	first. new sorting stuff.
+
+2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* monop.cs: sort members
 
 2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
