@@ -1,3 +1,7 @@
+2005-02-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* console-io.c: <curses.h> is needed by term.h on solaris.
+
 2005-02-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* icall.c, class-internals.h, monodiet.c, class.c: Remove
