@@ -58,7 +58,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Site s = new Site ("www.go-mono.com");
 			AssertEquals ("Name", "www.go-mono.com", s.Name);
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">\r\n   <Name>www.go-mono.com</Name>\r\n</System.Security.Policy.Site>\r\n", s.ToString ());
+			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>www.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
 
 			Site s2 = (Site) s.Copy ();
 			AssertEquals ("Copy.Name", s.Name, s2.Name);
@@ -77,7 +77,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Site s = new Site ("*.go-mono.com");
 			AssertEquals ("Name", "*.go-mono.com", s.Name);
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">\r\n   <Name>*.go-mono.com</Name>\r\n</System.Security.Policy.Site>\r\n", s.ToString ());
+			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>*.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
 
 			Site s2 = (Site) s.Copy ();
 			AssertEquals ("Copy.Name", s.Name, s2.Name);
@@ -133,7 +133,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Site s = new Site ("*");
 			AssertEquals ("Name", "*", s.Name);
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">\r\n   <Name>*</Name>\r\n</System.Security.Policy.Site>\r\n", s.ToString ());
+			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>*</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
 
 			Site s2 = (Site) s.Copy ();
 			AssertEquals ("Copy.Name", s.Name, s2.Name);

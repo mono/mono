@@ -305,7 +305,7 @@ namespace System.Security
 		
 		private void ToXml(ref StringBuilder s, int level)
 		{
-			s.Append (' ', level << 2);
+			s.Append (' ', level * 3 );
 			s.Append ("<");
 			s.Append (tag);
 			
@@ -322,7 +322,7 @@ namespace System.Security
 			
 			if ((text == null || text == String.Empty) && 
 			    (children == null || children.Count == 0))
-				s.Append ("/>");
+				s.Append ("/>").Append (Environment.NewLine);
 			else {
 				s.Append (">").Append (text);
 				if (children != null) {

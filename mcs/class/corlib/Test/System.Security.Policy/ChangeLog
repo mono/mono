@@ -1,3 +1,8 @@
+2004-01-25  David Sheldon <dave-mono@earth.li>
+        
+	* PublisherTest.cs, SiteTest.cs: Changed "\r\n" in strings to use
+	Environment.NewLine. 
+
 2004-01-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* UrlTest.cs: New. Unit tests for Url. Site test still fails.
