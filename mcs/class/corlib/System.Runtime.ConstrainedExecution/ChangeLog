@@ -1,0 +1,4 @@
+2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CriticalFinalizerObject.cs: Moved from System.Runtime.Reliability to
+	match Fx 2.0 beta 1.
