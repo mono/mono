@@ -1,4 +1,8 @@
 
+Mon Sep 16 18:49:55 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c, get.c, dump.c: updates for changes in libmetadata.
+
 Fri Sep 13 15:39:41 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: dump public key.
