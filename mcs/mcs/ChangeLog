@@ -1,5 +1,8 @@
 2004-12-30  Duncan Mak  <duncan@ximian.com>
 
+	* typemanager.cs (TypeManager.CheckStructCycles): Don't crash here
+	if field.FieldBuilder is null. Fixes #70758.
+
 	* convert.cs: Fixed some typos and update some of the names.
 	(ImplicitStandardConversionExists):
 	(TryImplicitIntConversion): if target_type is IConvertible,
