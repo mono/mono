@@ -1,5 +1,23 @@
 2004-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpGetWebServiceHandler.cs:
+	* HttpPostWebServiceHandler.cs: removed.
+
+	* HttpSimpleWebServiceHandler.cs: changed ctor parameters and added
+	EnableSession property.
+
+	* WebServiceHandler.cs: added EnableSession virtual property.
+
+	* WebServiceHandlerFactory.cs: added a new handler that implements
+	IRequiresSessionState used for HttpGet and HttpPost.
+	(GetHandler): for HttpGet and HttpPost check if the method requires to
+	have a Session object and use the new SimpleSyncSessionHandler in that
+	case.
+
+	Still missing proper session handler for SOAP requests.
+
+2004-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpSimpleWebServiceHandler.cs:
 	* HttpSoapWebServiceHandler.cs: use the session if the method has
 	EnableSession set.

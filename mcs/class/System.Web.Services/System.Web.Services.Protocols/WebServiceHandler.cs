@@ -46,6 +46,10 @@ namespace System.Web.Services.Protocols
 			set { this.session = value; }
 		}
 
+		public virtual bool EnableSession {
+			get { return false; }
+		}
+		
 		public virtual void ProcessRequest (HttpContext context)
 		{
 		}

@@ -17,10 +17,23 @@ namespace System.Web.Services.Protocols
 	internal class HttpSimpleWebServiceHandler: WebServiceHandler 
 	{
 		HttpSimpleTypeStubInfo _typeInfo;
+		HttpSimpleMethodStubInfo method;
 		
-		public HttpSimpleWebServiceHandler (Type type, string protocolName): base (type)
+		public HttpSimpleWebServiceHandler (HttpSimpleTypeStubInfo typeInfo,
+						    HttpSimpleMethodStubInfo method,
+						    string protocolName) : base (typeInfo.Type)
 		{
-			_typeInfo = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (type, protocolName);
+			this._typeInfo = typeInfo;
+			this.method = method;
+		}
+		
+		public override bool EnableSession {
+			get {
+				if (method == null)
+					return false;
+
+				return method.MethodInfo.EnableSession;
+			}
 		}
 		
 		protected HttpSimpleTypeStubInfo TypeStub
@@ -38,7 +51,6 @@ namespace System.Web.Services.Protocols
 			Exception error = null;
 			try
 			{
-				HttpSimpleMethodStubInfo method = (HttpSimpleMethodStubInfo) _typeInfo.GetMethod (name);
 				if (method == null) throw new InvalidOperationException ("Method " + name + " not defined in service " + ServiceType.Name);
 
 				if (method.MethodInfo.EnableSession)

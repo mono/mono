@@ -96,11 +96,9 @@ System.Web.Services.Protocols/HtmlFormParameterReader.cs
 System.Web.Services.Protocols/HtmlFormParameterWriter.cs
 System.Web.Services.Protocols/HttpGetClientProtocol.cs
 System.Web.Services.Protocols/HttpGetTypeStubInfo.cs
-System.Web.Services.Protocols/HttpGetWebServiceHandler.cs
 System.Web.Services.Protocols/HttpMethodAttribute.cs
 System.Web.Services.Protocols/HttpPostClientProtocol.cs
 System.Web.Services.Protocols/HttpPostTypeStubInfo.cs
-System.Web.Services.Protocols/HttpPostWebServiceHandler.cs
 System.Web.Services.Protocols/HttpServerProtocol.cs
 System.Web.Services.Protocols/HttpSimpleClientProtocol.cs
 System.Web.Services.Protocols/HttpSimpleTypeStubInfo.cs

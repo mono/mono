@@ -14,6 +14,7 @@
 using System.IO;
 using System.Web.Services;
 using System.Web.Services.Configuration;
+using System.Web.SessionState;
 using System.Web.UI;
 using System.Collections.Specialized;
 
@@ -28,6 +29,24 @@ namespace System.Web.Services.Protocols
 		void IHttpHandler.ProcessRequest (HttpContext context)
 		{
 			// Do nothing
+		}
+	}
+	
+	class SimpleSyncSessionHandler : HttpSimpleWebServiceHandler, IHttpHandler, IRequiresSessionState
+	{
+		public SimpleSyncSessionHandler (HttpSimpleTypeStubInfo typeInfo,
+						 HttpSimpleMethodStubInfo method, string protocolName)
+						 : base (typeInfo, method, protocolName)
+		{
+		}
+
+		public override bool IsReusable {
+			get { return base.IsReusable; }
+		}
+
+		public override void ProcessRequest (HttpContext context)
+		{
+			base.ProcessRequest (context);
 		}
 	}
 	
@@ -59,10 +78,22 @@ namespace System.Web.Services.Protocols
 				handler = new HttpSoapWebServiceHandler (type);
 				break;
 			case WSProtocol.HttpPost:
-				handler = new HttpPostWebServiceHandler (type);
-				break;
 			case WSProtocol.HttpGet:
-				handler = new HttpGetWebServiceHandler (type);
+				string proto = protocol.ToString ();
+				TypeStubInfo tinfo = TypeStubManager.GetTypeStub (type, proto);
+				HttpSimpleTypeStubInfo typeInfo = (HttpSimpleTypeStubInfo) tinfo;
+
+				string name = context.Request.PathInfo;
+				if (name.StartsWith ("/"))
+					name = name.Substring (1);
+
+				HttpSimpleMethodStubInfo method = null;
+				method = (HttpSimpleMethodStubInfo) typeInfo.GetMethod (name);
+				if (method != null && method.MethodInfo.EnableSession)
+					handler = new SimpleSyncSessionHandler (typeInfo, method, proto);
+				else
+					handler = new HttpSimpleWebServiceHandler (typeInfo, method, proto);
+
 				break;
 			case WSProtocol.Documentation:
 				handler = new SoapDocumentationHandler (type, context);
