@@ -20,9 +20,10 @@ using QName = System.Xml.XmlQualifiedName;
 namespace Mono.Xml.Xsl.Operations {	
 	public class XslElement : XslCompiledElement {
 		XslAvt name, ns;
-		string calcName, calcNs;
+		string calcName, calcNs, calcPrefix;
 		XmlNamespaceManager nsm;
-		
+		bool isEmptyElement;
+
 		XslOperation value;
 		XmlQualifiedName [] useAttributeSets;
 		
@@ -35,9 +36,10 @@ namespace Mono.Xml.Xsl.Operations {
 			calcName = XslAvt.AttemptPreCalc (ref name);
 			
 			if (calcName != null && ns == null) {
-				QName q = XslNameUtil.FromString (calcName, c.Input);
-				calcName = q.Name;
-				calcNs = q.Namespace;	
+				int colonAt = calcName.IndexOf (':');
+				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
+				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
+				calcNs = c.Input.GetNamespace (calcPrefix);
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
 			
@@ -46,6 +48,8 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets");
 			
+			isEmptyElement = c.Input.IsEmptyElement;
+
 			if (c.Input.MoveToFirstChild ()) {
 				value = c.CompileTemplateContent ();
 				c.Input.MoveToParent ();
@@ -54,26 +58,39 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			string nm, nmsp;
+			string nm, nmsp, localName, prefix;
 			
 			nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
-			
+			prefix = calcPrefix != null ? calcPrefix : String.Empty;
+
 			if (nmsp == null) {
 				QName q = XslNameUtil.FromString (nm, nsm);
-				nm = q.Name;
-				nmsp = q.Namespace;	
-			} else
-				nm = XslNameUtil.LocalNameOf (nm);
+				localName = q.Name;
+				nmsp = q.Namespace;
+			}
+			if (calcPrefix == String.Empty) {
+				XPathNavigator nav = this.InputNode.Clone ();
+				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
+					do {
+						if (nav.Value == nmsp) {
+							prefix = nav.Name;
+							break;
+						}
+					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
+				}
+			}
+
+			p.Out.WriteStartElement (prefix, nm, nmsp);
 			
-			p.Out.WriteStartElement (nm, nmsp);
-			
+			p.TryStylesheetNamespaceOutput ();
 			if (useAttributeSets != null)
 				foreach (XmlQualifiedName s in useAttributeSets)
 					p.ResolveAttributeSet (s).Evaluate (p);
-			
+
 			if (value != null) value.Evaluate (p);
-			p.Out.WriteEndElement ();
+
+			p.Out.WriteFullEndElement ();
 		}
 	}
 }

@@ -59,8 +59,11 @@ namespace Mono.Xml.Xsl.Operations {
 					} while (nav.MoveToNext ());
 					nav.MoveToParent ();
 				}
-				
-				outputter.WriteEndElement ();
+
+				if (nav.IsEmptyElement)
+					outputter.WriteEndElement ();
+				else
+					outputter.WriteFullEndElement ();
 				break;
 				
 			case XPathNodeType.Attribute:

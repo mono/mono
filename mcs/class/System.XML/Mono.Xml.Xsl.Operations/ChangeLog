@@ -1,3 +1,15 @@
+2003-11-02 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslCompiledElement.cs : Added InputNode for namespace-prefix support.
+	* XslAttribute.cs, XslElement.cs, XslLiteralElement.cs :
+	  Correct Prefix support.
+	* XslLiteralElement.cs : Moved xmlns output after attribute sets.
+	* XslCopy.cs : Added use-attribute-sets support for Root XPath type.
+	* XslCopy.cs, XslCopyOf.cs, XslLiteralElement.cs : Support for
+	  IsEmptyElement (XslElement not yet. confirm what OASIS tests expect).
+	* XslCopy.cs, XslElement.cs, XslLiteralElement.cs : 
+	  Support for stylesheet xmlns decls emission.
+
 2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslAttribute.cs, XslElement.cs: Allow dynamically parsed names.

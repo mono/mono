@@ -36,17 +36,25 @@ namespace Mono.Xml.Xsl.Operations {
 			switch (p.CurrentNode.NodeType)
 			{
 			case XPathNodeType.Root:
+				if (p.Out.CanProcessAttributes && useAttributeSets != null)
+					foreach (XmlQualifiedName s in useAttributeSets)
+						p.ResolveAttributeSet (s).Evaluate (p);
+
 				if (children != null) children.Evaluate (p);
 				break;
 			case XPathNodeType.Element:
 				p.Out.WriteStartElement (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
 				
+				p.TryStylesheetNamespaceOutput ();
 				if (useAttributeSets != null)
 					foreach (XmlQualifiedName s in useAttributeSets)
 						p.ResolveAttributeSet (s).Evaluate (p);
 			
 				if (children != null) children.Evaluate (p);
-				p.Out.WriteEndElement ();
+				if (p.CurrentNode.IsEmptyElement)
+					p.Out.WriteEndElement ();
+				else
+					p.Out.WriteFullEndElement ();
 				break;
 			case XPathNodeType.Attribute:
 				p.Out.WriteAttributeString (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, p.CurrentNode.Value);

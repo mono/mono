@@ -21,7 +21,7 @@ using QName = System.Xml.XmlQualifiedName;
 namespace Mono.Xml.Xsl.Operations {
 	public class XslAttribute : XslCompiledElement {
 		XslAvt name, ns;
-		string calcName, calcNs;
+		string calcName, calcNs, calcPrefix;
 		XmlNamespaceManager nsm;
 		
 		XslOperation value;
@@ -36,9 +36,10 @@ namespace Mono.Xml.Xsl.Operations {
 			calcName = XslAvt.AttemptPreCalc (ref name);
 			
 			if (calcName != null && ns == null) {
-				QName q = XslNameUtil.FromString (calcName, c.Input);
-				calcName = q.Name;
-				calcNs = q.Namespace;	
+				int colonAt = calcName.IndexOf (':');
+				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
+				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
+				calcNs = c.Input.GetNamespace (calcPrefix);
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
 			
@@ -53,20 +54,48 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			string nm, nmsp;
+			string nm, nmsp, localName, prefix;
 			
 			nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
-			
-			if (nmsp == null) {
-				QName q = XslNameUtil.FromString (nm, nsm);
-				nm = q.Name;
-				nmsp = q.Namespace;	
-			} else
-				nm = XslNameUtil.LocalNameOf (nm);
+			prefix = calcPrefix != null ? calcPrefix : String.Empty;
+
+			if (nm == "xmlns")
+				// It is an error. We must recover by not emmiting any attributes 
+				// (unless we throw an exception).
+				return;
+
+			int colonAt = nm.IndexOf (':');
+			// local attribute
+			prefix = colonAt < 0 ? String.Empty : nm.Substring (0, colonAt);
+			nm = colonAt < 0 ? nm : nm.Substring (colonAt + 1, nm.Length - colonAt - 1);
+			if (colonAt > 0) {
+				// global attribute
+				if (nmsp == null) {
+					QName q = XslNameUtil.FromString (nm, nsm);
+					nm = q.Name;
+					nmsp = q.Namespace;
+				} else
+					nm = XslNameUtil.LocalNameOf (nm);
+			}
+
+			if (nmsp != String.Empty && prefix == String.Empty) {
+				XPathNavigator nav = this.InputNode.Clone ();
+				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
+					do {
+						if (nav.Value == nmsp) {
+							prefix = nav.Name;
+							break;
+						}
+					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
+				}
+			}
+
+			if (prefix == "xmlns")
+				prefix = String.Empty;	// Should not be allowed.
 
 			if (value == null)
-				p.Out.WriteAttributeString("", nm, nmsp, "");
+				p.Out.WriteAttributeString(prefix, nm, nmsp, "");
 			else {
 				StringWriter sw = new StringWriter ();
 				Outputter outputter = new TextOutputter (sw, true);
@@ -74,7 +103,7 @@ namespace Mono.Xml.Xsl.Operations {
 				value.Evaluate (p);			    
 				p.PopOutput ();
 				outputter.Done ();			        
-				p.Out.WriteAttributeString ("", nm, nmsp, sw.ToString ());			                    			        
+				p.Out.WriteAttributeString (prefix, nm, nmsp, sw.ToString ());			                    			        
 			}						
 		}
 	}

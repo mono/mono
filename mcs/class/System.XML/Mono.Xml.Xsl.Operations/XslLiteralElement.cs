@@ -19,6 +19,7 @@ namespace Mono.Xml.Xsl.Operations {
 	public class XslLiteralElement : XslCompiledElement {
 		XslOperation children;
 		string localname, prefix, nsUri;
+		bool isEmptyElement;
 		ArrayList attrs;
 		XmlQualifiedName [] useAttributeSets;
 		Hashtable nsDecls;
@@ -52,6 +53,7 @@ namespace Mono.Xml.Xsl.Operations {
 			this.useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets", XsltNamespace);
 			this.nsDecls = c.GetNamespacesToCopy ();
 			if (nsDecls.Count == 0) nsDecls = null;
+			this.isEmptyElement = c.Input.IsEmptyElement;
 			
 			if (c.Input.MoveToFirstAttribute ())
 			{
@@ -73,10 +75,6 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			p.Out.WriteStartElement (prefix, localname, nsUri);
 
-			if (nsDecls != null)
-				foreach (DictionaryEntry de in nsDecls)
-					p.Out.WriteNamespaceDecl ((string)de.Key, (string)de.Value);
-			
 			if (useAttributeSets != null)
 				foreach (XmlQualifiedName s in useAttributeSets)
 					p.ResolveAttributeSet (s).Evaluate (p);
@@ -87,8 +85,16 @@ namespace Mono.Xml.Xsl.Operations {
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
 			
+			p.TryStylesheetNamespaceOutput ();
+			if (nsDecls != null)
+				foreach (DictionaryEntry de in nsDecls)
+					p.Out.WriteNamespaceDecl ((string)de.Key, (string)de.Value);
+			
 			if (children != null) children.Evaluate (p);
-			p.Out.WriteEndElement ();
+			if (isEmptyElement)
+				p.Out.WriteEndElement ();
+			else
+				p.Out.WriteFullEndElement ();
 		}
 	}
 }
