@@ -6754,8 +6754,11 @@ namespace Mono.CSharp {
 				return false;
 
 			if (OptAttributes != null) {
-				Attribute indexer_attr = OptAttributes.GetIndexerNameAttribute (ec);
+				Attribute indexer_attr = OptAttributes.Search (TypeManager.indexer_name_type, ec);
 				if (indexer_attr != null) {
+					// Remove the attribute from the list because it is not emitted
+					OptAttributes.Attrs.Remove (indexer_attr);
+
 					ShortName = indexer_attr.GetIndexerAttributeValue (ec);
 
 					if (IsExplicitImpl) {

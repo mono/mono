@@ -314,7 +314,7 @@ namespace Mono.CSharp {
 			if (OptAttributes != null) {
 				EmitContext ec = new EmitContext (ds.Parent, ds, ds.Location,
 								  null, null, ds.ModFlags, false);
-				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
+				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					return cls_attribute.GetClsCompliantAttributeValue (ds);
@@ -1006,7 +1006,7 @@ namespace Mono.CSharp {
 			if (OptAttributes != null) {
 				EmitContext ec = new EmitContext (Parent, this, Location,
 								  null, null, ModFlags, false);
-				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
+				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					if (cls_attribute.GetClsCompliantAttributeValue (this)) {

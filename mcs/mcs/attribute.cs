@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 		/// </summary>
  		Attributes attributes;
 
-		public Attributable(Attributes attrs)
+		public Attributable (Attributes attrs)
 		{
 			attributes = attrs;
 		}
@@ -145,12 +145,18 @@ namespace Mono.CSharp {
 		/// <summary>
                 ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
                 /// </summary>
-		protected virtual Type CheckAttributeType (EmitContext ec, bool complain)
+		protected virtual Type CheckAttributeType (EmitContext ec)
 		{
-			Type t1 = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			string NameAttribute = Name + "Attribute";
+
+			Type t1 = ec.ResolvingTypeTree
+				? ec.DeclSpace.FindType (Location, Name)
+				: RootContext.LookupType (ec.DeclSpace, Name, true, Location);
 
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
-			Type t2 = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
+			Type t2 = ec.ResolvingTypeTree
+				? ec.DeclSpace.FindType (Location, NameAttribute)
+				: RootContext.LookupType (ec.DeclSpace, NameAttribute, true, Location);
 
 			String err0616 = null;
 
@@ -161,13 +167,13 @@ namespace Mono.CSharp {
 			if (t2 != null && ! t2.IsSubclassOf (TypeManager.attribute_type)) {
 				t2 = null;
 				err0616 = (err0616 != null) 
-					? "Neither '" + Name + "' nor '" + Name + "Attribute' is an attribute class"
+					? "Neither '" + Name + "' nor '" + NameAttribute +"' is an attribute class"
 					: "'" + Name + "Attribute': is not an attribute class";
 			}
 
 			if (t1 != null && t2 != null) {
 				Report.Error(1614, Location, "'" + Name + "': is ambiguous; " 
-					     + " use either '@" + Name + "' or '" + Name + "Attribute'");
+					     + " use either '@" + Name + "' or '" + NameAttribute + "'");
 				return null;
 			}
 			if (t1 != null)
@@ -180,17 +186,17 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (complain)
-				Report.Error (246, Location, 
-					      "Could not find attribute '" + Name 
-					      + "' (are you missing a using directive or an assembly reference ?)");
+			Report.Error (246, Location, 
+				      "Could not find attribute '" + Name 
+				      + "' (are you missing a using directive or an assembly reference ?)");
+
 			return null;
 		}
 
-		public Type ResolveType (EmitContext ec, bool complain)
+		public Type ResolveType (EmitContext ec)
 		{
 			if (Type == null)
-				Type = CheckAttributeType (ec, complain);
+				Type = CheckAttributeType (ec);
 			return Type;
 		}
 
@@ -262,7 +268,7 @@ namespace Mono.CSharp {
 			Type oldType = Type;
 			
 			// Sanity check.
-			Type = CheckAttributeType (ec, true);
+			Type = CheckAttributeType (ec);
 
 			if (oldType == null && Type == null)
 				return null;
@@ -1001,7 +1007,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ResolveType (ec, true);
+			ResolveType (ec);
 			if (Type == null)
 				return null;
 			
@@ -1163,12 +1169,12 @@ namespace Mono.CSharp {
 			ns = container.NamespaceEntry;
 		}
 
-		protected override Type CheckAttributeType (EmitContext ec, bool complain)
+		protected override Type CheckAttributeType (EmitContext ec)
 		{
 			NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
 			if (old == null || old.NS == null || old.NS == Namespace.Root) 
 				ec.DeclSpace.NamespaceEntry = ns;
-			return base.CheckAttributeType (ec, complain);
+			return base.CheckAttributeType (ec);
 		}
 	}
 
@@ -1227,18 +1233,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		private Attribute Search (Type t, EmitContext ec, bool complain)
+		public Attribute Search (Type t, EmitContext ec)
 		{
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType (ec, complain) == t)
+				if (a.ResolveType (ec) == t)
 					return a;
 			}
 			return null;
-		}
-
-		public Attribute Search (Type t, EmitContext ec)
-		{
-			return Search (t, ec, true);
 		}
 
 		/// <summary>
@@ -1249,7 +1250,7 @@ namespace Mono.CSharp {
 			ArrayList ar = null;
 
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType (ec, false) == t) {
+				if (a.ResolveType (ec) == t) {
 					if (ar == null)
 						ar = new ArrayList ();
 					ar.Add (a);
@@ -1274,26 +1275,6 @@ namespace Mono.CSharp {
 		{
                         return Search (t, ec) != null;
 		}
-
-		public Attribute GetClsCompliantAttribute (EmitContext ec)
-		{
-			return Search (TypeManager.cls_compliant_attribute_type, ec, false);
-		}
-
-		/// <summary>
-		/// Pulls the IndexerName attribute from an Indexer if it exists.
-		/// </summary>
-		public Attribute GetIndexerNameAttribute (EmitContext ec)
-		{
-			Attribute a = Search (TypeManager.indexer_name_type, ec, false);
-			if (a == null)
-				return null;
-
-			// Remove the attribute from the list because it is not emitted
-			Attrs.Remove (a);
-			return a;
-		}
-
 	}
 
 	/// <summary>
