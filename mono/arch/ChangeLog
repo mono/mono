@@ -1,3 +1,7 @@
+2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* sparc/sparc-codegen.h: Add SPARC64 support.
+
 2004-05-07  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* ppc/ppc-codegen.h: remove GCC-ism in ppc_emit32
