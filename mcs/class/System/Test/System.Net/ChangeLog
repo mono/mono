@@ -1,3 +1,8 @@
+2003-07-16  Peter Williams  <peter@newton.cx>
+
+	* IPAddressTest.cs: #if NET_1_1 for some IPv6 tests that
+	rely on some NET_1_1-only features.
+
 2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
 
 	* IPAddressTest.cs: Added IPv6 addresses tests.

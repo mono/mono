@@ -32,22 +32,13 @@ cmp_flags = /r:$(real_corlib) $(corlib_flags)
 
 # Here, we make all.
 
-ifdef PLATFORM_MAKE_CORLIB_CMP
-build_cmplib = $(cmplib)
-else
-build_cmplib = 
-endif
-
-all-local: $(corlib) $(build_cmplib)
+all-local: $(corlib)
 
 # should we install cmplib? sure!
 
-install-local: $(corlib) $(build_cmplib)
+install-local: $(corlib)
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib
-ifdef PLATFORM_MAKE_CORLIB_CMP
-	$(INSTALL_LIB) $(cmplib) $(DESTDIR)$(prefix)/lib
-endif
 
 clean-local:
 	-rm -f $(corlib) $(cmplib) $(testlib) TestResult.xml \
@@ -97,7 +88,7 @@ $(makefrag): $(response)
 	@echo "$(stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo -e "\ttouch \$$@" >>$@
+	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(makefrag)
@@ -126,7 +117,7 @@ $(cmp_makefrag): $(cmp_response)
 	@echo "$(cmp_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo -e "\ttouch \$$@" >>$@
+	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(cmp_makefrag)
@@ -155,7 +146,7 @@ $(test_makefrag): $(test_response)
 	@echo "$(test_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo -e "\ttouch \$$@" >>$@
+	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(test_makefrag)

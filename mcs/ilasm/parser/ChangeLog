@@ -1,3 +1,7 @@
+2003-07-16  Peter Williams  <peter@newton.cx>
+
+	* .cvsignore: ILParser.cs has been moved.
+
 2003-07-14 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Seperate generic constraints from generic parameters.

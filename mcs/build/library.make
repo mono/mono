@@ -85,7 +85,7 @@ $(makefrag): $(sourcefile)
 	@echo "$(stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo -e "\ttouch \$$@" >>$@
+	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
 	@rm -rf $@.new
 
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
@@ -121,7 +121,7 @@ $(test_makefrag): $(test_response)
 	@echo "$(test_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo -e "\ttouch \$$@" >>$@
+	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(test_makefrag)

@@ -1,3 +1,8 @@
+2003-07-16  Peter Williams  <peter@newton.cx>
+
+	* System.Windows.Forms.dll.sources: Don't build with two
+	AssemblyInfo.cs files.
+
 2003-07-07  Martin Willemoes Hansen <mwh@sysrq.dk>
 
 	* System.Windows.Forms.Design/AnchorEditor.cs

@@ -90,6 +90,12 @@ dist-recursive: dist-local
 
 # We do this manually to not have a make[1]: blah message (That is,
 # instead of using a '%: %-recursive %-local' construct.)
+#
+# Let the makefile override these for special situations (running checks
+# in the toplevel makefile, or a directory that needs to be built before
+# its subdirectories).
+
+ifndef OVERRIDE_BARE_TARGETS
 
 all: all-recursive all-local
 
@@ -100,6 +106,8 @@ test: test-recursive test-local
 run-test: run-test-recursive run-test-local
 
 clean: clean-recursive clean-local
+
+endif
 
 # Can only do this from the top dir
 # ## dist: dist-recursive dist-local

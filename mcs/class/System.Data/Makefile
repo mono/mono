@@ -4,10 +4,10 @@ include ../../build/rules.make
 
 # I have *no idea* why I need to do this.
 
-ifeq ($(PROFILE),bootstrap)
-system = $(topdir)/class/lib/System.dll
-else
+ifeq ($(PROFILE),atomic)
 system = System.dll
+else
+system = $(topdir)/class/lib/System.dll
 endif
 
 LIBRARY = System.Data.dll

@@ -1,3 +1,8 @@
+2003-07-16  Peter Williams  <peter@newton.cx>
+
+	* Makefile (LIB_MCS_FLAGS): Add /r:System.dll here. Why wasn't
+	this necessary with MCS? (csc.exe needs it.)
+
 2002-11-16  Tim Coleman <tim@timcoleman.com>
 	* makefile.gnu:
 		Add MONO_PATH_PREFIX so build doesn't

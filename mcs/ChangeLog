@@ -1,3 +1,58 @@
+2003-07-16  Peter Williams  <peter@newton.cx>
+
+	A whole passel of build system changes. Doc updates:
+	
+	* build/README.makefiles: Doc updates.
+
+	* build/profiles/net_1_0.make: Doc changes.
+
+	* INSTALL.txt: A few more touchups.
+
+	Better defaults:
+	
+	* build/config-default.make (prefix): Default install prefix
+	should be /usr/local.
+
+	* build/profiles/bootstrap.make: This profile ...
+
+	* build/profiles/default.make: ... is now the default.
+
+	* build/profiles/atomic.make: And the default is now this.
+
+	Fixes for pre-build checks:
+	
+	* Makefile: Do the platform and (new) profile checks
+	before the build, which took some infrastructure changes.
+
+	* build/rules.make: Allow a Makefile to specify its own all/install/etc
+	targets.
+
+	* build/profiles/default.make (profile-check): Add a blank
+	target here.
+
+	* build/profiles/atomic.make: Check for a full MCS install to 
+	build against.
+
+	HP/UX fixes with help from Bernie Solomon:
+	
+	* build/config-default.make (ECHO_ESCAPE): HP/UX 'echo'
+        doesn't need a -e parameter to interpret escape codes. Test for
+        that and define a configuration parameter.
+
+        * build/library.make ($(makefrag)): Use $(ECHO_ESCAPE)
+        instead of assuming that 'echo -e' will interpret escape
+        codes.
+
+        * build/executable.make ($(makefrag)): Here too.
+
+	A make distcheck fix:
+
+	* Makefile: Inherit the current prefix so that the build can
+	find the right System.Xml.dll.
+	
+	And Windows build fixes with the invaluable help of Sebastian
+	Pouliot (in various subdirectories).
+	
 2003-07-14  Peter Williams  <peter@newton.cx>
 
 	* build/rules.make (dist-recursive): Fix recursive rules

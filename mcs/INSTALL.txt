@@ -10,15 +10,16 @@ be supplemented by corlib, a CLR assembly to which they are closely
 tied. This package provides the C# sources for corlib as well as some
 additional assemblies and mcs, the Mono C# compiler.
 
-To build this package, you must already have a C# compiler installed.
-Build instructions for *NIX and Microsoft Windows follow.
-
-Building mcs
+Building MCS
 ============
 
-These instructions apply to both Unix and Windows.  You need GNU make
-to build the software (on Windows, you will need for example the
-Cygwin environment setup)
+These instructions apply to both Linux and Windows. To build this
+package, you must already have a C# compiler installed.  This means
+that to build on Linux, you need to get a distribution of the MCS
+binaries; these are called monocharges. See README.building for
+information on where to get them. On Windows, you can just use the
+Microsoft compiler. You also need GNU make to build the software (on
+Windows, you will need for example the Cygwin environment setup).
 
 To build the compiler and class libraries, run:
 
@@ -31,31 +32,65 @@ To install them, run the following:
 
     make install
 
-The default is /usr/local, to change this configuration option type:
+The default prefix is /usr/local. To change this configuration option type:
 
-    echo prefix=/your-prefix > build/config.make
+    echo prefix=/your-prefix >> build/config.make
+
+If you get "corlib out of sync" errors, try
+
+    make PROFILE="atomic"
+
+The difference between the two modes is explained farther down.
+
+Monocharges
+===========
 
 If you are tracking Mono's development, you may sometimes need to share
 the compiled libraries with others, you can do:
 
     make monocharge
 
-Or a light version:
+Or a light version, which contains only the essential libraries and
+results in a much smaller file:
 
     make monocharge-lite
 
-
 Configuration
--------------
+=============
 
 If you want to change the configuration options for the build process,
 place your configuration options in build/config.make
 
-A list of variables that control the build are listed in the
-build/config-default.make
+A list of variables that control the build are listed in the file
+build/config-default.make.
 
-The Build System
-----------------
+Build profiles? What?
+======================
+
+Don't worry about them too much. If you're wondering which to use:
+use the default if you can (that's why it's the default!) and use
+the atomic if you have to.
+
+The default profile uses the C# compiler and class libaries as they
+are built. This lets you build MCS without needing to have already 
+installed it, but can fail if the libraries change significantly.
+(This is the source of the dreaded "corlib out of sync" warning, most
+of the time.)
+
+The atomic profile tries to use the system compiler and preexisting
+MCS libraries. New libaries are built against this constant reference 
+point, so if a newly built library has a binary incompatibility, the
+rest of your build can proceed.
+
+If you want to always use the atomic profile, run this command:
+
+	echo PROFILE=atomic >> build/config.make
+
+More About the Build System
+===========================
+
+More information is found in build/README.*. Here's a quick rundown
+of the features:
 
         * Unified build system for Windows and Linux. Windows is still
 	  fairly untested, but "should work." Unfortunately I don't
@@ -96,4 +131,3 @@ The Build System
 	  targets. They're made possible because 'make install' now
 	  supports DESTDIR a la automake, which I'm sure someone cares
 	  about.
-

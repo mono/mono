@@ -35,7 +35,7 @@ namespace MonoTests.System.Net.Sockets {
 
 			// connect to it from a new socket
 			IPHostEntry hostent = Dns.GetHostByAddress("127.0.0.1");
-			Socket outSock;
+			Socket outSock = null;
 
 			foreach(IPAddress address in hostent.AddressList) {
 				if(address.AddressFamily == AddressFamily.InterNetwork) {

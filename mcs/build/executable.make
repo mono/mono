@@ -54,7 +54,7 @@ $(makefrag): $(sourcefile)
 	@echo "$(stampfile): $(BUILT_SOURCES) \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo -e "\ttouch \$$@" >>$@
+	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
 	@rm -rf $@.new
 
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD

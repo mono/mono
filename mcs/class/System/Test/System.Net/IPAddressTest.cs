@@ -132,11 +132,13 @@ public class IPAddressTest
 		ip = IPAddress.Parse ("::101");
 		Assertion.AssertEquals ("IsLoopback #2", false, IPAddress.IsLoopback (ip));
 
+#if NET_1_1
 		ip = IPAddress.IPv6Loopback;
 		Assertion.AssertEquals ("IsLoopback #3", true, IPAddress.IsLoopback (ip));
 
 		ip = IPAddress.IPv6None;
 		Assertion.AssertEquals ("IsLoopback #7", false, IPAddress.IsLoopback (ip));
+#endif
 
 		ip = IPAddress.Any;
 		Assertion.AssertEquals ("IsLoopback #5", false, IPAddress.IsLoopback (ip));

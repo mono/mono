@@ -15,7 +15,7 @@ DISTFILES = \
 	platforms/linux.make		\
 	platforms/win32.make		\
 	profiles/default.make		\
-	profiles/bootstrap.make		\
+	profiles/atomic.make		\
 	profiles/net_1_0.make
 
 dist-local: dist-default

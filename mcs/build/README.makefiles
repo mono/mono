@@ -23,7 +23,7 @@ A general makefile looks like this:
 ========================================
 thisdir = class/Mono.My.Library
 SUBDIRS =
-include ../../rules.make
+include ../../build/rules.make
 
 all-local:
 	do some stuff
@@ -76,7 +76,8 @@ able to proceed unsupervised and test everything that can be tested in
 such a manner.
 
 	* clean-local removes built files; 'make clean' should leave
-only files that go into a distribution tarball
+only files that go into a distribution tarball. (But it is not necessarily
+true that all files that go into a tarball need to be left after a make clean.)
 
 	* dist-local copies files into the distribution tree, which is
 given by the variable $(distdir). dist-local always depends on the
@@ -91,8 +92,12 @@ target 'dist-default'. See ** 'make dist' below.
 In general, MCS needs to be able to build relying only on the
 existence of a runtime and core libraries (corlib, System,
 System.Xml). So there shouldn't be any checking for libraries or
-whatnot; MCS should be able to build out of the box after only
-'./configure linux' or './configure win32'.
+whatnot; MCS should be able to build out of the box. We try to keep
+platform detection and feature testing (ie, for HP/UX echo) inside
+the makefiles; right now, there's no configuration script, and it'd
+be nice to keep it that way. (I am told that some people build on
+both Windows and Linux in the same tree, which would be impossible to
+do if we cached platform-related configury values.)
 
 That being said, it's very convenient for developers to be able to
 customize their builds to suit their needs. To allow this, the
@@ -100,11 +105,11 @@ Makefile rules are set up to allow people to override pretty much any
 important variable.
 
 Configuration variables are given defaults in `config-default.make';
-`rules.make' optionally includes `$(topdir)/config.make', so you can
-customize your build without CVS trying to commit your modified
+`rules.make' optionally includes `$(topdir)/build/config.make', so you
+can customize your build without CVS trying to commit your modified
 `config-default.make' all the time.  Platform-specific variables are
-defined in `$(topdir)/platform.make', which should be a copy of one of
-the appropriate platform-specific makefiles. (Currently, the only
+defined in `$(topdir)/build/platforms/$(PLATFORM).make', where
+$(PLATFORM) is detected in config-default.make. (Currently, the only
 choices are linux.make and win32.make.)
 
 The best way to learn what the configuration variables are is to read
@@ -216,7 +221,7 @@ carefully it can be extremely useful.
 PROGRAM = myprogram.exe
 LOCAL_MCS_FLAGS = /r:System.Xml.dll
 
-include ../executable.make
+include ../build/executable.make
 ========================================
 
 executable.make builds a program in the current directory. Its name is
@@ -237,7 +242,7 @@ test, set the variable HAS_TEST:
 PROGRAM = myprogram.exe
 LOCAL_MCS_FLAGS = /r:System.Xml.dll
 HAS_TEST = yes
-include ../executable.make
+include ../build/executable.make
 
 test-local: mytester.exe
 
@@ -258,7 +263,7 @@ LOCAL_MCS_FLAGS = /r:System.Xml.dll
 BUILT_SOURCES = parser.cs
 CLEAN_FILES = y.output
 
-include ../executable.make
+include ../build/executable.make
 
 parser.cs: parser.jay
 	$(topdir)/jay/jay $< > $@
@@ -282,7 +287,7 @@ LIBRARY = Mono.MyLib.dll
 LIB_MCS_FLAGS = /unsafe
 TEST_MCS_FLAGS = /r:System.Xml.dll
 
-include ../../library.make
+include ../../build/library.make
 ========================================
 
 Where you library is called $(LIBRARY); it will be put into
@@ -312,7 +317,7 @@ LIBRARY = Mono.MyLib.dll
 LIB_MCS_FLAGS = /unsafe
 NO_TEST = yes
 
-include ../../library.make
+include ../../build/library.make
 ========================================
 
 and feel ashamed. Every good library has a test suite!
@@ -372,7 +377,8 @@ be able to give it any arguments. If you're on a platform which has an
 interpreter or jitter, $(RUNTIME_FLAGS) is included in $(RUNTIME), so
 set that variable.
 
-
+$(TEST_RUNTIME) is the runtime to use when running tests. Right now it's
+just "mono --debug".
 
 
 
@@ -423,7 +429,7 @@ consistently.
 
 The 'dist-default' target will copy the files listed in $(DISTFILES)
 into the distribution directory, as well as Makefile and ChangeLog if
-it exists. This is almost always all that you need, so ideally your
+they exist. This is almost always all that you need, so ideally your
 make dist support should only be:
 
 ========================================
@@ -552,27 +558,65 @@ class/Mono.MyFancyLib/Makefile
 thisdir = class/Mono.MyFancyLib
 SUBDIRS =
 DIST_ONLY_SUBDIRS = MyFancyDemo
-include ../../rules.make
+include ../../build/rules.make
 
 LIBRARY = Mono.MyFancyLib.dll
 LIB_MCS_FLAGS = /r:System.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-include ../../library.make
+include ../../build/library.make
 ========================================
 
 class/Mono.MyFancyLib/MyFancyDemo/Makefile
 ========================================
 thisdir = class/Mono.MyFancyLib/MyFancyDemo
 SUBDIRS =
-include ../../../rules.make
+include ../../../build/rules.make
 
 PROGRAM = FancyDemo.exe
 LOCAL_MCS_FLAGS = /r:gtk-sharp.dll
 
-include ../../../executable.make
+include ../../../build/executable.make
 ========================================
 
+
+
+
+* Special recursion needs? Use OVERRIDE_BARE_TARGETS
+
+By default, rules.make defines the all, install, clean, etc. targets
+to look something like this:
+
+   all: all-recursive all-local
+
+Sometimes that doesn't cut it; say for example you want to check for
+something before doing a lengthy recursive build (see
+$(topdir)/Makefile) or you have a something like this
+
+	class/MyLibrary:
+		Build MyLibrary.dll
+	class/MyLibrary/Test:
+		Build TestMyLibrary.exe
+
+'make clean test' will fail here, because the build will happen in
+the Test subdirectory first, so there will be no MyLibrary.dll to link
+against. (Unless you write a nasty evil relative path rule which is
+strongly discouraged.)
+
+Anyway, to solve this problem you can do
+
+========================================
+OVERRIDE_BARE_TARGETS = yes
+thisdir = class/MyLibrary
+SUBDIRS = Test
+include ../../build/rules.make
+
+# This is normally "all-recursive all-local"
+all: all-local all-recursive
+
+test: test-local test-recursive
+...
+========================================
 
 
 
@@ -584,39 +628,13 @@ The way rules.make does its recursion is very standard; it maps
 {all,install,clean, dist,test} to $@-recursive, which executes that
 rule in each directory in $(SUBDIRS), and then calls $@-local in the
 current directory. So something that gets built in a subdirectory
-cannot rely on something that gets built in its parent directory; so
-far, this hasn't really been a problem, and I hope it won't be. One
-crappy solution would be:
-
-========================================
-thisdir = directory/subdir
-SUBDIRS = 
-include ../../rules.make
-
-all-local: myfoo.exe
-
-myfoo.exe: ../libfoo.dll
-	$(CSCOMPILE) ...
-
-../libfoo.dll:
-	cd .. && $(MAKE) libfoo.dll
-========================================
-
-Alternatively, I think I could add support so that you could do this:
-
-========================================
-thisdir = directory
-SUBDIRS = . subdir          # <-- look at this
-include ../../rules.make
-
-all-local: libfoo.dll
-
-libfoo.dll:
-	$(CSCOMPILE) ...
-========================================
-
-But that would get into some really nasty shell script so I'd rather
-not have to do that.
+cannot rely on something that gets built in its parent directory. If
+this is a problem, see the bit about using OVERRIDE_BARE_TARGETS;
+since the recursive rules do $(MAKE) $* in their subdirectories,
+changing the 'all' target will do the right thing in a recursive
+build. Note that the recursive rule for 'dist' is different; it makes
+dist-recursive in subdirectories, so you at least have to define that
+rule, even if you use OVERRIDE_BARE_TARGETS.
 
 Note that even a directory that doesn't, for example, have any tests
 must still define test-local; otherwise 'make test' run from the
@@ -627,7 +645,7 @@ toplevel directory will break.
 
 
 
-** Flags
+** Flags for Tools
 
 We want to make it so that the user can specify certain flags to
 always be given to a tool, so there's a general way of implementing
@@ -639,9 +657,14 @@ FLAGS variables:
 	* $(LOCAL_foo_FLAGS) is set in a specific Makefile to
 	  provide necessary values.
 
-	* $(USE_foo_FLAGS) is defined to be the combination of
-	  $(LOCAL_foo_FLAGS) and $(foo_FLAGS), and it's what is 
-	  actually passed to $(foo).
+	* $(PLATFORM_foo_FLAGS) is set in the platform configuration
+	  to provide platform-specific values.
+
+	* $(PROFILE_foo_FLAGS) is set in the profile configuration
+	  to provide profile-specific values.
+
+	* $(USE_foo_FLAGS) is defined to be the combination of all of
+	  the above, and it's what is actually passed to $(foo).
 
 $(MCS_FLAGS) and $(CFLAGS) follow this model. If you end up finding
 that another tool is used commonly (hm, jay...), please follow this form.
@@ -666,12 +689,20 @@ If you're writing shell script code as part of a make rule, remember
 that Windows has command-line length limits. So something like
 
 ========================================
-for f in $(all_the_sources_to_corlib) ; do ....
+mytool $(all_the_sources_to_corlib)
 ========================================
 
-Is probably going to cause problems. Other than that, you can rely on
-fairly advanced (ie, GNU) behaviors from the standard shell utilities,
-since both Cygwin and Linux will be using them.
+Is probably going to cause problems. As I understand it, 
+
+========================================
+for f in  $(all_the_sources_to_corlib) ; do ...
+========================================
+
+is ok, since the shell itself doesn't have those limitations. Other
+than that, you should still try to write fairly portable shell
+script. Linux and Cygwin both use the GNU utilities, but there's at
+least one hardy soul trying to build Mono on HP/UX, and no doubt there
+will be ports to more Unices as time goes on.
 
 
 
@@ -680,8 +711,17 @@ since both Cygwin and Linux will be using them.
 
 ** Misc
 
-$(LIBRARY_FLAGS) would be a good place to add /d:DOT_NET_1_1 or whatever
-it is.
+We still don't use /d:NET_1_1 ; it causes some build problems right
+now.
+
+There's a hack in class/System.Data/Makefile to work around a very
+strange crash in the runtime with some custom attribute stuff. It'd be
+nice to fix it.
+
+Also, there's a /lib:$(prefix)/lib in the System.dll Makefile, which
+is for some reason necessary if System.Xml.dll hasn't been built yet.
+(Well, it's necessary because of the /r:System.Xml.dll, but that
+should be in the search path, it seems.)
 
 A lot of the weird targets in the old makefiles have been dropped; I
 have a feeling that a lot of them are archaic and not needed anymore.

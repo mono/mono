@@ -15,12 +15,21 @@ CFLAGS = -g -O2
 INSTALL = /usr/bin/install
 RUNTIME = mono $(RUNTIME_FLAGS)
 TEST_RUNTIME=MONO_PATH="$(topdir)/class/lib:.:$$MONO_PATH" $(RUNTIME) --debug
-prefix = /usr
+prefix = /usr/local
 
 # In case you want to add MCS_FLAGS, this lets you not have to
 # keep track of the default value
 
 DEFAULT_MCS_FLAGS := $(MCS_FLAGS)
+
+# Not all echos are alike. HP/UX doesn't need a -e command.
+# Test for this here
+
+ifeq ($(shell echo -e foo),foo)
+ECHO_ESCAPE=echo -e
+else
+ECHO_ESCAPE=echo
+endif
 
 # You shouldn't need to set these but might on a 
 # weird platform.

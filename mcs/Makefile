@@ -1,27 +1,24 @@
 thisdir := .
 SUBDIRS := build jay mcs class mbas nunit20 monoresgen ilasm tools tests errors docs
+OVERRIDE_BARE_TARGETS = hells yeah
 include build/rules.make
 
-all-local: platform-check
+# Define these ourselves to that the platform checks come first
 
-install-local: platform-check
+all: platform-check profile-check all-recursive #all-local
 
-test-local: platform-check
+install: platform-check profile-check install-recursive #install-local
 
-clean-local:
+test: platform-check profile-check test-recursive #test-local
 
-dist-local:
+run-test: run-test-recursive #run-test-local
+
+clean: clean-recursive #clean-local
 
 # fun specialty targets
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test
-
-bootstrap:
-	$(MAKE) all MCS='$$(INTERNAL_MCS)'
-
-unbootstrap:
-	$(MAKE) all MCS='$$(BOOTSTRAP_MCS)'
 
 # Disting. We need to override $(distdir) here.
 
@@ -54,7 +51,9 @@ dist-pre:
 dist-post:
 	tar cvzf $(package).tar.gz $(package)
 
-dist-tarball: dist-pre dist-default dist-recursive dist-post
+dist-local: dist-default
+
+dist-tarball: dist-pre dist-recursive dist-post
 
 dist: dist-tarball
 	rm -rf $(package)
@@ -62,6 +61,9 @@ dist: dist-tarball
 # the egrep -v is kind of a hack (to get rid of the makefrags)
 # but otherwise we have to make dist then make clean which
 # is sort of not kosher. And it breaks with DIST_ONLY_SUBDIRS.
+#
+# We need to set prefix on make so class/System/Makefile can find
+# the installed System.Xml to build properly
 
 distcheck:
 	rm -rf InstallTest Distcheck-MCS ; \
@@ -70,7 +72,7 @@ distcheck:
 	$(MAKE) dist-tarball || exit 1 ; \
 	mv $(package) Distcheck-MCS ; \
 	(cd Distcheck-MCS && \
-	    make && make test && make install DESTDIR="$$destdir" && \
+	    make prefix=$(prefix) && make test && make install DESTDIR="$$destdir" && \
 	    make clean && make dist || exit 1) || exit 1 ; \
 	mv Distcheck-MCS $(package) ; \
 	tar tzf $(package)/$(package).tar.gz |sed -e 's,/$$,,' |sort >distdist.list ; \
