@@ -1,3 +1,9 @@
+2004-01-13  Ravindra  <rkumar@novell.com>
+
+	* Matrix.cs: Made the Matrix(IntPtr) constructor internal.
+	Because default access is private, that makes it unusable
+	by other classes.
+
 2004-01-10  Ravindra  <rkumar@novell.com>
 
 	* All Enums: Made serializable.

@@ -20,7 +20,7 @@ namespace System.Drawing.Drawing2D
                 internal IntPtr nativeMatrix;
                 
                 // constructors
-                Matrix (IntPtr ptr)
+                internal Matrix (IntPtr ptr)
                 {
                         nativeMatrix = ptr;
                 }
