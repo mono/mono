@@ -1,3 +1,8 @@
+2002-04-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_vtable): use domain mempool to allocate vtable
+	(mono_class_proxy_vtable): use domain mempool
+
 Mon Apr 8 17:17:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.h, appdomain.c: split initialization that requires the
