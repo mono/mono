@@ -42,14 +42,19 @@ namespace System.Data.Common {
 #endif
 
 		protected DBDataPermission (PermissionState state) 
-			: this (state, false)
+			: this (state, false, false)
 		{
 		}
 
 #if NET_1_2
 		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
 #endif
-		public DBDataPermission (PermissionState state, bool allowBlankPassword) 
+		public DBDataPermission (PermissionState state, bool allowBlankPassword)
+			: this (state, allowBlankPassword, true)
+		{
+		}
+
+		DBDataPermission (PermissionState state, bool allowBlankPassword, bool dummyArg)
 		{
 			this.state = state;
 			this.allowBlankPassword = allowBlankPassword;

@@ -1,3 +1,8 @@
+2004-01-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbDataPermission.cs : .ctor(PermissionState state) should not call
+	  obsolete .ctor(state, allowBlankPassword). csc reports an error.
+
 2003-12-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DbDataAdapter.cs: handle MissingShemaAction.AddWithKey, call
