@@ -7,10 +7,7 @@
 //   Duncan Mak (duncan@ximian.com)
 //   Ravindra (rkumar@novell.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
-// (C) Novell, Inc.  http://www.novell.com
-//
-
+// Copyright (C) Ximian, Inc.  http://www.ximian.com
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -38,9 +35,10 @@ using System;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
-namespace System.Drawing {
-
-	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable {
+namespace System.Drawing
+{
+	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable
+	{
 		internal IntPtr nativeObject;
 		internal bool isModifiable = true;
 		internal Brush brush;

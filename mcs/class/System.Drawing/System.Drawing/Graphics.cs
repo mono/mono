@@ -1,14 +1,12 @@
 //
 // System.Drawing.Graphics.cs
 //
-// (C) 2003 Ximian, Inc.  http://www.ximian.com
-//
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
 //      Alexandre Pigolkine(pigolkine@gmx.de)
-//		Jordi Mas i Hernandez (jordi@ximian.com)
+//	Jordi Mas i Hernandez (jordi@ximian.com)
 //
-
+// Copyright (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //

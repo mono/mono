@@ -66,12 +66,12 @@ namespace System.Drawing
 			nativeStrFmt = native;
 		}
 		
-		~StringFormat()
+		~StringFormat ()
 		{	
-			Dispose ();
+			Dispose (false);
 		}
 		
-		public void Dispose()
+		public void Dispose ()
 		{	
 			Dispose (true);
 			System.GC.SuppressFinalize (this);
@@ -79,12 +79,13 @@ namespace System.Drawing
 
 		void Dispose (bool disposing)
 		{
-			if (disposing) {
+			if (nativeStrFmt != IntPtr.Zero) {
 				lock (this)
 				{
 					Status status = GDIPlus.GdipDeleteStringFormat (nativeStrFmt);
 					GDIPlus.CheckStatus (status);
 				}
+				nativeStrFmt = IntPtr.Zero;
 			}
 		}
 

@@ -7,10 +7,6 @@
 //	Sanjay Gupta (gsanjay@novell.com)
 //	Ravindra (rkumar@novell.com)
 //
-// Copyright (C) 2004 Novell, Inc. http://www.novell.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
