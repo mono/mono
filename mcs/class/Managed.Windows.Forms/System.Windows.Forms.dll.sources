@@ -159,6 +159,12 @@ System.Windows.Forms/StatusBarPanelClickEventArgs.cs
 System.Windows.Forms/StatusBarPanelClickEventHandler.cs
 System.Windows.Forms/StatusBarPanel.cs
 System.Windows.Forms/StatusBarPanelStyle.cs
+System.Windows.Forms/TabAlignment.cs
+System.Windows.Forms/TabAppearance.cs
+System.Windows.Forms/TabControl.cs
+System.Windows.Forms/TabDrawMode.cs
+System.Windows.Forms/TabPage.cs
+System.Windows.Forms/TabSizeMode.cs
 System.Windows.Forms/Theme.cs
 System.Windows.Forms/ThemeEngine.cs
 System.Windows.Forms/ThemeGtk.cs
