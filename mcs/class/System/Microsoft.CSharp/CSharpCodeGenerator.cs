@@ -66,7 +66,7 @@ namespace Mono.CSharp
 
 				OutputType( createType );
 				
-				output.WriteLine( " {" );
+				output.WriteLine( "[] {" );
 				++Indent;
 				OutputExpressionList( initializers, true );
 				--Indent;
@@ -499,6 +499,9 @@ namespace Mono.CSharp
 			if (method.CustomAttributes.Count > 0)
 				OutputAttributeDeclarations( method.CustomAttributes );
 
+			if (method.ReturnTypeCustomAttributes.Count > 0)
+				OutputAttributeDeclarations( method.ReturnTypeCustomAttributes );
+
 			MemberAttributes attributes = method.Attributes;
 
 			if (method.PrivateImplementationType == null)
@@ -721,6 +724,9 @@ namespace Mono.CSharp
 		protected override void GenerateAttributeDeclarationsStart( CodeAttributeDeclarationCollection attributes )
 		{
 			Output.Write( '[' );
+			CodeMemberMethod met = CurrentMember as CodeMemberMethod;
+			if (met != null && met.ReturnTypeCustomAttributes == attributes)
+				Output.Write ("return: ");
 		}
 		
 		protected override void GenerateAttributeDeclarationsEnd( CodeAttributeDeclarationCollection attributes )

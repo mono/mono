@@ -1,3 +1,8 @@
+2003-09-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* CSharpCodeGenerator.cs: Fixed generation of array construction with initializers.
+	  Render return type custom attributes.
+
 2003-08-15  Jaroslaw Kowalski <jarek@atm.com.pl>
 
 	* CSharpCodeGenerator.cs:
@@ -141,5 +146,3 @@
 
 	* CSharpCodeGenerator.cs: C# Code Generator. Not fully complete
 	but doing fairly well.
-
-
