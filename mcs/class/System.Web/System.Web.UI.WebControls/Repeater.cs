@@ -227,22 +227,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public override void DataBind()
+		public override void DataBind ()
 		{
-			OnDataBinding(EventArgs.Empty);
+			OnDataBinding (EventArgs.Empty);
 		}
 
 		protected override void CreateChildControls()
 		{
-			Controls.Clear();
-			if(ViewState[ITEMCOUNT] != null)
-			{
-				CreateControlHierarchy(false);
-			} else
-			{
-				itemsArrayList = new ArrayList();
+			Controls.Clear ();
+			if (ViewState[ITEMCOUNT] != null) {
+				CreateControlHierarchy (false);
+			} else {
+				itemsArrayList = new ArrayList ();
+				ClearChildViewState ();
 			}
-			ClearChildViewState();
 		}
 
 		private RepeaterItem CreateItem (int itemIndex,
@@ -293,20 +291,20 @@ namespace System.Web.UI.WebControls
 
 		protected virtual void CreateControlHierarchy (bool useDataSource)
 		{
-			ArrayList itemList = new ArrayList ();
-			items = new RepeaterItemCollection (itemList);
-			IEnumerable ds = null;
-			if (useDataSource)
-				ds = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
-
-			if (!useDataSource) {
-				int itemCount  = (int) ViewState [ITEMCOUNT];
-				if (itemCount != -1) 
-					ds = new ArrayList (itemCount);
+			if (itemsArrayList != null) {
+				itemsArrayList.Clear ();
+			} else {
+				itemsArrayList = new ArrayList ();
 			}
 
-			if (ds == null)
-				return;
+			IEnumerable ds = null;
+			if (useDataSource) {
+				ds = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+			} else {
+				int itemCount  = (int) ViewState [ITEMCOUNT];
+				if (itemCount != -1)
+					ds = new DataSourceInternal (itemCount);
+			}
 
 			if (headerTemplate != null)
 				CreateItem (-1, ListItemType.Header, useDataSource, null);
@@ -323,15 +321,18 @@ namespace System.Web.UI.WebControls
 					lType = ListItemType.AlternatingItem;
 				else
 					lType = ListItemType.Item;
-					
+
 				repeaterItem = CreateItem (index, lType, useDataSource, item);
-				itemList.Add (repeaterItem);
+				itemsArrayList.Add (repeaterItem);
 				index++;
 				even = !even;
 			}
 
 			if (footerTemplate != null)
 				CreateItem (-1, ListItemType.Footer, useDataSource, null);
+
+			if (useDataSource)
+				ViewState [ITEMCOUNT] = (ds == null) ? -1 : index;
 		}
 
 		protected override bool OnBubbleEvent(object sender, EventArgs e)

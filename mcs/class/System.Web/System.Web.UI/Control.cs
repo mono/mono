@@ -404,16 +404,17 @@ namespace System.Web.UI
 			WebTrace.WriteLine ("End");
 			WebTrace.PopContext ();
                 }
+
                 protected void BuildProfileTree(string parentId, bool calcViewState)
                 {
                         //TODO
                 }
-                protected void ClearChildViewState()
+
+                protected void ClearChildViewState ()
                 {
-                        //TODO
-                        //Not quite sure about this. an example clears children then calls this, so I think
-                        //view state is local to the current object, not children.
+			_viewState = null;
                 }
+
                 protected virtual void CreateChildControls() {} //DIT
                 protected virtual ControlCollection CreateControlCollection() //DIT
                 {

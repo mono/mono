@@ -1,5 +1,10 @@
 2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Repeater.cs: fixed bug #48807. It needed to use a DummyDataSource and 
+	ClearViewState only called when no items.
+
+2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* RadioButtonList.cs: fix for bug #48874 by Yaron Shkop.
 
 2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>

@@ -1,3 +1,7 @@
+2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: implemented ClearChildViewState ().
+
 2003-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: store unique IDs for controls requiring postback. Fixes bug
