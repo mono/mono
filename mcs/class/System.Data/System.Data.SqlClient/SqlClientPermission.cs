@@ -30,7 +30,11 @@ namespace System.Data.SqlClient {
 
 		 [Obsolete ("Use SqlClientPermission(PermissionState.None)", true)]
 		public SqlClientPermission ()
+#if NET_2_0
+			: this (PermissionState.None)
+#else
 //			: this (PermissionState.None, false)
+#endif
 		{
 		}
 
@@ -41,6 +45,9 @@ namespace System.Data.SqlClient {
 
 		[Obsolete ("Use SqlClientPermission(PermissionState.None)", true)]
 		public SqlClientPermission (PermissionState state, bool allowBlankPassword) 
+#if NET_2_0
+			: this (state)
+#endif
 		{
 			AllowBlankPassword = allowBlankPassword;
 		}

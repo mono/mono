@@ -30,7 +30,11 @@ namespace System.Data.Common {
 		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
 #endif
 		protected DBDataPermission () 
+#if NET_2_0
+			: this (PermissionState.None)
+#else
 			: this (PermissionState.None, false)
+#endif
 		{
 		}
 
