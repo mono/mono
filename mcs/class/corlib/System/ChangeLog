@@ -1,3 +1,8 @@
+2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Convert.cs: Fixed the convertion of negative integers (byte, short, 
+	int and long) into string in a specific base (2, 8, 10 or 16).
+
 2004-06-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Math.cs: Fixed IEEERemainder to return -0 (0x8000000000000000) when

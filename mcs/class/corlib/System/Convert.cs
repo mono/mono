@@ -1662,10 +1662,23 @@ namespace System {
 
 		public static string ToString (byte value, int toBase)
 		{
-			if (NotValidBase (toBase))
-				throw new ArgumentException ("toBase is not valid.");
+			if (value == 0)
+				return "0";
+			if (toBase == 10)
+				return value.ToString ();
 			
-			return ConvertToBase ((int) value, toBase);
+			byte[] val = BitConverter.GetBytes (value);
+
+			switch (toBase) {
+			case 2:
+				return ConvertToBase2 (val);
+			case 8:
+				return ConvertToBase8 (val);
+			case 16:
+				return ConvertToBase16 (val);
+			default:
+				throw new ArgumentException (Locale.GetText ("toBase is not valid."));
+			}
 		}
 
 		public static string ToString (char value) 
@@ -1725,10 +1738,23 @@ namespace System {
 
 		public static string ToString (int value, int toBase)
 		{
-			if (NotValidBase (toBase))
-				throw new ArgumentException ("toBase is not valid.");
-		
-			return ConvertToBase ((int) value, toBase);
+			if (value == 0)
+				return "0";
+			if (toBase == 10)
+				return value.ToString ();
+			
+			byte[] val = BitConverter.GetBytes (value);
+
+			switch (toBase) {
+			case 2:
+				return ConvertToBase2 (val);
+			case 8:
+				return ConvertToBase8 (val);
+			case 16:
+				return ConvertToBase16 (val);
+			default:
+				throw new ArgumentException (Locale.GetText ("toBase is not valid."));
+			}
 		}
 
 		public static string ToString (int value, IFormatProvider provider) 
@@ -1743,10 +1769,23 @@ namespace System {
 
 		public static string ToString (long value, int toBase)
 		{
-			if (NotValidBase (toBase))
-				throw new ArgumentException ("toBase is not valid.");
+			if (value == 0)
+				return "0";
+			if (toBase == 10)
+				return value.ToString ();
 			
-			return ConvertToBase (value, toBase);
+			byte[] val = BitConverter.GetBytes (value);
+
+			switch (toBase) {
+			case 2:
+				return ConvertToBase2 (val);
+			case 8:
+				return ConvertToBase8 (val);
+			case 16:
+				return ConvertToBase16 (val);
+			default:
+				throw new ArgumentException (Locale.GetText ("toBase is not valid."));
+			}
 		}
 
 		public static string ToString (long value, IFormatProvider provider) 
@@ -1787,10 +1826,23 @@ namespace System {
 
 		public static string ToString (short value, int toBase)
 		{
-			if (NotValidBase (toBase))
-				throw new ArgumentException ("toBase is not valid.");
+			if (value == 0)
+				return "0";
+			if (toBase == 10)
+				return value.ToString ();
 			
-			return ConvertToBase ((int) value, toBase);
+			byte[] val = BitConverter.GetBytes (value);
+
+			switch (toBase) {
+			case 2:
+				return ConvertToBase2 (val);
+			case 8:
+				return ConvertToBase8 (val);
+			case 16:
+				return ConvertToBase16 (val);
+			default:
+				throw new ArgumentException (Locale.GetText ("toBase is not valid."));
+			}
 		}
 
 		public static string ToString (short value, IFormatProvider provider) 
@@ -2484,49 +2536,86 @@ namespace System {
 				return (long) result;
 		}
 
-		private static string ConvertToBase (int value, int toBase)
+		private static string ConvertToBase2 (byte[] value)
 		{
 			StringBuilder sb = new StringBuilder ();
-			BuildConvertedString (sb, value, toBase);
+			for (int i = value.Length - 1; i >= 0; i--) {
+				byte b = value [i];
+				for (int j = 0; j < 8; j++) {
+					if ((b & 0x80) == 0x80) {
+						sb.Append ('1');
+					}
+					else {
+						if (sb.Length > 0)
+							sb.Append ('0');
+					}
+					b <<= 1;
+				}
+			}
 			return sb.ToString ();
 		}
 
-		private static string ConvertToBase (long value, int toBase)
+		private static string ConvertToBase8 (byte[] value)
 		{
+			ulong l = 0;
+			switch (value.Length) {
+			case 1:
+				l = (ulong) value [0];
+				break;
+			case 2:
+				l = (ulong) BitConverter.ToUInt16 (value, 0);
+				break;
+			case 4:
+				l = (ulong) BitConverter.ToUInt32 (value, 0);
+				break;
+			case 8:
+				l = BitConverter.ToUInt64 (value, 0);
+				break;
+			default:
+				throw new ArgumentException ("value");
+			}
+
 			StringBuilder sb = new StringBuilder ();
-			BuildConvertedString64 (sb, value, toBase);
+			for (int i = 21; i >= 0; i--) {
+				// 3 bits at the time
+				char val = (char) ((l >> i * 3) & 0x7);
+				if ((val != 0) || (sb.Length > 0)) {
+					val += '0';
+					sb.Append (val);
+				}
+			}
 			return sb.ToString ();
 		}
-		
 
-		internal static void BuildConvertedString (StringBuilder sb, int value, int toBase)
+		private static string ConvertToBase16 (byte[] value)
 		{
-			int divided = value / toBase;
-			int reminder = value % toBase;		
+			StringBuilder sb = new StringBuilder ();
+			for (int i = value.Length - 1; i >= 0; i--) {
+				char high = (char)((value[i] >> 4) & 0x0f);
+				if ((high != 0) || (sb.Length > 0)) {
+					if (high < 10) 
+						high += '0';
+					else {
+						high -= (char) 10;
+						high += 'a';
+					}
+					sb.Append (high);
+				}
 
-			if (divided > 0)
-				BuildConvertedString (sb, divided, toBase);
-		
-			if (reminder >= 10)
-				sb.Append ((char) (reminder + 'a' - 10));
-			else
-				sb.Append ((char) (reminder + '0'));
+				char low = (char)(value[i] & 0x0f);
+				if ((low != 0) || (sb.Length > 0)) {
+					if (low < 10)
+						low += '0';
+					else {
+						low -= (char) 10;
+						low += 'a';
+					}
+					sb.Append (low);
+				}
+			}
+			return sb.ToString ();
 		}
 
-		internal static void BuildConvertedString64 (StringBuilder sb, long value, int toBase)
-		{
-			long divided = value / toBase;
-			long reminder = value % toBase;		
-
-			if (divided > 0)
-				BuildConvertedString64 (sb, divided, toBase);
-		
-			if (reminder >= 10)
-				sb.Append ((char) (reminder + 'a' - 10));
-			else
-				sb.Append ((char) (reminder + '0'));
-		}
-		
 		// Lookup table for the conversion ToType method. Order
 		// is important! Used by ToType for comparing the target
 		// type, and uses hardcoded array indexes.
