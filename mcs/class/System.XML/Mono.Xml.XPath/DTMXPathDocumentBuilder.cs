@@ -19,12 +19,12 @@ namespace Mono.Xml.XPath
 	public class DTMXPathDocumentBuilder
 	{
 		public DTMXPathDocumentBuilder (string url)
-			: this (url, XmlSpace.None, false, 100)
+			: this (url, XmlSpace.None, false, 400)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (string url, XmlSpace space)
-			: this (url, space, false, 100)
+			: this (url, space, false, 400)
 		{
 		}
 
@@ -34,135 +34,71 @@ namespace Mono.Xml.XPath
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader)
-			: this (reader, XmlSpace.None, false, 100)
+			: this (reader, XmlSpace.None, false, 400)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space)
-			: this (reader, space, false, 100)
+			: this (reader, space, false, 400)
 		{
 		}
 
-		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space, bool supportID, int defaultCapacity)
+		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space, bool supportsID, int defaultCapacity)
 		{
 			this.xmlReader = reader;
-			if (supportID)
+			if (supportsID)
 				this.validatingReader = reader as XmlValidatingReader;
 			lineInfo = reader as IXmlLineInfo;
 			this.xmlSpace = xmlSpace;
 			this.nameTable = reader.NameTable;
-			DefaultCapacity = defaultCapacity;
+			nodeCapacity = nodeCapacity;
+			attributeCapacity = nodeCapacity * 2;
 			Compile ();
 		}
 		
-		bool supportID;
 		XmlReader xmlReader;
 		XmlValidatingReader validatingReader;
 		XmlSpace xmlSpace;
 		XmlNameTable nameTable;
 		IXmlLineInfo lineInfo;
-		int defaultCapacity = 100;
-		public int DefaultCapacity {
-			get { return defaultCapacity; }
-			set {
-				if (value < 0)
-					throw new ArgumentOutOfRangeException ();
-				defaultCapacity = value;
-			}
-		}
+		int nodeCapacity = 400;
+		int attributeCapacity = 800;
+		int nsCapacity = 10;
 
-#region Tree node info collections.
-		// Tree Node
-		int [] firstChild_ = new int [0];
-		int [] parent_ = new int [0];
-		int [] firstAttribute_ = new int [0];
-		int [] previousSibling_ = new int [0];
-		int [] nextSibling_ = new int [0];
-		int [] depth_ = new int [0];
-		int [] position_ = new int [0];
-		XPathNodeType [] nodeType_ = new XPathNodeType [0];
-		string [] baseUri_ = new string [0];
-		bool [] isEmptyElement_ = new bool [0];
-		string [] localName_ = new string [0];
-		string [] namespaceUri_ = new string [0];
-		string [] prefix_ = new string [0];
-		string [] value_ = new string [0];
-		string [] xmlLang_ = new string [0];
-		int [] namespaceNode_ = new int [0];
-		int [] nodeLineNumber_ = new int [0];
-		int [] nodeLinePosition_ = new int [0];
+		// Linked Node
+		DTMXPathLinkedNode [] nodes = new DTMXPathLinkedNode [0];
 
 		// Attribute
-		int [] ownerElement_ = new int [0];
-		int [] nextAttribute_ = new int [0];
-		string [] attrLocalName_ = new string [0];
-		string [] attrPrefix_ = new string [0];
-		string [] attrNsUri_ = new string [0];
-		string [] attrValue_ = new string [0];
-		object [] attrSchemaType_ = new object [0];
-		int [] attrLineNumber_ = new int [0];
-		int [] attrLinePosition_ = new int [0];
+		DTMXPathAttributeNode [] attributes = new DTMXPathAttributeNode [0];
 
 		// NamespaceNode
-		int [] nsDeclaredElement_ = new int [100];
-		int [] nextNsNode_ = new int [100];
-		string [] nsNodeName_ = new string [100];
-		string [] nsNodeUri_ = new string [100];
+		DTMXPathNamespaceNode [] namespaces = new DTMXPathNamespaceNode [0];
 
 		// idTable [string value] -> int nodeId
-		Hashtable idTable_;
-#endregion
+		Hashtable idTable;
 
 		int nodeIndex;
 		int attributeIndex;
 		int nsIndex;
 		bool requireFirstChildFill;
 
+		int prevSibling;
+		int position;
+		bool skipRead = false;
+
 		public DTMXPathDocument CreateDocument ()
 		{
 			return new DTMXPathDocument (nameTable,
-				firstChild_,
-				parent_,
-				firstAttribute_,
-				previousSibling_,
-				nextSibling_,
-				depth_,
-				position_,
-				nodeType_,
-				baseUri_,
-				isEmptyElement_,
-				localName_,
-				namespaceUri_,
-				prefix_,
-				value_,
-				xmlLang_,
-				namespaceNode_,
-				nodeLineNumber_,
-				nodeLinePosition_,
-
-				// Attribute
-				ownerElement_,
-				nextAttribute_,
-				attrLocalName_,
-				attrPrefix_,
-				attrNsUri_,
-				attrValue_,
-				attrSchemaType_,
-				attrLineNumber_,
-				attrLinePosition_,
-
-				// NamespaceNode
-				nsDeclaredElement_,
-				nextNsNode_,
-				nsNodeName_,
-				nsNodeUri_,
-				idTable_
+				nodes,
+				attributes,
+				namespaces,
+				idTable
 			);
 		}
 
 		public void Compile ()
 		{
-			idTable_ = new Hashtable ();
+			idTable = new Hashtable ();
 
 			// index 0 is dummy. No node (including Root) is assigned to this index
 			// So that we can easily compare index != 0 instead of index < 0.
@@ -170,12 +106,12 @@ namespace Mono.Xml.XPath
 			AddNode (0, 0, 0, 0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
 			nodeIndex++;
 			AddAttribute (0, null, null, null, null, null, 0, 0);
-			nextAttribute_ [0] = 0;
+//			attributes [0].NextAttribute = 0;
 			AddNsNode (0, null, null);
 			nsIndex++;
-			nextNsNode_ [0] = 0;
+//			nextNsNode_ [0] = 0;
 			AddNsNode (1, "xml", XmlNamespaces.XML);
-			nextNsNode_ [1] = 0;
+//			nextNsNode_ [1] = 0;
 
 			// add root.
 			AddNode (0, 0, 0, 0, -1, 0, XPathNodeType.Root, xmlReader.BaseURI, false, "", "", "", "", "", 1, 0, 0);
@@ -185,16 +121,12 @@ namespace Mono.Xml.XPath
 
 			while (!xmlReader.EOF)
 				Read ();
-			SetNodeArraysLength (nodeIndex + 1);
-			SetAttributeArraysLength (attributeIndex + 1);
-			SetNsArraysLength (nsIndex + 1);
+			SetNodeArrayLength (nodeIndex + 1);
+			SetAttributeArrayLength (attributeIndex + 1);
+			SetNsArrayLength (nsIndex + 1);
 
 			xmlReader = null;	// It is no more required.
 		}
-
-		int prevSibling;
-		int position;
-		bool skipRead = false;
 
 		public void Read ()
 		{
@@ -204,10 +136,10 @@ namespace Mono.Xml.XPath
 			skipRead = false;
 			int parent = nodeIndex;
 
-			if (depth_ [nodeIndex] >= xmlReader.Depth) {	// not ">=" ? But == worked when with ArrayList...
+			if (nodes [nodeIndex].Depth >= xmlReader.Depth) {	// not ">=" ? But == worked when with ArrayList...
 				// if not, then current node is parent.
-				while (xmlReader.Depth <= depth_ [parent])
-					parent = parent_ [parent];
+				while (xmlReader.Depth <= nodes [parent].Depth)
+					parent = nodes [parent].Parent;
 			}
 
 			prevSibling = nodeIndex;
@@ -222,17 +154,17 @@ namespace Mono.Xml.XPath
 				if (requireFirstChildFill)
 					prevSibling = 0;
 				else
-					while (depth_ [prevSibling] != xmlReader.Depth)
-						prevSibling = parent_ [prevSibling];
+					while (nodes [prevSibling].Depth != xmlReader.Depth)
+						prevSibling = nodes [prevSibling].Parent;
 				if (prevSibling != 0)
-					position = position_ [prevSibling] + 1;
+					position = nodes [prevSibling].Position + 1;
 
 				nodeIndex++;
 
 				if (prevSibling != 0)
-					nextSibling_ [prevSibling] = nodeIndex;
+					nodes [prevSibling].NextSibling = nodeIndex;
 				if (requireFirstChildFill)
-					firstChild_ [parent] = nodeIndex;
+					nodes [parent].FirstChild = nodeIndex;
 				break;
 			case XmlNodeType.Whitespace:
 				if (xmlSpace == XmlSpace.Preserve)
@@ -281,7 +213,7 @@ namespace Mono.Xml.XPath
 				// this code is tricky, but after ReadString() invokation,
 				// xmlReader is moved to next node!!
 				if (value == null)
-					value_ [nodeIndex] = xmlReader.ReadString ();
+					nodes [nodeIndex].Value = xmlReader.ReadString ();
 				break;
 			case XmlNodeType.Comment:
 				value = xmlReader.Value;
@@ -309,14 +241,15 @@ namespace Mono.Xml.XPath
 						// add namespace node.
 						nsIndex++;
 
-						nextNsNode_ [nsIndex] = lastNsIndexInCurrent == 0 ? namespaceNode_ [parent] : lastNsIndexInCurrent;
+						int nextTmp = lastNsIndexInCurrent == 0 ? nodes [parent].FirstNamespace : lastNsIndexInCurrent;
 
-						if (lastNsIndexInCurrent == 0)
-							namespaceNode_ [nodeIndex] = nsIndex;
 						this.AddNsNode (nodeIndex,
 							(xmlReader.Prefix == null || xmlReader.Prefix == String.Empty) ?
 								"" : xmlReader.LocalName,
 							xmlReader.Value);
+						namespaces [nsIndex].NextNamespace = nextTmp;
+//						if (lastNsIndexInCurrent == 0)
+//							nodes [nodeIndex].FirstNamespace = nsIndex;
 						lastNsIndexInCurrent = nsIndex;
 					} else {
 						// add attribute node.
@@ -332,9 +265,9 @@ namespace Mono.Xml.XPath
 						if (firstAttributeIndex == 0)
 							firstAttributeIndex = attributeIndex;
 						else
-							nextAttribute_ [attributeIndex - 1] = attributeIndex;
+							attributes [attributeIndex - 1].NextAttribute = attributeIndex;
 						// dummy for "current" attribute.
-						nextAttribute_ [attributeIndex] = 0;
+						attributes [attributeIndex].NextAttribute = 0;
 
 						// Identity infoset
 						if (validatingReader != null) {
@@ -344,7 +277,7 @@ namespace Mono.Xml.XPath
 								dt = xsType.Datatype;
 							}
 							if (dt != null && dt.TokenizedType == XmlTokenizedType.ID)
-								idTable_.Add (xmlReader.Value, nodeIndex);
+								idTable.Add (xmlReader.Value, nodeIndex);
 						}
 					}
 				} while (xmlReader.MoveToNextAttribute ());
@@ -372,144 +305,95 @@ namespace Mono.Xml.XPath
 				requireFirstChildFill = true;
 		}
 
-		private void SetObjectArrayLength (ref object [] a, int length)
+		private void SetNodeArrayLength (int size)
 		{
-			object [] arr = new object [length];
-			Array.Copy (a, arr, System.Math.Min (a.Length, length));
-			a = arr;
+			DTMXPathLinkedNode [] newArr = new DTMXPathLinkedNode [size];
+			Array.Copy (nodes, newArr, System.Math.Min (size, nodes.Length));
+			nodes = newArr;
 		}
 
-		private void SetBoolArrayLength (ref bool [] a, int length)
+		private void SetAttributeArrayLength (int size)
 		{
-			bool [] bArr = new bool [length];
-			Array.Copy (a, bArr, System.Math.Min (a.Length, length));
-			a = bArr;
+			DTMXPathAttributeNode [] newArr = 
+				new DTMXPathAttributeNode [size];
+			Array.Copy (attributes, newArr, System.Math.Min (size, attributes.Length));
+			attributes = newArr;
 		}
 
-		private void SetXPathNodeTypeArrayLength (ref XPathNodeType [] a, int length)
+		private void SetNsArrayLength (int size)
 		{
-			XPathNodeType [] arr = new XPathNodeType [length];
-			Array.Copy (a, arr, System.Math.Min (a.Length, length));
-			a = arr;
-		}
-
-		private void SetIntArrayLength (ref int [] a, int length)
-		{
-			int [] intArr = new int [length];
-			Array.Copy (a, intArr, System.Math.Min (a.Length, length));
-			a = intArr;
-		}
-
-		private void SetStringArrayLength (ref string [] a, int length)
-		{
-			string [] strArr = new string [length];
-			Array.Copy (a, strArr, System.Math.Min (a.Length, length));
-			a = strArr;
-		}
-
-		private void SetNodeArraysLength (int size)
-		{
-			SetIntArrayLength (ref firstChild_, size);
-			SetIntArrayLength (ref parent_, size);
-			SetIntArrayLength (ref firstAttribute_, size);
-			SetIntArrayLength (ref previousSibling_, size);
-			SetIntArrayLength (ref nextSibling_, size);
-			SetIntArrayLength (ref depth_, size);
-			SetIntArrayLength (ref position_, size);
-			SetXPathNodeTypeArrayLength (ref nodeType_, size);
-			SetStringArrayLength (ref baseUri_, size);
-			SetBoolArrayLength (ref isEmptyElement_, size);
-			SetStringArrayLength (ref localName_, size);
-			SetStringArrayLength (ref namespaceUri_, size);
-			SetStringArrayLength (ref prefix_, size);
-			SetStringArrayLength (ref value_, size);
-			SetStringArrayLength (ref xmlLang_, size);
-			SetIntArrayLength (ref namespaceNode_, size);
-			SetIntArrayLength (ref nodeLineNumber_, size);
-			SetIntArrayLength (ref nodeLinePosition_, size);
-		}
-
-		private void SetAttributeArraysLength (int size)
-		{
-			SetIntArrayLength (ref ownerElement_, size);
-			SetIntArrayLength (ref nextAttribute_, size);
-			SetStringArrayLength (ref attrLocalName_, size);
-			SetStringArrayLength (ref attrPrefix_, size);
-			SetStringArrayLength (ref attrNsUri_, size);
-			SetStringArrayLength (ref attrValue_, size);
-			SetObjectArrayLength (ref attrSchemaType_, size);
-			SetIntArrayLength (ref attrLineNumber_, size);
-			SetIntArrayLength (ref attrLinePosition_, size);
-		}
-
-		private void SetNsArraysLength (int size)
-		{
-			SetIntArrayLength (ref nsDeclaredElement_, size);
-			SetIntArrayLength (ref nextNsNode_, size);
-			SetStringArrayLength (ref nsNodeName_, size);
-			SetStringArrayLength (ref nsNodeUri_, size);
+			DTMXPathNamespaceNode [] newArr =
+				new DTMXPathNamespaceNode [size];
+			Array.Copy (namespaces, newArr, System.Math.Min (size, namespaces.Length));
+			namespaces = newArr;
 		}
 
 		// Here followings are skipped: firstChild, nextSibling, 
 		public void AddNode (int parent, int firstAttribute, int attributeEnd, int previousSibling, int depth, int position, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
 		{
-			if (firstChild_.Length < nodeIndex + 1) {
-				if (firstChild_.Length >= defaultCapacity)
-					defaultCapacity *= 2;
-				SetNodeArraysLength (defaultCapacity);
+			if (nodes.Length < nodeIndex + 1) {
+//				if (nodes.Length >= nodeCapacity) {
+					nodeCapacity *= 2;
+					SetNodeArrayLength (nodeCapacity);
+//				}
 			}
 
-			firstChild_ [nodeIndex] = 0;		// dummy
-			parent_ [nodeIndex] = parent;
-			firstAttribute_ [nodeIndex] = firstAttribute;
-			previousSibling_ [nodeIndex] = previousSibling;
-			nextSibling_ [nodeIndex] = 0;	// dummy
-			depth_ [nodeIndex] = depth;
-			position_ [nodeIndex] = position;
-			nodeType_ [nodeIndex] = nodeType;
-			baseUri_ [nodeIndex] = baseUri;
-			isEmptyElement_ [nodeIndex] = isEmptyElement;
-			localName_ [nodeIndex] = localName;
-			namespaceUri_ [nodeIndex] = ns;
-			prefix_ [nodeIndex] = prefix;
-			value_ [nodeIndex] = value;
-			xmlLang_ [nodeIndex] = xmlLang;
-			namespaceNode_ [nodeIndex] = namespaceNode;
-			nodeLineNumber_ [nodeIndex] = lineNumber;
-			nodeLinePosition_ [nodeIndex] = linePosition;
+			DTMXPathLinkedNode curNode = nodes [nodeIndex];// = new DTMXPathLinkedNode ();
+			nodes [nodeIndex].FirstChild = 0;		// dummy
+			nodes [nodeIndex].Parent = parent;
+			nodes [nodeIndex].FirstAttribute = firstAttribute;
+			nodes [nodeIndex].PreviousSibling = previousSibling;
+			nodes [nodeIndex].NextSibling = 0;	// dummy
+			nodes [nodeIndex].Depth = depth;
+			nodes [nodeIndex].Position = position;
+			nodes [nodeIndex].NodeType = nodeType;
+			nodes [nodeIndex].BaseURI = baseUri;
+			nodes [nodeIndex].IsEmptyElement = isEmptyElement;
+			nodes [nodeIndex].LocalName = localName;
+			nodes [nodeIndex].NamespaceURI = ns;
+			nodes [nodeIndex].Prefix = prefix;
+			nodes [nodeIndex].Value = value;
+			nodes [nodeIndex].XmlLang = xmlLang;
+			nodes [nodeIndex].FirstNamespace = namespaceNode;
+			nodes [nodeIndex].LineNumber = lineNumber;
+			nodes [nodeIndex].LinePosition = linePosition;
 		}
 
 		// Followings are skipped: nextAttribute,
 		public void AddAttribute (int ownerElement, string localName, string ns, string prefix, string value, object schemaType, int lineNumber, int linePosition)
 		{
-			if (ownerElement_.Length < attributeIndex + 1) {
-				if (ownerElement_.Length >= defaultCapacity)
-					defaultCapacity *= 2;
-				SetAttributeArraysLength (defaultCapacity);
+			if (attributes.Length < attributeIndex + 1) {
+//				if (attributes.Length >= attributeCapacity) {
+					attributeCapacity *= 2;
+					SetAttributeArrayLength (attributeCapacity);
+//				}
 			}
 
-			ownerElement_ [attributeIndex] = ownerElement;
-			attrLocalName_ [attributeIndex] = localName;
-			attrNsUri_ [attributeIndex] = ns;
-			attrPrefix_ [attributeIndex] = prefix;
-			attrValue_ [attributeIndex] = value;
-			attrSchemaType_ [attributeIndex] = schemaType;
-			attrLineNumber_ [attributeIndex] = lineNumber;
-			attrLinePosition_ [attributeIndex] = linePosition;
+			DTMXPathAttributeNode attr = attributes [attributeIndex];// = new DTMXPathAttributeNode ();
+			attributes [attributeIndex].OwnerElement = ownerElement;
+			attributes [attributeIndex].LocalName = localName;
+			attributes [attributeIndex].NamespaceURI = ns;
+			attributes [attributeIndex].Prefix = prefix;
+			attributes [attributeIndex].Value = value;
+			attributes [attributeIndex].SchemaType = schemaType;
+			attributes [attributeIndex].LineNumber = lineNumber;
+			attributes [attributeIndex].LinePosition = linePosition;
 		}
 
 		// Followings are skipped: nextNsNode (may be next attribute in the same element, or ancestors' nsNode)
 		public void AddNsNode (int declaredElement, string name, string ns)
 		{
-			if (nsDeclaredElement_.Length < nsIndex + 1) {
-				if (nsDeclaredElement_.Length >= defaultCapacity)
-					defaultCapacity *= 2;
-				SetNsArraysLength (defaultCapacity);
+			if (namespaces.Length < nsIndex + 1) {
+//				if (namespaces.Length >= nsCapacity) {
+					nsCapacity *= 2;
+					SetNsArrayLength (nsCapacity);
+//				}
 			}
 
-			nsDeclaredElement_ [nsIndex] = declaredElement;
-			nsNodeName_ [nsIndex] = name;
-			nsNodeUri_ [nsIndex] = ns;
+			DTMXPathNamespaceNode nsNode = namespaces [nsIndex];// = new DTMXPathNamespaceNode ();
+			namespaces [nsIndex].DeclaredElement = declaredElement;
+			namespaces [nsIndex].Name = name;
+			namespaces [nsIndex].Namespace = ns;
 		}
 	}
 }

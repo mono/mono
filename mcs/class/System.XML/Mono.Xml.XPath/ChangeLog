@@ -1,3 +1,9 @@
+2003-10-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Added DTMXPathNode.cs.
+	* Fundamental changes in whole DTM stuff. Node information is now array
+	  of "node struct" instead of individual arrays.
+
 2003-09-21 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Pattern.cs: save the parser (will reduce memory allocation when
