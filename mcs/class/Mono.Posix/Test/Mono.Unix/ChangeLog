@@ -1,3 +1,7 @@
+2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* StdlibTest.cs: Ignore the signal(3) test, as it's currently hanging Mono.
+
 2005-01-13  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* StdlibTest.cs: Added tests for signal(3) and snprintf(3).

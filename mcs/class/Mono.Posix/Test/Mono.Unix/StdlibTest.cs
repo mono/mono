@@ -29,7 +29,7 @@ namespace MonoTests.Mono.Unix {
 			}
 		}
 
-		[Test]
+		[Test, Ignore ("Sending Signals from inside Mono hangs the program")]
 		public void Signal ()
 		{
 			// Insert handler
