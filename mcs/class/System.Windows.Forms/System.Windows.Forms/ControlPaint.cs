@@ -1,27 +1,27 @@
-////
-//// System.Windows.Forms.ControlPaint.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc 2002
-////
 //
+// System.Windows.Forms.ControlPaint.cs
 //
-//using System.Drawing;
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Provides methods used to paint common Windows controls and their elements.
-//	///
-//	/// ToDo note:
-//	///  - Nothing is implemented
-//	/// </summary>
-//	
-//	[MonoTODO]
-//  public sealed class ControlPaint
-//	{
+// (C) Ximian, Inc 2002
+//
+
+
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Provides methods used to paint common Windows controls and their elements.
+	///
+	/// ToDo note:
+	///  - Nothing is implemented
+	/// </summary>
+	
+	[MonoTODO]
+  public sealed class ControlPaint
+	{
 //		#region Properties
 //		[MonoTODO]
 //		public static Color ContrastControlDark
@@ -461,5 +461,5 @@
 //			throw new NotImplementedException ();
 //		}
 //		#endregion
-//	}
-//}
+	}
+}

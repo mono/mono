@@ -1,23 +1,23 @@
-////
-//// System.Windows.Forms.CurrencyManager.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System.ComponentModel;
-//using System.Collections;
+// System.Windows.Forms.CurrencyManager.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Manages a list of Binding objects.
-//	/// </summary>
-//	[MonoTODO]
-//	public class CurrencyManager : BindingManagerBase
-//	{
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) 2002 Ximian, Inc
+//
+
+using System.ComponentModel;
+using System.Collections;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Manages a list of Binding objects.
+	/// </summary>
+	[MonoTODO]
+	public class CurrencyManager : BindingManagerBase
+	{
 //		#region Fields
 //		/* uncomment if needed
 //		protected Type finalType;
@@ -138,5 +138,5 @@
 //			remove { throw new NotImplementedException (); }
 //		}
 //		#endregion
-//	}
-//}
+	}
+}

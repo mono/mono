@@ -1,29 +1,29 @@
-////
-//// System.Windows.Forms.Cursors.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.ComponentModel;
-//using System.Runtime.Serialization;
-//using System.IO;
-//using System.Drawing;
+// System.Windows.Forms.Cursors.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Provides a collection of Cursor objects for use by a Windows Forms application.
-//	///
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public sealed class Cursors
-//	{
+// (C) Ximian, Inc., 2002
+//
+
+using System.ComponentModel;
+using System.Runtime.Serialization;
+using System.IO;
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Provides a collection of Cursor objects for use by a Windows Forms application.
+	///
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public sealed class Cursors
+	{
 //		#region Properties
 //		[MonoTODO]
 //		public static Cursor AppStarting {
@@ -165,5 +165,5 @@
 //			get { throw new NotImplementedException (); }
 //		}
 //		#endregion
-//	}
-//}
+	}
+}

@@ -1,30 +1,30 @@
-////
-//// System.Windows.Forms.Cursor.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.ComponentModel;
-//using System.Runtime.Serialization;
-//using System.IO;
-//using System.Drawing;
+// System.Windows.Forms.Cursor.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Represents the image used to paint the mouse pointer.
-//	///
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	[Serializable]
-//	public sealed class Cursor : IDisposable, ISerializable
-//	{
+// (C) Ximian, Inc., 2002
+//
+
+using System.ComponentModel;
+using System.Runtime.Serialization;
+using System.IO;
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Represents the image used to paint the mouse pointer.
+	///
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	[Serializable]
+	public sealed class Cursor : IDisposable, ISerializable
+	{
 //		#region Fields
 //		#endregion
 //		
@@ -159,5 +159,5 @@
 //			throw new NotImplementedException ();
 //		}
 //		#endregion
-//	}
-//}
+	}
+}

@@ -1,28 +1,28 @@
-////
-//// System.Windows.Forms.CursorConverter.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.ComponentModel;
-//using System.Globalization;
+// System.Windows.Forms.CursorConverter.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Provides a type converter to convert Cursor objects to and from various other representations.
-//	///
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public class CursorConverter : TypeConverter
-//	{
-//		
+// (C) Ximian, Inc., 2002
+//
+
+using System.ComponentModel;
+using System.Globalization;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Provides a type converter to convert Cursor objects to and from various other representations.
+	///
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public class CursorConverter : TypeConverter
+	{
+		
 //		#region Constructors
 //		[MonoTODO]
 //		public CursorConverter() {
@@ -63,5 +63,5 @@
 //			throw new NotImplementedException ();
 //		}
 //		#endregion
-//	}
-//}
+	}
+}

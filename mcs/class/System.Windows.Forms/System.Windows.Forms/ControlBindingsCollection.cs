@@ -1,27 +1,27 @@
-////
-//// System.Windows.Forms.ControlBindingsCollection.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System.Collections;
-//using System.ComponentModel;
+// System.Windows.Forms.ControlBindingsCollection.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Represents the collection of data bindings for a control.
-//	///
-//	/// ToDo note:
-//	///  - no methods are implemented
-//	/// </summary>
-//	
-//	[MonoTODO]
-//	public class ControlBindingsCollection : BindingsCollection
-//	{
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) 2002 Ximian, Inc
+//
+
+using System.Collections;
+using System.ComponentModel;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Represents the collection of data bindings for a control.
+	///
+	/// ToDo note:
+	///  - no methods are implemented
+	/// </summary>
+	
+	[MonoTODO]
+	public class ControlBindingsCollection : BindingsCollection
+	{
 //		#region Constructors
 //		protected internal ControlBindingsCollection() : base () {
 //		}
@@ -74,5 +74,5 @@
 //		}
 //		#endregion
 //		
-//	}
-//}
+	}
+}

@@ -1,28 +1,28 @@
-////
-//// System.Windows.Forms.ContextMenu.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-////using System.ComponentModel;
-////using System.Collections;
-//using System.Drawing;
+// System.Windows.Forms.ContextMenu.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Represents a Windows combo box control.
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public class ContextMenu : Menu
-//	{
-//		// private fields
+// (C) Ximian, Inc., 2002
+//
+
+//using System.ComponentModel;
+//using System.Collections;
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Represents a Windows combo box control.
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public class ContextMenu : Menu
+	{
+		// private fields
 //		RightToLeft rightToLeft;
 //		
 //		// --- Constructor ---
@@ -74,5 +74,5 @@
 //			}
 //		}
 //
-//	}
-//}
+	}
+}
