@@ -1,3 +1,9 @@
+2004-04-24  Todd Berman  <tberman@sevenl.net>
+	
+	* System.Windows.Forms/ContextMenu.cs:
+	* System.Windows.Forms/Menu.cs: Whitespace fixes.
+	* System.Windows.Forms/MenuItem.cs: fix the check for a null parent.
+
 2004-04-23  Peter Bartok <pbartok@novell.com>
    * RadioButton.cs: Fixed window generation, now properly displays.
      Also uses System.Drawing instead of Wine for drawing now.
