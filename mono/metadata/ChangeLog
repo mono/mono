@@ -1,5 +1,8 @@
 2004-02-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_string_is_interned_lookup): Fix interning of long
+	strings. Fixes #54473.
+
 	* domain.c (ldstr_equal): Optimize if the two strings are equal.
 
 	* icall.c: Revert the klass->refclass changes since they introduce
