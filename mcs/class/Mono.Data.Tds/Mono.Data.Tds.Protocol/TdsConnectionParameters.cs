@@ -45,5 +45,20 @@ namespace Mono.Data.Tds.Protocol {
 		public string User = String.Empty;
 		public bool DomainLogin = false; 
 		public string DefaultDomain = String.Empty; 
+
+                public void Reset ()
+                {
+                        ApplicationName = "Mono";
+                        Database = String.Empty;
+                        Charset = String.Empty;
+                        Hostname = System.Net.Dns.GetHostName();
+                        Language = String.Empty;
+                        LibraryName = "Mono";
+                        Password = String.Empty;
+                        ProgName = "Mono";
+                        User = String.Empty;
+                        DomainLogin = false; 
+                        DefaultDomain = String.Empty;
+                }
 	}
 }

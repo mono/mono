@@ -1,3 +1,8 @@
+2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* TdsConnectionParameters.cs: added a method Reset to initialize
+	parameters again.
+
 2005-01-16  Daniel Morgan <danielmorgan@verizon.net>
 
 	* Tds.cs: TDS 5.0 (Sybase) needs to get a DECIMAL
