@@ -238,6 +238,8 @@ namespace Mono.Tools
 				return;
 			}
 
+			// strong name verification temp. disabled
+			/*
 			byte[] akey = an.GetPublicKey ();
 			if (akey == null || akey.Length < 12) {
 				Console.WriteLine ("ERROR: assembly has no valid public key token");
@@ -248,6 +250,7 @@ namespace Mono.Tools
 				Console.WriteLine ("ERROR: invalid strongname signature in assembly");
 				return;
 			}
+			*/
 
 			bool force = false;
 

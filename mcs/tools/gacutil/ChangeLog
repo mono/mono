@@ -1,5 +1,9 @@
 2004-04-27  Jackson Harper  <jackson@ximian.com>
 
+	* gacutil.cs: Temporarily disable strong name verification when installing.
+	
+2004-04-27  Jackson Harper  <jackson@ximian.com>
+
 	* gacutil.cs: Remove hack for removing strong name headers. The
 	strong name type now handles these properly and this screwed up
 	the ecma key.
