@@ -1,3 +1,10 @@
+2004-09-29  Jackson Harper  <jackson@ximian.com>
+
+	* Graphics.cs: Use FromHdcInternal to set the X display
+	handle. Add a flag to check if we are on unix so we aren't calling
+	Environment.OSVersion.Platform all the time. Mad props to Peter
+	Bartok for this.
+
 2004-09-17  Marek Safar <marek.safar@seznam.cz>
 
 	* Font.cs (FromHfont, ToHfont): Fixed windows implementation.

@@ -47,6 +47,7 @@ namespace System.Drawing
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
 		private static IntPtr display = IntPtr.Zero;
+		private static bool use_x_drawable = false;
 	
 		[ComVisible(false)]
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
@@ -61,6 +62,9 @@ namespace System.Drawing
 		private Graphics (IntPtr nativeGraphics)
 		{
 			nativeObject = nativeGraphics;
+                        if (Environment.OSVersion.Platform == (PlatformID) 128) {
+				use_x_drawable = true;
+			}
 		}
 		
 		~Graphics ()
@@ -1244,11 +1248,11 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
-			throw new NotImplementedException ();
+			display = hdc;
+			return null;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
@@ -1256,29 +1260,18 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 			
-			// This needs some working over to support wine in the future
-			if (Environment.OSVersion.Platform==(PlatformID)128) {
-
+			if (use_x_drawable) {
 				if (display==IntPtr.Zero) {
-					display=GDIPlus.XOpenDisplay(IntPtr.Zero);
+					display = GDIPlus.XOpenDisplay (IntPtr.Zero);
 				}
-				return FromHwnd(hwnd, display);
-			}
-			Status status = GDIPlus.GdipCreateFromHWND (hwnd, out graphics); 				GDIPlus.CheckStatus (status);
- 			
-			return new Graphics (graphics); 
-		}
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]		
-		public static Graphics FromHwnd (IntPtr hwnd, IntPtr display)
-		{
-			lock (typeof (Graphics))
-			{
-				IntPtr graphics;
-				Status s = GDIPlus.GdipCreateFromXDrawable_linux (hwnd, display, out graphics);
-				GDIPlus.CheckStatus (s);
-				return new Graphics (graphics);
+				return FromXDrawable (hwnd, display);
 			}
+			
+			Status status = GDIPlus.GdipCreateFromHWND (hwnd, out graphics);
+			GDIPlus.CheckStatus (status);
+
+				return new Graphics (graphics);
 		}
 
 		[MonoTODO]
