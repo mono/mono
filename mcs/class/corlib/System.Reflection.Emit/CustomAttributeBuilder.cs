@@ -66,17 +66,15 @@ namespace System.Reflection.Emit {
 			return len;
 		}
 
-		internal static string string_from_bytes (byte[] data, int pos, int len) {
-			char[] chars = new char [len];
-			// FIXME: use a utf8 decoder here
-			for (int i = 0; i < len; ++i)
-				chars [i] = (char)data [pos + i];
-			return new String (chars);
+		internal static string string_from_bytes (byte[] data, int pos, int len) 
+		{
+			return System.Text.Encoding.UTF8.GetString(data, pos, len);
 		}
 
 		internal static UnmanagedMarshal get_umarshal (CustomAttributeBuilder customBuilder, bool is_field) {
 			byte[] data = customBuilder.Data;
 			UnmanagedType subtype = UnmanagedType.I4;
+			int sizeConst = 0;
 			int value;
 			int utype; /* the (stupid) ctor takes a short or an enum ... */
 			utype = (int)data [2];
@@ -90,10 +88,13 @@ namespace System.Reflection.Emit {
 			nnamed |= ((int)data [pos++]) << 8;
 			
 			for (int i = 0; i < nnamed; ++i) {
-				byte type = data [pos++];
+				int paramType; // What is this ?
+				paramType = (int)data [pos++];
+				paramType |= ((int)data [pos++]) << 8;
 				int len = decode_len (data, pos, out pos);
 				string named_name = string_from_bytes (data, pos, len);
 				pos += len;
+
 				switch (named_name) {
 				case "ArraySubType":
 					value = (int)data [pos++];
@@ -101,6 +102,13 @@ namespace System.Reflection.Emit {
 					value |= ((int)data [pos++]) << 16;
 					value |= ((int)data [pos++]) << 24;
 					subtype = (UnmanagedType)value;
+					break;
+				case "SizeConst":
+					value = (int)data [pos++];
+					value |= ((int)data [pos++]) << 8;
+					value |= ((int)data [pos++]) << 16;
+					value |= ((int)data [pos++]) << 24;
+					sizeConst = value;
 					break;
 				default:
 					break;
@@ -113,7 +121,9 @@ namespace System.Reflection.Emit {
 			case UnmanagedType.SafeArray:
 				return UnmanagedMarshal.DefineSafeArray (subtype);
 			case UnmanagedType.ByValArray:
+				return UnmanagedMarshal.DefineByValArray (sizeConst);
 			case UnmanagedType.ByValTStr:
+				return UnmanagedMarshal.DefineByValTStr (sizeConst);
 			default:
 				return UnmanagedMarshal.DefineUnmanagedMarshal ((UnmanagedType)utype);
 			}

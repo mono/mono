@@ -1,3 +1,10 @@
+
+Mon Jan 27 17:07:38 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* CustomAttributeBuilder.cs, FieldBuilder.cs: applied
+	(reformatted) patch from "Jerome Laban" <jlaban@wanadoo.fr>
+	to fix ByValStr and ByValArray encodings.
+
 2003-01-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AssemblyBuilder.cs: fixed compilation with csc.

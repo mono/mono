@@ -94,6 +94,7 @@ namespace System.Reflection.Emit {
 				attrs |= FieldAttributes.NotSerialized;
 				return;
 			} else if (attrname == "System.Runtime.InteropServices.MarshalAsAttribute") {
+				attrs |= FieldAttributes.HasFieldMarshal;
 				marshal_info = CustomAttributeBuilder.get_umarshal (customBuilder, true);
 				/* FIXME: check for errors */
 				return;
