@@ -1,3 +1,8 @@
+2003-07-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PrincipalPermissionAttributeTest.cs: New.
+	* PrincipalPermissionTest.cs: New.
+
 2003-06-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ReflectionPermissionAttributeTest.cs: New.
