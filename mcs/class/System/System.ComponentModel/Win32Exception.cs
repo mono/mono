@@ -63,6 +63,8 @@ namespace System.ComponentModel
 			 * the runtime can throw. A list of the errors
 			 * can be found in class System.IO.MonoIOError.
 			 */
+			w32_errors.Add(2,
+				       Locale.GetText("Cannot find the specified file"));
 			w32_errors.Add(10004,
 				       Locale.GetText("interrupted"));
 			w32_errors.Add(10013,

@@ -1,3 +1,7 @@
+2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Win32Exception.cs: added error code 2.
+
 2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Win32Exception.cs: implemented GetObjectData ().
