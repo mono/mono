@@ -50,7 +50,6 @@ namespace System.Net {
 				throw new ArgumentNullException ("asyncResult");
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetHostByNameCallback cb = (GetHostByNameCallback) async.AsyncDelegate;
-			asyncResult.AsyncWaitHandle.WaitOne ();
 			return cb.EndInvoke(asyncResult);
 		}
 
@@ -60,7 +59,6 @@ namespace System.Net {
 				throw new ArgumentNullException ("asyncResult");
 			AsyncResult async = (AsyncResult) asyncResult;
 			ResolveCallback cb = (ResolveCallback) async.AsyncDelegate;
-			asyncResult.AsyncWaitHandle.WaitOne ();
 			return cb.EndInvoke(asyncResult);
 		}
 
