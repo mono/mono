@@ -432,7 +432,12 @@ namespace System
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern Assembly [] GetAssemblies ();
+		private extern Assembly [] GetAssemblies (bool refOnly);
+
+		public Assembly [] GetAssemblies ()
+		{
+			return GetAssemblies (false);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern object GetData (string name);
@@ -448,7 +453,7 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern Assembly LoadAssembly (string assemblyRef, Evidence securityEvidence);
+		internal extern Assembly LoadAssembly (string assemblyRef, Evidence securityEvidence, bool refOnly);
 
 		public Assembly Load (AssemblyName assemblyRef)
 		{
@@ -467,7 +472,7 @@ namespace System
 					throw new ArgumentException (Locale.GetText ("assemblyRef.Name cannot be empty."), "assemblyRef");
 			}
 
-			return LoadAssembly (assemblyRef.FullName, assemblySecurity);
+			return LoadAssembly (assemblyRef.FullName, assemblySecurity, false);
 		}
 
 		public Assembly Load (string assemblyString)
@@ -475,15 +480,20 @@ namespace System
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
 
-			return LoadAssembly (assemblyString, null);
+			return LoadAssembly (assemblyString, null, false);
 		}
 
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
 		{
+			return Load (assemblyString, assemblySecurity, false);
+		}
+		
+		internal Assembly Load (string assemblyString, Evidence assemblySecurity, bool refonly)
+		{
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
 
-			return LoadAssembly (assemblyString, assemblySecurity);
+			return LoadAssembly (assemblyString, assemblySecurity, refonly);
 		}
 
 		public Assembly Load (byte[] rawAssembly)
@@ -497,14 +507,19 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern Assembly LoadAssemblyRaw (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence);
+		internal extern Assembly LoadAssemblyRaw (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence, bool refonly);
 
 		public Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence)
+		{
+			return Load (rawAssembly, rawSymbolStore, securityEvidence, false);
+		}
+
+		internal Assembly Load (byte [] rawAssembly, byte [] rawSymbolStore, Evidence securityEvidence, bool refonly)
 		{
 			if (rawAssembly == null)
 				throw new ArgumentNullException ("rawAssembly");
 				
-			return LoadAssemblyRaw (rawAssembly, rawSymbolStore, securityEvidence);
+			return LoadAssemblyRaw (rawAssembly, rawSymbolStore, securityEvidence, refonly);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
@@ -759,8 +774,12 @@ namespace System
 			AssemblyLoad (this, new AssemblyLoadEventArgs (assembly));
 		}
 
-		private Assembly DoAssemblyResolve (string name)
+		private Assembly DoAssemblyResolve (string name, bool refonly)
 		{
+#if NET_2_0
+			if (refonly && ReflectionOnlyPreBindAssemblyResolve == null)
+				return null;
+#endif
 			if (AssemblyResolve == null)
 				return null;
 			
@@ -771,13 +790,25 @@ namespace System
 				assembly_resolve_in_progress = ht;
 			}
 
-			if (ht.Contains (name))
+			Assembly ass = (Assembly) ht [name];
+#if NET_2_0
+			if (ass != null && (ass.ReflectionOnly == refonly))
 				return null;
-			else
-				ht [name] = name;
-
+#else
+			if (ass != null)
+				return null;
+#endif
+			ht [name] = name;
 			try {
-				foreach (Delegate eh in AssemblyResolve.GetInvocationList ()) {
+				
+#if NET_2_0
+				Delegate [] invocation_list = refonly ? ReflectionOnlyPreBindAssemblyResolve.GetInvocationList () : 
+					AssemblyResolve.GetInvocationList ();
+#else
+				Delegate [] invocation_list = AssemblyResolve.GetInvocationList ();
+#endif
+
+				foreach (Delegate eh in invocation_list) {
 					ResolveEventHandler handler = (ResolveEventHandler) eh;
 					Assembly assembly = handler (this, new ResolveEventArgs (name));
 					if (assembly != null)
@@ -884,6 +915,9 @@ namespace System
 		}
 
 #if NET_2_0
+
+		public event ResolveEventHandler ReflectionOnlyPreBindAssemblyResolve;
+		
 		private ActivationContext _activation;
 		private ApplicationIdentity _applicationIdentity;
 		private AppDomainManager _domain_manager;
@@ -968,7 +1002,7 @@ namespace System
 		[MonoTODO ("see Assembly.ReflectionOnlyLoad")]
 		public Assembly[] ReflectionOnlyGetAssemblies ()
 		{
-			return new Assembly [0];
+			return GetAssemblies (true);
 		}
 #endif
 	}
