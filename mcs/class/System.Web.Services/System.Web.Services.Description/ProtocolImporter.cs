@@ -163,6 +163,13 @@ namespace System.Web.Services.Description {
 				foreach (Service service in info.ServiceDescription.Services)
 				{
 					this.service = service;
+					int bindingCount = 0;
+					foreach (Port port in service.Ports)
+					{
+						binding = ServiceDescriptions.GetBinding (port.Binding);
+						if (IsBindingSupported ()) bindingCount ++;
+					}
+					
 					foreach (Port port in service.Ports)
 					{
 						this.iinfo = info;
@@ -171,7 +178,7 @@ namespace System.Web.Services.Description {
 						if (!IsBindingSupported ()) continue;
 						
 						found = true;
-						ImportPortBinding ();
+						ImportPortBinding (bindingCount > 1);
 					}
 				}
 			}
@@ -181,9 +188,9 @@ namespace System.Web.Services.Description {
 			return true;
 		}
 
-		void ImportPortBinding ()
+		void ImportPortBinding (bool multipleBindings)
 		{
-			if (service.Ports.Count > 1) className = port.Name;
+			if (multipleBindings) className = port.Name;
 			else className = service.Name;
 			
 			className = classNames.AddUnique (CodeIdentifier.MakeValid (className), port);

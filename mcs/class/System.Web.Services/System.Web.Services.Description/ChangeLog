@@ -1,3 +1,11 @@
+2004-01-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpSimpleProtocolImporter.cs: pass the web service class list to the xml 
+	  importers to make sure that no data classes are created with the same
+	  name as the web service.
+	* ProtocolImporter.cs: Use port name as class name only if there is more
+	  than one port using the same protocol. This fixes big #52742.
+
 2004-01-19  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpSimpleProtocolReflector.cs, SoapProtocolReflector.cs: 
