@@ -1,5 +1,10 @@
 2003-08-17  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* MethodCall.cs: Throw the right exception if the target object is not
+	  found when resolving the target method.
+
+2003-08-17  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* CallContext.cs: Fixed bug #47686.
 
 2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
