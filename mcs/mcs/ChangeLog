@@ -1,5 +1,11 @@
 2002-05-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (MemberLookup); use the new GetInterfaces
+	method. 
+
+	(GetInterfaces): The code used to lookup interfaces for a type is
+	used in more than one place, factor it here. 
+
 	* driver.cs: Track the errors at the bottom of the file, we kept
 	on going.
 

@@ -283,7 +283,7 @@ public class TypeManager {
 	public static void RegisterBuilder (TypeBuilder tb, Type [] ifaces)
 	{
 		if (ifaces != null)
-		    builder_to_ifaces [tb] = ifaces;
+			builder_to_ifaces [tb] = ifaces;
 	}
 	
 	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc, Type [] ifaces)
@@ -1024,7 +1024,22 @@ public class TypeManager {
 		} else
 			return pi.GetGetMethod ();
 	}
-				
+
+	/// <summary>
+	///   This function returns the interfaces in the type `t'.  Works with
+	///   both types and TypeBuilders.
+	/// </summary>
+	public static Type [] GetInterfaces (Type t)
+	{
+		if (t.IsArray)
+			t = TypeManager.array_type;
+		
+		if (t is TypeBuilder)
+			return (Type []) builder_to_ifaces [t];
+		else
+			return t.GetInterfaces ();
+	}
+	
 	/// <remarks>
 	///  The following is used to check if a given type implements an interface.
 	///  The cache helps us reduce the expense of hitting Type.GetInterfaces everytime.
@@ -1040,23 +1055,15 @@ public class TypeManager {
 		// will return all the interfaces implement by the type
 		// or its parents.
 		//
-		if (t.IsArray)
-			t = TypeManager.array_type;
 		do {
-			interfaces = null;
+			interfaces = GetInterfaces (t);
 			
-			if (t is TypeBuilder){
-				interfaces = (Type []) builder_to_ifaces [t];
-				if (interfaces == null)
-					return false;
-			} else
-				interfaces = t.GetInterfaces ();
-
 			for (int i = interfaces.Length; i > 0; ){
 				i--;
 				if (interfaces [i] == iface)
 					return true;
 			}
+			
 			t = t.BaseType;
 		} while (t != null);
 		
@@ -1444,8 +1451,13 @@ public class TypeManager {
 		if (!queried_type.IsInterface)
 			return null;
 
-		Type [] ifaces = queried_type.GetInterfaces ();
-
+		if (queried_type.IsArray)
+			queried_type = TypeManager.array_type;
+		
+		Type [] ifaces = GetInterfaces (queried_type);
+		if (ifaces == null)
+			return null;
+		
 		foreach (Type itype in ifaces){
 			MemberInfo [] x;
 
