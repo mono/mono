@@ -1,5 +1,13 @@
 2004-07-23  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay (CSharpParser): Added a new `current_class' field
+	and removed the `current_interface' one.
+	(struct_declaration, class_declaration, interface_declaration):
+	Set `current_class' to the newly created class/struct/interface;
+	set their `Bases' and call Register() before parsing their body.
+
+2004-07-23  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (Kind): New public enum.
 	(TypeContainer): Made this class abstract.
 	(TypeContainer.Kind): New public readonly field.

@@ -33,6 +33,7 @@ namespace Mono.CSharp
 	public class CSharpParser : GenericParser {
 		NamespaceEntry  current_namespace;
 		TypeContainer   current_container;
+		TypeContainer	current_class;
 	
 		IIteratorContainer iterator_container;
 
@@ -48,14 +49,6 @@ namespace Mono.CSharp
                 /// </summary>
                 bool       create_toplevel_block;
 	
-                /// <summary>
-		/// <summary>
-		///   Current interface is used by the various declaration
-		///   productions in the interface declaration to "add"
-		///   the interfaces as we find them.
-		/// </summary>
-		Interface  current_interface;
-
 		/// <summary>
 		///   This is used by the unary_expression code to resolve
 		///   a name against a parameter.  
@@ -712,26 +705,28 @@ struct_declaration
 	  opt_modifiers
 	  STRUCT IDENTIFIER
 	  { 
-		Struct new_struct;
-		string full_struct_name = MakeName ((string) $4);
+		string name = MakeName ((string) $4);
 
-		new_struct = new Struct (current_namespace, current_container, full_struct_name,
-					 (int) $2, (Attributes) $1, lexer.Location);
-		current_container = new_struct;
-		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
+		current_class = new Struct (current_namespace, current_container, name,
+					    (int) $2, (Attributes) $1, lexer.Location);
+
+		current_container = current_class;
+		RootContext.Tree.RecordDecl (name, current_class);
 	  }
 	  opt_class_base
+	  {
+		if ($6 != null)
+			current_class.Bases = (ArrayList) $6;
+
+		current_class.Register ();
+	  }
 	  struct_body
 	  opt_semicolon
 	  {
-		Struct new_struct = (Struct) current_container;
-
-		if ($6 != null)
-			new_struct.Bases = (ArrayList) $6;
+		$$ = current_class;
 
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
-		$$ = new_struct;
+		current_class = current_container;
 	  }
 	| opt_attributes opt_modifiers STRUCT error {
 		CheckIdentifierToken (yyToken);
@@ -1219,31 +1214,32 @@ interface_declaration
 	  opt_modifiers
 	  INTERFACE IDENTIFIER
 	  {
-		Interface new_interface;
-		string full_interface_name = MakeName ((string) $4);
+		string name = MakeName ((string) $4);
 
-		new_interface = new Interface (current_namespace, current_container, full_interface_name,
-					       (int) $2, (Attributes) $1, lexer.Location);
-		if (current_interface != null) {
-			Location l = lexer.Location;
-			Report.Error (-2, l, "Internal compiler error: interface inside interface");
+		if ((current_class != null) && (current_class.Kind == Kind.Interface)) {
+			Report.Error (-2, lexer.Location,
+				      "Internal compiler error: interface inside interface");
 		}
-		current_interface = new_interface;
-		current_container = new_interface;
-		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
+
+		current_class = new Interface (current_namespace, current_container, name,
+					       (int) $2, (Attributes) $1, lexer.Location);
+
+		current_container = current_class;
+		RootContext.Tree.RecordDecl (name, current_class);
 	  }
 	  opt_class_base
-	  interface_body opt_semicolon
-	  { 
-		Interface new_interface = (Interface) current_interface;
+	  {
+		current_class.Bases = (ArrayList) $6;
 
-		if ($6 != null)
-			new_interface.Bases = (ArrayList) $6;
+		current_class.Register ();
+	  }
+	  interface_body 
+	  opt_semicolon 
+	  {
+		$$ = current_class;
 
-		current_interface = null;
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddInterface (new_interface), 
-			  new_interface.Name, new_interface.Location);
+		current_class = current_container;
 	  }
 	| opt_attributes opt_modifiers INTERFACE error {
 		CheckIdentifierToken (yyToken);
@@ -1271,26 +1267,26 @@ interface_member_declaration
 	  { 
 		Method m = (Method) $1;
 
-		CheckDef (current_interface.AddMethod (m), m.Name, m.Location);
+		CheckDef (current_class.AddMethod (m), m.Name, m.Location);
 	  }
 	| interface_property_declaration	
 	  { 
 		Property p = (Property) $1;
 
-		CheckDef (current_interface.AddProperty (p), p.Name, p.Location);
+		CheckDef (current_class.AddProperty (p), p.Name, p.Location);
           }
 	| interface_event_declaration 
           { 
 		if ($1 != null){
 			Event e = (Event) $1;
-			CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
+			CheckDef (current_class.AddEvent (e), e.Name, lexer.Location);
 		}
 	  }
 	| interface_indexer_declaration
 	  { 
 		Indexer i = (Indexer) $1;
 
-		current_interface.AddIndexer (i);
+		current_class.AddIndexer (i);
 	  }
 	;
 
@@ -2899,33 +2895,34 @@ class_declaration
 	  opt_modifiers
 	  CLASS IDENTIFIER
 	  {
-		Class new_class;
-		string name;
+		string name = MakeName ((string) $4);
 
-		name = MakeName ((string) $4);
+		current_class = new Class (current_namespace, current_container, name,
+					   (int) $2, (Attributes) $1, lexer.Location);
 
-		new_class = new Class (current_namespace, current_container, name, (int) $2, 
-				       (Attributes) $1, lexer.Location);
-		current_container = new_class;
-		RootContext.Tree.RecordDecl (name, new_class);
+		current_container = current_class;
+		RootContext.Tree.RecordDecl (name, current_class);
 	  }
 	  opt_class_base
+	  {
+		if ($6 != null) {
+			if (current_class.Name == "System.Object") {
+				Report.Error (537, current_class.Location,
+					      "The class System.Object cannot have a base " +
+					      "class or implement an interface.");
+			}
+			current_class.Bases = (ArrayList) $6;
+		}
+
+		current_class.Register ();
+	  }
 	  class_body 
 	  opt_semicolon 
 	  {
-		Class new_class = (Class) current_container;
-
-		if ($6 != null) {
-			if (new_class.Name == "System.Object") {
-				Report.Error (537, new_class.Location, "The class System.Object cannot have a base class or implement an interface.");
-			}
-			new_class.Bases = (ArrayList) $6;
-		}
+		$$ = current_class;
 
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
-
-		$$ = new_class;
+		current_class = current_container;
 	  }
 	;	
 
@@ -4099,40 +4096,7 @@ MakeName (string class_name)
 void 
 CheckDef (DeclSpace.AdditionResult result, string name, Location l)
 {
-	if (result == DeclSpace.AdditionResult.Success)
-		return;
-
-	switch (result){
-	case DeclSpace.AdditionResult.NameExists:
-		Report.Error (102, l, "The container `" + current_container.Name + 
-				 "' already contains a definition for `"+
-				 name + "'");
-		break;
-
-
-		//
-		// This is handled only for static Constructors, because
-		// in reality we handle these by the semantic analysis later
-		//
- 	case DeclSpace.AdditionResult.MethodExists:
-  		Report.Error (
-			111, l, "Class `"+current_container.Name+
-  			"' already defines a member called '" + 
-  			name + "' with the same parameter types (more than one default constructor)");
-  		break;
-
-	case DeclSpace.AdditionResult.EnclosingClash:
-		Report.Error (542, l, "Member names cannot be the same as their enclosing type");
-		break;
-		
-	case DeclSpace.AdditionResult.NotAConstructor:
-		Report.Error (1520, l, "Class, struct, or interface method must have a return type");
-		break;
-
-	case DeclSpace.AdditionResult.Error:
-		// Error has already been reported.
-		break;
-	}
+	current_container.CheckDef (result, name, l);
 }
 
 void 
