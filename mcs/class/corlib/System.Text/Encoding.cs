@@ -234,7 +234,7 @@ namespace System.Text {
 
                 public virtual byte[] GetBytes(char[] chars, int index, int count)
 		{
-			int bc = GetMaxByteCount (count);
+			int bc = GetByteCount (chars, index, count);
 			byte [] bytes = new byte [bc];
 			
 			int len = GetBytes (chars, index, count, bytes, 0);
