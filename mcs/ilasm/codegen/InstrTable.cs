@@ -20,14 +20,16 @@ namespace Mono.ILASM {
 		private static Hashtable type_table;
 		private static Hashtable method_table;
 		private static Hashtable field_table;
+		private static Hashtable branch_table;
 
 		static InstrTable ()
 		{
 			CreateOpTable ();
 			CreateIntTable ();
 			CreateTypeTable ();
-			CreateMethodTable ();	
+			CreateMethodTable ();
 			CreateFieldTable ();
+			CreateBranchTable ();
 		}
 		
 		public static ILToken GetToken (string str)
@@ -49,6 +51,15 @@ namespace Mono.ILASM {
 			} else if (IsFieldOp (str)) {
 				FieldOp op = GetFieldOp (str);
 				return new ILToken (Token.INSTR_FIELD, op);
+			} else if (IsBranchOp (str)) {
+				BranchOp op = GetBranchOp (str);
+				return new ILToken (Token.INSTR_BRTARGET, op);
+			} else if (IsLdcr4 (str)) {
+				return new ILToken (Token.INSTR_R, "");
+			} else if (IsLdcr8 (str)) {
+				return new ILToken (Token.INSTR_R, "");
+			} else if (IsSwitch (str)) {
+				return new ILToken (Token.INSTR_SWITCH, str);
 			}
 
 			return null;
@@ -58,7 +69,9 @@ namespace Mono.ILASM {
 		{
 			return (IsOp (str) || IsIntOp (str) || 
 				IsTypeOp (str) || IsMethodOp (str) ||
-				IsLdstrOp (str) || IsFieldOp (str));
+				IsLdstrOp (str) || IsFieldOp (str) ||
+   				IsBranchOp (str) || IsLdcr4 (str) || IsLdcr8 (str) ||
+				IsSwitch (str));
 		}
 
 		public static bool IsOp (string str)
@@ -91,6 +104,26 @@ namespace Mono.ILASM {
 			return field_table.Contains (str);
 		}
 
+		public static bool IsBranchOp (string str)
+		{
+			return branch_table.Contains (str);
+		}
+
+		public static bool IsLdcr4 (string str)
+		{
+			return "ldc.r4" == str;
+		}
+
+		public static bool IsLdcr8 (string str)
+		{
+			return "ldc.r8" == str;
+		}
+
+		public static bool IsSwitch (string str)
+		{
+			return "switch" == str;
+		}
+
 		public static Op GetOp (string str)
 		{
 			return (Op) op_table[str];
@@ -114,6 +147,11 @@ namespace Mono.ILASM {
 		public static FieldOp GetFieldOp (string str)
 		{
 			return (FieldOp) field_table[str];
+		}
+
+		public static BranchOp GetBranchOp (string str)
+		{
+			return (BranchOp) branch_table[str];
 		}
 
 		private static void CreateOpTable ()
@@ -190,7 +228,7 @@ namespace Mono.ILASM {
 			op_table["conv.u4"] = Op.conv_u4;
 			op_table["conv.u8"] = Op.conv_u8;
 			op_table["conv.r.un"] = Op.conv_r_un;
-			op_table["throwOp"] = Op.throwOp;
+			op_table["throw"] = Op.throwOp;
 			op_table["conv.ovf.i1.un"] = Op.conv_ovf_i1_un;
 			op_table["conv.ovf.i2.un"] = Op.conv_ovf_i2_un;
 			op_table["conv.ovf.i4.un"] = Op.conv_ovf_i4_un;
@@ -269,8 +307,9 @@ namespace Mono.ILASM {
 			int_table["ldloc.s"] = IntOp.ldloc_s;
 			int_table["ldloca.s"] = IntOp.ldloca_s;
 			int_table["stloc.s"] = IntOp.stloc_s;
-			int_table["ldc_i4.s"] = IntOp.ldc_i4_s;
-			int_table["ldc_i4"] = IntOp.ldc_i4;
+			int_table["ldc.i4.s"] = IntOp.ldc_i4_s;
+			int_table["ldc.i4"] = IntOp.ldc_i4;
+			int_table["ldc.i8"] = IntOp.ldc_i4;
 			int_table["ldarg"] = IntOp.ldarg;
 			int_table["ldarga"] = IntOp.ldarga;
 			int_table["starf"] = IntOp.starg;
@@ -310,7 +349,7 @@ namespace Mono.ILASM {
 			method_table["newobj"] = MethodOp.newobj;
 			method_table["ldtoken"] = MethodOp.ldtoken;
 			method_table["ldftn"] = MethodOp.ldftn;
-			method_table["ldvirtfn"] = MethodOp.ldvirtfn;
+			method_table["ldvirtftn"] = MethodOp.ldvirtfn;
 		}
 
 		private static void CreateFieldTable ()
@@ -324,6 +363,41 @@ namespace Mono.ILASM {
 			field_table["ldsflda"] = FieldOp.ldsflda;
 			field_table["stsfld"] = FieldOp.stsfld;
 			field_table["ldtoken"] = FieldOp.ldtoken;
+		}
+		
+		/// TODO: .s needs fixin
+		private static void CreateBranchTable ()
+		{
+			branch_table = new Hashtable ();
+
+			branch_table["br"] = BranchOp.br;
+			branch_table["brfalse"] = BranchOp.brfalse;
+			branch_table["brtrue"] = BranchOp.brtrue;
+			branch_table["beq"] = BranchOp.beq;
+			branch_table["bge"] = BranchOp.bge;
+			branch_table["bgt"] = BranchOp.bgt;
+			branch_table["ble"] = BranchOp.ble;
+			branch_table["blt"] = BranchOp.blt;
+			branch_table["bne.un"] = BranchOp.bne_un;
+			branch_table["bge.un"] = BranchOp.bge_un;
+			branch_table["bgt.un"] = BranchOp.bgt_un;
+			branch_table["ble.un"] = BranchOp.ble_un;
+			branch_table["blt.un"] = BranchOp.blt_un;
+			branch_table["leave"] = BranchOp.leave;
+
+			branch_table["br.s"] = BranchOp.br;
+			branch_table["brfalse.s"] = BranchOp.brfalse;
+			branch_table["brtrue.s"] = BranchOp.brtrue;
+			branch_table["beq.s"] = BranchOp.beq;
+			branch_table["bge.s"] = BranchOp.bge;
+			branch_table["bgt.s"] = BranchOp.bgt;
+			branch_table["ble.s"] = BranchOp.ble;
+			branch_table["blt.s"] = BranchOp.blt;
+			branch_table["bne.un.s"] = BranchOp.bne_un;
+			branch_table["bge.un.s"] = BranchOp.bge_un;
+			branch_table["bgt.un.s"] = BranchOp.bgt_un;
+			branch_table["ble.un.s"] = BranchOp.blt_un;
+			branch_table["leave.s"] = BranchOp.leave;
 		}
 	}
 

@@ -1,3 +1,8 @@
+2003-03-29 Jackson Harper <jackson@latitudegeo.com>
+
+	* InstrTable.cs: Add branch ops switch, and lc.r*, also fix some
+	typos for other ops.
+
 2003-03-17 Jackson Harper <jackson@latitudegeo.com>
 
 	* ClassTable.cs: Set defined flag and type attributes for referenced 
