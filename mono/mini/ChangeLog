@@ -1,3 +1,11 @@
+2005-03-15  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c: As discussed, make the code actually free the delegate
+	thunk now, to enable the debugging of delegate problems, use
+	MONO_DEBUG=1 when running Mono. 
+
+	This takes also care of parts of the leaks as seen by Joe.
+
 2005-03-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_setup_jit_tls_data): Enable 
