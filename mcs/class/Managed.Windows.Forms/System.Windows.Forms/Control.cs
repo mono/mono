@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.13  2004/08/09 17:25:56  jackson
+// Use new color names
+//
 // Revision 1.12  2004/08/09 15:54:51  jackson
 // Get default properties from the theme.
 //
@@ -500,7 +503,7 @@ namespace System.Windows.Forms
 		#region Public Static Properties
 		public static Color DefaultBackColor {
 			get {
-				return ThemeEngine.Current.DefaultBackColor;
+				return ThemeEngine.Current.DefaultControlBackColor;
 			}
 		}
 
@@ -512,7 +515,7 @@ namespace System.Windows.Forms
 
 		public static Color DefaultForeColor {
 			get {
-				return ThemeEngine.Current.DefaultForeColor;
+				return ThemeEngine.Current.DefaultControlForeColor;
 			}
 		}
 
