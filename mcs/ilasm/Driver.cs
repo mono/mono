@@ -85,7 +85,6 @@ namespace Mono.ILASM {
 					} 
 					switch (GetCommand (str, out command_arg)) {
 						case "out":
-							Console.WriteLine ("Setting output: {0}", command_arg);
 							output_file = command_arg;
 							break;
 						case "exe":
