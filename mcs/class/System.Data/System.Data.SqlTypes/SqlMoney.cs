@@ -57,23 +57,7 @@ namespace System.Data.SqlTypes
 		{
 			if (value > 922337203685477.5807m || value < -922337203685477.5808m)
 				throw new OverflowException ();
-
-			value = Decimal.Round (value, 4);
-
-			int [] bits = Decimal.GetBits (value);
-			int scaleDiff = 4 - ((bits [3] & 0x7FFF0000) >> 16);
-			decimal tmp = value;
-			// integrify
-			if (scaleDiff > 0)
-				for (int i = 0; i < scaleDiff; i++)
-					tmp *= 10;
-			else if (scaleDiff < 0)
-				for (int i = 0; i > scaleDiff; i--)
-					tmp /= 10;
-			int [] tmpbits = decimal.GetBits (tmp);
-			tmpbits [3] = (value < 0) ? 0x8004 << 16 : 0x40000;
-			this.value = new decimal (tmpbits);
-
+			this.value = Decimal.Round (value, 4);
 			notNull = true;
 		}
 

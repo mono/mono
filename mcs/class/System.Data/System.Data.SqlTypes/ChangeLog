@@ -1,3 +1,9 @@
+2004-06-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SqlMoney.cs: Removed old "hack" to correct scale after rounding as
+	Decimal has been fixed (in fact this code was moved and adapted for
+	Decimal as it was better than the previous fix).
+
 2004-06-08 Umadevi S <sumadevi@novell.com>
 	* SqlGuid.cs - fixed bug 59420. Implemented CompareTo according to MSDN documenation
 
