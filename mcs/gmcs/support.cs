@@ -21,7 +21,6 @@ namespace Mono.CSharp {
 	public interface ParameterData {
 		Type ParameterType (int pos);
 		GenericConstraints GenericConstraints (int pos);
-		bool HasArrayParameter { get; }
 		int  Count { get; }
 		bool HasParams { get; }
 		string ParameterName (int pos);
@@ -53,7 +52,7 @@ namespace Mono.CSharp {
 				MethodInfo generic = mb.GetGenericMethodDefinition ();
 				gpd = Invocation.GetParameterData (generic);
 
-				last_arg_is_params = gpd.HasArrayParameter;
+				last_arg_is_params = gpd.HasParams;
 				return;
 			}
 
@@ -68,10 +67,6 @@ namespace Mono.CSharp {
 				return;
 
 			last_arg_is_params = true;
-		}
-
-		public bool HasArrayParameter {
-			get { return last_arg_is_params; }
 		}
 
 		public Type ParameterType (int pos)
