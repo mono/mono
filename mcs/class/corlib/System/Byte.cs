@@ -8,6 +8,7 @@
 //
 
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace System {
 	
@@ -69,8 +70,43 @@ namespace System {
 
 		public static byte Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
-			// TODO: Implement me
-			throw new NotImplementedException ();
+			if (null == s){
+				throw new ArgumentNullException();
+			}
+
+			// TODO: Handle other styles and FormatProvider properties
+			if (NumberStyles.Integer == style){
+				// the pattern allowed is: [ws][+]digits[ws]
+				// [ws] = optional whitespace (any amount)
+				// [+] = one optional plus sign
+				// digits = one or more characters '0' through '9'
+				Regex bytePattern = new Regex("^\\s*\\+?\\d+\\s*$");
+				if (bytePattern.IsMatch(s)){
+					int retVal = 0;
+					int endIndex;
+					// extract the digits from the string
+					Regex byteDigitPattern = new Regex("\\d+");
+					Match m = byteDigitPattern.Match(s);
+					// find out the index number where the digits end
+					endIndex = m.Index+m.Length-1;
+					// work back-to-front through the digits and
+					// multiply each digit by the next power of 10 (start at 0)
+					for(int j = endIndex; j>=m.Index; j--){
+						retVal += (s[j]-'0')*(int)Math.Pow(10,endIndex-j);
+						if (retVal > Byte.MaxValue || retVal < Byte.MinValue){    
+							throw new OverflowException();
+						}
+					}
+					return (byte)retVal;
+				}
+				else {
+				    throw new FormatException();
+				}
+				
+			}
+			else {
+				throw new NotImplementedException();
+			}
 		}
 
 		public override string ToString ()

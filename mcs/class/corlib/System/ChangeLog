@@ -1,3 +1,8 @@
+2001-12-08  Nick Drochak  <ndrochak@gol.com>
+
+	* Byte.cs (Parse): Start implementation. Parse(string) works, but
+	now we need to handle other formats
+
 2001-12-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* DateTime.cs: added an icall to GetNow()
