@@ -29,26 +29,50 @@
 //
 
 using System;
+using System.Collections;
+using System.Reflection.Emit;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class ArrayLiteral : AST {
 
-		ASTList elems;
+		internal ASTList elems;
+		internal int size;
 
 		public ArrayLiteral (Context context, ASTList elems)
 		{
 			throw new NotImplementedException ();
 		}
 
+		internal ArrayLiteral (AST parent)
+		{
+			this.parent = parent;
+			elems = new ASTList ();
+		}
+
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			bool r = true;
+			foreach (AST ast in elems.elems)
+				r &= ast.Resolve (context);
+			return r;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			int i = 0;
+			ILGenerator ig = ec.ig;
+			ArrayList exps = elems.elems;
+			ig.Emit (OpCodes.Ldc_I4, size);
+			ig.Emit (OpCodes.Newarr, typeof (object));
+			foreach (AST ast in exps) {
+				ig.Emit (OpCodes.Dup);
+ 				ig.Emit (OpCodes.Ldc_I4, i);				
+ 				ast.Emit (ec);
+ 				ig.Emit (OpCodes.Stelem_Ref);
+				i++;
+			}
+ 			ig.Emit (OpCodes.Call, typeof (Globals).GetMethod ("ConstructArrayLiteral"));
 		}
 	}
 }
