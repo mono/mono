@@ -652,7 +652,7 @@ namespace System.Web.UI
                 protected virtual object SaveViewState ()
                 {
 			if ((stateMask & VISIBLE_CHANGED) != 0) {
-				ViewState ["Visible"] = Visible;
+				ViewState ["Visible"] = (stateMask & VISIBLE) != 0;
 			} else if (_viewState == null) {
 				return null;
 			}
