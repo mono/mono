@@ -142,6 +142,9 @@ public class Outline {
 
 		if (t.IsDefined (typeof (System.FlagsAttribute), true))
 			o.WriteLine ("[Flags]");
+
+		if (t.IsDefined (typeof (System.ObsoleteAttribute), true))
+			o.WriteLine ("[Obsolete]");
 	}
 
 	void OutlineEvent (EventInfo ei)

@@ -1,3 +1,7 @@
+2004-10-27  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: report [Obsolete] types
+
 2004-09-22  John Luke  <john.luke@gmail.com>
 
 	* outline.cs: use simpler IsDefined method
