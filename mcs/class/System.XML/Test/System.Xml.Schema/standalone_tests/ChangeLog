@@ -1,3 +1,7 @@
+2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xsdtest.cs : XmlReaders should be closed in case of errors.
+
 2004-01-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* README, Makefile, test-masters.tar.gz, xsdtest.cs : Initial checkin.

@@ -28,9 +28,9 @@ Console.WriteLine ("Started:  " + DateTime.Now);
 				schemaFile = schemaFile.Substring (2);
 			bool isValidSchema = test.SelectSingleNode ("@out_s").InnerText == "1";
 			XmlSchema schema = null;
+			XmlTextReader sxr = null;
 			try {
-				XmlTextReader sxr = new XmlTextReader (basePath + schemaFile);
-Console.WriteLine ("BaseURI: " + sxr.BaseURI);
+				sxr = new XmlTextReader (basePath + schemaFile);
 				schema = XmlSchema.Read (sxr, null);
 				sxr.Close ();
 				schema.Compile (null);
@@ -40,12 +40,14 @@ Console.WriteLine ("BaseURI: " + sxr.BaseURI);
 				}
 			} catch (XmlSchemaException ex) {
 				if (isValidSchema) {
-					Console.WriteLine ("Incorrectly Invalid schema  : " + schemaFile + " " + ex);
+					Console.WriteLine ("Incorrectly Invalid schema  : " + schemaFile + " " + ex.Message);
 					continue;
 				}
 			} catch (Exception ex) {
-				Console.WriteLine ("Unexpected Exception on schema: " + schemaFile + " " + ex);
+				Console.WriteLine ("Unexpected Exception on schema: " + schemaFile + " " + ex.Message);
 				continue;
+			} finally {
+				sxr.Close ();
 			}
 			// Test instances
 			string instanceFile = test.SelectSingleNode ("@instance").InnerText;
@@ -54,19 +56,21 @@ Console.WriteLine ("BaseURI: " + sxr.BaseURI);
 			else if (instanceFile.StartsWith ("./"))
 				instanceFile = instanceFile.Substring (2);
 			bool isValidInstance = test.SelectSingleNode ("@out_x").InnerText == "1";
+			XmlValidatingReader xvr = null;
 			try {
-				XmlValidatingReader xvr = new XmlValidatingReader (new XmlTextReader (basePath + "\\" + instanceFile));
+				xvr = new XmlValidatingReader (new XmlTextReader (basePath + "\\" + instanceFile));
 				xvr.Schemas.Add (schema);
 				while (!xvr.EOF)
 					xvr.Read ();
 				if (!isValidInstance)
 					Console.WriteLine ("Incorrectly Valid   instance: " + schemaFile);
-				xvr.Close ();
 			} catch (XmlSchemaException ex) {
 				if (isValidInstance)
-					Console.WriteLine ("Incorrectly Invalid instance: " + schemaFile + " " + ex);
+					Console.WriteLine ("Incorrectly Invalid instance: " + schemaFile + " " + ex.Message);
 			} catch (Exception ex) {
-				Console.WriteLine ("Unexpected Exception on instance: " + schemaFile + " " + ex);
+				Console.WriteLine ("Unexpected Exception on instance: " + schemaFile + " " + ex.Message);
+			} finally {
+				xvr.Close ();
 			}
 		}
 Console.WriteLine ("Finished: " + DateTime.Now);
