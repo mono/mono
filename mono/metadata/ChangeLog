@@ -105,7 +105,6 @@ Thu Feb 19 19:39:09 CET 2004 Paolo Molaro <lupus@ximian.com>
 	* icall.c: Revert the klass->refclass changes since they introduce
 	regressions (bug #54518).
 
->>>>>>> 1.1394
 2004-02-18  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_init): If we're a generic instance and don't
@@ -173,7 +172,6 @@ Tue Feb 17 21:40:16 CET 2004 Paolo Molaro <lupus@ximian.com>
 	* reflection.h (MonoReflectionGenericInst): Removed `methods',
 	`ctors' and `fields'; added `initialized'.
 
->>>>>>> 1.1380
 2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* debug-helpers.c (mono_method_full_name): Fix output for empty
