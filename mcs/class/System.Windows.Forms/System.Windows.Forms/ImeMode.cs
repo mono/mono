@@ -3,16 +3,17 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
+//
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// </summary>
-	public enum ImeMode {
+namespace System.Windows.Forms
+{
+	[ComVisible (true)]
+	public enum ImeMode
+	{
 		Alpha = 8,
 		AlphaFull = 7,
 		Disable = 3,

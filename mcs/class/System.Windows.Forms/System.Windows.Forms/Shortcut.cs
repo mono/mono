@@ -5,17 +5,16 @@
 //   Dennis Hayes = dennish@raytek.com
 //   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
-// = C, 2002 Ximian, Inc.  http://www.ximian.com
+// (C), 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// </summary>
-	[Flags]
-	public enum Shortcut {
+namespace System.Windows.Forms
+{
+	[ComVisible (true)]
+	public enum Shortcut
+	{
 		Alt0 = 262192,
 		Alt1 = 262193,
 		Alt2 = 262194,

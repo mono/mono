@@ -3,18 +3,20 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
+//
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// </summary>
-	///
+namespace System.Windows.Forms
+{
 	[Flags]
-	public enum Keys {
+	[ComVisible (true)]
+	[TypeConverter (typeof (KeysConverter))]
+	public enum Keys
+	{
 		A = 65,
 		Add = 107,
 		Alt = 262144,

@@ -3,19 +3,18 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
-//	 Gianandrea Terzi (gianandrea.terzi@lario.com)
+//   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// </summary>
-	[Flags]
-	public enum ScrollEventType {
+namespace System.Windows.Forms
+{
+	[ComVisible (true)]
+	public enum ScrollEventType
+	{
 		EndScroll = 8,
 		First = 6,
 		LargeDecrement = 2,

@@ -3,16 +3,15 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
+//
 // (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
-
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// </summary>
-	public enum AccessibleStates{
+namespace System.Windows.Forms
+{
+	[Flags]
+	public enum AccessibleStates
+	{
 		AlertLow = 67108864,
 		AlertMedium = 134217728,
 		AlertHigh = 268435456,
@@ -45,15 +44,6 @@ namespace System.Windows.Forms {
 		Sizeable = 131072,
 		Traversed =8388608,
 		Unavailable = 1,
-		Valid = 1073741823,		
-
-
-		//Where did these come from, are they missing from elsewhere?
-		//AddSelection = ,
-		//ExtendSelection = ,
-		//None = ,
-		//RemoveSelection = ,
-		//TakeFocus = ,
-		//TakeSelection = 
+		Valid = 1073741823
 	}
 }

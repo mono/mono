@@ -8,14 +8,13 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// </summary>
-	[Flags]
-	public enum SelectionMode {
+namespace System.Windows.Forms
+{
+	[ComVisible (true)]
+	public enum SelectionMode
+	{
 		MultiExtended = 3,
 		MultiSimple = 2,
 		None = 0,

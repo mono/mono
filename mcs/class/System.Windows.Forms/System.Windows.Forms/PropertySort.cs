@@ -3,16 +3,17 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
+//
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// </summary>
-	public enum PropertySort {
+namespace System.Windows.Forms
+{
+	[ComVisible (true)]
+	public enum PropertySort
+	{
 		Alphabetical = 1,
 		Categorized = 2,
 		CategorizedAlphabetical = 3,
