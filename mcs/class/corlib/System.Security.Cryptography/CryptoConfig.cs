@@ -1,5 +1,5 @@
 //
-// CryptoConfig.cs: Handles cryptographic implementations and OIDs.
+// CryptoConfig.cs: Handles cryptographic implementations and OIDs mappings.
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
@@ -20,6 +20,7 @@ namespace System.Security.Cryptography {
 
 public class CryptoConfig {
 
+	static private object lockObject;
 	static private Hashtable algorithms;
 	static private Hashtable oid;
 
@@ -42,7 +43,6 @@ public class CryptoConfig {
 	// LAMESPEC: undocumented classes (also undocumented in CryptoConfig ;-)
 	private const string defaultDSASigDesc = defaultNamespace + "DSASignatureDescription";
 	private const string defaultRSASigDesc = defaultNamespace + "RSAPKCS1SHA1SignatureDescription";
-
 #if NET_1_2
 	private const string defaultRIPEMD160 = defaultNamespace + "RIPEMD160Managed";
 #endif
@@ -114,7 +114,6 @@ public class CryptoConfig {
 	private const string nameMAC3DESb = "System.Security.Cryptography.MACTripleDES";
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string name3DESKeyWrap = "TripleDESKeyWrap";
-
 #if NET_1_2
 	private const string nameRIPEMD160a = "RIPEMD160";
 	private const string nameRIPEMD160b = "RIPEMD-160";
@@ -139,7 +138,14 @@ public class CryptoConfig {
 	private const string urlKeyValueRSA = urlXmlDsig + " KeyValue/RSAKeyValue";	// space is required
 	private const string urlRetrievalMethod = urlXmlDsig + " RetrievalMethod";	// space is required
 
-	static CryptoConfig ()
+	static CryptoConfig () 
+	{
+		// lock(this) is bad
+		// http://msdn.microsoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
+		lockObject = new object ();
+	}
+
+	private static void Initialize () 
 	{
 		algorithms = new Hashtable ();
 		// see list @ http://msdn.microsoft.com/library/en-us/cpref/html/
@@ -170,15 +176,15 @@ public class CryptoConfig {
 
 		algorithms.Add (nameDSAa, defaultDSA);  
 		algorithms.Add (nameDSAb, defaultDSA);  
-	
+
 		algorithms.Add (nameDESa, defaultDES);
 		algorithms.Add (nameDESb, defaultDES);
-	
+
 		algorithms.Add (name3DESa, default3DES);
 		algorithms.Add (name3DESb, default3DES);
 		algorithms.Add (name3DESc, default3DES);
 		algorithms.Add (name3DESd, default3DES);
-	
+
 		algorithms.Add (nameRC2a, defaultRC2);
 		algorithms.Add (nameRC2b, defaultRC2);
 
@@ -196,7 +202,6 @@ public class CryptoConfig {
 		algorithms.Add (nameHMACb, defaultHMAC);
 		algorithms.Add (nameMAC3DESa, defaultMAC3DES);
 		algorithms.Add (nameMAC3DESb, defaultMAC3DES);
-
 #if NET_1_2
 		algorithms.Add (nameRIPEMD160a, defaultRIPEMD160);
 		algorithms.Add (nameRIPEMD160b, defaultRIPEMD160);
@@ -250,13 +255,11 @@ public class CryptoConfig {
 		oid.Add (name3DESKeyWrap, oid3DESKeyWrap);
 
 		// Add/modify the config as specified by machine.config
-		string config = GetMachineConfigPath ();
-		// debug @"D:\Program Files\Mono-0.25\etc\mono\machine.config";
-		if (config != null)
-			LoadConfig (config);
+		string config = Environment.GetMachineConfigPath ();
+		LoadConfig (config);
 	}
 
-	internal static void LoadConfig (string filename) 
+	private static void LoadConfig (string filename) 
 	{
 		if (!File.Exists (filename))
 			return;
@@ -320,27 +323,6 @@ public class CryptoConfig {
 		}
 	}
 
-	// managed version of "get_machine_config_path"
-	internal static string GetMachineConfigPath () 
-	{
-		string env = Environment.GetEnvironmentVariable ("MONO_CONFIG");
-		if (env != null)
-			return env;
-		env = Environment.GetEnvironmentVariable ("MONO_BASEPATH");
-		if (env == null)
-			return null;
-
-		StringBuilder sb = new StringBuilder ();
-		sb.Append (env);
-		sb.Append (Path.DirectorySeparatorChar);
-		sb.Append ("etc");
-		sb.Append (Path.DirectorySeparatorChar);
-		sb.Append ("mono");
-		sb.Append (Path.DirectorySeparatorChar);
-		sb.Append ("machine.config");
-		return sb.ToString ();
-	}
-
 	public static object CreateFromName (string name)
 	{
 		return CreateFromName (name, null);
@@ -350,6 +332,12 @@ public class CryptoConfig {
 	{
 		if (name == null)
 			throw new ArgumentNullException ();
+
+		if (algorithms == null) {
+			lock (lockObject) {
+				Initialize ();
+			}
+		}
 	
 		try {
 			Type algoClass = null;
@@ -362,7 +350,7 @@ public class CryptoConfig {
 			return Activator.CreateInstance (algoClass, args);
 		}
 		catch {
-			// method deosn't throw any exception
+			// method doesn't throw any exception
 			return null;
 		}
 	}
@@ -456,6 +444,12 @@ public class CryptoConfig {
 	{
 		if (name == null)
 			throw new ArgumentNullException ("name");
+
+		if (oid == null) {
+			lock (lockObject) {
+				Initialize ();
+			}
+		}
 
 		return (string)oid [name];
 	}

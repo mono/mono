@@ -1,5 +1,8 @@
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* CryptoConfig.cs: Now use internal Environment.GetMachineConfigPath()
+	to find machine.config.	Initialization removed from static constructor
+	to speed up 98% of software that do not requires it.
 	* SymmetricAlgorithm.cs: Fixed padding for None and Zeros modes. Unit
 	tests for padding modes are now in PaddingModeTest.cs.
 
