@@ -1,3 +1,8 @@
+2003-07-24  Ravi Pratap  <ravi@ximian.com>
+
+	* icall.c: Remove the FIXED_MCS_45127 workarounds - this has been
+	fixed.
+
 2003-07-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* reflection.c: Fix bug #46669
