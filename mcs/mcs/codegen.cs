@@ -42,11 +42,14 @@ namespace Mono.CSharp {
 
 			return name.Substring (0, pos);
 		}
+
+		public string FileName;
 		
 		public CodeGen (string name, string output)
 		{
 			AssemblyName an;
-			
+
+			FileName = output;
 			an = new AssemblyName ();
 			an.Name = TrimExt (Basename (name));
 			current_domain = AppDomain.CurrentDomain;
@@ -157,7 +160,7 @@ namespace Mono.CSharp {
 			this.ig = ig;
 
 			TypeContainer = parent;
-			CheckState = parent.RootContext.Checked;
+			CheckState = RootContext.Checked;
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;

@@ -423,7 +423,7 @@ namespace Mono.CSharp {
 			do {
 				MemberInfo [] mi;
 
-				mi = ec.TypeContainer.RootContext.TypeManager.FindMembers (
+				mi = RootContext.TypeManager.FindMembers (
 					current_type, mt, bf | BindingFlags.DeclaredOnly,
 					Type.FilterName, name);
 				

@@ -20,17 +20,17 @@ namespace Mono.CSharp {
 		//
 		// Contains the parsed tree
 		//
-		Tree tree;
+		static Tree tree;
 
 		//
 		// Contains loaded assemblies and our generated code as we go.
 		//
-		public TypeManager TypeManager;
+		static public TypeManager TypeManager;
 
 		//
 		// The System.Reflection.Emit CodeGenerator
 		//
-		CodeGen cg;
+		static CodeGen cg;
 
 		static public bool Optimize;
 		
@@ -55,31 +55,35 @@ namespace Mono.CSharp {
 		// or abstract as well as the parent names (to implement new, 
 		// override).
 		//
-		ArrayList type_container_resolve_order;
-		ArrayList interface_resolve_order;
+		static ArrayList type_container_resolve_order;
+		static ArrayList interface_resolve_order;
 		
 		//
 		// Holds a reference to the Private Implementation Details
 		// class.
 		//
-		TypeBuilder impl_details_class;
+		static TypeBuilder impl_details_class;
 
+		public static int WarningLevel = 4;
+		
 		//
 		// Constructor
 		//
-		public RootContext ()
+		static RootContext ()
 		{
-			tree = new Tree (this);
+			tree = new Tree ();
 			TypeManager = new TypeManager ();
 		}
 
-		public Tree Tree {
+		static public Tree Tree {
 			get {
 				return tree;
 			}
 		}
 
-		public CodeGen CodeGen {
+		static public string MainClass;
+		
+		static public CodeGen CodeGen {
 			get {
 				return cg;
 			}
@@ -98,9 +102,14 @@ namespace Mono.CSharp {
 		// 
 		// The default compiler checked state
 		//
-		public bool Checked = false;
+		static public bool Checked = false;
 
-		string MakeFQN (string nsn, string name)
+		//
+		// Whether to allow Unsafe code
+		//
+		static public bool Unsafe = false;
+		
+		static string MakeFQN (string nsn, string name)
 		{
 			string prefix = (nsn == "" ? "" : nsn + ".");
 
@@ -114,7 +123,7 @@ namespace Mono.CSharp {
 		//   It creates the TypeBuilder's as it processes the user defined
 		//   types.  
 		// </remarks>
-		public void ResolveTree ()
+		static public void ResolveTree ()
 		{
 			//
 			// Interfaces are processed first, as classes and
@@ -164,7 +173,7 @@ namespace Mono.CSharp {
 		//   methods, fields, etc) we need to "Define" them before we
 		//   can save the Assembly
 		// </remarks>
-		public void CloseTypes ()
+		static public void CloseTypes ()
 		{
 			TypeContainer root = Tree.Types;
 			
@@ -200,7 +209,7 @@ namespace Mono.CSharp {
 		//
 		// Returns: Type or null if they type can not be found.
 		//
-		public Type LookupType (DeclSpace ds, string name, bool silent)
+		static public Type LookupType (DeclSpace ds, string name, bool silent)
 		{
 			Type t;
 
@@ -243,12 +252,12 @@ namespace Mono.CSharp {
 		//   This is the silent version of LookupType, you can use this
 		//   to `probe' for a type
 		// </summary>
-		public Type LookupType (TypeContainer tc, string name)
+		static public Type LookupType (TypeContainer tc, string name)
 		{
 			return LookupType (tc, name, true);
 		}
 
-		public bool IsNamespace (string name)
+		static public bool IsNamespace (string name)
 		{
 			Namespace ns;
 
@@ -268,7 +277,7 @@ namespace Mono.CSharp {
 		//
 		// This is invoked after all interfaces, structs and classes
 		// have been defined through `ResolveTree' 
-		public void PopulateTypes ()
+		static public void PopulateTypes ()
 		{
 			if (interface_resolve_order != null)
 				foreach (Interface iface in interface_resolve_order)
@@ -292,7 +301,7 @@ namespace Mono.CSharp {
 			
 		}
 
-		public void EmitCode ()
+		static public void EmitCode ()
 		{
 			if (type_container_resolve_order != null)
 				foreach (TypeContainer tc in type_container_resolve_order)
@@ -302,7 +311,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Compiling against Standard Libraries property.
 		// </summary>
-		public bool StdLib {
+		static public bool StdLib {
 			get {
 				return stdlib;
 			}
@@ -312,7 +321,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static ModuleBuilder ModuleBuilder {
+		static public ModuleBuilder ModuleBuilder {
 			get {
 				return mb;
 			}
@@ -322,12 +331,12 @@ namespace Mono.CSharp {
 		// Public Field, used to track which method is the public entry
 		// point.
 		//
-		public MethodInfo EntryPoint;
+		static public MethodInfo EntryPoint;
 
 		//
 		// These are used to generate unique names on the structs and fields.
 		//
-		int field_count;
+		static int field_count;
 		
 		//
 		// Makes an initialized struct, returns the field builder that
@@ -343,7 +352,7 @@ namespace Mono.CSharp {
 		//
 		// 2. Define the field on the impl_details_class
 		//
-		public FieldBuilder MakeStaticData (byte [] data)
+		static public FieldBuilder MakeStaticData (byte [] data)
 		{
 			FieldBuilder fb;
 			int size = data.Length;

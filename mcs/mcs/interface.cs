@@ -65,9 +65,8 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Interface (RootContext rc, TypeContainer parent, string name, int mod,
-				  Attributes attrs, Location l)
-			: base (rc, name, l)
+		public Interface (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
+			: base (name, l)
 		{
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
 			this.parent = parent;

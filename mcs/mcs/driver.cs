@@ -29,25 +29,23 @@ namespace Mono.CSharp
 		//
 		// Assemblies references to be linked.   Initialized with
 		// mscorlib.dll here.
-		ArrayList references;
+		static ArrayList references;
 
 		// Lookup paths
-		ArrayList link_paths;
+		static ArrayList link_paths;
 
-		RootContext context; 
+		static bool yacc_verbose = false;
 
-		bool yacc_verbose = false;
+		static int error_count = 0;
 
-		int error_count = 0;
+		static string first_source;
 
-		string first_source;
+		static Target target = Target.Exe;
+		static string target_ext = ".exe";
 
-		Target target = Target.Exe;
-		string target_ext = ".exe";
-
-		bool parse_only = false;
+		static bool parse_only = false;
 		
-		public int parse (string input_file)
+		static int parse (string input_file)
 		{
 			CSharpParser parser;
 			System.IO.Stream input;
@@ -60,7 +58,7 @@ namespace Mono.CSharp
 				return 1;
 			}
 
-			parser = new CSharpParser (context, input_file, input);
+			parser = new CSharpParser (input_file, input);
 			parser.yacc_verbose = yacc_verbose;
 			try {
 				errors = parser.parse ();
@@ -73,49 +71,69 @@ namespace Mono.CSharp
 			return errors;
 		}
 		
-		public void Usage ()
+		static void Usage (bool is_error)
 		{
 			Console.WriteLine (
-				"compiler [options] source-files\n\n" +
-				"-v           Verbose parsing\n"+
-				"-o           Specifies output file\n" +
-				"-L           Specifies path for loading assemblies\n" +
-				"--checked    Set default context to checked\n" +
-				"--fatal      Makes errors fatal\n" +
-				"--nostdlib   Does not load core libraries\n" +
-				"--optimize   Optimizes\n" +
-				"--parse      Only parses the source file\n" +
-				"--probe X L  Probes for the source to generate code X on line L\n" +
-				"--target     Specifies the target (exe, winexe, library, module)\n" +
-				"-r           References an assembly\n");
-			
+				"Mono C# compiler, (C) 2001 Ximian, Inc.\n" +
+				"mcs [options] source-files\n" +
+				"   --about         About the Mono C# compiler\n" +
+				"   --checked       Set default context to checked\n" +
+				"   --fatal         Makes errors fatal\n" +
+				"   -L PATH         Adds PATH to the assembly link path\n" +
+				"   --nostdlib      Does not load core libraries\n" +
+				"   --nowarn XXX    Ignores warning number XXX\n" +
+				"   -o FNAME        Specifies output file\n" +
+				"   --optimize      Optimizes\n" +
+				"   --parse         Only parses the source file\n" +
+				"   --probe X L     Probes for the source to generate code X on line L\n" +
+				"   --target KIND   Specifies the target (KIND is one of: exe, winexe, " +
+				                    "library, module)\n" +
+				"   --unsafe        Allows unsafe code\n" +
+				"   --werror        Treat warnings as errors\n" +
+				"   --wlevel LEVEL  Sets warning level (the highest is 4, the default)\n" +
+				"   -r              References an assembly\n" +
+				"   -v              Verbose parsing (for debugging the parser)\n");
+			if (is_error)
+				error_count++;
 		}
 
-		public static void error (string msg)
+		static void About ()
+		{
+			Console.WriteLine (
+				"The Mono C# compiler is (C) 2001 Ximian, Inc.\n\n" +
+				"The compiler source code is released under the terms of the GNU GPL\n\n" +
+
+				"For more information on Mono, visit the project Web site\n" +
+				"   http://www.go-mono.com\n\n" +
+
+				"The compiler was written by Miguel de Icaza and Ravi Pratap");
+		}
+		
+		static void error (string msg)
 		{
 			Console.WriteLine ("Error: " + msg);
 		}
 
-		public static void notice (string msg)
+		static void notice (string msg)
 		{
 			Console.WriteLine (msg);
 		}
 		
-		public static int Main(string[] args)
+		public static int Main (string[] args)
 		{
-			Driver driver = new Driver (args);
-
-			return driver.error_count;
+			MainDriver (args);
+			
+			return error_count;
 		}
 
-		public int LoadAssembly (string assembly)
+		static public int LoadAssembly (string assembly)
 		{
 			Assembly a;
 			string total_log = "";
 
 			try {
 				a = Assembly.Load (assembly);
-				context.TypeManager.AddAssembly (a);
+				RootContext.TypeManager.AddAssembly (a);
 				return 0;
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
@@ -123,7 +141,7 @@ namespace Mono.CSharp
 
 					try {
 						a = Assembly.LoadFrom (full_path);
-						context.TypeManager.AddAssembly (a);
+						RootContext.TypeManager.AddAssembly (a);
 						return 0;
 					} catch (FileNotFoundException ff) {
 						total_log += ff.FusionLog;
@@ -152,7 +170,7 @@ namespace Mono.CSharp
 		/// <summary>
 		///   Loads all assemblies referenced on the command line
 		/// </summary>
-		public int LoadReferences ()
+		static public int LoadReferences ()
 		{
 			int errors = 0;
 			
@@ -172,13 +190,11 @@ namespace Mono.CSharp
 		///    TODO: Mostly structured to debug the compiler
 		///    now, needs to be turned into a real driver soon.
 		/// </remarks>
-		public Driver (string [] args)
+		static void MainDriver (string [] args)
 		{
-			ITreeDump generator = null;
 			int errors = 0, i;
 			string output_file = null;
 
-			context = new RootContext ();
 			references = new ArrayList ();
 			link_paths = new ArrayList ();
 
@@ -189,113 +205,164 @@ namespace Mono.CSharp
 			// path.
 			//
 			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
-			
-			for (i = 0; i < args.Length; i++){
+
+			int argc = args.Length;
+			for (i = 0; i < argc; i++){
 				string arg = args [i];
-				
-				try {
-					if (arg.StartsWith ("-")){
-						if (arg == "-v"){
-							yacc_verbose = true;
-							continue;
+
+				if (arg.StartsWith ("-")){
+					switch (arg){
+					case "-v":
+						yacc_verbose = true;
+						continue;
+
+					case "--parse":
+						parse_only = true;
+						continue;
+
+					case "--main": case "-m":
+						if ((i + 1) >= argc){
+							Usage (true);
+							return;
 						}
+						RootContext.MainClass = args [++i];
+						continue;
+
+					case "--unsafe":
+						RootContext.Unsafe = true;
+						break;
 						
-						if (arg == "--parse"){
-							parse_only = true;
-							continue;
+					case "--optimize":
+						RootContext.Optimize = true;
+						continue;
+
+					case "--help":
+						Usage (false);
+						return;
+						
+					case "--probe": {
+						int code, line;
+						
+						code = Int32.Parse (args [++i], 0);
+						line = Int32.Parse (args [++i], 0);
+						Report.SetProbe (code, line);
+						continue;
+					}
+
+					case "-o": case "--output":
+						if ((i + 1) >= argc){
+							Usage (true);
+							return;
+						}
+						output_file = args [++i];
+						continue;
+						
+					case "--checked":
+						RootContext.Checked = true;
+						continue;
+						
+					case "--target":
+						if ((i + 1) >= argc){
+							Usage (true);
+							return;
 						}
 
-						if (arg == "--optimize"){
-							RootContext.Optimize = true;
-							continue;
-						}
-						
-						if (arg == "--probe"){
-							int code, line;
-
-							code = Int32.Parse (args [++i], 0);
-							line = Int32.Parse (args [++i], 0);
-							Report.SetProbe (code, line);
-							continue;
-						}
-						
-						if (arg == "-z"){
-							generator.ParseOptions (args [++i]);
-							continue;
-						}
-						
-						if (arg == "-o" || arg == "--output"){
-							try {
-								output_file = args [++i];
-							} catch (Exception){
-								error ("Could not write to `"+args [i]);
-								error_count++;
-								return;
-							}
-							continue;
-						}
-
-						if (arg == "--checked"){
-							context.Checked = true;
-							continue;
-						}
-						
-						if (arg == "--target"){
-							string type = args [++i];
+						string type = args [++i];
+						switch (type){
+						case "library":
+							target = Target.Library;
+							target_ext = ".dll";
+							break;
 							
-							switch (type){
-							case "library":
-								target = Target.Library;
-								target_ext = ".dll";
-								break;
-								
-							case "exe":
-								target = Target.Exe;
-								break;
-								
-							case "winexe":
-								target = Target.WinExe;
-								break;
-								
-							case "module":
-								target = Target.Module;
-								target_ext = ".dll";
-								break;
-							}
-							continue;
+						case "exe":
+							target = Target.Exe;
+							break;
+							
+						case "winexe":
+							target = Target.WinExe;
+							break;
+							
+						case "module":
+							target = Target.Module;
+							target_ext = ".dll";
+							break;
+						}
+						continue;
+
+					case "-r":
+						if ((i + 1) >= argc){
+							Usage (true);
+							return;
 						}
 						
-						if (arg == "-r"){
-							references.Add (args [++i]);
-							continue;
-						}
+						references.Add (args [++i]);
+						continue;
 						
-						if (arg == "-L"){
-							link_paths.Add (args [++i]);
-							continue;
+					case "-L":
+						if ((i + 1) >= argc){
+							Usage (true);
+							return;
 						}
+						link_paths.Add (args [++i]);
+						continue;
 						
-						if (arg == "--nostdlib"){
-							context.StdLib = false;
-							continue;
-						}
+					case "--nostdlib":
+						RootContext.StdLib = false;
+						continue;
 						
-						if (arg == "--fatal"){
-							Report.Fatal = true;
-							continue;
+					case "--fatal":
+						Report.Fatal = true;
+						continue;
+
+					case "--werror":
+						Report.WarningsAreErrors = true;
+						continue;
+
+					case "--nowarn":
+						if ((i + 1) >= argc){
+							Usage (true);
+							return;
 						}
-						Usage ();
-						error_count++;
+						int warn;
+						
+						try {
+							warn = Int32.Parse (args [++i]);
+						} catch {
+							Usage (true);
+							return;
+						}
+						Report.SetIgnoreWarning (warn);
+						continue;
+
+					case "--wlevel":
+						if ((i + 1) >= argc){
+							Usage (true);
+							error_count++;
+							return;
+						}
+						int level;
+						
+						try {
+							level = Int32.Parse (args [++i]);
+						} catch {
+							Usage (true);
+							return;
+						}
+						if (level < 0 || level > 4){
+							Report.Error (1900, "Warning level must be 0 to 4");
+							return;
+						} else
+							RootContext.WarningLevel = level;
+						continue;
+						
+					case "--about":
+						About ();
+						return;
+						
+					default:
+						Usage (true);
 						return;
 					}
-				} catch (System.IndexOutOfRangeException){
-					Usage ();
-					error_count++;
-					return;
-				} catch (System.FormatException) {
-					Usage ();
-					error_count++;
-					return;
 				}
 
 				if (first_source == null)
@@ -326,7 +393,7 @@ namespace Mono.CSharp
 			//
 			// Load Core Library for default compilation
 			//
-			if (context.StdLib){
+			if (RootContext.StdLib){
 				references.Insert (0, "mscorlib");
 				references.Insert (1, "System");
 			}
@@ -346,35 +413,6 @@ namespace Mono.CSharp
 				return;
 			}
 
-
-			//
-			// Dumping the parsed tree.
-			//
-			// This code generation interface is only here
-			// for debugging the parser. 
-			//
-			if (generator != null){
-				if (output_file == null){
-					error ("Error: no output file specified");
-					return;
-				}
-
-				Stream output_stream = File.Create (output_file);
-				StreamWriter output = new StreamWriter (output_stream);
-				
-				errors += generator.Dump (context.Tree, output);
-
-				if (errors > 0){
-					error ("Compilation failed");
-					return;
-				} else
-					notice ("Compilation successful");
-
-				output.Flush ();
-				output.Close ();
-			} 
-
-			
 			error_count = errors;
 
 			//
@@ -386,22 +424,22 @@ namespace Mono.CSharp
 				output_file = first_source.Substring (0, pos) + target_ext;
 			}
 
-			context.CodeGen = new CodeGen (output_file, output_file);
+			RootContext.CodeGen = new CodeGen (output_file, output_file);
 
 			//
 			// Before emitting, we need to get the core
 			// types emitted from the user defined types
 			// or from the system ones.
 			//
-			context.TypeManager.InitCoreTypes ();
+			RootContext.TypeManager.InitCoreTypes ();
 
-			context.TypeManager.AddModule (context.CodeGen.ModuleBuilder);
+			RootContext.TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
 			
 			//
 			// The second pass of the compiler
 			//
-			context.ResolveTree ();
-			context.PopulateTypes ();
+			RootContext.ResolveTree ();
+			RootContext.PopulateTypes ();
 			
 			if (Report.Errors > 0){
 				error ("Compilation failed");
@@ -411,14 +449,14 @@ namespace Mono.CSharp
 			//
 			// The code generator
 			//
-			context.EmitCode ();
+			RootContext.EmitCode ();
 			
 			if (Report.Errors > 0){
 				error ("Compilation failed");
 				return;
 			}
 			
-			context.CloseTypes ();
+			RootContext.CloseTypes ();
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
 				
@@ -430,7 +468,7 @@ namespace Mono.CSharp
 				k = PEFileKinds.WindowApplication;
 
 			if (target == Target.Exe || target == Target.WinExe){
-				MethodInfo ep = context.EntryPoint;
+				MethodInfo ep = RootContext.EntryPoint;
 
 				if (ep == null){
 					Report.Error (5001, "Program " + output_file +
@@ -438,10 +476,10 @@ namespace Mono.CSharp
 					return;
 				}
 				
-				context.CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+				RootContext.CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
 			}
 			
-			context.CodeGen.Save (output_file);
+			RootContext.CodeGen.Save (output_file);
 
 			if (Report.Errors > 0){
 				error ("Compilation failed");

@@ -3583,7 +3583,7 @@ namespace Mono.CSharp {
 			byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
 			
 			if (data != null) {
-				fb = ec.TypeContainer.RootContext.MakeStaticData (data);
+				fb = RootContext.MakeStaticData (data);
 				
 				if (is_expression)
 					ig.Emit (OpCodes.Dup);
@@ -4455,7 +4455,7 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
+					indexer_type, RootContext.TypeManager, ea.loc);
 
 
 			//
@@ -4484,7 +4484,7 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
+					indexer_type, RootContext.TypeManager, ea.loc);
 
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
 				set_arguments = (ArrayList) ea.Arguments.Clone ();

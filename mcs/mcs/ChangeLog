@@ -1,5 +1,24 @@
 2001-12-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Method.Define): Allow the entry point to be in a
+	specific class.
+
+	* driver.cs: Rewrite the argument handler to clean it up a bit.
+
+	* rootcontext.cs: Made it just an auxiliary namespace feature by
+	making everything static.
+
+	* driver.cs: Adapt code to use RootContext type name instead of
+	instance variable.
+
+	* delegate.cs: Remove RootContext argument.
+
+	* class.cs: (Struct, TypeContainer, Class): Remove RootContext
+	argument. 
+
+	* class.cs (Event.Define): The lookup can fail.
+	
+
 	* cs-tokenizer.cs: Begin implementation of pre-procesor. 
 
 	* expression.cs: Resolve the this instance before invoking the code.

@@ -53,12 +53,9 @@ namespace Mono.CSharp
 		// </summary>
 		Hashtable namespaces;
 
-		RootContext rc;
-		
-		public Tree (RootContext rc)
+		public Tree ()
 		{
-			root_types = new TypeContainer (rc, null, "", new Location (-1));
-			this.rc = rc;
+			root_types = new TypeContainer (null, "", new Location (-1));
 		}
 
 

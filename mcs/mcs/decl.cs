@@ -52,8 +52,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public readonly RootContext RootContext;
-		
 		string name, basename;
 		
 		/// <summary>
@@ -106,10 +104,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected Hashtable defined_names;
 
-		public DeclSpace (RootContext rc, string name, Location l)
+		public DeclSpace (string name, Location l)
 		{
 			this.name = name;
-			this.RootContext = rc;
 			this.basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();
 			Location = l;

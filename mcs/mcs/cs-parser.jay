@@ -72,18 +72,10 @@ namespace Mono.CSharp
 		// </summmary>
 		bool  parsing_indexer;
 
-		// <summary>
-		//   Used to record all types defined
-		// </summary>
-		Tree tree;
-
 		//
 		// An out-of-band stack.
 		//
 		Stack oob_stack;
-
-		RootContext rc;
-
 %}
 
 %token EOF
@@ -298,7 +290,7 @@ using_namespace_directive
 namespace_declaration
 	: NAMESPACE qualified_identifier 
 	  {
-		current_namespace = tree.RecordNamespace (current_namespace, (string) $2);
+		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, (string) $2);
 	  } 
 	  namespace_body opt_semicolon
 	  { 
@@ -587,11 +579,11 @@ struct_declaration
 		Struct new_struct;
 		string full_struct_name = MakeName ((string) $4);
 
-		new_struct = new Struct (rc, current_container, full_struct_name, (int) $2, 
+		new_struct = new Struct (current_container, full_struct_name, (int) $2, 
 					 (Attributes) $1, lexer.Location);
 		current_container = new_struct;
 		current_container.Namespace = current_namespace;
-		tree.RecordStruct (full_struct_name, new_struct);
+		RootContext.Tree.RecordStruct (full_struct_name, new_struct);
 	  }
 	  opt_struct_interfaces
 	  struct_body
@@ -1001,7 +993,7 @@ interface_declaration
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $4);
 
-		new_interface = new Interface (rc, current_container, full_interface_name, (int) $2, 
+		new_interface = new Interface (current_container, full_interface_name, (int) $2, 
 					       (Attributes) $1, lexer.Location);
 		if (current_interface != null) {
 			Location l = lexer.Location;
@@ -1009,7 +1001,7 @@ interface_declaration
 		}
 		current_interface = new_interface;
 		new_interface.Namespace = current_namespace;
-		tree.RecordInterface (full_interface_name, new_interface);
+		RootContext.Tree.RecordInterface (full_interface_name, new_interface);
 	  }
 	  opt_interface_base
 	  interface_body
@@ -1493,7 +1485,7 @@ enum_declaration
 	  opt_semicolon
 	  { 
 		string name = (string) $4;
-		Enum e = new Enum (rc, (string) $5, (int) $2, name, (Attributes) $1, lexer.Location);
+		Enum e = new Enum ((string) $5, (int) $2, name, (Attributes) $1, lexer.Location);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
 			CheckDef (e.AddEnumMember (ev.identifier, 
@@ -1565,7 +1557,7 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		Delegate del = new Delegate (rc, (string) $4, (int) $2, 
+		Delegate del = new Delegate ((string) $4, (int) $2, 
 		                             MakeName ((string) $5), (Parameters) $7, 
 					     (Attributes) $1, lexer.Location);
 		  
@@ -1579,7 +1571,7 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		Delegate del = new Delegate (rc, "System.Void", (int) $2, (string) $5, (Parameters) $7, 
+		Delegate del = new Delegate ("System.Void", (int) $2, (string) $5, (Parameters) $7, 
 					     (Attributes) $1, lexer.Location);
 
 		CheckDef (current_container.AddDelegate (del), del.Name);
@@ -2384,11 +2376,11 @@ class_declaration
 		Class new_class;
 		string full_class_name = MakeName ((string) $4);
 
-		new_class = new Class (rc, current_container, full_class_name, (int) $2, 
+		new_class = new Class (current_container, full_class_name, (int) $2, 
 				       (Attributes) $1, lexer.Location);
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
-		tree.RecordClass (full_class_name, new_class);
+		RootContext.Tree.RecordClass (full_class_name, new_class);
 	  }
 	  opt_class_base
 	  class_body 
@@ -3547,14 +3539,12 @@ public Tokenizer Lexer {
 	}
 }		   
 
-public CSharpParser(RootContext rc, string name, System.IO.Stream input)
+public CSharpParser (string name, System.IO.Stream input)
 {
 	current_namespace = new Namespace (null, "");
-	this.rc = rc;
-	this.tree = rc.Tree;
 	this.name = name;
 	this.input = input;
-	current_container = tree.Types;
+	current_container = RootContext.Tree.Types;
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();
 

@@ -47,8 +47,8 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (RootContext rc, string type, int mod_flags, string name, Attributes attrs, Location l)
-			: base (rc, name, l)
+		public Enum (string type, int mod_flags, string name, Attributes attrs, Location l)
+			: base (name, l)
 		{
 			this.BaseType = type;
 			this.EnumName = name;

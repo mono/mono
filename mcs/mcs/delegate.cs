@@ -34,8 +34,6 @@ namespace Mono.CSharp {
 		public MethodBuilder      BeginInvokeBuilder;
 		public MethodBuilder      EndInvokeBuilder;
 		
-		public readonly RootContext RootContext;
-
 		Type [] param_types;
 		Type ret_type;
 		
@@ -51,10 +49,9 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Delegate (RootContext rc, string type, int mod_flags, string name, Parameters param_list,
+		public Delegate (string type, int mod_flags, string name, Parameters param_list,
 				 Attributes attrs, Location loc)
 		{
-			this.RootContext = rc;
 			this.Name       = name;
 			this.ReturnType = type;
 			this.mod_flags  = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);

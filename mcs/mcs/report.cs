@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Collections;
 
 namespace Mono.CSharp {
 
@@ -21,6 +22,9 @@ namespace Mono.CSharp {
 		// for debugging the compiler
 		static bool fatal;
 
+		// whether we consider warnings to be errors.
+		static bool warnings_are_errors;
+		
 		//
 		// If the error code is reported on the given line,
 		// then the process exits with a unique error code.
@@ -29,6 +33,11 @@ namespace Mono.CSharp {
 		//
 		static int probe_error = 0;
 		static int probe_line = 0;
+
+		//
+		// Keeps track of the warnings that we are ignoring
+		//
+		static Hashtable warning_ignore_table;
 		
 		static void Check (int code)
 		{
@@ -57,24 +66,37 @@ namespace Mono.CSharp {
 
 		static public void Warning (int code, Location l, string text)
 		{
-			Console.WriteLine (l.Name + "(" + l.Row + 
-					   "): warning CS"+code+": " + text);
-			warnings++;
-			Check (code);
+			if (warning_ignore_table != null){
+				if (warning_ignore_table.Contains (code))
+					return;
+			}
+			
+			if (warnings_are_errors)
+				Error (code, l, text);
+			else {
+				string row;
+				
+				if (Location.IsNull (l))
+					row = "";
+				else
+					row = l.Row.ToString ();
+				
+				Console.WriteLine (l.Name + "(" + row + "): warning CS"+code+": " + text);
+				warnings++;
+				Check (code);
+			}
 		}
 		
+		static public void Warning (int code, string text)
+		{
+			Warning (code, Location.Null, text);
+		}
+
 		static public void Error (int code, string text)
 		{
 			string msg = "error CS"+code+": "+text;
 
 			RealError (msg);
-			Check (code);
-		}
-
-		static public void Warning (int code, string text)
-		{
-			Console.WriteLine ("warning CS"+code+": "+text);
-			warnings++;
 			Check (code);
 		}
 
@@ -86,6 +108,14 @@ namespace Mono.CSharp {
 				Warning (m.code, m.text);
 		}
 
+		static public void SetIgnoreWarning (int code)
+		{
+			if (warning_ignore_table == null)
+				warning_ignore_table = new Hashtable ();
+
+			warning_ignore_table [code] = true;
+		}
+		
 		static public void SetProbe (int code, int line)
 		{
 			probe_error = code;
@@ -117,6 +147,12 @@ namespace Mono.CSharp {
 
 			get {
 				return fatal;
+			}
+		}
+
+		static public bool WarningsAreErrors {
+			set {
+				warnings_are_errors = true;
 			}
 		}
 	}

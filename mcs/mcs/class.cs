@@ -94,8 +94,8 @@ namespace Mono.CSharp {
 		public bool Inherited;
 		
 
-		public TypeContainer (RootContext rc, TypeContainer parent, string name, Location l)
-			: base (rc, name, l)
+		public TypeContainer (TypeContainer parent, string name, Location l)
+			: base (name, l)
 		{
 			string n;
 			types = new ArrayList ();
@@ -1590,9 +1590,8 @@ namespace Mono.CSharp {
 			Modifiers.ABSTRACT |
 			Modifiers.SEALED;
 
-		public Class (RootContext rc, TypeContainer parent, string name, int mod,
-			      Attributes attrs, Location l)
-			: base (rc, parent, name, l)
+		public Class (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
+			: base (parent, name, l)
 		{
 			int accmods;
 
@@ -1627,9 +1626,8 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Struct (RootContext rc, TypeContainer parent, string name, int mod,
-			       Attributes attrs, Location l)
-			: base (rc, parent, name, l)
+		public Struct (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
+			: base (parent, name, l)
 		{
 			int accmods;
 			
@@ -1891,6 +1889,15 @@ namespace Mono.CSharp {
 			return type_return_type;
 		}
 
+		void DuplicatEntryPoint (MethodInfo b)
+		{
+			Report.Error (
+				17, Location,
+				"Program `" + RootContext.CodeGen.FileName +
+				"'  has more than one entry point defined: `" +
+				b.DeclaringType.Name + "." + b.Name + "'");
+		}
+		
 		//
 		// Creates the type
 		//
@@ -2102,16 +2109,22 @@ namespace Mono.CSharp {
 			//
 			// FIXME: Allow pluggable entry point, check arguments, etc.
 			//
-			if (Name == "Main"){
-				if ((ModFlags & Modifiers.STATIC) != 0){
-					parent.RootContext.EntryPoint = MethodBuilder;
-
-					//
-					// FIXME: Verify that the method signature
-					// is valid for an entry point, and report
-					// error 28 if not.
-					//
+			if (Name == "Main" &&
+			    ((ModFlags & Modifiers.STATIC) != 0) && 
+			    (RootContext.MainClass == null ||
+			     RootContext.MainClass == parent.TypeBuilder.FullName)){
+				if (RootContext.EntryPoint != null){
+					DuplicatEntryPoint (MethodBuilder);
+					DuplicatEntryPoint (RootContext.EntryPoint);
 				}
+				
+				RootContext.EntryPoint = MethodBuilder;
+				
+				//
+				// FIXME: Verify that the method signature
+				// is valid for an entry point, and report
+				// error 28 if not.
+				//
 			}
 			
 			//
@@ -2440,6 +2453,9 @@ namespace Mono.CSharp {
 			Type t = parent.LookupType (Type, false);
 
 			if (t == null)
+				return;
+
+			if (!TypeContainer.AsAccessible (t, ModFlags))
 				return;
 			
 			FieldBuilder = parent.TypeBuilder.DefineField (
@@ -2859,19 +2875,21 @@ namespace Mono.CSharp {
 				return;
 			
 			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
-
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
-			
 			MethodBuilder mb;
 
 			EventType = parent.LookupType (Type, false);
+			if (EventType == null)
+				return;
 
+			if (!TypeContainer.AsAccessible (EventType, ModFlags))
+				return;
+			
 			if (!EventType.IsSubclassOf (TypeManager.delegate_type)) {
 				Report.Error (66, Location, "'" + parent.Name + "." + Name +
 					      "' : event must be of a delegate type");
 				return;
 			}
-			
 			
 			Type [] parameters = new Type [1];
 			parameters [0] = EventType;
