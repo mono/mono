@@ -981,6 +981,35 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
+		//
+		// Defines the default constructors
+		//
+		protected void DefineDefaultConstructor (bool is_static)
+		{
+			Constructor c;
+
+			// The default constructor is public
+			// If the class is abstract, the default constructor is protected
+			// The default static constructor is private
+
+			int mods = Modifiers.PUBLIC;
+			if (is_static)
+				mods = Modifiers.STATIC | Modifiers.PRIVATE;
+			else if ((ModFlags & Modifiers.ABSTRACT) != 0)
+				mods = Modifiers.PROTECTED;
+
+			c = new Constructor (this, Basename, mods, Parameters.EmptyReadOnlyParameters,
+					     new ConstructorBaseInitializer (
+						     null, Parameters.EmptyReadOnlyParameters,
+						     Location),
+					     Location);
+			
+			AddConstructor (c);
+			
+			c.Block = new ToplevelBlock (null, Location);
+			
+		}
+
 		/// <remarks>
 		///  The pending methods that need to be implemented
 		//   (interfaces or abstract methods)
@@ -1481,11 +1510,6 @@ namespace Mono.CSharp {
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
 		}
 
-		protected virtual void DefineDefaultConstructor ()
-		{
-			// Nothing to do
-		}
-
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
@@ -1540,7 +1564,32 @@ namespace Mono.CSharp {
 			DefineContainerMembers (constants);
 			DefineContainerMembers (fields);
 
-			DefineDefaultConstructor ();
+			if ((Kind == Kind.Class) && !(this is ClassPart)){
+				if ((instance_constructors == null) &&
+				    !(this is StaticClass)) {
+					if (default_constructor == null)
+						DefineDefaultConstructor (false);
+				}
+
+				if (initialized_static_fields != null &&
+				    default_static_constructor == null)
+					DefineDefaultConstructor (true);
+			}
+
+			if (Kind == Kind.Struct){
+				//
+				// Structs can not have initialized instance
+				// fields
+				//
+				if (initialized_static_fields != null &&
+				    default_static_constructor == null)
+					DefineDefaultConstructor (true);
+
+				if (initialized_fields != null)
+					ReportStructInitializedInstanceError ();
+			}
+
+			Pending = GetPendingImplementations ();
 
 			if (parts != null) {
 				foreach (ClassPart part in parts) {
@@ -1595,6 +1644,18 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		void ReportStructInitializedInstanceError ()
+		{
+			string n = TypeBuilder.FullName;
+			
+			foreach (Field f in initialized_fields){
+				Report.Error (
+					573, Location,
+					"`" + n + "." + f.Name + "': can not have " +
+					"instance field initializers in structs");
+			}
 		}
 
 		protected virtual void DefineContainerMembers (MemberCoreArrayList mcal)
@@ -2765,40 +2826,6 @@ namespace Mono.CSharp {
 			return PendingImplementation.GetPendingImplementations (this);
 		}
 
-		//
-		// Defines the default constructors
-		//
-		protected void DefineDefaultConstructor (bool is_static)
-		{
-			Constructor c;
-
-			// The default constructor is public
-			// If the class is abstract, the default constructor is protected
-			// The default static constructor is private
-
-			int mods = Modifiers.PUBLIC;
-			if (is_static)
-				mods = Modifiers.STATIC | Modifiers.PRIVATE;
-			else if ((ModFlags & Modifiers.ABSTRACT) != 0)
-				mods = Modifiers.PROTECTED;
-
-			c = new Constructor (this, Basename, mods, Parameters.EmptyReadOnlyParameters,
-					     new ConstructorBaseInitializer (
-						     null, Parameters.EmptyReadOnlyParameters,
-						     Location),
-					     Location);
-			
-			AddConstructor (c);
-			
-			c.Block = new ToplevelBlock (null, Location);
-			
-		}
-
-		protected override void DefineDefaultConstructor ()
-		{
-			Pending = PendingImplementation.GetPendingImplementations (this);
-		}
-
 		protected override void VerifyMembers (EmitContext ec) 
 		{
 			if (Fields != null) {
@@ -2849,14 +2876,6 @@ namespace Mono.CSharp {
 				Report.FeatureIsNotStandardized ("static classes");
 				Environment.Exit (1);
 			}
-		}
-
-		// Only static fields are allowed
-		protected override void DefineDefaultConstructor ()
-		{
-			if (initialized_static_fields != null &&
-				default_static_constructor == null)
-				DefineDefaultConstructor (true);
 		}
 
 		protected override void DefineContainerMembers (MemberCoreArrayList list)
@@ -2977,17 +2996,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void DefineDefaultConstructor ()
-		{
-			if (instance_constructors == null && default_constructor == null)
-				DefineDefaultConstructor (false);
-
-			if (initialized_static_fields != null && default_static_constructor == null)
-				DefineDefaultConstructor (true);
-
-			base.DefineDefaultConstructor ();
-		}
-
 		public override void Register ()
 		{
 			CheckDef (Parent.AddClass (this), Name, Location);
@@ -3039,24 +3047,6 @@ namespace Mono.CSharp {
 			get {
 				return AttributeTargets.Struct;
 			}
-		}
-
-		protected override void DefineDefaultConstructor ()
-		{
-			//
-			// Structs can not have initialized instance
-			// fields
-			//
-			if (initialized_static_fields != null &&
-				default_static_constructor == null)
-				DefineDefaultConstructor (true);
-
-			if (initialized_fields != null) {
-				foreach (Field f in initialized_fields)
-					Report.Error (573, f.Location, "'{0}': cannot have instance field initializers in structs", f.GetSignatureForError ());
-			}
-
-			base.DefineDefaultConstructor ();
 		}
 
 		public override void Register ()
