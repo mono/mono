@@ -1,3 +1,16 @@
+2003-11-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h (MonoMethodInfo): Track changes to the managed structure.
+
+	* icall.c (ves_icall_get_method_info): Return callingConvention as
+	well.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetNamespaces): Add 
+	namespaces from the EXPORTEDTYPE table as well.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Merge types
+	from all modules inside the assembly.
+	
 2003-11-11  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_bind_generic_parameters): Make
