@@ -1,4 +1,8 @@
 
+Wed Apr 3 17:59:26 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Assembly.cs: implement GetTypes() and GetExportedTypes().
+
 Mon Mar 25 18:54:58 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoEvent.cs: added the needed fields.

@@ -106,14 +106,17 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern Type[] GetTypes (bool exportedOnly);
+		
 		public virtual Type[] GetTypes ()
 		{
-			throw new NotImplementedException ();
+			return GetTypes (false);
 		}
 
 		public virtual Type[] GetExportedTypes ()
 		{
-			throw new NotImplementedException ();
+			return GetTypes (true);
 		}
 
 		public virtual Type GetType (String name, Boolean throwOnError)
