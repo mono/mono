@@ -1,5 +1,8 @@
 2001-09-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Added --parse option that only parses its input files
+	and terminates.
+
 	* class.cs: Reveted lsat change from Ravi to IsTopLevel.  That is
 	incorrect.  IsTopLevel is not used to tell whether an object is
 	root_types or not (that can be achieved by testing this ==

@@ -45,6 +45,8 @@ namespace CIR
 		string first_source;
 
 		Target target = Target.Exe;
+
+		bool parse_only = false;
 		
 		public int parse (string input_file)
 		{
@@ -81,6 +83,7 @@ namespace CIR
 				"--nostdlib Does not load core libraries\n" +
 				"--target   Specifies the target (exe, winexe, library, module)\n" +
 				"--dumper   Specifies a tree dumper\n" +
+				"--parse    Only parses the source file\n" +
 				"-r         References an assembly\n");
 			
 		}
@@ -184,7 +187,7 @@ namespace CIR
 				string arg = args [i];
 				
 				if (arg.StartsWith ("-")){
-					if (arg.StartsWith ("-v")){
+					if (arg == "-v"){
 						yacc_verbose = true;
 						continue;
 					}
@@ -194,12 +197,17 @@ namespace CIR
 						continue;
 					}
 
-					if (arg.StartsWith ("-z")){
+					if (arg == "--parse"){
+						parse_only = true;
+						continue;
+					}
+					
+					if (arg == "-z"){
 						generator.ParseOptions (args [++i]);
 						continue;
 					}
 					
-					if (arg.StartsWith ("-o")){
+					if (arg == "-o"){
 						try {
 							output_file = args [++i];
 						} catch (Exception){
@@ -210,7 +218,7 @@ namespace CIR
 						continue;
 					}
 
-					if (arg.StartsWith ("--target")){
+					if (arg == "--target"){
 						string type = args [++i];
 
 						switch (type){
@@ -232,18 +240,19 @@ namespace CIR
 						}
 					}
 					
-					if (arg.StartsWith ("-r")){
+					if (arg == "-r"){
 						references.Add (args [++i]);
 						continue;
 					}
 
-					if (arg.StartsWith ("-L")){
+					if (arg == "-L"){
 						link_paths.Add (args [++i]);
 						continue;
 					}
 
 					if (arg == "--nostdlib"){
 						context.StdLib = false;
+						continue;
 					}
 
 					Usage ();
@@ -268,6 +277,9 @@ namespace CIR
 				context.Report.Error (2008, "No files to compile were specified");
 				return;
 			}
+
+			if (parse_only)
+				return;
 			
 			//
 			// Load Core Library for default compilation
