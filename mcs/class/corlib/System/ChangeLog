@@ -1,3 +1,7 @@
+2001-09-06  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* String.cs (System): Don't mix uint and int.
+
 2001-09-04  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* String.cs (BoyerMoore): Modified to not use pointers and to instead
