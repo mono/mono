@@ -10,7 +10,6 @@
 //
 
 using System;
-using System.Globalization;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -253,61 +252,6 @@ namespace Mono.CSharp {
 			return;
 		}
 
-		// Function to convert an object to another type and return
-		// it as an object. In place for the core data types to use
-		// when implementing IConvertible. Uses hardcoded indexes in 
-		// the conversionTypes array, so if modify carefully.
-		private static object ChangeEnumType (object value, Type conversionType)
-		{
-			if (!(value is IConvertible))
-				throw new ArgumentException ();
-
-			IConvertible convertValue = (IConvertible) value;
-			CultureInfo ci = CultureInfo.CurrentCulture;
-			NumberFormatInfo provider = ci.NumberFormat;
-
-			//
-			// We must use Type.Equals() here since `conversionType' is
-			// the TypeBuilder created version of a system type and not
-			// the system type itself.  You cannot use Type.GetTypeCode()
-			// on such a type - it'd always return TypeCode.Object.
-			//
-			if (conversionType.Equals (typeof (Boolean)))
-				return (object)(convertValue.ToBoolean (provider));
-			else if (conversionType.Equals (typeof (Byte)))
-				return (object)(convertValue.ToByte (provider));
-			else if (conversionType.Equals (typeof (Char)))
-				return (object)(convertValue.ToChar (provider));
-			else if (conversionType.Equals (typeof (DateTime)))
-				return (object)(convertValue.ToDateTime (provider));
-			else if (conversionType.Equals (typeof (Decimal)))
-				return (object)(convertValue.ToDecimal (provider));
-			else if (conversionType.Equals (typeof (Double)))
-				return (object)(convertValue.ToDouble (provider));
-			else if (conversionType.Equals (typeof (Int16)))
-				return (object)(convertValue.ToInt16 (provider));
-			else if (conversionType.Equals (typeof (Int32)))
-				return (object)(convertValue.ToInt32 (provider));
-			else if (conversionType.Equals (typeof (Int64)))
-				return (object)(convertValue.ToInt64 (provider));
-			else if (conversionType.Equals (typeof (SByte)))
-				return (object)(convertValue.ToSByte (provider));
-			else if (conversionType.Equals (typeof (Single)))
-				return (object)(convertValue.ToSingle (provider));
-			else if (conversionType.Equals (typeof (String)))
-				return (object)(convertValue.ToString (provider));
-			else if (conversionType.Equals (typeof (UInt16)))
-				return (object)(convertValue.ToUInt16 (provider));
-			else if (conversionType.Equals (typeof (UInt32)))
-				return (object)(convertValue.ToUInt32 (provider));
-			else if (conversionType.Equals (typeof (UInt64)))
-				return (object)(convertValue.ToUInt64 (provider));
-			else if (conversionType.Equals (typeof (Object)))
-				return (object)(value);
-			else 
-				throw new InvalidCastException ();
-		}
-
 		/// <summary>
 		///  This is used to lookup the value of an enum member. If the member is undefined,
 		///  it attempts to define it and return its value
@@ -387,10 +331,7 @@ namespace Mono.CSharp {
 			FieldBuilder fb = TypeBuilder.DefineField (name, UnderlyingType, attr);
 
 			try {
-				if (RootContext.StdLib)
-					default_value = Convert.ChangeType (default_value, UnderlyingType);
-				else
-					default_value = ChangeEnumType (default_value, UnderlyingType);
+				default_value = TypeManager.ChangeType (default_value, UnderlyingType);
 			} catch {
 				Error_ConstantValueCannotBeConverted (c, loc);
 				return null;
@@ -449,10 +390,7 @@ namespace Mono.CSharp {
 					}
 					
 					try {
-						if (RootContext.StdLib)
-							default_value = Convert.ChangeType (default_value, UnderlyingType);
-						else
-							default_value = ChangeEnumType (default_value, UnderlyingType);
+						default_value = TypeManager.ChangeType (default_value, UnderlyingType);
 					} catch {
 						Error_ConstantValueCannotBeConverted (default_value, loc);
 						return false;

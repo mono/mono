@@ -1,5 +1,16 @@
 2002-06-09  Martin Baulig  <martin@gnome.org>
 
+	* const.cs (Const.LookupConstantValue): Convert `Expr' to a literal of
+	the same type as the constant if necessary.  There's also a test-130.cs
+	for this.
+
+	* enum.cs (Enum.ChangeEnumType): Moved to typemanager.cs and made public.
+
+	* typemanager.cs (TypeManager.ChangeType): Previously known as
+	Enum.ChangeEnumType().
+
+2002-06-09  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (Cast.TryReduce): Added support for consts.
 
 2002-06-08  Ravi Pratap  <ravi@ximian.com>
