@@ -160,12 +160,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert("Should have Append bit in AllFiles.", (intersection.AllFiles & FileIOPermissionAccess.Append) != 0);
 			Assert("Should have Write bit in AllLocalFiles.", (intersection.AllLocalFiles & FileIOPermissionAccess.Write) != 0);
 
-			intersection = (FileIOPermission)p.Intersect(p);
-			pathsInPermission = intersection.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
-			Assert("Should have only Append bit in AllFiles.", intersection.AllFiles == FileIOPermissionAccess.Append);
-			Assert("Should have only Write bit in AllLocalFiles.", intersection.AllLocalFiles == FileIOPermissionAccess.Write);
-
 			p2 = new FileIOPermission(FileIOPermissionAccess.Append | FileIOPermissionAccess.Read, pathArrayGood2);
 			p2.AllFiles = FileIOPermissionAccess.Append | FileIOPermissionAccess.Write;
 			p2.AllLocalFiles = FileIOPermissionAccess.Write | FileIOPermissionAccess.Read;

@@ -1,3 +1,9 @@
+2002-02-09  Nick Drochak  <ndrochak@gol.com>
+
+	* FileIOPermissionTest.cs: Remove intersect test where it was trying
+	to intersect a permission with itself.  This throws an exception
+	with mscorlib.
+
 2002-01-14  Nick Drochak  <ndrochak@gol.com>
 
 	* FileIOPermissionTest.cs: New File.
