@@ -5,6 +5,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -20,6 +21,7 @@ namespace Mono.Xml.XPath
 		{
 			Context = context;
 			ErrorOutput = System.IO.TextWriter.Null;
+//			debug = new yydebug.yyDebugSimple ();
 		}
 		
 		internal Expression Compile (string xpath)
@@ -28,12 +30,39 @@ namespace Mono.Xml.XPath
 				Tokenizer tokenizer = new Tokenizer (xpath);
 				return (Expression) yyparse (tokenizer);
 			} catch (XPathException e) {
-				throw e;
+				throw;
 			} catch (Exception e) {
 				throw new XPathException ("Error during parse of " + xpath, e);
 			}
 		}
 		static int yacc_verbose_flag;
+
+		private NodeSet CreateNodeTest (Axes axis, object nodeTest, ArrayList plist)
+		{
+			NodeSet test = CreateNodeTest (axis, nodeTest);
+			if (plist != null) {
+				for (int i = 0; i < plist.Count; i++)
+					test = new ExprFilter (test,
+						(Expression) plist [i]);
+			}
+			return test;
+		}
+
+		private NodeTest CreateNodeTest (Axes axis, object test)
+		{
+			if (test is XPathNodeType)
+				return new NodeTypeTest (axis,
+					(XPathNodeType) test, null);
+			else if (test is string || test == null)
+				return new NodeTypeTest (axis,
+					XPathNodeType.ProcessingInstruction,
+					(string) test);
+			XmlQualifiedName q = (XmlQualifiedName) test;
+			if (q == XmlQualifiedName.Empty)
+				return new NodeTypeTest (axis);
+			else
+				return new NodeNameTest (axis, q, Context);
+		}
 %}
 
 %token ERROR
@@ -114,6 +143,7 @@ namespace Mono.Xml.XPath
 %left MINUS
 
 %%
+
 
 
 Expr
@@ -258,8 +288,35 @@ RelativeLocationPath
 	;
 
 Step
-	: PredicatedStep
-	| DOT
+	: AxisSpecifier NodeTest Predicates
+	{
+		$$ = CreateNodeTest ((Axes) $1, $2, (ArrayList) $3);
+	}
+	| AbbreviatedStep
+	;
+
+NodeTest // QName, XPathNodeType or string
+	: NameTest
+	| NodeType PAREN_OPEN PAREN_CLOSE
+	{
+		$$ = (XPathNodeType) $1;
+	}
+	| PROCESSING_INSTRUCTION PAREN_OPEN OptionalLiteral PAREN_CLOSE
+	{
+		$$ = (string) $3;
+	}
+	;
+
+NameTest
+	: ASTERISK
+	{
+		$$ = XmlQualifiedName.Empty;
+	}
+	| QName // token QName also contains "blah:*"
+	;
+
+AbbreviatedStep
+	: DOT
 	{
 		$$ = new NodeTypeTest (Axes.Self, XPathNodeType.All);
 	}
@@ -269,30 +326,30 @@ Step
 	}
 	;
 
-PredicatedStep
-	: AxisTest
-	| PredicatedStep Predicate
+Predicates
+	: /* empty */
 	{
-		$$ = new ExprFilter ((NodeSet) $1, (Expression) $2);
+		$$ = null;
 	}
-	;
-
-AxisTest
-	: AxisSpecifier QName
+	| Predicates Predicate
 	{
-		$$ = new NodeNameTest ((Axes) $1, (XmlQualifiedName) $2, Context);
-	}
-	| AxisSpecifier ASTERISK
-	{
-		$$ = new NodeTypeTest ((Axes) $1);
-	}
-	| AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE
-	{
-		$$ = new NodeTypeTest ((Axes) $1, (XPathNodeType) $2, (String) $4);
+		ArrayList al = (ArrayList) $1;
+		if (al == null)
+			al = new ArrayList ();
+		al.Add ($2);
+		$$ = al;
 	}
 	;
 
 AxisSpecifier
+	: AxisName COLON2
+	{
+		$$ = $1;
+	}
+	| AbbreviatedAxisSpecifier
+	;
+
+AbbreviatedAxisSpecifier
 	: /* empty */
 	{
 		$$ = Axes.Child;
@@ -300,10 +357,6 @@ AxisSpecifier
 	| AT
 	{
 		$$ = Axes.Attribute;
-	}
-	| AxisName COLON2
-	{
-		$$ = $1;
 	}
 	;
 
