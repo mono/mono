@@ -585,24 +585,13 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr DefWndProc(ref Message msg) {
-#if not
-			switch (msg.Msg) {
-				case (int)Msg.WM_PAINT: {
-					IntPtr	gc;
+			switch((Msg)msg.Msg) {
+				case Msg.WM_ERASEBKGND: {
+					XClearArea(DisplayHandle, msg.HWnd, 0, 0, 0, 0, false);
 
-					if (msg.Hwnd!=IntPtr.Zero) {
-						gc=XCreateGC(DisplayHandle, msg.Hwnd, 0, IntPtr.Zero);
-						XSetBackground(DisplayHandle, gc, this.BackColor.ToArgb());
-						XFreeGC(DisplayHandle, gc);
-					}
-					break;
+					return IntPtr.Zero;
 				}
 			}
-#endif
-
-#if debug
-			Console.WriteLine("XplatUIX11.DefWndProc");
-#endif
 			return IntPtr.Zero;
 		}
 
@@ -741,7 +730,11 @@ namespace System.Windows.Forms {
 				data = new HandleData ();
 				handle_data [xevent.AnyEvent.window] = data;
 			}
-				   
+
+			if (!data.IsVisible) {
+				return;
+			}
+
 			data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
 					xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 				   
@@ -983,6 +976,8 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
+					NativeWindow.WndProc(msg.hwnd, Msg.WM_ERASEBKGND, msg.hwnd, IntPtr.Zero);
+
 					msg.message=Msg.WM_PAINT;
 					msg.wParam=IntPtr.Zero;
 					msg.lParam=IntPtr.Zero;
@@ -1103,6 +1098,15 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
+			HandleData data = (HandleData) handle_data [handle];
+
+			if (data == null) {
+				data = new HandleData ();
+				handle_data [handle] = data;
+			}
+
+			data.IsVisible = visible;
+
 			lock (xlib_lock) {
 				if (visible) {
 					XMapWindow(DisplayHandle, handle);
@@ -1114,7 +1118,12 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool IsVisible(IntPtr handle) {
-			return true;
+			HandleData data = (HandleData) handle_data [handle];
+
+			if (data == null || data.IsVisible == true) {
+				return true;
+			}
+			return false;
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
@@ -1349,6 +1358,10 @@ namespace System.Windows.Forms {
 		internal extern static int XMapWindow(IntPtr display, IntPtr window);
 		[DllImport ("libX11", EntryPoint="XUnmapWindow")]
 		internal extern static int XUnmapWindow(IntPtr display, IntPtr window);
+		[DllImport ("libX11", EntryPoint="XMapSubwindows")]
+		internal extern static int XMapSubindows(IntPtr display, IntPtr window);
+		[DllImport ("libX11", EntryPoint="XUnmapSubwindows")]
+		internal extern static int XUnmapSubwindows(IntPtr display, IntPtr window);
 		[DllImport ("libX11", EntryPoint="XRootWindow")]
 		internal extern static IntPtr XRootWindow(IntPtr display, int screen_number);
 		[DllImport ("libX11", EntryPoint="XNextEvent")]
@@ -1482,6 +1495,8 @@ namespace System.Windows.Forms {
 		internal extern static IntPtr XCreateGC(IntPtr display, IntPtr window, int valuemask, IntPtr values);
 		[DllImport ("libX11", EntryPoint="XFreeGC")]
 		internal extern static int XFreeGC(IntPtr display, IntPtr gc);
+		[DllImport ("libX11", EntryPoint="XDrawLine")]
+		internal extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
 		[DllImport ("libX11", EntryPoint="XSetWindowBackground")]
 		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, uint background);
 		#endregion
