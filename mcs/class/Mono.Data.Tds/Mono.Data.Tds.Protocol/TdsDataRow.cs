@@ -1,5 +1,5 @@
 //
-// Mono.Data.Tds.Protocol.TdsPacketRowResult.cs
+// Mono.Data.Tds.Protocol.TdsDataRow.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -11,7 +11,7 @@ using System;
 using System.Collections;
 
 namespace Mono.Data.Tds.Protocol {
-	public class TdsPacketRowResult : TdsPacketResult, IList, ICollection, IEnumerable
+	public class TdsDataRow : IList, ICollection, IEnumerable
 	{
 		#region Fields
 
@@ -22,8 +22,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		#region Constructors
 
-		public TdsPacketRowResult ()
-			: base (TdsPacketSubType.Row)
+		public TdsDataRow ()
 		{
 			list = new ArrayList ();
 			bigDecimalIndex = -1;

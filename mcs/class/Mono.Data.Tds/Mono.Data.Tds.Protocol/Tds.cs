@@ -36,12 +36,11 @@ namespace Mono.Data.Tds.Protocol {
 		bool moreResults;
 
 		Encoding encoder;
-		TdsServerType serverType;
 		bool autoCommit;
 
 		bool doneProc;
-		TdsPacketRowResult currentRow = null;
-		TdsPacketColumnInfoResult columnInfo;
+		TdsDataRow currentRow = null;
+		TdsDataColumnCollection columns;
 
 		ArrayList tableNames;
 		ArrayList columnNames;
@@ -80,7 +79,7 @@ namespace Mono.Data.Tds.Protocol {
 			get { return columnNames; }
 		}
 
-		public TdsPacketRowResult ColumnValues {
+		public TdsDataRow ColumnValues {
 			get { return currentRow; }
 		}
 
@@ -119,8 +118,8 @@ namespace Mono.Data.Tds.Protocol {
 			get { return databaseProductVersion; }
 		}
 
-		public TdsPacketColumnInfoResult Schema {
-			get { return columnInfo; }
+		public TdsDataColumnCollection Columns {
+			get { return columns; }
 		}
 
 		public TdsVersion TdsVersion {
@@ -407,8 +406,8 @@ namespace Mono.Data.Tds.Protocol {
 					scale = comm.GetByte ();
 				}
 				else {
-					precision = (byte) columnInfo[ordinal]["NumericPrecision"];
-					scale = (byte) columnInfo[ordinal]["NumericScale"];
+					precision = (byte) columns[ordinal]["NumericPrecision"];
+					scale = (byte) columns[ordinal]["NumericScale"];
 				}
 
 				element = GetDecimalValue (precision, scale);
@@ -758,11 +757,11 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected void LoadRow ()
 		{
-			currentRow = new TdsPacketRowResult ();
+			currentRow = new TdsDataRow ();
 
 			int i = 0;
-			foreach (TdsSchemaInfo schema in columnInfo) {
-				object o = GetColumnValue ((TdsColumnType) schema["ColumnType"], false, i);
+			foreach (TdsDataColumn column in columns) {
+				object o = GetColumnValue ((TdsColumnType) column["ColumnType"], false, i);
 				currentRow.Add (o);
 				if (o is TdsBigDecimal && currentRow.BigDecimalIndex < 0) 
 					currentRow.BigDecimalIndex = i;
@@ -851,17 +850,17 @@ namespace Mono.Data.Tds.Protocol {
 					byte index = (byte) (values[0] - (byte) 1);
 					byte tableIndex = (byte) (values[1] - (byte) 1);
 
-					columnInfo [index]["IsExpression"] = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
-					columnInfo [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
+					columns [index]["IsExpression"] = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
+					columns [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
 
 					if ((values[2] & (byte) TdsColumnStatus.Rename) != 0)
-						columnInfo [index]["BaseColumnName"] = baseColumnName;
-					columnInfo [index]["BaseTableName"] = tableNames [tableIndex];
+						columns [index]["BaseColumnName"] = baseColumnName;
+					columns [index]["BaseTableName"] = tableNames [tableIndex];
 				}
 			}
 		}
 
-		protected abstract TdsPacketColumnInfoResult ProcessColumnInfo ();
+		protected abstract TdsDataColumnCollection ProcessColumnInfo ();
 
 		protected void ProcessColumnNames ()
 		{
@@ -881,7 +880,7 @@ namespace Mono.Data.Tds.Protocol {
 		}
 
 		[MonoTODO ("Make sure counting works right, especially with multiple resultsets.")]
-		protected TdsPacketEndTokenResult ProcessEndToken (TdsPacketSubType type)
+		protected void ProcessEndToken (TdsPacketSubType type)
 		{
 			byte status = Comm.GetByte ();
 			Comm.Skip (1);
@@ -895,21 +894,21 @@ namespace Mono.Data.Tds.Protocol {
 			if (type == TdsPacketSubType.DoneInProc) 
 				rowCount = -1;
 
-			TdsPacketEndTokenResult result = new TdsPacketEndTokenResult (type, status, rowCount);
+			moreResults = ((status & 0x01) != 0);
+			bool cancelled = ((status & 0x20) != 0);
+
 			if (type == TdsPacketSubType.DoneProc)  {
 				doneProc = true;
-				if (result.RowCount > 0)
-					recordsAffected += result.RowCount;
+				if (rowCount > 0)
+					recordsAffected += rowCount;
 			}
-			moreResults = result.MoreResults;
 
-			if (!result.MoreResults) 
+			if (moreResults) 
 				queryInProgress = false;
-			if (result.Cancelled)
+			if (cancelled)
 				cancelsProcessed += 1;
 			if (messages.Count > 0 && !moreResults) 
 				OnTdsInfoMessage (CreateTdsInfoMessageEvent (messages));
-			return result;
 		}
 
 		protected void ProcessEnvironmentChange ()
@@ -1046,11 +1045,6 @@ namespace Mono.Data.Tds.Protocol {
 			outputParameters.Add (value);
 		}
 
-		protected TdsPacketRetStatResult ProcessReturnStatus ()
-		{
-			return new TdsPacketRetStatResult (comm.GetTdsInt ());
-		}
-
 		protected void ProcessDynamic ()
 		{
 			Comm.Skip (2);
@@ -1061,8 +1055,6 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected virtual TdsPacketSubType ProcessSubPacket ()
 		{
-			TdsPacketResult result = null;
-
 			TdsPacketSubType subType = (TdsPacketSubType) comm.GetByte ();
 
 			switch (subType) {
@@ -1093,7 +1085,7 @@ namespace Mono.Data.Tds.Protocol {
 				ProcessLoginAck ();
 				break;
 			case TdsPacketSubType.ReturnStatus :
-				result = ProcessReturnStatus ();
+				Comm.Skip (4);
 				break;
 			case TdsPacketSubType.ProcId:
 				Comm.Skip (8);
@@ -1101,7 +1093,7 @@ namespace Mono.Data.Tds.Protocol {
 			case TdsPacketSubType.Done:
 			case TdsPacketSubType.DoneProc:
 			case TdsPacketSubType.DoneInProc:
-				result = ProcessEndToken (subType);
+				ProcessEndToken (subType);
 				break;
 			case TdsPacketSubType.ColumnName:
 				Comm.Skip (8);
@@ -1110,7 +1102,7 @@ namespace Mono.Data.Tds.Protocol {
 			case TdsPacketSubType.ColumnInfo:      // TDS 4.2
 			case TdsPacketSubType.ColumnMetadata:  // TDS 7.0
 			case TdsPacketSubType.RowFormat:       // TDS 5.0
-				columnInfo = ProcessColumnInfo ();
+				columns = ProcessColumnInfo ();
 				break;
 			case TdsPacketSubType.ColumnDetail:
 				ProcessColumnDetail ();
@@ -1120,11 +1112,9 @@ namespace Mono.Data.Tds.Protocol {
 				break;
 			case TdsPacketSubType.ColumnOrder:
 				comm.Skip (comm.GetTdsShort ());
-				result = new TdsPacketColumnOrderResult ();
 				break;
 			case TdsPacketSubType.Control:
 				comm.Skip (comm.GetTdsShort ());
-				result = new TdsPacketControlResult ();
 				break;
 			case TdsPacketSubType.Row:
 				LoadRow ();

@@ -1,5 +1,5 @@
 //
-// System.Data.Common.TdsSchemaInfo.cs
+// System.Data.Common.TdsDataColumn.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -10,18 +10,11 @@
 using System.Collections;
 
 namespace Mono.Data.Tds.Protocol {
-	public class TdsSchemaInfo : Hashtable
+	public class TdsDataColumn : Hashtable
 	{
-		#region Fields
-
-		Hashtable table;
-
-		#endregion // Fields
-
 		#region Constructors
 
-		public TdsSchemaInfo ()
-			: base ()
+		public TdsDataColumn ()
 		{
 			SetDefaultValues ();
 		}

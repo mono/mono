@@ -197,14 +197,14 @@ namespace Mono.Data.Tds.Protocol {
 			return IsConnected;
 		}
 
-		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
+		protected override TdsDataColumnCollection ProcessColumnInfo ()
 		{
 			byte precision;
 			byte scale;
 			int totalLength = Comm.GetTdsShort ();
 			int bytesRead = 0;
 
-			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
+			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 
 			while (bytesRead < totalLength) {
 				scale = 0;
@@ -251,7 +251,7 @@ namespace Mono.Data.Tds.Protocol {
 					bytesRead += 1;
 				}
 
-				int index = result.Add (new TdsSchemaInfo ());
+				int index = result.Add (new TdsDataColumn ());
 				result[index]["NumericPrecision"] = precision;
 				result[index]["NumericScale"] = scale;
 				result[index]["ColumnSize"] = bufLength;

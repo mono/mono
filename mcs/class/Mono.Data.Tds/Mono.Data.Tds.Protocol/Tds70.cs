@@ -208,8 +208,6 @@ namespace Mono.Data.Tds.Protocol {
 			Comm.Append (empty, 3, pad);
                         Comm.SendPacket ();
 
-                        TdsPacketResult result;
-
 			MoreResults = true;
 			SkipToEnd ();
 
@@ -319,9 +317,9 @@ namespace Mono.Data.Tds.Protocol {
 			return ColumnValues [0].ToString ();
 		}
 
-		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
+		protected override TdsDataColumnCollection ProcessColumnInfo ()
 		{
-			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
+			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 			int numColumns = Comm.GetTdsShort ();
 
 			for (int i = 0; i < numColumns; i += 1) {
@@ -379,7 +377,7 @@ namespace Mono.Data.Tds.Protocol {
 
 				string columnName = Comm.GetString (Comm.GetByte ());
 
-				int index = result.Add (new TdsSchemaInfo ());
+				int index = result.Add (new TdsDataColumn ());
 				result[index]["AllowDBNull"] = nullable;
 				result[index]["ColumnName"] = columnName;
 				result[index]["ColumnSize"] = columnSize;

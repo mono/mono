@@ -361,9 +361,9 @@ namespace Mono.Data.Tds.Protocol {
 			return id;
 		}
 
-		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
+		protected override TdsDataColumnCollection ProcessColumnInfo ()
 		{
-			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
+			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 			int totalLength = Comm.GetTdsShort ();	
 			int count = Comm.GetTdsShort ();
 			for (int i = 0; i < count; i += 1) {
@@ -406,7 +406,7 @@ namespace Mono.Data.Tds.Protocol {
 				if (isBlob)
 					Comm.Skip (Comm.GetTdsShort ()); // Class ID
 
-				int index = result.Add (new TdsSchemaInfo ());
+				int index = result.Add (new TdsDataColumn ());
 				result[index]["NumericPrecision"] = precision;
 				result[index]["NumericScale"] = scale;
 				result[index]["ColumnSize"] = bufLength;

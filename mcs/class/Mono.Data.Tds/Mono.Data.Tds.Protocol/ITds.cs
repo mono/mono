@@ -32,11 +32,11 @@ namespace Mono.Data.Tds.Protocol {
 			get;
 		}
 
-		TdsPacketColumnInfoResult Schema {
+		TdsDataColumnCollection Columns {
 			get;
 		}
 
-		TdsPacketRowResult ColumnValues {
+		TdsDataRow ColumnValues {
 			get;
 		}
 

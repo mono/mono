@@ -1,3 +1,27 @@
+2002-12-01  Tim Coleman <tim@timcoleman.com>
+	* list:
+		Remove more unnecessary files.
+	* Mono.Data.Tds.Protocol/TdsDataRow.cs:
+	* Mono.Data.Tds.Protocol/TdsDataColumn.cs:
+	* Mono.Data.Tds.Protocol/TdsDataColumnCollection.cs:
+		New classes
+	* Mono.Data.Tds.Protocol/TdsPacketColumnInfoResult.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketColumnOrderResult.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketControlResult.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketOutputParam.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketResult.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketRowResult.cs:
+	* Mono.Data.Tds.Protocol/TdsSchemaInfo.cs:
+		Remove obsolete classes
+	* Mono.Data.Tds.Protocol/ITds.cs:
+	* Mono.Data.Tds.Protocol/Tds.cs:
+	* Mono.Data.Tds.Protocol/Tds42.cs:
+	* Mono.Data.Tds.Protocol/Tds50.cs:
+	* Mono.Data.Tds.Protocol/Tds70.cs:
+	* Mono.Data.Tds.Protocol/Tds80.cs:
+		Change Schema and ColumnValues
+		
+
 2002-11-30  Tim Coleman <tim@timcoleman.com>
 	* list:
 		Remove unnecessary files.
