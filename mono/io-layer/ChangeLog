@@ -1,3 +1,9 @@
+2002-03-19  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* io.h, io.c, events.c, mutexes.c, semaphores.c, sockets.c,
+	threads.c, io.c: added flush method to handles.
+
+	* io.c: FlushFileBuffers() and FindFirstFile() functions.
 
 Thu Mar 7 17:21:52 CET 2002 Paolo Molaro <lupus@ximian.com>
 
