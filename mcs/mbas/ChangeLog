@@ -1,4 +1,8 @@
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* oops merged expression.cs from mcs/mcs is breaking my make
+	* driver.cs, assemblyinfo.cs wasn´t ready for prime time (offending lines were commented out)
+
+2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged expression.cs from mcs/mcs
 
 2002-06-12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>

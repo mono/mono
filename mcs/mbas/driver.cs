@@ -136,7 +136,7 @@ Options:
 
 		static void About ()
 		{
-			Options.ShowAbout();
+//			Options.ShowAbout();
 		}
 		
 		static void error (string msg)
@@ -149,7 +149,7 @@ Options:
 			Console.WriteLine (msg);
 		}
 		
-		private static Mono.GetOptions.OptionList Options;
+//		private static Mono.GetOptions.OptionList Options;
 
 		private static bool SetVerboseParsing(object nothing)
 		{
@@ -159,12 +159,12 @@ Options:
 
 		public static int Main (string[] args)
 		{
-			Options = new Mono.GetOptions.OptionList("The compiler source code is released under the terms of the GNU GPL\n\n" +
+/*			Options = new Mono.GetOptions.OptionList("The compiler source code is released under the terms of the GNU GPL\n\n" +
 				"For more information on Mono, visit the project Web site\n" +
 				"   http://www.go-mono.com" , "mbas [options] source-files");
 			Options.AddAbout(' ',"about", "About the MonoBASIC compiler");
 			Options.AddBooleanSwitch ('v',"verbose", "Verbose parsing (for debugging the parser)", false, new Mono.GetOptions.OptionFound(SetVerboseParsing) );
-			MainDriver(args);	
+*/			MainDriver(args);	
 			return (error_count + Report.Errors) != 0 ? 1 : 0;
 		}
 
@@ -451,8 +451,8 @@ Options:
 			//
 			link_paths.Add (GetSystemDir ());
 
-			Options.ProcessArgs(args);
-			return; 
+//			Options.ProcessArgs(args);
+//			return; 
 
 			int argc = args.Length;
 			for (i = 0; i < argc; i++){
