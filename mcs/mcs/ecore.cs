@@ -85,6 +85,35 @@ namespace Mono.CSharp {
 		void AddressOf (EmitContext ec, AddressOp mode);
 	}
 
+	/// <summary>
+	///   This interface denotes an expression which evaluates to a member
+	///   of a struct or a class.
+	/// </summary>
+	public interface IMemberExpr
+	{
+		/// <summary>
+		///   The name of this member.
+		/// </summary>
+		string Name {
+			get;
+		}
+
+		/// <summary>
+		///   Whether this is a static member.
+		/// </summary>
+		bool IsStatic {
+			get;
+		}
+
+		/// <summary>
+		///   The instance expression associated with this member, if it's a
+		///   non-static member.
+		/// </summary>
+		Expression InstanceExpression {
+			get; set;
+		}
+	}
+
 	/// <remarks>
 	///   Base class for expressions
 	/// </remarks>
@@ -3261,10 +3290,10 @@ namespace Mono.CSharp {
 		//
 		Expression MemberStaticCheck (Expression e)
 		{
-			if (e is FieldExpr){
-				FieldInfo fi = ((FieldExpr) e).FieldInfo;
+			if (e is IMemberExpr){
+				IMemberExpr member = (IMemberExpr) e;
 				
-				if (!fi.IsStatic){
+				if (!member.IsStatic){
 					Error_ObjectRefRequired (loc, Name);
 					return null;
 				}
@@ -3276,16 +3305,6 @@ namespace Mono.CSharp {
 					return null;
 				}
 				return e;
-			} else if (e is PropertyExpr){
-				if (!((PropertyExpr) e).IsStatic){
-					Error_ObjectRefRequired (loc, Name);
-					return null;
-				}
-			} else if (e is EventExpr) {
-				if (!((EventExpr) e).IsStatic) {
-					Error_ObjectRefRequired (loc, Name);
-					return null;
-				}
 			}
 
 			return e;
@@ -3435,7 +3454,7 @@ namespace Mono.CSharp {
 				// into something meaningful.
 				return this;
 			}
-			
+
 			//
 			// Stage 2 continues here. 
 			// 
@@ -3444,139 +3463,10 @@ namespace Mono.CSharp {
 
 			if (ec.OnlyLookupTypes)
 				return null;
-			
-			if (e is FieldExpr){
-				FieldExpr fe = (FieldExpr) e;
-				FieldInfo fi = fe.FieldInfo;
 
-				if (fi.FieldType.IsPointer && !ec.InUnsafe){
-					UnsafeError (loc);
-				}
-				
-				if (ec.IsStatic){
-					if (!allow_static && !fi.IsStatic){
-						Error_ObjectRefRequired (loc, Name);
-						return null;
-					}
-				} else {
-					// If we are not in static code and this
-					// field is not static, set the instance to `this'.
+			if (e is IMemberExpr)
+				return MemberAccess.ResolveMemberAccess (ec, e, null, loc, this);
 
-					if (!fi.IsStatic)
-						fe.InstanceExpression = ec.This;
-				}
-
-				
-				if (fi is FieldBuilder) {
-					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
-					
-					if (c != null) {
-						object o = c.LookupConstantValue (ec);
-						if (o == null)
-							return null;
-						object real_value = ((Constant)c.Expr).GetValue ();
-						return Constantify (real_value, fi.FieldType);
-					}
-				}
-
-				if (fi.IsLiteral) {
-					Type t = fi.FieldType;
-					Type decl_type = fi.DeclaringType;
-					object o;
-
-					if (fi is FieldBuilder)
-						o = TypeManager.GetValue ((FieldBuilder) fi);
-					else
-						o = fi.GetValue (fi);
-					
-					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
-						Expression enum_member = MemberLookup (
-							ec, decl_type, "value__", MemberTypes.Field,
-							AllBindingFlags, loc); 
-
-						Enum en = TypeManager.LookupEnum (decl_type);
-
-						Constant c;
-						if (en != null)
-							c = Constantify (o, en.UnderlyingType);
-						else 
-							c = Constantify (o, enum_member.Type);
-						
-						return new EnumConstant (c, decl_type);
-					}
-					
-					Expression exp = Constantify (o, t);
-				}
-					
-				return e;
-			}
-
-			if (e is PropertyExpr) {
-				PropertyExpr pe = (PropertyExpr) e;
-
-				if (ec.IsStatic){
-					if (allow_static)
-						return e;
-
-					return MemberStaticCheck (e);
-				} else {
-					// If we are not in static code and this
-					// field is not static, set the instance to `this'.
-
-					if (!pe.IsStatic)
-						pe.InstanceExpression = ec.This;
-				}
-
-				return e;
-			}
-
-			if (e is EventExpr) {
-				//
-				// If the event is local to this class, we transform ourselves into
-				// a FieldExpr
-				//
-				EventExpr ee = (EventExpr) e;
-
-				Expression ml = MemberLookup (
-					ec, ec.ContainerType, ee.EventInfo.Name,
-					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
-
-				if (ml != null) {
-					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
-
-					if (mi == null) {
-						//
-						// If this happens, then we have an event with its own
-						// accessors and private field etc so there's no need
-						// to transform ourselves : we should instead flag an error
-						//
-						Assign.error70 (ee.EventInfo, loc);
-						return null;
-					}
-
-					ml = ExprClassFromMemberInfo (ec, mi, loc);
-					
-					if (ml == null) {
-						Report.Error (-200, loc, "Internal error!!");
-						return null;
-					}
-
-					Expression instance_expr;
-					
-					FieldInfo fi = ((FieldExpr) ml).FieldInfo;
-
-					if (fi.IsStatic)
-						instance_expr = null;
-					else {
-						instance_expr = ec.This;
-						instance_expr = instance_expr.Resolve (ec);
-					} 
-					
-					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, loc, null);
-				}
-			}
-				
-			
 			if (ec.IsStatic){
 				if (allow_static)
 					return e;
@@ -3585,8 +3475,6 @@ namespace Mono.CSharp {
 			} else
 				return e;
 		}
-
-		
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -3766,9 +3654,9 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
-	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation {
+	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation, IMemberExpr {
 		public readonly FieldInfo FieldInfo;
-		public Expression InstanceExpression;
+		Expression instance_expr;
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
@@ -3778,17 +3666,39 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public string Name {
+			get {
+				return FieldInfo.Name;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return FieldInfo.IsStatic;
+			}
+		}
+
+		public Expression InstanceExpression {
+			get {
+				return instance_expr;
+			}
+
+			set {
+				instance_expr = value;
+			}
+		}
+
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (!FieldInfo.IsStatic){
-				if (InstanceExpression == null){
+				if (instance_expr == null){
 					throw new Exception ("non-static FieldExpr without instance var\n" +
 							     "You have to assign the Instance variable\n" +
 							     "Of the FieldExpr to set this\n");
 				}
 
-				InstanceExpression = InstanceExpression.Resolve (ec);
-				if (InstanceExpression == null)
+				instance_expr = instance_expr.Resolve (ec);
+				if (instance_expr == null)
 					return null;
 			}
 
@@ -3851,23 +3761,23 @@ namespace Mono.CSharp {
 				
 				ig.Emit (OpCodes.Ldsfld, FieldInfo);
 			} else {
-				if (InstanceExpression.Type.IsValueType){
+				if (instance_expr.Type.IsValueType){
 					IMemoryLocation ml;
 					LocalTemporary tempo = null;
 					
-					if (!(InstanceExpression is IMemoryLocation)){
+					if (!(instance_expr is IMemoryLocation)){
 						tempo = new LocalTemporary (
-							ec, InstanceExpression.Type);
+							ec, instance_expr.Type);
 
 						InstanceExpression.Emit (ec);
 						tempo.Store (ec);
 						ml = tempo;
 					} else
-						ml = (IMemoryLocation) InstanceExpression;
+						ml = (IMemoryLocation) instance_expr;
 
 					ml.AddressOf (ec, AddressOp.Load);
 				} else 
-					InstanceExpression.Emit (ec);
+					instance_expr.Emit (ec);
 
 				if (is_volatile)
 					ig.Emit (OpCodes.Volatile);
@@ -3889,7 +3799,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (!is_static){
-				Expression instance = InstanceExpression;
+				Expression instance = instance_expr;
 
 				if (instance.Type.IsValueType){
 					if (instance is IMemoryLocation){
@@ -3965,10 +3875,10 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {
-				if (InstanceExpression is IMemoryLocation)
-					((IMemoryLocation)InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
+				if (instance_expr is IMemoryLocation)
+					((IMemoryLocation)instance_expr).AddressOf (ec, AddressOp.LoadStore);
 				else
-					InstanceExpression.Emit (ec);
+					instance_expr.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
@@ -3981,19 +3891,19 @@ namespace Mono.CSharp {
 	///   This is not an LValue because we need to re-write the expression, we
 	///   can not take data from the stack and store it.  
 	/// </summary>
-	public class PropertyExpr : ExpressionStatement, IAssignMethod {
+	public class PropertyExpr : ExpressionStatement, IAssignMethod, IMemberExpr {
 		public readonly PropertyInfo PropertyInfo;
-		public readonly bool IsStatic;
 		public bool IsBase;
 		MethodInfo [] Accessors;
+		bool is_static;
 		
 		Expression instance_expr;
-		
+
 		public PropertyExpr (PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
-			IsStatic = false;
+			is_static = false;
 			loc = l;
 			Accessors = TypeManager.GetAccessors (pi);
 
@@ -4001,7 +3911,7 @@ namespace Mono.CSharp {
 				foreach (MethodInfo mi in Accessors){
 					if (mi != null)
 						if (mi.IsStatic)
-							IsStatic = true;
+							is_static = true;
 				}
 			else
 				Accessors = new MethodInfo [2];
@@ -4009,6 +3919,18 @@ namespace Mono.CSharp {
 			type = TypeManager.TypeToCoreType (pi.PropertyType);
 		}
 
+		public string Name {
+			get {
+				return PropertyInfo.Name;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return is_static;
+			}
+		}
+		
 		//
 		// The instance expression associated with this expression
 		//
@@ -4096,12 +4018,11 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to an Event
 	/// </summary>
-	public class EventExpr : Expression {
+	public class EventExpr : Expression, IMemberExpr {
 		public readonly EventInfo EventInfo;
-		public Expression InstanceExpression;
+		public Expression instance_expr;
 
-		public readonly bool IsStatic;
-
+		bool is_static;
 		MethodInfo add_accessor, remove_accessor;
 		
 		public EventExpr (EventInfo ei, Location loc)
@@ -4114,12 +4035,34 @@ namespace Mono.CSharp {
 			remove_accessor = TypeManager.GetRemoveMethod (ei);
 			
 			if (add_accessor.IsStatic || remove_accessor.IsStatic)
-					IsStatic = true;
+				is_static = true;
 
 			if (EventInfo is MyEventBuilder)
 				type = ((MyEventBuilder) EventInfo).EventType;
 			else
 				type = EventInfo.EventHandlerType;
+		}
+
+		public string Name {
+			get {
+				return EventInfo.Name;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return is_static;
+			}
+		}
+
+		public Expression InstanceExpression {
+			get {
+				return instance_expr;
+			}
+
+			set {
+				instance_expr = value;
+			}
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -4144,10 +4087,10 @@ namespace Mono.CSharp {
 			
 			if (((Binary) source).Oper == Binary.Operator.Addition)
 				Invocation.EmitCall (
-					ec, false, IsStatic, InstanceExpression, add_accessor, args, loc);
+					ec, false, IsStatic, instance_expr, add_accessor, args, loc);
 			else
 				Invocation.EmitCall (
-					ec, false, IsStatic, InstanceExpression, remove_accessor, args, loc);
+					ec, false, IsStatic, instance_expr, remove_accessor, args, loc);
 		}
 	}
 }	

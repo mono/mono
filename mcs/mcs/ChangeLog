@@ -1,3 +1,15 @@
+2002-08-07  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (IMemberExpr): New public interface.
+	(FieldExpr, PropertyExpr, EventExpr): Implement IMemberExpr.
+	(SimpleName.SimpleNameResolve): Call MemberAccess.ResolveMemberAccess
+	if the expression is an IMemberExpr.
+
+	* expression.cs (MemberAccess.ResolveMemberAccess): Allow `left'
+	to be null, implicitly default to `this' if we're non-static in
+	this case.  Simplified the code a lot by using the new IMemberExpr
+	interface.  Also fixed bug #28176 here.
+
 2002-08-06  Martin Baulig  <martin@gnome.org>
 
 	* cs-parser.jay (SimpleLookup): Removed.  We need to create

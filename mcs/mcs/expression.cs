@@ -5260,6 +5260,22 @@ namespace Mono.CSharp {
 							      Expression left, Location loc,
 							      Expression left_original)
 		{
+			bool left_is_type, left_is_explicit;
+
+			// If `left' is null, then we're called from SimpleNameResolve and this is
+			// a member in the currently defining class.
+			if (left == null) {
+				left_is_type = ec.IsStatic;
+				left_is_explicit = false;
+
+				// Implicitly default to `this' unless we're static.
+				if (!ec.IsStatic && !ec.InEnumContext)
+					left = ec.This;
+			} else {
+				left_is_type = left is TypeExpr;
+				left_is_explicit = true;
+			}
+
 			//
 			// Method Groups
 			//
@@ -5269,7 +5285,7 @@ namespace Mono.CSharp {
 				//
 				// Type.MethodGroup
 				//
-				if (left is TypeExpr){
+				if (left_is_type){
 					if (!mg.RemoveInstanceMethods ()){
 						SimpleName.Error_ObjectRefRequired (loc, mg.Methods [0].Name); 
 						return null;
@@ -5357,7 +5373,7 @@ namespace Mono.CSharp {
 					
 					Expression exp = Constantify (o, t);
 
-					if (!(left is TypeExpr)) {
+					if (left_is_explicit && !left_is_type) {
 						error176 (loc, fe.FieldInfo.Name);
 						return null;
 					}
@@ -5369,69 +5385,9 @@ namespace Mono.CSharp {
 					UnsafeError (loc);
 					return null;
 				}
-				
-				if (left is TypeExpr){
-					// and refers to a type name or an 
-					if (!fe.FieldInfo.IsStatic){
-						error176 (loc, fe.FieldInfo.Name);
-						return null;
-					}
-					return member_lookup;
-				} else {
-					if (fe.FieldInfo.IsStatic){
-						if (IdenticalNameAndTypeName (ec, left_original, loc))
-							return member_lookup;
-
-						error176 (loc, fe.FieldInfo.Name);
-						return null;
-					}
-
-					//
-					// Since we can not check for instance objects in SimpleName,
-					// becaue of the rule that allows types and variables to share
-					// the name (as long as they can be de-ambiguated later, see 
-					// IdenticalNameAndTypeName), we have to check whether left 
-					// is an instance variable in a static context
-					//
-
-					if (ec.IsStatic && left is FieldExpr){
-						FieldExpr fexp = (FieldExpr) left;
-
-						if (!fexp.FieldInfo.IsStatic){
-							SimpleName.Error_ObjectRefRequired (loc, fexp.FieldInfo.Name);
-							return null;
-						}
-					}
-					fe.InstanceExpression = left;
-
-					return fe;
-				}
-			}
-
-			if (member_lookup is PropertyExpr){
-				PropertyExpr pe = (PropertyExpr) member_lookup;
-
-				if (left is TypeExpr){
-					if (!pe.IsStatic){
-						SimpleName.Error_ObjectRefRequired (loc, pe.PropertyInfo.Name);
-						return null;
-					}
-					return pe;
-				} else {
-					if (pe.IsStatic){
-						if (IdenticalNameAndTypeName (ec, left_original, loc))
-							return member_lookup;
-						error176 (loc, pe.PropertyInfo.Name);
-						return null;
-					}
-					pe.InstanceExpression = left;
-					
-					return pe;
-				}
 			}
 
 			if (member_lookup is EventExpr) {
-
 				EventExpr ee = (EventExpr) member_lookup;
 				
 				//
@@ -5464,28 +5420,55 @@ namespace Mono.CSharp {
 					}
 					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
+			}
 
-				if (left is TypeExpr) {
-					if (!ee.IsStatic) {
-						SimpleName.Error_ObjectRefRequired (loc, ee.EventInfo.Name);
-						return null;
-					}
+			if (member_lookup is IMemberExpr) {
+				IMemberExpr me = (IMemberExpr) member_lookup;
 
-					return ee;
-
-				} else {
-					if (ee.IsStatic) {
+				if (left_is_type){
+					if (!me.IsStatic){
 						if (IdenticalNameAndTypeName (ec, left_original, loc))
-							return ee;
-						    
-						error176 (loc, ee.EventInfo.Name);
+							return member_lookup;
+
+						SimpleName.Error_ObjectRefRequired (loc, me.Name);
 						return null;
 					}
+				} else {
+					if (me.IsStatic){
+						if (IdenticalNameAndTypeName (ec, left_original, loc))
+							return member_lookup;
 
-					ee.InstanceExpression = left;
+						if (left_is_explicit) {
+							error176 (loc, me.Name);
+							return null;
+						}
+					}
 
-					return ee;
+					//
+					// Since we can not check for instance objects in SimpleName,
+					// becaue of the rule that allows types and variables to share
+					// the name (as long as they can be de-ambiguated later, see 
+					// IdenticalNameAndTypeName), we have to check whether left 
+					// is an instance variable in a static context
+					//
+					// However, if the left-hand value is explicitly given, then
+					// it is already our instance expression, so we aren't in
+					// static context.
+					//
+
+					if (ec.IsStatic && !left_is_explicit && left is IMemberExpr){
+						IMemberExpr mexp = (IMemberExpr) left;
+
+						if (!mexp.IsStatic){
+							SimpleName.Error_ObjectRefRequired (loc, mexp.Name);
+							return null;
+						}
+					}
+
+					me.InstanceExpression = left;
 				}
+
+				return member_lookup;
 			}
 
 			if (member_lookup is TypeExpr){
@@ -5550,9 +5533,8 @@ namespace Mono.CSharp {
 			}
 
 			if (expr_type.IsPointer){
-				Error (23,
-					      "The `.' operator can not be applied to pointer operands (" +
-					      TypeManager.CSharpName (expr_type) + ")");
+				Error (23, "The `.' operator can not be applied to pointer operands (" +
+				       TypeManager.CSharpName (expr_type) + ")");
 				return null;
 			}
 
@@ -5571,10 +5553,10 @@ namespace Mono.CSharp {
 					expr_type, expr_type, AllMemberTypes, AllBindingFlags, Identifier);
 				if (lookup == null)
 					Error (117, "`" + expr_type + "' does not contain a " +
-						      "definition for `" + Identifier + "'");
+					       "definition for `" + Identifier + "'");
 				else
 					Error (122, "`" + expr_type + "." + Identifier + "' " +
-						      "is inaccessible because of its protection level");
+					       "is inaccessible because of its protection level");
 					      
 				return null;
 			}
