@@ -1,5 +1,9 @@
 2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_native_wrapper): Do not free the
+	memory returned by mono_string_builder_to_utf16, since it points into
+	managed memory. Thanks to Bernie Solomon for noticing this.
+
 	* icall.c: Add AppDomainSetup icalls.
 
 	* reflection.h (MonoReflectionMethodAux): Add 'param_cattr' field.
