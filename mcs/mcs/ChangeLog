@@ -1,3 +1,16 @@
+2002-12-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Remove some dead code.
+
+	* cs-parser.jay: Estimate the number of methods needed
+	(RootContext.MethodCount);
+
+	* cs-tokenizer.cs: Use char arrays for parsing identifiers and
+	numbers instead of StringBuilders.
+
+	* support.cs (PtrHashtable): Add constructor with initial size;
+	We can now reduce reallocations of the method table.
+
 2002-12-10  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (ApplyAttributes): Keep track of the emitted
