@@ -1,12 +1,12 @@
 //
 // System.ServiceProcess.ServiceControllerPermissionAttribute.cs
 //
-// Author:
+// Authors:
 //      Duncan Mak (duncan@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003, Ximian Inc.
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,62 +28,61 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Security;
 using System.Security.Permissions;
 
 namespace System.ServiceProcess {
 
-        [Serializable]
-        [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class |
-                        AttributeTargets.Struct   | AttributeTargets.Constructor |
-                        AttributeTargets.Method   | AttributeTargets.Event)]
-        public class ServiceControllerPermissionAttribute : CodeAccessSecurityAttribute
-        {
-                string machine_name;
-                string service_name;
-                ServiceControllerPermissionAccess permission_access;
-                
-                public ServiceControllerPermissionAttribute (SecurityAction action)
-                        : base (action)
-                {
-                        machine_name = ".";
-                        service_name = "*";
-                        permission_access = ServiceControllerPermissionAccess.Browse;
-                }
+	[Serializable]
+	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class |
+			AttributeTargets.Struct   | AttributeTargets.Constructor |
+			AttributeTargets.Method   | AttributeTargets.Event,
+			AllowMultiple=true, Inherited=false)]
+	public class ServiceControllerPermissionAttribute : CodeAccessSecurityAttribute {
 
-                public string MachineName {
+		string machine_name;
+		string service_name;
+		ServiceControllerPermissionAccess permission_access;
+		
+		public ServiceControllerPermissionAttribute (SecurityAction action)
+			: base (action)
+		{
+			machine_name = ResourcePermissionBase.Local;
+			service_name = ResourcePermissionBase.Any;
+			permission_access = ServiceControllerPermissionAccess.Browse;
+		}
 
-                        get { return machine_name; }
-                                
+		public string MachineName {
+			get { return machine_name; }
+			set { 
+				ServiceControllerPermission.ValidateMachineName (value);
+				machine_name = value;
+			}
+		}
 
-                        set { machine_name = value; }
-                }
+		public ServiceControllerPermissionAccess PermissionAccess {
+			get { return permission_access; }
+			set {
+				permission_access = value;
+			}
+		}
 
-                public ServiceControllerPermissionAccess PermissionAccess {
+		public string ServiceName {
+			get { return service_name; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("ServiceName");
+				ServiceControllerPermission.ValidateServiceName (value);
+				service_name = value;
+			}
+		}
 
-                        get { return permission_access; }
-
-                        set { permission_access = value; }
-                }
-
-                public string ServiceName {
-
-                        get { return service_name; }
-
-                        set {
-                                if (value == null)
-                                        throw new ArgumentNullException (
-                                                Locale.GetText ("Argument is null"));
-
-                                service_name = value;
-                        }
-                }
-
-                [MonoTODO]
-                public override IPermission CreatePermission ()
-                {
-                        throw new NotImplementedException ();
-                }
-        }
+		public override IPermission CreatePermission ()
+		{
+			if (base.Unrestricted)
+				return new ServiceControllerPermission (PermissionState.Unrestricted);
+			else
+				return new ServiceControllerPermission (PermissionState.None);
+		}
+	}
 }

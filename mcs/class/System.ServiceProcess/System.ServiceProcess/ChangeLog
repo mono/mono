@@ -1,0 +1,10 @@
+2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New.
+	* ServiceControllerPermission.cs: New. Added permission class.
+	* ServiceControllerPermissionAttribute.cs: Completed TODO, added 
+	missing validations (machine and service names). Fixed AttributeUsage.
+	* ServiceControllerPermissionEntry.cs: Added internal GetBaseEntry for
+	synchronization. Converted spaces to tabs.
+	* ServiceControllerPermissionEntryCollection.cs: Added synchronization 
+	with entries in the base class. Converted spaces to tabs.
