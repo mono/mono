@@ -39,7 +39,7 @@ namespace System.Xml
 			set { data = value; }
 		}
 
-		public int Length {
+		public virtual int Length {
 			get { return data != null ? data.Length : 0; }
 		}
 

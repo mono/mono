@@ -20,13 +20,13 @@ namespace System.Security.Principal {
 			this.roles = roles;
 		}
 
-		public IIdentity Identity {
+		public virtual IIdentity Identity {
 			get {
 				return identity;
 			}
 		}
 
-		public bool IsInRole (string role)
+		public virtual bool IsInRole (string role)
 		{
 			foreach (string r in roles)
 				if (role == r)

@@ -194,7 +194,7 @@ namespace System.Resources
 				reader = readerToEnumerate;
 			}
 
-			public DictionaryEntry Entry
+			public virtual DictionaryEntry Entry
 			{
 				get {
 					if (null == reader.stream)
@@ -209,7 +209,7 @@ namespace System.Resources
 				}
 			}
 			
-			public object Key
+			public virtual object Key
 			{
 				get { 
 					if (null == reader.stream)
@@ -220,7 +220,7 @@ namespace System.Resources
 				}
 			}
 			
-			public object Value
+			public virtual object Value
 			{
 				get { 
 					if (null == reader.stream)
@@ -231,7 +231,7 @@ namespace System.Resources
 				}
 			}
 			
-			public object Current
+			public virtual object Current
 			{
 				get {
 					if (null == reader.stream)
@@ -242,7 +242,7 @@ namespace System.Resources
 				}
 			}
 			
-			public bool MoveNext ()
+			public virtual bool MoveNext ()
 			{
 				if (null == reader.stream)
 					throw new InvalidOperationException("ResourceReader is closed.");

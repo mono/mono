@@ -16,6 +16,6 @@ namespace System.Diagnostics.SymbolStore
 		}
 
 		// Fields
-		public static Guid Microsoft;
+		public static readonly Guid Microsoft;
 	}
 }

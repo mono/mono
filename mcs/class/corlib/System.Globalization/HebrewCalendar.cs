@@ -35,7 +35,7 @@ public class HebrewCalendar : Calendar {
 	/// The era number for the Anno Mundi (A.M.) era, called
 	/// plain HebrewEra.
 	/// </summary>
-	public const int HebrewEra = 1;
+	public static readonly int HebrewEra = 1;
 
 	/// <summary>
 	/// The

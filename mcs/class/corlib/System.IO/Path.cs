@@ -14,7 +14,7 @@ using System;
 
 namespace System.IO
 {
-	public class Path
+	public sealed class Path
 	{
 		public static readonly char AltDirectorySeparatorChar;
 		public static readonly char DirectorySeparatorChar;

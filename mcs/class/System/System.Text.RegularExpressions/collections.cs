@@ -115,7 +115,7 @@ namespace System.Text.RegularExpressions {
 	}
 
 	public class MatchCollection : RegexCollectionBase, ICollection, IEnumerable {
-		public Match this[int i] {
+		public virtual Match this[int i] {
 			get { return (Match)list[i]; }
 		}
 

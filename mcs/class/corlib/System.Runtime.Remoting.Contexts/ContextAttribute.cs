@@ -54,7 +54,7 @@ namespace System.Runtime.Remoting.Contexts {
 		/// <summary>
 		///    Adds the current context property to the IConstructionCallMessage
 		/// </summary>
-		public void GetPropertiesForNewContext (IConstructionCallMessage msg)
+		public virtual void GetPropertiesForNewContext (IConstructionCallMessage msg)
 		{
 			if (msg == null)
 				throw new ArgumentNullException ("IConstructionCallMessage");
@@ -68,7 +68,7 @@ namespace System.Runtime.Remoting.Contexts {
 		//   True whether the context arguments satisfies the requirements
 		//   of the current context.
 		// </summary>
-		public bool IsContextOK (Context ctx, IConstructionCallMessage msg)
+		public virtual bool IsContextOK (Context ctx, IConstructionCallMessage msg)
 		{
 			if (msg == null)
 				throw new ArgumentNullException ("IConstructionCallMessage");
@@ -88,7 +88,7 @@ namespace System.Runtime.Remoting.Contexts {
 			return true;
 		}
 
-		public bool IsNewContextOK (Context ctx)
+		public virtual bool IsNewContextOK (Context ctx)
 		{
 			return true;
 		}

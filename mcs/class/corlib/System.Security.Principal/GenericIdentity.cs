@@ -25,19 +25,19 @@ namespace System.Security.Principal {
 			this.user_name = user_name;
 		}
 
-		public string AuthenticationType {
+		public virtual string AuthenticationType {
 			get {
 				return authentication_type;
 			}
 		}
 
-		public string Name {
+		public virtual string Name {
 			get {
 				return user_name;
 			}
 		}
 
-		public bool IsAuthenticated {
+		public virtual bool IsAuthenticated {
 			get {
 				return true;
 			}

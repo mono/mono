@@ -90,5 +90,10 @@ namespace System.Reflection {
 			MonoFieldInfo.get_field_info (this, out info);
 			return String.Format ("{0} {1}", info.type, info.name);
 		}
+
+		[MonoTODO]
+		public override void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
+		{
+		}
 	}
 }

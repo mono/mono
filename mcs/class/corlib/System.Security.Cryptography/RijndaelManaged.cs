@@ -20,7 +20,7 @@ using System.Security.Cryptography;
 /// 	created on - 2/23/2002 6:21:44 PM
 /// </remarks>
 namespace System.Security.Cryptography {
-	public class RijndaelManaged : Rijndael {
+	public sealed class RijndaelManaged : Rijndael {
 		
 		/// <summary>
 		/// RijndaelManaged constructor.

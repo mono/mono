@@ -10,7 +10,7 @@
 using System;
 
 namespace System.Diagnostics {
-	public class FileVersionInfo {
+	public sealed class FileVersionInfo {
 		[MonoTODO]
 		public string Comments {
 			get {

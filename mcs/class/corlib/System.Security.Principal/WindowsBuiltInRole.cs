@@ -9,7 +9,7 @@
 
 namespace System.Security.Principal {
 
-	enum WindowsBuiltInRole {
+	internal enum WindowsBuiltInRole {
 		Administrator = 544,
 		User = 545,
 		Guest = 546,

@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace System {
 
 	[Serializable]
-	public class TypeInitializationException : SystemException {
+	public sealed class TypeInitializationException : SystemException {
 		string type_name;
 
 		// Constructors

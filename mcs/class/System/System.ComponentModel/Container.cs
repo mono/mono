@@ -120,7 +120,7 @@ namespace System.ComponentModel {
 			return new DefaultSite (name, component, this);
 		}
 
-		public virtual void Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);

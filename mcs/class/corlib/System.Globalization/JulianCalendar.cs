@@ -34,7 +34,7 @@ public class JulianCalendar : Calendar {
 	/// The era number for the Common Era (C.E.) or Anno Domini (A.D.)
 	/// respective.
 	/// </summary>
-	public const int JulianEra = 1;
+	public static readonly int JulianEra = 1;
 
 	/// <value>Overridden. Gives the eras supported by the Julian
 	/// calendar as an array of integers.

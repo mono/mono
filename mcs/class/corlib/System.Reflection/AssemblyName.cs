@@ -15,7 +15,7 @@ using System.Runtime.Serialization;
 namespace System.Reflection {
 
 	[Serializable]
-	public class AssemblyName  : ISerializable // ICloneable, , IDeserializationCallback
+	public sealed class AssemblyName  : ISerializable // ICloneable, , IDeserializationCallback
 	{
 		string name;
 		string codebase;
@@ -33,7 +33,7 @@ namespace System.Reflection {
 			version = (Version)si.GetValue ("_Version", typeof (Version));
 		}
 
-		public virtual string Name {
+		public string Name {
 			get {
 				return name;
 			}
@@ -42,7 +42,7 @@ namespace System.Reflection {
 			}
 		}
 
-		public virtual string CodeBase {
+		public string CodeBase {
 			get {
 				return codebase;
 			}
@@ -52,7 +52,7 @@ namespace System.Reflection {
 			}
 		}
 
-		public virtual Version Version {
+		public Version Version {
 			get {
 				return version;
 			}

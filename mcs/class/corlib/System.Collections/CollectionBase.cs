@@ -18,16 +18,16 @@ namespace System.Collections {
 		private System.Collections.ArrayList myList;
 		
 		// public instance properties
-		public virtual int Count { get { return InnerList.Count; } }
+		public int Count { get { return InnerList.Count; } }
 		
 		// Public Instance Methods
-		public virtual System.Collections.IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
-		public virtual void Clear() { 
+		public System.Collections.IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
+		public void Clear() { 
 			OnClear();
 			InnerList.Clear(); 
 			OnClearComplete();
 		}
-		public virtual void RemoveAt (int index) {
+		public void RemoveAt (int index) {
 			object objectToRemove;
 			objectToRemove = InnerList[index];
 			OnValidate(objectToRemove);

@@ -9,7 +9,7 @@
 
 namespace System.Security.Principal {
 
-	enum WindowsAccountType {
+	internal enum WindowsAccountType {
 		Normal,
 		Guest,
 		System,

@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 namespace System {
 
 	[Serializable]
-	public class StackOverflowException : SystemException {
+	public sealed class StackOverflowException : SystemException {
 		// Constructors
 		public StackOverflowException ()
 			: base (Locale.GetText ("The requested operation caused a stack overflow"))

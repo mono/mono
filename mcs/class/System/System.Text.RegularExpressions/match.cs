@@ -156,7 +156,7 @@ namespace System.Text.RegularExpressions {
 			return inner;	// FIXME need to sync on machine access
 		}
 		
-		public GroupCollection Groups {
+		public virtual GroupCollection Groups {
 			get { return groups; }
 		}
 

@@ -38,7 +38,7 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Computes the entire hash of all the bytes in the byte array.
 		/// </summary>
-		public virtual byte[] ComputeHash (byte[] input) {
+		public byte[] ComputeHash (byte[] input) {
 			// inputData = input.Clone();
 			HashCore (input, 0, input.Length);
 			HashValue = HashFinal ();

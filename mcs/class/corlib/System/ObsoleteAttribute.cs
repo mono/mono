@@ -14,7 +14,7 @@ namespace System
 		      AttributeTargets.Field | AttributeTargets.Event |
 		      AttributeTargets.Interface | AttributeTargets.Delegate)]
 	     [Serializable]
-	     public class ObsoleteAttribute : Attribute
+	     public sealed class ObsoleteAttribute : Attribute
 	     {
 		     private string message;
 		     private bool isError = false;

@@ -9,7 +9,7 @@
 namespace System
 {
 	[AttributeUsage (AttributeTargets.Method)]
-	public class STAThreadAttribute : Attribute
+	public sealed class STAThreadAttribute : Attribute
 	{
 		   // Constructors
 		public STAThreadAttribute () : base ()

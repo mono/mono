@@ -38,7 +38,7 @@ namespace System {
 
 		private void *value;
 
-		public static IntPtr Zero;
+		public static readonly IntPtr Zero;
 
 		static IntPtr ()
 		{

@@ -16,7 +16,7 @@ namespace System.Security.Permissions {
 		AttributeTargets.Struct | AttributeTargets.Constructor |
 		AttributeTargets.Method)]
 	[Serializable]
-	public class IsolatedStoragePermissionAttribute : CodeAccessSecurityAttribute {
+	public abstract class IsolatedStoragePermissionAttribute : CodeAccessSecurityAttribute {
 		
 		public IsolatedStoragePermissionAttribute (SecurityAction action) : base (action) {
 		}

@@ -9,7 +9,7 @@
 
 namespace System.ComponentModel {
 
-	public class MemberDescriptor {
+	public abstract class MemberDescriptor {
 		string name;
 		Attribute [] attrs;
 		

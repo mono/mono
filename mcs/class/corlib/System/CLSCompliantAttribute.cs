@@ -17,7 +17,7 @@ namespace System {
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.All)]
 	[Serializable]
-	public class CLSCompliantAttribute : Attribute {
+	public sealed class CLSCompliantAttribute : Attribute {
 
 		bool is_compliant;
 

@@ -9,7 +9,7 @@
 namespace System
 {
 	[AttributeUsage (AttributeTargets.Method)]
-	public class MTAThreadAttribute : Attribute
+	public sealed class MTAThreadAttribute : Attribute
 	{
 		// Constructors
 		public MTAThreadAttribute () : base ()

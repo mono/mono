@@ -303,7 +303,7 @@ namespace System.Reflection.Emit {
 			if (sym_writer != null)
 				scopes.Push (sym_writer.OpenScope (code_len));
 		}
-		public virtual LocalBuilder DeclareLocal (Type localType) {
+		public LocalBuilder DeclareLocal (Type localType) {
 			LocalBuilder res = new LocalBuilder (module, localType);
 			if (locals != null) {
 				LocalBuilder[] new_l = new LocalBuilder [locals.Length + 1];
@@ -486,7 +486,7 @@ namespace System.Reflection.Emit {
 				cur_stack -= mparams.Length;
 		}
 		[CLSCompliant(false)]
-		public virtual void Emit (OpCode opcode, sbyte val) {
+		public void Emit (OpCode opcode, sbyte val) {
 			make_room (3);
 			ll_emit (opcode);
 			code [code_len++] = (byte)val;
@@ -577,7 +577,7 @@ namespace System.Reflection.Emit {
 		public virtual void ThrowException (Type exceptionType) {
 			throw new NotImplementedException ();
 		}
-		public virtual void UsingNamespace (String usingNamespace) {
+		public void UsingNamespace (String usingNamespace) {
 			throw new NotImplementedException ();
 		}
 

@@ -50,7 +50,7 @@ namespace System {
 		}		
 
 		// Properties
-		public virtual double OffendingNumber {
+		public double OffendingNumber {
 			get {
 				return offending_number;
 			}

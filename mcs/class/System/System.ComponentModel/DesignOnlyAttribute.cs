@@ -11,7 +11,7 @@
 namespace System.ComponentModel {
 
 	[AttributeUsage (AttributeTargets.Property)]
-	public class DesignOnlyAttribute : Attribute {
+	public sealed class DesignOnlyAttribute : Attribute {
 		bool design_only;
 		
 		public static readonly DesignOnlyAttribute No;

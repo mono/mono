@@ -10,7 +10,7 @@
 namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage(AttributeTargets.Property, Inherited=false)] [Serializable]
-	public class IndexerNameAttribute : Attribute {
+	public sealed class IndexerNameAttribute : Attribute {
 		public IndexerNameAttribute (string indexer_name)
 		{
 		}

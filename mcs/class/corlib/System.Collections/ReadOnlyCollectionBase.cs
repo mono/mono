@@ -18,10 +18,10 @@ namespace System.Collections {
 		private System.Collections.ArrayList myList;
 		
 		// public instance properties
-		public virtual int Count { get { return InnerList.Count; } }
+		public int Count { get { return InnerList.Count; } }
 		
 		// Public Instance Methods
-		public virtual System.Collections.IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
+		public System.Collections.IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
 		
 		// Protected Instance Constructors
 		protected ReadOnlyCollectionBase() {
@@ -29,7 +29,7 @@ namespace System.Collections {
 		}
 		
 		// Protected Instance Properties
-		protected virtual System.Collections.ArrayList InnerList {get { return this.myList; } }
+		protected System.Collections.ArrayList InnerList {get { return this.myList; } }
 		
 		// ICollection methods
 		void ICollection.CopyTo(Array array, int index) {

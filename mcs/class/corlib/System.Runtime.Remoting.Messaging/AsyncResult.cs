@@ -25,28 +25,28 @@ public class AsyncResult : IAsyncResult {
 	bool completed;
 	bool endinvoke_called;
 		
-	public object AsyncState
+	public virtual object AsyncState
 	{
 		get {
 			return async_state;
 		}
 	}
 
-	public WaitHandle AsyncWaitHandle
+	public virtual WaitHandle AsyncWaitHandle
 	{
 		get {
 			return handle;
 		}
 	}
 
-	public bool CompletedSynchronously
+	public virtual bool CompletedSynchronously
 	{
 		get {
 			return sync_completed;
 		}
 	}
 
-	public bool IsCompleted
+	public virtual bool IsCompleted
 	{
 		get {
 			return completed;
@@ -58,9 +58,12 @@ public class AsyncResult : IAsyncResult {
 		get {
 			return endinvoke_called;
 		}
+		set {
+			endinvoke_called = value;
+		}
 	}
 		
-	public object AsyncDelegate
+	public virtual object AsyncDelegate
 	{
 		get {
 			return async_delegate;

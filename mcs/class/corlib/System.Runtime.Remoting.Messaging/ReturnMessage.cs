@@ -119,7 +119,7 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 		}
 
-		public object ReturnValue {
+		public virtual object ReturnValue {
 			get {
 				return msg.rval;
 			}

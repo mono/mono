@@ -249,7 +249,7 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public virtual void SetAttribute (string localName, string namespaceURI, string value)
+		public virtual string SetAttribute (string localName, string namespaceURI, string value)
 		{
 			throw new NotImplementedException ();
 		}

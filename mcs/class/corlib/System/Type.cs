@@ -435,7 +435,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool type_is_subtype_of (Type a, Type b, bool check_interfaces);
 		
-		public bool IsSubclassOf (Type c)
+		public virtual bool IsSubclassOf (Type c)
 		{
 			return type_is_subtype_of (this, c, false);
 		}

@@ -39,7 +39,7 @@ namespace System.Configuration
 		/// <param name="section">The XML node that contains the configuration information to be handled. section provides direct access to the XML contents of the configuration section.</param>
 		/// <returns></returns>
 		[MonoTODO]
-		public object Create(object parent, object context, XmlNode section)
+		public virtual object Create(object parent, object context, XmlNode section)
 		{
 			//FIXME: Enter a meaningful error message
 			if(section == null)

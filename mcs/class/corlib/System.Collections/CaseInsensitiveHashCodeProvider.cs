@@ -57,7 +57,7 @@ namespace System.Collections {
 		//
 
 		[MonoTODO]
-		public virtual int GetHashCode (object obj)
+		public int GetHashCode (object obj)
 		{
 			if (obj == null) {
 				throw new ArgumentNullException ("obj is null");

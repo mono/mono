@@ -9,7 +9,7 @@
 namespace System
 {
 	[AttributeUsage (AttributeTargets.Method)]
-	public class LoaderOptimizationAttribute : Attribute
+	public sealed class LoaderOptimizationAttribute : Attribute
 	{
 		private LoaderOptimization lo;
 		

@@ -140,7 +140,7 @@ namespace System.IO
 			return new StreamReader (path);
 		}
 
-		public FileStream OpenWrite (string path)
+		public static FileStream OpenWrite (string path)
 		{
 			return new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}

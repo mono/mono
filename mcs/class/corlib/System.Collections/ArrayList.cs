@@ -352,17 +352,17 @@ namespace System.Collections {
 				return new ArrayListEnumerator (start, num, data);
 			}
 
-			public object Current {
+			public virtual object Current {
 				get {
 					return data [idx];
 				}
 			}
-			public bool MoveNext() {
+			public virtual bool MoveNext() {
 				if (++idx < start + num)
 					return true;
 				return false;
 			}
-			public void Reset() {
+			public virtual void Reset() {
 				idx = start - 1;
 			}
 		}

@@ -133,7 +133,7 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public XmlResolver XmlResolver {
+		public virtual XmlResolver XmlResolver {
 			set { throw new NotImplementedException(); }
 		}
 

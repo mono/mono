@@ -4,7 +4,7 @@ namespace System.Collections
 {
   // do we really need to specify IEnumerable since ICollection extends it?
   [Serializable]
-  public class BitArray : ICollection, IEnumerable, ICloneable
+  public sealed class BitArray : ICollection, IEnumerable, ICloneable
   {
     private Int32[] m_array;
     private int m_length;
@@ -149,7 +149,7 @@ namespace System.Collections
     
 
     /* --- Public properties --- */
-    public virtual int Count
+    public int Count
     {
       get
       {
@@ -157,7 +157,7 @@ namespace System.Collections
       }
     }
 
-    public virtual bool IsReadOnly
+    public bool IsReadOnly
     {
       get
       {
@@ -165,7 +165,7 @@ namespace System.Collections
       }
     }
 
-    public virtual bool IsSynchronized
+    public bool IsSynchronized
     {
       get
       {
@@ -173,7 +173,7 @@ namespace System.Collections
       }
     }
 
-    public virtual bool this[int index]
+    public bool this[int index]
     {
       get
       {
@@ -186,7 +186,7 @@ namespace System.Collections
 
     }
 
-    public virtual int Length
+    public int Length
     {
       get
       {
@@ -216,7 +216,7 @@ namespace System.Collections
       }
     }
 
-    public virtual object SyncRoot
+    public object SyncRoot
     {
       get
       {

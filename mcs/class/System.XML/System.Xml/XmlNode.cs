@@ -311,25 +311,25 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public virtual XmlNodeList SelectNodes (string xpath)
+		public XmlNodeList SelectNodes (string xpath)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlNodeList SelectNodes (string xpath, XmlNamespaceManager nsmgr)
+		public XmlNodeList SelectNodes (string xpath, XmlNamespaceManager nsmgr)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlNode SelectSingleNode (string xpath)
+		public XmlNode SelectSingleNode (string xpath)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlNode SelectSingleNode (string xpath, XmlNamespaceManager nsmgr)
+		public XmlNode SelectSingleNode (string xpath, XmlNamespaceManager nsmgr)
 		{
 			throw new NotImplementedException ();
 		}

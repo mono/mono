@@ -8,7 +8,7 @@
 using System;
 
 namespace System {
-	public class BitConverter {
+	public sealed class BitConverter {
 
 		private BitConverter () {}
 

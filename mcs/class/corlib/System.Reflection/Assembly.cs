@@ -241,7 +241,7 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-		public String[] GetManifestResourceNames ()
+		public virtual String[] GetManifestResourceNames ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -256,7 +256,7 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-		public ManifestResourceInfo GetManifestResourceInfo (String resourceName)
+		public virtual ManifestResourceInfo GetManifestResourceInfo (String resourceName)
 		{
 			throw new NotImplementedException ();
 		}

@@ -12,7 +12,7 @@ using System.Globalization;
 namespace System.Reflection
 {
 	[Serializable]
-	public class TargetParameterCountException : ApplicationException
+	public sealed class TargetParameterCountException : ApplicationException
 	{
 		public TargetParameterCountException ()
 			: base (Locale.GetText ("Number of parameter does not match expected count."))

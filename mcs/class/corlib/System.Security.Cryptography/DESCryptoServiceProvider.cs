@@ -188,7 +188,7 @@ namespace System.Security.Cryptography {
 	} // DESDecryptor
 
 
-	public class DESCryptoServiceProvider {
+	public sealed class DESCryptoServiceProvider {
 		private byte [] iv;
 		private byte [] key;
 
@@ -201,12 +201,12 @@ namespace System.Security.Cryptography {
 		// Factories
 		//
 
-		public virtual ICryptoTransform CreateEncryptor()
+		public ICryptoTransform CreateEncryptor()
 		{
 			return new DESEncryptor (key, iv);
 		}
 
-		public virtual ICryptoTransform CreateDecryptor()
+		public ICryptoTransform CreateDecryptor()
 		{
 			return new DESDecryptor (key, iv);
 		}
@@ -226,7 +226,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		public virtual byte[] IV {
+		public byte[] IV {
 			get {
 				return this.iv;
 			}

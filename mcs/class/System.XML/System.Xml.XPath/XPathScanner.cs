@@ -67,7 +67,7 @@ namespace System.Xml.XPath
 		VariableReference
 	}
 
-	public class XPathScanner
+	public sealed class XPathScanner
 	{
 		private string xpath;
 		private int index;

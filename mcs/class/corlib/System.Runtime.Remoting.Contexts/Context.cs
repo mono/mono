@@ -41,7 +41,7 @@ namespace System.Runtime.Remoting.Contexts {
 			}
 		}
 
-		public IContextProperty GetProperty (string name)
+		public virtual IContextProperty GetProperty (string name)
 		{
 			if (context_properties == null)
 				return null;
@@ -53,7 +53,7 @@ namespace System.Runtime.Remoting.Contexts {
 			return null;
 		}
 
-		public void SetProperty (IContextProperty prop)
+		public virtual void SetProperty (IContextProperty prop)
 		{
 			if (prop == null)
 				throw new ArgumentNullException ("IContextProperty");

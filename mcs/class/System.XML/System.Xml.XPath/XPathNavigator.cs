@@ -151,7 +151,7 @@ namespace System.Xml.XPath
 
 		public abstract bool MoveToPrevious ();
 
-		public abstract bool MoveToRoot ();
+		public abstract void MoveToRoot ();
 
 		[MonoTODO]
 		public virtual XPathNodeIterator Select (string xpath)

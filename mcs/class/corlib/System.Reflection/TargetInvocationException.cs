@@ -7,7 +7,7 @@
 namespace System.Reflection
 {
 	[Serializable]
-	public class TargetInvocationException : ApplicationException
+	public sealed class TargetInvocationException : ApplicationException
 	{
 		private TargetInvocationException () {}
 	}

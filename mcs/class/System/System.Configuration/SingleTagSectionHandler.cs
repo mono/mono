@@ -36,7 +36,7 @@ namespace System.Configuration
 		/// <param name="section">The name of the configuration section.</param>
 		/// <returns></returns>
 		[MonoTODO]
-		public object Create(object parent, object context, XmlNode section)
+		public virtual object Create(object parent, object context, XmlNode section)
 		{
 			//FIXME: I'm not quite sure how to implement 'parent' or 'context'.
 			//TODO: Add in proper Error Handling.

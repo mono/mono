@@ -49,7 +49,7 @@ namespace System.Security.Cryptography {
 
 		/// <summary>
 		/// </summary>
-		public virtual bool CanTransformMultipleBlocks {
+		public bool CanTransformMultipleBlocks {
 			get {
 				return false;
 			}
@@ -62,7 +62,7 @@ namespace System.Security.Cryptography {
 		/// <remarks>
 		///  The input block size for Base64 decoder is always 1 byte.
 		/// </remarks>
-		public virtual int InputBlockSize {
+		public int InputBlockSize {
 			get {
 				return 1;
 			}
@@ -75,7 +75,7 @@ namespace System.Security.Cryptography {
 		/// <remarks>
 		///  The value returned by this property is always 3.
 		/// </remarks>
-		public virtual int OutputBlockSize {
+		public int OutputBlockSize {
 			get {
 				return 3;
 			}
@@ -170,7 +170,7 @@ namespace System.Security.Cryptography {
 
 		/// <summary>
 		/// </summary>
-		public virtual int TransformBlock (byte [] inputBuffer,
+		public int TransformBlock (byte [] inputBuffer,
 		                                   int inputOffset,
 		                                   int inputCount,
 		                                   byte [] outputBuffer,
@@ -216,7 +216,7 @@ namespace System.Security.Cryptography {
 
 		/// <summary>
 		/// </summary>
-		public virtual byte [] TransformFinalBlock (byte [] inputBuffer,
+		public byte [] TransformFinalBlock (byte [] inputBuffer,
 		                                            int inputOffset,
 		                                            int inputCount)
 		{

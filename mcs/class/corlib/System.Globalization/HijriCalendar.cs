@@ -43,7 +43,7 @@ public class HijriCalendar : Calendar {
 	/// <summary>
 	/// The era number for the Anno Hegirae (A.H.) era.
 	/// </summary>
-	public const int HijriEra = 1;
+	public static readonly int HijriEra = 1;
 
 	/// <summary>
 	/// The minimum fixed day number supported by the Hijri calendar.

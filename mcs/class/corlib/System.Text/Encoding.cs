@@ -313,14 +313,14 @@ namespace System.Text {
                 }
 
 		[MonoTODO]
-                public virtual Encoding GetEncoding (int codepage)
+                public static Encoding GetEncoding (int codepage)
 		{
                         // FIXME
                         return null;
                 }
 		
 		[MonoTODO]
-                public virtual Encoding GetEncoding (string name)
+                public static Encoding GetEncoding (string name)
 		{
                         // FIXME
                         return null;

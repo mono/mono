@@ -16,12 +16,12 @@ namespace System.Security.Cryptography {
 	/// C# implementation of the SHA1 cryptographic hash function.
 	/// LAMESPEC?: Basically the same thing as SHA1Managed except for how its implemented.
 	/// </summary>
-	public class SHA1CryptoServiceProvider : SHA1 {
+	public sealed class SHA1CryptoServiceProvider : SHA1 {
 		private const int BLOCK_SIZE_BYTES =  64;
 		private const int HASH_SIZE_BYTES  =  20;
 		private const int HASH_SIZE_BITS   = 160;
-		[CLSCompliant(false)] protected uint[] _H;  // these are my chaining variables
-		[CLSCompliant(false)] protected uint count;
+		[CLSCompliant(false)] private uint[] _H;  // these are my chaining variables
+		[CLSCompliant(false)] private uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
 	

@@ -90,7 +90,7 @@ namespace System.IO {
 			}
 		}
 
-		public Encoding CurrentEncoding
+		public virtual Encoding CurrentEncoding
 		{
 			get {
 				return internalEncoding;

@@ -19,7 +19,7 @@ namespace System.ComponentModel {
 	// <remarks>
 	//   Longer description
 	// </remarks>
-	public class EventHandlerList : IDisposable {
+	public sealed class EventHandlerList : IDisposable {
 		Hashtable table;
 		
 		public EventHandlerList ()

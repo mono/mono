@@ -12,7 +12,7 @@ using System;
 namespace System.Runtime.Serialization {
 
 	[Serializable]
-	public sealed class SerializationException : SystemException {
+	public class SerializationException : SystemException {
 		// Constructors
 		public SerializationException ()
 			: base ("An error occurred during (de)serialization")
