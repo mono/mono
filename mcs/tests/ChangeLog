@@ -1,3 +1,7 @@
+2004-11-18  Martin Baulig  <martin@ximian.com>
+
+	* gen-102.cs: New test for #62909.
+
 2004-11-17  Raja R Harinath  <rharinath@novell.com>
 
 	* harness.mk: Add the pover-a and pover-b multi-file test.
