@@ -1,5 +1,10 @@
 2004-05-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* process.c: use double quotes to quote program name and arguments on
+	windows. Fixes bug #58575.
+
+2004-05-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* file-io.c: don't return "." and ".." when using windows Find*File.
 
 2003-05-17	Patrik Torstensson <totte@hiddenpeaks.com>
