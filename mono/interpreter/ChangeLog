@@ -1,3 +1,13 @@
+2004-07-31  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.h: add mono_interp_ftnptr_to_delegate 
+
+	* transform.c (generate): use mono_interp_ftnptr_to_delegate
+	as ical function.
+
+	* interp.c: add mono_interp_ftnptr_to_delegate to create
+	interpreter style delegate. fixes pinvoke3
+
 2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* interp.c: Use mono_init_from_assembly instead of mono_init.
