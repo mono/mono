@@ -1,3 +1,7 @@
+2003-3-08  Joel Basson  <jstrike@mweb.co.za>
+
+* Frame.cs should have been GroupBox.cs
+
 2003-03-07  Joel Basson  <jstrike@mweb.co.za>
 
 *	CheckBox.cs

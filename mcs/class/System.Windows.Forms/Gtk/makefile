@@ -21,7 +21,7 @@ SOURCES = \
 	TextBox.cs	\
 	CheckBox.cs	\
 	RadioButton.cs	\
-	Frame.cs	\
+	GroupBox.cs	\
 	ProgressBar.cs	\
 	ScrollableControl.cs
 
