@@ -12,5 +12,7 @@ namespace System.Threading
 {
 	// 'unsafe' wasn't in the spec, but the compiler insists because of
 	// the pointer.
+	[Serializable]
+	[CLSCompliant(false)]
 	public unsafe delegate void IOCompletionCallback(uint errorCode, uint numBytes, NativeOverlapped *pOVERLAP);
 }
