@@ -1,3 +1,8 @@
+
+Thu Nov 13 16:24:29 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ppc/ppc-codegen.h: fixed most of the incorrect macros from ct.
+
 2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* */tramp.c (mono_create_method_pointer): Rename to 
