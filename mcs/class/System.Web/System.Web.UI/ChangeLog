@@ -1,5 +1,11 @@
 2003-11-19  Jackson Harper <jackson@ximian.com>
 
+	* Control.cs: Remove ResolveBaseUrl. ResolveUrl does the same
+	thing, some corner cases still need work though. Was this the
+	shortest lived method in the history of mono?
+	
+2003-11-19  Jackson Harper <jackson@ximian.com>
+
 	* Control.cs: New method for resolving urls that use ~/ to denote
 	the applications base directory.
 	
