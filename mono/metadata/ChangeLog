@@ -1,5 +1,9 @@
 2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_managed_wrapper): Add support for the modopt(CallConvCdecl).
+
+2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
 	* class-internals.h object-internals.h class.c reflection.c: Extend the
 	mono_lookup_dynamic_token () function to return the class of the
 	token as well. 
