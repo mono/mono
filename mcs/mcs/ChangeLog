@@ -1,5 +1,14 @@
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (MemberAccess.ResolveMemberAccess): If this is an
+	EventExpr, don't do a DeclaredOnly MemberLookup, but check whether
+	`ee.EventInfo.DeclaringType == ec.ContainerType'.  The
+	MemberLookup would return a wrong event if this is an explicit
+	interface implementation and the class has an event with the same
+	name.
+
+2002-08-23  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (Block.AddChildVariableNames): New public method.
 	(Block.AddChildVariableName): Likewise.
 	(Block.IsVariableNameUsedInChildBlock): Likewise.

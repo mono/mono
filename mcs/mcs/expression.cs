@@ -5437,13 +5437,9 @@ namespace Mono.CSharp {
 				// If the event is local to this class, we transform ourselves into
 				// a FieldExpr
 				//
-				
-				Expression ml = MemberLookup (
-					ec, ec.ContainerType, ee.EventInfo.Name, MemberTypes.Event,
-					AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
-				if (ml != null) {
-					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
+				if (ee.EventInfo.DeclaringType == ec.ContainerType) {
+					MemberInfo mi = GetFieldFromEvent (ee);
 
 					if (mi == null) {
 						//
@@ -5455,7 +5451,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					ml = ExprClassFromMemberInfo (ec, mi, loc);
+					Expression ml = ExprClassFromMemberInfo (ec, mi, loc);
 					
 					if (ml == null) {
 						Report.Error (-200, loc, "Internal error!!");
