@@ -1,3 +1,14 @@
+2002-05-20  Martin Baulig  <martin@gnome.org>
+
+	* reflection.c (mono_reflection_setup_internal_class): Don't crash
+	if `tb->parent == NULL'.
+	(mono_reflection_create_internal_class): New function.  This is
+	called from TypeBuilder.CreateType() and sets `klass->enum_basetype'
+	for enum types.
+
+	* icall.c ("System.Reflection.Emit.TypeBuilder::create_internal_class"):
+	New interncall.
+
 2002-05-19  Martin Baulig  <martin@gnome.org>
 
 	* unicode.c (ves_icall_iconv_get_bytes): Actually use the `charCount'
