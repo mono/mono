@@ -1,5 +1,5 @@
 //
-// ast.cs: Base class for the EcmaScript program tree representation.
+// ASTList.cs:
 //
 // Author: Cesar Octavio Lopez Nataren
 //
@@ -8,6 +8,10 @@
 
 namespace Microsoft.JScript
 {
-	public abstract class AST
-	{}
+	using System.Collections;
+
+	public class ASTList : AST
+	{
+		private ArrayList elems;
+	}
 }

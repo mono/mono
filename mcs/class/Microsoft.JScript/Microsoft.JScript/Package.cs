@@ -1,5 +1,5 @@
 //
-// ast.cs: Base class for the EcmaScript program tree representation.
+// Package.cs:
 //
 // Author: Cesar Octavio Lopez Nataren
 //
@@ -8,6 +8,9 @@
 
 namespace Microsoft.JScript
 {
-	public abstract class AST
-	{}
+	public class Package : AST
+	{
+		public static void JScriptPackage (string rootName, VsaEngine engine)
+		{}
+	}
 }

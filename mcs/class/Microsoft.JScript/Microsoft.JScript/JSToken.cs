@@ -1,5 +1,5 @@
 //
-// ast.cs: Base class for the EcmaScript program tree representation.
+// JSToken.cs:
 //
 // Author: Cesar Octavio Lopez Nataren
 //
@@ -8,6 +8,6 @@
 
 namespace Microsoft.JScript
 {
-	public abstract class AST
-	{}
+	public enum JSToken {
+	}
 }

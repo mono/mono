@@ -1,5 +1,5 @@
 //
-// ast.cs: Base class for the EcmaScript program tree representation.
+// Empty.cs:
 //
 // Author: Cesar Octavio Lopez Nataren
 //
@@ -8,6 +8,8 @@
 
 namespace Microsoft.JScript
 {
-	public abstract class AST
-	{}
+	public class Empty
+	{
+		public static readonly Empty Value = null;
+	}
 }

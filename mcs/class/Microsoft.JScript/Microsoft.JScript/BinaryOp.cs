@@ -1,5 +1,5 @@
 //
-// ast.cs: Base class for the EcmaScript program tree representation.
+// BinaryOp.cs:
 //
 // Author: Cesar Octavio Lopez Nataren
 //
@@ -8,6 +8,10 @@
 
 namespace Microsoft.JScript
 {
-	public abstract class AST
-	{}
+	public abstract class BinaryOp : AST
+	{
+		AST op1, op2;
+		// FIXME: the operator is missing.
+	}
 }
+	

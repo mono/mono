@@ -1,5 +1,5 @@
 //
-// ast.cs: Base class for the EcmaScript program tree representation.
+// Import.cs:
 //
 // Author: Cesar Octavio Lopez Nataren
 //
@@ -8,6 +8,11 @@
 
 namespace Microsoft.JScript
 {
-	public abstract class AST
-	{}
+	public class Import : AST
+	{
+		string name;
+
+		public static void JScriptImport (string name, VsaEngine engine)
+		{}
+	}
 }
