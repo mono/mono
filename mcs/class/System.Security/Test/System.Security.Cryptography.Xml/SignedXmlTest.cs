@@ -397,5 +397,33 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			sxe.SigningKeyName = "mono";
 			AssertEquals ("SigningKeyName", "mono", sxe.SigningKeyName);
 		}
+
+		[Test]
+		public void CheckSignatureEmptySafe ()
+		{
+			SignedXml sx;
+			KeyInfoClause kic;
+			KeyInfo ki;
+
+			// empty keyinfo passes...
+			sx = new SignedXml ();
+			sx.KeyInfo = new KeyInfo ();
+			Assert (!sx.CheckSignature ());
+
+			// with empty KeyInfoName
+			kic = new KeyInfoName ();
+			ki = new KeyInfo ();
+			ki.AddClause (kic);
+			sx.KeyInfo = ki;
+			Assert (!sx.CheckSignature ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void CheckSignatureEmpty ()
+		{
+			SignedXml sx = new SignedXml ();
+			sx.CheckSignature ();
+		}
 	}
 }
