@@ -1,3 +1,8 @@
+2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* RemotingServices.cs (IsOneWay): use IsDefined rather than
+	GetCustomAttributes. It is much faster.
+
 2004-07-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ObjRef.cs: Fixed type check in in ObjRef constructor. The requested class

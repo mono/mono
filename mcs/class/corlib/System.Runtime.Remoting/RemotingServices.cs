@@ -406,9 +406,7 @@ namespace System.Runtime.Remoting
 
 		public static bool IsOneWay(MethodBase method)
 		{
-			// TODO: use internal call for better performance
-			object[] atts = method.GetCustomAttributes (typeof (OneWayAttribute), false);
-			return atts.Length > 0;
+			return method.IsDefined (typeof (OneWayAttribute), false);
 		}
 
 		internal static bool IsAsyncMessage(IMessage msg)
