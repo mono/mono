@@ -665,7 +665,7 @@ namespace System.Xml
 			if(reader.NodeType == XmlNodeType.Element)
 				reader.MoveToFirstAttribute ();
 			else if(reader.NodeType != XmlNodeType.Attribute)
-				throw new InvalidOperationException ("bad position to read attribute.");
+				throw new InvalidOperationException (MakeReaderErrorMessage ("bad position to read attribute.", reader));
 			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 			ReadAttributeNodeValue (reader, attribute);
 			return attribute;
@@ -745,8 +745,10 @@ namespace System.Xml
 					break;
 
 				case XmlNodeType.EndElement:
-					if(currentNode == null || currentNode.Name != reader.Name)
-						throw new XmlException ("mismatch end tag.");
+					if (currentNode == null)
+						throw new XmlException ("Unexpected end element.");
+					else if (currentNode.Name != reader.Name)
+						throw new XmlException (MakeReaderErrorMessage (String.Format ("mismatch end tag. Expected {0} but found {1}", currentNode.Name, reader.Name), reader));
 					currentNode = currentNode.ParentNode;
 					break;
 
@@ -770,7 +772,7 @@ namespace System.Xml
 					newNode = CreateXmlDeclaration ("1.0" , String.Empty, String.Empty);
 					((XmlDeclaration)newNode).Value = reader.Value;
 					if(currentNode != null)
-						throw new XmlException ("XmlDeclaration at invalid position.");
+						throw new XmlException (MakeReaderErrorMessage ("XmlDeclaration at invalid position.", reader));
 					break;
 
 				case XmlNodeType.DocumentType:
@@ -789,7 +791,7 @@ namespace System.Xml
 						newNode = ReadDoctypeNode (xtReader);
 					}
 					if(currentNode != null)
-						throw new XmlException ("XmlDocumentType at invalid position.");
+						throw new XmlException (this.MakeReaderErrorMessage ("XmlDocumentType at invalid position.", reader));
 					break;
 
 				case XmlNodeType.EntityReference:
@@ -821,6 +823,15 @@ namespace System.Xml
 			if (startDepth != reader.Depth && reader.EOF)
 				throw new XmlException ("Unexpected end of xml reader.");
 			return resultNode != null ? resultNode : newNode;
+		}
+
+		private string MakeReaderErrorMessage (string message, XmlReader reader)
+		{
+			IXmlLineInfo li = reader as IXmlLineInfo;
+			if (li != null)
+				return String.Format ("{0} Line number = {1}, Inline position = {2}.", li.LineNumber, li.LinePosition);
+			else
+				return message;
 		}
 
 		private XmlDocumentType ReadDoctypeNode (XmlTextReader xtReader)

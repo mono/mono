@@ -493,9 +493,10 @@ namespace System.Xml
 				throw new ArgumentException ();
 
 			CheckState ();
-			w.Write ("{0}:{1}", ns, localName);
-		}
 
+			string prefix = namespaceManager.LookupPrefix (ns);
+			w.Write ("{0}:{1}", prefix, localName);
+		}
 		public override void WriteRaw (string data)
 		{
 			WriteStringInternal (data, false);

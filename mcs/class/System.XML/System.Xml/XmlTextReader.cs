@@ -598,7 +598,8 @@ namespace System.Xml
 					innerXmlBuilder = new StringBuilder ();
 				innerXmlBuilder.Length = 0;
 				do {
-					ReadContent ();
+//					ReadContent ();
+					Read ();
 					if (NodeType != XmlNodeType.EndElement || depth + 1 > startDepth)
 						innerXmlBuilder.Append (currentTag);
 				} while (depth >= startDepth);
@@ -1079,8 +1080,9 @@ namespace System.Xml
 			string name = ReadName ();
 			if (elementStack.Count == 0)
 				throw ReaderError("closing element without matching opening element");
-			if ((string)elementStack.Pop() != name)
-				throw ReaderError("unmatched closing element");
+			string expected = (string)elementStack.Pop();
+			if (expected != name)
+				throw ReaderError(String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
 			baseURIStack.Pop ();
 
 			SkipWhitespace ();

@@ -1,3 +1,27 @@
+2003-04-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Added missing ChangeLog of 4/4/2003.
+	* XmlTextWriter.cs : patch by Erik. fixed WriteQualifiedName.
+	  (write prefix instead of ns.)
+	* XmlInputStream.cs : file access mode fix (FileAccess.Read was missing)
+	* XmlTextReader.cs : modified to call Read() instead of ReadContent().
+	  (It may be required for decorated reader such as XmlValidatingReader.)
+	  Changed Read() error message for mismatch end tag.
+	* XmlDocument.cs : (ReadNode) friendly message for mismatch EndElement.
+	* XmlReader.cs : Corrected misinterpreted MoveToContent() method.
+
+2003-04-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs : Load() now closes the given XmlReader.
+	  Don't allow creation of XmlTextReader for Doctype. (workaround.)
+	* XmlInputStream.cs : It now closes its internal stream explicitly.
+	* XmlNode.cs : RemoveChild() bugfix for removing LastLinkedChild.
+	* XmlNodeReader.cs : GetAttribute() bugfix for not-present attribute.
+	* XmlParserInput.cs : added Close() method.
+	* XmlReader.cs : MoveToContent() should (1) not Read in case of empty
+	  element, and (2) MoveToElement() in case of attribute.
+	* XmlTextReader.cs : Close() now actually closes source TextReaders.
+
 2003-03-26  Duncan Mak  <duncan@ximian.com>
 
 	* XmlTextWriter.cs (Write): A patch from Atsushi to fix

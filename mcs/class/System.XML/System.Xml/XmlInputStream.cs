@@ -84,7 +84,7 @@ namespace Mono.Xml.Native
 				Uri uri = new Uri (url);
 				Initialize (new MemoryStream (new System.Net.WebClient ().DownloadData (url)));
 			} catch (UriFormatException ex) {
-				Initialize (new FileStream (url, FileMode.Open));
+				Initialize (new FileStream (url, FileMode.Open, FileAccess.Read));
 			}
 #else
 			Initialize (new FileStream (url, FileMode.Open, FileAccess.Read));
