@@ -2113,7 +2113,6 @@ namespace Mono.MonoBASIC {
 					overload_failed = true;
 				}
 			}	
-
 			//
 			// Step 2: Default operations on CLI native types.
 			//
@@ -2492,7 +2491,7 @@ namespace Mono.MonoBASIC {
 					right = ConvertImplicit (ec, right, TypeManager.double_type, loc);
 					type = TypeManager.double_type;
 				}
-			} else {
+			}else if (r != TypeManager.string_type && l != TypeManager.string_type) {
 				DoNumericPromotions (ec, l, r);
 				if (left == null || right == null){
 					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
@@ -2527,11 +2526,35 @@ namespace Mono.MonoBASIC {
 			    oper == Operator.LessThan ||
 			    oper == Operator.GreaterThanOrEqual ||
 			    oper == Operator.GreaterThan){
+			if (r == TypeManager.string_type && l == TypeManager.string_type) {
+				type = TypeManager.bool_type;
+
+				Expression etmp;
+                        	ArrayList args;
+                        	Argument arg1, arg2,arg3;
+				Expression e = null;
+				eclass = ExprClass.Value;
+
+                        	etmp = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.StringType.StrCmp", loc);
+                        	args = new ArrayList();
+                        	arg1 = new Argument (left, Argument.AType.Expression);
+                        	arg2 = new Argument (right, Argument.AType.Expression);
+                        	arg3 = new Argument (new BoolConstant(false), Argument.AType.Expression);
+                        	args.Add (arg1);
+                        	args.Add (arg2);
+                        	args.Add (arg3);
+                        	e = (Expression) new Invocation (etmp, args, loc);
+                        	e = new Binary(oper,e.Resolve(ec),new IntConstant(0),loc);
+                        	return e.Resolve(ec);
+			
+			
+			}else {
 				type = TypeManager.bool_type;
 			}
-
+			}
 			return this;
 		}
+		
 
 		public override Expression DoResolve (EmitContext ec)
 		{
