@@ -1,3 +1,7 @@
+2002-03-11  Duncan Mak  <duncan@ximian.com>
+
+	* IHasXmlNode.cs: Added to CVS.
+
 2002-03-08  Jason Diamond <jason@injektilo.org>
 
 	* XmlParserContext.cs: Added missing constructors and missing Encoding 
