@@ -802,6 +802,8 @@ namespace Mono.CSharp {
 					} else {
 						throw new Exception ( "Unexepected input: " + left);
 					}
+				} catch (DivideByZeroException){
+					Report.Error (020, loc, "Division by constant zero");
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
 				}
