@@ -1,3 +1,7 @@
+2002-11-12 Jackson Harper <jackson@latitudegeo.com>
+
+	* arch.cs compiler.cs regex.cs: Added mapping attribute to MachineFactories
+
 2002-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* parser.cs: detect illegal \ at end of pattern. Fixes 31334.
