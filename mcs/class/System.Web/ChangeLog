@@ -1,3 +1,7 @@
+2004-10-11  Sanjay Gupta <gsanjay@novell.com>
+
+	* makefile: Added flag to build System.Web_test.dll.
+
 2004-10-08  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Web_test.dll.sources: Added new file.
