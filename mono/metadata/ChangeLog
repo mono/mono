@@ -1,3 +1,8 @@
+2003-04-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_type_stack_size): size should be a multiple of
+	sizeof (gpointer)
+
 2003-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* gc.c:
