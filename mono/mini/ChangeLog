@@ -1,4 +1,9 @@
 
+Tue Apr 15 14:17:57 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: make the method->opcode optimization dependent
+	on MONO_OPT_INSTRINS and do it lazily.
+
 Tue Apr 15 14:15:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: print overall results at the end of regression run.
