@@ -12,6 +12,10 @@ Novell.Directory.Ldap.Utilclass/ResourcesHandler.cs
 Novell.Directory.Ldap.Utilclass/ExceptionMessages.cs
 Novell.Directory.Ldap.Utilclass/RespControlVector.cs
 Novell.Directory.Ldap.Utilclass/ExtResponseFactory.cs
+Novell.Directory.Ldap.Utilclass/TokenTypes.cs
+Novell.Directory.Ldap.Utilclass/CharacterTypes.cs
+Novell.Directory.Ldap.Utilclass/SchemaTokenCreator.cs
+Novell.Directory.Ldap.Utilclass/SchemaParser.cs
 Novell.Directory.Ldap.Asn1/Asn1Boolean.cs
 Novell.Directory.Ldap.Asn1/Asn1Choice.cs
 Novell.Directory.Ldap.Asn1/Asn1Encoder.cs
@@ -119,6 +123,16 @@ Novell.Directory.Ldap/LdapSearchResultReference.cs
 Novell.Directory.Ldap/LdapMessageQueue.cs
 Novell.Directory.Ldap/MessageAgent.cs
 Novell.Directory.Ldap/LdapUrl.cs
+Novell.Directory.Ldap/LdapSchema.cs
+Novell.Directory.Ldap/LdapObjectClassSchema.cs
+Novell.Directory.Ldap/LdapDITStructureRuleSchema.cs
+Novell.Directory.Ldap/LdapDITContentRuleSchema.cs
+Novell.Directory.Ldap/LdapMatchingRuleSchema.cs
+Novell.Directory.Ldap/LdapMatchingRuleUseSchema.cs
+Novell.Directory.Ldap/LdapSyntaxSchema.cs
+Novell.Directory.Ldap/LdapAttributeSchema.cs
+Novell.Directory.Ldap/LdapSchemaElement.cs
+Novell.Directory.Ldap/LdapNameFormSchema.cs
 Novell.Directory.Ldap/LdapControl.cs
 Novell.Directory.Ldap/LdapException.cs
 Novell.Directory.Ldap/LdapMessage.cs
