@@ -602,7 +602,6 @@ namespace System.Windows.Forms {
 			int ypos = 1;
 			int prev_row = 1;
 			Size spacing = TabSpacing;
-			int size = item_size.Height + 2 + spacing.Width;
 			int xpos = CalcXPos ();
 
 			if (TabPages.Count == 0)
@@ -633,7 +632,6 @@ namespace System.Windows.Forms {
 			}
 
 			if (SelectedIndex != -1) {
-				TabPage page = TabPages [SelectedIndex];
 				ExpandSelected (TabPages [SelectedIndex], 1, row_width - 1);
 			}
 		}
@@ -643,7 +641,6 @@ namespace System.Windows.Forms {
 			int ypos = CalcYPos ();
 			int prev_row = 1;
 			Size spacing = TabSpacing;
-			int size = item_size.Width + 2 + (spacing.Width * 2);
 			int xpos = 4;
 			int begin_prev = 0;
 
@@ -688,7 +685,6 @@ namespace System.Windows.Forms {
 			}
 
 			if (SelectedIndex != -1) {
-				TabPage page = TabPages [SelectedIndex];
 				ExpandSelected (TabPages [SelectedIndex], 2, row_width - 1);
 			}
 		}

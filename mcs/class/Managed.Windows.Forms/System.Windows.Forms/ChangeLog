@@ -1,5 +1,10 @@
 2004-12-17  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs:
+	* TreeView.cs: get rid of warnings.
+
+2004-12-17  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIStructs.cs: Fix a couple wrong virtual keycodes.
 
 2004-12-17  Jordi Mas i Hernandez <jordi@ximian.com>

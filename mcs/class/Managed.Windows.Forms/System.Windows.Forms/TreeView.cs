@@ -800,7 +800,6 @@ namespace System.Windows.Forms {
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
 
 			// TODO: So much optimization potential here
-			int half_height = ItemHeight / 2;
 			while (walk.MoveNext ()) {
 				TreeNode node = (TreeNode) walk.Current;
 				if (node.PlusMinusBounds.Contains (e.X, e.Y)) {
