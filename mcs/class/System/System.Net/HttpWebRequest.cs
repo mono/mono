@@ -927,7 +927,7 @@ namespace System.Net
 				r = asyncWrite;
 
 			if (r != null) {
-				WebException wexc = new WebException ("Error getting response stream", e, status, null); 
+				WebException wexc = new WebException ("Error getting response stream: " + status, e, status, null); 
 				r.SetCompleted (false, wexc);
 				r.DoCallback ();
 				asyncRead = null;

@@ -225,6 +225,16 @@ namespace System.Net
 		
 		// Internal Methods
 		
+		// With this we don't check for invalid characters in header. See bug #55994.
+		internal void SetInternal (string header)
+		{
+			int pos = header.IndexOf (':');
+			if (pos == -1)
+				throw new ArgumentException ("no colon found", "header");				
+
+			SetInternal (header.Substring (0, pos), header.Substring (pos + 1));
+		}
+
 		internal void SetInternal (string name, string value)
 		{
 			if (value == null)

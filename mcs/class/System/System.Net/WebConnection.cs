@@ -351,7 +351,7 @@ namespace System.Net
 						return -1;
 
 					foreach (string s in headers)
-						Data.Headers.Add (s);
+						Data.Headers.SetInternal (s);
 
 					if (Data.StatusCode == (int) HttpStatusCode.Continue) {
 						sPoint.SendContinue = true;
