@@ -1,3 +1,7 @@
+2003-04-10  Ville Palo <vi64pa@kolumbus.fi>
+
+	* StringWriterTest.cs: Added couple of tests.
+	
 2003-04-05  Nick Drochak  <ndrochak@gol.com>
 
 	* PathTest.cs: Use nunit2 convention for exception test.
