@@ -1,3 +1,6 @@
+2004-01-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* file-io.c : On Windows, there are much more invalid_path_chars.
 
 Fri Jan 2 13:35:48 CET 2004 Paolo Molaro <lupus@ximian.com>
 
