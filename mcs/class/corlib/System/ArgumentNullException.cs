@@ -21,7 +21,7 @@ namespace System {
 		}
 
 		public ArgumentNullException (string param_name)
-			: base (Locale.GetText ("Argument {0} cannot be null"), param_name)
+			: base (Locale.GetText ("Argument cannot be null"), param_name)
 		{
 		}
 

@@ -504,8 +504,14 @@ namespace System {
 						      Evidence securityInfo,
 						      AppDomainSetup info)
 		{
-			if (friendlyName == null || securityInfo == null || info == null)
-				throw new System.ArgumentNullException();
+			if (friendlyName == null)
+				throw new System.ArgumentNullException ("friendlyName");
+
+			if (securityInfo == null)
+				throw new System.ArgumentNullException ("securityInfo");
+
+			if (info == null)
+				throw new System.ArgumentNullException ("info");
 
 			AppDomain ad = createDomain (friendlyName, info);
 
