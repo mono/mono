@@ -232,7 +232,7 @@ namespace Cairo {
 
                 public void CurveTo (double x1, double y1, double x2, double y2, double x3, double y3)
                 {
-                        CairoAPI.cairo_curve_to (state, x1, y1, x2, x2, x3, y3);
+                        CairoAPI.cairo_curve_to (state, x1, y1, x2, y2, x3, y3);
                 }
 
                 public void CurveTo (Point p1, Point p2, Point p3)

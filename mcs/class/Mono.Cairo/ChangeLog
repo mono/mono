@@ -1,3 +1,8 @@
+2004-05-10  Radek Doulik  <rodo@ximian.com>
+
+	* Mono.Cairo/Graphics.cs: fixed typo, pass x2, y2 to
+	cairo_curve_to instead of passing x2, x2
+
 2004-04-25  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Mono.Cairo/Pattern.cs: implemented all the new pattern API 
 	introduced in Cairo 0.1.20
