@@ -76,7 +76,7 @@ namespace System.Web {
 		
 		protected override void OnValidate (object value)
 		{
-			this.OnValidate (value);
+			base.OnValidate (value);
 			if (value as SiteMapNode == null)
 				throw new ArgumentException ("Invalid type");
 		}

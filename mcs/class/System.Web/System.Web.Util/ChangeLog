@@ -1,3 +1,8 @@
+2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* UrlUtils.cs: new function to do the app mapping, but make
+	it return a physical path.
+
 2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* UrlUtils.cs: add a new function for mapping app absolute

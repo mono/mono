@@ -1,3 +1,12 @@
+2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* SiteMap.cs (Init): implement a hack that doesnt need the config
+	stuff. Should do that later.
+	* SiteMapNodeCollection (OnValidate): Fix recursion.
+	* SiteMapProvider.cs: We dont implement some culture stuff work
+	around it. Fix typo.
+	* XmlSiteMapProvider.cs: Added.
+	
 2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ISiteMapProvider.cs:

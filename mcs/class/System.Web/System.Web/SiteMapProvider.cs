@@ -85,13 +85,13 @@ namespace System.Web {
 					lock (this) {
 						if (urlToNode == null) {
 							urlToNode = new Hashtable (
-								new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture),
-								new CaseInsensitiveComparer (CultureInfo.InvariantCulture)
+								new CaseInsensitiveHashCodeProvider (),
+								new CaseInsensitiveComparer ()
 							);
 						}
 					}
 				}
-				return nodeToChildren;
+				return urlToNode;
 			}
 		}
 		

@@ -282,5 +282,21 @@ namespace System.Web.Util
 			}
 			return path;	
 		}
+		
+		public static string ResolvePhysicalPathFromAppAbsolute (string path)
+		{
+			if (path [0] != '~') return path;
+				
+			if (path.Length == 1)
+				return HttpRuntime.AppDomainAppPath;
+			
+			if (path [1] == '/' || path [1] == '\\') {
+				string appPath = HttpRuntime.AppDomainAppPath;
+				if (appPath.Length > 1)
+					return appPath + "/" + path.Substring (2);
+				return "/" + path.Substring (2);
+			}
+			return path;	
+		}
 	}
 }

@@ -11,13 +11,25 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.Configuration.Provider;
 
 namespace System.Web {
 	public sealed class SiteMap {
 		[MonoTODO ("Get everything from the config")]
 		private static void Init ()
 		{
-			throw new NotImplementedException ();
+			if (provider == null) {
+				lock (typeof (SiteMap)) {
+					if (provider == null) {
+						providers = new SiteMapProviderCollection ();
+						provider = new XmlSiteMapProvider ();
+						NameValueCollection attributes = new NameValueCollection ();
+						attributes.Add ("siteMapFile", "app.sitemap");
+						((IProvider)provider).Initialize ("AspNetXmlSiteMapProvider", attributes);
+						providers.Add ((IProvider)provider);
+					}
+				}
+			}
 		}
 		
 		public static SiteMapNode CurrentNode { 

@@ -448,3 +448,4 @@ System.Web/SiteMapNode.cs
 System.Web/SiteMapNodeCollection.cs
 System.Web/SiteMapProvider.cs
 System.Web/SiteMapProviderCollection.cs
+System.Web/XmlSiteMapProvider.cs
