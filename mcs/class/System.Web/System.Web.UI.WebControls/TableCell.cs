@@ -41,12 +41,12 @@ namespace System.Web.UI.WebControls
 #if NET_2_0
 	[Bindable (false)]
 #else
-	[ParseChildren(false)]
+	[PersistChildren(true)]
 #endif
 	[DefaultProperty("Text")]
 	[ToolboxItem(false)]
 	[ControlBuilder(typeof(TableCellControlBuilder))]
-	[PersistChildren(true)]
+	[ParseChildren(false)]
 	public class TableCell: WebControl
 	{
 		public TableCell () : base (HtmlTextWriterTag.Td)

@@ -44,6 +44,9 @@ namespace System.Web.UI.WebControls
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ToolboxData("<{0}:Button runat=\"server\" Text=\"Button\"></{0}:Button>")]
 	public class Button : WebControl, IPostBackEventHandler
+#if NET_2_0
+		, IButtonControl
+#endif
 	{
 		private static readonly object ClickEvent   = new object();
 		private static readonly object CommandEvent = new object();
@@ -135,6 +138,79 @@ namespace System.Web.UI.WebControls
 				ViewState["Text"] = value;
 			}
 		}
+		
+#if NET_2_0
+		[ThemeableAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[DefaultValueAttribute ("")]
+		[UrlProperty]
+		public string PostBackUrl {
+			get {
+				string text = (string)ViewState["PostBackUrl"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["PostBackUrl"] = value;
+			}
+		}
+		
+		[BindableAttribute (true)]
+		[LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		public string SoftkeyLabel {
+			get {
+				string text = (string)ViewState["SoftkeyLabel"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["SoftkeyLabel"] = value;
+			}
+		}
+		
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public string ValidationGroup {
+			get {
+				string text = (string)ViewState["ValidationGroup"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["ValidationGroup"] = value;
+			}
+		}
+		
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public string OnClientClick {
+			get {
+				string text = (string)ViewState["OnClientClick"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["OnClientClick"] = value;
+			}
+		}
+		
+		[DefaultValueAttribute (true)]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public bool UseSubmitBehavior {
+			get {
+				object b = ViewState["UseSubmitBehavior"];
+				if (b != null) return (bool)b;
+				return true;
+			}
+			set {
+				ViewState["UseSubmitBehavior"] = value;
+			}
+		}
+#endif
 
 		[WebCategory ("Action")]
 		[WebSysDescription ("Raised when the Button is clicked.")]
@@ -185,7 +261,16 @@ namespace System.Web.UI.WebControls
 			RaiseBubbleEvent(this, e);
 		}
 
+#if NET_2_0
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+		
+		protected virtual void RaisePostBackEvent (string eventArgument)
+#else
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+#endif
 		{
 			if (CausesValidation)
 				Page.Validate ();
@@ -193,6 +278,21 @@ namespace System.Web.UI.WebControls
 			OnClick (EventArgs.Empty);
 			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
 		}
+		
+#if NET_2_0
+		protected virtual PostBackOptions GetPostBackOptions ()
+		{
+			PostBackOptions ops = new PostBackOptions (this);
+			if (PostBackUrl != "")
+				ops.ActionUrl = PostBackUrl;
+			ops.PerformValidation = Page.Validators.Count > 0 && CausesValidation;
+			if (ops.PerformValidation)
+				ops.ValidationGroup = ValidationGroup;
+			ops.ClientSubmit = UseSubmitBehavior;
+			ops.RequiresJavaScriptProtocol = false;
+			return ops;
+		}
+#endif
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
@@ -202,11 +302,38 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "submit");
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, base.UniqueID);
 			writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
-			if (Page != null && CausesValidation && Page.Validators.Count > 0) {
-				writer.AddAttribute (System.Web.UI.HtmlTextWriterAttribute.Onclick,
-						     Utils.GetClientValidatedEvent (Page));
-				writer.AddAttribute ("language", "javascript");
+
+			if (Page != null) {
+				string script = "";
+#if NET_2_0
+				script = OnClientClick;
+				if (script.Length > 0) script += ";";
+				
+				PostBackOptions ops = GetPostBackOptions ();
+				if (ops != null && ops.RequiresSpecialPostBack) {
+					script += Page.GetPostBackEventReference (ops);
+				}
+				else if (CausesValidation && Page.Validators.Count > 0) {
+					if (UseSubmitBehavior)
+						script += Utils.GetClientValidatedEvent (Page);
+					else
+						script += Utils.GetClientValidatedPostBack (this);
+				}
+				else if (!UseSubmitBehavior) {
+					script += Page.GetPostBackClientEvent (this,"");
+				}
+#else
+				if (CausesValidation && Page.Validators.Count > 0) {
+					script += Utils.GetClientValidatedEvent (Page);
+				}
+#endif
+				
+				if (script != "") {
+					writer.AddAttribute (System.Web.UI.HtmlTextWriterAttribute.Onclick, script);
+					writer.AddAttribute ("language", "javascript");
+				}
 			}
+			
 			base.AddAttributesToRender (writer);
 		}
 

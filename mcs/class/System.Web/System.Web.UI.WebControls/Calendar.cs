@@ -679,6 +679,62 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(VisibleMonthChangedEvent, value);
 			}
 		}
+		
+#if NET_2_0
+		[MonoTODO ("Do something with this")]
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Appearance")]
+		public string CalendarEntryText {
+			get {
+				object o = ViewState ["CalendarEntryText"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["CalendarEntryText"] = value;
+			}
+		}
+
+		[LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Accessibility")]
+		public string Caption {
+			get {
+				object o = ViewState ["Caption"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["Caption"] = value;
+			}
+		}
+
+    	[WebCategoryAttribute ("Accessibility")]
+	    [DefaultValueAttribute (TableCaptionAlign.NotSet)]
+		public TableCaptionAlign CaptionAlign {
+			get {
+				object o = ViewState ["CaptionAlign"];
+				if (o != null) return (TableCaptionAlign) o;
+				return TableCaptionAlign.NotSet;
+			}
+			set {
+				ViewState ["CaptionAlign"] = value;
+			}
+		}
+
+		[DefaultValueAttribute (false)]
+		[WebCategoryAttribute ("Accessibility")]
+		public bool UseAccessibleHeader {
+			get {
+				object o = ViewState ["UseAccessibleHeader"];
+				if (o != null) return (bool) o;
+				return false;
+			}
+			set {
+				ViewState ["UseAccessibleHeader"] = value;
+			}
+		}
+#endif
 
 		protected virtual void OnDayRender(TableCell cell, CalendarDay day)
 		{
@@ -713,7 +769,16 @@ namespace System.Web.UI.WebControls
 		/// <remarks>
 		/// See test6.aspx in Tests directory for verification
 		/// </remarks>
+#if NET_2_0
 		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+		
+		protected virtual void RaisePostBackEvent (string eventArgument)
+#else
+		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
+#endif
 		{
 			// initialize the calendar...TODO: find out why this isn't done in the constructor
 			// if the culture is changed between rendering and postback this will be broken
@@ -784,6 +849,11 @@ namespace System.Web.UI.WebControls
 				calTable.GridLines = GridLines.Both;
 			else
 				calTable.GridLines = GridLines.None;
+				
+#if NET_2_0
+			calTable.Caption = Caption;
+			calTable.CaptionAlign = CaptionAlign;
+#endif
 
 			calTable.RenderBeginTag (writer);
 
@@ -945,6 +1015,7 @@ namespace System.Web.UI.WebControls
 					string cellText = GetCalendarLinkText (
 								"R" + week_offset + "07",
 								SelectWeekText, 
+								"Select week " + (crr + 1),
 								weeksCell.ForeColor,
 								isActive);
 
@@ -1002,6 +1073,7 @@ namespace System.Web.UI.WebControls
 						dayCell.Text = GetCalendarLinkText (
 									(begin + (crr * 7 + weekDay)).ToString (),
 									dayString,
+									currentDay.ToShortDateString (),
 									dayCell.ForeColor,
 									isActive);
 
@@ -1055,6 +1127,7 @@ namespace System.Web.UI.WebControls
 							globCal.GetDaysInMonth (sel_month.Year,
 									sel_month.Month).ToString ("d2"), // maybe there are calendars with less then 10 days in a month
 									  SelectMonthText,
+									  "Select the whole month",
 									  SelectorStyle.ForeColor,
 									  isActive);
 				} else {
@@ -1090,7 +1163,7 @@ namespace System.Web.UI.WebControls
 					break;
 				}
 
-				RenderCalendarCell(writer, dayHeaderCell, currDayContent);
+				RenderCalendarHeaderCell (writer, dayHeaderCell, currDayContent, currDTInfo.GetDayName (effDay));
 			}
 			writer.Write ("</tr>");
 		}
@@ -1140,6 +1213,7 @@ namespace System.Web.UI.WebControls
 						    prevCell,
 						    GetCalendarLinkText ("V" + prev_offset,
 							    		 prevContent,
+										 "Go to previous month",
 									 NextPrevStyle.ForeColor,
 									 isActive)
 						    );
@@ -1188,6 +1262,7 @@ namespace System.Web.UI.WebControls
 						    nextCell,
 						    GetCalendarLinkText ("V" + next_offset,
 									 nextContent,
+									 "Go to next month",
 									 NextPrevStyle.ForeColor,
 									 isActive)
 						    );
@@ -1243,6 +1318,22 @@ namespace System.Web.UI.WebControls
 			table.Font.MergeWith(Font);
 		}
 
+		private void RenderCalendarHeaderCell (HtmlTextWriter writer, TableCell cell, string text, string altText)
+		{
+#if NET_2_0
+			if (UseAccessibleHeader) {
+				writer.AddAttribute ("align", "center");
+				writer.AddAttribute ("abbr", altText);
+				writer.AddAttribute ("scope", "column");
+				writer.RenderBeginTag (HtmlTextWriterTag.Th);
+				writer.Write (text);
+				writer.RenderEndTag ();
+				return;
+			}
+#endif
+			RenderCalendarCell (writer, cell, text);
+		}
+
 		private void RenderCalendarCell (HtmlTextWriter writer, TableCell cell, string text)
 		{
 			cell.RenderBeginTag(writer);
@@ -1277,6 +1368,7 @@ namespace System.Web.UI.WebControls
 		/// </summary>
 		private string GetCalendarLinkText (string eventArg,
 						    string text,
+							string altText,
 						    Color foreground,
 						    bool isLink)
 		{
@@ -1290,7 +1382,15 @@ namespace System.Web.UI.WebControls
 				} else {
 					dispVal.Append (ColorTranslator.ToHtml (foreground));
 				}
-				dispVal.Append ("\">");
+				dispVal.Append ("\"");
+#if NET_2_0
+				if (UseAccessibleHeader) {
+					dispVal.Append (" title=\"");
+					dispVal.Append (altText);
+					dispVal.Append ("\"");
+				}
+#endif
+				dispVal.Append (">");
 				dispVal.Append (text);
 				dispVal.Append ("</a>");
 				return dispVal.ToString ();
@@ -1304,7 +1404,7 @@ namespace System.Web.UI.WebControls
 			HtmlTextWriter htw = new HtmlTextWriter (sw);
 			cell.RenderBeginTag (htw);
 			if(showLinks) {
-				htw.Write (GetCalendarLinkText ("{0}", "{1}", cell.ForeColor, showLinks));
+				htw.Write (GetCalendarLinkText ("{0}", "{1}", "{1}", cell.ForeColor, showLinks));
 			} else {
 				htw.Write ("{0}");
 			}

@@ -1,3 +1,10 @@
+2005-02-04  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Button.cs: Implemented all missing 2.0 features.
+	* Table.cs: Render the table caption, when specified.
+	* Calendar.cs: Implemented most of missing 2.0 features.
+	* TableCell.cs: Fixed attributes.
+
 2005-02-02  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ControlPropertyNameConverter.cs: Added file.

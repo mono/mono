@@ -226,6 +226,19 @@ namespace System.Web.UI.WebControls
 		{
 			return new TableStyle (ViewState);
 		}
+		
+#if NET_2_0
+    	public override void RenderBeginTag (HtmlTextWriter writer)
+		{
+			base.RenderBeginTag (writer);
+			if (Caption != "") {
+				writer.AddAttribute ("align", CaptionAlign.ToString());
+				writer.RenderBeginTag (HtmlTextWriterTag.Caption);
+				writer.Write (Caption);
+				writer.RenderEndTag ();
+			}
+		}
+#endif
 
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
