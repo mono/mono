@@ -1,3 +1,7 @@
+2005-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetTest.cs : Fixed strict type name under .NET 2.0.
+
 2005-02-03  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* ForeignKeyConstraintTest.cs: TestCtor5: ad-hoc fixes for mono.
