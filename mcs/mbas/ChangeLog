@@ -1,3 +1,6 @@
+2004-09-23 Anirban Bhattacharjee <banirban@novell.com>
+	* expression.cs: Enhanced mbas to resolve Default property or indexer
+
 2004-09-21 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Fixed bug #66231 -
 	 Now, Me.SubName, MyBase.SubName or any other qualified name 

@@ -3201,6 +3201,7 @@ namespace Mono.MonoBASIC {
 				return (ParameterData) ip;
 			} else {
 				ParameterInfo [] pi = mb.GetParameters ();
+
 				ReflectionParameters rp = new ReflectionParameters (pi);
 				method_parameter_cache [mb] = rp;
 
@@ -3821,6 +3822,7 @@ namespace Mono.MonoBASIC {
 			int arg_count = Arguments == null ? 0 : Arguments.Count;
 
 			ParameterData pd = GetParameterData (method);
+			
 
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = (Argument) Arguments [i];
@@ -3966,7 +3968,14 @@ namespace Mono.MonoBASIC {
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			this.is_left_hand = true;
-			return DoResolve (ec);
+			Expression expr_to_return = DoResolve (ec);
+
+			if (expr_to_return is IndexerAccess) {
+				IndexerAccess ia = expr_to_return as IndexerAccess;
+				expr_to_return = ia.DoResolveLValue (ec, right_side);
+			}
+
+			return expr_to_return;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -4099,37 +4108,55 @@ namespace Mono.MonoBASIC {
 					ArrayAccess aa = new ArrayAccess (ea, expr.Location);
 					expr_to_return = aa.DoResolve(ec);
 					expr_to_return.eclass = ExprClass.Variable;
-				}
-				else
-				{
-					// We can't resolve now, but we
-					// have to try to access the array with a call
-					// to LateIndexGet/Set in the runtime
-					Expression lig_call_expr;
-
+				} else {
+					//
+					// check whether this is a indexer
+					//
+					ArrayList idxs = new ArrayList();
+					foreach (Argument a in Arguments) {
+						idxs.Add (a.Expr);
+					}
+					ElementAccess ea = new ElementAccess (expr, idxs, expr.Location);
+					IndexerAccess ia = new IndexerAccess (ea, expr.Location);
 					if (!is_left_hand)
-						lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", Location.Null);
+                        expr_to_return = ia.DoResolve(ec);
 					else
-						lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexSet", Location.Null);
-					Expression obj_type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", Location.Null);
-					ArrayList adims = new ArrayList();
+						expr_to_return = ia.DoResolve(ec);
+					//
+					// Since all the above are failed we need to do
+					// late binding
+					//
+					if (expr_to_return == null) {
 
-					ArrayList ainit = new ArrayList();
-					foreach (Argument a in Arguments)
-						ainit.Add ((Expression) a.Expr);
+						// We can't resolve now, but we
+						// have to try to access the array with a call
+						// to LateIndexGet/Set in the runtime
+						Expression lig_call_expr;
 
-					adims.Add ((Expression) new IntLiteral (Arguments.Count));
+						if (!is_left_hand)
+							lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", Location.Null);
+						else
+							lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexSet", Location.Null);
+						Expression obj_type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", Location.Null);
+						ArrayList adims = new ArrayList();
 
-					Expression oace = new ArrayCreation (obj_type, adims, "", ainit, Location.Null);
+						ArrayList ainit = new ArrayList();
+						foreach (Argument a in Arguments)
+							ainit.Add ((Expression) a.Expr);
 
-					ArrayList args = new ArrayList();
-					args.Add (new Argument(expr, Argument.AType.Expression));
-					args.Add (new Argument(oace, Argument.AType.Expression));
-					args.Add (new Argument(NullLiteral.Null, Argument.AType.Expression));
+						adims.Add ((Expression) new IntLiteral (Arguments.Count));
 
-					Expression lig_call = new Invocation (lig_call_expr, args, Location.Null);
-					expr_to_return = lig_call.Resolve(ec);
-					expr_to_return.eclass = ExprClass.Variable;
+						Expression oace = new ArrayCreation (obj_type, adims, "", ainit, Location.Null);
+
+						ArrayList args = new ArrayList();
+						args.Add (new Argument(expr, Argument.AType.Expression));
+						args.Add (new Argument(oace, Argument.AType.Expression));
+						args.Add (new Argument(NullLiteral.Null, Argument.AType.Expression));
+
+						Expression lig_call = new Invocation (lig_call_expr, args, Location.Null);
+						expr_to_return = lig_call.Resolve(ec);
+						expr_to_return.eclass = ExprClass.Variable;
+					}
 				}
 			}
 
