@@ -1,3 +1,8 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* Makefile: Put the PROFILE= stuff before the target, this is more
+	pleasurable to cygwin users.
+	
 2004-04-28  Jackson Harper  <jackson@ximian.com>
 
 	* Makefile: build the net_1_1 and net_2_0 profiles by default.
