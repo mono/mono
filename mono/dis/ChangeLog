@@ -7,7 +7,7 @@
 
 2004-12-11  Martin Baulig  <martin@ximian.com>
 
-	* get.c (get_token): Escape typedefs and typerefs.
+	* get.c (get_token): Escape typedefs.
 
 2004-12-11  Martin Baulig  <martin@ximian.com>
 
@@ -27,7 +27,7 @@
 
 2004-12-10  Martin Baulig  <martin@ximian.com>
 
-	* get.c (init_key_table): Added `type'.
+	* get.c (init_key_table): Added `type' and `strict'.
 	(get_generic_param): Also escape the type parameter names.
 	Correctly handle multiple constraints.
 
