@@ -1,3 +1,9 @@
+2004-07-30  Raja R Harinath  <harinath@blr-harinath.blr.novell.com>
+
+	* executable.make (PROGRAM_config): New auto-detecting define.
+	Defined if $(PROGRAM).config exists.
+	(install-local): Install $(PROGRAM_config) if it exists.
+
 2004-07-21  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* profiles/default.make, profiles/net_2_0.make, profiles/net_1_0.make:

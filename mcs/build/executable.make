@@ -8,6 +8,7 @@
 
 base_prog = $(shell basename $(PROGRAM))
 sourcefile = $(base_prog).sources
+PROGRAM_config := $(wildcard $(PROGRAM).config)
 
 ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
 response = $(sourcefile)
@@ -26,9 +27,12 @@ endif
 
 all-local: $(PROGRAM)
 
-install-local: $(PROGRAM)
+install-local: $(PROGRAM) $(PROGRAM_config)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+ifdef PROGRAM_config
+	$(INSTALL_DATA) $(PROGRAM_config) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+endif
 
 uninstall-local:
 	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog)
