@@ -1,5 +1,9 @@
 2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* ConformanceLevel.cs : added.
+
+2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNodeChangedEventArgs.cs : the last patch looks true 
 	  ONLY AFTER .NET 2.0.
 
