@@ -51,11 +51,11 @@ namespace System.Collections {
 	[Serializable]
 	public abstract class DictionaryBase : IDictionary, ICollection, IEnumerable {
 
-		Hashtable dictionary;
+		Hashtable hashtable;
 		
 		protected DictionaryBase ()
 		{
-			dictionary = new Hashtable ();
+			hashtable = new Hashtable ();
 		}
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace System.Collections {
 		public void Clear ()
 		{
 			OnClear ();
-			dictionary.Clear ();
+			hashtable.Clear ();
 			OnClearComplete ();
 		}
 
@@ -73,7 +73,7 @@ namespace System.Collections {
 		/// </summary>
 		public int Count {
 			get {
-				return dictionary.Count;
+				return hashtable.Count;
 			}
 		}
 
@@ -91,7 +91,7 @@ namespace System.Collections {
 		/// </summary>
 		protected Hashtable InnerHashtable {
 			get {
-				return dictionary;
+				return hashtable;
 			}
 		}
 
@@ -129,7 +129,7 @@ namespace System.Collections {
 		/// </summary>
 		private void DoCopy (Array array, int index)
 		{
-			foreach (DictionaryEntry de in dictionary)
+			foreach (DictionaryEntry de in hashtable)
 				array.SetValue (de, index++);
 		}
 
@@ -138,7 +138,7 @@ namespace System.Collections {
 		/// </summary>
 		public IDictionaryEnumerator GetEnumerator ()
 		{
-			return dictionary.GetEnumerator ();
+			return hashtable.GetEnumerator ();
 		}
 
 		/// <summary>
@@ -311,20 +311,20 @@ namespace System.Collections {
 
 		object IDictionary.this [object key] {
 			get {
-				OnGet (key, dictionary[key]);
-				object value = dictionary [key];
+				OnGet (key, hashtable [key]);
+				object value = hashtable [key];
 				return value;
 			}
 
 			set {
 				OnValidate (key, value);
-				object current_value = dictionary [key];
+				object current_value = hashtable [key];
 				OnSet (key, current_value, value);
-				dictionary [key] = value;
+				hashtable [key] = value;
 				try {
 					OnSetComplete (key, current_value, value);
 				} catch {
-					dictionary [key] = current_value;
+					hashtable [key] = current_value;
 					throw;
 				}
 			}
@@ -332,13 +332,13 @@ namespace System.Collections {
 
 		ICollection IDictionary.Keys {
 			get {
-				return dictionary.Keys;
+				return hashtable.Keys;
 			}
 		}
 
 		ICollection IDictionary.Values {
 			get {
-				return dictionary.Values;
+				return hashtable.Values;
 			}
 		}
 
@@ -349,11 +349,11 @@ namespace System.Collections {
 		{
 			OnValidate (key, value);
 			OnInsert (key, value);
-			dictionary.Add (key, value);
+			hashtable.Add (key, value);
 			try {
 				OnInsertComplete (key, value);
 			} catch {
-				dictionary.Remove(key);
+				hashtable.Remove (key);
 				throw;
 			}
 		}
@@ -363,10 +363,10 @@ namespace System.Collections {
 		/// </summary>
 		void IDictionary.Remove (object key)
 		{
-			object value = dictionary [key];
+			object value = hashtable [key];
 			OnValidate (key, value);
 			OnRemove (key, value);
-			dictionary.Remove (key);
+			hashtable.Remove (key);
 			OnRemoveComplete (key, value);
 		}
 
@@ -375,24 +375,24 @@ namespace System.Collections {
 		/// </summary>
 		bool IDictionary.Contains (object key)
 		{
-			return dictionary.Contains (key);
+			return hashtable.Contains (key);
 		}
 
 		bool ICollection.IsSynchronized {
 			get {
-				return dictionary.IsSynchronized;
+				return hashtable.IsSynchronized;
 			}
 		}
 
 		object ICollection.SyncRoot {
 			get {
-				return dictionary.SyncRoot;
+				return hashtable.SyncRoot;
 			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return dictionary.GetEnumerator ();
+			return hashtable.GetEnumerator ();
 		}
 	}
 }
