@@ -197,7 +197,7 @@ namespace System.Security.Cryptography.Xml {
 			}
 		}
 
-		[MonoTODO("incomplete")]
+		[MonoTODO ("Need testing")]
 		private byte[] GetReferenceHash (Reference r) 
 		{
 			Stream s = null;
@@ -608,8 +608,7 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 #if NET_1_1
-		[MonoTODO("property not (yet) used in class")]
-		[ComVisible(false)]
+		[ComVisible (false)]
 		public XmlResolver Resolver {
 			set { xmlResolver = value; }
 		}
