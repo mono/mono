@@ -1,3 +1,8 @@
+2004-04-14  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Added log-ops.js, we'll be adding all sort of test for logic
+	operators here.
+
 2004-03-13  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* func-form-params.js: exercise function's parameters.
