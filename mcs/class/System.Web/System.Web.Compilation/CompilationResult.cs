@@ -7,6 +7,7 @@
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.Collections;
 
 namespace System.Web.Compilation
 {
@@ -16,6 +17,7 @@ namespace System.Web.Compilation
 		string output;
 		string outputFile;
 		object data;
+		Hashtable options;
 		
 		public CompilationResult ()
 		{
@@ -35,28 +37,29 @@ namespace System.Web.Compilation
 			data = other.data;
 		}
 		
-		public int ExitCode
-		{
+		public int ExitCode {
 			get { return exitCode; }
 			set { exitCode = exitCode; }
 		}
 		
-		public string CompilerOutput
-		{
+		public string CompilerOutput {
 			get { return output; }
 			set { output = value; }
 		}
 
-		public string OutputFile
-		{
+		public string OutputFile {
 			get { return outputFile; }
 			set { outputFile = value; }
 		}
 
-		public object Data
-		{
+		public object Data {
 			get { return data; }
 			set { data = value; }
+		}
+
+		public Hashtable Options {
+			get { return options; }
+			set { options = value; }
 		}
 
 		public override string ToString ()

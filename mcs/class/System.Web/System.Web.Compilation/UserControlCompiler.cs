@@ -32,6 +32,7 @@ namespace System.Web.Compilation
 
 			CachingCompiler compiler = new CachingCompiler (this);
 			CompilationResult result = new CompilationResult ();
+			result.Options = options;
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);
 				
@@ -78,8 +79,10 @@ namespace System.Web.Compilation
 		{
 			CompilationCacheItem item = CachingCompiler.GetCached (userControlParser.InputFile);
 			if (item != null && item.Result != null) {
-				if (item.Result != null)
+				if (item.Result != null) {
+					userControlParser.Options = item.Result.Options;
 					return item.Result.Data as Type;
+				}
 
 				throw new CompilationException (item.Result);
 			}

@@ -525,6 +525,20 @@ class AspGenerator
 		if (att ["CompilerOptions"] != null)
 			Options ["CompilerOptions"] = (string) att ["CompilerOptions"];
 
+		if (att ["AutoEventWireup"] != null) {
+			if (options ["AutoEventWireup"] != null)
+				throw new ApplicationException ("Already have an AutoEventWireup attribute");
+			
+			bool autoevent = true;
+			string v = att ["AutoEventWireup"] as string;
+			try {
+				autoevent = Convert.ToBoolean (v);
+			} catch (Exception) {
+				throw new ApplicationException ("'" + v + "' is not a valid value for AutoEventWireup");
+			}
+			options ["AutoEventWireup"] = autoevent;
+		}
+
 		//FIXME: add support for more attributes.
 	}
 

@@ -131,6 +131,7 @@ namespace System.Web.UI
 			if (initialized)
 				return;
 			initialized = true;
+			WireupAutomaticEvents ();
 			FrameworkInitialize ();
 		}
 

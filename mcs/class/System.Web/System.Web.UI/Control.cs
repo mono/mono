@@ -116,6 +116,7 @@ namespace System.Web.UI
 		private bool autoID = true;
 		private bool creatingControls = false;
 		private bool bindingContainer = true;
+		private bool autoEventWireup = true;
         	
         	    private DataBindingCollection dataBindings = null;
 
@@ -320,12 +321,18 @@ namespace System.Web.UI
                         	return _viewState;
                         }
                 }
+
                 protected virtual bool ViewStateIgnoresCase
                 {
                         get {
                                 return false;
                         }
                 }
+
+		internal bool AutoEventWireup {
+			get { return autoEventWireup; }
+			set { autoEventWireup = value; }
+		}
 
 		internal void SetBindingContainer (bool isBC)
 		{

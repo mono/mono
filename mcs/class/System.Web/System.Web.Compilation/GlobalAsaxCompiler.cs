@@ -31,6 +31,7 @@ namespace System.Web.Compilation
 
 			CachingCompiler compiler = new CachingCompiler (this);
 			CompilationResult result = new CompilationResult ();
+			result.Options = options;
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);
 				

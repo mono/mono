@@ -12,7 +12,6 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
-using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Web;
@@ -354,47 +353,6 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 	
-	MethodInfo [] autoEventsMethods = null;
-
-	private void InvokeEventMethod (string m_name, object sender, EventArgs e)
-	{
-		if (autoEventsMethods == null) {
-			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
-					  BindingFlags.DeclaredOnly | BindingFlags.Instance;
-			
-			MethodInfo [] m1 = GetType ().GetMethods (bf);
-			bf = BindingFlags.Public | BindingFlags.NonPublic |
-			     BindingFlags.DeclaredOnly | BindingFlags.Static;
-
-			MethodInfo [] m2 = GetType ().GetMethods (bf);
-			autoEventsMethods = new MethodInfo [m1.Length + m2.Length];
-			m1.CopyTo (autoEventsMethods, 0);
-			m2.CopyTo (autoEventsMethods, m1.Length);
-		}
-
-		foreach (MethodInfo m in autoEventsMethods) {
-			if (m.ReturnType != typeof (void))
-				continue;
-
-			if (m.Name != m_name)
-				continue;
-
-			ParameterInfo [] pi = m.GetParameters ();
-			if (pi.Length != 2)
-				continue;
-
-			if (pi [0].ParameterType != typeof (object) ||
-			    pi [1].ParameterType != typeof (EventArgs))
-				continue;
-
-			object [] parms = new object [2];
-			parms [0] = sender;
-			parms [1] = e;
-			m.Invoke (this, parms);
-			break;
-		}
-	}
-
 	private void RenderPostBackScript (HtmlTextWriter writer, string formUniqueID)
 	{
 		writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTTARGET\" value=\"\" />");
@@ -444,37 +402,6 @@ public class Page : TemplateControl, IHttpHandler
 		postBackScriptRendered = false;
 	}
 
-
-	private void _Page_Init (object sender, EventArgs e)
-	{
-		InvokeEventMethod ("Page_Init", sender, e);
-	}
-
-	private void _Page_Load (object sender, EventArgs e)
-	{
-		InvokeEventMethod ("Page_Load", sender, e);
-	}
-
-	private void _Page_DataBind (object sender, EventArgs e)
-	{
-		InvokeEventMethod ("Page_DataBind", sender, e);
-	}
-
-	private void _Page_PreRender (object sender, EventArgs e)
-	{
-		InvokeEventMethod ("Page_PreRender", sender, e);
-	}
-
-	private void _Page_Dispose (object sender, EventArgs e)
-	{
-		InvokeEventMethod ("Page_Dispose", sender, e);
-	}
-
-	private void _Page_Error (object sender, EventArgs e)
-	{
-		InvokeEventMethod ("Page_Error", sender, e);
-	}
-
 	private void ProcessPostData (NameValueCollection data, bool second)
 	{
 		if (data == null)
@@ -508,23 +435,13 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	private bool init_done;
 	public void ProcessRequest (HttpContext context)
 	{
 		_context = context;
 		WebTrace.PushContext ("Page.ProcessRequest ()");
 		WebTrace.WriteLine ("Entering");
-		if (!init_done){
-			init_done = true;
-			// These should depend on AutoEventWireUp in Page directive. Defaults to true.
-			Init += new EventHandler (_Page_Init);
-			Load += new EventHandler (_Page_Load);
-			DataBinding += new EventHandler (_Page_DataBind);
-			PreRender += new EventHandler (_Page_PreRender);
-			Disposed += new EventHandler (_Page_Dispose);
-			Error += new EventHandler (_Page_Error);
-			WebTrace.WriteLine ("Finished init");
-		}
+		WireupAutomaticEvents ();
+		WebTrace.WriteLine ("Finished hookup");
 		//-- Control execution lifecycle in the docs
 		WebTrace.WriteLine ("Controls.Clear");
 		Controls.Clear ();

@@ -9,6 +9,8 @@
 //
 
 using System;
+using System.Collections;
+using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Util;
 
@@ -19,6 +21,18 @@ namespace System.Web.UI {
 		static object abortTransaction = new object ();
 		static object commitTransaction = new object ();
 		static object error = new object ();
+		static string [] methodNames = { "Page_Init",
+						 "Page_Load",
+						 "Page_DataBind",
+						 "Page_PreRender",
+						 "Page_Dispose",
+						 "Page_Error" };
+
+		const BindingFlags bflags = BindingFlags.Public |
+					    BindingFlags.NonPublic |
+					    BindingFlags.DeclaredOnly |
+					    BindingFlags.Static |
+					    BindingFlags.Instance;
 
 		#region Constructor
 		protected TemplateControl ()
@@ -53,6 +67,40 @@ namespace System.Web.UI {
 										    bool fAsciiOnly)
 		{
 			return null;
+		}
+
+		internal void WireupAutomaticEvents ()
+		{
+			if (!SupportAutoEvents || !AutoEventWireup)
+				return;
+
+			Type type = GetType ();
+			foreach (MethodInfo method in type.GetMethods (bflags)) {
+				int pos = Array.IndexOf (methodNames, method.Name);
+				if (pos == -1)
+					continue;
+
+				string name = methodNames [pos];
+				pos = name.IndexOf ("_");
+				if (pos == -1 || pos + 1 == name.Length)
+					continue;
+
+				if (method.ReturnType != typeof (void))
+					continue;
+
+				ParameterInfo [] parms = method.GetParameters ();
+				if (parms.Length != 2 ||
+				    parms [0].ParameterType != typeof (object) ||
+				    parms [1].ParameterType != typeof (EventArgs))
+				    continue;
+
+				string eventName = name.Substring (pos + 1);
+				EventInfo evt = type.GetEvent (eventName);
+				if (evt == null)
+					continue;
+
+				evt.AddEventHandler (this, Delegate.CreateDelegate (typeof (EventHandler), method));
+			}
 		}
 
 		protected virtual void FrameworkInitialize ()

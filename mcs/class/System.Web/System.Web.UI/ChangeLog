@@ -1,3 +1,20 @@
+2002-12-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: added AutoEventWireup internal property.
+
+	* Page.cs: removed page events wire up from here.
+
+	* TemplateControl.cs: new method WireupAutomaticEvents to hook up page
+	and user controls events.
+
+	* TemplateControlParser.cs: process the options that are applicable
+	once we have the instance of the control.
+
+	* TemplateParser.cs: also stores the options.
+
+	* UserControl.cs: hook up events before initializing the control.
+
+
 2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: new method to set bindingContainer value.
