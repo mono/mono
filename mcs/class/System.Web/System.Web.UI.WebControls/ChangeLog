@@ -1,3 +1,16 @@
+2001-12-28      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* HyperLink.cs                - Completed
+	* Image.cs                    - Completed
+	* ImageButton.cs              - Completed
+	* Label.cs                    - Completed
+	* LabelControlBuilder.cs      - Completed
+	* LinkButton.cs               - Completed
+	* LinkButtonControlBuilder.cs - Completed
+	* Literal.cs                  - Completed
+	* LieteralControlBuilder.cs   - Completed
+
+
 2001-12-27      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* Calendar.cs                 - Completed the functions of Render*,
