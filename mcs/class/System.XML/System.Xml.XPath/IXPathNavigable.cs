@@ -1,6 +1,5 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.Xml.IXmlLineInfo.cs
+// System.Xml.XPath.IXPathNavigable
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
@@ -12,6 +11,6 @@ namespace System.Xml.XPath
 {
 	public interface IXPathNavigable
 	{
-		XPathNavigator CreateNavigator();
+		XPathNavigator CreateNavigator ();
 	}
 }

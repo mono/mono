@@ -62,6 +62,11 @@
                     AssemblyName = "System"
                     HintPath = "..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.dll"
                 />
+                <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -356,12 +361,36 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.XPath\ChangeLog"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "System.Xml.XPath\IXPathNavigable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.XPath\XPathExpression.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathNamespaceScope.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.XPath\XPathNavigator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathNodeIterator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathResultType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

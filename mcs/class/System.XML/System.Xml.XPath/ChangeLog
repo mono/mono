@@ -1,0 +1,8 @@
+2002-03-06  Jason Diamond  <jason@injektilo.org>
+
+	* ChangeLog: Added to this directory.
+
+	* XPathExpression.cs, XPathNamespaceScope.cs, XPathNodeIterator.cs,
+	XPathResultType.cs: New files.
+
+	* XPathNavigator.cs: Stubbed out all properties and methods.
