@@ -1,3 +1,35 @@
+2003-10-22  Eran Domb  <erand@mainsoft.com>
+	* DataRelationCollection.cs (AddCore): The unique constraint was added even if the createConstraints flag was false.
+	(Clear): The collection was cleared without removing the relation from the parent and child tables.
+	
+	* DataSet.cs (Copy, Clone): The Relations of the DataSet were not copy.
+	(HasChanges, Reset): Imlementation.
+	
+	* DataTable.cs (HasErrors): There is no flag for errors, instead the table ask her row if they have any errors.
+	This is because the we do not no when to turn off the flag.
+	(Locale): Changing implementation to behave like ADO.NET.
+	(AcceptChanges): Fix bug.
+	(Clear): Check that this table is not referenced from a foreign key constraint.
+	(Copy): Do not try to access a deleted row.
+	(CopyProperties): Copy the PrimaryKey.
+	(GetChanges, ImportRow): Implementation.
+	(LoadDataRow): Adding implementation if the table has PrimaryKey.
+	(ToString): Changing implementation to behave like ADO.NET.
+	
+	* UniqueConstraint.cs (AssertConstraint): support for Multiple DataColumns in the constraint.
+	
+	* DataRow.cs (Ctor): In the constructor we initiate the current array, but we should initiate only the proposed array for new rows.
+	(HasErrors): Implementation.
+	(Delete): Added checking for child rows of the deleted row.
+	(EndEdit): Added checking for child row and firing events.
+	(GetColumnError): Added a check that the method will not return null, as in ADO.NET(an empty string is returned).
+	(GetColumnsInError): Added a check for null values in column error.
+	(HasVersion): Added special treatment for special RowState.
+	(CollectionChanged): More checks to avoid NullReferenceException.
+	
+	* DataRowCollection.cs (Remove): Fix a bug.
+
+
 2003-10-01  Duncan Mak  <duncan@ximian.com>
 
 	More patches from Eran Domb <erand@mainsoft.com>.
