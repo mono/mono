@@ -8802,8 +8802,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (dim == "?") {
-				NullableType nullable = new NullableType (left, loc);
+			if ((dim.Length > 0) && (dim [0] == '?')) {
+				TypeExpr nullable = new NullableType (left, loc);
+				if (dim.Length > 1)
+					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
 				return nullable.ResolveAsTypeTerminal (ec);
 			}
 
@@ -8836,25 +8838,29 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			//
-			// ltype.Fullname is already fully qualified, so we can skip
-			// a lot of probes, and go directly to TypeManager.LookupType
-			//
-			string fname = ltype.FullName != null ? ltype.FullName : ltype.Name;
-			string cname = fname + dim;
-			type = TypeManager.LookupTypeDirect (cname);
-			if (type == null){
+			if (dim != "") {
 				//
-				// For arrays of enumerations we are having a problem
-				// with the direct lookup.  Need to investigate.
+				// ltype.Fullname is already fully qualified, so we can skip
+				// a lot of probes, and go directly to TypeManager.LookupType
 				//
-				// For now, fall back to the full lookup in that case.
-				//
-				FullNamedExpression e = ec.DeclSpace.LookupType (cname, false, loc);
-				if (e is TypeExpr)
-					type = ((TypeExpr) e).ResolveType (ec);
-				if (type == null)
-					return null;
+				string fname = ltype.FullName != null ? ltype.FullName : ltype.Name;
+				string cname = fname + dim;
+				type = TypeManager.LookupTypeDirect (cname);
+				if (type == null){
+					//
+					// For arrays of enumerations we are having a problem
+					// with the direct lookup.  Need to investigate.
+					//
+					// For now, fall back to the full lookup in that case.
+					//
+					FullNamedExpression e = ec.DeclSpace.LookupType (cname, false, loc);
+					if (e is TypeExpr)
+						type = ((TypeExpr) e).ResolveType (ec);
+					if (type == null)
+						return null;
+				}
+			} else {
+				type = ltype;
 			}
 
 			if (!ec.InUnsafe && type.IsPointer){

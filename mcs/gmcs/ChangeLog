@@ -1,3 +1,9 @@
+2005-02-26  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Allow `dim' to
+	begin with a "?", for instance "?[]".  Don't do a type lookup if
+	`dim' is empty.
+
 2005-02-25  Martin Baulig  <martin@ximian.com>
 
 	The first part of Nullable Types :-)
