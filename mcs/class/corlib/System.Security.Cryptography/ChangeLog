@@ -1,7 +1,9 @@
 2004-11-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PasswordDeriveBytes.cs: Fix default iretation count to 100. Fix
-	exceptions to match MS more closely.
+	exceptions to match MS more closely. Fixed possible ArgumentException
+	when asking multiple GetBytes than results in more bits than the hash
+	function can provide.
 
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 

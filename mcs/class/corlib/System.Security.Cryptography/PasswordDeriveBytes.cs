@@ -52,7 +52,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 	private byte[] output;
 	private int position;
 	private int hashnumber;
-	private int globalPos;
 
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt) 
 	{
@@ -230,7 +229,8 @@ public class PasswordDeriveBytes : DeriveBytes {
 					Locale.GetText ("too long"));
 			}
 
-			int l = Math.Min (cb - cpos, output2.Length);
+			int rem = output2.Length - position;
+			int l = Math.Min (cb - cpos, rem);
 			Buffer.BlockCopy (output2, position, result, cpos, l);
 			cpos += l;
 			position += l;
@@ -238,7 +238,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 				position -= output2.Length;
 				hashnumber++;
 			}
-			globalPos += l;
 		}
 		return result;
 	}
@@ -246,7 +245,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 	public override void Reset () 
 	{
 		// note: Reset doesn't change state
-		globalPos = 0;
 		position = 0;
 		hashnumber = 0;
 
