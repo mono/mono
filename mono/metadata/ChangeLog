@@ -1,3 +1,8 @@
+2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* string-icalls.c: Fixed trim method, added the constructors done by Duncan, fixed
+			   method signatures to use gunichar2 instead of gint16.
+
 2002-04-20  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* object.h, object.c: domain-specific versions of mono_object_new and
