@@ -22,7 +22,9 @@
 			</sources>
 		</csc>
 		<copy file="../lib/Accessibility.dll" tofile="Test/Accessibility.dll"/>
-		<nant basedir="Test" target="build"/>
+<!-- TODO: missing tests & buildfile
+		<nant basedir="Test" target="build"/>  
+-->
 	</target>
 
 	<target name="test" depends="build">

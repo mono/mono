@@ -8,28 +8,46 @@
 	<property name="debug" value="false"/>
 
 	<target name="build">
-		<nant basedir="corlib" target="build"/>
-		<nant basedir="Cscompmgd" target="build"/>
-		<nant basedir="I18N" target="build"/>
-		<nant basedir="System" target="build"/>
-		<nant basedir="System.Drawing" target="build"/>
-		<nant basedir="System.EnterpriseServices" target="build"/>
-		<nant basedir="System.XML" target="build"/>
-		<nant basedir="Mono.Data.Tds" target="build"/>
-		<nant basedir="System.Data" target="build"/>
-		<nant basedir="Mono.Data.MySql" target="build"/>
-		<nant basedir="Mono.Data.PostgreSqlClient" target="build"/>
-		<nant basedir="Mono.Data.SqliteClient" target="build"/>
-		<nant basedir="Mono.Data.SybaseClient" target="build"/>
-		<nant basedir="Mono.Data.TdsClient" target="build"/> 
-		<nant basedir="System.Web" target="build"/>
-		<nant basedir="System.Web.Services" target="build"/>
-		<nant basedir="Mono.GetOptions" target="build"/>
-		<nant basedir="Microsoft.VisualBasic" target="build"/>
-		<nant basedir="System.Configuration.Install" target="build"/>
-		<nant basedir="System.Runtime.Remoting" target="build"/>
-		<nant basedir="System.Runtime.Serialization.Formatters.Soap" target="build"/>
-		<nant basedir="Mono.PEToolkit" target="build"/>
+		<nant basedir="Accessibility" target="build" buildfile="Accessibility/Accessibility.build"/>
+		<nant basedir="corlib" target="build" buildfile="corlib/corlib.build"/>
+		<nant basedir="Cscompmgd" target="build" buildfile="Cscompmgd/Cscompmgd.build"/>
+		<nant basedir="I18N" target="build" buildfile="I18N/I18N.build"/>
+		<nant basedir="Microsoft.VisualBasic" target="build" buildfile="Microsoft.VisualBasic/Microsoft.VisualBasic.build"/>
+		<nant basedir="Mono.CSharp.Debugger" target="build" buildfile="Mono.CSharp.Debugger/Mono.CSharp.Debugger.build"/>
+		<nant basedir="Mono.Data" target="build" buildfile="Mono.Data/Mono.Data.build"/>
+
+		<!-- TODO: Mono.Data.SybaseClient depends on Mono.Data.Tds -->
+		<nant basedir="Mono.Data.Tds" target="build" buildfile="Mono.Data.Tds/Mono.Data.Tds.build"/>
+		
+		<!-- TODO: Mono.Data.* depends on System.Data -->
+		<nant basedir="System.Data" target="build" buildfile="System.Data/System.Data.build"/>
+		<nant basedir="Mono.Data.MySql" target="build" buildfile="Mono.Data.MySql/Mono.Data.MySql.build"/>
+		<nant basedir="Mono.Data.PostgreSqlClient" target="build" buildfile="Mono.Data.PostgreSqlClient/Mono.Data.PostgreSqlClient.build"/>
+		<nant basedir="Mono.Data.SqliteClient" target="build" buildfile="Mono.Data.SqliteClient/Mono.Data.SqliteClient.build"/>	
+		<nant basedir="Mono.Data.SybaseClient" target="build" buildfile="Mono.Data.SybaseClient/Mono.Data.SybaseClient.build"/>
+		
+		<nant basedir="Mono.Data.TdsClient" target="build" buildfile="Mono.Data.TdsClient/Mono.Data.TdsClient.build"/>
+		<!-- TODO: LDAP doesn't compile with csc yet
+		<nant basedir="Mono.Directory.LDAP" target="build" buildfile="Mono.Directory.LDAP/Mono.Directory.LDAP.build"/> 
+		-->
+		<nant basedir="Mono.GetOptions" target="build" buildfile="Mono.GetOptions/Mono.GetOptions.build"/>
+		<nant basedir="Mono.PEToolkit" target="build" buildfile="Mono.PEToolkit/PEToolkit.build"/>
+		<nant basedir="System" target="build" buildfile="System/System.build"/>
+		<nant basedir="System.Configuration.Install" target="build" buildfile="System.Configuration.Install/System.Configuration.Install.build"/>
+		<nant basedir="System.Data.OracleClient" target="build" buildfile="System.Data.OracleClient/System.Data.OracleClient.build"/>
+		<!-- TODO: System.Design doesn't build yet on csc
+		<nant basedir="System.Design" target="build" buildfile="System.Design/System.Design.build"/>
+		-->
+		<nant basedir="System.Drawing" target="build" buildfile="System.Drawing/System.Drawing.build"/>
+		<nant basedir="System.EnterpriseServices" target="build" buildfile="System.EnterpriseServices/System.EnterpriseServices.build"/>
+		<nant basedir="System.Runtime.Remoting" target="build" buildfile="System.Runtime.Remoting/System.Runtime.Remoting.build"/>
+		<nant basedir="System.Runtime.Serialization.Formatters.Soap" target="build" buildfile="System.Runtime.Serialization.Formatters.Soap/System.Runtime.Serialization.Formatters.Soap.build"/>
+		<nant basedir="System.Security" target="build" buildfile="System.Security/System.Security.build"/>
+		<nant basedir="System.ServiceProcess" target="build" buildfile="System.ServiceProcess/System.ServiceProcess.build"/>
+		<nant basedir="System.Web" target="build" buildfile="System.Web/System.Web.build"/>
+		<nant basedir="System.Web.Services" target="build" buildfile="System.Web.Services/System.Web.Services.build"/>
+		<nant basedir="System.Windows.Forms" target="build" buildfile="System.Windows.Forms/System.Windows.Forms.build"/>
+		<nant basedir="System.XML" target="build" buildfile="System.XML/System.XML.build"/>
 	</target>
 
 	<target name="test">

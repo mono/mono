@@ -1,3 +1,8 @@
+2002-12-10  Jeroen Janssen <japj@darius.demon.nl>
+	
+	* updated .build file(s) to correctly contain required buildfile 
+	  attribute for nant
+
 2002-10-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* makefile.gnu: added test target.
