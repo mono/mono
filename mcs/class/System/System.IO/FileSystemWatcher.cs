@@ -114,7 +114,9 @@ namespace System.IO {
 					mode = InternalSupportsFSW ();
 
 				bool ok = false;
-				if (mode == 2)
+				if (mode == 3)
+					ok = KeventWatcher.GetInstance (out watcher);
+				else if (mode == 2)
 					ok = FAMWatcher.GetInstance (out watcher);
 				else if (mode == 1)
 					ok = DefaultWatcher.GetInstance (out watcher);

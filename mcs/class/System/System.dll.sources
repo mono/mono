@@ -409,6 +409,7 @@ System.IO/FileSystemWatcher.cs
 System.IO/IFileWatcher.cs
 System.IO/InternalBufferOverflowException.cs
 System.IO/IODescriptionAttribute.cs
+System.IO/KeventWatcher.cs
 System.IO/MonoIO.cs
 System.IO/MonoIOError.cs
 System.IO/NotifyFilters.cs

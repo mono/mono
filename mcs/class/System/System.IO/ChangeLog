@@ -1,3 +1,8 @@
+2004-08-06  Geoff Norton <gnorton@customerdna.com>
+
+	* FileSystemWatcher.cs: Use the new KeventWatcher if its supported
+	* KeventWatcher.cs: Added to cvs
+
 2004-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultWatcher.cs: fixed subdirectories notifications and don't
