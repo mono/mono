@@ -19,7 +19,6 @@ namespace Mono.Enumerations
 		private string className;
 		private Type   type;
 
-		private static readonly string baseDir = @"C:\WINNT\Microsoft.NET\Framework\v1.0.2914";
 		private static readonly string[] assemblies = {
 			"mscorlib",
 			"System",
@@ -67,10 +66,9 @@ namespace Mono.Enumerations
 			type = null;
 			foreach(string assemblyName in assemblies)
 			{
-				string fileName = baseDir + "\\" + assemblyName + ".dll";
 				try
 				{
-					Assembly assembly = Assembly.Load(AssemblyName.GetAssemblyName(fileName));
+					Assembly assembly = Assembly.Load(assemblyName + ".dll");
 					foreach(Type t in assembly.GetTypes())
 					{
 						if(!t.IsEnum)
