@@ -1,3 +1,7 @@
+2005-01-13  Jordi Mas i Hernandez <jordi@ximian.com>	
+	* XplatUIWin32.cs: fixes Win32 marshaling
+	* XplatUIX11.cs: fixes method signature
+
 2005-01-17  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Clean up resources when we no longer need them
