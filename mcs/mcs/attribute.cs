@@ -208,7 +208,11 @@ namespace Mono.CSharp {
 		public static bool GetAttributeArgumentExpression (Expression e, Location loc, Type arg_type, out object result)
 		{
 			if (e is EnumConstant) {
-				result = e;
+				if (RootContext.StdLib)
+					result = ((EnumConstant)e).GetValueAsEnumType ();
+				else
+					result = ((EnumConstant)e).GetValue ();
+
 				return true;
 			}
 
@@ -300,7 +304,6 @@ namespace Mono.CSharp {
 			}
 
 			pos_values = new object [pos_arg_count];
-			object[] real_pos_values = new object [pos_arg_count];
 
 			//
 			// First process positional arguments 
@@ -320,21 +323,14 @@ namespace Mono.CSharp {
 				if (!GetAttributeArgumentExpression (e, Location, a.Type, out val))
 					return null;
 
-				if (val is EnumConstant) {
-					EnumConstant econst = (EnumConstant) e;
-
-					pos_values [i] = val = econst.GetValue ();
-					real_pos_values [i] = econst.GetValueAsEnumType ();
-				} else {
-					real_pos_values [i] = pos_values [i] = val;
-				}
+				pos_values [i] = val;
 
 				if (DoCompares){
-					if (usage_attr)
-						usage_attribute = new AttributeUsageAttribute ((AttributeTargets) val);
-					else if (MethodImplAttr)
+					if (usage_attr) {
+						usage_attribute = new AttributeUsageAttribute ((AttributeTargets)val);
+					} else if (MethodImplAttr) {
 						this.ImplOptions = (MethodImplOptions) val;
-					else if (GuidAttr){
+					} else if (GuidAttr){
 						//
 						// we will later check the validity of the type
 						//
@@ -489,16 +485,16 @@ namespace Mono.CSharp {
 					continue;
 				
 				if (j == group_in_params_array){
-					object v = real_pos_values [j];
+					object v = pos_values [j];
 					int count = pos_arg_count - j;
 
 					object [] array = new object [count];
-					real_pos_values [j] = array;
+					pos_values [j] = array;
 					array [0] = v;
 				} else {
-					object [] array = (object []) real_pos_values [group_in_params_array];
+					object [] array = (object []) pos_values [group_in_params_array];
 
-					array [j - group_in_params_array] = real_pos_values [j];
+					array [j - group_in_params_array] = pos_values [j];
 				}
 			}
 
@@ -510,8 +506,8 @@ namespace Mono.CSharp {
 				object [] new_pos_values = new object [argc];
 
 				for (int p = 0; p < argc; p++)
-					new_pos_values [p] = real_pos_values [p];
-				real_pos_values = new_pos_values;
+					new_pos_values [p] = pos_values [p];
+				pos_values = new_pos_values;
 			}
 
 			try {
@@ -528,13 +524,13 @@ namespace Mono.CSharp {
 					prop_infos.CopyTo   (prop_info_arr, 0);
 
 					cb = new CustomAttributeBuilder (
-						(ConstructorInfo) constructor, real_pos_values,
+						(ConstructorInfo) constructor, pos_values,
 						prop_info_arr, prop_values_arr,
 						field_info_arr, field_values_arr);
 				}
 				else
 					cb = new CustomAttributeBuilder (
-						(ConstructorInfo) constructor, real_pos_values);
+						(ConstructorInfo) constructor, pos_values);
 			} catch (NullReferenceException) {
 				// 
 				// Don't know what to do here

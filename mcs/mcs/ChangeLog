@@ -1,3 +1,10 @@
+2004-10-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #67108
+	* attribute.cs: Enum conversion moved to 
+	GetAttributeArgumentExpression to be applied to the all
+	expressions.
+
 2004-10-01  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #65833, test-300.cs, cs0122-5.cs, cs0122-6.cs.
