@@ -1,3 +1,8 @@
+2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Path.cs: add the trailing directory separator only for volumes.
+	Fixes bug #53035.
+
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* IntPtrStream.cs: Fix build bustage.

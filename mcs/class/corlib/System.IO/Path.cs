@@ -113,7 +113,9 @@ namespace System.IO
 
 			if (nLast > 0) {
 				string ret = path.Substring (0, nLast);
-				if (ret [ret.Length - 1] != DirectorySeparatorChar)
+				int l = ret.Length;
+				if (l >= 2 && ret [l - 1] != DirectorySeparatorChar &&
+					      ret [l - 2] == VolumeSeparatorChar)
 					return ret + DirectorySeparatorChar;
 				else
 					return ret;

@@ -541,15 +541,18 @@ namespace MonoTests.System.IO
 			Assert ("IsPathRooted #08", Path.IsPathRooted ("//"));
 			Assert ("IsPathRooted #09", Path.IsPathRooted ("\\\\"));
 			Assert ("IsPathRooted #10", !Path.IsPathRooted (":"));
-			if (OS == OsType.Windows) 
+			if (Windows)
 				Assert ("IsPathRooted #11", Path.IsPathRooted ("z:"));
 			else
 				Assert ("IsPathRooted #11", !Path.IsPathRooted ("z:"));
-			Assert ("IsPathRooted #12", Path.IsPathRooted ("z:\\"));
-			Assert ("IsPathRooted #13", Path.IsPathRooted ("z:\\topdir"));
-			// This looks MS BUG. It is treated as absolute path
-			Assert ("IsPathRooted #14", Path.IsPathRooted ("z:curdir"));
-			Assert ("IsPathRooted #15", Path.IsPathRooted ("\\abc\\def"));
+
+			if (Windows) {
+				Assert ("IsPathRooted #12", Path.IsPathRooted ("z:\\"));
+				Assert ("IsPathRooted #13", Path.IsPathRooted ("z:\\topdir"));
+				// This looks MS BUG. It is treated as absolute path
+				Assert ("IsPathRooted #14", Path.IsPathRooted ("z:curdir"));
+				Assert ("IsPathRooted #15", Path.IsPathRooted ("\\abc\\def"));
+			}
 		}
 
 		public void TestCanonicalizeDots ()
@@ -565,7 +568,7 @@ namespace MonoTests.System.IO
 			if (Windows) {
 				AssertEquals ("Win #01", "C:\\foo", Path.GetDirectoryName ("C:\\foo\\foo.txt"));
 			} else {
-				AssertEquals ("No win #01", "/etc", "/etc/hostname");
+				AssertEquals ("No win #01", "/etc", Path.GetDirectoryName ("/etc/hostname"));
 			}
 		}
 #if !NUNIT
