@@ -1,3 +1,15 @@
+2004-02-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : For performance reason, XmlTextReader now uses
+	  base ReadInnerXml() and don't store currentTag array unnecessarily.
+	* XmlTextReader.cs :
+	  - Fixed GetAttribute(int) that might cause index out of range.
+	  - Now it consumes the text reader by reading blocks, as MS.NET does.
+	    Modified GetRemainder(), PeekChar(), ReadChar() and so on.
+	  - Now it doesn't create Value string for linked nodes, unless it 
+	    is actually required.
+	  - some code refactory.
+
 2004-02-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs, XmlTextWriterOpenElement.cs :

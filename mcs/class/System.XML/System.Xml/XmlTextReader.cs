@@ -296,12 +296,12 @@ namespace System.Xml
 			currentToken.Clear ();
 			attributeCount = 0;
 			if (reader != null)
-				reader.Close();
+				reader.Close ();
 		}
 
 		public override string GetAttribute (int i)
 		{
-			if (i > attributeCount)
+			if (i >= attributeCount)
 				throw new ArgumentOutOfRangeException ("i is smaller than AttributeCount");
 			else {
 				return attributeTokens [i].Value;
@@ -344,26 +344,9 @@ namespace System.Xml
 
 		public TextReader GetRemainder ()
 		{
-			StringBuilder sb = null;
-			if (this.hasPeekChars) {
-				sb = new StringBuilder ();
-				int end = 0;
-				for (; end < 6; end++)
-					if (peekChars [end] <= 0)
-						break;
-				sb.Append (peekChars, 0, end);
-			}
-			if (has_peek && peek_char > 0) {
-				if (sb != null)
-					sb.Append (ExpandSurrogateChar (peek_char));
-				else
-					return new StringReader (ExpandSurrogateChar (peek_char) + reader.ReadToEnd ());
-			}
-			// As long as less memory consumptive...
-			if (sb != null)
-				return new StringReader (sb.ToString () + reader.ReadToEnd ());
-			else
-				return new StringReader (reader.ReadToEnd ());
+			if (peekCharsIndex == peekCharsLength)
+				return reader;
+			return new StringReader (new string (peekChars, peekCharsIndex, peekCharsLength - peekCharsIndex) + reader.ReadToEnd ());
 		}
 
 		bool IXmlLineInfo.HasLineInfo ()
@@ -644,6 +627,17 @@ namespace System.Xml
 		}
 
 #if NET_1_0
+#if true
+		public override string ReadInnerXml ()
+		{
+			return ReadInnerXmlInternal ();
+		}
+
+		public override string ReadOuterXml ()
+		{
+			return ReadOuterXmlInternal ();
+		}
+#else
 		StringBuilder innerXmlBuilder;
 		public override string ReadInnerXml ()
 		{
@@ -672,7 +666,7 @@ namespace System.Xml
 						Read ();
 					}
 					else
-						innerXmlBuilder.Append (currentTag);
+						innerXmlBuilder.Append (CreateCurrentTagString ());
 				} while (loop);
 				string xml = innerXmlBuilder.ToString ();
 				innerXmlBuilder.Length = 0;
@@ -697,13 +691,13 @@ namespace System.Xml
 				return String.Format ("{0}={1}{2}{1}", Name, QuoteChar, ReadInnerXml ());
 			case XmlNodeType.Element:
 				bool isEmpty = IsEmptyElement;
-				string startTag = currentTag.ToString ();
+				string startTag = CreateCurrentTagString ();
 				string name = Name;
 
 				if (NodeType == XmlNodeType.Element && !isEmpty)
 					return String.Format ("{0}{1}</{2}>", startTag, ReadInnerXml (), name);
 				else
-					return currentTag.ToString ();
+					return CreateCurrentTagString ();
 			case XmlNodeType.None:
 				// MS document is incorrect. Seems not to progress.
 				return String.Empty;
@@ -712,6 +706,7 @@ namespace System.Xml
 				return String.Empty;
 			}
 		}
+#endif
 #endif
 
 		public override string ReadString ()
@@ -757,12 +752,14 @@ namespace System.Xml
 		#region Privates
 		internal class XmlTokenInfo
 		{
-			public XmlTokenInfo (XmlTextReader xtr)
+			public XmlTokenInfo (XmlTextReader xtr, bool isPrimaryToken)
 			{
+				this.isPrimaryToken = isPrimaryToken;
 				Reader = xtr;
 				Clear ();
 			}
 
+			bool isPrimaryToken;
 			string valueCache;
 
 			protected XmlTextReader Reader;
@@ -779,7 +776,21 @@ namespace System.Xml
 			public XmlNodeType NodeType;
 
 			public virtual string Value {
-				get { return valueCache; }
+				get {
+					if (valueCache != null)
+						return valueCache;
+					switch (NodeType) {
+					case XmlNodeType.Text:
+					case XmlNodeType.SignificantWhitespace:
+					case XmlNodeType.Whitespace:
+					case XmlNodeType.Comment:
+					case XmlNodeType.CDATA:
+					case XmlNodeType.ProcessingInstruction:
+						valueCache = Reader.CreateValueString ();
+						return valueCache;
+					}
+					return null;
+				}
 				set { valueCache = value; }
 			}
 
@@ -845,7 +856,7 @@ namespace System.Xml
 		internal class XmlAttributeTokenInfo : XmlTokenInfo
 		{
 			public XmlAttributeTokenInfo (XmlTextReader reader)
-				: base (reader)
+				: base (reader, false)
 			{
 				NodeType = XmlNodeType.Attribute;
 			}
@@ -980,12 +991,10 @@ namespace System.Xml
 		private const int initialCurrentTagCapacity = 256;
 
 		private TextReader reader;
-		private bool can_seek;
-		private bool has_peek;
-		private int peek_char;
-		private bool hasPeekChars;
 		private char [] peekChars;
 		private int peekCharsIndex;
+		private int peekCharsLength;
+		private const int peekCharCapacity = 1024;
 
 		private int line;
 		private int column;
@@ -993,8 +1002,6 @@ namespace System.Xml
 		private int currentLinkedNodeLineNumber;
 		private int currentLinkedNodeLinePosition;
 		private bool useProceedingLineInfo;
-
-		// A buffer for ReadContent for ReadOuterXml
 
 		private XmlNodeType startNodeType;
 		// State machine attribute.
@@ -1017,7 +1024,7 @@ namespace System.Xml
 
 		private void Init ()
 		{
-			currentToken = new XmlTokenInfo (this);
+			currentToken = new XmlTokenInfo (this, true);
 			cursorToken = currentToken;
 			currentAttribute = -1;
 			currentAttributeValue = -1;
@@ -1031,7 +1038,6 @@ namespace System.Xml
 			depthUp = false;
 
 			popScope = allowMultipleRoot = false;
-//			elementStack.Clear ();
 			elementNames = new string [10];
 			elementNameStackPos = 0;
 
@@ -1051,9 +1057,10 @@ namespace System.Xml
 			currentTagLength = 0;
 			currentTagCapacity = initialCurrentTagCapacity;
 
-			can_seek = has_peek = false;
-			peek_char = peekCharsIndex = 0;
-			peekChars = new char [6];
+			peekCharsIndex = 0;
+			peekCharsLength = 0;
+			if (peekChars == null)
+				peekChars = new char [peekCharCapacity];
 
 			line = 1;
 			column = 0;
@@ -1159,12 +1166,20 @@ namespace System.Xml
 
 		private int PeekChar ()
 		{
+#if true
+			if (peekCharsLength == peekCharsIndex) {
+				if (!ReadTextReader ())
+					return -1;
+				return PeekChar ();
+			}
+			else
+				return peekChars [peekCharsIndex];
+#else
 			if (hasPeekChars)
 				return peekChars [peekCharsIndex];
 
 			if (has_peek)
 				return peek_char;
-
 			peek_char = reader.Read ();
 			if (peek_char >= 0xD800 && peek_char <= 0xDBFF) {
 				int i = reader.Read ();
@@ -1173,30 +1188,19 @@ namespace System.Xml
 			}
 			has_peek = true;
 			return peek_char;
+#endif
 		}
 
 		private int ReadChar ()
 		{
 			int ch;
 
-			if (hasPeekChars) {
-				ch = peekChars [peekCharsIndex++];
-				if (peekChars [peekCharsIndex] == 0)
-					hasPeekChars = false;
-			} else if (has_peek) {
-				ch = peek_char;
-				has_peek = false;
-			} else {
-				ch = reader.Read ();
-				if (ch >= 0xD800 && ch <= 0xDBFF) {
-					int i = reader.Read ();
-					if (i > 0xDC00 && i <= 0xDFFF)
-						ch += i;
-					// otherwise, illegal character, 
-					// so leave it as is (and discard 
-					// the latter invalid piece of the pair)
-				}
+			if (peekCharsLength == peekCharsIndex) {
+				if (!ReadTextReader ())
+					return -1;
+				return ReadChar ();
 			}
+			ch = peekChars [peekCharsIndex++];
 
 			if (ch == '\n') {
 				line++;
@@ -1204,20 +1208,24 @@ namespace System.Xml
 			} else {
 				column++;
 			}
-			/*
-			if (ch < Char.MaxValue)
-				currentTag.Append ((char) ch);
-			else
-				currentTag.Append (ExpandSurrogateChar (ch));
-			*/
-			AppendCurrentTagChar (ch);
+			if (currentState != XmlNodeType.Element)
+				AppendCurrentTagChar (ch);
 			return ch;
+		}
+
+		private bool ReadTextReader ()
+		{
+			peekCharsIndex = 0;
+			peekCharsLength = reader.Read (peekChars, 0, peekCharCapacity);
+			if (peekCharsLength == 0)
+				return false;
+			return true;
 		}
 
 		private string ExpandSurrogateChar (int ch)
 		{
 			if (ch < Char.MaxValue)
-				return ((char) peek_char).ToString ();
+				return ((char) ch).ToString ();
 			else {
 				char [] tmp = new char [] {(char) (ch / 0x10000 + 0xD800 - 1), (char) (ch % 0x10000 + 0xDC00)};
 				return new string (tmp);
@@ -1257,11 +1265,12 @@ namespace System.Xml
 					break;
 				case -1:
 					readState = ReadState.EndOfFile;
+					ClearValueBuffer ();
 					SetProperties (
 						XmlNodeType.None, // nodeType
 						String.Empty, // name
 						false, // isEmptyElement
-						(string) null, // value
+						null, // value
 						true // clearAttributes
 					);
 					if (depth > 0)
@@ -1287,11 +1296,12 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					"Reference to any unparsed entities is not allowed here.");
 
+			ClearValueBuffer ();
 			SetProperties (
 				XmlNodeType.EntityReference, // nodeType
 				entityReferenceName, // name
 				false, // isEmptyElement
-				(string) null, // value
+				null, // value
 				true // clearAttributes
 			);
 
@@ -1380,7 +1390,6 @@ namespace System.Xml
 			}
 			else {
 				depthUp = true;
-//				elementStack.Push (name);
 				PushElementName (name);
 				parserContext.PushScope ();
 			}
@@ -1391,7 +1400,7 @@ namespace System.Xml
 				XmlNodeType.Element, // nodeType
 				name, // name
 				isEmptyElement, // isEmptyElement
-				(string) null, // value
+				null, // value
 				false // clearAttributes
 			);
 		}
@@ -1415,10 +1424,8 @@ namespace System.Xml
 					"End tag cannot appear in this state.");
 
 			string name = ReadName ();
-//			if (elementStack.Count == 0)
 			if (elementNameStackPos == 0)
 				throw new XmlException (this as IXmlLineInfo,"closing element without matching opening element");
-//			string expected = (string)elementStack.Pop();
 			string expected = elementNames [--elementNameStackPos];
 			if (expected != name)
 				throw new XmlException (this as IXmlLineInfo,String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
@@ -1432,7 +1439,7 @@ namespace System.Xml
 				XmlNodeType.EndElement, // nodeType
 				name, // name
 				false, // isEmptyElement
-				(string) null, // value
+				null, // value
 				true // clearAttributes
 			);
 
@@ -1441,24 +1448,24 @@ namespace System.Xml
 
 		private void AppendNameChar (int ch)
 		{
-			CheckNameCapacity ();
+			if (nameLength == nameCapacity)
+				ExpandNameCapacity ();
 			if (ch < Char.MaxValue)
 				nameBuffer [nameLength++] = (char) ch;
 			else {
 				nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
-				CheckNameCapacity ();
+				if (nameLength == nameCapacity)
+					ExpandNameCapacity ();
 				nameBuffer [nameLength++] = (char) (ch % 0x10000 + 0xDC00);
 			}
 		}
 
-		private void CheckNameCapacity ()
+		private void ExpandNameCapacity ()
 		{
-			if (nameLength == nameCapacity) {
-				nameCapacity = nameCapacity * 2;
-				char [] oldNameBuffer = nameBuffer;
-				nameBuffer = new char [nameCapacity];
-				Array.Copy (oldNameBuffer, nameBuffer, nameLength);
-			}
+			nameCapacity = nameCapacity * 2;
+			char [] oldNameBuffer = nameBuffer;
+			nameBuffer = new char [nameCapacity];
+			Array.Copy (oldNameBuffer, nameBuffer, nameLength);
 		}
 
 		private string CreateNameString ()
@@ -1468,24 +1475,24 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
-			CheckValueCapacity ();
+			if (valueLength == valueCapacity)
+				ExpandValueCapacity ();
 			if (ch < Char.MaxValue)
 				valueBuffer [valueLength++] = (char) ch;
 			else {
 				valueBuffer [valueLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
-				CheckValueCapacity ();
+				if (valueLength == valueCapacity)
+					ExpandValueCapacity ();
 				valueBuffer [valueLength++] = (char) (ch % 0x10000 + 0xDC00);
 			}
 		}
 
-		private void CheckValueCapacity ()
+		private void ExpandValueCapacity ()
 		{
-			if (valueLength == valueCapacity) {
-				valueCapacity = valueCapacity * 2;
-				char [] oldValueBuffer = valueBuffer;
-				valueBuffer = new char [valueCapacity];
-				Array.Copy (oldValueBuffer, valueBuffer, valueLength);
-			}
+			valueCapacity = valueCapacity * 2;
+			char [] oldValueBuffer = valueBuffer;
+			valueBuffer = new char [valueCapacity];
+			Array.Copy (oldValueBuffer, valueBuffer, valueLength);
 		}
 
 		private string CreateValueString ()
@@ -1500,24 +1507,24 @@ namespace System.Xml
 
 		private void AppendCurrentTagChar (int ch)
 		{
-			CheckCurrentTagCapacity ();
+			if (currentTagLength == currentTagCapacity)
+				ExpandCurrentTagCapacity ();
 			if (ch < Char.MaxValue)
 				currentTagBuffer [currentTagLength++] = (char) ch;
 			else {
 				currentTagBuffer [currentTagLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
-				CheckCurrentTagCapacity ();
+				if (currentTagLength == currentTagCapacity)
+					ExpandCurrentTagCapacity ();
 				currentTagBuffer [currentTagLength++] = (char) (ch % 0x10000 + 0xDC00);
 			}
 		}
 
-		private void CheckCurrentTagCapacity ()
+		private void ExpandCurrentTagCapacity ()
 		{
-			if (currentTagLength == currentTagCapacity) {
-				currentTagCapacity = currentTagCapacity * 2;
-				char [] oldCurrentTagBuffer = currentTagBuffer;
-				currentTagBuffer = new char [currentTagCapacity];
-				Array.Copy (oldCurrentTagBuffer, currentTagBuffer, currentTagLength);
-			}
+			currentTagCapacity = currentTagCapacity * 2;
+			char [] oldCurrentTagBuffer = currentTagBuffer;
+			currentTagBuffer = new char [currentTagCapacity];
+			Array.Copy (oldCurrentTagBuffer, currentTagBuffer, currentTagLength);
 		}
 
 		private string CreateCurrentTagString ()
@@ -1581,7 +1588,7 @@ namespace System.Xml
 					nodeType, // nodeType
 					String.Empty, // name
 					false, // isEmptyElement
-					CreateValueString (), // value
+					null, // value: create only when required
 					true // clearAttributes
 				);
 			}
@@ -1652,21 +1659,8 @@ namespace System.Xml
 		// Real EOF must not be detected here.
 		private int ReadEntityReference (bool ignoreEntityReferences)
 		{
-			nameLength = 0;
-
-			int ch = PeekChar ();
-
-			while (ch != ';' && ch != -1) {
-				AppendNameChar (ReadChar ());
-				ch = PeekChar ();
-			}
-
+			string name = ReadName ();
 			Expect (';');
-
-			string name = CreateNameString ();
-			if (!XmlChar.IsName (name))
-				throw new XmlException (this as IXmlLineInfo,
-					"Invalid entity reference name was found.");
 
 			int predefined = XmlChar.GetPredefinedEntity (name);
 			if (predefined >= 0)
@@ -1769,7 +1763,7 @@ namespace System.Xml
 				attributeValueTokens = newArray;
 			}
 			if (attributeValueTokens [currentAttributeValue] == null)
-				attributeValueTokens [currentAttributeValue] = new XmlTokenInfo (this);
+				attributeValueTokens [currentAttributeValue] = new XmlTokenInfo (this, false);
 			currentAttributeValueToken = attributeValueTokens [currentAttributeValue];
 			currentAttributeValueToken.Clear ();
 		}
@@ -1919,7 +1913,7 @@ namespace System.Xml
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
 				false, // isEmptyElement
-				CreateValueString (), // value
+				null, // value: create only when required
 				true // clearAttributes
 			);
 		}
@@ -1961,7 +1955,6 @@ namespace System.Xml
 				XmlNodeType.XmlDeclaration, // nodeType
 				"xml", // name
 				false, // isEmptyElement
-//				currentTag.ToString (6, currentTagLength - 6), // value
 				new string (currentTagBuffer, 6, currentTagLength - 6), // value
 				false // clearAttributes
 			);
@@ -1977,32 +1970,27 @@ namespace System.Xml
 				return;
 
 			ReadChar ();
-			peekChars [0] = '<';
 
 			if (PeekChar () != '?') {
-				hasPeekChars = true;
+				peekCharsIndex = 0;
 				return;
 			}
 			ReadChar ();
-			peekChars [1] = '?';
 
-			for (int i = 2; i < 6; i++) {
-				if (PeekChar () == 0)
+			while (peekCharsIndex < 6) {
+				if (PeekChar () < 0)
 					break;
 				else
-					peekChars [i] = (char) ReadChar ();
+					ReadChar ();
 			}
 			if (new string (peekChars, 2, 4) != "xml ") {
 				if (new string (peekChars, 2, 3).ToLower () == "xml") {
 					throw new XmlException (this as IXmlLineInfo,
 						"Processing instruction name must not be character sequence 'X' 'M' 'L' with case insensitivity.");
 				}
-				hasPeekChars = true;
+				peekCharsIndex = 0;
 				return;
 			}
-
-			for (int i = 0; i < 6; i++)
-				peekChars [i] = '\0';
 
 			SkipWhitespace ();
 
@@ -2129,7 +2117,7 @@ namespace System.Xml
 				XmlNodeType.Comment, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				CreateValueString (), // value
+				null, // value: create only when required
 				true // clearAttributes
 			);
 		}
@@ -2159,9 +2147,6 @@ namespace System.Xml
 						break;
 					} else {
 						skip = true;
-//						AppendValueChar (']');
-//						AppendValueChar (']');
-//						ch = ReadChar ();
 					}
 				}
 				if (normalization && XmlChar.IsInvalid (ch))
@@ -2174,7 +2159,7 @@ namespace System.Xml
 				XmlNodeType.CDATA, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				CreateValueString (), // value
+				null, // value: create only when required
 				true // clearAttributes
 			);
 		}
@@ -2226,7 +2211,6 @@ namespace System.Xml
 				int startPos = currentTagLength;
 				ReadInternalSubset ();
 				int endPos = currentTagLength - 1;
-//				parserContext.InternalSubset = currentTag.ToString (startPos, endPos - startPos);
 				parserContext.InternalSubset = new string (currentTagBuffer, startPos, endPos - startPos);
 			}
 			// end of DOCTYPE decl.
@@ -2519,29 +2503,6 @@ namespace System.Xml
 			return CreateNameString ();
 		}
 
-		/*
-		private void PushbackChar (int ch)
-		{
-			if (ch == 10)
-				this.line--;
-			currentTagLength--;
-			if (!has_peek) {
-				peek_char = ch;
-				has_peek = true;
-			} else {
-				if (hasPeekChars) {
-					if (peekCharsIndex == 0)
-						throw new NotSupportedException ();
-					peekChars [peekCharsIndex--] = (char) ch;
-				} else {
-					peekCharsIndex = 0;
-					peekChars [0] = (char) ch;
-					hasPeekChars = true;
-				}
-			}
-		}
-		*/
-
 		// Read the next character and compare it against the
 		// specified character.
 		private void Expect (int expected)
@@ -2573,7 +2534,7 @@ namespace System.Xml
 				if (i < 0x21 && XmlChar.IsWhitespace (i))
 					continue;
 				if (c != i)
-					throw new XmlException (String.Join (String.Empty, new string [] {"Expected ", c.ToString (), ", but found " + (char) i, "[", i.ToString (), "]"}));
+					throw new XmlException (this, String.Join (String.Empty, new string [] {"Expected ", c.ToString (), ", but found " + (char) i, "[", i.ToString (), "]"}));
 				break;
 			}
 		}
@@ -2608,11 +2569,11 @@ namespace System.Xml
 				SetProperties (nodeType,
 					       String.Empty,
 					       false,
-					       CreateValueString (),
+					       null, // value: create only when required
 					       true);
 			}
 
-			return; // (PeekChar () != -1);
+			return;
 		}
 
 		private byte GetBase64Byte (char ch)
@@ -2666,7 +2627,6 @@ namespace System.Xml
 					// Seems to skip immediate EndElement
 					Expect ('/');
 					string name = ReadName ();
-//					if (name != (string) this.elementStack.Peek ()) {
 					if (name != elementNames [elementNameStackPos - 1]) {
 						if (i + 1 < length) {
 							buffer [bufIndex++] = '<';
@@ -2679,7 +2639,6 @@ namespace System.Xml
 					Expect ('>');
 					depth--;
 					elementNames [--elementNameStackPos] = null;
-//					this.elementStack.Pop ();
 					shouldSkipUntilEndTag = false;
 					Read ();
 					return i;
@@ -2711,12 +2670,10 @@ namespace System.Xml
 						continue;
 					ReadChar ();
 					string name = ReadName ();
-//					if (name != (string) this.elementStack.Peek ())
 					if (name != elementNames [elementNameStackPos - 1])
 						continue;
 					Expect ('>');
 					depth--;
-//					this.elementStack.Pop ();
 					elementNames [--elementNameStackPos] = null;
 					return Read ();
 				}

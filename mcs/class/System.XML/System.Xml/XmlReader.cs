@@ -121,42 +121,12 @@ namespace System.Xml
 
 		public static bool IsName (string s)
 		{
-			bool result = false;
-
-			if (s != null && s.Length > 0) {
-				char[] chars = s.ToCharArray ();
-
-				if (XmlChar.IsFirstNameChar (chars[0])) {
-					int i = 1;
-					int n = chars.Length;
-
-					while (i < n && XmlChar.IsNameChar (chars[i]))
-						++i;
-
-					result = i == n;
-				}
-			}
-
-			return result;
+			return s != null && XmlChar.IsName (s);
 		}
 
 		public static bool IsNameToken (string s)
 		{
-			bool result = false;
-
-			if (s != null && s.Length > 0) {
-				char[] chars = s.ToCharArray ();
-
-				int i = 0;
-				int n = chars.Length;
-
-				while (i < n && XmlChar.IsNameChar (chars[i]))
-					++i;
-
-				result = i == n;
-			}
-
-			return result;
+			return s != null && XmlChar.IsNmToken (s);
 		}
 
 		public virtual bool IsStartElement ()
@@ -336,6 +306,17 @@ namespace System.Xml
 #else
 		public virtual string ReadInnerXml ()
 		{
+			return ReadInnerXmlInternal ();
+		}
+
+		public virtual string ReadOuterXml ()
+		{
+			return ReadOuterXmlInternal ();
+		}
+#endif
+
+		internal string ReadInnerXmlInternal ()
+		{
 			if (ReadState != ReadState.Interactive)
 				return String.Empty;
 
@@ -360,7 +341,7 @@ namespace System.Xml
 			return sw.ToString ();
 		}
 
-		public virtual string ReadOuterXml ()
+		internal string ReadOuterXmlInternal ()
 		{
 			if (ReadState != ReadState.Interactive)
 				return String.Empty;
@@ -370,7 +351,6 @@ namespace System.Xml
 			xtw.WriteNode (this, false);
 			return sw.ToString ();
 		}
-#endif
 
 		public virtual void ReadStartElement ()
 		{
