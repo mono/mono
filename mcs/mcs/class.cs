@@ -1272,9 +1272,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			MethodInfo[] methods = new MethodInfo [members.Count];
-			members.CopyTo (methods, 0);
-			return methods;
+			MethodInfo[] retMethods = new MethodInfo [members.Count];
+			members.CopyTo (retMethods, 0);
+			return retMethods;
 		}
 		
 		/// <summary>

@@ -1,3 +1,7 @@
+2004-03-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* class.cs : csc build fix for GetMethods(). See bug #52503.
+
 2004-03-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* expression.cs: Make sure fp comparisons work with NaN.
