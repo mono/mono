@@ -1,3 +1,11 @@
+2003-11-29  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-grammar.g: define new rule 'arguments' instead of
+	repeating hand written rule all around. Change "." for DOT, dumb
+	mistake by myself. Added rule new_expr. Now we handle properly the
+	call_expr rule (as defined on the spec), and added a new
+	argument. Added subrule new_expr to  left_hand_side_expr rule.
+
 2003-11-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs (Expression): implemented Emit.

@@ -327,40 +327,55 @@ member_expr returns [AST mem_exp]
 	mem_exp = null;
 }
 	: mem_exp = primary_expr member_aux
-	| "new" member_expr OPEN_PARENS (arguments_list [null] | ) CLOSE_PARENS
+	| "new" member_expr arguments
 	;
 
 member_aux
-	: ( "." IDENTIFIER member_aux 
+	: ( DOT IDENTIFIER member_aux 
 	  | (OPEN_BRACKET)=> OPEN_BRACKET expr CLOSE_BRACKET
-	  | 
+	  |
 	  )
 	;
 
-
+new_expr returns [AST new_exp]
+{
+	new_exp = null; 
+	AST mem_exp = null;
+}
+	: mem_exp = member_expr { new_exp = mem_exp; }
+	;
+        
 call_expr returns [Call func_call]
 {
 	func_call = null;
 	AST member = null;
-	AST args;
+	AST args1 = null;
+	AST args2 = null;
 }
-	: member = member_expr args = call_aux
+	: member = member_expr args1 = arguments args2 = call_aux
 	  {
-		  func_call = new Call (member, args);
+		  func_call = new Call (member, args1, args2);
 	  }
 	;
 
 call_aux returns [AST args]
 {
-	Args tmp_args = new Args ();
 	args = null;
+} 
+	: 
+	( arguments 
+	| OPEN_BRACKET expr CLOSE_BRACKET
+	| DOT IDENTIFIER
+	) call_aux
+	|
+	;
+
+arguments returns [Args args]
+{
+	Args tmp = new Args ();
+	args = null; 
 }
-	: ((OPEN_PARENS (arguments_list [tmp_args] { args = tmp_args; } | ) CLOSE_PARENS
-	   | OPEN_BRACKET expr CLOSE_BRACKET
-	   | DOT IDENTIFIER
-	   ) call_aux 
-	  |
-          )
+	: OPEN_PARENS (arguments_list [tmp] { args = tmp; } | ) CLOSE_PARENS
 	;
 
 arguments_list [Args args]
@@ -371,11 +386,13 @@ arguments_list [Args args]
 	  (COMMA a = assignment_expr { args.Add (a); })*
 	;
 
-left_hand_side_expr returns [Call call]
+left_hand_side_expr returns [AST lhe]
 {
-	call = null;
+	lhe = null;
+	Call call = null;
 }
-	: call = call_expr
+	: (call_expr)=> call = call_expr { lhe = call; }
+	| lhe = new_expr
 	;
 
 postfix_expr returns [Unary post_expr]
