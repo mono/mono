@@ -1,3 +1,8 @@
+2003-10-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exception.h exception.c: Add AppDomainUnloadedException && fix 
+	warning.
+
 2003-10-21  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c
