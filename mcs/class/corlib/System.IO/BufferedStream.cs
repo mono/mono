@@ -180,7 +180,7 @@ namespace System.IO {
 
 			CheckObjectDisposedException ();
 
-			if (!m_stream.CanRead)
+			if (!m_stream.CanWrite)
 				throw new NotSupportedException ();
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ();
