@@ -9,6 +9,6 @@ unix:
 	@echo "'make unix' is broken for now."
 
 make-list:
-	cat $$i/common.src $$i/windows.src | sed "s/^/$$i\\\\/";
+	cat common.src windows.src > list
 
 test: $(PLATFORM)

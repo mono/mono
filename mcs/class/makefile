@@ -1,4 +1,4 @@
-DIRS=corlib System
+DIRS=corlib System System.XML
 CSC=//c/winnt/microsoft.net/framework/v1.0.2914/csc.exe
 
 all:
@@ -7,7 +7,7 @@ all:
 
 windows:
 	for i in $(DIRS); do				\
-		(cd $$i; CSC=$(CSC) NUNIT_CONSOLE=NUnitConsole.exe PLATFORM=window make windows)\
+		(cd $$i; CSC=$(CSC) NUNIT_CONSOLE=NUnitConsole.exe PLATFORM=window make windows) || exit 1;\
 	done;
 
 unix:

@@ -1,3 +1,9 @@
+2001-07-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* Hashtable.cs: Removed call to d.Count in the Hashtable
+	constructor that takes an IDictionary as IDictionary does not
+	provide a Count field.
+
 2001-07-15  Sean MacIsaac  <macisaac@ximian.com>
 
 	* IDictionary.cs: Clear was clear.

@@ -27,7 +27,8 @@
 namespace System {
 
     /// <summary>
-    /// Represents the boolean values of logical true and false.</summary>
+    /// Represents the boolean values of logical true and false.
+    /// </summary>
     /// The .NET Framework SDK lists this as implementing IConvertible,
     /// though it's not done here or in the ECMA spec.
     public struct Boolean : IComparable { //, IConvertible {
@@ -42,7 +43,9 @@ namespace System {
       
 	/// <value>
 	/// Internal bool value for for this instance</value>
-	private bool value;
+	//
+	// Hack: we tag it as public, so the source will compile.
+	public bool value;
 	
 	static Boolean() {
 	    FalseString = "False";
