@@ -1,3 +1,12 @@
+2002-03-25  Martin Baulig  <martin@gnome.org>
+
+	* MonoDwarfFileWriter.cs (CreateType): Return a `DieType'.
+	(RegisterType): Add the type to the type hash before creating dependency types
+	so we don't get recursion loops.
+	(RegisterPointerType): New func to register a "pointer to type" type.
+	(DieTypeDef, DiePointerType, DieArrayType, DieStringType, DieClassType): New
+	types; added support for strings, arrays and basic support for classes.
+	
 2002-03-24  Martin Baulig  <martin@gnome.org>
 
 	* IMonoSymbolWriter.cs: Killed all methods in this interface, no longer needed.

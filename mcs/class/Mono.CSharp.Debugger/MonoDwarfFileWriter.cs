@@ -20,7 +20,6 @@ using System.IO;
 	
 namespace Mono.CSharp.Debugger
 {
-
 	public class DwarfFileWriter
 	{
 		protected const string producer_id = "Mono C# Compiler 0.01 03-18-2002";
@@ -89,20 +88,23 @@ namespace Mono.CSharp.Debugger
 		//
 		// Create a debugging information entry for the given type.
 		//
-		public Die CreateType (DieCompileUnit die_compile_unit, Type type)
+		public DieType CreateType (DieCompileUnit die_compile_unit, Type type)
 		{
-			if (type.IsPrimitive)
-				return new DieBaseType (die_compile_unit, type);
-			else if (type.IsPointer)
+			if (type.IsPointer)
 				return new DiePointerType (die_compile_unit, type.GetElementType ());
 			else if (type.IsEnum)
 				return new DieEnumType (die_compile_unit, type);
-			else if (type.IsValueType) {
+			else if (type.Equals (typeof (string)))
+				return new DieStringType (die_compile_unit, type);
+			else if (type.IsArray)
+				return new DieArrayType (die_compile_unit, type.GetElementType (),
+							 type.GetArrayRank ());
+			else if (type.IsValueType)
 				return new DieStructureType (die_compile_unit, type);
-			}
+			else if (type.IsClass)
+				return new DieClassType (die_compile_unit, type);
 
-			return new DieBaseType (die_compile_unit, typeof (void));
-			// throw new NotSupportedException ("Type " + type + " is not yet supported.");
+			throw new NotSupportedException ("Type " + type + " is not yet supported.");
 		}
 
 		//
@@ -449,13 +451,19 @@ namespace Mono.CSharp.Debugger
 
 		// DWARF tag from the DWARF 2 specification.
 		public enum DW_TAG {
+			TAG_array_type		= 0x01,
+			TAG_class_type		= 0x02,
 			TAG_enumeration_type	= 0x04,
 			TAG_formal_parameter	= 0x05,
 			TAG_lexical_block	= 0x0b,
 			TAG_member		= 0x0d,
 			TAG_pointer_type	= 0x0f,
 			TAG_compile_unit	= 0x11,
+			TAG_string_type		= 0x12,
 			TAG_structure_type	= 0x13,
+			TAG_typedef		= 0x16,
+			TAG_inheritance		= 0x1c,
+			TAG_subrange_type	= 0x21,
 			TAG_base_type		= 0x24,
 			TAG_enumerator		= 0x28,
 			TAG_subprogram		= 0x2e,
@@ -472,7 +480,9 @@ namespace Mono.CSharp.Debugger
 			AT_high_pc		= 0x12,
 			AT_language		= 0x13,
 			AT_const_value		= 0x1c,
+			AT_lower_bound		= 0x22,
 			AT_producer		= 0x25,
+			AT_upper_bound		= 0x2f,
 			AT_artificial		= 0x34,
 			AT_data_member_location	= 0x38,
 			AT_declaration		= 0x3c,
@@ -499,6 +509,7 @@ namespace Mono.CSharp.Debugger
 		}
 
 		public enum DW_OP {
+			OP_deref		= 0x06,
 			OP_const1u		= 0x08,
 			OP_const1s		= 0x09,
 			OP_const2u		= 0x0a,
@@ -512,6 +523,22 @@ namespace Mono.CSharp.Debugger
 			OP_plus			= 0x22,
 			OP_plus_uconst		= 0x23,
 			OP_fbreg		= 0x91,
+		}
+
+		protected enum MRI_string {
+			offset_length		= 0x00,
+			offset_vector		= 0x01
+		}
+
+		protected enum MRI_array {
+			offset_bounds		= 0x00,
+			offset_max_length	= 0x01,
+			offset_vector		= 0x02
+		}
+
+		protected enum MRI_array_bounds {
+			offset_lower		= 0x00,
+			offset_length		= 0x01
 		}
 
 		protected class MethodParameter : IMethodParameter
@@ -687,6 +714,7 @@ namespace Mono.CSharp.Debugger
 			private static int my_abbrev_id;
 
 			protected Hashtable types = new Hashtable ();
+			protected Hashtable pointer_types = new Hashtable ();
 
 			static DieCompileUnit ()
 			{
@@ -741,10 +769,35 @@ namespace Mono.CSharp.Debugger
 				if (types.Contains (type))
 					return (Die) types [type];
 
-				Die die = dw.CreateType (this, type);
+				if (type.IsPrimitive) {
+					Die base_type = new DieBaseType (this, type);
+
+					types.Add (type, base_type);
+
+					return base_type;
+				}
+
+				DieType die = dw.CreateType (this, type);
 
 				types.Add (type, die);
+
+				die.RegisterDependencyTypes ();
+
 				return die;
+			}
+
+			public Die RegisterPointerType (Type type)
+			{
+				if (pointer_types.Contains (type))
+					return (Die) pointer_types [type];
+
+				Die type_die = RegisterType (type);
+
+				Die pointer_die = new DieInternalPointer (this, type_die);
+
+				pointer_types.Add (type, pointer_die);
+
+				return pointer_die;
 			}
 
 			public void WriteRelativeDieReference (Die target_die)
@@ -988,8 +1041,64 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		public abstract class DieType : Die
+		{
+			public DieType (DieCompileUnit parent_die, Type type, int abbrev_id)
+				: base (parent_die, abbrev_id)
+			{
+				this.type = type;
+			}
+
+			protected Type type;
+
+			//
+			// This is called after the type has been added to the type hash.
+			//
+			// You need to register your dependency types here and not in the
+			// constructor to avoid a recursion loop if a type references itself.
+			//
+			public virtual void RegisterDependencyTypes ()
+			{
+				// do nothing
+			}
+		}
+
+		public class DieTypeDef : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieTypeDef ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_typedef, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected string name;
+			protected Die type_die;
+
+			public DieTypeDef (Die parent_die, Die type_die, string name)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.name = name;
+				this.type_die = type_die;
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (name);
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+			}
+		}
+
 		// DW_TAG_pointer_type
-		public class DiePointerType : Die
+		public class DiePointerType : DieType
 		{
 			private static int my_abbrev_id;
 
@@ -1005,16 +1114,14 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			protected Type type;
 			protected Die type_die;
 
-			//
-			// Create a new type DIE describing a pointer to @type.
-			//
 			public DiePointerType (DieCompileUnit parent_die, Type type)
-				: base (parent_die, my_abbrev_id)
+				: base (parent_die, type, my_abbrev_id)
+			{ }
+
+			public override void RegisterDependencyTypes ()
 			{
-				this.type = type;
 				type_die = DieCompileUnit.RegisterType (type);
 			}
 
@@ -1024,8 +1131,38 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		public class DieInternalPointer : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieInternalPointer ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_pointer_type, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected Die type_die;
+
+			public DieInternalPointer (Die parent_die, Die type_die)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.type_die = type_die;
+			}
+
+			public override void DoEmit ()
+			{
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+			}
+		}
+
 		// DW_TAG_enumeration_type
-		public class DieEnumType : Die
+		public class DieEnumType : DieType
 		{
 			private static int my_abbrev_id;
 
@@ -1042,13 +1179,9 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			protected Type type;
-
 			public DieEnumType (DieCompileUnit parent_die, Type type)
-				: base (parent_die, my_abbrev_id)
+				: base (parent_die, type, my_abbrev_id)
 			{
-				this.type = type;
-
 				foreach (object value in Enum.GetValues (type))
 					new DieEnumerator (this, Enum.GetName (type, value), (int) value);
 			}
@@ -1056,7 +1189,7 @@ namespace Mono.CSharp.Debugger
 			public override void DoEmit ()
 			{
 				aw.WriteString (type.Name);
-				dw.AddRelocEntry (RelocEntryType.TYPE_SIZEOF, type);
+				dw.AddRelocEntry_TypeSize (type);
 				aw.WriteUInt8 (0);
 			}
 		}
@@ -1096,8 +1229,8 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		// DW_TAG_structure_type_type
-		public class DieStructureType : Die
+		// DW_TAG_structure_type
+		public class DieStructureType : DieType
 		{
 			private static int my_abbrev_id;
 
@@ -1114,23 +1247,269 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			protected Type type;
+			protected string name;
+			protected FieldInfo[] fields;
+			protected Die[] field_type_dies;
+			protected Die[] field_dies;
+
+			public override void RegisterDependencyTypes ()
+			{
+				fields = type.GetFields ();
+				field_type_dies = new Die [fields.Length];
+				field_dies = new Die [fields.Length];
+
+				for (int i = 0; i < fields.Length; i++) {
+					Type field_type = fields [i].FieldType;
+					field_type_dies [i] = DieCompileUnit.RegisterType (field_type);
+					field_dies [i] = new DieMember (this, type, fields [i].Name,
+									i, field_type_dies [i]);
+				}
+			}
 
 			public DieStructureType (DieCompileUnit parent_die, Type type)
+				: this (parent_die, type, type.Name, my_abbrev_id)
+			{ }
+
+			protected DieStructureType (DieCompileUnit parent_die, Type type, int abbrev_id)
+				: this (parent_die, type, type.Name, abbrev_id)
+			{ }
+
+			protected DieStructureType (DieCompileUnit parent_die, Type type, string name)
+				: this (parent_die, type, name, my_abbrev_id)
+			{ }
+
+			protected DieStructureType (DieCompileUnit parent_die, Type type,
+						    string name, int abbrev_id)
+				: base (parent_die, type, abbrev_id)
+			{
+				this.name = name;
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (name);
+				dw.AddRelocEntry_TypeSize (type);
+				aw.WriteUInt8 (0);
+			}
+		}
+
+		public class DieArrayType : DieStructureType
+		{
+			public override void RegisterDependencyTypes ()
+			{
+				Die array_die = new DieInternalArray (DieCompileUnit, typeof (MonoArrayBounds));
+				new DieSubRangeType (array_die, typeof (int), 0, rank);
+
+				Die bounds_die = new DieInternalPointer (DieCompileUnit, array_die);
+				new DieMember (this, typeof (MonoArray), "Bounds",
+					       (int) MRI_array.offset_bounds, bounds_die);
+
+				Die length_die = DieCompileUnit.RegisterType (typeof (int));
+				new DieMember (this, typeof (MonoArray), "MaxLength",
+					       (int) MRI_array.offset_max_length, length_die);
+
+				Die vector_die = new DieInternalArray (DieCompileUnit, element_type);
+				new DieSubRangeType (vector_die, typeof (int), 0, -1);
+
+				new DieMember (this, typeof (MonoArray), "Vector",
+					       (int) MRI_array.offset_vector, vector_die);
+			}
+
+			protected Type element_type;
+			protected int rank;
+
+			protected static string MakeArrayName (Type type, int rank)
+			{
+				string name = type.Name;
+
+				for (int i = 0; i < rank; i++)
+					name += "[]";
+
+				return name;
+			}
+
+			public DieArrayType (DieCompileUnit parent_die, Type type, int rank)
+				: base (parent_die, typeof (MonoArray), MakeArrayName (type, rank))
+			{
+				this.element_type = type;
+				this.rank = rank;
+			}
+		}
+
+		public class DieStringType : DieStructureType
+		{
+
+			public override void RegisterDependencyTypes ()
+			{
+				Die length_die = DieCompileUnit.RegisterType (typeof (int));
+				new DieMember (this, typeof (MonoString), "Length",
+					       (int) MRI_string.offset_length, length_die);
+
+				Die vector_die = new DieArrayType (DieCompileUnit, typeof (char), 1);
+				new DieSubRangeType (vector_die, typeof (int), 0, -1);
+
+				Die vector_ptr_die = new DieInternalPointer (DieCompileUnit, vector_die);
+
+				new DieMember (this, typeof (MonoString), "Vector",
+					       (int) MRI_string.offset_vector, vector_ptr_die);
+			}
+
+			public DieStringType (DieCompileUnit parent_die, Type type)
+				: base (parent_die, typeof (MonoString))
+			{ }
+		}
+
+
+		protected class DieInternalArray : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieInternalArray ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data1)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_array_type, true, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			public DieInternalArray (Die parent_die, Type type)
 				: base (parent_die, my_abbrev_id)
 			{
 				this.type = type;
 
-				FieldInfo[] fields = type.GetFields ();
-				for (int i = 0; i < fields.Length; i++)
-					new DieMember (this, type, i, fields [i]);
+				this.type_die = DieCompileUnit.RegisterType (type);
+			}
+
+			protected Type type;
+			protected Die type_die;
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (type.Name);
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+				aw.WriteUInt8 (4);
+			}
+		}
+
+		public class DieSubRangeType : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieSubRangeType ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_lower_bound, DW_FORM.FORM_data4),
+					new AbbrevEntry (DW_AT.AT_upper_bound, DW_FORM.FORM_data4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_subrange_type, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected int lower;
+			protected int upper;
+			protected Die type_die;
+
+			public DieSubRangeType (Die parent_die, Type type, int lower, int upper)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.lower = lower;
+				this.upper = upper;
+
+				type_die = DieCompileUnit.RegisterType (type);
+			}
+
+			public override void DoEmit ()
+			{
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+				aw.WriteUInt32 (lower);
+				aw.WriteUInt32 (upper);
+			}
+		}
+
+		// DW_TAG_class_type
+		public class DieClassType : DieStructureType
+		{
+			private static int my_abbrev_id;
+
+			static DieClassType ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data1)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_class_type, true, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			public DieClassType (DieCompileUnit parent_die, Type type)
+				: base (parent_die, type, my_abbrev_id)
+			{ }
+
+			public override void RegisterDependencyTypes ()
+			{
+				if ((type.BaseType != null) && !type.BaseType.Equals (typeof (object)) &&
+				    !type.BaseType.Equals (typeof (System.Array))) {
+					Die parent_die = DieCompileUnit.RegisterType (type.BaseType);
+
+					new DieInheritance (this, parent_die);
+				}
 			}
 
 			public override void DoEmit ()
 			{
 				aw.WriteString (type.Name);
-				dw.AddRelocEntry (RelocEntryType.TYPE_SIZEOF, type);
+				dw.AddRelocEntry_TypeSize (type);
 				aw.WriteUInt8 (0);
+			}
+		}
+
+		// DW_TAG_inheritance
+		public class DieInheritance : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieInheritance ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_data_member_location, DW_FORM.FORM_block4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_inheritance, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			Die type_die;
+
+			public DieInheritance (Die parent_die, Die type_die)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.type_die = type_die;
+			}
+
+			public override void DoEmit ()
+			{
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+
+				object end_index = aw.StartSubsectionWithSize ();
+				aw.WriteUInt8 ((int) DW_OP.OP_const1u);
+				aw.WriteUInt8 (0);
+				aw.EndSubsection (end_index);
 			}
 		}
 
@@ -1154,28 +1533,28 @@ namespace Mono.CSharp.Debugger
 			}
 
 			protected Type parent_type;
+			protected string name;
 			protected int index;
-			protected FieldInfo field;
 			protected Die type_die;
 
-			public DieMember (Die parent_die, Type parent_type, int index, FieldInfo field)
+			public DieMember (Die parent_die, Type parent_type, string name, int index,
+					  Die type_die)
 				: base (parent_die, my_abbrev_id)
 			{
-				this.field = field;
+				this.name = name;
 				this.index = index;
 				this.parent_type = parent_type;
-				this.type_die = DieCompileUnit.RegisterType (field.FieldType);
+				this.type_die = type_die;
 			}
 
 			public override void DoEmit ()
 			{
-				aw.WriteString (field.Name);
+				aw.WriteString (name);
 				DieCompileUnit.WriteRelativeDieReference (type_die);
 
 				object end_index = aw.StartSubsectionWithSize ();
 				aw.WriteUInt8 ((int) DW_OP.OP_const4u);
-				dw.AddRelocEntry (RelocEntryType.TYPE_FIELD_OFFSET,
-						  parent_type, index);
+				dw.AddRelocEntry_TypeFieldOffset (parent_type, index);
 				aw.WriteInt32 (0);
 				aw.EndSubsection (end_index);
 			}
@@ -1285,7 +1664,10 @@ namespace Mono.CSharp.Debugger
 				: base (parent_die, get_abbrev_id (vtype))
 			{
 				this.name = name;
-				this.type_die = DieCompileUnit.RegisterType (type);
+				if (type.IsValueType)
+					this.type_die = DieCompileUnit.RegisterType (type);
+				else
+					this.type_die = DieCompileUnit.RegisterPointerType (type);
 				this.vtype = vtype;
 			}
 
@@ -1361,7 +1743,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected const int reloc_table_version = 5;
+		protected const int reloc_table_version = 7;
 
 		protected enum Section {
 			DEBUG_INFO		= 0x01,
@@ -1428,20 +1810,26 @@ namespace Mono.CSharp.Debugger
 		protected enum RelocEntryType {
 			NONE,
 			// Size of an address on the target machine
-			TARGET_ADDRESS_SIZE	= 0x01,
+			TARGET_ADDRESS_SIZE		= 0x01,
 			// Map an IL offset to a machine address
-			IL_OFFSET		= 0x02,
+			IL_OFFSET			= 0x02,
 			// Start address of machine code for this method
-			METHOD_START_ADDRESS	= 0x03,
+			METHOD_START_ADDRESS		= 0x03,
 			// End address of machine code for this method
-			METHOD_END_ADDRESS	= 0x04,
+			METHOD_END_ADDRESS		= 0x04,
 			// Stack offset of local variable
-			LOCAL_VARIABLE		= 0x05,
+			LOCAL_VARIABLE			= 0x05,
 			// Stack offset of method parameter
-			METHOD_PARAMETER	= 0x06,
+			METHOD_PARAMETER		= 0x06,
 			// Sizeof (type)
-			TYPE_SIZEOF		= 0x07,
-			TYPE_FIELD_OFFSET	= 0x08
+			TYPE_SIZEOF			= 0x07,
+			TYPE_FIELD_OFFSET		= 0x08,
+			MONO_STRING_SIZEOF		= 0x09,
+			MONO_STRING_OFFSET		= 0x0a,
+			MONO_ARRAY_SIZEOF		= 0x0b,
+			MONO_ARRAY_OFFSET		= 0x0c,
+			MONO_ARRAY_BOUNDS_SIZEOF	= 0x0d,
+			MONO_ARRAY_BOUNDS_OFFSET	= 0x0e
 		}
 
 		protected class RelocEntry {
@@ -1552,6 +1940,30 @@ namespace Mono.CSharp.Debugger
 			AddRelocEntry (entry_type, get_type_token (type), original);
 		}
 
+		protected void AddRelocEntry_TypeSize (Type type)
+		{
+			if (type.Equals (typeof (MonoString)))
+				AddRelocEntry (RelocEntryType.MONO_STRING_SIZEOF);
+			else if (type.Equals (typeof (MonoArray)))
+				AddRelocEntry (RelocEntryType.MONO_ARRAY_SIZEOF);
+			else if (type.Equals (typeof (MonoArrayBounds)))
+				AddRelocEntry (RelocEntryType.MONO_ARRAY_BOUNDS_SIZEOF);
+			else
+				AddRelocEntry (RelocEntryType.TYPE_SIZEOF, type);
+		}
+
+		protected void AddRelocEntry_TypeFieldOffset (Type type, int index)
+		{
+			if (type.Equals (typeof (MonoString)))
+				AddRelocEntry (RelocEntryType.MONO_STRING_OFFSET, index);
+			else if (type.Equals (typeof (MonoArray)))
+				AddRelocEntry (RelocEntryType.MONO_ARRAY_OFFSET, index);
+			else if (type.Equals (typeof (MonoArrayBounds)))
+				AddRelocEntry (RelocEntryType.MONO_ARRAY_BOUNDS_OFFSET, index);
+			else
+				AddRelocEntry (RelocEntryType.TYPE_FIELD_OFFSET, type, index);
+		}
+
 		//
 		// Mono relocation table. See the README.relocation-table file in this
 		// directory for a detailed description of the file format.
@@ -1582,6 +1994,15 @@ namespace Mono.CSharp.Debugger
 				case RelocEntryType.TYPE_FIELD_OFFSET:
 					aw.WriteUInt32 (entry.Token);
 					aw.WriteUInt32 (entry.Original);
+					break;
+				case RelocEntryType.MONO_STRING_SIZEOF:
+				case RelocEntryType.MONO_ARRAY_SIZEOF:
+				case RelocEntryType.MONO_ARRAY_BOUNDS_SIZEOF:
+					break;
+				case RelocEntryType.MONO_STRING_OFFSET:
+				case RelocEntryType.MONO_ARRAY_OFFSET:
+				case RelocEntryType.MONO_ARRAY_BOUNDS_OFFSET:
+					aw.WriteUInt32 (entry.Token);
 					break;
 				}
 
@@ -1638,4 +2059,13 @@ namespace Mono.CSharp.Debugger
 			current_section = section;
 		}
 	}
+
+	internal struct MonoString
+	{ }
+
+	internal struct MonoArrayBounds
+	{ }
+
+	internal struct MonoArray
+	{ }
 }

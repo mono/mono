@@ -606,16 +606,12 @@ namespace Mono.CSharp.Debugger
 		{
 			DwarfFileWriter.DieMethodVariable die;
 
-			Console.WriteLine ("WRITE LOCAL: " + (LocalVariable) local + " " + local.Type);
-
 			die = new DwarfFileWriter.DieMethodVariable (parent_die, local);
 		}
 
 		protected void WriteBlock (DwarfFileWriter.Die parent_die, ISourceBlock block)
 		{
 			DwarfFileWriter.DieLexicalBlock die;
-
-			Console.WriteLine ("WRITE BLOCK: " + (SourceBlock) block);
 
 			die = new DwarfFileWriter.DieLexicalBlock (parent_die, block);
 
@@ -628,8 +624,6 @@ namespace Mono.CSharp.Debugger
 			DwarfFileWriter.DieSubProgram die;
 
 			die = new DwarfFileWriter.DieSubProgram (parent_die, method);
-
-			Console.WriteLine ("WRITE METHOD: " + method.MethodInfo.Name + " " + method.Token);
 
 			foreach (ILocalVariable local in method.Locals)
 				WriteLocal (die, local);
