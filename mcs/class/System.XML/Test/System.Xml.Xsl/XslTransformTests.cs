@@ -1,5 +1,5 @@
 //
-// System.Xml.Serialization.XmlSerializer.cs
+// System.Xml.Xsl.XslTransformTests.cs
 //
 // Author:
 //   Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
@@ -9,6 +9,7 @@
 
 using System;
 using System.Xml;
+using System.Xml.XPath;
 using System.Xml.Xsl;
 using NUnit.Framework;
 
@@ -57,5 +58,32 @@ namespace MonoTests.System.Xml.Xsl
 			XslTransform t = new XslTransform ();
 			t.Load (doc);
 		}
+
+		[Test]
+		[ExpectedException (typeof (XsltCompileException))]
+		public void InvalidStylesheet2 ()
+		{
+			string xml = @"<root>text</root>";
+			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
+	<xsl:template match='/root'>
+		<xsl:call-template name='foo'>
+			<xsl:with-param name='name' value='text()' />
+		</xsl:call-template>
+	</xsl:template>
+	<xsl:template name='foo'>
+		<xsl:param name='name' />
+		<result>
+			<xsl:if test='1'>
+				<xsl:variable name='last' value='text()' />
+				<xsl:value-of select='$last' />
+			</xsl:if>
+		</result>
+	</xsl:template>
+</xsl:stylesheet>
+";
+			XslTransform xslt = new XslTransform ();
+			xslt.Load (new XPathDocument (new XmlTextReader (xsl, XmlNodeType.Document, null)));
+		}
+
 	}
 }

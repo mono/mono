@@ -1,3 +1,7 @@
+2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslTransformTests.cs : Added InvalidStylesheet2().
+
 2004-03-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslTransformTests.cs : added some tests for invalid stylesheets.
