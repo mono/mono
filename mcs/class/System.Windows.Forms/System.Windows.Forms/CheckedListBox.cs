@@ -192,14 +192,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
-			Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height,e.Graphics);
+			Rectangle paintBounds = new Rectangle (0, 0, e.Bounds.Width, e.Bounds.Height);
+			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
 			Graphics paintOn = Graphics.FromImage(bmp);
 			
-			paintOn.FillRectangle(SystemBrushes.Window, e.Bounds);
+			paintOn.FillRectangle(SystemBrushes.Window, paintBounds);
 			
-			Rectangle checkRect = new Rectangle( e.Bounds.Left, e.Bounds.Top, e.Bounds.Height, e.Bounds.Height);
+			Rectangle checkRect = new Rectangle( 0, 0, paintBounds.Height, paintBounds.Height);
 			checkRect.Inflate(-1,-1);
-			Rectangle textRect = new Rectangle( checkRect.Right, e.Bounds.Top, e.Bounds.Width - checkRect.Width - 1, e.Bounds.Height);
+			Rectangle textRect = new Rectangle( checkRect.Right, 0, paintBounds.Width - checkRect.Width - 1, paintBounds.Height);
 			
 			if( (e.State & DrawItemState.Selected) != 0) {
 				paintOn.FillRectangle(SystemBrushes.Highlight, textRect);
@@ -223,7 +224,7 @@ namespace System.Windows.Forms {
 			if( 0 != (DrawItemState.Focus & e.State)) {
 				ControlPaint.DrawFocusRectangle (paintOn, textRect);
 			}
-			e.Graphics.DrawImage(bmp, 0, 0, e.Bounds.Width, e.Bounds.Height);
+			e.Graphics.DrawImage(bmp, e.Bounds.Left, e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
 			paintOn.Dispose ();
 			bmp.Dispose();
 		}

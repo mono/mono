@@ -44,11 +44,14 @@ namespace System.Windows.Forms {
 				// let the control decide what to do
     				// base.WndProc (ref m);
 				//Console.WriteLine ("Control WndProc {0}", control.GetType().ToString());
+#if FilterDrawItem				
 					if (m.Msg == Msg.WM_DRAWITEM) {
 						m.Result = (IntPtr)1;
 					}
 					else
        					control.WndProc (ref m);
+#endif				
+   					control.WndProc (ref m);
     			}
     		}
     		

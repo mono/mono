@@ -1,3 +1,11 @@
+2003-08-02 Alexandre Pigolkine <pigolkine@gmx.de>
+	* CheckBox.cs			painting in OnPaint implemented
+	* CheckedListBox.cs		changes to painting code
+	* Button.cs				code cleanup
+	* Control.cs			call to subclassed control can be controlled by mask
+	* Message.cs			helper properties
+	* win32Enums.cs			new values
+
 2003-08-01 Alexandre Pigolkine <pigolkine@gmx.de>
 	* ControlPaint.cs		DrawStringDisabled changed
 	* Label.cs				painting moved inside OnPaint function
