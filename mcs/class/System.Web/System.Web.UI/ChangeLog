@@ -1,3 +1,10 @@
+2002-06-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	* Page.cs: first attemp to save view state.
+
+	* HtmlForm.cs: don't render Action.
+
 2002-06-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: implemented more properties using information we already

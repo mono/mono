@@ -1,3 +1,11 @@
+2002-06-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs:
+	* HttpContext.cs: added System.Web.SessionState namespace.
+
+	* HttpSessionState.cs: removed. It is under
+	System.Web.SessionState.
+
 2002-06-10  Duncan Mak  <duncan@ximian.com>
 
 	* HttpBrowserCapabilities.cs (BackgroundSounds): Fixed typo.

@@ -44,6 +44,7 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _visible;
 	private bool _renderingForm;
 	private bool _hasForm;
+	private object _savedViewState;
 
 	#region Fields
 	 	protected const string postEventArgumentID = ""; //FIXME
@@ -266,10 +267,8 @@ public class Page : TemplateControl, IHttpHandler
 	[MonoTODO]
 	protected virtual NameValueCollection DeterminePostBackMode ()
 	{
-		/* Why does this not compile? HttpSessionState has IsNewSession...
-		if (_session.IsNewSession)
+		if (Session.IsNewSession)
 			return null;
-		*/
 		
 		if (IsPostBack)
 			return _context.Request.Form; //FIXME: is this enough?
@@ -339,12 +338,6 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[MonoTODO]
-	protected virtual object LoadPageStateFromPersistenceMedium ()
-	{
-		throw new NotImplementedException ();
-	}
-
-	[MonoTODO]
 	public string MapPath (string virtualPath)
 	{
 		throw new NotImplementedException ();
@@ -370,6 +363,9 @@ public class Page : TemplateControl, IHttpHandler
 
 		_renderingForm = true;
 		_hasForm = true;
+		writer.WriteLine();
+		writer.Write("<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"");
+		writer.WriteLine("1\" />"); //FIXME: should use a random secure value.
 	}
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
@@ -474,10 +470,26 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 	
-	[MonoTODO]
-	void SavePageViewState ()
+	protected virtual object LoadPageStateFromPersistenceMedium ()
 	{
-		throw new NotImplementedException ();
+		return _savedViewState;
+	}
+
+	internal void LoadPageViewState()
+	{
+		object sState = LoadPageStateFromPersistenceMedium ();
+		if (sState != null)
+			LoadViewStateRecursive (sState);
+	}
+
+	protected virtual void SavePageStateToPersistenceMedium (object viewState)
+	{
+		_savedViewState = viewState;
+	}
+
+	internal void SavePageViewState ()
+	{
+		SavePageStateToPersistenceMedium (SaveViewStateRecursive ());
 	}
 
 	public virtual void Validate ()
@@ -496,7 +508,7 @@ public class Page : TemplateControl, IHttpHandler
 	public virtual void VerifyRenderingInServerForm (Control control)
 	{
 		if (!_renderingForm)
-			throw new HttpException ("Control '" + control.ClientID + 
+			throw new HttpException ("Control '" + control.ClientID + " " + control.GetType () + 
 						 "' must be rendered within a HtmlForm");
 	}
 

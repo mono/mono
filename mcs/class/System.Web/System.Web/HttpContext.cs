@@ -7,8 +7,9 @@
 using System;
 using System.Collections;
 using System.Security.Principal;
-using System.Web.Caching;
 using System.Threading;
+using System.Web.Caching;
+using System.Web.SessionState;
 
 namespace System.Web {
    [MonoTODO("HttpContext - Should also keep the script timeout info")]

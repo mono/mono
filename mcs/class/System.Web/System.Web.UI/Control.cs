@@ -379,12 +379,13 @@ namespace System.Web.UI
                                 if (_controls[i].ID == id) return _controls[i];
                         return null;
                 }
+
                 protected virtual void LoadViewState(object savedState)
                 {
-                        //TODO: What should I do by default?
+			ViewState.LoadViewState (savedState);
                 }
                 
-				[MonoTODO]
+		[MonoTODO]
                 protected string MapPathSecure(string virtualPath)
                 {
                         //TODO: Need to read up on security+web.
