@@ -1,4 +1,8 @@
 
+Tue Nov 27 15:24:07 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x96/x86-codegen.c: x86_lea_memindex() added.
+
 Thu Nov 15 17:41:01 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: handle enums with underlying type different from int32.
