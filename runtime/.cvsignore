@@ -1,3 +1,5 @@
 Makefile
 Makefile.in
 *.dll
+*.mdb
+mcs.exe.config
