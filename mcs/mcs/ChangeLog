@@ -1,3 +1,8 @@
+2004-06-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs: FAQ avoider: turn 1577 into a warning for now until
+	tomorrow.
+
 2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* codegen.cs: Check that all referenced assemblies have a strongname

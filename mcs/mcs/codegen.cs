@@ -104,7 +104,7 @@ namespace Mono.CSharp {
 					AssemblyName ref_name = a.GetName ();
 					byte [] b = ref_name.GetPublicKeyToken ();
 					if (b == null || b.Length == 0) {
-						Report.Error (1577, "Assembly generation failed " +
+						Report.Warning (1577, "Assembly generation failed " +
 								"-- Referenced assembly '" +
 								ref_name.Name +
 								"' does not have a strong name.");
