@@ -11,7 +11,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public class Print : Statement {
+	public class Print : AST {
 
 		internal AST exp;
 
@@ -20,14 +20,17 @@ namespace Microsoft.JScript {
 			set { exp = value; }
 		}
 
-
 		internal Print ()
 		{}
-
 
 		public override string ToString ()
 		{
 			return exp.ToString ();
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

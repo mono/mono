@@ -44,6 +44,19 @@ namespace Microsoft.JScript {
 
 			for (i = 0; i < size; i++)
 				((AST) Elements [i]).Emit (ec);
-		}						
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r = true;
+			int i, size = Elements.Count;
+
+			System.Console.WriteLine ("Block::Resolve");
+
+			for (i = 0; i < size; i++)
+				r &= ((AST) Elements [i]).Resolve (context);
+
+			return r;
+		}
 	}
 }

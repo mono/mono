@@ -28,5 +28,10 @@ namespace Microsoft.JScript {
 		{
 			return expression.ToString ();
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

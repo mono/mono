@@ -11,5 +11,10 @@ using System;
 namespace Microsoft.JScript.Tmp {
 
 	public class DebugBreak : AST {
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

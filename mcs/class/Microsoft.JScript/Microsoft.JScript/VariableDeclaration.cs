@@ -14,7 +14,7 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
-	public class VariableDeclaration : Statement {
+	public class VariableDeclaration : AST {
 
 		private string id;
 		private Type type;
@@ -42,7 +42,10 @@ namespace Microsoft.JScript {
 			set { id = value; }
 		}
 
-		
+		public AST InitValue {
+			get { return val; }
+		}
+
 		public Type Type {
 			get { return type; }
 			set { type = value; }
@@ -72,6 +75,13 @@ namespace Microsoft.JScript {
 						  FieldAttributes.Public |
 						  FieldAttributes.Static);
 						  
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			context.Enter (id, this);
+			Console.WriteLine ("VariableDeclaration::Resolve");
+			return true;
 		}
 	}
 }

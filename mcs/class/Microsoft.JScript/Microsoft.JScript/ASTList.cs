@@ -23,13 +23,11 @@ namespace Microsoft.JScript.Tmp {
 			elems = new ArrayList ();
 		}
 
-
 		internal ASTList Add (AST elem)
 		{
 			elems.Add (elem);
 			return this;
 		}
-
 
 		public override string ToString ()
 		{
@@ -39,6 +37,11 @@ namespace Microsoft.JScript.Tmp {
 				sb.Append (ast.ToString () + "\n");
 
 			return sb.ToString ();
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

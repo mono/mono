@@ -31,5 +31,11 @@ namespace Microsoft.JScript {
 		{
 			src_elems.Emit (ec);
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			System.Console.WriteLine ("ScriptBlock::Resolve");
+			return src_elems.Resolve (context);
+		}
 	}
 }

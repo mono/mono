@@ -32,7 +32,11 @@ namespace Microsoft.JScript {
 			
 			return sb.ToString ();
 		}
-			
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}			
 	}
 
 	public class Binary : BinaryOp {
@@ -58,6 +62,11 @@ namespace Microsoft.JScript {
 				sb.Append (right.ToString ());
 
 			return sb.ToString ();
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 
@@ -85,6 +94,11 @@ namespace Microsoft.JScript {
 
 			return sb.ToString ();
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	public class Call : AST {
@@ -109,6 +123,11 @@ namespace Microsoft.JScript {
 
 			return sb.ToString ();
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	internal class Identifier : AST {
@@ -124,6 +143,11 @@ namespace Microsoft.JScript {
 		{
 			return name;
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	public class Args : AST {
@@ -138,6 +162,11 @@ namespace Microsoft.JScript {
 		internal void Add (AST e)
 		{
 			elems.Add (e);
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 
@@ -169,6 +198,11 @@ namespace Microsoft.JScript {
 				return sb.ToString ();
 
 			} else return String.Empty;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

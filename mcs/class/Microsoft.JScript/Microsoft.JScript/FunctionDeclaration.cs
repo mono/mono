@@ -62,6 +62,17 @@ namespace Microsoft.JScript {
 					  typeof (Microsoft.JScript.ScriptFunction),
 					  FieldAttributes.Public |
 					  FieldAttributes.Static);
+
+			method = type.DefineMethod (name, Function.attr, 
+						    Function.return_type,
+						    Function.params_types ());
+
+			ec.ig = method.GetILGenerator ();
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

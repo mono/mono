@@ -15,10 +15,19 @@ namespace Microsoft.JScript {
 
 		public Literal ()
 		{}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
-
 	internal class This : Literal {
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	internal class BooleanLiteral : Literal {
@@ -33,6 +42,11 @@ namespace Microsoft.JScript {
 		public override string ToString ()
 		{
 			return val.ToString ();
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

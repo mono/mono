@@ -7,6 +7,7 @@
 //
 
 using Microsoft.JScript.Vsa;
+using System;
 
 namespace Microsoft.JScript.Tmp {
 
@@ -16,5 +17,10 @@ namespace Microsoft.JScript.Tmp {
 
 		public static void JScriptImport (string name, VsaEngine engine)
 		{}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

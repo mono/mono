@@ -24,5 +24,10 @@ namespace Microsoft.JScript.Tmp {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

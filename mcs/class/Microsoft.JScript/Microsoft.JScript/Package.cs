@@ -8,6 +8,7 @@
 
 using Microsoft.JScript.Vsa;
 using System.Collections;
+using System;
 
 namespace Microsoft.JScript {
 
@@ -18,5 +19,10 @@ namespace Microsoft.JScript {
 
 		public static void JScriptPackage (string rootName, VsaEngine engine)
 		{}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
