@@ -1,3 +1,7 @@
+2003-23-01  Ville Palo <vi64pa@koti.soon.fi>
+
+	* ForeignKeyConstraint.cs: More tests
+	
 2003-22-01  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataRelationTest.cs: More tests and little clean up.

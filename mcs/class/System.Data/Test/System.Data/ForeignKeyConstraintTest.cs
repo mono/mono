@@ -54,6 +54,138 @@ namespace MonoTests.System.Data
 			}
 		}
 
+		// Tests ctor (string, DataColumn, DataColumn)
+		public void TestCtor1 ()
+		{
+			DataTable Table =  _ds.Tables [0];
+			
+			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Table =  _ds.Tables [1];
+			AssertEquals ("test#02", 0, Table.Constraints.Count);
+			
+			// ctor (string, DataColumn, DataColumn
+			ForeignKeyConstraint Constraint = new ForeignKeyConstraint ("test", _ds.Tables [0].Columns [2], _ds.Tables [1].Columns [0]);
+			Table = _ds.Tables [1];
+			Table.Constraints.Add (Constraint);
+			
+			AssertEquals ("test#03", 1, Table.Constraints.Count);
+			AssertEquals ("test#04", "test", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+
+			Table = _ds.Tables [0];
+			AssertEquals ("test#06", 1, Table.Constraints.Count);
+			AssertEquals ("test#07", "Constraint1", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());
+		}
+		
+		// Tests ctor (DataColumn, DataColumn)
+		public void TestCtor2 ()
+		{
+			DataTable Table =  _ds.Tables [0];
+			
+			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Table =  _ds.Tables [1];
+			AssertEquals ("test#02", 0, Table.Constraints.Count);
+			
+			// ctor (string, DataColumn, DataColumn
+			ForeignKeyConstraint Constraint = new ForeignKeyConstraint (_ds.Tables [0].Columns [2], _ds.Tables [1].Columns [0]);
+			Table = _ds.Tables [1];
+			Table.Constraints.Add (Constraint);
+			
+			AssertEquals ("test#03", 1, Table.Constraints.Count);
+			AssertEquals ("test#04", "Constraint1", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+
+			Table = _ds.Tables [0];
+			AssertEquals ("test#06", 1, Table.Constraints.Count);
+			AssertEquals ("test#07", "Constraint1", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());
+		}
+		
+		// Test ctor (DataColumn [], DataColumn [])
+		public void TestCtor3 ()
+		{
+			DataTable Table =  _ds.Tables [0];
+			
+			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Table =  _ds.Tables [1];
+			AssertEquals ("test#02", 0, Table.Constraints.Count);
+						
+			DataColumn [] Cols1 = new DataColumn [2];
+			Cols1 [0] = _ds.Tables [0].Columns [1];
+			Cols1 [1] = _ds.Tables [0].Columns [2];
+			
+			DataColumn [] Cols2 = new DataColumn [2];
+			Cols2 [0] = _ds.Tables [1].Columns [0];
+			Cols2 [1] = _ds.Tables [1].Columns [1];
+			
+			ForeignKeyConstraint Constraint = new ForeignKeyConstraint (Cols1, Cols2);
+			Table = _ds.Tables [1];
+			Table.Constraints.Add (Constraint);
+			
+			AssertEquals ("test#03", 1, Table.Constraints.Count);
+			AssertEquals ("test#04", "Constraint1", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+
+			Table = _ds.Tables [0];
+			AssertEquals ("test#06", 1, Table.Constraints.Count);
+			AssertEquals ("test#07", "Constraint1", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());
+
+		}
+	
+		// Tests ctor (string, DataColumn [], DataColumn [])	
+		public void TestCtor4 ()
+		{
+			DataTable Table =  _ds.Tables [0];
+			
+			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Table =  _ds.Tables [1];
+			AssertEquals ("test#02", 0, Table.Constraints.Count);
+						
+			DataColumn [] Cols1 = new DataColumn [2];
+			Cols1 [0] = _ds.Tables [0].Columns [1];
+			Cols1 [1] = _ds.Tables [0].Columns [2];
+			
+			DataColumn [] Cols2 = new DataColumn [2];
+			Cols2 [0] = _ds.Tables [1].Columns [0];
+			Cols2 [1] = _ds.Tables [1].Columns [1];
+			
+			ForeignKeyConstraint Constraint = new ForeignKeyConstraint ("Test", Cols1, Cols2);
+			Table = _ds.Tables [1];
+			Table.Constraints.Add (Constraint);
+			
+			AssertEquals ("test#03", 1, Table.Constraints.Count);
+			AssertEquals ("test#04", "Test", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+
+			Table = _ds.Tables [0];
+			AssertEquals ("test#06", 1, Table.Constraints.Count);
+			AssertEquals ("test#07", "Constraint1", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());			
+		}
+		
+		//  If Childs and parents are in same table
+		public void TestKeyBetweenColumns ()
+		{
+			DataTable Table =  _ds.Tables [0];
+			
+			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Table =  _ds.Tables [1];
+			AssertEquals ("test#02", 0, Table.Constraints.Count);
+						
+			
+			ForeignKeyConstraint Constraint = new ForeignKeyConstraint ("Test", _ds.Tables [0].Columns [0], _ds.Tables [0].Columns [2]);
+			Table = _ds.Tables [0];
+			Table.Constraints.Add (Constraint);
+			
+			AssertEquals ("test#03", 2, Table.Constraints.Count);
+			AssertEquals ("test#04", "Constraint1", Table.Constraints [0].ConstraintName);
+			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+			AssertEquals ("test#04", "Test", Table.Constraints [1].ConstraintName);
+			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [1].GetType ());
+
+		}
 
 		public void TestCtorExceptions ()
 		{
@@ -115,6 +247,17 @@ namespace MonoTests.System.Data
 				Assertion.Fail("A4: Wrong Exception type. " + exc.ToString());
 			}
 
+                        try                                           
+                        {                                             
+                                fkc = new ForeignKeyConstraint(new DataColumn [] {_ds.Tables[0].Columns[0], _ds.Tables[0].Columns[1]}, new DataColumn [] {localTable.Columns[1], _ds.Tables[1].Columns [0]});    
+                                Assertion.Fail("Failed to throw InvalidOperationException.");                                         
+                        }                                             
+                        catch (InvalidConstraintException) {}         
+                        catch (AssertionFailedError exc) {throw exc;} 
+                        catch (Exception exc)                         
+                        {                                             
+                                Assertion.Fail("A5: Wrong Exceptiontype. " + exc.ToString());
+                        }                                             
 
 		}
 		public void TestCtorExceptions2 () 
