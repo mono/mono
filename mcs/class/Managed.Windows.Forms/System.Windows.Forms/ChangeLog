@@ -1,3 +1,12 @@
+2005-02-14  Miguel de Icaza  <miguel@novell.com>
+
+	* NumericUpDown.cs (Increment, ToString): Add.
+	(DecimalPlaces): implement.
+	
+	Add attributes.
+	
+	* UpDownBase.cs: Add the designer attributes. 
+
 2005-02-13  Peter Bartok  <pbartok@novell.com>
 
 	* Panel.cs: Removed border_style, now in Control

@@ -28,15 +28,21 @@ using System;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
+	[DefaultEvent ("ValueChanged")]
+	[DefaultProperty ("Value")]
 	public class NumericUpDown : UpDownBase, ISupportInitialize {
 		Decimal updown_value;
 		Decimal min = 0m;
 		Decimal max = 100m;
+		Decimal increment = 1m;
 		bool thousand = false;
 		bool on_init = false;
+		string format;
+		int decimal_places;
 		
 		public NumericUpDown () : base ()
 		{
+			UpdateFormat ();
 			UpdateEditText ();
 		}
 		
@@ -73,8 +79,8 @@ namespace System.Windows.Forms {
 			if (UserEdit)
 				ParseEditText ();
 
-			if (updown_value > min){
-				updown_value--;
+			if (updown_value-increment >= min){
+				updown_value -= increment;
 				UpdateEditText ();
 			}
 		}
@@ -84,8 +90,8 @@ namespace System.Windows.Forms {
 			if (UserEdit)
 				ParseEditText ();
 
-			if (updown_value < max){
-				updown_value++;
+			if (updown_value + increment <= max){
+				updown_value += increment;
 				UpdateEditText ();
 			}
 		}
@@ -96,7 +102,7 @@ namespace System.Windows.Forms {
 				return;
 			
 			ChangingText = true;
-			Text = updown_value.ToString ();
+			Text = updown_value.ToString (format);
 		}
 
 		public void ParseEditText ()
@@ -122,6 +128,7 @@ namespace System.Windows.Forms {
 			UpdateEditText ();
 		}
 
+		[Bindable(true)]
 		public decimal Value {
 			get {
 				return updown_value;
@@ -138,10 +145,21 @@ namespace System.Windows.Forms {
 						String.Format ("Value {0} not within boundaries [{1}, {2}]", value, min, max));
 				
 				updown_value = value;
-				Text = updown_value.ToString ();
+				Text = updown_value.ToString (format);
 			}
 		}
 
+		public decimal Increment {
+			get {
+				return increment;
+			}
+
+			set {
+				increment = value;
+			}
+		}
+		
+		[RefreshProperties(RefreshProperties.All)]
 		public decimal Maximum {
 			get {
 				return max;
@@ -157,6 +175,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[RefreshProperties(RefreshProperties.All)]
 		public decimal Minimum {
 			get {
 				return min;
@@ -182,17 +201,38 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public bool ThousandsSepator {
+		void UpdateFormat ()
+		{
+			if (thousand)
+				format = "N" + decimal_places.ToString ();
+			else
+				format = "F" + decimal_places.ToString ();
+		}
+		
+		public bool ThousandsSeparator {
 			get {
 				return thousand;
 			}
 
 			set {
 				thousand = value;
+				UpdateFormat ();
 				UpdateEditText ();
 			}
 		}
 
+		public int DecimalPlaces {
+			get {
+				return decimal_places;
+			}
+
+			set {
+				decimal_places = value;
+				UpdateFormat ();
+				UpdateEditText ();
+			}
+		}
+		
 #region Overrides for Control hooks
 
 		protected override void OnLostFocus (EventArgs e)
@@ -222,6 +262,10 @@ namespace System.Windows.Forms {
 		}
 #endregion
 		
-		
+
+		public override string ToString ()
+		{
+			return String.Format ("{0} Min={0} Max={1}", base.ToString (), min, max);
+		}
 	}
 }

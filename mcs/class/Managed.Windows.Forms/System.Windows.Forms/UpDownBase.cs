@@ -45,6 +45,8 @@ TODO:
 */
 using System;
 using System.Drawing;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	public abstract class UpDownBase : ContainerControl {
@@ -326,6 +328,7 @@ namespace System.Windows.Forms {
 			spinner.SetBounds (entry_width + 1, bounds.Y, scrollbar_button_size, bounds.Height);
 		}
 
+#if NET_2_0
 		protected override void OnPaint (PaintEventArgs e)
 		{
 			base.OnPaint (e);
@@ -337,7 +340,9 @@ namespace System.Windows.Forms {
 		{
 			base.SetVisibleCore (state);
 		}
+#endif
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc (ref Message m)
 		{
 			base.WndProc (ref m);
@@ -404,6 +409,9 @@ namespace System.Windows.Forms {
 #region UpDownBase Properties
 
 		/* FIXME: Do not know what Autoscroll should do */
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
 		public virtual bool AutoScroll {
 			get {
 				return base.AutoScroll;
@@ -415,6 +423,9 @@ namespace System.Windows.Forms {
 		}
 
 		/* FIXME: Do not know what AutoscrollMargin does */
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
 		public new Size AutoScrollMargin {
 			get {
 				return base.AutoScrollMargin;
@@ -426,6 +437,9 @@ namespace System.Windows.Forms {
 		}
 
 		/* FIXME: Do not know what AutoscrollMinSize does */
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
 		public new Size AutoScrollMinSize {
 			get {
 				return base.AutoScrollMinSize;
@@ -446,6 +460,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
 		public override Image BackgroundImage {
 			get {
 				return entry.BackgroundImage;
@@ -456,6 +473,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(BorderStyle.Fixed3D)]
+		[DispId(-504)]
 		public BorderStyle BorderStyle {
 			get {
 				return border_style;
@@ -546,6 +565,7 @@ namespace System.Windows.Forms {
                         }
                 }
 
+		[DefaultValue(false)]
 		public bool ReadOnly {
 			get {
 				return entry.ReadOnly;
@@ -570,6 +590,53 @@ namespace System.Windows.Forms {
 		}
 #endregion
 
+#region Events
+		//
+		// All these events are just a proxy to the base class,
+		// we must overwrite them for API compatibility
+		//
+		
+		public new event EventHandler MouseEnter {
+			add {
+				base.MouseEnter += value;
+			}
+
+			remove {
+				base.MouseEnter -= value;
+			}
+		}
+
+		public new event EventHandler MouseHover {
+			add {
+				base.MouseHover += value;
+			}
+
+			remove {
+				base.MouseHover -= value;
+			}
+		}
+
+		public new event EventHandler MouseLeave {
+			add {
+				base.MouseLeave += value;
+			}
+
+			remove {
+				base.MouseLeave -= value;
+			}
+		}
+
+		public new event EventHandler BackgroundImageChanged {
+			add {
+				base.BackgroundImageChanged += value;
+			}
+
+			remove {
+				base.BackgroundImageChanged -= value;
+			}
+		}
+#endregion
+		
 #region Abstract methods
 		public abstract void DownButton ();
 		public abstract void UpButton ();
