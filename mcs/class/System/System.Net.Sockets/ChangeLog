@@ -1,3 +1,7 @@
+2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* NetworkStream.cs: Added [In,Out] attributes to Read method.
+
 2003-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TcpListener.cs: various fixes to make the new tests pass. Closes

@@ -8,6 +8,7 @@
 //
 
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace System.Net.Sockets
 {
@@ -238,7 +239,7 @@ namespace System.Net.Sockets
 			GC.SuppressFinalize (this);
 		}
 
-		public override int Read (byte [] buffer, int offset, int size)
+		public override int Read ([In,Out] byte [] buffer, int offset, int size)
 		{
 			CheckDisposed ();
 			int res;
@@ -257,7 +258,7 @@ namespace System.Net.Sockets
 			} catch (Exception e) {
 				throw new IOException ("Read failure", e);
 			}
-
+			
 			return res;
 		}
 
