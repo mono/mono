@@ -1,4 +1,8 @@
 
+Mon Feb 11 11:20:57 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86.brg: fix invalid cast check in unbox. Pack MBTree structure.
+
 Sun Feb 10 12:54:05 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* emit-x86.c: make x86_magic_trampoline() handle call instructions
