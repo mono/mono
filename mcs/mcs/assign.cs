@@ -388,7 +388,7 @@ namespace Mono.CSharp {
 			}
 			
 			FieldExpr field_exp = target as FieldExpr;
-			if (field_exp != null && !ec.IsConstructor && !ec.IsFieldInitializer) {
+			if (field_exp != null && field_exp.DeclaringType.IsValueType && !ec.IsConstructor && !ec.IsFieldInitializer) {
 				field_exp = field_exp.InstanceExpression as FieldExpr;
 				if (field_exp != null && field_exp.FieldInfo.IsInitOnly) {
 					if (field_exp.IsStatic) {

@@ -1,3 +1,9 @@
+2004-12-07  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70106
+	* assign.cs.cs (Assign.DoResolve): Reports error 1648 for value types
+	only.
+
 2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs-parser.jay : handle doc comments on implicit/explicit operators.
