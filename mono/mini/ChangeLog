@@ -1,5 +1,7 @@
 2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
-	
+
+	* mini-amd64.c (mono_arch_allocate_vars): Use mono_allocate_stack_slots ().
+
 	* mini.c (mono_allocate_stack_slots): Add a fixme.
 
 	* mini-x86.c (mono_arch_allocate_vars): Use mono_allocate_stack_slots ().
