@@ -1,3 +1,11 @@
+2003-05-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSCompiler.cs: actually add the list of referenced assemblies to the
+	compiler options. Throw a CompilationException if there's an error.
+
+	* CachingCompiler.cs: added a method to compile directly from a source
+	file.
+	
 2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: copy the location before setting the value for the

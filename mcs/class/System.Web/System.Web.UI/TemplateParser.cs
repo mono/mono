@@ -8,6 +8,7 @@
 // (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
 //
 using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.IO;
 using System.Reflection;
@@ -321,10 +322,15 @@ namespace System.Web.UI
 
 			AddDependency (realPath);
 
-			//TODO: support other languages
-			Assembly assembly = CSCompiler.CompileCSFile (realPath, assemblies);
-			AddAssembly (assembly, true);
-			return assembly;
+			CompilerResults result = CachingCompiler.Compile (realPath, assemblies);
+			if (result.NativeCompilerReturnValue != 0) {
+				StringWriter writer = new StringWriter();
+				StreamReader reader = new StreamReader (realPath);
+				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
+			}
+
+			AddAssembly (result.CompiledAssembly, true);
+			return result.CompiledAssembly;
 		}
 		
 		protected abstract Type DefaultBaseType { get; }

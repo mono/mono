@@ -10,6 +10,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Web.UI;
 
@@ -115,6 +116,41 @@ namespace System.Web.Compilation
 
 				results = compiler.Compiler.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
 				cache [key] = new CompilationCacheItem (results, compiler.Parser.Dependencies);
+			}
+
+			return results;
+		}
+
+		static CompilerParameters GetOptions (ICollection assemblies)
+		{
+			CompilerParameters options = new CompilerParameters ();
+			if (assemblies != null) {
+				StringCollection coll = new StringCollection ();
+				foreach (string str in assemblies)
+					coll.Add (str);
+
+				options.ReferencedAssemblies = coll;
+			}
+
+			return options;
+		}
+
+		public static CompilerResults Compile (string file, ArrayList assemblies)
+		{
+			CompilationCacheItem item = GetCached (file);
+			if (item != null)
+				return item.Result;
+			
+			CompilerResults results = null;
+			lock (compilationLock) {
+				item = GetCached (file);
+				if (item != null)
+					return item.Result;
+
+				CompilerParameters options = GetOptions (assemblies);
+				//TODO: support for other languages
+				results = CSCompiler.Compiler.CompileAssemblyFromFile (options, file);
+				cache [file] = new CompilationCacheItem (results, null);
 			}
 
 			return results;

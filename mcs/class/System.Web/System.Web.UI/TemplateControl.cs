@@ -30,8 +30,6 @@ namespace System.Web.UI {
 
 		const BindingFlags bflags = BindingFlags.Public |
 					    BindingFlags.NonPublic |
-					    BindingFlags.DeclaredOnly |
-					    BindingFlags.Static |
 					    BindingFlags.Instance;
 
 		#region Constructor

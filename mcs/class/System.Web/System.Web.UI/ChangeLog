@@ -1,3 +1,11 @@
+2003-05-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControl.cs: fixed the flags used to find the methods that
+	are automatically hooked up on events.
+
+	* TemplateParser.cs: don't compile a source file directly.  Use the
+	cache instead.
+
 2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseParser.cs: Location property is now here. Added a couple of

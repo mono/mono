@@ -11,6 +11,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Specialized;
+using System.IO;
 using System.Text;
 using System.Reflection;
 using Microsoft.CSharp;
@@ -40,6 +41,8 @@ namespace System.Web.Compilation
 				StringCollection coll = new StringCollection ();
 				foreach (string str in assemblies)
 					coll.Add (str);
+
+				options.ReferencedAssemblies = coll;
 			}
 		}
 
@@ -47,13 +50,8 @@ namespace System.Web.Compilation
 		{
 			CompilerResults results = compiler.CompileAssemblyFromFile (options, filename);
 			if (results.NativeCompilerReturnValue != 0) {
-				StringBuilder errors = new StringBuilder ();
-				foreach (CompilerError error in results.Errors) {
-					errors.Append (error);
-					errors.Append ('\n');
-				}
-
-				throw new HttpException ("Error compiling " + filename + "\n" + errors.ToString ());
+				StreamReader reader = new StreamReader (filename);
+				throw new CompilationException (filename, results.Errors, reader.ReadToEnd ());
 			}
 
 			return results.CompiledAssembly;
