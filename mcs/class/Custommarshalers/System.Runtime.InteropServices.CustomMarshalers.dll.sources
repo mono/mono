@@ -1,3 +1,6 @@
+./Assembly/AssemblyInfo.cs
+./Assembly/Locale.cs
+./Assembly/TODOAttribute.cs
 ./System.Runtime.InteropServices.CustomMarshalers/EnumerableToDispatchMarshaler.cs
 ./System.Runtime.InteropServices.CustomMarshalers/ExpandoToDispatchExMarshaler.cs
 ./System.Runtime.InteropServices.CustomMarshalers/EnumeratorToEnumVariantMarshaler.cs
