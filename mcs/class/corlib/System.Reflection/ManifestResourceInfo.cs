@@ -13,6 +13,10 @@ namespace System.Reflection
 		private string _filename;
 		private ResourceLocation _location;
 
+		internal ManifestResourceInfo ()
+		{
+		}
+
 		internal ManifestResourceInfo (Assembly assembly, string filename, ResourceLocation location)
 		{
 			_assembly = assembly;
