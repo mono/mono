@@ -504,8 +504,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 						
 			palbuff = Marshal.AllocHGlobal (size);
 			
-			try {
-				Console.WriteLine ("point 2->{0}", size);
+			try {				
 				status = GDIPlus.GdipGetImagePalette (nativeObject, palbuff, size);
 				GDIPlus.CheckStatus (status);
 						
