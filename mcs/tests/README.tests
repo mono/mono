@@ -585,6 +585,10 @@ Method group conversions for C# 2.0
 ----------
 Test iterators using foreach where you have to load the address of a struct
 
+2test-15.cs
+-----------
+Partial type with a destructor.
+
 pu-ip.cs, pu-pi.cs, pi.cs, pu.cs
 --------------------------------
 Test that the order for internal/public in external assemblies does not
