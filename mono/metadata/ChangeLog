@@ -1,3 +1,8 @@
+2003-03-03  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (create_sockaddr_from_object): Rename sockaddr_un
+	variable so it compiles on solaris.  Problem spotted by
+	Christopher Taylor <ct@cs.clemson.edu>
 
 2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
