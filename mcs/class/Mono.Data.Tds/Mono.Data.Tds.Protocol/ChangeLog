@@ -1,3 +1,8 @@
+2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Tds.cs: set the charset for MS SQL 2000. Patch from Aleksandar
+	Dezelin. Closes bug #73591.
+
 2004-11-06 Gert Driesen <drieseng@users.sourceforge.net>
 	* Tds70.cs: For numeric parameters, convert enum to numeric value.
 	Fixes bug #66630.

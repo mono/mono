@@ -1011,8 +1011,7 @@ namespace Mono.Data.Tds.Protocol {
 			case TdsEnvPacketSubType.CharSet :
 				cLen = comm.GetByte () & 0xff;
 				if (tdsVersion == TdsVersion.tds70) {
-					//this.language = comm.GetString (cLen); // FIXME
-					comm.GetString (cLen);
+					SetCharset (comm.GetString (cLen));
 					comm.Skip (len - 2 - cLen * 2);
 				}
 				else {
