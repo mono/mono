@@ -1,3 +1,8 @@
+2005-03-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (emit_call): Handle the case when the callee might be
+	an AOT method.
+
 2005-03-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Reorder cases to be
