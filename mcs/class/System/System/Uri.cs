@@ -41,6 +41,8 @@ namespace System
 		private string query = String.Empty;
 		private string fragment = String.Empty;
 		private string userinfo = String.Empty;
+		private bool is_root_path = false;
+		private bool is_wins_dir = true;
 
 		private string [] segments;
 		
@@ -299,7 +301,7 @@ namespace System
 				if (System.IO.Path.DirectorySeparatorChar == '\\')
 					return "\\\\" + Unescape (host + path.Replace ('/', '\\'));
 				else 
-					return "/" + Unescape (host + path);
+					return (is_root_path? "/": "") + (is_wins_dir? "/": "") + Unescape (host + path);
 			} 
 		}
 
@@ -506,7 +508,7 @@ namespace System
 				StringBuilder s = new StringBuilder ();
 				s.Append (scheme);
 				s.Append (GetSchemeDelimiter (scheme));
-				if (path.Length > 1 && path [1] == ':' && "file".Equals (scheme)) 
+				if (path.Length > 1 && path [1] == ':' && (Uri.UriSchemeFile == scheme)) 
 					s.Append ('/');  // win32 file
 				if (userinfo.Length > 0) 
 					s.Append (userinfo).Append ('@');
@@ -519,7 +521,7 @@ namespace System
 				StringBuilder sb = new StringBuilder ();
 				sb.Append (scheme);
 				sb.Append (GetSchemeDelimiter (scheme));
-				if (path.Length > 1 && path [1] == ':' && "file".Equals (scheme)) 
+				if (path.Length > 1 && path [1] == ':' && (Uri.UriSchemeFile == scheme)) 
 					sb.Append ('/');  // win32 file
 				if (userinfo.Length > 0) 
 					sb.Append (userinfo).Append ('@');
@@ -738,12 +740,23 @@ namespace System
 				throw new UriFormatException ("The format of the URI could not be determined.");
 			
 			bool isUnixFilepath = false;
-			
+
+			if (c == '/') {
+				is_root_path = true;
+			}
+
+			if ((uriString.Length >= 2) &&
+					((uriString [0] == '/') || (uriString [0] == '\\')) &&
+					((uriString [1] == '/') || (uriString [1] == '\\'))) {
+				is_wins_dir = true;
+				is_root_path = true;
+			}
+
 			// 2 scheme
 			if (c == ':') {				
 				if (pos == 1) {
 					// a windows filepath
-					scheme = "file";
+					scheme = Uri.UriSchemeFile;
 					path = uriString.Replace ('\\', '/');
 					return;
 				}
@@ -752,17 +765,17 @@ namespace System
 				uriString = uriString.Remove (0, pos + 1);
 			} else if ((c == '/') && (pos == 0)) {
 				// unix bare filepath
-				scheme = "file";
-				uriString = "//" + uriString;	
+				scheme = Uri.UriSchemeFile;
+				uriString = "//" + uriString;
 				isUnixFilepath = true;
 			} else
-				scheme = "file";
+				scheme = Uri.UriSchemeFile;
 						
 			// 3
 			if ((uriString.Length >= 2) && 
 			    ((uriString [0] == '/') || (uriString [0] == '\\')) &&
 			    ((uriString [1] == '/') || (uriString [1] == '\\'))) 
-				if ("file".Equals (scheme)) 
+				if (scheme == Uri.UriSchemeFile) 
 					uriString = uriString.TrimStart (new char [] {'/', '\\'});			    	
 				else
 				    	uriString = uriString.Remove (0, 2);
@@ -785,7 +798,8 @@ namespace System
 			pos = uriString.IndexOfAny (new char[] {'/', '\\'});
 			if (pos == -1) {
 				if ((scheme != Uri.UriSchemeMailto) &&
-				    (scheme != Uri.UriSchemeNews))
+				    (scheme != Uri.UriSchemeNews) &&
+					(scheme != Uri.UriSchemeFile))
 					path = "/";
 			} else {
 				path = uriString.Substring (pos).Replace ('\\', '/');

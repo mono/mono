@@ -1,3 +1,9 @@
+2003-10-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Uri.cs: fixed a problem with some URIs like file://some_file.txt
+	It used to return "/some_file.txt/" instead of "some_file.txt" in
+	LocalPath. Fix handling of full path files and SMB addresses.
+
 2003-08-12  Duncan Mak  <duncan@ximian.com>
 
 	* Uri.cs (constructor): Properly implement RFC 2396, Par. 5.2,

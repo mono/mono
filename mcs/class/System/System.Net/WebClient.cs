@@ -291,8 +291,14 @@ namespace System.Net
 			}
 			
 
-			if (baseAddress == null && query == null)
-				return new Uri (path);
+			if (baseAddress == null && query == null) {
+				try {
+					return new Uri (path);
+				}
+				catch (System.UriFormatException ufe) {
+					return new Uri ("file://" + path);
+				}
+			}
 
 			if (baseAddress == null)
 				return new Uri (path + query, (query != null));

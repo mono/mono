@@ -1,3 +1,8 @@
+2003-10-10  Pedro Martínez Julá  <yoros.wanadoo.es>
+
+	* UriTest.cs: added some test for "file://one_file.txt". Uri used to
+	fail with this URIs.
+
 2003-08-18  Nick Drochak  <ndrochak@gol.com>
 
 	* UriBuilderTest.cs: Separated tests into NUnit v2 style. Need to track

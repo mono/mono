@@ -1,3 +1,9 @@
+2003-10-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* WebClient.cs: MS.NET works right when we try OpenRead("file.txt")
+	but we didn't. Now, when Uri fails with an exception, it adds
+	"file://" before the URI and tries again.
+
 2003-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ServicePoint.cs: preparing for recycling. Not yet finished.

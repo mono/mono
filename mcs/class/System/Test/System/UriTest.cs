@@ -119,7 +119,7 @@ namespace MonoTests.System
 			if (isWin32)
 				Assertion.AssertEquals ("#n11", @"\\myserver\mydir\mysubdir\myfile.ext", uri.LocalPath);
 			else
-				Assertion.AssertEquals ("#n11", "/myserver/mydir/mysubdir/myfile.ext", uri.LocalPath);
+				Assertion.AssertEquals ("#n11", "//myserver/mydir/mysubdir/myfile.ext", uri.LocalPath);
 
 			Assertion.AssertEquals ("#n12", "/mydir/mysubdir/myfile.ext", uri.PathAndQuery);
 			Assertion.AssertEquals ("#n13", -1, uri.Port);
@@ -204,6 +204,17 @@ namespace MonoTests.System
 			Assertion.AssertEquals ("#5c", "file", uri.Scheme);
 			Assertion.AssertEquals ("#5d", "", uri.Host);
 			Assertion.AssertEquals ("#5e", "c:/cygwin/tmp/hello.txt", uri.AbsolutePath);
+			
+			uri = new Uri("file://one_file.txt");
+			Assertion.AssertEquals("#6a", "file://one_file.txt", uri.ToString());
+			if (isWin32)
+				Assertion.AssertEquals("#6b", "\\\\one_file.txt", uri.LocalPath);
+			else
+				Assertion.AssertEquals("#6b", "/one_file.txt", uri.LocalPath);
+			Assertion.AssertEquals("#6c", "file", uri.Scheme);
+			Assertion.AssertEquals("#6d", "one_file.txt", uri.Host);
+			Assertion.AssertEquals("#6e", "", uri.AbsolutePath);
+
 		}
 		
 		[Test]
