@@ -110,8 +110,6 @@ namespace System.Web.Caching {
 			bool lookup = true;
 			
 			if (varyby == null) {
-				int secs = (ideal_duration > context.Response.Cache.Duration ?
-						ideal_duration : context.Response.Cache.Duration);
 				varyby = new CachedVaryBy (context.Response.Cache, vary_key);
 				context.Cache.InsertPrivate (vary_key, varyby, null,
 						Cache.NoAbsoluteExpiration,
