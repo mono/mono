@@ -34,6 +34,10 @@ namespace System.Security.Cryptography {
 				return true;
 			}
 		}
+
+		void System.IDisposable.Dispose() 
+		{
+                }
 	
 		/// <summary>
 		/// Computes the entire hash of all the bytes in the byte array.
@@ -50,17 +54,18 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Creates the default implementation of the default hash algorithm (SHA1).
 		/// </summary>
-		public static HashAlgorithm Create () {
-			return SHA1.Create ();
+		public static HashAlgorithm Create () 
+                {
+			return Create ("System.Security.Cryptography.HashAlgorithm");
 		}
 	
 		/// <summary>
 		/// Creates a specific implementation of the general hash idea.
 		/// </summary>
-		/// <param name="st">FIXME: No clue.  Specifies which derived class to create.</param>
-		[MonoTODO]
-		public static HashAlgorithm Create (string st) {
-			return Create ();
+		/// <param name="st">Specifies which derived class to create.</param>
+		public static HashAlgorithm Create (string hashName) 
+                {
+			return (HashAlgorithm) CryptoConfig.CreateFromName (hashName);
 		}
 	
 		/// <summary>
