@@ -148,8 +148,8 @@ namespace System.Web {
 			}
 
 			if (_oServerVariables == null){ 
-				_oServerVariables = new ServerVariablesCollection(this);            
- 				_oServerVariables.MakeReadOnly();
+				_oServerVariables = new ServerVariablesCollection (this);            
+ 				_oServerVariables.MakeReadOnly ();
 			}
 		}
 
@@ -241,18 +241,12 @@ namespace System.Web {
 			return _arrRawContent;
 		}
 		
-		internal HttpContext Context
-		{
-			get{
-				return _oContext;
-			}
+		internal HttpContext Context {
+			get { return _oContext; }
 		}
 
-		internal HttpWorkerRequest WorkerRequest
-		{
-			get{
-				return _WorkerRequest;
-			}
+		internal HttpWorkerRequest WorkerRequest {
+			get { return _WorkerRequest; }
 		}
 
 		public string [] AcceptTypes {

@@ -1,7 +1,10 @@
+2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: removed extra ^Ms and fixed style of last patch.
+
 2004-06-08  Alon Gazit  <along@mainsoft.com>
 
 	* HttpRequest.cs: Add a patch for HttpRequest.ServerVariables.
-
 
 2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
