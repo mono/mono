@@ -1,3 +1,21 @@
+2002-10-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Following the comment from 2002-09-26 to AddMethod, I
+	have fixed a remaining problem: not every AddXXXX was adding a
+	fully qualified name.  
+
+	Now everyone registers a fully qualified name in the DeclSpace as
+	being defined instead of the partial name.  
+
+	Downsides: we are slower than we need to be due to the excess
+	copies and the names being registered this way.  
+
+	The reason for this is that we currently depend (on the corlib
+	bootstrap for instance) that types are fully qualified, because
+	we dump all the types in the namespace, and we should really have
+	types inserted into the proper namespace, so we can only store the
+	basenames in the defined_names array.
+
 2002-10-10  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (ArrayAccess.EmitStoreOpcode): Reverted the patch
