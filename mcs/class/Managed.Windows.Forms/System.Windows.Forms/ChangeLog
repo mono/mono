@@ -1,5 +1,9 @@
 2004-12-20  Peter Bartok  <pbartok@novell.com>
 
+	* CommonDialog.cs: Initial check-in
+
+2004-12-20  Peter Bartok  <pbartok@novell.com>
+
 	* Control.cs (Visible): Now uses the parent window instead of the
 	  client area window for the property
 
