@@ -1,4 +1,13 @@
 
+Fri Jan 11 18:54:42 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: don't try to output a code RVA for abstract methods.
+	Small fixes for method header format. Output parameter info to the
+	ParamDef table. Save method overriding info to MethodImpl table.
+	Fix property support. Allow typedef.extends to be a type in the
+	building assembly.
+	* verify.c: fix off-by-one error.
+
 Thu Jan 10 19:36:27 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: fix mono_class_from_mono_type () for szarray types.
