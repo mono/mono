@@ -1,5 +1,10 @@
 2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
 
+	* string-icalls.c (mono_string_InternalRemove): Fixed overwrite bug.
+	* object.h (mono_string_chars): Changed casting type.
+
+2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
+
 	* string-icalls.c: Fixed trim method, added the constructors done by Duncan, fixed
 			   method signatures to use gunichar2 instead of gint16.
 
