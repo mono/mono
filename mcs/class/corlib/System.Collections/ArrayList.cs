@@ -1,4 +1,3 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Collections.ArrayList
 //
@@ -65,12 +64,12 @@ namespace System.Collections {
 		}
 
 		[MonoTODO]
-		public static ArrayList Synchronized (IList list) {
+		public static IList Synchronized (IList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.Synchronized");
 		}
 
 		[MonoTODO]
-		public static ArrayList FixedSize (ArrayList list) {
+		public static IList FixedSize (ArrayList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
 		}
 

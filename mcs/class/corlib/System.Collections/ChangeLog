@@ -1,3 +1,9 @@
+2002-03-13  Duncan Mak  <duncan@ximian.com>
+
+	* ArrayList.cs (FixedSize): Changed the return type to IList if
+	the argument is an IList.
+	(Synchronized): Ditto here.
+
 2002-03-08  Sergey Chaban <serge@wildwestsoftware.com>
 
 	* Hashtable.cs: Fixed ToPrime () bug. Removed ALLOC_GRAIN.
