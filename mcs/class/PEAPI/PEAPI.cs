@@ -3669,7 +3669,7 @@ if (rsrc != null)
 
     internal FileRef(uint nameIx, byte[] hashBytes, bool metaData,
                       bool entryPoint, MetaData md) {
-      if (metaData) flags = HasMetaData;
+      if (!metaData) flags = NoMetaData;
       if (entryPoint) md.SetEntryPoint(this);
       this.nameIx = nameIx;
       hashIx = md.AddToBlobHeap(hashBytes);
@@ -5593,7 +5593,7 @@ if (rsrc != null)
                         }
                         return 0;
     }
-
+  }
   /**************************************************************************/  
         /// <summary>
         /// Descriptor for another module in THIS assembly
