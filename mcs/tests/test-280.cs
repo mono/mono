@@ -1,3 +1,5 @@
+//
+// Thisis just a compilation test for bug 61593
 using System;
 namespace AppFramework.Util
 {
@@ -15,5 +17,7 @@ namespace AppFramework.Util
            return false;
        }
    }
+
+  static void Main () {}
 }
  
