@@ -1,5 +1,11 @@
 2003-08-19 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Implement address constants and string
+	constants. Add data definitions to their types, and create data
+	item lists. Also implement long form overrides.
+	
+2003-08-19 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Add override methods.
 	
 2003-08-10 Jackson Harper <jackson@latitudegeo.com>

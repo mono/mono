@@ -634,8 +634,30 @@ class_decl		: method_all
                           {
                                 codegen.CurrentTypeDef.SetPack ((int) $2);
                           }
-			| D_OVERRIDE type_spec DOUBLE_COLON method_name
-			  K_WITH call_conv type type_spec DOUBLE_COLON method_name
+			| D_OVERRIDE type_spec DOUBLE_COLON method_name K_WITH call_conv type
+                          type_spec DOUBLE_COLON method_name type_list
+                          {
+                                //
+                                // My copy of the spec didn't have a type_list but
+                                // it seems pretty crucial
+                                //
+                                ITypeRef owner = (ITypeRef) $2;
+                                ArrayList arg_list = (ArrayList) $11;
+                                ITypeRef[] param_list;
+                                IMethodRef decl;
+
+                                if (arg_list != null)
+                                        param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
+                                else
+                                        param_list = new ITypeRef[0];
+
+                                decl = owner.GetMethodRef ((ITypeRef) $7,
+                                        (CallConv) $6, (string) $4, param_list);
+
+                                string sig = MethodDef.CreateSignature ((string) $10,
+                                                                        param_list);
+                                codegen.CurrentTypeDef.AddOverride (sig, decl);                                        
+                          }
 			  OPEN_PARENS sig_args CLOSE_PARENS
 			| language_decl
                         | constraint_decl
@@ -1068,11 +1090,11 @@ field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
                                 if ($2 != null) {
                                         field_def.SetOffset ((uint) $2);
                                 }
-                                /*
+                                
                                 if ($6 != null) {
                                         field_def.AddDataValue ((DataConstant) $6);
                                 }
-                                */
+                                
                                 if ($7 != null) {
                                         field_def.SetValue ((Constant) $7);
                                 }
@@ -1151,8 +1173,8 @@ field_attr		: /* EMPTY */
 at_opt			: /* EMPTY */
 			| K_AT id
                           {
-                                // TODO: Implement DataTable
-                                // $$ = new DataConstant (DataTable.GetOffset ((string) $2));
+                                // DataDef def = new DataDef ((string) $2, false);
+                                // def.PeapiConstant = new DataConstant (DataTable.GetOffset ((string) $2));
                           }
 			;
 
@@ -1220,9 +1242,6 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
 
 data_decl		: data_head data_body
                           {
-                                /*
-                                Console.WriteLine ("Creating data decl: '{0}' '{1}'", $1, $2);
-
                                 DataDef datadef = (DataDef) $1;
                                 
                                 if ($2 is ArrayList) {
@@ -1236,7 +1255,7 @@ data_decl		: data_head data_body
                                 } else {
                                         datadef.PeapiConstant = (PEAPI.Constant) $2;
                                 }
-                                */
+                                codegen.CurrentTypeDef.AddDataDef ((DataDef) $1);
                           }
 			;
 
@@ -1259,11 +1278,27 @@ data_body		: OPEN_BRACE dataitem_list CLOSE_BRACE
 			;
 
 dataitem_list		: dataitem
+                          {
+                                ArrayList dataitem_list = new ArrayList ();
+                                dataitem_list.Add ($1);
+                                $$ = dataitem_list;
+                          }
 			| dataitem_list COMMA dataitem
+                          {
+                                ArrayList list = (ArrayList) $1;
+                                list.Add ($3);
+                          }
 			;
 
 dataitem		: K_CHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
+                          {
+                                $$ = new StringConst ((string) $4);
+                          }
 			| AMPERSAND OPEN_PARENS id CLOSE_PARENS
+                          {
+                                DataDef def = codegen.CurrentTypeDef.GetDataDef ((string) $3);
+                                $$ = new AddressConstant ((DataConstant) def.PeapiConstant);
+                          }
 			| K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
                           {
                                 $$ = new ByteArrConst ((byte[]) $4);
