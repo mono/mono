@@ -1,6 +1,12 @@
+2003-04-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509CertificateTest.cs: Commented ToString() test because of the
+	dates included within (which makes the comparison with a pre-
+	generated value difficult).
+
 2003-04-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
-	* X509CertificateTest.cs: Corrected end-of-line issue for Linux.
+	* X509CertificateTest.cs: Corrected end-of-line issue for Linux. 
 
 2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
