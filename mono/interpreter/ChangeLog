@@ -1,4 +1,8 @@
 
+Wed Nov 7 15:47:36 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: updates for changes in array code.
+
 Fri Nov 2 19:06:54 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: hanlde field refs. Throw an exception on NULL references.

@@ -1,3 +1,20 @@
+
+Wed Nov 7 15:40:01 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, loader.c: remove the internalcall array constructors.
+	Changes to match the new MonoArray structure.
+	* object.h, object.c: an array object doesn't allocate an extra
+	vector. Add mono_array_new_full () to create jagged arrays easily.
+
+Mon Nov 5 19:51:06 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c: add mono_metadata_field_info () to
+	retreive all the info about a field from vairous tables.
+	* icall.c: implement S.Runtime.CServices::InitializeArray () icall.
+	* class.h, class.c: augment MonoClassField with more info.
+	Implemented mono_ldtoken for fields. Implemented ExplicitLayout
+	policy and load a field's RVA if needed.
+
 2001-11-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_metadata_init): create a trampoline for all
