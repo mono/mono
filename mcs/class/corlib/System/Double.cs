@@ -33,6 +33,21 @@ namespace System {
 			if (!(v is System.Double))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Double"));
 
+			if (IsPositiveInfinity(value) && IsPositiveInfinity((double) v)){
+				return 0;
+			}
+
+			if (IsNegativeInfinity(value) && IsNegativeInfinity((double) v)){
+				return 0;
+			}
+
+			if (IsNaN((double) v)) {
+				if (IsNaN(value))
+					return 0;
+				else
+					return 1;
+			}
+
 			return (int) (value - ((double) v));
 		}
 

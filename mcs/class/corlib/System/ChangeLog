@@ -1,3 +1,8 @@
+2002-03-18  Nick Drochak  <ndrochak@gol.com>
+
+	* Double.cs: Explicitly handle comparisons in CompareTo() for
+	Positive/Negative Infinity and NaN. Unit Test now passes on Linux.
+
 2002-03-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* Array.cs: Add some extra debugging information.
