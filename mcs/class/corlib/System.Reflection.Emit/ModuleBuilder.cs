@@ -44,7 +44,7 @@ namespace System.Reflection.Emit {
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces);
 			if (types != null) {
-				TypeBuilder[] new_types = new TypeBuilder [types.Length];
+				TypeBuilder[] new_types = new TypeBuilder [types.Length + 1];
 				System.Array.Copy (types, new_types, types.Length);
 				new_types [types.Length] = res;
 				types = new_types;
@@ -74,6 +74,27 @@ namespace System.Reflection.Emit {
 		public EnumBuilder DefineEnum( string name, TypeAttributes visibility, Type underlyingType) {
 			EnumBuilder eb = new EnumBuilder (this, name, visibility, underlyingType);
 			return eb;
+		}
+
+		public override Type GetType( string className) {
+			return GetType (className, false, false);
+		}
+		
+		public override Type GetType( string className, bool ignoreCase) {
+			return GetType (className, false, ignoreCase);
+		}
+		
+		public override Type GetType( string className, bool throwOnError, bool ignoreCase) {
+			int i;
+			if (types == null && throwOnError)
+				throw new TypeLoadException (className);
+			for (i = 0; i < types.Length; ++i) {
+				if (String.Compare (className, types [i].Name, ignoreCase) == 0)
+					return types [i];
+			}
+			if (throwOnError)
+				throw new TypeLoadException (className);
+			return null;
 		}
 
 		internal int get_next_table_index (int table, bool inc) {

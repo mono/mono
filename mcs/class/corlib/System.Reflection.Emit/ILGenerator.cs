@@ -185,7 +185,11 @@ namespace System.Reflection.Emit {
 			emit_int (token);
 		}
 		public virtual void Emit (OpCode opcode, Double val) {
-			throw new NotImplementedException ();
+			byte[] s = System.BitConverter.GetBytes (val);
+			make_room (10);
+			ll_emit (opcode);
+			System.Array.Copy (s, 0, code, code_len, 8);
+			code_len += 8;
 		}
 		public virtual void Emit (OpCode opcode, FieldInfo field) {
 			int token = abuilder.GetToken (field);
@@ -280,7 +284,11 @@ namespace System.Reflection.Emit {
 			emit_int (token);
 		}
 		public virtual void Emit (OpCode opcode, float val) {
-			throw new NotImplementedException ();
+			byte[] s = System.BitConverter.GetBytes (val);
+			make_room (6);
+			ll_emit (opcode);
+			System.Array.Copy (s, 0, code, code_len, 4);
+			code_len += 4;
 		}
 		public virtual void Emit (OpCode opcode, string val) {
 			int token = abuilder.GetToken (val);
@@ -289,7 +297,10 @@ namespace System.Reflection.Emit {
 			emit_int (token);
 		}
 		public virtual void Emit (OpCode opcode, Type type) {
-			throw new NotImplementedException ();
+			make_room (6);
+			ll_emit (opcode);
+			emit_int (0);
+			Console.WriteLine ("Emit (opcode, type) not implemented");
 		}
 
 		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes) {

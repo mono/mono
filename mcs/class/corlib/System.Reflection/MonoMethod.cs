@@ -108,6 +108,17 @@ namespace System.Reflection {
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
 			return null;
 		}
+
+		public override string ToString () {
+			string parms = "";
+			ParameterInfo[] p = GetParameters ();
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					parms = parms + ", ";
+				parms = parms + p [i].ParameterType.Name;
+			}
+			return Name+"("+parms+")";
+		}
 	}
 	
 	internal class MonoCMethod : ConstructorInfo {

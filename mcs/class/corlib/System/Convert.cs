@@ -1603,17 +1603,21 @@ namespace System {
 
 		// ========== Conversion / Helper Fucntions ========== //
 
+		[MonoTODO]
 		public static object ChangeType( object value, Type conversionType) {
-			return null;
+			return value;
 		}
+		[MonoTODO]
 		public static object ChangeType( object value, TypeCode typeCode) {
-			return null;
+			return value;
 		}
+		[MonoTODO]
 		public static object ChangeType( object value, Type conversionType, IFormatProvider provider) {
-			return null;
+			return value;
 		}
+		[MonoTODO]
 		public static object ChangeType( object value, TypeCode typeCode, IFormatProvider provider) {
-			return null;
+			return value;
 		}
 	
 		// Lookup table for the conversion ToType method. Order

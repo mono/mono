@@ -30,6 +30,10 @@ namespace System.Reflection.Emit {
 
 	public const int UnspecifiedTypeSize = -1;
 
+		internal override TypeAttributes AttributesImpl {
+			get {return attrs;}
+		}
+		
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			int sep_index;
 			this.parent = parent;
@@ -48,6 +52,7 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (interfaces, this.interfaces, interfaces.Length);
 			}
 			pmodule = mb;
+			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (0x02, true);
 		}
 

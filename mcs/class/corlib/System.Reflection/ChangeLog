@@ -1,3 +1,8 @@
+
+Wed Jan 9 19:37:14 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoMethod.cs: ToString () implementation.
+
 2002-01-04  Ravi Pratap  <ravi@ximian.com>
 
 	* Assembly.cs : Decorate missing bits with the MonoTODO

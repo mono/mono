@@ -96,5 +96,14 @@ namespace System {
 			//
 			// Got to think more about this.
 		}
+
+		[MonoTODO]
+		public static bool operator == (MulticastDelegate a, MulticastDelegate b) {
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public static bool operator != (MulticastDelegate a, MulticastDelegate b) {
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -1,4 +1,12 @@
 
+Wed Jan 9 19:37:55 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: emit float and doubles.
+	* ModuleBuilder.cs: off-by-one error fix and GetType()
+	implementations.
+	* TypeBuilder.cs: AttributesImpl added.
+	* UnmanagedMarshal.cs: stubbed out class.
+
 Sat Jan 5 15:59:05 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ILGenerator.cs: fix emission of two-bytes opcodes.

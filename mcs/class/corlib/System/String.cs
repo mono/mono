@@ -1656,6 +1656,14 @@ namespace System {
 		// Operators
 		public static bool operator ==(string a, string b)
 		{
+			if ((object)a == null) {
+				if ((object)b == null)
+					return true;
+				return false;
+			}
+			if ((object)b == null)
+				return false;
+	
 			if (a.length != b.length)
 				return false;
 

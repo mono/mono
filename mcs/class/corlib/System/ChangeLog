@@ -1,3 +1,10 @@
+
+Wed Jan 9 19:35:07 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MulticastDelegate.cs: add == and != operator stubs.
+	* String.cs: check for null in == operator.
+	* Type.cs: use a virtual method to get TypeAttributes.
+
 Tue Jan  8 23:30:19 EST 2002 Matt Kimball <matt@kimball.net>
 	* String.cs: Fixed several off-by-one errors in LastIndexOf* methods
 

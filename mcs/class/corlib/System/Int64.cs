@@ -120,7 +120,9 @@ namespace System {
 		public static long Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
-			throw new NotImplementedException ();
+			// throw new NotImplementedException ();
+			// good enough for now
+			return Parse (s);
 		}
 
 		public override string ToString ()

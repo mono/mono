@@ -63,13 +63,17 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern TypeAttributes get_attributes (Type type);
-		
+	
+		internal virtual TypeAttributes AttributesImpl {
+			get {return get_attributes (this);}
+		}
+
 		/// <summary>
 		///   Returns the Attributes associated with the type.
 		/// </summary>
 		public TypeAttributes Attributes {
 			get {
-				return get_attributes (this);
+				return AttributesImpl;
 			}
 		}
 		
