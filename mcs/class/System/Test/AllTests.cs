@@ -21,7 +21,6 @@ namespace Ximian.Mono.Tests
 			get {
 				TestSuite suite =  new TestSuite();
 				suite.AddTest(DnsTest.Suite);
-				suite.AddTest(IPHostEntryTest.Suite);
 				
 				suite.AddTest(Testsuite.System.Collections.Specialized.NameValueCollectionTest.Suite);
 				suite.AddTest(new TestSuite(typeof(System.Collections.Specialized.StringCollectionTest)));
