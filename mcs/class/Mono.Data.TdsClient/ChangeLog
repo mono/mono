@@ -1,3 +1,43 @@
+2002-11-04  Tim Coleman <tim@timcoleman.com>
+        * list:
+                Add Mono.Data.TdsClient.Internal.TdsInternalError
+                Add Mono.Data.TdsClient.Internal.TdsInternalErrorCollection
+                Add Mono.Data.TdsClient.Internal.TdsInternalErrorMessageEventHandler
+                Add Mono.Data.TdsClient.Internal.TdsInternalErrorMessageEventArgs
+                Add Mono.Data.TdsClient.Internal.TdsInternalInfoMessageEventHandler
+                Add Mono.Data.TdsClient.Internal.TdsInternalInfoMessageEventArgs
+                Remove Mono.Data.TdsClient.Internal.TdsPacketErrorResult
+                Remove Mono.Data.TdsClient.Internal.TdsPacketErrorResultCollection
+                Remove Mono.Data.TdsClient.Internal.TdsPacketMessageResult
+	* Mono.Data.TdsClient/TdsInfoMessageEventArgs.cs:
+	* Mono.Data.TdsClient/TdsInfoMessageEventHandler.cs:
+	* Mono.Data.TdsClient.Internal/TdsInternalError.cs:
+	* Mono.Data.TdsClient.Internal/TdsInternalErrorCollection.cs:
+	* Mono.Data.TdsClient.Internal/TdsInternalErrorMessageEventArgs.cs:
+	* Mono.Data.TdsClient.Internal/TdsInternalErrorMessageEventHandler.cs:
+	* Mono.Data.TdsClient.Internal/TdsInternalInfoMessageEventArgs.cs:
+	* Mono.Data.TdsClient.Internal/TdsInternalInfoMessageEventHandler.cs:
+		New classes added
+	* Mono.Data.TdsClient.Internal/TdsPacketErrorResult.cs:
+	* Mono.Data.TdsClient.Internal/TdsPacketErrorResultCollection.cs:
+	* Mono.Data.TdsClient.Internal/TdsPacketMessageResult.cs:
+		Classes removed
+	* Mono.Data.TdsClient/TdsCommand.cs:
+	* Mono.Data.TdsClient/TdsConnection.cs:
+	* Mono.Data.TdsClient/TdsError.cs:
+	* Mono.Data.TdsClient/TdsErrorCollection.cs:
+	* Mono.Data.TdsClient/TdsException.cs:
+	* Mono.Data.TdsClient/TdsTransaction.cs:
+	* Mono.Data.TdsClient/TdsPacketColumnInfoResult.cs:
+		More implementation
+	* Mono.Data.TdsClient.Internal/ITds.cs:
+	* Mono.Data.TdsClient.Internal/Tds.cs:
+	* Mono.Data.TdsClient.Internal/Tds42.cs:
+	* Mono.Data.TdsClient.Internal/Tds50.cs:
+	* Mono.Data.TdsClient.Internal/Tds70.cs:
+	* Mono.Data.TdsClient.Internal/Tds80.cs:
+		New events added
+
 2002-11-04  Tim Coleman (tim@timcoleman.com)
 	* list :
 		Add Mono.Data.TdsClient.Internal.TdsBigDecimal

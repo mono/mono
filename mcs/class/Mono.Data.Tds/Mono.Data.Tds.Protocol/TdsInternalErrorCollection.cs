@@ -1,27 +1,27 @@
 //
-// Mono.Data.TdsClient.Internal.TdsPacketErrorResultCollection.cs
+// Mono.Data.TdsClient.Internal.TdsInternalErrorCollection.cs
 //
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+//    Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System;
 using System.Collections;
-using System.Data;
 
 namespace Mono.Data.TdsClient.Internal {
-	internal class TdsPacketErrorResultCollection : IEnumerable
+	internal sealed class TdsInternalErrorCollection : IEnumerable 
 	{
 		#region Fields
 
 		ArrayList list;
-		
+
 		#endregion // Fields
 
 		#region Constructors
 
-		public TdsPacketErrorResultCollection ()
+		public TdsInternalErrorCollection ()
 		{
 			list = new ArrayList ();
 		}
@@ -34,8 +34,8 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return list.Count; }
 		}
 
-		public TdsPacketErrorResult this [int index] {
-			get { return (TdsPacketErrorResult) list[index]; }
+		public TdsInternalError this [int index] {
+			get { return (TdsInternalError) list[index]; }
 			set { list[index] = value; }
 		}
 
@@ -43,12 +43,17 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region Methods
 
-		public int Add (TdsPacketErrorResult error)
+		public int Add (TdsInternalError error)
 		{
-			return (list.Add (error));
+			return list.Add (error);
 		}
 
-		public IEnumerator GetEnumerator ()
+		public void Clear ()
+		{
+			list.Clear ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return list.GetEnumerator ();
 		}
@@ -56,3 +61,4 @@ namespace Mono.Data.TdsClient.Internal {
 		#endregion // Methods
 	}
 }
+

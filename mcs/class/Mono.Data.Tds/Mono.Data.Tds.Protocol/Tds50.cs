@@ -11,7 +11,7 @@ using System;
 using System.Data.Common;
 
 namespace Mono.Data.TdsClient.Internal {
-        internal class Tds50 : Tds, ITds
+        internal class Tds50 : Tds
 	{
 		#region Fields
 
@@ -45,7 +45,6 @@ namespace Mono.Data.TdsClient.Internal {
 
 			byte pad = (byte) 0;
 			byte[] empty = new byte[0];
-			bool isOkay = true;
 
 			Comm.StartPacket (TdsPacketType.Logon);
 
@@ -194,16 +193,12 @@ namespace Mono.Data.TdsClient.Internal {
 			Comm.SendPacket ();
 
 			TdsPacketResult result;
-
-			while (!((result = ProcessSubPacket()) is TdsPacketEndTokenResult)) {
-				if (result is TdsPacketErrorResult) {
-					isOkay = false;
-				}
-				// XXX Should really process some more types of packets.
+			bool done = false;
+			while (!done) {
+				result = ProcessSubPacket ();
+				done = (result is TdsPacketEndTokenResult);
 			}
-
-			IsConnected = isOkay;
-			return isOkay;
+			return IsConnected;
 		}
 
 		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()

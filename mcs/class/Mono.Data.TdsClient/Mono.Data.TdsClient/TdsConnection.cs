@@ -47,6 +47,11 @@ namespace Mono.Data.TdsClient {
 		// Our TDS object, the real workhorse
 		ITds tds = null;
 
+		TdsDataReader dataReader = null;
+
+		static readonly object EventTdsInfoMessage = new object ();
+		static readonly object EventStateChange = new object ();
+
 		#endregion // Fields
 
 		#region Constructors
@@ -87,6 +92,11 @@ namespace Mono.Data.TdsClient {
 			get { return tds.Database; }
 		}
 
+		internal TdsDataReader DataReader {
+			get { return dataReader; }
+			set { dataReader = value; }
+		}
+
 		public string DataSource {
 			get { return DataSource; }
 		}
@@ -110,42 +120,93 @@ namespace Mono.Data.TdsClient {
 		internal ITds Tds {
 			get { return tds; }
 		}
+
+		internal TdsTransaction Transaction {	
+			get { return transaction; }
+		}
 	
 		public string WorkstationId {
 			get { return parms.Hostname; }
 		}
 
 		#endregion // Properties
+		
+		#region Events
+
+		public event TdsInfoMessageEventHandler InfoMessage {
+			add { Events.AddHandler (EventTdsInfoMessage, value); }
+			remove { Events.RemoveHandler (EventTdsInfoMessage, value); }
+		}
+
+		public event StateChangeEventHandler StateChange {
+			add { Events.AddHandler (EventStateChange, value); }
+			remove { Events.RemoveHandler (EventStateChange, value); }
+		}
+
+		#endregion // Events
+
+		#region Delegates
+
+		private void ErrorHandler (object sender, TdsInternalErrorMessageEventArgs e)
+		{
+			throw new TdsException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono TdsClient Data Provider", e.State);
+		} 
+
+		private void MessageHandler (object sender, TdsInternalInfoMessageEventArgs e)
+		{
+			OnTdsInfoMessage (CreateTdsInfoMessageEvent (e.Errors));
+		}
+
+		#endregion // Delegates
 
 		#region Methods
 
 		public TdsTransaction BeginTransaction ()
 		{
-			return BeginTransaction (IsolationLevel.ReadCommitted);
+			return BeginTransaction (IsolationLevel.ReadCommitted, String.Empty);
 		}
 
-		public TdsTransaction BeginTransaction (IsolationLevel il)
+		public TdsTransaction BeginTransaction (IsolationLevel iso)
+		{
+			return BeginTransaction (iso, String.Empty);
+		}
+
+		public TdsTransaction BeginTransaction (string transactionName)
+		{
+			return BeginTransaction (IsolationLevel.ReadCommitted, transactionName);
+		}
+
+		public TdsTransaction BeginTransaction (IsolationLevel iso, string transactionName)
 		{
 			if (state == ConnectionState.Closed)
 				throw new InvalidOperationException ("Invalid operation. The connection is closed.");
-			if (transaction != null && transaction.Open)
+			if (transaction != null && transaction.IsOpen)
 				throw new InvalidOperationException ("TdsConnection does not support parallel transactions.");
-
-			transaction = new TdsTransaction (this, il);
+			tds.ExecuteNonQuery (String.Format ("BEGIN TRANSACTION {0}", transactionName));
+			transaction = new TdsTransaction (this, iso);
 			return transaction;
 		}
 
-		public void ChangeDatabase (string databaseName)
+		public void ChangeDatabase (string database)
 		{
-			if (Database == databaseName)
+			if (!IsValidDatabaseName (database))
+				throw new ArgumentException (String.Format ("The database name {0} is not valid.", database));
+			if (Database == database)
 				return;
-			tds.ExecuteNonQuery (String.Format ("use {0}", databaseName));
+			tds.ExecuteNonQuery (String.Format ("use {0}", database));
+		}
+
+		private void ChangeState (ConnectionState currentState)
+		{
+			ConnectionState originalState = state;
+			state = currentState;
+			OnStateChange (CreateStateChangeEvent (originalState, currentState));
 		}
 
 		public void Close ()
 		{
 			// rollback any open transactions
-			if (transaction != null && transaction.Open)
+			if (transaction != null && transaction.IsOpen)
 				transaction.Rollback ();
 
 			// if we aren't pooling, just close the connection
@@ -156,7 +217,9 @@ namespace Mono.Data.TdsClient {
 			else
 				tds.Disconnect ();
 
-			this.state = ConnectionState.Closed;
+			tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
+			tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
+			ChangeState (ConnectionState.Closed);
 		}
 
 		[MonoTODO]
@@ -167,7 +230,19 @@ namespace Mono.Data.TdsClient {
 
 		public TdsCommand CreateCommand ()
 		{
-			return (new TdsCommand (null, this, transaction));
+			TdsCommand command = new TdsCommand ();
+			command.Connection = this;
+			return command;
+		}
+
+		private TdsInfoMessageEventArgs CreateTdsInfoMessageEvent (TdsInternalErrorCollection errors)
+		{
+			return new TdsInfoMessageEventArgs (errors);
+		}
+
+		private StateChangeEventArgs CreateStateChangeEvent (ConnectionState originalState, ConnectionState currentState)
+		{
+			return new StateChangeEventArgs (originalState, currentState);
 		}
 
                 object ICloneable.Clone()
@@ -188,6 +263,25 @@ namespace Mono.Data.TdsClient {
 		IDbCommand IDbConnection.CreateCommand ()
 		{
 			return CreateCommand ();
+		}
+
+		static bool IsValidDatabaseName (string database)
+		{
+			if (database.Length > 32 || database.Length < 1)
+				return false;
+
+			if (database[0] == '"' && database[database.Length] == '"')
+				database = database.Substring (1, database.Length - 2);
+			else if (Char.IsDigit (database[0]))
+				return false;
+
+			if (database[0] == '_')
+				return false;
+
+			foreach (char c in database.Substring (1, database.Length - 1))
+				if (!Char.IsLetterOrDigit (c) && c != '_')
+					return false;
+			return true;
 		}
 
 		public void Open ()
@@ -212,11 +306,15 @@ namespace Mono.Data.TdsClient {
 				tds = pool.AllocateConnection ();
 			}
 
+			tds.TdsErrorMessage += new TdsInternalErrorMessageEventHandler (ErrorHandler);
+			tds.TdsInfoMessage += new TdsInternalInfoMessageEventHandler (MessageHandler);
+
 			if (!tds.IsConnected) {
 				tds.Connect (parms);
 				ChangeDatabase (parms.Database);
 			}
-			this.state = ConnectionState.Open;
+
+			ChangeState (ConnectionState.Open);
 		}
 
 		[MonoTODO]
@@ -361,7 +459,7 @@ namespace Mono.Data.TdsClient {
 				case "NET" :
 				case "NETWORK LIBRARY" :
 					if (!value.ToUpper ().Equals ("DBMSSOCN"))
-						throw new TdsException ("Unsupported network library.");
+						throw new NotSupportedException ("Unsupported network library.");
 					break;
 				case "PACKET SIZE" :
 					packetSize = Int32.Parse (value);
@@ -384,6 +482,21 @@ namespace Mono.Data.TdsClient {
 				}
 			}
 		}
+
+		private void OnTdsInfoMessage (TdsInfoMessageEventArgs value)
+		{
+			TdsInfoMessageEventHandler handler = (TdsInfoMessageEventHandler) Events [EventTdsInfoMessage];
+			if (handler != null)
+				handler (this, value);
+		}
+
+		private void OnStateChange (StateChangeEventArgs value)
+		{
+			StateChangeEventHandler handler = (StateChangeEventHandler) Events [EventStateChange];
+			if (handler != null)
+				handler (this, value);
+		}
+
 		#endregion // Methods
 	}
 }

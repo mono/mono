@@ -10,7 +10,7 @@
 using System;
 
 namespace Mono.Data.TdsClient.Internal {
-        internal class Tds80 : Tds, ITds
+        internal class Tds80 : Tds
 	{
 		#region Fields
 

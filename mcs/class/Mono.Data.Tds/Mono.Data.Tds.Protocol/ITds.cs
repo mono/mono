@@ -40,11 +40,6 @@ namespace Mono.Data.TdsClient.Internal {
 			get;
 		}
 
-		TdsPacketErrorResultCollection Errors {
-			get;
-		}
-
-
 		ArrayList OutputParameters {
 			get;	
 			set;
@@ -64,5 +59,12 @@ namespace Mono.Data.TdsClient.Internal {
 		void SkipToEnd ();
 
 		#endregion
+
+		#region Events
+
+		event TdsInternalErrorMessageEventHandler TdsErrorMessage;
+		event TdsInternalInfoMessageEventHandler TdsInfoMessage;
+
+		#endregion // Events
 	}
 }

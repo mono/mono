@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlTypes;
@@ -18,7 +19,7 @@ using System.Net.Sockets;
 using System.Text;
 
 namespace Mono.Data.TdsClient.Internal {
-        internal abstract class Tds : ITds
+        internal abstract class Tds : Component, ITds
 	{
 		#region Fields
 
@@ -38,8 +39,6 @@ namespace Mono.Data.TdsClient.Internal {
 		bool connected = false;
 		bool moreResults;
 
-		TdsMessage lastServerMessage;
-
 		Encoding encoder;
 		TdsServerType serverType;
 		IsolationLevel isolationLevel;
@@ -51,7 +50,6 @@ namespace Mono.Data.TdsClient.Internal {
 		TdsPacketColumnNamesResult columnNames;
 		TdsPacketColumnInfoResult columnInfo;
 		TdsPacketTableNameResult tableNames;
-		TdsPacketErrorResultCollection errors = new TdsPacketErrorResultCollection ();
 
 		bool queryInProgress;
 		int cancelsRequested;
@@ -61,6 +59,11 @@ namespace Mono.Data.TdsClient.Internal {
 		bool isDoneInProc;
 
 		ArrayList outputParameters = new ArrayList ();
+
+		static readonly object EventTdsErrorMessage = new object ();
+		static readonly object EventTdsInfoMessage = new object ();
+
+		TdsInternalErrorCollection messages = new TdsInternalErrorCollection ();
 
 		#endregion // Fields
 
@@ -82,6 +85,10 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return columnNames; }
 		}
 
+		public TdsPacketRowResult ColumnValues {
+			get { return currentRow; }
+		}
+
 		protected TdsComm Comm {
 			get { return comm; }
 		}
@@ -92,10 +99,6 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public string DataSource {
 			get { return dataSource; }
-		}
-
-		public TdsPacketErrorResultCollection Errors {
-			get { return errors; }
 		}
 
 		public bool IsConnected {
@@ -119,10 +122,6 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return columnInfo; }
 		}
 
-		public TdsPacketRowResult ColumnValues {
-			get { return currentRow; }
-		}
-
 		public TdsVersion TdsVersion {
 			get { return tdsVersion; }
 		}
@@ -133,6 +132,20 @@ namespace Mono.Data.TdsClient.Internal {
 		}
 
 		#endregion // Properties
+
+		#region Events
+
+		public event TdsInternalErrorMessageEventHandler TdsErrorMessage {
+			add { Events.AddHandler (EventTdsErrorMessage, value); }
+			remove { Events.RemoveHandler (EventTdsErrorMessage, value); }
+		}
+
+		public event TdsInternalInfoMessageEventHandler TdsInfoMessage {
+			add { Events.AddHandler (EventTdsInfoMessage, value); }
+			remove { Events.RemoveHandler (EventTdsInfoMessage, value); }
+		}
+
+		#endregion // Events
 
 		#region Constructors
 
@@ -200,6 +213,7 @@ namespace Mono.Data.TdsClient.Internal {
 		public int ExecuteNonQuery (string sql)
 		{
 			TdsPacketResult result = null;
+			messages.Clear ();
 			doneProc = false;
 
 			if (sql.Length > 0) {
@@ -232,7 +246,6 @@ namespace Mono.Data.TdsClient.Internal {
 					}
 				}
 			}
-
 			if (sql.Trim ().ToUpper ().StartsWith ("SELECT"))
 				return -1;
 			else
@@ -269,8 +282,9 @@ namespace Mono.Data.TdsClient.Internal {
 						break;
 					case "Mono.Data.TdsClient.Internal.TdsPacketColumnInfoResult" :
 						columnInfo = (TdsPacketColumnInfoResult) result;
-						if (comm.Peek () != (byte) TdsPacketSubType.TableName)
+						if (comm.Peek () != (byte) TdsPacketSubType.TableName) {
 							return true;
+						}
 						break;
 					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
 						currentRow = (TdsPacketRowResult) result;
@@ -317,12 +331,27 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region // Private Methods
 
+		protected TdsInternalInfoMessageEventArgs CreateTdsInfoMessageEvent (TdsInternalErrorCollection errors)
+		{
+			return new TdsInternalInfoMessageEventArgs (errors);
+		}
+
+		protected TdsInternalErrorMessageEventArgs CreateTdsErrorMessageEvent (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state)
+		{
+			return new TdsInternalErrorMessageEventArgs (new TdsInternalError (theClass, lineNumber, message, number, procedure, server, source, state));
+		}
+
 		private void FinishQuery (bool wasCancelled, bool moreResults)
 		{
-			if (!moreResults)
+			if (!moreResults) 
 				queryInProgress = false;
 			if (wasCancelled)
 				cancelsProcessed += 1;
+
+			if (messages.Count > 0) {
+				OnTdsInfoMessage (CreateTdsInfoMessageEvent (messages));
+				messages.Clear ();
+			}
 		}
 
 		private object GetColumnValue (TdsColumnType colType, bool outParam)
@@ -767,8 +796,7 @@ namespace Mono.Data.TdsClient.Internal {
 		protected TdsPacketColumnInfoResult ProcessColumnDetail ()
 		{
 			TdsPacketColumnInfoResult result = columnInfo;
-
-			int len = comm.GetTdsShort ();
+			int len = GetSubPacketLength ();
 			byte[] values = new byte[3];
 			int columnNameLength;
 			string baseColumnName = String.Empty;
@@ -925,42 +953,49 @@ namespace Mono.Data.TdsClient.Internal {
 				databaseProductName = databaseProductName.Substring (0, last);
 			}
 
+			connected = true;
+
 			return new TdsPacketResult (TdsPacketSubType.LoginAck);
 		}
 
-		private TdsPacketMessageResult ProcessMessage (TdsPacketSubType subType)
+		protected void OnTdsErrorMessage (TdsInternalErrorMessageEventArgs value)
 		{
-			TdsMessage message = new TdsMessage ();
+			TdsInternalErrorMessageEventHandler handler = (TdsInternalErrorMessageEventHandler) Events [EventTdsErrorMessage];
+			if (handler != null)
+				handler (this, value);
+		}
+
+		protected void OnTdsInfoMessage (TdsInternalInfoMessageEventArgs value)
+		{
+			TdsInternalInfoMessageEventHandler handler = (TdsInternalInfoMessageEventHandler) Events [EventTdsInfoMessage];
+			if (handler != null)
+				handler (this, value);
+		}
+
+		private void ProcessMessage (TdsPacketSubType subType)
+		{
 			GetSubPacketLength ();
-			int len;
 
-			message.Number = comm.GetTdsInt ();
-			message.State = comm.GetByte ();
-			message.Severity = comm.GetByte ();
-			
-			len = comm.GetTdsShort ();
+			int number = comm.GetTdsInt ();
+			byte state = comm.GetByte ();
+			byte theClass = comm.GetByte ();
+			string message = comm.GetString (comm.GetTdsShort ());
 
-			message.Message = comm.GetString (len);
 
-			len = comm.GetByte ();
+			string server = comm.GetString (comm.GetByte ());
 
-			message.Server = comm.GetString (len);
+			if (subType != TdsPacketSubType.Info && subType != TdsPacketSubType.Error) 
+				return;
 
-			if (subType == TdsPacketSubType.Error | subType == TdsPacketSubType.Info) {
-				len = comm.GetByte ();
-				message.ProcName = comm.GetString (len);
-			}
-			else 
-				return null;
+			string procedure = comm.GetString (comm.GetByte ());
+			byte lineNumber = comm.GetByte ();
+			string source = String.Empty; // FIXME
 
-			message.Line = comm.GetByte ();
 			comm.GetByte ();
-
-			lastServerMessage = message;
-			if (subType == TdsPacketSubType.Error) 
-				errors.Add (new TdsPacketErrorResult (subType, message));
-
-			return new TdsPacketMessageResult (subType, message);
+			if (subType == TdsPacketSubType.Error)
+				OnTdsErrorMessage (CreateTdsErrorMessageEvent (theClass, lineNumber, message, number, procedure, server, source, state));
+			else
+				messages.Add (new TdsInternalError (theClass, lineNumber, message, number, procedure, server, source, state));
 		}
 
 		private TdsPacketOutputParam ProcessOutputParam ()
@@ -998,10 +1033,10 @@ namespace Mono.Data.TdsClient.Internal {
 			case TdsPacketSubType.EnvChange :
 				result = ProcessEnvChange ();
 				break;
-			case TdsPacketSubType.Error :
 			case TdsPacketSubType.Info :
 			case TdsPacketSubType.Msg50Token :
-				result = ProcessMessage (subType);
+			case TdsPacketSubType.Error :
+				ProcessMessage (subType);
 				break;
 			case TdsPacketSubType.Param :
 				result = ProcessOutputParam ();
@@ -1130,5 +1165,4 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#endregion // Private Methods
 	}
-
 }

@@ -1,21 +1,20 @@
 //
-// Mono.Data.TdsClient.TdsError.cs
+// Mono.Data.TdsClient.Internal.TdsInternalError.cs
 //
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+//    Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) 2002 Tim Coleman
+// Copyright (C) Tim Coleman, 2002
 //
 
-using Mono.Data.TdsClient.Internal;
 using System;
 
-namespace Mono.Data.TdsClient {
-        public sealed class TdsError
+namespace Mono.Data.TdsClient.Internal {
+	internal sealed class TdsInternalError 
 	{
 		#region Fields
-		
-		byte theClass = 0x0;
+
+		byte theClass;
 		int lineNumber;
 		string message;
 		int number;
@@ -28,7 +27,7 @@ namespace Mono.Data.TdsClient {
 
 		#region Constructors
 
-		internal TdsError (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state)
+		public TdsInternalError (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state)
 		{
 			this.theClass = theClass;
 			this.lineNumber = lineNumber;
@@ -44,48 +43,47 @@ namespace Mono.Data.TdsClient {
 
 		#region Properties
 
-		public byte Class {
+		public Byte Class {
 			get { return theClass; }
+			set { theClass = value; }
 		}
 
 		public int LineNumber {
 			get { return lineNumber; }
+			set { lineNumber = value; }
 		}
 
 		public string Message {
 			get { return message; }
+			set { message = value; }
 		}
 
 		public int Number {
 			get { return number; }
+			set { number = value; }
 		}
 
 		public string Procedure {
 			get { return procedure; }
+			set { procedure = value; }
 		}
 
 		public string Server {
 			get { return server; }
+			set { server = value;}
 		}
 
 		public string Source {
 			get { return source; }
+			set { source = value; }
 		}
 
 		public byte State {
 			get { return state; }
+			set { state = value; }
 		}
 
 		#endregion // Properties
-
-		#region Methods
-
-		[MonoTODO]
-		public override string ToString ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		#endregion // Methods
 	}
 }
+

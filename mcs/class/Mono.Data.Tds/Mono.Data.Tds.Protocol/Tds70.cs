@@ -11,7 +11,7 @@ using System;
 using System.Data.Common;
 
 namespace Mono.Data.TdsClient.Internal {
-        internal class Tds70 : Tds, ITds
+        internal class Tds70 : Tds
 	{
 		#region Fields
 
@@ -39,8 +39,6 @@ namespace Mono.Data.TdsClient.Internal {
 		{
 			if (IsConnected)
 				throw new InvalidOperationException ("The connection is already open.");
-
-			bool isOkay = true;
 
 			SetLanguage (connectionParameters.Language);
 			SetCharset ("utf-8");
@@ -147,16 +145,12 @@ namespace Mono.Data.TdsClient.Internal {
 
                         TdsPacketResult result;
 
-                        while (!((result = ProcessSubPacket()) is TdsPacketEndTokenResult)) {
-				if (result is TdsPacketErrorResult) {
-					isOkay = false;
-					break;
-				}
-				// XXX Should really process some more types of packets.
+			bool done = false;
+			while (!done) {
+				result = ProcessSubPacket ();
+				done = (result is TdsPacketEndTokenResult);
 			}
-
-			IsConnected = isOkay;
-			return isOkay;
+			return IsConnected;
 		}
 
 		private static string EncryptPassword (string pass)

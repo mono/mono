@@ -23,7 +23,6 @@ namespace Mono.Data.TdsClient {
 		TdsConnection connection;
 		TdsParameterCollection parameters;
 		TdsTransaction transaction;
-		bool readerIsOpen = false;
 
 		#endregion // Fields
 
@@ -73,7 +72,12 @@ namespace Mono.Data.TdsClient {
 
 		public TdsConnection Connection {	
 			get { return connection; }
-			set { connection = value; }
+			set { 
+				if (transaction != null && connection.Transaction != null && connection.Transaction.IsOpen)
+					throw new InvalidOperationException ("The Connection property was changed while a transaction was in progress.");
+				transaction = null;
+				connection = value;
+			}
 		}
 
 		IDbConnection IDbCommand.Connection {
@@ -135,13 +139,7 @@ namespace Mono.Data.TdsClient {
 
 		public int ExecuteNonQuery ()
 		{
-			if (connection == null)
-				throw new TdsException ("The connection is not set.");
-			if (connection.State != ConnectionState.Open)
-				throw new TdsException ("The connection is closed.");
-			if (commandText == String.Empty || commandText == null)
-				throw new TdsException ("The command text is not set.");
-
+			ValidateCommand ("ExecuteNonQuery");
 			return connection.Tds.ExecuteNonQuery (FormatQuery (commandText, commandType));
 		}
 
@@ -150,18 +148,11 @@ namespace Mono.Data.TdsClient {
 			return ExecuteReader (CommandBehavior.Default);
 		}
 
-		[MonoTODO]
 		public TdsDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			if (connection == null)
-				throw new TdsException ("The connection is not set.");
-			if (connection.State != ConnectionState.Open)
-				throw new TdsException ("The connection is closed.");
-			if (commandText == String.Empty || commandText == null)
-				throw new TdsException ("The command text is not set.");
-			connection.Tds.ExecuteQuery (FormatQuery (commandText, commandType));
-
-			return new TdsDataReader (this);
+			ValidateCommand ("ExecuteReader");
+			connection.DataReader = new TdsDataReader (this);
+			return connection.DataReader;
 		}
 
 		[MonoTODO]
@@ -180,7 +171,7 @@ namespace Mono.Data.TdsClient {
 			case CommandType.StoredProcedure :
 				return String.Format ("exec {0}", commandText);
 			}
-			throw new TdsException ("Invalid command type");
+			throw new InvalidOperationException ("Invalid command type");
 		}
 
 		[MonoTODO]
@@ -210,13 +201,19 @@ namespace Mono.Data.TdsClient {
 			throw new NotImplementedException ();
 		}
 
-		/*
-		internal void SkipToEnd ()
+		private void ValidateCommand (string method)
 		{
-			if (tds != null)
-				while (GetMoreResults (tds, false) || updateCount != 1);
+			if (connection == null)
+				throw new InvalidOperationException (String.Format ("{0} requires a Connection object to continue.", method));
+			if (connection.Transaction != null && transaction != connection.Transaction)
+				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
+			if (connection.State != ConnectionState.Open)
+				throw new InvalidOperationException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", method));
+			if (commandText == String.Empty || commandText == null)
+				throw new InvalidOperationException ("The command text for this Command has not been set.");
+			if (connection.DataReader != null)
+				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
 		}
-		*/
 
                 #endregion // Methods
 	}

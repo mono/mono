@@ -11,7 +11,7 @@ using System;
 using System.Data.Common;
 
 namespace Mono.Data.TdsClient.Internal {
-        internal class Tds42 : Tds, ITds
+        internal class Tds42 : Tds
 	{
 		#region Fields
 
@@ -45,7 +45,6 @@ namespace Mono.Data.TdsClient.Internal {
 
 			byte pad = (byte) 0;
 			byte[] empty = new byte[0];
-			bool isOkay = true;
 
 			Comm.StartPacket (TdsPacketType.Logon);
 
@@ -194,20 +193,13 @@ namespace Mono.Data.TdsClient.Internal {
 			Comm.SendPacket ();
 
 			TdsPacketResult result;
+			bool done = false;
 
-			while (!((result = ProcessSubPacket()) is TdsPacketEndTokenResult)) {
-				if (result is TdsPacketErrorResult) {
-					isOkay = false;
-					break;
-				}
-				// XXX Should really process some more types of packets.
+			while (!done) {
+				result = ProcessSubPacket ();
+				done = (result is TdsPacketEndTokenResult);
 			}
-
-			// XXX Possible bug.  What happend if this is cancelled before the logon
-			// takes place?  Should isOkay be false?
-
-			IsConnected = isOkay;
-			return isOkay;
+			return IsConnected;
 		}
 
 		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()

@@ -30,10 +30,16 @@ namespace Mono.Data.TdsClient {
 
 		#region Constructors
 
-		internal TdsException (string message)
+		internal TdsException ()
+                       : base ("a TDS Exception has occurred.")
 		{
-			this.message = message;
-			errors = new TdsErrorCollection ();
+			errors = new TdsErrorCollection();
+		}
+
+		internal TdsException (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state)
+			: base (message)
+		{
+			errors = new TdsErrorCollection (theClass, lineNumber, message, number, procedure, server, source, state);
 		}
 
 		#endregion // Constructors

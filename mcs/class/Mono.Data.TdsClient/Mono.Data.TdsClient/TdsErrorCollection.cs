@@ -20,6 +20,19 @@ namespace Mono.Data.TdsClient {
 
 		#endregion // Fields
 
+		#region Constructors
+
+		internal TdsErrorCollection ()
+		{
+		}
+
+		internal TdsErrorCollection (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state)
+		{
+			Add (theClass, lineNumber, message, number, procedure, server, source, state);
+		}
+
+		#endregion // Constructors
+
 		#region Properties
 
 		public int Count {
@@ -43,6 +56,16 @@ namespace Mono.Data.TdsClient {
 		#endregion // Properties
 
 		#region Methods
+
+		internal void Add (TdsError error)
+		{
+			list.Add (error);
+		}
+
+		internal void Add (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state)
+		{
+			Add (new TdsError (theClass, lineNumber, message, number, procedure, server, source, state));
+		}
 
 		[MonoTODO]
 		public void CopyTo (Array array, int index)
