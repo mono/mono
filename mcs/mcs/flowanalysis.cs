@@ -364,7 +364,7 @@ namespace Mono.CSharp
 		{
 			switch (type) {
 			case BranchingType.Exception:
-				return new FlowBranchingException (parent, block, loc);
+				throw new InvalidOperationException ();
 
 			case BranchingType.Switch:
 				return new FlowBranchingBlock (parent, type, SiblingType.SwitchSection, block, loc);
@@ -1233,6 +1233,12 @@ namespace Mono.CSharp
 				throw new NotSupportedException ();
 		}
 
+		public virtual void StealFinallyClauses (ref ArrayList list)
+		{
+			if (Parent != null)
+				Parent.StealFinallyClauses (ref list);
+		}
+
 		public bool IsAssigned (VariableInfo vi)
 		{
 			return CurrentUsageVector.IsAssigned (vi);
@@ -1362,15 +1368,22 @@ namespace Mono.CSharp
 
 	public class FlowBranchingException : FlowBranching
 	{
+		ExceptionStatement stmt;
 		UsageVector current_vector;
 		UsageVector catch_vectors;
 		UsageVector finally_vector;
 		UsageVector finally_origins;
+		bool emit_finally;
 		bool in_try;
 
-		public FlowBranchingException (FlowBranching parent, Block block, Location loc)
-			: base (parent, BranchingType.Exception, SiblingType.Try, block, loc)
-		{ }
+		public FlowBranchingException (FlowBranching parent,
+					       ExceptionStatement stmt)
+			: base (parent, BranchingType.Exception, SiblingType.Try,
+				null, stmt.loc)
+		{
+			this.stmt = stmt;
+			this.emit_finally = true;
+		}
 
 		protected override void AddSibling (UsageVector sibling)
 		{
@@ -1421,6 +1434,19 @@ namespace Mono.CSharp
 			vector = vector.Clone ();
 			vector.Next = finally_origins;
 			finally_origins = vector;
+		}
+
+		public override void StealFinallyClauses (ref ArrayList list)
+		{
+			if (list == null)
+				list = new ArrayList ();
+			list.Add (stmt);
+			emit_finally = false;
+			base.StealFinallyClauses (ref list);
+		}
+
+		public bool EmitFinally {
+			get { return emit_finally; }
 		}
 
 		public override LabeledStatement LookupLabel (string name, Location loc)

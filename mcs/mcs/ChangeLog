@@ -1,5 +1,28 @@
 2004-07-20  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (ExceptionStatement): New abstract class.  This is
+	now used as a base class for everyone who's using `finally'.
+	(Using.ResolveLocalVariableDecls): Actually ResolveLValue() all
+	our local variables before using them.
+
+	* flowanalysis.cs (FlowBranching.StealFinallyClauses): New public
+	virtual method.  This is used by Yield.Resolve() to "steal" an
+	outer block's `finally' clauses.
+	(FlowBranchingException): The .ctor now takes an ExceptionStatement
+	argument.
+
+	* codegen.cs (EmitContext.StartFlowBranching): Added overloaded
+	version which takes an ExceptionStatement.  This version must be
+	used to create exception branchings.
+
+	* iterator.cs
+	(Yield.Resolve): "Steal" all `finally' clauses from containing blocks.
+	(Iterator.EmitMoveNext): Added exception support; protect the
+	block with a `fault' clause, properly handle 'finally' clauses.
+	(Iterator.EmitDispose): Run all the `finally' clauses here.
+
+2004-07-20  Martin Baulig  <martin@ximian.com>
+
 	* iterator.cs: This is the first of a set of changes in the
 	iterator code.  Match the spec more closely: if we're an
 	IEnumerable, then GetEnumerator() must be called.  The first time
