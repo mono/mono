@@ -1,3 +1,9 @@
+2003-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c:
+	(DeleteFile): call SetLastError on failure. Fix by
+	richard.torkar@htu.se (Richard Torkar). Closes bug #48222.
+
 2003-09-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* daemon.c: In compare_process(), discard handles already signalled.
