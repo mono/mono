@@ -1,3 +1,15 @@
+2004-12-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c mini-x86.c aot.c mini-sparc.c: Add a 'compile_corlib'
+	argument mini_compile_method and to MonoCompile, and use this to
+	determine whenever a given method is compiled for AOT. This allows the
+	other methods compiled during AOT compilation to be free of AOT stuff,
+	so the backends does not need to add special support for them by
+	creating a fake GOT etc.
+
+	* mini-x86.c (mono_arch_patch_code): Remove fake got stuff as it is no
+	longer needed.
+
 2004-12-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c (mono_method_to_ir): It turns out that some of the
