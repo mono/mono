@@ -44,11 +44,8 @@ namespace System.Drawing
 			//with parameter FrameDimension.Time
 			Guid[] dimensionList = img.FrameDimensionsList;
 			int length = dimensionList.Length;
-			for (int i=0; i<length; i++)
-			{
-				Guid dimension = dimensionList[i];
-				if (dimension.Equals (FrameDimension.Time))
-				{
+			for (int i=0; i<length; i++){
+				if (dimensionList [i].Equals(FrameDimension.Time.Guid)){
 					int frameCount = img.GetFrameCount (FrameDimension.Time);
 					if (frameCount > 1)
 						return true;
