@@ -1,3 +1,7 @@
+2003-07-31  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStream.cs: Closing bug #46143. The Read method was re-written.
+
 2003-07-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStream.cs: Fixed bug #46143 (exception) - however we dont 
