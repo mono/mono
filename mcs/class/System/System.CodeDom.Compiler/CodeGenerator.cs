@@ -481,6 +481,9 @@ namespace System.CodeDom.Compiler {
 					output.Write (formattable.ToString (null, CultureInfo.InvariantCulture));
 				else
 					output.Write (e.Value.ToString ());
+					
+				if (type == typeof (float))
+					output.Write ("f");
 			} else {
 				throw new ArgumentException ("Value type (" + type + ") is not a primitive type");
 			}
