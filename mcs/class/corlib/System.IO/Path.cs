@@ -107,12 +107,12 @@ namespace System.IO
 
 				if (path.Length > 2)
 				{
-					int nLast = path.LastIndexOfAny (PathSeparatorChars, path.Length - 2);
+					int nLast = path.LastIndexOfAny (PathSeparatorChars);
 
 					if (nLast > 0)
-					{
 						return path.Substring (0, nLast);
-					}
+					else
+						return String.Empty;
 				}
 			}
 			return path;

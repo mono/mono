@@ -60,10 +60,17 @@ namespace System.IO {
 				throw new ArgumentNullException("path");
 			if (String.Empty == path)
 				throw new ArgumentException("path cannot be empty string");
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException("path contains invalid characters");
+
 			if (null == encoding)
 				throw new ArgumentNullException("encoding");
 			if (bufferSize < 0)
 				throw new ArgumentOutOfRangeException("bufferSize");
+
+			string DirName = Path.GetDirectoryName(path);
+			if (DirName != String.Empty && !Directory.Exists(DirName))
+				throw new DirectoryNotFoundException();
 
 			FileMode mode;
 

@@ -76,6 +76,14 @@ namespace System.IO {
 				throw new ArgumentNullException();
 			if (String.Empty == path)
 				throw new ArgumentException();
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException("path contains invalid characters");
+
+			string DirName = Path.GetDirectoryName(path);
+			if (DirName != String.Empty && !Directory.Exists(DirName))
+				throw new DirectoryNotFoundException();
+			if (!File.Exists(path))
+				throw new FileNotFoundException(path);
 
 			Stream stream = (Stream) File.OpenRead (path);
 			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
