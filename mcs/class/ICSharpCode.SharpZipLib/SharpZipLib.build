@@ -20,6 +20,7 @@
 			<sources>
 				<includes name="**/*.cs"/> 
 				<includes name="**/**/*.cs"/>
+				<includes name="**/**/**/*.cs"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
