@@ -1229,6 +1229,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\XplatUIOSX.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\XplatUIStructs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
