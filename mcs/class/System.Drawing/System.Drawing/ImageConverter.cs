@@ -54,17 +54,15 @@ namespace System.Drawing
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
 		{
-			if ( (val is Image) && (destType == typeof (string)))
-				return val.ToString();
-			else if (CanConvertTo(null, destType)) 
-			{
+			if ((val is Image) && (destType == typeof (string)))
+				return val.ToString ();
+			else if (CanConvertTo (null, destType)){
 				//came here means destType is byte array ;
-				MemoryStream ms = new MemoryStream();
+				MemoryStream ms = new MemoryStream ();
 				((Image)val).Save (ms, ((Image)val).RawFormat);
-				return ms.GetBuffer();
-			}
-			else
-				return new NotSupportedException ();
+				return ms.GetBuffer ();
+			}else
+				return new NotSupportedException ("ImageConverter can not convert from " + val.GetType ());				
 		}
 
 		[MonoTODO ("Implement")]

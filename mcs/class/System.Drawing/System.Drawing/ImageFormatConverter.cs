@@ -11,6 +11,7 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Drawing.Imaging;
 
 namespace System.Drawing
 {
@@ -19,33 +20,60 @@ namespace System.Drawing
 	/// </summary>
 	public class ImageFormatConverter : TypeConverter
 	{
-		[MonoTODO ("Implement")]
 		public ImageFormatConverter ()
 		{
 		}
 
-		[MonoTODO ("Implement")]
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type srcType)
 		{
-			throw new NotImplementedException (); 
+			if (srcType == typeof (string))
+				return true;
+			else
+				return false;
 		}
 
-		[MonoTODO ("Implement")]
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destType)
 		{
-			throw new NotImplementedException (); 
+			if (destType == typeof (string))
+				return true;
+			else
+				return false; 
 		}
 		
-		[MonoTODO ("Implement")]
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object val)
-		{
-			throw new NotImplementedException (); 
+		{			
+			string strFormat = val as string;
+			if (strFormat == null)
+				return base.ConvertFrom (context, culture, val);
+			
+			if (strFormat.Equals ("Bmp"))
+				return ImageFormat.Bmp;
+			else if (strFormat.Equals ("Emf"))
+				return ImageFormat.Emf;
+			else if (strFormat.Equals ("Exif"))
+				return ImageFormat.Exif;
+			else if (strFormat.Equals ("Gif"))
+				return ImageFormat.Gif;
+			else if (strFormat.Equals ("Icon"))
+				return ImageFormat.Icon;
+			else if (strFormat.Equals ("Jpeg"))
+				return ImageFormat.Jpeg;
+			else if (strFormat.Equals ("MemoryBMP"))
+				return ImageFormat.MemoryBmp;
+			else if (strFormat.Equals ("Png"))
+				return ImageFormat.Png;
+			else if (strFormat.Equals ("Tiff"))
+				return ImageFormat.Tiff;
+			else 
+				return ImageFormat.Wmf;			
 		}
 
-		[MonoTODO ("Implement")]
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
 		{
-			throw new NotImplementedException (); 
+			if ((val is ImageFormat) && (destType == typeof (string)))
+				return val.ToString ();
+			
+			return new NotSupportedException ("ImageFormatConverter can not convert from " + val.GetType ());
 		}
 
 		[MonoTODO ("Implement")]

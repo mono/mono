@@ -1,5 +1,11 @@
 2004-04-27  Sanjay Gupta  <gsanjay@novell.com>
 
+	* ImageConverter.cs: Added exception message.
+	* IconConverter.cs: Added exception message.
+	* ImageFormatConverter.cs: Implemented first version.
+
+2004-04-27  Sanjay Gupta  <gsanjay@novell.com>
+
 	* ImageConverter.cs: Implemented first version.
 
 2004-04-27  Sanjay Gupta  <gsanjay@novell.com>
