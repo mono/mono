@@ -1,3 +1,9 @@
+2004-12-16  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (Conditional.DoResolve): Add warning 429.
+	
+	* statement.cs (If.Resolve): Add warning 665.
+
 2004-12-16  Raja R Harinath  <rharinath@novell.com>
 
 	New invariant: RootContext.Tree.Types.NamespaceEntry == null

@@ -146,6 +146,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			Assign ass = expr as Assign;
+			if (ass != null && ass.Source is Constant) {
+				Report.Warning (665, 3, loc, "Assignment in conditional expression is always constant; did you mean to use == instead of = ?");
+			}
+
 			//
 			// Dead code elimination
 			//

@@ -2697,7 +2697,7 @@ namespace Mono.CSharp {
 				((oper == Operator.LogicalAnd && (bool)lc.GetValue () == false) ||
 				 (oper == Operator.LogicalOr && (bool)lc.GetValue () == true))) {
 
-				// TODO: make a sence to resolve unreachable expression as we do for statement
+				// TODO: make a sense to resolve unreachable expression as we do for statement
 				Report.Warning (429, 4, loc, "Unreachable expression code detected");
 				return left;
 			}
@@ -3529,13 +3529,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			// Dead code optimalization
 			if (expr is BoolConstant){
 				BoolConstant bc = (BoolConstant) expr;
 
-				if (bc.Value)
-					return trueExpr;
-				else
-					return falseExpr;
+				Report.Warning (429, 4, bc.Value ? falseExpr.Location : trueExpr.Location, "Unreachable expression code detected");
+				return bc.Value ? trueExpr : falseExpr;
 			}
 
 			return this;
