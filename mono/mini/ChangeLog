@@ -1,3 +1,7 @@
+2003-04-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mono_compile_create_var): use g_malloc/g_realloc instead
+	of the mempool. This is slightly faster and uses less memory
 
 Wed Apr 16 12:53:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
