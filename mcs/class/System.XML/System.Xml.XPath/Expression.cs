@@ -1476,6 +1476,12 @@ namespace System.Xml.XPath
 		{
 			_expr = expr;
 		}
+
+		public override Expression Optimize ()
+		{
+			return _expr;
+		}
+
 		public override String ToString () { return "(" + _expr.ToString () + ")"; }
 		public override XPathResultType ReturnType { get { return _expr.ReturnType; }}
 		public override object Evaluate (BaseIterator iter)

@@ -619,7 +619,22 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
 		{
-			throw new NotImplementedException ();
+			Hashtable table = new Hashtable ();
+			XPathNamespaceScope xpscope =
+				scope == XmlNamespaceScope.Local ?
+					XPathNamespaceScope.Local :
+				scope == XmlNamespaceScope.ExcludeXml ?
+					XPathNamespaceScope.ExcludeXml :
+				XPathNamespaceScope.All;
+			XPathNavigator nav = Clone ();
+			if (nav.NodeType != XPathNodeType.Element)
+				nav.MoveToParent ();
+			if (!nav.MoveToFirstNamespace (xpscope))
+				return table;
+			do {
+				table.Add (nav.Name, nav.Value);
+			} while (nav.MoveToNextNamespace (xpscope));
+			return table;
 		}
 
 		public virtual string LookupNamespace (string prefix)
@@ -627,6 +642,7 @@ namespace System.Xml.XPath
 			return LookupNamespace (prefix, false);
 		}
 
+		[Obsolete]
 		public virtual string LookupNamespace (string prefix, bool atomizedNames)
 		{
 			XPathNavigator nav = Clone ();
@@ -646,12 +662,27 @@ namespace System.Xml.XPath
 			return LookupPrefix (namespaceUri, false);
 		}
 
-		[MonoTODO]
+		[Obsolete]
 		public virtual string LookupPrefix (string namespaceUri, bool atomizedNames)
 		{
-			throw new NotImplementedException ();
+			XPathNavigator nav = Clone ();
+			if (nav.NodeType != XPathNodeType.Element)
+				nav.MoveToParent ();
+			if (!nav.MoveToFirstNamespace ())
+				return null;
+			do {
+				if (atomizedNames) {
+					if (Object.ReferenceEquals (nav.Value, namespaceUri))
+						return nav.Name;
+				} else {
+					if (nav.Value == namespaceUri)
+						return nav.Name;
+				}
+			} while (nav.MoveToNextNamespace ());
+			return null;
 		}
 
+		[Obsolete]
 		public virtual bool MoveToAttribute (string localName, string namespaceURI, bool atomizedNames)
 		{
 			return MoveToAttribute (localName, namespaceURI);
@@ -677,6 +708,7 @@ namespace System.Xml.XPath
 			return MoveTo (SelectChildren (localName, namespaceURI));
 		}
 
+		[Obsolete]
 		public virtual bool MoveToChild (string localName, string namespaceURI, bool atomizedNames)
 		{
 			return MoveToChild (localName, namespaceURI);
@@ -692,6 +724,7 @@ namespace System.Xml.XPath
 			return MoveTo (SelectDescendants (localName, namespaceURI, false));
 		}
 
+		[Obsolete]
 		public virtual bool MoveToDescendant (string localName, string namespaceURI, bool atomizedNames)
 		{
 			return MoveToDescendant (localName, namespaceURI);
@@ -710,6 +743,7 @@ namespace System.Xml.XPath
 			return false;
 		}
 
+		[Obsolete]
 		public virtual bool MoveToNext (string localName, string namespaceURI, bool atomizedNames)
 		{
 			return MoveToNext (localName, namespaceURI);

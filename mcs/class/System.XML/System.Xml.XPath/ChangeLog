@@ -1,3 +1,11 @@
+2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Iterator.cs : when PredicateIterator has a numeric predicate, it
+	  will never be true twice. So just break up the iteration on true.
+	* XPathNavigator.cs : implemented LookupPrefix().
+	* Expression.cs : ExprParens.Optimize() could just return the content
+	  expression.
+
 2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IXPathChangeNavigable.cs,

@@ -996,6 +996,7 @@ namespace System.Xml.XPath
 		private BaseIterator _iter;
 		private Expression _pred;
 		private XPathResultType resType;
+		private bool finished;
 
 		public PredicateIterator (BaseIterator iter, Expression pred) : base (iter.NamespaceManager)
 		{
@@ -1009,17 +1010,21 @@ namespace System.Xml.XPath
 			_iter = (BaseIterator) other._iter.Clone ();
 			_pred = other._pred;
 			resType = other.resType;
+			finished = other.finished;
 		}
 		public override XPathNodeIterator Clone () { return new PredicateIterator (this); }
 
 		public override bool MoveNextCore ()
 		{
+			if (finished)
+				return false;
 			while (_iter.MoveNext ())
 			{
 				switch (resType) {
 					case XPathResultType.Number:
 						if (_pred.EvaluateNumber (_iter) != _iter.ComparablePosition)
 							continue;
+						finished = true;
 						break;
 					case XPathResultType.Any: {
 						object result = _pred.Evaluate (_iter);
@@ -1027,6 +1032,7 @@ namespace System.Xml.XPath
 						{
 							if ((double) result != _iter.ComparablePosition)
 								continue;
+							finished = true;
 						}
 						else if (!XPathFunctions.ToBoolean (result))
 							continue;
