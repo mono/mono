@@ -503,6 +503,7 @@ namespace Mono.ILASM {
                  public static string CreateVarargSignature (string name, IList param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
+                        ParamDef last = null;
 
                         builder.Append (name);
                         builder.Append ('(');
@@ -515,13 +516,16 @@ namespace Mono.ILASM {
                                         builder.Append (paramdef.TypeName);
                                         first = false;
                                 }
+                                last = (ParamDef) param_list[param_list.Count - 1];
                         }
-                        ParamDef last = (ParamDef) param_list[param_list.Count - 1];
-                        if (!last.IsSentinel ()) {
+
+
+                        if (last == null || !last.IsSentinel ()) {
                                 if (!first)
                                         builder.Append (',');
                                 builder.Append ("...");
                         }
+
                         builder.Append (')');
 
                         return builder.ToString ();
