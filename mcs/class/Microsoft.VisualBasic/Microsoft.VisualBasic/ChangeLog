@@ -1,3 +1,13 @@
+2005-02-14  Duncan Mak  <duncan@ximian.com>
+
+	* Collection.cs:
+	* ComClassAttibute.cs:
+	* SpcInfo.cs:
+	* TabInfo.cs:
+	* VBFixedStringAttribute.cs:
+	* VBMath.cs: Remove extraneous semicolon at the end of the class
+	declaration. Spotted by Dennis Hayes <denisraytek@yahoo.com>.
+
 2004-10-11 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* FileSystem.cs: Adjusting exposed API according to class status page ('ref' instead of 'out'). 
 	Commented out an additional API.

@@ -79,5 +79,5 @@ namespace Microsoft.VisualBasic {
 			rnd = new Random((int)Number);
 		}
 		// Events
-	};
+	}
 }

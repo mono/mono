@@ -85,5 +85,5 @@ namespace Microsoft.VisualBasic {
 				return new int[] { upperBound1 }; 
 			} 
 		}
-	};
+	}
 }

@@ -74,5 +74,5 @@ namespace Microsoft.VisualBasic {
 		public string ClassID { get { return classID; } }
 
 		public string InterfaceID { get { return interfaceID; } }
-	};
+	}
 }

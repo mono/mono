@@ -356,5 +356,5 @@ namespace Microsoft.VisualBasic {
 		{
 			return new ColEnumerator(this);
 		}
-	};
+	}
 }

@@ -42,5 +42,5 @@ namespace Microsoft.VisualBasic {
 		{
 			Count = value;
 		}
-	};
+	}
 }
