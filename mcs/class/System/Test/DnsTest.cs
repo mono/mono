@@ -129,17 +129,6 @@ public class DnsTest: TestCase {
 		SubTestGetHostByAddressIPAddress(new IPAddress(IPAddress.NetworkToHostOrder((int)site2IP)));
 	}
 	
-	private void SubTestIpToString(int IpAddr) {
-		String addr = System.Net.Dns.IpToString(IpAddr);
-		Assert(addr != null);
-		Assert(addr.Split('.').Length == 4);
-	}
-	
-	public void TestIpToString() {
-		SubTestIpToString((int)site1IP);
-		SubTestIpToString((int)site2IP);
-	}
-	
 	private void SubTestResolve(string addr) {
 		IPHostEntry h = System.Net.Dns.Resolve(addr);
 		SubTestValidIPHostEntry(h);

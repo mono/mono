@@ -1,3 +1,7 @@
+2002-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* DnsTest.cs: Updated test.
+
 2001-09-26  Mads Pultz <mpultz@get2net.dk>
 	* DnsTest.cs: initial tests of BeginGetHostByName and EndGetHostByName implemented.
 

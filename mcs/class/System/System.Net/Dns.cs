@@ -166,7 +166,7 @@ namespace System.Net {
 		public static IPHostEntry GetHostByAddress(IPAddress address) {
 			if (address == null)
 				throw new ArgumentNullException();
-			return GetHostByAddress(IPAddress.HostToNetworkOrder(address.Address));
+			return GetHostByAddress (IPAddress.HostToNetworkOrder (address.Address));
 		}
 		
 		public static IPHostEntry GetHostByAddress(string address) {
@@ -197,24 +197,6 @@ namespace System.Net {
 		public static string GetHostName() {
 			IPHostEntry h = GetHostByAddress("127.0.0.1");
 			return h.HostName;
-		}
-		
-		/// <param name=address>
-		/// IP address in Little-Endian byte order.
-		/// </param>
-		/// <returns>
-		/// IP address in dotted notation form.
-		/// </returns>
-		public static string IpToString(int address) {
-			address = IPAddress.HostToNetworkOrder(address);
-			StringBuilder res = new StringBuilder();
-			for(int i = 3; i > 0; --i) {
-				byte b = (byte)(address >> i * 8);
-				res.Append(b);
-				res.Append('.');
-			}
-			res.Append((byte)address);
-			return res.ToString();
 		}
 		
 		/// <summary>
@@ -314,7 +296,7 @@ namespace System.Net {
 				++p;
 			}
 			if (res > uint.MaxValue)
-				return new IPAddress(IPAddress.NetworkToHostOrder(res));
+				return new IPAddress(IPAddress.NetworkToHostOrder((long)res));
 			else
 				return new IPAddress(IPAddress.NetworkToHostOrder((int)res));
 		}

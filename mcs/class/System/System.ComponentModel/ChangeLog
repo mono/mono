@@ -1,3 +1,7 @@
+2002-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* Win32Exception.cs: Add.
+
 2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
 	* CategoryAttribute.cs, Component.cs, ComponentCollection.cs: MonoTODO.

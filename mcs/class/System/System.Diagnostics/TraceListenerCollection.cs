@@ -149,11 +149,12 @@ namespace System.Diagnostics
 		/// <param name="index">
 		/// Starting index of copy
 		/// </param>
+		[MonoTODO]
 		public void CopyTo(Array listeners, int index)
 		{
 			try {
 				this.listeners.CopyTo(listeners, index);
-			} catch(Exception e) {
+			} catch {
 				
 			}
 		}
@@ -218,7 +219,7 @@ namespace System.Diagnostics
 					if(listener.Name.Equals(name))
 						listeners.Remove(listener);
 				}
-			} catch(Exception e) {
+			} catch {
 				throw new ArgumentException("Listener is not in list.");
 			}
 		}

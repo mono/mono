@@ -13,7 +13,7 @@ namespace System.Net {
 	///   Encapsulates an IP Address.
 	/// </remarks>
 	public class IPAddress {
-		public uint Address;
+		public long Address;
 
 		public static readonly IPAddress Any;
 		public static readonly IPAddress Broadcast;
@@ -36,7 +36,7 @@ namespace System.Net {
 		/// <summary>
 		///   Constructor from a 32-bit constant.
 		/// </summary>
-		public IPAddress (uint address)
+		public IPAddress (long address)
 		{
 			this.Address = address;
 		}
@@ -78,7 +78,7 @@ namespace System.Net {
 		/// <summary>
 		///   Returns this object rendered in a quad-dotted notation
 		/// </summary>
-		public static string ToString (uint addr)
+		static string ToString (long addr)
 		{
 			return  (addr >> 24).ToString () + "." +
 				((addr >> 16) & 0xff).ToString () + "." +
@@ -100,6 +100,42 @@ namespace System.Net {
 		public override int GetHashCode ()
 		{
 			return (int)Address;
+		}
+
+		[MonoTODO]
+		public static short HostToNetworkOrder (short host)
+		{
+			return host;
+		}
+
+		[MonoTODO]
+		public static int HostToNetworkOrder (int host)
+		{
+			return host;
+		}
+
+		[MonoTODO]
+		public static long HostToNetworkOrder (long host)
+		{
+			return host;
+		}
+
+		[MonoTODO]
+		public static short NetworkToHostOrder (short host)
+		{
+			return host;
+		}
+
+		[MonoTODO]
+		public static int NetworkToHostOrder (int host)
+		{
+			return host;
+		}
+
+		[MonoTODO]
+		public static long NetworkToHostOrder (long host)
+		{
+			return host;
 		}
 	}
 	

@@ -2,94 +2,37 @@
 // System.Net.Sockets.NetworkStream.cs
 //
 // Author:
-//   Andrew Sutton
+//   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) Andrew Sutton
+// (C) 2002 Ximian, Inc.
 //
 using System;
-using System.Reflection;
 using System.Runtime.Serialization;
+using System.Globalization;
+using System.ComponentModel;
 
 namespace System.Net.Sockets
 {
-	// <remarks>
-	//    A socket exception. Does this REALLY need to
-	//    be derived from Win32Exception? It seems a
-	//    little lame.
-	//
-	//    This needs some work...
-	// </remarks>
-	public class SocketException : Exception
-	{
-		protected int		error_code;
-		protected int		native_code;
-		protected string	help_link;
-		protected string	message;
-
+	public class SocketException : Win32Exception {
+		// Constructors
 		public SocketException ()
-		{
-			error_code = 0;
-		}
-
-		public SocketException (int error)
-		{
-			error_code = error;
-		}
-
-		public SocketException (SerializationInfo info, StreamingContext cxt)
+			: base (Locale.GetText ("Socket exception"))
 		{
 		}
 
-		public override int ErrorCode
+		public SocketException (int code)
+			: base (Locale.GetText ("Socket exception"), code)
 		{
-			get { return error_code; }
 		}
-
-		public override string HelpLink
-		{
-			get { return help_link; }
-			set { help_link = value; }
+		
+		protected SocketException(SerializationInfo info, StreamingContext context)
+			: base (info, context) {
 		}
-
-		public override Exception InnerException
-		{
-			get { return inner_exception }
-		}
-
-		public override string Message
-		{
-			get { return message; }
-		}
-
-		public override int NativeErrorCode
-		{
-			get { return native_code; }
-		}
-
-		public override string Source
-		{
-			get { return source; }
-		}
-
-		public override string StackTrace
-		{
-			get { return stack_trace; }
-		}
-
-		public override int GetHashCode()
-		{
-			return native_code;
-		}
-
-		[MonoTODO]
-		public override void GetObjectData( SerializationInfo info, StreamingContext cxt )
-		{
-			// TODO: fill this in
-		}
-
-		public override string ToString()
-		{
-			return error_code + " " + help_link;
+		
+		public override int ErrorCode {
+			get {
+				return NativeErrorCode;
+			}
 		}
 	}
 }
