@@ -135,8 +135,8 @@ recheck_range (int ret)
 
 MPH_INTERNAL char* 
 _mph_copy_structure_strings (
-	void *to,   size_t *to_offsets, 
-	void *from, size_t *from_offsets, 
+	void *to,         const size_t *to_offsets, 
+	const void *from, const size_t *from_offsets, 
 	size_t num_strings);
 
 #endif /* ndef INC_mph_H */

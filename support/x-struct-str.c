@@ -14,8 +14,8 @@
 
 char* MPH_INTERNAL
 _mph_copy_structure_strings (
-	void *to,   size_t *to_offsets, 
-	void *from, size_t *from_offsets, 
+	void *to,         const size_t *to_offsets, 
+	const void *from, const size_t *from_offsets, 
 	size_t num_strings)
 {
 	int i;
