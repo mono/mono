@@ -17,7 +17,10 @@ System.Web.Services.Description/FaultBinding.cs
 System.Web.Services.Description/FaultBindingCollection.cs
 System.Web.Services.Description/HttpAddressBinding.cs
 System.Web.Services.Description/HttpBinding.cs
+System.Web.Services.Description/HttpGetProtocolReflector.cs
 System.Web.Services.Description/HttpOperationBinding.cs
+System.Web.Services.Description/HttpPostProtocolReflector.cs
+System.Web.Services.Description/HttpSimpleProtocolReflector.cs
 System.Web.Services.Description/HttpUrlEncodedBinding.cs
 System.Web.Services.Description/HttpUrlReplacementBinding.cs
 System.Web.Services.Description/Import.cs

@@ -1,3 +1,10 @@
+2003-10-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* System.Web.Services.dll.sources: Added 
+		System.Web.Services.Description/HttpGetProtocolReflector.cs
+		System.Web.Services.Description/HttpPostProtocolReflector.cs
+		System.Web.Services.Description/HttpSimpleProtocolReflector.cs
+
 2003-09-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* System.Web.Services.dll.sources: Added 
