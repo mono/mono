@@ -1,4 +1,8 @@
 
+Mon Apr 22 19:44:16 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: fix off-by-one error when reading argument names.
+
 Mon Apr 22 19:28:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* profiler.c: win32 counter implementation (untested).
