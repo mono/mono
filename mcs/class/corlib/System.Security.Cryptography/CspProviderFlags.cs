@@ -37,11 +37,11 @@ namespace System.Security.Cryptography {
 #if NET_2_0
 		,
 		NoFlags = 0,
-		NoPrompt = 4,
-		UseArchivableKey = 8,
-		UseExistingKey = 16,
-		UseNonExportableKey = 32,
-		UseUserProtectedKey = 64
+		NoPrompt = 64,
+		UseArchivableKey = 16,
+		UseExistingKey = 8,
+		UseNonExportableKey = 4,
+		UseUserProtectedKey = 32
 #endif
 	}
 }

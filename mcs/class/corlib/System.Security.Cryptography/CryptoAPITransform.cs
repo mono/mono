@@ -43,10 +43,12 @@ namespace System.Security.Cryptography {
 			m_disposed = false;
 		}
 
+#if ! NET_2_0
 		~CryptoAPITransform () 
 		{
 			Dispose (false);
 		}
+#endif
 
 		public bool CanReuseTransform {
 			get { return true; }
