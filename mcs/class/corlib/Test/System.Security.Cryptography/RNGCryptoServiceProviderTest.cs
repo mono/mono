@@ -22,7 +22,7 @@ namespace MonoTests.System.Security.Cryptography {
 		
 		public static ITest Suite {
 			get {
-				return new TestSuite(typeof(RNGCryptoServiceProvider));
+				return new TestSuite(typeof(RNGCryptoServiceProviderTest));
 			}
 		}
 

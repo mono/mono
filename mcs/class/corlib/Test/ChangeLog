@@ -1,5 +1,10 @@
 2002-02-21  Mark Crichton <crichton@gimp.org>
 
+	* System.Security.Cryptography.RNGCryptoServiceProviderTest.cs:
+	Fixed typo
+
+2002-02-21  Mark Crichton <crichton@gimp.org>
+
 	* Addded System.Security.Cryptography.RNGCryptoServiceProviderTest.cs
 	* System.Security.Cryptography/AllTests.cs: Added
 	RNGCryptoServiceProviderTest.
