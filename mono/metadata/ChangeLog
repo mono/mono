@@ -1,3 +1,9 @@
+
+Tue Apr 8 11:19:53 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.h: avoid the C++ keywords in header files (Jerome Laban
+	spotted and fixed this).
+
 2003-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object.c:
