@@ -1,3 +1,8 @@
+2004-09-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* interp.c: In interp_walk_stack, don't crash if the context is not set
+	  (this may happen if the method is called by unmanaged code).
+
 2004-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* interp.c: thread local alloc
