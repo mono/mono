@@ -435,6 +435,9 @@ namespace Mono.CSharp {
 			DeclSpace = ds;
 			CheckState = RootContext.Checked;
 			ConstantCheckState = true;
+
+			if ((return_type is TypeBuilder) && return_type.IsGenericTypeDefinition)
+				throw new Exception ("FUCK");
 			
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;

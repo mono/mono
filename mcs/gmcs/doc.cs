@@ -261,8 +261,7 @@ namespace Mono.CSharp {
 		// returns a full runtime type name from a name which might
 		// be C# specific type name.
 		//
-		private static Type FindDocumentedType (MemberCore mc,
-			string name, DeclSpace ds, bool allowAlias, string cref)
+		private static Type FindDocumentedType (MemberCore mc, string name, DeclSpace ds, string cref)
 		{
 			bool isArray = false;
 			string identifier = name;
@@ -273,16 +272,14 @@ namespace Mono.CSharp {
 					isArray = true;
 				}
 			}
-			Type t = FindDocumentedTypeNonArray (mc, identifier,
-				ds, allowAlias, cref);
+			Type t = FindDocumentedTypeNonArray (mc, identifier, ds, cref);
 			if (t != null && isArray)
 				t = Array.CreateInstance (t, 0).GetType ();
 			return t;
 		}
 
-		private static Type FindDocumentedTypeNonArray (MemberCore mc,
-			string identifier, DeclSpace ds, bool allowAlias,
-			string cref)
+		private static Type FindDocumentedTypeNonArray (MemberCore mc, 
+			string identifier, DeclSpace ds, string cref)
 		{
 			switch (identifier) {
 			case "int":
@@ -318,30 +315,23 @@ namespace Mono.CSharp {
 			case "void":
 				return typeof (void);
 			}
-			if (allowAlias) {
-				IAlias alias = ds.LookupAlias (identifier);
-				if (alias != null)
-					identifier = alias.Name;
-			}
-			Type t = ds.FindType (mc.Location, identifier);
-			if (t == null)
-				t = TypeManager.LookupType (identifier);
-			if (t == null) {
-				int index = identifier.LastIndexOf ('.');
-				if (index < 0)
+			FullNamedExpression e = ds.FindType (mc.Location, identifier);
+			if (e != null) {
+				if (!(e is TypeExpr))
 					return null;
-				int warn;
-				Type parent = FindDocumentedType (mc,
-					identifier.Substring (0, index),
-					ds, allowAlias, cref);
-				if (parent == null)
-					return null;
-				t = FindDocumentedMember (mc, parent,
-					identifier.Substring (index + 1),
-					Type.EmptyTypes,
-					ds, out warn, cref) as Type;
+				return ((TypeExpr) e).ResolveType (ds.EmitContext);
 			}
-			return t;
+			int index = identifier.LastIndexOf ('.');
+			if (index < 0)
+				return null;
+			int warn;
+			Type parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref);
+			if (parent == null)
+				return null;
+			return FindDocumentedMember (mc, parent,
+				identifier.Substring (index + 1),
+				Type.EmptyTypes,
+				ds, out warn, cref) as Type;
 		}
 
 		//
@@ -465,7 +455,7 @@ namespace Mono.CSharp {
 				((PropertyInfo) mi).PropertyType :
 				null;
 			if (returnTypeName != null) {
-				Type returnType = FindDocumentedType (mc, returnTypeName, ds, true, cref);
+				Type returnType = FindDocumentedType (mc, returnTypeName, ds, cref);
 				if (returnType == null || returnType != expected) {
 					warningType = 1581;
 					Report.Warning (1581, 1, mc.Location, "Invalid return type in XML comment cref attribute '{0}'", cref);
@@ -544,7 +534,7 @@ namespace Mono.CSharp {
 				ArrayList plist = new ArrayList ();
 				for (int i = 0; i < paramList.Length; i++) {
 					string paramTypeName = paramList [i].Trim (wsChars);
-					Type paramType = FindDocumentedType (mc, paramTypeName, ds, true, cref);
+					Type paramType = FindDocumentedType (mc, paramTypeName, ds, cref);
 					if (paramType == null) {
 						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter '{0}' in XML comment cref attribute '{1}'", i + 1, cref);
 						return;
@@ -564,7 +554,7 @@ namespace Mono.CSharp {
 				parameters = sb.ToString ();
 			}
 
-			Type type = FindDocumentedType (mc, name, ds, true, cref);
+			Type type = FindDocumentedType (mc, name, ds, cref);
 			if (type != null) {
 				xref.SetAttribute ("cref", "T:" + type.FullName.Replace ("+", "."));
 				return; // a type
@@ -580,7 +570,7 @@ namespace Mono.CSharp {
 			if (period > 0) {
 				string typeName = name.Substring (0, period);
 				string memberName = name.Substring (period + 1);
-				type = FindDocumentedType (mc, typeName, ds, false, cref);
+				type = FindDocumentedType (mc, typeName, ds, cref);
 				int warnResult;
 				if (type != null) {
 					MemberInfo mi = FindDocumentedMember (mc, type, memberName, parameterTypes, ds, out warnResult, cref);

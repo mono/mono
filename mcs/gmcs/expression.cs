@@ -7215,7 +7215,7 @@ namespace Mono.CSharp {
 			if (sn == null || left == null || left.Type.Name != sn.Name)
 				return false;
 
-			return RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc) != null;
+			return ec.DeclSpace.LookupType (sn.Name, true, loc) != null;
 		}
 		
 		// TODO: possible optimalization
@@ -7435,17 +7435,15 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			if (expr is SimpleName){
-				SimpleName child_expr = (SimpleName) expr;
-				string fqname = DeclSpace.MakeFQN (child_expr.Name, Identifier);
-
-				Expression new_expr;
-				if (args != null)
-					new_expr = new ConstructedType (fqname, args, loc);
-				else
-					new_expr = new SimpleName (fqname, loc);
-
-				return new_expr.Resolve (ec, flags);
+			if (expr is Namespace) {
+				Namespace ns = (Namespace) expr;
+				string lookup_id = MemberName.MakeName (Identifier, args);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
+				if ((retval != null) && (args != null))
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
+				if (retval == null)
+					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
+				return retval;
 			}
 					
 			//
@@ -7523,7 +7521,7 @@ namespace Mono.CSharp {
 			}
 
 			if (member_lookup is TypeExpr) {
-				if (!(expr is TypeExpr) && !(expr is SimpleName)) {
+				if (!(expr is TypeExpr)) {
 					Error (572, "Can't reference type `" + Identifier + "' through an expression; try `" +
 					       member_lookup.Type + "' instead");
 					return null;
@@ -7575,58 +7573,31 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return DoResolve (ec, null, ResolveFlags.VariableOrValue |
-					  ResolveFlags.SimpleName | ResolveFlags.Type);
+			return DoResolve (ec, null, ResolveFlags.VariableOrValue | ResolveFlags.Type);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolve (ec, right_side, ResolveFlags.VariableOrValue |
-					  ResolveFlags.SimpleName | ResolveFlags.Type);
+			return DoResolve (ec, right_side, ResolveFlags.VariableOrValue | ResolveFlags.Type);
 		}
 
-		public override Expression ResolveAsTypeStep (EmitContext ec)
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
-			string fname = null;
-			MemberAccess full_expr = this;
-			while (full_expr != null) {
-				if (fname != null)
-					fname = String.Concat (full_expr.Identifier, ".", fname);
-				else
-					fname = full_expr.Identifier;
-
-				fname = MemberName.MakeName (fname, args);
-
-				if (full_expr.Expr is SimpleName) {
-					string full_name = String.Concat (((SimpleName) full_expr.Expr).Name, ".", fname);
-					Type fully_qualified = ec.DeclSpace.FindType (loc, full_name);
-					if (fully_qualified != null) {
-						if (args == null)
-							return new TypeExpression (fully_qualified, loc);
-
-						ConstructedType ctype = new ConstructedType (fully_qualified, args, loc);
-						return ctype.ResolveAsTypeStep (ec);
-					}
-				}
-
-				full_expr = full_expr.Expr as MemberAccess;
-			}
-
-			Expression new_expr = expr.ResolveAsTypeStep (ec);
+			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec);
 
 			if (new_expr == null)
 				return null;
 
-			if (new_expr is SimpleName){
-				SimpleName child_expr = (SimpleName) new_expr;
-				string fqname = DeclSpace.MakeFQN (child_expr.Name, Identifier);
-				
-				if (args != null)
-					new_expr = new ConstructedType (fqname, args, loc);
-				else
-					new_expr = new SimpleName (fqname, loc);
+			string lookup_id = MemberName.MakeName (Identifier, args);
 
-				return new_expr.ResolveAsTypeStep (ec);
+			if (new_expr is Namespace) {
+				Namespace ns = (Namespace) new_expr;
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
+				if ((retval != null) && (args != null))
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
+				if (retval == null)
+					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
+				return retval;
 			}
 
 			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (ec);
@@ -7642,18 +7613,20 @@ namespace Mono.CSharp {
 			}
 
 			Expression member_lookup;
-			string lookup_id;
-			lookup_id = MemberName.MakeName (Identifier, args);
-			member_lookup = MemberLookupFinal (
-				ec, expr_type, expr_type, lookup_id, loc);
-			if (member_lookup == null)
+			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, lookup_id, loc);
+			if (member_lookup == null) {
+				Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
+					      Identifier, new_expr.FullName);
 				return null;
+			}
 
-			TypeExpr texpr = member_lookup as TypeExpr;
-			if (texpr == null)
+			if (!(member_lookup is TypeExpr)) {
+				Report.Error (118, loc, "'{0}.{1}' denotes a '{2}', where a type was expected",
+					      new_expr.FullName, Identifier, member_lookup.ExprClassName ());
 				return null;
+			}
 
-			texpr = texpr.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = member_lookup.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
 
@@ -7677,6 +7650,9 @@ namespace Mono.CSharp {
 			}
 
 			return texpr;
+
+			member_lookup = member_lookup.Resolve (ec, ResolveFlags.Type);
+			return (member_lookup as TypeExpr);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -8868,7 +8844,9 @@ namespace Mono.CSharp {
 				//
 				// For now, fall back to the full lookup in that case.
 				//
-				type = RootContext.LookupType (ec.DeclSpace, cname, false, loc);
+				FullNamedExpression e = ec.DeclSpace.LookupType (cname, false, loc);
+				if (e is TypeExpr)
+					type = ((TypeExpr) e).ResolveType (ec);
 				if (type == null)
 					return null;
 			}
@@ -8891,6 +8869,12 @@ namespace Mono.CSharp {
 		public override string Name {
 			get {
 				return left + dim;
+			}
+		}
+
+		public override string FullName {
+			get {
+				return type.FullName;
 			}
 		}
 	}

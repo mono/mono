@@ -837,6 +837,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override string FullName {
+			get {
+				return type_parameter.Name;
+			}
+		}
+
 		public TypeParameter TypeParameter {
 			get {
 				return type_parameter;
@@ -1013,6 +1019,16 @@ namespace Mono.CSharp {
 			loc = l;
 
 			this.name = name;
+			full_name = name + "<" + args.ToString () + ">";
+		}
+
+		public ConstructedType (FullNamedExpression fname, TypeArguments args, Location l)
+		{
+			loc = l;
+			this.name = fname.FullName;
+			this.args = args;
+
+			eclass = ExprClass.Type;
 			full_name = name + "<" + args.ToString () + ">";
 		}
 
@@ -1365,6 +1381,13 @@ namespace Mono.CSharp {
 				return full_name;
 			}
 		}
+
+
+		public override string FullName {
+			get {
+				return full_name;
+			}
+		}
 	}
 
 	public class GenericMethod : DeclSpace
@@ -1429,7 +1452,7 @@ namespace Mono.CSharp {
 
 		public override MemberCache MemberCache {
 			get {
-				throw new Exception ();
+				return null;
 			}
 		}
 

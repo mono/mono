@@ -51,20 +51,15 @@ namespace Mono.CSharp {
 		// Returns a method group.
 		MethodGroup		= 4,
 
-		// Allows SimpleNames to be returned.
-		// This is used by MemberAccess to construct long names that can not be
-		// partially resolved (namespace-qualified names for example).
-		SimpleName		= 8,
-
 		// Mask of all the expression class flags.
-		MaskExprClass		= 15,
+		MaskExprClass		= 7,
 
 		// Disable control flow analysis while resolving the expression.
 		// This is used when resolving the instance expression of a field expression.
-		DisableFlowAnalysis	= 16,
+		DisableFlowAnalysis	= 8,
 
 		// Set if this is resolving the first part of a MemberAccess.
-		Intermediate		= 32
+		Intermediate		= 16
 	}
 
 	//
@@ -308,11 +303,10 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// This is used if the expression should be resolved as a type.
-		// the default implementation fails.   Use this method in
-		// those participants in the SimpleName chain system.
+		// This is used if the expression should be resolved as a type or namespace name.
+		// the default implementation fails.   
 		//
-		public virtual Expression ResolveAsTypeStep (EmitContext ec)
+		public virtual FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
 			return null;
 		}
@@ -326,13 +320,22 @@ namespace Mono.CSharp {
 		{
 			int errors = Report.Errors;
 
-			TypeExpr te = ResolveAsTypeStep (ec) as TypeExpr;
+			FullNamedExpression fne = ResolveAsTypeStep (ec);
 
-			if ((te == null) || (te.eclass != ExprClass.Type) || (te.Type == null)) {
+			if (fne == null) {
 				if (errors == Report.Errors)
 					Report.Error (246, Location, "Cannot find type '{0}'", ToString ());
 				return null;
 			}
+
+			if (fne.eclass != ExprClass.Type) {
+				if (errors == Report.Errors)
+					Report.Error (118, Location, "'{0}' denotes a '{1}', where a type was expected",
+						      fne.FullName, fne.ExprClassName ());
+				return null;
+			}
+
+			TypeExpr te = fne as TypeExpr;
 
 			if (!te.CheckAccessLevel (ec.DeclSpace)) {
 				Report.Error (122, Location, "'{0}' is inaccessible due to its protection level", te.Name);
@@ -369,22 +372,14 @@ namespace Mono.CSharp {
 
 			ec.DoFlowAnalysis = old_do_flow_analysis;
 
-			if (e == null)
-				return null;
-
-			if (e is SimpleName){
-				SimpleName s = (SimpleName) e;
-
-				if ((flags & ResolveFlags.SimpleName) == 0) {
-					MemberLookupFailed (ec, null, ec.ContainerType, s.Name,
+			if (e == null) {
+				if (this is SimpleName)
+					MemberLookupFailed (ec, null, ec.ContainerType, ((SimpleName) this).Name, 
 							    ec.DeclSpace.Name, loc);
-					return null;
-				}
-
-				return s;
+				return null;
 			}
 
-			if ((e is TypeExpr) || (e is ComposedCast)) {
+			if ((e is TypeExpr) || (e is ComposedCast) || (e is Namespace)) {
 				if ((flags & ResolveFlags.Type) == 0) {
 					e.Error_UnexpectedKind (flags, loc);
 					return null;
@@ -395,6 +390,7 @@ namespace Mono.CSharp {
 
 			switch (e.eclass) {
 			case ExprClass.Type:
+			case ExprClass.Namespace:
 				if ((flags & ResolveFlags.VariableOrValue) == 0) {
 					e.Error_UnexpectedKind (flags, loc);
 					return null;
@@ -431,11 +427,12 @@ namespace Mono.CSharp {
 						     " ExprClass is Invalid after resolve");
 			}
 
-			if (e.type == null)
+			if (e.type == null && !(e is Namespace)) {
 				throw new Exception (
 					"Expression " + e.GetType () +
 					" did not set its type after Resolve\n" +
 					"called from: " + this.GetType ());
+			}
 
 			return e;
 		}
@@ -874,9 +871,9 @@ namespace Mono.CSharp {
 			return operator_true;
 		}
 		
-		static string ExprClassName (ExprClass c)
+		public string ExprClassName ()
 		{
-			switch (c){
+			switch (eclass){
 			case ExprClass.Invalid:
 				return "Invalid";
 			case ExprClass.Value:
@@ -906,11 +903,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error_UnexpectedKind (string expected, Location loc)
 		{
-			string kind = "Unknown";
-			
-			kind = ExprClassName (eclass);
-
-			Report.Error (118, loc, "Expression denotes a `" + kind +
+			Report.Error (118, loc, "Expression denotes a `" + ExprClassName () +
 			       "' where a `" + expected + "' was expected");
 		}
 
@@ -929,9 +922,6 @@ namespace Mono.CSharp {
 			if ((flags & ResolveFlags.MethodGroup) != 0)
 				valid.Add ("method group");
 
-			if ((flags & ResolveFlags.SimpleName) != 0)
-				valid.Add ("simple name");
-
 			if (valid.Count == 0)
 				valid.Add ("unknown");
 
@@ -944,9 +934,7 @@ namespace Mono.CSharp {
 				sb.Append (valid [i]);
 			}
 
-			string kind = ExprClassName (eclass);
-
-			Error (119, "Expression denotes a `" + kind + "' where " +
+			Error (119, "Expression denotes a `" + ExprClassName () + "' where " +
 			       "a `" + sb.ToString () + "' was expected");
 		}
 		
@@ -2005,54 +1993,17 @@ namespace Mono.CSharp {
 	}
 	
 	/// <summary>
-	///   SimpleName expressions are initially formed of a single
-	///   word and it only happens at the beginning of the expression.
+	///   SimpleName expressions are formed of a single word and only happen at the beginning 
+	///   of a dotted-name.
 	/// </summary>
-	///
-	/// <remarks>
-	///   The expression will try to be bound to a Field, a Method
-	///   group or a Property.  If those fail we pass the name to our
-	///   caller and the SimpleName is compounded to perform a type
-	///   lookup.  The idea behind this process is that we want to avoid
-	///   creating a namespace map from the assemblies, as that requires
-	///   the GetExportedTypes function to be called and a hashtable to
-	///   be constructed which reduces startup time.  If later we find
-	///   that this is slower, we should create a `NamespaceExpr' expression
-	///   that fully participates in the resolution process. 
-	///   
-	///   For example `System.Console.WriteLine' is decomposed into
-	///   MemberAccess (MemberAccess (SimpleName ("System"), "Console"), "WriteLine")
-	///   
-	///   The first SimpleName wont produce a match on its own, so it will
-	///   be turned into:
-	///   MemberAccess (SimpleName ("System.Console"), "WriteLine").
-	///   
-	///   System.Console will produce a TypeExpr match.
-	///   
-	///   The downside of this is that we might be hitting `LookupType' too many
-	///   times with this scheme.
-	/// </remarks>
 	public class SimpleName : Expression {
 		public string Name;
 		public readonly TypeArguments Arguments;
 
-		//
-		// If true, then we are a simple name, not composed with a ".
-		//
-		bool is_base;
-
-		public SimpleName (string a, string b, Location l)
-		{
-			Name = String.Concat (a, ".", b);
-			loc = l;
-			is_base = false;
-		}
-		
 		public SimpleName (string name, Location l)
 		{
 			Name = name;
 			loc = l;
-			is_base = true;
 		}
 
 		public SimpleName (string name, TypeArguments args, Location l)
@@ -2060,7 +2011,6 @@ namespace Mono.CSharp {
 			Name = name;
 			Arguments = args;
 			loc = l;
-			is_base = true;
 		}
 
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
@@ -2111,60 +2061,23 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, null, true, intermediate);
 		}
 
-		public override Expression ResolveAsTypeStep (EmitContext ec)
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
 			DeclSpace ds = ec.DeclSpace;
-			NamespaceEntry ns = ds.NamespaceEntry;
-			Type t;
-			IAlias alias_value;
+			FullNamedExpression dt;
 
-			//
-			// Since we are cheating: we only do the Alias lookup for
-			// namespaces if the name does not include any dots in it
-			//
-			if (ns != null && is_base)
-				alias_value = ns.LookupAlias (Name);
-			else
-				alias_value = null;
+			dt = ds.LookupGeneric (Name, loc);
+			if (dt != null)
+				return dt.ResolveAsTypeStep (ec);
 
-			TypeParameterExpr generic_type = ds.LookupGeneric (Name, loc);
-			if (generic_type != null)
-				return generic_type.ResolveAsTypeTerminal (ec);
+			int errors = Report.Errors;
+			dt = ec.ResolvingTypeTree 
+				? ds.FindType (loc, Name)
+				: ds.LookupType (Name, true, loc);
+			if (Report.Errors != errors)
+				return null;
 
-			if (ec.ResolvingTypeTree){
-				int errors = Report.Errors;
-				Type dt = ds.FindType (loc, Name);
-				
-				if (Report.Errors != errors)
-					return null;
-				
-				if (dt != null)
-					return new TypeExpression (dt, loc);
-
-				if (alias_value != null){
-					if (alias_value.IsType)
-						return alias_value.ResolveAsType (ec);
-					if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
-						return new TypeExpression (t, loc);
-				}
-			}
-
-			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-				return new TypeExpression (t, loc);
-
-			if (alias_value != null) {
-				if (alias_value.IsType)
-					return alias_value.ResolveAsType (ec);
-				if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
-					return new TypeExpression (t, loc);
-				
-				// we have alias value, but it isn't Type, so try if it's namespace
-				return new SimpleName (alias_value.Name, loc);
-			}
-
-			// No match, maybe our parent can compose us
-			// into something meaningful.
-			return this;
+			return dt;
 		}
 
 		Expression SimpleNameResolve (EmitContext ec, Expression right_side,
@@ -2176,12 +2089,9 @@ namespace Mono.CSharp {
 
 			Block current_block = ec.CurrentBlock;
 			if (current_block != null){
-				//LocalInfo vi = current_block.GetLocalInfo (Name);
-				if (is_base &&
-				    current_block.IsVariableNameUsedInChildBlock(Name)) {
+				if (current_block.IsVariableNameUsedInChildBlock (Name)) {
 					Report.Error (135, Location,
-						      "'{0}' has a different meaning in a " +
-						      "child block", Name);
+						      "'{0}' has a different meaning in a child block", Name);
 					return null;
 				}
 			}
@@ -2260,34 +2170,8 @@ namespace Mono.CSharp {
 			if (e == null && ec.ContainerType != null)
 				e = MemberLookup (ec, ec.ContainerType, Name, loc);
 
-			if (e == null) {
-				//
-				// Since we are cheating (is_base is our hint
-				// that we are the beginning of the name): we
-				// only do the Alias lookup for namespaces if
-				// the name does not include any dots in it
-				//
-				NamespaceEntry ns = ec.DeclSpace.NamespaceEntry;
-				if (is_base && ns != null){
-					IAlias alias_value = ns.LookupAlias (Name);
-					if (alias_value != null){
-						if (alias_value.IsType)
-							return alias_value.ResolveAsType (ec);
-
-						Name = alias_value.Name;
-						Type t;
-
-						if ((t = TypeManager.LookupType (Name)) != null)
-							return new TypeExpression (t, loc);
-					
-						// No match, maybe our parent can compose us
-						// into something meaningful.
-						return this;
-					}
-				}
-
+			if (e == null)
 				return ResolveAsTypeStep (ec);
-			}
 
 			if (e is TypeExpr)
 				return e;
@@ -2357,12 +2241,22 @@ namespace Mono.CSharp {
 			return Name;
 		}
 	}
+
+	/// <summary>
+	///   Represents a namespace or a type.  The name of the class was inspired by
+	///   section 10.8.1 (Fully Qualified Names).
+	/// </summary>
+	public abstract class FullNamedExpression : Expression {
+		public abstract string FullName {
+			get;
+		}
+	}
 	
 	/// <summary>
 	///   Fully resolved expression that evaluates to a type
 	/// </summary>
-	public abstract class TypeExpr : Expression, IAlias {
-		override public Expression ResolveAsTypeStep (EmitContext ec)
+	public abstract class TypeExpr : FullNamedExpression {
+		override public FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
 			TypeExpr t = DoResolveAsTypeStep (ec);
 			if (t == null)
@@ -2429,6 +2323,15 @@ namespace Mono.CSharp {
 
 		protected abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
 
+		public virtual Type ResolveType (EmitContext ec)
+		{
+			TypeExpr t = ResolveAsTypeTerminal (ec);
+			if (t == null)
+				return null;
+
+			return t.Type;
+		}
+
 		public abstract string Name {
 			get;
 		}
@@ -2451,18 +2354,9 @@ namespace Mono.CSharp {
 		{
 			return Name;
 		}
-
-		bool IAlias.IsType {
-			get { return true; }
-		}
-
-		TypeExpr IAlias.ResolveAsType (EmitContext ec)
-		{
-			return ResolveAsTypeTerminal (ec);
-		}
 	}
 
-	public class TypeExpression : TypeExpr, IAlias {
+	public class TypeExpression : TypeExpr {
 		public TypeExpression (Type t, Location l)
 		{
 			Type = t;
@@ -2481,7 +2375,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		string IAlias.Name {
+		public override string FullName {
 			get {
 				return Type.FullName != null ? Type.FullName : Type.Name;
 			}
@@ -2504,16 +2398,24 @@ namespace Mono.CSharp {
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (type == null) {
-				type = RootContext.LookupType (
-					ec.DeclSpace, name, false, Location.Null);
-				if (type == null)
+				FullNamedExpression t = ec.DeclSpace.LookupType (name, false, Location.Null);
+				if (t == null)
 					return null;
+				if (!(t is TypeExpr))
+					return null;
+				type = ((TypeExpr) t).ResolveType (ec);
 			}
 
 			return this;
 		}
 
 		public override string Name {
+			get {
+				return name;
+			}
+		}
+
+		public override string FullName {
 			get {
 				return name;
 			}
@@ -2530,13 +2432,13 @@ namespace Mono.CSharp {
 		{ }
 	}
 
-	public class TypeAliasExpression : TypeExpr, IAlias {
-		IAlias alias;
+	public class TypeAliasExpression : TypeExpr {
+		FullNamedExpression alias;
 		TypeExpr texpr;
 		TypeArguments args;
 		string name;
 
-		public TypeAliasExpression (IAlias alias, TypeArguments args, Location l)
+		public TypeAliasExpression (FullNamedExpression alias, TypeArguments args, Location l)
 		{
 			this.alias = alias;
 			this.args = args;
@@ -2544,18 +2446,22 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Type;
 			if (args != null)
-				name = alias.Name + "<" + args.ToString () + ">";
+				name = alias.FullName + "<" + args.ToString () + ">";
 			else
-				name = alias.Name;
+				name = alias.FullName;
 		}
 
 		public override string Name {
+			get { return alias.FullName; }
+		}
+
+		public override string FullName {
 			get { return name; }
 		}
 
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			texpr = alias.ResolveAsType (ec);
+			texpr = alias.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
 

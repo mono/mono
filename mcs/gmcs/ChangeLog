@@ -5,6 +5,37 @@
 
 2005-01-11  Raja R Harinath  <rharinath@novell.com>
 
+	Improve standard-compliance of simple name and member access 
+	resolution.  Fixes bugs #52697, #57200, #67520, #69519.
+	* ecore.cs (FullNamedExpression): New abstract base class 
+	for Namespaces and TypeExpressions.
+	(ResolveFlags.SimpleName): Remove.
+	(SimpleName): Remove support for dotted names.
+	(SimpleName.ResolveAsTypeStep): Simplify.  Now just a wrapper to 
+	DeclSpace.FindType and DeclSpace.LookupType.
+	(SimpleName.DoSimpleNameResolve): Remove support for dotted names.
+	(Expression.ExprClassName): Make member function.
+	* expression.cs (MemberAccess.ResolveAsTypeStep): Support LHS being
+	a namespace.  Remove creation of dotted "SimpleName"s.
+	(MemberAccess.DoResolve): Likewise.
+	* decl.cs (DeclSpace.Cache): Make private.
+	(DeclSpace.LookupInterfaceOrClass): Return a FullNamedExpression.
+	(DeclSpace.FindType): Update.
+	(DeclSpace.LookupType): Move here from RootContext.  Return a 
+	FullNamedExpression.
+	* namespace.cs (Namespace): Derive from FullNamedExpression
+	so that it can be part of expression resolution.
+	(Namespace.Lookup): Return an FullNamedExpression.
+	(NamespaceEntry.LookupAlias): Lookup aliases only in current
+	namespace.
+	* rootcontext.cs (NamespaceLookup): Remove.
+	(LookupType): Move to DeclSpace.
+	* attribute.cs (CheckAttributeType): Update.
+	* doc.cs (FindDocumentedType): Remove allowAlias argument.
+	(FindDocumentedTypeNonArray): Likewise.
+
+2005-01-11  Raja R Harinath  <rharinath@novell.com>
+
 	Fix cs0509.cs, cs1632.cs.
 	* class.cs (TypeContainer.GetNormalBases): Don't assume !IsClass
 	is the same as IsInterface.
