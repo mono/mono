@@ -81,6 +81,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (expected [i].OuterXml != actual [i].OuterXml)
 					Fail (msg + " [" + i + "] expected " + expected[i].OuterXml + " bug got " + actual[i].OuterXml);
 			}
+			AssertEquals (expected.Count, actual.Count);
 		}
 
 		[Test]
@@ -129,8 +130,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			// FIXME: This cannot be the *right* result - I must be missing something :(
-			AssertEquals ("XPath result", doc.ChildNodes, xnl);
+			AssertEquals (47, xnl.Count);
 		}
 
 		[Test]
@@ -151,8 +151,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			// FIXME: This cannot be the *right* result - I must be missing something :(
-			AssertEquals ("XPath result", doc.ChildNodes, xnl);
+			AssertEquals (47, xnl.Count);
 		}
 
 		[Test]
@@ -177,8 +176,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			// FIXME: This cannot be the *right* result - I must be missing something :(
-			AssertEquals ("XPath result", doc.ChildNodes, xnl);
+			AssertEquals (47, xnl.Count);
 		}
 
 		[Test]
@@ -247,20 +245,43 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Ignore ("MS.NET looks incorrect, or something incorrect in this test code")]
-		public void FunctionHere ()
+		[Ignore ("MS.NET looks incorrect, or something incorrect in this test code; It turned out nothing to do with function here()")]
+		public void FunctionHereObsolete ()
 		{
 			XmlDsigXPathTransform t = new XmlDsigXPathTransform ();
 			XmlDocument xpdoc = new XmlDocument ();
 			string ns = "http://www.w3.org/2000/09/xmldsig#";
-			string xpath = "<XPath xmlns='" + ns + "' xmlns:x='urn:foo'>here()</XPath>";
+//			string xpath = "<XPath xmlns='" + ns + "' xmlns:x='urn:foo'>here()</XPath>";
+			string xpath = "<XPath xmlns='" + ns + "' xmlns:x='urn:foo'></XPath>";
 			xpdoc.LoadXml (xpath);
 			t.LoadInnerXml (xpdoc.ChildNodes);
 			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
+
+			doc.LoadXml ("<element a='b'><foo><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			XmlNodeList nl = (XmlNodeList) t.GetOutput ();
 			AssertEquals (0, nl.Count);
+
+			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
+			t.LoadInput (doc);
+			nl = (XmlNodeList) t.GetOutput ();
+			AssertEquals (1, nl.Count);
+
+			doc.LoadXml ("<element xmlns='urn:foo'><foo xmlns='urn:bar'><bar>test</bar></foo></element>");
+			t.LoadInput (doc);
+			nl = (XmlNodeList) t.GetOutput ();
+			AssertEquals (2, nl.Count);
+
+			doc.LoadXml ("<element xmlns='urn:foo' xmlns:x='urn:x'><foo xmlns='urn:bar'><bar>test</bar></foo></element>");
+			t.LoadInput (doc);
+			nl = (XmlNodeList) t.GetOutput ();
+			AssertEquals (3, nl.Count);
+
+			doc.LoadXml ("<envelope><Signature xmlns='http://www.w3.org/2000/09/xmldsig#'><XPath>blah</XPath></Signature></envelope>");
+			t.LoadInput (doc);
+			nl = (XmlNodeList) t.GetOutput ();
+			AssertEquals (1, nl.Count);
+			AssertEquals (XmlNodeType.Attribute, nl [0].NodeType);
 		}
 	}
 }

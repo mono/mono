@@ -136,6 +136,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+		[Ignore ("MS.NET incorrectly ignores the element's namespace that should be in the output (note that namespace specification on an element to represent the element's namespace URI is not a 'namespace node' that should be specified separately in XPath expression)")]
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -188,7 +189,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument();
 			object o = transform.GetOutput (doc.GetType ());
 		}
-		
+
 	        [Test]
 	        public void C14NSpecExample1 ()
 	        {

@@ -121,14 +121,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Ignore ("LAMESPEC or BUG but this returns nothing with MS implementation ???")]
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetDoc ();
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals ("XmlChildNodes", String.Empty, output); // ???
+			// Note that ChildNodes does not contain the text node.
+			AssertEquals ("XmlChildNodes", String.Empty, output);
 		}
 
 		[Test]
