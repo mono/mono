@@ -31,6 +31,7 @@ namespace Mono.GetOptions
 		public MemberInfo MemberInfo;
 		public ArrayList Values;
 		public System.Type ParameterType;
+		public string ParamName = "PARAM"; // TODO: another element to get from OptionAttribute
 		
 		public override string ToString()
 		{
@@ -42,11 +43,10 @@ namespace Mono.GetOptions
 			if (NeedsParameter)
 			{
 				if (this.LongForm != string.Empty && this.LongForm != null)
-					optionHelp += "=PARAM"; 
-				else
-					optionHelp += "PARAM"; 
+					optionHelp += "="; 
+				optionHelp += ParamName; 
 			}
-			optionHelp = optionHelp.PadRight(23) + " ";
+			optionHelp = optionHelp.PadRight(26) + " ";
 			optionHelp += this.ShortDescription;
 			return optionHelp; 
 		}
@@ -189,9 +189,16 @@ namespace Mono.GetOptions
 
 		public bool ProcessArgument(string arg, string nextArg)
 		{
-			if (arg == ("-" + ShortForm) || arg == ("--" + LongForm))
+			if (arg == ("-" + ShortForm) || arg == ("--" + LongForm) ||
+				arg == ("/" + ShortForm) || arg == ("/" + LongForm)) 
 			{
 				DoIt(nextArg);
+				return true;
+			}
+			string temp = (arg + ":" + nextArg).TrimStart('-','/');
+			if (temp == LongForm)
+			{
+				DoIt(null);
 				return true;
 			}
 			return false;

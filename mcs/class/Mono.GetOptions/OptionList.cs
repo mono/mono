@@ -1,11 +1,10 @@
 //
 // OptionList.cs
 //
-// Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com) (original)
-// Author: Dean Scarff (D_Scarff@AIMINGFORSPAMFREEmsn.com) (modifications)
+// Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com)
+//
 //
 // (C) 2002 Rafael Teixeira
-// Modifications (C) 2002 Dean Scarff, distributed under the Gnu General Public License Version 2 or later
 //
 
 using System;
@@ -298,11 +297,8 @@ namespace Mono.GetOptions
 
 						if ((parsingMode & OptionsParsingMode.Windows) > 0)
 						{
-							if ((arg.Length == 2) && (arg[0] == '/')) // Windows options only come in this fashion
-							{
-								result.Add("-" + arg[1]); // translate to Linux style
-								continue;
-							}
+						 	if (arg[0] == '/')
+								result.AddRange(arg.Split(':')); 
 						}
 
 						if ((parsingMode & OptionsParsingMode.Linux) > 0)
@@ -362,7 +358,7 @@ namespace Mono.GetOptions
 
 					OptionWasProcessed = false;
 
-					if (arg.StartsWith("-"))
+					if (arg.StartsWith("-") || arg.StartsWith("/"))
 					{
 						foreach(OptionDetails option in list)
 						{

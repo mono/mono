@@ -1,14 +1,18 @@
+2003-01-30  Duncan Mak  <duncan@ximian.com>
+
+    * OptionDetails.cs : now handle composite arguments '/option:suboption'
+
 2003-01-20  Duncan Mak  <duncan@ximian.com>
 
-      * list.unix: Remove the extra reference to ArgumentProcessorAttribute.cs
+    * list.unix: Remove the extra reference to ArgumentProcessorAttribute.cs
       
 2002-09-03  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 
 	* added AboutAttribute.cs, AuthorAttribute.cs, OptionAttribute.cs, 
-        UsageComplementAttribute.cs, OptionDetails.cs, Options.cs. 
-        Now reflection is used to drive de options processing.
+		UsageComplementAttribute.cs, OptionDetails.cs, Options.cs. 
+        Now reflection is used to drive the options processing.
 
-      * added GetOptTest test subproject
+	* added GetOptTest test subproject
 
 2002-08-30  Juli Mallett  <jmallett@FreeBSD.org>
 
