@@ -1148,21 +1148,21 @@ public class DirectoryTest : Assertion {
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
-	public void SetCurrentDirectoryNull (string path)
+	public void SetCurrentDirectoryNull ()
 	{
 		Directory.SetCurrentDirectory (null);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]
-	public void SetCurrentDirectoryEmpty (string path)
+	public void SetCurrentDirectoryEmpty ()
 	{
 		Directory.SetCurrentDirectory (String.Empty);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]
-	public void SetCurrentDirectoryWhitespace (string path)
+	public void SetCurrentDirectoryWhitespace ()
 	{
 		Directory.SetCurrentDirectory (" ");
 	}

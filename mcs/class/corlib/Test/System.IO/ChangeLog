@@ -1,3 +1,7 @@
+2003-01-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DirectoryTest.cs : remoed incorrect args.
+
 2003-12-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* PathTest.cs : On Unix, "Z:" can be valid local file.
