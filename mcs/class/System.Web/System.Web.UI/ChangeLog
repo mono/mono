@@ -1,3 +1,8 @@
+2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ObjectStateFormatter.cs: added formatters for Unit and FontUnit, which
+	are not [Serializable]. Fixes bug #52244.
+
 2003-12-16  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Render trace data when tracing is enabled.

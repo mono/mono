@@ -176,6 +176,8 @@ namespace System.Web.UI {
 				new ArrayListFormatter ().Register ();
 				new HashtableFormatter ().Register ();
 				new ObjectArrayFormatter ().Register ();
+				new UnitFormatter ().Register ();
+				new FontUnitFormatter ().Register ();
 				
 				new ColorFormatter ().Register ();
 				
@@ -739,6 +741,38 @@ namespace System.Web.UI {
 			}
 		}
 		
+		class FontUnitFormatter : StringFormatter {
+			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			{
+				base.Write (w, o.ToString (), ctx);
+			}
+			
+			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			{
+				return FontUnit.Parse ((string) base.Read (token, r, ctx));
+			}
+			
+			protected override Type Type {
+				get { return typeof (FontUnit); }
+			}
+		}
+
+		class UnitFormatter : StringFormatter {
+			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			{
+				base.Write (w, o.ToString (), ctx);
+			}
+			
+			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			{
+				return FontUnit.Parse ((string) base.Read (token, r, ctx));
+			}
+			
+			protected override Type Type {
+				get { return typeof (Unit); }
+			}
+		}
+
 		class BinaryObjectFormatter : ObjectFormatter {
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
