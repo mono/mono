@@ -149,14 +149,12 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("setter incomplete (wrong prefix&nsURI)")]
 		// We gotta do more in the set block here
 		// We need to do the proper tests and throw
 		// the correct Exceptions
 		//
 		// Wrong cases are: (1)check readonly, (2)check character validity,
 		// (3)check format validity, (4)this is attribute and qualifiedName != "xmlns"
-		// (5)when argument is 'xml' or 'xmlns' and namespaceURI doesn't match
 		public override string Prefix {
 			set {
 				if (IsReadOnly)

@@ -322,10 +322,36 @@ namespace System.Xml
 			w.Write (Convert.ToBase64String (buffer, index, count));
 		}
 
-		[MonoTODO]
+		// BinHex??
 		public override void WriteBinHex (byte[] buffer, int index, int count)
 		{
-			throw new NotImplementedException ();
+			CheckState ();
+
+			if (!openAttribute) {
+				IndentingOverriden = true;
+				CloseStartElement ();
+			}
+
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", index, "index must be non negative integer.");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", count, "count must be non negative integer.");
+			if (buffer.Length < index + count)
+				throw new ArgumentOutOfRangeException ("index and count must be smaller than the length of the buffer.");
+
+			for (int i = index; i < count; i++) {
+				int val = buffer [i];
+				int high = val >> 4;
+				int low = val & 15;
+				if (high > 9)
+					w.Write ((char) (high + 55));
+				else
+					w.Write ((char) (high + 0x30));
+				if (low > 9)
+					w.Write ((char) (low + 55));
+				else
+					w.Write ((char) (low + 0x30));
+			}
 		}
 
 		public override void WriteCData (string text)
@@ -353,10 +379,16 @@ namespace System.Xml
 			w.Write("&#x{0:X};", intCh);
 		}
 
-		[MonoTODO]
 		public override void WriteChars (char[] buffer, int index, int count)
 		{
-			throw new NotImplementedException ();
+			CheckState ();
+
+			if (!openAttribute) {
+				IndentingOverriden = true;
+				CloseStartElement ();
+			}
+
+			w.Write (buffer, index, count);
 		}
 
 		public override void WriteComment (string text)
@@ -568,17 +600,27 @@ namespace System.Xml
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
-			if ((prefix == "xml") && (localName == "lang"))
+			if ((prefix == "xml") && (localName == "lang")) {
+				ns = XmlNamespaceManager.XmlnsXml;
 				openXmlLang = true;
+			}
 
-			if ((prefix == "xml") && (localName == "space"))
+			if ((prefix == "xml") && (localName == "space")) {
+				ns = XmlNamespaceManager.XmlnsXml;
 				openXmlSpace = true;
+			}
 
 			if ((prefix == "xmlns") && (localName.ToLower ().StartsWith ("xml")))
 				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML: " + prefix + ":" + localName);
 
 			if ((prefix == "xmlns") && (ns != XmlnsNamespace))
 				throw new ArgumentException (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
+
+			// ignore non-namespaced node's prefix.
+			if (ns == null)
+				ns = String.Empty;
+			if (ns == String.Empty)
+				prefix = String.Empty;
 
 			CheckState ();
 
@@ -676,15 +718,21 @@ namespace System.Xml
 			if (!Namespaces && (((prefix != null) && (prefix != String.Empty))
 				|| ((ns != null) && (ns != String.Empty))))
 				throw new ArgumentException ("Cannot set the namespace if Namespaces is 'false'.");
+			if ((prefix != null && prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
+				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
+
+			// ignore non-namespaced node's prefix.
+			if (ns == null)
+				ns = String.Empty;
+			if (ns == String.Empty)
+				prefix = String.Empty;
+
 
 			WriteStartElementInternal (prefix, localName, ns);
 		}
 
 		private void WriteStartElementInternal (string prefix, string localName, string ns)
 		{
-			if ((prefix != null && prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
-				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
-
 			hasRoot = true;
 			CheckState ();
 			CloseStartElement ();
