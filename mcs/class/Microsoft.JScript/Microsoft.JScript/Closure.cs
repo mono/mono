@@ -17,7 +17,6 @@ namespace Microsoft.JScript {
 
 		public Closure (FunctionObject func)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public override string ToString ()

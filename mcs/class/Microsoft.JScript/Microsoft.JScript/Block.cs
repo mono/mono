@@ -14,24 +14,24 @@ namespace Microsoft.JScript {
 
 	public class Block : AST {
 
-		internal ArrayList Elements;
+		internal ArrayList elems;
 
 		internal Block (AST parent)
 		{
 			this.parent = parent;
-			Elements = new ArrayList ();
+			elems = new ArrayList ();
 		}
 
 		internal void Add (AST e)
 		{
-			Elements.Add (e);
+			elems.Add (e);
 		}
 
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			foreach (AST a in Elements)
+			foreach (AST a in elems)
 				if (a != null)
 					sb.Append (a.ToString () + " ");
 
@@ -40,20 +40,30 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			int i, size = Elements.Count;
+			int i, n = elems.Count;
+			object e;
+			
+			for (i = 0; i < n; i++) {
+				e = elems [i];
+				if (e is FunctionDeclaration)
+					((FunctionDeclaration) e).Emit (ec);
+			}
 
-			for (i = 0; i < size; i++)
-				((AST) Elements [i]).Emit (ec);
+			for (i = 0; i < n; i++) {
+				e = elems [i];
+				if (!(e is FunctionDeclaration))
+					((AST) e).Emit (ec);
+			}
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
 			AST e;
 			bool r = true;
-			int i, n = Elements.Count;
+			int i, n = elems.Count;
 
 			for (i = 0; i < n; i++) {
-				e = (AST) Elements [i];
+				e = (AST) elems [i];
 				r &= e.Resolve (context);
 			}
 			return r;			

@@ -16,7 +16,6 @@ namespace Microsoft.JScript {
 
 		public JSLocalField (string name, RuntimeTypeHandle handle, int number)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public override Type FieldType {

@@ -48,11 +48,11 @@ function_decl_or_expr [AST parent] returns [AST func]
 {
 	func = null;
 	bool is_func_exp = false;
-	FormalParameterList p = null;
+	FormalParameterList p = new FormalParameterList ();
 	Block body = null;
 }
 	: "function" (id:IDENTIFIER | { is_func_exp = true; } ) 
-	  OPEN_PARENS (p = formal_param_list | ) CLOSE_PARENS 
+	  OPEN_PARENS (p = formal_param_list [parent] | ) CLOSE_PARENS 
 	  (COLON type_annot:IDENTIFIER | )
 	  {
 		if (is_func_exp)
@@ -81,9 +81,10 @@ function_body [AST parent] returns [Block elems]
 	: source_elements [elems]
 	;
 
-formal_param_list returns [FormalParameterList p]
+formal_param_list [AST parent] returns [FormalParameterList p]
 {
 	p = new FormalParameterList ();
+    p.parent = parent;
 }
 	: i:IDENTIFIER (COLON t1:IDENTIFIER { p.Add (i.getText (), t1.getText ()); } 
 		       | { p.Add (i.getText (), "Object"); } 

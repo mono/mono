@@ -21,6 +21,7 @@ namespace Microsoft.JScript {
 		internal TypeBuilder type_builder;
 		internal ILGenerator ig;
 		internal ILGenerator gc_ig;
+		internal ModuleBuilder mod_builder;
 
 		internal EmitContext (TypeBuilder type)
 		{
@@ -34,6 +35,14 @@ namespace Microsoft.JScript {
 									new Type [] {});
 				gc_ig = global_code.GetILGenerator ();
 			}
+		}
+
+		internal EmitContext (TypeBuilder type_builder, ModuleBuilder mod_builder, ILGenerator gc_ig, ILGenerator loc_ig)
+		{
+			this.type_builder = type_builder;
+			this.mod_builder = mod_builder;
+			this.gc_ig = gc_ig;
+			this.ig = loc_ig;			
 		}
 	}
 
@@ -99,6 +108,7 @@ namespace Microsoft.JScript {
 							 (typeof (CompilerGlobalScopeAttribute).GetConstructor (new Type [] {}), new object [] {}));
 
 			EmitContext ec = new EmitContext (type_builder);
+			ec.mod_builder = module_builder;
 			ILGenerator global_code = ec.gc_ig;
 
 			emit_default_script_constructor (ec);

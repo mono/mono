@@ -66,5 +66,13 @@ namespace Microsoft.JScript {
 
 			return sb.ToString ();
 		}
+
+		internal int num_of_locals {
+			get { return  ((SymbolTable) stack.Peek ()).size; }
+		}
+
+		internal DictionaryEntry [] current_locals {
+			get { return  ((SymbolTable) stack.Peek ()).current_symbols; }
+		}
 	}
 }

@@ -44,5 +44,22 @@ namespace Microsoft.JScript {
 
 			return sb.ToString ();
 		}
+
+		internal int size {
+			get { return symbols.Count; }
+		}
+
+		internal DictionaryEntry [] current_symbols {
+			get {
+				int n = symbols.Count;
+				if (n == 0)
+					return null;
+				else {
+					DictionaryEntry [] e = new DictionaryEntry [symbols.Count];
+					symbols.CopyTo (e, 0);
+					return e;
+				}
+			}
+		}
 	}
 }
