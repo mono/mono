@@ -38,9 +38,6 @@ namespace System.Xml
 			set {
 				OwnerDocument.onNodeChanging (this, this.ParentNode);
 
-				if (IsReadOnly)
-					throw new ArgumentException ("Node is read-only.");
-
 				data = value;
 
 				OwnerDocument.onNodeChanged (this, this.ParentNode);

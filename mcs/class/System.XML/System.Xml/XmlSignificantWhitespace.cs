@@ -51,7 +51,10 @@ namespace System.Xml
 		// Methods
 		public override XmlNode CloneNode (bool deep)
 		{
-			return new XmlSignificantWhitespace (Data, OwnerDocument);
+			XmlNode n = new XmlSignificantWhitespace (Data, OwnerDocument);
+			if (IsReadOnly)
+				n.SetReadOnly ();
+			return n;
 		}
 
 		public override void WriteContentTo (XmlWriter w) {}

@@ -1,5 +1,29 @@
 2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	W3C DOM compliant read-only check support (buggy part in MS.NET).
+	* XmlAttribute.cs,
+	  XmlCDataSection.cs,
+	  XmlCharacterData.cs,
+	  XmlDocument.cs,
+	  XmlElement.cs,
+	  XmlNode.cs,
+	  XmlSignificantWhitespace.cs,
+	  XmlText.cs
+	  : CloneNode() - set read-only when copied node is read-only.
+	    Check IsReadOnly on attempt to modify value.
+	* XmlEntity.cs,
+	  XmlEntityReference.cs : Set descendant nodes read-only.
+	* XmlAttributeCollection.cs,
+	  XmlNode.cs
+	  : Fixed incompatible exception type.
+	* XmlEntityReference.cs : CloneNode() should not pass an empty string
+	  as its name.
+	* XmlEntityReference.cs,
+	  XmlProcessingInstruction.cs : Check XML name validity.
+	* XmlText.cs : CloneNode() does not have to check children.
+
+2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDeclaration.cs : More strict check on InnerText and Value.
 
 2004-04-24  Atsushi Enomoto <atsushi@ximian.com>

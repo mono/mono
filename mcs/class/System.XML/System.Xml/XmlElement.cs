@@ -215,6 +215,8 @@ namespace System.Xml
 					node.AppendChild (ChildNodes [i].CloneNode (true));
 			}
 
+			if (IsReadOnly)
+				node.SetReadOnly ();
 			return node;
 		}
 

@@ -129,6 +129,8 @@ namespace System.Xml
 
 		public virtual XmlAttribute Remove (XmlAttribute node) 
 		{
+			if (IsReadOnly)
+				throw new ArgumentException ("This attribute collection is read-only.");
 			if (node == null)
 				throw new ArgumentException ("Specified node is null.");
 			if (node.OwnerDocument != ownerDocument)
@@ -186,11 +188,11 @@ namespace System.Xml
 		public override XmlNode SetNamedItem (XmlNode node)
 		{
 			if(IsReadOnly)
-				throw new XmlException ("this AttributeCollection is read only.");
+				throw new ArgumentException ("this AttributeCollection is read only.");
 
 			XmlAttribute attr = node as XmlAttribute;
 			if (attr.OwnerElement != null)
-				throw new InvalidOperationException ("This attribute is already set to another element.");
+				throw new ArgumentException ("This attribute is already set to another element.");
 
 			ownerElement.OwnerDocument.onNodeInserting (node, ownerElement);
 

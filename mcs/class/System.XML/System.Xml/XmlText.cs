@@ -55,10 +55,8 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlText newText = OwnerDocument.CreateTextNode(Data);
-			if(deep) {
-				for (int i = 0; i < ChildNodes.Count; i++)
-					newText.AppendChild (ChildNodes [i].CloneNode (deep));
-			}
+			if (IsReadOnly)
+				newText.SetReadOnly ();
 			return newText;
 		}
 

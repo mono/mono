@@ -21,6 +21,8 @@ namespace System.Xml
 		protected internal XmlEntityReference (string name, XmlDocument doc)
 			: base (doc)
 		{
+			// LAMESPEC: MS CreateNode() allows null node name.
+			XmlConvert.VerifyName (name);
 			entityName = doc.NameTable.Add (name);
 		}
 
@@ -66,7 +68,7 @@ namespace System.Xml
 			// API docs: "The replacement text is not included." XmlNode.CloneNode
 			// "The replacement text is set when node is inserted." XmlEntityReference.CloneNode
 			//
-			return new XmlEntityReference ("", OwnerDocument);
+			return new XmlEntityReference (Name, OwnerDocument);
 		}
 
 		public override void WriteContentTo (XmlWriter w)
@@ -99,6 +101,7 @@ namespace System.Xml
 				for (int i = 0; i < ent.ChildNodes.Count; i++)
 					InsertBefore (ent.ChildNodes [i].CloneNode (true), null, false, true);
 			}
+			SetReadOnly (this);
 		}
 	}
 }

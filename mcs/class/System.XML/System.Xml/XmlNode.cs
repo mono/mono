@@ -27,6 +27,7 @@ namespace System.Xml
 		StringBuilder tmpBuilder;
 		XmlLinkedNode lastLinkedChild;
 		XmlNodeListChildren childNodes;
+		bool isReadOnly;
 
 		#endregion
 
@@ -120,7 +121,7 @@ namespace System.Xml
 		}
 
 		public virtual bool IsReadOnly {
-			get { return false; }
+			get { return isReadOnly; }
 		}
 
 		[System.Runtime.CompilerServices.IndexerName("Item")]
@@ -610,7 +611,7 @@ namespace System.Xml
 		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 			if(oldChild.ParentNode != this)
-				throw new XmlException ("The node to be removed is not a child of this node.");
+				throw new ArgumentException ("The node to be removed is not a child of this node.");
 
 			if (checkNodeType)
 				ownerDoc.onNodeRemoving (oldChild, oldChild.ParentNode);
@@ -652,10 +653,10 @@ namespace System.Xml
 		public virtual XmlNode ReplaceChild (XmlNode newChild, XmlNode oldChild)
 		{
 			if(oldChild.ParentNode != this)
-				throw new InvalidOperationException ("The node to be removed is not a child of this node.");
+				throw new ArgumentException ("The node to be removed is not a child of this node.");
 			
 			if (newChild == this || IsAncestor (newChild))
-				throw new ArgumentException("Cannot insert a node or any ancestor of that node as a child of itself.");
+				throw new InvalidOperationException("Cannot insert a node or any ancestor of that node as a child of itself.");
 			
 			for (int i = 0; i < ChildNodes.Count; i++) {
 				XmlNode n = ChildNodes [i];
@@ -729,6 +730,21 @@ namespace System.Xml
 			if (!iter.MoveNext ())
 				return null;
 			return ((XmlDocumentNavigator) iter.Current).Node;
+		}
+
+		internal static void SetReadOnly (XmlNode n)
+		{
+			if (n.Attributes != null)
+				for (int i = 0; i < n.Attributes.Count; i++)
+					SetReadOnly (n.Attributes [i]);
+			for (int i = 0; i < n.ChildNodes.Count; i++)
+				SetReadOnly (n.ChildNodes [i]);
+			n.isReadOnly = true;
+		}
+
+		internal void SetReadOnly ()
+		{
+			isReadOnly = true;
 		}
 
 		public virtual bool Supports (string feature, string version)

@@ -211,6 +211,8 @@ namespace System.Xml
 			get { return BuildChildValue (ChildNodes); }
 
 			set {
+				if (this.IsReadOnly)
+					throw new ArgumentException ("Attempt to modify a read-only node.");
 				XmlNode firstChild = FirstChild;
 				if (firstChild == null)
 					AppendChild (OwnerDocument.CreateTextNode (value));
@@ -245,6 +247,8 @@ namespace System.Xml
 					node.AppendChild (ChildNodes [i].CloneNode (deep));
 			}
 
+			if (IsReadOnly)
+				node.SetReadOnly ();
 			return node;
 		}
 

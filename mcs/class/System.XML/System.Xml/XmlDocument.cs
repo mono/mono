@@ -634,6 +634,8 @@ namespace System.Xml
 
 		internal void onNodeChanging(XmlNode node, XmlNode Parent)
 		{
+			if (node.IsReadOnly)
+				throw new ArgumentException ("Node is read-only.");
 			if (NodeChanging != null)
 				NodeChanging (node, new XmlNodeChangedEventArgs
 					(XmlNodeChangedAction.Change,
