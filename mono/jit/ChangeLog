@@ -1,3 +1,13 @@
+2001-09-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: branch addresses are now resolved
+
+	* testjit.c (compute_branches): compute address of branches
+
+	* x86.brg: emit real x86 instructions
+
+	* testjit.c: call objdump to disassemble the output
+
 2001-09-13  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: use the right offsets to access local variables
