@@ -1,5 +1,11 @@
 2002-04-30  Jeffrey Stedfast  <fejj@ximian.com>
 
+	* rand.c
+	(ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_GetBytes):
+	Make the prototypes match.
+	(ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_GetNonZeroBytes):
+	Same.
+
 	* icall.c
 	(ves_icall_System_CurrentTimeZone_GetTimeZoneData): Fixed for
 	systems that use 'timezone' rather than tm.tm_gmtoff. Also, not
