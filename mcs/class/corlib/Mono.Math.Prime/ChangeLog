@@ -1,3 +1,7 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrimalityTests.cs: In sync with Mono.Security.dll version.
+
 2003-04-23  Alp Toker  <alp@atoker.com>
 
 	* PrimalityTests.cs: Mark PrimalityTest as non-CLS-compliant (build fix)
