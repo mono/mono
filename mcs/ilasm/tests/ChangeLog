@@ -1,5 +1,9 @@
 2003-02-04 Jackson Harper <jackson@latitudegeo.com>
 
+	* test-1.il: Add header, put in a namespace
+
+2003-02-04 Jackson Harper <jackson@latitudegeo.com>
+
 	* makefile: Use .il files not .cs ;-)
 
 2003-02-04 Jackson Harper <jackson@latitudegeo.com>
