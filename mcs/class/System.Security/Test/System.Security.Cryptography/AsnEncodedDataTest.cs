@@ -241,6 +241,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		// note: important to emulate in Mono because we need it for SSL/TLS
 		public void Build_NetscapeCertTypeExtension ()
 		{
 			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x03, 0x02, 0x01, 0x06 });
@@ -254,6 +255,23 @@ namespace MonoTests.System.Security.Cryptography {
 			// and strangely no NewLine is being appended to Format(true)
 			// finally this also means that the Oid "knowns" about oid not used in the Fx itself
 			Assert.AreEqual ("Netscape Cert Type", aed.Oid.FriendlyName, "FriendlyName");
+			// anyway the answer is most probably CryptoAPI
+		}
+
+		[Test]
+		// note: important to emulate in Mono because we need it for SSL/TLS
+		public void Build_SubjectAltNameExtension ()
+		{
+			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x30, 0x16, 0x82, 0x14, 0x77, 0x77, 0x77, 0x2E, 0x6D, 0x6F, 0x6E, 0x6F, 0x2D, 0x70, 0x72, 0x6F, 0x6A, 0x65, 0x63, 0x74, 0x2E, 0x63, 0x6F, 0x6D });
+			Assert.AreEqual ("30 16 82 14 77 77 77 2e 6d 6f 6e 6f 2d 70 72 6f 6a 65 63 74 2e 63 6f 6d", aed.Format (true), "Format(true)");
+			Assert.AreEqual ("30 16 82 14 77 77 77 2e 6d 6f 6e 6f 2d 70 72 6f 6a 65 63 74 2e 63 6f 6d", aed.Format (false), "Format(false)");
+			aed.Oid = new Oid ("2.5.29.17");
+			// and now "AsnEncodedData" knows how to (magically) decode the data without involving the class
+			Assert.AreEqual ("DNS Name=www.mono-project.com" + Environment.NewLine, aed.Format (true), "aed.Format(true)");
+			Assert.AreEqual ("DNS Name=www.mono-project.com", aed.Format (false), "aed.Format(false)");
+			// note that the Fx doesn't "really" support this extension
+			// finally this also means that the Oid "knowns" about oid not used in the Fx itself
+			Assert.AreEqual ("Subject Alternative Name", aed.Oid.FriendlyName, "FriendlyName");
 			// anyway the answer is most probably CryptoAPI
 		}
 	}
