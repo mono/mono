@@ -2355,17 +2355,17 @@ namespace Mono.MonoBASIC {
 				}
 				
 				if (!rie){
-					temp = ConvertImplicit (ec, right, l, loc);
+					temp = ConvertImplicit (ec, left, r, loc);
 					if (temp != null)
-						right = temp;
+						left = temp;
 					else {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
 				} if (!lie){
-					temp = ConvertImplicit (ec, left, r, loc);
+					temp = ConvertImplicit (ec, right, l, loc);
 					if (temp != null){
-						left = temp;
+						right = temp;
 						l = r;
 					} else {
 						Error_OperatorCannotBeApplied ();
@@ -2555,9 +2555,11 @@ namespace Mono.MonoBASIC {
 			if (left is EnumConstant) {
 				left = ((EnumConstant) left).WidenToCompilerConstant();
 			}
+
 			if (right is EnumConstant) {
 				right = ((EnumConstant) right).WidenToCompilerConstant();
 			}
+
 			if (left is Constant && right is Constant){
 				Expression e = ConstantFold.BinaryFold (
 					ec, oper, (Constant) left, (Constant) right, loc);
