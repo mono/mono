@@ -1,3 +1,10 @@
+2003-06-08  Ville Palo <vi64pa@kolumbus.fi>
+
+	* BinaryWriterTest.cs:
+	* BinaryReaderTest.cs:
+	* DirectoryTest.cs:
+	* FileTest.cs: now works with ms.net, clean ups, nunit2, ...
+	
 2003-05-29  Nick Drochak <ndrochak@gol.com>
 
 	* ms_run_test.sh: added .NET verion of helper script

@@ -20,9 +20,9 @@ namespace MonoTests.System.IO
 			
                 [SetUp]
 		public void SetUp() {
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
-			Directory.CreateDirectory (TempFolder);
+			if (!Directory.Exists (TempFolder))
+				Directory.CreateDirectory (TempFolder);
+			
 			if (!File.Exists (_codeFileName))
 				File.Create (_codeFileName).Close ();
                 }
@@ -30,125 +30,146 @@ namespace MonoTests.System.IO
                 [TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
+
+				if (Directory.Exists (TempFolder))
+					Directory.Delete (TempFolder, true);
+		}		
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]		
+		public void CtorArgumentNullException1 ()
+		{
+			BinaryReader r = null;
+			try {
+				r = new BinaryReader ((Stream) null);
+			} finally {
+				if (r != null)
+					r.Close ();				
+			}
 		}
 
-		public void TestCtor1() 
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]		
+		public void CtorArgumentNullException2 ()				
 		{
-			{
-				bool errorThrown = false;
-				try {
-					BinaryReader r = new BinaryReader ((Stream) null);
-				} catch (ArgumentNullException) {
-					errorThrown = true;
-				}
-				Assert ("#01 null string error not thrown", errorThrown);
-			}
-			{
-				bool errorThrown = false;
-				FileStream f = new FileStream (_codeFileName, FileMode.Open, FileAccess.Write);
-				try {
-					BinaryReader r = new BinaryReader (f);
+			BinaryReader r = null;
+			try {
+				r = new BinaryReader ((Stream) null, Encoding.ASCII);
+			} finally {
+				if (r != null)
 					r.Close ();
-				} catch  (ArgumentException) {
-					errorThrown = true;
-				}
-				f.Close ();
-				Assert ("#02 no read error not thrown", errorThrown);
-			}
-			{
-				FileStream f = new FileStream (_codeFileName, 
-								FileMode.Open, 
-								FileAccess.Read);
-				BinaryReader r = new BinaryReader (f);
-				AssertNotNull ("#03 no binary reader created", r);
-				r.Close ();
-				f.Close ();
-			}
-				
-		}
-
-		public void TestCtor2 () 
-		{
-			{
-				bool errorThrown = false;
-				try {
-					BinaryReader r = new BinaryReader ((Stream) null, Encoding.ASCII);
-				} catch (ArgumentNullException) {
-					errorThrown = true;
-				} catch (Exception e) {
-					Fail ("#04 Incorrect exception thrown: " + e.ToString ());
-				}
-				Assert ("#05 null stream error not thrown", errorThrown);
-			}
-			{
-				bool errorThrown = false;
-				try {
-					BinaryReader r = new BinaryReader ((Stream) null, Encoding.Unicode);
-				} catch (ArgumentNullException) {
-					errorThrown = true;
-				} catch (Exception e) {
-					Fail ("#06 Incorrect exception thrown: " + e.ToString ());
-				}
-				Assert("#07 null stream error not thrown", errorThrown);
-			}
-			{
-				bool errorThrown = false;
-				try {
-					BinaryReader r = new BinaryReader ((Stream) null, Encoding.UTF7);
-				} catch (ArgumentNullException) {
-					errorThrown = true;
-				} catch (Exception e) {
-					Fail ("#08 Incorrect exception thrown: " + e.ToString ());
-				}
-				Assert ("#09 null stream error not thrown", errorThrown);
-			}
-			{
-				bool errorThrown = false;
-				try {
-					BinaryReader r = new BinaryReader ((Stream) null, Encoding.UTF8);
-				} catch (ArgumentNullException) {
-					errorThrown = true;
-				} catch (Exception e) {
-					Fail ("#0A Incorrect exception thrown: " + e.ToString ());
-				}
-				Assert ("#0B null stream error not thrown", errorThrown);
 			}
 		}
 
-		public void TestCtor3 ()
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]		
+		public void CtorArgumentNullException3 ()				
 		{
-			bool errorThrown = false;
+			BinaryReader r = null;
+			try {				
+				r = new BinaryReader ((Stream) null, Encoding.Unicode);
+			} finally {
+				if (r != null)
+					r.Close ();
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]		
+		public void CtorArgumentNullException4 ()				
+		{	
+			BinaryReader r = null;
+			try {
+				r = new BinaryReader ((Stream) null, Encoding.UTF7);
+			} finally {
+				if (r != null)
+					r.Close ();
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]		
+		public void CtorArgumentNullException5 ()				
+		{	
+			BinaryReader r = null;
+			try {
+				r = new BinaryReader ((Stream) null, Encoding.UTF8);
+			} finally {
+				if (r != null)
+					r.Close ();
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]		
+		public void CtorArgumentNullException6 ()				
+		{	
 			byte [] b = new byte [30];
 			MemoryStream m = new MemoryStream (b);
+			BinaryReader r = null;
 			try {
-				BinaryReader r = new BinaryReader (m, (Encoding) null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
-			} catch(Exception e) {
-				Fail ("#0C Incorrect Exception thrown: " + e.ToString ());
+				r = new BinaryReader (m, (Encoding) null);
+			} finally {
+				m.Close ();
+				if (r != null)
+					r.Close ();
 			}
-			Assert ("#0D No exception trown: ", errorThrown);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void CtorArgumentException ()
+		{
+			FileStream f = null;
+			BinaryReader r = null;
+			try {
+				f = new FileStream (_codeFileName, FileMode.Open, FileAccess.Write);
+				r = new BinaryReader (f);
+			} finally {
+				if (r != null)
+					r.Close ();
+				if (f != null)
+					f.Close ();				
+			}
+		}
+
+		[Test]
+		public void Ctor1() 
+		{
+			FileStream f = null;
+			BinaryReader r = null;
+			try {
+				f = new FileStream (_codeFileName, 
+							FileMode.Open, 
+							FileAccess.Read);
+				r = new BinaryReader (f);
+				AssertNotNull ("#03 no binary reader created", r);
+			} finally {
+				if (r != null)
+					r.Close ();
+				if (f != null)
+					f.Close ();
+			}							
 		}
 
 		//TODO: (TestCtor*) Verify the Use of a wrong Stream
 		//TODO: (TestClose*) Verify the Close Method
-		public void TestClose1 ()
+		[Test]
+		public void Close1 ()
 		{
-			{
-				byte [] b = new byte [30];
-				MemoryStream m = new MemoryStream (b);
-				try {
-					BinaryReader r = new BinaryReader (m);
-					r.Close ();
-				} catch (Exception e) {
-					Fail ("#0E Unhandled Exception: "+ e.ToString ());
-				}
+			byte [] b = new byte [30];
+			MemoryStream m = new MemoryStream (b);
+			BinaryReader r = null;
+			try {
+				r = new BinaryReader (m);
+			} finally {
+				r.Close ();
+				m.Close ();
 			}
 		}
 
 		//TODO: (TestRead*) Verify Read Method
+		[Test]
 		public void TestReadBoolean ()
 		{
 			bool [] a = {true, true, false};
@@ -161,29 +182,37 @@ namespace MonoTests.System.IO
 				  
 			bool b;
 			MemoryStream m = new MemoryStream (arr_a);
+			BinaryReader r = null;
 			try {	
-				BinaryReader r = new BinaryReader (m);
+				r = new BinaryReader (m);
 				b = r.ReadBoolean ();
 				AssertEquals ("#11 No well readed boolean: ", a [0], b);
-			} catch (Exception e) {
-				Fail ("#12 Unexpected exception thrown: " + e.ToString ());
+			} finally {
+				if (r != null)
+					r.Close ();				
+				m.Close ();		
 			}
 		}
 
+		[Test]
 		public void TestReadByte ()
 		{
 			byte [] a = {0, 2, 3, 1, 5, 2};
 			byte b;
 			MemoryStream m = new MemoryStream (a);
+			BinaryReader r = null;
 			try {
-				BinaryReader r = new BinaryReader (m);
+				r = new BinaryReader (m);
 				b = r.ReadByte ();
 				AssertEquals ("#13 No well readed byte: ", a [0], b);
-			} catch (Exception e) {
-				Fail ("#14 Unexpected Exception thrown: " + e.ToString ());
+			} finally {
+				if (r != null)
+					r.Close ();
+				m.Close ();
 			}
 		}
 
+		[Test]
 		public void TestReadChar()
 		{
 			char [] a = {'a','b','c','d','e'};
@@ -196,16 +225,20 @@ namespace MonoTests.System.IO
 			   i++;
 			}
 
-			MemoryStream m = new MemoryStream (arr_a);
-			BinaryReader r = new BinaryReader (m);
+			MemoryStream m = null;
+			BinaryReader r = null;
 			try {
+				m = new MemoryStream (arr_a);
+				r = new BinaryReader (m);
 				c = r.ReadChar ();
 				AssertEquals ("#15 No well readed Char", a [0], c);
-			} catch (Exception e)  {
-				Fail ("#16 Unexpeted Exception: " + e.ToString ());
+			} finally  {
+				r.Close ();
+				m.Close ();				
 			}
 		}
 
+		[Test]
 		public void TestReadInt32 () //Uses BinaryWriter!!
 		{
 			int [] arr_int = {1,10,200,3000,40000,500000,6000000};
@@ -213,24 +246,30 @@ namespace MonoTests.System.IO
 			int [] arr_int2 = new int [7];
 			int i;
 			
-			MemoryStream mem_stream = new MemoryStream (arr_byte);
-			BinaryWriter bin_writer = new BinaryWriter (mem_stream);
-			
-			foreach (int elem in arr_int)	{
-				bin_writer.Write(elem);
-			}
-			
-			mem_stream.Seek(0,SeekOrigin.Begin);
-			BinaryReader bin_reader = new BinaryReader (mem_stream);
-			bin_reader.BaseStream.Seek(0,SeekOrigin.Begin);
-
-			for (i=0;i<7;i++) {
-				try{
-					arr_int2 [i] = bin_reader.ReadInt32();
-					AssertEquals("#2E Wrong Readed Int32 in iteration "+ i,arr_int [i],arr_int2 [i]);
-				} catch (IOException e) {
-					Fail("#2F Unexpected IO Exception" + e.ToString());
+			MemoryStream mem_stream = null;
+			BinaryWriter bin_writer = null;
+			try {
+				mem_stream = new MemoryStream (arr_byte);
+				bin_writer = new BinaryWriter (mem_stream);
+				foreach (int elem in arr_int)	{
+					bin_writer.Write(elem);
 				}
+			
+				mem_stream.Seek(0,SeekOrigin.Begin);
+				BinaryReader bin_reader = new BinaryReader (mem_stream);
+				bin_reader.BaseStream.Seek(0,SeekOrigin.Begin);
+			
+				for (i=0;i<7;i++) {
+					try{
+						arr_int2 [i] = bin_reader.ReadInt32();
+						AssertEquals("#2E Wrong Readed Int32 in iteration "+ i,arr_int [i],arr_int2 [i]);
+					} catch (IOException e) {
+						Fail("#2F Unexpected IO Exception" + e.ToString());
+					}
+				}
+			} finally {	
+				bin_writer.Close ();
+				mem_stream.Close ();				
 			}
 		}
 
@@ -239,6 +278,7 @@ namespace MonoTests.System.IO
 		// ReadBoolean, ReadByte, ReadChar, ReadInt32 Done
 		
 		//TODO: (TestFillBuffer*) Verify the FillBuffer Method
+		[Test]
 		public void TestPeekChar ()
 		{
 			char char1, char2;
@@ -251,17 +291,22 @@ namespace MonoTests.System.IO
 				i++;
 			}
 				  
-			MemoryStream m = new MemoryStream (arr_b);
-			BinaryReader r = new BinaryReader (m);
+			MemoryStream m = null;
+			BinaryReader r = null;
+			
 			try {	
+				m = new MemoryStream (arr_b);
+				r = new BinaryReader (m);
 				char1 = (char) r.PeekChar ();
 				char2 = (char) r.PeekChar ();
 				AssertEquals ("#20 the stream pointer have been altered in peek", char1, char2);
-			} catch (Exception e) {
-				Fail ("#21 Unexpected exception thrown: " + e.ToString ());
+			} finally {
+				r.Close ();
+				m.Close ();
 			}
 		}
 		
+		[Test]
 		public void TestBaseSeek1 ()
 		{
 			char char1, char2;
@@ -273,18 +318,22 @@ namespace MonoTests.System.IO
 				i++;
 			}
 
-			MemoryStream m = new MemoryStream (arr_b);
-			BinaryReader r = new BinaryReader (m);
+			MemoryStream m = null;
+			BinaryReader r = null;
 			try {
+				m = new MemoryStream (arr_b);
+				r = new BinaryReader (m);
 				char1 = (char) r.PeekChar ();
 				r.BaseStream.Seek (0,SeekOrigin.Current);
 				char2 = (char) r.PeekChar ();
 				AssertEquals ("#22 the stream Has been altered in Seek", char1, char2);
-			} catch (Exception e) {
-				Fail ("#23 Unexpected exception thrown: " + e.ToString ());
+			} finally {
+				r.Close ();
+				m.Close ();
 			}
 		}
 
+		[Test]
 		public void TestBaseSeek2 ()
 		{
 			char char1, char2;
@@ -296,35 +345,43 @@ namespace MonoTests.System.IO
 				i++;
 			}
 			
-			MemoryStream m = new MemoryStream (arr_b);
-			BinaryReader r = new BinaryReader (m);
+			MemoryStream m = null;
+			BinaryReader r = null;
 			try {
+				m = new MemoryStream (arr_b);
+				r = new BinaryReader (m);
 				char1 = (char) r.PeekChar ();
 				r.BaseStream.Seek (3,SeekOrigin.Current);
 				r.BaseStream.Seek (-3,SeekOrigin.Current);
 				char2 = (char) r.PeekChar ();
 				AssertEquals ("#24 the stream Has been altered in Seek", char1, char2);
-			} catch (Exception e) {
-				Fail ("#25 Unexpected exception thrown: " + e.ToString ());
+			} finally {
+				r.Close ();
+				m.Close ();
 			}
 		}
+		
+		[Test]
 		public void TestInterleavedSeek1 ()
 		{
 			byte int1;
 			byte [] arr_byte = {0,1,2,3,4,5,6,7,8,9};
 			
-			MemoryStream m = new MemoryStream (arr_byte);
-			BinaryReader r = new BinaryReader (m);
+			MemoryStream m = null;
+			BinaryReader r = null;
 
-			{
+			try {
+				m = new MemoryStream (arr_byte);
+				r = new BinaryReader (m);
+				{
 				try {
 					int1 = r.ReadByte();
 					AssertEquals("#26 Not well readed Byte", int1, arr_byte[0]);
 				} catch (Exception e) {
 				Fail ("#27 Unexpected exception thrown: " + e.ToString ());
 				}
-			}
-			{
+				}
+				{
 				try {
 					r.BaseStream.Seek(-1,SeekOrigin.End);
 					int1 = r.ReadByte();
@@ -332,8 +389,8 @@ namespace MonoTests.System.IO
 				} catch (Exception e) {
 				Fail ("#29 Unexpected exception thrown: " + e.ToString ());
 				}
-			}
-			{
+				}
+				{
 				try {
 					r.BaseStream.Seek(3,SeekOrigin.Begin);
 					int1 = r.ReadByte();
@@ -341,8 +398,8 @@ namespace MonoTests.System.IO
 				} catch (Exception e) {
 					Fail ("#2B Unexpected exception thrown: " + e.ToString ());
 				}
-			}
-			{
+				}
+				{
 				try {
 					r.BaseStream.Seek(2,SeekOrigin.Current);
 					int1 = r.ReadByte();
@@ -350,6 +407,10 @@ namespace MonoTests.System.IO
 				} catch (Exception e) {
 				Fail ("#2D Unexpected exception thrown: " + e.ToString ());
 				}
+				}
+			} finally {
+				r.Close ();
+				m.Close ();
 			}
 
 		}
@@ -361,8 +422,13 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentNullException))]
 	public void CtorNullExceptionStream () 
 	{
-		BinaryReader reader = new BinaryReader (null);
-		Fail();
+		BinaryReader reader = null;
+		try {
+			reader = new BinaryReader (null);
+		} finally {
+			if (reader != null)
+				reader.Close ();
+		}
 	}
 
 	/// <summary>
@@ -372,9 +438,18 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentNullException))]
 	public void CtorNullExceptionEncoding () 
 	{
-		MemoryStream stream = new MemoryStream (64);	
-		BinaryReader reader = new BinaryReader (stream, null);
-		Fail();
+		MemoryStream stream = null;	
+		BinaryReader reader = null;
+		
+		try {
+			stream = new MemoryStream (64);	
+			reader = new BinaryReader (stream, null);
+		} finally {
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -386,12 +461,19 @@ namespace MonoTests.System.IO
 	{
 		string path = TempFolder + "/BinaryReaderTestFile.1";
 		DeleteFile (path);
+		FileStream file = null;
+		BinaryReader breader = null;
 
-		FileStream file = new FileStream (path, FileMode.CreateNew, FileAccess.Read);
-		BinaryReader breader = new BinaryReader (file);
-
-		if (File.Exists (path))
-			File.Delete (path);		
+		try {
+			file = new FileStream (path, FileMode.CreateNew, FileAccess.Read);
+			breader = new BinaryReader (file);
+		} finally {
+			if (breader != null)
+				breader.Close ();
+			if (file != null)
+				file.Close ();
+			DeleteFile (path);		
+		}
 	}
 
 	/// <summary>
@@ -403,13 +485,21 @@ namespace MonoTests.System.IO
 	{
 		string path = TempFolder + "/BinaryReaderTestFile.2";
 		DeleteFile (path);
-
-		FileStream file = new FileStream (path, FileMode.CreateNew, FileAccess.Write);
-		file.Close ();
-		BinaryReader breader = new BinaryReader (file);
-
-		if (File.Exists (path))
-			File.Delete (path);		
+		FileStream file = null;
+		BinaryReader breader = null;
+		try {
+			file = new FileStream (path, FileMode.CreateNew, FileAccess.Write);
+			file.Close ();
+			breader = new BinaryReader (file);
+		} finally {
+			
+			if (breader != null)
+				breader.Close ();
+			
+			if (file != null)
+				file.Close ();			
+			DeleteFile (path);			
+		}
 	}
 
 	/// <summary>
@@ -419,11 +509,21 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentException))]
 	public void CtorArgumentExceptionEncoding () 
 	{
-		MemoryStream stream = new MemoryStream (64);	
-		stream.Close ();
+		MemoryStream stream = null;
+		BinaryReader reader = null;
 		
-		BinaryReader reader = new BinaryReader (stream, new ASCIIEncoding ());
-		Fail();
+		try {
+			stream = new MemoryStream (64);	
+			stream.Close ();
+		
+			reader = new BinaryReader (stream, new ASCIIEncoding ());
+		} finally {
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
+		}
+		
 	}
 	
 	/// <summary>
@@ -433,28 +533,44 @@ namespace MonoTests.System.IO
 	public void Read ()
 	{
 		byte [] bytes = new byte [] {0, 1, 2, 3};
-		MemoryStream stream = new MemoryStream (bytes);
-		BinaryReader reader = new BinaryReader (stream);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+
+		try {
+			stream = new MemoryStream (bytes);
+			reader = new BinaryReader (stream);
 		
-		AssertEquals ("test#01", 0, reader.Read ());
-		AssertEquals ("test#02", 1, reader.Read ());
-		AssertEquals ("test#03", 2, reader.Read ());
-		AssertEquals ("test#04", 3, reader.Read ());
-		AssertEquals ("test#05", -1, reader.Read ());		
+			AssertEquals ("test#01", 0, reader.Read ());
+			AssertEquals ("test#02", 1, reader.Read ());
+			AssertEquals ("test#03", 2, reader.Read ());
+			AssertEquals ("test#04", 3, reader.Read ());
+			AssertEquals ("test#05", -1, reader.Read ());		
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
 	public void PeakChar ()
 	{
 		byte [] bytes = new byte [] {0, 1, 2, 3};
-		MemoryStream stream = new MemoryStream (bytes);
-		BinaryReader reader = new BinaryReader (stream);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
 		
-		AssertEquals ("test#01", 0, reader.PeekChar ());
-		AssertEquals ("test#02", 0, reader.PeekChar ());
-		AssertEquals ("test#03", 0, reader.Read ());
-		AssertEquals ("test#03", 1, reader.Read ());
-		AssertEquals ("test#03", 2, reader.PeekChar ());
+		try {
+			stream = new MemoryStream (bytes);
+			reader = new BinaryReader (stream);
+		
+			AssertEquals ("test#01", 0, reader.PeekChar ());
+			AssertEquals ("test#02", 0, reader.PeekChar ());
+			AssertEquals ("test#03", 0, reader.Read ());
+			AssertEquals ("test#03", 1, reader.Read ());
+			AssertEquals ("test#03", 2, reader.PeekChar ());
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -462,10 +578,18 @@ namespace MonoTests.System.IO
 	public void CloseRead ()
 	{
 		byte [] bytes = new byte [] {0, 1, 2, 3};
-		MemoryStream stream = new MemoryStream (bytes);
-		BinaryReader reader = new BinaryReader (stream);
-		reader.Close ();
-		reader.Read ();
+		MemoryStream stream = null;
+		BinaryReader reader = null;	
+		
+		try {
+			stream = new MemoryStream (bytes);
+			reader = new BinaryReader (stream);	
+			reader.Close ();
+			reader.Read ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 
 	[Test]
@@ -473,10 +597,18 @@ namespace MonoTests.System.IO
 	public void ClosePeakChar ()
 	{
 		byte [] bytes = new byte [] {0, 1, 2, 3};
-		MemoryStream stream = new MemoryStream (bytes);
-		BinaryReader reader = new BinaryReader (stream);
-		reader.Close ();
-		reader.PeekChar ();
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		
+		try {
+			stream = new MemoryStream (bytes);
+			reader = new BinaryReader (stream);
+			reader.Close ();
+			reader.PeekChar ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 
 	[Test]
@@ -484,23 +616,39 @@ namespace MonoTests.System.IO
 	public void CloseReadBytes ()
 	{
 		byte [] bytes = new byte [] {0, 1, 2, 3};
-		MemoryStream stream = new MemoryStream (bytes);
-		BinaryReader reader = new BinaryReader (stream);
-		reader.Close ();
-		reader.ReadBytes (1);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		
+		try {
+			stream = new MemoryStream (bytes);
+			reader = new BinaryReader (stream);
+			reader.Close ();
+			reader.ReadBytes (1);
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 
 	[Test]
 	public void BaseStream ()
 	{
 		byte [] bytes = new byte [] {0, 1, 2, 3};
-		MemoryStream stream = new MemoryStream (bytes);
-		BinaryReader reader = new BinaryReader (stream);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
 		
-		AssertEquals ("test#01", 4, reader.BaseStream.Length);
-		AssertEquals ("test#02", true, reader.BaseStream.CanRead);		
-		reader.Close ();
-		AssertEquals ("test#03", null, reader.BaseStream);
+		try {
+			stream = new MemoryStream (bytes);
+			reader = new BinaryReader (stream);
+		
+			AssertEquals ("test#01", 4, reader.BaseStream.Length);
+			AssertEquals ("test#02", true, reader.BaseStream.CanRead);		
+			reader.Close ();
+			AssertEquals ("test#03", null, reader.BaseStream);
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 
 	
@@ -511,28 +659,36 @@ namespace MonoTests.System.IO
 	public void ReadByteArray ()
 	{
 		byte [] bytes = new byte [] {0, 1, 2, 3, 4, 5};
-		MemoryStream stream = new MemoryStream (bytes);
-		BinaryReader reader = new BinaryReader (stream);
-		
-		bytes = new byte [3];
-		reader.Read (bytes, 0, 3);
-		AssertEquals ("test#01", 0, bytes [0]);
-		AssertEquals ("test#02", 1, bytes [1]);
-		AssertEquals ("test#03", 2, bytes [2]);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		try {
 
-		bytes = new byte [6];
-		reader.Read (bytes, 3, 3);
-		AssertEquals ("test#04", 0, bytes [0]);
-		AssertEquals ("test#05", 0, bytes [1]);
-		AssertEquals ("test#06", 0, bytes [2]);
-		AssertEquals ("test#07", 3, bytes [3]);
-		AssertEquals ("test#08", 4, bytes [4]);
-		AssertEquals ("test#09", 5, bytes [5]);
-		
-		bytes = new byte [2];
-		reader.Read (bytes, 0, 2);
-		AssertEquals ("test#10", 0, bytes [0]);
-		AssertEquals ("test#11", 0, bytes [1]);				
+			stream = new MemoryStream (bytes);
+			reader = new BinaryReader (stream);
+			
+			bytes = new byte [3];
+			reader.Read (bytes, 0, 3);
+			AssertEquals ("test#01", 0, bytes [0]);
+			AssertEquals ("test#02", 1, bytes [1]);
+			AssertEquals ("test#03", 2, bytes [2]);
+
+			bytes = new byte [6];
+			reader.Read (bytes, 3, 3);
+			AssertEquals ("test#04", 0, bytes [0]);
+			AssertEquals ("test#05", 0, bytes [1]);
+			AssertEquals ("test#06", 0, bytes [2]);
+			AssertEquals ("test#07", 3, bytes [3]);
+			AssertEquals ("test#08", 4, bytes [4]);
+			AssertEquals ("test#09", 5, bytes [5]);
+			
+			bytes = new byte [2];
+			reader.Read (bytes, 0, 2);
+			AssertEquals ("test#10", 0, bytes [0]);
+			AssertEquals ("test#11", 0, bytes [1]);				
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -542,28 +698,34 @@ namespace MonoTests.System.IO
 	public void ReadCharArray ()
 	{
 		
-		MemoryStream stream = new MemoryStream (new byte [] {109, 111, 110, 111, 58, 58});
-		BinaryReader reader = new BinaryReader (stream);
-		
-		char [] chars = new char [3];
-		reader.Read (chars, 0, 3);
-		AssertEquals ("test#01", 'm', chars [0]);
-		AssertEquals ("test#02", 'o', chars [1]);
-		AssertEquals ("test#03", 'n', chars [2]);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		try {
+			stream = new MemoryStream (new byte [] {109, 111, 110, 111, 58, 58});
+			reader = new BinaryReader (stream);
+			char [] chars = new char [3];
+			reader.Read (chars, 0, 3);
+			AssertEquals ("test#01", 'm', chars [0]);
+			AssertEquals ("test#02", 'o', chars [1]);
+			AssertEquals ("test#03", 'n', chars [2]);
 
-		chars = new char [6];
-		reader.Read (chars, 3, 3);
-		AssertEquals ("test#04", 0, chars [0]);
-		AssertEquals ("test#05", 0, chars [1]);
-		AssertEquals ("test#06", 0, chars [2]);
-		AssertEquals ("test#07", 'o', chars [3]);
-		AssertEquals ("test#08", ':', chars [4]);
-		AssertEquals ("test#09", ':', chars [5]);
-		
-		chars = new char [2];
-		reader.Read (chars, 0, 2);
-		AssertEquals ("test#08", 0, chars [0]);
-		AssertEquals ("test#09", 0, chars [1]);
+			chars = new char [6];
+			reader.Read (chars, 3, 3);
+			AssertEquals ("test#04", 0, chars [0]);
+			AssertEquals ("test#05", 0, chars [1]);
+			AssertEquals ("test#06", 0, chars [2]);
+			AssertEquals ("test#07", 'o', chars [3]);
+			AssertEquals ("test#08", ':', chars [4]);
+			AssertEquals ("test#09", ':', chars [5]);
+			
+			chars = new char [2];
+			reader.Read (chars, 0, 2);
+			AssertEquals ("test#08", 0, chars [0]);
+			AssertEquals ("test#09", 0, chars [1]);
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 
 	}
 	
@@ -573,14 +735,20 @@ namespace MonoTests.System.IO
 	[Test]
 	public void ReadBoolean ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
-		BinaryReader reader = new BinaryReader (stream);
-		
-		AssertEquals ("test#01", false, reader.ReadBoolean ());
-		AssertEquals ("test#02", true, reader.ReadBoolean ());
-		AssertEquals ("test#03", true, reader.ReadBoolean ());
-		AssertEquals ("test#04", false, reader.ReadBoolean ());
-		AssertEquals ("test#05", true, reader.ReadBoolean ());		
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		try {
+			stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+			reader = new BinaryReader (stream);
+			AssertEquals ("test#01", false, reader.ReadBoolean ());
+			AssertEquals ("test#02", true, reader.ReadBoolean ());
+			AssertEquals ("test#03", true, reader.ReadBoolean ());
+			AssertEquals ("test#04", false, reader.ReadBoolean ());
+			AssertEquals ("test#05", true, reader.ReadBoolean ());		
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -590,13 +758,18 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(EndOfStreamException))]	
 	public void ReadBooleanException ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1});
-		BinaryReader reader = new BinaryReader (stream);
-		
-		reader.ReadBoolean ();
-		reader.ReadBoolean ();
-		reader.ReadBoolean ();
-		Fail ();		
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		try {
+			stream = new MemoryStream (new byte [] {0, 1});
+			reader = new BinaryReader (stream);
+			reader.ReadBoolean ();
+			reader.ReadBoolean ();
+			reader.ReadBoolean ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -605,14 +778,22 @@ namespace MonoTests.System.IO
 	[Test]
 	public void ReadByte ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
-		BinaryReader reader = new BinaryReader (stream);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+
+		try {
+			stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+			reader = new BinaryReader (stream);
 		
-		AssertEquals ("test#01", 0, reader.ReadByte ());
-		AssertEquals ("test#02", 1, reader.ReadByte ());
-		AssertEquals ("test#03", 99, reader.ReadByte ());
-		AssertEquals ("test#04", 0, reader.ReadByte ());
-		AssertEquals ("test#05", 13, reader.ReadByte ());		
+			AssertEquals ("test#01", 0, reader.ReadByte ());
+			AssertEquals ("test#02", 1, reader.ReadByte ());
+			AssertEquals ("test#03", 99, reader.ReadByte ());
+			AssertEquals ("test#04", 0, reader.ReadByte ());
+			AssertEquals ("test#05", 13, reader.ReadByte ());		
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -622,12 +803,19 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(EndOfStreamException))]	
 	public void ReadByteException ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1});
-		BinaryReader reader = new BinaryReader (stream);
-		reader.ReadByte ();
-		reader.ReadByte ();
-		reader.ReadByte ();
-		Fail ();		
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+
+		try {
+			stream = new MemoryStream (new byte [] {0, 1});
+			reader = new BinaryReader (stream);
+			reader.ReadByte ();
+			reader.ReadByte ();
+			reader.ReadByte ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -636,20 +824,29 @@ namespace MonoTests.System.IO
 	[Test]
 	public void ReadBytes ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
-		BinaryReader reader = new BinaryReader (stream);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
 		
-		byte [] bytes = reader.ReadBytes (2);
-		AssertEquals ("test#01", 0, bytes [0]);
-		AssertEquals ("test#02", 1, bytes [1]);
+		try {
+			stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+			reader = new BinaryReader (stream);
+			
+			byte [] bytes = reader.ReadBytes (2);
+			AssertEquals ("test#01", 0, bytes [0]);
+			AssertEquals ("test#02", 1, bytes [1]);
 		
-		bytes = reader.ReadBytes (2);
-		AssertEquals ("test#03", 99, bytes [0]);
-		AssertEquals ("test#04", 0, bytes [1]);
+			bytes = reader.ReadBytes (2);
+			AssertEquals ("test#03", 99, bytes [0]);
+			AssertEquals ("test#04", 0, bytes [1]);
 		
-		bytes = reader.ReadBytes (2);
-		AssertEquals ("test#05", 13, bytes [0]);
-		AssertEquals ("test#06", 1, bytes.Length);
+			bytes = reader.ReadBytes (2);
+			AssertEquals ("test#05", 13, bytes [0]);
+			AssertEquals ("test#06", 1, bytes.Length);
+			
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -659,9 +856,17 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 	public void ReadBytesException ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
-		BinaryReader reader = new BinaryReader (stream);
-		reader.ReadBytes (-1);		
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+
+		try {
+			stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+			reader = new BinaryReader (stream);
+			reader.ReadBytes (-1);		
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -670,14 +875,21 @@ namespace MonoTests.System.IO
 	[Test]
 	public void ReadChar ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
-		BinaryReader reader = new BinaryReader (stream);
-		
-		AssertEquals ("test#01", 0, reader.ReadChar ());
-		AssertEquals ("test#02", 1, reader.ReadChar ());
-		AssertEquals ("test#03", 99, reader.ReadChar ());
-		AssertEquals ("test#04", 0, reader.ReadChar ());
-		AssertEquals ("test#05", 13, reader.ReadChar ());
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		try {
+			stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+			reader = new BinaryReader (stream);
+
+			AssertEquals ("test#01", 0, reader.ReadChar ());
+			AssertEquals ("test#02", 1, reader.ReadChar ());
+			AssertEquals ("test#03", 99, reader.ReadChar ());
+			AssertEquals ("test#04", 0, reader.ReadChar ());
+			AssertEquals ("test#05", 13, reader.ReadChar ());
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -687,12 +899,19 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(EndOfStreamException))]	
 	public void ReadCharException ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1});
-		BinaryReader reader = new BinaryReader (stream);
-		reader.ReadChar ();
-		reader.ReadChar ();
-		reader.ReadChar ();
-		Fail ();
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+
+		try {
+			stream = new MemoryStream (new byte [] {0, 1});
+			reader = new BinaryReader (stream);
+			reader.ReadChar ();
+			reader.ReadChar ();
+			reader.ReadChar ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 
 	/// <summary>
@@ -701,20 +920,26 @@ namespace MonoTests.System.IO
 	[Test]
 	public void ReadChars ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
-		BinaryReader reader = new BinaryReader (stream);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		try {			
+			stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+			reader = new BinaryReader (stream);
+			char [] chars = reader.ReadChars (2);
+			AssertEquals ("test#01", 0, chars [0]);
+			AssertEquals ("test#02", 1, chars [1]);
 		
-		char [] chars = reader.ReadChars (2);
-		AssertEquals ("test#01", 0, chars [0]);
-		AssertEquals ("test#02", 1, chars [1]);
+			chars = reader.ReadChars (2);
+			AssertEquals ("test#03", 99, chars [0]);
+			AssertEquals ("test#04", 0, chars [1]);
 		
-		chars = reader.ReadChars (2);
-		AssertEquals ("test#03", 99, chars [0]);
-		AssertEquals ("test#04", 0, chars [1]);
-		
-		chars = reader.ReadChars (2);
-		AssertEquals ("test#05", 13, chars [0]);
-		AssertEquals ("test#06", 1, chars.Length);
+			chars = reader.ReadChars (2);
+			AssertEquals ("test#05", 13, chars [0]);
+			AssertEquals ("test#06", 1, chars.Length);
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	/// <summary>
@@ -724,9 +949,16 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 	public void ReadCharsException ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
-		BinaryReader reader = new BinaryReader (stream);
-		reader.ReadChars (-1);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		try {
+			stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+			reader = new BinaryReader (stream);
+			reader.ReadChars (-1);
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	
@@ -736,9 +968,16 @@ namespace MonoTests.System.IO
 	[Test]
 	public void ReadDecimal ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
-		BinaryReader reader = new BinaryReader (stream);		
-		AssertEquals ("test#01", -18295873486192640, reader.ReadDecimal ());
+		MemoryStream stream = null;
+		BinaryReader reader = null;		
+		try {
+			stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
+			reader = new BinaryReader (stream);		
+			AssertEquals ("test#01", -18295873486192640, reader.ReadDecimal ());
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}		
 	}
 	
 	[Test]
@@ -747,8 +986,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0, 0});
 		BinaryReader reader = new BinaryReader (stream);		
-		reader.ReadDecimal ();
-		reader.ReadDecimal ();		
+		try {
+			reader.ReadDecimal ();
+			reader.ReadDecimal ();		
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -756,9 +1000,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
 		BinaryReader reader = new BinaryReader (stream);
-
-		AssertEquals ("test#01", 1.89131277973112E-307, reader.ReadDouble ());
-		AssertEquals ("test#02", 1.2024538023802E+111, reader.ReadDouble ());	
+		try {
+			AssertEquals ("test#01", 1.89131277973112E-307, reader.ReadDouble ());
+			AssertEquals ("test#02", 1.2024538023802E+111, reader.ReadDouble ());	
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -767,10 +1015,14 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
 		BinaryReader reader = new BinaryReader (stream);
-
-		reader.ReadDouble ();
-		reader.ReadDouble ();
-		reader.ReadDouble ();
+		try {
+			reader.ReadDouble ();
+			reader.ReadDouble ();
+			reader.ReadDouble ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -778,11 +1030,15 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0});
 		BinaryReader reader = new BinaryReader (stream);
-		
-		AssertEquals ("test#01", 321, reader.ReadInt16 ());
-		AssertEquals ("test#02", 11040, reader.ReadInt16 ());
-		AssertEquals ("test#03", 773, reader.ReadInt16 ());
-		AssertEquals ("test#04", 54, reader.ReadInt16 ());		
+		try {
+			AssertEquals ("test#01", 321, reader.ReadInt16 ());
+			AssertEquals ("test#02", 11040, reader.ReadInt16 ());
+			AssertEquals ("test#03", 773, reader.ReadInt16 ());
+			AssertEquals ("test#04", 54, reader.ReadInt16 ());		
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 	
 	[Test]
@@ -791,8 +1047,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1});
 		BinaryReader reader = new BinaryReader (stream);
-		reader.ReadInt16 ();
-		reader.ReadInt16 ();
+		try {
+			reader.ReadInt16 ();
+			reader.ReadInt16 ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 
 	[Test]
@@ -800,9 +1061,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0});
 		BinaryReader reader = new BinaryReader (stream);
-		
-		AssertEquals ("test#01", 723517761, reader.ReadInt32 ());
-		AssertEquals ("test#02", 3539717, reader.ReadInt32 ());
+		try {
+			AssertEquals ("test#01", 723517761, reader.ReadInt32 ());
+			AssertEquals ("test#02", 3539717, reader.ReadInt32 ());
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -811,9 +1076,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43});
 		BinaryReader reader = new BinaryReader (stream);
-		
-		reader.ReadInt32 ();
-		reader.ReadInt32 ();
+		try {
+			reader.ReadInt32 ();
+			reader.ReadInt32 ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 
 	[Test]
@@ -821,9 +1090,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
 		BinaryReader reader = new BinaryReader (stream);
-		
-		AssertEquals ("test#01", 15202969475612993, reader.ReadInt64 ());
-		AssertEquals ("test#02", 2471354792417887522, reader.ReadInt64 ());
+		try {
+			AssertEquals ("test#01", 15202969475612993, reader.ReadInt64 ());
+			AssertEquals ("test#02", 2471354792417887522, reader.ReadInt64 ());
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -833,9 +1106,14 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
 		BinaryReader reader = new BinaryReader (stream);
 		
-		reader.ReadInt64 ();
-		reader.ReadInt64 ();
-		reader.ReadInt64 ();
+		try {
+			reader.ReadInt64 ();
+			reader.ReadInt64 ();
+			reader.ReadInt64 ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -844,9 +1122,14 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {65, 200, 32});
 		BinaryReader reader = new BinaryReader (stream);
 		
-		AssertEquals ("test#01", 65, reader.ReadSByte ());
-		AssertEquals ("test#02", -56, reader.ReadSByte ());
-		AssertEquals ("test#03", 32, reader.ReadSByte ());
+		try {
+			AssertEquals ("test#01", 65, reader.ReadSByte ());
+			AssertEquals ("test#02", -56, reader.ReadSByte ());
+			AssertEquals ("test#03", 32, reader.ReadSByte ());
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -856,9 +1139,14 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {65, 200});
 		BinaryReader reader = new BinaryReader (stream);
 		
-		reader.ReadSByte ();
-		reader.ReadSByte ();
-		reader.ReadSByte ();		
+		try {
+			reader.ReadSByte ();
+			reader.ReadSByte ();
+			reader.ReadSByte ();		
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 	
 	[Test]
@@ -866,9 +1154,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 200, 0, 0, 0, 1, 2, 3, 4});
 		BinaryReader reader = new BinaryReader (stream);
-		
-		AssertEquals ("test#01", 7.183757E-41, reader.ReadSingle ());
-		AssertEquals ("test#01", 3.820471E-37, reader.ReadSingle ());
+		try {
+			AssertEquals ("test#01", 7.183757E-41, reader.ReadSingle ());
+			AssertEquals ("test#01", 3.820471E-37, reader.ReadSingle ());
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -877,24 +1169,34 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 200, 0, 0, 0, 1, 2, 3, 4});
 		BinaryReader reader = new BinaryReader (stream);
-		
-		reader.ReadSingle ();
-		reader.ReadSingle ();
-		reader.ReadSingle ();
+		try {
+			reader.ReadSingle ();
+			reader.ReadSingle ();
+			reader.ReadSingle ();
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 	
 	[Test]
 	public void ReadString ()
 	{
-		MemoryStream stream = new MemoryStream (new byte [] {6,109, 111, 110, 111, 58, 58});
-		BinaryReader reader = new BinaryReader (stream);
+		MemoryStream stream = null;
+		BinaryReader reader = null;
+		try {
+			stream = new MemoryStream (new byte [] {6,109, 111, 110, 111, 58, 58});
+			reader = new BinaryReader (stream);
+			AssertEquals ("test#01", "mono::", reader.ReadString ());
 		
-		AssertEquals ("test#01", "mono::", reader.ReadString ());
-		
-		stream = new MemoryStream (new byte [] {2,109, 111, 3, 111, 58, 58});
-		reader = new BinaryReader (stream);
-		AssertEquals ("test#02", "mo", reader.ReadString ());
-		AssertEquals ("test#03", "o::", reader.ReadString ());
+			stream = new MemoryStream (new byte [] {2,109, 111, 3, 111, 58, 58});
+			reader = new BinaryReader (stream);
+			AssertEquals ("test#02", "mo", reader.ReadString ());
+			AssertEquals ("test#03", "o::", reader.ReadString ());
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 	
 	[Test]
@@ -903,9 +1205,15 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {2,109, 111, 3, 111, 58, 58});
 		BinaryReader reader = new BinaryReader (stream);
-		reader.ReadString ();
-		reader.ReadString ();
-		reader.ReadString ();
+		
+		try {
+			reader.ReadString ();
+			reader.ReadString ();
+			reader.ReadString ();
+		} finally {
+			reader.Close ();
+			stream.Close ();
+		}
 	}
 	
 	[Test]
@@ -914,10 +1222,15 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {200, 200, 32, 43, 5, 3, 54, 0});
 		BinaryReader reader = new BinaryReader (stream);
 		
-		AssertEquals ("test#01", 51400, reader.ReadUInt16 ());
-		AssertEquals ("test#02", 11040, reader.ReadUInt16 ());
-		AssertEquals ("test#03", 773, reader.ReadUInt16 ());
-		AssertEquals ("test#04", 54, reader.ReadUInt16 ());		
+		try {
+			AssertEquals ("test#01", 51400, reader.ReadUInt16 ());
+			AssertEquals ("test#02", 11040, reader.ReadUInt16 ());
+			AssertEquals ("test#03", 773, reader.ReadUInt16 ());
+			AssertEquals ("test#04", 54, reader.ReadUInt16 ());		
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 	
 	[Test]
@@ -926,8 +1239,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1});
 		BinaryReader reader = new BinaryReader (stream);
-		reader.ReadUInt16 ();
-		reader.ReadUInt16 ();
+		try {
+			reader.ReadUInt16 ();
+			reader.ReadUInt16 ();
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 
 	[Test]
@@ -935,9 +1253,13 @@ namespace MonoTests.System.IO
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0});
 		BinaryReader reader = new BinaryReader (stream);
-		
-		AssertEquals ("test#01", 723517761, reader.ReadUInt32 ());
-		AssertEquals ("test#02", 3539717, reader.ReadUInt32 ());
+		try {
+			AssertEquals ("test#01", 723517761, reader.ReadUInt32 ());
+			AssertEquals ("test#02", 3539717, reader.ReadUInt32 ());
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 	
 	[Test]
@@ -947,8 +1269,13 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43});
 		BinaryReader reader = new BinaryReader (stream);
 		
-		reader.ReadUInt32 ();
-		reader.ReadUInt32 ();
+		try {
+			reader.ReadUInt32 ();
+			reader.ReadUInt32 ();
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 
 	[Test]
@@ -957,8 +1284,13 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
 		BinaryReader reader = new BinaryReader (stream);
 		
-		AssertEquals ("test#01", 15202969475612993, reader.ReadUInt64 ());
-		AssertEquals ("test#02", 2471354792417887522, reader.ReadUInt64 ());
+		try {
+			AssertEquals ("test#01", 15202969475612993, reader.ReadUInt64 ());
+			AssertEquals ("test#02", 2471354792417887522, reader.ReadUInt64 ());
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}
 	
 	[Test]
@@ -968,9 +1300,14 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
 		BinaryReader reader = new BinaryReader (stream);
 		
-		reader.ReadUInt64 ();
-		reader.ReadUInt64 ();
-		reader.ReadUInt64 ();
+		try {
+			reader.ReadUInt64 ();
+			reader.ReadUInt64 ();
+			reader.ReadUInt64 ();
+		} finally {
+			reader.Close ();
+			stream.Close ();			
+		}
 	}	
 
 	private void DeleteFile (string path)

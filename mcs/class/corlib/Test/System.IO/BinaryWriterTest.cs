@@ -87,16 +87,24 @@ public class BinaryWriterTest : Assertion {
 	/// Throws an exception if stream does not support writing
 	/// </summary>
 	[Test]
-	[ExpectedException(typeof(IOException))]
+	[ExpectedException(typeof(ArgumentException))]
 	public void CtorArgumentExceptionStreamCannotWrite ()
 	{
 		string path = TempFolder + "/BinaryWriterTest.1";
 		DeleteFile (path);
+		FileStream stream = null;
+		BinaryWriter reader = null;
 			
-		FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
-		BinaryWriter reader = new BinaryWriter (stream);
-		
-		DeleteFile (path);
+		try {
+			stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
+			reader = new BinaryWriter (stream);
+		} finally {
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
+			DeleteFile (path);
+		}
 	}
 
 	[Test]
