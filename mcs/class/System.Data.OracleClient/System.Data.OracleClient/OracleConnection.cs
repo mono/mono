@@ -70,14 +70,6 @@ namespace System.Data.OracleClient
 
 		#region Properties
 
-		// only for DEBUG purposes - not part of MS.NET 1.1 OracleClient
-		public static uint ConnectionCount {
-			get {
-				uint count = 0; // OciGlue.OciGlue_ConnectionCount();
-				return count;
-			}
-		}
-
 		int IDbConnection.ConnectionTimeout {
 			[MonoTODO]
 			get { return -1; }

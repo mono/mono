@@ -1,5 +1,5 @@
 //
-// OracleTransaction.cs 
+// OracleDataReader.cs 
 //
 // Part of the Mono class libraries at
 // mcs/class/System.Data.OracleClient/System.Data.OracleClient
@@ -7,9 +7,11 @@
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient
 //
-// Author: Tim Coleman <tim@timcoleman.com>
+// Authors: Tim Coleman <tim@timcoleman.com>
+//          Daniel Morgan <danmorg@sc.rr.com>
 //
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2003
 //
 // Licensed under the MIT/X11 License.
 //
@@ -38,12 +40,11 @@ namespace System.Data.OracleClient {
 		internal OracleDataReader (OracleCommand command)
 		{
 			this.command = command;
-			this.fieldCount = -1;
 			this.hasRows = false;
 			this.isClosed = false;
 			this.isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
 			this.schemaTable = ConstructSchemaTable ();
-			Read ();
+			this.fieldCount = command.StatementHandle.ColumnCount;
 		}
 
 		public int Depth {
@@ -72,10 +73,12 @@ namespace System.Data.OracleClient {
 
 		public int RecordsAffected {
 			get { 
-				if (isSelect) 
-					return -1;
-				else
-					throw new NotImplementedException ();
+				// FIXME: get RecordsAffected for DML, otherwise, -1
+				return -1;
+				//if (isSelect) 
+				//	return -1;
+				//else
+				//	throw new NotImplementedException ();
 			}
 		}
 
@@ -209,7 +212,11 @@ namespace System.Data.OracleClient {
 
 		public Type GetFieldType (int i)
 		{
-			return (Type) schemaTable.Rows[i]["DataType"];
+			// FIXME: "DataType" need to implement
+			//OciColumnInfo columnInfo = command.StatementHandle.DescribeColumn (i);
+			//Type fieldType = OciGlue.OciDataTypeToDbType (columnInfo.DataType);
+			//return fieldType;
+			return typeof(string);
 		}
 
 		public float GetFloat (int i)
@@ -254,7 +261,8 @@ namespace System.Data.OracleClient {
 
 		public string GetName (int i)
 		{
-			return (string) schemaTable.Rows[i]["ColumnName"];
+			OciColumnInfo columnInfo = command.StatementHandle.DescribeColumn (i);
+			return columnInfo.ColumnName;
 		}
 
 		public int GetOrdinal (string name)
@@ -272,7 +280,7 @@ namespace System.Data.OracleClient {
 		{
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
-			fieldCount = 0;
+			
 			dataTypeNames = new ArrayList ();
 
 			for (int i = 0; i < command.StatementHandle.ColumnCount; i += 1) {
@@ -281,10 +289,12 @@ namespace System.Data.OracleClient {
 
 				row ["ColumnName"] = columnInfo.ColumnName;
 				row ["ColumnOrdinal"] = i + 1;
-				row ["ColumnSize"] = columnInfo.ColumnSize;
-				row ["NumericPrecision"] = columnInfo.Precision;
-				row ["NumericScale"] = columnInfo.Scale;
+				row ["ColumnSize"] = (int) columnInfo.ColumnSize;
+				row ["NumericPrecision"] = (short) columnInfo.Precision;
+				row ["NumericScale"] = (short) columnInfo.Scale;
+				// FIXME: "DataType" need to implement
 				//row ["DataType"] = OciGlue.OciDataTypeToDbType (columnInfo.DataType);
+				row ["DataType"] = typeof(string);
 				row ["AllowDBNull"] = columnInfo.AllowDBNull;
 				row ["BaseColumnName"] = columnInfo.BaseColumnName;
 
@@ -343,7 +353,9 @@ namespace System.Data.OracleClient {
 		[MonoTODO]
 		public bool NextResult ()
 		{
-			throw new NotImplementedException ();
+			// FIXME: get next result
+			//throw new NotImplementedException ();
+			return false; 
 		}
 
 		public bool Read ()

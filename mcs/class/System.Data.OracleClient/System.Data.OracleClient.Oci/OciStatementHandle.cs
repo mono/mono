@@ -231,6 +231,24 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
+		public sbyte GetAttributeSByte (IntPtr handle, OciAttributeType type) {
+			sbyte output;
+			int status = 0;
+
+			status = OciGlue.OCIAttrGetSByte (handle,
+				(uint) OciDescriptorType.Parameter,
+				out output,
+				IntPtr.Zero,
+				type,
+				ErrorHandle.Handle);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			return output;
+		}
+
 		public byte GetAttributeByte (IntPtr handle, OciAttributeType type)
 		{
 			byte output;
@@ -242,6 +260,25 @@ namespace System.Data.OracleClient.Oci {
 						IntPtr.Zero,
 						type,
 						ErrorHandle.Handle);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			return output;
+		}
+
+		public ushort GetAttributeUInt16 (IntPtr handle, OciAttributeType type) {
+			int status = 0;
+			ushort output;
+
+			status = OciGlue.OCIAttrGetUInt16 (handle,
+				(uint) OciDescriptorType.Parameter,	
+				out output,
+				IntPtr.Zero,
+				type,
+				ErrorHandle.Handle);
+
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -314,11 +351,11 @@ namespace System.Data.OracleClient.Oci {
 
 			IntPtr parameterHandle = CreateParameterHandle (ordinal + 1);
 
-			columnInfo.ColumnName = ""; // GetAttributeString (parameterHandle, OciAttributeType.DisplayName);
+			columnInfo.ColumnName = GetAttributeString (parameterHandle, OciAttributeType.Name);
 			columnInfo.ColumnOrdinal = ordinal + 1;
-			columnInfo.ColumnSize = GetAttributeInt32 (parameterHandle, OciAttributeType.DataSize);
+			columnInfo.ColumnSize = GetAttributeUInt16 (parameterHandle, OciAttributeType.DataSize);
 			columnInfo.Precision = GetAttributeByte (parameterHandle, OciAttributeType.Precision);
-			columnInfo.Scale = GetAttributeByte (parameterHandle, OciAttributeType.Scale);
+			columnInfo.Scale = GetAttributeSByte (parameterHandle, OciAttributeType.Scale);
 			columnInfo.DataType = (OciDataType) GetAttributeInt32 (parameterHandle, OciAttributeType.DataType);
 			columnInfo.AllowDBNull = GetAttributeBool (parameterHandle, OciAttributeType.IsNull);
 			columnInfo.BaseColumnName = GetAttributeString (parameterHandle, OciAttributeType.Name);

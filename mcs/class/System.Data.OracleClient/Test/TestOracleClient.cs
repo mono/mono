@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Data;
 using System.Data.OracleClient;
 
 namespace Test.OracleClient
@@ -81,11 +82,60 @@ namespace Test.OracleClient
 			cmd.ExecuteNonQuery();
 		}
 
+		static void ReadSimpleTest(OracleConnection con) 
+		{
+			string selectSql = 
+				"SELECT ename, job FROM scott.emp";
+			OracleCommand cmd = new OracleCommand();
+			cmd.Connection = con;
+			cmd.CommandText = selectSql;
+			OracleDataReader reader = cmd.ExecuteReader();
+			Console.WriteLine("Results...");
+			Console.WriteLine("Schema");
+			DataTable table;
+			table = reader.GetSchemaTable();
+			for(int c = 0; c < reader.FieldCount; c++) {
+				Console.WriteLine("  Column " + c.ToString());
+				DataRow row = table.Rows[c];
+			
+				string ColumnName = (string) row["ColumnName"];
+				string BaseColumnName = (string) row["BaseColumnName"];
+				int ColumnSize = (int) row["ColumnSize"];
+				int NumericScale = Convert.ToInt32( row["NumericScale"]);
+				int NumericPrecision = Convert.ToInt32(row["NumericPrecision"]);
+				Type DataType = (Type) row["DataType"];
+
+				Console.WriteLine("    ColumnName: " + ColumnName);
+				Console.WriteLine("    BaseColumnName: " + BaseColumnName);
+				Console.WriteLine("    ColumnSize: " + ColumnSize.ToString());
+				Console.WriteLine("    NumericScale: " + NumericScale.ToString());
+				Console.WriteLine("    NumericPrecision: " + NumericPrecision.ToString());
+				Console.WriteLine("    DataType: " + DataType.ToString());
+			}
+
+			int row = 0;
+			Console.WriteLine("Data");
+			while(reader.Read()) {
+				row++;
+				Console.WriteLine("  Row: " + row.ToString());
+				for(int f = 0; f < reader.FieldCount; f++) {
+					object ovalue;
+					string svalue;
+					ovalue = reader.GetValue(0);
+					svalue = ovalue.ToString();
+					Console.WriteLine("     Field: " + f.ToString());
+					Console.WriteLine("         Value: " + svalue);
+				}
+			}
+			if(row == 0)
+				Console.WriteLine("No data returned.");
+		}
+
 		static void Wait(string msg) 
 		{
-			Console.WriteLine(msg);
-			Console.WriteLine("Waiting...  Presee Enter to continue...");
-			string nothing = Console.ReadLine();
+			//Console.WriteLine(msg);
+			//Console.WriteLine("Waiting...  Presee Enter to continue...");
+			//string nothing = Console.ReadLine();
 		}
 
 		[STAThread]
@@ -122,11 +172,15 @@ namespace Test.OracleClient
 			
 			Wait("Verify 3 connections.");
 					
-			DoTest1(con1, 1);
-			DoTest1(con2, 2);
-			DoTest1(con3, 3);
+			//DoTest1(con1, 1);
+			//DoTest1(con2, 2);
+			//DoTest1(con3, 3);
 			
-			DoTest9(con1);
+			//DoTest9(con1);
+			
+			Console.WriteLine ("Read Simple Test BEGIN...");
+                        ReadSimpleTest(con1);
+			Console.WriteLine ("Read Simple Test END.");
 
 			Wait("Verify Proper Results.");
 						
@@ -144,3 +198,4 @@ namespace Test.OracleClient
 		}
 	}
 }
+

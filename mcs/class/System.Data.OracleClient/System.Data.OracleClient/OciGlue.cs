@@ -84,9 +84,25 @@ namespace System.Data.OracleClient.Oci {
 							IntPtr errhp);
 
 		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
+		public static extern int OCIAttrGetSByte (IntPtr trgthndlp,
+			uint trghndltyp,
+			out sbyte attributep,
+			IntPtr sizep,
+			[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
+			IntPtr errhp);
+
+		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
 		public static extern int OCIAttrGetByte (IntPtr trgthndlp,
 							uint trghndltyp,
 							out byte attributep,
+							IntPtr sizep,
+							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
+							IntPtr errhp);
+
+		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
+		public static extern int OCIAttrGetUInt16 (IntPtr trgthndlp,
+							uint trghndltyp,
+							out ushort attributep,
 							IntPtr sizep,
 							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
 							IntPtr errhp);

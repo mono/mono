@@ -1,4 +1,19 @@
-2003-12-13  Tim Coleman <tim@timcoleman.com>
+2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs
+	* System.Data.OracleClient.Oci/OciColumnInfo.cs
+	* System.Data.OracleClient/OciGlue.cs
+	* System.Data.OracleClient/OracleDataReader.cs: fixes
+	  to display character data in SQL# command-line 
+	  and GTK# versions
+	
+	* Test/TestOracleClient.cs: updated test to
+	  include reading data via the OracleDataReader
+	
+	* System.Data.OracleClient/OracleConnection.cs: removed
+	  debug code
+
+2003-02-13  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient.Oci/OciColumnInfo.cs:
 	* System.Data.OracleClient.Oci/OciDataType.cs:
 	* System.Data.OracleClient.Oci/OciDefineHandle.cs:

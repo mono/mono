@@ -22,9 +22,9 @@ namespace System.Data.OracleClient.Oci {
 	{
 		public string ColumnName;
 		public int ColumnOrdinal;
-		public int ColumnSize;
+		public ushort ColumnSize;
 		public byte Precision;
-		public byte Scale;
+		public sbyte Scale;
 		public OciDataType DataType;
 		public bool AllowDBNull;
 		public string BaseColumnName;
