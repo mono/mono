@@ -14,50 +14,50 @@ using System;
 namespace MonoTests.System
 {
 	[TestFixture]
-	public class UriBuilderTest 
+	public class UriBuilderTest : Assertion
 	{
 		private UriBuilder b, b2, b3;
 		
 		[SetUp]
 		public void GetReady()
 		{
-			b = new UriBuilder ("http://", "www.ximian.com", 80, "foo/bar/index.html");
+			b = new UriBuilder ("http", "www.ximian.com", 80, "foo/bar/index.html");
 		}
 
 		[Test]
 		public void Constructors ()
 		{
 			b = new UriBuilder ();
-			Assertion.AssertEquals ("#1", "http", b.Scheme);
-			Assertion.AssertEquals ("#2", "loopback", b.Host);
-			Assertion.AssertEquals ("#3", -1, b.Port);
+			AssertEquals ("#1", "http", b.Scheme);
+			AssertEquals ("#2", "loopback", b.Host);
+			AssertEquals ("#3", -1, b.Port);
 			
 			try {
-				b = new UriBuilder ("http://", "www.ximian.com", 80, "foo/bar/index.html", "extras");
-				Assertion.Fail ("#4 should have thrown an ArgumentException because extraValue must start with '?' or '#' character.");
+				b = new UriBuilder ("http", "www.ximian.com", 80, "foo/bar/index.html", "extras");
+				Fail ("#4 should have thrown an ArgumentException because extraValue must start with '?' or '#' character.");
 			} catch (ArgumentException) {}
 			
-			b = new UriBuilder ("http://", "www.ximian.com", 80, "foo/bar/index.html", "#extras");
+			b = new UriBuilder ("http", "www.ximian.com", 80, "foo/bar/index.html", "#extras");
 		}
 		
 		[Test]
 		public void UserInfo ()
 		{			
 			b = new UriBuilder ("mailto://myname:mypwd@contoso.com?subject=hello");
-			Assertion.AssertEquals ("#1", "myname", b.UserName);
-			Assertion.AssertEquals ("#2", "mypwd", b.Password);
+			AssertEquals ("#1", "myname", b.UserName);
+			AssertEquals ("#2", "mypwd", b.Password);
 			
-			b = new UriBuilder ("mailto:", "contoso.com");
+			b = new UriBuilder ("mailto", "contoso.com");
 			b.UserName = "myname";
 			b.Password = "mypwd";
-			Assertion.AssertEquals ("#3: known to fail with ms.net.", "myname:mypwd", b.Uri.UserInfo);
+			AssertEquals ("#3", "myname:mypwd", b.Uri.UserInfo);
 		}
 
 		[Test]
 		public void Path ()
 		{			
 			b.Path = ((char) 0xa9) + " 2002";
-			Assertion.AssertEquals ("#1: known to fail with ms.net, should at least return a slash.", "/%A9%202002", b.Path);			
+			AssertEquals ("#1", "%C2%A9%202002", b.Path);			
 		}	
 		
 		[Test]
@@ -78,43 +78,43 @@ namespace MonoTests.System
 		public void Query ()
 		{
 			b.Query = ((char) 0xa9) + " 2002";
-			Assertion.AssertEquals ("#1: known to fail with ms.net, should've been escaped.", "?%A9%202002", b.Query);			
-			Assertion.AssertEquals ("#2", String.Empty, b.Fragment);
+			AssertEquals ("#1", "?© 2002", b.Query);			
+			AssertEquals ("#2", String.Empty, b.Fragment);
 			b.Query = "?test";
-			Assertion.AssertEquals ("#3", "??test", b.Query);
+			AssertEquals ("#3", "??test", b.Query);
 			b.Query = null;
-			Assertion.AssertEquals ("#4", String.Empty, b.Query);
+			AssertEquals ("#4", String.Empty, b.Query);
 		}
 		
 		[Test]
 		public void Fragment ()
 		{
 			b.Fragment = ((char) 0xa9) + " 2002";
-			Assertion.AssertEquals ("#1: known to fail with ms.net, should've been escaped.", "#%A9%202002", b.Fragment);
-			Assertion.AssertEquals ("#2", String.Empty, b.Query);
+			AssertEquals ("#1", "#© 2002", b.Fragment);
+			AssertEquals ("#2", String.Empty, b.Query);
 			b.Fragment = "#test";
-			Assertion.AssertEquals ("#3", "##test", b.Fragment);
+			AssertEquals ("#3", "##test", b.Fragment);
 			b.Fragment = null;
-			Assertion.AssertEquals ("#4", String.Empty, b.Fragment);
+			AssertEquals ("#4", String.Empty, b.Fragment);
 		}
 		
 		[Test]
 		public void Scheme ()
 		{
 			b.Scheme = "http";
-			Assertion.AssertEquals ("#1", b.Scheme, "http");
+			AssertEquals ("#1", b.Scheme, "http");
 			b.Scheme = "http:";
-			Assertion.AssertEquals ("#2", b.Scheme, "http");
+			AssertEquals ("#2", b.Scheme, "http");
 			b.Scheme = "http://";
-			Assertion.AssertEquals ("#3", b.Scheme, "http");
+			AssertEquals ("#3", b.Scheme, "http");
 			b.Scheme = "http://foo/bar";
-			Assertion.AssertEquals ("#4", b.Scheme, "http");
+			AssertEquals ("#4", b.Scheme, "http");
 			b.Scheme = "mailto:";
-			Assertion.AssertEquals ("#5", b.Scheme, "mailto");
+			AssertEquals ("#5", b.Scheme, "mailto");
 			b.Scheme = "unknown";
-			Assertion.AssertEquals ("#6", b.Scheme, "unknown");
+			AssertEquals ("#6", b.Scheme, "unknown");
 			b.Scheme = "unknown://";
-			Assertion.AssertEquals ("#7", b.Scheme, "unknown");
+			AssertEquals ("#7", b.Scheme, "unknown");
 		}
 		
 		[Test]
@@ -124,17 +124,18 @@ namespace MonoTests.System
 			b2 = new UriBuilder ("http", "www.ximian.com", 80, "/foo/bar/index.html", "?item=1");
 			b3 = new UriBuilder (new Uri ("http://www.ximian.com/foo/bar/index.html?item=1"));
 			
-			Assertion.Assert ("#1", b.Equals (b2));
-			Assertion.Assert ("#2", b.Uri.Equals (b2.Uri));
-			Assertion.Assert ("#3", b.Equals (b3));
-			Assertion.Assert ("#4", b2.Equals (b3));
-			Assertion.Assert ("#5", b3.Equals (b));
+			Assert ("#1", b.Equals (b2));
+			Assert ("#2", b.Uri.Equals (b2.Uri));
+			Assert ("#3", b.Equals (b3));
+			Assert ("#4", b2.Equals (b3));
+			Assert ("#5", b3.Equals (b));
 		}
 		
 		[Test]
 		public void ToStringTest ()
 		{
-			Assertion.AssertEquals ("#1 known to fail with ms.net, should've been canonicalized.", b.Uri.ToString (), b.ToString ());
+			AssertEquals ("ToString ()", "http://www.ximian.com:80/foo/bar/index.html", b.ToString ());
+			AssertEquals ("Uri.ToString ()", "http://www.ximian.com/foo/bar/index.html", b.Uri.ToString ());
 		}
 	}
 }
