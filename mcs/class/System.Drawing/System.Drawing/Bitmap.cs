@@ -184,7 +184,7 @@ namespace System.Drawing {
 
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format)
 		{
-			GdipRect rc = new GdipRect ();
+			GpRect rc = new GpRect ();
 			rc.left = rect.Left;
 			rc.right = rect.Right;
 			rc.top = rect.Top;

@@ -1,3 +1,16 @@
+2003-11-17  Duncan Mak  <duncan@ximian.com>
+
+	* Bitmap.cs (LockBits):
+	* Graphics.cs (DrawString): Use GpRectF.
+
+	* gdipFunctions.cs: Updated method signatures.	
+
+	* Graphics.cs (MultiplyTransform): Implemented using
+	GdipMultiplyWorldTransform from GDI+.
+
+	* gdipStructs.cs (GdipRectF, GdipRect): Renamed to GpRectF and
+	GpRect, to be more consistent with the C naming.
+
 2003-11-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* Graphics.cs: Implement the other DrawString overloads .

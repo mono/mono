@@ -5,7 +5,7 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
-//   Alexandre Pigolkine(pigolkine@gmx.de)
+//      Alexandre Pigolkine(pigolkine@gmx.de)
 //
 using System;
 using System.Drawing.Drawing2D;
@@ -560,7 +560,7 @@ namespace System.Drawing
 		[MonoTODO("Ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
 		{
-			GdipRectF rf = new GdipRectF (layoutRectangle);
+			GpRectF rf = new GpRectF (layoutRectangle);
 			
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rf, IntPtr.Zero, brush.nativeObject);
 		}
@@ -568,7 +568,7 @@ namespace System.Drawing
 		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, PointF point)
 		{
-			GdipRectF rc = new GdipRectF ();
+			GpRectF rc = new GpRectF ();
 			rc.left = point.X;
 			rc.top = point.Y;
 			rc.right = 0;
@@ -579,7 +579,7 @@ namespace System.Drawing
 		[MonoTODO ("This ignores the font and format")]
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format)
 		{
-			GdipRectF rc = new GdipRectF ();
+			GpRectF rc = new GpRectF ();
 			rc.left = point.X;
 			rc.top = point.Y;
 			rc.right = 0;
@@ -590,7 +590,7 @@ namespace System.Drawing
 		[MonoTODO ("This ignores the font and the format")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			GdipRectF rect = new GdipRectF (layoutRectangle);
+			GpRectF rect = new GpRectF (layoutRectangle);
 			
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rect, IntPtr.Zero, brush.nativeObject);
 			
@@ -599,7 +599,7 @@ namespace System.Drawing
 		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			GdipRectF rc = new GdipRectF ();
+			GpRectF rc = new GpRectF ();
 			rc.left = x;
 			rc.top = y;
 			rc.right = 0;
@@ -1187,16 +1187,14 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void MultiplyTransform (Matrix matrix)
 		{
-			throw new NotImplementedException ();
+			MultiplyTransform (matrix, MatrixOrder.Prepend);
 		}
 
-		[MonoTODO]
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipMultiplyWorldTransform (nativeObject, matrix.nativeMatrix, order);
 		}
 
 		[MonoTODO]
@@ -1504,7 +1502,7 @@ namespace System.Drawing
 
 		public Matrix Transform {
 			get {
-				return transform;
+                                return transform;
 			}
 			set {
 				transform = value.Clone();

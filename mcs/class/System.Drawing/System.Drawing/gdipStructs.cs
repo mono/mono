@@ -47,23 +47,31 @@ namespace System.Drawing {
 	}
 	
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct GdipRect
+	internal struct GpRect
 	{
 		internal int left;
 		internal int top;
 		internal int right;
 		internal int bottom;
+
+                internal GpRect (Rectangle r)
+                {
+			left = r.Left;
+			top = r.Top;
+			right = r.Right;
+			bottom = r.Bottom;
+                }
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct GdipRectF
+	internal struct GpRectF
 	{
 		internal float left;
 		internal float top;
 		internal float right;
 		internal float bottom;
 
-		public GdipRectF (RectangleF r)
+		internal GpRectF (RectangleF r)
 		{
 			left = r.Left;
 			top = r.Top;
