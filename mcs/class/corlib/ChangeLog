@@ -1,3 +1,7 @@
+2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added Mono.Security/Uri.cs to the build.
+
 2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added System.Security.Policy/
