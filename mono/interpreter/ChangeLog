@@ -1,3 +1,7 @@
+2004-11-10  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* interp.c: Added MonoRemotingTarget parameter to signature
+	interp_create_remoting_trampoline.
 
 Tue Nov 9 17:28:48 CET 2004 Paolo Molaro <lupus@ximian.com>
 
