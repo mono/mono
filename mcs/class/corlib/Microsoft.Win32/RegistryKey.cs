@@ -99,7 +99,7 @@ namespace Microsoft.Win32
 		///	Dispose of registry key object. Close the 
 		///	key if it's still open.
 		/// </summary>
-		public void Dispose ()
+		void IDisposable.Dispose ()
 		{
 			Close ();
 			GC.SuppressFinalize (this);
