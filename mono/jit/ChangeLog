@@ -1,5 +1,9 @@
 2002-09-03  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (free_method_info): Make this actually work.
+
+2002-09-03  Martin Baulig  <martin@gnome.org>
+
 	* debug.h (MonoDebugFormat): Killed MONO_DEBUG_FORMAT_DWARF2_PLUS.
 	* debug-dwarf2-plus.c: Removed.
 
