@@ -1,3 +1,8 @@
+2005-01-27  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (common_sources): Add ssapre-cee-ops.h and
+	ssapre-mini-ops.h.
+
 2005-01-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (remove_block_if_useless): Only print debug stuff with -v -v.
