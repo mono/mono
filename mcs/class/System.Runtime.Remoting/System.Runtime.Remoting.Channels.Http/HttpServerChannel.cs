@@ -161,13 +161,6 @@ namespace System.Runtime.Remoting.Channels.Http
 				ChannelServices.CreateServerChannelSinkChain(_sinkProvider,this);
 
 			_transportSink = new HttpServerTransportSink(snk);
-
-			if(_port >= 0)
-			{
-				_tcpListener = new TcpListener( _bindToAddr,_port);
-				// start to listen
-				this.StartListening(null);
-			}
 		}
 
 		public void Listen()
@@ -183,6 +176,10 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public void StartListening(Object data)
 		{
+			if(_port == 0) return;	// TODO: take unused port
+			
+			_tcpListener = new TcpListener( _bindToAddr,_port);
+			
 			if(!_bListening)
 				_tcpListener.Start();
 
@@ -286,9 +283,10 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			get
 			{
-				return _channelData;
+				if (_bSuppressChannelData) return null;
+				else return _channelData;
 			}
-		} // ChannelData
+		}
 
 		public String ChannelScheme { get { return "http"; } }
 

@@ -73,42 +73,39 @@ namespace System.Runtime.Remoting.Channels.Http
 		// constructor used by config file
 		public HttpClientChannel(IDictionary properties, IClientChannelSinkProvider sinkProvider)
 		{	
-			if(properties!=null)
-			foreach(DictionaryEntry Dict in properties)
+			if (properties != null) 
 			{
-				switch(Dict.Key.ToString())
+				foreach(DictionaryEntry Dict in properties)
 				{
-					case "name":
-						_channelName = Dict.Value.ToString();
-						break;
-					case "priority":
-						_channelPriority = Convert.ToInt32(Dict.Value);
-						break;
-					case "clientConnectionLimit":
-						_clientConnectionLimit = Convert.ToInt32(Dict.Value);
-						break;
-					case "proxyName":
-						_proxyName = Dict.Value.ToString();
-						break;
-					case "proxyPort":
-						_proxyPort = Convert.ToInt32(Dict.Value);
-						break;
-					case "useDefaultCredentials":
-						_bUseDefaultCredentials = Convert.ToBoolean(Dict.Value);
-						break;
+					switch(Dict.Key.ToString())
+					{
+						case "name":
+							_channelName = Dict.Value.ToString();
+							break;
+						case "priority":
+							_channelPriority = Convert.ToInt32(Dict.Value);
+							break;
+						case "clientConnectionLimit":
+							_clientConnectionLimit = Convert.ToInt32(Dict.Value);
+							break;
+						case "proxyName":
+							_proxyName = Dict.Value.ToString();
+							break;
+						case "proxyPort":
+							_proxyPort = Convert.ToInt32(Dict.Value);
+							break;
+						case "useDefaultCredentials":
+							_bUseDefaultCredentials = Convert.ToBoolean(Dict.Value);
+							break;
+					}
 				}
 			}
-			//UpdateProxy();
-			SetupProvider(sinkProvider);
+			
+			SetupProvider (sinkProvider);
 
 		} 
         
 		
-		/*<note><private>
-		private void SetupChannel()
-		{
-		} */
-
 		public int ChannelPriority
 		{
 			get { return _channelPriority; }    
@@ -180,11 +177,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			ServicePoint sp = ServicePointManager.FindServicePoint(channelURI,ProxyObject);
 			if(_clientConnectionLimit> 0)
 				sp.ConnectionLimit = _clientConnectionLimit;
-				
-			
-		}
-
-		
+		}		
 
 		internal IWebProxy ProxyObject { get { return _proxyObject; } }
 		internal bool UseDefaultCredentials { get { return _bUseDefaultCredentials; } }
@@ -427,7 +420,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 		} // this[]   
         
-
 		public override ICollection Keys
 		{
 			get
@@ -454,9 +446,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 		} 
 
-
-		
-		
 		private void UpdateProxy()
 			{
 				// If the user values for the proxy object are valid , then the proxy

@@ -78,6 +78,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			return outStream;
 		}
+
 		public static bool CopyStream(Stream inStream, Stream outStream)
 		{
 			int  temp;
@@ -106,7 +107,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			return true;
 			
 		}
-
 
 		public static String GetHostName()
 		{
@@ -153,8 +153,5 @@ namespace System.Runtime.Remoting.Channels.Http
 			}		
 			return MachineIp;      
 		} 
-
 	}
-
-
 }

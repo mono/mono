@@ -1,3 +1,9 @@
+2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpServerChannel.cs: Removed StartListening call from constructor. It
+	  is called by the remoting framework.
+	* HttpClientChannel.cs, HttpHelper.cs: Fixed some formatting.
+
 2003-09-17  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpHelper.cs: Fixed bug #48468. Patch by Jean-Marc Andre.
