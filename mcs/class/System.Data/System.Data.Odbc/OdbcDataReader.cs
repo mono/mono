@@ -194,6 +194,7 @@ namespace System.Data.Odbc
 		}
 
 		[MonoTODO]
+		 [EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public OdbcDataReader GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
