@@ -1,5 +1,9 @@
 2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	XmlArgumentList.cs : added (still required).
+
+2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	SequenceType.cs,
 	XPath2Expression.cs,
 	XPathSequence.cs,
