@@ -8,8 +8,6 @@
 // (C) 2002
 // (C) 2003 Andreas Nahr
 //
-
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -30,9 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Security.Permissions;
-
 namespace System.Security.Permissions {
 
 	[Serializable]
@@ -42,12 +37,11 @@ namespace System.Security.Permissions {
 		private string[] permissionAccessPath;
 
 		public ResourcePermissionBaseEntry ()
-			: this (0, new string[0])
 		{
+			permissionAccessPath = new string [0];
 		}
 
-		public ResourcePermissionBaseEntry (int permissionAccess,
-			string[] permissionAccessPath)
+		public ResourcePermissionBaseEntry (int permissionAccess, string[] permissionAccessPath)
 		{
 			if (permissionAccessPath == null)
 				throw new ArgumentNullException ("permissionAccessPath");
@@ -57,11 +51,11 @@ namespace System.Security.Permissions {
 		}
 
 		public int PermissionAccess {
-			get {return permissionAccess;}
+			get { return permissionAccess; }
 		}
 
 		public string[] PermissionAccessPath {
-			get {return permissionAccessPath;}
+			get { return permissionAccessPath; }
 		}
 	}
 }

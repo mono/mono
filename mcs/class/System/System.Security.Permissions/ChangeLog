@@ -1,3 +1,11 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionHelper.cs: New. Static methods to help implementation of
+	permission classes.
+	* ResourcePermissionBase.cs: Implemented all TODO (except FromXml 
+	which isn't complete).
+	* ResourcePermissionBaseEntry.cs: Minor cleanup (namespaces, style).
+
 2003-07-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ChangeLog: Added

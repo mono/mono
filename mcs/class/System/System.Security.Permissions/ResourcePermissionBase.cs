@@ -3,10 +3,10 @@
 //
 // Authors:
 //	Jonathan Pryor (jonpryor@vt.edu)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,109 +28,325 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Security.Permissions;
+using System.Collections;
+using System.Globalization;
 
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public abstract class ResourcePermissionBase 
-		: CodeAccessPermission, IUnrestrictedPermission {
+	public abstract class ResourcePermissionBase : CodeAccessPermission, IUnrestrictedPermission {
 
-		[MonoTODO]
+		private const int version = 1;
+
+		private ArrayList _list;
+		private bool _unrestricted;
+		private Type _type;
+		private string[] _tags;
+
 		protected ResourcePermissionBase ()
 		{
-			throw new NotImplementedException ();
+			_list = new ArrayList ();
 		}
 
-		[MonoTODO]
-		protected ResourcePermissionBase (PermissionState state)
+		protected ResourcePermissionBase (PermissionState state) : this ()
 		{
-			throw new NotImplementedException ();
+			// there are no validation of the permission state
+			_unrestricted = (state == PermissionState.Unrestricted);
+			// but any invalid value results in a restricted set
 		}
 
 		public const string Any = "*";
 		public const string Local = ".";
 
-		[MonoTODO]
 		protected Type PermissionAccessType {
-			get {throw new NotImplementedException ();}
-			set {throw new NotImplementedException ();}
+			get { return _type; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("PermissionAccessType");
+				if (!value.IsEnum)
+					throw new ArgumentException ("!Enum", "PermissionAccessType");
+				_type = value;
+			}
 		}
 
-		[MonoTODO]
 		protected string[] TagNames {
-			get {throw new NotImplementedException ();}
-			set {throw new NotImplementedException ();}
+			get { return _tags; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("TagNames");
+				if (value.Length == 0)
+					throw new ArgumentException ("Length==0", "TagNames");
+				_tags = value;
+			}
 		}
 
-		[MonoTODO]
-		protected void AddPermissionAccess (
-			ResourcePermissionBaseEntry entry)
+		protected void AddPermissionAccess (ResourcePermissionBaseEntry entry)
 		{
-			throw new NotImplementedException ();
+			CheckEntry (entry);
+			if (Exists (entry)) {
+				string msg = Locale.GetText ("Entry already exists.");
+				throw new InvalidOperationException (msg);
+			}
+
+			_list.Add (entry);
 		}
 
-		[MonoTODO]
 		protected void Clear ()
 		{
-			throw new NotImplementedException ();
+			_list.Clear ();
 		}
 
-		[MonoTODO]
 		public override IPermission Copy ()
 		{
-			throw new NotImplementedException ();
+			ResourcePermissionBase copy = CreateFromType (this.GetType (), _unrestricted);
+			if (_tags != null)
+				copy._tags = (string[]) _tags.Clone ();
+			copy._type = _type;
+			// FIXME: shallow or deep copy ?
+			copy._list.AddRange (_list);
+			return copy;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("incomplete - need more test")]
 		public override void FromXml (SecurityElement securityElement)
 		{
-			throw new NotImplementedException ();
+// duplicate MS behaviour - reported as FDBK15052
+			if (securityElement == null)
+				throw new NullReferenceException ("securityElement");
+			CheckSecurityElement (securityElement, "securityElement", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
+
+			_unrestricted = PermissionHelper.IsUnrestricted (securityElement);
+			// TODO
 		}
 
-		[MonoTODO]
 		protected ResourcePermissionBaseEntry[] GetPermissionEntries ()
 		{
-			throw new NotImplementedException ();
+			ResourcePermissionBaseEntry[] entries = new ResourcePermissionBaseEntry [_list.Count];
+			_list.CopyTo (entries, 0);
+			return entries;
 		}
 
-		[MonoTODO]
 		public override IPermission Intersect (IPermission target)
 		{
-			throw new NotImplementedException ();
+			ResourcePermissionBase rpb = Cast (target);
+			if (rpb == null)
+				return null;
+
+			bool su = this.IsUnrestricted ();
+			bool tu = rpb.IsUnrestricted ();
+
+			// if one is empty we return null (unless the other one is unrestricted)
+			if (IsEmpty () && !tu)
+				return null;
+			if (rpb.IsEmpty () && !su)
+				return null;
+
+			ResourcePermissionBase result = CreateFromType (this.GetType (), (su && tu));
+			foreach (ResourcePermissionBaseEntry entry in _list) {
+				if (tu || rpb.Exists (entry))
+					result.AddPermissionAccess (entry);
+			}
+			foreach (ResourcePermissionBaseEntry entry in rpb._list) {
+				// don't add twice
+				if ((su || this.Exists (entry)) && !result.Exists (entry))
+					result.AddPermissionAccess (entry);
+			}
+			return result;
 		}
 
-		[MonoTODO]
 		public override bool IsSubsetOf (IPermission target)
 		{
-			throw new NotImplementedException ();
+			// do not use Cast - different permissions return false :-/
+			if (target == null)
+				return true;
+			ResourcePermissionBase rpb = (target as ResourcePermissionBase);
+			if (rpb == null)
+				return false;
+			if (rpb.IsUnrestricted ())
+				return true;
+			if (IsUnrestricted ())
+				return rpb.IsUnrestricted ();
+			foreach (ResourcePermissionBaseEntry entry in _list) {
+				if (!rpb.Exists (entry))
+					return false;
+			}
+			return true;
 		}
 
-		[MonoTODO]
 		public bool IsUnrestricted ()
 		{
-			throw new NotImplementedException ();
+			return _unrestricted;
 		}
 
-		[MonoTODO]
-		protected void RemovePermissionAccess (
-			ResourcePermissionBaseEntry entry)
+		protected void RemovePermissionAccess (ResourcePermissionBaseEntry entry)
 		{
-			throw new NotImplementedException ();
+			CheckEntry (entry);
+			for (int i = 0; i < _list.Count; i++) {
+				ResourcePermissionBaseEntry rpbe = (ResourcePermissionBaseEntry) _list [i];
+				if (Equals (entry, rpbe)) {
+					_list.RemoveAt (i);
+					return;
+				}
+			}
+			string msg = Locale.GetText ("Entry doesn't exists.");
+			throw new InvalidOperationException (msg);
 		}
 
-		[MonoTODO]
 		public override SecurityElement ToXml ()
 		{
-			throw new NotImplementedException ();
+			SecurityElement se = PermissionHelper.Element (this.GetType (), version);
+			if (IsUnrestricted ()) {
+				se.AddAttribute ("Unrestricted", "true");
+			}
+			else {
+				foreach (ResourcePermissionBaseEntry entry in _list) {
+					SecurityElement container = se;
+					for (int i=0; i < _tags.Length; i++) {
+						SecurityElement child = new SecurityElement (_tags [i]);
+						child.AddAttribute ("name", entry.PermissionAccessPath [i]);
+						container.AddChild (child);
+						child = container;
+					}
+				}
+			}
+			return se;
 		}
 
-		[MonoTODO]
 		public override IPermission Union (IPermission target)
 		{
-			throw new NotImplementedException ();
+			ResourcePermissionBase rpb = Cast (target);
+			if (rpb == null)
+				return Copy ();
+			if (IsEmpty () && rpb.IsEmpty ())
+				return null;
+			if (rpb.IsEmpty ())
+				return Copy ();
+			if (IsEmpty ())
+				return rpb.Copy ();
+
+			bool unrestricted = (IsUnrestricted () || rpb.IsUnrestricted ());
+			ResourcePermissionBase result = CreateFromType (this.GetType (), unrestricted);
+			// strangely unrestricted union doesn't process the elements (while intersect does)
+			if (!unrestricted) {
+				foreach (ResourcePermissionBaseEntry entry in _list) {
+					result.AddPermissionAccess (entry);
+				}
+				foreach (ResourcePermissionBaseEntry entry in rpb._list) {
+					// don't add twice
+					if (!result.Exists (entry))
+						result.AddPermissionAccess (entry);
+				}
+			}
+			return result;
+		}
+
+		// helpers
+
+		private bool IsEmpty ()
+		{
+			return (!_unrestricted && (_list.Count == 0));
+		}
+
+		private ResourcePermissionBase Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			ResourcePermissionBase rp = (target as ResourcePermissionBase);
+			if (rp == null) {
+				PermissionHelper.ThrowInvalidPermission (target, typeof (ResourcePermissionBase));
+			}
+
+			return rp;
+		}
+
+		internal void CheckEntry (ResourcePermissionBaseEntry entry)
+		{
+			if (entry == null)
+				throw new ArgumentNullException ("entry");
+			if ((entry.PermissionAccessPath == null) || (entry.PermissionAccessPath.Length != _tags.Length)) {
+				string msg = Locale.GetText ("Entry doesn't match TagNames");
+				throw new InvalidOperationException (msg);
+			}
+		}
+
+		internal bool Equals (ResourcePermissionBaseEntry entry1, ResourcePermissionBaseEntry entry2)
+		{
+			if (entry1.PermissionAccess != entry2.PermissionAccess)
+				return false;
+			if (entry1.PermissionAccessPath.Length != entry2.PermissionAccessPath.Length)
+				return false;
+			for (int i=0; i < entry1.PermissionAccessPath.Length; i++) {
+				if (entry1.PermissionAccessPath [i] != entry2.PermissionAccessPath [i])
+					return false;
+			}
+			return true;
+		}
+
+		internal bool Exists (ResourcePermissionBaseEntry entry)
+		{
+			if (_list.Count == 0)
+				return false;
+			foreach (ResourcePermissionBaseEntry rpbe in _list) {
+				if (Equals (rpbe, entry))
+					return true;
+			}
+			return false;
+		}
+
+		// logic isn't identical to PermissionHelper.CheckSecurityElement
+		// - no throw on version mismatch
+		internal int CheckSecurityElement (SecurityElement se, string parameterName, int minimumVersion, int maximumVersion) 
+		{
+			if (se == null)
+				throw new ArgumentNullException (parameterName);
+
+			// Note: we do not care about the class attribute at 
+			// this stage (in fact we don't even if the class 
+			// attribute is present or not). Anyway the object has
+			// already be created, with success, if we're loading it
+
+			// we assume minimum version if no version number is supplied
+			int version = minimumVersion;
+			string v = se.Attribute ("version");
+			if (v != null) {
+				try {
+					version = Int32.Parse (v);
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Couldn't parse version from '{0}'.");
+					msg = String.Format (msg, v);
+					throw new ArgumentException (msg, parameterName, e);
+				}
+			}
+
+			return version;
+		}
+
+		// static helpers
+
+		private static char[] invalidChars = new char[] { '\t', '\n', '\v', '\f', '\r', ' ', '\\', '\x160' };
+
+		internal static void ValidateMachineName (string name)
+		{
+			// FIXME: maybe other checks are required (but not documented)
+			if ((name == null) || (name.Length == 0) || (name.IndexOfAny (invalidChars) != -1)) {
+				string msg = Locale.GetText ("Invalid machine name '{0}'.");
+				if (name == null)
+					name = "(null)";
+				msg = String.Format (msg, name);
+				throw new ArgumentException (msg, "MachineName");
+			}
+		}
+
+		internal static ResourcePermissionBase CreateFromType (Type type, bool unrestricted)
+		{
+			object[] parameters = new object [1];
+			parameters [0] = (object) ((unrestricted) ? PermissionState.Unrestricted : PermissionState.None);
+			// we must return the derived type - this is why an empty constructor is required ;-)
+			return (ResourcePermissionBase) Activator.CreateInstance (type, parameters);
 		}
 	}
 }
-
