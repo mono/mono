@@ -1,3 +1,12 @@
+2002-05-10  Duncan Mak  <duncan@ximian.com>
+
+	* System.Web.build: Include the System.Web.UI.HtmlControls namespace.
+
+	* Page.cs:
+	* ValidatorCollection.cs: Stubs to make things compile for
+	now. Added one dummy method (RegisterClientScriptFile) that's used
+	in the existing codebase,  but not in MS docs.
+
 2002-04-26  Lawrence Pit <loz@cable.a2000.nl>
 
 	* Added directory: System.Web.Mail

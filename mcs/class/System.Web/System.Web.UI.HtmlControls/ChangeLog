@@ -1,3 +1,11 @@
+2002-05-10  Duncan Mak  <duncan@ximian.com>
+
+	* HtmlInputImage.cs (OnServerClick): Commented out parts that
+	won't compile.
+
+	* HtmlForm.cs (RenderAttributes): 
+	(RenderChildren): Commented out code that doesn't compile. 
+
 2002-05-07  Duncan Mak  <duncan@ximian.com>
 
 	* HtmlSelect.cs (TrackViewState): Added 'new' keyword to avoid

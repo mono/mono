@@ -25,7 +25,7 @@
 				<excludes name="System.Web.Hosting/IAppDomainFactory.cs"/>
 				<excludes name="System.Web.Hosting/AppDomainFactory.cs"/>
 				<!--<excludes name="System.Web.UI/**"/>-->
-				<excludes name="System.Web.UI.HtmlControls/**"/>
+				<!--<excludes name="System.Web.UI.HtmlControls/**"/>-->
 				<!--<excludes name="System.Web.UI.WebControls/**"/>-->
 				<excludes name="System.Web/HttpCacheValidateHandler.cs"/>
 			</sources>

@@ -23,15 +23,15 @@ namespace System.Web.UI.HtmlControls{
 			writer.WriteAttribute("action",Action,true);
 			Attributes.Remove("action");
 
-			string clientOnSubmit = Page.ClientOnSubmitEvent;
-			if (clientOnSubmit != null && clientOnSubmit.Length > 0){
-				if (Attributes["onsubmit"] != null){
-					clientOnSubmit = String.Concat(clientOnSubmit,Attributes["onsubmit"]);
-					Attributes.Remove("onsubmit");
-				}
-				writer.WriteAttribute("language","javascript");
-				writer.WriteAttribute("onsubmit",clientOnSubmit);
-			}
+//			string clientOnSubmit = Page.ClientOnSubmitEvent;
+// 			if (clientOnSubmit != null && clientOnSubmit.Length > 0){
+// 				if (Attributes["onsubmit"] != null){
+// 					clientOnSubmit = String.Concat(clientOnSubmit,Attributes["onsubmit"]);
+// 					Attributes.Remove("onsubmit");
+// 				}
+// 				writer.WriteAttribute("language","javascript");
+// 				writer.WriteAttribute("onsubmit",clientOnSubmit);
+// 			}
 			if (ID == null){
 				writer.WriteAttribute("id",ClientID);
 			}
@@ -57,9 +57,9 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		protected override void RenderChildren(HtmlTextWriter writer){
-			Page.OnFormRender(writer,ClientID);
+			// Page.OnFormRender(writer,ClientID);
 			base.RenderChildren(writer);
-			Page.OnFormPostRender(writer,ClientID);
+			// Page.OnFormPostRender(writer,ClientID);
 		}
 		
 		protected override void OnInit(EventArgs e){

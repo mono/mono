@@ -26,7 +26,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected void OnServerClick(ImageClickEventArgs e){
 			ImageClickEventHandler handler = (ImageClickEventHandler) Events[EventServerClick];
-			if (handler != null) handler.Invoke(this, e);
+			// if (handler != null) handler.Invoke(this, e);
 		}
 		
 		protected override void RenderAttributes(HtmlTextWriter writer){
