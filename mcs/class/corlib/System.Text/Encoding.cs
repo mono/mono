@@ -237,7 +237,7 @@ public abstract class Encoding
 			if (i18nAssembly == null) {
 				try {
 					try {
-						i18nAssembly = Assembly.Load ("I18N");
+						i18nAssembly = Assembly.Load (Consts.AssemblyI18N);
 					} catch (NotImplementedException) {
 						// Assembly loading unsupported by the engine.
 						i18nDisabled = true;
