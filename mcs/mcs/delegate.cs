@@ -644,7 +644,7 @@ namespace Mono.CSharp {
 	public abstract class DelegateCreation : Expression {
 		protected MethodBase constructor_method;
 		protected MethodBase delegate_method;
-		protected Expression delegate_instance_expr;
+		protected MethodGroupExpr method_group;
 
 		public DelegateCreation () {}
 
@@ -670,13 +670,13 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (delegate_instance_expr == null ||
+			if (method_group.InstanceExpression == null ||
 			    delegate_method.IsStatic)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
-				delegate_instance_expr.Emit (ec);
+				method_group.InstanceExpression.Emit (ec);
 			
-			if (delegate_method.IsVirtual) {
+			if (delegate_method.IsVirtual && !method_group.IsBase) {
 				ec.ig.Emit (OpCodes.Dup);
 				ec.ig.Emit (OpCodes.Ldvirtftn, (MethodInfo) delegate_method);
 			} else
@@ -742,24 +742,22 @@ namespace Mono.CSharp {
 			}
 			
 			if (mg.InstanceExpression != null)
-				delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
-			else {
-				if (ec.IsStatic){
-					if (!delegate_method.IsStatic){
-						Report.Error (120, loc,
-							      "An object reference is required for the non-static method " +
-							      delegate_method.Name);
-						return null;
-					}
-					delegate_instance_expr = null;
-				} else
-					delegate_instance_expr = ec.GetThis (loc);
-			}
+				mg.InstanceExpression = mg.InstanceExpression.Resolve (ec);
+			else if (ec.IsStatic) {
+				if (!delegate_method.IsStatic) {
+					Report.Error (120, loc,
+						      "An object reference is required for the non-static method " +
+						      delegate_method.Name);
+					return null;
+				}
+				mg.InstanceExpression = null;
+			} else
+				mg.InstanceExpression = ec.GetThis (loc);
 			
-			if (delegate_instance_expr != null)
-				if (delegate_instance_expr.Type.IsValueType)
-					delegate_instance_expr = new BoxedCast (delegate_instance_expr);
+			if (mg.InstanceExpression != null && mg.InstanceExpression.Type.IsValueType)
+				mg.InstanceExpression = new BoxedCast (mg.InstanceExpression);
 			
+			method_group = mg;
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -819,15 +817,6 @@ namespace Mono.CSharp {
 				return null;
 
 			Argument a = (Argument) Arguments [0];
-			
-			Expression invoke_method = Expression.MemberLookup (
-				ec, type, "Invoke", MemberTypes.Method,
-				Expression.AllBindingFlags, loc);
-
-			if (invoke_method == null) {
-				Report.Error (-200, loc, "Internal error ! Could not find Invoke method!");
-				return null;
-			}
 
 			if (!a.ResolveMethodGroup (ec, loc))
 				return null;
@@ -845,35 +834,28 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			method_group = Expression.MemberLookup (
+				ec, type, "Invoke", MemberTypes.Method,
+				Expression.AllBindingFlags, loc) as MethodGroupExpr;
+
+			if (method_group == null) {
+				Report.Error (-200, loc, "Internal error ! Could not find Invoke method!");
+				return null;
+			}
+
 			// This is what MS' compiler reports. We could always choose
-			// to be more verbose and actually give delegate-level specifics
-			
+			// to be more verbose and actually give delegate-level specifics			
 			if (!Delegate.VerifyDelegate (ec, type, e_type, loc)) {
 				Report.Error (29, loc, "Cannot implicitly convert type '" + e_type + "' " +
 					      "to type '" + type + "'");
 				return null;
 			}
 				
-			delegate_instance_expr = e;
-			delegate_method = ((MethodGroupExpr) invoke_method).Methods [0];
+			method_group.InstanceExpression = e;
+			delegate_method = method_group.Methods [0];
 			
 			eclass = ExprClass.Value;
 			return this;
-		}
-		
-		public override void Emit (EmitContext ec)
-		{
-			if (delegate_instance_expr == null || delegate_method.IsStatic)
-				ec.ig.Emit (OpCodes.Ldnull);
-			else
-				delegate_instance_expr.Emit (ec);
-			
-			if (delegate_method.IsVirtual) {
-				ec.ig.Emit (OpCodes.Dup);
-				ec.ig.Emit (OpCodes.Ldvirtftn, (MethodInfo) delegate_method);
-			} else
-				ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
-			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) constructor_method);
 		}
 	}
 

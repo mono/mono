@@ -349,8 +349,8 @@ namespace Mono.Security.Protocol.Tls
 			this.inputBuffer	= new BufferedStream(new MemoryStream());
 			this.innerStream	= stream;
 			this.ownsStream		= ownsStream;
-			this.read			= String.Empty;
-			this.write			= String.Empty;
+			this.read			= new object ();
+			this.write			= new object ();
 			this.protocol		= new ClientRecordProtocol(innerStream, context);
 		}
 

@@ -1,3 +1,8 @@
+2004-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: don't pass double slash when the path begins with a
+	tilde. Fixes bug #61654.
+
 2004-05-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs:

@@ -1,3 +1,14 @@
+2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSessionState.cs: don't share static session objects declared in
+	the application file across the application, but on a per-session
+	basis. Fixes bug #65446.
+
+2004-07-07  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* SessionStateModule.cs: set path in session cookie to application
+	path.
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* IStateRuntime.cs: added missing marshalling attributes

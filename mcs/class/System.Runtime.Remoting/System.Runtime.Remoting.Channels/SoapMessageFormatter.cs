@@ -222,21 +222,21 @@ namespace System.Runtime.Remoting.Channels {
 			// have to add them here
 			_methodCallParameters = _methodCallInfo.GetParameters();
 			object[] args = new object[_methodCallParameters.Length];
-			
-			foreach(ParameterInfo paramInfo in _methodCallParameters)
+			int sn = 0;
+			for (int n=0; n<_methodCallParameters.Length; n++)
 			{
+				ParameterInfo paramInfo = _methodCallParameters [n];
 				Type paramType = (paramInfo.ParameterType.IsByRef ? paramInfo.ParameterType.GetElementType() : paramInfo.ParameterType);
 
 				if (paramInfo.IsOut && paramInfo.ParameterType.IsByRef) {
-					args [paramInfo.Position] = GetNullValue (paramType);
+					args [n] = GetNullValue (paramType);
 				}
 				else{
-					int index = Array.IndexOf(soapMessage.ParamNames, paramInfo.Name);
-					if(soapMessage.ParamValues[index] is IConvertible) 
-						soapMessage.ParamValues[index] = Convert.ChangeType(
-								soapMessage.ParamValues[index],
-								paramType);
-					args [paramInfo.Position] = soapMessage.ParamValues[index];
+					object val = soapMessage.ParamValues[sn++];
+					if(val is IConvertible) 
+						args [n] = Convert.ChangeType (val, paramType);
+					else
+						args [n] = val;
 				}
 			}
 			
@@ -267,10 +267,16 @@ namespace System.Runtime.Remoting.Channels {
 				ArrayList paramValues = new ArrayList();
 				ArrayList paramTypes = new ArrayList();
 				soapMessage.MethodName = mrm.MethodName+"Response";
-				if(mrm.ReturnValue != null && mrm.ReturnValue.GetType() != typeof(void)) {
+				
+				Type retType = ((MethodInfo)mrm.MethodBase).ReturnType;
+				
+				if(retType != typeof(void)) {
 					paramNames.Add("return");
 					paramValues.Add(mrm.ReturnValue);
-					paramTypes.Add(mrm.ReturnValue.GetType());
+					if (mrm.ReturnValue != null)
+						paramTypes.Add(mrm.ReturnValue.GetType());
+					else
+						paramTypes.Add(retType);
 				}
 				
 				for(int i = 0; i < mrm.OutArgCount; i++){

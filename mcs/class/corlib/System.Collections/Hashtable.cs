@@ -1114,8 +1114,9 @@ namespace System.Collections {
 
 			public override object Clone ()
 			{
-				Hashtable ht = (Hashtable) host.Clone ();
-				return new SyncHashtable (ht);
+				lock(host.SyncRoot) {
+					return new SyncHashtable( (Hashtable) host.Clone () );
+				}
 			}
 
 		} // SyncHashtable

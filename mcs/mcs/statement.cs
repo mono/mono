@@ -2734,9 +2734,22 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Exception, loc);
 			bool ok = Statement.Resolve (ec);
-			ec.EndFlowBranching ();
+			if (!ok) {
+				ec.KillFlowBranching ();
+				return false;
+			}
 
-			return ok;
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
+			if (reachability.Returns != FlowBranching.FlowReturns.Always) {
+				// Unfortunately, System.Reflection.Emit automatically emits
+				// a leave to the end of the finally block.
+				// This is a problem if `returns' is true since we may jump
+				// to a point after the end of the method.
+				// As a workaround, emit an explicit ret here.
+				ec.NeedReturnLabel ();
+			}
+
+			return true;
 		}
 		
 		protected override void DoEmit (EmitContext ec)

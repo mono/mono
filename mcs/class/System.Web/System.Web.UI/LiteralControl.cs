@@ -2,9 +2,11 @@
 // System.Web.UI.LiteralControl.cs
 //
 // Author:
-//   Bob Smith <bob@thestuff.net>
+// 	Bob Smith <bob@thestuff.net>
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Bob Smith
+// Copyright (c) 2002-2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -37,26 +39,27 @@ namespace System.Web.UI
 	[ToolboxItem(false)]
         public class LiteralControl : Control
         {
-                private string _text = String.Empty;
-                public LiteralControl() {}
-                public LiteralControl(string text)
+                string _text;
+
+                public LiteralControl () : this (null) {}
+
+                public LiteralControl (string text)
                 {
-                        _text = text;
+			EnableViewState = false;
+			PreventAutoID ();
+			_text = (text == null) ? "" : text; // Text property is not called for this.
                 }
-                public virtual string Text
-                {
-                        get
-                        {
-                                return _text;
-                        }
-                        set
-                        {
-                                _text = value;
+
+                public virtual string Text {
+                        get { return _text; }
+                        set {
+                                _text = (value == null) ? "" : value;
                         }
                 }
-                protected override void Render(HtmlTextWriter writer)
+
+                protected override void Render (HtmlTextWriter writer)
                 {
-                        writer.Write(_text);
+                        writer.Write (_text);
                 }
 
 		protected override ControlCollection CreateControlCollection ()
@@ -65,3 +68,4 @@ namespace System.Web.UI
 		}
         }
 }
+

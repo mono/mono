@@ -123,7 +123,7 @@ namespace System.IO {
 			else
 				mode = FileMode.Create;
 			
-			internalStream = new FileStream (path, mode, FileAccess.Write);
+			internalStream = new FileStream (path, mode, FileAccess.Write, FileShare.Read);
 
 			if (append)
 				internalStream.Position = internalStream.Length;
@@ -141,6 +141,10 @@ namespace System.IO {
 				if (DisposedAlready)
 					throw new ObjectDisposedException("StreamWriter");
 				iflush = value;
+
+				if (iflush) {
+					Flush ();
+				}
 			}
 		}
 
@@ -246,6 +250,28 @@ namespace System.IO {
 				decode_pos += todo;
 			}
 		}
+		
+		void LowLevelWrite (string s)
+		{
+			int count = s.Length;
+			int index = 0;
+			while (count > 0) {
+				int todo = decode_buf.Length - decode_pos;
+				if (todo == 0) {
+					Decode ();
+					todo = decode_buf.Length;
+				}
+				if (todo > count)
+					todo = count;
+				
+				for (int i = 0; i < todo; i ++)
+					decode_buf [i + decode_pos] = s [i + index];
+				
+				count -= todo;
+				index += todo;
+				decode_pos += todo;
+			}
+		}
 
 		public override void Write (char value)
 		{
@@ -278,7 +304,8 @@ namespace System.IO {
 				throw new ObjectDisposedException("StreamWriter");
 
 			if (value != null)
-				LowLevelWrite (value.ToCharArray (), 0, value.Length);
+				LowLevelWrite (value);
+			
 			if (iflush)
 				Flush ();
 		}

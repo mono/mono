@@ -584,7 +584,6 @@ namespace System.Net
 				initialMethod = method;
 				if (haveRequest) {
 					if (writeStream != null) {
-						Monitor.Exit (this);
 						asyncWrite.SetCompleted (true, writeStream);
 						asyncWrite.DoCallback ();
 						return asyncWrite;
@@ -830,7 +829,7 @@ namespace System.Net
 				throw new WebException ("No Location header found for " + (int) code,
 							WebExceptionStatus.ProtocolError);
 
-			string host = actualUri.Host;
+			Uri prev = actualUri;
 			try {
 				actualUri = new Uri (actualUri, uriString);
 			} catch (Exception) {
@@ -839,7 +838,8 @@ namespace System.Net
 									WebExceptionStatus.ProtocolError);
 			}
 
-			hostChanged = (actualUri.Host != host);
+			hostChanged = (actualUri.Scheme != prev.Scheme || actualUri.Host != prev.Host ||
+					actualUri.Port != prev.Port);
 			return true;
 		}
 

@@ -1,3 +1,13 @@
+2004-07-21  Geoff Norton <gnorton@customerdna.com>
+
+        * Hashtable.cs: lock the SyncRoot when Cloning a Synchronized hashtable to avoid
+          a snapshot out of sync error.
+ 
+2004-07-21  Duncan Mak  <duncan@ximian.com>
+
+	* DictionaryBase.cs: Rename the dictionary field to hashtable,
+	which causes a serialization interop bug. Fixes bug #61721.
+
 2004-06-18  Ben Maurer <bmaurer@ximian.com>
 
 	* IKeyComparer.cs: v2 class

@@ -106,6 +106,7 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("token", new TypeData (typeof (string), "token", true));
 			primitiveTypes.Add ("normalizedString", new TypeData (typeof (string), "normalizedString", true));
 			primitiveTypes.Add ("anyURI", new TypeData (typeof (string), "anyURI", true));
+			primitiveTypes.Add ("base64", new TypeData (typeof (byte[]), "base64", true));
 		}
 
 		public static TypeData GetTypeData (Type type)

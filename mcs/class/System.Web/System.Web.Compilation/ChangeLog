@@ -1,3 +1,42 @@
+2004-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebServiceCompiler.cs: fix buglet in my last commit.
+
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseCompiler.cs:
+	* CachingCompiler.cs:
+	* WebServiceCompiler.cs: correctly cache Type instead of the assembly
+	for ashx/asmx. Otherwise we need to open the file and check for the
+	class name in there. Thanks to Ben for pointing this out.
+
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CachingCompiler.cs: don't try to watch for changes in system
+	assemblies. Fixes bug #64871.
+
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: handle builders that need to process inner text
+	with tags.
+
+	* Location.cs: added setters for the properties.
+
+2004-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: the path for file was treated as virtual, but it's
+	physical. Fixes bug #61524.
+
+2004-07-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs: fixed case-sensitivity issues with #include and its
+	attributes. Closes #61429.
+
+2004-07-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseCompiler.cs:
+	* WebServiceCompiler.cs: really create the dlls under DynamicBase
+
 2004-06-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: for system colors, use SystemColors class

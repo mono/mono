@@ -46,16 +46,12 @@ namespace System.Web.Services {
 
 		public WebService ()
 		{
+			_context = HttpContext.Current;
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
-
-		internal void SetContext (HttpContext context)
-		{
-			_context = context;
-		}
 
 		[Browsable (false)]
 		[Description ("The ASP.NET application object for the current request.")]

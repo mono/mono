@@ -192,7 +192,9 @@ namespace System.Web.UI.WebControls
 			if(!Visible || (Visible && !Enabled))
 			{
 				IsValid = true;
+				return;
 			}
+
 			Control ctrl = Parent;
 			while(ctrl != null)
 			{

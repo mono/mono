@@ -422,24 +422,39 @@ namespace System.Net.Sockets
 				throw new SocketException (error);
 			}
 
+			/* Make sure the connected state is updated
+			 * for each socket returned from the select;
+			 * for non blocking Connect()s, this is when
+			 * we find out that the connect succeeded.
+			 */
+
 			if(read_list!=null) {
 				read_list.Clear();
-				for(i=0; i<read_arr.Length; i++) {
-					read_list.Add(read_arr[i]);
+				if (read_arr != null) {
+					for(i=0; i<read_arr.Length; i++) {
+						read_list.Add(read_arr[i]);
+						read_arr[i].connected = true;
+					}
 				}
 			}
 			
 			if(write_list!=null) {
 				write_list.Clear();
-				for(i=0; i<write_arr.Length; i++) {
-					write_list.Add(write_arr[i]);
+				if (write_arr != null) {
+					for(i=0; i<write_arr.Length; i++) {
+						write_list.Add(write_arr[i]);
+						write_arr[i].connected = true;
+					}
 				}
 			}
 			
 			if(err_list!=null) {
 				err_list.Clear();
-				for(i=0; i<err_arr.Length; i++) {
-					err_list.Add(err_arr[i]);
+				if (err_arr != null) {
+					for(i=0; i<err_arr.Length; i++) {
+						err_list.Add(err_arr[i]);
+						err_arr[i].connected = true;
+					}
 				}
 			}
 		}
@@ -1020,7 +1035,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
-			RemoveReference (req);
+			if (supportsAsync && socket_type == SocketType.Stream)
+				RemoveReference (req);
+
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
@@ -1063,7 +1080,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
-			RemoveReference (req);
+			if (supportsAsync && socket_type == SocketType.Stream)
+				RemoveReference (req);
+
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
@@ -1131,8 +1150,10 @@ namespace System.Net.Sockets
 			} else if (name==SocketOptionName.AddMembership ||
 				   name==SocketOptionName.DropMembership) {
 				return((MulticastOption)obj_val);
-			} else {
+			} else if (obj_val is int) {
 				return((int)obj_val);
+			} else {
+				return(obj_val);
 			}
 		}
 
@@ -1224,6 +1245,15 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
+			if (result == true) {
+				/* Update the connected state; for
+				 * non-blocking Connect()s this is
+				 * when we can find out that the
+				 * connect succeeded.
+				 */
+				connected = true;
+			}
+			
 			return result;
 		}
 		
@@ -1372,10 +1402,17 @@ namespace System.Net.Sockets
 			}
 
 			connected = true;
+
+			// If sockaddr is null then we're a connection
+			// oriented protocol and should ignore the
+			// remote_end parameter (see MSDN
+			// documentation for Socket.ReceiveFrom(...) )
 			
-			// Stupidly, EndPoint.Create() is an
-			// instance method
-			remote_end = remote_end.Create (sockaddr);
+			if ( sockaddr != null ) {
+				// Stupidly, EndPoint.Create() is an
+				// instance method
+				remote_end = remote_end.Create (sockaddr);
+			}
 
 			return cnt;
 		}

@@ -231,5 +231,106 @@ namespace MonoTests.System.Data.Odbc
                         CloseConnection ();
                 }
       }
+
+      [Test]
+      public void GetDateTimeTest ()
+      {
+                OdbcCommand cmd = conn.CreateCommand ();
+                string sql = "SELECT * FROM test";
+                cmd.CommandText = sql;
+                OdbcDataReader reader = cmd.ExecuteReader (CommandBehavior.Default);
+                try {
+                        if (reader.Read ()) {
+                                object ob = reader["col_datetime"];
+                                Assertion.AssertEquals ("Type of datetime column is wrong!", 
+                                                "System.DateTime", ob.GetType ().ToString () );
+                                ob = reader["col_date"];
+                                Assertion.AssertEquals ("Type of date column is wrong!", 
+                                                "System.DateTime", ob.GetType ().ToString () );
+				// FIXME : Once TIME data type is fixed, enable this check
+                                //ob = reader["col_time"];
+                                //Assertion.AssertEquals ("Type of time column is wrong!", 
+                                                //"System.DateTime", ob.GetType ().ToString () );
+
+				DateTime dt = reader.GetDateTime (4);
+				Assertion.AssertEquals ("DateValue (SQL_TIMESTAMP) is wrong", new DateTime (2004, 8, 22, 0, 0, 0), dt);
+				dt = reader.GetDateTime (5);
+				Assertion.AssertEquals ("DateValue (SQL_DATE) is wrong", new DateTime (2004, 8, 22, 0, 0, 0), dt);
+				// FIXME : Once TIME data type is fixed, enable this check
+				//dt = reader.GetDateTime (7);
+				//Assertion.AssertEquals ("DateValue is wrong", "2004-08-22", dt.ToString ());
+                        }
+                } finally {
+                        // clean up
+                        if (reader != null && !reader.IsClosed )
+                                reader.Close ();
+                        reader = null;
+                        CleanTestSetup ();
+                        CloseConnection ();
+                }
+      }
+
+
+      /// <summary>
+      /// This test for the return type &amp; value for GetValue
+      /// in case of Odbc Data type TINYINT
+      /// </summary>
+      [Test]
+      public void TinyIntTest ()
+      {
+                OdbcCommand cmd = conn.CreateCommand ();
+                string sql = "SELECT * FROM test";
+                cmd.CommandText = sql;
+                OdbcDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess);
+                try {
+                        if (reader.Read ()) {
+                                object ob = reader.GetValue (0);
+                                Assertion.AssertEquals ("Type of tinyInt column is wrong!", 
+                                                "System.Byte", ob.GetType ().ToString () );
+                                Assertion.AssertEquals ("Value of tinyInt column is wrong!", 
+                                                1, System.Convert.ToInt16(ob) );
+                        }
+                } finally {
+                        // clean up
+                        if (reader != null && !reader.IsClosed )
+                                reader.Close ();
+                        reader = null;
+                        CleanTestSetup ();
+                        CloseConnection ();
+                }
+      }
+
+      [Test]
+      public void NumericTest()
+     {
+                using(IDbConnection dbConnection = new OdbcConnection(connectionString))
+                {
+                        dbConnection.Open();
+                        IDbCommand dbCommand = dbConnection.CreateCommand();
+                        //note this will fail if the table already exists, ie if the test has failed.   
+                        dbCommand.CommandText = "CREATE TABLE NumericTable (NumericField NUMERIC(10) NOT NULL)";
+                        dbCommand.ExecuteNonQuery();
+                        dbCommand.CommandText = "INSERT INTO NumericTable (NumericField) VALUES (125)";
+                        dbCommand.ExecuteNonQuery();
+                        dbCommand.CommandText = "SELECT * FROM NumericTable";
+                        using(IDataReader reader = dbCommand.ExecuteReader())
+                        {
+                                while(reader.Read()) 
+                                {
+                                        for(int index = 0; index < reader.FieldCount; index++)
+                                        {
+                                                Object dataValue = reader.GetValue(index);
+                                                Assert.AreEqual("System.Decimal",dataValue.GetType().ToString());
+                                                Assert.AreEqual("125", dataValue.ToString());   
+                                } 
+                        }
+                }
+		dbCommand.CommandText = "DROP TABLE NumericTable";
+                dbCommand.ExecuteNonQuery();
+           }    
+     }
+                                                                                                    
+	
+
   }
 }

@@ -49,7 +49,7 @@ namespace System.Web.Compilation
 			this.Location = location;
 		}
 	}
-	
+
 	class BuilderLocationStack : Stack
 	{
 		public override void Push (object o)
@@ -138,6 +138,7 @@ namespace System.Web.Compilation
 		bool inScript, javascript;
 		ILocation location;
 		bool isApplication;
+		StringBuilder tagInnerText = new StringBuilder ();
 		static Hashtable emptyHash = new Hashtable ();
 
 		public AspGenerator (TemplateParser tparser)
@@ -319,8 +320,8 @@ namespace System.Web.Compilation
 
 				if (isvirtual) {
 					file = tparser.MapPath (file);
-				} else if (!Path.IsPathRooted (file)) {
-					file = UrlUtils.Combine (tparser.BaseVirtualDir, file);
+				} else {
+					file = GetIncludeFilePath (tparser.BaseDir, file);
 				}
 
 				InitParser (file);
@@ -332,6 +333,14 @@ namespace System.Web.Compilation
 			//PrintLocation (location);
 		}
 
+		static string GetIncludeFilePath (string basedir, string filename)
+		{
+			if (Path.DirectorySeparatorChar == '/')
+				filename = filename.Replace ("\\", "/");
+
+			return Path.GetFullPath (Path.Combine (basedir, filename));
+		}
+		
 		void TextParsed (ILocation location, string text)
 		{
 			if (text.IndexOf ("<%") != -1 && !inScript) {
@@ -359,7 +368,11 @@ namespace System.Web.Compilation
 			if (tparser.DefaultDirectiveName == "application" && t.Trim () != "")
 				throw new ParseException (location, "Content not valid for application file.");
 
-			stack.Builder.AppendLiteralString (t);
+			ControlBuilder current = stack.Builder;
+			current.AppendLiteralString (t);
+			if (current.NeedsTagInnerText ()) {
+				tagInnerText.Append (t);
+			}
 		}
 
 		bool ProcessTag (string tagid, TagAttributes atts, TagType tagtype)
@@ -485,6 +498,16 @@ namespace System.Web.Compilation
 
 			// if (current is TemplateBuilder)
 			//	pop from the id list
+			if (current.NeedsTagInnerText ()) {
+				try { 
+					current.SetTagInnerText (tagInnerText.ToString ());
+				} catch (Exception e) {
+					throw new ParseException (current.location, e.Message, e);
+				}
+
+				tagInnerText.Length = 0;
+			}
+
 			current.CloseControl ();
 			stack.Pop ();
 			stack.Builder.AppendSubBuilder (current);

@@ -199,13 +199,6 @@ namespace System.Web.UI
 				}
 			}
 
-			TraceConfig traceConfig = (TraceConfig) Context.GetConfig ("system.web/trace");
-			if (traceConfig != null) {
-				trace = traceConfig.Enabled;
-				if (trace)
-					haveTrace = true;
-			}
-
 			string tracestr = GetString (atts, "Trace", null);
 			if (tracestr != null) {
 				haveTrace = true;
@@ -227,13 +220,6 @@ namespace System.Web.UI
 							"one of the following values: SortByTime, SortByCategory.");
 			}
 
-			if (traceConfig != null) {
-				if (traceConfig.LocalOnly && !Context.Request.IsLocal) {
-					haveTrace = false;
-					trace = false;
-				}
-			}
-			
 			errorPage = GetString (atts, "ErrorPage", null);
 			validateRequest = GetBool (atts, "ValidateRequest", PagesConfig.ValidateRequest);
 			clientTarget = GetString (atts, "ClientTarget", null);

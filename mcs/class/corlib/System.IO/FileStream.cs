@@ -155,7 +155,7 @@ namespace System.IO
 
 			if (access == FileAccess.Read && mode != FileMode.Create && mode != FileMode.OpenOrCreate &&
 					mode != FileMode.CreateNew && !File.Exists (name))
-				throw new FileNotFoundException ("Could not find file \"" + name + "\".");
+				throw new FileNotFoundException ("Could not find file \"" + name + "\".", name);
 
 			if (mode == FileMode.CreateNew) {
 				string dname = Path.GetDirectoryName (name);

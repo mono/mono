@@ -1,3 +1,23 @@
+2004-09-15  Raja R Harinath  <rharinath@novell.com>
+
+	* test-280.cs: Backport fix from HEAD.
+	* test-292.cs: New test for #64330.
+
+2004-09-10  Raja R Harinath  <rharinath@novell.com>
+
+	* test-290.cs: New test.
+	* Makefile (TEST_SOURCES): Add test-290.cs.
+
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* unsafe-10.cs: new test
+
+2004-08-03  Ben Maurer  <bmaurer@ximian.com>
+	
+	* test-283.cs:  for 62275.
+
+	* unsafe-9.cs: new test for #62263.
+
 2004-06-24  Raja R Harinath  <rharinath@novell.com>
 
 	* test-252.cs: Avoid reference to System.dll.

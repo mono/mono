@@ -1,5 +1,11 @@
-2004-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+2004-07-21 Umadevi S <sumadevi@novell.com>
+        * DbDataRecord.cs - Fix for bug 58163. Return DBNull instead of null
 
+2004-07-07 Umadevi S <sumadevi@novell.com>
+        * DataContainer.cs :CheckedforNull before calling the relavant setmethods in each of the
+               SetItemForDataRecord method for the DateTimeClass
+
+2004-06-24  Atsushi Enomoto  <atsushi@ximian.com>
 	* DataColumnMappingCollection.cs : fixed typo.
 	* DbDataAdapter.cs : column mappings were not filled.
 

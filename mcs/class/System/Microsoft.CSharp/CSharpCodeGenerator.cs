@@ -503,7 +503,10 @@ namespace Mono.CSharp
 			OutputMemberAccessModifier( attributes );
 			OutputFieldScopeModifier( attributes );
 
-			OutputTypeNamePair( field.Type, GetSafeName (field.Name) );
+			if (IsCurrentEnum)
+				Output.Write(field.Name);
+			else
+				OutputTypeNamePair( field.Type, GetSafeName (field.Name) );
 
 			CodeExpression initExpression = field.InitExpression;
 			if ( initExpression != null ) {

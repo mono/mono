@@ -192,13 +192,14 @@ namespace System.Security.Cryptography.Xml {
 		{
 			while (pos < nl.Count) {
 				if (nl [pos].NodeType == XmlNodeType.Element) {
-					if (nl [pos].LocalName != name && nl [pos].NamespaceURI != ns) {
+					if (nl [pos].LocalName != name || nl [pos].NamespaceURI != ns) {
 						if (required)
 							throw new CryptographicException ("Malformed element " + name);
 						else
 							return -2;
 					}
-					return pos;
+					else
+						return pos;
 				}
 				else
 					pos++;

@@ -457,9 +457,9 @@ namespace Mono.Data.Tds.Protocol {
 			parms.Add (new TdsMetaParameter ("@P3", "nvarchar", commandText));
 
 			ExecProc ("sp_prepare", parms, 0, true);
-			if (!NextResult () || !NextRow () || ColumnValues [0] == null || ColumnValues [0] == DBNull.Value)
-				throw new TdsInternalException ();
 			SkipToEnd ();	
+			if (ColumnValues [0] == null || ColumnValues [0] == DBNull.Value)
+				throw new TdsInternalException ();
 			return ColumnValues [0].ToString ();
 		}
 

@@ -1,3 +1,8 @@
+2004-07-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Signature.cs : Fixed NextElementPos() that incorrectly examined
+	  node matching.
+
 2004-06-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyInfoX509Data.cs: Removed old internal IssuerSerial for the 

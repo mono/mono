@@ -2309,8 +2309,6 @@ namespace Mono.CSharp {
 			Type l = left.Type;
 			Type r = right.Type;
 
-			bool overload_failed = false;
-
 			//
 			// Special cases: string comapred to null
 			//
@@ -2361,8 +2359,6 @@ namespace Mono.CSharp {
 						MethodInfo mi = (MethodInfo) method;
 						
 						return new BinaryMethod (mi.ReturnType, method, args);
-					} else {
-						overload_failed = true;
 					}
 				}
 			}
@@ -2541,16 +2537,16 @@ namespace Mono.CSharp {
 						if (r == l)
 							return new PointerArithmetic (
 								false, left, right, TypeManager.int64_type,
-								loc);
+								loc).Resolve (ec);
 					} else {
 						Expression t = Make32or64 (ec, right);
 						if (t != null)
-							return new PointerArithmetic (oper == Operator.Addition, left, t, l, loc);
+							return new PointerArithmetic (oper == Operator.Addition, left, t, l, loc).Resolve (ec);
 					}
 				} else if (r.IsPointer && oper == Operator.Addition){
 					Expression t = Make32or64 (ec, left);
 					if (t != null)
-						return new PointerArithmetic (true, right, t, r, loc);
+						return new PointerArithmetic (true, right, t, r, loc).Resolve (ec);
 				}
 			}
 			
@@ -2687,14 +2683,6 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			//
-			// We are dealing with numbers
-			//
-			if (overload_failed){
-				Error_OperatorCannotBeApplied ();
-				return null;
-			}
-
 			//
 			// This will leave left or right set to null if there is an error
 			//
@@ -3422,7 +3410,6 @@ namespace Mono.CSharp {
 		public PointerArithmetic (bool is_addition, Expression l, Expression r, Type t, Location loc)
 		{
 			type = t;
-			eclass = ExprClass.Variable;
 			this.loc = loc;
 			left = l;
 			right = r;
@@ -3431,9 +3418,13 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			//
-			// We are born fully resolved
-			//
+			eclass = ExprClass.Variable;
+			
+			if (left.Type == TypeManager.void_ptr_type) {
+				Error (242, "The operation in question is undefined on void pointers");
+				return null;
+			}
+			
 			return this;
 		}
 
@@ -3441,7 +3432,8 @@ namespace Mono.CSharp {
 		{
 			Type op_type = left.Type;
 			ILGenerator ig = ec.ig;
-			int size = GetTypeSize (TypeManager.GetElementType (op_type));
+			Type element = TypeManager.GetElementType (op_type);
+			int size = GetTypeSize (element);
 			Type rtype = right.Type;
 			
 			if (rtype.IsPointer){
@@ -3454,7 +3446,7 @@ namespace Mono.CSharp {
 
 				if (size != 1){
 					if (size == 0)
-						ig.Emit (OpCodes.Sizeof, op_type);
+						ig.Emit (OpCodes.Sizeof, element);
 					else 
 						IntLiteral.EmitInt (ig, size);
 					ig.Emit (OpCodes.Div);
@@ -3469,7 +3461,7 @@ namespace Mono.CSharp {
 				right.Emit (ec);
 				if (size != 1){
 					if (size == 0)
-						ig.Emit (OpCodes.Sizeof, op_type);
+						ig.Emit (OpCodes.Sizeof, element);
 					else 
 						IntLiteral.EmitInt (ig, size);
 					if (rtype == TypeManager.int64_type)
@@ -3477,8 +3469,11 @@ namespace Mono.CSharp {
 					else if (rtype == TypeManager.uint64_type)
 						ig.Emit (OpCodes.Conv_U8);
 					ig.Emit (OpCodes.Mul);
-					ig.Emit (OpCodes.Conv_I);
 				}
+				
+				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
+					ig.Emit (OpCodes.Conv_I);
+				
 				if (is_add)
 					ig.Emit (OpCodes.Add);
 				else
@@ -3672,7 +3667,7 @@ namespace Mono.CSharp {
 			if (e != null) {
 				local_info.Used = true;
 				eclass = ExprClass.Value;
-				return e;
+				return e.Resolve (ec);
 			}
 
 			VariableInfo variable_info = local_info.VariableInfo; 
@@ -5846,7 +5841,7 @@ namespace Mono.CSharp {
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
 					if (tmp == null)
-						continue;
+						return false;
 
 					// Console.WriteLine ("I got: " + tmp);
 					// Handle initialization from vars, fields etc.
@@ -6020,10 +6015,12 @@ namespace Mono.CSharp {
 
 			if (type == null)
 				return false;
-
-			underlying_type = type;
-			if (underlying_type.IsArray)
-				underlying_type = TypeManager.GetElementType (underlying_type);
+			
+			if (!type.IsArray) {
+				Error (622, "Can only use array initializer expressions to assign to array types. Try using a new expression instead.");
+				return false;
+			}
+			underlying_type = TypeManager.GetElementType (type);
 			dimensions = type.GetArrayRank ();
 
 			return true;
@@ -6727,6 +6724,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (typearg.IsPointer && !ec.InUnsafe){
+				UnsafeError (loc);
+				return null;
+			}
 			CheckObsoleteAttribute (typearg);
 
 			type = TypeManager.type_type;
@@ -7361,7 +7362,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		Expression MakePointerAccess ()
+		Expression MakePointerAccess (EmitContext ec)
 		{
 			Type t = Expr.Type;
 
@@ -7375,8 +7376,10 @@ namespace Mono.CSharp {
 			}
 			Expression p;
 
-			p = new PointerArithmetic (true, Expr, ((Argument)Arguments [0]).Expr, t, loc);
-			return new Indirection (p, loc);
+			p = new PointerArithmetic (true, Expr, ((Argument)Arguments [0]).Expr, t, loc).Resolve (ec);
+			if (p == null)
+				return null;
+			return new Indirection (p, loc).Resolve (ec);
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -7400,7 +7403,7 @@ namespace Mono.CSharp {
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).Resolve (ec);
 			else if (t.IsPointer)
-				return MakePointerAccess ();
+				return MakePointerAccess (ec);
 			else
 				return (new IndexerAccess (this, loc)).Resolve (ec);
 		}
@@ -7414,7 +7417,7 @@ namespace Mono.CSharp {
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).ResolveLValue (ec, right_side);
 			else if (t.IsPointer)
-				return MakePointerAccess ();
+				return MakePointerAccess (ec);
 			else
 				return (new IndexerAccess (this, loc)).ResolveLValue (ec, right_side);
 		}
@@ -7556,7 +7559,7 @@ namespace Mono.CSharp {
 			//Console.WriteLine (new System.Diagnostics.StackTrace ());
 			is_stobj = false;
 			t = TypeManager.TypeToCoreType (t);
-			if (TypeManager.IsEnumType (t) && t != TypeManager.enum_type)
+			if (TypeManager.IsEnumType (t))
 				t = TypeManager.EnumToUnderlying (t);
 			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
@@ -8136,6 +8139,9 @@ namespace Mono.CSharp {
 
 				pe.IsBase = true;
 			}
+			
+			if (e is MethodGroupExpr)
+				((MethodGroupExpr) e).IsBase = true;
 
 			return e;
 		}

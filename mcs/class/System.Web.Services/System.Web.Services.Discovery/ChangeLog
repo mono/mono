@@ -1,3 +1,8 @@
+2004-08-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ContractReference.cs, DiscoveryClientProtocol.cs: Set the url from which
+	  documents are being read.
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* SchemaReference.cs: corrected namespace

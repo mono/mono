@@ -392,8 +392,15 @@ namespace System.CodeDom.Compiler {
 
 			GenerateNamespaceStart (ns);
 
-			foreach (CodeNamespaceImport import in ns.Imports)
+			foreach (CodeNamespaceImport import in ns.Imports) {
+				if (import.LinePragma != null)
+					GenerateLinePragmaStart (import.LinePragma);
+
 				GenerateNamespaceImport (import);
+
+				if (import.LinePragma != null)
+					GenerateLinePragmaEnd (import.LinePragma);
+			}
 
 			output.WriteLine();
 
@@ -410,8 +417,15 @@ namespace System.CodeDom.Compiler {
 		protected abstract void GenerateNamespaceImport (CodeNamespaceImport i);
 		protected void GenerateNamespaceImports (CodeNamespace e)
 		{
-			foreach (CodeNamespaceImport import in e.Imports)
+			foreach (CodeNamespaceImport import in e.Imports) {
+				if (import.LinePragma != null)
+					GenerateLinePragmaStart (import.LinePragma);
+
 				GenerateNamespaceImport (import);
+
+				if (import.LinePragma != null)
+					GenerateLinePragmaEnd (import.LinePragma);
+			}
 		}
 
 		protected void GenerateNamespaces (CodeCompileUnit e)
@@ -472,7 +486,14 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GenerateSnippetCompileUnit (CodeSnippetCompileUnit e)
 		{
+			if (e.LinePragma != null)
+				GenerateLinePragmaStart (e.LinePragma);
+
 			output.WriteLine (e.Value);
+
+			if (e.LinePragma != null)
+				GenerateLinePragmaEnd (e.LinePragma);
+
 		}
 
 		protected abstract void GenerateSnippetExpression (CodeSnippetExpression e);
@@ -969,19 +990,23 @@ namespace System.CodeDom.Compiler {
 
 		private void GenerateType (CodeTypeDeclaration type)
 		{
+			if (type.LinePragma != null)
+				GenerateLinePragmaStart (type.LinePragma);
+
 			CodeTypeDelegate del = type as CodeTypeDelegate;
 			if (del != null)
 				GenerateDelegate (del);
 			else
 				GenerateNonDelegateType (type);
+
+			if (type.LinePragma != null)
+				GenerateLinePragmaEnd (type.LinePragma);
 		}
 
 		private void GenerateDelegate (CodeTypeDelegate type)
 		{
 			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
-
-			InitOutput (output, options);
 
 			foreach (CodeCommentStatement statement in type.Comments)
 				GenerateCommentStatement (statement);
@@ -998,8 +1023,6 @@ namespace System.CodeDom.Compiler {
 		{
 			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
-
-			InitOutput (output, options);
 
 			foreach (CodeCommentStatement statement in type.Comments)
 				GenerateCommentStatement (statement);
@@ -1024,11 +1047,17 @@ namespace System.CodeDom.Compiler {
 				CodeTypeMember prevMember = this.currentMember;
 				this.currentMember = member;
 
+				if (prevMember != null && prevMember.LinePragma != null)
+					GenerateLinePragmaEnd (prevMember.LinePragma);
+
 				if (options.BlankLinesBetweenMembers)
 					output.WriteLine ();
 
 				foreach (CodeCommentStatement statement in member.Comments)
 					GenerateCommentStatement (statement);
+
+				if (member.LinePragma != null)
+					GenerateLinePragmaStart (member.LinePragma);
 
 				CodeMemberEvent eventm = member as CodeMemberEvent;
 				if (eventm != null) 
@@ -1087,6 +1116,9 @@ namespace System.CodeDom.Compiler {
 				
 				this.currentMember = prevMember;
 			}
+
+			if (currentMember != null && currentMember.LinePragma != null)
+				GenerateLinePragmaEnd (currentMember.LinePragma);
 				
 			GenerateTypeEnd (type);
 			this.currentType = prevType;

@@ -1,3 +1,7 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Chain.cs: Merge bug fixes from HEAD.
+
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Rethrow original exception when parsing X.509 

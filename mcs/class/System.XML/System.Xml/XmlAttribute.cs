@@ -104,9 +104,7 @@ namespace System.Xml
 		#region Properties
 
 		public override string BaseURI {
-			get {
-				return OwnerElement.BaseURI;
-			}
+			get { return OwnerElement != null ? OwnerElement.BaseURI : String.Empty; }
 		}
 
 		public override string InnerText {
@@ -175,9 +173,7 @@ namespace System.Xml
 		}
 
 		public virtual XmlElement OwnerElement {
-			get {
-				return ownerElement;
-			}
+			get { return ownerElement; }
 		}
 
 		public override XmlNode ParentNode {
@@ -248,11 +244,11 @@ namespace System.Xml
 		}
 
 		internal override string XmlLang {
-			get { return OwnerElement.XmlLang; }
+			get { return OwnerElement != null ? OwnerElement.XmlLang : String.Empty; }
 		}
 
 		internal override XmlSpace XmlSpace {
-			get { return OwnerElement.XmlSpace; }
+			get { return OwnerElement != null ? OwnerElement.XmlSpace : XmlSpace.None; }
 		}
 
 		#endregion
@@ -298,6 +294,9 @@ namespace System.Xml
 
 		internal DTDAttributeDefinition GetAttributeDefinition ()
 		{
+			if (OwnerElement == null)
+				return null;
+
 			// If it is default, then directly create new attribute.
 			DTDAttListDeclaration attList = OwnerDocument.DocumentType != null ? OwnerDocument.DocumentType.DTD.AttListDecls [OwnerElement.Name] : null;
 			return attList != null ? attList [Name] : null;

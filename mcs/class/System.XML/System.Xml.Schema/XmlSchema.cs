@@ -369,7 +369,10 @@ namespace System.Xml.Schema
 					if (resolver != null) {
 						url = GetResolvedUri (resolver, ext.SchemaLocation);
 						if (schemaLocationStack.Contains (url)) {
-							error(handler, "Nested inclusion was found: " + url);
+							// Just skip nested inclusion. 
+							// The spec is "carefully written"
+							// not to handle it as an error.
+	//						error (handler, "Nested inclusion was found: " + url);
 							// must skip this inclusion
 							continue;
 						}

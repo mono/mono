@@ -651,22 +651,27 @@ namespace System.Drawing
 		
 		public void DrawImageUnscaled (Image image, Point point)
 		{
-			DrawImage(image, point.X, point.Y);
+			DrawImageUnscaled (image, point.X, point.Y);
 		}
 		
 		public void DrawImageUnscaled (Image image, Rectangle rect)
 		{
-			DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
+			DrawImageUnscaled (image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 		
 		public void DrawImageUnscaled (Image image, int x, int y)
 		{
-			DrawImage(image, x, y);
+			DrawImage (image, x, y, image.Width, image.Height);
 		}
 
 		public void DrawImageUnscaled (Image image, int x, int y, int width, int height)
 		{
-			DrawImage(image, x, y, width, height);
+			Image tmpImg = new Bitmap (width, height);
+			Graphics g = FromImage (tmpImg);
+			g.DrawImage (image, 0, 0, image.Width, image.Height);
+			this.DrawImage (tmpImg, x, y, width, height);
+			tmpImg.Dispose ();
+			g.Dispose ();		
 		}
 
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)

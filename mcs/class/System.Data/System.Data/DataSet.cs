@@ -1270,7 +1270,7 @@ namespace System.Data {
 
 		private void WriteColumnAsAttribute (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
 		{
-			WriteAttributeString (writer, mode, col.Namespace, col.Prefix, XmlConvert.EncodeLocalName (col.ColumnName), row[col, version].ToString ());
+			WriteAttributeString (writer, mode, col.Namespace, col.Prefix, XmlConvert.EncodeLocalName (col.ColumnName), WriteObjectXml (row[col, version]));
 		}
 
 		private void WriteTableElement (XmlWriter writer, XmlWriteMode mode, DataTable table, DataRow row, DataRowVersion version)
@@ -1282,7 +1282,7 @@ namespace System.Data {
 
 			if (mode == XmlWriteMode.DiffGram) {
 				WriteAttributeString (writer, mode, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "id", table.TableName + (row.XmlRowID + 1));
-				WriteAttributeString (writer, mode, XmlConstants.MsdataNamespace, XmlConstants.MsdataPrefix, "rowOrder", row.XmlRowID.ToString());
+				WriteAttributeString (writer, mode, XmlConstants.MsdataNamespace, XmlConstants.MsdataPrefix, "rowOrder", XmlConvert.ToString (row.XmlRowID));
 				string modeName = null;
 				if (row.RowState == DataRowState.Modified)
 					modeName = "modified";
@@ -1390,6 +1390,8 @@ namespace System.Data {
 				nsmgr.AddNamespace (XmlConstants.TnsPrefix, Namespace);
 				nsmgr.AddNamespace (String.Empty, Namespace);
 			}
+			if (CheckExtendedPropertyExists ())
+				nsmgr.AddNamespace (XmlConstants.MspropPrefix, XmlConstants.MspropNamespace);
 
 			if (atts.Count > 0)
 				schema.UnhandledAttributes = atts.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
@@ -1415,6 +1417,8 @@ namespace System.Data {
 			atts.Add (attr);
 
 			elem.UnhandledAttributes = atts.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
+
+			AddExtendedPropertyAttributes (elem, ExtendedProperties, doc);
 
 			XmlSchemaComplexType complex = new XmlSchemaComplexType ();
 			elem.SchemaType = complex;
@@ -1446,7 +1450,7 @@ namespace System.Data {
 
 			schema.Items.Add (elem);
 			
-			AddConstraintsToSchema (elem, constraintPrefix, tables, relations);
+			AddConstraintsToSchema (elem, constraintPrefix, tables, relations, doc);
 			foreach (string prefix in nsmgr) {
 				string ns = nsmgr.LookupNamespace (nsmgr.NameTable.Get (prefix));
 				if (prefix != "xmlns" && prefix != "xml" && ns != null && ns != String.Empty)
@@ -1455,29 +1459,48 @@ namespace System.Data {
 			return schema;
 		}
 		
+		private bool CheckExtendedPropertyExists ()
+		{
+			if (ExtendedProperties.Count > 0)
+				return true;
+			foreach (DataTable dt in Tables) {
+				if (dt.ExtendedProperties.Count > 0)
+					return true;
+				foreach (DataColumn col in dt.Columns)
+					if (col.ExtendedProperties.Count > 0)
+						return true;
+				foreach (Constraint c in dt.Constraints)
+					if (c.ExtendedProperties.Count > 0)
+						return true;
+			}
+			foreach (DataRelation rel in Relations)
+				if (rel.ExtendedProperties.Count > 0)
+					return true;
+			return false;
+		}
+
 		// Add all constraints in all tables to the schema.
-		private void AddConstraintsToSchema (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables, DataRelationCollection relations) 
+		private void AddConstraintsToSchema (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables, DataRelationCollection relations, XmlDocument doc)
 		{
 			// first add all unique constraints.
-			Hashtable uniqueNames = AddUniqueConstraints (elem, constraintPrefix, tables);
+			Hashtable uniqueNames = AddUniqueConstraints (elem, constraintPrefix, tables, doc);
 			// Add all foriegn key constraints.
-			AddForeignKeys (uniqueNames, elem, constraintPrefix, relations);
+			AddForeignKeys (uniqueNames, elem, constraintPrefix, relations, doc);
 		}
 		
 		// Add unique constaraints to the schema.
 		// return hashtable with the names of all XmlSchemaUnique elements we created.
-		private Hashtable AddUniqueConstraints (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables)
+		private Hashtable AddUniqueConstraints (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables, XmlDocument doc)
 		{
-			XmlDocument doc = new XmlDocument();
 			Hashtable uniqueNames = new Hashtable();
 			foreach (DataTable table in tables) {
 				
-				foreach (Constraint constaint in table.Constraints) {
+				foreach (Constraint constraint in table.Constraints) {
 					
-					if (constaint is UniqueConstraint) {
+					if (constraint is UniqueConstraint) {
 						ArrayList attrs = new ArrayList ();
 						XmlAttribute attrib;
-						UniqueConstraint uqConst = (UniqueConstraint)constaint;
+						UniqueConstraint uqConst = (UniqueConstraint) constraint;
 						XmlSchemaUnique uniq = new XmlSchemaUnique ();
 						
 						// if column of the constraint is hidden do not write the constraint.
@@ -1520,6 +1543,8 @@ namespace System.Data {
 							uniq.Fields.Add(field);
 						}
 				
+						AddExtendedPropertyAttributes (uniq, constraint.ExtendedProperties, doc);
+
 						elem.Constraints.Add (uniq);
 						uniqueNames.Add (uniq.Name, null);
 					}
@@ -1529,11 +1554,10 @@ namespace System.Data {
 		}
 		
 		// Add the foriegn keys to the schema.
-		private void AddForeignKeys (Hashtable uniqueNames, XmlSchemaElement elem, string constraintPrefix, DataRelationCollection relations)
+		private void AddForeignKeys (Hashtable uniqueNames, XmlSchemaElement elem, string constraintPrefix, DataRelationCollection relations, XmlDocument doc)
 		{
 			if (relations == null) return;
 			
-			XmlDocument doc = new XmlDocument();
 			foreach (DataRelation rel in relations) {
 				
 				if (rel.ParentKeyConstraint == null || rel.ChildKeyConstraint == null)
@@ -1585,7 +1609,10 @@ namespace System.Data {
 					field.XPath = constraintPrefix+column.ColumnName;
 					keyRef.Fields.Add(field);
 				}
+
 				keyRef.UnhandledAttributes = (XmlAttribute[])attrs.ToArray (typeof (XmlAttribute));
+				AddExtendedPropertyAttributes (keyRef, rel.ExtendedProperties, doc);
+
 				elem.Constraints.Add (keyRef);
 			}
 		}
@@ -1618,7 +1645,7 @@ namespace System.Data {
 				
 				// add ordinal attribute
 				xlmAttrs[1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Ordinal, XmlConstants.MsdataNamespace);
-				xlmAttrs[1].Value = simple.Ordinal.ToString();
+				xlmAttrs[1].Value = XmlConvert.ToString (simple.Ordinal);
 				simpleContent.UnhandledAttributes = xlmAttrs;
 				
 			        
@@ -1655,12 +1682,12 @@ namespace System.Data {
 
 					if (col.AutoIncrementSeed != 0) {
 						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.AutoIncrementSeed, XmlConstants.MsdataNamespace);
-						xattr.Value = col.AutoIncrementSeed.ToString();
+						xattr.Value = XmlConvert.ToString (col.AutoIncrementSeed);
 						xattrs.Add (xattr);
 					}
 
 					if (col.DefaultValue.ToString () != String.Empty)
-						colElem.DefaultValue = col.DefaultValue.ToString ();
+						colElem.DefaultValue = WriteObjectXml (col.DefaultValue);
 					
 					if (col.MaxLength < 0)
 						colElem.SchemaTypeName = MapType (col.DataType);
@@ -1687,6 +1714,7 @@ namespace System.Data {
 					}
 					
 					colElem.UnhandledAttributes = (XmlAttribute[])xattrs.ToArray(typeof (XmlAttribute));
+					AddExtendedPropertyAttributes (colElem, col.ExtendedProperties, doc);
 					seq.Items.Add (colElem);
 				}
 
@@ -1726,11 +1754,32 @@ namespace System.Data {
 					schemaToAdd.Namespaces.Add (prefix, col.Namespace);
 				}
 				att.SchemaTypeName = MapType (col.DataType);
+				// FIXME: what happens if extended properties are set on attribute columns??
 				schemaAttributes.Add (att);
 			}
 
+			AddExtendedPropertyAttributes (elem, table.ExtendedProperties, doc);
+
 			return elem;
 		}
+
+		private void AddExtendedPropertyAttributes (XmlSchemaAnnotated xsobj, PropertyCollection props, XmlDocument doc)
+		{
+			ArrayList attList = new ArrayList ();
+			XmlAttribute xmlAttr;
+
+			if (xsobj.UnhandledAttributes != null)
+				attList.AddRange (xsobj.UnhandledAttributes);
+
+			// add extended properties to xs:element
+			foreach (DictionaryEntry de in props) {
+				xmlAttr = doc.CreateAttribute (XmlConstants.MspropPrefix, XmlConvert.EncodeName (de.Key.ToString ()), XmlConstants.MspropNamespace);
+				xmlAttr.Value = de.Value != null ? WriteObjectXml (de.Value) : String.Empty;
+				attList.Add (xmlAttr);
+			}
+			if (attList.Count > 0)
+				xsobj.UnhandledAttributes = attList.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
+ 		}
 
 		private string SafeNS (string ns)
 		{

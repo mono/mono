@@ -1929,11 +1929,12 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
+		string name = MakeName ((string) $5);
 		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
-					     (int) $2, MakeName ((string) $5), (Parameters) $7, 
-					     (Attributes) $1, l);
+					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
 		  
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
+		RootContext.Tree.RecordDecl (name, del);
 	  }	
 	| opt_attributes
 	  opt_modifiers
@@ -1944,12 +1945,14 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
+		string name = MakeName ((string) $5);
 		Delegate del = new Delegate (
 			current_namespace, current_container,
-			TypeManager.system_void_expr, (int) $2, MakeName ((string) $5), 
+			TypeManager.system_void_expr, (int) $2, name,
 			(Parameters) $7, (Attributes) $1, l);
 
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
+		RootContext.Tree.RecordDecl (name, del);
 	  }
 	;
 
@@ -3818,11 +3821,13 @@ fixed_statement
 	  type fixed_pointer_declarators 
 	  CLOSE_PARENS 
 	  {
-		Block assign_block = new Block (current_block, Block.Flags.Implicit);
 		ArrayList list = (ArrayList) $4;
 		Expression type = (Expression) $3;
 		Location l = lexer.Location;
 		int top = list.Count;
+
+		Block assign_block = new Block (current_block);
+		current_block = assign_block;
 
 		for (int i = 0; i < top; i++){
 			Pair p = (Pair) list [i];
@@ -3835,17 +3840,25 @@ fixed_statement
 			p.First = v;
 			list [i] = p;
 		}
-		current_block.AddStatement (assign_block);
-		current_block = assign_block;
-		oob_stack.Push (assign_block);
+
 		oob_stack.Push (l);
 	  }
 	  embedded_statement 
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		oob_stack.Pop ();
 
-		$$ = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
+		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
+
+		if (RootContext.WarningLevel >= 3){
+			if ($7 == EmptyStatement.Value)
+				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
+		}
+
+		current_block.AddStatement (f);
+		while (current_block.Implicit)
+			current_block = current_block.Parent;
+		$$ = current_block;
+		current_block = current_block.Parent;
 	  }
 	;
 

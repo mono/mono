@@ -1,3 +1,18 @@
+2004-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : DataSet's ExtendedProperties were not XmlConverted.
+
+2004-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConstants.cs : Added constants for "msprop" support.
+	* DataSet.cs : ExtendedProperties should be written in the schema.
+	  This fixes bug #61233.
+
+2004-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : on serialization to XmlWriter, XmlConvert should be
+	  used. There were also some culture dependency problems to write int.
+
 2004-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDataInferenceLoader.cs : It was not always filling relation

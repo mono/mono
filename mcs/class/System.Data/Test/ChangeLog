@@ -1,3 +1,13 @@
+2004-08-26  Sureshkumar T <TSureshkumar@novell.com>
+	* MySqlTestBed.cs - Added few more fields for DateTime testing
+
+2004-08-13 Umadevi S <sumadevi@novell.com>
+	* Added standalone nunit testcases for datacontainer class.
+	* Currently will use MSSQL server
+	* New File
+		MSSqlTestBed.cs - Base class for MSSql testing
+	(similar to the mysqltestbed)
+
 2004-06-16  Sureshkumar T <TSureshkumar@novell.com>
 	* Added standalone NUnit test cases for MySql db related tests.
 	* Created sub-directory for System.Data.Odbc

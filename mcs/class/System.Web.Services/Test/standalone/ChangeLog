@@ -1,3 +1,7 @@
+2004-08-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* server/SessionCounter.asmx: Check that Context != null in the constructor.
+
 2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* proxies.net.xml.gz: Updated.

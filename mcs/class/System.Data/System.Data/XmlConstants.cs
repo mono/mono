@@ -83,6 +83,8 @@ internal class XmlConstants
 	//ms schema objects	
 	public const string MsdataPrefix = "msdata";	
 	public const string MsdataNamespace = "urn:schemas-microsoft-com:xml-msdata";
+	public const string MspropPrefix = "msprop";	
+	public const string MspropNamespace = "urn:schemas-microsoft-com:xml-msprop";
 	public const string DiffgrPrefix = "diffgr";
 	public const string DiffgrNamespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
 	public const string TnsPrefix = "mstns";

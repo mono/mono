@@ -1,3 +1,7 @@
+2004-07-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TraceHandler.cs: check that trace is enabled or throw.
+
 2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceHandler.cs: Added protected missing members and attributes.

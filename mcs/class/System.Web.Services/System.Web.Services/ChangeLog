@@ -1,3 +1,9 @@
+2004-08-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* WebService.cs: Get the HttpContext from the HttpContext.Current, do not
+	  wait to be set with SetContext. In this way the context is available
+	  in the web service constructor.
+
 2004-05-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* WebService.cs: Take the session from the context.

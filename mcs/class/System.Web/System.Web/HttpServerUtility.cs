@@ -46,6 +46,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Web.Hosting;
+using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -199,7 +201,7 @@ namespace System.Web
 
 			HttpRequest request = _Context.Request;
 			string oldFilePath = request.FilePath;
-			request.SetFilePath (path);
+			request.SetFilePath (UrlUtils.Combine (_Context.Request.BaseVirtualDir, path));
 			string oldQuery = request.QueryStringRaw;
 			
 			if (!preserveQuery)	request.QueryStringRaw = query;
@@ -302,7 +304,15 @@ namespace System.Web
 		/// <param name="path">The URL path of the new page on the server to execute. </param>
 		public void Transfer (string path)
 		{
-			Transfer (path, true);
+			// If it's a page and a postback, don't pass form data
+			// See bug #65613.
+			bool preserveForm = true;
+			if (_Context.Handler is Page) {
+				Page page = (Page) _Context.Handler;
+				preserveForm = !page.IsPostBack;
+			}
+
+			Transfer (path, preserveForm);
 		}
 
 		/// <summary>

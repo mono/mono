@@ -51,7 +51,6 @@ namespace System.Web.Mail
 		private string to;
 		private string urlContentBase;
 		private string urlContentLocation;
-		private Hashtable fields;
 		
 		// Constructor		
 		public MailMessage ()
@@ -59,7 +58,9 @@ namespace System.Web.Mail
 			attachments = new ArrayList (8);
 			headers = new ListDictionary ();
 			bodyEncoding = Encoding.Default;
+#if NET_1_1
 			fields = new Hashtable ();
+#endif
 		}		
 	
 		// Properties
@@ -127,6 +128,8 @@ namespace System.Web.Mail
 		}
 
 #if NET_1_1
+		private Hashtable fields;
+		
 		public IDictionary Fields {
 			get {
 				return (IDictionary) fields;

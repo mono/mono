@@ -76,12 +76,6 @@ namespace System.Web {
 
 		static HttpRuntime ()
 		{
-			appPathDiscoveryStackWalk = null;
-			ctrlPrincipalStackWalk    = null;
-			sensitiveInfoStackWalk    = null;
-			unmgdCodeStackWalk        = null;
-			unrestrictedStackWalk     = null;
-         
 			_runtime = new HttpRuntime ();
 			_runtime.Init();
 		}
@@ -185,6 +179,8 @@ namespace System.Web {
 				context.Response.FinalFlush ();
 			}
 
+			/*
+			 * This is not being used. OnFirstRequestEnd is empty.
 			if (!_firstRequestExecuted) {
 				lock (this) {
 					if (!_firstRequestExecuted) {
@@ -193,6 +189,7 @@ namespace System.Web {
 					}
 				}
 			}
+			*/
 
 			Interlocked.Decrement(ref _activeRequests);
 
@@ -237,6 +234,7 @@ namespace System.Web {
 			HttpContext context = new HttpContext (wr);
 			HttpException exception = new HttpException (503, "Service unavailable");
 			Interlocked.Increment (ref _runtime._activeRequests);
+			context.Response.InitializeWriter ();
 			_runtime.FinishRequest (context, exception);
 		}
 
@@ -279,10 +277,10 @@ namespace System.Web {
 				if (!_firstRequestStarted) {
 					lock (this) {
 						if (!_firstRequestStarted) {
-							_firstRequestStarted = true;
 							_firstRequestStartTime = DateTime.Now;
 							OnFirstRequestStart(context);
-						}						
+							_firstRequestStarted = true;
+						}
 					}
 				}
 
@@ -317,37 +315,32 @@ namespace System.Web {
 		void TryExecuteQueuedRequests ()
 		{
 			// Wait for pending jobs to start
-			if (Interlocked.CompareExchange (ref pendingCallbacks, 3, 3) == 3) {
-				return;
-			}
-
-			if (queueManager == null)
+			if (Interlocked.CompareExchange (ref pendingCallbacks, 3, 3) == 3)
 				return;
 
-			if (!queueManager.CanExecuteRequest (false)) {
+			HttpWorkerRequest wr = queueManager.GetNextRequest (null);
+			if (wr == null)
 				return;
-			}
-
-			HttpWorkerRequest wr = queueManager.Dequeue ();
-			if (wr == null) {
-				return;
-			}
 
 			Interlocked.Increment (ref pendingCallbacks);
 			ThreadPool.QueueUserWorkItem (doRequestCallback, wr);
 			TryExecuteQueuedRequests ();
 		}
 
-		public static void ProcessRequest (HttpWorkerRequest Request)
+		public static void ProcessRequest (HttpWorkerRequest request)
 		{
-			if (Request == null)
-				throw new ArgumentNullException ("Request");
+			if (request == null)
+				throw new ArgumentNullException ("request");
 
-			if (!_runtime._firstRequestExecuted || _runtime.queueManager.CanExecuteRequest (false)) {
-				_runtime.InternalExecuteRequest (Request);
-			} else {
-				_runtime.queueManager.Queue (Request);
+			QueueManager mgr = _runtime.queueManager;
+			if (_runtime._firstRequestStarted && mgr != null) {
+				request = mgr.GetNextRequest (request);
+				// We're busy, return immediately
+				if (request == null)
+					return;
 			}
+
+			_runtime.InternalExecuteRequest (request);
 		}
 
 #if NET_1_1
@@ -507,7 +500,7 @@ namespace System.Web {
 
 		[MonoTODO ("GetResourceStringFromResourceManager (string)")]
 		private string GetResourceStringFromResourceManager (string key) {
-			return "String returned by HttpRuntime.GetResourceStringFromResourceManager";
+			return key;
 		}
 
 		#region Security Internal Methods (not impl)

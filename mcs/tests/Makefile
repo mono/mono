@@ -43,7 +43,9 @@ TEST_SOURCES = \
 	test-241 test-242 test-243 test-244 test-245 test-246 test-247 test-248 test-249 test-250 \
 	test-251 test-252 test-253 test-254 test-255 test-256 test-257 test-258 test-259 test-260 \
 	test-261 test-262 test-263 test-264 test-265 test-266 test-267 test-268 test-269 test-270 \
-	test-271 test-272 test-273 test-274 test-275 test-276 test-277                            \
+	test-271 test-272 test-273 test-274 test-275 test-276 test-277                   test-280 \
+	                  test-283 test-284 						 test-290 \
+		 test-292 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16
 
@@ -54,7 +56,7 @@ TEST2_SOURCES = \
 	2test-1 2test-2 2test-3 2test-4 2test-5 2test-6
 
 UNSAFE_SOURCES = \
-	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5 unsafe-6 unsafe-7 unsafe-8
+	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5 unsafe-6 unsafe-7 unsafe-8 unsafe-9 unsafe-10
 
 WINDOWS_SOURCES = \
 	test-50 test-67

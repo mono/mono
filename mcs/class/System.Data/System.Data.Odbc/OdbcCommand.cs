@@ -223,7 +223,14 @@ namespace System.Data.Odbc
 				return (IDbTransaction) Transaction;
 			}
 			set {
-				throw new NotImplementedException ();
+				 if (value is OdbcTransaction)
+                                {
+                                        Transaction = (OdbcTransaction)value;
+                                }
+                                else
+                                {
+                                        throw new ArgumentException ();
+                                }
 			}
 		}
 
@@ -285,6 +292,12 @@ namespace System.Data.Odbc
 
 		public int ExecuteNonQuery ()
 		{
+			return ExecuteNonQuery (true);
+		}
+
+		private int ExecuteNonQuery (bool freeHandle) 
+		{
+			int records = 0;
 			if (connection == null)
 				throw new InvalidOperationException ();
 			if (connection.State == ConnectionState.Closed)
@@ -293,9 +306,26 @@ namespace System.Data.Odbc
 
 			ExecSQL(CommandText);
 
-//			if (!prepared)
-//				libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
-			return 0;
+			// .NET documentation says that except for INSERT, UPDATE and
+                        // DELETE  where the return value is the number of rows affected
+                        // for the rest of the commands the return value is -1.
+                        if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
+                                    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||
+                                    (CommandText.ToUpper().IndexOf("DELETE")!=-1)) {
+                                                                                                    
+                                        int numrows = 0;
+                                        OdbcReturn ret = libodbc.SQLRowCount(hstmt,ref numrows);
+                                        records = numrows;
+                        }
+                        else
+                                        records = -1;
+
+			if (freeHandle && !prepared) {
+				OdbcReturn ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
+			}
+			return records;
 		}
 
 		public void Prepare()
@@ -330,7 +360,7 @@ namespace System.Data.Odbc
 
 		public OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			ExecuteNonQuery();
+			ExecuteNonQuery(false);
 			dataReader=new OdbcDataReader(this,behavior);
 			return dataReader;
 		}
@@ -342,11 +372,12 @@ namespace System.Data.Odbc
 		
 		public object ExecuteScalar ()
 		{
-			object val;
+			object val = null;
 			OdbcDataReader reader=ExecuteReader();
 			try
 			{
-				val=reader[0];
+				if (reader.Read ())
+					val=reader[0];
 			}
 			finally
 			{
