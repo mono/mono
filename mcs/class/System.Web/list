@@ -121,6 +121,7 @@ System.Web.UI/RenderMethod.cs
 System.Web.UI/TemplateControl.cs
 System.Web.UI/TemplateParser.cs
 System.Web.UI/Triplet.cs
+System.Web.UI/UserControl.cs
 System.Web.UI/CompiledTemplateBuilder.cs
 System.Web.UI.HtmlControls/HtmlAnchor.cs
 System.Web.UI.HtmlControls/HtmlButton.cs
