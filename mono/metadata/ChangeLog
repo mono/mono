@@ -1,3 +1,11 @@
+2003-06-14  Dick Porter  <dick@ximian.com>
+
+	* threads.c (start_wrapper): Remove the reference to the thread
+	object in the TLS data, so the thread object can be finalized.
+	This won't be reached if the thread threw an uncaught exception,
+	so those thread handles will stay referenced :-( (This is due to
+	missing support for scanning thread-specific data in the Boehm GC
+	- the io-layer keeps a GC-visible hash of pointers to TLS data.)
 
 Sat Jun 14 13:16:17 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
