@@ -23,8 +23,7 @@ namespace System.Runtime.Remoting.Channels
 		{
 			Assembly asm;
 			
-			int i = assemblyName.IndexOf (",");
-			if (i != -1)
+			if (assemblyName.IndexOf (',') != -1)
 			{
 				// Try using the full name
 				try
@@ -34,12 +33,10 @@ namespace System.Runtime.Remoting.Channels
 					if (t != null) return t;
 				}
 				catch {}
-				
-				assemblyName = assemblyName.Substring (0,i);
 			}
 			
 			// Try using the simple name
-			asm = Assembly.Load (assemblyName);
+			asm = Assembly.LoadWithPartialName (assemblyName);
 			return asm.GetType (typeName, true);
 		}
 	}
