@@ -888,7 +888,12 @@ namespace System
 
 	public static byte ToByte (decimal value)
 	{
-		return Convert.ToByte (value);
+		if (value > Byte.MaxValue || value < Byte.MinValue)
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than Byte.MaxValue or less than Byte.MinValue"));
+	  
+		// return truncated value
+		return (byte)(Decimal.Floor (value));
 	}
 
 	public static double ToDouble (decimal value)
@@ -898,17 +903,32 @@ namespace System
 
 	public static short ToInt16 (decimal value)
 	{
-		return Convert.ToInt16 (value);
+		if (value > Int16.MaxValue || value < Int16.MinValue)
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than Int16.MaxValue or less than Int16.MinValue"));
+	  
+		// return truncated value
+		return (Int16)(Decimal.Floor (value));
 	}
 
 	public static int ToInt32 (decimal value)
 	{
-		return Convert.ToInt32 (value);
+		if (value > Int32.MaxValue || value < Int32.MinValue)
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than Int32.MaxValue or less than Int32.MinValue"));
+	  
+		// return truncated value
+		return (Int32)(Decimal.Floor (value));
 	}
 	
 	public static long ToInt64 (decimal value)
 	{
-		return Convert.ToInt64 (value);
+		if (value > Int64.MaxValue || value < Int64.MinValue)
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than Int64.MaxValue or less than Int64.MinValue"));
+	  
+		// return truncated value
+		return (Int64)(Decimal.Floor (value));
 	}
 
 	public static long ToOACurrency (decimal value)
@@ -919,7 +939,12 @@ namespace System
 	[CLSCompliant(false)]
 	public static sbyte ToSByte (decimal value)
 	{
-		return Convert.ToSByte (value);
+		if (value > SByte.MaxValue || value < SByte.MinValue)
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than SByte.MaxValue or less than SByte.MinValue"));
+	  
+		// return truncated value
+		return (SByte)(Decimal.Floor (value));
 	}
 	
 	public static float ToSingle (decimal value)
@@ -930,19 +955,34 @@ namespace System
 	[CLSCompliant(false)]
 	public static ushort ToUInt16 (decimal value)
 	{
-		return Convert.ToUInt16 (value);
+		if (value > UInt16.MaxValue || value < UInt16.MinValue)
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than UInt16.MaxValue or less than UInt16.MinValue"));
+	  
+		// return truncated value
+		return (UInt16)(Decimal.Floor (value));
 	}
 
 	[CLSCompliant(false)]
 	public static uint ToUInt32 (decimal value)
 	{
-		return Convert.ToUInt32 (value);
+		if (value > UInt32.MaxValue || value < UInt32.MinValue)
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than UInt32.MaxValue or less than UInt32.MinValue"));
+	  
+		// return truncated value
+		return (UInt32)(Decimal.Floor (value));
 	}
 
 	[CLSCompliant(false)]
 	public static ulong ToUInt64 (decimal value)
 	{
-		return Convert.ToUInt64 (value);
+		if (value > UInt64.MaxValue || value < UInt64.MinValue)
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than UInt64.MaxValue or less than UInt64.MinValue"));
+	  
+		// return truncated value
+		return (UInt64)(Decimal.Floor (value));
 	}
 		
 	object IConvertible.ToType (Type conversionType, IFormatProvider provider)

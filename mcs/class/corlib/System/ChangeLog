@@ -1,5 +1,7 @@
 2004-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Decimal.cs: Fixed To... methods that needs to trunk the integer part
+	of Decimal (and not use the banker's rounding like Convert.To...).
 	* Single.cs: Fixed CompareTo and Equals (copied fix from Double) wrt
 	to NaN compares (see new unit tests).
 
