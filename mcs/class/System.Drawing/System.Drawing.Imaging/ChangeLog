@@ -1,3 +1,7 @@
+2004-02-12 Ravindra <rkumar@novell.com>
+	* EncoderParameters.cs: Implemented.
+	* EncoderParameter.cs: Implemented.
+
 2004-01-21 Jordi Mas i Hernàdez <jmas@softcatala.org>
 	* BmpBitmap.cs: fixed encoding and decoding problems
 	* ImageAttributes.cs: implemented
