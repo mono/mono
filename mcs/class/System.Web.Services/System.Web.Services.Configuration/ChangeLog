@@ -1,3 +1,9 @@
+2003-09-25  Lluis Sanchez Gual  <lluis@ximian.com>
+	
+	* WebServicesConfigurationSectionHandler.cs: added support for
+	  soapExtensionReflectorTypes, soapExtensionImporterTypes and
+	  serviceDescriptionFormatExtensionTypes.
+
 2003-08-28  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlFormatExtensionPointAttribute.cs: Fixed constructor. Member name

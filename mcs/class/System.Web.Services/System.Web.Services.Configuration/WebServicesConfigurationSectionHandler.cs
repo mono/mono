@@ -29,7 +29,10 @@ namespace System.Web.Services.Configuration
 		static WSConfig instance;
 		WSProtocol protocols;
 		string wsdlHelpPage;
-		ArrayList extensionTypes;
+		ArrayList extensionTypes = new ArrayList();
+		ArrayList extensionImporterTypes = new ArrayList();
+		ArrayList extensionReflectorTypes = new ArrayList();
+		ArrayList formatExtensionTypes = new ArrayList();
 		
 		public WSConfig (WSConfig parent)
 		{
@@ -90,14 +93,6 @@ namespace System.Web.Services.Configuration
 			protocols = 0;
 		}
 
-		public void AddExtensionType (WSExtensionConfig wsExtension)
-		{
-			if (extensionTypes == null)
-				extensionTypes = new ArrayList ();
-
-			extensionTypes.Add (wsExtension);
-		}
-
 		// Methods to query/get configuration
 		public static bool IsSupported (WSProtocol proto)
 		{
@@ -130,6 +125,19 @@ namespace System.Web.Services.Configuration
 		public ArrayList ExtensionTypes {
 			get { return extensionTypes; }
 		}
+
+		public ArrayList ExtensionImporterTypes {
+			get { return extensionImporterTypes; }
+		}
+		
+		public ArrayList ExtensionReflectorTypes {
+			get { return extensionReflectorTypes; }
+		}
+		
+		public ArrayList FormatExtensionTypes {
+			get { return formatExtensionTypes; }
+		}
+		
 	}
 	
 	enum WSExtensionGroup
@@ -229,22 +237,22 @@ namespace System.Web.Services.Configuration
 				}
 
 				if (name == "soapExtensionTypes") {
-					ConfigSoapExtensionTypes (child, config);
+					ConfigSoapExtensionTypes (child, config.ExtensionTypes);
 					continue;
 				}
 
 				if (name == "soapExtensionReflectorTypes") {
-					//TODO: Not supported by now
+					ConfigSoapExtensionTypes (child, config.ExtensionReflectorTypes);
 					continue;
 				}
 
 				if (name == "soapExtensionImporterTypes") {
-					//TODO: Not supported by now
+					ConfigSoapExtensionTypes (child, config.ExtensionImporterTypes);
 					continue;
 				}
 
 				if (name == "serviceDescriptionFormatExtensionTypes") {
-					//TODO: Not supported by now
+					ConfigFormatExtensionTypes (child, config);
 					continue;
 				}
 
@@ -313,7 +321,7 @@ namespace System.Web.Services.Configuration
 			}
 		}
 		
-		static void ConfigSoapExtensionTypes (XmlNode section, WSConfig config)
+		static void ConfigSoapExtensionTypes (XmlNode section, ArrayList extensions)
 		{
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				ThrowException ("Unrecognized attribute", section);
@@ -349,7 +357,40 @@ namespace System.Web.Services.Configuration
 					if (e != null)
 						ThrowException (e.Message, child);
 
-					config.AddExtensionType (wse);
+					extensions.Add (wse);
+					continue;
+				}
+
+				ThrowException ("Unexpected element", child);
+			}
+		}
+		
+		static void ConfigFormatExtensionTypes (XmlNode section, WSConfig config)
+		{
+			if (section.Attributes != null && section.Attributes.Count != 0)
+				ThrowException ("Unrecognized attribute", section);
+
+			XmlNodeList nodes = section.ChildNodes;
+			foreach (XmlNode child in nodes) {
+				XmlNodeType ntype = child.NodeType;
+				if (ntype == XmlNodeType.Whitespace || ntype == XmlNodeType.Comment)
+					continue;
+
+				if (ntype != XmlNodeType.Element)
+					ThrowException ("Only elements allowed", child);
+				
+				string name = child.Name;
+				string error;
+				if (name == "add") {
+					string typeName = AttValue ("name", child, false);
+					if (child.Attributes != null && child.Attributes.Count != 0)
+						HandlersUtil.ThrowException ("Unrecognized attribute", child);
+
+					try {
+						config.FormatExtensionTypes.Add (Type.GetType (typeName, true));
+					} catch (Exception e) {
+						ThrowException (e.Message, child);
+					}
 					continue;
 				}
 
@@ -420,4 +461,3 @@ namespace System.Web.Services.Configuration
 	}
 
 }
-
