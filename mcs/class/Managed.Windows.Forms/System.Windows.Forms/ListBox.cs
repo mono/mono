@@ -750,6 +750,7 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
+			listbox_info.item_height = FontHeight;
 
 			RellocateScrollBars ();
 			CalcClientArea ();
@@ -1596,7 +1597,7 @@ namespace System.Windows.Forms
 				Sort ();				
 						
 			if (Items.Count == 0) {
-				SelectedIndex = -1;
+				selected_index = -1;
 				focused_item = -1;
 			}
 

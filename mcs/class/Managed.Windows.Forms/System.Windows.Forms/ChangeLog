@@ -1,3 +1,9 @@
+2005-02-03  Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	* ListBox.cs:
+		- Fixes font height after font change
+		- Avoid generating unnecesary OnSelectedIndexChanged on clearing
+		
 2005-02-02  Peter Bartok  <pbartok@novell.com>
 
 	* HandleData.cs: Introduced static methods to allow class 
