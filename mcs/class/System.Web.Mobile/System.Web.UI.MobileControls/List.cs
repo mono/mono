@@ -16,6 +16,9 @@ namespace System.Web.UI.MobileControls
 	public class List : PagedControl//, INamingContainer, IListControl,
 //	                    ITemplateable, IPostBackEventHandler
 	{
+		private static readonly object ItemDataBindEvent = new object();
+		private static readonly object ItemCommandEvent  = new object();
+
 		public List()
 		{
 		}
@@ -26,6 +29,36 @@ namespace System.Web.UI.MobileControls
 			{
 				throw new NotImplementedException();
 			}
+		}
+
+		protected override bool OnBubbleEvent(object sender, EventArgs e)
+		{
+			if(e is ListCommandEventArgs)
+			{
+				OnItemCommand((ListCommandEventArgs)e);
+				return true;
+			}
+			return false;
+		}
+
+		protected override void OnDataBinding(EventArgs e)
+		{
+			base.OnDataBinding(e);
+			throw new NotImplementedException();
+		}
+
+		protected void OnItemDataBind(ListDataBindEventArgs e)
+		{
+			ListDataBindEventHandler ldbeh = (ListDataBindEventHandler)(Events[ItemDataBindEvent]);
+			if(ldbeh != null)
+				ldbeh(this, e);
+		}
+
+		protected virtual void OnItemCommand(ListCommandEventArgs e)
+		{
+			ListCommandEventHandler lceh = (ListCommandEventHandler)(Events[ItemCommandEvent]);
+			if(lceh != null)
+				lceh(this, e);
 		}
 	}
 }

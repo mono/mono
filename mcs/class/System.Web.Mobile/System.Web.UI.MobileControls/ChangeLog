@@ -1,4 +1,12 @@
 
+2003-01-27	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* List.cs, PagedControl.cs
+	                         : Was I drunk? or Sleeping when I wrote
+	                           the classes? I mixed up the methods.
+	                           Reorganizing.
+	* PagedControl.cs        : Completed.
+
 2003-01-26	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* Form.cs                : HasActiveHandler()       - Stubbed.

@@ -16,8 +16,6 @@ namespace System.Web.UI.MobileControls
 	public abstract class PagedControl : MobileControl
 	{
 		private static readonly object LoadItemsEvent    = new object();
-		private static readonly object ItemDataBindEvent = new object();
-		private static readonly object ItemCommandEvent  = new object();
 
 		private int itemCount = 0;
 		private ItemPager itemPager;
@@ -39,11 +37,6 @@ namespace System.Web.UI.MobileControls
 			}
 		}
 
-		private void OnLoadItems()
-		{
-			OnLoadItems(new LoadItemsEventArgs(PagerItemIndex, PagerItemCount));
-		}
-
 		private int PagerItemIndex
 		{
 			get
@@ -63,6 +56,87 @@ namespace System.Web.UI.MobileControls
 
 		protected abstract int InternalItemCount { get; }
 
+		public int FirstVisibleItemIndex
+		{
+			get
+			{
+				if(!IsCustomPaging && EnablePagination)
+					return PagerItemIndex;
+				return 0;
+			}
+		}
+
+		private bool IsCustomPaging
+		{
+			get
+			{
+				return (itemCount > 0);
+			}
+		}
+
+		public int ItemCount
+		{
+			get
+			{
+				return itemCount;
+			}
+			set
+			{
+				itemCount = value;
+			}
+		}
+
+		public int ItemWeight
+		{
+			get
+			{
+				return ControlPager.DefaultWeight;
+			}
+		}
+
+		public int ItemsPerPage
+		{
+			get
+			{
+				object o = ViewState["ItemsPerPage"];
+				if(o != null)
+					return (int)o;
+				return 0;
+			}
+			set
+			{
+				ViewState["ItemsPerPage"] = value;
+			}
+		}
+
+		public int VisibleItemCount
+		{
+			get
+			{
+				if(IsCustomPaging || !EnablePagination)
+					return InternalItemCount;
+				return PagerItemCount;
+			}
+		}
+
+		public override int VisibleWeight
+		{
+			get
+			{
+				if(VisibleItemCount == -1)
+					return 0;
+				return VisibleItemCount * GetItemWeight();
+			}
+		}
+
+		private int GetItemWeight()
+		{
+			int iw = Adapter.ItemWeight;
+			if(iw == ControlPager.UseDefaultWeight)
+				return ItemWeight;
+			return iw;
+		}
+
 		protected virtual void OnLoadItems(LoadItemsEventArgs e)
 		{
 			LoadItemsEventHandler lieh = (LoadItemsEventHandler)(Events[LoadItemsEvent]);
@@ -70,34 +144,47 @@ namespace System.Web.UI.MobileControls
 				lieh(this, e);
 		}
 
-		protected override bool OnBubbleEvent(object sender, EventArgs e)
+		private void OnLoadItems()
 		{
-			if(e is ListCommandEventArgs)
+			OnLoadItems(new LoadItemsEventArgs(PagerItemIndex, PagerItemCount));
+		}
+
+		protected virtual void OnPageChanged(int oldPageIndex, int newPageIndex)
+		{
+			pagingCharsChanged = true;
+		}
+
+		protected override void OnPreRender(EventArgs e)
+		{
+			if(IsCustomPaging)
 			{
-				OnItemCommand((ListCommandEventArgs)e);
-				return true;
+				if(!Page.IsPostBack || Form.PaginationStateChanged
+				   || pagingCharsChanged || !IsViewStateEnabled())
+				{
+					OnLoadItems();
+				}
 			}
-			return false;
+			base.OnPreRender(e);
 		}
 
-		protected override void OnDataBinding(EventArgs e)
+		private bool IsViewStateEnabled()
 		{
-			base.OnDataBinding(e);
-			throw new NotImplementedException();
+			Control ctrl = this;
+			while(ctrl != null && ctrl.EnableViewState)
+			{
+				ctrl = ctrl.Parent;
+			}
+			return (ctrl == null);
 		}
 
-		protected void OnItemDataBind(ListDataBindEventArgs e)
+		public override void PaginateRecursive(ControlPager pager)
 		{
-			ListDataBindEventHandler ldbeh = (ListDataBindEventHandler)(Events[ItemDataBindEvent]);
-			if(ldbeh != null)
-				ldbeh(this, e);
-		}
-
-		protected virtual void OnItemCommand(ListCommandEventArgs e)
-		{
-			ListCommandEventHandler lceh = (ListCommandEventHandler)(Events[ItemCommandEvent]);
-			if(lceh != null)
-				lceh(this, e);
+			int ic = 0;
+			int ipp = 0;
+			if(IsCustomPaging || InternalItemCount == 0)
+				ic = ItemCount;
+			ipp = ItemsPerPage;
+			itemPager = pager.GetItemPager(this, ic, ipp, GetItemWeight());
 		}
 	}
 }
