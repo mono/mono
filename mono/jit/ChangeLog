@@ -1,6 +1,7 @@
 2002-07-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (CALL_VOID): fix bug #27751
+	(CONV_R_UN) use reg2 instead of reg1 for the negative check /fix bug 27849.
 
 	* jit.c (mono_analyze_stack): adjust valuetype size for pinvoke calls
 
