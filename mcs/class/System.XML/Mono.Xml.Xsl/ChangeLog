@@ -1,3 +1,8 @@
+2003-12-20 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslStylesheet.cs : considering xsl:imports, we can't handle namespace
+	  aliases at compilation time, so evaluate at the first run-time.
+
 2003-12-18 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* GenericOutputter.cs : support for runtime-determined output type.

@@ -37,7 +37,7 @@ namespace Mono.Xml.Xsl {
 		// [QName]=>XmlSpace
 		Hashtable spaceControls = new Hashtable ();
 		// [string stylesheet-prefix]=>string result-prefix
-		Hashtable namespaceAliases = new Hashtable ();
+		NameValueCollection namespaceAliases = new NameValueCollection ();
 		// [QName]=>XmlSpace
 		Hashtable parameters = new Hashtable ();
 		// [QName]=>XslKey
@@ -91,7 +91,7 @@ namespace Mono.Xml.Xsl {
 			get { return spaceControls; }
 		}
 
-		public Hashtable NamespaceAliases {
+		public NameValueCollection NamespaceAliases {
 			get { return namespaceAliases; }
 		}
 
@@ -227,6 +227,44 @@ namespace Mono.Xml.Xsl {
 			return true;
 		}
 
+		bool countedNamespaceAliases;
+		bool cachedHasNamespaceAliases;
+		public bool HasNamespaceAliases {
+			get {
+				if (!countedNamespaceAliases) {
+					countedNamespaceAliases = true;
+					if (namespaceAliases.Count > 0)
+						cachedHasNamespaceAliases = true;
+					else if (imports.Count == 0)
+						cachedHasNamespaceAliases = false;
+					else {
+						for (int i = 0; i < imports.Count; i++)
+							if (((XslStylesheet) imports [i]).namespaceAliases.Count > 0)
+								countedNamespaceAliases = true;
+						cachedHasNamespaceAliases = false;
+					}
+				}
+				return cachedHasNamespaceAliases;
+			}
+		}
+
+		public string GetActualPrefix (string prefix)
+		{
+			if (!HasNamespaceAliases)
+				return prefix;
+
+			string result = namespaceAliases [prefix];
+			if (result == null) {
+				foreach (XslStylesheet s in imports) {
+					result = s.namespaceAliases [prefix];
+					if (result != null)
+						break;
+				}
+			}
+
+			return result != null ? result : prefix;
+		}
+
 		private XslStylesheet (Compiler c, XslStylesheet importer) : this (c)
 		{
 			this.importer = importer;
@@ -270,7 +308,7 @@ namespace Mono.Xml.Xsl {
 					break;
 				
 				case "namespace-alias":
-					namespaceAliases.Add (c.GetAttribute ("stylesheet-prefix", ""), c.GetAttribute ("result-prefix", ""));
+					namespaceAliases.Add ((string) c.GetAttribute ("stylesheet-prefix", ""), (string) c.GetAttribute ("result-prefix", ""));
 					break;
 				
 				case "attribute-set":
@@ -366,11 +404,7 @@ namespace Mono.Xml.Xsl {
 					return null;
 			}
 
-			string alias = NamespaceAliases [prefix] as string;
-			if (alias != null)
-				return alias;
-
-			return prefix;
+			return GetActualPrefix (prefix);
 		}
 	}
 
