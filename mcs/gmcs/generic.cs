@@ -342,7 +342,7 @@ namespace Mono.CSharp {
 			// First, resolve the generic type.
 			//
 			SimpleName sn = new SimpleName (name, loc);
-			Expression resolved = sn.ResolveAsTypeStep (ec);
+			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
 			if (resolved == null)
 				return null;
 
@@ -372,11 +372,6 @@ namespace Mono.CSharp {
 					      "type parameters, but specified {2}.", gt.Name,
 					      gen_params.Length, atypes.Length);
 				return null;
-			}
-
-			if (args.HasTypeArguments) {
-				type = gt;
-				return type;
 			}
 
 			for (int i = 0; i < gen_params.Length; i++) {
