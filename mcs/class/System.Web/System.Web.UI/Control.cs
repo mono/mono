@@ -211,6 +211,8 @@ namespace System.Web.UI
                                 return Context.Request.ApplicationPath; //TODO: Dont think this is right.
                         }
                 }
+
+				[MonoTODO]
                 public virtual string UniqueID
                 {
                         get
@@ -345,6 +347,8 @@ namespace System.Web.UI
                 {
                         //TODO: What should I do by default?
                 }
+                
+				[MonoTODO]
                 protected string MapPathSecure(string virtualPath)
                 {
                         throw new NotImplementedException();
@@ -394,6 +398,8 @@ namespace System.Web.UI
                                 if (eh != null) eh(this, e);
                         }
                 }
+                
+				[MonoTODO]
                 protected void RaiseBubbleEvent(object source, EventArgs args)
                 {
                         throw new NotImplementedException();
@@ -419,6 +425,8 @@ namespace System.Web.UI
                 {
                         _trackViewState = true;
                 }
+                
+				[MonoTODO]
                 public virtual void Dispose()
                 {
                         //TODO: nuke stuff.
@@ -521,6 +529,8 @@ namespace System.Web.UI
                                 Render(writer);
                         }
                 }
+                
+                [MonoTODO]
                 public string ResolveUrl(string relativeUrl)
                 {
                 	throw new NotImplementedException();
@@ -550,10 +560,14 @@ namespace System.Web.UI
                         if (_controls != null) foreach (Control c in _controls) c.InitRecursive(namingContainer);
                         OnInit(EventArgs.Empty);
                 }
+                
+                [MonoTODO]
                 protected object SaveViewStateRecursive()
                 {
                         throw new NotImplementedException();
                 }
+                
+                [MonoTODO]
                 protected void LoadViewStateRecursive(Object savedState)
                 {
                         throw new NotImplementedException();

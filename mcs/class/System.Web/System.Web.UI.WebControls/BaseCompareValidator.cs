@@ -190,7 +190,6 @@ namespace System.Web.UI.WebControls
 		/// </summary>
 		protected static bool Convert(string text, ValidationDataType type, out object convertedValue)
 		{
-			//throw new NotImplementedException();
 			convertedValue = null;
 			try
 			{

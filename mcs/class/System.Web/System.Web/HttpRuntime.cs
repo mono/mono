@@ -116,6 +116,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTodo("Init")]
 		private void Init()
 		{
 			initErrorException = null;
@@ -135,6 +136,7 @@ namespace System.Web
 			}
 		}
 
+		[MonoTODO("FormatResourceString(string, string, string)")]
 		internal static string FormatResourceString(string key, string arg0, string type)
 		{
 			throw new NotImplementedException();
@@ -158,6 +160,7 @@ namespace System.Web
 			return runtime.GetResourceStringFromResourceManager(key);
 		}
 		
+		[MonoTODO("GetResourceStringFromResourceManager(string)")]
 		private string GetResourceStringFromResourceManager(string key)
 		{
 			throw new NotImplementedException();
@@ -171,6 +174,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string AppDomainAppId
 		{
 			get
@@ -179,6 +183,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string AppDomainAppPath
 		{
 			get
@@ -187,6 +192,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string AppDomainAppVirtualPath
 		{
 			get
@@ -195,6 +201,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string AppDomainId
 		{
 			get
@@ -203,6 +210,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string AspInstallDirectory
 		{
 			get
@@ -211,6 +219,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string BinDirectory
 		{
 			get
@@ -219,6 +228,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string ClrInstallDirectory
 		{
 			get
@@ -227,6 +237,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string CodegenDir
 		{
 			get
@@ -235,6 +246,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static bool IsOnUNCShare
 		{
 			get
@@ -243,6 +255,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static string MachineConfigurationDirectory
 		{
 			get
@@ -251,6 +264,7 @@ namespace System.Web
 			}
 		}
 		
+		[MonoTODO]
 		public static void Close()
 		{
 			throw new NotImplementedException();

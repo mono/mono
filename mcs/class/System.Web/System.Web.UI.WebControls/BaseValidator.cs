@@ -174,18 +174,21 @@ namespace System.Web.UI.WebControls
 
 		protected abstract bool EvaluateIsValid();
 
+		[MonoTODO]
 		protected string GetControlRenderID(string name)
 		{
 			// TODO: What value? What is it?
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		protected string GetControlValidationValue(string name)
 		{
 			throw new NotImplementedException();
 			// TODO: What value? What is it?
 		}
 
+		[MonoTODO]
 		protected void RegisterValidatorCommonScript()
 		{
 			throw new NotImplementedException();
@@ -193,6 +196,7 @@ namespace System.Web.UI.WebControls
 			// Note: This method is primarily used by control developers
 		}
 
+		[MonoTODO]
 		protected void RegisterValidatorDeclaration()
 		{
 			// TODO: Still wondering!

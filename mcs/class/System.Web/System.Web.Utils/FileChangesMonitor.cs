@@ -47,6 +47,7 @@ namespace System.Web.Utils
 		/// <param name="file">Name of the file</param>
 		/// <param name="mTime">Last modification date</param>
 		/// <param name="length">Legnth of the file</param>
+		[MonoTODO]
 		public void GetFileAttributes(string file, out DateTime mTime, long length)
 		{
 			if(!Path.IsPathRooted(file))

@@ -28,6 +28,7 @@ namespace System.Web.Utils
 		
 		private bool   exists;
 		
+		[MonoTODO]
 		public FilePathParser(string path, bool isFile, bool getShortNames)
 		{
 			path = path.Trim();
@@ -71,6 +72,7 @@ namespace System.Web.Utils
 			return ( bDir!=null ? bDir : Path.GetPathRoot(file));
 		}
 		
+		[MonoTODO("Native_Call_Required")]
 		public static string GetShortPathName(string path)
 		{
 			//TODO: Native calls required, it's in kernel32.dll for windows

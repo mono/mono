@@ -93,6 +93,7 @@ namespace System.Web.Utils
 			}
 		}
 				
+		[MonoTODO]
 		internal static string GetLoadedModuleVersion(string modulename)
 		{
 			//TODO: Load the version information from the module
@@ -100,6 +101,7 @@ namespace System.Web.Utils
 			throw new NotImplementedException();
 		}
 		
+		[MonoTODO]
 		internal static string GetLoadedModuleFilename(string modulename)
 		{
 			throw new NotImplementedException();

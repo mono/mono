@@ -151,6 +151,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[MonoTODO("Internal_Call_Requirements")]
 		protected override void Render(HtmlTextWriter writer)
 		{
 			bool hasBeginRendering = false;
