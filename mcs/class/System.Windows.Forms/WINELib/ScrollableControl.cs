@@ -21,7 +21,6 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		[MonoTODO]
 		public ScrollableControl () : base ()
 		{
 		}
@@ -245,22 +244,19 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
-		protected override void OnLayout (LayoutEventArgs levent)
+		protected override void OnLayout (LayoutEventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnLayout (e);
 		}
 
-		[MonoTODO]
 		protected override void OnMouseWheel (MouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnMouseWheel (e);
 		}
 
-		[MonoTODO]
 		protected override void OnVisibleChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnVisibleChanged (e);
 		}
 
 		//ContentAlignment RtlTranslateAlignment(ContentAlignment calign)

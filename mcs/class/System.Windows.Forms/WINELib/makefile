@@ -2,8 +2,9 @@ CSC=mcs
 X11R6_INCLUDE=/usr/X11R6/include
 WINE_INCLUDE=/usr/local/include/wine
 WINE_LIB=/usr/local/lib/wine
-GLIB20_INCLUDE=/usr/include/glib-2.0
-GLIB20_LIB_INCLUDE=/usr/lib/glib-2.0/include
+GLIB20_INCLUDE=`pkg-config --cflags glib-2.0` `pkg-config --cflags gmodule-2.0`
+GLIB20_LIB=`pkg-config --libs glib-2.0` `pkg-config --libs gmodule-2.0`
+# GLIB20_LIB_INCLUDE=/usr/lib/glib-2.0/include
 LIBMONO=/usr/local/lib/libmono.a
 SOURCES = \
 	Win32.cs \
@@ -100,18 +101,18 @@ monostub.exe.so: monostub.o monostub.exe.spec.o monostub.exe.dbg.o
 	gcc -shared -Wl,-Bsymbolic -D_REENTRANT -DWINELIB -o monostub.exe.so \
 	monostub.exe.spec.o \
 	monostub.o monostub.exe.dbg.o -I/usr/local/include \
-	 -I$(GLIB20_INCUDE) -I$(GLIB20_LIB_INCLUDE) -L/usr/lib \
+	 $(GLIB20_INCUDE) -L/usr/lib \
 	/usr/local/lib/libmono.a -lgc  \
-	-lwine -lntdll.dll -lglib-2.0 -lgmodule-2.0 -lm -lpthread 
+	-lwine -lntdll.dll $(GLIB20_LIB) -lm -lpthread 
 
 clean:	
 	rm *.o monostub.exe.dbg.c monostub.exe.spec.c monostub.exe.so *.exe *.dll
 
 monostub.o: monostub.c
-	gcc -c -I. -I$(WINE_INCLUDE)  -I$(GLIB20_INCLUDE) -I$(GLIB20_LIB_INCLUDE) -g -O2 -Wall -I$(X11R6_INCLUDE) -D_REENTRANT -DWINELIB -o monostub.o monostub.c
+	gcc -c -I. -I$(WINE_INCLUDE)  $(GLIB20_INCLUDE) -g -O2 -Wall -I$(X11R6_INCLUDE) -D_REENTRANT -DWINELIB -o monostub.o monostub.c
 
 monostart.o: monostart.c
-	gcc -c -I. -g -O2 -Wall -I$(X11R6_INCLUDE) -D_REENTRANT -DWINELIB -o monostart.o monostart.c -I$(GLIB20_INCLUDE) -I$(GLIB20_LIB_INCLUDE) -I$(WINE_INCLUDE)
+	gcc -c -I. -g -O2 -Wall -I$(X11R6_INCLUDE) -D_REENTRANT -DWINELIB -o monostart.o monostart.c $(GLIB20_INCLUDE) -I$(WINE_INCLUDE)
 
 monostub.exe.tmp.o: monostub.o monostart.o
 	ld -r  monostub.o -o monostub.exe.tmp.o  

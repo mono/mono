@@ -23,7 +23,6 @@ namespace System.Windows.Forms {
 
 		public Form () : base ()
 		{
-
 		}
 		
 		static Form ()
@@ -530,120 +529,117 @@ namespace System.Windows.Forms {
 
 		//  --- Public Events
 		
-		[MonoTODO]
-		public event EventHandler Activated {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler Activated; //{
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
 		public event EventHandler Closed;
 		 
 		// CancelEventHandler not yet implemented/stubbed
 		//public event CancelEventHandler Closing;
 		
-		[MonoTODO]
-		public event EventHandler Deactivate {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler Deactivate; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
+
+		public event InputLanguageChangedEventHandler InputLanguageChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		[MonoTODO]
-		public event InputLanguageChangedEventHandler InputLanguageChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event InputLanguageChangingEventHandler InputLanguageChanging; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		[MonoTODO]
-		public event InputLanguageChangingEventHandler InputLanguageChanging {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler  Load; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		[MonoTODO]
-		public event EventHandler  Load {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler  MaximizedBoundsChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		[MonoTODO]
-		public event EventHandler  MaximizedBoundsChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler MaximumSizeChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		[MonoTODO]
-		public event EventHandler  MaximumSizeChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler  MdiChildActivate; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		[MonoTODO]
-		public event EventHandler  MdiChildActivate {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler  MenuComplete; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		[MonoTODO]
-		public event EventHandler  MenuComplete {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler  MenuStart; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		[MonoTODO]
-		public event EventHandler  MenuStart {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public event EventHandler  MinimumSizedChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler  MinimumSizedChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 
 		
 		//  --- Protected Properties
@@ -651,7 +647,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
+				return base.CreateParams;
 			}
 		}
 
@@ -669,13 +665,13 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected Rectangle MaximizedBounds {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+ 			get {
+ 				throw new NotImplementedException ();
+ 			}
+ 			set {
+ 				throw new NotImplementedException ();
+ 			}
+ 		}
 
 		
 		//  --- Protected Methods
@@ -692,13 +688,11 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
 		protected override void CreateHandle ()
 		{
-			throw new NotImplementedException ();
+			base.CreateHandle ();
 		}
 
-		[MonoTODO]
 		protected override void DefWndProc (ref Message m)
 		{
 			window.DefWndProc (ref m);
@@ -722,138 +716,126 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
 		protected override void OnCreateControl ()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
-		[MonoTODO]
 		protected override void OnFontChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+
 		}
 
-		[MonoTODO]
 		protected override void OnHandleCreated (EventArgs e)
 		{
-			throw new NotImplementedException ();
+
 		}
 
-		[MonoTODO]
 		protected override void OnHandleDestroyed (EventArgs e)
 		{
 		}
 
-		[MonoTODO]
 		protected virtual void OnInputLanguageChanged (InputLanguageChangedEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (InputLanguageChanged != null)
+				InputLanguageChanged (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnInputLanguagedChanging (InputLanguageChangingEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (InputLanguageChanging != null)
+				InputLanguageChanging (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnLoad (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (Load != null)
+				Load (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnMaximizedBoundsChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (MaximizedBoundsChanged != null)
+				MaximizedBoundsChanged (this, e);
 		}
 
-		[MonoTODO]
-		protected virtual void OnMaximumSizedChanged (EventArgs e)
+		protected virtual void OnMaximumSizeChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (MaximumSizeChanged != null)
+				MaximumSizeChanged (this, e);
 		}
 
-		[MonoTODO]
-		protected virtual void OnMdiChildActive (EventArgs e)
+		protected virtual void OnMdiChildActivate (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (MdiChildActivate != null)
+				MdiChildActivate (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnMenuComplete (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (MenuComplete != null)
+				MenuComplete (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnMenuStart (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (MenuStart != null)
+				MenuStart (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnMinimumSizeChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+
 		}
 
-		[MonoTODO]
 		protected override void  OnPaint (PaintEventArgs e)
 		{
-
+			base.OnPaint (e);
 		}
-		[MonoTODO]
+
 		protected override void  OnResize (EventArgs e)
 		{
 
 		}
 
-		[MonoTODO]
 		protected override void  OnStyleChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnStyleChanged (e);
 		}
+
 		protected override void  OnTextChanged (EventArgs e)
 		{
-
+			base.OnTextChanged (e);
 		}
 
-		[MonoTODO]
 		protected override void  OnVisibleChanged (EventArgs e)
 		{
-
+			base.OnVisibleChanged (e);
 		}
 
-		[MonoTODO]
 		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
-			throw new NotImplementedException ();
+			return base.ProcessCmdKey (ref msg, keyData);
 		}
 
-		[MonoTODO]
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
-			throw new NotImplementedException ();
+			return base.ProcessDialogKey (keyData);
 		}
 
-		[MonoTODO]
 		protected override bool ProcessKeyPreview (ref Message m)
 		{
-			throw new NotImplementedException ();
+			return base.ProcessKeyPreview (ref m);
 		}
 
-		[MonoTODO]
 		protected override bool ProcessTabKey (bool forward)
 		{
-			throw new NotImplementedException ();
+			return base.ProcessTabKey (forward);
 		}
 
-		[MonoTODO]
 		protected override void ScaleCore (float x, float y)
 		{
-			throw new NotImplementedException ();
+			base.ScaleCore (x, y);
 		}
 
 		//public void Select(bool b1, bool b2)
@@ -861,24 +843,21 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
 		protected override void SetBoundsCore (
 			int x, int y,  int width, int height,  
 			BoundsSpecified specified)
 		{
-			throw new NotImplementedException ();
+			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
-		[MonoTODO]
 		protected override void SetClientSizeCore (int x, int y)
 		{
-			throw new NotImplementedException ();
+			base.SetClientSizeCore (x, y);
 		}
 
-		[MonoTODO]
 		protected override void SetVisibleCore (bool value)
 		{
-			throw new NotImplementedException ();
+			base.SetVisibleCore (value);
 		}
 
 		//protected void UpdateBounds()
@@ -886,7 +865,6 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
 		protected override void WndProc (ref Message m)
 		{
 			base.WndProc (ref m);
@@ -935,7 +913,7 @@ namespace System.Windows.Forms {
 				//break;
 			case Win32.WM_MDIACTIVATE:
 				EventArgs mdiActivateArgs = new EventArgs();
-				OnMdiChildActive (mdiActivateArgs);
+				OnMdiChildActivate (mdiActivateArgs);
 				break;
 			case Win32.WM_EXITMENULOOP:
 				EventArgs menuCompleteArgs = new EventArgs();

@@ -1,3 +1,10 @@
+2002-9-16  John Sohn <jsohn@columbus.rr.com>
+	* Control.cs:
+	* ScrollableControl.cs
+	* Form.cs: added Win32 implementation to more methods and properties
+	* MessageBox.cs: fixed typo
+	* makefile: now using pkg-config for including and linking glib
+	
 2002-9-3   John Sohn <jsohn@columbus.rr.com>
 	* Control.cs: mapped more of the functions to the Win32 API
 	* Win32.cs: added more Win32 imports and definitions

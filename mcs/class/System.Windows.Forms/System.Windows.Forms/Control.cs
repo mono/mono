@@ -76,29 +76,12 @@ namespace System.Windows.Forms {
 		// --- Constructors ---
 		public Control ()
 		{
-			// FIXME: should window creation happen here
-			// (in the constructor)?
-			window = new ControlNativeWindow (this);
-			
-			createParams.Caption = "";
-			createParams.ClassName = "mono_native_window";
-			createParams.X = 10;
-			createParams.Y = 10;
-			createParams.Width = 50;
-			createParams.Height = 50;
-			createParams.ClassStyle = 0;
-			createParams.ExStyle = 0;
-			createParams.Param = 0;
-			createParams.Param = 0;
-			createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
-
-			window.CreateHandle (createParams);
-
+			CreateHandle ();
 			//Acually many of these need to be gotten or sent to 
 			//the OS, and not stored here.
 			//accessibleDefaultActionDescription=null;
 			//accessibleDescription=null;
-			//accessibleName=null;
+		//accessibleName=null;
 			//accessibleRole=AccessibleRole.Default;
 			//allowDrop=false;
 			//anchor=AnchorStyles.Top|AnchorStyles.Left;
@@ -152,7 +135,6 @@ namespace System.Windows.Forms {
 		//  - protected bool RenderRightToLeft {get;}
 		//  - public IWindowTarget WindowTarget {get; set;}
 		//[MonoTODO]
-		// AccessibleObject not ready
 		//public AccessibleObject AccessibilityObject {
 		//	get {
 		//		throw new NotImplementedException ();
@@ -307,6 +289,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public bool CanSelect {
 			get {
+// 				if (ControlStyles.Selectable &&
+// 				    isContainedInAnotherControl &&
+// 				    parentIsVisiable && isVisialbe &&
+// 				    parentIsEnabled && isEnabled) {
+// 					return true;
+// 				}
+// 				return false;
+
 				throw new NotImplementedException ();
 			}
 		}
@@ -383,6 +373,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		//[MonoTODO]
 		//public virtual ContextMenu ContextMenu {
 		//	get {
 		//		//return contextMenu;
@@ -425,7 +416,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
+		//[MonoTODO]
 		// waiting for BindingContext
 		//public ControlBindingsCollection DataBindings {
 		//	get {
@@ -707,18 +698,17 @@ namespace System.Windows.Forms {
 		}
 		
 		// [MonoTODO]
-		// Region class not ready
-		//public Region Region {
-		//	// CHECKME:
-		//	get {
-		//		//return region;
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		//region=value;
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public Region Region {
+			// CHECKME:
+			get {
+				//return region;
+				throw new NotImplementedException ();
+			}
+			set {
+				//region=value;
+				throw new NotImplementedException ();
+			}
+		}
 		
 		[MonoTODO]
 		protected bool ResizeRedraw {
@@ -924,7 +914,23 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void CreateHandle ()
 		{
-			throw new NotImplementedException ();
+			// FIXME: should window creation happen here
+			// (in the constructor)?
+			window = new ControlNativeWindow (this);
+			
+			createParams.Caption = "";
+			createParams.ClassName = "mono_native_window";
+			createParams.X = 10;
+			createParams.Y = 10;
+			createParams.Width = 50;
+			createParams.Height = 50;
+			createParams.ClassStyle = 0;
+			createParams.ExStyle = 0;
+			createParams.Param = 0;
+			createParams.Param = 0;
+			createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+
+			window.CreateHandle (createParams);
 		}
 	
 		protected virtual void DefWndProc (ref Message m)
@@ -1042,11 +1048,10 @@ namespace System.Windows.Forms {
 		}
 		
 		//[MonoTODO]
-		// Region class not ready
-		//public void Invalidate(Region region) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public void Invalidate(Region region) 
+		{
+			throw new NotImplementedException ();
+		}
 		
 		[MonoTODO]
 		public void Invalidate (Rectangle rc, bool invalidateChildren) 
@@ -1055,11 +1060,10 @@ namespace System.Windows.Forms {
 		}
 		
 		//[MonoTODO]
-		// Region not ready
-		//public void Invalidate(Region region,bool invalidateChildren) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public void Invalidate(Region region,bool invalidateChildren) 
+		{
+			throw new NotImplementedException ();
+		}
 		
 		[MonoTODO]
 		protected void InvokeGotFocus (Control toInvoke, EventArgs e) 
@@ -1113,402 +1117,400 @@ namespace System.Windows.Forms {
 		// methods used with events:
 		protected virtual void OnBackColorChanged (EventArgs e)
 		{
-			BackColorChanged (this, e);
+			if (BackColorChanged != null)
+				BackColorChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnBackgroundImageChanged (EventArgs e)
 		{
-			//BackgroundImageChanged (this, e);
-			throw new NotImplementedException ();
+			if (BackgroundImageChanged != null) 
+				BackgroundImageChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnBindingContextChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (BindingContextChanged != null)
+				BindingContextChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnCausesValidationChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (CausesValidationChanged != null)
+				CausesValidationChanged (this, e);
 		}
 		
-		// [MonoTODO]
-		// Region not ready
-		//protected virtual void OnChangeUICues(UICuesEventArgs e) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		protected virtual void OnChangeUICues(UICuesEventArgs e) 
+		{
+			if (ChangeUICues != null)
+				ChangeUICues (this, e);
+		}
 		
-		[MonoTODO]
 		protected virtual void OnClick (EventArgs e)
 		{
+			if (Click != null)
+				Click (this, e);
 		}
 		
-		[MonoTODO]
+
 		protected virtual void OnContextMenuChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (ContextMenuChanged != null)
+				ContextMenuChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnControlAdded (ControlEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (ControlAdded != null)
+				ControlAdded (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnControlRemoved (ControlEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (ControlRemoved != null)
+				ControlRemoved (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnCreateControl ()
 		{
-			throw new NotImplementedException ();
+
 		}
 		
-		[MonoTODO]
 		protected virtual void OnCursorChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (CursorChanged != null)
+				CursorChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnDockChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (DockChanged != null)
+				DockChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnDoubleClick (EventArgs e)
 		{
-
+			if (DoubleClick != null)
+				DoubleClick (this, e);
 		}
 		
-		[MonoTODO]
-		protected virtual void OnDragDrop (DragEventArgs drgevent)
+		protected virtual void OnDragDrop (DragEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (DragDrop != null)
+				DragDrop (this, e);
 		}
 		
-		[MonoTODO]
-		protected virtual void OnDragEnter (DragEventArgs drgevent)
+		protected virtual void OnDragEnter (DragEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (DragEnter != null)
+				DragEnter (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnDragLeave (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (DragLeave != null)
+				DragLeave (this, e);
 		}
 		
-		[MonoTODO]
-		protected virtual void OnDragOver (DragEventArgs drgevent)
+		protected virtual void OnDragOver (DragEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (DragOver != null)
+				DragOver (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnEnabledChanged (EventArgs e)
 		{
-
+			if (EnabledChanged != null)
+				EnabledChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnEnter (EventArgs e)
 		{
-
+			if (Enter != null)
+				Enter (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnFontChanged (EventArgs e)
 		{
-
+			if (FontChanged != null)
+				FontChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnForeColorChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (ForeColorChanged != null)
+				ForeColorChanged (this, e);
 		}
 		
-		[MonoTODO]
-		protected virtual void OnGiveFeedback (
-			GiveFeedbackEventArgs gfbevent)
+		protected virtual void OnGiveFeedback (GiveFeedbackEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (GiveFeedback != null)
+				GiveFeedback (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnGotFocus (EventArgs e) 
 		{
-
+			if (GotFocus != null)
+				GotFocus (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnHandleCreated (EventArgs e) 
 		{
-
+			if (HandleCreated != null)
+				HandleCreated (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnHandleDestroyed (EventArgs e) 
 		{
-
+			if (HandleDestroyed != null)
+				HandleDestroyed (this, e);
 		}
 		
-		[MonoTODO]
-		protected virtual void OnHelpRequested (HelpEventArgs hevent) 
+		protected virtual void OnHelpRequested (HelpEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (HelpRequested != null)
+				HelpRequested (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnImeModeChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (ImeModeChanged != null)
+				ImeModeChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnInvalidated (InvalidateEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (Invalidated != null)
+				Invalidated (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnKeyDown (KeyEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (KeyDown != null)
+				KeyDown (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnKeyPress (KeyPressEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (KeyPress != null)
+				KeyPress (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnKeyUp (KeyEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (KeyUp != null)
+				KeyUp (this, e);
+
 		}
 		
-		[MonoTODO]
-		protected virtual void OnLayout (LayoutEventArgs levent) 
+		protected virtual void OnLayout (LayoutEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (Layout != null)
+				Layout (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnLeave (EventArgs e) 
 		{
-
+			if (Leave != null)
+				Leave (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnLocationChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (LocationChanged != null)
+				LocationChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnLostFocus (EventArgs e) 
 		{
-
+			if (LostFocus != null)
+				LostFocus (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnMouseDown (MouseEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (MouseDown != null)
+				MouseDown (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnMouseEnter (EventArgs e) 
 		{
+			if (MouseEnter != null)
+				MouseEnter (this, e);
 		}
-		
-		[MonoTODO]
+
 		protected virtual void OnMouseHover (EventArgs e) 
 		{
-
+			if (MouseHover != null)
+				MouseHover (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnMouseLeave (EventArgs e) 
 		{
-
+			if (MouseLeave != null)
+				MouseLeave (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnMouseMove (MouseEventArgs e) 
 		{
-
+			if (MouseMove != null)
+				MouseMove (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnMouseUp (MouseEventArgs e) 
 		{
-
+			if (MouseUp != null)
+				MouseUp (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnMouseWheel (MouseEventArgs e) 
 		{
-
+			if (MouseWheel != null)
+				MouseWheel (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnMove (EventArgs e) 
 		{
-
+			if (Move != null)
+				Move (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnNotifyMessage (Message m) 
 		{
 
 		}
 		
-		[MonoTODO]
 		protected virtual void OnPaint (PaintEventArgs e) 
+		{
+			if (Paint != null)
+				Paint (this, e);
+		}
+		
+		protected virtual void OnPaintBackground (PaintEventArgs e) 
 		{
 
 		}
 		
-		[MonoTODO]
-		protected virtual void OnPaintBackground (
-			PaintEventArgs pevent) 
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		protected virtual void OnParentBackColorChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (BackColorChanged != null)
+				BackColorChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnParentBackgroundImageChanged (
 			EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (BackgroundImageChanged != null)
+				BackgroundImageChanged (this, e);
 		}
 		
-		[MonoTODO]
-		protected virtual void OnParentBindingContextChanged(
+		protected virtual void OnParentBindingContextChanged (
 			EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (BindingContextChanged != null)
+				BindingContextChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnParentChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (ParentChanged != null)
+				ParentChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnParentEnabledChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (EnabledChanged != null)
+				EnabledChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnParentFontChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (FontChanged != null)
+				FontChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnParentForeColorChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (ForeColorChanged != null)
+				ForeColorChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnParentRightToLeftChanged (
 			EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (RightToLeftChanged != null)
+				RightToLeftChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnParentVisibleChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (VisibleChanged != null)
+				VisibleChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnQueryContinueDrag (
-			QueryContinueDragEventArgs qcdevent) 
+			QueryContinueDragEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (QueryContinueDrag != null)
+				QueryContinueDrag (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnResize (EventArgs e) 
 		{
-
+			if (Resize != null)
+				Resize (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnRightToLeftChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (RightToLeftChanged != null)
+				RightToLeftChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnSizeChanged (EventArgs e) 
 		{
-
+			if (SizeChanged != null)
+				SizeChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnStyleChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (StyleChanged != null)
+				StyleChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnSystemColorsChanged (EventArgs e) 
 		{
-
+			if (SystemColorsChanged != null)
+				SystemColorsChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnTabIndexChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (TabIndexChanged != null)
+				TabIndexChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnTabStopChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (TabStopChanged != null)
+				TabStopChanged (this, e);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnTextChanged (EventArgs e) 
 		{
-
+			if (TextChanged != null)
+				TextChanged (this, e);
 		}
 
-		[MonoTODO]
-		protected virtual void OnTextAlignChanged (EventArgs e) {
-			throw new NotImplementedException ();
-		}
+		[MonoTODO] // this doesn't seem to be documented
+// 		protected virtual void OnTextAlignChanged (EventArgs e) {
+// 			TextAlignChanged (this, e);
+// 		}
 		
-		[MonoTODO]
 		protected virtual void OnValidated (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			if (Validated != null)
+				Validated (this, e);
 		}
 		
 		[MonoTODO]
@@ -1521,7 +1523,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnVisibleChanged (EventArgs e) 
 		{
-
+			if (VisibleChanged != null)
+				VisibleChanged (this, e);
 		}
 		// --- end of methods for events ---
 		
@@ -1628,7 +1631,8 @@ namespace System.Windows.Forms {
 		
 		public virtual void Refresh () 
 		{
-			Win32.InvalidateRect (Handle, (RECT) null, true);
+			Win32.RECT rect = (Win32.RECT) null;
+			Win32.InvalidateRect (Handle, ref rect, true);
 			Win32.UpdateWindow (Handle);
 		}
 		
@@ -1926,6 +1930,8 @@ namespace System.Windows.Forms {
 		protected virtual void WndProc(ref Message m) 
 		{
 			EventArgs eventArgs = new EventArgs ();
+			// FIXME: paintEventArgs is not being created properly
+			PaintEventArgs paintEventArgs = new PaintEventArgs (new Graphics(), new Rectangle());
 
 			switch (m.Msg) {
 
@@ -2006,8 +2012,7 @@ namespace System.Windows.Forms {
 				// OnClick (eventArgs);
 				// OnNotifyMessage (eventArgs);
 			case Win32.WM_PAINT:
-				// FIXME:
-				// OnPaint (eventArgs);
+				OnPaint (paintEventArgs);
 				break;
 			case Win32.WM_SIZE:
 				OnResize (eventArgs);
@@ -2032,7 +2037,6 @@ namespace System.Windows.Forms {
 		}
 
 		/// --- Control: events ---
-		[MonoTODO]
 		public event EventHandler BackColorChanged;// {
 //			add {
 //				throw new NotImplementedException ();
@@ -2042,538 +2046,484 @@ namespace System.Windows.Forms {
 //			}
 //		}
 		
-		[MonoTODO]
-		public event EventHandler BackgroundImageChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler BackgroundImageChanged; //{
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler BindingContextChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler BindingContextChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler CausesValidationChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler CausesValidationChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event UICuesEventHandler ChangeUICues {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event UICuesEventHandler ChangeUICues; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler Click {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler Click; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
 		public event EventHandler ContextMenuChanged;
 		
-		[MonoTODO]
-		public event ControlEventHandler ControlAdded	{
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event ControlEventHandler ControlAdded;	// {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event ControlEventHandler ControlRemoved	{
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event ControlEventHandler ControlRemoved; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler CursorChanged	{
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler CursorChanged;	// {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler DockChanged	{
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler DockChanged;	// {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler DoubleClick {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler DoubleClick; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event DragEventHandler DragDrop {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event DragEventHandler DragDrop; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event DragEventHandler DragEnter {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event DragEventHandler DragEnter; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler DragLeave {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler DragLeave; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event DragEventHandler DragOver {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event DragEventHandler DragOver; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler EnabledChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler EnabledChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler Enter {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler Enter; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler FontChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler FontChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler ForeColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler ForeColorChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event GiveFeedbackEventHandler GiveFeedback {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event GiveFeedbackEventHandler GiveFeedback; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler GotFocus {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler GotFocus; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler HandleCreated {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler HandleCreated; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler HandleDestroyed {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler HandleDestroyed; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event HelpEventHandler HelpRequested {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event HelpEventHandler HelpRequested; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler ImeModeChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler ImeModeChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event InvalidateEventHandler Invalidated {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event InvalidateEventHandler Invalidated; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event KeyEventHandler KeyDown {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event KeyEventHandler KeyDown; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event KeyPressEventHandler KeyPress {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event KeyPressEventHandler KeyPress; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event KeyEventHandler KeyUp {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event KeyEventHandler KeyUp; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event LayoutEventHandler Layout {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event LayoutEventHandler Layout; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler Leave {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler Leave; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler LocationChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler LocationChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler LostFocus {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler LostFocus; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event MouseEventHandler MouseDown {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event MouseEventHandler MouseDown; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler MouseEnter {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler MouseEnter; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler MouseHover {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler MouseHover; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler MouseLeave {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler MouseLeave; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event MouseEventHandler MouseMove {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event MouseEventHandler MouseMove; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event MouseEventHandler MouseUp {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event MouseEventHandler MouseUp; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event MouseEventHandler MouseWheel {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event MouseEventHandler MouseWheel; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler Move {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler Move; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event PaintEventHandler Paint {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event PaintEventHandler Paint; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler ParentChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler ParentChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event QueryContinueDragEventHandler QueryContinueDrag {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event QueryContinueDragEventHandler QueryContinueDrag; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler Resize {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler Resize; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler RightToLeftChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler RightToLeftChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler SizeChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler SizeChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler StyleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler StyleChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler SystemColorsChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler SystemColorsChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler TabIndexChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler TabIndexChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler TabStopChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler TabStopChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler TextChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler TextChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
-		[MonoTODO]
-		public event EventHandler Validated {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler Validated; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
 		[MonoTODO]
 		// CancelEventHandler not yet defined
@@ -2586,15 +2536,14 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		
-		[MonoTODO]
-		public event EventHandler VisibleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler VisibleChanged; // {
+// 			add {
+// 				throw new NotImplementedException ();
+// 			}
+// 			remove {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		
 		/// --- IWin32Window properties
 		public IntPtr Handle {

@@ -136,7 +136,7 @@ namespace System.Windows.Forms {
 			      MessageBoxButtons mb, MessageBoxIcon mi, 
 			      MessageBoxDefaultButton md, MessageBoxOptions mo)
 		{
-			return (DialogReult) 
+			return (DialogResult) 
 			    Win32.MessageBoxA ((IntPtr) 0, text, caption, 
 					       (uint) (mb | mi | md | mo) );
 		}
