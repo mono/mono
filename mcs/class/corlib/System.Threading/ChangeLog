@@ -1,3 +1,7 @@
+2002-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs: Implement GetDomain() and GetDomainID().
+
 2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ThreadPool.cs: now the monitor thread is not sleeping and checking if

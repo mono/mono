@@ -118,17 +118,12 @@ namespace System.Threading
 			return(slothash[slot]);
 		}
 
-		[MonoTODO]
 		public static AppDomain GetDomain() {
-			// FIXME
-			return(null);
+			return AppDomain.CurrentDomain;
 		}
 
-		[MonoTODO]
-		public static int GetDomainID() {
-			// FIXME
-			return(0);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static int GetDomainID();
 
 		public static LocalDataStoreSlot GetNamedDataSlot(string name) {
 			LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
