@@ -1,3 +1,21 @@
+2001-08-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_new_szarray): impl.
+
+	* loader.c (mono_typedef_from_name): return the token, not the index
+	(mono_get_corlib): impl.
+	(mono_get_array_class_info): impl.
+	(method_from_memberref): add array support
+	(mono_get_method): support INTERNAL_CALL
+
+	* class.c (mono_class_create_from_typedef): Array support,
+	code cleanup, store the token_type, not the token index, added
+	flag for value types.
+	(mono_type_to_tydedef): impl.
+	(mono_class_create_from_typespec): impl.
+	(mono_array_class_get): impl.
+	(mono_class_get): support TYPE_SPEC token.
+
 2001-08-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* cli.h: renamed MonoMethodManaged to MonoMethodNormal
