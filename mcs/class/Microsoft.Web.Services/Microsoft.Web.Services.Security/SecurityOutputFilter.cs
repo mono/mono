@@ -25,12 +25,15 @@ namespace Microsoft.Web.Services.Security {
 			if (envelope.Context.Security.Tokens.Count > 0) {
 				XmlNode xn = envelope.CreateElement (WSSecurity.Prefix, WSSecurity.ElementNames.Security, WSSecurity.NamespaceURI);
 				XmlAttribute xa = envelope.CreateAttribute (Soap.Prefix, Soap.AttributeNames.MustUnderstand, Soap.NamespaceURI);
+				xa.InnerText = "1";
 				xn.Attributes.Append (xa);
 				envelope.Header.AppendChild (xn);
 
 				foreach (SecurityToken st in envelope.Context.Security.Tokens) {
 					xn.AppendChild (st.GetXml (envelope));
 				}
+
+				// TODO: foreach (... in envelope.Context.ExtendedSecurity)
 			}
 		}
 	}

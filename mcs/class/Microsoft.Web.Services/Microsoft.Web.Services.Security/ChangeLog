@@ -1,3 +1,7 @@
+2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SecurityOutputFilter.cs: Added missing "1" to soap:mustUnderstand
+
 2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Nonce.cs: Added new internal constructor.
