@@ -186,51 +186,20 @@ namespace System.Data.Common {
 		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
 #endif
 		{
-			int count = 0;
-			bool doContinue = true;
-
 			if (dataReader.FieldCount == 0) {
 				dataReader.Close ();
 				return 0;
 			}
 			
-			try
-			{
-				object[] itemArray = new object [dataReader.FieldCount];
+			int count = 0;
+
+			try {
 				string tableName = SetupSchema (SchemaType.Mapped, dataTable.TableName);
-				if (tableName != null)
-				{
+				if (tableName != null) {
 					dataTable.TableName = tableName;
-					Hashtable mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
-
-					while (doContinue && dataReader.Read ()) 
-					{
-						// we get the values from the datareader
-						dataReader.GetValues (itemArray);
-
-						// we only need the values that has a mapping to the table.
-						object[] tableArray = new object[mapping.Count];
-						for (int i = 0; i < tableArray.Length; i++)
-							tableArray[i] = mapping[i]; // get the value for each column
-
-						try 
-						{
-							dataTable.BeginLoadData ();
-							dataTable.LoadDataRow (itemArray, AcceptChangesDuringFill);
-							dataTable.EndLoadData ();
-							count += 1;
-						}
-						catch (Exception e) 
-						{
-							FillErrorEventArgs args = CreateFillErrorEvent (dataTable, itemArray, e);
-							OnFillError (args);
-							doContinue = args.Continue;
-						}
-					}
+					FillTable (dataTable, dataReader, 0, 0, ref count);
 				}
-			}
-			finally
-			{
+			} finally {
 				dataReader.Close ();
 			}
 
@@ -286,79 +255,39 @@ namespace System.Data.Common {
 				return 0;
 			}
 
-                        DataTable dataTable;
-                        int resultIndex = 0;
-                        int count = 0;
-			bool doContinue = true;
+			DataTable dataTable;
+			int resultIndex = 0;
+			int count = 0;
 			
-			try
-			{
+			try {
 				string tableName = srcTable;
-				object[] itemArray;
-
-				do 
-				{
+				do {
 					tableName = SetupSchema (SchemaType.Mapped, tableName);
-					if (tableName != null)
-					{
+					if (tableName != null) {
 						// check if the table exists in the dataset
 						if (dataSet.Tables.Contains (tableName)) 
 							// get the table from the dataset
 							dataTable = dataSet.Tables [tableName];
-						else
-						{
+						else {
 							dataTable = new DataTable(tableName);
 							dataSet.Tables.Add (dataTable);
 						}
-						Hashtable mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
 
-						for (int i = 0; i < startRecord; i += 1)
-							dataReader.Read ();
-						
-						itemArray = new object [dataReader.FieldCount];
-
-						while (doContinue && dataReader.Read () && !(maxRecords > 0 && count >= maxRecords)) 
-						{
-							// we get the values from the datareader
-							dataReader.GetValues (itemArray);
-							
-							// we only need the values that has a mapping to the table.
-							object[] tableArray = new object[mapping.Count];
-							for (int i = 0; i < tableArray.Length; i++)
-								tableArray[i] = itemArray[(int)mapping[i]]; // get the value for each column
-							
-							try 
-							{
-								dataTable.BeginLoadData ();
-								//dataTable.LoadDataRow (itemArray, AcceptChangesDuringFill);
-								dataTable.LoadDataRow (tableArray, AcceptChangesDuringFill);
-								dataTable.EndLoadData ();
-								count += 1;
-							}
-							catch (Exception e) 
-							{
-								FillErrorEventArgs args = CreateFillErrorEvent (dataTable, itemArray, e);
-								OnFillError (args);
-								doContinue = args.Continue;
-							}
-						}
+						if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count))
+							break;
 
 						tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
 
 						startRecord = 0;
 						maxRecords = 0;
 					}
-
-				} while (doContinue && dataReader.NextResult ());
-			}
-			finally
-			{
+				} while (dataReader.NextResult ());
+			} finally {
 				dataReader.Close ();
 			}
 
                         return count;
 		}
-
 		
 		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
 		{
@@ -370,6 +299,39 @@ namespace System.Data.Common {
 				commandBehavior |= CommandBehavior.CloseConnection;
 			}
 			return Fill (dataSet, srcTable, command.ExecuteReader (commandBehavior), startRecord, maxRecords);
+		}
+
+		private bool FillTable (DataTable dataTable, IDataReader dataReader, int startRecord, int maxRecords, ref int counter) 
+		{
+			int counterStart = counter;
+			
+			int[] mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
+			object[] readerArray = new object[dataReader.FieldCount];
+			object[] tableArray = new object[mapping.Length];
+
+			while (dataReader.Read () && (maxRecords == 0 || (counterStart - counter) < maxRecords)) {
+				for (int i = 0; i < startRecord; i++)
+					dataReader.Read ();
+
+				// we get the values from the datareader
+				dataReader.GetValues (readerArray);
+				// copy from datareader columns to table columns according to given mapping
+				for (int i = 0; i < mapping.Length; i++)
+					tableArray[i] = readerArray[mapping[i]];
+
+				try {
+					dataTable.BeginLoadData ();
+					dataTable.LoadDataRow (tableArray, AcceptChangesDuringFill);
+					dataTable.EndLoadData ();
+					counter++;
+				} catch (Exception e) {
+					FillErrorEventArgs args = CreateFillErrorEvent (dataTable, tableArray, e);
+					OnFillError (args);
+					if(!args.Continue)
+						return false;
+				}
+			}
+			return true;
 		}
 
 		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType) 
@@ -488,16 +450,15 @@ namespace System.Data.Common {
 			return parameters;
 		}
 		
-		// this method bulds the schema for a given datatable
-		// returns a hashtable that his keys are the ordinal of the datatable columns, and his values
-		// are the indexes of the source columns in the data reader.
-		// each column in the datatable has a mapping to a specific column in the datareader
-		// the hashtable represents this match.
+		// this method builds the schema for a given datatable. it returns a int array with 
+		// "array[ordinal of datatable column] == index of source column in data reader".
+		// each column in the datatable has a mapping to a specific column in the datareader,
+		// the int array represents this match.
 		[MonoTODO ("Test")]
-		private Hashtable BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
+		private int[] BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
 		{
 			int readerIndex = 0;
-			Hashtable mapping = new Hashtable(); // hashing the reader indexes with the datatable indexes
+			int[] mapping = new int[reader.FieldCount]; // mapping the reader indexes to the datatable indexes
 			ArrayList primaryKey = new ArrayList ();
 			ArrayList sourceColumns = new ArrayList ();
 
@@ -547,7 +508,7 @@ namespace System.Data.Common {
 									primaryKey.Add (col);
 							
 							// add the ordinal of the column as a key and the index of the column in the datareader as a value.
-							mapping.Add(col.Ordinal, readerIndex);
+							mapping[col.Ordinal] = readerIndex;
 						}
 					}
 				}

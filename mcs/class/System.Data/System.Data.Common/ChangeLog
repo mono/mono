@@ -1,3 +1,9 @@
+2003-04-14  Juraj Skripsky <juraj@hotfeet.ch>
+	* DbDataAdapter.cs : Refactoring of Fill. New private method
+	FillTable does most of the work now. Use int[] instead of
+	hashtable for mapping. Move creation of tableArray[] outside
+	of loop.
+
 2004-03-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* DbDataPermissionAttribute.cs: Added .Net 1.1 marks
