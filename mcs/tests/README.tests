@@ -15,7 +15,7 @@ Test cases listed by Category:
 
 * Indexers and Properties
 
-  test-148.cs test-166.cs test-206.cs test-208.cs test-209.cs
+  test-148.cs test-166.cs test-206.cs test-208.cs test-209.cs test-221.cs
 
 * Events and Delegates
 
@@ -403,6 +403,10 @@ test-220.cs:
 ------------
 Test for a bug in foreach, where it would pick the wrong GetEnumerator in a class.
 Bug # was 51446
+
+test-221.cs:
+------------
+Test for correct scanning for base properties.
 
 verify-1.cs
 -----------

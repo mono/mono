@@ -1,3 +1,9 @@
+2003-12-22 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* test-221.cs: Add some regression tests relating to
+	52408 (these dont test the actual bug, but regressions I
+	created while writing the code for it).
+
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* module-1.cs module-2.cs module-3.cs: New files.
