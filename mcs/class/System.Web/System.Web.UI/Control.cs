@@ -647,8 +647,12 @@ namespace System.Web.UI
 
                 protected void PreRenderRecursiveInternal()
                 {
-                        OnPreRender(EventArgs.Empty);
-                        if (_controls != null) foreach (Control c in _controls) c.PreRenderRecursiveInternal();
+			if (_visible) {
+				EnsureChildControls ();
+				OnPreRender (EventArgs.Empty);
+				foreach (Control c in _controls)
+					c.PreRenderRecursiveInternal ();
+			}
                 }
 
                 protected void InitRecursive(Control namingContainer)

@@ -1,3 +1,8 @@
+2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: fixed PreRenderRecursiveInternal. Thanks to kojoadams for
+	reporting the bug.
+
 2002-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseParser.cs: use MapPath and context to locate files.
