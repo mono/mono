@@ -1,3 +1,9 @@
+2002-04-14 Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* ThreadState.cs: Added enum for threadpool thread
+	* Thread.cs: changed the set/clr_state to be internal (used from threadpool)
+	* Thread.cs: Added IsThreadPoolThread
+	* ThreadPool.cs: Implementation of QueueUserWorkItem
 
 Wed Feb 13 21:51:30 CET 2002 Paolo Molaro <lupus@ximian.com>
 

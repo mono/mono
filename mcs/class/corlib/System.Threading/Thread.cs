@@ -17,7 +17,6 @@ namespace System.Threading
 {
 	public sealed class Thread
 	{
-
 		private CultureInfo current_culture;
 
 		[MonoTODO]
@@ -224,6 +223,16 @@ namespace System.Threading
 			}
 		}
 
+      public bool IsThreadPoolThread {
+         get {
+            ThreadState curstate = state;
+            if ((curstate & ThreadState.ThreadPoolThread) != 0) {
+               return true;
+            }
+            return false;
+         }
+      }
+
 		public bool IsAlive {
 			get {
 				// LAMESPEC: is a Stopped or Suspended
@@ -397,12 +406,12 @@ namespace System.Threading
 			// FIXME
 		}
 
-		private void set_state(ThreadState set) {
+		internal void set_state(ThreadState set) {
 			lock(this) {
 				state |= set;
 			}
 		}
-		private void clr_state(ThreadState clr) {
+		internal void clr_state(ThreadState clr) {
 			lock(this) {
 				state &= ~clr;
 			}
