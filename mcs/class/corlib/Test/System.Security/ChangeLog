@@ -1,3 +1,7 @@
+2003-08-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManagerTest.cs: Added more unit tests.
+
 2003-08-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManagerTest.cs: Added bunch of tests for null usage. 
