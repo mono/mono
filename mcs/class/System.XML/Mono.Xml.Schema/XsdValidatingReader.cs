@@ -511,15 +511,12 @@ namespace Mono.Xml.Schema
 		private void ValidateStartElementParticle ()
 		{
 			stateManager.CurrentElement = null;
-			context.SiblingState =
-				context.SiblingState.EvaluateStartElement (
-					reader.LocalName, reader.NamespaceURI);
+			context.EvaluateStartElement (reader.LocalName,
+				reader.NamespaceURI);
 			if (context.SiblingState == XsdValidationState.Invalid)
 				HandleError ("Invalid start element: " + reader.NamespaceURI + ":" + reader.LocalName);
 
-			context.Element = stateManager.CurrentElement;
-			if (context.Element != null)
-				context.SchemaType = context.Element.ElementType;
+			context.SetElement (stateManager.CurrentElement);
 		}
 
 		private void ValidateEndElementParticle ()
@@ -529,7 +526,8 @@ namespace Mono.Xml.Schema
 					HandleError ("Invalid end element: " + reader.Name);
 				}
 			}
-			context.PopScope (reader.Depth);
+			if (skipValidationDepth < 0 || reader.Depth <= skipValidationDepth)
+				context.PopScope (reader.Depth);
 		}
 
 		// Utility for missing validation completion related to child items.
@@ -769,14 +767,9 @@ namespace Mono.Xml.Schema
 			if (xsiNilDepth >= 0 && xsiNilDepth < reader.Depth)
 				HandleError ("Element item appeared, while current element context is nil.");
 
-			context.Load (reader.Depth);
-			if (context.ChildState != null) {
-				context.SiblingState = context.ChildState;
-				context.ChildState = null;
-			}
+			context.MoveToChildState ();
 
 			// If validation state exists, then first assess particle validity.
-			context.SchemaType = null;
 			if (context.SiblingState != null) {
 				ValidateStartElementParticle ();
 			}
@@ -832,7 +825,6 @@ namespace Mono.Xml.Schema
 				context.Element = FindElement (reader.LocalName, reader.NamespaceURI);
 			if (context.Element != null) {
 				if (xsiTypeName == null) {
-					context.SchemaType = context.Element.ElementType;
 					AssessElementLocallyValidElement (context.Element, xsiNilValue);	// 1.1.2
 				}
 			} else {
@@ -1738,8 +1730,7 @@ namespace Mono.Xml.Schema
 			public XsdValidationState ChildState;
 			public XmlSchemaAttribute [] DefaultAttributes;
 
-			// Some of them might be missing (See the spec section 5.3).
-			public object SchemaType;
+			// Some of schema components might be missing (See the spec section 5.3).
 
 			public object LocalTypeDefinition;
 
@@ -1748,14 +1739,13 @@ namespace Mono.Xml.Schema
 					if (LocalTypeDefinition != null)
 						return LocalTypeDefinition;
 					else
-						return SchemaType;
+						return Element != null ? Element.ElementType : null;
 				}
 			}
 
 			public void Clear ()
 			{
 				Element = null;
-				SchemaType = null;
 				SiblingState = null;
 				// FIXME: It should be fine. Need more refactory.
 //				ChildState = null;
@@ -1769,20 +1759,31 @@ namespace Mono.Xml.Schema
 
 			public void PopScope (int depth)
 			{
-				Load (depth);
+				Clear ();
+				XsdValidationContext restored = (XsdValidationContext) contextStack [depth];
+				this.Element = restored.Element;
+				this.SiblingState = restored.SiblingState;
+				this.LocalTypeDefinition = restored.LocalTypeDefinition;
 				contextStack.Remove (depth + 1);
 			}
 
-			public void Load (int depth)
+			public void EvaluateStartElement (
+				string localName, string ns)
 			{
-				Clear ();
-				XsdValidationContext restored = (XsdValidationContext) contextStack [depth];
-				if (restored != null) {
-					this.Element = restored.Element;
-					this.SiblingState = restored.SiblingState;
-					this.SchemaType = restored.SchemaType;
-					this.LocalTypeDefinition = restored.LocalTypeDefinition;
+				SiblingState = SiblingState.EvaluateStartElement (localName, ns);
+			}
+
+			public void MoveToChildState ()
+			{
+				if (ChildState != null) {
+					SiblingState = ChildState;
+					ChildState = null;
 				}
+			}
+
+			public void SetElement (XmlSchemaElement element)
+			{
+				Element = element;
 			}
 		}
 	}

@@ -1,5 +1,11 @@
 2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdValidatingReader.cs : more refactoring on XsdValidationContext.
+	  context.Load() was unnecessary. SchemaType is not necessary.
+	  SiblingState and Element are now not accessed externally.
+
+2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReader.cs : more refactoring.
 
 2004-12-08  Atsushi Enomoto <atsushi@ximian.com>
