@@ -144,6 +144,8 @@ ArrayB \
 ArrayC \
 ArrayD \
 ArrayE \
+ArrayF \
+ArrayG \
 EnumA \
 EnumB \
 PropertyA \
@@ -372,6 +374,10 @@ StructureC2 \
 StructureC3 \
 ArrayC1 \
 ArrayC2 \
+ArrayC3 \
+ArrayC4 \
+ArrayC5 \
+ArrayC6 \
 EnumC1 \
 EnumC2 \
 EnumC3 \
@@ -514,6 +520,9 @@ AssignmentStatements3 \
 AssignmentStatements4 \
 AssignmentStatements5 \
 ConditionalStatements1 \
-LoopStatements1
+LoopStatements1 \
+Array1 \
+Array2 \
+Array3
 
 

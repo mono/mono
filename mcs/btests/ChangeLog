@@ -1,3 +1,15 @@
+2004-09-01 Sachin Kumar <skumar1@novell.com>
+	* Array1.vb:
+	* Array2.vb:
+	* Array3.vb:
+	* ArrayC3.vb:
+	* ArrayC4.vb:
+	* ArrayC5.vb:
+	* ArrayC6.vb:
+	* ArrayF.vb:
+	* ArrayG.vb:
+	* Test.Sources: included new tests
+
 2004-08-31 Sachin Kumar <skumar1@novell.com>
 	* ArrayE.vb:
 	* InvocationStatementA.vb:
