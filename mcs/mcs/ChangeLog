@@ -1,3 +1,17 @@
+2003-07-14  Martin Baulig  <martin@ximian.com>
+
+	* codegen.cs (EmitContext.InFixedInitializer): New public field.
+
+	* ecore.cs (IVariable.VerifyFixed): New interface method.
+
+	* expression.cs (Unary.ResolveOperator): When resolving the `&'
+	operator, check whether the variable is actually fixed.  Fixes bug
+	#36055.  Set a variable definitely assigned when taking its
+	address as required by the spec.
+
+	* statement.cs (LocalInfo.IsFixed): New field.
+	(LocalInfo.MakePinned): Set `IsFixed' to true.
+
 2003-07-14  Ravi Pratap M  <ravi@ximian.com>
 
 	* attribute.cs (Attribute.Resolve): While doing a Member lookup

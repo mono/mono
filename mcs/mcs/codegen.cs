@@ -244,6 +244,11 @@ namespace Mono.CSharp {
 		public bool InUnsafe;
 
 		/// <summary>
+		///  Whether we are in a `fixed' initialization
+		/// </summary>
+		public bool InFixedInitializer;
+
+		/// <summary>
 		///  Whether we are inside an anonymous method.
 		/// </summary>
 		public bool InAnonymousMethod;

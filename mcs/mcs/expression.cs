@@ -400,6 +400,18 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				IVariable variable = Expr as IVariable;
+				if (!ec.InFixedInitializer && ((variable == null) || !variable.VerifyFixed (false))) {
+					Error (212, "You can only take the address of an unfixed expression inside " +
+					       "of a fixed statement initializer");
+					return null;
+				}
+
+				// According to the specs, a variable is considered definitely assigned if you take
+				// its address.
+				if (variable != null)
+					variable.SetAssigned (ec);
+
 				type = TypeManager.GetPointerType (Expr.Type);
 				return this;
 
@@ -3418,6 +3430,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public bool VerifyFixed (bool is_expression)
+		{
+			return !is_expression || local_info.IsFixed;
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -3487,6 +3504,11 @@ namespace Mono.CSharp {
 
 		public VariableInfo VariableInfo {
 			get { return vi; }
+		}
+
+		public bool VerifyFixed (bool is_expression)
+		{
+			return !is_expression;
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
@@ -5942,6 +5964,11 @@ namespace Mono.CSharp {
 
 		public VariableInfo VariableInfo {
 			get { return variable_info; }
+		}
+
+		public bool VerifyFixed (bool is_expression)
+		{
+			return variable_info.LocalInfo.IsFixed;
 		}
 
 		public bool ResolveBase (EmitContext ec)

@@ -99,6 +99,8 @@ namespace Mono.CSharp {
 		VariableInfo VariableInfo {
 			get;
 		}
+
+		bool VerifyFixed (bool is_expression);
 	}
 
 	/// <summary>
@@ -2489,6 +2491,15 @@ namespace Mono.CSharp {
 			Report_AssignToReadonly (true);
 			
 			return null;
+		}
+
+		public bool VerifyFixed (bool is_expression)
+		{
+			IVariable variable = instance_expr as IVariable;
+			if ((variable == null) || !variable.VerifyFixed (true))
+				return false;
+
+			return true;
 		}
 
 		override public void Emit (EmitContext ec)

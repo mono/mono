@@ -2774,6 +2774,7 @@ namespace Mono.CSharp {
 		public bool Used;
 		public bool Assigned;
 		public bool ReadOnly;
+		public bool IsFixed;
 		
 		public LocalInfo (Expression type, string name, Block block, Location l)
 		{
@@ -2818,6 +2819,7 @@ namespace Mono.CSharp {
 		public void MakePinned ()
 		{
 			TypeManager.MakePinned (LocalBuilder);
+			IsFixed = true;
 		}
 
 		public override string ToString ()
@@ -4594,8 +4596,10 @@ namespace Mono.CSharp {
 							"fixed)");
 						return false;
 					}
-					
+
+					ec.InFixedInitializer = true;
 					e = e.Resolve (ec);
+					ec.InFixedInitializer = false;
 					if (e == null)
 						return false;
 
@@ -4613,7 +4617,9 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				ec.InFixedInitializer = true;
 				e = e.Resolve (ec);
+				ec.InFixedInitializer = false;
 				if (e == null)
 					return false;
 
