@@ -148,4 +148,5 @@ System.Reflection.Emit/TypeBuilderTest.cs
 System.Reflection.Emit/ConstructorBuilderTest.cs
 System.Reflection.Emit/AssemblyBuilderTest.cs
 System.Reflection.Emit/ModuleBuilderTest.cs
+System.Reflection.Emit/PropertyBuilderTest.cs
 
