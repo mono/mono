@@ -9,22 +9,21 @@
 
 
 using System;
-using System.Resources;
-using System.IO;
-
 using System.Collections;
-using MonoTests.System.Resources;
+using System.IO;
+using System.Reflection;
+using System.Resources;
 using NUnit.Framework;
 
 namespace MonoTests.System.Resources {
 
-	public class ResourceReaderTest : TestCase {
-		private static string m_ResourceFile = "resources" + Path.DirectorySeparatorChar + "MyResources.resources";
-		private static string m_BadResourceFile = "resources" + Path.DirectorySeparatorChar + "Empty.resources";
+	[TestFixture]
+	public class ResourceReaderTest : Assertion {
+		private static string m_ResourceFile = Path.GetDirectoryName (Assembly.GetAssembly (typeof (ResourceReaderTest)).Location) + Path.DirectorySeparatorChar + "resources" + Path.DirectorySeparatorChar + "MyResources.resources";
+		private static string m_BadResourceFile = Path.GetDirectoryName (Assembly.GetAssembly (typeof (ResourceReaderTest)).Location) + Path.DirectorySeparatorChar + "resources" + Path.DirectorySeparatorChar + "Empty.resources";
 		
-		protected override void SetUp() {
-		}
 
+		[Test]
 		public void TestConstructorStringExceptions() {
 			ResourceReader r;
 			try {
@@ -47,6 +46,7 @@ namespace MonoTests.System.Resources {
 			catch {}
 		}
 
+		[Test]
 		public void TestConstructorString() {
 			if (!File.Exists(m_ResourceFile)) {
 				Fail("Resource file is not where it should be:" + Directory.GetCurrentDirectory()+ "\\" + m_ResourceFile);
@@ -65,6 +65,7 @@ namespace MonoTests.System.Resources {
 			Assert("String constructor should not be null", null != r);
 		}
 
+		[Test]
 		public void TestConstructorStreamException1() {
 			ResourceReader r;
 			try {
@@ -74,6 +75,7 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Ignore("makes mono throw an NullReferenceException")]
+		[Test]
 		public void TestConstructorStreamException2() {
 			ResourceReader r;
 			try {
@@ -84,6 +86,7 @@ namespace MonoTests.System.Resources {
 			} catch{}
 		}
 
+		[Test]
 		public void TestStream(){
 			ResourceReader r = null;
 			try {
@@ -100,6 +103,7 @@ namespace MonoTests.System.Resources {
 			}
 		}
 
+		[Test]
 		public void TestClose() {
 			ResourceReader r = null;
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
@@ -118,6 +122,7 @@ namespace MonoTests.System.Resources {
 			}
 		}
 
+		[Test]
 		public void TestEnumerator(){
 			ResourceReader reader = null;
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
