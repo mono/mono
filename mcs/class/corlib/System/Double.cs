@@ -108,9 +108,14 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		enum State {
-			AllowSign, Digits, Decimal, ExponentSign, Exponent, ConsumeWhiteSpace
-		}
+		// We're intentionally using constants here to avoid some bigger headaches in mcs.
+		// This struct must be compiled before System.Enum so we can't use enums here.
+		private const int State_AllowSign = 1;
+		private const int State_Digits = 2;
+		private const int State_Decimal = 3;
+		private const int State_ExponentSign = 4;
+		private const int State_Exponent = 5;
+		private const int State_ConsumeWhiteSpace = 6;
 		
 		[MonoTODO("check if digits are group in correct numbers between the group separators")]
 		public static double Parse (string s, NumberStyles style, IFormatProvider provider)
@@ -148,7 +153,7 @@ namespace System {
 			//
 			// Machine state
 			//
-			State state = State.AllowSign;
+			int state = State_AllowSign;
 
 			//
 			// Setup
@@ -172,33 +177,33 @@ namespace System {
 				c = s [sidx];
 
 				switch (state){
-				case State.AllowSign:
+				case State_AllowSign:
 					if ((style & NumberStyles.AllowLeadingSign) != 0){
 						if (c == positive [0] &&
 						    s.Substring (sidx, positive.Length) == positive){
-							state = State.Digits;
+							state = State_Digits;
 							sidx += positive.Length-1;
 							continue;
 						}
 
 						if (c == negative [0] &&
 						    s.Substring (sidx, negative.Length) == negative){
-							state = State.Digits;
+							state = State_Digits;
 							b [didx++] = (byte) '-';
 							sidx += negative.Length-1;
 							continue;
 						}
 					}
-					state = State.Digits;
-					goto case State.Digits;
+					state = State_Digits;
+					goto case State_Digits;
 					
-				case State.Digits:
+				case State_Digits:
 					if (Char.IsDigit (c)){
 						b [didx++] = (byte) c;
 						break;
 					}
 					if (c == 'e' || c == 'E')
-						goto case State.Decimal;
+						goto case State_Decimal;
 					
 					if (decimal_separator != null &&
 					    decimal_separator [0] == c){
@@ -206,7 +211,7 @@ namespace System {
 						    decimal_separator){
 							b [didx++] = (byte) '.';
 							sidx += decimal_separator_len-1;
-							state = State.Decimal; 
+							state = State_Decimal; 
 							break;
 						}
 					}
@@ -215,17 +220,17 @@ namespace System {
 						if (s.Substring (sidx, group_separator_len) ==
 						    group_separator){
 							sidx += group_separator_len-1;
-							state = State.Digits; 
+							state = State_Digits; 
 							break;
 						}
 					}
 					
 					if (Char.IsWhiteSpace (c))
-						goto case State.ConsumeWhiteSpace;
+						goto case State_ConsumeWhiteSpace;
 
 					throw new FormatException ("Unknown char: " + c);
 
-				case State.Decimal:
+				case State_Decimal:
 					if (Char.IsDigit (c)){
 						b [didx++] = (byte) c;
 						break;
@@ -235,51 +240,51 @@ namespace System {
 						if ((style & NumberStyles.AllowExponent) == 0)
 							throw new FormatException ("Unknown char: " + c);
 						b [didx++] = (byte) c;
-						state = State.ExponentSign;
+						state = State_ExponentSign;
 						break;
 					}
 					
 					if (Char.IsWhiteSpace (c))
-						goto case State.ConsumeWhiteSpace;
+						goto case State_ConsumeWhiteSpace;
 					throw new FormatException ("Unknown char: " + c);
 
-				case State.ExponentSign:
+				case State_ExponentSign:
 					if (Char.IsDigit (c)){
-						state = State.Exponent;
-						goto case State.Exponent;
+						state = State_Exponent;
+						goto case State_Exponent;
 					}
 
 					if (c == positive [0] &&
 					    s.Substring (sidx, positive.Length) == positive){
-						state = State.Digits;
+						state = State_Digits;
 						sidx += positive.Length-1;
 						continue;
 					}
 
 					if (c == negative [0] &&
 					    s.Substring (sidx, negative.Length) == negative){
-						state = State.Digits;
+						state = State_Digits;
 						b [didx++] = (byte) '-';
 						sidx += negative.Length-1;
 						continue;
 					}
 
 					if (Char.IsWhiteSpace (c))
-						goto case State.ConsumeWhiteSpace;
+						goto case State_ConsumeWhiteSpace;
 					
 					throw new FormatException ("Unknown char: " + c);
 
-				case State.Exponent:
+				case State_Exponent:
 					if (Char.IsDigit (c)){
 						b [didx++] = (byte) c;
 						break;
 					}
 					
 					if (Char.IsWhiteSpace (c))
-						goto case State.ConsumeWhiteSpace;
+						goto case State_ConsumeWhiteSpace;
 					throw new FormatException ("Unknown char: " + c);
 
-				case State.ConsumeWhiteSpace:
+				case State_ConsumeWhiteSpace:
 					if (allow_trailing_white && Char.IsWhiteSpace (c))
 						break;
 					throw new FormatException ("Unknown char");
