@@ -117,7 +117,7 @@ namespace Microsoft.VisualBasic
 			return CompileAssemblyFromFileBatch (options, fileNames);
 		}
 
-		public CompilerResults CompileAssemblyFromFile (CompilerParameters options,string fileName)
+		public CompilerResults CompileAssemblyFromFile (CompilerParameters options, string fileName)
 		{
 			return CompileAssemblyFromFileBatch (options, new string []{fileName});
 		}
@@ -202,6 +202,7 @@ namespace Microsoft.VisualBasic
 		static string BuildArgs (CompilerParameters options, string [] fileNames)
 		{
 			StringBuilder args = new StringBuilder ();
+			args.AppendFormat ("/quiet ");
 			if (options.GenerateExecutable)
 				args.AppendFormat("/target:exe ");
 			else

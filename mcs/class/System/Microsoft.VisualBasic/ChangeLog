@@ -1,3 +1,6 @@
+2004-12-27  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* VBCodeCompiler.cs: Added /quiet argument to avoid the "Alpha message"
+	
 2004-08-21  Jochen Wezel <jwezel@compumaster.de>
 	* VBCodeGenerator.cs: Removed some indentation commenting in generated
 	  source code
