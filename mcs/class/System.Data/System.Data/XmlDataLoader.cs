@@ -71,7 +71,7 @@ namespace System.Data
 		private void ReadModeInferSchema (XmlReader reader)
 		{
 			// first load an XmlDocument from the reader.
-			XmlDocument doc = new XmlDocument();
+			XmlDocument doc = buildXmlDocument(reader);
 			doc.Load(reader);
 
 			// set EnforceConstraint to false - we do not want any validation during 
@@ -107,6 +107,10 @@ namespace System.Data
 			 *  Reads any inline schema, but an exception is thrown 
 			 *  if any tables in the inline schema already exist in the DataSet.
 			\*/
+			// set EnforceConstraint to false - we do not want any validation during 
+			// load time.
+			bool origEnforceConstraint = DSet.EnforceConstraints;
+			DSet.EnforceConstraints = false;
 
 			reader.MoveToContent ();
 			reader.ReadStartElement ();
@@ -138,6 +142,8 @@ namespace System.Data
 				}
 				reader.MoveToContent ();
 			}
+			// set the EnforceConstraints to original value;
+			DSet.EnforceConstraints = origEnforceConstraint;
 		}
 
 		#endregion // reading
@@ -289,6 +295,23 @@ namespace System.Data
 		}
 
 		#endregion // Private helper methods
+
+		internal static XmlDocument buildXmlDocument(XmlReader reader)
+		{
+			string endinglocalName = reader.LocalName;
+
+			XmlDocument doc = new XmlDocument();
+
+			// create all contents with use of ReadNode()
+			do 
+			{
+				XmlNode n = doc.ReadNode (reader);
+				if(n == null) break;
+				doc.AppendChild (n);
+			} while (reader.LocalName == endinglocalName);
+
+			return doc;
+		}
 
 		
 	}

@@ -12,7 +12,6 @@
 //
 // (C) 2002 Ville Palo
 //
-// TODO: Relations
 //
 
 using System;
@@ -77,10 +76,15 @@ namespace System.Data {
 		private void ReadXmlSchemaSequence (XmlSchemaSequence Sequence, DataTable Table)
 		{
 			foreach (XmlSchemaObject TempObj in Sequence.Items) {
-				
-				if (TempObj is XmlSchemaElement)
-					ReadXmlSchemaElement (TempObj as XmlSchemaElement, ElementType.ELEMENT_COLUMN, Table);
-				
+				if (TempObj is XmlSchemaElement){
+					XmlSchemaElement schemaElement = (XmlSchemaElement)TempObj;
+					// the element can be a Column or a Table
+					// tables do not have a type.
+					if (schemaElement.SchemaTypeName.Name.Length == 0) 
+						ReadXmlSchemaElement (schemaElement, ElementType.ELEMENT_TABLE, Table);
+					else
+						ReadXmlSchemaElement (schemaElement, ElementType.ELEMENT_COLUMN, Table);
+				}
 			}
 		}
 
@@ -137,9 +141,12 @@ namespace System.Data {
 					ReadXmlSchemaElement ((XmlSchemaElement)ElementCollection [Element.RefName.Name], ElementType.ELEMENT_TABLE);
 			}
 			else if (ElementType.ELEMENT_UNDEFINED != ElType) {
-
-				if (ElType == ElementType.ELEMENT_TABLE)
+				
+				if (ElType == ElementType.ELEMENT_TABLE){
 					ReadTable (Element);
+					// we have tp return else all child element of the tabel will be computed again.
+					return;
+				}
 				else if (ElType == ElementType.ELEMENT_COLUMN && Table != null)
 					ReadColumn (Element, Table);
 			}
@@ -153,8 +160,9 @@ namespace System.Data {
 				ReadXmlSchemaType (Element.SchemaType);
 
 			// Read possible constraints
-			if (Element.Constraints != null && Element.Constraints.Count > 0)
+			if (Element.Constraints != null && Element.Constraints.Count > 0){
 				ReadXmlSchemaConstraints (Element.Constraints);
+			}
 		}
 
 		private void ReadTable (XmlSchemaElement Element)
@@ -223,9 +231,10 @@ namespace System.Data {
 		private void ReadXmlSchemaConstraints (XmlSchemaObjectCollection Constraints)
 		{
 			foreach (XmlSchemaObject Constraint in Constraints) {
-				
 				if (Constraint is XmlSchemaUnique)
 					ReadXmlSchemaUnique ((XmlSchemaUnique)Constraint);
+				if (Constraint is XmlSchemaKeyref)
+					ReadXmlSchemaKeyref ((XmlSchemaKeyref)Constraint, Constraints);
 			}
 		}
 
@@ -233,19 +242,15 @@ namespace System.Data {
 		private void ReadXmlSchemaUnique (XmlSchemaUnique Unique)
 		{
 			// FIXME: Parsing XPath
-			
 			string TableName = Unique.Selector.XPath;
 			if (TableName.StartsWith (".//"))
 				TableName = TableName.Substring (3);
-			
 			DataColumn [] Columns;
 			if (DSet.Tables.Contains (TableName)) {
-				
 				DataTable Table = DSet.Tables [TableName];
 				Columns = new DataColumn [Unique.Fields.Count];
 				int i = 0;
 				foreach (XmlSchemaXPath Field in Unique.Fields) {
-
 					if (Table.Columns.Contains (Field.XPath)) {
 						Table.Columns [Field.XPath].Unique = true;
 						Columns [i] = Table.Columns [Field.XPath];
@@ -253,9 +258,92 @@ namespace System.Data {
 					}
 				}
 
-				UniqueConstraint Constraint = new UniqueConstraint (Unique.Name, Columns);
+				// find if there is an attribute with the constraint name
+				// if not use the XmlSchemaUnique name.
+				string constraintName = Unique.Name;
+				if (Unique.UnhandledAttributes != null){
+					foreach (XmlAttribute attr in Unique.UnhandledAttributes){
+						if (attr.LocalName == "ConstraintName"){
+							constraintName = attr.Value;
+							break;
+						}
+					}
+				}
+				UniqueConstraint Constraint = new UniqueConstraint (constraintName, Columns);
 			}
 		}
+
+		[MonoTODO()]
+		private void ReadXmlSchemaKeyref (XmlSchemaKeyref KeyRef, XmlSchemaObjectCollection collection) {
+			
+			string TableName = KeyRef.Selector.XPath;
+			if (TableName.StartsWith (".//"))
+				TableName = TableName.Substring (3);
+			DataColumn [] Columns;
+			if (DSet.Tables.Contains (TableName)) {
+				DataTable Table = DSet.Tables [TableName];
+				Columns = new DataColumn [KeyRef.Fields.Count];
+				int i = 0;
+				foreach (XmlSchemaXPath Field in KeyRef.Fields) {
+					if (Table.Columns.Contains (Field.XPath)) {
+						Columns [i] = Table.Columns [Field.XPath];
+						i++;
+					}
+				}
+				string name = KeyRef.Refer.Name;
+				// get the unique constraint for the releation
+				UniqueConstraint constraint = GetDSConstraint(name, collection);
+				DataRelation relation = new DataRelation(KeyRef.Name, constraint.Columns, Columns);
+				if (KeyRef.UnhandledAttributes != null){
+					foreach (XmlAttribute attr in KeyRef.UnhandledAttributes){
+						if (attr.LocalName == "IsNested"){
+							if (attr.Value == "true")
+								relation.Nested = true;
+						}
+					}
+				}
+
+				DSet.Relations.Add(relation);
+			}
+		}
+		
+		// get the unique constraint for the relation.
+		// name - the name of the XmlSchemaUnique element
+		private UniqueConstraint GetDSConstraint(string name, XmlSchemaObjectCollection collection)
+		{
+			// find the element in the constraint collection.
+			foreach (XmlSchemaObject shemaObj in collection){
+				if (shemaObj is XmlSchemaUnique){
+					XmlSchemaUnique unique = (XmlSchemaUnique) shemaObj;
+					if (unique.Name == name){
+						string tableName = unique.Selector.XPath;
+						if (tableName.StartsWith (".//"))
+							tableName = tableName.Substring (3);
+						
+						// find the table in the dataset.
+						if (DSet.Tables.Contains(tableName)){
+							DataTable table = DSet.Tables[tableName];
+							string constraintName = unique.Name;
+							// find if there is an attribute with the constraint name
+							// if not use the XmlSchemaUnique name.
+							if (unique.UnhandledAttributes != null){
+								foreach (XmlAttribute attr in unique.UnhandledAttributes){
+									if (attr.LocalName == "ConstraintName"){
+										constraintName = attr.Value;
+										break;
+									}
+								}
+							}
+							if (table.Constraints.Contains(constraintName))
+								return (UniqueConstraint)table.Constraints[constraintName];
+						}
+
+					}
+				}
+			}
+			return null;
+		}
+
 
 		#endregion // Private methods
 

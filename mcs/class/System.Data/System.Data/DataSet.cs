@@ -31,7 +31,8 @@ namespace System.Data {
 	[DefaultProperty ("DataSetName")]
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource, 
-		ISupportInitialize, ISerializable, IXmlSerializable {
+		ISupportInitialize, ISerializable, IXmlSerializable 
+	{
 		private string dataSetName;
 		private string _namespace = "";
 		private string prefix;
@@ -43,9 +44,10 @@ namespace System.Data {
 		private DataViewManager defaultView;
 		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
 		
-#region Constructors
+		#region Constructors
 
-		public DataSet () : this ("NewDataSet") {		
+		public DataSet () : this ("NewDataSet") 
+		{		
 		}
 		
 		public DataSet (string name)
@@ -60,7 +62,8 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		protected DataSet (SerializationInfo info, StreamingContext context) : this () {
+		protected DataSet (SerializationInfo info, StreamingContext context) : this ()
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -138,8 +141,7 @@ namespace System.Data {
 		public bool HasErrors {
 			[MonoTODO]
 			get {
-				for (int i = 0; i < Tables.Count; i++)
-				{
+				for (int i = 0; i < Tables.Count; i++) {
 					if (Tables[i].HasErrors)
 						return true;
 				}
@@ -364,8 +366,7 @@ namespace System.Data {
 			//demands these values. instead changing the DataRelation constructor and behaviour the
 			//parameters are pre-configured and sent to the most general constructor
 
-			foreach (DataRelation MyRelation in this.Relations)
-			{
+			foreach (DataRelation MyRelation in this.Relations) {
 				string pTable = MyRelation.ParentTable.TableName;
 				string cTable = MyRelation.ChildTable.TableName;
 				DataColumn[] P_DC = new DataColumn[MyRelation.ParentColumns.Length]; 
@@ -421,8 +422,7 @@ namespace System.Data {
 				IEnumerator rowEnumerator = origTable.Rows.GetEnumerator ();
 				while (rowEnumerator.MoveNext ()) {
 					DataRow row = (DataRow)rowEnumerator.Current;
-					if (row.IsRowChanged (rowStates))
-					{
+					if (row.IsRowChanged (rowStates)) {
 						DataRow newRow = copyTable.NewRow ();
 						copyTable.Rows.Add (newRow);
 						row.CopyValuesToRow (newRow);
@@ -618,14 +618,14 @@ namespace System.Data {
 			WriteXml (writer, mode, true);
 		}
 		
-		internal void WriteXml (Stream stream, XmlWriteMode mode, bool writePI)
+		public void WriteXml (Stream stream, XmlWriteMode mode, bool writePI)
 		{
 			XmlWriter writer = new XmlTextWriter (stream, null);
 			
 			WriteXml (writer, mode, writePI);
 		}
 
-		internal void WriteXml (string fileName, XmlWriteMode mode, bool writePI)
+		public void WriteXml (string fileName, XmlWriteMode mode, bool writePI)
 		{
 			XmlWriter writer = new XmlTextWriter (fileName, null);
 			
@@ -634,47 +634,43 @@ namespace System.Data {
 			writer.Close ();
 		}
 
-		internal void WriteXml (TextWriter writer, XmlWriteMode mode, bool writePI)
+		public void WriteXml (TextWriter writer, XmlWriteMode mode, bool writePI)
 		{
 			XmlWriter xwriter = new XmlTextWriter (writer);
 			
 			WriteXml (xwriter, mode, writePI);
 		}
 
-		internal void WriteXml (XmlWriter writer, XmlWriteMode mode, bool writePI)
+		public void WriteXml (XmlWriter writer, XmlWriteMode mode, bool writePI)
 		{
 			if (writePI && (writer.WriteState == WriteState.Start))
 				writer.WriteStartDocument (true);
 
-			 ((XmlTextWriter)writer).Formatting = Formatting.Indented;
+			((XmlTextWriter)writer).Formatting = Formatting.Indented;
+
+			if (mode == XmlWriteMode.DiffGram) {
+				SetRowsID();
+				WriteDiffGramElement(writer);
+			}
+
 			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
 			
-			if (mode == XmlWriteMode.WriteSchema)
-			{
+			if (mode == XmlWriteMode.WriteSchema) {
 				DoWriteXmlSchema (writer);
 			}
 			
-			//Write out each table in order, providing it is not
-			//part of another table structure via a nested parent relationship
-			foreach (DataTable table in Tables)
-			{
-				bool isTopLevel = true;
-				foreach (DataRelation rel in table.ParentRelations)
-				{
-					if (rel.Nested)
-					{
-						isTopLevel = false;
-						break;
-					}
-				}
-				
-				if (isTopLevel)
-				{
-					WriteTable ( writer, table, mode);
+			WriteTables (writer, mode, Tables, DataRowVersion.Default);
+			if (mode == XmlWriteMode.DiffGram) {
+				writer.WriteEndElement (); //DataSet name
+				if (HasChanges(DataRowState.Modified | DataRowState.Deleted)) {
+
+					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);	
+					WriteStartElement (writer, XmlWriteMode.DiffGram, Namespace, Prefix, "diffgr:before");
+					WriteTables (writer, mode, beforeDS.Tables, DataRowVersion.Original);
+					writer.WriteEndElement ();
 				}
 			}
-			
-			writer.WriteEndElement ();			
+			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
 		}
 
 		public void WriteXmlSchema (Stream stream)
@@ -700,7 +696,7 @@ namespace System.Data {
 
 		public void WriteXmlSchema (XmlWriter writer)
 		{
-			 ((XmlTextWriter)writer).Formatting = Formatting.Indented;
+			((XmlTextWriter)writer).Formatting = Formatting.Indented;
 			//Create a skeleton doc and then write the schema 
 			//proper which is common to the WriteXml method in schema mode
 			writer.WriteStartDocument ();
@@ -765,7 +761,7 @@ namespace System.Data {
 			/*\
 			 *  If we already have a schema, or the document 
 			 *  contains an in-line schema, sets XmlReadMode to ReadSchema.
-		        \*/
+			\*/
 
 			// FIXME: is this always true: "if we have tables we have to have schema also"
 			if (Tables.Count > 0)				
@@ -801,6 +797,15 @@ namespace System.Data {
 			XmlReadMode Result = XmlReadMode.Auto;
 
 			if (mode == XmlReadMode.DiffGram) {
+				if (reader.LocalName != "diffgram"){
+					reader.MoveToContent ();
+					reader.ReadStartElement ();	// <DataSet>
+
+					reader.MoveToContent ();
+					ReadXmlSchema (reader);
+
+					reader.MoveToContent ();
+				}
 				XmlDiffLoader DiffLoader = new XmlDiffLoader (this);
 				DiffLoader.Load (reader);
 				Result =  XmlReadMode.DiffGram;
@@ -881,14 +886,8 @@ namespace System.Data {
 
 		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
-			reader.MoveToContent ();
-			reader.ReadStartElement ();	// <DataSet>
 
-			reader.MoveToContent ();
-			ReadXmlSchema (reader);
-
-			reader.MoveToContent ();
-			ReadXml (reader, XmlReadMode.IgnoreSchema);
+			ReadXml (reader, XmlReadMode.DiffGram);
 			
 			// the XmlSerializationReader does this lines!!!
 			//reader.MoveToContent ();
@@ -898,7 +897,7 @@ namespace System.Data {
 		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
 			DoWriteXmlSchema (writer);
-			WriteXml (writer, XmlWriteMode.IgnoreSchema, true);
+			WriteXml (writer, XmlWriteMode.DiffGram, true);
 		}
 
 		protected virtual bool ShouldSerializeRelations ()
@@ -940,50 +939,70 @@ namespace System.Data {
 
 		#region Private Xml Serialisation
 
-		private string WriteObjectXml (object o) {
+		private string WriteObjectXml (object o)
+		{
 			switch (Type.GetTypeCode (o.GetType ())) {
-			case TypeCode.Boolean:
-				return XmlConvert.ToString ((Boolean) o);
-			case TypeCode.Byte:
-				return XmlConvert.ToString ((Byte) o);
-			case TypeCode.Char:
-				return XmlConvert.ToString ((Char) o);
-			case TypeCode.DateTime:
-				return XmlConvert.ToString ((DateTime) o);
-			case TypeCode.Decimal:
-				return XmlConvert.ToString ((Decimal) o);
-			case TypeCode.Double:
-				return XmlConvert.ToString ((Double) o);
-			case TypeCode.Int16:
-				return XmlConvert.ToString ((Int16) o);
-			case TypeCode.Int32:
-				return XmlConvert.ToString ((Int32) o);
-			case TypeCode.Int64:
-				return XmlConvert.ToString ((Int64) o);
-			case TypeCode.SByte:
-				return XmlConvert.ToString ((SByte) o);
-			case TypeCode.Single:
-				return XmlConvert.ToString ((Single) o);
-			case TypeCode.UInt16:
-				return XmlConvert.ToString ((UInt16) o);
-			case TypeCode.UInt32:
-				return XmlConvert.ToString ((UInt32) o);
-			case TypeCode.UInt64:
-				return XmlConvert.ToString ((UInt64) o);
+				case TypeCode.Boolean:
+					return XmlConvert.ToString ((Boolean) o);
+				case TypeCode.Byte:
+					return XmlConvert.ToString ((Byte) o);
+				case TypeCode.Char:
+					return XmlConvert.ToString ((Char) o);
+				case TypeCode.DateTime:
+					return XmlConvert.ToString ((DateTime) o);
+				case TypeCode.Decimal:
+					return XmlConvert.ToString ((Decimal) o);
+				case TypeCode.Double:
+					return XmlConvert.ToString ((Double) o);
+				case TypeCode.Int16:
+					return XmlConvert.ToString ((Int16) o);
+				case TypeCode.Int32:
+					return XmlConvert.ToString ((Int32) o);
+				case TypeCode.Int64:
+					return XmlConvert.ToString ((Int64) o);
+				case TypeCode.SByte:
+					return XmlConvert.ToString ((SByte) o);
+				case TypeCode.Single:
+					return XmlConvert.ToString ((Single) o);
+				case TypeCode.UInt16:
+					return XmlConvert.ToString ((UInt16) o);
+				case TypeCode.UInt32:
+					return XmlConvert.ToString ((UInt32) o);
+				case TypeCode.UInt64:
+					return XmlConvert.ToString ((UInt64) o);
 			}
 			if (o is TimeSpan) return XmlConvert.ToString ((TimeSpan) o);
 			if (o is Guid) return XmlConvert.ToString ((Guid) o);
 			return o.ToString ();
 		}
-	
-		private void WriteTable (XmlWriter writer, DataTable table, XmlWriteMode mode)
+		
+		private void WriteTables (XmlWriter writer, XmlWriteMode mode, DataTableCollection tableCollection, DataRowVersion version)
+		{
+			//Write out each table in order, providing it is not
+			//part of another table structure via a nested parent relationship
+			foreach (DataTable table in tableCollection) {
+				bool isTopLevel = true;
+				foreach (DataRelation rel in table.ParentRelations) {
+					if (rel.Nested) {
+						isTopLevel = false;
+						break;
+					}
+				}
+				
+				if (isTopLevel) {
+					WriteTable ( writer, table, mode, version);
+				}
+			}
+		}
+
+		private void WriteTable (XmlWriter writer, DataTable table, XmlWriteMode mode, DataRowVersion version)
 		{
 			DataRow[] rows = new DataRow [table.Rows.Count];
 			table.Rows.CopyTo (rows, 0);
-			WriteTable (writer, rows, mode);
+			WriteTable (writer, rows, mode, version);
 		}
 
-		private void WriteTable (XmlWriter writer, DataRow[] rows, XmlWriteMode mode)
+		private void WriteTable (XmlWriter writer, DataRow[] rows, XmlWriteMode mode, DataRowVersion version)
 		{
 			//The columns can be attributes, hidden, elements, or simple content
 			//There can be 0-1 simple content cols or 0-* elements
@@ -994,17 +1013,18 @@ namespace System.Data {
 			if (rows.Length == 0) return;
 			DataTable table = rows[0].Table;
 			SplitColumns (table, out atts, out elements, out simple);
+			//sort out the namespacing
+			string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
 
-			foreach (DataRow row in rows)
-			{
-				//sort out the namespacing
-				string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
-
+			foreach (DataRow row in rows) {
+				if (!row.HasVersion(version))
+					continue;
+				
 				// First check are all the rows null. If they are we just write empty element
 				bool AllNulls = true;
 				foreach (DataColumn dc in table.Columns) {
 				
-					if (row [dc.ColumnName] != DBNull.Value) {
+					if (row [dc.ColumnName, version] != DBNull.Value) {
 						AllNulls = false;
 						break;
 					} 
@@ -1015,43 +1035,25 @@ namespace System.Data {
 					writer.WriteElementString (table.TableName, "");
 					continue;
 				}
-
-				WriteStartElement (writer, mode, nspc, table.Prefix, table.TableName);
 				
-				foreach (DataColumn col in atts)
-				{					
-					WriteAttributeString (writer, mode, col.Namespace, col.Prefix, col.ColumnName, row[col].ToString ());
+				WriteTableElement (writer, mode, table, row, version);
+				
+				foreach (DataColumn col in atts) {					
+					WriteColumnAsAttribute (writer, mode, col, row, version);
 				}
 				
-				if (simple != null)
-				{
-					writer.WriteString (WriteObjectXml (row[simple]));
+				if (simple != null) {
+					writer.WriteString (WriteObjectXml (row[simple, version]));
 				}
-				else
-				{					
-					foreach (DataColumn col in elements)
-					{
-						string colnspc = nspc;
-						object rowObject = row [col];
-												
-						if (rowObject == null || rowObject == DBNull.Value)
-							continue;
-
-						if (col.Namespace != null)
-						{
-							colnspc = col.Namespace;
-						}
-				
-						//TODO check if I can get away with write element string
-						WriteStartElement (writer, mode, colnspc, col.Prefix, col.ColumnName);
-						writer.WriteString (WriteObjectXml (rowObject));
-						writer.WriteEndElement ();
+				else {					
+					foreach (DataColumn col in elements) {
+						WriteColumnAsElement (writer, mode, nspc, col, row, version);
 					}
 				}
 				
 				foreach (DataRelation relation in table.ChildRelations) {
 					if (relation.Nested) {
-						WriteTable (writer, row.GetChildRows (relation), mode);
+						WriteTable (writer, row.GetChildRows (relation), mode, version);
 					}
 				}
 				
@@ -1059,46 +1061,82 @@ namespace System.Data {
 			}
 
 		}
+
+		private void WriteColumnAsElement (XmlWriter writer, XmlWriteMode mode, string nspc, DataColumn col, DataRow row, DataRowVersion version)
+		{
+			string colnspc = nspc;
+			object rowObject = row [col, version];
+									
+			if (rowObject == null || rowObject == DBNull.Value)
+				return;
+
+			if (col.Namespace != null) {
+				colnspc = col.Namespace;
+			}
+	
+			//TODO check if I can get away with write element string
+			WriteStartElement (writer, mode, colnspc, col.Prefix, col.ColumnName);
+			writer.WriteString (WriteObjectXml (rowObject));
+			writer.WriteEndElement ();
+		}
+
+		private void WriteColumnAsAttribute (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
+		{
+			WriteAttributeString (writer, mode, col.Namespace, col.Prefix, col.ColumnName, row[col, version].ToString ());
+		}
+
+		private void WriteTableElement (XmlWriter writer, XmlWriteMode mode, DataTable table, DataRow row, DataRowVersion version)
+		{
+			//sort out the namespacing
+			string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
+
+			WriteStartElement (writer, mode, nspc, table.Prefix, table.TableName);
+
+			if (mode == XmlWriteMode.DiffGram) {
+				WriteAttributeString (writer, mode, "", "diffgr", "id", table.TableName + (row.XmlRowID + 1));
+				WriteAttributeString (writer, mode, "", "msdata", "rowOrder", row.XmlRowID.ToString());
+				if (row.RowState == DataRowState.Modified && version != DataRowVersion.Original){
+					WriteAttributeString (writer, mode, "", "diffgr", "hasChanges", "modified");
+				}
+			}
+		}
 		    
 		private void WriteStartElement (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name)
 		{			
-			switch ( mode)
-				{
-					case XmlWriteMode.WriteSchema:
-						if (nspc == null || nspc == "")
-						{
-							writer.WriteStartElement (name);
-						}
-						else if (prefix != null)
-						{							
-							writer.WriteStartElement (prefix, name, nspc);
-						}						
-						else
-						{					
-							writer.WriteStartElement (writer.LookupPrefix (nspc), name, nspc);
-						}
-						break;
-					case XmlWriteMode.DiffGram:
-						throw new NotImplementedException ();
-					default:					       
+			switch ( mode) {
+				case XmlWriteMode.WriteSchema:
+					if (nspc == null || nspc == "") {
 						writer.WriteStartElement (name);
-						break;					
-				};
+					}
+					else if (prefix != null) {							
+						writer.WriteStartElement (prefix, name, nspc);
+					}						
+					else {					
+						writer.WriteStartElement (writer.LookupPrefix (nspc), name, nspc);
+					}
+					break;
+				case XmlWriteMode.DiffGram:
+					writer.WriteStartElement (name);
+					break;	
+				default:					       
+					writer.WriteStartElement (name);
+					break;					
+			};
 		}
 		
 		private void WriteAttributeString (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue)
 		{
-			switch ( mode)
-				{
-					case XmlWriteMode.WriteSchema:
-						writer.WriteAttributeString (prefix, name, nspc);
-						break;
-					case XmlWriteMode.DiffGram:
-						throw new NotImplementedException ();				
-					default:
-						writer.WriteAttributeString (name, stringValue);
-						break;					
-				};
+			switch ( mode) {
+				case XmlWriteMode.WriteSchema:
+					writer.WriteAttributeString (prefix, name, nspc);
+					break;
+				case XmlWriteMode.DiffGram:
+					writer.WriteAttributeString (prefix, name, nspc, stringValue);
+					break;
+				default:
+					writer.WriteAttributeString (name, stringValue);
+					break;					
+			};
 		}
 
 		XmlSchema IXmlSerializable.GetSchema ()
@@ -1246,11 +1284,9 @@ namespace System.Data {
 			elem.SchemaType = complex;
 
 			//TODO - what about the simple content?
-			if (elements.Count == 0) 
-			{				
+			if (elements.Count == 0) {				
 			}
-			else 
-			{
+			else {
 				//A sequence of element types or a simple content node
 				//<xs:sequence>
 				XmlSchemaSequence seq = new XmlSchemaSequence ();
@@ -1306,6 +1342,7 @@ namespace System.Data {
 				att.SchemaTypeName = MapType (col.DataType);
 				complex.Attributes.Add (att);
 			}
+
 			return elem;
 		}
 
@@ -1336,9 +1373,9 @@ namespace System.Data {
 		/// content
 		/// </summary>
 		private void SplitColumns (DataTable table, 
-					   out ArrayList atts, 
-					   out ArrayList elements, 
-					   out DataColumn simple)
+			out ArrayList atts, 
+			out ArrayList elements, 
+			out DataColumn simple)
 		{
 			//The columns can be attributes, hidden, elements, or simple content
 			//There can be 0-1 simple content cols or 0-* elements
@@ -1348,8 +1385,7 @@ namespace System.Data {
 			
 			//Sort out the columns
 			foreach (DataColumn col in table.Columns) {
-				switch (col.ColumnMapping)
-				{
+				switch (col.ColumnMapping) {
 					case MappingType.Attribute:
 						atts.Add (col);
 						break;
@@ -1357,8 +1393,7 @@ namespace System.Data {
 						elements.Add (col);
 						break;
 					case MappingType.SimpleContent:
-						if (simple != null)
-						{
+						if (simple != null) {
 							throw new System.InvalidOperationException ("There may only be one simple content element");
 						}
 						simple = col;
@@ -1369,11 +1404,29 @@ namespace System.Data {
 				}
 			}
 		}
+
+		private void WriteDiffGramElement(XmlWriter writer)
+		{
+			WriteStartElement (writer, XmlWriteMode.DiffGram, Namespace, Prefix, "diffgr:diffgram");
+			WriteAttributeString(writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
+			WriteAttributeString(writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.DiffgrPrefix, XmlConstants.DiffgrNamespace);
+		}
+
+		private void SetRowsID()
+		{
+			foreach (DataTable Table in Tables) {
+				int dataRowID = 0;
+				foreach (DataRow Row in Table.Rows) {
+					Row.XmlRowID = dataRowID;
+					dataRowID++;
+				}
+			}
+		}
+
 		
 		private XmlQualifiedName MapType (Type type)
 		{
-			switch (Type.GetTypeCode (type))
-			{
+			switch (Type.GetTypeCode (type)) {
 				case TypeCode.String: return XmlConstants.QnString;
 				case TypeCode.Int16: return XmlConstants.QnShort;
 				case TypeCode.Int32: return XmlConstants.QnInt;

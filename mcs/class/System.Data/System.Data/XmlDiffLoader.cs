@@ -21,12 +21,12 @@ using System.Globalization;
 
 namespace System.Data {
 
-        internal class XmlDiffLoader
+	internal class XmlDiffLoader 
 	{
 
-	        #region Fields
-
-	        private DataSet DSet;
+		#region Fields
+		enum LoadType {CURRENT, BEFORE, ERROR};
+		private DataSet DSet;
 		private Hashtable DiffGrRows = new Hashtable ();
 		private Hashtable ErrorRows = new Hashtable ();
 
@@ -34,7 +34,7 @@ namespace System.Data {
 
 		#region ctors
 
-		public XmlDiffLoader (DataSet DSet)
+		public XmlDiffLoader (DataSet DSet) 
 		{
 			this.DSet = DSet;
 		}
@@ -43,24 +43,25 @@ namespace System.Data {
 
 		#region Public methods
 
-		public void Load (XmlReader Reader)
+		public void Load (XmlReader Reader) 
 		{
-			XmlTextReader TextReader = new XmlTextReader (Reader.BaseURI);
-			XmlDocument Document = new XmlDocument ();
-			Document.Load (TextReader);
-			TextReader.Close ();
 
+			XmlDocument Document = XmlDataLoader.buildXmlDocument(Reader);
+			
 			XPathNavigator Navigator = Document.CreateNavigator ();
+			bool origEnforceConstraint = DSet.EnforceConstraints;
+			DSet.EnforceConstraints = false;
 			LoadBefore (Navigator);
 			LoadCurrent (Navigator);
 			LoadErrors (Navigator);
+			DSet.EnforceConstraints = origEnforceConstraint;
 		}
 
 		#endregion // Public methods
 
 		#region Private methods
 
-		private void LoadCurrent (XPathNavigator Navigator)
+		private void LoadCurrent (XPathNavigator Navigator) 
 		{			
 			Navigator.MoveToRoot ();
 
@@ -71,51 +72,19 @@ namespace System.Data {
 					if (Navigator.MoveToFirstChild ()) {
 
 						if (Navigator.MoveToFirstChild ()) {
-
-							if (DSet.Tables.Contains (Navigator.LocalName)) {
-
-								DataTable Table = DSet.Tables [Navigator.LocalName];
-								DataRow Row = null;
-								bool NewRow = false;
-								bool HasErrors = false;
-								string id = "";
-								
-								if (Navigator.MoveToFirstAttribute ()) {
-									
-									do {
-										// Find out was there same row in 'before' section
-										if (Navigator.LocalName == "id") {
-											id = Navigator.Value;
-											if (DiffGrRows.Contains (id))
-												Row = (DataRow)DiffGrRows [id];
-
-										}
-										else if (Navigator.LocalName == "hasErrors" && String.Compare (Navigator.Value, "true", true) == 0)
-										   HasErrors = true;
-									} while (Navigator.MoveToNextAttribute ());
-
-									// back to business
-									Navigator.MoveToParent ();
-								}
-
-								if (Row == null) {
-									
-									Row = Table.NewRow ();
-									NewRow = true;
-								}
-																
-								LoadColumns (Table, Row, Navigator, NewRow);
-
-								if (HasErrors) // If row had errors add row to hashtable for later use
-									ErrorRows.Add (id, Row);
-							}
+							do {
+								if (DSet.Tables.Contains (Navigator.LocalName))
+									LoadCurrentTable(Navigator);
+								else 
+									throw new DataException (Locale.GetText ("Cannot load diffGram. Table '" + Navigator.LocalName + "' is missing in the destination dataset"));	
+							}while (Navigator.MoveToNext());
 						}
 					}
 				}
 			}
 		}
 
-		private void LoadBefore (XPathNavigator Navigator)
+		private void LoadBefore (XPathNavigator Navigator) 
 		{
 			Navigator.MoveToRoot ();
 
@@ -136,37 +105,17 @@ namespace System.Data {
 				if (Navigator.MoveToFirstChild ()) {
 
 					do {
-						if (DSet.Tables.Contains (Navigator.LocalName)) {
-
-							String id = null;
-							DataTable Table = DSet.Tables [Navigator.LocalName];
-							DataRow Row = Table.NewRow ();
-							
-							if (Navigator.MoveToFirstAttribute ()) {
-								
-								do {
-									if (Navigator.Name == "diffgr:id")
-										id = Navigator.Value;
-								       
-								} while (Navigator.MoveToNextAttribute ());
-								
-								Navigator.MoveToParent ();
-							}
-														
-							LoadColumns (Table, Row, Navigator, true);
-							DiffGrRows.Add (id, Row); // for later use
-							Row.AcceptChanges ();
-						} 
-						else {
+						if (DSet.Tables.Contains (Navigator.LocalName))
+							LoadBeforeTable(Navigator);
+						else
 							throw new DataException (Locale.GetText ("Cannot load diffGram. Table '" + Navigator.LocalName + "' is missing in the destination dataset"));
-						}
 					} while (Navigator.MoveToNext ());
 				}
 			}
 		}				 
 				
 					   
-		private void LoadErrors (XPathNavigator Navigator)
+		private void LoadErrors (XPathNavigator Navigator) 
 		{
 			Navigator.MoveToRoot ();
 
@@ -225,19 +174,90 @@ namespace System.Data {
 			}
 		}
 
-		private void LoadColumns (DataTable Table, DataRow Row, XPathNavigator Navigator, bool NewRow)
+		private void LoadColumns (DataTable Table, DataRow Row, XPathNavigator Navigator, bool NewRow, LoadType loadType) 
 		{
 			if (Navigator.MoveToFirstChild ()) {
 
 				do {
 					if (Table.Columns.Contains (Navigator.LocalName))
 						Row [Navigator.LocalName] = Navigator.Value;
+					else if (DSet.Tables.Contains (Navigator.LocalName)){
+						if (loadType == LoadType.BEFORE)
+							LoadBeforeTable(Navigator);
+						else if (loadType == LoadType.CURRENT)
+							LoadCurrentTable(Navigator);
+					}
 										
 				} while (Navigator.MoveToNext ());
 				
 				if (NewRow)
 					Table.Rows.Add (Row);
 			}
+		}
+
+		private void LoadBeforeTable (XPathNavigator Navigator) 
+		{
+				
+			String id = null;
+			DataTable Table = DSet.Tables [Navigator.LocalName];
+			DataRow Row = Table.NewRow ();
+							
+			if (Navigator.MoveToFirstAttribute ()) {
+								
+				do {
+					if (Navigator.Name == "diffgr:id")
+						id = Navigator.Value;
+								       
+				} while (Navigator.MoveToNextAttribute ());
+								
+				Navigator.MoveToParent ();
+			}
+														
+			LoadColumns (Table, Row, Navigator, true, LoadType.BEFORE);
+			DiffGrRows.Add (id, Row); // for later use
+			Row.AcceptChanges ();
+		}
+
+		private void LoadCurrentTable (XPathNavigator Navigator) 
+		{
+			
+			DataTable Table = DSet.Tables [Navigator.LocalName];
+			DataRow Row = null;
+			bool NewRow = false;
+			bool HasErrors = false;
+			string id = "";
+								
+			if (Navigator.MoveToFirstAttribute ()) {
+									
+				do {
+					// Find out was there same row in 'before' section
+					if (Navigator.LocalName == "id") {
+						id = Navigator.Value;
+						if (DiffGrRows.Contains (id))
+							Row = (DataRow)DiffGrRows [id];
+
+					}
+					else if (Navigator.LocalName == "hasErrors" && String.Compare (Navigator.Value, "true", true) == 0)
+						HasErrors = true;
+				} while (Navigator.MoveToNextAttribute ());
+
+				// back to business
+				Navigator.MoveToParent ();
+			}
+
+			if (Row == null) {
+				Row = Table.NewRow ();
+				NewRow = true;
+			}
+																
+			LoadColumns (Table, Row, Navigator, NewRow, LoadType.CURRENT);
+									
+			// back to business
+			Navigator.MoveToParent();
+									
+			if (HasErrors) // If row had errors add row to hashtable for later use
+				ErrorRows.Add (id, Row);
+		
 		}
 
 

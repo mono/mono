@@ -57,6 +57,8 @@ internal class XmlConstants
 	//ms schema objects	
 	public const string MsdataPrefix = "msdata";	
 	public const string MsdataNamespace = "urn:schemas-microsoft-com:xml-msdata";
+	public const string DiffgrPrefix = "diffgr";
+	public const string DiffgrNamespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
 	public const string TnsPrefix = "mstns";
 	public const string IsDataSet = "IsDataSet";
 	public const string Locale = "Locale";
