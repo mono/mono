@@ -630,32 +630,51 @@ namespace Mono.CSharp
 		//
 		int adjust_int (int c)
 		{
-			ulong ul = System.UInt64.Parse (number_builder.ToString ());
-			return integer_type_suffix (ul, c);
+			try {
+				ulong ul = System.UInt64.Parse (number_builder.ToString ());
+				return integer_type_suffix (ul, c);
+			} catch (OverflowException) {
+				error_details = "Integral constant is too large";
+				Report.Error (1021, Location, error_details);
+				val = 0ul;
+				return Token.LITERAL_INTEGER;
+			}
 		}
-
+		
 		int adjust_real (int t)
 		{
 			string s = number_builder.ToString ();
 
 			switch (t){
 			case Token.LITERAL_DECIMAL:
-				val = new System.Decimal ();
-				val = System.Decimal.Parse (
-					s, styles, csharp_format_info);
+				try {
+					val = System.Decimal.Parse (s, styles, csharp_format_info);
+				} catch (OverflowException) {
+					val = 0m;     
+					error_details = "Floating-point constant is outside the range of the type 'decimal'";
+					Report.Error(594, Location, error_details);
+				}
 				break;
 			case Token.LITERAL_FLOAT:
-				val = new System.Double ();
-				val = (float) System.Double.Parse (
-					s, styles, csharp_format_info);
+				try {
+					val = (float) System.Double.Parse (s, styles, csharp_format_info);
+				} catch (OverflowException) {
+					val = 0.0f;     
+					error_details = "Floating-point constant is outside the range of the type 'float'";
+					Report.Error(594, Location, error_details);
+				}
 				break;
-
+				
 			case Token.LITERAL_DOUBLE:
 			case Token.NONE:
-				val = new System.Double ();
-				val = System.Double.Parse (
-					s, styles, csharp_format_info);
 				t = Token.LITERAL_DOUBLE;
+				try {
+					val = System.Double.Parse (s, styles, csharp_format_info);
+				} catch (OverflowException) {
+					val = 0.0;     
+					error_details = "Floating-point constant is outside the range of the type 'double'";
+					Report.Error(594, Location, error_details);
+				}
 				break;
 			}
 			return t;

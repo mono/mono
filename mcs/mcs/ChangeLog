@@ -3,6 +3,14 @@
 	* class.cs (Method, Property, Indexer): Do not allow the public
 	modifier to be used in explicit interface implementations.
 
+	(TypeContainer.MethodModifiersValid): Catch virtual, abstract and
+	override modifiers in method declarations in structs
+
+2002-07-02   Andrew Birkett <adb@tardis.ed.ac.uk>
+
+	* cs-tokenizer.cs (adjust_int, adjust_real): Do not abort on
+	integer or real overflow, report an error
+
 2002-07-02  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (TypeManager.InitCoreTypes): When compiling

@@ -1476,6 +1476,13 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (this is Struct){
+				if ((flags & vao) != 0){
+					Modifiers.Error_InvalidModifier (loc, "virtual, abstract, or override");
+					ok = false;
+				}
+			}
+
 			if ((flags & Modifiers.OVERRIDE) != 0 && (flags & nv) != 0){
 				Report.Error (
 					113, loc, name +
@@ -2030,9 +2037,7 @@ namespace Mono.CSharp {
 						implementing = null;
 				} else {
 					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Report.Error (
-							106, Location, "`public', `virtual' or `abstract' modifiers "+
-							"are not allowed in explicit interface declarations");
+						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
 				}
@@ -2766,10 +2771,7 @@ namespace Mono.CSharp {
 						implementing = null;
 				} else {
 					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Report.Error (
-							106, Location, "`public', `virtual' or `abstract' modifiers "+
-							"are not allowed in explicit interface declarations"
-							);
+						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
 				}
@@ -3399,11 +3401,7 @@ namespace Mono.CSharp {
 						implementing = null;
 				} else {
 					if((ModFlags&(Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Report.Error (
-							106, Location,
-							"`public', `virtual' or `abstract' modifiers are not "+
-							"allowed in explicit interface declarations"
-							);
+						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
 				}
