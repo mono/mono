@@ -17,7 +17,8 @@ namespace Mono.Data.TdsClient {
 	{
 		#region Fields
 
-		internal TdsTransactionInternal transaction;
+		TdsConnection connection;
+		IsolationLevel isolationLevel;
 
 		#endregion // Fields
 
@@ -25,28 +26,34 @@ namespace Mono.Data.TdsClient {
 
 		public TdsTransaction (TdsConnection connection, IsolationLevel isolevel)
 		{
-			transaction = new TdsTransactionInternal (connection.connection, isolevel);
+			this.connection = connection;
+			this.isolationLevel = isolevel;
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		TdsConnection Connection {
+			get { return connection; }
+		}
+
 		IDbConnection IDbTransaction.Connection {
-			get { return ((IDbTransaction) transaction).Connection; }
+			get { return Connection; }
 		}
 
 		IsolationLevel IDbTransaction.IsolationLevel {
-			get { return ((IDbTransaction) transaction).IsolationLevel; }
+			get { return isolationLevel; }
 		}
 
 		#endregion // Properties
 
                 #region Methods
 
+		[System.MonoTODO]
 		public void Commit()
 		{
-			transaction.Commit ();
+                        throw new NotImplementedException ();
 		}
 
                 object ICloneable.Clone()
@@ -54,10 +61,10 @@ namespace Mono.Data.TdsClient {
                         throw new NotImplementedException ();
                 }
 
-
+		[System.MonoTODO]
 		public void Rollback ()
 		{
-			transaction.Rollback ();
+                        throw new NotImplementedException ();
 		}
 
                 #endregion // Methods

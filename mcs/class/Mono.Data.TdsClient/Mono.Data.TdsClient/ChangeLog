@@ -1,3 +1,23 @@
+2002-10-19  Tim Coleman (tim@timcoleman.com)
+	* TdsDataReader.cs:
+	* TdsError.cs:
+	* TdsErrorCollection.cs:
+	* TdsException.cs:
+	* TdsParameter.cs:
+	* TdsParameterCollection.cs:
+		Added new classes, to get started with this namespace.
+		This is pretty much what is needed to do things like
+		TdsConnection and so on.
+	* TdsCommand.cs:
+		De-wrappify this class.  There is no longer a 
+		Mono.Data.TdsClient.Internal.TdsCommandInternal class.
+	* TdsConnection.cs:
+		De-wrappify this class.  There is no longer a 
+		Mono.Data.TdsClient.Internal.TdsConnectionInternal class.
+	* TdsTransaction.cs:
+		De-wrappify this class.  There is no longer a 
+		Mono.Data.TdsClient.Internal.TdsTransactionInternal class.
+
 2002-10-17  Tim Coleman (tim@timcoleman.com)
 	* IsolationLevel.cs:
 		Removed, as we now use IsolationLevel from System.Data

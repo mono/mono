@@ -18,30 +18,35 @@ namespace Mono.Data.TdsClient {
 	{
 		#region Fields
 
-		internal TdsConnectionInternal connection;
+		bool autoCommit = true;
+		string connectionString;
+		int connectionTimeout = 15;
+		string database;
+		IsolationLevel isolationLevel = IsolationLevel.ReadCommitted;
+		int packetSize = 512;
+		ConnectionState state = ConnectionState.Closed;
+
+		string user;
+		string password;
+
+		ArrayList tdsPool;
+
+		TdsServerType serverType = TdsServerType.Generic;
+		TdsVersion tdsVersion = TdsVersion.tds42;
+		TdsConnectionParameters parms;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public TdsConnection (TdsServerType serverType)
-			: this (serverType, 15, true, false, IsolationLevel.ReadCommitted)
+		public TdsConnection ()
+			: this (String.Empty)
 		{
 		}
 
-		public TdsConnection (TdsServerType serverType, int connectionTimeout)
-			: this (serverType, connectionTimeout, true, false, IsolationLevel.ReadCommitted)
+		public TdsConnection (string connectionString)
 		{
-		}
-
-		public TdsConnection (TdsServerType serverType, int connectionTimeout, bool autoCommit)
-			: this (serverType, connectionTimeout, autoCommit, false, IsolationLevel.ReadCommitted)
-		{
-		}
-
-		public TdsConnection (TdsServerType serverType, int connectionTimeout, bool autoCommit, bool readOnly, IsolationLevel isolationLevel)
-		{
-			connection = new TdsConnectionInternal (serverType, connectionTimeout, autoCommit, readOnly, isolationLevel);
+			SetConnectionString (connectionString);
 		}
 			
 		#endregion // Constructors
@@ -49,41 +54,92 @@ namespace Mono.Data.TdsClient {
 		#region Properties
 
 		public string ConnectionString {
-			get { return connection.ConnectionString; }
-			set { connection.ConnectionString = value; }
+			get { return connectionString; }
+			set { SetConnectionString (value); }
 		}
 
 		public string Database {
-			get { return connection.Database; }
-			set { connection.Database = value; }
+			get { return parms.Database; }
+			set { parms.Database = value; }
 		}
 
 		public ConnectionState State {
-			get { return connection.State; }
+			get { return state; }
 		}
 		
 		public int ConnectionTimeout {
-			get { return connection.ConnectionTimeout; }
-			set { connection.ConnectionTimeout = value; }
+			get { return connectionTimeout; }
+			set { connectionTimeout = value; }
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
+		private Tds AllocateTds ()
+		{
+			Tds result;
+
+			int index = FindAnAvailableTds ();
+			if (index == -1) {
+				Tds tmpTds = new Tds (parms);
+				TdsInstance tmp = new TdsInstance (tmpTds);
+				tdsPool.Add (tmp);
+				index = FindAnAvailableTds ();
+			}
+			if (index == -1) 
+				throw new TdsException ("Internal error. Could not get a tds instance.");
+
+			if (((TdsInstance) tdsPool [index]).InUse) 
+				throw new TdsException ("Internal error. Tds instance already in use.");
+			((TdsInstance) tdsPool [index]).InUse = true;
+			result = ((TdsInstance) tdsPool [index]).Tds;
+			result.ChangeSettings (autoCommit, isolationLevel);
+
+			return result;
+		}
+
+		public TdsTransaction BeginTransaction ()
+		{
+			return BeginTransaction (IsolationLevel.ReadCommitted);
+		}
+
+		public TdsTransaction BeginTransaction (IsolationLevel il)
+		{
+			return new TdsTransaction (this, il);
+		}
+
 		public void ChangeDatabase (string databaseName)
 		{
-			connection.ChangeDatabase (databaseName);
+			if (Database == databaseName)
+				return;
+
+			foreach (TdsInstance instance in tdsPool) {
+				lock (instance.Tds) {
+					/*
+					TdsCommand command = instance.Tds.Command;
+					object o = (command == null ? (object) instance.Tds : command);
+					lock (o) {
+						if (command != null)
+							command.SkipToEnd ();
+						instance.Tds.ChangeDatabase (databaseName);
+					}
+					*/
+				}
+			}
 		}
 
+		[System.MonoTODO]
 		public void Close ()
 		{
-			connection.Close ();
+			throw new NotImplementedException ();
 		}
 
-		IDbCommand IDbConnection.CreateCommand ()
+		public TdsCommand CreateCommand ()
 		{
-			return ((IDbConnection) connection).CreateCommand ();
+			TdsCommand command = new TdsCommand ();
+			command.Connection = this; 
+			return command;
 		}
 
                 object ICloneable.Clone()
@@ -91,21 +147,107 @@ namespace Mono.Data.TdsClient {
                         throw new NotImplementedException ();
                 }
 
+		private int FindAnAvailableTds ()
+		{
+			for (int i = tdsPool.Count - 1; i >= 0; i --)
+				if (!((TdsInstance) tdsPool [i]).InUse)
+					return i;
+			return -1;
+		}
+
+		private void FreeTds (Tds tds)
+		{
+			int i = -1;
+			foreach (TdsInstance instance in tdsPool)
+				if (instance.Tds == tds) {
+					instance.InUse = false;
+					//tds.Command = null;
+					return;
+				}
+			throw new TdsException ("Tried to free a tds that wasn't in use.");
+		}
+
 		IDbTransaction IDbConnection.BeginTransaction ()
 		{
-			return ((IDbConnection) connection).BeginTransaction ();
+			return BeginTransaction ();
 		}
 
 		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel il)
 		{
-			return ((IDbConnection) connection).BeginTransaction (il);
+			return BeginTransaction (il);
+		}
+
+		IDbCommand IDbConnection.CreateCommand ()
+		{
+			return CreateCommand ();
 		}
 
 		public void Open ()
 		{
-			connection.Open ();
+			if (user == String.Empty || user == null)
+			{
+				throw new ArgumentException ();
+			}
+			if (password == null)
+			{
+				throw new ArgumentException ();
+			}
+
+			if (tdsPool == null)
+				tdsPool = new ArrayList ();
+
+			Tds tmpTds = AllocateTds ();
+			tdsVersion = tmpTds.TdsVersion;
+			database = tmpTds.Database;
+			FreeTds (tmpTds);
+			tmpTds.Logon (parms);
+		}
+
+		[System.MonoTODO]
+		private void SetConnectionString (string connectionString)
+		{
+			if (connectionString == String.Empty)
+				return;
+
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods
+
+		private class TdsInstance 
+		{
+
+			#region Fields
+
+			bool inUse;
+			Tds tds;
+
+			#endregion // Fields 
+
+			#region Constructors
+
+			public TdsInstance (Tds tds) 
+			{
+				this.tds = tds;
+				this.inUse = false;
+			}
+
+			#endregion // Constructors
+
+			#region Properties
+
+			public bool InUse {
+				get { return inUse; }
+				set { inUse = value; }
+			}
+
+			public Tds Tds {
+				get { return tds; }
+				set { tds = value; }
+			}
+
+			#endregion // Properties
+		}
+
 	}
 }

@@ -17,7 +17,12 @@ namespace Mono.Data.TdsClient {
 	{
 		#region Fields
 
-		internal TdsCommandInternal command;
+		string commandText;
+		int commandTimeout;
+		CommandType commandType;
+		TdsConnection connection;
+		TdsParameterCollection parameters;
+		TdsTransaction transaction;
 
 		#endregion // Fields
 
@@ -25,7 +30,6 @@ namespace Mono.Data.TdsClient {
 
 		public TdsCommand ()
 		{
-			command = new TdsCommandInternal ();
 		}
 
 		#endregion // Constructors
@@ -33,71 +37,99 @@ namespace Mono.Data.TdsClient {
 		#region Properties
 
 		public string CommandText {
-			get { return command.CommandText; }
-			set { command.CommandText = value; }
+			get { return commandText; }
+			set { commandText = value; }
 		}
 
 		public int CommandTimeout {
-			get { return command.CommandTimeout; }
-			set { command.CommandTimeout = value; }
+			get { return commandTimeout; }
+			set { commandTimeout = value; }
 		}
 
 		public CommandType CommandType {
-			get { return command.CommandType; }
-			set { command.CommandType = value; }
+			get { return commandType; }
+			set { commandType = value; }
+		}
+
+		public TdsConnection Connection {	
+			get { return connection; }
+			set { connection = value; }
 		}
 
 		IDbConnection IDbCommand.Connection {
-			get { return ((IDbCommand) command).Connection; }
-			set { ((IDbCommand) command).Connection = value; }
+			get { return Connection; }
+			set { 
+				if (!(value is TdsConnection)) 
+					throw new ArgumentException ();
+				Connection = (TdsConnection) value; 	
+			}
 		}
 
 		IDataParameterCollection IDbCommand.Parameters {
-			get { return ((IDbCommand) command).Parameters; }
+			get { return Parameters; }
 		}
 
 		IDbTransaction IDbCommand.Transaction {
-			get { return ((IDbCommand) command).Transaction; }
-			set { ((IDbCommand) command).Transaction = value; }
+			get { return Transaction; }
+			set { 
+				if (!(value is TdsTransaction)) 
+					throw new ArgumentException ();
+				Transaction = (TdsTransaction) value; 
+			}
 		}
 
+		public TdsParameterCollection Parameters {
+			get { return parameters; }
+		}
+
+		public TdsTransaction Transaction {
+			get { return transaction; }
+			set { transaction = value; }
+		}
+
+		[System.MonoTODO]
 		public UpdateRowSource UpdatedRowSource {
-			get { return command.UpdatedRowSource; }
-			set { command.UpdatedRowSource = value; }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		#endregion // Properties
 
                 #region Methods
 
+		[System.MonoTODO]
 		public void Cancel ()
 		{
-			command.Cancel ();
+			throw new NotImplementedException ();
 		}
 
-		IDbDataParameter IDbCommand.CreateParameter ()
+		[System.MonoTODO]
+		TdsParameter CreateParameter ()
 		{
-			return ((IDbCommand) command).CreateParameter ();
+			throw new NotImplementedException ();
 		}
 
+		[System.MonoTODO]
 		public int ExecuteNonQuery ()
 		{
-			return command.ExecuteNonQuery ();
+			throw new NotImplementedException ();
 		}
 
-		IDataReader IDbCommand.ExecuteReader ()
+		public TdsDataReader ExecuteReader ()
 		{
-			return ((IDbCommand) command).ExecuteReader ();
+			return ExecuteReader (CommandBehavior.Default);
 		}
 
-		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
+		[System.MonoTODO]
+		public TdsDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			return ((IDbCommand) command).ExecuteReader (behavior);
+			throw new NotImplementedException ();
 		}
 
+		[System.MonoTODO]
 		public object ExecuteScalar ()
 		{
-			return command.ExecuteScalar ();
+			throw new NotImplementedException ();
 		}
 
 		[System.MonoTODO]
@@ -106,10 +138,34 @@ namespace Mono.Data.TdsClient {
                         throw new NotImplementedException ();
                 }
 
+		IDbDataParameter IDbCommand.CreateParameter ()
+		{
+			return CreateParameter ();
+		}
+
+		IDataReader IDbCommand.ExecuteReader ()
+		{
+			return ExecuteReader ();
+		}
+
+		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
+		{
+			return ExecuteReader (behavior);
+		}
+
+		[System.MonoTODO]
 		public void Prepare ()
 		{
-			command.Prepare ();
+			throw new NotImplementedException ();
 		}
+
+		/*
+		internal void SkipToEnd ()
+		{
+			if (tds != null)
+				while (GetMoreResults (tds, false) || updateCount != 1);
+		}
+		*/
 
                 #endregion // Methods
 	}
