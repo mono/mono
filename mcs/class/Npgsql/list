@@ -17,6 +17,7 @@ Npgsql/NpgsqlEventLog.cs
 Npgsql/NpgsqlException.cs
 Npgsql/NpgsqlMediator.cs
 Npgsql/NpgsqlMessageTypes.cs
+Npgsql/NpgsqlNotificationEventArgs.cs
 Npgsql/NpgsqlParameter.cs
 Npgsql/NpgsqlParameterCollection.cs
 Npgsql/NpgsqlPasswordPacket.cs
