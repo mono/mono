@@ -38,7 +38,9 @@ namespace MonoTests.System.Security.Permissions {
 
 		private static string className = "System.Security.Permissions.RegistryPermission, ";
 		private static string keyCurrentUser = @"HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home";
+		private static string keyCurrentUserSubset = @"HKEY_CURRENT_USER\Software\Novell iFolder\";
 		private static string keyLocalMachine = @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000";
+		private static string keyLocalMachineSubset = @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\";
 
 		[Test]
 		public void PermissionStateNone ()
@@ -121,6 +123,27 @@ namespace MonoTests.System.Security.Permissions {
 			AssertEquals ("AddPathList-ToXml-Create", @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000", se.Attribute ("Create"));
 			AssertEquals ("AddPathList-ToXml-Read", @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000;HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home", se.Attribute ("Read"));
 			AssertEquals ("AddPathList-ToXml-Write", @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000;HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home", se.Attribute ("Write"));
+		}
+
+		[Test]
+		public void AddPathList_Subset ()
+		{
+			RegistryPermission ep = new RegistryPermission (PermissionState.None);
+			ep.AddPathList (RegistryPermissionAccess.AllAccess, keyLocalMachine);
+			ep.AddPathList (RegistryPermissionAccess.AllAccess, keyLocalMachineSubset);
+			SecurityElement se = ep.ToXml ();
+			AssertEquals ("AddPathList-ToXml-Create", keyLocalMachineSubset, se.Attribute ("Create"));
+			AssertEquals ("AddPathList-ToXml-Read", keyLocalMachineSubset, se.Attribute ("Read"));
+			AssertEquals ("AddPathList-ToXml-Write", keyLocalMachineSubset, se.Attribute ("Write"));
+
+			ep = new RegistryPermission (PermissionState.None);
+			ep.AddPathList (RegistryPermissionAccess.AllAccess, keyLocalMachine);
+			ep.AddPathList (RegistryPermissionAccess.Create, keyLocalMachineSubset);
+			ep.AddPathList (RegistryPermissionAccess.Read, keyCurrentUser);
+			se = ep.ToXml ();
+			AssertEquals ("AddPathList-ToXml-Create", keyLocalMachineSubset, se.Attribute ("Create"));
+			AssertEquals ("AddPathList-ToXml-Read", keyLocalMachine + ";" + keyCurrentUser, se.Attribute ("Read"));
+			AssertEquals ("AddPathList-ToXml-Write", keyLocalMachine, se.Attribute ("Write"));
 		}
 
 		[Test]
@@ -267,6 +290,17 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+		public void Union_Subset ()
+		{
+			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
+			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Create, keyLocalMachineSubset);
+			RegistryPermission ep3 = (RegistryPermission)ep1.Union (ep2);
+			AssertEquals ("Create", keyLocalMachineSubset, ep3.GetPathList (RegistryPermissionAccess.Create));
+			AssertEquals ("Read", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Read));
+			AssertEquals ("Write", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Write));
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void UnionWithBadPermission ()
 		{
@@ -320,6 +354,17 @@ namespace MonoTests.System.Security.Permissions {
 			AssertEquals ("Intersect-AllAccess-Create", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Create));
 			AssertEquals ("Intersect-AllAccess-Read", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Read));
 			AssertEquals ("Intersect-AllAccess-Write", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Write));
+		}
+
+		[Test]
+		public void Intersect_Subset ()
+		{
+			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
+			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Create, keyLocalMachineSubset);
+			RegistryPermission ep3 = (RegistryPermission)ep1.Intersect (ep2);
+			AssertEquals ("Create", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Create));
+			AssertNull ("Read", ep3.GetPathList (RegistryPermissionAccess.Read));
+			AssertNull ("Write", ep3.GetPathList (RegistryPermissionAccess.Write));
 		}
 
 		[Test]
