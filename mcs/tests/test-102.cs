@@ -17,6 +17,17 @@ namespace N1 {
 		}
 	}
 
+        [AttributeUsage (AttributeTargets.ReturnValue)]
+	public class ReturnAttribute : Attribute {
+
+		public string name;
+		
+		public ReturnAttribute (string s)
+		{
+			name = s;
+		}
+	}
+
 	interface A {
 		[Mine ("hello")]
 		void Hello ();
@@ -27,7 +38,7 @@ namespace N1 {
 		int i;
 		
 		[Mine ("Foo")]
-		[return: Mine ("Bar")]	
+		[return: Return ("Bar")]	
 		public static int Main ()
 		{
 			Type t = typeof (Foo);
@@ -42,12 +53,12 @@ namespace N1 {
 						Console.WriteLine ("Got more than one return attribute");
 						return 1;
 					}
-					if (!(ret_attrs [0] is MineAttribute)){
+					if (!(ret_attrs [0] is ReturnAttribute)){
 						Console.WriteLine ("Dit not get a MineAttribute");
 						return 2;
 					}
 
-					MineAttribute ma = (MineAttribute) ret_attrs [0];
+					ReturnAttribute ma = (ReturnAttribute) ret_attrs [0];
 					if (ma.name != "Bar"){
 						Console.WriteLine ("The return attribute is not Bar");
 						return 2;
