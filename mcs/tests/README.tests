@@ -267,6 +267,13 @@ test-195.cs
 Fix for bug #45149, constructors that call another constructor in the
 same class (using ": this()") should not emit instance field initializers. 
 
+test-196.cs:
+------------
+
+The optimization that we perform in uint & int-constant was triggering a bug
+because we returned always, when we should have continued the processing if the
+conditions were not correct.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

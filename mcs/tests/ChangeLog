@@ -1,7 +1,7 @@
 2003-06-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* makefile (TEST_SOURCES): Add the tests that require an assembly,
-	so we dont get another regression here (37521).
+	so we dont get another regression here (#37521).
 
 2003-05-27  Ravi Pratap  <ravi@ximian.com>
 
