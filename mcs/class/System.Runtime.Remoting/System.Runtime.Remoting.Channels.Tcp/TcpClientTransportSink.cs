@@ -84,6 +84,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 				connection = TcpConnectionPool.GetConnection (_host, _port);
 				TcpMessageIO.SendMessageStream (connection.Stream, requestStream, headers, connection.Buffer);
+				connection.Stream.Flush ();
 
 				if (!isOneWay) 
 				{
@@ -167,6 +168,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				// Sends the message
 				connection = TcpConnectionPool.GetConnection (_host, _port);
 				TcpMessageIO.SendMessageStream (connection.Stream, requestStream, requestHeaders, connection.Buffer);
+				connection.Stream.Flush ();
 
 				// Reads the response
 				MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream);

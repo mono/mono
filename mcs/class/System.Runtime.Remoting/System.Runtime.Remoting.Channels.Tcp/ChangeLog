@@ -1,3 +1,9 @@
+2004-12-17  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TcpMessageIO.cs: Removed some more WriteByte calls.
+	* TcpClientTransportSink.cs: Flush the net stream after writing
+	a message.
+
 2004-12-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TcpChannel.cs: Don't use regular expressions to parse the url, it's
