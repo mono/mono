@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
+// $ANTLR 2.7.3rc2: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
 
 namespace Microsoft.JScript
 {
@@ -2367,11 +2367,11 @@ _loop86_breakloop:			;
 		}    // ( ... )*
 	}
 	
-	public Unary  postfix_expr(
+	public AST  postfix_expr(
 		AST parent
 	) //throws RecognitionException, TokenStreamException
 {
-		Unary post_expr;
+		AST post_expr;
 		
 		
 			post_expr = null;
@@ -2443,17 +2443,20 @@ _loop86_breakloop:			;
 		if (0==inputState.guessing)
 		{
 			
-					  post_expr = new Unary (parent, left, op);
+					  if (op == JSToken.None)
+						  post_expr = left;
+					  else
+						  post_expr = new PostOrPrefixOperator (parent, left, op);
 				
 		}
 		return post_expr;
 	}
 	
-	public Unary  unary_expr(
+	public AST  unary_expr(
 		AST parent
 	) //throws RecognitionException, TokenStreamException
 {
-		Unary unary_exprn;
+		AST unary_exprn;
 		
 		
 			unary_exprn = null;
@@ -2612,7 +2615,7 @@ _loop86_breakloop:			;
 		
 		
 			mult_expr = null;
-			Unary left = null;
+			AST left = null;
 			AST right = null;
 		
 		
@@ -2639,7 +2642,7 @@ _loop86_breakloop:			;
 		
 			mult_aux = null;
 			JSToken mult_op = JSToken.None;
-			Unary left = null;
+			AST left = null;
 			AST right = null;
 		
 		

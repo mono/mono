@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
+// $ANTLR 2.7.3rc2: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
 
 namespace Microsoft.JScript
 {
@@ -7,6 +7,7 @@ namespace Microsoft.JScript
 	using Stream                          = System.IO.Stream;
 	using TextReader                      = System.IO.TextReader;
 	using Hashtable                       = System.Collections.Hashtable;
+	using Comparer                        = System.Collections.Comparer;
 	
 	using TokenStreamException            = antlr.TokenStreamException;
 	using TokenStreamIOException          = antlr.TokenStreamIOException;
@@ -20,6 +21,7 @@ namespace Microsoft.JScript
 	using CharBuffer                      = antlr.CharBuffer;
 	using Token                           = antlr.Token;
 	using CommonToken                     = antlr.CommonToken;
+	using SemanticException               = antlr.SemanticException;
 	using RecognitionException            = antlr.RecognitionException;
 	using NoViableAltForCharException     = antlr.NoViableAltForCharException;
 	using MismatchedCharException         = antlr.MismatchedCharException;
@@ -142,7 +144,7 @@ namespace Microsoft.JScript
 		{
 			caseSensitiveLiterals = true;
 			setCaseSensitive(true);
-			literals = new Hashtable();
+			literals = new Hashtable(null, Comparer.Default);
 			literals.Add("switch", 17);
 			literals.Add("case", 19);
 			literals.Add("this", 76);
@@ -173,7 +175,7 @@ namespace Microsoft.JScript
 			literals.Add("with", 20);
 		}
 		
-		public new Token nextToken()			//throws TokenStreamException
+		 public Token nextToken()			//throws TokenStreamException
 		{
 			Token theRetToken = null;
 tryAgain:
@@ -758,7 +760,10 @@ _loop171_breakloop:		;
 		{
 		case '"':
 		{
+			int _saveIndex = 0;
+			_saveIndex = text.Length;
 			match('"');
+			text.Length = _saveIndex;
 			{    // ( ... )*
 				for (;;)
 				{
@@ -776,7 +781,9 @@ _loop171_breakloop:		;
 				}
 _loop175_breakloop:				;
 			}    // ( ... )*
+			_saveIndex = text.Length;
 			match('"');
+			text.Length = _saveIndex;
 			break;
 		}
 		case '\'':
