@@ -24,6 +24,7 @@ namespace Mono.ILASM {
 			public ArrayList LocationList;
 			public Class Class;
 			public MethodTable method_table;
+			public FieldTable field_table;
 
 			public ClassTableItem (ClassDef klass, Location location)
 			{
@@ -32,6 +33,7 @@ namespace Mono.ILASM {
 				LocationList = new ArrayList ();
 				LocationList.Add (location);
 				method_table = new MethodTable (klass);
+				field_table = new FieldTable (klass);
 			}
 		
 			public bool Defined {
@@ -47,6 +49,11 @@ namespace Mono.ILASM {
 			public MethodTable MethodTable {
 				get { return method_table; }
 			}
+
+			public FieldTable FieldTable {
+				get { return field_table; }
+			}
+			
 		}
 
 		protected readonly TypeAttr DefaultAttr;
@@ -97,6 +104,18 @@ namespace Mono.ILASM {
 			}
 
 			return item.MethodTable;
+		}
+
+		public FieldTable GetFieldTable (string full_name, Location location)
+		{
+			ClassTableItem item = table[full_name] as ClassTableItem;
+			
+			if (item == null) {
+				GetReference (full_name, location);
+				return GetFieldTable (full_name, location);
+			}
+
+			return item.FieldTable;
 		}
 
 		public ClassDef AddDefinition (string name_space, string name, 

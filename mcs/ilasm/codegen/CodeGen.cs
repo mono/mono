@@ -94,6 +94,20 @@ namespace Mono.ILASM {
 			
 			return method_table.GetReference (name, return_type, param_list, param_type_list, location);
 		}
+		
+		public void AddField (FieldAttr attr, string name, TypeRef type, Location location) 
+		{
+			FieldTable field_table = class_table.GetFieldTable (current_class.Name, location);
+				
+			field_table.AddDefinition (attr, name, type, location);
+		}
+
+		public Field GetFieldRef (TypeRef parent, TypeRef type, string name, Location location)
+		{
+			FieldTable field_table = class_table.GetFieldTable (type.FullName, location);
+			
+			return field_table.GetReference (type, name, location);
+		}
 	}
 
 }
