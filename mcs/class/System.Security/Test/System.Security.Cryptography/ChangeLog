@@ -1,3 +1,9 @@
+2005-01-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsnEncodedDataTest.cs: Added tests for Oid, RawData properties and
+	for CopyFrom method.
+	* CryptographicAttributeTest.cs: Updated to NUnit 2.2 tests.
+
 2004-07-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsnEncodedDataTest.cs: Fixed for Fx 2.0 beta1.

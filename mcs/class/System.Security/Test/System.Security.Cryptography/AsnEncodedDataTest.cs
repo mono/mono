@@ -81,9 +81,9 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		// BUG [ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_OidNullData () 
 		{
+			// this is legal - http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=38336cfa-3b97-47da-ad4e-9522d557f001
 			Oid o = null;
 			AsnEncodedData aed = new AsnEncodedData (o, asnNullBytes);
 			Assert.IsNull (aed.Oid, "Oid");
@@ -126,6 +126,79 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			AsnEncodedData asn = null;
 			AsnEncodedData aed = new AsnEncodedData (asn);
+		}
+
+		[Test]
+		public void Oid_CreatedNull ()
+		{
+			AsnEncodedData aed = new AsnEncodedData ((Oid)null, asnNullBytes);
+			Assert.IsNull (aed.Oid, "Oid 1");
+			Oid o = new Oid ("1.2.3");
+			aed.Oid = o;
+			Assert.AreEqual ("1.2.3", aed.Oid.Value, "Oid 2");
+			o.Value = "1.2.4";
+			Assert.AreEqual ("1.2.3", aed.Oid.Value, "Oid 3"); // didn't change (copy)
+			aed.Oid = null;
+			Assert.IsNull (aed.Oid, "Oid 4");
+		}
+
+		[Test]
+		public void Oid ()
+		{
+			AsnEncodedData aed = new AsnEncodedData ("1.2.3", asnNullBytes);
+			Assert.AreEqual ("1.2.3", aed.Oid.Value, "Oid 1");
+			aed.Oid.Value = "1.2.4";
+			Assert.AreEqual ("1.2.4", aed.Oid.Value, "Oid 2"); // didn't change (copy)
+			aed.Oid = null;
+			Assert.IsNull (aed.Oid, "Oid 3");
+		}
+
+		[Test]
+		public void RawData_CanModify ()
+		{
+			byte[] data = (byte[])asnNullBytes.Clone ();
+			AsnEncodedData aed = new AsnEncodedData ("1.2.3", data);
+			Assert.AreEqual (asnNullString, aed.Format (true), "Format 1");
+			data[0] = 0x06;
+			Assert.AreEqual (asnNullString, aed.Format (true), "Format 2"); ; // didn't change (copy)
+			aed.RawData[0] = 0x07;
+			Assert.AreEqual ("07 00", aed.Format (true), "Format 3"); // changed!
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void RawData ()
+		{
+			AsnEncodedData aed = new AsnEncodedData ((Oid)null, asnNullBytes);
+			Assert.AreEqual (asnNullString, aed.Format (true), "Format 1");
+			aed.RawData = null;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CopyFrom_Null ()
+		{
+			AsnEncodedData aed = new AsnEncodedData ((Oid)null, asnNullBytes);
+			aed.CopyFrom (null);
+		}
+
+		[Test]
+		public void CopyFrom ()
+		{
+			Oid o = new Oid ("1.2.3");
+			byte[] data = (byte[])asnNullBytes.Clone ();
+			AsnEncodedData aed = new AsnEncodedData (o, asnNullBytes);
+			AsnEncodedData copy = new AsnEncodedData ((Oid)null, new byte [0]);
+			copy.CopyFrom (aed);
+
+			Assert.AreEqual (aed.Oid.Value, copy.Oid.Value, "Oid 1");
+			Assert.AreEqual (aed.Format (true), copy.Format (true), "Format 1");
+
+			aed.Oid = new Oid ("1.2.4");
+			aed.RawData = new byte[1];
+
+			Assert.AreEqual ("1.2.3", copy.Oid.Value, "Oid 2");
+			Assert.AreEqual (asnNullString, copy.Format (true), "Format 2");
 		}
 
 		[Test]
