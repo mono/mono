@@ -1818,6 +1818,15 @@ non_expression_type
 	  {
 		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
 	  }
+	
+	//
+	// We need this because the parser will happily go and reduce IDENTIFIER STAR
+	// through this different path
+	//
+	| multiplicative_expression STAR 
+	  {
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+	  }
 	;
 
 type_list

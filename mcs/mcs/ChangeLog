@@ -1,3 +1,12 @@
+2002-10-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Ugly.  We had to add a multiplicative_expression,
+	because identifiers after a parenthesis would end up in this kind
+	of production, and we needed to desamiguate it for having casts
+	like:
+
+		(UserDefinedType *) xxx
+
 2002-10-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (RealMemberLookup): when we deal with a subclass,
