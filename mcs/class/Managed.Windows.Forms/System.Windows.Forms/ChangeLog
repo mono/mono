@@ -1,8 +1,11 @@
 2005-01-27  Jackson Harper  <jackson@ximian.com>
 
-	* TabControl.cs: Only invalidate the effected tabs when the
+	* TabControl.cs:
+	- Only invalidate the effected tabs when the
 	selected index changes. This reduces drawing and gets rid of some
 	flicker.
+	- Only refresh if the tabs need to be shifted, otherwise only
+	invalidate the slider button.
 
 2005-01-27  Jackson Harper  <jackson@ximian.com>
 
