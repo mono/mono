@@ -59,7 +59,7 @@ namespace System.Reflection.Emit {
 	private EventBuilder[] events;
 	private CustomAttributeBuilder[] cattrs;
 	internal TypeBuilder[] subtypes;
-	private TypeAttributes attrs;
+	internal TypeAttributes attrs;
 	private int table_idx;
 	private ModuleBuilder pmodule;
 	private int class_size;
