@@ -1,4 +1,7 @@
 2002-05-03  Tim Coleman <tim@timcoleman.com>
+	* System.Data.build: Fix the build so that test depends on build
+
+2002-05-03  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlTypes/SqlByte.cs:
 	* System.Data.SqlTypes/SqlDateTime.cs:
 	* System.Data.SqlTypes/SqlDecimal.cs:

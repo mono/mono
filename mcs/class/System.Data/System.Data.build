@@ -44,7 +44,7 @@
 			</references>
 		</csc>
 	</target>
-	<target name="test">
+	<target name="test" depends="build">
 		<nant basedir="Test" target="test"/>
 	</target>
 	<target name="clean">
