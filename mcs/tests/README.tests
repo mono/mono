@@ -19,7 +19,7 @@ Test cases listed by Category:
 
 * Events and Delegates
 
-  test-149.cs
+  test-149.cs verify-3.cs
 
 * Constant Folding
 
@@ -99,3 +99,7 @@ verify-2.cs
 Test whether `return' in a Try/Catch block actually returns.  Test
 whether continue uses Leave when the branch is across Try/Catch
 boundaries.
+
+verify-3.cs
+-----------
+Checks default add/remove method of static events.
