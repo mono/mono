@@ -30,8 +30,8 @@ namespace Mine {
 			k++;	
 			++k;
 
-			// if (k)
-			//	Console.WriteLine ("k is definitely true");
+			if (k)
+				Console.WriteLine ("k is definitely true");
 
 	
 			return 0;
