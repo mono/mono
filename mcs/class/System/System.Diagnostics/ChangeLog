@@ -1,3 +1,7 @@
+2004-09-06  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Make Dispose() actually dispose things.
+
 2004-06-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Process.cs : quick fix for UseShellExecute=false on windows. See
