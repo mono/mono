@@ -766,6 +766,9 @@ namespace System.Xml
 					ReadTag ();
 					more = true;
 					break;
+				case '\r':
+					ReadChar ();
+					return ReadContent ();
 				case '\n':
 					ReadChar ();
 					return ReadContent ();
