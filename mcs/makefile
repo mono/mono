@@ -1,11 +1,10 @@
 DIRS=jay mcs class tools
 
-all:
-	@echo "You must use 'make windows' or 'make linux'."
+all: linux
 
 windows:
 	for i in $(DIRS); do 			\
-		(cd $$i; make windows)		\
+		(cd $$i; make linux)		\
 	done
 
 linux:
@@ -13,7 +12,7 @@ linux:
 		(cd $$i; make linux)		\
 	done
 
-	
+
 clean:
 	for i in $(DIRS); do 			\
 		(cd $$i; make clean)		\

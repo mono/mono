@@ -21,12 +21,12 @@
 	<target name="linux">
 		<nant basedir="corlib" target="linux"/>
 		<nant basedir="System" target="build"/>
-		<!-- Doesn't compile, will fix later -Sean
-			<nant basedir="System.Data" target="build"/>
-		-->
 		<nant basedir="System.Drawing" target="build"/>
 		<nant basedir="System.Web" target="build"/>
 		<nant basedir="System.XML" target="build"/>
+		<!-- Doesn't compile, will fix later -Sean
+			<nant basedir="System.Data" target="build"/>
+		-->
 	</target>
 
 	<target name="test">
