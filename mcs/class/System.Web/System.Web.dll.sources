@@ -60,6 +60,7 @@ System.Web/TimeoutManager.cs
 System.Web/TraceContext.cs
 System.Web/TraceMode.cs
 System.Web/TraceData.cs
+System.Web/TraceManager.cs
 System.Web/WebCategoryAttribute.cs
 System.Web/WebSysDescriptionAttribute.cs
 System.Web/HttpResponse.cs
