@@ -148,7 +148,7 @@ namespace MonoTests.System.IO
 				AssertEquals ("test#01", 1601, time.Year);
 				AssertEquals ("test#02", 1, time.Month);
 				AssertEquals ("test#03", 1, time.Day);
-				AssertEquals ("test#04", 2, time.Hour);
+				AssertEquals ("test#04", 9, time.Hour);
 				AssertEquals ("test#05", 0, time.Minute);
 				AssertEquals ("test#06", 0, time.Second);
 				AssertEquals ("test#07", 0, time.Millisecond);
@@ -159,7 +159,7 @@ namespace MonoTests.System.IO
 				AssertEquals ("test#08", 1601, time.Year);
 				AssertEquals ("test#09", 1, time.Month);
 				AssertEquals ("test#10", 1, time.Day);
-				AssertEquals ("test#11", 2, time.Hour);
+				AssertEquals ("test#11", 9, time.Hour);
 				AssertEquals ("test#12", 0, time.Minute);
 				AssertEquals ("test#13", 0, time.Second);
 				AssertEquals ("test#14", 0, time.Millisecond);
@@ -197,7 +197,7 @@ namespace MonoTests.System.IO
 				AssertEquals ("test#01", 1601, time.Year);
 				AssertEquals ("test#02", 1, time.Month);
 				AssertEquals ("test#03", 1, time.Day);
-				AssertEquals ("test#04", 2, time.Hour);
+				AssertEquals ("test#04", 9, time.Hour);
 				AssertEquals ("test#05", 0, time.Minute);
 				AssertEquals ("test#06", 0, time.Second);
 				AssertEquals ("test#07", 0, time.Millisecond);
@@ -263,7 +263,7 @@ namespace MonoTests.System.IO
 				AssertEquals ("test#01", 1601, time.Year);
 				AssertEquals ("test#02", 1, time.Month);
 				AssertEquals ("test#03", 1, time.Day);
-				AssertEquals ("test#04", 2, time.Hour);
+				AssertEquals ("test#04", 9, time.Hour);
 				AssertEquals ("test#05", 0, time.Minute);
 				AssertEquals ("test#06", 0, time.Second);
 				AssertEquals ("test#07", 0, time.Millisecond);

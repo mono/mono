@@ -1,3 +1,8 @@
+2003-06-18  Nick Drochak <ndrochak@gol.com>
+
+	* FileSystemInfoTest.cs: Works on .NET 1.1 now. If these values are
+	different on 1.0 then we need to wrap with a #if NET_1_1.
+
 2003-06-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FileStreamTest.cs: New tests for recently fixed bugs.
