@@ -1,3 +1,7 @@
+2004-04-18  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Statement.cs: Added code generation for while and do-while.
+
 2004-04-17  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Statement.cs (class if): reimplemented Emit based on fall_false.

@@ -170,7 +170,12 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			Label body_label = ig.DefineLabel ();
+			ig.MarkLabel (body_label);
+			if (stm != null)
+				stm.Emit (ec);
+			CodeGenerator.fall_false (ec, exp, body_label);			
 		}
 	}
 
@@ -202,7 +207,16 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			Label body_label = ig.DefineLabel ();
+			Label cond_label = ig.DefineLabel ();
+			ig.Emit (OpCodes.Br, cond_label);
+			ig.MarkLabel (body_label);
+			if (stm != null)
+				stm.Emit (ec);
+			ig.MarkLabel (cond_label);
+			CodeGenerator.fall_false (ec, exp, body_label);
+			
 		}
 	}
 
