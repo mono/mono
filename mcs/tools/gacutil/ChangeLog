@@ -1,5 +1,9 @@
 2004-05-21  Jackson Harper  <jackson@ximian.com>
 
+	* driver.cs: More fiddling with paths.
+	
+2004-05-21  Jackson Harper  <jackson@ximian.com>
+
 	* driver.cs: Allow the root and gacdir to both be specified. In
 	this case they are combined.
 	

@@ -88,15 +88,18 @@ namespace Mono.Tools {
 					name += args [i];
 			}
 
-			if (gacdir == null)
+			if (gacdir == null) {
 				gacdir = GetGacDir ();
-			else
-				gacdir = Path.Combine (Path.Combine (gacdir, "mono"), "gac");
+				libdir = GetLibDir ();
+			} else {
+				libdir = Path.Combine (gacdir, "mono");
+				gacdir = Path.Combine (libdir, "gac");
+			}
 
 			string link_gacdir = gacdir;
 			if (root != null) {
-				libdir = Path.Combine (Path.Combine (root, gacdir), "mono");
-				gacdir = Path.Combine (libdir, "gac");
+				libdir = Path.Combine (root, gacdir);
+				gacdir = Path.Combine (root, libdir);
 			}
 
 			switch (command) {
