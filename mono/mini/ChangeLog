@@ -1,3 +1,8 @@
+
+Wed Oct 6 12:40:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-ppc.brg: added a couple of speedup rules.
+
 2004-10-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (genmdesc_LDADD): Don't link this against libmetadata
