@@ -1,3 +1,10 @@
+2004-12-27  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_get_method): New static method; call
+	mono_get_method_full() and mono_get_inflated_method().
+	(mono_method_to_ir): Use mini_get_method() instead of
+	mono_get_method_full().	
+
 2004-12-26  Patrik Torstensson  <patrik.torstensson@gmail.com>
 
 	* mini-x86.c (atomic ops): fixed bug interlocked bug #70784. 
