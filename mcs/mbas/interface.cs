@@ -9,12 +9,13 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 
+#define CACHE
+
 /*This file will go off shortly
  * after copying the interface class 
  * in class.cs file
  */
 
-#define CACHE
 using System.Collections;
 using System;
 using System.IO;
