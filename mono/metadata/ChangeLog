@@ -1,3 +1,7 @@
+2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c loader.c security.c loader.h process.c threads.c mono-debug-debugger.c profiler.c marshal.c rand.cpedump.c: Fix 64 bit warnings.
+
 2005-01-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* loader.c (mono_method_signature): Make this method lazy
