@@ -25,6 +25,7 @@ namespace System.Reflection.Emit {
 		private TypeBuilder type;
 		private ParameterBuilder[] pinfo;
 		private CustomAttributeBuilder[] cattrs;
+		private bool init_locals = true;
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
 			attrs = attributes;
@@ -37,6 +38,11 @@ namespace System.Reflection.Emit {
 			table_idx = get_next_table_index (0x06, true);
 		}
 		
+		public bool InitLocals {
+			get {return init_locals;}
+			set {init_locals = value;}
+		}
+
 		internal TypeBuilder TypeBuilder {
 			get {return type;}
 		}
@@ -66,12 +72,6 @@ namespace System.Reflection.Emit {
 		}
 		public string Signature {
 			get {return "constructor signature";}
-		}
-
-		[MonoTODO]
-		public bool InitLocals { /* FIXME */
-			get {return false;} 
-			set {return;}
 		}
 
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {

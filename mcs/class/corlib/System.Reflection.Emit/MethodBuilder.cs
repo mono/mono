@@ -35,6 +35,7 @@ namespace System.Reflection.Emit {
 		private CharSet ncharset;
 		private CallingConvention native_cc;
 		private CallingConventions call_conv;
+		private bool init_locals = true;
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
 			this.name = name;
@@ -58,6 +59,11 @@ namespace System.Reflection.Emit {
 			pi_entry = entryName;
 			native_cc = nativeCConv;
 			ncharset = nativeCharset;
+		}
+
+		public bool InitLocals {
+			get {return init_locals;}
+			set {init_locals = value;}
 		}
 
 		internal TypeBuilder TypeBuilder {
