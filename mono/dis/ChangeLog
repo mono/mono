@@ -1,4 +1,9 @@
 
+Fri Jul 26 11:41:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c, dump.h, dump.c: output hash value in File table.
+	Add dumper function for DeclSecurity table.
+
 Fri Jul 19 14:20:10 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: handle null parent.
