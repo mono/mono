@@ -1,4 +1,8 @@
 
+Wed Jun 16 18:11:41 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, *.c, *.h: more API cleanups.
+
 Wed Jun 16 14:33:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: removed monosn from compilation.
