@@ -50,7 +50,7 @@ namespace System.Runtime.Remoting.Proxies
 
 			if (mMsg.CallType == CallType.EndInvoke)
 				return mMsg.AsyncResult.EndInvoke ();
-
+				
 			if (mMsg.MethodBase.IsConstructor)
 				return ActivateRemoteObject (mMsg);
 
@@ -108,7 +108,7 @@ namespace System.Runtime.Remoting.Proxies
 			else
 				_targetUri = identity.ObjectUri;
 
-			if (_objectIdentity.EnvoySink != null) 
+			if (_objectIdentity.EnvoySink != null)
 			{
 				_sink = _objectIdentity.EnvoySink;
 				_hasEnvoySink = true;
@@ -131,7 +131,10 @@ namespace System.Runtime.Remoting.Proxies
 		~RemotingProxy()
 		{
 			if (_objectIdentity != null)
-				RemotingServices.DisposeIdentity (_objectIdentity);
+			{
+				if (!(_objectIdentity is ClientActivatedIdentity))	// Local CBO proxy?
+					RemotingServices.DisposeIdentity (_objectIdentity);
+			}
 		}
 		
 	}
