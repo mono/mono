@@ -679,14 +679,14 @@ namespace Mono.CSharp
 					ulong ul = (uint) (number_builder [0] - '0');
 
 					for (int i = 1; i < number_pos; i++){
-						ul = checked ((ul * 10) + number_builder [i] - '0');
+						ul = checked ((ul * 10) + ((uint)(number_builder [i] - '0')));
 					}
 					return integer_type_suffix (ul, c);
 				} else {
 					uint ui = (uint) (number_builder [0] - '0');
 
 					for (int i = 1; i < number_pos; i++){
-						ui = checked ((ui * 10) + number_builder [i] - '0');
+						ui = checked ((ui * 10) + ((uint)(number_builder [i] - '0')));
 					}
 					return integer_type_suffix (ui, c);
 				}
