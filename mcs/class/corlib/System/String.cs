@@ -682,36 +682,58 @@ namespace System {
 			return obj.ToString();
 		}
 
-		public static String Concat(Object obj1, Object obj2) {
-			if (null == obj1)
-				obj1 = String.Empty;
-    
-			if (null == obj2)
-				obj2 = String.Empty;
+		public static String Concat(Object obj1, Object obj2)
+		{
+			string s1, s2;
 
-			return Concat(obj1.ToString(), obj2.ToString());
+			if (obj1 == null){
+				if (obj2 == null)
+					return String.Empty;
+				else
+					return obj2.ToString ();
+			} else if (obj2 == null)
+				return obj1.ToString ();
+
+			s1 = obj1.ToString ();
+			s2 = obj2.ToString ();
+			String tmp = InternalAllocateStr (s1.Length + s2.Length);
+			InternalStrcpy (tmp, 0, s1);
+			InternalStrcpy (tmp, s1.length, s2);
+
+			return tmp;
 		}
 
-		public static String Concat(Object obj1, Object obj2, Object obj3) {
-			if (null == obj1)
-				obj1 = String.Empty;
+		public static String Concat(Object obj1, Object obj2, Object obj3)
+		{
+			string s1, s2, s3;
+			if (obj1 == null)
+				s1 = String.Empty;
+			else
+				s1 = obj1.ToString ();
     
-			if (null == obj2)
-				obj2 = String.Empty;
+			if (obj2 == null)
+				s2 = String.Empty;
+			else
+				s2 = obj2.ToString ();
     
-			if (null == obj3)
-				obj3 = String.Empty;
+			if (obj3 == null)
+				s3 = String.Empty;
+			else
+				s3 = obj3.ToString ();
     
-			return Concat(obj1.ToString(), obj2.ToString(), obj3.ToString());
+			return Concat (s1, s2, s3);
 		}
 
-		public static String Concat(String s1, String s2) {
-			if (null == s1) {
-				if (null == s2) { return String.Empty; }
+		public static String Concat(String s1, String s2)
+		{
+			if (s1 == null) {
+				if (s2 == null)
+					return String.Empty;
 				return s2;
 			}
 
-			if (null == s2) { return s1; }
+			if (s2 == null)
+				return s1; 
 
 			String tmp = InternalAllocateStr(s1.length + s2.length);
             
@@ -721,15 +743,30 @@ namespace System {
 			return tmp;
 		}
 
-		public static String Concat(String s1, String s2, String s3) {
-			if (null == s1 && null == s2 && null == s3) {
-				return String.Empty;
+		public static String Concat(String s1, String s2, String s3)
+		{
+			if (s1 == null){
+				if (s2 == null){
+					if (s3 == null)
+						return String.Empty;
+					return s3;
+				} else {
+					if (s3 == null)
+						return s2;
+				}
+				s1 = String.Empty;
+			} else {
+				if (s2 == null){
+					if (s3 == null)
+						return s1;
+					else
+						s2 = String.Empty;
+				} else {
+					if (s3 == null)
+						s3 = String.Empty;
+				}
 			}
-
-			if (null == s1) { s1 = String.Empty; }
-			if (null == s2) { s2 = String.Empty; }
-			if (null == s3) { s3 = String.Empty; }
-
+			
 			String tmp = InternalAllocateStr(s1.length + s2.length + s3.length);
 
 			InternalStrcpy(tmp, 0, s1);

@@ -1,3 +1,6 @@
+2002-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* String.cs (Concat): Reduce the number of compares required. 
 
 Mon Nov 18 17:54:22 CET 2002 Paolo Molaro <lupus@ximian.com>
 
