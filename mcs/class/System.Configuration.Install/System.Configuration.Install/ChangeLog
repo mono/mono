@@ -1,3 +1,14 @@
+2002-12-01  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+
+	* IManagedInstaller.cs,
+	  Installer.cs,
+	  InstallException.cs,
+	  ComponentInstaller.cs, 
+	  InstallContext.cs,
+	  InstallEventArgs.cs,
+	  InstallerCollection.cs,
+	  InstallEventHandler.cs: Added.
+	
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* UninstallAction.cs: Changed namespace to
 		proper System.Configuration.Install;
