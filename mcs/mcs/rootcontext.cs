@@ -279,25 +279,25 @@ namespace Mono.CSharp {
 		// have been defined through `ResolveTree' 
 		static public void PopulateTypes ()
 		{
+			TypeContainer root = Tree.Types;
+
 			if (interface_resolve_order != null)
 				foreach (Interface iface in interface_resolve_order)
-					iface.Populate ();
+					iface.Define (root);
 
 			if (type_container_resolve_order != null)
 				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.Populate ();
-
-			TypeContainer root = Tree.Types;
+					tc.Define (root);
 
 			ArrayList delegates = root.Delegates;
 			if (delegates != null)
 				foreach (Delegate d in delegates)
-					d.Populate (root);
+					d.Define (root);
 
 			ArrayList enums = root.Enums;
 			if (enums != null)
 				foreach (Enum en in enums)
-					en.Populate (root);
+					en.Define (root);
 			
 		}
 

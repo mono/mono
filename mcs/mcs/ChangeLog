@@ -1,5 +1,22 @@
 2001-12-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* decl.cs: Move MemberCore here.
+
+	Make it the base class for DeclSpace.  This allows us to catch and
+	report 108 and 109 for everything now.
+
+	* class.cs (TypeContainer.Define): Extract all the members
+	before populating and emit the warning 108 (new keyword required
+	to override) instead of having each member implement this.
+
+	(MemberCore.Define): New abstract method, we will be using this in
+	the warning reporting engine in Populate.
+	
+	(Operator.Define): Adjust to new MemberCore protocol. 
+
+	* const.cs (Const): This does not derive from Expression, it is a
+	temporary object we use to create fields, it is a MemberCore. 
+
 	* class.cs (Method.Define): Allow the entry point to be in a
 	specific class.
 

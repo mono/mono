@@ -183,4 +183,22 @@ namespace Mono.CSharp {
 			comparer = new PtrComparer ();
 		}
 	}
+
+	//
+	// Compares member infos based on their name and
+	// also allows one argument to be a string
+	//
+	class MemberInfoCompare : IComparer {
+
+		public int Compare (object a, object b)
+		{
+			if (a is string)
+				return String.Compare ((string) a, ((MemberInfo)b).Name);
+
+			if (b is string)
+				return String.Compare (((MemberInfo)a).Name, (string) b);
+			return String.Compare (((MemberInfo)a).Name, ((MemberInfo)b).Name);
+		}
+	}
+
 }

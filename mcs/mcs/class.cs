@@ -20,8 +20,6 @@ namespace Mono.CSharp {
 	///   This is the base class for structs and classes.  
 	/// </summary>
 	public class TypeContainer : DeclSpace {
-		protected int mod_flags;
-
 		// Holds a list of classes and structures
 		ArrayList types;
 
@@ -370,12 +368,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public int ModFlags {
-			get {
-				return mod_flags;
-			}
-		}
-
 		public string Base {
 			get {
 				return base_class_name;
@@ -469,7 +461,7 @@ namespace Mono.CSharp {
 		
 		public virtual TypeAttributes TypeAttr {
 			get {
-				return Modifiers.TypeAttr (mod_flags, this);
+				return Modifiers.TypeAttr (ModFlags, this);
 			}
 		}
 
@@ -937,21 +929,72 @@ namespace Mono.CSharp {
 			InTransit = false;
 			return TypeBuilder;
 		}
+
+
+		/// <summary>
+		///   Defines the MemberCore objects that are in the `list' Arraylist
+		///
+		///   The `defined_names' array contains a list of members defined in
+		///   a base class
+		/// </summary>
+		static ArrayList remove_list = new ArrayList ();
+		void DefineMembers (ArrayList list, MemberInfo [] defined_names)
+		{
+			int idx;
+			
+			remove_list.Clear ();
+
+			foreach (MemberCore mc in list){
+				if (defined_names != null){
+					idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
+					
+					if ((mc.ModFlags & Modifiers.NEW) == 0){
+						if (idx >= 0)
+							Report108 (mc.Location, defined_names [idx]);
+					} else {
+						if (RootContext.WarningLevel >= 4){
+							if (idx < 0)
+								Report109 (mc.Location, mc);
+						}
+					}
+				}
+				
+				if (!mc.Define (this))
+					remove_list.Add (mc);
+			}
+			
+			foreach (object o in remove_list)
+				list.Remove (o);
+			
+			remove_list.Clear ();
+		}
 		
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
-		public void Populate ()
+		public override bool Define (TypeContainer parent)
 		{
-			if (Constants != null){
-				foreach (Const c in Constants)
-					c.Define (this);
+			MemberInfo [] defined_names = null;
+			
+			if (RootContext.WarningLevel > 1){
+				Type ptype;
+				
+				ptype = TypeBuilder.BaseType;
+				if (ptype != null){
+					defined_names = FindMembers (
+						ptype, MemberTypes.All & ~MemberTypes.Constructor,
+						BindingFlags.Public | BindingFlags.Instance |
+						BindingFlags.Static, null, null);
+
+					Array.Sort (defined_names, mif_compare);
+				}
 			}
 
-			if (Fields != null){
-				foreach (Field f in Fields)
-					f.Define (this);
-			} 
+			if (constants != null)
+				DefineMembers (constants, defined_names);
+
+			if (fields != null)
+				DefineMembers (fields, defined_names);
 
 			if (this is Class && constructors == null){
 				if (default_constructor == null) 
@@ -976,90 +1019,51 @@ namespace Mono.CSharp {
 			}
 
 			RegisterRequiredImplementations ();
-			
-			ArrayList remove_list = new ArrayList ();
 
-			if (constructors != null){
-				foreach (Constructor c in constructors){
-					MethodBase builder = c.Define (this);
-					
-					if (builder == null)
-						remove_list.Add (c);
-				}
+			//
+			// Constructors are not in the defined_names array
+			//
+			if (constructors != null)
+				DefineMembers (constructors, null);
 
-				foreach (object o in remove_list)
-					constructors.Remove (o);
-				
-				remove_list.Clear ();
-			} 
+			if (methods != null)
+				DefineMembers (methods, defined_names);
 
-			if (Methods != null){
-				foreach (Method m in methods){
-					MethodBase key = m.Define (this);
+			if (properties != null)
+				DefineMembers (properties, defined_names);
 
-					//
-					// FIXME:
-					// The following key is not enoug
-					// class x { public void X ()  {} }
-					// class y : x { public void X () {}}
-					// fails
-					
-					if (key == null)
-						remove_list.Add (m);
-				}
-				foreach (object o in remove_list)
-					methods.Remove (o);
-				
-				remove_list.Clear ();
-			}
+			if (events != null)
+				DefineMembers (events, defined_names);
 
-			if (Properties != null) {
-				foreach (Property p in Properties){
-					if (!p.Define (this))
-						remove_list.Add (p);
-				}
-				foreach (object o in remove_list)
-					properties.Remove (o);
-
-				remove_list.Clear ();
-			}
-
-			if (Events != null) {
-				foreach (Event e in Events)
-					e.Define (this);
-			}
-
-			if (Indexers != null) {
+			//
+			// FIXME: Make Indexers MemberCores?
+			//
+			if (indexers != null) {
 				foreach (Indexer i in Indexers)
 					i.Define (this);
 			}
 
-			if (Operators != null) {
-				foreach (Operator o in Operators) 
-					o.Define (this);
-			}
+			if (operators != null)
+				DefineMembers (operators, null);
 
-			if (Enums != null)
-				foreach (Enum en in Enums)
-					en.Populate (this);
+			//
+			// FIXME: I think we want to make Enums (hence DeclSpace)
+			// a MemberCore so we can report 108 and 109 here.
+			//
+			if (enums != null)
+				DefineMembers (enums, defined_names);
 			
-			if (Delegates != null) {
-				foreach (Delegate d in Delegates) {
-					if (!d.Populate (this))
-						remove_list.Add (d);
-				}
-				foreach (object o in remove_list)
-					delegates.Remove (o);
+			if (delegates != null)
+				DefineMembers (delegates, defined_names);
 
-				remove_list.Clear ();
-			}
-			
-			if (Types != null) {
-				foreach (TypeContainer tc in Types)
-					tc.Populate ();
-			}
+			//
+			// FIXME: As above, typecontainers should be MemberCores,
+			// so DeclSpaces should be MemberCores for 108 and 109
+			//
+			if (types != null)
+				DefineMembers (types, defined_names);
 
-		
+			return true;
 		}
 
 		/// <summary>
@@ -1100,10 +1104,16 @@ namespace Mono.CSharp {
 		/// </summary>
 		static MemberFilter abstract_method_filter;
 
+		/// <summary>
+		///   A member comparission method based on name only
+		/// </summary>
+		static IComparer mif_compare;
+		
 		static TypeContainer ()
 		{
 			abstract_method_filter = new MemberFilter (IsAbstractMethod);
 			accepting_filter = new MemberFilter (AlwaysAccept);
+			mif_compare = new MemberInfoCompare ();
 		}
 		
 		/// <summary>
@@ -1111,6 +1121,10 @@ namespace Mono.CSharp {
 		///   Only, we need to use this for types which are _being_ defined because MS' 
 		///   implementation can't take care of that.
 		/// </summary>
+		//
+		// FIXME: return an empty static array instead of null, that cleans up
+		// some code and is consistent with some coding conventions I just found
+		// out existed ;-)
 		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
 						  MemberFilter filter, object criteria)
 		{
@@ -1483,6 +1497,21 @@ namespace Mono.CSharp {
 		{
 			return "`" + Name + "." + n + "'";
 		}
+
+		public void Report108 (Location l, MemberInfo mi)
+		{
+			Report.Warning (
+				108, l, "The keyword new is required on " + 
+				MakeName (mi.Name) + " because it hides `" +
+				mi.ReflectedType.Name + "." + mi.Name + "'");
+		}
+
+		public void Report109 (Location l, MemberCore mc)
+		{
+			Report.Warning (
+				109, l, "The member " + MakeName (mc.Name) + " does not hide an " +
+				"inherited member, the keyword new is not required");
+		}
 		
 		public static int CheckMember (string name, MemberInfo mi, int ModFlags)
 		{
@@ -1600,7 +1629,7 @@ namespace Mono.CSharp {
 			else
 				accmods = Modifiers.PRIVATE;
 			
-			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, accmods);
+			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods);
 			this.attributes = attrs;
 		}
 
@@ -1636,9 +1665,9 @@ namespace Mono.CSharp {
 			else
 				accmods = Modifiers.PRIVATE;
 			
-			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, accmods);
+			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods);
 
-			this.mod_flags |= Modifiers.SEALED;
+			this.ModFlags |= Modifiers.SEALED;
 			this.attributes = attrs;
 			
 		}
@@ -1658,77 +1687,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class MemberCore {
-		public string Name;
-		public int ModFlags;
-		public readonly Location Location;
-
-		public MemberCore (string name, Location loc)
-		{
-			Name = name;
-			Location = loc;
-		}
-
-		protected void WarningNotHiding (TypeContainer parent)
-		{
-			Report.Warning (
-				109, Location,
-				"The member `" + parent.Name + "." + Name + "' does not hide an " +
-				"inherited member.  The keyword new is not required");
-							   
-		}
-
-		static string MethodBaseName (MethodBase mb)
-		{
-			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
-		}
-
-		//
-		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
-		// that have been defined.
-		//
-		// `name' is the user visible name for reporting errors (this is used to
-		// provide the right name regarding method names and properties)
-		//
-		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodInfo mb)
-		{
-			bool ok = true;
-			
-			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-				Report.Warning (
-					108, Location, "The keyword new is required on " + 
-					parent.MakeName (Name) + " because it hides `" +
-					mb.ReflectedType.Name + "." +
-					mb.Name + "'");
-			}
-
-			if ((ModFlags & Modifiers.OVERRIDE) != 0){
-				if (!(mb.IsAbstract || mb.IsVirtual)){
-					Report.Error (
-						506, Location, parent.MakeName (Name) +
-						": cannot override inherited member `" +
-						mb.ReflectedType.Name + "' because it is not " +
-						"virtual, abstract or override");
-					ok = false;
-				}
-			}
-
-			if (mb.IsVirtual || mb.IsAbstract){
-				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					Report.Warning (
-						114, Location, parent.MakeName (Name) + 
-						" hides inherited member " + MethodBaseName (mb) +
-						".  To make the current member override that " +
-						"implementation, add the override keyword, " +
-						"otherwise use the new keyword");
-				}
-			}
-
-			return ok;
-		}
-	}
-	
-	public class MethodCore : MemberCore {
+	public abstract class MethodCore : MemberCore {
 		public readonly Parameters Parameters;
 		Block block;
 		
@@ -1901,7 +1860,7 @@ namespace Mono.CSharp {
 		//
 		// Creates the type
 		//
-		public MethodBuilder Define (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 			Type ret_type = GetReturnType (parent);
 			Type [] parameters = ParameterTypes (parent);
@@ -1912,23 +1871,23 @@ namespace Mono.CSharp {
 
 			// Check if the return type and arguments were correct
 			if (ret_type == null || parameters == null)
-				return null;
+				return false;
 			
 			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
-				return null;
+				return false;
 
 			//
 			// verify accessibility
 			//
 			if (!TypeContainer.AsAccessible (ret_type, ModFlags))
-				return null;
+				return false;
 
 			foreach (Type partype in parameters)
 				if (!TypeContainer.AsAccessible (partype, ModFlags))
 					error = true;
 
 			if (error)
-				return null;
+				return false;
 
 			//
 			// Verify if the parent has a type with the same name, and then
@@ -1960,7 +1919,7 @@ namespace Mono.CSharp {
 				
 				if (mi != null && mi.Length > 0){
 					if (!CheckMethodAgainstBase (parent, (MethodInfo) mi [0])){
-						return null;
+						return false;
 					}
 				} else {
 					if ((ModFlags & Modifiers.NEW) != 0)
@@ -1987,7 +1946,7 @@ namespace Mono.CSharp {
 				short_name = Name.Substring (pos + 1);
 
 				if (iface_type == null)
-					return null;
+					return false;
 
 				// Compute the full name that we need to export
 				Name = iface_type.FullName + "." + short_name;
@@ -2087,7 +2046,7 @@ namespace Mono.CSharp {
 			}
 
 			if (MethodBuilder == null)
-				return null;
+				return false;
 
 			//
 			// HACK because System.Reflection.Emit is lame
@@ -2101,7 +2060,7 @@ namespace Mono.CSharp {
 					"Class `" + parent.Name + "' already contains a definition with " +
 					" the same return value and parameter types for method `" +
 					Name + "'");
-				return null;
+				return false;
 			}
 			
 			//
@@ -2116,9 +2075,8 @@ namespace Mono.CSharp {
 				if (RootContext.EntryPoint != null){
 					DuplicatEntryPoint (MethodBuilder);
 					DuplicatEntryPoint (RootContext.EntryPoint);
-				}
-				
-				RootContext.EntryPoint = MethodBuilder;
+				} else 
+					RootContext.EntryPoint = MethodBuilder;
 				
 				//
 				// FIXME: Verify that the method signature
@@ -2154,7 +2112,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return MethodBuilder;
+			return true;
 		}
 
 		//
@@ -2329,7 +2287,7 @@ namespace Mono.CSharp {
 		//
 		// Creates the ConstructorBuilder
 		//
-		public ConstructorBuilder Define (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
@@ -2344,7 +2302,7 @@ namespace Mono.CSharp {
 						568, Location, 
 						"Structs can not contain explicit parameterless " +
 						"constructors");
-					return null;
+					return false;
 				}
 			}
 
@@ -2357,13 +2315,15 @@ namespace Mono.CSharp {
 			ParameterInfo = new InternalParameters (parent, Parameters);
 
 			if (!TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, parameters)) {
-				Report.Error (111, Location,
-					      "Class `" + parent.Name + "' already contains a definition with the " +
-					      "same return value and parameter types for constructor `" + Name + "'");
-				return null;
+				Report.Error (
+					111, Location,
+					"Class `" +parent.Name+ "' already contains a definition with the " +
+					"same return value and parameter types for constructor `" + Name
+					+ "'");
+				return false;
 			}
 				
-			return ConstructorBuilder;
+			return true;
 		}
 
 		//
@@ -2448,18 +2408,35 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		public void Define (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 			Type t = parent.LookupType (Type, false);
 
 			if (t == null)
-				return;
+				return false;
 
 			if (!TypeContainer.AsAccessible (t, ModFlags))
-				return;
+				return false;
+
+			if (RootContext.WarningLevel > 1){
+				Type ptype = parent.TypeBuilder.BaseType;
+
+				// ptype is only null for System.Object while compiling corlib.
+				if (ptype != null){
+					MemberInfo [] mi;
+					
+					mi = TypeContainer.FindMembers (
+						ptype, MemberTypes.Method,
+						BindingFlags.Public |
+						BindingFlags.Static | BindingFlags.Instance,
+						System.Type.FilterName, Name);
+				}
+			}
 			
 			FieldBuilder = parent.TypeBuilder.DefineField (
 				Name, t, Modifiers.FieldAttr (ModFlags));
+
+			return true;
 		}
 
 		public void Emit (TypeContainer tc)
@@ -2715,7 +2692,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool Define (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 			Type iface_type = null;
 			string short_name;
@@ -2869,10 +2846,10 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		public void Define (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
-				return;
+				return false;
 			
 			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
@@ -2880,15 +2857,15 @@ namespace Mono.CSharp {
 
 			EventType = parent.LookupType (Type, false);
 			if (EventType == null)
-				return;
+				return false;
 
 			if (!TypeContainer.AsAccessible (EventType, ModFlags))
-				return;
+				return false;
 			
 			if (!EventType.IsSubclassOf (TypeManager.delegate_type)) {
 				Report.Error (66, Location, "'" + parent.Name + "." + Name +
 					      "' : event must be of a delegate type");
-				return;
+				return false;
 			}
 			
 			Type [] parameters = new Type [1];
@@ -2914,7 +2891,7 @@ namespace Mono.CSharp {
 					       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types for the " +
 					       "'add' method of event `" + Name + "'");
-					return;
+					return false;
 				}
 			}
 
@@ -2937,9 +2914,10 @@ namespace Mono.CSharp {
 				       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types for the " +
 					       "'remove' method of event `" + Name + "'");
-					return;
+					return false;
 				}
 			}
+			return true;
 		}
 
 		public void Emit (TypeContainer tc)
@@ -2982,7 +2960,7 @@ namespace Mono.CSharp {
 	// 
 	// int this [ args ]
  
-	public class Indexer {
+	public class Indexer : MemberCore {
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -2998,7 +2976,6 @@ namespace Mono.CSharp {
 		public readonly string     Type;
 		public readonly string     InterfaceType;
 		public readonly Parameters FormalParameters;
-		public readonly int        ModFlags;
 		public readonly Block      Get;
 		public readonly Block      Set;
 		public Attributes          OptAttributes;
@@ -3007,10 +2984,9 @@ namespace Mono.CSharp {
 		public PropertyBuilder PropertyBuilder;
 	        public Type IndexerType;
 
-		Location Location;
-			
 		public Indexer (string type, string int_type, int flags, Parameters parms,
 				Block get_block, Block set_block, Attributes attrs, Location loc)
+			: base ("", loc)
 		{
 
 			Type = type;
@@ -3020,10 +2996,9 @@ namespace Mono.CSharp {
 			Get = get_block;
 			Set = set_block;
 			OptAttributes = attrs;
-			Location = loc;
 		}
 
-		public void Define (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
 			PropertyAttributes prop_attr =
@@ -3036,20 +3011,20 @@ namespace Mono.CSharp {
 
 			// Check if the return type and arguments were correct
 			if (IndexerType == null || parameters == null)
-				return;
+				return false;
 
 			//
 			// verify accessibility
 			//
 			if (!TypeContainer.AsAccessible (IndexerType, ModFlags))
-				return;
+				return false;
 
 			foreach (Type partype in parameters)
 				if (!TypeContainer.AsAccessible (partype, ModFlags))
 					error = true;
 
 			if (error)
-				return;
+				return false;
 			
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
 				TypeManager.IndexerPropertyName (parent.TypeBuilder),
@@ -3066,7 +3041,7 @@ namespace Mono.CSharp {
 						      "' already contains a definition with the " +
 						      "same return value and parameter types for the " +
 						      "'get' indexer");
-					return;
+					return false;
 				}
 			}
 			
@@ -3094,7 +3069,7 @@ namespace Mono.CSharp {
 					       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types for the " +
 					       "'set' indexer");
-					return;
+					return false;
 				}
 			}
 
@@ -3128,6 +3103,8 @@ namespace Mono.CSharp {
 			}
 
 			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
+
+			return true;
 		}
 
 		public void Emit (TypeContainer tc)
@@ -3174,7 +3151,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Operator {
+	public class Operator : MemberCore {
 
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
@@ -3228,17 +3205,16 @@ namespace Mono.CSharp {
 		public readonly string FirstArgName;
 		public readonly string SecondArgType;
 		public readonly string SecondArgName;
-		public readonly int    ModFlags;
 		public readonly Block  Block;
 		public Attributes      OptAttributes;
 		public MethodBuilder   OperatorMethodBuilder;
-		public Location        Location;
 		
 		public string MethodName;
 		public Method OperatorMethod;
 
 		public Operator (OpType type, string ret_type, int flags, string arg1type, string arg1name,
 				 string arg2type, string arg2name, Block block, Attributes attrs, Location loc)
+			: base ("", loc)
 		{
 			OperatorType = type;
 			ReturnType = ret_type;
@@ -3249,7 +3225,6 @@ namespace Mono.CSharp {
 			SecondArgName = arg2name;
 			Block = block;
 			OptAttributes = attrs;
-			Location = loc;
 		}
 
 		string Prototype (TypeContainer parent)
@@ -3258,7 +3233,7 @@ namespace Mono.CSharp {
 				SecondArgType + ")";
 		}
 		
-		public void Define (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 			int length = 1;
 			MethodName = "op_" + OperatorType;
@@ -3274,6 +3249,7 @@ namespace Mono.CSharp {
 					"User defined operators `" +
 					Prototype (parent) +
 					"' must be declared static and public");
+				return false;
 			}
 
 			param_list[0] = new Parameter (FirstArgType, FirstArgName,
@@ -3297,63 +3273,94 @@ namespace Mono.CSharp {
 			// Rules for conversion operators
 			
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
+				if (first_arg_type == return_type && first_arg_type == declaring_type){
+					Report.Error (
+						555, Location,
+						"User-defined conversion cannot take an object of the " +
+						"enclosing type and convert to an object of the enclosing" +
+						" type");
+					return false;
+				}
 				
-				if (first_arg_type == return_type && first_arg_type == declaring_type)
-					Report.Error (555, Location,
-					       "User-defined conversion cannot take an object of the enclosing type " +
-					       "and convert to an object of the enclosing type");
+				if (first_arg_type != declaring_type && return_type != declaring_type){
+					Report.Error (
+						556, Location, 
+						"User-defined conversion must convert to or from the " +
+						"enclosing type");
+					return false;
+				}
 				
-				if (first_arg_type != declaring_type && return_type != declaring_type)
-					Report.Error (556, Location, 
-					       "User-defined conversion must convert to or from the enclosing type");
+				if (first_arg_type == TypeManager.object_type ||
+				    return_type == TypeManager.object_type){
+					Report.Error (
+						-8, Location,
+						"User-defined conversion cannot convert to or from " +
+						"object type");
+					return false;
+				}
 				
-				if (first_arg_type == TypeManager.object_type || return_type == TypeManager.object_type)
-					Report.Error (-8, Location,
-					       "User-defined conversion cannot convert to or from object type");
+				if (first_arg_type.IsInterface || return_type.IsInterface){
+					Report.Error (
+						552, Location,
+						"User-defined conversion cannot convert to or from an " +
+						"interface type");
+					return false;
+				}
 				
-				if (first_arg_type.IsInterface || return_type.IsInterface)
-					Report.Error (552, Location,
-					       "User-defined conversion cannot convert to or from an interface type");	 
-				
-				if (first_arg_type.IsSubclassOf (return_type) || return_type.IsSubclassOf (first_arg_type))
-					Report.Error (-10, Location,
-						"User-defined conversion cannot convert between types that " +
-						"derive from each other"); 
-				
+				if (first_arg_type.IsSubclassOf (return_type) ||
+				    return_type.IsSubclassOf (first_arg_type)){
+					Report.Error (
+						-10, Location,
+						"User-defined conversion cannot convert between types " +
+						"that derive from each other");
+					return false;
+				}
 			} else if (SecondArgType == null) {
 				// Checks for Unary operators
 				
-				if (first_arg_type != declaring_type) 
-					Report.Error (562, Location,
-						   "The parameter of a unary operator must be the containing type");
-				
+				if (first_arg_type != declaring_type){
+					Report.Error (
+						562, Location,
+						"The parameter of a unary operator must be the " +
+						"containing type");
+					return false;
+				}
 				
 				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
-					if (return_type != declaring_type)
-						Report.Error (559, Location,
-						       "The parameter and return type for ++ and -- " +
-						       "must be the containing type");
+					if (return_type != declaring_type){
+						Report.Error (
+							559, Location,
+							"The parameter and return type for ++ and -- " +
+							"must be the containing type");
+						return false;
+					}
 					
 				}
 				
 				if (OperatorType == OpType.True || OperatorType == OpType.False) {
-					if (return_type != TypeManager.bool_type)
-						Report.Error (215, Location,
-						       "The return type of operator True or False " +
-						       "must be bool");
+					if (return_type != TypeManager.bool_type){
+						Report.Error (
+							215, Location,
+							"The return type of operator True or False " +
+							"must be bool");
+						return false;
+					}
 				}
 				
 			} else {
 				// Checks for Binary operators
 				
 				if (first_arg_type != declaring_type &&
-				    param_types [1] != declaring_type)
-					Report.Error (563, Location,
-					       "One of the parameters of a binary operator must be the containing type");
+				    param_types [1] != declaring_type){
+					Report.Error (
+						563, Location,
+						"One of the parameters of a binary operator must " +
+						"be the containing type");
+					return false;
+				}
 			}
 			
-		
-			
+			return true;
 		}
 		
 		public void Emit (TypeContainer parent)

@@ -13,8 +13,88 @@
 using System;
 using System.Collections;
 using System.Reflection.Emit;
+using System.Reflection;
 
 namespace Mono.CSharp {
+
+	/// <summary>
+	///   Base representation for members.  This is only used to keep track
+	///   of Name, Location and Modifier flags.
+	/// </summary>
+	public abstract class MemberCore {
+		/// <summary>
+		///   Public name
+		/// </summary>
+		public string Name;
+
+		/// <summary>
+		///   Modifier flags that the user specified in the source code
+		/// </summary>
+		public int ModFlags;
+
+		/// <summary>
+		///   Location where this declaration happens
+		/// </summary>
+		public readonly Location Location;
+
+		public MemberCore (string name, Location loc)
+		{
+			Name = name;
+			Location = loc;
+		}
+
+		protected void WarningNotHiding (TypeContainer parent)
+		{
+			Report.Warning (
+				109, Location,
+				"The member `" + parent.Name + "." + Name + "' does not hide an " +
+				"inherited member.  The keyword new is not required");
+							   
+		}
+
+		static string MethodBaseName (MethodBase mb)
+		{
+			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
+		}
+
+		//
+		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
+		// that have been defined.
+		//
+		// `name' is the user visible name for reporting errors (this is used to
+		// provide the right name regarding method names and properties)
+		//
+		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodInfo mb)
+		{
+			bool ok = true;
+			
+			if ((ModFlags & Modifiers.OVERRIDE) != 0){
+				if (!(mb.IsAbstract || mb.IsVirtual)){
+					Report.Error (
+						506, Location, parent.MakeName (Name) +
+						": cannot override inherited member `" +
+						mb.ReflectedType.Name + "' because it is not " +
+						"virtual, abstract or override");
+					ok = false;
+				}
+			}
+
+			if (mb.IsVirtual || mb.IsAbstract){
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+					Report.Warning (
+						114, Location, parent.MakeName (Name) + 
+						" hides inherited member " + MethodBaseName (mb) +
+						".  To make the current member override that " +
+						"implementation, add the override keyword, " +
+						"otherwise use the new keyword");
+				}
+			}
+
+			return ok;
+		}
+
+		public abstract bool Define (TypeContainer parent);
+	}
 
 	/// <summary>
 	///   Base class for structs, classes, enumerations and interfaces.  
@@ -24,35 +104,20 @@ namespace Mono.CSharp {
 	///   provides the common foundation for managing those name
 	///   spaces.
 	/// </remarks>
-	public abstract class DeclSpace {
+	public abstract class DeclSpace : MemberCore {
 		/// <summary>
 		///   this points to the actual definition that is being
 		///   created with System.Reflection.Emit
 		/// </summary>
 		TypeBuilder definition;
 
-		/// <summary>
-		///   Location where this declaration happens
-		/// </summary>
-		public readonly Location Location;
-		
 		//
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
 		//
-		Namespace my_namespace;
-		
-		public Namespace Namespace {
-			get {
-				return my_namespace;
-			}
+		public Namespace Namespace;
 
-			set {
-				my_namespace = value;
-			}
-		}
-
-		string name, basename;
+		public string Basename;
 		
 		/// <summary>
 		///   The result value from adding an declaration into
@@ -87,29 +152,16 @@ namespace Mono.CSharp {
 			NotAConstructor
 		}
 
-		public string Name {
-			get {
-				return name;
-			}
-		}
-
-		public string Basename {
-			get {
-				return basename;
-			}
-		}
-		
 		/// <summary>
 		///   defined_names is used for toplevel objects
 		/// </summary>
 		protected Hashtable defined_names;
 
 		public DeclSpace (string name, Location l)
+			: base (name, l)
 		{
-			this.name = name;
-			this.basename = name.Substring (1 + name.LastIndexOf ('.'));
+			Basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();
-			Location = l;
 		}
 
 		/// <summary>
@@ -118,7 +170,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected AdditionResult IsValid (string name)
 		{
-			if (name == basename)
+			if (name == Basename)
 				return AdditionResult.EnclosingClash;
 
 			if (defined_names.Contains (name))

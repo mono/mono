@@ -16,18 +16,13 @@ namespace Mono.CSharp {
 	using System.Collections;
 
 
-	public class Const : Expression {
-
-		public readonly string     Name;
-		public readonly string     ConstantType;
+	public class Const : MemberCore {
+		public readonly string ConstantType;
 		public Expression Expr;
 		public Attributes  OptAttributes;
-		
-		int mod_flags;
-		Location Location;
 		public FieldBuilder FieldBuilder;
-
 		object ConstantValue = null;
+		Type type;
 
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -38,67 +33,46 @@ namespace Mono.CSharp {
 
 		public Const (string constant_type, string name, Expression expr, int mod_flags,
 			      Attributes attrs, Location loc)
+			: base (name, loc)
 		{
-			this.ConstantType = constant_type;
-			this.Name = name;
-			this.Expr = expr;
-			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
-			this.Location = loc;
+			ConstantType = constant_type;
+			Name = name;
+			Expr = expr;
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
 			OptAttributes = attrs;
 		}
 
 		public FieldAttributes FieldAttr {
 			get {
 				return FieldAttributes.Literal | FieldAttributes.Static |
-					Modifiers.FieldAttr (mod_flags) ;
+					Modifiers.FieldAttr (ModFlags) ;
 			}
 		}
 
-		public int ModFlags {
-			get {
-				return mod_flags;
-			}
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			// FIXME: implement
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Unimplemented");
-		}
-
-		void WarningNotHiding (TypeContainer parent)
-		{
-			Report.Warning (
-				109, Location,
-				"The member `" + parent.Name + "." + Name + "' does not hide an " +
-				"inherited member.  The keyword new is not required");
-		}
-		
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>
-		public void Define (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 			type = parent.LookupType (ConstantType, true);
 
 			if (type == null)
-				return;
+				return false;
 			
-			if (!TypeManager.IsBuiltinType (type) && (!type.IsSubclassOf (TypeManager.enum_type))) {
-				Report.Error (-3, Location, "Constant type is not valid (only system types are allowed)");
-				return;
+			if (!TypeManager.IsBuiltinType (type) &&
+			    (!type.IsSubclassOf (TypeManager.enum_type))) {
+				Report.Error (
+					-3, Location,
+					"Constant type is not valid (only system types are allowed)");
+				return false;
 			}
 
 			Type ptype = parent.TypeBuilder.BaseType;
 
 			if (ptype != null) {
-				MemberInfo [] mi = TypeContainer.FindMembers (ptype, MemberTypes.Field, BindingFlags.Public,
-									      Type.FilterName, Name);
+				MemberInfo [] mi = TypeContainer.FindMembers (
+					ptype, MemberTypes.Field, BindingFlags.Public,
+					Type.FilterName, Name);
 				
 				if (mi == null || mi.Length == 0)
 					if ((ModFlags & Modifiers.NEW) != 0)
@@ -110,6 +84,8 @@ namespace Mono.CSharp {
 			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 
 			TypeManager.RegisterConstant (FieldBuilder, this);
+
+			return true;
 		}
 
 		/// <summary>

@@ -36,7 +36,6 @@ namespace Mono.CSharp {
 			MethodAttributes.Virtual;
 		
 		ArrayList bases;
-		int mod_flags;
 		
 		ArrayList defined_method;
 		ArrayList defined_indexer;
@@ -68,7 +67,7 @@ namespace Mono.CSharp {
 		public Interface (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (name, l)
 		{
-			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
 			this.parent = parent;
 			OptAttributes = attrs;
 			
@@ -163,12 +162,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public int ModFlags {
-			get {
-				return mod_flags;
-			}
-		}
-		
 		public ArrayList Bases {
 			get {
 				return bases;
@@ -193,29 +186,29 @@ namespace Mono.CSharp {
 			get {
 				TypeAttributes x = 0;
 
-				if ((mod_flags & Modifiers.PUBLIC) != 0)
+				if ((ModFlags & Modifiers.PUBLIC) != 0)
 					x |= TypeAttributes.Public;
-				else if ((mod_flags & Modifiers.PRIVATE) != 0)
+				else if ((ModFlags & Modifiers.PRIVATE) != 0)
 					x |= TypeAttributes.NotPublic;
 				
 				if (IsTopLevel == false) {
 					
-					if ((mod_flags & Modifiers.PROTECTED) != 0
-					    && (mod_flags & Modifiers.INTERNAL) != 0)
+					if ((ModFlags & Modifiers.PROTECTED) != 0
+					    && (ModFlags & Modifiers.INTERNAL) != 0)
 						x |= TypeAttributes.NestedFamORAssem;
 					
-					if ((mod_flags & Modifiers.PROTECTED) != 0)
+					if ((ModFlags & Modifiers.PROTECTED) != 0)
 						x |= TypeAttributes.NestedFamily;
 					
-					if ((mod_flags & Modifiers.INTERNAL) != 0)
+					if ((ModFlags & Modifiers.INTERNAL) != 0)
 						x |= TypeAttributes.NestedAssembly;
 					
 				}
 				
-				if ((mod_flags & Modifiers.ABSTRACT) != 0)
+				if ((ModFlags & Modifiers.ABSTRACT) != 0)
 					x |= TypeAttributes.Abstract;
 				
-				if ((mod_flags & Modifiers.SEALED) != 0)
+				if ((ModFlags & Modifiers.SEALED) != 0)
 					x |= TypeAttributes.Sealed;
 
 				return x;
@@ -661,10 +654,10 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Performs semantic analysis, and then generates the IL interfaces
 		/// </summary>
-		public void Populate ()
+		public override bool Define (TypeContainer parent)
 		{
 			if (!SemanticAnalysis ())
-				return;
+				return false;
 
 			if (defined_method != null){
 				foreach (InterfaceMethod im in defined_method)
@@ -683,6 +676,8 @@ namespace Mono.CSharp {
 			if (defined_indexer != null)
 				foreach (InterfaceIndexer ii in defined_indexer)
 					PopulateIndexer (ii);
+
+			return true;
 		}
 
 		public void CloseType ()

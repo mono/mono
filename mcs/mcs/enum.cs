@@ -23,8 +23,6 @@ namespace Mono.CSharp {
 
 		ArrayList ordered_enums;
 		public readonly string BaseType;
-		public readonly string EnumName;
-		int mod_flags;
 		public TypeBuilder EnumBuilder;
 		public Attributes  OptAttributes;
 		
@@ -38,7 +36,6 @@ namespace Mono.CSharp {
 		Hashtable member_to_value;
 		
 		ArrayList field_builders;
-		Location loc;
 		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -51,10 +48,8 @@ namespace Mono.CSharp {
 			: base (name, l)
 		{
 			this.BaseType = type;
-			this.EnumName = name;
-			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
 			OptAttributes = attrs;
-			loc = l;
 
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();
@@ -107,7 +102,7 @@ namespace Mono.CSharp {
 				else
 					attr |= TypeAttributes.NotPublic;
 				
-				EnumBuilder = builder.DefineType (EnumName, attr, TypeManager.enum_type);
+				EnumBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
 
 			} else {
 				TypeBuilder builder = (TypeBuilder) parent_builder;
@@ -117,13 +112,13 @@ namespace Mono.CSharp {
 				else
 					attr |= TypeAttributes.NestedPrivate;
 				
-				EnumBuilder = builder.DefineNestedType (EnumName, attr, TypeManager.enum_type);
+				EnumBuilder = builder.DefineNestedType (Name, attr, TypeManager.enum_type);
 			}
 
 			EnumBuilder.DefineField ("value__", UnderlyingType,
 						 FieldAttributes.Public | FieldAttributes.SpecialName);
 
-			RootContext.TypeManager.AddEnumType (EnumName, EnumBuilder, this);
+			RootContext.TypeManager.AddEnumType (Name, EnumBuilder, this);
 
 			return;
 		}
@@ -230,7 +225,7 @@ namespace Mono.CSharp {
 				return default_value;
 
 			if (!defined_names.Contains (name)) {
-				Report.Error (117, loc, "'"+ EnumName + "' does not contain a definition for '"
+				Report.Error (117, loc, "'"+ Name + "' does not contain a definition for '"
 					      + name + "'");
 				return null;
 			}
@@ -303,15 +298,15 @@ namespace Mono.CSharp {
 			return default_value;
 		}
 		
-		public void Populate (TypeContainer tc)
+		public override bool Define (TypeContainer parent)
 		{
 			//
 			// If there was an error during DefineEnum, return
 			//
 			if (EnumBuilder == null)
-				return;
+				return false;
 			
-			EmitContext ec = new EmitContext (tc, Location, null, UnderlyingType, ModFlags);
+			EmitContext ec = new EmitContext (parent, Location, null, UnderlyingType, ModFlags);
 			
 			object default_value = 0;
 			
@@ -320,7 +315,6 @@ namespace Mono.CSharp {
 
 			
 			foreach (string name in ordered_enums) {
-
 				Expression val;
 
 				//
@@ -335,7 +329,7 @@ namespace Mono.CSharp {
 					default_value = LookupEnumValue (ec, name, loc);
 
 					if (default_value == null)
-						return;
+						return true;
 
 				} else {
 					
@@ -344,14 +338,14 @@ namespace Mono.CSharp {
 					if (default_value == null) {
 					   Report.Error (543, loc, "Enumerator value for '" + name + "' is too large to " +
 							      "fit in its type");
-						return;
+						return false;
 					}
 					
 					try {
 						default_value = Convert.ChangeType (default_value, UnderlyingType);
 					} catch {
 						error31 (default_value, loc);
-						return;
+						return false;
 					}
 
 					val = Expression.Literalize (default_value, UnderlyingType);
@@ -361,17 +355,17 @@ namespace Mono.CSharp {
 					member_to_value [name] = default_value;
 					
 					if (!TypeManager.RegisterField (fb, default_value))
-						return;
+						return false;
 				}
 
 				default_value = GetNextDefaultValue (default_value);
 			}
 			
 			if (OptAttributes == null)
-				return;
+				return true;
 			
 			if (OptAttributes.AttributeSections == null)
-				return;
+				return true;
 			
 			foreach (AttributeSection asec in OptAttributes.AttributeSections) {
 				if (asec.Attributes == null)
@@ -386,6 +380,8 @@ namespace Mono.CSharp {
 					EnumBuilder.SetCustomAttribute (cb);
 				}
 			}
+
+			return true;
 		}
 		
 		//
@@ -423,12 +419,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public int ModFlags {
-			get {
-				return mod_flags;
-			}
-		}
-		
 		// indexer
 		public Expression this [string name] {
 			get {

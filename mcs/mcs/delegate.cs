@@ -20,11 +20,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Holds Delegates
 	/// </summary>
-	public class Delegate {
-
-		public readonly string Name;
+	public class Delegate : MemberCore {
 		public readonly string ReturnType;
-		public int             mod_flags;
 		public Parameters      Parameters;
 		public Attributes      OptAttributes;
 		public TypeBuilder     TypeBuilder;
@@ -40,8 +37,6 @@ namespace Mono.CSharp {
 		Expression instance_expr;
 		MethodBase delegate_method;
 	
-		Location loc;
-
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -51,13 +46,12 @@ namespace Mono.CSharp {
 
 		public Delegate (string type, int mod_flags, string name, Parameters param_list,
 				 Attributes attrs, Location loc)
+			: base (name, loc)
 		{
-			this.Name       = name;
 			this.ReturnType = type;
-			this.mod_flags  = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
+			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
 			Parameters      = param_list;
 			OptAttributes   = attrs;
-			this.loc        = loc;
 		}
 
 		public void DefineDelegate (object parent_builder)
@@ -81,7 +75,7 @@ namespace Mono.CSharp {
 			RootContext.TypeManager.AddDelegateType (Name, TypeBuilder, this);
 		}
 
-		public bool Populate (TypeContainer parent)
+		public override bool Define (TypeContainer parent)
 		{
 
 			MethodAttributes mattr;
@@ -233,7 +227,8 @@ namespace Mono.CSharp {
 		///  Verifies whether the method in question is compatible with the delegate
 		///  Returns the method itself if okay and null if not.
 		/// </summary>
-		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type, MethodBase mb, Location loc)
+		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type, MethodBase mb,
+						       Location loc)
 		{
 			ParameterData pd = Invocation.GetParameterData (mb);
 
@@ -261,8 +256,10 @@ namespace Mono.CSharp {
 			}
 
 			if (mismatch) {
-				Report.Error (123, loc, "Method '" + Invocation.FullMethodDesc (mb) + "' does not match " +
-					      "delegate '" + FullDelegateDesc (delegate_type, invoke_mb, invoke_pd) + "'");
+				Report.Error (
+					123, loc, "Method '" + Invocation.FullMethodDesc (mb) +
+					"' does not match delegate '" +
+					FullDelegateDesc (delegate_type, invoke_mb, invoke_pd) + "'");
 				return null;
 			}
 
@@ -272,8 +269,9 @@ namespace Mono.CSharp {
 				mismatch = true;
 
 			if (mismatch) {
-				Report.Error (123, loc, "Method '" + Invocation.FullMethodDesc (mb) + "' does not match " +
-					      "delegate '" + FullDelegateDesc (delegate_type, invoke_mb, invoke_pd) + "'");
+				Report.Error (123, loc, "Method '" + Invocation.FullMethodDesc (mb) +
+					      "' does not match delegate '" +
+					      FullDelegateDesc (delegate_type, invoke_mb, invoke_pd) + "'");
 				return null;
 			}
 
@@ -284,7 +282,8 @@ namespace Mono.CSharp {
 		//  Verifies whether the invocation arguments are compatible with the
 		//  delegate's target method
 		// </summary>
-		public static bool VerifyApplicability (EmitContext ec, Type delegate_type, ArrayList args, Location loc)
+		public static bool VerifyApplicability (EmitContext ec, Type delegate_type, ArrayList args,
+							Location loc)
 		{
 			int arg_count;
 
@@ -442,12 +441,6 @@ namespace Mono.CSharp {
 			TypeBuilder.CreateType ();
 		}
 		
-		public int ModFlags {
-			get {
-				return mod_flags;
-			}
-		}
-
 		public Expression InstanceExpression {
 			get {
 				return instance_expr;
