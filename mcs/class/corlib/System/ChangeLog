@@ -1,3 +1,5 @@
+2002-01-09  Duco Fijma <duco@lorentz.xs4all.nl>
+	* Guid.cs: created first version
 
 Wed Jan 9 19:35:07 CET 2002 Paolo Molaro <lupus@ximian.com>
 
