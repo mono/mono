@@ -1,2 +1,6 @@
+2004-08-19 Gert Driesen <drieseng@users.souceforge.net>
+	* SqlConnectionTest.cs: Added testcases for bug #63165.
+
 2004-08-19 Umadevi S <sumadevi@novell.com>
- 	* Added file SqlDataAdapterTest.cs - to test update method on a datatable
+ 	* Added file SqlDataAdapterTest.cs - to test update method on a 
+	datatable
