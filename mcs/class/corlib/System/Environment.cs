@@ -93,7 +93,7 @@ namespace System
 		/// </summary>
 		[MonoTODO]
 		public static int ExitCode
-		{	// TODO: find a way to implement this property
+		{	
 			get
 			{
 				throw new NotImplementedException ();
@@ -120,14 +120,26 @@ namespace System
 			get;
 		}
 
+
+		//
+		// Support methods and fields for OSVersion property
+		//
+		static OperatingSystem os;
+
+		static extern PlatformID Platform {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+		}
+
 		/// <summary>
 		/// Gets the current OS version information
 		/// </summary>
-		[MonoTODO]
 		public static OperatingSystem OSVersion {
-			get
-			{
-				return null;
+			get {
+				if (os == null)
+					os = new OperatingSystem (Platform, new Version (5,1,2600,0));
+
+				return os;
 			}
 		}
 

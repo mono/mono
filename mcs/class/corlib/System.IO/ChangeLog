@@ -1,3 +1,14 @@
+2002-08-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* Path.cs (GetDirectoryName): Fix for filenames with size = 1
+
+	* File.cs: Removed all references that threw exceptions when the
+	paths contains a colon, as this is a valid part of an identifier
+	on Unix.
+
+	Everywhere: The String.Empty return from GetDirectoryName means
+	that there is no directory information about the path.
+
 2002-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileNotFoundException.cs: use Message and InnerException from base

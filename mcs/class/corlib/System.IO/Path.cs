@@ -104,7 +104,7 @@ namespace System.IO
 				CheckArgument.WhitespaceOnly (path);
 				CheckArgument.PathChars (path);
 
-				if (path.Length > 2)
+				if (path.Length > 0)
 				{
 					int nLast = path.LastIndexOfAny (PathSeparatorChars);
 
@@ -112,7 +112,7 @@ namespace System.IO
 						return path.Substring (0, nLast);
 					else
 						return String.Empty;
-				}
+				} 
 			}
 			return path;
 		}

@@ -45,18 +45,13 @@ namespace System.IO
 				throw new ArgumentException ("src");
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("dest");
-			if (src.IndexOf(':') > 1)
-				throw new NotSupportedException("src");
-			if (dest.IndexOf(':') > 1)
-				throw new NotSupportedException("dest");
-			if (!Exists (src)) {
+			if (!Exists (src))
 				throw new FileNotFoundException (src + " does not exist");
+
+			if ((GetAttributes(src) & FileAttributes.Directory) == FileAttributes.Directory){
+				throw new ArgumentException(src + " is a directory");
 			}
-			else {
-				if ((GetAttributes(src) & FileAttributes.Directory) == FileAttributes.Directory){
-					throw new ArgumentException(src + " is a directory");	
-				}
-			}
+			
 			if (Exists (dest)) {
 				if ((GetAttributes(dest) & FileAttributes.Directory) == FileAttributes.Directory){
 					throw new ArgumentException(dest + " is a directory");	
@@ -66,7 +61,7 @@ namespace System.IO
 			}
 
 			string DirName = Path.GetDirectoryName(dest);
-			if (!Directory.Exists (DirName))
+			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 
 			if (!MonoIO.CopyFile (src, dest, overwrite))
@@ -84,8 +79,6 @@ namespace System.IO
 				throw new ArgumentNullException("path");
 			if (String.Empty == path.Trim() || path.IndexOfAny(Path.InvalidPathChars) >= 0)
 				throw new ArgumentException("path");
-			if (path.IndexOf(':') > 1)
-				throw new NotSupportedException();
 
 			string DirName = Path.GetDirectoryName(path);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
@@ -115,13 +108,11 @@ namespace System.IO
 				throw new ArgumentNullException("path");
 			if (String.Empty == path.Trim() || path.IndexOfAny(Path.InvalidPathChars) >= 0)
 				throw new ArgumentException("path");
-			if (path.IndexOf(':') > 1)
-				throw new NotSupportedException();
 			if (Directory.Exists (path))
 				throw new UnauthorizedAccessException("path is a directory");
 
 			string DirName = Path.GetDirectoryName(path);
-			if (DirName.Length > 0 && !Directory.Exists (DirName))
+			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 
 			if (!MonoIO.DeleteFile (path)){
@@ -137,8 +128,7 @@ namespace System.IO
 			// is any problem with the path or permissions.  Minimizes what information can be
 			// discovered by using this method.
 			if (null == path || String.Empty == path.Trim() 
-				|| path.IndexOfAny(Path.InvalidPathChars) >= 0
-				|| path.IndexOf(':') > 1)
+			    || path.IndexOfAny(Path.InvalidPathChars) >= 0)
 				return false;
 
 			return MonoIO.ExistsFile (path);
@@ -150,12 +140,6 @@ namespace System.IO
 				throw new ArgumentNullException("path");
 			if (String.Empty == path.Trim() || path.IndexOfAny(Path.InvalidPathChars) >= 0)
 				throw new ArgumentException("path");
-			if (path.IndexOf(':') > 1)
-				throw new NotSupportedException();
-
-			string DirName = Path.GetDirectoryName(path);
-			if (!Directory.Exists(DirName))
-				throw new DirectoryNotFoundException("Directory '" + DirName + "' not found in '" + Environment.CurrentDirectory + "'.");
 
 			return MonoIO.GetFileAttributes (path);
 		}
@@ -194,10 +178,6 @@ namespace System.IO
 				throw new ArgumentException ("src");
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("dest");
-			if (src.IndexOf(':') > 1)
-				throw new NotSupportedException("src");
-			if (dest.IndexOf(':') > 1)
-				throw new NotSupportedException("dest");
 			if (!Exists (src))
 				throw new FileNotFoundException (src + " does not exist");
 			if (Exists (dest) && ((GetAttributes(dest) & FileAttributes.Directory) == FileAttributes.Directory))
@@ -205,10 +185,10 @@ namespace System.IO
 
 			string DirName;
 			DirName = Path.GetDirectoryName(src);
-			if (!Directory.Exists (DirName))
+			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Source directory not found: " + DirName);
 			DirName = Path.GetDirectoryName(dest);
-			if (!Directory.Exists (DirName))
+			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 
 			if (!MonoIO.MoveFile (src, dest))
