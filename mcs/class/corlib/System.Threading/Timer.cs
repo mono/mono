@@ -128,6 +128,9 @@ namespace System.Threading
 						wait.Reset ();
 						signaled = wait.WaitOne (period, false);
 
+						if (aborted)
+							break;
+
 						if (!signaled) {
 							callback (state);
 						} else if (!WaitForDueTime ()) {

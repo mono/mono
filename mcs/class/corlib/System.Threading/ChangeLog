@@ -1,3 +1,8 @@
+2004-09-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Timer.cs: don't invoke the callback twice when the timer changes.
+	Fixes bug #66116.
+
 2004-09-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* Interlocked.cs: Class is static in NET_2_0.
