@@ -1,6 +1,6 @@
 VERSION=0.13.99
 
-DIRS=jay nant mcs class mbas nunit nunit20 monoresgen ilasm tools
+DIRS=jay nant mcs class nunit nunit20 monoresgen ilasm tools
 INSTALL= /usr/bin/install
 
 all: 
