@@ -1,3 +1,9 @@
+2002-05-09  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlTypes/SqlDecimal.cs: Implementations of 
+	addition, subtraction, and multiplication for the
+	SqlDecimal type, as well as modification of some other
+	operations.  More to come on this one.
+
 2002-05-08  Rodrigo Moya <rodrigo@ximian.com>
 
 	* Test/System.Data_test.build: excluded TestDataColumn, which
