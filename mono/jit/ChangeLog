@@ -1,3 +1,8 @@
+2002-03-13  Martin Baulig  <martin@gnome.org>
+
+	* debug-stabs.c, debug-dwarf2.c: New files containing my new
+	debugging code. They're now in CVS, but not yet used anywhere.
+
 2002-03-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (mono_delegate_ctor): use C impl. instead of x86_*
