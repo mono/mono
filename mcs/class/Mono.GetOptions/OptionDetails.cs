@@ -28,13 +28,14 @@ namespace Mono.GetOptions
 
 	internal class OptionDetails : IComparable
 	{
-		public char ShortForm;
+		public string ShortForm;
 		public string LongForm;
 		public string AlternateForm;
 		public string ShortDescription;
 		public bool NeedsParameter;
 		public int MaxOccurs; // negative means there is no limit
 		public int Occurs;
+		public bool BooleanOption;
 		public Options OptionBundle;
 		public MemberInfo MemberInfo;
 		public ArrayList Values;
@@ -74,6 +75,7 @@ namespace Mono.GetOptions
 			// TODO: Yet not that good
 			string shortPrefix;
 			string longPrefix;
+			bool hasLongForm = (this.LongForm != null && this.LongForm != string.Empty);
 			if(this.OptionBundle.ParsingMode == Mono.GetOptions.OptionsParsingMode.Windows)
 			{
 				shortPrefix = "/";
@@ -85,11 +87,11 @@ namespace Mono.GetOptions
 				longPrefix = "--";
 			}
 			optionHelp = "  ";
-			optionHelp += (this.ShortForm != ' ') ? shortPrefix+this.ShortForm+" " : "   ";
-			optionHelp += (this.LongForm != string.Empty && this.LongForm != null) ? longPrefix+this.LongForm : "";
+			optionHelp += (this.ShortForm != string.Empty) ? shortPrefix+this.ShortForm+" " : "   ";
+			optionHelp += hasLongForm ? longPrefix+this.LongForm : "";
 			if (NeedsParameter)
 			{
-				if (this.LongForm != string.Empty && this.LongForm != null)
+				if (hasLongForm)
 					optionHelp += ":"; 
 				optionHelp += ParamName; 
 			}
@@ -125,12 +127,13 @@ namespace Mono.GetOptions
 
 		public OptionDetails(MemberInfo memberInfo, OptionAttribute option, Options optionBundle)
 		{
-			this.ShortForm = option.ShortForm;
+			this.ShortForm = ("" + option.ShortForm).Trim();
 			this.LongForm = (option.LongForm == string.Empty)? memberInfo.Name:option.LongForm;
 			this.AlternateForm = option.AlternateForm;
 			this.ShortDescription = option.ShortDescription;
 			this.Occurs = 0;
 			this.OptionBundle = optionBundle; 
+			this.BooleanOption = false;
 			this.MemberInfo = memberInfo;
 			this.NeedsParameter = false;
 			this.Values = null;
@@ -166,6 +169,7 @@ namespace Mono.GetOptions
 				}
 				else
 				{
+					this.BooleanOption = true;
 					if (option.MaxOccurs != 1)
 					{			
 						if (this.MemberInfo is MethodInfo || this.MemberInfo is PropertyInfo)
@@ -180,7 +184,7 @@ namespace Mono.GetOptions
 
 		internal string Key
 		{
-			get { return ((this.ShortForm != ' ') ? this.ShortForm + "" : "") + this.LongForm; }
+			get { return this.ShortForm + this.LongForm; }
 		}
 
 		int IComparable.CompareTo(object other)
@@ -217,7 +221,7 @@ namespace Mono.GetOptions
 				throw new IndexOutOfRangeException("Option " + ShortForm + " can be used at most " + MaxOccurs + " times");
 		}
 
-		private void DoIt()
+		private void DoIt(bool setValue)
 		{
 			if (!NeedsParameter)
 			{
@@ -228,12 +232,12 @@ namespace Mono.GetOptions
 
 				if (MemberInfo is FieldInfo)
 				{
-					((FieldInfo)MemberInfo).SetValue(OptionBundle, true);
+					((FieldInfo)MemberInfo).SetValue(OptionBundle, setValue);
 					return;
 				}
 				if (MemberInfo is PropertyInfo)
 				{
-					((PropertyInfo)MemberInfo).SetValue(OptionBundle, true, null);
+					((PropertyInfo)MemberInfo).SetValue(OptionBundle, setValue, null);
 					return;
 				}
 				if ((WhatToDoNext)((MethodInfo)MemberInfo).Invoke(OptionBundle, null) == WhatToDoNext.AbandonProgram)
@@ -287,17 +291,12 @@ namespace Mono.GetOptions
 			}
 		}
 
-		private bool StartsLikeAnOption(string arg)
-		{
-			return (arg != null && arg[0] == '-');
-		}
-
 		private bool IsThisOption(string arg)
 		{
-			if (StartsLikeAnOption(arg))
+			if (arg != null && arg != string.Empty)
 			{
-				arg = arg.TrimStart('-');
-				return (arg == "" + ShortForm || arg == LongForm || arg == AlternateForm);
+				arg = arg.TrimStart('-', '/');				
+				return (arg == ShortForm || arg == LongForm || arg == AlternateForm);
 			}
 			return false;
 		}
@@ -308,27 +307,19 @@ namespace Mono.GetOptions
 			{
 				if (!NeedsParameter)
 				{
-					DoIt();
+					DoIt(true); // in preparation for vbc-like booleans
 					return OptionProcessingResult.OptionAlone;
 				}
 				else
 				{
-					if (StartsLikeAnOption(nextArg))
-					{
-						DoIt(null);
-						return OptionProcessingResult.OptionAlone;
-					}
-					else
-					{
-						DoIt(nextArg);
-						return OptionProcessingResult.OptionConsumedParameter;
-					}
+					DoIt(nextArg);
+					return OptionProcessingResult.OptionConsumedParameter;
 				}
 			}
 
 			if (IsThisOption(arg + ":" + nextArg))
 			{
-				DoIt();
+				DoIt(true);
 				return OptionProcessingResult.OptionConsumedParameter;
 			}
 

@@ -49,6 +49,12 @@ namespace Mono.GetOptions
 		private ArrayList argumentsTail = new ArrayList();
 		private MethodInfo argumentProcessor = null;
 
+		internal bool MaybeAnOption(string arg)
+		{
+			return 	((parsingMode & OptionsParsingMode.Windows) > 0 && arg[0] == '/') || 
+					((parsingMode & OptionsParsingMode.Linux)   > 0 && arg[0] == '-');
+		}
+
 		public string Usage
 		{
 			get
@@ -217,7 +223,7 @@ namespace Mono.GetOptions
 			Console.WriteLine(Usage);
 			Console.Write("Short Options: ");
 			foreach (OptionDetails option in list)
-				Console.Write((option.ShortForm != ' ') ? option.ShortForm.ToString() : "");
+				Console.Write(option.ShortForm.Trim());
 			Console.WriteLine();
 			
 		}
@@ -304,35 +310,19 @@ namespace Mono.GetOptions
 							continue;
 						}
 
-						if (arg[0] == '/')
+						if ((parsingMode & OptionsParsingMode.Linux) > 0 && 
+							 arg[0] == '-' && arg[1] != '-' &&
+							 breakSingleDashManyLettersIntoManyOptions)
 						{
-							if ((parsingMode & OptionsParsingMode.Windows) > 0)
-							{
-								string newArg = '-' + arg.TrimStart('/');
-								result.AddRange(newArg.Split(':'));
-								continue;
-							}
+							foreach(char c in arg.Substring(1)) // many single-letter options
+								result.Add("-" + c); // expand into individualized options
+							continue;
 						}
 
-						if ((parsingMode & OptionsParsingMode.Linux) > 0)
+						if (MaybeAnOption(arg))
 						{
-							if ((arg[0] == '-') && (arg[1] != '-'))
-							{
-								if (breakSingleDashManyLettersIntoManyOptions)
-								{
-									foreach(char c in arg.Substring(1)) // many single-letter options
-										result.Add("-" + c); // expand into individualized options
-								}
-								else
-									result.Add(arg);
-								continue;
-							}
-
-							if (arg.StartsWith("--"))
-							{
-								result.AddRange(arg.Split('='));  // put in the same form of one-letter options with a parameter
-								continue;
-							}
+							result.AddRange(arg.Split(':','='));
+							continue;
 						}
 					}
 					else
@@ -372,7 +362,7 @@ namespace Mono.GetOptions
 
 					OptionWasProcessed = false;
 
-					if (arg.StartsWith("-"))
+					if (arg.StartsWith("-") || arg.StartsWith("/"))
 					{
 						foreach(OptionDetails option in list)
 						{
