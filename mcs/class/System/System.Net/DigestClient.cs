@@ -334,7 +334,7 @@ namespace System.Net
 				return null;
 	
 			string header = challenge.Trim ();
-			if (!header.ToLower ().IndexOf ("digest"))
+			if (header.ToLower ().IndexOf ("digest") == -1)
 				return null;
 
 			HttpWebRequest request = webRequest as HttpWebRequest;
