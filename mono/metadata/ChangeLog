@@ -1,5 +1,7 @@
 2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tabledefs.h (MANIFEST_RESOURCE_VISIBILITY_MASK): Add flags for ManifestResource.
+
 	* loader.c (mono_lookup_pinvoke_call): Correct the search order used for different CharSet
 	values.
 
