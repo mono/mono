@@ -1,8 +1,12 @@
+2003-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ObjectHandle.cs: simplified and fix InitializeLifetimeService.
+
 2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* RemotingServices.cs: Collect value of parameters with the Out flag into
-	  the return message. Also set and reset CallContext. 
-	  Added method UpdateOutArgObject.
+	* RemotingServices.cs: Collect value of parameters with the Out flag
+	into the return message. Also set and reset CallContext.  Added method
+	UpdateOutArgObject.
 
 2003-08-25  Lluis Sanchez Gual <lluis@ximian.com>
 
