@@ -84,7 +84,7 @@ namespace System {
 					       false,  bufferSize);
 		}
 
-		public static void setError (TextWriter newError)
+		public static void SetError (TextWriter newError)
 		{
 			if (newError == null)
 				throw new ArgumentNullException ();
@@ -92,7 +92,7 @@ namespace System {
 			stderr = newError;
 		}
 
-		public static void setIn (TextReader newIn)
+		public static void SetIn (TextReader newIn)
 		{
 			if (newIn == null)
 				throw new ArgumentNullException ();
@@ -100,7 +100,7 @@ namespace System {
 			stdin = newIn;
 		}
 
-		public static void setOut (TextWriter newOut)
+		public static void SetOut (TextWriter newOut)
 		{
 			if (newOut == null)
 				throw new ArgumentNullException ();
