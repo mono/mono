@@ -112,24 +112,8 @@ namespace System
 
 			userEscaped = dontEscape;
 
-			this.scheme = baseUri.scheme;
-			this.host = baseUri.host;
-			this.port = baseUri.port;
-			this.userinfo = baseUri.userinfo;
-			this.isUnc = baseUri.isUnc;
-			this.isWindowsFilePath = baseUri.isWindowsFilePath;
-			this.isUnixFilePath = baseUri.isUnixFilePath;
-			this.isOpaquePart = baseUri.isOpaquePart;
-
 			if (relativeUri == null)
 				throw new NullReferenceException ("relativeUri");
-
-			if (relativeUri == String.Empty) {
-				this.path = baseUri.path;
-				this.query = baseUri.query;
-				this.fragment = baseUri.fragment;
-				return;
-			}
 
 			int pos = relativeUri.IndexOf (':');
 			if (pos != -1) {
@@ -149,6 +133,22 @@ namespace System
 				}
 			}
 
+			this.scheme = baseUri.scheme;
+			this.host = baseUri.host;
+			this.port = baseUri.port;
+			this.userinfo = baseUri.userinfo;
+			this.isUnc = baseUri.isUnc;
+			this.isWindowsFilePath = baseUri.isWindowsFilePath;
+			this.isUnixFilePath = baseUri.isUnixFilePath;
+			this.isOpaquePart = baseUri.isOpaquePart;
+
+			if (relativeUri == String.Empty) {
+				this.path = baseUri.path;
+				this.query = baseUri.query;
+				this.fragment = baseUri.fragment;
+				return;
+			}
+			
 			// 8 fragment
 			pos = relativeUri.IndexOf ('#');
 			if (pos != -1) {

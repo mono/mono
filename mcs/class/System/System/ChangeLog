@@ -1,3 +1,9 @@
+2004-02-11  Jackson Harper  <jackson@ximian.com>
+
+	* Uri.cs: If the relative uri passed to Uri (base_uri,
+	relative_uri) is an absolute uri do not combine the uris. The base
+	uri is dropped.
+	
 2004-02-10  Jackson Harper  <jackson@ximian.com>
 
 	* Uri.cs: Preserve the trailing / if there is one when reducing
