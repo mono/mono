@@ -591,7 +591,6 @@ namespace System
 		static int DoBinarySearch (Array array, int index, int length, object value, IComparer comparer)
 		{
 			// cache this in case we need it
-			IComparable valueCompare = value as IComparable;
 			if (comparer == null)
 				comparer = Comparer.Default;
 

@@ -1,3 +1,7 @@
+2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Array.cs (DoBinarySearch): Fix a warning.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump corlib version.
