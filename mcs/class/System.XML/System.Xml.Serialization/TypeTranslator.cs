@@ -66,7 +66,7 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("gYearMonth", new TypeData (typeof (string), "gYearMonth", true));
 			primitiveTypes.Add ("month", new TypeData (typeof (DateTime), "month", true));
 			primitiveTypes.Add ("NMTOKEN", new TypeData (typeof (string), "NMTOKEN", true));
-			primitiveTypes.Add ("NMTOKENS", new TypeData (typeof (string[]), "NMTOKENS", true));
+			primitiveTypes.Add ("NMTOKENS", new TypeData (typeof (string), "NMTOKENS", true));
 			primitiveTypes.Add ("Name", new TypeData (typeof (string), "Name", true));
 			primitiveTypes.Add ("NCName", new TypeData (typeof (string), "NCName", true));
 			primitiveTypes.Add ("language", new TypeData (typeof (string), "language", true));
@@ -75,12 +75,12 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("nonPositiveInteger", new TypeData (typeof (string), "nonPositiveInteger", true));
 			primitiveTypes.Add ("negativeInteger", new TypeData (typeof (string), "negativeInteger", true));
 			primitiveTypes.Add ("nonNegativeInteger", new TypeData (typeof (string), "nonNegativeInteger", true));
-			primitiveTypes.Add ("ENTITIES", new TypeData (typeof (string[]), "ENTITIES", true));
+			primitiveTypes.Add ("ENTITIES", new TypeData (typeof (string), "ENTITIES", true));
 			primitiveTypes.Add ("ENTITY", new TypeData (typeof (string), "ENTITY", true));
 			primitiveTypes.Add ("hexBinary", new TypeData (typeof (byte[]), "hexBinary", true));
 			primitiveTypes.Add ("ID", new TypeData (typeof (string), "ID", true));
 			primitiveTypes.Add ("IDREF", new TypeData (typeof (string), "IDREF", true));
-			primitiveTypes.Add ("IDREFS", new TypeData (typeof (string[]), "IDREFS", true));
+			primitiveTypes.Add ("IDREFS", new TypeData (typeof (string), "IDREFS", true));
 			primitiveTypes.Add ("NOTATION", new TypeData (typeof (string), "NOTATION", true));
 			primitiveTypes.Add ("token", new TypeData (typeof (string), "token", true));
 			primitiveTypes.Add ("normalizedString", new TypeData (typeof (string), "normalizedString", true));

@@ -27,7 +27,10 @@ namespace System.Xml.Serialization {
 
 		static readonly string errSimple = "Cannot serialize object of type '{0}'. Base " +
 			"type '{1}' has simpleContent and can be only extended by adding XmlAttribute " +
-			"elements. Please consider changing XmlTextMember of the base class to string array";
+			"elements. Please consider changing XmlText member of the base class to string array";
+
+		static readonly string errSimple2 = "Cannot serialize object of type '{0}'. " +
+			"Consider changing type of XmlText member '{1}' from '{2}' to string or string array";
 
 		#region Constructors
 
@@ -242,8 +245,10 @@ namespace System.Xml.Serialization {
 			{
 				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, root, defaultNamespace);
 				
-				if (type.BaseType != typeof (object))
+				if (type.BaseType != typeof (object)) {
 					map.BaseMap = bmap;
+					classMap.SetCanBeSimpleType (false);
+				}
 				
 				// At this point, derived classes of this map must be already registered
 				
@@ -251,6 +256,16 @@ namespace System.Xml.Serialization {
 				
 				if (((ClassMap)bmap.ObjectMap).HasSimpleContent && classMap.ElementMembers != null && classMap.ElementMembers.Count != 1)
 					throw new InvalidOperationException (String.Format (errSimple, map.TypeData.TypeName, map.BaseMap.TypeData.TypeName));
+			}
+			
+			if (classMap.XmlTextCollector != null && !classMap.HasSimpleContent)
+			{
+				XmlTypeMapMember mem = classMap.XmlTextCollector;
+				if (mem.TypeData.Type != typeof(string) && 
+				   mem.TypeData.Type != typeof(string[]) && 
+				   mem.TypeData.Type != typeof(XmlNode[]))
+				   
+					throw new InvalidOperationException (String.Format (errSimple2, map.TypeData.TypeName, mem.Name, mem.TypeData.TypeName));
 			}
 			
 			return map;
@@ -632,6 +647,8 @@ namespace System.Xml.Serialization {
 					elem.Namespace = (atts.XmlArray != null && atts.XmlArray.Namespace != null) ? atts.XmlArray.Namespace : defaultNamespace;
 					elem.MappedType = ImportListMapping (rmember.MemberType, null, elem.Namespace, atts, 0);
 					elem.IsNullable = (atts.XmlArray != null) ? atts.XmlArray.IsNullable : false;
+					elem.Form = (atts.XmlArray != null) ? atts.XmlArray.Form : XmlSchemaForm.Qualified;
+
 					member.ElementInfo.Add (elem);
 					mapMember = member;
 				}

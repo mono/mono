@@ -245,13 +245,21 @@ namespace System.Xml.Serialization {
 			codeField.Attributes = MemberAttributes.Public;
 			codeClass.Members.Add (codeField);
 			
-			GenerateArrayElement (codeField, member, defaultNamespace);
+			CodeAttributeDeclarationCollection attributes = new CodeAttributeDeclarationCollection ();
+			AddArrayAttributes (attributes, member, defaultNamespace, false);
 
 			ListMap listMap = (ListMap) member.ListTypeMapping.ObjectMap;
-			AddArrayItemAttributes (codeField, listMap, member.TypeData.ListItemTypeData, defaultNamespace, 0);
+			AddArrayItemAttributes (attributes, listMap, member.TypeData.ListItemTypeData, defaultNamespace, 0);
+			
+			if (attributes.Count > 0) codeField.CustomAttributes = attributes;
 		}
 
-		void AddArrayItemAttributes (CodeMemberField codeField, ListMap listMap, TypeData type, string defaultNamespace, int nestingLevel)
+		public void AddArrayAttributes (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, string defaultNamespace, bool forceUseMemberName)
+		{
+			GenerateArrayElement (attributes, member, defaultNamespace, forceUseMemberName);
+		}
+
+		public void AddArrayItemAttributes (CodeAttributeDeclarationCollection attributes, ListMap listMap, TypeData type, string defaultNamespace, int nestingLevel)
 		{
 			foreach (XmlTypeMapElementInfo ainfo in listMap.ItemInfo)
 			{
@@ -259,14 +267,14 @@ namespace System.Xml.Serialization {
 				if (ainfo.MappedType != null) defaultName = ainfo.MappedType.ElementName;
 				else defaultName = ainfo.TypeData.XmlType;
 
-				GenerateArrayItemAttributes (codeField, listMap, type, ainfo, defaultName, defaultNamespace, nestingLevel);
+				GenerateArrayItemAttributes (attributes, listMap, type, ainfo, defaultName, defaultNamespace, nestingLevel);
 				if (ainfo.MappedType != null) ExportMapCode (ainfo.MappedType);
 			}
 
 			if (listMap.IsMultiArray)
 			{
 				XmlTypeMapping nmap = listMap.NestedArrayMapping;
-				AddArrayItemAttributes (codeField, (ListMap) nmap.ObjectMap, nmap.TypeData.ListItemTypeData, defaultNamespace, nestingLevel + 1);
+				AddArrayItemAttributes (attributes, (ListMap) nmap.ObjectMap, nmap.TypeData.ListItemTypeData, defaultNamespace, nestingLevel + 1);
 			}
 		}
 		
@@ -371,7 +379,7 @@ namespace System.Xml.Serialization {
 			return new CodeAttributeArgument (name, new CodeTypeOfExpression(typeName));
 		}
 
-		public CodeAttributeArgument GetEnumArg (string name, string enumType, string enumValue)
+		public static CodeAttributeArgument GetEnumArg (string name, string enumType, string enumValue)
 		{
 			return new CodeAttributeArgument (name, new CodeFieldReferenceExpression (new CodeTypeReferenceExpression(enumType), enumValue));
 		}
@@ -420,11 +428,11 @@ namespace System.Xml.Serialization {
 		{
 		}
 		
-		protected virtual void GenerateArrayElement (CodeMemberField codeField, XmlTypeMapMemberElement member, string defaultNamespace)
+		protected virtual void GenerateArrayElement (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, string defaultNamespace, bool forceUseMemberName)
 		{
 		}
 		
-		protected virtual void GenerateArrayItemAttributes (CodeMemberField codeField, ListMap listMap, TypeData type, XmlTypeMapElementInfo ainfo, string defaultName, string defaultNamespace, int nestingLevel)
+		protected virtual void GenerateArrayItemAttributes (CodeAttributeDeclarationCollection attributes, ListMap listMap, TypeData type, XmlTypeMapElementInfo ainfo, string defaultName, string defaultNamespace, int nestingLevel)
 		{
 		}
 

@@ -145,6 +145,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapMemberNamespaces _namespaceDeclarations;
 		XmlTypeMapMember _xmlTextCollector;
 		bool _ignoreMemberNamespace;
+		bool _canBeSimpleType = true;
 
 		public void AddMember (XmlTypeMapMember member)
 		{
@@ -311,15 +312,20 @@ namespace System.Xml.Serialization
 		{
 			get
 			{
-				if (_elementMembers == null || _elementMembers.Count != 1) return null;
+				if (!_canBeSimpleType || _elementMembers == null || _elementMembers.Count != 1) return null;
 				XmlTypeMapMemberElement member = (XmlTypeMapMemberElement) _elementMembers[0];
 				if (member.ElementInfo.Count != 1) return null;
 				XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) member.ElementInfo[0];
 				if (!einfo.IsTextElement) return null;
-				if (einfo.TypeData.SchemaType == SchemaTypes.Primitive || einfo.TypeData.SchemaType == SchemaTypes.Enum)
+				if (member.TypeData.SchemaType == SchemaTypes.Primitive || member.TypeData.SchemaType == SchemaTypes.Enum)
 					return new XmlQualifiedName (einfo.TypeData.XmlType, einfo.DataTypeNamespace);
 				return null;
 			}
+		}
+		
+		public void SetCanBeSimpleType (bool can)
+		{
+			_canBeSimpleType = can;
 		}
 
 		public bool HasSimpleContent

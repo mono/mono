@@ -8,6 +8,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Xml.Schema;
+
 namespace System.Xml.Serialization 
 {
 	public class XmlMemberMapping {
@@ -17,6 +19,7 @@ namespace System.Xml.Serialization
 		string _memberName;
 		string _namespace;
 		string _typeNamespace;
+		XmlSchemaForm _form;
 
 		internal XmlMemberMapping (string memberName, string defaultNamespace, XmlTypeMapMember mapMem, bool encodedFormat)
 		{
@@ -47,6 +50,7 @@ namespace System.Xml.Serialization
 					_namespace = info.Namespace;
 					if (info.MappedType != null) _typeNamespace = info.MappedType.Namespace;
 					else _typeNamespace = "";
+					_form = info.Form;
 				}
 			}
 			else
@@ -54,6 +58,9 @@ namespace System.Xml.Serialization
 				_elementName = _memberName;
 				_namespace = "";
 			}
+			
+			if (_form == XmlSchemaForm.None) 
+				_form = XmlSchemaForm.Qualified;
 		}
 
 		#region Properties
@@ -88,6 +95,10 @@ namespace System.Xml.Serialization
 
 		internal XmlTypeMapMember TypeMapMember {
 			get { return _mapMember; }
+		}
+		
+		internal XmlSchemaForm Form {
+			get { return _form; }
 		}
 
 		#endregion // Properties

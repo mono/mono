@@ -90,10 +90,12 @@ namespace System.Xml.Serialization {
 			else if (memType.SchemaType == SchemaTypes.Array)
 			{
 				// Array parameter
-				att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlArray");
-				if (forceUseMemberName || (member.ElementName != member.MemberName)) att.Arguments.Add (MapCodeGenerator.GetArg ("ElementName", member.ElementName));
-				if (member.Namespace != ns) att.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", member.Namespace));
-				if (att.Arguments.Count > 0) metadata.Add (att);
+				
+				XmlTypeMapMemberList list = member.TypeMapMember as XmlTypeMapMemberList;
+				ListMap listMap = (ListMap) list.ListTypeMapping.ObjectMap;
+				
+				codeGenerator.AddArrayAttributes (metadata, list, ns, forceUseMemberName);
+				codeGenerator.AddArrayItemAttributes (metadata, listMap, memType.ListItemTypeData, list.Namespace, 0);
 			}
 			else if (!member.Any)
 			{
@@ -101,6 +103,7 @@ namespace System.Xml.Serialization {
 				if (forceUseMemberName || (member.ElementName != member.MemberName)) att.Arguments.Add (MapCodeGenerator.GetArg ("ElementName", member.ElementName));
 				if (member.Namespace != ns) att.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", member.Namespace));
 				if (!TypeTranslator.IsDefaultPrimitiveTpeData (memType)) att.Arguments.Add (MapCodeGenerator.GetArg ("DataType", member.TypeName));
+				if (member.Form == XmlSchemaForm.Unqualified) att.Arguments.Add (MapCodeGenerator.GetEnumArg ("Form", "System.Xml.Schema.XmlSchemaForm", member.Form.ToString()));
 				if (att.Arguments.Count > 0) metadata.Add (att);
 			}
 		}
@@ -172,6 +175,7 @@ namespace System.Xml.Serialization {
 			if (einfo.ElementName != member.Name) att.Arguments.Add (GetArg (einfo.ElementName));
 			if (einfo.TypeData.FullTypeName != defaultType.FullTypeName) att.Arguments.Add (GetTypeArg ("Type", einfo.TypeData.FullTypeName));
 			if (einfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", einfo.Namespace));
+			if (einfo.Form == XmlSchemaForm.Unqualified) att.Arguments.Add (GetEnumArg ("Form", "System.Xml.Schema.XmlSchemaForm", einfo.Form.ToString()));
 			if (einfo.IsNullable) att.Arguments.Add (GetArg ("IsNullable", true));
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(einfo.TypeData)) att.Arguments.Add (GetArg ("DataType",einfo.TypeData.XmlType));
 			AddCustomAttribute (codeField, att, addAlwaysAttr);
@@ -183,17 +187,18 @@ namespace System.Xml.Serialization {
 				AddCustomAttribute (codeField, "System.Xml.Serialization.XmlChoiceIdentifier", GetArg(member.ChoiceMember));
 		}
 		
-		protected override void GenerateArrayElement (CodeMemberField codeField, XmlTypeMapMemberElement member, string defaultNamespace)
+		protected override void GenerateArrayElement (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, string defaultNamespace, bool forceUseMemberName)
 		{
 			XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) member.ElementInfo[0];
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlArray");
-			if (einfo.ElementName != member.Name) att.Arguments.Add (GetArg ("ElementName", einfo.ElementName));
+			if (forceUseMemberName || (einfo.ElementName != member.Name)) att.Arguments.Add (GetArg ("ElementName", einfo.ElementName));
 			if (einfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", einfo.Namespace));
+			if (einfo.Form == XmlSchemaForm.Unqualified) att.Arguments.Add (MapCodeGenerator.GetEnumArg ("Form", "System.Xml.Schema.XmlSchemaForm", einfo.Form.ToString()));
 			if (einfo.IsNullable) att.Arguments.Add (GetArg ("IsNullable", true));
-			AddCustomAttribute (codeField, att, false);
+			if (att.Arguments.Count > 0) attributes.Add (att);
 		}
 		
-		protected override void GenerateArrayItemAttributes (CodeMemberField codeField, ListMap listMap, TypeData type, XmlTypeMapElementInfo ainfo, string defaultName, string defaultNamespace, int nestingLevel)
+		protected override void GenerateArrayItemAttributes (CodeAttributeDeclarationCollection attributes, ListMap listMap, TypeData type, XmlTypeMapElementInfo ainfo, string defaultName, string defaultNamespace, int nestingLevel)
 		{
 			bool needsType = (listMap.ItemInfo.Count > 1) ||
 							 (ainfo.TypeData.FullTypeName != type.FullTypeName && !listMap.IsMultiArray);
@@ -202,9 +207,11 @@ namespace System.Xml.Serialization {
 			if (ainfo.ElementName != defaultName) att.Arguments.Add (GetArg ("ElementName", ainfo.ElementName));
 			if (ainfo.Namespace != defaultNamespace && ainfo.Namespace != XmlSchema.Namespace) att.Arguments.Add (GetArg ("Namespace", ainfo.Namespace));
 			if (needsType) att.Arguments.Add (GetTypeArg ("Type", ainfo.TypeData.FullTypeName));
-			if (ainfo.IsNullable) att.Arguments.Add (GetArg ("IsNullable", true));
+			if (!ainfo.IsNullable) att.Arguments.Add (GetArg ("IsNullable", false));
+			if (ainfo.Form == XmlSchemaForm.Unqualified) att.Arguments.Add (MapCodeGenerator.GetEnumArg ("Form", "System.Xml.Schema.XmlSchemaForm", ainfo.Form.ToString()));
 			if (att.Arguments.Count > 0 && nestingLevel > 0) att.Arguments.Add (GetArg ("NestingLevel", nestingLevel));
-			AddCustomAttribute (codeField, att, false);
+			
+			if (att.Arguments.Count > 0) attributes.Add (att);
 		}
 
 		protected override void GenerateTextElementAttribute (CodeMemberField codeField, XmlTypeMapElementInfo einfo, TypeData defaultType)

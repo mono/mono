@@ -228,6 +228,7 @@ namespace System.Xml.Serialization {
 				ExportMembersMapSchema (schema, cmap, map.BaseMap, ext.Attributes, out particle, out anyAttribute);
 				ext.Particle = particle;
 				ext.AnyAttribute = anyAttribute;
+				stype.IsMixed = cmap.XmlTextCollector != null;
 
 				ImportNamespace (schema, map.BaseMap.XmlTypeNamespace);
 				ExportClassSchema (map.BaseMap);
@@ -252,7 +253,7 @@ namespace System.Xml.Serialization {
 			XmlSchemaSequence seq = new XmlSchemaSequence ();
 
 			ICollection members = map.ElementMembers;
-			if (members != null)
+			if (members != null && !map.HasSimpleContent)
 			{
 				foreach (XmlTypeMapMemberElement member in members)
 				{
@@ -261,7 +262,8 @@ namespace System.Xml.Serialization {
 					Type memType = member.GetType();
 					if (memType == typeof(XmlTypeMapMemberFlatList))
 					{
-						seq.Items.Add (GetSchemaArrayElement (schema, member.ElementInfo));
+						XmlSchemaParticle part = GetSchemaArrayElement (schema, member.ElementInfo);
+						if (part != null) seq.Items.Add (part);
 					}
 					else if (memType == typeof(XmlTypeMapMemberAnyElement))
 					{
@@ -405,6 +407,9 @@ namespace System.Xml.Serialization {
 
 				if (defaultValue != System.DBNull.Value)
 					selem.DefaultValue = XmlCustomFormatter.ToXmlString (einfo.TypeData, defaultValue);
+					
+				if (einfo.Form != XmlSchemaForm.Qualified)
+					selem.Form = einfo.Form;
 
 				switch (einfo.TypeData.SchemaType)
 				{
@@ -673,7 +678,7 @@ namespace System.Xml.Serialization {
 		
 		string GetMapKey (XmlTypeMapping map)
 		{
-			return map.TypeData.FullTypeName + " " + map.XmlTypeNamespace;
+			return map.TypeData.FullTypeName + " " + map.XmlType + " " + map.XmlTypeNamespace;
 		}
 
 		void CompileSchemas ()

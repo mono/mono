@@ -1,3 +1,26 @@
+2004-02-11  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MapCodeGenerator.cs: Changed some methods to make them easier to reuse.
+	* TypeTranslator.cs: NMTOKENS, ENTITIES and IDREFS must be mapped to
+	  string, not string[].
+	* XmlCodeExporter.cs: AddMappingMetadata(): improved attribute generation
+	  for array parameters. In general, improved generation of schema Form 
+	  property.
+	* XmlMemberMapping.cs: Added Form property.
+	* XmlReflectionImporter.cs: Types that inherit from other types cannot be
+	  simple types. Added a check for this.
+	* XmlSchemaExporter.cs: several fixes: better generation of IsMixed and
+	  Form. The key used to determine if a map has been already generated must
+	  include the XmlType, since there can be two xml types with the same CLR
+	  type and namespace (for example, they may differ in the Form property).
+	* XmlSchemaImporter.cs: When getting the TypeData for a schema element,
+	  also return the corresponding map. There can be two maps that have the
+	  same TypeData, so given a TypeData is not always possible to get the
+	  correct corresponding map (for example two arrays that only differ in the
+	  Form of the item).
+	* XmlTypeMapping.cs: Added method to set if a map can represent a simple
+	  type or not.
+
 2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TypeTranslator.cs, XmlCustomFormatter.cs: Added support for the
