@@ -1,3 +1,13 @@
+2004-05-17  Massimiliano Mantione  <massi@ximian.com>
+
+	* abcremoval.c: Fixed coding style, added copyright header.
+
+	* abcremoval.h: Fixed style and moved prototype to mini.h, added copyright header.
+
+	* mini.h: Added prototype for abc removal main function.
+
+	* build_relations_propagation_table.pl: Added copyright header.
+
 2004-05-16	Patrik Torstensson <totte@hiddenpeaks.com>
 
 	* basic-long.cs: reg test for complex ceq_long bug.
