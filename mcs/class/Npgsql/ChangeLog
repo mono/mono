@@ -1,3 +1,7 @@
+2004-06-28  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (%.resources): Use $(RESGEN).
+
 2004-06-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Use $(PLATFORM_PATH_SEPARATOR) in MONO_PATH.

@@ -19,7 +19,7 @@ include ../../build/library.make
 $(the_lib): $(TXT_RESOURCES) $(RESX_RESOURCES)
 
 $(TXT_RESOURCES): %.resources: %.txt
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN) $<
+	$(RESGEN) $<
 
 $(RESX_RESOURCES): %.resources: %.resx
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN) $<
+	$(RESGEN) $<

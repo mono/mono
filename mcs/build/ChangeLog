@@ -1,3 +1,7 @@
+2004-06-28  Raja R Harinath  <rharinath@novell.com>
+
+	* platforms/linux.make (RESGEN): Define using $(INTERNAL_RESGEN).
+
 2004-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* executable.make ($(PROGRAM)): Move depend on the makefrags ...

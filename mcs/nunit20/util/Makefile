@@ -17,7 +17,7 @@ EXTRA_DISTFILES = \
 	Transform.resx
 
 %.resources: %.resx
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN) $<
+	$(RESGEN) $<
 
 include ../../build/library.make
 
