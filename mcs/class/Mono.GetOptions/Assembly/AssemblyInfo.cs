@@ -33,7 +33,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Mono")]
-[assembly: AssemblyCopyright("(C)2002,2003,2004 Rafael Teixeira")]
+[assembly: AssemblyCopyright("(C)2002,2003,2004,2005 Rafael Teixeira")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 [assembly: CLSCompliant(true)]		

@@ -39,6 +39,9 @@ namespace Mono.GetOptions
 		public string LongForm;
 		public string AlternateForm;
 		public int MaxOccurs; // negative means there is no limit
+		
+		public bool VBCStyleBoolean;
+		public bool SecondLevelHelp;
 
 		private void SetValues(
 			string shortDescription, 

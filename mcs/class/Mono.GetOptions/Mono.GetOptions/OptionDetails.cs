@@ -62,6 +62,8 @@ namespace Mono.GetOptions
 		public ArrayList Values;
 		public System.Type ParameterType;
 		public string paramName = null;
+		public bool VBCStyleBoolean;
+		public bool SecondLevelHelp;
 
 		private string ExtractParamName(string shortDescription)
 		{
@@ -116,37 +118,37 @@ namespace Mono.GetOptions
 			}
 		}
 
+		private string optionHelp = null;
+		
 		public override string ToString()
 		{
-			string optionHelp;
-			// TODO: Yet not that good
-			string shortPrefix;
-			string longPrefix;
-			bool hasLongForm = (this.LongForm != null && this.LongForm != string.Empty);
-			if(this.OptionBundle.ParsingMode == OptionsParsingMode.Windows)
+			if 	(optionHelp == null)
 			{
-				shortPrefix = "/";
-				longPrefix = "/";
-			} 
-			else 
-			{
-				shortPrefix = "-";
-				longPrefix = linuxLongPrefix;
+				string shortPrefix;
+				string longPrefix;
+				bool hasLongForm = (this.LongForm != null && this.LongForm != string.Empty);
+				if (this.OptionBundle.ParsingMode == OptionsParsingMode.Windows) {
+					shortPrefix = "/";
+					longPrefix = "/";
+				} else {
+					shortPrefix = "-";
+					longPrefix = linuxLongPrefix;
+				}
+				optionHelp = "  ";
+				optionHelp += (this.ShortForm != string.Empty) ? shortPrefix+this.ShortForm+" " : "   ";
+				optionHelp += hasLongForm ? longPrefix+this.LongForm : "";
+				if (NeedsParameter)	{
+					if (hasLongForm)
+						optionHelp += ":"; 
+					optionHelp += ParamName; 
+				} else if (BooleanOption && VBCStyleBoolean) {
+					optionHelp += "[+|-]";
+				}
+				optionHelp += "\t" + this.ShortDescription;
+				if (this.AlternateForm != string.Empty && this.AlternateForm != null)
+					optionHelp += " [short form: "+ shortPrefix + this.AlternateForm + "]";
 			}
-			optionHelp = "  ";
-			optionHelp += (this.ShortForm != string.Empty) ? shortPrefix+this.ShortForm+" " : "   ";
-			optionHelp += hasLongForm ? longPrefix+this.LongForm : "";
-			if (NeedsParameter)
-			{
-				if (hasLongForm)
-					optionHelp += ":"; 
-				optionHelp += ParamName; 
-			}
-			optionHelp = optionHelp.PadRight(32) + " ";
-			optionHelp += this.ShortDescription;
-			if (this.AlternateForm != string.Empty && this.AlternateForm != null)
-				optionHelp += " [/"+this.AlternateForm + "]";
-			return optionHelp; 
+			return optionHelp;
 		}
 
 		private static System.Type TypeOfMember(MemberInfo memberInfo)
@@ -188,6 +190,9 @@ namespace Mono.GetOptions
 			this.NeedsParameter = false;
 			this.Values = null;
 			this.MaxOccurs = 1;
+			this.VBCStyleBoolean = option.VBCStyleBoolean;
+			this.SecondLevelHelp = option.SecondLevelHelp;
+			
 			this.ParameterType = TypeOfMember(memberInfo);
 
 			if (this.ParameterType != null)
@@ -234,7 +239,9 @@ namespace Mono.GetOptions
 
 		internal string Key
 		{
-			get { return this.ShortForm + this.LongForm; }
+			get { 
+				return this.LongForm + " " + this.ShortForm; 
+			}
 		}
 
 		int IComparable.CompareTo(object other)
@@ -352,7 +359,9 @@ namespace Mono.GetOptions
 		{
 			if (arg != null && arg != string.Empty)
 			{
-				arg = arg.TrimStart('-', '/');				
+				arg = arg.TrimStart('-', '/');			
+				if (VBCStyleBoolean)
+					arg = arg.TrimEnd('-', '+');	
 				return (arg == ShortForm || arg == LongForm || arg == AlternateForm);
 			}
 			return false;
@@ -364,7 +373,10 @@ namespace Mono.GetOptions
 			{
 				if (!NeedsParameter)
 				{
-					DoIt(true); // in preparation for vbc-like booleans
+					if (VBCStyleBoolean && arg.EndsWith("-"))
+						DoIt(false);
+					else
+						DoIt(true);
 					return OptionProcessingResult.OptionAlone;
 				}
 				else

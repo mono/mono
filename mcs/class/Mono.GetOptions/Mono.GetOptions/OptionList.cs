@@ -61,6 +61,8 @@ namespace Mono.GetOptions
 		private ArrayList arguments = new ArrayList();
 		private ArrayList argumentsTail = new ArrayList();
 		private MethodInfo argumentProcessor = null;
+		
+		private bool HasSecondLevelHelp = false;
 
 		internal bool MaybeAnOption(string arg)
 		{
@@ -178,10 +180,11 @@ namespace Mono.GetOptions
 			foreach(MemberInfo mi in optionBundle.GetType().GetMembers())
 			{
 				object[] attribs = mi.GetCustomAttributes(typeof(OptionAttribute), true);
-				if (attribs != null && attribs.Length > 0)
-					list.Add(new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle));
-				else
-				{
+				if (attribs != null && attribs.Length > 0) {
+					OptionDetails option = new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle);
+					list.Add(option);
+					HasSecondLevelHelp = HasSecondLevelHelp || option.SecondLevelHelp;
+				} else {
 					attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
 					if (attribs != null && attribs.Length > 0)
 						AddArgumentProcessor(mi);
@@ -198,9 +201,18 @@ namespace Mono.GetOptions
 
 		#region Prebuilt Options
 
+		private bool bannerAlreadyShown = false;
+		
+		public void ShowBanner()
+		{
+			if (!bannerAlreadyShown)
+				Console.WriteLine(appTitle + "  " + appVersion + " - " + appCopyright); 
+			bannerAlreadyShown = true;
+		}
+		
 		private void ShowTitleLines()
 		{
-			Console.WriteLine(appTitle + "  " + appVersion + " - " + appCopyright); 
+			ShowBanner();
 			Console.WriteLine(appDescription); 
 			Console.WriteLine();
 		}
@@ -222,13 +234,36 @@ namespace Mono.GetOptions
 			Console.WriteLine(sb.ToString());
 		}
 
-		private void ShowHelp()
+		private void ShowHelp(bool showSecondLevelHelp)
 		{
 			ShowTitleLines();
 			Console.WriteLine(Usage);
 			Console.WriteLine("Options:");
+			ArrayList lines = new ArrayList(list.Count);
+			int tabSize = 0;
 			foreach (OptionDetails option in list)
-				Console.WriteLine(option);
+				if (option.SecondLevelHelp == showSecondLevelHelp) {
+					string[] optionLines = option.ToString().Split('\n');
+					foreach(string line in optionLines) {
+						int pos = line.IndexOf('\t');
+						if (pos > tabSize)
+							tabSize = pos;
+						lines.Add(line);
+					}
+				}
+			tabSize += 2;
+			foreach (string line in lines) {
+				string[] parts = line.Split('\t');
+				Console.Write(parts[0].PadRight(tabSize));
+				Console.WriteLine(parts[1]);
+				if (parts.Length > 2) {
+					string spacer = new string(' ', tabSize);
+					for(int i = 2; i < parts.Length; i++) {
+						Console.Write(spacer);
+						Console.WriteLine(parts[i]);
+					}
+				}
+			}
 		}
 
 		private void ShowUsage()
@@ -261,10 +296,16 @@ namespace Mono.GetOptions
 
 		internal WhatToDoNext DoHelp()
 		{
-			ShowHelp();
+			ShowHelp(false);
 			return WhatToDoNext.AbandonProgram;
 		}
 
+		internal WhatToDoNext DoHelp2()
+		{
+			ShowHelp(true);
+			return WhatToDoNext.AbandonProgram;
+		}
+		
 		#endregion
 
 		#region Arguments Processing
@@ -316,29 +357,23 @@ namespace Mono.GetOptions
 			bool ParsingOptions = true;
 			ArrayList result = new ArrayList();
 
-			foreach(string arg in ExpandResponseFiles(args))
-			{
-				if (arg.Length > 0)
-				{
-					if (ParsingOptions)
-					{
-						if (endOptionProcessingWithDoubleDash && (arg == "--"))
-						{
+			foreach(string arg in ExpandResponseFiles(args)) {
+				if (arg.Length > 0) {
+					if (ParsingOptions) {
+						if (endOptionProcessingWithDoubleDash && (arg == "--")) {
 							ParsingOptions = false;
 							continue;
 						}
 
 						if ((parsingMode & OptionsParsingMode.Linux) > 0 && 
 							 arg[0] == '-' && arg.Length > 1 && arg[1] != '-' &&
-							 breakSingleDashManyLettersIntoManyOptions)
-						{
+							 breakSingleDashManyLettersIntoManyOptions) {
 							foreach(char c in arg.Substring(1)) // many single-letter options
 								result.Add("-" + c); // expand into individualized options
 							continue;
 						}
 
-						if (MaybeAnOption(arg))
-						{
+						if (MaybeAnOption(arg)) {
 							int pos = IndexOfAny(arg, ':', '=');
 
 							if(pos < 0)
@@ -349,9 +384,7 @@ namespace Mono.GetOptions
 							}
 							continue;
 						}
-					}
-					else
-					{
+					} else {
 						argumentsTail.Add(arg);
 						continue;
 					}
@@ -374,11 +407,9 @@ namespace Mono.GetOptions
 
 			args = NormalizeArgs(args);
 
-			try
-			{
+			try {
 				int argc = args.Length;
-				for (int i = 0; i < argc; i++)
-				{
+				for (int i = 0; i < argc; i++) {
 					arg =  args[i];
 					if (i+1 < argc)
 						nextArg = args[i+1];
@@ -387,13 +418,10 @@ namespace Mono.GetOptions
 
 					OptionWasProcessed = false;
 
-					if (arg.Length > 1 && (arg.StartsWith("-") || arg.StartsWith("/")))
-					{
-						foreach(OptionDetails option in list)
-						{
+					if (arg.Length > 1 && (arg.StartsWith("-") || arg.StartsWith("/"))) {
+						foreach(OptionDetails option in list) {
 							OptionProcessingResult result = option.ProcessArgument(arg, nextArg);
-							if (result != OptionProcessingResult.NotThisOption)
-							{
+							if (result != OptionProcessingResult.NotThisOption) {
 								OptionWasProcessed = true;
 								if (result == OptionProcessingResult.OptionConsumedParameter)
 									i++;
@@ -403,33 +431,33 @@ namespace Mono.GetOptions
 					}
 
 					if (!OptionWasProcessed)
-					{
-						if (OptionDetails.Verbose)
-							Console.WriteLine("argument [" + arg + "]");
-
-						arguments.Add(arg);
-					}
+						ProcessNonOption(arg);
 				}
 
 				foreach(OptionDetails option in list)
 					option.TransferValues(); 
 
 				foreach(string argument in argumentsTail)
-					arguments.Add(argument);
+					ProcessNonOption(argument);
 
-				if (argumentProcessor == null)
-					return (string[])arguments.ToArray(typeof(string));
-			
-				foreach(string argument in arguments)
-					argumentProcessor.Invoke(optionBundle, new object[] { argument });  
-			}
-			catch (Exception ex)
-			{
+				return (string[])arguments.ToArray(typeof(string));
+				
+			} catch (Exception ex) {
 				System.Console.WriteLine(ex.ToString());
 				System.Environment.Exit(1);
 			}
 
 			return null;
+		}
+		
+		private void ProcessNonOption(string argument)
+		{
+			if (OptionDetails.Verbose)
+					Console.WriteLine("argument [" + argument + "]");							
+			if (argumentProcessor == null)
+				arguments.Add(argument);
+			else
+				argumentProcessor.Invoke(optionBundle, new object[] { argument });  						
 		}
 		
 		#endregion

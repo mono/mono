@@ -46,10 +46,21 @@ namespace Mono.GetOptions
 			RemainingArguments =  optionParser.ProcessArgs(args);
 		}
 
-		[Option("Show this help list", '?',"help")]
+		public void ShowBanner()
+		{
+			optionParser.ShowBanner();
+		}
+
+		[Option("Show this help list", '?', "help")]
 		public virtual WhatToDoNext DoHelp()
 		{
 			return optionParser.DoHelp();
+		}
+
+		[Option("Show an additional help list", "help2")]
+		public virtual WhatToDoNext DoHelp2()
+		{
+			return optionParser.DoHelp2();
 		}
 
 		[Option("Display version and licensing information", 'V', "version")]
@@ -58,13 +69,13 @@ namespace Mono.GetOptions
 			return optionParser.DoAbout();
 		}
 
-		[Option("Show usage syntax and exit", ' ',"usage")]
+		[Option("Show usage syntax and exit", "usage")]
 		public virtual WhatToDoNext DoUsage()
 		{
 			return optionParser.DoUsage();
 		}
 
-		[Option("Show verbose parsing of options", ' ',"verbosegetoptions")]
+		[Option("Show verbose parsing of options", "verbosegetoptions", SecondLevelHelp = true)]
 		public bool VerboseParsingOfOptions
 		{
 			set { OptionDetails.Verbose = value;}

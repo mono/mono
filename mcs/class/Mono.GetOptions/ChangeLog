@@ -1,3 +1,10 @@
+2005-02-28  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/OptionAttribute.cs, Mono.GetOptions/OptionDetails.cs, Mono.GetOptions/OptionList: 
+		Implemented support for vbc style booleans: /debug+ /debug- . Usage: [Option("debug", VBCStyleBoolean = true)]
+		Implemented support for second level help screen. Usage: [Option("advanced stuff", SecondLevelHelp = true)]
+		Better alignment for descriptions, specially multiline
+		ArgumentProcessor-marked method now is called while processing options to allow positional processing
+
 2005-02-03  Manjula GHM  <mmanjula@novell.com>
 	* Mono.GetOptions.csproj modifed to reflect new changes
 
