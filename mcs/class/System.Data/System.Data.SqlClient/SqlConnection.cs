@@ -251,6 +251,13 @@ namespace System.Data.SqlClient {
 		{
 			if (transaction != null && transaction.IsOpen)
 				transaction.Rollback ();
+
+			if (dataReader != null || xmlReader != null) {
+				tds.SkipToEnd ();
+				dataReader = null;
+				xmlReader = null;
+			}
+
 			if (pooling)
 				pool.ReleaseConnection (tds);
 			else
