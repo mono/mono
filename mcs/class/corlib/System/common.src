@@ -10,7 +10,9 @@ AttributeTargets.cs
 Boolean.cs
 Byte.cs
 Char.cs
+CLSCompliantAttribute.cs
 Convert.cs
+ContextStaticAttribute.cs
 DivideByZeroException.cs
 Double.cs
 DuplicateWaitObjectException.cs
@@ -18,6 +20,7 @@ EventArgs.cs
 EventHandler.cs
 Exception.cs
 ExecutionEngineException.cs
+FlagsAttribute.cs
 FormatException.cs
 ICloneable.cs
 IComparable.cs
