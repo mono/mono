@@ -25,6 +25,9 @@ namespace System.Reflection
 		private MethodInfo[] methods;
 		private ConstructorInfo[] ctors;
 		private FieldInfo[] fields;
+		private int first_method;
+		private int first_ctor;
+		private int first_field;
 
 		[MonoTODO]
 		internal MonoGenericInst ()
@@ -61,6 +64,10 @@ namespace System.Reflection
 						iface.inflate (iface, mlist, clist, flist);
 				}
 			}
+
+			first_method = mlist.Count;
+			first_ctor = clist.Count;
+			first_field = flist.Count;
 
 			foreach (MethodInfo m in generic_type.GetMethods (flags))
 				mlist.Add (inflate_method (this, reflected, m));
@@ -116,7 +123,15 @@ namespace System.Reflection
 			bool match;
 			MethodAttributes mattrs;
 
-			foreach (MethodInfo c in methods) {
+			int start;
+			if ((bindingAttr & BindingFlags.DeclaredOnly) != 0)
+				start = first_method;
+			else
+				start = 0;
+
+			for (int i = start; i < methods.Length; i++) {
+				MethodInfo c = methods [i];
+
 				match = false;
 				mattrs = c.Attributes;
 				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
@@ -159,7 +174,15 @@ namespace System.Reflection
 			bool match;
 			MethodAttributes mattrs;
 
-			foreach (ConstructorInfo c in ctors) {
+			int start;
+			if ((bindingAttr & BindingFlags.DeclaredOnly) != 0)
+				start = first_ctor;
+			else
+				start = 0;
+
+			for (int i = start; i < ctors.Length; i++) {
+				ConstructorInfo c = ctors [i];
+
 				match = false;
 				mattrs = c.Attributes;
 				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
@@ -202,7 +225,15 @@ namespace System.Reflection
 			bool match;
 			FieldAttributes fattrs;
 
-			foreach (FieldInfo c in fields) {
+			int start;
+			if ((bindingAttr & BindingFlags.DeclaredOnly) != 0)
+				start = first_field;
+			else
+				start = 0;
+
+			for (int i = start; i < fields.Length; i++) {
+				FieldInfo c = fields [i];
+
 				match = false;
 				fattrs = c.Attributes;
 				if ((fattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
