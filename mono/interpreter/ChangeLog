@@ -1,3 +1,8 @@
+
+Wed Sep 22 19:06:02 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: updates for stack walk interface.
+
 2004-09-09  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* interp.c: In interp_walk_stack, don't crash if the context is not set
