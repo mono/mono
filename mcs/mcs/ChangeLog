@@ -1,3 +1,8 @@
+2003-02-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: (AddAssemblyAndDeps, LoadAssembly): Enter the types
+	from referenced assemblies as well.
+
 2003-02-02  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (MethodData.Emit): Generate debugging info for external methods.
