@@ -349,7 +349,7 @@ namespace Mono.ILASM {
                         foreach (LabelInfo label in labelref_table.Values) {
                                 LabelInfo def = (LabelInfo) label_table[label.Name];
                                 if (def == null) {
-                                        Console.WriteLine ("Undefined Label:  " + label);
+                                        code_gen.Report.Error ("Undefined Label:  " + label);
                                         return;
                                 }
                                 label.Label = def.Label;

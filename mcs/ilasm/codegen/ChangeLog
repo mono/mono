@@ -1,3 +1,7 @@
+2003-10-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* MethodInfo.cs: Use report to display no label error message.
+	
 2003-10-01 Jackson Harper <jackson@latitudegeo.com>
 
 	* LabelInfo.cs: Fix tabbing, add ToString so labels are printed
