@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell Inc.
 //
 
 using System.Collections;
@@ -14,7 +16,8 @@ using System.Xml;
 namespace System.Security.Cryptography.Xml {
 
 	// FIXME: framework class isn't documented so compatibility isn't assured!
-	internal class IssuerSerial {
+	internal class IssuerSerial
+	{
 		public string Issuer;
 		public string Serial;
 
@@ -25,7 +28,8 @@ namespace System.Security.Cryptography.Xml {
 		}
 	}
 
-	public class KeyInfoX509Data : KeyInfoClause {
+	public class KeyInfoX509Data : KeyInfoClause 
+	{
 
 		private byte[] x509crl;
 		private ArrayList IssuerSerialList;
@@ -52,7 +56,7 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 		public ArrayList Certificates {
-			get { return X509CertificateList; }
+			get { return X509CertificateList.Count != 0 ? X509CertificateList : null; }
 		}
 
 		public byte[] CRL {
@@ -61,15 +65,15 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 		public ArrayList IssuerSerials {
-			get { return IssuerSerialList; }
+			get { return IssuerSerialList.Count != 0 ? IssuerSerialList : null; }
 		}
 
 		public ArrayList SubjectKeyIds {
-			get { return SubjectKeyIdList; }
+			get { return SubjectKeyIdList.Count != 0 ? SubjectKeyIdList : null; }
 		}
 
 		public ArrayList SubjectNames {
-			get { return SubjectNameList; }
+			get { return SubjectNameList.Count != 0 ? SubjectNameList : null; }
 		}
 
 		public void AddCertificate (X509Certificate certificate) 
@@ -164,11 +168,11 @@ namespace System.Security.Cryptography.Xml {
 			if ((element.LocalName != XmlSignature.ElementNames.X509Data) || (element.NamespaceURI != XmlSignature.NamespaceURI))
 				throw new CryptographicException ("element");
 
-			XmlNodeList xnl = null;
+			XmlElement [] xnl = null;
 			// <X509IssuerSerial>
-			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509IssuerSerial, XmlSignature.NamespaceURI);
+			xnl = XmlSignature.GetChildElements (element, XmlSignature.ElementNames.X509IssuerSerial);
 			if (xnl != null) {
-				for (int i=0; i < xnl.Count; i++) {
+				for (int i=0; i < xnl.Length; i++) {
 					XmlElement xel = (XmlElement) xnl[i];
 					XmlElement issuer = XmlSignature.GetChildElement (xel, XmlSignature.ElementNames.X509IssuerName, XmlSignature.NamespaceURI);
 					XmlElement serial = XmlSignature.GetChildElement (xel, XmlSignature.ElementNames.X509SerialNumber, XmlSignature.NamespaceURI);
@@ -176,24 +180,24 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			// <X509SKI>
-			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509SKI, XmlSignature.NamespaceURI);
+			xnl = XmlSignature.GetChildElements (element, XmlSignature.ElementNames.X509SKI);
 			if (xnl != null) {
-				for (int i=0; i < xnl.Count; i++) {
+				for (int i=0; i < xnl.Length; i++) {
 					byte[] skid = Convert.FromBase64String (xnl[i].InnerXml);
 					AddSubjectKeyId (skid);
 				}
 			}
 			// <X509SubjectName>
-			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509SubjectName, XmlSignature.NamespaceURI);
+			xnl = XmlSignature.GetChildElements (element, XmlSignature.ElementNames.X509SubjectName);
 			if (xnl != null) {
-				for (int i=0; i < xnl.Count; i++) {
+				for (int i=0; i < xnl.Length; i++) {
 					AddSubjectName (xnl[i].InnerXml);
 				}
 			}
 			// <X509Certificate>
-			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509Certificate, XmlSignature.NamespaceURI);
+			xnl = XmlSignature.GetChildElements (element, XmlSignature.ElementNames.X509Certificate);
 			if (xnl != null) {
-				for (int i=0; i < xnl.Count; i++) {
+				for (int i=0; i < xnl.Length; i++) {
 					byte[] cert = Convert.FromBase64String (xnl[i].InnerXml);
 					AddCertificate (new X509Certificate (cert));
 				}

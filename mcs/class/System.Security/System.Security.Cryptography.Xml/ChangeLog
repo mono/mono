@@ -1,5 +1,15 @@
 2004-03-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* KeyInfo.cs : Attribute Id was not handlded.
+	* KeyInfoX509Data.cs : all array members return null when there are
+	  no such contents. Just find child elements, not descendants.
+	* SignedXml.cs : key is not always required when CheckSignature() is
+	  called.
+	* XmlDsigXsltTransform.cs : LoadInput should allow node list.
+	* XmlSignature.cs : added GetChildElements().
+
+2004-03-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* KeyInfoX509Data.cs : trivial local var name fix.
 
 2004-03-09  Atsushi Enomoto <atsushi@ximian.com>

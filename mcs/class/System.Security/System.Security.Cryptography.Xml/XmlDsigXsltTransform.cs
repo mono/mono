@@ -102,7 +102,10 @@ namespace System.Security.Cryptography.Xml {
 				xsl.Load (obj as XmlDocument);
 			}
 			else if (obj is XmlNodeList) {
-				// Is it valid operation?
+				XmlNodeList nl = (XmlNodeList) obj;
+				for (int i = 0; i < nl.Count; i++)
+					doc.AppendChild (doc.ImportNode (nl [i], true));
+				xsl.Load (doc);
 			}
 
 			if (xnl != null) {

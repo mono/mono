@@ -3,11 +3,14 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell Inc.
 //
 
 using System;
+using System.Collections;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -94,6 +97,17 @@ namespace System.Security.Cryptography.Xml {
 		{
 			XmlElement el = GetChildElement (xel, element, XmlSignature.NamespaceURI);
 			return el != null ? el.GetAttribute (attribute) : null;
+		}
+
+		public static XmlElement [] GetChildElements (XmlElement xel, string element)
+		{
+			ArrayList al = new ArrayList ();
+			for (int i = 0; i < xel.ChildNodes.Count; i++) {
+				XmlNode n = xel.ChildNodes [i];
+				if (n.NodeType == XmlNodeType.Element && n.LocalName == element && n.NamespaceURI == XmlSignature.NamespaceURI)
+					al.Add (n);
+			}
+			return al.ToArray (typeof (XmlElement)) as XmlElement [];
 		}
 	}
 }

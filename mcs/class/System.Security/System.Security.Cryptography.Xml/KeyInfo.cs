@@ -76,6 +76,8 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
+			Id = value.Attributes ["Id"] != null ? value.GetAttribute ("Id") : null;
+
 			if ((value.LocalName == XmlSignature.ElementNames.KeyInfo) && (value.NamespaceURI == XmlSignature.NamespaceURI)) {
 				foreach (XmlNode n in value.ChildNodes) {
 					if (n.NodeType != XmlNodeType.Element)

@@ -190,7 +190,7 @@ namespace System.Security.Cryptography.Xml {
 			// CryptographicException
 			if (key == null)
 				key = GetPublicKey ();
-			return CheckSignature (key);
+			return CheckSignatureInternal (key);
 		}
 
 		private bool CheckReferenceIntegrity () 
@@ -208,7 +208,11 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
+			return CheckSignatureInternal (key);
+		}
 
+		private bool CheckSignatureInternal (AsymmetricAlgorithm key)
+		{
 			// Part 1: Are all references digest valid ?
 			bool result = CheckReferenceIntegrity ();
 			if (result) {
@@ -268,6 +272,8 @@ namespace System.Security.Cryptography.Xml {
 				key = GetPublicKey ();
 			signingKey = key;
 			// we'll find the key if we haven't already
+
+			// But it might be null when the signature contains only KeyName
 			return CheckSignature (key);
 		}
 
