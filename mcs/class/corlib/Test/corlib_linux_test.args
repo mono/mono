@@ -119,6 +119,8 @@ System.Security.Permissions/FileIOPermissionTest.cs
 System.Security.Policy/AllTests.cs
 System.Security.Policy/CodeGroupTest.cs
 System.Security.Policy/EvidenceTest.cs
+System.Security.Policy/PublisherTest.cs
+System.Security.Policy/PublisherMembershipConditionTest.cs
 System.Text/ASCIIEncodingTest.cs
 System.Text/AllTests.cs
 System.Text/StringBuilderTest.cs
