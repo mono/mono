@@ -1,5 +1,9 @@
 2003-10-05  Todd Berman <tberman@gentoo.org>
 
+	* Microsoft.Web.Services.dll.2.sources: Added AddressList.cs
+
+2003-10-05  Todd Berman <tberman@gentoo.org>
+
 	* Microsoft.Web.Services.Security/UsernameToken.cs: small WSE2 build
 	fixes.
 	* Microsoft.Web.Services.Addressing/AttributeUri.cs: implemented.
