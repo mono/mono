@@ -114,7 +114,7 @@ namespace System {
 		}
 
 		public String[] Split(char[] separator, int count) {
-			if (null == separator) {
+			if (null == separator || separator.Length == 0) {
 				separator = WhiteChars;
 			}
 
