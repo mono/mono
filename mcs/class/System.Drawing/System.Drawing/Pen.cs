@@ -148,6 +148,13 @@ namespace System.Drawing {
 
 			set {
 				if (isModifiable) {
+                                        int length = value.Length;
+                                        if (length < 2)
+                                                throw new ArgumentException ("Invalid parameter.");
+                                        foreach (float val in value)
+                                                if (val < 0 || val > 1)
+                                                        throw new ArgumentException ("Invalid parameter.");
+
 					Status status = GDIPlus.GdipSetPenCompoundArray (nativeObject, value, value.Length);
 					GDIPlus.CheckStatus (status);
 				}
@@ -241,6 +248,12 @@ namespace System.Drawing {
 
                         set {
 				if (isModifiable) {
+					int length = value.Length;
+					if (length == 0)
+						throw new ArgumentException ("Invalid parameter.");
+					foreach (float val in value)
+						if (val <= 0)
+							throw new ArgumentException ("Invalid parameter.");
                                 	Status status = GDIPlus.GdipSetPenDashArray (nativeObject, value, value.Length);
 					GDIPlus.CheckStatus (status);
 				}
