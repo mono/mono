@@ -1,3 +1,23 @@
+2004-05-21	Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* TcpListener.cs: Fixes a lot of the problems with remoting nunit tests.
+	
+	(AcceptTcpClient): Don't create TcpClient before a
+	connection is accepted.
+	
+	(LocalEndPoint): Use Server LocalEndPoint if connected
+	otherwise use endpoint from ctor.
+	
+	(Init): Save end point, not server endpoint. This did
+	cause TcpListener to ignore port sent via constructor.
+
+	(Pending): Fixed wait time (method should return directly)
+	
+	(Start): Moved Bind here instead of Init method; old method
+	caused us to bind ports even if the listener was stopped.
+	
+	(Stop): Null server when stopping
+
 2004-05-13  Dick Porter  <dick@ximian.com>
 
 	* UdpClient.cs: 

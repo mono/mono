@@ -3,11 +3,13 @@
 // Authors:
 //    Phillip Pearson (pp@myelin.co.nz)
 //    Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	  Patrik Torstensson
 //
 // Copyright (C) 2001, Phillip Pearson
 //    http://www.myelin.co.nz
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// (c) 2004 Novell, Inc.
 //
 
 using System;
@@ -36,8 +38,7 @@ namespace System.Net.Sockets
 		{
 			active = false;
 			server = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
-			server.Bind (ep);
-			savedEP = server.LocalEndPoint;
+			savedEP = ep;
 		}
 		
 		/// <summary>
@@ -102,7 +103,12 @@ namespace System.Net.Sockets
 		/// </summary>
 		public EndPoint LocalEndpoint
 		{
-			get { return savedEP; }
+			get { 
+				if (active)
+					return server.LocalEndPoint;
+
+				return savedEP; 
+			}
 		}
 		
 		/// <summary>
@@ -138,10 +144,13 @@ namespace System.Net.Sockets
 			if (!active)
 				throw new InvalidOperationException ("Socket is not listening");
 
+			Socket clientSocket = server.Accept ();
+
 			TcpClient client = new TcpClient();
 			// use internal method SetTcpClient to make a
 			// client with the specified socket
-			client.SetTcpClient(AcceptSocket());
+			client.SetTcpClient (clientSocket);
+			
 			return client;
 		}
 		
@@ -163,25 +172,28 @@ namespace System.Net.Sockets
 			if (!active)
 				throw new InvalidOperationException ("Socket is not listening");
 
-			return server.Poll(1000, SelectMode.SelectRead);
+			return server.Poll(0, SelectMode.SelectRead);
 		}
 		
 		/// <summary>
 		/// Tells the TcpListener to start listening.
 		/// </summary>
-		[MonoTODO]
 		public void Start ()
 		{
 			if (active)
 				return;
 
-			server.Listen(5);	// According to the
-						// man page some BSD
-						// and BSD-derived
-						// systems limit the
-						// backlog to 5.  This
-						// should really be
-						// configurable though
+			if (server == null)
+				throw new InvalidOperationException("Invalid server socket");
+
+			server.Bind (savedEP);
+			
+			// MS: sets Listen to Int32.MaxValue
+			server.Listen(5);	
+			// According to the man page some BSD and BSD-derived
+			// systems limit the backlog to 5.  This should really be
+			// configurable though
+
 			active = true;
 		}
 		
@@ -191,8 +203,11 @@ namespace System.Net.Sockets
 		/// </summary>
 		public void Stop ()
 		{
-			if (active)
+			if (active) 
+			{
 				server.Close ();
+				server = null;
+			}
 
 			Init (AddressFamily.InterNetwork, savedEP);
 		}
