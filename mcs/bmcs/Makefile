@@ -39,3 +39,6 @@ winstall: all
 winstall-as-mbas: all
 	cp ../class/lib/default/bmcs.exe  /cygdrive/c/WINDOWS/Microsoft.NET/Framework/v1.1.4322/
 	cp ../class/lib/default/bmcs.exe  /cygdrive/c/WINDOWS/Microsoft.NET/Framework/v1.1.4322/mbas.exe
+
+diffus:
+	diff --exclude='.svn' --exclude='*-parser.*' --exclude='*-tokenizer.cs' -ruN ../gmcs ../bmcs
