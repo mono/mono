@@ -1437,10 +1437,8 @@ namespace Mono.CSharp {
 			if (TypeBuilder.BaseType != null)
 				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
 
-			// TODO:
-			//if (TypeBuilder.IsInterface) {
-			//	parent_container = TypeManager.LookupInterfaceContainer (base_inteface_types);
-			//}
+			if (TypeBuilder.IsInterface)
+				parent_container = TypeManager.LookupInterfaceContainer (ifaces);
 
  			if (IsTopLevel) {
  				if ((ModFlags & Modifiers.NEW) != 0)
@@ -1528,7 +1526,7 @@ namespace Mono.CSharp {
 
 #if CACHE
 			if (!(this is ClassPart))
-			member_cache = new MemberCache (this);
+			member_cache = new MemberCache (this, false);
 #endif
 
 			if (parts != null) {
@@ -3125,6 +3123,17 @@ namespace Mono.CSharp {
 							"change return type when overriding inherited member");
 						return false;
 					}
+				} else {
+					if (parent_method.IsAbstract && !IsInterface) {
+						Report.SymbolRelatedToPreviousError (parent_method);
+						Report.Error (533, Location, "'{0}' hides inherited abstract member", GetSignatureForError (Parent));
+						return false;
+					}
+				}
+
+				if (parent_method.IsSpecialName && !(this is PropertyBase)) {
+					Report.Error (561, Location, "'{0}': cannot override '{1}' because it is a special compiler-generated method", GetSignatureForError (Parent), TypeManager.GetFullNameSignature (parent_method));
+					return false;
 				}
 
 				if (RootContext.WarningLevel > 2) {
@@ -3145,12 +3154,19 @@ namespace Mono.CSharp {
 				return true;
 			}
 
+			MemberInfo conflict_symbol = Parent.FindMemberWithSameName (Name, !(this is Property));
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-				Report.Error (115, Location, "'{0}': no suitable methods found to override", GetSignatureForError (Parent));
+				if (conflict_symbol != null) {
+					Report.SymbolRelatedToPreviousError (conflict_symbol);
+					if (this is PropertyBase)
+						Report.Error (544, Location, "'{0}': cannot override because '{1}' is not a property", GetSignatureForError (Parent), TypeManager.GetFullNameSignature (conflict_symbol));
+					else
+						Report.Error (505, Location, "'{0}': cannot override because '{1}' is not a method", GetSignatureForError (Parent), TypeManager.GetFullNameSignature (conflict_symbol));
+				} else
+					Report.Error (115, Location, "'{0}': no suitable methods found to override", GetSignatureForError (Parent));
 				return false;
 			}
 
-			MemberInfo conflict_symbol = Parent.FindMemberWithSameName (Name, !(this is Property));
 			if (conflict_symbol == null) {
 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
 					Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError (Parent));
@@ -3276,7 +3292,7 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (parent_method);
 				if (!IsInterface && (parent_method.IsVirtual || parent_method.IsAbstract)) {
 					if (RootContext.WarningLevel >= 2)
-						Report.Warning (114, Location, "'{0}' hides inherited member '{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword", GetSignatureForError (Parent), parent_method);
+						Report.Warning (114, Location, "'{0}' hides inherited member '{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword", GetSignatureForError (Parent), TypeManager.CSharpSignature (parent_method));
 				} else
 					Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member", GetSignatureForError (Parent));
 			}
@@ -6085,6 +6101,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		// TODO: rename to Resolve......
  		protected override MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type)
  		{
  			PropertyInfo parent_property = container.ParentContainer.MemberCache.FindMemberToOverride (
@@ -6094,14 +6111,22 @@ namespace Mono.CSharp {
  				return null;
 
  			parent_ret_type = parent_property.PropertyType;
+			MethodInfo get_accessor = parent_property.GetGetMethod (true);
+			MethodInfo set_accessor = parent_property.GetSetMethod (true);
 
- 			MethodInfo temp_m;
- 			temp_m = parent_property.GetGetMethod (true);
- 			if (temp_m != null)
- 				return temp_m;
+			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+				if (Get != null && !Get.IsDummy && get_accessor == null) {
+					Report.SymbolRelatedToPreviousError (parent_property);
+					Report.Error (545, Location, "'{0}': cannot override because '{1}' does not have an overridable get accessor", GetSignatureForError (), TypeManager.GetFullNameSignature (parent_property));
+				}
 
- 			System.Diagnostics.Debug.Assert (parent_property.GetSetMethod (true) != null, "Internal error property without get/set");
- 			return parent_property.GetSetMethod (true);
+				if (Set != null && !Set.IsDummy && set_accessor == null) {
+					Report.SymbolRelatedToPreviousError (parent_property);
+					Report.Error (546, Location, "'{0}': cannot override because '{1}' does not have an overridable set accessor", GetSignatureForError (), TypeManager.GetFullNameSignature (parent_property));
+				}
+			}
+			
+			return get_accessor != null ? get_accessor : set_accessor;
 		}
 
 		public override void Emit ()

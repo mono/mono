@@ -507,6 +507,54 @@ public class TypeManager {
 		return LookupTypeContainer (t);
 	}
 	
+	/// <summary>
+	/// Fills member container from base interfaces
+	/// </summary>
+	public static IMemberContainer LookupInterfaceContainer (Type[] types)
+	{
+		if (types == null)
+			return null;
+
+		IMemberContainer complete = null;
+		foreach (Type t in types) {
+			IMemberContainer one_type_cont = null;
+			if (t is TypeBuilder) {
+				one_type_cont = builder_to_declspace [t] as IMemberContainer;
+			} else
+				one_type_cont = TypeHandle.GetTypeHandle (t);
+
+			if (complete == null) {
+				complete = one_type_cont;
+				continue;
+			}
+
+			// We need to avoid including same member more than once
+			foreach (DictionaryEntry de in one_type_cont.MemberCache.Members) {
+				object o = complete.MemberCache.Members [de.Key];
+				if (o == null) {
+					complete.MemberCache.Members.Add (de.Key, de.Value);
+					continue;
+				}
+
+				ArrayList al_old = (ArrayList)o;
+				ArrayList al_new = (ArrayList)de.Value;
+
+				foreach (MemberCache.CacheEntry ce in al_new) {
+					bool exist = false;
+					foreach (MemberCache.CacheEntry ce_old in al_old) {
+						if (ce.Member == ce_old.Member) {
+							exist = true;
+							break;
+						}
+					}
+					if (!exist)
+						al_old.Add (ce);
+				}
+			}
+		}
+		return complete;
+	}
+
 	public static IMemberContainer LookupMemberContainer (Type t)
 	{
 		if (t is TypeBuilder) {
@@ -3150,8 +3198,10 @@ public class TypeManager {
 				// This happens with interfaces, they have a null
 				// basetype.  Look members up in the Object class.
 				//
-				if (current_type == null)
+				if (current_type == null) {
 					current_type = TypeManager.object_type;
+					searching = true;
+				}
 			}
 			
 			if (list.Length == 0)
@@ -3356,7 +3406,7 @@ public sealed class TypeHandle : IMemberContainer {
 		if (type.BaseType != null)
 			BaseType = GetTypeHandle (type.BaseType);
 		this.is_interface = type.IsInterface || type.IsGenericParameter;
-		this.member_cache = new MemberCache (this);
+		this.member_cache = new MemberCache (this, true);
 	}
 
 	// IMemberContainer methods
