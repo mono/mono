@@ -1,3 +1,7 @@
+2003-03-16 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Add switch to display tokens as they are generated.
+
 2003-03-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* makefile, makefile.gnu: Add FieldTable to build

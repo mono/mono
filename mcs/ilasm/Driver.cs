@@ -34,6 +34,7 @@ namespace Mono.ILASM {
 			private ArrayList il_file_list;
 			private string output_file;
 			private Target target = Target.Exe;
+			private bool show_tokens = false;
 			private bool scan_only = false;
 			private CodeGen codegen;
 
@@ -51,7 +52,7 @@ namespace Mono.ILASM {
 				}
 				if (output_file == null)
 					output_file = CreateOutputFile ();
-				codegen = new CodeGen (output_file, target == Target.Dll, true);
+				codegen = new CodeGen (output_file, target == Target.Dll, true);	
 				foreach (string file_path in il_file_list)
 					ProcessFile (file_path);
 				if (scan_only)
@@ -69,7 +70,11 @@ namespace Mono.ILASM {
 				}
 				StreamReader reader = File.OpenText (file_path);
 				ILTokenizer scanner = new ILTokenizer (reader);
-				
+
+				if (show_tokens) {
+					scanner.NewTokenEvent += new NewTokenEvent (ShowToken);
+				}
+   				
 				if (scan_only) {
 					ILToken tok;
 					while ((tok = scanner.NextToken) != ILToken.EOF) {
@@ -80,6 +85,11 @@ namespace Mono.ILASM {
 
 				ILParser parser = new ILParser (codegen);
 				parser.yyparse (new ScannerAdapter (scanner), null);
+			}
+
+			public void ShowToken (object sender, NewTokenEventArgs args)
+			{
+				Console.WriteLine ("token: '{0}'", args.Token);
 			}
 
 			private void ParseArgs (string[] args)
@@ -102,6 +112,9 @@ namespace Mono.ILASM {
 							break;
 						case "scan_only":
 							scan_only = true;
+							break;
+						case "show_tokens":
+							show_tokens = true;
 							break;
 						case "-about":
 							if (str[0] != '-')
