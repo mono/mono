@@ -125,12 +125,21 @@ namespace System.Drawing
 			return FromArgb ((argb >> 24) & 0x0FF, (argb >> 16) & 0x0FF, (argb >> 8) & 0x0FF, argb & 0x0FF);
 		}
 
-		public static Color FromKnownColor (KnownColor knownColorToConvert)
+		public static Color FromKnownColor (KnownColor c)
 		{
 			if (knownColors == null)
 				FillColorNames ();
 			
-			return knownColors [(int) knownColorToConvert];
+			if (c < KnownColor.ActiveBorder || c > KnownColor.YellowGreen) {
+				// This is what it returns!
+				Color d = FromArgb (0, 0, 0, 0);
+				d.myname = c.ToString ();
+				d.isnamedcolor = true;
+				d.knownColor = c;
+				return d;
+			}
+			
+			return knownColors [(int) c];
 		}
 
 		private static Hashtable GetColorHashtableFromType (Type type)
