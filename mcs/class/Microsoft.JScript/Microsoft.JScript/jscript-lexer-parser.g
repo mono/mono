@@ -216,16 +216,16 @@ inside_for [AST parent]
 	// FIXME: left_hand_side_expr in exp rule, missing
 	;
 	
-if_stm [AST parent] returns [AST ifStm]
+if_stm [AST parent] returns [AST if_stm]
 {
-	ifStm = null;
+	if_stm = null;
 	AST cond, true_stm, false_stm;
 	cond = true_stm = false_stm = null;
 }
-	: "if" OPEN_PARENS cond = expr [parent] CLOSE_PARENS true_stm = statement [null]
-	  (("else")=> "else" false_stm = statement [null] | )
+	: "if" OPEN_PARENS cond = expr [if_stm] CLOSE_PARENS true_stm = statement [if_stm]
+	  (("else")=> "else" false_stm = statement [if_stm] | )
 	  {
-		  ifStm = new If (cond, true_stm, false_stm);
+		  if_stm = new If (parent, cond, true_stm, false_stm);
 	  }
 	;
 
@@ -293,7 +293,7 @@ statement_list
 
 expr [AST parent] returns [Expression e]
 {
-	e = new Expression ();
+	e = new Expression (parent);
 	AST a = null;
 } 
 	: a = assignment_expr [parent] { e.Add (a); } 
@@ -898,7 +898,7 @@ numeric_literal [AST parent] returns [NumericLiteral num_lit]
 {
 	num_lit = null;
 }
-	: d:DECIMAL_LITERAL { num_lit = new NumericLiteral (parent, Convert.ToSingle (d.getText ())); }
+	: d:DECIMAL_LITERAL { num_lit = new NumericLiteral (parent, System.Convert.ToSingle (d.getText ())); }
 	| HEX_INTEGER_LITERAL
 	;
 
