@@ -1,4 +1,8 @@
 
+Tue Feb 26 11:43:34 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: added profiling for object creation.
+
 Mon Feb 25 17:37:07 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: use correct value for guint64 max.
