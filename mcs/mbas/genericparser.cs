@@ -34,7 +34,7 @@ namespace Mono.Languages
 		static private GenericParser defaultParser = null;
 
 		// Indicates if parsing should be verbose
-		static public bool yacc_verbose_flag = false;
+		static public int yacc_verbose_flag = 0;
 
 		// Context to use
 		static public ArrayList defines;

@@ -269,7 +269,7 @@ namespace Mono.Languages
 		
 		// TODO: semantics are different and should be adjusted
 		[Option("Display verbose messages", 'v')] 
-		public bool verbose	{ set { GenericParser.yacc_verbose_flag = value; } }
+		public bool verbose	{ set { GenericParser.yacc_verbose_flag = value ? 1 : 0; } }
 
 		// Advanced options	
 		//------------------------------------------------------------------

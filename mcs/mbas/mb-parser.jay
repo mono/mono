@@ -5112,7 +5112,7 @@ protected override int parse ()
 	
 	StringBuilder value = new StringBuilder ();
 	try {
-		if (yacc_verbose_flag)
+		if (yacc_verbose_flag > 0)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
 		else {
 			yyparse (lexer);

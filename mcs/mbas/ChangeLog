@@ -1,3 +1,10 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	Update to changes in jay/skeleton.cs.
+	* genericparser.cs (yacc_verbose_flag): Change to 'int'.
+	* mb-parser.jay (parse): Update to changes.
+	* driver.cs (verbose): Likewise.
+
 2004-11-24  Jambunathan K  <kjambunathan@novell.com>
 	* class.cs: Factored out classes - 1) GetMethod and SetMethod from
 	Property and 2) AddDelegateMethod and RemoveDelegateMethod from
