@@ -1,3 +1,49 @@
+2003-11-03 cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* ASTList.cs, ArrayLiteral.cs, BitwiseBinary.cs, Blocks.cs,
+	DebugBreak.cs, Enum.cs, Equality.cs, Eval.cs, ForIn.cs,
+	FunctionDeclaration.cs, FunctionExpression.cs, Import.cs,
+	InstanceOf.cs, Literal.cs, NumericBinary.cs, NumericUnary.cs,
+	Package.cs, Plus.cs, PostOrPrefixOperator.cs, Print.cs,
+	Relational.cs, ScriptBlock.cs, StrictEquality.cs, Throw.cs,
+	Try.cs, TypeOf.cs, VariableDeclaration.cs, VariableStatement.cs,
+	With.cs, expression.cs : Added 
+	'Resolve' method stub.
+
+	* CodeGenerator.cs: Added a ILGenerator field to EmitContext.
+
+	* FormalParameterList.cs: Added FormalParam class. Change Add
+	method to receive the id and the type annotation from function's parameters.
+
+	* FunctionDeclaration.cs: Added code for initial function's
+	definition code generation.
+
+	* FunctionObject.cs: Added MethodAttributes and type_annot
+	fields. Added params_types function, which returns an array of
+	types from each of the function's parameters.
+
+	* IdentificationTable.cs: Added ToString method.
+
+	* SemanticAnalizer.cs: Fixed the file name (maybe I should erase it
+	and add it again with the correct name). Not based on the Visitor
+	pattern anymore. Deleted all the VisitFOO methods. Added a
+	IdentificationTable field. Added Run, Dump methods.
+
+	* Statement.cs: Deleted Statement class (it was being used for
+	nothing). All classes that were having Statement as parent,
+	changed their parent to be AST.
+
+	* SymbolTable.cs: Added Add method that receives the id and the
+	declaration class. Retrieve changed to return an AST. Added
+	ToString method.
+
+	* VariableDeclaration.cs: Added InitValue property.
+
+	* ast.cs: Added some comments and abstract method 'Resolve'.
+
+	* jscript-lexer-parser.g: Added parsing support for formal
+	parameters type annotations.
+	
 2003-10-30  cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: fixed function call parsing! yeah! (give
