@@ -375,7 +375,8 @@
 	variables to registers.  The linear scan pass uses the
 	information that was previously gathered by the loop nesting
 	and loop structure computation to favor variables in inner
-	loops. 
+	loops.   This process updates the basic block `nesting' field
+	which is later used during liveness analysis.
 
 	Stack space is then reserved for the local variables and any
 	temporary variables generated during the various
