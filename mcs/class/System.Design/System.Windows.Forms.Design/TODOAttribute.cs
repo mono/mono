@@ -8,7 +8,7 @@
 //
 using System;
 
-namespace System { // Some classes are not under System.Design.* namespace
+namespace System {
 
 	/// <summary>
 	///   The TODO attribute is used to flag all incomplete bits in our class libraries
