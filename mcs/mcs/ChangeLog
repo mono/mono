@@ -1,3 +1,9 @@
+2004-05-30  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Ben Maurer.
+
+	* rootcontext.cs (RootContext.LookupType): Cache negative results.	
+
 2004-05-29  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (IMethodData.ShouldIgnore): New method.
