@@ -1,5 +1,9 @@
 2004-04-30  Todd Berman  <tberman@sevenl.net>
 
+	* gacutil.cs: remove /prefix, now --root and /root
+
+2004-04-30  Todd Berman  <tberman@sevenl.net>
+
 	* gacutil.cs: Change the way of handling the /prefix stuff.
 	Now all gacbased operations will work with /prefix or --root. This
 	*MUST* be at the end of the commandline for it to work.

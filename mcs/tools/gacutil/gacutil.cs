@@ -44,7 +44,7 @@ namespace Mono.Tools
 				args = stripped;
 			}
 
-			if (args[args.Length - 2] == "/prefix" || args[args.Length - 2] == "--root") {
+			if (args[args.Length - 2] == "/root" || args[args.Length - 2] == "--root") {
 				gac_path = Path.Combine (Path.Combine (args[args.Length - 1], "mono"), "gac");
 				gac_path += Path.DirectorySeparatorChar;
 
