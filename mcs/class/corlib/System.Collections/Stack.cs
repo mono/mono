@@ -16,10 +16,12 @@ namespace System.Collections {
 		private object[] contents;
 		private int current = -1;
 		private int count = 0;
-		private int capacity = 16;
+		private int capacity;
 		private int modCount = 0;
 
 		private void Resize(int ncapacity) {
+			
+			ncapacity = Math.Max (ncapacity, 16);
 			object[] ncontents = new object[ncapacity];
 
 			Array.Copy(contents, ncontents, count);
@@ -28,21 +30,23 @@ namespace System.Collections {
 			contents = ncontents;
 		}
 
-		public Stack() {
-			contents = new object[capacity];
-		}
+		public Stack () : this (16) {}
 
-		public Stack(ICollection collection) {
-			capacity = collection.Count;
-			contents = new object[capacity];
-			current = capacity - 1;
-			count = capacity;
+		public Stack(ICollection collection) : this (collection == null ? 16 : collection.Count) {
+			if (collection == null)
+				throw new ArgumentNullException("collection");
+			
+			current = collection.Count - 1;
+			count = collection.Count;
 
 			collection.CopyTo(contents, 0);
 		}
 
-		public Stack(int c) {
-			capacity = c;
+		public Stack (int c) {
+			if (c < 0)
+				throw new ArgumentOutOfRangeException ("c");
+			
+			capacity = Math.Max (c, 16);
 			contents = new object[capacity];
 		}
 
@@ -205,26 +209,31 @@ namespace System.Collections {
 			}
 		}
 
-		private class Enumerator : IEnumerator {
+		private class Enumerator : IEnumerator, ICloneable {
+			
+			const int EOF = -1;
+			const int BOF = -2;
 
 			Stack stack;
 			private int modCount;
 			private int current;
 
 			internal Enumerator(Stack s) {
-				// this is odd.  it seems that you need to 
-				// start one further ahead than current, since 
-				// MoveNext() gets called first when using an 
-				// Enumeration...
 				stack = s;
 				modCount = s.modCount;
-				current = s.current + 1;
+				current = BOF;
+			}
+			
+			public object Clone ()
+			{
+				return MemberwiseClone ();
 			}
 
 			public virtual object Current {
 				get {
 					if (modCount != stack.modCount 
-					    || current == -1 
+					    || current == BOF
+					    || current == EOF
 					    || current > stack.count)
 						throw new InvalidOperationException();
 					return stack.contents[current];
@@ -232,17 +241,20 @@ namespace System.Collections {
 			}
 
 			public virtual bool MoveNext() {
-				if (modCount != stack.modCount 
-				    || current == -1) {
+				if (modCount != stack.modCount)
 					throw new InvalidOperationException();
-				}
-
-				current--;
-
-				if (current == -1) {
+				
+				switch (current) {
+				case BOF:
+					current = stack.current;
+					return current != -1;
+				
+				case EOF:
 					return false;
-				} else {
-					return true;
+				
+				default:
+					current--; 
+					return current != -1;
 				}
 			}
 
@@ -251,9 +263,7 @@ namespace System.Collections {
 					throw new InvalidOperationException();
 				}
 
-				// start one ahead of stack.current, so the 
-				// first MoveNext() will put us at the top
-				current = stack.current + 1;
+				current = BOF;
 			}
 		}
 

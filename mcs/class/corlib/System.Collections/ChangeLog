@@ -1,5 +1,10 @@
 2003-06-07  Ben Maurer <bmaurer@users.sourceforge.net>
-	* Stack.cs: Contains (null) works correctly.
+	* Stack.cs: Contains (null) works correctly. We never have the
+	array sized less than 16, so that the doubling logic works no
+	matter what. The enumerator is IClonable, like in ms. The
+	Enumerator correctly throws an exception if Current is called
+	before the enumerator is started. We now pass all the Rotor tests
+	for this file!
 
 2003-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
