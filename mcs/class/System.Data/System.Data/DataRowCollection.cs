@@ -409,12 +409,5 @@ namespace System.Data
 				constraint.RollbackAssert(row);
 			}
 		}
-
-		internal void onColumnRemoved(int columnIndex)
-		{
-			foreach(DataRow row in List) {
-				row.onColumnRemoved(columnIndex);
-			}
-		}
 	}
 }

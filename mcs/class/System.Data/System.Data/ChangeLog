@@ -1,5 +1,9 @@
 2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
 
+	* DataRowCollection.cs : Removed onColumnRemoved since it iss not in use.
+	
+2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
+
 	* DataTable.cs :
 	  - Table stores default values for columns in soecial default values row. 
 	  It is allocated once (in NewRow)
