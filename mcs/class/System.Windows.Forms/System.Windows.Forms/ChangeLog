@@ -334,3 +334,9 @@ Added delegates. All delegates in System.Windows.Forms done
 * UpDownBase.cs
 * Better comments and formatting
 
+2002-6-18 DennisHayes <dennish@raytek.com>
+* Checked in for Jackson Harper (jackson@latitudegeo.com)
+* ToolBar.cs
+* TabControl.cs
+* TabPage.cs
+* Added sub classes

@@ -28,8 +28,7 @@ namespace System.Windows.Forms {
 		//  --- Public Properties
 		//
 		//[MonoTODO]
-		//public override AnchorStyles Anchor  {
-
+		//public override AnchorStyles Anchor {
 		//	get
 		//	{
 		//		throw new NotImplementedException ();
@@ -37,12 +36,10 @@ namespace System.Windows.Forms {
 		//	set
 		//	{
 		//		throw new NotImplementedException ();
-		//	}
-			
+		//	}	
 		//}
 		//[MonoTODO]
 		//public override DockStyle Dock {
-
 		//	get
 		//	{
 		//		throw new NotImplementedException ();
@@ -53,8 +50,7 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		//[MonoTODO]
-		//public int ImageIndex  {
-
+		//public int ImageIndex {
 		//	get
 		//	{
 		//		throw new NotImplementedException ();
@@ -66,7 +62,6 @@ namespace System.Windows.Forms {
 		//}
 		//[MonoTODO]
 		//public override string Text  {
-
 		//	get
 		//	{
 		//		throw new NotImplementedException ();
@@ -78,7 +73,6 @@ namespace System.Windows.Forms {
 		//}
 		//[MonoTODO]
 		//public string ToolTipText  {
-
 		//	get
 		//	{
 		//		throw new NotImplementedException ();
@@ -113,6 +107,15 @@ namespace System.Windows.Forms {
 		//protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
 		//{
 		//	throw new NotImplementedException ();
+		//}
+		//public class TabPageControlCollection : Control.ControlCollection {
+			//
+			// --- Public Methods
+			//
+			//public override void Add(Control value)
+			//{
+			//	throw new NotImplementedException ();
+			//}
 		//}
 	//}
 }

@@ -243,7 +243,6 @@ namespace System.Windows.Forms {
 		//public event ToolBarButtonClickEventHandler ButtonClick;
 		//[MonoTODO]
 		//public event ToolBarButtonClickEventHandler ButtonDropDown;
-		//[MonoTODO]
 		//
 		// --- Protected Properties
 		//
@@ -315,6 +314,102 @@ namespace System.Windows.Forms {
 		//protected override void WndProc(ref Message m)
 		//{
 		//	throw new NotImplementedException ();
+		//}
+		//public class ToolBarButtonCollection : IList, ICollection, IEnumerable {
+			//
+			// --- Public Constructor
+			//
+			//[MonoTODO]
+			//public ToolBar.ToolBarButtonCollection(ToolBar owner)
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//
+			// --- Public Properties
+			//
+			//[MonoTODO]
+			//public int Count {
+			//	get
+			//	{
+			//		throw new NotImplementedException ();
+			//	}
+			//}
+			//[MonoTODO]
+			//public bool IsReadOnly {
+			//	get
+			//	{
+			//		throw new NotImplementedException ();
+			//	}
+			//}
+			//[MonoTODO]
+			//public virtual ToolBarButton this[int index] {
+			//	get
+			//	{
+			//		throw new NotImplementedException ();
+			//	}
+			//	set
+			//	{
+			//		throw new NotImplementedException ();
+			//	}
+			//}
+			//
+			// --- Public Methods
+			//
+			//[MonoTODO]
+			//public int Add(string text) 
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public int Add(ToolBarButton button)
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public void AddRange(ToolBarButton[] buttons)
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public void Clear()
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public bool Contains(ToolBarButton button)
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public IEnumerator GetEnumerator()
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public int IndexOf(ToolBarButton button)
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public void Insert(int index, ToolBarButton button)
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public void Insert(int index, ToolBarButton button)
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public void Remove(ToolBarButton button)
+			//{
+			//	throw new NotImplementedException ();
+			//}
+			//[MonoTODO]
+			//public void RemoveAt(int index)
+			//{
+			//	throw new NotImplementedException ();
+			//}
 		//}
 	//}
 }
