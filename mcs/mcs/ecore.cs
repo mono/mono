@@ -1742,9 +1742,21 @@ namespace Mono.CSharp {
 					return new ULongConstant ((ulong) value);
 			}
 			
-			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type))
-				return new EnumConstant (ic, target_type);
+			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type)){
+				Type underlying = TypeManager.EnumToUnderlying (target_type);
+				Constant e = (Constant) ic;
+				
+				//
+				// Possibly, we need to create a different 0 literal before passing
+				// to EnumConstant
+				//n
+				if (underlying == TypeManager.int64_type)
+					e = new LongLiteral (0);
+				else if (underlying == TypeManager.uint64_type)
+					e = new ULongLiteral (0);
 
+				return new EnumConstant (e, target_type);
+			}
 			return null;
 		}
 
