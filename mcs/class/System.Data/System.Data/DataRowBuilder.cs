@@ -24,6 +24,7 @@ namespace System.Data
 		#region Fields
 		
 		private DataTable table;
+		internal int _rowId;
 
 		#endregion
 
@@ -33,9 +34,10 @@ namespace System.Data
 		// DataTable and two Int32.  For consistency, this
 		// class will also take those arguments.
 
-		internal DataRowBuilder (DataTable table, Int32 x, Int32 y)
+		internal DataRowBuilder (DataTable table, Int32 rowID, Int32 y)
 		{
 			this.table = table;
+			this._rowId = rowID;
 		}
 
 		#endregion

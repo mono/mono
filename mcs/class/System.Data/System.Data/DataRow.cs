@@ -41,6 +41,7 @@ namespace System.Data {
 		private bool editing = false;
 		private bool _hasParentCollection;
 		private bool _inChangingEvent;
+		private int _rowId;
 
 		#endregion
 
@@ -53,6 +54,8 @@ namespace System.Data {
 		protected internal DataRow (DataRowBuilder builder)
 		{
 			_table = builder.Table;
+			// Get the row id from the builder.
+			_rowId = builder._rowId;
 
 			original = null; 
 			
@@ -415,6 +418,7 @@ namespace System.Data {
 		//from a Datatable so I added this method. Delete if there is a better way.
 		internal void DetachRow() {
 			proposed = null;
+			_rowId = -1;
 			_hasParentCollection = false;
 			rowState = DataRowState.Detached;
 		}
@@ -433,6 +437,14 @@ namespace System.Data {
 		internal int XmlRowID {
 			get { return xmlRowID; }
 			set { xmlRowID = value; }
+		}
+		
+		/// <summary>
+		/// Gets and sets index of row.
+		// </summary>
+		internal int RowID {
+			get { return _rowId; }
+			set { _rowId = value; }
 		}
 
 		#endregion

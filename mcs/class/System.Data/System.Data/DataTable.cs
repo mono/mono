@@ -56,7 +56,7 @@ namespace System.Data {
 		private string _encodedTableName;
 		internal bool _duringDataLoad;
 		private bool dataSetPrevEnforceConstraints;
-
+		private DataRowBuilder _rowBuilder;
 
 		
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
@@ -888,7 +888,13 @@ namespace System.Data {
 		/// </summary>
 		public DataRow NewRow () 
 		{
-			return this.NewRowFromBuilder (new DataRowBuilder (this, 0, 0));
+			// initiate only one row builder.
+			if (_rowBuilder == null)
+				_rowBuilder = new DataRowBuilder (this, 0, 0);
+			
+			// new row get id -1.
+			_rowBuilder._rowId = -1;
+			return this.NewRowFromBuilder (_rowBuilder);
 		}
 
 		/// <summary>

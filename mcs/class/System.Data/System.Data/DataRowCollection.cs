@@ -64,8 +64,9 @@ namespace System.Data
 
 			if (row.Table != this.table)
 				throw new ArgumentException ("This row already belongs to another table.");
-
-			if (list.IndexOf(row) != -1)
+			
+			// If row id is not -1, we know that it is in the collection.
+			if (row.RowID != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
 			
 
@@ -75,6 +76,8 @@ namespace System.Data
 			
 			row.HasParentCollection = true;
 			list.Add (row);
+			// Set the row id.
+			row.RowID = list.Count - 1;
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
 		}
