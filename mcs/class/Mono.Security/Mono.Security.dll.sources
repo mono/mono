@@ -72,6 +72,7 @@
 ./Mono.Security.Protocol.Tls/ClientRecordProtocol.cs
 ./Mono.Security.Protocol.Tls/Context.cs
 ./Mono.Security.Protocol.Tls/ExchangeAlgorithmType.cs
+./Mono.Security.Protocol.Tls/HandshakeState.cs
 ./Mono.Security.Protocol.Tls/HashAlgorithmType.cs
 ./Mono.Security.Protocol.Tls/HttpsClientStream.cs
 ./Mono.Security.Protocol.Tls/RecordProtocol.cs
