@@ -1740,6 +1740,9 @@ namespace System.Windows.Forms
 
 		public bool Visible {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Visible;
+				}
 				if (!is_visible) {
 					return false;
 				}
@@ -1752,6 +1755,11 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					((Form)this).form_parent_window.Visible = value;
+					return;
+				}
+
 				SetVisibleCore(value);
 			}
 		}
@@ -2316,7 +2324,7 @@ namespace System.Windows.Forms
 				this.CreateHandle();
 			}
 
-			this.Visible=true;			
+			this.Visible=true;
 		}
 
 		public void SuspendLayout() {
@@ -2811,8 +2819,8 @@ namespace System.Windows.Forms
 				break;
 			}
 				
-			case Msg.WM_ERASEBKGND:{
-				if (GetStyle (ControlStyles.UserPaint)){						
+			case Msg.WM_ERASEBKGND: {
+				if (GetStyle (ControlStyles.UserPaint)) {
 					if (!GetStyle(ControlStyles.AllPaintingInWmPaint)) {
 						PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
 						OnPaintBackground (eraseEventArgs);
