@@ -89,12 +89,19 @@ namespace System.Net
 			queue = group.Queue;
 		}
 
+		bool CanReuse ()
+		{
+			// The real condition is !(socket.Poll (0, SelectMode.SelectRead) || socket.Available != 0)
+			// but if there's data pending to read (!) we won't reuse the socket.
+			return (socket.Poll (0, SelectMode.SelectRead) == false);
+		}
+		
 		void Connect ()
 		{
 			lock (this) {
 				if (socket != null && socket.Connected && status == WebExceptionStatus.Success) {
 					// Take the chunked stream to the expected state (State.None)
-					if (CompleteChunkedRead ()) {
+					if (CanReuse () && CompleteChunkedRead ()) {
 						reused = true;
 						return;
 					}
