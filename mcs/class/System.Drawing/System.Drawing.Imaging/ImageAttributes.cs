@@ -23,11 +23,11 @@ namespace System.Drawing.Imaging
 		}
 
 		//Sets the color keys for all GDI+ objects
-		public void SetColorKey(COLOR colorLow, COLOR colorHigh){
+		public void SetColorKey(Color colorLow, Color colorHigh){
 
 		}
 
-		public ~ImageAttributes() {
+		~ImageAttributes() {
 		}
 
 	}
