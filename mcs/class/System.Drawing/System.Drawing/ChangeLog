@@ -1,4 +1,10 @@
 2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
+	* gdipEnums.cs 
+	* gdipFunctions.cs 
+	* gdipStructs.cs		added 
+						
+
+2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs
 	* Brush.cs
 	* Font.cs
