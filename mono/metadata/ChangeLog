@@ -1,3 +1,7 @@
+2004-10-19    <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_InternalExecute): Fix build for gcc-2.95.
+
 2004-10-18    <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_object): Fix freeing of memory when a reference type is
