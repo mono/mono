@@ -1633,10 +1633,21 @@ public class TypeBuilderTest : Assertion
 		EnumBuilder enumBuilder = module.DefineEnum (genTypeName (),
 													 TypeAttributes.Public, typeof(int));
 		typeBuilder.DefineField ("myField", enumBuilder, FieldAttributes.Private);
+		enumBuilder.CreateType();
+		typeBuilder.CreateType();
+	}
+
+	[Test]
+	[ExpectedException(typeof(TypeLoadException))]
+	public void DefineEnumThrowIfTypeBuilderCalledBeforeEnumBuilder () {
+		TypeBuilder typeBuilder = module.DefineType (genTypeName (),
+													 TypeAttributes.Public);
+		EnumBuilder enumBuilder = module.DefineEnum (genTypeName (),
+													 TypeAttributes.Public, typeof(int));
+		typeBuilder.DefineField ("myField", enumBuilder, FieldAttributes.Private);
 		typeBuilder.CreateType();
 		enumBuilder.CreateType();
 	}
-
 	private void DefineStringProperty (TypeBuilder tb, string propertyName, string fieldName, MethodAttributes methodAttribs) {
 		// define the field holding the property value
 		FieldBuilder fieldBuilder = tb.DefineField (fieldName,

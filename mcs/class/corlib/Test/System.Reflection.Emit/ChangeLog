@@ -1,3 +1,8 @@
+2004-08-29  Nick Drochak <ndrochak@ieee.org>
+
+	* TypeBuilderTestTest.cs: Call EnumBuilder.CreateType()	before you call
+	TypeBuilder.CreateType().
+
 2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs: Add regression test for #62237.
