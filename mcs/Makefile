@@ -3,24 +3,26 @@ thisdir := .
 SUBDIRS := build jay mcs monoresgen class mbas nunit20 ilasm tools tests errors docs
 DIST_ONLY_SUBDIRS := gmcs
 
-net_2_0_bootstrap_SUBDIRS := class
+bootstrap_dirs := class
+net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs)
+net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_SUBDIRS := gmcs class tests errors tools
 
 ifdef TEST_SUBDIRS
 $(PROFILE)_SUBDIRS := $(TEST_SUBDIRS)
 endif
 
-ifndef NO_SIGN_ASSEMBLIES
 OVERRIDE_TARGET_ALL = yes
-endif
 
 include build/rules.make
 
 all-recursive $(STD_TARGETS:=-recursive): platform-check profile-check
 
-# Used only if OVERRIDE_TARGET_ALL is defined
+# Used when OVERRIDE_TARGET_ALL is defined
 all.override:
+ifndef NO_SIGN_ASSEMBLY
 	$(MAKE) NO_SIGN_ASSEMBLY=yes all.real
+endif
 	$(MAKE) all.real
 
 .PHONY: all-local $(STD_TARGETS:=-local)
