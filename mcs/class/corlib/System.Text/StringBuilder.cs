@@ -59,6 +59,10 @@ namespace System.Text {
 		public StringBuilder( int capacity ) : this(null, 0, 0, capacity) {}
 
 		public StringBuilder( int capacity, int maxCapacity ) : this(null, 0, 0, capacity) {
+			if(capacity > maxCapacity) 
+			{
+				throw new System.ArgumentOutOfRangeException("capacity", "Capacity exceeds maximum capacity.");
+			}
 			sMaxCapacity = maxCapacity;
 		}
 

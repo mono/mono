@@ -1,3 +1,11 @@
+2001-10-25  Nick Drochak  <ndrochak@gol.com>
+
+	* StringBuilder.cs: Throw exception if they try to make a StringBuilder
+		whose capacity is greater than the MaxCapacity.
+
+	I added some tests for the constructors and the above exception. More
+	coming soon.
+
 2001-10-23  Nick Drochak  <ndrochak@gol.com>
 
 	* StringBuilder.cs: Refactored constructor code into just one
