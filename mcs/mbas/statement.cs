@@ -235,15 +235,27 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public enum DoOptions {
+		WHILE,
+		UNTIL,
+		TEST_BEFORE,
+		TEST_AFTER
+	};
+
 	public class Do : Statement {
 		public Expression expr;
 		public readonly Statement  EmbeddedStatement;
+		//public DoOptions type;
+		public DoOptions test;
 		bool infinite, may_return;
+
 		
-		public Do (Statement statement, Expression boolExpr, Location l)
+		public Do (Statement statement, Expression boolExpr, DoOptions do_test, Location l)
 		{
 			expr = boolExpr;
 			EmbeddedStatement = statement;
+//			type = do_type;
+			test = do_test;
 			loc = l;
 		}
 
@@ -286,24 +298,45 @@ namespace Mono.CSharp {
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
 			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
-				
-			ig.MarkLabel (loop);
-			EmbeddedStatement.Emit (ec);
-			ig.MarkLabel (ec.LoopBegin);
 
-			//
-			// Dead code elimination
-			//
-			if (expr is BoolConstant){
-				bool res = ((BoolConstant) expr).Value;
+			if (test == DoOptions.TEST_AFTER) {
+				ig.MarkLabel (loop);
+				EmbeddedStatement.Emit (ec);
+				ig.MarkLabel (ec.LoopBegin);
 
-				if (res)
-					ec.ig.Emit (OpCodes.Br, loop); 
-			} else
-				EmitBoolExpression (ec, expr, loop, true);
-			
-			ig.MarkLabel (ec.LoopEnd);
+				//
+				// Dead code elimination
+				//
+				if (expr is BoolConstant){
+					bool res = ((BoolConstant) expr).Value;
 
+					if (res)
+						ec.ig.Emit (OpCodes.Br, loop);
+				} else
+					EmitBoolExpression (ec, expr, loop, true);
+
+				ig.MarkLabel (ec.LoopEnd);
+			}
+			else
+			{
+				ig.MarkLabel (loop);
+				ig.MarkLabel (ec.LoopBegin);
+
+				//
+				// Dead code elimination
+				//
+				if (expr is BoolConstant){
+					bool res = ((BoolConstant) expr).Value;
+
+					if (res)
+						ec.ig.Emit (OpCodes.Br, ec.LoopEnd);
+				} else
+					EmitBoolExpression (ec, expr, ec.LoopEnd, true);
+
+				EmbeddedStatement.Emit (ec);
+				ec.ig.Emit (OpCodes.Br, loop);
+				ig.MarkLabel (ec.LoopEnd);
+			}
 			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
