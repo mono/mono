@@ -8,7 +8,6 @@
 //
 
 using System;
-using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
@@ -21,20 +20,16 @@ namespace System.Security.Cryptography {
 
 public sealed class TripleDESCryptoServiceProvider : TripleDES {
 
-	public TripleDESCryptoServiceProvider () 
-	{
-	}
+	public TripleDESCryptoServiceProvider () {}
 
-	[MonoTODO]
 	public override void GenerateIV () 
 	{
-		throw new System.NotImplementedException ();
+		IVValue = KeyBuilder.IV (BlockSizeValue >> 3);
 	}
 	
-	[MonoTODO]
 	public override void GenerateKey () 
 	{
-		KeyValue = new byte [KeySizeValue / 8];
+		KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 	}
 	
 	public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 

@@ -10,7 +10,6 @@
 //
 
 using System;
-using System.Security.Cryptography;
 
 /// <summary>
 /// Rijndael is a symmetric block cipher supporting block and key sizes
@@ -28,21 +27,17 @@ public sealed class RijndaelManaged : Rijndael {
 	/// <summary>
 	/// RijndaelManaged constructor.
 	/// </summary>
-	public RijndaelManaged() 
-	{
-	}
+	public RijndaelManaged() {}
 	
 	/// <summary>
 	/// Generates a random IV for block feedback modes
 	/// </summary>
 	/// <remarks>
 	/// Method is inherited from SymmetricAlgorithm
-	///
 	/// </remarks>
-	[MonoTODO]
 	public override void GenerateIV () 
 	{
-		throw new System.NotImplementedException();
+		IVValue = KeyBuilder.IV (BlockSizeValue >> 3);
 	}
 	
 	/// <summary>
@@ -50,12 +45,10 @@ public sealed class RijndaelManaged : Rijndael {
 	/// </summary>
 	/// <remarks>
 	/// Inherited method from base class SymmetricAlgorithm
-	///
 	/// </remarks>
-	[MonoTODO]
 	public override void GenerateKey () 
 	{
-		KeyValue = new byte [KeySizeValue / 8];
+		KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 	}
 	
 	/// <summary>

@@ -1,7 +1,7 @@
 //
 // System.Security.Cryptography.DESCryptoServiceProvider
 //
-// Author:
+// Authors:
 //   Sergey Chaban (serge@wildwestsoftware.com)
 //   Sebastien Pouliot (spouliot@motus.com)
 //
@@ -10,7 +10,6 @@
 
 
 using System;
-using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
@@ -431,37 +430,33 @@ internal class DESTransform : SymmetricTransform {
 } 
 
 public sealed class DESCryptoServiceProvider : DES {
-	private RandomNumberGenerator rng;
 
-	public DESCryptoServiceProvider () : base ()
-	{
-		// there are no constructor accepting a secret key
-		// so we always need the RNG (using the default one)
-		rng = RandomNumberGenerator.Create ();
-	}
+	public DESCryptoServiceProvider () : base () {}
 
 	public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
 	{
+		Key = rgbKey;
+		IV = rgbIV;
 		return new DESTransform (this, false, rgbKey, rgbIV);
 	}
 
 	public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
 	{
+		Key = rgbKey;
+		IV = rgbIV;
 		return new DESTransform (this, true, rgbKey, rgbIV);
 	}
 
 	public override void GenerateIV () 
 	{
-		IVValue = new byte [(BlockSizeValue >> 3)];
-		rng.GetBytes (IVValue);
+		IVValue = KeyBuilder.IV (BlockSizeValue >> 3);
 	}
 
 	public override void GenerateKey () 
 	{
-		KeyValue = new byte [(KeySizeValue >> 3)];
-		rng.GetBytes (KeyValue);
+		KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 		while (IsWeakKey (KeyValue) || IsSemiWeakKey (KeyValue))
-			rng.GetBytes (KeyValue);
+			KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 	}
 
 } // DESCryptoServiceProvider

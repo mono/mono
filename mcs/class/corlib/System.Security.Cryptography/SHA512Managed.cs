@@ -128,14 +128,14 @@ public class SHA512Managed : SHA512 {
 
 	private void processWord (byte[] input, int inOff) 
 	{
-		W [wOff++] = ( (ulong) (input [inOff] & 0xff) << 56)
-			| ( (ulong) (input [inOff + 1] & 0xff) << 48)
-			| ( (ulong) (input [inOff + 2] & 0xff) << 40)
-			| ( (ulong) (input [inOff + 3] & 0xff) << 32)
-			| ( (ulong) (input [inOff + 4] & 0xff) << 24)
-			| ( (ulong) (input [inOff + 5] & 0xff) << 16)
-			| ( (ulong) (input [inOff + 6] & 0xff) << 8)
-			| ( (ulong) (input [inOff + 7] & 0xff)); 
+		W [wOff++] = ( (ulong) input [inOff] << 56)
+			| ( (ulong) input [inOff + 1] << 48)
+			| ( (ulong) input [inOff + 2] << 40)
+			| ( (ulong) input [inOff + 3] << 32)
+			| ( (ulong) input [inOff + 4] << 24)
+			| ( (ulong) input [inOff + 5] << 16)
+			| ( (ulong) input [inOff + 6] << 8)
+			| ( (ulong) input [inOff + 7]); 
 		if (wOff == 16)
 			processBlock ();
 	}
@@ -154,7 +154,7 @@ public class SHA512Managed : SHA512 {
 
 	// adjust the byte counts so that byteCount2 represents the
 	// upper long (less 3 bits) word of the byte count.
-	private void adjustByteCounts() 
+	private void adjustByteCounts () 
 	{
 		if (byteCount1 > 0x1fffffffffffffffL) {
 			byteCount2 += (byteCount1 >> 61);

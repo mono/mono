@@ -356,7 +356,6 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Gets or sets the actual Initial Vector
 		/// </summary>
-		[MonoTODO]
 		public virtual byte[] IV {
 			get {
 				if (this.IVValue == null)
@@ -372,7 +371,7 @@ namespace System.Security.Cryptography {
 					throw new CryptographicException ("IV length must match block size");
 				
 				this.IVValue = new byte [value.Length];
-				System.Array.Copy (value, 0, this.IVValue, 0, value.Length);
+				Array.Copy (value, 0, this.IVValue, 0, value.Length);
 			}
 		}
 
@@ -395,7 +394,7 @@ namespace System.Security.Cryptography {
 
 				this.KeySizeValue = value.Length * 8;
 				this.KeyValue = new byte [value.Length];
-				System.Array.Copy (value, 0, this.KeyValue, 0, value.Length);
+				Array.Copy (value, 0, this.KeyValue, 0, value.Length);
 			}
 		}
 		

@@ -1,3 +1,20 @@
+2002-12-27  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoTools.cs: New. Shared classes for cryptography. Now
+	includes a KeyBuilder to generate symmetric keys and IV.
+	* DES.cs: Modified Key validation.
+	* DESCryptoServiceProvider.cs: Implemented Key and IV using
+	KeyBuilder.
+	* RC2CryptoServiceProvider.cs: Implemented Key and IV using
+	KeyBuilder (and removed TODO).
+	* RijndaelManaged.cs: Implemented Key and IV using KeyBuilder 
+	(and removed TODO).
+	* SHA384Managed.cs: Changed code to remove compiler warning.
+	* SHA512Managed.cs: Changed code to remove compiler warning.
+	* SymmetricAlgorithm.cs: Removed TODO on IV.
+	* TripleDESCryptoServiceProvider.cs: Implemented Key and IV
+	using KeyBuilder (and removed TODO).
+
 2002-11-20  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsymmetricSignatureDeformatter.cs: Added exception handling in

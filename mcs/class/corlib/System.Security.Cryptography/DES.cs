@@ -83,7 +83,7 @@ public abstract class DES : SymmetricAlgorithm {
 	public static bool IsWeakKey (byte [] rgbKey)
 	{
 		if (rgbKey.Length == (blockSizeByte >> 3))
-			throw new CryptographicException ();
+			throw new CryptographicException ("Wrong Key Length");
 
 		ulong lk = PackKey (rgbKey);
 		foreach (ulong wk in weakKeys) {
@@ -95,7 +95,7 @@ public abstract class DES : SymmetricAlgorithm {
 	public static bool IsSemiWeakKey (byte [] rgbKey)
 	{
 		if (rgbKey.Length == (blockSizeByte >> 3))
-			throw new CryptographicException ();
+			throw new CryptographicException ("Wrong Key Length");
 
 		ulong lk = PackKey (rgbKey);
 		foreach (ulong swk in semiweakKeys) {
@@ -105,22 +105,13 @@ public abstract class DES : SymmetricAlgorithm {
 	}
 
 	public override byte[] Key {
-		get { 
-			if (KeyValue == null)
-				return base.Key;
-			else
-				return KeyValue;
-		}
+		get { return base.Key; }
 		set {
 			if (value == null)
 				throw new ArgumentNullException ();
-			if (value.Length != (blockSizeByte >> 3))
-				throw new ArgumentException ();
 			if (IsWeakKey (value) || IsSemiWeakKey (value))
 				throw new CryptographicException ();
-
-			KeyValue = new byte [8];
-			Array.Copy (value, 0, KeyValue, 0, blockSizeByte);
+			base.Key = value;
 		}
 	}
 
