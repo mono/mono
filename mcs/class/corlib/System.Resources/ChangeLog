@@ -1,3 +1,9 @@
+2002-01-24  Nick Drochak  <ndrochak@gol.com>
+
+	* ResourceReader.cs: Implemented constructors. Started on the 
+	GetEnumerator() method.  Not done yet, but comitting for 
+	'disaster recovery' purposes.
+
 2002-01-19  Duncan Mak  <duncan@ximian.com>
 
 	* *.cs: Fixed indentation. There was a stupid bug in my .emacs file.
