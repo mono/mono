@@ -1,3 +1,8 @@
+
+Fri Feb 15 15:06:33 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* socket-io.c: use g_snprintf() instead of snprintf.
+
 2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* reflection.c (mono_param_get_objects): Cast second argument to
