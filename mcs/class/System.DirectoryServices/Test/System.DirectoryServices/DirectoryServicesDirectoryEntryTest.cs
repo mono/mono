@@ -51,13 +51,14 @@ namespace MonoTests.System.DirectoryServices
 		[SetUp]
 		public void SetUp()
 		{
+			TearDown();
+
 			#region Initialize basics
 
 			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
 														LDAPServerUsername,
 														LDAPServerPassword,
 														AuthenticationTypes.ServerBind);
-
 			DirectoryEntry ouPeople = root.Children.Add("ou=people","Class");
 			ouPeople.Properties["objectClass"].Value = "organizationalUnit";
 			ouPeople.Properties["description"].Value = "All people in organisation";
@@ -198,7 +199,22 @@ namespace MonoTests.System.DirectoryServices
 			cnUziCohen_.CommitChanges();
 
 			#endregion // Manager
-
+						
+			cnJohnSmith.Dispose();
+			cnBarakTsabari.Dispose();
+			ouHumanResources.Dispose();
+			cnUziCohen.Dispose();
+			cnYossiCohen.Dispose();
+			cnDanielCohen.Dispose();
+			cnSaraCohen.Dispose();
+			ouRnD.Dispose();
+			cnDanielSmith.Dispose();
+			cnDanielMorgan.Dispose();
+			ouDevQA.Dispose();
+			cnUziCohen_.Dispose();
+			cnManager.Dispose();
+			ouPeople.Dispose();
+			root.Dispose();
 		}
 
 
@@ -208,13 +224,13 @@ namespace MonoTests.System.DirectoryServices
 			de = null;
 
 			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
-													LDAPServerUsername,
-													LDAPServerPassword,
-													AuthenticationTypes.ServerBind);
+														LDAPServerUsername,
+														LDAPServerPassword,
+														AuthenticationTypes.ServerBind);
 			
 			foreach(DirectoryEntry child in root.Children) {
 				DeleteTree_DFS(child);
-			}		
+			}	
 		}
 
 		private void DeleteTree_DFS(DirectoryEntry de)
@@ -303,20 +319,20 @@ namespace MonoTests.System.DirectoryServices
 
 			#region AuthenticationTypes.Encryption
 
-//			de = new DirectoryEntry(	LDAPServerConnectionString,
-//													LDAPServerUsername,
-//													LDAPServerPassword,
-//													AuthenticationTypes.Encryption);
-//			
-//			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Encryption);
-//			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
-//			Assert.AreEqual(de.Name,"dc=myhosting");
-//			//Assert.AreEqual(de.NativeGuid,null);
-//			Assert.AreEqual(de.Password,LDAPServerPassword);
-//			Assert.AreEqual(de.Path,LDAPServerConnectionString);
-//			Assert.AreEqual(de.SchemaClassName,"organization");
-//			Assert.AreEqual(de.UsePropertyCache,true);
-//			Assert.AreEqual(de.Username,LDAPServerUsername);
+			//			de = new DirectoryEntry(	LDAPServerConnectionString,
+			//													LDAPServerUsername,
+			//													LDAPServerPassword,
+			//													AuthenticationTypes.Encryption);
+			//			
+			//			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Encryption);
+			//			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
+			//			Assert.AreEqual(de.Name,"dc=myhosting");
+			//			//Assert.AreEqual(de.NativeGuid,null);
+			//			Assert.AreEqual(de.Password,LDAPServerPassword);
+			//			Assert.AreEqual(de.Path,LDAPServerConnectionString);
+			//			Assert.AreEqual(de.SchemaClassName,"organization");
+			//			Assert.AreEqual(de.UsePropertyCache,true);
+			//			Assert.AreEqual(de.Username,LDAPServerUsername);
 
 			#endregion //AuthenticationTypes.Encryption
 
@@ -398,39 +414,39 @@ namespace MonoTests.System.DirectoryServices
 
 			#region AuthenticationTypes.Secure
 
-//			de = new DirectoryEntry(LDAPServerConnectionString,
-//									LDAPServerUsername,
-//									LDAPServerPassword,
-//									AuthenticationTypes.Secure);
-//			
-//			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Secure);
-//			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
-//			Assert.AreEqual(de.Name,"dc=myhosting");
-//			//Assert.AreEqual(de.NativeGuid,null);
-//			Assert.AreEqual(de.Password,LDAPServerPassword);
-//			Assert.AreEqual(de.Path,LDAPServerConnectionString);
-//			Assert.AreEqual(de.SchemaClassName,"organization");
-//			Assert.AreEqual(de.UsePropertyCache,true);
-//			Assert.AreEqual(de.Username,LDAPServerUsername);
+			//			de = new DirectoryEntry(LDAPServerConnectionString,
+			//									LDAPServerUsername,
+			//									LDAPServerPassword,
+			//									AuthenticationTypes.Secure);
+			//			
+			//			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Secure);
+			//			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
+			//			Assert.AreEqual(de.Name,"dc=myhosting");
+			//			//Assert.AreEqual(de.NativeGuid,null);
+			//			Assert.AreEqual(de.Password,LDAPServerPassword);
+			//			Assert.AreEqual(de.Path,LDAPServerConnectionString);
+			//			Assert.AreEqual(de.SchemaClassName,"organization");
+			//			Assert.AreEqual(de.UsePropertyCache,true);
+			//			Assert.AreEqual(de.Username,LDAPServerUsername);
 
 			#endregion //AuthenticationTypes.Secure
 
 			#region AuthenticationTypes.SecureSocketsLayer
 
-//			de = new DirectoryEntry(LDAPServerConnectionString,
-//									LDAPServerUsername,
-//									LDAPServerPassword,
-//									AuthenticationTypes.SecureSocketsLayer);
-//			
-//			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.SecureSocketsLayer);
-//			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
-//			Assert.AreEqual(de.Name,"dc=myhosting");
-//			//Assert.AreEqual(de.NativeGuid,null);
-//			Assert.AreEqual(de.Password,LDAPServerPassword);
-//			Assert.AreEqual(de.Path,LDAPServerConnectionString);
-//			Assert.AreEqual(de.SchemaClassName,"organization");
-//			Assert.AreEqual(de.UsePropertyCache,true);
-//			Assert.AreEqual(de.Username,LDAPServerUsername);
+			//			de = new DirectoryEntry(LDAPServerConnectionString,
+			//									LDAPServerUsername,
+			//									LDAPServerPassword,
+			//									AuthenticationTypes.SecureSocketsLayer);
+			//			
+			//			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.SecureSocketsLayer);
+			//			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
+			//			Assert.AreEqual(de.Name,"dc=myhosting");
+			//			//Assert.AreEqual(de.NativeGuid,null);
+			//			Assert.AreEqual(de.Password,LDAPServerPassword);
+			//			Assert.AreEqual(de.Path,LDAPServerConnectionString);
+			//			Assert.AreEqual(de.SchemaClassName,"organization");
+			//			Assert.AreEqual(de.UsePropertyCache,true);
+			//			Assert.AreEqual(de.Username,LDAPServerUsername);
 
 			#endregion //AuthenticationTypes.SecureSocketsLayer
 
@@ -472,6 +488,28 @@ namespace MonoTests.System.DirectoryServices
 
 			#endregion //AuthenticationTypes.Signing
 
+		}
+
+		[Test]
+		public void DirectoryEntry_Dispose()
+		{
+			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
+														LDAPServerUsername,
+														LDAPServerPassword,
+														AuthenticationTypes.ServerBind);
+
+			DirectoryEntry ouPeople = root.Children.Add("ou=printers","Class");
+			ouPeople.Properties["objectClass"].Value = "organizationalUnit";
+			ouPeople.Properties["description"].Value = "All printers in organisation";
+			ouPeople.Properties["ou"].Value = "printers";
+			ouPeople.CommitChanges();
+
+			//root.Dispose();
+
+			ouPeople.Rename("ou=anotherPrinters");
+			ouPeople.CommitChanges();
+
+			Assert.IsTrue(DirectoryEntry.Exists(LDAPServerRoot + "ou=anotherPrinters,dc=myhosting,dc=example"));
 		}
 
 
@@ -592,18 +630,307 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectoryEntry_UsePropertyCache()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
+			string barakTsabariDN = LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example";
+			de = new DirectoryEntry(barakTsabariDN,
 									LDAPServerUsername,
 									LDAPServerPassword,
-									AuthenticationTypes.None);
+									AuthenticationTypes.ServerBind);
 
+			// UsePropertyCache = true
 			de.UsePropertyCache = true;
 			Assert.AreEqual(de.UsePropertyCache,true);
 
+			#region Check Properties
+
+			// Properties changes are cached
+			string oldTelephoneNumber = (string)de.Properties["telephoneNumber"].Value;
+			string newTelephoneNumber = "+972-3-6572345";
+
+			de.Properties["telephoneNumber"].Value = newTelephoneNumber;
+			DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariDN,
+																LDAPServerUsername,
+																LDAPServerPassword,
+																AuthenticationTypes.ServerBind);
+
+			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+			de.CommitChanges();
+			barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,newTelephoneNumber);
+
+			// restore object state
+			de.Properties["telephoneNumber"].Value = oldTelephoneNumber;
+			de.CommitChanges();
+
+			#endregion // Check Properties
+
+			#region Check DeleteTree
+
+			// DeleteTree is not cached
+			de.DeleteTree();
+			try {
+				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+													LDAPServerUsername,
+													LDAPServerPassword,
+													AuthenticationTypes.ServerBind);
+				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
+				barakTsabariDE.CommitChanges();
+				Assert.Fail("Object " + barakTsabariDN + " was not deleted from server.");
+			}
+			catch (Exception e) {
+				// do nothing
+			}
+
+			// restore object state
+			DirectoryEntry ouHumanResources = new DirectoryEntry(	LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
+																	LDAPServerUsername,
+																	LDAPServerPassword,
+																	AuthenticationTypes.ServerBind);
+			DirectoryEntry cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class");
+			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("person");
+			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("organizationalPerson");
+			cnBarakTsabari.Properties["cn"].Value = "Barak Tsabari";
+			cnBarakTsabari.Properties["facsimileTelephoneNumber"].Value = "+1 906 777 8853";
+			((PropertyValueCollection)cnBarakTsabari.Properties["ou"]).Add("Human Resources");
+			((PropertyValueCollection)cnBarakTsabari.Properties["ou"]).Add("People");
+			cnBarakTsabari.Properties["sn"].Value = "Tsabari";
+			cnBarakTsabari.Properties["telephoneNumber"].Value = "+1 906 777 8854";
+			cnBarakTsabari.CommitChanges();
+
+			#endregion // Check DeleteTree
+
+			#region Check MoveTo
+
+			// Move to is not cached
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+
+			DirectoryEntry ouRnD = new DirectoryEntry(	LDAPServerRoot + "ou=R&D,ou=people,dc=myhosting,dc=example",
+														LDAPServerUsername,
+														LDAPServerPassword,
+														AuthenticationTypes.ServerBind);
+			de.MoveTo(ouRnD);
+			try {
+				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+													LDAPServerUsername,
+													LDAPServerPassword,
+													AuthenticationTypes.ServerBind);
+				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
+				barakTsabariDE.CommitChanges();
+				Assert.Fail("Object " + barakTsabariDN + " was not moved from old location on the server.");
+			}
+			catch (Exception e) {
+				// do nothing
+			}
+
+
+			barakTsabariDE = new DirectoryEntry(LDAPServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people,dc=myhosting,dc=example",
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+			
+
+			// restore object state
+			ouHumanResources = new DirectoryEntry(	LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
+																	LDAPServerUsername,
+																	LDAPServerPassword,
+																	AuthenticationTypes.ServerBind);
+			barakTsabariDE = new DirectoryEntry(LDAPServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people,dc=myhosting,dc=example",
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			barakTsabariDE.MoveTo(ouHumanResources);
+			barakTsabariDE.CommitChanges();
+
+			#endregion // Check MoveTo
+
+			#region Check Rename
+
+			// Rename not chached
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+
+			de.Rename("cn=MyUser");
+
+			try {
+				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+													LDAPServerUsername,
+													LDAPServerPassword,
+													AuthenticationTypes.ServerBind);
+				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
+				barakTsabariDE.CommitChanges();
+				Assert.Fail("Object " + barakTsabariDN + " was not renamed on the server.");
+			}
+			catch (Exception e) {
+				// do nothing
+			}
+
+			barakTsabariDE = new DirectoryEntry(LDAPServerRoot + "cn=MyUser,ou=Human Resources,ou=people,dc=myhosting,dc=example",
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+
+			// restore object state
+			barakTsabariDE = new DirectoryEntry(LDAPServerRoot + "cn=MyUser,ou=Human Resources,ou=people,dc=myhosting,dc=example",
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			barakTsabariDE.Rename("cn=Barak Tsabari");
+			barakTsabariDE.CommitChanges();
+
+			#endregion // Check Rename
+
+			// UsePropertyCache = false	
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
 			de.UsePropertyCache = false;
 			Assert.AreEqual(de.UsePropertyCache,false);
-		}
 
+			#region Check Properties
+
+			// Properties changes not cached
+			de.Properties["telephoneNumber"].Value = newTelephoneNumber;
+			barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+
+			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,newTelephoneNumber);
+
+			#endregion // Check Properties
+
+			#region Check DeleteTree
+
+			// DeleteTree is not cached
+			de.DeleteTree();
+			try {
+				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+													LDAPServerUsername,
+													LDAPServerPassword,
+													AuthenticationTypes.ServerBind);
+				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
+				barakTsabariDE.CommitChanges();
+				Assert.Fail("Object " + barakTsabariDN + " was not deleted from server.");
+			}
+			catch (Exception e) {
+				// do nothing
+			}
+
+			// restore object state
+			ouHumanResources = new DirectoryEntry(	LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
+																	LDAPServerUsername,
+																	LDAPServerPassword,
+																	AuthenticationTypes.ServerBind);
+			cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class");
+			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("person");
+			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("organizationalPerson");
+			cnBarakTsabari.Properties["cn"].Value = "Barak Tsabari";
+			cnBarakTsabari.Properties["facsimileTelephoneNumber"].Value = "+1 906 777 8853";
+			((PropertyValueCollection)cnBarakTsabari.Properties["ou"]).Add("Human Resources");
+			((PropertyValueCollection)cnBarakTsabari.Properties["ou"]).Add("People");
+			cnBarakTsabari.Properties["sn"].Value = "Tsabari";
+			cnBarakTsabari.Properties["telephoneNumber"].Value = "+1 906 777 8854";
+			cnBarakTsabari.CommitChanges();
+
+			#endregion // Check DeleteTree
+
+			#region Check MoveTo
+
+			// Move to is not cached
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+
+			ouRnD = new DirectoryEntry(	LDAPServerRoot + "ou=R&D,ou=people,dc=myhosting,dc=example",
+										LDAPServerUsername,
+										LDAPServerPassword,
+										AuthenticationTypes.ServerBind);
+			de.MoveTo(ouRnD);
+			try {
+				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+													LDAPServerUsername,
+													LDAPServerPassword,
+													AuthenticationTypes.ServerBind);
+				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
+				barakTsabariDE.CommitChanges();
+				Assert.Fail("Object " + barakTsabariDN + " was not moved from old location on the server.");
+			}
+			catch (Exception e) {
+				// do nothing
+			}
+
+
+			barakTsabariDE = new DirectoryEntry(LDAPServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people,dc=myhosting,dc=example",
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+			
+
+			// restore object state
+			ouHumanResources = new DirectoryEntry(	LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
+																	LDAPServerUsername,
+																	LDAPServerPassword,
+																	AuthenticationTypes.ServerBind);
+			barakTsabariDE = new DirectoryEntry(LDAPServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people,dc=myhosting,dc=example",
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			barakTsabariDE.MoveTo(ouHumanResources);
+			barakTsabariDE.CommitChanges();
+
+			#endregion // Check MoveTo
+
+			#region Check Rename
+
+			// Rename not chached
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+
+			de.Rename("cn=MyUser");
+
+			try {
+				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+													LDAPServerUsername,
+													LDAPServerPassword,
+													AuthenticationTypes.ServerBind);
+				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
+				barakTsabariDE.CommitChanges();
+				Assert.Fail("Object " + barakTsabariDN + " was not renamed on the server.");
+			}
+			catch (Exception e) {
+				// do nothing
+			}
+
+			barakTsabariDE = new DirectoryEntry(LDAPServerRoot + "cn=MyUser,ou=Human Resources,ou=people,dc=myhosting,dc=example",
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+
+			// restore object state
+			barakTsabariDE = new DirectoryEntry(LDAPServerRoot + "cn=MyUser,ou=Human Resources,ou=people,dc=myhosting,dc=example",
+												LDAPServerUsername,
+												LDAPServerPassword,
+												AuthenticationTypes.ServerBind);
+			barakTsabariDE.Rename("cn=Barak Tsabari");
+			barakTsabariDE.CommitChanges();
+
+			#endregion // Check Rename
+		}
 
 		[Test]
 		public void DirectoryEntry_Children()
@@ -644,9 +971,9 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(children.Find("cn=Manager").Name,"cn=Manager");
 
 			de = new DirectoryEntry(LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example" ,
-						LDAPServerUsername,
-						LDAPServerPassword,
-						AuthenticationTypes.ServerBind);
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
 			children = de.Children;
 
 			Assert.AreEqual(children.Find("cn=Barak Tsabari").Name,"cn=Barak Tsabari");
@@ -666,9 +993,9 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.Name,"dc=myhosting");
 
 			de = new DirectoryEntry(LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
-						LDAPServerUsername,
-						LDAPServerPassword,
-						AuthenticationTypes.ServerBind);
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
 			Assert.AreEqual(de.Name,"ou=Human Resources");
 
 			de = new DirectoryEntry(LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example" ,
@@ -844,20 +1171,20 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectoryEntry_SchemaEntry()
 		{
-			de = new DirectoryEntry();
-			DirectoryEntry schemaEntry = de.SchemaEntry;
-
-			Assert.AreEqual(schemaEntry.Path,"LDAP://schema/domainDNS");
-			Assert.AreEqual(schemaEntry.Name,"domainDNS");
-			Assert.AreEqual(schemaEntry.Username,null);
-			Assert.AreEqual(schemaEntry.Password,null);
-			Assert.AreEqual(schemaEntry.UsePropertyCache,true);
-			Assert.AreEqual(schemaEntry.SchemaClassName,"Class");
-			Assert.AreEqual(schemaEntry.AuthenticationType,AuthenticationTypes.None);
+			//			de = new DirectoryEntry();
+			//			DirectoryEntry schemaEntry = de.SchemaEntry;
+			//
+			//			Assert.AreEqual(schemaEntry.Path,"LDAP://schema/domainDNS");
+			//			Assert.AreEqual(schemaEntry.Name,"domainDNS");
+			//			Assert.AreEqual(schemaEntry.Username,null);
+			//			Assert.AreEqual(schemaEntry.Password,null);
+			//			Assert.AreEqual(schemaEntry.UsePropertyCache,true);
+			//			Assert.AreEqual(schemaEntry.SchemaClassName,"Class");
+			//			Assert.AreEqual(schemaEntry.AuthenticationType,AuthenticationTypes.None);
 
 
 			de = new DirectoryEntry(LDAPServerConnectionString);
-			schemaEntry = de.SchemaEntry;
+			DirectoryEntry schemaEntry = de.SchemaEntry;
 
 			Assert.AreEqual(schemaEntry.Path,LDAPServerRoot + "schema/organization");
 			Assert.AreEqual(schemaEntry.Name,"organization");
@@ -949,7 +1276,7 @@ namespace MonoTests.System.DirectoryServices
 
 
 		[Test]
-		public void DirectoryEntry_CommitChanges()
+		public void DirectoryEntry_CommitChanges1()
 		{
 			string humanResourcesDN = LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example";
 			DirectoryEntry ouHumanResources = new DirectoryEntry(	humanResourcesDN,
@@ -1023,6 +1350,52 @@ namespace MonoTests.System.DirectoryServices
 			de.CommitChanges(); // this should do nothing
 		}
 
+		[Test]
+		public void DirectoryEntry_CommitChanges2()
+		{
+			string barakTsabariDN = LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example";
+			DirectoryEntry barakTsabariDE1 = new DirectoryEntry(barakTsabariDN,
+																LDAPServerUsername,
+																LDAPServerPassword,
+																AuthenticationTypes.ServerBind);
+			barakTsabariDE1.UsePropertyCache = true;
+
+			DirectoryEntry barakTsabariDE2 = new DirectoryEntry(barakTsabariDN,
+																LDAPServerUsername,
+																LDAPServerPassword,
+																AuthenticationTypes.ServerBind);
+			barakTsabariDE2.UsePropertyCache = true;
+
+			string oldTelephone = (string)((PropertyValueCollection)barakTsabariDE1.Properties["telephoneNumber"]).Value;
+			string newTelephone = "+972 3 6078596";
+			string oldFacsimilieTelephoneNumber = (string)((PropertyValueCollection)barakTsabariDE1.Properties["facsimileTelephoneNumber"]).Value;
+			string newFacsimilieTelephoneNumber1 = "+972-3-9872365";
+			string newFacsimilieTelephoneNumber2 = "+972-3-9999999";
+
+			barakTsabariDE1.Properties["telephoneNumber"].Value = newTelephone;
+			barakTsabariDE1.Properties["facsimileTelephoneNumber"].Value = newFacsimilieTelephoneNumber1;
+
+			barakTsabariDE2.Properties["facsimileTelephoneNumber"].Value = newFacsimilieTelephoneNumber2;
+
+			// only the changed properties of each object are set
+
+			barakTsabariDE1.CommitChanges();
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+			Assert.AreEqual(de.Properties["telephoneNumber"].Value,newTelephone);
+			Assert.AreEqual(de.Properties["facsimileTelephoneNumber"].Value,newFacsimilieTelephoneNumber1);
+
+			barakTsabariDE2.CommitChanges();
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+			Assert.AreEqual(de.Properties["telephoneNumber"].Value,newTelephone);
+			Assert.AreEqual(de.Properties["facsimileTelephoneNumber"].Value,newFacsimilieTelephoneNumber2);
+		}
+
 
 		[Test]
 		[ExpectedException(typeof(NotImplementedException))]
@@ -1048,17 +1421,37 @@ namespace MonoTests.System.DirectoryServices
 		{
 			string barakTsabariDN = LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example";
 
+			Assert.IsTrue(DirectoryEntry.Exists(barakTsabariDN));
 			de = new DirectoryEntry(barakTsabariDN,
 									LDAPServerUsername,
 									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
-			
-			Assert.IsTrue(DirectoryEntry.Exists(barakTsabariDN));
+									AuthenticationTypes.ServerBind);						
 
+			// no properties changed
 			de.DeleteTree();
 			de.CommitChanges();
 
 			Assert.IsFalse(DirectoryEntry.Exists(barakTsabariDN));
+
+			string johnSmithDN = LDAPServerRoot + "cn=John Smith,ou=Human Resources,ou=people,dc=myhosting,dc=example";
+
+			Assert.IsTrue(DirectoryEntry.Exists(johnSmithDN));
+			de = new DirectoryEntry(johnSmithDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+
+			de.Properties["telephoneNumber"].Value = "+972 3 9999999";
+
+			// some properties changed
+			de.DeleteTree();
+			try {
+				de.CommitChanges();					
+				Assert.Fail("Object " + johnSmithDN + " was not deleted from server");
+			}
+			catch(Exception e) {
+				// do nothing
+			}
 		}
 
 

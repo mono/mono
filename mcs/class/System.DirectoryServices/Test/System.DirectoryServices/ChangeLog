@@ -1,3 +1,15 @@
+2005-03-29  Boris Kirzner  <borisk@mainsoft.com>
+
+	* DirectoryServicesDirectoryEntryTest.cs: 
+		- Fixed SetUp method.
+		- More test cases and test fixes.
+	* DirectoryServicesDirectorySearcherTest.cs: 
+		- Fixed SetUp method.
+		- More test cases and test fixes.
+	* DirectoryServicesSearchResultTest.cs:
+		- Fixed SetUp method.
+		- Fixed test case (the filter feature is checked in DirectorySearcherTest).
+
 2005-03-20  Boris Kirzner  <borisk@mainsoft.com>
 
 	* DirectoryServicesDirectoryEntryTest.cs: Added DirectoryEntry_SchemaClassName test.

@@ -52,6 +52,8 @@ namespace MonoTests.System.DirectoryServices
 		[SetUp]
 		public void SetUp()
 		{
+			TearDown();
+
 			#region Initialize basics
 
 			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
@@ -200,6 +202,21 @@ namespace MonoTests.System.DirectoryServices
 
 			#endregion // Manager
 
+			cnJohnSmith.Dispose();
+			cnBarakTsabari.Dispose();
+			ouHumanResources.Dispose();
+			cnUziCohen.Dispose();
+			cnYossiCohen.Dispose();
+			cnDanielCohen.Dispose();
+			cnSaraCohen.Dispose();
+			ouRnD.Dispose();
+			cnDanielSmith.Dispose();
+			cnDanielMorgan.Dispose();
+			ouDevQA.Dispose();
+			cnUziCohen_.Dispose();
+			cnManager.Dispose();
+			ouPeople.Dispose();
+			root.Dispose();
 		}
 
 
@@ -276,7 +293,7 @@ namespace MonoTests.System.DirectoryServices
 			Assert.IsTrue(ds.PropertiesToLoad.Contains("ADsPath"));
 			Assert.IsTrue(ds.PropertiesToLoad.Contains("objectClass"));
 
-			ds.Filter = "((objectClass=person))";
+			ds.Filter = "(objectClass=person)";
 			SearchResult result = ds.FindOne();
 
 			Assert.AreEqual(result.Properties.Count,3);
@@ -295,7 +312,7 @@ namespace MonoTests.System.DirectoryServices
 			Assert.IsTrue(ds.PropertiesToLoad.Contains("objectClass"));
 			Assert.IsTrue(ds.PropertiesToLoad.Contains("missingProperty"));
 
-			ds.Filter = "((objectClass=person))";
+			ds.Filter = "(objectClass=person)";
 			result = ds.FindOne();
 
 			// Properties that does not exists are not loaded

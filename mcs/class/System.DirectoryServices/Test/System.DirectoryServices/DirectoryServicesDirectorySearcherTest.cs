@@ -53,6 +53,8 @@ namespace MonoTests.System.DirectoryServices
 		[SetUp]
 		public void SetUp()
 		{
+			TearDown();
+
 			#region Initialize basics
 
 			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
@@ -201,6 +203,21 @@ namespace MonoTests.System.DirectoryServices
 
 			#endregion // Manager
 
+			cnJohnSmith.Dispose();
+			cnBarakTsabari.Dispose();
+			ouHumanResources.Dispose();
+			cnUziCohen.Dispose();
+			cnYossiCohen.Dispose();
+			cnDanielCohen.Dispose();
+			cnSaraCohen.Dispose();
+			ouRnD.Dispose();
+			cnDanielSmith.Dispose();
+			cnDanielMorgan.Dispose();
+			ouDevQA.Dispose();
+			cnUziCohen_.Dispose();
+			cnManager.Dispose();
+			ouPeople.Dispose();
+			root.Dispose();
 		}
 
 
@@ -437,7 +454,7 @@ namespace MonoTests.System.DirectoryServices
 		}
 
 		[Test]
-		public void DirectorySearcher_Filter()
+		public void DirectorySearcher_Filter1()
 		{
 			de = new DirectoryEntry(LDAPServerConnectionString,
 									LDAPServerUsername,
@@ -454,6 +471,28 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(results.Count,12);
 
 			ds.Filter = "(&(objectClass=person)(objectClass=organizationalUnit))";
+			results = ds.FindAll();
+			Assert.AreEqual(results.Count,0);
+		}
+
+		[Test]
+		public void DirectorySearcher_Filter2()
+		{
+			de = new DirectoryEntry(LDAPServerConnectionString,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+			ds = new DirectorySearcher(de);
+			
+			ds.Filter = "((objectClass=person))";
+			SearchResultCollection results = ds.FindAll();
+			Assert.AreEqual(results.Count,8);
+
+			ds.Filter = "(|(objectClass=person)((objectClass=organizationalUnit)))";
+			results = ds.FindAll();
+			Assert.AreEqual(results.Count,12);
+
+			ds.Filter = "(&((objectClass=person))(objectClass=organizationalUnit))";
 			results = ds.FindAll();
 			Assert.AreEqual(results.Count,0);
 		}
