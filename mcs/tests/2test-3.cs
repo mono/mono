@@ -8,13 +8,13 @@ class X {
 	static IEnumerable GetIt (int [] args)
 	{
 		foreach (int a in args)
-			yield a;
+			yield return a;
 	}
 
 	static IEnumerable GetMulti (int [,] args)
 	{
 		foreach (int a in args)
-			yield a;
+			yield return a;
 	}
 	
 	static int Main ()

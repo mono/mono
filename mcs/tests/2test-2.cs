@@ -7,10 +7,10 @@ class X {
 
 	static IEnumerator GetRange ()
 	{
-		yield 1;
+		yield return 1;
 		for (i = start; i < end; i++)
-			yield i;
-		yield 100;
+			yield return i;
+		yield return 100;
 	}
 
 	static int Main ()

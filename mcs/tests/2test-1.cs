@@ -4,16 +4,16 @@ using System.Collections;
 class X {
 	static IEnumerator GetIt ()
 	{
-		yield 1;
-		yield 2;
-		yield 3;
+		yield return 1;
+		yield return 2;
+		yield return 3;
 	}
 	
 	static IEnumerable GetIt2 ()
 	{
-		yield 1;
-		yield 2;
-		yield 3;
+		yield return 1;
+		yield return 2;
+		yield return 3;
 	}
 
 	static int Main ()

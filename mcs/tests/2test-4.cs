@@ -5,7 +5,7 @@ class X {
 	static IEnumerable GetRange (int start, int end)
 	{
 		for (int i = start; i < end; i++)
-			yield i;
+			yield return i;
 	}
 
 	static void Main ()
