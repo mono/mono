@@ -1,14 +1,16 @@
 //
 // System.Enum.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Nick Drochak (ndrochak@gol.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 // TODO: Mucho left to implement.
 //
 
+using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
@@ -139,18 +141,46 @@ namespace System {
 		private extern object get_value ();
 		
 		public static Array GetValues (Type enumType) {
+			if (null == enumType)
+				throw new ArgumentNullException ("enumType cannot be null.");
+
+			if (!enumType.IsEnum)
+				throw new ArgumentException ("enumType is not an Enum type.");
+
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return info.values;
 		}
 		
 		public static string[] GetNames (Type enumType) {
+			if (null == enumType)
+				throw new ArgumentNullException ("enumType cannot be null.");
+
+			if (!enumType.IsEnum)
+				throw new ArgumentException ("enumType is not an Enum type.");
+
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return info.names;
 		}
 		
+		[MonoTODO("Complete parameter validation")]
 		public static string GetName (Type enumType, object value) {
+			if (null == enumType)
+				throw new ArgumentNullException ("enumType cannot be null.");
+			if (null == value)
+				throw new ArgumentNullException ("value cannot be null.");
+
+			if (!enumType.IsEnum)
+				throw new ArgumentException ("enumType is not an Enum type.");
+
+
+			// FIXME: Not sure how to ensure type of value parameter is correct
+			if (!IsDefined (enumType, value)
+				//|| !GetUnderlyingType (enumType).IsAssignableFrom (value.GetType ())
+				)
+				throw new ArgumentException ("value is an invalid type.");
+
 			MonoEnumInfo info;
 			int i;
 			MonoEnumInfo.GetInfo (enumType, out info);
@@ -161,11 +191,42 @@ namespace System {
 			return null;
 		}
 		
+		[MonoTODO("Complete parameter validation")]
 		public static bool IsDefined (Type enumType, object value) {
-			return GetName (enumType, value) != null;
+			if (null == enumType)
+				throw new ArgumentNullException ("enumType cannot be null.");
+			if (null == value)
+				throw new ArgumentNullException ("value cannot be null.");
+
+			if (!enumType.IsEnum)
+				throw new ArgumentException ("enumType is not an Enum type.");
+
+			// FIXME: Not sure how to ensure Type of value parameter is correct
+
+			Type t = value.GetType ();
+			if (!(t == typeof (SByte)
+				|| t == typeof (Int16)
+				|| t == typeof (Int32)
+				|| t == typeof (Int64)
+				|| t == typeof (Byte)
+				|| t == typeof (UInt16)
+				|| t == typeof (UInt32)
+				|| t == typeof (UInt64)
+				))
+				throw new ExecutionEngineException();
+
+			MonoEnumInfo info;
+			MonoEnumInfo.GetInfo (enumType, out info);
+			return ((IList)(info.values)).Contains (value);
 		}
 		
 		public static Type GetUnderlyingType (Type enumType) {
+			if (null == enumType)
+				throw new ArgumentNullException ("enumType cannot be null.");
+
+			if (!enumType.IsEnum)
+				throw new ArgumentException ("enumType is not an Enum type.");
+
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return info.utype;
@@ -173,11 +234,24 @@ namespace System {
 
 		public static object Parse (Type enumType, string value)
 		{
+			// Note: Parameters are checked in the other overload
 			return Parse (enumType, value, false);
 		}
 
 		public static object Parse (Type enumType, string value, bool ignoreCase)
 		{
+			if (null == enumType)
+				throw new ArgumentNullException ("enumType cannot be null.");
+
+			if (null == value)
+				throw new ArgumentNullException ("value cannot be null.");
+
+			if (!enumType.IsEnum)
+				throw new ArgumentException ("enumType is not an Enum type.");
+
+			if (String.Empty == value.Trim())
+				throw new ArgumentException ("value cannot be empty string.");
+
 			MonoEnumInfo info;
 			int i;
 			MonoEnumInfo.GetInfo (enumType, out info);
