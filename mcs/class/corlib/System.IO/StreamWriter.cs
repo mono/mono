@@ -242,17 +242,6 @@ namespace System.IO {
 				Flush ();
 		}
 
-		public override void WriteLine (string value) {
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
-
-			if (value != null)
-				LowLevelWrite (value.ToCharArray (), 0, value.Length);
-			string nl = NewLine;
-				LowLevelWrite (nl.ToCharArray (), 0, nl.Length);
-			if (iflush)
-				Flush ();
-		}
 
 		public override void Close()
 		{

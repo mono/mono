@@ -1,3 +1,7 @@
+2004-03-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* StreamWriter.cs: Removed unneeded function
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: added support for asynchronous I/O without using the
