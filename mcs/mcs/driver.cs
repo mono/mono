@@ -250,7 +250,7 @@ namespace Mono.CSharp
 					Console.Write(" - {0} warning(s)", Report.Warnings);
 				}
 				Console.WriteLine();
-				Console.WriteLine ("Counter1: " + counter1);
+				//Console.WriteLine ("Counter1: " + counter1);
 				//Console.WriteLine ("Counter2: " + counter2);
 				return 0;
 			} else {
