@@ -508,6 +508,7 @@ System.Runtime.Remoting.Channels/ServerChannelSinkStack.cs
 System.Runtime.Remoting.Channels/ServerProcessing.cs
 System.Runtime.Remoting.Channels/SinkProviderData.cs
 System.Runtime.Remoting.Channels/TransportHeaders.cs
+System.Runtime.Remoting.Channels/CrossAppDomainChannel.cs
 System.Runtime.Remoting.Contexts/Context.cs
 System.Runtime.Remoting.Contexts/ContextProperty.cs
 System.Runtime.Remoting.Contexts/CrossContextDelegate.cs
@@ -528,6 +529,7 @@ System.Runtime.Remoting.Messaging/AsyncResult.cs
 System.Runtime.Remoting.Messaging/CallContext.cs
 System.Runtime.Remoting.Messaging/Header.cs
 System.Runtime.Remoting.Messaging/HeaderHandler.cs
+System.Runtime.Remoting.Messaging/ErrorMessage.cs
 System.Runtime.Remoting.Messaging/IMessage.cs
 System.Runtime.Remoting.Messaging/IMessageCtrl.cs
 System.Runtime.Remoting.Messaging/IMessageSink.cs
@@ -548,6 +550,7 @@ System.Runtime.Remoting.Messaging/MethodReturnMessageWrapper.cs
 System.Runtime.Remoting.Messaging/MonoMethodMessage.cs
 System.Runtime.Remoting.Messaging/OneWayAttribute.cs
 System.Runtime.Remoting.Messaging/RemotingSurrogateSelector.cs
+System.Runtime.Remoting.Messaging/RemotingSurrogate.cs
 System.Runtime.Remoting.Messaging/ReturnMessage.cs
 System.Runtime.Remoting.Messaging/ServerContextTerminatorSink.cs
 System.Runtime.Remoting.Messaging/ServerObjectTerminatorSink.cs
