@@ -1,5 +1,11 @@
 2004-04-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* socket-io.c: don't display the non-supported family warning for known
+	families. Now this is not displayed on windows when checking support
+	for IPv4/IPv6.
+
+2004-04-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* class.c: don't display the layout warning for static fields.
 
 2004-04-21  Lluis Sanchez Gual <lluis@ximian.com>
