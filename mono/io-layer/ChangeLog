@@ -1,3 +1,8 @@
+2003-02-11  Dick Porter  <dick@ximian.com>
+
+	* timefuncs.h: 
+	* timefuncs.c: Added GetTickCount()
+
 2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* error.c: added WSA_EHOSTUNREACH mapping.

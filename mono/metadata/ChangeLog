@@ -1,3 +1,14 @@
+2003-02-11  Dick Porter  <dick@ximian.com>
+
+	* threads-types.h:
+	* monitor.c: Rewrote Monitor, making lock much faster and
+	Pulse/Wait work as specified.  Also uses much fewer handles, and only
+	creates them as needed.
+
+	* exception.c: Added SynchronizationLockException
+
+	* threads.c: Deleted old Monitor implementation.  The new one is
+	in a new file.
 
 Mon Feb 10 17:54:10 CET 2003 Paolo Molaro <lupus@ximian.com>
 
