@@ -33,7 +33,7 @@ namespace System.IO {
 			return -1;
 		}
 		
-		public virtual int Read( out char[] buffer, int index, int count ) { 
+		public virtual int Read( out char [] buffer, int index, int count ) { 
 			buffer = new char[1];
 			return 1;
 		}
