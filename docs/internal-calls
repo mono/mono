@@ -2,6 +2,7 @@
 * How to map C# types for use in the C implementation of internal calls
 
 	C# type 	C type
+	char 		gunichar2
 	bool 		MonoBoolean
 	sbyte 		signed char
 	byte 		guchar
