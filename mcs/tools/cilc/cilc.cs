@@ -867,6 +867,16 @@ public class cilc
 		FunctionGen (parameters, (MethodBase) m, t, m.ReturnType, false);
 	}
 
+	static readonly string[] keywords = {"auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else", "enum", "extern", "float", "for", "goto", "if", "int", "long", "register", "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while"};
+
+	static string KeywordAvoid (string s)
+	{
+		if (Array.IndexOf (keywords, s.ToLower ()) != -1)
+			return KeywordAvoid ("_" + s);
+
+		return s;
+	}
+	
 	static string ToValidFuncName (string name)
 	{
 		//avoid generated function name conflicts with internal functions
@@ -938,7 +948,7 @@ public class cilc
 				else
 					myname += "_and_";
 
-				myname += p.Name;
+				myname += KeywordAvoid (p.Name);
 			}
 		}
 
@@ -954,7 +964,7 @@ public class cilc
 		for (int i = 0 ; i < parameters.Length ; i++) {
 			ParameterInfo p = parameters[i];
 			mycsargs += GetMonoType (Type.GetTypeCode (p.ParameterType));
-			myargs += CsTypeToC (p.ParameterType) + p.Name;
+			myargs += CsTypeToC (p.ParameterType) + KeywordAvoid (p.Name);
 			if (i != parameters.Length - 1) {
 				mycsargs += ",";
 				myargs += ", ";
@@ -999,7 +1009,7 @@ public class cilc
 		//assign the parameters
 		for (int i = 0 ; i < parameters.Length ; i++) {
 			ParameterInfo p = parameters[i];
-			C.WriteLine  (params_arg + "[" + i + "] = " + GetMonoVal (p.Name, p.ParameterType.ToString ()) + ";");
+			C.WriteLine  (params_arg + "[" + i + "] = " + GetMonoVal (KeywordAvoid (p.Name), p.ParameterType.ToString ()) + ";");
 		}
 
 		if (parameters.Length != 0)
