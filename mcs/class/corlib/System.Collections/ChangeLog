@@ -1,3 +1,8 @@
+
+Tue Jun 4 13:08:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ArrayList.cs: fixed RemoveAt() implementation.
+
 2002-05-27  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayList.cs (LastIndexOf): Return -1 if searching for null, also

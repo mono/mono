@@ -291,8 +291,8 @@ namespace System.Collections {
 				if (IsReadOnly || IsFixedSize)
 					throw new NotSupportedException ();
 
-				for (int i  = index; i < count; i++)
-					list.RemoveAt (i);
+				for (int i  = 0; i < count; i++)
+					list.RemoveAt (index);
 			}
 
 			public override void Reverse ()
@@ -505,8 +505,8 @@ namespace System.Collections {
 					}
 				} else {
 					int numelts = count - startIndex + numshift;
-					for (int i = startIndex; i <= numelts; i++) {
-						dataArray[i] = dataArray[i - numshift];
+					for (int i = 0; i < numelts; i++) {
+						dataArray [i + startIndex] = dataArray [i + startIndex - numshift];
 					}
 					for (int i = count + numshift; i < count; i++) {
 						dataArray[i] = null;
