@@ -1,4 +1,8 @@
 
+Fri May 31 13:26:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* mono.c: added --config command line option.
+
 Fri May 31 12:34:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* jit.c, jit.h: collect statistics about the number of basic blocks.

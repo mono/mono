@@ -1,5 +1,5 @@
 .\" 
-.\" mint manual page.
+.\" mono manual page.
 .\" (C) Ximian, Inc. 
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
@@ -13,6 +13,7 @@ mono \- Mono ECMA-CLI Just in Time compiler.
 [\-\-help] [\-d] [\-\-debug-asm] [\-\-debug-forest] [\-\-trace-calls]
 [\-\-compile name] [\-\-ncompile num]  [\-\-noinline] [\-\-profile]
 [\-\-debug=[format]] [\-\-debug-args args] [\-\-break name] [\-\-precompile name]
+[\-\-config filename]
 program.exe [arguments...]
 .SH DESCRIPTION
 The \fImono\fP program is a Just in Time compiler for ECMA CLI byte
@@ -33,6 +34,11 @@ to sharing code.  This results in slower code, but enables code
 sharing across application domains.  The default is to maximize for
 speed, but disallow JITed code sharing across domains.  See
 System.LoaderOptimization for more information
+.TP
+.I "--config filename"
+Load the specified configuration file instead of the default one(s).
+The default files are /etc/mono/config and ~/.mono/config or the file
+specified in the MONO_CONFIG environment variable, if set.
 .TP
 .I "--noinline"
 Disables the code inliner.
