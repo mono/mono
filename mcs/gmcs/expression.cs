@@ -2451,34 +2451,39 @@ namespace Mono.CSharp {
 					if (((right.eclass == ExprClass.MethodGroup) ||
 					     (r == TypeManager.anonymous_method_type))){
 						if ((RootContext.Version != LanguageVersion.ISO_1)){
-						Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
-						if (tmp == null)
-							return null;
-						right = tmp;
-						r = right.Type;
-					}
+							Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
+							if (tmp == null)
+								return null;
+							right = tmp;
+							r = right.Type;
+						}
 					}
 				
 					if (TypeManager.IsDelegateType (r)){
-					MethodInfo method;
-					ArrayList args = new ArrayList (2);
+						MethodInfo method;
+						ArrayList args = new ArrayList (2);
 					
-					args = new ArrayList (2);
-					args.Add (new Argument (left, Argument.AType.Expression));
-					args.Add (new Argument (right, Argument.AType.Expression));
+						args = new ArrayList (2);
+						args.Add (new Argument (left, Argument.AType.Expression));
+						args.Add (new Argument (right, Argument.AType.Expression));
 					
-					if (oper == Operator.Addition)
-						method = TypeManager.delegate_combine_delegate_delegate;
-					else
-						method = TypeManager.delegate_remove_delegate_delegate;
+						if (oper == Operator.Addition)
+							method = TypeManager.delegate_combine_delegate_delegate;
+						else
+							method = TypeManager.delegate_remove_delegate_delegate;
 
-					if (l != r) {
-						Error_OperatorCannotBeApplied ();
-						return null;
+						Report.Debug (64, "BINARY DELEGATE", l, r, l.GetType (), r.GetType (),
+							      left, right, l == r, l.Equals (r),
+							      TypeManager.IsEqual (l, r), TypeManager.IsEqual (r, l),
+							      TypeManager.IsEqualGenericInstance (l, r));
+
+						if (!TypeManager.IsEqual (l, r)) {
+							Error_OperatorCannotBeApplied ();
+							return null;
+						}
+
+						return new BinaryDelegate (l, method, args);
 					}
-
-					return new BinaryDelegate (l, method, args);
-				}
 				}
 
 				//

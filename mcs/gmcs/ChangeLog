@@ -1,5 +1,13 @@
 2005-03-02  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (TypeManager.IsEqual): Make this symmetric.
+
+	* expression.cs (Binary.ResolveOperator): When resolving a
+	BinaryDelegate, use `TypeManager.IsEqual (l, r)' rather than just
+	`=='.  Fixes #71866.  See gen-127.cs.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.DoDefineMembers): We also need a default
 	static constructor in static classes.
 
