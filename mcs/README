@@ -2,6 +2,8 @@
 This contains the Mono C# compiler as well as the Mono runtime
 library.
 
+See INSTALL for a guide to building and installing mcs.
+
 Layout:
 
 	class/
