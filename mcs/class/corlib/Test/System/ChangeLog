@@ -1,5 +1,11 @@
 2003-06-23  Nick Drochak <ndrochak@gol.com>
 
+	* DecimalTest.cs: Make pass on .NET 1.1
+	* MarshalByRefObjectTest.cs: Avoid port conflict with other tests.
+	* SingleFormatterTest.cs: Ignore user overridden settings.
+
+2003-06-23  Nick Drochak <ndrochak@gol.com>
+
 	* DateTimeTest.cs (TestOA): Compare DateTime values instead of strings
 	to avoid "culture shock".  Made a new AssertEquals() that is more
 	DateTime-friedly.

@@ -19,7 +19,7 @@ namespace MonoTests.System {
 		[SetUp]
 		public void GetReady() 
 		{
-			CultureInfo EnUs = new CultureInfo ("en-us");
+			CultureInfo EnUs = new CultureInfo ("en-us", false);
 			EnUs.NumberFormat.CurrencyNegativePattern = 0; // -1 = (1)
 			EnUs.NumberFormat.CurrencyDecimalSeparator = ".";
 			EnUs.NumberFormat.NumberGroupSeparator = ",";

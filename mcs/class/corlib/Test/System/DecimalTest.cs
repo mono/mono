@@ -136,7 +136,11 @@ namespace MonoTests.System {
                 new ToStringTest("E6", 0.0012m, "1.200000E-003"),
                 new ToStringTest("F4", -0.001234m, "-0.0012"),
                 new ToStringTest("E3", -0.001234m, "-1.234E-003"),
-                new ToStringTest("g", -0.000012m, "-1.2e-05"),
+#if NET_1_0
+		new ToStringTest("g", -0.000012m, "-1.2e-05"),
+#else
+                new ToStringTest("g", -0.000012m, "-0.000012"),
+#endif
                 new ToStringTest("g", -0.00012m, "-0.00012"),
                 new ToStringTest("g4", -0.00012m, "-0.00012"),
                 new ToStringTest("g7", -0.00012m, "-0.00012"),
