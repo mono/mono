@@ -213,7 +213,11 @@ namespace Mono.Xml.Schema
 		}
 
 		// It is used only for independent XmlReader use, not for XmlValidatingReader.
+#if NET_2_0
+		public override object ReadTypedValue ()
+#else
 		public object ReadTypedValue ()
+#endif
 		{
 			XmlSchemaDatatype dt = SchemaType as XmlSchemaDatatype;
 			XmlSchemaSimpleType st = SchemaType as XmlSchemaSimpleType;
@@ -243,7 +247,7 @@ namespace Mono.Xml.Schema
 						loop = false;
 						break;
 					}
-				} while (loop && !EOF);
+				} while (loop && !EOF && ReadState == ReadState.Interactive);
 				return dt.ParseValue (storedCharacters.ToString (), NameTable, ParserContext.NamespaceManager);
 			case XmlNodeType.Attribute:
 				return dt.ParseValue (Value, NameTable, ParserContext.NamespaceManager);
