@@ -1,4 +1,7 @@
 2002-08-12  Tim Coleman <tim@timcoleman.com>
+	* Operation.cs:
+		Fix ParameterOrderString in case ParameterOrder is
+		null.
 	* BindingCollection.cs:
 		Remove Table handling on insert/delete/indexer
 		because it is handled in base class.

@@ -20,7 +20,6 @@ namespace System.Web.Services.Description {
 		OperationMessageCollection messages;
 		string name;
 		string[] parameterOrder;
-		string parameterOrderString;
 		PortType portType;
 
 		#endregion // Fields
@@ -33,7 +32,6 @@ namespace System.Web.Services.Description {
 			messages = new OperationMessageCollection (this);
 			name = String.Empty;
 			parameterOrder = null;
-			parameterOrderString = String.Empty;
 			portType = null;
 		}
 		
@@ -67,7 +65,11 @@ namespace System.Web.Services.Description {
 		[DefaultValue ("")]
 		[XmlAttribute ("parameterOrder")]
 		public string ParameterOrderString {
-			get { return String.Join (" ", parameterOrder); }
+			get { 
+				if (parameterOrder == null)
+					return String.Empty;
+				return String.Join (" ", parameterOrder); 
+			}
 			set { ParameterOrder = value.Split (' '); }
 		}
 
