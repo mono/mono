@@ -83,7 +83,15 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override object GetValue(object obj);
+		private extern object GetValueInternal (object obj);
+
+		public override object GetValue (object obj)
+		{
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+
+			return GetValueInternal (obj);
+		}
 
 		public override string ToString () {
 			MonoFieldInfo info;

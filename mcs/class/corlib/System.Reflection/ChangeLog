@@ -1,3 +1,7 @@
+2002-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoField.cs: GetValue renamed to GetValueInternal. Added check for
+	null.
 
 Wed Aug 21 13:03:25 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
