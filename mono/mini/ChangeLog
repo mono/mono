@@ -1,3 +1,7 @@
+2003-05-15  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* mini.c: fixed little bug in CEE_NEWOBJ case when calling
+	  the constructor through a proxy.
 
 Thu May 15 17:17:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
