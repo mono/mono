@@ -1,3 +1,30 @@
+2002-10-15  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.OleDb/libgda.cs: added more functions
+	to platfrom invoke into shared library libgda
+	
+	* System.Data.OleDb/OleDbDataReader.cs: implemented
+	GetSchemaTable() and GetFieldType()
+
+2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data/DataRow.cs: don't throw exception 
+	if DBNull is false.  Had to do comment this line
+	to allow a typeof(Type).
+	
+	* System.Data.SqlClient/SqlCommand.cs: the "DataType"
+	DataColumn and DataRows in a DataTable for a schema should 
+	be typeof Type,	not string.  This is to make it 
+	compatible with MS.NET
+	
+	* System.Data.SqlClient/SqlConnection.cs: the 
+	isolation level should be set before
+	beginning the transaction
+	
+	* Test/SqlSharpCli.cs: change string to Type for
+	"DataType" from a DataRow in a DataTable 
+	that contains a schema.  
+
 2002-10-14  Rodrigo Moya <rodrigo@ximian.com>
 
 	* list: added missing Odbc files.

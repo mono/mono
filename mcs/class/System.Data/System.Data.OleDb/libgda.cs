@@ -189,9 +189,24 @@ namespace System.Data.OleDb
 
 		[DllImport("gda-2")]
 		public static extern string gda_field_attributes_get_name (IntPtr fa);
-
+		
 		[DllImport("gda-2")]
 		public static extern GdaValueType gda_field_attributes_get_gdatype (IntPtr fa);
+
+		[DllImport("gda-2")]
+		public static extern long gda_field_attributes_get_defined_size (IntPtr fa);
+
+		[DllImport("gda-2")]
+		public static extern long gda_field_attributes_get_scale (IntPtr fa);
+
+		[DllImport("gda-2")]
+		public static extern bool gda_field_attributes_get_allow_null (IntPtr fa);
+		
+		[DllImport("gda-2")]
+		public static extern bool gda_field_attributes_get_primary_key (IntPtr fa);
+		
+		[DllImport("gda-2")]
+		public static extern bool gda_field_attributes_get_unique_key (IntPtr fa);
 		
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_client_new ();

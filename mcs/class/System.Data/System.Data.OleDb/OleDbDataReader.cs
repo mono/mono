@@ -296,7 +296,33 @@ namespace System.Data.OleDb
 		[MonoTODO]
 		public Type GetFieldType (int index)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+			GdaValueType type;
+
+			if (currentResult == -1)
+				throw new IndexOutOfRangeException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+				index, currentRow);
+			if (value == IntPtr.Zero)
+				throw new IndexOutOfRangeException ();
+
+			type = libgda.gda_value_get_type (value);
+			switch (type) {
+			case GdaValueType.Bigint : return typeof (long);
+			case GdaValueType.Boolean : return typeof (bool);
+			case GdaValueType.Date : return typeof (DateTime);
+			case GdaValueType.Double : return typeof (double);
+			case GdaValueType.Integer : return typeof (int);
+			case GdaValueType.Single : return typeof (float);
+			case GdaValueType.Smallint : return typeof (byte);
+			case GdaValueType.String : return typeof (string);
+			case GdaValueType.Time : return typeof (DateTime);
+			case GdaValueType.Timestamp : return typeof (DateTime);
+			case GdaValueType.Tinyint : return typeof (byte);
+			}
+
+			return typeof(string); // default
 		}
 
 		public float GetFloat (int ordinal)
@@ -397,10 +423,122 @@ namespace System.Data.OleDb
 
 		public DataTable GetSchemaTable ()
 		{
-			DataTable table = new DataTable ();
+			DataTable dataTableSchema = null;
+			// Only Results from SQL SELECT Queries 
+			// get a DataTable for schema of the result
+			// otherwise, DataTable is null reference
+			if(this.FieldCount > 0) {
 
-			// FIXME: implement
-			return table;
+				IntPtr attrs;
+				GdaValueType gdaType;
+				long columnSize = 0;
+
+				if (currentResult == -1) {
+					// FIXME: throw an exception?
+					Console.WriteLine("Error: current result -1");
+					return null;
+				}
+						
+				dataTableSchema = new DataTable ();
+				
+				dataTableSchema.Columns.Add ("ColumnName", typeof (string));
+				dataTableSchema.Columns.Add ("ColumnOrdinal", typeof (int));
+				dataTableSchema.Columns.Add ("ColumnSize", typeof (int));
+				dataTableSchema.Columns.Add ("NumericPrecision", typeof (int));
+				dataTableSchema.Columns.Add ("NumericScale", typeof (int));
+				dataTableSchema.Columns.Add ("IsUnique", typeof (bool));
+				dataTableSchema.Columns.Add ("IsKey", typeof (bool));
+				DataColumn dc = dataTableSchema.Columns["IsKey"];
+				dc.AllowDBNull = true; // IsKey can have a DBNull
+				dataTableSchema.Columns.Add ("BaseCatalogName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
+				dataTableSchema.Columns.Add ("DataType", typeof(Type));
+				dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
+				dataTableSchema.Columns.Add ("ProviderType", typeof (int));
+				dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
+				dataTableSchema.Columns.Add ("IsExpression", typeof (bool));
+				dataTableSchema.Columns.Add ("IsIdentity", typeof (bool));
+				dataTableSchema.Columns.Add ("IsAutoIncrement", typeof (bool));
+				dataTableSchema.Columns.Add ("IsRowVersion", typeof (bool));
+				dataTableSchema.Columns.Add ("IsHidden", typeof (bool));
+				dataTableSchema.Columns.Add ("IsLong", typeof (bool));
+				dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
+
+				DataRow schemaRow;
+				DbType dbType;
+				Type typ;
+								
+				for (int i = 0; i < this.FieldCount; i += 1 ) {
+					
+					schemaRow = dataTableSchema.NewRow ();
+
+					attrs = libgda.gda_data_model_describe_column ((IntPtr) gdaResults[currentResult],
+						i);
+					if (attrs == IntPtr.Zero){
+						// FIXME: throw exception
+						Console.WriteLine("Error: attrs null");
+						return null;
+					}
+
+					gdaType = libgda.gda_field_attributes_get_gdatype (attrs);
+					columnSize = libgda.gda_field_attributes_get_defined_size (attrs);
+					libgda.gda_field_attributes_free (attrs);
+										
+					schemaRow["ColumnName"] = this.GetName(i);
+					schemaRow["ColumnOrdinal"] = i + 1;
+					
+					schemaRow["ColumnSize"] = (int) columnSize;
+					schemaRow["NumericPrecision"] = 0;
+					schemaRow["NumericScale"] = 0;
+					// TODO: need to get KeyInfo
+					//if((cmdBehavior & CommandBehavior.KeyInfo) == CommandBehavior.KeyInfo) {
+						// bool IsUnique, IsKey;
+						// GetKeyInfo(field[i].Name, out IsUnique, out IsKey);
+					//}
+					//else {
+						schemaRow["IsUnique"] = false;
+						schemaRow["IsKey"] = DBNull.Value;
+					//}
+					schemaRow["BaseCatalogName"] = "";
+					
+					schemaRow["BaseColumnName"] = this.GetName(i);
+					schemaRow["BaseSchemaName"] = "";
+					schemaRow["BaseTableName"] = "";
+
+					schemaRow["DataType"] = this.GetFieldType(i);
+
+					schemaRow["AllowDBNull"] = false;
+					
+					schemaRow["ProviderType"] = (int) gdaType;
+					schemaRow["IsAliased"] = false;
+					schemaRow["IsExpression"] = false;
+					schemaRow["IsIdentity"] = false;
+					schemaRow["IsAutoIncrement"] = false;
+					schemaRow["IsRowVersion"] = false;
+					schemaRow["IsHidden"] = false;
+					schemaRow["IsLong"] = false;
+					schemaRow["IsReadOnly"] = false;
+					
+					schemaRow.AcceptChanges();
+					
+					dataTableSchema.Rows.Add (schemaRow);
+				}
+				
+#if DEBUG_OleDbDataReader
+				Console.WriteLine("********** DEBUG Table Schema BEGIN ************");
+				foreach (DataRow myRow in dataTableSchema.Rows) {
+					foreach (DataColumn myCol in dataTableSchema.Columns)
+						Console.WriteLine(myCol.ColumnName + " = " + myRow[myCol]);
+					Console.WriteLine();
+				}
+				Console.WriteLine("********** DEBUG Table Schema END ************");
+#endif // DEBUG_OleDbDataReader
+
+			}
+			
+			return dataTableSchema;
 		}
 
 		public string GetString (int ordinal)
