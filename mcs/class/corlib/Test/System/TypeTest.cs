@@ -85,6 +85,9 @@ namespace MonoTests.System
 	[TestFixture]
 	public class TypeTest : Assertion
 	{
+		private void ByrefMethod (ref int i, ref Derived1 j, ref Base1 k) {
+		}
+
 		[Test]
 		public void TestIsAssignableFrom () {
 			// Simple tests for inheritance
@@ -138,11 +141,22 @@ namespace MonoTests.System
 			AssertEquals ("#28", typeof (object[]).IsAssignableFrom (typeof (Enum[])) , true);
 			AssertEquals ("#29", typeof (ValueType[]).IsAssignableFrom (typeof (Enum[])) , true);
 			AssertEquals ("#30", typeof (Enum[]).IsAssignableFrom (typeof (Enum[])) , true);
+
+			// Tests for byref types
+			MethodInfo mi = typeof (TypeTest).GetMethod ("ByrefMethod", BindingFlags.Instance|BindingFlags.NonPublic);
+			Assert (mi.GetParameters ()[2].ParameterType.IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
+			Assert (mi.GetParameters ()[1].ParameterType.IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
 		}
 
 		[Test]
 		public void TestIsSubclassOf () {
 			Assert ("#01", typeof (ICloneable).IsSubclassOf (typeof (object)));
+
+			// Tests for byref types
+			Type paramType = typeof (TypeTest).GetMethod ("ByrefMethod", BindingFlags.Instance|BindingFlags.NonPublic).GetParameters () [0].ParameterType;
+			Assert (!paramType.IsSubclassOf (typeof (ValueType)));
+			Assert (paramType.IsSubclassOf (typeof (Object)));
+			Assert (!paramType.IsSubclassOf (paramType));
 		}
 
 		[Test]

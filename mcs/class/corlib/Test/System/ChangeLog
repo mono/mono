@@ -1,3 +1,7 @@
+2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Add tests for byref types.
+
 2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ConvertTest.cs: Add test for bug #67780.
