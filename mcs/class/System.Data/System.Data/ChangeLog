@@ -1,3 +1,12 @@
+2004-09-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataSet.cs : Don't check constraints for dataset clear
+	* DataRowCollection.cs : check for EnforceConstraints flag 
+	before checking foriegn key constraints in Clear method
+	* DataTable.cs : Redundant checking removed in Clear method as it is
+	checked in DataRowCollection.Clear method. 
+
+
 2004-09-19  Sureshkumar T <tsureshkumar@novell.com>
 	* DataRow.cs : while deserialization of dataset, adding a current row precedes the original row.
 		       hence, adding a row cache is necessary if the original row happens to be current.
