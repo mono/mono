@@ -112,6 +112,7 @@ namespace Mono.ILASM {
                                         	parser.yyparse (new ScannerAdapter (scanner),  null);
 				} catch {
 					Console.WriteLine ("Error at: " + scanner.Reader.Location);
+					throw;
 				}
                         }
 

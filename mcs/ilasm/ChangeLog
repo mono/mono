@@ -1,5 +1,9 @@
 2003-07-30 Jackson Harper <jackson@latitudegeo.com>
 
+	* Driver.cs: Throw compile errors for now
+	
+2003-07-30 Jackson Harper <jackson@latitudegeo.com>
+
 	* Driver.cs: Add some basic line number feedback when an error
 	occurs
 	
