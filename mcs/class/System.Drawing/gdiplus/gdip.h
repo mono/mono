@@ -16,7 +16,9 @@
 #include <stdio.h>
 
 #include <cairo.h>
+#ifndef CAIRO_HAS_XLIB_SURFACE
 #include <cairo-xlib.h>
+#endif
 #include <mono/io-layer/uglify.h>
 
 /*
@@ -236,6 +238,7 @@ typedef struct {
         GpPenAlignment mode;
         float dash_offset;
         int dash_count;
+	int own_dash_array;
         float *dash_array;
         GpUnit unit;
         GpMatrix *matrix;

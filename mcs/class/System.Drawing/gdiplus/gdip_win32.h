@@ -9,7 +9,9 @@
 #define _GDIP_WIN32_H
 
 #include <cairo.h>
+#ifndef CAIRO_HAS_XLIB_SURFACE
 #include <cairo-xlib.h>
+#endif
 #include <mono/io-layer/uglify.h>
 
 /* sizeof (GDIOBJHDR) = 12 (2 + 2 + 4 + 4) */

@@ -108,10 +108,10 @@ GdipMultiplyMatrix (GpMatrix *matrix, GpMatrix *matrix2, GpMatrixOrder order)
 {
         cairo_status_t status;
 
-        if (order == MatrixOrderPrepend)
+        if (order == MatrixOrderAppend)
                 status = cairo_matrix_multiply (matrix, matrix, matrix2);
 
-        else if (order == MatrixOrderAppend)
+        else if (order == MatrixOrderPrepend)
                 status = cairo_matrix_multiply (matrix, matrix2, matrix);
         
         else

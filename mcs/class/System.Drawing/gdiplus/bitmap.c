@@ -341,7 +341,7 @@ ____BitmapLockBits (GpBitmap *bitmap, Rect *rc, int flags, int format, int *widt
 	*stride = d.Stride;
 	*fptr = d.PixelFormat;
 	*res = d.Reserved;
-	*scan0 = d.Scan0;
+	*scan0 = (int)d.Scan0;
 
 	return s;
 }

@@ -292,6 +292,7 @@ GdipReleaseDC (GpGraphics *graphics, int hDC)
 	return Ok;
 }
 
+// FIXME: the stack implementation is probably not suitable
 #define MAX_GRAPHICS_STATE_STACK 100
 
 GpState saved_stack [MAX_GRAPHICS_STATE_STACK];
@@ -303,6 +304,7 @@ GdipRestoreGraphics (GpGraphics *graphics, unsigned int graphicsState)
 	if (graphicsState < MAX_GRAPHICS_STATE_STACK) {
 		cairo_matrix_copy (graphics->copy_of_ctm, saved_stack[graphicsState].matrix);
 		cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
+		current_stack_pos = graphicsState;
 	}
 	else {
 		return InvalidParameter;

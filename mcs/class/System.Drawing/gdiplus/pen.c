@@ -30,13 +30,19 @@ void
 gdip_pen_init (GpPen *pen)
 {
         pen->color = 0;
+		pen->brush = 0;
         pen->width = 1;
         pen->miter_limit = 10;
         pen->line_join = LineJoinMiter;
+	pen->dash_style = DashStyleSolid;
+	pen->line_cap = LineCapFlat;
+	pen->mode = PenAlignmentCenter;
+	pen->dash_offset = 0;
+	pen->dash_count = 0;
+	pen->own_dash_array = 0;
+	pen->dash_array = 0;
+	pen->unit = UnitWorld;
         pen->matrix = NULL;
-        pen->dash_offset = 0;
-        pen->line_cap = LineCapFlat;
-        pen->line_join = LineJoinMiter;
 }
 
 GpPen*
@@ -163,15 +169,22 @@ GdipCreatePen2 (GpBrush *brush, float width, GpUnit unit, GpPen **pen)
 GpStatus 
 GdipClonePen (GpPen *pen, GpPen **clonepen)
 {
+	// FIXME: copy dash array and matrix
         GpPen *result = gdip_pen_new ();
         result->color = pen->color;
+	result->brush = pen->brush;
         result->width = pen->width;
         result->miter_limit = pen->miter_limit;
         result->line_join = pen->line_join;
-        result->matrix = pen->matrix;
-        result->dash_offset = pen->dash_offset;
+	result->dash_style = pen->dash_style;
         result->line_cap = pen->line_cap;
-        result->line_join = pen->line_join;
+	result->mode = pen->mode;
+        result->dash_offset = pen->dash_offset;
+	result->dash_count = pen->dash_count;
+	result->own_dash_array = 0;
+	result->dash_array = pen->dash_array;
+	result->unit = pen->unit;
+        result->matrix = pen->matrix;
 
         *clonepen = result;
 
@@ -185,10 +198,11 @@ GdipDeletePen (GpPen *pen)
         if (pen->matrix != NULL)
                 cairo_matrix_destroy (pen->matrix);
 
-        if (pen->dash_array != NULL)
+        if (pen->dash_array != NULL && pen->own_dash_array)
                 free (pen->dash_array);
         
         GdipFree (pen);
+	return Ok;
 }
 
 GpStatus

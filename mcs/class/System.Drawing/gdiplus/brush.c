@@ -60,6 +60,7 @@ GpStatus
 GdipDeleteBrush (GpBrush *brush)
 {
         GdipFree (brush);
+	return Ok;
 }
 
 GpStatus

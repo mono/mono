@@ -1,3 +1,13 @@
+2004-01-10  Alexandre Pigolkine <pigolkine@gmx.de>
+	* bitmap.c 
+	* brush.c		cosmetic changes
+	* gdip.h		new field added to GpPen structure
+	* gdip_win32.h		conditional compilation flag used to reflect changes in Cairo > 0.14
+	* graphics.c		restore position in GRAPHICS_STATE stack 
+	* matrix.c		order of matrices in GdipMultiplyMatrix changed 
+	* pen.c			initialization of fields, protection in GdipDeletePen function added
+			
+
 2003-12-25  Duncan Mak  <duncan@ximian.com>
 
 	* graphics-path.c (GdipAddPathLine): Use append instead of
