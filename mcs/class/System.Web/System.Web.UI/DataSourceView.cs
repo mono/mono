@@ -70,12 +70,12 @@ namespace System.Web.UI {
 			callBack (rowAffected, passOn);
 		}
 
-		public virtual int ExecuteDelete(IDictionary keys, IDictionary values)
+		protected virtual int ExecuteDelete(IDictionary keys, IDictionary values)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public virtual int ExecuteInsert (IDictionary keys)
+		protected virtual int ExecuteInsert (IDictionary keys)
 		{
 			throw new NotSupportedException();
 		}
@@ -83,7 +83,7 @@ namespace System.Web.UI {
 		protected internal abstract IEnumerable ExecuteSelect (
 					DataSourceSelectArguments arguments);
 
-		public virtual int ExecuteUpdate (IDictionary keys, IDictionary values, 
+		protected virtual int ExecuteUpdate (IDictionary keys, IDictionary values, 
 								IDictionary oldValues )
 		{
 			throw new NotSupportedException ();

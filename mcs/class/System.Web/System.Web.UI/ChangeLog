@@ -1,3 +1,7 @@
+2004-11-05 Sanjay Gupta <gsanjay@novell.com>
+
+	* DataSourceView.cs: Changes in access modifiers of methods.
+
 2004-10-20 Sanjay Gupta <gsanjay@novell.com>
 
 	* DataSourceCapabilities.cs: Added Flags attribute.
