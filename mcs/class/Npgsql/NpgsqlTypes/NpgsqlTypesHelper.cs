@@ -537,8 +537,7 @@ namespace NpgsqlTypes
         
         static NpgsqlNativeTypeInfo()
         {
-            ni = new CultureInfo("en-US").NumberFormat;
-            ni.NumberGroupSeparator = "";
+            ni = (NumberFormatInfo) CultureInfo.InvariantCulture.NumberFormat.Clone();
             ni.NumberDecimalDigits = 15;
         }
 
@@ -620,17 +619,14 @@ namespace NpgsqlTypes
                     // Translate enum value to its underlying type. 
                     return QuoteString((String)Convert.ChangeType(Enum.Format(NativeData.GetType(), NativeData, "d"), typeof(String), CultureInfo.InvariantCulture));
                 }
-                else if (NativeData is Double) 
+                else if (NativeData is IFormattable)
                 {
-                    return QuoteString(((Double)NativeData).ToString("N", ni).Replace("'", "''").Replace("\\", "\\\\"));
+                    return QuoteString(((IFormattable) NativeData).ToString(null, ni).Replace("'", "''").Replace("\\", "\\\\"));
                     
                 }
-                else if (NativeData is Decimal) 
-                {
-                    return QuoteString(((Decimal)NativeData).ToString("N", ni).Replace("'", "''").Replace("\\", "\\\\"));
-                }
+                
                 // Do special handling of strings when in simple query. Escape quotes and backslashes.
-                return QuoteString(NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\"));
+                return QuoteString(NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\").Replace("\0", "\\0"));
                 
             }
     

@@ -1,4 +1,10 @@
 
+2005-02-13 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * NpgsqlTypes/NpgsqlTypesHelper.cs: gborg 1121: Fixed another culture variant representation problem when handling floating numbers. Thanks Sergey (sergey dot p dot k dot no dot spam at gmail dot com) for patch.
+    gborg 1167: Added support for writing null chars in text fields. Now they are escaped with \\0.
+    Thanks Sergey (sergey dot p dot k dot no dot spam at gmail dot com) for patch.
+    
 2005-02-08 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
     * NpgsqlTypes/NpgsqlTypesHelper.cs: Fixed float precision rounding. Now all float values are sent with 15 precision scale.
