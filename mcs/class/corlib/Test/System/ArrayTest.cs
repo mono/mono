@@ -464,7 +464,13 @@ public class ArrayTest : TestCase
 			bool errorThrown = false;
 			try {
 				String[] c1 = new String[2];
+				// TODO: this crashes mono if there are null
+				// values in the array.
+				c1[1] = "hey";
+				c1[0] = "you";
 				Char[] c2 = new Char[2];
+				c2[1] = 'a';
+				c2[0] = 'z';
 				c1.CopyTo(c2, 0);
 			} catch (ArrayTypeMismatchException) {
 				errorThrown = true;

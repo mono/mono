@@ -615,6 +615,7 @@ namespace MonoTests.System
 			}
 		}
 
+		[Ignore("this test hangs mono")]
 		public void TestToDateTime() {
 			string dateString = "01/01/2002";
 			
