@@ -147,6 +147,10 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
+		public abstract bool IsNegative {
+			get;
+		}
+
 		//
 		// Returns true iff 1) the stack type of this is one of Object, 
 		// int32, int64 and 2) this == 0 or this == null.
@@ -186,6 +190,12 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
 		}
 		
+		public override bool IsNegative {
+			get {
+				return false;
+			}
+		}
+	
 		public override bool IsZeroInteger {
 			get { return Value == false; }
 		}
@@ -246,6 +256,12 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 		
+		public override bool IsNegative {
+			get {
+				return false;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
@@ -335,6 +351,12 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 		
+		public override bool IsNegative {
+			get {
+				return false;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return Value == '\0'; }
 		}
@@ -396,6 +418,12 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return new IntConstant (Value);
+		}
+		
+		public override bool IsNegative {
+			get {
+				return Value < 0;
+			}
 		}
 		
 		public override bool IsZeroInteger {
@@ -461,6 +489,12 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
+
+		public override bool IsNegative {
+			get {
+				return Value < 0;
+			}
+		}
 	}
 
 	public class UShortConstant : Constant {
@@ -518,6 +552,12 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 		
+		public override bool IsNegative {
+			get {
+				return false;
+			}
+		}
+	
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
@@ -636,6 +676,12 @@ namespace Mono.CSharp {
 			return this;
 		}
 		
+		public override bool IsNegative {
+			get {
+				return Value < 0;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
@@ -696,6 +742,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
+		public override bool IsNegative {
+			get {
+				return false;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
@@ -771,6 +823,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
+		public override bool IsNegative {
+			get {
+				return Value < 0;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
@@ -833,6 +891,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
+		public override bool IsNegative {
+			get {
+				return false;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
@@ -886,6 +950,12 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return null;
+		}
+
+		public override bool IsNegative {
+			get {
+				return Value < 0;
+			}
 		}
 	}
 
@@ -943,6 +1013,12 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
+
+		public override bool IsNegative {
+			get {
+				return Value < 0;
+			}
+		}
 	}
 
 	public class DecimalConstant : Constant {
@@ -988,6 +1064,12 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
 		}
+
+		public override bool IsNegative {
+			get {
+				return Value < 0;
+			}
+		}
 	}
 
 	public class StringConstant : Constant {
@@ -1017,6 +1099,12 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				ec.ig.Emit (OpCodes.Ldstr, Value);
+		}
+
+		public override bool IsNegative {
+			get {
+				return false;
+			}
 		}
 	}
 

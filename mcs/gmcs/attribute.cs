@@ -210,6 +210,11 @@ namespace Mono.CSharp {
 		//
 		public static bool GetAttributeArgumentExpression (Expression e, Location loc, Type arg_type, out object result)
 		{
+			if (e is EnumConstant) {
+				result = e;
+				return true;
+			}
+
 			Constant constant = e as Constant;
 			if (constant != null) {
 				if (e.Type != arg_type) {
@@ -298,6 +303,7 @@ namespace Mono.CSharp {
 			}
 
 			pos_values = new object [pos_arg_count];
+			object[] real_pos_values = new object [pos_arg_count];
 
 			//
 			// First process positional arguments 
@@ -317,24 +323,32 @@ namespace Mono.CSharp {
 				if (!GetAttributeArgumentExpression (e, Location, a.Type, out val))
 					return null;
 				
-				pos_values [i] = val;
+				if (val is EnumConstant) {
+					EnumConstant econst = (EnumConstant) e;
+
+					pos_values [i] = val = econst.GetValue ();
+					real_pos_values [i] = econst.GetValueAsEnumType ();
+				} else {
+					real_pos_values [i] = pos_values [i] = val;
+				}
+
 				if (DoCompares){
 					if (usage_attr)
-						usage_attribute = new AttributeUsageAttribute ((AttributeTargets) pos_values [0]);
+						usage_attribute = new AttributeUsageAttribute ((AttributeTargets) val);
 					else if (MethodImplAttr)
-						this.ImplOptions = (MethodImplOptions) pos_values [0];
+						this.ImplOptions = (MethodImplOptions) val;
 					else if (GuidAttr){
 						//
 						// we will later check the validity of the type
 						//
-						if (pos_values [0] is string){
-							if (!ValidateGuid ((string) pos_values [0]))
+						if (val is string){
+							if (!ValidateGuid ((string) val))
 								return null;
 						}
 						
 					} else if (MarshalAsAttr)
 						this.UnmanagedType =
-						(System.Runtime.InteropServices.UnmanagedType) pos_values [0];
+						(System.Runtime.InteropServices.UnmanagedType) val;
 				}
 			}
 
@@ -484,16 +498,16 @@ namespace Mono.CSharp {
 					continue;
 				
 				if (j == group_in_params_array){
-					object v = pos_values [j];
+					object v = real_pos_values [j];
 					int count = pos_arg_count - j;
 
 					object [] array = new object [count];
-					pos_values [j] = array;
+					real_pos_values [j] = array;
 					array [0] = v;
 				} else {
-					object [] array = (object []) pos_values [group_in_params_array];
+					object [] array = (object []) real_pos_values [group_in_params_array];
 
-					array [j - group_in_params_array] = pos_values [j];
+					array [j - group_in_params_array] = real_pos_values [j];
 				}
 			}
 
@@ -505,8 +519,8 @@ namespace Mono.CSharp {
 				object [] new_pos_values = new object [argc];
 
 				for (int p = 0; p < argc; p++)
-					new_pos_values [p] = pos_values [p];
-				pos_values = new_pos_values;
+					new_pos_values [p] = real_pos_values [p];
+				real_pos_values = new_pos_values;
 			}
 
 			try {
@@ -523,13 +537,13 @@ namespace Mono.CSharp {
 					prop_infos.CopyTo   (prop_info_arr, 0);
 
 					cb = new CustomAttributeBuilder (
-						(ConstructorInfo) constructor, pos_values,
+						(ConstructorInfo) constructor, real_pos_values,
 						prop_info_arr, prop_values_arr,
 						field_info_arr, field_values_arr);
 				}
 				else
 					cb = new CustomAttributeBuilder (
-						(ConstructorInfo) constructor, pos_values);
+						(ConstructorInfo) constructor, real_pos_values);
 			} catch (NullReferenceException) {
 				// 
 				// Don't know what to do here
@@ -708,6 +722,14 @@ namespace Mono.CSharp {
 			return (bool)pos_values [0];
 		}
 
+		object GetValue (object value)
+		{
+			if (value is EnumConstant)
+				return ((EnumConstant) value).GetValue ();
+			else
+				return value;				
+		}
+
 		public object GetPositionalValue (int i)
 		{
 			return (pos_values == null) ? null : pos_values[i];
@@ -721,7 +743,7 @@ namespace Mono.CSharp {
 			i = 0;
 			foreach (FieldInfo fi in field_info_arr) {
 				if (fi.Name == name)
-					return field_values_arr [i];
+					return GetValue (field_values_arr [i]);
 				i++;
 			}
 			return null;

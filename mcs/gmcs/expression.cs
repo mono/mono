@@ -7990,8 +7990,13 @@ namespace Mono.CSharp {
 				if (argtype == TypeManager.int32_type ||
 				    argtype == TypeManager.uint32_type ||
 				    argtype == TypeManager.int64_type ||
-				    argtype == TypeManager.uint64_type)
+				    argtype == TypeManager.uint64_type) {
+					Constant c = a.Expr as Constant;
+					if (c != null && c.IsNegative) {
+						Report.Warning (251, 2, a.Expr.Location, "Indexing an array with a negative index (array indices always start at zero)");
+					}
 					continue;
+				}
 
 				//
 				// Mhm.  This is strage, because the Argument.Type is not the same as
@@ -9018,8 +9023,7 @@ namespace Mono.CSharp {
 			}
 
 			Constant c = count as Constant;
-			// TODO: because we don't have property IsNegative
-			if (c != null && c.ConvertToUInt () == null) {
+			if (c != null && c.IsNegative) {
 				Report.Error (247, loc, "Cannot use a negative size with stackalloc");
 				return null;
 			}
