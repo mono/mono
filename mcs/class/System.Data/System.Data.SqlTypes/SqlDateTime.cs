@@ -243,12 +243,17 @@ namespace System.Data.SqlTypes
                         DateTimeFormatInfo fmtInfo = DateTimeFormatInfo.CurrentInfo;
                         try {
                                 return new SqlDateTime (DateTime.Parse (s, fmtInfo));
-                        } catch (Exception e) {
-                                // try parsing in invariant culture
+                        } catch (Exception) { }
+
+                        // try parsing in invariant culture
+                        try {
                                 return new SqlDateTime (DateTime.Parse (s, CultureInfo.InvariantCulture));
-                        }
+                        } catch (Exception) { }
+
+                        // Not a recognizable format.
                         throw new FormatException (String.Format ("String {0} is not recognized as "+
                                                                   " valid DateTime.", s));
+
 		}
 
 		public SqlString ToSqlString ()

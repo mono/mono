@@ -1,3 +1,7 @@
+2005-03-11  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlDateTime.cs (Parse): Re-org. Resolve unreachable code.
+
 2005-02-11  Sureshkumar T  <tsureshkumar@novell.com>
 	    Ankit Jain	   <radical@corewars.org>
 
