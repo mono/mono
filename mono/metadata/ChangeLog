@@ -1,3 +1,9 @@
+
+Tue Jan 11 15:26:00 CET 2005 Paolo Molaro <lupus@ximian.comt>
+
+	* gc.c: set some fields to NULL at GC cleanup time.
+	* threads.c: if we quit the main thread, call exit ().
+
 2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (interruption_request_apc): Decore APC callbacks with CALLBACK under win32.
