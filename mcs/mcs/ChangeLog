@@ -1,3 +1,9 @@
+2002-11-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Do not short-circuit, because if we do, we
+	report errors (ie, #if false && true would produce an invalid
+	directive error);
+
 2002-11-24  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Cast.TryReduce): If we're in checked syntax,
