@@ -1,6 +1,11 @@
 
 2003-04-05	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* MobileCapabilities.cs    : HasCapability(string, string)
+	                             - In words how to implement it.
+
+2003-04-05	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* MobileCapabilities.cs    : More methods.
 	* DeviceFilterDictionary.cs: Used by MobCaps for filtering
 	                             the capabilities. Init impl.

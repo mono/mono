@@ -9,6 +9,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Web;
 using System.Web.UI;
 
@@ -19,6 +20,9 @@ namespace System.Web.Mobile
 		internal delegate void
 		       EvaluateCapabilitiesHandler(MobileCapabilities capabilities,
 		                                    string evaluationParam);
+
+		private Hashtable evaluatorResults =
+		       Hashtable.Synchronized(new Hashtable());
 
 		private bool canCombineFormsInDeck = false;
 
@@ -1308,6 +1312,46 @@ namespace System.Web.Mobile
 			{
 				throw new ArgumentException("MobCap_DelegateNameNoValue");
 			}
+			DeviceFilterDictionary dict = GetCurrentFilters();
+			// check if delegateName is ComparisonEvaluator
+			// search for it in this.evaluatorResults, if failed:
+			// HasProperty(??), HasItem(??)
+			//       -> add to this.evaluatorResults
+			// else throw not found exception!
+			throw new NotImplementedException();
+		}
+
+		private bool HasComparisonEvaluator(string evalName,
+		                                    out bool result)
+		{
+			throw new NotImplementedException();
+		}
+
+		private bool HasDelegateEvaluator(string evalName,
+		                                  out bool result)
+		{
+			throw new NotImplementedException();
+		}
+
+		private bool HasProperty(string evalName, string param,
+		                         out bool result)
+		{
+			throw new NotImplementedException();
+		}
+
+		private bool HasItem(string evalName, string param,
+		                     out bool result)
+		{
+			throw new NotImplementedException();
+		}
+
+		private bool IsComparisonEvaluator(string evalName)
+		{
+			throw new NotImplementedException();
+		}
+
+		private DeviceFilterDictionary GetCurrentFilters()
+		{
 			throw new NotImplementedException();
 		}
 	}
