@@ -19,7 +19,7 @@ namespace Mono.ILASM {
         public class ExternTypeRef : ModifiableType, IClassRef {
 
                 private PEAPI.Type type;
-                private string assembly_name;
+                private ExternRef extern_ref;
                 private string full_name;
                 private string sig_mod;
                 private bool is_valuetype;
@@ -30,10 +30,10 @@ namespace Mono.ILASM {
                 private Hashtable method_table;
                 private Hashtable field_table;
                 
-                public ExternTypeRef (string assembly_name, string full_name,
+                public ExternTypeRef (ExternRef extern_ref, string full_name,
                                 bool is_valuetype, ExternTable extern_table)
                 {
-                        this.assembly_name = assembly_name;
+                        this.extern_ref = extern_ref;
                         this.full_name = full_name;
                         this.is_valuetype = is_valuetype;
                         this.extern_table = extern_table;
@@ -45,9 +45,9 @@ namespace Mono.ILASM {
                         is_resolved = false;
                 }
 
-                private ExternTypeRef (string assembly_name, string full_name,
+                private ExternTypeRef (ExternRef extern_ref, string full_name,
                                 bool is_valuetype, ExternTable extern_table,
-                                ArrayList conv_list) : this (assembly_name, full_name,
+                                ArrayList conv_list) : this (extern_ref, full_name,
                                                 is_valuetype, extern_table)
                 {
                         ConversionList = conv_list;
@@ -55,7 +55,7 @@ namespace Mono.ILASM {
                 
                 public ExternTypeRef Clone ()
                 {
-                        return new ExternTypeRef (assembly_name, FullName, is_valuetype,
+                        return new ExternTypeRef (extern_ref, FullName, is_valuetype,
                                         extern_table, (ArrayList) ConversionList.Clone ());
                 }
                 
@@ -83,9 +83,9 @@ namespace Mono.ILASM {
                                 return;
 
                         if (is_valuetype)
-                                type = code_gen.ExternTable.GetValueClass (assembly_name, full_name);
+                                type = extern_ref.GetValueType (full_name);
                         else
-                                type = code_gen.ExternTable.GetClass (assembly_name, full_name);
+                                type = extern_ref.GetType (full_name);
 
                         type = Modify (code_gen, type);
 

@@ -24,6 +24,7 @@ namespace Mono.ILASM {
                 private string assembly_name;
                 private Report report;
                 private ExternAssembly current_assemblyref;
+                private ExternModule current_moduleref;
                 private string current_namespace;
                 private TypeDef current_typedef;
                 private MethodDef current_methoddef;
@@ -103,6 +104,10 @@ namespace Mono.ILASM {
                         get { return current_assemblyref; }
                 }
 
+                public ExternModule CurrentModuleRef {
+                        get { return current_moduleref; }
+                }
+
                 public ExternTable ExternTable {
                         get { return extern_table; }
                 }
@@ -139,6 +144,11 @@ namespace Mono.ILASM {
                 public bool IsThisAssembly (string name)
                 {
                         return (name == assembly_name);
+                }
+
+                public bool IsThisModule (string name)
+                {
+                        return (name == module_name);
                 }
 
                 public void BeginTypeDef (TypeAttr attr, string name, IClassRef parent,

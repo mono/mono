@@ -1,5 +1,12 @@
 2004-06-14  Jackson Harper  <jackson@ximian.com>
 
+	* CodeGen.cs: Allow adding module refs.
+	* ExternTable.cs: Add ExternModule refs.
+	* ExternTypeRef.cs: Take an ExternRef which can be either an
+	assmebly ref or a module ref.
+	
+2004-06-14  Jackson Harper  <jackson@ximian.com>
+
 	* CodeGen.cs: Implement setting module names.
 	
 2004-05-23  Jackson Harper  <jackson@ximian.com>
