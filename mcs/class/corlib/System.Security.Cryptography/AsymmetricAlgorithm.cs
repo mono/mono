@@ -5,36 +5,12 @@
 //	Thomas Neidhart (tome@sbox.tugraz.at)
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
 
-using Mono.Xml;
-
 namespace System.Security.Cryptography {
-
-	// to import keypairs parameters using MiniParser
-	internal class AsymmetricParameters : MiniParser.IReader {
-		private string xml;
-		private int pos;
-
-		public AsymmetricParameters (string xml) 
-		{
-			this.xml = xml;
-			pos = 0;
-		}
-
-		public int Read () 
-		{
-			try {
-				return (int) xml [pos++];
-			}
-			catch {
-				return -1;
-			}
-		}
-	}
 
 	/// <summary>
 	/// Abstract base class for all cryptographic asymmetric algorithms.

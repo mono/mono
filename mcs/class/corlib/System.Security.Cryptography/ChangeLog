@@ -1,3 +1,18 @@
+2003-07-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsymmetricAlgorithm.cs: Removed AsymmetricParameters (IReader) class. 
+	Now uses the new Mono.Xml.SecurityParser (xml -> SecurityElement)
+	* CryptoConfig.cs: Removed CorlibHandler and CorlibReader classes. Now 
+	uses the new Mono.Xml.SecurityParser (xml -> SecurityElement)
+	* DSA.cs: Removed DSAHandler (IHandler) class. Now uses the new 
+	Mono.Xml.SecurityParser (xml -> SecurityElement)
+	* DSACryptoServiceProvider.cs: Added ObjectDisposedException support
+	and fixed bugs found in new unit tests.
+	* RSA.cs: Removed DSAHandler (IHandler) class. Now uses the new 
+	Mono.Xml.SecurityParser (xml -> SecurityElement)
+	* RSACryptoServiceProvider.cs: Added ObjectDisposedException support
+	and fixed bugs found in new unit tests.
+
 2003-06-22  Sebastien Pouliot <spouliot@motus.com>
 
 	* DSACryptoServiceProvider.cs: Added UseMachineKeyStore property (1.1).

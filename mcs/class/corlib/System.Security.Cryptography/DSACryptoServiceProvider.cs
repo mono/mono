@@ -23,7 +23,6 @@ namespace System.Security.Cryptography {
 #else
 	public sealed class DSACryptoServiceProvider : DSA {
 #endif
-
 		private CspParameters cspParams;
 
 		private bool privateKeyExportable = true;
@@ -69,6 +68,7 @@ namespace System.Security.Cryptography {
 			// will throw an exception is key size isn't supported
 			KeySize = dwKeySize;
 			dsa = new DSAManaged (dwKeySize);
+			m_disposed = false;
 		}
 
 		~DSACryptoServiceProvider ()
@@ -78,7 +78,7 @@ namespace System.Security.Cryptography {
 
 		// DSA isn't used for key exchange
 		public override string KeyExchangeAlgorithm {
-			get { return ""; }
+			get { return null; }
 		}
 
 		public override int KeySize {

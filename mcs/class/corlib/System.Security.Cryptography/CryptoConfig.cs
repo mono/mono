@@ -18,144 +18,6 @@ using Mono.Xml;
 
 namespace System.Security.Cryptography {
 
-internal class CorlibReader : MiniParser.IReader {
-	private string xml;
-	private int pos;
-
-	public CorlibReader (string filename) 
-	{
-		try {
-			StreamReader sr = new StreamReader (filename);
-			xml = sr.ReadToEnd ();
-			sr.Close ();
-		}
-		catch {
-			xml = null;
-		}
-	}
-
-	public int Read () {
-		try {
-			return (int) xml [pos++];
-		}
-		catch {
-			return -1;
-		}
-	}
-}
-
-internal class CorlibHandler : MiniParser.IHandler {
-
-	private bool mscorlib;
-	private bool cryptographySettings;
-	private bool cryptoNameMapping;
-	private bool cryptoClasses;
-	private bool oidMap;
-
-	private Hashtable algo;
-	private Hashtable cryptoClass;
-	private Hashtable nameEntry;
-	private Hashtable oid;
-
-	public CorlibHandler (Hashtable algo, Hashtable oid) 
-	{
-		this.algo = algo;
-		this.oid = oid;
-		cryptoClass = new Hashtable ();
-		nameEntry = new Hashtable ();
-	}
-
-	public void OnStartParsing (MiniParser parser) {}
-
-	public void OnStartElement (string name, MiniParser.IAttrList attrs) 
-	{
-		switch (name) {
-			case "mscorlib":
-				mscorlib = true;
-				break;
-			case "cryptographySettings":
-				if (mscorlib)
-					cryptographySettings = true;
-				break;
-			case "cryptoNameMapping":
-				if (cryptographySettings)
-					cryptoNameMapping = true;
-				break;
-			case "nameEntry":
-				if (cryptoNameMapping) {
-					string ename = attrs.Values [0];
-					string eclas = attrs.Values [1];
-					nameEntry.Add (ename, eclas);
-				}
-				break;
-			case "cryptoClasses":
-				if (cryptoNameMapping)
-					cryptoClasses = true;
-				break;
-			case "cryptoClass":
-				if (cryptoClasses)
-					cryptoClass.Add (attrs.Names [0], attrs.Values [0]);
-				break;
-			case "oidMap":
-				if (cryptographySettings)
-					oidMap = true;
-				break;
-			case "oidEntry":
-				if (oidMap)
-					oid.Add (attrs.Values [0], attrs.Values [1]);
-				break;
-			default:
-				// unknown tag in parameters
-				break;
-		}
-	}
-
-	public void OnEndElement (string name) 
-	{
-		switch (name) {
-			case "mscorlib":
-				mscorlib = false;
-				break;
-			case "cryptographySettings":
-				cryptographySettings = false;
-				break;
-			case "cryptoNameMapping":
-				cryptoNameMapping = false;
-				break;
-			case "cryptoClasses":
-				cryptoClasses = false;
-				break;
-			case "oidMap":
-				oidMap = false;
-				break;
-			default:
-				// unknown tag in parameters
-				break;
-		}
-	}
-
-	public void OnChars (string ch) {}
-
-	public void OnEndParsing (MiniParser parser) 
-	{
-		foreach (string key in nameEntry.Keys) {
-			string eclass = (string) nameEntry [key];
-			
-			// is it a class or a friendly name ?
-			object o = cryptoClass [eclass];
-			if (o != null) {
-				// friendly name, so get it's class
-				eclass = (string) o;
-			}
-
-			if (algo.ContainsKey (key)) 
-				algo.Remove (key);
-			algo.Add (key, eclass);
-		}
-	}
-}
-
-
 public class CryptoConfig {
 
 	static private Hashtable algorithms;
@@ -266,8 +128,6 @@ public class CryptoConfig {
 	private const string urlKeyValueRSA = urlXmlDsig + " KeyValue/RSAKeyValue";	// space is required
 	private const string urlRetrievalMethod = urlXmlDsig + " RetrievalMethod";	// space is required
 
-	// ??? must we read from the machine.config each time or just at startup ???
-	[MonoTODO ("support OID in machine.config")]
 	static CryptoConfig ()
 	{
 		algorithms = new Hashtable ();
@@ -374,12 +234,72 @@ public class CryptoConfig {
 
 		// Add/modify the config as specified by machine.config
 		string config = GetMachineConfigPath ();
-		// debug @"C:\mono-0.17\install\etc\mono\machine.config";
-		if (config != null) {
-			MiniParser parser = new MiniParser ();
-			CorlibReader reader = new CorlibReader (config);
-			CorlibHandler handler = new CorlibHandler (algorithms, oid);
-			parser.Parse (reader, handler);
+		// debug @"D:\Program Files\Mono-0.25\etc\mono\machine.config";
+		if (config != null)
+			LoadConfig (config);
+	}
+
+	internal static void LoadConfig (string filename) 
+	{
+		if (!File.Exists (filename))
+			return;
+
+		SecurityParser sp = new SecurityParser ();
+		StreamReader sr = new StreamReader (filename);
+		try {
+			sp.LoadXml (sr.ReadToEnd ());
+		}
+		finally {
+			sr.Close ();
+		}
+
+		try {
+			SecurityElement root = sp.ToXml ();
+			SecurityElement mscorlib = root.SearchForChildByTag ("mscorlib");
+			if (mscorlib == null)
+				return;
+			SecurityElement cryptographySettings = mscorlib.SearchForChildByTag ("cryptographySettings");
+			if (cryptographySettings == null)
+				return;
+
+			// algorithms
+			SecurityElement cryptoNameMapping = cryptographySettings.SearchForChildByTag ("cryptoNameMapping");
+			if (cryptoNameMapping != null) {
+				SecurityElement cryptoClasses = cryptoNameMapping.SearchForChildByTag ("cryptoClasses");
+				if (cryptoClasses != null) {
+					foreach (SecurityElement nameEntry in cryptoNameMapping.Children) {
+						if (nameEntry.Tag == "nameEntry") {
+							string name = (string) nameEntry.Attributes ["name"];
+							string clas = (string) nameEntry.Attributes ["class"];
+							foreach (SecurityElement cryptoClass in cryptoClasses.Children) {
+								string fullname = (string) cryptoClass.Attributes [clas];
+								if (fullname != null) {
+									if (algorithms.ContainsKey (name)) 
+										algorithms.Remove (name);
+									algorithms.Add (name, fullname);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// oid
+			SecurityElement oidMap = cryptographySettings.SearchForChildByTag ("oidMap");
+			if (oidMap == null)
+				return;
+			foreach (SecurityElement oidEntry in oidMap.Children) {
+				if (oidEntry.Tag == "oidEntry") {
+					string oids = (string) oidEntry.Attributes ["OID"];
+					if (oid.ContainsKey (oids)) 
+						oid.Remove (oids);
+					oid.Add (oids, oidEntry.Attributes ["name"]);
+				}
+			}
+		}
+		catch {
+			// there's no error/warning in case the machine.config contains bad entries
 		}
 	}
 

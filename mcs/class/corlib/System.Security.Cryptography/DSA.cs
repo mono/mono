@@ -5,7 +5,7 @@
 //   Thomas Neidhart (tome@sbox.tugraz.at)
 //   Sebastien Pouliot (spouliot@motus.com)
 //
-// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -19,74 +19,11 @@ using Mono.Xml;
 
 namespace System.Security.Cryptography {
 
-	internal class DSAHandler : MiniParser.IHandler {
-
-		private DSAParameters dsa;
-		private bool unknown;
-		private byte[] temp;
-
-		public DSAHandler () 
-		{
-			dsa = new DSAParameters();
-		}
-
-		public DSAParameters GetParams () 
-		{
-			return dsa;
-		}
-
-		public void OnStartParsing (MiniParser parser) {}
-
-		public void OnStartElement (string name, MiniParser.IAttrList attrs) {}
-
-		public void OnEndElement (string name) 
-		{
-			switch (name) {
-				case "P":
-					dsa.P = temp;
-					break;
-				case "Q":
-					dsa.Q = temp;
-					break;
-				case "G":
-					dsa.G = temp;
-					break;
-				case "J":
-					dsa.J = temp;
-					break;
-				case "Y":
-					dsa.Y = temp;
-					break;
-				case "X":
-					dsa.X = temp;
-					break;
-				case "Seed":
-					dsa.Seed = temp;
-					break;
-				case "PgenCounter":
-					byte[] counter4b = new byte[4];
-					Array.Copy (temp, 0, counter4b, 0, temp.Length);
-					dsa.Counter = BitConverter.ToInt32 (counter4b, 0);
-					break;
-				default:
-					// unknown tag in parameters
-					break;
-			}
-		}
-
-		public void OnChars (string ch) 
-		{
-			temp = Convert.FromBase64String (ch);
-		}
-
-		public void OnEndParsing (MiniParser parser) {}
-	}
-
 	/// <summary>
 	/// Abstract base class for all implementations of the DSA algorithm
 	/// </summary>
-	public abstract class DSA : AsymmetricAlgorithm
-	{
+	public abstract class DSA : AsymmetricAlgorithm	{
+
 		// LAMESPEC: It says to derive new DSA implemenation from DSA class.
 		// Well it's aint gonna be easy this way.
 		// RSA constructor is public
@@ -112,18 +49,40 @@ namespace System.Security.Cryptography {
 				Array.Clear (parameters.X, 0, parameters.X.Length);
 		}
 
+		private byte[] GetNamedParam (SecurityElement se, string param) 
+		{
+			SecurityElement sep = se.SearchForChildByTag (param);
+			if (sep == null)
+				return null;
+			return Convert.FromBase64String (sep.Text);
+		}
+
 		public override void FromXmlString (string xmlString) 
 		{
 			if (xmlString == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("xmlString");
 			
 			DSAParameters dsaParams = new DSAParameters ();
 			try {
-				MiniParser parser = new MiniParser ();
-				AsymmetricParameters reader = new AsymmetricParameters (xmlString);
-				DSAHandler handler = new DSAHandler ();
-				parser.Parse(reader, handler);
-				ImportParameters (handler.GetParams ());
+				SecurityParser sp = new SecurityParser ();
+				sp.LoadXml (xmlString);
+				SecurityElement se = sp.ToXml ();
+				if (se.Tag != "DSAKeyValue")
+					throw new Exception ();
+				dsaParams.P = GetNamedParam (se, "P");
+				dsaParams.Q = GetNamedParam (se, "Q");
+				dsaParams.G = GetNamedParam (se, "G");
+				dsaParams.J = GetNamedParam (se, "J");
+				dsaParams.Y = GetNamedParam (se, "Y");
+				dsaParams.X = GetNamedParam (se, "X");
+				dsaParams.Seed = GetNamedParam (se, "Seed");
+				byte[] counter = GetNamedParam (se, "PgenCounter");
+				if (counter != null) {
+					byte[] counter4b = new byte [4]; // always 4 bytes
+					Array.Copy (counter, 0, counter4b, 0, counter.Length);
+					dsaParams.Counter = BitConverter.ToInt32 (counter4b, 0);
+				}
+				ImportParameters (dsaParams);
 			}
 			catch {
 				ZeroizePrivateKey (dsaParams);
@@ -136,6 +95,7 @@ namespace System.Security.Cryptography {
 		
 		public abstract void ImportParameters (DSAParameters parameters);
 
+		// note: using SecurityElement.ToXml wouldn't generate the same string as the MS implementation
 		public override string ToXmlString (bool includePrivateParameters)
 		{
 			StringBuilder sb = new StringBuilder ();

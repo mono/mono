@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002
-// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -16,67 +16,8 @@ using Mono.Xml;
 
 namespace System.Security.Cryptography {
 
-	internal class RSAHandler : MiniParser.IHandler {
+	public abstract class RSA : AsymmetricAlgorithm {
 
-		private RSAParameters rsa;
-		private byte[] temp;
-
-		public RSAHandler () 
-		{
-			rsa = new RSAParameters ();
-		}
-
-		public RSAParameters GetParams () 
-		{
-			return rsa;
-		}
-
-		public void OnStartParsing (MiniParser parser) {}
-
-		public void OnStartElement (string name, MiniParser.IAttrList attrs) {}
-
-		public void OnEndElement (string name) {
-			switch (name) {
-				case "P":
-					rsa.P = temp;
-					break;
-				case "Q":
-					rsa.Q = temp;
-					break;
-				case "D":
-					rsa.D = temp;
-					break;
-				case "DP":
-					rsa.DP = temp;
-					break;
-				case "DQ":
-					rsa.DQ = temp;
-					break;
-				case "Exponent":
-					rsa.Exponent = temp;
-					break;
-				case "InverseQ":
-					rsa.InverseQ = temp;
-					break;
-				case "Modulus":
-					rsa.Modulus = temp;
-					break;
-				default:
-					// unknown tag in parameters
-					break;
-			}
-		}
-
-		public void OnChars (string ch) 
-		{
-			temp = Convert.FromBase64String (ch);
-		}
-
-		public void OnEndParsing (MiniParser parser) {}
-	}
-
-	public abstract class RSA : AsymmetricAlgorithm 
-	{
 		public static new RSA Create () 
 		{
 			return Create ("System.Security.Cryptography.RSA");
@@ -87,7 +28,7 @@ namespace System.Security.Cryptography {
 			return (RSA) CryptoConfig.CreateFromName (algName);
 		}
 	
-		public RSA () { }
+		public RSA () {}
 
 		public abstract byte[] EncryptValue (byte[] rgb);
 		public abstract byte[] DecryptValue (byte[] rgb);
@@ -111,6 +52,14 @@ namespace System.Security.Cryptography {
 				Array.Clear(parameters.D, 0, parameters.D.Length);
 		}
 
+		private byte[] GetNamedParam (SecurityElement se, string param) 
+		{
+			SecurityElement sep = se.SearchForChildByTag (param);
+			if (sep == null)
+				return null;
+			return Convert.FromBase64String (sep.Text);
+		}
+
 		public override void FromXmlString (string xmlString) 
 		{
 			if (xmlString == null)
@@ -118,11 +67,20 @@ namespace System.Security.Cryptography {
 
 			RSAParameters rsaParams = new RSAParameters ();
 			try {
-				MiniParser parser = new MiniParser ();
-				AsymmetricParameters reader = new AsymmetricParameters (xmlString);
-				RSAHandler handler = new RSAHandler ();
-				parser.Parse(reader, handler);
-				ImportParameters (handler.GetParams ());
+				SecurityParser sp = new SecurityParser ();
+				sp.LoadXml (xmlString);
+				SecurityElement se = sp.ToXml ();
+				if (se.Tag != "RSAKeyValue")
+					throw new Exception ();
+				rsaParams.P = GetNamedParam (se, "P");
+				rsaParams.Q = GetNamedParam (se, "Q");
+				rsaParams.D = GetNamedParam (se, "D");
+				rsaParams.DP = GetNamedParam (se, "DP");
+				rsaParams.DQ = GetNamedParam (se, "DQ");
+				rsaParams.InverseQ = GetNamedParam (se, "InverseQ");
+				rsaParams.Exponent = GetNamedParam (se, "Exponent");
+				rsaParams.Modulus = GetNamedParam (se, "Modulus");
+				ImportParameters (rsaParams);
 			}
 			catch {
 				ZeroizePrivateKey (rsaParams);

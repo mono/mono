@@ -40,6 +40,7 @@ namespace System.Security.Cryptography {
 			Common (1024, null);
 		}
 	
+		[MonoTODO("Missing keypair persistance using CspParameters")]
 		public RSACryptoServiceProvider (CspParameters parameters) 
 		{
 			Common (1024, parameters);
@@ -55,13 +56,13 @@ namespace System.Security.Cryptography {
 	
 		// FIXME: We currently dont link with MS CAPI. Anyway this makes
 		// only sense in Windows - what do we do elsewhere ?
+		[MonoTODO("Missing keypair persistance using CspParameters")]
 		public RSACryptoServiceProvider (int dwKeySize, CspParameters parameters) 
 		{
 			Common (dwKeySize, parameters);
 			// no keypair generation done at this stage
 		}
 	
-		[MonoTODO("Persistance")]
 		// FIXME: We currently dont link with MS CAPI. Anyway this makes
 		// only sense in Windows - what do we do elsewhere ?
 		private void Common (int dwKeySize, CspParameters p) 
@@ -89,7 +90,7 @@ namespace System.Security.Cryptography {
 #if ! NET_1_0
 		private static bool useMachineKeyStore = false;
 
-		[MonoTODO("Related to persistance")]
+		[MonoTODO("Related to keypair persistance")]
 		public static bool UseMachineKeyStore {
 			get { return useMachineKeyStore; }
 			set { useMachineKeyStore = value; }
@@ -115,10 +116,10 @@ namespace System.Security.Cryptography {
 			}
 		}
 	
-		[MonoTODO("Persistance")]
+		[MonoTODO("Related to keypair persistance")]
 		public bool PersistKeyInCsp {
-			get { return false;  }
-			set { throw new NotSupportedException (); }
+			get { return persistKey;  }
+			set { persistKey = value; }
 		}
 	
 		public override string SignatureAlgorithm {
@@ -254,6 +255,9 @@ namespace System.Security.Cryptography {
 		// HashAlgorithm descendant
 		public bool VerifyData (byte[] buffer, object halg, byte[] signature) 
 		{
+			if (signature == null)
+				throw new ArgumentNullException ("signature");
+
 			HashAlgorithm hash = GetHash (halg);
 			byte[] toBeVerified = hash.ComputeHash (buffer);
 			return PKCS1.Verify_v15 (this, hash, toBeVerified, signature);
