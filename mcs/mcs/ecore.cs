@@ -501,6 +501,23 @@ namespace Mono.CSharp {
 			if (method_list != null && method_list.Count > 0)
 				return new MethodGroupExpr (method_list);
 
+			//
+			// Interfaces do not list members they inherit, so we have to
+			// scan those.
+			// 
+			if (!t.IsInterface)
+				return null;
+
+			Type [] ifaces = t.GetInterfaces ();
+
+			foreach (Type itype in ifaces){
+				Expression x;
+
+				x = MemberLookup (ec, itype, name, mt, bf, loc);
+				if (x != null)
+					return x;
+			}
+					
 			return null;
 		}
 
