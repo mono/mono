@@ -1,4 +1,9 @@
 
+Mon Apr 29 13:45:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: fix thinko, enable actual finalization since the jit is now
+	fixed.
+
 Mon Apr 29 12:47:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c, object.c: take into account that an object may be offset wrt the address
