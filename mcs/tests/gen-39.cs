@@ -23,7 +23,7 @@ class Zoo<T>
 		return new Monkey<T,U> (this, u);
 	}
 
-	public struct Monkey<V,W> : IMonkey<W>
+	public class Monkey<V,W> : IMonkey<W>
 	{
 		public readonly Zoo<V> Zoo;
 		public readonly W Data;
