@@ -29,6 +29,7 @@ namespace System.Web
 		private HttpApplication _oApplication;
 		private HttpSessionState _oSession;
 		private HttpWorkerRequest _oWorkerRequest;
+		private TraceContext _oTrace;
 		private IHttpHandler _Handler;
 		private IHttpAsyncHandler _AsyncHandler;
 		private IPrincipal _User;
@@ -49,6 +50,7 @@ namespace System.Web
 			_oTimestamp = DateTime.Now;
 			_oRequest = Request;
 			_oResponse = Response;
+			_oTrace = new TraceContext (this);
 		}
 
 		public HttpContext (HttpWorkerRequest WorkerRequest)
@@ -61,6 +63,7 @@ namespace System.Web
 			_oRequest = new HttpRequest (WorkerRequest, this);
 			_oResponse = new HttpResponse (WorkerRequest, this);
 			_oWorkerRequest = WorkerRequest;
+			_oTrace = new TraceContext (this);
 		}
 
 		internal HttpWorkerRequest WorkerRequest
@@ -235,7 +238,7 @@ namespace System.Web
 		public TraceContext Trace
 		{
 			get {
-				throw new NotImplementedException();
+				return _oTrace;
 			}
 		}
 

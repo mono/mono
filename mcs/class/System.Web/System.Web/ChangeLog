@@ -1,3 +1,8 @@
+2003-12-15  Jackson Harper <jackson@ximian.com>
+
+	* TraceContext.cs: Initial implementation of storing data.
+	* HttpContext.cs: Create and expose a trace object.
+	
 2003-12-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: ThreadAbortException is ok on Redirect.
