@@ -1,3 +1,24 @@
+2001-11-18  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayCreation::ValidateInitializers): Update to perform
+	some type checking etc.
+
+2001-11-17  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayCreation::ValidateInitializers): Implement
+	bits to provide dimension info is user skips doing that.
+
+	Update second constructor to store the rank correctly.
+
+2001-11-16  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayCreation::ValidateInitializers): Poke around
+	and try to implement.
+
+	* ../errors/cs0150.cs : Add.
+
+	* ../errors/cs0178.cs : Add.
+
 2001-11-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs: Implement foreach on multi-dimensional arrays. 

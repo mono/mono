@@ -2,6 +2,7 @@
 // enum.cs: Enum handling.
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
+//         Ravi Pratap     (ravi@ximian.com)
 //
 // Licensed under the terms of the GNU GPL
 //

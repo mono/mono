@@ -2891,6 +2891,8 @@ namespace CIR {
 		
 		bool IsBuiltinType = false;
 
+		int dimensions = 0;
+
 		public ArrayCreation (string requested_type, ArrayList exprs,
 				      string rank, ArrayList initializers, Location l)
 		{
@@ -2909,9 +2911,14 @@ namespace CIR {
 		public ArrayCreation (string requested_type, string rank, ArrayList initializers, Location l)
 		{
 			RequestedType = requested_type;
-			Rank = rank;
 			Initializers = initializers;
 			loc = l;
+
+			Rank = rank.Substring (0, rank.LastIndexOf ("["));
+
+			string tmp = rank.Substring (rank.LastIndexOf ("["));
+
+			dimensions = tmp.Length - 1;
 		}
 
 		public static string FormArrayType (string base_type, int idx_count, string rank)
@@ -2943,12 +2950,111 @@ namespace CIR {
 
 			return val.Substring (0, val.LastIndexOf ("["));
 		}
-		
 
+		void error178 ()
+		{
+			Report.Error (178, loc, "Incorrectly structured array initializer");
+		}
+
+		bool ValidateInitializers (EmitContext ec)
+		{
+			if (Initializers == null)
+				return true;
+
+			Type underlying_type = ec.TypeContainer.LookupType (RequestedType, false);
+
+			ArrayList probe = Initializers;
+
+			if (Arguments != null) {
+				for (int i = 0; i < Arguments.Count; i++) {
+					Argument a = (Argument) Arguments [i];
+					
+					Expression e = Expression.Reduce (ec, a.Expr);
+					
+					if (!(e is Literal)) {
+						Report.Error (150, loc, "A constant value is expected");
+						return false;
+					}
+					
+					int value = (int) ((Literal) e).GetValue ();
+		
+					if (probe == null) {
+						error178 ();
+						return false;
+					}
+						
+					if (value != probe.Count) {
+						error178 ();
+						return false;
+					}
+
+					if (probe [0] is ArrayList)
+						probe = (ArrayList) probe [0];
+					else {
+						for (int j = 0; j < probe.Count; ++j) {
+							Expression tmp = (Expression) probe [j];
+							
+							tmp = tmp.Resolve (ec);
+
+							Expression conv = ConvertImplicitRequired (ec, tmp,
+												   underlying_type, loc);
+
+							if (conv == null)
+								return false;
+						}
+
+						probe = null;
+					}
+				}
+
+			} else {
+				//
+				// Here is where we update dimension info in the case
+				// that the user skips doing that
+				//
+
+				Arguments = new ArrayList ();
+				
+				for (probe = Initializers; probe != null; ) {
+					Expression e = new IntLiteral (probe.Count);
+
+					Arguments.Add (new Argument (e, Argument.AType.Expression));
+
+					if (probe [0] is ArrayList)
+						probe = (ArrayList) probe [0];
+					else {
+						for (int j = 0; j < probe.Count; ++j) {
+							Expression tmp = (Expression) probe [j];
+							
+							tmp = tmp.Resolve (ec);
+
+							Expression conv = ConvertImplicitRequired (ec, tmp,
+												   underlying_type, loc);
+
+							if (conv == null)
+								return false;
+						}
+						
+						probe = null;
+					}
+				}
+
+				if (Arguments.Count != dimensions) {
+					error178 ();
+					return false;
+				}
+			}
+
+			return true;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			int arg_count;
-			
+
+			if (!ValidateInitializers (ec))
+				return null;
+
 			if (Arguments == null)
 				arg_count = 0;
 			else
