@@ -1,3 +1,10 @@
+2003-11-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* LosFormatter.cs: Use ObjectStateFormatter. Pretty big size
+	reduction.
+
+	* ObjectStateFormatter.cs: Comment out tracing.
+
 2003-11-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: fixed UICulture, LCID and Culture. Set the thread
