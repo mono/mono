@@ -1,3 +1,8 @@
+2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigurationSettings.cs: reimplemented. It is now able to deliver
+	sections to their handlers for processing.
+
 2002-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigHelper.cs: New file. Contains some
