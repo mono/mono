@@ -1,5 +1,10 @@
 2002-02-28  Martin Baulig  <martin@gnome.org>
 
+	* String.cs: This file now passes the testsuite on Linux :-)
+	
+	* String.cs (Intern, IsInterned): The interncalls are now called _Intern and _IsInterned;
+	make them private and provide C# wrappers which do proper argument checking.
+
 	* String.cs (Format): Correctly handle escaped brackets.
 
 	* String.cs (_CompareChar): New internal function which compares two chars.

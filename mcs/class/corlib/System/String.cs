@@ -900,10 +900,26 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static string Intern (string str);
+		internal extern static string _Intern (string str);
+
+		public static string Intern (string str)
+		{
+			if (str == null)
+				throw new ArgumentNullException ();
+
+			return _Intern (str);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static string IsInterned (string str);
+		internal extern static string _IsInterned (string str);
+
+		public static string IsInterned (string str)
+		{
+			if (str == null)
+				throw new ArgumentNullException ();
+
+			return _IsInterned (str);
+		}
 
 		public static string Join (string separator, string[] value)
 		{
