@@ -1,4 +1,8 @@
 
+Fri Jul 19 14:21:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fix float boxing on LE systems.
+
 Sat Jul 13 19:54:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: advance ip in conv.r.un.
