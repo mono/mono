@@ -1,13 +1,16 @@
-// System.Xml.Xsl.XslTransform
+// UnmanagedXslTransform
 //
 // Authors:
 //	Tim Coleman <tim@timcoleman.com>
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) Copyright 2002 Tim Coleman
 // (c) 2003 Ximian Inc. (http://www.ximian.com)
+// (C) Ben Maurer 2003
 //
 
+// DO NOT MOVE THIS FILE. WE WANT HISTORY
 using System;
 using System.Collections;
 using System.IO;
@@ -19,36 +22,27 @@ using BF = System.Reflection.BindingFlags;
 
 namespace System.Xml.Xsl
 {
-	public unsafe sealed class XslTransform
+	internal unsafe sealed class UnmanagedXslTransform : XslTransformImpl
 	{
 
 		#region Fields
-
-		XmlResolver xmlResolver;
+		
 		IntPtr stylesheet;
 		Hashtable extensionObjectCache = new Hashtable();
 
 		#endregion
 
 		#region Constructors
-		public XslTransform ()
+		public UnmanagedXslTransform ()
 		{
 			stylesheet = IntPtr.Zero;
 		}
 
 		#endregion
 
-		#region Properties
-
-		public XmlResolver XmlResolver {
-			set { xmlResolver = value; }
-		}
-
-		#endregion
-
 		#region Methods
 
-		~XslTransform ()
+		~UnmanagedXslTransform ()
 		{
 			FreeStylesheetIfNeeded ();
 		}
@@ -60,47 +54,17 @@ namespace System.Xml.Xsl
 				stylesheet = IntPtr.Zero;
 			}
 		}
-		
-		// Loads the XSLT stylesheet contained in the IXPathNavigable.
-		public void Load (IXPathNavigable stylesheet)
-		{
-			Load (stylesheet.CreateNavigator ());
-		}
 
-		// Loads the XSLT stylesheet specified by a URL.
-		public void Load (string url)
+		public override void Load (string url, XmlResolver resolver)
 		{
-			if (url == null)
-				throw new ArgumentNullException ("url");
-
 			FreeStylesheetIfNeeded ();
 			stylesheet = xsltParseStylesheetFile (url);
 			Cleanup ();
 			if (stylesheet == IntPtr.Zero)
 				throw new XmlException ("Error creating stylesheet");
 		}
-
-		static IntPtr GetStylesheetFromString (string xml)
-		{
-			IntPtr result = IntPtr.Zero;
-
-			IntPtr xmlDoc = xmlParseDoc (xml);
-
-			if (xmlDoc == IntPtr.Zero) {
-				Cleanup ();
-				throw new XmlException ("Error parsing stylesheet");
-			}
-				
-			result = xsltParseStylesheetDoc (xmlDoc);
-			Cleanup ();
-			if (result == IntPtr.Zero)
-				throw new XmlException ("Error creating stylesheet");
-
-			return result;
-		}
-
-		// Loads the XSLT stylesheet contained in the XmlReader
-		public void Load (XmlReader stylesheet)
+		
+		public override void Load (XmlReader stylesheet, XmlResolver resolver)
 		{
 			FreeStylesheetIfNeeded ();
 			// Create a document for the stylesheet
@@ -118,8 +82,7 @@ namespace System.Xml.Xsl
 				throw new XmlException ("Error creating stylesheet");
 		}
 
-		// Loads the XSLT stylesheet contained in the XPathNavigator
-		public void Load (XPathNavigator stylesheet)
+		public override void Load (XPathNavigator stylesheet, XmlResolver resolver)
 		{
 			FreeStylesheetIfNeeded ();
 			StringWriter sr = new UTF8StringWriter ();
@@ -129,70 +92,24 @@ namespace System.Xml.Xsl
 			if (this.stylesheet == IntPtr.Zero)
 				throw new XmlException ("Error creating stylesheet");
 		}
-
-		[MonoTODO("use the resolver")]
-		// Loads the XSLT stylesheet contained in the IXPathNavigable.
-		public void Load (IXPathNavigable stylesheet, XmlResolver resolver)
+		
+		static IntPtr GetStylesheetFromString (string xml)
 		{
-			Load (stylesheet);
-		}
+			IntPtr result = IntPtr.Zero;
 
-		[MonoTODO("use the resolver")]
-		// Loads the XSLT stylesheet specified by a URL.
-		public void Load (string url, XmlResolver resolver)
-		{
-			Load (url);
-		}
+			IntPtr xmlDoc = xmlParseDoc (xml);
 
-		[MonoTODO("use the resolver")]
-		// Loads the XSLT stylesheet contained in the XmlReader
-		public void Load (XmlReader stylesheet, XmlResolver resolver)
-		{
-			Load (stylesheet);
-		}
-
-		[MonoTODO("use the resolver")]
-		// Loads the XSLT stylesheet contained in the XPathNavigator
-		public void Load (XPathNavigator stylesheet, XmlResolver resolver)
-		{
-			Load (stylesheet);
-		}
-
-		// Transforms the XML data in the IXPathNavigable using
-		// the specified args and outputs the result to an XmlReader.
-		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args)
-		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-
-			return Transform (input.CreateNavigator (), args);
-		}
-
-		// Transforms the XML data in the input file and outputs
-		// the result to an output file.
-		public void Transform (string inputfile, string outputfile)
-		{
-			IntPtr xmlDocument = IntPtr.Zero;
-			IntPtr resultDocument = IntPtr.Zero;
-
-			try {
-				xmlDocument = xmlParseFile (inputfile);
-				if (xmlDocument == IntPtr.Zero)
-					throw new XmlException ("Error parsing input file");
-
-				resultDocument = ApplyStylesheet (xmlDocument, null, null);
-
-				if (-1 == xsltSaveResultToFilename (outputfile, resultDocument, stylesheet, 0))
-					throw new XmlException ("Error in xsltSaveResultToFilename");
-			} finally {
-				if (xmlDocument != IntPtr.Zero)
-					xmlFreeDoc (xmlDocument);
-
-				if (resultDocument != IntPtr.Zero)
-					xmlFreeDoc (resultDocument);
-
+			if (xmlDoc == IntPtr.Zero) {
 				Cleanup ();
+				throw new XmlException ("Error parsing stylesheet");
 			}
+				
+			result = xsltParseStylesheetDoc (xmlDoc);
+			Cleanup ();
+			if (result == IntPtr.Zero)
+				throw new XmlException ("Error creating stylesheet");
+
+			return result;
 		}
 
 		IntPtr ApplyStylesheet (IntPtr doc, string[] argArr, Hashtable extobjects)
@@ -323,78 +240,7 @@ namespace System.Xml.Xsl
 			return xmlInput;
 		}
 
-		[MonoTODO("Node Set and Node Fragment Parameters and Extension Objects")]
-		// Transforms the XML data in the XPathNavigator using
-		// the specified args and outputs the result to an XmlReader.
-		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
-		{
-			IntPtr xmlInput = GetDocumentFromNavigator (input);
-			string[] argArr = null;
-			Hashtable extensionObjects = null;
-			if (args != null) {
-				extensionObjects = args.extensionObjects;
-				argArr = new string[args.parameters.Count * 2 + 1];
-				int index = 0;
-				foreach (object key in args.parameters.Keys) {
-					argArr [index++] = key.ToString();
-					object value = args.parameters [key];
-					if (value is Boolean)
-						argArr [index++] = XmlConvert.ToString((bool) value); // FIXME: How to encode it for libxslt?
-					else if (value is Double)
-						argArr [index++] = XmlConvert.ToString((double) value); // FIXME: How to encode infinity's and Nan?
-					else
-						argArr [index++] = "'" + value.ToString() + "'"; // FIXME: How to encode "'"?
-				}
-				argArr[index] = null;
-			}
-			string xslOutputString = ApplyStylesheetAndGetString (xmlInput, argArr, extensionObjects);
-			xmlFreeDoc (xmlInput);
-			Cleanup ();
-
-			return new XmlTextReader (new StringReader (xslOutputString));
-		}
-
-		// Transforms the XML data in the IXPathNavigable using
-		// the specified args and outputs the result to a Stream.
-		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output)
-		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-
-			Transform (input.CreateNavigator (), args, new StreamWriter (output));
-		}
-
-		// Transforms the XML data in the IXPathNavigable using
-		// the specified args and outputs the result to a TextWriter.
-		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
-		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-
-			Transform (input.CreateNavigator (), args, output);
-		}
-
-		// Transforms the XML data in the IXPathNavigable using
-		// the specified args and outputs the result to an XmlWriter.
-		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
-		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-
-			Transform (input.CreateNavigator (), args, output);
-		}
-
-		// Transforms the XML data in the XPathNavigator using
-		// the specified args and outputs the result to a Stream.
-		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
-		{
-			Transform (input, args, new StreamWriter (output));
-		}
-
-		// Transforms the XML data in the XPathNavigator using
-		// the specified args and outputs the result to a TextWriter.
-		[MonoTODO("Node Set and Node Fragment Parameters and Extension Objects")]
-		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
+		public override void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
@@ -402,6 +248,8 @@ namespace System.Xml.Xsl
 			if (output == null)
 				throw new ArgumentNullException ("output");
 
+			StringWriter writer = new UTF8StringWriter ();
+			
 			IntPtr inputDoc = GetDocumentFromNavigator (input);
 			string[] argArr = null;
 			Hashtable extensionObjects = null;
@@ -424,19 +272,39 @@ namespace System.Xml.Xsl
 			string transform = ApplyStylesheetAndGetString (inputDoc, argArr, extensionObjects);
 			xmlFreeDoc (inputDoc);
 			Cleanup ();
-			output.Write (transform);
-			output.Flush ();
-		}
-
-		// Transforms the XML data in the XPathNavigator using
-		// the specified args and outputs the result to an XmlWriter.
-		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
-		{
-			StringWriter writer = new UTF8StringWriter ();
-			Transform (input, args, writer);
+			writer.Write (transform);
+			writer.Flush ();
+			
 			output.WriteRaw (writer.GetStringBuilder ().ToString ());
 			output.Flush ();
 		}
+
+		public override void Transform(string inputfile, string outputfile, XmlResolver resolver)
+		{
+			IntPtr xmlDocument = IntPtr.Zero;
+			IntPtr resultDocument = IntPtr.Zero;
+
+			try {
+				xmlDocument = xmlParseFile (inputfile);
+				if (xmlDocument == IntPtr.Zero)
+					throw new XmlException ("Error parsing input file");
+
+				resultDocument = ApplyStylesheet (xmlDocument, null, null);
+
+				if (-1 == xsltSaveResultToFilename (outputfile, resultDocument, stylesheet, 0))
+					throw new XmlException ("Error in xsltSaveResultToFilename");
+			} finally {
+				if (xmlDocument != IntPtr.Zero)
+					xmlFreeDoc (xmlDocument);
+
+				if (resultDocument != IntPtr.Zero)
+					xmlFreeDoc (resultDocument);
+
+				Cleanup ();
+			}
+		}
+
+
 
 		static void Save (XmlReader rdr, TextWriter baseWriter)
 		{
