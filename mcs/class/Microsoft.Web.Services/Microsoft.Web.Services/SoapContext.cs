@@ -35,17 +35,22 @@ namespace Microsoft.Web.Services {
 #if !WSE1
                 private AddressingHeaders addressingHeaders;
 #endif
-		internal SoapContext () 
+		internal SoapContext () : this (null) 
 		{
-			timestamp = new Microsoft.Web.Services.Timestamp.Timestamp ();
-			table = new Hashtable ();
 		}
 
 		internal SoapContext (SoapEnvelope env) 
 		{
-			envelope = env;
+#if WSE1
 			timestamp = new Microsoft.Web.Services.Timestamp.Timestamp ();
 			table = new Hashtable ();
+
+			envelope = env;
+#else //WSE2
+			addressingHeaders = new AddressingHeaders (env);
+
+			envelope = env;
+#endif
 		}
 #if !WSE1
 		public Action Action {
@@ -60,6 +65,36 @@ namespace Microsoft.Web.Services {
   	 
 		public To To {
 			get { return addressingHeaders.To; }
+		}
+
+		public AddressingHeaders Addressing {
+			get { return addressingHeaders; }
+			set { addressingHeaders = value; }
+		}
+
+		public FaultTo FaultTo {
+			get { return addressingHeaders.FaultTo; }
+			set { addressingHeaders.FaultTo = value; }
+		}
+
+		public From From {
+			get { return addressingHeaders.From; }
+			set { addressingHeaders.From = value; }
+		}
+
+		public MessageID MessageID {
+			get { return addressingHeaders.MessageID; }
+			set { addressingHeaders.MessageID = value; }
+		}
+
+		public Recipient Recipient {
+			get { return addressingHeaders.Recipient; }
+			set { addressingHeaders.Recipient = value; }
+		}
+
+		public RelatesTo RelatesTo {
+			get { return addressingHeaders.RelatesTo; }
+			set { addressingHeaders.RelatesTo = value; }
 		}
 #endif
 		public Uri Actor { 

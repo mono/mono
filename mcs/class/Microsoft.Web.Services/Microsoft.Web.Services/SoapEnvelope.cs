@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using System.Text;
 
 namespace Microsoft.Web.Services {
 
@@ -19,6 +20,9 @@ namespace Microsoft.Web.Services {
 		private XmlElement envelope;
 		private XmlElement body;
 		private XmlElement header;
+#if WSE2
+		private Encoding _encoding;
+#endif
 
 		public SoapEnvelope ()
 		{
@@ -30,6 +34,23 @@ namespace Microsoft.Web.Services {
 		{
 			this.context = context;
 		}
+
+#if WSE2
+		public Encoding Encoding {
+			get {
+				if(_encoding == null) {
+					return new UTF8Encoding (false);
+				}
+				return _encoding;
+			}
+			set {
+				_encoding = value;
+				if(_encoding is UTF8Encoding) {
+					_encoding = new UTF8Encoding (false);
+				}
+			}
+		}
+#endif
 
 		public XmlElement Body {
 			get {
@@ -122,7 +143,11 @@ namespace Microsoft.Web.Services {
 		[MonoTODO("why?")]
 		public override void Save (string str) 
 		{
+#if WSE2
+			base.Save (new XmlTextWriter (str, Encoding));
+#else
 			base.Save (str);
+#endif
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2003-10-13  Todd Berman <tberman@gentoo.org>
+
+	* SoapContext.cs: Added Addressing objects.
+	* SoapEnvelope.cs: Added Encoding and fixed up Save (string)
+
 2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SoapWebRequest.cs: Now returns a SoapWebResponse for GetResponse. Added 
