@@ -1,5 +1,7 @@
 2004-02-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* gc.c: Add checks for GC_enable and GC_disable.
+
 	* string-icalls.c locales.c: Applied patch from Jaroslaw Kowalski
 	(jaak@zd.com.pl). Fix memory corruption in String.Replace 
 	(bug #54988).
