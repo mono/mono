@@ -1,3 +1,7 @@
+2004-09-04  Tim Coleman <tim@timcoleman.com>
+	* System.Security.dll.sources:
+		Add new System.Security.Cryptography.Pkcs classes.
+
 2004-09-03  Tim Coleman <tim@timcoleman.com>
 	* System.Security.dll.sources: 
 		Add new System.Security.Cryptography.X509Certificates classes

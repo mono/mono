@@ -21,8 +21,10 @@ System.Security.Cryptography.Pkcs/CmsRecipientCollection.cs
 System.Security.Cryptography.Pkcs/CmsRecipientEnumerator.cs
 System.Security.Cryptography.Pkcs/CmsSigner.cs
 System.Security.Cryptography.Pkcs/Pkcs9Attribute.cs
+System.Security.Cryptography.Pkcs/Pkcs9ContentType.cs
 System.Security.Cryptography.Pkcs/Pkcs9DocumentDescription.cs
 System.Security.Cryptography.Pkcs/Pkcs9DocumentName.cs
+System.Security.Cryptography.Pkcs/Pkcs9MessageDigest.cs
 System.Security.Cryptography.Pkcs/Pkcs9SigningTime.cs
 System.Security.Cryptography.Pkcs/PublicKeyInfo.cs
 System.Security.Cryptography.Pkcs/RecipientInfo.cs
