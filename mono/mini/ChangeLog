@@ -1,5 +1,9 @@
 2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_emit_epilog): Optimize the corlib exception
+	throwing code to reduce its size, unify the AOT and non-aot code and 
+	get rid of relocations in the AOT case.
+
 	* mini-x86.h mini.c exceptions-x86.c 
 	(mono_arch_get_throw_corlib_exception): New arch specific function to 
 	raise corlib exceptions which doesn't require relocations in the 
