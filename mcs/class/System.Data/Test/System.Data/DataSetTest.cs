@@ -3,9 +3,11 @@
 // Authors:
 //   Ville Palo <vi64pa@koti.soon.fi>
 //   Martin Willemoes Hansen <mwh@sysrq.dk>
+//   Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) Copyright 2002 Ville Palo
 // (C) Copyright 2003 Martin Willemoes Hansen
+// (C) Copyright 2004 Novell Inc.
 //
 
 using NUnit.Framework;
@@ -171,11 +173,7 @@ namespace MonoTests.System.Data
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// FIXME: modified attributes based on XmlSchema.Write difference
 //			AssertEquals ("test#02", "<xs:schema id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
-#else
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"\">", substring);
-#endif
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -531,11 +529,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// FIXME: modified attributes based on XmlSchema.Write difference
 //			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
-#else
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
-#endif
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -625,11 +619,7 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// FIXME: modified attributes based on XmlSchema.Write difference
 //			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"NewDataSet\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
-#else
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
-#endif
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -997,8 +987,7 @@ namespace MonoTests.System.Data
 			xw.Formatting = Formatting.Indented;
 			xw.QuoteChar = '\'';
 			ds.WriteXmlSchema (xw);
-			AssertEquals (schema, sw.ToString ());
-
+			AssertEquals (schema, sw.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1028,7 +1017,7 @@ namespace MonoTests.System.Data
 #if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='DS'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 #else
-			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
+			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 #endif
 			DataSet ds = new DataSet ();
 			ds.DataSetName = "DS";
@@ -1165,7 +1154,7 @@ namespace MonoTests.System.Data
 			ds.Relations.Add (rel);
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (sw);
-			AssertEquals (xml, sw.ToString ());
+			AssertEquals (xml, sw.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1187,7 +1176,7 @@ namespace MonoTests.System.Data
     <col3>sample text 2</col3>
   </table2>
 </set>";
-			AssertEquals (result, sr.ReadToEnd ());
+			AssertEquals (result, sr.ReadToEnd ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1204,7 +1193,7 @@ namespace MonoTests.System.Data
 			ds.Tables [0].Rows.Add (new object [] {"content string."});
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (sw);
-			AssertEquals (xml, sw.ToString ());
+			AssertEquals (xml, sw.ToString ().Replace ("\r\n", "\n"));
 		}
         }
 }

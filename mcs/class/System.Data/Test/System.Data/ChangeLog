@@ -1,3 +1,8 @@
+2004-05-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataSetTest.cs : Converted CRLF to LF for line ending comparison.
+	  (and added copyright line.)
+
 2004-05-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DataSetTest.cs : Added WriteXmlEncodedXml() test.
