@@ -1,3 +1,9 @@
+
+Fri Aug 1 16:51:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h, reflection.c, metadata.c, icall.c: more generics
+	support, icalls and fixes.
+
 2003-07-31  Miguel de Icaza  <miguel@ximian.com>
 
 	* unicode.c (ves_icall_System_Char_IsPunctuation): The set of
