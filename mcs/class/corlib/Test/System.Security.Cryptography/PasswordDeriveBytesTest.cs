@@ -77,7 +77,7 @@ public class PasswordDeriveBytesTest {
 #if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
 #else
-	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 #endif
 	public void Ctor_PasswordNullSaltCspParameters ()
 	{
@@ -86,7 +86,7 @@ public class PasswordDeriveBytesTest {
 	}
 
 	[Test]
-	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltNullCspParameters ()
 	{
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", null, new CspParameters ());
@@ -105,7 +105,7 @@ public class PasswordDeriveBytesTest {
 	}
 
 	[Test]
-	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltCspParameters ()
 	{
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, new CspParameters ());
@@ -176,7 +176,7 @@ public class PasswordDeriveBytesTest {
 #if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
 #else
-	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 #endif
 	public void Ctor_PasswordNullSaltHashIterationCspParameters ()
 	{
@@ -185,7 +185,7 @@ public class PasswordDeriveBytesTest {
 	}
 
 	[Test]
-	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltNullHashIterationCspParameters ()
 	{
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", null, "SHA1", 1, new CspParameters ());
@@ -216,7 +216,7 @@ public class PasswordDeriveBytesTest {
 	}
 
 	[Test]
-	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltHashIterationMaxValueCspParameters ()
 	{
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", Int32.MaxValue, new CspParameters ());
@@ -235,7 +235,7 @@ public class PasswordDeriveBytesTest {
 	}
 
 	[Test]
-	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltHashIterationCspParameters ()
 	{
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", 1, new CspParameters ());

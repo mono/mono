@@ -1,3 +1,8 @@
+2005-01-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PasswordDeriveBytesTest.cs: Changed [Ignore] to [Category
+	("NotWorking")] to reduce nunit logs.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStreamTest.cs: Added [ExpectedException] for [Ignored] unit 
