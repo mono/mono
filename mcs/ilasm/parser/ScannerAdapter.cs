@@ -28,9 +28,6 @@ namespace Mono.ILASM {
 			}
 		}
 
-
-
-
 		//
 		// yyParser.yyInput interface
 		//
@@ -57,6 +54,10 @@ namespace Mono.ILASM {
 		public object value ()
 		{
 			return tokens.LastToken.Value;
+		}
+
+	        public void cleanup ()
+		{
 		}
 	}
 }

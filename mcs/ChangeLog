@@ -1,3 +1,8 @@
+2003-01-13  Duncan Mak  <duncan@ximian.com>
+
+	* ilasm/parser/ScannerAdapter.cs: Implement the new cleanup method
+	in the tokenizer. This fixes the build.
+
 2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* README.building: New file.

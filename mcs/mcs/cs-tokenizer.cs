@@ -1759,7 +1759,7 @@ namespace Mono.CSharp
 			return Token.EOF;
 		}
 
-		public void Cleanup ()
+		public void cleanup ()
 		{
 			if (ifstack != null && ifstack.Count >= 1) {
 				int state = (int) ifstack.Pop ();

@@ -1,3 +1,7 @@
+2003-01-13  Duncan Mak  <duncan@ximian.com>
+
+	* skeleton.cs (cleanpup): Rename to cleanup to make it look more consistent.
+
 2003-01-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* skeleton.cs: Call lexer.Cleanup when the lexer reaches the EOF.
