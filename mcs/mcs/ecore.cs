@@ -2119,20 +2119,40 @@ namespace Mono.CSharp {
 
 			if (e is MemberExpr) {
 				MemberExpr me = (MemberExpr) e;
-				Expression left = (ec.IsStatic || ec.IsFieldInitializer)
-					? (Expression) new TypeExpression (ec.ContainerType, loc)
-					: (Expression) ec.GetThis (loc);
-			
-				e = me.ResolveMemberAccess (ec, left, loc, (intermediate ? this : null), true);
+
+				Expression left;
+				if (me.IsInstance) {
+					if (ec.IsStatic || ec.IsFieldInitializer) {
+						//
+						// Note that an MemberExpr can be both IsInstance and IsStatic.
+						// An unresolved MethodGroupExpr can contain both kinds of methods
+						// and each predicate is true if the MethodGroupExpr contains
+						// at least one of that kind of method.
+						//
+
+						if (!me.IsStatic &&
+						    (!intermediate || !IdenticalNameAndTypeName (ec, me, loc))) {
+							Error_ObjectRefRequired (ec, loc, Name);
+							return null;
+						}
+
+						//
+						// Pass the buck to MemberAccess and Invocation.
+						//
+						left = EmptyExpression.Null;
+					} else {
+						left = ec.GetThis (loc);
+					}
+				} else {
+					left = new TypeExpression (ec.ContainerType, loc);
+				}
+
+				e = me.ResolveMemberAccess (ec, left, loc, null);
 				if (e == null)
 					return null;
 
 				me = e as MemberExpr;
 				if (me == null)
-					return e;
-
-				if (!me.IsStatic && me.InstanceExpression == null && 
-				    (intermediate && IdenticalNameAndTypeName (ec, e, loc)))
 					return e;
 
 				if (!me.IsStatic &&
@@ -2461,19 +2481,15 @@ namespace Mono.CSharp {
 		// TODO: possible optimalization
 		// Cache resolved constant result in FieldBuilder <-> expression map
 		public virtual Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
-								SimpleName original, bool left_is_inferred)
+							       SimpleName original)
 		{
 			//
 			// Precondition:
-			//   original == null || original.Resolve (...) === (left_is_inferred ? this : left)
+			//   original == null || original.Resolve (...) ==> left
 			//
 
 			if (left is TypeExpr) {
 				if (!IsStatic) {
-					if ((ec.IsFieldInitializer || ec.IsStatic) && left_is_inferred &&
-					    original != null && original.IdenticalNameAndTypeName (ec, this, loc))
-						return this;
-
 					SimpleName.Error_ObjectRefRequired (ec, loc, Name);
 					return null;
 				}
@@ -2482,8 +2498,7 @@ namespace Mono.CSharp {
 			}
 				
 			if (!IsInstance) {
-				if (left_is_inferred ||
-				    (original != null && original.IdenticalNameAndTypeName (ec, left, loc)))
+				if (original != null && original.IdenticalNameAndTypeName (ec, left, loc))
 					return this;
 
 				error176 (loc, Name);
@@ -2592,14 +2607,13 @@ namespace Mono.CSharp {
 		}
 
 		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
-								 SimpleName original, bool left_is_inferred)
+								SimpleName original)
 		{
-			if (!left_is_inferred &&
-			    !(left is TypeExpr) &&
+			if (!(left is TypeExpr) &&
 			    original != null && original.IdenticalNameAndTypeName (ec, left, loc))
 				IdenticalTypeName = true;
 
-			return base.ResolveMemberAccess (ec, left, loc, original, left_is_inferred);
+			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
 		
 		override public Expression DoResolve (EmitContext ec)
@@ -2713,7 +2727,7 @@ namespace Mono.CSharp {
 		}
 
 		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
-								 SimpleName original, bool left_is_inferred)
+								SimpleName original)
 		{
 			bool left_is_type = left is TypeExpr;
 
@@ -2734,7 +2748,7 @@ namespace Mono.CSharp {
 
 					Expression exp = Constantify (real_value, t);
 					
-					if (!left_is_inferred && !left_is_type && 
+					if (!left_is_type && 
 					    (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
 						Report.SymbolRelatedToPreviousError (c);
 						error176 (loc, c.GetSignatureForError ());
@@ -2761,7 +2775,7 @@ namespace Mono.CSharp {
 					o = FieldInfo.GetValue (FieldInfo);
 				
 				if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
-					if (!left_is_inferred && !left_is_type &&
+					if (!left_is_type &&
 					    (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
 						error176 (loc, FieldInfo.Name);
 						return null;
@@ -2784,7 +2798,7 @@ namespace Mono.CSharp {
 				
 				Expression exp = Constantify (o, t);
 				
-				if (!left_is_inferred && !left_is_type) {
+				if (!left_is_type) {
 					error176 (loc, FieldInfo.Name);
 					return null;
 				}
@@ -2797,7 +2811,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return base.ResolveMemberAccess (ec, left, loc, original, left_is_inferred);
+			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -3046,16 +3060,6 @@ namespace Mono.CSharp {
 
 		void EmitInstance (EmitContext ec)
 		{
-			//
-			// In case it escapes StaticMemberCheck due to IdenticalTypeAndName.
-			// This happens in cases like 'string String', 'int Int32', etc.
-			// where the "IdenticalTypeAndName" mechanism is fooled.
-			//
-			if (InstanceExpression == null) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, FieldInfo.Name);
-				return;
-			}
-
 			if (InstanceExpression.Type.IsValueType) {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
@@ -3437,16 +3441,6 @@ namespace Mono.CSharp {
 			if (is_static)
 				return;
 
-			//
-			// In case it escapes StaticMemberCheck due to IdenticalTypeAndName.
-			// This happens in cases like 'string String', 'int Int32', etc.
-			// where the "IdenticalTypeAndName" mechanism is fooled.
-			//
-			if (InstanceExpression == null) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
-				return;
-			}
-
 			if (InstanceExpression.Type.IsValueType) {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
@@ -3581,7 +3575,7 @@ namespace Mono.CSharp {
 		}
 
 		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
-								 SimpleName original, bool left_is_inferred)
+								SimpleName original)
 		{
 			//
 			// If the event is local to this class, we transform ourselves into a FieldExpr
@@ -3598,14 +3592,14 @@ namespace Mono.CSharp {
 						Report.Error (-200, loc, "Internal error!!");
 						return null;
 					}
+
+					InstanceExpression = null;
 				
-					InstanceExpression = left_is_inferred ? null : left;
-				
-					return ml.ResolveMemberAccess (ec, left, loc, original, left_is_inferred);
+					return ml.ResolveMemberAccess (ec, left, loc, original);
 				}
 			}
 
-			return base.ResolveMemberAccess (ec, left, loc, original, left_is_inferred);
+			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
 
 

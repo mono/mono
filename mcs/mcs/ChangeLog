@@ -1,3 +1,17 @@
+2005-03-31  Raja R Harinath  <rharinath@novell.com>
+
+	Clean up semantics of invoking ResolveMemberAccess.
+	* ecore.cs (SimpleName.DoSimpleNameResolve): If a MemberExpression
+	can have an instance, ensure that we pass in a non-TypeExpression
+	to ResolveMemberAccess.  Tighten up IdenticalNameAndTypeName checks.
+	(MemberExpr.DoSimpleNameResolve): Remove type_is_inferred
+	argument.  Update to changes and simplify.
+	(FieldExpr.Emitinstance): Remove CS0120 check.
+	(PropertyExpr.EmitInstance): Likewise.
+	* expression.cs (Argument.Resolve): Likewise.
+	(Invocation.DoResolve): Update to changes in semantics of
+	InstanceExpression.
+
 2005-03-31  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #74241

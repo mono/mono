@@ -4226,32 +4226,6 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			if (Expr is MemberExpr) {
-				MemberExpr me = Expr as MemberExpr;
-
-				//
-				// This can happen with the following code:
-				//
-				//   class X {}
-				//   class Y {
-				//     public Y (X x) {}
-			        //   }
-				//   class Z : Y {
-				//     X X;
-				//     public Z () : base (X) {}
-				//   }
-				//
-				// SimpleNameResolve is conservative about flagging the X as
-				// an error since it has identical name and type.  However,
-				// because there's no MemberAccess, that is not really justified.
-				// It is still simpler to fix it here, rather than in SimpleNameResolve.
-				//
-				if (me.IsInstance && me.InstanceExpression == null) {
-					SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
-					return false;
-				}
-			}
-
 			if (ArgType == AType.Expression)
 				return true;
 			else {
@@ -5247,17 +5221,19 @@ namespace Mono.CSharp {
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
 				type = TypeManager.TypeToCoreType (mi.ReturnType);
-				if (!mi.IsStatic && mg.InstanceExpression == null) {
-					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
-					return null;
-				}
-
 				Expression iexpr = mg.InstanceExpression;
-				if (mi.IsStatic && (iexpr != null) && !(iexpr is This)) {
-					if (mg.IdenticalTypeName)
+				if (mi.IsStatic) {
+					if (iexpr == null || 
+					    iexpr is This || iexpr is EmptyExpression ||
+					    mg.IdenticalTypeName) {
 						mg.InstanceExpression = null;
-					else {
+					} else {
 						MemberExpr.error176 (loc, mi.Name);
+						return null;
+					}
+				} else {
+					if (iexpr == null || iexpr is EmptyExpression) {
+						SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
 						return null;
 					}
 				}
@@ -7329,7 +7305,7 @@ namespace Mono.CSharp {
 			}
 
 			MemberExpr me = (MemberExpr) member_lookup;
-			member_lookup = me.ResolveMemberAccess (ec, expr, loc, original, false);
+			member_lookup = me.ResolveMemberAccess (ec, expr, loc, original);
 			if (member_lookup == null)
 				return null;
 
@@ -8397,7 +8373,7 @@ namespace Mono.CSharp {
 
 			MemberExpr me = (MemberExpr) member_lookup;
 			
-			Expression e = me.ResolveMemberAccess (ec, left, loc, null, false);
+			Expression e = me.ResolveMemberAccess (ec, left, loc, null);
 
 			if (e is PropertyExpr) {
 				PropertyExpr pe = (PropertyExpr) e;
