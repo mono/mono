@@ -5824,7 +5824,7 @@ namespace Mono.CSharp {
 			}
 			type = TypeManager.TypeToCoreType (t.GetElementType ());
 			if (type.IsPointer && !ec.InUnsafe){
-				UnsafeError (ea.loc);
+				UnsafeError (ea.Location);
 				return null;
 			}
 
@@ -5843,7 +5843,7 @@ namespace Mono.CSharp {
 				//
 				// Wonder if I will run into trouble for this.
 				//
-				a.Expr = ExpressionToArrayArgument (ec, a.Expr, ea.loc);
+				a.Expr = ExpressionToArrayArgument (ec, a.Expr, ea.Location);
 				if (a.Expr == null)
 					return null;
 			}
@@ -6220,14 +6220,14 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					ec.ContainerType, indexer_type, ea.loc);
+					ec.ContainerType, indexer_type, ea.Location);
 
 
 			//
 			// Step 2: find the proper match
 			//
 			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0){
-				Location loc = ea.loc;
+				Location loc = ea.Location;
 				
 				get = (MethodInfo) Invocation.OverloadResolve (
 					ec, new MethodGroupExpr (ilist.getters, loc), ea.Arguments, loc);
@@ -6241,7 +6241,7 @@ namespace Mono.CSharp {
 
 			type = get.ReturnType;
 			if (type.IsPointer && !ec.InUnsafe){
-				UnsafeError (ea.loc);
+				UnsafeError (ea.Location);
 				return null;
 			}
 			
@@ -6256,10 +6256,10 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					ec.ContainerType, indexer_type, ea.loc);
+					ec.ContainerType, indexer_type, ea.Location);
 
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
-				Location loc = ea.loc;
+				Location loc = ea.Location;
 				
 				set_arguments = (ArrayList) ea.Arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
@@ -6281,7 +6281,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, false, false, ea.Expr, get, ea.Arguments, ea.loc);
+			Invocation.EmitCall (ec, false, false, ea.Expr, get, ea.Arguments, ea.Location);
 		}
 
 		//
@@ -6291,7 +6291,7 @@ namespace Mono.CSharp {
 		//
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			Invocation.EmitCall (ec, false, false, ea.Expr, set, set_arguments, ea.loc);
+			Invocation.EmitCall (ec, false, false, ea.Expr, set, set_arguments, ea.Location);
 		}
 	}
 

@@ -1,3 +1,13 @@
+2002-08-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	Fixed compilation with csc.
+
+	* ecore.cs: Expression.Error made public. Is this correct? Should
+	Warning be made public too?
+
+	* expression.cs: use ea.Location instead of ea.loc.
+	[FIXME:  Filed as bug #28607: MCS must report these errors.]
+
 2002-08-06  Martin Baulig  <martin@gnome.org>
 
 	* ecore.cs (Expression.loc): Moved the location here instead of

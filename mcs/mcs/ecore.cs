@@ -91,7 +91,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Utility wrapper routine for Error, just to beautify the code
 		/// </summary>
-		protected void Error (int error, string s)
+		public void Error (int error, string s)
 		{
 			if (Location.IsNull (loc))
 				Report.Error (error, loc, s);
