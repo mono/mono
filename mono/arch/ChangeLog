@@ -1,3 +1,9 @@
+
+Fri Nov 19 17:29:22 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* ppc/ppc-codegen.h: counter reg decrement branch values
+	(patch by Geoff Norton <gnorton@customerdna.com>).
+
 2004-11-16  Patrik Torstensson <patrik.torstensson@gmail.com>
 
 	* x86/x86-codegen.h: added opcodes for xadd instructions
