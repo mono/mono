@@ -120,11 +120,11 @@ namespace System.Xml
 			Encoding enc)
 		{
 			if (nt == null)
-				this.nameTable = nsMgr.NameTable;
+				this.nameTable = nsMgr == null ? new NameTable () : nsMgr.NameTable;
 			else
-				this.NameTable = nt;
+				this.nameTable = nt;
 
-			this.namespaceManager = nsMgr;
+			this.namespaceManager = nsMgr != null ? nsMgr : new XmlNamespaceManager (nameTable);
 			if (dtd != null) {
 				this.docTypeName = dtd.Name;
 				this.publicID = dtd.PublicId;

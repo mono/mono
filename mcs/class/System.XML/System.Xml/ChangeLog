@@ -1,3 +1,8 @@
+2004-04-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlParserContext.cs : Fixed .ctor() not to reference null namespace
+	  manager. This fixes bug #56770.
+
 2004-04-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDReader.cs : In ProcessDTDSubset(), 1)error message was 
