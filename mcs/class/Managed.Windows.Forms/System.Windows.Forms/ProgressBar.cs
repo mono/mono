@@ -23,9 +23,12 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: ProgressBar.cs,v $
+// Revision 1.9  2004/10/05 04:56:11  jackson
+// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
+//
 // Revision 1.8  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -371,7 +374,6 @@ namespace System.Windows.Forms
     				return;
 
 			UpdateAreas ();
-			CreateBuffers (Width, Height);
     		}
 
 		/* Disable background painting to avoid flickering, since we do our painting*/

@@ -23,6 +23,9 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.10  2004/10/05 04:56:11  jackson
+// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
+//
 // Revision 1.9  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -132,10 +135,6 @@ namespace System.Windows.Forms {
 			Redraw();
 		}
 
-		private void SizeEvent(object sender, System.EventArgs e) {
-			this.CreateBuffers(this.client_size.Width, this.client_size.Height);
-			Redraw();
-		}
 		#endregion	// Private Properties and Methods
 
 		#region Public Constructors
@@ -155,9 +154,6 @@ namespace System.Windows.Forms {
 			text_format.Alignment = StringAlignment.Center;
 			text_format.LineAlignment = StringAlignment.Center;
 
-			CreateBuffers(client_size.Width, this.client_size.Height);
-
-			SizeChanged+=new System.EventHandler(SizeEvent);
 			TextChanged+=new System.EventHandler(RedrawEvent);
 			ForeColorChanged+=new EventHandler(RedrawEvent);
 			BackColorChanged+=new System.EventHandler(RedrawEvent);

@@ -30,9 +30,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.15  2004/10/05 04:56:12  jackson
+// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
+//
 // Revision 1.14  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -426,7 +429,6 @@ namespace System.Windows.Forms
 					Size = new Size (50, Height);
 
 			UpdateArea ();
-			CreateBuffers (Width, Height);
 			UpdatePos (Value, true);			
 		}
 	
@@ -656,7 +658,6 @@ namespace System.Windows.Forms
     				return;
 
 			UpdateArea ();
-			CreateBuffers (Width, Height);
 		}		
 
 		private void OnPaintTB (PaintEventArgs pevent)

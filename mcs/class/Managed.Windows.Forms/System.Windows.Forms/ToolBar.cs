@@ -32,9 +32,12 @@
 // Copyright (C) Novell Inc., 2004 (http://www.novell.com)
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.13  2004/10/05 04:56:12  jackson
+// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
+//
 // Revision 1.12  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -670,7 +673,6 @@ namespace System.Windows.Forms
 		{
 			if (recalculate) {
 				CalcToolBar ();
-				CreateBuffers (this.Width, this.Height);
 			}
 			redraw = true;
 			Refresh ();

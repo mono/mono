@@ -222,7 +222,6 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated (e);
 
 			UpdateArea ();
-			CreateBuffers (Width, Height);
 			Draw();
 		}
 

@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.22 $
+// $Revision: 1.23 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.23  2004/10/05 04:56:11  jackson
+// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
+//
 // Revision 1.22  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -428,8 +431,6 @@ namespace System.Windows.Forms
 			scrollbutton_height = ThemeEngine.Current.ScrollBarButtonSize;
 			scrollbutton_width = ThemeEngine.Current.ScrollBarButtonSize;
 
-			CreateBuffers (Width, Height);
-
 			CalcThumbArea ();
 			UpdatePos (Value, true);
 		}
@@ -563,8 +564,6 @@ namespace System.Windows.Forms
 			paint_area.X = paint_area. Y = 0;
 			paint_area.Width = Width;
 			paint_area.Height = Height;
-
-			CreateBuffers (Width, Height);
 
 			CalcThumbArea ();
 			UpdatePos (position, true);

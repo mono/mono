@@ -24,9 +24,12 @@
 //	Peter Bartok, pbartok@novell.com
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.16  2004/10/05 04:56:11  jackson
+// Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
+//
 // Revision 1.15  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -574,8 +577,6 @@ namespace System.Windows.Forms
 
     		private void OnHandleCreatedLB (Object o, EventArgs e)
 		{
-			CreateBuffers (Width, Height);
-
 			if (autosize)
 				CalcAutoSize ();
 		}
@@ -584,8 +585,6 @@ namespace System.Windows.Forms
     		{
     			if (Width <= 0 || Height <= 0)
     				return;
-
-			CreateBuffers (Width, Height);
     		}
 
 

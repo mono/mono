@@ -398,7 +398,6 @@ namespace System.Windows.Forms
 		protected override void OnResize(EventArgs e)
 		{
 			Console.WriteLine ("OnResize {0} {1} ", Width, Height);
-			CreateBuffers (Width, Height);
 		}
 
 		private void OnPaintPUW (Object o, PaintEventArgs pevent)
