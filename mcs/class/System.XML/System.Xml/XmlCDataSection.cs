@@ -46,7 +46,7 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteCData(Data);
+			w.WriteCData (Data);
 		}
 
 		#endregion

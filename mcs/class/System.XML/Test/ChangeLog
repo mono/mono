@@ -1,6 +1,22 @@
+2002-03-22  Duncan Mak  <duncan@ximian.com>
+
+	* AllTests.cs: 
+	* Microsoft.Test.csproj: 
+	* Mono.Test.csproj: Updated to include new files.
+
+	* XmlCDataSectionTests.cs: Added to CVS.
+
+	* XmlCommentTests.cs: Added to CVS. hanks to Kral for helping me
+	setup a testing environment on VS.NET.
+
+	* XmlElementTests.cs: Reformatted.
+	(TestCloneNode): Added.
+
+	* XmlWhiteSpaceTests.cs: Added to CVS.
+		
 2002-03-21  Kral Ferch <kral_ferch@hotmail.com>
 
-	* XmlDocumentTests.cs: Tests parent traversal up through
+	* XmlDocumentTests.cs: Tessts parent traversal up through
 	document itself until null.  Tests a removed elements next
 	sibling is null.
 	

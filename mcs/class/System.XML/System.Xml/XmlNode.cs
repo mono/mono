@@ -185,8 +185,10 @@ namespace System.Xml
 
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
-			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) {
-				XmlLinkedNode newLinkedChild = (XmlLinkedNode)newChild;
+			if (NodeType == XmlNodeType.Document
+			    || NodeType == XmlNodeType.Element
+			    || NodeType == XmlNodeType.Attribute) {
+				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
 				XmlLinkedNode lastLinkedChild = LastLinkedChild;
 
 				newLinkedChild.parentNode = this;

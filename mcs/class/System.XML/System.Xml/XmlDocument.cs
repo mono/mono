@@ -307,10 +307,13 @@ namespace System.Xml
 			return new XmlText (text, this);
 		}
 
-		[MonoTODO]
 		public virtual XmlWhitespace CreateWhitespace (string text)
 		{
-			throw new NotImplementedException ();
+			foreach (char c in text.ToCharArray ())
+				if ((c != ' ') && (c != '\r') && (c != '\n') && (c != '\t'))
+				    throw new ArgumentException ("Invalid whitespace characters.");
+			 
+			return new XmlWhitespace (text, this);
 		}
 
 		[MonoTODO]

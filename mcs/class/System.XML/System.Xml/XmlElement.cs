@@ -43,65 +43,42 @@ namespace System.Xml
 		#region Properties
 
 		public override XmlAttributeCollection Attributes {
-			get { 
-				return attributes; 
-			}
+			get { return attributes; }
 		}
 
 		public virtual bool HasAttributes {
-			get { 
-				return attributes.Count > 0; 
-			}
+			get { return attributes.Count > 0; }
 		}
 
 		[MonoTODO]
 		public override string InnerText {
-			get { 
-				throw new NotImplementedException (); 
-			}
-
-			set { 
-				throw new NotImplementedException (); 
-			}
+			get { throw new NotImplementedException (); }
+			
+			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
 		public override string InnerXml {
-			get { 
-				throw new NotImplementedException (); 
-			}
+			get { throw new NotImplementedException (); }
 
-			set { 
-				throw new NotImplementedException (); 
-			}
+			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public bool IsEmpty	{
-			get { 
-				throw new NotImplementedException (); 
-			}
+		public bool IsEmpty {
+			get { throw new NotImplementedException (); }
 
-			set { 
-				throw new NotImplementedException (); 
-			}
+			set { throw new NotImplementedException (); }
 		}
 
 		internal override XmlLinkedNode LastLinkedChild {
-			get	{
-				return lastLinkedChild;
-			}
+			get { return lastLinkedChild; }
 
-			set {
-				lastLinkedChild = value;
-			}
+			set { lastLinkedChild = value; }
 		}
 		
-		public override string LocalName 
-		{
-			get { 
-				return localName; 
-			}
+		public override string LocalName {
+			get { return localName; }
 		}
 
 		public override string Name {
@@ -111,9 +88,7 @@ namespace System.Xml
 		}
 
 		public override string NamespaceURI {
-			get { 
-				return namespaceURI; 
-			}
+			get { return namespaceURI; }
 		}
 
 		[MonoTODO]
@@ -149,32 +124,23 @@ namespace System.Xml
 		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			if (deep) {
-				XmlNode node = ParentNode.FirstChild;
+			XmlNode node =  new XmlElement (prefix, localName, namespaceURI,
+							OwnerDocument);
 
-				while ((node != null) && (node.HasChildNodes)) {
-					//
-					// XmlNode.CloneNode says we should also clone the attributes,
-					// does the NextSibling.CloneNode do the Right Thing?
-					//
-					AppendChild (node.NextSibling.CloneNode (false));
+			for (int i = 0; i < node.Attributes.Count; i++)
+				node.AppendChild (node.Attributes [i].CloneNode (false));
+			
+			if (deep) {
+				while ((node != null) && (node.HasChildNodes)) {					
+					AppendChild (node.NextSibling.CloneNode (true));
 					node = node.NextSibling;
 				}
-
-				return node;
-			} else {
-				XmlNode node =  new XmlElement (prefix, localName, namespaceURI,
-								OwnerDocument);
-
-				//
-				// XmlNode.CloneNode says 'Clones the element node, its attributes
-				// including its default attributes.'
-				//
-				for (int i = 0; i < node.Attributes.Count; i++)
-					node.AppendChild (node.Attributes [i].CloneNode (false));
-
-				return node;
-			}
+			} // shallow cloning
+				
+			//
+			// Reminder: Also look into Default attributes.
+			//
+			return node;
 		}
 
 		[MonoTODO]

@@ -50,7 +50,7 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public void WriteAttributeString (string localName,	string ns, string value)
+		public void WriteAttributeString (string localName, string ns, string value)
 		{
 			throw new NotImplementedException ();
 		}

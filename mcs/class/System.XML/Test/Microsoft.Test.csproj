@@ -96,6 +96,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "XmlCDataSectionTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "XmlCommentTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "XmlDocumentTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -122,6 +132,11 @@
                 />
                 <File
                     RelPath = "XmlTextWriterTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "XmlWhiteSpaceTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

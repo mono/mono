@@ -1,3 +1,13 @@
+2002-03-22  Duncan Mak  <duncan@ximian.com>
+
+	* XmlElement.cs: Reformatted.
+	(CloneNode) Corrected.
+
+	* XmlDocument.cs (CreateWhitespace): Implemented.
+
+	* XmlAttribute.cs (CloneNode): Changed the child's CloneNode to
+	true, because Attributes have ChildNodes.
+
 2002-03-21  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlTextWriter.cs: WriteStartDocument tracks state, writes out

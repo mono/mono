@@ -148,18 +148,16 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			if (deep) { // recursively clone the subtree 
-				XmlNode node = FirstChild; // Attributes have no ParentNodes
-
+			XmlNode node = new XmlAttribute (prefix, localName, namespaceURI,
+							 OwnerDocument);
+			if (deep) {
 				while ((node != null) && (node.HasChildNodes)) {
-					AppendChild (node.NextSibling.CloneNode (false));
+					AppendChild (node.NextSibling.CloneNode (true));
 					node = node.NextSibling;
 				}
+			}
 
-				return node;
-			} else
-				return new XmlAttribute (prefix, localName, namespaceURI,
-							 OwnerDocument);
+			return node;
 		}
 
 		internal void SetOwnerElement (XmlElement ownerElement)
@@ -168,13 +166,13 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public override void WriteContentTo(XmlWriter w)
+		public override void WriteContentTo (XmlWriter w)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override void WriteTo(XmlWriter w)
+		public override void WriteTo (XmlWriter w)
 		{
 			throw new NotImplementedException ();
 		}
@@ -182,13 +180,9 @@ namespace System.Xml
 		#endregion
 
 		internal override XmlLinkedNode LastLinkedChild {
-			get	{
-				return lastChild;
-			}
+			get { return lastChild; }
 
-			set {
-				lastChild = value;
-			}
+			set { lastChild = value; }
 		}
 	}
 }
