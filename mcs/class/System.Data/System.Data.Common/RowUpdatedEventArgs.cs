@@ -44,39 +44,32 @@ namespace System.Data.Common {
 
 		#region Properties
 		
-		[MonoTODO]
 		public IDbCommand Command {
 			get { return command; }
 		}
 
-		[MonoTODO]
 		public Exception Errors {
 			get { return errors; }
 			set { errors = value; }
 		}
 
-		[MonoTODO]
 		public int RecordsAffected {
 			get { return recordsAffected; }
 		}
 
-		[MonoTODO]
 		public DataRow Row {
 			get { return dataRow; }
 		}
 
-		[MonoTODO]
 		public StatementType StatementType {
 			get { return statementType; }
 		}
 
-		[MonoTODO]
 		public UpdateStatus Status {
 			get { return status; }
 			set { status = value; }
 		}
 
-		[MonoTODO]
 		public DataTableMapping TableMapping {
 			get { return tableMapping; }
 		}
