@@ -663,7 +663,12 @@ namespace System.Xml
 					}
 					if (createPrefix)
 						prefix = "d" + indentLevel + "p" + (newAttributeNamespaces.Count + 1);
-					newAttributeNamespaces.Add (prefix, ns);
+					
+					// check if prefix exists. If yes - check if namespace is the same.
+					if (newAttributeNamespaces [prefix] == null)
+						newAttributeNamespaces.Add (prefix, ns);
+					else if (!newAttributeNamespaces [prefix].Equals (ns))
+						throw new ArgumentException ("Duplicate prefix with different namespace");
 				}
 
 				if (prefix == String.Empty && ns != XmlnsNamespace)

@@ -1,3 +1,8 @@
+2003-11-20 Eran Domb <erand@mainsoft.com>
+
+	* XmlTextWriter.cs (WriteStartAttribute) : Check if the ket already exists in the newAttributeNamespaces table 
+	  before trying to add it to the table.
+
 2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs : Replaced entity should not treat whitespaces
