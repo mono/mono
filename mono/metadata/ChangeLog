@@ -1,3 +1,8 @@
+2002-05-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_runtime_invoke_array): applied patch from Rachel
+	Hestilow to fix bug #25104
+
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.c (mono_debug_find_source_location): New function.
