@@ -44,6 +44,7 @@ namespace demo
 			this.vScrollBar1.ValueChanged += new EventHandler(this.vScrollBar1_ValueChanged);
 			
 			this.vScrollBar1.BackColor = Color.Brown;
+			// this.BackColor = Color.Yellow;
 
 			this.hScrollBar1.Location = new System.Drawing.Point(50, 60);
 			this.hScrollBar1.Maximum = 200;

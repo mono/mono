@@ -20,11 +20,12 @@ namespace System.Windows.Forms {
 		string caption;
 		bool firsttimeactivated=false;
 		Size csize;
-		// if the application has a menu and/or a statusbar
-		// then this menu should be added to the vbox before
-		// the layout and the statusbar after the layout
 		Control menu = null;
-
+		Button acceptbutton, cancelbutton; 
+		bool autoscroll, autoscale, controlbox;
+		Size autoscalecasesize = new Size ();
+		
+		
 		public Form () : base ()
 		{
 		}
@@ -37,10 +38,6 @@ namespace System.Windows.Forms {
 		
 		void delete_cb (object o, DeleteEventArgs args)
 		{
-
-			//if (Closing != null)
-			//Closing (o, args);
-			
 			if (Closed != null)
 				Closed (o, args);
 		}
@@ -51,8 +48,15 @@ namespace System.Windows.Forms {
 				Load (this, EventArgs.Empty);
 		}
 
+		void activate_cb (object o, EventArgs args)
+		{
+			if (Activated != null)
+				Activated (o, args);
+		}
+
 		internal void ConnectEvents ()
 		{
+			win.DefaultActivated += new EventHandler (activate_cb);
 			win.DeleteEvent += new DeleteEventHandler (delete_cb);
 			win.Realized += new EventHandler (load_cb);
 		}
@@ -68,16 +72,16 @@ namespace System.Windows.Forms {
 		}
 
 		//  --- Public Properties
-		//
-		// [MonoTODO]
-		// public IButtonControl AcceptButton {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public Button AcceptButton 
+		{
+			get {
+				return this.acceptbutton;
+			}
+			set {
+				this.acceptbutton = value;
+			}
+		}
+
 		// [MonoTODO]
 		// public static Form ActiveForm {
 		//	get {
@@ -90,32 +94,37 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool AutoScale {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		public virtual Size AutoScaleBaseSize {
+
+		[MonoTODO]
+		public bool AutoScale {
 			get {
-				return new Size ();
+				return this.autoscale;
 			}
 			set {
+				// autoscalecasesize
+				this.autoscale = value;
 			}
 		}
-		// [MonoTODO]
-		// public override bool AutoScroll {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+
+		[MonoTODO]
+		public virtual Size AutoScaleBaseSize {
+			get {
+				return this.autoscalecasesize;
+			}
+			set {
+				this.autoscalecasesize = value;
+			}
+		}
+		[MonoTODO]
+		public bool AutoScroll {
+			get {
+				return this.autoscroll;
+			}
+			set {
+				this.autoscroll = value;
+			}
+		}
+
 		// [MonoTODO]
 		// public virtual Color BackColor {
 		//	get {
@@ -125,16 +134,18 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public IButtonControl CancelButton {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
+
+		[MonoTODO]
+		public Button CancelButton {
+			get {
+				return this.cancelbutton;
+			}
+			set {
+				this.cancelbutton = value;
+			}
+		}
+
+		[MonoTODO]
 		public Size ClientSize {
 			get {
 				return csize;
@@ -144,15 +155,16 @@ namespace System.Windows.Forms {
 				Widget.SetSizeRequest (value.Width,value.Height);
 			}
 		}
-		// [MonoTODO]
-		// public bool ControlBox {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[MonoTODO]
+		public bool ControlBox {
+			get {
+				return this.controlbox;
+			}
+			set {
+				this.controlbox = value;
+			}
+		}
+
 		// [MonoTODO]
 		// public Rectangle DesktopBounds {
 		//	get {
@@ -189,88 +201,99 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool HelpButton {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public Icon Icon {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public bool IsMidiChild {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public bool IsMidiContainer {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public bool KeyPreview {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public bool MaximizeBox {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public Size MaximumSize {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public Form[] MdiChildren {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public Form MdiParent {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
+		[MonoTODO]
+		public bool HelpButton {
+			get {
+				return false;
+			}
+			set {
+				// Whatever
+			}
+		}
+
+		[MonoTODO]
+		public Icon Icon {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		 public bool IsMidiChild {
+			get {
+				return false;
+			}
+			set {
+				// Whatever
+			}
+		}
+
+		[MonoTODO]
+		public bool IsMidiContainer {
+			get {
+				return false;
+			}
+			set {
+				// Whatever
+			}
+		}
+
+		[MonoTODO]
+		public bool KeyPreview {
+			get {
+				return false;
+			}
+			set {
+				// Whatever
+			}
+		}
+
+		[MonoTODO]
+		public bool MaximizeBox {
+			get {
+				return false;
+			}
+			set {
+				// Whatever
+			}
+		}
+
+		[MonoTODO]
+		public Size MaximumSize {
+			get {
+				// TODO, return size of the screen here ?
+				return new Size ();
+			}
+			set {
+				// Whatever
+			}
+		}
+
+		private Form[] mdichildren;
+		[MonoTODO]
+		public Form[] MdiChildren {
+			get {
+				return mdichildren;
+			}
+			set {
+				this.mdichildren = value;
+			}
+		}
+
+		private Form mdiparent;
+		[MonoTODO]
+		public Form MdiParent {
+			get {
+				return mdiparent;
+			}
+			set {
+				mdiparent = value;
+			}
+		}
+
 		public Control Menu {
 			get {
 				return this.menu;
@@ -280,69 +303,82 @@ namespace System.Windows.Forms {
 				Control.Controls.Add(this.menu);
 			}
 		}
-		// [MonoTODO]
-		// public MainMenu MergedMenu {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public bool MinimizeBox {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public Size MinimumSize {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public bool Modal {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public double Opacity {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public Form[] OwnedForms {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public Form Owner {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}DefaultActivated
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public bool ShowInTaskbar {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+
+		 [MonoTODO]
+		 public MainMenu MergedMenu {
+			get {
+				// What is this?
+				return new MainMenu ();
+			}
+		}
+
+		[MonoTODO]
+		public bool MinimizeBox {
+			get {
+				return true;
+			}
+			set {
+				// Whatever
+			}
+		}
+
+		Size minimumsize = new Size();
+		[MonoTODO]
+		public Size MinimumSize {
+			get {
+				return this.minimumsize;
+			}
+			set {
+				this.minimumsize = value;
+			}
+		}
+
+		public bool Modal {
+			get {
+				return win.Modal;
+			}
+		}
+
+		[MonoTODO]
+		public double Opacity {
+			get {
+				return 1;
+			}
+			set {
+				// whatever
+			}
+		}
+
+		[MonoTODO]
+		public Form[] OwnedForms {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		private Form owner;
+		[MonoTODO]
+		public Form Owner {
+			get {
+				return this.owner;
+			}
+			set {
+				this.owner = value;
+			}
+		}
+
+		bool showintaskbar;
+		[MonoTODO]
+		public bool ShowInTaskbar {
+			get {
+				return this.showintaskbar;
+			}
+			set {
+				// We might need libegg for this
+				this.showintaskbar = value;
+			}
+		}
+
 		// [MonoTODO]
 		// public override ISite Site {
 		//	get {
@@ -420,11 +456,11 @@ namespace System.Windows.Forms {
 		// {
 		//		throw new NotImplementedException ();
 		// }
-		// [MonoTODO]
-		// public void Close()
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		[MonoTODO]
+		public void Close()
+		{
+			win.Destroy();
+		}
 		// [MonoTODO]
 		// public void Dispose()
 		// {
@@ -517,16 +553,8 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Events
 		//
-		// [MonoTODO]
-		// public event EventHandler Activated {
-		//	add {
-		//		throw new NotImplementedException ();
-		//	}DefaultActivated
-		//	remove {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		
+		[MonoTODO]
+		public event EventHandler Activated;
 		public event EventHandler Closed;
 		
 		// public event CancelEventHandler Closing;
