@@ -12,7 +12,8 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 
 namespace System.Drawing {
-	
+
+	[Serializable]
 	[StructLayout(LayoutKind.Sequential)]
 	[ComVisible (true)]
 	[TypeConverter(typeof(RectangleConverter))]
@@ -109,8 +110,8 @@ namespace System.Drawing {
 		{
 			x -= sz.Width;
 			y -= sz.Height;
-			Width = sz.Width * 2;
-			Height = sz.Height * 2;
+			Width += sz.Width * 2;
+			Height += sz.Height * 2;
 		}
 
 		/// <summary>
