@@ -1771,7 +1771,7 @@ namespace CIR {
 			//
 			TypeManager.RegisterMethod (MethodBuilder, parameters);
 			
-			ParameterInfo = new InternalParameters (parameters);
+			ParameterInfo = new InternalParameters (parameters, Parameters);
 
 			//
 			// This is used to track the Entry Point,
@@ -1953,7 +1953,7 @@ namespace CIR {
 			//
 			TypeManager.RegisterMethod (ConstructorBuilder, parameters);
 
-			ParameterInfo = new InternalParameters (parameters);
+			ParameterInfo = new InternalParameters (parameters, Parameters);
 
 			return ConstructorBuilder;
 		}
@@ -2278,7 +2278,7 @@ namespace CIR {
 					"get_Item", attr, IndexerType, parameters);
 				TypeManager.RegisterMethod (GetBuilder, parameters);
 				TypeContainer.RegisterParameterForBuilder (
-					GetBuilder, new InternalParameters (parameters));
+					GetBuilder, new InternalParameters (parameters, FormalParameters));
 			}
 			
 			if (Set != null){
@@ -2286,12 +2286,21 @@ namespace CIR {
 				Type [] set_pars = new Type [top + 1];
 				parameters.CopyTo (set_pars, 0);
 				set_pars [top] = IndexerType;
+
+				Parameter [] fixed_parms = FormalParameters.FixedParameters;
+
+				Parameter [] tmp = new Parameter [fixed_parms.Length + 1];
+
+				fixed_parms.CopyTo (tmp, 0);
+				tmp [fixed_parms.Length] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+
+				Parameters SetFormalParameters = new Parameters (tmp, null);
 				
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 					"set_Item", attr, null, set_pars);
 				TypeManager.RegisterMethod (SetBuilder, set_pars);
 				TypeContainer.RegisterParameterForBuilder (
-					SetBuilder, new InternalParameters (set_pars));
+					SetBuilder, new InternalParameters (set_pars, SetFormalParameters));
 			}
 
 			PropertyBuilder.SetGetMethod (GetBuilder);

@@ -1,5 +1,29 @@
 2001-10-30  Ravi Pratap  <ravi@ximian.com>
 
+	* support.cs (InternalParameters): Constructor now takes an extra argument 
+	which is the actual Parameters class.
+
+	(ParameterDesc): Update to provide info on ref/out modifiers.
+
+	* class.cs (everywhere): Update call to InternalParameters to pass in
+	the second argument too.
+
+	* support.cs (ParameterData): Add ParameterModifier, which is a method 
+	to return the modifier info [ref/out etc]
+
+	(InternalParameters, ReflectionParameters): Implement the above.
+
+	* expression.cs (Argument::ParameterModifier): Similar function to return
+	info about the argument's modifiers.
+
+	(Invocation::OverloadResolve): Update to take into account matching modifiers 
+	too.
+
+	* class.cs (Indexer::Define): Actually define a Parameter object and put it onto
+	a new SetFormalParameters object which we pass to InternalParameters.
+
+2001-10-30  Ravi Pratap  <ravi@ximian.com>
+
 	* expression.cs (NewArray): Merge into the ArrayCreation class.
 
 2001-10-29  Ravi Pratap  <ravi@ximian.com>

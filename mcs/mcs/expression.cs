@@ -3525,11 +3525,19 @@ namespace CIR {
 
 		public Type Type {
 			get {
-				if (ArgType == AType.Ref || ArgType == AType.Out)
-					return Type.GetType (expr.Type.FullName + "&");
-				else
-					return expr.Type;
+				return expr.Type;
 			}
+		}
+
+		public string GetParameterModifier ()
+		{
+			if (ArgType == AType.Ref)
+				return "REF";
+
+			if (ArgType == AType.Out)
+				return "OUT";
+
+			return "NONE";
 		}
 
 	        public static string FullDesc (Argument a)
@@ -3546,7 +3554,6 @@ namespace CIR {
 
 			return sb.ToString ();
 		}
-			
 		
 		public bool Resolve (EmitContext ec)
 		{
@@ -4038,10 +4045,10 @@ namespace CIR {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
-				
+
 				if (a.Type != parameter_type){
 					Expression conv;
-
+					
 					if (use_standard)
 						conv = ConvertImplicitStandard (ec, a_expr, parameter_type,
 										Location.Null);
@@ -4061,11 +4068,27 @@ namespace CIR {
 						}
 						return null;
 					}
+					
+			
+					
 					//
 					// Update the argument with the implicit conversion
 					//
 					if (a_expr != conv)
 						a.Expr = conv;
+				}
+
+				if (a.GetParameterModifier () != pd.ParameterModifier (j)) {
+					if (!Location.IsNull (loc)) {
+						Error (1502, loc,
+						       "The best overloaded match for method '" + FullMethodDesc (method)+
+						       "' has some invalid arguments");
+						Error (1503, loc,
+						       "Argument " + (j+1) +
+						       ": Cannot convert from '" + Argument.FullDesc (a) 
+						       + "' to '" + pd.ParameterDesc (j) + "'");
+					}
+					return null;
 				}
 			}
 			
@@ -4370,6 +4393,7 @@ namespace CIR {
 	//   There are two possible scenarios here: one is an array creation
 	//   expression that specifies the dimensions and optionally the
 	//   initialization data
+	// </remarks>
 	public class ArrayCreation : ExpressionStatement {
 
 		string RequestedType;
