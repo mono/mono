@@ -60,7 +60,7 @@ namespace MonoTests.System.Security.Cryptography {
 			if (expected == null) {
 				if (actual != null) {
 					string a =  BitConverter.ToString (actual);
-					Assert.Fail ("{0} - Expected null value but got: {1}", msg, a);
+					Assert.Fail (String.Format ("{0} - Expected null value but got: {1}", msg, a));
 				}
 			}
 			else if (actual == null) {

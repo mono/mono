@@ -1,3 +1,7 @@
+2004-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SHA224Test.cs: Fix compilation error with NUnit 2.1.91 (CVS).
+
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SHA224ManagedTest.cs: New. Unit tests for the managed implementation
