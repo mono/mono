@@ -1,0 +1,5 @@
+2004-01-11  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* AssemblyInfo.cs: New. Copied and ajusted from corlib.
+	* Locale.cs: New. Copied (verbatim) from corlib.
+	* ChangeLog: New.
