@@ -19,17 +19,18 @@ namespace System.Web.Mail
 	{
 		private ArrayList attachments;
 		private string bcc;
-		private string body;
+		private string body = "";
 		private Encoding bodyEncoding;
 		private MailFormat bodyFormat;
 		private string cc;		
 		private string from;
 		private ListDictionary headers;
 		private MailPriority priority;
-		private string subject;
+		private string subject = "";
 		private string to;
 		private string urlContentBase;
 		private string urlContentLocation;
+		private Hashtable fields;
 		
 		// Constructor		
 		public MailMessage ()
@@ -37,6 +38,7 @@ namespace System.Web.Mail
 			attachments = new ArrayList (8);
 			headers = new ListDictionary ();
 			bodyEncoding = Encoding.Default;
+			fields = new Hashtable ();
 		}		
 	
 		// Properties
@@ -104,9 +106,10 @@ namespace System.Web.Mail
 		}
 
 #if NET_1_1
-		[MonoTODO]
 		public IDictionary Fields {
-			get { throw new NotImplementedException (); }
+			get {
+				return (IDictionary) fields;
+			}
 		}
 #endif
 	}

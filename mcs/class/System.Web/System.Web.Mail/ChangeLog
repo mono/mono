@@ -1,3 +1,9 @@
+2004-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MailMessage.cs: patch by John Luke that initialized the fields in
+	the message and makes Fields return the same as in MS.NET. Fixes bug
+	#54908.
+
 2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MailMessage.cs: added Fields property.
