@@ -27,7 +27,6 @@
 
 	* gdipFunctions.cs: Import functions for GraphicsPath.
 
->>>>>>> 1.89
 2004-01-14  Ravindra <rkumar@novell.com>
                                                                                 
         * SolidBrush.cs: Made SolidBrush to initialize its color
