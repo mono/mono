@@ -175,12 +175,33 @@ namespace MonoTests.System
 			AssertEquals ("#rel32", "http://www.xxx.com/index.htm#here", uri.ToString());
 		}
 
+		// regression for bug #47573
+		[Test]
+		public void RelativeCtor ()
+		{
+			Uri b = new Uri ("http://a/b/c/d;p?q");
+//			AssertEquals ("g:h", "g:h", new Uri (b, "g:h").ToString ()); this causes crash under MS.NET 1.1
+			AssertEquals ("#1", "http://a/g", new Uri (b, "/g").ToString ());
+			AssertEquals ("#2", "http://g/", new Uri (b, "//g").ToString ());
+			AssertEquals ("#3", "http://a/b/c/?y", new Uri (b, "?y").ToString ());
+			Assert ("#4", new Uri (b, "#s").ToString ().EndsWith ("#s"));
+
+			Uri u = new Uri (b, "/g?q=r");
+			AssertEquals ("#5", "http://a/g?q=r", u.ToString ());
+			AssertEquals ("#6", "?q=r", u.Query);
+
+			u = new Uri (b, "/g?q=r;. a");
+			AssertEquals ("#5", "http://a/g?q=r;. a", u.ToString ());
+			AssertEquals ("#6", "?q=r;.%20a", u.Query);
+		}
+
 		[Test]
 		public void ConstructorsRejectRelativePath ()
 		{
 			string [] reluris = new string [] {
 				"readme.txt",
-				"thisdir/childdir/file"
+				"thisdir/childdir/file",
+				"./testfile"
 			};
 			string [] winRelUris = new string [] {
 				"c:readme.txt"
@@ -319,6 +340,34 @@ namespace MonoTests.System
 				Uri.FromHex ('%');
 				Fail ("#8");
 			} catch (ArgumentException) {}
+		}
+
+		class UriEx : Uri
+		{
+			public UriEx (string s) : base (s)
+			{
+			}
+
+			public string UnescapeString (string s)
+			{
+				return Unescape (s);
+			}
+
+			public static string UnescapeString (string uri, string target)
+			{
+				return new UriEx (uri).UnescapeString (target);
+			}
+		}
+
+		[Test]
+		public void Unescape ()
+		{
+			AssertEquals ("#1", "#", UriEx.UnescapeString ("file://localhost/c#", "%23"));
+			AssertEquals ("#2", "c#", UriEx.UnescapeString ("file://localhost/c#", "c%23"));
+			AssertEquals ("#3", "\xA9", UriEx.UnescapeString ("file://localhost/c#", "%A9"));
+			AssertEquals ("#1", "#", UriEx.UnescapeString ("http://localhost/c#", "%23"));
+			AssertEquals ("#2", "c#", UriEx.UnescapeString ("http://localhost/c#", "c%23"));
+			AssertEquals ("#3", "\xA9", UriEx.UnescapeString ("http://localhost/c#", "%A9"));
 		}
 
 		[Test]
@@ -596,7 +645,7 @@ namespace MonoTests.System
 			
 			AssertEquals ("#14", "http://www.xxx.com/bar/foo/foobar.htm?z=0&y=5" + (char) 0xa9, uri1.MakeRelative (uri8));
 		}
-		
+
 		[Test]
 		public void ToStringTest()
 		{			
@@ -683,6 +732,18 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void Segments5 ()
+		{
+			Uri uri = new Uri ("http://www.xxx.com/bar/foo/foobar.htm?z=0&y=5" + (char) 0xa9);
+			string [] segments = uri.Segments;
+			AssertEquals ("#01", 4, segments.Length);
+			AssertEquals ("#02", "/", segments [0]);
+			AssertEquals ("#03", "bar/", segments [1]);
+			AssertEquals ("#04", "foo/", segments [2]);
+			AssertEquals ("#05", "foobar.htm", segments [3]);
+		}
+
+		[Test]
 		[ExpectedException (typeof (UriFormatException))]
 		public void EmptyScheme ()
 		{
@@ -698,6 +759,26 @@ namespace MonoTests.System
 			// ((uint) Int32.MaxValue + (uint) 1) gives port == -2147483648 !!!
 			new Uri ("http://www.contoso.com:2147483648/foo/bar/");
 		}
+
+		class UriEx2 : Uri
+		{
+			public UriEx2 (string s) : base (s)
+			{
+			}
+
+			protected override void Parse ()
+			{
+			}
+		}
+
+		[Test]
+		public void ParseOverride ()
+		{
+			// If this does not override base's Parse(), it will
+			// fail since this argument is not Absolute URI.
+			UriEx2 ex = new UriEx2 ("readme.txt");
+		}
+
 
 		public static void Print (Uri uri)
 		{

@@ -1,5 +1,10 @@
 2004-06-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriTest.cs : Added RelativeCtor(), Unescape(), Segments5() and
+	  ParseOverride().
+
+2004-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UriBuilderTest.cs : Actually Query() and Fragment() didnt pass under
 	  MS.NET.
 
