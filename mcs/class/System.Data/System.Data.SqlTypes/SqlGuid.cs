@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Copyright 2002 Tim Coleman
 //
@@ -86,6 +87,10 @@ namespace System.Data.SqlTypes
 		public override bool Equals (object value)
 		{
 			if (!(value is SqlGuid))
+				return false;
+			else if (this.IsNull && ((SqlGuid)value).IsNull)
+				return true;
+			else if (((SqlGuid)value).IsNull)
 				return false;
 			else
 				return (bool) (this == (SqlGuid)value);

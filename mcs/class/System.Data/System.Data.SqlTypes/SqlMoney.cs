@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Copyright 2002 Tim Coleman
 //
@@ -20,8 +21,8 @@ namespace System.Data.SqlTypes
 		
 		private bool notNull;
 
-		public static readonly SqlMoney MaxValue = new SqlMoney (922337203685477.5807);
-		public static readonly SqlMoney MinValue = new SqlMoney (-922337203685477.5808);
+		public static readonly SqlMoney MaxValue = new SqlMoney (922337203685477.5807m);
+		public static readonly SqlMoney MinValue = new SqlMoney (-922337203685477.5808m);
 		public static readonly SqlMoney Null;
 		public static readonly SqlMoney Zero = new SqlMoney (0);
 
@@ -100,6 +101,10 @@ namespace System.Data.SqlTypes
 		public override bool Equals (object value)
 		{
 			if (!(value is SqlMoney))
+				return false;
+			if (this.IsNull && ((SqlMoney)value).IsNull)
+				return true;
+			else if (((SqlMoney)value).IsNull)
 				return false;
 			else
 				return (bool) (this == (SqlMoney)value);
@@ -235,12 +240,16 @@ namespace System.Data.SqlTypes
 
 		public static SqlMoney operator + (SqlMoney x, SqlMoney y)
 		{
-			return new SqlMoney (x.Value + y.Value);
+			checked {
+				return new SqlMoney (x.Value + y.Value);
+			}
 		}
 
 		public static SqlMoney operator / (SqlMoney x, SqlMoney y)
 		{
-			return new SqlMoney (x.Value / y.Value);
+			checked {
+				return new SqlMoney (x.Value / y.Value);
+			}
 		}
 
 		public static SqlBoolean operator == (SqlMoney x, SqlMoney y)
@@ -291,12 +300,16 @@ namespace System.Data.SqlTypes
 
 		public static SqlMoney operator * (SqlMoney x, SqlMoney y)
 		{
-			return new SqlMoney (x.Value * y.Value);
+			checked {
+				return new SqlMoney (x.Value * y.Value);
+			}
 		}
 
 		public static SqlMoney operator - (SqlMoney x, SqlMoney y)
 		{
-			return new SqlMoney (x.Value - y.Value);
+			checked {
+				return new SqlMoney (x.Value - y.Value);
+			}
 		}
 
 		public static SqlMoney operator - (SqlMoney n)
@@ -306,26 +319,32 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlMoney (SqlBoolean x)
 		{
-			if (x.IsNull) 
-				return Null;
-			else
-				return new SqlMoney ((decimal)x.ByteValue);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else
+					return new SqlMoney ((decimal)x.ByteValue);
+			}
 		}
 
 		public static explicit operator SqlMoney (SqlDecimal x)
 		{
-			if (x.IsNull) 
-				return Null;
-			else
-				return new SqlMoney (x.Value);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else
+					return new SqlMoney (x.Value);
+			}
 		}
 
 		public static explicit operator SqlMoney (SqlDouble x)
 		{
-			if (x.IsNull) 
-				return Null;
-			else
-				return new SqlMoney ((decimal)x.Value);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else
+					return new SqlMoney ((decimal)x.Value);
+			}
 		}
 
 		public static explicit operator decimal (SqlMoney x)
@@ -335,15 +354,19 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlMoney (SqlSingle x)
 		{
-			if (x.IsNull) 
-				return Null;
-			else
-				return new SqlMoney ((decimal)x.Value);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else
+					return new SqlMoney ((decimal)x.Value);
+			}
 		}
 
 		public static explicit operator SqlMoney (SqlString x)
 		{
-			return SqlMoney.Parse (x.Value);
+			checked {
+				return SqlMoney.Parse (x.Value);
+			}
 		}
 
 		public static implicit operator SqlMoney (decimal x)

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Copyright 2002 Tim Coleman
 //
@@ -91,8 +92,12 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlInt16))
 				return false;
+			else if (this.IsNull && ((SqlInt16)value).IsNull)
+				return true;
+			else if (((SqlInt16)value).IsNull)
+				return false;
 			else
-				return (bool) (this == (SqlInt16)value);
+				return (bool)(this == (SqlInt16)value);
 		}
 
 		public static SqlBoolean Equals (SqlInt16 x, SqlInt16 y)
@@ -237,7 +242,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt16 operator / (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 ((short) (x.Value / y.Value));
+			checked {
+				return new SqlInt16 ((short) (x.Value / y.Value));
+			}
 		}
 
 		public static SqlBoolean operator == (SqlInt16 x, SqlInt16 y)
@@ -322,7 +329,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt16 operator - (SqlInt16 n)
 		{
-			return new SqlInt16 ((short) (-n.Value));
+			checked {
+				return new SqlInt16 ((short) (-n.Value));
+			}
 		}
 
 		public static explicit operator SqlInt16 (SqlBoolean x)
@@ -334,19 +343,23 @@ namespace System.Data.SqlTypes
 		}
 
 		public static explicit operator SqlInt16 (SqlDecimal x)
-		{			
-			if (x.IsNull)
-				return Null;
-			else 
-				return new SqlInt16 ((short)x.Value);
+		{		
+			checked {
+				if (x.IsNull)
+					return Null;
+				else 
+					return new SqlInt16 ((short)x.Value);
+			}
 		}
 
 		public static explicit operator SqlInt16 (SqlDouble x)
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlInt16 (checked ((short)x.Value));
+			//			checked {
+				if (x.IsNull)
+					return Null;
+				else 
+					return new SqlInt16 (checked ((short)x.Value));
+				//}
 		}
 
 		public static explicit operator short (SqlInt16 x)
@@ -356,52 +369,52 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt16 (SqlInt32 x)
 		{
-			if (x.IsNull)
-				return Null;
-			else {
-				checked {
+			checked {
+				if (x.IsNull)
+					return Null;
+				else 
 					return new SqlInt16 ((short)x.Value);
-				}
 			}
 		}
 
 		public static explicit operator SqlInt16 (SqlInt64 x)
 		{
-			if (x.IsNull)
-				return Null;
-			else {
-				//				checked {
+			//checked {
+				if (x.IsNull)
+					return Null;
+				else
 					return new SqlInt16 ((short)x.Value);
-				//}
-			}
+				//		}
 		}
 
 		public static explicit operator SqlInt16 (SqlMoney x)
 		{
-			if (x.IsNull)
-				return Null;
-			else {
-				checked {
+			checked {
+				if (x.IsNull)
+					return Null;
+				else 
 					return new SqlInt16 ((short)x.Value);
-				}
-			}
+			}			
 		}
 
 
 		public static explicit operator SqlInt16 (SqlSingle x)
 		{
-			if (x.IsNull)
-				return Null;
-			else {
-				//	checked {
+			// FIXME
+			//checked {
+				if (x.IsNull)
+					return Null;
+				else 
 					return new SqlInt16 ((short)x.Value);
 				//}
-			}
 		}
 
 		public static explicit operator SqlInt16 (SqlString x)
-		{		       			
-			return SqlInt16.Parse (x.Value);		
+		{	
+			if (x.IsNull)
+				return Null;
+
+			return SqlInt16.Parse (x.Value);
 		}
 
 		public static implicit operator SqlInt16 (short x)
@@ -411,10 +424,7 @@ namespace System.Data.SqlTypes
 
 		public static implicit operator SqlInt16 (SqlByte x)
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlInt16 ((short)x.Value);
+			return new SqlInt16 ((short)x.Value);
 		}
 
 		#endregion

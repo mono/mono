@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Copyright 2002 Tim Coleman
 //
@@ -19,8 +20,8 @@ namespace System.Data.SqlTypes
 
 		private bool notNull;
 
-		public static readonly SqlDouble MaxValue = new SqlDouble (1.7976931348623157e308);
-		public static readonly SqlDouble MinValue = new SqlDouble (-1.7976931348623157e308);
+		public static readonly SqlDouble MaxValue = new SqlDouble (1.7976931348623157E+308);
+		public static readonly SqlDouble MinValue = new SqlDouble (-1.7976931348623157E+308);
 		public static readonly SqlDouble Null;
 		public static readonly SqlDouble Zero = new SqlDouble (0);
 
@@ -81,6 +82,10 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlDouble))
 				return false;
+			if (this.IsNull && ((SqlDouble)value).IsNull)
+				return true;
+			else if (((SqlDouble)value).IsNull)
+				return false;
 			else
 				return (bool) (this == (SqlDouble)value);
 		}
@@ -89,7 +94,6 @@ namespace System.Data.SqlTypes
 		{
 			return (x == y);
 		}
-
 		public override int GetHashCode ()
 		{
 			long LongValue = (long)value;
@@ -199,7 +203,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlDouble operator / (SqlDouble x, SqlDouble y)
 		{
-			return new SqlDouble (x.Value / y.Value);
+			checked {
+				return new SqlDouble (x.Value / y.Value);
+			}
 		}
 
 		public static SqlBoolean operator == (SqlDouble x, SqlDouble y)
@@ -252,16 +258,20 @@ namespace System.Data.SqlTypes
 
 		public static SqlDouble operator * (SqlDouble x, SqlDouble y)
 		{
-			return new SqlDouble (x.Value * y.Value);
+			checked {
+				return new SqlDouble (x.Value * y.Value);
+			}
 		}
 
 		public static SqlDouble operator - (SqlDouble x, SqlDouble y)
 		{
-			return new SqlDouble (x.Value - y.Value);
+			checked {
+				return new SqlDouble (x.Value - y.Value);
+			}
 		}
 
 		public static SqlDouble operator - (SqlDouble n)
-		{
+		{			
 			return new SqlDouble (-(n.Value));
 		}
 
@@ -280,7 +290,9 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlDouble (SqlString x)
 		{
-			return SqlDouble.Parse (x.Value);
+			checked {
+				return SqlDouble.Parse (x.Value);
+			}
 		}
 
 		public static implicit operator SqlDouble (double x)
@@ -301,7 +313,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull) 
 				return Null;
 			else
-				return new SqlDouble ((double)x.Value);
+				return new SqlDouble (x.ToDouble ());
 		}
 
 		public static implicit operator SqlDouble (SqlInt16 x)

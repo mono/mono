@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Copyright 2002 Tim Coleman
 //
@@ -20,8 +21,8 @@ namespace System.Data.SqlTypes
 
 		private bool notNull;
 
-		public static readonly SqlSingle MaxValue = new SqlSingle (3.40282346638528859e38);
-		public static readonly SqlSingle MinValue = new SqlSingle (-3.40282346638528859e38);
+		public static readonly SqlSingle MaxValue = new SqlSingle (3.40282346638528859E+38f);
+		public static readonly SqlSingle MinValue = new SqlSingle (-3.40282346638528859E+38f);
 		public static readonly SqlSingle Null;
 		public static readonly SqlSingle Zero = new SqlSingle (0);
 
@@ -87,6 +88,10 @@ namespace System.Data.SqlTypes
 		public override bool Equals (object value)
 		{
 			if (!(value is SqlSingle))
+				return false;
+			else if (this.IsNull && ((SqlSingle)value).IsNull)
+				return true;
+			else if (((SqlSingle)value).IsNull)
 				return false;
 			else
 				return (bool) (this == (SqlSingle)value);
@@ -196,12 +201,16 @@ namespace System.Data.SqlTypes
 
 		public static SqlSingle operator + (SqlSingle x, SqlSingle y)
 		{
-			return new SqlSingle (x.Value + y.Value);
+			checked {
+				return new SqlSingle ((float)(x.Value + y.Value));
+			}
 		}
 
 		public static SqlSingle operator / (SqlSingle x, SqlSingle y)
 		{
-			return new SqlSingle (x.Value / y.Value);
+			checked {
+				return new SqlSingle (x.Value / y.Value);
+			}
 		}
 
 		public static SqlBoolean operator == (SqlSingle x, SqlSingle y)
@@ -242,12 +251,16 @@ namespace System.Data.SqlTypes
 
 		public static SqlSingle operator * (SqlSingle x, SqlSingle y)
 		{
-			return new SqlSingle (x.Value * y.Value);
+			checked {
+				return new SqlSingle (x.Value * y.Value);
+			}
 		}
 
 		public static SqlSingle operator - (SqlSingle x, SqlSingle y)
 		{
-			return new SqlSingle (x.Value - y.Value);
+			checked {
+				return new SqlSingle (x.Value - y.Value);
+			}
 		}
 
 		public static SqlSingle operator - (SqlSingle n)
@@ -257,12 +270,22 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlSingle (SqlBoolean x)
 		{
-			return new SqlSingle((float)x.ByteValue);
+			checked {
+				if (x.IsNull)
+					return Null;
+				
+				return new SqlSingle((float)x.ByteValue);
+			}
 		}
 
 		public static explicit operator SqlSingle (SqlDouble x)
 		{
-			return new SqlSingle((float)x.Value);
+			checked {
+				if (x.IsNull)
+					return Null;
+				
+				return new SqlSingle((float)x.Value);
+			}
 		}
 
 		public static explicit operator float (SqlSingle x)
@@ -272,7 +295,12 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlSingle (SqlString x)
 		{
-			return SqlSingle.Parse (x.Value);
+			checked {
+				if (x.IsNull)
+					return Null;
+				
+				return SqlSingle.Parse (x.Value);
+			}
 		}
 
 		public static implicit operator SqlSingle (float x)
@@ -284,7 +312,7 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull) 
 				return Null;
-			else
+			else 
 				return new SqlSingle((float)x.Value);
 		}
 

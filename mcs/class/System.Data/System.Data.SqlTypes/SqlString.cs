@@ -5,6 +5,7 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Ville Palo (vi64pa@koti.soon.fi)
 //
 // (C) Ximian, Inc. 2002
 // (C) Copyright 2002 Tim Coleman
@@ -177,6 +178,10 @@ namespace System.Data.SqlTypes
 		public override bool Equals(object value) 
 		{
 			if (!(value is SqlString))
+				return false;
+			if (this.IsNull && ((SqlString)value).IsNull)
+				return true;
+			else if (((SqlString)value).IsNull)
 				return false;
 			else
 				return (bool) (this == (SqlString)value);

@@ -91,6 +91,10 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlByte))
 				return false;
+			else if (this.IsNull && ((SqlByte)value).IsNull)
+				 return true;
+			else if (((SqlByte)value).IsNull)
+				return false;
 			else
 				return (bool) (this == (SqlByte)value);
 		}
@@ -234,7 +238,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlByte operator / (SqlByte x, SqlByte y)
 		{
-			return new SqlByte ((byte) (x.Value / y.Value));
+			checked {
+				return new SqlByte ((byte) (x.Value / y.Value));
+			}
 		}
 
 		public static SqlBoolean operator == (SqlByte x, SqlByte y)
@@ -329,74 +335,83 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlByte (SqlDecimal x)
 		{
-			if (x.IsNull)
-				return Null;
-			else 
-				return new SqlByte ((byte)x.Value);
-
+			checked {
+				if (x.IsNull)
+					return Null;
+				else 
+					return new SqlByte ((byte)x.Value);
+			}
 		}
 
 		public static explicit operator SqlByte (SqlDouble x)
 		{
-			if (x.IsNull)
-				return Null;
-			else 				
-				return new SqlByte ((byte)x.Value);
+			// FIXME
+			//			checked {
+				if (x.IsNull)
+					return Null;
+				else 					
+					return new SqlByte ((byte)x.Value);
+				//}
 		}
 
 		public static explicit operator SqlByte (SqlInt16 x)
 		{
-			if (x.IsNull)
-				return Null;
-			else {
-				checked {
+			checked {
+				if (x.IsNull)
+					return Null;
+				else 			       
 					return new SqlByte ((byte)x.Value);
-				}
 			}
 		}
 
 		public static explicit operator SqlByte (SqlInt32 x)
 		{
-			if (x.IsNull)
-				return Null;
-			else {
-				checked {
+			checked {
+				if (x.IsNull)
+					return Null;
+				else 			       
 					return new SqlByte ((byte)x.Value);
-				}
 			}
 		}
 
 		public static explicit operator SqlByte (SqlInt64 x)
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlByte ((byte)x.Value);
+			// FIXME
+			//checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlByte ((byte)x.Value);
+				//}
 		}
 
 		public static explicit operator SqlByte (SqlMoney x)
 		{
-			if (x.IsNull)
-				return Null;
-			else {
-				checked {
+			checked {
+				if (x.IsNull)
+					return Null;
+				else 					
 					return new SqlByte ((byte)x.Value);
-				}
 			}
 		}
 
 		public static explicit operator SqlByte (SqlSingle x)
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlByte (checked((byte)x.Value));
+			// FIXME:
+			//checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlByte ((byte)x.Value);
+				//}
 		}
 
 
 		public static explicit operator SqlByte (SqlString x)
-		{
-			return SqlByte.Parse (x.Value);
+		{			
+			checked {
+				return SqlByte.Parse (x.Value);
+			}
 		}
 
 		public static implicit operator SqlByte (byte x)

@@ -4,6 +4,7 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Ville Palo (vi64pa@koti.soon.fi)
 //
 // (C) Ximian, Inc.
 // (C) Copyright 2002 Tim Coleman
@@ -100,6 +101,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlBinary))
 				return false;
+			else if (this.IsNull && ((SqlBinary)value).IsNull)
+				return true;
 			else if (((SqlBinary)value).IsNull)
 				return false;
 			else

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Copyright 2002 Tim Coleman
 //
@@ -92,6 +93,10 @@ namespace System.Data.SqlTypes
 		public override bool Equals (object value)
 		{
 			if (!(value is SqlInt64))
+				return false;
+			else if (this.IsNull && ((SqlInt64)value).IsNull)
+				return true;
+			else if (((SqlInt64)value).IsNull)
 				return false;
 			else
 				return (bool) (this == (SqlInt64)value);
@@ -240,7 +245,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt64 operator / (SqlInt64 x, SqlInt64 y)
 		{
-			return new SqlInt64 (x.Value / y.Value);
+			checked {
+				return new SqlInt64 (x.Value / y.Value);
+			}
 		}
 
 		public static SqlBoolean operator == (SqlInt64 x, SqlInt64 y)
@@ -310,6 +317,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt64 operator ~ (SqlInt64 x)
 		{
+			if (x.IsNull)
+				return SqlInt64.Null;
+
 			return new SqlInt64 (~(x.Value));
 		}
 
@@ -335,18 +345,22 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt64 (SqlDecimal x)
 		{
-			if (x.IsNull) 
-				return SqlInt64.Null;
-			else
-				return new SqlInt64 ((long)x.Value);
+			checked {
+				if (x.IsNull) 
+					return SqlInt64.Null;
+				else
+					return new SqlInt64 ((long)x.Value);
+			}
 		}
 
 		public static explicit operator SqlInt64 (SqlDouble x)
 		{
-			if (x.IsNull) 
-				return SqlInt64.Null;
-			else
-				return new SqlInt64 ((long)x.Value);
+			//checked {
+				if (x.IsNull) 
+					return SqlInt64.Null;
+				else
+					return new SqlInt64 ((long)x.Value);
+				//}
 		}
 
 		public static explicit operator long (SqlInt64 x)
@@ -356,23 +370,29 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt64 (SqlMoney x)
 		{
-			if (x.IsNull) 
-				return SqlInt64.Null;
-			else
-				return new SqlInt64 ((long)x.Value);
+			checked {
+				if (x.IsNull) 
+					return SqlInt64.Null;
+				else
+					return new SqlInt64 ((long)x.Value);
+			}
 		}
 
 		public static explicit operator SqlInt64 (SqlSingle x)
 		{
-			if (x.IsNull) 
-				return SqlInt64.Null;
-			else
-				return new SqlInt64 ((long)x.Value);
+			//checked {
+				if (x.IsNull) 
+					return SqlInt64.Null;
+				else
+					return new SqlInt64 ((long)x.Value);
+				//}
 		}
 
 		public static explicit operator SqlInt64 (SqlString x)
 		{
-			return SqlInt64.Parse (x.Value);
+			checked {
+				return SqlInt64.Parse (x.Value);
+			}
 		}
 
 		public static implicit operator SqlInt64 (long x)

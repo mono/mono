@@ -5,6 +5,7 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Ville Palo (vi64pa@koti.soon.fi)
 //
 // (C) Ximian, Inc. 2002
 // (C) Copyright 2002 Tim Coleman 
@@ -98,6 +99,10 @@ namespace System.Data.SqlTypes
 		public override bool Equals(object value) 
 		{
 			if (!(value is SqlInt32))
+				return false;
+			else if (this.IsNull && ((SqlInt32)value).IsNull)
+				return true;
+			else if (((SqlInt32)value).IsNull)
 				return false;
 			else
 				return (bool) (this == (SqlInt32)value);
@@ -228,7 +233,9 @@ namespace System.Data.SqlTypes
 		// Compute Addition
 		public static SqlInt32 operator + (SqlInt32 x, SqlInt32 y) 
 		{
-			return new SqlInt32 (x.Value + y.Value);
+			checked {
+				return new SqlInt32 (x.Value + y.Value);
+			}
 		}
 
 		// Bitwise AND
@@ -240,13 +247,17 @@ namespace System.Data.SqlTypes
 		// Bitwise OR
 		public static SqlInt32 operator | (SqlInt32 x, SqlInt32 y) 
 		{
-			return new SqlInt32 (x.Value | y.Value);
+			checked {
+				return new SqlInt32 (x.Value | y.Value);
+			}
 		}
 
 		// Compute Division
 		public static SqlInt32 operator / (SqlInt32 x, SqlInt32 y) 
 		{
-			return new SqlInt32 (x.Value / y.Value);
+			checked {
+				return new SqlInt32 (x.Value / y.Value);
+			}
 		}
 
 		// Compare Equality
@@ -318,7 +329,9 @@ namespace System.Data.SqlTypes
 		// Compute Multiplication
 		public static SqlInt32 operator * (SqlInt32 x, SqlInt32 y) 
 		{
-			return new SqlInt32 (x.Value * y.Value);
+			checked {
+				return new SqlInt32 (x.Value * y.Value);
+			}
 		}
 
 		// Ones Complement
@@ -330,7 +343,9 @@ namespace System.Data.SqlTypes
 		// Subtraction
 		public static SqlInt32 operator - (SqlInt32 x, SqlInt32 y) 
 		{
-			return new SqlInt32 (x.Value - y.Value);
+			checked {
+				return new SqlInt32 (x.Value - y.Value);
+			}
 		}
 
 		// Negates the Value
@@ -350,18 +365,22 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt32 (SqlDecimal x) 
 		{
-			if (x.IsNull) 
-				return Null;
-			else 
-				return new SqlInt32 ((int)x.Value);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else 
+					return new SqlInt32 ((int)x.Value);
+			}
 		}
 
 		public static explicit operator SqlInt32 (SqlDouble x) 
 		{
-			if (x.IsNull) 
-				return Null;
-			else 
-				return new SqlInt32 ((int)x.Value);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else 
+					return new SqlInt32 ((int)x.Value);
+			}
 		}
 
 		public static explicit operator int (SqlInt32 x)
@@ -371,31 +390,39 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt32 (SqlInt64 x) 
 		{
-			if (x.IsNull) 
-				return Null;
-			else 
-				return new SqlInt32 ((int)x.Value);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else 
+					return new SqlInt32 ((int)x.Value);
+			}
 		}
 
 		public static explicit operator SqlInt32(SqlMoney x) 
 		{
-			if (x.IsNull) 
-				return Null;
-			else 
-				return new SqlInt32 ((int)x.Value);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else 
+					return new SqlInt32 ((int)x.Value);
+			}
 		}
 
 		public static explicit operator SqlInt32(SqlSingle x) 
 		{
-			if (x.IsNull) 
-				return Null;
-			else 
-				return new SqlInt32 ((int)x.Value);
+			checked {
+				if (x.IsNull) 
+					return Null;
+				else 
+					return new SqlInt32 ((int)x.Value);
+			}
 		}
 
 		public static explicit operator SqlInt32(SqlString x) 
 		{
-			return SqlInt32.Parse (x.Value);
+			checked {
+				return SqlInt32.Parse (x.Value);
+			}
 		}
 
 		public static implicit operator SqlInt32(int x) 

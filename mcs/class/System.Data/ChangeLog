@@ -1,3 +1,22 @@
+2002-11-07  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlBinary.cs:
+	* System.Data.SqlTypes/SqlBoolean.cs:
+	* System.Data.SqlTypes/SqlByte.cs:
+	* System.Data.SqlTypes/SqlDateTime.cs:
+	* System.Data.SqlTypes/SqlDecimal.cs:
+	* System.Data.SqlTypes/SqlDouble.cs:
+	* System.Data.SqlTypes/SqlDecimal.cs:
+	* System.Data.SqlTypes/SqlGuid.cs:
+	* System.Data.SqlTypes/SqlInt16.cs:
+	* System.Data.SqlTypes/SqlInt32.cs:
+	* System.Data.SqlTypes/SqlInt64.cs:
+	* System.Data.SqlTypes/SqlMoney.cs:
+	* System.Data.SqlTypes/SqlSingle.cs:
+	* System.Data.SqlTypes/SqlString.cs: Implemented more methods and 
+	fixed some. SqlBoolean Equals (object value) -method improvements to
+	all classes.
+	
 2002-11-07  Tim Coleman <tim@timcoleman.com>
 	* System.Data.Common/DbDataAdapter.cs:
 		Remove NotImplementedException in Dispose

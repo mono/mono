@@ -118,7 +118,11 @@ namespace System.Data.SqlTypes
 
 		public override bool Equals(object value) 
 		{
-			if (!(value is SqlByte))
+			if (!(value is SqlBoolean))
+				return false;
+			if (this.IsNull && ((SqlBoolean)value).IsNull)
+				return true;
+			else if (((SqlBoolean)value).IsNull)
 				return false;
 			else
 				return (bool) (this == (SqlBoolean)value);
@@ -319,79 +323,99 @@ namespace System.Data.SqlTypes
 		// SqlByte to SqlBoolean
 		public static explicit operator SqlBoolean (SqlByte x) 
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlBoolean ((int)x.Value);
+			checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlBoolean ((int)x.Value);
+			}
 		}
 
 		// SqlDecimal to SqlBoolean
 		public static explicit operator SqlBoolean (SqlDecimal x) 
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlBoolean ((int)x.Value);
+			checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlBoolean ((int)x.Value);
+			}
 		}
 		
 		// SqlDouble to SqlBoolean
 		public static explicit operator SqlBoolean (SqlDouble x) 
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlBoolean ((int)x.Value);
+			// FIXME
+			//checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlBoolean ((int)x.Value);
+				//}
 		}
 
 		// SqlInt16 to SqlBoolean
 		public static explicit operator SqlBoolean (SqlInt16 x) 
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlBoolean ((int)x.Value);
+			checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlBoolean ((int)x.Value);
+			}
 		}
 
 		// SqlInt32 to SqlBoolean
 		public static explicit operator SqlBoolean (SqlInt32 x) 
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlBoolean (x.Value);
+			checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlBoolean (x.Value);
+			}
 		}
 
 		// SqlInt64 to SqlBoolean
 		public static explicit operator SqlBoolean (SqlInt64 x) 
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlBoolean ((int)x.Value);
+			checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlBoolean ((int)x.Value);
+			}
 		}
 
 		// SqlMoney to SqlBoolean
 		public static explicit operator SqlBoolean (SqlMoney x) 
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlBoolean ((int)x.Value);
+			checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlBoolean ((int)x.Value);
+			}
 		}
 
 		// SqlSingle to SqlBoolean
 		public static explicit operator SqlBoolean (SqlSingle x) 
 		{
-			if (x.IsNull)
-				return Null;
-			else
-				return new SqlBoolean ((int)x.Value);
+			// FIXME
+			//checked {
+				if (x.IsNull)
+					return Null;
+				else
+					return new SqlBoolean ((int)x.Value);
+				//}
 		}
 
 		// SqlString to SqlBoolean
 		public static explicit operator SqlBoolean (SqlString x) 
 		{
-			return SqlBoolean.Parse (x.Value);
+			checked {
+				return SqlBoolean.Parse (x.Value);
+			}
 		}
 
 		// Boolean to SqlBoolean

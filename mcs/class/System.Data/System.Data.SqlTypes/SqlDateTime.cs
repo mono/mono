@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Copyright 2002 Tim Coleman
 //
@@ -111,6 +112,10 @@ namespace System.Data.SqlTypes
 		public override bool Equals (object value)
 		{
 			if (!(value is SqlDateTime))
+				return false;
+			else if (this.IsNull && ((SqlDateTime)value).IsNull)
+				return true;
+			else if (((SqlDateTime)value).IsNull)
 				return false;
 			else
 				return (bool) (this == (SqlDateTime)value);
