@@ -6009,10 +6009,12 @@ namespace Mono.CSharp {
 
 			if (type == null)
 				return false;
-
-			underlying_type = type;
-			if (underlying_type.IsArray)
-				underlying_type = TypeManager.GetElementType (underlying_type);
+			
+			if (!type.IsArray) {
+				Error (622, "Can only use array initializer expressions to assign to array types. Try using a new expression instead.");
+				return false;
+			}
+			underlying_type = TypeManager.GetElementType (type);
 			dimensions = type.GetArrayRank ();
 
 			return true;

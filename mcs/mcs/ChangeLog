@@ -1,3 +1,8 @@
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ArrayCreation (LookupType): If the type does not resolve 
+	to an array, give an error.
+
 2004-08-04  Miguel de Icaza  <miguel@ximian.com>
  
 	* cfold.cs: Synchronize the folding with the code in expression.cs
