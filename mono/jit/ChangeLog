@@ -1,3 +1,13 @@
+2003-01-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* debug.c (initialize_debugger_support): ifdef out the call to
+	mono_debugger_init_thread_debug for the release. 
+
+	Someone should look into why its not defined.  I think the problem
+	is what Dick pointed out somewhere: code in io-layer is not
+	supposed to ever be used in Windows, so code for the debugger that
+	lives there must be moved elsewhere.
+
 2003-01-19  Martin Baulig  <martin@ximian.com>
 
 	* debug.c: Ok, this should now finally be working this time ....
