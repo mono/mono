@@ -122,18 +122,22 @@ $(test_nunitfw):
 ifdef PLATFORM_MONO_NATIVE
 test-local: $(test_nunitfw) $(test_against) $(testlib)
 
-run-test-local: run-monotest
 else
 test-local: $(test_nunitfw) $(plattestlib)
 
-run-test-local: run-plattest
 endif
+
+run-test-local: run-plattest
+run-test-ondotnet-local: run-plattest-ondotnet
 
 run-monotest: $(test_against) $(testlib)
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(testlib)
 
 run-plattest: $(plattestlib)
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(plattestlib)
+
+run-plattest-ondotnet: $(plattestlib)
+	$(TEST_HARNESS) $(plattestlib)
 
 # OK, that was the easy part. Now we get to the fun bits.
 #
