@@ -96,7 +96,7 @@ namespace System.Web.UI.WebControls
 			{
 				if(DataTextFormatString.Length > 0)
 				{
-					retVal = String.Format((string)dataTextValue, DataTextFormatString);
+					retVal = String.Format(DataTextFormatString, dataTextValue);
 				}
 				else
 				{

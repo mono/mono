@@ -1,5 +1,10 @@
 2003-10-29 Jackson Harper <jackson@ximian.com>
 
+	* ButtonColumn.cs: Format string and text to format were
+	inversed. This fixes bug #50171.
+	
+2003-10-29 Jackson Harper <jackson@ximian.com>
+
 	* DataGridColumn.cs: If an item style is set apply it to the
 	cell. This fixes bug #50173.
 	
