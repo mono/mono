@@ -19,6 +19,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace System.Data {
 	/// <summary>
@@ -340,10 +341,10 @@ namespace System.Data {
 		}
 
 		public void WriteXmlSchema(string fileName)
-	    {
+		{
 			XmlWriter writer = new XmlTextWriter( fileName, null );
 	    	
-	    	WriteXmlSchema( writer );
+			WriteXmlSchema( writer );
 		}
 
 		public void WriteXmlSchema(TextWriter writer)
@@ -363,6 +364,30 @@ namespace System.Data {
 			
 			writer.WriteEndDocument();
 			
+		}
+
+		public void ReadXmlSchema(Stream stream)
+		{
+			XmlReader reader = new XmlTextReader( stream, null );
+			ReadXmlSchema( reader);
+		}
+
+		public void ReadXmlSchema(string str)
+		{
+			XmlReader reader = new XmlTextReader( str );
+			ReadXmlSchema( reader );
+		}
+
+		public void ReadXmlSchema(TextReader treader)
+		{
+			XmlReader reader = new XmlTextReader( treader );
+
+			ReadXmlSchema( reader );			
+		}
+
+		public void ReadXmlSchema(XmlReader reader)
+		{
+			DoReadXmlSchema( reader );
 		}
 
 		#endregion // Public Methods
@@ -671,9 +696,119 @@ namespace System.Data {
 			//</xs:element>
 			writer.WriteEndElement();
 		}
+
+		[MonoTODO]
+		private void DoReadXmlSchema(XmlReader reader)
+		{
+			DataTable dt = new DataTable ();
+			XmlSchema schema = XmlSchema.Read (reader, new ValidationEventHandler (OnXmlSchemaValidation));
+
+			XmlSchemaSequence s;
+			XmlSchemaElement e;
+        	
+			XmlSchemaComplexType t;
+			XmlSchemaChoice c;
+
+			string oldSchemaName = "";
+			string schemaTypeName = "";
+			string tableTypeName = "";
+        
+			for (int i = 0; i < schema.Items.Count; i++) {
+
+				// TODO: other types!
+				if ((e = schema.Items [i] as XmlSchemaElement) != null) {
+				
+					dataSetName = e.Name;
+					
+					if (dataSetName != oldSchemaName) {
+						tableCollection.Add (dt);
+						oldSchemaName = e.Name;
+					}
+
+					if ((t = e.SchemaType as XmlSchemaComplexType) != null) {
+						
+						if ((c = t.Particle as XmlSchemaChoice) != null) {
+							
+							for (int j = 0; j < c.Items.Count; j++) {
+								if ((e = c.Items [j] as XmlSchemaElement) != null)
+									dt.TableName = e.Name;
+								
+								// TODO: other types
+								if ((t = e.SchemaType as XmlSchemaComplexType) != null) {
+									
+									// TODO: other types
+									if ((s = t.Particle as XmlSchemaSequence) != null)  {
+										
+										// add columns to datatable
+										foreach (XmlSchemaElement el in s.Items)
+											dt.Columns.Add (el.Name);
+									}
+									
+								}
+							}
+						}
+					}
+					else {
+						// If not known type then it's declared after this
+						schemaTypeName = e.SchemaTypeName.ToString ();		
+					}
+				} // TODO: SimpleType
+				else if ((t = schema.Items [i] as XmlSchemaComplexType) != null) {
+										
+					if (t.Name == schemaTypeName) {
+						
+						if ((s = t.Particle as XmlSchemaSequence) != null) {
+							
+							for (int j  = 0; j < s.Items.Count; j++) {
+								
+								if ((e = s.Items [j] as XmlSchemaElement) != null)
+									dt.TableName = e.Name;
+								
+								// TODO: other types
+								if ((t = e.SchemaType as XmlSchemaComplexType) != null) {
+									
+									// TODO: other types
+									if ((s = t.Particle as XmlSchemaSequence) != null)  {
+										
+										// Add columns to datatable
+										foreach (XmlSchemaElement el in s.Items)
+											dt.Columns.Add (el.Name);
+									}
+									
+								}
+								else {
+									// If table type is not known it's declared after this
+									tableTypeName = e.SchemaTypeName.ToString ();
+								}
+							}	    															
+						}
+					}
+					
+					else if (t.Name == tableTypeName) { // table type declaration
+						
+						if ((s = t.Particle as XmlSchemaSequence) != null) {
+							
+							for (int j  = 0; j < s.Items.Count; j++) {
+								
+								if ((e = s.Items [j] as XmlSchemaElement) != null)
+									dt.Columns.Add (e.Name);
+							}																	
+						}
+						
+					}
+				}
+			}
+
+		}
+
 		#endregion
+
+		[MonoTODO]
+		private void OnXmlSchemaValidation (object sender, ValidationEventArgs args)
+		{
+			;
+		}
 	
-		
 		///<summary>
 		/// Helper function to split columns into attributes elements and simple
 		/// content
