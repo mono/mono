@@ -1,3 +1,10 @@
+2004-12-17  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs: Fix hard cpu eat on loop with existing timers,
+	Make caret exist and go blink blink.  Initial keyboard support.
+	Fix exception handler, Add Invalidate support.  Change way RefreshWindow
+	works.  
+
 2004-12-17  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIStructs.cs: Updated set of virtual keycodes.

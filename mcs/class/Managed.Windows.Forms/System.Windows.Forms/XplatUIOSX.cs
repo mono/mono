@@ -46,6 +46,14 @@ namespace System.Windows.Forms {
 
 		internal static MouseButtons mouse_state;
 		internal static Point mouse_position;
+		internal static OSXCaret caret;
+
+// FIXME: Caret can have colors?
+		internal static Pen caretOnPen = new Pen (Color.FromArgb (0,0,0));
+		internal static SolidBrush caretOnBrush = new SolidBrush (Color.FromArgb (0,0,0));
+// FIXME: When we figure out HIView backgrounds this will change on a per-caret basis
+		internal static Pen caretOffPen = new Pen (Color.FromArgb (255,255,255));
+		internal static SolidBrush caretOffBrush = new SolidBrush (Color.FromArgb (255,255,255));
 
 		internal static IntPtr mouseInWindow;
 		private static Hashtable handle_data;
@@ -54,8 +62,12 @@ namespace System.Windows.Forms {
 		private CarbonEventHandler windowEventHandler;
 		private static Hashtable view_window_mapping;
 		private static IntPtr grabWindow;
+		private static IntPtr fosterParent;
 
 		private static EventTypeSpec [] viewEvents = new EventTypeSpec [] {
+									new EventTypeSpec (1668183148, 7), 
+									new EventTypeSpec (1668183148, 13), 
+									new EventTypeSpec (1668183148, 2), 
 									new EventTypeSpec (1668183148, 4) 
 									};
 		private static EventTypeSpec [] windowEvents = new EventTypeSpec[] {
@@ -64,7 +76,10 @@ namespace System.Windows.Forms {
 									new EventTypeSpec (1836021107, 5),
 									new EventTypeSpec (1836021107, 6),
 									new EventTypeSpec (1836021107, 10),
-									new EventTypeSpec (2003398244, 27)
+									new EventTypeSpec (2003398244, 27),
+									new EventTypeSpec (1801812322, 1),
+									new EventTypeSpec (1801812322, 2),
+									new EventTypeSpec (1801812322, 3)
 									};
 
 		private ArrayList timer_list;
@@ -72,7 +87,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		internal override Keys ModifierKeys {
 			get {
-				throw new NotImplementedException ();
+				return Keys.None;
 			}
 		}
 
@@ -110,7 +125,14 @@ namespace System.Windows.Forms {
 			mouse_state=MouseButtons.None;
 			mouse_position=Point.Empty;
 			
+			IntPtr rect = IntPtr.Zero;
+			SetRect (ref rect, (short)0, (short)0, (short)0, (short)0);
+			CheckError (CreateNewWindow (6, 33554432 | 31 | 524288 , ref rect, ref fosterParent), "CreateFosterParent ()");
 			timer_list = new ArrayList ();
+
+			caret.timer = new Timer ();
+			caret.timer.Interval = 500;
+			caret.timer.Tick += new EventHandler (CaretCallback);
 		}
 
 		[MonoTODO]
@@ -140,6 +162,24 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		private void MouseHover (object sender, EventArgs e) {
 			throw new NotImplementedException ();
+		}
+
+		private void CaretCallback (object sender, EventArgs e) {
+			if (caret.paused) {
+				return;
+			}
+
+			caret.on = !caret.on;
+
+			if (caret.on) {
+				caret.graphics.FillRectangle (caretOnBrush, caret.rect);
+				caret.graphics.DrawRectangle (caretOnPen, caret.rect);
+			} else {
+				// Fixme; this will kill what was underneath it before
+				caret.graphics.FillRectangle (caretOffBrush, caret.rect);
+				caret.graphics.DrawRectangle (caretOffPen, caret.rect);
+			}
+			caret.graphics.Flush ();
 		}
 
 		[MonoTODO]
@@ -182,6 +222,7 @@ namespace System.Windows.Forms {
 				if ((cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
 					// This is a child view that is going to be parentless;
 					realWindow = false;
+					CheckError (HIViewFindByID (HIViewGetRoot (fosterParent), new HIViewID (2003398244, 1), ref parentHnd), "HIViewFindByID ()");
 				} else if ((cp.Style & (int)(WindowStyles.WS_POPUP))!=0) {
 					// This is a popup window that will be real.
 					realWindow = true;
@@ -252,8 +293,25 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		internal override void RefreshWindow(IntPtr handle) {
-			IntPtr outEvent = IntPtr.Zero;
-			HIViewSetNeedsDisplay (handle, true);
+			if (handle_data [handle] == null)
+				handle_data [handle] = new HandleData ();
+			HIRect bounds = new HIRect ();
+			HIViewGetBounds (handle, ref bounds);
+			((HandleData) handle_data [handle]).AddToInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
+			MSG msg = new MSG ();
+			msg.message = Msg.WM_PAINT;
+			msg.hwnd = handle;
+			msg.wParam = IntPtr.Zero;
+			msg.lParam = IntPtr.Zero;
+			if ((int)bounds.size.width > 0 && (int)bounds.size.height > 0)
+				carbonEvents.Enqueue (msg);
+/*
+Console.WriteLine ("Invalidating {0:x}", (int)handle);
+			if (HIViewGetSuperview (handle) != IntPtr.Zero)
+				HIViewSetNeedsDisplay (HIViewGetSuperview (handle), true);
+			else
+				HIViewSetNeedsDisplay (handle, true);
+*/
 		}
 
 		[MonoTODO("Find a way to make all the views do this; not just the window view")]
@@ -277,6 +335,11 @@ namespace System.Windows.Forms {
 				throw new Exception ("null data on paint event start: " + handle);
 			}
 
+			if (caret.visible == 1) {
+				caret.paused = true;
+				HideCaret ();
+			}
+
 			data.DeviceContext = Graphics.FromHwnd (handle);
 			paint_event = new PaintEventArgs((Graphics)data.DeviceContext, data.InvalidArea);
 
@@ -292,6 +355,11 @@ namespace System.Windows.Forms {
 			Graphics g = (Graphics) data.DeviceContext;
 			g.Flush ();
 			g.Dispose ();
+
+			if (caret.visible == 1) {
+				caret.paused = false;
+				ShowCaret ();
+			}
                 }
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
@@ -343,8 +411,13 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
-			// FIXME: What do we do here
-//			throw new NotImplementedException ();
+			((HandleData) handle_data [handle]).AddToInvalidArea (rc.X, rc.Y, rc.Width, rc.Height);
+			MSG msg = new MSG ();
+			msg.hwnd = handle;
+			msg.message = Msg.WM_PAINT;
+			msg.wParam = IntPtr.Zero;
+			msg.lParam = IntPtr.Zero;
+			carbonEvents.Enqueue (msg);
 		}
 
 		[MonoTODO]
@@ -352,9 +425,10 @@ namespace System.Windows.Forms {
 			return IntPtr.Zero;
 		}
 
-		[MonoTODO]
 		internal override void HandleException(Exception e) {
-			throw new NotImplementedException ();
+			StackTrace st = new StackTrace(e);
+                        Console.WriteLine("Exception '{0}'", e.Message+st.ToString());
+                        Console.WriteLine("{0}{1}", e.Message, st.ToString());
 		}
 
 		[MonoTODO]
@@ -374,6 +448,35 @@ namespace System.Windows.Forms {
 			msg.hwnd = IntPtr.Zero; 
 			lock (carbonEvents) {
 				switch (eventClass) {
+					// keyboard
+					case 1801812322: {
+						byte charCode = 0x00;
+						GetEventParameter (inEvent, 1801676914, 1413830740, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
+						IntPtr cntrl = IntPtr.Zero;
+						CheckError (GetKeyboardFocus (controlHnd, ref cntrl), "GetKeyboardFocus()");
+						msg.hwnd = cntrl;
+						msg.lParam = IntPtr.Zero;
+						msg.wParam = (IntPtr)charCode;
+						switch (eventKind) {
+							// keydown
+							case 1: {
+								msg.message = Msg.WM_CHAR;
+								break;
+							}
+							// repeat
+							case 2: {
+								msg.message = Msg.WM_CHAR;
+								break;
+							}
+							// keyup
+							case 3: {
+								msg.message = Msg.WM_KEYUP;
+								break;
+							}
+						}
+						carbonEvents.Enqueue (msg);
+						return -9874;
+					}
 					case 2003398244: {
 						switch (eventKind) {
 							case 27: {
@@ -485,7 +588,7 @@ namespace System.Windows.Forms {
 								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (2003398244, 1), ref pView), "HIViewFindByID ()");
 								CheckError (HIViewGetSubviewHit (pView, ref hiPoint, true, ref rView));
 								HIViewConvertPoint (ref hiPoint, pView, rView);
-								if (mouseInWindow != rView && grabWindow != IntPtr.Zero) {
+								if (mouseInWindow != rView && grabWindow == IntPtr.Zero) {
 									msg.hwnd = mouseInWindow;
 									msg.message = Msg.WM_MOUSE_LEAVE;
 									carbonEvents.Enqueue (msg);
@@ -526,7 +629,7 @@ namespace System.Windows.Forms {
 								}
 								if (grabWindow == IntPtr.Zero)
 									msg.hwnd = rView;
-								else
+								else 
 									msg.hwnd = grabWindow;
 								msg.message = Msg.WM_MOUSEMOVE;
 								msg.lParam = (IntPtr) ((ushort)hiPoint.y << 16 | (ushort)hiPoint.x);
@@ -566,8 +669,30 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_PAINT;
 								msg.wParam = IntPtr.Zero;
 								msg.lParam = IntPtr.Zero;
-								DispatchMessage (ref msg);
-////								carbonEvents.Enqueue (msg);
+//								DispatchMessage (ref msg);
+								carbonEvents.Enqueue (msg);
+								return 0;
+							}
+							case 2: {
+								Console.WriteLine ("Unicode thingie on {0:x}", msg.hwnd);
+								return 0;
+							}
+							case 13: {
+								IntPtr window = GetControlOwner (msg.hwnd);
+								SetKeyboardFocus (window, msg.hwnd, 1); 
+								return 0;
+							}
+							case 7: {
+								short pcode = 1;
+								GetEventParameter (inEvent, 1668313716, 1668313716, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (short)), IntPtr.Zero, ref pcode);
+								switch (pcode) {
+									case 0:
+									case -1:
+									case -2:
+										pcode = 0;
+										break;
+								}
+								SetEventParameter (inEvent, 1668313716, 1668313716, (uint)Marshal.SizeOf (typeof (short)), ref pcode);
 								return 0;
 							}
 						}
@@ -580,7 +705,6 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		//FIXME: If there are timers; we can loop really hard churning cpu
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			IntPtr evtRef = IntPtr.Zero;
 			IntPtr target = GetEventDispatcherTarget();
@@ -597,6 +721,14 @@ namespace System.Windows.Forms {
 						Idle (this, EventArgs.Empty);
 					else if (timer_list.Count == 0) {
 						ReceiveNextEvent (0, IntPtr.Zero, 0x7FFFFFFF, true, ref evtRef);
+						if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
+							SendEventToEventTarget (evtRef, target);
+							ReleaseEvent (evtRef);
+						}
+					} else {
+						// Fix the hard loop here; we'll let carbon event loop do its stuff until the next timer timeout
+						// Fixme; this string convert blows
+						ReceiveNextEvent (0, IntPtr.Zero, Convert.ToDouble ("0." + NextTimeout (DateTime.Now))/1.5, true, ref evtRef);
 						if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
 							SendEventToEventTarget (evtRef, target);
 							ReleaseEvent (evtRef);
@@ -678,7 +810,7 @@ namespace System.Windows.Forms {
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
 			if (HIViewGetSuperview (handle) != IntPtr.Zero)
 				CheckError (HIViewRemoveFromSuperview (handle), "HIViewRemoveFromSuperview ()");
-			HIViewAddSubview (parent, handle);
+			CheckError (HIViewAddSubview (parent, handle));
 			SetVisible (handle, IsVisible (parent));
 			return IntPtr.Zero;
 		}
@@ -749,6 +881,23 @@ namespace System.Windows.Forms {
 			return (IntPtr)result;
                 }
 
+		private int NextTimeout (DateTime now)
+		{
+			int timeout = 0x7FFFFFF;
+			lock (timer_list) {
+				foreach (Timer timer in timer_list) {
+					int next = (int) (timer.Expires - now).TotalMilliseconds;
+					if (next < 0)
+						return 0;
+					if (next < timeout)
+						timeout = next;
+				}
+			}
+			if (timeout < Timer.Minimum)
+				timeout = Timer.Minimum;
+
+			return timeout;
+		}
 		private void CheckTimers (DateTime now)
                 {
 			lock (timer_list) {
@@ -778,22 +927,83 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
-		internal override void CreateCaret(IntPtr hwnd, int width, int height) {
+		internal static void ShowCaret () {
+			if (caret.on)
+				return;
+			caret.on = true;
+			caret.graphics.FillRectangle (caretOnBrush, caret.rect);
+			caret.graphics.DrawRectangle (caretOnPen, caret.rect);
+			caret.graphics.Flush ();
 		}
 
-		[MonoTODO]
-		internal override void DestroyCaret(IntPtr hwnd) {
+		internal static void HideCaret () {
+			if (!caret.on)
+				return;
+			caret.on = false;
+			// Fixme; this will kill what was underneath it before
+			caret.graphics.FillRectangle (caretOffBrush, caret.rect);
+			caret.graphics.DrawRectangle (caretOffPen, caret.rect);
+			caret.graphics.Flush ();
 		}
 
-		[MonoTODO]
-		internal override void SetCaretPos(IntPtr hwnd, int x, int y) {
+		internal override void CreateCaret (IntPtr hwnd, int width, int height) {
+			if (caret.hwnd != IntPtr.Zero)
+				DestroyCaret (caret.hwnd);
+
+			caret.hwnd = hwnd;
+			caret.width = width;
+			caret.height = height;
+			caret.visible = 0;
+			caret.on = false;
+			caret.graphics = Graphics.FromHwnd (hwnd);
 		}
 
-		[MonoTODO]
-		internal override void CaretVisible(IntPtr hwnd, bool visible) {
+		internal override void DestroyCaret (IntPtr hwnd) {
+			if (caret.hwnd == hwnd) {
+				if (caret.visible == 1) {
+					caret.timer.Stop ();
+					HideCaret ();
+				}
+				caret.hwnd = IntPtr.Zero;
+				caret.visible = 0;
+				caret.on = false;
+			}
 		}
 
+		internal override void SetCaretPos (IntPtr hwnd, int x, int y) {
+			if (caret.hwnd == hwnd) {
+				caret.timer.Stop ();
+				HideCaret ();
+				caret.x = x;
+				caret.y = y;
+				caret.rect = new Rectangle (x, y, Math.Max (caret.width-1, 0), Math.Max (caret.height-1, 0));
+				if (caret.visible == 1) {
+					ShowCaret ();
+					caret.timer.Start ();
+				}
+			}
+		}
+
+		internal override void CaretVisible (IntPtr hwnd, bool visible) {
+			if (caret.hwnd == hwnd) {
+				if (visible) {
+					if (caret.visible < 1) {
+						caret.visible++;
+						caret.on = false;
+						if (caret.visible == 1) {
+							ShowCaret ();
+							caret.timer.Start ();
+						}
+					}
+				} else {
+					caret.visible--;
+					if (caret.visible == 0) {
+						caret.timer.Stop ();
+						HideCaret ();
+					}
+				}
+			}
+		}
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
@@ -866,6 +1076,13 @@ namespace System.Windows.Forms {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
                 static extern int InstallEventHandler (IntPtr window, CarbonEventHandler handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern IntPtr GetControlOwner (IntPtr aView);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int SetKeyboardFocus (IntPtr windowHdn, IntPtr cntrlHnd, ushort partcode);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetKeyboardFocus (IntPtr controlHnd, ref IntPtr cntrl);
+
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowEventTarget (IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetControlEventTarget (IntPtr aControl);
@@ -882,11 +1099,17 @@ namespace System.Windows.Forms {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventKind (IntPtr eventRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref byte outData);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref IntPtr outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref ushort outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref short outData);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref QDPoint outData);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int SetEventParameter (IntPtr evt, uint inName, uint inType, uint bufSize, ref short outData);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetPortWindowPort (IntPtr hWnd);
@@ -1015,4 +1238,18 @@ namespace System.Windows.Forms {
 		public short right;
 	}
 
+	internal struct OSXCaret
+	{
+		internal Timer timer;
+		internal IntPtr hwnd;
+		internal Graphics graphics;
+		internal Rectangle rect;
+		internal int x;
+		internal int y;
+		internal int width;
+		internal int height;
+		internal int visible;
+		internal bool on;
+		internal bool paused;
+	}
 }	
