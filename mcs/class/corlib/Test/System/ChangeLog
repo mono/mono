@@ -1,3 +1,8 @@
+2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : Added more milliseconds and pattern recognition
+	  tests. Patch by Steven Brown (a bit modified).
+
 2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DecimalTest.cs: Added tests for remainder, divide and parsing 

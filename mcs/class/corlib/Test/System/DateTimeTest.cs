@@ -1011,6 +1011,56 @@ public class DateTimeTest : Assertion
 		DateTime.FromFileTimeUtc (-1);
 	}
 
+ 	[Test]
+	public void Milliseconds ()
+	{
+		DateTime dt = DateTime.Parse ("2004-05-26T03:29:01.1234567-07:00");
+		dt = TimeZone.CurrentTimeZone.ToUniversalTime (dt);
+		AssertEquals ("DateTime with milliseconds", 632211641411234567, dt.Ticks);
+	}
+
+	[Test]
+	public void ParseNotExact ()
+	{
+		DateTime dt = DateTime.Parse ("2004-05-26T03:29:01-07:00 foo");
+		dt = TimeZone.CurrentTimeZone.ToUniversalTime (dt);
+		AssertEquals ("DateTime.Parse not exact", 632211641410000000, dt.Ticks);
+	}
+
+	[Test]
+	[ExpectedException (typeof (FormatException))]
+	public void ParseExactIsExact()
+	{
+		DateTime.ParseExact ("2004-05-26T03:29:01-07:00 foo", "yyyy-MM-ddTHH:mm:sszzz", null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (FormatException))]
+	public void ParseExactDoesNotEatZ ()
+	{
+		DateTime.ParseExact ("2004-05-26T03:29:01", "yyyy-MM-ddTHH:mm:ssZ", null);
+	}
+
+	[Test]
+	public void ParseExactMilliseconds ()
+	{
+		DateTime dt = DateTime.ParseExact ("2004-05-26T03:29:01.1234567-07:00", "yyyy-MM-ddTHH:mm:ss.fffffffzzz", null);
+		dt = TimeZone.CurrentTimeZone.ToUniversalTime (dt);
+		AssertEquals ("DateTime.ParseExact with milliseconds", 632211641411234567, dt.Ticks);
+	}
+
+	[Test]
+	public void NoColonTimeZone ()
+	{
+		AssertEquals ("DateTime with colon-less timezone", true, DateTime.Parse ("2004-05-26T03:29:01-0700").Ticks != DateTime.Parse ("2004-05-26T03:29:01-0800").Ticks);
+	}
+
+	[Test]
+	public void WithColonTimeZone ()
+	{
+		AssertEquals ("DateTime with colon tiemzone", true, DateTime.Parse ("2004-05-26T03:29:01-07:00").Ticks != DateTime.Parse ("2004-05-26T03:29:01-08:00").Ticks);
+	}
+
 	[Test]
 	[ExpectedException (typeof (InvalidCastException))]
 	public void IConvertible_ToType_Boolean () 
