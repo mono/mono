@@ -1210,7 +1210,6 @@ namespace Mono.CSharp {
 					return FlowReturns.NEVER;
 				else
 					return FlowReturns.SOMETIMES;
-				break;
 
 			case FlowReturns.SOMETIMES:
 				return FlowReturns.SOMETIMES;
@@ -1220,7 +1219,6 @@ namespace Mono.CSharp {
 					return FlowReturns.ALWAYS;
 				else
 					return FlowReturns.SOMETIMES;
-				break;
 
 			case FlowReturns.EXCEPTION:
 				if (b == FlowReturns.EXCEPTION)
@@ -1229,7 +1227,6 @@ namespace Mono.CSharp {
 					return FlowReturns.ALWAYS;
 				else
 					return FlowReturns.SOMETIMES;
-				break;
 			}
 
 			return b;
