@@ -45,6 +45,7 @@ public class Page : TemplateControl, IHttpHandler
 	private ArrayList _requiresPostBack;
 	private ArrayList requiresPostDataChanged;
 	private ArrayList requiresRaiseEvent;
+	private NameValueCollection secondPostData;
 
 	#region Fields
 	 	protected const string postEventArgumentID = ""; //FIXME
@@ -377,6 +378,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	private bool got_state = false;
 	private int _random;
+	private int queryStringHash;
 	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
 	{
 		if (renderingForm)
@@ -392,8 +394,7 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		StringBuilder state_string = new StringBuilder ();
 		state_string.AppendFormat ("{0:X}", GetTypeHashCode ());
-		if (_context != null)
-			state_string.Append (_context.Request.QueryString.GetHashCode ());
+		state_string.AppendFormat ("{0:X}", queryStringHash);
 
 		if (!got_state) {
 			Random rnd = new Random ();
@@ -424,9 +425,10 @@ public class Page : TemplateControl, IHttpHandler
 		InvokeEventMethod ("Page_Load", sender, e);
 	}
 
-	private void ProcessPostData ()
+	private void ProcessPostData (NameValueCollection data, bool second)
 	{
-		NameValueCollection data = DeterminePostBackMode ();
+		if (data == null)
+			return;
 
 		foreach (string id in data.AllKeys){
 			if (id == "__VIEWSTATE")
@@ -435,20 +437,23 @@ public class Page : TemplateControl, IHttpHandler
 			Control ctrl = FindControl (id);
 			if (ctrl != null){
 				IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
-				if (pbdh != null) {
-					if (pbdh.LoadPostData (id, data) == true) {
-						if (requiresPostDataChanged == null)
-							requiresPostDataChanged = new ArrayList ();
-						requiresPostDataChanged.Add (ctrl);
-					}
-				}
-
 				IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
-				if (pbeh != null) {
-					if (requiresRaiseEvent == null)
-						requiresRaiseEvent = new ArrayList ();
-					requiresRaiseEvent.Add (ctrl);
+
+				if (pbdh == null) {
+					if (pbeh != null)
+						RegisterRequiresRaiseEvent (pbeh);
+					continue;
 				}
+		
+				if (pbdh.LoadPostData (id, data) == true) {
+					if (requiresPostDataChanged == null)
+						requiresPostDataChanged = new ArrayList ();
+					requiresPostDataChanged.Add (pbdh);
+				}
+			} else if (!second) {
+				if (secondPostData == null)
+					secondPostData = new NameValueCollection ();
+				secondPostData.Add (id, null);
 			}
 		}
 	}
@@ -463,18 +468,21 @@ public class Page : TemplateControl, IHttpHandler
 			Load += new EventHandler (_Page_Load);
 		}
 		//-- Control execution lifecycle in the docs
+		Controls.Clear ();
 		FrameworkInitialize ();
 		InitRecursive (null);
 		got_state = false;
 		renderingForm = false;	
 		_context = context;
+		queryStringHash = _context.Request.QueryString.GetHashCode ();
 		if (IsPostBack) {
 			LoadPageViewState ();
-			ProcessPostData ();
+			ProcessPostData (DeterminePostBackMode (), false);
 		}
 
 		LoadRecursive ();
 		if (IsPostBack) {
+			ProcessPostData (secondPostData, true);
 			RaiseChangedEvents ();
 			RaisePostBackEvents ();
 		}
@@ -482,10 +490,11 @@ public class Page : TemplateControl, IHttpHandler
 
 		SavePageViewState ();
 		//--
+		StringBuilder sb = new StringBuilder ();
+		StringWriter sr = new StringWriter (sb);
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
-		this.RenderControl (output);
+		RenderControl (output);
 		_context = null;
-		UnloadRecursive (true);
 	}
 
 	internal void RaisePostBackEvents ()

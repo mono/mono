@@ -18,8 +18,7 @@ namespace System.Web.UI.HtmlControls{
 	public abstract class HtmlControl : Control, IAttributeAccessor
 	{
 		private string _tagName = "span";
-		//TODO: Is this correct, or is the StateBag really the ViewState?
-		private AttributeCollection _attributes = new AttributeCollection(new StateBag(true));
+		private AttributeCollection _attributes;
 		private bool _disabled = false;
 		
 		public HtmlControl() : this ("span") {}
@@ -89,7 +88,11 @@ namespace System.Web.UI.HtmlControls{
 		
 		public AttributeCollection Attributes
 		{
-			get { return _attributes; }
+			get { 
+				if (_attributes == null)
+					_attributes = new AttributeCollection (ViewState);
+				return _attributes;
+			}
 		}
 
 		public bool Disabled

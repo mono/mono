@@ -112,7 +112,7 @@ namespace System.Web.UI.WebControls
 		{
 			get {
 				object o = ViewState ["Wrap"];
-				return (o == null) ? false : (bool) o;
+				return (o == null) ? true : (bool) o;
 			}
 
 			set { ViewState ["Wrap"] = value; }
@@ -197,7 +197,8 @@ namespace System.Web.UI.WebControls
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-			//FIXME
+			if (Events [TextChangedEvent] == null)
+				ViewState.SetItemDirty ("Text", false);
 		}
 
 		protected virtual void OnTextChanged (EventArgs e)

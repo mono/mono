@@ -1,3 +1,8 @@
+2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlControl.cs: the attributes must use ViewState as its StateBag,
+	if not style values are lost between postbacks.
+
 2002-07-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlAnchor.cs:

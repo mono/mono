@@ -47,7 +47,10 @@ namespace System.Web.UI {
 
 		public void Add (string key, string value)
 		{
-			bag.Add (key, value); // if exists, only the value is replaced.
+			if (styleCollection != null && 0 == String.Compare (key, "style", true))
+				styleCollection.FillStyle (value);
+			else
+				bag.Add (key, value);
 		}
 
 		public void AddAttributes (HtmlTextWriter writer)

@@ -1,3 +1,17 @@
+2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AttributeCollection.cs:
+	(Add): handle 'style' through styleCollection.
+
+	* CssStyleCollection.cs:
+	(fillStyle): renamed to FillStyle and made it internal.
+
+	* Page.cs:
+	(GetViewStateString): fixed, broken after other recent changes.
+	(ProcessPostData): allow a second try for postback data after OnLoad.
+	(ProcessRequest): clear controls collection, removed call to 
+	UnloadRecursive.
+
 2002-07-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: uncommented Dispose.

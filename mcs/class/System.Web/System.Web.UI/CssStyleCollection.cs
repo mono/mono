@@ -25,10 +25,10 @@ namespace System.Web.UI {
 			style = new StateBag ();
 			string st_string = bag ["style"] as string;
 			if (st_string != null)
-				fillStyle (st_string);
+				FillStyle (st_string);
 		}
-		
-		private void fillStyle (string s)
+
+		internal void FillStyle (string s)
 		{
 			int mark = s.IndexOf (':');
 			if (mark == -1)
@@ -51,7 +51,7 @@ namespace System.Web.UI {
 			style.Add (key, value);
 			if (mark + 1 > fullValue.Length)
 				return;
-			fillStyle (fullValue.Substring (mark + 1));
+			FillStyle (fullValue.Substring (mark + 1));
 		}
 
 		private string BagToString ()

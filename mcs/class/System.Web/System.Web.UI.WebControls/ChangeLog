@@ -1,3 +1,8 @@
+2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TextBox.cs: default for Wrap is true.
+	(OnPreRender): don't save Text if there are no listeners on TextChanged.
+
 2002-07-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DropDownList.cs:
