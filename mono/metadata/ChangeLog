@@ -1,3 +1,10 @@
+2002-07-12  Dietmar Maurer  <dietmar@ximian.com>
+
+	* debug-helpers.c (mono_method_full_name): this can now generate
+	method names with signatures
+
+	* marshal.c (mono_marshal_get_managed_wrapper): bug fix: unmanaged
+	method dont have this pointers.
 
 Fri Jul 12 11:35:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
