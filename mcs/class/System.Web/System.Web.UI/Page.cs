@@ -237,7 +237,14 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public virtual HttpSessionState Session
 	{
-		get { return _context.Session; }
+		get {
+			if (_context.Session == null)
+				throw new HttpException ("Session state can only be used " +
+						"when enableSessionState is set to true, either " +
+						"in a configuration file or in the Page directive.");
+
+			return _context.Session;
+		}
 	}
 
 	[Browsable (false)]

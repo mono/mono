@@ -1,3 +1,8 @@
+2003-12-25  Jackson Harper <jackson@ximian.com>
+
+	* Page.cs: Throw error if the session is accessed when sessions
+	are disabled.
+	
 2003-12-18  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Write Trace info.
