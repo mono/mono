@@ -1,5 +1,10 @@
 2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter.cs : quick performance fix.
+	  Reduced memoty allocation (e.g. 12% when writing XMLSchema.xsd.)
+
+2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDObjectModel.cs :
 	  - DTDNode's BaseURI should not always refer to that of DTD's.
 	  - Use absolute URI's .ToString() instead of AbsolutePath.

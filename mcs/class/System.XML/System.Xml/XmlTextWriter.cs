@@ -200,16 +200,22 @@ namespace System.Xml
 			if (this.shouldCheckElementXmlns) {
 				string formatXmlns = String.Empty;
 				if (userWrittenNamespaces [prefix] == null) {
-					if (prefix != string.Empty)
-						formatXmlns = String.Concat (new object [] {"xmlns:", prefix, "=", quoteChar, EscapeString (ns, false), quoteChar});
-					else
-						formatXmlns = String.Concat ("xmlns=", quoteChar, EscapeString (ns, false), quoteChar);
+					if (prefix != string.Empty) {
+						w.Write (" xmlns:");
+						w.Write (prefix);
+						w.Write ('=');
+						w.Write (quoteChar);
+						w.Write (EscapeString (ns, false));
+						w.Write (quoteChar);
+					}
+					else {
+						w.Write (" xmlns=");
+						w.Write (quoteChar);
+						w.Write (EscapeString (ns, false));
+						w.Write (quoteChar);
+					}
 				}
 
-				if(formatXmlns != String.Empty) {
-					w.Write (' ');
-					w.Write(formatXmlns);
-				}
 				shouldCheckElementXmlns = false;
 			}
 
@@ -223,8 +229,12 @@ namespace System.Xml
 					if (namespaceManager.LookupNamespace (aprefix) == ans)
 						continue;
 	
-					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, EscapeString (ans, false));
-					w.Write(formatXmlns);
+					w.Write (" xmlns:");
+					w.Write (aprefix);
+					w.Write ('=');
+					w.Write (quoteChar);
+					w.Write (EscapeString (ans, false));
+					w.Write (quoteChar);
 				}
 				newAttributeNamespaces.Clear ();
 			}
@@ -295,9 +305,7 @@ namespace System.Xml
 			string prefix = namespaceManager.LookupPrefix (ns);
 
 			// XmlNamespaceManager has changed to return null when NSURI not found.
-			// (Contradiction to the documentation.)
-			//if (prefix == String.Empty)
-			//	prefix = null;
+			// (Contradiction to the ECMA documentation.)
 			return prefix;
 		}
 
@@ -320,7 +328,6 @@ namespace System.Xml
 			w.Write (Convert.ToBase64String (buffer, index, count));
 		}
 
-		// BinHex??
 		public override void WriteBinHex (byte[] buffer, int index, int count)
 		{
 			CheckState ();
@@ -828,11 +835,12 @@ namespace System.Xml
 				savingAttributeValue += text;
 		}
 
+		string [] replacements = new string [] {
+			"&amp;", "&lt;", "&gt;", "&quot;", "&apos;",
+			"&#xD;", "&#xA;"};
+
 		private string EscapeString (string source, bool skipQuotations)
 		{
-			string [] replacements = new string [] {
-				"&amp;", "&lt;", "&gt;", "&quot;", "&apos;",
-				"&#xD;", "&#xA;"};
 			int start = 0;
 			int pos = 0;
 			int count = source.Length;
