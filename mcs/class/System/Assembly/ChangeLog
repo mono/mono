@@ -1,3 +1,7 @@
+2005-04-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Consts.cs: added constants for Mono.Http.dll
+
 2004-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* AssemblyInfo.cs (AssemblyVersion): Define to 2.0.x when
