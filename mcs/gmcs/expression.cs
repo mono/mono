@@ -581,6 +581,9 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
+			if (TypeManager.IsNullableType (Expr.Type))
+				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
+
 			eclass = ExprClass.Value;
 			return ResolveOperator (ec);
 		}
@@ -2472,11 +2475,6 @@ namespace Mono.CSharp {
 						else
 							method = TypeManager.delegate_remove_delegate_delegate;
 
-						Report.Debug (64, "BINARY DELEGATE", l, r, l.GetType (), r.GetType (),
-							      left, right, l == r, l.Equals (r),
-							      TypeManager.IsEqual (l, r), TypeManager.IsEqual (r, l),
-							      TypeManager.IsEqualGenericInstance (l, r));
-
 						if (!TypeManager.IsEqual (l, r)) {
 							Error_OperatorCannotBeApplied ();
 							return null;
@@ -2747,6 +2745,9 @@ namespace Mono.CSharp {
 					if (e != null)
 						return e;
 			}
+
+			if (TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type))
+				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 			return ResolveOperator (ec);
 		}
@@ -3507,6 +3508,9 @@ namespace Mono.CSharp {
 
 			if (expr == null)
 				return null;
+
+			if (TypeManager.IsNullableType (expr.Type))
+				return new Nullable.LiftedConditional (expr, trueExpr, falseExpr, loc).Resolve (ec);
 			
 			if (expr.Type != TypeManager.bool_type){
 				expr = Expression.ResolveBoolean (

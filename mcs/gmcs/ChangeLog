@@ -1,3 +1,13 @@
+2005-03-05  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.Unwrap, Wrap): New protected classes.
+	(Nullable.Lifted): New abstract class; rewrote the lifted conversions.
+	(Nullable): Added support for lifted unary and binary operators.
+
+	* expression.cs (Unary.DoResolve): Added support for nullable types.
+	(Binary.DoResolve): Likewise.
+	(Conditional.DoResolve): Likewise.
+
 2005-03-02  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (DeclSpace.SetParameterInfo): Make this virtual.

@@ -1598,6 +1598,10 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Type;
 		}
 
+		public NullableType (Type type, Location loc)
+			: this (new TypeExpression (type, loc), loc)
+		{ }
+
 		public override string Name {
 			get { return underlying.ToString () + "?"; }
 		}
@@ -2310,6 +2314,77 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected class Unwrap : Expression
+		{
+			Expression expr;
+			NullableInfo info;
+
+			public Unwrap (Expression expr, Location loc)
+			{
+				this.expr = expr;
+				this.loc = loc;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				expr = expr.Resolve (ec);
+				if (expr == null)
+					return null;
+
+				info = new NullableInfo (expr.Type);
+				type = info.UnderlyingType;
+				eclass = expr.eclass;
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
+				ec.ig.EmitCall (OpCodes.Call, info.Value, null);
+			}
+
+			public void EmitCheck (EmitContext ec)
+			{
+				((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
+				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
+			}
+		}
+
+		protected class Wrap : Expression
+		{
+			Expression expr;
+			NullableInfo info;
+
+			public Wrap (Expression expr, Location loc)
+			{
+				this.expr = expr;
+				this.loc = loc;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				expr = expr.Resolve (ec);
+				if (expr == null)
+					return null;
+
+				TypeExpr target_type = new NullableType (expr.Type, loc);
+				target_type = target_type.ResolveAsTypeTerminal (ec);
+				if (target_type == null)
+					return null;
+
+				type = target_type.Type;
+				info = new NullableInfo (type);
+				eclass = ExprClass.Value;
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				expr.Emit (ec);
+				ec.ig.Emit (OpCodes.Newobj, info.Constructor);
+			}
+		}
+
 		public class NullLiteral : Expression, IMemoryLocation {
 			public NullLiteral (Type target_type, Location loc)
 			{
@@ -2343,87 +2418,205 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class LiftedConversion : Expression
+		public abstract class Lifted : Expression
 		{
-			Expression source;
-			NullableInfo source_info, target_info;
-			Expression conversion;
+			Expression expr, underlying, wrap, null_value;
+			Unwrap unwrap;
 
-			protected LiftedConversion (Expression source, Type target_type,
-						    NullableInfo source_info, NullableInfo target_info,
-						    Expression conversion, Location loc)
+			protected Lifted (Expression expr, Location loc)
 			{
-				this.source = source;
-				this.type = target_type;
-				this.source_info = source_info;
-				this.target_info = target_info;
-				this.conversion = conversion;
+				this.expr = expr;
 				this.loc = loc;
-
-				eclass = source.eclass;
-			}
-
-			public static Expression Create (EmitContext ec, Expression source, Type target_type,
-							 bool is_user, bool is_explicit, Location loc)
-			{
-				NullableInfo source_info = new NullableInfo (source.Type);
-				NullableInfo target_info = new NullableInfo (target_type);
-
-				source = source.Resolve (ec);
-				if (source == null)
-					return null;
-
-				Expression conversion;
-				if (is_user) {
-					conversion = Convert.UserDefinedConversion (
-						ec, new EmptyExpression (source_info.UnderlyingType),
-						target_info.UnderlyingType, loc, is_explicit);
-				} else {
-					if (is_explicit)
-						conversion = Convert.ExplicitConversion (
-							ec, new EmptyExpression (source_info.UnderlyingType),
-							target_info.UnderlyingType, loc);
-					else
-						conversion = Convert.ImplicitConversion (
-							ec, new EmptyExpression (source_info.UnderlyingType),
-							target_info.UnderlyingType, loc);
-				}
-
-				if (conversion == null)
-					return null;
-
-				return new LiftedConversion (
-					source, target_type, source_info, target_info, conversion, loc);
 			}
 
 			public override Expression DoResolve (EmitContext ec)
 			{
+				expr = expr.Resolve (ec);
+				if (expr == null)
+					return null;
+
+				unwrap = (Unwrap) new Unwrap (expr, loc).Resolve (ec);
+				if (unwrap == null)
+					return null;
+
+				underlying = ResolveUnderlying (unwrap, ec);
+				if (underlying == null)
+					return null;
+
+				wrap = new Wrap (underlying, loc).Resolve (ec);
+				if (wrap == null)
+					return null;
+
+				null_value = new NullLiteral (wrap.Type, loc).Resolve (ec);
+				if (null_value == null)
+					return null;
+
+				type = wrap.Type;
+				eclass = ExprClass.Value;
+				return this;
+			}
+
+			protected abstract Expression ResolveUnderlying (Expression unwrap, EmitContext ec);
+
+			public override void Emit (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+				Label is_null_label = ig.DefineLabel ();
+				Label end_label = ig.DefineLabel ();
+
+				unwrap.EmitCheck (ec);
+				ig.Emit (OpCodes.Brfalse, is_null_label);
+
+				wrap.Emit (ec);
+				ig.Emit (OpCodes.Br, end_label);
+
+				ig.MarkLabel (is_null_label);
+				null_value.Emit (ec);
+
+				ig.MarkLabel (end_label);
+			}
+		}
+
+		public class LiftedConversion : Lifted
+		{
+			public readonly bool IsUser;
+			public readonly bool IsExplicit;
+			public readonly Type TargetType;
+
+			public LiftedConversion (Expression expr, Type target_type, bool is_user,
+						 bool is_explicit, Location loc)
+				: base (expr, loc)
+			{
+				this.IsUser = is_user;
+				this.IsExplicit = is_explicit;
+				this.TargetType = target_type;
+			}
+
+			protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
+			{
+				if (IsUser) {
+					return Convert.UserDefinedConversion (
+						ec, unwrap, TargetType, loc, IsExplicit);
+				} else {
+					if (IsExplicit)
+						return Convert.ExplicitConversion (ec, unwrap, TargetType, loc);
+					else
+						return Convert.ImplicitConversion (ec, unwrap, TargetType, loc);
+				}
+			}
+		}
+
+		public class LiftedUnaryOperator : Lifted
+		{
+			public readonly Unary.Operator Oper;
+
+			public LiftedUnaryOperator (Unary.Operator op, Expression expr, Location loc)
+				: base (expr, loc)
+			{
+				this.Oper = op;
+			}
+
+			protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
+			{
+				return new Unary (Oper, unwrap, loc);
+			}
+		}
+
+		public class LiftedConditional : Lifted
+		{
+			Expression expr, true_expr, false_expr;
+			Unwrap unwrap;
+
+			public LiftedConditional (Expression expr, Expression true_expr, Expression false_expr,
+						  Location loc)
+				: base (expr, loc)
+			{
+				this.true_expr = true_expr;
+				this.false_expr = false_expr;
+			}
+
+			protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
+			{
+				return new Conditional (unwrap, true_expr, false_expr, loc);
+			}
+		}
+
+		public class LiftedBinaryOperator : Expression
+		{
+			public readonly Binary.Operator Oper;
+
+			Expression left, right, underlying, null_value;
+			Unwrap left_unwrap, right_unwrap;
+
+			public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right,
+						     Location loc)
+			{
+				this.Oper = op;
+				this.left = left;
+				this.right = right;
+				this.loc = loc;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				left = left.Resolve (ec);
+				if (left == null)
+					return null;
+
+				right = right.Resolve (ec);
+				if (right == null)
+					return null;
+
+				if (TypeManager.IsNullableType (left.Type)) {
+					left_unwrap = new Unwrap (left, loc);
+					left = left_unwrap.Resolve (ec);
+					if (left == null)
+						return null;
+				}
+
+				if (TypeManager.IsNullableType (right.Type)) {
+					right_unwrap = new Unwrap (right, loc);
+					right = right_unwrap.Resolve (ec);
+					if (right == null)
+						return null;
+				}
+
+				underlying = new Wrap (new Binary (Oper, left, right, loc), loc);
+				underlying = underlying.Resolve (ec);
+				if (underlying == null)
+					return null;
+
+				null_value = new NullLiteral (underlying.Type, loc).Resolve (ec);
+				if (null_value == null)
+					return null;
+
+				type = underlying.Type;
+				eclass = ExprClass.Value;
 				return this;
 			}
 
 			public override void Emit (EmitContext ec)
 			{
 				ILGenerator ig = ec.ig;
-				Label has_value_label = ig.DefineLabel ();
+
+				Label is_null_label = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
 
-				((IMemoryLocation) source).AddressOf (ec, AddressOp.LoadStore);
-				ig.EmitCall (OpCodes.Call, source_info.HasValue, null);
-				ig.Emit (OpCodes.Brtrue, has_value_label);
+				if (left_unwrap != null) {
+					left_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				}
 
-				LocalTemporary value_target = new LocalTemporary (ec, type);
-				value_target.AddressOf (ec, AddressOp.Store);
-				ig.Emit (OpCodes.Initobj, type);
-				value_target.Emit (ec);
-				value_target.Release (ec);
+				if (right_unwrap != null) {
+					right_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				}
+
+				underlying.Emit (ec);
 				ig.Emit (OpCodes.Br, end_label);
 
-				ig.MarkLabel (has_value_label);
-
-				((IMemoryLocation) source).AddressOf (ec, AddressOp.LoadStore);
-				ig.EmitCall (OpCodes.Call, source_info.Value, null);
-				conversion.Emit (ec);
-				ig.Emit (OpCodes.Newobj, target_info.Constructor);
+				ig.MarkLabel (is_null_label);
+				null_value.Emit (ec);
 
 				ig.MarkLabel (end_label);
 			}
