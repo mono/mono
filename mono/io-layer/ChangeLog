@@ -1,3 +1,8 @@
+2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* atomic.c (InterlockedIncrement): Fix fallback implementation of
+	InterlockedIncrement and InterlockedDecrement. Fixes #74228.
+
 2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* io-layer.h: Add required header files for compiling with VS.NET.
