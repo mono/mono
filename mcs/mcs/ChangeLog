@@ -1,5 +1,7 @@
 2002-01-03  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (New): Fix structures constructor calling.
+
 	* class.cs (Property, Method, Indexer): Emit Final flag on the
 	method if we are an interface implementation and we are not
 	abstract. 

@@ -1861,7 +1861,7 @@ namespace Mono.CSharp {
 		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria)
 		{
 			MethodInfo mi;
-			
+
 			if (! (m is MethodInfo))
 				return false;
 

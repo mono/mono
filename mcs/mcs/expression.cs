@@ -3558,34 +3558,37 @@ namespace Mono.CSharp {
 		//
 		bool DoEmit (EmitContext ec, bool need_value_on_stack)
 		{
-			if (method == null){
+			bool is_value_type = type.IsSubclassOf (TypeManager.value_type);
+			ILGenerator ig = ec.ig;
+			
+			if (is_value_type){
 				IMemoryLocation ml;
 
 				if (value_target == null)
 					value_target = new LocalTemporary (ec, type);
-						
+
 				ml = (IMemoryLocation) value_target;
 				ml.AddressOf (ec);
-			} else {
-				Invocation.EmitArguments (ec, method, Arguments);
-				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
-				return true;
 			}
 
-			//
-			// It must be a value type, sanity check
-			//
-			if (value_target != null){
-				ec.ig.Emit (OpCodes.Initobj, type);
+			if (method != null)
+				Invocation.EmitArguments (ec, method, Arguments);
+
+			if (is_value_type){
+				if (method == null)
+					ig.Emit (OpCodes.Initobj, type);
+				else
+					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 
 				if (need_value_on_stack){
 					value_target.Emit (ec);
 					return true;
 				}
 				return false;
+			} else {
+				ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+				return true;
 			}
-
-			throw new Exception ("No method and no value type");
 		}
 
 		public override void Emit (EmitContext ec)
