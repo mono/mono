@@ -181,7 +181,7 @@ namespace MonoTests.System.Data
 			
 			AssertEquals ("test#03", 2, Table.Constraints.Count);
 			AssertEquals ("test#04", "Constraint1", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+			AssertEquals ("test#05", typeof (UniqueConstraint), Table.Constraints [0].GetType ());
 			AssertEquals ("test#04", "Test", Table.Constraints [1].ConstraintName);
 			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [1].GetType ());
 
