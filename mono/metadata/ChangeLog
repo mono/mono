@@ -1,3 +1,9 @@
+
+Tue Dec 3 19:29:20 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: look for explicit interface implementation in parent
+	classes, too.
+
 2002-12-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* gc.c (run_finalize): dont run the finalizer (strange behaviour on rh7.3) 
