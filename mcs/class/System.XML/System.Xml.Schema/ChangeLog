@@ -1,3 +1,7 @@
+2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaType.cs : Implemented GetBuiltInComplexType(XmlTypeCode).
+
 2004-09-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaDatatype.cs : handle xdt:* types in FromName().

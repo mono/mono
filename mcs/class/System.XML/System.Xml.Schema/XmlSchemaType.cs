@@ -187,6 +187,17 @@ namespace System.Xml.Schema
 		}
 
 #if NET_2_0
+		public static XmlSchemaComplexType GetBuiltInComplexType (XmlTypeCode type)
+		{
+			switch (type) {
+			case XmlTypeCode.Item:
+				return XmlSchemaComplexType.AnyType;
+			}
+			return null;
+		}
+#endif
+
+#if NET_2_0
 		[MonoTODO]
 		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlQualifiedName qualifiedName)
 		{
