@@ -43,6 +43,7 @@ namespace System.Runtime.Remoting
 			throw new NotImplementedException ();
 		}
 		
+		[CLSCompliant (false)]
 		public static void SetServerIdentity (MethodCall m, object srvID)
 		{
 			Identity ident = srvID as Identity;
