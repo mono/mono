@@ -1,4 +1,13 @@
 2002-01-18  Duncan Mak  <duncan@ximian.com>
+	* ObsoleteAttribute.cs:
+	* STAThreadAttribute.cs:
+	* MTAThreadAttribute.cs:
+	* ThreadStaticAttribute.cs:
+	* LoaderOptimizationAttribute.cs:
+	* PlatformNotSupportedException.cs:
+	* LoaderOptimization.cs: Added to CVS.
+
+2002-01-18  Duncan Mak  <duncan@ximian.com>
 
 	* AppDomainUnloadedException.cs:
 	* MethodAccessException.cs:
