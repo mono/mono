@@ -185,26 +185,25 @@ namespace MonoTests.System.Data
 
 			TextWriter writer = new StringWriter ();
 			ds.WriteXmlSchema (writer);
-		
-			string TextString = writer.ToString ();
+
+			string TextString = GetNormalizedSchema (writer.ToString ());
+//			string TextString = writer.ToString ();
+
 			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#02", "<xs:schema id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#03", "  <xs:element name=\"test_dataset\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
 			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"test_dataset\">", substring);
-#else
-			AssertEquals ("test#03", "  <xs:element name=\"test_dataset\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
-#endif
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -228,13 +227,9 @@ namespace MonoTests.System.Data
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#09", "              <xs:element name=\"first\" msdata:Caption=\"test\" default=\"test_default_value\" minOccurs=\"0\">", substring);
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			AssertEquals ("test#09", "              <xs:element msdata:Caption=\"test\" minOccurs=\"0\" default=\"test_default_value\" name=\"first\">", substring);
-#else
-			AssertEquals ("test#09", "              <xs:element minOccurs=\"0\" default=\"test_default_value\" name=\"first\" msdata:Caption=\"test\">", substring);
-#endif
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -262,9 +257,9 @@ namespace MonoTests.System.Data
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
-			// Due to the assembly version difference, this test is index-based
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#16", "              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring);
+			AssertEquals ("test#16", "              <xs:element msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" minOccurs=\"0\" name=\"second\" type=\"xs:string\" />", substring);
 			if (substring.IndexOf ("<xs:element") < 0)
 				Fail ("test#16: " + substring);
 			if (substring.IndexOf ("name=\"second\"") < 0)
@@ -302,7 +297,7 @@ namespace MonoTests.System.Data
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#23", "              <xs:element name=\"second_first\" default=\"default_value\" minOccurs=\"0\">", substring);
 			AssertEquals ("test#23", "              <xs:element minOccurs=\"0\" default=\"default_value\" name=\"second_first\">", substring);
 			
@@ -368,12 +363,9 @@ namespace MonoTests.System.Data
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#40", "    <xs:unique name=\"second_test_table_Constraint1\" msdata:ConstraintName=\"Constraint1\">", substring);
 			AssertEquals ("test#40", "    <xs:unique msdata:ConstraintName=\"Constraint1\" name=\"second_test_table_Constraint1\">", substring);
-#else
-			AssertEquals ("test#40", "    <xs:unique name=\"second_test_table_Constraint1\" msdata:ConstraintName=\"Constraint1\">", substring);
-#endif
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -541,7 +533,9 @@ namespace MonoTests.System.Data
 			TextWriter writer = new StringWriter ();
 			ds.WriteXmlSchema (writer);
 		
-			string TextString = writer.ToString ();
+
+			string TextString = GetNormalizedSchema (writer.ToString ());
+//			string TextString = writer.ToString ();
 		        
 		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -549,19 +543,15 @@ namespace MonoTests.System.Data
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#03", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"Root\">", substring);
-#else
-			AssertEquals ("test#03", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
-#endif
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -585,13 +575,13 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#09", "              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring);
 			AssertEquals ("test#09", "              <xs:element minOccurs=\"0\" name=\"RegionID\" type=\"xs:string\" />", substring);
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#10", "              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring);
 			AssertEquals ("test#10", "              <xs:element minOccurs=\"0\" name=\"RegionDescription\" type=\"xs:string\" />", substring);
 
@@ -631,17 +621,19 @@ namespace MonoTests.System.Data
 			TextWriter writer = new StringWriter ();
 			
 			ds.WriteXmlSchema (writer);
-			string TextString = writer.ToString ();
+			string TextString = GetNormalizedSchema (writer.ToString ());
+//			string TextString = writer.ToString ();
 			
+
 		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"NewDataSet\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -653,7 +645,9 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
+			AssertEquals ("test#05", "      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"book\" type=\"bookType\" />", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -673,15 +667,22 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#10", "      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#10", "      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring);
+			
+			AssertEquals ("test#10", "      <xs:element msdata:Ordinal=\"1\" name=\"title\" type=\"xs:string\" />", substring);
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#11", "      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#11", "      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring);
+			AssertEquals ("test#11", "      <xs:element msdata:Ordinal=\"2\" name=\"price\" type=\"xs:decimal\" />", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
+			AssertEquals ("test#12", "      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"author\" type=\"authorName\" />", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -725,7 +726,9 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#23", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#23", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
+			AssertEquals ("test#23", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"NewDataSet\">", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -773,7 +776,8 @@ namespace MonoTests.System.Data
 			TextWriter writer = new StringWriter ();
 			ds.WriteXmlSchema (writer);
 		
-			string TextString = writer.ToString ();
+			string TextString = GetNormalizedSchema (writer.ToString ());
+//			string TextString = writer.ToString ();
 		        
 		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -781,13 +785,9 @@ namespace MonoTests.System.Data
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// FIXME: modified attributes based on XmlSchema.Write difference
+			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
-#else
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
-#endif
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"Root\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -799,7 +799,9 @@ namespace MonoTests.System.Data
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
+			AssertEquals ("test#05", "      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"book\" type=\"bookType\" />", substring);
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -819,16 +821,22 @@ namespace MonoTests.System.Data
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#10", "      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#10", "      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring);
+			AssertEquals ("test#10", "      <xs:element msdata:Ordinal=\"1\" name=\"title\" type=\"xs:string\" />", substring);
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#11", "      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#11", "      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring);
+			AssertEquals ("test#11", "      <xs:element msdata:Ordinal=\"2\" name=\"price\" type=\"xs:decimal\" />", substring);
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
+			AssertEquals ("test#12", "      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"author\" type=\"authorName\" />", substring);
+	
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#13", "    </xs:sequence>", substring);
@@ -871,7 +879,9 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#23", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#23", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
+			AssertEquals ("test#23", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"Root\">", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -899,11 +909,15 @@ namespace MonoTests.System.Data
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#30", "              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#30", "              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring);
+			AssertEquals ("test#30", "              <xs:element minOccurs=\"0\" name=\"RegionID\" type=\"xs:string\" />", substring);
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#31", "              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring);
+			// This is original DataSet.WriteXmlSchema() output
+//			AssertEquals ("test#31", "              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring);
+			AssertEquals ("test#31", "              <xs:element minOccurs=\"0\" name=\"RegionDescription\" type=\"xs:string\" />", substring);
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -935,8 +949,8 @@ namespace MonoTests.System.Data
 		[Test]
 		public void WriteDifferentNamespaceSchema ()
 		{
-			// I modified attribute order that is no worth testing.
-			/*
+			// This is original DataSet.WriteXmlSchema() output
+/*
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
 <xs:schema id='NewDataSet' targetNamespace='urn:bar' xmlns:mstns='urn:bar' xmlns='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified' xmlns:app1='urn:baz' xmlns:app2='urn:foo'>
   <!--ATTENTION: This schema contains references to other imported schemas-->
@@ -954,10 +968,10 @@ namespace MonoTests.System.Data
     </xs:complexType>
   </xs:element>
 </xs:schema>";
-			 */
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
+*/
+
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:mstns='urn:bar' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+<xs:schema xmlns:mstns='urn:bar' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
   <xs:import schemaLocation='_app1.xsd' namespace='urn:baz' />
   <xs:import schemaLocation='_app2.xsd' namespace='urn:foo' />
   <xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='NewDataSet'>
@@ -971,26 +985,6 @@ namespace MonoTests.System.Data
     </xs:complexType>
   </xs:element>
 </xs:schema>";
-#else
-			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' id='NewDataSet' elementFormDefault='qualified' attributeFormDefault='qualified' targetNamespace='urn:bar' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns='urn:bar'>
-  <!--ATTENTION: This schema contains references to other imported schemas-->
-  <xs:import namespace='urn:baz' schemaLocation='_app1.xsd' />
-  <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
-  <xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:Locale='fi-FI'>
-    <xs:complexType>
-      <xs:choice maxOccurs='unbounded'>
-        <xs:element ref='app2:NS1Table' />
-        <xs:element name='NS2Table'>
-          <xs:complexType>
-          </xs:complexType>
-        </xs:element>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-</xs:schema>";
-#endif
-
 			DataSet ds = new DataSet();
 			DataTable dt = new DataTable ();
 			dt.TableName = "NS1Table";
@@ -1009,7 +1003,11 @@ namespace MonoTests.System.Data
 			xw.Formatting = Formatting.Indented;
 			xw.QuoteChar = '\'';
 			ds.WriteXmlSchema (xw);
-			AssertEquals (schema, sw.ToString ().Replace ("\r\n", "\n"));
+
+//			string result = sw.ToString ();
+			string result = GetNormalizedSchema (sw.ToString ()).Replace ('"', '\'');
+
+			AssertEquals (schema, result.Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1017,7 +1015,6 @@ namespace MonoTests.System.Data
 		{
 			DataColumn col = new DataColumn ("TEST");
 			col.Namespace = "urn:foo";
-			Console.WriteLine (col.Namespace == "");
 			DataSet ds = new DataSet ("DS");
 			ds.Namespace = "urn:foo";
 			DataTable dt = new DataTable ("tab");
@@ -1031,16 +1028,14 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+//		[Category ("NotDotNet")] // due to WriteXmlSchema() difference
 		public void SerializeDataSet ()
 		{
 			// see GetReady() for current culture
+
+			// This is original DataSet.WriteXmlSchema() output
 //			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
-			// Modified attribute order from MS result
-#if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='DS'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
-#else
-			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
-#endif
 			DataSet ds = new DataSet ();
 			ds.DataSetName = "DS";
 			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
@@ -1048,8 +1043,151 @@ namespace MonoTests.System.Data
 			XmlTextWriter xw = new XmlTextWriter (sw);
 			xw.QuoteChar = '\'';
 			ser.Serialize (xw, ds);
+
 			AssertEquals (xml, sw.ToString ());
 		}
+
+		// bug #70961
+		[Test]
+		public void SerializeDataSet2 ()
+		{
+			DataSet quota = new DataSet ("Quota");
+
+			// Dimension
+			DataTable dt = new DataTable ("Dimension");
+			quota.Tables.Add (dt);
+
+			dt.Columns.Add ("Number", typeof(int));
+			dt.Columns ["Number"].AllowDBNull = false;
+			dt.Columns ["Number"].ColumnMapping = MappingType.Attribute;
+
+			dt.Columns.Add ("Title", typeof(string));
+			dt.Columns ["Title"].AllowDBNull = false;
+			dt.Columns ["Title"].ColumnMapping = 
+			MappingType.Attribute;
+
+			dt.Rows.Add (new object [] {0, "Hospitals"});
+			dt.Rows.Add (new object [] {1, "Doctors"});
+
+			dt.Constraints.Add ("PK_Dimension", dt.Columns ["Number"], true);
+
+			quota.AcceptChanges ();
+
+			XmlSerializer ser = new XmlSerializer (quota.GetType ());
+
+			StringWriter sw = new StringWriter ();
+		        ser.Serialize (sw, quota);
+Console.WriteLine (sw);
+
+			DataSet ds = (DataSet) ser.Deserialize (new StringReader (sw.ToString ()));
+		}
+
+		// bug #68007
+		public void SerializeDataSet3 ()
+		{
+			string xml = @"<?xml version=""1.0"" encoding=""utf-8""?><DataSet><xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata""><xs:element name=""Example"" msdata:IsDataSet=""true""><xs:complexType><xs:choice maxOccurs=""unbounded""><xs:element name=""Packages""><xs:complexType><xs:attribute name=""ID"" type=""xs:int"" use=""required"" /><xs:attribute name=""ShipDate"" type=""xs:dateTime"" /><xs:attribute name=""Message"" type=""xs:string"" /><xs:attribute name=""Handlers"" type=""xs:int"" /></xs:complexType></xs:element></xs:choice></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:diffgr=""urn:schemas-microsoft-com:xml-diffgram-v1""><Example><Packages diffgr:id=""Packages1"" msdata:rowOrder=""0"" ID=""0"" ShipDate=""2004-10-11T17:46:18.6962302-05:00"" Message=""Received with no breakage!"" Handlers=""3"" /><Packages diffgr:id=""Packages2"" msdata:rowOrder=""1"" ID=""1"" /></Example></diffgr:diffgram></DataSet>";
+
+			DataSet ds = new DataSet ("Example");
+
+			// Add a DataTable
+			DataTable dt = new DataTable ("Packages");
+			ds.Tables.Add (dt);
+
+			// Add an ID DataColumn w/ ColumnMapping = MappingType.Attribute
+			dt.Columns.Add (new DataColumn ("ID", typeof(int), "", 
+				MappingType.Attribute));
+			dt.Columns ["ID"].AllowDBNull = false;
+
+			// Add a nullable DataColumn w/ ColumnMapping = MappingType.Attribute
+			dt.Columns.Add (new DataColumn ("ShipDate",
+				typeof (DateTime), "", MappingType.Attribute));
+			dt.Columns ["ShipDate"].AllowDBNull = true;
+
+			// Add a nullable DataColumn w/ ColumnMapping = MappingType.Attribute
+			dt.Columns.Add (new DataColumn ("Message",
+				typeof (string), "", MappingType.Attribute));
+			dt.Columns ["Message"].AllowDBNull = true;
+
+			// Add a nullable DataColumn w/ ColumnMapping = MappingType.Attribute
+			dt.Columns.Add (new DataColumn ("Handlers",
+				typeof (int), "", MappingType.Attribute));
+			dt.Columns ["Handlers"].AllowDBNull = true;
+
+			// Add a non-null value row
+			DataRow newRow = dt.NewRow();
+			newRow ["ID"] = 0;
+			newRow ["ShipDate"] = DateTime.Now;
+			newRow ["Message"] = "Received with no breakage!";
+			newRow ["Handlers"] = 3;
+			dt.Rows.Add (newRow);
+
+			// Add a null value row
+			newRow = dt.NewRow ();
+			newRow ["ID"] = 1;
+			newRow ["ShipDate"] = DBNull.Value;
+			newRow ["Message"] = DBNull.Value;
+			newRow ["Handlers"] = DBNull.Value;
+			dt.Rows.Add (newRow);
+
+			ds.AcceptChanges ();
+
+			XmlSerializer ser = new XmlSerializer (ds.GetType());
+			StringWriter sw = new StringWriter ();
+			ser.Serialize (sw, ds);
+
+			string result = sw.ToString ();
+//			string result = GetNormalizedSchema (sw.ToString ()).Replace ('"', '\'');
+
+			AssertEquals (xml, result);
+		}
+
+		[Test]
+		public void DeserializeDataSet ()
+		{
+			string xml = @"<DataSet>
+  <diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1'>
+    <Quota>
+      <Dimension diffgr:id='Dimension1' msdata:rowOrder='0' Number='0' Title='Hospitals' />
+      <Dimension diffgr:id='Dimension2' msdata:rowOrder='1' Number='1' Title='Doctors' />
+    </Quota>
+  </diffgr:diffgram>
+</DataSet>";
+			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
+			ser.Deserialize (new XmlTextReader (
+				xml, XmlNodeType.Document, null));
+		}
+
+		/* To be added
+		[Test]
+		public void WriteDiffReadAutoWriteSchema ()
+		{
+			DataSet ds = new DataSet ();
+			ds.Tables.Add ("Table1");
+			ds.Tables.Add ("Table2");
+			ds.Tables [0].Columns.Add ("Column1_1");
+			ds.Tables [0].Columns.Add ("Column1_2");
+			ds.Tables [0].Columns.Add ("Column1_3");
+			ds.Tables [1].Columns.Add ("Column2_1");
+			ds.Tables [1].Columns.Add ("Column2_2");
+			ds.Tables [1].Columns.Add ("Column2_3");
+			ds.Tables [0].Rows.Add (new object [] {"ppp", "www", "xxx"});
+
+			// save as diffgram
+			StringWriter sw = new StringWriter ();
+			ds.WriteXml (sw, XmlWriteMode.DiffGram);
+			string xml = sw.ToString ();
+			string result = new StreamReader ("Test/System.Data/DataSetReadXmlTest1.xml", Encoding.ASCII).ReadToEnd ();
+			AssertEquals ("#01", result, xml);
+
+			// load diffgram above
+			ds.ReadXml (new StringReader (sw.ToString ()));
+			sw = new StringWriter ();
+			ds.WriteXml (sw, XmlWriteMode.WriteSchema);
+			xml = sw.ToString ();
+			result = new StreamReader ("Test/System.Data/DataSetReadXmlTest2.xml", Encoding.ASCII).ReadToEnd ();
+			AssertEquals ("#02", result, xml);
+		}
+		*/
 
 		[Test]
                 public void CloneCopy ()
@@ -1236,7 +1374,561 @@ namespace MonoTests.System.Data
 			ds.WriteXml (xtw);
 			AssertEquals (xml, sw.ToString ());
 		}
-		
+
+		// bug #53959.
+		[Test]
+		public void ReadWriteXml3 ()
+		{
+			string input = @"<FullTextResponse>
+  <Domains>
+    <AvailResponse info='y' name='novell-ximian-group' />
+    <AvailResponse info='n' name='ximian' />
+  </Domains>
+</FullTextResponse>";
+			DataSet ds = new DataSet ();
+			ds.ReadXml (new StringReader (input));
+
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.Formatting = Formatting.Indented;
+			xtw.QuoteChar = '\'';
+			ds.WriteXml (xtw);
+			xtw.Flush ();
+			AssertEquals (input, sw.ToString ().Replace ("\r\n", "\n"));
+		}
+
+		[Test] // bug #60469
+		public void WriteXmlSchema2 ()
+		{
+			string xml = @"<myDataSet xmlns='NetFrameWork'><myTable><id>0</id><item>item 0</item></myTable><myTable><id>1</id><item>item 1</item></myTable><myTable><id>2</id><item>item 2</item></myTable><myTable><id>3</id><item>item 3</item></myTable><myTable><id>4</id><item>item 4</item></myTable><myTable><id>5</id><item>item 5</item></myTable><myTable><id>6</id><item>item 6</item></myTable><myTable><id>7</id><item>item 7</item></myTable><myTable><id>8</id><item>item 8</item></myTable><myTable><id>9</id><item>item 9</item></myTable></myDataSet>";
+			// This is the MS output of WriteXmlSchema().
+/*
+			string schema = @"<?xml version='1.0' encoding='utf-16'?>
+<xs:schema id='myDataSet' targetNamespace='NetFrameWork' xmlns:mstns='NetFrameWork' xmlns='NetFrameWork' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified'>
+  <xs:element name='myDataSet' msdata:IsDataSet='true' msdata:Locale='fi-FI'>
+    <xs:complexType>
+      <xs:choice maxOccurs='unbounded'>
+        <xs:element name='myTable'>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name='id' msdata:AutoIncrement='true' type='xs:int' minOccurs='0' />
+              <xs:element name='item' type='xs:string' minOccurs='0' />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+*/
+			string schema = @"<?xml version='1.0' encoding='utf-16'?>
+<xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='NetFrameWork' xmlns='NetFrameWork' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='NetFrameWork' id='myDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='myDataSet'>
+    <xs:complexType>
+      <xs:choice maxOccurs='unbounded'>
+        <xs:element name='myTable'>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element msdata:AutoIncrement='true' minOccurs='0' name='id' type='xs:int' />
+              <xs:element minOccurs='0' name='item' type='xs:string' />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+
+
+			DataSet OriginalDataSet = new DataSet ("myDataSet"); 
+			OriginalDataSet.Namespace= "NetFrameWork"; 
+			DataTable myTable = new DataTable ("myTable"); 
+			DataColumn c1 = new DataColumn ("id", typeof (int)); 
+			c1.AutoIncrement = true;
+			DataColumn c2 = new DataColumn ("item"); 
+			myTable.Columns.Add (c1);
+			myTable.Columns.Add (c2);
+			OriginalDataSet.Tables.Add (myTable);
+			// Add ten rows.
+			DataRow newRow;
+			for(int i = 0; i < 10; i++) {
+				newRow = myTable.NewRow ();
+				newRow ["item"] = "item " + i;
+				myTable.Rows.Add (newRow);
+			} 
+			OriginalDataSet.AcceptChanges ();
+
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.QuoteChar = '\'';
+			OriginalDataSet.WriteXml (xtw);
+			string result = sw.ToString ();
+
+			AssertEquals (xml, result);
+
+			sw = new StringWriter ();
+			xtw = new XmlTextWriter (sw);
+			xtw.Formatting = Formatting.Indented;
+			OriginalDataSet.WriteXmlSchema (xtw);
+			result = GetNormalizedSchema (sw.ToString ());
+//			result = sw.ToString ();
+
+			result = result.Replace ("\r\n", "\n").Replace ('"', '\'');
+			AssertEquals (schema, result);
+		}
+
+		// bug #66366
+		[Test]
+		public void WriteXmlSchema3 ()
+		{
+			// This is the MS output of WriteXmlSchema().
+/*
+			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema id=""ExampleDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
+  <xs:element name=""ExampleDataSet"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""ExampleDataTable"">
+          <xs:complexType>
+            <xs:attribute name=""PrimaryKeyColumn"" type=""xs:int"" use=""required"" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name=""PK_ExampleDataTable"" msdata:PrimaryKey=""true"">
+      <xs:selector xpath="".//ExampleDataTable"" />
+      <xs:field xpath=""@PrimaryKeyColumn"" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>";
+*/
+			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns="""" id=""ExampleDataSet"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+  <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""ExampleDataSet"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""ExampleDataTable"">
+          <xs:complexType>
+            <xs:attribute name=""PrimaryKeyColumn"" type=""xs:int"" use=""required"" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique msdata:PrimaryKey=""true"" name=""PK_ExampleDataTable"">
+      <xs:selector xpath="".//ExampleDataTable"" />
+      <xs:field xpath=""@PrimaryKeyColumn"" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>";
+
+			DataSet ds = new DataSet ("ExampleDataSet");
+
+			ds.Tables.Add (new DataTable ("ExampleDataTable"));
+			ds.Tables ["ExampleDataTable"].Columns.Add (
+				new DataColumn ("PrimaryKeyColumn", typeof(int), "", MappingType.Attribute));
+			ds.Tables ["ExampleDataTable"].Columns ["PrimaryKeyColumn"].AllowDBNull = false;
+
+			ds.Tables ["ExampleDataTable"].Constraints.Add (
+				"PK_ExampleDataTable", 
+				ds.Tables ["ExampleDataTable"].Columns ["PrimaryKeyColumn"],
+				true);
+
+			ds.AcceptChanges ();
+			StringWriter sw = new StringWriter ();
+			ds.WriteXmlSchema (sw);
+
+//			string result = sw.ToString ();
+			string result = GetNormalizedSchema (sw.ToString ());
+
+			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
+		}
+
+		// bug #67792.
+		[Test]
+		public void WriteXmlSchema4 ()
+		{
+			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
+  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""MyType"">
+          <xs:complexType>
+            <xs:attribute name=""ID"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Desc"" type=""xs:string"" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+
+			DataSet ds = new DataSet ("Example");
+
+			// Add MyType DataTable
+			DataTable dt = new DataTable ("MyType");
+			ds.Tables.Add (dt);
+
+			dt.Columns.Add (new DataColumn ("ID", typeof(int), "",
+				MappingType.Attribute));
+			dt.Columns ["ID"].AllowDBNull = false;
+
+			dt.Columns.Add (new DataColumn ("Desc", typeof
+				(string), "", MappingType.Attribute));
+
+			ds.AcceptChanges ();
+
+			StringWriter sw = new StringWriter ();
+			ds.WriteXmlSchema (sw);
+
+			string result = sw.ToString ();
+
+			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
+		}
+
+		// bug # 68432
+		[Test]
+		public void WriteXmlSchema5 ()
+		{
+			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
+  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""StandAlone"">
+          <xs:complexType>
+            <xs:attribute name=""ID"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Desc"" type=""xs:string"" use=""required"" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name=""Dimension"">
+          <xs:complexType>
+            <xs:attribute name=""Number"" msdata:ReadOnly=""true"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Title"" type=""xs:string"" use=""required"" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name=""Element"">
+          <xs:complexType>
+            <xs:attribute name=""Dimension"" msdata:ReadOnly=""true"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Number"" msdata:ReadOnly=""true"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Title"" type=""xs:string"" use=""required"" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name=""PK_Dimension"" msdata:PrimaryKey=""true"">
+      <xs:selector xpath="".//Dimension"" />
+      <xs:field xpath=""@Number"" />
+    </xs:unique>
+    <xs:unique name=""PK_Element"" msdata:PrimaryKey=""true"">
+      <xs:selector xpath="".//Element"" />
+      <xs:field xpath=""@Dimension"" />
+      <xs:field xpath=""@Number"" />
+    </xs:unique>
+    <xs:keyref name=""FK_Element_To_Dimension"" refer=""PK_Dimension"">
+      <xs:selector xpath="".//Element"" />
+      <xs:field xpath=""@Dimension"" />
+    </xs:keyref>
+  </xs:element>
+</xs:schema>";
+
+			DataSet ds = new DataSet("Example");
+
+			// Add a DataTable with no ReadOnly columns
+			DataTable dt1 = new DataTable ("StandAlone");
+			ds.Tables.Add (dt1);
+
+			// Add a ReadOnly column
+			dt1.Columns.Add (new DataColumn ("ID", typeof(int), "", 
+				MappingType.Attribute));
+			dt1.Columns ["ID"].AllowDBNull = false;
+
+			dt1.Columns.Add (new DataColumn ("Desc", typeof
+				(string), "", MappingType.Attribute));
+			dt1.Columns ["Desc"].AllowDBNull = false;
+
+			// Add related DataTables with ReadOnly columns
+			DataTable dt2 = new DataTable ("Dimension");
+			ds.Tables.Add (dt2);
+			dt2.Columns.Add (new DataColumn ("Number", typeof
+				(int), "", MappingType.Attribute));
+			dt2.Columns ["Number"].AllowDBNull = false;
+			dt2.Columns ["Number"].ReadOnly = true;
+
+			dt2.Columns.Add (new DataColumn ("Title", typeof
+				(string), "", MappingType.Attribute));
+			dt2.Columns ["Title"].AllowDBNull = false;
+
+			dt2.Constraints.Add ("PK_Dimension", dt2.Columns ["Number"], true);
+
+			DataTable dt3 = new DataTable ("Element");
+			ds.Tables.Add(dt3);
+			
+			dt3.Columns.Add (new DataColumn ("Dimension", typeof
+				(int), "", MappingType.Attribute));
+			dt3.Columns ["Dimension"].AllowDBNull = false;
+			dt3.Columns ["Dimension"].ReadOnly = true;
+
+			dt3.Columns.Add (new DataColumn ("Number", typeof
+				(int), "", MappingType.Attribute));
+			dt3.Columns ["Number"].AllowDBNull = false;
+			dt3.Columns ["Number"].ReadOnly = true;
+
+			dt3.Columns.Add (new DataColumn ("Title", typeof
+				(string), "", MappingType.Attribute));
+			dt3.Columns ["Title"].AllowDBNull = false;
+
+			dt3.Constraints.Add ("PK_Element", new DataColumn[] { 
+				dt3.Columns ["Dimension"],
+				dt3.Columns ["Number"] }, true);
+
+			ds.Relations.Add ("FK_Element_To_Dimension",
+				dt2.Columns ["Number"], dt3.Columns["Dimension"]);
+
+			ds.AcceptChanges ();
+
+			StringWriter sw = new StringWriter ();
+			ds.WriteXmlSchema (sw);
+
+			string result = sw.ToString ();
+
+			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
+		}
+
+		// bug #67793
+		[Test]
+		public void WriteXmlSchema6 ()
+		{
+			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
+  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""MyType"">
+          <xs:complexType>
+            <xs:attribute name=""Desc"">
+              <xs:simpleType>
+                <xs:restriction base=""xs:string"">
+                  <xs:maxLength value=""32"" />
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+
+			DataSet ds = new DataSet("Example");
+
+			// Add MyType DataTable
+			ds.Tables.Add ("MyType");
+
+			ds.Tables ["MyType"].Columns.Add (new DataColumn(
+				"Desc", typeof (string), "", MappingType.Attribute));
+			ds.Tables ["MyType"].Columns ["Desc"].MaxLength = 32;
+
+			ds.AcceptChanges ();
+
+			StringWriter sw = new StringWriter ();
+			ds.WriteXmlSchema (sw);
+
+			string result = sw.ToString ();
+
+			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
+		}
+
+		// bug #68008
+		[Test]
+		public void WriteXmlSchema7 ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			ds.Tables.Add (dt);
+			dt.Rows.Add (new object [] {"foo", "bar"});
+			StringWriter sw = new StringWriter ();
+			ds.WriteXmlSchema (sw);
+			Assert (sw.ToString ().IndexOf ("xmlns=\"\"") > 0);
+		}
+
+		// bug #61233
+		[Test]
+		public void WriteXmlExtendedProperties ()
+		{
+			string xml = @"<NewDataSet>
+  <xs:schema id=""NewDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:msprop=""urn:schemas-microsoft-com:xml-msprop"">
+    <xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" msprop:version=""version 2.1"">
+      <xs:complexType>
+        <xs:choice maxOccurs=""unbounded"">
+          <xs:element name=""Foo"">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name=""col1"" type=""xs:string"" minOccurs=""0"" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <Foo>
+    <col1>foo</col1>
+  </Foo>
+</NewDataSet>";
+			DataSet ds = new DataSet ();
+			ds.ExtendedProperties ["version"] = "version 2.1";
+			DataTable dt = new DataTable ("Foo");
+			dt.Columns.Add ("col1");
+			dt.Rows.Add (new object [] {"foo"});
+			ds.Tables.Add (dt);
+
+			StringWriter sw = new StringWriter ();
+			ds.WriteXml(sw, XmlWriteMode.WriteSchema);
+
+			string result = sw.ToString ();
+
+			AssertEquals (xml, result.Replace ("\r\n", "\n"));
+		}
+
+		[Test]
+		public void WriteXmlModeSchema ()
+		{
+			string xml = @"<Example>
+  <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
+    <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+      <xs:complexType>
+        <xs:choice maxOccurs=""unbounded"">
+          <xs:element name=""Dimension"">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name=""Number"" type=""xs:int"" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name=""Element"">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name=""Dimension"" type=""xs:int"" />
+                <xs:element name=""Number"" type=""xs:int"" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+      <xs:unique name=""PK_Dimension"" msdata:PrimaryKey=""true"">
+        <xs:selector xpath="".//Dimension"" />
+        <xs:field xpath=""Number"" />
+      </xs:unique>
+      <xs:unique name=""PK_Element"" msdata:PrimaryKey=""true"">
+        <xs:selector xpath="".//Element"" />
+        <xs:field xpath=""Dimension"" />
+        <xs:field xpath=""Number"" />
+      </xs:unique>
+      <xs:keyref name=""FK_Element_To_Dimension"" refer=""PK_Dimension"">
+        <xs:selector xpath="".//Element"" />
+        <xs:field xpath=""Dimension"" />
+      </xs:keyref>
+    </xs:element>
+  </xs:schema>
+  <Dimension>
+    <Number>0</Number>
+  </Dimension>
+  <Dimension>
+    <Number>1</Number>
+  </Dimension>
+  <Element>
+    <Dimension>0</Dimension>
+    <Number>0</Number>
+  </Element>
+  <Element>
+    <Dimension>0</Dimension>
+    <Number>1</Number>
+  </Element>
+  <Element>
+    <Dimension>0</Dimension>
+    <Number>2</Number>
+  </Element>
+  <Element>
+    <Dimension>0</Dimension>
+    <Number>3</Number>
+  </Element>
+  <Element>
+    <Dimension>1</Dimension>
+    <Number>0</Number>
+  </Element>
+  <Element>
+    <Dimension>1</Dimension>
+    <Number>1</Number>
+  </Element>
+</Example>";
+
+			DataSet ds = new DataSet("Example");
+
+			// Dimension DataTable
+			DataTable dt1 = new DataTable ("Dimension");
+			ds.Tables.Add (dt1);
+
+			dt1.Columns.Add (new DataColumn ("Number", typeof (int)));
+			dt1.Columns ["Number"].AllowDBNull = false;
+
+			dt1.Constraints.Add ("PK_Dimension", dt1.Columns ["Number"], true);
+
+			// Element DataTable
+			DataTable dt2 = new DataTable ("Element");
+			ds.Tables.Add (dt2);
+
+			dt2.Columns.Add (new DataColumn ("Dimension", typeof (int)));
+			dt2.Columns ["Dimension"].AllowDBNull = false;
+
+			dt2.Columns.Add (new DataColumn ("Number", typeof (int)));
+			dt2.Columns ["Number"].AllowDBNull = false;
+
+			dt2.Constraints.Add ("PK_Element", new DataColumn[] {
+				dt2.Columns ["Dimension"],
+				dt2.Columns ["Number"] },
+				true);
+			
+			// Add DataRelations
+			ds.Relations.Add ("FK_Element_To_Dimension",
+				dt1.Columns ["Number"],
+				dt2.Columns ["Dimension"], true);
+
+			// Add 2 Dimensions
+			for (int i = 0; i < 2; i++) {
+				DataRow newRow = dt1.NewRow ();
+				newRow ["Number"] = i;
+				dt1.Rows.Add (newRow);
+			}
+
+			// Dimension 0 => 4 Elements
+			for (int i = 0; i < 4; i++) {
+				DataRow newRow = dt2.NewRow();
+				newRow ["Dimension"] = 0;
+				newRow ["Number"] = i;
+				dt2.Rows.Add (newRow);
+			}
+
+			// Dimension 1 => 2 Elements
+			for (int i = 0; i < 2; i++) {
+				DataRow newRow = dt2.NewRow();
+				newRow ["Dimension"] = 1;
+				newRow ["Number"] = i;
+				dt2.Rows.Add (newRow);
+			}
+
+			ds.AcceptChanges ();
+
+			StringWriter sw = new StringWriter ();
+			ds.WriteXml(sw, XmlWriteMode.WriteSchema);
+
+			string result = sw.ToString ();
+
+			AssertEquals (xml, result.Replace ("\r\n", "\n"));
+		}
+
 		[Test]
 		public void DeserializeModifiedDataSet ()
                 {

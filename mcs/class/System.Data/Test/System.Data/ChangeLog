@@ -1,3 +1,16 @@
+2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetReadXmlSchemaTest.cs : added test for bug #58744.
+	* DataSetReadXmlTest.cs : Added NameConflictDSAndTable().
+	* DataSetTest.cs :
+	  Now use XmlSerializer based output, to avoid silly attribute order in
+	  OwnWriteXmlSchema(),WriteXmlSchema(),ReadWriteXmlSchemaIgnoreSchema(),
+	  ReadWriteXmlSchema() and WriteDifferentNamespaceSchema().
+	  Added SerializeDataSet2(),SerializeDataSet3(),DeserializeDataSet(),
+	  ReadWriteXml3(),WriteXmlSchema2(),WriteXmlSchema3(),WriteXmlSchema4(),
+	  WriteXmlSchema5(),WriteXmlSchema6(),WriteXmlSchema7(),
+	  WriteXmlExtendedProperties() and WriteXmlModeSchema().
+
 2004-10-14 Umadevi S <sumadevi@novell.com>
 	* DataTableTest.cs : added testcase for subclass clone
 

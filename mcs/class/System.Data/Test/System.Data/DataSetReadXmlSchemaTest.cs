@@ -567,6 +567,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
+		// MS.NET has a bug on handling default value of referenced
+		// attribute.
 		public void TestSampleFileValueConstraints ()
 		{
 			DataSet ds = new DataSet ();
@@ -641,6 +644,14 @@ namespace MonoTests.System.Data
 			AssertDataTable ("root", dt, "e", 2, 0, 0, 0, 0, 0);
 			AssertDataColumn ("attr", dt.Columns [0], "a", true, false, 0, 1, "a", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("simple", dt.Columns [1], "e_text", false, false, 0, 1, "e_text", MappingType.SimpleContent, typeof (decimal), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
+		}
+
+		// bug #58744
+		[Test]
+		public void TestSampleFileXPath ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/test103.xsd");
 		}
 
 		[Test]

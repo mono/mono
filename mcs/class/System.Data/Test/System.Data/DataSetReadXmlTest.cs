@@ -34,6 +34,7 @@ using System.IO;
 using System.Data;
 using System.Text;
 using System.Xml;
+using System.Xml.Serialization;
 using NUnit.Framework;
 
 namespace MonoTests.System.Data
@@ -609,7 +610,7 @@ namespace MonoTests.System.Data
 			// already schema information in the dataset.
 			// Columns are kept 1 as old table holds.
 			// Rows are up to 2 because of accumulative read.
-			AssertReadXml (ds, "SimpleTable2", xml7,
+			AssertReadXml (ds, "SimpleTable2-2", xml7,
 				XmlReadMode.Auto, XmlReadMode.IgnoreSchema,
 				"NewDataSet", 1);
 			AssertDataTable ("#3", ds.Tables [0], "root", 1, 2, 0, 0, 0, 0);
@@ -649,36 +650,23 @@ namespace MonoTests.System.Data
 			AssertEquals ("no such table", 0, dt.Rows.Count);
 		}
 
-		/* To be added
+		// bug #60118
 		[Test]
-		public void SaveDiffLoadAutoSaveSchema ()
+		public void NameConflictDSAndTable ()
 		{
+			string xml = @"<PriceListDetails> 
+	<PriceListList>    
+		<Id>1</Id>
+	</PriceListList>
+	<PriceListDetails> 
+		<Id>1</Id>
+		<Status>0</Status>
+	</PriceListDetails>
+</PriceListDetails>";
+
 			DataSet ds = new DataSet ();
-			ds.Tables.Add ("Table1");
-			ds.Tables.Add ("Table2");
-			ds.Tables [0].Columns.Add ("Column1_1");
-			ds.Tables [0].Columns.Add ("Column1_2");
-			ds.Tables [0].Columns.Add ("Column1_3");
-			ds.Tables [1].Columns.Add ("Column2_1");
-			ds.Tables [1].Columns.Add ("Column2_2");
-			ds.Tables [1].Columns.Add ("Column2_3");
-			ds.Tables [0].Rows.Add (new object [] {"ppp", "www", "xxx"});
-
-			// save as diffgram
-			StringWriter sw = new StringWriter ();
-			ds.WriteXml (sw, XmlWriteMode.DiffGram);
-			string xml = sw.ToString ();
-			string result = new StreamReader ("Test/System.Data/DataSetReadXmlTest1.xml", Encoding.ASCII).ReadToEnd ();
-			AssertEquals ("#01", result, xml);
-
-			// load diffgram above
-			ds.ReadXml (new StringReader (sw.ToString ()));
-			sw = new StringWriter ();
-			ds.WriteXml (sw, XmlWriteMode.WriteSchema);
-			xml = sw.ToString ();
-			result = new StreamReader ("Test/System.Data/DataSetReadXmlTest2.xml", Encoding.ASCII).ReadToEnd ();
-			AssertEquals ("#02", result, xml);
+			ds.ReadXml (new StringReader (xml));
+			AssertNotNull (ds.Tables ["PriceListDetails"]);
 		}
-		*/
 	}
 }
