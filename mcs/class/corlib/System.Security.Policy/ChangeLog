@@ -1,3 +1,8 @@
+2004-10-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Evidence.cs: Fix the case where GetPublicKey returns a 0 length
+	byte array so that we don't create an invalid StrongName evidence.
+
 2004-09-19  Alexis Christoforides <alexis@thenull.net>
 
 	* CodeGroup.cs: Changed AddChild() to add a copy of the child, like 
