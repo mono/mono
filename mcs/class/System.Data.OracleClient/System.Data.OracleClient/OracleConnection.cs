@@ -26,61 +26,76 @@ using System.Data;
 using System.Data.OracleClient.OCI;
 using System.Text;
 
-namespace System.Data.OracleClient {
-	internal struct OracleConnectionInfo {
+namespace System.Data.OracleClient 
+{
+	internal struct OracleConnectionInfo 
+	{
 		public string Username;
 		public string Password;
 		public string Database;
 	}
 
-	public class OracleConnection {
+	public class OracleConnection 
+	{
 		private	OciGlue oci;
 		private ConnectionState state;
 		private OracleConnectionInfo conInfo;
 		private string connectionString = "";
 
-		public OracleConnection () {
+		public OracleConnection () 
+		{
 			state = ConnectionState.Closed;
 			oci = new OciGlue ();
 		}
 
-		public OracleConnection (string connectionString) : this() {
+		public OracleConnection (string connectionString) : this() 
+		{
 			this.connectionString = connectionString;
 		}
 
-		public void Open () {
+		public void Open () 
+		{
 			Int32 status;
 			
-			status = oci.OciGlueConnect(conInfo);
+			status = oci.Connect(conInfo);
 			if(status != 0)
-				throw new Exception("Error: Unable to connect: " + status.ToString());
+				throw new Exception("Error: Unable to connect: " + 
+					status.ToString() + 
+					": " +
+					oci.CheckError(status));
 			else
 				state = ConnectionState.Open;
 		}
 
-		public void Close () {
-			Int32 status = oci.OciGlueDisconnect();
+		public void Close () 
+		{
+			Int32 status = oci.Disconnect();
 			state = ConnectionState.Closed;
 			if(status != 0)
-				throw new Exception("Error: Unable to connect: " + status.ToString());
+				throw new Exception("Error: Unable to disconnect: " + 
+					status.ToString() + 
+					": " +
+					oci.CheckError(status));
 		}
 
-		// only for DEBUG purposes
-		public static uint ConnectionCount {
+		// only for DEBUG purposes - not part of MS.NET 1.1 OracleClient
+		public static uint ConnectionCount 
+		{
 			get {
 				uint count = OciGlue.OciGlue_ConnectionCount();
-				uint cnt = count;
-				return cnt;
+				return count;
 			}
 		}
 
-		public ConnectionState State {
+		public ConnectionState State 
+		{
 			get {
 				return state;
 			}
 		}
 
-		public string ConnectionString {
+		public string ConnectionString 
+		{
 			get {
 				return connectionString;
 			}
@@ -89,13 +104,15 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-		internal OciGlue Oci {
+		internal OciGlue Oci 
+		{
 			get {
 				return oci;
 			}
 		}
 
-		void SetConnectionString (string connectionString) {
+		void SetConnectionString (string connectionString) 
+		{
 			this.connectionString = connectionString;
 			conInfo.Username = "";
 			conInfo.Database = "";
@@ -152,7 +169,8 @@ namespace System.Data.OracleClient {
 			SetProperties (parameters);
 		}
 
-		private void SetProperties (NameValueCollection parameters) {	
+		private void SetProperties (NameValueCollection parameters) 
+		{	
 			string value;
 			foreach (string name in parameters) {
 				value = parameters[name];

@@ -45,7 +45,7 @@ namespace System.Data.OracleClient
 			status = conn.Oci.PrepareAndExecuteNonQuerySimple (sql);
 			if(status != 0) {
 				string statusText;
-				statusText = conn.Oci.CheckError(status);
+				statusText = conn.Oci.CheckStatus(status);
 				string msg = 
 					"SQL Error: [" + 
 					sql + "] " +

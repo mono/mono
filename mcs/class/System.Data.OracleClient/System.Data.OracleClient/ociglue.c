@@ -23,17 +23,27 @@
 
 #include "ociglue.h"
 
-GSList *conlist = NULL;
+/* ------------- Global Variables ---------------------- */
+GSList *conlist = NULL; /* singly linked list of oci_glue_connection_t */
 
+/* ------------- Private Function Prototypes ----------- */
 oci_glue_connection_t *find_connection (ub4 connection_handle);
 GSList *find_connection_node (ub4 connection_handle);
+text *check_error_internal (oci_glue_connection_t *oci_glue_handle, sb4 *errcode);
 
-sword OciGlue_Connect (ub4 *connection_handle, 
+/* ------------- Public Functions ----------- */
+text *OciGlue_Connect (sword *status, ub4 *connection_handle, sb4 *errcode, 
 					   char *database, char *username, char *password)
 {
-	sword status;
 	oci_glue_connection_t *oci_glue_handle;
+	text *errbuf = NULL;
 
+	if(!connection_handle || !errcode || !database || !username || !password) {
+		return NULL;
+	}
+	
+	*errcode = 0;
+	
 	*connection_handle = 0;
 
 	oci_glue_handle = g_new(oci_glue_connection_t, 1);
@@ -50,121 +60,137 @@ sword OciGlue_Connect (ub4 *connection_handle,
 
 	conlist = g_slist_append (conlist, oci_glue_handle);
 
-	status = OCIEnvCreate(&(oci_glue_handle->envhp), OCI_DEFAULT, (dvoid *)0, 
+	*status = OCIEnvCreate(&(oci_glue_handle->envhp), OCI_DEFAULT, (dvoid *)0, 
                                0, 0, 0, (size_t) 0, (dvoid **)0);
     
-	if(status != 0) {
+	if(*status != 0) {
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return NULL;
 	}
 
-	status = OCIHandleAlloc( (dvoid *) (oci_glue_handle->envhp), 
+	*status = OCIHandleAlloc( (dvoid *) (oci_glue_handle->envhp), 
 					(dvoid **) &(oci_glue_handle->errhp), 
 					OCI_HTYPE_ERROR, 
                    (size_t) 0, (dvoid **) 0);
 
-	if(status != 0) {
+	if(*status != 0) {
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return NULL;
 	}
 
   /* server contexts */
-  status = OCIHandleAlloc( (dvoid *) (oci_glue_handle->envhp), 
+  *status = OCIHandleAlloc( (dvoid *) (oci_glue_handle->envhp), 
 					(dvoid **) &(oci_glue_handle->srvhp), OCI_HTYPE_SERVER,
                    (size_t) 0, (dvoid **) 0);
 
-	if(status != 0) {
+	if(*status != 0) {
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return NULL;
 	}
 
-  status = OCIHandleAlloc( (dvoid *) (oci_glue_handle->envhp), 
+  *status = OCIHandleAlloc( (dvoid *) (oci_glue_handle->envhp), 
 					(dvoid **) &(oci_glue_handle->svchp), OCI_HTYPE_SVCCTX,
                    (size_t) 0, (dvoid **) 0);
 
-	if(status != 0) {
+	if(*status != 0) {
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return NULL;
 	}
 
-  status = OCIServerAttach(oci_glue_handle->srvhp, 
+  *status = OCIServerAttach(oci_glue_handle->srvhp, 
 					oci_glue_handle->errhp, (text *)"", strlen(""), 0);
 
-	if(status != 0) {
+	if(*status != 0) {
+		errbuf = check_error_internal (oci_glue_handle, errcode);
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return errbuf;
 	}
 
-  status = OCIAttrSet( (dvoid *) (oci_glue_handle->svchp), OCI_HTYPE_SVCCTX, 
+  *status = OCIAttrSet( (dvoid *) (oci_glue_handle->svchp), OCI_HTYPE_SVCCTX, 
 					(dvoid *) (oci_glue_handle->srvhp), 
                     (ub4) 0, OCI_ATTR_SERVER, 
 					(OCIError *) (oci_glue_handle->errhp));
 
-	if(status != 0) {
+	if(*status != 0) {
+		errbuf = check_error_internal (oci_glue_handle, errcode);
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return errbuf;
 	}
 
-  status = OCIHandleAlloc((dvoid *) (oci_glue_handle->envhp), 
+  *status = OCIHandleAlloc((dvoid *) (oci_glue_handle->envhp), 
 						(dvoid **)&(oci_glue_handle->authp), 
                         (ub4) OCI_HTYPE_SESSION, (size_t) 0, (dvoid **) 0);
 
-	if(status != 0) {
+	if(*status != 0) {
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return NULL;
 	}
 
-  status = OCIAttrSet((dvoid *) oci_glue_handle->authp, (ub4) OCI_HTYPE_SESSION,
+  *status = OCIAttrSet((dvoid *) oci_glue_handle->authp, (ub4) OCI_HTYPE_SESSION,
                  (dvoid *) username, (ub4) strlen((char *)username),
                  (ub4) OCI_ATTR_USERNAME, oci_glue_handle->errhp);
   
-	if(status != 0) {
+	if(*status != 0) {
+		errbuf = check_error_internal (oci_glue_handle, errcode);
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return errbuf;
 	}
 
-  status = OCIAttrSet((dvoid *) oci_glue_handle->authp, (ub4) OCI_HTYPE_SESSION,
+  *status = OCIAttrSet((dvoid *) oci_glue_handle->authp, (ub4) OCI_HTYPE_SESSION,
                  (dvoid *) password, (ub4) strlen((char *)password),
                  (ub4) OCI_ATTR_PASSWORD, oci_glue_handle->errhp);
 
-	if(status != 0) {
+	if(*status != 0) {
+		errbuf = check_error_internal (oci_glue_handle, errcode);
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return errbuf;
 	}
 
-  status = OCISessionBegin ( oci_glue_handle->svchp,  
+  *status = OCISessionBegin ( oci_glue_handle->svchp,  
 						oci_glue_handle->errhp, 
 						oci_glue_handle->authp, 
 						OCI_CRED_RDBMS, 
 						(ub4) OCI_DEFAULT);
 
-	if(status != 0) {
+	if(*status != 0) {
+		errbuf = check_error_internal (oci_glue_handle, errcode);
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return errbuf;
 	}
 
-  status = OCIAttrSet((dvoid *) (oci_glue_handle->svchp), 
+  *status = OCIAttrSet((dvoid *) (oci_glue_handle->svchp), 
 					(ub4) OCI_HTYPE_SVCCTX,
                    (dvoid *) (oci_glue_handle->authp), (ub4) 0,
                    (ub4) OCI_ATTR_SESSION, 
 				   oci_glue_handle->errhp); 
 
-  	if(status != 0) {
+  	if(*status != 0) {
+		errbuf = check_error_internal (oci_glue_handle, errcode);
 		OciGlue_Disconnect (*connection_handle);
-		return status;
+		*connection_handle = 0;
+		return errbuf;
 	}
 
-	return status;
+	return errbuf;
 }
 
 sword OciGlue_PrepareAndExecuteNonQuerySimple (ub4 connection_handle,
-									char *sqlstmt, int *found)
+									text *sqlstmt, ub4 *found)
 {
 	sword status = 0;
 	oci_glue_connection_t *oci_glue_handle;
 	void *node;
 	GSList *con_node;
-	
 		
 	if(!conlist)
 		return -1;
@@ -227,11 +253,13 @@ sword OciGlue_Disconnect (ub4 connection_handle)
 
 	if(oci_glue_handle) {
 		
-		status = OCISessionEnd(oci_glue_handle->svchp, 
-			oci_glue_handle->errhp, oci_glue_handle->authp, (ub4) 0);
+		if(oci_glue_handle->svchp && oci_glue_handle->errhp && oci_glue_handle->authp)
+			status = OCISessionEnd(oci_glue_handle->svchp, 
+				oci_glue_handle->errhp, oci_glue_handle->authp, (ub4) 0);
   
-		status = OCIServerDetach(oci_glue_handle->srvhp, oci_glue_handle->errhp, 
-			(ub4) OCI_DEFAULT);
+		if(oci_glue_handle->srvhp && oci_glue_handle->errhp)
+			status = OCIServerDetach(oci_glue_handle->srvhp, oci_glue_handle->errhp, 
+				(ub4) OCI_DEFAULT);
 
 		if (oci_glue_handle->srvhp)
 			status = OCIHandleFree((dvoid *) oci_glue_handle->srvhp, (ub4) OCI_HTYPE_SERVER);
@@ -250,6 +278,7 @@ sword OciGlue_Disconnect (ub4 connection_handle)
 
 		if (oci_glue_handle->envhp)
 			status = OCIHandleFree((dvoid *) oci_glue_handle->envhp, (ub4) OCI_HTYPE_ENV);
+
 	}
 	node = find_connection_node (connection_handle);
 	if(node) {
@@ -272,7 +301,7 @@ guint OciGlue_ConnectionCount ()
 	return g_slist_length (conlist);
 }
 
-CONST text *OciGlue_CheckError (sword status, ub4 connection_handle)
+text *OciGlue_CheckError (sword status, ub4 connection_handle)
 {
 	oci_glue_connection_t *oci_glue_handle = NULL;
 	text *errbuf;
@@ -291,7 +320,7 @@ CONST text *OciGlue_CheckError (sword status, ub4 connection_handle)
 		return NULL;
 
 	errbuf_size = sizeof(text) * 512;
-	errbuf = (text *) malloc(errbuf_size);
+	errbuf = (text *) g_malloc(errbuf_size);
 
 	OCIErrorGet((dvoid *)(oci_glue_handle->errhp), 
 		(ub4) 1, (text *) NULL, &errcode,
@@ -300,9 +329,31 @@ CONST text *OciGlue_CheckError (sword status, ub4 connection_handle)
 	return errbuf;
 }
 
-void Free (void *obj)
+void OciGlue_Free (void *obj)
 {
-	free(obj);
+	g_free(obj);
+}
+
+/* ------------- Private Functions ----------- */
+
+text *check_error_internal (oci_glue_connection_t *oci_glue_handle, sb4 *errcode)
+{
+	text* errbuf = NULL;
+	size_t errbuf_size;
+
+	if(!oci_glue_handle)
+		return NULL;
+	if(!errcode)
+		return NULL;
+
+	errbuf_size = sizeof(text) * 512;
+	errbuf = (text *) g_malloc(errbuf_size);
+
+	OCIErrorGet((dvoid *)(oci_glue_handle->errhp), 
+		(ub4) 1, (text *) NULL, errcode,
+		errbuf, (ub4) errbuf_size, OCI_HTYPE_ERROR);
+
+	return errbuf;
 }
 
 GSList *find_connection_node (ub4 connection_handle)
@@ -336,50 +387,3 @@ oci_glue_connection_t *find_connection (ub4 connection_handle)
 	}
 	return NULL;
 }
-
-/* For some reason, I was unable to get these to work. */
-/*
-dvoid *OciGlue_OCIEnvCreate(sword *status)
-{
-	OCIEnv *myenvhp = NULL;
-
-	*status = OCIEnvCreate(&myenvhp, OCI_THREADED|OCI_OBJECT, (dvoid *)0, 
-                               0, 0, 0, (size_t) 0, (dvoid **)0);
-
-	return myenvhp;
-}
-
-dvoid *OciGlue_OCIHandleAlloc(sword *status, CONST dvoid *parenth, ub4 type)
-{
-	dvoid *hndlpp = NULL;
-	 
-	*status = OCIHandleAlloc ((dvoid *)parenth, (dvoid **)&hndlpp,
-							type, 0, (dvoid **) 0);
-
-	return hndlpp;
-}
-
-void OciGlue_OCIServerAttach(sword *status, dvoid *srvhp, dvoid *errhp, 
-							 char *dblink, ub4 mode)
-{
-	*status = OCIServerAttach(srvhp, errhp, 
-				dblink, (sb4) strlen(dblink), (ub4) mode);
-}
-
-void OciGlue_OCIAttrSet(sword *status, 
-						dvoid *trgthndlp, ub4 trghndltyp, 
-						dvoid *attributep, ub4 size, ub4 attrtype, 
-						dvoid *errhp)
-{
-	*status = OCIAttrSet (trgthndlp, trghndltyp, 
-						  attributep, size, attrtype, 
-						  errhp);
-}
-
-void OciGlue_OCISessionBegin(sword *status, dvoid *svchp, dvoid *errhp, dvoid *usrhp,
-							ub4 credt, ub4 mode )
-{
-	*status = OCISessionBegin (svchp, errhp, usrhp, credt, mode);
-}
-*/
-

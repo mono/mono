@@ -19,12 +19,27 @@
 # builds with command-line Microsoft C 7.0 using cl and nmake
 # builds using the MSVC OCI import library oci.lib (lib that exports symbols from oci.dll)
 
+# Two environment variables need to be set: ORACLE_HOME and GLIB_PREFIX
+# ORACLE_HOME set to directory above where your /oci/lib
+# For example:
+#       set ORACLE_HOME=F:\oracle\ora81
+# Where f:\oracle\ora81 has a subdirectory oci
+#
+# GLIB_PREFIX set to where GLIB 2.0 prefix is installed 
+# For example:
+#       set GLIB_PREFIX=F:\cygwin\home\DanielMorgan\mono\install
+# Which assumes your glib-2.0 libraries are in $(GLIB_PREFIX)\lib
+# and your glib-2.0 include files are in $(GLIB_PREFIX)\include
+
 # GLIB 2.0 for Win32 found at http://www.gimp.org/win32
 
 PROJECT = System.Data.OracleClient.ociglue.dll
 
-GLIB_CFLAGS = -IF:\cygwin\home\DanielMorgan\mono\install\include\glib-2.0 -IF:\cygwin\home\DanielMorgan\mono\install\lib\glib-2.0\include
-GLIB_LIBS = /LIBPATH:F:\cygwin\home\DanielMorgan\mono\install\lib glib-2.0.lib intl.lib iconv.lib
+GLIB_CFLAGS = -I$(GLIB_PREFIX)\include\glib-2.0 -I$(GLIB_PREFIX)\lib\glib-2.0\include
+GLIB_LIBS = /LIBPATH:$(GLIB_PREFIX)\lib glib-2.0.lib intl.lib iconv.lib
+
+#GLIB_CFLAGS = -IF:\cygwin\home\DanielMorgan\mono\install\include\glib-2.0 -IF:\cygwin\home\DanielMorgan\mono\install\lib\glib-2.0\include
+#GLIB_LIBS = /LIBPATH:F:\cygwin\home\DanielMorgan\mono\install\lib glib-2.0.lib intl.lib iconv.lib
 
 # Oracle 8i OCI
 ORACLE_CFLAGS = -I%ORACLE_HOME%\oci\include
@@ -47,5 +62,5 @@ System.Data.OracleClient.ociglue.dll : $(SOURCE_C_FILES)
 	cl  $(OCIGLUELIB_CFLAGS) $(SOURCE_C_FILES) $(OCIGLUELIB_LINKFLAGS)
 	
 clean:
-	rm -f ociglue.dll
-	rm -f ociglue.o
+	rm -f System.Data.OracleClient.ociglue.dll
+	rm -f System.Data.OracleClient.ociglue.o

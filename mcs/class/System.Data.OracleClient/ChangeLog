@@ -1,3 +1,18 @@
+2002-12-08  Daniel Morgan <danmorg@sc.rr.com>
+
+	* list
+	* makefile.gnu: added files for linux build
+	
+	* System.Data.OracleClient.build: added file 
+	for windows build
+	
+	* .cvsignore: added file for cvs to ignore files
+
+	* System.Data.OracleClient/OciGlue.cs
+	* System.Data.OracleClient/ociglue.h
+	* System.Data.OracleClient/ociglue.c: code clean up 
+	and	better error handling
+	
 2002-12-05  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.OracleClient
