@@ -1,3 +1,7 @@
+2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
+	* System.Drawing.dll.sources: 	Remove cairo,win32,gtk implementations
+									Add gdi+ implementation
+
 2003-09-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* System.Drawing.dll.sources: Remove xr implementation. 
