@@ -144,6 +144,12 @@ namespace System.Xml.Schema
 			any.wildcard = this.wildcard;
 			OptimizedParticle = any;
 
+			// properties which never contribute to validation
+			any.Namespace = Namespace;
+			any.ProcessContents = ProcessContents;
+			any.Annotation = Annotation;
+			any.UnhandledAttributes = UnhandledAttributes;
+
 			return OptimizedParticle;
 		}
 		

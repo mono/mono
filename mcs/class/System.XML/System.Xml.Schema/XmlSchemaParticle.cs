@@ -156,13 +156,17 @@ namespace System.Xml.Schema
 		{
 			base.CopyInfo (obj);
 			if (MaxOccursString == "unbounded")
-				obj.MaxOccurs = obj.validatedMaxOccurs = decimal.MaxValue;
+				obj.maxOccurs = obj.validatedMaxOccurs = decimal.MaxValue;
 			else 
-				obj.MaxOccurs = obj.validatedMaxOccurs = this.ValidatedMaxOccurs;
+				obj.maxOccurs = obj.validatedMaxOccurs = this.ValidatedMaxOccurs;
 			if (MaxOccurs == 0)
-				obj.MinOccurs = obj.validatedMinOccurs = 0;
+				obj.minOccurs = obj.validatedMinOccurs = 0;
 			else
-				obj.MinOccurs = obj.validatedMinOccurs = this.ValidatedMinOccurs;
+				obj.minOccurs = obj.validatedMinOccurs = this.ValidatedMinOccurs;
+			if (MinOccursString != null)
+				obj.MinOccursString = MinOccursString;
+			if (MaxOccursString != null)
+				obj.MaxOccursString = MaxOccursString;
 		}
 
 		internal virtual bool ValidateOccurenceRangeOK (XmlSchemaParticle other,

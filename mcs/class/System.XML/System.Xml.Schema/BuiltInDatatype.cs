@@ -295,12 +295,21 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return ParseListValue (value, nt);
+			return GetValidatedArray (value, nt);
 		}
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
-			return new StringArrayValueType (ParseListValue (s, nameTable));
+			return new StringArrayValueType (GetValidatedArray (s, nameTable));
+		}
+
+		private string [] GetValidatedArray (string value, XmlNameTable nt)
+		{
+			string [] nmtokens = ParseListValue (value, nt);
+			for (int i = 0; i < nmtokens.Length; i++)
+				if (!XmlChar.IsNmToken (nmtokens [i]))
+					throw new ArgumentException ("Invalid name token.");
+			return nmtokens;
 		}
 	}
 
@@ -377,7 +386,12 @@ namespace Mono.Xml.Schema
 			get { return typeof (string); }
 		}
 
-		// ParseValue () method is as same as that of xs:string
+		public override object ParseValue (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		{
+			if (!XmlChar.IsNCName (s))
+				throw new ArgumentException ("'" + s + "' is an invalid NCName.");
+			return s;
+		}
 	}
 
 	// xs:IDREF
@@ -395,7 +409,12 @@ namespace Mono.Xml.Schema
 			get { return typeof (string); }
 		}
 
-		// ParseValue () method is as same as that of xs:string
+		public override object ParseValue (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		{
+			if (!XmlChar.IsNCName (s))
+				throw new ArgumentException ("'" + s + "' is an invalid NCName.");
+			return s;
+		}
 	}
 
 	// xs:IDREFS
@@ -415,12 +434,20 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return ParseListValue (value, nt);
+			return GetValidatedArray (value, nt);
 		}
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
-			return new StringArrayValueType (ParseListValue (s, nameTable));
+			return new StringArrayValueType (GetValidatedArray (s, nameTable));
+		}
+
+		private string [] GetValidatedArray (string value, XmlNameTable nt)
+		{
+			string [] idrefs = ParseListValue (value, nt);
+			for (int i = 0; i < idrefs.Length; i++)
+				XmlConvert.VerifyNCName (idrefs [i]);
+			return idrefs;
 		}
 	}
 
@@ -439,7 +466,7 @@ namespace Mono.Xml.Schema
 			get { return typeof (string); }
 		}
 
-		// ParseValue () method is as same as that of xs:string
+
 	}
 
 
@@ -460,12 +487,21 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return ParseListValue (value, nt);
+			return GetValidatedArray (value, nt);
 		}
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
-			return new StringArrayValueType (ParseListValue (s, nameTable));
+			return new StringArrayValueType (GetValidatedArray (s, nameTable));
+		}
+
+		private string [] GetValidatedArray (string value, XmlNameTable nt)
+		{
+			string [] entities = ParseListValue (value, nt);
+			for (int i = 0; i < entities.Length; i++)
+				if (!XmlChar.IsName (entities [i]))
+					throw new ArgumentException ("Invalid entitiy name.");
+			return entities;
 		}
 	}
 

@@ -1,3 +1,11 @@
+2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* BuiltInDatatype.cs : Fixed some Parse() for token based datatypes.
+	* XmlSchemaAny.cs : set properties for cloned particle. This will fix
+	  bugzilla #53668.
+	* XmlSchemaParticle.cs : copy occurence string after computation of
+	  validated min/max occurence. This will fix bug #53667.
+
 2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchema.cs : Raise warning event when external schema could not 
