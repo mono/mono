@@ -73,15 +73,15 @@ public class BitArrayTest : TestCase
     byte [] byteArr = new byte[] { 0xaa, 0x55, 0xaa, 0x55, 0x80 };
     BitArray ba = new BitArray(byteArr);
     
-    AssertEquals(ba.Length, byteArr.Length * 8);
+    AssertEquals("Lengths not equal", ba.Length, byteArr.Length * 8);
     
     // spot check
-    Assert(ba[7]);
-    Assert(!ba[6]);
-    Assert(!ba[15]);
-    Assert(ba[14]);
-    Assert(ba[39]);
-    Assert(!ba[35]);
+    Assert("7 not true", ba[7]);
+    Assert("6 not false", !ba[6]);
+    Assert("15 not false", !ba[15]);
+    Assert("14 not true", ba[14]);
+    Assert("39 not true", ba[39]);
+    Assert("35 not false", !ba[35]);
 
   }
 
