@@ -790,8 +790,10 @@ namespace System.Net
 
 			string connectionHeader = (ProxyQuery) ? "Proxy-Connection" : "Connection";
 			webHeaders.RemoveInternal ((!ProxyQuery) ? "Proxy-Connection" : "Connection");
-				
-			if (keepAlive && version == HttpVersion.Version10) {
+			bool spoint10 = (servicePoint.ProtocolVersion == null ||
+					 servicePoint.ProtocolVersion == HttpVersion.Version10);
+
+			if (keepAlive && (version == HttpVersion.Version10 || spoint10)) {
 				webHeaders.SetInternal (connectionHeader, "keep-alive");
 			} else if (!keepAlive && version == HttpVersion.Version11) {
 				webHeaders.SetInternal (connectionHeader, "close");

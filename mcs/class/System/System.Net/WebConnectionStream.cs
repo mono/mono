@@ -277,27 +277,27 @@ namespace System.Net
 				}
 			}
 
-			AsyncCallback chunkcb = null;
+			AsyncCallback callback = null;
+			if (cb != null)
+				callback = new AsyncCallback (CallbackWrapper);
+
 			if (sendChunked) {
 				WriteRequest ();
+
 				string cSize = String.Format ("{0:X}\r\n", size);
-				byte [] chunk = Encoding.ASCII.GetBytes (cSize);
-				chunkcb = new AsyncCallback (cnc.EndWrite);
-				result = new WebAsyncResult (null, result);
-				cnc.BeginWrite (chunk, 0, chunk.Length, chunkcb, result);
+				byte [] head = Encoding.ASCII.GetBytes (cSize);
+				int chunkSize = 2 + size + head.Length;
+				byte [] newBuffer = new byte [chunkSize];
+				Buffer.BlockCopy (head, 0, newBuffer, 0, head.Length);
+				Buffer.BlockCopy (buffer, offset, newBuffer, head.Length, size);
+				Buffer.BlockCopy (crlf, 0, newBuffer, head.Length + size, crlf.Length);
+
+				buffer = newBuffer;
+				offset = 0;
+				size = chunkSize;
 			}
 
-			if (cb != null)
-				cb = new AsyncCallback (CallbackWrapper);
-
-			result.InnerAsyncResult = cnc.BeginWrite (buffer, offset, size, cb, result);
-			if (result.InnerAsyncResult == null)
-				throw new WebException ("Aborted");
-
-			if (sendChunked) {
-				result.ChunkAsyncResult = cnc.BeginWrite (crlf, 0, crlf.Length, null, null);
-			}
-
+			result.InnerAsyncResult = cnc.BeginWrite (buffer, offset, size, callback, result);
 			return result;
 		}
 
@@ -317,9 +317,6 @@ namespace System.Net
 				throw result.Exception;
 
 			cnc.EndWrite (result.InnerAsyncResult);
-			if (sendChunked)
-				cnc.EndWrite (result.ChunkAsyncResult);
-
 			if (sendChunked) {
 				lock (this) {
 					pendingWrites--;

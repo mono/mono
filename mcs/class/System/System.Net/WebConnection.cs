@@ -283,8 +283,10 @@ namespace System.Net
 
 					if (String.Compare (parts [0], "HTTP/1.1", true) == 0) {
 						Data.Version = HttpVersion.Version11;
+						sPoint.SetVersion (HttpVersion.Version11);
 					} else {
 						Data.Version = HttpVersion.Version10;
+						sPoint.SetVersion (HttpVersion.Version10);
 					}
 
 					Data.StatusCode = (int) UInt32.Parse (parts [1]);

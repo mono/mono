@@ -21,7 +21,6 @@ namespace System.Net
 		object state;
 		int nbytes;
 		IAsyncResult innerAsyncResult;
-		IAsyncResult chunkAsyncResult;
 		bool callbackDone;
 		Exception exc;
 		HttpWebRequest request;
@@ -161,11 +160,6 @@ namespace System.Net
 		internal int NBytes {
 			get { return nbytes; }
 			set { nbytes = value; }
-		}
-
-		internal IAsyncResult ChunkAsyncResult {
-			get { return chunkAsyncResult; }
-			set { chunkAsyncResult = value; }
 		}
 
 		internal IAsyncResult InnerAsyncResult {

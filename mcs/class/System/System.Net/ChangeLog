@@ -1,5 +1,21 @@
 2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWebRequest.cs: send the 'Connection: keep-alive' header when we
+	don't know the server version or it's 1.0.
+
+	* ServicePoint.cs: added SetVersion.
+
+	* WebAsyncResult.cs: remove ChunkAsyncResult.
+
+	* WebConnection.cs: set the ServicePoint version when getting a response
+	from the server.
+
+	* WebConnectionStream.cs: when posting chunked content, send the head,
+	body and trailer of the chunk at once instead of doing 3 separate
+	writes, which may cause troubles.
+
+2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* WebConnection.cs: if we get a 100 when we're not waiting for it, set
 	that information in the ServicePoint.
 

@@ -174,6 +174,11 @@ namespace System.Net
 			}
 		}
 
+		internal void SetVersion (Version version)
+		{
+			protocolVersion = version;
+		}
+		
 		internal WebConnectionGroup GetConnectionGroup (string name)
 		{
 			if (name == null)
