@@ -6,7 +6,7 @@
 [done]Fix issue with ASP.Net data grid  
 [done]Transactions
 [done]Fixed date/time handling
-MySQLCommandBuilder
+MySqlCommandBuilder
  
 0.7
 =================================
@@ -16,7 +16,7 @@ Different character sets
 
 0.8
 ================================
-Designer support for MySQLCommandBuilder
+Designer support for MySqlCommandBuilder
 
 0.9
 ===============================
