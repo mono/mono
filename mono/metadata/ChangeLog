@@ -1,4 +1,8 @@
+2003-07-20 Jackson Harper <jackson@latitudegeo.com>
 
+	* image.c: Allow new metadata tables to be loaded without a
+	warning. Also update the warning message to give the new constant value.
+		
 Fri Jul 18 13:12:21 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h, debug-helpers.c, icall.c, image.c, marshal.c,
