@@ -17,7 +17,6 @@ namespace Mono.CSharp
 	using System.IO;
 	using System.Text;
 	using System.Globalization;
-	using Mono.Languages;
 
 	enum Target {
 		Library, Exe, Module, WinExe
@@ -175,7 +174,7 @@ namespace Mono.CSharp
 			StreamReader reader = new StreamReader (input, encoding, using_default_encoder);
 				
 			parser = new CSharpParser (reader, file, defines);
-			parser.yacc_verbose = yacc_verbose;
+			parser.yacc_verbose_flag = yacc_verbose;
 			try {
 				parser.parse ();
 			} catch (Exception ex) {
@@ -1119,6 +1118,8 @@ namespace Mono.CSharp
 			int i;
 			bool parsing_options = true;
 
+			Console.WriteLine ("Mono C# Compiler {0} for Generics",
+					   Assembly.GetExecutingAssembly ().GetName ().Version.ToString ());
 			try {
 				encoding = Encoding.GetEncoding (28591);
 			} catch {

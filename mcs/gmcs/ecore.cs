@@ -1989,6 +1989,13 @@ namespace Mono.CSharp {
 				// we have alias value, but it isn't Type, so try if it's namespace
 				return new SimpleName (alias_value, loc);
 			}
+
+			if (ec.IsGeneric){
+				TypeParameterExpr generic_type = ds.LookupGeneric (Name, loc);
+				
+				if (generic_type != null)
+ 					return generic_type;
+			}
 			
 			//
 			// Stage 2: Lookup up if we are an alias to a type
@@ -2097,7 +2104,7 @@ namespace Mono.CSharp {
 
 				lookup_ds =lookup_ds.Parent;
 			} while (lookup_ds != null);
-				
+
 			if (e == null && ec.ContainerType != null)
 				e = MemberLookup (ec, ec.ContainerType, Name, loc);
 

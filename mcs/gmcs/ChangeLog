@@ -58,9 +58,57 @@
 
 	* enum.cs (AddEnumMember): Report a CS0076 if name is `value__'.
 
-	* typemanager.cs (TypeManager.ChangeType): Catch exceptions;
-	makes cs0031.cs actually work.
+	* typemanager.cs (TypeManager.ChangeType): Catch exceptions; makes
+	cs0031.cs actually work.
 
+ 2003-07-20  Miguel de Icaza  <miguel@ximian.com>
+ 
+ 	* cs-parser.jay (namespace_name): do not use
+	namespace_or_type_name, use qualified_identifier, because
+	namespace_or_type_name will soon return a composed expression
+	instead of a string.
+ 
+ 	(namespace_or_type_name): Instead of returning a string, now this
+	production returns an expression.
+ 
+ 	* codegen.cs (EmitContext): Setup IsGeneric property based on
+	whether our DeclSpace is generic, our the method is generic.
+ 
+ 	* modifier.cs (Modifiers.METHOD_GENERIC): New definition, use if
+	the method is generic.
+ 
+ 	* cs-parser.jay (type_arguments, opt_type_argument_list,
+	type_parameters, type_parameter_list, opt_type_parameter_list,
+	type_parameter,, opt_type_parameter_constraints_clauses,
+	type_parameter_constraints_clauses,
+	type_parameter_constraint_clause, type_parameter_constraint,
+	interface_constraints): Add new production
+ 
+ 	* decl.cs (DeclSpace): IsGeneric, flag to track whether this
+	DeclSpace is generic or not.
+ 
+ 	(DeclSpace.SetParameterInfo): New routine, used to set the
+	parameter info for a type.
+ 
+ 	(DeclSpace.LookupGeneric): Lookups a name, and if it is a generic,
+	returns a GenericTypeExpr
+ 
+ 	* ecore.cs (SimpleName.ResolveAsTypeStep): If our container is
+	generic, lookup the generic argument.
+ 
+ 	* attribute.cs: Do not allow TypeParameterExpressions in
+	Attributes.
+ 
+ 	* class.cs: Do not allow the Main method to be defined in a
+	Generic container.
+ 
+ 	* expression.cs (SizeOf): Do not allow generic types to be used as
+ 	arguments to sizeof.
+ 
+ 	* typemanager.cs (IsGeneric): Wrapper for Reflection when we have
+ 	it: whether a type is generic or not.  Only works for types we are
+ 	currently building for now.
+ 	
 2003-07-20  Martin Baulig  <martin@ximian.com>
 
 	* namespace.cs: Fixed that bug which caused a crash when compiling
@@ -1160,7 +1208,31 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 2003-04-05  Martin Baulig  <martin@ximian.com>
 
-	* statement.cs (FlowBranching.UsageVector.MergeChildren): Fix bug #40670.
+	* expression.cs (SizeOf.DoResolve): Use ResolveTypeExpr, so we can
+	probe if its a type parameter, and if so, flag an error.
+
+	* decl.cs: Move here the SetParameterInfo code from class.cs.
+	Handle IsGeneric here.
+
+	Handle a variety of errors in the parameter info definition.
+
+	* ecore.cs (SimpleName.DoResolveType): Handle look ups for generic
+	type parameters here.
+
+	* cs-parser.jay (class_declaration): report errors for parameters
+	here as well.
+
+2003-01-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* generic.cs: New file, contains support code for generics.
+
+	* cs-parser.jay: Remove OP_SHIFT_LEFT, OP_SHIFT_RIGHT,
+	OP_SHIFT_LEFT_ASSIGN, OP_SHIFT_RIGHT_ASSIGN.
+
+	Update parser for the above removals.
+
+	* cs-tokenizer.cs: Do not handle <<= or >>= specially.  This is
+	now taken care of in the parser.
 
 2003-04-02  Miguel de Icaza  <miguel@ximian.com>
 

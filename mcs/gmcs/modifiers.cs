@@ -31,6 +31,7 @@ namespace Mono.CSharp {
 		// We use this internally to flag that the method contains an iterator
 		//
 		public const int METHOD_YIELDS = 0x8000;
+		public const int METHOD_GENERIC = 0x10000;
 
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;

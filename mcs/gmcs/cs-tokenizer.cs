@@ -279,6 +279,7 @@ namespace Mono.CSharp
 			keywords.Add ("virtual", Token.VIRTUAL);
 			keywords.Add ("void", Token.VOID);
 			keywords.Add ("volatile", Token.VOLATILE);
+			keywords.Add ("where", Token.WHERE);
 			keywords.Add ("while", Token.WHILE);
 
 			if (RootContext.V2){
@@ -493,16 +494,7 @@ namespace Mono.CSharp
 			}
 
 			if (c == '<'){
-				if (d == '<'){
-					getChar ();
-					d = peekChar ();
-
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_LEFT_ASSIGN;
-					}
-					return Token.OP_SHIFT_LEFT;
-				} else if (d == '='){
+				if (d == '='){
 					doread = true;
 					return Token.OP_LE;
 				}
@@ -510,16 +502,7 @@ namespace Mono.CSharp
 			}
 
 			if (c == '>'){
-				if (d == '>'){
-					getChar ();
-					d = peekChar ();
-
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_RIGHT_ASSIGN;
-					}
-					return Token.OP_SHIFT_RIGHT;
-				} else if (d == '='){
+				if (d == '='){
 					doread = true;
 					return Token.OP_GE;
 				}

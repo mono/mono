@@ -75,6 +75,12 @@ namespace Mono.CSharp {
 			Report.Error (-6, loc,
                                       "Could not find a constructor for this argument list.");
 		}
+
+		static void Error_TypeParameterInAttribute (Location loc)
+		{
+			Report.Error (
+				-202, loc, "Can not use a type parameter in an attribute");
+		}
 		
 		private Type CheckAttributeType (EmitContext ec) {
 			Type t;
@@ -264,6 +270,11 @@ namespace Mono.CSharp {
 				}
 
 				e = a.Expr;
+				if (e is TypeParameterExpr){
+					Error_TypeParameterInAttribute (Location);
+					return null;
+				}
+					
 				if (member is PropertyExpr) {
 					PropertyExpr pe = (PropertyExpr) member;
 					PropertyInfo pi = pe.PropertyInfo;
@@ -625,7 +636,7 @@ namespace Mono.CSharp {
 				foreach (Attribute a in asec.Attributes){
 					if (a.ResolveType (ec) == null)
 						return null;
-					
+
 					if (a.Type != TypeManager.indexer_name_type)
 						continue;
 

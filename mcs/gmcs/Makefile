@@ -20,7 +20,7 @@ COMPILER_SOURCES = \
 	enum.cs				\
 	ecore.cs			\
 	expression.cs 			\
-	genericparser.cs		\
+	generic.cs			\
 	interface.cs			\
 	iterators.cs			\
 	literal.cs			\

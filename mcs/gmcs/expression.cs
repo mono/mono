@@ -6379,7 +6379,7 @@ namespace Mono.CSharp {
 	///   Implements the sizeof expression
 	/// </summary>
 	public class SizeOf : Expression {
-		public readonly Expression QueriedType;
+		public Expression QueriedType;
 		Type type_queried;
 		
 		public SizeOf (Expression queried_type, Location l)
@@ -6397,10 +6397,15 @@ namespace Mono.CSharp {
 				return null;
 			}
 				
-			type_queried = ec.DeclSpace.ResolveType (QueriedType, false, loc);
-			if (type_queried == null)
+			QueriedType = ec.DeclSpace.ResolveTypeExpr (QueriedType, false, loc);
+			if (QueriedType == null || QueriedType.Type == null)
 				return null;
 
+			if (QueriedType is TypeParameterExpr){
+				((TypeParameterExpr)QueriedType).Error_CannotUseAsUnmanagedType (loc);
+				return null;
+			}
+			
 			if (!TypeManager.IsUnmanagedType (type_queried)){
 				Report.Error (208, loc, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
 				return null;

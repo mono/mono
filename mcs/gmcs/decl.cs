@@ -296,7 +296,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected Hashtable defined_names;
 
-		TypeContainer parent;		
+		//
+		// Whether we are Generic
+		//
+		public bool IsGeneric;
+		
+		TypeContainer parent;
 
 		public DeclSpace (TypeContainer parent, string name, Location l)
 			: base (name, l)
@@ -304,6 +309,12 @@ namespace Mono.CSharp {
 			Basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();
 			this.parent = parent;
+
+			//
+			// We are generic if our parent is generic
+			//
+			if (parent != null)
+				IsGeneric = parent.IsGeneric;
 		}
 
 		/// <summary>
@@ -761,6 +772,64 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public abstract MemberCache MemberCache {
 			get;
+		}
+
+		//
+		// Extensions for generics
+		//
+		ArrayList type_parameter_list;
+
+		///
+		/// Called by the parser to configure the type_parameter_list for this
+		/// declaration space
+		///
+		public AdditionResult SetParameterInfo (ArrayList type_parameter_list, object constraints)
+		{
+			this.type_parameter_list = type_parameter_list;
+
+			//
+			// Mark this type as Generic
+			//
+			IsGeneric = true;
+			
+			//
+			// Register all the names
+			//
+			foreach (string type_parameter in type_parameter_list){
+				AdditionResult res = IsValid (type_parameter, type_parameter);
+
+				if (res != AdditionResult.Success)
+					return res;
+
+				DefineName (type_parameter, GetGenericData ());
+			}
+
+			return AdditionResult.Success;
+		}
+
+		//
+		// This is just something to flag the defined names for now
+		//
+		const int GENERIC_COOKIE = 20;
+		static object generic_flag = GENERIC_COOKIE;
+		
+		static object GetGenericData ()
+		{
+			return generic_flag;
+		}
+		
+		/// <summary>
+		///   Returns a GenericTypeExpr if `name' refers to a type parameter
+		/// </summary>
+		public TypeParameterExpr LookupGeneric (string name, Location l)
+		{
+			foreach (string type_parameter in type_parameter_list){
+				Console.WriteLine ("   trying: " + type_parameter);
+				if (name == type_parameter)
+					return new TypeParameterExpr (name, l);
+			}
+
+			return null;
 		}
 	}
 

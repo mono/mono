@@ -128,7 +128,7 @@ namespace Mono.CSharp {
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
 		MemberCache member_cache;
-		
+
 		//
 		// The indexer name for this class
 		//
@@ -142,11 +142,11 @@ namespace Mono.CSharp {
 
 			if (parent == null)
 				n = "";
-			else
+			else 
 				n = parent.Name;
 
 			base_class_name = null;
-			
+
 			//Console.WriteLine ("New class " + name + " inside " + n);
 		}
 
@@ -602,6 +602,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		void Error_TypeParameterAsBase (TypeParameterExpr e)
+		{
+			Report.Error (
+			      -213, e.Location,
+			      String.Format ("Type parameter `{0}' can not be used t as a base class or interface", e.Name));
+		}
+		
 		/// <remarks>
 		///  The pending methods that need to be implemented (interfaces or abstract methods)
 		/// </remarks>
@@ -659,6 +666,12 @@ namespace Mono.CSharp {
 				name = ResolveTypeExpr (name, false, Location);
 
 				if (name == null){
+					error = true;
+					return null;
+				}
+
+				if (name is TypeParameterExpr){
+					Error_TypeParameterAsBase ((TypeParameterExpr) name);
 					error = true;
 					return null;
 				}
@@ -786,6 +799,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (IsGeneric && (parent == TypeManager.attribute_type ||
+					  parent.IsSubclassOf (TypeManager.attribute_type))){
+				Report.Error (-214, Location, "Generic type can not derive from Attribute");
+				return null;
+			}
+			
 			if (!is_class && TypeManager.value_type == null)
 				throw new Exception ();
 
@@ -2065,7 +2084,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		
 	}
 
 	public class Class : TypeContainer {
@@ -2551,6 +2569,11 @@ namespace Mono.CSharp {
 			     RootContext.MainClass == container.TypeBuilder.FullName)){
                                 if (IsEntryPoint (MethodBuilder, ParameterInfo)) {
                                         if (RootContext.EntryPoint == null) {
+						if (container.IsGeneric){
+							Report.Error (-201, Location,
+								      "Entry point can not be defined in a generic class");
+						}
+						
                                                 RootContext.EntryPoint = MethodBuilder;
                                                 RootContext.EntryPointLocation = Location;
                                         } else {

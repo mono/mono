@@ -275,6 +275,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InEnumContext;
 
+		/// <summary>
+		///   If our type container, or the method we are generating code
+		///   for is Generic
+		/// </summary>
+		public bool IsGeneric;
+		
 		protected Stack FlowStack;
 		
 		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
@@ -309,6 +315,11 @@ namespace Mono.CSharp {
 			
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;
+
+			//
+			// We should also set it if the method is generic
+			//
+			IsGeneric = ds.IsGeneric || ((Modifiers.METHOD_GENERIC) != 0);
 		}
 
 		public EmitContext (TypeContainer tc, Location l, ILGenerator ig,

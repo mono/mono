@@ -26,12 +26,11 @@ using System;
 namespace Mono.CSharp
 {
 	using System.Collections;
-	using Mono.Languages;
 
 	/// <summary>
 	///    The C# Parser
 	/// </summary>
-	public class CSharpParser : GenericParser {
+	public class CSharpParser {
 		NamespaceEntry  current_namespace;
 		TypeContainer   current_container;
 	
@@ -80,6 +79,11 @@ namespace Mono.CSharp
 		// Switch stack.
 		//
 		Stack switch_stack;
+
+		public bool yacc_verbose_flag;
+
+		// Name of the file we are parsing
+		public string name;
 
 		//
 		// The current file.
@@ -174,6 +178,7 @@ namespace Mono.CSharp
 %token VIRTUAL	
 %token VOID	
 %token VOLATILE
+%token WHERE
 %token WHILE	
 
 /* v2 tokens */
@@ -213,8 +218,6 @@ namespace Mono.CSharp
 /* C# multi-character operators. */
 %token OP_INC                 "++"
 %token OP_DEC                 "--"
-%token OP_SHIFT_LEFT          "<<"
-%token OP_SHIFT_RIGHT         ">>"
 %token OP_LE                  "<="
 %token OP_GE                  ">="
 %token OP_EQ                  "=="
@@ -226,8 +229,6 @@ namespace Mono.CSharp
 %token OP_MOD_ASSIGN          "%="
 %token OP_ADD_ASSIGN          "+="
 %token OP_SUB_ASSIGN          "-="
-%token OP_SHIFT_LEFT_ASSIGN   "<<="
-%token OP_SHIFT_RIGHT_ASSIGN  ">>="
 %token OP_AND_ASSIGN          "&="
 %token OP_XOR_ASSIGN          "^="
 %token OP_OR_ASSIGN           "|="
@@ -252,7 +253,6 @@ namespace Mono.CSharp
 %left OP_AND
 %left BITWISE_OR
 %left BITWISE_AND
-%left OP_SHIFT_LEFT OP_SHIFT_RIGHT
 %left PLUS MINUS
 %left STAR DIV PERCENT
 %right BANG CARRET UMINUS
@@ -358,7 +358,7 @@ qualified_identifier
 
 
 namespace_name
-	: namespace_or_type_name
+	: qualified_identifier
 	;
 
 namespace_body
@@ -1358,8 +1358,8 @@ overloadable_operator
         | BITWISE_AND { $$ = Operator.OpType.BitwiseAnd; }
         | BITWISE_OR { $$ = Operator.OpType.BitwiseOr; }
         | CARRET { $$ = Operator.OpType.ExclusiveOr; }
-        | OP_SHIFT_LEFT { $$ = Operator.OpType.LeftShift; }
-        | OP_SHIFT_RIGHT { $$ = Operator.OpType.RightShift; }
+        | OP_LT OP_LT { $$ = Operator.OpType.LeftShift; }
+        | OP_GT OP_GT { $$ = Operator.OpType.RightShift; }
         | OP_EQ { $$ = Operator.OpType.Equality; }
         | OP_NE { $$ = Operator.OpType.Inequality; }
         | OP_GT { $$ = Operator.OpType.GreaterThan; }
@@ -1824,9 +1824,52 @@ type_name
 	;
 
 namespace_or_type_name
-	: qualified_identifier
+	: IDENTIFIER opt_type_argument_list { 
+		if ($2 == null)
+			$$ = new SimpleName ((string) $1, lexer.Location);
+		else 
+			$$ = new ConstructedType (null, (string) $1, (TypeArguments) $2, lexer.Location);
+	  }
+	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list
+	  {
+		Expression right;
+
+		if ($4 == null)
+			right = new SimpleName ((string) $3, lexer.Location);
+		else
+			right = new ConstructedType ((Expression) $1, (string) $3, 
+				(TypeArguments) $4, lexer.Location);
+
+		//
+		// This is known to be broken, just to compile for now
+		// Right should be an expression, not a string
+		//
+		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	  }
 	;
 
+// 
+// TODO:
+//   Figure out what to do with the list 
+//
+opt_type_argument_list
+	: /* empty */ 		     { $$ = null; } 
+	| OP_LT type_arguments OP_GT { $$ = $2; } 
+	;
+
+type_arguments
+	: type {
+		TypeArguments type_args = new TypeArguments ();
+		type_args.Add ((Expression) $1);
+		$$ = type_args;
+  	  }
+	| type_arguments COMMA type {
+		TypeArguments type_args = (TypeArguments) $1;
+		type_args.Add ((Expression) $3);
+		$$ = type_args;
+	  }
+	;
+	
 /* 
  * Before you think of adding a return_type, notice that we have been
  * using two rules in the places where it matters (one rule using type
@@ -2489,12 +2532,12 @@ additive_expression
 
 shift_expression
 	: additive_expression
-	| shift_expression OP_SHIFT_LEFT additive_expression
+	| shift_expression OP_LT OP_LT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.LeftShift, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| shift_expression OP_SHIFT_RIGHT additive_expression
+	| shift_expression OP_GT OP_GT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.RightShift, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
@@ -2640,14 +2683,14 @@ assignment_expression
 		$$ = new CompoundAssign (
 			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, l);
 	  }
-	| prefixed_unary_expression OP_SHIFT_LEFT_ASSIGN expression
+	| prefixed_unary_expression OP_LT OP_LE expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
 			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3, l);
 	  }
-	| prefixed_unary_expression OP_SHIFT_RIGHT_ASSIGN expression
+	| prefixed_unary_expression OP_GT OP_GE expression
 	  {
 		Location l = lexer.Location;
 
@@ -2709,19 +2752,35 @@ class_declaration
 		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (name, new_class);
 	  }
+	  opt_type_parameter_list
 	  opt_class_base
+	  opt_type_parameter_constraints_clauses
 	  class_body 
 	  opt_semicolon 
 	  {
 		Class new_class = (Class) current_container;
 
-		if ($6 != null)
-			new_class.Bases = (ArrayList) $6;
+		if ($8 != null && $6 == null)
+			Report.Error (-200, new_class.Location,
+				      "Type parameter constraints only valid if there is a type parameter list");
 
+		if ($6 != null)
+			CheckDef (new_class.SetParameterInfo ((ArrayList) $6, $8), new_class.Name, new_class.Location);
+		if ($7 != null)
+			new_class.Bases = (ArrayList) $7;
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
 
 		$$ = new_class;
+	  }
+	| opt_attributes
+	  opt_modifiers
+	  CLASS IDENTIFIER
+	  WHERE {
+		Report.Error (-200, lexer.Location,
+			"Type parameter constraints only valid if there is a type parameter list");
+		yyErrorFlag = 0;
+		$$ = null;
 	  }
 	;	
 
@@ -2771,6 +2830,81 @@ class_base
 	: COLON type_list { $$ = $2; }
 	;
 
+opt_type_parameter_list
+	: /* empty */		{ $$ = null; }
+	| type_parameter_list   { $$ = $1; }
+	;
+
+type_parameter_list
+	: OP_LT type_parameters OP_GT { $$ = $2; }
+	;
+
+type_parameters
+	: type_parameter { 
+		// 
+		// Do some profiling to find the optimal size, for now we
+		// assume most people will be generic on one type (saves space
+		//
+		ArrayList type_parameters = new ArrayList (1);
+		type_parameters.Add ($1);
+		$$ = type_parameters;
+	  }
+	| type_parameters COMMA type_parameter {
+		ArrayList type_parameters = (ArrayList) $1;
+
+		type_parameters.Add ($3);
+		$$ = type_parameters;
+	  }
+	;
+
+type_parameter
+	: IDENTIFIER
+	;
+
+opt_type_parameter_constraints_clauses
+	: /* empty */		{ $$ = null; }
+	| type_parameter_constraints_clauses 
+	  { $$ = $1; }
+	;
+
+type_parameter_constraints_clauses
+	: type_parameter_constraints_clause
+	| type_parameter_constraints_clauses type_parameter_constraints_clause
+	; 
+
+type_parameter_constraint_clause
+	: WHERE type_parameter COLON type_parameter_constraints {
+		$$ = new Constraints ((string) $2, (ArrayList) $4);
+	  }
+	; 
+
+type_parameter_constraint
+	  //
+	  // we merge class and interface constraints, the tree resolution
+	  // will split them apart.
+	  //
+	| interface_constraints { $$ = $1; }
+	;
+
+interface_constraints
+	: type { 
+		ArrayList constraints = new ArrayList (1);
+		constraints.Add ($1);
+		$$ = constraints;
+	  }
+	| NEW OPEN_PARENS CLOSE_PARENS { 
+		ArrayList constraints = new ArrayList (1);
+		constraints.Add (true);
+		$$ = constraints;
+	  } 
+	| interface_constraints COMMA type {
+		ArrayList constraints = (ArrayList) $1;
+
+		constraints.Add ($3);
+		$$ = constraints;
+	}
+	;
+	
 //
 // Statements (8.2)
 //
@@ -4083,7 +4217,7 @@ public CSharpParser (StreamReader reader, SourceFile file, ArrayList defines)
 	lexer = new Tokenizer (reader, file, defines);
 }
 
-public override void parse ()
+public void parse ()
 {
 	try {
 		if (yacc_verbose_flag)

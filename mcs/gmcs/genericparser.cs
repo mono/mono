@@ -25,8 +25,6 @@ namespace Mono.Languages
 		// Input stream to parse from.
 		public System.IO.Stream input;
 
-		public abstract void parse ();
-
 		public virtual string[] extensions()
 		{
 			string [] list = { ".cs" };

@@ -1309,6 +1309,16 @@ public class TypeManager {
 	}
 
 	//
+	// Only a quick hack to get things moving, while real runtime support appears
+	//
+	public static bool IsGeneric (Type t)
+	{
+		DeclSpace ds = (DeclSpace) builder_to_declspace [t];
+
+		return ds.IsGeneric;
+	}
+	
+	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
 	//
 	public static bool IsUnmanagedType (Type t)
