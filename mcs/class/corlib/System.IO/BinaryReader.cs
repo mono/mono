@@ -262,9 +262,18 @@ namespace System.IO {
 		}
 
 		public virtual byte ReadByte() {
-			FillBuffer(1);
+			if (m_stream == null) {
+				if (m_disposed)
+					throw new ObjectDisposedException ("BinaryReader", "Cannot read from a closed BinaryReader.");
 
-			return(m_buffer[0]);
+				throw new IOException ("Stream is invalid");
+			}
+			
+			int val = m_stream.ReadByte ();
+			if (val != -1)
+				return (byte) val;
+			
+			throw new EndOfStreamException ();
 		}
 
 		public virtual byte[] ReadBytes(int count) {
