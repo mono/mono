@@ -150,8 +150,9 @@ namespace System.Windows.Forms
 		private TimerType timer_type;
 		private int thumb_pixel_click_move;
 		private int thumb_pixel_click_move_prev;
-		private int thumb_size = 0;
+		private int thumb_size = 40;
 		private const int thumb_min_size = 8;
+		private const int thumb_notshown_size = 40;
 		internal bool vert;
 		private int lastclick_pos;      // Position of the last button-down event
 		private int lastclick_pos_thumb;      // Position of the last button-down event relative to the thumb		
@@ -455,10 +456,7 @@ namespace System.Windows.Forms
 		
 		protected override void OnHandleCreated (System.EventArgs e)
 		{
-			base.OnHandleCreated (e);
-
-			scrollbutton_height = ThemeEngine.Current.ScrollBarButtonSize;
-			scrollbutton_width = ThemeEngine.Current.ScrollBarButtonSize;
+			base.OnHandleCreated (e);		
 
 			CalcThumbArea ();
 			UpdatePos (Value, true);
@@ -529,16 +527,15 @@ namespace System.Windows.Forms
 				thumb_area.Y = scrollbutton_height;
 				thumb_area.Width = Width;
 
-				if (Height < scrollbutton_height * 2)
+				if (Height < thumb_notshown_size)
 					thumb_size = 0;
 				else {
 					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
-					thumb_size = 1 + (int) (thumb_area.Height * per);
-
+					thumb_size = 1 + (int) (thumb_area.Height * per);					
+					
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size;
-				}
-
+				}				
 
 				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
 
@@ -549,15 +546,16 @@ namespace System.Windows.Forms
 				thumb_area.Height = Height;
 				thumb_area.Width = Width - scrollbutton_width -  scrollbutton_width;	
 				
-				if (Width < scrollbutton_width * 2)
+				if (Width < thumb_notshown_size)
 					thumb_size = 0;
 				else {
 					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Width * per);
-
+					
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size;
 				}
+				
 				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
 			}
 		}
@@ -586,9 +584,22 @@ namespace System.Windows.Forms
     		}
 
     		private void OnResizeSB (Object o, EventArgs e)
-    		{
+    		{    			
     			if (Width <= 0 || Height <= 0)
-    				return;
+    				return;    			
+    			
+			if (vert) {				
+				if (Height < ThemeEngine.Current.ScrollBarButtonSize * 2)
+					scrollbutton_height = Height /2;
+				else
+					scrollbutton_height = ThemeEngine.Current.ScrollBarButtonSize;
+				
+			} else {
+				if (Width < ThemeEngine.Current.ScrollBarButtonSize * 2)
+					scrollbutton_width = Width /2;
+				else
+					scrollbutton_width = ThemeEngine.Current.ScrollBarButtonSize;
+			}			
 
 			CalcThumbArea ();
 			UpdatePos (position, true);
@@ -669,7 +680,7 @@ namespace System.Windows.Forms
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
     		{
-			if (Enabled == false)
+			if (Enabled == false || thumb_size == 0)
 				return;
 
 			if (firstbutton_pressed) {
@@ -790,7 +801,7 @@ namespace System.Windows.Forms
 				Refresh ();
 			}
 
-			if (thumb_pos.Contains (e.X, e.Y)) {
+			if (thumb_size > 0 && thumb_pos.Contains (e.X, e.Y)) {
 				thumb_pressed = true;
 				this.Capture = true;
 				Refresh ();
@@ -806,7 +817,7 @@ namespace System.Windows.Forms
 				}
 			}
 			else {
-				if (thumb_area.Contains (e.X, e.Y)) {
+				if (thumb_size > 0 && thumb_area.Contains (e.X, e.Y)) {
 
 					if (vert) {
 						lastclick_pos_thumb = e.Y - thumb_pos.Y;

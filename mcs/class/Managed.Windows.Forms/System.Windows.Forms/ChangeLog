@@ -1,3 +1,12 @@
+2004-12-01  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic.cs: remove cache of brush and pens for 
+	specific controls and use the global system, fixes scrollbutton
+	bugs (for small sizes, disabled, etc)
+	
+	* ScrollBar.cs: does not show the thumb for very small controls
+	(as MS) and allow smaller buttons that the regular size
+
 2004-12-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* UpDownBase.cs: Add abstract methods for the interface.

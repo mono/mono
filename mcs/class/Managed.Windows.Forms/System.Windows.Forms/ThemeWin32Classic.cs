@@ -315,33 +315,20 @@ namespace System.Windows.Forms
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INFOBK,			0xffffffff,
 		  
 		};		
-		
-		static protected Pen pen_ticks;		
-		static protected SolidBrush br_arrow;
-		static protected SolidBrush br_progressbarblock;		
-		static protected Pen pen_arrow;
 				
-
-		/* Cache */
-		protected SolidBrush label_br_fore_color;
-		protected SolidBrush label_br_back_color;
+		/* Hardcoded colour values not exposed in the API constants in all configurations */
+		static readonly Color arrow_color = Color.Black;
+		static readonly Color pen_ticks_color = Color.Black;
+		static readonly Color progressbarblock_color = Color.FromArgb (255, 0, 0, 128);
 
 		#region	Principal Theme Methods
 		public ThemeWin32Classic ()
-		{
-			label_br_fore_color = null;
-			label_br_back_color = null;						
-
+		{			
 			/* Init Default colour array*/
 			syscolors =  Array.CreateInstance (typeof (Color), (uint) XplatUIWin32.GetSysColorIndex.COLOR_MAXVALUE+1);
 			
 			for (int i = 0; i < theme_colors.Length; i +=2) 
-				syscolors.SetValue (Color.FromArgb ((int)theme_colors[i+1]), (int) theme_colors[i]);
- 
-			pen_ticks = new Pen (Color.Black);			
-			br_arrow = new SolidBrush (Color.Black);
-			pen_arrow = new Pen (Color.Black);
-			br_progressbarblock = new SolidBrush (Color.FromArgb (255, 0, 0, 128));			
+				syscolors.SetValue (Color.FromArgb ((int)theme_colors[i+1]), (int) theme_colors[i]);			
 
 			defaultWindowBackColor = SystemColors.Window;
 			defaultWindowForeColor = ColorButtonText;
@@ -1004,21 +991,14 @@ namespace System.Windows.Forms
 		#endregion	// HScrollBar
 
 		#region Label
-		public  override void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label) {
-			if (label_br_fore_color == null || label_br_fore_color.Color != label.ForeColor) {
-				label_br_fore_color = GetControlForeBrush (label.ForeColor);
-			}
-
-			if (label_br_back_color == null || label_br_back_color.Color != label.BackColor) {
-				label_br_back_color = GetControlBackBrush (label.BackColor);
-			}
-
-			dc.FillRectangle (label_br_back_color, clip_rectangle);
+		public  override void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label) 
+		{		
+			dc.FillRectangle (ResPool.GetSolidBrush (label.BackColor), clip_rectangle);
 			
 			CPDrawBorderStyle (dc, clip_rectangle, label.BorderStyle);		
 
 			if (label.Enabled) {
-				dc.DrawString (label.Text, label.Font, label_br_fore_color, clip_rectangle, label.string_format);
+				dc.DrawString (label.Text, label.Font, ResPool.GetSolidBrush (label.ForeColor), clip_rectangle, label.string_format);
 			} else {
 				ControlPaint.DrawStringDisabled (dc, label.Text, label.Font, label.ForeColor, clip_rectangle, label.string_format);
 			}
@@ -1837,7 +1817,7 @@ namespace System.Windows.Forms
 			
 			/* Draw Blocks */
 			while ((x - client_area.X) < barpos_pixels) {
-				dc.FillRectangle (br_progressbarblock, x, client_area.Y, block_width, client_area.Height);
+				dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), x, client_area.Y, block_width, client_area.Height);
 				x  = x + increment;
 			}
 		}
@@ -2203,10 +2183,7 @@ namespace System.Windows.Forms
 				CPDrawScrollButton (dc, bar.FirstArrowArea, ScrollButton.Left, bar.firstbutton_state);
 				CPDrawScrollButton (dc, bar.SecondArrowArea, ScrollButton.Right, bar.secondbutton_state);
 
-				/* Background */
-				//dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width, 
-				//	0, area.Width - (scrollbutton_width * 2), area.Height);
-					
+				/* Background */					
 				switch (bar.thumb_moving) {
 				case ScrollBar.ThumbMoving.None: {
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width,
@@ -2246,8 +2223,8 @@ namespace System.Windows.Forms
 			}
 
 			/* Thumb */
-			if (bar.Enabled)
-				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);
+			if (bar.Enabled && thumb_pos.Width > 0 && thumb_pos.Height > 0)
+				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);				
 		}
 
 		public override int ScrollBarButtonSize {
@@ -3118,10 +3095,10 @@ namespace System.Windows.Forms
 				
 				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 	{					
 					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
+						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
 							area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc);
 					else
-						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
+						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
 							area.X + bottomtick_startpoint.X  + 2, area.Y + bottomtick_startpoint.Y + inc);
 				}
 			}
@@ -3132,13 +3109,12 @@ namespace System.Windows.Forms
 				pixel_len = thumb_area.Height - 11;
 				pixels_betweenticks = pixel_len / ticks;
 				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {
-					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
 					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
+						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
 							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y + inc);
 					else
-						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
+						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
 							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y  + inc);
 				}			
 			}
@@ -3299,10 +3275,10 @@ namespace System.Windows.Forms
 				
 				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
 					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
+						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
 							area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3);
 					else
-						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
+						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
 							area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y + 2);
 				}
 			}
@@ -3312,10 +3288,10 @@ namespace System.Windows.Forms
 				
 				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
 					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
+						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
 							area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y);
 					else
-						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
+						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
 							area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
 				}			
 			}
@@ -4063,6 +4039,9 @@ namespace System.Windows.Forms
 			bool enabled = (state == ButtonState.Inactive) ? false: true;			
 					
 			DrawScrollButtonPrimitive (dc, area, state);
+						
+			if (area.Width < 12 || area.Height < 12) /* Cannot see a thing at smaller sizes */
+				return;
 
 			/* Paint arrows */
 			switch (type) {
@@ -4072,26 +4051,29 @@ namespace System.Windows.Forms
 
 				for (int i = 0; i < 3; i++)
 					if (enabled)
-						dc.DrawLine (pen_arrow, x + i, y - i, x + i + 6 - 2*i, y - i);
+						dc.DrawLine (ResPool.GetPen (arrow_color), x + i, y - i, x + i + 6 - 2*i, y - i);
 					else
 						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y - i, x + i + 6 - 2*i, y - i);
 
 				
-				dc.FillRectangle (br_arrow, x + 3, area.Y + 6, 1, 1);				
+				dc.FillRectangle (enabled ? ResPool.GetSolidBrush (arrow_color) :  ResPool.GetSolidBrush (ColorGrayText),
+					x + 3, area.Y + 6, 1, 1);
+					
 				break;
 			}
 			case ScrollButton.Down: {
-				int x = area.X +  (area.Width / 2) - 4;
+				int x = area.X +  (area.Width / 2) - 5;
 				int y = area.Y + 5;
 
 				for (int i = 4; i != 0; i--)
 					if (enabled)
-						dc.DrawLine (pen_arrow, x + i, y + i, x + i + 8 - 2*i, y + i);
+						dc.DrawLine (ResPool.GetPen (arrow_color), x + i, y + i, x + i + 8 - 2*i, y + i);
 					else
 						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y + i, x + i + 8 - 2*i, y + i);
 
 				
-				dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);
+				dc.FillRectangle (enabled ? ResPool.GetSolidBrush (arrow_color) :  ResPool.GetSolidBrush (ColorGrayText),
+					x + 4, y + 4, 1, 1);
 				break;
 			}
 
@@ -4101,25 +4083,27 @@ namespace System.Windows.Forms
 
 				for (int i = 0; i < 3; i++)
 					if (enabled)
-						dc.DrawLine (pen_arrow, x - i, y + i, x - i, y + i + 6 - 2*i);
+						dc.DrawLine (ResPool.GetPen (arrow_color), x - i, y + i, x - i, y + i + 6 - 2*i);
 					else
 						dc.DrawLine (ResPool.GetPen (ColorGrayText), x - i, y + i, x - i, y + i + 6 - 2*i);
 
-				dc.FillRectangle (br_arrow, x - 3, y + 3, 1, 1);
+				dc.FillRectangle (enabled ? ResPool.GetSolidBrush (arrow_color) :  ResPool.GetSolidBrush (ColorGrayText),
+					x - 3, y + 3, 1, 1);
 				break;
 			}
 
 			case ScrollButton.Right: {
-				int y = area.Y +  (area.Height / 2) - 4;
+				int y = area.Y +  (area.Height / 2) - 5;
 				int x = area.X + 5;
 
 				for (int i = 4; i != 0; i--)
 					if (enabled)
-						dc.DrawLine (pen_arrow, x + i, y + i, x + i, y + i + 8 - 2*i);
+						dc.DrawLine (ResPool.GetPen (arrow_color), x + i, y + i, x + i, y + i + 8 - 2*i);
 					else
 						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y + i, x + i, y + i + 8 - 2*i);
 
-				dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);				
+				dc.FillRectangle (enabled ? ResPool.GetSolidBrush (arrow_color) :  ResPool.GetSolidBrush (ColorGrayText),
+					x + 4, y + 4, 1, 1);
 				break;
 			}
 
