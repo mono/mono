@@ -1,3 +1,6 @@
+2002-07-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (emit_ptr_to_str_conv): first impl.
 
 Tue Jul 16 12:39:33 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
