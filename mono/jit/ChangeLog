@@ -1,3 +1,8 @@
+2002-12-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* jit.c (mono_analyze_stack): call the utility function 
+	mono_field_from_token to avoid code duplication.
+
 2002-12-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): added some additinal checks to verify IL code
