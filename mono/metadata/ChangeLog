@@ -1,3 +1,9 @@
+2003-12-10  Mark Crichton <crichton@gimp.org>
+
+	* icall.c: removed the GetNonZeroBytes.  We now handle this case
+	in managed code.
+
+	* rand.c, rand.h: Same here.  Also cleaned up the clode slightly.
 
 Tue Dec 9 15:36:18 CET 2003 Paolo Molaro <lupus@ximian.com>
 
