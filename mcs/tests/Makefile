@@ -116,7 +116,8 @@ TEST_SOURCES_net_2_0 = \
 	gen-111 gen-112 gen-113 gen-114 gen-115 gen-116 gen-117 gen-118 gen-119 gen-120 \
 	gen-121 gen-122 gen-123 gen-124
 
-TEST_EXCLUDES_net_2_0 = $(NEW_TEST_SOURCES_common)
+# gen-72 fails after the runtime changes in r40305
+TEST_EXCLUDES_net_2_0 = $(NEW_TEST_SOURCES_common) gen-72
 
 # These tests load User32.dll and/or Kernel32.dll
 TEST_SOURCES_win32 = test-67

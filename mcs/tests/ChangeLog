@@ -1,3 +1,8 @@
+2005-02-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile (TEST_EXCLUDES_net_2_0): Disable gen-72 until the runtime
+	regression is fixed.
+
 2005-02-02  Raja R Harinath  <rharinath@novell.com>
 
 	* test-341.cs: Update to reflect fix of compiler crash.
