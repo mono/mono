@@ -37,7 +37,7 @@ namespace System.Web.UI.HtmlControls
 			set { }
 		}
 		
-		protected virtual string RenderedName
+		internal virtual string RenderedName
 		{
 			get { return Name; }
 		}

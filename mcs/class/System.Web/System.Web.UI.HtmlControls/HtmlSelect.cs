@@ -381,7 +381,8 @@ namespace System.Web.UI.HtmlControls{
 				return;
 			}
 		}
-		
+
+		[HtmlControlPersistable (false)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual int SelectedIndex {

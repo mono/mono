@@ -1,3 +1,12 @@
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* HtmlContainerControl.cs: Added attributes
+	* HtmlControl.cs: Added attributes
+	* HtmlInputControl.cs: Fixed public signature
+	* HtmlInputRadioButton.cs: Fixed public signature
+	* HtmlSelect.cs: Added missing attribute
+	* HtmlTable.cs: Added missing attribute
+
 2003-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlSelect.cs: fixed bug #44894.

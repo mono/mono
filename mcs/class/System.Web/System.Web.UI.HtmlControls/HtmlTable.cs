@@ -148,7 +148,8 @@ namespace System.Web.UI.HtmlControls{
 				throw new NotSupportedException("InnerText property not supported by HtmlTable");
 			}
 		}
-		
+
+		[IgnoreUnknownContent ()]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual HtmlTableRowCollection Rows {

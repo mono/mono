@@ -40,7 +40,8 @@ namespace System.Web.UI.HtmlControls
 		public HtmlContainerControl () : this ("span") {}
 		
 		public HtmlContainerControl (string tag) : base(tag) {}
-		
+
+		[HtmlControlPersistable (false)]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual string InnerHtml
@@ -72,7 +73,8 @@ namespace System.Web.UI.HtmlControls
 				ViewState ["innerhtml"] = value;
 			}
 		}
-		
+
+		[HtmlControlPersistable (false)]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual string InnerText

@@ -103,7 +103,7 @@ namespace System.Web.UI.HtmlControls{
 			set { Attributes ["name"] = value; }
 		}
 		
-		protected override string RenderedName{
+		internal override string RenderedName{
 			get{
 				string attr = base.RenderedName;
 				string id = UniqueID;

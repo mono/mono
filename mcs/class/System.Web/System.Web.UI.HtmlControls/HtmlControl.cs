@@ -10,6 +10,7 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
@@ -17,6 +18,7 @@ using System.Web.UI;
 namespace System.Web.UI.HtmlControls{
 	
 	[ToolboxItem(false)]
+	[Designer ("System.Web.UI.Design.HtmlIntrinsicControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public abstract class HtmlControl : Control, IAttributeAccessor
 	{
 		internal string _tagName;
