@@ -188,7 +188,7 @@ namespace System
 					Locale.GetText (" is not in a range between 1 and 9999."));
 
 			if (daylightCache [year] == null) {
-				lock (this) {
+				lock (daylightCache) {
 					if (daylightCache [year] == null) {
 						Int64[] data;
 						string[] names;

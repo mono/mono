@@ -1,3 +1,8 @@
+2005-02-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TimeZone.cs: lock on the static Hashtable instead of 'this'. Fixes
+	bug #72238.
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BitConverter.cs: Reverted my patch from 2004-11-15 as this is true
