@@ -1,3 +1,9 @@
+2003-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini.c:
+	(print_method_from_ip): also print source location information if
+	available.
+
 2003-06-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_find_block_region): bug fix in region code
