@@ -3,24 +3,23 @@ MCS_FLAGS = --target library --noconfig
 INSTALL = /usr/bin/install
 prefix = /usr
 
+SOURCES_CMD=find . \
+	  \( -false $(SOURCES_INCLUDE:%=-o -path '%') \) -a	 \
+	! \( -false $(SOURCES_EXCLUDE:%=-o -path '%') \)
+
 all: .makefrag $(LIBRARY)
 
 clean:
-	-rm -rf $(LIBRARY) .response .makefrag library-deps.stamp
+	-rm -rf $(LIBRARY) .response .makefrag
 
-.response: $(LIB_LIST)
-	cat $^ |egrep '\.cs$$' >$@
-
-.makefrag: $(LIB_LIST) $(topdir)/class/library.make
-	echo -n "library-deps.stamp: " >$@.new
-	cat $< |egrep '\.cs$$' | sed -e 's,\.cs,.cs \\,' >>$@.new
-	cat $@.new |sed -e '$$s, \\$$,,' >$@
-	echo -e "\ttouch library-deps.stamp" >>$@
-	rm -rf $@.new
+.PHONY: .makefrag
+.makefrag:
+	@echo -n "SOURCES=" >$@
+	@$(SOURCES_CMD) | tee .response | sed -e 's/$$/ \\/' >>$@
 
 -include .makefrag
 
-$(LIBRARY): .response library-deps.stamp
+$(LIBRARY): $(SOURCES) $(topdir)/class/library.make
 	MONO_PATH=$(MONO_PATH_PREFIX)$(MONO_PATH) $(MCS) $(MCS_FLAGS) -o $(LIBRARY) $(LIB_FLAGS) @.response
 
 install: all

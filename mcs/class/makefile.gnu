@@ -17,7 +17,9 @@ default: all
 
 all clean:
 	@for i in $(DIRS) ; do \
-		(cd $$i && $(MAKE) -f makefile.gnu $@) || exit 1; \
+		if [ -d "$$i" ] && [ -f "$$i/makefile.gnu" ] ; then	\
+			(cd $$i && $(MAKE) -f makefile.gnu $@) || exit 1; \
+		fi	\
 	done
 
 install: all
