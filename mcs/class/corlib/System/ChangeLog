@@ -1,3 +1,8 @@
+2004-06-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FloatingPointFormatter.cs : Literal string should be kept in the
+	  output.
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : Concatenating whitespace removal was not working fine.

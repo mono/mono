@@ -734,7 +734,20 @@ namespace System {
 			f.Percent = false;
 			f.FirstFormatPos = -1;
 			int aux = 0, i = 0, count = 0;
+			bool inQuote = false;
 			foreach (char c in format) {
+				if (c == '\'') {
+					if (inQuote)
+						inQuote = false;
+					else
+						inQuote = true;
+					i++;
+					continue;
+				} else if (inQuote) {
+					i++;
+					continue;
+				}
+
 				switch (c) {
 				case ',':
 					aux++;
@@ -777,6 +790,8 @@ namespace System {
 				}
 				i++;
 			}
+			if (inQuote)
+				throw new FormatException ("Literal in format string is not correctly terminated.");
 			if (aux > 0) {
 				f.NumberOfColons = aux;
 			}
@@ -969,6 +984,15 @@ namespace System {
 						sb.Append (nfi.PercentSymbol);
 					else if (format [i] == '\u2030')
 						sb.Append (nfi.PerMilleSymbol);
+					else if (format [i] == '\'') {
+						int l = ++i;
+						while (i < format.Length) {
+							if (format [i] == '\'')
+								break;
+							i++;
+						}
+						sb.Insert (0, format.Substring (l, i - l));
+					}
 					else {
 						sb.Append(format[i]);
 					}
@@ -1000,6 +1024,15 @@ namespace System {
 					sb.Insert (0, nfi.PercentSymbol);
 				else if (format [i] == '\u2030')
 					sb.Insert (0, nfi.PerMilleSymbol);
+				else if (format [i] == '\'') {
+					int l = i;
+					while (i >= 0) {
+						if (format [i] == '\'')
+							break;
+						i--;
+					}
+					sb.Insert (0, format.Substring (i, l - i));
+				}
 				else if (format[i] != ',') {
 					sb.Insert(0, format[i]);
 				}
@@ -1031,6 +1064,15 @@ namespace System {
 					sb.Insert (0, nfi.PercentSymbol);
 				else if (format [i] == '\u2030')
 					sb.Insert (0, nfi.PerMilleSymbol);
+				else if (format [i] == '\'') {
+					int l = i;
+					while (i >= 0) {
+						if (format [i] == '\'')
+							break;
+						i--;
+					}
+					sb.Insert (0, format.Substring (i, l - i));
+				}
 				else if (format [i] != '.')
 					sb.Insert(0, format[i]);
 			}
