@@ -1,3 +1,8 @@
+2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* domain-internals.h: Move exvar_offset from MonoJitInfo to 
+	MonoJitExceptionInfo, since each catch clause needs its own variable.
+	
 2005-01-11  Dick Porter  <dick@ximian.com>
 
 	* image.c (mono_pe_file_open): New variant on mono_image_open()
