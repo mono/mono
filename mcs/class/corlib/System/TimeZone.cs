@@ -54,20 +54,31 @@ namespace System {
 			return IsDaylightSavingTime (time, GetDaylightChanges (time.Year));
 		}
 
-		public virtual bool IsDaylightSavingTime (DateTime time, DaylightTime daylightTimes)
-		{
+		public static bool IsDaylightSavingTime (DateTime time, DaylightTime daylightTimes)
+                {
 			if (daylightTimes == null)
-				throw new ArgumentNullException ("daylightTimes is null.");
+                                throw new ArgumentNullException ("daylightTimes");
 
-			if (daylightTimes.Delta == TimeSpan.Zero)
-				return false; 
+                        // If Start == End, then DST is off
+                        if (daylightTimes.Start.Ticks == daylightTimes.End.Ticks)
+                                return false;
 
-			if ((daylightTimes.Start <= time) && (time < daylightTimes.End))
-				return true;
-			else // time doesn't not fall in the span of daylightTimes
-				return false;
-		}
+			//We are in the northern hemisphere.                           
+			if (daylightTimes.Start.Ticks < daylightTimes.End.Ticks) {
+                                if (daylightTimes.Start.Ticks < time.Ticks
+				    && daylightTimes.End.Ticks > time.Ticks)
+                                        return true; // time lies between Start and End
 
+			} else {  // We are in the southern hemisphere.
+				if (time.Year == daylightTimes.Start.Year && time.Year == daylightTimes.End.Year)
+                                        if (time.Ticks < daylightTimes.End.Ticks
+					    || time.Ticks > daylightTimes.Start.Ticks)
+                                                return true; // time is less than End OR more than Start 
+                        }
+
+			return false;
+                }
+		
 		public virtual DateTime ToLocalTime (DateTime time)
 		{
 			return time + GetUtcOffset (time);
@@ -129,7 +140,7 @@ namespace System {
 			return (DaylightTime) daylightCache [year];
                 }
 
-		public override TimeSpan GetUtcOffset(DateTime time)
+		public override TimeSpan GetUtcOffset (DateTime time)
 		{
                         if (IsDaylightSavingTime (time))
                                 return utcOffsetWithDLS;
