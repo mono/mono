@@ -17,6 +17,7 @@ COMPILER_SOURCES = \
 	enum.cs				\
 	expression.cs 			\
 	gen-treedump.cs			\
+	genericparser.cs		\
 	interface.cs			\
 	literal.cs			\
 	modifiers.cs 			\

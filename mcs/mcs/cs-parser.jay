@@ -30,13 +30,12 @@ using System;
 namespace CIR
 {
 	using System.Collections;
+	using Mono.Languages;
 
 	/// <summary>
 	///    The C# Parser
 	/// </summary>
-	public class CSharpParser {
-		static int global_errors;
-
+	public class CSharpParser : GenericParser {
 		Namespace     current_namespace;
 		TypeContainer current_container;
 	
@@ -78,12 +77,6 @@ namespace CIR
 		// </summary>
 		Tree tree;
 		RootContext rc;
-
-		// Name of the file we are parsing
-		public string name;
-
-		// Input stream to parse from.
-		public System.IO.Stream input;
 
 %}
 
@@ -2926,12 +2919,6 @@ void CheckBoolean (Expression expr)
 	// finishme
 }
 
-static public void error (int code, string desc)
-{
-	Console.WriteLine ("Error CS"+code+": "+desc);
-	global_errors++;
-}
-
 void output (string s)
 {
 	Console.WriteLine (s);
@@ -2957,7 +2944,7 @@ public CSharpParser(RootContext rc, string name, System.IO.Stream input)
 	lexer = new Tokenizer (input, name);
 }
 
-public int parse ()
+public override int parse ()
 {
 	StringBuilder value = new StringBuilder ();
 
@@ -2977,19 +2964,7 @@ public int parse ()
 	return global_errors;
 }
 
-bool yacc_verbose_flag = false;
-
-public bool yacc_verbose {
-	set {
-		yacc_verbose_flag = value;
-	}
-
-	get {
-		return yacc_verbose_flag;
-	}
-}
-
 /* end end end */
 }
-}
+
 
