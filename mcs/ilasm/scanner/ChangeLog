@@ -1,3 +1,9 @@
+2003-05-18 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTokenizer.cs: If toen.token does not create a keyword return
+	the first token as an id, not a keyword ie (add.exe should return
+	"ID period ID" not "ADD period ID"
+		
 2003-04-28 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILTokenizer.cs: Get instructions from table and check if they

@@ -185,6 +185,9 @@ namespace Mono.ILASM {
                                                                 if (opcode == null) {
                                                                         reader.Unread (opTail.ToCharArray ());
                                                                         reader.RestoreLocation ();
+                                                                        res.token = strBuilder.TokenId;
+                                                                        res.val = val;
+                                                                        break;
                                                                 } else {
                                                                         res = opcode;
                                                                         break;
