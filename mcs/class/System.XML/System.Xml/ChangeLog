@@ -1,5 +1,13 @@
 2002-04-12  Duncan Mak  <duncan@ximian.com>
 
+	* XmlAttribute.cs (Prefix): Added preliminary code for set block,
+	added comment on work that needs to be done here. A new MonoTODO item. 
+
+	* XmlDocument.cs (ctor): Corrected constructor signature, changed
+	parameter from 'NameTable' to 'XmlNameTable'.
+
+	* XmlDocumentFragment.cs (InnerXml): Added missing set block.
+
 	* XmlCaseOrder.cs: Moved to System.Xml.XPath.
 
 2002-04-10  Duncan Mak  <duncan@ximian.com>

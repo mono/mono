@@ -24,7 +24,8 @@ namespace System.Xml
 
 		[MonoTODO]
 		public override string InnerXml {
-			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException (); }
+			get { throw new NotImplementedException (); }
 		}
 		
 		public override string LocalName {

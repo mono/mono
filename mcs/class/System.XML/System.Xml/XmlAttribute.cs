@@ -114,7 +114,15 @@ namespace System.Xml
 			}
 		}
 
+		[MonoTODO]
+		// We gotta do more in the set block here
+		// We need to do the proper tests and throw
+		// the correct Exceptions
 		public override string Prefix {
+			set {
+				prefix = value;
+			}
+			
 			get {
 				return prefix;
 			}

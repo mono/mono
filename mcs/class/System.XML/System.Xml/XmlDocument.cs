@@ -32,7 +32,7 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		public XmlDocument (NameTable nt) : base (null)
+		public XmlDocument (XmlNameTable nt) : base (null)
 		{
 			nameTable = nt;
 		}
