@@ -1,3 +1,12 @@
+2004-03-02 Anirban Bhattacharjee <banirban@novell.com>
+
+	* class.cs
+	* decl.cs
+	* modifiers.cs
+	* mb-parser.jay
+	Added Overloads and Shadows modifiers to Function and Sub
+	Fixed few other modifier related problems in Function and Sub
+
 2004-01-07  Nick Drochak <ndrochak@ieee.org>
 
 	* genericparser.cs:

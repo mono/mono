@@ -110,6 +110,8 @@ namespace Mono.MonoBASIC
 		// </summary>
 		Expression set_implicit_value_parameter_type;		
 		
+		Location member_location;
+		
 		// An out-of-band stack.
 		//
 		Stack oob_stack;
@@ -522,16 +524,16 @@ identifier
 
 type_character
 	: PERCENT 			{ $$ = TypeManager.system_int32_expr; }
-	| LONGTYPECHAR 		{ $$ = TypeManager.system_int64_expr; }
+	| LONGTYPECHAR 			{ $$ = TypeManager.system_int64_expr; }
 	| AT_SIGN		 	{ $$ = TypeManager.system_decimal_expr; }
-	| SINGLETYPECHAR 	{ $$ = TypeManager.system_single_expr; }
-	| NUMBER_SIGN 		{ $$ = TypeManager.system_double_expr; }
-	| DOLAR_SIGN 		{ $$ = TypeManager.system_string_expr; }
+	| SINGLETYPECHAR 		{ $$ = TypeManager.system_single_expr; }
+	| NUMBER_SIGN 			{ $$ = TypeManager.system_double_expr; }
+	| DOLAR_SIGN 			{ $$ = TypeManager.system_string_expr; }
 	;	
 	
 opt_type_character
-	: /* empty */		{ $$ = null; }
-	| type_character	{ $$ = $1; }
+	: /* empty */			{ $$ = null; }
+	| type_character		{ $$ = $1; }
 	;
 	
 
@@ -867,12 +869,13 @@ modifier
 	| PRIVATE			{ $$ = Modifiers.PRIVATE; }
 	| SHARED			{ $$ = Modifiers.STATIC; }
 	| FRIEND			{ $$ = Modifiers.INTERNAL; }
-	| NOTINHERITABLE	{ $$ = Modifiers.SEALED; } 
-	| OVERRIDABLE		{ $$ = Modifiers.VIRTUAL; }
-	| NOTOVERRIDABLE	{ $$ = Modifiers.NONVIRTUAL; }
-	| OVERRIDES 		{ $$ = Modifiers.OVERRIDE; }
-	| OVERLOADS			{ $$ = Modifiers.OVERLOADS; }
-	| MUSTINHERIT		{ $$ = Modifiers.ABSTRACT; }
+	| NOTINHERITABLE		{ $$ = Modifiers.SEALED; } 
+	| OVERRIDABLE			{ $$ = Modifiers.VIRTUAL; }
+	| NOTOVERRIDABLE		{ $$ = Modifiers.NONVIRTUAL; }
+	| OVERRIDES 			{ $$ = Modifiers.OVERRIDE; }
+	| OVERLOADS			{ $$ = Modifiers.NEW; }
+	| SHADOWS			{ $$ = Modifiers.SHADOWS; }
+	| MUSTINHERIT			{ $$ = Modifiers.ABSTRACT; }
 	| READONLY 			{ $$ = Modifiers.READONLY; }
 	| DEFAULT 			{ $$ = Modifiers.DEFAULT; }
 	| WRITEONLY			{ $$ = Modifiers.WRITEONLY; }
@@ -1026,10 +1029,14 @@ must_override_sub_declaration
 		$$ = method; 			    
 	  }
 	;
+
 	
 must_override_func_declaration
-	: MUSTOVERRIDE FUNCTION identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type EOL
+	: MUSTOVERRIDE FUNCTION identifier opt_type_character OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_type_with_ranks EOL
 	  {	
+		Expression ftype = ($8 == null) ? (($4 == null) ? TypeManager.	
+			system_object_expr : (Expression) $4 ) : (Expression) $8;
+
 	  	if (current_container is Module)
 	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
 	  		
@@ -1038,13 +1045,13 @@ must_override_func_declaration
 	  			
 		current_modifiers |= Modifiers.ABSTRACT;
 			  			  	
-	  	Method method = new Method ((Expression) $8, (int) current_modifiers, (string) $3,
-					    (Parameters) $5, null, null, lexer.Location);
+	  	Method method = new Method ((Expression) ftype, (int) current_modifiers, 
+						(string) $3,(Parameters) $6, null, null, 
+						lexer.Location);
 					    
 		if (!(current_container is Class))
 			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");
 			
-		// FIXME ASAP: This will crash the compiler at resolution time			
 		$$ = method; 					
 	  }	
 	;
@@ -1057,14 +1064,16 @@ sub_declaration
 
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
-			current_modifiers = Modifiers.PUBLIC;		 	
+			current_modifiers = Modifiers.PUBLIC;		
+			
+		member_location = lexer.Location;
 	  }
 	  opt_statement_list 
 	  END SUB EOL
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, null, (Expression) $7, 
-					    lexer.Location);
+					    member_location);
 	
 		method.Block = (Block) end_block();
 		$$ = method;
@@ -1091,10 +1100,10 @@ func_declaration
 	: FUNCTION identifier opt_type_character
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_type_with_ranks opt_implement_clause EOL
 	  { 
-	  	
 	  	current_local_parameters = (Parameters) $5;
+	  	member_location = lexer.Location;
 		start_block(); 
-		
+				
 		Expression ftype = ($7 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $7;
 
 		// Structure members are Public by default			
@@ -1113,7 +1122,7 @@ func_declaration
 
 		Method method = new Method ((Expression) ftype, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, null, 
-					    (Expression) ftype, lexer.Location);
+					    (Expression) $8, member_location);
 		method.Block = end_block();
 		$$ = method;
 	  }	  

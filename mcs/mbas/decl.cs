@@ -45,11 +45,11 @@ namespace Mono.MonoBASIC {
 
 		protected void WarningNotHiding (TypeContainer parent)
 		{
-			Report.Warning (
+			/*Report.Warning (
 				109, Location,
 				"The member " + parent.MakeName (Name) + " does not hide an " +
 				"inherited member.  The keyword new is not required");
-							   
+			*/				   
 		}
 
 		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method,
@@ -108,25 +108,26 @@ namespace Mono.MonoBASIC {
 			}
 
 			if (mb.IsVirtual || mb.IsAbstract){
-				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.SHADOWS)) == 0){
 					if (Name != "Finalize"){
 						Report.Warning (
-							114, 2, Location, parent.MakeName (Name) + 
-							" hides inherited member `" + name +
+							40005, 2, Location, parent.MakeName (Name) + 
+							" shadows overridable member `" + name +
 							"'.  To make the current member override that " +
-							"implementation, add the override keyword, " +
-							"otherwise use the new keyword");
-						ModFlags |= Modifiers.NEW;
+							"implementation, add the overrides keyword." );
+						ModFlags |= Modifiers.SHADOWS;
 					}
 				}
 			} else {
-				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE | 
+					Modifiers.SHADOWS)) == 0)
+				{
 					if (Name != "Finalize"){
 						Report.Warning (
-							108, 1, Location, "The keyword new is required on " +
+							40004, 1, Location, "The keyword Shadows is required on " +
 							parent.MakeName (Name) + " because it hides " +
 							"inherited member `" + name + "'");
-						ModFlags |= Modifiers.NEW;
+						ModFlags |= Modifiers.SHADOWS;
 					}
 				}
 			}

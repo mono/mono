@@ -90,7 +90,7 @@ namespace Mono.MonoBASIC {
 
 		// The emit context for toplevel objects.
 		EmitContext ec;
-		
+
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -207,7 +207,7 @@ namespace Mono.MonoBASIC {
 				c.AddConstructor (dc);		
 			} 
 */
-			// --------------------------------------------------------------				
+			//--------------------------------------------------------------				
 				
 			return AdditionResult.Success;
 		}
@@ -253,7 +253,7 @@ namespace Mono.MonoBASIC {
 
 			if (basename == Basename)
 				return AdditionResult.EnclosingClash;
-
+			
 			if (methods == null)
 				methods = new ArrayList ();
 
@@ -878,7 +878,51 @@ namespace Mono.MonoBASIC {
 		void DefineMembers (ArrayList list, MemberInfo [] defined_names)
 		{
 			int idx;
-			
+
+			// if one of the overloaded method is having
+			// Shadows or Overloads modifier all other should 
+			// have the same modifier
+			Hashtable members = new Hashtable();
+			int modval;
+			foreach (MemberCore mc in list)
+			{
+				modval = 0;
+				if(members[mc.Name] == null)
+				{
+					foreach (MemberCore m in list)
+					{
+						if(m.Name == mc.Name) 
+						{
+							if ((m.ModFlags & Modifiers.SHADOWS) != 0)
+							{
+								modval = Modifiers.SHADOWS;
+								break;
+							}
+							else if((m.ModFlags & Modifiers.NEW) != 0)
+							{
+								modval = Modifiers.NEW;
+							}
+						}
+					}
+					members.Add(mc.Name, modval);
+				}
+				
+				modval = (int)members[mc.Name];
+				if(modval != 0)
+				{
+					if(((modval & Modifiers.SHADOWS) != 0) && ((mc.ModFlags & Modifiers.SHADOWS) == 0))
+						Report.Error (
+							30695, mc.Location,
+							"Function '" + mc.Name + "': must be declared 'Shadows' " +
+							"because another '" + mc.Name + "' declared 'Shadows'");
+					else if(((modval & Modifiers.NEW) != 0) && ((mc.ModFlags & Modifiers.NEW) == 0))
+						Report.Error (
+							31409, mc.Location,
+							"Function '" + mc.Name + "': must be declared 'Overloads' " +
+							"because another '" + mc.Name + "' declared 'Overloads'");
+				}
+			}
+			members.Clear ();
 			remove_list.Clear ();
 
 			foreach (MemberCore mc in list){
@@ -895,6 +939,8 @@ namespace Mono.MonoBASIC {
 					if (RootContext.WarningLevel >= 4){
 						if ((mc.ModFlags & Modifiers.NEW) != 0)
 							Warning_KewywordNewNotRequired (mc.Location, mc);
+						if ((mc.ModFlags & Modifiers.SHADOWS) != 0)
+							Warning_KewywordShadowsNotRequired (mc.Location, mc);
 					}
 					continue;
 				}
@@ -910,8 +956,9 @@ namespace Mono.MonoBASIC {
 				if (match is MethodBase && mc is MethodCore)
 					continue; 
 				
-				if ((mc.ModFlags & Modifiers.NEW) == 0)
-					Warning_KeywordNewRequired (mc.Location, defined_names [idx]);
+				if (((mc.ModFlags & Modifiers.SHADOWS) == 0) && idx > 0)
+					Warning_KeywordShadowsRequired (mc.Location, defined_names [idx]);
+				
 			}
 			
 			foreach (object o in remove_list)
@@ -1550,12 +1597,19 @@ namespace Mono.MonoBASIC {
 			return "`" + Name + "." + n + "'";
 		}
 
-		public void Warning_KeywordNewRequired (Location l, MemberInfo mi)
+		public void Warning_KeywordShadowsRequired (Location l, MemberInfo mi)
 		{
 			Report.Warning (
-				108, l, "The keyword new is required on " + 
-				MakeName (mi.Name) + " because it hides `" +
+				108, l, "The keyword 'Shadows' is required on " + 
+				MakeName (mi.Name) + " because it shadows `" +
 				mi.ReflectedType.Name + "." + mi.Name + "'");
+		}
+
+		public void Warning_KewywordShadowsNotRequired (Location l, MemberCore mc)
+		{
+			Report.Warning (
+				109, l, "The member " + MakeName (mc.Name) + " does not hide an " +
+				"inherited member, the keyword shadows is not required");
 		}
 
 		public void Warning_KewywordNewNotRequired (Location l, MemberCore mc)
@@ -1648,6 +1702,14 @@ namespace Mono.MonoBASIC {
 					Report.Error (
 						238, loc, name +
 						" cannot be sealed because it is not an override");
+					ok = false;
+				}
+			}
+			if ((flags & Modifiers.NEW) != 0){
+				if ((flags & Modifiers.SHADOWS) != 0){
+					Report.Error (
+						31408, loc, 
+						" 'Overloads' and 'Shadows' cannot be combined ");
 					ok = false;
 				}
 			}
@@ -2190,8 +2252,9 @@ namespace Mono.MonoBASIC {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
-		        Modifiers.UNSAFE |
-			Modifiers.EXTERN;
+		    	Modifiers.UNSAFE |
+			Modifiers.EXTERN|
+			Modifiers.SHADOWS;
 
 		//
 		// return_type can be "null" for VOID values.
@@ -2342,8 +2405,8 @@ namespace Mono.MonoBASIC {
 						}
 					}
 				} else {
-					if ((ModFlags & Modifiers.NEW) != 0)
-						WarningNotHiding (parent);
+					/*if ((ModFlags & Modifiers.NEW) != 0)
+						WarningNotHiding (parent);*/
 
 					if ((ModFlags & Modifiers.OVERRIDE) != 0){
 						Report.Error (115, Location,
@@ -2351,9 +2414,9 @@ namespace Mono.MonoBASIC {
 							      " no suitable methods found to override");
 					}
 				}
-			} else if ((ModFlags & Modifiers.NEW) != 0)
+			}/* else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
-
+			*/
 			return true;
 		}
 

@@ -26,10 +26,12 @@ namespace Mono.MonoBASIC {
 		public const int VOLATILE  = 0x01000;
 		public const int UNSAFE    = 0x02000;
 		public const int WRITEONLY = 0x04000;
-		public const int OVERLOADS = 0x08000;
+		// Todo : Shadows needs implementation		
+		public const int SHADOWS   = 0x08000;
 		public const int DEFAULT   = 0x10000;
 		public const int NONVIRTUAL= 0x20000;
 		private const int TOP      = 0x20000;
+		
 
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;
@@ -65,6 +67,8 @@ namespace Mono.MonoBASIC {
 				s = "extern"; break;
 			case Modifiers.VOLATILE:
 				s = "volatile"; break;
+			case Modifiers.SHADOWS:
+				s = "shadows"; break;
 			}
 
 			return s;
@@ -141,7 +145,6 @@ namespace Mono.MonoBASIC {
 		public static MethodAttributes MethodAttr (int mod_flags)
 		{
 			MethodAttributes ma = 0;
-
 			if ((mod_flags & PUBLIC) != 0)
 				ma |= MethodAttributes.Public;
 			if ((mod_flags & PRIVATE) != 0)
@@ -177,7 +180,10 @@ namespace Mono.MonoBASIC {
 			
 			if ((mod_flags & NEW) != 0)
 				ma |= MethodAttributes.HideBySig;
-			
+
+			//if ((mod_flags & SHADOWS) != 0)
+				// needs to be fixed
+
 			return ma;
 		}
 
