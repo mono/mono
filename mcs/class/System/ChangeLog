@@ -1,3 +1,8 @@
+2002-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list:
+	* list.unix: added EnumConverter.cs
+
 2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list:
