@@ -1,5 +1,16 @@
 2003-11-02  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (fieldref_encode_signature): Take a `MonoType *'
+	instead of a `MonoClassField *' since we just need the type.
+	(create_generic_typespec): New static function.  Creates a
+	TypeSpec token for a generic type declaration.
+	(mono_image_get_generic_field_token): New static function.
+	(mono_image_create_token): If we're a FieldBuilder in a generic
+	type declaration, call mono_image_get_generic_field_token() to get
+	the token.
+
+2003-11-02  Martin Baulig  <martin@ximian.com>
+
 	* reflection.h
 	(MonoReflectionInflatedMethod, MonoReflectionInflatedField): Added
 	`MonoReflectionGenericInst *declaring_type' and
