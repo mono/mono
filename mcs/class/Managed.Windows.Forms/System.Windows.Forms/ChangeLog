@@ -1,3 +1,8 @@
+2004-12-07  Geoff Norton  <gnorton@customerdna.com>
+
+        * XplatUIOSX.cs: Initial checkin
+        * XplatUI.cs: Use the Quartz driver if the environment is set to use it
+
 2004-12-03  Ravindra <rkumar@novell.com>
 
 	* ListView.cs: Added some keybindings and fixed scrolling.
