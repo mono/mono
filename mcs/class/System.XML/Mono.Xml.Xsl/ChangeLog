@@ -1,5 +1,12 @@
 2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Attribute.cs: Change to struct. Remove QName class.
+	* GenericOutputter.cs: use an Attribute [] rather than an
+	ArrayList. Allows us not to allocate Attributes, which is great
+	for speed. Roll our own allocation.
+
+2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs: add GetNsm to main class as well.
 
 2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>

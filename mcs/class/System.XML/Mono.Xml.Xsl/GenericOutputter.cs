@@ -31,7 +31,8 @@ namespace Mono.Xml.Xsl
 		// Collection of pending attributes. TODO: Can we make adding an attribute
 		// O(1)? I'm not sure it is that important (this would only really make a difference
 		// if elements had like 10 attributes, which is very rare).
-		ArrayList pendingAttributes = new ArrayList ();
+		Attribute [] pendingAttributes = new Attribute [10];
+		int pendingAttributesPos = 0;
 		//Namespace manager. Subject to optimization.
 		private XmlNamespaceManager _nsManager;
 		//Name table
@@ -86,8 +87,9 @@ namespace Mono.Xml.Xsl
 				//namespaces to WriteStartElement
 				_nsManager.PushScope ();
 				//Emit pending attributes
-				foreach (Attribute attr in pendingAttributes) {
-					_emitter.WriteAttributeString (attr.Prefix, attr.QName.Name, attr.QName.Namespace, attr.Value);
+				for (int i = 0; i < pendingAttributesPos; i++) {
+					Attribute attr = pendingAttributes [i];
+					_emitter.WriteAttributeString (attr.Prefix, attr.LocalName, attr.Namespace, attr.Value);
 				}	
 				//Attributes flushed, state is Content now				
 				_state = WriteState.Content;
@@ -120,7 +122,7 @@ namespace Mono.Xml.Xsl
 			CheckState ();
 			_emitter.WriteStartElement (prefix, localName, nsURI);
 			_state = WriteState.Element;						
-			pendingAttributes.Clear ();
+			pendingAttributesPos = 0;
 		}
 
 		public override void WriteEndElement ()
@@ -135,10 +137,10 @@ namespace Mono.Xml.Xsl
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
 		{										
 			//Put attribute to pending attributes collection, replacing namesake one
-		 	XmlQualifiedName qName = new XmlQualifiedName (localName, nsURI);
-			
-			foreach (Attribute attr in pendingAttributes) {
-				if (attr.QName == qName) {
+			for (int i = 0; i < pendingAttributesPos; i++) {
+				Attribute attr = pendingAttributes [i];
+				
+				if (attr.LocalName == localName && attr.Namespace == nsURI) {
 					attr.Value = value;
 					//Keep prefix (e.g. when literal attribute is overriden by xsl:attribute)
 					if (attr.Prefix == String.Empty && prefix != String.Empty)
@@ -148,7 +150,17 @@ namespace Mono.Xml.Xsl
 				}
 			}
 			
-			pendingAttributes.Add (new Attribute (prefix, qName, value));	
+			if (pendingAttributesPos == pendingAttributes.Length) {
+				Attribute [] old = pendingAttributes;
+				pendingAttributes = new Attribute [pendingAttributesPos * 2 + 1];
+				if (pendingAttributesPos > 0)
+					Array.Copy (old, 0, pendingAttributes, 0, pendingAttributesPos);
+			}
+			pendingAttributes [pendingAttributesPos].Prefix = prefix;
+			pendingAttributes [pendingAttributesPos].Namespace = nsURI;
+			pendingAttributes [pendingAttributesPos].LocalName = localName;
+			pendingAttributes [pendingAttributesPos].Value = value;
+			pendingAttributesPos++;
 		}
 
 		public override void WriteNamespaceDecl (string prefix, string nsUri)

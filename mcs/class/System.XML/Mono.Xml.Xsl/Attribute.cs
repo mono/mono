@@ -14,15 +14,18 @@ namespace Mono.Xml.Xsl {
 	/// <summary>
 	/// XML attribute.
 	/// </summary>
-	public class Attribute {
-	    public string Prefix;
-	    public XmlQualifiedName QName;
-	    public string Value;
+	public struct Attribute {
+		public string Prefix;
+		public string Namespace;
+		public string LocalName;
+		public string Value;
 	    
-		public Attribute(string prefix, XmlQualifiedName qName, string value){
-		    Prefix = prefix;
-		    QName = qName;
-		    Value = value;
+		public Attribute (string prefix, string namespaceUri, string localName, string value)
+		{
+			this.Prefix = prefix;
+			this.Namespace = namespaceUri;
+			this.LocalName = localName;
+			this.Value = value;
 		}
 	}
 }
