@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -48,10 +49,10 @@ public abstract class TripleDES : SymmetricAlgorithm {
 		}
 		set { 
 			if (value == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("Key");
 			// this will check for both key size and weak keys
 			if (IsWeakKey (value))
-				throw new CryptographicException ();
+				throw new CryptographicException (Locale.GetText ("Weak Key"));
 			KeyValue = (byte[]) value.Clone (); 
 		}
 	}
@@ -91,7 +92,7 @@ public abstract class TripleDES : SymmetricAlgorithm {
 			}
 		}
 		else
-			throw new CryptographicException ();
+			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 
 		return true;
 	}
@@ -108,4 +109,3 @@ public abstract class TripleDES : SymmetricAlgorithm {
 }
 
 }
-

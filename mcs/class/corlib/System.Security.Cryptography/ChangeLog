@@ -6,13 +6,16 @@
 	Fixed the KeySize must be equal with EffectiveKeySize to match MS 
 	implementation.
 	* SHA1.cs: Moved XML comments to monodoc.
-	* SHA1CryptoServiceProvider.cs: Moved XML comments to monodoc. Removed CLSCompliance 
-	attributes from	private fields. 
+	* SHA1CryptoServiceProvider.cs: Moved XML comments to monodoc. Removed
+	CLSCompliance attributes from private fields. 
 	* SHA256.cs: Moved XML comments to monodoc.
-	* SHA256Managed.cs: Moved XML comments to monodoc. Removed CLSCompliance 
-	attributes from	private fields.
+	* SHA256Managed.cs: Moved XML comments to monodoc. Removed 
+	CLSCompliance attributes from	private fields.
 	* SHA384.cs: Moved XML comments to monodoc.
 	* SHA512.cs: Moved XML comments to monodoc.
+	* TripleDES.cs: Added globalization to exceptions.
+	* TripleDESCryptoServiceProvider.cs: Changed Array.Copy to 
+	Buffer.BlockCopy. Zeroize decrypted data.
 
 2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 

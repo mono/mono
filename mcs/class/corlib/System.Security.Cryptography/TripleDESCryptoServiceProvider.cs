@@ -2,9 +2,10 @@
 // TripleDESCryptoServiceProvider.cs: Default TripleDES implementation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -21,7 +22,9 @@ namespace System.Security.Cryptography {
 	
 	public sealed class TripleDESCryptoServiceProvider : TripleDES {
 	
-		public TripleDESCryptoServiceProvider () {}
+		public TripleDESCryptoServiceProvider ()
+		{
+		}
 	
 		public override void GenerateIV () 
 		{
@@ -67,12 +70,12 @@ namespace System.Security.Cryptography {
 			byte[] key2 = new byte [8];
 			byte[] key3 = new byte [8];
 			DES des = DES.Create ();
-			Array.Copy (key, 0, key1, 0, 8);
-			Array.Copy (key, 8, key2, 0, 8);
+			Buffer.BlockCopy (key, 0, key1, 0, 8);
+			Buffer.BlockCopy (key, 8, key2, 0, 8);
 			if (key.Length == 16)
-				Array.Copy (key, 0, key3, 0, 8);
+				Buffer.BlockCopy (key, 0, key3, 0, 8);
 			else
-				Array.Copy (key, 16, key3, 0, 8);
+				Buffer.BlockCopy (key, 16, key3, 0, 8);
 	
 			// note: some modes (like CFB) requires encryption when decrypting
 			if ((encryption) || (algo.Mode == CipherMode.CFB)) {
@@ -101,6 +104,8 @@ namespace System.Security.Cryptography {
 				D1.ProcessBlock (input, output);
 				E2.ProcessBlock (output, temp);
 				D3.ProcessBlock (temp, output);
+				// don't keep decrypted content in memory
+				Array.Clear (temp, 0, temp.Length);
 			}
 		}
 	}
