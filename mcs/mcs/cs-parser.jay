@@ -1168,6 +1168,7 @@ constructor_declaration
 			if (c.Initializer == null)
 				c.Initializer = new ConstructorBaseInitializer (null, lexer.Location);
 		}
+		
 		CheckDef (current_container.AddConstructor (c), c.Name);
 
 		current_local_parameters = null;
@@ -1828,11 +1829,11 @@ unchecked_expression
 unary_expression
 	: primary_expression
 	| PLUS unary_expression		{ 
-	  	$$ = new Unary (Unary.Operator.Add, (Expression) $2, lexer.Location);
+	  	$$ = new Unary (Unary.Operator.Addition, (Expression) $2, lexer.Location);
 	  } 
 	| MINUS unary_expression 
 	  { 
-		$$ = new Unary (Unary.Operator.Subtract, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.Subtraction, (Expression) $2, lexer.Location);
 	  }
 	| BANG unary_expression 
 	  {

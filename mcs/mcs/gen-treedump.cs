@@ -81,12 +81,12 @@ namespace Generator {
 			int prec = 0;
 			
 			switch (u.Oper){
-			case Unary.Operator.Add:
+			case Unary.Operator.Addition:
 				prec = 10;
 				s = "+";
 				break;
 				
-			case Unary.Operator.Subtract:
+			case Unary.Operator.Subtraction:
 				prec = 10;
 				s = "-";
 				break;

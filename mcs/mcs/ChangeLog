@@ -1,3 +1,24 @@
+2001-09-27  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer::AddConstructor): Fix a stupid bug
+	I had introduced long ago (what's new ?).
+
+	* expression.cs (UserImplicitCast::CanConvert): Static method to do 
+	the work of all the checking. 
+	(ConvertImplicit): Call CanConvert and only then create object if necessary.
+	(UserImplicitCast::CanConvert, ::Resolve): Re-write.
+
+	(Unary::Operator): Rename Add and Subtract to Addition and Subtraction because
+	that is the right way. 
+
+	(Invocation::MakeUnionSet): Convenience function to make unions of sets for 
+	overloading resolution. Use everywhere instead of cutting and pasting code.
+
+	(Binary::ResolveOperator): Use MakeUnionSet.
+
+	(UserImplicitCast::CanConvert, ::Resolve): Update to take care of the case when 
+	we have to convert to bool types. Not complete yet.
+	
 2001-09-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (TypeManager::CSharpName): support ushort.

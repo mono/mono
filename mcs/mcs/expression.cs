@@ -335,15 +335,13 @@ namespace CIR {
 			//
 			// Step 1: Perform implicit conversions as found on expr.Type
 			//
-			Expression imp;
 
-			imp = new UserImplicitCast (expr, target_type);
-
-			imp = imp.Resolve (tc);
-
-			if (imp != null)
+			if (UserImplicitCast.CanConvert (tc, expr, target_type) == true) {
+				Expression imp = new UserImplicitCast (expr, target_type);
+				imp.Resolve (tc);
 				return imp;
-
+			}
+			
 			//
 			// Step 2: Built-in conversions.
 			//
@@ -972,7 +970,7 @@ namespace CIR {
 	// </remarks>
 	public class Unary : ExpressionStatement {
 		public enum Operator {
-			Add, Subtract, Negate, BitComplement,
+			Addition, Subtraction, Negate, BitComplement,
 			Indirection, AddressOf, PreIncrement,
 			PreDecrement, PostIncrement, PostDecrement
 		}
@@ -1016,9 +1014,9 @@ namespace CIR {
 		string OperName ()
 		{
 			switch (oper){
-			case Operator.Add:
+			case Operator.Addition:
 				return "+";
-			case Operator.Subtract:
+			case Operator.Subtraction:
 				return "-";
 			case Operator.Negate:
 				return "!";
@@ -1138,7 +1136,7 @@ namespace CIR {
 				return this;
 			}
 
-			if (oper == Operator.Add) {
+			if (oper == Operator.Addition) {
 				//
 				// A plus in front of something is just a no-op, so return the child.
 				//
@@ -1153,7 +1151,7 @@ namespace CIR {
 			// double  operator- (double d)
 			// decimal operator- (decimal d)
 			//
-			if (oper == Operator.Subtract){
+			if (oper == Operator.Subtraction){
 				//
 				// Fold a "- Constant" into a negative constant
 				//
@@ -1321,10 +1319,10 @@ namespace CIR {
 			}
 			
 			switch (oper) {
-			case Operator.Add:
+			case Operator.Addition:
 				throw new Exception ("This should be caught by Resolve");
 				
-			case Operator.Subtract:
+			case Operator.Subtraction:
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Neg);
 				break;
@@ -1771,37 +1769,13 @@ namespace CIR {
 
 			right_expr = MemberLookup (tc.RootContext, r, op, false);
 
-			if (left_expr != null || right_expr != null) {
-				//
-				// Now we need to form the union of these two sets and
-				// then call OverloadResolve on that.
-				//
-				MethodGroupExpr left_set = null, right_set = null;
-				int length1 = 0, length2 = 0;
+			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
 
-				if (left_expr != null) {
-					left_set = (MethodGroupExpr) left_expr;
-					length1 = left_set.Methods.Length;
-				}
-
-				if (right_expr != null) {
-					right_set = (MethodGroupExpr) right_expr;
-					length2 = right_set.Methods.Length;
-				}
-
-				MemberInfo [] miset = new MemberInfo [length1 + length2];
-				if (left_set != null)
-					left_set.Methods.CopyTo (miset, 0);
-				if (right_set != null)
-					right_set.Methods.CopyTo (miset, length1);
-				
-				MethodGroupExpr union = new MethodGroupExpr (miset);
-				
-				Arguments = new ArrayList ();
-				Arguments.Add (new Argument (left, Argument.AType.Expression));
-				Arguments.Add (new Argument (right, Argument.AType.Expression));
-
+			Arguments = new ArrayList ();
+			Arguments.Add (new Argument (left, Argument.AType.Expression));
+			Arguments.Add (new Argument (right, Argument.AType.Expression));
 			
+			if (union != null) {
 				method = Invocation.OverloadResolve (tc, union, Arguments, location);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
@@ -1809,8 +1783,8 @@ namespace CIR {
 					type = mi.ReturnType;
 					return this;
 				}
-			}
-
+			}	
+			
 			//
 			// Step 2: Default operations on CLI native types.
 			//
@@ -2799,6 +2773,40 @@ namespace CIR {
 			sb.Append (")");
 			return sb.ToString ();
 		}
+
+		public static MethodGroupExpr MakeUnionSet (Expression mg1, Expression mg2)
+		{
+
+			if (mg1 != null || mg2 != null) {
+					
+				MethodGroupExpr left_set = null, right_set = null;
+				int length1 = 0, length2 = 0;
+				
+				if (mg1 != null) {
+					left_set = (MethodGroupExpr) mg1;
+					length1 = left_set.Methods.Length;
+				}
+				
+				if (mg2 != null) {
+					right_set = (MethodGroupExpr) mg2;
+					length2 = right_set.Methods.Length;
+				}
+				
+				MemberInfo [] miset = new MemberInfo [length1 + length2];
+				if (left_set != null)
+					left_set.Methods.CopyTo (miset, 0);
+				if (right_set != null)
+					right_set.Methods.CopyTo (miset, length1);
+				
+				MethodGroupExpr union = new MethodGroupExpr (miset);
+
+				return union;
+				
+			}
+
+			return null;
+
+		}
 		
 		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
@@ -3599,36 +3607,109 @@ namespace CIR {
 		public override Expression Resolve (TypeContainer tc)
 		{
 			source = source.Resolve (tc);
-
+			
 			if (source == null)
 				return null;
 
-			Expression mg;
+			Expression mg1, mg2;
+			MethodGroupExpr union;
+			
+			mg1 = MemberLookup (tc.RootContext, source.Type, "op_Implicit", false);
+			mg2 = MemberLookup (tc.RootContext, target, "op_Implicit", false);
+			
+			union = Invocation.MakeUnionSet (mg1, mg2);
 
-			mg = MemberLookup (tc.RootContext, source.Type, "op_Implicit", false);
-
-			if (mg != null) {
+			arguments = new ArrayList ();
+			arguments.Add (new Argument (source, Argument.AType.Expression));
+			
+			if (union != null) {
+				method = Invocation.OverloadResolve (tc, union, arguments,
+								     new Location ("FIXME", 1, 1));
 				
-				MethodGroupExpr me = (MethodGroupExpr) mg;
+				if (method != null) {
+					type = ((MethodInfo) method).ReturnType;
+					return this;
+				}
+			}
+			
+			if (target == TypeManager.bool_type) {
 
-				arguments = new ArrayList ();
-				arguments.Add (new Argument (source, Argument.AType.Expression));
+				mg1 = MemberLookup (tc.RootContext, source.Type, "op_True", false);
+				mg2 = MemberLookup (tc.RootContext, target, "op_True", false);
+				
+				union = Invocation.MakeUnionSet (mg1, mg2);
 
-				method = Invocation.OverloadResolve (tc, me, arguments, new Location ("", 0,0));
+				if (union == null)
+					return null;
+				
+				method = Invocation.OverloadResolve (tc, union, arguments,
+								     new Location ("FIXME", 1, 1));
+				
+				if (method != null) {
+					type = ((MethodInfo) method).ReturnType;
+					return this;
+				}
+			}
+			
+			return null;
+		}
+
+		public static bool CanConvert (TypeContainer tc, Expression source, Type target)
+		{
+			source = source.Resolve (tc);
+			
+			if (source == null)
+				return false;
+
+			Expression mg1, mg2;
+			MethodBase method;
+			ArrayList arguments;
+			
+			mg1 = MemberLookup (tc.RootContext, source.Type, "op_Implicit", false);
+			mg2 = MemberLookup (tc.RootContext, target, "op_Implicit", false);
+			
+			MethodGroupExpr union = Invocation.MakeUnionSet (mg1, mg2);
+
+			arguments = new ArrayList ();
+			arguments.Add (new Argument (source, Argument.AType.Expression));
+			
+			if (union != null) {
+				
+				method = Invocation.OverloadResolve (tc, union, arguments,
+										new Location ("FIXME", 1, 1));
+				if (method != null) {
+					MethodInfo mi = (MethodInfo) method;
+					
+					if (mi.ReturnType == target)
+						return true;
+				}
+			}
+			
+			// If we have a boolean type, we need to check for the True
+			// and False operators too.
+			
+			if (target == TypeManager.bool_type) {
+
+				mg1 = MemberLookup (tc.RootContext, source.Type, "op_True", false);
+				mg2 = MemberLookup (tc.RootContext, target, "op_True", false);
+				
+				union = Invocation.MakeUnionSet (mg1, mg2);
+
+				if (union == null)
+					return false;
+
+				method = Invocation.OverloadResolve (tc, union, arguments,
+								     new Location ("FIXME", 1, 1));
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
 
-					type = mi.ReturnType;
-
-					if (type != target)
-						return null;
-					
-					return this;
-				} else
-					return null;
-
-			} else
-				return null;
+					if (mi.ReturnType == target) 
+						return true;
+				}
+			}
+			
+			return false;
+			
 		}
 		
 		public override void Emit (EmitContext ec)

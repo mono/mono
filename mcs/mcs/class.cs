@@ -217,7 +217,7 @@ namespace CIR {
 
 		public AdditionResult AddConstructor (Constructor c)
 		{
-			if (c.Name != Name) 
+			if (c.Name != Basename) 
 				return AdditionResult.NotAConstructor;
 
 			if (constructors == null)
