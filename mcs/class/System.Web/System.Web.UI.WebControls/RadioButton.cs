@@ -53,7 +53,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[MonoTODO]
 		internal override void RenderInputTag(HtmlTextWriter writer, string id)
 		{
 			writer.AddAttribute(HtmlTextWriterAttribute.Id, id);
