@@ -407,5 +407,70 @@ namespace MonoTests.System.Security.Policy {
 			cg2.FromXml (se);
 			Assert.IsTrue (cg.Equals (cg2), "Equals (FromXml)");
 		}
+		
+		[Test]
+		public void ResolveWithChildren ()
+		{
+			PermissionSet pset1 = new PermissionSet (PermissionState.None);
+			PermissionSet pset2 = new PermissionSet (PermissionState.None);
+			PermissionSet pset3 = new PermissionSet (PermissionState.None);
+			PermissionSet pset4 = new PermissionSet (PermissionState.None);
+			PermissionSet pset5 = new PermissionSet (PermissionState.None);
+			PermissionSet pset6 = new PermissionSet (PermissionState.None);
+
+			IPermission perm1 = new UIPermission (PermissionState.Unrestricted);
+			IPermission perm2 = new EnvironmentPermission (PermissionState.Unrestricted);
+			IPermission perm3 = new FileDialogPermission (PermissionState.Unrestricted);
+			IPermission perm4 = new ReflectionPermission (PermissionState.Unrestricted);
+			IPermission perm5 = new RegistryPermission (PermissionState.Unrestricted);
+			IPermission perm6 = new FileIOPermission (PermissionState.Unrestricted);
+			
+			pset1.AddPermission (perm1);
+			PolicyStatement policy1 = new PolicyStatement (pset1);
+			
+			pset2.AddPermission(perm2);
+			PolicyStatement policy2 = new PolicyStatement (pset2);
+			
+			pset3.AddPermission (perm3);
+			PolicyStatement policy3 = new PolicyStatement (pset3);
+			
+			pset4.AddPermission (perm4);
+			PolicyStatement policy4 = new PolicyStatement (pset4);
+			
+			pset5.AddPermission (perm5);
+			PolicyStatement policy5 = new PolicyStatement (pset5);
+			
+			pset6.AddPermission (perm6);
+			PolicyStatement policy6 = new PolicyStatement (pset6);
+
+			UnionCodeGroup root = new UnionCodeGroup (new AllMembershipCondition (), policy1);
+			
+			UnionCodeGroup child1 = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.Internet), policy2);
+			UnionCodeGroup child2 = new UnionCodeGroup (new AllMembershipCondition (), policy3);
+			UnionCodeGroup child3 = new UnionCodeGroup (new AllMembershipCondition (), policy4);
+			UnionCodeGroup childofchild1 = new UnionCodeGroup (new AllMembershipCondition (), policy5);
+			UnionCodeGroup childofchild3 = new UnionCodeGroup (new AllMembershipCondition (), policy6);
+			
+			child1.AddChild (childofchild1);
+			child3.AddChild (childofchild3);
+
+			root.AddChild (child1);
+			root.AddChild (child2);
+			root.AddChild (child3);
+			
+			PolicyStatement result = root.Resolve (new Evidence ());
+
+			PermissionSet correctset = new PermissionSet (PermissionState.None);
+			correctset.AddPermission (perm1);
+			correctset.AddPermission (perm3);
+			correctset.AddPermission (perm4);
+			correctset.AddPermission (perm6);
+
+			Assert.AreEqual (correctset.Count, result.PermissionSet.Count, "PermissionSet.Count");
+			foreach (IPermission p in correctset) {
+				IPermission r = result.PermissionSet.GetPermission (p.GetType ());
+				Assert.IsNotNull (r, "PermissionSet.GetPermission");
+			}
+		}		
 	}
 }

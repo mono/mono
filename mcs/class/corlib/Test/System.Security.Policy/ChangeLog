@@ -1,3 +1,7 @@
+2004-09-19  Alexis Christoforides <alexis@thenull.net>
+
+	* UnionCodeGroupTest.cs: Added ResolveWithChildren test.
+
 2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashTest.cs: Fixed tests so they execute without errors on both
