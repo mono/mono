@@ -7,6 +7,8 @@
 // (C) 2004 Novell Inc.
 //
 
+#if NET_2_0
+
 using System;
 using System.IO;
 using System.Net;
@@ -174,3 +176,5 @@ namespace System.Xml
 		}
 	}
 }
+
+#endif

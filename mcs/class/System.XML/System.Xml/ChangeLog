@@ -1,5 +1,9 @@
 2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderSettings.cs, XmlWriterSettings.cs : NET_2_0 were missed.
+
+2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlFactory.cs,
 	  XmlItemView.cs,
 	  XmlItemViewCollection.cs,
