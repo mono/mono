@@ -8,8 +8,6 @@
 	* WebConnectionStream.cs: Remove unused variables thus eliminating some
 	build warnings.
 
-
-
 2004-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: patch by Yaacov Akiba Slama that fixes 100-continue
