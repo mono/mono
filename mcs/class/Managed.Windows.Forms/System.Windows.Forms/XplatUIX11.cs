@@ -264,7 +264,7 @@ namespace System.Windows.Forms {
 			HandleData data = (HandleData) handle_data [handle];
 			if (data != null) {
 				data.Dispose ();
-				handle_data = null;
+				handle_data[handle] = null;
 			}
 			return;
 		}
@@ -305,7 +305,7 @@ namespace System.Windows.Forms {
 			}
 
 			data.DeviceContext = Graphics.FromHwnd (handle);
-			paint_event = new PaintEventArgs(data.DeviceContext, data.InvalidArea);
+			paint_event = new PaintEventArgs((Graphics)data.DeviceContext, data.InvalidArea);
 
 			return paint_event;
 		}
