@@ -499,6 +499,8 @@ public virtual void RenderBeginTag(HtmlTextWriterTag tagKey){
 		}
 	}
 	TagInformation currentTag = HtmlTextWriter._tagNameLookupArray[_tagIndex];
+	if (currentTag.closingTag == null)
+		currentTag.closingTag = EndTagLeftChars + _tagName + TagRightChar;
 	if (tagRender) {
 		tagRendered = false;
 		if (tabsPending)
