@@ -1,4 +1,8 @@
 
+Tue Aug 6 12:40:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: use mono_image_get_entry_point ().
+
 Fri Jul 26 11:41:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* main.c, dump.h, dump.c: output hash value in File table.
