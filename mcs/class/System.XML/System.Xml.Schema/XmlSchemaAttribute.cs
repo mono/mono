@@ -162,20 +162,19 @@ namespace System.Xml.Schema
 		///     4. If default and use are both present, use must have the ·actual value· optional.
 		/// </remarks>
 		[MonoTODO]
-		//FIXME: Should we set a property to null if an error occurs? Or should we stop the validation?
 		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
 			errorCount = 0;
 			
 			if(parentIsSchema)//a
 			{
-				if(this.refName!= null && !this.refName.IsEmpty) // a.1
+				if(RefName!= null && !RefName.IsEmpty) // a.1
 					error(h,"ref must be absent in the top level <attribute>");
 				
-				if(this.form != XmlSchemaForm.None)	// a.2
+				if(Form != XmlSchemaForm.None)	// a.2
 					error(h,"form must be absent in the top level <attribute>");
 				
-				if(this.use != XmlSchemaUse.None)		// a.3
+				if(Use != XmlSchemaUse.None)		// a.3
 					error(h,"use must be absent in the top level <attribute>");
 
 				// TODO: a.10, a.11, a.12, a.13
@@ -183,7 +182,8 @@ namespace System.Xml.Schema
 			}
 			else // local
 			{
-				if(this.refName == null || this.refName.IsEmpty)
+				//FIXME: How to Use of AttributeFormDefault????
+				if(RefName == null || RefName.IsEmpty)
 				{
 					//TODO: b.8
 					CompileCommon(h,info, true);
@@ -209,44 +209,45 @@ namespace System.Xml.Schema
 		{
 			if(refIsNotPresent)
 			{
-				if(this.name == null)	//a.4, b.1, 
+				if(Name == null)	//a.4, b.1, 
 					error(h,"Required attribute name must be present");
-				else if(!XmlSchemaUtil.CheckNCName(this.name)) // a.4.2, b1.2
+				else if(!XmlSchemaUtil.CheckNCName(Name)) // a.4.2, b1.2
 					error(h,"attribute name must be NCName");
-				else if(this.name == "xmlns") // a.14 , b5
-					error(h,"attribute name can't be xmlns");
+				else if(Name == "xmlns") // a.14 , b5
+					error(h,"attribute name must not be xmlns");
 				else
-					this.qualifiedName = new XmlQualifiedName(this.name, info.targetNS);	
+					qualifiedName = new XmlQualifiedName(Name, info.TargetNamespace);	
 
-				if(this.schemaType != null)
+				if(SchemaType != null)
 				{
-					if(this.schemaTypeName != null && !this.SchemaTypeName.IsEmpty) // a.8
+					if(SchemaTypeName != null && !SchemaTypeName.IsEmpty) // a.8
 						error(h,"attribute can't have both a type and <simpleType> content");
-					else 
-					{
-						errorCount += this.schemaType.Compile(h,info); 
-					}
+
+					errorCount += SchemaType.Compile(h,info); 
 				}
+
+				if(SchemaTypeName != null && !XmlSchemaUtil.CheckQName(SchemaTypeName))
+					error(h,SchemaTypeName+" is not a valid QName");
 			}
 			else
 			{
-				//	redundant since we call function after check
-				//if(this.refName == null || this.refName.IsEmpty) 
-				//	error(h,"refname must be present");
-				this.qualifiedName = this.refName;
+				if(RefName == null || RefName.IsEmpty) 
+					error(h,"Error: Should Never Happen. refname must be present");
+				else
+					qualifiedName = RefName;
 			}
-			if(info.targetNS == XmlSchema.InstanceNamespace && this.name != "nil" && this.name != "type" 
-				&& this.name != "schemaLocation" && this.name != "noNamespaceSchemaLocation") // a.15, a.16
+
+			if(info.TargetNamespace == XmlSchema.InstanceNamespace && Name != "nil" && Name != "type" 
+				&& Name != "schemaLocation" && Name != "noNamespaceSchemaLocation") // a.15, a.16
 				error(h,"targetNamespace can't be " + XmlSchema.InstanceNamespace);
 
-			if(this.defaultValue != null && this.fixedValue != null) // a.6, b.3, c.3
+			if(DefaultValue != null && FixedValue != null) // a.6, b.3, c.3
 				error(h,"default and fixed must not both be present in an Attribute");
 
-			if(this.defaultValue != null && this.use != XmlSchemaUse.None && this.use != XmlSchemaUse.Optional)
+			if(DefaultValue != null && Use != XmlSchemaUse.None && Use != XmlSchemaUse.Optional)
 				error(h,"if default is present, use must be optional");
-			
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h,"id attribute must be a valid ID");
+
+			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
 		}
 
 		[MonoTODO]
@@ -334,6 +335,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						attribute.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						attribute.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

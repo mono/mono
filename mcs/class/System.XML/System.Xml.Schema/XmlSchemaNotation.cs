@@ -55,18 +55,17 @@ namespace System.Xml.Schema
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
 				error(h,"attribute name must be NCName");
 			else
-				qualifiedName = new XmlQualifiedName(Name,info.targetNS);
+				qualifiedName = new XmlQualifiedName(Name,info.TargetNamespace);
 
-			if(Public==null||Public == "")
+			if(Public==null)
 				error(h,"public must be present");
 			else if(!XmlSchemaUtil.CheckAnyUri(Public))
 				error(h,"public must be anyURI");
 
-			if(system != null && XmlSchemaUtil.CheckAnyUri(system))
-				error(h,"system must be anyURI");
-
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
+			if(system != null && !XmlSchemaUtil.CheckAnyUri(system))
+				error(h,"system must be present and of Type anyURI");
+			
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
 			return errorCount;
 		}
@@ -125,6 +124,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						notation.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						notation.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

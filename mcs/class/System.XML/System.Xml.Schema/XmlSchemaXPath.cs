@@ -24,6 +24,13 @@ namespace System.Xml.Schema
 			get{ return  xpath; } 
 			set{ xpath = value; }
 		}
+
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
+			return errorCount;
+		}
+
 		//<selector 
 		//  id = ID 
 		//  xpath = a subset of XPath expression, see below 
@@ -62,6 +69,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						path.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						path.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

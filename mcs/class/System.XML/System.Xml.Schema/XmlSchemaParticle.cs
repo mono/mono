@@ -38,7 +38,7 @@ namespace System.Xml.Schema
 					if(val >= 0 && (val == Decimal.Truncate(val)))
 					{
 						maxOccurs = val;
-						maxstr = value;
+						maxstr = val.ToString();
 					}
 					else
 					{
@@ -59,7 +59,7 @@ namespace System.Xml.Schema
 				if(val >= 0 && (val == Decimal.Truncate(val)))
 				{
 					minOccurs = val;
-					minstr	 = value;
+					minstr	 = val.ToString();
 				}
 				else
 				{

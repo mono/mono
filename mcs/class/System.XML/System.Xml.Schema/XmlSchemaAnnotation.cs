@@ -44,13 +44,13 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			return 1;
+			return 0;
 		}
 		
 		[MonoTODO]
 		internal int Validate(ValidationEventHandler h)
 		{
-			return 1;
+			return 0;
 		}
 
 		//<annotation
@@ -87,7 +87,11 @@ namespace System.Xml.Schema
 				}
 				else
 				{
-					//TODO: Add to Unhandled attributes
+											if(reader.Prefix == "xmlns")
+												annotation.Namespaces.Add(reader.LocalName, reader.Value);
+											else if(reader.Name == "xmlns")
+												annotation.Namespaces.Add("",reader.Value);
+						//TODO: Add to Unhandled attributes
 				}
 			}
 			

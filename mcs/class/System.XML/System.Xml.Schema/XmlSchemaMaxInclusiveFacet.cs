@@ -62,6 +62,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						maxi.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						maxi.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

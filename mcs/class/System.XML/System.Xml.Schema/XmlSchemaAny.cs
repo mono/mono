@@ -46,10 +46,8 @@ namespace System.Xml.Schema
 		{
 			errorCount = 0;
 
-			if(Id != null && !XmlSchemaUtil.CheckID(Id))
-			{
-				error(h, "id attribute must be a valid ID");
-			}
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+
 			//define ##any=1,##other=2,##targetNamespace=4,##local=8,anyURI=16
 			int nscount = 0;
 			string[] nslist = XmlSchemaUtil.SplitList(Namespace);
@@ -160,6 +158,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						any.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						any.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

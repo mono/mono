@@ -72,9 +72,10 @@ namespace System.Xml.Schema
 			{
 				errorCount += this.baseType.Compile(h,info);
 			}
+			if(!XmlSchemaUtil.CheckQName(BaseTypeName))
+				error(h,"BaseTypeName must be a XmlQualifiedName");
 
-			if(this.Id != null && !XmlSchemaUtil.CheckID(this.Id))
-				error(h,"id must be a valid ID");
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
 			return errorCount;
 		}
@@ -125,6 +126,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						restriction.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						restriction.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

@@ -42,11 +42,6 @@ namespace System.Xml.Schema
 			errorCount = 0;
 
 			int count = BaseTypes.Count;
-			if(MemberTypes != null)
-				count += MemberTypes.Length;
-
-			if(count == 0)
-				error(h, "Atleast one simpletype or membertype must be present");
 
 			foreach(XmlSchemaObject obj in baseTypes)
 			{
@@ -65,16 +60,22 @@ namespace System.Xml.Schema
 			{
 				for(int i=0; i< memberTypes.Length; i++)
 				{
-					if(memberTypes[i] == null)
+					if(memberTypes[i] == null || !XmlSchemaUtil.CheckQName(MemberTypes[i]))
 					{
-						warn(h,"memberTypes should not have a null value");
+						warn(h,"Invalid membertype");
 						memberTypes[i] = XmlQualifiedName.Empty;
+					}
+					else
+					{
+						count += MemberTypes.Length;
 					}
 				}
 			}
 
-			if(this.Id != null && !XmlSchemaUtil.CheckID(this.Id))
-				error(h,"id must be a valid ID");
+			if(count == 0)
+				error(h, "Atleast one simpletype or membertype must be present");
+
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
 			return errorCount;
 		}
@@ -131,6 +132,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						union.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						union.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

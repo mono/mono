@@ -30,25 +30,34 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
+			//FIXME: Should we reset the values on error??
 			if(MaxOccurs != Decimal.One)
 				error(h,"maxOccurs must be 1");
 			if(MinOccurs != Decimal.One && MinOccurs != Decimal.Zero)
 				error(h,"minOccurs must be 0 or 1");
 
+			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
+
 			foreach(XmlSchemaObject obj in Items)
 			{
 				if(obj is XmlSchemaElement)
 				{
-					errorCount += ((XmlSchemaElement)obj).Compile(h,info);
+					XmlSchemaElement elem = (XmlSchemaElement)obj;
+					if(elem.MaxOccurs != Decimal.One && elem.MaxOccurs != Decimal.Zero)
+					{
+						elem.error(h,"The {max occurs} of all the elements of 'all' must be 0 or 1. ");
+					}
+					errorCount += elem.Compile(h,info);
 				}
 				else
 				{
 					error(h,"XmlSchemaAll can only contain Items of type Element");
 				}
 			}
+
 			return errorCount;
 		}
-		
+
 		[MonoTODO]
 		internal int Validate(ValidationEventHandler h)
 		{
@@ -112,6 +121,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						all.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						all.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

@@ -1,5 +1,5 @@
 Bugs in Implementation:
 
-1. Not all Compile methods check for the Id attribute. Trivial but needs to be done.
-2. None of the XmlSchemaObjects except the XmlSchema populate XmlSerializerNamespaces.
-3. Non schema attributes are not being handled. Need an internal XmlAttribute constructor.
+// None of the XmlSchemaObjects except the XmlSchema populate XmlSerializerNamespaces.
+2. Non schema attributes are not being handled. Need an internal XmlAttribute constructor.
+3. Documentation and appInfo's Markup is not being read in the Read() Method.

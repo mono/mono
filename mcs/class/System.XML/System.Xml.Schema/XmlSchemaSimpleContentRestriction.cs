@@ -81,6 +81,8 @@ namespace System.Xml.Schema
 			{
 				error(h, "base must be present and a QName");
 			}
+			else if(!XmlSchemaUtil.CheckQName(BaseTypeName))
+				error(h,"BaseTypeName must be a QName");
 
 			if(BaseType != null)
 			{
@@ -110,8 +112,8 @@ namespace System.Xml.Schema
 			
 			//TODO: Compile Facets: Looks like they are a part of datatypes. So we'll do them with the datatypes
 
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
+			
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 			return errorCount;
 		}
 		
@@ -162,6 +164,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						restriction.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						restriction.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

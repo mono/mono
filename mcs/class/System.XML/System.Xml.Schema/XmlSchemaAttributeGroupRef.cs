@@ -33,10 +33,13 @@ namespace System.Xml.Schema
 		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
 			errorCount = 0;
-			if(this.refName == null || this.refName.IsEmpty)
+			if(RefName == null || RefName.IsEmpty)
 				error(h, "ref must be present");
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
+			else if(!XmlSchemaUtil.CheckQName(RefName))
+				error(h, "ref must be a valid qname");
+
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+
 //			if(this.Annotation != null)
 //				error(h, "attributegroup with a ref can't have any content");
 			
@@ -90,6 +93,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						attrgrp.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						attrgrp.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

@@ -67,12 +67,14 @@ namespace System.Xml.Schema
 		{
 			errorCount = 0;
 
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+
 			if(this.Name == null) //1
 				error(h,"Name is required in top level simpletype");
 			else if(!XmlSchemaUtil.CheckNCName(this.Name)) // b.1.2
 				error(h,"name attribute of a simpleType must be NCName");
 			else
-				this.qualifiedName = new XmlQualifiedName(this.Name,info.targetNS);
+				this.qualifiedName = new XmlQualifiedName(this.Name,info.TargetNamespace);
 			
 			if(this.AnyAttribute != null)
 			{
@@ -144,6 +146,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						attrgrp.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						attrgrp.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

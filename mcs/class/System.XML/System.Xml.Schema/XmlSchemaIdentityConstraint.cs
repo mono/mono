@@ -59,17 +59,32 @@ namespace System.Xml.Schema
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
 				error(h,"attribute name must be NCName");
 			else
-				this.qName = new XmlQualifiedName(Name,info.targetNS);
+				this.qName = new XmlQualifiedName(Name,info.TargetNamespace);
 
 			//TODO: Compile Xpath. 
 			if(Selector == null)
 				error(h,"selector must be present");
-		
+			else
+			{
+				errorCount += Selector.Compile(h,info);
+			}
+
 			if(Fields.Count == 0)
 				error(h,"atleast one field value must be present");
-
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
+			else
+			{
+				foreach(XmlSchemaObject obj in Fields)
+				{
+					if(obj is XmlSchemaXPath)
+					{
+						XmlSchemaXPath field = (XmlSchemaXPath)obj;
+						errorCount += field.Compile(h,info);
+					}
+					else
+						error(h,"Object of type "+obj.GetType()+" is invalid in the Fields Collection");
+				}
+			}
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
 			return errorCount;
 		}

@@ -208,62 +208,72 @@ namespace System.Xml.Schema
 		///		2. finalDefault must be one of (#all | List of (extension | restriction| union| list))
 		///		3. id must be of type ID
 		///		4. targetNamespace should be any uri
-		///		5. version should be a token
+		///		5. version should be a normalizedString
 		///		6. xml:lang should be a language
-		///		
 		/// </remarks>
 		[MonoTODO]
 		public void Compile(ValidationEventHandler handler)
 		{
-			//1. Union and List are not allowed in block default
-			if(this.blockDefault != XmlSchemaDerivationMethod.All)
-			{
-				if((this.blockDefault & XmlSchemaDerivationMethod.List)!=0 )
-					error(handler, "list is not allowed in blockDefault attribute");
-				if((this.blockDefault & XmlSchemaDerivationMethod.Union)!=0 )
-					error(handler, "union is not allowed in blockDefault attribute");
-			}
-			//2. Substitution is not allowed in finaldefault.
-			if(this.finalDefault != XmlSchemaDerivationMethod.All)
-			{
-				if((this.finalDefault & XmlSchemaDerivationMethod.Substitution)!=0 )
-					error(handler, "substitution is not allowed in finalDefault attribute");
-			}
-			//3. id must be of type ID
-			if(this.id != null && !XmlSchemaUtil.CheckID(this.id))
-				error(handler, "id attribute is not a valid ID");
-
-			//4. targetNamespace should be of type anyURI
-			if(!XmlSchemaUtil.CheckAnyUri(this.targetNamespace))
-				error(handler, "targetNamespace is not a valid URI");
-
-			//5. version should be of type TOKEN
-			if(!XmlSchemaUtil.CheckToken(this.version))
-				error(handler, "version is not a valid token");
-
-			//6. xml:lang must be a language
-			if(!XmlSchemaUtil.CheckLanguage(this.language))
-				error(handler, "xml:lang is not a valid language");
-
 			// Create the xmlschemainfo object which we use to pass variables like targetnamespace;
 			info = new XmlSchemaInfo();
-			if(this.targetNamespace != null && XmlSchemaUtil.CheckAnyUri(this.targetNamespace))
-				info.targetNS = this.TargetNamespace;
-			
-			if(this.ElementFormDefault != XmlSchemaForm.Qualified)
-				info.formDefault = XmlSchemaForm.Unqualified;
+
+			//1. Union and List are not allowed in block default
+			if(BlockDefault != XmlSchemaDerivationMethod.All)
+			{
+				if((BlockDefault & XmlSchemaDerivationMethod.List)!=0 )
+					error(handler, "list is not allowed in blockDefault attribute");
+				if((BlockDefault & XmlSchemaDerivationMethod.Union)!=0 )
+					error(handler, "union is not allowed in blockDefault attribute");
+			}
+
+			//2. Substitution is not allowed in finaldefault.
+			if(FinalDefault != XmlSchemaDerivationMethod.All)
+			{
+				if((FinalDefault & XmlSchemaDerivationMethod.Substitution)!=0 )
+					error(handler, "substitution is not allowed in finalDefault attribute");
+			}
+
+			//3. id must be of type ID
+			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, handler);
+
+			//4. targetNamespace should be of type anyURI or absent
+			if(TargetNamespace != null)
+			{
+				if(!XmlSchemaUtil.CheckAnyUri(TargetNamespace))
+					error(handler, TargetNamespace+" is not a valid value for targetNamespace attribute of schema");
+				else
+					info.TargetNamespace = TargetNamespace;
+			}
+
+			//5. version should be of type normalizedString
+			if(!XmlSchemaUtil.CheckNormalizedString(Version))
+				error(handler, Version + "is not a valid value for version attribute of schema");
+
+			//6. xml:lang must be a language
+			if(!XmlSchemaUtil.CheckLanguage(Language))
+				error(handler, Language + " is not a valid language");
+
+			// elementFormDefault defaults to UnQualified
+			if(ElementFormDefault != XmlSchemaForm.Qualified)
+				info.ElementFormDefault = XmlSchemaForm.Unqualified;
 			else
-				info.formDefault = XmlSchemaForm.Qualified;
+				info.ElementFormDefault = XmlSchemaForm.Qualified;
+
+			// attributeFormDefault defaults to UnQualified
+			if(AttributeFormDefault != XmlSchemaForm.Qualified)
+				info.AttributeFormDefault = XmlSchemaForm.Unqualified;
+			else
+				info.AttributeFormDefault = XmlSchemaForm.Qualified;
 
 			if(FinalDefault == XmlSchemaDerivationMethod.All)
-				info.finalDefault = XmlSchemaDerivationMethod.All;
+				info.FinalDefault = XmlSchemaDerivationMethod.All;
 			else // If finalDefault is None, info's finalDefault is set to empty
-				info.finalDefault = (FinalDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction));
+				info.FinalDefault = (FinalDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction));
 
 			if(BlockDefault == XmlSchemaDerivationMethod.All)
-				info.blockDefault = XmlSchemaDerivationMethod.All;
+				info.BlockDefault = XmlSchemaDerivationMethod.All;
 			else // If finalDefault is None, info's blockDefault is set to empty
-				info.blockDefault = (blockDefault & (XmlSchemaDerivationMethod.Extension |
+				info.BlockDefault = (blockDefault & (XmlSchemaDerivationMethod.Extension |
 									XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution));
 
 			// Compile the content of this schema
@@ -275,14 +285,16 @@ namespace System.Xml.Schema
 				}
 				else
 				{
-					error(handler,"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of Schema");
+					error(handler,"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of XmlSchema");
 				}
 			}
 			foreach(XmlSchemaObject obj in Items)
 			{
 				if(obj is XmlSchemaAnnotation)
 				{
-					if(((XmlSchemaAnnotation)obj).Compile(handler,info) == 0)
+					int numerr = ((XmlSchemaAnnotation)obj).Compile(handler,info);
+					errorCount += numerr;
+					if( numerr == 0)
 					{
 						//FIXME: What PSVI set do we add this to?
 					}
@@ -291,7 +303,9 @@ namespace System.Xml.Schema
 				{
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
 					attr.parentIsSchema = true;
-					if(attr.Compile(handler,info) == 0)
+					int numerr = attr.Compile(handler,info);
+					errorCount += numerr;					
+					if(numerr == 0)
 					{
 						Attributes.Add(attr.QualifiedName, attr);
 					}
@@ -299,7 +313,9 @@ namespace System.Xml.Schema
 				else if(obj is XmlSchemaAttributeGroup)
 				{
 					XmlSchemaAttributeGroup attrgrp = (XmlSchemaAttributeGroup) obj;
-					if(attrgrp.Compile(handler,info) == 0)
+					int numerr = attrgrp.Compile(handler,info);
+					errorCount += numerr;					
+					if(numerr == 0)
 					{
 						AttributeGroups.Add(attrgrp.QualifiedName, attrgrp);
 					}
@@ -308,7 +324,9 @@ namespace System.Xml.Schema
 				{
 					XmlSchemaComplexType ctype = (XmlSchemaComplexType) obj;
 					ctype.istoplevel = true;
-					if(ctype.Compile(handler,info) == 0)
+					int numerr = ctype.Compile(handler,info);
+					errorCount += numerr;					
+					if(numerr == 0)
 					{
 						schemaTypes.Add(ctype.QualifiedName, ctype);
 					}
@@ -317,7 +335,9 @@ namespace System.Xml.Schema
 				{
 					XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
 					stype.islocal = false; //This simple type is toplevel
-					if(stype.Compile(handler,info) == 0)
+					int numerr = stype.Compile(handler,info);
+					errorCount += numerr;					
+					if(numerr == 0)
 					{
 						SchemaTypes.Add(stype.QualifiedName, stype);
 					}
@@ -326,7 +346,9 @@ namespace System.Xml.Schema
 				{
 					XmlSchemaElement elem = (XmlSchemaElement) obj;
 					elem.parentIsSchema = true;
-					if(elem.Compile(handler,info) == 0)
+					int numerr = elem.Compile(handler,info);
+					errorCount += numerr;					
+					if(numerr == 0)
 					{
 						Elements.Add(elem.QualifiedName,elem);
 					}
@@ -334,7 +356,9 @@ namespace System.Xml.Schema
 				else if(obj is XmlSchemaGroup)
 				{
 					XmlSchemaGroup grp = (XmlSchemaGroup) obj;
-					if(grp.Compile(handler,info) == 0)
+					int numerr = grp.Compile(handler,info);
+					errorCount += numerr;					
+					if(numerr == 0)
 					{
 						Groups.Add(grp.QualifiedName,grp);
 					}
@@ -342,7 +366,9 @@ namespace System.Xml.Schema
 				else if(obj is XmlSchemaNotation)
 				{
 					XmlSchemaNotation ntn = (XmlSchemaNotation) obj;
-					if(ntn.Compile(handler,info) == 0)
+					int numerr = ntn.Compile(handler,info);
+					errorCount += numerr;					
+					if(numerr == 0)
 					{
 						Notations.Add(ntn.QualifiedName, ntn);
 					}
@@ -362,6 +388,7 @@ namespace System.Xml.Schema
 
 			foreach(XmlSchemaObject obj in Includes)
 			{
+				
 			}
 
 			//				foreach(XmlSchemaAnnotation ann in ??????)
@@ -408,7 +435,6 @@ namespace System.Xml.Schema
 			return Read(new XmlTextReader(stream),validationEventHandler);
 		}
 
-		[MonoTODO]
 		public static XmlSchema Read(XmlReader rdr, ValidationEventHandler validationEventHandler)
 		{
 			//XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));

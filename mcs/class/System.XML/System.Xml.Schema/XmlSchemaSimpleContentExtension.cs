@@ -53,10 +53,12 @@ namespace System.Xml.Schema
 			{
 				error(h, "base must be present and a QName");
 			}
-			
+			else if(!XmlSchemaUtil.CheckQName(BaseTypeName))
+				error(h,"BaseTypeName must be a QName");
+
 			if(this.AnyAttribute != null)
 			{
-				AnyAttribute.Compile(h,info);
+				errorCount += AnyAttribute.Compile(h,info);
 			}
 
 			foreach(XmlSchemaObject obj in Attributes)
@@ -64,18 +66,18 @@ namespace System.Xml.Schema
 				if(obj is XmlSchemaAttribute)
 				{
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-					attr.Compile(h,info);
+					errorCount += attr.Compile(h,info);
 				}
-				else if(obj is XmlSchemaAttributeGroup)
+				else if(obj is XmlSchemaAttributeGroupRef)
 				{
-					XmlSchemaAttributeGroup atgrp = (XmlSchemaAttributeGroup) obj;
-					atgrp.Compile(h,info);
+					XmlSchemaAttributeGroupRef atgrp = (XmlSchemaAttributeGroupRef) obj;
+					errorCount += atgrp.Compile(h,info);
 				}
 				else
 					error(h,obj.GetType() +" is not valid in this place::SimpleConentExtension");
 			}
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
+			
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
 			return errorCount;
 		}
@@ -126,6 +128,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						extension.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						extension.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

@@ -17,7 +17,6 @@ namespace System.Xml.Schema
 
 		public XmlSchemaDocumentation()
 		{
-			source = string.Empty;
 		}
 
 		[XmlAnyElement]

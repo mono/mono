@@ -67,6 +67,5 @@ namespace System.Xml.Schema
 		{
 			ValidationHandler.RaiseValidationWarning(handle,message, innerException);
 		}
-
 	}
 }

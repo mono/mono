@@ -50,8 +50,8 @@ namespace System.Xml.Schema
 				else
 					error(h,"simpleContent can't have any value other than restriction or extention");
 			}
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
+			
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 			return errorCount;
 		}
 		
@@ -93,6 +93,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						simple.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						simple.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

@@ -44,6 +44,7 @@ namespace System.Xml.Schema
 		}
 
 		// 1. name must be present
+		// 2. MinOccurs & MaxOccurs of the Particle must be absent
 		[MonoTODO]
 		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
@@ -52,31 +53,38 @@ namespace System.Xml.Schema
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
 				error(h,"attribute name must be NCName");
 			else
-				qualifiedName = new XmlQualifiedName(Name,info.targetNS);
-			
+				qualifiedName = new XmlQualifiedName(Name,info.TargetNamespace);
+
 			if(Particle == null)
 			{
 				error(h,"Particle is required");
 			}
-			else if(Particle is XmlSchemaChoice)
+			else 
 			{
-				errorCount += ((XmlSchemaChoice)Particle).Compile(h,info);
+				if(Particle.MaxOccursString != null)
+					Particle.error(h,"MaxOccurs must not be present when the Particle is a child of Group");
+				if(Particle.MinOccursString != null)
+					Particle.error(h,"MinOccurs must not be present when the Particle is a child of Group");
+			
+				if(Particle is XmlSchemaChoice)
+				{
+					errorCount += ((XmlSchemaChoice)Particle).Compile(h,info);
+				}
+				else if(Particle is XmlSchemaSequence)
+				{
+					errorCount += ((XmlSchemaSequence)Particle).Compile(h,info);
+				}
+				else if(Particle is XmlSchemaAll)
+				{
+					errorCount += ((XmlSchemaAll)Particle).Compile(h,info);
+				}
+				else
+				{
+					error(h,"only all,choice or sequence are allowed");
+				}
 			}
-			else if(Particle is XmlSchemaSequence)
-			{
-				errorCount += ((XmlSchemaSequence)Particle).Compile(h,info);
-			}
-			else if(Particle is XmlSchemaAll)
-			{
-				errorCount += ((XmlSchemaAll)Particle).Compile(h,info);
-			}
-			else
-			{
-				error(h,"only all,choice or sequence are allowed");
-			}
-
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
+			
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
 			return errorCount;
 		}
@@ -126,6 +134,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						group.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						group.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

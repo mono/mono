@@ -1,5 +1,6 @@
 using System;
 using System.Xml;
+using System.Collections;
 
 namespace System.Xml.Schema
 {
@@ -12,17 +13,19 @@ namespace System.Xml.Schema
 		private XmlSchemaUtil()
 		{}
 
-		[MonoTODO]
-		public static bool CheckID(string id)
+		public static void CompileID(string id,  XmlSchemaObject xso, Hashtable idCollection, ValidationEventHandler h)
 		{
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#ID
 			// 1. ID must be a NCName
 			// 2. ID must be unique in the schema
+			if(id == null)
+				return;
 			if(!CheckNCName(id)) 
-				return false;
-			//If !unique
-
-			return true;
+				xso.error(h,id+" is not a valid id attribute");
+			else if(idCollection.ContainsKey(id))
+				xso.error(h,"Duplicate id attribute "+id);
+			else
+				idCollection.Add(id,xso);
 		}
 
 		[MonoTODO]
@@ -36,6 +39,12 @@ namespace System.Xml.Schema
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#token
 			return true;
 		}
+
+		public static bool CheckNormalizedString(string token)
+		{
+			return true;
+		}
+
 		public static bool CheckLanguage(string lang)
 		{
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#language
@@ -55,6 +64,10 @@ namespace System.Xml.Schema
 			}
 		}
 
+		public static bool CheckQName(XmlQualifiedName qname)
+		{
+			return true;
+		}
 		public static bool IsValidQName(string qname)
 		{
 			foreach(string part in qname.Split(new char[]{':'},2))
@@ -133,6 +146,10 @@ namespace System.Xml.Schema
 				return decimal.Zero;
 			}
 		}
+
+		// Is some value is read, return it.
+		// If no values return empty.
+		// If exception, return none
 		public static XmlSchemaDerivationMethod ReadDerivationAttribute(XmlReader reader, out Exception innerExcpetion, string name)
 		{
 			innerExcpetion = null;
@@ -140,7 +157,7 @@ namespace System.Xml.Schema
 			{
 				string list = reader.Value;
 				string warn = "";
-				XmlSchemaDerivationMethod val = XmlSchemaDerivationMethod.None;
+				XmlSchemaDerivationMethod val = 0;
 				
 				if(list.IndexOf("#all") != -1 && list.Trim() != "#all")
 				{
@@ -176,7 +193,7 @@ namespace System.Xml.Schema
 			catch(Exception ex)
 			{
 				innerExcpetion = ex;
-				return 0;
+				return XmlSchemaDerivationMethod.None;
 			}
 		}
 

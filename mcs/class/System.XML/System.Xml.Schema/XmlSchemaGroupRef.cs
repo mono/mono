@@ -36,13 +36,19 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
+			//FIXME: Should we reset the values
+			if(MinOccurs > MaxOccurs)
+				error(h,"minOccurs must be less than or equal to maxOccurs");
+
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+
 			if(refName == null || refName.IsEmpty)
 			{
 				error(h,"ref must be present");
 			}
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
-			
+			else if(!XmlSchemaUtil.CheckQName(RefName))
+				error(h, "RefName must be a valid XmlQualifiedName");
+
 			return errorCount;
 		}
 		
@@ -116,6 +122,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						groupref.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						groupref.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

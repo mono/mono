@@ -146,13 +146,11 @@ namespace System.Xml.Schema
 			{
 				if(this.Name == null || this.Name == string.Empty)
 					error(h,"name must be present in a top level complex type");
+				else if(!XmlSchemaUtil.CheckNCName(Name))
+					error(h,"name must be a NCName");
 				else
-				{
-					if(!XmlSchemaUtil.CheckNCName(Name))
-						error(h,"name must be a NCName");
-					else
-						this.qName = new XmlQualifiedName(info.targetNS, Name);
-				}
+					this.qName = new XmlQualifiedName(Name,info.TargetNamespace);
+				
 				if(Block != XmlSchemaDerivationMethod.None)
 				{
 					if(Block == XmlSchemaDerivationMethod.All)
@@ -167,12 +165,12 @@ namespace System.Xml.Schema
 				}
 				else
 				{
-					if(info.blockDefault == XmlSchemaDerivationMethod.All)
+					if(info.BlockDefault == XmlSchemaDerivationMethod.All)
 					{
 						blockResolved = XmlSchemaDerivationMethod.All;
 					}
 					else
-						blockResolved = info.blockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+						blockResolved = info.BlockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
 				}
 				if(Final != XmlSchemaDerivationMethod.None)
 				{
@@ -188,13 +186,13 @@ namespace System.Xml.Schema
 				}
 				else
 				{
-					if(info.finalDefault == XmlSchemaDerivationMethod.All)
+					if(info.FinalDefault == XmlSchemaDerivationMethod.All)
 					{
 						finalResolved = XmlSchemaDerivationMethod.All;
 					}
 					else
 					{
-						finalResolved = info.blockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+						finalResolved = info.BlockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
 					}
 				}
 			}
@@ -258,17 +256,19 @@ namespace System.Xml.Schema
 					if(obj is XmlSchemaAttribute)
 					{
 						XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-						attr.Compile(h,info);
+						errorCount += attr.Compile(h,info);
 					}
 					else if(obj is XmlSchemaAttributeGroupRef)
 					{
 						XmlSchemaAttributeGroupRef atgrp = (XmlSchemaAttributeGroupRef) obj;
-						atgrp.Compile(h,info);
+						errorCount += atgrp.Compile(h,info);
 					}
 					else
 						error(h,obj.GetType() +" is not valid in this place::ComplexType");
 				}
 			}
+
+			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
 			return errorCount;
 		}
 		
@@ -345,6 +345,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						ctype.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						ctype.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

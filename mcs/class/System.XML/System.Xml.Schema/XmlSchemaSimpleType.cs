@@ -67,24 +67,13 @@ namespace System.Xml.Schema
 				else if(!XmlSchemaUtil.CheckNCName(this.Name)) // b.1.2
 					error(h,"name attribute of a simpleType must be NCName");
 				else
-					this.qName = new XmlQualifiedName(this.Name,info.targetNS);
+					this.qName = new XmlQualifiedName(this.Name,info.TargetNamespace);
 				
 				//NOTE: Although the FinalResolved can be Empty, it is not a valid value for Final
 				//DEVIATION: If an error occurs, the finaldefault is always consulted. This deviates
 				//			 from the way MS implementation works.
 				switch(this.Final) //b.3, b.4
 				{
-						// Invalid values: Throw error and use "prohibited substitutions"
-					case XmlSchemaDerivationMethod.Substitution:
-						error(h,"substition is not a valid value for final in a simpletype");
-						goto case XmlSchemaDerivationMethod.None;
-					case XmlSchemaDerivationMethod.Extension:
-						error(h,"extension is not a valid value for final in a simpletype");
-						goto case XmlSchemaDerivationMethod.None;
-					case XmlSchemaDerivationMethod.Empty:
-						error(h,"empty is not a valid value for final in simpletype");
-						goto case XmlSchemaDerivationMethod.None;
-						//valid cases:
 					case XmlSchemaDerivationMethod.All:
 						this.finalResolved = XmlSchemaDerivationMethod.All;
 						break;
@@ -97,24 +86,21 @@ namespace System.Xml.Schema
 					case XmlSchemaDerivationMethod.Restriction:
 						this.finalResolved = XmlSchemaDerivationMethod.Restriction;
 						break;
-						// If mutliple values are specified
 					default:
-						error(h,"simpletype can't have more than one value for final");
+						error(h,"The value of final attribute is not valid for simpleType");
 						goto case XmlSchemaDerivationMethod.None;
 						// use assignment from finaldefault on schema.
-						// The possible values of finalDefault on schema are #all | List of (extension | restriction)
-						// Of these, the only possible values for us are #all | restriction.
 					case XmlSchemaDerivationMethod.None: // b.5
-						if(info.finalDefault == XmlSchemaDerivationMethod.All)
+						if(info.FinalDefault == XmlSchemaDerivationMethod.All)
 							finalResolved = XmlSchemaDerivationMethod.All;
-						else // Either Restriction or Empty
-							finalResolved = info.finalDefault & XmlSchemaDerivationMethod.Restriction;
+						else 
+							finalResolved = info.FinalDefault & (XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.List |
+								XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Union );
 						break;
 				}
 			}
 
-			if(this.Id != null && !XmlSchemaUtil.CheckID(this.Id))
-				error(h,"id must be a valid ID");
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
 			if(this.Content == null) //a.3,b.2
 				error(h,"Content is required in a simpletype");
@@ -185,6 +171,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						stype.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						stype.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

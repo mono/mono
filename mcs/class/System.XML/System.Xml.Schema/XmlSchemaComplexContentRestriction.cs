@@ -64,7 +64,9 @@ namespace System.Xml.Schema
 			{
 				error(h, "base must be present and a QName");
 			}
-			
+			else if(!XmlSchemaUtil.CheckQName(BaseTypeName))
+				error(h,"BaseTypeName is not a valid XmlQualifiedName");
+
 			if(this.AnyAttribute != null)
 			{
 				errorCount += AnyAttribute.Compile(h,info);
@@ -105,9 +107,9 @@ namespace System.Xml.Schema
 					errorCount += ((XmlSchemaSequence)Particle).Compile(h,info);
 				}
 			}
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
 			
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+
 			return errorCount;
 		}
 		
@@ -158,6 +160,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						restriction.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						restriction.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

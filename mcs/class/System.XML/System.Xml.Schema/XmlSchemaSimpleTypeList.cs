@@ -49,17 +49,18 @@ namespace System.Xml.Schema
 		{
 			errorCount = 0;
 
-			if(this.itemType != null && !this.ItemTypeName.IsEmpty)
+			if(ItemType != null && !ItemTypeName.IsEmpty)
 				error(h, "both itemType and simpletype can't be present");
-			if(this.itemType == null && this.ItemTypeName.IsEmpty)
+			if(ItemType == null && ItemTypeName.IsEmpty)
 				error(h, "one of itemType or simpletype must be present");
-			if(this.itemType != null)
+			if(ItemType != null)
 			{
-				errorCount += this.itemType.Compile(h,info);
+				errorCount += ItemType.Compile(h,info);
 			}
-
-			if(this.Id != null && !XmlSchemaUtil.CheckID(this.Id))
-				error(h,"id must be a valid ID");
+			if(!XmlSchemaUtil.CheckQName(ItemTypeName))
+				error(h,"BaseTypeName must be a XmlQualifiedName");
+			
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
 			return errorCount;
 		}
@@ -110,6 +111,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						list.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						list.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

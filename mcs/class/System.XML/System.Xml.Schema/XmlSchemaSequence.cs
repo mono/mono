@@ -31,6 +31,12 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
+			//FIXME: Should we reset the values
+			if(MinOccurs > MaxOccurs)
+				error(h,"minOccurs must be less than or equal to maxOccurs");
+
+			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
+
 			foreach(XmlSchemaObject obj in Items)
 			{
 				if(obj is XmlSchemaElement)
@@ -119,6 +125,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						sequence.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						sequence.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

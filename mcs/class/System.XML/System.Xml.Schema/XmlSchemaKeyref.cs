@@ -33,9 +33,12 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		internal new int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			errorCount = base.Compile(h,info);
+			errorCount += base.Compile(h,info);
 			if(refer == null || refer.IsEmpty)
 				error(h,"refer must be present");
+			else if(!XmlSchemaUtil.CheckQName(refer))
+				error(h,"Refer is not a valid XmlQualifiedName");
+
 			return errorCount;
 		}
 		
@@ -96,6 +99,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						keyref.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						keyref.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}
@@ -133,6 +140,8 @@ namespace System.Xml.Schema
 				if(level <= 3 && reader.LocalName == "field")
 				{
 					level = 3;
+					if(keyref.Selector == null)
+						error(h,"selector must be defined before field declarations",null);
 					XmlSchemaXPath field = XmlSchemaXPath.Read(reader,h,"field");
 					if(field != null)
 						keyref.Fields.Add(field);

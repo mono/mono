@@ -219,12 +219,13 @@ namespace System.Xml.Schema
 			{
 				if(this.refName != null && !RefName.IsEmpty)
 					error(h,"ref must be absent");
+
 				if(this.name == null)	//b1
 					error(h,"Required attribute name must be present");
 				else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
 					error(h,"attribute name must be NCName");
 				else
-					this.qName = new XmlQualifiedName(this.name, info.targetNS);
+					this.qName = new XmlQualifiedName(this.name, info.TargetNamespace);
 				
 				if(form != XmlSchemaForm.None)
 					error(h,"form must be absent");
@@ -233,28 +234,121 @@ namespace System.Xml.Schema
 				if(MaxOccursString != null)
 					error(h,"maxOccurs must be absent");
 
+				XmlSchemaDerivationMethod allfinal = (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
 				if(final == XmlSchemaDerivationMethod.All)
-					finalResolved = XmlSchemaDerivationMethod.All;
+					finalResolved = allfinal;
 				else if(final == XmlSchemaDerivationMethod.None)
-					finalResolved = info.blockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+					finalResolved = info.BlockDefault & allfinal;
 				else 
-					finalResolved = final & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+				{
+					if((final & ~allfinal) != 0)
+						warn(h,"some values for final are invalid in this context");
+					finalResolved = final & allfinal;
+				}
+
+				XmlSchemaDerivationMethod allblock = XmlSchemaDerivationMethod.Extension | 
+					XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution;
 
 				if(block == XmlSchemaDerivationMethod.All)
-					blockResolved = XmlSchemaDerivationMethod.All;
+					blockResolved = allblock;
 				else if(block == XmlSchemaDerivationMethod.None)
-					blockResolved = info.blockDefault & (XmlSchemaDerivationMethod.Extension | 
-						XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution);
-				else 
-					blockResolved = block & (XmlSchemaDerivationMethod.Extension | 
-						XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution);
+					blockResolved = info.BlockDefault & allblock;
+				else
+				{
+					if((block & ~allblock) != 0)
+						warn(h,"Some of the values for block are invalid in this context");
+					blockResolved = block & allblock;
+				}
 
 				if(schemaType != null && schemaTypeName != null && !schemaTypeName.IsEmpty)
 				{
 					error(h,"both schemaType and content can't be present");
 				}
-				else
+
+				//Even if both are present, read both of them.
+				if(schemaType != null)
 				{
+					if(schemaType is XmlSchemaSimpleType)
+					{
+						errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,info);
+					}
+					else if(schemaType is XmlSchemaComplexType)
+					{
+						errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,info);
+					}
+					else
+						error(h,"only simpletype or complextype is allowed");
+				}
+				if(schemaTypeName != null && !schemaTypeName.IsEmpty)
+				{
+					if(!XmlSchemaUtil.CheckQName(SchemaTypeName))
+						error(h,"SchemaTypeName must be an XmlQualifiedName");
+				}
+				if(SubstitutionGroup != null && !SubstitutionGroup.IsEmpty)
+				{
+					if(!XmlSchemaUtil.CheckQName(SubstitutionGroup))
+						error(h,"SubstitutionGroup must be a valid XmlQualifiedName");
+				}
+
+				foreach(XmlSchemaObject obj in constraints)
+				{
+					if(obj is XmlSchemaUnique)
+						errorCount += ((XmlSchemaUnique)obj).Compile(h,info);
+					else if(obj is XmlSchemaKey)
+						errorCount += ((XmlSchemaKey)obj).Compile(h,info);
+					else if(obj is XmlSchemaKeyref)
+						errorCount += ((XmlSchemaKeyref)obj).Compile(h,info);
+				}
+
+
+			}
+			else
+			{
+				if(substitutionGroup != null && !substitutionGroup.IsEmpty)
+					error(h,"substitutionGroup must be absent");
+				if(final != XmlSchemaDerivationMethod.None)
+					error(h,"final must be absent");
+				if(isAbstract)
+					error(h,"abstract must be absent");
+
+				//FIXME: Should we reset the values
+				if(MinOccurs > MaxOccurs)
+					error(h,"minOccurs must be less than or equal to maxOccurs");
+
+				if(refName == null || RefName.IsEmpty)
+				{
+					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && info.ElementFormDefault == XmlSchemaForm.Qualified))
+						this.targetNamespace = info.TargetNamespace;
+					else
+						this.targetNamespace = string.Empty;
+
+					if(this.name == null)	//b1
+						error(h,"Required attribute name must be present");
+					else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
+						error(h,"attribute name must be NCName");
+					else
+						this.qName = new XmlQualifiedName(this.name, this.targetNamespace);
+				
+					XmlSchemaDerivationMethod allblock = XmlSchemaDerivationMethod.Extension | 
+						XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution;
+
+					if(block == XmlSchemaDerivationMethod.All)
+						blockResolved = allblock;
+					else if(block == XmlSchemaDerivationMethod.None)
+						blockResolved = info.BlockDefault & allblock;
+					else
+					{
+						if((block & ~allblock) != 0)
+							warn(h,"Some of the values for block are invalid in this context");
+						blockResolved = block & allblock;
+					}
+
+					if(schemaType != null && schemaTypeName != null && !schemaTypeName.IsEmpty)
+					{
+						error(h,"both schemaType and content can't be present");
+					}
+
+					//Even if both are present, read both of them.
 					if(schemaType != null)
 					{
 						if(schemaType is XmlSchemaSimpleType)
@@ -268,90 +362,32 @@ namespace System.Xml.Schema
 						else
 							error(h,"only simpletype or complextype is allowed");
 					}
-					else
+					if(schemaTypeName != null && !schemaTypeName.IsEmpty)
 					{
-						if(schemaTypeName == null || schemaTypeName.IsEmpty)
-							error(h,"one of schemaType or schemaTypeName must be present: line 272");
+						if(!XmlSchemaUtil.CheckQName(SchemaTypeName))
+							error(h,"SchemaTypeName must be an XmlQualifiedName");
 					}
-				}
-				foreach(XmlSchemaObject obj in constraints)
-				{
-					if(obj is XmlSchemaUnique)
-						((XmlSchemaUnique)obj).Compile(h,info);
-					else if(obj is XmlSchemaKey)
-						((XmlSchemaKey)obj).Compile(h,info);
-					else if(obj is XmlSchemaKeyref)
-						((XmlSchemaKeyref)obj).Compile(h,info);
-				}
-			}
-			else
-			{
-				if(substitutionGroup != null && !substitutionGroup.IsEmpty)
-					error(h,"substitutionGroup must be absent");
-				if(final != XmlSchemaDerivationMethod.None)
-					error(h,"final must be absent");
-				if(isAbstract)
-					error(h,"abstract must be absent");
-
-				if(refName == null || RefName.IsEmpty)
-				{
-					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && info.formDefault == XmlSchemaForm.Qualified))
-						this.targetNamespace = info.targetNS;
-					else
-						this.targetNamespace = string.Empty;
-
-					if(this.name == null)	//b1
-						error(h,"Required attribute name must be present");
-					else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
-						error(h,"attribute name must be NCName");
-					else
-						this.qName = new XmlQualifiedName(this.name, this.targetNamespace);
-				
-					if(block == XmlSchemaDerivationMethod.All)
-						blockResolved = XmlSchemaDerivationMethod.All;
-					else if(block == XmlSchemaDerivationMethod.None)
-						blockResolved = info.blockDefault & (XmlSchemaDerivationMethod.Extension | 
-							XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution);
-					else 
-						blockResolved = block & (XmlSchemaDerivationMethod.Extension | 
-							XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution);
-
-					if(schemaType != null && schemaTypeName != null && !schemaTypeName.IsEmpty)
+					if(SubstitutionGroup != null && !SubstitutionGroup.IsEmpty)
 					{
-						error(h,"both schemaType and content can't be present");
-					}
-					else
-					{
-						if(schemaType != null)
-						{
-							if(schemaType is XmlSchemaSimpleType)
-								errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,info);
-							else if(schemaType is XmlSchemaComplexType)
-								errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,info);
-							else
-								error(h,"only simpletype or complextype is allowed");
-						}
-						else
-						{
-							if(schemaTypeName == null || schemaTypeName.IsEmpty)
-							{
-								error(h,"one of schemaType or schemaTypeName must be present: line 336 "+ hash);
-							}
-						}
+						if(!XmlSchemaUtil.CheckQName(SubstitutionGroup))
+							error(h,"SubstitutionGroup must be a valid XmlQualifiedName");
 					}
 
 					foreach(XmlSchemaObject obj in constraints)
 					{
 						if(obj is XmlSchemaUnique)
-							((XmlSchemaUnique)obj).Compile(h,info);
+							errorCount += ((XmlSchemaUnique)obj).Compile(h,info);
 						else if(obj is XmlSchemaKey)
-							((XmlSchemaKey)obj).Compile(h,info);
+							errorCount += ((XmlSchemaKey)obj).Compile(h,info);
 						else if(obj is XmlSchemaKeyref)
-							((XmlSchemaKeyref)obj).Compile(h,info);
+							errorCount += ((XmlSchemaKeyref)obj).Compile(h,info);
 					}
 				}
 				else
 				{
+					if(!XmlSchemaUtil.CheckQName(RefName))
+						error(h,"RefName must be a XmlQualifiedName");
+
 					if(name != null)
 						error(h,"name must not be present when ref is present");
 					if(Constraints.Count != 0)
@@ -372,8 +408,9 @@ namespace System.Xml.Schema
 						error(h,"simpleType or complexType must be absent");
 				}
 			}
-			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
-				error(h, "id must be a valid ID");
+			
+			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+
 			return errorCount;
 		}
 		
@@ -513,6 +550,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						element.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						element.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}

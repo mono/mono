@@ -1,3 +1,6 @@
+2002-06-14  Dwivedi, Ajay kumar <adwiv@yahoo.com>
+	* General: Fixed a few more Bugs
+
 2002-06-10  Dwivedi, Ajay kumar <adwiv@yahoo.com>
 	* XmlSchemaReader: A Wrapper class around XmlReader with customized
 	  methods to suit reading a schema.

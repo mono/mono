@@ -75,6 +75,10 @@ namespace System.Xml.Schema
 				}
 				else
 				{
+					if(reader.Prefix == "xmlns")
+						key.Namespaces.Add(reader.LocalName, reader.Value);
+					else if(reader.Name == "xmlns")
+						key.Namespaces.Add("",reader.Value);
 					//TODO: Add to Unhandled attributes
 				}
 			}
@@ -112,6 +116,8 @@ namespace System.Xml.Schema
 				if(level <= 3 && reader.LocalName == "field")
 				{
 					level = 3;
+					if(key.Selector == null)
+						error(h,"selector must be defined before field declarations",null);
 					XmlSchemaXPath field = XmlSchemaXPath.Read(reader,h,"field");
 					if(field != null)
 						key.Fields.Add(field);
