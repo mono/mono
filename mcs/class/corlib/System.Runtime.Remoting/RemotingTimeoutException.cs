@@ -51,5 +51,10 @@ namespace System.Runtime.Remoting {
 			: base (message, ex)
 		{
 		}
+
+		internal RemotingTimeoutException (SerializationInfo info, StreamingContext context) 
+			: base(info, context)
+		{
+		}
 	}
 }
