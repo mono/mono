@@ -1,3 +1,5 @@
+// MailAddress.cs
+// author: Per Arneng <pt99par@student.bth.se>
 using System;
 
 namespace System.Web.Mail {

@@ -102,6 +102,7 @@ System.Web.Mail/MailEncoder.cs
 System.Web.Mail/SmtpMessage.cs
 System.Web.Mail/MailAddress.cs
 System.Web.Mail/MailAddressCollection.cs
+System.Web.Mail/MailMessageWrapper.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
 System.Web.UI/Control.cs

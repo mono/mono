@@ -1,3 +1,5 @@
+// MailAddressCollection.cs
+// author: Per Arneng <pt99par@student.bth.se>
 using System;
 using System.Text;
 using System.Collections;

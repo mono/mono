@@ -43,7 +43,7 @@ namespace System.Web.Mail {
 	    	    
 	}
 	
-	public void Send( SmtpMessage msg ) {
+	public void Send( MailMessageWrapper msg ) {
 	    
 	    if( msg.From == null ) {
 		throw new SmtpException( "From property must be set." );
@@ -96,7 +96,7 @@ namespace System.Web.Mail {
 	}
 	
 	// sends a single part mail to the server
-	private void SendSinglepartMail( SmtpMessage msg ) {
+	private void SendSinglepartMail( MailMessageWrapper msg ) {
 	    	    	    
 	    // create the headers
 	    IDictionary headers = CreateHeaders( msg );
@@ -109,7 +109,7 @@ namespace System.Web.Mail {
 	}
 	
 	// sends a multipart mail to the server
-	private void SendMultipartMail( SmtpMessage msg ) {
+	private void SendMultipartMail( MailMessageWrapper msg ) {
 	    	    	    
 	    // create the headers
 	    IDictionary headers = CreateHeaders( msg );
@@ -189,7 +189,7 @@ namespace System.Web.Mail {
 	
 	// send the standard headers
 	// and the custom in MailMessage
-	private IDictionary CreateHeaders( SmtpMessage msg ) {
+	private IDictionary CreateHeaders( MailMessageWrapper msg ) {
 	    Hashtable headers = new Hashtable(); 
 	    
 	    headers[ "From" ] = msg.From.ToString();
