@@ -1,4 +1,10 @@
 
+Fri Feb 18 16:00:29 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: we don't depend on the GC checking tls
+	slots anymore.
+	* processes.c: remove unused ref to GC headers.
+
 Thu Feb 17 19:57:11 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* io.c: remove _wapi_thread_cur_apc_pending () checks
