@@ -219,6 +219,8 @@ System.Data.SqlTypes/SqlTruncateException.cs
 System.Data.SqlTypes/SqlTypeException.cs
 System.Data.SqlTypes/SqlUtcDateTime.cs
 System.Data.SqlTypes/SqlXmlReader.cs
+System.Data.Odbc/OdbcCategoryAttribute.cs
+System.Data.Odbc/OdbcDescriptionAttribute.cs
 System.Data.Odbc/OdbcColumn.cs
 System.Data.Odbc/OdbcCommand.cs
 System.Data.Odbc/OdbcConnection.cs
