@@ -1,5 +1,11 @@
 2005-01-14  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Draw a gray box instead of a grip in the lower
+	right hand corner when there are both horizontal and vertical
+	scroll bars.
+
+2005-01-14  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: When erasing backgrounds use FromHwnd instead of
 	FromHdc when there is a NULL wparam. This occurs on the X driver.
 	* XplatUIX11.cs: Set the wparam to NULL.

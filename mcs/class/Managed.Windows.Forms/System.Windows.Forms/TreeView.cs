@@ -69,8 +69,6 @@ namespace System.Windows.Forms {
 		private HScrollBar hbar;
 		private bool hbar_added;
 		private int hbar_offset;
-		private SizeGrip grip;
-		private bool grip_added;
 		
 		private int update_stack;
 
@@ -649,10 +647,11 @@ namespace System.Windows.Forms {
 				skipped_nodes = 0;
 			}
 
-			if (add_hscroll && add_vscroll)
-				AddSizeGrip ();
-			else if (grip != null)
-				grip.Visible = false;
+			if (add_hscroll && add_vscroll) {
+				Rectangle corner = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
+				if (clip.IntersectsWith (corner))
+					DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorButtonFace), corner);
+			}
 		}
 
 		private void DrawNodePlusMinus (TreeNode node, Rectangle clip, int x, int y, int middle)
@@ -884,22 +883,6 @@ namespace System.Windows.Forms {
 			hbar.Visible = true;
 		}
 
-		private void AddSizeGrip ()
-		{
-			if (grip == null)
-				grip = new SizeGrip ();
-
-			grip.Bounds = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
-
-			if (!grip_added) {
-				grip.BackColor = ThemeEngine.Current.ColorButtonFace;
-				Controls.Add (grip);
-				grip_added = true;
-			}
-
-			grip.Visible = true;
-		}
-
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
 			SuspendLayout ();
@@ -917,10 +900,6 @@ namespace System.Windows.Forms {
 			if (hbar != null) {
 				int width = (vbar != null && vbar.Visible ? Width - vbar.Width : Width);
 				hbar.SetBounds (0, Bottom - hbar.Height, width, 0, BoundsSpecified.Y | BoundsSpecified.Width);
-			}
-
-			if (grip != null) {
-				grip.SetBounds (Right - grip.Width, Bottom - grip.Height, 0, 0, BoundsSpecified.X | BoundsSpecified.Y);
 			}
 
 			ResumeLayout ();
