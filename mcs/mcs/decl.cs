@@ -131,7 +131,14 @@ namespace Mono.CSharp {
 			///   it looked like a constructor) but was not (because the name
 			///   of the method is not the same as the container class
 			/// </summary>
-			NotAConstructor
+			NotAConstructor,
+
+			/// <summary>
+			///   This is only used by static constructors to emit the
+			///   error 111, but this error for other things really
+			///   happens at another level for other functions.
+			/// </summary>
+			MethodExists
 		}
 
 	/// <summary>

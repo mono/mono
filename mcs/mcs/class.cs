@@ -214,20 +214,26 @@ namespace Mono.CSharp {
 
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
 			
-			if (is_static)
+			if (is_static){
 				have_static_constructor = true;
-			else {
+				if (default_static_constructor != null){
+					Console.WriteLine ("I have a static constructor already");
+					Console.WriteLine ("   " + default_static_constructor);
+					return AdditionResult.MethodExists;
+				}
+
+				default_static_constructor = c;
+			} else {
+				if (c.IsDefault ()){
+					if (default_constructor != null)
+						return AdditionResult.MethodExists;
+					default_constructor = c;
+				}
+				
 				if (instance_constructors == null)
 					instance_constructors = new ArrayList ();
 				
 				instance_constructors.Add (c);
-			}
-			
-			if (c.IsDefault ()) {
-				if (is_static)
-					default_static_constructor = c;
-				else
-					default_constructor = c;
 			}
 			
 			return AdditionResult.Success;
@@ -525,15 +531,15 @@ namespace Mono.CSharp {
 					     new ConstructorBaseInitializer (null, new Location (-1)),
 					     new Location (-1));
 			
-			AddConstructor (c);
-			
-			c.Block = new Block (null);
-			
 			if (is_static)
 				mods = Modifiers.STATIC;
 
 			c.ModFlags = mods;
 
+			AddConstructor (c);
+			
+			c.Block = new Block (null);
+			
 		}
 
 		public void ReportStructInitializedInstanceError ()
@@ -2336,10 +2342,15 @@ namespace Mono.CSharp {
 		//
 		public bool IsDefault ()
 		{
-			return  (Parameters.FixedParameters == null ? true : Parameters.Empty) &&
-				(Parameters.ArrayParameter == null ? true : Parameters.Empty) &&
-				(Initializer is ConstructorBaseInitializer) &&
-				(Initializer.Arguments == null);
+			if ((ModFlags & Modifiers.STATIC) != 0)
+				return  (Parameters.FixedParameters == null ? true : Parameters.Empty) &&
+					(Parameters.ArrayParameter == null ? true : Parameters.Empty);
+			
+			else
+				return  (Parameters.FixedParameters == null ? true : Parameters.Empty) &&
+					(Parameters.ArrayParameter == null ? true : Parameters.Empty) &&
+					(Initializer is ConstructorBaseInitializer) &&
+					(Initializer.Arguments == null);
 		}
 
 		//

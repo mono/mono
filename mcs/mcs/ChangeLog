@@ -1,5 +1,32 @@
 2001-12-29  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (EmitCall): if a method is not virtual, then do
+	not use callvirt on it.
+
+	(ArrayAccess.EmitAssign): storing non-builtin value types (ie,
+	user defined stuff) requires the use of stobj, which takes an
+	address on the stack instead of an array and an index.  So emit
+	the Ldelema operation for it.
+
+	(EmitStoreOpcode): Use stobj for valuetypes.
+
+	(UnaryMutator.EmitCode): Use the right 1 value depending on
+	whether we are dealing with int64/uint64, float or doubles.
+
+	* class.cs (TypeContainer.AddConstructor): Fix the logic to define
+	constructors that I implemented last night.
+
+	(Constructor.IsDefault): Fix to work properly for static
+	constructors.
+
+	* cs-parser.jay (CheckDef): report method signature errors.
+	Update error number 103 to be 132.
+
+	* decl.cs: New AdditionResult enumeration value: MethodExists.
+	Although we do this check for methods later on in the semantic
+	analysis, catching repeated default constructors is so easy that
+	we catch these here. 
+	
 	* expression.cs (Binary.DoNumericPromotions): Fix the uint64 type
 	promotions code.
 

@@ -524,6 +524,17 @@ namespace Mono.CSharp {
 				return false;
 			} 
 
+			//
+			// UGH: Non trivial.  This Br might cross a try/catch boundary
+			// How can we tell?
+			//
+			// while () {
+			//   try { ... } catch { continue; }
+			// }
+			//
+			// From:
+			// try {} catch { while () { continue; }}
+			//
 			ec.ig.Emit (OpCodes.Br, begin);
 			return false;
 		}

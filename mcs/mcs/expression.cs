@@ -634,17 +634,26 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			IAssignMethod ia = (IAssignMethod) expr;
-
-			if (temp_storage == null)
-				temp_storage = new LocalTemporary (ec, expr.Type);
+			Type expr_type = expr.Type;
 			
+			if (temp_storage == null)
+				temp_storage = new LocalTemporary (ec, expr_type);
+
 			switch (mode){
 			case Mode.PreIncrement:
 			case Mode.PreDecrement:
 				if (method == null){
 					expr.Emit (ec);
 
-					ig.Emit (OpCodes.Ldc_I4_1);
+					if (expr_type == TypeManager.uint64_type ||
+					    expr_type == TypeManager.int64_type)
+						ig.Emit (OpCodes.Ldc_I8, 1L);
+					else if (expr_type == TypeManager.double_type)
+						ig.Emit (OpCodes.Ldc_R8, 1.0);
+					else if (expr_type == TypeManager.float_type)
+						ig.Emit (OpCodes.Ldc_R4, 1.0F);
+					else
+						ig.Emit (OpCodes.Ldc_I4_1);
 				
 					if (mode == Mode.PreDecrement)
 						ig.Emit (OpCodes.Sub);
@@ -670,7 +679,15 @@ namespace Mono.CSharp {
 					else
 						ig.Emit (OpCodes.Dup);
 
-					ig.Emit (OpCodes.Ldc_I4_1);
+					if (expr_type == TypeManager.uint64_type ||
+					    expr_type == TypeManager.int64_type)
+						ig.Emit (OpCodes.Ldc_I8, 1L);
+					else if (expr_type == TypeManager.double_type)
+						ig.Emit (OpCodes.Ldc_R8, 1.0);
+					else if (expr_type == TypeManager.float_type)
+						ig.Emit (OpCodes.Ldc_R4, 1.0F);
+					else
+						ig.Emit (OpCodes.Ldc_I4_1);
 				
 					if (mode == Mode.PostDecrement)
 						ig.Emit (OpCodes.Sub);
@@ -3325,9 +3342,8 @@ namespace Mono.CSharp {
 						// reference-type with a value-type argument need
 						// to have their value boxed.  
 
+						struct_call = true;
 						if (method.DeclaringType.IsValueType){
-							struct_call = true;
-
 							//
 							// If the expression implements IMemoryLocation, then
 							// we can optimize and use AddressOf on the
@@ -3359,6 +3375,13 @@ namespace Mono.CSharp {
 			if (Arguments != null)
 				EmitArguments (ec, method, Arguments);
 
+			if (method is MethodInfo){
+				MethodInfo mi = (MethodInfo) method;
+
+				if (!mi.IsVirtual)
+					is_static = true;
+			}
+			
 			if (is_static || struct_call){
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
@@ -3470,9 +3493,10 @@ namespace Mono.CSharp {
 							return null;
 					}
 				}
-				
+
 				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
 								     Arguments, loc);
+				
 			}
 			
 			if (method == null && !is_struct) {
@@ -5035,9 +5059,10 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldelem_R8);
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldelem_I);
-			else if (type.IsValueType)
+			else if (type.IsValueType){
 				ig.Emit (OpCodes.Ldelema, type);
-			else 
+				ig.Emit (OpCodes.Ldobj, type);
+			} else 
 				ig.Emit (OpCodes.Ldelem_Ref);
 		}
 
@@ -5062,6 +5087,8 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stelem_R8);
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stelem_I);
+			else if (t.IsValueType)
+				ig.Emit (OpCodes.Stobj, t);
 			else
 				ig.Emit (OpCodes.Stelem_Ref);
 		}
@@ -5147,9 +5174,19 @@ namespace Mono.CSharp {
 			foreach (Argument a in ea.Arguments)
 				a.Expr.Emit (ec);
 
-			source.Emit (ec);
-
 			Type t = source.Type;
+
+			//
+			// The stobj opcode used by value types will need
+			// an address on the stack, not really an array/array
+			// pair
+			//
+			if (rank == 1){
+				if (t.IsValueType && !TypeManager.IsBuiltinType (t))
+					ig.Emit (OpCodes.Ldelema, t);
+			}
+			
+			source.Emit (ec);
 
 			if (rank == 1)
 				EmitStoreOpcode (ig, t);

@@ -1327,7 +1327,7 @@ constructor_declaration
 
 			if (!c.Parameters.Empty){
 				Location l = lexer.Location;
-				Report.Error (103, l, "Static constructors should not have parameters");
+				Report.Error (132, l, "Static constructors should not have parameters");
 			}
 		} 
 		
@@ -3343,13 +3343,16 @@ CheckDef (AdditionResult result, string name)
 		break;
 
 
-//	NEED TO HANDLE THIS IN SEMANTIC ANALYSIS:
-//
-//  	case AdditionResult.MethodDuplicated:
-//  		error (111, "Class `"+current_container.Name+
-//  			    "' already defines a member called '" + 
-//  			    name + "' with the same parameter types");
-//  		break;
+		//
+		// This is handled only for static Constructors, because
+		// in reality we handle these by the semantic analysis later
+		//
+ 	case AdditionResult.MethodExists:
+  		Report.Error (
+			111, l, "Class `"+current_container.Name+
+  			"' already defines a member called '" + 
+  			name + "' with the same parameter types (more than one default constructor)");
+  		break;
 
 	case AdditionResult.EnclosingClash:
 		Report.Error (542, l, "Member names cannot be the same as their enclosing type");
