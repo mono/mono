@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Collections {
 
@@ -326,8 +327,8 @@ namespace System.Collections {
 			int len = table.Length;
 
 			for (int i=0; i < len; i++) {
-				object trial_value = table[i].value;
-				if ((null != trial_value) && (trial_value.Equals (value))) {
+				object trialValue = table[i].value;
+				if ((null != trialValue) && (trialValue.Equals (value))) {
 					return i;
 				}
 			}
@@ -384,10 +385,11 @@ namespace System.Collections {
 			}
 		}
 
-		[MonoTODO]
 		public static SortedList Synchronized (SortedList list)
 		{
-			return null;
+			if (list == null)
+				throw new ArgumentNullException (Locale.GetText ("Base list is null."));
+			return new SynchedSortedList (list);
 		}
 
 		public virtual void TrimToSize ()
@@ -503,8 +505,8 @@ namespace System.Collections {
 			InitTable (capacity, false);
 		}
 
-		private void InitTable (int capacity, bool force_size) {
-			if (!force_size && (capacity < INITIAL_SIZE)) capacity = INITIAL_SIZE;
+		private void InitTable (int capacity, bool forceSize) {
+			if (!forceSize && (capacity < INITIAL_SIZE)) capacity = INITIAL_SIZE;
 			this.table = new Slot [capacity];
 			this.inUse = 0;
 			this.modificationCount = 0;
@@ -579,7 +581,7 @@ namespace System.Collections {
 			}
 
 			public Enumerator (SortedList host)
-			           : this (host, EnumeratorMode.KEY_MODE)
+			: this (host, EnumeratorMode.KEY_MODE)
 			{
 			}
 
@@ -894,8 +896,238 @@ namespace System.Collections {
 				return new SortedList.Enumerator (host, EnumeratorMode.VALUE_MODE);
 			}
 
-
 		}
+
+		protected class SynchedSortedList : SortedList {
+
+			private SortedList host;
+
+			public SynchedSortedList (SortedList host)
+			{
+				if (host == null)
+					throw new ArgumentNullException ();
+				this.host = host;
+			}
+
+			// ICollection
+
+			public override int Count {
+				get {
+					return host.Count;
+				}
+			}
+
+			public override bool IsSynchronized {
+				get {
+					return true;
+				}
+			}
+
+			public override Object SyncRoot {
+				get {
+					return host.SyncRoot;
+				}
+			}
+
+
+
+			// IDictionary
+
+			public override bool IsFixedSize {
+				get {
+					return host.IsFixedSize;
+				}     
+			}
+
+
+			public override bool IsReadOnly {
+				get {
+					return host.IsReadOnly;
+				}
+			}
+
+			public override ICollection Keys {
+				get {
+					ICollection keys = null;
+					lock (host.SyncRoot) {
+						keys = host.Keys;
+					}
+					return keys;
+				}
+			}
+
+			public override ICollection Values {
+				get {
+					ICollection vals = null;
+					lock (host.SyncRoot) {
+						vals = host.Values;
+					}
+					return vals;
+				}
+			}
+
+
+
+			public override Object this [object key] {
+				get {
+					lock (host.SyncRoot) {
+						return host.GetImpl (key);
+					}
+				}
+				set {
+					lock (host.SyncRoot) {
+						host.PutImpl (key, value, true);
+					}
+				}
+			}
+
+
+
+			// ICollection
+
+			public override void CopyTo (Array array, int arrayIndex)
+			{
+				lock (host.SyncRoot) {
+					host.CopyTo (array, arrayIndex);
+				}
+			}
+
+
+			// IDictionary
+
+			public override void Add (object key, object value)
+			{
+				lock (host.SyncRoot) {
+					host.PutImpl (key, value, false);
+				}
+			}
+
+			public override void Clear () 
+			{
+				lock (host.SyncRoot) {
+					host.Clear ();
+				}
+			}
+
+			public override bool Contains (object key)
+			{
+				lock (host.SyncRoot) {
+					return (host.Find (key) >= 0);
+				}
+			}
+
+			public override IDictionaryEnumerator GetEnumerator ()
+			{
+				lock (host.SyncRoot) {
+					return host.GetEnumerator();
+				}
+			}
+
+			public override void Remove (object key)
+			{
+				lock (host.SyncRoot) {
+					host.Remove (key);
+				}
+			}
+
+
+
+			public override bool ContainsKey (object key)
+			{
+				lock (host.SyncRoot) {
+					return host.Contains (key);
+				}
+			}
+
+			public override bool ContainsValue (object value)
+			{
+				lock (host.SyncRoot) {
+					return host.ContainsValue (value);
+				}
+			}
+
+
+			// ICloneable
+
+			public override object Clone ()
+			{
+				lock (host.SyncRoot) {
+					return (host.Clone () as SortedList);
+				}
+			}
+
+
+
+			//
+			// SortedList overrides
+			//
+
+			public override Object GetByIndex (int index)
+			{
+				lock (host.SyncRoot) {
+					return host.GetByIndex (index);
+				}
+			}
+
+			public override Object GetKey (int index)
+			{
+				lock (host.SyncRoot) {
+					return host.GetKey (index);
+				}
+			}
+
+			public override IList GetKeyList ()
+			{
+				lock (host.SyncRoot) {
+					return new ListKeys (host);
+				}
+			}
+
+
+			public override IList GetValueList ()
+			{
+				lock (host.SyncRoot) {
+					return new ListValues (host);
+				}
+			}
+
+			public override void RemoveAt (int index)
+			{
+				lock (host.SyncRoot) {
+					host.RemoveAt (index);
+				}
+			}
+
+			public override int IndexOfKey (object key)
+			{
+				lock (host.SyncRoot) {
+					return host.IndexOfKey (key);
+				}
+			}
+
+			public override int IndexOfValue (Object val)
+			{
+				lock (host.SyncRoot) {
+					return host.IndexOfValue (val);
+				}
+			}
+
+			public override void SetByIndex (int index, object value)
+			{
+				lock (host.SyncRoot) {
+					host.SetByIndex (index, value);
+				}
+			}
+
+			public override void TrimToSize()
+			{
+				lock (host.SyncRoot) {
+					host.TrimToSize();
+				}
+			}
+
+
+		} // SynchedSortedList
 
 	} // SortedList
 
