@@ -17,7 +17,6 @@ DISTFILES = \
 	CONTRIBUTORS_README 	\
 	README.tests		\
 	errors.txt 		\
-	fail			\
 	runtest.pl		\
 	do-tests.pl		\
 	$(wildcard *.cs)	\
