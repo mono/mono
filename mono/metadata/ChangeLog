@@ -1,3 +1,8 @@
+
+Sat Jun 14 13:13:20 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fixed GetElementType for byrefs (bug# 44792).
+
 2003-06-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_create_runtime_class): Add support for
