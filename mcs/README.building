@@ -1,0 +1,33 @@
+
+[1] Building mono + mcs from CVS on *NIX. The Easy Way (tm)
+-------------------------------------------------------------
+1. Get mono and mcs from CVS (http://www.go-mono.com/download.html)
+
+2. Use the script to build mono (mono/doc/mono-build.sh).
+
+3. Copy the dlls and mcs.exe from the latest monocharge tarball
+(http://www.gnome-db.org/~gonzalo/mono/) to /where/you/installed/mono/lib and
+..../bin respectively.
+
+
+
+[2] Keeping the stuff up to date
+----------------------------------
+Once you have followed the above steps, do these ones to keep your installation
+up to date:
+
+1. In mcs directory,
+
+	cvs -z3 update -Pd
+	make -f makefile.gnu
+
+2. Use the mono-build.sh script to update, rebuild and install mono from CVS.
+Doing a cvs update of mono/doc/mono-build.sh file is also a good idea.
+
+3. In mcs directory:
+
+	make -f makefile.gnu install prefix=/prefix/of/your/installation/path
+
+4. In case of troubles (ie, unable to compile mcs/* sources) go to [1].
+
+-Gonzalo

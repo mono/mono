@@ -1,6 +1,8 @@
 DIRS=jay mcs class nunit nunit20 monoresgen ilasm tools
 DIST=monocharge-`date -u +%Y%m%d`
 MCS = mcs
+INSTALL=/usr/bin/install
+DOCFILES= README.building
 
 #nant doesn't work yet
 
@@ -25,6 +27,9 @@ install:
 	for i in $(DIRS) ; do \
 		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
 	done
+	mkdir -p $(prefix)/share/doc/mono
+	$(INSTALL) -m 644 $(DOCFILES) $(prefix)/share/doc/mono
+
 
 test: all
 	for i in $(DIRS) ; do \
