@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 {
 	[DefaultEvent ("Scroll")]
 	[DefaultProperty ("Value")]
-	public class ScrollBar : Control
+	public abstract class ScrollBar : Control
 	{
 		#region Local Variables
 		private int position;

@@ -42,8 +42,8 @@ namespace System.Windows.Forms {
 		private Size			auto_scroll_min_size;
 		private Point			auto_scroll_position;
 		private DockPaddingEdges	dock_padding;
-		private ScrollBar		hscrollbar;
-		private ScrollBar		vscrollbar;
+		private HScrollBar		hscrollbar;
+		private VScrollBar		vscrollbar;
 		#endregion	// Local Variables
 
 		[MonoTODO("Need to use the edge values when performing the layout")]
@@ -318,7 +318,7 @@ namespace System.Windows.Forms {
 				if (hscroll_visible != value) {
 					hscroll_visible = value;
 					if (hscroll_visible && hscrollbar == null)
-						hscrollbar = new ScrollBar ();
+						hscrollbar = new HScrollBar ();
 				}
 			}
 		}
@@ -332,7 +332,7 @@ namespace System.Windows.Forms {
 				if (vscroll_visible != value) {
 					vscroll_visible = value;
 					if (vscroll_visible && vscrollbar == null)
-						vscrollbar = new ScrollBar ();
+						vscrollbar = new VScrollBar ();
 				}
 			}
 		}

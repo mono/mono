@@ -1,5 +1,11 @@
 2005-02-03  Jackson Harper  <jackson@ximian.com>
 
+	* ScrollBar.cs: Make abstract
+	* ScrollableControl.cs: Create H/V scrollbars now that scrollbar
+	is abstract.
+
+2005-02-03  Jackson Harper  <jackson@ximian.com>
+
 	* ScrollBar.cs: First part of my scrollbar fixups. This removes
 	all the unneeded refreshes and uses invalidates with properly
 	computed rects.
