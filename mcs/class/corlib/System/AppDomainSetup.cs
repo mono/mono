@@ -38,6 +38,7 @@ namespace System
 {
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.None)]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public sealed class AppDomainSetup : IAppDomainSetup
 	{
 		string application_base;

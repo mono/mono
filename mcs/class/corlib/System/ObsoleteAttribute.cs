@@ -41,8 +41,8 @@ namespace System
 	[Serializable]
 	public sealed class ObsoleteAttribute : Attribute
 	{
-		private string message;
-		private bool isError = false;
+		private string _message;
+		private bool _error;
 
 		//	 Constructors
 		public ObsoleteAttribute ()
@@ -52,22 +52,22 @@ namespace System
 
 		public ObsoleteAttribute (string message)
 		{
-			this.message = message;
+			_message = message;
 		}
 
 		public ObsoleteAttribute (string message, bool error)
 		{
-			this.message = message;
-			this.isError = error;
+			_message = message;
+			_error = error;
 		}
 
 		// Properties
 		public string Message {
-			get { return message; }
+			get { return _message; }
 		}
 
 		public bool IsError {
-			get { return isError; }
+			get { return _error; }
 		}
 	}
 }

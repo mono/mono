@@ -30,6 +30,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.Serialization;
+
 namespace System
 {
 	[Serializable]
@@ -48,6 +50,10 @@ namespace System
 
 		public InvalidProgramException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+
+		internal InvalidProgramException (SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
 	}

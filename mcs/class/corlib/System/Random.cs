@@ -42,7 +42,7 @@ namespace System
 		const int MZ = 0;
 
 		int inext, inextp;
-		int [] ma = new int [56];
+		int [] SeedArray = new int [56];
 		
 		public Random ()
 			: this (Environment.TickCount)
@@ -56,21 +56,21 @@ namespace System
 
 			// Numerical Recipes in C online @ http://www.library.cornell.edu/nr/bookcpdf/c7-1.pdf
 			mj = MSEED - Math.Abs (Seed);
-			ma [55] = mj;
+			SeedArray [55] = mj;
 			mk = 1;
 			for (int i = 1; i < 55; i++) {  //  [1, 55] is special (Knuth)
 				ii = (21 * i) % 55;
-				ma [ii] = mk;
+				SeedArray [ii] = mk;
 				mk = mj - mk;
 				if (mk < 0)
 					mk += MBIG;
-				mj = ma[ii];
+				mj = SeedArray [ii];
 			}
 			for (int k = 1; k < 5; k++) {
 				for (int i = 1; i < 56; i++) {
-					ma [i] -= ma [1 + (i + 30) % 55];
-					if (ma [i] < 0)
-						ma [i] += MBIG;
+					SeedArray [i] -= SeedArray [1 + (i + 30) % 55];
+					if (SeedArray [i] < 0)
+						SeedArray [i] += MBIG;
 				}
 			}
 			inext = 0;
@@ -84,12 +84,12 @@ namespace System
 			if (++inext  >= 56) inext  = 1;
 			if (++inextp >= 56) inextp = 1;
 
-			retVal = ma [inext] - ma [inextp];
+			retVal = SeedArray [inext] - SeedArray [inextp];
 
 			if (retVal < 0)
 				retVal += MBIG;
 
-			ma [inext] = retVal;
+			SeedArray [inext] = retVal;
 
 			return retVal * (1.0 / MBIG);
 		}
