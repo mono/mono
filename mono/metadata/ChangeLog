@@ -1,5 +1,9 @@
 2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
 
+	* string-icalls.c: optimized a few methods.
+
+2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
+
 	* icall.c: added all new string internal calls
 	* string-icalls.c: added, new string internal call implementation.
 	* object.c: added mono_string_new_size for allocating a string a size
