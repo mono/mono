@@ -74,7 +74,7 @@ namespace System.Collections.Generic
 		
 		public void CheckRange (int idx, int count)
 		{
-			if (idx < 0 || count < 0 || idx + count < size)
+			if (idx < 0 || count < 0 || idx + count > size)
 				throw new ArgumentOutOfRangeException ();
 		}
 		
@@ -263,7 +263,12 @@ namespace System.Collections.Generic
 		
 		void Shift (int start, int delta)
 		{
+			if (delta < 0)
+				start -= delta;
+			
 			Array.Copy (data, start, data, start + delta, size - start);
+			
+			size += delta;
 		}
 		
 		public void Insert (int index, T item)
@@ -272,7 +277,6 @@ namespace System.Collections.Generic
 				throw new ArgumentOutOfRangeException ();
 			
 			Shift (index, 1);
-			size ++;
 			this [index] = item;
 				
 		}

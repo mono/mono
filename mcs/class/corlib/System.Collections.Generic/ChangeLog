@@ -1,3 +1,12 @@
+2005-02-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* List.cs (CheckRange): Comparison error. Duh!
+	(Shift): really deal with neg. delta. Also, adjust the `size'.
+
+	Based on a patch from Marc Denty (marc.denty@libertysurf.fr).
+
+	Fixes #72258.
+
 2005-01-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* Queue.cs: `duh' bugs.
