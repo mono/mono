@@ -2,6 +2,11 @@
 
 	* Makefile (TEST_SOURCES): Don't hardcode TEST_SOURCES_default.
 	(test-harness-run): Clean up error reporting.
+	(TEST_NOPASS): Remove.  Move old contents ...
+	(TEST_SOURCES_common): ... here and ...
+	(TEST_EXCLUDES_common): ... here.
+	(TEST_SOURCES_default): Move new tests to TEST_SOURCES_common
+	and TESTS_EXCLUDES_net_2_0.
 
 2004-11-30  Marek Safar <marek.safar@seznam.cz>
 
