@@ -1,3 +1,18 @@
+2002-02-17  Radek Doulik  <rodo@ximian.com>
+
+	* ppc/tramp.c: fixed minimal stack size, fixed string parameters,
+	fix byte and half word parameters 
+	(mono_string_new_wrapper): new helper function, cut&pasted from
+	x86, modified to check for NULL text to avoid branching in
+	generated code
+	(calculate_sizes): updated for string retval changes
+	(emit_call_and_store_retval): updated for string retval
+
+	* ppc/ppc-codegen.h (ppc_mr): added lhz, lbz, sth
+
+2002-02-16  Radek Doulik  <rodo@ximian.com>
+
+	* ppc/tramp.c (emit_call_and_store_retval): support U2, I2, CHAR
 
 Mon Feb 11 18:40:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
