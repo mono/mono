@@ -1,3 +1,7 @@
+2003-01-13 Jackson Harper <jackson@latitudegeo.com>
+
+	* cs-parser.jay: Add cleanup call.
+
 2003-01-13  Duncan Mak  <duncan@ximian.com>
 
 	* cs-tokenizer.cs (Cleanup): Rename to 'cleanup' to make it more
