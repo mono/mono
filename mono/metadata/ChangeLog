@@ -1,3 +1,14 @@
+
+Thu Jan 10 19:36:27 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fix mono_class_from_mono_type () for szarray types.
+	Remove unused cache check in mono_class_from_type_spec().
+	* icall.c: *type_from_name () functions handle simple arrays and byref.
+	* reflection.c: handle byref and szarray types. Handle methods without
+	body (gets P/Invoke compilation working). Handle types and fields in
+	get_token ().
+	* reflection.h: add rank to MonoTypeInfo.
+
 2002-01-10  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Implemented WaitAll(), WaitAny() and WaitOne()

@@ -1,4 +1,9 @@
 
+Thu Jan 10 20:59:59 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c, interp.h: add a flag to mono_create_trampoline ()
+	to handle runtime methods.
+
 Sat Jan 5 15:45:14 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: allow classname:method name in --debug argument.

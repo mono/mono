@@ -1,3 +1,10 @@
+
+Thu Jan 10 21:01:08 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: mono_create_trampoline (): the runtime argument is
+	needed to handle correctly delegates, the previous change in handling
+	the string return type broke them.
+
 Tue Jan  8 22:38:41 MST 2002 Matt Kimball <matt@kimball.net>
 	
 	* x86/tramp.c: handle strings returned from functions in external 
