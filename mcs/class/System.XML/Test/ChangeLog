@@ -1,5 +1,10 @@
 2002-08-16  Jason Diamond  <jason@injektilo.org>
 
+	* XmlElementTests.cs: Added test for OuterXml (and WriteTo) for
+	qualified elements.
+
+2002-08-16  Jason Diamond  <jason@injektilo.org>
+
 	* makefile.gnu: Added SOURCES_INCLUDE and SOURCES_EXCLUDE variables
 	to get tests to build with the new build system.
 

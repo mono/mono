@@ -134,5 +134,11 @@ namespace MonoTests.System.Xml
 			AssertEquals ("val1", element.GetAttribute ("attr1"));
 			AssertEquals ("val2", element.GetAttribute ("attr2"));
 		}
+
+		public void TestOuterXmlWithNamespace ()
+		{
+			XmlElement element = document.CreateElement ("foo", "bar", "#foo");
+			AssertEquals ("<foo:bar xmlns:foo=\"#foo\" />", element.OuterXml);
+		}		
 	}
 }
