@@ -1050,7 +1050,9 @@ namespace System.Windows.Forms
 						  0, 0, control.TotalWidth, control.Font.Height);
 				if (control.Columns.Count > 0) {
 					foreach (ColumnHeader col in control.Columns) {
-						this.CPDrawButton (dc, col.Rect, (col.Pressed ? ButtonState.Pushed : ButtonState.Normal));
+						this.CPDrawButton (dc, col.Rect, (col.Pressed ?
+										  ButtonState.Pushed :
+										  ButtonState.Normal));
 						dc.DrawString (col.Text, control.Font,
 							       ResPool.GetSolidBrush (this.ColorButtonText),
 							       col.Rect, col.Format);

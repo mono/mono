@@ -810,10 +810,10 @@ namespace System.Windows.Forms
 				}
 
 				if (this.clicked_column != null) {
-						this.clicked_column.pressed = true;
-						this.Invalidate (this.clicked_column.Rect);
-						this.Redraw (false);
-						return;
+					this.clicked_column.pressed = true;
+					this.Invalidate (this.clicked_column.Rect);
+					this.Redraw (false);
+					return;
 				}
 			}
 
@@ -867,13 +867,13 @@ namespace System.Windows.Forms
 			// on a column
 			if (this.clicked_column != null) {
 				if (this.clicked_column.pressed == false &&
-					this.clicked_column.Rect.Contains (hit)) {
+				    this.clicked_column.Rect.Contains (hit)) {
 					this.clicked_column.pressed = true;
 					this.Invalidate (this.clicked_column.Rect);
 					this.Redraw (false);
 				}
 				else if (this.clicked_column.pressed && 
-					! this.clicked_column.Rect.Contains (hit)) {
+					 ! this.clicked_column.Rect.Contains (hit)) {
 					this.clicked_column.pressed = false;
 					this.Invalidate (this.clicked_column.Rect);
 					this.Redraw (false);
@@ -890,12 +890,13 @@ namespace System.Windows.Forms
 			Point hit = new Point (me.X, me.Y);
 
 			if (this.clicked_column != null) {
-					if (this.clicked_column.pressed) {
-							this.clicked_column.pressed = false;
-							this.Invalidate (this.clicked_column.Rect);
-							this.Redraw (false);
-							this.OnColumnClick (new ColumnClickEventArgs (this.clicked_column.Index));
-					}
+				if (this.clicked_column.pressed) {
+					this.clicked_column.pressed = false;
+					this.Invalidate (this.clicked_column.Rect);
+					this.Redraw (false);
+					this.OnColumnClick (new ColumnClickEventArgs
+							    (this.clicked_column.Index));
+				}
 			}
 
 			this.clicked_column = null;

@@ -89,7 +89,7 @@ namespace System.Windows.Forms
 		// we can't do ColumnHeader.column_rect.XXX. Hence,
 		// we have some of the following properties to work around CS0197.
 		internal bool Pressed {
-				get { return this.pressed; }
+			get { return this.pressed; }
 		}
 
 		internal int X {
