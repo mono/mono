@@ -1,3 +1,8 @@
+
+Tue Mar 26 19:54:45 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: remove glib mem vtable code.
+
 2002-03-26  Martin Baulig  <martin@gnome.org>
 
 	* debug-dwarf2.c (write_method_lines_dwarf2): Don't generate method
