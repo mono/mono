@@ -66,8 +66,10 @@ namespace System.Runtime.Remoting {
 
 			if (assemblyName == string.Empty)
 				return XmlNsForClrTypeWithNs + typeNamespace;
+			else if (typeNamespace == string.Empty)
+				return EncodeNs (XmlNsForClrTypeWithAssembly + assemblyName);
 			else
-				return XmlNsForClrTypeWithNsAndAssembly + typeNamespace + "/" + assemblyName;
+				return EncodeNs (XmlNsForClrTypeWithNsAndAssembly + typeNamespace + "/" + assemblyName);
 		}
 
 		public static bool DecodeXmlNamespaceForClrTypeNamespace (string inNamespace, 
@@ -76,6 +78,7 @@ namespace System.Runtime.Remoting {
 
 			if (inNamespace == null) throw new ArgumentNullException ("inNamespace");
 
+			inNamespace = DecodeNs (inNamespace);
 			typeNamespace = null;
 			assemblyName = null;
 
@@ -353,6 +356,22 @@ namespace System.Runtime.Remoting {
 				_soapActions [mb] = soapAction;
 				_soapActionsMethods [soapAction] = mb;
 			}
+		}
+		
+		static string EncodeNs (string ns)
+		{	
+			// Simple url encoding for namespaces
+			
+			ns = ns.Replace (",","%2C");
+			ns = ns.Replace (" ","%20");
+			return ns.Replace ("=","%3D");
+		}
+		
+		static string DecodeNs (string ns)
+		{
+			ns = ns.Replace ("%2C",",");
+			ns = ns.Replace ("%20"," ");
+			return ns.Replace ("%3D","=");
 		}
 	}
 }
