@@ -21,9 +21,19 @@ namespace Commons.Xml.Relaxng.Rnc
 
 	public class RncParser
 	{
+		public static RelaxngPattern ParseRnc (TextReader reader)
+		{
+			return ParseRnc (reader, new NameTable ());
+		}
+
+		public static RelaxngPattern ParseRnc (TextReader reader, XmlNameTable nameTable)
+		{
+			return new RncParser (nameTable).Parse (reader);
+		}
+
 		XmlNamespaceManager nsmgr;
 		XmlNamespaceManager dtnsmgr;
-		string defaultNamespace;
+		string defaultNamespace = String.Empty;
 
 		RncTokenizer tokenizer;
 

@@ -1,3 +1,9 @@
+2004-05-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncParser.jay :
+	  Added static Parse () methods.
+	  Converted all CRLF to LF, since jay automatically inserts LF lines.
+
 2004-03-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Initial checkin; added RncParser.jay, RncTokenizer.cs and ChangeLog.
