@@ -3708,12 +3708,16 @@ namespace Mono.MonoBASIC {
 
 // #52067 - Start - Trying to solve
 
-			if (e == null)
-				foreach(Type type in TypeManager.GetPertinentStandardModules(new string[] {"Microsoft.VisualBasic", ""})) {
+			if (e == null) {
+				//TODO: Get Namespaces from SourceBeingCompiled
+				string[] NamespacesInScope = new string[] {"Microsoft.VisualBasic", ""};
+
+				foreach(Type type in TypeManager.GetPertinentStandardModules(NamespacesInScope)) {
 					e = MemberLookup(ec, type, Name, loc);
 					if (e != null) // FIXME! Must Output Ambiguity Error Messages
 						break;
 				}
+			}
 
 // #52067 - End
 
