@@ -7,6 +7,7 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.InteropServices;
@@ -906,11 +907,15 @@ namespace System {
 			return result;
 		}
 
+		[DebuggerHidden]
+		[DebuggerStepThrough] 
 		public object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args)
 		{
 			return InvokeMember (name, invokeAttr, binder, target, args, null, null, null);
 		}
 
+		[DebuggerHidden]
+		[DebuggerStepThrough] 
 		public object InvokeMember (string name, BindingFlags invokeAttr, Binder binder,
 					    object target, object[] args, CultureInfo culture)
 		{

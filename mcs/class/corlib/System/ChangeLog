@@ -1,3 +1,7 @@
+2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Type.cs: added missing attributes on InvokeMember
+
 2004-06-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* String.cs: Flag concat with four arguments internal. 
@@ -10,6 +14,7 @@
 	match MS implementation and allow serialization to work. Fix 
 	bug #59113.
 
+>>>>>>> 1.841
 2004-05-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DateTime.cs: adjust milliseconds for fraction specifier ('f').
