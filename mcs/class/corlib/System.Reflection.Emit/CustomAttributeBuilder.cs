@@ -260,7 +260,7 @@ namespace System.Reflection.Emit {
 					break;
 				default:
 					len = decode_len(data, pos, out pos);
-					string v = string_from_bytes (data, pos, len);
+					string_from_bytes (data, pos, len);
 					pos += len;
 					break;
 				}

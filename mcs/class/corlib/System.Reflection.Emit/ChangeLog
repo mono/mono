@@ -1,3 +1,6 @@
+2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilder.cs: Fix a warning.
 
 Wed Dec 15 11:34:13 CET 2004 Paolo Molaro <lupus@ximian.com>
 
