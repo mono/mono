@@ -45,7 +45,7 @@
 	</target>
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="Ximian.Mono.Tests.AllTests,System_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,System_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">

@@ -1,5 +1,9 @@
 2002-05-05  Nick Drochak  <ndrochak@gol.com>
 
+	* ChangeLog: Update build file to run correct class in the test dll.
+
+2002-05-05  Nick Drochak  <ndrochak@gol.com>
+
 	* AllTests.cs:
 	* BasicOperationsTest.cs:
 	* DnsTest.cs:
