@@ -1,5 +1,7 @@
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* ARC4Managed.cs: Added missing exception handling in TransformBlock 
+	and TransformFinalBlock.
 	* SymmetricTransform.cs: Fixed possible integer overflow.
 
 2004-05-10  Sebastien Pouliot  <sebastien@ximian.com>

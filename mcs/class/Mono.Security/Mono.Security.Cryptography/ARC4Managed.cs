@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
@@ -113,7 +114,35 @@ namespace Mono.Security.Cryptography {
 			}
 		}
 
+		private void CheckInput (byte[] inputBuffer, int inputOffset, int inputCount)
+		{
+			if (inputBuffer == null)
+				throw new ArgumentNullException ("inputBuffer");
+			if (inputOffset < 0)
+				throw new ArgumentOutOfRangeException ("inputOffset", "< 0");
+			if (inputCount < 0)
+				throw new ArgumentOutOfRangeException ("inputCount", "< 0");
+			// ordered to avoid possible integer overflow
+			if (inputOffset > inputBuffer.Length - inputCount)
+				throw new ArgumentException ("inputBuffer", Locale.GetText ("Overflow"));
+		}
+
 		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) 
+		{
+			CheckInput (inputBuffer, inputOffset, inputCount);
+			// check output parameters
+			if (outputBuffer == null)
+				throw new ArgumentNullException ("outputBuffer");
+			if (outputOffset < 0)
+				throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
+			// ordered to avoid possible integer overflow
+			if (outputOffset > outputBuffer.Length - inputCount)
+				throw new ArgumentException ("outputBuffer", Locale.GetText ("Overflow"));
+
+			return InternalTransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
+		}
+
+		private int InternalTransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) 
 		{
 			byte xorIndex;
 			for (int counter = 0; counter < inputCount; counter ++) {               
@@ -132,8 +161,10 @@ namespace Mono.Security.Cryptography {
 
 		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
+			CheckInput (inputBuffer, inputOffset, inputCount);
+
 			byte[] output = new byte [inputCount];
-			TransformBlock (inputBuffer, inputOffset, inputCount, output, 0);
+			InternalTransformBlock (inputBuffer, inputOffset, inputCount, output, 0);
 			return output;
 		}
 	}
