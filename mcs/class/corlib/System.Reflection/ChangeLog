@@ -1,5 +1,7 @@
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* FieldInfo.cs: Add support for returning MarshalAsAttribute.
+
 	* ParameterInfo.cs: Add marshalAs field, add support for returning
 	MarshalAsAttribute.
 

@@ -168,16 +168,21 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern UnmanagedMarshal GetUnmanagedMarshal ();
+
 		internal object[] GetPseudoCustomAttributes ()
 		{
 			int count = 0;
-
-			/* FIXME: Add support for MarshalAsAttribute */
 
 			if (IsNotSerialized)
 				count ++;
 
 			if (DeclaringType.IsExplicitLayout)
+				count ++;
+
+			UnmanagedMarshal marshalAs = GetUnmanagedMarshal ();
+			if (marshalAs != null)
 				count ++;
 
 			if (count == 0)
@@ -189,6 +194,8 @@ namespace System.Reflection {
 				attrs [count ++] = new NonSerializedAttribute ();
 			if (DeclaringType.IsExplicitLayout)
 				attrs [count ++] = new FieldOffsetAttribute (GetFieldOffset ());
+			if (marshalAs != null)
+				attrs [count ++] = marshalAs.ToMarshalAsAttribute ();
 
 			return attrs;
 		}
