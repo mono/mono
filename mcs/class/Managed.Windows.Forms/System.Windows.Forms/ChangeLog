@@ -1,5 +1,11 @@
 2004-11-09  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs (CalcXPos): New helper method so we can determine
+	the proper place to start drawing vertical tabs.
+	* ThemeWin32Classic.cs (DrawTab): Draw right aligned tabs.
+	
+2004-11-09  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs: Calculate sizing and rects for left aligned tabs.
 	* ThemeWin32Classic.cs (GetTabControl*ScrollRect): Only handle Top
 	and Bottom, left and right are illegal values for this and

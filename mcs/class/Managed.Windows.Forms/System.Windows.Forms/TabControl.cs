@@ -570,6 +570,16 @@ namespace System.Windows.Forms {
 			return 1;
 		}
 
+		private int CalcXPos ()
+		{
+			if (Alignment == TabAlignment.Right) {
+				Rectangle r = ThemeEngine.Current.GetTabControlDisplayRectangle (this);
+				return r.Right + 4;
+			}
+			return 4;
+
+		}
+
 		private void SizeTabs ()
 		{
 			switch (Alignment) {
@@ -589,7 +599,7 @@ namespace System.Windows.Forms {
 			int prev_row = 1;
 			Size spacing = TabSpacing;
 			int size = item_size.Height + 2 + spacing.Width;
-			int xpos = 4;
+			int xpos = CalcXPos ();
 
 			if (TabPages.Count == 0)
 				return;

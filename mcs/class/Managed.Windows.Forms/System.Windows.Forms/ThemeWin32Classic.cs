@@ -26,9 +26,14 @@
 //
 //
 //
-// $Revision: 1.62 $
+// $Revision: 1.63 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.63  2004/11/10 01:04:28  jackson
+// 	* TabControl.cs (CalcXPos): New helper method so we can determine
+// 	the proper place to start drawing vertical tabs.
+// 	* ThemeWin32Classic.cs (DrawTab): Draw right aligned tabs.
+//
 // Revision 1.62  2004/11/09 21:44:54  jackson
 // 	* TabControl.cs: Calculate sizing and rects for left aligned tabs.
 // 	* ThemeWin32Classic.cs (GetTabControl*ScrollRect): Only handle Top
@@ -2067,7 +2072,32 @@ namespace System.Windows.Forms
 					break;
 
 				default:
-					throw new Exception ("right tabs");
+					// TabAlignment.Right
+
+					dc.FillRectangle (GetControlBackBrush (tab.BackColor), bounds);
+
+					dc.DrawLine (light, bounds.Left, bounds.Top, bounds.Right - 3, bounds.Top);
+					dc.DrawLine (light, bounds.Right - 3, bounds.Top, bounds.Right, bounds.Top + 3);
+
+					dc.DrawLine (SystemPens.ControlDark, bounds.Right - 1, bounds.Top + 1, bounds.Right - 1, bounds.Bottom - 1);
+					dc.DrawLine (SystemPens.ControlDark, bounds.Left, bounds.Bottom - 1, bounds.Right - 2, bounds.Bottom - 1);
+
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right, bounds.Top + 3, bounds.Right, bounds.Bottom - 3);
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Left, bounds.Bottom, bounds.Right - 3, bounds.Bottom);
+
+					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
+
+					if (page.Text != String.Empty) {
+						StringFormat string_format = new StringFormat ();
+						string_format.Alignment = StringAlignment.Center;
+						string_format.LineAlignment = StringAlignment.Center;
+						string_format.FormatFlags = StringFormatFlags.NoWrap;
+						string_format.FormatFlags = StringFormatFlags.DirectionVertical;
+						interior.X++;
+						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+					}
+
+					break;
 				}
 			}
 
