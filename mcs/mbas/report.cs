@@ -82,8 +82,8 @@ namespace Mono.CSharp {
 		static public void Error (int code, Location l, string text)
 		{
 			string msg = String.Format (
-				"{0}({1}) error CS{2:0000}: {3}", l.Name, l.Row, code, text);
-//				"{0}({1}) error CS{2}: {3}", l.Name, l.Row, code, text);
+				"{0}({1}) error BC{2:0000}: {3}", l.Name, l.Row, code, text);
+//				"{0}({1}) error BC{2}: {3}", l.Name, l.Row, code, text);
 			
 			RealError (msg);
 			Check (code);
@@ -107,8 +107,8 @@ namespace Mono.CSharp {
 					row = l.Row.ToString ();
 				
 				Console.WriteLine (String.Format (
-					"{0}({1}) warning CS{2:0000}: {3}",
-//					"{0}({1}) warning CS{2}: {3}",
+					"{0}({1}) warning BC{2:0000}: {3}",
+//					"{0}({1}) warning BC{2}: {3}",
 					l.Name,  row, code, text));
 				Warnings++;
 				Check (code);
@@ -137,8 +137,8 @@ namespace Mono.CSharp {
 
 		static public void Error (int code, string text)
 		{
-			string msg = String.Format ("error CS{0:0000}: {1}", code, text);
-//			string msg = String.Format ("error CS{0}: {1}", code, text);
+			string msg = String.Format ("error BC{0:0000}: {1}", code, text);
+//			string msg = String.Format ("error BC{0}: {1}", code, text);
 			
 			RealError (msg);
 			Check (code);
