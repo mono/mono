@@ -1,3 +1,8 @@
+2003-04-18  Duncan Mak  <duncan@ximian.com>
+
+	* write-source.cs: Make it handle TextInfo, NumberFormatInfo, and
+	some other fixes.
+
 2003-04-14  Duncan Mak  <duncan@ximian.com>
 
 	* makefile: Added a makefile.

@@ -1,13 +1,13 @@
 CSC=mcs
-
+MONO=mono
 
 all: Mono.Globalization.dll
 
 Mono.Globalization.dll: write-source.exe
-	mcs src/*.cs /t:library /out:Mono.Globalization.dll
-
-write-source: write-source.cs
-	mcs write-source.cs
+	$(CSC) /t:library MonoCultures.cs /out:Mono.Globalization.dll
 
 write-source.exe: write-source
-	mono write-source.exe
+	$(MONO) --debug write-source.exe
+
+write-source: write-source.cs
+	$(CSC) /debug write-source.cs
