@@ -1,3 +1,10 @@
+2002-12-05  Alejandro Sánchez Acosta  <raciel@gnome.org>
+
+	* ActiveDesignerEventArgs.cs,
+	  ActiveDesignerEventHandler.cs: Added
+	
+
+
 2002-11-30  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
 
 	* System.ComponentModel.Design/CommandID.cs
