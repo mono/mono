@@ -153,14 +153,20 @@ namespace System.Resources
 					string n = get_attr (reader, "name");
 					string t = get_attr (reader, "type");
 					string mt = get_attr (reader, "mimetype");
+
+					Type tt = t == null ? null : Type.GetType (t);
+
+					if (t != null && tt == null)
+						throw new SystemException ("The type `" + t +"' could not be resolved");
+
 					if (n != null) {
 						object v = null;
 						string val = get_value (reader, "value");
-						if (mt != null && t != null) {
-							TypeConverter c = TypeDescriptor.GetConverter (Type.GetType (t));
+						if (mt != null && tt != null) {
+							TypeConverter c = TypeDescriptor.GetConverter (tt);
 							v = c.ConvertFrom (Convert.FromBase64String (val));
-						} else if (t != null) {
-							TypeConverter c = TypeDescriptor.GetConverter (Type.GetType (t));
+						} else if (tt != null) {
+							TypeConverter c = TypeDescriptor.GetConverter (tt);
 							v = c.ConvertFromString (val);
 						} else { 
 							v = val;
