@@ -1,3 +1,9 @@
+2004-08-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Optimize lmf saving a bit.
+
+	* tramp-amd64.c: Patch calling code in trampolines.
+
 2004-08-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c: pinvoke struct passing fixes.
