@@ -49,7 +49,7 @@ namespace Mono.CSharp
 			foreach (CodeCompileUnit e in ea) {
 				fileNames [i] = GetTempFileNameWithExtension ("cs");
 				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
-				StreamWriter s=new StreamWriter(f);
+				StreamWriter s=new StreamWriter(f, Encoding.UTF8);
 				if (e.ReferencedAssemblies != null) {
 					foreach (string str in e.ReferencedAssemblies) {
 						if (!assemblies.Contains (str))

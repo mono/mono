@@ -1,13 +1,18 @@
+2004-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: when generating files from DOM, set the
+	encoding to UTF-8 with BOM marker. Fixes bug #52604.
+
 2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* CSharpCodeCompiler.cs: In BuildArgs, add "--" separator between options
-	  and source files.
+	* CSharpCodeCompiler.cs: In BuildArgs, add "--" separator between
+	options and source files.
 
 2003-10-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* CSharpCodeGenerator.cs: added override for the method 
-	  GenerateParameterDeclarationExpression. The parameter must be generated
-	  with a safe C# name.
+	  GenerateParameterDeclarationExpression. The parameter must be
+	  generated with a safe C# name.
 	
 2003-09-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
