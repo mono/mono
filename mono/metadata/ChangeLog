@@ -1,3 +1,10 @@
+
+Fri Jan 23 21:27:40 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* socket-io.c: include the new socket-wrappers.h header.
+	Use the wrappers instead of the unix socket functions to make the code
+	more clear.
+
 2004-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* profiler.c (merge_methods): Fix merging of profile info. Fixes #53010.
