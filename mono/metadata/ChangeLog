@@ -1,3 +1,8 @@
+2003-08-06  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c: Don't store the MonoString's vtable to
+	make this work for applications with multiple application domains.
+
 2003-08-04  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c: Completely reworked the type support; the
