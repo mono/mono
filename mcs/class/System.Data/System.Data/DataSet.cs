@@ -476,7 +476,11 @@ namespace System.Data {
 					foreach( DataColumn col in elements )
 					{
 						string colnspc = nspc;
-						
+						object rowObject = row [col];
+												
+						if (rowObject == null)
+							continue;
+
 						if( col.Namespace != null )
 						{
 							colnspc = col.Namespace;
@@ -484,7 +488,7 @@ namespace System.Data {
 				
 						//TODO check if I can get away with write element string
 						WriteStartElement( writer, mode, colnspc, col.Prefix, col.ColumnName );
-						writer.WriteString( row[col].ToString() );
+						writer.WriteString( rowObject.ToString() );
 						writer.WriteEndElement();
 					}
 				}
@@ -732,8 +736,10 @@ namespace System.Data {
 				        // does element have type defined
 					if (!element.SchemaTypeName.IsEmpty)
 						ReadTypeElement (element, ComplexTypes, ref dt);
-					else if ((complexType = element.SchemaType as XmlSchemaComplexType) != null)
+					else if ((complexType = element.SchemaType as XmlSchemaComplexType) != null) {
+						dataSetName = element.Name;
 						ReadColumnsFromSchema (complexType, ComplexTypes, ref dt);
+					}
 
 					Tables.Add (dt);
 				}
