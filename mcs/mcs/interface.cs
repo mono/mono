@@ -353,8 +353,9 @@ namespace Mono.CSharp {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
+				Type [] null_types = null;
 				InternalParameters inp = new InternalParameters
-					((Type [])null, Parameters.GetEmptyReadOnlyParameters ());
+					(null_types, Parameters.GetEmptyReadOnlyParameters ());
 				
 				if (!RegisterMethod (get, inp, null)) {
 					Error111 (ip);
