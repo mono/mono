@@ -1,3 +1,10 @@
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exception.c (ves_icall_get_trace): avoid crash if the exception is 
+	not yet thrown.
+
+	* exception.c (ves_icall_get_trace): avoid crash on unmanaged frames.
+
 2003-01-26  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (mono_debug_init): Take a boolean argument which
