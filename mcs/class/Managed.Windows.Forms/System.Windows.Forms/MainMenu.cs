@@ -31,15 +31,16 @@ namespace System.Windows.Forms
 	public class MainMenu : Menu
 	{
 		private RightToLeft right_to_left;
+		private Form form;
 
     		public MainMenu () : base (null)
     		{
-
+			form = null;
     		}
 
 		public MainMenu (MenuItem[] items) : base (items)
 		{
-
+			form = null;
 		}
 
 		#region Public Properties
@@ -57,11 +58,6 @@ namespace System.Windows.Forms
 		{
 			throw new NotImplementedException ();
 		}
-
-		protected void CloneMenu (Menu menu)
-		{
-			throw new NotImplementedException ();
-		}
 		
 		protected override IntPtr CreateMenuHandle ()
 		{
@@ -73,11 +69,6 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
-		public virtual void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-		
 		public Form GetForm ()
 		{
 			throw new NotImplementedException ();
@@ -89,6 +80,11 @@ namespace System.Windows.Forms
 		}
 
 		#endregion Public Methods
+		
+		internal void SetForm (Form form)
+		{
+			this.form = form;
+		}
 	}
 }
 

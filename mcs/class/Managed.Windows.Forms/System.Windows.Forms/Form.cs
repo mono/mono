@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.15  2004/10/08 08:50:29  jordi
+// more menu work
+//
 // Revision 1.14  2004/10/02 19:05:52  pbartok
 // - Added KeyPreview property
 // - Added Menu property (still incomplete, pending Jordi's menu work)
@@ -260,6 +263,7 @@ namespace System.Windows.Forms {
 					// We'll need a way to store what form owns the menu inside the menu; I'd
 					// have to set this here.
 					menu = value;
+					menu.SetForm (this);
 				}
 			}
 		}

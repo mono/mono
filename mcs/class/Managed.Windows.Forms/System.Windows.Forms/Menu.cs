@@ -33,15 +33,15 @@ namespace System.Windows.Forms
 {
 	public abstract class Menu : Component
 	{
-		protected MenuItemCollection menu_items;
-		private IntPtr handle = IntPtr.Zero;
+		internal MenuItemCollection menu_items;
+		internal IntPtr menu_handle = IntPtr.Zero;
 
 		public const int FindHandle = 0;
 		public const int FindShortcut = 1;
 		
  		protected Menu (MenuItem[] items)
 		{
-			Console.WriteLine ("Menu.Menu " + (items != null));
+			//Console.WriteLine ("Menu.Menu " + (items != null));
 
 			menu_items = new MenuItemCollection (this);
 
@@ -53,12 +53,12 @@ namespace System.Windows.Forms
 		#region Public Properties
 		public IntPtr Handle {
 			get {
-				if (handle == IntPtr.Zero) {
-					handle = CreateMenuHandle ();
+				if (menu_handle == IntPtr.Zero) {
+					menu_handle = CreateMenuHandle ();
 					CreateItems ();
 				}
 
-				return handle;
+				return menu_handle;
 			}
 		}
 		
@@ -99,12 +99,7 @@ namespace System.Windows.Forms
 		{
 			throw new NotImplementedException ();
 		}
-
-		public virtual void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-
+		
 		public MenuItem FindMenuItem (int type, IntPtr value)
 		{
 			throw new NotImplementedException ();
@@ -116,6 +111,11 @@ namespace System.Windows.Forms
 		}
 		
 		public ContextMenu GetContextMenu ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public MainMenu GetMainMenu ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -139,12 +139,14 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
-		private void CreateItems ()
+		protected void CreateItems ()
 		{
 			Console.WriteLine ("Menu.CreateItems:" + menu_items.Count);
 
-			for (int i = 0; i < menu_items.Count; i++)
+			for (int i = 0; i < menu_items.Count; i++) 
 				menu_items[i].Create ();
+				
+			Console.WriteLine ("End Menu.CreateItems:" + menu_items.Count);
 
 		}
 
