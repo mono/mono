@@ -933,7 +933,69 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override void CreateControlHierarchy(bool useDataSource)
 		{
+			IEnumerator pageSource;
+			int         itemCount;
+			int         dsItemCount;
+			ArrayList   dataKeys;
+			ArrayList   columns;
+			IEnumerable resolvedDS;
+			ICollection collResolvedDS;
+			int         pageDSCount;
+			int         colCount;
+			DataGridColumn[] cols;
+			Table       deployTable;
+			TableRowCollection deployRows;
+			ListItemType deployType;
+			int         indexCounter;
+			string      dkField;
+			bool        dsUse;
+			bool        pgEnabled;
+			int         editIndex;
+			int         selIndex;
+
+			pagedDataSource = CreatePagedDataSource();
+			pageSource      = null;
+			itemCount       = -1;
+			dsItemCount     = -1;
+			dataKeys        = DataKeysArray;
+			columns         = null;
+			if(itemsArrayList != null)
+			{
+				itemsArrayList.Clear();
+			} else
+			{
+				itemsArrayList = new ArrayList();
+			}
+			if(!useDataSource)
+			{
+				itemCount    = (int) ViewState["_DataGrid_ItemCount"];
+				pageDSCount  = (int) ViewState["_DataGrid_DataSource_Count"];
+				if(itemCount != -1)
+				{
+					if(pagedDataSource.IsCustomPagingEnabled)
+					{
+						// I may need a dummy pagedDS
+					}
+				}
+			} else
+			{
+				//TODO: Use Data Source
+			}
 			throw new NotImplementedException();
+		}
+
+		private PagedDataSource CreatePagedDataSource()
+		{
+			PagedDataSource retVal;
+
+			retVal = new PagedDataSource();
+			retVal.CurrentPageIndex = CurrentPageIndex;
+			retVal.PageSize         = PageSize;
+			retVal.AllowPaging      = AllowPaging;
+			retVal.AllowCustomPaging = AllowCustomPaging;
+			retVal.VirtualCount      = VirtualItemCount;
+
+			return retVal;
 		}
 
 		internal void OnColumnsChanged()
