@@ -315,7 +315,7 @@ namespace System.IO
 			if (path == "")
 				throw new ArgumentException ("The Path do not have a valid format");
 			
-			return new DirectoryInfo (Path.GetDirectoryName (path + Path.DirectorySeparatorChar + ".."));
+			return new DirectoryInfo (Path.GetDirectoryName (path));
 		}
 
 		public static void Move (string src, string dest)
