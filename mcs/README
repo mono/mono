@@ -1,24 +1,42 @@
-This contains the Mono C# compiler as well as the Mono runtime
-library.
+This contains code written in C# of Mono, it contains:
 
-See INSTALL.txt for a guide to building and installing mcs.
+	* Compilers written in C#
+
+	* Class Libraries.
+
+	* Regression Test Suites
+
+To install this source code, look at the INSTALL file in the `mono'
+package module which drives the compilation of this directory.
 
 Layout:
 
+	bmcs/
+		New experimental Basic compiler.
+
+	build/
+		Rules, configuration and makefile components to build
+		this module.
+
 	class/
-		Class libraries
+		The class libraries.
 
 	errors/
-		Sample programs that should generate errors by the compiler.
+		Sample programs that should generate errors by the C# compiler.
+
+	gmcs/
+
+		The Mono C# compiler with Generics support.  This will
+	  	become the default in Mono 2.0.
 
 	jay/
 		Yacc-based parser generator.
 
 	mcs/
-		The Mono C# compiler
+		The Mono C# compiler (1.0 + 2.0 minus generics).
 
 	tests/
-		Sample tests 
+		Regression test suite for the C# compiler
 
 	docs/
 		Some notes on the compiler and the class libraries.
