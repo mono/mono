@@ -1,5 +1,9 @@
 2004-02-05  Ravindra  <rkumar@novell.com>
 
+	* Brush.cs: Added a missing namespace.
+
+2004-02-05  Ravindra  <rkumar@novell.com>
+
 	* gdipFunctions.cs: Added methods for HatchBrush and 
 	SolidBrush.
 	* SolidBrush.cs: Added checks for status.
