@@ -1,3 +1,8 @@
+2002-03-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: impl. lreg: XOR (lreg, lreg)
+	impl. REM (freg, freg)
+
 2002-03-17  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_open_assembly): Call mono_debug_get_type() on all
