@@ -5233,17 +5233,19 @@ namespace Mono.CSharp {
 					method = TypeManager.void_array_copyto_array_int;
 			}
 
-			//
-			// This checks ObsoleteAttribute on the method and on the declaring type
-			//
-			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
-			if (oa != null)
-				AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
+			if (ec.TestObsoleteMethodUsage) {
+				//
+				// This checks ObsoleteAttribute on the method and on the declaring type
+				//
+				ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
+				if (oa != null)
+					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
 
 
-			oa = AttributeTester.GetObsoleteAttribute (method.DeclaringType);
-			if (oa != null) {
-				AttributeTester.Report_ObsoleteMessage (oa, method.DeclaringType.FullName, loc);
+				oa = AttributeTester.GetObsoleteAttribute (method.DeclaringType);
+				if (oa != null) {
+					AttributeTester.Report_ObsoleteMessage (oa, method.DeclaringType.FullName, loc);
+				}
 			}
 
 			if (IsMethodExcluded (method, ec))

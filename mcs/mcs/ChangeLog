@@ -1,3 +1,12 @@
+2004-09-14  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #61902
+	* codegen.cs (TestObsoleteMethodUsage): Trace when method is
+	called and is obsolete then this member suppress message
+	when call is inside next [Obsolete] method or type.
+
+	* expression.cs: Use TestObsoleteMethodUsage member.
+
 2004-09-14  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay: Sync a bit with the GMCS version.

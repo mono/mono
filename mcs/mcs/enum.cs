@@ -69,8 +69,6 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			base.Emit ();
-
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this); 
 
