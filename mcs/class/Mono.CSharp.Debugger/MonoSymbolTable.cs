@@ -52,7 +52,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 36;
+		public const int  Version = 37;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		#region This is actually written to the symbol file
