@@ -213,16 +213,10 @@ namespace System
 		/// <summary>
 		/// Get the user name of current process is running under
 		/// </summary>
-		public static string UserName
+		public extern static string UserName
 		{
-			get {
-				string result = GetEnvironmentVariable ("USERNAME");
-
-				if (result == null || result == String.Empty)
-					result = GetEnvironmentVariable ("USER");
-
-				return result;
-			}
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		/// <summary>
