@@ -15,6 +15,7 @@ Mono.Security/ASN1Convert.cs
 Mono.Security/PKCS7.cs
 Mono.Security.Authenticode/AuthenticodeBase.cs
 Mono.Security.Authenticode/AuthenticodeDeformatter.cs
+Mono.Security.Cryptography/CryptoConvert.cs
 Mono.Security.Cryptography/CryptoTools.cs
 Mono.Security.Cryptography/DSAManaged.cs
 Mono.Security.Cryptography/PKCS1.cs
