@@ -1,3 +1,8 @@
+2005-02-16  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.Resolve): Add arguments casting for
+	when types doesn't match ctor arguments.
+
 2005-02-16  Raja R Harinath  <rharinath@novell.com>
 
 	Fix parts of #63202.

@@ -564,6 +564,16 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				object value = pos_values [j];
+				if (value != null && a.Type != value.GetType () && a.Type.IsPrimitive) {
+					bool fail;
+					pos_values [j] = TypeManager.ChangeType (value, a.Type, out fail);
+					if (fail) {
+						// TODO: Can failed ?
+						throw new NotImplementedException ();
+					}
+				}
+
 				if (j < last_real_param)
 					continue;
 				
