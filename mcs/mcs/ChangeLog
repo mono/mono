@@ -4,6 +4,10 @@
 	here, it makes it easier for me to see what changed in MCS since
 	the last time I merged.
 
+2004-09-14  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberCore.Emit): Always call VerifyObsoleteAttribute().
+
 2004-09-14  Marek Safar  <marek.safar@seznam.cz>
 
 	Fixed bug #61902
