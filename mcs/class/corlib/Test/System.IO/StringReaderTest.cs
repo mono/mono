@@ -25,6 +25,17 @@ public class StringReaderTest : TestCase {
 	public StringReaderTest() : base ("MonoTests.System.IO.StringReaderTest testcase") { }
 	public StringReaderTest( string name ): base(name) { }
 
+	public  void TestReadLine() {
+		string testme = "a\nb\nc\n";
+		StringReader sr = new StringReader (testme);
+		string inputLine;
+		int lines = 0;
+		while ((inputLine = sr.ReadLine ()) != null)
+			lines++;
+		
+		AssertEquals ("Incorrect number of lines", 3, lines);
+	}
+
 	public void TestPeekRead() {
 		StringReader reader = new StringReader( "Test String" );
 

@@ -1,3 +1,8 @@
+2002-06-12  Nick Drochak  <ndrochak@gol.com>
+
+	* StringReaderTest.cs: Regression test for a bug that we had were
+	ReadLine() was not returning null when the string ended with newline.
+
 2002-05-15  Nick Drochak  <ndrochak@gol.com>
 
 	* StreamReaderTest.cs: 
