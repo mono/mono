@@ -1,3 +1,7 @@
+2005-03-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h: Add some SSE2 instructions.
+
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* amd64/amd64-codegen.h: Add xadd instructions.
