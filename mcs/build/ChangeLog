@@ -1,3 +1,7 @@
+2005/01/03  Nick Drochak  <ndrochak@ieee.org>
+
+* library.make: Ingore tests that are not meant to be run on MS DotNet
+
 2004-12-14  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (do-profile-check): Rename from
