@@ -203,11 +203,9 @@ namespace System.ComponentModel {
 			}
 		}
 
-		[MonoTODO ("Add localization support")]
 		protected virtual string GetLocalizedString (string value)
 		{
-			// FIXME: Check if other implementation exists
-			return null;
+			return Locale.GetText (value);
 		}
 
 		public string Category {

@@ -1,5 +1,9 @@
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* CategoryAttribute.cs: Added localization support
+
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* IComponent.cs:
 	* MarshalByValueComponent.cs: Reworked attributes based on the new Consts scheme
 
