@@ -582,7 +582,7 @@ namespace Mono.CSharp.Debugger
 
 		protected enum MRI_string {
 			offset_length		= 0x00,
-			offset_vector		= 0x01
+			offset_chars		= 0x01
 		}
 
 		protected enum MRI_array {
@@ -1437,15 +1437,13 @@ namespace Mono.CSharp.Debugger
 					Die string_die = new DieInternalString (DieCompileUnit);
 
 					new DieMember (this, typeof (MonoString), "String",
-						       (int) MRI_string.offset_vector, string_die);
+						       (int) MRI_string.offset_chars, string_die);
 				} else {
-					Die vector_die = new DieArrayType (DieCompileUnit, typeof (char), 1);
+					Die vector_die = new DieInternalArray (DieCompileUnit, typeof (char));
 					new DieSubRangeType (vector_die, typeof (int), 0, -1);
 
-					Die ptr_die = new DieInternalPointer (DieCompileUnit, vector_die);
-
-					new DieMember (this, typeof (MonoString), "Vector",
-						       (int) MRI_string.offset_vector, ptr_die);
+					new DieMember (this, typeof (MonoString), "Chars",
+						       (int) MRI_string.offset_chars, vector_die);
 				}
 			}
 
@@ -1478,14 +1476,14 @@ namespace Mono.CSharp.Debugger
 
 			public override void DoEmit ()
 			{
-				dw.AddRelocEntry_TypeFieldOffset (typeof (MonoArray),
-								  (int) MRI_array.offset_max_length);
+				dw.AddRelocEntry_TypeFieldOffset (typeof (MonoString),
+								  (int) MRI_string.offset_length);
 				aw.WriteInt32 (0);
-				dw.AddRelocEntry_TypeFieldSize (typeof (MonoArray),
-								(int) MRI_array.offset_max_length);
+				dw.AddRelocEntry_TypeFieldSize (typeof (MonoString),
+								(int) MRI_string.offset_length);
 				aw.WriteInt32 (0);
-				dw.AddRelocEntry_TypeFieldOffset (typeof (MonoArray),
-								  (int) MRI_array.offset_vector);
+				dw.AddRelocEntry_TypeFieldOffset (typeof (MonoString),
+								  (int) MRI_string.offset_chars);
 				aw.WriteInt32 (0);
 			}
 		}
@@ -1905,7 +1903,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected const int reloc_table_version = 9;
+		protected const int reloc_table_version = 10;
 
 		protected enum Section {
 			DEBUG_INFO		= 0x01,

@@ -1,3 +1,7 @@
+2002-04-25  Martin Baulig  <martin@gnome.org>
+
+	* MonoDwarfFileWriterCs: Reflect latest MonoString changes.
+
 2002-04-13  Martin Baulig  <martin@gnome.org>
 
 	* IMonoSymbolWriter.cs (ISourceBlock): Added `Blocks' property and `AddBlock'
