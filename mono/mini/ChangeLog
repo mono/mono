@@ -1,5 +1,7 @@
 2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ssa.c: Handle OP_LCOMPARE the same as OP_COMPARE.
+
 	* objects.cs exceptions.cs basic.cs basic-long.cs basic-calls.cs: New
 	regression tests.
 
