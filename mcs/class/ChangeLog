@@ -1,3 +1,8 @@
+2003-02-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* makefile.gnu (test): do not install .dbg files since mcs no longer
+	generates them.
+
 2003-02-13  Tim Coleman <tim@timcoleman.com>
 	* makefile.gnu: Add System.Data.OracleClient to linux build.
 
