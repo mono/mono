@@ -19,20 +19,20 @@
 //		//
 //		//  --- Public Properties
 //		//
-//		 [MonoTODO]
-//		 public MonthCalendar.HitArea HitArea {
+//		[MonoTODO]
+//		public MonthCalendar.HitArea HitArea {
 //			get {
 //				throw new NotImplementedException ();
 //			}
 //		}
-//		 [MonoTODO]
-//		 public Point Point {
+//		[MonoTODO]
+//		public Point Point {
 //			get {
 //				throw new NotImplementedException ();
 //			}
 //		}
-//		 [MonoTODO]
-//		 public DateTime Time {
+//		[MonoTODO]
+//		public DateTime Time {
 //			get {
 //				throw new NotImplementedException ();
 //			}
@@ -41,48 +41,48 @@
 //		//
 //		//  --- Public Methods
 //		//
-//		 [MonoTODO]
-//		 public virtual bool Equals(object)
-//		 {
-//				throw new NotImplementedException ();
-//		 }
-//		 [MonoTODO]
-//		 public static bool Equals(object, object)
-//		 {
-//				throw new NotImplementedException ();
-//		 }
-//		 [MonoTODO]
-//		 public virtual int GetHashCode()
-//		 {
-//				throw new NotImplementedException ();
-//		 }
-//		 [MonoTODO]
-//		 public Type GetType()
-//		 {
-//				throw new NotImplementedException ();
-//		 }
-//		 [MonoTODO]
-//		 public virtual string ToString()
-//		 {
-//				throw new NotImplementedException ();
-//		 }
+//		[MonoTODO]
+//		public virtual bool Equals(object)
+//		{
+//			throw new NotImplementedException ();
+//		}
+//		[MonoTODO]
+//		public static bool Equals(object, object)
+//		{
+//			throw new NotImplementedException ();
+//		}
+//		[MonoTODO]
+//		public virtual int GetHashCode()
+//		{
+//			throw new NotImplementedException ();
+//		}
+//		[MonoTODO]
+//		public Type GetType()
+//		{
+//			throw new NotImplementedException ();
+//		}
+//		[MonoTODO]
+//		public virtual string ToString()
+//		{
+//			throw new NotImplementedException ();
+//		}
 //
 //		//
 //		//  --- Protected Methods
 //		//
-//		 [MonoTODO]
-//		 public protected object MemberwiseClone()
-//		 {
-//				throw new NotImplementedException ();
-//		 }
+//		[MonoTODO]
+//		public protected object MemberwiseClone()
+//		{
+//			throw new NotImplementedException ();
+//		}
 //
 //		//
-//		//  --- DeConstructor
+//		//  --- Destructor
 //		//
-//		 [MonoTODO]
-//		 ~MonthCalendar.HitTestInfo()
-//		 {
-//				throw new NotImplementedException ();
-//		 }
-//	}
+//		[MonoTODO]
+//		~MonthCalendar.HitTestInfo()
+//		{
+//			throw new NotImplementedException ();
+//		}
+//	 }
 //}

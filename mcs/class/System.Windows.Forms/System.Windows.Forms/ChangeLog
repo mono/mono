@@ -234,6 +234,19 @@ Added delegates. All delegates in System.Windows.Forms done
 * Panel.cs
 * New class, Stubbed and commented out
 
+2002-5-31 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* Panel.cs
+* New class, Stubbed and commented out
+
+2002-5-31 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* MonthCalendar.cs
+* MonthCalendar.HitTestInfo.cs
+* MouseEventArgs.cs
+* NativeWindow.cs
+* Removed trash byte
+
 
 
 
