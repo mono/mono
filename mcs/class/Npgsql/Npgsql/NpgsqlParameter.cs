@@ -29,7 +29,7 @@ using System.Data;
 using System.ComponentModel;
 using NpgsqlTypes;
 
-#if !__MonoCS__
+#if WITHDESIGN
 using Npgsql.Design;
 #endif
 
@@ -39,7 +39,7 @@ namespace Npgsql
     ///<summary>
     /// This class represents a parameter to a command that will be sent to server
     ///</summary>
-    #if !__MonoCS__
+    #if WITHDESIGN
     [TypeConverter(typeof(NpgsqlParameterConverter))]
     #endif
     
@@ -384,7 +384,7 @@ namespace Npgsql
         /// </summary>
         /// <value><b>true</b> if null values are accepted; otherwise, <b>false</b>. The default is <b>false</b>.</value>
         
-        #if !__MonoCS__
+        #if WITHDESIGN
         [EditorBrowsable(EditorBrowsableState.Advanced), Browsable(false), DefaultValue(false), DesignOnly(true)]
         #endif
         

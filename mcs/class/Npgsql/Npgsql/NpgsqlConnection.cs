@@ -36,7 +36,7 @@ using Mono.Security.Protocol.Tls;
 
 using NpgsqlTypes;
 
-#if !__MonoCS__
+#if WITHDESIGN
 using Npgsql.Design;
 #endif
 
@@ -59,7 +59,7 @@ namespace Npgsql
     /// This class represents a connection to a
     /// PostgreSQL server.
     /// </summary>
-    #if !__MonoCS__
+    #if WITHDESIGN
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlConnection))]
     #endif
     
@@ -158,7 +158,7 @@ namespace Npgsql
         /// the initial connection. The default value is an empty string.
         /// </value>
         
-        #if !__MonoCS__
+        #if WITHDESIGN
         [RefreshProperties(RefreshProperties.All), DefaultValue(""), RecommendedAsConfigurable(true)]
         [NpgsqlSysDescription("Description_ConnectionString", typeof(NpgsqlConnection)), Category("Data")]
         [Editor(typeof(ConnectionStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -219,7 +219,7 @@ namespace Npgsql
         /// </summary>
         /// <value>The time (in seconds) to wait for a connection to open. The default value is 15 seconds.</value>
         
-        #if !__MonoCS__
+        #if WITHDESIGN
         [NpgsqlSysDescription("Description_ConnectionTimeout", typeof(NpgsqlConnection))]
         #endif
         
@@ -235,7 +235,7 @@ namespace Npgsql
         /// </summary>
         /// <value>The name of the current database or the name of the database to be
         /// used after a connection is opened. The default value is the empty string.</value>
-        #if !__MonoCS__
+        #if WITHDESIGN
         [NpgsqlSysDescription("Description_Database", typeof(NpgsqlConnection))]
         #endif
         

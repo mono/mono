@@ -33,7 +33,7 @@ using System.Collections;
 using System.ComponentModel;
 using NpgsqlTypes;
 
-#if !__MonoCS__
+#if WITHDESIGN
 using Npgsql.Design;
 #endif
 
@@ -45,7 +45,7 @@ namespace Npgsql
     /// This class cannot be inherited.
     /// </summary>
     
-    #if !__MonoCS__
+    #if WITHDESIGN
     [ListBindable(false)]
     [Editor(typeof(NpgsqlParametersEditor), typeof(System.Drawing.Design.UITypeEditor))]
     #endif
@@ -77,7 +77,7 @@ namespace Npgsql
         /// <param name="parameterName">The name of the <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> to retrieve.</param>
         /// <value>The <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> with the specified name, or a null reference if the parameter is not found.</value>
         
-        #if !__MonoCS__
+        #if WITHDESIGN
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         #endif
         
@@ -100,7 +100,7 @@ namespace Npgsql
         /// <param name="index">The zero-based index of the <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> to retrieve.</param>
         /// <value>The <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> at the specified index.</value>
         
-        #if !__MonoCS__
+        #if WITHDESIGN
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         #endif
         
@@ -391,7 +391,7 @@ namespace Npgsql
         /// </summary>
         /// <value>The number of <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> objects in the collection.</value>
         
-        #if !__MonoCS__
+        #if WITHDESIGN
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         #endif
         

@@ -32,7 +32,7 @@ using System.Collections;
 
 using NpgsqlTypes;
 
-#if !__MonoCS__
+#if WITHDESIGN
 using Npgsql.Design;
 #endif
 
@@ -42,10 +42,9 @@ namespace Npgsql
     /// Represents a SQL statement or function (stored procedure) to execute
     /// against a PostgreSQL database. This class cannot be inherited.
     /// </summary>
-    #if !__MonoCS__
+    #if WITHDESIGN
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlCommand)), ToolboxItem(true)]
     #endif
-    
     public sealed class NpgsqlCommand : Component, IDbCommand, ICloneable
     {
         // Logging related values
@@ -259,7 +258,7 @@ namespace Npgsql
         /// Gets the <see cref="Npgsql.NpgsqlParameterCollection">NpgsqlParameterCollection</see>.
         /// </summary>
         /// <value>The parameters of the SQL statement or function (stored procedure). The default is an empty collection.</value>
-        #if !__MonoCS__
+        #if WITHDESIGN
         [Category("Data"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         #endif
         
@@ -292,7 +291,7 @@ namespace Npgsql
         /// </summary>
         /// <value>The <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see>.
         /// The default value is a null reference.</value>
-        #if !__MonoCS__
+        #if WITHDESIGN
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         #endif
         
@@ -322,7 +321,7 @@ namespace Npgsql
         /// method of the <see cref="System.Data.Common.DbDataAdapter">DbDataAdapter</see>.
         /// </summary>
         /// <value>One of the <see cref="System.Data.UpdateRowSource">UpdateRowSource</see> values.</value>
-        #if !__MonoCS__
+        #if WITHDESIGN
         [Category("Behavior"), DefaultValue(UpdateRowSource.Both)]
         #endif
         

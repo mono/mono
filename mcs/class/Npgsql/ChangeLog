@@ -1,3 +1,11 @@
+2005-01-27  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * Npgsql/NpgsqlParameter.cs,
+    Npgsql/NpgsqlConnection.cs,
+    Npgsql/NpgsqlCommand.cs,
+    Npgsql/NpgsqlParameterCollection.cs,
+    Makefile: Fixed problem when compiling Npgsql with Mono on windows with cygwin. Thanks Atsushi Enomoto(atsushi at ximian dot com) for heads up and Rafael Teixeira(monoman at gmail dot com) for fix.
+
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : quick csc build fix (tested on mcs as well).
