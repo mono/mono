@@ -1,3 +1,7 @@
+2003-11-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* CaseInsensitiveComparer.cs: Add missing method.
+
 2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Stack.cs: Applied patch from Carlos A. Barcenilla to fix minor

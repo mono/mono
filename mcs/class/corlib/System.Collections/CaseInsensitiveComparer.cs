@@ -13,20 +13,19 @@ using System.Threading;
 using System.Collections;
 using System.Globalization;
 
-
-
 namespace System.Collections {
 
 	[Serializable]
 	public class CaseInsensitiveComparer : IComparer {
 
-		private static CaseInsensitiveComparer singleton;
+		private static CaseInsensitiveComparer default_comparer, default_invariant_comparer;
 		private CultureInfo cinfo;
 		// Class constructor
 
 		static CaseInsensitiveComparer ()
 		{
-		    singleton=new CaseInsensitiveComparer ();
+			default_comparer = new CaseInsensitiveComparer ();
+			default_invariant_comparer = new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
 		}
 
 
@@ -39,9 +38,9 @@ namespace System.Collections {
 
 		public CaseInsensitiveComparer (CultureInfo culture)
 		{
-		    if (culture==null)
-			throw new ArgumentNullException("culture");
-		    cinfo = culture;
+			if (culture == null)
+				throw new ArgumentNullException("culture");
+			cinfo = culture;
 		}
 
 
@@ -51,11 +50,16 @@ namespace System.Collections {
 
 		public static CaseInsensitiveComparer Default {
 			get {
-				return singleton;
+				return default_comparer;
 			}
 		}
 
-
+		public static CaseInsensitiveComparer DefaultInvariant {
+			get {
+				return default_invariant_comparer;
+			}
+		}
+		
 		//
 		// Instance methods
 		//
