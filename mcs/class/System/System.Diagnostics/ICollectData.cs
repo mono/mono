@@ -18,10 +18,10 @@ namespace System.Diagnostics
 	public interface ICollectData {
 		void CloseData ();
 		void CollectData (
-			int id, 
-			IntPtr valueName, 
-			IntPtr data, 
-			int totalBytes, 
+			[In] int id, 
+			[In] IntPtr valueName, 
+			[In] IntPtr data, 
+			[In] int totalBytes, 
 			out IntPtr res);
 	}
 }

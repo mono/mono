@@ -1,3 +1,7 @@
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ICollectData.cs: Fixed signature
+
 2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ICollectData.cs: Added missing attribute
