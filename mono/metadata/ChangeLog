@@ -1,7 +1,9 @@
-2005-01-25  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-01-25  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
 	* icall.c: Renamed GetEnvironmentVariable so internal* so it was
 	possible to add imperative security checks before calling the icall.
+	* reflection.c: Return security attributes on the original MonoMethod
+	(and not the wrapped one). This fix permissions on icalls.
 
 2005-01-25  Dick Porter  <dick@ximian.com>
 
