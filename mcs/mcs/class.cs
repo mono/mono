@@ -2803,7 +2803,7 @@ namespace Mono.CSharp {
 				//
 				if (implementing.DeclaringType.IsInterface)
 					flags |= MethodAttributes.NewSlot;
-				
+
 				flags |=
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;

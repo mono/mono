@@ -53,6 +53,8 @@ namespace Mono.CSharp {
 		IMemberContainer parent_container;
 		MemberCache member_cache;
 
+		bool members_defined;
+
 		// These will happen after the semantic analysis
 		
 		// Hashtable defined_indexers;
@@ -228,9 +230,22 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public MethodInfo [] GetMethods ()
+		//
+		// This might trigger a definition of the methods.  This happens only
+		// with Attributes, as Attribute classes are processed before interfaces.
+		// Ideally, we should make everything just define recursively in terms
+		// of its dependencies.
+		//
+		public MethodInfo [] GetMethods (TypeContainer container)
 		{
-			int n = method_builders.Count;
+			int n = 0;
+			
+			if (!members_defined){
+				if (DefineMembers (container))
+					n = method_builders.Count;
+			} else
+				n = method_builders.Count;
+			
 			MethodInfo [] mi = new MethodInfo [n];
 			
 			method_builders.CopyTo (mi, 0);
@@ -835,7 +850,7 @@ namespace Mono.CSharp {
 
 			member_cache = new MemberCache (this);
 #endif
-
+			members_defined = true;
 			return true;
 		}
 

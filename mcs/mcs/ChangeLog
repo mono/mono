@@ -1,5 +1,17 @@
 2002-09-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* pending.cs (PendingImplementation): pass the container pointer. 
+
+	* interface.cs (GetMethods): Allow for recursive definition.  Long
+	term, I would like to move every type to support recursive
+	definitions, not the current ordering mechanism that we have right
+	now.
+
+	The situation is this: Attributes are handled before interfaces,
+	so we can apply attributes to interfaces.  But some attributes
+	implement interfaces, we will now handle the simple cases
+	(recursive definitions will just get an error).  
+
 	* parameter.cs: Only invalidate types at the end if we fail to
 	lookup all types.  
 
