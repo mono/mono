@@ -12,5 +12,11 @@
 namespace System {
 
 	public abstract class Enum {
+
+		public static bool IsDefined (Type enum_type, object value)
+		{
+			return false;
+		}
 	}
+
 }
