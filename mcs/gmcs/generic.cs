@@ -426,15 +426,38 @@ namespace Mono.CSharp {
 
 			SimpleName sn = new SimpleName (name, args.Count, loc);
 			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
-			if (resolved == null)
-				return null;
+			if (resolved == null) {
+				sn = new SimpleName (name, -1, loc);
+				resolved = sn.ResolveAsTypeTerminal (ec);
+				if ((resolved == null) || (resolved.Type == null)) {
+					Report.Error (246, loc,
+						      "The type or namespace name `{0}<...>' "+
+						      "could not be found", name);
+					return null;
+				}
 
-			if (resolved.Type == null) {
-				Report.Error (-220, loc,
-					      "Failed to resolve constructed type `{0}'",
-					      full_name);
+				Type t = resolved.Type;
+				int num_args = TypeManager.GetNumberOfTypeArguments (t);
+
+				if (num_args == 0) {
+					Report.Error (308, loc,
+						      "The non-generic type `{0}' cannot " +
+						      "be used with type arguments.",
+						      TypeManager.CSharpName (t));
+					return null;
+				}
+
+				Report.Error (305, loc,
+					      "Using the generic type `{0}' " +
+					      "requires {1} type arguments",
+					      TypeManager.GetFullName (t), num_args);
 				return null;
 			}
+
+			if (resolved.Type == null)
+				throw new InternalErrorException (
+					"Failed to resolve constructed type `{0}'",
+					full_name);
 
 			gt = resolved.Type.GetGenericTypeDefinition ();
 			return this;

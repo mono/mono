@@ -796,7 +796,7 @@ public class TypeManager {
 
 	static public string GetFullName (Type t)
 	{
-		string name = t.DeclaringType.FullName.Replace ('+', '.') + '.' + t.Name;
+		string name = t.FullName.Replace ('+', '.');
 
 		DeclSpace tc = LookupDeclSpace (t);
 		if ((tc != null) && tc.IsGeneric) {
@@ -819,6 +819,9 @@ public class TypeManager {
 			for (int i = 0; i < tparam.Length; i++) {
 				if (i > 0)
 					sb.Append (",");
+				Report.Debug (64, "TEST", i, tparam [i],
+					      tparam [i].GetType (),
+					      tparam [i].Name);
 				sb.Append (tparam [i].Name);
 			}
 			sb.Append (">");

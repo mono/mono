@@ -408,15 +408,41 @@ namespace Mono.CSharp {
 			int errors = Report.Errors;
 
 			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
-			 
-			if (d == null || d.eclass != ExprClass.Type){
-				if (!silent && (Report.Errors == errors)){
-					Report.Error (246, loc, "Cannot find type `"+ e +"'");
+
+			if ((d != null) && (d.eclass == ExprClass.Type))
+				return d;
+
+			if (silent || (Report.Errors != errors))
+				return null;
+
+			if (e is SimpleName){
+				SimpleName s = new SimpleName (((SimpleName) e).Name, -1, loc);
+				d = s.ResolveAsTypeTerminal (type_resolve_ec);
+
+				if ((d == null) || (d.Type == null)) {
+					Report.Error (246, loc, "Cannot find type `{0}'", e);
+					return null;
 				}
+
+				int num_args = TypeManager.GetNumberOfTypeArguments (d.Type);
+
+				if (num_args == 0) {
+					Report.Error (308, loc,
+						      "The non-generic type `{0}' cannot " +
+						      "be used with type arguments.",
+						      TypeManager.CSharpName (d.Type));
+					return null;
+				}
+
+				Report.Error (305, loc,
+					      "Using the generic type `{0}' " +
+					      "requires {1} type arguments",
+					      TypeManager.GetFullName (d.Type), num_args);
 				return null;
 			}
 
-			return d;
+			Report.Error (246, loc, "Cannot find type `{0}'", e);
+			return null;
 		}
 		
 		public bool CheckAccessLevel (Type check_type) 

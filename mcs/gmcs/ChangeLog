@@ -1,3 +1,11 @@
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.ResolveTypeExpr): Added more error checking
+	for generics.
+
+	* generics.cs (ConstructedType.DoResolveAsTypeStep): Added better
+	error reporting.
+
 2004-03-15  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.GetFullName): New public method.
