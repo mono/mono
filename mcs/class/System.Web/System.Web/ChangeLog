@@ -1,3 +1,8 @@
+2003-03-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCachePolicy.cs: implemented all TODOs.
+	* HttpRequestStream.cs: make it internal.
+
 2003-03-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpContext.cs: implemented RewritePath in other way.

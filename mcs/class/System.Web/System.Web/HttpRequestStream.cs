@@ -8,7 +8,7 @@ using System;
 using System.IO;
 
 namespace System.Web {
-   public class HttpRequestStream : Stream {
+   class HttpRequestStream : Stream {
       private byte []	_arrData;
       private int			_iLength;
       private int			_iOffset;
