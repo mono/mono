@@ -1,3 +1,6 @@
+2002-05-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_metadata_parse_signature): impl.
 
 Tue May 28 16:02:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

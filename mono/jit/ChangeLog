@@ -1,5 +1,7 @@
 2002-05-28  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg: impl. CKFINITE 
+
 	* jit.c (mono_analyze_stack): impl. CEE_CALLI
 
 	* x86.brg (JMP): impl. JMP opcode
