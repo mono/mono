@@ -1,3 +1,20 @@
+2003-06-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebClientProtocol.cs: handle cookies if the request is a
+	HttpWebRequest. It gets the cookies set in the response and sends them
+	on subsequent requests.
+
+	* SoapHttpClientProtocol.cs:
+	(GetWebRequest): just calls the base method.
+	(SendRequest): set the method here.
+	(Invoke): call GetWebResponse instead of request.GetResponse.
+
+	* WebClientProtocol.cs:
+	(GetWebRequest): set some properties of the request.
+	(GetWebResponse): if we get a WebException containing a response, return
+	that as the response and ignore the exception.
+	(GetWebResponse (req, async)): only call EndGetResponse.
+
 2003-06-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Methods.cs: Added information about headers in MethodStubInfo. Added cache of serializers

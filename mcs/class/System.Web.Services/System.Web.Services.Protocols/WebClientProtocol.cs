@@ -132,13 +132,16 @@ namespace System.Web.Services.Protocols {
 
 		protected virtual WebRequest GetWebRequest (Uri uri)
 		{
+			if (uri == null)
+				throw new InvalidOperationException ("uri is null");
+
 			current_request = WebRequest.Create (uri);
-			current_request.Timeout = Timeout;
+			current_request.Timeout = timeout;
+			current_request.PreAuthenticate = preAuthenticate;
+			current_request.ConnectionGroupName = connectionGroupName;
 
 			if (credentials != null)
 				current_request.Credentials = credentials;
-			if (connectionGroupName != String.Empty)
-				current_request.ConnectionGroupName = connectionGroupName;
 
 			return current_request;
 		}
@@ -147,7 +150,18 @@ namespace System.Web.Services.Protocols {
 		{
 			if (abort)
 				throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
-			return request.GetResponse ();
+
+			WebResponse response = null;
+			try {
+				request.Timeout = timeout;
+				response = request.GetResponse ();
+			} catch (WebException e) {
+				response = e.Response;
+				if (response == null)
+					throw;
+			}
+
+			return response;
 		}
 
 		protected virtual WebResponse GetWebResponse (WebRequest request, IAsyncResult result)
@@ -155,8 +169,6 @@ namespace System.Web.Services.Protocols {
 			if (abort)
 				throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
 
-			IAsyncResult ar = request.BeginGetResponse (null, null);
-			ar.AsyncWaitHandle.WaitOne ();
 			return request.EndGetResponse (result);
 		}
 

@@ -55,10 +55,7 @@ namespace System.Web.Services.Protocols {
 
 		protected override WebRequest GetWebRequest (Uri uri)
 		{
-			WebRequest request = WebRequest.Create (uri);
-			request.Method = "POST";
-
-			return request;
+			return base.GetWebRequest (uri);
 		}
 
 		//
@@ -94,6 +91,7 @@ namespace System.Web.Services.Protocols {
 
 		void SendRequest (WebRequest request, SoapClientMessage message)
 		{
+			request.Method = "POST";
 			WebHeaderCollection headers = request.Headers;
 			headers.Add ("SOAPAction", message.Action);
 
@@ -199,7 +197,7 @@ namespace System.Web.Services.Protocols {
 			{
 				WebRequest request = GetWebRequest (uri);
 				SendRequest (request, message);
-				response = request.GetResponse ();
+				response = GetWebResponse (request);
 			}
 			catch (WebException ex)
 			{
