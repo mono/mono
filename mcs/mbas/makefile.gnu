@@ -1,8 +1,8 @@
-MCS =../mcs/mcs.exe
+MCS = mcs
 MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr
-RUNTIME=mono
+zRUNTIME=mono
 
 COMPILER_SOURCES = \
       AssemblyInfo.cs   \
