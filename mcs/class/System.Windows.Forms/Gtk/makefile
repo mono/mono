@@ -16,6 +16,13 @@ SOURCES = \
 	IContainerControl.cs	\
 	Label.cs		\
 	ScrollBars.cs	\
+	ScrollBar.cs	\
+	RightToLeft.cs	\
+	VScrollBar.cs	\
+	HScrollBar.cs	\
+	ScrollEventHandler.cs \
+	ScrollEventArgs.cs \
+	ScrollEventType.cs \
 	HorizontalAlignment.cs	\
 	TextBoxBase.cs	\
 	TextBox.cs	\

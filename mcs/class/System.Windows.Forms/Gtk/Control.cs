@@ -26,8 +26,9 @@ namespace System.Windows.Forms {
 		Point location = new System.Drawing.Point (0, 0);
 		Gtk.Layout layout = null;
 		AnchorStyles anchor = AnchorStyles.Top|AnchorStyles.Left;
-
+		bool tabStop=true;
 		static int init_me;
+		RightToLeft rightToLeft;
 
 		public class ControlCollection : IList, ICollection, IEnumerable, ICloneable 
 		{
@@ -319,5 +320,69 @@ namespace System.Windows.Forms {
 			get { return anchor; }
 			set { anchor=value; }
 		}
+		
+		[MonoTODO]
+		protected virtual void OnEnabledChanged(EventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected virtual void OnHandleCreated(EventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual Color ForeColor {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+		[MonoTODO]
+		public virtual System.Drawing.Image BackgroundImage {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+		[MonoTODO]
+		public virtual Color BackColor {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+		public bool TabStop {
+			get {
+				return tabStop;
+			}
+			set {
+				tabStop = value;
+			}
+		}
+
+		[MonoTODO]
+		public virtual RightToLeft RightToLeft {
+			get {
+				return rightToLeft;
+			}
+			set {
+				rightToLeft = value;
+			}
+		}
+
+
+
 	}
 }

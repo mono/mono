@@ -1,8 +1,9 @@
-//		
-//			System.Windows.Forms Demo app
 //
-//			Author: 
-//						Joel Basson		(jstrike@mweb.co.za)
+// System.Windows.Forms Demo app
+//
+// Authors: 
+//    Joel Basson (jstrike@mweb.co.za)
+//    Philip Van Hoof (me@freax.org)
 //
 //
 
@@ -14,118 +15,136 @@ namespace demo
 {
 	
 	public class GtkForm : System.Windows.Forms.Form
-  	{
+	{
 		private Button copybutton = new Button();
 		private Button pastebutton = new Button();
 		private Button cutbutton = new Button();
-	    	private Button button1 = new Button(); 
-			private Button button2 = new Button(); 
-			private Label label1 = new Label();
-	    	private TextBox text1 = new TextBox(); 
-	    	private ProgressBar bar1 = new ProgressBar();
-			private CheckBox check1 = new CheckBox();
-	    	private RadioButton opt1 = new RadioButton();
-			private RadioButton opt2 = new RadioButton();
-			private RadioButton opt3 = new RadioButton();
-			private GroupBox frame1 = new GroupBox();
-			private PictureBox pbox = new PictureBox();
-			private FileDialog fdialog = new FileDialog();
-		
-	    	private void InitializeWidgets()
-	    	{
-    		button1.Location = new Point(150, 28);
-       	  	button1.Name = "button1";
-    	  	button1.Size = new Size(128, 44);
-       	 	button1.Text = "Apply";
-    	  	button1.Click += new EventHandler(this.button1_Click);    
-         	button1.Enabled = false;
-  
-			button2.Location = new Point(150, 85);
-       	  	button2.Name = "button2";
-    	  	button2.Size = new Size(128, 44);
-       	 	button2.Text = "File";
-    	  	button2.Click += new EventHandler(this.button2_Click); 
+		private Button button1 = new Button(); 
+		private Button button2 = new Button(); 
+		private Label label1 = new Label();
+		private TextBox text1 = new TextBox(); 
+		private ProgressBar bar1 = new ProgressBar();
+		private CheckBox check1 = new CheckBox();
+		private RadioButton opt1 = new RadioButton();
+		private RadioButton opt2 = new RadioButton();
+		private RadioButton opt3 = new RadioButton();
+		private GroupBox frame1 = new GroupBox();
+		private PictureBox pbox = new PictureBox();
+		private FileDialog fdialog = new FileDialog();
+		private VScrollBar vScrollBar1 = new VScrollBar();
+		private HScrollBar hScrollBar1 = new HScrollBar();
 
-  	  	copybutton.Click += new EventHandler(this.copybutton_Click); 
-  	  	pastebutton.Click += new EventHandler(this.pastebutton_Click); 
-  	  	cutbutton.Click += new EventHandler(this.cutbutton_Click); 
+		private void InitializeWidgets()
+		{
+			this.vScrollBar1.Location = new Point(10, 10);
+			this.vScrollBar1.Maximum = 200;
+			this.vScrollBar1.Name = "vScrollBar1";
+			this.vScrollBar1.Size = new Size(24, 200);
+			this.vScrollBar1.TabIndex = 0;
 
-		copybutton.Location = new Point(320, 80); 
-		pastebutton.Location = new Point(320, 100); 
-		cutbutton.Location = new Point(320, 120);
+			this.hScrollBar1.Location = new System.Drawing.Point(50, 60);
+			this.hScrollBar1.Maximum = 200;
+			this.hScrollBar1.Minimum = 10;
+			this.hScrollBar1.Name = "hScrollBar1";
+			this.hScrollBar1.Size = new System.Drawing.Size(360, 24);
 
-		copybutton.Size = new Size(150, 20); 
-		pastebutton.Size = new Size(150, 20); 
-		cutbutton.Size = new Size(150, 20); 
+			this.button1.Location = new Point(150, 28);
+			this.button1.Name = "button1";
+			this.button1.Size = new Size(128, 44);
+			this.button1.Text = "Apply";
+			this.button1.Click += new EventHandler(this.button1_Click);    
+			this.button1.Enabled = false;
 
-		copybutton.Text ="Copy";
-		pastebutton.Text ="Paste";
-		cutbutton.Text ="Cut";
+			this.button2.Location = new Point(150, 85);
+			this.button2.Name = "button2";
+			this.button2.Size = new Size(128, 44);
+			this.button2.Text = "File";
+			this.button2.Click += new EventHandler(this.button2_Click); 
 
-    	    	text1.Location = new Point(320,48);
-    	    	text1.Name = "textBox1";
-   	    		text1.Size = new Size(150, 22);
-	 			text1.Text = this.button1.Name;
+			this.copybutton.Click += new EventHandler(this.copybutton_Click); 
+			this.pastebutton.Click += new EventHandler(this.pastebutton_Click); 
+			this.cutbutton.Click += new EventHandler(this.cutbutton_Click); 
 
-	    		bar1.Location = new Point(0, 230);
-	    		bar1.Size = new Size(512, 20);
-	    		bar1.Text = "This is a ProgressBar";
-				bar1.Value = 25;
+			this.copybutton.Location = new Point(320, 80); 
+			this.pastebutton.Location = new Point(320, 100); 
+			this.cutbutton.Location = new Point(320, 120);
 
-  	    		label1.Location = new Point(330, 20);
-	    		label1.Text = "This is a Label";	
-			
-				check1.Location = new Point(150, 160);
-				check1.Size = new Size(180, 20);
-				check1.Text = "arbitrary CheckBox";
-				check1.Checked = false;
-		
-				opt1.Location = new Point(20, 160);
-				opt1.Size = new Size(100, 20);
-				opt1.Text = "CenterImage";
+			this.copybutton.Size = new Size(150, 20); 
+			this.pastebutton.Size = new Size(150, 20); 
+			this.cutbutton.Size = new Size(150, 20); 
 
-				opt2.Location = new Point(20,180);
-				opt2.Size = new Size(100, 20);
-				opt2.Text = "StretchImage";
-				
-				opt3.Location = new Point(20,200);
-				opt3.Size = new Size(100, 20);
-				opt3.Text = "Normal";
+			this.copybutton.Text ="Copy";
+			this.pastebutton.Text ="Paste";
+			this.cutbutton.Text ="Cut";
 
-				frame1.Location = new Point(15, 140);
-				frame1.Size = new Size (110, 85);
-				frame1.Text = "Properties";
-				
-				pbox.Location = new Point (25, 28);
-				pbox.Size = new Size(100, 100);
-				//
-				//Add you image name and path below
-				//pbox.File = "/home/jstrike/Shared/7804.jpg";
+			this.text1.Location = new Point(320,48);
+			this.text1.Name = "textBox1";
+			this.text1.Size = new Size(150, 22);
+			this.text1.Text = this.button1.Name;
 
-          this.Controls.AddRange(new System.Windows.Forms.Control[] { 
-									this.button1,
-									this.button2,
-									this.copybutton,
-									this.pastebutton,
-									this.cutbutton,
-                     				this.text1, 
-									this.bar1, 
-									this.check1,
-									this.opt1,
-									this.opt2,
-									this.opt3,
-									this.frame1,
-									this.pbox,
-									this.fdialog,
-									this.label1 });
-          this.Size = new Size(512, 250);
-    		}
-    	
-    	public GtkForm()
-    	{
-    	   	InitializeWidgets();
+			this.bar1.Location = new Point(0, 230);
+			this.bar1.Size = new Size(512, 20);
+			this.bar1.Text = "This is a ProgressBar";
+			this.bar1.Value = 25;
 
-    	}
+			this.label1.Location = new Point(330, 20);
+			this.label1.Text = "This is a Label";	
+
+			this.check1.Location = new Point(150, 160);
+			this.check1.Size = new Size(180, 20);
+			this.check1.Text = "arbitrary CheckBox";
+			this.check1.Checked = false;
+
+			this.opt1.Location = new Point(20, 160);
+			this.opt1.Size = new Size(100, 20);
+			this.opt1.Text = "CenterImage";
+
+			this.opt2.Location = new Point(20,180);
+			this.opt2.Size = new Size(100, 20);
+			this.opt2.Text = "StretchImage";
+
+			this.opt3.Location = new Point(20,200);
+			this.opt3.Size = new Size(100, 20);
+			this.opt3.Text = "Normal";
+
+			this.frame1.Location = new Point(15, 140);
+			this.frame1.Size = new Size (110, 85);
+			this.frame1.Text = "Properties";
+
+			this.pbox.Location = new Point (25, 28);
+			this.pbox.Size = new Size(100, 100);
+
+			//
+			// Add you image name and path below
+			// pbox.File = "/home/jstrike/Shared/7804.jpg";
+			//
+
+			this.Controls.AddRange(new System.Windows.Forms.Control[] { 
+						this.button1,
+						this.button2,
+						this.copybutton,
+						this.pastebutton,
+						this.cutbutton,
+						this.text1, 
+						this.bar1, 
+						this.check1,
+						this.opt1,
+						this.opt2,
+						this.opt3,
+						this.frame1,
+						this.pbox,
+						this.fdialog,
+						this.vScrollBar1,
+						this.hScrollBar1,
+						this.label1 });
+
+			this.Size = new Size(512, 250);
+		}
+
+		public GtkForm()
+		{
+			InitializeWidgets();
+		}
 
 		private void copybutton_Click(object sender, EventArgs e){ 
 			//text1.Select (1, 4);
