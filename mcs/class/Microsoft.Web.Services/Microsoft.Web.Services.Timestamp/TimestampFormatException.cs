@@ -15,26 +15,25 @@ using System.Xml;
 
 namespace Microsoft.Web.Services.Timestamp {
 
-	[MonoTODO("We should support I18N")]
 	[Serializable]
 	public class TimestampFormatException : SoapHeaderException {
-		public static readonly string BadDelayAttribute = "Bad Delay Attribute";
-		public static readonly string DelayAttributeWithPlusSign = "Delay Attribute With Plus Sign";
-		public static readonly string DuplicateCreatedElement = "Duplicate Created Element";
-		public static readonly string DuplicateExpiresElement = "Duplicate Expires Element";
-		public static readonly string MissingActorAttributeInReceivedElement = "Missing Actor Attribute In Received Element";
-		public static readonly string MissingCreatedElement = "Missing Created Element";
-		public static readonly string MoreThanOneTimestampHeaders = "More Than One Timestamp Headers";
+		public static readonly string BadDelayAttribute = Locale.GetText ("Bad Delay Attribute");
+		public static readonly string DelayAttributeWithPlusSign = Locale.GetText ("Delay Attribute With Plus Sign");
+		public static readonly string DuplicateCreatedElement = Locale.GetText ("Duplicate Created Element");
+		public static readonly string DuplicateExpiresElement = Locale.GetText ("Duplicate Expires Element");
+		public static readonly string MissingActorAttributeInReceivedElement = Locale.GetText ("Missing Actor Attribute In Received Element");
+		public static readonly string MissingCreatedElement = Locale.GetText ("Missing Created Element");
+		public static readonly string MoreThanOneTimestampHeaders = Locale.GetText ("More Than One Timestamp Headers");
 #if WSE2
-		public static readonly string BadActorAttribute = "Bad Actor Attribute";
-		public static readonly string BadCreatedElement = "Bad Created Element";
-		public static readonly string BadExpiresElement = "Bad Expires Element";
-		public static readonly string BadNamespaceForActor = "Bad Namespace For Actor";
-		public static readonly string BadNamespaceForMustUnderstand = "Bad Namespace For MustUnderstand";
-		public static readonly string BadReceivedElement = "Bad Received Element";
-		public static readonly string BadTimestampActorAttribute = "BadTimestamp Actor Attribute";
-		public static readonly string DuplicateActorAttribute = "Duplicate Actor Attribute";
-		public static readonly string DuplicateDelayAttribute = "Duplicate Delay Attribute";
+		public static readonly string BadActorAttribute = Locale.GetText ("Bad Actor Attribute");
+		public static readonly string BadCreatedElement = Locale.GetText ("Bad Created Element");
+		public static readonly string BadExpiresElement = Locale.GetText ("Bad Expires Element");
+		public static readonly string BadNamespaceForActor = Locale.GetText ("Bad Namespace For Actor");
+		public static readonly string BadNamespaceForMustUnderstand = Locale.GetText ("Bad Namespace For MustUnderstand");
+		public static readonly string BadReceivedElement = Locale.GetText ("Bad Received Element");
+		public static readonly string BadTimestampActorAttribute = Locale.GetText ("BadTimestamp Actor Attribute");
+		public static readonly string DuplicateActorAttribute = Locale.GetText ("Duplicate Actor Attribute");
+		public static readonly string DuplicateDelayAttribute = Locale.GetText ("Duplicate Delay Attribute");
 #endif
 		public TimestampFormatException (string message)
                         : base (message, XmlQualifiedName.Empty) {}
