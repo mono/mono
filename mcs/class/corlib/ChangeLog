@@ -1,3 +1,8 @@
+2002-11-17  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* unix.args: added missing files from System.Security.Cryptography
+	namespace.
+
 2002-10-28  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 
 	* unix.args: added missing files from System.Security.Cryptography
