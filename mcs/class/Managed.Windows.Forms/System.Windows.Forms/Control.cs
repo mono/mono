@@ -29,9 +29,34 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.65 $
+// $Revision: 1.66 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.66  2004/10/02 19:02:56  pbartok
+// - Added private method to get the Control object from the window handle
+// - Implemented ContextMenu property
+// - Implemented PointToScreen
+// - Implemented PreProcessMessage
+// - Implemented IsInputChar
+// - Implemented IsInputKey
+// - Implemented ProcessCmdKey
+// - Completed ProcessKeyEventArgs
+// - Fixed message loop to call the proper chain of functions on key events
+// - Implemented ProcessDialogChar
+// - Implemented ProcessDialogKey
+// - Implemented ProcessKeyMessage
+// - Implemented ProcessKeyPreview
+// - Added RaiseDragEvent stub (MS internal method)
+// - Added RaiseKeyEvent stub (MS internal method)
+// - Added RaiseMouseEvent stub (MS Internal method)
+// - Added RaisePaintEvent stub (MS Internal method)
+// - Added ResetMouseEventArgs stub (MS Internal method)
+// - Implemented RtlTranslateAlignment
+// - Implemented RtlTranslateContent
+// - Implemented RtlTranslateHorizontal
+// - Implemented RtlTranslateLeftRight
+// - Added generation of KeyPress event
+//
 // Revision 1.65  2004/09/22 18:01:28  jackson
 // Text is never null
 //
@@ -349,6 +374,7 @@ namespace System.Windows.Forms
 		internal RightToLeft		right_to_left;		// drawing direction for control
 		internal int			layout_suspended;
 		internal bool			double_buffering;
+		internal ContextMenu		context_menu;		// Context menu associated with the control
 
 		private Graphics		dc_mem;			// Graphics context for double buffering
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
@@ -362,6 +388,14 @@ namespace System.Windows.Forms
 
 			public ControlNativeWindow(Control control) : base() {
 				this.control=control;
+			}
+
+			static internal Control ControlFromHandle(IntPtr hWnd) {
+				ControlNativeWindow	window;
+
+				window = (ControlNativeWindow)window_collection[hWnd];
+
+				return window.control;
 			}
 
 			protected override void WndProc(ref Message m) {
@@ -1166,17 +1200,18 @@ namespace System.Windows.Forms
 				return false;
 			}
 		}
-#if notdef
 		public virtual ContextMenu ContextMenu {
 			get {
-				throw new NotImplementedException();
+				return context_menu;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (context_menu != value) {
+					context_menu = value;
+					OnContextMenuChanged(EventArgs.Empty);
+				}
 			}
 		}
-#endif
 
 		public ControlCollection Controls {
 			get {
@@ -1767,7 +1802,6 @@ namespace System.Windows.Forms
 		}
 
 		public void BringToFront() {
-			// Need to update the child list of our parent
 			if ((parent != null) && (parent.child_controls[0]!=this)) {
 				if (parent.child_controls.Contains(this)) {
 					parent.child_controls.SetChildIndex(this, 0);
@@ -1776,21 +1810,6 @@ namespace System.Windows.Forms
 
 			XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, true, false);
 
-			if (parent != null) {
-				parent.Refresh();
-			}
-		}
-
-		public void SendToBack() {
-			// Need to update the child list of our parent
-			if ((parent != null) && (parent.child_controls[parent.child_controls.Count-1]!=this)) {
-
-				if (parent.child_controls.Contains(this)) {
-					parent.child_controls.SetChildIndex(this, parent.child_controls.Count);
-				}
-			}
-
-			XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, false, true);
 			if (parent != null) {
 				parent.Refresh();
 			}
@@ -2066,6 +2085,40 @@ namespace System.Windows.Forms
 			return new Point (x, y);
 		}
 
+		public Point PointToScreen(Point p) {
+			int x = p.X;
+			int y = p.Y;
+
+			XplatUI.ClientToScreen(Handle, ref x, ref y);
+
+			return new Point(x, y);
+		}
+
+		public virtual bool PreProcessMessage(ref Message msg) {
+			Keys key_data;
+
+			if (msg.Msg == (int)Msg.WM_KEYDOWN) {
+				key_data = (Keys)msg.WParam.ToInt32();
+				if (!ProcessCmdKey(ref msg, key_data)) {
+					if (IsInputKey(key_data)) {
+						return false;
+					}
+
+					return ProcessDialogKey(key_data);
+				}
+
+				return true;
+			} else if (msg.Msg == (int)Msg.WM_CHAR) {
+				if (IsInputChar((char)msg.WParam)) {
+					return false;
+				}
+
+				return ProcessDialogChar((char)msg.WParam);
+			}
+
+			return false;
+		}
+
 		public virtual void Refresh() {			
 			if (IsHandleCreated == true) {
 				XplatUI.RefreshWindow(window.Handle);
@@ -2095,6 +2148,19 @@ namespace System.Windows.Forms
 		[MonoTODO("Finish")]
 		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
 			return false;
+		}
+
+		public void SendToBack() {
+			if ((parent != null) && (parent.child_controls[parent.child_controls.Count-1]!=this)) {
+				if (parent.child_controls.Contains(this)) {
+					parent.child_controls.SetChildIndex(this, parent.child_controls.Count);
+				}
+			}
+
+			XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, false, true);
+			if (parent != null) {
+				parent.Refresh();
+			}
 		}
 
 		public void SetBounds(int x, int y, int width, int height) {
@@ -2171,58 +2237,126 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected bool GetStyle(ControlStyles flag) {
+			return (control_style & flag) != 0;
+		}
+
 		protected virtual void InitLayout() {
 			if (parent != null) {
 				parent.PerformLayout(this, "parent");
 			}
 		}
 
-		protected virtual bool ProcessKeyEventArgs (ref Message msg)
-		{
-			KeyEventArgs key_event;
-
-			switch (msg.Msg) {
-			case (int)Msg.WM_KEYDOWN: {
-				key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
-				OnKeyDown (key_event);
-				return key_event.Handled;
-			}
-			case (int)Msg.WM_KEYUP: {
-				key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
-				OnKeyUp (key_event);
-				return key_event.Handled;
+		protected virtual bool IsInputChar (char charCode) {
+			if (parent != null) {
+				return parent.IsInputChar(charCode);
 			}
 
-			default:
-				break;
-			}
+			return true;
+		}
 
+		protected virtual bool IsInputKey (Keys keyData) {
+			// Doc says this one calls IsInputChar; not sure what to do with that
 			return false;
 		}
 
-		protected virtual bool IsInputKey (Keys keyData) 
-		{
+		protected virtual bool ProcessCmdKey(ref Message msg, Keys keyData) {
+			if ((context_menu != null) && context_menu.ProcessCmdKey(ref msg, keyData)) {
+				return true;
+			}
+
+			if (parent != null) {
+				return parent.ProcessCmdKey(ref msg, keyData);
+			}
+
 			return false;
-		}
-
-		protected virtual bool ProcessDialogKey (Keys keyData)
-		{
-			if (parent != null)
-				return Parent.ProcessDialogKey (keyData);
-
-    			return false;
-		}
-
-		protected bool GetStyle(ControlStyles flag) {
-			return (control_style & flag) != 0;
 		}
 
 		protected virtual bool ProcessDialogChar(char charCode) {
-			throw new NotImplementedException();
+			if (parent != null) {
+				return parent.ProcessDialogChar (charCode);
+			}
+
+			return false;
+		}
+
+		protected virtual bool ProcessDialogKey (Keys keyData) {
+			if (parent != null) {
+				return parent.ProcessDialogKey (keyData);
+			}
+
+			return false;
+		}
+
+		protected virtual bool ProcessKeyEventArgs (ref Message msg)
+		{
+			KeyEventArgs		key_event;
+
+			switch (msg.Msg) {
+				case (int)Msg.WM_KEYDOWN: {
+					key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
+					OnKeyDown (key_event);
+					return key_event.Handled;
+				}
+				case (int)Msg.WM_KEYUP: {
+					key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
+					OnKeyUp (key_event);
+					return key_event.Handled;
+				}
+
+				case (int)Msg.WM_CHAR: {
+					KeyPressEventArgs	key_press_event;
+
+					key_press_event = new KeyPressEventArgs((char)msg.WParam);
+					OnKeyPress(key_press_event);
+					return key_press_event.Handled;
+				}
+
+				default: {
+					break;
+				}
+			}
+
+			return false;
+		}
+
+		protected internal virtual bool ProcessKeyMessage(ref Message msg) {
+			if (parent != null) {
+				if (parent.ProcessKeyPreview(ref msg)) {
+					return true;
+				}
+			}
+
+			return ProcessKeyEventArgs(ref msg);
+		}
+
+		protected virtual bool ProcessKeyPreview(ref Message msg) {
+			if (parent != null) {
+				return parent.ProcessKeyPreview(ref msg);
+			}
+
+			return false;
 		}
 
 		protected virtual bool ProcessMnemonic(char charCode) {
-			throw new NotImplementedException();
+			// override me
+			return false;
+		}
+
+		protected void RaiseDragEvent(object key, DragEventArgs e) {
+			// MS Internal
+		}
+
+		protected void RaiseKeyEvent(object key, KeyEventArgs e) {
+			// MS Internal
+		}
+
+		protected void RaiseMouseEvent(object key, MouseEventArgs e) {
+			// MS Internal
+		}
+
+		protected void RaisePaintEvent(object key, PaintEventArgs e) {
+			// MS Internal
 		}
 
 		protected void RecreateHandle() {
@@ -2244,6 +2378,85 @@ namespace System.Windows.Forms
 			}
 
 			is_recreating = false;
+		}
+
+		protected void ResetMouseEventArgs() {
+			// MS Internal
+		}
+
+		protected ContentAlignment RtlTranslateAlignment(ContentAlignment align) {
+			if (right_to_left == RightToLeft.No) {
+				return align;
+			}
+
+			switch (align) {
+				case ContentAlignment.TopLeft: {
+					return ContentAlignment.TopRight;
+				}
+
+				case ContentAlignment.TopRight: {
+					return ContentAlignment.TopLeft;
+				}
+
+				case ContentAlignment.MiddleLeft: {
+					return ContentAlignment.MiddleRight;
+				}
+
+				case ContentAlignment.MiddleRight: {
+					return ContentAlignment.MiddleLeft;
+				}
+
+				case ContentAlignment.BottomLeft: {
+					return ContentAlignment.BottomRight;
+				}
+
+				case ContentAlignment.BottomRight: {
+					return ContentAlignment.BottomLeft;
+				}
+
+				default: {
+					// if it's center it doesn't change
+					return align;
+				}
+			}
+		}
+
+		protected HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment align) {
+			if ((right_to_left == RightToLeft.No) || (align == HorizontalAlignment.Center)) {
+				return align;
+			}
+
+			if (align == HorizontalAlignment.Left) {
+				return HorizontalAlignment.Right;
+			}
+
+			// align must be HorizontalAlignment.Right
+			return HorizontalAlignment.Left;
+		}
+
+		protected LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment align) {
+			if (right_to_left == RightToLeft.No) {
+				return align;
+			}
+
+			if (align == LeftRightAlignment.Left) {
+				return LeftRightAlignment.Right;
+			}
+
+			// align must be LeftRightAlignment.Right;
+			return LeftRightAlignment.Left;
+		}
+
+		protected ContentAlignment RtlTranslateContent(ContentAlignment align) {
+			return RtlTranslateAlignment(align);
+		}
+
+		protected HorizontalAlignment RtlTranslateHorizontal(HorizontalAlignment align) {
+			return RtlTranslateAlignment(align);
+		}
+
+		protected LeftRightAlignment RtlTranslateLeftRight(LeftRightAlignment align) {
+			return RtlTranslateAlignment(align);
 		}
 
 		protected virtual void ScaleCore(float dx, float dy) {
@@ -2564,17 +2777,25 @@ namespace System.Windows.Forms
 			}
 
 			case Msg.WM_KEYDOWN: {
-
-				if (!ProcessKeyEventArgs (ref m))
+				if (!ProcessKeyMessage(ref m)) {
 					DefWndProc (ref m);
+				}
 
 				break;					
 			}
 
 			case Msg.WM_KEYUP: {
-
-				if (!ProcessKeyEventArgs (ref m))
+				if (!ProcessKeyMessage(ref m)) {
 					DefWndProc (ref m);
+				}
+
+				break;					
+			}		
+
+			case Msg.WM_CHAR: {
+				if (!ProcessKeyMessage(ref m)) {
+					DefWndProc (ref m);
+				}
 
 				break;					
 			}		
@@ -2717,6 +2938,10 @@ namespace System.Windows.Forms
 
 		protected virtual void OnKeyDown(KeyEventArgs e) {			
 			if (KeyDown!=null) KeyDown(this, e);
+		}
+
+		protected virtual void OnKeyPress(KeyPressEventArgs e) {
+			if (KeyPress!=null) KeyPress(this, e);
 		}
 
 		protected virtual void OnKeyUp(KeyEventArgs e) {
