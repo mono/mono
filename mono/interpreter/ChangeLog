@@ -1,4 +1,11 @@
 
+Sun Aug 26 11:37:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.h, interp.c: load also a MonoClass pointer when we load
+	an address on the stack. Implemented conv.i1, conv.i2, con.i4,
+	conv.u4, conv.r4, conv.r8. Print the arguments in the stack trace
+	and the name of the exception.
+
 Sat Aug 25 15:56:03 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: Implemented some opcodes: starg.s, ldobj, isinst,
