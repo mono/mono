@@ -1,3 +1,12 @@
+2003-08-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentNavigator.cs : Fixed MoveToFirstNamespace() that arose
+	  infinite loop.
+	* XmlNamespaceManager.cs : Renamed AtomStrEq to AtomicStringEquals.
+	  Commented out Console.Error.WriteLine().
+	* XmlUrlResolver.cs : Fixed ResolveUri() and GetEntity() to support
+	  escape and unescape for relative URI string.
+
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XmlParserContext.cs: Make each context inherit next.

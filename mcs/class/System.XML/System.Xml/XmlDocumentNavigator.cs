@@ -300,7 +300,7 @@ namespace System.Xml
 					}
 					if (namespaceScope == XPathNamespaceScope.Local)
 						return false;
-					el = node.ParentNode as XmlElement;
+					el = el.ParentNode as XmlElement;
 				} while (el != null);
 			}
 

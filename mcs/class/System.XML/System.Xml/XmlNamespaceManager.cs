@@ -72,7 +72,7 @@ namespace System.Xml
 			// Is it already in the table?
 			for (int i = decls.Length - 1; i >= decls.Length - count; i--) {
 				Namespace decl = (Namespace)decls [i];
-				if (AtomStrEq (decl.Prefix, prefix)) {
+				if (AtomicStringEquals (decl.Prefix, prefix)) {
 					// Then redefine it
 					decl.Uri = uri;
 					return;
@@ -129,7 +129,7 @@ namespace System.Xml
 			
 			for (int i = decls.Length - 1; i >= decls.Length - count; i--) {
 				Namespace decl = (Namespace)decls [i];
-				if (AtomStrEq (decl.Prefix, prefix) && decl.Uri != null)
+				if (AtomicStringEquals (decl.Prefix, prefix) && decl.Uri != null)
 					return true;
 			}
 			return false;
@@ -143,15 +143,15 @@ namespace System.Xml
 			if (prefix == String.Empty)
 				return DefaultNamespace;
 
-			if (AtomStrEq (XML, prefix))
+			if (AtomicStringEquals (XML, prefix))
 				return XML_URL;
 
-			if (AtomStrEq (XMLNS, prefix))
+			if (AtomicStringEquals (XMLNS, prefix))
 				return XMLNS_URL;
 
 			for (int i = decls.Length - 1; i >= 0; i--) {
 				Namespace decl = (Namespace)decls [i];
-				if (AtomStrEq (decl.Prefix, prefix) && decl.Uri != null)
+				if (AtomicStringEquals (decl.Prefix, prefix) && decl.Uri != null)
 					return decl.Uri;
 			}
 			return null;
@@ -163,19 +163,19 @@ namespace System.Xml
 			if (uri == null)
 				return null;
 
-			if (AtomStrEq (DefaultNamespace, uri))
+			if (AtomicStringEquals (DefaultNamespace, uri))
 				return String.Empty;
 			
-			if (AtomStrEq (XML_URL, uri))
+			if (AtomicStringEquals (XML_URL, uri))
 				return XML;
 			
-			if (AtomStrEq (XMLNS_URL, uri))
+			if (AtomicStringEquals (XMLNS_URL, uri))
 				return XMLNS;
 
 
 			for (int i = decls.Length - 1; i >= 0; i--) {
 				Namespace decl = (Namespace)decls [i];
-				if (AtomStrEq (decl.Uri, uri) && decl.Uri != null)
+				if (AtomicStringEquals (decl.Uri, uri) && decl.Uri != null)
 					return decl.Prefix;
 			}
 
@@ -229,14 +229,14 @@ namespace System.Xml
 				
 			for (int i = decls.Length - 1; i >= decls.Length - count; i--) {
 				Namespace n = (Namespace)decls [i];
-				if (AtomStrEq (n.Prefix, p) && AtomStrEq (n.Uri, u))
+				if (AtomicStringEquals (n.Prefix, p) && AtomicStringEquals (n.Uri, u))
 					n.Uri = null;
 			}
 		}
 		
-		bool AtomStrEq (string a, string b) {
+		bool AtomicStringEquals (string a, string b) {
 			if (String.Equals (a, b) && !Object.ReferenceEquals (a, b)) {
-				Console.Error.WriteLine ("WARNING: {0} not interned", a);
+//				Console.Error.WriteLine ("WARNING: {0} not interned", a);
 			}
 			
 			return String.Equals (a, b);

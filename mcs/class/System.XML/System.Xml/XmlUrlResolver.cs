@@ -39,17 +39,17 @@ namespace System.Xml
 		}
 		
 		// Methods
-		[MonoTODO("Use Credentials; Uri must be absolute.")]
+		[MonoTODO("Uri must be absolute.")]
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
 			if (absoluteUri.Scheme == "file")
-				return new FileStream (absoluteUri.LocalPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+				return new FileStream (UnescapeRelativeUriBody (absoluteUri.LocalPath), FileMode.Open, FileAccess.Read, FileShare.Read);
 
 			// (MS documentation says) parameter role isn't used yet.
 			Stream s = null;
 			using (s) {
 				WebClient wc = new WebClient ();
-//				wc.Credentials = credential;
+				wc.Credentials = credential;
 				s = wc.OpenRead (absoluteUri.ToString ());
 				if (s.GetType ().IsSubclassOf (ofObjectToReturn))
 					return s;
@@ -71,17 +71,31 @@ namespace System.Xml
 				// extraneous "/a" is required because current Uri stuff 
 				// seems ignorant of difference between "." and "./". 
 				// I'd be appleciate if it is fixed with better solution.
-				return new Uri (new Uri (Path.GetFullPath ("./a")), relativeUri);
+				return new Uri (new Uri (Path.GetFullPath ("./a")), EscapeRelativeUriBody (relativeUri));
 			}
-
-			// Do not expect relativeUri.Length > 2.
-//			if (relativeUri.IndexOf ("://") >= 0)
-//				return new Uri (relativeUri);
 
 			if (relativeUri == null)
 				return baseUri;
 
-			return new Uri (baseUri, relativeUri);
+			return new Uri (baseUri, EscapeRelativeUriBody (relativeUri));
+		}
+
+		private string EscapeRelativeUriBody (string src)
+		{
+			return src.Replace ("<", "%3C")
+				.Replace (">", "%3E")
+				.Replace ("#", "%23")
+				.Replace ("%", "%25")
+				.Replace ("\"", "%22");
+		}
+
+		private string UnescapeRelativeUriBody (string src)
+		{
+			return src.Replace ("%3C", "<")
+				.Replace ("%3E", ">")
+				.Replace ("%23", "#")
+				.Replace ("%25", "%")
+				.Replace ("%22", "\"");
 		}
 	}
 }
