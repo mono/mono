@@ -1,3 +1,7 @@
+2004-04-26  Jochen Wezel <jwezel@compumaster.de>
+
+	* VBCodeGenerator.cs: GenerateAttributeDeclarationsEnd: Fix of line break
+
 2004-02-10  Jackson Harper <jackson@ximian.com>
 
 	* VBCodeCompiler.cs: Use the temp files collection for

@@ -826,7 +826,7 @@ namespace Microsoft.VisualBasic
 		
 		protected override void GenerateAttributeDeclarationsEnd (CodeAttributeDeclarationCollection attributes)
 		{
-			Output.WriteLine ('>');
+			Output.WriteLine ('> _');
 		}
 
 		protected override void OutputDirection (FieldDirection direction)
