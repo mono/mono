@@ -98,7 +98,7 @@ namespace System.Web.UI.WebControls
 		 * CreateControlHeirarchy(bool)
 		 */
 		 
-		public virtual ITemplate editItemTemplate
+		public virtual ITemplate EditItemTemplate
 		{
 			get
 			{

@@ -17,8 +17,9 @@
 				<excludes name="System.Web/HttpWorkerRequest.cs"/>
 				<excludes name="System.Web.Hosting/**"/>
 				<excludes name="System.Web.UI/**"/>
-				<excludes name="System.Web.UI.HtmlControls/**"/>
 				<excludes name="System.Web/IHttpModule.cs"/>
+				<excludes name="System.Web.UI.HtmlControls/**"/>
+				<excludes name="System.Web.UI.WebControls/**"/>
 				<excludes name="System.Web/IHttpHandlerFactory.cs"/>
 				<excludes name="System.Web/HttpCacheValidateHandler.cs"/>
 				<excludes name="System.Web/IHttpAsyncHandler.cs"/>
