@@ -1,3 +1,8 @@
+2003-01-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Goto.Resolve): Set `Returns' to ALWAYS.
+	(GotoDefault.Resolve): Set `Returns' to ALWAYS.
+	(GotoCase.Resolve): Set `Returns' to ALWAYS.
 
 Tue Jan 7 18:32:24 CET 2003 Paolo Molaro <lupus@ximian.com>
 
