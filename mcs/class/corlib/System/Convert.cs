@@ -188,8 +188,8 @@ namespace System {
 			if (offset < 0 || length < 0 || (offset + length) > inArray.Length)
 				throw new ArgumentOutOfRangeException();
 			
-			// FIXME: change to stand alone Base64 Encoder class
-			byte[] outArr = toBase64Transform.TransformFinalBlock(inArray, offset, length);
+			// note: normally ToBase64Transform doesn't support multiple block processing
+			byte[] outArr = toBase64Transform.InternalTransformFinalBlock (inArray, offset, length);
 			
 			return (new System.Text.ASCIIEncoding().GetString(outArr));
 		}
