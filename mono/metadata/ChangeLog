@@ -1,3 +1,7 @@
+2003-01-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: implemented ves_icall_MonoMethod_get_base_definition.
+
 2003-01-29  Dick Porter  <dick@ximian.com>
 
 	* threads.c: No need for the fake_thread kludge now that Thread
