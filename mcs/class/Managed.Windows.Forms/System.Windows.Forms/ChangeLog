@@ -1,5 +1,10 @@
 2005-01-20  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIStructs.cs: More misc keys
+	* X11Keyboard.cs: Ignore some control keys.
+
+2005-01-20  Jackson Harper  <jackson@ximian.com>
+
 	* X11Structs.cs: Add the modmaps to the keymask struct and tabify.
 	* X11Keyboard.cs: Set the AltGr mask when we get a key event.
 

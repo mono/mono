@@ -72,6 +72,15 @@ namespace System.Windows.Forms {
 
 		public void KeyEvent (IntPtr hwnd, XEvent xevent, ref MSG msg)
 		{
+			XKeySym keysym;
+
+			XLookupString (ref xevent, IntPtr.Zero, 0, out keysym, IntPtr.Zero);
+			if (((int) keysym >= (int) MiscKeys.XK_ISO_Lock && 
+				(int) keysym <= (int) MiscKeys.XK_ISO_Last_Group_Lock) ||
+         			(int) keysym == (int) MiscKeys.XK_Mode_switch) {
+			        return;
+    			}
+
 			if ((xevent.KeyEvent.keycode >> 8) == 0x10)
 				xevent.KeyEvent.keycode = xevent.KeyEvent.keycode & 0xFF;
 

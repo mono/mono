@@ -591,6 +591,8 @@ namespace System.Windows.Forms {
 	}
 
 	internal enum MiscKeys {
+		XK_ISO_Lock             = 0xfe01,
+		XK_ISO_Last_Group_Lock	= 0xfe0f,
 		XK_Select		= 0xff60,
 		XK_Print		= 0xff61,
 		XK_Execute		= 0xff62,
