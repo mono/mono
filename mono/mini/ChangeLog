@@ -1,4 +1,11 @@
 
+Thu Apr 29 13:50:51 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c, mini-ppc.h, mini-ppc.c: fixed localloc
+	and prolog/epilog for methods that use it. Allow
+	enough param area room for varargs methods. Fix miguel's
+	breakage in exception handling.
+
 Thu Apr 29 12:06:51 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: run genmdesc only on current arch.
