@@ -1,3 +1,27 @@
+2002-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlSelect.cs:
+	(RenderAttributes): new -> override and fixes stack overflow.
+	(RenderChildren): only 1 option can be selected at any given time
+	except when Multiple property is true.
+	(Multiple): the attribute value is either "true" or "false", not 
+	"multiple".
+
+	* HtmlTable.cs:
+	(Add):
+	(AddAt): allow HtmlTableRow as children, not HtmlTableCell.
+
+	* HtmlTableCell.cs:
+	(RenderEndTag): new -> override.
+
+	* HtmlTableRow.cs:
+	(RenderChildren): fixed another stack overflow.
+	(RenderEndTag): new -> override.
+
+	* HtmlTextArea.cs:
+	(RenderAttributes): new -> override.
+
+
 2002-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlInputHidden.cs: fixed constructor.

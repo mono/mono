@@ -90,7 +90,7 @@ namespace System.Web.UI.HtmlControls{
 			return false;
 		}
 		
-		protected new void RenderAttributes(HtmlTextWriter writer){
+		protected override void RenderAttributes(HtmlTextWriter writer){
 			writer.WriteAttribute("name", Name);
 			Attributes.Remove("name");
 			base.RenderAttributes(writer);

@@ -19,11 +19,11 @@ namespace System.Web.UI.HtmlControls{
 		protected override void RenderChildren(HtmlTextWriter writer){
 			writer.WriteLine();
 			writer.Indent = writer.Indent + 1;
-			this.RenderChildren(writer);
+			base.RenderChildren(writer);
 			writer.Indent = writer.Indent - 1;
 		}
 		
-		protected new void RenderEndTag(HtmlTextWriter writer){
+		protected override void RenderEndTag(HtmlTextWriter writer){
 			base.RenderEndTag(writer);
 			writer.WriteLine();
 		}

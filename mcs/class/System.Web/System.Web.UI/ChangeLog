@@ -1,3 +1,8 @@
+2002-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlCollection.cs:
+	(AddAt): if index is -1 behave as a plain Add.
+
 2002-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: for each child control to render, assign Control.Page.

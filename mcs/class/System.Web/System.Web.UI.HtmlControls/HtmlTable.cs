@@ -149,20 +149,20 @@ namespace System.Web.UI.HtmlControls{
 			internal HtmlTableRowControlCollection(Control owner): base(owner){}
 			
 			public override void Add(Control child){
-				if ((child as HtmlTableCell) != null){
+				if ((child as HtmlTableRow) != null){
 					base.Add(child);
 				}
 				else{
-					throw new ArgumentException("HtmlTableRow cannot have children of type" + child.GetType().Name);
+					throw new ArgumentException("HtmlTableRow cannot have children of type " + child.GetType().Name);
 				}
 			}
 			
 			public override void AddAt(int index, Control child){
-				if ((child as HtmlTableCell) != null){
+				if ((child as HtmlTableRow) != null){
 					base.AddAt(index,child);
 				}
 				else{
-					throw new ArgumentException("HtmlTableRow cannot have children of type" + child.GetType().Name);
+					throw new ArgumentException("HtmlTableRow cannot have children of type " + child.GetType().Name);
 				}
 			}
 		} // end of HtmlTableRowControlCollection

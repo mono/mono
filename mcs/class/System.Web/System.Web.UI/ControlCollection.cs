@@ -63,13 +63,16 @@ namespace System.Web.UI {
 			if (child == null) // maybe we should check for ! (child is Control)?
 				throw new ArgumentNullException ();
 			
-			if ((index < 0) || (index > Count))
+			if ((index < -1) || (index > Count))
 				throw new ArgumentOutOfRangeException ();
 
 			if (IsReadOnly)
 				throw new HttpException ();
 
-			list [index] = child;
+			if (index == -1)
+				Add (child);
+			else
+				list [index] = child;
 		}
 
 		public virtual void Clear ()

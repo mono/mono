@@ -14,7 +14,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlTableCell(string tagName): base(tagName){}
 		
-		protected new void RenderEndTag(HtmlTextWriter writer){
+		protected override void RenderEndTag(HtmlTextWriter writer){
 			base.RenderEndTag(writer);
 			writer.WriteLine();
 		}

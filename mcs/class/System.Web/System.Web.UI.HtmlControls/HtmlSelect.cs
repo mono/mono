@@ -101,13 +101,13 @@ namespace System.Web.UI.HtmlControls{
 				handler.Invoke(this,e);
 		}
 		
-		protected new void RenderAttributes(HtmlTextWriter writer){
+		protected override void RenderAttributes(HtmlTextWriter writer){
 			writer.WriteAttribute("name", Name);
 			Attributes.Remove("name");
 			Attributes.Remove("DataValueField");
 			Attributes.Remove("DataTextField");
 			Attributes.Remove("DataMember");
-			RenderAttributes(writer);
+			base.RenderAttributes(writer);
 		}
 		
 		protected override void RenderChildren(HtmlTextWriter writer){
@@ -117,12 +117,19 @@ namespace System.Web.UI.HtmlControls{
 			writer.Indent = writer.Indent + 1;
 			if (Items.Count >= 0){
 				// display all options, and set the selected option
+				bool rendered_selected = false;
 				foreach (ListItem option in Items){
 					//write begin tag with attributes
 					writer.WriteBeginTag("option");
-					if (option.Selected == true){
+					if (!rendered_selected && option.Selected){
 						writer.WriteAttribute("selected","selected");
+						if (!Multiple)
+							rendered_selected = true;
 					}
+					else if (option.Selected){
+						option.Selected = false;
+					}
+
 					writer.WriteAttribute("value",option.Value,true);
 					option.Attributes.Remove("text");
 					option.Attributes.Remove("value");
@@ -306,12 +313,11 @@ namespace System.Web.UI.HtmlControls{
 		public bool Multiple{
 			get{
 				string attr = Attributes["multiple"];
-				if (attr != null) return attr.Equals("multiple");
+				if (attr != null) return (0 == String.Compare (attr, "true", true));
 				return false;
 			}
 			set{
-				if (value == true) Attributes["multiple"] = "multiple";
-				else Attributes["multiple"] = null;
+				Attributes["multiple"] = value.ToString ();
 			}
 		}
 		
@@ -327,7 +333,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		public virtual int SelectedIndex {
 			get{
-				for (int i=0; i<=Items.Count; i++){
+				for (int i=0; i<Items.Count; i++){
 					if (Items[i].Selected == true) return i;
 				}
 				if (Size<=1 && !Multiple){
