@@ -1,6 +1,1 @@
-MakeCert.pdb
-cert2spc.pdb
-chktrust.pdb
-secutil.pdb
-signcode.pdb
-sn.pdb
+*.pdb
