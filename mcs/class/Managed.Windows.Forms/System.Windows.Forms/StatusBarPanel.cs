@@ -115,14 +115,14 @@ namespace System.Windows.Forms {
 			set { style = value; }
 		}
 
-		[DefaultValue(null)]
+		[DefaultValue("")]
 		[Localizable(true)]
 		public string Text {
 			get { return text; }
 			set { text = value; }
 		}
 
-		[DefaultValue(null)]
+		[DefaultValue("")]
 		[Localizable(true)]
 		public string ToolTipText {
 			get { return tool_tip_text; }

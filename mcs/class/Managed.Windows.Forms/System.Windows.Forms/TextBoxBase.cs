@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -27,12 +27,16 @@
 // NOT COMPLETE
 #define Debug
 
-
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+	[DefaultEvent("TextChanged")]
+	[Designer("System.Windows.Forms.Design.TextBoxBaseDesigner, " + Consts.AssemblySystem_Design)]
 	public abstract class TextBoxBase : Control {
 		#region Local Variables
 		internal HorizontalAlignment	alignment;
@@ -65,9 +69,9 @@ namespace System.Windows.Forms {
 
 		#endregion	// Local Variables
 
-		#region Private Constructor
+		#region Internal Constructor
 		// Constructor will go when complete, only for testing - pdb
-		public TextBoxBase() {
+		internal TextBoxBase() {
 			alignment = HorizontalAlignment.Left;
 			accepts_return = false;
 			accepts_tab = false;
@@ -109,7 +113,7 @@ namespace System.Windows.Forms {
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.UserPaint, true);
 		}
-		#endregion	// Private Constructor
+		#endregion	// Internal Constructor
 
 		#region Private and Internal Methods
 		internal string CaseAdjust(string s) {
@@ -125,6 +129,7 @@ namespace System.Windows.Forms {
 		#endregion	// Private and Internal Methods
 
 		#region Public Instance Properties
+		[DefaultValue(false)]
 		public bool AcceptsTab {
 			get {
 				return accepts_tab;
@@ -138,6 +143,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public virtual bool AutoSize {
 			get {
 				return auto_size;
@@ -156,6 +164,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DispId(-501)]
 		public override System.Drawing.Color BackColor {
 			get {
 				return base.BackColor;
@@ -165,6 +174,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override System.Drawing.Image BackgroundImage {
 			get {
 				return base.BackgroundImage;
@@ -174,6 +185,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(BorderStyle.Fixed3D)]
+		[DispId(-504)]
 		public BorderStyle BorderStyle {
 			get {
 				return border_style;
@@ -187,12 +200,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanUndo {
 			get {
 				return undo;
 			}
 		}
 
+		[DispId(-513)]
 		public override System.Drawing.Color ForeColor {
 			get {
 				return base.ForeColor;
@@ -202,6 +218,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool HideSelection {
 			get {
 				return hide_selection;
@@ -222,6 +239,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Editor("System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[Localizable(true)]
 		public string[] Lines {
 			get {
 				string[]	lines;
@@ -256,6 +276,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(32767)]
+		[Localizable(true)]
 		public virtual int MaxLength {
 			get {
 				return max_length;
@@ -268,6 +290,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Modified {
 			get {
 				return modified;
@@ -281,6 +305,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(false)]
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.All)]
 		public virtual bool Multiline {
 			get {
 				return multiline;
@@ -303,12 +330,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get {
 				return this.Font.Height + 7;	// FIXME - consider border style as well
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool ReadOnly {
 			get {
 				return read_only;
@@ -322,6 +353,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual string SelectedText {
 			get {
 				return document.GetSelection();
@@ -333,6 +366,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual int SelectionLength {
 			get {
 				return document.SelectionLength();
@@ -357,6 +392,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart {
 			get {
 				int index;
@@ -376,6 +413,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
 		public override string Text {
 			get {
 				if (document == null || document.Root == null || document.Root.text == null) {
@@ -432,6 +470,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
 		public virtual int TextLength {
 			get {
 				if (document == null || document.Root == null || document.Root.text == null) {
@@ -454,6 +493,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
+		[Localizable(true)]
 		public bool WordWrap {
 			get {
 				return word_wrap;
@@ -910,11 +951,21 @@ Console.WriteLine("Destroying caret");
 		#region Events
 		public event EventHandler	AcceptsTabChanged;
 		public event EventHandler	AutoSizeChanged;
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 		public event EventHandler	BorderStyleChanged;
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public event EventHandler	Click;
 		public event EventHandler	HideSelectionChanged;
 		public event EventHandler	ModifiedChanged;
 		public event EventHandler	MultilineChanged;
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event PaintEventHandler	Paint;
 		public event EventHandler	ReadOnlyChanged;
 		#endregion	// Events

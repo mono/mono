@@ -84,6 +84,28 @@ namespace System.Windows.Forms {
 			form.CreateControl();
 
 			while (!exiting && !form.end_modal && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
+				if (message_filters.Count > 0) {
+					Message	m;
+					bool	drop;
+
+					drop = false;
+					m = new Message();
+					m.Msg = (int)msg.message;
+					m.HWnd = msg.hwnd;
+					m.LParam = msg.lParam;
+					m.WParam = msg.wParam;
+					for (int i = 0; i < message_filters.Count; i++) {
+						if (((IMessageFilter)message_filters[i]).PreFilterMessage(ref m)) {
+							// we're dropping the message
+							drop = true;
+							break;
+						}
+					}
+					if (drop) {
+						continue;
+					}
+				}
+
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);
 
@@ -311,6 +333,28 @@ namespace System.Windows.Forms {
 			messageloop_started = true;
 
 			while (!exiting && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
+				if (message_filters.Count > 0) {
+					Message	m;
+					bool	drop;
+
+					drop = false;
+					m = new Message();
+					m.Msg = (int)msg.message;
+					m.HWnd = msg.hwnd;
+					m.LParam = msg.lParam;
+					m.WParam = msg.wParam;
+					for (int i = 0; i < message_filters.Count; i++) {
+						if (((IMessageFilter)message_filters[i]).PreFilterMessage(ref m)) {
+							// we're dropping the message
+							drop = true;
+							break;
+						}
+					}
+					if (drop) {
+						continue;
+					}
+				}
+
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);
 

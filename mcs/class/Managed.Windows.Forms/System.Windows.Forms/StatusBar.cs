@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
@@ -28,67 +28,39 @@
 //
 
 using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Drawing.Imaging;
 
 namespace System.Windows.Forms {
-
+	[DefaultEvent("PanelClick")]
+	[Designer("System.Windows.Forms.Design.StatusBarDesigner, " + Consts.AssemblySystem_Design)]
+	[DefaultProperty("Text")]
 	public class StatusBar : Control {
-
+		#region Fields
 		private StatusBarPanelCollection panels;
 
 		private bool show_panels = false;
 		private bool sizing_grip = true;
 
 		internal Rectangle paint_area = new Rectangle ();
+		#endregion	// Fields
 
+		#region Public Constructors
+		[MonoTODO("Change cursor when mouse is over grip")]
 		public StatusBar ()
 		{
 			base.Dock = DockStyle.Bottom;
 			Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			this.TabStop = false;
 		}
+		#endregion	// Public Constructors
 
-		public override string Text {
-			get { return base.Text; }
-			set {
-				if (value == Text)
-					return;
-				base.Text = value;
-				Refresh ();
-			}
-			
-		}
-
-		public bool ShowPanels {
-			get { return show_panels; }
-			set {
-				if (show_panels == value)
-					return;
-				show_panels = value;
-			}
-		}
-
-		public bool SizingGrip {
-			get { return sizing_grip; }
-			set {
-				if (sizing_grip == value)
-					return;
-				sizing_grip = value;
-			}
-		}
-
-		public Color ForeColor {
-			get { return base.ForeColor; }
-			set {
-				if (value == ForeColor)
-					return;
-				if (ForeColorChanged != null)
-					ForeColorChanged (this, EventArgs.Empty);
-				Refresh ();
-			}
-		}
-
+		#region	Public Instance Properties
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Color BackColor {
 			get { return base.BackColor; }
 			set {
@@ -101,6 +73,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set {
@@ -112,6 +86,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue(DockStyle.Bottom)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set {
@@ -122,6 +98,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
 		public override Font Font {
 			get { return base.Font; }
 			set {
@@ -132,6 +109,21 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public Color ForeColor {
+			get { return base.ForeColor; }
+			set {
+				if (value == ForeColor)
+					return;
+				if (ForeColorChanged != null)
+					ForeColorChanged (this, EventArgs.Empty);
+				Refresh ();
+			}
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
 			set {
@@ -143,11 +135,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public new bool TabStop {
-			get { return base.TabStop; }
-			set { base.TabStop = value; }
-		}
-
+		[MergableProperty(false)]
+		[Localizable(true)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public StatusBarPanelCollection Panels {
 			get {
 				if (panels == null)
@@ -156,52 +146,123 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public override string ToString ()
-		{
-			return base.ToString () + ", Panels.Count: " + Panels.Count +
-				(Panels.Count > 0 ? ", Panels[0]: " + Panels [0] : String.Empty);
+		[DefaultValue(false)]
+		public bool ShowPanels {
+			get { return show_panels; }
+			set {
+				if (show_panels == value)
+					return;
+				show_panels = value;
+			}
 		}
 
-		public new event EventHandler BackColorChanged;
-		public new event EventHandler ForeColorChanged;
-		public new event EventHandler BackgroundImageChanged;
-		public event StatusBarDrawItemEventHandler DrawItem;
-		public new event EventHandler ImeModeChanged;
-		public new event PaintEventHandler Paint;
-		public event StatusBarPanelClickEventHandler PanelClick;
-		
+		[DefaultValue(true)]
+		public bool SizingGrip {
+			get { return sizing_grip; }
+			set {
+				if (sizing_grip == value)
+					return;
+				sizing_grip = value;
+			}
+		}
+
+		[DefaultValue(false)]
+		public new bool TabStop {
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
+		}
+
+		[Localizable(true)]
+		public override string Text {
+			get { return base.Text; }
+			set {
+				if (value == Text)
+					return;
+				base.Text = value;
+				Refresh ();
+			}
+			
+		}
+
+		#endregion Public Instance Properties
+
+		#region Protected Instance Properties
 		protected override CreateParams CreateParams {
 			get {
 				return base.CreateParams;
 			}
 		}
 
-		protected override Size DefaultSize {
-			get { return ThemeEngine.Current.StatusBarDefaultSize; }
-		}
-
 		protected override ImeMode DefaultImeMode {
 			get { return ImeMode.Disable; }
 		}
 
-		protected override void WndProc(ref Message m)
-		{
-			switch ((Msg) m.Msg) {
-			case Msg.WM_PAINT: {				
-				PaintEventArgs	paint_event;
-
-				paint_event = XplatUI.PaintEventStart (Handle);
-				DoPaint (paint_event);
-				XplatUI.PaintEventEnd (Handle);
-				return;
-			}
-			}
-			base.WndProc (ref m);
+		protected override Size DefaultSize {
+			get { return ThemeEngine.Current.StatusBarDefaultSize; }
 		}
 
+		#endregion	// Protected Instance Properties
+
+		#region Public Instance Methods
+		public override string ToString () {
+			return base.ToString () + ", Panels.Count: " + Panels.Count +
+				(Panels.Count > 0 ? ", Panels[0]: " + Panels [0] : String.Empty);
+		}
+
+		#endregion	// Public Instance Methods
+
+		#region Protected Instance Methods
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
+		}
+
+		protected override void Dispose (bool disposing) {
+			base.Dispose (disposing);
+		}
+
+		protected virtual void OnDrawItem (StatusBarDrawItemEventArgs e) {
+			if (DrawItem != null)
+				DrawItem (this, e);
+		}
+
+		protected override void OnHandleCreated (EventArgs e) {
+			base.OnHandleCreated (e);
+
+			UpdateArea ();
+			Draw();
+		}
+
+		protected override void OnHandleDestroyed (EventArgs e) {
+			base.OnHandleDestroyed (e);
+		}
+
+		protected override void OnLayout (LayoutEventArgs e) {
+			base.OnLayout (e);
+		}
+
+		protected override void OnMouseDown (MouseEventArgs e) {
+			if (panels == null)
+				return;
+
+			float prev_x = 0;
+			float gap = ThemeEngine.Current.StatusBarHorzGapWidth;
+			for (int i = 0; i < panels.Count; i++) {
+				float x = panels [i].Width + prev_x + (i == panels.Count - 1 ? gap : gap / 2);
+				if (e.X >= prev_x && e.X <= x) {
+					OnPanelClick (new StatusBarPanelClickEventArgs (panels [i],
+						e.Button, e.Clicks, e.X, e.Y));
+					break;
+				}
+				prev_x = x;
+			}
+
+			base.OnMouseDown (e);
+		}
+
+		protected virtual void OnPanelClick (StatusBarPanelClickEventArgs e) {
+			if (PanelClick != null)
+				PanelClick (this, e);
 		}
 
 		protected override void OnResize (EventArgs e)
@@ -216,64 +277,27 @@ namespace System.Windows.Forms {
 			Draw ();
 		}
 
-		protected override void OnHandleCreated (EventArgs e)
-		{
-			base.OnHandleCreated (e);
+		protected override void WndProc(ref Message m) {
+			switch ((Msg) m.Msg) {
+				case Msg.WM_PAINT: {				
+					PaintEventArgs	paint_event;
 
-			UpdateArea ();
-			Draw();
+					paint_event = XplatUI.PaintEventStart (Handle);
+					DoPaint (paint_event);
+					XplatUI.PaintEventEnd (Handle);
+					return;
+				}
+			}
+			base.WndProc (ref m);
 		}
 
-		protected override void OnHandleDestroyed (EventArgs e)
-		{
-			base.OnHandleDestroyed (e);
-		}
+		#endregion	// Methods
 
-		protected override void OnLayout (LayoutEventArgs e)
-		{
-			base.OnLayout (e);
-		}
 
-		protected override void OnMouseDown (MouseEventArgs e)
-		{
-                        if (panels == null)
-                                return;
-
-                        float prev_x = 0;
-                        float gap = ThemeEngine.Current.StatusBarHorzGapWidth;
-                        for (int i = 0; i < panels.Count; i++) {
-                                float x = panels [i].Width + prev_x + (i == panels.Count - 1 ? gap : gap / 2);
-                                if (e.X >= prev_x && e.X <= x) {
-                                        OnPanelClick (new StatusBarPanelClickEventArgs (panels [i],
-                                                                      e.Button, e.Clicks, e.X, e.Y));
-                                        break;
-                                }
-                                prev_x = x;
-                        }
-
-			base.OnMouseDown (e);
-		}
-
-		protected virtual void OnPanelClick (StatusBarPanelClickEventArgs e)
-		{
-			if (PanelClick != null)
-				PanelClick (this, e);
-		}
-
+		#region Internal Methods
 		internal void OnDrawItemInternal (StatusBarDrawItemEventArgs e)
 		{
 			OnDrawItem (e);
-		}
-
-		protected virtual void OnDrawItem (StatusBarDrawItemEventArgs e)
-		{
-			if (DrawItem != null)
-				DrawItem (this, e);
-		}
-
-		protected override void Dispose (bool disposing)
-		{
-			base.Dispose (disposing);
 		}
 
 		private void DoPaint (PaintEventArgs pevent)
@@ -345,18 +369,73 @@ namespace System.Windows.Forms {
 		{
 			ThemeEngine.Current.DrawStatusBar (DeviceContext, this.ClientRectangle, this);
 		}
+		#endregion	// Internal Methods
 
+
+		#region Events
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackColorChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler ForeColorChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler ImeModeChanged;
+
+		public event StatusBarDrawItemEventHandler DrawItem;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event PaintEventHandler Paint;
+		public event StatusBarPanelClickEventHandler PanelClick;
+		#endregion	// Events
+		
+
+		#region Subclass StatusBarPanelCollection
 		public class StatusBarPanelCollection :	 IList, ICollection, IEnumerable {
-
+			#region Fields
 			private StatusBar owner;
-
 			private ArrayList panels;
+			#endregion	// Fields
 
+			#region Public Constructors
 			public StatusBarPanelCollection (StatusBar owner)
 			{
 				this.owner = owner;
 			}
 
+			#endregion	// Public Constructors
+
+			#region Private & Internal Methods
+			private int AddInternal (StatusBarPanel p, bool refresh) {
+				if (p == null)
+					throw new ArgumentNullException ("value");
+				if (panels == null)
+					panels = new ArrayList ();
+
+				int res = panels.Add (p);
+				p.SetParent (owner);
+
+				if (refresh) {
+					owner.CalcPanelSizes ();
+					owner.Refresh ();
+				}
+
+				return res;
+			}
+
+			#endregion	// Private & Internal Methods
+
+			#region Public Instance Properties
+			[Browsable(false)]
+			[EditorBrowsable(EditorBrowsableState.Never)]
 			public virtual int Count {
 				get {
 					if (panels == null)
@@ -367,18 +446,6 @@ namespace System.Windows.Forms {
 
 			public virtual bool IsReadOnly {
 				get { return false; }
-			}
-
-			bool IList.IsFixedSize {
-				get { return false; }
-			}
-
-			bool ICollection.IsSynchronized {
-				get { return panels.IsSynchronized; }
-			}
-
-			object ICollection.SyncRoot {
-				get { return panels.SyncRoot; }
 			}
 
 			public virtual StatusBarPanel this [int index] {
@@ -396,39 +463,21 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			public virtual int Add (StatusBarPanel p)
-			{
+			#endregion	// Public Instance Properties
+
+			#region Public Instance Methods
+			public virtual int Add (StatusBarPanel p) {
 				return AddInternal (p, true);
 			}
 
-			public virtual StatusBarPanel Add (string text)
-			{
+			public virtual StatusBarPanel Add (string text) {
 				StatusBarPanel res = new StatusBarPanel ();
 				res.Text = text;
 				Add (res);
 				return res;
 			}
 
-			private int AddInternal (StatusBarPanel p, bool refresh)
-			{
-				if (p == null)
-					throw new ArgumentNullException ("value");
-				if (panels == null)
-					panels = new ArrayList ();
-
-				int res = panels.Add (p);
-				p.SetParent (owner);
-
-				if (refresh) {
-					owner.CalcPanelSizes ();
-					owner.Refresh ();
-				}
-
-				return res;
-			}
-
-			public virtual void AddRange (StatusBarPanel [] range)
-			{
+			public virtual void AddRange (StatusBarPanel [] range) {
 				if (range == null)
 					throw new ArgumentNullException ("panels");
 				if (range.Length == 0)
@@ -441,8 +490,25 @@ namespace System.Windows.Forms {
 				owner.Refresh ();
 			}
 
-			public virtual void Insert (int index, StatusBarPanel value)
-			{
+			public virtual void Clear () {
+				panels.Clear ();
+
+				owner.Refresh ();
+			}
+
+			public virtual bool Contains (StatusBarPanel panel) {
+				return panels.Contains (panel);
+			}
+
+			public virtual IEnumerator GetEnumerator () {
+				return panels.GetEnumerator ();
+			}
+
+			public virtual int IndexOf (StatusBarPanel panel) {
+				return panels.IndexOf (panel);
+			}
+
+			public virtual void Insert (int index, StatusBarPanel value) {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 				if (index > Count)
@@ -455,36 +521,23 @@ namespace System.Windows.Forms {
 				owner.Refresh ();
 			}
 
-			public virtual void Clear ()
-			{
-				panels.Clear ();
-
-				owner.Refresh ();
-			}
-
-			public virtual bool Contains (StatusBarPanel panel)
-			{
-				return panels.Contains (panel);
-			}
-
-			public virtual IEnumerator GetEnumerator ()
-			{
-				return panels.GetEnumerator ();
-			}
-
-			public virtual int IndexOf (StatusBarPanel panel)
-			{
-				return panels.IndexOf (panel);
-			}
-
-			public virtual void Remove (StatusBarPanel panel)
-			{
+			public virtual void Remove (StatusBarPanel panel) {
 				panels.Remove (panel);
 			}
 
-			public virtual void RemoveAt (int index)
-			{
+			public virtual void RemoveAt (int index) {
 				panels.RemoveAt (index);
+			}
+
+			#endregion	// Public Instance Methods
+
+			#region IList & ICollection Interfaces
+			bool ICollection.IsSynchronized {
+				get { return panels.IsSynchronized; }
+			}
+
+			object ICollection.SyncRoot {
+				get { return panels.SyncRoot; }
 			}
 
 			void ICollection.CopyTo (Array dest, int index)
@@ -492,18 +545,17 @@ namespace System.Windows.Forms {
 				panels.CopyTo (dest, index);
 			}
 
+
 			object IList.this [int index] {
 				get { return panels [index]; }
 				set { panels [index] = value; }
 			}
 
-			int IList.Add (object value)
-			{
+			int IList.Add (object value) {
 				return panels.Add (value);
 			}
 
-			bool IList.Contains (object panel)
-			{
+			bool IList.Contains (object panel) {
 				return panels.Contains (panel);
 			}
 
@@ -517,11 +569,17 @@ namespace System.Windows.Forms {
 				panels.Insert (index, value);
 			}
 
+			bool IList.IsFixedSize {
+				get { return false; }
+			}
+
 			void IList.Remove (object value)
 			{
 				panels.Remove (value);
 			}
+			#endregion	// IList & ICollection Interfaces
 		}
+		#endregion	// Subclass StatusBarPanelCollection
 	}
 
 }

@@ -24,14 +24,18 @@
 
 
 using System;
-using System.Drawing;
 using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
 
 
 namespace System.Windows.Forms {
-
+	[DefaultEvent("SelectedIndexChanged")]
+	[DefaultProperty("TabPages")]
+	[Designer("System.Windows.Forms.Design.TabControlDesigner, " + Consts.AssemblySystem_Design)]
 	public class TabControl : Control {
-
+		#region Fields
 		private int selected_index = -1;
 		private TabAlignment alignment;
 		private TabAppearance appearance;
@@ -51,7 +55,9 @@ namespace System.Windows.Forms {
 		private ButtonState right_slider_state;
 		private ButtonState left_slider_state;
 		private int slider_pos = 0;
-		
+		#endregion	// Fields
+
+		#region Public Constructors
 		public TabControl ()
 		{
 			tab_pages = new TabPageCollection (this);
@@ -64,6 +70,12 @@ namespace System.Windows.Forms {
 			SizeChanged += new EventHandler (SizeChangedHandler);
 		}
 
+		#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		[DefaultValue(TabAlignment.Top)]
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.All)]
 		public TabAlignment Alignment {
 			get { return alignment; }
 			set {
@@ -76,6 +88,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(TabAppearance.Normal)]
+		[Localizable(true)]
 		public TabAppearance Appearance {
 			get { return appearance; }
 			set {
@@ -86,11 +100,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color BackColor {
 			get { return base.BackColor; }
 			set { /* nothing happens on set on MS */ }
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set { base.BackgroundImage = value; }
@@ -102,6 +120,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(TabDrawMode.Normal)]
 		public TabDrawMode DrawMode {
 			get { return draw_mode; }
 			set {
@@ -112,11 +131,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color ForeColor {
 			get { return base.ForeColor; }
 			set { base.ForeColor = value; }
 		}
 
+		[DefaultValue(false)]
 		public bool HotTrack {
 			get { return hottrack; }
 			set {
@@ -127,11 +149,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(null)]
 		public ImageList ImageList {
 			get { return image_list; }
 			set { image_list = value; }
 		}
 
+		[Localizable(true)]
 		public Size ItemSize {
 			get {
 				return item_size;
@@ -144,6 +168,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool Multiline {
 			get { return multiline; }
 			set {
@@ -156,6 +181,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
 		public Point Padding {
 			get { return padding; }
 			set {
@@ -169,10 +195,14 @@ namespace System.Windows.Forms {
 
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int RowCount {
 			get { return row_count; }
 		}
 
+		[DefaultValue(-1)]
+		[Browsable(false)]
 		public int SelectedIndex {
 			get { return selected_index; }
 			set {
@@ -212,6 +242,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TabPage SelectedTab {
 			get {
 				if (selected_index == -1)
@@ -226,6 +258,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(false)]
+		[Localizable(true)]
 		public bool ShowToolTips {
 			get { return show_tool_tips; }
 			set {
@@ -236,6 +270,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(TabSizeMode.Normal)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public TabSizeMode SizeMode {
 			get { return size_mode; }
 			set {
@@ -246,21 +282,32 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int TabCount {
 			get {
 				return tab_pages.Count;
 			}
 		}
 
+		[DefaultValue(null)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MergableProperty(false)]
 		public TabPageCollection TabPages {
 			get { return tab_pages; }
 		}
 
+		[Browsable(false)]
+		[Bindable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text {
 			get { return base.Text; }
 			set { base.Text = value; }
 		}
 
+		#endregion	// Public Instance Properties
+
+		#region Internal Properties
 		internal bool ShowSlider {
 			get { return show_slider; }
 			set { show_slider = value; }
@@ -278,6 +325,15 @@ namespace System.Windows.Forms {
 			get { return left_slider_state; }
 		}
 
+		private Size DefaultItemSize {
+			get {
+				return ThemeEngine.Current.TabControlDefaultItemSize;
+			}
+		}
+
+		#endregion	// Internal Properties
+
+		#region Protected Instance Properties
 		[MonoTODO ("Anything special need to be done?")]
 		protected override CreateParams CreateParams {
 			get {
@@ -291,40 +347,9 @@ namespace System.Windows.Forms {
 			get { return new Size (200, 100); }  
 		}
 
-		private Size DefaultItemSize {
-			get {
-				return ThemeEngine.Current.TabControlDefaultItemSize;
-			}
-		}
+		#endregion	// Protected Instance Properties
 
-		public new event EventHandler BackColorChanged {
-			add { base.BackColorChanged += value; }
-			remove { base.BackColorChanged -= value; }
-		}
-
-		public new event EventHandler BackgroundImageChanged {
-			add { base.BackgroundImageChanged += value; }
-			remove { base.BackgroundImageChanged -= value; }
-		}
-
-		public new event EventHandler ForeColorChanged {
-			add { base.ForeColorChanged += value; }
-			remove { base.ForeColorChanged -= value; }
-		}
-
-		public new event PaintEventHandler Paint {
-			add { base.Paint += value; }
-			remove { base.Paint -= value; }
-		}
-
-		public new event EventHandler TextChanged {
-			add { base.TextChanged += value; }
-			remove { base.TextChanged -= value; }
-		}
-
-		public event DrawItemEventHandler DrawItem;
-		public event EventHandler SelectedIndexChanged;
-
+		#region Public Instance Methods
 		public Rectangle GetTabRect (int index)
 		{
 			TabPage page = GetTab (index);
@@ -336,6 +361,9 @@ namespace System.Windows.Forms {
 			return GetTab (index);
 		}
 
+		#endregion	// Public Instance Methods
+
+		#region Protected Instance Methods
 		protected override Control.ControlCollection CreateControlsInstance ()
 		{
 			return new TabControl.ControlCollection (this);
@@ -387,6 +415,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		#endregion	// Protected Instance Methods
+
+		#region Internal & Private Methods
 		private bool CanScrollRight {
 			get {
 				if (TabPages [TabCount - 1].TabBounds.Right > ClientRectangle.Right - 40)
@@ -829,6 +860,50 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
+		#endregion	// Internal & Private Methods
+
+		#region Events
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackColorChanged {
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+
+		public event DrawItemEventHandler DrawItem;
+		public event EventHandler SelectedIndexChanged;
+		#endregion	// Events
+
+
+		#region Class TabPage.ControlCollection
 		public class ControlCollection : System.Windows.Forms.Control.ControlCollection {
 
 			private TabControl owner;
@@ -857,7 +932,9 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+		#endregion	// Class TabPage.ControlCollection
 
+		#region Class TabPage.TabPageCollection
 		public class TabPageCollection	: IList, ICollection, IEnumerable {
 
 			private TabControl owner;
@@ -871,6 +948,7 @@ namespace System.Windows.Forms {
 				controls = owner.Controls;
 			}
 
+			[Browsable(false)]
 			public virtual int Count {
 				get { return owner.Controls.Count; }
 			}
@@ -986,6 +1064,7 @@ namespace System.Windows.Forms {
 				Remove ((TabPage) value);
 			}
 		}
+		#endregion	// Class TabPage.TabPageCollection
 	}
 }
 

@@ -1,3 +1,34 @@
+2005-02-17  Peter Bartok  <pbartok@novell.com>
+
+	* Application.cs: Now calls registered message filters
+	* DockStyle.cs: Fixed attribute
+	* Form.cs: Fixed attribute
+	* Menu.cs: Fixed attribute
+	* ToolTip.cs: Fixed attribute
+	* TreeNode.cs: Added missing attributes and arranged in regions
+	* PropertyGrid.cs: Fixed signatures
+	* TreeNodeCollection.cs: Added attributes
+	* Splitter.cs: Added missing attributes; arranged into regions
+	* TabPage.cs: Added missing attributes; arranged into regions
+	* TextBoxBase.cs: Added missing attributes
+	* TextBox.cs: Added missing attributes
+	* ArrangeDirection.cs: Added missing attributes
+	* TreeNodeConverter.cs: Added stub (needed for TreeNode)
+	* ToolBarButton.cs: Fixed attributes
+	* AnchorStyles.cs: Fixed attribute
+	* TrackBar.cs: Fixed attributes
+	* TabControl.cs: Added missing attributes and arranged into regions
+	* ToolBar.cs: Fixed attribute
+	* StatusBar.cs: Fixed signature, organized into regions and added
+	  attributes
+	* StatusBarPanel.cs: Fixed attributes
+	* ContentsResizedEventArgs.cs: Implemented
+	* ContentsResizedEventHandler.cs: Implemented
+	* DateBoldEventArgs.cs: Implemented
+	* DateBoldEventHandler.cs: Implemented
+	* UpDownEventArgs.cs: Implemented
+	* UpDownEventHandler.cs: Implemented
+	
 2005-02-16  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Form.cs: first Menu NC refactoring

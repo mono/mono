@@ -17,25 +17,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
-//	Peter Bartok	pbartok@novell.com
+//	Peter Bartok	(pbartok@novell.com)
 //
-
+//
 
 // COMPLETE
 
-using System.ComponentModel;
-
 namespace System.Windows.Forms {
-	[Editor("System.Windows.Forms.Design.DockEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-	public enum DockStyle {
-		None	= 0,
-		Top	= 1,
-		Bottom	= 2,
-		Left	= 3,
-		Right	= 4,
-		Fill	= 5
+	public class UpDownEventArgs : EventArgs {
+		#region Local Variables
+		private int	button_id;
+		#endregion	// Local Variables
+
+		#region Public Constructors
+		public UpDownEventArgs(int buttonPushed) {
+			button_id = buttonPushed;
+		}
+		#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		public int ButtonID {
+			get {
+				return button_id;
+			}
+		}
+		#endregion	// Public Instance Properties
 	}
 }

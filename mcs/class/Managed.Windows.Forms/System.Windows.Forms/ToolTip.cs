@@ -32,7 +32,7 @@ using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Windows.Forms {
-	[ProvideProperty ("ToolTip", "System.Windows.Forms.Control")]
+	[ProvideProperty ("ToolTip", typeof(System.Windows.Forms.Control))]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	public sealed class ToolTip : System.ComponentModel.Component, System.ComponentModel.IExtenderProvider {
 		#region Local variables

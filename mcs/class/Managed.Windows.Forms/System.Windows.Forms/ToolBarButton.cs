@@ -40,7 +40,7 @@ using System.Drawing.Imaging;
 namespace System.Windows.Forms
 {
 	[DefaultProperty ("Text")]
-	[Designer ("System.Windows.Forms.Design.ToolBarButtonDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.ToolBarButtonDesigner, " + Consts.AssemblySystem_Design)]
 	[DesignTimeVisible (false)]
 	[ToolboxItem (false)]
 	public class ToolBarButton : Component
@@ -221,7 +221,7 @@ namespace System.Windows.Forms
 			set { tag = value; }
 		}
 
-		[DefaultValue (null)]
+		[DefaultValue ("")]
 		[Localizable (true)]
 		public string Text {
 			get { return text; }
@@ -235,7 +235,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (null)]
+		[DefaultValue ("")]
 		[Localizable (true)]
 		public string ToolTipText {
 			get { return tooltip; }

@@ -17,25 +17,53 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
-//	Peter Bartok	pbartok@novell.com
+//	Peter Bartok	(pbartok@novell.com)
 //
-
+//
 
 // COMPLETE
 
-using System.ComponentModel;
-
 namespace System.Windows.Forms {
-	[Editor("System.Windows.Forms.Design.DockEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-	public enum DockStyle {
-		None	= 0,
-		Top	= 1,
-		Bottom	= 2,
-		Left	= 3,
-		Right	= 4,
-		Fill	= 5
+	public class DateBoldEventArgs : EventArgs {
+		#region Local Variables
+		private int		size;
+		private DateTime	start;
+		private int[]		days_to_bold;
+		#endregion	// Local Variables
+
+		#region Internal Constructor
+		DateBoldEventArgs(DateTime start, int size, int[] daysToBold) {
+			this.start = start;
+			this.size = size;
+			this.days_to_bold = daysToBold;
+		}
+		#endregion
+
+		#region Public Instance Properties
+		public int[] DaysToBold {
+			get {
+				return days_to_bold;
+			}
+
+			set {
+				days_to_bold = value;
+			}
+		}
+
+		public int Size {
+			get {
+				return size;
+			}
+		}
+
+		public DateTime StartDate {
+			get {
+				return start;
+			}
+		}
+		#endregion	// Public Instance Properties
 	}
 }

@@ -17,24 +17,32 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 
 namespace System.Windows.Forms {
-
+	[DefaultEvent("Click")]
+	[DesignTimeVisible(false)]
+	[DefaultProperty("Text")]
+	[Designer("System.Windows.Forms.Design.TabPageDesigner, " + Consts.AssemblySystem_Design)]
+	[ToolboxItem(false)]
 	public class TabPage : Panel {
-
+		#region Fields
 		private int image_index = -1;
 		private string tooltip_text = String.Empty;
 		private Rectangle tab_bounds;
 		private int row;
+		#endregion	// Fields
 		
+		#region Public Constructors
 		public TabPage ()
 		{
 			Visible = true;
@@ -45,21 +53,34 @@ namespace System.Windows.Forms {
 			Text = text;
 		}
 
+		#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override AnchorStyles Anchor {
 			get { return base.Anchor; }
 			set { base.Anchor = value; }
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set { base.Dock = value; }
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool Enabled {
 			get { return base.Enabled; }
 			set { base.Enabled = value; }
 		}
 
+		[DefaultValue(-1)]
+		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[Localizable(true)]
+		[TypeConverter(typeof(ImageIndexConverter))]
 		public int ImageIndex {
 			get { return image_index; }
 			set {
@@ -70,16 +91,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new int TabIndex {
 			get { return base.TabIndex; }
 			set { base.TabIndex = value; }
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
 
+		[Browsable(true)]
+		[Localizable(true)]
 		public override string Text {
 			get { return base.Text; }
 			set {
@@ -90,6 +117,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue("")]
 		public string ToolTipText {
 			get { return tooltip_text; }
 			set {
@@ -99,36 +128,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool Visible {
 			get { return base.Visible; }
 			set { base.Visible = value; }
 		}
 
-		public new event EventHandler DockChanged {
-			add { base.DockChanged += value; }
-			remove { base.DockChanged -= value; }
-		}
+		#endregion	// Public Instance Properties
 
-		public new event EventHandler EnabledChanged {
-			add { base.EnabledChanged += value; }
-			remove { base.EnabledChanged -= value; }
-		}
-
-		public new event EventHandler TabIndexChanged {
-			add { base.TabIndexChanged += value; }
-			remove { base.TabIndexChanged -= value; }
-		}
-
-		public new event EventHandler TabStopChanged {
-			add { base.TabStopChanged += value; }
-			remove { base.TabStopChanged -= value; }
-		}
-
-		public new event EventHandler VisibleChanged {
-			add { base.VisibleChanged += value; }
-			remove { base.VisibleChanged -= value; }
-		}
-
+		#region Public Static Methods
 		public static TabPage GetTabPageOfComponent (object comp)
 		{
 			Control control = comp as Control;
@@ -143,11 +152,17 @@ namespace System.Windows.Forms {
 			return control as TabPage;
 		}
 
+		#endregion	// Public Static Methods
+
+		#region Public Instance Methods
 		public override string ToString ()
 		{
 			return "TabPage: {" + Text + "}";
 		}
 
+		#endregion	// Public Instance Methods
+
+		#region	Internal & Private Methods and Properties
 		internal Rectangle TabBounds {
 			get { return tab_bounds; }
 			set { tab_bounds = value; }
@@ -169,6 +184,9 @@ namespace System.Windows.Forms {
 			get { return base.Parent as TabControl; }
 		}
 
+		#endregion	// Internal & Private Methods and Properties
+
+		#region Protected Instance Methods
 		protected override ControlCollection CreateControlsInstance ()
 		{
 			return new TabPageControlCollection (this);
@@ -187,6 +205,47 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		#endregion	// Protected Instance Methods
+
+		#region Events
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler DockChanged {
+			add { base.DockChanged += value; }
+			remove { base.DockChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler EnabledChanged {
+			add { base.EnabledChanged += value; }
+			remove { base.EnabledChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler TabIndexChanged {
+			add { base.TabIndexChanged += value; }
+			remove { base.TabIndexChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler VisibleChanged {
+			add { base.VisibleChanged += value; }
+			remove { base.VisibleChanged -= value; }
+		}
+
+		#endregion	// Events
+
+		#region Class TabPageControlCollection
 		public class TabPageControlCollection : ControlCollection {
 
 			private TabPage owner;
@@ -201,6 +260,7 @@ namespace System.Windows.Forms {
 				base.Add (value);
 			}
 		}
+		#endregion	// Class TabPageControlCollection
 	}
 
 	

@@ -57,6 +57,8 @@ System.Windows.Forms/ComboBoxStyle.cs
 System.Windows.Forms/CommonDialog.cs
 System.Windows.Forms/ComponentModel.cs
 System.Windows.Forms/ContainerControl.cs
+System.Windows.Forms/ContentsResizedEventArgs.cs
+System.Windows.Forms/ContentsResizedEventHandler.cs
 System.Windows.Forms/ContextMenu.cs
 System.Windows.Forms/Control.cs
 System.Windows.Forms/ControlEventArgs.cs
@@ -72,6 +74,8 @@ System.Windows.Forms/DataGrid.cs
 System.Windows.Forms/DataGridLineStyle.cs
 System.Windows.Forms/DataGridParentRowsLabelStyle.cs
 System.Windows.Forms/DataGridTableStyle.cs
+System.Windows.Forms/DateBoldEventArgs.cs
+System.Windows.Forms/DateBoldEventHandler.cs
 System.Windows.Forms/DateRangeEventArgs.cs
 System.Windows.Forms/DateRangeEventHandler.cs
 System.Windows.Forms/DateTimePicker.cs
@@ -281,6 +285,7 @@ System.Windows.Forms/ToolTip.cs
 System.Windows.Forms/TrackBar.cs
 System.Windows.Forms/TreeNode.cs
 System.Windows.Forms/TreeNodeCollection.cs
+System.Windows.Forms/TreeNodeConverter.cs
 System.Windows.Forms/TreeView.cs
 System.Windows.Forms/TreeViewAction.cs
 System.Windows.Forms/TreeViewCancelEventArgs.cs
@@ -292,6 +297,8 @@ System.Windows.Forms/UICues.cs
 System.Windows.Forms/UICuesEventArgs.cs
 System.Windows.Forms/UICuesEventHandler.cs
 System.Windows.Forms/UpDownBase.cs
+System.Windows.Forms/UpDownEventArgs.cs
+System.Windows.Forms/UpDownEventHandler.cs
 System.Windows.Forms/UserControl.cs
 System.Windows.Forms/View.cs
 System.Windows.Forms/VScrollBar.cs

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
@@ -26,10 +26,11 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace System.Windows.Forms {
-
+	[Editor("System.Windows.Forms.Design.TreeNodeCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 	public class TreeNodeCollection : IList, ICollection, IEnumerable {
 
 		private static readonly int OrigSize = 50;
@@ -48,6 +49,8 @@ namespace System.Windows.Forms {
 			nodes = new TreeNode [OrigSize];
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int Count {
 			get { return count; }
 		}

@@ -35,6 +35,7 @@
 // NOT COMPLETE
 
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
@@ -42,8 +43,9 @@ using System.Timers;
 
 namespace System.Windows.Forms
 {	
-
+	[Designer("System.Windows.Forms.Design.TrackBarDesigner, " + Consts.AssemblySystem_Design)]
 	[DefaultEvent ("Scroll")]
+	[DefaultProperty("Value")]
 	public class TrackBar : Control, ISupportInitialize
 	{
 		private int minimum;
@@ -189,7 +191,8 @@ namespace System.Windows.Forms
 			get { return ThemeEngine.Current.TrackBarDefaultSize; }
 		}	
 		
-		[EditorBrowsable (EditorBrowsableState.Never)]	 
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Font Font {
 			get { return base.Font;	}
 			set { base.Font = value; }
@@ -346,7 +349,7 @@ namespace System.Windows.Forms
 		}
 		
 		[DefaultValue (0)]
-		[Bindable (false)]
+		[Bindable (true)]
 		public int Value {
 			get { return position; }
 			set {

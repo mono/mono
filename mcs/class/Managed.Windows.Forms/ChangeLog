@@ -1,3 +1,9 @@
+2005-02-17  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added DateBoldEventHandler.cs,
+	  DateBoldEventArgs.cs, UpDownEventHandler.cs, UpDownEventArgs.cs,
+	  ContentsResizedEventHandler.cs, ContentsResizedEventArgs.cs
+
 2005-02-15  Peter Bartok  <pbartok@novell.com>
 
 	* Makefile: Altered, following Harinath's suggestion of trying to

@@ -26,17 +26,18 @@
 // NOT COMPLETE
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections;
-using System.Windows.Forms.Design;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms.Design;
 using System.Windows.Forms.PropertyGridInternal;
 
 namespace System.Windows.Forms
-{	
-	public class PropertyGrid : System.Windows.Forms.ContainerControl
+{
+	[Designer("System.Windows.Forms.Design.PropertyGridDesigner, " + Consts.AssemblySystem_Design)]
+	public class PropertyGrid : System.Windows.Forms.ContainerControl, ComponentModel.Com2Interop.IComPropertyBrowser
 	{
 		#region Private Members
 
@@ -434,6 +435,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(null)]
+		[TypeConverter("System.Windows.Forms.PropertyGrid+SelectedObjectConverter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 		public object SelectedObject
 		{
 			get {
@@ -448,6 +451,7 @@ namespace System.Windows.Forms
 		}
 
 		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public object[] SelectedObjects
 		{
 			get {
@@ -461,6 +465,8 @@ namespace System.Windows.Forms
 		}
 
 		[BrowsableAttribute(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PropertyTab SelectedTab
 		{
 			get {
@@ -539,6 +545,8 @@ namespace System.Windows.Forms
 
 
 		[MonoTODO]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual Type DefaultTabType 
 		{
 			get {
@@ -601,7 +609,6 @@ namespace System.Windows.Forms
 
 		protected override void OnGotFocus(EventArgs e) 
 		{
-			has_focus=true;
 			base.OnGotFocus(e);
 		}
 
@@ -615,11 +622,6 @@ namespace System.Windows.Forms
 			base.OnHandleDestroyed (e);
 		}
 
-		protected override void OnLostFocus(EventArgs e) 
-		{
-			has_focus=false;
-			base.OnLostFocus(e);
-		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
@@ -704,9 +706,56 @@ namespace System.Windows.Forms
 		public event EventHandler SelectedObjectsChanged;
 		#endregion
 
+		#region Com2Interop.IComPropertyBrowser Interface
+		[MonoTODO]
+		bool ComponentModel.Com2Interop.IComPropertyBrowser.InPropertySet {
+			get  {
+				throw new NotImplementedException();
+			}
+		}
+
+		[MonoTODO]
+		void ComponentModel.Com2Interop.IComPropertyBrowser.DropDownDone() {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		bool ComponentModel.Com2Interop.IComPropertyBrowser.EnsurePendingChangesCommitted() {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		void ComponentModel.Com2Interop.IComPropertyBrowser.HandleF4() {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		void ComponentModel.Com2Interop.IComPropertyBrowser.LoadState(Microsoft.Win32.RegistryKey key) {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		void ComponentModel.Com2Interop.IComPropertyBrowser.SaveState(Microsoft.Win32.RegistryKey key) {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		private event ComponentRenameEventHandler com_component_name_changed;
+		event ComponentRenameEventHandler ComponentModel.Com2Interop.IComPropertyBrowser.ComComponentNameChanged {
+			add { com_component_name_changed += value; }
+			remove { com_component_name_changed -= value; }
+		}
+		#endregion	// Com2Interop.IComPropertyBrowser Interface
+
 		#region PropertyTabCollection Class
 		public class PropertyTabCollection : ICollection, IEnumerable
 		{
+			#region Private Constructors
+			private PropertyTabCollection() {
+			}
+
+			#endregion	// Private Constructors
+
 			[MonoTODO]
 			public PropertyTab this[int index]
 			{
@@ -717,7 +766,7 @@ namespace System.Windows.Forms
 		
 			#region ICollection Members
 			[MonoTODO]
-			public bool IsSynchronized
+			bool ICollection.IsSynchronized
 			{
 				get {
 					// TODO:  Add PropertyTabCollection.IsSynchronized getter implementation
@@ -726,13 +775,13 @@ namespace System.Windows.Forms
 			}
 
 			[MonoTODO]
-			public void CopyTo(Array array, int index)
+			void ICollection.CopyTo(Array array, int index)
 			{
 				// TODO:  Add PropertyTabCollection.CopyTo implementation
 			}
 
 			[MonoTODO]
-			public object SyncRoot
+			object ICollection.SyncRoot
 			{
 				get {
 					// TODO:  Add PropertyTabCollection.SyncRoot getter implementation

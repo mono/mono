@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -27,6 +27,8 @@
 // NOT COMPLETE
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 
 namespace System.Windows.Forms {
@@ -56,6 +58,7 @@ namespace System.Windows.Forms {
 		#endregion	// Private & Internal Methods
 
 		#region Public Instance Properties
+		[DefaultValue(false)]
 		public bool AcceptsReturn {
 			get {
 				return accepts_return;
@@ -68,6 +71,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(CharacterCasing.Normal)]
 		public CharacterCasing CharacterCasing {
 			get {
 				return character_casing;
@@ -80,6 +84,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue("")]
 		public char PasswordChar {
 			get {
 				return password_char;
@@ -92,6 +98,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(ScrollBars.None)]
+		[Localizable(true)]
 		public ScrollBars ScrollBars {
 			get {
 				return scrollbars;
@@ -104,6 +112,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public override int SelectionLength {
+			get {
+				return base.SelectionLength;
+			}
+			set {
+				base.SelectionLength = value;
+			}
+		}
+
+
 		public override string Text {
 			get {
 				return base.Text;
@@ -114,6 +134,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(HorizontalAlignment.Left)]
+		[Localizable(true)]
 		public HorizontalAlignment TextAlign {
 			get {
 				return alignment;

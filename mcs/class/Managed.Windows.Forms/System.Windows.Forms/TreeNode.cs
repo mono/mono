@@ -24,15 +24,16 @@
 //	Kazuki Oikawa (kazuki@panicode.com)
 
 using System;
-using System.Text;
+using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace System.Windows.Forms {
-
+	[TypeConverter(typeof(TreeNodeConverter))]
 	[Serializable]
-	public class TreeNode : MarshalByRefObject, ICloneable /*, ISerializable */ {
-
+	public class TreeNode : MarshalByRefObject, ICloneable, ISerializable {
+		#region Fields
 		private TreeView tree_view;
 		internal TreeNode parent;
 		private int index;
@@ -52,12 +53,17 @@ namespace System.Windows.Forms {
 
 		private object tag;
 		private IntPtr handle;
-		
+		#endregion	// Fields
+
+		#region Internal Constructors		
 		internal TreeNode (TreeView tree_view) : this ()
 		{
 			this.tree_view = tree_view;
 		}
 
+		#endregion	// Internal Constructors
+
+		#region Public Constructors
 		public TreeNode ()
 		{
 			nodes = new TreeNodeCollection (this);
@@ -85,22 +91,9 @@ namespace System.Windows.Forms {
 			Nodes.AddRange (children);
 		}
 
-		internal TreeView TreeView {
-			get {
-				if (tree_view != null)
-					return tree_view;
-				TreeNode walk = parent;
-				while (walk != null) {
-					if (walk.TreeView != null)
-						tree_view = walk.TreeView;
-					walk = walk.parent;
-				}
-				return tree_view;
-			}
-		}
+		#endregion	// Public Constructors
 
 		#region ICloneable Members
-
 		public object Clone()
 		{
 			TreeNode tn = new TreeNode (text, image_index, selected_image_index);
@@ -115,40 +108,33 @@ namespace System.Windows.Forms {
 			return tn;
 		}
 
-		#endregion
+		#endregion	// ICloneable Members
 
-		public TreeNode Parent {
-			get {
-				if (tree_view != null && tree_view.root_node == parent)
-					return null;
-				return parent;
-			}
+		#region ISerializable Members
+		[MonoTODO]
+		public void GetObjectData(SerializationInfo info, StreamingContext context) {
+			throw new NotImplementedException();
 		}
+		#endregion	// ISerializable Members
 
-		public string Text {
-			get {
-				if (text == null)
-					return String.Empty;
-				return text;
+		#region Public Instance Properties
+		public Color BackColor {
+			get { 
+				if (prop_bag != null)
+					return prop_bag.BackColor;
+				if (TreeView != null)
+					return TreeView.BackColor;
+				return Color.Empty;
 			}
-			set {
-				if (text == value)
-					return;
-				text = value;
-				bounds.Width = 0;
+			set { 
+				if (prop_bag == null)
+					prop_bag = new OwnerDrawPropertyBag ();
+				prop_bag.BackColor = value;
 			}
 		}
 
 		public Rectangle Bounds {
 			get { return bounds; }
-		}
-
-		internal Rectangle PlusMinusBounds {
-			get { return plus_minus_bounds; }
-		}
-
-		internal Rectangle CheckBoxBounds {
-			get { return checkbox_bounds; }
 		}
 
 		public bool Checked {
@@ -163,18 +149,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public Color BackColor {
-			get { 
-				if (prop_bag != null)
-					return prop_bag.BackColor;
-				if (TreeView != null)
-					return TreeView.BackColor;
-				return Color.Empty;
-			}
-			set { 
-				if (prop_bag == null)
-					prop_bag = new OwnerDrawPropertyBag ();
-				prop_bag.BackColor = value;
+		public TreeNode FirstNode {
+			get {
+				if (nodes.Count > 0)
+					return nodes [0];
+				return null;
 			}
 		}
 
@@ -193,37 +172,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public Font NodeFont {
-			get {
-				if (prop_bag != null)
-					return prop_bag.Font;
-				if (TreeView != null)
-					return TreeView.Font;
-				return null;
-			}
-			set {
-				if (prop_bag == null)
-					prop_bag = new OwnerDrawPropertyBag (); 
-				prop_bag.Font = value;
-			}
-		}
-
-		public TreeNodeCollection Nodes {
-			get {
-				if (nodes == null)
-					nodes = new TreeNodeCollection (this);
-				return nodes;
-			}
-		}
-
-		public TreeNode FirstNode {
-			get {
-				if (nodes.Count > 0)
-					return nodes [0];
-				return null;
-			}
-		}
-
 		public string FullPath {
 			get {
 				if (tree_view == null)
@@ -235,89 +183,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		bool BuildFullPath (StringBuilder path)
-		{
-			if (parent == null)
-				return false;
-
-			if (parent.BuildFullPath (path))
-				path.Append (tree_view.PathSeparator);
-
-			path.Append (text);
-			return true;
-		}
-
-		public bool IsExpanded {
-			get { return is_expanded; }
-		}
-
-		public TreeNode NextNode {
-			get {
-				if (parent == null)
-					return null;
-				if (parent.Nodes.Count > index + 1)
-					return parent.Nodes [index + 1];
-				return null;
-			}
-		}
-		
-		public TreeNode PrevNode {
-			get {
-				if (parent == null)
-					return null;
-				if (index == 0 || index > parent.Nodes.Count)
-					return null;
-				return parent.Nodes [index - 1];
-			}
-		}
-
-		public TreeNode NextVisibleNode {
-			get {
-				OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (this);
-				if (!o.MoveNext ())
-					return null;
-				TreeNode c = (TreeNode) o.Current;
-				if (!c.IsInClippingRect)
-					return null;
-				return c;
-			}
-		}
-
-		public TreeNode PrevVisibleNode {
-			get {
-				OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (this);
-				if (!o.MovePrevious ())
-					return null;
-				TreeNode c = (TreeNode) o.Current;
-				if (!c.IsInClippingRect)
-					return null;
-				return c;
-			}
-		}
-
-		public TreeNode LastNode {
-			get {
-				return (nodes == null || nodes.Count == 0) ? null : nodes [nodes.Count - 1];
-			}
-		}
-
-		public int Index {
-			get { return index; }
-		}
-
+		[Localizable(true)]
 		public int ImageIndex {
 			get { return image_index; }
 			set { image_index = value; }
 		}
 
-		public int SelectedImageIndex {
-			get { return selected_image_index; }
-			set { selected_image_index = value; }
+		public bool IsEditing {
+			get { return is_editing; }
 		}
 
-		public object Tag {
-			get { return tag; }
-			set { tag = value; }
+		public bool IsExpanded {
+			get { return is_expanded; }
 		}
 
 		public bool IsSelected {
@@ -326,10 +203,6 @@ namespace System.Windows.Forms {
 					return false;
 				return TreeView.SelectedNode == this;
 			}
-		}
-
-		public bool IsEditing {
-			get { return is_editing; }
 		}
 
 		public bool IsVisible {
@@ -350,22 +223,217 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public void BeginEdit ()
-		{
+		public TreeNode LastNode {
+			get {
+				return (nodes == null || nodes.Count == 0) ? null : nodes [nodes.Count - 1];
+			}
+		}
+
+		public TreeNode NextNode {
+			get {
+				if (parent == null)
+					return null;
+				if (parent.Nodes.Count > index + 1)
+					return parent.Nodes [index + 1];
+				return null;
+			}
+		}
+		
+		public TreeNode NextVisibleNode {
+			get {
+				OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (this);
+				if (!o.MoveNext ())
+					return null;
+				TreeNode c = (TreeNode) o.Current;
+				if (!c.IsInClippingRect)
+					return null;
+				return c;
+			}
+		}
+
+		[Localizable(true)]
+		public Font NodeFont {
+			get {
+				if (prop_bag != null)
+					return prop_bag.Font;
+				if (TreeView != null)
+					return TreeView.Font;
+				return null;
+			}
+			set {
+				if (prop_bag == null)
+					prop_bag = new OwnerDrawPropertyBag (); 
+				prop_bag.Font = value;
+			}
+		}
+
+		[ListBindable(false)]
+		public TreeNodeCollection Nodes {
+			get {
+				if (nodes == null)
+					nodes = new TreeNodeCollection (this);
+				return nodes;
+			}
+		}
+
+		public TreeNode Parent {
+			get {
+				if (tree_view != null && tree_view.root_node == parent)
+					return null;
+				return parent;
+			}
+		}
+
+		public TreeNode PrevNode {
+			get {
+				if (parent == null)
+					return null;
+				if (index == 0 || index > parent.Nodes.Count)
+					return null;
+				return parent.Nodes [index - 1];
+			}
+		}
+
+		public TreeNode PrevVisibleNode {
+			get {
+				OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (this);
+				if (!o.MovePrevious ())
+					return null;
+				TreeNode c = (TreeNode) o.Current;
+				if (!c.IsInClippingRect)
+					return null;
+				return c;
+			}
+		}
+
+		[Localizable(true)]
+		public int SelectedImageIndex {
+			get { return selected_image_index; }
+			set { selected_image_index = value; }
+		}
+
+		[Bindable(true)]
+		[Localizable(false)]
+		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
+		[DefaultValue(null)]
+		public object Tag {
+			get { return tag; }
+			set { tag = value; }
+		}
+
+		[Localizable(true)]
+		public string Text {
+			get {
+				if (text == null)
+					return String.Empty;
+				return text;
+			}
+			set {
+				if (text == value)
+					return;
+				text = value;
+				bounds.Width = 0;
+			}
+		}
+
+		public TreeView TreeView {
+			get {
+				if (tree_view != null)
+					return tree_view;
+				TreeNode walk = parent;
+				while (walk != null) {
+					if (walk.TreeView != null)
+						tree_view = walk.TreeView;
+					walk = walk.parent;
+				}
+				return tree_view;
+			}
+		}
+
+		#endregion	// Public Instance Properties
+
+		#region Public Static Methods
+		#endregion	// Public Static Methods
+
+		#region Public Instance Methods
+		public void BeginEdit () {
 			is_editing = true;
 		}
 
-		public void EndEdit (bool cancel)
-		{
+		public void Collapse () {
+			Collapse(false);
+		}
+
+		public void EndEdit (bool cancel) {
 			is_editing = false;
 			if (!cancel && TreeView != null)
 				text = TreeView.LabelEditText;
 		}
 
-		public void Expand ()
-		{
+		public void Expand () {
 			Expand(false);
 		}
+
+		public void ExpandAll () {
+			ExpandRecursive (this);
+			if(TreeView != null)
+				TreeView.Refresh();
+		}
+
+		public int GetNodeCount (bool include_subtrees) {
+			if (!include_subtrees)
+				return Nodes.Count;
+
+			int count = 0;
+			GetNodeCountRecursive (this, ref count);
+
+			return count;
+		}
+
+		public void Remove () {
+			if (parent == null)
+				return;
+			parent.Nodes.RemoveAt (Index);
+		}
+
+		public void Toggle () {
+			if (is_expanded)
+				Collapse ();
+			else
+				Expand ();
+		}
+
+		public override String ToString () {
+			return String.Concat ("TreeNode: ", Text);
+		}
+
+		#endregion	// Public Instance Methods
+
+		#region Internal & Private Methods and Properties
+		internal Rectangle PlusMinusBounds {
+			get { return plus_minus_bounds; }
+		}
+
+		internal Rectangle CheckBoxBounds {
+			get { return checkbox_bounds; }
+		}
+
+		bool BuildFullPath (StringBuilder path)
+		{
+			if (parent == null)
+				return false;
+
+			if (parent.BuildFullPath (path))
+				path.Append (tree_view.PathSeparator);
+
+			path.Append (text);
+			return true;
+		}
+
+		public int Index {
+			get { return index; }
+		}
+
 		private void Expand (bool byInternal)
 		{
 			if (is_expanded)
@@ -385,11 +453,6 @@ namespace System.Windows.Forms {
 				if (IsVisible && TreeView != null)
 					TreeView.UpdateBelow (this);
 			}
-		}
-
-		public void Collapse ()
-		{
-			Collapse(false);
 		}
 
 		private void Collapse (bool byInternal)
@@ -429,20 +492,6 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		public void Remove ()
-		{
-			if (parent == null)
-				return;
-			parent.Nodes.RemoveAt (Index);
-		}
-
-		public void ExpandAll ()
-		{
-			ExpandRecursive (this);
-			if(TreeView != null)
-				TreeView.Refresh();
-		}
-
 		private void ExpandRecursive (TreeNode node)
 		{
 			node.Expand (true);
@@ -478,25 +527,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int GetNodeCount (bool include_subtrees)
-		{
-			if (!include_subtrees)
-				return Nodes.Count;
-
-			int count = 0;
-			GetNodeCountRecursive (this, ref count);
-
-			return count;
-		}
-
-		public void Toggle ()
-		{
-			if (is_expanded)
-				Collapse ();
-			else
-				Expand ();
-		}
-
 		internal void SetNodes (TreeNodeCollection nodes)
 		{
 			this.nodes = nodes;
@@ -508,11 +538,6 @@ namespace System.Windows.Forms {
 			foreach (TreeNode child in node.Nodes) {
 				GetNodeCountRecursive (child, ref count);
 			}
-		}
-
-		public override String ToString ()
-		{
-			return String.Concat ("TreeNode: ", Text);
 		}
 
 		internal void UpdateBounds (int x, int y, int width, int height)
@@ -561,6 +586,8 @@ namespace System.Windows.Forms {
 				return true;
 			}
 		}
+		#endregion	// Internal & Private Methods and Properties
+
 	}
 }
 
