@@ -42,9 +42,14 @@ namespace System.Net
 			isRead = true;
 			pending = new ManualResetEvent (true);
 			this.cnc = cnc;
-			try {
-				contentLength = Int32.Parse (cnc.Data.Headers ["Content-Length"]);
-			} catch {
+			string clength = cnc.Data.Headers ["Content-Length"];
+			if (clength != null && clength != "") {
+				try {
+					contentLength = Int32.Parse (clength);
+				} catch {
+					contentLength = Int32.MaxValue;
+				}
+			} else {
 				contentLength = Int32.MaxValue;
 			}
 		}
