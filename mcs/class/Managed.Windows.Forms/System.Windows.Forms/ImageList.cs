@@ -120,8 +120,8 @@ namespace System.Windows.Forms {
 					case ColorDepth.Depth8Bit:	format=PixelFormat.Format8bppIndexed; break;
 					case ColorDepth.Depth16Bit:	format=PixelFormat.Format16bppRgb555; break;
 					case ColorDepth.Depth24Bit:	format=PixelFormat.Format24bppRgb; break;
-					case ColorDepth.Depth32Bit:	format=PixelFormat.Format32bppRgb; break;
-					default:			format=PixelFormat.Format32bppRgb; break;
+					case ColorDepth.Depth32Bit:	format=PixelFormat.Format32bppArgb; break;
+					default:			format=PixelFormat.Format32bppArgb; break;
 				}
 
 				// Check if we can add straight or if we have to resize
@@ -132,7 +132,7 @@ namespace System.Windows.Forms {
 					reformatted_image = new Bitmap(width, height, format);
 					g=Graphics.FromImage(reformatted_image);
 
-					g.DrawImage(image, new Rectangle(0, 0, width, height), 0, 0, width, height, GraphicsUnit.Pixel);
+					g.DrawImage(image, new Rectangle(0, 0, width, height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
 					g.Dispose();
 
 					return list.Add(reformatted_image);
@@ -352,6 +352,9 @@ namespace System.Windows.Forms {
 
 		public ImageList(System.ComponentModel.IContainer container) : this ()
 		{
+			color_depth = ColorDepth.Depth8Bit;
+			transparency_color = Color.Transparent;
+			size = new Size(16, 16);
 			container.Add (this);
 		}
 		#endregion	// Public Constructors

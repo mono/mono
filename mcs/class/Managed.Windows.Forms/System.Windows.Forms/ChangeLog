@@ -1,3 +1,9 @@
+2005-03-02  Jordi Mas i Hernandez <jordi@ximian.com>
+	* ImageList.cs
+	  - Changes 32-bit pixel format to Format32bppArgb to allow transparency
+	  - Fixes ImageList constructor with ImageList container
+	  - Fixes image scaling (wrong parameters at DrawImage)
+
 2005-02-02  Jackson Harper  <jackson@ximian.com>
 
 	* Binding.cs: Make property searches case-insensitive. Eliminate
