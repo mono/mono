@@ -2259,23 +2259,24 @@ namespace Mono.MonoBASIC {
 					return e.Resolve (ec);
 				} else if (!l.IsValueType || !r.IsValueType) {
 
-			 // If one of the operands are reference types and other is object, support for 'Is' operator
-                                if (oper == Operator.Is) {
-                                        eclass = ExprClass.Value;
-                                        type = TypeManager.bool_type;
-                                        return this;
-                                }
-			}
-		} else if (!l.IsValueType && !r.IsValueType) {
+			 		// If one of the operands are reference types and other is object, support for 'Is' operator
+                                	if (oper == Operator.Is) {
+                                        	eclass = ExprClass.Value;
+                                        	type = TypeManager.bool_type;
+                                        	return this;
+                                	}
+				}
 
-			 // If both the operands are reference types, support for 'Is' operator
-                                if (oper == Operator.Is) {
-                                        eclass = ExprClass.Value;
-                                        type = TypeManager.bool_type;
-                                        return this;
-                                }
 		
 			} else if (!l.IsValueType || !r.IsValueType) {
+				if (!l.IsValueType && !r.IsValueType) {
+			 		// If both the operands are reference types, support for 'Is' operator
+                                	if (oper == Operator.Is) {
+                                       		eclass = ExprClass.Value;
+                                        	type = TypeManager.bool_type;
+                                        	return this;
+                                	}
+				}
 				// Either of the operands are reference types
 				if (l.IsSubclassOf (TypeManager.delegate_type) && 
 				    r.IsSubclassOf (TypeManager.delegate_type)) {
