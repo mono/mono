@@ -152,7 +152,6 @@ namespace System.Net {
 			for (int i = ips.Length - 1; i >= 0; i--)
 				a = (a << 8) |  (Byte.Parse(ips [i]));
 			
-			a = NetworkToHostOrder (a);
 			return (new IPAddress (a));
 		}
 		
@@ -166,7 +165,7 @@ namespace System.Net {
 					throw new ArgumentOutOfRangeException (
 						"the address must be between 0 and 0xFFFFFFFF");*/
 
-				address = value & 0x00000000FFFFFFFF;
+				address = value;
 			}
 		}
 
@@ -186,7 +185,7 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
-			return (HostToNetworkOrder (addr.address) & 0xFF) == 127;
+			return (NetworkToHostOrder (addr.address) & 0xFF) == 127;
 		}
 
 		/// <summary>
@@ -195,7 +194,7 @@ namespace System.Net {
 		/// </summary>
 		public override string ToString ()
 		{
-			return ToString (HostToNetworkOrder (address));
+			return ToString (address);
 		}
 
 		/// <summary>

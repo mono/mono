@@ -1,5 +1,9 @@
 2002-04-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* IPAddress.cs: little changes to behave as MS.
+
+2002-04-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Dns.cs (Resolve): behave as MS. Agreed with Mads.
 
 2002-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
