@@ -3926,7 +3926,13 @@ namespace Mono.MonoBASIC {
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 
-			if (Get != null) {
+			if (Get == null) {
+				if ((ModFlags & Modifiers.WRITEONLY) == 0)
+					Report.Error (
+						30124, Location,
+						"Property without 'Get' accessor must have a 'WriteOnly' modifier");
+			}
+			else {
 				if (get_params == Parameters.EmptyReadOnlyParameters) 
 				{
 					g_parameters = TypeManager.NoTypes;
@@ -3961,14 +3967,22 @@ namespace Mono.MonoBASIC {
 				GetBuilder = GetData.MethodBuilder;
 			}
 
-			if (Set != null) {
+			if (Set == null) {
+				if ((ModFlags & Modifiers.READONLY) == 0)
+					Report.Error (
+						30124, Location,
+						"Property without 'Set' accessor must have a 'ReadOnly' modifier");
+						
+			}
+			else 
+			{
 				if (set_params == Parameters.EmptyReadOnlyParameters) 
 				{
 					s_parameters = new Type [1];
 					s_parameters [0] = MemberType;
 
 					s_parms = new Parameter [1];
-					s_parms [0] = new Parameter (Type, /* was "value" */ set_parameter_name, 
+					s_parms [0] = new Parameter (Type, set_parameter_name, 
 						Parameter.Modifier.NONE, null);
 				}
 				else
@@ -3984,24 +3998,23 @@ namespace Mono.MonoBASIC {
 					{
 						Parameter tp = set_params.FixedParameters[i];
 						s_parms[i] = new Parameter (tp.TypeName, tp.Name,
-													Parameter.Modifier.NONE, null);
+							Parameter.Modifier.NONE, null);
 					}
 				}
 
 				s_ip = new InternalParameters (
 					parent, new Parameters (s_parms, null, Location));
 
-				
 				SetData = new MethodData (this, "set", TypeManager.void_type,
-							  s_parameters, s_ip, CallingConventions.Standard,
-							  Set.OptAttributes, ModFlags, flags, false);
+					s_parameters, s_ip, CallingConventions.Standard,
+					Set.OptAttributes, ModFlags, flags, false);
 
 				if (!SetData.Define (parent))
 					return false;
 
 				SetBuilder = SetData.MethodBuilder;
 				SetBuilder.DefineParameter (1, ParameterAttributes.None, 
-								/* was "value" */ set_parameter_name); 
+					set_parameter_name); 
 			}
 
 			// FIXME - PropertyAttributes.HasDefault ?
@@ -4014,11 +4027,8 @@ namespace Mono.MonoBASIC {
 				PropertyBuilder = parent.TypeBuilder.DefineProperty (
 					Name, prop_attr, MemberType, null);
 				
-				if (Get != null)
-					PropertyBuilder.SetGetMethod (GetBuilder);
-				
-				if (Set != null)
-					PropertyBuilder.SetSetMethod (SetBuilder);
+				PropertyBuilder.SetGetMethod (GetBuilder);
+				PropertyBuilder.SetSetMethod (SetBuilder);
 
 				//
 				// HACK for the reasons exposed above
