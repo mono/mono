@@ -28,17 +28,11 @@ namespace Mono.ILASM {
 			System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
                         DriverMain driver = new DriverMain (args);
-                        try {
                                 if (!driver.Run ()) {
                                         Console.WriteLine ();
                                         Console.WriteLine ("***** FAILURE *****");
                                         return 1;
                                 }
-                        } catch (Exception e) {
-                                Console.WriteLine (e);
-                                Console.WriteLine ("Error while compiling.");
-                                return 1;
-                        }
                         Console.WriteLine ("Operation completed successfully");
                         return 0;
                 }
@@ -68,7 +62,6 @@ namespace Mono.ILASM {
 
                         public bool Run ()
                         {
-                                try {
                                         if (il_file_list.Count == 0)
                                                 Usage ();
                                         if (output_file == null)
@@ -82,10 +75,6 @@ namespace Mono.ILASM {
                                         if (report.ErrorCount > 0)
                                                 return false;
                                         codegen.Write ();
-                                } catch {
-                                        return false;
-                                }
-
                                 return true;
                         }
 
