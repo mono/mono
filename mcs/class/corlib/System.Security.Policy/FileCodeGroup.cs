@@ -69,7 +69,7 @@ namespace System.Security.Policy {
 			get { return "Union";}
 		}
 
-		[MonoTODO]
+                [MonoTODO ("no children processing")]
 		public override PolicyStatement Resolve (Evidence evidence)
 		{
 			if (null == evidence)
@@ -81,13 +81,16 @@ namespace System.Security.Policy {
 			if (!MembershipCondition.Check(evidence))
 				return null;
 
-			IEnumerator hostEnumerator = evidence.GetHostEnumerator();
-			while (hostEnumerator.MoveNext())
-			{
-				// FIXME: not sure what to do here
-				//  How do we check the URL and make a PolicyStatement?
+			PolicyStatement pst = this.PolicyStatement.Copy ();
+			if (this.Children.Count > 0) {
+				foreach (CodeGroup cg in this.Children) {
+					PolicyStatement child = cg.Resolve (evidence);
+					if (child != null) {
+						// TODO union
+					}
+				}
 			}
-			throw new NotImplementedException();
+			return pst;
 		}
 
 		public override CodeGroup ResolveMatchingCodeGroups(Evidence evidence)
@@ -95,7 +98,7 @@ namespace System.Security.Policy {
 			if (null == evidence)
 				throw new ArgumentNullException("evidence");
 
-			if (!MembershipCondition.Check(evidence))
+			if (!MembershipCondition.Check (evidence))
 				return null;
 
 			FileCodeGroup matchRoot = new FileCodeGroup(MembershipCondition, m_access);

@@ -1,3 +1,14 @@
+2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Evidence.cs: Added new static internal method to create default
+	host evidences for an assembly.
+	* FileCodeGroup.cs: Added incomplete (no children) policy resolution 
+	in order to load more complex policies.
+	* Hash.cs: Added ISerialization support (required for cross-domain 
+	evidence support, like nunit).
+	* NetCodeGroup.cs: Added incomplete (no children) policy resolution in
+	order to load more complex policies.
+
 2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Gac.cs: New. Implemented Gac evidence for NET_2_0.

@@ -55,11 +55,14 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 		this.assembly = assembly;
 	}
 
-#if NET_2_0
 	internal Hash () 
 	{
 	}
-#endif
+
+	internal Hash (SerializationInfo info, StreamingContext context)
+	{
+		data = (byte[]) info.GetValue ("RawData", typeof (byte[]));
+	}
 
 	//
 	// Public Properties
@@ -98,12 +101,11 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 		return hashAlg.ComputeHash (GetData ());
 	}
 
-	[MonoTODO]
 	public void GetObjectData (SerializationInfo info, StreamingContext context) 
 	{
 		if (info == null)
 			throw new ArgumentNullException ("info");
-		throw new NotImplementedException ();
+		info.AddValue ("RawData", GetData ());
 	}
 
 	[MonoTODO("The Raw data seems to be different than the raw data I have")]
@@ -143,10 +145,9 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 
 	// interface IBuiltInEvidence
 
-	[MonoTODO]
 	int IBuiltInEvidence.GetRequiredSize (bool verbose) 
 	{
-		return 0;
+		return (verbose ? 5 : 0);	// as documented
 	}
 
 	[MonoTODO]

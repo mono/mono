@@ -33,7 +33,9 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Security.Permissions;
+using System.Security.Cryptography.X509Certificates;
 
 namespace System.Security.Policy {
 
@@ -236,6 +238,60 @@ namespace System.Security.Policy {
 			}
 		}
 #endif
+
+		// this avoid us to build all evidences from the runtime
+		// (i.e. multiple unmanaged->managed calls) and also allows
+		// to delay their creation until (if) needed
+		static internal Evidence GetDefaultHostEvidence (Assembly a) 
+		{
+			Evidence e = new Evidence ();
+			string aname = a.CodeBase;
+
+			// by default all assembly have the Zone, Url and Hash evidences
+			e.AddHost (Zone.CreateFromUrl (aname));
+			e.AddHost (new Url (aname));
+			e.AddHost (new Hash (a));
+
+			// non local files (e.g. http://) also get a Site evidence
+			if (!aname.ToUpper ().StartsWith ("FILE://")) {
+				e.AddHost (Site.CreateFromUrl (aname));
+			}
+
+			// strongnamed assemblies gets a StrongName evidence
+			AssemblyName an = a.GetName ();
+			byte[] pk = an.GetPublicKey ();
+			if (pk != null) {
+				StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (pk);
+				e.AddHost (new StrongName (blob, an.Name, an.Version));
+			}
+
+			// Authenticode(r) signed assemblies get a Publisher evidence
+			try {
+				X509Certificate x509 = X509Certificate.CreateFromSignedFile (a.Location);
+				if (x509.GetHashCode () != 0) {
+					e.AddHost (new Publisher (x509));
+				}
+			}
+			catch (ArgumentException) {
+				// URI are not supported
+			}
+#if NET_2_0
+			// assemblies loaded from the GAC also get a Gac evidence (new in Fx 2.0)
+			if (a.GlobalAssemblyCache) {
+				e.AddHost (new Gac ());
+			}
+/*
+			// the current HostSecurityManager may add/remove some evidence
+			AppDomainManager dommgr = AppDomain.CurrentDomain.DomainManager;
+			if (dommgr != null) {
+				if ((dommgr.HostSecurityManager.Flags & HostSecurityManagerFlags.HostAssemblyEvidence) ==
+					HostSecurityManagerFlags.HostAssemblyEvidence) {
+					e = dommgr.HostSecurityManager.ProvideAssemblyEvidence (a, e);
+				}
+			}*/
+#endif
+			return e;
+		}
 	
 		private class EvidenceEnumerator : IEnumerator {
 			

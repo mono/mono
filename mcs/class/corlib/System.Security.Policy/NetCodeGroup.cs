@@ -193,13 +193,25 @@ namespace System.Security.Policy {
 		}
 #endif
 
-		[MonoTODO]
+                [MonoTODO ("no children processing")]
 		public override PolicyStatement Resolve (Evidence evidence)
 		{
 			if (evidence == null) 
 				throw new ArgumentNullException ("evidence");
 
-			throw new NotImplementedException ();
+ 			if (!MembershipCondition.Check (evidence))
+				return null;
+
+			PolicyStatement pst = this.PolicyStatement.Copy ();
+			if (this.Children.Count > 0) {
+				foreach (CodeGroup cg in this.Children) {
+					PolicyStatement child = cg.Resolve (evidence);
+					if (child != null) {
+						// TODO union
+					}
+				}
+			}
+			return pst;
 		}
 
 #if NET_2_0
@@ -212,7 +224,7 @@ namespace System.Security.Policy {
 		public override CodeGroup ResolveMatchingCodeGroups (Evidence evidence) 
 		{
 			if (evidence == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("evidence");
 			
 			CodeGroup return_group = null;
 			if (MembershipCondition.Check (evidence)) {
