@@ -1,3 +1,10 @@
+2003-04-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.c (dis_stringify_modifiers): Print a space between custom modifers.
+	* get.c (get_custom_mod): Handle multiple custom modifiers aka bug #30812.
+	* main.c: Print klass name at the end of each method to make it easier
+	to find a given method.
+
 2003-03-31  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c: Sorted command line options table by name.
