@@ -1,3 +1,8 @@
+2002-03-01  Martin Baulig  <martin@gnome.org>
+
+	* MartinTests.cs: 15 tests currently work on Linux, call them all and
+	provide comments for the non-working tests.
+
 2002-02-28  Duncan Mak  <duncan@ximian.com>
 
 	* MathTest.cs: Committed for Jon Guymon <gnarg@slackworks.com>.

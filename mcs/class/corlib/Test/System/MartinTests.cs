@@ -20,25 +20,30 @@ namespace MonoTests.System {
                         get 
                         {
                                 TestSuite suite =  new TestSuite();
+
+				// ArrayTest: crashes
+				suite.AddTest(BitConverterTest.Suite);
 				suite.AddTest(BooleanTest.Suite);
+                                suite.AddTest(ByteTest.Suite);
+				// CharTest: crashes
+                                suite.AddTest(ConsoleTest.Suite);
+				// EnumTest: crashes
+				suite.AddTest(GuidTest.Suite);
+				// Int16Test: file codegen-x86.c: line 1489
+                                suite.AddTest(Int32Test.Suite);
+				// Int64Test: deadly NumberOverflow
+                                suite.AddTest(ObjectTest.Suite);
+				// RandomTest: tree mismatch
+                                suite.AddTest(ResolveEventArgsTest.Suite);
+				// SByteTest: tree mismatch
 				suite.AddTest(StringTest.Suite);
 				suite.AddTest(TimeSpanTest.Suite);
+				suite.AddTest(UInt16Test.Suite);
+                                // UInt32Test: file codegen-x86.c: line 1562
+                                suite.AddTest(UInt64Test.Suite);
 				suite.AddTest(DoubleTest.Suite);
 				suite.AddTest(TimeZoneTest.Suite);
 				suite.AddTest(DateTimeTest.Suite);
-
-                                //suite.AddTest(RandomTest.Suite);
-                                //suite.AddTest(ArrayTest.Suite);
-				//suite.AddTest(BitConverterTest.Suite);
-                                //suite.AddTest(ByteTest.Suite);
-                                //suite.AddTest(CharTest.Suite);
-                                //suite.AddTest(ConsoleTest.Suite);
-				//suite.AddTest(EnumTest.Suite);
-				//suite.AddTest(GuidTest.Suite);
-                                //suite.AddTest(ObjectTest.Suite);
-                                //suite.AddTest(ResolveEventArgsTest.Suite);
-                                //suite.AddTest(SByteTest.Suite);
-
 
 				return suite;
                         }
