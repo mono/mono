@@ -1,0 +1,12 @@
+2003-03-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ARC4Managed.cs: New. Implementation of the Alleged RC4(tm)
+	stream cipher in managed code (required for SSL/TLS).
+	* CryptoConvert.cs: New. Helper class to help convert between
+	Windows crypto structures and .NET crypto classes (required
+	for security tools).
+	* MD2.cs: New. Abstract class for all MD2 hash implementations.
+	* MD2Managed.cs: New. Managed implementation of the MD2 hash
+	algorithm (required for old, but still valid, X.509 certificates).
+	* RC4.cs: New. Abstract class for all RC4 stream cipher 
+	implementations.
