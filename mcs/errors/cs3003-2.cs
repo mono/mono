@@ -1,4 +1,4 @@
-// cs3002.cs: Argument type 'CLSClass.Index' is not CLS-compliant
+// CS3003: Type of 'CLSClass.Index' is not CLS-compliant
 // Line: 10
 
 using System;

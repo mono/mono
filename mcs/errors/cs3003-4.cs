@@ -1,4 +1,4 @@
-// cs3002-8.cs: Return type of 'I.Error' is not CLS-compliant
+// CS3003: Type of 'I.Error' is not CLS-compliant
 // Line: 8
 
 using System;
