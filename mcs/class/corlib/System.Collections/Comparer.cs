@@ -39,23 +39,18 @@ namespace System.Collections {
 
 		public int Compare (object a, object b)
 		{
-			int res=0;
+			if (a == b)
+				return 0;
+			else if (a == null)
+				return -1;
+			else if (b == null)
+				return 1;
+			else if (a is IComparable)
+				return (a as IComparable).CompareTo (b);
+			else if (b is IComparable)
+				return -(b as IComparable).CompareTo (a);
 
-			if (a is IComparable) {
-				res = (a as IComparable).CompareTo (b);
-			} else if (b is IComparable) {
-				res = (b as IComparable).CompareTo (a);
-			} else {
-				throw new ArgumentException ("Neither a nor b IComparable");
-			}
-
-			return res;
+			throw new ArgumentException ("Neither a nor b IComparable");
 		}
-
-		public override string ToString ()
-		{
-			return "mono::System.Collections.Comparer";
-		}
-
 	}
 }
