@@ -1,5 +1,10 @@
 2003-08-09  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* DTDAutomata.cs : Fixed (modified or added) TryEndElement() of choice,
+	  sequence and oneOrMore. Fixed DTDChoiceAutomata.TryStartElement().
+
+2003-08-09  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextReader.cs : Checked and fixed all TryExpandPERef() invokation 
 	  and supplied SkipWhitespace() as they needed. It broke monodoc.
 	  Fixed ReadEntityValueDecl() to get correct value.

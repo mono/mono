@@ -161,12 +161,7 @@ namespace Mono.Xml
 
 		public override DTDAutomata TryEndElement ()
 		{
-			if (left == Root.Empty)
-				return right;
-			if (right == Root.Empty)
-				return left;
-			else
-				return Root.Invalid;
+			return left.TryEndElement ().MakeChoice (right.TryEndElement ());
 		}
 
 		bool hasComputedEmptiable;
@@ -209,13 +204,18 @@ namespace Mono.Xml
 			DTDAutomata afterL = left.TryStartElement (name);
 			DTDAutomata afterR = right.TryStartElement (name);
 			if (afterL == Root.Invalid)
-				return (afterL.Emptiable) ? afterR : afterL;
+				return (left.Emptiable) ? afterR : afterL;
 			// else
 			DTDAutomata whenLeftConsumed = afterL.MakeSequence (right);
 			if (left.Emptiable)
 				return afterR.MakeChoice (whenLeftConsumed);
 			else
 				return whenLeftConsumed;
+		}
+
+		public override DTDAutomata TryEndElement ()
+		{
+			return left.Emptiable ? right : Root.Invalid;
 		}
 
 		bool hasComputedEmptiable;
@@ -255,6 +255,11 @@ namespace Mono.Xml
 					Root.Empty.MakeChoice (this));
 			else
 				return Root.Invalid;
+		}
+
+		public override DTDAutomata TryEndElement ()
+		{
+			return Emptiable ? children.TryEndElement () : Root.Invalid;
 		}
 	}
 
