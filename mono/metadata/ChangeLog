@@ -1,5 +1,10 @@
 2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* appdomain.c: don't look for assemblies in ApplicationBase if
+	PrivateBinPathProbe is set.
+
+2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* object.c: make the first argument in main_args contain the absolute
 	path to the assembly. Fixes bug #37511.
 
