@@ -44,7 +44,7 @@ class MonoP {
 	{
 		Type t;
 		if (assembly != null){
-			Assembly a = Assembly.Load (assembly);
+			Assembly a = Assembly.LoadWithPartialName (assembly);
 			t = a.GetType (tname, false, ignoreCase);
 		} else
 			t = Type.GetType (tname, false, ignoreCase);
