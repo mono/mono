@@ -1,5 +1,9 @@
 2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : added more "common pattern" tests.
+
+2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeTest.cs : Added more milliseconds and pattern recognition
 	  tests. Patch by Steven Brown (a bit modified).
 

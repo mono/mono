@@ -896,11 +896,16 @@ public class DateTimeTest : Assertion
 			Thread.CurrentThread.CurrentCulture = ci;
 			DateTime dt;
 
+			// Common patterns
 			// X509Certificate pattern is _always_ accepted.
 			dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
 #if NET_1_1
 			dt = DateTime.Parse ("19960312183847Z");
 #endif
+
+			dt = DateTime.Parse ("2004-05-26T03:29:01.1234567");
+			dt = DateTime.Parse ("2004-05-26T03:29:01.1234567-07:00");
+
 			// memo: the least LCID is 127, and then 1025(ar-SA)
 
 			// "th-TH" locale rejects them since in
