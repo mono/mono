@@ -40,7 +40,14 @@ internal sealed class Consts
 	public const string AssemblyMono_Security = "Mono.Security, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756";
 	public const string AssemblyMono_Posix = "Mono.Posix, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756";
 
-//#elif (NET_1_1)
+#elif (NET_2_0)
+
+	public const string AssemblySystem_Design = "System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem_Drawing = "System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblyMicrosoft_VisualStudio = "Microsoft.VisualStudio, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblyMono_Security = "Mono.Security, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756";
+	public const string AssemblyMono_Posix = "Mono.Posix, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756";
+	
 #else
 	// NET_1_1 is seen as default if somebody 'forgets' to specify any of the symbols
 	// to ensure we are not breaking the build in this case
