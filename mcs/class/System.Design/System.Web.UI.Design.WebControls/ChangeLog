@@ -1,6 +1,14 @@
 
 2002-10-07     Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* BaseDataListDesigner.cs : Dipose(bool)    - Implemented.	
+	                          : GetDesignTimeDataSource(IEnumerable, int, bool)
+	                                            - Stubbed.
+	                          : GetDesignTimeDataSource(int, bool)
+	                                            - Implemented.
+
+2002-10-07     Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* BaseDataListDesigner.cs : Initial implementation.
 
 2002-10-07     Gaurav Vaish <gvaish_mono@lycos.com>

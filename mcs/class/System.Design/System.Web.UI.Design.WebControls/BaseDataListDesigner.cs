@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Reflection;
 using System.Web.UI.Design;
@@ -24,6 +25,21 @@ namespace System.Web.UI.Design.WebControls
 	{
 		private BaseDataList baseDataList;
 		private DataTable    desTimeDataTable;
+
+		private static readonly string[] validNames = new string[] {
+			"AlternatingItemStyle",
+			"BackColor",
+			"DataSource",
+			"DataMember",
+			"EditItemStyle",
+			"Font",
+			"ForeColor",
+			"HeaderStyle",
+			"FooterStyle",
+			"ItemStyle",
+			"SelectedItemStyle",
+			"SeparatorStyle"
+		};
 
 		public BaseDataListDesigner()
 		{
@@ -109,10 +125,16 @@ namespace System.Web.UI.Design.WebControls
 			}
 		}
 
-		[MonoTODO]
 		public object GetSelectedDataSource()
 		{
-			throw new NotImplementedException();
+			object retVal = null;
+			DataBinding element = DataBindings["DataSource"];
+			if(element != null)
+			{
+				retVal = DesignTimeData.GetSelectedDataSource(baseDataList,
+				                                       element.Expression);
+			}
+			return retVal;
 		}
 
 		public IEnumerable GetResolvedSelectedDataSource()
@@ -122,10 +144,70 @@ namespace System.Web.UI.Design.WebControls
 			if(element != null)
 			{
 				retVal = DesignTimeData.GetSelectedDataSource(baseDataList,
-				                                              element.Expression,
-				                                              DataMember);
+				                                        element.Expression,
+				                                        DataMember);
 			}
 			return retVal;
+		}
+
+		public override IEnumerable GetTemplateContainerDataSource(
+		                                               string templateName)
+		{
+			return GetResolvedSelectedDataSource();
+		}
+
+		public override void Initialize(IComponent component)
+		{
+			baseDataList = (BaseDataList)component;
+			base.Initialize(component);
+		}
+
+		public override void OnComponentChanged(object sender,
+		                                        ComponentChangedEventArgs e)
+		{
+			if(e.Member != null)
+			{
+				string name = e.Member.Name;
+				foreach(string current in validNames)
+				{
+					if(name == current)
+					{
+						OnStylesChanged();
+						break;
+					}
+				}
+			}
+			base.OnComponentChanged(sender, e);
+		}
+
+		protected internal void OnStylesChanged()
+		{
+			OnTemplateEditingVerbsChanged();
+		}
+
+		protected abstract void OnTemplateEditingVerbsChanged();
+
+		protected override void Dispose(bool disposing)
+		{
+			if(disposing)
+				baseDataList = null;
+			base.Dispose(disposing);
+		}
+
+		protected IEnumerable GetDesignTimeDataSource(int minimumRows,
+		                                      out bool dummyDataSource)
+		{
+			IEnumerable retVal = GetResolvedSelectedDataSource();
+			return GetDesignTimeDataSource(retVal, minimumRows,
+			                               out dummyDataSource);
+		}
+
+		[MonoTODO]
+		protected IEnumerable GetDesignTimeDataSource(IEnumerable selectedDataSource,
+		                                              int minimumRows,
+		                                              out bool dummyDataSource)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
