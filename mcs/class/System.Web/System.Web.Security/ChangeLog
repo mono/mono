@@ -1,3 +1,33 @@
+2003-11-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+	
+	* AccessMembershipProvider.cs: New v2 file
+	* AccessRoleProvider.cs: New v2 file
+	* ADMembershipProvider.cs: New v2 file
+	* AnonymousIdentificationEventArgs.cs: New v2 file
+	* AnonymousIdentificationEventHandler.cs: New v2 file
+	* AnonymousIdentificationModule.cs: New v2 file
+	* CookieProtection.cs: New v2 file
+	* IMembershipProvider.cs: New v2 file
+	* IRoleProvider.cs: New v2 file
+	* Membership.cs: New v2 file
+	* MembershipCreateStatus.cs: New v2 file
+	* MembershipCreateUserException.cs: New v2 file
+	* MembershipOnlineStatus.cs: New v2 file
+	* MembershipPasswordException.cs: New v2 file
+	* MembershipPasswordFormat.cs: New v2 file
+	* MembershipProviderCollection.cs: New v2 file
+	* MembershipSortOptions.cs: New v2 file
+	* MembershipUser.cs: New v2 file
+	* MembershipUserCollection.cs: New v2 file
+	* RoleManagerEventArgs.cs: New v2 file
+	* RoleManagerEventHandler.cs: New v2 file
+	* RoleManagerModule.cs: New v2 file
+	* RolePrincipal.cs: New v2 file
+	* RoleProviderCollection.cs: New v2 file
+	* Roles.cs: New v2 file
+	* SqlMembershipProvider.cs: New v2 file
+	* SqlRoleProvider.cs: New v2 file
+
 2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: encoding updates.
