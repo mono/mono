@@ -100,6 +100,7 @@
 				<excludes name="System/Console.cs"/>
 				<excludes name="System/RuntimeTypeHandle.cs"/>
 				<excludes name="System/ICloneable.cs"/>
+				<excludes name="System.Runtime.CompilerServices/RuntimeHelpers.cs"/>
 				<!-- <excludes name="System/AppDomain.cs"/> -->
 				<!-- <excludes name="System/Exception.cs"/> -->
 
