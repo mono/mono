@@ -7,13 +7,18 @@
  * Copyright (C) 2004 Jonathan Pryor
  */
 
-#include <sys/sendfile.h>
+#include <sys/types.h>
 #include <errno.h>
+
+#ifdef HAVE_SYS_SENDFILE_H
+#include <sys/sendfile.h>
+#endif /* ndef HAVE_SYS_SENDFILE_H */
 
 #include "mph.h"
 
 G_BEGIN_DECLS
 
+#ifdef HAVE_SENDFILE
 mph_ssize_t
 Mono_Posix_Syscall_sendfile (int out_fd, int in_fd, mph_off_t *offset, mph_size_t count)
 {
@@ -29,6 +34,7 @@ Mono_Posix_Syscall_sendfile (int out_fd, int in_fd, mph_off_t *offset, mph_size_
 
 	return r;
 }
+#endif /* ndef HAVE_SENDFILE */
 
 G_END_DECLS
 

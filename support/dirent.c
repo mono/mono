@@ -53,7 +53,11 @@ copy_dirent (
 	)
 {
 	to->d_ino    = from->d_ino;
+#ifdef MPH_ON_BSD
+	to->d_off    = 0;
+#else
 	to->d_off    = from->d_off;
+#endif
 	to->d_reclen = from->d_reclen;
 	to->d_type   = from->d_type;
 	to->d_name   = strdup (from->d_name);

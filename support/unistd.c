@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <limits.h>
+#include <string.h>     /* for swab(3) on Mac OS X */
 
 #include <glib/gtypes.h>
 
@@ -136,12 +137,14 @@ Mono_Posix_Syscall_confstr (int name, char *buf, mph_size_t len)
 	return confstr (name, buf, (size_t) len);
 }
 
+#ifdef HAVE_TTYNAME_R
 gint32
 Mono_Posix_Syscall_ttyname_r (int fd, char *buf, mph_size_t len)
 {
 	mph_return_if_size_t_overflow (len);
 	return ttyname_r (fd, buf, (size_t) len);
 }
+#endif /* ndef HAVE_TTYNAME_R */
 
 gint32
 Mono_Posix_Syscall_readlink (const char *path, char *buf, mph_size_t len)
@@ -181,7 +184,12 @@ gint32
 Mono_Posix_Syscall_sethostid (gint64 hostid)
 {
 	mph_return_if_long_overflow (hostid);
+#ifdef MPH_ON_BSD
+	sethostid ((long) hostid);
+	return 0;
+#else
 	return sethostid ((long) hostid);
+#endif
 }
 
 gint32

@@ -16,6 +16,7 @@
 
 G_BEGIN_DECLS
 
+#ifdef HAVE_STIME
 gint32
 Mono_Posix_Syscall_stime (mph_time_t *t)
 {
@@ -28,6 +29,7 @@ Mono_Posix_Syscall_stime (mph_time_t *t)
 	_t = (time_t) *t;
 	return stime (&_t);
 }
+#endif /* ndef HAVE_STIME */
 
 mph_time_t
 Mono_Posix_Syscall_time (mph_time_t *t)

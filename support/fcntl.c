@@ -42,13 +42,13 @@ gint32
 Mono_Posix_Syscall_fcntl_arg (gint32 fd, gint32 cmd, gint64 arg)
 {
 	long _arg;
-	int _argi;
 	gint32 _cmd;
 
 	mph_return_if_long_overflow (arg);
 
 #ifdef F_NOTIFY
 	if (cmd == F_NOTIFY) {
+		int _argi;
 		if (Mono_Posix_FromDirectoryNotifyFlags (arg, &_argi) == -1) {
 			return -1;
 		}
@@ -140,6 +140,7 @@ Mono_Posix_Syscall_creat (const char *pathname, guint32 mode)
 #endif
 }
 
+#ifdef HAVE_POSIX_FADVISE
 gint32
 Mono_Posix_Syscall_posix_fadvise (gint32 fd, mph_off_t offset, mph_off_t len, 
 	gint32 advice)
@@ -156,7 +157,9 @@ Mono_Posix_Syscall_posix_fadvise (gint32 fd, mph_off_t offset, mph_off_t len,
 	return posix_fadvise (fd, (off_t) offset, (off_t) len, advice);
 #endif
 }
+#endif /* ndef HAVE_POSIX_FADVISE */
 
+#ifdef HAVE_POSIX_FALLOCATE
 gint32
 Mono_Posix_Syscall_posix_fallocate (gint32 fd, mph_off_t offset, mph_size_t len)
 {
@@ -169,6 +172,7 @@ Mono_Posix_Syscall_posix_fallocate (gint32 fd, mph_off_t offset, mph_size_t len)
 	return posix_fadvise (fd, (off_t) offset, (size_t) len);
 #endif
 }
+#endif /* ndef HAVE_POSIX_FALLOCATE */
 
 G_END_DECLS
 

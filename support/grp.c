@@ -7,10 +7,14 @@
  * Copyright (C) 2004 Jonathan Pryor
  */
 
+#include <sys/types.h>
+#include <sys/param.h>
 #include <grp.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>	/* for setgroups on Mac OS X */
 
 #include "mph.h"
 
@@ -233,6 +237,7 @@ Mono_Posix_Syscall_getgrent (struct Mono_Posix_Syscall__Group *grbuf)
 	return 0;
 }
 
+#ifdef HAVE_FGETGRENT
 gint32
 Mono_Posix_Syscall_fgetgrent (FILE *stream, struct Mono_Posix_Syscall__Group *grbuf)
 {
@@ -253,6 +258,7 @@ Mono_Posix_Syscall_fgetgrent (FILE *stream, struct Mono_Posix_Syscall__Group *gr
 	}
 	return 0;
 }
+#endif /* ndef HAVE_FGETGRENT */
 
 gint32
 Mono_Posix_Syscall_setgroups (mph_size_t size, mph_gid_t *list)

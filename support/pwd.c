@@ -228,6 +228,7 @@ Mono_Posix_Syscall_getpwent (struct Mono_Posix_Syscall__Passwd *pwbuf)
 	return 0;
 }
 
+#ifdef HAVE_FGETPWENT
 gint32
 Mono_Posix_Syscall_fgetpwent (FILE *stream, struct Mono_Posix_Syscall__Passwd *pwbuf)
 {
@@ -248,6 +249,7 @@ Mono_Posix_Syscall_fgetpwent (FILE *stream, struct Mono_Posix_Syscall__Passwd *p
 	}
 	return 0;
 }
+#endif /* ndef FGETPWENT */
 
 G_END_DECLS
 
