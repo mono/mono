@@ -407,18 +407,18 @@
 				if( Handle != IntPtr.Zero){
 					int style = Win32.GetWindowLong( Handle, GetWindowLongFlag.GWL_STYLE).ToInt32();
 					int menuExists = 0;
-					if( (style & (int)WindowStyles.WS_CHILD) != 0 ){
+					if( (style & (int)WindowStyles.WS_CHILD) == 0 ){
 						menuExists = Win32.GetMenu(Handle) != IntPtr.Zero ? 1 : 0;
 					}
 					Win32.AdjustWindowRect( ref rc, style, menuExists);
-					Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, 400 /*rc.right - rc.left */, rc.bottom - rc.top, 
+					Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, rc.right - rc.left, rc.bottom - rc.top, 
 						SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOZORDER);
 				}
 				else {
 					Win32.AdjustWindowRect( ref rc, styleIfNoWindow, menuIfNoWindow ? 1 : 0);
-					Width = rc.right - rc.left;
-					Height = rc.bottom - rc.top;
 				}
+				Width = rc.right - rc.left;
+				Height = rc.bottom - rc.top;
 			}    		
     		
     		public bool ContainsFocus {

@@ -11,8 +11,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
 	public class TabPage : Panel {
@@ -22,7 +20,7 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public TabPage() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		//
 		//  --- Public Properties
@@ -30,20 +28,23 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override AnchorStyles Anchor {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Anchor;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Anchor = value;
 			}	
 		}
 		[MonoTODO]
 		public override DockStyle Dock {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Dock;
 			}
 			set {
-				throw new NotImplementedException ();
-			}
+				//FIXME:
+				base.Dock = value;			}
 		}
 		[MonoTODO]
 		public int ImageIndex {
@@ -51,16 +52,18 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
 		public override string Text  {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Text = value;
 			}
 		}
 		[MonoTODO]
@@ -69,7 +72,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -77,22 +80,26 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public static TabPage GetTabPageOfComponent(object comp) {
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
 		public override string ToString() {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		
 		//  --- Protected Methods
 		
 		[MonoTODO]
 		protected override ControlCollection CreateControlsInstance() {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CreateControlsInstance();
 		}
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetBoundsCore(x,y,width,height,specified);
 		}
 		// FIXME  dont compile
 		//[MonoTODO]

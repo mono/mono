@@ -682,7 +682,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -727,7 +727,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -874,7 +874,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -898,10 +898,12 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string Text  {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Text = value;
 			}
 		}
 		[MonoTODO]
@@ -985,7 +987,8 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		protected override void CreateHandle() {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.CreateHandle();
 		}
 		[MonoTODO]
 		protected bool GetStyle(ControlStyles flag) {
@@ -1453,7 +1456,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.CreateParams;
 			}
 		}
 		[MonoTODO]
@@ -1572,13 +1576,6 @@ namespace System.Windows.Forms {
 		public event CancelEventHandler Validating;
 		public event EventHandler VisibleChanged;
 
-		//
-		//  --- Destructor
-		//
-		[MonoTODO]
-		~MonthCalendar() {
-			throw new NotImplementedException ();
-		}
 		//
 		// System.Windows.Forms.MonthCalendar.HitTestInfo.cs
 		//

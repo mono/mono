@@ -297,15 +297,15 @@
 					// FIXME: If Form's window has no style for menu,  probably, better to add it
 					// if menu have to be removed, remove the style.
 					// Attention to the repainting.
-//						if( mainMenu_ != null) {
+						if( mainMenu_ != null) {
 //							//long myStyle = Win32.GetWindowLongA( Handle, Win32.GWL_STYLE);
 //							//myStyle |= (long)Win32.WS_OVERLAPPEDWINDOW;
 //							//Win32.SetWindowLongA( Handle, Win32.GWL_STYLE, myStyle);
-//							SetMenu( Handle, mainMenu_.Handle);
-//						}
-//						else {
-//							SetMenu( Handle, IntPtr.Zero);
-//						}
+							Win32.SetMenu( Handle, mainMenu_.Handle);
+						}
+						else {
+							Win32.SetMenu( Handle, IntPtr.Zero);
+						}
 					}
 				}
 

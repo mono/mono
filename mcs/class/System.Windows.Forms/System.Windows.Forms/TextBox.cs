@@ -36,7 +36,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -47,7 +47,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -58,7 +58,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -69,7 +69,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -80,7 +80,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -117,16 +117,19 @@ namespace System.Windows.Forms {
 		 [MonoTODO]
 		 protected override ImeMode DefaultImeMode {
 			 get {
-				 throw new NotImplementedException ();
+				 //FIXME:
+				 return base.ImeMode;
 			 }
 		 }
 		 [MonoTODO]
 		 public override int SelectionLength {
 			 get {
-				 throw new NotImplementedException ();
+				 //FIXME:
+				 return base.SelectionLength;
 			 }
 			 set {
-				 throw new NotImplementedException ();
+				 //FIXME:
+				 base.SelectionLength = value;
 			 }
 		 }
 		
@@ -135,17 +138,20 @@ namespace System.Windows.Forms {
 		
 		protected override bool IsInputKey(Keys keyData)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.IsInputKey(keyData);
 		}
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			//FIXME:
+			base.OnHandleCreated(e);
 		}
 		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs mevent)
+		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			//FIXME:
+			base.OnMouseUp(e);
 		}
 		[MonoTODO]
 		//[Lame Spec] spec says this should be virtural
@@ -158,6 +164,7 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m)
 		{
 			//FIXME:
+			base.WndProc(ref m);
 		}
 	}
 }

@@ -207,13 +207,24 @@ namespace System.Windows.Forms {
 		}
 */
 		protected int index_ = -1;
+		
+		internal void SetIndex( int value)
+		{
+			index_ = value;
+		}
+		
 		public int Index {
 
 			get {
 				return index_;
 			}
 			set {
-				index_ = value;
+				if( index_ != value){
+					if(Parent != null){
+						Parent.MenuItems.MoveItemToIndex(value, this);
+						Parent.menuStructureModified_ = true;
+					}
+				}
 			}
 		}
 

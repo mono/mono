@@ -63,7 +63,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override bool Equals(object obj)
 		{
-			throw new NotImplementedException ();
+			return base.Equals(obj);
 		}
 		[MonoTODO]
 		public static Screen FormControl(Control ctl)
@@ -103,7 +103,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException ();
+			return base.GetHashCode();
 		}
 		//[Serializable]
 		//[ClassInterface(ClassInterfaceType.AutoDual)]
@@ -120,7 +120,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			return base.ToString();
 		}
 	 }
 }

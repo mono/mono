@@ -40,7 +40,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}	
 		}
 
@@ -50,7 +50,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}	
 		}
 
@@ -60,7 +60,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -77,7 +77,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -87,7 +87,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -104,7 +104,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -114,7 +114,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -124,7 +124,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -134,7 +134,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -144,7 +144,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -153,7 +153,7 @@ using System.ComponentModel;
 		[MonoTODO]
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			return base.ToString();
 		}
 		//
 		// --- Protected Methods

@@ -23,7 +23,7 @@ using System.ComponentModel;
 		[MonoTODO]
 		public SelectionRangeConverter()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		//
@@ -33,65 +33,63 @@ using System.ComponentModel;
 		[MonoTODO]
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type type)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CanConvertFrom(context,type);
 		}
 
 		[MonoTODO]
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type type)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CanConvertTo(context, type);
 		}
 		
 		[MonoTODO]
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object obj)
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ConvertFrom(context, culture, value);
 		}
 
 		[MonoTODO]
-		public override object ConvertTo( ITypeDescriptorContext context, CultureInfo culture, object obj, Type type)
+		public override object ConvertTo( ITypeDescriptorContext context, CultureInfo culture, object value, Type type)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ConvertTo(context, culture, value, type);
 		}
 
 		[MonoTODO]
 		public override object CreateInstance(ITypeDescriptorContext context, IDictionary dict)
 		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CreateInstance(context, dict );
 		}
 
 		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-		[MonoTODO]
 		public bool CreateInstanceSupported()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			throw new NotImplementedException();
 		}
 		[MonoTODO]
 		public override bool GetCreateInstanceSupported(ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.GetCreateInstanceSupported(context);
 		}
 		
-		[MonoTODO]
-		public override PropertyDescriptorCollection GetProperties( ITypeDescriptorContext context, object obj, Attribute[] atts)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override bool GetPropertiesSupported(ITypeDescriptorContext context)
-		{
-			throw new NotImplementedException ();
-		}
+		//Not part of Spec??
+		//[MonoTODO]
+		//public override PropertyDescriptorCollection GetProperties( ITypeDescriptorContext context, object obj, Attribute[] atts)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//
+		//[MonoTODO]
+		//public override bool GetPropertiesSupported(ITypeDescriptorContext context)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 	 }
 }

@@ -21,17 +21,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public SelectionRange()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public SelectionRange(SelectionRange range)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public SelectionRange(DateTime time1,DateTime time2)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		
@@ -43,7 +43,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -52,28 +52,18 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
 
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			return base.ToString();
 		}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}	 
 	}
 }

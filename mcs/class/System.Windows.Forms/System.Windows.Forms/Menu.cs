@@ -73,18 +73,15 @@ namespace System.Windows.Forms  {
 		{
 			if( menuStructureModified_) {
 				while( Win32.RemoveMenu( menuHandle_, 0, (uint)MF_.MF_BYPOSITION) != 0);
-				int curIndex = 0;
 				foreach(MenuItem mi in MenuItems) {
 					System.Console.WriteLine("MenuItem {0} Parent {1}", mi.Text, mi.IsParent);
 					if( mi.IsParent){
 						Win32.AppendMenuA( menuHandle_, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP,
 															mi.Handle, mi.Text);
-						mi.Index = curIndex++;
 					}
 					else {
 						Win32.AppendMenuA( menuHandle_, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING,
 								   (IntPtr) mi.GetID(), mi.Text);
-						mi.Index = curIndex++;
 					}
 				}
 				menuStructureModified_ = false;
@@ -260,6 +257,19 @@ namespace System.Windows.Forms  {
 				parentMenu_ = m;
 			}
 
+			internal void MoveItemToIndex( int index, MenuItem mi)
+			{
+				if( index >= items_.Count){
+					// FIXME: Set exception parameters
+					throw new ArgumentException();
+				}
+				else if( items_.Count != 1){
+					items_.Remove (mi);
+					items_.Insert (index, mi);
+					mi.SetIndex(index);
+				}
+			}
+
 			//
 			// -- Public Methods
 			//
@@ -269,7 +279,8 @@ namespace System.Windows.Forms  {
 				if( mi != null && parentMenu_ != null){
 					parentMenu_.OnNewMenuItemAdd(mi);
 					items_.Add(mi);
-					result = items_.Count;
+					result = items_.Count - 1;
+					mi.SetIndex(result);
 					//System.Console.WriteLine("Adding menuItem {0}, parent {1}", mi.Text, mi.IsParent);
 /*					
 					if( mi.IsParent){
@@ -303,6 +314,7 @@ namespace System.Windows.Forms  {
 					parentMenu_.OnNewMenuItemAdd(mi);
 					items_.Insert(i, mi);
 					result = i;
+					mi.SetIndex(result);
 /*					
 					if( mi.IsParent){
 						Win32.InsertMenuA( parentMenu_.Handle, (uint)i,

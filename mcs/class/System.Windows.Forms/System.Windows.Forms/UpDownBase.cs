@@ -45,20 +45,24 @@ namespace System.Windows.Forms {
 		// Gets or sets the background color for the control
 		public override Color BackColor {
 			get {
-				throw new NotImplementedException ();
+				return base.BackColor;
+				//FIXME:
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackColor = value;
 			}
 		}
 
 		// Gets or sets the background image displayed in the control
 		public override Image BackgroundImage {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackgroundImage;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackgroundImage = value;
 			}
 		}
 
@@ -68,34 +72,39 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
 		// Gets or sets the shortcut menu associated with the control
 		public override ContextMenu ContextMenu {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.ContextMenu;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.ContextMenu = value;
 			}
 		}
 
 		// Gets a value indicating whether the control has input focus
 		public override bool Focused {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Focused;
 			}
 		}
 		
 		// Gets or sets the foreground color of the control
 		public override Color ForeColor {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.ForeColor;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.ForeColor = value;
 			}
 		}
 
@@ -106,7 +115,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -124,17 +133,19 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
 		// Gets or sets the site of the control.
 		public override ISite Site {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Site;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Site = value;
 			}
 		}
 
@@ -154,7 +165,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -165,7 +176,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		#endregion // Public Properties
@@ -182,7 +193,7 @@ namespace System.Windows.Forms {
 		// starting position and number of characters to select.
 		public void Select(int start,int length) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		// When overridden in a derived class, handles the pressing of 
@@ -202,7 +213,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -243,7 +254,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		#endregion // Protected Properties
@@ -312,7 +323,8 @@ namespace System.Windows.Forms {
 		// This member overrides Control.SetBoundsCore.
 		protected override void SetBoundsCore(int x, int y, int width, 
 			int height, BoundsSpecified specified)  {
-			throw new NotImplementedException ();
+
+			//FIXME:
 		}
 
 		// When overridden in a derived class, updates the text displayed in the

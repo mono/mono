@@ -11,8 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 using System.ComponentModel;
     public class Timer : Component {
@@ -39,7 +37,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -48,7 +46,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		//
@@ -57,17 +55,18 @@ using System.ComponentModel;
 		[MonoTODO]
 		public void Start() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Stop() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		//
 		// --- Public Events
@@ -81,7 +80,7 @@ using System.ComponentModel;
 		[MonoTODO]
 		protected virtual void OnTick(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	}
 }

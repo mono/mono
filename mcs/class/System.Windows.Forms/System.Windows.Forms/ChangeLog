@@ -1,3 +1,31 @@
+  2002-12-6  DennisHayes <dennish@raytek.com>	
+
+	* checkin for Alexandre Pigolkine (pigolkine@gmx.de)
+	* Form.cs
+	* Menu.cs
+	* MenuItem.cs
+	
+	* Implmentation
+
+    2002-12-6  DennisHayes <dennish@raytek.com>	
+
+	* Control.cs
+	* Form.cs
+	* MonthCalendar.cs
+	* Screen.cs
+	* SelectionRange.cs
+	* SelectionRangeConverter.cs
+	* TabPage.cs
+	* TextBox.cs
+	* Timer.cs
+	* ToolBarButton.cs
+	* TrackBar.cs
+	* UpDownBase.cs
+	* UserControl.cs
+	* tooltip.cs
+
+	* cleanup, dead code removeal, replaced throw not implmented's with //FIXME:s
+
     2002-12-3  DennisHayes <dennish@raytek.com>	
 	* *.cs
 	* switched to unix style line terminiators

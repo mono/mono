@@ -25,10 +25,12 @@ namespace System.Windows.Forms {
 		public override string Text {
 
 			get {
-				throw new NotImplementedException();
+				//FIXME:
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException();
+				//FIXME:
+				base.Text = value;
 			}
 		}
 
@@ -43,29 +45,29 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnCreateControl()
 		{
-			throw new NotImplementedException();
+			//FIXME:
+			base.OnCreateControl();
 		}
 
 		[MonoTODO]
 		protected virtual void OnLoad(EventArgs e)
 		{
-			throw new NotImplementedException();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			throw new NotImplementedException();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			throw new NotImplementedException();
+			//FIXME:
 		}
 
 		// --- Events ---
-		[MonoTODO]
 		public event EventHandler Load;
 	}
 }
