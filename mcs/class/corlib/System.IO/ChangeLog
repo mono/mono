@@ -1,3 +1,8 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BufferedStream.cs: On Position change, do not reset the buffer if the
+	new position is in the limits of the buffer. This fixes #49403.
+
 2003-04-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Path.cs : ChangeExtension() does not remove dot(.) when extension is

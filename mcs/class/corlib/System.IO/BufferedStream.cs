@@ -65,8 +65,16 @@ namespace System.IO {
 			}
 
 			set {
-				Flush();
-				m_stream.Position = value;
+				if (value < Position && (Position - value <= m_buffer_pos) && m_buffer_reading) {
+					m_buffer_pos -= (int) (Position - value);
+				}
+				else if (value > Position && (value - Position < m_buffer_read_ahead - m_buffer_pos) && m_buffer_reading) {
+					m_buffer_pos += (int) (value - Position);
+				}
+				else {
+					Flush();
+					m_stream.Position = value;
+				}
 			}
 		}
 
