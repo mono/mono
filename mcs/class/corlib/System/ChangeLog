@@ -1,3 +1,8 @@
+2003-11-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomainSetup.cs: Don't add an extra '/' at the end of 
+	ApplicationBase. The tests pass now with mono.
+
 2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ValueType.cs: New optimized implementation for Equals and GetHashCode.

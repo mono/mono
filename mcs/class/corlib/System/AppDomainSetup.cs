@@ -55,10 +55,6 @@ namespace System {
 				appBase = Path.GetFullPath (appBase);
 			}
 
-			len = appBase.Length;
-			if (len == 0 || appBase [len - 1] != Path.DirectorySeparatorChar)
-				appBase = appBase + Path.DirectorySeparatorChar;
-
 			return appBase;
 		}
 		
