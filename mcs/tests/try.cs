@@ -45,7 +45,7 @@ class t {
 			a = 0x3;
 		} catch {
 			a = 0x1;
-		} finalize {
+		} finally {
 			a = 111;
 		}
 	}

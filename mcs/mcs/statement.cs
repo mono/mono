@@ -342,8 +342,15 @@ namespace CIR {
 		{
 			string type = null;
 
-			if (variables != null)
-				type = (string) variables [name];
+			if (variables != null) {
+				object temp;
+				temp = variables [name];
+				if (temp != null) {
+					VariableInfo vi = (VariableInfo) temp;
+					type = vi.Type;
+				}
+			}
+			
 			if (type != null)
 				return type;
 			else if (Parent != null)

@@ -1195,7 +1195,7 @@ event_accessor_declarations
 	}
 	| remove_accessor_declaration add_accessor_declaration
 	{
-		$$ = new DictionaryEntry ($2, $2);
+		$$ = new DictionaryEntry ($2, $1);
 	}	
 	;
 
@@ -2598,70 +2598,73 @@ opt_expression
 
 try_statement
 	: TRY block catch_clauses 
+	{
+		Catch g = null;
+		ArrayList s = new ArrayList ();
+		
+		foreach (Catch cc in (ArrayList) $3) {
+			if (cc.Type == null)
+				g = cc;
+			else
+				s.Add (cc);
+		}
+
+		// Now s contains the list of specific catch clauses
+		// and g contains the general one.
+		
+		$$ = new Try ((Block) $2, s, g, null);
+	}
+	| TRY block opt_catch_clauses FINALLY block
 	  {
-		DictionaryEntry cc = (DictionaryEntry) $3;
-		ArrayList s = null;
+		Catch g = null;
+		ArrayList s = new ArrayList ();
+		
+		foreach (Catch cc in (ArrayList) $3) {
+			if (cc.Type == null)
+				g = cc;
+			else
+				s.Add (cc);
+		}
 
-		if (cc.Key != null)
-			s = (ArrayList) cc.Key;
-
-		$$ = new Try ((Block) $2, s, (Catch) cc.Value, null);
-	  }
-	| TRY block FINALLY block
-	  {
-		$$ = new Try ((Block) $2, null, null, (Block) $4);
-	  }
-	| TRY block catch_clauses FINALLY block
-	  {
-		DictionaryEntry cc = (DictionaryEntry) $3;
-		ArrayList s = null;
-
-		if (cc.Key != null)
-			s = (ArrayList) cc.Key;
-
-		$$ = new Try ((Block) $2, s, (Catch) cc.Value, (Block) $5);
+		$$ = new Try ((Block) $2, s, g, (Block) $5);
 	  }
 	;
+
+opt_catch_clauses
+	: /* empty */  { $$ = null; }
+        | catch_clauses
+	;
+
+//  catch_clauses
+//  	: specific_catch_clauses opt_general_catch_clause
+//  	  {
+//  		$$ = new DictionaryEntry ($1, $2);
+//  	  }
+//  	| opt_specific_catch_clauses general_catch_clause
+//  	  {
+//  		$$ = new DictionaryEntry ($2, $1);
+//  	  }
+//  	;
+
+//  opt_general_catch_clause
+//  	: /* empty */			{ $$ = null; }
+//  	| general_catch_clause 
+//  	;
+
+//  opt_specific_catch_clauses
+//  	: /* emtpy */			{ $$ = null; }
+//  	| specific_catch_clauses 
+//  	;
 
 catch_clauses
-	: specific_catch_clauses opt_general_catch_clause
-	  {
-		DictionaryEntry pair = new DictionaryEntry ();
-
-		pair.Key = $1; 
-		pair.Value = $2;
-
-		$$ = pair;
-	  }
-	| opt_specific_catch_clauses general_catch_clause
-	  {
-		DictionaryEntry pair = new DictionaryEntry ();
-		pair.Key = $1;
-		pair.Value = $1;
-
-		$$ = pair;
-	  }
-	;
-
-opt_general_catch_clause
-	: /* empty */			{ $$ = null; }
-	| general_catch_clause 
-	;
-
-opt_specific_catch_clauses
-	: /* emtpy */			{ $$ = null; }
-	| specific_catch_clauses 
-	;
-
-specific_catch_clauses
-	: specific_catch_clause 
+	: catch_clause 
 	  {
 		ArrayList l = new ArrayList ();
 
 		l.Add ($1);
 		$$ = l;
 	  }
-	| specific_catch_clauses specific_catch_clause
+	| catch_clauses catch_clause
 	  {
 		ArrayList l = (ArrayList) $1;
 
@@ -2670,29 +2673,57 @@ specific_catch_clauses
 	  }
 	;
 
-specific_catch_clause
-	: CATCH OPEN_PARENS type opt_identifier CLOSE_PARENS block
-	  {
-		string id = null;
+//  specific_catch_clause
+//  	: CATCH OPEN_PARENS type opt_identifier CLOSE_PARENS block
+//  	  {
+//  		string id = null;
 
-		if ($4 != null)
-			id = (string) $4;
+//  		if ($4 != null)
+//  			id = (string) $4;
 
-		$$ = new Catch ((string) $3, id, (Block) $6);
-	  }
-	;
+//  		$$ = new Catch ((string) $3, id, (Block) $6);
+//  	  }
+//  	;
 
 opt_identifier
 	: /* empty */	{ $$ = null; }
 	| IDENTIFIER
 	;
 
-general_catch_clause
-	: CATCH block
-	  {
-		$$ = new Catch (null, null, (Block) $2);
-	  }
-	;
+//  general_catch_clause
+//  	: CATCH block
+//  	  {
+//  		$$ = new Catch (null, null, (Block) $2);
+//  	  }
+//  	;
+
+catch_clause 
+	: CATCH opt_catch_args block
+	{
+		string type = null;
+		string id = null;
+		
+		if ($2 != null) {
+			DictionaryEntry cc = (DictionaryEntry) $2;
+			type = (string) cc.Key;
+			id   = (string) cc.Value;
+		}
+
+		$$ = new Catch (type, id, (Block) $3);
+	}
+        ;
+
+opt_catch_args
+	: /* empty */ { $$ = null; }
+        | catch_args
+	;	  
+
+catch_args 
+        : OPEN_PARENS type opt_identifier CLOSE_PARENS 
+        {
+		$$ = new DictionaryEntry ($2, $3);
+	}
+        ;
 
 checked_statement
 	: CHECKED block

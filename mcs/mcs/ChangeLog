@@ -1,3 +1,32 @@
+2001-08-29  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* class.cs (TypeContainer::AddIndexer): Remove FIXME comment. We
+	ostensibly handle this in semantic analysis.
+
+	* cs-parser.jay (general_catch_clause): Comment out
+	(specific_catch_clauses, specific_catch_clause): Ditto.
+	(opt_general_catch_clause, opt_specific_catch_clauses): Ditto
+	(catch_args, opt_catch_args): New productions.
+	(catch_clause): Rewrite to use the new productions above
+	(catch_clauses): Modify accordingly.
+	(opt_catch_clauses): New production to use in try_statement
+	(try_statement): Revamp. Basically, we get rid of one unnecessary rule
+	and re-write the code in the actions to extract the specific and
+	general catch clauses by being a little smart ;-)
+
+	* ../tests/try.cs : Fix. It's not 'finalize' my friend, it's 'finally' !
+	Hooray, try and catch statements parse fine !
+	
+2001-08-28  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* statement.cs (Block::GetVariableType): Fix logic to extract the type
+	string from the hashtable of variables.
+
+	* cs-parser.jay (event_accessor_declarations): Trivial fix. Man, how did
+	I end up making that mistake ;-)
+	(catch_clauses): Fixed gross error which made Key and Value of the 
+	DictionaryEntry the same : $1 !!
+
 2001-08-28  Ravi Pratap  <ravi@che.iitm.ac.in>
 
 	* cs-tokenizer.cs (initTokens): Add keywords 'add' and 'remove'

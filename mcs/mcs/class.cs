@@ -303,10 +303,6 @@ namespace CIR {
 
 			indexers.Add (i);
 
-			// FIXME: We don't really keep a list of signatures already defined
-			// so there is no checking here if there already is something
-			// with the same signature
-
 			return AdditionResult.Success;
 		}
 		
