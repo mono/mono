@@ -1,3 +1,10 @@
+Wed Jul 11 18:52:15 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c: output real name of local var.
+	* dump.c: output more info about fields (flags and type). Properly decode
+	Property signatures. Decode also method table.
+	* main.c: Fix local variable info. Hopefully fix field and property list.
+
 Mon Jul  9 16:39:41 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c: write stuff to output, not stderr. Give more info for properties.
