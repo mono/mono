@@ -104,10 +104,15 @@ namespace Mono.ILASM {
                                 }
 
                                 ILParser parser = new ILParser (codegen);
-                                if (show_parser)
-                                        parser.yyparse (new ScannerAdapter (scanner),  new yydebug.yyDebugSimple ());
-                                else
-                                        parser.yyparse (new ScannerAdapter (scanner),  null);
+				try {
+                                	if (show_parser)
+                                        	parser.yyparse (new ScannerAdapter (scanner),  
+								new yydebug.yyDebugSimple ());
+                                	else
+                                        	parser.yyparse (new ScannerAdapter (scanner),  null);
+				} catch {
+					Console.WriteLine ("Error at: " + scanner.Reader.Location);
+				}
                         }
 
                         public void ShowToken (object sender, NewTokenEventArgs args)

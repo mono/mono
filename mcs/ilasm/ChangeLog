@@ -1,3 +1,8 @@
+2003-07-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Add some basic line number feedback when an error
+	occurs
+	
 2003-07-17 Jackson Harper <jackson@latitudegeo.com>
 
 	* ilasm.exe.sources: Add corlib/GenericTypeRef.cs to build
