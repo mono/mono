@@ -1,3 +1,11 @@
+2004-10-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (Expression.Constantity): Add support for turning null
+	into a constant.
+
+	* const.cs (Const.Define): Allow constants to be reference types
+	as long as the value is Null.
+
 2004-10-04  Juraj Skripsky  <js@hotfeet.ch>
 
 	* namespace.cs (NamespaceEntry.Using): No matter which warning
