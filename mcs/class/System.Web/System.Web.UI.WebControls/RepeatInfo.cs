@@ -230,7 +230,7 @@ namespace System.Web.UI.WebControls
 							writer.RenderEndTag();
 						if(hasSeps && index != (total - 1))
 						{
-							if(colsCount == 1)
+							if(isTable && colsCount == 1)
 							{
 								writer.RenderEndTag();
 								writer.RenderBeginTag(HtmlTextWriterTag.Tr);
