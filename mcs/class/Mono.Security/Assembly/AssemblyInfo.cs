@@ -35,13 +35,14 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription ("Mono.Security.dll")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyTitle ("Mono.Security.dll")]
-//[assembly: CLSCompliant (true)]
+[assembly: CLSCompliant (true)]
 [assembly: ComVisible (false)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 
 // BigInteger use unsafe code
-[assembly:SecurityPermission(SecurityAction.RequestOptional, UnmanagedCode=true)]
+// incomplete - prevent testing on Windows
+//[assembly:SecurityPermission (SecurityAction.RequestOptional, UnmanagedCode=true)]
 
 
 //[assembly: AssemblyDelaySign (true)]

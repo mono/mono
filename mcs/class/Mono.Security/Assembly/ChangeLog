@@ -1,3 +1,7 @@
+2004-04-24  Sebastien Pouliot <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Add ClsCompliant(true). Remove RequestOptional.
+
 2004-04-20  Sebastien Pouliot <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: New. Copied and ajusted from System.Security.
