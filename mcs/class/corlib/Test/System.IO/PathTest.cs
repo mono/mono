@@ -458,6 +458,13 @@ namespace MonoTests.System.IO
 			Assert ("IsPathRooted #03", !Path.IsPathRooted (null));
 		}
 
+		public void TestCanonicalizeDots ()
+		{
+			string current = Path.GetFullPath (".");
+			Assert ("TestCanonicalizeDotst #01", !current.EndsWith ("."));
+			string parent = Path.GetFullPath ("..");
+			Assert ("TestCanonicalizeDotst #02", !current.EndsWith (".."));
+		}
 #if !NUNIT
 		void Assert (string msg, bool result)
 		{

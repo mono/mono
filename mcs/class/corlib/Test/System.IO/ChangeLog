@@ -1,3 +1,7 @@
+2003-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PathTest.cs: added test for GetFullPath (".") and ".."
+
 2003-05-13  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileStreamTest.cs:
