@@ -1,6 +1,6 @@
 // cs0108.cs: The new keyword is required on 'O.InnerAttribute()' because it hides inherited member
 // Line: 12
-// Compiler options: -t:library
+// Compiler options: -warnaserror -warn:2
 
 using System;
 

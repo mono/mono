@@ -1,6 +1,6 @@
 // cs0108-12.cs: The keyword new is required on 'Libs.MyLib' because it hides inherited member
 // Line: 18
-// Compiler options: -warnaserror -warn:1
+// Compiler options: -warnaserror -warn:2
 
 using System;
 using System.Runtime.InteropServices;

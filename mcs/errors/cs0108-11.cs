@@ -1,6 +1,6 @@
 // cs0108.cs: The new keyword is required on 'Bar.this[int, int]' because it hides inherited member
 // Line: 15
-// Compiler options: -warnaserror -warn:1
+// Compiler options: -warnaserror -warn:2
 
 public class Foo
 {
