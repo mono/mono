@@ -781,5 +781,20 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			dvr.Read ();	// &ent;
 		}
+
+		[Test]
+		public void ResolveEntityReadAttributeValue ()
+		{
+			string dtd = "<!DOCTYPE root [<!ELEMENT root (#PCDATA)*><!ATTLIST root attr CDATA #REQUIRED><!ENTITY ent 'entity string'>]>";
+			string xml = dtd + "<root attr='&ent; text'>&ent;</root>";
+			dvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			dvr.Read (); // doctype
+			dvr.Read (); // root
+			dvr.MoveToAttribute (0); // attr
+			Assert (dvr.ReadAttributeValue ()); // Should read expanded text
+			AssertEquals (XmlNodeType.Text, dvr.NodeType); // not EntityReference
+			AssertEquals ("entity string text", dvr.Value);
+			Assert (!dvr.ReadAttributeValue ());
+		}
 	}
 }
