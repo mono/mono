@@ -1,3 +1,8 @@
+2004-09-15  Raja R Harinath  <rharinath@novell.com>
+
+	* test-280.cs: Backport fix from HEAD.
+	* test-292.cs: New test for #64330.
+
 2004-09-10  Raja R Harinath  <rharinath@novell.com>
 
 	* test-290.cs: New test.
