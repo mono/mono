@@ -366,7 +366,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Type gt = resolved.Type.GetGenericTypeDefinition ();
-			gen_params = gt.GetGenericParameters ();
+			gen_params = gt.GetGenericArguments ();
 			atypes = args.Arguments;
 
 			if (atypes.Length != gen_params.Length) {

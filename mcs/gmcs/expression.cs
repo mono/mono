@@ -7987,7 +7987,7 @@ namespace Mono.CSharp {
 			if (ltype == null)
 				return null;
 
-			if (ltype.IsUnboundGenericParameter) {
+			if (ltype.IsGenericParameter) {
 				int rank = dim.Length-2;
 				if ((rank < 0) || (dim [0] != '[') || (dim [rank+1] != ']'))
 					return null;

@@ -377,7 +377,7 @@ namespace Mono.CSharp {
 			if (check_type == TypeBuilder)
 				return true;
 
-			if (check_type.IsUnboundGenericParameter)
+			if (check_type.IsGenericParameter)
 				return true; // FIXME
 			
 			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
@@ -560,7 +560,7 @@ namespace Mono.CSharp {
 		//
 		public bool AsAccessible (Type parent, int flags)
 		{
-			if (parent.IsUnboundGenericParameter)
+			if (parent.IsGenericParameter)
 				return true; // FIXME
 
 			while (parent.IsArray || parent.IsPointer || parent.IsByRef)
