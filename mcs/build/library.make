@@ -183,7 +183,7 @@ run-test-ondotnet-lib: test-local
 	$$ok
 endif
 
-DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
+DISTFILES = $(sourcefile) $(test_sourcefile) $(btest_sourcefile) $(EXTRA_DISTFILES)
 
 TEST_FILES =
 
