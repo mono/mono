@@ -1,8 +1,9 @@
 //
 // System.IO.StreamWriter.cs
 //
-// Author:
+// Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Paolo Molaro (lupus@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -24,11 +25,12 @@ namespace System.IO {
 		
 		private const int DefaultBufferSize = 1024;
 		private const int DefaultFileBufferSize = 4096;
-		private const int MinimumBufferSize = 2;
+		private const int MinimumBufferSize = 256;
 
-		private int pos;
-		private int BufferSize;
-		private byte[] TheBuffer;
+		private byte[] byte_buf;
+		private int byte_pos;
+		private char[] decode_buf;
+		private int decode_pos;
 
 		private bool DisposedAlready = false;
 		private bool preamble_done = false;
@@ -43,9 +45,10 @@ namespace System.IO {
 
 		internal void Initialize(Encoding encoding, int bufferSize) {
 			internalEncoding = encoding;
-			pos = 0;
-			BufferSize = Math.Max(bufferSize, MinimumBufferSize);
-			TheBuffer = new byte[BufferSize];
+			decode_pos = byte_pos = 0;
+			int BufferSize = Math.Max(bufferSize, MinimumBufferSize);
+			decode_buf = new char [BufferSize];
+			byte_buf = new byte [encoding.GetMaxByteCount (BufferSize)];
 		}
 
 		//[MonoTODO("Nothing is done with bufferSize")]
@@ -136,18 +139,46 @@ namespace System.IO {
 			}
 
 			internalStream = null;
-			TheBuffer = null;
+			byte_buf = null;
 			internalEncoding = null;
+			decode_buf = null;
 		}
 
 		public override void Flush () {
 			if (DisposedAlready)
 				throw new ObjectDisposedException("StreamWriter");
 
-			if (pos > 0) {
-				internalStream.Write (TheBuffer, 0, pos);
+			Decode ();
+			if (byte_pos > 0) {
+				FlushBytes ();
 				internalStream.Flush ();
-				pos = 0;
+			}
+		}
+
+		// how the speedup works:
+		// the Write () methods simply copy the characters in a buffer of chars (decode_buf)
+		// Decode () is called when the buffer is full or we need to flash.
+		// Decode () will use the encoding to get the bytes and but them inside
+		// byte_buf. From byte_buf the data is finally outputted to the stream.
+		void FlushBytes () {
+			// write the encoding preamble only at the start of the stream
+			if (!preamble_done && byte_pos > 0) {
+				byte[] preamble = internalEncoding.GetPreamble ();
+				if (preamble.Length > 0)
+					internalStream.Write (preamble, 0, preamble.Length);
+				preamble_done = true;
+			}
+			internalStream.Write (byte_buf, 0, byte_pos);
+			byte_pos = 0;
+		}
+		
+		void Decode () {
+			if (byte_pos > 0)
+				FlushBytes ();
+			if (decode_pos > 0) {
+				int len = internalEncoding.GetBytes (decode_buf, 0, decode_pos, byte_buf, byte_pos);
+				byte_pos += len;
+				decode_pos = 0;
 			}
 		}
 		
@@ -155,56 +186,72 @@ namespace System.IO {
 			if (DisposedAlready)
 				throw new ObjectDisposedException("StreamWriter");
 
-			byte[] res = new byte [internalEncoding.GetByteCount (buffer)];
-			int len;
-			int BytesToBuffer;
-			int resPos = 0;
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (index < 0 || index > buffer.Length)
+				throw new ArgumentOutOfRangeException ("index");
+			if (count < 0 || (index + count) > buffer.Length)
+				throw new ArgumentOutOfRangeException ("count");
 
-			len = internalEncoding.GetBytes (buffer, index, count, res, 0);
-			// write the encoding preamble only at the start of the stream
-			if (!preamble_done && len > 0) {
-				byte[] preamble = internalEncoding.GetPreamble ();
-				if (preamble.Length > 0)
-					internalStream.Write (preamble, 0, preamble.Length);
-				preamble_done = true;
-			}
-
-			// if they want AutoFlush, don't bother buffering
-			if (iflush) {
+			LowLevelWrite (buffer, index, count);
+			if (iflush)
 				Flush();
-				internalStream.Write (res, 0, len);
-				internalStream.Flush ();
-			} else {
-				// otherwise use the buffer.
-				// NOTE: this logic is not optimized for performance.
-				while (resPos < len) {
-					// fill the buffer if we've got more bytes than will fit
-					BytesToBuffer = Math.Min(BufferSize - pos, len - resPos);
-					Array.Copy(res, resPos, TheBuffer, pos, BytesToBuffer);
-					resPos += BytesToBuffer;
-					pos += BytesToBuffer;
-					// if the buffer is full, flush it out.
-					if (pos == BufferSize) Flush();
+		}
+		
+		void LowLevelWrite (char[] buffer, int index, int count) {
+			while (count > 0) {
+				int todo = decode_buf.Length - decode_pos;
+				if (todo == 0) {
+					Decode ();
+					todo = decode_buf.Length;
 				}
+				if (todo > count)
+					todo = count;
+				Buffer.BlockCopy (buffer, index * 2, decode_buf, decode_pos * 2, todo * 2);
+				count -= todo;
+				index += todo;
+				decode_pos += todo;
 			}
 		}
 
 		public override void Write (char value)
 		{
-			Write (new char [] {value}, 0, 1);
+			// the size of decode_buf is always > 0 and
+			// we check for overflow right away
+			if (decode_pos >= decode_buf.Length)
+				Decode ();
+			decode_buf [decode_pos++] = value;
+			if (iflush)
+				Flush ();
 		}
 
 		public override void Write (char [] value)
 		{
-			Write (value, 0, value.Length);
+			LowLevelWrite (value, 0, value.Length);
+			if (iflush)
+				Flush ();
 		}
 
-		public override void Write(string value) {
+		public override void Write (string value) {
 			if (DisposedAlready)
 				throw new ObjectDisposedException("StreamWriter");
 
 			if (value != null)
-				Write (value.ToCharArray (), 0, value.Length);
+				LowLevelWrite (value.ToCharArray (), 0, value.Length);
+			if (iflush)
+				Flush ();
+		}
+
+		public override void WriteLine (string value) {
+			if (DisposedAlready)
+				throw new ObjectDisposedException("StreamWriter");
+
+			if (value != null)
+				LowLevelWrite (value.ToCharArray (), 0, value.Length);
+			string nl = NewLine;
+				LowLevelWrite (nl.ToCharArray (), 0, nl.Length);
+			if (iflush)
+				Flush ();
 		}
 
 		public override void Close()

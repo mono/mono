@@ -4,6 +4,7 @@
 // Authors:
 //   Marcin Szczepanski (marcins@zipworld.com.au)
 //   Miguel de Icaza (miguel@gnome.org)
+//   Paolo Molaro (lupus@ximian.com)
 //
 
 using System.Text;
@@ -14,14 +15,14 @@ namespace System.IO {
 	public abstract class TextWriter : MarshalByRefObject, IDisposable {
                 
                 protected TextWriter() {
-			CoreNewLine = "\n".ToCharArray ();
+			CoreNewLine = System.Environment.NewLine;
 		}
                 
                 protected TextWriter( IFormatProvider formatProvider ) {
                         internalFormatProvider = formatProvider;
                 }
 
-                protected char[] CoreNewLine;
+                protected string CoreNewLine;
 
                 internal IFormatProvider internalFormatProvider;
 
@@ -37,11 +38,11 @@ namespace System.IO {
 
                 public virtual string NewLine { 
                         get {
-                                return new String(CoreNewLine);
+                                return CoreNewLine;
                         }
                         
                         set {
-                                CoreNewLine = value.ToCharArray();
+                                CoreNewLine = value;
                         }
                 }
 
@@ -84,8 +85,10 @@ namespace System.IO {
 
                 public virtual void Write (char[] value)
 		{
-			if (value != null)
-				Write (new String (value));
+			if (value != null) {
+				for (int i = 0; i < value.Length; ++i)
+					Write (value [i]);
+			}
 		}
 		
                 public virtual void Write (decimal value)
@@ -121,7 +124,8 @@ namespace System.IO {
 		
                 public virtual void Write (string value)
 		{
-			// do nothing
+			if (value != null)
+				Write (value.ToCharArray ());
 		}
 		
 		[CLSCompliant(false)]
@@ -148,7 +152,15 @@ namespace System.IO {
 		
                 public virtual void Write (char[] buffer, int index, int count)
 		{
-			Write (new String (buffer, index, count));
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (index < 0 || index > buffer.Length)
+				throw new ArgumentOutOfRangeException ("index");
+			if (count < 0 || (index + count) > buffer.Length)
+				throw new ArgumentOutOfRangeException ("count");
+			for (; count > 0; --count, ++index) {
+				Write (buffer [index]);
+			}
 		}
 		
                 public virtual void Write (string format, object arg0, object arg1)
@@ -281,6 +293,12 @@ namespace System.IO {
 			}
 			
 			public override void Write (string s)
+			{
+			}
+			public override void Write (char value)
+			{
+			}
+			public override void Write (char[] value, int index, int count)
 			{
 			}
 		}
