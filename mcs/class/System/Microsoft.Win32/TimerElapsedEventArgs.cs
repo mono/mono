@@ -1,33 +1,31 @@
 //
 // TimerElapsedEventArgs.cs
 //
-// Author:
-//  Johannes Roith (johannes@jroith.de)
+// Authors:
+//   Johannes Roith (johannes@jroith.de)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Johannes Roith
 //
-namespace Microsoft.Win32 {
 
-	/// <summary>
-	/// </summary>
-public class TimerElapsedEventArgs : System.EventArgs{
+using System.Runtime.InteropServices;
 
-	System.IntPtr mytimerId;
-
-	
-	public TimerElapsedEventArgs(System.IntPtr timerId)
+namespace Microsoft.Win32 
+{
+	[ComVisible(false)]
+	public class TimerElapsedEventArgs : System.EventArgs
 	{
-		this.mytimerId = timerId;
-	}
-	
-	public System.IntPtr TimerId {
+		System.IntPtr mytimerId;
 
-		get{
-			return mytimerId;
+		public TimerElapsedEventArgs (System.IntPtr timerId)
+		{
+			this.mytimerId = timerId;
 		}
-		
-	}
-	
-}
 
+		public System.IntPtr TimerId {
+			get {
+				return mytimerId;
+			}
+		}
+	}
 }
