@@ -265,12 +265,24 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return true;
+			return Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			Label false_label = ig.DefineLabel ();
+			Label merge_label = ig.DefineLabel ();
+			CodeGenerator.fall_true (ec, cond_exp, false_label);
+			if (true_exp != null)
+				true_exp.Emit (ec);
+			ig.Emit (OpCodes.Br, merge_label);
+			ig.MarkLabel (false_label);
+			if (false_exp != null)
+				false_exp.Emit (ec);
+			ig.MarkLabel (merge_label);
+			if (no_effect)
+				ig.Emit (OpCodes.Pop);
 		}
 	}
 
