@@ -1,3 +1,8 @@
+2005-02-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpRequest.cs: Make sure that any access after a ValidateInput 
+	throws an exception if the data isn't safe.
+
 2005-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CapabilitiesLoader.cs: fix the path, as machine.config is now in a

@@ -92,6 +92,10 @@ namespace System.Web {
 		bool validateCookies;
 		bool validateForm;
 		bool validateQueryString;
+
+		bool checkedCookies;
+		bool checkedForm;
+		bool checkedQueryString;
 #endif
 
 		public HttpRequest(string Filename, string Url, string Querystring) {
@@ -499,12 +503,13 @@ namespace System.Web {
 					cookies = new HttpCookieCollection (null, false);
 					if (_WorkerRequest != null)
 						GetCookies ();
-#if NET_1_1
-					if (validateCookies)
-						ValidateCookieCollection (cookies);
-#endif
 				}
-
+#if NET_1_1
+				if (validateCookies && !checkedCookies) {
+					ValidateCookieCollection (cookies);
+					checkedCookies = true;
+				}
+#endif
 				return cookies;
 			}
 		}
@@ -593,11 +598,13 @@ namespace System.Web {
 			get {
 				if (_oFormData == null) {
 					ParseFormData ();
-#if NET_1_1
-					if (validateForm)
-						ValidateNameValueCollection ("Form", _oFormData);
-#endif
 				}
+#if NET_1_1
+				if (validateForm && !checkedForm) {
+					ValidateNameValueCollection ("Form", _oFormData);
+					checkedForm = true;
+				}
+#endif
 
 				return _oFormData;
 			}
@@ -793,12 +800,13 @@ namespace System.Web {
 						_oQueryString = new HttpValueCollection(QueryStringRaw, true,
 											Encoding.ASCII);
 					}
-#if NET_1_1
-					if (validateQueryString)
-						ValidateNameValueCollection ("QueryString", _oQueryString);
-#endif
 				}
-
+#if NET_1_1
+				if (validateQueryString && !checkedQueryString) {
+					ValidateNameValueCollection ("QueryString", _oQueryString);
+					checkedQueryString = true;
+				}
+#endif
 				return _oQueryString;
 			}
 		}
