@@ -586,29 +586,6 @@ namespace System.Reflection.Emit {
 		
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }
 
-		private static int decode_len (byte[] data, int pos, out int rpos) {
-			int len = 0;
-			if ((data [pos] & 0x80) == 0) {
-				len = (int)(data [pos++] & 0x7f);
-			} else if ((data [pos] & 0x40) == 0) {
-				len = ((data [pos] & 0x3f) << 8) + data [pos + 1];
-				pos += 2;
-			} else {
-				len = ((data [pos] & 0x1f) << 24) + (data [pos + 1] << 16) + (data [pos + 2] << 8) + data [pos + 3];
-				pos += 4;
-			}
-			rpos = pos;
-			return len;
-		}
-
-		private static string string_from_bytes (byte[] data, int pos, int len) {
-			char[] chars = new char [len];
-			// FIXME: use a utf8 decoder here
-			for (int i = 0; i < len; ++i)
-				chars [i] = (char)data [pos + i];
-			return new String (chars);
-		}
-
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.InteropServices.StructLayoutAttribute") {
@@ -638,9 +615,10 @@ namespace System.Reflection.Emit {
 				int nnamed = (int)data [pos++];
 				nnamed |= ((int)data [pos++]) << 8;
 				for (int i = 0; i < nnamed; ++i) {
+					byte named_type = data [pos++];
 					byte type = data [pos++];
-					int len = decode_len (data, pos, out pos);
-					string named_name = string_from_bytes (data, pos, len);
+					int len = CustomAttributeBuilder.decode_len (data, pos, out pos);
+					string named_name = CustomAttributeBuilder.string_from_bytes (data, pos, len);
 					pos += len;
 					/* all the fields are integers in StructLayout */
 					int value = (int)data [pos++];
