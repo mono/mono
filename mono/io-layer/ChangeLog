@@ -1,3 +1,14 @@
+2002-10-02  Dick Porter  <dick@ximian.com>
+
+	* shared.c: Use mmap() instead of sysv shm for the shared data.
+
+	* wapi-private.h (_WAPI_HANDLE_VERSION): Reset back to 0, for the
+	new system
+
+	* daemon-private.h: 
+	* daemon.c: mmap()ed regions survive fork, so just pass the
+	pointer to _wapi_daemon_main instead of mapping it again.
+
 2002-10-01  Dick Porter  <dick@ximian.com>
 
 	* timed-thread.c: Kludge for CREATE_SUSPENDED thread creation.
