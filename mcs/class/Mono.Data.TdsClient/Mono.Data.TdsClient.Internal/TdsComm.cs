@@ -51,7 +51,8 @@ namespace Mono.Data.TdsClient.Internal {
 		#endregion // Fields
 		
 		#region Constructors
-		
+
+		[MonoTODO ("Fix when asynchronous socket connect works on Linux.")]		
 		public TdsComm (string dataSource, int port, int packetSize, int timeout, TdsVersion tdsVersion)
 		{
 			this.packetSize = packetSize;
@@ -70,6 +71,13 @@ namespace Mono.Data.TdsClient.Internal {
 			IPEndPoint endPoint;
 			endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
 
+			// This replaces the code below for now
+			socket.Connect (endPoint);
+
+			/*
+			FIXME: Asynchronous socket connection doesn't work right on linux, so comment 
+			       this out for now.  This *does* do the right thing on windows
+
 			connected.Reset ();
 			IAsyncResult asyncResult = socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
 
@@ -77,6 +85,7 @@ namespace Mono.Data.TdsClient.Internal {
 				throw Tds.CreateTimeoutException (dataSource, "Open()");
 			else if (timeout > 0 && !connected.WaitOne ())
 				throw Tds.CreateTimeoutException (dataSource, "Open()");
+			*/
 
 			stream = new NetworkStream (socket);
 		}
