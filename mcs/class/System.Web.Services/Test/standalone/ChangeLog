@@ -1,3 +1,8 @@
+2003-12-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* services.xml: Enabled test for a couple of services.
+	* wstest.cs: Improved "stat" option.
+	
 2003-12-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Makefile.cs: Generate list of client test files in target "gen".

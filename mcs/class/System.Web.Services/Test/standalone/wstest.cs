@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Web.Services.Discovery;
 using System.Web.Services.Description;
+using System.Net;
 
 public class Driver
 {
@@ -109,6 +110,8 @@ public class Driver
 	
 	static void Clean (Hashtable clientHash, string path)
 	{
+		if (Path.GetFileName (path) == "CVS") return;
+		
 		string[] files = Directory.GetFiles (path);
 
 		foreach (string file in files)
@@ -201,6 +204,27 @@ public class Driver
 		
 		sd.Wsdl = dref.Url;
 		
+		string loc = GetLocation (doc);
+		if (loc != null)
+		{
+			WebResponse res = null;
+			try
+			{
+				res = WebRequest.Create (loc).GetResponse ();
+			}
+			catch (Exception ex)
+			{
+				WebException wex = ex as WebException;
+				if (wex != null) res = wex.Response;
+			}
+			if (res != null)
+			{
+				sd.ServerType = res.Headers ["Server"] + " # " + res.Headers ["X-Powered-By"];
+			}
+		}
+		
+		Console.WriteLine (loc + " - " + sd.ServerType);
+		
 		ArrayList bins = GetBindingTypes (doc);
 		sd.Protocols = (string[]) bins.ToArray(typeof(string));
 		return sd;
@@ -229,6 +253,20 @@ public class Driver
 			}
 		}
 		return list;
+	}
+	
+	static string GetLocation (ServiceDescription doc)
+	{
+		foreach (Service s in doc.Services)
+		{
+			foreach (Port p in s.Ports)
+			{
+				SoapAddressBinding loc = (SoapAddressBinding) p.Extensions.Find (typeof (System.Web.Services.Description.SoapAddressBinding));
+				if (loc != null)
+					return loc.Location;
+			}
+		}
+		return null;
 	}
 	
 	static string GetServiceName (DiscoveryReference dref)
@@ -296,12 +334,23 @@ public class Driver
 		int get = 0;
 		int tests = 0;
 		
+		Hashtable servers = new Hashtable ();
+		
 		foreach (ServiceData sd in services.services)
 		{
 			if (Array.IndexOf(sd.Protocols, "Soap") != -1) soap++;
 			if (Array.IndexOf(sd.Protocols, "HttpPost") != -1) post++;
 			if (Array.IndexOf(sd.Protocols, "HttpGet") != -1) get++;
 			if (sd.ClientTest) tests++;
+			
+			string st = sd.ServerType;
+			if (st == null) st = "Unknown";
+			object on = servers [st];
+			
+			if (on == null)
+				servers [st] = 1;
+			else
+				servers [st] = ((int)on)+1;
 		}
 		
 		Console.WriteLine ("Total services: " + services.services.Count);
@@ -310,6 +359,22 @@ public class Driver
 		Console.WriteLine ("HttpGet Protocol:  " + get);
 		Console.WriteLine ("Total proxies: " + (soap + post + get));
 		Console.WriteLine ("Nunit Tests: " + tests);
+		Console.WriteLine ();
+		Console.WriteLine ("Server Types:");
+		
+		string[] serverNames = new string[servers.Count];
+		int[] serverCounts = new int[servers.Count];
+		int n=0;
+		
+		foreach (DictionaryEntry ent in servers)
+		{
+			serverNames [n] = (string) ent.Key;
+			serverCounts [n++] = (int) ent.Value;
+		}
+		
+		Array.Sort (serverCounts, serverNames);
+		for (n=serverNames.Length-1; n >=0; n--)
+			Console.WriteLine ("{0,-3} {1}", serverCounts[n], serverNames[n]);
 	}
 
 	static void BuildProxies (bool buildAll)
@@ -332,7 +397,6 @@ public class Driver
 	static void BuildProxy (ServiceData fd, bool rebuild, ArrayList proxies)
 	{
 		string wsdl = fd.Wsdl;
-		if (wsdl == null) wsdl = fd.Location + "?wsdl";
 		
 		if (fd.Protocols == null)
 		{
@@ -507,8 +571,8 @@ public class ServiceData
 	[XmlElement("name")]
 	public string Name;
 	
-	[XmlElement("location")]
-	public string Location;
+	[XmlElement("serverType")]
+	public string ServerType;
 	
 	[XmlArray("protocols")]
 	[XmlArrayItem("protocol")]

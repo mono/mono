@@ -1451,7 +1451,7 @@
     <protocols>
       <protocol>Soap</protocol>
     </protocols>
-    <clientTest>false</clientTest>
+    <clientTest>true</clientTest>
   </service>
   <service>
     <wsdl>http://www.indobiz.com/OptionPricing.asmx?WSDL</wsdl>
@@ -2466,7 +2466,7 @@
     <protocols>
       <protocol>Soap</protocol>
     </protocols>
-    <clientTest>false</clientTest>
+    <clientTest>true</clientTest>
   </service>
   <service>
     <wsdl>http://www.oakleaf.ws/cfrsearchws/cfrsearchws.asmx?wsdl</wsdl>
