@@ -123,9 +123,13 @@ namespace MonoTests.Mono.Security.Cryptography {
 			AssertEquals ("KeyPair", strongNameString, rsa.ToXmlString (true));
 			AssertEquals ("PublicKey-1", strongNamePublicKeyString, rsa.ToXmlString (false));
 
-			// public key
+			// public key (direct)
 			rsa = CryptoConvert.FromCapiKeyBlob (strongNamePublicKey, 12);
 			AssertEquals ("PublicKey-2", strongNamePublicKeyString, rsa.ToXmlString (false));
+
+			// public key (indirect - inside header)
+			rsa = CryptoConvert.FromCapiKeyBlob (strongNamePublicKey, 0);
+			AssertEquals ("PublicKey-3", strongNamePublicKeyString, rsa.ToXmlString (false));
 		}
 
 		[Test]

@@ -294,13 +294,19 @@ namespace Mono.Security.Cryptography {
 				throw new ArgumentException ("blob is too small.");
 
 			switch (blob [offset]) {
+				case 0x00:
+					// this could be a public key inside an header
+					// like "sn -e" would produce
+					if (blob [offset + 12] == 0x06) {
+						return FromCapiPublicKeyBlob (blob, offset + 12);
+					}
+					break;
 				case 0x06:
 					return FromCapiPublicKeyBlob (blob, offset);
 				case 0x07:
 					return FromCapiPrivateKeyBlob (blob, offset);
-				default:
-					throw new CryptographicException ("Unknown blob format.");
 			}
+			throw new CryptographicException ("Unknown blob format.");
 		}
 
 		static public byte[] ToCapiKeyBlob (AsymmetricAlgorithm keypair, bool includePrivateKey) 
