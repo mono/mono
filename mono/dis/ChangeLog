@@ -1,3 +1,8 @@
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
+	* get.c: Fix name escaping so we dont escape everything in the
+	world anymore.
+	
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
 	* get.c (get_methodref_signature): Include "vararg " in the
