@@ -1,3 +1,8 @@
+2005-01-31  Nick Drochak <ndrochak@ieee.org>
+
+	* SoapServicesTest.cs: Pull out asserts that do not work on mono.
+	* SynchronizationAttributeTest.cs: Run test on mono, but not .NET.
+
 2004-04-06  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SynchronizationAttributeTest.cs: Added test for Monitor.Exit.
