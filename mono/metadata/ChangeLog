@@ -1,4 +1,8 @@
+2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.c (mono_domain_fire_assembly_load): Handle the case when
+	this is called during startup.
+	
 Fri Feb 4 20:27:58 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.c, monitor.c, monitor.h, threads-types.h: made the
