@@ -36,8 +36,6 @@ namespace Mono.CSharp {
 		bool Inherited;
 
 		bool UsageAttr = false;
-		public bool StructLayout = false;
-		public TypeAttributes StructLayoutAttributes = 0;
 		
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
@@ -96,39 +94,11 @@ namespace Mono.CSharp {
 
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			return Resolve (ec, false);
-		}
-		
-		public CustomAttributeBuilder Resolve (EmitContext ec, bool partial)
-		{
-			//
-			// We might call resolve twice, because Structs will call
-			// things in advance, so they can find out any attribute information
-			// that needs to be encoded in the TypeAttribute (TypeAttribute.AnsiClass,
-			// TypeAttribute.UnicodeClass, or TypeAttribute.AutoClass
-			//
-			if (cb != null)
-				return cb;
-
-			//
-			// Also, we might back out if we are not a StructLayout, because
-			// only then we care about getting the extra type flags
-			//
-			if (Type == null){
-				Type = CheckAttributeType (ec);
+			Type = CheckAttributeType (ec);
 			
-				if (Type == null)
-					return null;
-			}
-
-			if (Type == TypeManager.structlayout_type){
-				StructLayout = true;
-				StructLayoutAttributes = TypeAttributes.AnsiClass;
-			}
-
-			if (partial && !StructLayout)
+			if (Type == null)
 				return null;
-			
+
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 
@@ -262,26 +232,6 @@ namespace Mono.CSharp {
 					if (e is Constant){
 						object value = ((Constant) e).GetValue ();
 						
-						if (StructLayout && fi.Name == "CharSet"){
-							CharSet cs = (CharSet) value;
-
-							switch (cs){
-							case CharSet.Ansi:
-							case CharSet.None:
-								StructLayoutAttributes =
-								TypeAttributes.AnsiClass;
-								break;
-							case CharSet.Auto:
-								StructLayoutAttributes =
-								TypeAttributes.AutoClass;
-								break;
-							case CharSet.Unicode:
-								StructLayoutAttributes =
-								TypeAttributes.UnicodeClass;
-								break;
-							}
-							continue;
-						}
 						field_values.Add (value);
 					} else { 
 						error182 ();
@@ -292,8 +242,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			StructLayout = false;
-			
 			Expression mg = Expression.MemberLookup (
 				ec, Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance, Location);
@@ -508,40 +456,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		//
-		// Returns TypeAttributes that might be encoded on the attributes.  Ugly, ugly
-		//
-		public static TypeAttributes GetExtraTypeInfo (EmitContext ec, Attributes opt_attrs)
-		{
-#if DO_NO_PERFORM_UGLY_HACK
-			return 0;
-#else
-			if (opt_attrs.AttributeSections == null)
-				return 0;
-
-			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-
-				if (asec.Attributes == null)
-					continue;
-
-				if (asec.Target == "assembly")
-					continue;
-				
-				foreach (Attribute a in asec.Attributes) {
-					CustomAttributeBuilder cb = a.Resolve (ec, true);
-
-					if (cb == null)
-						continue;
-
-					if (a.StructLayout)
-						return a.StructLayoutAttributes;
-				}
-			}
-
-			return 0;
-#endif
-		}
-		
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs, Location loc)
 		{
@@ -625,8 +539,18 @@ namespace Mono.CSharp {
 								return;
 							}
 						}
-						
-						((TypeBuilder) builder).SetCustomAttribute (cb);
+
+						try {
+							((TypeBuilder) builder).SetCustomAttribute (cb);
+						} catch (System.ArgumentException) {
+							Report.Warning (
+								-21, loc,
+						"The CharSet named property on StructLayout\n"+
+						"\tdoes not work correctly on Microsoft.NET\n"+
+						"\tYou might want to remove the CharSet declaration\n"+
+						"\tor compile using the Mono runtime instead of the\n"+
+						"\tMicrosoft .NET runtime");
+						}
 						
 					} else if (kind is AssemblyBuilder){
 						((AssemblyBuilder) builder).SetCustomAttribute (cb);

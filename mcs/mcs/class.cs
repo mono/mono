@@ -894,12 +894,6 @@ namespace Mono.CSharp {
 
 			TypeAttributes type_attributes = TypeAttr;
 
-			//
-			// The Ansi/Auto/Unicode bits are encoded in attributes.  Argh
-			//
-			if (OptAttributes != null)
-				type_attributes |= Attribute.GetExtraTypeInfo (ec, OptAttributes);
-			
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				ModuleBuilder builder = CodeGen.ModuleBuilder;

@@ -794,11 +794,14 @@ namespace Mono.CSharp {
 					}
 				} else
 					method.Emit (ec);
-				
+
 				temp_storage.Store (ec);
+				ig.Emit (OpCodes.Nop);
 				ia.EmitAssign (ec, temp_storage);
-				if (is_expr)
+				ig.Emit (OpCodes.Nop);
+				if (is_expr){
 					temp_storage.Emit (ec);
+				}
 				break;
 				
 			case Mode.PostIncrement:

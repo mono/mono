@@ -1,3 +1,8 @@
+2002-05-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs: Remove the hack to handle the CharSet property on
+	StructLayouts. 
+
 2002-05-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs (DoResolve): More uglyness, we now only try to
