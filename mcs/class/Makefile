@@ -1,12 +1,11 @@
 thisdir = class
 include ../build/rules.make
 
+MONO_POSIX = Mono.Posix
 ifeq ($(PLATFORM),linux)
 MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
-MONO_POSIX = Mono.Posix
 else
 MONO_CSHARP_DEBUGGER =
-MONO_POSIX =
 endif
 SUBDIRS = \
 	corlib				\
