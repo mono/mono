@@ -1,3 +1,7 @@
+2002-09-12  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): code cleanup, fix bug #29365
+
 2002-09-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (LDELEMA): use x86_lea 
