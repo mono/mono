@@ -1,5 +1,32 @@
 2004-08-02  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.ifaces): Make this a `Type[]', not a
+	`TypeExpr[]' array.
+	(TypeContainer.GetClassBases): Return the unexpanded list of
+	interfaces; we expand them later.
+	(TypeContainer.DefineType): After creating the TypeBuilder, call
+	TypeManager.ExpandInterfaces() to get an expanded and resolved
+	list of interfaces.
+
+	* ecore.cs (TypeExpr.GetInterfaces): Removed
+
+	* generics.cs (Constraints.InterfaceConstraints): Remove.
+	(TypeParameter.DefineType): Call TypeManager.RegisterBuilder() to
+	register the interface constraints.
+
+	* typemanager.cs
+	(TypeManager.AddUserType): Removed the `ifaces' argument.
+	(TypeManager.AddTypeParameter): Likewise.
+	(TypeManager.AddUserInterface): Removed, was unused.
+	(TypeManager.RegisterBuilder): Take a `Type[]' instead of a
+	`TypeExpr[]' array for the interfaces.
+	(TypeManager.ExpandInterfaces): Call this after the TypeBuilder
+	has been defined, returns a list of the resolved interfaces types.
+	(TypeManager.GetInterfaces): Return a `Type[]', not a `TypeExpr[]'.
+	(TypeManager.GetExplicitInterfaces): Likewise.	
+
+2004-08-02  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.EmitCall): If we're invoking a method
 	on a type parameter, use the new `Constrained' prefix opcode.
 	(New.DoEmit): Also use the `Newobj' opcode for generic instances.

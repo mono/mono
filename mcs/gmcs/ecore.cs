@@ -2371,11 +2371,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual TypeExpr[] GetInterfaces ()
-		{
-			return TypeManager.GetInterfaces (Type);
-		}
-
 		public abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
 
 		public virtual Type ResolveType (EmitContext ec)

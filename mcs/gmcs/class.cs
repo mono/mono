@@ -136,8 +136,7 @@ namespace Mono.CSharp {
 		bool members_defined_ok;
 
 		// The interfaces we implement.
-		TypeExpr [] ifaces;
-		Type[] base_inteface_types;
+		Type[] ifaces;
 
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
@@ -948,7 +947,7 @@ namespace Mono.CSharp {
 						      Name);
 			}
 
-			return TypeManager.ExpandInterfaces (ifaces);
+			return ifaces;
 		}
 
 		bool CheckGenericInterfaces (Type[] ifaces)
@@ -1005,7 +1004,7 @@ namespace Mono.CSharp {
 
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 
-			ifaces = GetClassBases (out parent_type, out error); 
+			TypeExpr[] iface_exprs = GetClassBases (out parent_type, out error); 
 			if (error)
 				return null;
 
@@ -1068,7 +1067,7 @@ namespace Mono.CSharp {
 					MemberName.Basename, type_attributes, ptype, null);
 			}
 
-			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
+			TypeManager.AddUserType (Name, TypeBuilder, this);
 
 			if (IsGeneric) {
 				CurrentType = new ConstructedType (
@@ -1118,21 +1117,22 @@ namespace Mono.CSharp {
 			}
 
 			// add interfaces that were not added at type creation
-			if (ifaces != null) {
- 				Type[] itypes = new Type[ifaces.Length];
- 				for (int i = 0; i < ifaces.Length; ++i) {
- 					Type itype = ifaces [i].ResolveType (ec);
- 					TypeBuilder.AddInterfaceImplementation (itype);
- 					itypes [i] = itype;
-  				}
-
-				if (error)
-					return null;
-
-				if (!CheckGenericInterfaces (itypes)) {
+			if (iface_exprs != null) {
+				ifaces = TypeManager.ExpandInterfaces (ec, iface_exprs);
+				if (ifaces == null) {
 					error = true;
 					return null;
 				}
+
+				foreach (Type itype in ifaces)
+ 					TypeBuilder.AddInterfaceImplementation (itype);
+
+				if (!CheckGenericInterfaces (ifaces)) {
+					error = true;
+					return null;
+				}
+
+				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
 			}
 
 			//
@@ -1964,17 +1964,6 @@ namespace Mono.CSharp {
 			}
 			}
 				
- 				if (base_inteface_types != null) {
- 					foreach (Type base_type in base_inteface_types) {
- 						MemberList list = TypeContainer.FindMembers (base_type, mt, bf, filter, criteria);
-
- 						if (list.Count > 0) {
- 							if (members == null)
- 								members = new ArrayList ();
- 							members.AddRange (list);
- 						}
- 					}
- 				}
  			}
 
 			Timer.StopTimer (TimerType.TcFindMembers);
@@ -2401,8 +2390,8 @@ namespace Mono.CSharp {
 			bool found = false;
 
 			if (ifaces != null){
-				foreach (TypeExpr t in ifaces){
-					if (t.Type == interface_type){
+				foreach (Type t in ifaces){
+					if (t == interface_type){
 						found = true;
 						break;
 					}
@@ -2424,8 +2413,8 @@ namespace Mono.CSharp {
 			if (ifaces == null)
 				return;
 
-			foreach (TypeExpr expr in ifaces) {
-				CheckUsageOfObsoleteAttribute (expr.Type);
+			foreach (Type iface in ifaces) {
+				CheckUsageOfObsoleteAttribute (iface);
 			}
 		}
 

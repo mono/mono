@@ -136,14 +136,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public TypeExpr[] InterfaceConstraints {
-			get {
-				TypeExpr[] ifaces = new TypeExpr [iface_constraints.Count];
-				iface_constraints.CopyTo (ifaces, 0);
-				return ifaces;
-			}
-		}
-
 		public bool ResolveTypes (EmitContext ec)
 		{
 			iface_constraint_types = new Type [iface_constraints.Count];
@@ -295,12 +287,10 @@ namespace Mono.CSharp {
 		public void Define (GenericTypeParameterBuilder type)
 		{
 			this.type = type;
-			TypeExpr[] ifaces = null;
-			if (constraints != null) {
-				ifaces = constraints.InterfaceConstraints;
+			Type[] ifaces = null;
+			if (constraints != null)
 				constraints.Define (type);
-			}
-			TypeManager.AddTypeParameter (type, this, ifaces);
+			TypeManager.AddTypeParameter (type, this);
 		}
 
 		public bool DefineType (EmitContext ec)
@@ -315,6 +305,7 @@ namespace Mono.CSharp {
 					type.SetBaseTypeConstraint (gc.ClassConstraint);
 
 				type.SetInterfaceConstraints (gc.InterfaceConstraints);
+				TypeManager.RegisterBuilder (type, gc.InterfaceConstraints);
 			}
 
 			return true;
@@ -681,11 +672,7 @@ namespace Mono.CSharp {
 			//
 			// Now, check the interface constraints.
 			//
-			foreach (TypeExpr iface in TypeManager.GetInterfaces (ptype)) {
-				Type itype = iface.ResolveType (ec);
-				if (itype == null)
-					return false;
-
+			foreach (Type itype in TypeManager.GetInterfaces (ptype)) {
 				if (!CheckConstraint (ec, ptype, aexpr, itype)) {
 					Report.Error (309, loc, "The type `{0}' must be " +
 						      "convertible to `{1}' in order to " +
@@ -844,12 +831,6 @@ namespace Mono.CSharp {
 
 		public override bool IsAttribute {
 			get { return false; }
-		}
-
-		public override TypeExpr[] GetInterfaces ()
-		{
-			TypeExpr[] ifaces = TypeManager.GetInterfaces (gt);
-			return ifaces;
 		}
 
 		public override bool Equals (object obj)
