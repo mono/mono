@@ -4,11 +4,12 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
@@ -25,6 +26,13 @@ namespace System.Web.Security
 		static string cookiePath;
 		static int timeout;
 		static FormsProtectionEnum protection;
+
+		// same names and order used in xsp
+		static string [] indexFiles = { "index.aspx",
+						"Default.aspx",
+						"default.aspx",
+						"index.html",
+						"index.htm" };
 
 		public static bool Authenticate (string name, string password)
 		{
@@ -115,7 +123,7 @@ namespace System.Web.Security
 
 		public static HttpCookie GetAuthCookie (string userName, bool createPersistentCookie)
 		{
-			return GetAuthCookie (userName, createPersistentCookie, cookiePath);
+			return GetAuthCookie (userName, createPersistentCookie, null);
 		}
 
 		public static HttpCookie GetAuthCookie (string userName, bool createPersistentCookie, string strCookiePath)
@@ -149,10 +157,35 @@ namespace System.Web.Security
 			return new HttpCookie (cookieName, Encrypt (ticket), strCookiePath, then);
 		}
 
-		[MonoTODO]
 		public static string GetRedirectUrl (string userName, bool createPersistentCookie)
 		{
-			throw new NotImplementedException ();
+			if (userName == null)
+				return null;
+
+			//TODO: what's createPersistentCookie used for?
+			Initialize ();
+			HttpRequest request = HttpContext.Current.Request;
+			string returnUrl = request ["RETURNURL"];
+			if (returnUrl != null)
+				return returnUrl;
+
+			returnUrl = request.ApplicationPath;
+			string apppath = request.PhysicalApplicationPath;
+			bool found = false;
+
+			foreach (string indexFile in indexFiles) {
+				string filePath = Path.Combine (apppath, indexFile);
+				if (File.Exists (filePath)) {
+					returnUrl = UrlUtils.Combine (returnUrl, indexFile);
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+				returnUrl = UrlUtils.Combine (returnUrl, "index.aspx");
+
+			return returnUrl;
 		}
 
 		static string GetHexString (string str)
@@ -219,16 +252,20 @@ namespace System.Web.Security
 			}
 		}
 
-		[MonoTODO]
 		public static void RedirectFromLoginPage (string userName, bool createPersistentCookie)
 		{
-			throw new NotImplementedException ();
+			RedirectFromLoginPage (userName, createPersistentCookie, null);
 		}
 
-		[MonoTODO]
 		public static void RedirectFromLoginPage (string userName, bool createPersistentCookie, string strCookiePath)
 		{
-			throw new NotImplementedException ();
+			if (userName == null)
+				return;
+
+			Initialize ();
+			SetAuthCookie (userName, createPersistentCookie, strCookiePath);
+			HttpResponse resp = HttpContext.Current.Response;
+			resp.Redirect (GetRedirectUrl (userName, createPersistentCookie), false);
 		}
 
 		public static FormsAuthenticationTicket RenewTicketIfOld (FormsAuthenticationTicket tOld)
@@ -249,6 +286,7 @@ namespace System.Web.Security
 
 		public static void SetAuthCookie (string userName, bool createPersistentCookie)
 		{
+			Initialize ();
 			SetAuthCookie (userName, createPersistentCookie, cookiePath);
 		}
 

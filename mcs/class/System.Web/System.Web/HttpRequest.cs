@@ -629,10 +629,21 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO("Call item in querystring, form, cookie and servervariables")]
 		public string this [string sKey] {
 			get {
-				throw new NotImplementedException();
+				string result = QueryString [sKey];
+				if (result != null)
+					return result;
+
+				result = Form [sKey];
+				if (result != null)
+					return result;
+
+				HttpCookie cookie = Cookies [sKey];
+				if (cookie != null)
+					return cookie.Value;
+
+				return ServerVariables [sKey];
 			}
 		}
 

@@ -1,3 +1,7 @@
+2003-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: added AuthorizationConfig and AuthorizationConfigHandler.
+
 2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added a couple of new files.

@@ -9,8 +9,10 @@
 
 using System;
 using System.Security.Principal;
+using System.Text;
 using System.Web;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Security
 {
@@ -41,6 +43,13 @@ namespace System.Web.Security
 			string cookieName = config.CookieName;
 			string cookiePath = config.CookiePath;
 			string loginPage = config.LoginUrl;
+
+			string appVPath = context.Request.ApplicationPath;
+			string reqPath = context.Request.Path;
+			if (reqPath.StartsWith (appVPath))
+				reqPath = reqPath.Substring (appVPath.Length);
+
+			context.SkipAuthorization = (reqPath == loginPage);
 			
 			FormsAuthenticationEventArgs formArgs = new FormsAuthenticationEventArgs (context);
 			if (Authenticate != null)
@@ -54,9 +63,8 @@ namespace System.Web.Security
 			}
 				
 			HttpCookie cookie = context.Request.Cookies [cookieName];
-			if (cookie == null || (cookie.Expires != DateTime.MinValue && cookie.Expires < DateTime.Now)) {
+			if (cookie == null || (cookie.Expires != DateTime.MinValue && cookie.Expires < DateTime.Now))
 				return;
-			}
 
 			FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt (cookie.Value);
 			FormsAuthentication.RenewTicketIfOld (ticket);
@@ -68,7 +76,6 @@ namespace System.Web.Security
 				cookie.Expires = ticket.Expiration;
 
 			context.Response.Cookies.Add (cookie);
-			context.SkipAuthorization = (context.Request.Path == loginPage);
 		}
 
 		void OnEndRequest (object sender, EventArgs args)
@@ -78,11 +85,14 @@ namespace System.Web.Security
 
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
-			if (context.Response.StatusCode != 401)
+			if (context.Response.StatusCode != 401 || context.Request.QueryString ["ReturnUrl"] != null)
 				return;
 
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
-			context.Response.Redirect (config.LoginUrl);
+			StringBuilder login = new StringBuilder ();
+			login.Append (UrlUtils.Combine (context.Request.ApplicationPath, config.LoginUrl));
+			login.AppendFormat ("?ReturnUrl={0}", HttpUtility.UrlEncode (context.Request.RawUrl));
+			context.Response.Redirect (login.ToString ());
 		}
 
 		public event FormsAuthenticationEventHandler Authenticate;

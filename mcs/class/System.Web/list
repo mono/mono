@@ -64,6 +64,8 @@ System.Web.Caching/ExpiresBuckets.cs
 System.Web.Configuration/AuthConfig.cs
 System.Web.Configuration/AuthenticationConfigHandler.cs
 System.Web.Configuration/AuthenticationMode.cs
+System.Web.Configuration/AuthorizationConfig.cs
+System.Web.Configuration/AuthorizationConfigHandler.cs
 System.Web.Configuration/ClientTargetSectionHandler.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs

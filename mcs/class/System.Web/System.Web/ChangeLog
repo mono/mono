@@ -1,3 +1,7 @@
+2003-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: implemented the indexer.
+
 2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlizedException.cs: base class for exceptions that makes it easy to
