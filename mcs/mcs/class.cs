@@ -3452,12 +3452,14 @@ namespace Mono.CSharp {
 			//
 			// Now define the accessors
 			//
+			string add_name = "add_" + Name;
 			
 			AddBuilder = parent.TypeBuilder.DefineMethod (
-							 "add_" + Name, m_attr, null, parameters);
+				add_name, m_attr, null, parameters);
 			AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
 			EventBuilder.SetAddOnMethod (AddBuilder);
-
+			parent.IsInterfaceMethod (null, add_name, null, parameters, true);
+			
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
@@ -3473,11 +3475,13 @@ namespace Mono.CSharp {
 					      "'add' method of event `" + Name + "'");
 				return false;
 			}
-		
+
+			string remove_name = "remove_" + Name;
 			RemoveBuilder = parent.TypeBuilder.DefineMethod (
-							    "remove_" + Name, m_attr, null, parameters);
+							    remove_name, m_attr, null, parameters);
 			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, "value");
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
+			parent.IsInterfaceMethod (null, remove_name, null, parameters, true);
 
 			//
 			// HACK because System.Reflection.Emit is lame

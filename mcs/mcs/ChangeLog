@@ -1,5 +1,8 @@
 2002-05-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Event): Events should also register if they do
+	implement the methods that an interface requires.
+
 	* typemanager.cs (MemberLookup); use the new GetInterfaces
 	method. 
 

@@ -288,7 +288,7 @@ namespace Mono.CSharp {
 					prop_info_arr, prop_values_arr,
 					field_info_arr, field_values_arr); 
 			} catch {
-				Console.WriteLine ("HELLO!");
+				Console.WriteLine ("FIXME: We have chosen the wrong constructor!");
 			}
 			
 			return cb;
