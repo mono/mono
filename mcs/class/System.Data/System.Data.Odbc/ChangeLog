@@ -1,3 +1,12 @@
+2004-12-28  Duncan Mak  <duncan@ximian.com>
+
+	* libodbc.cs: Change all the DllImport attributes to point to
+	"odbc32.dll" instead of "odbc32", because /etc/mono/config lists
+	"odbc32.dll" (all other entries in the file have the .dll suffix
+	as well, for consistency's sake, let's rename it here.)
+
+	This fixes #70727.
+	
 2004-12-03  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcParameter.cs: Fixed a null reference exception when a
