@@ -165,6 +165,20 @@ public class StringReaderTest : Assertion {
 		}        		
         }
 
+	[Test]
+	public void MoreEOL ()
+	{
+                TextReader tr = new StringReader ("There she was just a walking\n" +
+						  "Down the street singin'\r" +
+						  "Do wah diddy diddy dum diddy do");
+
+		int i = 0;
+		while (tr.ReadLine () != null)
+			i++;
+
+		AssertEquals ("#01", 3, i);
+	}
+
 }
 
 }

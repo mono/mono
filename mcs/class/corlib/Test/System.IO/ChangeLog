@@ -1,3 +1,7 @@
+2003-11-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringReaderTest.cs: added test from bug #51020.
+
 2003-10-21  Nick Drochak <ndrochak@gol.com>
 
 	* BufferedSTreamTest.cs: Make TearDown smarter about possible
