@@ -2896,8 +2896,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
-			case Msg.WM_MOUSEWHEEL: {
-				int clicks = 1;
+			case Msg.WM_MOUSEWHEEL: {				
 
 				OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
