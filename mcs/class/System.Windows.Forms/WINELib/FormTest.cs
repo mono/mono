@@ -5,8 +5,8 @@ class FormTest : Form
 {
  	static public void Main ()
 	{
-		Console.WriteLine("Creating Form");
-		FormTest form = new FormTest();
+		Console.WriteLine ("Creating Form");
+		FormTest form = new FormTest ();
 		Application.Run (form);
 	}
 }

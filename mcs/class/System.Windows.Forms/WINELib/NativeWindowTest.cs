@@ -4,6 +4,7 @@ using System.Windows.Forms;
 
 
 public class NativeWindowTest : NativeWindow {
+
 	protected override void WndProc (ref Message m) {
 		Console.WriteLine ("in NativeWindowTest WndProc");
 		if (m.Msg == Win32.WM_DESTROY) {

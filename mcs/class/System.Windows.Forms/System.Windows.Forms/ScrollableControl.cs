@@ -15,13 +15,14 @@ using System;
 using System.Drawing;
 using System.ComponentModel;
 namespace System.Windows.Forms {
+
 	public class ScrollableControl : Control {
 
 		//
 		//  --- Constructor
 		//
 		[MonoTODO]
-		public ScrollableControl() : base()
+		public ScrollableControl () : base ()
 		{
 		}
 
@@ -37,6 +38,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public Size AutoScrollMargin {
 			get {
@@ -46,6 +48,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public Size AutoScrollMinSize {
 			get {
@@ -55,6 +58,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public Point AutoScrollPosition {
 			get {
@@ -64,18 +68,21 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public override Rectangle DisplayRectangle {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public ScrollableControl.DockPaddingEdges DockPadding {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public override ISite Site {
 			get {
@@ -101,20 +108,24 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
+
 		[MonoTODO]
-		public override bool Equals(object o)
+		public override bool Equals (object o)
 		{
 			throw new NotImplementedException ();
 		}
+
 		//public static bool Equals(object o1, object o2)
 		//{
 		//	throw new NotImplementedException ();
 		//}
+
 		[MonoTODO]
-		public override int GetHashCode() {
+		public override int GetHashCode () {
 			//FIXME add our proprities
-			return base.GetHashCode();
+			return base.GetHashCode ();
 		}
+
 		//public void Invalidate()
 		//{
 		//	throw new NotImplementedException ();
@@ -191,12 +202,14 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Properties
 		//
+
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		protected bool HScroll {
 			get {
@@ -206,6 +219,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		protected bool VScroll {
 			get {
@@ -220,7 +234,8 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected virtual void AdjustFormScrollbars( bool displayScrollbars)
+		protected virtual void AdjustFormScrollbars (
+			bool displayScrollbars)
 		{
 			throw new NotImplementedException ();
 		}
@@ -229,21 +244,25 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
+
 		[MonoTODO]
-		protected override void OnLayout(LayoutEventArgs levent)
+		protected override void OnLayout (LayoutEventArgs levent)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
-		protected override void OnMouseWheel(MouseEventArgs e)
+		protected override void OnMouseWheel (MouseEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
-		protected override void OnVisibleChanged(EventArgs e)
+		protected override void OnVisibleChanged (EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		//ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
 		//{
 		//	throw new NotImplementedException ();
@@ -256,11 +275,13 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
+
 		[MonoTODO]
-		protected override void ScaleCore(float dx, float dy)
+		protected override void ScaleCore (float dx, float dy)
 		{
 			throw new NotImplementedException ();
 		}
+
 		//protected void UpdateBounds()
 		//{
 		//	throw new NotImplementedException ();
@@ -273,13 +294,12 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
+
 		[MonoTODO]
-		protected override void WndProc(ref Message m)
+		protected override void WndProc (ref Message m)
 		{
-			base.WndProc(ref m);
+			base.WndProc (ref m);
 		}
-		
-		
 		
 		/// ScrollableControl.DockPaddingEdges
 		/// Determines the border padding for docked controls.
@@ -321,26 +341,26 @@ namespace System.Windows.Forms {
 			
 			/// --- public Methods ---
 			[MonoTODO]
-			public override bool Equals(object other) 
+			public override bool Equals (object other) 
 			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public override int GetHashCode() 
+			public override int GetHashCode () 
 			{
 				throw new NotImplementedException ();
 			}
 			
 			/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 			[MonoTODO]
-			object ICloneable.Clone() 
+			object ICloneable.Clone () 
 			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public override string ToString() 
+			public override string ToString () 
 			{
 				throw new NotImplementedException ();
 			}

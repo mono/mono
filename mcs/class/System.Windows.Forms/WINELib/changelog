@@ -1,4 +1,14 @@
-2002-8-16 John Sohn <jsohn@columbus.rr.com>
+2002-8-18  John Sohn <jsohn@columbus.rr.com>
+	* Application.cs:
+	* ContainerControl.cs:
+	* Control.cs:
+	* Form.cs:
+	* FormTest.cs:
+	* NativeWindow.cs:
+	* NativeWindowTest.cs:
+	* ScrollableControl.cs:
+	* Win32.cs: Updated to better conform to Mono coding conventions
+2002-8-16  John Sohn <jsohn@columbus.rr.com>
 	* Application.cs: start of implementation, implements Run(Form) and 
 	handles WndProc as called from monostub WINE application
 	* Font.cs: empty class that allows code with references to 

@@ -21,7 +21,7 @@ namespace System.Windows.Forms {
 
 	public class ContainerControl : ScrollableControl, IContainerControl {
 
-		protected ContainerControl() : base() 
+		protected ContainerControl () : base () 
 		{
 		}
 		
@@ -48,19 +48,17 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 		
-		
-		
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected virtual void UpdateDefaultButton()
 		[MonoTODO]
-		protected override void AdjustFormScrollbars(bool displayScrollbars) 
+		protected override void AdjustFormScrollbars (bool displayScrollbars) 
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool disposing) 
+		protected override void Dispose (bool disposing) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -74,38 +72,38 @@ namespace System.Windows.Forms {
 		
 		// [event methods]
 		[MonoTODO]
-		protected override void OnControlRemoved(ControlEventArgs e) 
+		protected override void OnControlRemoved (ControlEventArgs e) 
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnCreateControl() 
+		protected override void OnCreateControl () 
 		{
 			throw new NotImplementedException ();
 		}
 		// end of [event methods]
 		
 		[MonoTODO]
-		protected override bool ProcessDialogChar(char charCode) 
+		protected override bool ProcessDialogChar (char charCode) 
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessDialogKey(Keys keyData) 
+		protected override bool ProcessDialogKey (Keys keyData) 
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessMnemonic(char charCode) 
+		protected override bool ProcessMnemonic (char charCode) 
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ProcessTabKey(bool forward) 
+		protected virtual bool ProcessTabKey (bool forward) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -117,7 +115,7 @@ namespace System.Windows.Forms {
 		//}
 		
 		[MonoTODO]
-		public bool Validate() 
+		public bool Validate () 
 		{
 			throw new NotImplementedException ();
 		}

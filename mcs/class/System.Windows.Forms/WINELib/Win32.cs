@@ -1,86 +1,76 @@
 //
 // System.Windows.Forms.Win32
 //
+// Provides easy access to commonly used Win32/WINELib contants and functions
+//
 // Author:
 //   John Sohn (jsohn@columbus.rr.com)
-//
-// Provides easy access to commonly used Win32/WINELib contants and functions
 //
 
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+
 	// holder for DLL Win32 DllImports 
 	public unsafe class Win32 {
+
 		[DllImport ("user32.dll", 
 			    CallingConvention = CallingConvention.StdCall,
 			    CharSet = CharSet.Auto)]
-		public static extern IntPtr CreateWindowExA(int dwExStyle,
-							    string lpClassName,
-							    string lpWindowName,
-							    int dwStyle,
-							    int x,
-							    int y,
-							    int nWidth,
-							    int nHeight,
-							    IntPtr hWndParent,
-							    IntPtr hMenu,
-							    IntPtr hInstance,
-							    void* lpParam);
+		public static extern IntPtr CreateWindowExA (
+			int dwExStyle, string lpClassName, string lpWindowName,
+			int dwStyle, int x, int y, int nWidth, int nHeight,
+			IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance,
+			void* lpParam);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
-		public extern static IntPtr DefWindowProcA(IntPtr hWnd, 
-							   int Msg,
-							   IntPtr wParam,
-							   IntPtr lParam);
+		public extern static IntPtr DefWindowProcA (
+			IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
-		public extern static int DestroyWindow(IntPtr hWnd);
+		public extern static int DestroyWindow (IntPtr hWnd);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
-		public static extern int ShowWindow(IntPtr hWnd, int nCmdShow);
+		public static extern int ShowWindow (IntPtr hWnd, 
+						     int nCmdShow);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall,CharSet = CharSet.Auto)]
-		public static extern int GetMessageA(int* msg, int hwnd, 
-						     int msgFrom,  int msgTo);
+		public static extern int GetMessageA (int* msg, int hwnd, 
+						      int msgFrom,  int msgTo);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
-		public static extern int  TranslateMessage(int* msg);
+		public static extern int  TranslateMessage (int* msg);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
-		public static extern int DispatchMessageA(int* msg);
+		public static extern int DispatchMessageA (int* msg);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall,
 			    CharSet = CharSet.Auto)]
-		public extern static void PostQuitMessage(int nExitCode);
+		public extern static void PostQuitMessage (int nExitCode);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall,
 			    CharSet = CharSet.Auto)]
-		public extern static IntPtr SetActiveWindow(IntPtr hWnd);
+		public extern static IntPtr SetActiveWindow (IntPtr hWnd);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall,
 			    CharSet = CharSet.Auto)]
-		public extern static int CloseWindow(IntPtr hWnd);
+		public extern static int CloseWindow (IntPtr hWnd);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall,
 			    CharSet = CharSet.Auto)]
-		public extern static int SetWindowPos(IntPtr hWnd,
-						      IntPtr hWndInsertAfter,
-						      int X,
-						      int Y,
-						      int cx,
-						      int cy,
-						      int uFlags);
+		public extern static int SetWindowPos (
+			IntPtr hWnd, IntPtr hWndInsertAfter, 
+			int X, int Y, int cx, int cy, int uFlags);
 
 		// Window Messages
 		public const int WM_NULL                 = 0x0000;
@@ -421,6 +411,5 @@ namespace System.Windows.Forms {
 		public const int SWP_NOSENDCHANGING  = 0x0400;
 		public const int SWP_DEFERERASE      = 0x2000;
 		public const int SWP_ASYNCWINDOWPOS  = 0x4000;
-
 	}
 }

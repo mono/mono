@@ -22,9 +22,10 @@ namespace System.Windows.Forms {
 	// </summary>
 
 	public unsafe class NativeWindow : MarshalByRefObject {
+
 		// the window's HWND
 		private IntPtr windowHandle;
-		static private Hashtable windowCollection = new Hashtable();
+		static private Hashtable windowCollection = new Hashtable ();
 
 		//
 		//  --- Constructor
@@ -46,9 +47,8 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		public void AssignHandle (IntPtr handle) {
-			if (windowHandle != (IntPtr) 0) {
+			if (windowHandle != (IntPtr) 0)
 				windowCollection.Remove (windowHandle);
-			}
 
 			windowHandle = handle;
 			windowCollection.Add (windowHandle, this);
@@ -58,50 +58,52 @@ namespace System.Windows.Forms {
 		public virtual void CreateHandle (CreateParams cp) {
 			IntPtr createdHWnd = (IntPtr) 0;
 
-			windowHandle = Win32.CreateWindowExA(cp.ExStyle,
-							     cp.ClassName,
-							     cp.Caption,
-							     cp.Style,
-							     cp.X,
-							     cp.Y,
-							     cp.Width,
-							     cp.Height,
-							     cp.Parent,
-							     (IntPtr) 0,
-							     (IntPtr) 0,
-							     null);
-
-			if (windowHandle != (IntPtr) 0) {
+			windowHandle = Win32.CreateWindowExA (cp.ExStyle,
+							      cp.ClassName,
+							      cp.Caption,
+							      cp.Style,
+							      cp.X,
+							      cp.Y,
+							      cp.Width,
+							      cp.Height,
+							      cp.Parent,
+							      (IntPtr) 0,
+							      (IntPtr) 0,
+							      null);
+			
+			if (windowHandle != (IntPtr) 0)
 				windowCollection.Add (windowHandle, this);
-			}
 		}
+
 		[MonoTODO]
 		public override ObjRef CreateObjRef (Type requestedType) {
 			throw new NotImplementedException ();
 		}
 
-		public void DefWndProc(ref Message m) {
+		public void DefWndProc (ref Message m) {
 			m.Result = Win32.DefWindowProcA (m.HWnd, m.Msg, 
 							 m.WParam, m.LParam);
 		}
 
-		public virtual void DestroyHandle() {
+		public virtual void DestroyHandle () {
 			windowCollection.Remove (windowHandle);
 			Win32.DestroyWindow (windowHandle);
 		}
+
 		[MonoTODO]
-		public override bool Equals(object o) {
+		public override bool Equals (object o) {
 			throw new NotImplementedException ();
 		}
+
 		//inherited
 		//public static bool Equals(object o1, object o2)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		[MonoTODO]
-		public override int GetHashCode() {
+		public override int GetHashCode () {
 			//FIXME add our proprities
-			return base.GetHashCode();
+			return base.GetHashCode ();
 		}
 
 		public static NativeWindow FromHandle (IntPtr handle) {
@@ -125,8 +127,9 @@ namespace System.Windows.Forms {
 			windowHandle = (IntPtr) 0;
 			OnHandleChange ();
 		}
+
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString () {
 			throw new NotImplementedException ();
 		}
 
@@ -138,11 +141,11 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		[MonoTODO]
-		protected virtual void OnHandleChange() {
+		protected virtual void OnHandleChange () {
 			// to be overridden
 		}
 		[MonoTODO]
-		protected virtual void OnThreadException(Exception e) {
+		protected virtual void OnThreadException (Exception e) {
 			throw new NotImplementedException ();
 		}
 
@@ -155,7 +158,7 @@ namespace System.Windows.Forms {
 		//  --- Destructor
 		//
 		[MonoTODO]
-		~NativeWindow() {
+		~NativeWindow () {
 		}
 
 // obsolete: should probably be handled by Application class

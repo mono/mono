@@ -23,25 +23,24 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Provides static methods and properties to manage an application, 
-	/// such as methods to start and stop an application, to process Windows messages, and 
-	/// properties to get information about an application. This class cannot be inherited.
-	///
+	/// such as methods to start and stop an application, to process 
+	/// Windows messages, and properties to get information about an 
+	/// application. This class cannot be inherited.
 	/// </summary>
 
 	[MonoTODO]
 	public sealed class Application {
+
 		static private Form applicationForm;
 
 		// --- (public) Properties ---
 		[MonoTODO]
 		public static bool AllowQuit {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static string CommonAppDataPath {
-
 			get { throw new NotImplementedException (); }
 		}
 	
@@ -53,69 +52,58 @@ namespace System.Windows.Forms {
 	
 		[MonoTODO]
 		public static string CompanyName {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static CultureInfo CurrentCulture {
-
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static InputLanguage CurrentInputLanguage {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static string ExecutablePath {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static string LocalUserAppDataPath {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static bool MessageLoop {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static string ProductName {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static string ProductVersion {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static string SafeTopLevelCaptionFormat {
-
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static string StartupPath {
-
 			get { throw new NotImplementedException (); }
 		}
 	
 		[MonoTODO]
 		public static string UserAppDataPath {
-
 			get { throw new NotImplementedException (); }
 		}
 	
@@ -126,49 +114,49 @@ namespace System.Windows.Forms {
 		//}
 		
 
-		private static ArrayList messageFilters = new ArrayList();
+		private static ArrayList messageFilters = new ArrayList ();
 	
 		// --- Methods ---
 		[MonoTODO]
-		public static void AddMessageFilter(IMessageFilter value) 
+		public static void AddMessageFilter (IMessageFilter value) 
 		{
-			messageFilters.Add(value);
+			messageFilters.Add (value);
 		}
 	
 		[MonoTODO]
-		public static void DoEvents() 
+		public static void DoEvents () 
 		{
 			throw new NotImplementedException ();
 		}
 	
 		[MonoTODO]
-		public static void Exit() 
+		public static void Exit () 
 		{
 			throw new NotImplementedException ();
 		}
 	
 		[MonoTODO]
-		public static void ExitThread() 
+		public static void ExitThread () 
 		{
 			throw new NotImplementedException ();
 		}
 	
 		[MonoTODO]
-		public static ApartmentState OleRequired() 
+		public static ApartmentState OleRequired () 
 		{
 			throw new NotImplementedException ();
 		}
 	
 		[MonoTODO]
-		public static void OnThreadException(Exception t) 
+		public static void OnThreadException (Exception t) 
 		{
 			throw new NotImplementedException ();
 		}
 	
 		[MonoTODO]
-		public static void RemoveMessageFilter(IMessageFilter value)
+		public static void RemoveMessageFilter (IMessageFilter value)
 		{
-			messageFilters.Remove(value);
+			messageFilters.Remove (value);
 		}
 
 		public static void Run ()
@@ -177,7 +165,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public static void Run(ApplicationContext context) 
+		public static void Run (ApplicationContext context) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -190,7 +178,7 @@ namespace System.Windows.Forms {
 		{
 			applicationForm = context;
 			int msg;
-			context.Show();
+			context.Show ();
 
 			while (Win32.GetMessageA (&msg, 0, 0, 0) != 0) {
 				Win32.TranslateMessage (&msg);
@@ -209,8 +197,8 @@ namespace System.Windows.Forms {
 		static private IntPtr _ApplicationWndProc (IntPtr hWnd, 
 							   int msg, 
 							   IntPtr wParam, 
-							   IntPtr lParam) 
-		{
+							   IntPtr lParam)  {
+
  		        Console.WriteLine ("in _ApplicationWndProc");
  			Message message = new Message ();
 
@@ -220,18 +208,18 @@ namespace System.Windows.Forms {
 			message.WParam = wParam;
 			message.LParam = lParam;
 
-			IEnumerator e = messageFilters.GetEnumerator();
+			IEnumerator e = messageFilters.GetEnumerator ();
 			
 			while (e.MoveNext()) {
-				IMessageFilter filter = (IMessageFilter) e.Current;
-				if (filter.PreFilterMessage(ref message)) {
+				IMessageFilter filter = 
+				        (IMessageFilter) e.Current;
+
+				if (filter.PreFilterMessage (ref message))
 					return message.Result;
-				}
 			}
 
-			if (applicationForm != null) {
-				applicationForm.WndProc(ref message);
-			}
+			if (applicationForm != null)
+				applicationForm.WndProc (ref message);
 
 			return Win32.DefWindowProcA (hWnd, msg, 
 						     wParam, lParam);
