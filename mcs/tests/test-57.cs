@@ -4,21 +4,26 @@ public delegate void EventHandler (int i, int j);
 
 public class Button {
 
-	public event EventHandler Click;
+	private EventHandler click;
+
+	public event EventHandler Click {
+		add    { click += value; }
+		remove { click -= value; }
+	}
 
         public void OnClick (int i, int j)
   	{
-  		if (Click == null) {
+  		if (click == null) {
 			Console.WriteLine ("Nothing to click!");
 			return;
 		}
 
-		Click (i, j);
+		click (i, j);
  	}
 
 	public void Reset ()
 	{
-		Click = null;
+		click = null;
 	}
 }
 
@@ -29,6 +34,7 @@ public class Blah {
 	public void Connect ()
 	{
 		Button1.Click += new EventHandler (Button1_Click);
+		Button1.Click += new EventHandler (Foo_Click);
 	}
 
 	public void Button1_Click (int i, int j)
@@ -37,9 +43,15 @@ public class Blah {
 		Console.WriteLine ("Answer : " + (i+j));
 	}
 
+	public void Foo_Click (int i, int j)
+	{
+		Console.WriteLine ("Foo was clicked !");
+		Console.WriteLine ("Answer : " + (i+j));
+	}
+
 	public void Disconnect ()
 	{
-		Console.WriteLine ("Disconnecting ...");
+		Console.WriteLine ("Disconnecting Button1's handler ...");
 		Button1.Click -= new EventHandler (Button1_Click);
 	}
 

@@ -1,3 +1,8 @@
+2001-12-25  Ravi Pratap  <ravi@ximian.com>
+
+	* test-57.cs : Update to exercise more of the code base for
+	events.
+
 2001-12-24  Ravi Pratap  <ravi@ximian.com>
 
 	* test-19.cs : Augment to exercise tests on delegates
