@@ -878,6 +878,7 @@ namespace System.Data {
 			switch (mode) {
 			case XmlReadMode.Auto:
 			case XmlReadMode.InferSchema:
+			case XmlReadMode.IgnoreSchema:
 			case XmlReadMode.Fragment:
 				break;
 			default:

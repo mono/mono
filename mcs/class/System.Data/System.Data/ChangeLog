@@ -1,3 +1,15 @@
+2004-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : Data should be read when mode is IgnoreSchema (well,
+	  the support is incomplete yet).
+	* XmlDataLoader.cs : 
+	  Reverted ReadModeSchema() argument change. XmlReadMode would be 
+	  useful to handle IgnoreSchema.
+	  Don't overwrite DataSetName when mode is not such kind.
+	  Set Prefix and Namespace as well as DataSetName.
+	  AllowDBNull looks set false by default for element column.
+	  Set unique constraint as primary key when infering the table schema.
+
 2004-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : 

@@ -20,7 +20,6 @@
 using System;
 using System.Data;
 using System.Xml;
-using System.Xml.XPath;
 using System.Collections;
 using System.Globalization;
 
@@ -31,7 +30,6 @@ namespace System.Data
 	{
 	
 		private DataSet DSet;
-		Hashtable DiffGrRows = new Hashtable ();
 
 		public XmlDataLoader (DataSet set) 
 		{
@@ -45,11 +43,15 @@ namespace System.Data
 			switch (mode) {
 			case XmlReadMode.Auto:
 				Result = DSet.Tables.Count == 0 ? XmlReadMode.InferSchema : XmlReadMode.IgnoreSchema;
-				ReadModeSchema (reader, true, true);
+				ReadModeSchema (reader, mode);
 				break;
 			case XmlReadMode.InferSchema:
 				Result = XmlReadMode.InferSchema;
-				ReadModeSchema (reader, true, false);
+				ReadModeSchema (reader, mode);
+				break;
+			case XmlReadMode.IgnoreSchema:
+				Result = XmlReadMode.IgnoreSchema;
+				ReadModeSchema (reader, mode);
 				break;
 			default:
 				reader.Skip ();
@@ -62,13 +64,15 @@ namespace System.Data
 		#region reading
 
 		// Read information from the reader.
-		private void ReadModeSchema (XmlReader reader, bool inferSchema, bool fillRows)
+		private void ReadModeSchema (XmlReader reader, XmlReadMode mode)
 		{
+			bool inferSchema = mode == XmlReadMode.InferSchema || mode == XmlReadMode.Auto;
+			bool fillRows = mode != XmlReadMode.InferSchema;
 			// FIXME: Do we really need this process here?
+			// If embedded schema is allowed, then this check should not be done here.
 			//check if the current element is schema.
 			if (reader.LocalName == "schema") {
-				
-				if (inferSchema)
+				if (mode != XmlReadMode.Auto)
 					reader.Skip(); // skip the schema node.
 				else
 					DSet.ReadXmlSchema(reader);
@@ -93,10 +97,13 @@ namespace System.Data
 			int rootNodeDepth = XmlNodeElementsDepth(doc.DocumentElement);
 			switch (rootNodeDepth) {
 			case 1:
-				DSet.DataSetName = doc.DocumentElement.LocalName;
+				if (inferSchema) {
+					DSet.DataSetName = doc.DocumentElement.LocalName;
+					DSet.Prefix = doc.DocumentElement.Prefix;
+					DSet.Namespace = doc.DocumentElement.NamespaceURI;
+				}
 				return;
 			case 2:
-				bool schemaExists = (DSet.Tables.Count == 0);
 				// create new document
 				XmlDocument newDoc = new XmlDocument();
 				// create element for dataset
@@ -107,12 +114,13 @@ namespace System.Data
 				XmlNode root = newDoc.ImportNode(doc.DocumentElement,true);
 				datasetElement.AppendChild(root);
 				doc = newDoc;
-				// set dataset name only when no schema exists now.
-				if (!schemaExists)
-					DSet.DataSetName = "NewDataSet";
 				break;
 			default:
-				DSet.DataSetName = doc.DocumentElement.LocalName;
+				if (inferSchema) {
+					DSet.DataSetName = doc.DocumentElement.LocalName;
+					DSet.Prefix = doc.DocumentElement.Prefix;
+					DSet.Namespace = doc.DocumentElement.NamespaceURI;
+				}
 				break;
 			}
 
@@ -133,7 +141,6 @@ namespace System.Data
 					AddRowToTable(node, null, inferSchema, fillRows);
 				}
 			}
-
 			// set the EnforceConstraints to original value;
 			DSet.EnforceConstraints = origEnforceConstraint;
 		}
@@ -245,6 +252,7 @@ namespace System.Data
 						string newRelationColumnName = table.TableName + "_Id";
 						if (!table.Columns.Contains(newRelationColumnName)) {
 							DataColumn newRelationColumn = new DataColumn(newRelationColumnName, typeof(int));
+							newRelationColumn.AllowDBNull = false;
 							newRelationColumn.AutoIncrement = true;
 							// we do not want to serialize this column so MappingType is Hidden.
 							newRelationColumn.ColumnMapping = MappingType.Hidden;
@@ -305,6 +313,7 @@ namespace System.Data
 					DataRelation dr = new DataRelation(relationColumn.Table.TableName + "_" + dc.Table.TableName, relationColumn, dc);
 					dr.Nested = true;
 					DSet.Relations.Add(dr);
+					UniqueConstraint.SetAsPrimaryKey (dr.ParentTable.Constraints, dr.ParentKeyConstraint);
 				}
 				rowValue.Add (relationColumn.ColumnName, relationColumn.GetAutoIncrementValue());
 			}
