@@ -1,3 +1,10 @@
+2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_field_get_value_object): New function.
+
+	* object.c appdomain.h appdomain.c: Make out_of_memory_ex domain
+	specific.
+
 2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (mono_runtime_get_out_of_memory_ex): New function to
