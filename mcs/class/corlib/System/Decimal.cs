@@ -63,8 +63,6 @@ namespace System
         private uint lo32;
         private uint mid32;
 
-        // LAMESPEC: this constructor is missing in specification
-        // but exists in MS Csharp implementation 
         public Decimal(int lo, int mid, int hi, bool isNegative, byte scale)
         {
             unchecked 
@@ -1061,13 +1059,15 @@ namespace System
 	    return Convert.ToUInt64 (this);
 	}
 
-        public string ToString(string format, IFormatProvider provider) 
+        public string ToString (string format, IFormatProvider provider) 
         {
-            NumberFormatInfo nfi = NumberFormatInfo.GetInstance(provider);
+		NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
             
-            if (format == null) format = "G";	
+		// use "G" for null or empty string
+		if ((format == null) || (format.Length == 0))
+			format = "G";	
 			
-            return DecimalFormatter.NumberToString(format, nfi, this);
+		return DecimalFormatter.NumberToString (format, nfi, this);
         }
 
         public override string ToString() 
