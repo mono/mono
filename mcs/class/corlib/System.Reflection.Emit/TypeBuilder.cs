@@ -338,9 +338,12 @@ namespace System.Reflection.Emit {
 		{
 			ConstructorBuilder cb = DefineConstructor (attributes, CallingConventions.Standard, null);
 
-			ConstructorInfo parent_constructor = parent.GetConstructor (
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-				null, Type.EmptyTypes, null);
+			ConstructorInfo parent_constructor = null;
+
+			if (parent != null)
+				parent_constructor = parent.GetConstructor (
+					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+					null, Type.EmptyTypes, null);
 
 			ILGenerator ig = cb.GetILGenerator ();
 			if (parent_constructor != null){

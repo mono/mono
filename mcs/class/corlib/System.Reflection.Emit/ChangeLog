@@ -1,3 +1,8 @@
+2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs (DefineDefaultConstructor): Make this work on types
+	without a parent. Fixes #48695.
+
 2003-09-17  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.CreateType): Don't append the type
