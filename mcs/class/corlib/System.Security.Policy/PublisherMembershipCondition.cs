@@ -27,19 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 using Mono.Security.Cryptography;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-	public sealed class PublisherMembershipCondition
-                : IConstantMembershipCondition, IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable {
-	
+	public sealed class PublisherMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
+
+		private readonly int version = 1;
+
 		private X509Certificate x509;
 
 		// so System.Activator.CreateInstance can create an instance...
@@ -70,6 +69,9 @@ namespace System.Security.Policy {
 	
 		public bool Check (Evidence evidence) 
 		{
+			if (evidence == null)
+				return false;
+
 			IEnumerator e = evidence.GetHostEnumerator ();
 			while (e.MoveNext ()) {
 				if (e.Current is Publisher) {
@@ -88,7 +90,7 @@ namespace System.Security.Policy {
 		public override bool Equals (object o) 
 		{
 			if (!(o is PublisherMembershipCondition))
-				throw new ArgumentException ("not a PublisherMembershipCondition");
+				return false;
 			return x509.Equals ((o as PublisherMembershipCondition).Certificate);
 		}
 	
@@ -99,16 +101,13 @@ namespace System.Security.Policy {
 	
 		public void FromXml (SecurityElement e, PolicyLevel level) 
 		{
-			if (e == null)
-				throw new ArgumentNullException ("e");
-			if (e.Tag != "IMembershipCondition")
-				throw new ArgumentException ("Not IMembershipCondition", "e");
-			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
+			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 			string cert = e.Attribute ("X509Certificate");
 			if (cert != null) {
 				byte[] rawcert = CryptoConvert.FromHex (cert);
 				x509 = new X509Certificate (rawcert);
 			}
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 		}
 	
 		public override int GetHashCode () 
@@ -121,18 +120,6 @@ namespace System.Security.Policy {
 			return "Publisher - " + x509.GetPublicKeyString ();
 		}
 
-		// snippet moved from FileIOPermission (nickd) to be reused in all derived classes
-		internal SecurityElement Element (object o, int version) 
-		{
-			SecurityElement se = new SecurityElement ("IMembershipCondition");
-			Type type = this.GetType ();
-			StringBuilder asmName = new StringBuilder (type.Assembly.ToString ());
-			asmName.Replace ('\"', '\'');
-			se.AddAttribute ("class", type.FullName + ", " + asmName);
-			se.AddAttribute ("version", version.ToString ());
-			return se;
-		}
-	
 		public SecurityElement ToXml () 
 		{
 			return ToXml (null);
@@ -141,7 +128,7 @@ namespace System.Security.Policy {
 		public SecurityElement ToXml (PolicyLevel level) 
 		{
 			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
-			SecurityElement se = Element (this, 1);
+			SecurityElement se = MembershipConditionHelper.Element (typeof (PublisherMembershipCondition), version);
 			se.AddAttribute ("X509Certificate", x509.GetRawCertDataString ());
 			return se;
 		}

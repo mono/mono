@@ -28,17 +28,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-        public sealed class ZoneMembershipCondition
-                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
-        {
-                SecurityZone zone;
+        public sealed class ZoneMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
+
+		private readonly int version = 1;
+
+                private SecurityZone zone;
 
 		// so System.Activator.CreateInstance can create an instance...
 		internal ZoneMembershipCondition ()
@@ -103,16 +103,7 @@ namespace System.Security.Policy {
 
                 public void FromXml (SecurityElement element, PolicyLevel level)
                 {
-			if (element == null)
-				throw new ArgumentNullException ("element");
-
-			if (element.Tag != "IMembershipCondition")
-				throw new ArgumentException (
-					Locale.GetText ("Invalid tag - expected IMembershipCondition"));
-
-                        if (element.Attribute ("version") != "1")
-                                throw new ArgumentException (
-                                        Locale.GetText ("The argument is invalid."));
+			MembershipConditionHelper.CheckSecurityElement (element, "element", version, version);
 
                         zone = (SecurityZone) Enum.Parse (
                                 typeof (SecurityZone), element.Attribute ("Zone"));
@@ -135,13 +126,10 @@ namespace System.Security.Policy {
 
                 public SecurityElement ToXml (PolicyLevel level)
                 {
-                        SecurityElement element = new SecurityElement ("IMembershipCondition");
-			Type type = this.GetType ();
-			string classString = type.FullName + ", " + type.Assembly;
-			element.AddAttribute ("class", classString);
-                        element.AddAttribute ("version", "1");
-                        element.AddAttribute ("Zone", zone.ToString ());
-                        return element;
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
+			SecurityElement se = MembershipConditionHelper.Element (typeof (ZoneMembershipCondition), version);
+                        se.AddAttribute ("Zone", zone.ToString ());
+                        return se;
                 }
         }
 }

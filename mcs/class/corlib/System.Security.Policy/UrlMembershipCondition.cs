@@ -3,13 +3,10 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003, Ximian Inc.
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,16 +29,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-        public sealed class UrlMembershipCondition
-                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
-        {
-                string url;
+        public sealed class UrlMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
+
+		private readonly int version = 1;
+
+		private string url;
                 
                 public UrlMembershipCondition (string url)
                 {
@@ -89,20 +86,7 @@ namespace System.Security.Policy {
 
 		public void FromXml (SecurityElement element, PolicyLevel level)
 		{
-			if (element == null)
-				throw new ArgumentNullException ("element");
-			
-			if (element.Tag != "IMembershipCondition")
-				throw new ArgumentException (
-					Locale.GetText ("Invalid tag - expected IMembershipCondition"));
-
-			if (element.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (
-					Locale.GetText ("Invalid class attribute"));
-
-			if (element.Attribute ("version") != "1")
-				throw new ArgumentException (
-					Locale.GetText ("Invalid version"));
+			MembershipConditionHelper.CheckSecurityElement (element, "element", version, version);
 			
 			url = element.Attribute ("Url");
 		}
@@ -124,11 +108,10 @@ namespace System.Security.Policy {
 
                 public SecurityElement ToXml (PolicyLevel level)
                 {
-                        SecurityElement element = new SecurityElement ("IMembershipCondition");
-			element.AddAttribute ("class", this.GetType ().AssemblyQualifiedName);
-			element.AddAttribute ("version", "1");
-                        element.AddAttribute ("Url", url);
-                        return element;
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
+			SecurityElement se = MembershipConditionHelper.Element (typeof (UrlMembershipCondition), version);
+                        se.AddAttribute ("Url", url);
+                        return se;
                 }
         }
 }

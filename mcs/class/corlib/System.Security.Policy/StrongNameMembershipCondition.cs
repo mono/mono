@@ -3,11 +3,9 @@
 //
 // Author:
 //      Duncan Mak (duncan@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Duncan Mak, Ximian Inc.
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,19 +28,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-        public sealed class StrongNameMembershipCondition
-                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
-        {
-                StrongNamePublicKeyBlob blob;
-                string name;
-                Version version;
+        public sealed class StrongNameMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
+
+		private readonly int version = 1;
+
+		private StrongNamePublicKeyBlob blob;
+		private string name;
+		private Version assemblyVersion;
                 
                 public StrongNameMembershipCondition (StrongNamePublicKeyBlob blob, string name, Version version)
                 {
@@ -51,7 +49,7 @@ namespace System.Security.Policy {
 
                         this.blob = blob;
                         this.name = name;
-                        this.version = version;
+                        assemblyVersion = version;
                 }
 
 		// for PolicyLevel (to avoid validation duplication)
@@ -68,28 +66,21 @@ namespace System.Security.Policy {
 		// properties
 
                 public string Name {
-
                         get { return name; }
-
                         set { name = value; }
                 }
 
                 public Version Version {
-
-                        get { return version; }
-
-                        set { version = value; }
+                        get { return assemblyVersion; }
+                        set { assemblyVersion = value; }
                 }
 
                 public StrongNamePublicKeyBlob PublicKey {
-
                         get { return blob; }
-
                         set {
                                 if (value == null)
                                         throw new ArgumentNullException (
                                                 Locale.GetText ("The argument is null."));
-
 				blob = value;
 			}
 		}
@@ -102,7 +93,8 @@ namespace System.Security.Policy {
 			foreach (object o in evidence) {
 				if (o is StrongName) {
 					StrongName sn = (o as StrongName);
-					if (sn.PublicKey.Equals (blob) && (sn.Name == name) && (sn.Version.Equals (version)))
+					/* ??? partial match ??? */
+					if (sn.PublicKey.Equals (blob) && (sn.Name == name) && (sn.Version.Equals (assemblyVersion)))
 						return true;
 				}
 			}
@@ -111,7 +103,7 @@ namespace System.Security.Policy {
 
 		public IMembershipCondition Copy ()
 		{
-			return new StrongNameMembershipCondition (blob, name, version);
+			return new StrongNameMembershipCondition (blob, name, assemblyVersion);
 		}
 
 		public override bool Equals (object o)
@@ -136,28 +128,22 @@ namespace System.Security.Policy {
 
 		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
-			if (e == null)
-				throw new ArgumentNullException ("e");
-
-			if (e.Attribute ("class").IndexOf (GetType ().Name) < 0)
-				throw new ArgumentException (Locale.GetText ("Invalid class"));
-
-			if (e.Attribute ("version") != "1")
-				throw new ArgumentException (Locale.GetText ("Invalid version"));
+			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 
 			blob = StrongNamePublicKeyBlob.FromString (e.Attribute ("PublicKeyBlob"));
 			name = e.Attribute ("Name");
 			string v = (string) e.Attribute ("AssemblyVersion");
 			if (v == null)
-				version = new Version ();
+				assemblyVersion = new Version ();
 			else
-				version = new Version (v);
+				assemblyVersion = new Version (v);
 		}
 
                 public override string ToString ()
                 {
+			// ??? missing informations ???
                         return String.Format ( "Strong Name - {0} name = {1} version {2}",
-                                        blob, name, version);
+                                        blob, name, assemblyVersion);
                 }
 
                 public SecurityElement ToXml ()
@@ -167,17 +153,16 @@ namespace System.Security.Policy {
 
                 public SecurityElement ToXml (PolicyLevel level)
                 {
-                        SecurityElement element = new SecurityElement ("IMembershipCondition");
-                        element.AddAttribute ("class", this.GetType ().AssemblyQualifiedName);
-                        element.AddAttribute ("version", "1");
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
+			SecurityElement se = MembershipConditionHelper.Element (typeof (StrongNameMembershipCondition), version);
 
-                        element.AddAttribute ("PublicKeyBlob", blob.ToString ());
-                        element.AddAttribute ("Name", name);
-			string v = version.ToString ();
+                        se.AddAttribute ("PublicKeyBlob", blob.ToString ());
+                        se.AddAttribute ("Name", name);
+			string v = assemblyVersion.ToString ();
 			if (v != "0.0")
-				element.AddAttribute ("AssemblyVersion", version.ToString ());
+				se.AddAttribute ("AssemblyVersion", assemblyVersion.ToString ());
 
-			return element;
+			return se;
                 }
         }
 }

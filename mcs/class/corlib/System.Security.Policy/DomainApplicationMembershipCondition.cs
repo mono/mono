@@ -1,12 +1,9 @@
 //
-// System.Security.Policy.ApplicationDirectoryMembershipCondition
+// System.Security.Policy.DomainApplicationMembershipCondition
 //
-// Authors:
-//	Nick Drochak (ndrochak@gol.com)
-//	Jackson Harper (Jackson@LatitudeGeo.com)
+// Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2002 Nick Drochak, All rights reserved.
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -29,62 +26,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System.Collections;
-using System.IO;
-using System.Reflection;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-	public sealed class ApplicationDirectoryMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
+	public sealed class DomainApplicationMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
 
 		private readonly int version = 1;
 
-		public ApplicationDirectoryMembershipCondition ()
+		public DomainApplicationMembershipCondition ()
 		{
 		}
 
-		// Methods
-		[MonoTODO ("incomplete url c14n")]
+		[MonoTODO ("documentation relies on (obsoleted) IApplicationDescription")]
 		public bool Check (Evidence evidence)
 		{
-			if (evidence == null)
-				return false;
-
-			string codebase = Assembly.GetCallingAssembly ().CodeBase;
-			string local = c14n (codebase);
-			Url ucode = new Url (codebase);
-
-			// *both* ApplicationDirectory and Url must be in *Host* evidences
-			bool adir = false;
-			bool url = false;
-			IEnumerator e = evidence.GetHostEnumerator ();
-			while (e.MoveNext ()) {
-				object o = e.Current;
-
-				if (!adir && (o is ApplicationDirectory)) {
-					ApplicationDirectory ad = (o as ApplicationDirectory);
-					adir = (c14n (ad.Directory).StartsWith (local));
-				}
-				else if (!url && (o is Url)) {
-					url = ucode.Equals (o);
-				}
-
-				// got both ?
-				if (adir && url)
-					return true;
-			}
+			//return (AppDomain.CurrentDomain.ApplicationDescription != null);
 			return false;
 		}
 
 		public IMembershipCondition Copy () 
 		{ 
-			return new ApplicationDirectoryMembershipCondition ();
+			return new DomainApplicationMembershipCondition ();
 		}
 		
 		public override bool Equals (object o) 
 		{ 
-			return (o is ApplicationDirectoryMembershipCondition); 
+			return (o is DomainApplicationMembershipCondition); 
 		}
 		
 		public void FromXml (SecurityElement e)
@@ -95,18 +66,21 @@ namespace System.Security.Policy {
 		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
 			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 		}
 		
-		// All instances of ApplicationDirectoryMembershipCondition are equal so they should
-		// have the same hashcode
 		public override int GetHashCode () 
 		{ 
-			return typeof (ApplicationDirectoryMembershipCondition).GetHashCode ();
+			return -1;
 		}
 		
 		public override string ToString () 
 		{ 
-			return "ApplicationDirectory";
+			ActivationContext ac = AppDomain.CurrentDomain.ActivationContext;
+			if (ac == null)
+				return "Domain";
+			else
+				return "Domain - " + ac.Identity.FullName;
 		}
 		
 		public SecurityElement ToXml () 
@@ -116,25 +90,12 @@ namespace System.Security.Policy {
 		
 		public SecurityElement ToXml (PolicyLevel level) 
 		{
-			SecurityElement se = MembershipConditionHelper.Element (typeof (ApplicationDirectoryMembershipCondition), version);
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
+			SecurityElement se = MembershipConditionHelper.Element (typeof (DomainApplicationMembershipCondition), version);
 			// nothing to add
 			return se;
 		}
-
-		// helpers
-
-		private string c14n (string filename) 
-		{
-			string fname = null;
-			// if present remove 'file:///'
-			if (filename.StartsWith ("file:///")) {
-				fname = filename.Substring (8);
-			}
-			else {
-				fname = filename;
-			}
-			// c14n filename (e.g. /../ are removed)
-			return Path.GetFullPath (fname);
-		}
 	}
 }
+
+#endif

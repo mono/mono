@@ -1,3 +1,29 @@
+2004-08-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AllMembershipCondition.cs: Use common template for membership 
+	condition.
+	* ApplicationDirectoryMembershipCondition.cs: Use common template for
+	membership condition. Limit evidences checks to host provided. 
+	"Mostly" functionnal - still need to check c14n issues.
+	* ApplicationMembershipCondition.cs: New. For NET_2_0 profile.
+	* DomainApplicationMembershipCondition.cs: New. For NET_2_0 profile.
+	* GacMembershipCondition.cs: Use common template for membership 
+	condition. Limit evidences checks to host provided.
+	* HashMembershipCondition.cs: Use common template for membership 
+	condition. Limit evidences checks to host provided.
+	* MembershipConditionHelper.cs: Internal class for common membership
+	condition classes functionalities.
+	* PublisherMembershipCondition.cs: Use common template for membership 
+	condition.
+	* SiteMembershipCondition.cs: Use common template for membership 
+	condition.
+	* StrongNameMembershipCondition.cs: Use common template for membership
+	condition.
+	* UrlMembershipCondition.cs: Use common template for membership 
+	condition.
+	* ZoneMembershipCondition.cs: Use common template for membership 
+	condition.
+
 2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ZoneMembershipCondition.cs: Added missing tag name validation in

@@ -27,15 +27,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
-using System.Security;
 
 namespace System.Security.Policy {
 
 	[Serializable]
 	public sealed class SiteMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
+
+		private readonly int version = 1;
 
 		private string _site;
 
@@ -113,16 +113,9 @@ namespace System.Security.Policy {
 
 		public void FromXml (SecurityElement e, PolicyLevel level) 
 		{
-			if (e == null)
-				throw new ArgumentNullException ("e");
-			if (e.Tag != "IMembershipCondition")
-				throw new ArgumentException (Locale.GetText ("Invalid XML - not a IMembershipCondition tag."));
-			if (e.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (Locale.GetText ("Invalid class."));
-			if (e.Attribute ("version") != "1")
-				throw new ArgumentException (Locale.GetText ("Invalid version."));
-
+			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 			_site = e.Attribute ("Site");
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 		}
 
 		public override int GetHashCode () 
@@ -142,11 +135,10 @@ namespace System.Security.Policy {
 
 		public SecurityElement ToXml (PolicyLevel level) 
 		{
-			SecurityElement element = new SecurityElement ("IMembershipCondition");
-			element.AddAttribute ("class", this.GetType ().AssemblyQualifiedName);
-			element.AddAttribute ("version", "1");
-			element.AddAttribute ("Site", _site);
-			return element;
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
+			SecurityElement se = MembershipConditionHelper.Element (typeof (SiteMembershipCondition), version);
+			se.AddAttribute ("Site", _site);
+			return se;
 		}
 	}
 }

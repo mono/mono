@@ -1,12 +1,9 @@
 //
-// System.Security.Policy.ApplicationDirectoryMembershipCondition
+// System.Security.Policy.ApplicationMembershipCondition
 //
-// Authors:
-//	Nick Drochak (ndrochak@gol.com)
-//	Jackson Harper (Jackson@LatitudeGeo.com)
+// Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2002 Nick Drochak, All rights reserved.
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -29,62 +26,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System.Collections;
-using System.IO;
-using System.Reflection;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-	public sealed class ApplicationDirectoryMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
+	public sealed class ApplicationMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
 
 		private readonly int version = 1;
 
-		public ApplicationDirectoryMembershipCondition ()
+		private bool _lookAtDir;
+
+		public ApplicationMembershipCondition ()
 		{
+			_lookAtDir = true;
 		}
 
-		// Methods
-		[MonoTODO ("incomplete url c14n")]
+		[MonoTODO ("fx 2.0 beta 1 has some related parts obsoleted - waiting...")]
 		public bool Check (Evidence evidence)
 		{
 			if (evidence == null)
 				return false;
-
-			string codebase = Assembly.GetCallingAssembly ().CodeBase;
-			string local = c14n (codebase);
-			Url ucode = new Url (codebase);
-
-			// *both* ApplicationDirectory and Url must be in *Host* evidences
-			bool adir = false;
-			bool url = false;
+			
 			IEnumerator e = evidence.GetHostEnumerator ();
 			while (e.MoveNext ()) {
-				object o = e.Current;
-
-				if (!adir && (o is ApplicationDirectory)) {
-					ApplicationDirectory ad = (o as ApplicationDirectory);
-					adir = (c14n (ad.Directory).StartsWith (local));
-				}
-				else if (!url && (o is Url)) {
-					url = ucode.Equals (o);
-				}
-
-				// got both ?
-				if (adir && url)
-					return true;
+				// TODO: from samples it seems related to IApplicationDescription and HostContext
+				// but some are obsoleted - so this should be moving to ApplicationIdentity ?
 			}
 			return false;
 		}
 
 		public IMembershipCondition Copy () 
 		{ 
-			return new ApplicationDirectoryMembershipCondition ();
+			// _lookAtDir value isn't copied (see unit tests)
+			return new ApplicationMembershipCondition ();
 		}
 		
 		public override bool Equals (object o) 
-		{ 
-			return (o is ApplicationDirectoryMembershipCondition); 
+		{
+			// _lookAtDir isn't part of Equals computation (see unit tests)
+			return (o is ApplicationMembershipCondition); 
 		}
 		
 		public void FromXml (SecurityElement e)
@@ -95,46 +78,39 @@ namespace System.Security.Policy {
 		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
 			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
+			if (!Boolean.TryParse (e.Attribute ("LookAtDir"), out _lookAtDir))
+				_lookAtDir = false;
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 		}
 		
-		// All instances of ApplicationDirectoryMembershipCondition are equal so they should
-		// have the same hashcode
 		public override int GetHashCode () 
-		{ 
-			return typeof (ApplicationDirectoryMembershipCondition).GetHashCode ();
+		{
+			return -1;
 		}
 		
 		public override string ToString () 
-		{ 
-			return "ApplicationDirectory";
+		{
+			ActivationContext ac = AppDomain.CurrentDomain.ActivationContext;
+			if (ac == null)
+				return "Application";
+			else
+				return "Application - " + ac.Identity.FullName;
 		}
 		
 		public SecurityElement ToXml () 
-		{ 
+		{
 			return ToXml (null);
 		}
 		
 		public SecurityElement ToXml (PolicyLevel level) 
 		{
-			SecurityElement se = MembershipConditionHelper.Element (typeof (ApplicationDirectoryMembershipCondition), version);
-			// nothing to add
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
+			SecurityElement se = MembershipConditionHelper.Element (typeof (ApplicationMembershipCondition), version);
+			if (_lookAtDir)
+				se.AddAttribute ("LookAtDir", "true");
 			return se;
-		}
-
-		// helpers
-
-		private string c14n (string filename) 
-		{
-			string fname = null;
-			// if present remove 'file:///'
-			if (filename.StartsWith ("file:///")) {
-				fname = filename.Substring (8);
-			}
-			else {
-				fname = filename;
-			}
-			// c14n filename (e.g. /../ are removed)
-			return Path.GetFullPath (fname);
 		}
 	}
 }
+
+#endif

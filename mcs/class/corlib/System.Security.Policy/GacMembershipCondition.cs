@@ -28,13 +28,15 @@
 
 #if NET_2_0
 
-using System;
+using System.Collections;
 using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-	public sealed class GacMembershipCondition : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition {
+	public sealed class GacMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
+
+		private readonly int version = 1;
 
 		public GacMembershipCondition ()
 		{
@@ -45,8 +47,10 @@ namespace System.Security.Policy {
 			if (evidence == null)
 				return false;
 
-			foreach (object o in evidence) {
-				if (o is Gac)
+			// true only if Gac is in host-supplied evidences
+			IEnumerator e = evidence.GetHostEnumerator ();
+			while (e.MoveNext ()) {
+				if (e.Current is Gac)
 					return true;
 			}
 			return false;
@@ -71,19 +75,8 @@ namespace System.Security.Policy {
 
                 public void FromXml (SecurityElement element, PolicyLevel level)
                 {
-			if (element == null) {
-				throw new ArgumentNullException (
-					Locale.GetText ("The argument is null."));
-			}
-			if (element.Tag != "IMembershipCondition") {
-				throw new ArgumentException (
-					Locale.GetText ("The argument is invalid."));
-			}
-/* the version number isn't validation in Fx 2.0 beta 1
-			if (element.Attribute ("version") != "1") {
-				throw new ArgumentException (
-					Locale.GetText ("The argument is invalid."));
-			} */
+			MembershipConditionHelper.CheckSecurityElement (element, "element", version, version);
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 		}
 
 		public override int GetHashCode ()
@@ -104,12 +97,10 @@ namespace System.Security.Policy {
 
 		public SecurityElement ToXml (PolicyLevel level)
 		{
-			SecurityElement element = new SecurityElement ("IMembershipCondition");
-			Type type = this.GetType ();
-			string classString = type.FullName + ", " + type.Assembly;
-			element.AddAttribute ("class", classString);
-			element.AddAttribute ("version", "1");
-			return element;
+			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
+			SecurityElement se = MembershipConditionHelper.Element (typeof (GacMembershipCondition), version);
+			// nothing to add
+			return se;
 		}
 	}
 }

@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -38,13 +39,11 @@ namespace System.Security.Policy {
 
 	[Serializable]
 #if NET_2_0
-	public sealed class HashMembershipCondition : IMembershipCondition, ISecurityEncodable, 
-		ISecurityPolicyEncodable, IDeserializationCallback, ISerializable {
+	public sealed class HashMembershipCondition : IMembershipCondition, IDeserializationCallback, ISerializable {
 #else
-	public sealed class HashMembershipCondition : IMembershipCondition, ISecurityEncodable, 
-		ISecurityPolicyEncodable {
+	public sealed class HashMembershipCondition : IMembershipCondition {
 #endif
-		private static readonly string XmlTag = "IMembershipCondition";
+		private readonly int version = 1;
 
 		private HashAlgorithm hash_algorithm;
 		private byte[] hash_value;
@@ -73,7 +72,7 @@ namespace System.Security.Policy {
 			get { return hash_algorithm; }
 			set { 
 				if (value == null)
-					throw new ArgumentNullException ();
+					throw new ArgumentNullException ("HashAlgorithm");
 				hash_algorithm = value; 
 			}
 		}
@@ -82,7 +81,7 @@ namespace System.Security.Policy {
 			get { return hash_value; }
 			set { 
 				if (value == null)
-					throw new ArgumentNullException ();
+					throw new ArgumentNullException ("HashValue");
 				hash_value = value; 
 			} 
 		}
@@ -94,14 +93,14 @@ namespace System.Security.Policy {
 		public bool Check (Evidence evidence)
 		{
 			if (evidence == null)
-				throw new ArgumentNullException ("evidence");
+				return false;
 
-			// Loop through evidence finding the first Hash object
-			foreach (object obj in evidence) {
-				Hash hash = obj as Hash;
+			IEnumerator e = evidence.GetHostEnumerator ();
+			while (e.MoveNext ()) {
+				Hash hash = (e.Current as Hash);
 				if (hash == null)
 					continue;
-				if (EqualsHashValue (hash.GenerateHash (hash_algorithm)))
+				if (Compare (hash_value, hash.GenerateHash (hash_algorithm)))
 					return true;
 				break;
 			}
@@ -121,22 +120,18 @@ namespace System.Security.Policy {
 
 			other = (HashMembershipCondition)o;
 			
-			return (other.HashAlgorithm == hash_algorithm &&
-				other.HashValue == hash_value);
+			return ((other.HashAlgorithm == hash_algorithm) &&
+				Compare (hash_value, other.hash_value));
 		}
 		
-		public SecurityElement ToXml()
+		public SecurityElement ToXml ()
 		{
 			return ToXml (null);
 		}
 
 		public SecurityElement ToXml (PolicyLevel level)
 		{
-			SecurityElement se = new SecurityElement (XmlTag);
-			Type type = this.GetType ();
-			string classString = type.FullName + ", " + type.Assembly;
-			se.AddAttribute ("class", classString);
-			se.AddAttribute ("version", "1");
+			SecurityElement se = MembershipConditionHelper.Element (typeof (HashMembershipCondition), version);
 			se.AddAttribute ("HashValue", Encoding.Default.GetString (hash_value));
 			se.AddAttribute ("HashAlgorithm", hash_algorithm.GetType ().FullName);
 			return se;
@@ -149,24 +144,18 @@ namespace System.Security.Policy {
 		
 		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
-			if (e == null)
-				throw new ArgumentNullException ("e");
-			if (e.Tag != XmlTag) {
-				throw new ArgumentException ("e", Locale.GetText (
-					"The Tag of SecurityElement must be " + XmlTag));
-			}
+			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 			
 			string value = (string)e.Attributes ["HashValue"];
 			string algorithm = (string)e.Attributes ["HashAlgorithm"];
 
 			if (value == null || algorithm == null ) {
-				throw new ArgumentException ("e", Locale.GetText (
-					"Missing either HashValue or HashAlgorithm"));
+				throw new ArgumentException (Locale.GetText (
+					"Missing either HashValue or HashAlgorithm"), "e");
 			}
 			
 			hash_value = Encoding.Default.GetBytes (value);
 			hash_algorithm = (HashAlgorithm)Assembly.GetExecutingAssembly ().CreateInstance (algorithm);
-			
 		}
 
 		public override int GetHashCode ()
@@ -191,29 +180,26 @@ namespace System.Security.Policy {
 		// Private Methods
 		//
 
-		private bool EqualsHashValue (byte[] value)
+		private bool Compare (byte[] expected, byte[] actual)
 		{
-			int len;
-
-			if (value.Length != hash_value.Length)
+			if (expected.Length != actual.Length)
 				return false;
 			
-			len = value.Length;
-			for (int i=0; i<len; i++ ) {
-				if (value[i] != hash_value[i])
+			int len = expected.Length;
+			for (int i = 0; i < len; i++) {
+				if (expected [i] != actual [i])
 					return false;
 			}
-
 			return true;
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("fx 2.0")]
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("fx 2.0")]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
 		}
