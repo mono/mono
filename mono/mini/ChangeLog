@@ -1,5 +1,8 @@
 2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-x86.c (x86_class_init_trampoline): Make code patching thread
+	safe on IA32.
+
 	* mini-x86.c (mono_arch_call_opcode): Disable AOT for methods with 
 	vararg calls.
 
