@@ -1,10 +1,17 @@
 All Classes, Interfaces, Structures, Delegates and Enumerations
 
 
-$$: Attributes may have to be supplied to the classes. Some of the
-    attributes include DefaultPropertyAttribute, ToolboxItemAttribute,
-    ParseChildrenAttribute (to be added to System.Web.UI) etc. Currently, I
-    have not taken care of these aspects. They are to be handled later on.
+<attributesIssue>
+ Attributes may have to be supplied to the classes. Some of the attributes
+ include DefaultPropertyAttribute, ToolboxItemAttribute, ParseChildrenAttribute
+ (to be added to System.Web.UI) etc. Currently, I have not taken care of these
+ aspects. They are to be handled later on.
+</attributesIssue>
+
+<disposableItemsIssue>
+ I have not taken care of any disposing issues that may be involved. But I think
+ it will not be a problem since I am no where using unmanaged code.
+</disposableItemsIssue>
 
 <legends>
 *: Completed
@@ -91,8 +98,8 @@ SelectedDatesCollection
 * TableItemStyle
 * TableRow
 * TableRowCollection
-TableStyle
-TargetConverter
+* TableStyle
+& TargetConverter
 TemplateColumn
 & TextBox
 * TextBoxControlBuilder
