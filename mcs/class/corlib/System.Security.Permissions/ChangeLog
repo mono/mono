@@ -1,3 +1,13 @@
+2003-08-05  Duncan Mak  <duncan@ximian.com>
+
+	* IsolatedStorageFilePermission.cs:
+	* RegistryPermission.cs:
+	* SecurityPermission.cs
+	* SiteIdentityPermission.cs:
+	* UIPermission.cs:
+	* UrlIdentityPermission.cs: (FromXml);
+	(ToXml): Implemented.
+
 2003-08-04  Duncan Mak  <duncan@ximian.com>
 
 	* StrongNamePublicKeyBlob.cs (FromString): Added new internal

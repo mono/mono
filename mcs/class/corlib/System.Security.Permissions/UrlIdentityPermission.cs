@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Security.Permissions {
 
@@ -39,9 +40,21 @@ namespace System.Security.Permissions {
 			return new UrlIdentityPermission (url);
 		}
 
-		[MonoTODO]
 		public override void FromXml (SecurityElement esd)
 		{
+			if (esd == null)
+				throw new ArgumentNullException (
+					Locale.GetText ("The argument is null."));
+			
+			if (esd.Attribute ("class") != GetType ().AssemblyQualifiedName)
+				throw new ArgumentException (
+					Locale.GetText ("The argument is not valid"));
+
+			if (esd.Attribute ("version") != "1")
+				throw new ArgumentException (
+					Locale.GetText ("The argument is not valid"));
+
+			url = esd.Attribute ("Url");
 		}
 
 		[MonoTODO]
@@ -70,10 +83,15 @@ namespace System.Security.Permissions {
 			return false;
 		}
 
-		[MonoTODO]
 		public override SecurityElement ToXml () 
 		{
-			return null;
+			SecurityElement e = new SecurityElement ("IPermission");
+			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
+			e.AddAttribute ("version", "1");
+
+			e.AddAttribute ("Url", url);
+
+			return e;
 		}
 
 		[MonoTODO]

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Security.Permissions {
 
@@ -58,9 +59,36 @@ namespace System.Security.Permissions {
 			return new UIPermission (_window, _clipboard);
 		}
 
-		[MonoTODO]
 		public override void FromXml (SecurityElement esd) 
 		{
+			if (esd == null)
+				throw new ArgumentNullException (
+					Locale.GetText ("The argument is null."));
+			
+			if (esd.Attribute ("class") != GetType ().AssemblyQualifiedName)
+				throw new ArgumentException (
+					Locale.GetText ("The argument is not valid"));
+
+			if (esd.Attribute ("version") != "1")
+				throw new ArgumentException (
+					Locale.GetText ("The argument is not valid"));
+			
+			if (esd.Attribute ("Unrestricted") == "true") {
+				_window = UIPermissionWindow.AllWindows;
+				_clipboard = UIPermissionClipboard.AllClipboard;
+
+			// only 2 attributes: class and version
+			} else if (esd.Attributes.Count == 2) {
+				_window = UIPermissionWindow.NoWindows;
+				_clipboard = UIPermissionClipboard.NoClipboard;
+
+			} else {
+				_window = (UIPermissionWindow) Enum.Parse (
+					typeof (UIPermissionWindow), esd.Attribute ("Window"));
+
+				_clipboard = (UIPermissionClipboard) Enum.Parse (
+					typeof (UIPermissionClipboard), esd.Attribute ("Clipboard"));
+			}
 		}
 
 		[MonoTODO]
@@ -81,10 +109,27 @@ namespace System.Security.Permissions {
 				(_clipboard == UIPermissionClipboard.AllClipboard));
 		}
 
-		[MonoTODO]
 		public override SecurityElement ToXml () 
 		{
-			return null;
+			SecurityElement e = new SecurityElement ("IPermission");
+			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
+			e.AddAttribute ("version", "1");
+
+			if (_window == UIPermissionWindow.NoWindows && _clipboard == UIPermissionClipboard.NoClipboard)
+				return e;
+
+			if (_window == UIPermissionWindow.AllWindows && _clipboard == UIPermissionClipboard.AllClipboard) {
+				e.AddAttribute ("Unrestricted", "true");
+				return e;
+			}
+
+			if (_window != UIPermissionWindow.NoWindows)
+				e.AddAttribute ("Window", _window.ToString ());
+
+			if (_clipboard != UIPermissionClipboard.NoClipboard)
+				e.AddAttribute ("Clipboard", _clipboard.ToString ());
+
+			return e;
 		}
 
 		[MonoTODO]

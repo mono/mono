@@ -1,3 +1,8 @@
+2003-08-05  Duncan Mak  <duncan@ximian.com>
+
+	* PolicyStatement.cs (FromXml):
+	(ToXml): Implemented.
+
 2003-08-04  Duncan Mak  <duncan@ximian.com>
         
 	* IConstantMembershipCondition.cs: added.

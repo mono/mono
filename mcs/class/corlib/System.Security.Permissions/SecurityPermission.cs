@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Security.Permissions;
 
 namespace System.Security.Permissions {
@@ -63,15 +64,33 @@ namespace System.Security.Permissions {
 			return false;
 		}
 
-		[MonoTODO]
 		public override void FromXml (SecurityElement e) 
 		{
+			if (e == null)
+				throw new ArgumentNullException (
+					Locale.GetText ("The argument is null."));
+			
+			if (e.Attribute ("class") != GetType ().AssemblyQualifiedName)
+				throw new ArgumentException (
+					Locale.GetText ("The argument is not valid"));
+
+			if (e.Attribute ("version") != "1")
+				throw new ArgumentException (
+					Locale.GetText ("The argument is not valid"));
+
+                        flags = (SecurityPermissionFlag) Enum.Parse (
+                                typeof (SecurityPermissionFlag), e.Attribute ("Flags"));
 		}
 
-		[MonoTODO]
 		public override SecurityElement ToXml () 
 		{
-			return null;
+			SecurityElement e = new SecurityElement ("IPermission");
+			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
+			e.AddAttribute ("version", "1");
+
+			e.AddAttribute ("Flags", flags.ToString ());
+
+			return e;
 		}
 
 		// private 

@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Security.Permissions;
 
 namespace System.Security.Permissions
@@ -63,17 +64,41 @@ namespace System.Security.Permissions
 			return IsolatedStorageContainment.UnrestrictedIsolatedStorage == m_allowed;
 		}
 
-		[MonoTODO]
 		public override SecurityElement ToXml ()
 		{
-			throw new NotImplementedException ();
+			SecurityElement e = new SecurityElement ("IPermission");
+			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
+			e.AddAttribute ("version", "1");
+
+			if (m_allowed == IsolatedStorageContainment.UnrestrictedIsolatedStorage)
+				e.AddAttribute ("Unrestricted", "true");
+
+			else if (m_allowed == IsolatedStorageContainment.None)
+				e.AddAttribute ("Allowed", "None");
+			
+			return e;
 		}
 
 
-		[MonoTODO]
 		public override void FromXml (SecurityElement esd)
 		{
-			throw new NotImplementedException ();
+			if (esd == null)
+				throw new ArgumentNullException (
+					Locale.GetText ("The argument is null."));
+			
+			if (esd.Attribute ("class") != GetType ().AssemblyQualifiedName)
+				throw new ArgumentException (
+					Locale.GetText ("The argument is not valid"));
+
+			if (esd.Attribute ("version") != "1")
+				throw new ArgumentException (
+					Locale.GetText ("The argument is not valid"));
+			
+			if (esd.Attribute ("Unrestricted") == "true")
+				m_allowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;
+
+			else if (esd.Attribute ("Allowed") == "None")
+				m_allowed = IsolatedStorageContainment.None;
 		}
 	}
 }

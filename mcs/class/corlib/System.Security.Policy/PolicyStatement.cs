@@ -7,6 +7,8 @@
 // (C) 2002
 //
 
+using System.Security.Permissions;
+
 namespace System.Security.Policy {
 
 	[Serializable]
@@ -42,22 +44,41 @@ namespace System.Security.Policy {
 
 		// ISecurityEncodable
 
-		[MonoTODO]
-		public void FromXml (SecurityElement e) {
+		public void FromXml (SecurityElement e)
+		{
+			FromXml (e, null);
 		}
 
-		[MonoTODO]
-		public void FromXml (SecurityElement e, PolicyLevel level) {
+		public void FromXml (SecurityElement e, PolicyLevel level)
+		{
+			SecurityElement permissions = e.SearchForChildByTag ("PermissionSet");
+
+			string attributes = e.Attribute ("Attributes");
+
+			if (attributes != null)
+				attrs = (PolicyStatementAttribute) Enum.Parse (
+					typeof (PolicyStatementAttribute), attributes);
+				
+			perms = new PermissionSet (PermissionState.None);
+			perms.FromXml (permissions);
 		}
 		
-		[MonoTODO]
-		public SecurityElement ToXml () {
-			return null;
+		public SecurityElement ToXml ()
+		{
+			return ToXml (null);
 		}
 
-		[MonoTODO]
-		public SecurityElement ToXml (PolicyLevel level) {
-			return null;
+		public SecurityElement ToXml (PolicyLevel level)
+		{
+			SecurityElement element = new SecurityElement ("PolicyStatement");
+			element.AddAttribute ("version", "1");
+
+			if (attrs != PolicyStatementAttribute.Nothing)
+				element.AddAttribute ("Attributes", attrs.ToString ());
+			
+			element.AddChild (perms.ToXml ());
+
+			return element;
 		}
 
 		private PermissionSet perms;
