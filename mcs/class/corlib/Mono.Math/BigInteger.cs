@@ -171,6 +171,7 @@ namespace Mono.Math {
 		public BigInteger ()
 		{
 			data = new uint [DEFAULT_LEN];
+			this.length = DEFAULT_LEN;
 		}
 
 #if !INSIDE_CORLIB
@@ -559,6 +560,9 @@ namespace Mono.Math {
 		/// <param name="rng">A RNG.</param>
 		public void Randomize (RandomNumberGenerator rng)
 		{
+			if (this == 0)
+				return;
+
 			int bits = this.BitCount ();
 			int dwords = bits >> 5;
 			int remBits = bits & 0x1F;

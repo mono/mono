@@ -1,3 +1,8 @@
+2004-10-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Fix issue #68452 when Randomize was being called on a
+	0 BigInteger (i.e. BitCount == 0).
+
 2004-05-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* BigInteger.cs: Removed useless [CLSCompliant (false)]
