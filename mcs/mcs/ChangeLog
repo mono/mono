@@ -1,5 +1,15 @@
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
+	Committing a patch from Ben Maurer; see bug #50820.
+
+	* typemanager.cs (TypeManager.FilterWithClosure): Added CS1540
+	check for classes.
+
+	* ecore.cs (Expression.MemberLookupFailed): Added CS1540 check for
+	classes.	
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Block.LookupLabel): Also lookup in implicit child blocks.
 	(Block.AddLabel): Call DoLookupLabel() to only search in the
 	current block.
