@@ -1,8 +1,9 @@
 //
 // Capturing test.
 //
-delegate void S ();
 using System;
+
+delegate void S ();
 
 class X {
 	static void Main ()
