@@ -12,7 +12,7 @@ LIBRARY = Npgsql.dll
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
 		/r:System.Data.dll /r:System.Drawing.dll \
 		/r:System.Windows.Forms.dll /r:System.Design.dll \
-		/r:../Mono.Security.Tls/System.Security.Tls.dll \
+		/r:Mono.Security.dll \
 		-resource:Npgsql/NpgsqlConnection.bmp \
 		-resource:Npgsql/NpgsqlCommand.bmp \
 		-resource:Npgsql/NpgsqlDataAdapter.bmp \

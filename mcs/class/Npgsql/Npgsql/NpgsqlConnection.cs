@@ -34,7 +34,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using NpgsqlTypes;
 using Npgsql.Design;
-using System.Security.Tls;
+using Mono.Security.Protocol.Tls;
 
 
 namespace Npgsql {

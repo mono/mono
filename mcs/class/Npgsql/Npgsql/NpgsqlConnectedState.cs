@@ -24,7 +24,7 @@
 
 using System;
 using System.IO;
-using System.Security.Tls;
+using Mono.Security.Protocol.Tls;
 
 
 namespace Npgsql

@@ -32,7 +32,7 @@ using System.Net.Sockets;
 using System.Collections;
 using System.Text;
 using System.Resources;
-using System.Security.Tls;
+using Mono.Security.Protocol.Tls;
 
 namespace Npgsql
 {
