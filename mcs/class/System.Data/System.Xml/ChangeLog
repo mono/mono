@@ -1,0 +1,4 @@
+2003-01-27  Ville Palo <vi64pa@koti.soon.fi>
+
+	* ChangeLog: Added this file.
+	* XmlDataDocument.cs: Some little fixes.

@@ -362,13 +362,19 @@ namespace System.Xml {
 			while (reader.Read () && reader.NodeType != XmlNodeType.Element);
 
 			do {
-
 				// Find right table from tablecollection
 				if (DataSet.Tables.Contains (reader.LocalName)) {
 
 					dt = DataSet.Tables [reader.LocalName];
+
+					// Make sure event handlers are not added twice
+					dt.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
 					dt.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+
+					dt.RowDeleted -= new DataRowChangeEventHandler (OnDataTableRowDeleted);
 					dt.RowDeleted += new DataRowChangeEventHandler (OnDataTableRowDeleted);
+					
+					dt.RowChanged -= new DataRowChangeEventHandler (OnDataTableRowChanged);
 					dt.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
 				}
 				else
@@ -482,9 +488,7 @@ namespace System.Xml {
 
 			// Dont trig event again
 			row.Table.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
-
 			row [args.Node.Name] = null;
-
 			row.Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
 		}
 
@@ -523,8 +527,9 @@ namespace System.Xml {
 				// add row to datatable
 
 				DataTable dt = DataSet.Tables [args.Node.Name];
-				DataRow row = dt.NewRow ();
+				dt.RowChanged -= new DataRowChangeEventHandler (OnDataTableRowChanged);
 
+				DataRow row = dt.NewRow ();
 				Hashtable ht = TempTable [args.Node.Name] as Hashtable;
 				
 				IDictionaryEnumerator enumerator = ht.GetEnumerator ();
@@ -533,10 +538,10 @@ namespace System.Xml {
 						row [enumerator.Key.ToString ()] = enumerator.Value.ToString ();
 				}
 				
-				dt.RowChanged -= new DataRowChangeEventHandler (OnDataTableRowChanged);
 				DataSet.Tables [args.Node.Name].Rows.Add (row);
 				dt.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
 			} 
+
 		}
 
 		#endregion // DataSet event handlers
@@ -566,9 +571,9 @@ namespace System.Xml {
 				return;
 
 			// TODO: Here should be some kind of error checking.
-			GetElementsByTagName (eventArgs.Column.ToString ()) [dataRowIDList.IndexOf (
+			GetElementsByTagName (eventArgs.Column.ColumnName) [dataRowIDList.IndexOf (
 				eventArgs.Row.XmlRowID)].InnerText = eventArgs.ProposedValue.ToString ();
-
+			
 			AddXmlDocumentListeners ();
 		}
 	
@@ -640,11 +645,11 @@ namespace System.Xml {
 			XmlElement element = CreateElement (args.Row.Table.TableName);
 			DocumentElement.AppendChild (element);
 
-			XmlElement rowElement = null;			
+			XmlElement rowElement = null;
 
 			for (int i = 0; i < row.Table.Columns.Count; i++) {
-				
-				rowElement = CreateElement (row.Table.Columns [i].ToString ());
+
+				rowElement = CreateElement (row.Table.Columns [i].ColumnName);
 				rowElement.InnerText = (string)row [i];
 				element.AppendChild (rowElement);
 			}
