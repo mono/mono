@@ -1,4 +1,9 @@
-2005-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+2004-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeDeformatterTest.cs: Check timestamp as an UTC value so 
+	that the test can work anywhere in the world (and not just at home ;)
+
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatterTest.cs: New. Unit tests to validate a valid
 	authenticode-signed assembly (included in test file) and an invalid
