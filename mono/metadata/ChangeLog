@@ -1,5 +1,7 @@
 2004-09-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* image.c (mono_image_addref): Fix comment.
+
 	* metadata.c (mono_metadata_parse_type): Avoid memory allocations if
 	possible.
 
