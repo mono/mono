@@ -59,6 +59,12 @@ namespace System.Data.SqlClient {
 			return new SqlClientPermission ( state);			
 		}
 
+		[MonoTODO]
+		public override void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+
 		#endregion // Methods
 	}
 }

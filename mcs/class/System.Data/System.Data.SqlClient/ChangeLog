@@ -1,3 +1,9 @@
+2004-05-13  Umadevi S  <sumadevi@novell.com>
+	
+	*  SqlClientPermission.cs, SqlDataReader.cs - added missing methods with TODO tags
+	*  SqlCommand.cs, SqlDataAdapter.cs - implemented ToolboxItemAttribute
+	*  SQLDebugging.cs - Added new file with a TODO tag	
+	
 2004-04-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SqlConnection.cs: Use connection pool implemented in Mono.Data.Tds.

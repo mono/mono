@@ -84,6 +84,13 @@ namespace System.Data.SqlClient {
 					return command.Tds.RecordsAffected; 
 			}
 		}
+
+		[MonoTODO]
+		public bool HasRows {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 	
 		#endregion // Properties
 

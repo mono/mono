@@ -26,6 +26,7 @@ using System.Xml;
 
 namespace System.Data.SqlClient {
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+	 [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 	public sealed class SqlCommand : Component, IDbCommand, ICloneable
 	{
 		#region Fields

@@ -18,6 +18,7 @@ using System.Data.Common;
 namespace System.Data.SqlClient {
 	[DefaultEvent ("RowUpdated")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)] 
 	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
 		#region Fields
