@@ -2,9 +2,10 @@
 // SignedXmlTest.cs - NUnit Test Cases for SignedXml
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -17,8 +18,18 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography.Xml {
 
+	public class SignedXmlEx : SignedXml {
+
+		public AsymmetricAlgorithm GetPublicKey () 
+		{
+			return base.GetPublicKey ();
+		}
+	}
+
 	[TestFixture]
 	public class SignedXmlTest : Assertion {
+
+		private const string signature = "<Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\" /><Reference URI=\"#MyObjectId\"><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>CTnnhjxUQHJmD+t1MjVXrOW+MCA=</DigestValue></Reference></SignedInfo><SignatureValue>dbFt6Zw3vR+Xh7LbM/vuifyFA7gPh/NlDM2Glz/SJBsveISieuTBpZlk/zavAeuXR/Nu0Ztt4OP4tCOg09a2RNlrTP0dhkeEfL1jTzpnVaLHuQbCiwOWCgbRif7Xt7N12FuiHYb3BltP/YyXS4E12NxlGlqnDiFA1v/mkK5+C1o=</SignatureValue><KeyInfo><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><RSAKeyValue><Modulus>hEfTJNa2idz2u+fSYDDG4Lx/xuk4aBbvOPVNqgc1l9Y8t7Pt+ZyF+kkF3uUl8Y0700BFGAsprnhwrWENK+PGdtvM5796ZKxCCa0ooKkofiT4355HqK26hpV8dvj38vq/rkJe1jHZgkTKa+c/0vjcYZOI/RT/IZv9JfXxVWLuLxk=</Modulus><Exponent>EQ==</Exponent></RSAKeyValue></KeyValue></KeyInfo><Object Id=\"MyObjectId\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><ObjectListTag xmlns=\"\" /></Object></Signature>";
 
 		[Test]
 		public void StaticValues () 
@@ -31,6 +42,75 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			AssertEquals ("XmlDsigNamespaceUrl", "http://www.w3.org/2000/09/xmldsig#", SignedXml.XmlDsigNamespaceUrl);
 			AssertEquals ("XmlDsigRSASHA1Url", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", SignedXml.XmlDsigRSASHA1Url);
 			AssertEquals ("XmlDsigSHA1Url", "http://www.w3.org/2000/09/xmldsig#sha1", SignedXml.XmlDsigSHA1Url);
+		}
+
+		[Test]
+		public void Constructor_Empty () 
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (signature);
+			XmlNodeList xnl = doc.GetElementsByTagName ("Signature", SignedXml.XmlDsigNamespaceUrl);
+			XmlElement xel = (XmlElement) xnl [0];
+
+			SignedXml sx = new SignedXml (doc);
+			sx.LoadXml (xel);
+			Assert ("CheckSignature", sx.CheckSignature ());
+		}
+
+		[Test]
+		public void Constructor_XmlDocument () 
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (signature);
+			XmlNodeList xnl = doc.GetElementsByTagName ("Signature", SignedXml.XmlDsigNamespaceUrl);
+			XmlElement xel = (XmlElement) xnl [0];
+
+			SignedXml sx = new SignedXml (doc);
+			sx.LoadXml (doc.DocumentElement);
+			Assert ("CheckSignature", sx.CheckSignature ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_XmlDocument_Null () 
+		{
+			XmlDocument doc = null;
+			SignedXml sx = new SignedXml (doc);
+		}
+
+		[Test]
+		public void Constructor_XmlElement () 
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (signature);
+			XmlNodeList xnl = doc.GetElementsByTagName ("Signature", SignedXml.XmlDsigNamespaceUrl);
+			XmlElement xel = (XmlElement) xnl [0];
+
+			SignedXml sx = new SignedXml (doc.DocumentElement);
+			sx.LoadXml (xel);
+			Assert ("CheckSignature", sx.CheckSignature ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Constructor_XmlElement_WithoutLoadXml () 
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (signature);
+			XmlNodeList xnl = doc.GetElementsByTagName ("Signature", SignedXml.XmlDsigNamespaceUrl);
+			XmlElement xel = (XmlElement) xnl [0];
+
+			SignedXml sx = new SignedXml (doc.DocumentElement);
+			Assert ("!CheckSignature", sx.CheckSignature ());
+			// SignedXml (XmlElement) != SignedXml () + LoadXml (XmlElement)
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_XmlElement_Null () 
+		{
+			XmlElement xel = null;
+			SignedXml sx = new SignedXml (xel);
 		}
 
 		// sample from MSDN (url)
@@ -77,8 +157,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			keyInfo.AddClause (new RSAKeyValue (key));
 			signedXml.KeyInfo = keyInfo;
 
+			AssertEquals ("KeyInfo", 1, signedXml.KeyInfo.Count);
+			AssertNull ("SignatureLength", signedXml.SignatureLength);
+			AssertNull ("SignatureMethod", signedXml.SignatureMethod);
+			AssertNull ("SignatureValue", signedXml.SignatureValue);
+			AssertNull ("SigningKeyName", signedXml.SigningKeyName);
+
 			// Compute the signature.
 			signedXml.ComputeSignature ();
+
+			AssertNull ("SigningKeyName", signedXml.SigningKeyName);
+			AssertEquals ("SignatureMethod", SignedXml.XmlDsigRSASHA1Url, signedXml.SignatureMethod);
+			AssertEquals ("SignatureValue", 128, signedXml.SignatureValue.Length);
+			AssertNull ("SigningKeyName", signedXml.SigningKeyName);
 
 			// Get the XML representation of the signature.
 			XmlElement xmlSignature = signedXml.GetXml ();
@@ -105,8 +196,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			keyInfo.AddClause (new DSAKeyValue (key));
 			signedXml.KeyInfo = keyInfo;
 
+			AssertEquals ("KeyInfo", 1, signedXml.KeyInfo.Count);
+			AssertNull ("SignatureLength", signedXml.SignatureLength);
+			AssertNull ("SignatureMethod", signedXml.SignatureMethod);
+			AssertNull ("SignatureValue", signedXml.SignatureValue);
+			AssertNull ("SigningKeyName", signedXml.SigningKeyName);
+
 			// Compute the signature.
 			signedXml.ComputeSignature ();
+
+			AssertNull ("SignatureLength", signedXml.SignatureLength);
+			AssertEquals ("SignatureMethod", SignedXml.XmlDsigDSAUrl, signedXml.SignatureMethod);
+			AssertEquals ("SignatureValue", 40, signedXml.SignatureValue.Length);
+			AssertNull ("SigningKeyName", signedXml.SigningKeyName);
 
 			// Get the XML representation of the signature.
 			XmlElement xmlSignature = signedXml.GetXml ();
@@ -128,7 +230,20 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			// Compute the signature.
 			byte[] secretkey = Encoding.Default.GetBytes ("password");
 			HMACSHA1 hmac = new HMACSHA1 (secretkey);
+
+			AssertNull ("KeyInfo", signedXml.KeyInfo);
+			AssertNull ("SignatureLength", signedXml.SignatureLength);
+			AssertNull ("SignatureMethod", signedXml.SignatureMethod);
+			AssertNull ("SignatureValue", signedXml.SignatureValue);
+			AssertNull ("SigningKeyName", signedXml.SigningKeyName);
+
 			signedXml.ComputeSignature (hmac);
+
+			AssertNull ("KeyInfo", signedXml.KeyInfo);
+			AssertNull ("SignatureLength", signedXml.SignatureLength);
+			AssertEquals ("SignatureMethod", SignedXml.XmlDsigHMACSHA1Url, signedXml.SignatureMethod);
+			AssertEquals ("SignatureValue", 20, signedXml.SignatureValue.Length);
+			AssertNull ("SigningKeyName", signedXml.SigningKeyName);
 
 			// Get the XML representation of the signature.
 			XmlElement xmlSignature = signedXml.GetXml ();
@@ -221,10 +336,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		// adapted from http://bugzilla.ximian.com/show_bug.cgi?id=52084
 		public void GetIdElement () 
 		{
-			string value = "<Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\" /><Reference URI=\"#MyObjectId\"><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>CTnnhjxUQHJmD+t1MjVXrOW+MCA=</DigestValue></Reference></SignedInfo><SignatureValue>dbFt6Zw3vR+Xh7LbM/vuifyFA7gPh/NlDM2Glz/SJBsveISieuTBpZlk/zavAeuXR/Nu0Ztt4OP4tCOg09a2RNlrTP0dhkeEfL1jTzpnVaLHuQbCiwOWCgbRif7Xt7N12FuiHYb3BltP/YyXS4E12NxlGlqnDiFA1v/mkK5+C1o=</SignatureValue><KeyInfo><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><RSAKeyValue><Modulus>hEfTJNa2idz2u+fSYDDG4Lx/xuk4aBbvOPVNqgc1l9Y8t7Pt+ZyF+kkF3uUl8Y0700BFGAsprnhwrWENK+PGdtvM5796ZKxCCa0ooKkofiT4355HqK26hpV8dvj38vq/rkJe1jHZgkTKa+c/0vjcYZOI/RT/IZv9JfXxVWLuLxk=</Modulus><Exponent>EQ==</Exponent></RSAKeyValue></KeyValue></KeyInfo><Object Id=\"MyObjectId\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><ObjectListTag xmlns=\"\" /></Object></Signature>";
-
 			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml (value);
+			doc.LoadXml (signature);
 
 			SignedXml v1 = new SignedXml ();
 			v1.LoadXml (doc.DocumentElement);
@@ -235,11 +348,53 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+		public void GetPublicKey () 
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (signature);
+
+			SignedXmlEx sxe = new SignedXmlEx ();
+			sxe.LoadXml (doc.DocumentElement);
+			
+			AsymmetricAlgorithm aa1 = sxe.GetPublicKey ();
+			Assert ("First Public Key is RSA", (aa1 is RSA));
+			
+			AsymmetricAlgorithm aa2 = sxe.GetPublicKey ();
+			AssertNull ("Second Public Key is null", aa2);
+		}
+
+		[Test]
+		public void Add_Null () 
+		{
+			SignedXml sx = new SignedXml ();
+			// no ArgumentNull exceptions for those
+			sx.AddObject (null);
+			sx.AddReference (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void GetXml_WithoutInfo () 
+		{
+			SignedXml sx = new SignedXml ();
+			XmlElement xel = sx.GetXml ();
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void LoadXml_Null ()
 		{
 			SignedXml sx = new SignedXml ();
 			sx.LoadXml (null);
+		}
+
+		[Test]
+		public void SigningKeyName () 
+		{
+			SignedXmlEx sxe = new SignedXmlEx ();
+			AssertNull ("SigningKeyName", sxe.SigningKeyName);
+			sxe.SigningKeyName = "mono";
+			AssertEquals ("SigningKeyName", "mono", sxe.SigningKeyName);
 		}
 	}
 }

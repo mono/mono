@@ -1,6 +1,11 @@
+2004-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXmlTest.cs: Completed unit tests as many methods were not 
+	tested at all previously.
+
 2004-03-15  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* SignedXml.cs: Added null test for LoadXml.
+	* SignedXmlTest.cs: Added null test for LoadXml.
 
 2004-03-14  Atsushi Enomoto  <atsushi@ximian.com>
 
