@@ -1,5 +1,10 @@
 2004-05-07  Dick Porter  <dick@ximian.com>
 
+	* io.c (SetFileAttributes): Don't have failed chmod()s cause a
+	"file not found" error.  Fixes bug 54032.
+	
+2004-05-07  Dick Porter  <dick@ximian.com>
+
 	* io.c (FindFirstFile): Comment out a windows-compatibility check
 	that breaks when directories have metachars in their names.
 	Workaround for bug 58116.
