@@ -1,5 +1,14 @@
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
+	* class.h (MonoInflatedField): New type.
+	(MonoClassField): Replaced `MonoType *generic_type' with
+	`MonoInflatedField *generic_info'.
+
+	* icall.c
+	(ves_icall_MonoField_Mono_GetGenericFieldDefinition): New icall.
+
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (mono_image_create_method_token): Correctly encode
 	varargs methods.
 
