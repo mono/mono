@@ -1,3 +1,10 @@
+2002-11-28  Daniel Morgan  <danmorg@sc.rr.com>
+
+	* makefile.gnu: added tools directory to linux build
+
+	* tools/makefile.gnu: added new file to built tools and install.
+        dist works too.  test is just blank.
+
 2002-11-16  Martin Baulig  <martin@ximian.com>
 
 	* makefile.gnu: `binary-snapshot' is now an alias for `dist'.
