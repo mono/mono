@@ -35,62 +35,87 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace System.Globalization {
 
 	[Serializable]
-	public class TextInfo: IDeserializationCallback
+	public unsafe class TextInfo: IDeserializationCallback
 	{
+		
+		[StructLayout (LayoutKind.Sequential)]
+		struct Data {
+			public int ansi;
+			public int ebcdic;
+			public int mac;
+			public int oem;
+			public byte list_sep;
+		}
+		
 		int m_win32LangID;
 		int m_nDataItem;
 		bool m_useUserOverride;
 
 		[NonSerialized]
-		CultureInfo ci;
+		readonly CultureInfo ci;
+		
+		[NonSerialized]
+		readonly Data* data;
 
-		internal TextInfo (CultureInfo ci, int lcid)
+		internal TextInfo (CultureInfo ci, int lcid, void* data)
 		{
 			this.m_win32LangID = lcid;
 			this.ci = ci;
+			this.data = (Data*) data;
 		}
 
-		[MonoTODO]
 		public virtual int ANSICodePage
 		{
 			get {
-				return 0;
+				if (data == null)
+					return 0;
+				
+				return data->ansi;
 			}
 		}
 
-		[MonoTODO]
 		public virtual int EBCDICCodePage
 		{
 			get {
-				return 0;
-			}
-		}
-		
-		[MonoTODO]
-		public virtual string ListSeparator 
-		{
-			get {
-				return ",";
+				if (data == null)
+					return 0;
+				
+				return data->ebcdic;
 			}
 		}
 
-		[MonoTODO]
+		public virtual string ListSeparator 
+		{
+			get {
+				if (data == null)
+					return ";";
+				
+				return ((char) data->list_sep).ToString ();
+			}
+		}
+
 		public virtual int MacCodePage
 		{
 			get {
-				return 0;
+				if (data == null)
+					return 0;
+				
+				return data->mac;
 			}
 		}
-		
-		[MonoTODO]
+
 		public virtual int OEMCodePage
 		{
 			get {
-				return 0;
+				if (data == null)
+					return 0;
+				
+				return data->oem;
 			}
 		}
 

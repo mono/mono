@@ -79,6 +79,8 @@ namespace System.Globalization
 		[NonSerialized]
 		private unsafe readonly int *calendar_data;
 		[NonSerialized]
+		private unsafe readonly void *textinfo_data;
+		[NonSerialized]
 		private Calendar [] optional_calendars;
 				
 		int m_dataItem;	// MS.NET serializes this.
@@ -192,13 +194,13 @@ namespace System.Globalization
 			}
 		}
 
-		public virtual TextInfo TextInfo
+		public unsafe virtual TextInfo TextInfo
 		{
 			get {
 				if (textInfo == null) {
 					lock (this) {
 						if(textInfo == null) {
-							textInfo = new TextInfo (this, cultureID);
+							textInfo = new TextInfo (this, cultureID, textinfo_data);
 						}
 					}
 				}
@@ -526,7 +528,7 @@ namespace System.Globalization
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static bool internal_is_lcid_neutral (int lcid, out bool is_neutral);
 
-		private void ConstructInvariant (bool use_user_override)
+		private unsafe void ConstructInvariant (bool use_user_override)
 		{
 			m_isReadOnly=false;
 			cultureID=0x7f;
@@ -538,7 +540,7 @@ namespace System.Globalization
 			/* DateTimeFormatInfo defaults to the invariant data */
 			dateTimeInfo=DateTimeFormatInfo.InvariantInfo;
 
-			textInfo=new TextInfo (this, cultureID);
+			textInfo=new TextInfo (this, cultureID, this.textinfo_data);
 
 			m_name="";
 			displayname="Invariant Language (Invariant Country)";

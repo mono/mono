@@ -1,3 +1,9 @@
+2004-12-13  Ben Maurer  <bmaurer@ximian.com>
+
+	* CultureInfo.cs: Store TextInfo data. Hand it over to TextInfo.
+	* TextInfo.cs: Rewrote props to use the textinfo data stored in
+	unmanaged code.
+
 2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CultureInfo.cs (Clone): Make the components of the culture read-write
