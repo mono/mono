@@ -20,3 +20,11 @@
 
 	* Changed the linux build script to replace corlib.dll
 	  with mscorlib.dll
+
+2003-12-09  Sunil Kumar  <sunilk@novell.com>
+
+	* Updated with Schema Support
+
+2003-12-14  Sunil Kumar  <sunilk@novell.com>
+
+	* Updated with XML Doc. Support
