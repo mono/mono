@@ -1592,8 +1592,13 @@ namespace Mono.CSharp
 
 						// Try to recover, read until newline or next "'"
 						while ((c = getChar ()) != -1){
-							if (c == '\n' || c == '\'')
+							if (c == '\n' || c == '\''){
+								line++;
+								ref_line++;
+								col = 0;
 								break;
+							} else
+								col++;
 							
 						}
 						return Token.ERROR;
