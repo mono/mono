@@ -2578,11 +2578,6 @@ namespace Mono.CSharp {
 		// Keeps track of constants
 		Hashtable constants;
 
-		//
-		// Maps variable names to ILGenerator.LocalBuilders
-		//
-		Hashtable local_builders;
-
 		bool used = false;
 
 		static int id;
@@ -2999,8 +2994,6 @@ namespace Mono.CSharp {
 			// Process this block variables
 			//
 			if (variables != null){
-				local_builders = new Hashtable ();
-				
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
 					VariableInfo vi = (VariableInfo) de.Value;
@@ -3021,9 +3014,6 @@ namespace Mono.CSharp {
 					}
 					
 					vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
-
-					if (CodeGen.SymbolWriter != null)
-						vi.LocalBuilder.SetLocalSymInfo (name);
 
 					if (constants == null)
 						continue;
@@ -3171,10 +3161,32 @@ namespace Mono.CSharp {
 
 			ec.CurrentBlock = this;
 
+			bool emit_debug_info = (CodeGen.SymbolWriter != null);
+			bool is_lexical_block = !Implicit && (Parent != null);
+			if (emit_debug_info) {
+				if (is_lexical_block)
+					ec.ig.BeginScope ();
+
+				if (variables != null) {
+					foreach (DictionaryEntry de in variables) {
+						string name = (string) de.Key;
+						VariableInfo vi = (VariableInfo) de.Value;
+
+						if (vi.LocalBuilder == null)
+							continue;
+
+						vi.LocalBuilder.SetLocalSymInfo (name);
+					}
+				}
+			}
+
 			ec.Mark (StartLocation);
 			bool retval = DoEmit (ec);
 			ec.Mark (EndLocation); 
-			
+
+			if (emit_debug_info && is_lexical_block)
+				ec.ig.EndScope ();
+
 			ec.CurrentBlock = prev_block;
 
 			return retval;
