@@ -1,3 +1,8 @@
+2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: just return instead of ExitThread to allow for thread
+	clean up earlier.
+
 2004-01-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_Module_Close): Prevent assertion
