@@ -340,10 +340,6 @@ namespace System.IO {
                         return outBuffer; 
                 }
 
-                // LAMESPEC: !!  It says that "offset" is "offset in buffer at which
-                // to begin writing", I presume this should be "offset in buffer at which
-                // to begin reading"
-
                 public override void Write( byte[] buffer, int offset, int count ) { 
                         if( buffer == null ) {
                                 throw new ArgumentNullException();
@@ -374,7 +370,6 @@ namespace System.IO {
 
                         Array.Copy( buffer, offset, internalBuffer, (int)position, count );
                         position += count;
-                
                 }
 
 
