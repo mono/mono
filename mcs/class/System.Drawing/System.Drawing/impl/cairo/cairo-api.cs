@@ -45,6 +45,7 @@ namespace System.Drawing.Cairo {
                         IntPtr cr, IntPtr data, Format format, int width, int height, int stride);
 
                 [DllImport (CairoImp)]
+		[CLSCompliant(false)]
                 public static extern void cairo_set_target_drawble (IntPtr cr, IntPtr dpy, ulong drawable);
                 
 		[DllImport (CairoImp)]
@@ -245,6 +246,7 @@ namespace System.Drawing.Cairo {
                 //
                 
                 [DllImport (CairoImp)]
+		[CLSCompliant (false)]
                 public static extern IntPtr cairo_surface_create_for_drawable (
                         IntPtr display, ulong drawable, IntPtr visual,
                         Format format, ulong colormap);
