@@ -467,6 +467,7 @@ System.Runtime.Remoting.Channels/BinaryServerFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/ChannelDataStore.cs
 System.Runtime.Remoting.Channels/ChannelServices.cs
 System.Runtime.Remoting.Channels/ClientChannelSinkStack.cs
+System.Runtime.Remoting.Channels/CommonTransportKeys.cs
 System.Runtime.Remoting.Channels/IChannel.cs
 System.Runtime.Remoting.Channels/IChannelDataStore.cs
 System.Runtime.Remoting.Channels/IChannelReceiver.cs
@@ -484,6 +485,7 @@ System.Runtime.Remoting.Channels/IServerChannelSinkProvider.cs
 System.Runtime.Remoting.Channels/IServerChannelSinkStack.cs
 System.Runtime.Remoting.Channels/IServerFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/ITransportHeaders.cs
+System.Runtime.Remoting.Channels/ServerChannelSinkStack.cs
 System.Runtime.Remoting.Channels/ServerProcessing.cs
 System.Runtime.Remoting.Channels/SoapServerFormatterSink.cs
 System.Runtime.Remoting.Contexts/Context.cs
