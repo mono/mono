@@ -1,4 +1,8 @@
 
+Wed May 15 16:02:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: output field RVA data.
+
 Fri May 10 21:00:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: print field offset info if needed.
