@@ -1,4 +1,9 @@
 
+Wed Sep 11 17:06:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: handle GetTarget for finalized objects spotted and fixed by
+	nick@chemlab.org.
+
 Wed Sep 11 15:27:20 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: implemented MonoType::Module.
