@@ -20,7 +20,7 @@ namespace Mono.Xml.Xsl.Operations {
 	public class XslApplyTemplates : XslCompiledElement {
 		XPathExpression select;
 		XmlQualifiedName mode;
-		ArrayList withParams = new ArrayList ();
+		ArrayList withParams;
 		
 		public XslApplyTemplates (Compiler c) : base (c) {}
 		
@@ -43,6 +43,7 @@ namespace Mono.Xml.Xsl.Operations {
 						switch (c.Input.LocalName)
 						{
 							case "with-param":
+								if (withParams == null) withParams = new ArrayList ();
 								withParams.Add (new XslVariableInformation (c));
 								break;
 								
@@ -64,19 +65,11 @@ namespace Mono.Xml.Xsl.Operations {
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)
-		{
-			Hashtable passedParams = null;
-			
-			if (withParams.Count > 0) {
-				passedParams = new Hashtable ();
-				foreach (XslVariableInformation param in withParams)
-					passedParams [param.Name] = param.Evaluate (p);
-			}
-			
+		{		
 			if (select == null)	
-				p.ApplyTemplates (p.CurrentNode.SelectChildren (XPathNodeType.All), mode, passedParams);
+				p.ApplyTemplates (p.CurrentNode.SelectChildren (XPathNodeType.All), mode, withParams);
 			else
-				p.ApplyTemplates (p.Select (select), mode, passedParams);
+				p.ApplyTemplates (p.Select (select), mode, withParams);
 		}
 	}
 }

@@ -121,25 +121,51 @@ namespace Mono.Xml.Xsl {
 		#endregion
 		
 		#region Templates -- Apply/Call
-		public void ApplyTemplates (XPathNodeIterator nodes, QName mode, Hashtable withParams)
+		Stack paramPassingCache = new Stack ();
+		
+		Hashtable GetParams (ArrayList withParams)
 		{
+			if (withParams == null) return null;
+			Hashtable ret;
+			
+			if (paramPassingCache.Count != 0) {
+				ret = (Hashtable)paramPassingCache.Pop ();
+				ret.Clear ();
+			} else
+				ret = new Hashtable ();
+			
+			foreach (XslVariableInformation param in withParams)
+				ret.Add (param.Name, param.Evaluate (this));
+			return ret;
+		}
+		
+		public void ApplyTemplates (XPathNodeIterator nodes, QName mode, ArrayList withParams)
+		{
+
+			Hashtable passedParams = GetParams (withParams);
+			
 			PushNodeset (nodes);
 			while (NodesetMoveNext ()) {
 				XslTemplate t = FindTemplate (CurrentNode, mode);
 				currentTemplateStack.Push (t);
-				t.Evaluate (this, withParams);
+				t.Evaluate (this, passedParams);
 				currentTemplateStack.Pop ();
 			}
-			
 			PopNodeset ();
+			
+			if (passedParams != null) paramPassingCache.Push (passedParams);
 		}
 		
-		public void CallTemplate (QName name, Hashtable withParams)
+		public void CallTemplate (QName name, ArrayList withParams)
 		{
+			Hashtable passedParams = GetParams (withParams);
+			
 			XslTemplate t = FindTemplate (name);
 			currentTemplateStack.Push (null);
-			t.Evaluate (this, withParams);
+			t.Evaluate (this, passedParams);
 			currentTemplateStack.Pop ();
+			
+			if (passedParams != null) paramPassingCache.Push (passedParams);
 		}
 		
 		public void ApplyImports ()

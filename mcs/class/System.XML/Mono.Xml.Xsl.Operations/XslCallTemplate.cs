@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 namespace Mono.Xml.Xsl.Operations {
 	public class XslCallTemplate : XslCompiledElement {
 		XmlQualifiedName name;
-		ArrayList withParams = new ArrayList ();
+		ArrayList withParams;
 		public XslCallTemplate (Compiler c) : base (c) {}
 		
 		protected override void Compile (Compiler c)
@@ -40,6 +40,7 @@ namespace Mono.Xml.Xsl.Operations {
 						switch (c.Input.LocalName)
 						{
 							case "with-param":
+								if (withParams == null) withParams = new ArrayList ();
 								withParams.Add (new XslVariableInformation (c));
 								break;
 							default:
@@ -55,16 +56,8 @@ namespace Mono.Xml.Xsl.Operations {
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)
-		{
-			Hashtable passedParams = null;
-			
-			if (withParams.Count > 0) {
-				passedParams = new Hashtable ();
-				foreach (XslVariableInformation param in withParams)
-					passedParams [param.Name] = param.Evaluate (p);
-			}
-			
-			p.CallTemplate (name, passedParams);
+		{			
+			p.CallTemplate (name, withParams);
 		}
 	}
 }
