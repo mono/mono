@@ -1,5 +1,15 @@
 2002-11-24  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Binary.DoNumericPromotions): Added `check_user_conv'
+	argument; if true, we also check for user-defined conversions.
+	This is only needed if both arguments are of a user-defined type.
+	Fixes #30443, added test-175.cs.
+	(Binary.ForceConversion): Pass the location argument to ConvertImplicit.
+
+	* ecore.cs (Expression.ImplicitUserConversionExists): New method.
+
+2002-11-24  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (ArrayAccess.GetStoreOpcode): New public static
 	function to get the store opcode.
 	(Invocation.EmitParams): Call ArrayAccess.GetStoreOpcode() and

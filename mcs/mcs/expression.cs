@@ -1615,7 +1615,7 @@ namespace Mono.CSharp {
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (ec, expr, target_type, new Location (-1));
+			return ConvertImplicit (ec, expr, target_type, loc);
 		}
 
 		public static void Error_OperatorAmbiguous (Location loc, Operator oper, Type l, Type r)
@@ -1628,13 +1628,34 @@ namespace Mono.CSharp {
 				+ "'");
 		}
 
+		bool IsOfType (EmitContext ec, Type l, Type r, Type t, bool check_user_conversions)
+		{
+			if ((l == t) || (r == t))
+				return true;
+
+			if (!check_user_conversions)
+				return false;
+
+			if (ImplicitUserConversionExists (ec, l, t))
+				return true;
+			else if (ImplicitUserConversionExists (ec, r, t))
+				return true;
+			else
+				return false;
+		}
+
 		//
 		// Note that handling the case l == Decimal || r == Decimal
 		// is taken care of by the Step 1 Operator Overload resolution.
 		//
-		bool DoNumericPromotions (EmitContext ec, Type l, Type r)
+		// If `check_user_conv' is true, we also check whether a user-defined conversion
+		// exists.  Note that we only need to do this if both arguments are of a user-defined
+		// type, otherwise ConvertImplict() already finds the user-defined conversion for us,
+		// so we don't explicitly check for performance reasons.
+ 		//
+		bool DoNumericPromotions (EmitContext ec, Type l, Type r, bool check_user_conv)
 		{
-			if (l == TypeManager.double_type || r == TypeManager.double_type){
+			if (IsOfType (ec, l, r, TypeManager.double_type, check_user_conv)){
 				//
 				// If either operand is of type double, the other operand is
 				// conveted to type double.
@@ -1645,7 +1666,7 @@ namespace Mono.CSharp {
 					left = ConvertImplicit (ec, left, TypeManager.double_type, loc);
 				
 				type = TypeManager.double_type;
-			} else if (l == TypeManager.float_type || r == TypeManager.float_type){
+			} else if (IsOfType (ec, l, r, TypeManager.float_type, check_user_conv)){
 				//
 				// if either operand is of type float, the other operand is
 				// converted to type float.
@@ -1655,7 +1676,7 @@ namespace Mono.CSharp {
 				if (l != TypeManager.double_type)
 					left = ConvertImplicit (ec, left, TypeManager.float_type, loc);
 				type = TypeManager.float_type;
-			} else if (l == TypeManager.uint64_type || r == TypeManager.uint64_type){
+			} else if (IsOfType (ec, l, r, TypeManager.uint64_type, check_user_conv)){
 				Expression e;
 				Type other;
 				//
@@ -1707,7 +1728,7 @@ namespace Mono.CSharp {
 				    (other == TypeManager.int64_type))
 					Error_OperatorAmbiguous (loc, oper, l, r);
 				type = TypeManager.uint64_type;
-			} else if (l == TypeManager.int64_type || r == TypeManager.int64_type){
+			} else if (IsOfType (ec, l, r, TypeManager.int64_type, check_user_conv)){
 				//
 				// If either operand is of type long, the other operand is converted
 				// to type long.
@@ -1718,7 +1739,7 @@ namespace Mono.CSharp {
 					right = ConvertImplicit (ec, right, TypeManager.int64_type, loc);
 				
 				type = TypeManager.int64_type;
-			} else if (l == TypeManager.uint32_type || r == TypeManager.uint32_type){
+			} else if (IsOfType (ec, l, r, TypeManager.uint32_type, check_user_conv)){
 				//
 				// If either operand is of type uint, and the other
 				// operand is of type sbyte, short or int, othe operands are
@@ -1810,6 +1831,15 @@ namespace Mono.CSharp {
 			return (t == TypeManager.uint32_type || t == TypeManager.uint64_type ||
 				t == TypeManager.short_type || t == TypeManager.byte_type);
 		}
+
+		static bool is_user_defined (Type t)
+		{
+			if (t.IsSubclassOf (TypeManager.value_type) &&
+			    (!TypeManager.IsBuiltinType (t) || t == TypeManager.decimal_type))
+				return true;
+			else
+				return false;
+		}
 					
 		Expression CheckShiftArguments (EmitContext ec)
 		{
@@ -1859,13 +1889,13 @@ namespace Mono.CSharp {
 				union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
 			} else
 				union = (MethodGroupExpr) left_expr;
-				
+
 			if (union != null) {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
 				
-				method = Invocation.OverloadResolve (ec, union, Arguments, Location.Null);
+				method = Invocation.OverloadResolve (ec, union, Arguments, loc);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
 					
@@ -2205,7 +2235,8 @@ namespace Mono.CSharp {
 			//
 			// This will leave left or right set to null if there is an error
 			//
-			DoNumericPromotions (ec, l, r);
+			bool check_user_conv = is_user_defined (l) && is_user_defined (r);
+			DoNumericPromotions (ec, l, r, check_user_conv);
 			if (left == null || right == null){
 				Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 				return null;

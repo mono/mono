@@ -1066,6 +1066,13 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public static bool ImplicitUserConversionExists (EmitContext ec, Type source, Type target)
+		{
+			Expression dummy = ImplicitUserConversion (
+				ec, new EmptyExpression (source), target, Location.Null);
+			return dummy != null;
+		}
+
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
