@@ -9,8 +9,7 @@
 // Copyright (C) Ximian, Inc,  2003
 //
 // TODO:
-//    Pairing of begin/end methods in Create ()
-//    Fix whether end_method_info is valid as the single element of the stuff.
+//    BeginInvoke, EndInvoke are missing.
 //    AsyncResultParameter
 //
 // WILD GUESS:
@@ -101,8 +100,9 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public ICustomAttributeProvider CustomAttributeProvider {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return method_info;
+			}
 		}
 
 		public Type DeclaringType {
@@ -113,11 +113,7 @@ namespace System.Web.Services.Protocols {
 
 		public MethodInfo EndMethodInfo {
 			get {
-				if (end_method_info != null)
-					return end_method_info;
-				if (IsEndMethod (method_info))
-					return method_info;
-				return null;
+				return end_method_info;
 			}
 		}
 
@@ -148,8 +144,9 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public string Name {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return method_info.Name;
+			}
 		}
 
 		void ComputeParameters ()
@@ -229,24 +226,54 @@ namespace System.Web.Services.Protocols {
 
 		public static LogicalMethodInfo[] Create (MethodInfo[] method_infos, LogicalMethodTypes types)
 		{
-			throw new Exception ("We do not perform begin/end pair matching yet");
-			
-			ArrayList group = new ArrayList ();
+			ArrayList sync = ((types & LogicalMethodTypes.Sync) != 0) ? new ArrayList () : null;
+			ArrayList begin, end;
+
+			if ((types & LogicalMethodTypes.Async) != 0){
+				begin = new ArrayList ();
+				end = new ArrayList ();
+			} else 
+				begin = end = null;
 
 			foreach (MethodInfo mi in method_infos){
-				if (IsBeginMethod (mi)  || IsEndMethod (mi)){
-					if ((types & LogicalMethodTypes.Sync) != 0)
-						continue;
-					group.Add (mi);
-				} else {
-					if ((types & LogicalMethodTypes.Async) != 0)
-						continue;
-					group.Add (mi);
+				if (IsBeginMethod (mi) && begin != null)
+					begin.Add (mi);
+				else if (IsEndMethod (mi) && end != null)
+					end.Add (mi);
+				else if (sync != null)
+					sync.Add (mi);
+			}
+
+			int bcount = 0, count = 0;
+			if (begin != null){
+				bcount = count = begin.Count;
+				if (count != end.Count)
+					throw new InvalidOperationException ("Imbalance of begin/end methods");
+			}
+			if (sync != null)
+				count += sync.Count;
+
+			LogicalMethodInfo [] res = new LogicalMethodInfo [count];
+			int dest = 0;
+			if (begin != null){
+				foreach (MethodInfo bm in begin){
+					string end_name = "End" + bm.Name.Substring (5);
+
+					for (int i = 0; i < bcount; i++){
+						MethodInfo em = (MethodInfo) end [i];
+						if (em.Name == end_name){
+							res [dest++] = new LogicalMethodInfo (bm, em);
+							break;
+						}
+						throw new InvalidOperationException ("Imbalance of begin/end methods");
+					}
 				}
 			}
-			LogicalMethodInfo [] res = new LogicalMethodInfo [group.Count];
-			group.CopyTo (res);
-
+			if (sync != null)
+				foreach (MethodInfo mi in sync){
+					res [dest++] = new LogicalMethodInfo (mi);
+				}
+			
 			return res;
 		}
 
