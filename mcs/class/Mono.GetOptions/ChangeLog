@@ -1,0 +1,3 @@
+2002-08-30  Juli Mallett  <jmallett@FreeBSD.org>
+
+	* list.unix, makefile.gnu: Added build glue for UNIX.
