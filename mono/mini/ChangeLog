@@ -1,3 +1,9 @@
+2003-05-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_output_basic_block): Handle negative zero
+	correctly.
+
+	* basic-float.cs: Added tests for negative zero.
 
 Sun May 11 14:56:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
