@@ -1,6 +1,10 @@
 
 2002-09-16     Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* AdRotatorDesigner.cs    : Completed.
+
+2002-09-16     Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* AdRotatorDesigner.cs    : Initial implementation.
 	* TODOAttribute.cs        : The TODO-Attribute class.
 	* TODO                    : Added file
