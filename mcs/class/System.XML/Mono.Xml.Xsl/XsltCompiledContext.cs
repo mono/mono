@@ -522,7 +522,9 @@ namespace Mono.Xml.Xsl.Functions {
 			StringBuilder sb = new StringBuilder ("Mono"); // Ensure begins with alpha
 			sb.Append (XmlConvert.EncodeLocalName (n.BaseURI));
 			sb.Replace ('_', 'm'); // remove underscores from EncodeLocalName
-			
+			sb.Append (n.NodeType);
+			sb.Append ('m');
+
 			do {
 				sb.Append (IndexInParent (n));
 				sb.Append ('m');
@@ -533,8 +535,6 @@ namespace Mono.Xml.Xsl.Functions {
 		
 		int IndexInParent (XPathNavigator nav)
 		{
-			nav = nav.Clone();
-			
 			int n = 0;
 			while (nav.MoveToPrevious ())
 				n++;
@@ -594,7 +594,7 @@ namespace Mono.Xml.Xsl.Functions {
 						do {
 							if (key.Matches (desc.Current, value))
 								AddResult (result, desc.Current);	
-						} while (desc.Current.MoveToNext ());
+						} while (desc.Current.MoveToNextAttribute ());
 						
 						desc.Current.MoveToParent ();
 					}

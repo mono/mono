@@ -1,5 +1,11 @@
 2003-11-19 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XsltCompiledContext.cs : XsltGenerateId.Evaluate() should consider
+	  node type (i.e. attribute and namespace). Removed extraneous Clone().
+	  Fixed XsltKey.Evaluate() to use MoveToNextAttribute to iterate attrs.
+
+2003-11-19 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* Compiler.cs : Changed Keys from ArrayList to Hashtable.
 	  XslStylesheet.cs : Added Keys support here.
 	* XslTransformProcessor.cs : Should call SetContext() to expressions
