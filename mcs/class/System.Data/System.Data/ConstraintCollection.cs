@@ -23,6 +23,7 @@ namespace System.Data {
 	/// hold collection of constraints for data table
 	/// </summary>
 	[DefaultEvent ("CollectionChanged")]
+	[EditorAttribute("Microsoft.VSDesigner.Data.Design.ConstraintsCollectionEditor, "+Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+Consts.AssemblySystem_Drawing )]
 	[Serializable]
 	public class ConstraintCollection : InternalDataCollectionBase 
 	{
@@ -200,10 +201,18 @@ namespace System.Data {
 			return fc;
 		}
 
-		[MonoTODO]
 		public void AddRange(Constraint[] constraints) {
 
-			throw new NotImplementedException ();
+			//FIXME: When AddRange() occurs after BeginInit,
+			//it does not add any elements to the collection until EndInit is called.
+						
+			 if ( (constraints == null) || (constraints.Length == 0))
+				throw new ArgumentNullException ("Cannot add null");
+			 else {
+				foreach (Constraint constraint in constraints)
+					 Add (constraint);
+			      }
+				
 		}
 
 		public bool CanRemove(Constraint constraint) 
@@ -228,7 +237,6 @@ namespace System.Data {
 			
 		}
 
-		[MonoTODO]
 		public void Clear() 
 		{
 			
@@ -247,6 +255,7 @@ namespace System.Data {
 			//LAMESPEC: MSFT implementation allows this
 			//even when a ForeignKeyConstraint exist for a UniqueConstraint
 			//thus violating the CanRemove logic
+			//CanRemove will throws Exception incase of the above
 			List.Clear(); //Will violate CanRemove rule
 			OnCollectionChanged( new CollectionChangeEventArgs(CollectionChangeAction.Refresh, this) );
 		}
