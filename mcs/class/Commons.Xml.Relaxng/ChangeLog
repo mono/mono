@@ -4,6 +4,9 @@
 	(LIB_MCS_FLAGS): Strip off directory of resource files to get
 	resource names.
 	(EXTRA_DISTFILES): Add $(RESOURCE_FILES).
+	(BUILT_SOURCES): Add Common.Xml.Relaxng.Rnc/RncParser.cs.
+	($(the_lib)): Depend on resource files too.
+	* Common.Xml.Relaxng.dll.sources: Remove RncParser.cs.
 
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 

@@ -19,6 +19,5 @@ Commons.Xml.Relaxng.Derivative/RdpNameClasses.cs
 Commons.Xml.Relaxng.Derivative/RdpObjects.cs
 Commons.Xml.Relaxng.Derivative/RdpPatterns.cs
 Commons.Xml.Relaxng.Derivative/Util.cs
-Commons.Xml.Relaxng.Rnc/RncParser.cs
 Commons.Xml.Relaxng.Rnc/RncTokenizer.cs
 

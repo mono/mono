@@ -28,6 +28,8 @@ EXTRA_DISTFILES = \
 Commons.Xml.Relaxng.Rnc/RncParser.cs: Commons.Xml.Relaxng.Rnc/RncParser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs Commons.Xml.Relaxng.Rnc/RncParser.jay > Commons.Xml.Relaxng.Rnc/RncParser.cs
 
-CLEAN_FILES = Commons.Xml.Relaxng.Rnc/RncParser.cs
+BUILT_SOURCES = Commons.Xml.Relaxng.Rnc/RncParser.cs
 
 include ../../build/library.make
+
+$(the_lib): $(OTHER_RES)
