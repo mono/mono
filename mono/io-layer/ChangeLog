@@ -1,3 +1,20 @@
+2002-07-12  Dick Porter  <dick@ximian.com>
+
+	* processes.c (CreateProcess): Send stdin, stdout and stderr
+	handles if the startup info doesnt specify new ones
+
+	* io.c (GetStdHandle): Return the same handle when the same
+	standard handle is requested
+
+	* handles.c: Pass file descriptors when forking
+
+	* daemon.c: Use supplied file descriptors when forking a new
+	process
+
+	* daemon-messages.h: 
+	* daemon-messages.c: Pass stdin, stdout and stderr file
+	descriptors to the daemon (used when forking)
+
 2002-07-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* daemon.c (_wapi_daemon_main): Use sizeof
