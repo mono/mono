@@ -1015,7 +1015,7 @@ namespace Mono.CSharp {
 						parent_type = TypeManager.system_object_expr;
 					else if (Name != "System.Object")
 						parent_type = TypeManager.system_object_expr;
-				} else {
+				} else if (Kind == Kind.Struct){
 					//
 					// If we are compiling our runtime,
 					// and we are defining ValueType, then our
