@@ -1,3 +1,13 @@
+2003-08-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* marshal.c: mono_delegate_begin_invoke(): If the target is a proxy,
+	  make a direct call. It is proxy's work to make the call asynchronous.
+	  mono_delegate_end_invoke(): If the targe is a proxy, just collect
+	  the return values.
+	* object.cs: mono_method_call_message_new(): read AsyncResult and
+	  state object from parameters list, if this info is requested.
+	* object.h: Added fields to store remote call output values in
+	  MonoAsyncResult. Added AsyncResult field in MonoMethodMessage.
 
 Wed Aug 20 12:57:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
