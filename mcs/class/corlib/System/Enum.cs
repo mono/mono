@@ -48,6 +48,7 @@ namespace System {
 		}
 	};
 
+	[Serializable]
 	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable {
 
 		// IConvertible methods Start -->
