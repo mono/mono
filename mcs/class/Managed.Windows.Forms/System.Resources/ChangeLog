@@ -1,3 +1,9 @@
+2005-02-11  Geoff Norton  (gnorton@customerdna.com)
+
+	* ResXResourceReader.cs (load_data): Temporarily re-introduce the 
+	old failure for types that we cannot yet handle to allow Npgsql to
+	build.
+	
 2005-02-11  Raja R Harinath  <rharinath@novell.com>
 
 	* ResXResourceReader.cs (load_data): Make exception more informative.
