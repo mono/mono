@@ -1,4 +1,9 @@
 
+Fri May 2 12:52:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-x86.c, driver.c: disable optimizations not available on a
+	specific cpu.
+
 Thu May 1 15:28:21 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: make sure leave calls all the needed finally blocks,
