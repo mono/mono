@@ -1702,8 +1702,14 @@ namespace System.Xml
 					ch = ReadReference (false);
 					if (returnEntityReference) // Returns -1 if char validation should not be done
 						break;
-				}
-				else {
+				} else if (normalization && ch == '\r') {
+					ReadChar ();
+					ch = ReadChar ();
+					if (ch != '\n')
+						// append '\n' instead of '\r'.
+						AppendValueChar ('\n');
+					// and in case of "\r\n", discard '\r'.
+				} else {
 					if (XmlChar.IsInvalid (ch))
 						throw new XmlException (this, "Not allowed character was found.");
 					ch = ReadChar ();
@@ -2296,8 +2302,18 @@ namespace System.Xml
 						skip = true;
 					}
 				}
-				if (normalization && XmlChar.IsInvalid (ch))
-					throw new XmlException (this, "Invalid character was found.");
+				if (normalization) {
+					if (ch == '\r') {
+						ch = PeekChar ();
+						if (ch != '\n')
+							// append '\n' instead of '\r'.
+							AppendValueChar ('\n');
+						// otherwise, discard '\r'.
+						continue;
+					}
+					else if (XmlChar.IsInvalid (ch))
+						throw new XmlException (this, "Invalid character was found.");
+				}
 
 				AppendValueChar (ch);
 			}
