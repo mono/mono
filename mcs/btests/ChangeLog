@@ -1,3 +1,15 @@
+2004-08-27 Sachin Kumar <skumar1@novell.com>
+	* ExceptionHandlingC.vb:
+	* ExceptionHandlingC10.vb:
+	* ExceptionHandlingC11.vb:
+	* ExceptionHandlingC12.vb:
+	* ExceptionHandlingC13.vb:
+	* ExceptionHandlingC14.vb:
+	* ExceptionHandlingC15.vb:
+	* ExceptionHandlingC16.vb:
+	* ExceptionHandlingC17.vb:
+	* Test.Sources: included new tests	
+
 2004-08-26 Sachin Kumar <skumar1@novell.com>
 	* ExceptionHandlingA.vb:
 	* ExceptionHandlingB.vb:

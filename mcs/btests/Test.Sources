@@ -216,7 +216,8 @@ ForB \
 ForEachB \
 LoopStatementsA \
 ExceptionHandlingA \
-ExceptionHandlingB
+ExceptionHandlingB \
+ExceptionHandlingC
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -469,7 +470,15 @@ ExceptionHandlingC5 \
 ExceptionHandlingC6 \
 ExceptionHandlingC7 \
 ExceptionHandlingC8 \
-ExceptionHandlingC9
+ExceptionHandlingC9 \
+ExceptionHandlingC10 \
+ExceptionHandlingC11 \
+ExceptionHandlingC12 \
+ExceptionHandlingC13 \
+ExceptionHandlingC14 \
+ExceptionHandlingC15 \
+ExceptionHandlingC16 \
+ExceptionHandlingC17
 
 # All negetive test cases which should fail at
 # runtime goes here
