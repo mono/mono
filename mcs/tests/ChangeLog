@@ -1,3 +1,7 @@
+2004-08-31  Marek Safar <marek.safar@seznam.cz>
+
+	* test-286.cs: New test for #64689.
+
 2004-08-28  Martin Baulig  <martin@ximian.com>
 
 	* gen-73.cs: New test for #62552.
