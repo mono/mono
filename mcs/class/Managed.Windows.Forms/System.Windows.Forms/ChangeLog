@@ -1,3 +1,13 @@
+2004-11-09  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Calculate sizing and rects for left aligned tabs.
+	* ThemeWin32Classic.cs (GetTabControl*ScrollRect): Only handle Top
+	and Bottom, left and right are illegal values for this and
+	multiline is enabled when the alignment is set to left or right.
+	(DrawTab): Each alignment block should draw the text itself now
+	because Left requires special love. Also add rendering for Left
+	aligned tabs.
+	
 2004-11-09  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	*  Form.cs, MainMenu.cs, MenuAPI.cs: fixes menu navigation, fixes popups,

@@ -193,7 +193,7 @@ namespace System.Windows.Forms {
 
 				if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow) 
 					DropRow (TabPages [selected_index].Row);
-				SizeTabs (Width);
+				SizeTabs ();
 				
 				Refresh ();
 			}
@@ -392,7 +392,7 @@ namespace System.Windows.Forms {
 					right_slider_state = ButtonState.Pushed;
 					if (CanScrollRight) {
 						slider_pos++;
-						SizeTabs (Width);
+						SizeTabs ();
 					}
 					Refresh ();
 					return;
@@ -400,7 +400,7 @@ namespace System.Windows.Forms {
 					left_slider_state = ButtonState.Pushed;
 					if (CanScrollLeft) {
 						slider_pos--;
-						SizeTabs (Width);
+						SizeTabs ();
 					}
 					Refresh ();
 					return;
@@ -445,8 +445,8 @@ namespace System.Windows.Forms {
 
 		private void ResizeTabPages ()
 		{
-			CalcTabRows (Width);
-			SizeTabs (Width);
+			CalcTabRows ();
+			SizeTabs ();
 			Rectangle r = DisplayRectangle;
 			foreach (TabPage page in Controls) {
 				page.Bounds = r;
@@ -462,6 +462,19 @@ namespace System.Windows.Forms {
 		private Size TabSpacing {
 			get {
 				return ThemeEngine.Current.TabControlGetSpacing (this);
+			}
+		}
+
+		private void CalcTabRows ()
+		{
+			switch (Alignment) {
+			case TabAlignment.Right:
+			case TabAlignment.Left:
+				CalcTabRows (Height);
+				break;
+			default:
+				CalcTabRows (Width);
+				break;
 			}
 		}
 
@@ -510,12 +523,11 @@ namespace System.Windows.Forms {
 		private int BottomRow {
 			get {
 				switch (Alignment) {
-				case TabAlignment.Top:
-					return 1;
+				case TabAlignment.Right:
 				case TabAlignment.Bottom:
 					return row_count;
 				default:
-					throw new Exception ("vertical rendered tabs");
+					return 1;
 				}
 			}
 		}
@@ -524,6 +536,7 @@ namespace System.Windows.Forms {
 		{
 			get {
 				switch (Alignment) {
+				case TabAlignment.Right:
 				case TabAlignment.Bottom:
 					return -1;
 				default:
@@ -555,6 +568,60 @@ namespace System.Windows.Forms {
 				return r.Bottom + 3;
 			}
 			return 1;
+		}
+
+		private void SizeTabs ()
+		{
+			switch (Alignment) {
+			case TabAlignment.Right:
+			case TabAlignment.Left:
+				SizeTabsV (Height);
+				break;
+			default:
+				SizeTabs (Width);
+				break;
+			}
+		}
+
+		private void SizeTabsV (int row_width)
+		{
+			int ypos = 1;
+			int prev_row = 1;
+			Size spacing = TabSpacing;
+			int size = item_size.Height + 2 + spacing.Width;
+			int xpos = 4;
+
+			if (TabPages.Count == 0)
+				return;
+
+			prev_row = TabPages [0].Row;
+
+			for (int i = 0; i < TabPages.Count; i++) {
+				TabPage page = TabPages [i];
+				int width;
+
+				if (SizeMode == TabSizeMode.Fixed) {
+					width = item_size.Width;
+				} else {
+					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
+				}
+
+				if (width < MinimumTabWidth)
+					width = MinimumTabWidth;
+				if (page.Row != prev_row)
+					ypos = 1;
+
+				page.TabBounds = new Rectangle (xpos + (row_count - page.Row) * ((item_size.Height - 2) + spacing.Width),
+						ypos, item_size.Height - 2, width);
+
+				ypos += width + spacing.Width;
+				prev_row = page.Row;
+			}
+
+			if (SelectedIndex != -1) {
+				TabPage page = TabPages [SelectedIndex];
+				ExpandSelected (TabPages [SelectedIndex], 1, row_width - 1);
+			}
 		}
 
 		private void SizeTabs (int row_width)
@@ -649,7 +716,17 @@ namespace System.Windows.Forms {
 
 				page.TabBounds = new Rectangle (l, y, r - l, h);
 			} else {
-				// TODO: left and right
+				int l = page.TabBounds.Left - 3;
+				int r = page.TabBounds.Right + 3;
+				int t = page.TabBounds.Top - 3;
+				int b = page.TabBounds.Bottom + 3;
+
+				if (t < left_edge)
+					t = left_edge;
+				if (b > right_edge)
+					b = right_edge;
+
+				page.TabBounds = new Rectangle (l, t, r - l, b - t);
 			}
 		}
 
@@ -714,7 +791,7 @@ namespace System.Windows.Forms {
 				} else {
 					// Setting the selected index will calc the tab rows so
 					// we don't need to do it again
-					owner.CalcTabRows (owner.Width);
+					owner.CalcTabRows ();
 				}
 			}
 		}

@@ -26,9 +26,18 @@
 //
 //
 //
-// $Revision: 1.61 $
+// $Revision: 1.62 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.62  2004/11/09 21:44:54  jackson
+// 	* TabControl.cs: Calculate sizing and rects for left aligned tabs.
+// 	* ThemeWin32Classic.cs (GetTabControl*ScrollRect): Only handle Top
+// 	and Bottom, left and right are illegal values for this and
+// 	multiline is enabled when the alignment is set to left or right.
+// 	(DrawTab): Each alignment block should draw the text itself now
+// 	because Left requires special love. Also add rendering for Left
+// 	aligned tabs.
+//
 // Revision 1.61  2004/11/09 11:06:21  jba
 // - (DrawButtonBase): Fix verticle text rect clipping in windows
 // - (DrawCheckBox): Fix CheckAlign.TopCenter and CheckAlign.BottomCenter
@@ -1855,11 +1864,9 @@ namespace System.Windows.Forms
 			switch (tab.Alignment) {
 			case TabAlignment.Top:
 				return new Rectangle (tab.ClientRectangle.Right - 34, tab.ClientRectangle.Top + 1, 17, 17);
-			case TabAlignment.Bottom:
+			default:
 				Rectangle panel_rect = GetTabPanelRectExt (tab);
 				return new Rectangle (tab.ClientRectangle.Right - 34, panel_rect.Bottom + 2, 17, 17);
-			default:
-				throw new Exception ("vertical tab rendering");
 			}
 		}
 
@@ -1868,11 +1875,9 @@ namespace System.Windows.Forms
 			switch (tab.Alignment) {
 			case TabAlignment.Top:
 				return new Rectangle (tab.ClientRectangle.Right - 17, tab.ClientRectangle.Top + 1, 17, 17);
-			case TabAlignment.Bottom:
+			default:
 				Rectangle panel_rect = GetTabPanelRectExt (tab);
 				return new Rectangle (tab.ClientRectangle.Right - 17, panel_rect.Bottom + 2, 17, 17);
-			default:
-				throw new Exception ("vertical tab rendering");
 			}
 		}
 
@@ -1991,6 +1996,15 @@ namespace System.Windows.Forms
 
 					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
 
+					if (page.Text != String.Empty) {
+						StringFormat string_format = new StringFormat ();
+						string_format.Alignment = StringAlignment.Center;
+						string_format.LineAlignment = StringAlignment.Center;
+						string_format.FormatFlags = StringFormatFlags.NoWrap;
+						interior.Y++;
+						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+					}
+
 					break;
 
 				case TabAlignment.Bottom:
@@ -2009,10 +2023,51 @@ namespace System.Windows.Forms
 
 					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
 
+					if (page.Text != String.Empty) {
+						StringFormat string_format = new StringFormat ();
+						string_format.Alignment = StringAlignment.Center;
+						string_format.LineAlignment = StringAlignment.Center;
+						string_format.FormatFlags = StringFormatFlags.NoWrap;
+						interior.Y++;
+						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+					}
+
+					break;
+
+				case TabAlignment.Left:
+
+					dc.FillRectangle (GetControlBackBrush (tab.BackColor), bounds);
+
+					dc.DrawLine (light, bounds.Left, bounds.Bottom - 3, bounds.Left, bounds.Top + 3);
+					dc.DrawLine (light, bounds.Left, bounds.Top + 3, bounds.Left + 3, bounds.Top);
+					dc.DrawLine (light, bounds.Left + 3, bounds.Top, bounds.Right, bounds.Top);
+
+					dc.DrawLine (SystemPens.ControlDark, bounds.Right, bounds.Bottom - 1, bounds.Left + 2, bounds.Bottom - 1);
+
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right, bounds.Bottom, bounds.Left + 2, bounds.Bottom);
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Left + 2, bounds.Bottom, bounds.Left, bounds.Bottom - 3);
+
+					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
+
+					if (page.Text != String.Empty) {
+						StringFormat string_format = new StringFormat ();
+						// Flip the text around
+						string_format.Alignment = StringAlignment.Center;
+						string_format.LineAlignment = StringAlignment.Center;
+						string_format.FormatFlags = StringFormatFlags.NoWrap;
+						string_format.FormatFlags = StringFormatFlags.DirectionVertical;
+						int wo = interior.Width / 2;
+						int ho = interior.Height / 2;
+						dc.TranslateTransform (interior.X + wo, interior.Y + ho);
+						dc.RotateTransform (180);
+						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), 0, 0, string_format);
+						dc.ResetTransform ();
+					}
+
 					break;
 
 				default:
-					throw new NotImplementedException ("Vertical tab drawing");
+					throw new Exception ("right tabs");
 				}
 			}
 
@@ -2022,15 +2077,6 @@ namespace System.Windows.Forms
 					pen.DashStyle = DashStyle.Dot;
 					dc.DrawRectangle (pen, interior);
 				}
-			}
-
-			if (page.Text != String.Empty) {
-				StringFormat string_format = new StringFormat ();
-				string_format.Alignment = StringAlignment.Center;
-				string_format.LineAlignment = StringAlignment.Center;
-				string_format.FormatFlags = StringFormatFlags.NoWrap;
-				interior.Y++;
-				dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
 			}
 
 			return res;
