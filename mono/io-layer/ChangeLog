@@ -1,3 +1,11 @@
+2004-08-17  Dick Porter  <dick@ximian.com>
+
+	* daemon.c (process_new): 
+	* handles.c (_wapi_handle_new_internal): Cope when the space
+	reserved for file descriptors is larger than the shared segment
+	size.  Fixes the crash reported when running mono under gdb on
+	macosx.
+
 2004-08-16  Dick Porter  <dick@ximian.com>
 
 	* sockets.c:
