@@ -1,4 +1,13 @@
 
+Tue Mar 5 18:14:01 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: remove some magic numbers and use the smbolic names,
+	instead. Added init_events() to load event info at class init time.
+	* metadata.h, metadata.c: added mono_metadata_events_from_typedef()
+	and mono_metadata_methods_from_event().
+	* reflection.h, reflection.c: added support for writing out the evnets
+	related information.
+
 Mon Mar 4 20:32:43 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.h, icall.c: use a different method (GetInterfaces)

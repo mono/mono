@@ -1,4 +1,9 @@
 
+Tue Mar 5 18:11:01 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: print index of the methodsemantics table.
+	* main.cs: print event information.
+
 Wed Feb 20 22:10:48 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c: fix the fix and more complete custom attribute decoder.

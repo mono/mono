@@ -1,4 +1,8 @@
 
+Tue Mar 5 18:12:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fix non-debug build and some more opcode work.
+
 Mon Mar 4 11:21:44 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: print the address of 'this' in tracing mode.
