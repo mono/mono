@@ -121,7 +121,7 @@ namespace System {
 
 			if (s.Length == 0)
 				throw new FormatException ("Input string was not " + 
-							   "in the correct format.");
+							   "in the correct format: s.Length==0.");
 
 			NumberFormatInfo nfi;
 			if (fp != null) {
@@ -166,10 +166,10 @@ namespace System {
 
 				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign)
 					throw new FormatException ("Input string was not in the correct " +
-								   "format.");
+								   "format: Has Negative Sign.");
 				if (s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign)
 					throw new FormatException ("Input string was not in the correct " +
-								   "format.");
+								   "format: Has Positive Sign.");
 			}
 
 			if (AllowLeadingSign && !foundSign) {
@@ -215,11 +215,13 @@ namespace System {
 
 				if (!Int32.ValidDigit (s [pos], AllowHexSpecifier)) {
 					if (AllowThousands &&
-					    Int32.FindOther (ref pos, s, nfi.NumberGroupSeparator))
+					    (Int32.FindOther (ref pos, s, nfi.NumberGroupSeparator)
+						|| Int32.FindOther (ref pos, s, nfi.CurrencyGroupSeparator)))
 					    continue;
 					else
 					if (!decimalPointFound && AllowDecimalPoint &&
-					    Int32.FindOther (ref pos, s, nfi.NumberDecimalSeparator)) {
+					    (Int32.FindOther (ref pos, s, nfi.NumberDecimalSeparator)
+						|| Int32.FindOther (ref pos, s, nfi.CurrencyDecimalSeparator))) {
 					    decimalPointFound = true;
 					    continue;
 					}
@@ -265,7 +267,7 @@ namespace System {
 
 			// Post number stuff
 			if (nDigits == 0)
-				throw new FormatException ("Input string was not in the correct format.");
+				throw new FormatException ("Input string was not in the correct format: nDigits == 0.");
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
@@ -281,8 +283,11 @@ namespace System {
 			
 			if (AllowCurrencySymbol && !foundCurrency) {
 				// Currency + sign
+				if (nfi.CurrencyPositivePattern == 3 && s[pos++] != ' ')
+					throw new FormatException ("Input string was not in the correct format: no space between number and currency symbol.");
+
 				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
-				if (foundCurrency) {
+				if (foundCurrency && pos < s.Length) {
 					if (AllowTrailingWhite)
 						pos = Int32.JumpOverWhite (pos, s, true);
 					if (!foundSign && AllowTrailingSign)
@@ -297,13 +302,14 @@ namespace System {
 			if (foundOpenParentheses) {
 				if (pos >= s.Length || s [pos++] != ')')
 					throw new FormatException ("Input string was not in the correct " +
-								   "format.");
+								   "format: No room for close parens.");
 				if (AllowTrailingWhite && pos < s.Length)
 					pos = Int32.JumpOverWhite (pos, s, false);
 			}
 
 			if (pos < s.Length)
-				throw new FormatException ("Input string was not in the correct format.");
+				throw new FormatException ("Input string was not in the correct format: Did not parse entire string. pos = " 
+										+ pos + " s.Length = " + s.Length);
 
 			
 			if (!negative)

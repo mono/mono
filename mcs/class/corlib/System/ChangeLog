@@ -1,3 +1,10 @@
+2002-06-11  Nick Drochak  <ndrochak@gol.com>
+
+	* Int64.cs (Parse): Added unique strings to the messages where we throw
+	a FormatException. Needed these to debug, so just left them in since
+	they might be useful later. Fixed Currency parsing where we weren't
+	looking at CurrencyDecimalSeparator, etc.
+
 2002-06-09  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* DateTime.cs: fixes to pass tests M0 to M6:
