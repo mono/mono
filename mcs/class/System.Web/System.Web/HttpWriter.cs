@@ -118,7 +118,7 @@ namespace System.Web
 		{
 			// This clears all the buffers that are around
 			_OutputHelper.Flush ();
-			_OutputStream.Position = 0;
+			_OutputStream.SetLength (0);
 		}
 
 		internal void SendContent (HttpWorkerRequest Handler)
