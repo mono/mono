@@ -1,3 +1,8 @@
+2004-08-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Xml.cs: use MapPath in DocumentSource and documentContent. Fixes
+	bug #62726.
+
 2004-07-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseValidator.cs: in Validate(), when the control is not visible or
@@ -5,8 +10,8 @@
 	#61831.
 
 2004-06-10 Alon Gazit <along@mainsoft.com>
-        * WebControl.cs: fixed LoadViewState(). 
-        Creates new attributes state bag only when the current is null.
+	* WebControl.cs: fixed LoadViewState(). 
+	Creates new attributes state bag only when the current is null.
 
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

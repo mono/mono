@@ -189,21 +189,19 @@ namespace System.Web.UI.WebControls
 							GetType().Name));
 		}
 
-		[MonoTODO("security")]
 		private void LoadXpathDoc ()
 		{
 			if (documentContent != null && documentContent.Length > 0) {
-				xpathDoc = new XPathDocument (new StringReader (documentContent));
+				xpathDoc = new XPathDocument (new StringReader (MapPathSecure (documentContent)));
 				return;
 			}
 
 			if (documentSource != null && documentSource.Length != 0) {
-				xpathDoc = new XPathDocument (documentSource);
+				xpathDoc = new XPathDocument (MapPathSecure (documentSource));
 				return;
 			}
 		}
 
-		[MonoTODO("security")]
 		private void LoadTransform ()
 		{
 			if (transform != null)
