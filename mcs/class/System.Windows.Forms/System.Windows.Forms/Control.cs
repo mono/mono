@@ -1,48 +1,47 @@
-    //
-    // System.Windows.Forms.Control.cs
-    //
-    // Author:
-    //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-    //	Dennis Hayes (dennish@rayetk.com)
-    //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
-    //	 Alexandre Pigolkine (pigolkine@gmx.de)
-    //	Aleksey Ryabchuk (ryabchuk@yahoo.com)
-    //
-    // (C) Ximian, Inc., 2002
-    //
-    
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Collections;
-	using System.Threading;
-	using System.Text;
-    using System.Runtime.InteropServices;
-    using System.Collections.Specialized;
+//
+// System.Windows.Forms.Control.cs
+//
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@rayetk.com)
+//   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
+//	 Alexandre Pigolkine (pigolkine@gmx.de)
+//	Aleksey Ryabchuk (ryabchuk@yahoo.com)
+//
+// (C) Ximian, Inc., 2002
+//
 
-    namespace System.Windows.Forms {
-    
-    	/// <summary>
-    	/// Defines the base class for controls, which are components with 
-    	/// visual representation.
-    	/// </summary>
-    	
+using System.ComponentModel;
+using System.Drawing;
+using System.Collections;
+using System.Threading;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.Collections.Specialized;
+
+namespace System.Windows.Forms {
+	
     	public class Control : Component , ISynchronizeInvoke, IWin32Window {
     
 
+		//
     		// Helper NativeWindow class to dispatch messages back
     		// to the Control class
+		//
     		protected class ControlNativeWindow : NativeWindow {
     
     			private Control control;
     
-    			public ControlNativeWindow (Control control) : base() {
+    			public ControlNativeWindow (Control control) : base ()
+			{
     				this.control = control;
     			}
     
-    			protected override void WndProc (ref Message m) {
-					//Console.WriteLine ("Control WndProc Message HWnd {0}, Msg {1}", m.HWnd, m.Msg);
-					// Do not call default WndProc here
-					// let the control decide what to do
+    			protected override void WndProc (ref Message m)
+			{
+				//Console.WriteLine ("Control WndProc Message HWnd {0}, Msg {1}", m.HWnd, m.Msg);
+				// Do not call default WndProc here
+				// let the control decide what to do
     				// base.WndProc (ref m);
        				control.WndProc (ref m);
     			}
@@ -56,10 +55,13 @@
 		static private NativeWindow parkingWindow = null;
 		private static bool classRegistered = false;
 
+		//
     		// private fields
+		//
     		// it seems these are stored in case the window is not created,
     		// corresponding properties (below) need to check if window
     		// is created or not and react accordingly
+		//
     		string accessibleDefaultActionDescription;
     		string accessibleDescription;
     		string accessibleName;
@@ -94,98 +96,98 @@
 		int clientHeight;
 
 		BitVector32 statuses;
-		private static readonly int LAYOUT_SUSPENDED = BitVector32.CreateMask();
-		private static readonly int LAYOUT_PENDING   = BitVector32.CreateMask( LAYOUT_SUSPENDED );
-		private static readonly int DISPOSED	     = BitVector32.CreateMask( LAYOUT_PENDING );
-		private static readonly int RECREATING_HANDLE= BitVector32.CreateMask( DISPOSED );
-		private static readonly int CREATED          = BitVector32.CreateMask( RECREATING_HANDLE );
-		private static readonly int DISPOSING        = BitVector32.CreateMask( CREATED );
-		private static readonly int TOPLEVEL         = BitVector32.CreateMask( DISPOSING );
+		private static readonly int LAYOUT_SUSPENDED = BitVector32.CreateMask ();
+		private static readonly int LAYOUT_PENDING   = BitVector32.CreateMask (LAYOUT_SUSPENDED);
+		private static readonly int DISPOSED	     = BitVector32.CreateMask (LAYOUT_PENDING);
+		private static readonly int RECREATING_HANDLE= BitVector32.CreateMask (DISPOSED);
+		private static readonly int CREATED          = BitVector32.CreateMask (RECREATING_HANDLE);
+		private static readonly int DISPOSING        = BitVector32.CreateMask (CREATED);
+		private static readonly int TOPLEVEL         = BitVector32.CreateMask (DISPOSING);
 
-			object tag;
-			protected bool mouseIsInside_;
+		object tag;
+		protected bool mouseIsInside_;
+		
+		// BeginInvoke () etc. helpers
+		static int InvokeMessage = Win32.RegisterWindowMessage ("mono_control_invoke_helper");
+		
+		// CHECKME: This variable is used to determine whether current thread
+		// was used to create Control Handle. It take some space but saves a call
+		// to unmanaged code in ISynchronizeInvoke.IsInvokeRequired.
+		private int CreatorThreadId_ = 0; 
+		
+		private Queue InvokeQueue_ = new Queue ();
+		
+		internal class ControlInvokeHelper : IAsyncResult {
+			private Delegate Method_ = null;
+			private object[] MethodArgs_ = null;
+			private object MethodResult_ = null;
+			private ManualResetEvent AsyncWaitHandle_ = new ManualResetEvent (false);
+			private bool CompletedSynchronously_ = false;
+			private bool IsCompleted_ = false;
+			
+			public ControlInvokeHelper (Delegate method, object[] args) {
+				Method_ = method;
+				MethodArgs_ = args;
+			}
+			
+			// IAsyncResult interface 
+			object IAsyncResult.AsyncState { 
+				get {
+					if (MethodArgs_ != null && MethodArgs_.Length != 0) 
+						return MethodArgs_[MethodArgs_.Length - 1];
 
-			// BeginInvoke() etc. helpers
-			static int InvokeMessage = Win32.RegisterWindowMessage("mono_control_invoke_helper");
-
-			// CHECKME: This variable is used to determine whether current thread
-			// was used to create Control Handle. It take some space but saves a call
-			// to unmanaged code in ISynchronizeInvoke.IsInvokeRequired.
-			private int CreatorThreadId_ = 0; 
-
-			private Queue InvokeQueue_ = new Queue();
-
-			internal class ControlInvokeHelper : IAsyncResult {
-				private Delegate Method_ = null;
-				private object[] MethodArgs_ = null;
-				private object MethodResult_ = null;
-				private ManualResetEvent AsyncWaitHandle_ = new ManualResetEvent(false);
-				private bool CompletedSynchronously_ = false;
-				private bool IsCompleted_ = false;
-
-				public ControlInvokeHelper( Delegate method, object[] args) {
-					Method_ = method;
-					MethodArgs_ = args;
+					return null;
 				}
-
-				// IAsyncResult interface 
-				object IAsyncResult.AsyncState { 
-					get {
-						if( MethodArgs_ != null && MethodArgs_.Length != 0) {
-							return MethodArgs_[MethodArgs_.Length - 1];
-						}
-						return null;
-					}
-				}
-
-				WaitHandle IAsyncResult.AsyncWaitHandle { 
-					get {
-						return AsyncWaitHandle_;
-					}
-				}
-
-				bool IAsyncResult.CompletedSynchronously {
-					get {
-						return CompletedSynchronously_;
-					}
-				}
-
-				bool IAsyncResult.IsCompleted { 
-					get {
-						return IsCompleted_;
-					}
-				}
-
-				internal bool CompletedSynchronously {
-					set {
-						CompletedSynchronously_ = value;
-					}
-				}
-
-				internal object MethodResult {
-					get {
-						return MethodResult_;
-					}
-				}
-
-				internal void ExecuteMethod() {
-					object result = Method_.DynamicInvoke(MethodArgs_);
-					lock(this) {
-						MethodResult_ = result;
-						IsCompleted_ = true;
-					}
-					AsyncWaitHandle_.Set();
+			}
+			
+			WaitHandle IAsyncResult.AsyncWaitHandle { 
+				get {
+					return AsyncWaitHandle_;
 				}
 			}
 
+			bool IAsyncResult.CompletedSynchronously {
+				get {
+					return CompletedSynchronously_;
+				}
+			}
+
+			bool IAsyncResult.IsCompleted { 
+				get {
+					return IsCompleted_;
+				}
+			}
+
+			internal bool CompletedSynchronously {
+				set {
+					CompletedSynchronously_ = value;
+				}
+			}
+
+			internal object MethodResult {
+				get {
+					return MethodResult_;
+				}
+			}
+
+			internal void ExecuteMethod () {
+				object result = Method_.DynamicInvoke (MethodArgs_);
+				lock (this) {
+					MethodResult_ = result;
+					IsCompleted_ = true;
+				}
+				AsyncWaitHandle_.Set ();
+			}
+		}
+
     		// --- Constructors ---
     
-	 		//Compact Framework //only Control()
+		//Compact Framework //only Control ()
     		public Control ()
     		{
     			childControls = CreateControlsInstance ();
 
-			statuses = new BitVector32(); 
+			statuses = new BitVector32 (); 
 			
     			accessibleDefaultActionDescription = null;
     			accessibleDescription = null;
@@ -195,8 +197,8 @@
     			anchor = AnchorStyles.Top | AnchorStyles.Left;
     			backColor = Control.DefaultBackColor;
     			backgroundImage = null;
-    			bounds = new Rectangle();
-			oldBounds = new Rectangle();
+    			bounds = new Rectangle ();
+			oldBounds = new Rectangle ();
     			// bindingContext = null;
     			causesValidation = true;
     			contextMenu = null;
@@ -223,13 +225,13 @@
 
 			mouseIsInside_ = false;
     			controlStyles_ = ControlStyles.Selectable | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
-				// Do not create Handle here, only in CreateHandle
-    			// CreateHandle();//sets window handle. FIXME: No it does not
+			// Do not create Handle here, only in CreateHandle
+    			// CreateHandle ();//sets window handle. FIXME: No it does not
     		}
     		
     		// according to docs, the constructors do not create 
     		// the (HWND) window
-    		public Control (string text) : this() 
+    		public Control (string text) : this () 
     		{
     			Text = text;
     			// SetWindowTextA (Handle, text);
@@ -242,7 +244,7 @@
     		}
     		
     		public Control (string text, int left, int top, 
-    				int width, int height) : this(text) 
+    				int width, int height) : this (text) 
     		{
     			Left = left;
     			Top = top;
@@ -268,7 +270,7 @@
      		private Control (IntPtr existingHandle)
      		{
      			window = (ControlNativeWindow) NativeWindow.FromHandle (
-     				existingHandle);
+										existingHandle);
      		}
     
     		// --- Properties ---
@@ -332,24 +334,24 @@
     				return anchor;
     			}
     			set {
-				if ( anchor != value ) {
+				if (anchor != value){
     					anchor = value;
-					if ( anchor != ( AnchorStyles.Left | AnchorStyles.Top ) )
+					if (anchor != (AnchorStyles.Left | AnchorStyles.Top))
 						Dock = DockStyle.None;
 				}
     			}
     		}
     		
-	  		//Compact Framework
+		//Compact Framework
     		public virtual Color BackColor {
     			get {
-					return backColor;
+				return backColor;
     			}
     			set {
-					if( backColor != value) {
-						backColor = value;
-						OnBackColorChanged(new EventArgs());
-					}
+				if (backColor != value) {
+					backColor = value;
+					OnBackColorChanged (new EventArgs ());
+				}
     			}
     		}
     		
@@ -360,7 +362,7 @@
     			set {
     				backgroundImage = value;
     				// FIXME: force redraw
-					Invalidate();
+				Invalidate ();
     			}
     		}
     
@@ -375,20 +377,20 @@
     			}
     		}
     		
-	 		//Compact Framework
+		//Compact Framework
     		public int Bottom {
     			get {
     				return Top + Height;
     			}
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public Rectangle Bounds {
     			get {
     				return bounds;
     			}
     			set {
-				SetBounds(value.Left, value.Top, value.Width, value.Height);
+				SetBounds (value.Left, value.Top, value.Width, value.Height);
     			}
     		}
     		
@@ -401,17 +403,17 @@
     		}
     		
     		[MonoTODO]
-    		public bool CanSelect {
+		public bool CanSelect {
     			get {
-				if ( !GetStyle ( ControlStyles.Selectable ) )
+				if (!GetStyle (ControlStyles.Selectable))
 					return false;
 
-				if ( Parent == null )
+				if (Parent == null)
 					return false;
 
 				Control parent = Parent;
-				while ( parent != null ) {
-					if ( !parent.Visible || !parent.Enabled )
+				while (parent != null){
+					if (!parent.Visible || !parent.Enabled)
 						return false;
 					parent = parent.Parent;
 				}
@@ -420,7 +422,7 @@
     			}
     		}
     		
-	 		//Compact Framework
+		//Compact Framework
     		public bool Capture {
     			get {
     				if (IsHandleCreated) {
@@ -455,29 +457,29 @@
     			}
     		}
     		
-	 		//Compact Framework
+		//Compact Framework
     		public Rectangle ClientRectangle {
     			get {
-				return new Rectangle ( 0, 0, ClientSize.Width, ClientSize.Height );
+				return new Rectangle (0, 0, ClientSize.Width, ClientSize.Height);
  
     			}
     		}
     		
-	 		//Compact Framework
-			[MonoTODO]
-			public Size ClientSize {
-				get {
-					return new Size ( clientWidth, clientHeight);
-				}
-				set {
-					SetClientSizeCore ( value.Width, value.Height );
-				}
+		//Compact Framework
+		[MonoTODO]
+		public Size ClientSize {
+			get {
+				return new Size (clientWidth, clientHeight);
 			}
+			set {
+				SetClientSizeCore (value.Width, value.Height);
+			}
+		}
     		
     		[MonoTODO]
-    		public string CompanyName {
+		public string CompanyName {
     			get {
-					//Better than throwing an execption
+				//Better than throwing an execption
     				return "Company Name";
     			}
     		}
@@ -485,25 +487,25 @@
     		public bool ContainsFocus {
     			get {
     				if (IsHandleCreated) {
-						if (Focused) return true;
-						foreach (Control ctr in Controls) {
-							if (ctr.ContainsFocus) return true;
-						}
+					if (Focused) return true;
+					foreach (Control ctr in Controls) {
+						if (ctr.ContainsFocus) return true;
+					}
     				}
     				return false;
     			}
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		public virtual ContextMenu ContextMenu {
+		public virtual ContextMenu ContextMenu {
     			get {
   				return contextMenu;
     			}
     			set {
-				if ( contextMenu != value ) {
+				if (contextMenu != value){
 					contextMenu = value;
-					OnContextMenuChanged ( EventArgs.Empty );
+					OnContextMenuChanged (EventArgs.Empty);
 				}
     			}
     		}
@@ -518,87 +520,87 @@
     		
     		protected virtual CreateParams CreateParams {
     			get {
-  					CreateParams createParams = new CreateParams ();
-  					createParams.Caption = Text;
-  					createParams.X = Left;
-  					createParams.Y = Top;
-  					createParams.Width = Width;
-  					createParams.Height = Height;
-  					createParams.ClassStyle = 0;
-  					createParams.ExStyle = 0;
-  					createParams.Param = 0;
+				CreateParams createParams = new CreateParams ();
+				createParams.Caption = Text;
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
   				
-  					if (parent != null)
-  						createParams.Parent = parent.Handle;
-  					else 
-  						createParams.Parent = ParkingWindowHandle;
+				if (parent != null)
+					createParams.Parent = parent.Handle;
+				else 
+					createParams.Parent = ParkingWindowHandle;
 	  
-  					createParams.Style = (int) WindowStyles.WS_OVERLAPPED;
-					if( visible) {
-						createParams.Style |= (int) WindowStyles.WS_VISIBLE;
-					}
+				createParams.Style = (int) WindowStyles.WS_OVERLAPPED;
+				if (visible) {
+					createParams.Style |= (int) WindowStyles.WS_VISIBLE;
+				}
 	  
     				return createParams;
     			}
     		}
     		
-			internal protected IntPtr ControlRealWndProc = IntPtr.Zero;
-			internal protected bool SubClassWndProc_ = false;
+		internal protected IntPtr ControlRealWndProc = IntPtr.Zero;
+		internal protected bool SubClassWndProc_ = false;
 
-			// This function lets Windows or/and default Windows control process message
-			// Classes have to call it if they do not handle message in WndProc or
-			// default handling is needed.
-			protected void CallControlWndProc( ref Message msg) {
-				if( ControlRealWndProc != IntPtr.Zero) {
-					msg.Result = (IntPtr)Win32.CallWindowProc(ControlRealWndProc, msg.HWnd, (int)msg.Msg, msg.WParam.ToInt32(), msg.LParam.ToInt32());
+		// This function lets Windows or/and default Windows control process message
+		// Classes have to call it if they do not handle message in WndProc or
+		// default handling is needed.
+		protected void CallControlWndProc (ref Message msg) {
+			if (ControlRealWndProc != IntPtr.Zero) {
+				msg.Result = (IntPtr)Win32.CallWindowProc (ControlRealWndProc, msg.HWnd, (int)msg.Msg, msg.WParam.ToInt32 (), msg.LParam.ToInt32 ());
+			}
+			else {
+				DefWndProc (ref msg);
+			}
+		}
+
+		// Subclass only native Windows controls. Those classes have to set SubClassWndProc_ to true in contructor
+		private void SubclassWindow () {
+			if (IsHandleCreated && SubClassWndProc_) {
+				ControlRealWndProc = Win32.SetWindowLong (Handle, GetWindowLongFlag.GWL_WNDPROC, NativeWindow.GetWindowProc ());
+			}
+		}
+
+		private void UnsubclassWindow () {
+			if (IsHandleCreated) {
+				Win32.SetWindowLong (Handle, GetWindowLongFlag.GWL_WNDPROC, ControlRealWndProc.ToInt32 ());
+			}
+		}
+
+		protected virtual void OnWmCommand (ref Message m) {
+			if (m.LParam.ToInt32 () != 0) {
+				if (m.LParam != Handle) {
+					// Control notification
+					System.Console.WriteLine ("Control notification Code {0} Id = Hwnd {1}", m.HiWordWParam, m.LParam.ToInt32 ());
+					Control.ReflectMessage (m.LParam, ref m);
 				}
 				else {
-					DefWndProc(ref msg);
+					// Unhandled Control reflection
+					// Derived class didn't handle WM_COMMAND or called base.WndProc in WM_COMMAND handler
+					// CHECKME: Shall we notify user in debug build, throw an exception or just ignore this case ?
 				}
 			}
-
-			// Subclass only native Windows controls. Those classes have to set SubClassWndProc_ to true in contructor
-			private void SubclassWindow() {
-				if( IsHandleCreated && SubClassWndProc_) {
-					ControlRealWndProc = Win32.SetWindowLong( Handle, GetWindowLongFlag.GWL_WNDPROC, NativeWindow.GetWindowProc());
-				}
-			}
-
-			private void UnsubclassWindow() {
-				if( IsHandleCreated) {
-					Win32.SetWindowLong( Handle, GetWindowLongFlag.GWL_WNDPROC, ControlRealWndProc.ToInt32());
-				}
-			}
-
-			protected virtual void OnWmCommand (ref Message m) {
-				if( m.LParam.ToInt32() != 0) {
-					if( m.LParam != Handle) {
-						// Control notification
-						System.Console.WriteLine("Control notification Code {0} Id = Hwnd {1}", m.HiWordWParam, m.LParam.ToInt32());
-						Control.ReflectMessage(m.LParam, ref m);
-					}
-					else {
-						// Unhandled Control reflection
-						// Derived class didn't handle WM_COMMAND or called base.WndProc in WM_COMMAND handler
-						// CHECKME: Shall we notify user in debug build, throw an exception or just ignore this case ?
-					}
-				}
-			}
+		}
 
     		[MonoTODO]
-    		public virtual Cursor Cursor {
+		public virtual Cursor Cursor {
     			get { 
-				if ( cursor == null )
+				if (cursor == null)
 					return Cursors.Default;
 				return cursor; 
 			}
     			set { cursor = value;}
     		}
     		
-	  		//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		// waiting for BindingContext; should be stubbed now
-    		public ControlBindingsCollection DataBindings {
+		// waiting for BindingContext; should be stubbed now
+			public ControlBindingsCollection DataBindings {
     			get {
     				throw new NotImplementedException ();
     			}
@@ -613,14 +615,14 @@
     		}
     
     		//[MonoTODO]
-    		// FIXME: use GetSystemMetrics?
+   		// FIXME: use GetSystemMetrics?
      		public static Font DefaultFont {
     			// FIXME: get current system font from GenericSansSerif
     			//        call ArgumentException not called
     			get {
-    		//		throw new NotImplementedException ();
-    		//		return (FontFamily.GenericSansSerif);
-					return Font.FromHfont(Win32.GetStockObject(GSO_.DEFAULT_GUI_FONT));
+				//		throw new NotImplementedException ();
+				//		return (FontFamily.GenericSansSerif);
+				return Font.FromHfont (Win32.GetStockObject (GSO_.DEFAULT_GUI_FONT));
     			}
     		}
     		
@@ -638,8 +640,8 @@
     		
     		protected virtual Size DefaultSize {
     			get {
-					//Default label size, this should be correct.
-    				return new Size(100,23);
+				//Default label size, this should be correct.
+    				return new Size (100,23);
     			}
     		}
     		
@@ -658,67 +660,67 @@
     				return dock;
     			}
     			set {
-				if ( dock != value ) {
+				if (dock != value){
     					dock = value;
-					if ( dock != DockStyle.None )
-						 Anchor = ( AnchorStyles.Left | AnchorStyles.Top );
-					OnDockChanged ( EventArgs.Empty );					
+					if (dock != DockStyle.None)
+						Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+					OnDockChanged (EventArgs.Empty);					
 				}
     			}
     		}
     
-	  		//Compact Framework
+		//Compact Framework
     		public virtual bool Enabled {
     			get {
-					return enabled;
+				return enabled;
     				//return Win32.IsWindowEnabled (Handle);
     			}
     			set {
-					if( enabled != value) {
-						Win32.EnableWindow (Handle, value);
-						enabled = value;
-						// FIXME: Disable/enable all children here
-						Invalidate();
-					}
+				if (enabled != value) {
+					Win32.EnableWindow (Handle, value);
+					enabled = value;
+					// FIXME: Disable/enable all children here
+					Invalidate ();
+				}
     			}
     		}
     		
-  			//Compact Framework
+		//Compact Framework
     		public virtual bool Focused {
     			get {
-					if (IsHandleCreated) {
-						IntPtr focusedWindow = Win32.GetFocus();
-						if (focusedWindow == Handle)
-							return true;
-					}
-					return false;
+				if (IsHandleCreated) {
+					IntPtr focusedWindow = Win32.GetFocus ();
+					if (focusedWindow == Handle)
+						return true;
 				}
+				return false;
+			}
     		}
     		
-  			//Compact Framework
+		//Compact Framework
     		public virtual Font Font {
-				get {
-					Font result = font;
-					if( result == null) {
-						if( Parent != null) {
-							result = Parent.Font;
-						}
-						if( result == null) {
-							result = Control.DefaultFont;
-						}
+			get {
+				Font result = font;
+				if (result == null) {
+					if (Parent != null) {
+						result = Parent.Font;
 					}
-					return result;
+					if (result == null) {
+						result = Control.DefaultFont;
+					}
 				}
+				return result;
+			}
     			set {
-					font = value;
-					if( IsHandleCreated) {
-						Win32.SendMessage(Handle, Msg.WM_SETFONT, Font.ToHfont().ToInt32(), 1);
-					}
+				font = value;
+				if (IsHandleCreated) {
+					Win32.SendMessage (Handle, Msg.WM_SETFONT, Font.ToHfont ().ToInt32 (), 1);
 				}
+			}
     		}
     		
     		[MonoTODO]
-    		protected int FontHeight {
+		protected int FontHeight {
     			get {
     				throw new NotImplementedException ();
     			}
@@ -727,7 +729,7 @@
     			}
     		}
     		
-  			//Compact Framework
+		//Compact Framework
     		public virtual Color ForeColor {
     			get {
     				return foreColor;
@@ -745,13 +747,13 @@
     			}
     		}
     		
-  			//Compact Framework
+		//Compact Framework
     		public int Height {
     			get {
     				return bounds.Height;
     			}
     			set {
-				SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
+				SetBounds (bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
     			}
     		}
     		
@@ -783,55 +785,55 @@
     			get { return window != null && window.Handle != IntPtr.Zero; }
     		}
     		
-  			//Compact Framework
-			public int Left {
-				get {
-					return bounds.X;
-				}
-				set {
-					SetBounds(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
-				}
+		//Compact Framework
+		public int Left {
+			get {
+				return bounds.X;
 			}
+			set {
+				SetBounds (value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
+			}
+		}
  		
- 			//Compact Framework
-			public Point Location {
-				// CHECKME:
-				get {
-					return new Point (Top, Left);
-				}
-				set {
-					SetBounds(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
-				}
+		//Compact Framework
+		public Point Location {
+			// CHECKME:
+			get {
+				return new Point (Top, Left);
 			}
+			set {
+				SetBounds (value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
+			}
+		}
     		
     		public static Keys ModifierKeys {
     			get {
 				Keys keys = Keys.None;
 
-				if ( ( Win32.GetKeyState( (int) VirtualKeys.VK_SHIFT ) & 0x8000 ) == 0x8000 )
-					 keys |= Keys.Shift;
-				if ( ( Win32.GetKeyState( (int) VirtualKeys.VK_MENU ) & 0x8000 )  == 0x8000 )
+				if ( (Win32.GetKeyState ( (int) VirtualKeys.VK_SHIFT)& 0x8000)== 0x8000)
+					keys |= Keys.Shift;
+				if ( (Win32.GetKeyState ( (int) VirtualKeys.VK_MENU)& 0x8000) == 0x8000)
 					keys |= Keys.Alt;
-				if ( ( Win32.GetKeyState( (int) VirtualKeys.VK_CONTROL) & 0x8000) == 0x8000 )
-					 keys |= Keys.Control;
+				if ( (Win32.GetKeyState ( (int) VirtualKeys.VK_CONTROL) & 0x8000) == 0x8000)
+					keys |= Keys.Control;
 
 				return keys;
     			}
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		public static MouseButtons MouseButtons {
+		public static MouseButtons MouseButtons {
     			get {
     				// FIXME: use GetAsycKeyState?
     				throw new NotImplementedException ();
     			}
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public static Point MousePosition {
     			get {
-    				POINT point = new POINT();
+    				POINT point = new POINT ();
     				Win32.GetCursorPos (ref point);
     				return new Point ( (int) point.x, (int) point.y);
     			}
@@ -847,7 +849,7 @@
     			}
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public Control Parent {
     			get {
     				return parent;
@@ -855,92 +857,92 @@
     				//return FromHandle (parent);
     			}
     			set {
-					if( parent != value) {
-						Console.WriteLine ("setting parent");
-						parent = value;
+				if (parent != value) {
+					Console.WriteLine ("setting parent");
+					parent = value;
 	    
-						Console.WriteLine ("add ourself to the parents control");
-						// add ourself to the parents control
-						if ( !parent.Controls.Contains ( this ) )
-							parent.Controls.Add (this);
+					Console.WriteLine ("add ourself to the parents control");
+					// add ourself to the parents control
+					if (!parent.Controls.Contains (this))
+						parent.Controls.Add (this);
 
-						// FIXME: Is this logic correct ?
-						if( BackColor == DefaultBackColor) {
-							if( parent.BackColor != BackColor)
-								OnParentBackColorChanged(new EventArgs());
-						}
-
-						Console.WriteLine ("SetParent");
-						if (IsHandleCreated) {
-							Console.WriteLine ("Handle created");
-							Win32.SetParent (Handle, value.Handle);
-						}
-						/*
-						else if( parent.IsHandleCreated){
-							// CHECKME: Now control is responsible for creating his window
-							// when added to Form, may be things must be reversed.
-							CreateControl();
-						}
-						*/			
+					// FIXME: Is this logic correct ?
+					if (BackColor == DefaultBackColor) {
+						if (parent.BackColor != BackColor)
+							OnParentBackColorChanged (new EventArgs ());
 					}
+
+					Console.WriteLine ("SetParent");
+					if (IsHandleCreated) {
+						Console.WriteLine ("Handle created");
+						Win32.SetParent (Handle, value.Handle);
+					}
+					/*
+					  else if (parent.IsHandleCreated){
+					  // CHECKME: Now control is responsible for creating his window
+					  // when added to Form, may be things must be reversed.
+					  CreateControl ();
+					  }
+					*/			
+				}
     			}
     		}
     		
 		protected static IntPtr ParkingWindowHandle {
 			get {
-				if ( parkingWindow == null )
-					parkingWindow = new NativeWindow ( );
+				if (parkingWindow == null)
+					parkingWindow = new NativeWindow ();
 
-				if ( parkingWindow.Handle == IntPtr.Zero ) {
-					CreateParams pars = new CreateParams ( );
+				if (parkingWindow.Handle == IntPtr.Zero){
+					CreateParams pars = new CreateParams ();
 					pars.ClassName = "mono_native_window";
 					pars.Style = (int) WindowStyles.WS_OVERLAPPED;
-					parkingWindow.CreateHandle ( pars );
+					parkingWindow.CreateHandle (pars);
 				}
 
 				return parkingWindow.Handle;
 			}
 		}
 
-		protected static void RegisterDefaultWindowClass ( )
+		protected static void RegisterDefaultWindowClass ()
 		{
-			if ( !classRegistered ) {
-				WNDCLASS wndClass = new WNDCLASS();
+			if (!classRegistered){
+				WNDCLASS wndClass = new WNDCLASS ();
  
 				wndClass.style = (int) (CS_.CS_OWNDC);
-				wndClass.lpfnWndProc = NativeWindow.GetWindowProc();
+				wndClass.lpfnWndProc = NativeWindow.GetWindowProc ();
 				wndClass.cbClsExtra = 0;
 				wndClass.cbWndExtra = 0;
 				wndClass.hInstance = (IntPtr)0;
 				wndClass.hIcon = (IntPtr)0;
-				wndClass.hCursor = Win32.LoadCursor( (IntPtr)0, LC_.IDC_ARROW);
-				wndClass.hbrBackground = (IntPtr)((int)GetSysColorIndex.COLOR_BTNFACE + 1);
+				wndClass.hCursor = Win32.LoadCursor ( (IntPtr)0, LC_.IDC_ARROW);
+				wndClass.hbrBackground = (IntPtr) ( (int)GetSysColorIndex.COLOR_BTNFACE + 1);
 				wndClass.lpszMenuName = "";
 				wndClass.lpszClassName = Win32.DEFAULT_WINDOW_CLASS;
     
-				if (Win32.RegisterClass(ref wndClass) != 0) 
+				if (Win32.RegisterClass (ref wndClass) != 0) 
 					classRegistered = true; 
 			}		
 		}
 
     		[MonoTODO]
-    		public string ProductName {
+		public string ProductName {
     			get {
-					//FIXME:
+				//FIXME:
     				return "Product Name";
     			}
     		}
     		
     		[MonoTODO]
-    		public string ProductVersion {
+		public string ProductVersion {
     			get {
-					//FIXME:
-					return "Product Version";
+				//FIXME:
+				return "Product Version";
     			}
     		}
     		
     		[MonoTODO]
-    		public bool RecreatingHandle {
+		public bool RecreatingHandle {
     			get {
     				return statuses [ RECREATING_HANDLE ] ;
     			}
@@ -957,11 +959,11 @@
     		}
     		
     		protected bool ResizeRedraw {
-    			get {	return GetStyle ( ControlStyles.ResizeRedraw );	}
-    			set {	SetStyle ( ControlStyles.ResizeRedraw, value ); }
+    			get {	return GetStyle (ControlStyles.ResizeRedraw);	}
+    			set {	SetStyle (ControlStyles.ResizeRedraw, value); }
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public int Right {
     			get {
     				return Left + Width;
@@ -969,7 +971,7 @@
     		}
     		
     		[MonoTODO]
-    		public virtual RightToLeft RightToLeft {
+		public virtual RightToLeft RightToLeft {
     			// CHECKME:
     			get {
     				return rightToLeft;
@@ -980,21 +982,21 @@
     		}
     		
     		[MonoTODO]
-    		protected virtual bool ShowFocusCues {
+		protected virtual bool ShowFocusCues {
     			get {
     				throw new NotImplementedException ();
     			}
     		}
     		
     		[MonoTODO]
-    		protected bool ShowKeyboardCues {
+		protected bool ShowKeyboardCues {
     			get {
     				throw new NotImplementedException ();
     			}
     		}
     		
     		[MonoTODO]
-    		public override ISite Site {
+		public override ISite Site {
     			get {
     				throw new NotImplementedException ();
     			}
@@ -1006,16 +1008,16 @@
 		//Compact Framework
     		public Size Size {
     			get {
-				return new Size(Width, Height);
+				return new Size (Width, Height);
     			}
     			set {
-				SetBounds(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
+				SetBounds (bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
 			}
     		}
 
     		internal int tabindex;//for debug/test only. remove
     		[MonoTODO]
-    		public int TabIndex {
+		public int TabIndex {
     			get {
     				return tabindex;
     			}
@@ -1035,7 +1037,7 @@
     		}
     		
     		[MonoTODO]
-    		public object Tag {
+		public object Tag {
     			get {
     				return tag;
     			}
@@ -1044,45 +1046,45 @@
     			}
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public virtual string Text {
     			get {
-					// CHECKME: if we really need to provide back current text of real window
-					// or just our copy in text member.
-    				if ( IsHandleCreated ) {
+				// CHECKME: if we really need to provide back current text of real window
+				// or just our copy in text member.
+    				if (IsHandleCreated){
 					int len = Win32.GetWindowTextLengthA (Handle);
-					// FIXME: len is doubled due to some strange behaviour.(of GetWindowText function ?)
+					// FIXME: len is doubled due to some strange behaviour. (of GetWindowText function ?)
 					// instead of 10 characters we can get only 9, even if sb.Capacity is 10.
-					StringBuilder sb = new StringBuilder(len * 2 /*Win32.GetWindowTextLengthA (Handle)*/);
+					StringBuilder sb = new StringBuilder (len * 2 /*Win32.GetWindowTextLengthA (Handle)*/);
     					Win32.GetWindowText (Handle, sb, sb.Capacity);
-    					text = sb.ToString();
+    					text = sb.ToString ();
     				} 
 				return text;
     			}
     			set {
-				if ( text != value ) {
+				if (text != value){
     					text = value;
 	    
     					if (IsHandleCreated)
     						Win32.SetWindowTextA (Handle, value);
 
-					OnTextChanged ( EventArgs.Empty );
+					OnTextChanged (EventArgs.Empty);
 				}
     			}
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public int Top {
     			get {
 				return bounds.Top;
  			}
  			set {
-				SetBounds(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
+				SetBounds (bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
 			}
  		}
  		
     		[MonoTODO]
-    		public Control TopLevelControl {
+		public Control TopLevelControl {
     			get {
     				throw new NotImplementedException ();
     			}
@@ -1091,42 +1093,42 @@
     		public bool Visible {
     			get {	return visible;	}
     			set {
-				SetVisibleCore ( value );
+				SetVisibleCore (value);
     			}
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public int Width {
     			get {
     				return bounds.Width;
     			}
     			set {
-				SetBounds(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
+				SetBounds (bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
 			}
     		}
     		
     		/// --- methods ---
     		/// internal .NET framework supporting methods, not stubbed out:
-    		/// - protected virtual void NotifyInvalidate(Rectangle invalidatedArea)
-    		/// - protected void RaiseDragEvent(object key,DragEventArgs e);
-    		/// - protected void RaiseKeyEvent(object key,KeyEventArgs e);
-    		/// - protected void RaiseMouseEvent(object key,MouseEventArgs e);
-    		/// - protected void RaisePaintEvent(object key,PaintEventArgs e);
-    		/// - protected void ResetMouseEventArgs();
+    		/// - protected virtual void NotifyInvalidate (Rectangle invalidatedArea)
+    		/// - protected void RaiseDragEvent (object key,DragEventArgs e);
+    		/// - protected void RaiseKeyEvent (object key,KeyEventArgs e);
+    		/// - protected void RaiseMouseEvent (object key,MouseEventArgs e);
+    		/// - protected void RaisePaintEvent (object key,PaintEventArgs e);
+    		/// - protected void ResetMouseEventArgs ();
     		
     		[MonoTODO]
-    		protected void AccessibilityNotifyClients (
-    			AccessibleEvents accEvent,int childID) 
+		protected void AccessibilityNotifyClients (
+								   AccessibleEvents accEvent,int childID) 
     		{
     			throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
-    		public void BringToFront () 
+		public void BringToFront () 
     		{
-			if ( IsHandleCreated )
-				Win32.SetWindowPos ( Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, 0, 0, 
-					SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE );
+			if (IsHandleCreated)
+				Win32.SetWindowPos (Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, 0, 0, 
+						     SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
 		}
     		
     		public bool Contains (Control ctl) 
@@ -1136,15 +1138,15 @@
     		
     		public void CreateControl () 
     		{
-			if ( !Created )	{
+			if (!Created)	{
     				CreateHandle ();
-				OnCreateControl();
+				OnCreateControl ();
 				statuses [ CREATED ] = true;
 			}
 		}
     
     		[MonoTODO]
-    		protected virtual AccessibleObject CreateAccessibilityInstance() {
+		protected virtual AccessibleObject CreateAccessibilityInstance () {
     			throw new NotImplementedException ();
     		}
     		
@@ -1153,93 +1155,93 @@
     			return new ControlCollection (this);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		public Graphics CreateGraphics () 
+		public Graphics CreateGraphics () 
     		{
-				return Graphics.FromHwnd(Handle);
+			return Graphics.FromHwnd (Handle);
     		}
     	
     		protected virtual void CreateHandle ()
     		{
-			if( IsDisposed )
-				throw new ObjectDisposedException ( Name );
+			if (IsDisposed)
+				throw new ObjectDisposedException (Name);
 
-			if( IsHandleCreated ) 
+			if (IsHandleCreated)
 				return;
 
-			if( window == null)
+			if (window == null)
 				window = new ControlNativeWindow (this);
 
 			CreateParams createParams = CreateParams;
-			if( !Enabled) {
+			if (!Enabled) {
 				createParams.Style |= (int)WindowStyles.WS_DISABLED;
 			}
 			window.CreateHandle (createParams);
 
-			if( window.Handle != IntPtr.Zero) {
-				if( !controlsCollection.Contains( window.Handle ) )
-					controlsCollection.Add( window.Handle, this );
+			if (window.Handle != IntPtr.Zero) {
+				if (!controlsCollection.Contains (window.Handle))
+					controlsCollection.Add (window.Handle, this);
 
-				SubclassWindow();
+				SubclassWindow ();
 
-				CreatorThreadId_ = Win32.GetCurrentThreadId();
+				CreatorThreadId_ = Win32.GetCurrentThreadId ();
 
-				OnHandleCreated ( EventArgs.Empty );
+				OnHandleCreated (EventArgs.Empty);
 			}
     		}
     	
     		protected virtual void DefWndProc (ref Message m)
     		{
-    			window.DefWndProc(ref m);
+    			window.DefWndProc (ref m);
     		}
     		
     		protected virtual void DestroyHandle ()
     		{
-			if ( IsHandleCreated ) {
-				if( Handle != IntPtr.Zero) {
-					controlsCollection.Remove(Handle);
+			if (IsHandleCreated){
+				if (Handle != IntPtr.Zero) {
+					controlsCollection.Remove (Handle);
 				}
-				if( window != null) {
+				if (window != null) {
 					window.DestroyHandle ();
 				}
 			}
 		}
     	
-    		protected override void Dispose ( bool disposing ) 
+    		protected override void Dispose (bool disposing)
     		{
-			lock ( this ) {
+			lock (this){
 				statuses [ DISPOSING ] = true;
 				try {
-					if ( disposing ) {
-						DestroyHandle ( );
+					if (disposing){
+						DestroyHandle ();
 					}
 					// close/free unmanaged resources
 				}
 				finally {
-		    			base.Dispose( disposing );
+		    			base.Dispose (disposing);
 				}
 				statuses [ DISPOSED ] = true;
 			}
     		}
     	
     		[MonoTODO]
-    		public DragDropEffects DoDragDrop (
-    			object data, DragDropEffects allowedEffects)
+		public DragDropEffects DoDragDrop (
+							   object data, DragDropEffects allowedEffects)
     		{
     			throw new NotImplementedException ();
     		}
     	
-    		//public object EndInvoke(IAsyncResult asyncResult):
+    		//public object EndInvoke (IAsyncResult asyncResult):
     		//look under ISynchronizeInvoke methods
     	
     		[MonoTODO]
-    		public Form FindForm () 
+		public Form FindForm () 
     		{
     			throw new NotImplementedException ();
     		}
     	
- 			//Compact Framework
+		//Compact Framework
     		public bool Focus () 
     		{
     			if (Win32.SetFocus (Handle) != (IntPtr) 0)
@@ -1248,86 +1250,86 @@
     		}
     	
     		[MonoTODO]
-    		public static Control FromChildHandle (IntPtr handle) 
+		public static Control FromChildHandle (IntPtr handle) 
     		{
     			Control control  = null;
     			IntPtr 	controlHwnd = handle;
-				while( controlHwnd != IntPtr.Zero) {
-		 			control  = controlsCollection[controlHwnd] as Control;
-		 			if( control != null) break;
-		 			controlHwnd = Win32.GetParent(controlHwnd);
-				}
-				return control;    			
+			while (controlHwnd != IntPtr.Zero) {
+				control  = controlsCollection[controlHwnd] as Control;
+				if (control != null) break;
+				controlHwnd = Win32.GetParent (controlHwnd);
+			}
+			return control;    			
     		}
     	
     		public static Control FromHandle (IntPtr handle) 
     		{
-				// FIXME: Here we have to check, whether control already exists
+			// FIXME: Here we have to check, whether control already exists
     			//Control control = new Control (handle);
-	 			Control control  = controlsCollection[handle] as Control;
+			Control control  = controlsCollection[handle] as Control;
     			return control;
     		}
     	
     		[MonoTODO]
-    		public Control GetChildAtPoint (Point pt) 
+		public Control GetChildAtPoint (Point pt) 
     		{
     			throw new NotImplementedException ();
     		}
     	
     		// [MonoTODO]
-    		//public IContainerControl GetContainerControl () 
+   		//public IContainerControl GetContainerControl () 
     		//{
     		//	throw new NotImplementedException ();
     		//}
 
-		internal Control getNextFocusedControlCore ( Control parent, Control ctl, bool forward )
+		internal Control getNextFocusedControlCore (Control parent, Control ctl, bool forward)
 		{
-			while ( parent.Parent != null )
+			while (parent.Parent != null)
 				parent = parent.Parent;
 
-			Control next = parent.GetNextControl ( ctl, forward );
-			while ( next != null ) {
-				if ( next.TabStop && next.CanFocus )
+			Control next = parent.GetNextControl (ctl, forward);
+			while (next != null){
+				if (next.TabStop && next.CanFocus)
 					return next;
-				next = parent.GetNextControl ( next, forward );
+				next = parent.GetNextControl (next, forward);
 			}
 			return null;
 		}
 
-		internal Control getNextFocusedControl ( Control parent, bool forward )
+		internal Control getNextFocusedControl (Control parent, bool forward)
 		{
-			Control next = getNextFocusedControlCore ( parent, FocusedControl, forward );
-			if ( next == null )
-				next = getNextFocusedControlCore ( parent, null, forward );
+			Control next = getNextFocusedControlCore (parent, FocusedControl, forward);
+			if (next == null)
+				next = getNextFocusedControlCore (parent, null, forward);
 			return next;
 		}
     		
     		[MonoTODO]
-    		public Control GetNextControl ( Control ctl, bool forward ) 
+		public Control GetNextControl (Control ctl, bool forward)
     		{
 			Control next = null;
 
-			if ( ctl == null ) 
-				next = Controls.GetFirstControl ( forward );
+			if (ctl == null)
+				next = Controls.GetFirstControl (forward);
 			else {
-				if ( forward )
-					next = getNextControlForward ( ctl );
+				if (forward)
+					next = getNextControlForward (ctl);
 				else
-					next = getNextControlBackward ( ctl );
+					next = getNextControlBackward (ctl);
 			}
 			return next;
 		}
 
-    		private Control getNextControlForward ( Control ctl ) 
+    		private Control getNextControlForward (Control ctl)
 		{
-			if ( ctl.Controls.Count != 0 )
-				return ctl.Controls.GetFirstControl ( true );
+			if (ctl.Controls.Count != 0)
+				return ctl.Controls.GetFirstControl (true);
 
 			Control parent = ctl.Parent;
-			if ( parent != null ) {
-				while ( parent != null ) {
-					Control next = parent.Controls.GetNextControl ( ctl, true );
-					if ( next != null )
+			if (parent != null){
+				while (parent != null){
+					Control next = parent.Controls.GetNextControl (ctl, true);
+					if (next != null)
 						return next;
 					ctl = parent;
 					parent = parent.Parent;
@@ -1335,34 +1337,34 @@
 				return null;
 			}
 			else
-				return Controls.GetFirstControl ( true );
+				return Controls.GetFirstControl (true);
 		}
 
-    		private Control getNextControlBackward ( Control ctl ) 
+    		private Control getNextControlBackward (Control ctl)
 		{
 			Control parent = ctl.Parent;
-			if ( parent != null ) {
-				Control next = parent.Controls.GetNextControl ( ctl, false );
-				if ( next != null ) {
-					if ( next.Controls.Count > 0 )
-						return next.Controls.GetFirstControl ( false );
+			if (parent != null){
+				Control next = parent.Controls.GetNextControl (ctl, false);
+				if (next != null){
+					if (next.Controls.Count > 0)
+						return next.Controls.GetFirstControl (false);
 					else
 						return next;
 				}
 				return parent;
 			}
 			else
-				return Controls.GetFirstControl ( false );
+				return Controls.GetFirstControl (false);
 		}
 
     		[MonoTODO]
-    		protected bool GetStyle (ControlStyles flag) 
+		protected bool GetStyle (ControlStyles flag) 
     		{
     			return (controlStyles_ & flag) != 0;
     		}
     	
     		[MonoTODO]
-    		protected bool GetTopLevel () 
+		protected bool GetTopLevel () 
     		{
     			return statuses [ TOPLEVEL ];
     		}
@@ -1373,51 +1375,51 @@
     		}
     		
     		[MonoTODO]
-    		protected virtual void InitLayout () 
+		protected virtual void InitLayout () 
     		{
-				//FIXME:
+			//FIXME:
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public void Invalidate () 
     		{
     			if (IsHandleCreated) {
-					Win32.InvalidateRect(Handle, IntPtr.Zero, 1);
+				Win32.InvalidateRect (Handle, IntPtr.Zero, 1);
     			}
     		}
     		
-    		public void Invalidate ( bool invalidateChildren ) 
+    		public void Invalidate (bool invalidateChildren)
     		{
-			Invalidate ( ) ;
-			if ( invalidateChildren ) {
-				foreach ( Control child in Controls )
-					child.Invalidate ( invalidateChildren );
+			Invalidate () ;
+			if (invalidateChildren){
+				foreach (Control child in Controls)
+					child.Invalidate (invalidateChildren);
 			}
 		}
     		
 		// tries to find appropriate owner for modal form
-		internal static Control getOwnerWindow ( Control skip )
+		internal static Control getOwnerWindow (Control skip)
 		{
 			// temporary solution
-			IEnumerator cw = controlsCollection.GetEnumerator ( );
+			IEnumerator cw = controlsCollection.GetEnumerator ();
 
-			while ( cw.MoveNext ( ) ) {
+			while (cw.MoveNext ()){
 				Control c = ( (DictionaryEntry) cw.Current).Value as Control;
-				if ( c != null && c != skip ) {
-					IntPtr parent = Win32.GetParent ( c.Handle );
-					IntPtr owner  = Win32.GetWindow ( c.Handle, (uint) GetWindowConstants.GW_OWNER );
-					if ( parent == IntPtr.Zero && owner == IntPtr.Zero )
+				if (c != null && c != skip){
+					IntPtr parent = Win32.GetParent (c.Handle);
+					IntPtr owner  = Win32.GetWindow (c.Handle, (uint) GetWindowConstants.GW_OWNER);
+					if (parent == IntPtr.Zero && owner == IntPtr.Zero)
 						return c;
 				}
 			}
 			return null;
 		}
 
- 			//Compact Framework
+		//Compact Framework
     		public void Invalidate (Rectangle rc) 
     		{
     			if (IsHandleCreated) {
-    				RECT rect = new RECT();
+    				RECT rect = new RECT ();
     				rect.left = rc.Left;
     				rect.top = rc.Top;
     				rect.right = rc.Right;
@@ -1427,71 +1429,71 @@
     		}
     		
     		[MonoTODO]
-    		public void Invalidate(Region region) 
+		public void Invalidate (Region region) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public void Invalidate (Rectangle rc, bool invalidateChildren) 
+		public void Invalidate (Rectangle rc, bool invalidateChildren) 
     		{
-				//FIXME:
+			//FIXME:
     		}
     		
     		[MonoTODO]
-    		public void Invalidate(Region region,bool invalidateChildren) 
+		public void Invalidate (Region region,bool invalidateChildren) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		protected void InvokeGotFocus (Control toInvoke, EventArgs e) 
+		protected void InvokeGotFocus (Control toInvoke, EventArgs e) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		protected void InvokeLostFocus (Control toInvoke, EventArgs e) 
+		protected void InvokeLostFocus (Control toInvoke, EventArgs e) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		protected void InvokeOnClick (Control toInvoke, EventArgs e) 
+		protected void InvokeOnClick (Control toInvoke, EventArgs e) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		protected void InvokePaint (Control c, PaintEventArgs e) 
+		protected void InvokePaint (Control c, PaintEventArgs e) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		protected void InvokePaintBackground (
-    			Control c,PaintEventArgs e) 
+		protected void InvokePaintBackground (
+							      Control c,PaintEventArgs e) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		protected virtual bool IsInputChar (char charCode)
+		protected virtual bool IsInputChar (char charCode)
     		{
     			return true;
     		}
     		
     		[MonoTODO]
-    		protected virtual bool IsInputKey (Keys keyData) 
+		protected virtual bool IsInputKey (Keys keyData) 
     		{
 			return false;
     		}
     		
     		public static bool IsMnemonic (char charCode, string text)
     		{
-    			if ( text == null )
+    			if (text == null)
 				return false;
-			return text.IndexOf ( "&" + charCode ) > 0;
+			return text.IndexOf ("&" + charCode)> 0;
 
     		}
     		
@@ -1501,10 +1503,10 @@
     			if (BackColorChanged != null)
     				BackColorChanged (this, e);
 
-				foreach( Control ctl in Controls) {
-					ctl.OnParentBackColorChanged(e);
-				}
+			foreach (Control ctl in Controls) {
+				ctl.OnParentBackColorChanged (e);
 			}
+		}
     		
     		protected virtual void OnBackgroundImageChanged (EventArgs e)
     		{
@@ -1524,13 +1526,13 @@
     				CausesValidationChanged (this, e);
     		}
     		
-    		protected virtual void OnChangeUICues(UICuesEventArgs e) 
+    		protected virtual void OnChangeUICues (UICuesEventArgs e) 
     		{
     			if (ChangeUICues != null)
     				ChangeUICues (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnClick (EventArgs e)
     		{
     			if (Click != null)
@@ -1546,8 +1548,8 @@
     		
     		protected virtual void OnControlAdded (ControlEventArgs e)
     		{	
-			if ( Created ) {
-				e.Control.CreateControl ( );
+			if (Created){
+				e.Control.CreateControl ();
 			}
 			e.Control.Visible = Visible;
 
@@ -1563,17 +1565,17 @@
     		
     		protected virtual void OnCreateControl ()
     		{
-				//FIXME:
+			//FIXME:
     			// create all child windows
-    			IEnumerator cw = childControls.GetEnumerator();
+    			IEnumerator cw = childControls.GetEnumerator ();
     
-    			while (cw.MoveNext()) {
+    			while (cw.MoveNext ()) {
     				Console.WriteLine ("Adding Control");
     				Control control = (Control) cw.Current;
     				control.CreateControl ();
     				control.Show ();
     			}
-			}
+		}
     		
     		protected virtual void OnCursorChanged (EventArgs e)
     		{
@@ -1585,8 +1587,8 @@
     		{
 			// changing this property does not affect the control directly
 			// so have its parent to calculate new layout
-			if ( Parent != null )
-				Parent.PerformLayout ( this, "Dock" );
+			if (Parent != null)
+				Parent.PerformLayout (this, "Dock");
     			if (DockChanged != null)
     				DockChanged (this, e);
     		}
@@ -1621,7 +1623,7 @@
     				DragOver (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnEnabledChanged (EventArgs e)
     		{
     			if (EnabledChanged != null)
@@ -1652,7 +1654,7 @@
     				GiveFeedback (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnGotFocus (EventArgs e) 
     		{
     			if (GotFocus != null)
@@ -1663,11 +1665,11 @@
     		{
     			Console.WriteLine ("OnHandleCreated");
 
-				//if( font != null) {
-				//	Win32.SendMessage( Handle, Msg.WM_SETFONT, font.ToHfont().ToInt32(), 0);
-				//}
-				Win32.SendMessage( Handle, Msg.WM_SETFONT, Font.ToHfont().ToInt32(), 0);
-				Win32.SetWindowText( Handle, text);
+			//if (font != null) {
+			//	Win32.SendMessage (Handle, Msg.WM_SETFONT, font.ToHfont ().ToInt32 (), 0);
+			//}
+			Win32.SendMessage (Handle, Msg.WM_SETFONT, Font.ToHfont ().ToInt32 (), 0);
+			Win32.SetWindowText (Handle, text);
 
     			if (HandleCreated != null)
     				HandleCreated (this, e);
@@ -1676,9 +1678,9 @@
     		
     		protected virtual void OnHandleDestroyed (EventArgs e) 
     		{
-				if( Handle != IntPtr.Zero) {
-					controlsCollection.Remove(Handle);
-				}
+			if (Handle != IntPtr.Zero) {
+				controlsCollection.Remove (Handle);
+			}
 				
     			if (HandleDestroyed != null) {
     				HandleDestroyed (this, e);
@@ -1703,21 +1705,21 @@
     				Invalidated (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnKeyDown (KeyEventArgs e) 
     		{
     			if (KeyDown != null)
     				KeyDown (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnKeyPress (KeyPressEventArgs e) 
     		{
     			if (KeyPress != null)
     				KeyPress (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnKeyUp (KeyEventArgs e) 
     		{
     			if (KeyUp != null)
@@ -1727,7 +1729,7 @@
     		
     		protected virtual void OnLayout (LayoutEventArgs e) 
     		{
-			DoDockAndAnchorLayout ( e );
+			DoDockAndAnchorLayout (e);
     			if (Layout != null)
     				Layout (this, e);
     		}
@@ -1744,14 +1746,14 @@
     				LocationChanged (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnLostFocus (EventArgs e) 
     		{
     			if (LostFocus != null)
     				LostFocus (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnMouseDown (MouseEventArgs e) 
     		{
     			if (MouseDown != null)
@@ -1760,7 +1762,7 @@
     		
     		protected virtual void OnMouseEnter (EventArgs e) 
     		{
-				//System.Console.WriteLine("OnMouseEnter");
+			//System.Console.WriteLine ("OnMouseEnter");
     			if (MouseEnter != null)
     				MouseEnter (this, e);
     		}
@@ -1773,56 +1775,56 @@
     		
     		protected virtual void OnMouseLeave (EventArgs e) 
     		{
-				//System.Console.WriteLine("OnMouseLeave");
+			//System.Console.WriteLine ("OnMouseLeave");
 
-				mouseIsInside_ = false;
+			mouseIsInside_ = false;
     			if (MouseLeave != null)
     				MouseLeave (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnMouseMove (MouseEventArgs e) 
     		{
-				// If enter and mouse pressed - do not process
-				if( ((e.Button & MouseButtons.Left) != 0) && !mouseIsInside_) return;
+			// If enter and mouse pressed - do not process
+			if ( ( (e.Button & MouseButtons.Left) != 0) && !mouseIsInside_) return;
 
-				if( !mouseIsInside_) {
-					TRACKMOUSEEVENT tme = new TRACKMOUSEEVENT();
-					tme.cbSize = 16;
-					tme.hWnd = Handle;
-					tme.dwFlags = (int)TrackerEventFlags.TME_LEAVE;
-					tme.dwHoverTime = 0;
+			if (!mouseIsInside_) {
+				TRACKMOUSEEVENT tme = new TRACKMOUSEEVENT ();
+				tme.cbSize = 16;
+				tme.hWnd = Handle;
+				tme.dwFlags = (int)TrackerEventFlags.TME_LEAVE;
+				tme.dwHoverTime = 0;
 
-					bool result = Win32.TrackMouseEvent(ref tme);
-					if( !result) {
-						System.Console.WriteLine("{0}",Win32.FormatMessage(Win32.GetLastError()));
-					}
+				bool result = Win32.TrackMouseEvent (ref tme);
+				if (!result) {
+					System.Console.WriteLine ("{0}",Win32.FormatMessage (Win32.GetLastError ()));
 				}
+			}
 
-				POINT pt = new POINT();
-				pt.x = e.X;
-				pt.y = e.Y;
-				Win32.ClientToScreen(Handle, ref pt);
-				IntPtr wndUnderMouse = Win32.WindowFromPoint(pt);
+			POINT pt = new POINT ();
+			pt.x = e.X;
+			pt.y = e.Y;
+			Win32.ClientToScreen (Handle, ref pt);
+			IntPtr wndUnderMouse = Win32.WindowFromPoint (pt);
 
-				if( wndUnderMouse != Handle) {
-					// we are outside of the window
-					if( mouseIsInside_) {
-						OnMouseLeave(new EventArgs());
-						mouseIsInside_ = false;
-					}
+			if (wndUnderMouse != Handle) {
+				// we are outside of the window
+				if (mouseIsInside_) {
+					OnMouseLeave (new EventArgs ());
+					mouseIsInside_ = false;
 				}
-				else {
-					if( !mouseIsInside_) {
-						mouseIsInside_ = true;
-						OnMouseEnter(new EventArgs());
-					}
+			}
+			else {
+				if (!mouseIsInside_) {
+					mouseIsInside_ = true;
+					OnMouseEnter (new EventArgs ());
 				}
+			}
     			if (MouseMove != null)
     				MouseMove (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnMouseUp (MouseEventArgs e) 
     		{
     			if (MouseUp != null)
@@ -1843,52 +1845,52 @@
     		
     		protected virtual void OnNotifyMessage (Message m) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnPaint (PaintEventArgs e)
     		{
     			if (Paint != null)
     				Paint (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnPaintBackground (PaintEventArgs e) 
     		{
-                if( GetStyle(ControlStyles.UserPaint)) {
-                    Brush br = new SolidBrush(BackColor);
-                    e.Graphics.FillRectangle(br, e.ClipRectangle);
-                    br.Dispose();
-                }
-            }
+			if (GetStyle (ControlStyles.UserPaint)) {
+				Brush br = new SolidBrush (BackColor);
+				e.Graphics.FillRectangle (br, e.ClipRectangle);
+				br.Dispose ();
+			}
+		}
     		
     		protected virtual void OnParentBackColorChanged (EventArgs e) 
     		{
-				BackColor = Parent.BackColor;
-				// FIXME: setting BackColor fires the BackColorChanged event,
-				// so we do not need to call this here
-				/*
-    			if (BackColorChanged != null)
-    				BackColorChanged (this, e);
-				*/					
+			BackColor = Parent.BackColor;
+			// FIXME: setting BackColor fires the BackColorChanged event,
+			// so we do not need to call this here
+			/*
+			  if (BackColorChanged != null)
+			  BackColorChanged (this, e);
+			*/					
     		}
     		
     		protected virtual void OnParentBackgroundImageChanged (
-    			EventArgs e) 
+								       EventArgs e) 
     		{
     			if (BackgroundImageChanged != null)
     				BackgroundImageChanged (this, e);
     		}
     		
     		protected virtual void OnParentBindingContextChanged (
-    			EventArgs e) 
+								      EventArgs e) 
     		{
     			if (BindingContextChanged != null)
     				BindingContextChanged (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnParentChanged (EventArgs e) 
     		{
     			if (ParentChanged != null)
@@ -1914,7 +1916,7 @@
     		}
     		
     		protected virtual void OnParentRightToLeftChanged (
-    			EventArgs e) 
+								   EventArgs e) 
     		{
     			if (RightToLeftChanged != null)
     				RightToLeftChanged (this, e);
@@ -1927,19 +1929,19 @@
     		}
     		
     		protected virtual void OnQueryContinueDrag (
-    			QueryContinueDragEventArgs e) 
+							    QueryContinueDragEventArgs e) 
     		{
     			if (QueryContinueDrag != null)
     				QueryContinueDrag (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnResize (EventArgs e) 
     		{
     			if (Resize != null)
     				Resize (this, e);
 
-			PerformLayout ( this, "Bounds" );
+			PerformLayout (this, "Bounds");
     		}
     		
     		protected virtual void OnRightToLeftChanged (EventArgs e) 
@@ -1950,7 +1952,7 @@
     		
     		protected virtual void OnSizeChanged (EventArgs e) 
     		{
-			OnResize ( e );
+			OnResize (e);
     			if (SizeChanged != null)
     				SizeChanged (this, e);
     		}
@@ -1979,17 +1981,17 @@
     				TabStopChanged (this, e);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		protected virtual void OnTextChanged (EventArgs e) 
     		{
     			if (TextChanged != null)
     				TextChanged (this, e);
     		}
-    
+		
     		//[MonoTODO] // this doesn't seem to be documented
-    // 		protected virtual void OnTextAlignChanged (EventArgs e) {
-    // 			TextAlignChanged (this, e);
-    // 		}
+	// 		protected virtual void OnTextAlignChanged (EventArgs e) {
+		// 			TextAlignChanged (this, e);
+		// 		}
     		
     		protected virtual void OnValidated (EventArgs e) 
     		{
@@ -1998,144 +2000,144 @@
     		}
     		
     		//[MonoTODO]
-    		// CancelEventArgs not ready
-    		//protected virtual void OnValidating(CancelEventArgs e) 
+   		// CancelEventArgs not ready
+    		//protected virtual void OnValidating (CancelEventArgs e) 
     		//{
     		//	throw new NotImplementedException ();
     		//}
     		
     		[MonoTODO]
-    		protected virtual void OnVisibleChanged (EventArgs e) 
+		protected virtual void OnVisibleChanged (EventArgs e) 
     		{
     			if (VisibleChanged != null)
     				VisibleChanged (this, e);
 
-			PerformLayout ( );
+			PerformLayout ();
     		}
     		// --- end of methods for events ---
     		
     		
     		[MonoTODO]
-    		public void PerformLayout () 
+		public void PerformLayout () 
     		{
-			PerformLayout ( null, null );
+			PerformLayout (null, null);
 		}
     		
     		[MonoTODO]
-    		public void PerformLayout (Control affectedControl,
-    					   string affectedProperty) 
+		public void PerformLayout (Control affectedControl,
+						   string affectedProperty) 
     		{
-			if ( !statuses [ LAYOUT_SUSPENDED ] )
-				OnLayout ( new LayoutEventArgs ( affectedControl, affectedProperty ) );
+			if (!statuses [ LAYOUT_SUSPENDED ])
+				OnLayout (new LayoutEventArgs (affectedControl, affectedProperty));
 			else
 				statuses [ LAYOUT_PENDING ] = true;
 		}
     		
- 			//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		public Point PointToClient (Point p) 
+		public Point PointToClient (Point p) 
     		{
     			throw new NotImplementedException ();
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		public Point PointToScreen (Point p) 
+		public Point PointToScreen (Point p) 
     		{
     			throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
-    		public virtual bool PreProcessMessage (ref Message msg) 
+		public virtual bool PreProcessMessage (ref Message msg) 
     		{
-			if ( msg.Msg == Msg.WM_KEYDOWN ) {
-				Keys keyData = (Keys)msg.WParam.ToInt32( );
-    				if ( !ProcessCmdKey ( ref msg, keyData ) ) {
-					if ( IsInputKey ( keyData ) )
+			if (msg.Msg == Msg.WM_KEYDOWN){
+				Keys keyData = (Keys)msg.WParam.ToInt32 ();
+    				if (!ProcessCmdKey (ref msg, keyData)) {
+					if (IsInputKey (keyData))
 						return false;
 
-					return ProcessDialogKey ( keyData );
+					return ProcessDialogKey (keyData);
 				}
 				return true;
 			}
-			else if ( msg.Msg == Msg.WM_CHAR ) {
-				if ( IsInputChar ( (char) msg.WParam ) )
+			else if (msg.Msg == Msg.WM_CHAR){
+				if (IsInputChar ( (char) msg.WParam))
 					return false;
 
-				return ProcessDialogChar ( (char) msg.WParam );
+				return ProcessDialogChar ( (char) msg.WParam);
 			}
 
 			return false;
     		}
     		
     		[MonoTODO]
-    		protected virtual bool ProcessCmdKey (ref Message msg,
-    						      Keys keyData) 
+		protected virtual bool ProcessCmdKey (ref Message msg,
+							      Keys keyData) 
     		{
 			// do something with context menu
 
-    			if ( Parent != null )
-				return Parent.ProcessCmdKey ( ref msg, keyData );
+    			if (Parent != null)
+				return Parent.ProcessCmdKey (ref msg, keyData);
 			return false;
     		}
     		
     		[MonoTODO]
-    		protected virtual bool ProcessDialogChar (char charCode) 
+		protected virtual bool ProcessDialogChar (char charCode) 
     		{
-			if ( Parent != null )
-				return Parent.ProcessDialogChar ( charCode );
+			if (Parent != null)
+				return Parent.ProcessDialogChar (charCode);
     			return false;
     		}
     		
     		[MonoTODO]
-    		protected virtual bool ProcessDialogKey (Keys keyData) 
+		protected virtual bool ProcessDialogKey (Keys keyData) 
     		{
-			if ( Parent != null )
-				return Parent.ProcessDialogKey ( keyData );
+			if (Parent != null)
+				return Parent.ProcessDialogKey (keyData);
     			return false;
     		}
     		
     		[MonoTODO]
-    		protected virtual bool ProcessKeyEventArgs (ref Message m) 
+		protected virtual bool ProcessKeyEventArgs (ref Message m) 
     		{
 			bool handled = false;
 
-			switch ( m.Msg ) {
+			switch (m.Msg){
 			case Msg.WM_KEYDOWN:
-				KeyEventArgs args_down = new KeyEventArgs ( (Keys)m.WParam.ToInt32() );
-				OnKeyDown ( args_down );
+				KeyEventArgs args_down = new KeyEventArgs ( (Keys)m.WParam.ToInt32 ());
+				OnKeyDown (args_down);
 				handled = args_down.Handled;
-			break;			
+				break;			
 			case Msg.WM_CHAR:
-				KeyPressEventArgs args_press = new KeyPressEventArgs ( (char) m.WParam );
-				OnKeyPress ( args_press );
+				KeyPressEventArgs args_press = new KeyPressEventArgs ( (char) m.WParam);
+				OnKeyPress (args_press);
 				handled = args_press.Handled;
-			break;
+				break;
 			case Msg.WM_KEYUP:
-				KeyEventArgs args_up = new KeyEventArgs ( (Keys)m.WParam.ToInt32() );
-				OnKeyUp ( args_up );
+				KeyEventArgs args_up = new KeyEventArgs ( (Keys)m.WParam.ToInt32 ());
+				OnKeyUp (args_up);
 				handled = args_up.Handled;
-			break;
+				break;
 			}
 			
 			return handled;
     		}
     		
     		[MonoTODO]
-    		protected internal virtual bool ProcessKeyMessage ( ref Message m) 
+		protected internal virtual bool ProcessKeyMessage (ref Message m) 
     		{
-			if ( Parent != null ) {
-				if ( !Parent.ProcessKeyPreview ( ref m ) )
-					return ProcessKeyEventArgs ( ref m );
+			if (Parent != null){
+				if (!Parent.ProcessKeyPreview (ref m))
+					return ProcessKeyEventArgs (ref m);
 			}
 			return false;
     		}
     		
     		[MonoTODO]
-    		protected virtual bool ProcessKeyPreview (ref Message m) 
+		protected virtual bool ProcessKeyPreview (ref Message m) 
     		{
-    			if ( Parent != null )
-				return Parent.ProcessKeyPreview ( ref m );
+    			if (Parent != null)
+				return Parent.ProcessKeyPreview (ref m);
 			return false;
     		}
     		
@@ -2148,254 +2150,251 @@
     		
     		// used when properties/values of Control 
     		// are big enough to warrant recreating the HWND
-    		protected void RecreateHandle() 
+    		protected void RecreateHandle () 
     		{
 			statuses [ RECREATING_HANDLE ] = true;
-			if( IsHandleCreated) {
+			if (IsHandleCreated) {
 				DestroyHandle ();
 				CreateHandle ();
 
-				UpdateZOrder ( );
+				UpdateZOrder ();
 
-				IEnumerator cw = childControls.GetEnumerator();
-				while ( cw.MoveNext() )
-					(( Control )cw.Current).RecreateHandle ( );
+				IEnumerator cw = childControls.GetEnumerator ();
+				while (cw.MoveNext ())
+					 ( (Control)cw.Current).RecreateHandle ();
 
 			}
 			statuses [ RECREATING_HANDLE ] = false;
 		}
     		
- 			//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		public Rectangle RectangleToClient (Rectangle r) 
+		public Rectangle RectangleToClient (Rectangle r) 
     		{
-				// FIXME: What to return if Handle is not created yet ?
-				RECT rect = new RECT();
-				rect.left = r.Left;
-				rect.top = r.Top;
-				rect.right = r.Right;
-				rect.bottom = r.Bottom;
-				Win32.ScreenToClient(Handle,ref rect);
-				return new Rectangle( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+			// FIXME: What to return if Handle is not created yet ?
+			RECT rect = new RECT ();
+			rect.left = r.Left;
+			rect.top = r.Top;
+			rect.right = r.Right;
+			rect.bottom = r.Bottom;
+			Win32.ScreenToClient (Handle,ref rect);
+			return new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		public Rectangle RectangleToScreen (Rectangle r) 
+		public Rectangle RectangleToScreen (Rectangle r) 
     		{
-				// FIXME: What to return if Handle is not created yet ?
-				RECT rect = new RECT();
-				rect.left = r.Left;
-				rect.top = r.Top;
-				rect.right = r.Right;
-				rect.bottom = r.Bottom;
-				Win32.ClientToScreen(Handle,ref rect);
-				return new Rectangle( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
-			}
+			// FIXME: What to return if Handle is not created yet ?
+			RECT rect = new RECT ();
+			rect.left = r.Left;
+			rect.top = r.Top;
+			rect.right = r.Right;
+			rect.bottom = r.Bottom;
+			Win32.ClientToScreen (Handle,ref rect);
+			return new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+		}
     		
     		[MonoTODO]
-    		protected static bool ReflectMessage (IntPtr hWnd, ref Message m) {
-				bool result = false;
-				Control cntrl = Control.FromHandle( hWnd);
-				if( cntrl != null) {
-					cntrl.WndProc(ref m);
-					result = true;
-				}
-				return result;
+		protected static bool ReflectMessage (IntPtr hWnd, ref Message m) {
+			bool result = false;
+			Control cntrl = Control.FromHandle (hWnd);
+			if (cntrl != null) {
+				cntrl.WndProc (ref m);
+				result = true;
 			}
+			return result;
+		}
     		
- 			//Compact Framework
     		public virtual void Refresh () 
     		{
-    			//RECT rect = (RECT) null;
-    			//InvalidateRect (Handle, ref rect, true);
     			Win32.UpdateWindow (Handle);
     		}
     		
     		[MonoTODO]
-    		public virtual void ResetBackColor () 
+		public virtual void ResetBackColor () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public void ResetBindings () 
+		public void ResetBindings () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public virtual void ResetFont () 
+		public virtual void ResetFont () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public virtual void ResetForeColor () 
+		public virtual void ResetForeColor () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public void ResetImeMode () 
+		public void ResetImeMode () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public virtual void ResetRightToLeft () 
+		public virtual void ResetRightToLeft () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public virtual void ResetText () 
+		public virtual void ResetText () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public void ResumeLayout () 
+		public void ResumeLayout () 
     		{
 			statuses [ LAYOUT_SUSPENDED ] = false;
-			if ( statuses [ LAYOUT_PENDING ] ) {
-				PerformLayout ( );
+			if (statuses [ LAYOUT_PENDING ]){
+				PerformLayout ();
 				statuses [ LAYOUT_PENDING ] = false;
 			}
 		}
     		
     		[MonoTODO]
-    		public void ResumeLayout (bool performLayout) 
+		public void ResumeLayout (bool performLayout) 
     		{
 			statuses [ LAYOUT_SUSPENDED ] = false;
-			if ( performLayout && statuses [ LAYOUT_PENDING ] ) {
-				PerformLayout ( );
+			if (performLayout && statuses [ LAYOUT_PENDING ]){
+				PerformLayout ();
 				statuses [ LAYOUT_PENDING ] = false;
 			}
 		}
     		
     		[MonoTODO]
-    		protected ContentAlignment RtlTranslateAlignment (
-    			ContentAlignment align) 
+		protected ContentAlignment RtlTranslateAlignment (
+									  ContentAlignment align) 
     		{
     			throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
-    		protected HorizontalAlignment RtlTranslateAlignment (
-    			HorizontalAlignment align) 
+		protected HorizontalAlignment RtlTranslateAlignment (
+									     HorizontalAlignment align) 
     		{
     			throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
-    		protected LeftRightAlignment RtlTranslateAlignment (
-    			LeftRightAlignment align) 
+		protected LeftRightAlignment RtlTranslateAlignment (
+									    LeftRightAlignment align) 
     		{
     			throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
-    		protected ContentAlignment RtlTranslateContent (
-    			ContentAlignment align) 
+		protected ContentAlignment RtlTranslateContent (
+									ContentAlignment align) 
     		{
     			throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
-    		protected HorizontalAlignment RtlTranslateHorizontal (
-    			HorizontalAlignment align) 
+		protected HorizontalAlignment RtlTranslateHorizontal (
+									      HorizontalAlignment align) 
     		{
     			throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
-    		protected LeftRightAlignment RtlTranslateLeftRight (
-    			LeftRightAlignment align) 
+		protected LeftRightAlignment RtlTranslateLeftRight (
+									    LeftRightAlignment align) 
     		{
     			throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
-    		public void Scale (float ratio) 
+		public void Scale (float ratio) 
     		{
-			Scale ( ratio, ratio );
+			Scale (ratio, ratio);
 		}
     		
     		[MonoTODO]
-    		public void Scale (float dx,float dy) 
+		public void Scale (float dx,float dy) 
     		{
-			SuspendLayout();
-			ScaleCore ( dx, dy );
-			IEnumerator cw = childControls.GetEnumerator();
-			while ( cw.MoveNext() ) {
+			SuspendLayout ();
+			ScaleCore (dx, dy);
+			IEnumerator cw = childControls.GetEnumerator ();
+			while (cw.MoveNext ()){
 				Control control = (Control) cw.Current;
-				control.Scale ( dx, dy );
+				control.Scale (dx, dy);
 			}
-			ResumeLayout();
+			ResumeLayout ();
 		}
     		
     		[MonoTODO]
-    		protected virtual void ScaleCore (float dx, float dy) 
+		protected virtual void ScaleCore (float dx, float dy) 
     		{
-			Location   = new Point ( (int) (Left * dx), (int) (Top * dy) );
-			ClientSize = new Size  ((int) ( ClientSize.Width * dx ),
-						(int) ( ClientSize.Height * dy) );
+			Location   = new Point ( (int) (Left * dx), (int) (Top * dy));
+			ClientSize = new Size  ( (int) (ClientSize.Width * dx),
+						 (int) (ClientSize.Height * dy));
 		}
     		
     		[MonoTODO]
-    		public void Select () 
+		public void Select () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		protected virtual void Select (bool directed,bool forward) 
+		protected virtual void Select (bool directed,bool forward) 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		public bool SelectNextControl (Control ctl, bool forward, 
-    					       bool tabStopOnly, 
-    					       bool nested, bool wrap)
+		public bool SelectNextControl (Control ctl, bool forward, 
+						       bool tabStopOnly, 
+						       bool nested, bool wrap)
     		{
     			throw new NotImplementedException ();
     		}
     		
- 			//Compact Framework
+		//Compact Framework
     		[MonoTODO]
-    		public void SendToBack () 
+		public void SendToBack () 
     		{
-				//FIXME:
+			//FIXME:
     		}
     		
     		[MonoTODO]
-    		public void SetBounds (int x, int y, int width, int height) 
+		public void SetBounds (int x, int y, int width, int height) 
     		{
-			SetBounds(x, y, width, height, BoundsSpecified.All);
+			SetBounds (x, y, width, height, BoundsSpecified.All);
 		}
     		
     		[MonoTODO]
-    		public void SetBounds (int x, int y, int width, int height, BoundsSpecified specified) 
+		public void SetBounds (int x, int y, int width, int height, BoundsSpecified specified) 
     		{
-			SetBoundsCore( x, y, width, height, specified);
+			SetBoundsCore (x, y, width, height, specified);
 		}
     		
     		[MonoTODO]
-    		protected virtual void SetBoundsCore ( int x, int y, int width, int height, BoundsSpecified specified) 
+		protected virtual void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) 
     		{
-			if( (specified & BoundsSpecified.X) == 0)      x = Left;
-			if( (specified & BoundsSpecified.Y) == 0)      y = Top;
-			if( (specified & BoundsSpecified.Width) == 0)  width = Width;
-			if( (specified & BoundsSpecified.Height) == 0) height = Height;
+			if ( (specified & BoundsSpecified.X) == 0)      x = Left;
+			if ( (specified & BoundsSpecified.Y) == 0)      y = Top;
+			if ( (specified & BoundsSpecified.Width) == 0)  width = Width;
+			if ( (specified & BoundsSpecified.Height) == 0) height = Height;
 
-			if( IsHandleCreated ) {
+			if (IsHandleCreated){
 				SetWindowPosFlags flags = SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_DRAWFRAME;
-				Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_NOTOPMOST, x, y, width, height, flags);
+				Win32.SetWindowPos (Handle, SetWindowPosZOrder.HWND_NOTOPMOST, x, y, width, height, flags);
 			}
 
-			UpdateBounds( x, y, width, height );
+			UpdateBounds (x, y, width, height);
 		}
     		
 		protected virtual bool MenuPresent {
@@ -2403,65 +2402,65 @@
 		}
 
     		[MonoTODO]
-    		protected virtual void SetClientSizeCore (int x, int y)
+		protected virtual void SetClientSizeCore (int x, int y)
     		{
-			RECT rc   = new RECT();
+			RECT rc   = new RECT ();
 			rc.right  = x;
 			rc.bottom = y;
 			
 			CreateParams pars = CreateParams;		
-			Win32.AdjustWindowRectEx ( ref rc, pars.Style, MenuPresent ? 1 : 0, pars.ExStyle );
+			Win32.AdjustWindowRectEx (ref rc, pars.Style, MenuPresent ? 1 : 0, pars.ExStyle);
 
-			Size = new Size( rc.right - rc.left, rc.bottom - rc.top );
+			Size = new Size (rc.right - rc.left, rc.bottom - rc.top);
 		}
     		
     		[MonoTODO]
-    		protected void SetStyle (ControlStyles flag, bool value) 
+		protected void SetStyle (ControlStyles flag, bool value) 
     		{
-    			if( value) {
+    			if (value) {
     				controlStyles_ |= flag;
     			}
     			else {
     				controlStyles_ &= ~flag;
     			}
-			}
+		}
     		
     		protected void SetTopLevel (bool value)
     		{/*
-    			if (value)
-    				// FIXME: verify on whether this is supposed
-    				// to activate/deactive the window
-    				Win32.SetWindowPos (Handle, 
-						SetWindowPosZOrder.HWND_NOTOPMOST,
-						0, 0, 0, 0, 0);
-    			else
-    				// FIXME: this does not make sense but
-    				// the docs say the window is hidden
-    				Win32.ShowWindow (Handle, ShowWindowStyles.SW_HIDE);
-		*/
-			if ( GetTopLevel ( ) != value && Parent != null )
-				throw new ArgumentException ( );
+		   if (value)
+		   // FIXME: verify on whether this is supposed
+		   // to activate/deactive the window
+		   Win32.SetWindowPos (Handle, 
+		   SetWindowPosZOrder.HWND_NOTOPMOST,
+		   0, 0, 0, 0, 0);
+		   else
+		   // FIXME: this does not make sense but
+		   // the docs say the window is hidden
+		   Win32.ShowWindow (Handle, ShowWindowStyles.SW_HIDE);
+		 */
+			if (GetTopLevel () != value && Parent != null)
+				throw new ArgumentException ();
 
 			statuses [ TOPLEVEL ] = value;
     		}
     		
     		[MonoTODO]
-    		protected virtual void SetVisibleCore ( bool value )
+		protected virtual void SetVisibleCore (bool value)
     		{
-			bool visibleChanged = ( visible != value );
+			bool visibleChanged = (visible != value);
 
 			visible = value;
 
-			if ( visibleChanged )
-				OnVisibleChanged ( EventArgs.Empty );
+			if (visibleChanged)
+				OnVisibleChanged (EventArgs.Empty);
 
-			if ( IsHandleCreated ) {
+			if (IsHandleCreated){
 				SetWindowPosFlags flags = value ? SetWindowPosFlags.SWP_SHOWWINDOW : SetWindowPosFlags.SWP_HIDEWINDOW;
 				flags |= SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE;
-				Win32.SetWindowPos( Handle, 0, 0, 0, 0, 0, flags );
+				Win32.SetWindowPos (Handle, 0, 0, 0, 0, 0, flags);
 			}
 
-			foreach ( Control c in Controls )
+			foreach (Control c in Controls)
 				c.Visible = value ;
 		}
     		
@@ -2475,32 +2474,32 @@
 			statuses [ LAYOUT_SUSPENDED ] = true;
 		}
     		
- 			//Compact Framework
+		//Compact Framework
     		public void Update () 
     		{
     			Win32.UpdateWindow (Handle);
     		}
     		
     		[MonoTODO]
-    		protected void UpdateBounds () 
+		protected void UpdateBounds () 
     		{	// update control bounds with current size and position
 
 			// currently, this function is called in responce to
 			// window events, so I assume that all window handles
 			// are created
-			RECT rect = new RECT ( );
-			Win32.GetWindowRect ( Handle, ref rect );
+			RECT rect = new RECT ();
+			Win32.GetWindowRect (Handle, ref rect);
 
-			IntPtr parent = Win32.GetParent ( Handle );
-			if ( parent != IntPtr.Zero ) {
-				Win32.ScreenToClient( parent, ref rect );
+			IntPtr parent = Win32.GetParent (Handle);
+			if (parent != IntPtr.Zero){
+				Win32.ScreenToClient (parent, ref rect);
 			}
 
-			UpdateBounds ( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top );
+			UpdateBounds (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 		}
     		
     		[MonoTODO]
-    		protected void UpdateBounds (int x, int y, int width, int height) 
+		protected void UpdateBounds (int x, int y, int width, int height) 
     		{
 			int clWidth = width;
 			int clHeight = height;
@@ -2508,96 +2507,96 @@
 			CreateParams pars = CreateParams;
 			// this check should be removed when all controls will use base
 			// implementation of CreateParams
-			if ( pars != null ) {
-				RECT rc   = new RECT();
+			if (pars != null){
+				RECT rc   = new RECT ();
 				rc.right  = width;
 				rc.bottom = height;
 				
-				Win32.AdjustWindowRectEx ( ref rc, pars.Style, MenuPresent ? 1 : 0, pars.ExStyle );
+				Win32.AdjustWindowRectEx (ref rc, pars.Style, MenuPresent ? 1 : 0, pars.ExStyle);
 
-				clWidth  -= ( ( rc.right - rc.left ) - clWidth );
-				clHeight -= ( ( rc.bottom - rc.top ) - clHeight);
+				clWidth  -= ( (rc.right - rc.left)- clWidth);
+				clHeight -= ( (rc.bottom - rc.top)- clHeight);
 			}
 			
-			UpdateBounds ( x , y, width, height, clWidth, clHeight );
+			UpdateBounds (x , y, width, height, clWidth, clHeight);
 		}
     		
     		[MonoTODO]
-    		protected void UpdateBounds (
-    			int x, int y, int width, int height, int clientWidth,
-    			int clientHeight)
+		protected void UpdateBounds (
+						     int x, int y, int width, int height, int clientWidth,
+						     int clientHeight)
 		{
 			oldBounds.X = bounds.X;
 			oldBounds.Y = bounds.Y;
 			oldBounds.Width = bounds.Width;
 			oldBounds.Height = bounds.Height;
 
-			bool bLocationChanged = ( bounds.X != x ) || ( bounds.Y != y );
+			bool bLocationChanged = (bounds.X != x)|| (bounds.Y != y);
 			bounds.X = x;
 			bounds.Y = y;
 			
-			bool bSizeChanged = ( bounds.Width  != width ) || ( bounds.Height != height );
+			bool bSizeChanged = (bounds.Width  != width)|| (bounds.Height != height);
 			bounds.Width  = width;
 			bounds.Height = height;
 
 			this.clientWidth   = clientWidth;
 			this.clientHeight  = clientHeight;
 
-			if ( bLocationChanged )
-				OnLocationChanged ( EventArgs.Empty );
-			if ( bSizeChanged )
-				OnSizeChanged ( EventArgs.Empty );
+			if (bLocationChanged)
+				OnLocationChanged (EventArgs.Empty);
+			if (bSizeChanged)
+				OnSizeChanged (EventArgs.Empty);
 		}
     		
     		[MonoTODO]
-    		protected void UpdateStyles () 
+		protected void UpdateStyles () 
     		{
-				//FIXME:
-			}
+			//FIXME:
+		}
     		
     		[MonoTODO]
-    		protected void UpdateZOrder () 
+		protected void UpdateZOrder () 
     		{
-			if ( !IsHandleCreated || Parent == null )
+			if (!IsHandleCreated || Parent == null)
 				return;
 
-			int position = Parent.Controls.GetChildIndex ( this , false );
-			switch ( position ) {
+			int position = Parent.Controls.GetChildIndex (this , false);
+			switch (position){
 			case  0:
-				BringToFront();
-			break;
+				BringToFront ();
+				break;
 				// not in collection for some reason
 			case -1:
-			break;
+				break;
 			default:
 				Control prev = Parent.Controls [ position - 1 ];
-				if ( prev.IsHandleCreated )
-					Win32.SetWindowPos( Handle, prev.Handle, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE );
-			break;
+				if (prev.IsHandleCreated)
+					Win32.SetWindowPos (Handle, prev.Handle, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
+				break;
 			}
 		}
     		
 
-			internal MouseEventArgs Msg2MouseEventArgs( ref Message msg) {
-				MouseButtons mb = MouseButtons.None;
-				KeyStatusFlags keyIndicator = (KeyStatusFlags)msg.WParam.ToInt32();
-				if( (keyIndicator & KeyStatusFlags.MK_LBUTTON) != 0) {
-					mb |= MouseButtons.Left;
-				}
-				if( (keyIndicator & KeyStatusFlags.MK_RBUTTON) != 0) {
-					mb |= MouseButtons.Right;
-				}
-				if( (keyIndicator & KeyStatusFlags.MK_MBUTTON) != 0) {
+		internal MouseEventArgs Msg2MouseEventArgs (ref Message msg) {
+			MouseButtons mb = MouseButtons.None;
+			KeyStatusFlags keyIndicator = (KeyStatusFlags)msg.WParam.ToInt32 ();
+			if ( (keyIndicator & KeyStatusFlags.MK_LBUTTON) != 0) {
+				mb |= MouseButtons.Left;
+			}
+			if ( (keyIndicator & KeyStatusFlags.MK_RBUTTON) != 0) {
+				mb |= MouseButtons.Right;
+			}
+				if ( (keyIndicator & KeyStatusFlags.MK_MBUTTON) != 0) {
 					mb |= MouseButtons.Middle;
 				}
-				if( (keyIndicator & KeyStatusFlags.MK_XBUTTON1) != 0) {
+				if ( (keyIndicator & KeyStatusFlags.MK_XBUTTON1) != 0) {
 					mb |= MouseButtons.XButton1;
 				}
-				if( (keyIndicator & KeyStatusFlags.MK_XBUTTON2) != 0) {
+				if ( (keyIndicator & KeyStatusFlags.MK_XBUTTON2) != 0) {
 					mb |= MouseButtons.XButton2;
 				}
 
-				return new MouseEventArgs( mb, (mb != MouseButtons.None) ? 1: 0, msg.LoWordLParam, msg.HiWordLParam, 0);
+				return new MouseEventArgs (mb, (mb != MouseButtons.None) ? 1: 0, msg.LoWordLParam, msg.HiWordLParam, 0);
 			}
 
     		// WndProc - calls appriate On... function for the give
@@ -2650,31 +2649,31 @@
     		// OnParentRightToLeftChanged
     		// OnParentVisibleChanged
     		//
-    		protected virtual void WndProc(ref Message m) 
+    		protected virtual void WndProc (ref Message m) 
     		{
     			EventArgs eventArgs = new EventArgs ();
     			// FIXME: paintEventArgs is not being created properly
 				// FIXME: Graphics does not have a public constructor, you must get one from .NET
     			//PaintEventArgs paintEventArgs = new PaintEventArgs (
-    			//	new Graphics(), new Rectangle());
+    			//	new Graphics (), new Rectangle ());
 
-				if( (uint)m.Msg == Control.InvokeMessage) {
+				if ( (uint)m.Msg == Control.InvokeMessage) {
 					ControlInvokeHelper helper = null;
-					lock( InvokeQueue_.SyncRoot) {
-						if( InvokeQueue_.Count > 0) {
-							helper = (ControlInvokeHelper)InvokeQueue_.Dequeue();
+					lock (InvokeQueue_.SyncRoot) {
+						if (InvokeQueue_.Count > 0) {
+							helper = (ControlInvokeHelper)InvokeQueue_.Dequeue ();
 						}
 					}
-					if( helper != null) {
-						helper.ExecuteMethod();
+					if (helper != null) {
+						helper.ExecuteMethod ();
 					}
 					return;
 				}
-				else if( m.Msg == Msg.WM_COMMAND) {
+				else if (m.Msg == Msg.WM_COMMAND) {
 					// Notification
 					m.Result = (IntPtr)1;
 					OnWmCommand (ref m);
-					if( m.Result != IntPtr.Zero) {
+					if (m.Result != IntPtr.Zero) {
 						CallControlWndProc (ref m);
 					}
 					return;
@@ -2687,7 +2686,7 @@
     				break;
     			case Msg.WM_LBUTTONDBLCLK:
     				OnDoubleClick (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
     				break;
     				// OnDragDrop
     				// OnDragEnter
@@ -2696,191 +2695,191 @@
     				// OnQueryContinueDrag
     			case Msg.WM_ENABLE:
     				OnEnabledChanged (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_SETFOCUS:
     				OnEnter (eventArgs);
     				OnGotFocus (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_FONTCHANGE:
     				OnFontChanged (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_DESTROY:
     				OnHandleDestroyed (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_HELP:
     				// FIXME:
     				//OnHelpRequested (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_KEYDOWN:
-				if ( !ProcessKeyMessage ( ref m ) )
-					CallControlWndProc( ref m );
+				if (!ProcessKeyMessage (ref m))
+					CallControlWndProc (ref m);
 			break;
     			case Msg.WM_CHAR:
-				if ( !ProcessKeyMessage ( ref m ) )
-					CallControlWndProc( ref m );
+				if (!ProcessKeyMessage (ref m))
+					CallControlWndProc (ref m);
 			break;
     			case Msg.WM_KEYUP:
-				if ( !ProcessKeyMessage ( ref m ) )
-					CallControlWndProc( ref m );
+				if (!ProcessKeyMessage (ref m))
+					CallControlWndProc (ref m);
 			break;
     			case Msg.WM_KILLFOCUS:
     				OnLeave (eventArgs);
     				OnLostFocus (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_MOUSEACTIVATE:
     				//OnMouseEnter (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_MOUSEHOVER: // called by TrackMouseEvent
     				OnMouseHover (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_MOUSELEAVE: // called by TrackMouseEvent
     				OnMouseLeave (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_MOUSEMOVE:
     				// FIXME:
-    				OnMouseMove (Msg2MouseEventArgs(ref m));
-					CallControlWndProc(ref m);
+    				OnMouseMove (Msg2MouseEventArgs (ref m));
+					CallControlWndProc (ref m);
 					break;
 				case Msg.WM_LBUTTONDOWN:
 					// FIXME:
 					//OnMouseDown (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
 				case Msg.WM_LBUTTONUP:
     				// FIXME:
     				//OnMouseUp (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_MOUSEWHEEL:
     				// FIXME:
     				//OnMouseWheel (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_MOVE:
     				OnMove (eventArgs);
-				UpdateBounds ( );
-				CallControlWndProc(ref m);
+				UpdateBounds ();
+				CallControlWndProc (ref m);
 				break;
 				case Msg.WM_NOTIFY:
-					NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure ( m.LParam,
-									typeof ( NMHDR ) );
-					if( !Control.ReflectMessage( nmhdr.hwndFrom, ref m )) 
-						CallControlWndProc(ref m);
+					NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure (m.LParam,
+									typeof (NMHDR));
+					if (!Control.ReflectMessage (nmhdr.hwndFrom, ref m)) 
+						CallControlWndProc (ref m);
 					
 					// FIXME: get NM_CLICKED msg from pnmh
 					// OnClick (eventArgs);
 					//OnNotifyMessage (eventArgs);
 					break;
     			case Msg.WM_ERASEBKGND:
-    				if( GetStyle(ControlStyles.UserPaint)){
-	    				if( !GetStyle(ControlStyles.AllPaintingInWmPaint)) {
-							PaintEventArgs eraseEventArgs = new PaintEventArgs( Graphics.FromHdc(m.WParam), new Rectangle(new Point(0,0),Size));
-		    				OnPaintBackground(eraseEventArgs);
-							eraseEventArgs.Dispose();
+    				if (GetStyle (ControlStyles.UserPaint)){
+	    				if (!GetStyle (ControlStyles.AllPaintingInWmPaint)) {
+							PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
+		    				OnPaintBackground (eraseEventArgs);
+							eraseEventArgs.Dispose ();
 	    				}
 	    				m.Result = (IntPtr)1;
     				}
     				else {
-						CallControlWndProc(ref m);
+						CallControlWndProc (ref m);
     				}
     				break;
 				case Msg.WM_PAINT:
-					if( !GetStyle(ControlStyles.UserPaint)) {
-						CallControlWndProc(ref m);
+					if (!GetStyle (ControlStyles.UserPaint)) {
+						CallControlWndProc (ref m);
 					}
 					else {
-						PAINTSTRUCT	ps = new PAINTSTRUCT();
-						IntPtr hdc = Win32.BeginPaint( Handle, ref ps);
-						Rectangle rc = new Rectangle();
+						PAINTSTRUCT	ps = new PAINTSTRUCT ();
+						IntPtr hdc = Win32.BeginPaint (Handle, ref ps);
+						Rectangle rc = new Rectangle ();
 						rc.X = ps.rcPaint.left;
 						rc.Y = ps.rcPaint.top;
 						rc.Width = ps.rcPaint.right - ps.rcPaint.left;
 						rc.Height = ps.rcPaint.bottom - ps.rcPaint.top;
-						PaintEventArgs paintEventArgs = new PaintEventArgs( Graphics.FromHdc(hdc), rc);
-	    				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) {
-	    					OnPaintBackground(paintEventArgs);
+						PaintEventArgs paintEventArgs = new PaintEventArgs (Graphics.FromHdc (hdc), rc);
+	    				if (GetStyle (ControlStyles.AllPaintingInWmPaint)) {
+	    					OnPaintBackground (paintEventArgs);
 	    				}
 						OnPaint (paintEventArgs);
-						paintEventArgs.Dispose();
-						Win32.EndPaint(Handle, ref ps);
+						paintEventArgs.Dispose ();
+						Win32.EndPaint (Handle, ref ps);
 					}
 					break;
     			case Msg.WM_SIZE:
-    				if( GetStyle(ControlStyles.ResizeRedraw)) {
-    					Invalidate();		
+    				if (GetStyle (ControlStyles.ResizeRedraw)) {
+    					Invalidate ();		
     				}
-				CallControlWndProc(ref m);
+				CallControlWndProc (ref m);
 				break;
     			case Msg.WM_WINDOWPOSCHANGED:
-    				UpdateBounds ( );
-    				CallControlWndProc(ref m);
+    				UpdateBounds ();
+    				CallControlWndProc (ref m);
     			break;
     			case Msg.WM_STYLECHANGED:
     				OnStyleChanged (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_SYSCOLORCHANGE:
     				OnSystemColorsChanged (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_SETTEXT:
     				//OnTextChanged (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_SETFONT:
     				//OnTextChanged (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_SHOWWINDOW:
     				OnVisibleChanged (eventArgs);
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 					break;
 				case Msg.WM_CTLCOLORLISTBOX:
-					Win32.SetTextColor( m.WParam, Win32.RGB(ForeColor));
-					//Win32.SetBkColor( m.WParam, 0x00FF00);
-					//m.Result = Win32.GetStockObject(GSO_.LTGRAY_BRUSH);
+					Win32.SetTextColor (m.WParam, Win32.RGB (ForeColor));
+					//Win32.SetBkColor (m.WParam, 0x00FF00);
+					//m.Result = Win32.GetStockObject (GSO_.LTGRAY_BRUSH);
 					break;
 				case Msg.WM_MEASUREITEM:
-					ReflectMessage( m.WParam, ref m);
+					ReflectMessage (m.WParam, ref m);
 					break;
 				case Msg.WM_DRAWITEM:
-					Control.ReflectMessage( m.WParam, ref m);
+					Control.ReflectMessage (m.WParam, ref m);
 					break;
 				case Msg.WM_HSCROLL:
 				case Msg.WM_VSCROLL:
-					if(!Control.ReflectMessage( m.LParam, ref m )) {
-    					CallControlWndProc(ref m);
+					if (!Control.ReflectMessage (m.LParam, ref m)) {
+    					CallControlWndProc (ref m);
 					}
 					break;
 				case Msg.WM_SETCURSOR:
-					if ( cursor != null && cursor.Handle != IntPtr.Zero ) {
-						Win32.SetCursor ( cursor.Handle );
+					if (cursor != null && cursor.Handle != IntPtr.Zero){
+						Win32.SetCursor (cursor.Handle);
 						m.Result = (IntPtr)1;
 					} else
-						CallControlWndProc( ref m );
+						CallControlWndProc (ref m);
 				break;
 				case Msg.WM_RBUTTONDOWN:
-					if ( contextMenu != null ) {
-						contextMenu.Show ( this, 
-							new Point ( Win32.HIGH_ORDER ( m.LParam.ToInt32() ),
-								    Win32.LOW_ORDER ( m.LParam.ToInt32() ) ) );
+					if (contextMenu != null){
+						contextMenu.Show (this, 
+							new Point (Win32.HIGH_ORDER (m.LParam.ToInt32 ()),
+								    Win32.LOW_ORDER (m.LParam.ToInt32 ())));
 					}
-					CallControlWndProc( ref m );
+					CallControlWndProc (ref m);
 				break;
 				default:
-					CallControlWndProc(ref m);
+					CallControlWndProc (ref m);
 /*
-					if( ControlRealWndProc != IntPtr.Zero) {
-						CallControlWndProc(ref m);
+					if (ControlRealWndProc != IntPtr.Zero) {
+						CallControlWndProc (ref m);
 					}
 					else {
 						DefWndProc (ref m);
@@ -2890,9 +2889,10 @@
     			}
     		}
 
-		private void DoAnchor(Control ctrl) {
+		private void DoAnchor (Control ctrl)
+		{
 			// the default, no actions are needed
-			if ( ctrl.Anchor == ( AnchorStyles.Left | AnchorStyles.Top ) )
+			if (ctrl.Anchor == (AnchorStyles.Left | AnchorStyles.Top))
 				return;
 
 			int deltaWidth = Bounds.Width - oldBounds.Width;
@@ -2900,22 +2900,22 @@
 			int halfDeltaWidth = deltaWidth / 2;
 			int halfDeltaHeight = deltaHeight / 2;
 			Rectangle controlBounds = ctrl.Bounds;
-			if ((ctrl.Anchor & AnchorStyles.Left) == 0) {
+			if ( (ctrl.Anchor & AnchorStyles.Left) == 0) {
 				controlBounds.X += halfDeltaWidth;
 			}
-			if ((ctrl.Anchor & AnchorStyles.Top) == 0) {
+			if ( (ctrl.Anchor & AnchorStyles.Top) == 0) {
 				controlBounds.Y += halfDeltaHeight;
 			}
-			if ((ctrl.Anchor & AnchorStyles.Right) == AnchorStyles.Right) {
-				if ((ctrl.Anchor & AnchorStyles.Left) == AnchorStyles.Left) {
+			if ( (ctrl.Anchor & AnchorStyles.Right) == AnchorStyles.Right) {
+				if ( (ctrl.Anchor & AnchorStyles.Left) == AnchorStyles.Left) {
 					controlBounds.Width += deltaWidth;
 				}
 				else {
 					controlBounds.X += halfDeltaWidth;
 				}
 			}
-			if ((ctrl.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom) {
-				if ((ctrl.Anchor & AnchorStyles.Top) == AnchorStyles.Top) {
+			if ( (ctrl.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom) {
+				if ( (ctrl.Anchor & AnchorStyles.Top) == AnchorStyles.Top) {
 					controlBounds.Height += deltaHeight;
 				}
 				else {
@@ -2925,67 +2925,68 @@
 			ctrl.Bounds = controlBounds;
 		}
 
-		private void DoDockAndAnchorLayout ( LayoutEventArgs e ) {
+		private void DoDockAndAnchorLayout (LayoutEventArgs e)
+		{
 			Rectangle area = DisplayRectangle;
 			
-			for ( int i = childControls.Count - 1; i >= 0; i-- ) {
+			for (int i = childControls.Count - 1; i >= 0; i--){
 				Control control = childControls[i];
 				
-				switch ( control.Dock ) {
+				switch (control.Dock){
 				case DockStyle.Bottom:
-					control.SetBounds ( area.Left, area.Bottom - control.Height,
-								area.Width, control.Height );
+					control.SetBounds (area.Left, area.Bottom - control.Height,
+								area.Width, control.Height);
 					area.Height -= control.Height;
 				break;
 				case DockStyle.Top:
-					control.SetBounds ( area.Left, area.Y, area.Width, control.Height );
+					control.SetBounds (area.Left, area.Y, area.Width, control.Height);
 					area.Y += control.Height;
 					area.Height -= control.Height;
 				break;
 				case DockStyle.Right:
-					control.SetBounds ( area.Right - control.Width,	area.Top,
-								control.Width, area.Height );
+					control.SetBounds (area.Right - control.Width,	area.Top,
+								control.Width, area.Height);
 					area.Width -= control.Width;
 				break;
 				case DockStyle.Left:
-					control.SetBounds ( area.Left, area.Y, control.Width, area.Height );
+					control.SetBounds (area.Left, area.Y, control.Width, area.Height);
 					area.X += control.Width;
 					area.Width -= control.Width;
 				break;
 				case DockStyle.None:
-					DoAnchor(control);
+					DoAnchor (control);
 				break;
 				}
 			}
 
-			for ( int i = childControls.Count - 1; i >= 0; i-- ) {
+			for (int i = childControls.Count - 1; i >= 0; i--){
 				Control control = childControls[i];
 				
-				if ( control.Dock == DockStyle.Fill ) {
-					control.SetBounds ( area.X, area.Y, area.Width, area.Height );
+				if (control.Dock == DockStyle.Fill){
+					control.SetBounds (area.X, area.Y, area.Width, area.Height);
 				}	
 			}
 		}
     		
 		internal static Control FocusedControl {
 			get {
-				IEnumerator cw = controlsCollection.GetEnumerator ( );
+				IEnumerator cw = controlsCollection.GetEnumerator ();
 
-				while ( cw.MoveNext ( ) ) {
+				while (cw.MoveNext ()){
 					Control c = ( (DictionaryEntry) cw.Current).Value as Control;
 
-					if ( c.Focused ) return c;
+					if (c.Focused)return c;
 				}
 
 				return null;
 			}
 		}
 
-		internal Control getParentForm ( )
+		internal Control getParentForm ()
 		{
 			Control parent = this.Parent;
-			while ( parent != null ) {
-				if ( parent is Form ) 
+			while (parent != null){
+				if (parent is Form)
 					return parent;
 				parent = parent.Parent;
 			}
@@ -3086,7 +3087,7 @@
     		
     		public event EventHandler Validated;
     		//[MonoTODO]
-    		// CancelEventHandler not yet defined
+   		// CancelEventHandler not yet defined
     		//public event CancelEventHandler Validating {
     		
     		public event EventHandler VisibleChanged;
@@ -3096,10 +3097,10 @@
     			get { 
 				// If the handle has not yet been created,
 				// referencing this property will force the
-				// handle to be created. ( MSDN )
+				// handle to be created. (MSDN)
 
-    				if ( !IsHandleCreated ) 
-					CreateHandle ( );
+    				if (!IsHandleCreated)
+					CreateHandle ();
 
     				return window.Handle;
     			}
@@ -3107,27 +3108,27 @@
     		
     		/// --- ISynchronizeInvoke properties ---
     		[MonoTODO]
-    		public bool InvokeRequired {
+   		public bool InvokeRequired {
     			get { 
-					return CreatorThreadId_ != Win32.GetCurrentThreadId(); 
+					return CreatorThreadId_ != Win32.GetCurrentThreadId (); 
 				}
     		}
     		
-			private IAsyncResult DoInvoke( Delegate method, object[] args) {
+			private IAsyncResult DoInvoke (Delegate method, object[] args) {
 				IAsyncResult result = null;
-				ControlInvokeHelper helper = new ControlInvokeHelper(method, args);
-				if( InvokeRequired) {
-					lock( this) {
-						lock( InvokeQueue_.SyncRoot) {
-							InvokeQueue_.Enqueue(helper);
+				ControlInvokeHelper helper = new ControlInvokeHelper (method, args);
+				if (InvokeRequired) {
+					lock (this) {
+						lock (InvokeQueue_.SyncRoot) {
+							InvokeQueue_.Enqueue (helper);
 						}
-						Win32.PostMessage(Handle, Control.InvokeMessage, 0, 0);
+						Win32.PostMessage (Handle, Control.InvokeMessage, 0, 0);
 						result = helper;
 					}
 				}
 				else {
 					helper.CompletedSynchronously = true;
-					helper.ExecuteMethod();
+					helper.ExecuteMethod ();
 					result = helper;
 				}
 				return result;
@@ -3137,13 +3138,13 @@
     		[MonoTODO]
     		public IAsyncResult BeginInvoke (Delegate method) 
     		{
-				return DoInvoke( method, null);
+				return DoInvoke (method, null);
     		}
     		
     		[MonoTODO]
     		public IAsyncResult BeginInvoke (Delegate method, object[] args) 
     		{
-				return DoInvoke( method, args);
+				return DoInvoke (method, args);
 			}
     		
     		[MonoTODO]
@@ -3151,9 +3152,9 @@
     		{
 				object result = null;
 				ControlInvokeHelper helper = asyncResult as ControlInvokeHelper;
-				if( helper != null) {
-					if( !asyncResult.CompletedSynchronously) {
-						asyncResult.AsyncWaitHandle.WaitOne();
+				if (helper != null) {
+					if (!asyncResult.CompletedSynchronously) {
+						asyncResult.AsyncWaitHandle.WaitOne ();
 					}
 					result = helper.MethodResult;
 				}
@@ -3164,14 +3165,14 @@
     		[MonoTODO]
     		public object Invoke (Delegate method) 
     		{
-				return Invoke( method, null);
+				return Invoke (method, null);
 			}
     		
     		//[MonoTODO]
     		public object Invoke (Delegate method, object[] args) 
     		{
-				IAsyncResult result = BeginInvoke(method, args);
-				return EndInvoke(result);
+				IAsyncResult result = BeginInvoke (method, args);
+				return EndInvoke (result);
 			}
     		
     		/// sub-class: Control.ControlAccessibleObject
@@ -3260,10 +3261,10 @@
     			
     			/// --- ControlAccessibleObject Methods ---
     			[MonoTODO]
-     			public override int GetHelpTopic(out string fileName) 
+     			public override int GetHelpTopic (out string fileName) 
      			{
 					//FIXME:
-					return base.GetHelpTopic(out fileName);
+					return base.GetHelpTopic (out fileName);
 				}
     			
     			[MonoTODO]
@@ -3283,7 +3284,7 @@
     			public override string ToString ()
     			{
 					//FIXME:
-					return base.ToString();
+					return base.ToString ();
 			}
     		}
     		
@@ -3295,14 +3296,14 @@
     
 			class ControlComparer : IComparer {
 
-				int IComparer.Compare( object x, object y )
+				int IComparer.Compare (object x, object y)
 				{
-					int tx = ( ( Control )x ).TabIndex;
-					int ty = ( ( Control )y ).TabIndex;
+					int tx = ( (Control)x).TabIndex;
+					int ty = ( (Control)y).TabIndex;
 
-					if ( tx > ty )
+					if (tx > ty)
 						return 1;
-					else if ( tx < ty )
+					else if (tx < ty)
 						return -1;
 					else
 						return 0;
@@ -3339,17 +3340,17 @@
     		
     			public virtual void Add (Control value) 
     			{
-				if( !Contains(value)) {
+				if (!Contains (value)) {
 					collection.Add (value);
 					value.Parent = owner;
-					owner.OnControlAdded ( new ControlEventArgs ( value ) );
+					owner.OnControlAdded (new ControlEventArgs (value));
 				}
 			}
     			
     			public virtual void AddRange (Control[] controls) 
     			{
-					for(int i = 0; i < controls.Length; i++) {
-						Add(controls[i]);
+					for (int i = 0; i < controls.Length; i++) {
+						Add (controls[i]);
 					}
     			}
     			
@@ -3372,19 +3373,19 @@
     			public override bool Equals (object obj) 
     			{
 					//FIXME:
-					return base.Equals(obj);
+					return base.Equals (obj);
 			}
 
-			public int GetChildIndex ( Control child )
+			public int GetChildIndex (Control child)
 			{
-				return GetChildIndex ( child, true );
+				return GetChildIndex (child, true);
 			}
 
-			public int GetChildIndex ( Control child, bool throwException )
+			public int GetChildIndex (Control child, bool throwException)
 			{
-				int index = collection.IndexOf ( child );
-				if ( index == -1 && throwException )
-					throw new ArgumentException( "'child' is not a child control of this parent.");
+				int index = collection.IndexOf (child);
+				if (index == -1 && throwException)
+					throw new ArgumentException ("'child' is not a child control of this parent.");
 				return index;
 			}
 
@@ -3397,7 +3398,7 @@
     			public override int GetHashCode () 
     			{
 				//FIXME:
-				return base.GetHashCode();
+				return base.GetHashCode ();
 			}
     			
     			public int IndexOf (Control control) 
@@ -3412,58 +3413,58 @@
     			
     			public void RemoveAt (int index) 
     			{
-				Remove ( this [ index ] );
+				Remove (this [ index ]);
 				// have to give a chance to handle this situation in derived class
     				//collection.RemoveAt (index);
     			}
     			
-    			public void SetChildIndex ( Control child, int newIndex ) 
+    			public void SetChildIndex (Control child, int newIndex)
     			{
-				int oldIndex = collection.IndexOf ( child );
-				if ( oldIndex == -1 )
-					throw new ArgumentException( "'child' is not a child control of this parent.");
+				int oldIndex = collection.IndexOf (child);
+				if (oldIndex == -1)
+					throw new ArgumentException ("'child' is not a child control of this parent.");
 
-				if ( oldIndex != newIndex ) {
-					collection.Remove ( child );
+				if (oldIndex != newIndex){
+					collection.Remove (child);
 
-					if ( newIndex >= collection.Count )
-						collection.Add ( child );
+					if (newIndex >= collection.Count)
+						collection.Add (child);
 					else
-						collection.Insert ( newIndex, child );
+						collection.Insert (newIndex, child);
 				}
     			}
 
-			internal Control GetFirstControl ( bool direction )
+			internal Control GetFirstControl (bool direction)
 			{
-				if ( collection.Count == 0 )
+				if (collection.Count == 0)
 					return null;
 
-				ArrayList copy = collection.Clone ( ) as ArrayList;
-				copy.Sort ( new ControlComparer ( ) );
+				ArrayList copy = collection.Clone () as ArrayList;
+				copy.Sort (new ControlComparer ());
 				
-				if ( direction )
+				if (direction)
 					return copy [0] as Control;
 				else {
 					Control last = copy[ collection.Count - 1 ] as Control;
-					if ( last.Controls.Count == 0 )
+					if (last.Controls.Count == 0)
 						return last;
 					else
-						return last.Controls.GetFirstControl ( false );
+						return last.Controls.GetFirstControl (false);
 				}
 			}
 
 
-			internal Control GetNextControl ( Control ctl, bool forward )
+			internal Control GetNextControl (Control ctl, bool forward)
 			{
-				if ( collection.Count == 0 )
+				if (collection.Count == 0)
 					return null;
 
-				ArrayList copy = collection.Clone ( ) as ArrayList;
-				copy.Sort ( new ControlComparer (  ) );
+				ArrayList copy = collection.Clone () as ArrayList;
+				copy.Sort (new ControlComparer ());
 
-				int index = copy.IndexOf ( ctl ) + ( forward ? 1 : -1 );
+				int index = copy.IndexOf (ctl)+ (forward ? 1 : -1);
 
-				if ( ( forward && index  < copy.Count ) || ( !forward && index >= 0 ) )
+				if ( (forward && index  < copy.Count)|| (!forward && index >= 0))
 					return copy[index] as Control;
 
 				return null;
@@ -3524,11 +3525,11 @@
     			{
     				collection.Insert (index, value);
     			}
-    		
+			
     			void IList.Remove (object control) 
     			{
     				collection.Remove (control);
     			}
     		}  // --- end of Control.ControlCollection ---
     	}
-    }
+}

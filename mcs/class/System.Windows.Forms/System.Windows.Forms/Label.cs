@@ -1,25 +1,20 @@
-    //
-    // System.Windows.Forms.Label.cs
-    //
-    // Author:
-    //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-    //	  implemented for Gtk+ by Rachel Hestilow (hestilow@ximian.com)
-    //	Dennis Hayes (dennish@raytek.com)
-    //   WineLib implementation started by John Sohn (jsohn@columbus.rr.com)
-    //
-    // (C) 2002/3 Ximian, Inc
-    //
-    
-    namespace System.Windows.Forms {
+//
+// System.Windows.Forms.Label.cs
+//
+// Author:
+//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	  implemented for Gtk+ by Rachel Hestilow (hestilow@ximian.com)
+//	Dennis Hayes (dennish@raytek.com)
+//   WineLib implementation started by John Sohn (jsohn@columbus.rr.com)
+//
+// (C) 2002/3 Ximian, Inc
+//
+
+namespace System.Windows.Forms {
     	using System.ComponentModel;
     	using System.Drawing;
-    
-    	// <summary>
-    	//
-    	// </summary>
-    	
+	
     	public class Label : Control {
-    
     		Image backgroundImage;
     		BorderStyle borderStyle;
     		bool autoSize;
@@ -34,23 +29,18 @@
     		ContentAlignment textAlign;
     		bool useMnemonic;
     
-    		//
-    		//  --- Constructor
-    		//
     		public Label () : base ()
     		{
-				// Defaults in the Spec
-				autoSize = false;
-				borderStyle = BorderStyle.None;
-				base.TabStop = false;
-				
-				SubClassWndProc_ = true;
-			SetStyle ( ControlStyles.Selectable, false );
+			// Defaults in the Spec
+			autoSize = false;
+			borderStyle = BorderStyle.None;
+			base.TabStop = false;
+			
+			SubClassWndProc_ = true;
+			SetStyle (ControlStyles.Selectable, false);
     		}
-    		
-    		//
-    		//  --- Public Properties
-    		//
+
+#region Properties
     		public virtual bool AutoSize {
     			get {
     				return autoSize;
@@ -177,11 +167,7 @@
     				useMnemonic = value;
     			}
     		}
-    
-    		//
-    		//  --- Protected Properties
-    		//
-    
+		
     		protected override CreateParams CreateParams {
     			get {
 				CreateParams createParams = base.CreateParams;
@@ -221,9 +207,9 @@
     			}
     		}
     
-    		//
-    		//  --- Public Methods
-    		//
+#endregion
+
+#region Methods
 
     		public new void Select()
     		{
@@ -237,17 +223,7 @@
 				//FIXME: add name of lable, as well as text. would adding base.ToString work?
     			return "Label: " + base.Text;
     		}
-    
-    		//
-    		//  --- Public Events
-    		// 
-    		public event EventHandler AutoSizeChanged;
-   
-    		public event EventHandler TextAlignChanged;
-    
-    		//
-    		//  --- Protected Methods
-    		//
+
     		[MonoTODO]
     		protected  Rectangle CalcImageRenderBounds (
     			Image image, Rectangle rect, ContentAlignment align)
@@ -375,5 +351,13 @@
     		{
     			base.WndProc (ref m);
     		}
+#endregion
+
+#region Events
+    		public event EventHandler AutoSizeChanged;
+   
+    		public event EventHandler TextAlignChanged;
+#endif
+		
     	}
     }
