@@ -1,3 +1,6 @@
+2002-04-04  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* icall.c: Enum_ToObject accepts enum value arguments.
 
 Thu Apr 4 11:35:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
