@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>div-MV (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="bg">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ca">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="cs">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="da">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="de">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="el">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="en">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="es">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="fi">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="fr">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="he">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="hu">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="is">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="it">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ja">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ko">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="nl">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="no">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="pl">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="pt">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ro">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ru">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="hr">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="sk">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="sq">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="sv">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="th">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="tr">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ur">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="id">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="uk">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="be">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="sl">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="et">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="lv">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="lt">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="fa">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="vi">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="hy">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="az">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="eu">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="mk">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="af">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ka">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="fo">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="hi">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ms">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="kk">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ky">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="sw">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="uz">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="tt">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="pa">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="gu">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="ta">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="te">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="kn">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="mr">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="sa">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="mn">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="gl">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="kok">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="syr">div-MV (Needs translation)</DisplayName>
+    <DisplayName lang="div">div-MV (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>div-MV (Need English name)</EnglishName>
   <LCID>1125</LCID>
   <Name>div-MV</Name>

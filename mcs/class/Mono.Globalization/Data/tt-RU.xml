@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>tt-RU (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="bg">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ca">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="cs">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="da">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="de">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="el">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="en">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="es">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="fi">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="fr">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="he">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="hu">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="is">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="it">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ja">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ko">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="nl">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="no">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="pl">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="pt">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ro">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ru">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="hr">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="sk">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="sq">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="sv">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="th">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="tr">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ur">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="id">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="uk">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="be">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="sl">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="et">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="lv">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="lt">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="fa">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="vi">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="hy">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="az">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="eu">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="mk">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="af">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ka">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="fo">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="hi">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ms">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="kk">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ky">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="sw">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="uz">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="tt">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="pa">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="gu">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="ta">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="te">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="kn">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="mr">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="sa">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="mn">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="gl">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="kok">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="syr">tt-RU (Needs translation)</DisplayName>
+    <DisplayName lang="div">tt-RU (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>tt-RU (Need English name)</EnglishName>
   <LCID>1092</LCID>
   <Name>tt-RU</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>eu-ES (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="bg">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ca">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="cs">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="da">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="de">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="el">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="en">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="es">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="fi">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="fr">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="he">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="hu">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="is">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="it">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ja">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ko">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="nl">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="no">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="pl">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="pt">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ro">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ru">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="hr">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sk">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sq">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sv">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="th">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="tr">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ur">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="id">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="uk">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="be">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sl">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="et">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="lv">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="lt">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="fa">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="vi">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="hy">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="az">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="eu">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="mk">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="af">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ka">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="fo">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="hi">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ms">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="kk">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ky">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sw">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="uz">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="tt">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="pa">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="gu">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ta">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="te">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="kn">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="mr">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sa">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="mn">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="gl">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="kok">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="syr">eu-ES (Needs translation)</DisplayName>
+    <DisplayName lang="div">eu-ES (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>eu-ES (Need English name)</EnglishName>
   <LCID>1069</LCID>
   <Name>eu-ES</Name>

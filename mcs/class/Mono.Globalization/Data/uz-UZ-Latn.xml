@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>uz-UZ-Latn (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="bg">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ca">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="cs">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="da">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="de">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="el">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="en">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="es">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fi">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fr">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="he">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hu">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="is">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="it">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ja">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ko">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="nl">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="no">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pl">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pt">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ro">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ru">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hr">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sk">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sq">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sv">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="th">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="tr">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ur">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="id">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="uk">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="be">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sl">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="et">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="lv">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="lt">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fa">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="vi">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hy">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="az">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="eu">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mk">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="af">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ka">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fo">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hi">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ms">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kk">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ky">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sw">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="uz">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="tt">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pa">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="gu">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ta">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="te">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kn">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mr">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sa">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mn">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="gl">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kok">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="syr">uz-UZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="div">uz-UZ-Latn (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>uz-UZ-Latn (Need English name)</EnglishName>
   <LCID>1091</LCID>
   <Name>uz-UZ-Latn</Name>

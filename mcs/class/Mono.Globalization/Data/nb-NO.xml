@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>nb-NO (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="bg">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ca">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="cs">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="da">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="de">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="el">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="en">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="es">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="fi">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="fr">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="he">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="hu">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="is">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="it">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ja">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ko">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="nl">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="no">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="pl">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="pt">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ro">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ru">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="hr">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="sk">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="sq">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="sv">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="th">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="tr">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ur">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="id">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="uk">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="be">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="sl">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="et">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="lv">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="lt">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="fa">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="vi">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="hy">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="az">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="eu">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="mk">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="af">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ka">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="fo">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="hi">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ms">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="kk">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ky">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="sw">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="uz">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="tt">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="pa">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="gu">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="ta">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="te">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="kn">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="mr">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="sa">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="mn">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="gl">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="kok">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="syr">nb-NO (Needs translation)</DisplayName>
+    <DisplayName lang="div">nb-NO (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>nb-NO (Need English name)</EnglishName>
   <LCID>1044</LCID>
   <Name>nb-NO</Name>

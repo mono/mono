@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>sk-SK (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="bg">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ca">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="cs">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="da">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="de">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="el">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="en">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="es">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="fi">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="fr">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="he">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="hu">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="is">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="it">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ja">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ko">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="nl">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="no">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="pl">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="pt">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ro">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ru">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="hr">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="sk">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="sq">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="sv">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="th">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="tr">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ur">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="id">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="uk">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="be">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="sl">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="et">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="lv">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="lt">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="fa">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="vi">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="hy">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="az">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="eu">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="mk">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="af">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ka">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="fo">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="hi">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ms">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="kk">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ky">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="sw">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="uz">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="tt">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="pa">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="gu">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="ta">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="te">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="kn">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="mr">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="sa">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="mn">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="gl">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="kok">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="syr">sk-SK (Needs translation)</DisplayName>
+    <DisplayName lang="div">sk-SK (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>sk-SK (Need English name)</EnglishName>
   <LCID>1051</LCID>
   <Name>sk-SK</Name>

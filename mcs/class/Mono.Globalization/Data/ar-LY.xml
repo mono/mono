@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-LY (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-LY (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-LY (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-LY (Need English name)</EnglishName>
   <LCID>4097</LCID>
   <Name>ar-LY</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ca-ES (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="da">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="de">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="el">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="en">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="es">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="he">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="is">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="it">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="no">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="th">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="id">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="be">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="et">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="az">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="af">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="te">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ca-ES (Needs translation)</DisplayName>
+    <DisplayName lang="div">ca-ES (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ca-ES (Need English name)</EnglishName>
   <LCID>1027</LCID>
   <Name>ca-ES</Name>

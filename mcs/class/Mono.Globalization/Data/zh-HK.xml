@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>zh-HK (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="bg">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ca">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="cs">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="da">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="de">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="el">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="en">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="es">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="fi">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="fr">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="he">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="hu">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="is">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="it">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ja">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ko">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="nl">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="no">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="pl">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="pt">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ro">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ru">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="hr">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="sk">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="sq">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="sv">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="th">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="tr">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ur">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="id">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="uk">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="be">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="sl">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="et">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="lv">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="lt">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="fa">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="vi">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="hy">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="az">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="eu">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="mk">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="af">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ka">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="fo">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="hi">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ms">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="kk">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ky">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="sw">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="uz">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="tt">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="pa">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="gu">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="ta">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="te">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="kn">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="mr">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="sa">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="mn">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="gl">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="kok">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="syr">zh-HK (Needs translation)</DisplayName>
+    <DisplayName lang="div">zh-HK (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>zh-HK (Need English name)</EnglishName>
   <LCID>3076</LCID>
   <Name>zh-HK</Name>

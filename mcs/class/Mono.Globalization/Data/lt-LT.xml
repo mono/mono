@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>lt-LT (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="bg">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ca">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="cs">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="da">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="de">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="el">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="en">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="es">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="fi">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="fr">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="he">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="hu">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="is">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="it">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ja">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ko">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="nl">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="no">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="pl">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="pt">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ro">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ru">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="hr">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="sk">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="sq">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="sv">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="th">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="tr">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ur">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="id">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="uk">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="be">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="sl">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="et">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="lv">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="lt">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="fa">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="vi">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="hy">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="az">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="eu">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="mk">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="af">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ka">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="fo">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="hi">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ms">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="kk">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ky">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="sw">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="uz">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="tt">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="pa">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="gu">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="ta">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="te">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="kn">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="mr">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="sa">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="mn">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="gl">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="kok">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="syr">lt-LT (Needs translation)</DisplayName>
+    <DisplayName lang="div">lt-LT (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>lt-LT (Need English name)</EnglishName>
   <LCID>1063</LCID>
   <Name>lt-LT</Name>

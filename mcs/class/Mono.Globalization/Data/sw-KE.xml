@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>sw-KE (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="bg">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ca">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="cs">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="da">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="de">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="el">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="en">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="es">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="fi">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="fr">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="he">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="hu">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="is">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="it">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ja">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ko">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="nl">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="no">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="pl">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="pt">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ro">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ru">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="hr">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="sk">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="sq">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="sv">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="th">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="tr">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ur">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="id">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="uk">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="be">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="sl">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="et">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="lv">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="lt">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="fa">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="vi">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="hy">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="az">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="eu">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="mk">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="af">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ka">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="fo">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="hi">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ms">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="kk">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ky">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="sw">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="uz">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="tt">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="pa">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="gu">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="ta">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="te">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="kn">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="mr">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="sa">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="mn">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="gl">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="kok">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="syr">sw-KE (Needs translation)</DisplayName>
+    <DisplayName lang="div">sw-KE (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>sw-KE (Need English name)</EnglishName>
   <LCID>1089</LCID>
   <Name>sw-KE</Name>

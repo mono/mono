@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>he-IL (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="bg">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ca">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="cs">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="da">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="de">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="el">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="en">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="es">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="fi">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="fr">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="he">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="hu">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="is">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="it">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ja">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ko">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="nl">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="no">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="pl">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="pt">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ro">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ru">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="hr">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="sk">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="sq">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="sv">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="th">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="tr">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ur">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="id">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="uk">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="be">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="sl">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="et">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="lv">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="lt">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="fa">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="vi">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="hy">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="az">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="eu">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="mk">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="af">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ka">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="fo">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="hi">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ms">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="kk">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ky">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="sw">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="uz">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="tt">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="pa">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="gu">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="ta">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="te">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="kn">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="mr">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="sa">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="mn">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="gl">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="kok">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="syr">he-IL (Needs translation)</DisplayName>
+    <DisplayName lang="div">he-IL (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>he-IL (Need English name)</EnglishName>
   <LCID>1037</LCID>
   <Name>he-IL</Name>

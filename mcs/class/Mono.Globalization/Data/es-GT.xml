@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>es-GT (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="bg">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ca">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="cs">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="da">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="de">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="el">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="en">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="es">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="fi">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="fr">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="he">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="hu">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="is">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="it">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ja">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ko">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="nl">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="no">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="pl">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="pt">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ro">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ru">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="hr">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="sk">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="sq">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="sv">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="th">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="tr">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ur">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="id">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="uk">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="be">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="sl">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="et">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="lv">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="lt">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="fa">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="vi">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="hy">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="az">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="eu">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="mk">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="af">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ka">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="fo">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="hi">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ms">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="kk">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ky">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="sw">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="uz">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="tt">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="pa">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="gu">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="ta">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="te">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="kn">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="mr">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="sa">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="mn">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="gl">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="kok">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="syr">es-GT (Needs translation)</DisplayName>
+    <DisplayName lang="div">es-GT (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>es-GT (Need English name)</EnglishName>
   <LCID>4106</LCID>
   <Name>es-GT</Name>

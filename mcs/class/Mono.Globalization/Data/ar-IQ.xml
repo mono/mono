@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-IQ (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-IQ (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-IQ (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-IQ (Need English name)</EnglishName>
   <LCID>2049</LCID>
   <Name>ar-IQ</Name>

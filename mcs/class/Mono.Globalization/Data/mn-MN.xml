@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>mn-MN (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="bg">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ca">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="cs">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="da">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="de">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="el">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="en">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="es">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="fi">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="fr">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="he">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="hu">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="is">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="it">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ja">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ko">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="nl">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="no">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="pl">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="pt">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ro">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ru">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="hr">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="sk">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="sq">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="sv">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="th">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="tr">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ur">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="id">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="uk">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="be">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="sl">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="et">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="lv">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="lt">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="fa">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="vi">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="hy">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="az">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="eu">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="mk">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="af">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ka">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="fo">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="hi">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ms">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="kk">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ky">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="sw">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="uz">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="tt">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="pa">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="gu">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="ta">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="te">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="kn">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="mr">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="sa">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="mn">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="gl">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="kok">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="syr">mn-MN (Needs translation)</DisplayName>
+    <DisplayName lang="div">mn-MN (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>mn-MN (Need English name)</EnglishName>
   <LCID>1104</LCID>
   <Name>mn-MN</Name>

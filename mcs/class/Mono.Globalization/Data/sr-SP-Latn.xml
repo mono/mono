@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>sr-SP-Latn (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="bg">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ca">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="cs">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="da">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="de">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="el">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="en">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="es">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fi">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fr">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="he">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hu">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="is">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="it">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ja">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ko">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="nl">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="no">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pl">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pt">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ro">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ru">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hr">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sk">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sq">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sv">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="th">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="tr">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ur">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="id">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="uk">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="be">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sl">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="et">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="lv">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="lt">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fa">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="vi">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hy">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="az">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="eu">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mk">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="af">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ka">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fo">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hi">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ms">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kk">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ky">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sw">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="uz">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="tt">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pa">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="gu">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ta">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="te">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kn">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mr">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sa">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mn">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="gl">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kok">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="syr">sr-SP-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="div">sr-SP-Latn (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>sr-SP-Latn (Need English name)</EnglishName>
   <LCID>2074</LCID>
   <Name>sr-SP-Latn</Name>

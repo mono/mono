@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>es-EC (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="bg">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ca">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="cs">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="da">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="de">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="el">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="en">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="es">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="fi">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="fr">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="he">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="hu">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="is">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="it">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ja">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ko">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="nl">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="no">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="pl">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="pt">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ro">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ru">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="hr">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="sk">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="sq">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="sv">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="th">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="tr">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ur">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="id">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="uk">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="be">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="sl">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="et">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="lv">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="lt">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="fa">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="vi">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="hy">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="az">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="eu">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="mk">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="af">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ka">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="fo">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="hi">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ms">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="kk">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ky">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="sw">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="uz">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="tt">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="pa">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="gu">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="ta">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="te">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="kn">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="mr">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="sa">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="mn">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="gl">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="kok">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="syr">es-EC (Needs translation)</DisplayName>
+    <DisplayName lang="div">es-EC (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>es-EC (Need English name)</EnglishName>
   <LCID>12298</LCID>
   <Name>es-EC</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>de-AT (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="bg">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ca">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="cs">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="da">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="de">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="el">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="en">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="es">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="fi">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="fr">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="he">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="hu">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="is">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="it">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ja">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ko">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="nl">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="no">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="pl">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="pt">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ro">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ru">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="hr">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="sk">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="sq">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="sv">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="th">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="tr">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ur">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="id">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="uk">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="be">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="sl">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="et">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="lv">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="lt">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="fa">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="vi">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="hy">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="az">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="eu">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="mk">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="af">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ka">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="fo">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="hi">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ms">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="kk">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ky">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="sw">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="uz">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="tt">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="pa">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="gu">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="ta">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="te">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="kn">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="mr">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="sa">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="mn">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="gl">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="kok">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="syr">de-AT (Needs translation)</DisplayName>
+    <DisplayName lang="div">de-AT (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>de-AT (Need English name)</EnglishName>
   <LCID>3079</LCID>
   <Name>de-AT</Name>

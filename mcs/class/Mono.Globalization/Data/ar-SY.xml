@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-SY (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-SY (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-SY (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-SY (Need English name)</EnglishName>
   <LCID>10241</LCID>
   <Name>ar-SY</Name>

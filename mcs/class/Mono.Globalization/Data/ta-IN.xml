@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ta-IN (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="da">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="de">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="el">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="en">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="es">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="he">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="is">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="it">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="no">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="th">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="id">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="be">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="et">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="az">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="af">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="te">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ta-IN (Needs translation)</DisplayName>
+    <DisplayName lang="div">ta-IN (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ta-IN (Need English name)</EnglishName>
   <LCID>1097</LCID>
   <Name>ta-IN</Name>

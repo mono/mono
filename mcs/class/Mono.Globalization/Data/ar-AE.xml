@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-AE (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-AE (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-AE (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-AE (Need English name)</EnglishName>
   <LCID>14337</LCID>
   <Name>ar-AE</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ms-BN (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="da">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="de">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="el">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="en">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="es">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="he">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="is">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="it">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="no">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="th">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="id">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="be">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="et">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="az">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="af">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="te">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ms-BN (Needs translation)</DisplayName>
+    <DisplayName lang="div">ms-BN (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ms-BN (Need English name)</EnglishName>
   <LCID>2110</LCID>
   <Name>ms-BN</Name>

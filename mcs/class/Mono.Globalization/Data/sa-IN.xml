@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>sa-IN (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="bg">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ca">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="cs">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="da">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="de">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="el">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="en">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="es">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fi">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fr">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="he">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hu">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="is">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="it">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ja">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ko">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="nl">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="no">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pl">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pt">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ro">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ru">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hr">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sk">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sq">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sv">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="th">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tr">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ur">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="id">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uk">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="be">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sl">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="et">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lv">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lt">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fa">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="vi">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hy">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="az">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="eu">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mk">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="af">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ka">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fo">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hi">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ms">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kk">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ky">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sw">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uz">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tt">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pa">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gu">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ta">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="te">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kn">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mr">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sa">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mn">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gl">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kok">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="syr">sa-IN (Needs translation)</DisplayName>
+    <DisplayName lang="div">sa-IN (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>sa-IN (Need English name)</EnglishName>
   <LCID>1103</LCID>
   <Name>sa-IN</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>be-BY (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="bg">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ca">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="cs">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="da">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="de">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="el">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="en">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="es">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="fi">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="fr">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="he">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="hu">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="is">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="it">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ja">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ko">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="nl">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="no">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="pl">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="pt">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ro">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ru">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="hr">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="sk">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="sq">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="sv">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="th">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="tr">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ur">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="id">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="uk">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="be">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="sl">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="et">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="lv">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="lt">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="fa">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="vi">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="hy">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="az">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="eu">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="mk">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="af">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ka">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="fo">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="hi">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ms">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="kk">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ky">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="sw">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="uz">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="tt">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="pa">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="gu">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="ta">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="te">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="kn">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="mr">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="sa">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="mn">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="gl">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="kok">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="syr">be-BY (Needs translation)</DisplayName>
+    <DisplayName lang="div">be-BY (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>be-BY (Need English name)</EnglishName>
   <LCID>1059</LCID>
   <Name>be-BY</Name>

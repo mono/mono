@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>kk-KZ (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="bg">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ca">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="cs">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="da">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="de">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="el">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="en">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="es">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="fi">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="fr">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="he">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="hu">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="is">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="it">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ja">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ko">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="nl">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="no">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="pl">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="pt">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ro">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ru">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="hr">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="sk">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="sq">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="sv">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="th">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="tr">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ur">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="id">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="uk">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="be">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="sl">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="et">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="lv">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="lt">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="fa">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="vi">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="hy">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="az">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="eu">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="mk">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="af">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ka">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="fo">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="hi">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ms">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="kk">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ky">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="sw">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="uz">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="tt">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="pa">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="gu">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="ta">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="te">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="kn">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="mr">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="sa">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="mn">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="gl">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="kok">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="syr">kk-KZ (Needs translation)</DisplayName>
+    <DisplayName lang="div">kk-KZ (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>kk-KZ (Need English name)</EnglishName>
   <LCID>1087</LCID>
   <Name>kk-KZ</Name>

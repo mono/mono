@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>hi-IN (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="bg">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ca">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="cs">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="da">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="de">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="el">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="en">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="es">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fi">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fr">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="he">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hu">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="is">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="it">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ja">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ko">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="nl">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="no">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pl">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pt">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ro">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ru">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hr">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sk">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sq">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sv">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="th">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tr">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ur">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="id">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uk">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="be">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sl">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="et">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lv">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lt">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fa">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="vi">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hy">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="az">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="eu">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mk">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="af">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ka">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fo">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hi">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ms">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kk">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ky">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sw">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uz">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tt">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pa">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gu">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ta">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="te">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kn">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mr">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sa">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mn">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gl">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kok">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="syr">hi-IN (Needs translation)</DisplayName>
+    <DisplayName lang="div">hi-IN (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>hi-IN (Need English name)</EnglishName>
   <LCID>1081</LCID>
   <Name>hi-IN</Name>

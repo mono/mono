@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>is-IS (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="bg">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ca">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="cs">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="da">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="de">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="el">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="en">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="es">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="fi">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="fr">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="he">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="hu">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="is">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="it">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ja">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ko">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="nl">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="no">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="pl">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="pt">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ro">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ru">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="hr">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="sk">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="sq">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="sv">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="th">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="tr">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ur">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="id">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="uk">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="be">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="sl">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="et">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="lv">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="lt">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="fa">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="vi">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="hy">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="az">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="eu">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="mk">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="af">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ka">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="fo">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="hi">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ms">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="kk">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ky">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="sw">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="uz">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="tt">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="pa">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="gu">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="ta">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="te">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="kn">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="mr">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="sa">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="mn">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="gl">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="kok">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="syr">is-IS (Needs translation)</DisplayName>
+    <DisplayName lang="div">is-IS (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>is-IS (Need English name)</EnglishName>
   <LCID>1039</LCID>
   <Name>is-IS</Name>

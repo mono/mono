@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>zh-TW (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="bg">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ca">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="cs">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="da">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="de">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="el">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="en">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="es">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="fi">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="fr">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="he">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="hu">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="is">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="it">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ja">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ko">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="nl">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="no">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="pl">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="pt">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ro">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ru">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="hr">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="sk">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="sq">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="sv">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="th">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="tr">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ur">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="id">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="uk">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="be">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="sl">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="et">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="lv">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="lt">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="fa">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="vi">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="hy">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="az">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="eu">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="mk">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="af">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ka">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="fo">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="hi">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ms">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="kk">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ky">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="sw">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="uz">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="tt">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="pa">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="gu">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="ta">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="te">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="kn">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="mr">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="sa">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="mn">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="gl">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="kok">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="syr">zh-TW (Needs translation)</DisplayName>
+    <DisplayName lang="div">zh-TW (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>zh-TW (Need English name)</EnglishName>
   <LCID>1028</LCID>
   <Name>zh-TW</Name>

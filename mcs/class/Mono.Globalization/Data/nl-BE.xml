@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>nl-BE (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="bg">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ca">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="cs">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="da">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="de">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="el">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="en">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="es">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="fi">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="fr">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="he">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="hu">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="is">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="it">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ja">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ko">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="nl">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="no">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="pl">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="pt">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ro">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ru">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="hr">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="sk">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="sq">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="sv">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="th">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="tr">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ur">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="id">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="uk">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="be">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="sl">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="et">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="lv">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="lt">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="fa">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="vi">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="hy">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="az">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="eu">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="mk">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="af">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ka">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="fo">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="hi">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ms">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="kk">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ky">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="sw">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="uz">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="tt">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="pa">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="gu">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="ta">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="te">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="kn">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="mr">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="sa">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="mn">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="gl">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="kok">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="syr">nl-BE (Needs translation)</DisplayName>
+    <DisplayName lang="div">nl-BE (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>nl-BE (Need English name)</EnglishName>
   <LCID>2067</LCID>
   <Name>nl-BE</Name>

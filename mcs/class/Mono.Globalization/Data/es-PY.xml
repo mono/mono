@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>es-PY (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="bg">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ca">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="cs">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="da">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="de">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="el">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="en">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="es">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="fi">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="fr">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="he">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="hu">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="is">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="it">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ja">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ko">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="nl">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="no">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="pl">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="pt">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ro">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ru">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="hr">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="sk">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="sq">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="sv">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="th">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="tr">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ur">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="id">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="uk">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="be">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="sl">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="et">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="lv">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="lt">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="fa">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="vi">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="hy">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="az">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="eu">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="mk">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="af">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ka">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="fo">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="hi">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ms">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="kk">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ky">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="sw">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="uz">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="tt">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="pa">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="gu">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="ta">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="te">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="kn">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="mr">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="sa">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="mn">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="gl">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="kok">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="syr">es-PY (Needs translation)</DisplayName>
+    <DisplayName lang="div">es-PY (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>es-PY (Need English name)</EnglishName>
   <LCID>15370</LCID>
   <Name>es-PY</Name>

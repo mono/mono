@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-BH (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-BH (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-BH (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-BH (Need English name)</EnglishName>
   <LCID>15361</LCID>
   <Name>ar-BH</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>zh-MO (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="bg">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ca">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="cs">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="da">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="de">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="el">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="en">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="es">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="fi">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="fr">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="he">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="hu">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="is">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="it">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ja">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ko">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="nl">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="no">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="pl">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="pt">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ro">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ru">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="hr">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="sk">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="sq">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="sv">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="th">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="tr">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ur">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="id">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="uk">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="be">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="sl">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="et">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="lv">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="lt">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="fa">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="vi">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="hy">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="az">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="eu">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="mk">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="af">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ka">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="fo">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="hi">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ms">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="kk">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ky">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="sw">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="uz">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="tt">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="pa">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="gu">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="ta">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="te">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="kn">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="mr">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="sa">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="mn">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="gl">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="kok">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="syr">zh-MO (Needs translation)</DisplayName>
+    <DisplayName lang="div">zh-MO (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>zh-MO (Need English name)</EnglishName>
   <LCID>5124</LCID>
   <Name>zh-MO</Name>

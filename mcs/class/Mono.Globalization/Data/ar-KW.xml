@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-KW (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-KW (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-KW (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-KW (Need English name)</EnglishName>
   <LCID>13313</LCID>
   <Name>ar-KW</Name>

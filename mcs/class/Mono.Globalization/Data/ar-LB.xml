@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-LB (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-LB (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-LB (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-LB (Need English name)</EnglishName>
   <LCID>12289</LCID>
   <Name>ar-LB</Name>

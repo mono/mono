@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>fo-FO (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="bg">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ca">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="cs">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="da">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="de">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="el">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="en">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="es">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="fi">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="fr">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="he">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="hu">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="is">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="it">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ja">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ko">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="nl">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="no">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="pl">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="pt">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ro">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ru">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="hr">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="sk">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="sq">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="sv">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="th">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="tr">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ur">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="id">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="uk">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="be">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="sl">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="et">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="lv">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="lt">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="fa">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="vi">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="hy">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="az">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="eu">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="mk">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="af">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ka">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="fo">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="hi">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ms">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="kk">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ky">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="sw">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="uz">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="tt">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="pa">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="gu">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="ta">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="te">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="kn">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="mr">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="sa">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="mn">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="gl">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="kok">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="syr">fo-FO (Needs translation)</DisplayName>
+    <DisplayName lang="div">fo-FO (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>fo-FO (Need English name)</EnglishName>
   <LCID>1080</LCID>
   <Name>fo-FO</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>es-PE (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="bg">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ca">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="cs">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="da">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="de">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="el">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="en">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="es">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="fi">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="fr">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="he">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="hu">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="is">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="it">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ja">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ko">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="nl">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="no">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="pl">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="pt">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ro">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ru">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="hr">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="sk">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="sq">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="sv">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="th">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="tr">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ur">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="id">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="uk">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="be">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="sl">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="et">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="lv">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="lt">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="fa">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="vi">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="hy">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="az">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="eu">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="mk">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="af">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ka">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="fo">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="hi">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ms">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="kk">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ky">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="sw">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="uz">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="tt">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="pa">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="gu">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="ta">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="te">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="kn">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="mr">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="sa">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="mn">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="gl">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="kok">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="syr">es-PE (Needs translation)</DisplayName>
+    <DisplayName lang="div">es-PE (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>es-PE (Need English name)</EnglishName>
   <LCID>10250</LCID>
   <Name>es-PE</Name>

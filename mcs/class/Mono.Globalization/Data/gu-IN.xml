@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>gu-IN (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="bg">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ca">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="cs">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="da">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="de">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="el">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="en">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="es">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fi">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fr">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="he">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hu">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="is">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="it">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ja">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ko">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="nl">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="no">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pl">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pt">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ro">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ru">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hr">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sk">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sq">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sv">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="th">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tr">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ur">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="id">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uk">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="be">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sl">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="et">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lv">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lt">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fa">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="vi">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hy">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="az">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="eu">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mk">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="af">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ka">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fo">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hi">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ms">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kk">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ky">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sw">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uz">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tt">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pa">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gu">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ta">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="te">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kn">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mr">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sa">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mn">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gl">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kok">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="syr">gu-IN (Needs translation)</DisplayName>
+    <DisplayName lang="div">gu-IN (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>gu-IN (Need English name)</EnglishName>
   <LCID>1095</LCID>
   <Name>gu-IN</Name>

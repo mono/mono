@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>zh-CN (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="bg">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ca">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="cs">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="da">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="de">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="el">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="en">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="es">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="fi">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="fr">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="he">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="hu">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="is">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="it">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ja">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ko">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="nl">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="no">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="pl">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="pt">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ro">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ru">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="hr">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="sk">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="sq">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="sv">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="th">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="tr">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ur">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="id">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="uk">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="be">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="sl">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="et">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="lv">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="lt">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="fa">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="vi">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="hy">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="az">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="eu">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="mk">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="af">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ka">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="fo">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="hi">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ms">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="kk">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ky">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="sw">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="uz">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="tt">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="pa">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="gu">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="ta">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="te">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="kn">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="mr">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="sa">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="mn">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="gl">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="kok">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="syr">zh-CN (Needs translation)</DisplayName>
+    <DisplayName lang="div">zh-CN (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>zh-CN (Need English name)</EnglishName>
   <LCID>2052</LCID>
   <Name>zh-CN</Name>

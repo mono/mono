@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>fr-FR (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="bg">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ca">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="cs">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="da">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="de">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="el">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="en">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="es">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="fi">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="fr">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="he">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="hu">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="is">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="it">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ja">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ko">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="nl">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="no">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="pl">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="pt">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ro">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ru">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="hr">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="sk">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="sq">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="sv">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="th">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="tr">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ur">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="id">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="uk">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="be">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="sl">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="et">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="lv">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="lt">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="fa">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="vi">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="hy">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="az">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="eu">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="mk">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="af">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ka">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="fo">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="hi">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ms">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="kk">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ky">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="sw">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="uz">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="tt">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="pa">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="gu">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="ta">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="te">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="kn">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="mr">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="sa">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="mn">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="gl">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="kok">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="syr">fr-FR (Needs translation)</DisplayName>
+    <DisplayName lang="div">fr-FR (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>fr-FR (Need English name)</EnglishName>
   <LCID>1036</LCID>
   <Name>fr-FR</Name>

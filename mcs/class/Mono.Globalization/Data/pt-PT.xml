@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>pt-PT (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="bg">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ca">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="cs">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="da">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="de">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="el">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="en">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="es">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="fi">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="fr">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="he">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="hu">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="is">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="it">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ja">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ko">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="nl">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="no">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="pl">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="pt">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ro">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ru">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="hr">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="sk">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="sq">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="sv">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="th">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="tr">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ur">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="id">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="uk">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="be">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="sl">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="et">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="lv">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="lt">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="fa">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="vi">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="hy">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="az">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="eu">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="mk">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="af">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ka">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="fo">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="hi">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ms">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="kk">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ky">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="sw">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="uz">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="tt">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="pa">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="gu">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="ta">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="te">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="kn">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="mr">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="sa">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="mn">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="gl">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="kok">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="syr">pt-PT (Needs translation)</DisplayName>
+    <DisplayName lang="div">pt-PT (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>pt-PT (Need English name)</EnglishName>
   <LCID>2070</LCID>
   <Name>pt-PT</Name>

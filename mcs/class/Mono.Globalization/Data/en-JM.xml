@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>en-JM (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="bg">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ca">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="cs">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="da">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="de">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="el">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="en">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="es">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="fi">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="fr">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="he">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="hu">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="is">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="it">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ja">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ko">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="nl">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="no">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="pl">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="pt">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ro">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ru">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="hr">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="sk">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="sq">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="sv">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="th">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="tr">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ur">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="id">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="uk">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="be">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="sl">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="et">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="lv">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="lt">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="fa">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="vi">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="hy">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="az">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="eu">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="mk">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="af">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ka">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="fo">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="hi">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ms">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="kk">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ky">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="sw">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="uz">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="tt">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="pa">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="gu">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="ta">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="te">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="kn">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="mr">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="sa">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="mn">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="gl">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="kok">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="syr">en-JM (Needs translation)</DisplayName>
+    <DisplayName lang="div">en-JM (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>en-JM (Need English name)</EnglishName>
   <LCID>8201</LCID>
   <Name>en-JM</Name>

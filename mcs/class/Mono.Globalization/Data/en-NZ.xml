@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>en-NZ (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="bg">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ca">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="cs">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="da">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="de">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="el">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="en">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="es">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="fi">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="fr">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="he">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="hu">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="is">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="it">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ja">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ko">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="nl">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="no">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="pl">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="pt">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ro">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ru">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="hr">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="sk">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="sq">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="sv">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="th">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="tr">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ur">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="id">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="uk">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="be">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="sl">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="et">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="lv">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="lt">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="fa">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="vi">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="hy">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="az">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="eu">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="mk">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="af">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ka">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="fo">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="hi">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ms">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="kk">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ky">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="sw">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="uz">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="tt">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="pa">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="gu">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="ta">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="te">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="kn">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="mr">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="sa">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="mn">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="gl">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="kok">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="syr">en-NZ (Needs translation)</DisplayName>
+    <DisplayName lang="div">en-NZ (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>en-NZ (Need English name)</EnglishName>
   <LCID>5129</LCID>
   <Name>en-NZ</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>fi-FI (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="bg">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ca">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="cs">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="da">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="de">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="el">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="en">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="es">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="fi">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="fr">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="he">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="hu">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="is">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="it">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ja">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ko">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="nl">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="no">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="pl">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="pt">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ro">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ru">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="hr">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="sk">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="sq">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="sv">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="th">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="tr">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ur">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="id">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="uk">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="be">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="sl">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="et">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="lv">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="lt">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="fa">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="vi">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="hy">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="az">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="eu">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="mk">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="af">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ka">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="fo">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="hi">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ms">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="kk">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ky">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="sw">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="uz">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="tt">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="pa">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="gu">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="ta">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="te">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="kn">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="mr">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="sa">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="mn">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="gl">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="kok">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="syr">fi-FI (Needs translation)</DisplayName>
+    <DisplayName lang="div">fi-FI (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>fi-FI (Need English name)</EnglishName>
   <LCID>1035</LCID>
   <Name>fi-FI</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ka-GE (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="da">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="de">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="el">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="en">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="es">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="he">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="is">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="it">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="no">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="th">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="id">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="be">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="et">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="az">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="af">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="te">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ka-GE (Needs translation)</DisplayName>
+    <DisplayName lang="div">ka-GE (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ka-GE (Need English name)</EnglishName>
   <LCID>1079</LCID>
   <Name>ka-GE</Name>

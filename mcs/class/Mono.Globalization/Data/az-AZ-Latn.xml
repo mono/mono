@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>az-AZ-Latn (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="bg">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ca">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="cs">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="da">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="de">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="el">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="en">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="es">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fi">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fr">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="he">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hu">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="is">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="it">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ja">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ko">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="nl">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="no">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pl">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pt">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ro">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ru">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hr">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sk">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sq">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sv">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="th">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="tr">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ur">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="id">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="uk">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="be">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sl">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="et">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="lv">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="lt">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fa">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="vi">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hy">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="az">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="eu">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mk">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="af">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ka">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="fo">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="hi">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ms">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kk">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ky">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sw">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="uz">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="tt">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="pa">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="gu">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="ta">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="te">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kn">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mr">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="sa">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="mn">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="gl">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="kok">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="syr">az-AZ-Latn (Needs translation)</DisplayName>
+    <DisplayName lang="div">az-AZ-Latn (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>az-AZ-Latn (Need English name)</EnglishName>
   <LCID>1068</LCID>
   <Name>az-AZ-Latn</Name>

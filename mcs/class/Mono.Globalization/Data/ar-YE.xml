@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-YE (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-YE (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-YE (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-YE (Need English name)</EnglishName>
   <LCID>9217</LCID>
   <Name>ar-YE</Name>

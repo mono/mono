@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>sq-AL (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="bg">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ca">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="cs">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="da">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="de">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="el">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="en">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="es">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="fi">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="fr">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="he">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="hu">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="is">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="it">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ja">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ko">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="nl">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="no">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="pl">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="pt">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ro">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ru">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="hr">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="sk">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="sq">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="sv">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="th">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="tr">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ur">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="id">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="uk">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="be">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="sl">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="et">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="lv">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="lt">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="fa">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="vi">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="hy">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="az">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="eu">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="mk">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="af">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ka">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="fo">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="hi">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ms">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="kk">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ky">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="sw">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="uz">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="tt">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="pa">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="gu">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="ta">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="te">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="kn">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="mr">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="sa">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="mn">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="gl">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="kok">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="syr">sq-AL (Needs translation)</DisplayName>
+    <DisplayName lang="div">sq-AL (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>sq-AL (Need English name)</EnglishName>
   <LCID>1052</LCID>
   <Name>sq-AL</Name>

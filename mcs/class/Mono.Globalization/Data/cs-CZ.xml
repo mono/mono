@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>cs-CZ (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="bg">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ca">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="cs">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="da">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="de">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="el">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="en">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="es">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="fi">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="fr">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="he">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="hu">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="is">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="it">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ja">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ko">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="nl">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="no">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="pl">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="pt">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ro">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ru">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="hr">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="sk">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="sq">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="sv">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="th">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="tr">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ur">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="id">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="uk">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="be">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="sl">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="et">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="lv">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="lt">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="fa">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="vi">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="hy">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="az">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="eu">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="mk">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="af">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ka">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="fo">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="hi">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ms">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="kk">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ky">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="sw">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="uz">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="tt">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="pa">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="gu">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="ta">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="te">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="kn">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="mr">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="sa">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="mn">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="gl">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="kok">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="syr">cs-CZ (Needs translation)</DisplayName>
+    <DisplayName lang="div">cs-CZ (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>cs-CZ (Need English name)</EnglishName>
   <LCID>1029</LCID>
   <Name>cs-CZ</Name>

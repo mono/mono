@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>syr-SY (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="bg">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ca">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="cs">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="da">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="de">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="el">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="en">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="es">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="fi">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="fr">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="he">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="hu">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="is">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="it">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ja">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ko">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="nl">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="no">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="pl">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="pt">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ro">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ru">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="hr">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sk">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sq">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sv">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="th">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="tr">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ur">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="id">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="uk">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="be">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sl">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="et">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="lv">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="lt">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="fa">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="vi">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="hy">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="az">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="eu">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="mk">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="af">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ka">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="fo">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="hi">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ms">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="kk">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ky">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sw">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="uz">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="tt">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="pa">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="gu">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="ta">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="te">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="kn">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="mr">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="sa">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="mn">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="gl">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="kok">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="syr">syr-SY (Needs translation)</DisplayName>
+    <DisplayName lang="div">syr-SY (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>syr-SY (Need English name)</EnglishName>
   <LCID>1114</LCID>
   <Name>syr-SY</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ro-RO (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="da">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="de">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="el">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="en">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="es">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="he">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="is">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="it">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="no">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="th">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="id">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="be">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="et">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="az">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="af">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="te">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ro-RO (Needs translation)</DisplayName>
+    <DisplayName lang="div">ro-RO (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ro-RO (Need English name)</EnglishName>
   <LCID>1048</LCID>
   <Name>ro-RO</Name>

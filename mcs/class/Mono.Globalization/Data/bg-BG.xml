@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>bg-BG (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="bg">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ca">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="cs">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="da">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="de">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="el">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="en">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="es">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="fi">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="fr">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="he">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="hu">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="is">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="it">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ja">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ko">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="nl">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="no">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="pl">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="pt">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ro">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ru">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="hr">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="sk">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="sq">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="sv">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="th">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="tr">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ur">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="id">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="uk">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="be">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="sl">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="et">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="lv">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="lt">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="fa">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="vi">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="hy">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="az">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="eu">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="mk">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="af">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ka">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="fo">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="hi">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ms">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="kk">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ky">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="sw">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="uz">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="tt">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="pa">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="gu">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="ta">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="te">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="kn">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="mr">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="sa">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="mn">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="gl">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="kok">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="syr">bg-BG (Needs translation)</DisplayName>
+    <DisplayName lang="div">bg-BG (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>bg-BG (Need English name)</EnglishName>
   <LCID>1026</LCID>
   <Name>bg-BG</Name>

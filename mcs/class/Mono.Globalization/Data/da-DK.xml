@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>da-DK (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="bg">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ca">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="cs">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="da">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="de">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="el">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="en">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="es">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="fi">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="fr">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="he">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="hu">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="is">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="it">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ja">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ko">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="nl">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="no">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="pl">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="pt">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ro">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ru">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="hr">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="sk">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="sq">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="sv">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="th">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="tr">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ur">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="id">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="uk">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="be">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="sl">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="et">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="lv">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="lt">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="fa">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="vi">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="hy">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="az">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="eu">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="mk">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="af">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ka">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="fo">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="hi">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ms">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="kk">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ky">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="sw">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="uz">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="tt">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="pa">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="gu">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="ta">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="te">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="kn">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="mr">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="sa">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="mn">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="gl">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="kok">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="syr">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="div">da-DK (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>da-DK (Need English name)</EnglishName>
   <LCID>1030</LCID>
   <Name>da-DK</Name>

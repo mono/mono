@@ -1,3 +1,10 @@
+2003-04-12  Duncan Mak  <duncan@ximian.com>
+
+	* Data/CultureInfo.xsd: XML schema for the XML files.
+
+	* Data/*.xml: Modify the DisplayName element to allow for more
+	flexible translation.
+
 2003-04-11  Duncan Mak  <duncan@ximian.com>
 
 	* Data/??.xml: Remove the empty Parent element in the neutral cultures.

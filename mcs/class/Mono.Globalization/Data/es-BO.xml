@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>es-BO (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="bg">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ca">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="cs">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="da">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="de">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="el">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="en">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="es">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="fi">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="fr">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="he">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="hu">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="is">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="it">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ja">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ko">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="nl">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="no">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="pl">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="pt">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ro">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ru">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="hr">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="sk">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="sq">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="sv">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="th">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="tr">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ur">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="id">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="uk">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="be">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="sl">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="et">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="lv">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="lt">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="fa">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="vi">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="hy">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="az">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="eu">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="mk">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="af">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ka">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="fo">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="hi">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ms">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="kk">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ky">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="sw">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="uz">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="tt">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="pa">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="gu">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="ta">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="te">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="kn">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="mr">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="sa">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="mn">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="gl">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="kok">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="syr">es-BO (Needs translation)</DisplayName>
+    <DisplayName lang="div">es-BO (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>es-BO (Need English name)</EnglishName>
   <LCID>16394</LCID>
   <Name>es-BO</Name>

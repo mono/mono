@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>kn-IN (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="bg">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ca">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="cs">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="da">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="de">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="el">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="en">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="es">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fi">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fr">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="he">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hu">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="is">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="it">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ja">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ko">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="nl">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="no">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pl">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pt">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ro">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ru">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hr">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sk">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sq">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sv">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="th">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tr">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ur">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="id">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uk">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="be">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sl">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="et">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lv">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="lt">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fa">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="vi">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hy">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="az">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="eu">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mk">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="af">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ka">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="fo">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="hi">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ms">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kk">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ky">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sw">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="uz">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="tt">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="pa">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gu">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="ta">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="te">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kn">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mr">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="sa">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="mn">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="gl">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="kok">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="syr">kn-IN (Needs translation)</DisplayName>
+    <DisplayName lang="div">kn-IN (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>kn-IN (Need English name)</EnglishName>
   <LCID>1099</LCID>
   <Name>kn-IN</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-SA (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-SA (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-SA (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-SA (Need English name)</EnglishName>
   <LCID>1025</LCID>
   <Name>ar-SA</Name>

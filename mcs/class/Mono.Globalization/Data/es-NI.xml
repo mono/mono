@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>es-NI (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="bg">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ca">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="cs">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="da">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="de">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="el">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="en">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="es">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="fi">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="fr">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="he">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="hu">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="is">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="it">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ja">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ko">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="nl">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="no">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="pl">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="pt">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ro">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ru">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="hr">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="sk">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="sq">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="sv">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="th">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="tr">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ur">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="id">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="uk">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="be">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="sl">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="et">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="lv">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="lt">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="fa">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="vi">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="hy">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="az">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="eu">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="mk">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="af">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ka">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="fo">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="hi">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ms">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="kk">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ky">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="sw">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="uz">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="tt">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="pa">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="gu">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="ta">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="te">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="kn">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="mr">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="sa">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="mn">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="gl">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="kok">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="syr">es-NI (Needs translation)</DisplayName>
+    <DisplayName lang="div">es-NI (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>es-NI (Need English name)</EnglishName>
   <LCID>19466</LCID>
   <Name>es-NI</Name>

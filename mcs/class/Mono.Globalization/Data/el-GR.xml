@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>el-GR (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="bg">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ca">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="cs">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="da">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="de">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="el">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="en">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="es">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="fi">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="fr">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="he">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="hu">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="is">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="it">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ja">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ko">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="nl">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="no">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="pl">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="pt">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ro">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ru">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="hr">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="sk">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="sq">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="sv">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="th">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="tr">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ur">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="id">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="uk">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="be">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="sl">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="et">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="lv">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="lt">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="fa">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="vi">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="hy">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="az">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="eu">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="mk">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="af">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ka">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="fo">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="hi">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ms">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="kk">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ky">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="sw">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="uz">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="tt">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="pa">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="gu">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="ta">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="te">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="kn">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="mr">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="sa">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="mn">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="gl">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="kok">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="syr">el-GR (Needs translation)</DisplayName>
+    <DisplayName lang="div">el-GR (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>el-GR (Need English name)</EnglishName>
   <LCID>1032</LCID>
   <Name>el-GR</Name>

@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>sv-SE (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="bg">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ca">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="cs">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="da">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="de">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="el">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="en">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="es">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="fi">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="fr">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="he">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="hu">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="is">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="it">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ja">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ko">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="nl">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="no">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="pl">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="pt">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ro">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ru">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="hr">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="sk">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="sq">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="sv">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="th">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="tr">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ur">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="id">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="uk">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="be">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="sl">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="et">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="lv">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="lt">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="fa">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="vi">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="hy">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="az">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="eu">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="mk">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="af">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ka">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="fo">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="hi">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ms">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="kk">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ky">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="sw">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="uz">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="tt">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="pa">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="gu">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="ta">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="te">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="kn">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="mr">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="sa">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="mn">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="gl">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="kok">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="syr">sv-SE (Needs translation)</DisplayName>
+    <DisplayName lang="div">sv-SE (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>sv-SE (Need English name)</EnglishName>
   <LCID>1053</LCID>
   <Name>sv-SE</Name>

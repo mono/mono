@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>et-EE (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="bg">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ca">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="cs">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="da">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="de">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="el">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="en">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="es">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="fi">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="fr">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="he">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="hu">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="is">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="it">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ja">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ko">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="nl">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="no">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="pl">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="pt">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ro">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ru">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="hr">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="sk">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="sq">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="sv">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="th">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="tr">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ur">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="id">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="uk">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="be">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="sl">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="et">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="lv">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="lt">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="fa">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="vi">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="hy">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="az">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="eu">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="mk">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="af">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ka">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="fo">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="hi">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ms">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="kk">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ky">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="sw">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="uz">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="tt">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="pa">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="gu">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="ta">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="te">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="kn">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="mr">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="sa">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="mn">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="gl">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="kok">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="syr">et-EE (Needs translation)</DisplayName>
+    <DisplayName lang="div">et-EE (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>et-EE (Need English name)</EnglishName>
   <LCID>1061</LCID>
   <Name>et-EE</Name>

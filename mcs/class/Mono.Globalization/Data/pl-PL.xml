@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>pl-PL (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="bg">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ca">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="cs">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="da">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="de">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="el">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="en">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="es">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="fi">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="fr">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="he">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="hu">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="is">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="it">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ja">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ko">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="nl">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="no">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="pl">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="pt">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ro">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ru">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="hr">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="sk">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="sq">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="sv">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="th">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="tr">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ur">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="id">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="uk">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="be">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="sl">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="et">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="lv">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="lt">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="fa">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="vi">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="hy">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="az">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="eu">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="mk">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="af">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ka">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="fo">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="hi">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ms">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="kk">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ky">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="sw">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="uz">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="tt">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="pa">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="gu">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="ta">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="te">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="kn">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="mr">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="sa">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="mn">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="gl">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="kok">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="syr">pl-PL (Needs translation)</DisplayName>
+    <DisplayName lang="div">pl-PL (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>pl-PL (Need English name)</EnglishName>
   <LCID>1045</LCID>
   <Name>pl-PL</Name>

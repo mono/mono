@@ -70,7 +70,75 @@
       <AbbreviatedDayName>Sat</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
-  <DisplayName>ar-MA (Need display name)</DisplayName>
+  <DisplayNames>
+    <DisplayName lang="ar">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="bg">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ca">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHS">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="zh-CHT">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="cs">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="da">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="de">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="el">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="en">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="es">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="fi">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="fr">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="he">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="hu">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="is">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="it">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ja">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ko">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="nl">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="no">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="pl">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="pt">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ro">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ru">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="hr">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="sk">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="sq">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="sv">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="th">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="tr">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ur">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="id">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="uk">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="be">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="sl">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="et">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="lv">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="lt">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="fa">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="vi">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="hy">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="az">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="eu">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="mk">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="af">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ka">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="fo">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="hi">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ms">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="kk">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ky">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="sw">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="uz">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="tt">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="pa">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="gu">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="ta">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="te">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="kn">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="mr">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="sa">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="mn">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="gl">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="kok">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="syr">ar-MA (Needs translation)</DisplayName>
+    <DisplayName lang="div">ar-MA (Needs translation)</DisplayName>
+  </DisplayNames>
   <EnglishName>ar-MA (Need English name)</EnglishName>
   <LCID>6145</LCID>
   <Name>ar-MA</Name>
