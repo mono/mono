@@ -323,5 +323,61 @@ namespace MonoTests.System.Xml
 			string expected = "<KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><DSAKeyValue>blablabla</DSAKeyValue></KeyValue>";
 			AssertEquals (expected, xel.OuterXml);
 		}
+
+		[Test]
+		public void SelectNodes ()
+		{
+			// This test is done in this class since it tests only XmlDocumentNavigator.
+			string xpath = "//@*|//namespace::*";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
+			XmlNodeList nl = doc.SelectNodes (xpath);
+			AssertEquals (6, nl.Count);
+			// BTW, as for namespace nodes, Node does not exist
+			// in the tree, so the return value should be
+			// implementation dependent.
+			AssertEquals (XmlNodeType.Attribute, nl [0].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [1].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [2].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [3].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [4].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [5].NodeType);
+			AssertEquals ("xmlns", nl [0].LocalName);
+			AssertEquals ("xml", nl [1].LocalName);
+			AssertEquals ("xmlns", nl [2].LocalName);
+			AssertEquals ("xml", nl [3].LocalName);
+			AssertEquals ("xmlns", nl [4].LocalName);
+			AssertEquals ("xml", nl [5].LocalName);
+		}
+
+		[Test]
+		[Ignore ("MS.NET has a bug; it fails to return nodes in document order.")]
+		public void SelectNodes2 ()
+		{
+			// This test is done in this class since it tests only XmlDocumentNavigator.
+			string xpath = "//*|//@*|//namespace::*";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
+			XmlNodeList nl = doc.SelectNodes (xpath);
+			AssertEquals (9, nl.Count);
+			AssertEquals (XmlNodeType.Element, nl [0].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [1].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [2].NodeType);
+			AssertEquals (XmlNodeType.Element, nl [3].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [4].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [5].NodeType);
+			AssertEquals (XmlNodeType.Element, nl [6].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [7].NodeType);
+			AssertEquals (XmlNodeType.Attribute, nl [8].NodeType);
+			AssertEquals ("element", nl [0].LocalName);
+			AssertEquals ("xmlns", nl [1].LocalName);
+			AssertEquals ("xml", nl [2].LocalName);
+			AssertEquals ("foo", nl [3].LocalName);
+			AssertEquals ("xmlns", nl [4].LocalName);
+			AssertEquals ("xml", nl [5].LocalName);
+			AssertEquals ("bar", nl [6].LocalName);
+			AssertEquals ("xmlns", nl [7].LocalName);
+			AssertEquals ("xml", nl [8].LocalName);
+		}
 	}
 }

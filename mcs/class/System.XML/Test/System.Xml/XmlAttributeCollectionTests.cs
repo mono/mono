@@ -136,6 +136,16 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void InsertAfterError ()
+		{
+			this.document.LoadXml ("<root><elem a='1'/></root>");
+			XmlAttribute attr = document.CreateAttribute ("foo");
+			attr.Value = "test";
+			document.DocumentElement.Attributes.InsertAfter (attr, document.DocumentElement.FirstChild.Attributes [0]);
+		}
+
+		[Test]
 		public void InsertAfterReplacesInCorrectOrder ()
 		{
 			XmlDocument testDoc = new XmlDocument ();

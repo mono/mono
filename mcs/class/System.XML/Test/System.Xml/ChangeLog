@@ -1,3 +1,8 @@
+2004-03-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttributeCollectionTests.cs : Added InsertAfterError().
+	* XmlNodeTests.cs : Added SelectNodes(), SelectNodes2() [commented].
+
 2004-03-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentTests.cs : added Implementation().
