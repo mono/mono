@@ -7,6 +7,13 @@
 
 2003-04-07  Martin Baulig  <martin@ximian.com>
 
+	* codegen.cs (EmitContext.CurrentFile): New public field.
+	(EmitContext.Mark): Use the CurrentFile to check whether the
+	location is in the correct file.
+	(EmitContext.EmitTopBlock): Initialize CurrentFile here.
+
+2003-04-07  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (Expression.ResolveBoolean): Don't call ec.Mark().
 
 	* codegen.cs (EmitContext.EmitTopBlock): Don't call Mark() on the
@@ -34,7 +41,7 @@
 	test-190.cs.
 	(FilterWithClosure): We may access private members of the outer
 	class if we're a nested child and deriving from the outer class.
-	(RealMemberLookup): Only set "`closure_private_ok' if the
+	(RealMemberLookup): Only set `closure_private_ok' if the
 	`original_bf' contained BindingFlags.NonPublic.
 
 2003-04-05  Martin Baulig  <martin@ximian.com>
@@ -50,6 +57,9 @@
 
 	* cs-parser.jay: Add error productions for ADD/REMOVE missing a
 	block in event declarations.
+
+	* ecore.cs (FieldExpr.AddressOf): If our instance expression is a
+	value type, get its address.
 
 	* expression.cs (Is.Emit): For action `LeaveOnStack' we were
 	leaving a class on the stack instead of a boolean value (int
