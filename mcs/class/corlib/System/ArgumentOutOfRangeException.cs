@@ -3,11 +3,13 @@
 //
 // Author:
 //   Joe Shaw (joe@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace System {
 
@@ -36,11 +38,25 @@ namespace System {
 			this.actual_value = actual_value;
 		}
 
+		public ArgumentOutOfRangeException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			actual_value = info.GetString ("ActualValue");
+		}
+ 
 		// Properties
 		public virtual object ActualValue {
 			get {
 				return actual_value;
 			}
 		}
+
+		// Methods
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("ActualValue", actual_value);
+		}
+		
 	}
 }

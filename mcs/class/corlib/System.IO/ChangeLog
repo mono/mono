@@ -1,3 +1,7 @@
+2002-01-31  Duncan Mak  <duncan@ximian.com>
+
+	* FileLoadException.cs:
+	* FileNotFoundException: Added missing bits for serialization.
 
 Thu Jan 24 17:42:54 CET 2002 Paolo Molaro <lupus@ximian.com>
 

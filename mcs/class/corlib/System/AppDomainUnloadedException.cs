@@ -13,30 +13,30 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-	   [Serializable]
-	   public class AppDomainUnloadedException : SystemException
-	   {
-			 // Constructors
-			 public AppDomainUnloadedException ()
-				    : base (Locale.GetText ("Can't access an unloaded application domain."))
-			 {
-			 }
+	[Serializable]
+	public class AppDomainUnloadedException : SystemException
+	{
+		 // Constructors
+		 public AppDomainUnloadedException ()
+			    : base (Locale.GetText ("Can't access an unloaded application domain."))
+		 {
+		 }
 
-			 public AppDomainUnloadedException (string message)
-				    : base (message)
-			 {
-			 }
+		 public AppDomainUnloadedException (string message)
+			    : base (message)
+		 {
+		 }
 			 
-			 protected AppDomainUnloadedException (SerializationInfo info,
-				    StreamingContext context)
-				    : base (info, context)
-			 {
-			 }
+		 protected AppDomainUnloadedException (SerializationInfo info,
+			    StreamingContext context)
+			    : base (info, context)
+		 {
+		 }
 
-			 public AppDomainUnloadedException (string message, Exception innerException)
-				    :base (message, innerException)
-			 {
-			 }
-				    
-	   }
+		 public AppDomainUnloadedException (string message, Exception innerException)
+			    :base (message, innerException)
+		 {
+		 }
+			    
+	}
 }

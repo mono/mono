@@ -7,9 +7,10 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace System {
-
+	[Serializable]
 	public class ArrayTypeMismatchException : SystemException {
 		// Constructors
 		public ArrayTypeMismatchException ()
@@ -26,5 +27,12 @@ namespace System {
 			: base (message, inner)
 		{
 		}
+
+		protected ArrayTypeMismatchException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+
+		
 	}
 }

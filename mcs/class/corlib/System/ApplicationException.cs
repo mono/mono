@@ -15,7 +15,7 @@ using System.Runtime.Serialization;
 namespace System
 {
 
-     [Serializable]
+	[Serializable]
 	public class ApplicationException : Exception
 	{
 		// Constructors

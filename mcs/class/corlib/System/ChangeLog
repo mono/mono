@@ -1,3 +1,15 @@
+2002-01-31  Duncan Mak  <duncan@ximian.com>
+
+	* AppDomainUnloadedException.cs:
+	* ApplicationException.cs:
+	* ArgumentOutOfRangeException.cs:
+	* ArithmeticException.cs:
+	* ArrayTypeMismatchException:
+	* BadImageFormatException.cs:
+	* Exception.cs:
+	* MissingMemberException.cs:
+	* TypeLoadException.cs: Added missing bits for serialization.
+
 2002-01-30  Duco Fijma <duco@lorentz.xs4all.nl>
 	* Guid.cs: implemented everything but Guid.NewGuid
 

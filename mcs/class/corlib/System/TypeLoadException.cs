@@ -24,16 +24,19 @@ namespace System {
 		public TypeLoadException ()
 			: base (Locale.GetText ("A type load exception has occurred."))
 		{
+			msg = Locale.GetText ("A type load exception has occured.");
 		}
 
 		public TypeLoadException (string message)
 			: base (message)
 		{
+			msg = message;
 		}
 
 		public TypeLoadException (string message, Exception inner)
 			: base (message, inner)
 		{
+			msg = message;
 		}
 
 		public TypeLoadException (SerializationInfo info,
@@ -42,24 +45,24 @@ namespace System {
 		{
 		}
 
-		// Methods
-		[MonoTODO]
-		public override void GetObjectData (SerializationInfo info,
-						    StreamingContext context)
-		{
-		}
-
 		// Properties
-		[MonoTODO]
 		public override string Message
 		{
-			get { return null; }
+			get { return msg; }
 		}
 
-		[MonoTODO]
 		public string TypeName
 		{
-			get { return null; }
+			get { return type; }
+		}
+
+		// Method
+		[MonoTODO] // it seems like this object serializes more fields than those described.
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info is null.");
+			base.GetObjectData (info, context);
 		}
 	}
 }

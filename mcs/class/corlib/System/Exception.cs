@@ -138,7 +138,7 @@ namespace System {
 		{
 			info.AddValue ("ClassName", class_name);
 			info.AddValue ("Message",   message);
-			info.AddValue  ("InnerException", inner_exception);
+			info.AddValue ("InnerException", inner_exception);
 			info.AddValue ("HelpURL",   help_link);
 			info.AddValue ("StackTraceString", stack_trace);
 			info.AddValue ("RemoteStackTrace", remote_stack_trace);
