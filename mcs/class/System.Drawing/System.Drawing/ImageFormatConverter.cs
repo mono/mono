@@ -64,8 +64,10 @@ namespace System.Drawing
 				return ImageFormat.Png;
 			else if (strFormat.Equals ("Tiff"))
 				return ImageFormat.Tiff;
-			else 
-				return ImageFormat.Wmf;			
+			else if (strFormat.Equals ("Wmf"))
+				return ImageFormat.Wmf;
+			else
+				return new NotSupportedException ("ImageFormatConverter cannot convert from " + val.GetType ());
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )

@@ -1,3 +1,7 @@
+2004-04-28  Sanjay Gupta  <gsanjay@novell.com>
+
+	* ImageFormatConverter.cs: Corrected ConvertFrom method.
+
 2004-04-27  Sanjay Gupta  <gsanjay@novell.com>
 
 	* ImageConverter.cs: Added exception message.
