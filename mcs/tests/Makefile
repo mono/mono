@@ -143,7 +143,7 @@ TEST_ORDERING = \
 # Some tests may require additional files to be available in the current directory.
 # To promote interoperability, we prefer that those files not be referred to with ../ or ..\\
 # To that end, we will copy those files to the test-harness directory, so that we can refer to simple filenames.
-TEST_HARNESS_EXTRAS = $(wildcard *.inc)
+TEST_HARNESS_EXTRAS = $(wildcard *.inc) test-74.cs
 
 all-local install-local uninstall-local:
 
