@@ -1,3 +1,12 @@
+2001-07-17	John Barnette	<jbarn@httcb.net>
+	* StringCollection.cs:
+		Implemented and working according to spec.
+	* StringIterator.cs:
+		(ADDED) Implemented and working according to spec.
+	* StringCollectionTest.cs:
+		(ADDED) Initial revision contains 17 tests; all of 'em
+		run correctly.  More complicated tests to follow.
+
 2001-07-15  Sean MacIsaac  <macisaac@ximian.com>
 
 	* StringCollection.cs: Added so that CodeDom.* would compile.
