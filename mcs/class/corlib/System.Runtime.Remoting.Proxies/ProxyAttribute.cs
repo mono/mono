@@ -29,7 +29,7 @@ namespace System.Runtime.Remoting.Proxies {
 
 		public virtual RealProxy CreateProxy (ObjRef objref, Type serverType, object serverObject, Context serverContext)
 		{
-			return RemotingServices.GetRealProxy (RemotingServices.GetProxyForRemoteObject (objref, false));
+			return RemotingServices.GetRealProxy (RemotingServices.GetProxyForRemoteObject (objref, serverType));
 		}
 
 		public void GetPropertiesForNewContext (IConstructionCallMessage msg)

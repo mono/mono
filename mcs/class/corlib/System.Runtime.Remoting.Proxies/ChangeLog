@@ -1,3 +1,10 @@
+2003-03-20  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* RealProxy.cs: added variables to support proxy bypass when the called CBO is
+	  in the same context as the caller.
+	* RemotingProxy.cs: added suport for dynamic sinks. Activation code moved to
+	  ActivationServices.
+
 2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* ProxyAttribute.cs: Implemented.

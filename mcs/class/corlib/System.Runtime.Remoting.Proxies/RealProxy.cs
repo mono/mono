@@ -13,6 +13,7 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Activation;
+using System.Runtime.Remoting.Contexts;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
@@ -27,6 +28,8 @@ namespace System.Runtime.Remoting.Proxies
 	public abstract class RealProxy {
 
 		Type class_to_proxy;
+		internal Context _targetContext;
+		MarshalByRefObject _server;
 		internal Identity _objectIdentity;
 		Object _objTP;
 
@@ -57,7 +60,8 @@ namespace System.Runtime.Remoting.Proxies
 
 		public virtual Type GetProxiedType() 
 		{
-			return class_to_proxy;
+			if (class_to_proxy.IsInterface) return typeof (MarshalByRefObject);
+			else return class_to_proxy;
 		}
 
 		public virtual ObjRef CreateObjRef (Type requestedType)
@@ -108,22 +112,21 @@ namespace System.Runtime.Remoting.Proxies
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		protected void AttachServer(MarshalByRefObject s)
 		{
-			throw new NotImplementedException();
+			_server = s;
 		}
 
-		[MonoTODO]
 		protected MarshalByRefObject DetachServer()
 		{
-			throw new NotImplementedException();
+			MarshalByRefObject ob = _server;
+			_server = null;
+			return ob;
 		}
 
-		[MonoTODO]
 		protected MarshalByRefObject GetUnwrappedServer()
 		{
-			throw new NotImplementedException();
+			return _server;
 		}
 	}
 }

@@ -27,7 +27,6 @@ namespace System.Runtime.Remoting.Proxies
 		static MethodInfo _cache_GetHashCodeMethod = typeof(System.Object).GetMethod("GetHashCode");
 
 		IMessageSink _sink;
-		string _activationUrl;
 		bool _hasEnvoySink;
 		ConstructionCall _ctorCall;
 
@@ -39,9 +38,7 @@ namespace System.Runtime.Remoting.Proxies
 
 		internal RemotingProxy (Type type, string activationUrl, object[] activationAttributes) : base (type)
 		{
-			_activationUrl = activationUrl;
 			_hasEnvoySink = false;
-
 			_ctorCall = ActivationServices.CreateConstructionCall (type, activationUrl, activationAttributes);
 		}
 
@@ -61,49 +58,34 @@ namespace System.Runtime.Remoting.Proxies
 			mMsg.Uri = _objectIdentity.ObjectUri;
 			((IInternalMessage)mMsg).TargetIdentity = _objectIdentity;
 
-			// Exiting from the context?
-			if (!Thread.CurrentContext.IsDefaultContext && !_hasEnvoySink)
-				return Thread.CurrentContext.GetClientContextSinkChain ().SyncProcessMessage (request);
+			_objectIdentity.NotifyClientDynamicSinks (true, request, true, false);
+
+			IMessage response;
+
+			// Needs to go through the client context sink?
+			if (Thread.CurrentContext.HasExitSinks && !_hasEnvoySink)
+				response = Thread.CurrentContext.GetClientContextSinkChain ().SyncProcessMessage (request);
 			else
-				return _sink.SyncProcessMessage (request);
+				response = _sink.SyncProcessMessage (request);
+
+			_objectIdentity.NotifyClientDynamicSinks (false, request, true, false);
+
+			return response;
 		}
 
-		IMessage ActivateRemoteObject (IMethodMessage request)
+		internal void AttachIdentity (Identity identity)
 		{
-			if (_activationUrl == null)
-				return new ReturnMessage (this, new object[0], 0, null, (IMethodCallMessage) request);	// Ignore constructor call for WKOs
+			_objectIdentity = identity;
 
-			IMethodReturnMessage response;
-
-			_ctorCall.CopyFrom (request);
-
-			if (_activationUrl == ChannelServices.CrossContextUrl)
+			if (identity is ClientActivatedIdentity)	// It is a CBO
 			{
-				// Cross context activation
-
-				_objectIdentity = RemotingServices.CreateContextBoundObjectIdentity (_ctorCall.ActivationType);
-				RemotingServices.SetMessageTargetIdentity (_ctorCall, _objectIdentity);
-				response = _ctorCall.Activator.Activate (_ctorCall);
+				ClientActivatedIdentity cai = (ClientActivatedIdentity)identity;
+				_targetContext = cai.Context;
+				AttachServer (cai.GetServerObject ());
 			}
-			else
-			{
-				// Remote activation
 
-				RemoteActivator remoteActivator = (RemoteActivator) RemotingServices.Connect (typeof (RemoteActivator), _activationUrl);
-
-				try {
-					response = remoteActivator.Activate (_ctorCall) as IMethodReturnMessage;
-				}
-				catch (Exception ex) {
-					return new ReturnMessage (ex, (IMethodCallMessage)request);
-				}
-
-				ObjRef objRef = (ObjRef) response.ReturnValue;
-				if (RemotingServices.GetIdentityForUri (objRef.URI) != null)
-					throw new RemotingException("Inconsistent state during activation; there may be two proxies for the same object");
-
-				_objectIdentity = RemotingServices.GetOrCreateClientIdentity (objRef, this);
-			}
+			if (identity is ClientIdentity)
+				((ClientIdentity)identity).ClientProxy = (MarshalByRefObject) GetTransparentProxy();
 
 			if (_objectIdentity.EnvoySink != null) 
 			{
@@ -113,9 +95,16 @@ namespace System.Runtime.Remoting.Proxies
 			else 
 				_sink = _objectIdentity.ChannelSink;
 
-			_activationUrl = null;
-			_ctorCall = null;
-			return response;
+			_ctorCall = null;	// Object already constructed
+		}
+
+		IMessage ActivateRemoteObject (IMethodMessage request)
+		{
+			if (_ctorCall == null)	// It must be a WKO
+				return new ReturnMessage (this, new object[0], 0, null, (IMethodCallMessage) request);	// Ignore constructor call for WKOs
+
+			_ctorCall.CopyFrom (request);
+			return ActivationServices.Activate (this, _ctorCall);
 		}
 	}
 }
