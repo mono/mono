@@ -261,7 +261,6 @@ namespace Microsoft.VisualBasic {
 
 		public static Object CallByName (Object objRef, String name, CallType userCallType, Object[] args)
 		{
-			Object retVal = null;
 			Type[] argsType = null;
 
 
@@ -323,7 +322,6 @@ namespace Microsoft.VisualBasic {
 		public static System.String Environ (System.Int32 Expression)
 		{ 
 			int index = 0;
-			Exception e;
 
 			//		Console.WriteLine("Coming Here"+Expression);
 

@@ -416,7 +416,6 @@ public abstract class BaseVBFile : VBFile
 		if(Value is DBNull) {
 			String res = "";
 			res = Input(res);
-			int answer = 0;
 			if(res.StartsWith("#ERROR ")&& res.EndsWith("#")) {
 				Value = IntegerType.FromString(res.Substring(7,res.Length-1));
 				return;

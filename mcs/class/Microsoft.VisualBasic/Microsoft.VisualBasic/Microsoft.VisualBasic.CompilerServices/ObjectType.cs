@@ -1014,8 +1014,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		//checked + string//make typecode
 		[MonoTODO]
 		internal static TypeCode GetWidestType(TypeCode type1, TypeCode type2) {
-			int index1 = getVTypeFromTypeCode(type1);
-			int index2 = getVTypeFromTypeCode(type2);
+			//int index1 = getVTypeFromTypeCode(type1);
+			//int index2 = getVTypeFromTypeCode(type2);
 			//return getTypeCodeFromVType(WiderType(index1,index2));
 			//TODO:
 			throw new NotImplementedException("GetWidest type nneds repair");
@@ -1371,8 +1371,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				return false;
 			}
 
-			int index1 = getVTypeFromTypeCode(typeCode1);
-			int index2 = getVTypeFromTypeCode(typeCode2);
+			//int index1 = getVTypeFromTypeCode(typeCode1);
+			//int index2 = getVTypeFromTypeCode(typeCode2);
 			throw new NotImplementedException("MSVB.CS.IsWiderNumeric needs help");
 			//TODO:
 			//return )WiderType[index1,index2] == getVTypeFromTypeCode(typeCode1);

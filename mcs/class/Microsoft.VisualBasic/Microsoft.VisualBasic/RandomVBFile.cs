@@ -249,7 +249,6 @@ public class RandomVBFile : BaseVBFile
 		base.setRecord(recordNum);
 		int strLen = 0;
 		Object obj;
-		int num4=-1;     
 		if (strIsFixedLen && (type == typeof(string)))
 		{
 			if (rank == 1)
@@ -402,7 +401,6 @@ public class RandomVBFile : BaseVBFile
 		}      
 		int len1 = (arr as Array).GetLength(0);
 		int len2 = (rank == 2) ? (arr as Array).GetLength(1) : 0;
-		String val = "";
 		if (rank == 1)
 		{
 			for (int i = 0 ; i < len1 ; i++)

@@ -60,8 +60,6 @@ namespace Microsoft.VisualBasic
 
 		public static void Reset()
 		{
-			Object value;
-
 			ICollection s = _openFilesMap.Keys;
 
 			int [] iArr = new int[s.Count];
@@ -443,8 +441,6 @@ namespace Microsoft.VisualBasic
 			VBFile vbFile = getVBFile(fileNumber);
 			if (value != null)
 			{
-				Type type = null;
-
 				if (value is bool) {
 					bool tmp;
 					vbFile.Input(out tmp);
