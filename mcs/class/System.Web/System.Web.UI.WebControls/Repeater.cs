@@ -314,11 +314,11 @@ namespace System.Web.UI.WebControls
 					ds = new DataSourceInternal (itemCount);
 			}
 
-			if (headerTemplate != null)
-				CreateItem (-1, ListItemType.Header, useDataSource, null);
-
 			int index = 0;
 			if (ds != null) {
+				if (headerTemplate != null)
+					CreateItem (-1, ListItemType.Header, useDataSource, null);
+				
 				bool even = true;
 				foreach (object item in ds){
 					if (separatorTemplate != null && index > 0)
@@ -337,10 +337,10 @@ namespace System.Web.UI.WebControls
 					index++;
 					even = !even;
 				}
+				
+				if (footerTemplate != null)
+					CreateItem (-1, ListItemType.Footer, useDataSource, null);
 			}
-
-			if (footerTemplate != null)
-				CreateItem (-1, ListItemType.Footer, useDataSource, null);
 
 			if (useDataSource)
 				ViewState [ITEMCOUNT] = (ds == null) ? -1 : index;

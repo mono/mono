@@ -1,4 +1,10 @@
 2003-12-15  Alon Gazit <along@mainsoft.com>
+	* Repeater.cs: Change the implementation of CreateControlHierarchy().
+	The current implementation renders extra Header and footer 
+	without Repeater.DataSource assign. 
+	This fixes bug #52179.
+
+2003-12-15  Alon Gazit <along@mainsoft.com>
 	* DataGrid.cs: Change the implementation of the property 
 	BackImageUrl. The current implementation has no influence 
 	on the rendered Html.
