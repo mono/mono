@@ -1,4 +1,13 @@
 2002-07-23  Tim Coleman <tim@timcoleman.com>
+	* WebService.cs: 
+		Change Description to WebServicesDescription
+	* WebServicesDescriptionAttribute.cs:
+		Add back constructor as MS build doesn't
+		seem to like it missing.  Now calls base()
+		with the string.  Also remove the sealed
+		modifier and change the attribute targets.
+
+2002-07-23  Tim Coleman <tim@timcoleman.com>
 	* WebServicesDescriptionAttribute.cs:
 		Removed the "guts" because they are defined in
 		System.ComponentModel.DescriptionAttribute.

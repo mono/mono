@@ -10,9 +10,12 @@
 using System.ComponentModel;
 
 namespace System.Web.Services {
-	[AttributeUsage(AttributeTargets.All)]
-	internal sealed class WebServicesDescriptionAttribute : DescriptionAttribute 
+	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Event)]
+	internal class WebServicesDescriptionAttribute : DescriptionAttribute 
 	{
-		public WebServicesDescriptionAttribute (string s) {}
+		public WebServicesDescriptionAttribute (string description) 
+			: base (description)
+		{
+		}
 	}
 }

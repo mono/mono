@@ -33,35 +33,35 @@ namespace System.Web.Services {
 		#region Properties
 
 		[Browsable (false)]
-		[Description ("The ASP.NET application object for the current request.")]
+		[WebServicesDescription ("The ASP.NET application object for the current request.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpApplicationState Application {
 			get { return application.Application; }
 		}
 
 		[Browsable (false)]
-		[Description ("The ASP.NET context object for the current request.")]
+		[WebServicesDescription ("The ASP.NET context object for the current request.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpContext Context {
 			get { return application.Context; }
 		}
 
 		[Browsable (false)]
-		[Description ("The ASP.NET utility object for the current request.")]
+		[WebServicesDescription ("The ASP.NET utility object for the current request.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpServerUtility Server {
 			get { return application.Server; }
 		}
 
 		[Browsable (false)]
-		[Description ("The ASP.NET session object for the current request.")]
+		[WebServicesDescription ("The ASP.NET session object for the current request.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpSessionState Session {
 			get { return application.Session; }
 		}
 
 		[Browsable (false)]
-		[Description ("The ASP.NET user object for the current request.  The object is used for authorization.")]
+		[WebServicesDescription ("The ASP.NET user object for the current request.  The object is used for authorization.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IPrincipal User {
 			get { return application.User; }
