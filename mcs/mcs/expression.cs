@@ -4454,7 +4454,7 @@ namespace Mono.CSharp {
 				return true;
 
 			//
-			// Note that this is not just an optimization.  This handles the case
+			// This handles the case
 			//
 			//   Add (float f1, float f2, float f3);
 			//   Add (params decimal [] foo);
@@ -4465,16 +4465,6 @@ namespace Mono.CSharp {
 			if (!same)
 				return false;
 
-			if (candidate_params == best_params) {
-				//
-				// We need to handle the case of a virtual function and its override.
-				// The override is ignored during 'applicable_type' calculation.  However,
-				// it should be chosen over the base virtual function, especially when handling
-				// value types.
-				//
-				return IsAncestralType (best.DeclaringType, candidate.DeclaringType);
-			}
-
 			//
 			// This handles the following cases:
 			//
@@ -4483,6 +4473,30 @@ namespace Mono.CSharp {
 			//     Concat (string s1, params string [] srest)
 			//
                         return !candidate_params && best_params;
+		}
+
+		static bool IsOverride (MethodBase cand_method, MethodBase base_method)
+		{
+			if (!IsAncestralType (base_method.DeclaringType, cand_method.DeclaringType))
+				return false;
+
+			ParameterData cand_pd = TypeManager.GetParameterData (cand_method);
+			ParameterData base_pd = TypeManager.GetParameterData (base_method);
+		
+			if (cand_pd.Count != base_pd.Count)
+				return false;
+
+			for (int j = 0; j < cand_pd.Count; ++j) {
+				Parameter.Modifier cm = cand_pd.ParameterModifier (j);
+				Parameter.Modifier bm = base_pd.ParameterModifier (j);
+				Type ct = TypeManager.TypeToCoreType (cand_pd.ParameterType (j));
+				Type bt = TypeManager.TypeToCoreType (base_pd.ParameterType (j));
+
+				if (cm != bm || ct != bt)
+					return false;
+			}
+
+			return true;
 		}
 
 		public static string FullMethodDesc (MethodBase mb)
@@ -4757,6 +4771,7 @@ namespace Mono.CSharp {
 			Type applicable_type = null;
 			int arg_count = 0;
 			ArrayList candidates = new ArrayList ();
+			ArrayList candidate_overrides = new ArrayList ();
 
                         //
                         // Used to keep a map between the candidate
@@ -4794,6 +4809,20 @@ namespace Mono.CSharp {
 					continue;
 
 				//
+				// Methods marked 'override' don't take part in 'applicable_type'
+				// computation, nor in the actual overload resolution.
+				// However, they still need to be emitted instead of a base virtual method.
+				// We avoid doing the 'applicable' test here, since it'll anyway be applied
+				// to the base virtual function, and IsOverride is much faster than IsApplicable.
+				//
+				if (!me.IsBase &&
+				    methods [i].IsVirtual &&
+				    (methods [i].Attributes & MethodAttributes.NewSlot) == 0) {
+					candidate_overrides.Add (methods [i]);
+					continue;
+				}
+
+				//
 				// Check if candidate is applicable (section 14.4.2.1)
 				//   Is candidate applicable in normal form?
 				//
@@ -4815,15 +4844,6 @@ namespace Mono.CSharp {
 					continue;
 
 				candidates.Add (methods [i]);
-
-				//
-				// Methods marked 'override' don't take part in 'applicable_type'
-				// computation.
-				//
-				if (!me.IsBase &&
-				    methods [i].IsVirtual &&
-				    (methods [i].Attributes & MethodAttributes.NewSlot) == 0)
-					continue;
 
 				if (applicable_type == null)
 					applicable_type = decl_type;
@@ -4977,6 +4997,19 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			//
+			// If the method is a virtual function, pick an override closer to the LHS type.
+			//
+			if (!me.IsBase && method.IsVirtual) {
+				if ((method.Attributes & MethodAttributes.NewSlot) != MethodAttributes.NewSlot)
+					throw new InternalErrorException (
+						"Should not happen.  An 'override' method took part in overload resolution: " + method);
+								    
+				foreach (MethodBase candidate in candidate_overrides) {
+					if (IsOverride (candidate, method))
+						method = candidate;
+				}
+			}
 
 			//
 			// And now check if the arguments are all
