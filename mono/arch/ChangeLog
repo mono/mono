@@ -1,3 +1,7 @@
+2004-08-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* x86/x86-codegen.h: Add macros for accessing the mod/rm byte.
+
 2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* amd64/amd64-codegen.h: Ongoing JIT work.
