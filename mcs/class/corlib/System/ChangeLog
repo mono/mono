@@ -1,3 +1,8 @@
+2004-11-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BitConverter.cs: Added support for special case when ToString is 
+	called with (new byte [0]).
+
 2004-11-10  Lluis Sanchez  <lluis@novell.com>
 
 	* Exception.cs: Added setter for StackTrace.
