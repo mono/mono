@@ -1,3 +1,7 @@
+2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* string-icalls.c: Join ignores null strings in the source array.
+
 2003-10-09  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* threads.h threads.c : add mono_threads_set_default_stacksize
