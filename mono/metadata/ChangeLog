@@ -1,3 +1,8 @@
+
+Fri Feb 11 16:22:10 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c, appdomain.c: remove #ifdefs from the code.
+
 2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* metadata-internals.h: Added flags to MonoAssembly to cache the most
