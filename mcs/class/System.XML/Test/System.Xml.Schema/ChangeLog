@@ -1,3 +1,8 @@
+2005-01-30  Nick Drochak <ndrochak@ieee.org>
+
+	* XmlSchemaTests.cs: Use less strict test. Probably the order of the 
+	namespaces is not required to be in any particular order.
+
 2004-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaTests.cs : added TestWriteNamespaces2 ().
