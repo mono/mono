@@ -825,10 +825,10 @@ namespace CIR {
 				MethodInfo mi = (MethodInfo) me.Methods [i];
 				Type ret_type = mi.ReturnType;
 				
-				if (StandardConversionExists (target, ret_type)) {
+				if (StandardConversionExists (ret_type, target)) {
 					if (best == null)
 						best = ret_type;
-					
+
 					if (!StandardConversionExists (ret_type, best))
 						best = ret_type;
 				}
@@ -924,17 +924,13 @@ namespace CIR {
 				Type most_specific_source, most_specific_target;
 
 				most_specific_source = FindMostEncompassedType (tc, union, source_type);
-
 				if (most_specific_source == null)
 					return null;
-				
 
 				most_specific_target = FindMostEncompassingType (tc, union, target);
-
 				if (most_specific_target == null) 
 					return null;
 				
-
 				int count = 0;
 				
 				for (int i = union.Methods.Length; i > 0;) {
@@ -1329,7 +1325,7 @@ namespace CIR {
 		static public Expression ConvertExplicit (TypeContainer tc, Expression expr,
 							  Type target_type, Location l)
 		{
-			Expression ne = ConvertImplicit (tc, expr, target_type, l);
+			Expression ne = ConvertImplicitStandard (tc, expr, target_type, l);
 
 			if (ne != null)
 				return ne;
@@ -4439,6 +4435,11 @@ namespace CIR {
 				ig.Emit (OpCodes.Call, (MethodInfo) method);
 			else
 				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+
+
+			// FIXME : Need to emit the right Opcode for conversion back to the
+			// type expected by the actual expression. At this point, the type
+			// of the value on the stack is obviously what the method returns 
 		}
 
 	}

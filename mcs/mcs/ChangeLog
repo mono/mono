@@ -1,3 +1,11 @@
+2001-10-05  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Expression::FindMostEncompassingType): Fix bug which
+	prevented it from working correctly. 
+
+	(ConvertExplicit): Make the first try, a call to ConvertImplicitStandard, not
+	merely ConvertImplicit.
+
 2001-10-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: Make the LookupTypeContainer function static,

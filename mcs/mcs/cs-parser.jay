@@ -1788,7 +1788,7 @@ dim_separators
 	  }
 	| dim_separators COMMA
 	  {
-		$$ =(string) $1 + ",";
+		$$ = (string) $1 + ",";
 	  }
 	;
 
@@ -1810,24 +1810,24 @@ array_initializer
 		$$ = list;
 	  }
 	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
-	{
+	  {
 		$$ = (ArrayList) $2;
-	}
+	  }
 	;
 
 variable_initializer_list
 	: variable_initializer
-	{
+	  {
 		ArrayList list = new ArrayList ();
 		list.Add ($1);
 		$$ = list;
-	}
+	  }
 	| variable_initializer_list COMMA variable_initializer
-	{
+	  {
 		ArrayList list = (ArrayList) $1;
 		list.Add ($3);
 		$$ = list;
-	}
+	  }
 	;
 
 typeof_expression
