@@ -1,3 +1,7 @@
+2002-12-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: patch from Jaroslaw Kowalski to fix Environment.MachineName.
+
 2002-12-12  Juli Mallett  <jmallett@FreeBSD.org>
 
 	* gc.h, gc-internal.h: Rename header for GC internal calls to
