@@ -120,9 +120,9 @@ namespace Mono.CSharp {
 				      "expression or array creation expression");
 		}
 
-		static void Error_AttributeConstructorMismatch (Location loc)
+		void Error_AttributeConstructorMismatch ()
 		{
-			Report.Error (-6, loc,
+			Report.Error (-6, Location,
                                       "Could not find a constructor for this argument list.");
 		}
 
@@ -447,7 +447,7 @@ namespace Mono.CSharp {
                                 Location);
 
 			if (mg == null) {
-				Error_AttributeConstructorMismatch (Location);
+				Error_AttributeConstructorMismatch ();
 				return null;
 			}
 
@@ -455,7 +455,7 @@ namespace Mono.CSharp {
 				ec, (MethodGroupExpr) mg, pos_args, false, Location);
 
 			if (constructor == null) {
-				Error_AttributeConstructorMismatch (Location);
+				Error_AttributeConstructorMismatch ();
 				return null;
 			}
 
@@ -637,59 +637,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// This method should be invoked to pull the IndexerName attribute from an
-		// Indexer if it exists.
-		//
-		public static string ScanForIndexerName (EmitContext ec, Attributes opt_attrs)
-		{
-			if (opt_attrs == null)
-				return null;
-			if (opt_attrs.AttributeSections == null)
-				return null;
-
-			foreach (Attribute a in opt_attrs.AttributeSections) {
-				if (a.ResolveType (ec, true) == null)
-					return null;
-
-				if (a.Type != TypeManager.indexer_name_type)
-					continue;
-
-				//
-				// So we have found an IndexerName, pull the data out.
-				//
-				if (a.Arguments == null || a.Arguments [0] == null){
-					Error_AttributeConstructorMismatch (a.Location);
-					return null;
-				}
-				ArrayList pos_args = (ArrayList) a.Arguments [0];
-				if (pos_args.Count == 0){
-					Error_AttributeConstructorMismatch (a.Location);
-					return null;
-				}
-					
-				Argument arg = (Argument) pos_args [0];
-				if (!arg.Resolve (ec, a.Location))
-					return null;
-					
-				Expression e = arg.Expr;
-				if (!(e is StringConstant)){
-					Error_AttributeConstructorMismatch (a.Location);
-					return null;
-				}
-
-				//
-				// Remove the attribute from the list
-				//
-
-				//TODO: It is very close to hack and it can crash here
-				opt_attrs.AttributeSections.Remove (a);
-
-				return (((StringConstant) e).Value);
-			}
-			return null;
-		}
-
-		//
 		// This pulls the condition name out of a Conditional attribute
 		//
 		public string Conditional_GetConditionName ()
@@ -698,19 +645,19 @@ namespace Mono.CSharp {
 			// So we have a Conditional, pull the data out.
 			//
 			if (Arguments == null || Arguments [0] == null){
-				Error_AttributeConstructorMismatch (Location);
+				Error_AttributeConstructorMismatch ();
 				return null;
 			}
 
 			ArrayList pos_args = (ArrayList) Arguments [0];
 			if (pos_args.Count != 1){
-				Error_AttributeConstructorMismatch (Location);
+				Error_AttributeConstructorMismatch ();
 				return null;
 			}
 
 			Argument arg = (Argument) pos_args [0];	
 			if (!(arg.Expr is StringConstant)){
-				Error_AttributeConstructorMismatch (Location);
+				Error_AttributeConstructorMismatch ();
 				return null;
 			}
 
@@ -733,26 +680,51 @@ namespace Mono.CSharp {
 			if (pos_args.Count == 0)
 				return "";
 			else if (pos_args.Count > 2){
-				Error_AttributeConstructorMismatch (Location);
+				Error_AttributeConstructorMismatch ();
 				return null;
 			}
 
 			Argument arg = (Argument) pos_args [0];	
 			if (!(arg.Expr is StringConstant)){
-				Error_AttributeConstructorMismatch (Location);
+				Error_AttributeConstructorMismatch ();
 				return null;
 			}
 
 			if (pos_args.Count == 2){
 				Argument arg2 = (Argument) pos_args [1];
 				if (!(arg2.Expr is BoolConstant)){
-					Error_AttributeConstructorMismatch (Location);
+					Error_AttributeConstructorMismatch ();
 					return null;
 				}
 				is_error = ((BoolConstant) arg2.Expr).Value;
 			}
 
 			return ((StringConstant) arg.Expr).Value;
+		}
+
+		public string IndexerName_GetIndexerName (EmitContext ec)
+		{
+			if (Arguments == null || Arguments [0] == null){
+				Error_AttributeConstructorMismatch ();
+				return null;
+			}
+			ArrayList pos_args = (ArrayList) Arguments [0];
+			if (pos_args.Count != 1) {
+				Error_AttributeConstructorMismatch ();
+				return null;
+			}
+
+			Argument arg = (Argument) pos_args [0];
+			if (!arg.Resolve (ec, Location))
+				return null;
+
+			StringConstant sc = arg.Expr as StringConstant;
+			if (sc == null){
+				Error_AttributeConstructorMismatch ();
+				return null;
+			}
+
+			return sc.Value;
 		}
 
  		/// <summary>
@@ -837,6 +809,11 @@ namespace Mono.CSharp {
 			get { return ImplOptions == MethodImplOptions.InternalCall; }
 		}
 
+		protected virtual bool CanIgnoreInvalidAttribute (Attributable ias)
+		{
+			return false;
+		}
+
   		/// <summary>
 		/// Emit attribute for Attributable symbol
   		/// </summary>
@@ -848,7 +825,10 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
-				Error_AttributeNotValidForElement (this, Location);
+				// The parser applies toplevel attributes both to the assembly and
+				// to a top-level class, if any.  So, be silent about them.
+				if (! CanIgnoreInvalidAttribute (ias))
+					Error_AttributeNotValidForElement (this, Location);
 				return;
 			}
 
@@ -1084,28 +1064,40 @@ namespace Mono.CSharp {
 
 		protected override Type CheckAttributeType (EmitContext ec, bool complain)
 		{
-			ec.DeclSpace.NamespaceEntry = ns;
+			NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
+			if (old == null || old.NS == null || old.NS == Namespace.Root) 
+				ec.DeclSpace.NamespaceEntry = ns;
 			return base.CheckAttributeType (ec, complain);
+		}
+
+		protected override bool CanIgnoreInvalidAttribute (Attributable ias)
+		{
+			// Ignore error if this attribute is shared between the Assembly
+			// and a top-level class.  The parser couldn't figure out which entity
+			// this attribute belongs to.  If this attribute is erroneous, it should
+			// be caught when it is processed by the top-level class.
+
+			return (Target == null && ias is CommonAssemblyModulClass);
 		}
 	}
 
 	public class Attributes {
-		public ArrayList AttributeSections;
+		public ArrayList Attrs;
 
 		public Attributes (Attribute a)
 		{
-			AttributeSections = new ArrayList ();
-			AttributeSections.Add (a);
+			Attrs = new ArrayList ();
+			Attrs.Add (a);
 		}
 
 		public Attributes (ArrayList attrs)
 		{
-			AttributeSections = attrs;
+			Attrs = attrs;
 		}
 
 		public void AddAttributes (ArrayList attrs)
 		{
-			AttributeSections.AddRange (attrs);
+			Attrs.AddRange (attrs);
 		}
 
 		/// <summary>
@@ -1113,19 +1105,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void CheckTargets (string[] possible_targets)
 		{
-			foreach (Attribute a in AttributeSections) {
+			foreach (Attribute a in Attrs) {
 				if (a.Target == null)
 					continue;
 
-				bool valid_target = false;
-				for (int i = 0; i < possible_targets.Length; ++i) {
-					if (a.Target == possible_targets [i]) {
-						valid_target = true;
-						break;
-					}
-				}
-
-				if (valid_target)
+				if (((IList) possible_targets).Contains (a.Target))
 					continue;
 
 				StringBuilder sb = new StringBuilder ();
@@ -1138,20 +1122,25 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Attribute Search (Type t, EmitContext ec)
+		private Attribute Search (Type t, EmitContext ec, bool complain)
 		{
-			foreach (Attribute attr_section in AttributeSections) {
-				if (attr_section.ResolveType (ec, false) == t)
-					return attr_section;
+			foreach (Attribute a in Attrs) {
+				if (a.ResolveType (ec, false) == t)
+					return a;
 			}
 			return null;
+		}
+
+		public Attribute Search (Type t, EmitContext ec)
+		{
+			return Search (t, ec, true);
 		}
 
 		public void Emit (EmitContext ec, Attributable ias)
 		{
 			ListDictionary ld = new ListDictionary ();
 
-			foreach (Attribute a in AttributeSections) {
+			foreach (Attribute a in Attrs) {
 				a.Emit (ec, ias, ld);
 			}
 		}
@@ -1163,7 +1152,23 @@ namespace Mono.CSharp {
 
 		public Attribute GetClsCompliantAttribute (EmitContext ec)
 		{
-			return Search (TypeManager.cls_compliant_attribute_type, ec);
+			return Search (TypeManager.cls_compliant_attribute_type, ec, false);
+		}
+
+		/// <summary>
+		/// Pulls the IndexerName attribute from an Indexer if it exists.
+		/// </summary>
+		public string ScanForIndexerName (EmitContext ec)
+		{
+			Attribute a = Search (TypeManager.indexer_name_type, ec);
+			if (a == null)
+				return null;
+
+			// Remove the attribute from the list
+			//TODO: It is very close to hack and it can crash here
+			Attrs.Remove (a);
+
+			return a.IndexerName_GetIndexerName (ec);
 		}
  	}
 

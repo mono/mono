@@ -850,17 +850,19 @@ namespace Mono.CSharp {
 			is_cls_compliant = a.GetClsCompliantAttributeValue (null);
 		}
 
-		//TODO: this code is buggy because compare Attribute name without resolve is wrong
 		public AssemblyName GetAssemblyName (string name, string output) 
 		{
 			if (OptAttributes != null) {
-				foreach (Attribute a in OptAttributes.AttributeSections) {
+                               foreach (Attribute a in OptAttributes.Attrs) {
 					if (a.Target != "assembly")
 						continue;
-					// strongname attributes don't support AllowMultiple
-					//Attribute a = (Attribute) asect.Attributes [0];
+                                       // TODO: This code is buggy: comparing Attribute name without resolving it is wrong.
+                                       //       However, this is invoked by CodeGen.Init, at which time none of the namespaces
+                                       //       are loaded yet.
 					switch (a.Name) {
 						case "AssemblyKeyFile":
+                                               case "AssemblyKeyFileAttribute":
+                                               case "System.Reflection.AssemblyKeyFileAttribute":
 							if (RootContext.StrongNameKeyFile != null) {
 								Report.Warning (1616, "Compiler option -keyfile overrides " +
 									"AssemblyKeyFileAttribute");
@@ -872,6 +874,8 @@ namespace Mono.CSharp {
 							}
 							break;
 						case "AssemblyKeyName":
+                                               case "AssemblyKeyNameAttribute":
+                                               case "System.Reflection.AssemblyKeyNameAttribute":
 							if (RootContext.StrongNameKeyContainer != null) {
 								Report.Warning (1616, "Compiler option -keycontainer overrides " +
 									"AssemblyKeyNameAttribute");
@@ -883,6 +887,8 @@ namespace Mono.CSharp {
 							}
 							break;
 						case "AssemblyDelaySign":
+                                               case "AssemblyDelaySignAttribute":
+                                               case "System.Reflection.AssemblyDelaySignAttribute":
 							RootContext.StrongNameDelaySign = a.GetBoolean ();
 							break;
 					}

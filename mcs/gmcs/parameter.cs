@@ -90,11 +90,11 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	/// Class for applying custom attributes on the parameter type.
-	/// ! Now it works only with 1st parameter (for properties and events)
+       /// Class for applying custom attributes on the implicit parameter type
+       /// of the 'set' method in properties, and the 'add' and 'remove' methods in events.
 	/// </summary>
-	public class ParameterAtribute: ParameterBase {
-		public ParameterAtribute (MethodBuilder mb):
+       public class ImplicitParameter: ParameterBase {
+               public ImplicitParameter (MethodBuilder mb):
 			base (null)
 		{
 			builder = mb.DefineParameter (1, ParameterAttributes.None, "");			
