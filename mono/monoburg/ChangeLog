@@ -1,6 +1,8 @@
 2002-10-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.c (emit_tree_match): omit unnecessary compare
+	(emit_label_func): make it possible to print operator names in
+	error messages.
 
 2002-10-09  Dietmar Maurer  <dietmar@ximian.com>
 
