@@ -26,7 +26,7 @@ namespace Mine {
 
 			int k = new Foo ();
 
-			if (number == 2)
+			if (number == 2 && k == 3)
 				return 0;
 			else
 				return 1;
