@@ -4,6 +4,9 @@
 	message (1502, 1503) when we can't locate a method after overload
 	resolution. This is much more informative and closes the bug
 	Miguel reported.
+
+	* interface.cs (PopulateMethod): Return if there are no argument
+	types. Fixes a NullReferenceException bug.
 	
 2002-09-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
