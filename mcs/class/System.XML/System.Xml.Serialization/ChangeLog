@@ -1,3 +1,7 @@
+2003-10-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchemas.cs : Implemented IsDataSet().
+
 2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapCodeExporter.cs: Initial implementation of AddMappingMetadata().

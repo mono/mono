@@ -14,6 +14,7 @@ namespace System.Xml.Serialization {
 	public class XmlSchemas : CollectionBase {
 
 		#region Fields
+		private static string msdataNS = "urn:schemas-microsoft-com:xml-msdata";
 
 		Hashtable table = new Hashtable ();
 
@@ -109,10 +110,18 @@ namespace System.Xml.Serialization {
 			List.Insert (index, schema);
 		}
 
-		[MonoTODO]
 		public static bool IsDataSet (XmlSchema schema)
 		{
-			throw new NotImplementedException ();
+			XmlSchemaElement el = schema.Items.Count == 1 ?
+				schema.Items [0] as XmlSchemaElement : null;
+			if (el != null && el.UnhandledAttributes.Length > 0) {
+				for (int i = 0; i < el.UnhandledAttributes.Length; i++) {
+					XmlAttribute attr = el.UnhandledAttributes [i];
+					if (attr.NamespaceURI == msdataNS && attr.LocalName == "IsDataSet")
+						return (attr.Value.ToLower (System.Globalization.CultureInfo.InvariantCulture) == "true");
+				}
+			}
+			return false;
 		}
 
 		protected override void OnClear ()
