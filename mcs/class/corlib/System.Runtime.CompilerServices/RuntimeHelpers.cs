@@ -27,6 +27,27 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
+		public static int GetHashCode (object o) {
+			return Object.InternalGetHashCode (o);
+		}
+
+		public static new bool Equals (object o1, object o2) {
+			// LAMESPEC: According to MSDN, this is equivalent to 
+			// Object::Equals (). But the MS version of Object::Equals()
+			// includes the functionality of ValueType::Equals(), while
+			// our version does not.
+			if (o1 == o2)
+				return true;
+			if ((o1 == null) || (o2 == null))
+				return false;
+			// FIXME: the following does not work due to bug #41550
+			//if (o1 is ValueType)
+			if (o1.GetType ().IsValueType)
+				return ValueType.InternalEquals (o1, o2);
+			else
+				return Object.Equals (o1, o2);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern object GetObjectValue (object obj);
 

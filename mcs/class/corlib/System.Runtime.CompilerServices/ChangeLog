@@ -1,3 +1,8 @@
+2003-04-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* RuntimeHelpers.cs: Implement Equals and GetHashCode methods from
+	NET 1.1.
+
 2002-09-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CallConvCdecl.cs: new file
