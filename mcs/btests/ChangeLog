@@ -1,5 +1,9 @@
 2004-07-07 Bernie Solomon <bernard@ugsolutions.com>
+	* Test.Sources: make file names match actual files
+	
+2004-07-07 Bernie Solomon <bernard@ugsolutions.com>
 	* OptionalA.vb: new test for optional args + overloads
+	* Test.Sources:
 
 2004-09-03 Sachin Kumar <skumar1@novell.com>
 	* ConversionsA.vb:
