@@ -40,7 +40,7 @@ namespace System.Web.Mail {
 		throw new SmtpException( "Response is to short " + 
 					   line.Length + ".");
 	    
-	    if( line[ 3 ] != ' ' )
+	    if( ( line[ 3 ] != ' ' ) && ( line[ 3 ] != '-' ) )
 		throw new SmtpException( "Response format is wrong.(" + 
 					 line + ")" );
 	    
