@@ -399,6 +399,15 @@ namespace System.Net
 			set { webHeaders.SetInternal ("User-Agent", value); }
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public bool UnsafeAuthenticatedConnectionSharing
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
+
 		internal bool GotRequestStream {
 			get { return gotRequestStream; }
 		}

@@ -1,3 +1,7 @@
+2004-01-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpWebRequest.cs: Added missing property.
+
 2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Dns.cs: don't block forever in EndResolve and EndGetHostByName. Fixes
