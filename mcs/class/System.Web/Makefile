@@ -10,7 +10,10 @@ LIB_MCS_FLAGS = \
 	/r:System.Drawing.dll 		\
 	/r:System.Data.dll		\
 	/r:System.Xml.dll		\
-	/r:System.EnterpriseServices.dll
+	/r:System.EnterpriseServices.dll \
+	/resource:System.Web.UI.WebControls/TreeView_Default_Collapse.gif \
+	/resource:System.Web.UI.WebControls/TreeView_Default_Expand.gif \
+	/resource:System.Web.UI.WebControls/TreeView_Default_NoExpand.gif
 HAS_TEST = yes
 
 include ../../build/library.make

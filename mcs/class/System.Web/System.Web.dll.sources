@@ -239,6 +239,7 @@ System.Web.UI.WebControls/AuthenticateEventArgs.cs
 System.Web.UI.WebControls/AuthenticateEventHandler.cs
 System.Web.UI.WebControls/AutoCompleteType.cs
 System.Web.UI.WebControls/BaseCompareValidator.cs
+System.Web.UI.WebControls/BaseDataBoundControl.cs
 System.Web.UI.WebControls/BaseDataList.cs
 System.Web.UI.WebControls/BaseValidator.cs
 System.Web.UI.WebControls/BorderStyle.cs
@@ -366,6 +367,7 @@ System.Web.UI.WebControls/GridViewUpdatedEventArgs.cs
 System.Web.UI.WebControls/GridViewUpdatedEventHandler.cs
 System.Web.UI.WebControls/GridViewUpdateEventArgs.cs
 System.Web.UI.WebControls/GridViewUpdateEventHandler.cs
+System.Web.UI.WebControls/HierarchicalDataBoundControl.cs
 System.Web.UI.WebControls/HorizontalAlign.cs
 System.Web.UI.WebControls/HorizontalAlignConverter.cs
 System.Web.UI.WebControls/HotSpotMode.cs
@@ -484,8 +486,17 @@ System.Web.UI.WebControls/TextAlign.cs
 System.Web.UI.WebControls/TextBox.cs
 System.Web.UI.WebControls/TextBoxControlBuilder.cs
 System.Web.UI.WebControls/TextBoxMode.cs
+System.Web.UI.WebControls/TreeNode.cs
+System.Web.UI.WebControls/TreeNodeBinding.cs
+System.Web.UI.WebControls/TreeNodeBindingCollection.cs
+System.Web.UI.WebControls/TreeNodeCollection.cs
+System.Web.UI.WebControls/TreeNodeEventArgs.cs
+System.Web.UI.WebControls/TreeNodeEventHandler.cs
 System.Web.UI.WebControls/TreeNodeSelectAction.cs
+System.Web.UI.WebControls/TreeNodeStyle.cs
+System.Web.UI.WebControls/TreeNodeStyleCollection.cs
 System.Web.UI.WebControls/TreeNodeTypes.cs
+System.Web.UI.WebControls/TreeView.cs
 System.Web.UI.WebControls/TreeViewImageSet.cs
 System.Web.UI.WebControls/TitleFormat.cs
 System.Web.UI.WebControls/Unit.cs

@@ -1,3 +1,19 @@
+2004-11-23  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Makefile: Added TreeView resources.
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/BaseDataBoundControl.cs
+		System.Web.UI.WebControls/HierarchicalDataBoundControl.cs
+		System.Web.UI.WebControls/TreeNode.cs
+		System.Web.UI.WebControls/TreeNodeBinding.cs
+		System.Web.UI.WebControls/TreeNodeBindingCollection.cs
+		System.Web.UI.WebControls/TreeNodeCollection.cs
+		System.Web.UI.WebControls/TreeNodeEventArgs.cs
+		System.Web.UI.WebControls/TreeNodeEventHandler.cs
+		System.Web.UI.WebControls/TreeNodeStyle.cs
+		System.Web.UI.WebControls/TreeNodeStyleCollection.cs
+		System.Web.UI.WebControls/TreeView.cs
+	
 2004-11-19  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Web.dll.sources: Added new file:
