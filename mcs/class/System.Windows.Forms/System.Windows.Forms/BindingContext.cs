@@ -3,10 +3,11 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
-
+using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	public class BindingContext {
@@ -81,6 +82,6 @@ namespace System.Windows.Forms {
 		//
 		// --- Public Events
 		// Following events not stubbed out, because they are only supporting internal .NET Framework infrastructure
-//		// - public event CollectionChangeEventHandler CollectionChanged;
+		public event CollectionChangeEventHandler CollectionChanged;
 	}
 }

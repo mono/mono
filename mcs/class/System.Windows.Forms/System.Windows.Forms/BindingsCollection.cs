@@ -3,7 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -29,25 +29,31 @@ namespace System.Windows.Forms {
 		{
 		}
 		#endregion
-		
+
 		// --- public and protected Properties ---
-//		[MonoTODO]
+		[MonoTODO]
 //		//FIXME
-//		public override int Count {
-//			// CHECKME:
-//			get { return base.Count; }
-//		}
+		public virtual int Count {
+			get {
+				throw new NotImplementedException ();
+				//return base.Count;
+			}
+		}
 		
 		[MonoTODO]
 		public Binding this[int index] {
 			// CHECKME:
-			get { return (Binding)(base.List[index]); }
+			get {
+				return (Binding)(base.List[index]);
+			}
 		}
 		
 		[MonoTODO]
 		protected override ArrayList List {
 			// CHECKME:
-			get { return base.List; }
+			get {
+				return base.List;
+ }
 		}
 		
 		

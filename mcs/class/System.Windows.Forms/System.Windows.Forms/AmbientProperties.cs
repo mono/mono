@@ -32,14 +32,6 @@ namespace System.Windows.Forms {
 		}
 
 		// --- (public) Properties ---
-		Color BackColor {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
 
 		/// <summary>
 		///	Equals Method
@@ -49,12 +41,12 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this AmbientProperties and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o) 
+		public override bool Equals (object obj) 
 		{
-			if (!(o is AmbientProperties))
+			if (!(obj is AmbientProperties))
 				return false;
 
-			return (this == (AmbientProperties) o);
+			return (this == (AmbientProperties) obj);
 		}
 
 		/// <summary>
@@ -86,7 +78,7 @@ namespace System.Windows.Forms {
 			return base.ToString();// String.Format ("[{0},{1},{2}]", bindingpath, bindingfield, bindingmember);
 		}
 
-		Cursor Cursor {
+		public Cursor Cursor {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -104,7 +96,15 @@ namespace System.Windows.Forms {
 			}
 		}
 	
-		public Color Forecolor {
+		public Color ForeColor {
+			get { 
+				throw new NotImplementedException (); 
+			}
+			set {
+				throw new NotImplementedException (); 
+			}
+		}
+		public Color BackColor {
 			get { 
 				throw new NotImplementedException (); 
 			}

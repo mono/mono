@@ -4,7 +4,6 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
-//
 // (C) 2002 Ximian, Inc
 //
 using System.Drawing;
@@ -61,7 +60,8 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-
+		
+		//inherited
 		//public IAsyncResult BeginInvoke(Delegate d) {
 		//	throw new NotImplementedException ();
 		//}
@@ -155,10 +155,10 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 
-		[MonoTODO]
-		protected override void Dispose(bool b) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//protected override void Dispose(bool disposing) {
+		//	throw new NotImplementedException ();
+		//}
 
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) {
@@ -181,7 +181,7 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 
-		// Inherited
+
 		//protected override void UpdateBounds()
 		//{
 		//	throw new NotImplementedException ();

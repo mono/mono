@@ -3,8 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Dennis Hayes (dennish@raytek.com)
-//
+//   Dennis Hayes (dennish@raytek.com)
 // (C) 2002 Ximian, Inc
 //
 using System.Drawing;
@@ -167,7 +166,7 @@ namespace System.Windows.Forms {
 
 		
 		//  --- Public Methods
-		
+		//inherited
 		//public void Dispose()
 		//{
 		//	throw new NotImplementedException ();
@@ -207,6 +206,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Properties
 		//
+		//inherited
 		//[MonoTODO]
 		//protected void Dispose()
 		//{

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -22,24 +23,24 @@ namespace System.Windows.Forms {
 	public class ColorDialog : CommonDialog {
 
 		// private fields
-		bool allowFullOpen;
-		bool anyColor;
-		Color color;
-		int[] customColors;
-		bool fullOpen;
-		bool showHelp;
-		bool solidColorOnly;
+		//private bool allowFullOpen;
+		//private bool anyColor;
+		//private Color color;
+		//private int[] customColors;
+		//private bool fullOpen;
+		//private bool showHelp;
+		//private bool solidColorOnly;
 
 		/// --- Constructor ---
 		protected ColorDialog() : base() 
 		{
-			allowFullOpen = true;
-			anyColor = false;
-			color = Color.Black;
-			customColors = null;
-			fullOpen = false;
-			showHelp = false;
-			solidColorOnly = false;
+			//allowFullOpen = true;
+			//anyColor = false;
+			//color = Color.Black;
+			//customColors = null;
+			//fullOpen = false;
+			//showHelp = false;
+			//solidColorOnly = false;
 		}
 		
 		
@@ -50,43 +51,82 @@ namespace System.Windows.Forms {
 		/// - protected virtual IntPtr Instance {get;}
 		/// - protected virtual int Options {get;}
 		public virtual bool AllowFullOpen {
-			get { return allowFullOpen; }
-			set { allowFullOpen=value; }
+			get {
+				throw new NotImplementedException ();
+				//return allowFullOpen;
+			}
+			set {
+				throw new NotImplementedException ();
+				//allowFullOpen=value;
+			}
 		}
 		
 		public virtual bool AnyColor {
-			get { return anyColor; }
-			set { anyColor=value; }
+			get {
+				throw new NotImplementedException ();
+				//return anyColor;
+			}
+			set {
+				throw new NotImplementedException ();
+				//anyColor=value;
+			}
 		}
 		
 		public Color Color {
-			get { return color; }
-			set { color=value; }
+			get {
+				throw new NotImplementedException ();
+				//return color;
+			}
+			set {
+				throw new NotImplementedException ();
+				//color=value;
+			}
 		}
 		
 		public int[] CustomColors {
-			get { return customColors; }
-			set { customColors=value; }
+			get {
+				throw new NotImplementedException ();
+				//return customColors;
+			}
+			set {
+				throw new NotImplementedException ();
+				//customColors=value;
+			}
 		}
 		
 		public virtual bool FullOpen {
-			get { return fullOpen; }
-			set { fullOpen=value; }
+			get {
+				throw new NotImplementedException ();
+				//return fullOpen;
+			}
+			set {
+				throw new NotImplementedException ();
+				//fullOpen=value;
+			}
 		}
 		
 		public virtual bool ShowHelp {
-			get { return showHelp; }
-			set { showHelp=value; }
+			get {
+				throw new NotImplementedException ();
+				//return showHelp;
+			}
+			set {
+				throw new NotImplementedException ();
+				//showHelp=value;
+			}
 		}
 		
 		public virtual bool SolidColorOnly {
-			get { return solidColorOnly; }
-			set { solidColorOnly=value; }
+			get {
+				throw new NotImplementedException ();
+				//return solidColorOnly;
+			}
+			set {
+				throw new NotImplementedException ();
+				//solidColorOnly=value;
+			}
 		}
-		
-		
-		
-		
+
 		/// --- ColorDialog methods ---
 		[MonoTODO]
 		public override void Reset() 

@@ -3,8 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Dennis Hayes (dennish@raytek.com)
-//
+//   Dennis Hayes (dennish@raytek.com)
 // (C) 2002 Ximian, Inc
 //
 using System.ComponentModel;
@@ -148,7 +147,7 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 
-		//Not overridden
+		// inherited
 		//[MonoTODO]
 		//public override void Dispose() {
 		//	throw new NotImplementedException ();
@@ -206,6 +205,7 @@ namespace System.Windows.Forms {
 		//
 		// --- Protected Methods
 		//
+		//inherited
 		//[MonoTODO]
 		//protected  void Dispose()
 		//{

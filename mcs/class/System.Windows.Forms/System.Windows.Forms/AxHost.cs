@@ -3,7 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
+//	Dennis hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -320,7 +320,7 @@ namespace System.Windows.Forms {
 		//public new event EventHandler TextChanged;
 		
 		/// --- public delegates ---
-		[Serializable]
+		//[Serializable]
 		protected delegate void AboutBoxDelegate();
 		
 		/// --- ICustomTypeDescriptor methods ---

@@ -3,7 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Dennis Hayes (dennish@raytek.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -33,7 +33,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public override bool Equals(object o)
+		public override bool Equals(object obj)
 		{
 			throw new NotImplementedException ();
 		}

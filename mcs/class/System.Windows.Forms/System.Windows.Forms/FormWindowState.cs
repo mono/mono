@@ -15,7 +15,7 @@ namespace System.Windows.Forms {
 	/// <summary>
   /// Specifies how a form window is displayed.
 	/// </summary>
-	[Serializable]
+	//[Serializable]
 	[ComVisible(true)]
 	public enum FormWindowState {
 

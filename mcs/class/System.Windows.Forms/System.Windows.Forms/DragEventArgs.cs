@@ -4,7 +4,7 @@
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
 //   Implemented by Richard Baumann <biochem333@nyc.rr.com>
-//	Dennis Hayes (dennish@raytek.com)
+//   Dennis Hayes (dennish@Raytek.com)
 // (C) Ximian, Inc., 2002
 //
 

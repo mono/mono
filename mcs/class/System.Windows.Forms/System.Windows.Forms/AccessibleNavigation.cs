@@ -16,7 +16,7 @@ namespace System.Windows.Forms {
 	/// Specifies a values for navigating among accessible objects.
 	/// </summary>
 
-	[Serializable]
+	//[Serializable]
 	public enum AccessibleNavigation {
 
 		//Values were verified with enumcheck.

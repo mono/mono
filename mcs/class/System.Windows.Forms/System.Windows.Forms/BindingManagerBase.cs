@@ -3,7 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//
+//	Dennis hayes (dennish@raytek.com)
 // (C) 2002 Ximian, Inc
 //
 
@@ -82,6 +82,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
+		//protected abstract string GetListName(ArrayList listAccessors);
 		protected internal abstract string GetListName(ArrayList listAccessors);
 
 		protected internal abstract void OnCurrentChanged(EventArgs e); 

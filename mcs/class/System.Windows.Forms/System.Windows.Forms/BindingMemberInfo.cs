@@ -110,12 +110,12 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this BindingMemberInfo and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is BindingMemberInfo))
+			if (!(obj is BindingMemberInfo))
 				return false;
 
-			return (this == (BindingMemberInfo) o);
+			return (this == (BindingMemberInfo) obj);
 		}
 
 		/// <summary>

@@ -3,8 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-//	Dennis Hayes (dennish@raytek.com)
-//
+//	 Dennis Hayes(dennish@raytek.com)
 // (C) 2002 Ximian, Inc
 //
 using System.Drawing;
@@ -114,7 +113,12 @@ using System.ComponentModel;
 		{
 			throw new NotImplementedException ();
 		}
+		//inheriated
 		//public void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public static bool Equals(object o1, object o2)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -123,10 +127,6 @@ using System.ComponentModel;
 		{
 			throw new NotImplementedException ();
 		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public string GetError(Control control)
 		{

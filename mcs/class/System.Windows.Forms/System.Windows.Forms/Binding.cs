@@ -3,12 +3,12 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
 
 namespace System.Windows.Forms {
-
 	public class Binding {
 
 		/// <summary>

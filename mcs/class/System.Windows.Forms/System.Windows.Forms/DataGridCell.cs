@@ -101,12 +101,12 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this DataGridCell and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is DataGridCell))
+			if (!(obj is DataGridCell))
 				return false;
 
-			return (this == (DataGridCell) o);
+			return (this == (DataGridCell) obj);
 		}
 
 		/// <summary>

@@ -67,10 +67,10 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this ColumnClickEventArgs and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o) 
+		public override bool Equals (object obj) 
 		{
-			if (!(o is ColumnClickEventArgs))return false;
-			return (this == (ColumnClickEventArgs) o);
+			if (!(obj is ColumnClickEventArgs))return false;
+			return (this == (ColumnClickEventArgs) obj);
 		}
 
 

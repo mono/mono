@@ -16,7 +16,7 @@ namespace System.Windows.Forms {
   /// Specifies constants indicating when the error icon, supplied by an ErrorProvider, 
   /// should blink to alert the user that an error has occurred.
 	/// </summary>
-	[Serializable]
+	//[Serializable]
 	public enum ErrorBlinkStyle {
 
 		//Values were verified with enumcheck.

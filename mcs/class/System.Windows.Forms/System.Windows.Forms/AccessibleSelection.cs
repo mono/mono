@@ -17,7 +17,7 @@ namespace System.Windows.Forms {
   /// This enumeration has a FlagsAttribute attribute that allows a bitwise combination of its member values.
 	/// </summary>
 	[Flags]
-	[Serializable]
+	//[Serializable]
 	public enum AccessibleSelection {
 
 		AddSelection = 1,

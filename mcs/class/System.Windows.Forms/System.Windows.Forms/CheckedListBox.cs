@@ -3,7 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
+//	Denis hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -23,8 +23,8 @@ namespace System.Windows.Forms {
 	public class CheckedListBox : ListBox {
 
 		// private fields
-		bool checkOnClick;
-		bool threeDCheckBoxes;
+		private bool checkOnClick;
+		private bool threeDCheckBoxes;
 		
 		
 		// --- Constructor ---
@@ -33,9 +33,6 @@ namespace System.Windows.Forms {
 			checkOnClick = false;
 			threeDCheckBoxes = true;
 		}
-		
-		
-		
 		
 		// --- CheckedListBox Properties ---
 		[MonoTODO]

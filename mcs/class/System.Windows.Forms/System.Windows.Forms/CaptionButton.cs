@@ -16,7 +16,7 @@ namespace System.Windows.Forms {
 	/// Specifies the type of caption button to display.
 	/// </summary>
 
-	[Serializable]
+	//[Serializable]
 	public enum CaptionButton {
 
 		//Values were verified with enumcheck.

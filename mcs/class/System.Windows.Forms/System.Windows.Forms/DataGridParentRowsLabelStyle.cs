@@ -15,7 +15,7 @@ namespace System.Windows.Forms {
 	/// <summary>
   /// Specifies how the parent row labels of a DataGrid control are displayed.
 	/// </summary>
-	[Serializable]
+	//[Serializable]
 	public enum DataGridParentRowsLabelStyle {
 
 		//Values were verified with enumcheck.
