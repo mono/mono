@@ -360,7 +360,7 @@ namespace MonoTests.System.Data
 							,_dataset.Tables["Order"].Columns["custid"]);
 			drcol.Add(dr1);	
 			AssertEquals("test#1","System.Data.DataRelationCollection",drcol.ToString());
-			System.Console.WriteLine(drcol.ToString());
+			Console.WriteLine(drcol.ToString());
 		}
 	}
 }
