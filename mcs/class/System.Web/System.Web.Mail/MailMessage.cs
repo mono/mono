@@ -3,6 +3,7 @@
 //
 // Author:
 //    Lawrence Pit (loz@cable.a2000.nl)
+//    Per Arneng (pt99par@student.bth.se)
 //
 
 using System;
@@ -35,6 +36,7 @@ namespace System.Web.Mail
 		{
 			attachments = new ArrayList (8);
 			headers = new ListDictionary ();
+			bodyEncoding = Encoding.Default;
 		}		
 	
 		// Properties

@@ -8,6 +8,7 @@
 
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.IO;
 using System.Reflection;
@@ -35,19 +36,17 @@ namespace System.Web.Mail
 		
 		public static void Send (MailMessage message) 
 		{
-		    
-		    // if no encoding is set then set the system
-		    // default encoding
-		    if( message.BodyEncoding == null ) message.BodyEncoding = Encoding.Default;
-		    
+		   		   		    
 		    try {
 			
+			// wrap the MailMessage in a MailMessage wrapper for easier
+			// access to properties and to add some functionality
 			MailMessageWrapper messageWrapper = new MailMessageWrapper( message );
-
+			
 			SmtpClient smtp = new SmtpClient (smtpServer);
 			
 			smtp.Send (messageWrapper);
-			
+		       
 			smtp.Close ();
 		    
 		    } catch (SmtpException ex) {
@@ -62,7 +61,13 @@ namespace System.Web.Mail
 			throw new HttpException (ex.Message);
 			
 		    } catch (FormatException ex) {
+			
 			throw new HttpException (ex.Message);
+		    
+		    } catch (SocketException ex) {
+			
+			throw new HttpException (ex.Message);
+			
 		    }
 		    
 		}

@@ -38,7 +38,7 @@ namespace System.Web.Mail {
 		string[] parts = value.Split( new char[] { '@' } );
 		
 		if( parts.Length != 2 ) 
-		    throw new FormatException( "Email address is incorrect: " + value );
+		    throw new FormatException( "Invalid e-mail address: '" + value + "'.");
 		
 		user = parts[ 0 ];
 		host = parts[ 1 ];
@@ -65,7 +65,7 @@ namespace System.Web.Mail {
 	    }
 
 	    if( address == null ) 
-		throw new FormatException( "Email address not found in: " + str );
+		throw new FormatException( "Invalid e-mail address: '" + str + "'.");
 	    
 	    address = address.Trim( new char[] { '<' , '>' , '(' , ')' } );
 	    

@@ -22,6 +22,7 @@ namespace System.Web.Mail {
 	private MailAddressCollection to = new MailAddressCollection();
 	private MailHeader header = new MailHeader();
 	private MailMessage message;
+	private string body;
 		
 	// Constructor		
 	public MailMessageWrapper( MailMessage message )
@@ -54,7 +55,7 @@ namespace System.Web.Mail {
 		// if the BodyEncoding is not 7bit us-ascii then
 		// convert the subject using base64 
 		if( message.BodyEncoding is ASCIIEncoding ) {
-		
+		    
 		    header.Subject = message.Subject;
 		    
 		} else {
@@ -67,6 +68,15 @@ namespace System.Web.Mail {
 		}
 	    }
 
+	    // convert single '.' on a line with ".." to not
+	    // confuse the smtp server since the DATA command
+	    // is terminated with a '.' on a single line.
+	    // this is also according to the smtp specs.
+	    if( message.Body != null ) {
+		body = message.Body.Replace( "\n.\n" , "\n..\n" );
+		body = body.Replace( "\r\n.\r\n" , "\r\n..\r\n" );
+	    }
+	    
 	    
 	    // set the Contet-Base header
 	    if( message.UrlContentBase != null ) 
@@ -148,8 +158,8 @@ namespace System.Web.Mail {
 	}
 	
 	public string Body {
-	    get { return message.Body; } 
-	    set { message.Body = value; } 
+	    get { return body; } 
+	    set { body = value; } 
 	}
 
 	public Encoding BodyEncoding {

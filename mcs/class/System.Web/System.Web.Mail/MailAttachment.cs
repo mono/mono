@@ -3,6 +3,7 @@
 //
 // Author:
 //    Lawrence Pit (loz@cable.a2000.nl)
+//    Per Arneng (pt99par@student.bth.se)
 //
 
 namespace System.Web.Mail
@@ -24,13 +25,14 @@ namespace System.Web.Mail
 			try {
 				System.IO.File.OpenRead (filename).Close ();
 			} catch (Exception) {
-				throw new System.Web.HttpException ("Cannot find file: " + filename);
+			    throw new System.Web.HttpException ("Cannot find file: '" + 
+								filename + "'." );
 			}			
 		}
-		
-		// Properties
+	    
+	        // Properties
 		public string Filename 
-		{
+	        {
 			get { return filename; } 
 		}
 		

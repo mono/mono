@@ -102,7 +102,7 @@ namespace System.Web.Mail {
 	    // write the header
 	    smtp.WriteHeader( msg.Header );
 	    
-	    // send the mail body FIXME
+	    // send the mail body
 	    smtp.WriteBytes( msg.BodyEncoding.GetBytes( msg.Body ) );
 
 	}
