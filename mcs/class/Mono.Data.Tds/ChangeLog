@@ -1,3 +1,9 @@
+2003-12-17  Sebastien Pouliot <spouliot@videotron.ca> 
+	for Daniel Morgan <danielmorgan@verizon.net>
+
+	* Makefile: added Mono.Security.dll as a reference so we can get 
+	NTLM support via Mono.Security.Protocol.Ntlm
+
 2003-11-20  Joerg Rosenkranz <joergr@voelcker.com>
 	
 	* Mono.Data.Tds/TdsMetaParameter.cs: Fixed Prepare to allow string
