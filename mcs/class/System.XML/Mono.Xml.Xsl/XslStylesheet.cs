@@ -42,7 +42,7 @@ namespace Mono.Xml.Xsl {
 		Hashtable decimalFormats = new Hashtable ();
 		// [QName]=>XmlSpace
 		Hashtable parameters = new Hashtable ();
-		Hashtable keyPatterns;
+		
 		// [string href]=>XslOutput
 		Hashtable outputs = new Hashtable ();
 		MSXslScriptManager msScripts = new MSXslScriptManager ();
@@ -87,10 +87,6 @@ namespace Mono.Xml.Xsl {
 
 		public Hashtable Parameters {
 			get { return parameters; }
-		}
-		
-		public Hashtable KeyPatterns {
-			get { return keyPatterns; }
 		}
 
 		public Hashtable Outputs {
@@ -177,10 +173,7 @@ namespace Mono.Xml.Xsl {
 					break;
 
 				case "key":
-					XslKey key = new XslKey (c.ParseQNameAttribute ("name"), c.GetAttribute ("use"), c.GetAttribute ("match"), n);
-					if (keyPatterns [key.Name] != null)
-						throw new InvalidOperationException ("Key definition " + key.Name + " is already registered.");
-					keyPatterns.Add (key.Name, key);	
+					c.AddKeyPattern (new XslKey (c));
 					break;
 					
 				case "output":

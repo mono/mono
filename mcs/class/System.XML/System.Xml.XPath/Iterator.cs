@@ -528,6 +528,11 @@ namespace System.Xml.XPath
 		{
 			_enum = enumerator;
 		}
+		
+		public EnumeratorIterator (IEnumerator enumerator, XmlNamespaceManager nsm) : base (nsm)
+		{
+			_enum = enumerator;
+		}
 
 		protected EnumeratorIterator (EnumeratorIterator other) : base (other)
 		{

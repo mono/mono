@@ -30,19 +30,22 @@ namespace Mono.Xml.Xsl {
 		Hashtable attrSets;
 		ExpressionStore exprStore;
 		XmlNamespaceManager nsMgr;
+		ArrayList keys;
 		
-		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr)
+		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, ArrayList keys)
 		{
 			this.style = style;
 			this.globalVariables = globalVariables;
 			this.attrSets = attrSets;
 			this.exprStore = exprStore;
 			this.nsMgr = nsMgr;
+			this.keys = keys;
 		}
 		public Hashtable Variables {get{return globalVariables;}}
 		public XslStylesheet Style { get { return style; }}
 		public ExpressionStore ExpressionStore {get{return exprStore;}}
 		public XmlNamespaceManager NamespaceManager {get{return nsMgr;}}
+		public ArrayList Keys {get { return keys;}}
 		
 		public XslGeneralVariable ResolveVariable (QName name)
 		{
@@ -91,7 +94,7 @@ namespace Mono.Xml.Xsl {
 			}
 			this.rootStyle = new XslStylesheet (this);
 			
-			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr);
+			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, keys);
 		}
 		
 #region Input
@@ -227,7 +230,7 @@ namespace Mono.Xml.Xsl {
 			return new XslTemplateContent (this);
 		}
 #endregion
-
+#region Variables
 		public void AddGlobalVariable (XslGlobalVariable var)
 		{
 			globalVariables [var.Name] = var;
@@ -266,6 +269,15 @@ namespace Mono.Xml.Xsl {
 			exprStore.AddSort (e, s);
 		}
 		public VariableScope CurrentVariableScope { get { return curVarScope; }}
+#endregion
+#region Key
+		ArrayList keys = new ArrayList ();
+		
+		public void AddKeyPattern (XslKey key)
+		{
+			keys.Add (key);
+		}
+#endregion
 	}
 	
 	public class VariableScope {
@@ -443,6 +455,17 @@ namespace Mono.Xml.Xsl {
 				return new QName (name.Substring (colon, name.Length - colon), current.GetNamespace (name.Substring (0, colon)));
 			else if (colon < 0)
 				return new QName (name, current.GetNamespace (""));
+			else
+				throw new ArgumentException ("Invalid name: " + name);
+		}
+		
+		public static QName FromString (string name, XmlNamespaceManager ctx)
+		{
+			int colon = name.IndexOf (':');
+			if (colon > 0)
+				return new QName (name.Substring (colon, name.Length - colon), ctx.LookupNamespace (name.Substring (0, colon)));
+			else if (colon < 0)
+				return new QName (name, ctx.LookupNamespace (""));
 			else
 				throw new ArgumentException ("Invalid name: " + name);
 		}

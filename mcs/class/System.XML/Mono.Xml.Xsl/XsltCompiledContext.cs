@@ -322,7 +322,58 @@ namespace Mono.Xml.Xsl.Functions {
 		
 		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
 		{
-			throw new NotImplementedException ();
+			ArrayList result = new ArrayList ();
+			QName name = XslNameUtil.FromString ((string)args [0], xsltContext);
+			XPathNodeIterator it = args [1] as XPathNodeIterator;
+			
+			if (it != null) {
+				while (it.MoveNext())
+					FindKeyMatch (xsltContext, name, it.Current.Value, result, docContext);
+			} else {
+				FindKeyMatch (xsltContext, name, XPathFunctions.ToString (args [1]), result, docContext);
+			}
+			
+			return new EnumeratorIterator (result.GetEnumerator (), xsltContext);
+		}
+		
+		void FindKeyMatch (XsltCompiledContext xsltContext, QName name, string value, ArrayList result, XPathNavigator context)
+		{
+			XPathNavigator searchDoc = context.Clone ();
+			searchDoc.MoveToRoot ();
+			foreach (XslKey key in xsltContext.Processor.CompiledStyle.Keys) {
+				if (key.Name == name) {
+					XPathNodeIterator desc = searchDoc.SelectDescendants (XPathNodeType.All, true);
+
+					while (desc.MoveNext ()) {
+						if (key.Matches (desc.Current, value))
+							AddResult (result, desc.Current);
+						
+						if (desc.Current.MoveToFirstAttribute ()) {
+							do {
+								if (key.Matches (desc.Current, value))
+									AddResult (result, desc.Current);	
+							} while (desc.Current.MoveToNext ());
+							
+							desc.Current.MoveToParent ();
+						}
+					}
+				}
+			}
+		}
+
+		void AddResult (ArrayList result, XPathNavigator nav)
+		{
+			for (int i = 0; i < result.Count; i++) {
+				XmlNodeOrder docOrder = nav.ComparePosition (((XPathNavigator)result [i]));
+				if (docOrder == XmlNodeOrder.Same)
+					return;
+				
+				if (docOrder == XmlNodeOrder.Before) {
+					result.Insert(i, nav.Clone ());
+					return;
+				}
+			}
+			result.Add (nav.Clone ());
 		}
 	}
 	
