@@ -1,3 +1,8 @@
+2003-11-10  Todd Berman  <tberman@gentoo.org>
+
+	* sn.cs: No more OutOfMemoryExceptions if the GetPublicKey returns
+	a new byte[0].
+	
 2003-10-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* sn.cs: Fixed strongname generation for small exponents (like 17). 
