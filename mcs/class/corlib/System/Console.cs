@@ -20,7 +20,9 @@ namespace System {
 		static Console ()
 		{
 			stderr = new StreamWriter (OpenStandardError ());
+			((StreamWriter)stderr).AutoFlush = true;
 			stdout = new StreamWriter (OpenStandardOutput ());
+			((StreamWriter)stdout).AutoFlush = true;
 			stdin  = new StreamReader (OpenStandardInput ());
 		}
 

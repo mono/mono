@@ -3,6 +3,9 @@
 	* BitConverter.cs (ToString): Add parameter check for invalid start 
 	index.
 
+	* Console.cs: Use AutoFlush on the StreamWriter for stdin and stdout
+	now that StreamWriter uses buffering
+
 2002-05-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* Double.cs: Oops.  Also handle exponents without finding a dot.
