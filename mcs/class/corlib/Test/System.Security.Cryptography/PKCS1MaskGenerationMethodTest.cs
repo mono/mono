@@ -96,7 +96,7 @@ namespace MonoTests.System.Security.Cryptography {
 		// see ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-1/pkcs-1v2-1-vec.zip for RSA tests vector
 		[Test]
 #if ! NET_2_0
-		[Ignore ("Known to fail under MS runtime - both 1.0 and 1.1")]
+		[Category ("NotDotNet")] // Known to fail under MS runtime - both 1.0 and 1.1
 #endif
 		public void PKCS1v21TestVector ()
 		{

@@ -68,7 +68,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 #if ! NET_2_0
-		[Ignore ("MS throw a ExecutionEngineException")]
+		[Category ("NotDotNet")] // MS throw a ExecutionEngineException
 #endif
 		public void TransformBlock_NullOutput () 
 		{

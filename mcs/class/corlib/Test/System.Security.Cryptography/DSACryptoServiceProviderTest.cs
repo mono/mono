@@ -332,7 +332,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 	[Test]
 #if ! NET_2_0
-	[Ignore ("Running this test breaks all further DSA tests on MS runtime!")]
+	[Category ("NotDotNet")] // Running this test breaks all further DSA tests on MS runtime!
 #endif
 	public void VerifySignatureWithoutKey () 
 	{
@@ -401,7 +401,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	[Test]
 	[ExpectedException (typeof (CryptographicException))]
 #if ! NET_2_0
-	[Ignore ("MS runtime throws a System.ExecutionEngineException then exit the application")]
+	[Category ("NotDotNet")] // MS runtime throws a System.ExecutionEngineException then exit the application
 #endif
 	public void DSAImportMissingY () 
 	{

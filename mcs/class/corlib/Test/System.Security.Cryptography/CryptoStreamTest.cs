@@ -335,7 +335,7 @@ namespace MonoTests.System.Security.Cryptography {
 #if NET_2_0
 		[ExpectedException (typeof (IndexOutOfRangeException))]
 #else
-		[Ignore ("Test cause System.ExecutionEngineException on MS runtime")]
+		[Category ("NotDotNet")] // Test cause System.ExecutionEngineException on MS runtime
 #endif
 		public void Read_Disposed_Break () 
 		{
@@ -435,7 +435,7 @@ namespace MonoTests.System.Security.Cryptography {
 #if NET_2_0
 		[ExpectedException (typeof (IndexOutOfRangeException))]
 #else
-		[Ignore ("Test cause System.ExecutionEngineException on MS runtime")]
+		[Category ("NotDotNet")] // Test cause System.ExecutionEngineException on MS runtime
 #endif
 		public void Write_Disposed () 
 		{

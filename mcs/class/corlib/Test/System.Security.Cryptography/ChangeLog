@@ -1,3 +1,11 @@
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoStreamTest.cs, DSACryptoServiceProviderTest.cs,
+	HashAlgorithmTest.cs, PKCS1MaskGenerationMethodTest.cs,
+	RSAPKCS1KeyExchangeFormatterTest.cs, ToBase64TransformTest.cs:
+	Use [Category ("NotDotNet")] for tests failing only on the MS runtime
+	(so they are now executed on Mono).
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TripleDESTest.cs: Testing weak key with null throws a NRE.

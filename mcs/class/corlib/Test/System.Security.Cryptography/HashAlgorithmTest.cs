@@ -274,7 +274,7 @@ public class HashAlgorithmTest : Assertion {
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 #if ! NET_2_0
-	[Ignore ("System.ExecutionEngineException on MS runtime (1.1)")]
+	[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
 #endif
 	public void TransformBlock_OutputBuffer_Null ()
 	{

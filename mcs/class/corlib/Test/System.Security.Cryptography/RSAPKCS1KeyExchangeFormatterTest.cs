@@ -69,7 +69,7 @@ public class RSAPKCS1KeyExchangeFormatterTest : Assertion {
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 #if ! NET_2_0
-	[Ignore ("Sometime causes System.ExecutionEngineException on MS implementation")]
+	[Category ("NotDotNet")] // Sometime causes System.ExecutionEngineException on MS implementation
 #endif
 	public void KeyExchangeNull ()
 	{
