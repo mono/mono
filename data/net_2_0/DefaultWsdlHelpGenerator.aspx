@@ -14,6 +14,7 @@
 <%@ Import Namespace="System.Xml.Serialization" %>
 <%@ Import Namespace="System.Xml" %>
 <%@ Import Namespace="System.Xml.Schema" %>
+<%@ Import Namespace="System.Web.Services" %>
 <%@ Import Namespace="System.Web.Services.Description" %>
 <%@ Import Namespace="System" %>
 <%@ Import Namespace="System.Net" %>
@@ -50,6 +51,7 @@ ArrayList InParams;
 ArrayList OutParams;
 string CurrentOperationProtocols;
 int CodeTextColumns = 95;
+BasicProfileViolationCollection ProfileViolations;
 
 void Page_Load(object sender, EventArgs e)
 {
@@ -66,6 +68,8 @@ void Page_Load(object sender, EventArgs e)
 	
 	DefaultBinding = desc.Bindings[0].Name;
 	WebServiceDescription = service.Documentation;
+	if (WebServiceDescription == "" || WebServiceDescription == null)
+		WebServiceDescription = "Description has not been provided";
 	ServiceProtocols = FindServiceProtocols (null);
 	
 	CurrentOperationName = Request.QueryString["op"];
@@ -82,6 +86,9 @@ void Page_Load(object sender, EventArgs e)
 
 	BindingsRepeater.DataSource = list;
 	Page.DataBind();
+	
+	ProfileViolations = new BasicProfileViolationCollection ();
+	WebServicesInteroperability.CheckConformance (WsiClaims.BP10, descriptions, ProfileViolations);
 }
 
 void BuildOperationInfo ()
@@ -940,15 +947,23 @@ public class HtmlSampleGenerator: SampleGenerator
 			}
 
 			// Serialize headers
+			
+			bool writtenHeader = false;
 			foreach (object ob in msgbin.Extensions)
 			{
 				SoapHeaderBinding hb = ob as SoapHeaderBinding;
 				if (hb == null) continue;
 				
-				xtw.WriteStartElement ("soap", "Header", SoapEnvelopeNamespace);
+				if (!writtenHeader) {
+					xtw.WriteStartElement ("soap", "Header", SoapEnvelopeNamespace);
+					writtenHeader = true;
+				}
+				
 				WriteHeader (xtw, hb);
-				xtw.WriteEndElement ();
 			}
+			
+			if (writtenHeader)
+				xtw.WriteEndElement ();
 
 			// Serialize body
 			xtw.WriteStartElement ("soap", "Body", SoapEnvelopeNamespace);
@@ -1595,7 +1610,23 @@ function clearForm ()
 
 	<p class="label">Web Service Overview</p>
 	<%#WebServiceDescription%>
-	
+	<br/><br/>
+	<% if (ProfileViolations.Count > 0) { %>
+		<p class="label">Basic Profile Conformance</p>
+		This web service does not conform to WS-I Basic Profile v1.0
+	<%
+		Response.Write ("<ul>");
+		foreach (BasicProfileViolation vio in ProfileViolations) {
+			Response.Write ("<li><b>" + vio.NormativeStatement + "</b>: " + vio.Details);
+			Response.Write ("<ul>");
+			foreach (string ele in vio.Elements)
+				Response.Write ("<li>" + ele + "</li>");
+			Response.Write ("</ul>");
+			Response.Write ("</li>");
+		}
+		Response.Write ("</ul>");
+	}%>
+
 <%} if (DefaultBinding == null) {%>
 This service does not contain any public web method.
 <%} else if (CurrentPage == "op") {%>
