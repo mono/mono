@@ -1,3 +1,29 @@
+2005-02-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: another leftover.
+
+Fri Feb 18 17:37:29 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* io.c: fixed logic in checking errno in rev 40815.
+
+Fri Feb 18 16:00:29 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: we don't depend on the GC checking tls
+	slots anymore.
+	* processes.c: remove unused ref to GC headers.
+
+Thu Feb 17 19:57:11 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* io.c: remove _wapi_thread_cur_apc_pending () checks
+	when the siscall should return immediatly and handle
+	the case when a syscall is interrupted without
+	erroring out, but returning a 0 read/write if possible.
+	Still the cases of read from file need to be handled.
+
+Tue Feb 8 18:28:11 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: make people test with 1 MB stack per thread.
+
 2005-01-17  Dick Porter  <dick@ximian.com>
 
 	* timefuncs.h: Make WapiFileTime endian-aware, as it's often
