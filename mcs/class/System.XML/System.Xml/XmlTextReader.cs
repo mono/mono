@@ -367,7 +367,6 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override bool MoveToAttribute (string name)
 		{
 			MoveToElement ();
@@ -489,13 +488,52 @@ namespace System.Xml
 		[MonoTODO]
 		public override string ReadInnerXml ()
 		{
-			throw new NotImplementedException ();
+			// Still need a Well Formedness check.
+			// Will wait for Validating reader ;-)
+			if (NodeType == XmlNodeType.Attribute) {
+				return Value;
+			} else {
+   				saveToXmlBuffer = true;
+				string startname = this.Name;
+				string endname = string.Empty;
+				readState = ReadState.Interactive;
+
+				while (startname != endname) {
+					ReadContent ();
+    				endname = this.Name;
+				}
+
+				xmlBuffer.Replace(currentTag.ToString (), "");
+				saveToXmlBuffer = false;
+				string InnerXml = xmlBuffer.ToString ();
+				xmlBuffer.Length = 0;
+				return InnerXml;
+			}
 		}
 
 		[MonoTODO]
 		public override string ReadOuterXml ()
 		{
-			throw new NotImplementedException ();
+			// Still need a Well Formedness check.
+			// Will wait for Validating reader ;-)
+			if (NodeType == XmlNodeType.Attribute) {
+				return Name+"=\""+Value+"\"";
+			} else {
+   				saveToXmlBuffer = true;
+				xmlBuffer.Append(currentTag.ToString ());
+				string startname = this.Name;
+				string endname = string.Empty;
+				readState = ReadState.Interactive;
+
+				while (startname != endname) {
+					ReadContent ();
+    				endname = this.Name;
+				}
+				saveToXmlBuffer = false;
+				string OuterXml = xmlBuffer.ToString ();
+				xmlBuffer.Length = 0;
+				return OuterXml;
+			}
 		}
 
 		[MonoTODO]
@@ -561,6 +599,10 @@ namespace System.Xml
 		private int valueCapacity;
 		private const int initialValueCapacity = 8192;
 
+		private StringBuilder xmlBuffer; // This is for Read(Inner|Outer)Xml
+		private StringBuilder currentTag; // A buffer for ReadContent for ReadOuterXml
+		private bool saveToXmlBuffer;
+
 		private void Init ()
 		{
 			readState = ReadState.Initial;
@@ -590,6 +632,9 @@ namespace System.Xml
 			valueBuffer = new char [initialValueCapacity];
 			valueLength = 0;
 			valueCapacity = initialValueCapacity;
+
+			xmlBuffer = new StringBuilder ();
+			currentTag = new StringBuilder ();
 		}
 
 		// Use this method rather than setting the properties
@@ -667,7 +712,12 @@ namespace System.Xml
 
 		private int ReadChar ()
 		{
-			return reader.Read ();
+			int ch = reader.Read ();
+			if (saveToXmlBuffer) {
+				xmlBuffer.Append ((char) ch);
+			}
+			currentTag.Append ((char) ch);
+			return ch;
 		}
 
 		// This should really keep track of some state so
@@ -676,7 +726,7 @@ namespace System.Xml
 		private bool ReadContent ()
 		{
 			bool more = false;
-
+			currentTag.Length = 0;
 			if (popScope) {
 				parserContext.NamespaceManager.PopScope ();
 				popScope = false;
@@ -690,7 +740,7 @@ namespace System.Xml
 				SetEntityReferenceProperties ();
 				more = true;
 			} else {
-				switch (PeekChar ())
+    			switch (PeekChar ())
 				{
 				case '<':
 					ReadChar ();
