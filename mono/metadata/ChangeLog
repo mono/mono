@@ -1,3 +1,7 @@
+2002-03-18  Dick Porter  <dick@ximian.com>
+
+	* reflection.c (mono_image_get_type_info): rename interface to
+	iface, because of "#define interface struct" on windows.
 
 Sat Mar 16 19:18:38 CET 2002 Paolo Molaro <lupus@ximian.com>
 
