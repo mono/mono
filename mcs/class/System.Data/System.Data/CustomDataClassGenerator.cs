@@ -44,13 +44,13 @@ namespace System.Data
 				ds.ReadXml (args [0]);
 				ICodeGenerator gen = new CSharpCodeProvider ().CreateGenerator ();
 
-				CodeNamespace cns = new CodeNamespace ();
+				CodeNamespace cns = new CodeNamespace ("MyNamespace");
 				TextWriter tw = new StreamWriter (Path.ChangeExtension (args [0], ".ms.cs"), false, Encoding.Default);
 				TypedDataSetGenerator.Generate (ds, cns, gen);
 				gen.GenerateCodeFromNamespace (cns, tw, null);
 				tw.Close ();
 
-				cns = new CodeNamespace ();
+				cns = new CodeNamespace ("MyNamespace");
 				tw = new StreamWriter (Path.ChangeExtension (args [0], ".mono.cs"), false, Encoding.Default);
 				CustomDataClassGenerator.CreateDataSetClasses (ds, cns, gen, null);
 				gen.GenerateCodeFromNamespace (cns, tw, null);
@@ -123,7 +123,7 @@ namespace System.Data
 	internal class ClassGeneratorOptions
 #endif
 	{
-		public bool MakeClassesInsideDataSet;
+		public bool MakeClassesInsideDataSet = true; // default = MS compatible
 
 		public CodeNamingMethod CreateDataSetName;
 		public CodeNamingMethod CreateTableTypeName;
@@ -131,7 +131,7 @@ namespace System.Data
 		public CodeNamingMethod CreateTableColumnName;
 		public CodeNamingMethod CreateColumnName;
 		public CodeNamingMethod CreateRowName;
-//		public CodeNamingMethod CreateRelationName;
+		public CodeNamingMethod CreateRelationName;
 		public CodeNamingMethod CreateTableDelegateName;
 		public CodeNamingMethod CreateEventArgsName;
 
@@ -198,7 +198,7 @@ namespace System.Data
 			else
 				return CustomDataClassGenerator.MakeSafeName (source, gen) + "Row";
 		}
-/*
+
 		internal string RelationName (string source, ICodeGenerator gen)
 		{
 			if (CreateRelationName != null)
@@ -206,7 +206,6 @@ namespace System.Data
 			else
 				return CustomDataClassGenerator.MakeSafeName (source, gen) + "Relation";
 		}
-*/
 	}
 
 	internal class Generator
@@ -274,13 +273,6 @@ namespace System.Data
 					cns.Types.Add (dtEventType);
 				}
 			}
-			foreach (DataRelation rel in ds.Relations) {
-				CodeTypeDeclaration relType = GenerateDataRelationType (rel);
-				if (opts.MakeClassesInsideDataSet)
-					dsType.Members.Add (relType);
-				else
-					cns.Types.Add (relType);
-			}
 		}
 
 		private CodeThisReferenceExpression This ()
@@ -346,6 +338,11 @@ namespace System.Data
 		private CodeExpression New (string t, params CodeExpression [] parameters)
 		{
 			return new CodeObjectCreateExpression (TypeRef (t), parameters);
+		}
+
+		private CodeExpression NewArray (Type t, params CodeExpression [] parameters)
+		{
+			return new CodeArrayCreateExpression (t, parameters);
 		}
 
 		private CodeVariableReferenceExpression Local (string name)
@@ -467,7 +464,7 @@ namespace System.Data
 
 			// .ctor()
 			dsType.Members.Add (CreateDataSetDefaultCtor ());
-			// TODO: runtime serialization .ctor()
+			// runtime serialization .ctor()
 			dsType.Members.Add (CreateDataSetSerializationCtor ());
 
 			// Clone()
@@ -664,12 +661,104 @@ namespace System.Data
 				string tableTypeName = opts.TableTypeName (dt.TableName, gen);
 				m.Statements.Add (Let (FieldRef (tableFieldName), New (tableTypeName)));
 				m.Statements.Add (Eval (MethodInvoke (PropRef ("Tables"), "Add", FieldRef (tableFieldName))));
-				// TODO: ForeignKeyConstraint
 			}
 
-			// TODO: relations
+			bool fkcExists = false;
+			bool ucExists = false;
+			foreach (DataTable dt in ds.Tables) {
+				string tname = "__table" + opts.TableMemberName (dt.TableName, gen);
+				foreach (Constraint c in dt.Constraints) {
+					UniqueConstraint uc = c as UniqueConstraint;
+					if (uc != null) {
+						if (!ucExists) {
+							m.Statements.Add (VarDecl (typeof (UniqueConstraint), "uc", null));
+							ucExists = true;
+						}
+						CreateUniqueKeyStatements (m, uc, tname);
+						continue;
+					}
+					ForeignKeyConstraint fkc = c as ForeignKeyConstraint;
+					if (fkc != null) {
+						if (!fkcExists) {
+							m.Statements.Add (VarDecl (typeof (ForeignKeyConstraint), "fkc", null));
+							fkcExists = true;
+						}
+						CreateForeignKeyStatements (m, fkc, tname);
+					}
+					// What if other cases? dunno. Just ignore ;-)
+				}
+			}
+			foreach (DataRelation rel in ds.Relations) {
+				string relName = opts.RelationName (rel.RelationName, gen);
+				ArrayList pcols = new ArrayList ();
+				foreach (DataColumn pcol in rel.ParentColumns)
+					pcols.Add (IndexerRef (PropRef (FieldRef ("__table" + opts.TableMemberName (rel.ParentTable.TableName, gen)), "Columns"), Const (pcol.ColumnName)));
+
+				ArrayList ccols = new ArrayList ();
+				foreach (DataColumn ccol in rel.ChildColumns)
+					ccols.Add (IndexerRef (PropRef (FieldRef ("__table" + opts.TableMemberName (rel.ChildTable.TableName, gen)), "Columns"), Const (ccol.ColumnName)));
+
+				// relation field
+				string fieldName = "__relation" + relName;
+				m.Statements.Add (Let (FieldRef (fieldName), New (typeof (DataRelation),
+					Const (rel.RelationName),
+					NewArray (typeof (DataColumn), pcols.ToArray (typeof (CodeExpression)) as CodeExpression []),
+					NewArray (typeof (DataColumn), ccols.ToArray (typeof (CodeExpression)) as CodeExpression []),
+					Const (false)
+					)));
+				m.Statements.Add (Let (PropRef (FieldRef (fieldName), "Nested"), Const (rel.Nested)));
+			}
 
 			return m;
+		}
+
+		private void CreateUniqueKeyStatements (CodeMemberMethod m, UniqueConstraint uc, string tableField)
+		{
+			ArrayList al = new ArrayList ();
+			foreach (DataColumn col in uc.Columns)
+				al.Add (IndexerRef (PropRef (FieldRef (tableField), "Columns"), Const (col.ColumnName)));
+
+			m.Statements.Add (Let (Local ("uc"), New (
+				typeof (UniqueConstraint),
+				Const (uc.ConstraintName),
+				NewArray (
+					typeof (DataColumn),
+					al.ToArray (typeof (CodeExpression)) as CodeExpression []),
+				Const (uc.IsPrimaryKey))));
+			m.Statements.Add (MethodInvoke (PropRef (FieldRef (tableField), "Constraints"), "Add", Local ("uc")));
+		}
+
+		private void CreateForeignKeyStatements (CodeMemberMethod m,ForeignKeyConstraint fkc, string tableField)
+		{
+			ArrayList pcols = new ArrayList ();
+			foreach (DataColumn col in fkc.Columns)
+				pcols.Add (IndexerRef (PropRef (FieldRef (tableField), "Columns"), Const (col.ColumnName)));
+
+			ArrayList ccols = new ArrayList ();
+			foreach (DataColumn col in fkc.RelatedColumns)
+				pcols.Add (IndexerRef (PropRef (FieldRef (tableField), "Columns"), Const (col.ColumnName)));
+
+			m.Statements.Add (Let (Local ("fkc"), New (
+				typeof (ForeignKeyConstraint),
+				Const (fkc.ConstraintName),
+				NewArray (
+					typeof (DataColumn),
+					pcols.ToArray (typeof (CodeExpression)) as CodeExpression []),
+				NewArray (
+					typeof (DataColumn),
+					ccols.ToArray (typeof (CodeExpression)) as CodeExpression []))));
+
+			m.Statements.Add (Let (
+				PropRef (Local ("fkc"), "AcceptRejectRule"),
+				FieldRef (TypeRefExp (typeof (AcceptRejectRule)), Enum.GetName (typeof (AcceptRejectRule), fkc.AcceptRejectRule))));
+			m.Statements.Add (Let (
+				PropRef (Local ("fkc"), "DeleteRule"),
+				FieldRef (TypeRefExp (typeof (Rule)), Enum.GetName (typeof (Rule), fkc.DeleteRule))));
+			m.Statements.Add (Let (
+				PropRef (Local ("fkc"), "UpdateRule"),
+				FieldRef (TypeRefExp (typeof (Rule)), Enum.GetName (typeof (Rule), fkc.UpdateRule))));
+
+			m.Statements.Add (MethodInvoke (PropRef (FieldRef (tableField), "Constraints"), "Add", Local ("fkc")));
 		}
 
 		private CodeMemberMethod CreateDataSetInitializeFields ()
@@ -681,9 +770,9 @@ namespace System.Data
 			foreach (DataTable dt in ds.Tables)
 				m.Statements.Add (Eval (MethodInvoke (FieldRef ("__table" + opts.TableMemberName (dt.TableName, gen)), "InitializeFields")));
 
-/* TODO: relation field initialization
+			foreach (DataRelation rel in ds.Relations)
+				m.Statements.Add (Let (FieldRef ("__relation" + opts.RelationName (rel.RelationName, gen)), IndexerRef (PropRef ("Relations"), Const (rel.RelationName))));
 
-*/
 			return m;
 		}
 
@@ -716,6 +805,7 @@ namespace System.Data
 
 			CodeMemberProperty pubTable = new CodeMemberProperty ();
 			pubTable.Type = TypeRef (tableTypeName);
+			pubTable.Attributes = MemberAttributes.Public;
 			pubTable.Name = tableVarName;
 			pubTable.HasSet = false;
 			// Code: return __table[foo];
@@ -725,10 +815,25 @@ namespace System.Data
 
 		}
 
-		// TODO: implement
 		private void CreateDataSetRelationMembers (CodeTypeDeclaration dsType, DataRelation relation)
 		{
-			throw new NotImplementedException ();
+			string relName = opts.RelationName (relation.RelationName, gen);
+			string fieldName = "__relation" + relName;
+
+			CodeMemberField field = new CodeMemberField ();
+			field.Type = TypeRef (typeof (DataRelation));
+			field.Name = fieldName;
+			dsType.Members.Add (field);
+
+			// This is not supported in MS.NET
+			CodeMemberProperty prop = new CodeMemberProperty ();
+			prop.Type = TypeRef (typeof (DataRelation));
+			prop.Attributes = MemberAttributes.Public;
+			prop.Name = relName;
+			prop.HasSet = false;
+			// Code: return __relation[foo_bar];
+			prop.GetStatements.Add (Return (FieldRef (fieldName)));
+			dsType.Members.Add (prop);
 		}
 
 #endregion
@@ -821,12 +926,10 @@ namespace System.Data
 			CodeMemberMethod m = new CodeMemberMethod ();
 			m.Name = "InitializeClass";
 			foreach (DataColumn col in dt.Columns) {
-				m.Statements.Add (VarDecl (
-					typeof (DataColumn),
-					"c",
-					New (typeof (DataColumn), Const (col.ColumnName))));
-				m.Statements.Add (Eval (MethodInvoke (PropRef ("Columns"), "Add", Local ("c"))));
-				m.Statements.Add (Let (FieldRef ("__column" + opts.TableColName (col.ColumnName, gen)), Local ("c")));
+				m.Statements.Add (Eval (MethodInvoke (
+					PropRef ("Columns"),
+					"Add",
+					New (typeof (DataColumn), Const (col.ColumnName)))));
 			}
 			return m;
 		}
@@ -937,17 +1040,36 @@ namespace System.Data
 			m.Name = "Add" + rowType;
 			m.ReturnType = TypeRef (rowType);
 			m.Attributes = MemberAttributes.Public;
+
+			m.Statements.Add (VarDecl (rowType, "row", MethodInvoke ("New" + rowType)));
+
 			foreach (DataColumn col in dt.Columns) {
 				if (col.ColumnMapping == MappingType.Hidden) {
-					// TODO: find relation parent from relations, and if this column is a reference to parent column, get the parent table and set the type of the table as the parameter type
-					throw new NotImplementedException ();
+					foreach (DataRelation r in dt.DataSet.Relations) {
+						if (r.ChildTable == dt) {
+							// parameter
+							string paramType = opts.RowName (r.ParentTable.TableName, gen);
+							string paramName = paramType;
+							m.Parameters.Add (Param (paramType, paramName));
+							// CODE: SetParentRow (fooRow, DataSet.Relations ["foo_bar"]);
+							m.Statements.Add (Eval (MethodInvoke (Local ("row"), "SetParentRow", ParamRef (paramName), IndexerRef (PropRef (PropRef ("DataSet"), "Relations"), Const (r.RelationName)))));
+							break;
+						}
+					}
 				}
-				else
-					m.Parameters.Add (Param (col.DataType, opts.ColumnName (col.ColumnName, gen)));
+				else {
+					// parameter
+					string paramName = opts.ColumnName (col.ColumnName, gen);
+					m.Parameters.Add (Param (col.DataType, paramName));
+					// row ["foo"] = foo;
+					m.Statements.Add (Let (IndexerRef (Local ("row"), Const (paramName)), ParamRef (paramName)));
+				}
 			}
 
-			// TODO: implement
-			m.Statements.Add (Throw (New (typeof (NotImplementedException))));
+			// Rows.Add (row);
+			m.Statements.Add (MethodInvoke (PropRef ("Rows"), "Add", Local ("row")));
+			m.Statements.Add (Return (Local ("row")));
+
 			return m;
 		}
 
@@ -1239,12 +1361,6 @@ TODO:
 
 #endregion
 
-
-
-		private CodeTypeDeclaration GenerateDataRelationType (DataRelation rel)
-		{
-			throw new NotImplementedException ();
-		}
 	}
 }
 
@@ -1396,6 +1512,9 @@ MonoDataSetGenerator API notes
 		create new [foo]row.
 		set members
 		Rows.Add ()
+		// where
+		//	non-relation-children are just created as column type
+		//	relation-children are typeof fooRow[]
 
 	GetEnumerator() { Rows.GetEnumerator (); }
 
@@ -1406,6 +1525,8 @@ MonoDataSetGenerator API notes
 
 	void Remove[foo]Row([foo]Row)
 
+	//for each ChildRelations
+	[bar]Row [] Get[foo_bar]Rows ()
 
 *** protected members
 

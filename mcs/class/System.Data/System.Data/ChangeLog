@@ -1,5 +1,18 @@
 2004-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CustomDataClassGenerator.cs :
+	  - Put classes inside custom DataSet class.
+	  - Added automatic DataRelation creation support.
+	  - Added Constraints creation support. That is done separate from
+	    relations, since they might be independently created.
+	  - Added non-MS public DataRelation fields.
+	  - Removed extraneous "DataRelation type generation" code.
+	  - Fixed custom_dataset.Initialize() not to create "c" field that
+	    was created more than once.
+	  - Implemented AddxxxRow() that takes parameters for every column.
+
+2004-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaDataImporter.cs : When primary key is used more than once,
 	  DataRelation borked because of empty parent column name.
 
