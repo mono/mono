@@ -1,6 +1,6 @@
 System.Windows.Forms wine-patch README
 
-After applying the patch to wine, run "autoconf configure.ac" and then 
+After applying the patch to wine, run "autoconf" and then 
 ./configure in the wine directory and 'make && make depend && make install'.
 
 Also, once the install is done you will need to create symbolic links for
