@@ -2040,6 +2040,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (e.Type != null && e.Type.IsPointer && !ec.InUnsafe) {
+				UnsafeError (loc);
+				return null;
+			}
+
 			return e;
 		}
 
