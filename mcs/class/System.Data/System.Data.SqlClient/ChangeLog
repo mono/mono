@@ -1,0 +1,14 @@
+2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* ChangeLog: added this file
+
+	* SqlConnection.cs: - parse data source for 3 possible uses:
+	"Server=hostname", 
+	"Server=hostname\\instancename", 
+	"Server=hostname,port" and open the connection based on the
+	resulting server name and port.  
+	- Added support for named instances
+	by discovery of the sql server tcp port via the sql monitor (udp port 1434)
+	thanks to Phillip Jerkins (Phillip.Jerkins@morgankeegan.com) contribution.
+	Also, thanks to Gonzalo and Tim for their help with timeouts.
+	

@@ -1,14 +1,16 @@
 //
 // System.Data.SqlClient.SqlConnection.cs
 //
-// Author:
+// Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Phillip Jerkins (Phillip.Jerkins@morgankeegan.com)
 //
-// (C) Ximian, Inc 2002
-// (C) Daniel Morgan 2002
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Ximian, Inc 2002
+// Copyright (C) Daniel Morgan 2002, 2003
+// Copyright (C) Tim Coleman, 2002, 2003
+// Copyright (C) Phillip Jerkins, 2003
 //
 
 using Mono.Data.Tds;
@@ -21,6 +23,7 @@ using System.Data;
 using System.Data.Common;
 using System.EnterpriseServices;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Xml;
 
@@ -334,16 +337,22 @@ namespace System.Data.SqlClient {
 
 		public void Open () 
 		{
+			string serverName = "";
 			if (connectionString == null)
 				throw new InvalidOperationException ("Connection string has not been initialized.");
 
 			try {
-				if (!pooling)
-					tds = new Tds70 (DataSource, port, PacketSize, ConnectionTimeout);
+				if (!pooling) {
+					if(!ParseDataSource (dataSource, out port, out serverName))
+						throw new SqlException(20, 0, "SQL Server does not exist or access denied.",  17, "ConnectionOpen (Connect()).", dataSource, parms.ApplicationName, 0);
+					tds = new Tds70 (serverName, port, PacketSize, ConnectionTimeout);
+				}
 				else {
 					pool = (SqlConnectionPool) SqlConnectionPools [connectionString];
 					if (pool == null) {
-						pool = new SqlConnectionPool (dataSource, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
+						if(!ParseDataSource (dataSource, out port, out serverName))
+							throw new SqlException(20, 0, "SQL Server does not exist or access denied.",  17, "ConnectionOpen (Connect()).", dataSource, parms.ApplicationName, 0);
+						pool = new SqlConnectionPool (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
 						SqlConnectionPools [connectionString] = pool;
 					}
 					tds = pool.AllocateConnection ();
@@ -367,6 +376,43 @@ namespace System.Data.SqlClient {
 			*/
 				
 			ChangeState (ConnectionState.Open);
+		}
+
+		private bool ParseDataSource (string theDataSource, out int thePort, out string theServerName) 
+		{
+			theServerName = "";
+			string theInstanceName = "";
+			thePort = 1433; // default TCP port for SQL Server
+			bool success = true;
+                        			
+			int idx = 0;
+			if ((idx = theDataSource.IndexOf (",")) > -1) {
+				theServerName = theDataSource.Substring (0, idx);
+				string p = theDataSource.Substring (idx + 1);
+				thePort = Int32.Parse (p);
+			}
+			else if ((idx = theDataSource.IndexOf ("\\")) > -1) {
+				theServerName = theDataSource.Substring (0, idx);
+				theInstanceName = theDataSource.Substring (idx + 1);
+				// do port discovery via UDP port 1434
+				port = DiscoverTcpPortViaSqlMonitor (theServerName, theInstanceName);
+				if (port == -1)
+					success = false;
+			}
+			else {
+				theServerName = theDataSource;
+			}
+
+			return success;
+		}
+
+		private int DiscoverTcpPortViaSqlMonitor(string ServerName, string InstanceName) 
+		{
+			SqlMonitorSocket msock;
+			msock = new SqlMonitorSocket (ServerName, InstanceName);
+			int SqlServerPort = msock.DiscoverTcpPort ();
+			msock = null;
+			return SqlServerPort;
 		}
 
                 void SetConnectionString (string connectionString)
@@ -565,6 +611,67 @@ namespace System.Data.SqlClient {
 		{
 			if (StateChange != null)
 				StateChange (this, value);
+		}
+
+		private sealed class SqlMonitorSocket : UdpClient 
+		{
+			// UDP port that the SQL Monitor listens
+			private static readonly int SqlMonitorUdpPort = 1434;
+			private static readonly string SqlServerNotExist = "SQL Server does not exist or access denied";
+
+			private string server;
+			private string instance;
+
+			internal SqlMonitorSocket (string ServerName, string InstanceName) 
+				: base (ServerName, SqlMonitorUdpPort) 
+			{
+				server = ServerName;
+				instance = InstanceName;
+			}
+
+			internal int DiscoverTcpPort () 
+			{
+				int SqlServerTcpPort;
+				Client.Blocking = false;
+				// send command to UDP 1434 (SQL Monitor) to get
+				// the TCP port to connect to the MS SQL server		
+				ASCIIEncoding enc = new ASCIIEncoding ();
+				Byte[] rawrq = new Byte [instance.Length + 1];
+				rawrq[0] = 4;
+				enc.GetBytes (instance, 0, instance.Length, rawrq, 1);
+				int bytes = Send (rawrq, rawrq.Length);		
+
+				if (!Active)
+					return -1; // Error
+				
+				bool result;
+				result = Client.Poll (100, SelectMode.SelectRead);
+				if (result == false)
+					return -1; // Error
+
+				if (Client.Available <= 0)
+					return -1; // Error
+
+				IPEndPoint endpoint = new IPEndPoint (Dns.GetHostByName ("localhost").AddressList [0], 0);
+				Byte [] rawrs;
+
+				rawrs = Receive (ref endpoint);
+
+				string rs = Encoding.ASCII.GetString (rawrs);
+
+				string[] rawtokens = rs.Split (';');
+				Hashtable data = new Hashtable ();
+				for (int i = 0; i < rawtokens.Length / 2 && i < 256; i++) {
+					data [rawtokens [i * 2]] = rawtokens [ i * 2 + 1];
+				}
+				if (!data.ContainsKey ("tcp")) 
+					throw new NotImplementedException ("Only TCP/IP is supported.");
+
+				SqlServerTcpPort = int.Parse ((string) data ["tcp"]);
+				Close ();
+
+				return SqlServerTcpPort;
+			}
 		}
 
 		#endregion // Methods
