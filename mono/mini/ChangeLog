@@ -1,3 +1,7 @@
+2004-09-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_instrument_prolog): Fix tracing support.
+
 2004-09-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c (mono_find_jit_info): Refactor common code from
