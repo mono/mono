@@ -1,3 +1,8 @@
+2004-09-29  Sanjay Gupta <gsanjay@novell.com>
+
+	* System.Web.dll.sources: Added new classes in 
+	  System.Web.UI.WebControls.WebParts.
+
 2004-09-28  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Web.dll.sources: Added new classes in 
