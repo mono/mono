@@ -828,6 +828,57 @@ public class StringTest : TestCase
 		AssertEquals("First limited chunk", "", chunks[0]);
 		AssertEquals("Second limited chunk", "bcdefghijklm", chunks[1]);
 
+		string s3 = "1.0";
+		char[] c3 = {'.'};
+		chunks = s3.Split(c3,2);
+		AssertEquals("1.0 split length", 2, chunks.Length);
+		AssertEquals("1.0 split first chunk", "1", chunks[0]);
+		AssertEquals("1.0 split second chunk", "0", chunks[1]);
+
+		string s4 = "1.0.0";
+		char[] c4 = {'.'};
+		chunks = s4.Split(c4,2);
+		AssertEquals("1.0.0 split length", 2, chunks.Length);
+		AssertEquals("1.0.0 split first chunk", "1", chunks[0]);
+		AssertEquals("1.0.0 split second chunk", "0.0", chunks[1]);
+
+		string s5 = ".0.0";
+		char[] c5 = {'.'};
+		chunks = s5.Split (c5, 2);
+		AssertEquals(".0.0 split length", 2, chunks.Length);
+		AssertEquals(".0.0 split first chunk", "", chunks[0]);
+		AssertEquals(".0.0 split second chunk", "0.0", chunks[1]);
+
+		string s6 = ".0";
+		char[] c6 = {'.'};
+		chunks = s6.Split (c6, 2);
+		AssertEquals(".0 split length", 2, chunks.Length);
+		AssertEquals(".0 split first chunk", "", chunks[0]);
+		AssertEquals(".0 split second chunk", "0", chunks[1]);
+
+		string s7 = "0.";
+		char[] c7 = {'.'};
+		chunks = s7.Split (c7, 2);
+		AssertEquals("0. split length", 2, chunks.Length);
+		AssertEquals("0. split first chunk", "0", chunks[0]);
+		AssertEquals("0. split second chunk", "", chunks[1]);
+
+		string s8 = "0.0000";
+		char[] c8 = {'.'};
+		chunks = s8.Split (c8, 2);
+		AssertEquals("0.0000/2 split length", 2, chunks.Length);
+		AssertEquals("0.0000/2 split first chunk", "0", chunks[0]);
+		AssertEquals("0.0000/2 split second chunk", "0000", chunks[1]);
+
+		chunks = s8.Split (c8, 3);
+		AssertEquals("0.0000/3 split length", 2, chunks.Length);
+		AssertEquals("0.0000/3 split first chunk", "0", chunks[0]);
+		AssertEquals("0.0000/3 split second chunk", "0000", chunks[1]);
+
+		chunks = s8.Split (c8, 1);
+		AssertEquals("0.0000/1 split length", 1, chunks.Length);
+		AssertEquals("0.0000/1 split first chunk", "0.0000", chunks[0]);
+
 		chunks = s1.Split(c2, 1);
 		AssertEquals("Single split", 1, chunks.Length);
 		AssertEquals("Single chunk", s1, chunks[0]);
