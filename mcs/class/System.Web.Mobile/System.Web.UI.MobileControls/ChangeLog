@@ -1,6 +1,11 @@
 
 2003-01-18	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* Constants.cs           : Undocumented class. Reflection revealed.	
+	                           Implemented.
+
+2003-01-18	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* ArrayListCollectionBase.cs
 	                         : Implemented.
 
