@@ -1,3 +1,10 @@
+2002-06-23  Piers Haken <piersh@friskit.com>
+	
+	* XmlDocumentNavigator.cs: implement Clone()
+	* XmlElement.cs: remove bogus unimplemented override of InnerText
+	* XmlNode.cs: implment SelectNodes/SelectSingleNode
+	* XmlNodeArrayList.cs: new support class for SelectNodes
+
 2002-06-21  Ajay kumar Dwivedi <adwiv@yahoo.com>
 	
 	* XmlQualifiedName: Name and Namespaces are never null. If null is passed

@@ -1,0 +1,388 @@
+%{
+// XPath parser
+//
+// Author - Piers Haken <piersh@friskit.com>
+//
+
+// TODO: FUNCTION_CALL should be a QName, not just a NCName
+// TODO: PROCESSING_INSTRUCTION's optional parameter
+// TODO: flatten argument/predicate lists in place
+
+using System;
+
+namespace System.Xml.XPath
+{
+	public class XPathParser
+	{
+
+%}
+
+%token ERROR
+%token EOF
+
+%token SLASH
+%token SLASH2
+%token DOT
+%token DOT2
+%token COLON
+%token COLON2
+%token COMMA
+%token AT
+
+%token FUNCTION_NAME
+
+%token BRACKET_OPEN
+%token BRACKET_CLOSE
+%token PAREN_OPEN
+%token PAREN_CLOSE
+
+%token AND
+%token OR
+%token DIV
+%token MOD
+%token PLUS
+%token MINUS
+%token ASTERISK
+%token DOLLAR
+%token BAR
+%token EQ
+%token NE
+%token LE
+%token GE
+%token LT
+%token GT
+
+%token ANCESTOR
+%token ANCESTOR_OR_SELF
+%token ATTRIBUTE
+%token CHILD
+%token DESCENDANT
+%token DESCENDANT_OR_SELF
+%token FOLLOWING
+%token FOLLOWING_SIBLING
+%token NAMESPACE
+%token PARENT
+%token PRECEDING
+%token PRECEDING_SIBLING
+%token SELF
+
+%token COMMENT
+%token TEXT
+%token PROCESSING_INSTRUCTION
+%token NODE
+
+%token NUMBER
+%token LITERAL
+%token NCName
+
+
+%start Expr
+
+
+%left AND
+%left OR
+%left EQ
+%left NE
+%left LE
+%left GE
+%left LT
+%left GT
+
+%left DIV
+%left MOD
+%left PLUS
+%left MINUS
+
+%%
+
+
+Expr
+	: OrExpr
+	;
+	
+OrExpr
+	: AndExpr 
+	| OrExpr OR AndExpr
+	{
+		$$ = new ExprOR ((Expression) $1, (Expression) $3);
+	}
+	;
+
+AndExpr
+	: EqualityExpr 
+	| AndExpr AND EqualityExpr 
+	{
+		$$ = new ExprAND ((Expression) $1, (Expression) $3);
+	}
+	;
+
+EqualityExpr
+	: RelationalExpr 
+	| EqualityExpr EQ RelationalExpr 
+	{
+		$$ = new ExprEQ ((Expression) $1, (Expression) $3);
+	}
+	| EqualityExpr NE RelationalExpr 
+	{
+		$$ = new ExprNE ((Expression) $1, (Expression) $3);
+	}
+	;
+
+RelationalExpr
+	: AdditiveExpr 
+	| RelationalExpr LT AdditiveExpr 
+	{
+		$$ = new ExprLT ((Expression) $1, (Expression) $3);
+	}
+	| RelationalExpr GT AdditiveExpr 
+	{
+		$$ = new ExprGT ((Expression) $1, (Expression) $3);
+	}
+	| RelationalExpr LE AdditiveExpr 
+	{
+		$$ = new ExprLE ((Expression) $1, (Expression) $3);
+	}
+	| RelationalExpr GE AdditiveExpr 
+	{
+		$$ = new ExprGE ((Expression) $1, (Expression) $3);
+	}
+	;
+
+AdditiveExpr
+	: MultiplicativeExpr 
+	| AdditiveExpr PLUS MultiplicativeExpr
+	{
+		$$ = new ExprPLUS ((Expression) $1, (Expression) $3);
+	}
+	| AdditiveExpr MINUS MultiplicativeExpr
+	{
+		$$ = new ExprMINUS ((Expression) $1, (Expression) $3);
+	}
+	;
+
+MultiplicativeExpr
+	: UnaryExpr 
+	| MultiplicativeExpr ASTERISK UnaryExpr 
+	{
+		$$ = new ExprMULT ((Expression) $1, (Expression) $3);
+	}
+	| MultiplicativeExpr DIV UnaryExpr
+	{
+		$$ = new ExprDIV ((Expression) $1, (Expression) $3);
+	}
+	| MultiplicativeExpr MOD UnaryExpr
+	{
+		$$ = new ExprMOD ((Expression) $1, (Expression) $3);
+	}
+	;
+
+UnaryExpr
+	: UnionExpr 
+	| MINUS UnaryExpr 
+	{
+		$$ = new ExprNEG ((Expression) $2);
+	}
+	;
+
+UnionExpr
+	: PathExpr 
+	| UnionExpr BAR PathExpr
+	{
+		$$ = new ExprUNION ((NodeSet) $1, (NodeSet) $3);
+	}
+	;
+
+PathExpr
+	: RelativeLocationPath
+	| SLASH
+	{
+		$$ = new ExprRoot ();
+	}
+	| SLASH RelativeLocationPath
+	{
+		$$ = new ExprSLASH (new ExprRoot (), (NodeSet) $2);
+	}
+	| SLASH2 RelativeLocationPath 
+	{
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		$$ = new ExprSLASH (new ExprSLASH (new ExprRoot (), exprStep), (NodeSet) $2);
+	}
+	| FilterExpr 
+	| FilterExpr SLASH RelativeLocationPath
+	{
+		$$ = new ExprSLASH ((NodeSet) $1, (NodeSet) $3);
+	}
+	| FilterExpr SLASH2 RelativeLocationPath
+	{
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		$$ = new ExprSLASH (new ExprSLASH ((NodeSet) $1, exprStep), (NodeSet) $3);
+	}
+	;
+
+RelativeLocationPath
+	: Step
+	| RelativeLocationPath SLASH Step 
+	{
+		$$ = new ExprSLASH ((NodeSet) $1, (NodeSet) $3);
+	}
+	| RelativeLocationPath SLASH2 Step 
+	{
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		$$ = new ExprSLASH (new ExprSLASH ((NodeSet) $1, exprStep), (NodeSet) $3);
+	}
+	;
+
+Step
+	: AxisSpecifier QName ZeroOrMorePredicates
+	{
+		$$ = new ExprStep (new NodeNameTest ((Axes) $1, (QName) $2), (ExprPredicates) $3);
+	}
+	| AxisSpecifier ASTERISK ZeroOrMorePredicates
+	{
+		$$ = new ExprStep (new NodeTypeTest ((Axes) $1, NodeTestTypes.Principal), (ExprPredicates) $3);
+	}
+	| AxisSpecifier NCName COLON ASTERISK ZeroOrMorePredicates
+	{
+		$$ = new ExprStep (new NodeNameTestAny ((Axes) $1, (NCName) $2), (ExprPredicates) $5);
+	}
+	| AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE ZeroOrMorePredicates
+	{
+		$$ = new ExprStep (new NodeTypeTest ((Axes) $1, (NodeTestTypes) $2, (String) $4), (ExprPredicates) $6);
+	}
+	| DOT
+	{
+		$$ = new ExprStep (new NodeTypeTest (Axes.Self, NodeTestTypes.Node));
+	}
+	| DOT2
+	{
+		$$ = new ExprStep (new NodeTypeTest (Axes.Parent, NodeTestTypes.Node));
+	}
+	;
+
+AxisSpecifier
+	: /* empty */
+	{
+		$$ = Axes.Child;
+	}
+	| AT
+	{
+		$$ = Axes.Attribute;
+	}
+	| AxisName COLON2
+	{
+		$$ = $1;
+	}
+	;
+
+NodeType
+	: COMMENT					{ $$ = NodeTestTypes.Comment; }
+	| TEXT						{ $$ = NodeTestTypes.Text; }
+	| PROCESSING_INSTRUCTION	{ $$ = NodeTestTypes.ProcessingInstruction; }
+	| NODE						{ $$ = NodeTestTypes.Node; }
+	;
+
+
+FilterExpr
+	: PrimaryExpr 
+	| FilterExpr Predicate 
+	{
+		$$ = new ExprFilter ((Expression) $1, (Expression) $2);
+	}
+	;
+
+PrimaryExpr
+	: DOLLAR QName
+	{
+		$$ = new ExprVariable ((QName) $2);
+	} 
+	| PAREN_OPEN Expr PAREN_CLOSE
+	{
+		$$ = $2;
+	}
+	| LITERAL
+	{
+		$$ = new ExprLiteral ((String) $1);
+	}
+	| NUMBER
+	{
+		$$ = new ExprNumber ((double) $1);
+	}
+	| FunctionCall
+	;
+
+FunctionCall
+	: FUNCTION_NAME PAREN_OPEN OptionalArgumentList PAREN_CLOSE
+	{
+		$$ = new ExprFunctionCall ((String) $1, (FunctionArguments) $3);
+	}
+	;
+
+OptionalArgumentList
+	: /* empty */
+	| Expr OptionalArgumentListTail
+	{
+		$$ = new FunctionArguments ((Expression) $1, (FunctionArguments) $2);
+	}
+	;
+
+OptionalArgumentListTail
+	: /* empty */
+	| COMMA Expr OptionalArgumentListTail
+	{
+		$$ = new FunctionArguments ((Expression) $2, (FunctionArguments) $3);
+	}
+	;
+
+
+ZeroOrMorePredicates
+	: /* empty */
+	| Predicate ZeroOrMorePredicates
+	{
+		$$ = new ExprPredicates ((Expression) $1, (ExprPredicates) $2);
+	}
+	;
+
+Predicate
+	: BRACKET_OPEN Expr BRACKET_CLOSE
+	{
+		$$ = $2;
+	}
+	;
+
+AxisName
+	: ANCESTOR				{ $$ = Axes.Ancestor; }
+	| ANCESTOR_OR_SELF		{ $$ = Axes.AncestorOrSelf; }
+	| ATTRIBUTE				{ $$ = Axes.Attribute; }
+	| CHILD					{ $$ = Axes.Child; }
+	| DESCENDANT			{ $$ = Axes.Descendant; }
+	| DESCENDANT_OR_SELF	{ $$ = Axes.DescendantOrSelf; }
+	| FOLLOWING				{ $$ = Axes.Following; }
+	| FOLLOWING_SIBLING		{ $$ = Axes.FollowingSibling; }
+	| NAMESPACE				{ $$ = Axes.Namespace; }
+	| PARENT				{ $$ = Axes.Parent; }
+	| PRECEDING				{ $$ = Axes.Preceding; }
+	| PRECEDING_SIBLING		{ $$ = Axes.PrecedingSibling; }
+	| SELF					{ $$ = Axes.Self; }
+	;
+
+OptionalLiteral
+	: /* empty */
+	| LITERAL
+	{
+		$$ = $1;
+	}
+	;
+
+QName
+	: NCName
+	{
+		$$ = new NCName ((String) $1);
+	}
+	| NCName COLON NCName
+	{
+		$$ = new QName ((String) $1, (String) $3);
+	}
+	;
+
+%%
+	}

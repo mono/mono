@@ -91,6 +91,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\IHasXmlNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\IXmlLineInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -161,6 +166,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlConstructs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlConvert.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlDeclaration.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -187,6 +202,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlEntity.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -261,7 +281,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlNodeReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlNodeType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlNotation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -345,7 +375,36 @@
                     BuildAction = "None"
                 />
                 <File
+                    RelPath = "System.Xml.XPath\DefaultContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\Expression.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\Iterator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.XPath\IXPathNavigable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\Parser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\Parser.jay"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\Tokenizer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -361,6 +420,16 @@
                 />
                 <File
                     RelPath = "System.Xml.XPath\XmlSortOrder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

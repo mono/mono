@@ -13,6 +13,8 @@ namespace System.Xml.XPath
 {
 	public abstract class XPathNodeIterator : ICloneable
 	{
+		private int _count;
+
 		#region Constructor
 
 		protected XPathNodeIterator ()
@@ -23,10 +25,19 @@ namespace System.Xml.XPath
 
 		#region Properties
 
-		[MonoTODO]
-		public virtual int Count { 
-			get {
-				throw new NotImplementedException ();
+		public virtual int Count
+		{
+			get
+			{
+				if (_count == 0)
+				{
+					// compute and cache the count
+					XPathNodeIterator tmp = Clone ();
+					while (tmp.MoveNext ())
+						;
+					_count = tmp.CurrentPosition;
+				}
+				return _count;
 			}
 		}
 

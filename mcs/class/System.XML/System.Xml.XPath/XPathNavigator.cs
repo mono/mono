@@ -62,35 +62,38 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public virtual XPathExpression Compile (string xpath)
 		{
-			throw new NotImplementedException ();
+			Tokenizer tokenizer = new Tokenizer (xpath);
+			XPathParser parser = new XPathParser ();
+			Expression expr = (Expression) parser.yyparse (tokenizer);
+			return new CompiledExpression (expr);
 		}
 
-		[MonoTODO]
 		public virtual object Evaluate (string xpath)
 		{
-			throw new NotImplementedException ();
+			return Evaluate (Compile (xpath));
 		}
 
-		[MonoTODO]
 		public virtual object Evaluate (XPathExpression expr)
 		{
-			throw new NotImplementedException ();
+			return Evaluate (expr, null);
 		}
 
 		[MonoTODO]
 		public virtual object Evaluate (XPathExpression expr, XPathNodeIterator context)
 		{
-			throw new NotImplementedException ();
+			// TODO: check casts
+			if (context == null)
+				context = new SelfIterator (this, new DefaultContext ());
+			return ((CompiledExpression) expr).Evaluate ((BaseIterator) context);
 		}
 
 		public abstract string GetAttribute (string localName, string namespaceURI);
 
 		public abstract string GetNamespace (string name);
 		
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			return Clone ();
 		}
 
 		[MonoTODO]
@@ -104,7 +107,7 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public virtual bool Matches (string xpath)
 		{
-			throw new NotImplementedException ();
+			return Matches (Compile (xpath));
 		}
 
 		[MonoTODO]
@@ -123,10 +126,9 @@ namespace System.Xml.XPath
 
 		public abstract bool MoveToFirstChild ();
 
-		[MonoTODO]
 		public bool MoveToFirstNamespace ()
 		{
-			throw new NotImplementedException ();
+			return MoveToFirstNamespace (XPathNamespaceScope.All);
 		}
 
 		public abstract bool MoveToFirstNamespace (XPathNamespaceScope namespaceScope);
@@ -139,10 +141,9 @@ namespace System.Xml.XPath
 
 		public abstract bool MoveToNextAttribute ();
 
-		[MonoTODO]
 		public bool MoveToNextNamespace ()
 		{
-			throw new NotImplementedException ();
+			return MoveToNextNamespace (XPathNamespaceScope.All);
 		}
 
 		public abstract bool MoveToNextNamespace (XPathNamespaceScope namespaceScope);
@@ -153,16 +154,16 @@ namespace System.Xml.XPath
 
 		public abstract void MoveToRoot ();
 
-		[MonoTODO]
 		public virtual XPathNodeIterator Select (string xpath)
 		{
-			throw new NotImplementedException ();
+			return Select (Compile (xpath));
 		}
 
 		[MonoTODO]
 		public virtual XPathNodeIterator Select (XPathExpression expr)
 		{
-			throw new NotImplementedException ();
+			BaseIterator iter = new SelfIterator (this, new DefaultContext ());
+			return ((CompiledExpression) expr).EvaluateNodeSet (iter);
 		}
 
 		[MonoTODO]
@@ -201,10 +202,9 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return Value;
 		}
 
 		#endregion

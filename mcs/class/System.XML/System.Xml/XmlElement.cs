@@ -50,13 +50,6 @@ namespace System.Xml
 			get { return attributes.Count > 0; }
 		}
 
-		[MonoTODO]
-		public override string InnerText {
-			get { throw new NotImplementedException (); }
-			
-			set { throw new NotImplementedException (); }
-		}
-
 		[MonoTODO ("Setter.")]
 		public override string InnerXml {
 			get {

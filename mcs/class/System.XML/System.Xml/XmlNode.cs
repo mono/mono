@@ -323,28 +323,46 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlNodeList SelectNodes (string xpath)
 		{
-			throw new NotImplementedException ();
+			return SelectNodes (xpath, null);
 		}
 
 		[MonoTODO]
 		public XmlNodeList SelectNodes (string xpath, XmlNamespaceManager nsmgr)
 		{
-			throw new NotImplementedException ();
+			XPathNavigator nav = CreateNavigator ();
+			XPathExpression expr = nav.Compile (xpath);
+			if (nsmgr != null)
+				expr.SetContext (nsmgr);
+			XPathNodeIterator iter = nav.Select (expr);
+			if (!iter.MoveNext ())
+				return null;
+			ArrayList rgNodes = new ArrayList ();
+			do
+			{
+				rgNodes.Add (((XmlDocumentNavigator) iter.Current).Node);
+			}
+			while (iter.MoveNext ());
+			return new XmlNodeArrayList (rgNodes);
 		}
 
-		[MonoTODO]
 		public XmlNode SelectSingleNode (string xpath)
 		{
-			throw new NotImplementedException ();
+			return SelectSingleNode (xpath, null);
 		}
 
 		[MonoTODO]
 		public XmlNode SelectSingleNode (string xpath, XmlNamespaceManager nsmgr)
 		{
-			throw new NotImplementedException ();
+			XPathNavigator nav = CreateNavigator ();
+			XPathExpression expr = nav.Compile (xpath);
+			if (nsmgr != null)
+				expr.SetContext (nsmgr);
+			XPathNodeIterator iter = nav.Select (expr);
+			if (!iter.MoveNext ())
+				return null;
+			return ((XmlDocumentNavigator) iter.Current).Node;
 		}
 
 		internal void SetParentNode (XmlNode parent)

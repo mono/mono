@@ -168,10 +168,9 @@ namespace System.Xml
 
 		#region Methods
 
-		[MonoTODO]
 		public override XPathNavigator Clone ()
 		{
-			throw new NotImplementedException ();
+			return new XmlDocumentNavigator (node);
 		}
 
 		[MonoTODO]
@@ -304,6 +303,8 @@ namespace System.Xml
 			if (node.NodeType != XmlNodeType.Document)
 				node = node.OwnerDocument;
 		}
+
+		internal XmlNode Node { get { return node; } }
 
 		#endregion
 	}

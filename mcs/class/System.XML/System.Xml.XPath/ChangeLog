@@ -1,3 +1,22 @@
+2002-06-23  Piers Haken <piersh@friskit.com>
+
+	* XPathNavigator.cs: implement:
+		- Compile
+		- Evaluate
+		- Clone
+		- Select
+		- ToString
+		- some forwarding methods
+
+	* XPathNodeIterator: implement caching Count
+
+	* Tokenizer.cs: new XPath tokenizer
+	* Parser.jay: new XPath grammar
+	* Parser.cs: new precompiled XPath grammar
+	* Expression.cs: new XPath expression objects
+	* Iterator.cs: new XPath result/context objects
+	* DefaultContext.cs: new XPath function binding context
+
 2002-05-08  Tim Coleman <tim@timcoleman.com>
 	* XPathDocument.cs:
 	* XPathException.cs: New stub files added.

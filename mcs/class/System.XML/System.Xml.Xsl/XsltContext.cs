@@ -30,6 +30,7 @@ namespace System.Xml.Xsl
 		#region Properties
 
 		public abstract bool Whitespace { get; }
+		public abstract bool PreserveWhitespace (XPathNavigator nav);
 
 		#endregion
 
