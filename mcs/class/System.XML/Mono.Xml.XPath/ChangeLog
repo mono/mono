@@ -1,8 +1,9 @@
 2004-07-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathNavigator.cs :
-	  Fixed IsSamePosition(). currentAttr and currentNS are not always
-	  the same when current is attribute or current is namespace.
+	  Fixed IsSamePosition(). currentAttr is not always the same as
+	  that of other when current is not attribute. Ditto for currentNS
+	  (when current is not namespace).
 	* XPathNavigatorReader.cs : Fixed NodeType - 1) When attribute value is
 	  being consumed, then node type should be Text, and 2) Root node is
 	  usually mapped to Document, but XmlReader never returns Document,
