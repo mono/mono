@@ -68,14 +68,14 @@ namespace Npgsql
             return new MD5CryptoServiceProvider();
         }
 
-
+        /*
         // Commented out because it uses the CryptoConfig which can't be available in all
         // platforms.
         /// <summary>
         /// Creates a new derived implementation.
         /// </summary>
         /// <param name="hashName">Specifies which derived class to create</param>
-        /*public static new MD5 Create (string hashName)
+        public static new MD5 Create (string hashName)
         {
         	return (MD5) CryptoConfig.CreateFromName (hashName);
         }*/

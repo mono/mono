@@ -1,4 +1,28 @@
 
+
+2004-05-24
+    Npgsql 0.6 development release
+    
+    New Features:
+        
+        NpgsqlException now gives aceess to error collection through 
+        the Errors property. This property return a collection of NpgsqlErrors objects. Also it gives access 
+        to error message, hint, severity and code. This fixes the feature request 689 in gborg. Note the most of them are 
+        only available in 7.4+ server versions. (Glen Parker (glenebob at nwlink dot com) )
+        
+        NpgsqlException is now used exclusively to sign erros from backend interation. In past, it was being used to sign other
+        errors inside provider. This change gives more consistency to error handling logic. (Glen Parker (glenebob at nwlink dot com) )
+        
+    
+    Bug fixes:
+        
+        Using Command and Prepare adds single quotes to strings twice (ID: 772) (Glen Parker)
+        
+        
+        
+        
+
+
 2002-06-10
     Npgsql 0.2 development release.
     

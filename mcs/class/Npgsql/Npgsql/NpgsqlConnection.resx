@@ -118,6 +118,9 @@
 	<data name="Exception_ConnOpen">
 		<value>Connection already open</value>
 	</data>
+	<data name="Exception_ConnNotOpen">
+		<value>Connection is not open</value>
+	</data>
 	<data name="Exception_ConnStrEmpty">
 		<value>ConnectionString cannot be empty.</value>
 	</data>
@@ -132,6 +135,9 @@
 	</data>
 	<data name="Exception_WrongKeyVal">
 		<value>key=value argument incorrect in ConnectionString</value>
+	</data>
+	<data name="Exception_InvalidBooleanKeyVal">
+		<value>expecting key=[boolean] value in ConnectionString</value>
 	</data>
 	<data name="Exception_InvalidIntegerKeyVal">
 		<value>expecting key=[numeric] value in ConnectionString</value>

@@ -12,7 +12,7 @@ using System.Drawing.Design;
 using System.Windows.Forms.Design;
 
 namespace Npgsql.Design {
-	internal class ConnectionStringEditorForm : System.Windows.Forms.Form {
+	public class ConnectionStringEditorForm : System.Windows.Forms.Form {
 		private System.Windows.Forms.TabControl tc_main;
 		private System.Windows.Forms.TabPage tp_connection;
 		private System.Windows.Forms.Label lab_advise;
@@ -36,7 +36,6 @@ namespace Npgsql.Design {
 		private System.Windows.Forms.Button btn_refresh;
 		private System.Windows.Forms.Label lab_password;
 		private System.Resources.ResourceManager resman;
-
 		private Npgsql.NpgsqlConnection pgconn;
 
 		/// <summary>
@@ -44,22 +43,24 @@ namespace Npgsql.Design {
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		public ConnectionStringEditorForm() {
+		public ConnectionStringEditorForm()
+    : this("")
+    {}
+
+		public ConnectionStringEditorForm(String ConnectionString) {
 			InitializeComponent();
 			// Attention: The localization-issues don't only affect the surface but also affect some
 			// MessageBoxes which have to be localized too - look for resman!
 			resman = new System.Resources.ResourceManager(typeof(ConnectionStringEditorForm));
-		}
 
-		public ConnectionStringEditorForm(String ConnectionString) : this(){
 			this.pgconn.ConnectionString = ConnectionString;
-			this.tb_password.Text = this.pgconn.connection_string_values[this.pgconn.CONN_PASSWORD] == null ? String.Empty : this.pgconn.connection_string_values[this.pgconn.CONN_PASSWORD].ToString();
-			this.tb_port.Text = this.pgconn.connection_string_values[this.pgconn.CONN_PORT] == null ? String.Empty : this.pgconn.connection_string_values[this.pgconn.CONN_PORT].ToString();
-			this.tb_server.Text = this.pgconn.connection_string_values[this.pgconn.CONN_SERVER] == null ? String.Empty : this.pgconn.connection_string_values[this.pgconn.CONN_SERVER].ToString();
-			this.tb_username.Text = this.pgconn.connection_string_values[this.pgconn.CONN_USERID] == null ? String.Empty : this.pgconn.connection_string_values[this.pgconn.CONN_USERID].ToString();
+			this.tb_password.Text = this.pgconn.Password;
+			this.tb_port.Text = this.pgconn.ServerPort.ToString();
+			this.tb_server.Text = this.pgconn.ServerName;
+			this.tb_username.Text = this.pgconn.UserName;
 			this.tb_timeout.Text = this.pgconn.ConnectionTimeout.ToString();
-			if(this.pgconn.connection_string_values[this.pgconn.CONN_DATABASE] != null){
-				this.cb_select_db.Items.Add(this.pgconn.connection_string_values[this.pgconn.CONN_DATABASE].ToString());
+			if (this.pgconn.Database != "") {
+				this.cb_select_db.Items.Add(this.pgconn.Database);
 				this.cb_select_db.SelectedIndex = 0;
 			}
 		}
@@ -648,7 +649,6 @@ namespace Npgsql.Design {
 			this.AcceptButton = this.btn_ok;
 			this.AccessibleDescription = ((string)(resources.GetObject("$this.AccessibleDescription")));
 			this.AccessibleName = ((string)(resources.GetObject("$this.AccessibleName")));
-			this.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("$this.Anchor")));
 			this.AutoScaleBaseSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScaleBaseSize")));
 			this.AutoScroll = ((bool)(resources.GetObject("$this.AutoScroll")));
 			this.AutoScrollMargin = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMargin")));
@@ -661,7 +661,6 @@ namespace Npgsql.Design {
 																																	this.btn_cancel,
 																																	this.btn_ok,
 																																	this.tc_main});
-			this.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("$this.Dock")));
 			this.Enabled = ((bool)(resources.GetObject("$this.Enabled")));
 			this.Font = ((System.Drawing.Font)(resources.GetObject("$this.Font")));
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -677,7 +676,6 @@ namespace Npgsql.Design {
 			this.ShowInTaskbar = false;
 			this.StartPosition = ((System.Windows.Forms.FormStartPosition)(resources.GetObject("$this.StartPosition")));
 			this.Text = resources.GetString("$this.Text");
-			this.Visible = ((bool)(resources.GetObject("$this.Visible")));
 			this.tc_main.ResumeLayout(false);
 			this.tp_connection.ResumeLayout(false);
 			this.gb_add_parms.ResumeLayout(false);
@@ -728,9 +726,8 @@ namespace Npgsql.Design {
 					MessageBox.Show(this, resman.GetString("MsgboxText_NoUser"), resman.GetString("MsgboxTitle_Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return false;
 				}
-				if(this.tb_port.Text == String.Empty){
-					sw.Write("Port=5432;");
-				}else{
+				sw.Write("Server={0};", this.tb_server.Text);
+				if(this.tb_port.Text != String.Empty){
 					sw.Write("Port={0};", tb_port.Text);
 				}
 				// this happens if the user clicks Ok or Check Connection
@@ -763,7 +760,7 @@ namespace Npgsql.Design {
 					return false;
 				}
 
-				sw.Write("Server={0};User Id={1};Password={2};", this.tb_server.Text, this.tb_username.Text, this.tb_password.Text);
+				sw.Write("User Id={0};Password={1};", this.tb_username.Text, this.tb_password.Text);
 				this.pgconn.ConnectionString = sw.ToString();
 				this.pgconn.Open();
 				if(fillComboBox == true){

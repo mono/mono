@@ -65,22 +65,34 @@ namespace Npgsql
             _isClosed = false;
         }
 
-        private Boolean CanRead()
+        private Boolean HaveResultSet()
         {
-            //NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CanRead");
-            /*if (_currentResultset == null)
-            	return false;*/
-            return ((_currentResultset != null) &&
-                    (_currentResultset.Count > 0) &&
-                    (_rowIndex < _currentResultset.Count));
-
+            return (_currentResultset != null);
         }
 
-        private void CheckCanRead()
+        private Boolean HaveRow()
         {
-            if (!CanRead())
-                throw new InvalidOperationException("Cannot read data");
+            return (HaveResultSet() && _rowIndex >= 0 && _rowIndex < _currentResultset.Count);
         }
+
+        private void CheckHaveResultSet()
+        {
+            if (! HaveResultSet()) {
+                throw new InvalidOperationException("Cannot read data. No result set.");
+            }
+        }
+
+        private void CheckHaveRow()
+        {
+            CheckHaveResultSet();
+
+            if (_rowIndex < 0) {
+                throw new InvalidOperationException("DataReader positioned before beginning of result set. Did you call Read()?");
+            } else if (_rowIndex >= _currentResultset.Count) {
+                throw new InvalidOperationException("DataReader positioned beyond end of result set.");
+            }
+        }
+
 
         /// <summary>
         /// Releases the resources used by the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
@@ -135,8 +147,9 @@ namespace Npgsql
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "RecordsAffected");
 
-                if (CanRead())
+                if (HaveResultSet()) {
                     return -1;
+                }
 
                 String[] _returnStringTokens = ((String)_responses[_resultsetIndex]).Split(null);	// whitespace separator.
 
@@ -164,7 +177,7 @@ namespace Npgsql
         /// <summary>
         /// Advances the data reader to the next result, when multiple result sets were returned by the PostgreSQL backend.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the reader was advanced, otherwise false.</returns>
         public Boolean NextResult()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "NextResult");
@@ -184,17 +197,19 @@ namespace Npgsql
         /// <summary>
         /// Advances the data reader to the next row.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the reader was advanced, otherwise false.</returns>
         public Boolean Read()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Read");
 
-            _rowIndex++;
+            CheckHaveResultSet();
 
-            if (!CanRead())
+            if (_rowIndex < _currentResultset.Count) {
+                _rowIndex++;
+                return (_rowIndex < _currentResultset.Count);
+            } else {
                 return false;
-            else
-                return true;
+            }
         }
 
         /// <summary>
@@ -220,7 +235,7 @@ namespace Npgsql
 
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "FieldCount");
 
-                if (_currentResultset == null) //Executed a non return rows query.
+                if (! HaveResultSet()) //Executed a non return rows query.
                     return -1;
                 else
                     return _currentResultset.RowDescription.NumFields;
@@ -230,73 +245,90 @@ namespace Npgsql
 
         }
 
-        public String GetName(Int32 i)
+        /// <summary>
+        /// Return the column name of the column at index <param name="Index"></param>.
+        /// </summary>
+        public String GetName(Int32 Index)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetName");
 
-            if (_currentResultset == null)
+            if (! HaveResultSet())
                 return String.Empty;
             else
-                return _currentResultset.RowDescription[i].name;
+                return _currentResultset.RowDescription[Index].name;
         }
 
-        public String GetDataTypeName(Int32 i)
+        /// <summary>
+        /// Return the data type name of the column at index <param name="Index"></param>.
+        /// </summary>
+        public String GetDataTypeName(Int32 Index)
         {
             // FIXME: have a type name instead of the oid
-            if (_currentResultset == null)
+            if (! HaveResultSet())
                 return String.Empty;
             else
-                return (_currentResultset.RowDescription[i].type_oid).ToString();
+                return (_currentResultset.RowDescription[Index].type_oid).ToString();
         }
 
-        public Type GetFieldType(Int32 i)
+        /// <summary>
+        /// Return the data type of the column at index <param name="Index"></param>.
+        /// </summary>
+        public Type GetFieldType(Int32 Index)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFieldType");
 
 
-            if (_currentResultset == null)
+            if (! HaveResultSet())
                 return null;
             else
-                return NpgsqlTypesHelper.GetSystemTypeFromTypeOid(_connection.OidToNameMapping, _currentResultset.RowDescription[i].type_oid);
+                return NpgsqlTypesHelper.GetSystemTypeFromTypeOid(_connection.OidToNameMapping, _currentResultset.RowDescription[Index].type_oid);
         }
 
-        public Object GetValue(Int32 i)
+        /// <summary>
+        /// Return the value of the column at index <param name="Index"></param>.
+        /// </summary>
+        public Object GetValue(Int32 Index)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetValue");
 
-            CheckCanRead();
+            if (Index < 0 || Index >= _currentResultset.RowDescription.NumFields) {
+                throw new IndexOutOfRangeException("Column index out of range");
+            }
 
-            if (i < 0)
-                throw new IndexOutOfRangeException("Cannot read data. Column less than 0 specified.");
-            if (_rowIndex < 0)
-                throw new InvalidOperationException("Cannot read data. DataReader not initialized. Maybe you forgot to call Read()?");
-            return ((NpgsqlAsciiRow)_currentResultset[_rowIndex])[i];
+            CheckHaveRow();
 
-
+            return ((NpgsqlAsciiRow)_currentResultset[_rowIndex])[Index];
         }
 
-
-        public Int32 GetValues(Object[] values)
+        /// <summary>
+        /// Copy values from each column in the current row into <param name="Values"></param>.
+        /// </summary>
+        /// <returns>The number of column values copied.</returns>
+        public Int32 GetValues(Object[] Values)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetValues");
 
-            CheckCanRead();
+            CheckHaveRow();
 
             // Only the number of elements in the array are filled.
             // It's also possible to pass an array with more that FieldCount elements.
-            Int32 maxColumnIndex = (values.Length < FieldCount) ? values.Length : FieldCount;
+            Int32 maxColumnIndex = (Values.Length < FieldCount) ? Values.Length : FieldCount;
 
-            for (Int32 i = 0; i < maxColumnIndex; i++)
-                values[i] = GetValue(i);
+            for (Int32 i = 0; i < maxColumnIndex; i++) {
+                Values[i] = GetValue(i);
+            }
 
             return maxColumnIndex;
 
         }
 
-        public Int32 GetOrdinal(String name)
+        /// <summary>
+        /// Return the column name of the column named <param name="Name"></param>.
+        /// </summary>
+        public Int32 GetOrdinal(String Name)
         {
-            CheckCanRead();
-            return _currentResultset.RowDescription.FieldIndex(name);
+            CheckHaveResultSet();
+            return _currentResultset.RowDescription.FieldIndex(Name);
         }
 
         /// <summary>
@@ -323,22 +355,29 @@ namespace Npgsql
             }
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to a Boolean.
+        /// </summary>
         public Boolean GetBoolean(Int32 i)
         {
             // Should this be done using the GetValue directly and not by converting to String
             // and parsing from there?
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetBoolean");
 
-
-            return (Boolean) GetValue(i);
-
+            return Convert.ToBoolean(GetValue(i));
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to a Byte.  Not implemented.
+        /// </summary>
         public Byte GetByte(Int32 i)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets raw data from a column.
+        /// </summary>
         public Int64 GetBytes(Int32 i, Int64 fieldOffset, Byte[] buffer, Int32 bufferoffset, Int32 length)
         {
 
@@ -356,11 +395,17 @@ namespace Npgsql
 
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to a Char.  Not implemented.
+        /// </summary>
         public Char GetChar(Int32 i)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets raw data from a column.
+        /// </summary>
         public Int64 GetChars(Int32 i, Int64 fieldoffset, Char[] buffer, Int32 bufferoffset, Int32 length)
         {
             String		str;
@@ -373,83 +418,110 @@ namespace Npgsql
             return buffer.GetLength(0);
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to a Guid.  Not implemented.
+        /// </summary>
         public Guid GetGuid(Int32 i)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to Int16.
+        /// </summary>
         public Int16 GetInt16(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt16");
 
-            return (Int16) GetValue(i);
-
+            return Convert.ToInt16(GetValue(i));
         }
 
-
+        /// <summary>
+        /// Gets the value of a column converted to Int32.
+        /// </summary>
         public Int32 GetInt32(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt32");
 
-            return (Int32) GetValue(i);
-
+            return Convert.ToInt32(GetValue(i));
         }
 
-
+        /// <summary>
+        /// Gets the value of a column converted to Int64.
+        /// </summary>
         public Int64 GetInt64(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt64");
 
-            return (Int64) GetValue(i);
+            return Convert.ToInt64(GetValue(i));
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to Single.
+        /// </summary>
         public Single GetFloat(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFloat");
 
-            return (Single) GetValue(i);
+            return Convert.ToSingle(GetValue(i));
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to Double.
+        /// </summary>
         public Double GetDouble(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDouble");
 
-            return (Double) GetValue(i);
+            return Convert.ToDouble(GetValue(i));
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to a String.
+        /// </summary>
         public String GetString(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetString");
 
-            return (String) GetValue(i);
+            return Convert.ToString(GetValue(i));
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to Decimal.
+        /// </summary>
         public Decimal GetDecimal(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDecimal");
 
-            return (Decimal) GetValue(i);
+            return Convert.ToDecimal(GetValue(i));
         }
 
+        /// <summary>
+        /// Gets the value of a column converted to a DateTime.
+        /// </summary>
         public DateTime GetDateTime(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDateTime");
 
-            return (DateTime) GetValue(i);
+            return Convert.ToDateTime(GetValue(i));
         }
 
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
         public IDataReader GetData(Int32 i)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Report whether the value in a column is DBNull.
+        /// </summary>
         public Boolean IsDBNull(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsDBNull");
 
-            CheckCanRead();
-
-            return ((NpgsqlAsciiRow)_currentResultset[_rowIndex]).IsDBNull(i);
+            return (GetValue(i) == DBNull.Value);
         }
 
         private DataTable GetResultsetSchema()
@@ -525,8 +597,6 @@ namespace Npgsql
             return result;
 
         }
-
-
 
         IEnumerator IEnumerable.GetEnumerator ()
         {

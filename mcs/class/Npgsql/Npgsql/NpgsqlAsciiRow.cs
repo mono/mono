@@ -35,34 +35,26 @@ namespace Npgsql
 {
 
     /// <summary>
-    /// This class represents the AsciiRow message sent from PostgreSQL
-    /// server.
+    /// This class represents the AsciiRow (version 2) and DataRow (version 3+)
+    /// message sent from the PostgreSQL server.
     /// </summary>
-    ///
-    internal sealed class NpgsqlAsciiRow
+    internal sealed class NpgsqlAsciiRow : NpgsqlRow
     {
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlAsciiRow";
 
-        private ArrayList             data;
         private readonly Int16        READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
-        private NpgsqlRowDescription  row_desc;
         private Hashtable             oid_to_name_mapping;
-        private ProtocolVersion       protocol_version;
-
-
 
         public NpgsqlAsciiRow(NpgsqlRowDescription rowDesc, Hashtable oidToNameMapping, ProtocolVersion protocolVersion)
+        : base(rowDesc, protocolVersion)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
 
-            data = new ArrayList();
-            row_desc = rowDesc;
             oid_to_name_mapping = oidToNameMapping;
-            protocol_version = protocolVersion;
         }
 
-        public void ReadFromStream(Stream inputStream, Encoding encoding)
+        public override void ReadFromStream(Stream inputStream, Encoding encoding)
         {
             switch (protocol_version) {
             case ProtocolVersion.Version2 :
@@ -91,12 +83,9 @@ namespace Npgsql
             // Get the data.
             for (Int16 field_count = 0; field_count < row_desc.NumFields; field_count++)
             {
-
-                // Check if this field isn't null
+                // Check if this field is null
                 if (IsBackendNull(null_map_array, field_count))
                 {
-                    // Field is null just keep next field.
-
                     data.Add(DBNull.Value);
                     continue;
                 }
@@ -148,17 +137,15 @@ namespace Npgsql
             {
                 Int32 field_value_size = PGUtil.ReadInt32(inputStream, input_buffer);
 
+                // Check if this field is null
                 if (field_value_size == -1) // Null value
                 {
-                    // Field is null just keep next field.
-
                     data.Add(DBNull.Value);
                     continue;
-
                 }
-                Int32 bytes_left = field_value_size;
 
-                StringBuilder result = new StringBuilder();
+                Int32           bytes_left = field_value_size;
+                StringBuilder   result = new StringBuilder();
 
                 while (bytes_left > READ_BUFFER_SIZE)
                 {
@@ -191,44 +178,13 @@ namespace Npgsql
         // We only need to do this for version 2 protocol.
         private static Boolean IsBackendNull(Byte[] null_map_array, Int32 index)
         {
-
             // Get the byte that holds the bit index position.
             Byte test_byte = null_map_array[index/8];
 
             // Now, check if index bit is set.
-            // To this, get its position in the byte, shift to
+            // To do this, get its position in the byte, shift to
             // MSB and test it with the byte 10000000.
             return (((test_byte << (index%8)) & 0x80) == 0);
         }
-
-
-        public Boolean IsDBNull(Int32 index)
-        {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsDBNull", index);
-
-            // Check valid index range.
-            if ((index < 0) || (index >= row_desc.NumFields))
-                throw new IndexOutOfRangeException("index");
-
-            return (this.data[index] == DBNull.Value);
-        }
-
-        public Object this[Int32 index]
-        {
-            get
-            {
-
-                NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, index);
-
-                if ((index < 0) || (index >= row_desc.NumFields))
-                    throw new IndexOutOfRangeException("this[] index value");
-
-                return data[index];
-
-
-
-            }
-        }
     }
-
 }

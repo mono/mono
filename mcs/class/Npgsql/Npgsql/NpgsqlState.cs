@@ -110,15 +110,23 @@ namespace Npgsql
                 }
             }*/
 
-            context.Connector.InUse = false;
-            context.Connector = null;
+            // CHECKME!!!
+            // The close logic is pretty messed up I think.  Needs lots of work.
+/*
+            if (! context.Connector.Shared) {
+                if (context.Connector.Stream != null) {
+                    try {
+                        context.Connector.Stream.Close();
+                    } catch {}
+                }
+            }
+*/
             //ChangeState( context, NpgsqlClosedState.Instance );
         }
 
-        ///<summary> This method is used by the states to change the state of the context.
+        ///<summary>
+        ///This method is used by the states to change the state of the context.
         /// </summary>
-        ///
-
         protected virtual void ChangeState(NpgsqlConnection context, NpgsqlState newState)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ChangeState");
@@ -132,18 +140,25 @@ namespace Npgsql
         /// to handle backend requests.
         /// </summary>
         ///
-
         protected virtual void ProcessBackendResponses( NpgsqlConnection context )
         {
-            switch (context.BackendProtocolVersion) {
-            case ProtocolVersion.Version2 :
-                ProcessBackendResponses_Ver_2(context);
-                break;
+            // reset any responses just before getting new ones
+            context.Mediator.ResetResponses();
 
-            case ProtocolVersion.Version3 :
-                ProcessBackendResponses_Ver_3(context);
-                break;
+            try {
+                switch (context.BackendProtocolVersion) {
+                case ProtocolVersion.Version2 :
+                    ProcessBackendResponses_Ver_2(context);
+                    break;
 
+                case ProtocolVersion.Version3 :
+                    ProcessBackendResponses_Ver_3(context);
+                    break;
+
+                }
+            } finally {
+                // reset expectations right after getting new responses
+                context.Mediator.ResetExpectations();
             }
         }
 
@@ -152,19 +167,12 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ProcessBackendResponses");
 
             BufferedStream 	stream = new BufferedStream(context.Stream);
-            Int32	authType;
-            Boolean readyForQuery = false;
-
             NpgsqlMediator mediator = context.Mediator;
 
-            // Reset the mediator.
-            mediator.Reset();
+            // Often used buffer
+            Byte[] inputBuffer = new Byte[ 4 ];
 
-            Int16 rowDescNumFields = 0;
-            NpgsqlRowDescription rd = null;
-
-            Byte[] inputBuffer = new Byte[ 500 ];
-
+            Boolean readyForQuery = false;
 
             while (!readyForQuery)
             {
@@ -189,9 +197,9 @@ namespace Npgsql
                     // Possible error in the NpgsqlConnectedState:
                     //		No pg_hba.conf configured.
 
-                    if ((context.CurrentState == NpgsqlStartupState.Instance) ||
-                            (context.CurrentState == NpgsqlConnectedState.Instance))
+                    if (! mediator.RequireReadyForQuery) {
                         return;
+                    }
 
                     break;
 
@@ -200,130 +208,132 @@ namespace Npgsql
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "AuthenticationRequest");
 
-                    stream.Read(inputBuffer, 0, 4);
-
-                    authType = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(inputBuffer, 0));
-
-                    if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationOk )
                     {
+                        Int32 authType = PGUtil.ReadInt32(stream, inputBuffer);
+
+                        if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationOk )
+                        {
+                            NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
+
+                            break;
+                        }
+
+                        if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationClearTextPassword )
+                        {
+                            NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationClearTextRequest", LogLevel.Debug);
+
+                            // Send the PasswordPacket.
+
+                            ChangeState( context, NpgsqlStartupState.Instance );
+                            context.Authenticate(context.Password);
+
+                            break;
+                        }
+
+
+                        if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationMD5Password )
+                        {
+                            NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationMD5Request", LogLevel.Debug);
+                            // Now do the "MD5-Thing"
+                            // for this the Password has to be:
+                            // 1. md5-hashed with the username as salt
+                            // 2. md5-hashed again with the salt we get from the backend
+
+
+                            MD5 md5 = MD5.Create();
+
+
+                            // 1.
+                            byte[] passwd = context.Encoding.GetBytes(context.Password);
+                            byte[] saltUserName = context.Encoding.GetBytes(context.UserName);
+
+                            byte[] crypt_buf = new byte[passwd.Length + saltUserName.Length];
+
+                            passwd.CopyTo(crypt_buf, 0);
+                            saltUserName.CopyTo(crypt_buf, passwd.Length);
+
+
+
+                            StringBuilder sb = new StringBuilder ();
+                            byte[] hashResult = md5.ComputeHash(crypt_buf);
+                            foreach (byte b in hashResult)
+                            sb.Append (b.ToString ("x2"));
+
+
+                            String prehash = sb.ToString();
+
+                            byte[] prehashbytes = context.Encoding.GetBytes(prehash);
+
+
+
+                            byte[] saltServer = new byte[4];
+                            stream.Read(saltServer, 0, 4);
+                            // Send the PasswordPacket.
+                            ChangeState( context, NpgsqlStartupState.Instance );
+
+
+                            // 2.
+
+                            crypt_buf = new byte[prehashbytes.Length + saltServer.Length];
+                            prehashbytes.CopyTo(crypt_buf, 0);
+                            saltServer.CopyTo(crypt_buf, prehashbytes.Length);
+
+                            sb = new StringBuilder ("md5"); // This is needed as the backend expects md5 result starts with "md5"
+                            hashResult = md5.ComputeHash(crypt_buf);
+                            foreach (byte b in hashResult)
+                            sb.Append (b.ToString ("x2"));
+
+                            context.Authenticate(sb.ToString ());
+
+                            break;
+                        }
+
+                        // Only AuthenticationClearTextPassword and AuthenticationMD5Password supported for now.
                         NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
-
-                        break;
+                        mediator.Errors.Add(String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType));
                     }
 
-                    if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationClearTextPassword )
-                    {
-                        NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationClearTextRequest", LogLevel.Debug);
-
-                        // Send the PasswordPacket.
-
-                        ChangeState( context, NpgsqlStartupState.Instance );
-                        context.Authenticate(context.ServerPassword);
-
-                        break;
-                    }
-
-
-                    if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationMD5Password )
-                    {
-                        NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationMD5Request", LogLevel.Debug);
-                        // Now do the "MD5-Thing"
-                        // for this the Password has to be:
-                        // 1. md5-hashed with the username as salt
-                        // 2. md5-hashed again with the salt we get from the backend
-
-
-                        MD5 md5 = MD5.Create();
-
-
-                        // 1.
-                        byte[] passwd = context.Encoding.GetBytes(context.ServerPassword);
-                        byte[] saltUserName = context.Encoding.GetBytes(context.UserName);
-
-                        byte[] crypt_buf = new byte[passwd.Length + saltUserName.Length];
-
-                        passwd.CopyTo(crypt_buf, 0);
-                        saltUserName.CopyTo(crypt_buf, passwd.Length);
-
-
-
-                        StringBuilder sb = new StringBuilder ();
-                        byte[] hashResult = md5.ComputeHash(crypt_buf);
-                        foreach (byte b in hashResult)
-                        sb.Append (b.ToString ("x2"));
-
-
-                        String prehash = sb.ToString();
-
-                        byte[] prehashbytes = context.Encoding.GetBytes(prehash);
-
-
-
-                        byte[] saltServer = new byte[4];
-                        stream.Read(saltServer, 0, 4);
-                        // Send the PasswordPacket.
-                        ChangeState( context, NpgsqlStartupState.Instance );
-
-
-                        // 2.
-
-                        crypt_buf = new byte[prehashbytes.Length + saltServer.Length];
-                        prehashbytes.CopyTo(crypt_buf, 0);
-                        saltServer.CopyTo(crypt_buf, prehashbytes.Length);
-
-                        sb = new StringBuilder ("md5"); // This is needed as the backend expects md5 result starts with "md5"
-                        hashResult = md5.ComputeHash(crypt_buf);
-                        foreach (byte b in hashResult)
-                        sb.Append (b.ToString ("x2"));
-
-                        context.Authenticate(sb.ToString ());
-
-                        break;
-                    }
-
-                    // Only AuthenticationClearTextPassword and AuthenticationMD5Password supported for now.
-                    NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
-                    mediator.Errors.Add(String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType));
                     return;
 
                 case NpgsqlMessageTypes_Ver_2.RowDescription:
                     // This is the RowDescription message.
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "RowDescription");
-                    rd = new NpgsqlRowDescription(context.BackendProtocolVersion);
-                    rd.ReadFromStream(stream, context.Encoding);
 
-                    // Initialize the array list which will contain the data from this rowdescription.
-                    //rows = new ArrayList();
+                    {
+                        NpgsqlRowDescription rd = new NpgsqlRowDescription(context.BackendProtocolVersion);
+                        rd.ReadFromStream(stream, context.Encoding);
 
-                    rowDescNumFields = rd.NumFields;
-                    mediator.AddRowDescription(rd);
-
+                        // Initialize the array list which will contain the data from this rowdescription.
+                        mediator.AddRowDescription(rd);
+                    }
 
                     // Now wait for the AsciiRow messages.
                     break;
 
                 case NpgsqlMessageTypes_Ver_2.AsciiRow:
-
                     // This is the AsciiRow message.
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "AsciiRow");
-                    NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(rd, context.OidToNameMapping, context.BackendProtocolVersion);
-                    asciiRow.ReadFromStream(stream, context.Encoding);
 
+                    {
+                        NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(context.Mediator.LastRowDescription, context.OidToNameMapping, context.BackendProtocolVersion);
+                        asciiRow.ReadFromStream(stream, context.Encoding);
 
-                    // Add this row to the rows array.
-                    //rows.Add(ascii_row);
-                    mediator.AddAsciiRow(asciiRow);
+                        // Add this row to the rows array.
+                        mediator.AddAsciiRow(asciiRow);
+                    }
 
                     // Now wait for CompletedResponse message.
                     break;
 
                 case NpgsqlMessageTypes_Ver_2.BinaryRow:
-
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "BinaryRow");
-                    NpgsqlBinaryRow binaryRow = new NpgsqlBinaryRow(rd);
-                    binaryRow.ReadFromStream(stream, context.Encoding);
 
-                    mediator.AddBinaryRow(binaryRow);
+                    {
+                        NpgsqlBinaryRow binaryRow = new NpgsqlBinaryRow(context.Mediator.LastRowDescription);
+                        binaryRow.ReadFromStream(stream, context.Encoding);
+
+                        mediator.AddBinaryRow(binaryRow);
+                    }
 
                     break;
 
@@ -390,10 +400,6 @@ namespace Npgsql
 
                 case NpgsqlMessageTypes_Ver_2.EmptyQueryResponse :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "EmptyQueryResponse");
-                    // This is the EmptyQueryResponse.
-                    // [FIXME] Just ignore it this way?
-                    // networkStream.Read(inputBuffer, 0, 1);
-                    //GetStringFromNetStream(networkStream);
                     PGUtil.ReadString(stream, context.Encoding);
                     break;
 
@@ -401,9 +407,7 @@ namespace Npgsql
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "NotificationResponse");
 
-                    Byte[] input_buffer = new Byte[4];
-                    stream.Read(input_buffer, 0, 4);
-                    Int32 PID = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
+                    Int32 PID = PGUtil.ReadInt32(stream, inputBuffer);
                     String notificationResponse = PGUtil.ReadString( stream, context.Encoding );
                     mediator.AddNotification(new NpgsqlNotificationEventArgs(PID, notificationResponse));
 
@@ -428,21 +432,13 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ProcessBackendResponses");
 
             BufferedStream 	stream = new BufferedStream(context.Stream);
-            Int32	authType;
-            Boolean readyForQuery = false;
-
             NpgsqlMediator mediator = context.Mediator;
 
-            // Reset the mediator.
-            mediator.Reset();
+            // Often used buffers
+            Byte[] inputBuffer = new Byte[ 4 ];
+            String Str;
 
-            Int16 rowDescNumFields = 0;
-            NpgsqlRowDescription rd = null;
-            String Str; // for various strings
-            Byte[] Buff = new Byte[4]; // for various reads
-
-            Byte[] inputBuffer = new Byte[ 500 ];
-
+            Boolean readyForQuery = false;
 
             while (!readyForQuery)
             {
@@ -467,9 +463,9 @@ namespace Npgsql
                     // Possible error in the NpgsqlConnectedState:
                     //		No pg_hba.conf configured.
 
-                    if ((context.CurrentState == NpgsqlStartupState.Instance) ||
-                            (context.CurrentState == NpgsqlConnectedState.Instance))
+                    if (! mediator.RequireReadyForQuery) {
                         return;
+                    }
 
                     break;
 
@@ -478,120 +474,118 @@ namespace Npgsql
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "AuthenticationRequest");
 
-                    stream.Read(inputBuffer, 0, 4);
-                    stream.Read(inputBuffer, 0, 4);
+                    // Eat length
+                    PGUtil.ReadInt32(stream, inputBuffer);
 
-                    authType = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(inputBuffer, 0));
-
-                    if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationOk )
                     {
+                    Int32 authType = PGUtil.ReadInt32(stream, inputBuffer);
+
+                        if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationOk )
+                        {
+                            NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
+
+                            break;
+                        }
+
+                        if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationClearTextPassword )
+                        {
+                            NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationClearTextRequest", LogLevel.Debug);
+
+                            // Send the PasswordPacket.
+
+                            ChangeState( context, NpgsqlStartupState.Instance );
+                            context.Authenticate(context.Password);
+
+                            break;
+                        }
+
+
+                        if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationMD5Password )
+                        {
+                            NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationMD5Request", LogLevel.Debug);
+                            // Now do the "MD5-Thing"
+                            // for this the Password has to be:
+                            // 1. md5-hashed with the username as salt
+                            // 2. md5-hashed again with the salt we get from the backend
+
+
+                            MD5 md5 = MD5.Create();
+
+
+                            // 1.
+                            byte[] passwd = context.Encoding.GetBytes(context.Password);
+                            byte[] saltUserName = context.Encoding.GetBytes(context.UserName);
+
+                            byte[] crypt_buf = new byte[passwd.Length + saltUserName.Length];
+
+                            passwd.CopyTo(crypt_buf, 0);
+                            saltUserName.CopyTo(crypt_buf, passwd.Length);
+
+
+
+                            StringBuilder sb = new StringBuilder ();
+                            byte[] hashResult = md5.ComputeHash(crypt_buf);
+                            foreach (byte b in hashResult)
+                            sb.Append (b.ToString ("x2"));
+
+
+                            String prehash = sb.ToString();
+
+                            byte[] prehashbytes = context.Encoding.GetBytes(prehash);
+
+
+
+                            stream.Read(inputBuffer, 0, 4);
+                            // Send the PasswordPacket.
+                            ChangeState( context, NpgsqlStartupState.Instance );
+
+
+                            // 2.
+
+                            crypt_buf = new byte[prehashbytes.Length + 4];
+                            prehashbytes.CopyTo(crypt_buf, 0);
+                            inputBuffer.CopyTo(crypt_buf, prehashbytes.Length);
+
+                            sb = new StringBuilder ("md5"); // This is needed as the backend expects md5 result starts with "md5"
+                            hashResult = md5.ComputeHash(crypt_buf);
+                            foreach (byte b in hashResult)
+                            sb.Append (b.ToString ("x2"));
+
+                            context.Authenticate(sb.ToString ());
+
+                            break;
+                        }
+
+                        // Only AuthenticationClearTextPassword and AuthenticationMD5Password supported for now.
                         NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
-
-                        break;
+                        mediator.Errors.Add(String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType));
                     }
 
-                    if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationClearTextPassword )
-                    {
-                        NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationClearTextRequest", LogLevel.Debug);
-
-                        // Send the PasswordPacket.
-
-                        ChangeState( context, NpgsqlStartupState.Instance );
-                        context.Authenticate(context.ServerPassword);
-
-                        break;
-                    }
-
-
-                    if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationMD5Password )
-                    {
-                        NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationMD5Request", LogLevel.Debug);
-                        // Now do the "MD5-Thing"
-                        // for this the Password has to be:
-                        // 1. md5-hashed with the username as salt
-                        // 2. md5-hashed again with the salt we get from the backend
-
-
-                        MD5 md5 = MD5.Create();
-
-
-                        // 1.
-                        byte[] passwd = context.Encoding.GetBytes(context.ServerPassword);
-                        byte[] saltUserName = context.Encoding.GetBytes(context.UserName);
-
-                        byte[] crypt_buf = new byte[passwd.Length + saltUserName.Length];
-
-                        passwd.CopyTo(crypt_buf, 0);
-                        saltUserName.CopyTo(crypt_buf, passwd.Length);
-
-
-
-                        StringBuilder sb = new StringBuilder ();
-                        byte[] hashResult = md5.ComputeHash(crypt_buf);
-                        foreach (byte b in hashResult)
-                        sb.Append (b.ToString ("x2"));
-
-
-                        String prehash = sb.ToString();
-
-                        byte[] prehashbytes = context.Encoding.GetBytes(prehash);
-
-
-
-                        byte[] saltServer = Buff;
-                        stream.Read(saltServer, 0, 4);
-                        // Send the PasswordPacket.
-                        ChangeState( context, NpgsqlStartupState.Instance );
-
-
-                        // 2.
-
-                        crypt_buf = new byte[prehashbytes.Length + saltServer.Length];
-                        prehashbytes.CopyTo(crypt_buf, 0);
-                        saltServer.CopyTo(crypt_buf, prehashbytes.Length);
-
-                        sb = new StringBuilder ("md5"); // This is needed as the backend expects md5 result starts with "md5"
-                        hashResult = md5.ComputeHash(crypt_buf);
-                        foreach (byte b in hashResult)
-                        sb.Append (b.ToString ("x2"));
-
-                        context.Authenticate(sb.ToString ());
-
-                        break;
-                    }
-
-                    // Only AuthenticationClearTextPassword and AuthenticationMD5Password supported for now.
-                    NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
-                    mediator.Errors.Add(String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType));
                     return;
 
                 case NpgsqlMessageTypes_Ver_3.RowDescription:
                     // This is the RowDescription message.
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "RowDescription");
-                    rd = new NpgsqlRowDescription(context.BackendProtocolVersion);
-                    rd.ReadFromStream(stream, context.Encoding);
+                    {
+                        NpgsqlRowDescription rd = new NpgsqlRowDescription(context.BackendProtocolVersion);
+                        rd.ReadFromStream(stream, context.Encoding);
 
-                    // Initialize the array list which will contain the data from this rowdescription.
-                    //rows = new ArrayList();
-
-                    rowDescNumFields = rd.NumFields;
-                    mediator.AddRowDescription(rd);
-
+                        mediator.AddRowDescription(rd);
+                    }
 
                     // Now wait for the AsciiRow messages.
                     break;
 
                 case NpgsqlMessageTypes_Ver_3.DataRow:
-
                     // This is the AsciiRow message.
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "DataRow");
-                    NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(rd, context.OidToNameMapping, context.BackendProtocolVersion);
-                    asciiRow.ReadFromStream(stream, context.Encoding);
+                    {
+                        NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(context.Mediator.LastRowDescription, context.OidToNameMapping, context.BackendProtocolVersion);
+                        asciiRow.ReadFromStream(stream, context.Encoding);
 
-
-                    // Add this row to the rows array.
-                    //rows.Add(ascii_row);
-                    mediator.AddAsciiRow(asciiRow);
+                        // Add this row to the rows array.
+                        mediator.AddAsciiRow(asciiRow);
+                    }
 
                     // Now wait for CompletedResponse message.
                     break;
@@ -605,7 +599,7 @@ namespace Npgsql
                     //   T = In transaction, ready for more.
                     //   E = Error in transaction, queries will fail until transaction aborted.
                     // Just eat the status byte, we have no use for it at this time.
-                    PGUtil.ReadInt32(stream, Buff);
+                    PGUtil.ReadInt32(stream, inputBuffer);
                     PGUtil.ReadString(stream, context.Encoding, 1);
 
                     readyForQuery = true;
@@ -645,7 +639,7 @@ namespace Npgsql
                     // This is the CompletedResponse message.
                     // Get the string returned.
 
-                    PGUtil.ReadInt32(stream, Buff);
+                    PGUtil.ReadInt32(stream, inputBuffer);
                     Str = PGUtil.ReadString(stream, context.Encoding);
 
                     NpgsqlEventLog.LogMsg(resman, "Log_CompletedResponse", LogLevel.Debug, Str);
@@ -658,33 +652,30 @@ namespace Npgsql
                 case NpgsqlMessageTypes_Ver_3.ParseComplete :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "ParseComplete");
                     // Just read up the message length.
-                    PGUtil.ReadInt32(stream, Buff);
+                    PGUtil.ReadInt32(stream, inputBuffer);
                     readyForQuery = true;
                     break;
 
                 case NpgsqlMessageTypes_Ver_3.BindComplete :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "BindComplete");
                     // Just read up the message length.
-                    PGUtil.ReadInt32(stream, Buff);
+                    PGUtil.ReadInt32(stream, inputBuffer);
                     readyForQuery = true;
                     break;
 
                 case NpgsqlMessageTypes_Ver_3.EmptyQueryResponse :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "EmptyQueryResponse");
-                    // This is the EmptyQueryResponse.
-                    // [FIXME] Just ignore it this way?
-                    // networkStream.Read(inputBuffer, 0, 1);
-                    //GetStringFromNetStream(networkStream);
-                    PGUtil.ReadInt32(stream, Buff);
+                    PGUtil.ReadInt32(stream, inputBuffer);
                     break;
 
                 case NpgsqlMessageTypes_Ver_3.NotificationResponse  :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "NotificationResponse");
 
                     // Eat the length
-                    PGUtil.ReadInt32(stream, Buff);
+                    PGUtil.ReadInt32(stream, inputBuffer);
                     {
-                        Int32 PID = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(Buff, 0));
+                        // Process ID sending notification
+                        Int32 PID = PGUtil.ReadInt32(stream, inputBuffer);
                         // Notification string
                         String notificationResponse = PGUtil.ReadString( stream, context.Encoding );
                         // Additional info, currently not implemented by PG (empty string always), eat it

@@ -32,18 +32,14 @@ namespace Npgsql
 {
     /// <summary>
     /// !!! Helper class, for compilation only.
-    /// </summary>
-
-    /// <summary>
     /// Connector implements the logic for the Connection Objects to
     /// access the physical connection to the database, and isolate
     /// the application developer from connection pooling internals.
     /// </summary>
     internal class Connector
     {
-        /// <value>Buffer for the public Pooled property</value>
-        private Boolean _inUse;
-
+        // Used to obtain a current key for the non-shared pool.
+        private NpgsqlConnection connection;
 
         private Stream _stream;
 
@@ -52,46 +48,45 @@ namespace Npgsql
 
         private Encoding _encoding;
 
-
         private Boolean _isInitialized;
 
-        private Boolean mPooled;
-        private Boolean mOpen;
+        private Boolean             _shared;
 
-        /// <value>Chain references for implementing a double linked
-        /// list</value>
-        /// <remarks>!!! This is a quick hack in order to get things
-        /// going faster. A connector list should better be based on
-        /// System.Collections.DictionaryBase...</remarks>
-        internal Connector Next;
-        internal Connector Prev;
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="Shared">Controls whether the connector can be shared.</param>
+        public Connector(bool Shared)
+        {
+            _shared = Shared;
+            _isInitialized = false;
+        }
 
-        /// <value>Controls the pooling of the connector.</value>
-        /// <remarks>It this is reset, then the physical connection is
-        /// closed and the connector is <b>not</b> added to the
-        /// pooled connectors list upon Release(). Can only be cleared
-        /// if connector is not shared.</remarks>
-        internal bool Pooled
+        /// <summary>
+        /// The NpgsqlConnection using this connector.  This will always return
+        /// null for shared connectors.
+        /// </summary>
+        internal NpgsqlConnection Connection
         {
             get
             {
-                return this.mPooled;
+                return connection;
             }
             set
             {
-                if ( this.mShared && ! value)
-                    return;
-                this.mPooled = value;
+                connection = value;
             }
         }
 
+        /// <summary>
+        /// Version of backend server this connector is connected to.
+        /// </summary>
         internal ServerVersion ServerVersion
         {
             get
             {
                 return _serverVersion;
             }
-
             set
             {
                 _serverVersion = value;
@@ -104,26 +99,30 @@ namespace Npgsql
             {
                 return _encoding;
             }
-
             set
             {
                 _encoding = value;
             }
         }
 
+        /// <summary>
+        /// Backend protocol version in use by this connector.
+        /// </summary>
         internal ProtocolVersion BackendProtocolVersion
         {
             get
             {
                 return _backendProtocolVersion;
             }
-
             set
             {
                 _backendProtocolVersion = value;
             }
         }
 
+        /// <summary>
+        /// The physical connection stream to the backend.
+        /// </summary>
         internal Stream Stream {
             get
             {
@@ -132,38 +131,33 @@ namespace Npgsql
             set
             {
                 _stream = value;
-                _isInitialized = true;
             }
         }
 
+        /// <summary>
+        /// Reports if this connector is fully connected.
+        /// </summary>
         internal Boolean IsInitialized
         {
             get
             {
                 return _isInitialized;
             }
-
+            set
+            {
+                _isInitialized = value;
+            }
         }
 
 
-        /// <value>Buffer for the public Shared property</value>
-        private bool mShared;
-
-        /// <value>Controls the physical connection sharing.</value>
+        /// <value>Reports whether this connector can be shared.</value>
         /// <remarks>Set true if this connector is shared among multiple
-        /// connections. Can only be set if the connector is pooled
-        /// and not yet opened.</remarks>
+        /// connections.</remarks>
         internal bool Shared
         {
             get
             {
-                return this.mShared;
-            }
-            set
-            {
-                if ( ! this.mPooled && value && ! mOpen )
-                    return;
-                mShared = value;
+                return _shared;
             }
         }
 
@@ -171,29 +165,6 @@ namespace Npgsql
         /// this Connector. Used in Release() to decide wether this
         /// connector is to be moved to the PooledConnectors list.</value>
         internal int mShareCount;
-
-        /// <value>Provides physical access to the server</value>
-        // !!! to be fixed
-        //private Npgsql.Socket Socket;
-
-
-        /// <summary>
-        /// Default constructor. Creates a pooled Connector by default.
-        /// </summary>
-        public Connector()
-        {
-            Pooled = true;
-            _isInitialized = false;
-        }
-
-        /// <summary>
-        /// Construcor, initializes the Connector object.
-        /// </summary>
-        internal Connector( bool Shared )
-        {
-            Shared = Shared;
-            Pooled = true;
-        }
 
         /// <summary>
         /// Opens the physical connection to the server.
@@ -208,18 +179,19 @@ namespace Npgsql
         }
 
 
-        internal Boolean InUse {
-            get
-            {
-                return _inUse;
-            }
-            set
-            {
-                _inUse = value;
-            }
-
+        /// <summary>
+        /// Closes the physical connection to the server.
+        /// </summary>
+        internal void Close()
+        {
+            // HACK HACK
+            // There needs to be a cleaner way to close this thing...
+            try {
+                Stream.Close();
+            } catch {}
         }
 
+        /*
         /// <summary>
         /// Releases a connector back to the pool manager's garding. Or to the
         /// garbage collection.
@@ -228,7 +200,7 @@ namespace Npgsql
         /// evaluation inside this method, so they are left in their current state.
         ///	They get new meaning again when the connector is requested from the
         /// pool manager later. </remarks>
-        /*public void Release()
+        public void Release()
         {
             if ( this.mShared )
             {

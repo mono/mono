@@ -86,8 +86,6 @@ namespace Npgsql
             BufferedStream stream = new BufferedStream(context.Stream);
             parse.WriteToStream(stream, context.Encoding);
             stream.Flush();
-
-
         }
 
 

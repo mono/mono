@@ -32,10 +32,17 @@ namespace Npgsql
     /// </summary>
     public class NpgsqlNotificationEventArgs : EventArgs
     {
+        /// <summary>
+        /// Process ID of the PostgreSQL backend that sent this notification.
+        /// </summary>
         public Int32 PID = 0;
+
+        /// <summary>
+        /// Condition that triggered that notification.
+        /// </summary>
         public String Condition = null;
 
-        public NpgsqlNotificationEventArgs(Int32 nPID, String nCondition)
+        internal NpgsqlNotificationEventArgs(Int32 nPID, String nCondition)
         {
             PID = nPID;
             Condition = nCondition;

@@ -33,11 +33,6 @@ using Npgsql;
 using System.Resources;
 
 
-
-/// <summary>
-///	This class contains helper methods for type conversion between
-/// the .Net type system and postgresql.
-/// </summary>
 namespace NpgsqlTypes
 {
 
@@ -59,6 +54,10 @@ namespace NpgsqlTypes
     }*/
 
 
+    /// <summary>
+    ///	This class contains helper methods for type conversion between
+    /// the .Net type system and postgresql.
+    /// </summary>
     internal class NpgsqlTypesHelper
     {
 
@@ -185,6 +184,14 @@ namespace NpgsqlTypes
 
         }
 
+        private static string QuoteString(bool Quote, string S)
+        {
+            if (Quote) {
+                return string.Format("'{0}'", S);
+            } else {
+                return S;
+            }
+        }
 
         public static String ConvertNpgsqlParameterToBackendStringValue(NpgsqlParameter parameter, Boolean QuoteStrings)
         {
@@ -197,18 +204,16 @@ namespace NpgsqlTypes
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertNpgsqlParameterToBackendStringValue");
 
             if ((parameter.Value == DBNull.Value) || (parameter.Value == null))
-                return "Null";
+                return "NULL";
 
             switch(parameter.DbType)
             {
             case DbType.Binary:
-								if (QuoteStrings) {
-                    return "'" + ConvertByteArrayToBytea((Byte[])parameter.Value) + "'";
-                } else {
-                    return ConvertByteArrayToBytea((Byte[])parameter.Value);
-                }
+                return QuoteString(QuoteStrings, ConvertByteArrayToBytea((Byte[])parameter.Value));
 
             case DbType.Boolean:
+                return ((bool)parameter.Value) ? "TRUE" : "FALSE";
+
             case DbType.Int64:
             case DbType.Int32:
             case DbType.Int16:
@@ -216,28 +221,19 @@ namespace NpgsqlTypes
 
             case DbType.Single:
                 // To not have a value implicitly converted to float8, we add quotes.
-                if (QuoteStrings) {
-                    return "'" + ((Single)parameter.Value).ToString(NumberFormatInfo.InvariantInfo) + "'";
-                } else {
-                    return ((Single)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
-                }
+                return QuoteString(QuoteStrings, ((Single)parameter.Value).ToString(NumberFormatInfo.InvariantInfo));
 
             case DbType.Double:
                 return ((Double)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
 
             case DbType.Date:
-                if (QuoteStrings) {
-                    return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd") + "'";
-                } else {
-                    return ((DateTime)parameter.Value).ToString("yyyy-MM-dd");
-                }
+                return QuoteString(QuoteStrings, ((DateTime)parameter.Value).ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo));
+
+            case DbType.Time:
+                return QuoteString(QuoteStrings, ((DateTime)parameter.Value).ToString("HH:mm:ss.fff", DateTimeFormatInfo.InvariantInfo));
 
             case DbType.DateTime:
-                if (QuoteStrings) {
-                    return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
-                } else {
-                    return ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff");
-                }
+                return QuoteString(QuoteStrings, ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff", DateTimeFormatInfo.InvariantInfo));
 
             case DbType.Decimal:
                 return ((Decimal)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
@@ -245,23 +241,11 @@ namespace NpgsqlTypes
             case DbType.String:
             case DbType.AnsiString:
             case DbType.StringFixedLength:
-                if (QuoteStrings) {
-                    return "'" + parameter.Value.ToString().Replace("'", "\\'") + "'";
-                } else {
-                    return parameter.Value.ToString();
-								}
-
-            case DbType.Time:
-                if (QuoteStrings) {
-                    return "'" + ((DateTime)parameter.Value).ToString("HH:mm:ss.ffff") + "'";
-                } else {
-                    return ((DateTime)parameter.Value).ToString("HH:mm:ss.ffff");
-								}
+                return QuoteString(QuoteStrings, parameter.Value.ToString().Replace("'", "''"));
 
             default:
                 // This should not happen!
                 throw new InvalidCastException(String.Format(resman.GetString("Exception_TypeNotSupported"), parameter.DbType));
-
 
             }
 

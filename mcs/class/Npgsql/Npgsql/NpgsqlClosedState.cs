@@ -58,11 +58,11 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
             
-            TcpClient tcpc = new TcpClient(context.ServerName, Int32.Parse(context.ServerPort));
+            TcpClient tcpc = new TcpClient(context.ServerName, context.ServerPort);
             Stream stream = tcpc.GetStream();
             
             // If the PostgreSQL server has SSL connections enabled Open SslClientStream if (response == 'S') {
-            if (context.SSL == "yes")
+            if (context.SSL)
             {
                 PGUtil.WriteInt32(stream, 8);
                 PGUtil.WriteInt32(stream,80877103);
@@ -82,7 +82,7 @@ namespace Npgsql
                         Tls.SecurityProtocolType.Ssl3);*/
 
 
-                    ((SslClientStream)stream).ServerCertValidationDelegate = context.CertificateValidationCallback;
+                    ((SslClientStream)stream).ServerCertValidationDelegate = new CertificateValidationCallback(context.DefaultCertificateValidationCallback);
                     ((SslClientStream)stream).ClientCertSelectionDelegate = context.CertificateSelectionCallback;
                     ((SslClientStream)stream).PrivateKeyCertSelectionDelegate = context.PrivateKeySelectionCallback;
 
@@ -93,11 +93,9 @@ namespace Npgsql
 
             context.Connector.Stream = stream;
 
-
             NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.ServerName, context.ServerPort);
             ChangeState(context, NpgsqlConnectedState.Instance);
             context.Startup();
-
         }
 
     }

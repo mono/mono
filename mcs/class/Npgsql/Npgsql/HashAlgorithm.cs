@@ -107,19 +107,21 @@ namespace Npgsql
 
         // Commented out because it uses the CryptoConfig which can't be available in all platforms
 
+        /*
         /// <summary>
         /// Creates the default implementation of the default hash algorithm (SHA1).
         /// </summary>
-        /*public static HashAlgorithm Create ()
+        public static HashAlgorithm Create ()
         {
         	return Create ("System.Security.Cryptography.HashAlgorithm");
         }*/
 
+        /*
         /// <summary>
         /// Creates a specific implementation of the general hash idea.
         /// </summary>
         /// <param name="hashName">Specifies which derived class to create.</param>
-        /*public static HashAlgorithm Create (string hashName)
+        public static HashAlgorithm Create (string hashName)
         {
         	return (HashAlgorithm) CryptoConfig.CreateFromName (hashName);
         }*/
@@ -135,7 +137,7 @@ namespace Npgsql
             get
             {
                 if (HashValue == null)
-                    throw new InvalidOperationException("HashValue is null");
+                    throw new NullReferenceException("HashValue is null");
                 return HashValue;
             }
         }

@@ -36,9 +36,19 @@ namespace Npgsql
     /// exchanging data generated/sent from/to backend.
     /// </summary>
     ///
-
     internal sealed class NpgsqlMediator
     {
+        //
+        // Expectations that depend on context.
+        // Non-default values must be set before collecting responses.
+        //
+        // Some kinds of messages only get one response, and do not
+        // expect a ready_for_query response.
+        private bool                  _require_ready_for_query;
+
+        //
+        // Responses collected from the backend.
+        //
         private ArrayList							_errors;
         private ArrayList							_notices;
         private	ArrayList							_resultSets;
@@ -46,13 +56,13 @@ namespace Npgsql
         private ArrayList             _notifications;
         private ListDictionary        _parameters;
         private NpgsqlBackEndKeyData  _backend_key_data;
-
         private NpgsqlRowDescription	_rd;
         private ArrayList							_rows;
 
-
         public NpgsqlMediator()
         {
+            _require_ready_for_query = true;
+
             _errors = new ArrayList();
             _notices = new ArrayList();
             _resultSets = new ArrayList();
@@ -62,7 +72,12 @@ namespace Npgsql
             _backend_key_data = null;
         }
 
-        public void Reset()
+        public void ResetExpectations()
+        {
+            _require_ready_for_query = true;
+        }
+
+        public void ResetResponses()
         {
             _errors.Clear();
             _notices.Clear();
@@ -71,7 +86,31 @@ namespace Npgsql
             _notifications.Clear();
             _parameters.Clear();
             _backend_key_data = null;
-            _rd = null;
+        }
+
+
+
+
+        public Boolean RequireReadyForQuery
+        {
+            get
+            {
+                return _require_ready_for_query;
+            }
+            set
+            {
+                _require_ready_for_query = value;
+            }
+        }
+
+
+
+        public NpgsqlRowDescription LastRowDescription
+        {
+            get
+            {
+                return _rd;
+            }
         }
 
         public ArrayList ResultSets
@@ -169,9 +208,9 @@ namespace Npgsql
             _rows.Add(asciiRow);
         }
 
-        public void AddBinaryRow(NpgsqlBinaryRow asciiRow)
+        public void AddBinaryRow(NpgsqlBinaryRow binaryRow)
         {
-            _rows.Add(asciiRow);
+            _rows.Add(binaryRow);
         }
 
 

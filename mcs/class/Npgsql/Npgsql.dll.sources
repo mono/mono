@@ -32,6 +32,7 @@ Npgsql/NpgsqlPasswordPacket.cs
 Npgsql/NpgsqlQuery.cs
 Npgsql/NpgsqlReadyState.cs
 Npgsql/NpgsqlResultSet.cs
+Npgsql/NpgsqlRow.cs
 Npgsql/NpgsqlRowDescription.cs
 Npgsql/NpgsqlStartupPacket.cs
 Npgsql/NpgsqlStartupState.cs

@@ -59,6 +59,7 @@ namespace Npgsql
                                                   "");
 
             startupPacket.WriteToStream( new BufferedStream(context.Stream), context.Encoding );
+            context.Mediator.RequireReadyForQuery = false;
             ProcessBackendResponses( context );
         }
 

@@ -644,7 +644,7 @@
 		<value>1</value>
 	</data>
 	<data name="tb_port.Text">
-		<value>5432</value>
+		<value></value>
 	</data>
 	<data name="tb_port.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 		<value>Left</value>

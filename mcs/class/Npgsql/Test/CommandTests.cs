@@ -26,6 +26,7 @@ using Npgsql;
 using NUnit.Framework;
 using NUnit.Core;
 using System.Data;
+using System.Globalization;
 using NpgsqlTypes;
 
 namespace NpgsqlTests
@@ -35,14 +36,14 @@ namespace NpgsqlTests
 	public class CommandTests
 	{
 		private NpgsqlConnection 	_conn = null;
-		private String 						_connString = "Server=localhost;User ID=npgsql_tests;Password=npgsql_tests;Database=npgsql_tests;SSL=yes";
+		private String 						_connString = "Server=localhost;User ID=npgsql_tests;Password=npgsql_tests;Database=npgsql_tests;SSL=yes;maxpoolsize=2;";
 		
 		[SetUp]
 		protected void SetUp()
 		{
 			//NpgsqlEventLog.Level = LogLevel.None;
-			NpgsqlEventLog.Level = LogLevel.Debug;
-			NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
+			//NpgsqlEventLog.Level = LogLevel.Debug;
+			//NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
 			_conn = new NpgsqlConnection(_connString);
 		}
 		
@@ -90,7 +91,7 @@ namespace NpgsqlTests
 			
 		}
 		[Test]
-		[ExpectedException(typeof(NpgsqlException))]
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void NoNameParameterAdd()
 		{
 			NpgsqlCommand command = new NpgsqlCommand();
@@ -349,6 +350,15 @@ namespace NpgsqlTests
 			
 			Assertion.AssertEquals("2002-02-02 09:00:23Z", d.ToString("u"));
 			
+			DateTimeFormatInfo culture = new DateTimeFormatInfo();
+			culture.TimeSeparator = ":";
+			DateTime dt = System.DateTime.Parse("2004-06-04 09:48:00", culture);
+
+			command.CommandText = "insert into tableb(field_timestamp) values (:a);delete from tableb where field_serial > 4;";
+			command.Parameters.Add(new NpgsqlParameter("a", DbType.DateTime));
+			command.Parameters[0].Value = dt;
+			
+			command.ExecuteScalar();
 			
 		}
 		
@@ -773,6 +783,7 @@ namespace NpgsqlTests
             
             
         }
+        
         
         [Test]
         public void AmbiguousFunctionParameterType()

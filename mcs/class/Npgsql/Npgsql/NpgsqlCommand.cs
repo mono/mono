@@ -101,10 +101,11 @@ namespace Npgsql
             this.Transaction = transaction;
         }
 
+        /*
         /// <summary>
         /// Finalizer for <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
         /// </summary>
-        /*~NpgsqlCommand ()
+        ~NpgsqlCommand ()
         {
             Dispose(false);
         }*/
@@ -172,7 +173,6 @@ namespace Npgsql
                 type = value;
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "CommandType", value);
             }
-
         }
 
         IDbConnection IDbCommand.Connection {
@@ -281,14 +281,6 @@ namespace Npgsql
             }
         }
 
-        private void CheckNotification()
-        {
-            if (connection.Mediator.Notifications.Count > 0)
-                for (int i=0; i < connection.Mediator.Notifications.Count; i++)
-                    connection.Notify((NpgsqlNotificationEventArgs) connection.Mediator.Notifications[i]);
-
-        }
-
         /// <summary>
         /// Attempts to cancel the execution of a <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
         /// </summary>
@@ -331,26 +323,12 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteNonQuery");
 
-            // Check the connection state.
-            CheckConnectionState();
-
             ExecuteCommand();
 
-            // Check if there were any errors.
-            if (connection.Mediator.Errors.Count > 0)
-                throw new NpgsqlException(connection.Mediator.Errors);
-
-
-            CheckNotification();
-
-
-
-            // The only expected result is the CompletedResponse result.
             // If nothing is returned, just return -1.
-
-            if(connection.Mediator.CompletedResponses.Count == 0)
+            if(connection.Mediator.CompletedResponses.Count == 0) {
                 return -1;
-
+            }
 
             // Check if the response is available.
             String firstCompletedResponse = (String)connection.Mediator.CompletedResponses[0];
@@ -375,7 +353,6 @@ namespace Npgsql
                 return Int32.Parse(ret_string_tokens[ret_string_tokens.Length - 1]);
             else
                 return -1;
-
         }
 
         /// <summary>
@@ -404,7 +381,6 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IDbCommand.ExecuteReader", cb);
 
             return (NpgsqlDataReader) ExecuteReader(cb);
-
         }
 
         /// <summary>
@@ -417,9 +393,7 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteReader");
 
-
             return ExecuteReader(CommandBehavior.Default);
-
         }
 
         /// <summary>
@@ -437,24 +411,11 @@ namespace Npgsql
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteReader", cb);
 
-            // Check the connection state.
-            CheckConnectionState();
-
-
             ExecuteCommand();
-
-            // Check if there were any errors.
-            if (connection.Mediator.Errors.Count > 0)
-                throw new NpgsqlException(connection.Mediator.Errors);
-
-
-            CheckNotification();
-
 
             // Get the resultsets and create a Datareader with them.
             return new NpgsqlDataReader(connection.Mediator.ResultSets, connection.Mediator.CompletedResponses, connection, cb);
         }
-
 
         ///<summary>
         /// This method binds the parameters from parameters collection to the bind
@@ -475,10 +436,11 @@ namespace Npgsql
             }
 
             connection.Bind(bind);
+            connection.Mediator.RequireReadyForQuery = false;
             connection.Flush();
 
+            connection.CheckErrorsAndNotifications();
         }
-
 
         /// <summary>
         /// Executes the query, and returns the first column of the first row
@@ -489,10 +451,6 @@ namespace Npgsql
         public Object ExecuteScalar()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteScalar");
-
-
-            // Check the connection state.
-            CheckConnectionState();
 
             /*if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
               if (parse == null)
@@ -508,21 +466,11 @@ namespace Npgsql
 
             ExecuteCommand();
 
-            // Check if there were any errors.
-            // [FIXME] Just check the first error.
-            if (connection.Mediator.Errors.Count > 0)
-                throw new NpgsqlException(connection.Mediator.Errors);
-
-
-
-            CheckNotification();
-
             // Now get the results.
             // Only the first column of the first row must be returned.
 
             // Get ResultSets.
             ArrayList resultSets = connection.Mediator.ResultSets;
-
 
             // First data is the RowDescription object.
             // Check all resultsets as insert commands could have been sent along
@@ -540,10 +488,7 @@ namespace Npgsql
                 }
             }
 
-
             return null;
-
-
         }
 
         /// <summary>
@@ -556,8 +501,9 @@ namespace Npgsql
             // Check the connection state.
             CheckConnectionState();
 
-            if (!connection.SupportsPrepare)
+            if (! connection.SupportsPrepare) {
                 return;	// Do nothing.
+            }
 
             if (connection.BackendProtocolVersion == ProtocolVersion.Version2)
             {
@@ -573,17 +519,21 @@ namespace Npgsql
                 parse = new NpgsqlParse(planName, GetParseCommandText(), new Int32[] {});
 
                 connection.Parse(parse);
+                connection.Mediator.RequireReadyForQuery = false;
                 connection.Flush();
 
-                bind = new NpgsqlBind(portalName, planName, new Int16[] {0}, null, new Int16[] {0});
+                // Check for errors and/or notifications and do the Right Thing.
+                connection.CheckErrorsAndNotifications();
 
+                bind = new NpgsqlBind(portalName, planName, new Int16[] {0}, null, new Int16[] {0});
             }
         }
 
+        /*
         /// <summary>
         /// Releases the resources used by the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
         /// </summary>
-        /*protected override void Dispose (bool disposing)
+        protected override void Dispose (bool disposing)
         {
             
             if (disposing)
@@ -631,8 +581,6 @@ namespace Npgsql
                 return GetClearCommandText();
             else
                 return GetPreparedCommandText();
-
-
         }
 
 
@@ -833,17 +781,27 @@ namespace Npgsql
 
         private void ExecuteCommand()
         {
-            //if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
-            if (parse == null)
+            // Check the connection state first.
+            CheckConnectionState();
+
+            if (parse == null) {
                 connection.Query(this);
-            else
-            {
+
+                // Check for errors and/or notifications and do the Right Thing.
+                connection.CheckErrorsAndNotifications();
+            } else {
                 BindParameters();
+
+                // Check for errors and/or notifications and do the Right Thing.
+                connection.CheckErrorsAndNotifications();
+
                 connection.Execute(new NpgsqlExecute(bind.PortalName, 0));
+
+                // Check for errors and/or notifications and do the Right Thing.
+                connection.CheckErrorsAndNotifications();
             }
             /*	else
             		throw new NotImplementedException(resman.GetString("Exception_CommandTypeTableDirect"));*/
-
         }
 
 

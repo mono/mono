@@ -35,28 +35,21 @@ namespace Npgsql
 {
 
     /// <summary>
-    /// This class represents the BinaryRow message sent from PostgreSQL
+    /// This class represents the BinaryRow message sent from  the PostgreSQL
     /// server.  This is unused as of protocol version 3.
     /// </summary>
-    ///
-    internal sealed class NpgsqlBinaryRow
+    internal sealed class NpgsqlBinaryRow : NpgsqlRow
     {
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlBinaryRow";
 
-        private ArrayList                  data;
-        private NpgsqlRowDescription       row_desc;
-
         public NpgsqlBinaryRow(NpgsqlRowDescription rowDesc)
+        : base(rowDesc, ProtocolVersion.Version2)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
-
-            data = new ArrayList();
-            row_desc = rowDesc;
         }
 
-
-        public void ReadFromStream(Stream inputStream, Encoding encoding)
+        public override void ReadFromStream(Stream inputStream, Encoding encoding)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream");
 
@@ -74,11 +67,9 @@ namespace Npgsql
             for (Int16 field_count = 0; field_count < row_desc.NumFields; field_count++)
             {
 
-                // Check if this field isn't null
+                // Check if this field is null
                 if (IsBackendNull(null_map_array, field_count))
                 {
-                    // Field is null just keep next field.
-
                     data.Add(DBNull.Value);
                     continue;
                 }
@@ -93,15 +84,12 @@ namespace Npgsql
 
                 input_buffer = new Byte[bytes_left];
 
-
                 // Now, read just the field value.
                 PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, bytes_left);
 
                 // Add them to the BinaryRow data.
                 data.Add(input_buffer);
-
             }
-
         }
 
         // Using the given null field map (provided by the backend),
@@ -113,35 +101,9 @@ namespace Npgsql
             Byte test_byte = null_map_array[index/8];
 
             // Now, check if index bit is set.
-            // To this, get its position in the byte, shift to
+            // To do this, get its position in the byte, shift to
             // MSB and test it with the byte 10000000.
             return (((test_byte << (index%8)) & 0x80) == 0);
-        }
-
-
-        public Boolean IsDBNull(Int32 index)
-        {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsDBNull", index);
-
-            // Check valid index range.
-            if ((index < 0) || (index >= row_desc.NumFields))
-                throw new IndexOutOfRangeException("index");
-
-            return (this.data[index] == DBNull.Value);
-        }
-
-        public Object this[Int32 index]
-        {
-            get
-            {
-                NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, index);
-                if ((index < 0) || (index >= row_desc.NumFields))
-                    throw new IndexOutOfRangeException("this[] index value");
-                return data[index];
-
-
-
-            }
         }
     }
 
