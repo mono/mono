@@ -33,7 +33,7 @@ public class BmpPaint {
 		Console.WriteLine("Bitmap stored to " + filename);
 	}
 	
-	static public void PaintOnBitmap (string filename) 
+	static public void PaintOnBitmap (string filename, string newname) 
 	{
 		Bitmap	bmp = new Bitmap(filename);
 		Console.WriteLine("Bitmap readed OK {0}", bmp != null);
@@ -48,19 +48,19 @@ public class BmpPaint {
 			gr.DrawRectangle(p, 20.0F, 20.0F, 60.0F, 60.0F);
 			p.Dispose();
 		}
-		bmp.Save(filename);
+		bmp.Save(newname);
 		gr.Dispose();
 		bmp.Dispose();
-		Console.WriteLine("Modified Bitmap stored to " + filename);
+		Console.WriteLine("Modified Bitmap stored to " + newname);
 	}
 	
 	static public void Main( string[] args) 
 	{
 		CreateBitmap ("file.bmp", ImageFormat.Bmp);
-		PaintOnBitmap ("file.bmp");
+		PaintOnBitmap ("file.bmp", "file-painted.bmp");
 		CreateBitmap ("file.jpg", ImageFormat.Jpeg);
-		PaintOnBitmap ("file.jpg");
+		PaintOnBitmap ("file.jpg", "file-painted.jpg");
 		CreateBitmap ("file.png", ImageFormat.Png);
-		PaintOnBitmap ("file.png");
+		PaintOnBitmap ("file.png", "file-painted.png");
 	}
 };

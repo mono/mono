@@ -1,3 +1,9 @@
+2004-01-16  Ravindra <rkumar@novell.com>
+	* BmpPaint.cs   did not run on .NET.
+	Modified to make it run on .NET. Specs say
+	"Do not save an image to the same stream
+	that was used to construct the image."
+
 2003-07-30  Alexandre Pigolkine <pigolkine@gmx.de>
 	* BmpPaint.cs 	modified
 
