@@ -374,10 +374,18 @@ namespace System.Xml.Serialization {
 			WriteElementStringRaw (localName, String.Empty, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, string ns, byte[] value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+                        if (value == null)
+			  return ;
+			WriteStartElement (localName, ns);
+
+			if (xsiType != null)
+				WriteXsiType (xsiType.Name, xsiType.Namespace);
+
+			if (value.Length > 0) 
+				Writer.WriteBase64(value,0,value.Length);
+			WriteEndElement ();
 		}
 
 		protected void WriteElementStringRaw (string localName, string ns, string value, XmlQualifiedName xsiType)

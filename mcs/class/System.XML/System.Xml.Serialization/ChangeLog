@@ -1,4 +1,9 @@
 2004-03-13  David Sheldon <dave-mono@earth.li>
+
+  * XmlSerializationWriter.cs: Implement WriteElementStringRaw with a
+   byte [].
+
+2004-03-13  David Sheldon <dave-mono@earth.li>
  
   * XmlTextAttribute.cs: Initialise dataType with zero-length string. 
    fixes test case that tests for this directly.
