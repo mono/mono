@@ -17,6 +17,7 @@ using System.IO;
 using System.Net;
 using System.Web.Services.Description;
 using System.Web.Services.Discovery;
+using System.Reflection;
 
 using Microsoft.CSharp;
 
@@ -268,6 +269,9 @@ namespace Mono.WebServices
 			+ "                                url for the generated WS proxy.\n"
 			+ "   -baseurl, -appsettingbaseurl:url Base url to use when constructing the\n"
 			+ "                                service url.\n"
+			+ "   -type:typename,assembly      Generate a proxy for a compiled web service\n"
+			+ "                                class. The URL parameter can be used to provide\n"
+			+ "                                the location of the service.\n"
 			+ "   -sample:[binding/]operation  Display a sample SOAP request and response.\n"
 			+ "   -?                           Display this message\n"
 			+ "\n"
@@ -292,6 +296,7 @@ namespace Mono.WebServices
 		string domain;
 		
 		string url;
+		string className;
 
 		///
 		/// <summary>
@@ -419,7 +424,12 @@ namespace Mono.WebServices
 				case "sample":
 					sampleSoap = value;
 					break;
-
+					
+				case "type":
+				case "t":
+					className = value;
+					break;
+					
 				case "?":
 				    help = true;
 				    break;
@@ -431,7 +441,7 @@ namespace Mono.WebServices
 						break;
 					}
 					else
-					    throw new Exception("Unknown option " + option);
+					    throw new Exception("Unknown option '" + option + "'");
 			}
 		}
 		
@@ -500,30 +510,51 @@ namespace Mono.WebServices
 				if (noLogo == false)
 					Console.WriteLine(ProductId);
 				
-				if (help || !hasURL)
+				if (help || (!hasURL && className == null))
 				{
 					Console.WriteLine(UsageMessage);
 					return 0;
 				}
 				
-				DiscoveryClientProtocol dcc = CreateClient ();
-								
-				if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
-					url = "file://" + Path.GetFullPath (url);
-					
-				dcc.DiscoverAny (url);
-				dcc.ResolveAll ();
-				
-				foreach (object doc in dcc.Documents.Values)
+				if (className == null)
 				{
-					if (doc is ServiceDescription)
-						descriptions.Add ((ServiceDescription)doc);
-					else if (doc is XmlSchema)
-						schemas.Add ((XmlSchema)doc);
+					DiscoveryClientProtocol dcc = CreateClient ();
+									
+					if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
+						url = "file://" + Path.GetFullPath (url);
+						
+					dcc.DiscoverAny (url);
+					dcc.ResolveAll ();
+					
+					foreach (object doc in dcc.Documents.Values)
+					{
+						if (doc is ServiceDescription)
+							descriptions.Add ((ServiceDescription)doc);
+						else if (doc is XmlSchema)
+							schemas.Add ((XmlSchema)doc);
+					}
+					
+					if (descriptions.Count == 0)
+						throw new Exception ("No WSDL document was found at the url " + url);
 				}
-				
-				if (descriptions.Count == 0)
-					throw new Exception ("No WSDL document was found at the url " + url);
+				else
+				{
+					string[] names = className.Split (',');
+					if (names.Length != 2) throw new Exception ("Invalid parameter value for 'type'");
+					string cls = names[0].Trim ();
+					string assembly = names[1].Trim ();
+					
+					Assembly asm = Assembly.LoadFrom (assembly);
+					Type t = asm.GetType (cls);
+					if (t == null) throw new Exception ("Type '" + cls + "' not found in assembly " + assembly);
+					ServiceDescriptionReflector reflector = new ServiceDescriptionReflector ();
+					reflector.Reflect (t, url);
+					foreach (XmlSchema s in reflector.Schemas)
+						schemas.Add (s);
+						
+					foreach (ServiceDescription sd in reflector.ServiceDescriptions)
+						descriptions.Add (sd);
+				}
 				
 				if (sampleSoap != null)
 				{

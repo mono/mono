@@ -1,3 +1,8 @@
+2004-11-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs: Added new option for generating a proxy for a compiled
+	  web service class.
+
 2004-09-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoWSDL.cs, MonoWSDL2.cs: Use a valid default file name when the wsdl
