@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Reflection;
 
 class I {
 
@@ -40,14 +41,19 @@ class X {
 		Console.WriteLine ("Answer is : " + result);
 	}
 
+	static bool MyFilter (MemberInfo mi, object criteria)
+	{
+		Console.WriteLine ("You passed in : " + criteria);
+		return true;
+	}
 	
 	public static int Main ()
 	{
 		I.GetTextFn _ = I.GetText;
 
-		X t = new X ();
+		X x = new X ();
 
-		Thread thr = new Thread (new ThreadStart (t.Thread_func));
+		Thread thr = new Thread (new ThreadStart (x.Thread_func));
 
 		thr.Start ();
 		Console.WriteLine ("Inside main ");
@@ -55,8 +61,18 @@ class X {
 
 		Console.WriteLine (_("Hello"));
 
-		t.Bar ();
+		x.Bar ();
 
+		MemberFilter filter = new MemberFilter (MyFilter);
+
+		Type t = x.GetType ();
+
+		MemberInfo [] mi = t.FindMembers (MemberTypes.Method, BindingFlags.Static | BindingFlags.NonPublic,
+						  Type.FilterName, "MyFilter");
+
+		if (!filter (mi [0], "MyFilter"))
+			return 1;
+		
 		Console.WriteLine ("Test passes");
 
 		return 0;

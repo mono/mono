@@ -8,8 +8,12 @@ public class Button {
 
         public void OnClick (int i, int j)
   	{
-  		if (Click != null)
-  			Click (i, j);
+  		if (Click == null) {
+			Console.WriteLine ("Nothing to click!");
+			return;
+		}
+
+		Click (i, j);
  	}
 
 	public void Reset ()
@@ -36,7 +40,7 @@ public class Blah {
 	public void Disconnect ()
 	{
 		Console.WriteLine ("Disconnecting ...");
-		//    Button1.Click -= new EventHandler (Button1_Click);
+		Button1.Click -= new EventHandler (Button1_Click);
 	}
 
 	public static int Main ()
@@ -47,7 +51,10 @@ public class Blah {
 
 		b.Button1.OnClick (2, 3);
 
-		b.OnClick ();
+		b.Disconnect ();
+
+		Console.WriteLine ("Now calling OnClick again");
+		b.Button1.OnClick (3, 7);
 
 		Console.WriteLine ("Events test passes");
 		return 0;

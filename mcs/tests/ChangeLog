@@ -1,3 +1,11 @@
+2001-12-24  Ravi Pratap  <ravi@ximian.com>
+
+	* test-19.cs : Augment to exercise tests on delegates
+	defined in mscorlib.
+
+	* test-57.cs : Update to exercise the -= operator
+	as well.
+	
 2001-12-23  Ravi Pratap  <ravi@ximian.com>
 
 	* test-57.cs : Update.
