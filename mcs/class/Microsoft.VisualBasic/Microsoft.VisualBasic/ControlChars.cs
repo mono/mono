@@ -33,10 +33,10 @@
 namespace Microsoft.VisualBasic {
 	sealed public class ControlChars {
 		// Declarations
-		public const System.String CrLf = "\n\r";
-		public const System.String NewLine = "\n\r";
-		public const System.Char Cr = '\n';
-		public const System.Char Lf = '\r';
+		public const System.String CrLf = "\r\n";
+		public const System.String NewLine = "\r\n";
+		public const System.Char Cr = '\r';
+		public const System.Char Lf = '\n';
 		public const System.Char Back = '\b';
 		public const System.Char FormFeed = '\f';
 		public const System.Char Tab = '\t';
