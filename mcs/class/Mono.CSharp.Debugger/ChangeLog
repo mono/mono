@@ -1,5 +1,8 @@
 2004-01-13  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolTable.cs: Added more #region's and a comment at the
+	top of the file.
+
 	* MonoSymbolWriter.cs (SourceMethod.BuildLineNumberTable): Removed
 	it here since it's in MethodEntry again.
 

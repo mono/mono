@@ -2,7 +2,7 @@
 // System.Diagnostics.SymbolStore/MonoSymbolTable.cs
 //
 // Author:
-//   Martin Baulig (martin@gnome.org)
+//   Martin Baulig (martin@ximian.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
@@ -13,7 +13,41 @@ using System.Reflection.Emit;
 using System.Collections;
 using System.Text;
 using System.IO;
-	
+
+//
+// Parts which are actually written into the symbol file are marked with
+//
+//         #region This is actually written to the symbol file
+//         #endregion
+//
+// Please do not modify these regions without previously talking to me.
+//
+// All changes to the file format must be synchronized in several places:
+//
+// a) The fields in these regions (and their order) must match the actual
+//    contents of the symbol file.
+//
+//    This helps people to understand the symbol file format without reading
+//    too much source code, ie. you look at the appropriate region and then
+//    you know what's actually in the file.
+//
+//    It is also required to help me enforce b).
+//
+// b) The regions must be kept in sync with the unmanaged code in
+//    mono/metadata/debug-mono-symfile.h
+//
+// When making changes to the file format, you must also increase two version
+// numbers:
+//
+// i)  OffsetTable.Version in this file.
+// ii) MONO_SYMBOL_FILE_VERSION in mono/metadata/debug-mono-symfile.h
+//
+// After doing so, recompile everything, including the debugger.  Symbol files
+// with different versions are incompatible to each other and the debugger and
+// the runtime enfore this, so you need to recompile all your assemblies after
+// changing the file format.
+//
+
 namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
@@ -21,6 +55,7 @@ namespace Mono.CSharp.Debugger
 		public const int  Version = 35;
 		public const long Magic   = 0x45e82623fd7fa614;
 
+		#region This is actually written to the symbol file
 		public int TotalFileSize;
 		public int DataSectionOffset;
 		public int DataSectionSize;
@@ -31,6 +66,7 @@ namespace Mono.CSharp.Debugger
 		public int MethodTableOffset;
 		public int MethodTableSize;
 		public int TypeCount;
+		#endregion
 
 		internal OffsetTable (BinaryReader reader)
 		{
@@ -72,8 +108,10 @@ namespace Mono.CSharp.Debugger
 
 	public struct LineNumberEntry
 	{
+		#region This is actually written to the symbol file
 		public readonly int Row;
 		public readonly int Offset;
+		#endregion
 
 		public LineNumberEntry (int row, int offset)
 		{
@@ -139,8 +177,10 @@ namespace Mono.CSharp.Debugger
 	public class LexicalBlockEntry
 	{
 		public int Index;
+		#region This is actually written to the symbol file
 		public int StartOffset;
 		public int EndOffset;
+		#endregion
 
 		public LexicalBlockEntry (int index, int start_offset)
 		{
@@ -174,10 +214,12 @@ namespace Mono.CSharp.Debugger
 
 	public struct LocalVariableEntry
 	{
+		#region This is actually written to the symbol file
 		public readonly string Name;
 		public readonly FieldAttributes Attributes;
 		public readonly byte[] Signature;
 		public readonly int BlockIndex;
+		#endregion
 
 		public LocalVariableEntry (string Name, FieldAttributes Attributes, byte[] Signature,
 					   int BlockIndex)
@@ -216,12 +258,19 @@ namespace Mono.CSharp.Debugger
 
 	public class SourceFileEntry
 	{
+		#region This is actually written to the symbol file
+		public readonly int Index;
+		int Count;
+		int NamespaceCount;
+		int NameOffset;
+		int MethodOffset;
+		int NamespaceTableOffset;
+		#endregion
+
 		MonoSymbolFile file;
 		string file_name;
 		ArrayList methods;
 		ArrayList namespaces;
-		int index, count, name_offset, method_offset;
-		int namespace_count, nstable_offset;
 		bool creating;
 
 		public static int Size {
@@ -232,7 +281,7 @@ namespace Mono.CSharp.Debugger
 		{
 			this.file = file;
 			this.file_name = file_name;
-			this.index = file.AddSource (this);
+			this.Index = file.AddSource (this);
 
 			creating = true;
 			methods = new ArrayList ();
@@ -266,51 +315,47 @@ namespace Mono.CSharp.Debugger
 
 		internal void WriteData (BinaryWriter bw)
 		{
-			name_offset = (int) bw.BaseStream.Position;
+			NameOffset = (int) bw.BaseStream.Position;
 			file.WriteString (bw, file_name);
 
 			ArrayList list = new ArrayList ();
 			foreach (MethodEntry entry in methods)
 				list.Add (entry.Write (file, bw));
 			list.Sort ();
-			count = list.Count;
+			Count = list.Count;
 
-			method_offset = (int) bw.BaseStream.Position;
+			MethodOffset = (int) bw.BaseStream.Position;
 			foreach (MethodSourceEntry method in list)
 				method.Write (bw);
 
-			namespace_count = namespaces.Count;
-			nstable_offset = (int) bw.BaseStream.Position;
+			NamespaceCount = namespaces.Count;
+			NamespaceTableOffset = (int) bw.BaseStream.Position;
 			foreach (NamespaceEntry ns in namespaces)
 				ns.Write (file, bw);
 		}
 
 		internal void Write (BinaryWriter bw)
 		{
-			bw.Write (index);
-			bw.Write (count);
-			bw.Write (namespace_count);
-			bw.Write (name_offset);
-			bw.Write (method_offset);
-			bw.Write (nstable_offset);
+			bw.Write (Index);
+			bw.Write (Count);
+			bw.Write (NamespaceCount);
+			bw.Write (NameOffset);
+			bw.Write (MethodOffset);
+			bw.Write (NamespaceTableOffset);
 		}
 
 		internal SourceFileEntry (MonoSymbolFile file, BinaryReader reader)
 		{
 			this.file = file;
 
-			index = reader.ReadInt32 ();
-			count = reader.ReadInt32 ();
-			namespace_count = reader.ReadInt32 ();
-			name_offset = reader.ReadInt32 ();
-			method_offset = reader.ReadInt32 ();
-			nstable_offset = reader.ReadInt32 ();
+			Index = reader.ReadInt32 ();
+			Count = reader.ReadInt32 ();
+			NamespaceCount = reader.ReadInt32 ();
+			NameOffset = reader.ReadInt32 ();
+			MethodOffset = reader.ReadInt32 ();
+			NamespaceTableOffset = reader.ReadInt32 ();
 
-			file_name = file.ReadString (name_offset);
-		}
-
-		public int Index {
-			get { return index; }
+			file_name = file.ReadString (NameOffset);
 		}
 
 		public string FileName {
@@ -325,13 +370,13 @@ namespace Mono.CSharp.Debugger
 				BinaryReader reader = file.BinaryReader;
 				int old_pos = (int) reader.BaseStream.Position;
 
-				reader.BaseStream.Position = method_offset;
+				reader.BaseStream.Position = MethodOffset;
 				ArrayList list = new ArrayList ();
-				for (int i = 0; i < count; i ++)
+				for (int i = 0; i < Count; i ++)
 					list.Add (new MethodSourceEntry (reader));
 				reader.BaseStream.Position = old_pos;
 
-				MethodSourceEntry[] retval = new MethodSourceEntry [count];
+				MethodSourceEntry[] retval = new MethodSourceEntry [Count];
 				list.CopyTo (retval, 0);
 				return retval;
 			}
@@ -339,16 +384,19 @@ namespace Mono.CSharp.Debugger
 
 		public override string ToString ()
 		{
-			return String.Format ("SourceFileEntry ({0}:{1}:{2})", index, file_name, count);
+			return String.Format ("SourceFileEntry ({0}:{1}:{2})",
+					      Index, file_name, Count);
 		}
 	}
 
 	public struct MethodSourceEntry : IComparable
 	{
+		#region This is actually written to the symbol file
 		public readonly int Index;
 		public readonly int FileOffset;
 		public readonly int StartRow;
 		public readonly int EndRow;
+		#endregion
 
 		public MethodSourceEntry (int index, int file_offset, int start, int end)
 		{
@@ -399,9 +447,11 @@ namespace Mono.CSharp.Debugger
 
 	public struct MethodIndexEntry
 	{
+		#region This is actually written to the symbol file
 		public readonly int FileOffset;
 		public readonly int FullNameOffset;
 		public readonly int Token;
+		#endregion
 
 		public static int Size {
 			get { return 12; }
@@ -770,10 +820,12 @@ namespace Mono.CSharp.Debugger
 
 	public struct NamespaceEntry
 	{
+		#region This is actually written to the symbol file
 		public readonly string Name;
 		public readonly int Index;
 		public readonly int Parent;
 		public readonly string[] UsingClauses;
+		#endregion
 
 		public NamespaceEntry (string name, int index, string[] using_clauses, int parent)
 		{
