@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 
 namespace System {
 
+[Serializable]
 public struct Guid  : IFormattable, IComparable  {
 
 	private uint _timeLow;
@@ -584,7 +585,7 @@ public struct Guid  : IFormattable, IComparable  {
 
 	public string ToString (string format) {
 		string f;
-		bool h = false;
+		bool h = true;
 		bool p = false;
 		bool b = false;
 
@@ -592,17 +593,15 @@ public struct Guid  : IFormattable, IComparable  {
 			f = format.ToLower();
 
 			if (f == "b") {
-				h = true;
 				b = true;
 			}
 			else if (f == "p") {
-				h = true;
 				p = true;
 			}
-			else if (f == "d") {
-				h = true;
+			else if (f == "n") {
+				h = false;
 			}
-			else if (f != "n" && f != "") {
+			else if (f != "d" && f != "") {
 				throw new FormatException ( Locale.GetText ("Argument to Guid.ToString(string format) should be \"b\", \"B\", \"d\", \"D\", \"n\", \"N\", \"p\" or \"P\""));
 			}
 		}

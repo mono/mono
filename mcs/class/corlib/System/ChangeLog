@@ -1,3 +1,10 @@
+2002-02-27  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* Guid.cs: Guid.ToString("") and Guid.ToString(null) is now understood as Guid.ToString("D") 
+	just as in mscorlib. There is (probably) a documentation bug in the MS FrameWork SDK, which
+        states that a lacking format should be interpreted as "N".  
+	Also added [Serializable] attribute
+	* TimeSpan.cs: some formatting and added the [Serializable] attribute
+
 2002-02-26  Duncan Mak  <duncan@ximian.com>
 
 	* WeakReference.cs: Committed for Ajay Kumar Dwivedi.	

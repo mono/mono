@@ -1,3 +1,7 @@
+2002-02-27  Duco Fijma <duco@lorentz.xs4all.nl>
+	* GuidTest.cs: changed to reflect new meaning of Guid.ToString("")
+	and Guid.ToString(null)
+
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
 	* MartinTests.cs: New file. This contains all the test which already

@@ -206,8 +206,8 @@ public class GuidTest : TestCase
 		AssertEquals("A3", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString("D") );
 		AssertEquals("A4", "{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString("B") );
 		AssertEquals("A5", "(00010203-0405-0607-0809-0a0b0c0d0e0f)", g.ToString("P") );
-		AssertEquals("A6", "000102030405060708090a0b0c0d0e0f", g.ToString("") );
-		AssertEquals("A7", "000102030405060708090a0b0c0d0e0f", g.ToString((string)null));
+		AssertEquals("A6", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString("") );
+		AssertEquals("A7", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString((string)null));
 
 		try {
 			g.ToString("X");
