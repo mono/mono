@@ -24,6 +24,7 @@ namespace MonoTests.System.Security.Cryptography {
 				suite.AddTest(AsymmetricAlgorithmTest.Suite); 
                         	suite.AddTest(RNGCryptoServiceProviderTest.Suite);
 				suite.AddTest(FromBase64TransformTest.Suite);
+				suite.AddTest(RijndaelManagedTest.Suite);
                                 return suite;
                         }
                 }

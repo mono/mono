@@ -71,6 +71,7 @@ System.Resources/ResourceReaderTest.cs
 System.Security.Cryptography/AllTests.cs
 System.Security.Cryptography/AsymmetricAlgorithmTest.cs
 System.Security.Cryptography/RNGCryptoServiceProviderTest.cs
+System.Security.Cryptography/RijndaelManagedTest.cs
 System.Security.Cryptography/SymmetricAlgorithmTest.cs
 System.Security.Cryptography/FromBase64Transform.cs
 System.Security.Permissions/AllTests.cs
