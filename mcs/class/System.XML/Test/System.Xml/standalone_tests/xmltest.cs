@@ -31,7 +31,7 @@ Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.ff
 	{
 		XmlDocument doc = new XmlDocument ();
 		foreach (FileInfo fi in
-			new DirectoryInfo (@"XML-Test-Suite/xmlconf/oasis").GetFiles ("*.xml")) {
+			new DirectoryInfo (@"xml-test-suite/xmlconf/oasis").GetFiles ("*.xml")) {
 			try {
 				XmlTextReader xtr = new XmlTextReader (fi.FullName);
 				xtr.Namespaces = false;
