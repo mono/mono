@@ -1,3 +1,10 @@
+2003-09-30  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* marshal.c (mono_marshal_type_size) struct alignment changed for 
+	64bit machines.  (emit_ptr_to_str_conv)	Fix bool conversions for 
+	64bits. Avoid leak in mono_marshal_get_native_wrapper when
+	mono_lookup_pinvoke_call throws.	
+
 2003-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_parse_type): Fix #49114.
