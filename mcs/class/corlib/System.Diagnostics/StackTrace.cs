@@ -32,6 +32,7 @@ namespace System.Diagnostics {
                 /// <summary>
                 ///   Initializes a new instance of the StackTrace class.
                 /// </summary>
+		[MonoTODO]
                 public StackTrace() {
                         throw new NotImplementedException();
                 }
@@ -50,6 +51,7 @@ namespace System.Diagnostics {
                 /// <param name="e">
                 ///   TODO:
                 /// </param>
+		[MonoTODO]
                 public StackTrace(Exception e) {
                         throw new NotImplementedException();
                 }
@@ -80,6 +82,7 @@ namespace System.Diagnostics {
                 ///   The number of frames up the stack to start the trace
                 ///   from.
                 /// </param>
+		[MonoTODO]
                 public StackTrace(Exception e, int skipFrames) {
                         throw new NotImplementedException();
                 }
@@ -110,6 +113,7 @@ namespace System.Diagnostics {
                 ///   The number of frames up the stack to start the trace
                 ///   from.
                 /// </param>
+		[MonoTODO]
                 public StackTrace(int skipFrames) {
                         throw new NotImplementedException();
                 }
@@ -150,6 +154,7 @@ namespace System.Diagnostics {
                 /// <param name="needFileInfo">
                 ///   TODO:
                 /// </param>
+		[MonoTODO]
                 public StackTrace(Thread targetThread, bool needFileInfo) {
                         throw new NotImplementedException();
                 }
