@@ -734,6 +734,12 @@ namespace System.Xml.XPath
 			if (typeR == XPathResultType.Any)
 				typeR = GetReturnType (_right.Evaluate (iter));
 
+			// Regard RTF as nodeset
+			if (typeL == XPathResultType.Navigator)
+				typeL = XPathResultType.NodeSet;
+			if (typeR == XPathResultType.Navigator)
+				typeR = XPathResultType.NodeSet;
+
 			if (typeL == XPathResultType.NodeSet || typeR == XPathResultType.NodeSet)
 			{
 				bool fReverse = false;
@@ -778,7 +784,7 @@ namespace System.Xml.XPath
 						{
 							double numR = XPathFunctions.ToNumber (iterR.Current.Value);
 							for (int l = 0; l < rgNodesL.Count; l++)
-								if (Compare (numR, (double) rgNodesL [l]))
+								if (Compare ((double) rgNodesL [l], numR))
 									return true;
 						}
 					}

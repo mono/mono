@@ -1,3 +1,10 @@
+2004-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs : RelationalExpr was comparing number and node in
+	  reverse order. Patch by Kazuki Oikawa. Fixed bug #72343.
+	  RelationalExpr should also handle result tree fragment as node-set
+	  as well as EqualityExpr. This fixes RTF case wrt #72343.
+
 2004-02-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : tiny code format fix by Andrew Skiba.
