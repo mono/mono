@@ -1,3 +1,7 @@
+2003-12-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (monosn_LDADD): Fix parallel build.
+
 2003-12-04  Martin Baulig  <martin@ximian.com>
 
 	* icall.c
