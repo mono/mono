@@ -53,13 +53,13 @@ namespace System.IO.IsolatedStorage
 		}
 
 		[MonoTODO]
-		protected virtual char SeperatorExternal
+		protected virtual char SeparatorExternal
 		{
 			get { return Char.MinValue; }
 		}
 
 		[MonoTODO]
-		protected virtual char SerperatorInternal
+		protected virtual char SeparatorInternal
 		{
 			get { return Char.MinValue; }
 		}
