@@ -308,10 +308,9 @@ namespace System {
 			return attributes;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return ((Object) this).GetHashCode ();
 		}
 		
 		public virtual bool IsDefaultAttribute ()
@@ -374,6 +373,14 @@ namespace System {
 			// Derived classes should override as appropriate
 			
 			return this.Equals (obj);
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || !(obj is Attribute))
+				return false;
+
+			return ((Attribute) obj) == this;
 		}
 	}
 }
