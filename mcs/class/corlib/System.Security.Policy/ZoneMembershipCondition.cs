@@ -101,13 +101,15 @@ namespace System.Security.Policy {
                         FromXml (element, null);
                 }
 
-                public void FromXml (SecurityElement element, PolicyLevel level)
-                {
+		public void FromXml (SecurityElement element, PolicyLevel level)
+		{
 			MembershipConditionHelper.CheckSecurityElement (element, "element", version, version);
 
-                        zone = (SecurityZone) Enum.Parse (
-                                typeof (SecurityZone), element.Attribute ("Zone"));
-                }
+			string z = element.Attribute ("Zone");
+			if (z != null) {
+				zone = (SecurityZone) Enum.Parse (typeof (SecurityZone), z);
+			}
+		}
 
                 public override int GetHashCode ()
                 {

@@ -1,3 +1,10 @@
+2004-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UrlMembershipCondition.cs: Check now only iterate host provided
+	evidences.
+	* ZoneMembershipCondition.cs: FromXml doesn't throw exceptions if Zone
+	attribute is missing.
+
 2004-08-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AllMembershipCondition.cs: Use common template for membership 

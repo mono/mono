@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Globalization;
 
 namespace System.Security.Policy {
@@ -55,8 +56,9 @@ namespace System.Security.Policy {
 			if (evidence == null)
 				return false;
 
-			foreach (object o in evidence) {
-				Url u = (o as Url);
+			IEnumerator e = evidence.GetHostEnumerator ();
+			while (e.MoveNext ()) {
+				Url u = (e.Current as Url);
 				if (u != null) {
 					// note: there shouldn't be more than one Url evidence
 					if (System.Security.Policy.Url.Compare (url, u.Value))
