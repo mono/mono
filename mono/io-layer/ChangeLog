@@ -1,3 +1,8 @@
+2002-04-30  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* atomic.c: Changed to use a normal mutex rather than a spinlock
+	since a lot of platforms seem to not have them :\
+
 2002-04-30  Dick Porter  <dick@ximian.com>
 
 	* Completely rewrote the handle waiting code: removed the helper
