@@ -1,3 +1,7 @@
+2003-02-07  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_from_mono_type): added MONO_TYPE_TYPEDBYREF
+
 2003-02-05  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_image_build_metadata): Make this public,
