@@ -29,15 +29,11 @@ namespace System.Xml
 		}
 
 		bool ICollection.IsSynchronized {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return false; }
 		}
 
 		bool IsReadOnly {
-			get {
-				return ownerElement.IsReadOnly;
-			}
+			get { return ownerElement.IsReadOnly; }
 		}
 
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
@@ -62,9 +58,7 @@ namespace System.Xml
 		}
 
 		object ICollection.SyncRoot {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return this; }
 		}
 
 		

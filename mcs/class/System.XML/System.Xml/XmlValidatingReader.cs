@@ -231,7 +231,7 @@ namespace System.Xml {
 					validationType = value; 
 					break;
 				case ValidationType.XDR:
-					throw new NotImplementedException ();
+					throw new NotSupportedException ();
 				}
 			}
 		}
@@ -248,9 +248,11 @@ namespace System.Xml {
 			set {
 				specifiedResolver = true;
 				resolver = value;
+				/*
 				XsdValidatingReader xsvr = validatingReader as XsdValidatingReader;
 				if (xsvr != null)
 					xsvr.XmlResolver = value;
+				*/
 				DTDValidatingReader dvr = validatingReader as DTDValidatingReader;
 				if (dvr != null)
 					dvr.XmlResolver = value;
@@ -371,12 +373,11 @@ namespace System.Xml {
 						xsvr.Schemas.Add (schema);
 					validatingReader = xsvr;
 					if (specifiedResolver) {
-						xsvr.XmlResolver = resolver;
 						dtdReader.XmlResolver = resolver;
 					}
 					break;
 				case ValidationType.XDR:
-					throw new NotImplementedException ();
+					throw new NotSupportedException ();
 				}
 				schemaInfo = validatingReader as IHasXmlSchemaInfo;
 			}

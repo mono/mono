@@ -423,5 +423,37 @@ namespace System.Xml {
 				throw new XmlException ("'" + ncname + "' is not a valid XML NCName");
 			return ncname;
 		}
+
+		// It is documented as public method, but in fact it is not.
+		internal static byte [] FromBinHexString (string s)
+		{
+			char [] chars = s.ToCharArray ();
+			byte [] bytes = new byte [chars.Length / 2 + chars.Length % 2];
+			FromBinHexString (chars, 0, chars.Length, bytes);
+			return bytes;
+		}
+
+		internal static int FromBinHexString (char [] chars, int offset, int charLength, byte [] buffer)
+		{
+			int bufIndex = offset;
+			for (int i = 0; i < charLength - 1; i += 2) {
+				buffer [bufIndex] = (chars [i] > '9' ?
+						(byte) (chars [i] - 'A' + 10) :
+						(byte) (chars [i] - '0'));
+				buffer [bufIndex] <<= 4;
+				buffer [bufIndex] += chars [i + 1] > '9' ?
+						(byte) (chars [i + 1] - 'A' + 10) : 
+						(byte) (chars [i + 1] - '0');
+				bufIndex++;
+			}
+			if (charLength %2 != 0)
+				buffer [bufIndex++] = (byte)
+					((chars [charLength - 1] > '9' ?
+						(byte) (chars [charLength - 1] - 'A' + 10) :
+						(byte) (chars [charLength - 1] - '0'))
+					<< 4);
+
+			return bufIndex - offset;
+		}
 	}
 }

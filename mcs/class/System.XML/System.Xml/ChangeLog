@@ -1,5 +1,14 @@
 2003-10-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlAttributeCollection.cs : Fixed synchronization stuff.
+	* XmlConvert.cs : Added two FromBinHexString() methods.
+	* XmlTextReader.cs : Modified to use one of the above method.
+	* XmlValidatingReader.cs : XsdValidatingReader.XmlResolver will be 
+	  disabled (in the next commit), so resolver won' be set to it.
+	  Attempt to validate against XDR now throws NotSupportedException.
+
+2003-10-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlChar.cs : added WhitespaceChars, used in common.
 	* XmlConvert.cs,
 	  XmlDeclaration.cs,

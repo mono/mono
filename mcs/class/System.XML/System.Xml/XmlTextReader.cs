@@ -635,27 +635,12 @@ namespace System.Xml
 			else if (buffer.Length < offset + length)
 				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
 
+			if (length == 0)
+				return 0;
+
 			char [] chars = new char [length * 2];
 			int charsLength = ReadChars (chars, 0, length * 2);
-			int bufIndex = offset;
-			for (int i = 0; i < charsLength - 1; i += 2) {
-				buffer [bufIndex] = (chars [i] > '9' ?
-						(byte) (chars [i] - 'A' + 10) :
-						(byte) (chars [i] - '0'));
-				buffer [bufIndex] <<= 4;
-				buffer [bufIndex] += chars [i + 1] > '9' ?
-						(byte) (chars [i + 1] - 'A' + 10) : 
-						(byte) (chars [i + 1] - '0');
-				bufIndex++;
-			}
-			if (charsLength %2 != 0)
-				buffer [bufIndex++] = (byte)
-					((chars [charsLength - 1] > '9' ?
-						(byte) (chars [charsLength - 1] - 'A' + 10) :
-						(byte) (chars [charsLength - 1] - '0'))
-					<< 4);
-
-			return bufIndex - offset;
+			return XmlConvert.FromBinHexString (chars, offset, charsLength, buffer);
 		}
 
 		public int ReadChars (char [] buffer, int offset, int length)
