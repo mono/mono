@@ -41,7 +41,15 @@ namespace System.Drawing.Drawing2D
 
 		public CustomLineCap(GraphicsPath fillPath, GraphicsPath strokePath, LineCap baseCap, float baseInset)
 		{
-			Status status = GDIPlus.GdipCreateCustomLineCap (fillPath.nativePath, strokePath.nativePath, baseCap, baseInset, out nativeObject);
+			IntPtr fill = IntPtr.Zero;
+			IntPtr stroke = IntPtr.Zero;
+
+			if (fillPath != null)
+				fill = fillPath.nativePath;
+			if (strokePath != null)
+				stroke = strokePath.nativePath;
+
+			Status status = GDIPlus.GdipCreateCustomLineCap (fill, stroke, baseCap, baseInset, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -119,6 +127,7 @@ namespace System.Drawing.Drawing2D
 		public virtual void Dispose ()
 		{
 			Dispose (true);
+			System.GC.SuppressFinalize (this);
 		}
 
 		protected virtual void Dispose (bool disposing)
