@@ -1,5 +1,13 @@
 2004-07-28  Dick Porter  <dick@ximian.com>
 
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_RecvFrom_internal): Check
+	returned sockaddr size before creating the remote address object.
+	Patch by Nick Vaughan (dev@6wardlaw.freeserve.co.uk), fixes bug
+	61608.
+
+2004-07-28  Dick Porter  <dick@ximian.com>
+
 	* locales.c (string_invariant_compare_char): Fix invariant char
 	compares between upper and lower cases.  Fixes bug 61458.
 
