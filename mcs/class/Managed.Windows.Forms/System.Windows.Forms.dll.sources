@@ -34,6 +34,8 @@ System.Windows.Forms/DragAction.cs
 System.Windows.Forms/DragDropEffects.cs
 System.Windows.Forms/DragEventArgs.cs
 System.Windows.Forms/DragEventHandler.cs
+System.Windows.Forms/DrawItemEventArgs.cs
+System.Windows.Forms/DrawItemState.cs
 System.Windows.Forms/FlatStyle.cs
 System.Windows.Forms/Form.cs
 System.Windows.Forms/FrameStyle.cs
