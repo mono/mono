@@ -29,10 +29,13 @@
 
 #if NET_2_0
 
-public enum Base64FormattingOptions 
+namespace System
 {
-	InsertLineBreaks = 0x1,
-	None = 0x0
+	public enum Base64FormattingOptions 
+	{
+		InsertLineBreaks = 0x1,
+		None = 0x0
+	}
 }
 
 #endif
