@@ -1,3 +1,8 @@
+
+Fri Feb 8 12:26:37 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* opcodes.c, opcodes.h: export interesting info about opcodes.
+
 2002-02-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.h (MONO_CHECK_ARG, MONO_CHECK_ARG_NULL): new macro for
