@@ -473,12 +473,18 @@ namespace System
 
 		public static DateTime FromFileTime (long fileTime) 
 		{
+			if (fileTime < 0)
+				throw new ArgumentOutOfRangeException ("fileTime", "< 0");
+
 			return new DateTime (true, w32file_epoch + fileTime);
 		}
 
 #if NET_1_1
 		public static DateTime FromFileTimeUtc (long fileTime) 
 		{
+			if (fileTime < 0)
+				throw new ArgumentOutOfRangeException ("fileTime", "< 0");
+
 			return new DateTime (false, w32file_epoch + fileTime);
 		}
 #endif

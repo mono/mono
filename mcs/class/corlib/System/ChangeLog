@@ -1,5 +1,9 @@
 2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DateTime.cs: Fixed FromFileTime for negative values.
+
+2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* DateTime.cs: Fixed OLE Automation date conversions: timezone 
 	insensitive, wrong exception in FromOADate, handling of Min/Max 
 	values, negative doubles where integer part is negative but 
