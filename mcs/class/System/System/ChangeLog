@@ -1,3 +1,9 @@
+2004-02-08  Jackson Harper  <jackson@ximian.com>
+
+	* Uri.cs: IsLoopback has different behavoir then
+	IPAddress::IsLoopback. It will only return true for ipv4 addresses
+	if they are 127.0.0.1, localhost, or loopback. 
+	
 2004-02-06  Jackson Harper  <jackson@ximian.com>
 
 	* Uri.cs: Do not escape querys or fragements. Only reduce certain
