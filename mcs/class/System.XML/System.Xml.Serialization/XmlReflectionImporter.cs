@@ -639,6 +639,10 @@ namespace System.Xml.Serialization {
 				elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
 				elem.Form = att.Form;
 				elem.IsNullable = att.IsNullable;
+				
+				if (elem.IsNullable && elem.TypeData.IsValueType)
+					throw new InvalidOperationException ("IsNullable may not be 'true' for value type " + elem.TypeData.FullTypeName);
+					
 				if (elem.TypeData.IsComplexType)
 				{
 					if (att.DataType != null) throw new InvalidOperationException ("'" + att.DataType + "' is an invalid value for the XmlElementAttribute.DateTime property. The property may only be specified for primitive types.");
