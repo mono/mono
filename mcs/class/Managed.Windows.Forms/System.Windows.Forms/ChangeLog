@@ -1,5 +1,10 @@
 2005-01-04  Peter Bartok <pbartok@novell.com>
 
+	* TextBoxBase.cs: Changed access level for Document property to
+	  match switch to internal for TextControl
+
+2005-01-04  Peter Bartok <pbartok@novell.com>
+
 	* AccessibleObject: Added ComVisible attribute
 
 2005-01-04  Jackson Harper  <jackson@ximian.com>

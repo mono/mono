@@ -806,7 +806,7 @@ Console.WriteLine("Destroying caret");
 		#endregion	// Events
 
 		#region Private Methods
-		public Document Document {
+		internal Document Document {
 			get {
 				return document;
 			}
