@@ -1,3 +1,7 @@
+2004-08-30  Nick Drochak <ndrochak@ieee.com>
+
+	* StackTraceTest.cs: Fix warning.
+
 2004-08-29  Nick Drochak <ndrochak@ieee.com>
 
 	* StackFrameTest.cs : Ignore tests that fail on MS.NET.

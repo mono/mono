@@ -90,7 +90,6 @@ namespace MonoTests.System.Diagnostics {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void StackTrace_ExceptionInt_Negative ()
 		{
-			Exception e = null;
 			new StackTrace (new Exception (), -1);
 		}
 
