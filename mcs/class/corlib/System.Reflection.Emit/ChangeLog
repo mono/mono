@@ -1,3 +1,7 @@
+2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+        * MethodRental.cs: Added check for method size
+
 2004-06-08  Martin Baulig  <martin@ximian.com>
 
 	* ILGenerator.cs (TokenGenerator.GetToken): Added overloaded

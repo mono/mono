@@ -18,9 +18,12 @@ namespace System.Reflection.Emit
 		}
 
 		[MonoTODO]
-		public static void SwapMethodBody (Type cls, int methodtoken, 
-										   IntPtr rgIL, int methodSize, int flags)
+		public static void SwapMethodBody (Type cls, int methodtoken, IntPtr rgIL, int methodSize, int flags)
 		{
+			if (methodSize <= 0 || methodSize >= 0x3f0000) {
+				throw new ArgumentException ("Data size must be > 0 and < 0x3f0000", "methodSize");
+			}
+
 			if (cls == null)
 				throw new ArgumentNullException ("cls");
 			if ((cls is TypeBuilder) && (! ((TypeBuilder)cls).is_created))
