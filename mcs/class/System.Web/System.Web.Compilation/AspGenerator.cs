@@ -292,7 +292,7 @@ namespace System.Web.Compilation
 
 		void TextParsed (ILocation location, string text)
 		{
-			if (text.IndexOf ("<%") != -1 && !inScript && !javascript) {
+			if (text.IndexOf ("<%") != -1 && !inScript) {
 				if (this.text.Length > 0)
 					FlushText ();
 				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);

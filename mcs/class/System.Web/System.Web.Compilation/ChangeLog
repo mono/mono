@@ -1,3 +1,8 @@
+2003-12-25  Jackson Harper <jackson@ximian.com>
+
+	* AspGenerator.cs: Allow scriptlets in javascript. This fixes bug
+	#52522.
+	
 2003-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PageCompiler.cs: assign the ErrorPage property if provided.
