@@ -3,6 +3,8 @@
 	* interp.h: put in space for old type field
 	for PPC as tramp.c assumes it. Quick fix until that's fixed.
 
+	* interp.c: reenable instruction tracing for DEBUG_INTERP
+
 2004-04-19  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* Makefile.am:
