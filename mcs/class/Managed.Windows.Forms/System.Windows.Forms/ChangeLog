@@ -1,3 +1,10 @@
+2005-01-11  John BouAntoun  <jba-mono@optusnet.com.au>
+
+	* MonthCalendar.cs:
+	- fixed selection to use mousemove, not mouse polling on timer
+	* ThemeWin32Classic.cs
+	- removed redundant unused variable "no_more_content"
+	
 2005-01-11  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs (DoEvents): Needs to return when no more events

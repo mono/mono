@@ -162,6 +162,7 @@ namespace System.Windows.Forms {
 
 			// event handlers
 			timer.Tick += new EventHandler (TimerHandler);
+			MouseMove += new MouseEventHandler (MouseMoveHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);
 			KeyDown += new KeyEventHandler (KeyDownHandler);
 			MouseUp += new MouseEventHandler (MouseUpHandler);
@@ -1339,24 +1340,8 @@ namespace System.Windows.Forms {
 //			// now find out which area was click
 //			if (this.Capture) {
 				HitTestInfo hti = this.HitTest (this.PointToClient (MousePosition));
-				// clear the last clicked item 
-				if (click_state [0]) {
-					// invalidate the area where the mouse was last held
-					DoMouseUp ();
-					Application.DoEvents ();
-					// register the click
-					if (hti.HitArea == HitArea.PrevMonthDate ||
-						hti.HitArea == HitArea.NextMonthDate ||
-						hti.HitArea == HitArea.Date)
-					{
-						DoDateMouseDown (hti);
-						click_state [0] = true;
-					}
-					// set the timer back to a faster refresh after the first one
-					if (timer.Interval != 20) {
-						timer.Interval = 20;
-					}
-				} else if (click_state [1] || click_state [2]) {
+				// see if it was clicked on the prev or next mouse 
+				if (click_state [1] || click_state [2]) {
 					// invalidate the area where the mouse was last held
 					DoMouseUp ();
 					Application.DoEvents ();
@@ -1437,6 +1422,23 @@ namespace System.Windows.Forms {
 			this.is_date_clicked = false;
 		}
 		
+		// occurs when mouse moves around control, used for selection
+		private void MouseMoveHandler (object sender, MouseEventArgs e) {
+			HitTestInfo hti = this.HitTest (e.X, e.Y);
+			// clear the last clicked item 
+			if (click_state [0]) {
+				// register the click
+				if (hti.HitArea == HitArea.PrevMonthDate ||
+					hti.HitArea == HitArea.NextMonthDate ||
+					hti.HitArea == HitArea.Date)
+				{
+					DoDateMouseDown (hti);
+					click_state [0] = true;
+				}
+				
+			}
+		}
+		
 		// to check if the mouse has come down on this control
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
@@ -1466,8 +1468,6 @@ namespace System.Windows.Forms {
 				case HitArea.NextMonthDate:
 					DoDateMouseDown (hti);
 					click_state [0] = true;
-					timer.Interval = 250;
-					timer.Start ();
 					break;
 				case HitArea.TitleMonth:
 					month_title_click_location = hti.Point;
@@ -1596,6 +1596,11 @@ namespace System.Windows.Forms {
 			if (timer.Enabled) {
 				timer.Stop ();
 			}
+			// clear the click state array
+			click_state [0] = false;
+			click_state [1] = false;
+			click_state [2] = false;
+			// do the regulare mouseup stuff
 			this.DoMouseUp ();
 		}
 

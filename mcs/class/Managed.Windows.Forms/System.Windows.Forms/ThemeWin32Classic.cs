@@ -1379,7 +1379,6 @@ namespace System.Windows.Forms
 				date_cell_size.Height);
 			int month_row_count = 0;
 			bool draw_week_num_divider = false;
-			bool no_more_content = false;	// required to enable us to fill the background rect and not draw any dates on it (if none are required)
 			DateTime current_date = mc.GetFirstDateInMonthGrid ( new DateTime (this_month.Year, this_month.Month, 1));
 			for (int i=0; i < 6; i++) 
 			{
