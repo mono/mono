@@ -189,7 +189,6 @@ namespace Mono.CSharp {
 
 				Namespace curr_ns = NamespaceEntry.NS;
 				while ((curr_ns != null) && (resolved_ns == null)) {
-					string full_name = DeclSpace.MakeFQN (curr_ns.Name, Name);
 					resolved_ns = curr_ns.GetNamespace (Name, false);
 
 					if (resolved_ns == null)
@@ -377,7 +376,7 @@ namespace Mono.CSharp {
 				if (ns != null)
 					return ns.Lookup (ds, last);
 
-				Type nested = TypeManager.LookupType (DeclSpace.MakeFQN (((Type) o).Name, last));
+				Type nested = TypeManager.LookupType ((((Type) o).Name + "." + last));
 				if ((nested == null) || ((ds != null) && !ds.CheckAccessLevel (nested)))
 					return null;
 
