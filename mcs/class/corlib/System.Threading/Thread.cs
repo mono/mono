@@ -32,6 +32,8 @@ namespace System.Threading
 		 * is ok to return
 		 */
 		private IntPtr start_notify;
+		private IntPtr stack_ptr;
+		private IntPtr static_data;
 		
 		public static Context CurrentContext {
 			get {
