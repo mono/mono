@@ -4,6 +4,7 @@
 // Authors: 
 // 	Duncan Mak <duncan@ximian.com>
 //	Nick Drochak <ndrochak@gol.com>
+//	Paolo Molaro <lupus@ximian.com>
 //
 // 2001 (C) Ximian Inc, http://www.ximian.com
 //
@@ -12,12 +13,15 @@
 using System.Collections;
 using System.Resources;
 using System.IO;
+using System.Xml;
 
 namespace System.Resources
 {
 	public sealed class ResXResourceReader : IResourceReader, IDisposable
 	{
 		Stream stream;
+		XmlTextReader reader;
+		Hashtable hasht;
 
 		// Constructors
 		public ResXResourceReader (Stream stream)
@@ -29,10 +33,12 @@ namespace System.Resources
 				throw new ArgumentException ("Stream was not readable.");
 
 			this.stream = stream;
+			reader = new XmlTextReader (stream);
 			
 			if (!IsStreamValid()){
 				throw new ArgumentException("Stream is not a valid .resources file!  It was possibly truncated.");
 			}
+			load_data ();
 		}
 		
 		public ResXResourceReader (string fileName)
@@ -47,15 +53,87 @@ namespace System.Resources
 				throw new FileNotFoundException ("Could not find file " + Path.GetFullPath(fileName));
 
 			stream = new FileStream (fileName, FileMode.Open);
+			reader = new XmlTextReader (stream);
 
 			if (!IsStreamValid()){
 				throw new ArgumentException("Stream is not a valid .resources file!  It was possibly truncated.");
 			}
+			load_data ();
 		}
 		
-		[MonoTODO]
+		static string get_attr (XmlTextReader reader, string name) {
+			if (!reader.HasAttributes)
+				return null;
+			for (int i = 0; i < reader.AttributeCount; i++) {
+				reader.MoveToAttribute (i);
+				if (reader.Name == name) {
+					string v = reader.Value;
+					reader.MoveToElement ();
+					return v;
+				}
+			}
+			reader.MoveToElement ();
+			return null;
+		}
+
+		static string get_value (XmlTextReader reader, string name) {
+			bool gotelement = false;
+			while (reader.Read ()) {
+				if (reader.NodeType == XmlNodeType.Element && reader.Name == name) {
+					gotelement = true;
+					break;
+				}
+			}
+			if (!gotelement)
+				return null;
+			while (reader.Read ()) {
+				if (reader.NodeType == XmlNodeType.Text) {
+					string v = reader.Value;
+					return v;
+				}
+			}
+			return null;
+		}
+
 		private bool IsStreamValid() {
-			return true;
+			bool gotroot = false;
+			bool gotmime = false;
+			
+			while (reader.Read ()) {
+				if (reader.NodeType == XmlNodeType.Element && reader.Name == "root") {
+					gotroot = true;
+					break;
+				}
+			}
+			if (!gotroot)
+				return false;
+			while (reader.Read ()) {
+				if (reader.NodeType == XmlNodeType.Element && reader.Name == "resheader") {
+					string v = get_attr (reader, "name");
+					if (v != null && v == "resmimetype") {
+						v = get_value (reader, "value");
+						if (v == "text/microsoft-resx") {
+							gotmime = true;
+							break;
+						}
+					}
+				}
+			}
+			return gotmime;
+		}
+
+		private void load_data ()
+		{
+			hasht = new Hashtable ();
+			while (reader.Read ()) {
+				if (reader.NodeType == XmlNodeType.Element && reader.Name == "data") {
+					string n = get_attr (reader, "name");
+					if (n != null) {
+						string v = get_value (reader, "value");
+						hasht [n] = v;
+					}
+				}
+			}
 		}
 
 		public void Close ()
@@ -69,7 +147,7 @@ namespace System.Resources
 				throw new InvalidOperationException("ResourceReader is closed.");
 			}
 			else {
-				return null;
+				return hasht.GetEnumerator ();
 			}
 		}
 		
