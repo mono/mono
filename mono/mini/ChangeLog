@@ -1,3 +1,12 @@
+2005-01-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_local_regalloc): Fix bug in div/rem 
+	register allocation. Fixes #71454.
+
+	* mini-amd64.c (mono_arch_local_regalloc): Ditto.	
+
+	* arrays.cs: Add new regression test.	
+
 2005-1-20  Massimiliano Mantione  <massi@ximian.com>
 
 	* ssapre.c: Turned usage of snprintf to GString.
