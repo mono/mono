@@ -1,3 +1,7 @@
+2003-04-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomain.cs: fixed InvalidCastException.
+
 2003-03-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Array.cs (Copy): Call FastCopy() earlier to avoid the expensive
