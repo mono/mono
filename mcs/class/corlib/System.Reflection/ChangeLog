@@ -1,3 +1,9 @@
+2003-02-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Binder.cs:
+	(check_type): return true when the target type is object and the source
+	is a value type.
+
 2003-02-03 Patrik Torstensson
 
 	* Binder.cs: minimize locking time in DefaultBinder.

@@ -125,7 +125,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return false;
+					return to == typeof (object);
 				case TypeCode.Byte:
 					switch (tot) {
 					case TypeCode.Char:
@@ -139,7 +139,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return false;
+					return to == typeof (object);
 				case TypeCode.SByte:
 					switch (tot) {
 					case TypeCode.Int16:
@@ -149,7 +149,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return false;
+					return to == typeof (object);
 				case TypeCode.UInt16:
 					switch (tot) {
 					case TypeCode.UInt32:
@@ -160,7 +160,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return false;
+					return to == typeof (object);
 				case TypeCode.Int16:
 					switch (tot) {
 					case TypeCode.Int32:
@@ -169,7 +169,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return false;
+					return to == typeof (object);
 				case TypeCode.UInt32:
 					switch (tot) {
 					case TypeCode.UInt64:
@@ -178,7 +178,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return false;
+					return to == typeof (object);
 				case TypeCode.Int32:
 					switch (tot) {
 					case TypeCode.Int64:
@@ -186,7 +186,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return false;
+					return to == typeof (object);
 				case TypeCode.UInt64:
 				case TypeCode.Int64:
 					switch (tot) {
@@ -194,12 +194,15 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return false;
+					return to == typeof (object);
 				case TypeCode.Single:
-					return tot == TypeCode.Double;
+					return tot == TypeCode.Double || to == typeof (object);
 				default:
 					/* TODO: handle valuetype -> byref */
-					return to.IsAssignableFrom (from);
+					if (to == typeof (object) && from.IsValueType)
+						return true;
+
+					return to.IsAssignableFrom (from)
 				}
 			}
 
