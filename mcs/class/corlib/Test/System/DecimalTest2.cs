@@ -51,7 +51,7 @@ namespace MonoTests.System
 
         private void ReportOpError(string msg, int i, int j, decimal d1, decimal d2, decimal d3, decimal d3b)
         {
-            Console.WriteLine("*** " + msg + " for " + d1 + " #" + i + "  " + d2 + " #" + j);
+            Console.WriteLine("*** {0} for d1={1} i={2} d2={3} j={4} d3={5} d3b={6}", msg, d1, i, d2, j, d3, d3b);
             Console.WriteLine("Ist:" + d3 +  "  Soll:" + d3b + "  delta=" + (d3 - d3b) + "  ==" + (d3 == d3b));
         }
 

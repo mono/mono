@@ -118,12 +118,25 @@ public class DoubleTest : TestCase
 
 	public void TestParse() {
 		int i=0;
-		for(i=0;i<string_values.Length;i++) {			
-			AssertEquals("Parse Failed", double_values[i], Double.Parse(string_values[i]));
+		try {
+			for(i=0;i<string_values.Length;i++) {			
+				AssertEquals("Parse Failed", double_values[i], Double.Parse(string_values[i]));
+			}
+		} catch (Exception e) {
+			Fail("TestParse: i=" + i + " failed with e = " + e.ToString());
 		}
 		
-		AssertEquals("Parse Failed NumberStyles.Float", 10.1111, Double.Parse(" 10.1111 ", NumberStyles.Float, Nfi));
-		AssertEquals("Parse Failed NumberStyles.AllowThousands", 1234.5678, Double.Parse("1,234.5678", NumberStyles.Float | NumberStyles.AllowThousands, Nfi));
+		try {
+			AssertEquals("Parse Failed NumberStyles.Float", 10.1111, Double.Parse(" 10.1111 ", NumberStyles.Float, Nfi));
+		} catch (Exception e) {
+			Fail("TestParse: Parse Failed NumberStyles.Float with e = " + e.ToString());
+		}
+
+		try {
+			AssertEquals("Parse Failed NumberStyles.AllowThousands", 1234.5678, Double.Parse("1,234.5678", NumberStyles.Float | NumberStyles.AllowThousands, Nfi));
+		} catch (Exception e) {
+			Fail("TestParse: Parse Failed NumberStyles.AllowThousands with e = " + e.ToString());
+		}
 	
 		try {
 			Double.Parse(null);

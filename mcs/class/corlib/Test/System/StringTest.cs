@@ -643,21 +643,21 @@ public class StringTest : TestCase
 			     -1, s1.LastIndexOf('i', 1, 2));
 
 		s1 = "original original";
-		AssertEquals("stepped string index",
+		AssertEquals("stepped string index #1",
 			     9, s1.LastIndexOf("original", s1.Length));
-		AssertEquals("stepped string index", 
+		AssertEquals("stepped string index #2", 
 			     0, s1.LastIndexOf("original", s1.Length-2));
-		AssertEquals("stepped string index", 
+		AssertEquals("stepped string index #3", 
 			     -1, s1.LastIndexOf("original", s1.Length-11));
-		AssertEquals("stepped string index",
+		AssertEquals("stepped string index #4",
 			     -1, s1.LastIndexOf("translator", 2));
-		AssertEquals("stepped limited string index",
+		AssertEquals("stepped limited string index #1",
 			     10, s1.LastIndexOf("rig", s1.Length-1, 10));
-		AssertEquals("stepped limited string index",
+		AssertEquals("stepped limited string index #2",
 			     -1, s1.LastIndexOf("rig", s1.Length, 3));
-		AssertEquals("stepped limited string index",
+		AssertEquals("stepped limited string index #3",
 			     10, s1.LastIndexOf("rig", s1.Length-2, 15));
-		AssertEquals("stepped limited string index",
+		AssertEquals("stepped limited string index #4",
 			     -1, s1.LastIndexOf("rig", s1.Length-2, 3));
 	}
 

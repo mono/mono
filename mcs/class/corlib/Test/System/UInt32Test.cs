@@ -172,14 +172,33 @@ public class UInt32Test : TestCase
 	
 	public void TestToString()
 	{
-		//test ToString()
-		AssertEquals(MyString1, MyUInt32_1.ToString());
-		AssertEquals(MyString2, MyUInt32_2.ToString());
-		AssertEquals(MyString3, MyUInt32_3.ToString());
+		int TestNumber = 1;
+		try {
+			//test ToString()
+			AssertEquals(MyString1, MyUInt32_1.ToString());
+			TestNumber++;
+			AssertEquals(MyString2, MyUInt32_2.ToString());
+			TestNumber++;
+			AssertEquals(MyString3, MyUInt32_3.ToString());
+		} catch (Exception e) {
+			Fail("TestToString: Failed on TestNumber=" + TestNumber);
+		}
+
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals(Results1[i], MyUInt32_2.ToString(Formats1[i]));
-			AssertEquals(Results2[i], MyUInt32_3.ToString(Formats2[i]));
+			try {
+				AssertEquals(Results1[i], MyUInt32_2.ToString(Formats1[i]));
+			} catch (Exception e) {
+				Fail("TestToString: MyUInt32_2.ToString(Formats1[i]) i=" + i 
+					+ ". e = " + e.ToString());
+			}
+
+			try {
+				AssertEquals(Results2[i], MyUInt32_3.ToString(Formats2[i]));
+			} catch (Exception e) {
+				Fail("TestToString: MyUInt32_3.ToString(Formats2[i]) i=" + i
+					+ ". e = " + e.ToString());
+			}
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {

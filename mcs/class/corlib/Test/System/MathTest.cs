@@ -216,25 +216,33 @@ public class MathTest : TestCase {
 	}
 
 	public void TestCeiling() {
-		double a = Math.Ceiling(1.5);
-		double b = 2;
+		try {
+			double a = Math.Ceiling(1.5);
+			double b = 2;
 
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double.Epsilon));
-		Assert(Math.Ceiling(double.NegativeInfinity) == double.NegativeInfinity);
-		Assert(Math.Ceiling(double.PositiveInfinity) == double.PositiveInfinity);
-		Assert(double.IsNaN(Math.Ceiling(double.NaN)));
+			Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
+			       (Math.Abs(a - b) <= double.Epsilon));
+			Assert(Math.Ceiling(double.NegativeInfinity) == double.NegativeInfinity);
+			Assert(Math.Ceiling(double.PositiveInfinity) == double.PositiveInfinity);
+			Assert(double.IsNaN(Math.Ceiling(double.NaN)));
+		} catch (Exception e) {
+			Fail("Unexpected Exception: " + e.ToString());
+		}
 	}
 
 	public void TestFloor() {
-		double a = Math.Floor(1.5);
-		double b = 1;
+		try {
+			double a = Math.Floor(1.5);
+			double b = 1;
 
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double.Epsilon));
-		Assert(Math.Floor(double.NegativeInfinity) == double.NegativeInfinity);
-		Assert(Math.Floor(double.PositiveInfinity) == double.PositiveInfinity);
-		Assert(double.IsNaN(Math.Floor(double.NaN)));
+			Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
+			       (Math.Abs(a - b) <= double.Epsilon));
+			Assert(Math.Floor(double.NegativeInfinity) == double.NegativeInfinity);
+			Assert(Math.Floor(double.PositiveInfinity) == double.PositiveInfinity);
+			Assert(double.IsNaN(Math.Floor(double.NaN)));
+		} catch (Exception e) {
+			Fail("Unexpected Exception: " + e.ToString());
+		}
 	}
 
 	public void TestIEEERemainder() {

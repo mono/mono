@@ -1,5 +1,15 @@
 2002-04-28  Nick Drochak  <ndrochak@gol.com>
 
+	* StringTest.cs: Mark Assert() messages with unique identifiers.
+	* DecimalTest2.cs: Write out more info in the Report method.  Need this
+	to determine why op_Subtraction() is failing in the next line.
+	* MathTest.cs:
+	* DoubleTest.cs:
+	* UInt32Test.cs: Add try-catch blocks to find out where the test is
+	failing.
+
+2002-04-28  Nick Drochak  <ndrochak@gol.com>
+
 	* ArrayTest.cs (TestIList_IndexOf): Display exception details if we get
 	an unexpected one.
 
