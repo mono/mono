@@ -1,5 +1,9 @@
 2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* Makefile: added dll extension to System.Runtime.Remoting reference
+
+2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* System.Runtime.Remoting_test.dll.sources: Added.
 	* Makefile: added test support.
 
