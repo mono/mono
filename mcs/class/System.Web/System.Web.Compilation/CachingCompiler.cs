@@ -20,11 +20,12 @@ namespace System.Web.Compilation
 	class CachingCompiler
 	{
 		static object compilationLock = new object ();
+		const string cachePrefix = "@@Assembly";
 
 		public static CompilerResults Compile (BaseCompiler compiler)
 		{
 			Cache cache = HttpRuntime.Cache;
-			string key = compiler.Parser.InputFile;
+			string key = cachePrefix + compiler.Parser.InputFile;
 			CompilerResults results = (CompilerResults) cache [key];
 			if (results != null)
 				return results;
@@ -45,7 +46,7 @@ namespace System.Web.Compilation
 
 		public static CompilerResults Compile (WebServiceCompiler compiler)
 		{
-			string key = compiler.Parser.PhysicalPath;
+			string key = cachePrefix + compiler.Parser.PhysicalPath;
 			Cache cache = HttpRuntime.Cache;
 			CompilerResults results = (CompilerResults) cache [key];
 			if (results != null)
@@ -83,12 +84,12 @@ namespace System.Web.Compilation
 							ArrayList assemblies)
 		{
 			Cache cache = HttpRuntime.Cache;
-			CompilerResults results = (CompilerResults) cache [key];
+			CompilerResults results = (CompilerResults) cache [cachePrefix + key];
 			if (results != null)
 				return results;
 
 			lock (compilationLock) {
-				results = (CompilerResults) cache [key];
+				results = (CompilerResults) cache [cachePrefix + key];
 				if (results != null)
 					return results;
  
@@ -103,7 +104,7 @@ namespace System.Web.Compilation
 				CompilerParameters options = GetOptions (assemblies);
 				results = compiler.CompileAssemblyFromFile (options, file);
 				string [] deps = (string []) assemblies.ToArray (typeof (string));
-				cache.Insert (key, results, new CacheDependency (deps));
+				cache.Insert (cachePrefix + key, results, new CacheDependency (deps));
 			}
 
 			return results;

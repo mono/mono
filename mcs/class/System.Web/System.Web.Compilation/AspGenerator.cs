@@ -178,7 +178,7 @@ namespace System.Web.Compilation
 
 		public Type GetCompiledType ()
 		{
-			Type type = (Type) HttpRuntime.Cache.Get (tparser.InputFile);
+			Type type = (Type) HttpRuntime.Cache.Get ("@@Type" + tparser.InputFile);
 			if (type != null) {
 				return type;
 			}
@@ -201,7 +201,7 @@ namespace System.Web.Compilation
 			CacheDependency cd = new CacheDependency ((string[])
 							tparser.Dependencies.ToArray (typeof (string)));
 
-			HttpRuntime.Cache.Insert (tparser.InputFile, type, cd);
+			HttpRuntime.Cache.Insert ("@@Type" + tparser.InputFile, type, cd);
 			return type;
 		}
 

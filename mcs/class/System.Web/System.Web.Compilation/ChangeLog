@@ -1,3 +1,9 @@
+2004-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs:
+	* CachingCompiler.cs: use a different prefix when caching compiler
+	results or Types.
+
 2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompiler.cs: dynamicBase is now protected. Check
