@@ -187,7 +187,6 @@ namespace System.Windows.Forms {
 			Console.WriteLine("XplatUIOSX.Exit");
 		}
 
-		[MonoTODO]
 		internal override void GetDisplaySize(out Size size) {
 			// FIXME:
 			size = new Size (1024, 768);
@@ -236,6 +235,7 @@ namespace System.Windows.Forms {
 			CheckError (HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref hWnd), "HIObjectCreate ()");
 			CheckError (InstallEventHandler (GetControlEventTarget (hWnd), viewEventHandler, (uint)viewEvents.Length, viewEvents, hWnd, IntPtr.Zero), "InstallEventHandler ()");
 			CheckError (HIViewChangeFeatures (hWnd, 1 << 1, 0), "HIViewChangeFeatures ()");
+			CheckError (HIViewChangeFeatures (hWnd, 1 << 25, 0), "HIViewChangeFeatures ()");
 			CheckError (HIViewSetFrame (hWnd, ref r), "HIViewSetFrame ()");
 			if (parentHnd != IntPtr.Zero && parentHnd != hWnd) {
 				CheckError (HIViewAddSubview (parentHnd, hWnd), "HIViewAddSubview ()");
@@ -273,13 +273,19 @@ namespace System.Windows.Forms {
 			return CreateWindow(create_params);
                 }
 
-		[MonoTODO]
 		internal override void DestroyWindow(IntPtr handle) {
-			throw new NotImplementedException ();
+			if (HIViewGetSuperview (handle) != IntPtr.Zero)
+				CheckError (HIViewRemoveFromSuperview (handle), "HIViewRemoveFromSuperview ()");
+			if (view_window_mapping [handle] != null) {
+				DisposeWindow ((IntPtr)(view_window_mapping [handle]));
+			} else {
+				CFRelease (handle);
+			}
 		}
 
-		[MonoTODO]
 		internal override void RefreshWindow(IntPtr handle) {
+			// FIXME: We should generate an expose rather than inject into the
+			// stream
 			if (handle_data [handle] == null)
 				handle_data [handle] = new HandleData ();
 			HIRect bounds = new HIRect ();
@@ -313,7 +319,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			}
 		}
 
-		[MonoTODO]
 		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
 			PaintEventArgs  paint_event;
 
@@ -333,7 +338,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			return paint_event;
 		}
 
-		[MonoTODO]
 		internal override void PaintEventEnd(IntPtr handle) {
 			HandleData data = (HandleData) handle_data [handle];
 			if (data == null)
@@ -368,7 +372,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			}
 		}
 
-		[MonoTODO]
 		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
 			HIRect r = new HIRect ();
 			CheckError (HIViewGetFrame (handle, ref r), "HIViewGetFrame ()");
@@ -387,7 +390,7 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 
 		[MonoTODO]
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
-			//throw new NotImplementedException ();
+			//Like X11 we need not do anything here
 		}
 
 		internal override void SetModal(IntPtr handle, bool Modal) {
@@ -404,8 +407,9 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			return;
 		}
 
-		[MonoTODO]
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
+			// FIXME: We should expose on this rect instead of jumping into
+			// the loop as invalidarea migt change
 			((HandleData) handle_data [handle]).AddToInvalidArea (rc.X, rc.Y, rc.Width, rc.Height);
 			MSG msg = new MSG ();
 			msg.hwnd = handle;
@@ -426,14 +430,13 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
                         Console.WriteLine("{0}{1}", e.Message, st.ToString());
 		}
 
-		[MonoTODO]
 		internal override void DoEvents() {
-			throw new NotImplementedException ();
+			Console.WriteLine("XplatUIOSX.DoEvents");
 		}
 
-		[MonoTODO]
 		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
-			throw new NotImplementedException ();
+			Console.WriteLine("XplatUIOSX.PeekMessage");
+			return true;
 		}
 
 		internal int WindowHandler (IntPtr inCallRef, IntPtr inEvent, IntPtr controlHnd) {
@@ -849,7 +852,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			return HIViewGetSuperview (handle);
 		}
 
-		[MonoTODO]
 		internal override void GrabWindow(IntPtr hWnd, IntPtr confine_hwnd) {
 			grabWindow = hWnd;
 		}
@@ -1074,9 +1076,35 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
 
-		[MonoTODO]
 		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount) {
-			;
+			IntPtr rect = IntPtr.Zero;
+			HIRect vBounds = new HIRect ();
+                        HIViewGetBounds (hwnd, ref vBounds);
+			HIViewConvertRect (ref vBounds, hwnd, IntPtr.Zero);
+			SetRect (ref rect, (short)vBounds.origin.x, (short)(vBounds.origin.y-22), (short)(vBounds.origin.x+vBounds.size.width), (short)(vBounds.origin.y+vBounds.size.height-22));
+			ScrollRect (ref rect, (short)XAmount, (short)-YAmount, IntPtr.Zero);
+
+			// FIXME: If XAmount and YAmount are both != 0 we'll have a problem
+			MSG msg = new MSG ();
+			msg.hwnd = hwnd;
+			msg.message = Msg.WM_PAINT;
+			msg.wParam = IntPtr.Zero;
+			msg.lParam = IntPtr.Zero;
+			if (YAmount > 0) {
+				((HandleData)handle_data [hwnd]).AddToInvalidArea (0, YAmount, (int)vBounds.size.width, (int)(vBounds.size.height));
+				carbonEvents.Enqueue (msg);
+			} else if (YAmount < 0) {
+				((HandleData)handle_data [hwnd]).AddToInvalidArea (0, 0, (int)vBounds.size.width, -YAmount);
+				carbonEvents.Enqueue (msg);
+			}
+
+			if (XAmount > 0) {
+				((HandleData)handle_data [hwnd]).AddToInvalidArea (0, 0, XAmount, (int)vBounds.size.height);
+				carbonEvents.Enqueue (msg);
+			} else if (XAmount < 0) {
+				((HandleData)handle_data [hwnd]).AddToInvalidArea ((int)(vBounds.size.width+XAmount), 0, (int)vBounds.size.width, (int)vBounds.size.height);
+				carbonEvents.Enqueue (msg);
+			}
 		}
 
 
@@ -1140,12 +1168,16 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewGetBounds (IntPtr vHnd, ref HIRect r);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewScrollRect (IntPtr vHnd, ref HIRect rect, float x, float y);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewScrollRect (IntPtr vHnd, IntPtr rect, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewSetBoundsOrigin (IntPtr vHnd, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewConvertRect (ref HIRect r, IntPtr a, IntPtr b);
 		
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void ScrollRect (ref IntPtr r, short dh, short dv, IntPtr rgnHandle);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void SetRect (ref IntPtr r, short left, short top, short right, short bottom);
 
@@ -1223,6 +1255,8 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int CreateNewWindow (int klass, uint attributes, ref IntPtr r, ref IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int DisposeWindow (IntPtr wHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int ShowWindow (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HideWindow (IntPtr wHnd);
@@ -1253,6 +1287,8 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetWindowContentColor (IntPtr hWnd, ref RGBColor backColor);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CFRelease (IntPtr wHnd);
 
 		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
 		internal extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);

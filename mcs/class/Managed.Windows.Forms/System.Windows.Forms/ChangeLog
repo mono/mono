@@ -1,4 +1,9 @@
 2004-12-19  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs: Implement DestroyWindow.  Implement ScrollWindow
+	Minor code cleanup.
+
+2004-12-19  Geoff Norton  <gnorton@customerdna.com>
 	
 	* XplatUIOSX.cs (SetModal): Implement this method on OSX.
 
