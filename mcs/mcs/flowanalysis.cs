@@ -676,24 +676,33 @@ namespace Mono.CSharp
 			// </summary>
 			public void MergeJumpOrigins (ICollection origin_vectors)
 			{
-				Report.Debug (1, "  MERGING JUMP ORIGIN", this);
+				Report.Debug (1, "  MERGING JUMP ORIGINS", this);
 
 				reachability = Reachability.Never ();
 
 				if (origin_vectors == null)
 					return;
 
+				bool first = true;
+
 				foreach (UsageVector vector in origin_vectors) {
 					Report.Debug (1, "    MERGING JUMP ORIGIN", vector);
 
-					locals.And (vector.locals);
-					if (parameters != null)
-						parameters.And (vector.parameters);
-
+					if (first) {
+						locals.Or (vector.locals);
+						if (parameters != null)
+							parameters.Or (vector.parameters);
+						first = false;
+					} else {
+						locals.And (vector.locals);
+						if (parameters != null)
+							parameters.And (vector.parameters);
+					}
+						
 					Reachability.And (ref reachability, vector.Reachability, true);
 				}
 
-				Report.Debug (1, "  MERGING JUMP ORIGIN DONE", this);
+				Report.Debug (1, "  MERGING JUMP ORIGINS DONE", this);
 			}
 
 			// <summary>
@@ -1101,6 +1110,12 @@ namespace Mono.CSharp
 
 		public override void Label (ArrayList origin_vectors)
 		{
+			if (!CurrentUsageVector.Reachability.IsUnreachable) {
+				if (origin_vectors == null)
+					origin_vectors = new ArrayList (1);
+				origin_vectors.Add (CurrentUsageVector.Clone ());
+			}
+
 			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
 		}
 

@@ -1,3 +1,9 @@
+2003-12-13  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs
+	(UsageVector.MergeJumpOrigins, FlowBranching.Label): Make this
+	actually work and also fix #48962.
+
 2003-12-12 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* decl.cs: Do not check System.Object for nested types,
