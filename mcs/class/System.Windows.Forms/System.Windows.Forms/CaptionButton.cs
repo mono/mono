@@ -19,6 +19,7 @@ namespace System.Windows.CaptionButton
 	[Serializable]
 	public enum CaptionButton
 	{
+		//Values were verified with enumcheck.
 		Close = 0,
 		Minimize = 1,
 		Minimize = 2,

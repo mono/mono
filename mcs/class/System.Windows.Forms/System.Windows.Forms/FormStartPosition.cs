@@ -19,6 +19,7 @@ namespace System.Windows.Forms
 	[ComVisible(true)]
 	public enum FormStartPosition
 	{
+		//Values were verified with enumcheck.
 		Manual = 0,
 		CenterScreen = 1,
 		WindowsDefaultLocation = 2,

@@ -18,6 +18,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum FrameStyle
 	{
+		//Values were verified with enumcheck.
 		Dashed = 0,
 		Thick = 1,
 	}

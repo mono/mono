@@ -19,6 +19,7 @@ namespace System.Windows.Forms
 	[ComVisible(true)]
 	public enum FormBorderStyle
 	{
+		//Values were verified with enumcheck.
 		None = 0,
 		FixedSingle = 1,
 		Fixed3D = 2,

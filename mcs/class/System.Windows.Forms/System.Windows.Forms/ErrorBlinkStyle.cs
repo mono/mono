@@ -19,6 +19,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum ErrorBlinkStyle
 	{
+		//Values were verified with enumcheck.
 		BlinkIfDifferentError = 0,
 		AlwaysBlink = 1,
 		NeverBlink = 2,

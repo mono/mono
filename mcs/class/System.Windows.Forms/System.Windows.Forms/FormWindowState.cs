@@ -19,6 +19,7 @@ namespace System.Windows.Forms
 	[ComVisible(true)]
 	public enum FormWindowState
 	{
+		//Values were verified with enumcheck.
 		Normal = 0,
 		Maximized = 1,
 		Minimized = 2,

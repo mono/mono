@@ -19,6 +19,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum CheckState
 	{
+		//Values were verified with enumcheck.
 		Unchecked = 0,
 		Checked = 1,
 		Indeterminate = 2,

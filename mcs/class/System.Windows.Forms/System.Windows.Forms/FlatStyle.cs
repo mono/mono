@@ -18,6 +18,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum FlatStyle
 	{
+		//Values were verified with enumcheck.
 		Flat = 0,
 		Popup = 1,
 		Standard = 2,

@@ -19,13 +19,14 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum AccessibleNavigation
 	{
-		Down,
-		FirstChild,
-		LastChild,
-		Left,
-		Next,
-		Previous,
-		Right,
-		Up
+		//Values were verified with enumcheck.
+		Down = 2,
+		FirstChild = 7,
+		LastChild = 8,
+		Left = 3,
+		Next = 5,
+		Previous = 6,
+		Right = 4,
+		Up = 1
 	}
 }

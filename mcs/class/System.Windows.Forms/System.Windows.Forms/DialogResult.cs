@@ -11,14 +11,14 @@ using System;
 
 namespace System.Windows.Forms
 {
-
 	/// <summary>
-  /// Specifies identifiers to indicate the return value of a dialog box.
+	/// Specifies identifiers to indicate the return value of a dialog box.
 	/// </summary>
 	[Serializable]
 	[ComVisible(true)]
 	public enum DialogResult
 	{
+		//Values were verified with enumcheck.
 		None = 0,
 		OK = 1,
 		Cancel = 2,

@@ -18,6 +18,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum DataGridParentRowsLabelStyle
 	{
+		//Values were verified with enumcheck.
 		None = 0,
 		TableName = 1,
 		ColumnName = 2,

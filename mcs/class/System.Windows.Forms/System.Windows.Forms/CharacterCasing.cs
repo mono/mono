@@ -18,6 +18,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum CharacterCasing
 	{
+		//Values were verified with enumcheck.
 		Normal = 0,
 		Upper = 1,
 		Lower = 2,

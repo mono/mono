@@ -18,6 +18,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum DrawMode
 	{
+		//Values were verified with enumcheck.
 		Normal = 0,
 		OwnerDrawFixed = 1,
 		OwnerDrawVariable = 2,

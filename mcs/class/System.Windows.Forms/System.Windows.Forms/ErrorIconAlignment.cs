@@ -19,6 +19,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum ErrorIconAlignment
 	{
+		//Values were verified with enumcheck.
 		TopLeft = 0,
 		TopRight = 1,
 		MiddleLeft = 2,
