@@ -11,6 +11,7 @@ using System.IO;
 using System.Web.Services;
 using System.Web.Services.Configuration;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
@@ -34,7 +35,7 @@ namespace System.Web.Services.Description {
 		string targetNamespace;
 		Types types;
 		static XmlSerializer serializer;
-
+		XmlSerializerNamespaces ns;
 
 		#endregion // Fields
 
@@ -53,13 +54,18 @@ namespace System.Web.Services.Description {
 			messages = new MessageCollection (this);
 			name = String.Empty;		
 			portTypes = new PortTypeCollection (this);
-			retrievalUrl = String.Empty;
-
 
 			serviceDescriptions = null;
 			services = new ServiceCollection (this);
 			targetNamespace = String.Empty;
 			types = null;
+
+			ns = new XmlSerializerNamespaces ();
+			ns.Add ("soap", SoapBinding.Namespace);
+			ns.Add ("s", XmlSchema.Namespace);
+			ns.Add ("http", HttpBinding.Namespace);
+			ns.Add ("mime", MimeContentBinding.Namespace);
+			ns.Add ("tm", MimeTextBinding.Namespace);
 		}
 		
 		#endregion // Constructors
@@ -165,7 +171,8 @@ namespace System.Web.Services.Description {
 
 		public void Write (Stream stream)
 		{
-			serializer.Serialize (stream, this);
+
+			serializer.Serialize (stream, this, ns);
 		}
 
 		public void Write (string fileName)
@@ -175,12 +182,12 @@ namespace System.Web.Services.Description {
 
 		public void Write (TextWriter writer)
 		{
-			serializer.Serialize (writer, this);
+			serializer.Serialize (writer, this, ns);
 		}
 
 		public void Write (XmlWriter writer)
 		{
-			serializer.Serialize (writer, this);
+			serializer.Serialize (writer, this, ns);
 		}
 
 		internal void SetParent (ServiceDescriptionCollection serviceDescriptions)

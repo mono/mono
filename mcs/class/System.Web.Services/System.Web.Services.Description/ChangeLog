@@ -1,5 +1,11 @@
 2002-08-06  Tim Coleman <tim@timcoleman.com>
 	* ServiceDescription.cs:
+		Add namespace definitions when serializing.
+	* HttpBinding.cs:
+		Change namespace definition (wsdl was spelt wsld)
+
+2002-08-06  Tim Coleman <tim@timcoleman.com>
+	* ServiceDescription.cs:
 		Change the XmlElement name from "type" to "types" for
 		the Types object
 
