@@ -1,3 +1,7 @@
+2005-01-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* thread6.cs: Add test for aborting the current thread.
+
 2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* thread6.cs: Add test for rethrowing abort exceptions.
