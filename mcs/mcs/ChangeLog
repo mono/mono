@@ -1,3 +1,8 @@
+2002-12-14  Jaroslaw Kowalski <jarek@atm.com.pl>
+
+	* decl.cs: Added special case to allow overrides on "protected
+	internal" methods
+	
 2002-12-18  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (Attributes.AddAttributeSection): Rename to this
