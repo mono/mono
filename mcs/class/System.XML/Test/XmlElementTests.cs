@@ -39,6 +39,28 @@ namespace MonoTests.System.Xml
 			//AssertEquals (attributesCount, element.Attributes.Count);
 		}
 
+		// for NodeInserted Event
+		private bool Inserted = false;
+		private void OnNodeInserted (object o, XmlNodeChangedEventArgs e)
+		{
+			Inserted = true;
+		}
+
+		// for NodeChanged Event
+		private bool Changed = false;
+		private void OnNodeChanged (object o, XmlNodeChangedEventArgs e)
+		{
+			Changed = true;
+		}
+
+		// for NodeRemoved Event
+		private bool Removed = false;
+		private void OnNodeRemoved (object o, XmlNodeChangedEventArgs e)
+		{
+			Removed = true;
+		}
+
+
 		public void TestCloneNode ()
 		{
 			XmlElement element = document.CreateElement ("foo");
@@ -208,7 +230,7 @@ namespace MonoTests.System.Xml
 			AssertEquals ("attributes not properly removed.", false, xmlElement.HasAttribute ("type"));
 		}
 
-		public void TestSetAttributeNode()
+		public void TestSetAttributeNode ()
 		{
 			XmlDocument xmlDoc = new XmlDocument ();
 			XmlElement xmlEl = xmlDoc.CreateElement ("TestElement");
@@ -218,63 +240,88 @@ namespace MonoTests.System.Xml
 			AssertEquals ("attribute namespace not properly created.", true, xmlAttribute.NamespaceURI.Equals ("namespace1"));
 		}
 
-		public void TestInnerXmlSetter()
+		public void TestInnerXmlSetter ()
 		{
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml("<root/>");
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root/>");
 			XmlElement el =  doc.DocumentElement;
-			AssertNull("#Simple", el.FirstChild);
+			AssertNull ("#Simple", el.FirstChild);
 			el.InnerXml = "<foo><bar att='baz'/></foo>";
 			XmlElement child = el.FirstChild as XmlElement;
-			AssertNotNull("#Simple.Child", child);
-			AssertEquals("#Simple.Child.Name", "foo", child.LocalName);
+			AssertNotNull ("#Simple.Child", child);
+			AssertEquals ("#Simple.Child.Name", "foo", child.LocalName);
 
 			XmlElement grandchild = child.FirstChild as XmlElement;
-			AssertNotNull("#Simple.GrandChild", grandchild);
-			AssertEquals("#Simple.GrandChild.Name", "bar", grandchild.LocalName);
-			AssertEquals("#Simple.GrandChild.Attr", "baz", grandchild.GetAttribute("att"));
+			AssertNotNull ("#Simple.GrandChild", grandchild);
+			AssertEquals ("#Simple.GrandChild.Name", "bar", grandchild.LocalName);
+			AssertEquals ("#Simple.GrandChild.Attr", "baz", grandchild.GetAttribute ("att"));
 
-			doc.LoadXml("<root xmlns='NS0' xmlns:ns1='NS1'><foo/><ns1:bar/><ns2:bar xmlns:ns2='NS2' /></root>");
+			doc.LoadXml ("<root xmlns='NS0' xmlns:ns1='NS1'><foo/><ns1:bar/><ns2:bar xmlns:ns2='NS2' /></root>");
 			el = doc.DocumentElement.FirstChild.NextSibling as XmlElement;	// ns1:bar
-			AssertNull("#Namespaced.Prepare", el.FirstChild);
+			AssertNull ("#Namespaced.Prepare", el.FirstChild);
 			el.InnerXml = "<ns1:baz />";
-			AssertNotNull("#Namespaced.Child", el.FirstChild);
-			AssertEquals("#Namespaced.Child.Name", "baz", el.FirstChild.LocalName);
-			AssertEquals("#Namespaced.Child.NSURI", "NS1", el.FirstChild.NamespaceURI);	// important!
+			AssertNotNull ("#Namespaced.Child", el.FirstChild);
+			AssertEquals ("#Namespaced.Child.Name", "baz", el.FirstChild.LocalName);
+			AssertEquals ("#Namespaced.Child.NSURI", "NS1", el.FirstChild.NamespaceURI);	// important!
 
 			el.InnerXml = "<hoge />";
-			AssertEquals("#Namespaced.VerifyPreviousCleared", "hoge", el.FirstChild.Name);
+			AssertEquals ("#Namespaced.VerifyPreviousCleared", "hoge", el.FirstChild.Name);
 		}
 
-		public void TestRemoveAttribute()
+		public void TestRemoveAttribute ()
 		{
 			string xlinkURI = "http://www.w3.org/1999/XLink";
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml("<root a1='1' a2='2' xlink:href='urn:foo' xmlns:xlink='" + xlinkURI + "' />");
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root a1='1' a2='2' xlink:href='urn:foo' xmlns:xlink='" + xlinkURI + "' />");
+
 			XmlElement el =  doc.DocumentElement;
-			el.RemoveAttribute("a1");
-			AssertNull("RemoveAttribute", el.GetAttributeNode("a1"));
-			el.RemoveAttribute("xlink:href");
-			AssertNull("RemoveAttribute", el.GetAttributeNode("href", xlinkURI));
-			el.RemoveAllAttributes();
-			AssertNull("RemoveAllAttributes", el.GetAttributeNode("a2"));
+			el.RemoveAttribute ("a1");
+			AssertNull ("RemoveAttribute", el.GetAttributeNode ("a1"));
+			el.RemoveAttribute ("xlink:href");
+			AssertNull ("RemoveAttribute", el.GetAttributeNode ("href", xlinkURI));
+			el.RemoveAllAttributes ();
+			AssertNull ("RemoveAllAttributes", el.GetAttributeNode ("a2"));
 		}
 
-		public void TestWriteToWithDeletedNamespacePrefix()
+		public void TestWriteToWithDeletedNamespacePrefix ()
 		{
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml("<root xmlns:foo='urn:dummy'><foo foo:bar='baz' /></root>");
-			doc.DocumentElement.RemoveAllAttributes();
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root xmlns:foo='urn:dummy'><foo foo:bar='baz' /></root>");
+			doc.DocumentElement.RemoveAllAttributes ();
 
-			Assert(doc.DocumentElement.FirstChild.OuterXml.IndexOf("xmlns:foo") > 0);
+			Assert (doc.DocumentElement.FirstChild.OuterXml.IndexOf("xmlns:foo") > 0);
 		}
 
-		public void TestWriteToWithDifferentNamespaceAttributes()
+		public void TestWriteToWithDifferentNamespaceAttributes ()
 		{
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml("<root xmlns:foo='urn:dummy' xmlns:html='http://www.w3.org/1999/xhtml' html:style='font-size: 1em'></root>");
-			Assert(doc.OuterXml.IndexOf("xmlns:html=\"http://www.w3.org/1999/xhtml\"") > 0);
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root xmlns:foo='urn:dummy' xmlns:html='http://www.w3.org/1999/xhtml' html:style='font-size: 1em'></root>");
+			Assert (doc.OuterXml.IndexOf ("xmlns:html=\"http://www.w3.org/1999/xhtml\"") > 0);
 		}
 
+		public void TestInnerTextAndEvent ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root><child>text</child><child2><![CDATA[cdata]]></child2></root>");
+			doc.NodeInserted += new XmlNodeChangedEventHandler (
+				OnNodeInserted);
+			doc.NodeRemoved += new XmlNodeChangedEventHandler (
+				OnNodeRemoved);
+			// If only one child of the element is Text node,
+			// then no events are fired.
+			doc.DocumentElement.FirstChild.InnerText = "no events fired.";
+			AssertEquals ("NoInsertEventFired", false, Inserted);
+			AssertEquals ("NoRemoveEventFired", false, Removed);
+			AssertEquals ("SetInnerTextToSingleText", "no events fired.", doc.DocumentElement.FirstChild.InnerText);
+			Inserted = false;
+			Removed = false;
+
+			// if only one child of the element is CDataSection,
+			// then events are fired.
+			doc.DocumentElement.LastChild.InnerText = "events are fired.";
+			AssertEquals ("InsertedEventFired", true, Inserted);
+			AssertEquals ("RemovedEventFired", true, Removed);
+			AssertEquals ("SetInnerTextToCDataSection", "events are fired.", doc.DocumentElement.LastChild.InnerText);
+		}
 	}
 }

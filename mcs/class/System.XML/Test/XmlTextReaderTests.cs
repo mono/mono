@@ -1770,7 +1770,7 @@ namespace MonoTests.System.Xml
 			XmlReader xmlReader =
 				new XmlTextReader (new StringReader (xml));
 			xmlReader.Read ();
-			AssertEquals (xmlReader ["value"], "hello & world");
+			AssertEquals ("hello & world", xmlReader ["value"]);
 		}
 	}
 }
