@@ -9,6 +9,8 @@
 //
 using System;
 using System.Drawing.Imaging;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace System.Drawing
 {
@@ -17,6 +19,10 @@ namespace System.Drawing
 	/// </summary>
 	public sealed class ImageAnimator
 	{
+		static bool isAnimating = false;
+		static Thread thread;
+		static int activeFrame;
+
 		private ImageAnimator ()
 		{
 			//
@@ -24,10 +30,27 @@ namespace System.Drawing
 			//
 		}
 
-		[MonoTODO ("Implement")]
 		public static void Animate (Image img, EventHandler onFrameChangeHandler)
 		{
-			throw new NotImplementedException (); 
+			if (img == null)
+				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");
+
+			if (!isAnimating) {
+				int frameCount = img.GetFrameCount (FrameDimension.Time);
+				if (frameCount>1){
+					isAnimating = true;
+					//Start a new thread for looping within multiple frames of the image
+					WorkerThread WT = new WorkerThread(img, new ActiveFrameCountCallBack(ResultCallback));
+					ThreadStart TS = new ThreadStart(WT.LoopHandler);	
+					thread = new Thread(TS);
+					//Console.WriteLine ("Starting Thread");
+					//MessageBox.Show ("Starting Thread");
+					thread.Start();					
+				}
+							
+			}
+			//Console.WriteLine ("Started Thread");
+			//MessageBox.Show ("Started Thread");
 		}
 
 		public static bool CanAnimate (Image img)
@@ -55,10 +78,20 @@ namespace System.Drawing
 			return false; 
 		}
 
-		[MonoTODO ("Implement")]
 		public static void StopAnimate (Image img, EventHandler onFrameChangeHandler)
 		{
-			throw new NotImplementedException (); 
+			if (img == null)
+				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");
+			//Console.WriteLine ("Stopping animation");
+			//MessageBox.Show ("Stopping animation");
+			if (isAnimating) {
+				isAnimating = false;
+				thread.Abort ();
+				//Thread.CurrentThread.Join ();
+				//Console.WriteLine ("Thread Joined");
+				//MessageBox.Show ("Thread Joined");
+			}
+			
 		}
 
 		[MonoTODO ("Implement")]
@@ -70,7 +103,80 @@ namespace System.Drawing
 		[MonoTODO ("Implement")]
 		public static void UpdateFrames (Image img)
 		{
-			throw new NotImplementedException (); 
+			/* Not sure as to what else needs to be done here.
+			  I have updated the frame thats what i can think of
+			  It surely requires something else also, as my application
+			  shows only a static image */
+
+			//Console.WriteLine ("Updating Frame "+activeFrame);
+			//MessageBox.Show ("Updating Frame "+activeFrame);
+			
+			int fc = img.SelectActiveFrame (FrameDimension.Time, activeFrame);						
+			
+			//Console.WriteLine ("Updated Frame "+ fc);
+			//MessageBox.Show ("Updated Frame "+ fc);
 		}	
+
+		// The callback method must match the signature of the
+		// callback delegate.
+		//
+		static void ResultCallback(int activeFrameCount) 
+		{
+			activeFrame = activeFrameCount;
+		}
+
+	}
+
+	// Delegate that defines the signature for the callback method.
+	//
+	delegate void ActiveFrameCountCallBack(int lineCount);
+
+	class WorkerThread
+	{
+		Image image;
+		int activeFrameCount;
+		int frameCount;
+		ActiveFrameCountCallBack afc;
+				
+		public WorkerThread(Image img, ActiveFrameCountCallBack afCount)
+		{
+			//Console.WriteLine ("Worker Thread Constructor");
+			//MessageBox.Show ("Worker Thread Constructor");
+			image = img;			
+			frameCount = img.GetFrameCount (FrameDimension.Time);
+			afc = afCount;
+		}
+    
+		public void LoopHandler()
+		{
+			try
+			{
+				//Console.WriteLine ("Came in loop handler");
+				//MessageBox.Show ("Came in loop handler");
+				while (true)
+				{
+					//Need a way to get the delay during animation
+					Thread.Sleep (100);
+					activeFrameCount++;
+					if (activeFrameCount > frameCount)
+						activeFrameCount = 0;
+					if (afc != null)
+						afc (activeFrameCount);
+
+				}
+				//Console.WriteLine ("Exiting loop handler");
+				//MessageBox.Show ("Exiting loop handler");
+			}
+			catch(ThreadAbortException tae)
+			{ 
+				//lets not bother ourselves with tae
+				//it will be thrown anyway
+			}
+			catch(Exception er)
+			{
+				throw er;
+			}
+
+		}
 	}
 }
