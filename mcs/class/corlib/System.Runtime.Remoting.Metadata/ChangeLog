@@ -1,3 +1,7 @@
+2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapTypeAttribute.cs: Use full namespace name.
+
 2003-12-03  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapTypeAttribute.cs: Set correct value for default namespace.
