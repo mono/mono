@@ -12,7 +12,7 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
-	public delegate void XmlNodeChangedEventHandler (XmlNodeChangedEventArgs args);
+//	public delegate void XmlNodeChangedEventHandler (XmlNodeChangedEventArgs args);
 
 	public class XmlDocument : XmlNode
 	{
@@ -473,42 +473,48 @@ namespace System.Xml
 		internal void onNodeChanging(XmlNode node, XmlNode Parent)
 		{
 			if (NodeInserting != null)
-				NodeChanging( new XmlNodeChangedEventArgs(XmlNodeChangedAction.Change,
+				NodeChanging (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Change,
 					node, Parent, Parent));
 		}
 
-		internal void onNodeChanged(XmlNode node, XmlNode Parent)
+		internal void onNodeChanged (XmlNode node, XmlNode Parent)
 		{
 			if (NodeChanged != null)
-				NodeInserted( new XmlNodeChangedEventArgs(XmlNodeChangedAction.Change,
+				NodeInserted (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Change,
 					node, Parent, Parent));
 		}
 
-		internal void onNodeInserting(XmlNode node, XmlNode newParent)
+		internal void onNodeInserting (XmlNode node, XmlNode newParent)
 		{
 			if (NodeInserting != null)
-				NodeInserting( new XmlNodeChangedEventArgs(XmlNodeChangedAction.Insert,
+				NodeInserting (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Insert,
 					node, null, newParent));
 		}
 
-		internal void onNodeInserted(XmlNode node, XmlNode newParent)
+		internal void onNodeInserted (XmlNode node, XmlNode newParent)
 		{
 			if (NodeInserted != null)
-				NodeInserted( new XmlNodeChangedEventArgs(XmlNodeChangedAction.Insert,
+				NodeInserted (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Insert,
 					node, null, newParent));
 		}
 
-		internal void onNodeRemoving(XmlNode node, XmlNode oldParent)
+		internal void onNodeRemoving (XmlNode node, XmlNode oldParent)
 		{
 			if (NodeRemoving != null)
-				NodeRemoving(new XmlNodeChangedEventArgs(XmlNodeChangedAction.Remove,
+				NodeRemoving (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Remove,
 					node, oldParent, null));
 		}
 
-		internal void onNodeRemoved(XmlNode node, XmlNode oldParent)
+		internal void onNodeRemoved (XmlNode node, XmlNode oldParent)
 		{
 			if (NodeRemoved != null)
-				NodeRemoved(new XmlNodeChangedEventArgs(XmlNodeChangedAction.Remove,
+				NodeRemoved (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Remove,
 					node, oldParent, null));
 		}
 

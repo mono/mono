@@ -1,3 +1,12 @@
+2002-03-14  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDocument.cs: Moved the NodeChanged EventHandler to its own
+	file, and updated the callbacks to reflect the change.
+
+	* XmlNodeChangedEventHandler.cs: Added, replacing the version that
+	was in XmlDocument.cs. It has two arguments now (object,
+	EventArgs) , instead of one (object).
+
 2002-03-14  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlWriter.cs: Formatting.
