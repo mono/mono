@@ -1,5 +1,10 @@
 2004-04-02  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (GenericMemberAccess.ResolveAsTypeStep): Added
+	support for nested types.
+
+2004-04-02  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (IAlias): New public interface.
 	(TypeExpr, TypeExpression): Implement IAlias.
 	(TypeAliasExpression): New public class.

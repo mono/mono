@@ -805,6 +805,7 @@ namespace Mono.CSharp {
 	public class GenericMemberAccess : MemberAccess
 	{
 		TypeArguments args;
+		bool has_outer_params;
 
 		public GenericMemberAccess (Expression expr, string id, TypeArguments args, Location loc)
 			: base (expr, id, args.Count, loc)
@@ -821,6 +822,7 @@ namespace Mono.CSharp {
 				new_args.Add (args);
 
 				args = new_args;
+				has_outer_params = true;
 			}
 
 			return true;
@@ -899,6 +901,20 @@ namespace Mono.CSharp {
 			Type t = ((TypeExpr) expr).ResolveType (ec);
 			if (t == null)
 				return null;
+
+			Type tdecl = t.DeclaringType;
+			if (!has_outer_params &&
+			    (tdecl != null) && TypeManager.HasGenericArguments (tdecl)) {
+				Type[] decl_args = TypeManager.GetTypeArguments (tdecl);
+
+				TypeArguments new_args = new TypeArguments (loc);
+				foreach (Type decl in decl_args)
+					new_args.Add (new TypeExpression (decl, loc));
+				new_args.Add (args);
+
+				args = new_args;
+				has_outer_params = true;
+			}
 
 			ConstructedType ctype = new ConstructedType (t, args, loc);
 			return ctype.ResolveAsTypeStep (ec);

@@ -1494,6 +1494,11 @@ public class TypeManager {
 		return ds.IsGeneric;
 	}
 
+	public static bool HasGenericArguments (Type t)
+	{
+		return GetNumberOfTypeArguments (t) > 0;
+	}
+
 	public static int GetNumberOfTypeArguments (Type t)
 	{
 		DeclSpace tc = LookupDeclSpace (t);
