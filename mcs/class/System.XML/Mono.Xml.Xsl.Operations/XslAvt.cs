@@ -109,13 +109,16 @@ namespace Mono.Xml.Xsl.Operations {
 		public string Evaluate (XslTransformProcessor p)
 		{
 			if (simpleString != null) return simpleString;
+			if (avtParts.Count == 1)
+				return ((AvtPart) avtParts [0]).Evaluate (p);
 				
-			StringBuilder sb = new StringBuilder ();
+			StringBuilder sb = p.GetAvtStringBuilder ();
 			
-			foreach (AvtPart part in avtParts)
-				sb.Append (part.Evaluate (p));
-				
-			return sb.ToString ();
+			int len = avtParts.Count;
+			for (int i = 0; i < len; i++)
+				sb.Append (((AvtPart) avtParts [i]).Evaluate (p));
+			
+			return p.ReleaseAvtStringBuilder ();
 		}
 		
 		// Represents part of an AVT

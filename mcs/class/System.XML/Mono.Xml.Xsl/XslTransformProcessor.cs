@@ -12,6 +12,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Text;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -118,6 +119,41 @@ namespace Mono.Xml.Xsl {
 		}
 		
 		public Hashtable Outputs { get { return compiledStyle.Outputs; }}
+		#endregion
+		
+		#region AVT StringBuilder
+		StringBuilder avtSB;
+	
+		#if DEBUG
+		bool avtSBlock = false
+		#endif
+	
+		public StringBuilder GetAvtStringBuilder ()
+		{
+			#if DEBUG
+				if (avtSBlock)
+					throw new Exception ("String Builder was locked");
+				avtSBlock = true;
+			#endif
+			
+			if (avtSB == null)
+				avtSB = new StringBuilder ();
+			
+			return avtSB;
+		}
+		
+		public string ReleaseAvtStringBuilder ()
+		{
+			#if DEBUG
+				if (!avtSBlock)
+					throw new Exception ("you never locked the string builder");
+				avtSBlock = false;
+			#endif
+			
+			string ret = avtSB.ToString ();
+			avtSB.Length = 0;
+			return ret;
+		}
 		#endregion
 		
 		#region Templates -- Apply/Call
