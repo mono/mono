@@ -65,7 +65,7 @@ namespace System.Data.Odbc
 						return typeof(float);
 					case OdbcType.SmallInt:
 						return typeof(System.Int16);
-					case OdbcType.UniqueIndetifier:
+					case OdbcType.UniqueIdentifier:
 						return typeof(Guid);
 				}
 				throw new InvalidCastException();

@@ -51,7 +51,7 @@ namespace System.Data.Odbc
 		Text=-1,		// SQL_LONGVARCHAR
 		Timestamp=93,	// SQL_TYPE_TIMESTAMP
 		TinyInt=-6,		// SQL_TINYINT
-		UniqueIndetifier=-11,  // SQL_GUID
+		UniqueIdentifier=-11,  // SQL_GUID
 		VarBinary=-3,	// SQL_VARBINARY
 		VarChar=12		// SQL_VARCHAR
 	}
