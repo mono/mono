@@ -148,32 +148,6 @@ namespace System.Security.Permissions {
 		internal void AddPathInternal (FileIOPermissionAccess access, string path)
 		{
 			path = Path.GetFullPath (path);
-/*			switch (access) {
-				case FileIOPermissionAccess.AllAccess:
-					readList.Add (path);
-					writeList.Add (path);
-					appendList.Add (path);
-					pathList.Add (path);
-					break;
-				case FileIOPermissionAccess.NoAccess:
-					// ??? unit tests doesn't show removal using NoAccess ???
-					break;
-				case FileIOPermissionAccess.Read:
-					readList.Add (path);
-					break;
-				case FileIOPermissionAccess.Write:
-					writeList.Add (path);
-					break;
-				case FileIOPermissionAccess.Append:
-					appendList.Add (path);
-					break;
-				case FileIOPermissionAccess.PathDiscovery:
-					pathList.Add (path);
-					break;
-				default:
-					ThrowInvalidFlag (access, true);
-					break;
-			}*/
 
 			if ((access & FileIOPermissionAccess.Read) == FileIOPermissionAccess.Read)
 				readList.Add (path);
@@ -241,8 +215,6 @@ namespace System.Security.Permissions {
                         if ((FileIOPermissionAccess.AllAccess & access) != access)
 				ThrowInvalidFlag (access, true);
 
-			//LAMESPEC: docs says it returns (semicolon separated) list, but return
-			//type is array.  I think docs are wrong and it just returns an array
 			ArrayList result = new ArrayList ();
 			switch (access) {
 				case FileIOPermissionAccess.NoAccess:
@@ -288,7 +260,6 @@ namespace System.Security.Permissions {
 
 			return (result.IsEmpty () ? null : result);
 		}
-
 
 		public override bool IsSubsetOf (IPermission target)
 		{

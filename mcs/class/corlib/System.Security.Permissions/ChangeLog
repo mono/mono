@@ -1,3 +1,8 @@
+2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileIOPermission.cs: Removed old commented code and a LAMESPEC (as 
+	current documentation has been corrected).
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SiteIdentityPermission.cs: Fix case were the wildcard '*' is present
