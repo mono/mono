@@ -12,7 +12,7 @@ namespace System.Windows.Forms{
 
 	public class MenuItem : Control {
 
-		public MenuItemCollection MenuItems = new MenuItemCollection(this);
+		public MenuItemCollection MenuItems;
 		internal Gtk.MenuItem file_item;
 		String text;
 		
@@ -44,7 +44,8 @@ namespace System.Windows.Forms{
 		}
 
 		public MenuItem() : base (){
-			
+			this.MenuItems = new MenuItemCollection(this);
+	
 			CreateMenuItem();
 		}
 

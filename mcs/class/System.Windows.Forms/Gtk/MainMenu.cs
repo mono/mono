@@ -12,7 +12,7 @@ namespace System.Windows.Forms{
 
 	public class MainMenu : Control{
 
-		public MenuItemCollection MenuItems = new MenuItemCollection(this);
+		public MenuItemCollection MenuItems;
 		String text;
 		Gtk.MenuBar mb;
 
@@ -41,6 +41,7 @@ namespace System.Windows.Forms{
 		}
 
 		public MainMenu() : base (){
+			this.MenuItems = new MenuItemCollection(this);
 
 			CreateMenuBar();
 		}

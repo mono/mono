@@ -20,7 +20,7 @@ namespace System.Windows.Forms {
 		
 		private int menusize;
 		private bool UpdateState;
-		public ItemCollection Items = new ItemCollection(this);
+		public ItemCollection Items;
  		GLib.List list = new GLib.List (IntPtr.Zero, typeof (string));
 		System.Collections.ArrayList alist = new System.Collections.ArrayList();
 		
@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 		}
 
 		public ComboBox () : base (){
+			Items = new ItemCollection(this);
 	
 			UpdateState = false;
 		}

@@ -22,7 +22,6 @@ namespace System.Windows.Forms {
 		private int maxlength = 0;
 		private Gtk.TextTagTable tagtable;
 		private Gtk.TextBuffer textbuffer = null;
-
 		//
 		//  --- Public Properties
 		//
@@ -281,39 +280,53 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public void Copy()
 		{
-			throw new NotImplementedException ();
+			TextBuffer.CopyClipboard (Gtk.Clipboard.Get (Gdk.Atom.Intern("GDK_NONE", false)));
 		}
-		[MonoTODO]
+
 		public void Cut()
 		{
-			throw new NotImplementedException ();
+			TextBuffer.CutClipboard (Gtk.Clipboard.Get (Gdk.Atom.Intern("GDK_NONE", false)), true);
 		}
-		[MonoTODO]
+
 		public void Paste()
 		{
-			throw new NotImplementedException ();
+			// Wait for my gtk-sharp patch
+			TextBuffer.PasteClipboard(Gtk.Clipboard.Get (Gdk.Atom.Intern("GDK_NONE", false)), true);
 		}
+
 		[MonoTODO]
 		public void ScrollToCaret()
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public void Select(int start, int length) 
 		{
-			throw new NotImplementedException ();
+			Gtk.TextIter iter_start, iter_end;
+			TextBuffer.GetIterAtOffset (out iter_start, start);
+			TextBuffer.GetIterAtOffset (out iter_end, length);
+
+			TextBuffer.MoveMark(TextBuffer.InsertMark , iter_end);
+			TextBuffer.MoveMark (TextBuffer.SelectionBound, iter_start);
 		}
-		[MonoTODO]
+
 		public void SelectAll()
 		{
-			throw new NotImplementedException ();
+			Gtk.TextIter iter_start, iter_end;
+			TextBuffer.GetBounds (out iter_start, out iter_end);
+
+			TextBuffer.MoveMark(TextBuffer.InsertMark , iter_end);
+			TextBuffer.MoveMark (TextBuffer.SelectionBound, iter_start);
+
 		}
-		[MonoTODO]
+
 		public override string ToString()
 		{
+			// MS.NET returns "System.Windows.Forms.TextBox, Text: textBox1"
+			// return "System.Windows.Forms.TextBox, Text: " + this.name;
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
@@ -448,4 +461,3 @@ namespace System.Windows.Forms {
 		}
 */	}
 }
-
