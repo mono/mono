@@ -1,3 +1,7 @@
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StackTraceTest.cs: Added test for unthrown exceptions.
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2

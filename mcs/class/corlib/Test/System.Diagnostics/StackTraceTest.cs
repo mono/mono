@@ -71,6 +71,15 @@ namespace MonoTests.System.Diagnostics {
                         AssertEquals("Frame with index 0",
                                      frame,
                                      trace.GetFrame(0));
-                }                
+                }
+
+				/// <summary>
+				///   Test stack trace of not yet thrown exception.
+				/// </summary>
+				public void TestUnthrownException () {
+					AssertEquals ("Unthrown exception",
+								  (new StackTrace (new Exception ())).FrameCount,
+								  0);
+				}
 	}
 }
