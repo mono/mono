@@ -1,4 +1,8 @@
 2002-05-14  Dan Lewis  <dihlewis@yahoo.co.uk>
+	
+	* icall.c: make GetHashCode return non-negative values.
+
+2002-05-14  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* object.c, icall.c, gc.c: revert to address-based hashcode.
 
