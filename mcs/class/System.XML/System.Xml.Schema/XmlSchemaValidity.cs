@@ -31,9 +31,9 @@ namespace System.Xml.Schema
 {
 	public enum XmlSchemaValidity
 	{
-		Invalid,
 		NotKnown,
-		Valid
+		Valid,
+		Invalid,
 	}
 }
 

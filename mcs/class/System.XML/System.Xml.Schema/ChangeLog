@@ -1,3 +1,14 @@
+2004-07-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaBuiltInType.cs, XmlSchemaValidity.cs, XmlTypeCode.cs
+	  : fixed annoying enum errors.
+	* XmlSchemaCollection.cs : completely delegate to XmlSchemaSet.
+	* XmlSchemaSet.cs : sealed classes. Use ListDictionary (avoid annoying
+	  order preservation matter). NameTable null check for .ctor().
+	  Fill GlobalAttributes, GlobalElements, GlobalTypes correctly.
+	  Add(string, XmlReader) checks namespace conflicts, while
+	  Add(XmlSchema) does not. Fixed Schemas() return type.
+
 2004-07-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaDatatypeVariety.cs : Fixed class name typo.

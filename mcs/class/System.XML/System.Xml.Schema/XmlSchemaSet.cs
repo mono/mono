@@ -40,35 +40,38 @@ using System.Xml.XPath;
 namespace System.Xml.Schema
 {
 #if NET_2_0
-	public class XmlSchemaSet
+	public sealed class XmlSchemaSet
 #else
-	internal class XmlSchemaSet
+	internal sealed class XmlSchemaSet
 #endif
 	{
 		XmlNameTable nameTable;
 		XmlResolver xmlResolver;
 
-		Hashtable schemas;
+		ListDictionary schemas;
 		XmlSchemaObjectTable attributes;
 		XmlSchemaObjectTable elements;
 		XmlSchemaObjectTable types;
 		XmlSchemaCollection col;
+		ValidationEventHandler handler;
 
 		bool isCompiled;
 
 		internal Guid CompilationId;
 
-		public XmlSchemaSet () : this (new NameTable ())
+		public XmlSchemaSet ()
+			: this (new NameTable ())
 		{
+			handler = new ValidationEventHandler (this.OnValidationError);
 		}
 
 		public XmlSchemaSet (XmlNameTable nameTable)
 		{
+			if (nameTable == null)
+				throw new ArgumentNullException ("nameTable");
+
 			this.nameTable = nameTable;
-			schemas = new Hashtable ();
-			attributes = new XmlSchemaObjectTable ();
-			elements = new XmlSchemaObjectTable ();
-			types = new XmlSchemaObjectTable ();
+			schemas = new ListDictionary ();
 			CompilationId = Guid.NewGuid ();
 		}
 
@@ -79,15 +82,45 @@ namespace System.Xml.Schema
 		}
 
 		public XmlSchemaObjectTable GlobalAttributes {
-			get { return attributes; }
+			get {
+				if (attributes == null) {
+					lock (this) {
+						attributes = new XmlSchemaObjectTable ();
+						foreach (XmlSchema s in schemas.Values)
+							foreach (XmlSchemaAttribute a in s.Attributes.Values)
+								attributes.Add (a.QualifiedName, a);
+					}
+				}
+				return attributes;
+			}
 		}
 
 		public XmlSchemaObjectTable GlobalElements {
-			get { return elements; }
+			get {
+				if (elements == null) {
+					lock (this) {
+						elements = new XmlSchemaObjectTable ();
+						foreach (XmlSchema s in schemas.Values)
+							foreach (XmlSchemaElement e in s.Elements.Values)
+								elements.Add (e.QualifiedName, e);
+					}
+				}
+				return elements;
+			}
 		}
 
 		public XmlSchemaObjectTable GlobalTypes { 
-			get { return types; }
+			get {
+				if (types == null) {
+					lock (this) {
+						types = new XmlSchemaObjectTable ();
+						foreach (XmlSchema s in schemas.Values)
+							foreach (XmlSchemaType t in s.SchemaTypes.Values)
+								types.Add (t.QualifiedName, t);
+					}
+				}
+				return types;
+			}
 		}
 
 		public bool IsCompiled { 
@@ -120,38 +153,45 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[MonoTODO ("Check how targetNamespace is used")]
+		// LAMESPEC? MS.NET allows multiple chameleon schema addition,
+		// while rejects namespace-targeted schema.
 		public XmlSchema Add (string targetNamespace, XmlReader reader)
 		{
-			return Add (XmlSchema.Read (reader, null));
+			XmlSchema schema = XmlSchema.Read (reader, handler);
+			if (targetNamespace != null)
+				schema.TargetNamespace = targetNamespace;
+			XmlSchema existing = schemas [GetSafeNs (schema.TargetNamespace)] as XmlSchema;
+			if (existing != null)
+				throw new ArgumentException (String.Format ("Item has been already added. Target namespace is \"{0}\"", schema.TargetNamespace));
+			return Add (schema);
 		}
 
 		[MonoTODO ("Check the exact behavior when namespaces are in conflict")]
 		public void Add (XmlSchemaSet schemaSet)
 		{
 			foreach (XmlSchema schema in schemaSet.schemas)
-				schemas.Add (schema.TargetNamespace, schema);
+				Add (schema);
 		}
 
-		[MonoTODO ("Check the exact behavior when namespaces are in conflict")]
+		[MonoTODO ("Currently no way to identify if the argument schema is error-prone or not.")]
 		public XmlSchema Add (XmlSchema schema)
 		{
-			XmlSchema existing = schemas [GetSafeNs (schema.TargetNamespace)] as XmlSchema;
-			if (existing != null)
-				return existing;
-			schemas.Add (GetSafeNs (schema.TargetNamespace), schema);
+			schemas [GetSafeNs (schema.TargetNamespace)] = schema;
 			return schema;
 		}
 
 		[MonoTODO]
 		public void Compile ()
 		{
-			throw new NotImplementedException ();
+			foreach (XmlSchema schema in schemas.Values)
+				schema.Compile (handler, col, xmlResolver);
+			isCompiled = true;
+			attributes = elements = types = null;
 		}
 
 		public bool Contains (string targetNamespace)
 		{
-			return schemas.ContainsKey (targetNamespace);
+			return schemas.Contains (targetNamespace);
 		}
 
 		public bool Contains (XmlSchema targetNamespace)
@@ -213,13 +253,13 @@ namespace System.Xml.Schema
 			throw new NotImplementedException ();
 		}
 
-		public ArrayList Schemas ()
+		public ICollection Schemas ()
 		{
 			return new ArrayList (schemas.Values);
 		}
 
 		[MonoTODO]
-		public ArrayList Schemas (string targetNamespace)
+		public ICollection Schemas (string targetNamespace)
 		{
 			throw new NotImplementedException ();
 		}

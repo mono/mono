@@ -35,6 +35,10 @@ namespace System.Xml.Schema
 {
 	/// <summary>
 	/// Summary description for XmlSchemaCollection.
+	///
+	/// It is just a wrapper for XmlSchemaSet (unlike MS.NET, our 
+	/// XmlSchemaCollection is originally designed to be conformant to 
+	/// W3C specification).
 	/// </summary>
 	public sealed class XmlSchemaCollection : ICollection, IEnumerable
 	{
@@ -135,6 +139,7 @@ namespace System.Xml.Schema
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
+			/*
 			foreach (XmlSchema s in schema) {
 				string ns = GetSafeNs (s.TargetNamespace);
 				lock (schemaSet) {
@@ -142,6 +147,10 @@ namespace System.Xml.Schema
 						schemaSet.Remove (schemaSet.Get (ns));
 					schemaSet.Add (s);
 				}
+			}
+			*/
+			lock (schemaSet) {
+				schemaSet.Add (schema.schemaSet);
 			}
 		}
 

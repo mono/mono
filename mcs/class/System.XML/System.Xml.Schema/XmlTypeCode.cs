@@ -35,65 +35,61 @@ namespace System.Xml.Schema
 {
 	public enum XmlTypeCode
 	{
-		AnyAtomicType, // xdt
-		AnyItem, // xpath misc
-		AnyNode, // node
-		AnySimpleType,
-		AnyType,
-		AnyUri,
-		Attribute, // node
-		Base64Binary,
-		Boolean,
-		Byte,
-		Comment, // node
-		Date,
-		DateTime,
-		DayTimeDuration, // xdt
-		Decimal,
+		None,
+		Item,
+		Node,
 		Document, // node
+		Element, // node
+		Attribute, // node
+		Namespace, // node
+		ProcessingInstruction, // node
+		Comment, // node
+		Text,	// node
+		AnyAtomicType, // xdt
+		UntypedAtomic, // xdt
+		String,
+		Boolean,
+		Decimal,
+		Float,
 		Double,
 		Duration,
-		Element, // node
-		// Entities is not primitive
-		Entity,
-		Float,
+		DateTime,
+		Time,
+		Date,
+		GYearMonth,
+		GYear,
+		GMonthDay,
 		GDay,
 		GMonth,
-		GMonthDay,
-		GYear,
-		GYearMonth,
 		HexBinary,
-		Id,
-		Idref,
-		// Idrefs is not primitive
-		Int,
-		Integer,
+		Base64Binary,
+		AnyUri,
+		QName,
+		Notation,
+		NormalizedString,
+		Token,
 		Language,
-		Long,
+		NmToken, // NmTokens is not primitive
 		Name,
 		NCName,
-		NegativeInteger,
-		NmToken,
-		// NmTokens is not primitive
-		None,
-		NonNegativeInteger,
+		Id,
+		Idref, // Idrefs is not primitive
+		Entity, // Entities is not primitive
+		Integer,
 		NonPositiveInteger,
-		Normalizedstring,
-		Notation,
-		// there seems "ocument" enumeration in MS.NET, but it must be a bug
-		PositiveInteger,
-		ProcessingInstruction, // node
-		QName,
+		NegativeInteger,
+		Long,
+		Int,
 		Short,
-		String,
-		Time,
-		Token,
-		UnsignedByte,
-		UnsignedInt,
+		Byte,
+		NonNegativeInteger,
 		UnsignedLong,
+		UnsignedInt,
 		UnsignedShort,
-		UntypedAtomic, // xdt
-		YearMonthDuration // xdt
+		UnsignedByte,
+		PositiveInteger,
+		YearMonthDuration, // xdt
+		DayTimeDuration, // xdt
 	}
 }
 #endif
