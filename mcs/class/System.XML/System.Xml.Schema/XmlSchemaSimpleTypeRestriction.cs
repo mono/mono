@@ -587,7 +587,7 @@ namespace System.Xml.Schema
 				}
 			}
 
-				}catch (Exception e) {
+				} catch (Exception) {
 					return null;
 				}
 			}

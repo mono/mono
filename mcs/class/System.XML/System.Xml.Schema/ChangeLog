@@ -1,3 +1,15 @@
+2004-11-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaDatatype.cs : added ParseValue() override.
+	* XmlSchemaSimpleTypeList.cs,
+	  XmlSchemaSimpleTypeUnion.cs : #if NET_2_0 some private fields,
+	  just for eliminating warnings :(
+	* XmlSchemaSet.cs : commented some fields currently not in use.
+	  It is for eliminating warnings.
+	* XmlSchemaSimpleTypeRestriction.cs : removed exception field name
+	  to eliminate warning.
+	* XmlSchemaException.cs : hasLineInfo is also runtime serialized now.
+
 2004-11-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaException.cs : Message is only 1.x (not 2.0).

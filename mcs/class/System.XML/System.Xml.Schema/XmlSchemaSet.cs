@@ -52,8 +52,8 @@ namespace System.Xml.Schema
 		XmlSchemaObjectTable attributes;
 		XmlSchemaObjectTable elements;
 		XmlSchemaObjectTable types;
-		XmlSchemaObjectTable attributeGroups;
-		XmlSchemaObjectTable groups;
+//		XmlSchemaObjectTable attributeGroups;
+//		XmlSchemaObjectTable groups;
 		
 		XmlSchemaCollection col;
 		ValidationEventHandler handler;

@@ -37,7 +37,9 @@ namespace System.Xml.Schema
 		private XmlQualifiedName[] memberTypes;
 		const string xmlname = "union";
 		private object [] validatedTypes;
+#if NET_2_0
 		private XmlSchemaSimpleType [] validatedSchemaTypes;
+#endif
 
 		public XmlSchemaSimpleTypeUnion()
 		{

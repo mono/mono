@@ -83,6 +83,14 @@ namespace System.Xml.Schema
 #endif
 
 #if NET_2_0
+		[MonoTODO]
+		public virtual object ParseValue (object o, 
+			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr)
+		{
+			return ParseValue (o != null ? o.ToString () : null,
+				nameTable, nsmgr);
+		}
+
 		public abstract object ParseValue (string s, 
 			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr);
 

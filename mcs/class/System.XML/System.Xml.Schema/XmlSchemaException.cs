@@ -61,7 +61,7 @@ namespace System.Xml.Schema
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
-			hasLineInfo = true;
+			this.hasLineInfo = info.GetBoolean ("hasLineInfo");
 			this.lineNumber = info.GetInt32 ("lineNumber");
 			this.linePosition = info.GetInt32 ("linePosition");
 			this.sourceUri = info.GetString ("sourceUri");
@@ -173,6 +173,7 @@ namespace System.Xml.Schema
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
+			info.AddValue ("hasLineInfo", hasLineInfo);
 			info.AddValue ("lineNumber", lineNumber);
 			info.AddValue ("linePosition", linePosition);
 			info.AddValue ("sourceUri", sourceUri);
