@@ -1,3 +1,8 @@
+2002-09-13  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Include the member name in
+	the CS0038 error message.
+
 2002-09-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (CheckedExpr, UnCheckedExpr): If we have a
