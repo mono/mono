@@ -335,7 +335,9 @@ public class DateTimeTest : Assertion
 		long offset = TimeZone.CurrentTimeZone.GetUtcOffset(t1).Ticks / 36000000000;
 		AssertEquals("C26", offset.ToString("+#;-#;0"), t1.ToString ("%z"));
 		AssertEquals("C27", offset.ToString("+00;-00;00"), t1.ToString ("zz"));
-		AssertEquals("C28", offset.ToString("+00;-00;00") + ":00", t1.ToString ("zzz"));
+		// This does not work in, eg banglore, because their timezone has an offset of
+		// +05:30
+		//AssertEquals("C28", offset.ToString("+00;-00;00") + ":00", t1.ToString ("zzz"));
 		AssertEquals("C29", " : ", t1.ToString (" : "));
 		AssertEquals("C30", " / ", t1.ToString (" / "));
 		AssertEquals("C31", " yyy ", t1.ToString (" 'yyy' "));

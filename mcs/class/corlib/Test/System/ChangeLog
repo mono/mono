@@ -1,3 +1,9 @@
+2004-10-27  Ben Maurer  <bmaurer@ximian.com>
+
+	* DateTimeTest.cs (TestToString): Remove test C28.
+	The test does not work in banglore because they have an
+	offset that has a half-hour part. 
+
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add tests for byref types.
