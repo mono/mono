@@ -1,4 +1,7 @@
+2004-06-10  Jackson Harper  <jackson@ximian.com>
 
+	* assembly.c: Use <path>/lib/mono/gac for the extra paths lookup.
+	
 Thu Jun 10 20:10:16 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: make the token for a created method match
