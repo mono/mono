@@ -4629,9 +4629,7 @@ this_access
 	  }
 	| MYCLASS
 	  {
-		// FIXME: This is actually somewhat different from Me
-		// because it is for accessing static (classifier) methods/properties/fields
-		$$ = new This (current_block, lexer.Location);
+		$$ = new This (This.TypeOfAccess.MyClass, current_block, lexer.Location);
 	  }
 	;
 

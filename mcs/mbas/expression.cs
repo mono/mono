@@ -4818,6 +4818,10 @@ namespace Mono.MonoBASIC {
 		{
 			ILGenerator ig = ec.ig;
 			bool struct_call = false;
+			bool is_myclass = false;
+
+			if (instance_expr is This && ((This) instance_expr).AccessType == This.TypeOfAccess.MyClass) 
+				is_myclass = true;
 
 			Type decl_type = method.DeclaringType;
 
@@ -4924,7 +4928,7 @@ namespace Mono.MonoBASIC {
 
 			EmitArguments (ec, method, Arguments);
 
-			if (is_static || struct_call || is_base)
+			if (is_static || struct_call || is_base || is_myclass)
 			{
 				if (method is MethodInfo) 
 				{
@@ -5938,18 +5942,36 @@ namespace Mono.MonoBASIC {
 	/// </summary>
 	public class This : Expression, IAssignMethod, IMemoryLocation, IVariable {
 
+		public enum TypeOfAccess : byte {
+			Me, MyClass
+		}
+
 		Block block;
 		VariableInfo vi;
+		TypeOfAccess access_type;
 		
+		public This (TypeOfAccess access_type, Block block, Location loc)
+		{
+			this.loc = loc;
+			this.block = block;
+			this.access_type = access_type;
+		}
+
 		public This (Block block, Location loc)
 		{
 			this.loc = loc;
 			this.block = block;
+			this.access_type = TypeOfAccess.Me;
 		}
 
 		public This (Location loc)
 		{
 			this.loc = loc;
+			this.access_type = TypeOfAccess.Me;
+		}
+
+		public TypeOfAccess AccessType { 
+			get { return access_type; }
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)

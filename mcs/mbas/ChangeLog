@@ -1,4 +1,9 @@
 2005-03-22 Satya Sudha K <ksathyasudha@novell.com>
+	* mb-parser.jay
+	* expression.cs :
+			Fix for 'MyClass' instance expressions 
+
+2005-03-22 Satya Sudha K <ksathyasudha@novell.com>
 	   Sudharsan V <vsudharsan@novell.com>
 	* mb-parser.jay : 
 			Removed some conflicts in the grammar
