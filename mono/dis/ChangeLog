@@ -1,3 +1,8 @@
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
+	* get.c (get_methodref_signature): If we're a varargs method,
+	print "..." for the sentinel followed by the actual types.
+
 2004-06-08  Martin Baulig  <martin@ximian.com>
 
 	* dump.c (dump_table_memberref): Added support for MethodDef
