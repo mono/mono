@@ -566,7 +566,8 @@ namespace Mono.CSharp {
 							return;
 						}
 
-					if (kind is Method || kind is Operator || kind is InterfaceMethod) {
+					if (kind is Method || kind is Operator || kind is InterfaceMethod ||
+					    kind is Accessor) {
 						if (a.Type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
 								((MethodBuilder) builder).
@@ -639,8 +640,6 @@ namespace Mono.CSharp {
 						((ModuleBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is FieldBuilder) {
 						((FieldBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Accessor) {
-						((MethodBuilder) builder).SetCustomAttribute (cb);
 					} else
 						throw new Exception ("Unknown kind: " + kind);
 				}

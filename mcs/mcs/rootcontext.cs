@@ -637,11 +637,20 @@ namespace Mono.CSharp {
 
 
 			if (type_container_resolve_order != null){
-				foreach (TypeContainer tc in type_container_resolve_order)
+				foreach (TypeContainer tc in type_container_resolve_order) {
+					// When compiling corlib, these types have already been
+					// populated from BootCorlib_PopulateCoreTypes ().
+					if (!RootContext.StdLib &&
+					    ((tc.Name == "System.Object") ||
+					     (tc.Name == "System.Attribute") ||
+					     (tc.Name == "System.ValueType")))
+						continue;
+
 					if ((tc.ModFlags & Modifiers.NEW) == 0)
 						tc.Define (root);
 					else
 						Report1530 (tc.Location);
+				}
 			}
 
 			ArrayList delegates = root.Delegates;

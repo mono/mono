@@ -1,5 +1,25 @@
 2002-06-29  Martin Baulig  <martin@gnome.org>
 
+	MCS now compiles corlib on GNU/Linux :-)
+
+	* attribute.cs (Attribute.ApplyAttributes): Treat Accessors like Method,
+	ie. check for MethodImplOptions.InternalCall.
+
+	* class.cs (TypeContainer.DefineType): When compiling corlib, both parent
+	and TypeManager.attribute_type are null, so we must explicitly check
+	whether parent is not null to find out whether it's an attribute type.
+	(Property.Emit): Always call Attribute.ApplyAttributes() on the GetBuilder
+	and SetBuilder, not only if the property is neither abstract nor external.
+	This is necessary to set the MethodImplOptions on the accessor methods.
+	(Indexer.Emit): Call Attribute.ApplyAttributes() on the GetBuilder and
+	SetBuilder, see Property.Emit().
+
+	* rootcontext.cs (RootContext.PopulateTypes): When compiling corlib, don't
+	populate "System.Object", "System.ValueType" and "System.Attribute" since
+	they've already been populated from BootCorlib_PopulateCoreTypes().
+
+2002-06-29  Martin Baulig  <martin@gnome.org>
+
 	* ecore.cs (Expression.ImplicitReferenceConversionExists): If expr
 	is the NullLiteral, we also need to make sure that target_type is not
 	an enum type.	

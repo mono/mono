@@ -802,8 +802,9 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
 
-			if (parent == TypeManager.attribute_type ||
-			    parent.IsSubclassOf (TypeManager.attribute_type)) {
+			if ((parent != null) &&
+			    (parent == TypeManager.attribute_type ||
+			     parent.IsSubclassOf (TypeManager.attribute_type))) {
 				RootContext.RegisterAttribute (this);
 				TypeManager.RegisterAttrType (TypeBuilder, this);
 			} else
@@ -2959,7 +2960,10 @@ namespace Mono.CSharp {
 			//
 			if (PropertyBuilder != null)
 				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
-			
+			if (Get != null)
+				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
+			if (Set != null)
+				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
 
 			//
 			// abstract or extern properties have no bodies
@@ -2971,7 +2975,6 @@ namespace Mono.CSharp {
 				ig = GetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, PropertyType, ModFlags);
 
-				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
 				ec.EmitTopBlock (Get.Block, Location);
 			}
 
@@ -2979,7 +2982,6 @@ namespace Mono.CSharp {
 				ig = SetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, null, ModFlags);
 
-				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
 				ec.EmitTopBlock (Set.Block, Location);
 			}
 		}
@@ -3639,6 +3641,10 @@ namespace Mono.CSharp {
 			if (PropertyBuilder != null)
 				Attribute.ApplyAttributes (
 					ec, PropertyBuilder, this, OptAttributes, Location);
+			if (Get != null)
+				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
+			if (Set != null)
+				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
 
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
