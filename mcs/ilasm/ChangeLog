@@ -1,0 +1,9 @@
+2003-02-02 Jackson Harper <jackson@latitudegeo.com>
+
+	* makefile.gnu: Use new Driver.cs instead of Main.cs
+
+2003-02-02 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Add new Driver
+	* tests: Add new tests directory
+	* makefile: Use new Driver.cs instead of Main.cs

@@ -18,7 +18,7 @@ public class ILAsmTest {
 		StreamReader reader = File.OpenText (args [0]);
 		ILTokenizer scanner = new ILTokenizer (reader);
 
-		bool testScanner = !true;
+		bool testScanner = true;
 
 		if (testScanner) {
 			ILToken tok;
@@ -26,7 +26,7 @@ public class ILAsmTest {
 				Console.WriteLine (tok);
 			}
 		} else {
-			ILParser parser = new ILParser ();
+			ILParser parser = new ILParser (new CodeGen ());
 			parser.yyparse (new ScannerAdapter (scanner), new yydebug.yyDebugSimple ());
 
 			CodeGen cg = parser.CodeGen;
