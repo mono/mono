@@ -1,5 +1,7 @@
 2004-09-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c: Fix build.
+
 	* mini-sparc.c mini-x86.c mini-amd64.c: Use the new 
 	mono_type_get_underlying_type () helper function to simplify code.
 	
