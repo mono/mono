@@ -167,31 +167,36 @@ namespace Mono.CSharp {
 				Binary tmp;
 				EventInfo ei = ((EventExpr) target).EventInfo;
 
-				//
-				// If this is the case, then the Event does not belong 
-				// to this TypeContainer and so, according to the spec
-				// is allowed to only appear on the left hand of
-				// the += and -= operators
-				//
-				// Note that if target will not appear as an EventExpr
-				// in the case it is being referenced within the same type container;
-				// it will appear as a FieldExpr in that case.
-				
-				if (!(source is Binary)) {
-					error70 (ei);
-					return null;
-				} else {
-					tmp = ((Binary) source);
-					if (tmp.Oper != Binary.Operator.Addition &&
-					    tmp.Oper != Binary.Operator.Subtraction) {
+
+				Expression ml = MemberLookup (ec, ec.TypeContainer.TypeBuilder, ei.Name,
+							      true, MemberTypes.Event, AllBindingFlags, l);
+
+				if (ml == null) {
+				        //
+					// If this is the case, then the Event does not belong 
+					// to this TypeContainer and so, according to the spec
+					// is allowed to only appear on the left hand of
+					// the += and -= operators
+					//
+					// Note that if target will not appear as an EventExpr
+					// in the case it is being referenced within the same type container;
+					// it will appear as a FieldExpr in that case.
+					//
+					
+					if (!(source is Binary)) {
 						error70 (ei);
 						return null;
+					} else {
+						tmp = ((Binary) source);
+						if (tmp.Oper != Binary.Operator.Addition &&
+						    tmp.Oper != Binary.Operator.Subtraction) {
+							error70 (ei);
+							return null;
+						}
 					}
 				}
-				
-				return this;
 			}
-
+			
 			if (source is New && target_type.IsSubclassOf (TypeManager.value_type)){
 				New n = (New) source;
 
@@ -205,7 +210,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (target.eclass != ExprClass.Variable){
+			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess){
 				Report.Error (131, l,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");

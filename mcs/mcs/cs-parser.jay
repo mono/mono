@@ -1375,7 +1375,6 @@ event_declaration
 	  {
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
-			// FIXME : Is this right ?
 			Event e = new Event ((string) $4, var.identifier, var.expression_or_array_initializer,
 					     (int) $2, null, null, (Attributes) $1, lexer.Location);
 
@@ -1385,9 +1384,18 @@ event_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  EVENT type member_name { lexer.EventParsing = true; }
-	  OPEN_BRACE event_accessor_declarations CLOSE_BRACE
-	{
+	  EVENT type member_name
+	  OPEN_BRACE
+	  {
+		implicit_value_parameter_type = (string) $4;  
+		lexer.EventParsing = true;
+	  }
+	  event_accessor_declarations
+	  {
+		lexer.EventParsing = false;  
+	  }
+	  CLOSE_BRACE
+	  {
 		Pair pair = (Pair) $8;
 		Block add_block = null;
 		Block rem_block = null;
@@ -1401,7 +1409,8 @@ event_declaration
 				     (Attributes) $1, lexer.Location);
 		
 		CheckDef (current_container.AddEvent (e), e.Name);
-	}
+		implicit_value_parameter_type = null;
+	  }
 	;
 
 event_accessor_declarations
@@ -1416,7 +1425,19 @@ event_accessor_declarations
 	;
 
 add_accessor_declaration
-	: opt_attributes ADD { lexer.EventParsing = false; } block
+	: opt_attributes ADD
+	  {
+		Parameter [] args = new Parameter [1];
+		Parameter implicit_value_parameter = new Parameter (
+			implicit_value_parameter_type, "value", 
+			Parameter.Modifier.NONE, null);
+
+		args [0] = implicit_value_parameter;
+		
+		current_local_parameters = new Parameters (args, null, lexer.Location);  
+		lexer.EventParsing = false;
+	  }
+          block
 	  {
 		$$ = $4;
 		lexer.EventParsing = true;
@@ -1424,11 +1445,23 @@ add_accessor_declaration
 	;
 
 remove_accessor_declaration
-	: opt_attributes REMOVE { lexer.EventParsing = false; } block
-	{
+	: opt_attributes REMOVE
+	  {
+		Parameter [] args = new Parameter [1];
+		Parameter implicit_value_parameter = new Parameter (
+			implicit_value_parameter_type, "value", 
+			Parameter.Modifier.NONE, null);
+
+		args [0] = implicit_value_parameter;
+		
+		current_local_parameters = new Parameters (args, null, lexer.Location);  
+		lexer.EventParsing = false;
+	  }
+          block
+	  {
 		$$ = $4;
 		lexer.EventParsing = true;
-	}
+	  }
 	;
 
 indexer_declaration

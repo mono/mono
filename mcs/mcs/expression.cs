@@ -1128,7 +1128,8 @@ namespace Mono.CSharp {
 		MethodBase method;
 		ArrayList  Arguments;
 		Location   loc;
-		
+
+		bool DelegateOperation;
 
 		public Binary (Operator oper, Expression left, Expression right, Location loc)
 		{
@@ -1501,8 +1502,8 @@ namespace Mono.CSharp {
 					else
 						method = TypeManager.delegate_remove_delegate_delegate;
 					
+					DelegateOperation = true;
 					type = l;
-					
 					return this;
 				}
 			}
@@ -1833,6 +1834,9 @@ namespace Mono.CSharp {
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 
+				if (DelegateOperation)
+					ig.Emit (OpCodes.Castclass, type);
+					
 				return;
 			}
 

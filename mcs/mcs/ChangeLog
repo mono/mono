@@ -1,3 +1,17 @@
+2001-12-25  Ravi Pratap  <ravi@ximian.com>
+
+	* assign.cs (DoResolve): Perform check on events only if they 
+	are being accessed outside the declaring type.
+
+	* cs-parser.jay (event_declarations): Update rules to correctly
+	set the type of the implicit parameter etc.
+
+	(add_accessor, remove_accessor): Set current local parameters.
+
+	* expression.cs (Binary): For delegate addition and subtraction,
+	cast the return value from the method into the appropriate delegate
+	type.
+
 2001-12-24  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (RegisterDelegateData, GetDelegateData): Get rid
