@@ -1,3 +1,7 @@
+2003-10-12  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* WebClient.cs: refine reading of local files (like MS.NET).
+
 2003-10-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* WebClient.cs: MS.NET works right when we try OpenRead("file.txt")

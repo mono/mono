@@ -296,7 +296,12 @@ namespace System.Net
 					return new Uri (path);
 				}
 				catch (System.UriFormatException ufe) {
-					return new Uri ("file://" + path);
+					if (path[0] == '/') {
+						return new Uri ("file://" + path);
+					}
+					else {
+						return new Uri ("file://" + Environment.CurrentDirectory + path);
+					}
 				}
 			}
 
