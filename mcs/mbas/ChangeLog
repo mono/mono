@@ -1,3 +1,6 @@
+2004/04/07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* AssemblyInfo.cs : Correcting information and version number
+
 2004-04-29 Anirban Bhattacharjee <banirban@novell.com>
 	* enum.cs: bug fixing - setting one enum member to another
 
