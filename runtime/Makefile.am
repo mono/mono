@@ -87,7 +87,7 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/sqlsharp.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/chktrust.exe . || cp $(monobinsdir)/chktrust.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/signcode.exe . || cp $(monobinsdir)/signcode.exe .
-	-cp $(top_srcdir)/../mcs/tools/security/Makecert.exe . || cp $(monobinsdir)/MakeCert.exe .
+	-cp $(top_srcdir)/../mcs/tools/security/MakeCert.exe . || cp $(monobinsdir)/MakeCert.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/cert2spc.exe . || cp $(monobinsdir)/cert2spc.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/certmgr.exe . || cp $(monobinsdir)/certmgr.exe .
 	-cp $(top_srcdir)/../mcs/tools/monop/monop.exe . || cp $(monobinsdir)/monop.exe .
