@@ -1,3 +1,7 @@
+2004-08-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* server/SessionCounter.asmx: Check that Context != null in the constructor.
+
 2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Conv.asmx.template, Conv.cs.template, client/localhost/ConvDoc*,
