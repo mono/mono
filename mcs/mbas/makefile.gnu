@@ -7,6 +7,7 @@ RUNTIME=mono
 COMPILER_SOURCES = \
       AssemblyInfo.cs   \
 	assign.cs		\
+	argument.cs		\
 	attribute.cs		\
 	cfold.cs		\
 	class.cs 		\

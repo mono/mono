@@ -4,6 +4,7 @@ CSCFLAGS=/nologo /optimize /target:exe /r:System.dll /r:../class/lib/Mono.GetOpt
 COMPILER_SOURCES = \
     AssemblyInfo.cs   \
 	assign.cs		\
+	argument.cs		\
 	attribute.cs		\
 	cfold.cs		\
 	class.cs 		\

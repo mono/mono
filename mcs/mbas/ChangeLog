@@ -1,3 +1,8 @@
+2003/02/12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* added argument.cs (extracted from expression.cs) makefiles corrected
+	* mb-parser.jay : eliminated reduce/reduce conflict on opt_argument_list rule, 
+	  by putting and if to make a argument list with just an empty argument list become an empty list
+
 2003/02/03  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* rootcontext.cs : added RootNamespace member
 	* mb-parser.jay : use RootContext.RootNamespace to initialize outermost namespace

@@ -2529,8 +2529,14 @@ invocation_expression
 	;
 
 opt_argument_list
-	: /* empty */		{ $$ = null; }
-	| argument_list
+	: argument_list 
+	  { 
+		ArrayList list = (ArrayList) $1;
+		if (list.Count == 1 && ((Argument)list[0]).ArgType == Argument.AType.NoArg)
+			$$ = null;
+		else
+			$$ = list;
+	  }
 	;
 
 argument_list
