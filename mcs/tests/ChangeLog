@@ -1,3 +1,8 @@
+2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, xml-033.cs, xml-033-ref.xml : test for implicit/explicit 
+	  operator doc comments. Makefile was missing xml-03*.cs
+
 2004-12-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (multi-2): Remove.  Move comments to README.tests.
