@@ -1,3 +1,7 @@
+2005-02-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* SocketTest.cs: Mark some tests with [Category ("InetAccess")].
+
 2005-01-08  Nick Drochak  <ndrochak@ieee.org>
 
 	* SocketTest.cs: Ignore test on MS.NET

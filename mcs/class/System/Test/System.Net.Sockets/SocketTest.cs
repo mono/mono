@@ -18,6 +18,7 @@ namespace MonoTests.System.Net.Sockets
 	public class SocketTest
 	{
 		[Test]
+		[Category ("InetAccess")]
 		public void EndConnect ()
 		{
 		    IPAddress ipOne = IPAddress.Parse ("192.168.244.244");   // something bogus
