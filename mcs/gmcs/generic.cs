@@ -530,10 +530,26 @@ namespace Mono.CSharp {
 			get { return gt.IsSealed; }
 		}
 
+		public override bool IsAttribute {
+			get { return false; }
+		}
+
 		public override TypeExpr[] GetInterfaces ()
 		{
 			TypeExpr[] ifaces = TypeManager.GetInterfaces (gt);
 			return ifaces;
+		}
+
+		public override bool Equals (object obj)
+		{
+			ConstructedType cobj = obj as ConstructedType;
+			if (cobj == null)
+				return false;
+
+			if ((type == null) || (cobj.type == null))
+				return false;
+
+			return type == cobj.type;
 		}
 
 		public override string Name {

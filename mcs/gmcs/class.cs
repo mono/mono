@@ -618,14 +618,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void Error_TypeParameterAsBase (TypeParameterExpr e)
-		{
-			Report.Error (
-				689, e.Location,
-				"Type parameter `{0}' can not be used as a " +
-				"base class or interface", e.Name);
-		}
-
 		/// <remarks>
 		///  The pending methods that need to be implemented (interfaces or abstract methods)
 		/// </remarks>
@@ -687,7 +679,19 @@ namespace Mono.CSharp {
 				}
 
 				if (name is TypeParameterExpr){
-					Error_TypeParameterAsBase ((TypeParameterExpr) name);
+					Report.Error (
+						689, name.Location,
+						"Type parameter `{0}' can not be used as a " +
+						"base class or interface", name.Name);
+					error = true;
+					return null;
+				}
+
+				if (IsGeneric && name.IsAttribute){
+					Report.Error (
+						698, name.Location,
+						"A generic type cannot derive from `{0}' " +
+						"because it is an attribute class", name.Name);
 					error = true;
 					return null;
 				}
@@ -734,10 +738,11 @@ namespace Mono.CSharp {
 				base_class_name = parent.Name;
 
 			TypeExpr [] ifaces = new TypeExpr [count-start];
-			
+
 			for (i = start, j = 0; i < count; i++, j++){
 				Expression name = (Expression) bases [i];
 				TypeExpr resolved = ResolveTypeExpr (name, false, Location);
+
 				if (resolved == null)
 					return null;
 				
