@@ -41,7 +41,7 @@ namespace System.Reflection.Emit {
 	private ModuleBuilder pmodule;
 	private int class_size;
 	private PackingSize packing_size;
-	private	MonoGenericParam[] generic_params;
+	private	GenericTypeParameterBuilder[] generic_params;
 	private RefEmitPermissionSet[] permissions;	
 	#endregion
 	private Type created;
@@ -1295,29 +1295,14 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern MonoGenericParam define_generic_parameter (string name, int index);
-		
-		public Type DefineGenericParameter (string name)
+		public GenericTypeParameterBuilder[] DefineGenericParameters (string[] names)
 		{
-			int index;
-			if (generic_params != null) {
-				MonoGenericParam[] new_generic_params = new MonoGenericParam [generic_params.Length+1];
-				System.Array.Copy (generic_params, new_generic_params, generic_params.Length);
-				index = generic_params.Length;
-				generic_params = new_generic_params;
-			} else {
-				generic_params = new MonoGenericParam [1];
-				index = 0;
-			}
+			generic_params = new GenericTypeParameterBuilder [names.Length];
+			for (int i = 0; i < names.Length; i++)
+				generic_params [i] = new GenericTypeParameterBuilder (
+					this, null, names [i], i);
 
-			generic_params [index] = define_generic_parameter (name, index);
-			return generic_params [index];
-		}
-
-		public void SetGenericParameterConstraints (int index, Type[] constraints, bool has_ctor_constraint)
-		{
-			generic_params [index].SetConstraints (constraints, has_ctor_constraint);
+			return generic_params;
 		}
 
 		public MethodBuilder DefineGenericMethod (string name, MethodAttributes attributes)

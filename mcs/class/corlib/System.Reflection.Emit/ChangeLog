@@ -1,3 +1,17 @@
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
+	* GenericTypeParameterBuilder.cs: New file.
+
+	* TypeBuilder.cs (TypeBuilder.DefineGenericParameters): New public
+	method.  This is the new public API.
+	(TypeBuilder.DefineGenericParameter): Removed.
+	(TypeBuilder.SetGenericParameterConstraints): Removed.
+
+	* MethodBuilder.cs (MethodBuilder.DefineGenericParameters): New public
+	method.  This is the new public API.
+	(MethodBuilder.DefineGenericParameter): Removed.
+	(MethodBuilder.SetGenericParameterConstraints): Removed.
+
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
 	* OpCodes.cs (OpCodes.Constrained): New opcode.
