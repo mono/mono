@@ -1,3 +1,8 @@
+2003-06-29  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ReflectionPermission.cs: Completed class implementation.
+	* ReflectionPermissionAttribute.cs: Completed class implementation.
+
 2003-06-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CodeAccessSecurityAttribute.cs: Added [Serializable] to class.

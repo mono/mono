@@ -1,22 +1,25 @@
 //
 // System.Security.Permissions.ReflectionPermissionAttribute.cs
 //
-// Duncan Mak <duncan@ximian.com>
+// Authors
+//	Duncan Mak <duncan@ximian.com>
+//	Sebastien Pouliot <spouliot@motus.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
+// Portions Copyright (C) 2003 Motus Technologies (http://www.motus.com)
 //
 
 using System;
 using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class ReflectionPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class ReflectionPermissionAttribute : CodeAccessSecurityAttribute {
+
 		// Fields
 		private ReflectionPermissionFlag flags;
 		private bool memberAccess;
@@ -30,32 +33,54 @@ namespace System.Security.Permissions
 		public ReflectionPermissionFlag Flags
 		{
 			get { return flags; }
-			set { flags = value; }
+			set { 
+				flags = value; 
+				memberAccess = ((flags & ReflectionPermissionFlag.MemberAccess) == ReflectionPermissionFlag.MemberAccess);
+				reflectionEmit = ((flags & ReflectionPermissionFlag.ReflectionEmit) == ReflectionPermissionFlag.ReflectionEmit);
+				typeInfo = ((flags & ReflectionPermissionFlag.TypeInformation) == ReflectionPermissionFlag.TypeInformation);
+			}
 		}
 		
 		public bool MemberAccess
 		{
 			get { return memberAccess; }
-			set { memberAccess = value; }
+			set { 
+				if (value)
+					flags |= ReflectionPermissionFlag.MemberAccess;
+				else
+					flags -= ReflectionPermissionFlag.MemberAccess;
+				memberAccess = value; 
+			}
 		}
 		
 		public bool ReflectionEmit
 		{
 			get { return reflectionEmit; }
-			set { reflectionEmit = value; }
+			set { 
+				if (value)
+					flags |= ReflectionPermissionFlag.ReflectionEmit;
+				else
+					flags -= ReflectionPermissionFlag.ReflectionEmit;
+				reflectionEmit = value; 
+			}
 		}  
 
 		public bool TypeInformation
 		{
 			get { return typeInfo; }
-			set { typeInfo = value; }
+			set { 
+				if (value)
+					flags |= ReflectionPermissionFlag.TypeInformation;
+				else
+					flags -= ReflectionPermissionFlag.TypeInformation;
+				typeInfo = value; 
+			}
 		}
 		
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			return new ReflectionPermission (flags);
 		}
 	}
 }
