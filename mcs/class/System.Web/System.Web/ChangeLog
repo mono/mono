@@ -1,3 +1,8 @@
+2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: use the correct Delegate.CreateDelegate
+	overload. The previous one only admits static methods.
+
 2003-08-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ProcessModelInfo.cs: Fixed signature

@@ -250,13 +250,15 @@ namespace System.Web {
 
 				if (methodData is MethodInfo) {
 					MethodInfo method = (MethodInfo) methodData;
-					evt.AddEventHandler (target, Delegate.CreateDelegate (typeof (EventHandler), method));
+					evt.AddEventHandler (target, Delegate.CreateDelegate (
+								typeof (EventHandler), app, method.Name));
 					continue;
 				}
 
 				ArrayList list = (ArrayList) methodData;
 				foreach (MethodInfo method in list)
-					evt.AddEventHandler (target, Delegate.CreateDelegate (typeof (EventHandler), method));
+					evt.AddEventHandler (target, Delegate.CreateDelegate (
+								typeof (EventHandler), app, method.Name));
 			}
 		}
 
