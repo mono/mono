@@ -18,7 +18,6 @@ namespace System.Data.SqlTypes
 
 		public static readonly SqlInt16 MaxValue = new SqlInt16 (32767);
 		public static readonly SqlInt16 MinValue = new SqlInt16 (-32768);
-		[MonoTODO]
 		public static readonly SqlInt16 Null;
 		public static readonly SqlInt16 Zero = new SqlInt16 (0);
 
@@ -40,7 +39,12 @@ namespace System.Data.SqlTypes
 		}
 
 		public short Value { 
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -286,17 +290,26 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt16 (SqlBoolean x)
 		{
-			return new SqlInt16 ((short)x.ByteValue);
+			if (x.IsNull)
+				return SqlInt16.Null;
+			else
+				return new SqlInt16 ((short)x.ByteValue);
 		}
 
 		public static explicit operator SqlInt16 (SqlDecimal x)
 		{
-			return new SqlInt16 ((short)x.Value);
+			if (x.IsNull)
+				return SqlInt16.Null;
+			else
+				return new SqlInt16 ((short)x.Value);
 		}
 
 		public static explicit operator SqlInt16 (SqlDouble x)
 		{
-			return new SqlInt16 ((short)x.Value);
+			if (x.IsNull)
+				return SqlInt16.Null;
+			else
+				return new SqlInt16 ((short)x.Value);
 		}
 
 		public static explicit operator short (SqlInt16 x)
@@ -306,22 +319,34 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt16 (SqlInt32 x)
 		{
-			return new SqlInt16 ((short)x.Value);
+			if (x.IsNull)
+				return SqlInt16.Null;
+			else
+				return new SqlInt16 ((short)x.Value);
 		}
 
 		public static explicit operator SqlInt16 (SqlInt64 x)
 		{
-			return new SqlInt16 ((short)x.Value);
+			if (x.IsNull)
+				return SqlInt16.Null;
+			else
+				return new SqlInt16 ((short)x.Value);
 		}
 
 		public static explicit operator SqlInt16 (SqlMoney x)
 		{
-			return new SqlInt16 ((short)x.Value);
+			if (x.IsNull)
+				return SqlInt16.Null;
+			else
+				return new SqlInt16 ((short)x.Value);
 		}
 
 		public static explicit operator SqlInt16 (SqlSingle x)
 		{
-			return new SqlInt16 ((short)x.Value);
+			if (x.IsNull)
+				return SqlInt16.Null;
+			else
+				return new SqlInt16 ((short)x.Value);
 		}
 
 		[MonoTODO]
@@ -337,7 +362,10 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt16 (SqlByte x)
 		{
-			return new SqlInt16 ((short)x.Value);
+			if (x.IsNull)
+				return SqlInt16.Null;
+			else
+				return new SqlInt16 ((short)x.Value);
 		}
 
 		#endregion

@@ -46,7 +46,12 @@ namespace System.Data.SqlTypes
 		}
 
 		public float Value { 
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -269,32 +274,50 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlSingle (SqlByte x)
 		{
-			return new SqlSingle((float)x.Value);
+			if (x.IsNull) 
+				return SqlSingle.Null;
+			else
+				return new SqlSingle((float)x.Value);
 		}
 
 		public static explicit operator SqlSingle (SqlDecimal x)
 		{
-			return new SqlSingle((float)x.Value);
+			if (x.IsNull) 
+				return SqlSingle.Null;
+			else
+				return new SqlSingle((float)x.Value);
 		}
 
 		public static explicit operator SqlSingle (SqlInt16 x)
 		{
-			return new SqlSingle((float)x.Value);
+			if (x.IsNull) 
+				return SqlSingle.Null;
+			else
+				return new SqlSingle((float)x.Value);
 		}
 
 		public static explicit operator SqlSingle (SqlInt32 x)
 		{
-			return new SqlSingle((float)x.Value);
+			if (x.IsNull) 
+				return SqlSingle.Null;
+			else
+				return new SqlSingle((float)x.Value);
 		}
 
 		public static explicit operator SqlSingle (SqlInt64 x)
 		{
-			return new SqlSingle((float)x.Value);
+			if (x.IsNull) 
+				return SqlSingle.Null;
+			else
+				return new SqlSingle((float)x.Value);
 		}
 
 		public static explicit operator SqlSingle (SqlMoney x)
 		{
-			return new SqlSingle((float)x.Value);
+			if (x.IsNull) 
+				return SqlSingle.Null;
+			else
+				return new SqlSingle((float)x.Value);
 		}
 
 		#endregion

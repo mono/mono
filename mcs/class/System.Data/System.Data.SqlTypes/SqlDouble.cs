@@ -40,7 +40,12 @@ namespace System.Data.SqlTypes
 		}
 
 		public double Value { 
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -256,37 +261,58 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlDouble (SqlByte x)
 		{
-			return new SqlDouble ((double)x.Value);
+			if (x.IsNull) 
+				return SqlDouble.Null;
+			else
+				return new SqlDouble ((double)x.Value);
 		}
 
 		public static explicit operator SqlDouble (SqlDecimal x)
 		{
-			return new SqlDouble ((double)x.Value);
+			if (x.IsNull) 
+				return SqlDouble.Null;
+			else
+				return new SqlDouble ((double)x.Value);
 		}
 
 		public static explicit operator SqlDouble (SqlInt16 x)
 		{
-			return new SqlDouble ((double)x.Value);
+			if (x.IsNull) 
+				return SqlDouble.Null;
+			else
+				return new SqlDouble ((double)x.Value);
 		}
 
 		public static explicit operator SqlDouble (SqlInt32 x)
 		{
-			return new SqlDouble ((double)x.Value);
+			if (x.IsNull) 
+				return SqlDouble.Null;
+			else
+				return new SqlDouble ((double)x.Value);
 		}
 
 		public static explicit operator SqlDouble (SqlInt64 x)
 		{
-			return new SqlDouble ((double)x.Value);
+			if (x.IsNull) 
+				return SqlDouble.Null;
+			else
+				return new SqlDouble ((double)x.Value);
 		}
 
 		public static explicit operator SqlDouble (SqlMoney x)
 		{
-			return new SqlDouble ((double)x.Value);
+			if (x.IsNull) 
+				return SqlDouble.Null;
+			else
+				return new SqlDouble ((double)x.Value);
 		}
 
 		public static explicit operator SqlDouble (SqlSingle x)
 		{
-			return new SqlDouble ((double)x.Value);
+			if (x.IsNull) 
+				return SqlDouble.Null;
+			else
+				return new SqlDouble ((double)x.Value);
 		}
 
 		#endregion

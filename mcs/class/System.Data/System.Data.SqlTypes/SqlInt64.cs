@@ -45,7 +45,12 @@ namespace System.Data.SqlTypes
 		}
 
 		public long Value { 
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -286,17 +291,26 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt64 (SqlBoolean x)
 		{
-			return new SqlInt64 ((long)x.ByteValue);
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else
+				return new SqlInt64 ((long)x.ByteValue);
 		}
 
 		public static explicit operator SqlInt64 (SqlDecimal x)
 		{
-			return new SqlInt64 ((long)x.Value);
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else
+				return new SqlInt64 ((long)x.Value);
 		}
 
 		public static explicit operator SqlInt64 (SqlDouble x)
 		{
-			return new SqlInt64 ((long)x.Value);
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else
+				return new SqlInt64 ((long)x.Value);
 		}
 
 		public static explicit operator long (SqlInt64 x)
@@ -306,12 +320,18 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt64 (SqlMoney x)
 		{
-			return new SqlInt64 ((long)x.Value);
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else
+				return new SqlInt64 ((long)x.Value);
 		}
 
 		public static explicit operator SqlInt64 (SqlSingle x)
 		{
-			return new SqlInt64 ((long)x.Value);
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else
+				return new SqlInt64 ((long)x.Value);
 		}
 
 		[MonoTODO]
@@ -327,17 +347,26 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt64 (SqlByte x)
 		{
-			return new SqlInt64 ((long)x.Value);
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else
+				return new SqlInt64 ((long)x.Value);
 		}
 
 		public static explicit operator SqlInt64 (SqlInt16 x)
 		{
-			return new SqlInt64 ((long)x.Value);
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else
+				return new SqlInt64 ((long)x.Value);
 		}
 
 		public static explicit operator SqlInt64 (SqlInt32 x)
 		{
-			return new SqlInt64 ((long)x.Value);
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else
+				return new SqlInt64 ((long)x.Value);
 		}
 
 		#endregion

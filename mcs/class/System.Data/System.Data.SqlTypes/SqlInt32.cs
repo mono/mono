@@ -4,11 +4,11 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc. 2002
+// (C) Copyright 2002 Tim Coleman 
 //
-
-using System;
 
 namespace System.Data.SqlTypes
 {
@@ -23,17 +23,10 @@ namespace System.Data.SqlTypes
 
 		private int value;
 
-		[MonoTODO]
-		public static readonly SqlInt32 MaxValue;
-
-		[MonoTODO]
-		public static readonly SqlInt32 MinValue;
-
-		[MonoTODO]
+		public static readonly SqlInt32 MaxValue = new SqlInt32 (2147483647);
+		public static readonly SqlInt32 MinValue = new SqlInt32 (-2147483648);
 		public static readonly SqlInt32 Null;
-
-		[MonoTODO]
-		public static readonly SqlInt32 Zero;
+		public static readonly SqlInt32 Zero = new SqlInt32 (0);
 
 		#endregion
 
@@ -46,19 +39,26 @@ namespace System.Data.SqlTypes
 
 		#endregion
 
-		// Public Properties
+		#region Properties
 
 		public bool IsNull {
 			get { return (bool) (this == SqlInt32.Null); }
 		}
 
 		public int Value {
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
-		// Public Methods
+		#endregion
 
-		public static SqlInt32 Add(SqlInt32 x, SqlInt32 y) 
+		#region Methods
+
+		public static SqlInt32 Add (SqlInt32 x, SqlInt32 y) 
 		{
 			return (x + y);
 		}
@@ -150,8 +150,6 @@ namespace System.Data.SqlTypes
 			return (x - y);
 		}
 
-		// Type Conversions
-
 		public SqlBoolean ToSqlBoolean() 
 		{
 			return ((SqlBoolean)this);
@@ -203,41 +201,45 @@ namespace System.Data.SqlTypes
 			return (x ^ y);
 		}
 
-		// Public Operators
+		#endregion
+
+		#region Operators
 
 		// Compute Addition
-		public static SqlInt32 operator +(SqlInt32 x, SqlInt32 y) 
+		public static SqlInt32 operator + (SqlInt32 x, SqlInt32 y) 
 		{
 			return new SqlInt32 (x.Value + y.Value);
 		}
 
 		// Bitwise AND
-		public static SqlInt32 operator &(SqlInt32 x, SqlInt32 y) 
+		public static SqlInt32 operator & (SqlInt32 x, SqlInt32 y) 
 		{
 			return new SqlInt32 (x.Value & y.Value);
 		}
 
 		// Bitwise OR
-		public static SqlInt32 operator |(SqlInt32 x, SqlInt32 y) 
+		public static SqlInt32 operator | (SqlInt32 x, SqlInt32 y) 
 		{
 			return new SqlInt32 (x.Value | y.Value);
 		}
 
 		// Compute Division
-		public static SqlInt32 operator /(SqlInt32 x, SqlInt32 y) 
+		public static SqlInt32 operator / (SqlInt32 x, SqlInt32 y) 
 		{
 			return new SqlInt32 (x.Value / y.Value);
 		}
 
 		// Compare Equality
-		public static SqlBoolean operator ==(SqlInt32 x, SqlInt32 y) 
+		public static SqlBoolean operator == (SqlInt32 x, SqlInt32 y) 
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 
 		// Bitwise Exclusive-OR (XOR)
-		public static SqlInt32 operator ^(SqlInt32 x, SqlInt32 y) 
+		public static SqlInt32 operator ^ (SqlInt32 x, SqlInt32 y) 
 		{
 			return new SqlInt32 (x.Value ^ y.Value);
 		}
@@ -245,103 +247,131 @@ namespace System.Data.SqlTypes
 		// > Compare
 		public static SqlBoolean operator >(SqlInt32 x, SqlInt32 y) 
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value > y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value > y.Value);
 		}
 
 		// >= Compare
-		public static SqlBoolean operator >=(SqlInt32 x, SqlInt32 y) 
+		public static SqlBoolean operator >= (SqlInt32 x, SqlInt32 y) 
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value >= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		// != Inequality Compare
-		public static SqlBoolean operator !=(SqlInt32 x, SqlInt32 y) 
+		public static SqlBoolean operator != (SqlInt32 x, SqlInt32 y) 
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value != y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value != y.Value);
 		}
 		
 		// < Compare
-		public static SqlBoolean operator <(SqlInt32 x, SqlInt32 y) 
+		public static SqlBoolean operator < (SqlInt32 x, SqlInt32 y) 
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value < y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value < y.Value);
 		}
 
 		// <= Compare
-		public static SqlBoolean operator <=(SqlInt32 x, SqlInt32 y) 
+		public static SqlBoolean operator <= (SqlInt32 x, SqlInt32 y) 
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value <= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value <= y.Value);
 		}
 
 		// Compute Modulus
-		public static SqlInt32 operator %(SqlInt32 x, SqlInt32 y) 
+		public static SqlInt32 operator % (SqlInt32 x, SqlInt32 y) 
 		{
 			return new SqlInt32 (x.Value % y.Value);
 		}
 
 		// Compute Multiplication
-		public static SqlInt32 operator *(SqlInt32 x, SqlInt32 y) 
+		public static SqlInt32 operator * (SqlInt32 x, SqlInt32 y) 
 		{
 			return new SqlInt32 (x.Value * y.Value);
 		}
 
 		// Ones Complement
-		public static SqlInt32 operator ~(SqlInt32 x) 
+		public static SqlInt32 operator ~ (SqlInt32 x) 
 		{
 			return new SqlInt32 (~x.Value);
 		}
 
 		// Subtraction
-		public static SqlInt32 operator -(SqlInt32 x, SqlInt32 y) 
+		public static SqlInt32 operator - (SqlInt32 x, SqlInt32 y) 
 		{
 			return new SqlInt32 (x.Value - y.Value);
 		}
 
 		// Negates the Value
-		public static SqlInt32 operator -(SqlInt32 x) 
+		public static SqlInt32 operator - (SqlInt32 x) 
 		{
 			return new SqlInt32 (-x.Value);
 		}
 
 		// Type Conversions
 
-		public static explicit operator SqlInt32(SqlBoolean x) 
+		public static explicit operator SqlInt32 (SqlBoolean x) 
 		{
-			return new SqlInt32 ((int)x.ByteValue);
+			if (x.IsNull) 
+				return SqlInt32.Null;
+			else 
+				return new SqlInt32 ((int)x.ByteValue);
 		}
 
-		public static explicit operator SqlInt32(SqlDecimal x) 
+		public static explicit operator SqlInt32 (SqlDecimal x) 
 		{
-			return new SqlInt32 ((int)x.Value);
+			if (x.IsNull) 
+				return SqlInt32.Null;
+			else 
+				return new SqlInt32 ((int)x.Value);
 		}
 
-		public static explicit operator SqlInt32(SqlDouble x) 
+		public static explicit operator SqlInt32 (SqlDouble x) 
 		{
-			return new SqlInt32 ((int)x.Value);
+			if (x.IsNull) 
+				return SqlInt32.Null;
+			else 
+				return new SqlInt32 ((int)x.Value);
 		}
 
-		public static explicit operator int(SqlInt32 x)
+		public static explicit operator int (SqlInt32 x)
 		{
 			return x.Value;
 		}
 
-		public static explicit operator SqlInt32(SqlInt64 x) 
+		public static explicit operator SqlInt32 (SqlInt64 x) 
 		{
-			return new SqlInt32 ((int)x.Value);
+			if (x.IsNull) 
+				return SqlInt32.Null;
+			else 
+				return new SqlInt32 ((int)x.Value);
 		}
 
 		public static explicit operator SqlInt32(SqlMoney x) 
 		{
-			return new SqlInt32 ((int)x.Value);
+			if (x.IsNull) 
+				return SqlInt32.Null;
+			else 
+				return new SqlInt32 ((int)x.Value);
 		}
 
 		public static explicit operator SqlInt32(SqlSingle x) 
 		{
-			return new SqlInt32 ((int)x.Value);
+			if (x.IsNull) 
+				return SqlInt32.Null;
+			else 
+				return new SqlInt32 ((int)x.Value);
 		}
 
 		[MonoTODO]
@@ -357,12 +387,20 @@ namespace System.Data.SqlTypes
 
 		public static implicit operator SqlInt32(SqlByte x) 
 		{
-			return new SqlInt32 ((int)x.Value);
+			if (x.IsNull) 
+				return SqlInt32.Null;
+			else 
+				return new SqlInt32 ((int)x.Value);
 		}
 
 		public static implicit operator SqlInt32(SqlInt16 x) 
 		{
-			return new SqlInt32 ((int)x.Value);
+			if (x.IsNull) 
+				return SqlInt32.Null;
+			else 
+				return new SqlInt32 ((int)x.Value);
 		}
+
+		#endregion
 	}
 }

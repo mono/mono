@@ -19,15 +19,10 @@ namespace System.Data.SqlTypes
 		public static readonly byte MaxPrecision = 38; 
 
 		[MonoTODO]
-		public static readonly byte MaxScale; 
+		public static readonly byte MaxScale;  // ????
 
-		[MonoTODO]
-		public static readonly SqlDecimal MaxValue;
-
-		[MonoTODO]
-		public static readonly SqlDecimal MinValue;
-		
-		[MonoTODO]
+		public static readonly SqlDecimal MaxValue = new SqlDecimal (79228162514264337593543950335.0);
+		public static readonly SqlDecimal MinValue = new SqlDecimal (-79228162514264337593543950335.0);
 		public static readonly SqlDecimal Null;
 
 		#endregion
@@ -97,7 +92,12 @@ namespace System.Data.SqlTypes
 		}
 
 		public decimal Value { 
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -346,7 +346,10 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlDecimal (SqlBoolean x)
 		{
-			return new SqlDecimal ((decimal)x.ByteValue);
+			if (x.IsNull) 
+				return SqlDecimal.Null;
+			else
+				return new SqlDecimal ((decimal)x.ByteValue);
 		}
 
 		public static explicit operator Decimal (SqlDecimal n)
@@ -356,12 +359,18 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlDecimal (SqlDouble x)
 		{
-			return new SqlDecimal ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlDecimal.Null;
+			else
+				return new SqlDecimal ((decimal)x.Value);
 		}
 
 		public static explicit operator SqlDecimal (SqlSingle x)
 		{
-			return new SqlDecimal ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlDecimal.Null;
+			else
+				return new SqlDecimal ((decimal)x.Value);
 		}
 
 		[MonoTODO]
@@ -377,27 +386,42 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlDecimal (SqlByte x)
 		{
-			return new SqlDecimal ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlDecimal.Null;
+			else
+				return new SqlDecimal ((decimal)x.Value);
 		}
 
 		public static explicit operator SqlDecimal (SqlInt16 x)
 		{
-			return new SqlDecimal ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlDecimal.Null;
+			else
+				return new SqlDecimal ((decimal)x.Value);
 		}
 
 		public static explicit operator SqlDecimal (SqlInt32 x)
 		{
-			return new SqlDecimal ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlDecimal.Null;
+			else
+				return new SqlDecimal ((decimal)x.Value);
 		}
 
 		public static explicit operator SqlDecimal (SqlInt64 x)
 		{
-			return new SqlDecimal ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlDecimal.Null;
+			else
+				return new SqlDecimal ((decimal)x.Value);
 		}
 
 		public static explicit operator SqlDecimal (SqlMoney x)
 		{
-			return new SqlDecimal ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlDecimal.Null;
+			else
+				return new SqlDecimal ((decimal)x.Value);
 		}
 
 		#endregion

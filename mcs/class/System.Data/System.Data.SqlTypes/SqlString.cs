@@ -7,6 +7,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc. 2002
+// (C) Copyright 2002 Tim Coleman
 //
 
 using System;
@@ -26,16 +27,11 @@ namespace System.Data.SqlTypes
 		private string value;
 
 		public static readonly int BinarySort;
-
 		public static readonly int IgnoreCase;
-
 		public static readonly int IgnoreKanaType;
-
 		public static readonly int IgnoreNonSpace;
-
 		public static readonly int IgnoreWidth;
-
-		public static readonly SqlString Null = new SqlString (null);
+		public static readonly SqlString Null;
 
 		#endregion // Fields
 
@@ -113,7 +109,7 @@ namespace System.Data.SqlTypes
 		}
 
 		public bool IsNull {
-			get { return (value == null); }
+			get { return (bool) (this == SqlString.Null); }
 		}
 
 		// geographics location and language (locale id)
@@ -129,9 +125,14 @@ namespace System.Data.SqlTypes
 			}
 		}
 
-		public string Value {
-			get { return value; }
-		}
+                public string Value {
+                        get {
+                                if (this.IsNull)
+                                        throw new SqlNullValueException ("The property contains Null.");
+                                else
+                                        return value;
+                        }
+                }
 
 		#endregion // Public Properties
 

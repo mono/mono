@@ -14,12 +14,10 @@ namespace System.Data.SqlTypes
 	public struct SqlByte : INullable, IComparable
 	{
 		#region Fields
-		private byte value;
 
+		byte value;
 		public static readonly SqlByte MaxValue = new SqlByte (0xff);
 		public static readonly SqlByte MinValue = new SqlByte (0);
-
-		[MonoTODO]
 		public static readonly SqlByte Null;
 		public static readonly SqlByte Zero = new SqlByte (0);
 
@@ -41,7 +39,12 @@ namespace System.Data.SqlTypes
 		}
 
 		public byte Value { 
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -277,7 +280,10 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlByte (SqlBoolean x)
 		{
-			return new SqlByte (x.ByteValue);
+			if (x.IsNull)
+				return SqlByte.Null;
+			else
+				return new SqlByte (x.ByteValue);
 		}
 
 		public static explicit operator byte (SqlByte x)
@@ -287,37 +293,58 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlByte (SqlDecimal x)
 		{
-			return new SqlByte ((byte)x.Value);
+			if (x.IsNull)
+				return SqlByte.Null;
+			else
+				return new SqlByte ((byte)x.Value);
 		}
 
 		public static explicit operator SqlByte (SqlDouble x)
 		{
-			return new SqlByte ((byte)x.Value);
+			if (x.IsNull)
+				return SqlByte.Null;
+			else
+				return new SqlByte ((byte)x.Value);
 		}
 
 		public static explicit operator SqlByte (SqlInt16 x)
 		{
-			return new SqlByte ((byte)x.Value);
+			if (x.IsNull)
+				return SqlByte.Null;
+			else
+				return new SqlByte ((byte)x.Value);
 		}
 
 		public static explicit operator SqlByte (SqlInt32 x)
 		{
-			return new SqlByte ((byte)x.Value);
+			if (x.IsNull)
+				return SqlByte.Null;
+			else
+				return new SqlByte ((byte)x.Value);
 		}
 
 		public static explicit operator SqlByte (SqlInt64 x)
 		{
-			return new SqlByte ((byte)x.Value);
+			if (x.IsNull)
+				return SqlByte.Null;
+			else
+				return new SqlByte ((byte)x.Value);
 		}
 
 		public static explicit operator SqlByte (SqlMoney x)
 		{
-			return new SqlByte ((byte)x.Value);
+			if (x.IsNull)
+				return SqlByte.Null;
+			else
+				return new SqlByte ((byte)x.Value);
 		}
 
 		public static explicit operator SqlByte (SqlSingle x)
 		{
-			return new SqlByte ((byte)x.Value);
+			if (x.IsNull)
+				return SqlByte.Null;
+			else
+				return new SqlByte ((byte)x.Value);
 		}
 
 		[MonoTODO]

@@ -46,13 +46,17 @@ namespace System.Data.SqlTypes
 
 		#region Properties
 
-		[MonoTODO]
 		public bool IsNull {
-			get { throw new NotImplementedException (); }
+			get { return (bool) (this == SqlGuid.Null); }
 		}
 
 		public Guid Value { 
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion

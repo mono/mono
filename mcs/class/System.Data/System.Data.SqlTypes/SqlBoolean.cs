@@ -20,18 +20,13 @@ namespace System.Data.SqlTypes
 
 		#region Fields
 
-		private byte value;
+		byte value;
 
 		public static readonly SqlBoolean False = new SqlBoolean (false);
-		[MonoTODO]
 		public static readonly SqlBoolean Null;
-
 		public static readonly SqlBoolean One = new SqlBoolean (1);
-		
 		public static readonly SqlBoolean True = new SqlBoolean (true);
-
 		public static readonly SqlBoolean Zero = new SqlBoolean (0);
-
 
 		#endregion // Fields
 
@@ -142,42 +137,43 @@ namespace System.Data.SqlTypes
 
 		public SqlDecimal ToSqlDecimal() 
 		{
-			return ((SqlDecimal)value);
+			return ((SqlDecimal)this);
 		}
 
 		public SqlDouble ToSqlDouble() 
 		{
-			return ((SqlDouble)value);
+			return ((SqlDouble)this);
 		}
 
 		public SqlInt16 ToSqlInt16() 
 		{
-			return ((SqlInt16)value);
+			return ((SqlInt16)this);
 		}
 
 		public SqlInt32 ToSqlInt32() 
 		{
-			return ((SqlInt32)value);
+			return ((SqlInt32)this);
 		}
 
 		public SqlInt64 ToSqlInt64() 
 		{
-			return ((SqlInt64)value);
+			return ((SqlInt64)this);
 		}
 
 		public SqlMoney ToSqlMoney() 
 		{
-			return ((SqlMoney)value);
+			return ((SqlMoney)this);
 		}
 
 		public SqlSingle ToSqlSingle() 
 		{
-			return ((SqlSingle)value);
+			return ((SqlSingle)this);
 		}
 
+		[MonoTODO]
 		public SqlString ToSqlString() 
 		{
-			return new SqlString (this.ToString());
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -266,55 +262,80 @@ namespace System.Data.SqlTypes
 		// SqlByte to SqlBoolean
 		public static explicit operator SqlBoolean (SqlByte x) 
 		{
-			return x.ToSqlBoolean ();
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean ((int)x.Value);
 		}
 
 		// SqlDecimal to SqlBoolean
 		public static explicit operator SqlBoolean (SqlDecimal x) 
 		{
-			return x.ToSqlBoolean ();
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean ((int)x.Value);
 		}
 		
 		// SqlDouble to SqlBoolean
 		public static explicit operator SqlBoolean (SqlDouble x) 
 		{
-			return x.ToSqlBoolean ();
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean ((int)x.Value);
 		}
 
 		// SqlInt16 to SqlBoolean
 		public static explicit operator SqlBoolean (SqlInt16 x) 
 		{
-			return x.ToSqlBoolean ();
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean ((int)x.Value);
 		}
 
 		// SqlInt32 to SqlBoolean
 		public static explicit operator SqlBoolean (SqlInt32 x) 
 		{
-			return x.ToSqlBoolean ();
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value);
 		}
 
 		// SqlInt64 to SqlBoolean
 		public static explicit operator SqlBoolean (SqlInt64 x) 
 		{
-			return x.ToSqlBoolean ();
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean ((int)x.Value);
 		}
 
 		// SqlMoney to SqlBoolean
 		public static explicit operator SqlBoolean (SqlMoney x) 
 		{
-			return x.ToSqlBoolean ();
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean ((int)x.Value);
 		}
 
 		// SqlSingle to SqlBoolean
 		public static explicit operator SqlBoolean (SqlSingle x) 
 		{
-			return x.ToSqlBoolean ();
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean ((int)x.Value);
 		}
 
 		// SqlString to SqlBoolean
+		[MonoTODO]
 		public static explicit operator SqlBoolean (SqlString x) 
 		{
-			return x.ToSqlBoolean ();
+			throw new NotImplementedException ();
 		}
 
 		// Boolean to SqlBoolean

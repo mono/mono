@@ -57,7 +57,12 @@ namespace System.Data.SqlTypes
 		}
 
 		public decimal Value { 
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -273,17 +278,26 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlMoney (SqlBoolean x)
 		{
-			return new SqlMoney ((decimal)x.ByteValue);
+			if (x.IsNull) 
+				return SqlMoney.Null;
+			else
+				return new SqlMoney ((decimal)x.ByteValue);
 		}
 
 		public static explicit operator SqlMoney (SqlDecimal x)
 		{
-			return new SqlMoney (x.Value);
+			if (x.IsNull) 
+				return SqlMoney.Null;
+			else
+				return new SqlMoney (x.Value);
 		}
 
 		public static explicit operator SqlMoney (SqlDouble x)
 		{
-			return new SqlMoney ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlMoney.Null;
+			else
+				return new SqlMoney ((decimal)x.Value);
 		}
 
 		public static explicit operator decimal (SqlMoney x)
@@ -293,7 +307,10 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlMoney (SqlSingle x)
 		{
-			return new SqlMoney ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlMoney.Null;
+			else
+				return new SqlMoney ((decimal)x.Value);
 		}
 
 		[MonoTODO]
@@ -309,22 +326,34 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlMoney (SqlByte x)
 		{
-			return new SqlMoney ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlMoney.Null;
+			else
+				return new SqlMoney ((decimal)x.Value);
 		}
 
 		public static explicit operator SqlMoney (SqlInt16 x)
 		{
-			return new SqlMoney ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlMoney.Null;
+			else
+				return new SqlMoney ((decimal)x.Value);
 		}
 
 		public static explicit operator SqlMoney (SqlInt32 x)
 		{
-			return new SqlMoney ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlMoney.Null;
+			else
+				return new SqlMoney ((decimal)x.Value);
 		}
 
 		public static explicit operator SqlMoney (SqlInt64 x)
 		{
-			return new SqlMoney ((decimal)x.Value);
+			if (x.IsNull) 
+				return SqlMoney.Null;
+			else
+				return new SqlMoney ((decimal)x.Value);
 		}
 
 		#endregion

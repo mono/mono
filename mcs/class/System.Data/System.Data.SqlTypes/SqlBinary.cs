@@ -15,13 +15,46 @@ namespace System.Data.SqlTypes
 	/// </summary>
 	public struct SqlBinary : INullable, IComparable
 	{
-		private byte[] value;
+
+		#region Fields
+
+		byte[] value;
 		public static readonly SqlBinary Null = new SqlBinary (null);
+
+		#endregion
+
+		#region Constructors
 		
 		public SqlBinary (byte[] value) 
 		{
 			this.value = value;
 		}
+
+		#endregion
+
+		#region Properties
+
+		public bool IsNull {
+			get { return (value == null); }
+		}
+
+		public byte this[int index] {
+			get { return value[index]; }
+		}
+
+		[MonoTODO]
+		public int Length {
+			get { throw new NotImplementedException (); }
+		}
+
+		public byte[] Value 
+		{
+			get { return value; }
+		}
+
+		#endregion
+
+		#region Methods
 
 		[MonoTODO]
 		public int CompareTo (object value) 
@@ -51,6 +84,10 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
+		#endregion
+
+		#region Operators
+
 		public static SqlBoolean GreaterThan (SqlBinary x, SqlBinary y) 
 		{
 			return (x > y);
@@ -66,7 +103,6 @@ namespace System.Data.SqlTypes
 			return (x < y);
 		}
 
-		[MonoTODO]
 		public static SqlBoolean LessThanOrEqual (SqlBinary x, SqlBinary y) 
 		{
 			return (x <= y);
@@ -88,23 +124,6 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 		
-		public bool IsNull {
-			get { return (value == null); }
-		}
-
-		public byte this[int index] {
-			get { return value[index]; }
-		}
-
-		[MonoTODO]
-		public int Length {
-			get { throw new NotImplementedException (); }
-		}
-
-		public byte[] Value 
-		{
-			get { return value; }
-		}
 
 		[MonoTODO]
 		public static SqlBinary operator + (SqlBinary x, SqlBinary y) 
@@ -115,36 +134,48 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static SqlBoolean operator == (SqlBinary x, SqlBinary y) 
 		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static SqlBoolean operator > (SqlBinary x, SqlBinary y) 
 		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static SqlBoolean operator >= (SqlBinary x, SqlBinary y) 
 		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static SqlBoolean operator != (SqlBinary x, SqlBinary y) 
 		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static SqlBoolean operator < (SqlBinary x, SqlBinary y) 
 		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static SqlBoolean operator <= (SqlBinary x, SqlBinary y) 
 		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
 			throw new NotImplementedException ();
 		}
 
@@ -162,5 +193,7 @@ namespace System.Data.SqlTypes
 		{
 			return new SqlBinary (x);
 		}
+
+		#endregion
 	}
 }
