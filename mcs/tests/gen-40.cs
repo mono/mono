@@ -92,6 +92,17 @@ public class Stack<T>
 			}
 		}
 	}
+
+	public void Test ()
+	{
+		Stack<T>.Foo<T> foo1 = GetFoo (TheData);
+		Foo<T> foo2 = GetFoo (TheData);
+
+		Stack<long>.Foo<T> foo3 = new Stack<long>.Foo<T> (TheData);
+		Stack<long>.Foo<float> foo4 = new Stack<long>.Foo<float> (3.14F);
+
+		Foo<double> foo5 = new Foo<double> (3.14);
+	}
 }
 
 class X
