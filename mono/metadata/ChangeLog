@@ -1,3 +1,8 @@
+2002-04-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* image.h: typedef MonoImageOpenStatus
+	* types.h: removed unused file
+	
 2002-04-04  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* icall.c: Enum_ToObject accepts enum value arguments.
