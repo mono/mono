@@ -1,3 +1,11 @@
+2001-08-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* loader.c (mono_get_string_class_info): do a strcmp to check
+	if it is System.String instead of using magic numbers.
+
+	* class.c (mono_class_create_from_typedef): do a strcmp to check
+	if it is System.Object instead of using magic numbers.
+
 Wed Aug 1 22:48:29 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h: mono_field_type_size () moved to metadata.

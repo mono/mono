@@ -1,3 +1,6 @@
+2001-08-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* image.h (MONO_IMAGE_IS_CORLIB): removed 
 
 Wed Aug 1 22:54:08 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
