@@ -17,6 +17,13 @@ class X {
 			return 1;
 		if (e != f)
 			return 2;
+
+		string g = "Hello\nworld";
+		string h = @"Hello
+world";
+		if (g != h) 
+			return 3;
+
 		return 0;
 	}
 }

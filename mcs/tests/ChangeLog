@@ -1,3 +1,7 @@
+2002-07-06  Andrew Birkett  <adb@tardis.ed.ac.uk>
+
+	* test-74.cs: Added test for \n in verbatim string.
+
 2002-06-27  Martin Baulig  <martin@gnome.org>
 
 	* makefile (test-compiler-mono): New target to compile and run
