@@ -1,3 +1,17 @@
+2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* IXmlSchemaInfo.cs,
+	  IXmlType.cs,
+	  XmlSchemaDatatypeVariety.cs,
+	  XmlSchemaValidity.cs,
+	  XmlTypeCode.cs,
+	  XmlValueConverter.cs : added.
+
+	* XmlSchemaInfo.cs : removed (.NET 1.2).
+
+	* XmlSchemaBuiltInType.cs,
+	  XmlSchemaSet.cs : updated.
+
 2004-05-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* CustomSerializer.cs : Added custom serializer for XmlSchema, that is

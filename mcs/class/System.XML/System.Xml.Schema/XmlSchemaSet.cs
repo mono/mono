@@ -122,6 +122,7 @@ namespace System.Xml.Schema
 			return schema;
 		}
 
+		[MonoTODO]
 		public void Compile ()
 		{
 			throw new NotImplementedException ();
@@ -152,9 +153,9 @@ namespace System.Xml.Schema
 			return (XmlSchema) schemas [GetSafeNs (ns)];
 		}
 
-		internal IEnumerator GetEnumerator()
+		internal IEnumerator GetEnumerator ()
 		{
-			return schemas.GetEnumerator();
+			return schemas.GetEnumerator ();
 		}
 
 		string GetSafeNs (string ns)
@@ -179,9 +180,21 @@ namespace System.Xml.Schema
 			return schema;
 		}
 
+		[MonoTODO]
+		public bool RemoveRecursive (XmlSchema schema)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XmlSchema Reprocess (XmlSchema schema)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public ArrayList Schemas ()
 		{
-			return new ArrayList (schemas);
+			return new ArrayList (schemas.Values);
 		}
 
 		[MonoTODO]
