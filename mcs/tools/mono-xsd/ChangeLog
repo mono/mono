@@ -1,3 +1,11 @@
+2004-04-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NewMonoXSD.cs : Added support for (ADO.NET based) xsd inference.
+	  Changed command line usage to require /c for serialization class
+	  generation, or /d for typed dataset generation (not supported yet).
+	  Modified usage message due to the changes above.
+	* Makefile : Added reference to System.Data.dll.
+
 2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* NewMonoXSD.cs: Compile the loaded schemas if they are not already compiled.
