@@ -1132,7 +1132,7 @@ namespace System.Windows.Forms {
 
 	[StructLayout (LayoutKind.Sequential)]
 	internal struct XGCValues {
-		internal GCFunction		function;
+		internal GXFunction		function;
 		internal uint			plane_mask;
 		internal uint			foreground;
 		internal uint			background;
