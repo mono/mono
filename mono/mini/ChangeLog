@@ -1,5 +1,7 @@
 2004-03-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_setup_jit_tls_data): Fix previous patch.
+	
 	* mini-x86.c (mono_arch_setup_jit_tls_data): Turn off the sigaltstack
 	stuff if SIGSEGV_ON_ALTSTACK is not defined.
 
