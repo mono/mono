@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.17  2004/08/10 18:32:10  jordi
+// throw ontextchange event
+//
 // Revision 1.16  2004/08/10 17:43:04  pbartok
 // - Added more to the still unfinished Dock/Anchor layout code
 //
@@ -963,6 +966,7 @@ namespace System.Windows.Forms
 				if (text!=value) {
 					text=value;
 					XplatUI.Text(Handle, text);
+					OnTextChanged (EventArgs.Empty);
 				}
 			}
 		}
