@@ -178,9 +178,6 @@ namespace System.IO {
 
 		public override int Peek ()
 		{
-			if (!internalStream.CanSeek)
-				return -1;
-
 			if (pos >= cchDecoded && ReadBuffer () == 0)
 				return -1;
 

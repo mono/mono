@@ -1,3 +1,8 @@
+2002-07-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StreamReader.cs:
+	(Peek): no need to have seek capabilitites. 
+
 2002-06-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Path.cs (ChangeExtension): handle some special cases (fixes bug #25319)
