@@ -1,3 +1,11 @@
+2003-06-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mono_method_to_ir): inline static readonly fields
+
+	* ssa.c (fold_tree): start cfold support for long (very simple
+	cases only)
+
+	* cfold.c (mono_constant_fold_inst): opt. CEE_CONV_I8 (OP_ICONST)
 
 Fri Jun 6 11:41:18 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
