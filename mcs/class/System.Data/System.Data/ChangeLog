@@ -1,3 +1,11 @@
+2004-03-30 Lluis Sanchez Gual <lluis@ximian.com>
+
+	* DataColumn.cs: In Expression setter, set the expression member even if 
+	  it is an empty string.
+	* DataSet.cs: Support serialization of byte[] columns.
+	* XmlDataLoader.cs: Support deserialization  of Guid columns. 
+	  Set MappingType.Attribute to columns infered from attributes.
+
 2004-03-29  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* ExpressionElements.cs : remove

@@ -1105,6 +1105,7 @@ namespace System.Data {
 			}
 			if (o is TimeSpan) return XmlConvert.ToString ((TimeSpan) o);
 			if (o is Guid) return XmlConvert.ToString ((Guid) o);
+			if (o is byte[]) return Convert.ToBase64String ((byte[])o);
 			return o.ToString ();
 		}
 		

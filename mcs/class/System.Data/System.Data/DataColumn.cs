@@ -388,10 +388,9 @@ namespace System.Data {
 		 		if (value != String.Empty) {
 					Parser parser = new Parser ();
 					compiledExpression = parser.Compile (value);
-					expression = value;  
-
 					ReadOnly = true;
-   			} 
+   				}
+				expression = value;  
 			}
 		}
 

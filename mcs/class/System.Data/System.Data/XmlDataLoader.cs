@@ -163,6 +163,7 @@ namespace System.Data
 			}
 
 			if (type == typeof (TimeSpan)) return XmlConvert.ToTimeSpan (value);
+			if (type == typeof (Guid)) return XmlConvert.ToGuid (value);
 			if (type == typeof (byte[])) return Convert.FromBase64String (value);
 
 			return Convert.ChangeType (value, type);
@@ -263,8 +264,10 @@ namespace System.Data
 				if (attr.Prefix.Equals("xmlns"))
 					table.Namespace = attr.Value;
 				else { // the attribute is a column.
-					if (!table.Columns.Contains(attr.LocalName))
-						table.Columns.Add(attr.LocalName);
+					if (!table.Columns.Contains(attr.LocalName)) {
+						DataColumn col = table.Columns.Add(attr.LocalName);
+						col.ColumnMapping = MappingType.Attribute;
+					}
 					table.Columns[attr.LocalName].Namespace = table.Namespace;
 
 					rowValue.Add(attr.LocalName, attr.Value);
