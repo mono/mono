@@ -1,5 +1,13 @@
 2003-10-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exception.c (mono_exception_from_name_msg): New helper function for
+	creating exceptions and initializing their message field.
+
+	* exception.c: Simplify functions using the new helper.
+
+	* exception.h exception.c (mono_get_exception_cannot_unload_appdomain):
+	New function.
+
 	* object.h object.c: Remove G_GNUC_NORETURN from the signature of
 	mono_raise_exception, since otherwise gcc doesn't generate the function
 	epilog for raise_exception, confusing the stack unwinding in the JIT.
