@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.OracleClient.Oci;
+using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient {
 	public sealed class OracleDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
@@ -42,6 +43,7 @@ namespace System.Data.OracleClient {
 			this.isClosed = false;
 			this.isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
 			this.schemaTable = ConstructSchemaTable ();
+			Read ();
 		}
 
 		public int Depth {
@@ -266,17 +268,30 @@ namespace System.Data.OracleClient {
 			throw new IndexOutOfRangeException ();
 		}
 		
-		[MonoTODO]
 		public DataTable GetSchemaTable ()
 		{
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
-			if (!moreResults)
-				return null;
 			fieldCount = 0;
 			dataTypeNames = new ArrayList ();
 
-			throw new NotImplementedException ();
+			for (int i = 0; i < command.StatementHandle.ColumnCount; i += 1) {
+				DataRow row = schemaTable.NewRow ();
+				OciColumnInfo columnInfo = command.StatementHandle.DescribeColumn (i);
+
+				row ["ColumnName"] = columnInfo.ColumnName;
+				row ["ColumnOrdinal"] = i + 1;
+				row ["ColumnSize"] = columnInfo.ColumnSize;
+				row ["NumericPrecision"] = columnInfo.Precision;
+				row ["NumericScale"] = columnInfo.Scale;
+				//row ["DataType"] = OciGlue.OciDataTypeToDbType (columnInfo.DataType);
+				row ["AllowDBNull"] = columnInfo.AllowDBNull;
+				row ["BaseColumnName"] = columnInfo.BaseColumnName;
+
+				schemaTable.Rows.Add (row);
+			}
+
+			return schemaTable;
 		}
 
 		public string GetString (int i)
@@ -298,7 +313,15 @@ namespace System.Data.OracleClient {
 		[MonoTODO]
 		public object GetValue (int i)
 		{
-			throw new NotImplementedException ();
+			// OBVIOUSLY THIS IS NOT REALLY A STRING ALWAYS
+			// The OciDefineHandle should get it as a native type.
+			object foo = Marshal.PtrToStringAnsi (((OciDefineHandle) command.StatementHandle.Values [i]).Value, ((OciDefineHandle) command.StatementHandle.Values[i]).DefinedSize);
+
+			if (foo != null)
+				return String.Copy ((string) foo);
+
+			return null;
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -323,10 +346,9 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public bool Read ()
 		{
-			throw new NotImplementedException ();
+			return command.StatementHandle.Fetch ();
 		}
 	}
 }

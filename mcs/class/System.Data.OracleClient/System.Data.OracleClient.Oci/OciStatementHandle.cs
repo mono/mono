@@ -16,6 +16,7 @@
 // 
 
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
@@ -27,6 +28,10 @@ namespace System.Data.OracleClient.Oci {
 		OciStatementMode mode;
 		OciServiceHandle serviceHandle;
 		OciErrorHandle errorHandle;
+		ArrayList values;
+
+		bool moreResults;
+		int columnCount;
 	
 		#endregion // Fields
 
@@ -37,11 +42,16 @@ namespace System.Data.OracleClient.Oci {
 		{
 			language = OciStatementLanguage.NTV;
 			mode = OciStatementMode.Default;
+			moreResults = false;
 		}
 
 		#endregion // Constructors
 
 		#region Properties
+
+		public int ColumnCount {
+			get { return columnCount; }
+		}
 
 		public OciErrorHandle ErrorHandle {
 			get { return errorHandle; }
@@ -58,9 +68,24 @@ namespace System.Data.OracleClient.Oci {
 			set { serviceHandle = value; }
 		}
 
+		public ArrayList Values {
+			get { return values; }
+		}
+
 		#endregion // Properties
 
 		#region Methods
+
+		[DllImport ("oci")]
+		public static extern int OCIDescriptorFree (IntPtr descp,
+							[MarshalAs (UnmanagedType.U4)] OciDescriptorType type);
+
+		[DllImport ("oci")]
+		public static extern int OCIParamGet (IntPtr hndlp,
+							[MarshalAs (UnmanagedType.U4)] OciHandleType htype,
+							IntPtr errhp,
+							out IntPtr parmdpp,
+							[MarshalAs (UnmanagedType.U4)] int pos);
 
 		[DllImport ("oci")]
 		public static extern int OCIStmtExecute (IntPtr svchp,
@@ -73,12 +98,56 @@ namespace System.Data.OracleClient.Oci {
 							[MarshalAs (UnmanagedType.U4)] OciExecuteMode mode);
 
 		[DllImport ("oci")]
+		public static extern int OCIStmtFetch (IntPtr stmtp,
+							IntPtr errhp,
+							uint nrows,
+							ushort orientation,
+							uint mode);
+							
+
+		[DllImport ("oci")]
 		public static extern int OCIStmtPrepare (IntPtr stmthp,
 							IntPtr errhp,
 							string stmt,
 							[MarshalAs (UnmanagedType.U4)] int stmt_length,
 							[MarshalAs (UnmanagedType.U4)] OciStatementLanguage language,
 							[MarshalAs (UnmanagedType.U4)] OciStatementMode mode);
+
+		public IntPtr CreateParameterHandle (int position)
+		{
+			IntPtr handle = IntPtr.Zero;
+			int status = 0;
+
+			status = OCIParamGet (Handle,
+						OciHandleType.Statement,
+						ErrorHandle.Handle,
+						out handle,
+						position);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			return handle;
+		}
+
+		public void FreeParameterHandle (IntPtr handle)
+		{
+			int status = 0;
+
+			status = OCIDescriptorFree (handle, OciDescriptorType.Parameter);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+
+		void Define ()
+		{
+			values = new ArrayList ();
+			for (int i = 0; i < columnCount; i += 1)  
+				values.Add (new OciDefineHandle (this, i + 1));
+		}
 
 		public void Dispose ()
 		{
@@ -98,6 +167,9 @@ namespace System.Data.OracleClient.Oci {
 		public bool Execute (bool nonQuery)
 		{
 			int status = 0;
+			columnCount = 0;
+			moreResults = false;
+
 			status = OCIStmtExecute (Service.Handle,
 						Handle,
 						ErrorHandle.Handle,
@@ -106,7 +178,18 @@ namespace System.Data.OracleClient.Oci {
 						IntPtr.Zero,
 						IntPtr.Zero,
 						OciExecuteMode.Default);
-			if (status != 0) {
+
+			switch (status) {
+			case OciGlue.OCI_DEFAULT:
+				if (!nonQuery) {
+					GetColumnCount ();
+					Define ();
+					moreResults = true;
+				}
+				break;
+			case OciGlue.OCI_NO_DATA:
+				break;
+			default:
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
@@ -114,16 +197,149 @@ namespace System.Data.OracleClient.Oci {
 			return true;
 		}
 
+		void GetColumnCount ()
+		{
+			int status = 0;
+			status = OciGlue.OCIAttrGetInt32 ( Handle,
+						(uint) OciHandleType.Statement,
+						out columnCount,
+						IntPtr.Zero,
+						OciAttributeType.ParameterCount,
+						ErrorHandle.Handle);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+
+		public bool GetAttributeBool (IntPtr handle, OciAttributeType type)
+		{
+			bool output;
+			int status = 0;
+
+			status = OciGlue.OCIAttrGetBool (handle,
+						(uint) OciDescriptorType.Parameter,
+						out output,
+						IntPtr.Zero,
+						type,
+						ErrorHandle.Handle);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			return output;
+		}
+
+		public byte GetAttributeByte (IntPtr handle, OciAttributeType type)
+		{
+			byte output;
+			int status = 0;
+
+			status = OciGlue.OCIAttrGetByte (handle,
+						(uint) OciDescriptorType.Parameter,
+						out output,
+						IntPtr.Zero,
+						type,
+						ErrorHandle.Handle);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			return output;
+		}
+
+		public int GetAttributeInt32 (IntPtr handle, OciAttributeType type)
+		{
+			int status = 0;
+			int output;
+
+			status = OciGlue.OCIAttrGetInt32 (handle,
+						(uint) OciDescriptorType.Parameter,	
+						out output,
+						IntPtr.Zero,
+						type,
+						ErrorHandle.Handle);
+
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			return output;
+		}
+
+		[MonoTODO]
+		public string GetAttributeString (IntPtr handle, OciAttributeType type)
+		{
+			string output = String.Empty;
+			IntPtr outputPtr = IntPtr.Zero;
+			int outSize;
+			int status = 0;
+
+			status = OciGlue.OCIAttrGet (handle,
+						(uint) OciDescriptorType.Parameter,
+						out outputPtr,
+						out outSize,
+						type,
+						ErrorHandle.Handle);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			if (outputPtr != IntPtr.Zero && outSize > 0) {
+				object name = Marshal.PtrToStringAnsi (outputPtr, outSize);
+				if (name != null) {
+					output = String.Copy ((string) name);
+					/* TRWC 
+					 * We shouldn't really free this, but how can we make Oracle
+					 * do it?
+					 */
+					// Marshal.FreeHGlobal (outputPtr); -- this *may* leak memory
+				}
+			}
+
+			return output;
+		}
+
+		[MonoTODO]
+		public OciColumnInfo DescribeColumn (int ordinal)
+		{
+			int status = 0;
+			OciColumnInfo columnInfo;
+
+			string schemaName;	
+
+			IntPtr parameterHandle = CreateParameterHandle (ordinal + 1);
+
+			columnInfo.ColumnName = ""; // GetAttributeString (parameterHandle, OciAttributeType.DisplayName);
+			columnInfo.ColumnOrdinal = ordinal + 1;
+			columnInfo.ColumnSize = GetAttributeInt32 (parameterHandle, OciAttributeType.DataSize);
+			columnInfo.Precision = GetAttributeByte (parameterHandle, OciAttributeType.Precision);
+			columnInfo.Scale = GetAttributeByte (parameterHandle, OciAttributeType.Scale);
+			columnInfo.DataType = (OciDataType) GetAttributeInt32 (parameterHandle, OciAttributeType.DataType);
+			columnInfo.AllowDBNull = GetAttributeBool (parameterHandle, OciAttributeType.IsNull);
+			columnInfo.BaseColumnName = GetAttributeString (parameterHandle, OciAttributeType.Name);
+
+			// TRWC not sure what to do with this yet.
+			schemaName = GetAttributeString (parameterHandle, OciAttributeType.SchemaName);
+
+			FreeParameterHandle (parameterHandle);
+
+			return columnInfo;
+		}
+
 		public OciStatementType GetStatementType ()
 		{
 			int status = 0;
-			int size;
 			int statementType;
 
 			status = OciGlue.OCIAttrGetInt32 (Handle,
-							OciHandleType.Statement,
+							(uint) OciHandleType.Statement,
 							out statementType,
-							out size,
+							IntPtr.Zero,
 							OciAttributeType.StatementType,
 							errorHandle.Handle);
 			if (status != 0) {
@@ -132,6 +348,30 @@ namespace System.Data.OracleClient.Oci {
 			}
 
 			return (OciStatementType) statementType;
+		}
+
+		public bool Fetch ()
+		{
+			int status = 0;
+			status = OCIStmtFetch (Handle,
+						ErrorHandle.Handle,
+						1,
+						2,
+						0);
+
+			switch (status) {
+			case OciGlue.OCI_NO_DATA:
+				moreResults = false;
+				break;
+			case OciGlue.OCI_DEFAULT:
+				moreResults = true;
+				break;
+			default:
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			return moreResults;
 		}
 
 		public void Prepare (string commandText)

@@ -1,3 +1,20 @@
+2003-12-13  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient.Oci/OciColumnInfo.cs:
+	* System.Data.OracleClient.Oci/OciDataType.cs:
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+	* list:
+		New classes added
+	* System.Data.OracleClient/OciGlue.cs:
+		Changes to AttrGet functions
+	* System.Data.OracleClient/OracleCommand.cs:
+	* System.Data.OracleClient/OracleDataReader.cs:
+		Start some work on getting data reader going
+	* System.Data.OracleClient.Oci/OciAttributeType.cs:
+		Add DisplayName
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs:
+		Add code to get schema for query, as well as
+		define output values.
+
 2003-02-12  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient/OracleException.cs:
 	* System.Data.OracleClient.Oci/IOciHandle.cs:

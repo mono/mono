@@ -77,6 +77,9 @@ namespace System.Data.OracleClient.Oci {
 		TypeName = 0x08,
 		SchemaName = 0x09,
 		SubName = 0x0a,
-		Position = 0x0b
+		Position = 0x0b,
+
+		/* Only columns */
+		DisplayName = 0x64
 	}
 }

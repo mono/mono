@@ -68,7 +68,6 @@ namespace System.Data.OracleClient {
 			this.updatedRowSource = UpdateRowSource.Both;
 			this.designTimeVisible = false;
                         parameters = new OracleParameterCollection (this);
-			Console.WriteLine ("Creating statement ...");
 		}
 
 		#endregion // Constructors
@@ -124,6 +123,10 @@ namespace System.Data.OracleClient {
 
 		public OracleParameterCollection Parameters {
 			get { return parameters; }
+		}
+
+		internal OciStatementHandle StatementHandle {
+			get { return statement; }
 		}
 
 		public OracleTransaction Transaction {
@@ -212,10 +215,12 @@ namespace System.Data.OracleClient {
 			return ExecuteReader (CommandBehavior.Default);
 		}
 
-		[MonoTODO]
 		public OracleDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			throw new NotImplementedException ();
+			statement = Connection.Oci.CreateStatement ();
+			statement.Prepare (CommandText);
+			statement.ExecuteQuery ();
+			return new OracleDataReader (this);
 		}
 
 		[MonoTODO]
