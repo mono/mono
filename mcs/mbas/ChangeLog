@@ -1,3 +1,9 @@
+2004-03-16 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: 
+		- changed variable declaration grammar and added support for multiple variables declartion under single type e.g. dim x, y as integer
+		- added few exception checks in variables
+		- added one exception check in property
+	
 2004/03/02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* sourcebeingcompiled.cs : new source/class to hold things previously contained in namespaces.cs 
 			because in C# they were semantically tied to nested namespaces, and in VB.NET 

@@ -1428,7 +1428,7 @@ interface_event_declaration
 	  }
 	;
 
-property_declaration
+ property_declaration
 	  : opt_modifiers PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
 	  {
 		get_implicit_value_parameter_type = (Expression) $6;
@@ -1575,14 +1575,20 @@ opt_set_parameter
 		set_implicit_value_parameter_type = (Expression) TypeManager.system_object_expr;
 		set_implicit_value_parameter_name = "Value";
 	}	
-	| OPEN_PARENS opt_identifier opt_type_spec CLOSE_PARENS
+	| OPEN_PARENS opt_parameter_modifier opt_identifier opt_type_spec CLOSE_PARENS
 	{
 		/* FIXME: possible syntax error which must be caught
 		   Set ( As <type>) is currently (and wrongly so) legal
 		*/
-		set_implicit_value_parameter_type = (Expression) $3;
+		Parameter.Modifier pm = (Parameter.Modifier)$2;
+		if ((pm | Parameter.Modifier.VAL) != 0)
+			Report.Error (31065, 
+				lexer.Location, 
+				"Set cannot have a paremeter modifier other than 'ByVal'");
+		
+		set_implicit_value_parameter_type = (Expression) $4;
 		if ($2 != null)
-			set_implicit_value_parameter_name = (string) $2;
+			set_implicit_value_parameter_name = (string) $3;
 		else
 			set_implicit_value_parameter_name = "Value";
 	}
@@ -1607,7 +1613,6 @@ field_declaration
 					
 		foreach (VariableDeclaration var in (ArrayList) $2){
 			Location l = var.Location;
-
 			Field field = new Field (var.type, mod, var.identifier, 
 						 var.expression_or_array_initializer, 
 						 (Attributes) null, l);
@@ -2808,81 +2813,147 @@ variable_declarators
 	: variable_declarator 
 	  {
 		ArrayList decl = new ArrayList ();
-		decl.Add ($1);
+		decl.AddRange ((ArrayList) $1);
 		$$ = decl;
 	  }
 	| variable_declarators COMMA variable_declarator
 	  {
 		ArrayList decls = (ArrayList) $1;
-		decls.Add ($3);
+		decls.AddRange ((ArrayList) $3);
 		$$ = $1;
 	  }
 	;
 
 variable_declarator
-	: identifier opt_type_character opt_array_name_modifier opt_type_decl opt_variable_initializer
+	: variable_names opt_type_decl opt_variable_initializer
 	  {
-	  	string varname = (string)$1;
-	  	current_rank_specifiers = (ArrayList) $3;
-	  	object varinit = $5;
+	    ArrayList names = (ArrayList) $1;
+		object varinit = $3;
+		ArrayList VarDeclarations = new ArrayList();
 	  	Expression vartype;
 	  	ArrayList a_dims = null;
-	  	
-	  	// Some checking is required for particularly weird declarations
-	  	// like Dim a As Integer(,)
-	  	if ($4 is Pair) {
-	  		vartype = (Expression) ((Pair) $4).First;
-			
-	  		if ($5 != null && $5 is ArrayList)
-	  			Report.Error (205, "End of statement expected.");
-	  			
-			ArrayList args = (ArrayList) ((Pair) $4).Second;
-			if (VariableDeclaration.IndexesSpecifiedInRank (args))	  	  
-				Report.Error (638, "Array bounds cannot appear in type specifiers.");	
-	
-			string s_vartype = vartype.ToString();				
-			s_vartype += "[";
-			if (args != null)
-				for (int x = 0; x < args.Count; x++)
-					s_vartype += ",";
+
+		if ((names.Count > 1) && (varinit != null)) 
+			Report.Error (
+				30671, lexer.Location, 
+				"Multiple variables with single type can not have " +
+				"a explicit initialization" );
+
 				
-			s_vartype += "]";	
-			vartype = DecomposeQI(s_vartype, Location.Null);						
-	  	}
-	  	else
-			vartype = ($4 == null) ? (($2 == null) ? TypeManager.system_object_expr : (Expression) $2 ) : (Expression) $4;
-	  		  		
-	  	/*
-	  	   Check for a declaration like Dim a(2) or Dim a(2,3)
-	  	   If this is the case, we must generate an ArrayCreationExpression
-	  	   and, in case, add the initializer after the array has been created.
-	  	*/
-	  	if (VariableDeclaration.IsArrayDecl (this)) {	
-			if (VariableDeclaration.IndexesSpecified(current_rank_specifiers)) {   
-				a_dims = (ArrayList) current_rank_specifiers;
-				VariableDeclaration.VBFixIndexLists (ref a_dims);
-				varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, lexer.Location);
-			}
+		foreach (VarName vname in names)
+		{
+			string varname = (string) vname.Name;
+			current_rank_specifiers = (ArrayList) vname.Rank;
+			a_dims = null;
+			varinit = $3;
+	
+		  	if(vname.Type != null && $2 != null)
+				Report.Error (
+					30302, lexer.Location, 
+					"Type character cannot be used with explicit type declaration" );
+	
+		  	// Some checking is required for particularly weird declarations
+	  		// like Dim a As Integer(,)
+		  	if ($2 is Pair) {
+		  		vartype = (Expression) ((Pair) $2).First;
+				
+	  			if ($3 != null && $3 is ArrayList)
+		  			Report.Error (205, "End of statement expected.");
+		  			
+				ArrayList args = (ArrayList) ((Pair) $2).Second;
+				if (VariableDeclaration.IndexesSpecifiedInRank (args))	  	  
+					Report.Error (638, 
+					"Array bounds cannot appear in type specifiers.");	
+	
+				string s_vartype = vartype.ToString();				
+				s_vartype += "[";
+				if (args != null)
+					for (int x = 0; x < args.Count; x++)
+						s_vartype += ",";
+				
+				s_vartype += "]";	
+				vartype = DecomposeQI(s_vartype, Location.Null);						
+	  		}
+	  		else
+				vartype = ($2 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $2;
 
-			vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (this), lexer.Location);
-		}
-
-		if (vartype is New) {
-			if (varinit != null) {
-				Report.Error (30205, lexer.Location, "End of statement expected");
-				$$ = null;
-			}
-			else
+			// if the variable is an array with explicit bound
+			// and having explicit initialization throw exception
+			if (current_rank_specifiers != null && varinit != null) 
 			{
-				varinit = vartype;
-				vartype = ((New)vartype).RequestedType;
+				bool broken = false;
+				foreach (ArrayList exprs in current_rank_specifiers)
+				{
+					foreach (Expression expr in exprs)
+					{
+						if (!((Expression)expr is EmptyExpression ))
+						{
+							Report.Error (
+								30672, lexer.Location, 
+								"Array declared with explicit bound " +
+								" can not have explicit initialization");
+							broken = true;
+							break;
+						}
+					}
+					if (broken)
+						break;
+				}
+		  	}
+		
+	  		/*
+	  		Check for a declaration like Dim a(2) or Dim a(2,3)
+	  		If this is the case, we must generate an ArrayCreationExpression
+	  		and, in case, add the initializer after the array has been created.
+	  		*/
+	  		if (VariableDeclaration.IsArrayDecl (this)) {	
+				if (VariableDeclaration.IndexesSpecified(current_rank_specifiers)) {   
+					a_dims = (ArrayList) current_rank_specifiers;
+					VariableDeclaration.VBFixIndexLists (ref a_dims);
+					varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, lexer.Location);
+				}
+				vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (this), lexer.Location);
 			}
-		}
-	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
+
+			if (vartype is New) {
+				if (varinit != null) {
+					Report.Error (30205, lexer.Location, "End of statement expected");
+					$$ = null;
+				}
+				else
+				{
+					varinit = vartype;
+					vartype = ((New)vartype).RequestedType;
+				}
+			}
+	  		VarDeclarations.Add (new VariableDeclaration (varname, vartype, varinit, lexer.Location, null));
+		}// end of for
+		$$ = VarDeclarations;
+	  } 
+	;
+
+variable_names
+	: variable_name
+	  {
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+		$$ = list;
+	  }
+	| variable_names COMMA variable_name
+	  {
+		ArrayList list = (ArrayList) $1;
+		list.Add ($3);
+		$$ = list;
+	  }
+	;
+	
+variable_name
+	: identifier opt_type_character opt_array_name_modifier
+	  {
+		$$ = new VarName ($1, $2, $3);
 	  }
 	;
 
-		
 opt_type_spec
 	: /* empty */	
 	  { 
@@ -3710,6 +3781,20 @@ Block declare_local_constant (Expression type, VariableDeclaration decl)
 	
 	return implicit_block;
 }
+
+struct VarName {
+                public object Name;
+                public object Type;
+		public object Rank;
+                                                                                
+                public VarName (object n, object t, object r)
+                {
+                        Name = n;
+                        Type = t;
+			Rank = r;
+                }
+        }
+
 
 // <summary>
 //   A class used to pass around variable declarations and constants
