@@ -1,3 +1,7 @@
+2002-06-09  Lawrence Pit  <loz@cable.a2000.nl>
+
+	* DateTimeTest.cs: Making tests culture independent
+
 2002-06-07  Nick Drochak  <ndrochak@gol.com>
 
 	* DecimalTest.cs: Catch unexpected exception and report it.

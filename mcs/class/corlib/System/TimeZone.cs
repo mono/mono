@@ -138,7 +138,8 @@ namespace System {
 			Int64[] data;
 			string[] names;
 
-			if (!GetTimeZoneData (2002, out data, out names))
+			DateTime now = new DateTime(DateTime.GetNow ());			
+			if (!GetTimeZoneData (now.Year, out data, out names))
 				throw new NotSupportedException (Locale.GetText ("Can't get timezone name"));
 
 			standardName = Locale.GetText (names[(int)TimeZoneNames.StandardNameIdx]);

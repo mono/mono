@@ -1,3 +1,8 @@
+2002-06-09  Lawrence Pit  <loz@cable.a2000.nl>
+
+	* TimeZone.cs: removed dependency on year 2002 from initialization of 
+	current timezone.
+
 2002-06-09  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ToType): Rearranged what Exceptions we throw to

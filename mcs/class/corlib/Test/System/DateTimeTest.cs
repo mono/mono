@@ -17,6 +17,8 @@ namespace MonoTests.System
 
 public class DateTimeTest : TestCase
 {
+	private CultureInfo oldcult;
+	
 	long[] myTicks = {
 		631501920000000000L,	// 25 Feb 2002 - 00:00:00
 		631502475130080000L,	// 25 Feb 2002 - 15:25:13,8
@@ -35,6 +37,18 @@ public class DateTimeTest : TestCase
 		get {
 			return new TestSuite (typeof (DateTimeTest));
 		}
+	}
+
+	protected override void SetUp() 
+	{
+		// the current culture determines the result of formatting
+		oldcult = Thread.CurrentThread.CurrentCulture;
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+	}
+	
+	protected override void TearDown ()
+	{
+		Thread.CurrentThread.CurrentCulture = oldcult;		
 	}
 	
 	public void TestCtors ()
@@ -68,12 +82,13 @@ public class DateTimeTest : TestCase
 		AssertEquals("B06", "02/25/2002 05:25:13", t1.ToString ("G"));
 		AssertEquals("B07", "February 25", t1.ToString ("m"));
 		AssertEquals("B08", "February 25", t1.ToString ("M"));
-		AssertEquals("B09", "Mon, 25 Feb 2002 04:25:13 GMT", t1.ToString ("r"));
-		AssertEquals("B10", "Mon, 25 Feb 2002 04:25:13 GMT", t1.ToString ("R"));
+		AssertEquals("B09", "Mon, 25 Feb 2002 05:25:13 GMT", t1.ToString ("r"));
+		AssertEquals("B10", "Mon, 25 Feb 2002 05:25:13 GMT", t1.ToString ("R"));
 		AssertEquals("B11", "2002-02-25T05:25:13", t1.ToString ("s"));
 		AssertEquals("B12", "05:25", t1.ToString ("t"));
 		AssertEquals("B13", "05:25:13", t1.ToString ("T"));
-		AssertEquals("B14", "2002-02-25 04:25:13Z", t1.ToString ("u"));
+		AssertEquals("B14", "2002-02-25 05:25:13Z", t1.ToString ("u"));
+		// next one assumes your CurrentTimezone is CET
 		AssertEquals("B15", "Monday, 25 February 2002 04:25:13", t1.ToString ("U"));
 		AssertEquals("B16", "2002 February", t1.ToString ("y"));
 		AssertEquals("B17", "2002 February", t1.ToString ("Y"));
@@ -104,6 +119,7 @@ public class DateTimeTest : TestCase
 		AssertEquals("C23", "P", t2.ToString ("%t"));
 		AssertEquals("C24", "AM", t1.ToString ("tt"));
 		AssertEquals("C25", "PM", t2.ToString ("tt"));
+		// next three assume your CurrentTimezone is CET
 		AssertEquals("C26", "+1", t1.ToString ("%z"));
 		AssertEquals("C27", "+01", t1.ToString ("zz"));
 		AssertEquals("C28", "+01:00", t1.ToString ("zzz"));
@@ -254,21 +270,29 @@ public class DateTimeTest : TestCase
 		AssertEquals ("G07", myTicks[0], t1.Ticks);
 
 		// Multi Custom Patterns
-
 		string rfc1123_date = "r";
-		string rfc850_date = "dddd, dd-MMM-yy HH:mm:ss G\\MT";
-		string asctime_date = "ddd MMM d HH:mm:ss yyyy";
+		string rfc850_date = "dddd, dd'-'MMM'-'yy HH':'mm':'ss 'GMT'";
+		string asctime_date = "ddd MMM d HH':'mm':'ss yyyy";
 		string [] formats = new string [] {rfc1123_date, rfc850_date, asctime_date};
 		CultureInfo enUS = new CultureInfo("en-US", false);
-		t1 = DateTime.ParseExact ("Sun, 06 Nov 1994 08:49:37 GMT", formats, enUS, 
+		t1 = DateTime.ParseExact ("Sun, 06 Nov 1994 08:49:37 GMT", formats[0], enUS, 
 					DateTimeStyles.AllowWhiteSpaces);
 		AssertEquals ("M01", myTicks[6], t1.Ticks);
-		t1 = DateTime.ParseExact ("Sunday, 06-Nov-94 08:49:37 GMT", formats, enUS, 
+		t1 = DateTime.ParseExact ("Sunday, 06-Nov-94 08:49:37 GMT", formats[1], enUS, 
 					DateTimeStyles.AllowWhiteSpaces);
 		AssertEquals ("M02", myTicks[6], t1.Ticks);
-		t1 = DateTime.ParseExact ("Sun Nov  6 08:49:37 1994", formats, enUS, 
+		t1 = DateTime.ParseExact ("Sun Nov  6 08:49:37 1994", formats[2], enUS, 
 					DateTimeStyles.AllowWhiteSpaces);
 		AssertEquals ("M03", myTicks[6], t1.Ticks);
+		t1 = DateTime.ParseExact ("Sun, 06 Nov 1994 08:49:37 GMT", formats, enUS, 
+					DateTimeStyles.AllowWhiteSpaces);
+		AssertEquals ("M04", myTicks[6], t1.Ticks);
+		t1 = DateTime.ParseExact ("Sunday, 06-Nov-94 08:49:37 GMT", formats, enUS, 
+					DateTimeStyles.AllowWhiteSpaces);
+		AssertEquals ("M05", myTicks[6], t1.Ticks);
+		t1 = DateTime.ParseExact ("Sun Nov  6 08:49:37 1994", formats, enUS, 
+					DateTimeStyles.AllowWhiteSpaces);
+		AssertEquals ("M06", myTicks[6], t1.Ticks);
 	}
 
 	public void TestParse ()
