@@ -1,3 +1,17 @@
+2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs: Double the size of the types array during insertion
+	do avoid excessive memory allocation and copying. Track the number of
+	types in a separate variable.
+
+	* TypeBuilder.cs: Same for the 'fields' and 'methods' arrays.
+
+2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs (DefinePInvokeMethod): Implement.
+
+	* ModuleBuilder.cs (DefineGlobalMethod): Implement the Net 1.2 variants.
+
 2003-11-28  Dick Porter  <dick@ximian.com>
 
 	* ModuleBuilder.cs: Do string compares with the Invariant culture.

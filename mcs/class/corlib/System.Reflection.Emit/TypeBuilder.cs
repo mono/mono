@@ -26,9 +26,11 @@ namespace System.Reflection.Emit {
 	private Type parent;
 	private Type nesting_type;
 	private Type[] interfaces;
+	private int num_methods;
 	private MethodBuilder[] methods;
 	private ConstructorBuilder[] ctors;
 	private PropertyBuilder[] properties;
+	private int num_fields;
 	private FieldBuilder[] fields;
 	private EventBuilder[] events;
 	private CustomAttributeBuilder[] cattrs;
@@ -132,7 +134,7 @@ namespace System.Reflection.Emit {
 				// that breaks mcs.
 				if (fields != null) {
 					foreach (FieldBuilder f in fields) {
-						if ((f.Attributes & FieldAttributes.Static) == 0)
+						if ((f != null) && (f.Attributes & FieldAttributes.Static) == 0)
 							return f.FieldType;
 					}
 				}
@@ -374,14 +376,16 @@ namespace System.Reflection.Emit {
 
 		private void append_method (MethodBuilder mb) {
 			if (methods != null) {
-				MethodBuilder[] new_methods = new MethodBuilder [methods.Length+1];
-				System.Array.Copy (methods, new_methods, methods.Length);
-				new_methods [methods.Length] = mb;
-				methods = new_methods;
+				if (methods.Length == num_methods) {
+					MethodBuilder[] new_methods = new MethodBuilder [methods.Length * 2];
+					System.Array.Copy (methods, new_methods, num_methods);
+					methods = new_methods;
+				}
 			} else {
 				methods = new MethodBuilder [1];
-				methods [0] = mb;
 			}
+			methods [num_methods] = mb;
+			num_methods ++;
 		}
 
 		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
@@ -498,13 +502,17 @@ namespace System.Reflection.Emit {
 
 			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes, requiredCustomAttributes, optionalCustomAttributes);
 			if (fields != null) {
-				FieldBuilder[] new_fields = new FieldBuilder [fields.Length+1];
-				System.Array.Copy (fields, new_fields, fields.Length);
-				new_fields [fields.Length] = res;
-				fields = new_fields;
+				if (fields.Length == num_fields) {
+					FieldBuilder[] new_fields = new FieldBuilder [fields.Length * 2];
+					System.Array.Copy (fields, new_fields, num_fields);
+					fields = new_fields;
+				}
+				fields [num_fields] = res;
+				num_fields ++;
 			} else {
 				fields = new FieldBuilder [1];
 				fields [0] = res;
+				num_fields ++;
 				create_internal_class (this);
 			}
 			return res;
@@ -559,6 +567,8 @@ namespace System.Reflection.Emit {
 			// value type.
 			if (fields != null) {
 				foreach (FieldBuilder fb in fields) {
+					if (fb == null)
+						continue;
 					Type ft = fb.FieldType;
 					if (!fb.IsStatic && (ft is TypeBuilder) && ft.IsValueType && (ft != this) && is_nested_in (ft)) {
 						TypeBuilder tb = (TypeBuilder)ft;
@@ -576,9 +586,8 @@ namespace System.Reflection.Emit {
 			}
 
 			if (methods != null) {
-				foreach (MethodBuilder method in methods) {
-					method.fixup ();
-				}
+				for (int i = 0; i < num_methods; ++i)
+					((MethodBuilder)(methods[i])).fixup ();
 			}
 
 			//
@@ -657,6 +666,8 @@ namespace System.Reflection.Emit {
 			FieldAttributes mattrs;
 			
 			foreach (FieldInfo c in fields) {
+				if (c == null)
+					continue;
 				if (c.Name != name)
 					continue;
 				match = false;
@@ -693,6 +704,8 @@ namespace System.Reflection.Emit {
 			FieldAttributes mattrs;
 			
 			foreach (FieldInfo c in fields) {
+				if (c == null)
+					continue;
 				match = false;
 				mattrs = c.Attributes;
 				if ((mattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
@@ -752,6 +765,8 @@ namespace System.Reflection.Emit {
 			MethodAttributes mattrs;
 
 			foreach (MethodInfo c in methods) {
+				if (c == null)
+					continue;
 				match = false;
 				mattrs = c.Attributes;
 				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {

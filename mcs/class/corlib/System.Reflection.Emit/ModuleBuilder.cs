@@ -21,6 +21,7 @@ using System.Globalization;
 namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
 		private IntPtr dynamic_image;
+		private int num_types;
 		private TypeBuilder[] types;
 		private CustomAttributeBuilder[] cattrs;
 		private byte[] guid;
@@ -223,14 +224,16 @@ namespace System.Reflection.Emit {
 		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
 			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packsize, typesize, null);
 			if (types != null) {
-				TypeBuilder[] new_types = new TypeBuilder [types.Length + 1];
-				System.Array.Copy (types, new_types, types.Length);
-				new_types [types.Length] = res;
-				types = new_types;
+				if (types.Length == num_types) {
+					TypeBuilder[] new_types = new TypeBuilder [types.Length * 2];
+					System.Array.Copy (types, new_types, num_types);
+					types = new_types;
+				}
 			} else {
 				types = new TypeBuilder [1];
-				types [0] = res;
 			}
+			types [num_types] = res;
+			num_types ++;
 			name_cache.Add (name, res);
 			return res;
 		}
