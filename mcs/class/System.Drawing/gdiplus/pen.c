@@ -42,7 +42,7 @@ gdip_pen_init (GpPen *pen)
 	pen->own_dash_array = 0;
 	pen->dash_array = 0;
 	pen->unit = UnitWorld;
-        pen->matrix = NULL;
+        pen->matrix = cairo_matrix_create ();
 }
 
 GpPen*
