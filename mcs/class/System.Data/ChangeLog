@@ -1,5 +1,11 @@
 2002-05-01  Daniel Morgan <danmorg@sc.rr.com>
 
+	* System.Data.build: added /nowarn: nnnn arguments 
+	so you will not get a ton of warnings.  The warnings
+	being excluded are: 1595, 0067, 0109, 0169, and	0649
+
+2002-05-01  Daniel Morgan <danmorg@sc.rr.com>
+
 	* System.Data.build: modified to exclude more 
 	files from the build
 
