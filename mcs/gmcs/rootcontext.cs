@@ -304,6 +304,7 @@ namespace Mono.CSharp {
 				"System.IDisposable",
 				
 				"System.Runtime.Serialization.ISerializable",
+				"System.Runtime.InteropServices._Exception",
 
 				"System.Reflection.IReflect",
 				"System.Reflection.ICustomAttributeProvider",

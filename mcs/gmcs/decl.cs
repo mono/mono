@@ -211,7 +211,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public readonly MemberName MemberName;
+		public MemberName MemberName;
 
 		/// <summary>
 		///   Modifier flags that the user specified in the source code

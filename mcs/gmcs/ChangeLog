@@ -1,3 +1,11 @@
+2004-11-29  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (MemberCore.MemberName): Remove readonly to fix an error
+	cs1648 report.
+	* rootcontext.cs (ResolveCore::interfaces_first_stage): Add
+	System.Runtime.InteropServices._Exception, since it's a base
+	interface of the core type System.Exception in the net_2_0 profile.
+
 2004-11-27  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (Expression.StoreFromPtr): Use `stobj' for generic parameters.
