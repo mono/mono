@@ -1,5 +1,10 @@
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeFormatInfo.cs : 'U' is in fact the same as 'F' for pattern
+	  strings. Thanks to kangaroo for the hint.
+
+2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeFormatInfo.cs : Fixed longtimes and shorttimes (exchanged).
 
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>

@@ -525,21 +525,16 @@ namespace System.Globalization
 				table [s] = s;
 			foreach (string s in GetAllDateTimePatterns ('u'))
 				table [s] = s;
-			// FIXME: this is not implemented as yet.
-//			foreach (string s in GetAllDateTimePatterns ('U'))
-//				table [s] = s;
+			// For 'U' cases, the patterns always matches with 'F'
+			// (Differs in that 'U' assumes UTC while 'F' doesn't)
 			string [] ret = new string [table.Count];
 			table.Values.CopyTo (ret, 0);
 			return ret;
 		}
 
 		// LAMESPEC: this is not in ECMA specs
-		[MonoTODO]
-		// FIXME: Actually, this method should return more than one
-		// pattern string for each locales. But at this point we have
-		// only one pattern string, so here we just return one element
-		// array.
-		public string[] GetAllDateTimePatterns(char format)
+		[MonoTODO ("Currently we does not support multiple patterns for other than invariant")]
+		public string[] GetAllDateTimePatterns (char format)
 		{
 			string [] list;
 			switch (format) {
@@ -574,6 +569,9 @@ namespace System.Globalization
 				if (list != null)
 					return list;
 				return new string [] {ShortDatePattern + ' ' + ShortTimePattern};
+			// The 'U' pattern strings are always the same as 'F'.
+			// (only differs in assuming UTC or not.)
+			case 'U':
 			case 'F':
 				list = PopulateCombinedList (_LongDatePatterns, _LongTimePatterns);
 				if (list != null)
@@ -604,8 +602,6 @@ namespace System.Globalization
 				return new string [] {SortableDateTimePattern};
 			case 'u':
 				return new string [] {UniversalSortableDateTimePattern};
-			case 'U': // FIXME: what to return?
-				throw new NotImplementedException ();
 			}
 			throw new ArgumentException ("Format specifier was invalid.");
 		}
