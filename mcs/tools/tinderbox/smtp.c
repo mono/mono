@@ -188,10 +188,7 @@ void SendMail (const char *szTo, const MailFields *pmf)
 			strLine [cch] = '\0';
 
 			if (cch == 1 && strLine [0] == '.')
-			{
-				strcat (strLine, ".");
-				cch ++;
-			}
+				fputc ('.', ps);
 
 			fprintf (ps, "%s\r\n", strLine);
 			fflush (ps);

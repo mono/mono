@@ -174,8 +174,9 @@ function build_failed ()
 	echo "Previous build: `cat .build.date.last_success`" >> $BUILDMSG
 	echo >> $BUILDMSG
 
-	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE $EMAIL_CC -a $LOG -s "[MONOBUILD] broken (`uname -s -m`)" -m $BUILDMSG
-	rm -f $BUILDMSG
+	sed -e 's/$//' < $LOG > errors.txt
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE $EMAIL_CC -a errors.txt -s "[MONOBUILD] broken (`uname -s -m`)" -m $BUILDMSG
+	rm -f $BUILDMSG errors.txt
 }
 
 [ -f $LOGPREV ] && mv $LOGPREV $LOG
