@@ -1,5 +1,12 @@
 2002-09-25  Martin Baulig  <martin@gnome.org>
 
+	* debug-mono-symfile.h (MonoDebugLineNumberEntry): New type to
+	store line number info.  For the dynamic symbol file, we only need
+	to provide the JIT generated dynamic line number info for the dynamic
+	symbol file.
+
+2002-09-25  Martin Baulig  <martin@gnome.org>
+
 	* debug-mono-symfile.h: Incremented version number.
 
 2002-09-24  Martin Baulig  <martin@gnome.org>
