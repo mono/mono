@@ -1,3 +1,7 @@
+2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* verify.c (check_corlib): Check corlib version number.
+
 2003-12-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_method_from_wrapper): Remove assert so this
