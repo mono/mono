@@ -1,3 +1,7 @@
+2002-03-30  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_init): added exerimental EXT_VTABLE_HACK, if
+	defined we call all (non-static)methods through the vtable. 
 
 Fri Mar 29 18:09:08 CET 2002 Paolo Molaro <lupus@ximian.com>
 
