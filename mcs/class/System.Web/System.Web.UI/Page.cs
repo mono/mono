@@ -29,7 +29,6 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _viewState = true;
 	private bool _viewStateMac = false;
 	private string _errorPage;
-	private ArrayList _fileDependencies;
 	private string _ID;
 	private bool _isValid;
 	private HttpServerUtility _server;
@@ -132,9 +131,12 @@ public class Page : TemplateControl, IHttpHandler
 		set { _errorPage = value; }
 	}
 
-	ArrayList FileDependencies
+	protected ArrayList FileDependencies
 	{
-		set { _fileDependencies = value; }
+		set {
+			if (Response != null)
+				Response.AddFileDependencies (value);
+		}
 	}
 
 	public override string ID

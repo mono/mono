@@ -1519,7 +1519,7 @@ class AspGenerator
 				"\t\t\tthis.__BuildControlTree (this);\n");
 
 		if (!IsUserControl) {
-			epilog.AppendFormat ("\t\t\tResponse.AddFileDependencies (ASP.{0}.__fileDependencies);\n" +
+			epilog.AppendFormat ("\t\t\tthis.FileDependencies = ASP.{0}.__fileDependencies;\n" +
 						"\t\t\tthis.EnableViewStateMac = true;\n", className);
 		}
 		epilog.Append ("\t\t}\n\n");

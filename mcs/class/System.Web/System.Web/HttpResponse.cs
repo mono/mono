@@ -56,6 +56,8 @@ namespace System.Web
 
 		HttpWorkerRequest _WorkerRequest;
 
+		ArrayList fileDependencies;
+
 		public HttpResponse (TextWriter output)
 		{
 			 _bBuffering = true;
@@ -172,7 +174,11 @@ namespace System.Web
 								      _sTransferEncoding));
 			}
 
-			// TODO: Add Cookie headers..
+			if (_Cookies != null) {
+				int length = _Cookies.Count;
+				for (int i = 0; i < length; i++)
+					oHeaders.Add (_Cookies.Get (i).GetCookieHeader ());
+			}
 
 			return oHeaders;
 		}
@@ -222,16 +228,26 @@ namespace System.Web
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO()]
 		public void AddFileDependencies (ArrayList filenames)
 		{
-			//throw new NotImplementedException();
+			if (filenames == null || filenames.Count == 0)
+				return;
+			
+			if (fileDependencies == null) {
+				fileDependencies = (ArrayList) filenames.Clone ();
+				return;
+			}
+
+			foreach (string fn in filenames)
+				AddFileDependency (fn);
 		}
 
-		[MonoTODO()]
 		public void AddFileDependency (string filename)
 		{
-			//throw new NotImplementedException();
+			if (fileDependencies == null)
+				fileDependencies = new ArrayList ();
+
+			fileDependencies.Add (filename);
 		}
 
 		public void AddHeader (string name, string value)
@@ -239,10 +255,12 @@ namespace System.Web
 			AppendHeader(name, value);
 		}
 
-		[MonoTODO()]
 		public void AppendCookie (HttpCookie cookie)
 		{
-			throw new NotImplementedException ();
+			if (_bHeadersSent)
+				throw new HttpException ("Cannot append cookies after HTTP headers have been sent");
+
+			Cookies.Add (cookie);
 		}
 
 		[MonoTODO()]
@@ -492,6 +510,9 @@ namespace System.Web
 		public HttpRequest Request
 		{
 			get {
+				if (_Context == null)
+					return null;
+
 				return _Context.Request;
 			}
 		}
@@ -632,10 +653,10 @@ namespace System.Web
 
 			_bFlushing = true;
 
-			if (_Writer != null) {
-				_Writer.FlushBuffers ();
-			} else {
+			if (_Writer == null) {
 				_TextWriter.Flush ();
+				_bFlushing = false;
+				return;
 			}
 
 			try {
@@ -645,7 +666,6 @@ namespace System.Web
 						length = _Writer.BufferSize;
 						if (length == 0 && _lContentLength == 0)
 							_sContentType = null;
-
 
 						SendHeaders ();
 						length = _Writer.BufferSize;
@@ -671,9 +691,9 @@ namespace System.Web
 						SendHeaders ();
 					}
 				}
-				if ((!_bSuppressContent && Request.HttpMethod == "HEAD") || _Writer == null) {
+
+				if (!_bSuppressContent && Request.HttpMethod == "HEAD")
 					_bSuppressContent = true;
-				}
 
 				if (!_bSuppressContent) {
 					_bClientDisconnected = false;
@@ -696,12 +716,14 @@ namespace System.Web
 					} else {
 						_Writer.SendContent (_WorkerRequest);
 					}
-
-					_WorkerRequest.FlushResponse (bFinish);
-
-					if (!bFinish)
-						_Writer.Clear ();
+				} else {
+					_Writer.Clear ();
 				}
+
+				_WorkerRequest.FlushResponse (bFinish);
+
+				if (!bFinish)
+					_Writer.Clear ();
 			} finally {
 				_bFlushing = false;
 			}
@@ -718,15 +740,6 @@ namespace System.Web
 			Redirect (url, true);
 		}
 
-		//FIXME: [1] this is an ugly hack to make it work until we have SimpleWorkerRequest!
-		private string redirectLocation;
-		public string RedirectLocation
-		{
-		      get {
-			      return redirectLocation;
-		      }
-		}
-
 		public void Redirect (string url, bool endResponse)
 		{
 			if (_bHeadersSent)
@@ -735,19 +748,15 @@ namespace System.Web
 			Clear ();
 
 			StatusCode = 302;
-			redirectLocation = url;
-			//[1]AppendHeader(HttpWorkerRequest.HeaderLocation, url);
+			AppendHeader (HttpWorkerRequest.HeaderLocation, url);
 
 			// Text for browsers that can't handle location header
 			Write ("<html><head><title>Object moved</title></head><body>\r\n");
 			Write ("<h2>Object moved to <a href='" + url + "'>here</a></h2>\r\n");
 			Write ("</body><html>\r\n");
 
-			/* [1]
-			if (endResponse) {
-			End();
-			}
-			*/
+			if (endResponse)
+				End ();
 		}
 
 		public void Write (char ch)
@@ -776,10 +785,12 @@ namespace System.Web
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO()]
 		public void SetCookie (HttpCookie cookie)
 		{
-			throw new NotImplementedException ();
+			if (_bHeadersSent)
+				throw new HttpException ("Cannot append cookies after HTTP headers have been sent");
+
+			Cookies.Add (cookie);
 		}
 
 		private void WriteFromStream (Stream stream, long offset, long length, long bufsize)

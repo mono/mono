@@ -60,6 +60,8 @@ namespace System.Web {
 
 		private HttpBrowserCapabilities _browser;
 
+		private HttpCookieCollection cookies;
+
 		public HttpRequest(string Filename, string Url, string Querystring) {
 			_iContentLength = -1;
 			_iTotalBytes = -1;
@@ -388,10 +390,99 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO()]
-		public HttpCookieCollection Cookies {
+		static private string GetCookieValue (string str, int length, bool allowComma, ref int i)
+		{
+			if (i >= length)
+				return null;
+
+			int k = i;
+			while (k < length && Char.IsWhiteSpace (str [k]))
+				k++;
+
+			int begin = k;
+			while (k < length && (str [k] != ';' || (allowComma && str [k] == ',')))
+				k++;
+
+			i = k;
+			return str.Substring (begin, i - begin).Trim ();
+		}
+
+		static private string GetCookieName (string str, int length, ref int i)
+		{
+			if (i >= length)
+				return null;
+
+			int k = i;
+			while (k < length && Char.IsWhiteSpace (str [k]))
+				k++;
+
+			int begin = k;
+			while (k < length && str [k] != ';' &&  str [k] != '=')
+				k++;
+
+			i = k + 1;
+			return str.Substring (begin, k - begin).Trim ();
+		}
+
+		private void GetCookies ()
+		{
+			string header = _WorkerRequest.GetKnownRequestHeader (HttpWorkerRequest.HeaderCookie);
+			if (header == null || header.Length == 0)
+				return;
+
+			/* RFC 2109
+			 *	cookie          =       "Cookie:" cookie-version
+			 *				   1*((";" | ",") cookie-value)
+			 *	cookie-value    =       NAME "=" VALUE [";" path] [";" domain]
+			 *	cookie-version  =       "$Version" "=" value
+			 *	NAME            =       attr
+			 *	VALUE           =       value
+			 *	path            =       "$Path" "=" value
+			 *	domain          =       "$Domain" "=" value
+			 *
+			 *	MS ignores $Version! 
+			 *	',' as a separator produces errors.
+			 */
+
+			cookies = new HttpCookieCollection (_oContext.Response, false);
+			string [] name_values = header.Trim ().Split (';');
+			int length = name_values.Length;
+			HttpCookie cookie = null;
+			int pos;
+			for (int i = 0; i < length; i++) {
+				pos = 0;
+				string name_value = name_values [i].Trim ();
+				string name = GetCookieName (name_value, name_value.Length, ref pos);
+				string value = GetCookieName (name_value, name_value.Length, ref pos);
+				if (cookie != null) {
+					if (name == "$Path") {
+						cookie.Path = value;
+						continue;
+					} else if (name == "$Domain") {
+						cookie.Domain = value;
+						continue;
+					} else {
+						cookies.Add (cookie);
+						cookie = null;
+					}
+				}
+				cookie = new HttpCookie (name, value);
+			}
+
+			if (cookie != null)
+				cookies.Add (cookie);
+		}
+
+		public HttpCookieCollection Cookies
+		{
 			get {
-				throw new NotImplementedException();
+				if (cookies == null) {
+					cookies = new HttpCookieCollection (null, false);
+					if (_WorkerRequest != null)
+						GetCookies ();
+				}
+
+				return cookies;
 			}
 		}
 

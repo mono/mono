@@ -1,3 +1,14 @@
+2002-11-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCookie.cs: made GetCookieHeader internal.
+
+	* HttpRequest.cs: get cookies from request.
+
+	* HttpResponse.cs: send cookies. Implemented
+	AddFileDependencies (). Added check for _Writer == null in Flush
+	(Patrik ;-). Clear the content if HEAD or SupressContent == true.
+	Removed redirect hack used in old server.
+
 2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: fixed GetRawContent (). Now it only tries to read at

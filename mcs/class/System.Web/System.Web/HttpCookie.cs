@@ -41,7 +41,7 @@ namespace System.Web
 			_Path = "/";
 		}
 
-		HttpResponseHeader GetCookieHeader ()
+		internal HttpResponseHeader GetCookieHeader ()
 		{
 			StringBuilder oSetCookie = new StringBuilder ();
 

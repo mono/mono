@@ -1,3 +1,7 @@
+2002-11-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: implemented FileDependecies and made it protected.
+
 2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: save control names instead of the controls

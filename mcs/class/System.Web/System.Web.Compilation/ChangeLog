@@ -1,3 +1,7 @@
+2002-11-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: undo one-liner change.
+
 2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: removed a few hacks no longer needed.
