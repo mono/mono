@@ -1,3 +1,8 @@
+2002-10-31  Dick Porter  <dick@ximian.com>
+
+	* io.h: 
+	* io.c: Define and use INVALID_FILE_ATTRIBUTES
+
 2002-10-07  Dick Porter  <dick@ximian.com>
 
 	* timefuncs.c:

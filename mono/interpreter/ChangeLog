@@ -1,3 +1,8 @@
+2002-10-31  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am: The previous automake-1.6 fix broke automake-1.4 on
+	cygwin.  Try again.
+
 2002-09-27  Dick Porter  <dick@ximian.com>
 
 	* interp.c: Tell glib what the program name is, by passing it the

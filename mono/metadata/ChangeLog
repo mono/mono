@@ -1,3 +1,12 @@
+2002-10-31  Dick Porter  <dick@ximian.com>
+
+	* icall.c: 
+	* file-io.h: 
+	* file-io.c: Return the error status in a parameter, as the
+	GetLastError() value has long since been blown away if we try and
+	look it up in a subsequent internal call invocation.  Delete the
+	GetLastError() internal call, because it's useless.
+
 2002-10-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.[ch]: added cast_class to fix bug 29517
