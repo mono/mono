@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.2  2004/07/13 15:31:45  jordi
+// commit: new properties and fixes form size problems
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -48,7 +51,7 @@ namespace System.Windows.Forms {
 
 		#region Public Constructor & Destructor
 		public Form() {
-			Console.WriteLine("Form Constructor called");
+			Console.WriteLine("Form Constructor called");			
 			//XplatUI.Version();
 		}
 		#endregion	// Public Constructor & Destructor
@@ -57,6 +60,11 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
+		protected override Size DefaultSize {
+			get {
+				return new Size (300, 300);
+			}
+		}
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
@@ -78,10 +86,13 @@ namespace System.Windows.Forms {
 				create_params.ExStyle=0;
 				create_params.Parent=IntPtr.Zero;
 				create_params.Param=0;
-
+				create_params.X = Left;
+				create_params.Y = Top;
+				create_params.Width = Width;
+				create_params.Height = Height;
+				
 				create_params.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
-
-create_params.Style |= (int)WindowStyles.WS_VISIBLE;
+				create_params.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				return create_params;
 			}

@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.2  2004/07/13 15:31:45  jordi
+// commit: new properties and fixes form size problems
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -955,6 +958,16 @@ namespace System.Windows.Forms
 				SetBounds(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
 			}
 		}
+		
+		public int TabIndex {
+			get {
+				return tab_index;
+			}
+
+			set {
+				tab_index = value;
+			}
+		}
 
 		#endregion	// Public Instance Properties
 
@@ -1606,7 +1619,8 @@ namespace System.Windows.Forms
 			for (int i=0; i<num_of_children; i++) children[i].OnParentRightToLeftChanged(e);
 		}
 
-		protected virtual void OnSizeChanged(EventArgs e) {
+		protected virtual void OnSizeChanged(EventArgs e) {			
+			OnResize(e);
 			if (SizeChanged!=null) SizeChanged(this, e);
 		}
 
