@@ -1378,6 +1378,12 @@ namespace PEAPI
     CILInstruction[] multipleBranches;
     int tide = 0;
     CILInstruction labInstr;
+    uint offset = 0;
+ 
+    public CILLabel (uint offset) {
+	this.offset = offset;
+	}
+	
 
     internal CILLabel() {
     }
@@ -1406,6 +1412,8 @@ namespace PEAPI
     }
 
     internal uint GetLabelOffset() {
+      if (offset > 0)
+	return offset;
       if (labInstr == null) return 0;
       return labInstr.offset;
     }
