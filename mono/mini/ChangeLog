@@ -1,4 +1,9 @@
 
+Mon Dec 20 11:08:06 EST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: added code for direct access to
+	tls data slots.
+
 Mon Dec 20 10:58:28 EST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ops.h, inssel-x86.brg, cpu-amd64.md, inssel.brg, inssel-amd64.brg,
