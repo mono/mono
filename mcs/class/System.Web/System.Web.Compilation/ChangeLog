@@ -1,5 +1,10 @@
 2003-01-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspElements.cs: added 'codebehind' attribute for page, control and
+	application. It's ignored by MS, but allowed. Fixed typo.
+
+2003-01-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: fixed EnableSesssionState handling.
 
 2003-01-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>

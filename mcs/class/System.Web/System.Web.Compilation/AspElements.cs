@@ -339,8 +339,9 @@ namespace System.Web.Compilation
 
 	class Directive : Tag
 	{
+		// 'codebehind' is just ignored for Page, Application and Control
 		private static Hashtable directivesHash;
-		private static string [] page_atts = {  "AspCompat", "AutoEventWireup ", "Buffer",
+		private static string [] page_atts = {  "AspCompat", "AutoEventWireup", "Buffer",
 							"ClassName", "ClientTarget", "CodePage",
 							"CompilerOptions", "ContentType", "Culture", "Debug",
 							"Description", "EnableSessionState", "EnableViewState",
@@ -348,12 +349,12 @@ namespace System.Web.Compilation
 							"Inherits", "Language", "LCID", "ResponseEncoding",
 							"Src", "SmartNavigation", "Strict", "Trace",
 							"TraceMode", "Transaction", "UICulture",
-							"WarningLevel" };
+							"WarningLevel", "CodeBehind" };
 
 		private static string [] control_atts = { "AutoEventWireup", "ClassName", "CompilerOptions",
 							  "Debug", "Description", "EnableViewState",
 							  "Explicit", "Inherits", "Language", "Strict", "Src",
-							  "WarningLevel" };
+							  "WarningLevel", "CodeBehind" };
 
 		private static string [] import_atts = { "namespace" };
 		private static string [] implements_atts = { "interface" };
@@ -367,7 +368,7 @@ namespace System.Web.Compilation
 
 		private static string [] webservice_atts = { "class", "codebehind", "debug", "language" };
 
-		private static string [] application_atts = { "description", "inherits" };
+		private static string [] application_atts = { "description", "inherits", "codebehind" };
 
 		static Directive ()
 		{
