@@ -1,3 +1,7 @@
+2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: Added tests for remainder, divide and parsing overflow.
+
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs :

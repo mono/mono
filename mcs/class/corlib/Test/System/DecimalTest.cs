@@ -1,8 +1,11 @@
 // DecimalTest.cs - NUnit Test Cases for the System.Decimal struct
 //
-// Author: Martin Weindel (martin.weindel@t-online.de)
+// Authors:
+//	Martin Weindel (martin.weindel@t-online.de)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Martin Weindel, 2001
+// Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 
 using NUnit.Framework;
@@ -1108,6 +1111,88 @@ namespace MonoTests.System {
 	public void ParseFractions_TooSmall ()
 	{
 		Decimal.Parse ("0.0000000000000000000000000000001", CultureInfo.InvariantCulture);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void ParseFractions_TooManyDecimals ()
+	{
+		Decimal.Parse ("0.123456789012345678901234567890", CultureInfo.InvariantCulture);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void Parse_Int64_Overflow ()
+	{
+		// Int64.MaxValue + 1 + small fraction to allow 30 digits
+		//                          123456789012345678901234567890
+		decimal d = Decimal.Parse ("9223372036854775808.0000000009", CultureInfo.InvariantCulture);
+		long l = (long) d;
+	}
+
+	[Test]
+	[ExpectedException (typeof (DivideByZeroException))]
+	public void Remainder_ByZero () 
+	{
+		Decimal.Remainder (254.9m, 0m);
+	}
+
+	[Test]
+	public void Remainder () 
+	{
+		decimal p1 = 254.9m;
+		decimal p2 = 12.1m;
+		decimal n1 = -254.9m;
+		decimal n2 = -12.1m;
+
+		AssertEquals ("254.9 % 12.1", 0.8m, Decimal.Remainder (p1, p2));
+		AssertEquals ("-254.9 % 12.1", -0.8m, Decimal.Remainder (n1, p2));
+		AssertEquals ("254.9 % -12.1", 0.8m, Decimal.Remainder (p1, n2));
+		AssertEquals ("-254.9 % -12.1", -0.8m, Decimal.Remainder (n1, n2));
+
+		AssertEquals ("12.1 % 254.9", 12.1m, Decimal.Remainder (p2, p1));
+		AssertEquals ("-12.1 % 254.9", -12.1m, Decimal.Remainder (n2, p1));
+		AssertEquals ("12.1 % -254.9", 12.1m, Decimal.Remainder (p2, n1));
+		AssertEquals ("-12.1 % -254.9", -12.1m, Decimal.Remainder (n2, n1));
+
+		AssertEquals ("12.1 % 12.1", 0, Decimal.Remainder (p1, p1));
+		AssertEquals ("-12.1 % 12.1", 0, Decimal.Remainder (n1, p1));
+		AssertEquals ("12.1 % -12.1", 0, Decimal.Remainder (p1, n1));
+		AssertEquals ("-12.1 % -12.1", 0, Decimal.Remainder (n1, n1));
+	}
+
+	[Test]
+	[ExpectedException (typeof (DivideByZeroException))]
+	public void Divide_ByZero () 
+	{
+		Decimal.Divide (254.9m, 0m);
+	}
+
+	[Test]
+	public void Divide () 
+	{
+		decimal p1 = 254.9m;
+		decimal p2 = 12.1m;
+		decimal n1 = -254.9m;
+		decimal n2 = -12.1m;
+
+		decimal c1 = 21.066115702479338842975206612m;
+		decimal c2 = 0.0474695959199686151431934092m;
+
+		AssertEquals ("254.9 / 12.1", c1, Decimal.Divide (p1, p2));
+		AssertEquals ("-254.9 / 12.1", -c1, Decimal.Divide (n1, p2));
+		AssertEquals ("254.9 / -12.1", -c1, Decimal.Divide (p1, n2));
+		AssertEquals ("-254.9 / -12.1", c1, Decimal.Divide (n1, n2));
+
+		AssertEquals ("12.1 / 254.9", c2, Decimal.Divide (p2, p1));
+		AssertEquals ("-12.1 / 254.9", -c2, Decimal.Divide (n2, p1));
+		AssertEquals ("12.1 / -254.9", -c2, Decimal.Divide (p2, n1));
+		AssertEquals ("-12.1 / -254.9", c2, Decimal.Divide (n2, n1));
+
+		AssertEquals ("12.1 / 12.1", 1, Decimal.Divide (p1, p1));
+		AssertEquals ("-12.1 / 12.1", -1, Decimal.Divide (n1, p1));
+		AssertEquals ("12.1 / -12.1", -1, Decimal.Divide (p1, n1));
+		AssertEquals ("-12.1 / -12.1", 1, Decimal.Divide (n1, n1));
 	}
     }
 }
