@@ -210,16 +210,14 @@ namespace System.Xml
 			get { return GetAttribute (localName, namespaceName); }
 		}
 
-		[MonoTODO]
 		public int LineNumber
 		{
-			get { throw new NotImplementedException (); }
+			get { return line; }
 		}
 
-		[MonoTODO]
 		public int LinePosition
 		{
-			get { throw new NotImplementedException (); }
+			get { return column; }
 		}
 
 		public override string LocalName
@@ -613,6 +611,8 @@ namespace System.Xml
 		private StringBuilder xmlBuffer; // This is for Read(Inner|Outer)Xml
 		private StringBuilder currentTag; // A buffer for ReadContent for ReadOuterXml
 		private bool saveToXmlBuffer;
+		private int line;
+		private int column;
 
 		private void Init ()
 		{
@@ -728,6 +728,12 @@ namespace System.Xml
 		private int ReadChar ()
 		{
 			int ch = reader.Read ();
+			if (ch == '\n') {
+				line++;
+				column = 1;
+			} else {
+				column++;
+			}
 			if (saveToXmlBuffer) {
 				xmlBuffer.Append ((char) ch);
 			}
