@@ -1,3 +1,7 @@
+2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.c (get_constant): Applied patch from Ankit Jain (radical@gmail.com). Fixes #74367.
+
 2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* dis-cil.c, dump.c: Add mono-compiler.h header to allow/ease 
