@@ -1,3 +1,7 @@
+2004-10-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigIntegerTest.cs: New. General unit tests for BigInteger.
+
 2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GcdBigTest.cs: Ajusted to changes in assembly.
