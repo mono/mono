@@ -4,7 +4,7 @@ DIRS=jay mcs class nunit nunit/src/NUnitConsole
 
 default: all
 
-all clean:
+all clean install:
 	for i in $(DIRS) ; do \
 		(cd $$i; $(MAKE) -f makefile.gnu $@) || exit 1; \
 	done

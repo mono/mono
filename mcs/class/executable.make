@@ -1,9 +1,11 @@
 MCS = mcs
 MCS_FLAGS = --target exe
+INSTALL = /usr/bin/install
+prefix = /usr
 
 all: $(PROGRAM)
 
-clean-exe:
+clean:
 	-rm -rf $(PROGRAM) .response-exe .makefrag-exe
 
 .response-exe: $(PROGRAM_LIST)
@@ -19,3 +21,8 @@ clean-exe:
 
 $(PROGRAM): .response-exe .makefrag-exe #program-deps
 	$(MCS) $(MCS_FLAGS) -o $(PROGRAM) $(PROGRAM_FLAGS) @.response-exe
+
+install: all
+	mkdir -p $(prefix)/bin/
+	$(INSTALL) -m 755 $(PROGRAM) $(prefix)/bin/
+

@@ -3,3 +3,6 @@ all:
 
 clean:
 	$(MAKE) -f makefile clean
+
+install: all
+

@@ -1,5 +1,7 @@
 MCS = mcs
 MCS_FLAGS = --fatal --target exe
+INSTALL = /usr/bin/install
+prefix = /usr
 
 COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs location.cs
 
@@ -42,4 +44,8 @@ cs-parser.cs: cs-parser.jay
 
 clean:
 	-rm -f *.exe cs-parser.cs
+
+install: all
+	mkdir -p $(prefix)/bin/
+	$(INSTALL) -m 755 mcs.exe $(prefix)/bin/
 
