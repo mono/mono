@@ -1,3 +1,8 @@
+
+Sat Sep 27 16:17:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: instance fields are loaded from this.
+
 2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs (DefineDefaultConstructor): Make this work on types

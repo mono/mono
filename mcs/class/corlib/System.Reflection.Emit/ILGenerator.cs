@@ -684,7 +684,7 @@ namespace System.Reflection.Emit {
 			if (field.IsStatic)
 				Emit (OpCodes.Ldsfld, field);
 			else {
-				Emit (OpCodes.Ldloc_0);
+				Emit (OpCodes.Ldarg_0);
 				Emit (OpCodes.Ldfld, field);
 			}
 			Emit (OpCodes.Call, 
