@@ -28,15 +28,25 @@ using System.Runtime.Remoting.Messaging;
 namespace System.Runtime.Remoting.Channels.Http
 {
 
-	class RequestArguments
+	internal class RequestArguments
 	{
-		public RequestArguments(Socket SOCKET, HttpServerTransportSink SNK)
+		public RequestArguments (Socket socket, HttpServerTransportSink sink)
 		{
-			socket = SOCKET;
-			snk = SNK;
+			NetworkStream ns = new NetworkStream (socket);
+			InputStream = ns;
+			OutputStream = ns;
+			Sink = sink;
 		}
-		public Socket socket;
-		public HttpServerTransportSink snk;
+		
+		public RequestArguments (Stream inputStream, Stream outputStream, HttpServerTransportSink sink)
+		{
+			InputStream = inputStream;
+			OutputStream = outputStream;
+			Sink = sink;
+		}
+		public Stream InputStream;
+		public Stream OutputStream;
+		public HttpServerTransportSink Sink;
 	}
 
 	internal sealed class HttpServer
@@ -57,153 +67,141 @@ namespace System.Runtime.Remoting.Channels.Http
 		}
 
 		
-		public static void ProcessRequest(object Object)
+		public static void ProcessRequest (object reqInfo)
 		{
-			if(Object as RequestArguments == null)
+			if(reqInfo as RequestArguments == null)
 				return;
 
-			Socket socket;
-			HttpServerTransportSink snk;
-
-			RequestArguments reqArg = (RequestArguments)Object;
+			RequestArguments reqArg = (RequestArguments)reqInfo;
 		
-			socket = reqArg.socket;
-			snk = reqArg.snk;
-				
-			if(!socket.Connected)
-				return;
-
 			//Step (1) Start Reciceve the header
-			ArrayList  Headers = RecieveHeader(socket);
+			ArrayList  Headers = RecieveHeader (reqArg);
 				
 			//Step (2) Start Parse the header
 			IDictionary HeaderFields = new Hashtable();
 			IDictionary CustomHeaders = new Hashtable();
-			if(!ParseHeader(socket,Headers,HeaderFields,CustomHeaders))
+			if (!ParseHeader (reqArg, Headers, HeaderFields, CustomHeaders))
 				return;
 
 			//Step (3)
-			if(!CheckRequest(socket,HeaderFields,CustomHeaders))
+			if (!CheckRequest (reqArg, HeaderFields, CustomHeaders))
 				return;
 
 			//Step (4) Recieve the entity body
 			byte [] buffer =new byte[(int)HeaderFields["content-length"]];
-			if(!RecieveEntityBody(socket,buffer))
+			if (!RecieveEntityBody (reqArg, buffer))
 				return ;
 
 			//Step (5)
-		    if(! SendRequestForChannel(socket,snk,HeaderFields,CustomHeaders,buffer))
-				return ;
+		    SendRequestForChannel (reqArg, HeaderFields, CustomHeaders, buffer);
 		}
 
-		private static ArrayList RecieveHeader(Socket socket)
+		private static ArrayList RecieveHeader (RequestArguments reqArg)
 		{
 			bool bLastLine = false;
 			bool bEndOfLine = false;
 	
 			byte[] buffer = new byte[1024];
 			ArrayList  Headers = new ArrayList();
+			
+			Stream ist = reqArg.InputStream;
 
 			int index =0;
-			while(!bLastLine)
+			while (!bLastLine)
 			{ 
 				//recieve line by line 
 				index = 0;
 				bEndOfLine = false;
 
 				//Step (1) is it an empty line?
-				socket.Receive(buffer,index,1,SocketFlags.None);
+				ist.Read (buffer, index, 1);
 				
 				if(buffer[index++]==13)
 				{
-					socket.Receive(buffer,index,1,SocketFlags.None);
+					ist.Read (buffer, index, 1);
 					bLastLine=true;
 					bEndOfLine = true;
 				}
 				
 				//Step (2) recieve line bytes
-				while(!bEndOfLine)
+				while (!bEndOfLine)
 				{
-					socket.Receive(buffer,index,1,SocketFlags.None);
+					ist.Read (buffer, index, 1);
 
-					if(buffer[index++]==13)
+					if(buffer [index++]==13)
 					{
 						bEndOfLine = true;
-						socket.Receive(buffer,index,1,SocketFlags.None);
+						ist.Read (buffer,index,1);
 					}
-					
 				}
 
 				//Step (3) convert bytes to a string
-				if(bLastLine)
+				if (bLastLine)
 					continue;
-                	Headers.Add( Encoding.ASCII.GetString(buffer,0,index));
+					
+                Headers.Add (Encoding.ASCII.GetString (buffer,0,index));
 
 			}//end while loop
 			
 			return Headers;
 		}
 		
-		private static bool ParseHeader(Socket socket, ArrayList Headers,IDictionary HeaderFields, IDictionary CustomHeaders)
+		private static bool ParseHeader (RequestArguments reqArg, ArrayList Headers, IDictionary HeaderFields, IDictionary CustomHeaders)
 		{
-
-			for(int i=0;i<Headers.Count;i++)
+			for (int i=0;i<Headers.Count;i++)
 			{
-
-				if( ReqMessageParser.ParseHeaderField((string)Headers[i],HeaderFields))
+				if (ReqMessageParser.ParseHeaderField ((string)Headers[i],HeaderFields))
 					continue;
-				if(!ReqMessageParser.IsCustomHeader((string)Headers[i],CustomHeaders ) )
+					
+				if (!ReqMessageParser.IsCustomHeader((string)Headers[i],CustomHeaders ) )
 				{
-					SendResponse(socket,400,null,null);
+					SendResponse (reqArg, 400, null, null);
 					return false;
 				}
-				
 			}
 
 			return true;
 		}
 
-		
-
-		private static bool CheckRequest(Socket socket,IDictionary HeaderFields , IDictionary CustomHeaders)
+		private static bool CheckRequest (RequestArguments reqArg, IDictionary HeaderFields, IDictionary CustomHeaders)
 		{
 			string temp;
 			
 			//Check the method
 			temp = HeaderFields["method"].ToString();
-			if(temp!="POST")
+			if (temp!="POST")
 			{
-				SendResponse(socket,501,null,null);
+				SendResponse (reqArg, 501, null, null);
                 return false;
 			}
 
 			if (HeaderFields["expect"].ToString() == "100-continue")
-				SendResponse(socket,100,null,null);
+				SendResponse (reqArg, 100, null, null);
 
 			//Check for the content-length field
-			if(HeaderFields["content-length"]==null)
+			if (HeaderFields["content-length"]==null)
 			{
-				SendResponse(socket,411,null,null);
+				SendResponse (reqArg, 411, null, null);
 				return false;
 			}
 			return true;
 		}
 
 		
-		private static bool RecieveEntityBody(Socket socket, byte[] buffer)
+		private static bool RecieveEntityBody (RequestArguments reqArg, byte[] buffer)
 		{
 			try
 			{
 				int nr = 0;
 				while (nr < buffer.Length)
-					nr += socket.Receive (buffer, nr, buffer.Length - nr,SocketFlags.None);
+					nr += reqArg.InputStream.Read (buffer, nr, buffer.Length - nr);
 			}
-			catch(SocketException e)
+			catch (SocketException e)
 			{
 				switch(e.ErrorCode)
 				{
 					case 10060 : //TimeOut
-						SendResponse(socket,408,null,null);
+						SendResponse (reqArg, 408, null, null);
 						break;
 					default :
 						//<Exception>					
@@ -216,7 +214,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			return true;
 		}
 	
-		private static bool SendRequestForChannel(Socket socket ,HttpServerTransportSink snk ,IDictionary HeaderFields , IDictionary CustomHeaders, byte[]buffer)
+		private static bool SendRequestForChannel (RequestArguments reqArg, IDictionary HeaderFields, IDictionary CustomHeaders, byte[] buffer)
 		{
 			TransportHeaders THeaders = new TransportHeaders();
 
@@ -230,9 +228,9 @@ namespace System.Runtime.Remoting.Channels.Http
 			//THeaders["__ConnectionId"] = Int64.Parse("1");
 			//THeaders["__IPAddress"]= ((IPEndPoint)socket.RemoteEndPoint).Address;
 
-			THeaders["__RequestUri"] =FixURI((string)HeaderFields["request-url"]);
-			THeaders["Content-Type"]=HeaderFields["content-type"];
-			THeaders["__RequestVerb"]=HeaderFields["method"];
+			THeaders["__RequestUri"] = FixURI((string)HeaderFields["request-url"]);
+			THeaders["Content-Type"]= HeaderFields["content-type"];
+			THeaders["__RequestVerb"]= HeaderFields["method"];
 			THeaders["__HttpVersion"] = HeaderFields["http-version"];
 			THeaders["User-Agent"] = HeaderFields["user-agent"];
 			THeaders["Host"] = HeaderFields["host"];
@@ -242,7 +240,7 @@ namespace System.Runtime.Remoting.Channels.Http
 				THeaders[DictEntry.Key.ToString()] = DictEntry.Value.ToString();
 			}
 
-			snk.ServiceRequest(socket,stream,THeaders);
+			reqArg.Sink.ServiceRequest (reqArg, stream, THeaders);
 			return true;
 		}
 
@@ -256,7 +254,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 		}
 		
-		public static bool SendResponse(Socket socket, int HttpStatusCode, ITransportHeaders  headers , Stream responseStream)
+		public static bool SendResponse (RequestArguments reqArg, int HttpStatusCode, ITransportHeaders  headers , Stream responseStream)
 		{
 			byte [] headersBuffer = null;
 			byte [] entityBuffer = null;
@@ -293,21 +291,15 @@ namespace System.Runtime.Remoting.Channels.Http
 
    			ResponseStr.Append("\r\n");
 		
-		   	headersBuffer =   Encoding.ASCII.GetBytes(ResponseStr.ToString());
+		   	headersBuffer = Encoding.ASCII.GetBytes (ResponseStr.ToString());
 
 			try
 			{
-
 				//send headersBuffer
-				if(socket.Send(headersBuffer,0,headersBuffer.Length,SocketFlags.None) != headersBuffer.Length)
-					return false;
+				reqArg.OutputStream.Write (headersBuffer, 0, headersBuffer.Length);
 
-
-
-				if(entityBuffer != null)
-					if(socket.Send(entityBuffer,0,entityBuffer.Length,SocketFlags.None) != entityBuffer.Length)
-						return false;
-
+				if (entityBuffer != null)
+					reqArg.OutputStream.Write (entityBuffer, 0, entityBuffer.Length);
 			}
 			catch (SocketException )
 			{
@@ -315,8 +307,8 @@ namespace System.Runtime.Remoting.Channels.Http
 				//may be its the client's fault so just return with false
 				return false;
 			}
-		 
-		  return true;
+
+			return true;
 		}
 
 		public static bool SendResponse(Socket socket , int HttpStatusCode ,string ReasonPhrase, ITransportHeaders headers , Stream responseStream )
@@ -325,7 +317,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			return true;
 		}
 
-		private static string GetReasonPhrase(int HttpStatusCode)
+		internal static string GetReasonPhrase(int HttpStatusCode)
 		{
 			switch (HttpStatusCode)
 			{
@@ -395,13 +387,11 @@ namespace System.Runtime.Remoting.Channels.Http
 		 
 
 		 
-		 public  ReqMessageParser()
+		public ReqMessageParser ()
 		{
-			
-
 		}
 
-		 public static bool  ParseHeaderField(string buffer,IDictionary headers)
+		 public static bool ParseHeaderField(string buffer,IDictionary headers)
 		 {
 			
 			 try

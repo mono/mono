@@ -1,3 +1,16 @@
+2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpChannel.cs: Moved initialization code in SetupChannel to the
+	  respective client and server channels. Added implementatoin of the
+	  interface IChannelReceiverHook.
+	* HttpRemotingHandler.cs: Implemented.
+	* HttpRemotingHandlerFactory.cs: Implemented.
+	* HttpServer.cs: In general, use Stream instances instead of Socket. It is
+	  more reusable in this way. Also improved formatting.
+	* HttpServerChannel.cs: Implemented support for IChannelReceiverHook.
+	  Added new method DispatchRequest in HttpServerTransportSink that can
+	  be reused by HttpRemotingHandler.
+
 2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpServerChannel.cs: Removed StartListening call from constructor. It

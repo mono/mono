@@ -22,7 +22,7 @@ using System.Runtime.Remoting.Messaging;
 namespace System.Runtime.Remoting.Channels.Http  
 {
 
-	public class HttpChannel: IChannelReceiver, IChannelSender, IChannel
+	public class HttpChannel: IChannelReceiver, IChannelSender, IChannel, IChannelReceiverHook
 	{
 		private HttpServerChannel serverChannel;
 		private HttpClientChannel clientChannel;
@@ -46,78 +46,16 @@ namespace System.Runtime.Remoting.Channels.Http
 			SetupChannel(Properties,clientSinkProvider,serverSinkProvider);
 		}
 
-
-		private void SetupChannel(IDictionary Properties,IClientChannelSinkProvider clientSinkProvider,IServerChannelSinkProvider serverSinkProvider)
+		private void SetupChannel (IDictionary properties, IClientChannelSinkProvider clientSinkProvider, IServerChannelSinkProvider serverSinkProvider)
 		{
-			if(Properties == null)
-			{
-				clientChannel = new HttpClientChannel();
-				serverChannel = new HttpServerChannel();
-			}
-			else if(Properties.Count == 1)
-			{
-				clientChannel = new HttpClientChannel();
-				serverChannel = new HttpServerChannel(Convert.ToInt32(Properties["port"].ToString()));
-			}
-			else
-			{
-				IDictionary clientProperties = new Hashtable();
-				IDictionary serverProperties = new Hashtable();
-				foreach(DictionaryEntry DictEntry in Properties)
-				{
-					switch(DictEntry.Key.ToString())
-					{
-						// Properties Supported By : HttpChannel,HttpServerChannel,HttpClientChannel
-						case "name":
-							channelName = DictEntry.Value.ToString(); 
-							break;
-
-						case "priority":
-							channelPriority = Convert.ToInt32(DictEntry.Value.ToString());
-							break;
-					
-						// Properties Supported By : HttpChannel , HttpClientChannel ONLY
-						case "clientConnectionLimit":
-							clientProperties["clientConnectionLimit"] = DictEntry.Value;
-							break;
-
-						case "proxyName":
-							clientProperties["proxyName"] = DictEntry.Value;
-							break;
-
-						case "proxyPort":
-							clientProperties["proxyPort"] = DictEntry.Value;
-							break;
-						
-						case "useDefaultCredentials":
-							clientProperties["useDefaultCredentials"] = DictEntry.Value;
-							break;
-
-						// Properties Supported By : HttpChannel , HttpServerChannel ONLY
-						case "bindTo": 
-							serverProperties["bindTo"] = DictEntry.Value;
-							break;
-						case "listen": 
-							serverProperties["listen"] = DictEntry.Value; 
-							break; 
-						case "machineName": 
-							serverProperties["machineName"] = DictEntry.Value; 
-							break; 
-						case "port": 
-							serverProperties["port"] = DictEntry.Value; 
-							break;
-						case "suppressChannelData": 
-							serverProperties["suppressChannelData"] = DictEntry.Value;
-							break;
-						case "useIpAddress": 
-							serverProperties["useIpAddress"] = DictEntry.Value; 
-							break;
-					}
-
-				}
-				clientChannel = new HttpClientChannel(clientProperties,clientSinkProvider);
-				serverChannel = new HttpServerChannel(serverProperties,serverSinkProvider);
-			}
+			clientChannel = new HttpClientChannel (properties, clientSinkProvider);
+			serverChannel = new HttpServerChannel (properties, serverSinkProvider);
+			
+			object val = properties ["name"];
+			if (val != null) channelName = val as string;
+			
+			val = properties ["priority"];
+			if (val != null) channelPriority = Convert.ToInt32 (val);
 		}
 
 
@@ -137,14 +75,11 @@ namespace System.Runtime.Remoting.Channels.Http
 			return HttpHelper.Parse(url, out objectURI);
 		}
 
-
-
 		//IChannelSender Members
 		public IMessageSink CreateMessageSink(String url, Object remoteChannelData, out String objectURI)
 		{
 			return clientChannel.CreateMessageSink(url, remoteChannelData, out objectURI);
 		}
-
 
 		//IChannelReciever Members
 		public String[] GetUrlsForUri(String objectURI)
@@ -161,9 +96,31 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			serverChannel.StopListening(data);
 		} 
+		
 		public Object ChannelData
 		{
 			get { return serverChannel.ChannelData; }
 		}
+		
+		public String ChannelScheme 
+		{
+			get { return "http"; } 
+		}
+
+		public bool WantsToListen 
+		{ 
+			get { return serverChannel.WantsToListen; } 
+			set { serverChannel.WantsToListen = value; }
+		} 
+		
+		public IServerChannelSink ChannelSinkChain 
+		{
+			get { return serverChannel.ChannelSinkChain; }
+		}
+
+		public void AddHookChannelUri (String channelUri)
+		{
+			serverChannel.AddHookChannelUri (channelUri);
+		} 
 	}
 }

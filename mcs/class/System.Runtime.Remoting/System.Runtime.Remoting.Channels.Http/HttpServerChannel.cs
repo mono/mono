@@ -47,7 +47,6 @@ namespace System.Runtime.Remoting.Channels.Http
         
 		private IServerChannelSinkProvider _sinkProvider = null;
 		private HttpServerTransportSink    _transportSink = null;
-		private IServerChannelSink         _sinkChain = null;
 
 		private bool _wantsToListen = true;
         
@@ -58,46 +57,37 @@ namespace System.Runtime.Remoting.Channels.Http
 		//   to start listening, that will get set here.
 		private AutoResetEvent  _waitForStartListening = new AutoResetEvent(false);
 
-
-
 		public HttpServerChannel() : base()
 		{
 			SetupChannel(null);
-		
 		}
 
 		public HttpServerChannel(int port) : base()
 		{
 			_port = port;
 			SetupChannel(null);
-		
 		} 
-    
 		
 		public HttpServerChannel(String name, int port) : base()
 		{
             _channelName = name;
 			_port = port;
+			_wantsToListen = false;
 			SetupChannel(null);
-
 		} 
 
-		
 		public HttpServerChannel(String name, int port, IServerChannelSinkProvider sinkProvider) : base()
 		{
 			//enter the name later ya gameeel
 			
 			_port = port;
+			_wantsToListen = false;
 			SetupChannel(sinkProvider);
-	
 		} 
 
-
-		
-		public HttpServerChannel(IDictionary properties, IServerChannelSinkProvider sinkProvider) : base()
-		{      
-				
-			if(properties != null)
+		public HttpServerChannel (IDictionary properties, IServerChannelSinkProvider sinkProvider) : base()
+		{
+			if (properties != null)
 			foreach(DictionaryEntry Dict in properties)
 			{
 				switch((string)Dict.Key)
@@ -106,44 +96,41 @@ namespace System.Runtime.Remoting.Channels.Http
 						_channelName = (string)Dict.Value;
 						break;
 					case "bindTo": 
-						_bindToAddr = IPAddress.Parse((string)Dict.Value); 
+						_bindToAddr = IPAddress.Parse ((string)Dict.Value); 
 						break;
 					case "listen": 
-						_wantsToListen = Boolean.Parse((string)Dict.Value);; 
+						_wantsToListen = Convert.ToBoolean (Dict.Value);; 
 						break; 
 					case "machineName": 
 						_machineName = (string)Dict.Value; 
 						break; 
 					case "port": 
-						_port =(int) Dict.Value; 
+						_wantsToListen = false;
+						_port = Convert.ToInt32 (Dict.Value);
 						break;
 					case "suppressChannelData": 
-						_bSuppressChannelData = Boolean.Parse((string)Dict.Value); 
+						_bSuppressChannelData = Convert.ToBoolean (Dict.Value); 
 						break;
 					case "useIpAddress": 
-						_bUseIpAddress = Boolean.Parse((string)Dict.Value); 
+						_bUseIpAddress = Convert.ToBoolean (Dict.Value); 
 						break;
 				}
 			}
 
-			SetupChannel(sinkProvider);
-			
+			SetupChannel (sinkProvider);
 		} 
 
 
-		void SetupChannel(IServerChannelSinkProvider sinkProvider)
+		void SetupChannel (IServerChannelSinkProvider sinkProvider)
 		{
-			
 			SetupMachineName();
 			
 			_sinkProvider = sinkProvider;
-			
 			
 			String[] urls = { this.GetChannelUri() };
 
 			// needed for CAOs
 			_channelData = new ChannelDataStore(urls);
-			
 			
 			if(_sinkProvider == null)
 				_sinkProvider = new SoapServerFormatterSinkProvider();
@@ -160,7 +147,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			IServerChannelSink snk = 
 				ChannelServices.CreateServerChannelSinkChain(_sinkProvider,this);
 
-			_transportSink = new HttpServerTransportSink(snk);
+			_transportSink = new HttpServerTransportSink (snk);
 		}
 
 		public void Listen()
@@ -168,17 +155,17 @@ namespace System.Runtime.Remoting.Channels.Http
 			while(true)
 			{
 				Socket socket = _tcpListener.AcceptSocket();
-				RequestArguments reqArg = new RequestArguments(socket,_transportSink);
+				RequestArguments reqArg = new RequestArguments (socket, _transportSink);
 				ThreadPool.QueueUserWorkItem (new WaitCallback (HttpServer.ProcessRequest), reqArg);
 			}
 
 		} 
 
-		public void StartListening(Object data)
+		public void StartListening (Object data)
 		{
-			if(_port == 0) return;	// TODO: take unused port
+			if(_port <= 0) return;	// TODO: take unused port
 			
-			_tcpListener = new TcpListener( _bindToAddr,_port);
+			_tcpListener = new TcpListener (_bindToAddr, _port);
 			
 			if(!_bListening)
 				_tcpListener.Start();
@@ -205,7 +192,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 
 			_bListening = false;
-		
 		}
 
 		
@@ -261,7 +247,6 @@ namespace System.Runtime.Remoting.Channels.Http
 				return "http://" + _machineName + ":" + _port;
 			}
 		} 
-
 	
 		public virtual String[] GetUrlsForUri(String objectUri)
 		{
@@ -288,22 +273,30 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 		}
 
-		public String ChannelScheme { get { return "http"; } }
-
+		public String ChannelScheme 
+		{
+			get { return "http"; } 
+		}
 
 		public bool WantsToListen 
 		{ 
 			get { return _wantsToListen; } 
 			set { _wantsToListen = value; }
 		} 
-
 		
-		public IServerChannelSink ChannelSinkChain { get { return _sinkChain; } }
-
+		public IServerChannelSink ChannelSinkChain 
+		{ 
+			get { return _transportSink.NextChannelSink; } 
+		}
 		
-		public void AddHookChannelUri(String channelUri)
+		public void AddHookChannelUri (String channelUri)
 		{
-		} 
+			string [] uris = _channelData.ChannelUris;
+			
+			string [] newUris = new string[1] { channelUri };
+			_channelData.ChannelUris = newUris;
+			_wantsToListen = false;
+		}
         
 		public Object this[Object key]
 		{
@@ -317,8 +310,7 @@ namespace System.Runtime.Remoting.Channels.Http
 						break;
 				}
 			}
-		} 
-    
+		}
 		
 		public ICollection Keys
 		{
@@ -328,11 +320,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 		}
 
-		
-
 	} // HttpServerChannel
-
-    
 
 
 	internal class HttpServerTransportSink : IServerChannelSink
@@ -344,43 +332,33 @@ namespace System.Runtime.Remoting.Channels.Http
 		private IServerChannelSink _nextSink;
         
 
-		public HttpServerTransportSink(IServerChannelSink nextSink)
+		public HttpServerTransportSink (IServerChannelSink nextSink)
 		{
 			_nextSink = nextSink;
 
 		} // IServerChannelSink
-        
-	
-    
-		internal void ServiceRequest(Socket socket , Stream requestStream , ITransportHeaders headers)
-		{          
-			ServerChannelSinkStack sinkStack = new ServerChannelSinkStack();
-			sinkStack.Push(this, socket);
 
-			IMessage responseMessage;
+		internal void ServiceRequest (RequestArguments reqArg, Stream requestStream, ITransportHeaders headers)
+		{          
 			ITransportHeaders responseHeaders;
 			Stream responseStream;
 
-			ServerProcessing processing = ServerProcessing.Complete;
+			ServerProcessing processing;
 			try
 			{
-				processing =
-					_nextSink.ProcessMessage(sinkStack, null, headers, requestStream,
-					out responseMessage,
-					out responseHeaders, out responseStream);
+				processing = DispatchRequest (requestStream, headers, out responseStream, out responseHeaders);
 
 				switch (processing)
 				{                    
 					case ServerProcessing.Complete:
-						sinkStack.Pop(this);
-						if(!HttpServer.SendResponse(socket,200,responseHeaders,responseStream))
+						if (!HttpServer.SendResponse (reqArg, 200, responseHeaders, responseStream))
 						{
 							//ooops couldnot send response !!!!!! and error occured
 						}
 						break;
 
 					case ServerProcessing.OneWay:				
-						if(!HttpServer.SendResponse(socket,200,null,null))
+						if (!HttpServer.SendResponse (reqArg, 200, null, null))
 						{
 							//ooops couldnot send response !!!!!! and error occured
 						}
@@ -390,17 +368,28 @@ namespace System.Runtime.Remoting.Channels.Http
 						break;
 				}
 			}
-			catch(Exception )
+			catch (Exception ex)
 			{
+				Console.WriteLine (ex);
 			}
 		}
 
+		internal ServerProcessing DispatchRequest (Stream requestStream, ITransportHeaders headers, out Stream responseStream, out ITransportHeaders responseHeaders)
+		{          
+			ServerChannelSinkStack sinkStack = new ServerChannelSinkStack();
 
+			IMessage responseMessage;
+
+			return _nextSink.ProcessMessage (sinkStack, null, headers, requestStream,
+						out responseMessage,
+						out responseHeaders, out responseStream);
+		}
+		
 		//
 		// IServerChannelSink implementation
 		//
 
-		public ServerProcessing ProcessMessage(IServerChannelSinkStack sinkStack,
+		public ServerProcessing ProcessMessage (IServerChannelSinkStack sinkStack,
 			IMessage requestMsg,
 			ITransportHeaders requestHeaders, Stream requestStream,
 			out IMessage responseMsg, out ITransportHeaders responseHeaders,
@@ -412,16 +401,12 @@ namespace System.Runtime.Remoting.Channels.Http
 		} // ProcessMessage
            
 
-		public void AsyncProcessResponse(IServerResponseChannelSinkStack sinkStack, Object state,
+		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, Object state,
 			IMessage msg, ITransportHeaders headers, Stream stream)                 
 		{
-			Socket socket = (Socket) state;
-			
-			if(!HttpServer.SendResponse(socket,200,headers,stream))
-			{
-				//Ooops could not send response!!!!!!!!!1
-			}
-		} // AsyncProcessResponse
+			// Never called
+			throw new NotSupportedException ();
+		}
 
 
 		public Stream GetResponseStream(IServerResponseChannelSinkStack sinkStack, Object state,
