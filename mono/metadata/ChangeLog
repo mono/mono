@@ -1,3 +1,9 @@
+2004-09-08  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* object.c: In mono_message_invoke, fill the output parameter array after
+	  calling the managed method (it was done before the call). This fixes
+	  bug #59299.
+
 2004-09-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c (mono_image_close): Applied patch from 
@@ -11054,4 +11060,3 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
-
