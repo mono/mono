@@ -1,3 +1,8 @@
+2004-05-07  Raja R Harinath  <rharinath@novell.com>
+
+	* AssemblyInfo.cs (AssemblyDelaySign, AssemblyKeyFile): Disable
+	with BOOTSTRAP_WITH_OLDLIB.  Mono 0.31 runtime crashes on this.
+
 2004-05-03 Lluis Sanches Gual  <lluis@ximian.com>
 
 	* Consts.cs: Added.
