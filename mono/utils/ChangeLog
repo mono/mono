@@ -1,4 +1,8 @@
 
+Fri Feb 25 14:54:19 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mono-compiler.h: amd64 can't handle local-exec in PIC libs.
+
 Thu Feb 24 15:18:05 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, mono-compiler.h: added header to deal with 
