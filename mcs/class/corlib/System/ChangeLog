@@ -1,3 +1,7 @@
+2004-09-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleHandle.cs: Updated after changes to Module class.
+
 2004-09-21  Geoff Norton <gnorton@customerdna.com>
 
 	* Type.cs: BindingFlags.IgnoreCase was being ignored, this reimplements

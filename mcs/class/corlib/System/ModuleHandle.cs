@@ -62,36 +62,36 @@ namespace System
 			Module.GetPEKind (value, out peKind, out machine);
 		}
 
-		[MonoTODO]
 		public RuntimeFieldHandle ResolveFieldHandle (int fieldToken)
 		{
+			ResolveTokenError error;
 			if (value == IntPtr.Zero)
 				throw new ArgumentNullException (String.Empty, "Invalid handle");
-			IntPtr res = Module.ResolveFieldToken (value, fieldToken);
+			IntPtr res = Module.ResolveFieldToken (value, fieldToken, out error);
 			if (res == IntPtr.Zero)
 				throw new Exception (String.Format ("Could not load field '0x{0:x}' from assembly '0x{1:x}'", fieldToken, value.ToInt64 ()));
 			else
 				return new RuntimeFieldHandle (res);
 		}
 
-		[MonoTODO]
 		public RuntimeMethodHandle ResolveMethodHandle (int methodToken)
 		{
+			ResolveTokenError error;
 			if (value == IntPtr.Zero)
 				throw new ArgumentNullException (String.Empty, "Invalid handle");
-			IntPtr res = Module.ResolveMethodToken (value, methodToken);
+			IntPtr res = Module.ResolveMethodToken (value, methodToken, out error);
 			if (res == IntPtr.Zero)
 				throw new Exception (String.Format ("Could not load method '0x{0:x}' from assembly '0x{1:x}'", methodToken, value.ToInt64 ()));
 			else
 				return new RuntimeMethodHandle (res);
 		}
 
-		[MonoTODO]
 		public RuntimeTypeHandle ResolveTypeHandle (int typeToken)
 		{
+			ResolveTokenError error;
 			if (value == IntPtr.Zero)
 				throw new ArgumentNullException (String.Empty, "Invalid handle");
-			IntPtr res = Module.ResolveTypeToken (value, typeToken);
+			IntPtr res = Module.ResolveTypeToken (value, typeToken, out error);
 			if (res == IntPtr.Zero)
 				throw new TypeLoadException (String.Format ("Could not load type '0x{0:x}' from assembly '0x{1:x}'", typeToken, value.ToInt64 ()));
 			else
