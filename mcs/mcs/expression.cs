@@ -5453,6 +5453,12 @@ namespace Mono.CSharp {
 						o = fi.GetValue (fi);
 					
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
+						if (left_is_explicit && !left_is_type &&
+						    !IdenticalNameAndTypeName (ec, left_original, loc)) {
+							error176 (loc, fe.FieldInfo.Name);
+							return null;
+						}					
+						
 						Expression enum_member = MemberLookup (
 							ec, decl_type, "value__", MemberTypes.Field,
 							AllBindingFlags, loc); 
