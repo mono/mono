@@ -353,6 +353,12 @@ namespace System.Windows.Forms {
 		private void timer_Tick(object sender, EventArgs e) {
 			// Show our pretty selves
 			timer.Stop();
+
+			// FIXME - Should not need this check../
+			if (tooltip_window.IsDisposed) {
+				return;
+			}
+
 			if (!tooltip_window.Visible) {
 				// The initial_delay timer kicked in
 				tooltip_window.Visible = true;

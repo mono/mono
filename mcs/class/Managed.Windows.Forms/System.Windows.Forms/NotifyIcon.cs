@@ -39,6 +39,7 @@ namespace System.Windows.Forms {
 		private bool			visible;
 		private NotifyIconWindow	window;
 		private bool			systray_active;
+		private ToolTip			tooltip;
 		#endregion	// Local Variables
 
 		#region NotifyIconWindow Class
@@ -71,7 +72,11 @@ namespace System.Windows.Forms {
 
 					cp = base.CreateParams;
 
-					cp.Style = (int)(WindowStyles.WS_POPUP);
+					cp.Parent = IntPtr.Zero;
+					cp.Style = (int)WindowStyles.WS_POPUP;
+					cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
+
+					cp.ExStyle = (int)(WindowStyles.WS_EX_TOOLWINDOW);
 
 					return cp;
 				}
@@ -130,6 +135,7 @@ namespace System.Windows.Forms {
 					int		y;
 					int		size;
 
+Console.WriteLine("CalculateIconRect: Width:{0}, Height:{1}", Width, Height);
 
 					// Icons are always square. Try to center them in the window
 					if (ClientRectangle.Width < ClientRectangle.Height) {
@@ -222,7 +228,7 @@ namespace System.Windows.Forms {
 			}
 
 			systray_active = true;
-			XplatUI.SystrayAdd(window.Handle, text, icon);
+			XplatUI.SystrayAdd(window.Handle, text, icon, out tooltip);
 		}
 
 		private void HideSystray() {
@@ -231,7 +237,7 @@ namespace System.Windows.Forms {
 			}
 
 			systray_active = false;
-			XplatUI.SystrayRemove(window.Handle);
+			XplatUI.SystrayRemove(window.Handle, ref tooltip);
 		}
 
 		private void UpdateSystray() {
@@ -243,7 +249,7 @@ namespace System.Windows.Forms {
 				icon_bitmap = icon.ToBitmap();
 			}
 
-			XplatUI.SystrayChange(window.Handle, text, icon);
+			XplatUI.SystrayChange(window.Handle, text, icon, ref tooltip);
 			window.Invalidate();
 		}
 		#endregion	// Private Methods
@@ -289,7 +295,11 @@ namespace System.Windows.Forms {
 						throw new ArgumentException("ToolTip length must be less than 64 characters long", "Text");
 					}
 					text = value;
-					ShowSystray(true);
+					if (text == string.Empty && icon == null) {
+						HideSystray();
+					} else {
+						ShowSystray(true);
+					}
 				}
 			}
 		}

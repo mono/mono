@@ -152,7 +152,6 @@ namespace System.Windows.Forms {
 #endif
 
 					case Msg.WM_SETFOCUS: {
-Console.WriteLine("ParentForm got focus");
 						owner.WndProc(ref m);
 						return;
 					}

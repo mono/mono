@@ -380,16 +380,16 @@ namespace System.Windows.Forms {
 			driver.ScrollWindow(hwnd, XAmount, YAmount, clear);
 		}
 
-		internal static bool SystrayAdd(IntPtr hwnd, string tip, Icon icon) {
-			return driver.SystrayAdd(hwnd, tip, icon);
+		internal static bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt) {
+			return driver.SystrayAdd(hwnd, tip, icon, out tt);
 		}
 
-		internal static void SystrayChange(IntPtr hwnd, string tip, Icon icon) {
-			driver.SystrayChange(hwnd, tip, icon);
+		internal static void SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt) {
+			driver.SystrayChange(hwnd, tip, icon, ref tt);
 		}
 
-		internal static void SystrayRemove(IntPtr hwnd) {
-			driver.SystrayRemove(hwnd);
+		internal static void SystrayRemove(IntPtr hwnd, ref ToolTip tt) {
+			driver.SystrayRemove(hwnd, ref tt);
 		}
 
 

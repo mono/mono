@@ -1309,7 +1309,7 @@ if (c != null) {
 			Win32ScrollWindowEx(hwnd, XAmount, YAmount, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, clear ? (ScrollWindowExFlags.SW_INVALIDATE | ScrollWindowExFlags.SW_ERASE) : ScrollWindowExFlags.SW_NONE);
 		}
 
-		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon) {
+		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt) {
 			NOTIFYICONDATA	nid;
 
 			nid = new NOTIFYICONDATA();
@@ -1331,10 +1331,12 @@ if (c != null) {
 				nid.uFlags |= NotifyIconFlags.NIF_ICON;
 			}
 
+			tt = null;
+
 			return Win32Shell_NotifyIcon(NotifyIconMessage.NIM_ADD, ref nid);
 		}
 
-		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon) {
+		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt) {
 			NOTIFYICONDATA	nid;
 
 			nid = new NOTIFYICONDATA();
@@ -1359,7 +1361,7 @@ if (c != null) {
 			return Win32Shell_NotifyIcon(NotifyIconMessage.NIM_MODIFY, ref nid);
 		}
 
-		internal override void SystrayRemove(IntPtr hwnd) {
+		internal override void SystrayRemove(IntPtr hwnd, ref ToolTip tt) {
 			NOTIFYICONDATA	nid;
 
 			nid = new NOTIFYICONDATA();

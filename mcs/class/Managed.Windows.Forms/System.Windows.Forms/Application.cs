@@ -68,6 +68,10 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			// Both calls are needed, one is for the WM, the other for our focus logic
+			XplatUI.Activate(form.form_parent_window.window.Handle);
+			form.Activate();
+
 			while (control.MoveNext()) {
 				if ((((Control)control.Current).parent == null) && (((Control)control.Current).is_visible) && (((Control)control.Current).is_enabled)) {
 					if ((control.Current is Form.FormParentWindow)  && (((Form.FormParentWindow)control.Current)!=form.form_parent_window)) {
@@ -297,6 +301,10 @@ namespace System.Windows.Forms {
 			if (app_context != null) {
 				form = app_context.MainForm;
 			}
+
+			// Both calls are needed, one is for the WM, the other for our focus logic
+			XplatUI.Activate(form.form_parent_window.window.Handle);
+			form.Activate();
 
 			messageloop_started = true;
 

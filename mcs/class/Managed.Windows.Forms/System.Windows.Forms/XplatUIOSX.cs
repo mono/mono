@@ -1373,17 +1373,17 @@ DEBUG THIS:
 		}
 
 		[MonoTODO]
-		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon) {
+		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt) {
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon) {
+		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt) {
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		internal override void SystrayRemove(IntPtr hwnd) {
+		internal override void SystrayRemove(IntPtr hwnd, ref ToolTip tt) {
 			throw new NotImplementedException();
 		}
 

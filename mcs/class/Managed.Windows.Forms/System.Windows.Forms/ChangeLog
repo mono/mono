@@ -1,3 +1,14 @@
+2005-01-27  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs, XplatUIOSX.cs,
+	  XplatUIX11.cs: Extended the Systray API
+	* Form.cs: Removed debug output
+	* Application.cs: Fixed focus assignment, always need to call
+	  XplatUI.Activate() since Form.Activate() has rules that may
+	  prevent activation
+	* NotifyIcon.cs: Should be complete now
+	* ToolTip.cs: Worked around possible timer bug
+
 2005-01-27  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs:

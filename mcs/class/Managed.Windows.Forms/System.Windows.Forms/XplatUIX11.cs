@@ -2129,7 +2129,7 @@ namespace System.Windows.Forms {
 			XFreeGC(DisplayHandle, gc);
 		}
 
-		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon) {
+		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt) {
 			GetSystrayManagerWindow();
 
 			if (systray_manager_window != IntPtr.Zero) {
@@ -2151,10 +2151,24 @@ namespace System.Windows.Forms {
 
 				atoms = new uint[2];
 				atoms[0] = 1;	// Version 1
-				atoms[1] = 0;	// We're not mapped
+				atoms[1] = 1;	// We're not mapped
 
 				// This line cost me 3 days...
-				//XChangeProperty(DisplayHandle, hwnd, xembed_info, xembed_info, 32, PropertyMode.Replace, atoms, 2);
+				XChangeProperty(DisplayHandle, hwnd, xembed_info, xembed_info, 32, PropertyMode.Replace, atoms, 2);
+
+				// Need to pick some reasonable defaults
+				tt = new ToolTip();
+				tt.AutomaticDelay = 100;
+				tt.InitialDelay = 250;
+				tt.ReshowDelay = 250;
+				tt.ShowAlways = true;
+
+				if ((tip != null) && (tip != string.Empty)) {
+					tt.SetToolTip(Control.FromHandle(hwnd), tip);
+					tt.Active = true;
+				} else {
+					tt.Active = false;
+				}
 
 				// Make sure the window exists
 				XSync(DisplayHandle, hwnd);
@@ -2162,18 +2176,25 @@ namespace System.Windows.Forms {
 				SendNetClientMessage(systray_manager_window, (IntPtr)net_system_tray, IntPtr.Zero, (IntPtr)SystrayRequest.SYSTEM_TRAY_REQUEST_DOCK, hwnd);
 				return true;
 			}
+			tt = null;
 			return false;
 		}
 
-		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon) {
-			// nothing to do, all done inside NotifyIcon
+		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt) {
+			tt.SetToolTip(Control.FromHandle(hwnd), tip);
+			tt.Active = true;
 			return true;
 		}	
 
-		internal override void SystrayRemove(IntPtr hwnd) {
+		internal override void SystrayRemove(IntPtr hwnd, ref ToolTip tt) {
 			XUnmapWindow(DisplayHandle, hwnd);
 			SetParent(hwnd, FosterParent);
 			// The caller can now re-dock it later...
+
+			if (tt != null) {
+				tt.Dispose();
+				tt = null;
+			}
 		}
 
 		// Santa's little helper
@@ -2332,6 +2353,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, uint[] atoms, int nelements);
+
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, IntPtr atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XDeleteProperty")]
 		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, int property);
