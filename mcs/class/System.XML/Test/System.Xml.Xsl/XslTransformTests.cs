@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml.Xsl
 {
 	[TestFixture]
-	public class XslTransformTests
+	public class XslTransformTests : Assertion
 	{
 		XmlDocument doc;
 		XslTransform xslt;
@@ -36,7 +36,7 @@ namespace MonoTests.System.Xml.Xsl
 			xslt.Load ("XmlFiles/xsl/empty.xsl");
 			xslt.Transform ("XmlFiles/xsl/empty.xsl", "XmlFiles/xsl/result.xml");
 			result.Load ("XmlFiles/xsl/result.xml");
-			Assertion.AssertEquals ("count", 1, result.ChildNodes.Count);
+			AssertEquals ("count", 1, result.ChildNodes.Count);
 		}
 	}
 }

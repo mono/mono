@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlCommentTests
+	public class XmlCommentTests : Assertion
 	{
 		XmlDocument document;
 		XmlComment comment;
@@ -42,10 +42,10 @@ namespace MonoTests.System.Xml
 			
 			deep = comment.CloneNode (true); // deep
 			XmlNodeBaseProperties (original, deep);
-			Assertion.AssertEquals ("Value incorrectly cloned",
+			AssertEquals ("Value incorrectly cloned",
 				original.Value, deep.Value);
 
-			Assertion.AssertEquals ("deep cloning differs from shallow cloning",
+			AssertEquals ("deep cloning differs from shallow cloning",
 				deep.OuterXml, shallow.OuterXml);
 		}
 
@@ -53,8 +53,8 @@ namespace MonoTests.System.Xml
 		public void XmlCommentInnerAndOuterXml ()
 		{
 			comment = document.CreateComment ("foo");
-			Assertion.AssertEquals (String.Empty, comment.InnerXml);
-			Assertion.AssertEquals ("<!--foo-->", comment.OuterXml);
+			AssertEquals (String.Empty, comment.InnerXml);
+			AssertEquals ("<!--foo-->", comment.OuterXml);
 		}
 
 		[Test]
@@ -62,7 +62,7 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
-			Assertion.AssertEquals ("XmlComment IsReadOnly property broken",
+			AssertEquals ("XmlComment IsReadOnly property broken",
 				comment.IsReadOnly, false);
 		}
 
@@ -71,7 +71,7 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
-			Assertion.AssertEquals (comment.NodeType + " LocalName property broken",
+			AssertEquals (comment.NodeType + " LocalName property broken",
 				      comment.LocalName, "#comment");
 		}
 
@@ -80,7 +80,7 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
-			Assertion.AssertEquals (comment.NodeType + " Name property broken",
+			AssertEquals (comment.NodeType + " Name property broken",
 				comment.Name, "#comment");
 		}
 
@@ -89,7 +89,7 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<root><foo></foo></root>");
 			comment = document.CreateComment ("Comment");
-			Assertion.AssertEquals ("XmlComment NodeType property broken",
+			AssertEquals ("XmlComment NodeType property broken",
 				      comment.NodeType.ToString (), "Comment");
 		}
 
@@ -101,11 +101,11 @@ namespace MonoTests.System.Xml
 			//			assertequals (original.nodetype + " was incorrectly cloned.",
 			//				      original.baseuri, cloned.baseuri);			
 
-			Assertion.AssertNull (cloned.ParentNode);
-			Assertion.AssertEquals ("Value incorrectly cloned",
+			AssertNull (cloned.ParentNode);
+			AssertEquals ("Value incorrectly cloned",
 				original.Value, cloned.Value);
 
-			Assertion.Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
+			Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
        
 	}

@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlProcessingInstructionTests
+	public class XmlProcessingInstructionTests : Assertion
 	{
 		XmlDocument document;
 		XmlProcessingInstruction pi;
@@ -31,8 +31,8 @@ namespace MonoTests.System.Xml
 		public void InnerAndOuterXml ()
 		{
 			pi = document.CreateProcessingInstruction ("foo", "bar");
-			Assertion.AssertEquals (String.Empty, pi.InnerXml);
-			Assertion.AssertEquals ("<?foo bar?>", pi.OuterXml);
+			AssertEquals (String.Empty, pi.InnerXml);
+			AssertEquals ("<?foo bar?>", pi.OuterXml);
 		}
 	}
 }

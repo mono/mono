@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlEntityReferenceTests
+	public class XmlEntityReferenceTests : Assertion
 	{
 		[Test]
 		public void WriteTo ()
@@ -25,8 +25,8 @@ namespace MonoTests.System.Xml
 			doc.LoadXml("<root/>");
 			XmlEntityReference er = doc.CreateEntityReference("foo");
 			doc.DocumentElement.AppendChild(er);
-			Assertion.AssertEquals ("Name", "foo", er.Name);
-			Assertion.AssertEquals ("WriteTo", "<root>&foo;</root>", doc.DocumentElement.OuterXml);
+			AssertEquals ("Name", "foo", er.Name);
+			AssertEquals ("WriteTo", "<root>&foo;</root>", doc.DocumentElement.OuterXml);
 		}
 	}
 }

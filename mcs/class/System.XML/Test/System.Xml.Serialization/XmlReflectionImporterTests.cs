@@ -46,7 +46,7 @@ namespace MonoTests.System.Xml.Serialization
 	}
 
 	[TestFixture]
-	public class XmlReflectionImporterTests
+	public class XmlReflectionImporterTests : Assertion
 	{
 		private const string SomeNamespace = "some:urn";
 		private const string AnotherNamespace = "another:urn";
@@ -101,190 +101,190 @@ namespace MonoTests.System.Xml.Serialization
 		public void TestIntTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(int));
-			Assertion.AssertEquals(tm.ElementName, "int");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Int32");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Int32");
+			AssertEquals(tm.ElementName, "int");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Int32");
+			AssertEquals(tm.TypeFullName, "System.Int32");
 		}
 
 		[Test]
 		public void TestIntArrayTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(int[]));
-			Assertion.AssertEquals(tm.ElementName, "ArrayOfInt");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Int32[]");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Int32[]");
+			AssertEquals(tm.ElementName, "ArrayOfInt");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Int32[]");
+			AssertEquals(tm.TypeFullName, "System.Int32[]");
 		}
 
 		[Test]
 		public void TestStringTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(string));
-			Assertion.AssertEquals(tm.ElementName, "string");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "String");
-			Assertion.AssertEquals(tm.TypeFullName, "System.String");
+			AssertEquals(tm.ElementName, "string");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "String");
+			AssertEquals(tm.TypeFullName, "System.String");
 		}
 
 		[Test]
 		public void TestObjectTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(object));
-			Assertion.AssertEquals(tm.ElementName, "anyType");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Object");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Object");
+			AssertEquals(tm.ElementName, "anyType");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Object");
+			AssertEquals(tm.TypeFullName, "System.Object");
 		}
 
 		[Test]
 		public void TestByteTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(byte));
-			Assertion.AssertEquals(tm.ElementName, "unsignedByte");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Byte");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Byte");
+			AssertEquals(tm.ElementName, "unsignedByte");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Byte");
+			AssertEquals(tm.TypeFullName, "System.Byte");
 		}
 
 		[Test]
 		public void TestByteArrayTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(byte[]));
-			Assertion.AssertEquals(tm.ElementName, "base64Binary");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Byte[]");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Byte[]");
+			AssertEquals(tm.ElementName, "base64Binary");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Byte[]");
+			AssertEquals(tm.TypeFullName, "System.Byte[]");
 		}
 
 		[Test]
 		public void TestBoolTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(bool));
-			Assertion.AssertEquals(tm.ElementName, "boolean");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Boolean");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Boolean");
+			AssertEquals(tm.ElementName, "boolean");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Boolean");
+			AssertEquals(tm.TypeFullName, "System.Boolean");
 		}
 
 		[Test]
 		public void TestShortTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(short));
-			Assertion.AssertEquals(tm.ElementName, "short");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Int16");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Int16");
+			AssertEquals(tm.ElementName, "short");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Int16");
+			AssertEquals(tm.TypeFullName, "System.Int16");
 		}
 
 		[Test]
 		public void TestUnsignedShortTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(ushort));
-			Assertion.AssertEquals(tm.ElementName, "unsignedShort");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "UInt16");
-			Assertion.AssertEquals(tm.TypeFullName, "System.UInt16");
+			AssertEquals(tm.ElementName, "unsignedShort");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "UInt16");
+			AssertEquals(tm.TypeFullName, "System.UInt16");
 		}
 		
 		[Test]
 		public void TestUIntTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(uint));
-			Assertion.AssertEquals(tm.ElementName, "unsignedInt");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "UInt32");
-			Assertion.AssertEquals(tm.TypeFullName, "System.UInt32");
+			AssertEquals(tm.ElementName, "unsignedInt");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "UInt32");
+			AssertEquals(tm.TypeFullName, "System.UInt32");
 		}
 		
 		[Test]
 		public void TestLongTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(long));
-			Assertion.AssertEquals(tm.ElementName, "long");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Int64");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Int64");
+			AssertEquals(tm.ElementName, "long");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Int64");
+			AssertEquals(tm.TypeFullName, "System.Int64");
 		}
 		
 		[Test]
 		public void TestULongTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(ulong));
-			Assertion.AssertEquals(tm.ElementName, "unsignedLong");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "UInt64");
-			Assertion.AssertEquals(tm.TypeFullName, "System.UInt64");
+			AssertEquals(tm.ElementName, "unsignedLong");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "UInt64");
+			AssertEquals(tm.TypeFullName, "System.UInt64");
 		}
 		
 		[Test]
 		public void TestFloatTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(float));
-			Assertion.AssertEquals(tm.ElementName, "float");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Single");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Single");
+			AssertEquals(tm.ElementName, "float");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Single");
+			AssertEquals(tm.TypeFullName, "System.Single");
 		}
 		
 		[Test]
 		public void TestDoubleTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(double));
-			Assertion.AssertEquals(tm.ElementName, "double");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Double");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Double");
+			AssertEquals(tm.ElementName, "double");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Double");
+			AssertEquals(tm.TypeFullName, "System.Double");
 		}
 		
 		[Test]
 		public void TestDateTimeTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(DateTime));
-			Assertion.AssertEquals(tm.ElementName, "dateTime");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "DateTime");
-			Assertion.AssertEquals(tm.TypeFullName, "System.DateTime");
+			AssertEquals(tm.ElementName, "dateTime");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "DateTime");
+			AssertEquals(tm.TypeFullName, "System.DateTime");
 		}
 		
 		[Test]
 		public void TestGuidTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(Guid));
-			Assertion.AssertEquals(tm.ElementName, "guid");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Guid");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Guid");
+			AssertEquals(tm.ElementName, "guid");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Guid");
+			AssertEquals(tm.TypeFullName, "System.Guid");
 		}
 		
 		[Test]
 		public void TestDecimalTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(decimal));
-			Assertion.AssertEquals(tm.ElementName, "decimal");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Decimal");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Decimal");
+			AssertEquals(tm.ElementName, "decimal");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Decimal");
+			AssertEquals(tm.TypeFullName, "System.Decimal");
 		}
 		
 		[Test]
 		public void TestXmlQualifiedNameTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(XmlQualifiedName));
-			Assertion.AssertEquals(tm.ElementName, "QName");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "XmlQualifiedName");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Xml.XmlQualifiedName");
+			AssertEquals(tm.ElementName, "QName");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "XmlQualifiedName");
+			AssertEquals(tm.TypeFullName, "System.Xml.XmlQualifiedName");
 		}
 		
 		[Test]
 		public void TestSByteTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(sbyte));
-			Assertion.AssertEquals(tm.ElementName, "byte");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "SByte");
-			Assertion.AssertEquals(tm.TypeFullName, "System.SByte");
+			AssertEquals(tm.ElementName, "byte");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "SByte");
+			AssertEquals(tm.TypeFullName, "System.SByte");
 		}
 		
 
@@ -292,10 +292,10 @@ namespace MonoTests.System.Xml.Serialization
 		public void TestCharTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof(char));
-			Assertion.AssertEquals(tm.ElementName, "char");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "Char");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Char");
+			AssertEquals(tm.ElementName, "char");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "Char");
+			AssertEquals(tm.TypeFullName, "System.Char");
 		}
 
 		[Test]
@@ -304,7 +304,7 @@ namespace MonoTests.System.Xml.Serialization
 			try
 			{
 				XmlTypeMapping tm = Map(null);
-				Assertion.Fail("Should not be able to map a null type");
+				Fail("Should not be able to map a null type");
 			}
 			catch (Exception)
 			{
@@ -319,7 +319,7 @@ namespace MonoTests.System.Xml.Serialization
 			{
 				// this can use any class
 				XmlTypeMapping tm = Map(typeof(SimpleClass));
-				Assertion.Fail("Should not be able to this type");
+				Fail("Should not be able to this type");
 			}
 			catch (Exception)
 			{
@@ -331,10 +331,10 @@ namespace MonoTests.System.Xml.Serialization
 		public void TestTypeMapping()
 		{
 			XmlTypeMapping tm = Map(typeof());
-			Assertion.AssertEquals(tm.ElementName, "");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "");
-			Assertion.AssertEquals(tm.TypeFullName, "System.");
+			AssertEquals(tm.ElementName, "");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "");
+			AssertEquals(tm.TypeFullName, "System.");
 		}
 		*/
 	
@@ -342,10 +342,10 @@ namespace MonoTests.System.Xml.Serialization
 		public void TestIntTypeMappingWithDefaultNamespaces()
 		{
 			XmlTypeMapping tm = Map(typeof(int), SomeNamespace);
-			Assertion.AssertEquals(tm.ElementName, "int");
-			Assertion.AssertEquals(tm.Namespace, SomeNamespace);
-			Assertion.AssertEquals(tm.TypeName, "Int32");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Int32");
+			AssertEquals(tm.ElementName, "int");
+			AssertEquals(tm.Namespace, SomeNamespace);
+			AssertEquals(tm.TypeName, "Int32");
+			AssertEquals(tm.TypeFullName, "System.Int32");
 		}
 
 		[Test]
@@ -357,10 +357,10 @@ namespace MonoTests.System.Xml.Serialization
 			overrides.Add(typeof(SimpleClass), attrs);
 			
 			XmlTypeMapping tm = Map(type, overrides);
-			Assertion.AssertEquals(tm.ElementName, "SimpleClass");
-			Assertion.AssertEquals(tm.Namespace, "");
-			Assertion.AssertEquals(tm.TypeName, "SimpleClass");
-			Assertion.AssertEquals(tm.TypeFullName, "MonoTests.System.Xml.TestClasses.SimpleClass");
+			AssertEquals(tm.ElementName, "SimpleClass");
+			AssertEquals(tm.Namespace, "");
+			AssertEquals(tm.TypeName, "SimpleClass");
+			AssertEquals(tm.TypeFullName, "MonoTests.System.Xml.TestClasses.SimpleClass");
 		}
 
 		
@@ -377,7 +377,7 @@ namespace MonoTests.System.Xml.Serialization
 			try
 			{
 				mm = MembersMap(type, overrides, members, true);
-				Assertion.Fail("Should not be able to fetch an empty XmlMembersMapping");
+				Fail("Should not be able to fetch an empty XmlMembersMapping");
 			}
 			catch (Exception)
 			{
@@ -392,16 +392,16 @@ namespace MonoTests.System.Xml.Serialization
 
 			mm = MembersMap(type, overrides, members, false);
 
-			Assertion.Equals(mm.Count, 1);
+			Equals(mm.Count, 1);
 
 			XmlMemberMapping smm = mm[0];
-			Assertion.AssertEquals(smm.Any, false);
-			Assertion.AssertEquals(smm.ElementName, "something");
-			Assertion.AssertEquals(smm.MemberName, "something");
-			Assertion.AssertEquals(smm.Namespace, null);
-			Assertion.AssertEquals(smm.TypeFullName, "System.String");
-			Assertion.AssertEquals(smm.TypeName, "string");
-			Assertion.AssertEquals(smm.TypeNamespace, null);
+			AssertEquals(smm.Any, false);
+			AssertEquals(smm.ElementName, "something");
+			AssertEquals(smm.MemberName, "something");
+			AssertEquals(smm.Namespace, null);
+			AssertEquals(smm.TypeFullName, "System.String");
+			AssertEquals(smm.TypeName, "string");
+			AssertEquals(smm.TypeNamespace, null);
 
 			
 			rm = new XmlReflectionMember();
@@ -412,7 +412,7 @@ namespace MonoTests.System.Xml.Serialization
 			members[0] = rm;
 
 			mm = MembersMap(type, overrides, members, false);
-			Assertion.Equals(mm.Count, 0);
+			Equals(mm.Count, 0);
 		}
 
 		[Test]
@@ -423,10 +423,10 @@ namespace MonoTests.System.Xml.Serialization
 			root.Namespace = TheNamespace;
 			
 			XmlTypeMapping tm = Map(typeof(int), root);
-			Assertion.AssertEquals(tm.ElementName, "price");
-			Assertion.AssertEquals(tm.Namespace, TheNamespace);
-			Assertion.AssertEquals(tm.TypeName, "Int32");
-			Assertion.AssertEquals(tm.TypeFullName, "System.Int32");
+			AssertEquals(tm.ElementName, "price");
+			AssertEquals(tm.Namespace, TheNamespace);
+			AssertEquals(tm.TypeName, "Int32");
+			AssertEquals(tm.TypeFullName, "System.Int32");
 		}
 
 	}

@@ -22,7 +22,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlWriterTests
+	public class XmlWriterTests : Assertion
 	{
 		StringWriter writer;
 		XmlTextWriter xtw;
@@ -47,7 +47,7 @@ namespace MonoTests.System.Xml
 			StringReader sr = new StringReader (xml);
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtw.WriteNode (xtr, false);
-			Assertion.AssertEquals (xml.Replace ("'", "\""),
+			AssertEquals (xml.Replace ("'", "\""),
 				writer.ToString ());
 		}
 
@@ -60,7 +60,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtr.Read ();
 			xtw.WriteNode (xtr, false);
-			Assertion.AssertEquals ("<?xml version=\"1.0\"?>",
+			AssertEquals ("<?xml version=\"1.0\"?>",
 				 writer.ToString ());
 		}
 
@@ -72,7 +72,7 @@ namespace MonoTests.System.Xml
 			StringReader sr = new StringReader (xml);
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtw.WriteNode (xtr, false);
-			Assertion.AssertEquals (xml.Replace ("'", "\""),
+			AssertEquals (xml.Replace ("'", "\""),
 				writer.ToString ());
 		}
 
@@ -84,7 +84,7 @@ namespace MonoTests.System.Xml
 			StringReader sr = new StringReader (xml);
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtw.WriteNode (xtr, false);
-			Assertion.AssertEquals (xml.Replace ("'", "\""),
+			AssertEquals (xml.Replace ("'", "\""),
 				writer.ToString ());
 		}
 		
@@ -98,13 +98,13 @@ namespace MonoTests.System.Xml
 			StartElementTestWriter xw = new StartElementTestWriter ();
 			xw.WriteStartDocument ();
 			xw.WriteStartElement ("test");
-			Assertion.AssertEquals ("StartElementOverride.NS", null, xw.NS);
-			Assertion.AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
+			AssertEquals ("StartElementOverride.NS", null, xw.NS);
+			AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
 			xw.NS = String.Empty;
 			xw.Prefix = String.Empty;
 			xw.WriteStartElement ("test", "urn:hoge");
-			Assertion.AssertEquals ("StartElementOverride.NS", "urn:hoge", xw.NS);
-			Assertion.AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
+			AssertEquals ("StartElementOverride.NS", "urn:hoge", xw.NS);
+			AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
 		}
 		
 		class StartElementTestWriter : DefaultXmlWriter

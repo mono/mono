@@ -21,7 +21,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlDocumentTests
+	public class XmlDocumentTests : Assertion
 	{
 		private XmlDocument document;
 		private ArrayList eventStrings = new ArrayList();
@@ -95,32 +95,32 @@ namespace MonoTests.System.Xml
 
 			try {
 				node = document.CreateNode (null, null, null);
-				Assertion.Fail ("Expected an ArgumentException to be thrown.");
+				Fail ("Expected an ArgumentException to be thrown.");
 			} catch (ArgumentException) {}
 
 			try {
 				node = document.CreateNode ("attribute", null, null);
-				Assertion.Fail ("Expected a NullReferenceException to be thrown.");
+				Fail ("Expected a NullReferenceException to be thrown.");
 			} catch (NullReferenceException) {}
 
 			try {
 				node = document.CreateNode ("attribute", "", null);
-				Assertion.Fail ("Expected an ArgumentException to be thrown.");
+				Fail ("Expected an ArgumentException to be thrown.");
 			} catch (ArgumentException) {}
 
 			try {
 				node = document.CreateNode ("element", null, null);
-				Assertion.Fail ("Expected a NullReferenceException to be thrown.");
+				Fail ("Expected a NullReferenceException to be thrown.");
 			} catch (NullReferenceException) {}
 
 			try {
 				node = document.CreateNode ("element", "", null);
-				Assertion.Fail ("Expected an ArgumentException to be thrown.");
+				Fail ("Expected an ArgumentException to be thrown.");
 			} catch (ArgumentException) {}
 
 			try {
 				node = document.CreateNode ("entityreference", null, null);
-				Assertion.Fail ("Expected a NullReferenceException to be thrown.");
+				Fail ("Expected a NullReferenceException to be thrown.");
 			} catch (NullReferenceException) {}
 		}
 
@@ -131,32 +131,32 @@ namespace MonoTests.System.Xml
 
 			try {
 				node = document.CreateNode (XmlNodeType.EndElement, null, null);
-				Assertion.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} catch (ArgumentOutOfRangeException) {}
 
 			try {
 				node = document.CreateNode (XmlNodeType.EndEntity, null, null);
-				Assertion.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} catch (ArgumentOutOfRangeException) {}
 
 			try {
 				node = document.CreateNode (XmlNodeType.Entity, null, null);
-				Assertion.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} catch (ArgumentOutOfRangeException) {}
 
 			try {
 				node = document.CreateNode (XmlNodeType.None, null, null);
-				Assertion.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} catch (ArgumentOutOfRangeException) {}
 
 			try {
 				node = document.CreateNode (XmlNodeType.Notation, null, null);
-				Assertion.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} catch (ArgumentOutOfRangeException) {}
 
 			// TODO:  undocumented allowable type.
 			node = document.CreateNode (XmlNodeType.XmlDeclaration, null, null);
-			Assertion.AssertEquals (XmlNodeType.XmlDeclaration, node.NodeType);
+			AssertEquals (XmlNodeType.XmlDeclaration, node.NodeType);
 		}
 
 		[Test]
@@ -167,32 +167,32 @@ namespace MonoTests.System.Xml
 			// No constructor params for Document, DocumentFragment.
 
 			node = document.CreateNode (XmlNodeType.CDATA, "a", "b", "c");
-			Assertion.AssertEquals (String.Empty, ((XmlCDataSection)node).Value);
+			AssertEquals (String.Empty, ((XmlCDataSection)node).Value);
 
 			node = document.CreateNode (XmlNodeType.Comment, "a", "b", "c");
-			Assertion.AssertEquals (String.Empty, ((XmlComment)node).Value);
+			AssertEquals (String.Empty, ((XmlComment)node).Value);
 
 			node = document.CreateNode (XmlNodeType.DocumentType, "a", "b", "c");
-			Assertion.AssertNull (((XmlDocumentType)node).Value);
+			AssertNull (((XmlDocumentType)node).Value);
 
 // TODO: add this back in to test when it's implemented.
 //			node = document.CreateNode (XmlNodeType.EntityReference, "a", "b", "c");
-//			Assertion.AssertNull (((XmlEntityReference)node).Value);
+//			AssertNull (((XmlEntityReference)node).Value);
 
 			node = document.CreateNode (XmlNodeType.ProcessingInstruction, "a", "b", "c");
-			Assertion.AssertEquals (String.Empty, ((XmlProcessingInstruction)node).Value);
+			AssertEquals (String.Empty, ((XmlProcessingInstruction)node).Value);
 
 			node = document.CreateNode (XmlNodeType.SignificantWhitespace, "a", "b", "c");
-			Assertion.AssertEquals (String.Empty, ((XmlSignificantWhitespace)node).Value);
+			AssertEquals (String.Empty, ((XmlSignificantWhitespace)node).Value);
 
 			node = document.CreateNode (XmlNodeType.Text, "a", "b", "c");
-			Assertion.AssertEquals (String.Empty, ((XmlText)node).Value);
+			AssertEquals (String.Empty, ((XmlText)node).Value);
 
 			node = document.CreateNode (XmlNodeType.Whitespace, "a", "b", "c");
-			Assertion.AssertEquals (String.Empty, ((XmlWhitespace)node).Value);
+			AssertEquals (String.Empty, ((XmlWhitespace)node).Value);
 
 			node = document.CreateNode (XmlNodeType.XmlDeclaration, "a", "b", "c");
-			Assertion.AssertEquals ("version=\"1.0\"", ((XmlDeclaration)node).Value);
+			AssertEquals ("version=\"1.0\"", ((XmlDeclaration)node).Value);
 		}
 
 		[Test]
@@ -202,72 +202,72 @@ namespace MonoTests.System.Xml
 
 			try {
 				node = document.CreateNode ("foo", null, null);
-				Assertion.Fail ("Expected an ArgumentException to be thrown.");
+				Fail ("Expected an ArgumentException to be thrown.");
 			} catch (ArgumentException) {}
 
 			node = document.CreateNode("attribute", "foo", null);
-			Assertion.AssertEquals (XmlNodeType.Attribute, node.NodeType);
+			AssertEquals (XmlNodeType.Attribute, node.NodeType);
 
 			node = document.CreateNode("cdatasection", null, null);
-			Assertion.AssertEquals (XmlNodeType.CDATA, node.NodeType);
+			AssertEquals (XmlNodeType.CDATA, node.NodeType);
 
 			node = document.CreateNode("comment", null, null);
-			Assertion.AssertEquals (XmlNodeType.Comment, node.NodeType);
+			AssertEquals (XmlNodeType.Comment, node.NodeType);
 
 			node = document.CreateNode("document", null, null);
-			Assertion.AssertEquals (XmlNodeType.Document, node.NodeType);
+			AssertEquals (XmlNodeType.Document, node.NodeType);
 			// TODO: test which constructor this ended up calling,
 			// i.e. reuse underlying NameTable or not?
 
 // TODO: add this back in to test when it's implemented.
 //			node = document.CreateNode("documentfragment", null, null);
-//			Assertion.AssertEquals (XmlNodeType.DocumentFragment, node.NodeType);
+//			AssertEquals (XmlNodeType.DocumentFragment, node.NodeType);
 
 			node = document.CreateNode("documenttype", null, null);
-			Assertion.AssertEquals (XmlNodeType.DocumentType, node.NodeType);
+			AssertEquals (XmlNodeType.DocumentType, node.NodeType);
 
 			node = document.CreateNode("element", "foo", null);
-			Assertion.AssertEquals (XmlNodeType.Element, node.NodeType);
+			AssertEquals (XmlNodeType.Element, node.NodeType);
 
 // TODO: add this back in to test when it's implemented.
 //			node = document.CreateNode("entityreference", "foo", null);
-//			Assertion.AssertEquals (XmlNodeType.EntityReference, node.NodeType);
+//			AssertEquals (XmlNodeType.EntityReference, node.NodeType);
 
 			node = document.CreateNode("processinginstruction", null, null);
-			Assertion.AssertEquals (XmlNodeType.ProcessingInstruction, node.NodeType);
+			AssertEquals (XmlNodeType.ProcessingInstruction, node.NodeType);
 
 			node = document.CreateNode("significantwhitespace", null, null);
-			Assertion.AssertEquals (XmlNodeType.SignificantWhitespace, node.NodeType);
+			AssertEquals (XmlNodeType.SignificantWhitespace, node.NodeType);
 
 			node = document.CreateNode("text", null, null);
-			Assertion.AssertEquals (XmlNodeType.Text, node.NodeType);
+			AssertEquals (XmlNodeType.Text, node.NodeType);
 
 			node = document.CreateNode("whitespace", null, null);
-			Assertion.AssertEquals (XmlNodeType.Whitespace, node.NodeType);
+			AssertEquals (XmlNodeType.Whitespace, node.NodeType);
 		}
 
 		[Test]
 		public void DocumentElement ()
 		{
-			Assertion.AssertNull (document.DocumentElement);
+			AssertNull (document.DocumentElement);
 			XmlElement element = document.CreateElement ("foo", "bar", "http://foo/");
-			Assertion.AssertNotNull (element);
+			AssertNotNull (element);
 
-			Assertion.AssertEquals ("foo", element.Prefix);
-			Assertion.AssertEquals ("bar", element.LocalName);
-			Assertion.AssertEquals ("http://foo/", element.NamespaceURI);
+			AssertEquals ("foo", element.Prefix);
+			AssertEquals ("bar", element.LocalName);
+			AssertEquals ("http://foo/", element.NamespaceURI);
 
-			Assertion.AssertEquals ("foo:bar", element.Name);
+			AssertEquals ("foo:bar", element.Name);
 
-			Assertion.AssertSame (element, document.AppendChild (element));
+			AssertSame (element, document.AppendChild (element));
 
-			Assertion.AssertSame (element, document.DocumentElement);
+			AssertSame (element, document.DocumentElement);
 		}
 
 		[Test]
 		public void DocumentEmpty()
 		{
-			Assertion.AssertEquals ("Incorrect output for empty document.", "", document.OuterXml);
+			AssertEquals ("Incorrect output for empty document.", "", document.OuterXml);
 		}
 
 		[Test]
@@ -282,19 +282,19 @@ namespace MonoTests.System.Xml
 			document.AppendChild (document.CreateElement ("foo"));
 			comment = document.CreateComment ("bar");
 			document.DocumentElement.AppendChild (comment);
-			Assertion.AssertEquals ("<!--bar-->", document.DocumentElement.InnerXml);
+			AssertEquals ("<!--bar-->", document.DocumentElement.InnerXml);
 			comment.Value = "baz";
-			Assertion.Assert (eventStrings.Contains ("NodeChanged, Change, <!--baz-->, foo, foo"));
-			Assertion.AssertEquals ("<!--baz-->", document.DocumentElement.InnerXml);
+			Assert (eventStrings.Contains ("NodeChanged, Change, <!--baz-->, foo, foo"));
+			AssertEquals ("<!--baz-->", document.DocumentElement.InnerXml);
 
 			// Node that isn't part of the document but created by the document.
 			element = document.CreateElement ("foo");
 			comment = document.CreateComment ("bar");
 			element.AppendChild (comment);
-			Assertion.AssertEquals ("<!--bar-->", element.InnerXml);
+			AssertEquals ("<!--bar-->", element.InnerXml);
 			comment.Value = "baz";
-			Assertion.Assert (eventStrings.Contains ("NodeChanged, Change, <!--baz-->, foo, foo"));
-			Assertion.AssertEquals ("<!--baz-->", element.InnerXml);
+			Assert (eventStrings.Contains ("NodeChanged, Change, <!--baz-->, foo, foo"));
+			AssertEquals ("<!--baz-->", element.InnerXml);
 
 /*
  TODO:  Insert this when XmlNode.InnerText() and XmlNode.InnerXml() have been implemented.
@@ -304,13 +304,13 @@ namespace MonoTests.System.Xml
 			element.InnerText = "bar";
 			document.AppendChild(element);
 			element.InnerText = "baz";
-			Assertion.Assert(eventStrings.Contains("NodeChanged, Change, baz, foo, foo"));
+			Assert(eventStrings.Contains("NodeChanged, Change, baz, foo, foo"));
 			
 			// Node that isn't part of the document but created by the document.
 			element = document.CreateElement("qux");
 			element.InnerText = "quux";
 			element.InnerText = "quuux";
-			Assertion.Assert(eventStrings.Contains("NodeChanged, Change, quuux, qux, qux"));
+			Assert(eventStrings.Contains("NodeChanged, Change, quuux, qux, qux"));
 */
 		}
 
@@ -326,32 +326,32 @@ namespace MonoTests.System.Xml
 			document.AppendChild (document.CreateElement ("foo"));
 			comment = document.CreateComment ("bar");
 			document.DocumentElement.AppendChild (comment);
-			Assertion.AssertEquals ("<!--bar-->", document.DocumentElement.InnerXml);
+			AssertEquals ("<!--bar-->", document.DocumentElement.InnerXml);
 			comment.Value = "baz";
-			Assertion.Assert (eventStrings.Contains ("NodeChanging, Change, <!--bar-->, foo, foo"));
-			Assertion.AssertEquals ("<!--baz-->", document.DocumentElement.InnerXml);
+			Assert (eventStrings.Contains ("NodeChanging, Change, <!--bar-->, foo, foo"));
+			AssertEquals ("<!--baz-->", document.DocumentElement.InnerXml);
 
 			// Node that isn't part of the document but created by the document.
 			element = document.CreateElement ("foo");
 			comment = document.CreateComment ("bar");
 			element.AppendChild (comment);
-			Assertion.AssertEquals ("<!--bar-->", element.InnerXml);
+			AssertEquals ("<!--bar-->", element.InnerXml);
 			comment.Value = "baz";
-			Assertion.Assert (eventStrings.Contains ("NodeChanging, Change, <!--bar-->, foo, foo"));
-			Assertion.AssertEquals ("<!--baz-->", element.InnerXml);
+			Assert (eventStrings.Contains ("NodeChanging, Change, <!--bar-->, foo, foo"));
+			AssertEquals ("<!--baz-->", element.InnerXml);
 
 			// If an exception is thrown the Document returns to original state.
 			document.NodeChanging += new XmlNodeChangedEventHandler (this.EventNodeChangingException);
 			element = document.CreateElement("foo");
 			comment = document.CreateComment ("bar");
 			element.AppendChild (comment);
-			Assertion.AssertEquals ("<!--bar-->", element.InnerXml);
+			AssertEquals ("<!--bar-->", element.InnerXml);
 			try 
 			{
 				comment.Value = "baz";
-				Assertion.Fail("Expected an exception to be thrown by the NodeChanging event handler method EventNodeChangingException().");
+				Fail("Expected an exception to be thrown by the NodeChanging event handler method EventNodeChangingException().");
 			} catch (Exception) {}
-			Assertion.AssertEquals ("<!--bar-->", element.InnerXml);
+			AssertEquals ("<!--bar-->", element.InnerXml);
 
 			// Yes it's a bit anal but this tests whether the node changing event exception fires before the
 			// ArgumentOutOfRangeException.  Turns out it does so that means our implementation needs to raise
@@ -359,7 +359,7 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				comment.ReplaceData(-1, 0, "qux");
-				Assertion.Fail("Expected an ArgumentOutOfRangeException to be thrown.");
+				Fail("Expected an ArgumentOutOfRangeException to be thrown.");
 			} 
 			catch (Exception) {}
 
@@ -371,13 +371,13 @@ namespace MonoTests.System.Xml
 			element.InnerText = "bar";
 			document.AppendChild(element);
 			element.InnerText = "baz";
-			Assertion.Assert(eventStrings.Contains("NodeChanging, Change, bar, foo, foo"));
+			Assert(eventStrings.Contains("NodeChanging, Change, bar, foo, foo"));
 
 			// Node that isn't part of the document but created by the document.
 			element = document.CreateElement("foo");
 			element.InnerText = "bar";
 			element.InnerText = "baz";
-			Assertion.Assert(eventStrings.Contains("NodeChanging, Change, bar, foo, foo"));
+			Assert(eventStrings.Contains("NodeChanging, Change, bar, foo, foo"));
 
 			// If an exception is thrown the Document returns to original state.
 			document.NodeChanging += new XmlNodeChangedEventHandler (this.EventNodeChangingException);
@@ -385,9 +385,9 @@ namespace MonoTests.System.Xml
 			element.InnerText = "bar";
 			try {
 				element.InnerText = "baz";
-				Assertion.Fail("Expected an exception to be thrown by the NodeChanging event handler method EventNodeChangingException().");
+				Fail("Expected an exception to be thrown by the NodeChanging event handler method EventNodeChangingException().");
 			} catch (Exception) {}
-			Assertion.AssertEquals("bar", element.InnerText);
+			AssertEquals("bar", element.InnerText);
 */
 		}
 
@@ -401,17 +401,17 @@ namespace MonoTests.System.Xml
 			// Inserted 'foo' element to the document.
 			element = document.CreateElement ("foo");
 			document.AppendChild (element);
-			Assertion.Assert (eventStrings.Contains ("NodeInserted, Insert, <foo />, <none>, #document"));
+			Assert (eventStrings.Contains ("NodeInserted, Insert, <foo />, <none>, #document"));
 
 			// Append child on node in document
 			element = document.CreateElement ("foo");
 			document.DocumentElement.AppendChild (element);
-			Assertion.Assert (eventStrings.Contains ("NodeInserted, Insert, <foo />, <none>, foo"));
+			Assert (eventStrings.Contains ("NodeInserted, Insert, <foo />, <none>, foo"));
 
 			// Append child on node not in document but created by document
 			element = document.CreateElement ("bar");
 			element.AppendChild(document.CreateElement ("bar"));
-			Assertion.Assert(eventStrings.Contains("NodeInserted, Insert, <bar />, <none>, bar"));
+			Assert(eventStrings.Contains("NodeInserted, Insert, <bar />, <none>, bar"));
 		}
 
 		[Test]
@@ -424,30 +424,30 @@ namespace MonoTests.System.Xml
 			// Inserting 'foo' element to the document.
 			element = document.CreateElement ("foo");
 			document.AppendChild (element);
-			Assertion.Assert (eventStrings.Contains ("NodeInserting, Insert, <foo />, <none>, #document"));
+			Assert (eventStrings.Contains ("NodeInserting, Insert, <foo />, <none>, #document"));
 
 			// Append child on node in document
 			element = document.CreateElement ("foo");
 			document.DocumentElement.AppendChild (element);
-			Assertion.Assert(eventStrings.Contains ("NodeInserting, Insert, <foo />, <none>, foo"));
+			Assert(eventStrings.Contains ("NodeInserting, Insert, <foo />, <none>, foo"));
 
 			// Append child on node not in document but created by document
 			element = document.CreateElement ("bar");
-			Assertion.AssertEquals (0, element.ChildNodes.Count);
+			AssertEquals (0, element.ChildNodes.Count);
 			element.AppendChild (document.CreateElement ("bar"));
-			Assertion.Assert (eventStrings.Contains ("NodeInserting, Insert, <bar />, <none>, bar"));
-			Assertion.AssertEquals (1, element.ChildNodes.Count);
+			Assert (eventStrings.Contains ("NodeInserting, Insert, <bar />, <none>, bar"));
+			AssertEquals (1, element.ChildNodes.Count);
 
 			// If an exception is thrown the Document returns to original state.
 			document.NodeInserting += new XmlNodeChangedEventHandler (this.EventNodeInsertingException);
-			Assertion.AssertEquals (1, element.ChildNodes.Count);
+			AssertEquals (1, element.ChildNodes.Count);
 			try 
 			{
 				element.AppendChild (document.CreateElement("baz"));
-				Assertion.Fail ("Expected an exception to be thrown by the NodeInserting event handler method EventNodeInsertingException().");
+				Fail ("Expected an exception to be thrown by the NodeInserting event handler method EventNodeInsertingException().");
 			} 
 			catch (Exception) {}
-			Assertion.AssertEquals (1, element.ChildNodes.Count);
+			AssertEquals (1, element.ChildNodes.Count);
 		}
 
 		[Test]
@@ -462,10 +462,10 @@ namespace MonoTests.System.Xml
 			element = document.CreateElement ("foo");
 			element2 = document.CreateElement ("bar");
 			element.AppendChild (element2);
-			Assertion.AssertEquals (1, element.ChildNodes.Count);
+			AssertEquals (1, element.ChildNodes.Count);
 			element.RemoveChild (element2);
-			Assertion.Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
-			Assertion.AssertEquals (0, element.ChildNodes.Count);
+			Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
+			AssertEquals (0, element.ChildNodes.Count);
 
 /*
  * TODO:  put this test back in when AttributeCollection.RemoveAll() is implemented.
@@ -474,10 +474,10 @@ namespace MonoTests.System.Xml
 			element = document.CreateElement ("foo");
 			element2 = document.CreateElement ("bar");
 			element.AppendChild(element2);
-			Assertion.AssertEquals(1, element.ChildNodes.Count);
+			AssertEquals(1, element.ChildNodes.Count);
 			element.RemoveAll();
-			Assertion.Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
-			Assertion.AssertEquals(0, element.ChildNodes.Count);
+			Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
+			AssertEquals(0, element.ChildNodes.Count);
 */
 
 			// Removed 'bar' element from 'foo' inside document.
@@ -485,10 +485,10 @@ namespace MonoTests.System.Xml
 			document.AppendChild (element);
 			element = document.CreateElement ("bar");
 			document.DocumentElement.AppendChild (element);
-			Assertion.AssertEquals (1, document.DocumentElement.ChildNodes.Count);
+			AssertEquals (1, document.DocumentElement.ChildNodes.Count);
 			document.DocumentElement.RemoveChild (element);
-			Assertion.Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
-			Assertion.AssertEquals (0, document.DocumentElement.ChildNodes.Count);
+			Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
+			AssertEquals (0, document.DocumentElement.ChildNodes.Count);
 		}
 	
 		[Test]
@@ -503,10 +503,10 @@ namespace MonoTests.System.Xml
 			element = document.CreateElement ("foo");
 			element2 = document.CreateElement ("bar");
 			element.AppendChild (element2);
-			Assertion.AssertEquals (1, element.ChildNodes.Count);
+			AssertEquals (1, element.ChildNodes.Count);
 			element.RemoveChild (element2);
-			Assertion.Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
-			Assertion.AssertEquals (0, element.ChildNodes.Count);
+			Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
+			AssertEquals (0, element.ChildNodes.Count);
 
 /*
  * TODO:  put this test back in when AttributeCollection.RemoveAll() is implemented.
@@ -515,10 +515,10 @@ namespace MonoTests.System.Xml
 			element = document.CreateElement ("foo");
 			element2 = document.CreateElement ("bar");
 			element.AppendChild(element2);
-			Assertion.AssertEquals(1, element.ChildNodes.Count);
+			AssertEquals(1, element.ChildNodes.Count);
 			element.RemoveAll();
-			Assertion.Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
-			Assertion.AssertEquals(0, element.ChildNodes.Count);
+			Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
+			AssertEquals(0, element.ChildNodes.Count);
 */
 
 			// Removing 'bar' element from 'foo' inside document.
@@ -526,22 +526,22 @@ namespace MonoTests.System.Xml
 			document.AppendChild (element);
 			element = document.CreateElement ("bar");
 			document.DocumentElement.AppendChild (element);
-			Assertion.AssertEquals (1, document.DocumentElement.ChildNodes.Count);
+			AssertEquals (1, document.DocumentElement.ChildNodes.Count);
 			document.DocumentElement.RemoveChild (element);
-			Assertion.Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
-			Assertion.AssertEquals (0, document.DocumentElement.ChildNodes.Count);
+			Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
+			AssertEquals (0, document.DocumentElement.ChildNodes.Count);
 
 			// If an exception is thrown the Document returns to original state.
 			document.NodeRemoving += new XmlNodeChangedEventHandler (this.EventNodeRemovingException);
 			element.AppendChild (element2);
-			Assertion.AssertEquals (1, element.ChildNodes.Count);
+			AssertEquals (1, element.ChildNodes.Count);
 			try 
 			{
 				element.RemoveChild(element2);
-				Assertion.Fail ("Expected an exception to be thrown by the NodeRemoving event handler method EventNodeRemovingException().");
+				Fail ("Expected an exception to be thrown by the NodeRemoving event handler method EventNodeRemovingException().");
 			} 
 			catch (Exception) {}
-			Assertion.AssertEquals (1, element.ChildNodes.Count);
+			AssertEquals (1, element.ChildNodes.Count);
 		}
 
 		[Test]
@@ -559,7 +559,7 @@ namespace MonoTests.System.Xml
 			document = new XmlDocument ();
 			document.Load (memoryStream);
 			XmlNodeList bookList = document.GetElementsByTagName ("book");
-			Assertion.AssertEquals ("GetElementsByTagName (string) returned incorrect count.", 4, bookList.Count);
+			AssertEquals ("GetElementsByTagName (string) returned incorrect count.", 4, bookList.Count);
 		}
 
 		[Test]
@@ -583,40 +583,40 @@ namespace MonoTests.System.Xml
 			document = new XmlDocument ();
 			document.Load (memoryStream);
 			XmlNodeList bookList = document.GetElementsByTagName ("book", "http://www.goo.com");
-			Assertion.AssertEquals ("GetElementsByTagName (string, uri) returned incorrect count.", 2, bookList.Count);
+			AssertEquals ("GetElementsByTagName (string, uri) returned incorrect count.", 2, bookList.Count);
 		}
 
 		[Test]
 		public void InnerAndOuterXml ()
 		{
-			Assertion.AssertEquals (String.Empty, document.InnerXml);
-			Assertion.AssertEquals (document.InnerXml, document.OuterXml);
+			AssertEquals (String.Empty, document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
 
 			XmlDeclaration declaration = document.CreateXmlDeclaration ("1.0", null, null);
 			document.AppendChild (declaration);
-			Assertion.AssertEquals ("<?xml version=\"1.0\"?>", document.InnerXml);
-			Assertion.AssertEquals (document.InnerXml, document.OuterXml);
+			AssertEquals ("<?xml version=\"1.0\"?>", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
 
 			XmlElement element = document.CreateElement ("foo");
 			document.AppendChild (element);
-			Assertion.AssertEquals ("<?xml version=\"1.0\"?><foo />", document.InnerXml);
-			Assertion.AssertEquals (document.InnerXml, document.OuterXml);
+			AssertEquals ("<?xml version=\"1.0\"?><foo />", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
 
 			XmlComment comment = document.CreateComment ("bar");
 			document.DocumentElement.AppendChild (comment);
-			Assertion.AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar--></foo>", document.InnerXml);
-			Assertion.AssertEquals (document.InnerXml, document.OuterXml);
+			AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar--></foo>", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
 
 			XmlText text = document.CreateTextNode ("baz");
 			document.DocumentElement.AppendChild (text);
-			Assertion.AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar-->baz</foo>", document.InnerXml);
-			Assertion.AssertEquals (document.InnerXml, document.OuterXml);
+			AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar-->baz</foo>", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
 
 			element = document.CreateElement ("quux");
 			element.SetAttribute ("quuux", "squonk");
 			document.DocumentElement.AppendChild (element);
-			Assertion.AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar-->baz<quux quuux=\"squonk\" /></foo>", document.InnerXml);
-			Assertion.AssertEquals (document.InnerXml, document.OuterXml);
+			AssertEquals ("<?xml version=\"1.0\"?><foo><!--bar-->baz<quux quuux=\"squonk\" /></foo>", document.InnerXml);
+			AssertEquals (document.InnerXml, document.OuterXml);
 		}
 
 		[Test]
@@ -633,15 +633,15 @@ namespace MonoTests.System.Xml
 			MemoryStream memoryStream = new MemoryStream (Encoding.UTF8.GetBytes (xml));
 			document = new XmlDocument ();
 			document.Load (memoryStream);
-			Assertion.AssertEquals ("Not Loaded From IOStream", true, document.HasChildNodes);
+			AssertEquals ("Not Loaded From IOStream", true, document.HasChildNodes);
 		}
 
 		[Test]
 		public void LoadXmlCDATA ()
 		{
 			document.LoadXml ("<foo><![CDATA[bar]]></foo>");
-			Assertion.Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.CDATA);
-			Assertion.AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.CDATA);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
 		}
 
 		[Test]
@@ -650,88 +650,88 @@ namespace MonoTests.System.Xml
 // XmlTextReader needs to throw this exception
 //			try {
 //				document.LoadXml("<!--foo-->");
-//				Assertion.Fail("XmlException should have been thrown.");
+//				Fail("XmlException should have been thrown.");
 //			}
 //			catch (XmlException e) {
-//				Assertion.AssertEquals("Exception message doesn't match.", "The root element is missing.", e.Message);
+//				AssertEquals("Exception message doesn't match.", "The root element is missing.", e.Message);
 //			}
 
 			document.LoadXml ("<foo><!--Comment--></foo>");
-			Assertion.Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Comment);
-			Assertion.AssertEquals ("Comment", document.DocumentElement.FirstChild.Value);
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Comment);
+			AssertEquals ("Comment", document.DocumentElement.FirstChild.Value);
 
 			document.LoadXml (@"<foo><!--bar--></foo>");
-			Assertion.AssertEquals ("Incorrect target.", "bar", ((XmlComment)document.FirstChild.FirstChild).Data);
+			AssertEquals ("Incorrect target.", "bar", ((XmlComment)document.FirstChild.FirstChild).Data);
 		}
 
 		[Test]
 		public void LoadXmlElementSingle ()
 		{
-			Assertion.AssertNull (document.DocumentElement);
+			AssertNull (document.DocumentElement);
 			document.LoadXml ("<foo/>");
 
-			Assertion.AssertNotNull (document.DocumentElement);
-			Assertion.AssertSame (document.FirstChild, document.DocumentElement);
+			AssertNotNull (document.DocumentElement);
+			AssertSame (document.FirstChild, document.DocumentElement);
 
-			Assertion.AssertEquals (String.Empty, document.DocumentElement.Prefix);
-			Assertion.AssertEquals ("foo", document.DocumentElement.LocalName);
-			Assertion.AssertEquals (String.Empty, document.DocumentElement.NamespaceURI);
-			Assertion.AssertEquals ("foo", document.DocumentElement.Name);
+			AssertEquals (String.Empty, document.DocumentElement.Prefix);
+			AssertEquals ("foo", document.DocumentElement.LocalName);
+			AssertEquals (String.Empty, document.DocumentElement.NamespaceURI);
+			AssertEquals ("foo", document.DocumentElement.Name);
 		}
 
 		[Test]
 		public void LoadXmlElementWithAttributes ()
 		{
-			Assertion.AssertNull (document.DocumentElement);
+			AssertNull (document.DocumentElement);
 			document.LoadXml ("<foo bar='baz' quux='quuux' hoge='hello &amp; world' />");
 
 			XmlElement documentElement = document.DocumentElement;
 
-			Assertion.AssertEquals ("baz", documentElement.GetAttribute ("bar"));
-			Assertion.AssertEquals ("quuux", documentElement.GetAttribute ("quux"));
-			Assertion.AssertEquals ("hello & world", documentElement.GetAttribute ("hoge"));
-			Assertion.AssertEquals ("hello & world", documentElement.Attributes ["hoge"].Value);
-			Assertion.AssertEquals (1, documentElement.GetAttributeNode ("hoge").ChildNodes.Count);
+			AssertEquals ("baz", documentElement.GetAttribute ("bar"));
+			AssertEquals ("quuux", documentElement.GetAttribute ("quux"));
+			AssertEquals ("hello & world", documentElement.GetAttribute ("hoge"));
+			AssertEquals ("hello & world", documentElement.Attributes ["hoge"].Value);
+			AssertEquals (1, documentElement.GetAttributeNode ("hoge").ChildNodes.Count);
 		}
 
 		[Test]
 		public void LoadXmlElementWithChildElement ()
 		{
 			document.LoadXml ("<foo><bar/></foo>");
-			Assertion.Assert (document.ChildNodes.Count == 1);
-			Assertion.Assert (document.FirstChild.ChildNodes.Count == 1);
-			Assertion.AssertEquals ("foo", document.DocumentElement.LocalName);
-			Assertion.AssertEquals ("bar", document.DocumentElement.FirstChild.LocalName);
+			Assert (document.ChildNodes.Count == 1);
+			Assert (document.FirstChild.ChildNodes.Count == 1);
+			AssertEquals ("foo", document.DocumentElement.LocalName);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.LocalName);
 		}
 
 		[Test]
 		public void LoadXmlElementWithTextNode ()
 		{
 			document.LoadXml ("<foo>bar</foo>");
-			Assertion.Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Text);
-			Assertion.AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Text);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
 		}
 
 		[Test]
 		public void LoadXmlExceptionClearsDocument ()
 		{
 			document.LoadXml ("<foo/>");
-			Assertion.Assert (document.FirstChild != null);
+			Assert (document.FirstChild != null);
 			
 			try {
 				document.LoadXml ("<123/>");
-				Assertion.Fail ("An XmlException should have been thrown.");
+				Fail ("An XmlException should have been thrown.");
 			} catch (XmlException) {}
 
-			Assertion.Assert (document.FirstChild == null);
+			Assert (document.FirstChild == null);
 		}
 
 		[Test]
 		public void LoadXmlProcessingInstruction ()
 		{
 			document.LoadXml (@"<?foo bar='baaz' quux='quuux'?><quuuux></quuuux>");
-			Assertion.AssertEquals ("Incorrect target.", "foo", ((XmlProcessingInstruction)document.FirstChild).Target);
-			Assertion.AssertEquals ("Incorrect data.", "bar='baaz' quux='quuux'", ((XmlProcessingInstruction)document.FirstChild).Data);
+			AssertEquals ("Incorrect target.", "foo", ((XmlProcessingInstruction)document.FirstChild).Target);
+			AssertEquals ("Incorrect data.", "bar='baaz' quux='quuux'", ((XmlProcessingInstruction)document.FirstChild).Data);
 		}
 
 		[Test]
@@ -741,15 +741,15 @@ namespace MonoTests.System.Xml
 			
 			xml = "<root><![CDATA[foo]]></root>";
 			document.LoadXml (xml);
-			Assertion.AssertEquals("XmlDocument with cdata OuterXml is incorrect.", xml, document.OuterXml);
+			AssertEquals("XmlDocument with cdata OuterXml is incorrect.", xml, document.OuterXml);
 
 			xml = "<root><!--foo--></root>";
 			document.LoadXml (xml);
-			Assertion.AssertEquals("XmlDocument with comment OuterXml is incorrect.", xml, document.OuterXml);
+			AssertEquals("XmlDocument with comment OuterXml is incorrect.", xml, document.OuterXml);
 
 			xml = "<root><?foo bar?></root>";
 			document.LoadXml (xml);
-			Assertion.AssertEquals("XmlDocument with processing instruction OuterXml is incorrect.", xml, document.OuterXml);
+			AssertEquals("XmlDocument with processing instruction OuterXml is incorrect.", xml, document.OuterXml);
 		}
 
 		[Test]
@@ -757,11 +757,11 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<foo><bar><baz/></bar></foo>");
 			XmlNode node = document.FirstChild.FirstChild.FirstChild;
-			Assertion.AssertEquals ("Wrong child found.", "baz", node.LocalName);
-			Assertion.AssertEquals ("Wrong parent.", "bar", node.ParentNode.LocalName);
-			Assertion.AssertEquals ("Wrong parent.", "foo", node.ParentNode.ParentNode.LocalName);
-			Assertion.AssertEquals ("Wrong parent.", "#document", node.ParentNode.ParentNode.ParentNode.LocalName);
-			Assertion.AssertNull ("Expected parent to be null.", node.ParentNode.ParentNode.ParentNode.ParentNode);
+			AssertEquals ("Wrong child found.", "baz", node.LocalName);
+			AssertEquals ("Wrong parent.", "bar", node.ParentNode.LocalName);
+			AssertEquals ("Wrong parent.", "foo", node.ParentNode.ParentNode.LocalName);
+			AssertEquals ("Wrong parent.", "#document", node.ParentNode.ParentNode.ParentNode.LocalName);
+			AssertNull ("Expected parent to be null.", node.ParentNode.ParentNode.ParentNode.ParentNode);
 		}
 
 		[Test]
@@ -774,7 +774,7 @@ namespace MonoTests.System.Xml
 			node = document.DocumentElement.FirstChild;
 			document.DocumentElement.RemoveChild (node);
 			nextSibling = node.NextSibling;
-			Assertion.AssertNull ("Expected removed node's next sibling to be null.", nextSibling);
+			AssertNull ("Expected removed node's next sibling to be null.", nextSibling);
 		}
 
 		// ImportNode
@@ -792,50 +792,50 @@ namespace MonoTests.System.Xml
 
 			// Attribute
 			n = newDoc.ImportNode(bar.GetAttributeNode("href", xlinkURI), true);
-			Assertion.AssertEquals("#ImportNode.Attr.NS.LocalName", "href", n.LocalName);
-			Assertion.AssertEquals("#ImportNode.Attr.NS.NSURI", xlinkURI, n.NamespaceURI);
-			Assertion.AssertEquals("#ImportNode.Attr.NS.Value", "#foo", n.Value);
+			AssertEquals("#ImportNode.Attr.NS.LocalName", "href", n.LocalName);
+			AssertEquals("#ImportNode.Attr.NS.NSURI", xlinkURI, n.NamespaceURI);
+			AssertEquals("#ImportNode.Attr.NS.Value", "#foo", n.Value);
 
 			// CDATA
 			n = newDoc.ImportNode(bar.FirstChild.FirstChild, true);
-			Assertion.AssertEquals("#ImportNode.CDATA", "cdata section.\n\titem 1\n\titem 2\n", n.Value);
+			AssertEquals("#ImportNode.CDATA", "cdata section.\n\titem 1\n\titem 2\n", n.Value);
 
 			// Element
 			XmlElement e = newDoc.ImportNode(bar, true) as XmlElement;
-			Assertion.AssertEquals("#ImportNode.Element.Name", "bar", e.Name);
-			Assertion.AssertEquals("#ImportNode.Element.Attr", "#foo", e.GetAttribute("href", xlinkURI));
-			Assertion.AssertEquals("#ImportNode.Element.deep", "baz", e.FirstChild.Name);
+			AssertEquals("#ImportNode.Element.Name", "bar", e.Name);
+			AssertEquals("#ImportNode.Element.Attr", "#foo", e.GetAttribute("href", xlinkURI));
+			AssertEquals("#ImportNode.Element.deep", "baz", e.FirstChild.Name);
 
 			// Entity Reference:
 			//   [2002/10/14] CreateEntityReference was not implemented.
 //			document.LoadXml("<!DOCTYPE test PUBLIC 'dummy' [<!ENTITY FOOENT 'foo'>]><root>&FOOENT;</root>");
 //			n = newDoc.ImportNode(document.DocumentElement.FirstChild);
-//			Assertion.AssertEquals("#ImportNode.EntityReference", "FOOENT", n.Name);
-//			Assertion.AssertEquals("#ImportNode.EntityReference", "foo_", n.Value);
+//			AssertEquals("#ImportNode.EntityReference", "FOOENT", n.Name);
+//			AssertEquals("#ImportNode.EntityReference", "foo_", n.Value);
 
 			// Processing Instruction
 			document.LoadXml("<foo><?xml-stylesheet href='foo.xsl' ?></foo>");
 			XmlProcessingInstruction pi = (XmlProcessingInstruction)newDoc.ImportNode(document.DocumentElement.FirstChild, false);
-			Assertion.AssertEquals("#ImportNode.ProcessingInstruction.Name", "xml-stylesheet", pi.Name);
-			Assertion.AssertEquals("#ImportNode.ProcessingInstruction.Data", "href='foo.xsl'", pi.Data.Trim());
+			AssertEquals("#ImportNode.ProcessingInstruction.Name", "xml-stylesheet", pi.Name);
+			AssertEquals("#ImportNode.ProcessingInstruction.Data", "href='foo.xsl'", pi.Data.Trim());
 			
 			// Text
 			document.LoadXml(xml1);
 			n = newDoc.ImportNode((XmlText)bar.FirstChild.ChildNodes[1], true);
-			Assertion.AssertEquals("#ImportNode.Text", "From here, simple text node.", n.Value);
+			AssertEquals("#ImportNode.Text", "From here, simple text node.", n.Value);
 
 			// XmlDeclaration
 			document.LoadXml(xml1);
 			XmlDeclaration decl = (XmlDeclaration)newDoc.ImportNode(document.FirstChild, false);
-			Assertion.AssertEquals("#ImportNode.XmlDeclaration.Type", XmlNodeType.XmlDeclaration, decl.NodeType);
-			Assertion.AssertEquals("#ImportNode.XmlDeclaration.Encoding", "utf-8", decl.Encoding);
+			AssertEquals("#ImportNode.XmlDeclaration.Type", XmlNodeType.XmlDeclaration, decl.NodeType);
+			AssertEquals("#ImportNode.XmlDeclaration.Encoding", "utf-8", decl.Encoding);
 		}
 
 		[Test]
 		public void NameTable()
 		{
 			XmlDocument doc = new XmlDocument();
-			Assertion.AssertNotNull(doc.NameTable);
+			AssertNotNull(doc.NameTable);
 		}
 
 		[Test]
@@ -843,7 +843,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml("<root />");
-			Assertion.AssertNotNull(doc.DocumentElement);
+			AssertNotNull(doc.DocumentElement);
 		}
 
 		[Test]
@@ -853,26 +853,26 @@ namespace MonoTests.System.Xml
 			try {
 				doc.LoadXml ("<!DOCTYPE test><root />");
 			} catch (XmlException) {
-				Assertion.Fail ("#DoctypeDecl.OnlyName");
+				Fail ("#DoctypeDecl.OnlyName");
 			}
 #if NetworkEnabled
 			try 
 			{
 				doc.LoadXml ("<!DOCTYPE test SYSTEM 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><root />");
 			} catch (XmlException) {
-				Assertion.Fail("#DoctypeDecl.System");
+				Fail("#DoctypeDecl.System");
 			}
 			try {
 				doc.LoadXml ("<!DOCTYPE test PUBLIC '-//test' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><root />");
 			} catch (XmlException) {
-				Assertion.Fail ("#DoctypeDecl.Public");
+				Fail ("#DoctypeDecl.Public");
 			}
 #endif
 			// Should this be commented out?
 			try {
 				doc.LoadXml ("<!DOCTYPE test [<!ELEMENT foo >]><root />");
 			} catch (XmlException) {
-				Assertion.Fail("#DoctypeDecl.ElementDecl");
+				Fail("#DoctypeDecl.ElementDecl");
 			}
 		}
 
@@ -882,9 +882,9 @@ namespace MonoTests.System.Xml
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<foo><bar /><baz hoge='fuga'>TEST Text</baz></foo>");
 			XmlDocument doc2 = (XmlDocument)doc.CloneNode (false);
-			Assertion.AssertEquals ("ShallowCopy", 0, doc2.ChildNodes.Count);
+			AssertEquals ("ShallowCopy", 0, doc2.ChildNodes.Count);
 			doc2 = (XmlDocument)doc.CloneNode (true);
-			Assertion.AssertEquals ("DeepCopy", "foo", doc2.DocumentElement.Name);
+			AssertEquals ("DeepCopy", "foo", doc2.DocumentElement.Name);
 		}
 
 		[Test]
@@ -892,7 +892,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username></username></query></iq>");
-			Assertion.AssertEquals ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username /></query></iq>", doc.OuterXml);
+			AssertEquals ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username /></query></iq>", doc.OuterXml);
 		}
 
 		[Test]
@@ -905,7 +905,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader reader = new XmlTextReader (new StringReader (input));
 			dom.Load (reader);
 
-			Assertion.AssertEquals (XmlNodeType.Element, dom.FirstChild.NextSibling.NextSibling.NodeType);
+			AssertEquals (XmlNodeType.Element, dom.FirstChild.NextSibling.NextSibling.NodeType);
 		}
 
 //		[Test]  Comment out in the meantime.

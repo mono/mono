@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlSignificantWhitespaceTests
+	public class XmlSignificantWhitespaceTests : Assertion
 	{
 		XmlDocument document;
 		XmlDocument doc2;
@@ -43,8 +43,8 @@ namespace MonoTests.System.Xml
 		public void InnerAndOuterXml ()
 		{
 			whitespace = doc2.CreateSignificantWhitespace ("\r\n\t ");
-			Assertion.AssertEquals (String.Empty, whitespace.InnerXml);
-			Assertion.AssertEquals ("\r\n\t ", whitespace.OuterXml);
+			AssertEquals (String.Empty, whitespace.InnerXml);
+			AssertEquals ("\r\n\t ", whitespace.OuterXml);
 		}
 
 		[Test]
@@ -52,21 +52,21 @@ namespace MonoTests.System.Xml
 		{
 			string val = "\t\t\r\n ";
 			whitespace = doc2.CreateSignificantWhitespace (val);
-			Assertion.AssertEquals ("#DataValue.1", val, whitespace.Data);
-			Assertion.AssertEquals ("#DataValue.2", val, whitespace.Value);
+			AssertEquals ("#DataValue.1", val, whitespace.Data);
+			AssertEquals ("#DataValue.2", val, whitespace.Value);
 			whitespace.Value = val + "\t";
-			Assertion.AssertEquals ("#DataValue.3", val + "\t", whitespace.Data);
+			AssertEquals ("#DataValue.3", val + "\t", whitespace.Data);
 		}
 			
 		internal void XmlNodeBaseProperties (XmlNode original, XmlNode cloned)
 		{
 //			assertequals (original.nodetype + " was incorrectly cloned.",
 //				      original.baseuri, cloned.baseuri);			
-			Assertion.AssertNull (cloned.ParentNode);
-			Assertion.AssertEquals ("Value incorrectly cloned",
+			AssertNull (cloned.ParentNode);
+			AssertEquals ("Value incorrectly cloned",
 				       cloned.Value, original.Value);
 			
-                        Assertion.Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
+                        Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
 
 		[Test]
@@ -79,42 +79,42 @@ namespace MonoTests.System.Xml
 				return;
 
 			} catch (Exception) {
-				Assertion.Fail ("Incorrect Exception thrown.");
+				Fail ("Incorrect Exception thrown.");
 			}
 		}
 
 		[Test]
 		public void XmlSignificantWhitespaceConstructor ()
 		{
-			Assertion.AssertEquals ("whitespace char didn't get copied right",
+			AssertEquals ("whitespace char didn't get copied right",
 				      "\r\n", whitespace.Data);
 		}
 		
 	       	[Test]
 		public void XmlSignificantWhitespaceName ()
 		{
-			Assertion.AssertEquals (whitespace.NodeType + " Name property broken",
+			AssertEquals (whitespace.NodeType + " Name property broken",
 				      whitespace.Name, "#significant-whitespace");
 		}
 
 		[Test]
 		public void XmlSignificantWhitespaceLocalName ()
 		{
-			Assertion.AssertEquals (whitespace.NodeType + " LocalName property broken",
+			AssertEquals (whitespace.NodeType + " LocalName property broken",
 				      whitespace.LocalName, "#significant-whitespace");
 		}
 
 		[Test]
 		public void XmlSignificantWhitespaceNodeType ()
 		{
-			Assertion.AssertEquals ("XmlSignificantWhitespace NodeType property broken",
+			AssertEquals ("XmlSignificantWhitespace NodeType property broken",
 				      whitespace.NodeType.ToString (), "SignificantWhitespace");
 		}
 
 		[Test]
 		public void XmlSignificantWhitespaceIsReadOnly ()
 		{
-			Assertion.AssertEquals ("XmlSignificantWhitespace IsReadOnly property broken",
+			AssertEquals ("XmlSignificantWhitespace IsReadOnly property broken",
 				      whitespace.IsReadOnly, false);
 		}
 
@@ -129,7 +129,7 @@ namespace MonoTests.System.Xml
 			deep = whitespace.CloneNode (true); // deep
 			XmlNodeBaseProperties (original, deep); 
 
-                        Assertion.AssertEquals ("deep cloning differs from shallow cloning",
+                        AssertEquals ("deep cloning differs from shallow cloning",
 				      deep.OuterXml, shallow.OuterXml);
 		}
 	}

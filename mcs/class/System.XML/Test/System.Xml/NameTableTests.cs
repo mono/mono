@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class NameTableTests
+	public class NameTableTests : Assertion
 	{
 		NameTable table;
 		
@@ -34,8 +34,8 @@ namespace MonoTests.System.Xml
 		{
 			string add = "add1";
 			string testAdd = table.Add (add);
-			Assertion.AssertEquals (add, testAdd);
-			Assertion.AssertSame (add, testAdd);
+			AssertEquals (add, testAdd);
+			AssertSame (add, testAdd);
 		}
 
 		//
@@ -48,7 +48,7 @@ namespace MonoTests.System.Xml
 			int index = 0;
 			int length = 3; // "add"			
 
-			Assertion.AssertEquals ("add", table.Add (test, index, length));
+			AssertEquals ("add", table.Add (test, index, length));
 		}
 
 		//
@@ -60,8 +60,8 @@ namespace MonoTests.System.Xml
 			string get1 = "get1";
 			string testGet = table.Add (get1);			
 
-			Assertion.AssertEquals (table.Get (get1), testGet);
-			Assertion.AssertSame (get1, testGet );
+			AssertEquals (table.Get (get1), testGet);
+			AssertSame (get1, testGet );
 		}
 
 		//
@@ -76,7 +76,7 @@ namespace MonoTests.System.Xml
 			
 			string testGet = table.Add (test, index, length);			
 
-			Assertion.AssertEquals (table.Get (test, index, length), testGet);
+			AssertEquals (table.Get (test, index, length), testGet);
 		}
 
 		//
@@ -89,7 +89,7 @@ namespace MonoTests.System.Xml
 			int index = 0;
 			int length = 0;
 
-			Assertion.AssertEquals (table.Get (test, index, length), String.Empty);
+			AssertEquals (table.Get (test, index, length), String.Empty);
 		}
 	}
 }

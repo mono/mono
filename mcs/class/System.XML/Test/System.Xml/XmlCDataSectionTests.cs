@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlCDataSectionTests
+	public class XmlCDataSectionTests : Assertion
 	{
 		XmlDocument document;
 		XmlCDataSection section;
@@ -35,45 +35,45 @@ namespace MonoTests.System.Xml
 
 		internal void XmlNodeBaseProperties (XmlNode original, XmlNode cloned)
 		{
-			// Assertion.AssertEquals (original.nodetype + " was incorrectly cloned.",
+			// AssertEquals (original.nodetype + " was incorrectly cloned.",
 			// 		 original.baseuri, cloned.baseuri);			
-			Assertion.AssertNull (cloned.ParentNode);
-                        Assertion.Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
+			AssertNull (cloned.ParentNode);
+                        Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
 	       
 		[Test]
 		public void XmlCDataSectionInnerAndOuterXml ()
 		{
 			section = document.CreateCDataSection ("foo");
-			Assertion.AssertEquals (String.Empty, section.InnerXml);
-			Assertion.AssertEquals ("<![CDATA[foo]]>", section.OuterXml);
+			AssertEquals (String.Empty, section.InnerXml);
+			AssertEquals ("<![CDATA[foo]]>", section.OuterXml);
 		}
 
 		[Test]
 		public void XmlCDataSectionName ()
 		{
-			Assertion.AssertEquals (section.NodeType + " Name property broken",
+			AssertEquals (section.NodeType + " Name property broken",
 				      section.Name, "#cdata-section");
 		}
 
 		[Test]
 		public void XmlCDataSectionLocalName ()
 		{
-			Assertion.AssertEquals (section.NodeType + " LocalName property broken",
+			AssertEquals (section.NodeType + " LocalName property broken",
 				      section.LocalName, "#cdata-section");
 		}
 
 		[Test]
 		public void XmlCDataSectionNodeType ()
 		{
-			Assertion.AssertEquals ("XmlCDataSection NodeType property broken",
+			AssertEquals ("XmlCDataSection NodeType property broken",
 				      section.NodeType.ToString (), "CDATA");
 		}
 
 		[Test]
 		public void XmlCDataSectionIsReadOnly ()
 		{
-			Assertion.AssertEquals ("XmlCDataSection IsReadOnly property broken",
+			AssertEquals ("XmlCDataSection IsReadOnly property broken",
 				      section.IsReadOnly, false);
 		}
 
@@ -84,15 +84,15 @@ namespace MonoTests.System.Xml
 
 			shallow = section.CloneNode (false); // shallow
 			XmlNodeBaseProperties (original, shallow);
-			Assertion.AssertEquals ("Value incorrectly cloned",
+			AssertEquals ("Value incorrectly cloned",
 				      original.Value, shallow.Value);
 			
 			deep = section.CloneNode (true); // deep
 			XmlNodeBaseProperties (original, deep);
-			Assertion.AssertEquals ("Value incorrectly cloned",
+			AssertEquals ("Value incorrectly cloned",
 				       original.Value, deep.Value);
 
-                        Assertion.AssertEquals ("deep cloning differs from shallow cloning",
+                        AssertEquals ("deep cloning differs from shallow cloning",
 				      deep.OuterXml, shallow.OuterXml);
 		}
 	}

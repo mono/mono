@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlTextWriterTests
+	public class XmlTextWriterTests : Assertion
 	{
 		StringWriter sw;
 		XmlTextWriter xtw;
@@ -43,7 +43,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString("bar", "baz");
 			xtw.WriteAttributeString ("xmlns", "abc", null, "http://abc.def");
-			Assertion.AssertEquals ("<foo bar='baz' xmlns:abc='http://abc.def'", StringWriterText);
+			AssertEquals ("<foo bar='baz' xmlns:abc='http://abc.def'", StringWriterText);
 		}
 
 		[Test]
@@ -53,14 +53,14 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteAttributeString ("xmlns", "abc", null, "http://abc.def");
 			xtw.WriteAttributeString("bar", "baz");
-			Assertion.AssertEquals ("<foo xmlns:abc='http://abc.def' bar='baz'", StringWriterText);
+			AssertEquals ("<foo xmlns:abc='http://abc.def' bar='baz'", StringWriterText);
 		}
 
 		[Test]
 		public void AttributeNamespacesThreeParamWithNullInNamespaceParam ()
 		{
 			xtw.WriteAttributeString ("xmlns", null, "http://abc.def");
-			Assertion.AssertEquals ("xmlns='http://abc.def'", StringWriterText);
+			AssertEquals ("xmlns='http://abc.def'", StringWriterText);
 		}
 
 		[Test]
@@ -77,7 +77,7 @@ namespace MonoTests.System.Xml
 		public void AttributeNamespacesWithNullInNamespaceParam ()
 		{
 			xtw.WriteAttributeString ("xmlns", "abc", null, "http://abc.def");
-			Assertion.AssertEquals ("xmlns:abc='http://abc.def'", StringWriterText);
+			AssertEquals ("xmlns:abc='http://abc.def'", StringWriterText);
 		}
 
 		[Test]
@@ -95,7 +95,7 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
-				Assertion.Fail ("any prefix which name starts from \"xml\" must not be allowed.");
+				Fail ("any prefix which name starts from \"xml\" must not be allowed.");
 			} 
  			catch (ArgumentException e) {}
 		}
@@ -106,20 +106,20 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 
 			xtw.WriteAttributeString ("foo", "bar");
-			Assertion.AssertEquals ("<foo foo='bar'", StringWriterText);
+			AssertEquals ("<foo foo='bar'", StringWriterText);
 
 			xtw.WriteAttributeString ("bar", "");
-			Assertion.AssertEquals ("<foo foo='bar' bar=''", StringWriterText);
+			AssertEquals ("<foo foo='bar' bar=''", StringWriterText);
 
 			xtw.WriteAttributeString ("baz", null);
-			Assertion.AssertEquals ("<foo foo='bar' bar='' baz=''", StringWriterText);
+			AssertEquals ("<foo foo='bar' bar='' baz=''", StringWriterText);
 
 			try {
 				// Why does this pass Microsoft?
 				// Anyway, Mono should not allow such code.
 				xtw.WriteAttributeString ("", "quux");
-//				Assertion.AssertEquals ("<foo foo='bar' bar='' baz='' ='quux'", StringWriterText);
-				Assertion.Fail ("empty name not allowed.");
+//				AssertEquals ("<foo foo='bar' bar='' baz='' ='quux'", StringWriterText);
+				Fail ("empty name not allowed.");
 			} catch (Exception) {
 			}
 
@@ -127,8 +127,8 @@ namespace MonoTests.System.Xml
 				// Why does this pass Microsoft?
 				// Anyway, Mono should not allow such code.
 				xtw.WriteAttributeString (null, "quuux");
-//				Assertion.AssertEquals ("<foo foo='bar' bar='' baz='' ='quux' ='quuux'", StringWriterText);
-				Assertion.Fail ("null name not allowed.");
+//				AssertEquals ("<foo foo='bar' bar='' baz='' ='quux' ='quuux'", StringWriterText);
+				Fail ("null name not allowed.");
 			} catch (Exception) {
 			}
 		}
@@ -142,7 +142,7 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				xtw.WriteAttributeString ("baz", "quux");
-				Assertion.Fail ("Expected an InvalidOperationException to be thrown.");
+				Fail ("Expected an InvalidOperationException to be thrown.");
 			} 
 			catch (InvalidOperationException) {}
 		}
@@ -151,17 +151,17 @@ namespace MonoTests.System.Xml
 		public void AttributeWriteAttributeStringWithoutParentElement ()
 		{
 			xtw.WriteAttributeString ("foo", "bar");
-			Assertion.AssertEquals ("foo='bar'", StringWriterText);
+			AssertEquals ("foo='bar'", StringWriterText);
 
 			xtw.WriteAttributeString ("baz", "quux");
-			Assertion.AssertEquals ("foo='bar' baz='quux'", StringWriterText);
+			AssertEquals ("foo='bar' baz='quux'", StringWriterText);
 		}
 
 		[Test]
 		public void CDataValid ()
 		{
 			xtw.WriteCData ("foo");
-			Assertion.AssertEquals ("WriteCData had incorrect output.", "<![CDATA[foo]]>", StringWriterText);
+			AssertEquals ("WriteCData had incorrect output.", "<![CDATA[foo]]>", StringWriterText);
 		}
 
 		[Test]
@@ -169,7 +169,7 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				xtw.WriteCData("foo]]>bar");
-				Assertion.Fail("Should have thrown an ArgumentException.");
+				Fail("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) { }
 		}
@@ -181,7 +181,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement("bar");
 			xtw.WriteStartElement("baz");
 			xtw.Close();
-			Assertion.AssertEquals ("Close didn't write out end elements properly.", "<foo><bar><baz /></bar></foo>",	StringWriterText);
+			AssertEquals ("Close didn't write out end elements properly.", "<foo><bar><baz /></bar></foo>",	StringWriterText);
 		}
 
 		[Test]
@@ -196,52 +196,52 @@ namespace MonoTests.System.Xml
 
 			try {
 				xtw.WriteCData ("foo");
-				Assertion.Fail ("WriteCData after Close Should have thrown an InvalidOperationException.");
+				Fail ("WriteCData after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				Assertion.AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
 				xtw.WriteComment ("foo");
-				Assertion.Fail ("WriteComment after Close Should have thrown an InvalidOperationException.");
+				Fail ("WriteComment after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				Assertion.AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
 				xtw.WriteProcessingInstruction ("foo", "bar");
-				Assertion.Fail ("WriteProcessingInstruction after Close Should have thrown an InvalidOperationException.");
+				Fail ("WriteProcessingInstruction after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				Assertion.AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
 				xtw.WriteStartElement ("foo", "bar", "baz");
-				Assertion.Fail ("WriteStartElement after Close Should have thrown an InvalidOperationException.");
+				Fail ("WriteStartElement after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				Assertion.AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try 
 			{
 				xtw.WriteAttributeString ("foo", "bar");
-				Assertion.Fail ("WriteAttributeString after Close Should have thrown an InvalidOperationException.");
+				Fail ("WriteAttributeString after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) 
 			{
-				Assertion.AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
 				xtw.WriteString ("foo");
-				Assertion.Fail ("WriteString after Close Should have thrown an InvalidOperationException.");
+				Fail ("WriteString after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				Assertion.AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 		}
 
@@ -249,7 +249,7 @@ namespace MonoTests.System.Xml
 		public void CommentValid ()
 		{
 			xtw.WriteComment ("foo");
-			Assertion.AssertEquals ("WriteComment had incorrect output.", "<!--foo-->", StringWriterText);
+			AssertEquals ("WriteComment had incorrect output.", "<!--foo-->", StringWriterText);
 		}
 
 		[Test]
@@ -257,13 +257,13 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				xtw.WriteComment("foo-");
-				Assertion.Fail("Should have thrown an ArgumentException.");
+				Fail("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) { }
 
 			try {
 				xtw.WriteComment("foo-->bar");
-				Assertion.Fail("Should have thrown an ArgumentException.");
+				Fail("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) { }
 		}
@@ -271,7 +271,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void ConstructorsAndBaseStream ()
 		{
-			Assertion.Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (null, this.xtw.BaseStream));
+			Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (null, this.xtw.BaseStream));
 
 			MemoryStream ms;
 			StreamReader sr;
@@ -285,8 +285,8 @@ namespace MonoTests.System.Xml
 			sr = new StreamReader (ms, Encoding.Unicode);
 			string expectedXmlDeclaration = "<?xml version=\"1.0\" encoding=\"utf-16\"?>";
 			string actualXmlDeclaration = sr.ReadToEnd();
-			Assertion.AssertEquals (expectedXmlDeclaration, actualXmlDeclaration);
-			Assertion.Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (ms, xtw.BaseStream));
+			AssertEquals (expectedXmlDeclaration, actualXmlDeclaration);
+			Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (ms, xtw.BaseStream));
 
 			ms = new MemoryStream ();
 			xtw = new XmlTextWriter (ms, new UnicodeEncoding ());
@@ -294,7 +294,7 @@ namespace MonoTests.System.Xml
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
 			sr = new StreamReader (ms, Encoding.Unicode);
-			Assertion.AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?>", sr.ReadToEnd ());
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?>", sr.ReadToEnd ());
 
 			ms = new MemoryStream ();
 			xtw = new XmlTextWriter (ms, new UTF8Encoding ());
@@ -302,7 +302,7 @@ namespace MonoTests.System.Xml
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
 			sr = new StreamReader (ms, Encoding.UTF8);
-			Assertion.AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-8\"?>", sr.ReadToEnd ());
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-8\"?>", sr.ReadToEnd ());
 
 			ms = new MemoryStream ();
 			xtw = new XmlTextWriter (ms, null);
@@ -310,7 +310,7 @@ namespace MonoTests.System.Xml
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
 			sr = new StreamReader (ms, Encoding.UTF8);
-			Assertion.AssertEquals ("<?xml version=\"1.0\"?>", sr.ReadToEnd ());
+			AssertEquals ("<?xml version=\"1.0\"?>", sr.ReadToEnd ());
 
 			ms = new MemoryStream ();
 			xtw = new XmlTextWriter (ms, null);
@@ -318,35 +318,35 @@ namespace MonoTests.System.Xml
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
 			sr = new StreamReader (ms, Encoding.UTF8);
-			Assertion.AssertEquals ("<?xml version=\"1.0\" standalone=\"yes\"?>", sr.ReadToEnd ());
-			Assertion.Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (ms, xtw.BaseStream));
+			AssertEquals ("<?xml version=\"1.0\" standalone=\"yes\"?>", sr.ReadToEnd ());
+			Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (ms, xtw.BaseStream));
 		}
 
 		[Test]
 		public void DocumentStart ()
 		{
 			xtw.WriteStartDocument ();
-			Assertion.AssertEquals ("XmlDeclaration is incorrect.", "<?xml version='1.0' encoding='utf-16'?>", StringWriterText);
+			AssertEquals ("XmlDeclaration is incorrect.", "<?xml version='1.0' encoding='utf-16'?>", StringWriterText);
 
 			try 
 			{
 				xtw.WriteStartDocument ();
-				Assertion.Fail("Should have thrown an InvalidOperationException.");
+				Fail("Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				Assertion.AssertEquals ("Exception message is incorrect.",
+				AssertEquals ("Exception message is incorrect.",
 					"WriteStartDocument should be the first call.", e.Message);
 			}
 
 			xtw = new XmlTextWriter (sw = new StringWriter ());
 			xtw.QuoteChar = '\'';
 			xtw.WriteStartDocument (true);
-			Assertion.AssertEquals ("<?xml version='1.0' encoding='utf-16' standalone='yes'?>", StringWriterText);
+			AssertEquals ("<?xml version='1.0' encoding='utf-16' standalone='yes'?>", StringWriterText);
 
 			xtw = new XmlTextWriter (sw = new StringWriter ());
 			xtw.QuoteChar = '\'';
 			xtw.WriteStartDocument (false);
-			Assertion.AssertEquals ("<?xml version='1.0' encoding='utf-16' standalone='no'?>", StringWriterText);
+			AssertEquals ("<?xml version='1.0' encoding='utf-16' standalone='no'?>", StringWriterText);
 		}
 
 		[Test]
@@ -354,26 +354,26 @@ namespace MonoTests.System.Xml
 		{
 			xtw.WriteStartElement ("foo");
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals ("Incorrect output.", "<foo />", StringWriterText);
+			AssertEquals ("Incorrect output.", "<foo />", StringWriterText);
 		}
 
 		[Test]
 		public void ElementWriteElementString ()
 		{
 			xtw.WriteElementString ("foo", "bar");
-			Assertion.AssertEquals ("WriteElementString has incorrect output.", "<foo>bar</foo>", StringWriterText);
+			AssertEquals ("WriteElementString has incorrect output.", "<foo>bar</foo>", StringWriterText);
 
 			xtw.WriteElementString ("baz", "");
-			Assertion.AssertEquals ("<foo>bar</foo><baz />", StringWriterText);
+			AssertEquals ("<foo>bar</foo><baz />", StringWriterText);
 
 			xtw.WriteElementString ("quux", null);
-			Assertion.AssertEquals ("<foo>bar</foo><baz /><quux />", StringWriterText);
+			AssertEquals ("<foo>bar</foo><baz /><quux />", StringWriterText);
 
 			xtw.WriteElementString ("", "quuux");
-			Assertion.AssertEquals ("<foo>bar</foo><baz /><quux /><>quuux</>", StringWriterText);
+			AssertEquals ("<foo>bar</foo><baz /><quux /><>quuux</>", StringWriterText);
 
 			xtw.WriteElementString (null, "quuuux");
-			Assertion.AssertEquals ("<foo>bar</foo><baz /><quux /><>quuux</><>quuuux</>", StringWriterText);
+			AssertEquals ("<foo>bar</foo><baz /><quux /><>quuux</><>quuuux</>", StringWriterText);
 		}
 
 		[Test]
@@ -384,7 +384,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 			xtw.WriteElementString ("bar", "");
 			xtw.Close ();
- 			Assertion.AssertEquals (String.Format ("<?xml version='1.0' encoding='utf-16'?>{0}<foo>{0}  <bar />{0}</foo>", Environment.NewLine), StringWriterText);
+ 			AssertEquals (String.Format ("<?xml version='1.0' encoding='utf-16'?>{0}<foo>{0}  <bar />{0}</foo>", Environment.NewLine), StringWriterText);
 		}
 
 		[Test]
@@ -397,7 +397,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("bar");
 			xtw.WriteElementString ("baz", "");
 			xtw.Close ();
- 			Assertion.AssertEquals (String.Format ("<?xml version='1.0' encoding='utf-16'?>{0}<foo>{0}xx<bar>{0}xxxx<baz />{0}xx</bar>{0}</foo>", Environment.NewLine), StringWriterText);
+ 			AssertEquals (String.Format ("<?xml version='1.0' encoding='utf-16'?>{0}<foo>{0}xx<bar>{0}xxxx<baz />{0}xx</bar>{0}</foo>", Environment.NewLine), StringWriterText);
 		}
 
 		[Test]
@@ -413,7 +413,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteString (" walks slowly."); 
 			xtw.WriteEndElement (); 
 			xtw.WriteEndElement ();
- 			Assertion.AssertEquals (String.Format ("<ol>{0}  <li>The big <b>E</b><i>lephant</i> walks slowly.</li>{0}</ol>", Environment.NewLine), StringWriterText);
+ 			AssertEquals (String.Format ("<ol>{0}  <li>The big <b>E</b><i>lephant</i> walks slowly.</li>{0}</ol>", Environment.NewLine), StringWriterText);
 		}
 
 		[Test]
@@ -424,18 +424,18 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("one");
 			xtw.WriteAttributeString ("xmlns", "foo", null, "http://abc.def");
 			xtw.WriteAttributeString ("xmlns", "bar", null, "http://ghi.jkl");
-			Assertion.AssertEquals ("foo", xtw.LookupPrefix ("http://abc.def"));
-			Assertion.AssertEquals ("bar", xtw.LookupPrefix ("http://ghi.jkl"));
+			AssertEquals ("foo", xtw.LookupPrefix ("http://abc.def"));
+			AssertEquals ("bar", xtw.LookupPrefix ("http://ghi.jkl"));
 			xtw.WriteEndElement ();
 
 			xtw.WriteStartElement ("two");
 			xtw.WriteAttributeString ("xmlns", "baz", null, "http://mno.pqr");
 			xtw.WriteString("quux");
-			Assertion.AssertEquals ("baz", xtw.LookupPrefix ("http://mno.pqr"));
-			Assertion.AssertNull (xtw.LookupPrefix ("http://abc.def"));
-			Assertion.AssertNull (xtw.LookupPrefix ("http://ghi.jkl"));
+			AssertEquals ("baz", xtw.LookupPrefix ("http://mno.pqr"));
+			AssertNull (xtw.LookupPrefix ("http://abc.def"));
+			AssertNull (xtw.LookupPrefix ("http://ghi.jkl"));
 
-			Assertion.AssertNull (xtw.LookupPrefix ("http://bogus"));
+			AssertNull (xtw.LookupPrefix ("http://bogus"));
 		}
 
 		[Test]
@@ -452,7 +452,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteAttributeString ("", "e", null, "f");
 			xtw.WriteAttributeString (null, "g", null, "h");
 
-			Assertion.AssertEquals ("<foo bar='baz' a='b' c='d' e='f' g='h'", StringWriterText);
+			AssertEquals ("<foo bar='baz' a='b' c='d' e='f' g='h'", StringWriterText);
 
 			// These should throw ArgumentException because they pass in a
 			// namespace when Namespaces = false.
@@ -474,38 +474,38 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("", "c", null);
 			xtw.WriteStartElement ("", "d", "");
 
-			Assertion.AssertEquals ("<foo>bar</foo><baz><quux><quuux><a><b><c><d", StringWriterText);
+			AssertEquals ("<foo>bar</foo><baz><quux><quuux><a><b><c><d", StringWriterText);
 
 			// These should throw ArgumentException because they pass in a
 			// namespace when Namespaces = false.
 			try {
 				xtw.WriteElementString ("qux", "http://netsack.com/", String.Empty);
-				Assertion.Fail ("Expected an ArgumentException.");
+				Fail ("Expected an ArgumentException.");
 			} catch (ArgumentException) {}
 
 			try {
 				xtw.WriteStartElement ("foo", "http://netsack.com/");
-				Assertion.Fail ("Expected an ArgumentException.");
+				Fail ("Expected an ArgumentException.");
 			} catch (ArgumentException) {}
 
 			try {
 				xtw.WriteStartElement ("foo", "bar", "http://netsack.com/");
-				Assertion.Fail ("Expected an ArgumentException.");
+				Fail ("Expected an ArgumentException.");
 			} catch (ArgumentException) {}
 
 			try {
 				xtw.WriteStartElement ("foo", "bar", null);
-				Assertion.Fail ("Expected an ArgumentException.");
+				Fail ("Expected an ArgumentException.");
 			} catch (ArgumentException) {}
 
 			try {
 				xtw.WriteStartElement ("foo", "bar", "");
-				Assertion.Fail ("Expected an ArgumentException.");
+				Fail ("Expected an ArgumentException.");
 			} catch (ArgumentException) {}
 
 			try {
 				xtw.WriteStartElement ("foo", "", "");
-				Assertion.Fail ("Expected an ArgumentException.");
+				Fail ("Expected an ArgumentException.");
 			} catch (ArgumentException) {}
 		}
 
@@ -517,7 +517,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteElementString("baz", String.Empty, String.Empty);
 			xtw.WriteEndElement();
 			xtw.WriteEndElement();
-			Assertion.AssertEquals ("XmlTextWriter is incorrectly outputting namespaces.",
+			AssertEquals ("XmlTextWriter is incorrectly outputting namespaces.",
 				"<foo xmlns='http://netsack.com/'><bar xmlns=''><baz /></bar></foo>", StringWriterText);
 		}
 
@@ -529,7 +529,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteElementString ("qux", "http://netsack.com/", String.Empty);
 			xtw.WriteEndElement ();
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals ("XmlTextWriter is incorrectly outputting prefixes.",
+			AssertEquals ("XmlTextWriter is incorrectly outputting prefixes.",
 				"<foo:bar xmlns:foo='http://netsack.com/'><foo:baz><foo:qux /></foo:baz></foo:bar>", StringWriterText);
 		}
 
@@ -538,13 +538,13 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				xtw.WriteStartElement ("foo", "bar", "");
-				Assertion.Fail ("Should have thrown an ArgumentException.");
+				Fail ("Should have thrown an ArgumentException.");
 			} catch (ArgumentException) {}
 
 			try 
 			{
 				xtw.WriteStartElement ("foo", "bar", null);
-				Assertion.Fail ("Should have thrown an ArgumentException.");
+				Fail ("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) {}
 		}
@@ -556,17 +556,17 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				xtw.Namespaces = false;
-				Assertion.Fail ("Expected an InvalidOperationException.");
+				Fail ("Expected an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException) {}
-			Assertion.AssertEquals (true, xtw.Namespaces);
+			AssertEquals (true, xtw.Namespaces);
 		}
 
 		[Test]
 		public void ProcessingInstructionValid ()
 		{
 			xtw.WriteProcessingInstruction("foo", "bar");
-			Assertion.AssertEquals ("WriteProcessingInstruction had incorrect output.", "<?foo bar?>", StringWriterText);
+			AssertEquals ("WriteProcessingInstruction had incorrect output.", "<?foo bar?>", StringWriterText);
 		}
 
 		[Test]
@@ -575,28 +575,28 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				xtw.WriteProcessingInstruction("fo?>o", "bar");
-				Assertion.Fail("Should have thrown an ArgumentException.");
+				Fail("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) { }
 
 			try 
 			{
 				xtw.WriteProcessingInstruction("foo", "ba?>r");
-				Assertion.Fail("Should have thrown an ArgumentException.");
+				Fail("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) { }
 
 			try 
 			{
 				xtw.WriteProcessingInstruction("", "bar");
-				Assertion.Fail("Should have thrown an ArgumentException.");
+				Fail("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) { }
 
 			try 
 			{
 				xtw.WriteProcessingInstruction(null, "bar");
-				Assertion.Fail("Should have thrown an ArgumentException.");
+				Fail("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) { }
 		}
@@ -612,7 +612,7 @@ namespace MonoTests.System.Xml
 			// namespace declaration
 			xtw.WriteElementString ("foo", "http://netsack.com", "bar");
 
-			Assertion.AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?><foo xmlns=\"http://netsack.com\">bar</foo>", StringWriterText);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?><foo xmlns=\"http://netsack.com\">bar</foo>", StringWriterText);
 
 
 		}
@@ -622,7 +622,7 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				xtw.QuoteChar = 'x';
-				Assertion.Fail ("Should have thrown an ArgumentException.");
+				Fail ("Should have thrown an ArgumentException.");
 			} catch (ArgumentException) {}
 		}
 
@@ -632,26 +632,26 @@ namespace MonoTests.System.Xml
 			UTF8Encoding encoding = new UTF8Encoding();
 			byte[] fooBar = encoding.GetBytes("foobar");
 			xtw.WriteBase64 (fooBar, 0, 6);
-			Assertion.AssertEquals("Zm9vYmFy", StringWriterText);
+			AssertEquals("Zm9vYmFy", StringWriterText);
 
 			try {
 				xtw.WriteBase64 (fooBar, 3, 6);
-				Assertion.Fail ("Expected an Argument Exception to be thrown.");
+				Fail ("Expected an Argument Exception to be thrown.");
 			} catch (ArgumentException) {}
 
 			try {
 				xtw.WriteBase64 (fooBar, -1, 6);
-				Assertion.Fail ("Expected an Argument Exception to be thrown.");
+				Fail ("Expected an Argument Exception to be thrown.");
 			} catch (ArgumentOutOfRangeException) {}
 
 			try {
 				xtw.WriteBase64 (fooBar, 3, -1);
-				Assertion.Fail ("Expected an Argument Exception to be thrown.");
+				Fail ("Expected an Argument Exception to be thrown.");
 			} catch (ArgumentOutOfRangeException) {}
 
 			try {
 				xtw.WriteBase64 (null, 0, 6);
-				Assertion.Fail ("Expected an Argument Exception to be thrown.");
+				Fail ("Expected an Argument Exception to be thrown.");
 			} catch (ArgumentNullException) {}
 		}
 
@@ -659,16 +659,16 @@ namespace MonoTests.System.Xml
 		public void WriteCharEntity ()
 		{
 			xtw.WriteCharEntity ('a');
-			Assertion.AssertEquals ("&#x61;", StringWriterText);
+			AssertEquals ("&#x61;", StringWriterText);
 
 			xtw.WriteCharEntity ('A');
-			Assertion.AssertEquals ("&#x61;&#x41;", StringWriterText);
+			AssertEquals ("&#x61;&#x41;", StringWriterText);
 
 			xtw.WriteCharEntity ('1');
-			Assertion.AssertEquals ("&#x61;&#x41;&#x31;", StringWriterText);
+			AssertEquals ("&#x61;&#x41;&#x31;", StringWriterText);
 
 			xtw.WriteCharEntity ('K');
-			Assertion.AssertEquals ("&#x61;&#x41;&#x31;&#x4B;", StringWriterText);
+			AssertEquals ("&#x61;&#x41;&#x31;&#x4B;", StringWriterText);
 
 			try {
 				xtw.WriteCharEntity ((char)0xd800);
@@ -681,7 +681,7 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				xtw.WriteEndAttribute ();
-				Assertion.Fail ("Should have thrown an InvalidOperationException.");
+				Fail ("Should have thrown an InvalidOperationException.");
 			}
 			catch (InvalidOperationException) {}
 		}
@@ -691,7 +691,7 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				xtw.WriteEndDocument ();
-				Assertion.Fail ("Expected an ArgumentException.");
+				Fail ("Expected an ArgumentException.");
 			} catch (ArgumentException) {}
 
 			xtw.WriteStartDocument ();
@@ -699,17 +699,17 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				xtw.WriteEndDocument ();
-				Assertion.Fail ("Expected an ArgumentException.");
+				Fail ("Expected an ArgumentException.");
 			} 
 			catch (ArgumentException) {}
 
 			xtw.WriteStartElement ("foo");
 			xtw.WriteStartAttribute ("bar", null);
-			Assertion.AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='", StringWriterText);
+			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='", StringWriterText);
 
 			xtw.WriteEndDocument ();
-			Assertion.AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='' />", StringWriterText);
-			Assertion.AssertEquals (WriteState.Start, xtw.WriteState);
+			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='' />", StringWriterText);
+			AssertEquals (WriteState.Start, xtw.WriteState);
 		}
 
 		[Test]
@@ -717,19 +717,19 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				xtw.WriteEndElement ();
-				Assertion.Fail ("Should have thrown an InvalidOperationException.");
+				Fail ("Should have thrown an InvalidOperationException.");
 			} catch (InvalidOperationException e) {
-				Assertion.AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);
 			}
 
 			xtw.WriteStartElement ("foo");
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals ("<foo />", StringWriterText);
+			AssertEquals ("<foo />", StringWriterText);
 
 			xtw.WriteStartElement ("bar");
 			xtw.WriteStartAttribute ("baz", null);
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals ("<foo /><bar baz='' />", StringWriterText);
+			AssertEquals ("<foo /><bar baz='' />", StringWriterText);
 		}
 
 		[Test]
@@ -737,17 +737,17 @@ namespace MonoTests.System.Xml
 		{
 			xtw.WriteStartElement ("foo");
 			xtw.WriteFullEndElement ();
-			Assertion.AssertEquals ("<foo></foo>", StringWriterText);
+			AssertEquals ("<foo></foo>", StringWriterText);
 
 			xtw.WriteStartElement ("bar");
 			xtw.WriteAttributeString ("foo", "bar");
 			xtw.WriteFullEndElement ();
-			Assertion.AssertEquals ("<foo></foo><bar foo='bar'></bar>", StringWriterText);
+			AssertEquals ("<foo></foo><bar foo='bar'></bar>", StringWriterText);
 
 			xtw.WriteStartElement ("baz");
 			xtw.WriteStartAttribute ("bar", null);
 			xtw.WriteFullEndElement ();
-			Assertion.AssertEquals ("<foo></foo><bar foo='bar'></bar><baz bar=''></baz>", StringWriterText);
+			AssertEquals ("<foo></foo><bar foo='bar'></bar><baz bar=''></baz>", StringWriterText);
 		}
 
 		[Test]
@@ -758,20 +758,20 @@ namespace MonoTests.System.Xml
 			xtw.WriteQualifiedName ("bob", "http://localhost/");
 			xtw.WriteEndElement ();
 
-			Assertion.AssertEquals ("<test xmlns:me='http://localhost/'>me:bob</test>", StringWriterText);
+			AssertEquals ("<test xmlns:me='http://localhost/'>me:bob</test>", StringWriterText);
 		}
 
 		[Test]
 		public void WriteRaw ()
 		{
 			xtw.WriteRaw("&<>\"'");
-			Assertion.AssertEquals ("&<>\"'", StringWriterText);
+			AssertEquals ("&<>\"'", StringWriterText);
 
 			xtw.WriteRaw(null);
-			Assertion.AssertEquals ("&<>\"'", StringWriterText);
+			AssertEquals ("&<>\"'", StringWriterText);
 
 			xtw.WriteRaw("");
-			Assertion.AssertEquals ("&<>\"'", StringWriterText);
+			AssertEquals ("&<>\"'", StringWriterText);
 		}
 
 		[Test]
@@ -782,21 +782,21 @@ namespace MonoTests.System.Xml
 			xtw.WriteRaw ("&<>\"'");
 			xtw.WriteEndAttribute ();
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals ("<foo bar='&<>\"'' />", StringWriterText);
+			AssertEquals ("<foo bar='&<>\"'' />", StringWriterText);
 		}
 
 		[Test]
 		public void WriteStateTest ()
 		{
-			Assertion.AssertEquals (WriteState.Start, xtw.WriteState);
+			AssertEquals (WriteState.Start, xtw.WriteState);
 			xtw.WriteStartDocument ();
-			Assertion.AssertEquals (WriteState.Prolog, xtw.WriteState);
+			AssertEquals (WriteState.Prolog, xtw.WriteState);
 			xtw.WriteStartElement ("root");
-			Assertion.AssertEquals (WriteState.Element, xtw.WriteState);
+			AssertEquals (WriteState.Element, xtw.WriteState);
 			xtw.WriteElementString ("foo", "bar");
-			Assertion.AssertEquals (WriteState.Content, xtw.WriteState);
+			AssertEquals (WriteState.Content, xtw.WriteState);
 			xtw.Close ();
-			Assertion.AssertEquals (WriteState.Closed, xtw.WriteState);
+			AssertEquals (WriteState.Closed, xtw.WriteState);
 		}
 
 		[Test]
@@ -811,7 +811,7 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("bar", "&<>");
-			Assertion.AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='&amp;&lt;&gt;'", StringWriterText);
+			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='&amp;&lt;&gt;'", StringWriterText);
 		}
 
 		[Test]
@@ -822,7 +822,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("bar", "\"baz\"");
 			xtw.WriteAttributeString ("quux", "'baz'");
-			Assertion.AssertEquals ("<foo bar='\"baz\"' quux='&apos;baz&apos;'", StringWriterText);
+			AssertEquals ("<foo bar='\"baz\"' quux='&apos;baz&apos;'", StringWriterText);
 		}
 
 		[Test]
@@ -834,7 +834,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("bar", "\"baz\"");
 			xtw.WriteAttributeString ("quux", "'baz'");
-			Assertion.AssertEquals ("<foo bar=\"&quot;baz&quot;\" quux=\"'baz'\"", StringWriterText);
+			AssertEquals ("<foo bar=\"&quot;baz&quot;\" quux=\"'baz'\"", StringWriterText);
 		}
 
 		[Test]
@@ -843,65 +843,65 @@ namespace MonoTests.System.Xml
 			// Testing element values
 			xtw.QuoteChar = '\'';
 			xtw.WriteElementString ("foo", "&<>\"'");
-			Assertion.AssertEquals ("<foo>&amp;&lt;&gt;\"'</foo>", StringWriterText);
+			AssertEquals ("<foo>&amp;&lt;&gt;\"'</foo>", StringWriterText);
 		}
 
 		[Test]
 		public void XmlLang ()
 		{
-			Assertion.AssertNull (xtw.XmlLang);
+			AssertNull (xtw.XmlLang);
 			
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("xml", "lang", null, "langfoo");
-			Assertion.AssertEquals ("langfoo", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo'", StringWriterText);
+			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo'", StringWriterText);
 
 			xtw.WriteAttributeString ("boo", "yah");
-			Assertion.AssertEquals ("langfoo", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'", StringWriterText);
+			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'", StringWriterText);
 			
 			xtw.WriteElementString("bar", "baz");
-			Assertion.AssertEquals ("langfoo", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>", StringWriterText);
+			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>", StringWriterText);
 			
 			xtw.WriteString("baz");
-			Assertion.AssertEquals ("langfoo", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz", StringWriterText);
+			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz", StringWriterText);
 			
 			xtw.WriteStartElement ("quux");
 			xtw.WriteStartAttribute ("xml", "lang", null);
-			Assertion.AssertEquals ("langfoo", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='", StringWriterText);
+			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='", StringWriterText);
 			
 			xtw.WriteString("langbar");
-			Assertion.AssertEquals ("langfoo", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='", StringWriterText);
+			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='", StringWriterText);
 			
 			xtw.WriteEndAttribute ();
-			Assertion.AssertEquals ("langbar", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'", StringWriterText);
+			AssertEquals ("langbar", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'", StringWriterText);
 
 			// check if xml:lang repeats output even if same as current scope.
 			xtw.WriteStartElement ("joe");
 			xtw.WriteAttributeString ("xml", "lang", null, "langbar");
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><joe xml:lang='langbar'", StringWriterText);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><joe xml:lang='langbar'", StringWriterText);
 
 			
 			xtw.WriteElementString ("quuux", "squonk");
-			Assertion.AssertEquals ("langbar", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><joe xml:lang='langbar'><quuux>squonk</quuux>", StringWriterText);
+			AssertEquals ("langbar", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><joe xml:lang='langbar'><quuux>squonk</quuux>", StringWriterText);
 
 			xtw.WriteEndElement ();
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals ("langfoo", xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><joe xml:lang='langbar'><quuux>squonk</quuux></joe></quux>", StringWriterText);
+			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><joe xml:lang='langbar'><quuux>squonk</quuux></joe></quux>", StringWriterText);
 			
 			xtw.WriteEndElement ();
-			Assertion.AssertNull (xtw.XmlLang);
-			Assertion.AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><joe xml:lang='langbar'><quuux>squonk</quuux></joe></quux></foo>", StringWriterText);
+			AssertNull (xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><joe xml:lang='langbar'><quuux>squonk</quuux></joe></quux></foo>", StringWriterText);
 			
 			xtw.Close ();
-			Assertion.AssertNull (xtw.XmlLang);
+			AssertNull (xtw.XmlLang);
 		}
 
 		// TODO: test operational aspects
@@ -909,37 +909,37 @@ namespace MonoTests.System.Xml
 		public void XmlSpaceTest ()
 		{
 			xtw.WriteStartElement ("foo");
-			Assertion.AssertEquals (XmlSpace.None, xtw.XmlSpace);
+			AssertEquals (XmlSpace.None, xtw.XmlSpace);
 
 			xtw.WriteStartElement ("bar");
 			xtw.WriteAttributeString ("xml", "space", null, "preserve");
-			Assertion.AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
-			Assertion.AssertEquals ("<foo><bar xml:space='preserve'",	StringWriterText);
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+			AssertEquals ("<foo><bar xml:space='preserve'",	StringWriterText);
 
 			xtw.WriteStartElement ("baz");
 			xtw.WriteAttributeString ("xml", "space", null, "preserve");
-			Assertion.AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
-			Assertion.AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'", StringWriterText);
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+			AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'", StringWriterText);
 
 			xtw.WriteStartElement ("quux");
 			xtw.WriteStartAttribute ("xml", "space", null);
-			Assertion.AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
-			Assertion.AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+			AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
 
 			xtw.WriteString ("default");
-			Assertion.AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
-			Assertion.AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+			AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
 			
 			xtw.WriteEndAttribute ();
-			Assertion.AssertEquals (XmlSpace.Default, xtw.XmlSpace);
-			Assertion.AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='default'", StringWriterText);
+			AssertEquals (XmlSpace.Default, xtw.XmlSpace);
+			AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='default'", StringWriterText);
 
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals (XmlSpace.None, xtw.XmlSpace);
+			AssertEquals (XmlSpace.None, xtw.XmlSpace);
 
 			xtw.WriteStartElement ("quux");
 			try {
@@ -968,16 +968,16 @@ namespace MonoTests.System.Xml
 		{
 			xtw.WriteStartElement ("foo");
 			xtw.WriteStartAttribute ("xml", "space", null);
-			Assertion.AssertEquals (XmlSpace.None, xtw.XmlSpace);
-			Assertion.AssertEquals ("<foo xml:space='", StringWriterText);
+			AssertEquals (XmlSpace.None, xtw.XmlSpace);
+			AssertEquals ("<foo xml:space='", StringWriterText);
 
 			xtw.WriteString ("default");
-			Assertion.AssertEquals (XmlSpace.None, xtw.XmlSpace);
-			Assertion.AssertEquals ("<foo xml:space='", StringWriterText);
+			AssertEquals (XmlSpace.None, xtw.XmlSpace);
+			AssertEquals ("<foo xml:space='", StringWriterText);
 
 			xtw.WriteEndAttribute ();
-			Assertion.AssertEquals (XmlSpace.Default, xtw.XmlSpace);
-			Assertion.AssertEquals ("<foo xml:space='default'", StringWriterText);
+			AssertEquals (XmlSpace.Default, xtw.XmlSpace);
+			AssertEquals ("<foo xml:space='default'", StringWriterText);
 		}
 
 		[Test]
@@ -993,7 +993,7 @@ namespace MonoTests.System.Xml
 			xtr.Read();	// read XMLDecl
 			wr.WriteAttributes(xtr, false);
 			// This method don't always have to take this double-quoted style...
-			Assertion.AssertEquals("#WriteAttributes.XmlDecl.1", "version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"", sw.ToString().Trim());
+			AssertEquals("#WriteAttributes.XmlDecl.1", "version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"", sw.ToString().Trim());
 
 			sb.Remove(0, sb.Length);	// init
 			ctx = new XmlParserContext(doc.NameTable, new XmlNamespaceManager(doc.NameTable), "", XmlSpace.Default);
@@ -1001,7 +1001,7 @@ namespace MonoTests.System.Xml
 			xtr.Read();	// read XMLDecl
 			wr.WriteAttributes(xtr, false);
 			// This method don't always have to take this double-quoted style...
-			Assertion.AssertEquals("#WriteAttributes.XmlDecl.2", "version=\"1.0\" standalone=\"no\"", sw.ToString().Trim());
+			AssertEquals("#WriteAttributes.XmlDecl.2", "version=\"1.0\" standalone=\"no\"", sw.ToString().Trim());
 
 			sb.Remove(0, sb.Length);	// init
 			xtr.Read();	// read root
@@ -1010,7 +1010,7 @@ namespace MonoTests.System.Xml
 			wr.WriteEndElement();
 			wr.Close();
 			// This method don't always have to take this double-quoted style...
-			Assertion.AssertEquals("#WriteAttributes.Element", "<root a1=\"A\" b2=\"B\" c3=\"C\" />", sw.ToString().Trim());
+			AssertEquals("#WriteAttributes.Element", "<root a1=\"A\" b2=\"B\" c3=\"C\" />", sw.ToString().Trim());
 		}
 	}
 }

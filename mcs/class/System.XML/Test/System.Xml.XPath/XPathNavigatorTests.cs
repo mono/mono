@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XPathNavigatorTests
+	public class XPathNavigatorTests : Assertion
 	{
 		XmlDocument document;
 		XPathNavigator navigator;
@@ -34,7 +34,7 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<foo />");
 			navigator = document.CreateNavigator ();
-			Assertion.AssertNotNull (navigator);
+			AssertNotNull (navigator);
 		}
 
 		[Test]
@@ -43,14 +43,14 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo:bar xmlns:foo='#foo' />");
 			navigator = document.CreateNavigator ();
 			
-			Assertion.AssertEquals (XPathNodeType.Root, navigator.NodeType);
-			Assertion.AssertEquals (String.Empty, navigator.Name);
-			Assertion.AssertEquals (String.Empty, navigator.LocalName);
-			Assertion.AssertEquals (String.Empty, navigator.NamespaceURI);
-			Assertion.AssertEquals (String.Empty, navigator.Prefix);
-			Assertion.Assert (!navigator.HasAttributes);
-			Assertion.Assert (navigator.HasChildren);
-			Assertion.Assert (!navigator.IsEmptyElement);
+			AssertEquals (XPathNodeType.Root, navigator.NodeType);
+			AssertEquals (String.Empty, navigator.Name);
+			AssertEquals (String.Empty, navigator.LocalName);
+			AssertEquals (String.Empty, navigator.NamespaceURI);
+			AssertEquals (String.Empty, navigator.Prefix);
+			Assert (!navigator.HasAttributes);
+			Assert (navigator.HasChildren);
+			Assert (!navigator.IsEmptyElement);
 		}
 
 		[Test]
@@ -59,14 +59,14 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo:bar xmlns:foo='#foo' />");
 			navigator = document.DocumentElement.CreateNavigator ();
 			
-			Assertion.AssertEquals (XPathNodeType.Element, navigator.NodeType);
-			Assertion.AssertEquals ("foo:bar", navigator.Name);
-			Assertion.AssertEquals ("bar", navigator.LocalName);
-			Assertion.AssertEquals ("#foo", navigator.NamespaceURI);
-			Assertion.AssertEquals ("foo", navigator.Prefix);
-			Assertion.Assert (!navigator.HasAttributes);
-			Assertion.Assert (!navigator.HasChildren);
-			Assertion.Assert (navigator.IsEmptyElement);
+			AssertEquals (XPathNodeType.Element, navigator.NodeType);
+			AssertEquals ("foo:bar", navigator.Name);
+			AssertEquals ("bar", navigator.LocalName);
+			AssertEquals ("#foo", navigator.NamespaceURI);
+			AssertEquals ("foo", navigator.Prefix);
+			Assert (!navigator.HasAttributes);
+			Assert (!navigator.HasChildren);
+			Assert (navigator.IsEmptyElement);
 		}
 
 		[Test]
@@ -75,14 +75,14 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo bar:baz='quux' xmlns:bar='#bar' />");
 			navigator = document.DocumentElement.GetAttributeNode("baz", "#bar").CreateNavigator ();
 			
-			Assertion.AssertEquals (XPathNodeType.Attribute, navigator.NodeType);
-			Assertion.AssertEquals ("bar:baz", navigator.Name);
-			Assertion.AssertEquals ("baz", navigator.LocalName);
-			Assertion.AssertEquals ("#bar", navigator.NamespaceURI);
-			Assertion.AssertEquals ("bar", navigator.Prefix);
-			Assertion.Assert (!navigator.HasAttributes);
-			Assertion.Assert (!navigator.HasChildren);
-			Assertion.Assert (!navigator.IsEmptyElement);
+			AssertEquals (XPathNodeType.Attribute, navigator.NodeType);
+			AssertEquals ("bar:baz", navigator.Name);
+			AssertEquals ("baz", navigator.LocalName);
+			AssertEquals ("#bar", navigator.NamespaceURI);
+			AssertEquals ("bar", navigator.Prefix);
+			Assert (!navigator.HasAttributes);
+			Assert (!navigator.HasChildren);
+			Assert (!navigator.IsEmptyElement);
 		}
 
 		[Test]
@@ -91,32 +91,32 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			navigator = document.DocumentElement.CreateNavigator ();
 			
-			Assertion.AssertEquals ("foo", navigator.Name);
-			Assertion.Assert (navigator.MoveToFirstChild ());
-			Assertion.AssertEquals ("bar", navigator.Name);
-			Assertion.Assert (navigator.MoveToNext ());
-			Assertion.AssertEquals ("baz", navigator.Name);
-			Assertion.Assert (!navigator.MoveToNext ());
-			Assertion.AssertEquals ("baz", navigator.Name);
-			Assertion.Assert (navigator.MoveToPrevious ());
-			Assertion.AssertEquals ("bar", navigator.Name);
-			Assertion.Assert (!navigator.MoveToPrevious ());
-			Assertion.Assert (navigator.MoveToParent ());
-			Assertion.AssertEquals ("foo", navigator.Name);
+			AssertEquals ("foo", navigator.Name);
+			Assert (navigator.MoveToFirstChild ());
+			AssertEquals ("bar", navigator.Name);
+			Assert (navigator.MoveToNext ());
+			AssertEquals ("baz", navigator.Name);
+			Assert (!navigator.MoveToNext ());
+			AssertEquals ("baz", navigator.Name);
+			Assert (navigator.MoveToPrevious ());
+			AssertEquals ("bar", navigator.Name);
+			Assert (!navigator.MoveToPrevious ());
+			Assert (navigator.MoveToParent ());
+			AssertEquals ("foo", navigator.Name);
 			navigator.MoveToRoot ();
-			Assertion.AssertEquals (XPathNodeType.Root, navigator.NodeType);
-			Assertion.Assert (!navigator.MoveToParent ());
-			Assertion.AssertEquals (XPathNodeType.Root, navigator.NodeType);
-			Assertion.Assert (navigator.MoveToFirstChild ());
-			Assertion.AssertEquals ("foo", navigator.Name);
-			Assertion.Assert (navigator.MoveToFirst ());
-			Assertion.AssertEquals ("foo", navigator.Name);
-			Assertion.Assert (navigator.MoveToFirstChild ());
-			Assertion.AssertEquals ("bar", navigator.Name);
-			Assertion.Assert (navigator.MoveToNext ());
-			Assertion.AssertEquals ("baz", navigator.Name);
-			Assertion.Assert (navigator.MoveToFirst ());
-			Assertion.AssertEquals ("bar", navigator.Name);
+			AssertEquals (XPathNodeType.Root, navigator.NodeType);
+			Assert (!navigator.MoveToParent ());
+			AssertEquals (XPathNodeType.Root, navigator.NodeType);
+			Assert (navigator.MoveToFirstChild ());
+			AssertEquals ("foo", navigator.Name);
+			Assert (navigator.MoveToFirst ());
+			AssertEquals ("foo", navigator.Name);
+			Assert (navigator.MoveToFirstChild ());
+			AssertEquals ("bar", navigator.Name);
+			Assert (navigator.MoveToNext ());
+			AssertEquals ("baz", navigator.Name);
+			Assert (navigator.MoveToFirst ());
+			AssertEquals ("bar", navigator.Name);
 		}
 
 		[Test]
@@ -131,20 +131,20 @@ namespace MonoTests.System.Xml
 			document2.LoadXml ("<foo><bar /></foo>");
 			XPathNavigator navigator2 = document2.DocumentElement.CreateNavigator ();
 
-			Assertion.AssertEquals ("foo", navigator1a.Name);
-			Assertion.Assert (navigator1a.MoveToFirstChild ());
-			Assertion.AssertEquals ("bar", navigator1a.Name);
+			AssertEquals ("foo", navigator1a.Name);
+			Assert (navigator1a.MoveToFirstChild ());
+			AssertEquals ("bar", navigator1a.Name);
 
-			Assertion.Assert (!navigator1b.IsSamePosition (navigator1a));
-			Assertion.AssertEquals ("foo", navigator1b.Name);
-			Assertion.Assert (navigator1b.MoveTo (navigator1a));
-			Assertion.Assert (navigator1b.IsSamePosition (navigator1a));
-			Assertion.AssertEquals ("bar", navigator1b.Name);
+			Assert (!navigator1b.IsSamePosition (navigator1a));
+			AssertEquals ("foo", navigator1b.Name);
+			Assert (navigator1b.MoveTo (navigator1a));
+			Assert (navigator1b.IsSamePosition (navigator1a));
+			AssertEquals ("bar", navigator1b.Name);
 
-			Assertion.Assert (!navigator2.IsSamePosition (navigator1a));
-			Assertion.AssertEquals ("foo", navigator2.Name);
-			Assertion.Assert (!navigator2.MoveTo (navigator1a));
-			Assertion.AssertEquals ("foo", navigator2.Name);
+			Assert (!navigator2.IsSamePosition (navigator1a));
+			AssertEquals ("foo", navigator2.Name);
+			Assert (!navigator2.MoveTo (navigator1a));
+			AssertEquals ("foo", navigator2.Name);
 		}
 
 		[Test]
@@ -153,16 +153,16 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo bar='baz' quux='quuux' />");
 			navigator = document.DocumentElement.CreateNavigator ();
 
-			Assertion.AssertEquals (XPathNodeType.Element, navigator.NodeType);
-			Assertion.AssertEquals ("foo", navigator.Name);
-			Assertion.Assert (navigator.MoveToFirstAttribute ());
-			Assertion.AssertEquals (XPathNodeType.Attribute, navigator.NodeType);
-			Assertion.AssertEquals ("bar", navigator.Name);
-			Assertion.AssertEquals ("baz", navigator.Value);
-			Assertion.Assert (navigator.MoveToNextAttribute ());
-			Assertion.AssertEquals (XPathNodeType.Attribute, navigator.NodeType);
-			Assertion.AssertEquals ("quux", navigator.Name);
-			Assertion.AssertEquals ("quuux", navigator.Value);
+			AssertEquals (XPathNodeType.Element, navigator.NodeType);
+			AssertEquals ("foo", navigator.Name);
+			Assert (navigator.MoveToFirstAttribute ());
+			AssertEquals (XPathNodeType.Attribute, navigator.NodeType);
+			AssertEquals ("bar", navigator.Name);
+			AssertEquals ("baz", navigator.Value);
+			Assert (navigator.MoveToNextAttribute ());
+			AssertEquals (XPathNodeType.Attribute, navigator.NodeType);
+			AssertEquals ("quux", navigator.Name);
+			AssertEquals ("quuux", navigator.Value);
 		}
 
 		[Test]
@@ -171,12 +171,12 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><bar>baz</bar><quux>quuux</quux></foo>");
 			navigator = document.DocumentElement.CreateNavigator ();
 
-			Assertion.AssertEquals (XPathNodeType.Element, navigator.NodeType);
-			Assertion.AssertEquals ("foo", navigator.Name);
-			//Assertion.AssertEquals ("bazquuux", navigator.Value);
+			AssertEquals (XPathNodeType.Element, navigator.NodeType);
+			AssertEquals ("foo", navigator.Name);
+			//AssertEquals ("bazquuux", navigator.Value);
 
 			navigator.MoveToRoot ();
-			//Assertion.AssertEquals ("bazquuux", navigator.Value);
+			//AssertEquals ("bazquuux", navigator.Value);
 		}
 
 		[Test]
@@ -187,8 +187,8 @@ namespace MonoTests.System.Xml
 
 			navigator.MoveToRoot ();
 			navigator.MoveToFirstChild ();
-			Assertion.AssertEquals (XPathNodeType.Element, navigator.NodeType);
-			Assertion.AssertEquals ("Root", navigator.Name);
+			AssertEquals (XPathNodeType.Element, navigator.NodeType);
+			AssertEquals ("Root", navigator.Name);
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2003-05-13  Martin Willemoes Hansen <mwh@sysrq.dk>
+
+	* Tests inherits from Assertion and Assertion. prefixes removed
+
 2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlConvertTests.cs.

@@ -13,17 +13,17 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlConvertTests
+	public class XmlConvertTests : Assertion
 	{
 		private void AssertName (string result, string source)
 		{
-			Assertion.AssertEquals (result,
+			AssertEquals (result,
 				XmlConvert.EncodeName (source));
 		}
 
 		private void AssertNmToken (string result, string source)
 		{
-			Assertion.AssertEquals (result,
+			AssertEquals (result,
 				XmlConvert.EncodeNmToken (source));
 		}
 
@@ -51,8 +51,8 @@ namespace MonoTests.System.Xml
 			// Don't include TimeZone value for test value.
 			string dateString = 
 				XmlConvert.ToString (new DateTime (2003, 5, 5));
-			Assertion.AssertEquals (33, dateString.Length);
-			Assertion.AssertEquals ("2003-05-05T00:00:00.0000000", dateString.Substring (0, 27));
+			AssertEquals (33, dateString.Length);
+			AssertEquals ("2003-05-05T00:00:00.0000000", dateString.Substring (0, 27));
 		}
 	}
 }
