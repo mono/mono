@@ -1387,6 +1387,16 @@ namespace System.Windows.Forms{
 	}
 	#endregion
 
+	#region ScrollBarMessages
+	public enum ScrollBarMessages 
+	{
+		SBM_SETPOS                  = 0x00E0,
+		SBM_GETPOS                  = 0x00E1,
+		SBM_SETRANGE                = 0x00E2,
+		SBM_GETRANGE                = 0x00E3
+	}
+	#endregion
+
 	#region System Metrics Codes
 	public enum SystemMetricsCodes {
 		SM_CXSCREEN             = 0,

@@ -3,7 +3,8 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Dennis Hayes (dennish@raytek.com)
+//   Dennis Hayes (dennish@raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -19,6 +20,7 @@
 
 
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
@@ -27,138 +29,110 @@ namespace System.Windows.Forms {
 
      public class ScrollBar : Control {
 
-		//
-		//  --- Constructor
-		//
+		int value_;
+		int minimum;
+		int maximum;
+		int largeChange;
+		int smallChange;
 
 		public ScrollBar() : base()
 		{
 			//spec says tabstop defaults to false.
 			base.TabStop = false;
-			//base.window
+			value_ = 0;
+			minimum = 0;
+			maximum = 100;
+			largeChange = 10;
+			smallChange = 1;	
 		}
 
-		//
-		//  --- Public Properties
-		//
-
-		 //COMPACT FRAMEWORK
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color BackColor {
-			get {
-				//FIXME:
-				return base.BackColor;
-			}
-			set {
-				//FIXME:
-				base.BackColor = value;
-			}
+			get { return base.BackColor; }
+			set { base.BackColor = value;}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Image BackgroundImage {
-			get {
-				//FIXME:
-				return base.BackgroundImage;
-			}
-			set {
-				//FIXME:
-				base.BackgroundImage = value;
-			}
+			get { return base.BackgroundImage;  }
+			set { base.BackgroundImage = value; }
 		}
 
-		 //COMPACT FRAMEWORK
-		 [MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color ForeColor {
-			get {
-				//FIXME:
-				return base.ForeColor;
-			}
-			set {
-				//FIXME:
-				base.ForeColor = value;
-			}
+			get { return base.ForeColor;  }
+			set { base.ForeColor = value; }
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public new ImeMode ImeMode {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:		
-			}
+			get { return base.ImeMode; }
+			set { base.ImeMode = ImeMode.NoControl; }
 		}
 
-		 //COMPACT FRAMEWORK
 		[MonoTODO]
 		public int LargeChange {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return largeChange; }
 			set {
-				//FIXME:		
+				if ( value < 0 )
+					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+
+				largeChange = value;	
 			}
 		}
 
-		 //COMPACT FRAMEWORK
-		 [MonoTODO]
+		[MonoTODO]
 		public int Maximum {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return maximum; }
 			set {
-				//FIXME:		
+				maximum = value;
+
+				if ( maximum < minimum )
+					minimum = maximum;
 			}
 		}
 
-		 //COMPACT FRAMEWORK
-		 [MonoTODO]
+		[MonoTODO]
 		public int Minimum {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return minimum; }
 			set {
-				//FIXME:		
+				minimum = value;
+
+				if ( minimum > maximum )
+					maximum = minimum;
 			}
 		}
 
-		 //COMPACT FRAMEWORK
-		 [MonoTODO]
+		[MonoTODO]
 		public int SmallChange {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return smallChange; }
 			set {
-				//FIXME:		
+				if ( value < 0 )
+					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+
+				smallChange = value;
 			}
 		}
 
-		 //COMPACT FRAMEWORK
-		 public override string Text {
-			 //Can't imagen what a scroll bar would do with text, so just call base.
-			 get {
-				 return base.Text;
-			 }
-			 set {
-				 base.Text = value;
-			 }
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
+		public override string Text {
+			 get { return base.Text;  }
+			 set { base.Text = value; }
 		 }
 
-		 //COMPACT FRAMEWORK
-		 [MonoTODO]
+		[MonoTODO]
 		public int Value {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return value_; }
 			set {
-				//FIXME:		
+				if ( value < Minimum || value > Maximum )
+					throw new ArgumentException(
+						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+
+				bool raiseEvent = ( value_ != value ) && ( ValueChanged != null );
+
+				value_ = value;
 			}
 		}
-
-		//
-		//  --- Public Methods
-		//
 
 		//COMPACT FRAMEWORK
 		public override string ToString()
@@ -174,20 +148,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public event ScrollEventHandler Scroll;
 
-		//Compact FrameWork
 		public event EventHandler ValueChanged;
-
-		//
-		//  --- Protected Properties
-		//
 
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams createParams = base.CreateParams;
-				createParams.Caption = "";
 				createParams.ClassName = "SCROLLBAR";
-				createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
+				createParams.Style |= (int) (WindowStyles.WS_VISIBLE | WindowStyles.WS_CHILD);
 				return createParams;
 			}
 		}

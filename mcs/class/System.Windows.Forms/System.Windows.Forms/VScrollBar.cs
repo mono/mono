@@ -19,11 +19,7 @@ namespace System.Windows.Forms {
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams createParams = base.CreateParams;
-				createParams.Caption = "";
-				createParams.ClassName = "VSCROLL";
-	  
-				createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
-	  
+				createParams.Style |= (int) ScrollBarFlags.SBS_VERT;
 				return createParams;
 			}
 		}

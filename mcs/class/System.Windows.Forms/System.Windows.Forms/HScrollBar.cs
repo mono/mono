@@ -34,12 +34,7 @@ namespace System.Windows.Forms {
 		protected  override  CreateParams CreateParams {
 			get {
 				CreateParams createParams = base.CreateParams;
-
-				createParams.ClassName = "HSCROLL";
-				createParams.Style = (int) (
-					(int)WindowStyles.WS_CHILD | 
-					(int)WindowStyles.WS_VISIBLE | (int)SS_Static_Control_Types.SS_LEFT );
-
+				createParams.Style |= (int) ScrollBarFlags.SBS_HORZ;
 				return createParams;
 			}
 		}

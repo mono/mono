@@ -1,4 +1,10 @@
 2003-06-06   Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* HScrollBar.cs
+	* ScrollBar.cs
+	* VScrollBar.cs
+	* win32Enums.cs : started implementation of scrollbar classes
+
+2003-06-06   Aleksey Ryabchuk <ryabchuk@yahoo.com>
         * Form.cs : MaximumSize, MinimumSize, TopMost were implemented, small fixes and improvements
 	* win32Structs.cs: WINDOWPOS structure
 
