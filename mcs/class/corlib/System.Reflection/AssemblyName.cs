@@ -3,13 +3,10 @@
 //
 // Authors:
 //	Paolo Molaro (lupus@ximian.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -68,6 +65,13 @@ namespace System.Reflection {
 			// defaults
 			versioncompat = AssemblyVersionCompatibility.SameMachine;
 		}
+
+#if NET_2_0
+		public AssemblyName (string assemblyName)
+		{
+			name = assemblyName;
+		}
+#endif
 
 		internal AssemblyName (SerializationInfo si, StreamingContext sc)
 		{

@@ -127,9 +127,15 @@ namespace System.Reflection {
 			get;
 		}
 
-		[MonoTODO ("CAS related - post Mono 1.0 (see #53548)")]
 		public virtual Evidence Evidence {
 			get {
+				// if the host (runtime) hasn't provided it's own evidence...
+				if (_evidence == null) {
+					// ... we will provide our own
+					lock (this) {
+						_evidence = Evidence.GetDefaultHostEvidence (this);
+					}
+				}
 				return _evidence;
 			}
 		}
@@ -354,11 +360,14 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static Assembly LoadFrom (String assemblyFile);
 
-		[MonoTODO]
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
-			// Evidence is ignored
-			return LoadFrom (assemblyFile);
+			Assembly a = LoadFrom (assemblyFile);
+			if ((a != null) && (securityEvidence != null)) {
+				// merge evidence (i.e. replace defaults with provided evidences)
+				a.Evidence.Merge (securityEvidence);
+			}
+			return a;
 		}
 
 #if NET_1_1
@@ -599,5 +608,77 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Type MonoDebugger_GetType (Assembly assembly, int token);
+
+		// Code Access Security
+
+		internal void Resolve () 
+		{
+			lock (this) {
+				_granted = SecurityManager.ResolvePolicy (Evidence, _minimum, _optional,
+					_refuse, out _denied);
+			}
+#if false
+			Console.WriteLine ("Granted: {0}", _granted);
+			if (_denied != null)
+				Console.WriteLine ("Denied: {0}", _denied);
+#endif
+		}
+
+		internal PermissionSet GrantedPermissionSet {
+			get {
+				if (_granted == null) {
+					Resolve ();
+				}
+				return _granted;
+			}
+		}
+
+		internal PermissionSet DeniedPermissionSet {
+			get {
+				// yes we look for granted, as denied may be null
+				if (_granted == null) {
+					Resolve ();
+				}
+				return _denied;
+			}
+		}
+
+		// Result isn't affected by overrides (like Assert, Deny and PermitOnly)
+		internal bool Demand (IPermission p) 
+		{
+			Type t = p.GetType ();
+
+			// have we been explicitely denied this permission ?
+			if (_denied != null) {
+				IPermission denied = _denied.GetPermission (t);
+				if (denied != null) {
+					if (p.IsSubsetOf (denied))
+						return false;
+				}
+			}
+
+			// is it part of the optional permissions requested by the assembly ?
+			if (_optional != null) {
+				IPermission optional = _optional.GetPermission (t);
+				if (optional != null) {
+					// there is! so we can only request a subset of it
+					if (!p.IsSubsetOf (optional))
+						return false;
+				}
+			}
+
+			// don't check IUnrestrictedPermission if we have "Full Trust"
+			// note: that won't work for code identity permissions (e.g. Zone)
+			if ((p is IUnrestrictedPermission) && GrantedPermissionSet.IsUnrestricted ())
+				return true;
+
+			// finally does the resolved policy allow this requested permission ?
+			IPermission granted = GrantedPermissionSet.GetPermission (t);
+			if (granted != null) {
+				if (!p.IsSubsetOf (granted))
+					return false;
+			}
+			return true;
+		}
 	}
 }

@@ -1,3 +1,9 @@
+2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Get default evidences when no evidences have been 
+	supplied. Added internal methods for CAS.
+	* AssemblyName.cs: New constructor for NET_2_0.
+
 2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Added new fields for CAS to match the runtime (v23).
