@@ -579,6 +579,38 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// Invoke this routine to remap a VariableInfo into the
+		// proper MemberAccess expression
+		//
+		public Expression RemapLocal (LocalInfo local_info)
+		{
+			FieldExpr fe = new FieldExpr (local_info.FieldBuilder, loc);
+			fe.InstanceExpression = new ProxyInstance ();
+			return fe.DoResolve (this);
+		}
+
+		public Expression RemapLocalLValue (LocalInfo local_info, Expression right_side)
+		{
+			FieldExpr fe = new FieldExpr (local_info.FieldBuilder, loc);
+			fe.InstanceExpression = new ProxyInstance ();
+			return fe.DoResolveLValue (this, right_side);
+		}
+
+		public Expression RemapParameter (int idx)
+		{
+			FieldExpr fe = new FieldExprNoAddress (IteratorHandler.Current.parameter_fields [idx], loc);
+			fe.InstanceExpression = new ProxyInstance ();
+			return fe.DoResolve (this);
+		}
+
+		public Expression RemapParameterLValue (int idx, Expression right_side)
+		{
+			FieldExpr fe = new FieldExprNoAddress (IteratorHandler.Current.parameter_fields [idx], loc);
+			fe.InstanceExpression = new ProxyInstance ();
+			return fe.DoResolveLValue (this, right_side);
+		}
+		
+		//
 		// Emits the proper object to address fields on a remapped
 		// variable/parameter to field in anonymous-method/iterator proxy classes.
 		//
@@ -594,22 +626,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void EmitArgument (int idx)
-		{
-			if (InIterator)
-				ig.Emit (OpCodes.Ldfld, IteratorHandler.Current.parameter_fields [idx]);
-			else
-				throw new Exception ("EmitStoreArgument for an unknown state");
-		}
-		
-		public void EmitStoreArgument (int idx)
-		{
-			if (InIterator)
-				ig.Emit (OpCodes.Stfld, IteratorHandler.Current.parameter_fields [idx]);
-			else
-				throw new Exception ("EmitStoreArgument for an unknown state");
-		}
-		
 		public Expression GetThis (Location loc)
 		{
 			This my_this;

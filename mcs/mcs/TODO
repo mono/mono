@@ -1,3 +1,13 @@
+Instance idea
+-------------
+
+	It would be nice to have things that can be "instances" to have an
+	EmitInstance method (this would default to nothing).
+
+	The idea is to be able to use efficiently the instance data on stack
+	manipulations, as opposed to the current scheme, where we basically have
+	a few special cases.
+
 Optimization ideas
 ------------------
 

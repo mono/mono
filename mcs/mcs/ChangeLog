@@ -1,3 +1,36 @@
+2003-08-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (RemapLocal, RemapLocalLValue, RemapParameter,
+	RemapParameterLValue): New methods that are used to turn a
+	precomputed FieldInfo into an expression like this:
+
+		instance.FieldInfo
+
+	The idea is to use this instead of making LocalVariableReference
+	have more than one meaning.
+
+	* cs-parser.jay: Add error production to BASE.
+
+	* ecore.cs: Deal with TypeManager.GetField returning null, which
+	is now a valid return value.
+
+	(FieldExprNoAddress): New expression for Fields whose address can
+	not be taken.
+
+	* expression.cs (LocalVariableReference): During the resolve
+	phases, create new expressions if we are in a remapping context.
+	Remove code that dealt with remapping here.
+
+	(ParameterReference): same.
+
+	(ProxyInstance): New expression, like the `This' expression, but
+	it is born fully resolved.  We know what we are doing, so remove
+	the errors that are targeted to user-provided uses of `this'.
+
+	* statement.cs (Foreach): our variable is now stored as an
+	Expression;  During resolution, follow the protocol, dont just
+	assume it will return this.
+	
 2003-08-06  Martin Baulig  <martin@ximian.com>
 
 	* support.cs (SeekableStreamReader.cs): New public class.

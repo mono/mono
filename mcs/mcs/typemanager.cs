@@ -1613,6 +1613,11 @@ public class TypeManager {
 		return true;
 	}
 
+	//
+	// The return value can be null;  This will be the case for
+	// auxiliary FieldBuilders created by the compiler that have no
+	// real field being declared on the source code
+	//
 	static public FieldBase GetField (FieldInfo fb)
 	{
 		return (FieldBase) fieldbuilders_to_fields [fb];

@@ -5207,7 +5207,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Foreach : Statement {
 		Expression type;
-		LocalVariableReference variable;
+		Expression variable;
 		Expression expr;
 		Statement statement;
 		ForeachHelperMethods hm;
@@ -5281,7 +5281,8 @@ namespace Mono.CSharp {
 			if (conv == null)
 				return false;
 
-			if (variable.ResolveLValue (ec, empty) == null)
+			variable = variable.ResolveLValue (ec, empty);
+			if (variable == null)
 				return false;
 
 			if (!statement.Resolve (ec))
@@ -5588,7 +5589,7 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Callvirt, hm.get_current);
 
-			variable.EmitAssign (ec, conv);
+			((IAssignMethod)variable).EmitAssign (ec, conv);
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (end_try);
@@ -5664,7 +5665,7 @@ namespace Mono.CSharp {
 				// then we use the variable.EmitAssign to load using the proper cast.
 				//
 				ArrayAccess.EmitLoadOpcode (ig, element_type);
-				variable.EmitAssign (ec, conv);
+				((IAssignMethod)variable).EmitAssign (ec, conv);
 
 				statement.Emit (ec);
 
@@ -5727,7 +5728,7 @@ namespace Mono.CSharp {
 					CallingConventions.HasThis| CallingConventions.Standard,
 					var_type, args);
 				ig.Emit (OpCodes.Call, get);
-				variable.EmitAssign (ec, conv);
+				((IAssignMethod)variable).EmitAssign (ec, conv);
 				statement.Emit (ec);
 				ig.MarkLabel (ec.LoopBegin);
 				for (dim = rank - 1; dim >= 0; dim--){

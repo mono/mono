@@ -2186,6 +2186,10 @@ base_access
 	  {
 		$$ = new BaseIndexerAccess ((ArrayList) $3, lexer.Location);
 	  }
+	| BASE error {
+		Report.Error (175, "Use of keyword `base' is not valid in this context");
+		$$ = null;
+	  }
 	;
 
 post_increment_expression

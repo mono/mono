@@ -972,9 +972,7 @@ namespace Mono.CSharp {
 				// For now: only localvariables when not remapped
 				//
 
-				if (method == null && 
-				    (expr is LocalVariableReference && ec.RemapToProxy == false) ||
-				    (expr is FieldExpr && ((FieldExpr) expr).FieldInfo.IsStatic)){
+				if (method == null && (expr is FieldExpr && ((FieldExpr) expr).FieldInfo.IsStatic)){
 					if (empty_expr == null)
 						empty_expr = new EmptyExpression ();
 					
@@ -3526,6 +3524,9 @@ namespace Mono.CSharp {
 			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
+			if (local_info.LocalBuilder == null)
+				return ec.RemapLocal (local_info);
+			
 			return this;
 		}
 
@@ -3545,6 +3546,9 @@ namespace Mono.CSharp {
 				Error (1604, "cannot assign to `" + Name + "' because it is readonly");
 				return null;
 			}
+
+			if (local_info.LocalBuilder == null)
+				return ec.RemapLocalLValue (local_info, right_side);
 			
 			return this;
 		}
@@ -3558,13 +3562,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (local_info.LocalBuilder == null){
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
-			} else 
-				ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
-			
-			local_info.Used = true;
+			ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
 		}
 		
 		public void EmitAssign (EmitContext ec, Expression source)
@@ -3573,25 +3571,15 @@ namespace Mono.CSharp {
 
 			local_info.Assigned = true;
 
-			if (local_info.LocalBuilder == null){
-				ig.Emit (OpCodes.Ldarg_0);
-				source.Emit (ec);
-				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
-			} else {
-				source.Emit (ec);
-				ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
-			}
+			source.Emit (ec);
+			ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (local_info.LocalBuilder == null){
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
-			} else
-				ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
+			ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
 		}
 
 		public override string ToString ()
@@ -3696,6 +3684,9 @@ namespace Mono.CSharp {
 			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
 
+			if (ec.RemapToProxy)
+				return ec.RemapParameter (idx);
+			
 			return this;
 		}
 
@@ -3705,6 +3696,9 @@ namespace Mono.CSharp {
 
 			SetAssigned (ec);
 
+			if (ec.RemapToProxy)
+				return ec.RemapParameterLValue (idx, right_side);
+			
 			return this;
 		}
 
@@ -3743,12 +3737,6 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (ec.RemapToProxy){
-				ig.Emit (OpCodes.Ldarg_0);
-				ec.EmitArgument (idx);
-				return;
-			}
-			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)
@@ -3769,13 +3757,6 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			ILGenerator ig = ec.ig;
-			
-			if (ec.RemapToProxy){
-				ig.Emit (OpCodes.Ldarg_0);
-				source.Emit (ec);
-				ec.EmitStoreArgument (idx);
-				return;
-			}
 			
 			int arg_idx = idx;
 
@@ -3799,11 +3780,6 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			if (ec.RemapToProxy){
-				Report.Error (-1, "Report this: Taking the address of a remapped parameter not supported");
-				return;
-			}
-			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)
@@ -6363,6 +6339,29 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// This produces the value that renders an instance, used by the iterators code
+	//
+	public class ProxyInstance : Expression, IMemoryLocation  {
+		public override Expression DoResolve (EmitContext ec)
+		{
+			eclass = ExprClass.Variable;
+			type = ec.ContainerType;
+			return this;
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldarg_0);
+
+		}
+		
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			ec.ig.Emit (OpCodes.Ldarg_0);
+		}
+	}
+	
 	/// <summary>
 	///   Implements the typeof operator
 	/// </summary>

@@ -2552,11 +2552,12 @@ namespace Mono.CSharp {
 
 			if (FieldInfo is FieldBuilder){
 				FieldBase f = TypeManager.GetField (FieldInfo);
-
-				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
-					is_volatile = true;
-				
-				f.status |= Field.Status.USED;
+				if (f != null){
+					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
+						is_volatile = true;
+					
+					f.status |= Field.Status.USED;
+				}
 			} 
 			
 			if (FieldInfo.IsStatic){
@@ -2627,11 +2628,12 @@ namespace Mono.CSharp {
 
 			if (FieldInfo is FieldBuilder){
 				FieldBase f = TypeManager.GetField (FieldInfo);
-				
-				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
-					ig.Emit (OpCodes.Volatile);
-				
-				f.status |= Field.Status.ASSIGNED;
+				if (f != null){
+					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
+						ig.Emit (OpCodes.Volatile);
+					
+					f.status |= Field.Status.ASSIGNED;
+				}
 			} 
 
 			if (is_static)
@@ -2646,15 +2648,17 @@ namespace Mono.CSharp {
 			
 			if (FieldInfo is FieldBuilder){
 				FieldBase f = TypeManager.GetField (FieldInfo);
-				if ((f.ModFlags & Modifiers.VOLATILE) != 0){
-					Error (676, "volatile variable: can not take its address, or pass as ref/out parameter");
-					return;
+				if (f != null){
+					if ((f.ModFlags & Modifiers.VOLATILE) != 0){
+						Error (676, "volatile variable: can not take its address, or pass as ref/out parameter");
+						return;
+					}
+					
+					if ((mode & AddressOp.Store) != 0)
+						f.status |= Field.Status.ASSIGNED;
+					if ((mode & AddressOp.Load) != 0)
+						f.status |= Field.Status.USED;
 				}
-				
-				if ((mode & AddressOp.Store) != 0)
-					f.status |= Field.Status.ASSIGNED;
-				if ((mode & AddressOp.Load) != 0)
-					f.status |= Field.Status.USED;
 			} 
 
 			//
@@ -2692,6 +2696,20 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// A FieldExpr whose address can not be taken
+	//
+	public class FieldExprNoAddress : FieldExpr, IMemoryLocation {
+		public FieldExprNoAddress (FieldInfo fi, Location loc) : base (fi, loc)
+		{
+		}
+		
+		public new void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			Report.Error (-215, "Report this: Taking the address of a remapped parameter not supported");
+		}
+	}
+	
 	/// <summary>
 	///   Expression that evaluates to a Property.  The Assign class
 	///   might set the `Value' expression if we are in an assignment.
