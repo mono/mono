@@ -1,3 +1,7 @@
+2004-08-14 Ben Maurer  <bmaurer@ximian.com>
+
+	* Makefile.am: static link on x86 (r=zoltan)
+
 2004-08-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-amd64.c (amd64_magic_trampoline): Avoid patching the trampoline
