@@ -270,7 +270,7 @@ namespace System {
 		}
 
 		const int StringCompareModeDirect = 0;
-		const int StringCompareModeCaseSensitive = 1;
+		const int StringCompareModeCaseInsensitive = 1;
 		const int StringCompareModeOrdinal = 2;
 
 		internal static int _CompareGetLength (string strA, string strB)
@@ -393,7 +393,7 @@ namespace System {
 		public static int Compare (string strA, int indexA, string strB, int indexB,
 					   int length, bool ignoreCase, CultureInfo culture)
 		{
-			_StringCompareMode mode;
+			int mode;
 
 			mode = ignoreCase ? StringCompareModeCaseInsensitive :
 				StringCompareModeDirect;
