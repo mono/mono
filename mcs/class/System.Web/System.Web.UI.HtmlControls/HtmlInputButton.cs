@@ -12,11 +12,11 @@ namespace System.Web.UI.HtmlControls{
 	
 	public class HtmlInputButton : HtmlInputControl, IPostBackEventHandler{
 		
-		private static readonly object EventServerChange;
+		private static readonly object EventServerClick;
 		
 		public HtmlInputButton(string type): base(type){}
 		
-		protected void OnServerClick(ImageClickEventArgs e){
+		protected void OnServerClick(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerClick];
 			if (handler != null){
 				handler.Invoke(this, e);
@@ -25,7 +25,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected override void RenderAttributes(HtmlTextWriter writer){
 			string attrType = Type;
-			bool ofTypeSubmit = String.Compare(attrType, "submit", true) == false;
+			bool ofTypeSubmit = (String.Compare(attrType, "submit", true) == 0);
 			bool events;
 			if (ofTypeSubmit != true){
 				events = (Events[EventServerClick] != null);
@@ -35,7 +35,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 			if (Page != null){
 				if (ofTypeSubmit != true){
-					Util.WriteOnClickAttribute(
+					System.Web.UI.Util.WriteOnClickAttribute(
 					                           writer,
 					                           this,
 					                           false,
@@ -43,8 +43,8 @@ namespace System.Web.UI.HtmlControls{
 					                           CausesValidation == false? Page.Validators.Count > 0: false);
 				}
 				else{
-					if (events != true && String.Compare(attrType,"button", true) != null){
-						Util.WriteOnClickAttribute(
+					if (events != true && String.Compare(attrType,"button", true) != 0){
+						System.Web.UI.Util.WriteOnClickAttribute(
 						                           writer,
 						                           this,
 						                           false,
@@ -53,14 +53,14 @@ namespace System.Web.UI.HtmlControls{
 					}
 				}
 			}
-			RenderAttributes(writer);
+			base.RenderAttributes(writer);
 		}
 		
-		public override IPostBackEventHandler RaisePostBackEvent(string eventArgument){
-			if (CausesValidation != null){
+		public void RaisePostBackEvent(string eventArgument){
+			if(CausesValidation == true){
 				Page.Validate();
 			}
-			OnServerClick(new ImageClickEventArgs(_x, _y));
+			OnServerClick(EventArgs.Empty);
 		}
 		
 		public event EventHandler ServerClick{

@@ -6,6 +6,7 @@
 using System;
 using System.Web;
 using System.Web.UI;
+using System.Collections;
 
 namespace System.Web.UI.HtmlControls{
 	public sealed class HtmlTableCellCollection : ICollection {
@@ -20,18 +21,19 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		public void Clear(){
-			if (_owner.HasConrols) _owner.Conrols.Clear;
+			if (_owner.HasControls()) _owner.Controls.Clear();
 		}
 		
 		public void CopyTo(Array array, int index){
-			IEnumerator i = GetEnumerator;
-			while(i.MoveNext){
+			//FIXME: convert to foreach loop
+			IEnumerator i = GetEnumerator();
+			while(i.MoveNext()){
 				array.SetValue(i.Current, index++);
 			}
 		}
 		
 		public IEnumerator GetEnumerator(){
-			return _owner.Controls.GetEnumerator;
+			return _owner.Controls.GetEnumerator();
 		}
 		
 		public void Insert(int index, HtmlTableCell cell){
@@ -48,7 +50,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		public int Count {
 			get{
-				if (_owner.HasConrols) return _owner.Controls.Count;
+				if (_owner.HasControls()) return _owner.Controls.Count;
 				return 0;
 			}
 		}
@@ -67,13 +69,16 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlTableRow this[int index] {
 			get{
-				return (HtmlTableCell) _owner.Controls[index];
+				return (HtmlTableRow) _owner.Controls[index];
 			}
 		}
 		
-		public object SyncRoot {};
+		public object SyncRoot {
+			get{
+				return null;
+			}
+		}
 		
 	} // end of System.Web.UI.HtmlControls.HtmlTableCellCollection
 	
 }
-

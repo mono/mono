@@ -15,40 +15,31 @@ namespace System.Web.UI.HtmlControls{
 		
 		private static readonly object EventServerChange;
 		
-		public HtmlInputCheckBox: base("checkbox"){}
+		public HtmlInputCheckBox(): base("checkbox"){}
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			string postValue = postCollection[postDataKey];
-			bool greaterthan;
-			if (postValue != null){
-				greaterthan = postValue.Length > 0;
-			}
-			else{
-				greaterthan = false;
-			}
-			bool equalcheck = greaterthan == Checked == false;
-			Checked = greaterthan;
-			return equalcheck;
+			bool postChecked = false;
+			if (postValue != null)
+				postChecked = postValue.Length > 0;
+			Checked = postChecked;
+			return (postChecked == Checked == false);
 		}
 		
-		public override void RaisePostDataChangedEvent(){
+		public void RaisePostDataChangedEvent(){
 			OnServerChange(EventArgs.Empty);
 		}
 		
 		protected void OnServerChange(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerChange];
-			if (handler != null){
-				handler.Invoke(this, e);
-			}
+			if (handler != null) handler.Invoke(this, e);
 		}
 		
-		protected void OnPreRender(EventArgs e){
-			if (Page != null && !Disabled){
+		protected override void OnPreRender(EventArgs e){
+			if (Page != null && !Disabled)
 				Page.RegisterRequiresPostBack(this);
-			}
-			if (Events[EventServerChange] != null && !Disabled){
+			if (Events[EventServerChange] != null && !Disabled)
 				ViewState.SetItemDirty("checkbox",false);
-			}
 		}
 		
 		public event EventHandler ServerChange{
@@ -63,16 +54,12 @@ namespace System.Web.UI.HtmlControls{
 		public bool Checked{
 			get{
 				string attr = Attributes["checked"];
-				if (attr != null){
+				if (attr != null)
 					return attr.Equals("checked");
-				}
 				return false;
 			}
 			set{
-				if (value != true){
-					Attributes["checked"] = null;
-				}
-				Attributes["checked"] = "checked";
+				Attributes["checked"] = (value == true)? "checked": null;
 			}
 		}
 		

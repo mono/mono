@@ -9,9 +9,9 @@ using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
 	
-	public class HtmlButton : HtmlContainerControl, IPostBackDataHandler{
+	public class HtmlButton : HtmlContainerControl, IPostBackEventHandler{
 		
-		private static readonly object EventServerChange;
+		private static readonly object EventServerClick;
 		
 		public HtmlButton(): base("button"){}
 		
@@ -23,23 +23,20 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		//FIXME: check function
-		protected override void RenderAttributes(HtmlTextWriter writer){
+		protected new void RenderAttributes(HtmlTextWriter writer){
 			if (Page != null && Events[EventServerClick] != null){
-				Util.WriteOnClickAttribute(
+				System.Web.UI.Util.WriteOnClickAttribute(
 				                           writer,
 				                           this,
 				                           false,
 				                           true,
 				                           CausesValidation == false? Page.Validators.Count > 0: false);
 			}
-			RenderAttributes(writer);
-			
+			base.RenderAttributes(writer);
 		}
 		
-		//FIXME: not sure about the accessor
 		public void RaisePostBackEvent(string eventArgument){
-			if (CausesValidation = false){
+			if (CausesValidation){
 				Page.Validate();
 			}
 			OnServerClick(EventArgs.Empty);
@@ -56,11 +53,11 @@ namespace System.Web.UI.HtmlControls{
 		
 		public bool CausesValidation{
 			get{
-				object causesVal = ViewState["CausesValidation"];
-				if (causesVal != null){
-					return (Boolean) causesVal;
+				object attr = ViewState["CausesValidation"];
+				if (attr != null){
+					return (Boolean) attr;
 				}
-				return 1;
+				return true;
 			}
 			set{
 				ViewState["CausesValidation"] = (Boolean) value;

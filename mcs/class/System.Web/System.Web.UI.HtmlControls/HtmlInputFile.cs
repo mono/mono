@@ -15,58 +15,54 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlInputFile():base("file"){}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
+		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			string postValue = postCollection[postDataKey];
-			if (postValue != null){
+			if (postValue != null)
 				Value = postValue;
-			}
 			return false;
 		}
 		
-		public void RaisePostDataChangedEvent(){}
+		public virtual void RaisePostDataChangedEvent(){}
 		
 		public string Accept{
 			get{
 				string attr = Attributes["accept"];
-				if (attr != null){
+				if (attr != null)
 					return attr;
-				}
 				return "";
 			}
 			set{
-				Attributes["accept"] = MapStringAttributeToString(value);
+				Attributes["accept"] = AttributeToString(value);
 			}
 		}
 		
 		public int MaxLength{
 			get{
 				string attr = Attributes["maxlength"];
-				if (attr != null){
+				if (attr != null)
 					return Int32.Parse(attr, CultureInfo.InvariantCulture);
-				}
 				return -1;
 			}
 			set{
-				Attributes["accept"] = MapIntegerAttributeToString(value);
+				Attributes["accept"] = AttributeToString(value);
 			}
 		}
 		
 		public int Size{
 			get{
 				string attr = Attributes["size"];
-				if (attr != null){
-					return Int32.Parse(attr);
-				}
+				if (attr != null)
+					return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["size"] = MapIntegerAttributeToString(value);
+				Attributes["size"] = AttributeToString(value);
 			}
 		}
 		
 		public HttpPostedFile PostedFile{
 			get{
-				return Context.Request.Files[RenderedNameAttribute];
+				return Context.Request.Files[RenderedName];
 			}
 		}
 		

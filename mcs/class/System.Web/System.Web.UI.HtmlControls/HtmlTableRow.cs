@@ -10,22 +10,23 @@ using System.Web.UI;
 namespace System.Web.UI.HtmlControls{
 	public class HtmlTableRow : HtmlContainerControl {
 		private HtmlTableCellCollection _cells;
-		public HtmlTableRow():base("tr");
+		public HtmlTableRow():base("tr"){}
 		
 		protected override ControlCollection CreateControlCollection(){
-			return new HtmlYableCellControlCollection(this);
+			return new HtmlTableCellControlCollection(this);
 		}
 		
 		protected override void RenderChildren(HtmlTextWriter writer){
 			writer.WriteLine();
 			writer.Indent = writer.Indent + 1;
-			base.RenderChildren;
+			//FIXME: base.RenderChildren();
 			writer.Indent = writer.Indent - 1;
+			writer.WriteLine();
 		}
 		
-		protected override void RenderEndTag(HtmlTextWriter writer){
+		protected new void RenderEndTag(HtmlTextWriter writer){
 			base.RenderEndTag(writer);
-			writer.WriteLine;
+			writer.WriteLine();
 		}
 		
 		public string Align {
@@ -35,7 +36,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["align"] = MapStringAttributeToString(value);
+				Attributes["align"] = AttributeToString(value);
 			}
 		}
 		
@@ -46,7 +47,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["bgcolor"] = MapStringAttributeToString(value);
+				Attributes["bgcolor"] = AttributeToString(value);
 			}
 		}
 		
@@ -57,7 +58,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["bordercolor"] = MapStringAttributeToString(value);
+				Attributes["bordercolor"] = AttributeToString(value);
 			}
 		}
 		
@@ -75,25 +76,25 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["height"] = MapStringAttributeToString(value);
+				Attributes["height"] = AttributeToString(value);
 			}
 		}
 		
 		public override string InnerHtml {
 			get{
-				throw new NotSupportedException(HttpRuntime.FormatResourceString("InnerHtml_Not_Supported", this.GetType.Name);
+				throw new NotSupportedException("InnerHtml is not supported by HtmlTableRow");
 			}
 			set{
-				throw new NotSupportedException(HttpRuntime.FormatResourceString("InnerHtml_Not_Supported", this.GetType.Name);
+				throw new NotSupportedException("InnerHtml is not supported by HtmlTableRow");
 			}
 		}
 		
 		public override string InnerText {
 			get{
-				throw new NotSupportedException(HttpRuntime.FormatResourceString("InnerText_Not_Supported", this.GetType.Name);
+				throw new NotSupportedException("InnerText is not supported by HtmlTableRow");
 			}
 			set{
-				throw new NotSupportedException(HttpRuntime.FormatResourceString("InnerText_Not_Supported", this.GetType.Name);
+				throw new NotSupportedException("InnerText is not supported by HtmlTableRow");
 			}
 		}
 		
@@ -104,30 +105,32 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["valign"] = MapStringAttributeToString(value);
+				Attributes["valign"] = AttributeToString(value);
 			}
 		}
 		
-	}
-	
-	private protected class HtmlTableCellControlCollection : ControlCollection {
-		internal HtmlTableCellControlCollection(Control owner): base(owner);
 		
-		public override void Add(Control child){
-			if (child Is HtmlTableCell){
-				base.Add(child);
-			}
-			else{
-				throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type","HtmlTableRow",child.GetType.Name.ToString);
-			}
-		}
 		
-		public override void AddAt(int index, Control child){
-			if (child Is HtmlTableCell){
-				base.AddAt(index,child);
+		protected class HtmlTableCellControlCollection : ControlCollection {
+			
+			internal HtmlTableCellControlCollection(Control owner): base(owner){}
+			
+			public override void Add(Control child){
+				if (child is HtmlTableCell){
+					base.Add(child);
+				}
+				else{
+					throw new ArgumentException("HtmlTableRow cannot have children of Type " + child.GetType().Name);
+				}
 			}
-			else{
-				throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type","HtmlTableRow",child.GetType.Name.ToString);
+			
+			public override void AddAt(int index, Control child){
+				if (child is HtmlTableCell){
+					base.AddAt(index,child);
+				}
+				else{
+					throw new ArgumentException("HtmlTableRow cannot have children of Type " + child.GetType().Name);
+				}
 			}
 		}
 	}  // end of System.Web.UI.HtmlControls.HtmlTableRow+HtmlTableCellControlCollection

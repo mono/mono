@@ -11,35 +11,31 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
-	public class HtmlInputFile : HtmlInputControl, IPostBackDataHandler{
+	public class HtmlInputHidden : HtmlInputControl, IPostBackDataHandler{
 		
 		private static readonly object EventServerChange;
 		
-		public HtmlInputFile(string type):base("file"){}
+		public HtmlInputHidden(string type):base("hidden"){}
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			string postValue = postCollection[postDataKey];
-			if (postValue != null){
+			if (postValue != null)
 				Value = postValue;
-			}
 			return false;
 		}
 		
-		public override void RaisePostDataChangedEvent(){
+		public virtual void RaisePostDataChangedEvent(){
 			OnServerChange(EventArgs.Empty);
 		}
 		
 		protected void OnServerChange(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerChange];
-			if (handler != null){
-				handler.Invoke(this, e);
-			}
+			if (handler != null) handler.Invoke(this, e);
 		}
 		
-		protected void OnPreRender(EventArgs e){
-			if (Events[EventServerChange] != null && !Disabled){
+		protected override void OnPreRender(EventArgs e){
+			if (Events[EventServerChange] != null && !Disabled)
 				ViewState.SetItemDirty("value",false);
-			}
 		}
 		
 		public event EventHandler ServerChange{

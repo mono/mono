@@ -15,9 +15,9 @@ namespace System.Web.UI.HtmlControls{
 		
 		private static readonly object EventServerChange;
 		
-		public HtmlInputRadioButton: base("radio"){}
+		public HtmlInputRadioButton(): base("radio"){}
 		
-		protected void OnPreRender(EventArgs e){
+		protected override void OnPreRender(EventArgs e){
 			if (Page != null && !Disabled){
 				Page.RegisterRequiresPostBack(this);
 			}
@@ -33,7 +33,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		protected void RenderAttributes(HtmlTextWriter writer){
+		protected override void RenderAttributes(HtmlTextWriter writer){
 			writer.WriteAttribute("value", Value);
 			Attributes.Remove("value");
 			RenderAttributes(writer);
@@ -41,7 +41,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			string postValue = postCollection[postDataKey];
-			bool myBool;
+			bool myBool = false;
 			if (postValue != null && postValue.Equals(Value)){
 				if (!Checked){
 					Checked = true;
@@ -57,7 +57,7 @@ namespace System.Web.UI.HtmlControls{
 			return myBool;
 		}
 		
-		public override void RaisePostDataChangedEvent(){
+		public void RaisePostDataChangedEvent(){
 			OnServerChange(EventArgs.Empty);
 		}
 		
@@ -85,7 +85,7 @@ namespace System.Web.UI.HtmlControls{
 				Attributes["checked"] = "checked";
 			}
 		}
-		public string Name{
+		public new string Name{
 			get{
 				string attr = Attributes["name"];
 				if (attr != null){
@@ -94,19 +94,19 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["name"] = value.MapStringAttributeToString("name");
+				Attributes["name"] = AttributeToString(value);
 			}
 		}
 		
-		private string RenderedNameAttribute{
+		private new string RenderedName{
 			get{
-				string renderedName = base.RenderedNameAttribute;
+				string attr = base.RenderedName;
 				string id = UniqueID;
 				int indexOfX = id.LastIndexOf('X');
-				if (indexOfX != 0 && indexOfX !< 0){
-					renderedName = renderedName.Concat(id.Substring(0,indexOfX+1), renderedName);
+				if (indexOfX != 0 && indexOfX >= 0){
+					attr = String.Concat(attr, id.Substring(0,indexOfX+1));
 				}
-				return renderedName;
+				return attr;
 			}
 		}
 		

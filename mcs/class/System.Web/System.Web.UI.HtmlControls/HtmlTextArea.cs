@@ -27,8 +27,7 @@ namespace System.Web.UI.HtmlControls{
 				return -1;
 			}
 			set{
-				//MapIntegerAttributeToString(value) accessible constraint is "assembly"
-				Attributes["cols"] = MapIntegerAttributeToString(value);
+				Attributes["cols"] = AttributeToString(value);
 			}
 		}
 		
@@ -41,8 +40,7 @@ namespace System.Web.UI.HtmlControls{
 				return -1;
 			}
 			set{
-				//MapIntegerAttributeToString(value) accessible constraint is "assembly"
-				Attributes["rows"] = MapIntegerAttributeToString(value);
+				Attributes["rows"] = AttributeToString(value);
 			}
 		}
 		
@@ -54,13 +52,7 @@ namespace System.Web.UI.HtmlControls{
 				InnerHtml = value;
 			}
 		}
-		
-		protected string RenderedNameAttribute{
-			get{
-				return Name;
-			}
-		}
-		
+			
 		public virtual string Name{
 			get{
 				if (UniqueID != null){
@@ -88,7 +80,6 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		//FIXME: not sure about the accessor
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			string currentValue = Value;
 			string postedValue = postCollection[postDataKey];
@@ -100,31 +91,27 @@ namespace System.Web.UI.HtmlControls{
 			
 		}
 		
-		protected override void RenderAttributes(HtmlTextWriter writer){
-			writer.WriteAttribute("name", RenderedNameAttribute);
-			base.Attributes.Remove("name");
+		protected new void RenderAttributes(HtmlTextWriter writer){
+			writer.WriteAttribute("name", Name);
+			Attributes.Remove("name");
 			base.RenderAttributes(writer);
 		}
 		
-		//FIXME: not sure about the accessor
 		public void RaisePostDataChangedEvent(){
 			OnServerChange(EventArgs.Empty);
 		}
 		
 		protected override void OnPreRender(EventArgs e){
-			if(Events[EventServerChange]==null || Disabled==true){
+			if(Events[EventServerChange]==null || Disabled){
 				ViewState.SetItemDirty("value",false);
 			}
 		}
 		
 		protected override void AddParsedSubObject(object obj){
-			//FIXME: not sure about this function
-			if (obj is LiteralControl || obj is DataBoundLiteralControl){
+			if (obj is LiteralControl || obj is DataBoundLiteralControl)
 				AddParsedSubObject(obj);
-				return;
-			}
-			//FormatResourceString accessible constraint is "assembly"
-			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type","HtmlTextArea",obj.GetType.Name));
+			else
+				throw new NotSupportedException("HtmlTextArea cannot have children of Type " + obj.GetType().Name);
 		}
 		
 	} // class HtmlTextArea

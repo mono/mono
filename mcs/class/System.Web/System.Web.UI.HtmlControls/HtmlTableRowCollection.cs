@@ -6,6 +6,7 @@
 using System;
 using System.Web;
 using System.Web.UI;
+using System.Collections;
 
 namespace System.Web.UI.HtmlControls{
 	public sealed class HtmlTableRowCollection : ICollection {
@@ -21,18 +22,17 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		public void Clear(){
-			if (_owner.HasConrols) _owner.Conrols.Clear;
+			if (_owner.HasControls()) _owner.Controls.Clear();
 		}
 		
 		public void CopyTo(Array array, int index){
-			IEnumerator i = GetEnumerator;
-			while(i.MoveNext){
-				array.SetValue(i.Current, index++);
-			}
+			//FIXME: foreach(IEnumerator i in GetEnumerator()){
+			//	array.SetValue(i, index+1);
+			//}
 		}
 		
 		public IEnumerator GetEnumerator(){
-			return _owner.Controls.GetEnumerator;
+			return _owner.Controls.GetEnumerator();
 		}
 		
 		public void Insert(int index, HtmlTableRow row){
@@ -49,7 +49,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		public int Count {
 			get{
-				if (_owner.HasConrols) return _owner.Controls.Count;
+				if (_owner.HasControls()) return _owner.Controls.Count;
 				return 0;
 			}
 		}
@@ -72,8 +72,12 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public object SyncRoot {};
+		public object SyncRoot {
+			get{
+				//LAMESPEC: what to return
+				return null;
+			}
+	}
 	}
 	// end of System.Web.UI.HtmlControls.HtmlTableRowCollection
 }
-

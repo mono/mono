@@ -16,10 +16,10 @@ namespace System.Web.UI.HtmlControls{
 			Attributes["type"] = type;
 		}
 		
-		protected override void RenderAttributes(HtmlTextWriter writer){
-			writer.WriteAttribute("name",RenderedNameAttribute);
+		protected virtual new void RenderAttributes(HtmlTextWriter writer){
+			writer.WriteAttribute("name",RenderedName);
 			Attributes.Remove("name");
-			RenderAttributes(writer);
+			base.RenderAttributes(writer);
 			writer.Write(" /");
 		}
 		
@@ -30,7 +30,7 @@ namespace System.Web.UI.HtmlControls{
 			set{}
 		}
 		
-		protected string RenderedNameAttribute{
+		protected virtual string RenderedName{
 			get{
 				return Name;
 			}
@@ -46,7 +46,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public string Value{
+		public virtual string Value{
 			get{
 				string attr = Attributes["value"];
 				if (attr != null){
@@ -55,10 +55,9 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["value"] = MapStringAttributeToString(value);
+				Attributes["value"] = AttributeToString(value);
 			}
 		}
 	} // class HtmlInputControl
 } // namespace System.Web.UI.HtmlControls
-
 

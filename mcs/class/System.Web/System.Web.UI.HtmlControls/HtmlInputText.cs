@@ -18,7 +18,7 @@ namespace System.Web.UI.HtmlControls{
 		public HtmlInputText(string type):base(type){}
 		public HtmlInputText():base("text"){}
 		
-		protected void OnPreRender(EventArgs e){
+		protected override void OnPreRender(EventArgs e){
 			if (Events[EventServerChange] != null && !Disabled){
 				ViewState.SetItemDirty("value",false);
 			}
@@ -26,13 +26,12 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected void OnServerChange(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerChange];
-			if (handler != null){
-				handler.Invoke(this, e);
-			}
+			if (handler != null) handler.Invoke(this, e);
 		}
 		
-		protected void RenderAttributes(HtmlTextWriter writer){
-			if (!String.Compare(Type, "password", true)){
+		protected override void RenderAttributes(HtmlTextWriter writer){
+			//hide value when password box
+			if (String.Compare(Type, "password") != 0){
 				ViewState.Remove("value");
 			}
 			RenderAttributes(writer);
@@ -40,15 +39,15 @@ namespace System.Web.UI.HtmlControls{
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			string currentValue = Value;
-			string postValue = postCollection.GetValues[];
-			if (!currentValue.Equals(postValue){
-				Value = postValue;
+			string[] postedValue = postCollection.GetValues(postDataKey);
+			if (!currentValue.Equals(postedValue)){
+				Value = postedValue[0];
 				return true;
 			}
 			return false;
 		}
 		
-		public override void RaisePostDataChangedEvent(){
+		public void RaisePostDataChangedEvent(){
 			OnServerChange(EventArgs.Empty);
 		}
 		
@@ -63,40 +62,34 @@ namespace System.Web.UI.HtmlControls{
 		
 		public int MaxLength{
 			get{
-				string currentMaxLength = (String) ViewState["maxlength"];
-				if (currentMaxLength != null){
-					return Int32.Parse(currentMaxLength, CultureInfo.InvariantCulture);
-				}
+				string attr = (String) ViewState["maxlength"];
+				if (attr != null) return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["maxlength"] = MapIntegerAttributeToString(value);
+				Attributes["maxlength"] = AttributeToString(value);
 			}
 		}
 		
 		public int Size{
 			get{
-				string currentMaxLength = (String) ViewState["size"];
-				if (currentMaxLength != null){
-					return Int32.Parse(currentMaxLength, CultureInfo.InvariantCulture);
-				}
+				string attr = (String) ViewState["size"];
+				if (attr != null) return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["size"] = MapIntegerAttributeToString(value);
+				Attributes["size"] = AttributeToString(value);
 			}
 		}
 		
-		public string Value{
+		public override string Value{
 			get{
 				string attr = Attributes["value"];
-				if (attr != null){
-					return attr;
-				}
+				if (attr != null) return attr;
 				return "";
 			}
 			set{
-				Attributes["value"] = MapStringAttributeToString(value);
+				Attributes["value"] = AttributeToString(value);
 			}
 		}
 		

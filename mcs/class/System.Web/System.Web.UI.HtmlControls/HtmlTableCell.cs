@@ -6,14 +6,15 @@
 using System;
 using System.Web;
 using System.Web.UI;
+using System.Globalization;
 
 namespace System.Web.UI.HtmlControls{
 	public class HtmlTableCell : HtmlContainerControl {
-		public HtmlTableCell(): base("td");
+		public HtmlTableCell(): base("td"){}
 		
-		public HtmlTableCell(string tagName): base(tagName);
+		public HtmlTableCell(string tagName): base(tagName){}
 		
-		protected override void RenderEndTag(HtmlTextWriter writer){
+		protected new void RenderEndTag(HtmlTextWriter writer){
 			base.RenderEndTag(writer);
 			writer.WriteLine();
 		}
@@ -25,7 +26,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["align"] = MapStringAttributeToString(value);
+				Attributes["align"] = AttributeToString(value);
 			}
 		}
 		
@@ -36,7 +37,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["bgcolor"] = MapStringAttributeToString(value);
+				Attributes["bgcolor"] = AttributeToString(value);
 			}
 		}
 		
@@ -47,18 +48,18 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["bordercolor"] = MapStringAttributeToString(value);
+				Attributes["bordercolor"] = AttributeToString(value);
 			}
 		}
 		
 		public int ColSpan {
 			get{
 				string attr = Attributes["colspan"];
-				if (attr != null) return return Int32.Parse(attr, CultureInfo.InvariantCulture);
+				if (attr != null) return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["colspan"] = MapIntegerAttributeToString(value);
+				Attributes["colspan"] = AttributeToString(value);
 			}
 		}
 		
@@ -69,14 +70,14 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["height"] = MapStringAttributeToString(value);
+				Attributes["height"] = AttributeToString(value);
 			}
 		}
 		
 		public bool NoWrap {
 			get{
 				string attr = Attributes["colspan"];
-				if (attr != null) return String.Equals("nowrap");
+				if (attr != null) return attr.Equals("nowrap");
 				return false;
 			}
 			set{
@@ -92,11 +93,11 @@ namespace System.Web.UI.HtmlControls{
 		public int RowSpan {
 			get{
 				string attr = Attributes["rowspan"];
-				if (attr != null) return return Int32.Parse(attr, CultureInfo.InvariantCulture);
+				if (attr != null) return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["rowspan"] = MapIntegerAttributeToString(value);
+				Attributes["rowspan"] = AttributeToString(value);
 			}
 		}
 		
@@ -107,7 +108,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["valign"] = MapStringAttributeToString(value);
+				Attributes["valign"] = AttributeToString(value);
 			}
 		}
 		
@@ -118,7 +119,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["width"] = MapStringAttributeToString(value);
+				Attributes["width"] = AttributeToString(value);
 			}
 		}
 		

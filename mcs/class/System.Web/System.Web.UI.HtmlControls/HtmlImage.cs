@@ -14,8 +14,8 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlImage(): base("img"){}
 		
-		protected override void RenderAttributes(HtmlTextWriter writer){
-			PreProcessRelativeReferenceAttribute(writer,"src");
+		protected new void RenderAttributes(HtmlTextWriter writer){
+			PreProcessRelativeReference(writer,"src");
 			RenderAttributes(writer);
 			writer.Write(" /");
 		}
@@ -29,7 +29,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["align"] = MapStringAttributeToString(value);
+				Attributes["align"] = AttributeToString(value);
 			}
 		}
 		
@@ -42,7 +42,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["alt"] = MapStringAttributeToString(value);
+				Attributes["alt"] = AttributeToString(value);
 			}
 		}
 		
@@ -55,7 +55,7 @@ namespace System.Web.UI.HtmlControls{
 				return -1;
 			}
 			set{
-				Attributes["border"] = MapIntegerAttributeToString(value);
+				Attributes["border"] = AttributeToString(value);
 			}
 		}
 		
@@ -68,7 +68,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["src"] = MapStringAttributeToString(value);
+				Attributes["src"] = AttributeToString(value);
 			}
 		}
 		
@@ -81,11 +81,10 @@ namespace System.Web.UI.HtmlControls{
 				return -1;
 			}
 			set{
-				Attributes["width"] = MapIntegerAttributeToString(value);
+				Attributes["width"] = AttributeToString(value);
 			}
 		}
 		
 	} // class HtmlImage
 } // namespace System.Web.UI.HtmlControls
-
 

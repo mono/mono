@@ -7,17 +7,18 @@ using System;
 using System.Web;
 using System.Web.UI;
 using System.Globalization;
+using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
 	public class HtmlInputImage : HtmlInputControl, IPostBackEventHandler, IPostBackDataHandler{
 		
-		private static readonly object EventServerChange;
+		private static readonly object EventServerClick;
 		private int _x, _y;
 		
 		public HtmlInputImage(): base("image"){}
 		
-		protected void OnPreRender(EventArgs e){
+		protected override void OnPreRender(EventArgs e){
 			if (Page != null && !Disabled){
 				Page.RegisterRequiresPostBack(this);
 			}
@@ -25,15 +26,13 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected void OnServerClick(ImageClickEventArgs e){
 			ImageClickEventHandler handler = (ImageClickEventHandler) Events[EventServerClick];
-			if (handler != null){
-				handler.Invoke(this, e);
-			}
+			if (handler != null) handler.Invoke(this, e);
 		}
 		
 		protected override void RenderAttributes(HtmlTextWriter writer){
-			PreProcessRelativeReferenceAttribute(writer,"src");
+			PreProcessRelativeReference(writer,"src");
 			if (Page != null && !CausesValidation){
-				Util.WriteOnClickAttribute(
+				System.Web.UI.Util.WriteOnClickAttribute(
 				                           writer,
 				                           this,
 				                           false,
@@ -44,8 +43,8 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
-			string postX = postCollection[String.Concat(RenderedNameAttribute,".x")];
-			string postY = postCollection[String.Concat(RenderedNameAttribute,".y")];
+			string postX = postCollection[String.Concat(RenderedName,".x")];
+			string postY = postCollection[String.Concat(RenderedName,".y")];
 			if (postX != null && postY != null && postX.Length >= 0 && postY.Length >= 0){
 				_x = Int32.Parse(postX, CultureInfo.InvariantCulture);
 				_y = Int32.Parse(postY, CultureInfo.InvariantCulture);
@@ -54,14 +53,14 @@ namespace System.Web.UI.HtmlControls{
 			return false;
 		}
 		
-		public override void RaisePostDataChangedEvent(){}
-		
-		public override IPostBackEventHandler RaisePostBackEvent(string eventArgument){
-			if (CausesValidation != null){
+		public void RaisePostBackEvent(string eventArgument){
+			if (CausesValidation){
 				Page.Validate();
 			}
-			OnServerClick(new ImageClickEventArgs(_x, _y));
+			OnServerClick(new ImageClickEventArgs(_x,_y));
 		}
+		
+		public void RaisePostDataChangedEvent(){}
 		
 		public event EventHandler ServerClick{
 			add{
@@ -75,48 +74,40 @@ namespace System.Web.UI.HtmlControls{
 		public string Align{
 			get{
 				string attr = Attributes["align"];
-				if (attr != null){
-					return attr;
-				}
+				if (attr != null) return attr;
 				return "";
 			}
 			set{
-				Attributes["align"] = MapStringAttributeToString(value);
+				Attributes["align"] = AttributeToString(value);
 			}
 		}
 		
 		public string Alt{
 			get{
 				string attr = Attributes["alt"];
-				if (attr != null){
-					return attr;
-				}
+				if (attr != null) return attr;
 				return "";
 			}
 			set{
-				Attributes["alt"] = MapStringAttributeToString(value);
+				Attributes["alt"] = AttributeToString(value);
 			}
 		}
 		
 		public int Border{
 			get{
 				string attr = Attributes["border"];
-				if (attr != null){
-					return Int32.Parse(attr,CultureInfo.InvariantCulture);
-				}
+				if (attr != null) return Int32.Parse(attr,CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["border"] = MapIntegerAttributeToString(value);
+				Attributes["border"] = AttributeToString(value);
 			}
 		}
 		
 		public bool CausesValidation{
 			get{
 				object causesVal = ViewState["CausesValidation"];
-				if (causesVal != null){
-					return (Boolean) causesVal;
-				}
+				if (causesVal != null) return (Boolean) causesVal;
 				return true;
 			}
 			set{
@@ -127,18 +118,13 @@ namespace System.Web.UI.HtmlControls{
 		public string Src{
 			get{
 				string attr = Attributes["src"];
-				if (attr != null){
-					return attr;
-				}
+				if (attr != null) return attr;
 				return "";
 			}
 			set{
-				Attributes["src"] = MapStringAttributeToString(value);
+				Attributes["src"] = AttributeToString(value);
 			}
 		}
-		
-		public event ServerClick;
-		
 	} // class HtmlInputImage
 } // namespace System.Web.UI.HtmlControls
 

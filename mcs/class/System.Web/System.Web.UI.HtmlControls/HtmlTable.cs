@@ -6,28 +6,29 @@
 using System;
 using System.Web;
 using System.Web.UI;
+using System.Globalization;
 
 namespace System.Web.UI.HtmlControls{
 	
 	public class HtmlTable : HtmlContainerControl {
 		private HtmlTableRowCollection _rows;
-
-		public HtmlTable():base("table");
+		
+		public HtmlTable():base("table"){}
 		
 		protected override ControlCollection CreateControlCollection(){
-			return new HtmlTableRowControlCollection;
+			return new HtmlTableRowControlCollection(this);
 		}
 		
 		protected override void RenderChildren(HtmlTextWriter writer){
 			writer.WriteLine();
 			writer.Indent = writer.Indent + 1;
-			base.RenderChildren;
+			base.RenderChildren(writer);
 			writer.Indent = writer.Indent - 1;
 		}
 		
-		protected override void RenderEndTag(HtmlTextWriter writer){
+		protected new void RenderEndTag(HtmlTextWriter writer){
 			base.RenderEndTag(writer);
-			writer.WriteLine;
+			writer.WriteLine();
 		}
 		
 		public string Align {
@@ -37,7 +38,7 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["align"] = MapStringAttributeToString(value);
+				Attributes["align"] = AttributeToString(value);
 			}
 		}
 		
@@ -48,18 +49,18 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["bgcolor"] = MapStringAttributeToString(value);
+				Attributes["bgcolor"] = AttributeToString(value);
 			}
 		}
 		
 		public int Border {
 			get{
 				string attr = Attributes["border"];
-				if (attr != null) return return Int32.Parse(attr, CultureInfo.InvariantCulture);
+				if (attr != null) return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["border"] = MapIntegerAttributeToString(value);
+				Attributes["border"] = AttributeToString(value);
 			}
 		}
 		
@@ -70,32 +71,32 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["bordercolor"] = MapStringAttributeToString(value);
+				Attributes["bordercolor"] = AttributeToString(value);
 			}
 		}
 		
 		public int CellPadding {
 			get{
 				string attr = Attributes["cellpadding"];
-				if (attr != null) return return Int32.Parse(attr, CultureInfo.InvariantCulture);
+				if (attr != null) return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["cellpadding"] = MapIntegerAttributeToString(value);
+				Attributes["cellpadding"] = AttributeToString(value);
 			}
 		}
 		
 		public int CellSpacing {
 			get{
 				string attr = Attributes["cellspacing"];
-				if (attr != null) return return Int32.Parse(attr, CultureInfo.InvariantCulture);
+				if (attr != null) return Int32.Parse(attr, CultureInfo.InvariantCulture);
 				return -1;
 			}
 			set{
-				Attributes["cellspacing"] = MapIntegerAttributeToString(value);
+				Attributes["cellspacing"] = AttributeToString(value);
 			}
 		}
-
+		
 		public string Height {
 			get{
 				string attr = Attributes["height"];
@@ -103,63 +104,65 @@ namespace System.Web.UI.HtmlControls{
 				return "";
 			}
 			set{
-				Attributes["height"] = MapStringAttributeToString(value);
+				Attributes["height"] = AttributeToString(value);
 			}
 		}
-
+		
 		public override string InnerHtml {
 			get{
-				throw new NotSupportedException(HttpRuntime.FormatResourceString("InnerHtml_Not_Supported", this.GetType.Name);
+				throw new NotSupportedException("InnerHtml property not supported by HtmlTable");
 			}
 			set{
-				throw new NotSupportedException(HttpRuntime.FormatResourceString("InnerHtml_Not_Supported", this.GetType.Name);
+				throw new NotSupportedException("InnerHtml property not supported by HtmlTable");
 			}
 		}
 		
 		public override string InnerText {
 			get{
-				throw new NotSupportedException(HttpRuntime.FormatResourceString("InnerText_Not_Supported", this.GetType.Name);
+				throw new NotSupportedException("InnerText property not supported by HtmlTable");
 			}
 			set{
-				throw new NotSupportedException(HttpRuntime.FormatResourceString("InnerText_Not_Supported", this.GetType.Name);
+				throw new NotSupportedException("InnerText property not supported by HtmlTable");
 			}
 		}
-
+		
 		public virtual HtmlTableRowCollection Rows {
 			get{
-				if (_rows == null) _rows = new HtmlTableRowCollection;
+				if (_rows == null) _rows = new HtmlTableRowCollection(this);
 				return _rows;
 			}
 		}
 		
-		public string Height {
+		public string Width {
 			get{
 				string attr = Attributes["width"];
 				if (attr != null) return attr;
 				return "";
 			}
 			set{
-				Attributes["width"] = MapStringAttributeToString(value);
+				Attributes["width"] = AttributeToString(value);
 			}
-		}		
-		private protected class HtmlTableRowControlCollection : ControlCollection {
-			internal HtmlTableCellControlCollection(Control owner): base(owner);
+		}
+		
+		protected class HtmlTableRowControlCollection : ControlCollection {
+			
+			internal HtmlTableRowControlCollection(Control owner): base(owner){}
 			
 			public override void Add(Control child){
-				if (child Is HtmlTableCell){
+				if ((child as HtmlTableCell) != null){
 					base.Add(child);
 				}
 				else{
-					throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type","HtmlTableRow",child.GetType.Name.ToString);
+					throw new ArgumentException("HtmlTableRow cannot have children of type" + child.GetType().Name);
 				}
 			}
 			
 			public override void AddAt(int index, Control child){
-				if (child Is HtmlTableCell){
+				if ((child as HtmlTableCell) != null){
 					base.AddAt(index,child);
 				}
 				else{
-					throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type","HtmlTableRow",child.GetType.Name.ToString);
+					throw new ArgumentException("HtmlTableRow cannot have children of type" + child.GetType().Name);
 				}
 			}
 		} // end of HtmlTableRowControlCollection

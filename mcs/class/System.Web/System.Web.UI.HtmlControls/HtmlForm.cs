@@ -9,143 +9,139 @@ using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
 	
-	public class HtmlForm : HtmlContainerControl, IPostBackDataHandler{
+	public class HtmlForm : HtmlContainerControl{
 		
 		private static string SmartNavIncludeScriptKey  = "SmartNavIncludeScript";
 		
 		public HtmlForm(): base("form"){}
-		
-		
-		protected override void RenderAttributes(HtmlTextWriter writer){
-			writer.WriteAttribute("name",RenderedNameAttribute);
+				
+		protected new void RenderAttributes(HtmlTextWriter writer){
+			writer.WriteAttribute("name",RenderedName);
 			Attributes.Remove("name");
 			writer.WriteAttribute("method",Method);
 			Attributes.Remove("method");
-			writer.WriteAttribute("action",GetActionAttribute,true);
+			writer.WriteAttribute("action",Action,true);
 			Attributes.Remove("action");
+
 			string clientOnSubmit = Page.ClientOnSubmitEvent;
 			if (clientOnSubmit != null && clientOnSubmit.Length > 0){
 				if (Attributes["onsubmit"] != null){
-					clientOnSubmit = String.Concat(clientOnSubmit,Attributes["onsubmit"];
-					Attributes.Remove("onsubmit")
+					clientOnSubmit = String.Concat(clientOnSubmit,Attributes["onsubmit"]);
+					Attributes.Remove("onsubmit");
 				}
 				writer.WriteAttribute("language","javascript");
 				writer.WriteAttribute("onsubmit",clientOnSubmit);
 			}
-			if (ID != null){
+			if (ID == null){
 				writer.WriteAttribute("id",ClientID);
 			}
-			RenderAttributes(writer);
+			base.RenderAttributes(writer);
 		}
 		
+		//TODO: adapt code for non-IE browsers
 		protected override void Render(HtmlTextWriter output){
-			if (Page.SmartNavigation != null){
-				UI.IAttributeAccessor.SetAttribute("_smartNavEnabled","true");
+			if (Page.SmartNavigation == true){
+				IAttributeAccessor.SetAttribute("_smartNavigation","true");
 				HttpBrowserCapabilities browserCap = Context.Request.Browser;
-				if (Browser.ToLower != "ie"){
-					Render(output);
+				if (browserCap.Browser.ToLower() != "ie" && browserCap.MajorVersion < 5){
+					base.Render(output);
 					return;
 				}
-				else if (browserCap.MajorVersion > 5){
-					output.WriteLine("<IFRAME ID=_hifSmartNav NAME=_hifSmartNav STYLE=display:none ></IFRAME>"
-					                 if (browerCap.MinorVersion > 0.5 && browserCap.MajorVersion != 5){
-					                 	Page.RegisterClientScriptFileInternal("SmartNavIncludeScript","JScript","SmartNavIE5.js");
-					                 }
-					                 else{
-					                 	if (Page.IsPostBack){
-					                 		Page.RegisterClientScriptFileInternal("SmartNavIncludeScript","JScript","SmartNav.js");
-					                 	}
-					                 }
-				}
-				Render(output);
+				output.WriteLine("<IFRAME ID=_hifSmartNav NAME=_hifSmartNav STYLE=display:none ></IFRAME>");
+				
+				if (browserCap.MinorVersion < 0.5 && browserCap.MajorVersion != 5)
+					Page.RegisterClientScriptFileInternal("SmartNavIncludeScript","JScript","SmartNavIE5.js");
+				else if (Page.IsPostBack) Page.RegisterClientScriptFileInternal("SmartNavIncludeScript","JScript","SmartNav.js");
+				base.Render(output);
 			}
 		}
 		
 		protected override void RenderChildren(HtmlTextWriter writer){
 			Page.OnFormRender(writer,ClientID);
-			RenderChildren(writer);
+			base.RenderChildren(writer);
 			Page.OnFormPostRender(writer,ClientID);
 		}
 		
 		protected override void OnInit(EventArgs e){
-			OnInit(e);
-			Page.RegisterViewStateHandler;
+			base.OnInit(e);
+			Page.RegisterViewStateHandler();
 		}
 		
-		private string GetActionAttribute(){
-			string loc0 = Context.Request.CurrentExecutionFilePath;
-			string loc1 = Context.Request.FilePath;
-			if (loc1.ReferenceEquals(loc0) != true){
-				loc2 = loc1;
-				int loc3 = loc2.LastIndexOf(G);
-				if (loc3 < 0) goto progres;
-				loc2 = loc2.Substring(loc3+1)
+		internal string Action{
+			get{
+				string executionFilePath = Context.Request.CurrentExecutionFilePath;
+				string filePath = Context.Request.FilePath;
+				string attr;
+				if (String.ReferenceEquals(executionFilePath, filePath) == true){
+					attr = filePath;
+					int lastSlash = attr.LastIndexOf('/');
+					if (lastSlash >= 0)
+						attr = attr.Substring(lastSlash + 1);
+				}
+				else{
+					attr = Util.UrlPath.MakeRelative(filePath,executionFilePath);
+				}
+				string queryString = Context.Request.QueryStringText;
+				if (queryString != null && queryString.Length > 0)
+					attr = String.Concat(attr, '?', queryString);
+				return attr;
 			}
-			else{
-				loc2 = Util.Version.SBSVersionString(loc1,loc0);
-			}
-			progres:
-				string loc4 = Context.Request.QueryStringText;
-			if (loc4 != null && loc4.Length > 0){
-				loc2 = String.Concat(loc2,"\?",loc4);
-			}
-			return loc2;
 		}
 		
 		public string EncType{
 			get{
-				string attrEncType = Attributes["enctype"];
-				if (attrEncType != null){
-					return attrEncType;
+				string attr = Attributes["enctype"];
+				if (attr != null){
+					return attr;
 				}
 				return null;
 			}
 			set{
-				Attributes["enctype"] = MapStringAttributeToString(value);
+				Attributes["enctype"] = AttributeToString(value);
 			}
 		}
 		
 		public string Method{
 			get{
-				string attrMethod = Attributes["method"];
-				if (attrMethod != null){
-					return attrMethod;
+				string attr = Attributes["method"];
+				if (attr != null){
+					return attr;
 				}
 				return "post";
 			}
 			set{
-				Attributes["method"] = MapStringAttributeToString(value);
+				Attributes["method"] = AttributeToString(value);
 			}
 		}
 		
 		public string Target{
 			get{
-				string attrTarget = Attributes["target"];
-				if (attrTarget != null){
-					return attrTarget;
+				string attr = Attributes["target"];
+				if (attr != null){
+					return attr;
 				}
 				return "";
 			}
 			set{
-				Attributes["target"] = MapStringAttributeToString(value);
+				Attributes["target"] = AttributeToString(value);
 			}
 		}
 		
 		public string Name{
 			get{
-				string attrName = Attributes["name"];
-				if (attrName != null){
-					return attrName;
+				string attr = Attributes["name"];
+				if (attr != null){
+					return attr;
 				}
 				return "";
 			}
 		}
 		
-		protected string RenderedNameAttribute{
+		internal string RenderedName{
 			get{
-				string attrName = Name;
-				if (attrName.Length > 0){
-					return attrName;
+				string attr = Name;
+				if (attr.Length > 0){
+					return attr;
 				}
 				return UniqueID;
 			}
