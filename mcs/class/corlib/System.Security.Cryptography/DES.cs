@@ -12,7 +12,6 @@ using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
-
 	internal sealed class DESCore {
 
 		internal static readonly int KEY_BIT_SIZE = 64;
@@ -179,8 +178,8 @@ namespace System.Security.Cryptography {
 
 
 		private static uint [] spBoxes;
-		private static byte [] ipTab;
-		private static byte [] fpTab;
+		private static int [] ipTab;
+		private static int [] fpTab;
 
 
 		static DESCore ()
@@ -246,18 +245,18 @@ namespace System.Security.Cryptography {
 
 
 
-		private static void InitPermutationTable (byte [] pBits, out byte [] permTab)
+		private static void InitPermutationTable (byte [] pBits, out int [] permTab)
 		{
-			permTab = new byte [8*2 * 8*2 * (64/8)];
+			permTab = new int [8*2 * 8*2 * (64/32)];
 
 			for (int i = 0; i < 16; i++) {
 				for (int j = 0; j < 16; j++) {
-					int offs = (i << 7) + (j << 3);
+					int offs = (i << 5) + (j << 1);
 					for (int n = 0; n < 64; n++) {
 						int bitNum = (int) pBits [n];
 						if ((bitNum >> 2 == i) &&
 						    0 != (j & (8 >> (bitNum & 3)))) {
-							permTab [offs + (n >> 3)] |= (byte) (0x80 >> (n & 7));
+							permTab [offs + (n >> (3+2))] |= (int) ((0x80808080 & (0xFF << (n & (3 << 3)))) >> (n & 7));
 						}
 					}
 				}
@@ -316,62 +315,57 @@ namespace System.Security.Cryptography {
 		}
 
 
-		/*
-		private static void Permutation (byte [] input, byte [] output, byte [] permTab)
+		private static void Permutation (byte [] input, byte [] _output, int [] permTab, bool preSwap)
 		{
-			Array.Clear (output, 0, BLOCK_BYTE_SIZE);
 
-			for (int i = 0, indx = 0; i < BLOCK_BYTE_SIZE*2; i += 2, indx++) {
-				int offs1 = (i << 7) + ((((int)(input [indx]) >> 4)) << 3);
-				int offs2 = ((i + 1) << 7) + ((((int)input [indx]) & 0xF) << 3);
+			if (preSwap) BSwap (input);
 
-				for (int j = 0; j < 8; j++) {
-					output [j] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-				}
-			}
-		}
-		*/
-
-		private static void Permutation (byte [] input, byte [] _output, byte [] permTab)
-		{
 			byte [] output = _output;
-			Array.Clear (output, 0, BLOCK_BYTE_SIZE);
 
-			int offs1 = (((int)(input [0]) >> 4)) << 3;
-			int offs2 = (1 << 7) + ((((int)input [0]) & 0xF) << 3);
+			int offs1 = (((int)(input [0]) >> 4)) << 1;
+			int offs2 = (1 << 5) + ((((int)input [0]) & 0xF) << 1);
 
-			output [0] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-			output [1] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-			output [2] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-			output [3] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-			output [4] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-			output [5] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-			output [6] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-			output [7] |= (byte) (permTab [offs1]   | permTab [offs2]);
+			int d1 = permTab [offs1++] | permTab [offs2++];
+			int d2 = permTab [offs1]   | permTab [offs2];
 
-			for (int i = 2, indx = 1; i < BLOCK_BYTE_SIZE*2; i += 2, indx++) {
-				offs1 = (i << 7) + ((((int)(input [indx]) >> 4)) << 3);
-				offs2 = ((i + 1) << 7) + ((((int)input [indx]) & 0xF) << 3);
 
-				output [0] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-				output [1] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-				output [2] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-				output [3] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-				output [4] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-				output [5] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-				output [6] |= (byte) (permTab [offs1++] | permTab [offs2++]);
-				output [7] |= (byte) (permTab [offs1]   | permTab [offs2]);
+			int max = BLOCK_BYTE_SIZE << 1;
+			for (int i = 2, indx = 1; i < max; i += 2, indx++) {
+				int ii = (int) input [indx];
+				offs1 = (i << 5) + ((ii >> 4) << 1);
+				offs2 = ((i + 1) << 5) + ((ii & 0xF) << 1);
+
+				d1 |= permTab [offs1++] | permTab [offs2++];
+				d2 |= permTab [offs1]   | permTab [offs2];
+			}
+
+			if (preSwap) {
+				output [0] = (byte) (d1);
+				output [1] = (byte) (d1 >> 8);
+				output [2] = (byte) (d1 >> 16);
+				output [3] = (byte) (d1 >> 24);
+				output [4] = (byte) (d2);
+				output [5] = (byte) (d2 >> 8);
+				output [6] = (byte) (d2 >> 16);
+				output [7] = (byte) (d2 >> 24);
+			} else {
+				output [0] = (byte) (d1 >> 24);
+				output [1] = (byte) (d1 >> 16);
+				output [2] = (byte) (d1 >> 8);
+				output [3] = (byte) (d1);
+				output [4] = (byte) (d2 >> 24);
+				output [5] = (byte) (d2 >> 16);
+				output [6] = (byte) (d2 >> 8);
+				output [7] = (byte) (d2);
 			}
 		}
 
 
 
 
-		private void BSwap ()
+		private static void BSwap (byte [] byteBuff)
 		{
 			byte t;
-
-			// byte [] byteBuff = this.byteBuff;
 
 			t = byteBuff [0];
 			byteBuff [0] = byteBuff [3];
@@ -448,38 +442,37 @@ namespace System.Security.Cryptography {
 			byte [] byteBuff = this.byteBuff;
 			uint [] dwordBuff = this.dwordBuff;
 
-			Permutation (block, byteBuff, ipTab);
+			Permutation (block, byteBuff, ipTab, false);
 
-
-			BSwap ();
 			Buffer.BlockCopy (byteBuff, 0, dwordBuff, 0, BLOCK_BYTE_SIZE);
 
+			uint d0 = dwordBuff[0];
+			uint d1 = dwordBuff[1];
+
 			// 16 rounds
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  0);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  1);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  2);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  3);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  4);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  5);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  6);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  7);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  8);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  9);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1], 10);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0], 11);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1], 12);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0], 13);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1], 14);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0], 15);
+			d0 ^= CipherFunct (d1,  0);
+			d1 ^= CipherFunct (d0,  1);
+			d0 ^= CipherFunct (d1,  2);
+			d1 ^= CipherFunct (d0,  3);
+			d0 ^= CipherFunct (d1,  4);
+			d1 ^= CipherFunct (d0,  5);
+			d0 ^= CipherFunct (d1,  6);
+			d1 ^= CipherFunct (d0,  7);
+			d0 ^= CipherFunct (d1,  8);
+			d1 ^= CipherFunct (d0,  9);
+			d0 ^= CipherFunct (d1, 10);
+			d1 ^= CipherFunct (d0, 11);
+			d0 ^= CipherFunct (d1, 12);
+			d1 ^= CipherFunct (d0, 13);
+			d0 ^= CipherFunct (d1, 14);
+			d1 ^= CipherFunct (d0, 15);
 
 
-			uint t = dwordBuff [0];
-			dwordBuff [0] = dwordBuff [1];
-			dwordBuff [1] = t;
+			dwordBuff [0] = d1;
+			dwordBuff [1] = d0;
 			Buffer.BlockCopy (dwordBuff, 0, byteBuff, 0, BLOCK_BYTE_SIZE);
-			BSwap();
 
-			Permutation (byteBuff, dest, fpTab);
+			Permutation (byteBuff, dest, fpTab, true);
 		}
 
 
@@ -490,39 +483,38 @@ namespace System.Security.Cryptography {
 			byte [] byteBuff = this.byteBuff;
 			uint [] dwordBuff = this.dwordBuff;
 
-			Permutation (block, byteBuff, ipTab);
+			Permutation (block, byteBuff, ipTab, false);
 
-			BSwap ();
 			Buffer.BlockCopy (byteBuff, 0, dwordBuff, 0, BLOCK_BYTE_SIZE);
 
-			uint t = dwordBuff [0];
-			dwordBuff [0] = dwordBuff [1];
-			dwordBuff [1] = t;
+			uint d1 = dwordBuff [0];
+			uint d0 = dwordBuff [1];
 
 			// 16 rounds in reverse order
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0], 15);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1], 14);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0], 13);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1], 12);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0], 11);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1], 10);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  9);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  8);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  7);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  6);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  5);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  4);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  3);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  2);
-			dwordBuff[1] ^= CipherFunct (dwordBuff [0],  1);
-			dwordBuff[0] ^= CipherFunct (dwordBuff [1],  0);
+			d1 ^= CipherFunct (d0, 15);
+			d0 ^= CipherFunct (d1, 14);
+			d1 ^= CipherFunct (d0, 13);
+			d0 ^= CipherFunct (d1, 12);
+			d1 ^= CipherFunct (d0, 11);
+			d0 ^= CipherFunct (d1, 10);
+			d1 ^= CipherFunct (d0,  9);
+			d0 ^= CipherFunct (d1,  8);
+			d1 ^= CipherFunct (d0,  7);
+			d0 ^= CipherFunct (d1,  6);
+			d1 ^= CipherFunct (d0,  5);
+			d0 ^= CipherFunct (d1,  4);
+			d1 ^= CipherFunct (d0,  3);
+			d0 ^= CipherFunct (d1,  2);
+			d1 ^= CipherFunct (d0,  1);
+			d0 ^= CipherFunct (d1,  0);
 
+			dwordBuff [0] = d0;
+			dwordBuff [1] = d1;
 
 
 			Buffer.BlockCopy (dwordBuff, 0, byteBuff, 0, BLOCK_BYTE_SIZE);
-			BSwap();
 
-			Permutation (byteBuff, dest, fpTab);
+			Permutation (byteBuff, dest, fpTab, true);
 		}
 
 
