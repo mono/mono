@@ -67,34 +67,61 @@ namespace System.Windows.Forms  {
 		}
 
 		protected Menu( MenuItem[] items) {
-			if( items != null) {
-				IsParent_ = true;
-				MenuItems.AddRange ( items);
-			}
+			MenuItems.AddRange ( items);
 		}
 
 		//
 		// -- Public Properties
 		//
 
-
-		private IntPtr menuHandle_ = IntPtr.Zero;
+		protected internal bool menuStructureModified_ = true;
+		
+		internal void BuildMenuStructure ()
+		{
+			if( menuStructureModified_) {
+				while( Win32.RemoveMenu( menuHandle_, 0, (uint)MF_.MF_BYPOSITION) != 0);
+				int curIndex = 0;
+				foreach(MenuItem mi in MenuItems) {
+					System.Console.WriteLine("MenuItem {0} Parent {1}", mi.Text, mi.IsParent);
+					if( mi.IsParent){
+						Win32.AppendMenuA( menuHandle_, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP,
+															mi.Handle, mi.Text);
+						mi.Index = curIndex++;
+					}
+					else {
+						Win32.AppendMenuA( menuHandle_, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING,
+								   (IntPtr) mi.GetID(), mi.Text);
+						mi.Index = curIndex++;
+					}
+				}
+				menuStructureModified_ = false;
+			}
+		}
+		
+        protected Menu parent_ = null;
+        
+		protected IntPtr menuHandle_ = IntPtr.Zero;
+		internal void CreateMenuHandle()
+		{
+			if( menuHandle_ == IntPtr.Zero) {
+				menuHandle_ = Win32.CreateMenu();
+				//System.Console.WriteLine("Create menu {0}", menuHandle_);
+				BuildMenuStructure();
+				allMenus_[menuHandle_] = this;
+			}
+		}
+		
 		public IntPtr Handle {
 			get {
-				if( menuHandle_ == IntPtr.Zero) {
-					menuHandle_ = Win32.CreateMenu();
-					//System.Console.WriteLine("Create menu {0}", menuHandle_);
-				}
+				CreateMenuHandle();
 				return menuHandle_;
 			}
 		}
 
-		protected bool IsParent_ = false;
-
 		public virtual bool IsParent {
 
 			get {
-				return IsParent_;
+				return MenuItems.Count != 0;
 			}
 		}
 
@@ -116,20 +143,12 @@ namespace System.Windows.Forms  {
 			}
 		}
 
-		internal const uint INVALID_MENU_ID = 0xffffffff;
-		// Variables are stored here to provide access for the base functions
-		protected internal uint MenuID_ = INVALID_MENU_ID;
-
-		// Provides unique id to all items in all menus, hopefully space is enougth.
-		// Possible to use array to keep ids from deleted menu items
-		// and reuse them.
-		protected static int MenuIDs_ = 1;
 
 		// Library interface
 
 		// Recursively searches for specified item in menu.
 		// Goes immediately into child, when mets one.
-		internal virtual MenuItem GetMenuItemByID( uint id)
+		internal MenuItem GetMenuItemByID (uint id)
 		{
 			foreach( MenuItem mi in MenuItems) {
 				if( mi.IsParent) {
@@ -137,26 +156,64 @@ namespace System.Windows.Forms  {
 					if( submi != null) return submi;
 				}
 				else {
-					if( mi.MenuID_ == id){
+					if( mi.GetID() == id){
 						return mi;
 					}
 				}
 			}
 			return null;
 		}
-
-		//
-		// Btw, this function is funky, it is being used by routines that are supposed
-		// to be passing an IntPtr to the AppendMenu function
-		//
-		internal virtual uint GetIDByMenuItem(MenuItem mi)
+		
+		private static Hashtable allMenus_ = new Hashtable();
+		
+		internal static Menu GetMenuByHandle (IntPtr hMenu)
 		{
-			// FIXME: Pay attention, do not assign an id to a "stranger"
-			// If reusing IDs, get one from array first
-			if ( mi.MenuID_ == INVALID_MENU_ID) {
-				mi.MenuID_ = (uint) MenuIDs_++;
+			Menu result = null;
+			try {
+				result = allMenus_[hMenu] as Menu;
 			}
-			return  (uint) mi.MenuID_;
+			catch(ArgumentNullException) {
+			}
+			catch(NotSupportedException) {
+			}
+			return result;
+		}
+		
+		internal void OnNewMenuItemAdd (MenuItem mi)
+		{
+			menuStructureModified_ = true;
+			mi.SetParent( this);
+		}
+		
+		internal void OnRemoveMenuItem (MenuItem mi)
+		{
+			if(menuHandle_ != IntPtr.Zero) {
+				menuStructureModified_ = true;
+			}
+			mi.SetParent( null);
+		}
+		
+		internal void OnLastSubItemRemoved ()
+		{
+			if( menuHandle_ != IntPtr.Zero) {
+				//System.Console.WriteLine("Delete menu {0}", menuHandle_);
+				Win32.DestroyMenu(menuHandle_);
+				allMenus_.Remove(menuHandle_);
+				menuHandle_ = IntPtr.Zero;
+				
+				if( parent_ != null) {
+					parent_.menuStructureModified_ = true;
+				}
+			}
+		}
+		
+		internal void OnWmInitMenu ()
+		{
+		}
+		
+		internal void OnWmInitMenuPopup ()
+		{
+			BuildMenuStructure();
 		}
 
 		//inherited
@@ -201,12 +258,12 @@ namespace System.Windows.Forms  {
 
 		public class MenuItemCollection : IList, ICollection, IEnumerable {
 			private ArrayList		items_ = new ArrayList();
-			private Menu 				parentMenu_ = null;
+			private Menu 			parentMenu_ = null;
 			//
 			// -- Constructor
 			//
 
-			public MenuItemCollection(Menu m) {
+			public MenuItemCollection (Menu m) {
 				parentMenu_ = m;
 			}
 
@@ -214,28 +271,28 @@ namespace System.Windows.Forms  {
 			// -- Public Methods
 			//
 
-			public virtual int Add(MenuItem mi) {
+			public virtual int Add (MenuItem mi) {
 				int result = -1;
-				// FIXME: MenuItem cannot be inserted to several containers. Check this here.
-				if( mi != null){
-					// FIXME: Set MenuItem's owner here.
+				if( mi != null && parentMenu_ != null){
+					parentMenu_.OnNewMenuItemAdd(mi);
 					items_.Add(mi);
 					result = items_.Count;
 					//System.Console.WriteLine("Adding menuItem {0}, parent {1}", mi.Text, mi.IsParent);
-					if( parentMenu_ != null) {
-						if( mi.IsParent){
-							Win32.AppendMenuA( parentMenu_.Handle, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP,
-																mi.Handle, mi.Text);
-						}
-						else {
-							Win32.AppendMenuA( parentMenu_.Handle, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING,
-									   (IntPtr) parentMenu_.GetIDByMenuItem(mi), mi.Text);
-						}
+/*					
+					if( mi.IsParent){
+						Win32.AppendMenuA( parentMenu_.Handle, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP,
+															mi.Handle, mi.Text);
 					}
+					else {
+						Win32.AppendMenuA( parentMenu_.Handle, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING,
+								   (IntPtr) mi.GetID(), mi.Text);
+					}
+*/					
 				}
 				return result;
 			}
-			private MenuItem AddMenuItemCommon( MenuItem mi) {
+			
+			private MenuItem AddMenuItemCommon (MenuItem mi) {
 				return ( -1 != Add (mi)) ? mi : null;
 			}
 
@@ -243,8 +300,30 @@ namespace System.Windows.Forms  {
 				return AddMenuItemCommon( new MenuItem (s));
 			}
 
-			public virtual int Add ( int i, MenuItem m) {
-				throw new NotImplementedException ();
+			public virtual int Add ( int i, MenuItem mi) {
+				if( i > items_.Count){
+					// FIXME: Set exception details
+					throw new System.ArgumentException();
+				}
+				int result = -1;
+				if( mi != null && parentMenu_ != null){
+					parentMenu_.OnNewMenuItemAdd(mi);
+					items_.Insert(i, mi);
+					result = i;
+/*					
+					if( mi.IsParent){
+						Win32.InsertMenuA( parentMenu_.Handle, (uint)i,
+											(int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP | (int)MF_.MF_BYPOSITION,
+											mi.Handle, mi.Text);
+					}
+					else {
+						Win32.InsertMenuA( parentMenu_.Handle, (uint)i,
+											(int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_BYPOSITION,
+								   			(IntPtr) mi.GetID(), mi.Text);
+					}
+*/					
+				}
+				return result;
 			}
 
 			public virtual MenuItem Add (string s, EventHandler e) {
@@ -256,25 +335,39 @@ namespace System.Windows.Forms  {
 			}
 
 			public virtual void AddRange(MenuItem[] items) {
-				foreach( MenuItem mi in items) {
-					Add(mi);
+				if( items != null) {
+					foreach( MenuItem mi in items) {
+						Add(mi);
+					}
 				}
 			}
 
 			public virtual void Clear() {
-				throw new NotImplementedException ();
+				if( parentMenu_ != null){
+					foreach( MenuItem mi in items_) {
+						parentMenu_.OnRemoveMenuItem( mi);
+					}
+				}
+				items_.Clear();
+				if( parentMenu_ != null){
+					parentMenu_.OnLastSubItemRemoved();
+				}				
 			}
 
 			public bool Contains(MenuItem m) {
-				throw new NotImplementedException ();
+				return items_.Contains(m);
 			}
 
 			public void CopyTo(Array a, int i) {
-				throw new NotImplementedException ();
+				int targetIdx = i;
+				foreach( MenuItem mi in items_) {
+					MenuItem newMi = mi.CloneMenu();
+					a.SetValue(newMi,targetIdx++);
+				}
 			}
 
 			public override bool Equals(object o) {
-				throw new NotImplementedException ();
+				return base.Equals(o);
 			}
 
 			[MonoTODO]
@@ -288,15 +381,23 @@ namespace System.Windows.Forms  {
 			}
 
 			public int IndexOf(MenuItem m) {
-				throw new NotImplementedException ();
+				return items_.IndexOf(m);
 			}
 
 			public virtual void Remove(MenuItem m) {
-				throw new NotImplementedException ();
+				if( m != null && parentMenu_ != null){
+					if( Contains(m)){
+						parentMenu_.OnRemoveMenuItem(m);
+						items_.Remove(m);
+						if( items_.Count == 0){
+							parentMenu_.OnLastSubItemRemoved();
+						}				
+					}
+				}
 			}
 
 			public virtual void RemoveAt(int i) {
-				throw new NotImplementedException ();
+				Remove(items_[i] as MenuItem);
 			}
 
 			public override string ToString() {
@@ -308,7 +409,7 @@ namespace System.Windows.Forms  {
 			//
 
 			~MenuItemCollection() {
-				throw new NotImplementedException ();
+				Clear();
 			}
 
 			//inherited
@@ -323,7 +424,7 @@ namespace System.Windows.Forms  {
 			public int Count {
 
 				get {
-					throw new NotImplementedException ();
+					return items_.Count;					
 				}
 			}
 

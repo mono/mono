@@ -778,6 +778,62 @@ namespace System.Windows.Forms{
 
 		#endregion
 
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Auto)]
+		internal static extern IntPtr GetMenu (IntPtr hWnd);
+		
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Auto)]
+		internal static extern int SetMenu (IntPtr hWnd, IntPtr hMenu);
+
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern int InsertMenuA(IntPtr hMenu, uint pos, uint uflags, IntPtr NewItem, string item);
+		
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern int RemoveMenu(IntPtr hMenu, uint pos, uint uflags);
+		
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall)]
+		internal static extern int DrawMenuBar (IntPtr hWnd);
+		
+
+
+		[DllImport ("user32.dll", CallingConvention = 
+			 CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static int AdjustWindowRect (
+			ref RECT rc, int dwStyle, int bMenu);
+
+
+
+		[DllImport ("kernel32.dll", CallingConvention = 
+			 CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static uint GetLastError ();
+		
+		[DllImport ("kernel32.dll", CallingConvention = 
+			 CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static uint  FormatMessage (
+			uint flags, IntPtr lpSource,
+			uint messageId, uint languageId,
+			StringBuilder lpBuffer, int nSize,
+			IntPtr Arguments);
+				
+		internal static string FormatMessage(uint error) {
+			StringBuilder sb = new StringBuilder(2048);
+			Win32.FormatMessage( (uint)(FM_.FORMAT_MESSAGE_FROM_SYSTEM | FM_.FORMAT_MESSAGE_IGNORE_INSERTS),
+				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);
+			return sb.ToString();
+		}
+
+
 
 	}
 

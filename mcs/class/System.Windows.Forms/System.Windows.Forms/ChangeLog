@@ -1,3 +1,16 @@
+  2002-11-27  DennisHayes <dennish@raytek.com>	
+	* checkin for Alexandre Pigolkine (pigolkine@gmx.de) with minor changes
+	
+	* Control.cs
+	* MainMenu.cs
+	* Menu.cs
+	* MenuItem.cs
+	* NativeWindow.cs
+	* win32Enums.cs
+	* win32functions.cs
+	
+	* WIN32 implmentation
+
     2002-11-24  DennisHayes <dennish@raytek.com>	
 
 	* Application.cs

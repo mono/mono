@@ -386,8 +386,8 @@
 					return new Size (0, 0);
 				}
 				set {
-					//How do set this???
-					throw new NotImplementedException ();
+					// FIXME: Is this good default style ?
+					SetClientSize(value, (int)(WindowStyles.WS_CHILD | WindowStyles.WS_BORDER), false);
 				}
 			}
     		
@@ -398,6 +398,29 @@
     				return "Company Name";
     			}
     		}
+
+			internal void SetClientSize(Size value, int styleIfNoWindow, bool menuIfNoWindow) {
+				RECT rc = new RECT();
+				rc.left = rc.top = 0;
+				rc.right = value.Width;
+				rc.bottom = value.Height;
+				
+				if( Handle != IntPtr.Zero){
+					int style = Win32.GetWindowLong( Handle, GetWindowLongFlag.GWL_STYLE).ToInt32();
+					int menuExists = 0;
+					if( (style & (int)WindowStyles.WS_CHILD) != 0 ){
+						menuExists = Win32.GetMenu(Handle) != IntPtr.Zero ? 1 : 0;
+					}
+					Win32.AdjustWindowRect( ref rc, style, menuExists);
+					Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, rc.right - rc.left, rc.bottom - rc.top, 
+						SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOZORDER);
+				}
+				else {
+					Win32.AdjustWindowRect( ref rc, styleIfNoWindow, menuIfNoWindow ? 1 : 0);
+					Width = rc.right - rc.left;
+					Height = rc.bottom - rc.top;
+				}
+			}    		
     		
     		public bool ContainsFocus {
     			get {
@@ -838,9 +861,9 @@
 						WindowRectangle.bottom - WindowRectangle.top);
     			}
     			set {
-    				Win32.SetWindowPos(Handle, 0, 0, 0, this.Size.Width, this.Size.Height,
+    				Win32.SetWindowPos(Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, this.Size.Width, this.Size.Height,
 						SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOMOVE | 
-						SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOACTIVATE);
+						SetWindowPosFlags.SWP_NOZORDER);// Activating might be a good idea?? | SetWindowPosFlags.SWP_NOACTIVATE);
     			}
     		}
     		

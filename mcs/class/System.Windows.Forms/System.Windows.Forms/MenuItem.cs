@@ -16,6 +16,8 @@ using System.Globalization;
 using System.Drawing;
 using System.Runtime.Remoting;
 using System.ComponentModel;
+using System.Text;
+
 namespace System.Windows.Forms {
 
 	/// <summary>
@@ -29,11 +31,11 @@ namespace System.Windows.Forms {
 		public MenuItem() : base(null) {
 		}
 
-		public MenuItem(string s) : base(null){
+		public MenuItem(string s) : this(){
 			text_ = s;
 		}
 
-		public MenuItem(string s, EventHandler e) : base(null) {
+		public MenuItem(string s, EventHandler e) : this() {
 			text_ = s;
 			Click += e;
 		}
@@ -42,11 +44,11 @@ namespace System.Windows.Forms {
 			text_ = s;
 		}
 
-		public MenuItem(string s, EventHandler e, Shortcut sc) : base(null) {
+		public MenuItem(string s, EventHandler e, Shortcut sc) : this() {
 			throw new NotImplementedException ();
 		}
 
-		public MenuItem(MenuMerge mm, int i, Shortcut sc, string s, EventHandler e, EventHandler e1, EventHandler e2, MenuItem[] items)  : base(null){
+		public MenuItem(MenuMerge mm, int i, Shortcut sc, string s, EventHandler e, EventHandler e1, EventHandler e2, MenuItem[] items)  : base(items){
 			throw new NotImplementedException ();
 		}
 
@@ -55,7 +57,9 @@ namespace System.Windows.Forms {
 		//
 
 		public virtual MenuItem CloneMenu() {
-			throw new NotImplementedException ();
+			MenuItem result = new MenuItem();
+			result.CloneMenu(this);
+			return result;
 		}
 
 		public override ObjRef CreateObjRef(Type t) {
@@ -63,31 +67,31 @@ namespace System.Windows.Forms {
 		}
 
 		public override bool Equals(object o) {
-			throw new NotImplementedException ();
+			return base.Equals(o);
 		}
-                
+
 		[MonoTODO]
 		public override int GetHashCode() {
 			//FIXME add our proprities
 			return base.GetHashCode();
 		}
-		//inherited	
+		//inherited
 		//public ContextMenu GetContextMenu() {
 		//	throw new NotImplementedException ();
 		//}
-                
+
 		//public MainMenu GetMainMenu() {
 		//	throw new NotImplementedException ();
 		//}
-                
+
 		public virtual MenuItem MergeMenu() {
 			throw new NotImplementedException ();
 		}
-                
+
 		public void MergeMenu(MenuItem m) {
 			throw new NotImplementedException ();
 		}
-                
+
 		//inherited
 		//public virtual void MergeMenu(Menu m) {
 		//	throw new NotImplementedException ();
@@ -96,32 +100,41 @@ namespace System.Windows.Forms {
 		public void PerformClick() {
 			OnClick( new EventArgs());
 		}
-                
+
 		public virtual void PerformSelect() {
 			throw new NotImplementedException ();
 		}
-                
+
 		public override string ToString() {
-			throw new NotImplementedException ();
+			StringBuilder sb = new StringBuilder();
+			sb.Append(base.ToString());
+			sb.AppendFormat(", Items.Count: {0}, Text: {1}", MenuItems.Count, Text);	
+			return sb.ToString();
 		}
 
 		//
 		// -- Protected Methods
 		//
-                
+
 		protected void CloneMenu(MenuItem m) {
-			throw new NotImplementedException ();
+			Text = m.Text;
+			Click += m.Click;
+			if( m.MenuItems.Count != 0){
+				MenuItem[] all_items = new MenuItem[m.MenuItems.Count];
+				m.MenuItems.CopyTo(all_items, 0);
+				MenuItems.AddRange(all_items);
+			}
 		}
-                
+
 		//inherited
 		//protected void CloneMenu(Menu m) {
 		//	throw new NotImplementedException ();
 		//}
-                
+
 		~MenuItem() {
 			throw new NotImplementedException ();
 		}
-                
+
 		//protected virtual object GetService(Type t) {
 		//	throw new NotImplementedException ();
 		//}
@@ -165,7 +178,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public bool Break {
 
 			get {
@@ -175,7 +188,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public bool Checked {
 
 			get {
@@ -185,13 +198,13 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		//public IContainer Container {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-                
+
 		public bool DefaultItem {
 
 			get {
@@ -201,7 +214,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public bool Enabled {
 
 			get {
@@ -211,20 +224,22 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
-		//public IntPtr Handle {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-
-		public int Index {
-
+/*
+		// completely inherit from base class
+		public new IntPtr Handle {
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+*/
+		protected int index_ = -1;
+		public int Index {
+
+			get {
+				return index_;
+			}
 			set {
-				throw new NotImplementedException ();
+				index_ = value;
 			}
 		}
 
@@ -234,7 +249,7 @@ namespace System.Windows.Forms {
 				return base.IsParent;
 			}
 		}
-                
+
 		public bool MdiList {
 
 			get {
@@ -244,13 +259,13 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		//inherited
 		//public MenuItem MdiListItem {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//}        
+		//}
 		//public Menu.MenuItemCollection MenuItems {
 		//	get {
 		//		throw new NotImplementedException ();
@@ -266,7 +281,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public MenuMerge MergeType {
 
 			get {
@@ -276,14 +291,14 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public char Mnemonic {
 
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public bool OwnerDraw {
 
 			get {
@@ -293,11 +308,18 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
+        internal void SetParent( Menu parent) {
+        	// FIXME: set exception parameters
+        	if( parent != null && parent_ != null)
+        		throw new System.Exception();
+        	parent_ = parent;
+        }
+        
 		public Menu Parent {
 
 			get {
-				throw new NotImplementedException ();
+				return parent_;
 			}
 		}
 
@@ -310,7 +332,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public Shortcut Shortcut {
 
 			get {
@@ -320,7 +342,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		//inherited
 		//public virtual ISite Site {
 		//	get {
@@ -330,7 +352,7 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-                
+
 		private string text_ = String.Empty;
 
 		public string Text {
@@ -341,7 +363,7 @@ namespace System.Windows.Forms {
 				text_ = value;
 			}
 		}
-                
+
 		public bool Visible {
 
 			get {
@@ -351,28 +373,54 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		//
 		// -- Protected Properties
 		//
-                
+
 		//inherited
 		//protected bool DesignMode {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//}      
+		//}
 		//protected EventHandlerList Events {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-                
+
+		internal const int INVALID_MENU_ID = -1; //0xffffffff;
+		// Variables are stored here to provide access for the base functions
+		protected int MenuID_ = INVALID_MENU_ID;
+
+		// Provides unique id to all items in all menus, hopefully space is enougth.
+		// Possible to use array to keep ids from deleted menu items
+		// and reuse them.
+		protected static int MenuIDs_ = 1;
+
+		protected int GetNewMenuID()
+		{
+			return MenuIDs_++;
+		}
+
 		protected int MenuID {
 
 			get {
+				if( MenuID_ == INVALID_MENU_ID) {
+					MenuID_ = GetNewMenuID();
+				}
 				return (int)MenuID_;
 			}
+		}
+
+		//
+		// Btw, this function is funky, it is being used by routines that are supposed
+		// to be passing an IntPtr to the AppendMenu function
+		//
+		internal int GetID()
+		{
+			return MenuID;
 		}
 
 		//

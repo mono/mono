@@ -125,8 +125,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					SetClientSize( value, (int)WindowStyles.WS_OVERLAPPEDWINDOW, mainMenu_ != null);
+				}
     		}
     
   			//Compact Framework
@@ -977,8 +977,29 @@
     			case Msg.WM_COMMAND:
     				OnWmCommand (ref m);
     				break;
+					case Msg.WM_INITMENU:
+						OnWmInitMenu (ref m);
+						break;
+					case Msg.WM_INITMENUPOPUP:
+						OnWmInitMenuPopup (ref m);
+						break;
     			}
     		}
+			#region new 11.26.2002 from Alexandre Pigolkine (pigolkine@gmx.de)
+			protected virtual void OnWmInitMenu (ref Message m) {
+				Menu mn = System.Windows.Forms.Menu.GetMenuByHandle( m.WParam);
+				if( mn != null) {
+					mn.OnWmInitMenu();
+				}
+			}
+
+			protected virtual void OnWmInitMenuPopup (ref Message m) {
+				Menu mn = System.Windows.Forms.Menu.GetMenuByHandle( m.WParam);
+				if( mn != null) {
+					mn.OnWmInitMenuPopup();
+				}
+			}
+			#endregion
 
     		//sub class
     		//System.Windows.Forms.Form.ControlCollection.cs

@@ -98,6 +98,10 @@ namespace System.Windows.Forms {
 			
 			if (windowHandle != (IntPtr) 0)
 				windowCollection.Add (windowHandle, this);
+			//debug
+			//else {
+			//	System.Console.WriteLine("Cannot create window {0}", Win32.FormatMessage(Win32.GetLastError()));
+			//}
 		}
 
 		[MonoTODO]

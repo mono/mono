@@ -387,6 +387,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region SetWindowPosFlags
+	[Flags]
 	public enum SetWindowPosFlags
 	{
 		SWP_NOSIZE          = 0x0001,
@@ -2084,9 +2085,43 @@ namespace System.Windows.Forms{
 
 	#region WF_
 	internal enum MF_ {
-		MF_ENABLED          = 0,
+		MF_INSERT           = 0x0,
+		MF_CHANGE           = 0x80,
+		MF_APPEND           = 0x100,
+		MF_DELETE           = 0x200,
+		MF_REMOVE           = 0x1000,
+		MF_BYCOMMAND        = 0,
+		MF_BYPOSITION       = 0x400,
+		MF_SEPARATOR        = 0x800,
+		MF_ENABLED          = 0, 
+		MF_GRAYED           = 1,
+		MF_DISABLED         = 2,
+		MF_UNCHECKED        = 0,
+		MF_CHECKED          = 8,
+		MF_USECHECKBITMAPS  = 0x200,
 		MF_STRING           = 0,
-		MF_POPUP            = 0x10
+		MF_BITMAP           = 4,
+		MF_OWNERDRAW        = 0x100,
+		MF_POPUP            = 0x10,
+		MF_MENUBARBREAK     = 0x20,
+		MF_MENUBREAK        = 0x40,
+		MF_UNHILITE         = 0,
+		MF_HILITE           = 0x80,
+		MF_DEFAULT          = 0x1000,
+		MF_SYSMENU          = 0x2000,
+		MF_HELP             = 0x4000,
+		MF_RIGHTJUSTIFY     = 0x4000
 	}
 	#endregion 
+
+	internal enum FM_ {
+		FORMAT_MESSAGE_ALLOCATE_BUFFER  = 0x100,
+		FORMAT_MESSAGE_IGNORE_INSERTS   = 0x200,
+		FORMAT_MESSAGE_FROM_STRING      = 0x400,
+		FORMAT_MESSAGE_FROM_HMODULE     = 0x800,
+		FORMAT_MESSAGE_FROM_SYSTEM      = 0x1000,
+		FORMAT_MESSAGE_ARGUMENT_ARRAY   = 0x2000,
+		FORMAT_MESSAGE_MAX_WIDTH_MASK   = 0xFF
+	}
+
 }
