@@ -502,7 +502,7 @@ public class TypeManager {
 		return TypeHandle.GetMemberCache (t);
 	}
 
-	public static MemberCache LookupParentInterfacesCache (Type t)
+	public static MemberCache LookupBaseInterfacesCache (Type t)
 	{
 		Type [] ifaces = t.GetInterfaces ();
 
@@ -759,7 +759,7 @@ public class TypeManager {
 			} 
 
 			//
-			// We know that System.Object does not have children, and since its the parent of 
+			// We know that System.Object does not have children, and since its the base of 
 			// all the objects, it always gets probbed for inner classes. 
 			//
 			if (top_level_type == "System.Object")
@@ -1613,10 +1613,10 @@ public class TypeManager {
 		return tc.Kind == Kind.Interface;
 	}
 
-	public static bool IsSubclassOf (Type type, Type parent)
+	public static bool IsSubclassOf (Type type, Type base_type)
 	{
 		do {
-			if (type.Equals (parent))
+			if (type.Equals (base_type))
 				return true;
 
 			type = type.BaseType;
@@ -1625,18 +1625,18 @@ public class TypeManager {
 		return false;
 	}
 
-	public static bool IsFamilyAccessible (Type type, Type parent)
+	public static bool IsFamilyAccessible (Type type, Type base_type)
 	{
-		return IsSubclassOf (type, parent);
+		return IsSubclassOf (type, base_type);
 	}
 
 	//
-	// Checks whether `type' is a subclass or nested child of `parent'.
+	// Checks whether `type' is a subclass or nested child of `base_type'.
 	//
-	public static bool IsNestedFamilyAccessible (Type type, Type parent)
+	public static bool IsNestedFamilyAccessible (Type type, Type base_type)
 	{
 		do {
-			if ((type == parent) || type.IsSubclassOf (parent))
+			if ((type == base_type) || type.IsSubclassOf (base_type))
 				return true;
 
 			// Handle nested types.
@@ -2041,20 +2041,20 @@ public class TypeManager {
 			t = TypeManager.array_type;
 		
 		if (t is TypeBuilder){
-			Type [] parent_ifaces;
+			Type [] base_ifaces;
 			
 			if (t.BaseType == null)
-				parent_ifaces = NoTypes;
+				base_ifaces = NoTypes;
 			else
-				parent_ifaces = GetInterfaces (t.BaseType);
+				base_ifaces = GetInterfaces (t.BaseType);
 			Type [] type_ifaces = (Type []) builder_to_ifaces [t];
 			if (type_ifaces == null)
 				type_ifaces = NoTypes;
 
-			int parent_count = parent_ifaces.Length;
-			Type [] result = new Type [parent_count + type_ifaces.Length];
-			parent_ifaces.CopyTo (result, 0);
-			type_ifaces.CopyTo (result, parent_count);
+			int base_count = base_ifaces.Length;
+			Type [] result = new Type [base_count + type_ifaces.Length];
+			base_ifaces.CopyTo (result, 0);
+			type_ifaces.CopyTo (result, base_count);
 
 			iface_cache [t] = result;
 			return result;
@@ -2086,7 +2086,7 @@ public class TypeManager {
 		// as soon as we hit a non-TypeBuiler in the interface
 		// chain, we could return, as the `Type.GetInterfaces'
 		// will return all the interfaces implement by the type
-		// or its parents.
+		// or its bases.
 		//
 		do {
 			interfaces = GetInterfaces (t);
@@ -2673,7 +2673,7 @@ public class TypeManager {
 			// works if we already used the cache in the first iteration of this loop.
 			//
 			// If we used the cache in any further iteration, we can still terminate the
-			// loop since the cache always looks in all parent classes.
+			// loop since the cache always looks in all base classes.
 			//
 
 			if (used_cache)
@@ -2893,16 +2893,16 @@ public sealed class TypeHandle : IMemberContainer {
 	private Type type;
 	private bool is_interface;
 	private MemberCache member_cache;
-	private MemberCache parent_cache;
+	private MemberCache base_cache;
 
 	private TypeHandle (Type type)
 	{
 		this.type = type;
 		if (type.BaseType != null) {
 			BaseType = GetTypeHandle (type.BaseType);
-			parent_cache = BaseType.MemberCache;
+			base_cache = BaseType.MemberCache;
 		} else if (type.IsInterface)
-			parent_cache = TypeManager.LookupParentInterfacesCache (type);
+			base_cache = TypeManager.LookupBaseInterfacesCache (type);
 		this.is_interface = type.IsInterface;
 		this.member_cache = new MemberCache (this);
 	}
@@ -2921,9 +2921,9 @@ public sealed class TypeHandle : IMemberContainer {
 		}
 	}
 
-	public MemberCache ParentCache {
+	public MemberCache BaseCache {
 		get {
-			return parent_cache;
+			return base_cache;
 		}
 	}
 

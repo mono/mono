@@ -39,7 +39,7 @@ namespace Mono.CSharp {
 		//
 		// Whether we are being linked against the standard libraries.
 		// This is only used to tell whether `System.Object' should
-		// have a parent or not.
+		// have a base class or not.
 		//
 		public static bool StdLib = true;
 
@@ -47,8 +47,8 @@ namespace Mono.CSharp {
 		// This keeps track of the order in which classes were defined
 		// so that we can poulate them in that order.
 		//
-		// Order is important, because we need to be able to tell by
-		// examining the parent's list of methods which ones are virtual
+		// Order is important, because we need to be able to tell, by
+		// examining the list of methods of the base class, which ones are virtual
 		// or abstract as well as the parent names (to implement new, 
 		// override).
 		//
@@ -473,21 +473,6 @@ namespace Mono.CSharp {
 			helper_classes.Add (helper_class);
 		}
 		
-		//
-		// This idea is from Felix Arrese-Igor
-		//
-		// Returns : the implicit parent of a composite namespace string
-		//   eg. Implicit parent of A.B is A
-		//
-		static public string ImplicitParent (string ns)
-		{
-			int i = ns.LastIndexOf ('.');
-			if (i < 0)
-				return null;
-			
-			return ns.Substring (0, i);
-		}
-
 		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
 		{
 			IAlias result = ds.NamespaceEntry.LookupNamespaceOrType (ds, name, loc);

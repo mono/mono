@@ -1,5 +1,11 @@
 2004-12-17  Raja R Harinath  <rharinath@novell.com>
 
+	* class.cs, decl.cs, ecore.cs, iterators.cs, pending.cs, 
+	  rootcontext.cs, typemanager.cs: Make nomenclature consistent.
+	"parent" refers to enclosing type/class.  "base" refers to superclass.
+
+2004-12-17  Raja R Harinath  <rharinath@novell.com>
+
 	* codegen.cs (CommonAssemblyModulClass.GetClsCompliantAttribute):
 	Ensure that we only have GlobalAttributes.
 	* attribute.cs (Attribute.Emit): Make non-virtual.

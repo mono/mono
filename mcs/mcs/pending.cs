@@ -23,7 +23,7 @@ namespace Mono.CSharp {
 
 		// 
 		// Whether it is optional, this is used to allow the explicit/implicit
-		// implementation when a parent class already implements an interface. 
+		// implementation when a base class already implements an interface. 
 		//
 		// For example:
 		//
@@ -68,7 +68,7 @@ namespace Mono.CSharp {
 
 		/// <summary>
 		///   This is the array of TypeAndMethods that describes the pending implementations
-		///   (both interfaces and abstract methods in parent class)
+		///   (both interfaces and abstract methods in base class)
 		/// </summary>
 		TypeAndMethods [] pending_implementations;
 
@@ -88,7 +88,7 @@ namespace Mono.CSharp {
 
 		// <remarks>
 		//   Returns a list of the abstract methods that are exposed by all of our
-		//   parents that we must implement.  Notice that this `flattens' the
+		//   bases that we must implement.  Notice that this `flattens' the
 		//   method search space, and takes into account overrides.  
 		// </remarks>
 		static ArrayList GetAbstractMethods (Type t)
@@ -248,9 +248,9 @@ namespace Mono.CSharp {
 			if (type_builder.BaseType == null)
 				return ret;
 			
-			Type [] parent_impls = TypeManager.GetInterfaces (type_builder.BaseType);
+			Type [] base_impls = TypeManager.GetInterfaces (type_builder.BaseType);
 			
-			foreach (Type t in parent_impls) {
+			foreach (Type t in base_impls) {
 				for (int i = 0; i < ret.Length; i ++) {
 					if (t == ret [i].Type) {
 						ret [i].Optional = true;
@@ -450,7 +450,7 @@ namespace Mono.CSharp {
 		///   For that case, we create an explicit implementation function
 		///   I.M in Y.
 		/// </summary>
-		void DefineProxy (Type iface, MethodInfo parent_method, MethodInfo iface_method,
+		void DefineProxy (Type iface, MethodInfo base_method, MethodInfo iface_method,
 				  Type [] args)
 		{
 			MethodBuilder proxy;
@@ -463,7 +463,7 @@ namespace Mono.CSharp {
 				MethodAttributes.NewSlot |
 				MethodAttributes.Virtual,
 				CallingConventions.Standard | CallingConventions.HasThis,
-				parent_method.ReturnType, args);
+				base_method.ReturnType, args);
 
 			int top = args.Length;
 			ILGenerator ig = proxy.GetILGenerator ();
@@ -481,18 +481,18 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ldarg, i - 1); break;
 				}
 			}
-			ig.Emit (OpCodes.Call, parent_method);
+			ig.Emit (OpCodes.Call, base_method);
 			ig.Emit (OpCodes.Ret);
 
 			container.TypeBuilder.DefineMethodOverride (proxy, iface_method);
 		}
 		
 		/// <summary>
-		///   This function tells whether one of our parent classes implements
+		///   This function tells whether one of our base classes implements
 		///   the given method (which turns out, it is valid to have an interface
-		///   implementation in a parent
+		///   implementation in a base
 		/// </summary>
-		bool ParentImplements (Type iface_type, MethodInfo mi)
+		bool BaseImplements (Type iface_type, MethodInfo mi)
 		{
 			MethodSignature ms;
 			
@@ -506,9 +506,9 @@ namespace Mono.CSharp {
 			if (list.Count == 0)
 				return false;
 
-			MethodInfo parent = (MethodInfo) list [0];
-			if (!parent.IsAbstract)
-				DefineProxy (iface_type, parent, mi, args);
+			MethodInfo base_method = (MethodInfo) list [0];
+			if (!base_method.IsAbstract)
+				DefineProxy (iface_type, base_method, mi, args);
 			return true;
 		}
 
@@ -540,7 +540,7 @@ namespace Mono.CSharp {
 							continue;
 						}
 
-						if (ParentImplements (type, mi))
+						if (BaseImplements (type, mi))
 							continue;
 
 						if (pending_implementations [i].optional)

@@ -1275,12 +1275,12 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Returns the IMemberContainer of the parent class or null if this
+		///   Returns the IMemberContainer of the base class or null if this
 		///   is an interface or TypeManger.object_type.
 		///   This is used when creating the member cache for a class to get all
-		///   members from the parent class.
+		///   members from the base class.
 		/// </summary>
-		MemberCache ParentCache {
+		MemberCache BaseCache {
 			get;
 		}
 
@@ -1342,10 +1342,10 @@ namespace Mono.CSharp {
 			Timer.IncrementCounter (CounterType.MemberCache);
 			Timer.StartTimer (TimerType.CacheInit);
 
-			// If we have a parent class (we have a parent class unless we're
+			// If we have a base class (we have a base class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
-			if (Container.ParentCache != null)
-				member_hash = SetupCache (Container.ParentCache);
+			if (Container.BaseCache != null)
+				member_hash = SetupCache (Container.BaseCache);
 			else
 				member_hash = new Hashtable ();
 
@@ -1380,16 +1380,16 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Bootstrap this member cache by doing a deep-copy of our parent.
+		///   Bootstrap this member cache by doing a deep-copy of our base.
 		/// </summary>
-		Hashtable SetupCache (MemberCache parent)
+		Hashtable SetupCache (MemberCache base_class)
 		{
 			Hashtable hash = new Hashtable ();
 
-			if (parent == null)
+			if (base_class == null)
 				return hash;
 
-			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
+			IDictionaryEnumerator it = base_class.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				hash [it.Key] = ((ArrayList) it.Value).Clone ();
 			 }
@@ -1468,7 +1468,7 @@ namespace Mono.CSharp {
 				}
 
 				// When this method is called for the current class, the list will
-				// already contain all inherited members from our parent classes.
+				// already contain all inherited members from our base classes.
 				// We cannot add new members in front of the list since this'd be an
 				// expensive operation, that's why the list is sorted in reverse order
 				// (ie. members from the current class are coming last).
@@ -1713,9 +1713,9 @@ namespace Mono.CSharp {
 
 
 			// `applicable' is a list of all members with the given member name `name'
-			// in the current class and all its parent classes.  The list is sorted in
+			// in the current class and all its base classes.  The list is sorted in
 			// reverse order due to the way how the cache is initialy created (to speed
-			// things up, we're doing a deep-copy of our parent).
+			// things up, we're doing a deep-copy of our base).
 
 			for (int i = applicable.Count-1; i >= 0; i--) {
 				CacheEntry entry = (CacheEntry) applicable [i];

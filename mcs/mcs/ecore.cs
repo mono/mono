@@ -736,7 +736,7 @@ namespace Mono.CSharp {
 				if (qualifier_type != ec.ContainerType) {
 					// Although a derived class can access protected members of
 					// its base class it cannot do so through an instance of the
-					// base class (CS1540).  If the qualifier_type is a parent of the
+					// base class (CS1540).  If the qualifier_type is a base of the
 					// ec.ContainerType and the lookup succeeds with the latter one,
 					// then we are in this situation.
 					foreach (MemberInfo m in almostMatchedMembers)
