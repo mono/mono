@@ -82,7 +82,7 @@ namespace Mono.Languages
 		[Option("Shows stack trace at error location", "Stacktrace")]
 		public bool Stacktrace { set { Report.Stacktrace = value; } }
 
-		private static ArrayList references;
+		private static ArrayList references = new ArrayList();
 
 		[Option("References an assembly", 'r')]
 		public static string reference { set { references.Add(value); } }
