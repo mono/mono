@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<masterdoc assembly="System.Runtime.Serialization.Formatters.Soap">
+    <class name="SoapFormatter" namespace="System.Runtime.Serialization.Formatters.Soap">
+        <constructor name="SoapFormatter" argnames="" />
+        <constructor name="SoapFormatter(System.Runtime.Serialization.ISurrogateSelector, System.Runtime.Serialization.StreamingContext)" argnames="selector, context" />
+        <property name="TopObject" propertytype="System.Runtime.Serialization.Formatters.ISoapMessage" />
+        <property name="TypeFormat" propertytype="System.Runtime.Serialization.Formatters.FormatterTypeStyle" />
+        <property name="AssemblyFormat" propertytype="System.Runtime.Serialization.Formatters.FormatterAssemblyStyle" />
+        <property name="SurrogateSelector" propertytype="System.Runtime.Serialization.ISurrogateSelector" />
+        <property name="Binder" propertytype="System.Runtime.Serialization.SerializationBinder" />
+        <property name="Context" propertytype="System.Runtime.Serialization.StreamingContext" />
+        <method name="Serialize(System.IO.Stream, System.Object)" argnames="serializationStream, graph" returntype="System.Void" />
+        <method name="Deserialize(System.IO.Stream)" argnames="serializationStream" returntype="System.Object" />
+        <method name="Serialize(System.IO.Stream, System.Object, System.Runtime.Remoting.Messaging.Header[])" argnames="serializationStream, graph, headers" returntype="System.Void" />
+        <method name="Deserialize(System.IO.Stream, System.Runtime.Remoting.Messaging.HeaderHandler)" argnames="serializationStream, handler" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+</masterdoc>

@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8"?>
+<masterdoc assembly="System.Runtime.Remoting">
+    <class name="CommonTransportKeys" namespace="System.Runtime.Remoting.Channels">
+        <constructor name="CommonTransportKeys" argnames="" />
+        <field name="IPAddress" />
+        <field name="ConnectionId" />
+        <field name="RequestUri" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="BinaryClientFormatterSinkProvider" namespace="System.Runtime.Remoting.Channels">
+        <constructor name="BinaryClientFormatterSinkProvider" argnames="" />
+        <constructor name="BinaryClientFormatterSinkProvider(System.Collections.IDictionary, System.Collections.ICollection)" argnames="properties, providerData" />
+        <property name="Next" propertytype="System.Runtime.Remoting.Channels.IClientChannelSinkProvider" />
+        <method name="CreateSink(System.Runtime.Remoting.Channels.IChannelSender, System.String, System.Object)" argnames="channel, url, remoteChannelData" returntype="System.Runtime.Remoting.Channels.IClientChannelSink" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="BinaryClientFormatterSink" namespace="System.Runtime.Remoting.Channels">
+        <constructor name="BinaryClientFormatterSink(System.Runtime.Remoting.Channels.IClientChannelSink)" argnames="nextSink" />
+        <property name="IncludeVersioning" propertytype="System.Boolean" />
+        <property name="StrictBinding" propertytype="System.Boolean" />
+        <property name="ChannelProtocol" propertytype="System.Runtime.Remoting.Channels.SinkChannelProtocol" />
+        <property name="NextSink" propertytype="System.Runtime.Remoting.Messaging.IMessageSink" />
+        <property name="NextChannelSink" propertytype="System.Runtime.Remoting.Channels.IClientChannelSink" />
+        <property name="Properties" propertytype="System.Collections.IDictionary" />
+        <method name="GetRequestStream(System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders)" argnames="msg, headers" returntype="System.IO.Stream" />
+        <method name="AsyncProcessResponse(System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack, System.Object, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream)" argnames="sinkStack, state, headers, stream" returntype="System.Void" />
+        <method name="AsyncProcessRequest(System.Runtime.Remoting.Channels.IClientChannelSinkStack, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream)" argnames="sinkStack, msg, headers, stream" returntype="System.Void" />
+        <method name="ProcessMessage(System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream, System.Runtime.Remoting.Channels.ITransportHeaders&amp;, System.IO.Stream&amp;)" argnames="msg, requestHeaders, requestStream, responseHeaders, responseStream" returntype="System.Void" />
+        <method name="AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Messaging.IMessageSink)" argnames="msg, replySink" returntype="System.Runtime.Remoting.Messaging.IMessageCtrl" />
+        <method name="SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" argnames="msg" returntype="System.Runtime.Remoting.Messaging.IMessage" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="BinaryServerFormatterSinkProvider" namespace="System.Runtime.Remoting.Channels">
+        <constructor name="BinaryServerFormatterSinkProvider" argnames="" />
+        <constructor name="BinaryServerFormatterSinkProvider(System.Collections.IDictionary, System.Collections.ICollection)" argnames="properties, providerData" />
+        <property name="Next" propertytype="System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
+        <method name="CreateSink(System.Runtime.Remoting.Channels.IChannelReceiver)" argnames="channel" returntype="System.Runtime.Remoting.Channels.IServerChannelSink" />
+        <method name="GetChannelData(System.Runtime.Remoting.Channels.IChannelDataStore)" argnames="channelData" returntype="System.Void" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="BinaryServerFormatterSink" namespace="System.Runtime.Remoting.Channels">
+        <enum name="Protocol" namespace="System.Runtime.Remoting.Channels">
+            <field name="Http" />
+            <field name="Other" />
+            <method name="ToString(System.IFormatProvider)" argnames="provider" inherited="System.Enum" returntype="System.String" />
+            <method name="GetTypeCode" argnames="" inherited="System.Enum" returntype="System.TypeCode" />
+            <method name="ToString(System.String, System.IFormatProvider)" argnames="format, provider" inherited="System.Enum" returntype="System.String" />
+            <method name="CompareTo(System.Object)" argnames="target" inherited="System.Enum" returntype="System.Int32" />
+            <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+            <method name="GetHashCode" argnames="" inherited="System.Enum" returntype="System.Int32" />
+            <method name="Equals(System.Object)" argnames="obj" inherited="System.Enum" returntype="System.Boolean" />
+            <method name="ToString" argnames="" inherited="System.Enum" returntype="System.String" />
+            <method name="ToString(System.String)" argnames="format" inherited="System.Enum" returntype="System.String" />
+            <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+            <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        </enum>
+        <constructor name="Protocol(System.Runtime.Remoting.Channels.BinaryServerFormatterSink.Protocol, System.Runtime.Remoting.Channels.IServerChannelSink, System.Runtime.Remoting.Channels.IChannelReceiver)" argnames="protocol, nextSink, receiver" />
+        <property name="IncludeVersioning" propertytype="System.Boolean" />
+        <property name="StrictBinding" propertytype="System.Boolean" />
+        <property name="NextChannelSink" propertytype="System.Runtime.Remoting.Channels.IServerChannelSink" />
+        <property name="Properties" propertytype="System.Collections.IDictionary" />
+        <method name="GetResponseStream(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack, System.Object, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders)" argnames="sinkStack, state, msg, headers" returntype="System.IO.Stream" />
+        <method name="AsyncProcessResponse(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack, System.Object, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream)" argnames="sinkStack, state, msg, headers, stream" returntype="System.Void" />
+        <method name="ProcessMessage(System.Runtime.Remoting.Channels.IServerChannelSinkStack, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream, System.Runtime.Remoting.Messaging.IMessage&amp;, System.Runtime.Remoting.Channels.ITransportHeaders&amp;, System.IO.Stream&amp;)" argnames="sinkStack, requestMsg, requestHeaders, requestStream, responseMsg, responseHeaders, responseStream" returntype="System.Runtime.Remoting.Channels.ServerProcessing" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="SoapClientFormatterSinkProvider" namespace="System.Runtime.Remoting.Channels">
+        <constructor name="SoapClientFormatterSinkProvider" argnames="" />
+        <constructor name="SoapClientFormatterSinkProvider(System.Collections.IDictionary, System.Collections.ICollection)" argnames="properties, providerData" />
+        <property name="Next" propertytype="System.Runtime.Remoting.Channels.IClientChannelSinkProvider" />
+        <method name="CreateSink(System.Runtime.Remoting.Channels.IChannelSender, System.String, System.Object)" argnames="channel, url, remoteChannelData" returntype="System.Runtime.Remoting.Channels.IClientChannelSink" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="SoapClientFormatterSink" namespace="System.Runtime.Remoting.Channels">
+        <constructor name="SoapClientFormatterSink(System.Runtime.Remoting.Channels.IClientChannelSink)" argnames="nextSink" />
+        <property name="IncludeVersioning" propertytype="System.Boolean" />
+        <property name="StrictBinding" propertytype="System.Boolean" />
+        <property name="ChannelProtocol" propertytype="System.Runtime.Remoting.Channels.SinkChannelProtocol" />
+        <property name="NextSink" propertytype="System.Runtime.Remoting.Messaging.IMessageSink" />
+        <property name="NextChannelSink" propertytype="System.Runtime.Remoting.Channels.IClientChannelSink" />
+        <property name="Properties" propertytype="System.Collections.IDictionary" />
+        <method name="GetRequestStream(System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders)" argnames="msg, headers" returntype="System.IO.Stream" />
+        <method name="AsyncProcessResponse(System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack, System.Object, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream)" argnames="sinkStack, state, headers, stream" returntype="System.Void" />
+        <method name="AsyncProcessRequest(System.Runtime.Remoting.Channels.IClientChannelSinkStack, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream)" argnames="sinkStack, msg, headers, stream" returntype="System.Void" />
+        <method name="ProcessMessage(System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream, System.Runtime.Remoting.Channels.ITransportHeaders&amp;, System.IO.Stream&amp;)" argnames="msg, requestHeaders, requestStream, responseHeaders, responseStream" returntype="System.Void" />
+        <method name="AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Messaging.IMessageSink)" argnames="msg, replySink" returntype="System.Runtime.Remoting.Messaging.IMessageCtrl" />
+        <method name="SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" argnames="msg" returntype="System.Runtime.Remoting.Messaging.IMessage" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="SoapServerFormatterSinkProvider" namespace="System.Runtime.Remoting.Channels">
+        <constructor name="SoapServerFormatterSinkProvider" argnames="" />
+        <constructor name="SoapServerFormatterSinkProvider(System.Collections.IDictionary, System.Collections.ICollection)" argnames="properties, providerData" />
+        <property name="Next" propertytype="System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
+        <method name="CreateSink(System.Runtime.Remoting.Channels.IChannelReceiver)" argnames="channel" returntype="System.Runtime.Remoting.Channels.IServerChannelSink" />
+        <method name="GetChannelData(System.Runtime.Remoting.Channels.IChannelDataStore)" argnames="channelData" returntype="System.Void" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="SoapServerFormatterSink" namespace="System.Runtime.Remoting.Channels">
+        <enum name="Protocol" namespace="System.Runtime.Remoting.Channels">
+            <field name="Http" />
+            <field name="Other" />
+            <method name="ToString(System.IFormatProvider)" argnames="provider" inherited="System.Enum" returntype="System.String" />
+            <method name="GetTypeCode" argnames="" inherited="System.Enum" returntype="System.TypeCode" />
+            <method name="ToString(System.String, System.IFormatProvider)" argnames="format, provider" inherited="System.Enum" returntype="System.String" />
+            <method name="CompareTo(System.Object)" argnames="target" inherited="System.Enum" returntype="System.Int32" />
+            <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+            <method name="GetHashCode" argnames="" inherited="System.Enum" returntype="System.Int32" />
+            <method name="Equals(System.Object)" argnames="obj" inherited="System.Enum" returntype="System.Boolean" />
+            <method name="ToString" argnames="" inherited="System.Enum" returntype="System.String" />
+            <method name="ToString(System.String)" argnames="format" inherited="System.Enum" returntype="System.String" />
+            <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+            <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        </enum>
+        <constructor name="Protocol(System.Runtime.Remoting.Channels.SoapServerFormatterSink.Protocol, System.Runtime.Remoting.Channels.IServerChannelSink, System.Runtime.Remoting.Channels.IChannelReceiver)" argnames="protocol, nextSink, receiver" />
+        <property name="IncludeVersioning" propertytype="System.Boolean" />
+        <property name="StrictBinding" propertytype="System.Boolean" />
+        <property name="NextChannelSink" propertytype="System.Runtime.Remoting.Channels.IServerChannelSink" />
+        <property name="Properties" propertytype="System.Collections.IDictionary" />
+        <method name="GetResponseStream(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack, System.Object, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders)" argnames="sinkStack, state, msg, headers" returntype="System.IO.Stream" />
+        <method name="AsyncProcessResponse(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack, System.Object, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream)" argnames="sinkStack, state, msg, headers, stream" returntype="System.Void" />
+        <method name="ProcessMessage(System.Runtime.Remoting.Channels.IServerChannelSinkStack, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream, System.Runtime.Remoting.Messaging.IMessage&amp;, System.Runtime.Remoting.Channels.ITransportHeaders&amp;, System.IO.Stream&amp;)" argnames="sinkStack, requestMsg, requestHeaders, requestStream, responseMsg, responseHeaders, responseStream" returntype="System.Runtime.Remoting.Channels.ServerProcessing" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <enum name="Protocol" namespace="System.Runtime.Remoting.Channels">
+        <field name="Http" />
+        <field name="Other" />
+        <method name="ToString(System.IFormatProvider)" argnames="provider" inherited="System.Enum" returntype="System.String" />
+        <method name="GetTypeCode" argnames="" inherited="System.Enum" returntype="System.TypeCode" />
+        <method name="ToString(System.String, System.IFormatProvider)" argnames="format, provider" inherited="System.Enum" returntype="System.String" />
+        <method name="CompareTo(System.Object)" argnames="target" inherited="System.Enum" returntype="System.Int32" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Enum" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Enum" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Enum" returntype="System.String" />
+        <method name="ToString(System.String)" argnames="format" inherited="System.Enum" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </enum>
+    <enum name="Protocol" namespace="System.Runtime.Remoting.Channels">
+        <field name="Http" />
+        <field name="Other" />
+        <method name="ToString(System.IFormatProvider)" argnames="provider" inherited="System.Enum" returntype="System.String" />
+        <method name="GetTypeCode" argnames="" inherited="System.Enum" returntype="System.TypeCode" />
+        <method name="ToString(System.String, System.IFormatProvider)" argnames="format, provider" inherited="System.Enum" returntype="System.String" />
+        <method name="CompareTo(System.Object)" argnames="target" inherited="System.Enum" returntype="System.Int32" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Enum" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Enum" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Enum" returntype="System.String" />
+        <method name="ToString(System.String)" argnames="format" inherited="System.Enum" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </enum>
+    <class name="HttpChannel" namespace="System.Runtime.Remoting.Channels.Http">
+        <constructor name="HttpChannel" argnames="" />
+        <constructor name="HttpChannel(System.Int32)" argnames="port" />
+        <constructor name="HttpChannel(System.Collections.IDictionary, System.Runtime.Remoting.Channels.IClientChannelSinkProvider, System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" argnames="properties, clientSinkProvider, serverSinkProvider" />
+        <field name="SinksWithProperties" inherited="System.Runtime.Remoting.Channels.BaseChannelWithProperties" />
+        <property name="ChannelPriority" propertytype="System.Int32" />
+        <property name="ChannelName" propertytype="System.String" />
+        <property name="ChannelData" propertytype="System.Object" />
+        <property name="ChannelScheme" propertytype="System.String" />
+        <property name="WantsToListen" propertytype="System.Boolean" />
+        <property name="ChannelSinkChain" propertytype="System.Runtime.Remoting.Channels.IServerChannelSink" />
+        <property name="Properties" propertytype="System.Collections.IDictionary" />
+        <property name="Item" propertytype="System.Object" />
+        <property name="Keys" propertytype="System.Collections.ICollection" />
+        <property name="Values" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Collections.ICollection" />
+        <property name="IsReadOnly" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <property name="IsFixedSize" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <property name="Count" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Int32" />
+        <property name="SyncRoot" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Object" />
+        <property name="IsSynchronized" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <method name="AddHookChannelUri(System.String)" argnames="channelUri" returntype="System.Void" />
+        <method name="CreateMessageSink(System.String, System.Object, System.String&amp;)" argnames="url, remoteChannelData, objectURI" returntype="System.Runtime.Remoting.Messaging.IMessageSink" />
+        <method name="Parse(System.String, System.String&amp;)" argnames="url, objectURI" returntype="System.String" />
+        <method name="StopListening(System.Object)" argnames="data" returntype="System.Void" />
+        <method name="StartListening(System.Object)" argnames="data" returntype="System.Void" />
+        <method name="GetUrlsForUri(System.String)" argnames="objectURI" returntype="System.String[]" />
+        <method name="CopyTo(System.Array, System.Int32)" argnames="array, index" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Remove(System.Object)" argnames="key" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="GetEnumerator" argnames="" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Collections.IDictionaryEnumerator" />
+        <method name="Clear" argnames="" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Add(System.Object, System.Object)" argnames="key, value" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Contains(System.Object)" argnames="key" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Boolean" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="HttpClientChannel" namespace="System.Runtime.Remoting.Channels.Http">
+        <constructor name="HttpClientChannel" argnames="" />
+        <constructor name="HttpClientChannel(System.String, System.Runtime.Remoting.Channels.IClientChannelSinkProvider)" argnames="name, sinkProvider" />
+        <constructor name="HttpClientChannel(System.Collections.IDictionary, System.Runtime.Remoting.Channels.IClientChannelSinkProvider)" argnames="properties, sinkProvider" />
+        <field name="SinksWithProperties" inherited="System.Runtime.Remoting.Channels.BaseChannelWithProperties" />
+        <property name="ChannelPriority" propertytype="System.Int32" />
+        <property name="ChannelName" propertytype="System.String" />
+        <property name="Item" propertytype="System.Object" />
+        <property name="Keys" propertytype="System.Collections.ICollection" />
+        <property name="ProxyObject" propertytype="System.Net.IWebProxy" />
+        <property name="UseDefaultCredentials" propertytype="System.Boolean" />
+        <property name="Properties" inherited="System.Runtime.Remoting.Channels.BaseChannelWithProperties" propertytype="System.Collections.IDictionary" />
+        <property name="Values" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Collections.ICollection" />
+        <property name="IsReadOnly" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <property name="IsFixedSize" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <property name="Count" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Int32" />
+        <property name="SyncRoot" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Object" />
+        <property name="IsSynchronized" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <method name="Parse(System.String, System.String&amp;)" argnames="url, objectURI" returntype="System.String" />
+        <method name="CreateMessageSink(System.String, System.Object, System.String&amp;)" argnames="url, remoteChannelData, objectURI" returntype="System.Runtime.Remoting.Messaging.IMessageSink" />
+        <method name="CopyTo(System.Array, System.Int32)" argnames="array, index" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Remove(System.Object)" argnames="key" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="GetEnumerator" argnames="" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Collections.IDictionaryEnumerator" />
+        <method name="Clear" argnames="" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Add(System.Object, System.Object)" argnames="key, value" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Contains(System.Object)" argnames="key" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Boolean" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="HttpServerChannel" namespace="System.Runtime.Remoting.Channels.Http">
+        <constructor name="HttpServerChannel" argnames="" />
+        <constructor name="HttpServerChannel(System.Int32)" argnames="port" />
+        <constructor name="HttpServerChannel(System.String, System.Int32)" argnames="name, port" />
+        <constructor name="HttpServerChannel(System.String, System.Int32, System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" argnames="name, port, sinkProvider" />
+        <constructor name="HttpServerChannel(System.Collections.IDictionary, System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" argnames="properties, sinkProvider" />
+        <field name="SinksWithProperties" inherited="System.Runtime.Remoting.Channels.BaseChannelWithProperties" />
+        <property name="ChannelPriority" propertytype="System.Int32" />
+        <property name="ChannelName" propertytype="System.String" />
+        <property name="ChannelData" propertytype="System.Object" />
+        <property name="ChannelScheme" propertytype="System.String" />
+        <property name="WantsToListen" propertytype="System.Boolean" />
+        <property name="ChannelSinkChain" propertytype="System.Runtime.Remoting.Channels.IServerChannelSink" />
+        <property name="Item" propertytype="System.Object" />
+        <property name="Keys" propertytype="System.Collections.ICollection" />
+        <property name="Properties" inherited="System.Runtime.Remoting.Channels.BaseChannelWithProperties" propertytype="System.Collections.IDictionary" />
+        <property name="Values" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Collections.ICollection" />
+        <property name="IsReadOnly" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <property name="IsFixedSize" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <property name="Count" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Int32" />
+        <property name="SyncRoot" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Object" />
+        <property name="IsSynchronized" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" propertytype="System.Boolean" />
+        <method name="AddHookChannelUri(System.String)" argnames="channelUri" returntype="System.Void" />
+        <method name="Parse(System.String, System.String&amp;)" argnames="url, objectURI" returntype="System.String" />
+        <method name="StopListening(System.Object)" argnames="data" returntype="System.Void" />
+        <method name="StartListening(System.Object)" argnames="data" returntype="System.Void" />
+        <method name="GetUrlsForUri(System.String)" argnames="objectUri" returntype="System.String[]" />
+        <method name="CopyTo(System.Array, System.Int32)" argnames="array, index" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Remove(System.Object)" argnames="key" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="GetEnumerator" argnames="" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Collections.IDictionaryEnumerator" />
+        <method name="Clear" argnames="" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Add(System.Object, System.Object)" argnames="key, value" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Void" />
+        <method name="Contains(System.Object)" argnames="key" inherited="System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" returntype="System.Boolean" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetChannelUri" argnames="" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="HttpRemotingHandler" namespace="System.Runtime.Remoting.Channels.Http">
+        <constructor name="HttpRemotingHandler" argnames="" />
+        <constructor name="HttpRemotingHandler(System.Type, System.Object)" argnames="type, srvID" />
+        <property name="IsReusable" propertytype="System.Boolean" />
+        <method name="ProcessRequest(System.Web.HttpContext)" argnames="context" returntype="System.Void" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="HttpRemotingHandlerFactory" namespace="System.Runtime.Remoting.Channels.Http">
+        <constructor name="HttpRemotingHandlerFactory" argnames="" />
+        <property name="WebServicesFactory" propertytype="System.Web.IHttpHandlerFactory" />
+        <property name="WebServicesFactoryType" propertytype="System.Type" />
+        <method name="ReleaseHandler(System.Web.IHttpHandler)" argnames="handler" returntype="System.Void" />
+        <method name="GetHandler(System.Web.HttpContext, System.String, System.String, System.String)" argnames="context, verb, url, filePath" returntype="System.Web.IHttpHandler" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="TcpChannel" namespace="System.Runtime.Remoting.Channels.Tcp">
+        <constructor name="TcpChannel" argnames="" />
+        <constructor name="TcpChannel(System.Int32)" argnames="port" />
+        <constructor name="TcpChannel(System.Collections.IDictionary, System.Runtime.Remoting.Channels.IClientChannelSinkProvider, System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" argnames="properties, clientSinkProvider, serverSinkProvider" />
+        <property name="ChannelPriority" propertytype="System.Int32" />
+        <property name="ChannelName" propertytype="System.String" />
+        <property name="ChannelData" propertytype="System.Object" />
+        <method name="CreateMessageSink(System.String, System.Object, System.String&amp;)" argnames="url, remoteChannelData, objectURI" returntype="System.Runtime.Remoting.Messaging.IMessageSink" />
+        <method name="Parse(System.String, System.String&amp;)" argnames="url, objectURI" returntype="System.String" />
+        <method name="StopListening(System.Object)" argnames="data" returntype="System.Void" />
+        <method name="StartListening(System.Object)" argnames="data" returntype="System.Void" />
+        <method name="GetUrlsForUri(System.String)" argnames="objectURI" returntype="System.String[]" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="TcpClientChannel" namespace="System.Runtime.Remoting.Channels.Tcp">
+        <constructor name="TcpClientChannel" argnames="" />
+        <constructor name="TcpClientChannel(System.String, System.Runtime.Remoting.Channels.IClientChannelSinkProvider)" argnames="name, sinkProvider" />
+        <constructor name="TcpClientChannel(System.Collections.IDictionary, System.Runtime.Remoting.Channels.IClientChannelSinkProvider)" argnames="properties, sinkProvider" />
+        <property name="ChannelPriority" propertytype="System.Int32" />
+        <property name="ChannelName" propertytype="System.String" />
+        <method name="Parse(System.String, System.String&amp;)" argnames="url, objectURI" returntype="System.String" />
+        <method name="CreateMessageSink(System.String, System.Object, System.String&amp;)" argnames="url, remoteChannelData, objectURI" returntype="System.Runtime.Remoting.Messaging.IMessageSink" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="TcpServerChannel" namespace="System.Runtime.Remoting.Channels.Tcp">
+        <constructor name="TcpServerChannel(System.Int32)" argnames="port" />
+        <constructor name="TcpServerChannel(System.String, System.Int32)" argnames="name, port" />
+        <constructor name="TcpServerChannel(System.String, System.Int32, System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" argnames="name, port, sinkProvider" />
+        <constructor name="TcpServerChannel(System.Collections.IDictionary, System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" argnames="properties, sinkProvider" />
+        <property name="ChannelPriority" propertytype="System.Int32" />
+        <property name="ChannelName" propertytype="System.String" />
+        <property name="ChannelData" propertytype="System.Object" />
+        <method name="Parse(System.String, System.String&amp;)" argnames="url, objectURI" returntype="System.String" />
+        <method name="StopListening(System.Object)" argnames="data" returntype="System.Void" />
+        <method name="StartListening(System.Object)" argnames="data" returntype="System.Void" />
+        <method name="GetUrlsForUri(System.String)" argnames="objectUri" returntype="System.String[]" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetChannelUri" argnames="" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="MetaData" namespace="System.Runtime.Remoting.MetadataServices">
+        <constructor name="MetaData" argnames="" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="ConvertTypesToSchemaToFile(System.Type[], System.Runtime.Remoting.MetadataServices.SdlType, System.String)" argnames="types, sdlType, path" returntype="System.Void" />
+        <method name="ConvertTypesToSchemaToStream(System.Type[], System.Runtime.Remoting.MetadataServices.SdlType, System.IO.Stream)" argnames="types, sdlType, outputStream" returntype="System.Void" />
+        <method name="ConvertTypesToSchemaToFile(System.Runtime.Remoting.MetadataServices.ServiceType[], System.Runtime.Remoting.MetadataServices.SdlType, System.String)" argnames="types, sdlType, path" returntype="System.Void" />
+        <method name="ConvertTypesToSchemaToStream(System.Runtime.Remoting.MetadataServices.ServiceType[], System.Runtime.Remoting.MetadataServices.SdlType, System.IO.Stream)" argnames="serviceTypes, sdlType, outputStream" returntype="System.Void" />
+        <method name="RetrieveSchemaFromUrlToStream(System.String, System.IO.Stream)" argnames="url, outputStream" returntype="System.Void" />
+        <method name="RetrieveSchemaFromUrlToFile(System.String, System.String)" argnames="url, path" returntype="System.Void" />
+        <method name="ConvertSchemaStreamToCodeSourceStream(System.Boolean, System.String, System.IO.Stream, System.Collections.ArrayList, System.String, System.String)" argnames="clientProxy, outputDirectory, inputStream, outCodeStreamList, proxyUrl, proxyNamespace" returntype="System.Void" />
+        <method name="ConvertSchemaStreamToCodeSourceStream(System.Boolean, System.String, System.IO.Stream, System.Collections.ArrayList, System.String)" argnames="clientProxy, outputDirectory, inputStream, outCodeStreamList, proxyUrl" returntype="System.Void" />
+        <method name="ConvertSchemaStreamToCodeSourceStream(System.Boolean, System.String, System.IO.Stream, System.Collections.ArrayList)" argnames="clientProxy, outputDirectory, inputStream, outCodeStreamList" returntype="System.Void" />
+        <method name="ConvertCodeSourceStreamToAssemblyFile(System.Collections.ArrayList, System.String, System.String)" argnames="outCodeStreamList, assemblyPath, strongNameFilename" returntype="System.Void" />
+        <method name="ConvertCodeSourceFileToAssemblyFile(System.String, System.String, System.String)" argnames="codePath, assemblyPath, strongNameFilename" returntype="System.Void" />
+        <method name="SaveStreamToFile(System.IO.Stream, System.String)" argnames="inputStream, path" returntype="System.Void" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="ServiceType" namespace="System.Runtime.Remoting.MetadataServices">
+        <constructor name="ServiceType(System.Type)" argnames="type" />
+        <constructor name="ServiceType(System.Type, System.String)" argnames="type, url" />
+        <property name="ObjectType" propertytype="System.Type" />
+        <property name="Url" propertytype="System.String" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="SdlChannelSinkProvider" namespace="System.Runtime.Remoting.MetadataServices">
+        <constructor name="SdlChannelSinkProvider" argnames="" />
+        <constructor name="SdlChannelSinkProvider(System.Collections.IDictionary, System.Collections.ICollection)" argnames="properties, providerData" />
+        <property name="Next" propertytype="System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
+        <method name="CreateSink(System.Runtime.Remoting.Channels.IChannelReceiver)" argnames="channel" returntype="System.Runtime.Remoting.Channels.IServerChannelSink" />
+        <method name="GetChannelData(System.Runtime.Remoting.Channels.IChannelDataStore)" argnames="localChannelData" returntype="System.Void" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="SdlChannelSink" namespace="System.Runtime.Remoting.MetadataServices">
+        <constructor name="SdlChannelSink(System.Runtime.Remoting.Channels.IChannelReceiver, System.Runtime.Remoting.Channels.IServerChannelSink)" argnames="receiver, nextSink" />
+        <property name="NextChannelSink" propertytype="System.Runtime.Remoting.Channels.IServerChannelSink" />
+        <property name="Properties" propertytype="System.Collections.IDictionary" />
+        <method name="GetResponseStream(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack, System.Object, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders)" argnames="sinkStack, state, msg, headers" returntype="System.IO.Stream" />
+        <method name="AsyncProcessResponse(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack, System.Object, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream)" argnames="sinkStack, state, msg, headers, stream" returntype="System.Void" />
+        <method name="ProcessMessage(System.Runtime.Remoting.Channels.IServerChannelSinkStack, System.Runtime.Remoting.Messaging.IMessage, System.Runtime.Remoting.Channels.ITransportHeaders, System.IO.Stream, System.Runtime.Remoting.Messaging.IMessage&amp;, System.Runtime.Remoting.Channels.ITransportHeaders&amp;, System.IO.Stream&amp;)" argnames="sinkStack, requestMsg, requestHeaders, requestStream, responseMsg, responseHeaders, responseStream" returntype="System.Runtime.Remoting.Channels.ServerProcessing" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="SUDSParserException" namespace="System.Runtime.Remoting.MetadataServices">
+        <property name="Message" inherited="System.Exception" propertytype="System.String" />
+        <property name="InnerException" inherited="System.Exception" propertytype="System.Exception" />
+        <property name="TargetSite" inherited="System.Exception" propertytype="System.Reflection.MethodBase" />
+        <property name="StackTrace" inherited="System.Exception" propertytype="System.String" />
+        <property name="HelpLink" inherited="System.Exception" propertytype="System.String" />
+        <property name="Source" inherited="System.Exception" propertytype="System.String" />
+        <property name="HResult" inherited="System.Exception" propertytype="System.Int32" />
+        <method name="GetObjectData(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)" argnames="info, context" inherited="System.Exception" returntype="System.Void" />
+        <method name="GetBaseException" argnames="" inherited="System.Exception" returntype="System.Exception" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Exception" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="SUDSGeneratorException" namespace="System.Runtime.Remoting.MetadataServices">
+        <property name="Message" inherited="System.Exception" propertytype="System.String" />
+        <property name="InnerException" inherited="System.Exception" propertytype="System.Exception" />
+        <property name="TargetSite" inherited="System.Exception" propertytype="System.Reflection.MethodBase" />
+        <property name="StackTrace" inherited="System.Exception" propertytype="System.String" />
+        <property name="HelpLink" inherited="System.Exception" propertytype="System.String" />
+        <property name="Source" inherited="System.Exception" propertytype="System.String" />
+        <property name="HResult" inherited="System.Exception" propertytype="System.Int32" />
+        <method name="GetObjectData(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)" argnames="info, context" inherited="System.Exception" returntype="System.Void" />
+        <method name="GetBaseException" argnames="" inherited="System.Exception" returntype="System.Exception" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Exception" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <enum name="SdlType" namespace="System.Runtime.Remoting.MetadataServices">
+        <field name="Sdl" />
+        <field name="Wsdl" />
+        <method name="ToString(System.IFormatProvider)" argnames="provider" inherited="System.Enum" returntype="System.String" />
+        <method name="GetTypeCode" argnames="" inherited="System.Enum" returntype="System.TypeCode" />
+        <method name="ToString(System.String, System.IFormatProvider)" argnames="format, provider" inherited="System.Enum" returntype="System.String" />
+        <method name="CompareTo(System.Object)" argnames="target" inherited="System.Enum" returntype="System.Int32" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Enum" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Enum" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Enum" returntype="System.String" />
+        <method name="ToString(System.String)" argnames="format" inherited="System.Enum" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </enum>
+    <class name="RemotingClientProxy" namespace="System.Runtime.Remoting.Services">
+        <constructor name="RemotingClientProxy" argnames="" />
+        <field name="_type" />
+        <field name="_tp" />
+        <field name="_url" />
+        <property name="AllowAutoRedirect" propertytype="System.Boolean" />
+        <property name="Cookies" propertytype="System.Object" />
+        <property name="EnableCookies" propertytype="System.Boolean" />
+        <property name="PreAuthenticate" propertytype="System.Boolean" />
+        <property name="Path" propertytype="System.String" />
+        <property name="Timeout" propertytype="System.Int32" />
+        <property name="Url" propertytype="System.String" />
+        <property name="UserAgent" propertytype="System.String" />
+        <property name="Username" propertytype="System.String" />
+        <property name="Password" propertytype="System.String" />
+        <property name="Domain" propertytype="System.String" />
+        <property name="ProxyName" propertytype="System.String" />
+        <property name="ProxyPort" propertytype="System.Int32" />
+        <property name="Events" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.EventHandlerList" />
+        <property name="Site" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.ISite" />
+        <property name="Container" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.IContainer" />
+        <property name="DesignMode" inherited="System.ComponentModel.Component" propertytype="System.Boolean" />
+        <method name="Dispose" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetService(System.Type)" argnames="service" inherited="System.ComponentModel.Component" returntype="System.Object" />
+        <method name="Dispose(System.Boolean)" argnames="disposing" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="CreateObjRef(System.Type)" argnames="requestedType" inherited="System.MarshalByRefObject" returntype="System.Runtime.Remoting.ObjRef" />
+        <method name="InitializeLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="GetLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.ComponentModel.Component" returntype="System.String" />
+        <method name="ConfigureProxy(System.Type, System.String)" argnames="type, url" returntype="System.Void" />
+        <method name="ConnectProxy" argnames="" returntype="System.Void" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        <event name="Disposed" inherited="System.ComponentModel.Component" />
+    </class>
+    <class name="RemotingService" namespace="System.Runtime.Remoting.Services">
+        <constructor name="RemotingService" argnames="" />
+        <property name="Application" propertytype="System.Web.HttpApplicationState" />
+        <property name="Context" propertytype="System.Web.HttpContext" />
+        <property name="Session" propertytype="System.Web.SessionState.HttpSessionState" />
+        <property name="Server" propertytype="System.Web.HttpServerUtility" />
+        <property name="User" propertytype="System.Security.Principal.IPrincipal" />
+        <property name="Events" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.EventHandlerList" />
+        <property name="Site" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.ISite" />
+        <property name="Container" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.IContainer" />
+        <property name="DesignMode" inherited="System.ComponentModel.Component" propertytype="System.Boolean" />
+        <method name="Dispose" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetService(System.Type)" argnames="service" inherited="System.ComponentModel.Component" returntype="System.Object" />
+        <method name="Dispose(System.Boolean)" argnames="disposing" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="CreateObjRef(System.Type)" argnames="requestedType" inherited="System.MarshalByRefObject" returntype="System.Runtime.Remoting.ObjRef" />
+        <method name="InitializeLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="GetLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.ComponentModel.Component" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        <event name="Disposed" inherited="System.ComponentModel.Component" />
+    </class>
+</masterdoc>
