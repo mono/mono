@@ -1,3 +1,8 @@
+2002-09-25  Mark Crichton  <crichton@gimp.org>
+
+	* sparc/tramp.c: Off by one error.  Whoops.  Trampoline code should
+	now work properly.
+
 2002-09-24  Mark Crichton  <crichton@gimp.org>
 
 	* sparc/tramp.c: Works as well as the old code did.  Cleanup is
