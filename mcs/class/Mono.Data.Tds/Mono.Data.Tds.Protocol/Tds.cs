@@ -293,6 +293,12 @@ namespace Mono.Data.Tds.Protocol {
 
 					break;
 				case TdsPacketSubType.TableName:
+				//	done = true;
+					peek = Comm.Peek ();
+					done = (peek != (byte) TdsPacketSubType.ColumnDetail);
+
+					break;
+				case TdsPacketSubType.ColumnDetail:
 					done = true;
 					break;
 				default:
