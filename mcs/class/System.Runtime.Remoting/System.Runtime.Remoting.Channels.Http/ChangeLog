@@ -1,4 +1,9 @@
-2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
+﻿2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpClientChannel.cs: Set the RequestUri transport header before sending 
+	  the request.
+
+﻿2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpRemotingHandlerFactory.cs: Loading of remoting configuration moved
 	  to System.Web.Configuraiton.

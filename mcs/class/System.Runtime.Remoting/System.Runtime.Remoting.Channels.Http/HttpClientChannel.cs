@@ -289,7 +289,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
 			string url = null;
-			string uri = (string)requestHeaders[CommonTransportKeys.RequestUri];
+			string uri = ((IMethodCallMessage)msg).Uri;
+			requestHeaders [CommonTransportKeys.RequestUri] = uri;
 			CreateUrl(uri,out url);
 
 			HttpWebRequest httpWebRequest = CreateWebRequest(url,requestHeaders,requestStream);
@@ -302,7 +303,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			ITransportHeaders headers, Stream stream)
 		{
 			string url = null;
-			string uri = (string)headers[CommonTransportKeys.RequestUri];
+			string uri = ((IMethodCallMessage)msg).Uri;
+			headers [CommonTransportKeys.RequestUri] = uri;
 			CreateUrl(uri,out url);
 
 			HttpWebRequest httpWebRequest = CreateWebRequest(url,headers,stream);
