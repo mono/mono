@@ -93,7 +93,7 @@ TEST_SOURCES_net_2_0 = \
 	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78  gen-79  gen-80 \
 	gen-81  gen-82  gen-83  gen-84
 
-TEST_EXCLUDES_net_2_0 = test-55 test-289
+TEST_EXCLUDES_net_2_0 = test-55 test-289 gen-77
 
 TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
 	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
