@@ -1,10 +1,6 @@
-REM LineNo: 14
+REM LineNo: 10
 REM ExpectedError: BC30012
 REM ErrorMessage: '#If' block must end with a matching '#End If'.
-
-REM LineNo: 10
-REM ExpectedError: BC30625
-REM ErrorMessage: 'Module' statement must end with a matching 'End Module'.
 
 Imports System
 Module ConditionalCompilation

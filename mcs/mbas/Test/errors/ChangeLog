@@ -1,3 +1,12 @@
+
+2005-03-11 Ritvik Mayank <mritvik@novell.com>
+	* ConditionalStatementsC22.vb
+	* ConditionalCompilationC10.vb
+	* ConditionalCompilationC7.vb
+	* ConditionalStatementsC4.vb
+	* ExceptionHandlingC1.vb
+		changed the LineNo. and removed spurious errors.
+
 2005-03-08 Satya Sudha K <ksathyasudha@novell.com>
 	* Negative test cases for Delegates, Events and Inheritance 
 		- Contributed by Sudharsan V <vsudharsan@novell.com>
@@ -42,7 +51,7 @@
 	* InterfaceC10.vb
 	* MustInheritC9.vb
 			removed the spurious errors.
-		
+
 2005-01-11 Manjula GHM <mmanjula@novell.com>
 	Added following files	
 	

@@ -3,7 +3,7 @@
 '
 ' (C) 2005 Novell, Inc.
 
-REM LineNo: 15
+REM LineNo: 13
 REM ExpectedError:  BC30081
 REM ErrorMessage: 'If' must end with a matching 'End If'.
 

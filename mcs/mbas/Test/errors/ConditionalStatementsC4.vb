@@ -1,4 +1,4 @@
-REM LineNo: 14
+REM LineNo: 12
 REM ExpectedError: BC30081
 REM ErrorMessage: 'If' must end with a matching 'End If'.
 
