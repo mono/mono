@@ -16,8 +16,8 @@ DISTFILES = README.tests $(wildcard *.vb)
 all: run-test-local
 
 run-test-local: 
-	rm -f *.exe *.log *.results; \
-	../test-mbas.pl --compiler=$(COMPILER) --compilerflags=$(COMPILER_FLAGS) --pattern=$(PATTERN)
+	@ rm -f *.exe *.log *.results; 
+	@ ../test-mbas.pl --compiler=$(COMPILER) --compilerflags=$(COMPILER_FLAGS) --pattern=$(PATTERN)
 
 all-local install-local test-local:
 	@:
