@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.21 $
+// $Revision: 1.22 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.22  2004/11/08 20:50:29  pbartok
+// - Fixed arguments for updated SetTopmost method
+//
 // Revision 1.21  2004/11/04 14:47:58  jordi
 // collection completion, drawing issues, missing features
 //
@@ -406,7 +409,7 @@ namespace System.Windows.Forms {
 					}
 
 					menu.SetForm (this);
-					MenuAPI.SetMenuBarWindow (menu.Handle, this);
+					MenuAPI.SetMenuBarWindow (menu.Handle, form_parent_window);
 				}
 			}
 		}
@@ -444,9 +447,9 @@ namespace System.Windows.Forms {
 					owner = value;
 					owner.AddOwnedForm(this);
 					if (owner != null) {
-						XplatUI.SetTopmost(this.window.Handle, true);
+						XplatUI.SetTopmost(this.window.Handle, owner.window.Handle, true);
 					} else {
-						XplatUI.SetTopmost(this.window.Handle, false);
+						XplatUI.SetTopmost(this.window.Handle, IntPtr.Zero, false);
 					}
 				}
 			}
