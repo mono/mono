@@ -1,3 +1,12 @@
+2002-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* attribute.cs: use the new property of TypeOf.
+	* expression.cs: added 'get' property around typearg.
+
+	These changes fix a build breaker reported by NickD. Is this the
+	correct way to fix?  If not, please, revert my changes and make it
+	work :-).
+
 2002-04-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: Add support for typeof in attribute invocations.

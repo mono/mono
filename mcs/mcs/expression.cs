@@ -4700,6 +4700,10 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ldtoken, typearg);
 			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
+
+		public Type TypeArg { 
+			get { return typearg; }
+		}
 	}
 
 	/// <summary>

@@ -121,7 +121,7 @@ namespace Mono.CSharp {
 				if (e is Constant) {
 					pos_values [i] = ((Constant) e).GetValue ();
 				} else if (e is TypeOf) {
-					pos_values [i] = ((TypeOf) e).typearg;
+					pos_values [i] = ((TypeOf) e).TypeArg;
 				} else {
 					error182 ();
 					return null;
