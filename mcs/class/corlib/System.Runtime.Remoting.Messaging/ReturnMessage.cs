@@ -79,6 +79,13 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 		}
 
+		[MonoTODO]
+		public virtual IDictionary Properties {
+			get {
+				return null;
+			}
+		}
+
 		public string TypeName {
 			get {
 				return msg.TypeName;

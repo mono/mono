@@ -9,7 +9,7 @@
 
 namespace System.Runtime.Remoting.Messaging {
 
-	public interface IMethodReturnMessage {
+	public interface IMethodReturnMessage : IMethodMessage, IMessage {
 
 		Exception Exception   { get; }
 		int       OutArgCount { get; }
