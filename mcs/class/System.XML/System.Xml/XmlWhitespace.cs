@@ -57,8 +57,7 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			if(OwnerDocument.PreserveWhitespace)
-				w.WriteWhitespace (Data);
+			w.WriteWhitespace (Data);
 		}
 	}
 }

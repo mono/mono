@@ -1,5 +1,10 @@
 2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlWhitespace.cs : Fixed WriteTo(). Whitespace nodes should be 
+	  written regardless of document's PreserveWhitespace.
+
+2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocumentNavigator.cs : Value should return concatenated string for 
 	  sequential text nodes. Considered detached nodes, the result of 
 	  MoveToParent() should be checked.
