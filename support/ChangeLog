@@ -1,3 +1,8 @@
+2004-11-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* Makefile.am (MPH_SOURCE): Add macros.c for compatibility with
+	the old API (currently the old API would fail).
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (MPH_SOURCE): Distribute old-map.h and map.h.

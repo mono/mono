@@ -9,25 +9,26 @@ INCLUDES = \
 	-I$(top_srcdir)
 
 MPH_SOURCE = \
-	mph.h \
-	old-map.h \
-	map.h \
-	dirent.c \
-	errno.c \
-	fcntl.c \
-	grp.c \
-	map.c \
-	pwd.c \
-	old-map.c \
-	stdio.c \
-	stdlib.c \
-	sys-mman.c \
-	sys-sendfile.c \
-	sys-stat.c \
-	sys-time.c \
-	sys-wait.c \
-	time.c \
-	unistd.c \
+	mph.h 		\
+	old-map.h 	\
+	map.h 		\
+	dirent.c 	\
+	errno.c 	\
+	fcntl.c 	\
+	grp.c 		\
+	macros.c	\
+	map.c 		\
+	pwd.c 		\
+	old-map.c 	\
+	stdio.c 	\
+	stdlib.c 	\
+	sys-mman.c 	\
+	sys-sendfile.c 	\
+	sys-stat.c 	\
+	sys-time.c 	\
+	sys-wait.c 	\
+	time.c 		\
+	unistd.c	 \
 	utime.c
 
 if HAVE_ZLIB
