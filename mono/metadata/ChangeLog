@@ -1,3 +1,9 @@
+
+Mon Oct 8 10:43:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: set the correct type for all the fundamental
+	type when loading the class.
+
 2001-10-05  Dick Porter  <dick@ximian.com>
 
 	* threads-pthread.c (pthread_mutex_timedlock): Simple
