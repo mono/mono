@@ -5772,7 +5772,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			Console.WriteLine ("array_data: " + array_data.Count);
 			object [] ret = new object [array_data.Count];
 			int i = 0;
 			foreach (Expression e in array_data){
