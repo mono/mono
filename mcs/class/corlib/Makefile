@@ -69,7 +69,7 @@ run-plattest:
 endif
 
 run-plattest-ondotnet: $(plattestlib)
-	$(TEST_HARNESS) $(plattestlib)
+	$(TEST_HARNESS) /exclude=NotDotNet $(plattestlib)
 
 EXTRA_DISTFILES = \
 	corlib.dll.win32-excludes corlib_cmp.dll.excludes corlib_res.dll.excludes \

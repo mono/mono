@@ -1,3 +1,7 @@
+2004-08-25  Nick Drochak <ndrochak@ieee.com>
+
+	* Makefile : Ignore tests that hang MS.NET.
+
 2004-08-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added System.Security.Policy/
