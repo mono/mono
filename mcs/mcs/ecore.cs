@@ -4073,17 +4073,13 @@ namespace Mono.CSharp {
 			// Handle initonly fields specially: make a copy and then
 			// get the address of the copy.
 			//
-			if (FieldInfo.IsInitOnly){
-				if (ec.IsConstructor) {
-					ig.Emit (OpCodes.Ldsflda, FieldInfo);
-				} else {
-					LocalBuilder local;
+			if (FieldInfo.IsInitOnly && !ec.IsConstructor){
+				LocalBuilder local;
 				
-					Emit (ec);
-					local = ig.DeclareLocal (type);
-					ig.Emit (OpCodes.Stloc, local);
-					ig.Emit (OpCodes.Ldloca, local);
-				}
+				Emit (ec);
+				local = ig.DeclareLocal (type);
+				ig.Emit (OpCodes.Stloc, local);
+				ig.Emit (OpCodes.Ldloca, local);
 				return;
 			}
 

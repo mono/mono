@@ -1,5 +1,12 @@
 2002-10-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (FieldExpr.AddressOf): We had a special code path for
+	init-only variables, but this path did not take into account that
+	there might be also instance readonly variables.  Correct this
+	problem. 
+
+	This fixes bug 32253
+
 	* delegate.cs (NewDelegate.DoResolve): Catch creation of unsafe
 	delegates as well.
 
