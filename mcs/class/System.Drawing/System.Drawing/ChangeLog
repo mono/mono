@@ -1,3 +1,7 @@
+2003-04-30  Nick Drochak <ndrochak@gol.com>
+
+	* Factories.cs: Change weird characters that broke build on windows.
+
 2003-04-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ColorConverter.cs:
