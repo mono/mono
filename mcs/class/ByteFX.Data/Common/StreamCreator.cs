@@ -95,7 +95,7 @@ namespace ByteFX.Data.Common
 
 			try
 			{
-				UnixEndPoint endPoint = new UnixEndPoint (hostList[0]);
+				UnixEndPoint endPoint = new UnixEndPoint (hostList);
 				socket.Connect (endPoint);
 				return new NetworkStream (socket, true);
 			}

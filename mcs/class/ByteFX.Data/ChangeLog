@@ -1,5 +1,11 @@
 2004-05-18  Duncan Mak  <duncan@ximian.com>
 
+	* Common/StreamCreator.cs (CreateUnixSocketStream): Instead of
+	hostList [0], which is a char, use hostList directly. This fixes
+	the build.
+
+2004-05-18  Duncan Mak  <duncan@ximian.com>
+
 	* Makefile: Add reference to Mono.Posix.dll.
 	
 	* ByteFX.Data.dll.sources: Update to latest listing of source
