@@ -2,9 +2,10 @@
 // StrongName.cs - Strong Name Implementation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -20,7 +21,7 @@ namespace Mono.Security {
 #else
 	public
 #endif
-	class StrongName {
+	sealed class StrongName {
 
 		internal class StrongNameSignature {
 			private byte[] hash;
@@ -111,6 +112,34 @@ namespace Mono.Security {
 		{
 			publicKey = null;
 			keyToken = null;
+		}
+
+		public bool CanSign {
+			get {
+				if (rsa == null)
+					return false;
+#if INSIDE_CORLIB || NET_1_2
+				// the easy way
+				if (RSA is RSACryptoServiceProvider) {
+					// available as internal for corlib
+					return !(rsa as RSACryptoServiceProvider).PublicOnly;
+				}
+				else 
+#endif
+				if (RSA is RSAManaged) {
+					return !(rsa as RSAManaged).PublicOnly;
+				}
+				else {
+					// the hard way
+					try {
+						RSAParameters p = rsa.ExportParameters (true);
+						return ((p.D != null) && (p.P != null) && (p.Q != null));
+					}
+					catch {
+						return false;
+					}
+				}
+			}
 		}
 
 		public RSA RSA {

@@ -1,3 +1,9 @@
+2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongName.cs: Added CanSign property for AssemblyBuilder. Current
+	Fx design requires an exception to know if the private key is present
+	in an RSA instance. In some case (inside corlib) we can do without...
+
 2004-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongName.cs: Added exceptions for null or invalid keys.
