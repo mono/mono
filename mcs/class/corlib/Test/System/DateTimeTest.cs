@@ -17,7 +17,7 @@ namespace MonoTests.System
 
 public class DateTimeTest : TestCase
 {
-	static long[] myTicks = {
+	long[] myTicks = {
 		631501920000000000L,	// 25 Feb 2002 - 00:00:00
 		631502475130080000L,	// 25 Feb 2002 - 15:25:13,8
 		631502115130080000L,	// 25 Feb 2002 - 05:25:13,8

@@ -1,3 +1,8 @@
+2002-03-03  Nick Drochak  <ndrochak@gol.com>
+
+	* DateTimeTest.cs: make static member non-static -- wouldn't work on 
+	Windows if it was static. Doesn't _need_ to be static anyway.
+
 2002-03-01  Duco Fijma  <duco@lorentz.xs4all.nl>
 	* AttributeTest.cs: created, far from complete. 
 	* CharEnumeratorTest.cs: created. Contains just the basic case.
