@@ -1,3 +1,7 @@
+2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs: fixed bug #36929.
+
 2003-01-21  Tim Haynes <thaynes@openlinksw.com>
 
 	* AspGenerator.cs:
