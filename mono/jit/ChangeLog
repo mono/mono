@@ -1,5 +1,18 @@
 2002-09-25  Martin Baulig  <martin@gnome.org>
 
+	* debug-private.h (DebugLineNumberInfo): Removed.  There's now a
+	MonoDebugLineNumberEntry type in debug-mono-symfile.h which we're
+	using instead of it.
+	(DebugMethodInfo): Removed `line_numbers'.
+
+	* debug.c: Reworked the line number generation; we're now using
+	the MonoDebugLineNumberEntry try for all debugging formats.  This
+	type also includes the line number and IL offset, this allows the
+	JIT to produce better line number info: we only emit line number
+	information for source lines which actually have code.
+
+2002-09-25  Martin Baulig  <martin@gnome.org>
+
 	* debug.h: Removed external declaration of all functions which
 	should only be called from the Mono Debugger and also made them
 	static.  Since the debugger gets their address from the
