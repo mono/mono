@@ -1,3 +1,22 @@
+2002-11-12  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.TdsClient.Internal/TdsContext.cs:
+		Remove this class as it is not being used
+	* Mono.Data.TdsClient.Internal/ITds.cs
+	* Mono.Data.TdsClient.Internal/Tds.cs
+	* Mono.Data.TdsClient.Internal/Tds42.cs
+	* Mono.Data.TdsClient.Internal/Tds50.cs
+	* Mono.Data.TdsClient.Internal/Tds70.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketColumnInfoResult.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketColumnNamesResult.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketColumnOrderResult.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketControlResult.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketEndTokenResult.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketOutputParam.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketRetStatResult.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketRowResult.cs
+	* Mono.Data.TdsClient.Internal/TdsPacketUnknown.cs
+		Remove references to System.Data
+
 2002-11-09  Tim Coleman <tim@timcoleman.com>
 	* list: 
 		Add new internal classes
