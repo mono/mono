@@ -1,3 +1,11 @@
+2005-02-23  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0122-10.cs, CS0122-10-lib.cs: New tests based on #57851.
+	* Makefile (all-local): Add CS0122-10-lib.dll.
+	* cs0122-11.cs: New test based on #72718.
+	* cs0112-2.cs: Remove erroneous test.  Same as cs1501.cs.
+	* mcs-expect-wrong-error (cs1501.cs): Remove.
+
 2005-02-22  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0115-3.c, cs0534-3.cs, cs0534-4.cs: New files based on #71134.
