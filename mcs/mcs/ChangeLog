@@ -1,3 +1,9 @@
+2003-01-21  Nick Drochak <ndrochak@gol.com>
+
+	* cs-tokenizer.cs:
+	* pending.cs:
+	* typemanager.cs: Remove compiler warnings
+
 2003-01-20  Duncan Mak  <duncan@ximian.com>
 
 	* AssemblyInfo.cs: Bump the version number to 0.19.
@@ -6,6 +12,7 @@
 
 	* cs-tokenizer.cs: little fixes to line numbering when #line is used.
 
+>>>>>>> 1.953
 2003-01-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.cs (Constructor::Emit): Emit debugging info for constructors.
