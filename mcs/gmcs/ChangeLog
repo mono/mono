@@ -1,3 +1,9 @@
+2004-07-18  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.BetterMethod): If no type arguments
+	were giving explicitly, a non-generic method is better than a
+	method whose type arguments we infered.
+
 2004-07-17  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberName.MakeName): Create the "class`1" names here;

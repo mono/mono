@@ -4313,7 +4313,7 @@ namespace Mono.CSharp {
 		///     0 if candidate ain't better
 		///     1 if candidate is better than the current best match
 		/// </remarks>
-		static int BetterFunction (EmitContext ec, ArrayList args,
+		static int BetterFunction (EmitContext ec, MethodGroupExpr me, ArrayList args,
 					   MethodBase candidate, bool candidate_params,
                                            MethodBase best, bool best_params,
 					   Location loc)
@@ -4389,7 +4389,21 @@ namespace Mono.CSharp {
 			best_pd = GetParameterData (best);
 
 			int rating1 = 0, rating2 = 0;
-			
+
+			if (!me.HasTypeArguments) {
+				//
+				// If no type arguments were given, a non-generic method
+				// is always better than a generic one whose type arguments
+				// we infered.  See gen-63.cs for an example.
+				//
+				if (best.Mono_IsInflatedMethod &&
+				    !candidate.Mono_IsInflatedMethod)
+					return 1;
+				else if (candidate.Mono_IsInflatedMethod &&
+					 !best.Mono_IsInflatedMethod)
+					return 0;
+			}
+
 			for (int j = 0; j < argument_count; ++j) {
 				int x, y;
 				
@@ -4790,7 +4804,7 @@ namespace Mono.CSharp {
                                 if (method != null)
                                         method_params = (bool) candidate_to_form [method];
                                 
-                                int x = BetterFunction (ec, Arguments,
+                                int x = BetterFunction (ec, me, Arguments,
                                                         candidate, cand_params,
 							method, method_params,
                                                         loc);
@@ -4884,7 +4898,7 @@ namespace Mono.CSharp {
 //                                         continue;
                                 
                                 bool cand_params = (bool) candidate_to_form [candidate];
-				int x = BetterFunction (ec, Arguments,
+				int x = BetterFunction (ec, me, Arguments,
                                                         method, best_params,
                                                         candidate, cand_params,
 							loc);
