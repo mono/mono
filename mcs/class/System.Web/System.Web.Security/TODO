@@ -16,19 +16,19 @@ All Classes and Delegates
 &: Work in progress. See <item-name>.cs file for maintainer's name
 </legends>
 
-DefaultAuthenticationEventArgs
-DefaultAuthenticationModule
-FileAuthorizationModule
-FormsAuthentication
-FormsAuthenticationEventArgs
+* DefaultAuthenticationEventArgs
+& DefaultAuthenticationModule
+& FileAuthorizationModule
+& FormsAuthentication
+& FormsAuthenticationEventArgs
 FormsAuthenticationModule
 FormsAuthenticationTicket
 FormsIdentity
-PassportAuthenticationEventArgs
+& PassportAuthenticationEventArgs
 PassportAuthenticationModule
 PassportIdentity
 UrlAuthorizationModule
-WindowsAuthenticationEventArgs
+& WindowsAuthenticationEventArgs
 WindowsAuthenticationModule
 
 * DefaultAuthenticationEventHandler

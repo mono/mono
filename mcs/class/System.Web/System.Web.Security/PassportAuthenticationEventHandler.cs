@@ -1,5 +1,5 @@
 /**
- * Namespace: System.Web.UI.Security
+ * Namespace: System.Web.Security
  *
  * Author: Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
@@ -10,7 +10,7 @@
  * (C) Gaurav Vaish (2002)
  */
 
-namespace System.Web.UI.Security
+namespace System.Web.Security
 {
 	public delegate void PassportAuthenticationEventHandler(object sender, PassportAuthenticationEventArgs e);
 }

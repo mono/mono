@@ -1,5 +1,18 @@
 2002-03-05	Gaurav Vaish <gvaish@iitk.ac.in>
 
+	* DefaultAuthenticationModule.cs  - Initial implementation.
+	* FileAuthorizationModule.cs      - Initial implementation.
+	* FormsAuthentication.cs          - First touch.
+
+
+	* DefaultAuthenticationEventArgs.cs
+	                                  - Completed.
+	* FormsAuthenticationEventArgs.cs,
+	* PassportAuthenticationEventArgs.cs,
+	* WindowsAuthenticationEventArgs.cs
+	                                  - Initial Implementations.
+
+
 	* DefaultAuthenticationEventHandler.cs,
 	* FormsAuthenticationEventHandler.cs,
 	* PassportAuthenticationEventHandler.cs, 
