@@ -760,7 +760,10 @@ namespace System.Web.UI.WebControls
 					} else if(String.Compare(cea, "next", true) == 0)
 					{
 						cIndex++;
+					} else {
+						cIndex = Convert.ToInt32 (cea) - 1;
 					}
+
 					OnPageIndexChanged(new DataGridPageChangedEventArgs(source, cIndex));
 				} else if(String.Compare(cmd, "sort", true) == 0)
 				{

@@ -168,7 +168,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return (!IsPagingEnabled || (CurrentPageIndex == PageCount));
+				return (!IsPagingEnabled || (CurrentPageIndex == (PageCount - 1)));
 			}
 		}
 

@@ -1,5 +1,11 @@
 2003-10-29 Jackson Harper <jackson@ximian.com>
 
+	* PagedDataSource.cs:
+	* DataGrid.cs: Patch by ximian@aksi.mdamt.net. Do not go past the
+	end of the last page. Fixes bug #5085.
+	
+2003-10-29 Jackson Harper <jackson@ximian.com>
+
 	* CheckBox.cs: Do not change the status of a checkbox when there
 	is no post data. This fixes bug #49091.
 	* CheckBoxList.cs: Do not change the status of the checkboxes when
