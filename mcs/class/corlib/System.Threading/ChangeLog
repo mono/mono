@@ -1,3 +1,9 @@
+2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Thread.cs: delayed thread creation until Start is called. If we
+	don't do that and Start() is not called, the thread is leaked. First
+	step towards fixing bug #53078. 
+
 2003-12-02  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Throw InvalidOperationException if Thread.Name is

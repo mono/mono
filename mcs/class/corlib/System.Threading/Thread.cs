@@ -241,17 +241,6 @@ namespace System.Threading
 				throw new ArgumentNullException("Null ThreadStart");
 			}
 			threadstart=start;
-
-			// This is a two-stage thread launch.  Thread_internal
-			// creates the new thread, but blocks it until
-			// Start() is called later.
-			system_thread_handle=Thread_internal(start);
-
-			// Should throw an exception here if
-			// Thread_internal returns NULL
-			if(system_thread_handle==(IntPtr)0) {
-				throw new SystemException("Thread creation failed");
-			}
 		}
 
 		[MonoTODO]
@@ -506,6 +495,15 @@ namespace System.Threading
 					throw new ThreadStateException("Thread has already been started");
 				}
 				
+
+				// Thread_internal creates the new thread, but
+				// blocks it until Start() is called later.
+				system_thread_handle=Thread_internal(threadstart);
+
+				if (system_thread_handle == (IntPtr) 0) {
+					throw new SystemException ("Thread creation failed");
+				}
+
 				// Launch this thread
 				Start_internal(system_thread_handle);
 
