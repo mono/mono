@@ -1,3 +1,8 @@
+2003-06-25  Dick Porter  <dick@ximian.com>
+
+	* threadpool.c (mono_thread_pool_add): Don't set up a finaliser
+	for the async object, the WaitHandle object will close the handle.
+	Fixes bug 45321.
 
 Wed Jun 25 18:12:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
