@@ -1,3 +1,8 @@
+2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: don't add import statement or assemblies from
+	global.asax to every file. Fixes bug #55496.
+
 2004-03-09  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* DataBinder.cs: allow unquoted string expressions (e.g. "[test]") and

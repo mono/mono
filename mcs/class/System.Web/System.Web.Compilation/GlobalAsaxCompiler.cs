@@ -18,31 +18,19 @@ namespace System.Web.Compilation
 		ApplicationFileParser parser;
 		static ArrayList applicationObjectTags = new ArrayList (1);
 		static ArrayList sessionObjectTags = new ArrayList (1);
-		static ArrayList imports;
-		static ArrayList assemblies;
 
 		public GlobalAsaxCompiler (ApplicationFileParser parser)
 			: base (parser)
 		{
 			applicationObjectTags.Clear ();
 			sessionObjectTags.Clear ();
-			
-			if (imports != null)
-				imports.Clear ();
-
-			if (assemblies != null)
-				assemblies.Clear ();
-
 			this.parser = parser;
 		}
 
 		public static Type CompileApplicationType (ApplicationFileParser parser)
 		{
 			AspGenerator generator = new AspGenerator (parser);
-			Type type = generator.GetCompiledType ();
-			imports = parser.Imports;
-			assemblies = parser.Assemblies;
-			return type;
+			return generator.GetCompiledType ();
 		}
 
 		protected override void CreateMethods ()
@@ -89,14 +77,6 @@ namespace System.Web.Compilation
 
 		internal static ArrayList SessionObjects {
 			get { return sessionObjectTags; }
-		}
-
-		internal static ArrayList Assemblies {
-			get { return assemblies; }
-		}
-
-		internal static ArrayList Imports {
-			get { return imports; }
 		}
 	}
 }

@@ -67,21 +67,6 @@ namespace System.Web.UI
 				AddAssembliesInBin ();
 
 			language = CompilationConfig.DefaultLanguage;
-			if (GlobalAsaxCompiler.Assemblies != null) {
-				foreach (string assembly in GlobalAsaxCompiler.Assemblies) {
-					if (!assemblies.Contains (assembly)) {
-						AddAssemblyByName (assembly);
-					}
-				}
-			}
-
-			if (GlobalAsaxCompiler.Imports != null) {
-				foreach (string import in GlobalAsaxCompiler.Imports) {
-					if (!imports.Contains (import)) {
-						imports.Add (import);
-					}
-				}
-			}
 		}
 
 		internal void AddApplicationAssembly ()
