@@ -1,3 +1,7 @@
+2004-12-02  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Distribute wsdl2.exe.sources.
+
 2004-11-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoWSDL.cs: Added new option for generating a proxy for a compiled
