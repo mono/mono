@@ -1,3 +1,12 @@
+2004-05-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* basic-long.cs: Add new regression test.
+
+2004-05-18  Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* mini-x86.c (mono_arch_local_regalloc): Avoid releasing a
+	register too early on the chain.
+
 2004-05-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (create_helper_signature): Use a helper function to reduce
