@@ -1,3 +1,11 @@
+2003-08-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStream.cs: Closing bug #40689. The Write method was re-written.
+	* SymmetricAlgorithm.cs: Removed Lluis previous patch (it fails a unit
+	test) and corrected a bug in FinalDecrypt.
+	* RSACryptoServiceProvider.cs: Fixed different exceptions from .NET 1.0
+	and 1.1.
+
 2003-07-31  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStream.cs: Closing bug #46143. The Read method was re-written.

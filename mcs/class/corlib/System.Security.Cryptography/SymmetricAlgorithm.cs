@@ -5,7 +5,7 @@
 //   Thomas Neidhart (tome@sbox.tugraz.at)
 //   Sebastien Pouliot (spouliot@motus.com)
 //
-// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -218,7 +218,7 @@ namespace System.Security.Cryptography {
 
 		private byte[] FinalEncrypt (byte [] inputBuffer, int inputOffset, int inputCount) 
 		{
-			if (inputCount == 0) return new byte[0];
+// FIXME: lluis ?	if (inputCount == 0) return new byte[0];
 
 			// are there still full block to process ?
 			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
@@ -245,11 +245,11 @@ namespace System.Security.Cryptography {
 				case PaddingMode.None:
 					break;
 				case PaddingMode.PKCS7:
-					for (int i = BlockSizeByte; --i >= (BlockSizeByte - padding);) 
+					for (int i = res.Length; --i >= (res.Length - padding);) 
 						res [i] = (byte) padding;
 					break;
 				case PaddingMode.Zeros:
-					for (int i = BlockSizeByte; --i >= (BlockSizeByte - padding);)
+					for (int i = res.Length; --i >= (res.Length - padding);)
 						res [i] = 0;
 					break;
 			}
@@ -285,11 +285,15 @@ namespace System.Security.Cryptography {
 			}
 
 			// return output without padding
-			byte[] data = new byte [total];
-			Array.Copy (res, 0, data, 0, total);
-			// zeroize decrypted data (copy with padding)
-			Array.Clear (res, 0, res.Length);
-			return data;
+			if (total > 0) {
+				byte[] data = new byte [total];
+				Array.Copy (res, 0, data, 0, total);
+				// zeroize decrypted data (copy with padding)
+				Array.Clear (res, 0, res.Length);
+				return data;
+			}
+			else
+				return res;
 		}
 
 		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount) 

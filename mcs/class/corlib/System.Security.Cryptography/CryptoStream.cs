@@ -83,12 +83,9 @@ public class CryptoStream : Stream {
 		Dispose (true);
 	}
 
+	// LAMESPEC: A CryptoStream can be close in read mode
 	public override void Close () 
 	{
-		// LAMESPEC: A CryptoStream can be close in read mode
-		//if (_mode != CryptoStreamMode.Write)
-		//	throw new NotSupportedException ();
-
 		// only flush in write mode (bugzilla 46143)
 		if ((!_flushedFinalBlock) && (_mode == CryptoStreamMode.Write))
 			FlushFinalBlock ();
@@ -99,10 +96,10 @@ public class CryptoStream : Stream {
 
 	private int ReadBlock (byte[] buffer, int offset, byte[] workspace) 
 	{
-		_stream.Read (workspace, 0, workspace.Length);
+		int readen = _stream.Read (workspace, 0, workspace.Length);
 		if (_stream.Position == _stream.Length) {
 			// last block
-			byte[] input = _transform.TransformFinalBlock (workspace, 0, workspace.Length);
+			byte[] input = _transform.TransformFinalBlock (workspace, 0, readen);
 			Array.Copy (input, 0, buffer, offset, input.Length);
 			// zeroize this last block
 			Array.Clear (input, 0, input.Length);
@@ -195,25 +192,42 @@ public class CryptoStream : Stream {
 
 		int bufferPos = offset;
 		while (count > 0) {
-			int len = Math.Min (workingBlock.Length - workPos, count);
-			Array.Copy (buffer, bufferPos, workingBlock, workPos, len);
-			bufferPos += len;
-			workPos += len;
-			count -= len;
-			if (workPos == workingBlock.Length) {
+			if (workPos == blockSize) {
 				workPos = 0;
-				byte[] output = new byte[_transform.OutputBlockSize];
-				_transform.TransformBlock (workingBlock, 0, workingBlock.Length, output, 0);
-				_stream.Write (output, 0, output.Length);
+				// use partial block to avoid (re)allocation
+				_transform.TransformBlock (workingBlock, 0, blockSize, partialBlock, 0);
+				_stream.Write (partialBlock, 0, partialBlock.Length);
+			}
+
+			if (_transform.CanTransformMultipleBlocks) {
+				// transform all except the last block (which may be the last block
+				// of the stream and require TransformFinalBlock)
+				int numBlock = (count / blockSize);
+				if ((count % blockSize) == 0) // partial block ?
+					numBlock--; // no then reduce
+				int multiSize = (numBlock * blockSize);
+				byte[] multiBlocks = new byte [multiSize];
+				_transform.TransformBlock (buffer, offset, multiSize, multiBlocks, 0);
+				_stream.Write (multiBlocks, 0, multiSize); 
+				// copy last block into partialBlock
+				workPos = count - multiSize;
+				Array.Copy (buffer, offset + multiSize, workingBlock, 0, workPos);
+				count = 0; // the last block, if any, is in workingBlock
+			}
+			else {
+				int len = Math.Min (blockSize - workPos, count);
+				Array.Copy (buffer, bufferPos, workingBlock, workPos, len);
+				bufferPos += len;
+				workPos += len;
+				count -= len;
+				// here block may be full, but we wont TransformBlock it until next iteration
+				// so that the last block will be called in FlushFinalBlock using TransformFinalBlock
 			}
 		}
 	}
 
 	public override void Flush ()
 	{
-		if (_mode != CryptoStreamMode.Write)
-			throw new NotSupportedException ("cannot flush a non-writeable CryptoStream");
-
 		if (_stream != null)
 			_stream.Flush ();
 	}
@@ -250,15 +264,24 @@ public class CryptoStream : Stream {
 	protected virtual void Dispose (bool disposing) 
 	{
 		if (!disposed) {
-			if (_stream != null)
-				_stream.Close ();
-			// always cleared for security reason
-			Array.Clear (workingBlock, 0, workingBlock.Length);
-			Array.Clear (partialBlock, 0, partialBlock.Length);
-			if (disposing) {
-				_stream = null;
-				workingBlock = null;
-				partialBlock = null;
+			try {
+				disposed = true;
+				// always cleared for security reason
+				if (workingBlock != null)
+					Array.Clear (workingBlock, 0, workingBlock.Length);
+				if (partialBlock != null)
+					Array.Clear (partialBlock, 0, partialBlock.Length);
+				if (disposing) {
+					if (_stream != null)
+						_stream.Close (); // should be Dispose
+					_stream = null;
+					workingBlock = null;
+					partialBlock = null;
+				}
+			}
+			finally {
+//				base.Dispose ();
+				GC.SuppressFinalize (this); // not called in Stream.Dispose
 			}
 		}
 	}

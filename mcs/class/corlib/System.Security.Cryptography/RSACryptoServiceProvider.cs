@@ -128,6 +128,10 @@ namespace System.Security.Cryptography {
 	
 		public byte[] Decrypt (byte[] rgb, bool fOAEP) 
 		{
+#if NET_1_1
+			if (m_disposed)
+				throw new ObjectDisposedException ("rsa");
+#endif
 			// choose between OAEP or PKCS#1 v.1.5 padding
 			AsymmetricKeyExchangeDeformatter def = null;
 			if (fOAEP)
@@ -205,6 +209,10 @@ namespace System.Security.Cryptography {
 		// HashAlgorithm descendant
 		public byte[] SignData (byte[] buffer, object halg) 
 		{
+#if NET_1_1
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+#endif
 			return SignData (buffer, 0, buffer.Length, halg);
 		}
 	
@@ -255,6 +263,10 @@ namespace System.Security.Cryptography {
 		// HashAlgorithm descendant
 		public bool VerifyData (byte[] buffer, object halg, byte[] signature) 
 		{
+#if NET_1_1
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+#endif
 			if (signature == null)
 				throw new ArgumentNullException ("signature");
 
