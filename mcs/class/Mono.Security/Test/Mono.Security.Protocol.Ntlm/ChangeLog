@@ -1,3 +1,7 @@
+2003-12-17  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ChallengeResponse.cs: Added test case for a null (and empty) password.
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ChallengeResponseTest.cs: Added the sample from L0phtCrack for a 
