@@ -1,3 +1,7 @@
+2001-12-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Throw.Emit): Add support for re-throwing exceptions.
+
 2001-12-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* location.cs (ToString): Provide useful rutine.

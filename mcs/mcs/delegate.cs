@@ -74,7 +74,6 @@ namespace Mono.CSharp {
 					name, attr, TypeManager.multicast_delegate_type);
 			}
 
-			Console.WriteLine ("Delegate name: " + TypeBuilder.FullName);
 			RootContext.TypeManager.AddDelegateType (Name, TypeBuilder, this);
 		}
 

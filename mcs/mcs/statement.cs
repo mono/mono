@@ -453,15 +453,27 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
+			if (Expr == null){
+				if (ec.InCatch)
+					ec.ig.Emit (OpCodes.Rethrow);
+				else {
+					Report.Error (
+						156, "A throw statement with no argument is only " +
+						"allowed in a catch clause");
+				}
+				return false;
+			}
+			
 			Expression e = Expr.Resolve (ec);
 
 			if (e == null)
 				return false;
-
+			
 			e.Emit (ec);
+
 			ec.ig.Emit (OpCodes.Throw);
 
-			return true;
+			return false;
 		}
 	}
 
