@@ -1,5 +1,5 @@
 //
-// System.Drawing.fontStyle.cs
+// System.Drawing.FontStyle.cs
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Author: Dennis Hayes (dennish@raytek.com)
@@ -9,11 +9,12 @@
 using System;
 namespace System.Drawing 
 {
+	[Flags]
 	public enum FontStyle {
-		Bold  = 1,
-		Italic = 2,
-		Regular = 3,
-		Strikeout = 4,
-		Underline = 5
+		Regular   = 0,
+		Bold      = 1,
+		Italic    = 2,
+		Underline = 4,
+		Strikeout = 8
 	}
 }

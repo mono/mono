@@ -10,9 +10,9 @@ using System;
 namespace System.Drawing 
 {
 	public enum StringDigitSubstitute {
-		National = 1,
-		None = 2,
-		Traditional = 3,
-		User = 4
+		User        = 0,
+		None        = 1,
+		National    = 2,
+		Traditional = 3
 	}
 }

@@ -10,16 +10,27 @@ using System;
 
 namespace System.Drawing
 {
-	/// <summary>
-	/// Summary description for SolidBrush.
-	/// </summary>
-	public class SolidBrush
-	{
-		public SolidBrush()
+	public class SolidBrush	: Brush {
+		
+		Color color;
+		
+		public SolidBrush( Color color ) {
+			this.color = color;
+		}
+
+		public Color Color {
+			get {
+				return color;
+			}
+			set {
+				color = value;
+			}
+		}
+		
+		public override object Clone()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			return new SolidBrush( color );
 		}
 	}
 }
+

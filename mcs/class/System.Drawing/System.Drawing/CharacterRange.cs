@@ -28,5 +28,13 @@ namespace System.Drawing
 				first = value;
 			}
 		}
+		public int Length{
+			get{
+				return length;
+			}
+			set{
+				length = value;
+			}
+		}
 	}
 }

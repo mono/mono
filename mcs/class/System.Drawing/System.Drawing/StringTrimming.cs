@@ -9,12 +9,12 @@
 using System;
 namespace System.Drawing 
 {
-	public enum  StringTrimming{
-		Character = 1,
-		EllipsisCharacter = 2,
-		EllipsisPath = 3,
-		EllipsisWord = 4,
-		None = 5,
-		Word = 6
+	public enum  StringTrimming {
+		None              = 0,
+		Character         = 1,
+		Word              = 2,
+		EllipsisCharacter = 3,
+		EllipsisWord      = 4,
+		EllipsisPath      = 5
 	}
 }

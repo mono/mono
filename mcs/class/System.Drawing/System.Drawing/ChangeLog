@@ -1,6 +1,25 @@
+ 2002-9-15 Asier Llano <asierllano@infonegocio.com>
+	
+	* Fixes	the enum values in the following enums
+	* ContentAlignment.cs:
+	* FontStyle.cs:
+	* GraphicsUnit.cs:
+	* KnownColor.cs:
+	* RotateFlipType.cs:
+	* StringAligment.cs:
+	* StringDigitSubstitute.cs:
+	* StringFormatFlags.cs:
+	* StringTrimming.cs:
+	* StringUnit.cs: 
+	* SolidBrush.cs: Easy implementation
+	* Brushes.cs:    Implementation based on SolidBrush and Color class.
+        * Brush.cs:      Fixes based on the status web).
+	* CharacterRange.cs: Implemented the missing Lenth property.
+
 2002-9-14 Dennis Hayes (dennish@raytek.com)
-* sample.cs
-* removed personal template that should not have been checked in
+	
+	* sample.cs
+	* removed personal template that should not have been checked in
 
 2002-09-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

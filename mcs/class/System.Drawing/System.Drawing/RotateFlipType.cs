@@ -9,21 +9,21 @@ using System;
 namespace System.Drawing 
 {
 	public enum RotateFlipType {
-		Rotate180FlipNone = 1,
-		Rotate180FlipX = 2,
-		Rotate180FlipXY = 3,
-		Rotate180FlipY = 4,
-		Rotate270FlipNone = 5,
-		Rotate270FlipX = 6,
-		Rotate270FlipXY = 7,
-		Rotate270FlipY = 8,
-		Rotate90FlipNone = 9,
-		Rotate90FlipX = 10,
-		Rotate90FlipXY = 11,
-		Rotate90FlipY = 12,
-		RotateNoneFlipNone = 13,
-		RotateNoneFlipX = 14,
-		RotateNoneFlipXY = 15,
-		RotateNoneFlipY = 16
+		RotateNoneFlipNone = 0,
+		Rotate180FlipXY    = 0,
+		Rotate90FlipNone   = 1,
+		Rotate270FlipXY    = 1,
+		Rotate180FlipNone  = 2,
+		RotateNoneFlipXY   = 2,
+		Rotate270FlipNone  = 3,
+		Rotate90FlipXY     = 3,
+		RotateNoneFlipX    = 4,
+		Rotate180FlipY     = 4,
+		Rotate90FlipX      = 5,
+		Rotate270FlipY     = 5,
+		Rotate180FlipX     = 6,
+		RotateNoneFlipY    = 6,
+		Rotate270FlipX     = 7,
+		Rotate90FlipY      = 7,
 	}
 }

@@ -15,13 +15,17 @@ namespace System.Drawing {
 
 		abstract public object Clone ();
 
+		internal Brush()
+		{
+		}
+
 		public void Dispose ()
 		{
 			Dispose (true);
 			System.GC.SuppressFinalize (this);
 		}
 
-		void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			// Nothing for now.
 		}
@@ -32,3 +36,4 @@ namespace System.Drawing {
 		}
 	}
 }
+

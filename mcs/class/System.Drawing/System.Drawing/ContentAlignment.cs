@@ -9,14 +9,14 @@ using System;
 namespace System.Drawing 
 {
 	public enum ContentAlignment {
-		BottomCenter = 1,
-		BottomLeft = 2,
-		BottomRight = 3,
-		MiddleCenter = 4,
-		MiddleLeft = 5,
-		MiddleRight = 6,
-		TopCenter = 7,
-		TopLeft = 8,
-		TopRight = 9
+		TopLeft      = 0x001,
+		TopCenter    = 0x002,
+		TopRight     = 0x004,
+		MiddleLeft   = 0x010,
+		MiddleCenter = 0x020,
+		MiddleRight  = 0x040,
+		BottomLeft   = 0x100,
+		BottomCenter = 0x200,
+		BottomRight  = 0x400
 	}
 }

@@ -9,15 +9,16 @@
 using System;
 namespace System.Drawing 
 {
+	[Flags]
 	public enum StringFormatFlags {
-		DirectionRightToLeft = 1,
-		DirectionVertical = 2,
-		DisplayFormatControl = 3,
-		FitBlackBox = 4,
-		LineLimit = 5,
-		MeasureTrailingSpaces = 6,
-		NoClip = 7,
-		NoFontFallback = 8,
-		NoWrap = 9,
+		DirectionRightToLeft  = 0x0001,
+		DirectionVertical     = 0x0002,
+		FitBlackBox           = 0x0004,
+		DisplayFormatControl  = 0x0020,
+		NoFontFallback        = 0x0400,
+		MeasureTrailingSpaces = 0x0800,
+		NoWrap                = 0x1000,
+		LineLimit             = 0x2000,
+		NoClip                = 0x4000
 	}
 }
