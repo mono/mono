@@ -1,10 +1,13 @@
 //
-// generic.cs: Support classes for generics
+// generic.cs: Generics support
 //
-// Author:
-//   Miguel de Icaza (miguel@ximian.com)
+// Authors: Martin Baulig (martin@ximian.com)
+//          Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2003 Ximian, Inc.
+// Licensed under the terms of the GNU GPL
+//
+// (C) 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2004 Novell, Inc
 //
 using System;
 using System.Reflection;

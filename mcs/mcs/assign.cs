@@ -3,9 +3,10 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
-//   Martin Baulig (martin@gnome.org)
+//   Martin Baulig (martin@ximian.com)
 //
 // (C) 2001, 2002, 2003 Ximian, Inc.
+// (C) 2004 Novell, Inc
 //
 using System;
 using System.Reflection;

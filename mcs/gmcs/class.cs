@@ -2,7 +2,7 @@
 // class.cs: Class and Struct handlers
 //
 // Authors: Miguel de Icaza (miguel@gnu.org)
-//          Martin Baulig (martin@gnome.org)
+//          Martin Baulig (martin@ximian.com)
 //          Marek Safar (marek.safar@seznam.cz)
 //
 // Licensed under the terms of the GNU GPL
