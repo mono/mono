@@ -76,7 +76,7 @@ namespace System.Xml.Serialization
 			foreach (XmlTypeMapping map in _derivedTypes)
 				if (map.TypeFullName == objectFullTypeName) return map;
 
-			throw new InvalidOperationException ("Invalid type: " + objectFullTypeName);
+			return null;
 		}
 
 		internal XmlTypeMapping GetRealElementMap (string name, string ens)
@@ -107,6 +107,8 @@ namespace System.Xml.Serialization
 		ArrayList _elementMembers;
 		Hashtable _attributeMembers;
 		ArrayList _flatLists;
+		XmlTypeMapMemberAnyElement _defaultAnyElement;
+		XmlTypeMapMemberAnyAttribute _defaultAnyAttribute;
 
 		public void AddMember (XmlTypeMapMember member)
 		{
@@ -119,9 +121,18 @@ namespace System.Xml.Serialization
 			}
 			else if (member is XmlTypeMapMemberFlatList)
 			{
-				if (_flatLists == null) _flatLists = new ArrayList ();
-				((XmlTypeMapMemberFlatList)member).FlatArrayIndex = _flatLists.Count;
-				_flatLists.Add (member);
+				RegisterFlatList ((XmlTypeMapMemberFlatList)member);
+			}
+			else if (member is XmlTypeMapMemberAnyElement)
+			{
+				XmlTypeMapMemberAnyElement mem = (XmlTypeMapMemberAnyElement) member;
+				if (mem.IsDefaultAny) _defaultAnyElement = mem;
+				if (mem.TypeData.IsListType) RegisterFlatList (mem);
+			}
+			else if (member is XmlTypeMapMemberAnyAttribute)
+			{
+				_defaultAnyAttribute = (XmlTypeMapMemberAnyAttribute) member;
+				return;
 			}
 
 			if (_elementMembers == null) {
@@ -142,6 +153,13 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		void RegisterFlatList (XmlTypeMapMemberExpandable member)
+		{
+			if (_flatLists == null) _flatLists = new ArrayList ();
+			member.FlatArrayIndex = _flatLists.Count;
+			_flatLists.Add (member);
+		}
+
 		public XmlTypeMapMemberAttribute GetAttribute (string name, string ns)
 		{
 			if (_attributeMembers == null) return null;
@@ -152,6 +170,16 @@ namespace System.Xml.Serialization
 		{
 			if (_elements == null) return null;
 			return (XmlTypeMapElementInfo)_elements[name + "/" + ns];
+		}
+
+		public XmlTypeMapMemberAnyElement DefaultAnyElementMember
+		{
+			get { return _defaultAnyElement; }
+		}
+
+		public XmlTypeMapMemberAnyAttribute DefaultAnyAttributeMember
+		{
+			get { return _defaultAnyAttribute; }
 		}
 
 		public ICollection AttributeMembers
@@ -217,6 +245,57 @@ namespace System.Xml.Serialization
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
+		}
+	}
+
+	internal class EnumMap: ObjectMap
+	{
+		EnumMapMember[] _members;
+
+		public class EnumMapMember
+		{
+			string _xmlName;
+			string _enumName;
+
+			public EnumMapMember (string xmlName, string enumName)
+			{
+				_xmlName = xmlName;
+				_enumName = enumName;
+			}
+
+			public string XmlName
+			{
+				get { return _xmlName; }
+			}
+
+			public string EnumName
+			{
+				get { return _enumName; }
+			}
+		}
+
+		public EnumMap (EnumMapMember[] members)
+		{
+			_members = members;
+		}
+
+		public EnumMapMember[] Members
+		{
+			get { return _members; }
+		}
+
+		public string GetXmlName (string enumName)
+		{
+			foreach (EnumMapMember mem in _members)
+				if (mem.EnumName == enumName) return mem.XmlName;
+			throw new InvalidOperationException ("Invalid enumeration value: " + enumName);
+		}
+
+		public string GetEnumName (string xmlName)
+		{
+			foreach (EnumMapMember mem in _members)
+				if (mem.XmlName == xmlName) return mem.EnumName;
+			throw new InvalidOperationException ("Invalid enumeration value: " + xmlName);
 		}
 	}
 }

@@ -41,8 +41,10 @@ namespace System.Xml.Serialization
 			switch (typeMap.TypeData.SchemaType)
 			{
 				case SchemaTypes.Class: return ReadClassInstance (typeMap, isNullable, checkType);
-				case SchemaTypes.Array: return ReadListElement (typeMap, isNullable);
+				case SchemaTypes.Array: return ReadListElement (typeMap, isNullable, null, true);
 				case SchemaTypes.XmlNode: return ReadXmlNodeElement (typeMap, isNullable);
+				case SchemaTypes.Primitive: return ReadPrimitiveElement (typeMap, isNullable);
+				case SchemaTypes.Enum: return ReadEnumElement (typeMap, isNullable);
 				default: throw new Exception ("Unsupported map type");
 			}
 		}
@@ -54,25 +56,54 @@ namespace System.Xml.Serialization
             if (checkType) 
 			{
                 System.Xml.XmlQualifiedName t = GetXsiType();
-				if (t != null) {
-					typeMap = typeMap.GetRealElementMap (t.Name, t.Namespace);
-					if (typeMap == null)
-						throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)t);
+				if (t != null) 
+				{
+					XmlTypeMapping realMap = typeMap.GetRealElementMap (t.Name, t.Namespace);
+					if (realMap == null) {
+						if (typeMap.TypeData.Type == typeof(object))
+							return ReadTypedPrimitive (t);
+						else
+							throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)t);
+					}
+					if (realMap != typeMap)
+						return ReadObject (realMap, false, false);
 				}
             }
 
 			object ob = Activator.CreateInstance (typeMap.TypeData.Type);
-
+			Type obType = typeMap.TypeData.Type;
 			ClassMap map = (ClassMap) typeMap.ObjectMap;
 
-			while (Reader.MoveToNextAttribute()) 
+			// Reads attributes
+
+			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
+			int anyAttributeIndex = 0;
+			object anyAttributeArray = null;
+
+			while (Reader.MoveToNextAttribute())
 			{
 				XmlTypeMapMemberAttribute member = map.GetAttribute (Reader.LocalName, Reader.NamespaceURI);
-				if (member != null)
-					member.SetValue (ob, XmlCustomFormatter.FromXmlString (member.TypeData.FullTypeName, Reader.Value));
-				else if (!IsXmlnsAttribute(Reader.Name)) 
+
+				if (member != null) {
+					member.SetValue (ob, XmlCustomFormatter.FromXmlString (member.TypeData.Type, Reader.Value));
+				}
+				else if (IsXmlnsAttribute(Reader.Name)) {
+					// Ignore
+				}	
+				else if (anyAttrMember != null) {
+					AddListValue (anyAttrMember.TypeData.Type, ref anyAttributeArray, anyAttributeIndex++, Document.ReadNode(Reader), true);
+				}
+				else
 					UnknownNode(ob);
 			}
+
+			if (anyAttrMember != null)
+			{
+				anyAttributeArray = ShrinkArray ((Array)anyAttributeArray, anyAttributeIndex, anyAttrMember.TypeData.Type.GetElementType(), true);
+				anyAttrMember.SetValue (ob, anyAttributeArray);
+			}
+
+			// Reads elements
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) 
@@ -89,9 +120,12 @@ namespace System.Xml.Serialization
 			int[] indexes = null;
 			object[] flatLists = null;
 
-			if (map.FlatLists != null) {
+			if (map.FlatLists != null) 
+			{
 				indexes = new int[map.FlatLists.Count];
 				flatLists = new object[map.FlatLists.Count];
+				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
+					if (mem.IsReadOnly (obType)) flatLists[mem.FlatArrayIndex] = mem.GetValue (ob);
 			}
 
 			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
@@ -103,13 +137,20 @@ namespace System.Xml.Serialization
 					{
 						if (info.Member.GetType() == typeof (XmlTypeMapMemberList))
 						{
-							info.Member.SetValue (ob, ReadListElement (info.MappedType, info.IsNullable));
+							if (info.Member.IsReadOnly (obType)) ReadListElement (info.MappedType, info.IsNullable, info.Member.GetValue (ob), false);
+							else info.Member.SetValue (ob, ReadListElement (info.MappedType, info.IsNullable, null, true));
 							readFlag[info.Member.Index] = true;
 						}
 						else if (info.Member.GetType() == typeof (XmlTypeMapMemberFlatList))
 						{
 							XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)info.Member;
-							AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadObjectElement (info));
+							AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadObjectElement (info), !info.Member.IsReadOnly (obType));
+						}
+						else if (info.Member.GetType() == typeof (XmlTypeMapMemberAnyElement))
+						{
+							XmlTypeMapMemberAnyElement mem = (XmlTypeMapMemberAnyElement)info.Member;
+							if (mem.TypeData.IsListType) AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (false), true);
+							else mem.SetValue (ob, ReadXmlNode (false));
 						}
 						else if (info.Member.GetType() == typeof(XmlTypeMapMemberElement))
 						{
@@ -117,7 +158,13 @@ namespace System.Xml.Serialization
 							readFlag[info.Member.Index] = true;
 						}
 						else
-							throw new Exception ("Unknown member type");
+							throw new InvalidOperationException ("Unknown member type");
+					}
+					else if (map.DefaultAnyElementMember != null)
+					{
+						XmlTypeMapMemberAnyElement mem = map.DefaultAnyElementMember;
+						if (mem.TypeData.IsListType) AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (false), true);
+						else mem.SetValue (ob, ReadXmlNode (false));
 					}
 					else 
 						UnknownNode(ob);
@@ -130,12 +177,13 @@ namespace System.Xml.Serialization
 
 			if (flatLists != null)
 			{
-				foreach (XmlTypeMapMemberFlatList mem in map.FlatLists)
+				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
 				{
 					Object list = flatLists[mem.FlatArrayIndex];
 					if (mem.TypeData.Type.IsArray)
 						list = ShrinkArray ((Array)list, indexes[mem.FlatArrayIndex], mem.TypeData.Type.GetElementType(), true);
-					mem.SetValue (ob, list);
+					if (!mem.IsReadOnly (obType))
+						mem.SetValue (ob, list);
 				}
 			}
 
@@ -150,24 +198,31 @@ namespace System.Xml.Serialization
 				if (elem.TypeData.SchemaType == SchemaTypes.XmlNode)
 					return ReadXmlNode (true);
 				else if (elem.IsNullable) 
-					return XmlCustomFormatter.FromXmlString (elem.TypeData.FullTypeName, ReadNullableString ());
+					return XmlCustomFormatter.FromXmlString (elem.TypeData.Type, ReadNullableString ());
 				else 
-					return XmlCustomFormatter.FromXmlString (elem.TypeData.FullTypeName, Reader.ReadElementString ());
+					return XmlCustomFormatter.FromXmlString (elem.TypeData.Type, Reader.ReadElementString ());
 			}
-			else if (elem.MappedType.TypeData.SchemaType == SchemaTypes.Array)
-				return ReadListElement (elem.MappedType, elem.IsNullable);
+			else if (elem.MappedType.TypeData.SchemaType == SchemaTypes.Array) {
+				return ReadListElement (elem.MappedType, elem.IsNullable, null, true);
+			}
+			else if (elem.MappedType.TypeData.SchemaType == SchemaTypes.Enum) {
+				return GetEnumValue (elem.MappedType, Reader.ReadElementString());
+			}
 			else
 				return ReadObject (elem.MappedType, elem.IsNullable, true);
 		}
 
-		object ReadListElement (XmlTypeMapping typeMap, bool isNullable)
+		object ReadListElement (XmlTypeMapping typeMap, bool isNullable, object list, bool canCreateInstance)
 		{
 			Type listType = typeMap.TypeData.Type;
 			ListMap listMap = (ListMap)typeMap.ObjectMap;
 
 			if (ReadNull()) return null;
 
-			object list = CreateList (listType);
+			if (list == null) {
+				if (canCreateInstance) list = CreateList (listType);
+				else throw CreateReadOnlyCollectionException (typeMap.TypeFullName);
+			}	
 
 			if (Reader.IsEmptyElement) {
 				Reader.Skip();
@@ -184,7 +239,7 @@ namespace System.Xml.Serialization
 				{
 					XmlTypeMapElementInfo elemInfo = listMap.FindElement (Reader.LocalName, Reader.NamespaceURI);
 					if (elemInfo != null)
-						AddListValue (listType, ref list, index++, ReadObjectElement (elemInfo));
+						AddListValue (listType, ref list, index++, ReadObjectElement (elemInfo), false);
 					else 
 						UnknownNode(null);
 				}
@@ -201,7 +256,7 @@ namespace System.Xml.Serialization
 			return list;
 		}
 
-		void AddListValue (Type listType, ref object list, int index, object value)
+		void AddListValue (Type listType, ref object list, int index, object value, bool canCreateInstance)
 		{
 			if (listType.IsArray)
 			{
@@ -210,7 +265,11 @@ namespace System.Xml.Serialization
 			}
 			else	// Must be IEnumerable
 			{
-				if (list == null) list = Activator.CreateInstance (listType);
+				if (list == null) {
+					if (canCreateInstance) list = Activator.CreateInstance (listType);
+					else throw CreateReadOnlyCollectionException (listType.FullName);
+				}
+
 				MethodInfo mi = listType.GetMethod ("Add");
 				mi.Invoke (list, new object[] { value });
 			}
@@ -227,6 +286,27 @@ namespace System.Xml.Serialization
 		object ReadXmlNodeElement (XmlTypeMapping typeMap, bool isNullable)
 		{
 			return ReadXmlNode (false);
+		}
+
+		object ReadPrimitiveElement (XmlTypeMapping typeMap, bool isNullable)
+		{
+			XmlQualifiedName t = GetXsiType();
+			if (t == null) t = new XmlQualifiedName (typeMap.XmlType, typeMap.Namespace);
+			return ReadTypedPrimitive (t);
+		}
+
+		object ReadEnumElement (XmlTypeMapping typeMap, bool isNullable)
+		{
+			Reader.ReadStartElement ();
+			object o = GetEnumValue (typeMap, Reader.ReadString());
+			Reader.ReadEndElement ();
+			return o;
+		}
+
+		object GetEnumValue (XmlTypeMapping typeMap, string val)
+		{
+			EnumMap map = (EnumMap) typeMap.ObjectMap;
+			return Enum.Parse (typeMap.TypeData.Type, map.GetEnumName (val));
 		}
 	}
 }

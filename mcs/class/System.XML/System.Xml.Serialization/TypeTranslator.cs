@@ -18,6 +18,7 @@ namespace System.Xml.Serialization
 	internal class TypeTranslator
 	{
 		static Hashtable nameCache;
+		static Hashtable primitiveTypes;
 
 		static TypeTranslator ()
 		{
@@ -43,6 +44,11 @@ namespace System.Xml.Serialization
 			nameCache.Add (typeof (byte[]), new TypeData (typeof (byte[]), "base64Binary", true));
 			nameCache.Add (typeof (XmlNode), new TypeData (typeof (XmlNode), "XmlNode", false));
 			nameCache.Add (typeof (XmlElement), new TypeData (typeof (XmlElement), "XmlElement", false));
+
+			primitiveTypes = new Hashtable();
+			ICollection types = nameCache.Values;
+			foreach (TypeData td in types)
+				primitiveTypes.Add (td.ElementName, td);
 		}
 
 		public static TypeData GetTypeData (Type type)
@@ -61,6 +67,11 @@ namespace System.Xml.Serialization
 			typeData = new TypeData (type, name, false);
 			nameCache[type] = typeData;
 			return typeData;
+		}
+
+		public static TypeData GetPrimitiveTypeData (string typeName)
+		{
+			return (TypeData) primitiveTypes[typeName];
 		}
 	}
 }

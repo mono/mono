@@ -84,7 +84,12 @@ namespace System.Xml.Serialization
 
 		public bool IsComplexType
 		{
-			get { return (SchemaType == SchemaTypes.Class || SchemaType == SchemaTypes.Array); }
+			get 
+			{ 
+				return (SchemaType == SchemaTypes.Class || 
+					      SchemaType == SchemaTypes.Array ||
+					      SchemaType == SchemaTypes.Enum ); 
+			}
 		}
 
 		public Type ListItemType

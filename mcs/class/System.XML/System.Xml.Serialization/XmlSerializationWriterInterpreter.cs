@@ -40,13 +40,21 @@ namespace System.Xml.Serialization
 			}
 
 			XmlTypeMapping map = typeMap.GetRealTypeMap (ob.GetType().FullName);
-			if (map != typeMap) needType = true;
-
-			switch (map.TypeData.SchemaType)
+			if (map == null)
 			{
-				case SchemaTypes.Class: WriteObjectElement (map, ob, element, namesp, needType); break;
-				case SchemaTypes.Array: WriteListElement (map, ob, element, namesp, needType); break;
-				case SchemaTypes.XmlNode: WriteXmlNodeElement (map, ob, element, namesp, needType); break;
+				WriteTypedPrimitive (element, namesp, ob, true);
+			}
+			else 
+			{
+				if (map != typeMap) needType = true;
+				switch (map.TypeData.SchemaType)
+				{
+					case SchemaTypes.Class: WriteObjectElement (map, ob, element, namesp, needType); break;
+					case SchemaTypes.Array: WriteListElement (map, ob, element, namesp, needType); break;
+					case SchemaTypes.XmlNode: WriteXmlNodeElement (map, ob, element, namesp, needType); break;
+					case SchemaTypes.Primitive: WriteTypedPrimitive (element, namesp, ob, needType); break;
+					case SchemaTypes.Enum: WriteEnumElement (map, ob, element, namesp, needType); break;
+				}
 			}
 		}
 
@@ -56,6 +64,8 @@ namespace System.Xml.Serialization
 			if (needType) 
 				WriteXsiType(typeMap.XmlType, typeMap.Namespace);
 
+			// Write attributes
+
 			ClassMap map = (ClassMap)typeMap.ObjectMap;
 			ICollection attributes = map.AttributeMembers;
 			if (attributes != null)
@@ -64,31 +74,59 @@ namespace System.Xml.Serialization
 					WriteAttribute(attr.AttributeName, attr.Namespace, XmlCustomFormatter.ToXmlString (attr.GetValue(ob)));
 			}
 
+			if (map.DefaultAnyAttributeMember != null)
+			{
+				ICollection extraAtts = (ICollection) map.DefaultAnyAttributeMember.GetValue (ob);
+				if (extraAtts != null) {
+					foreach (XmlAttribute attr in extraAtts)
+						WriteAttribute(attr.LocalName, attr.NamespaceURI, attr.Value);
+				}
+			}
+
+			// Write elements
+
 			ICollection members = map.ElementMembers;
 			if (members != null)
 			{
 				foreach (XmlTypeMapMemberElement member in members)
 				{
 					object memberValue = member.GetValue (ob);
-					if (member is XmlTypeMapMemberList)
+					if (member.GetType() == typeof(XmlTypeMapMemberList))
 					{
-						if (memberValue != null) {
+						if (memberValue != null) 
+						{
 							XmlTypeMapMemberList mm = (XmlTypeMapMemberList)member;
 							WriteStartElement(mm.ElementName, mm.Namespace, memberValue);
 							WriteListContent (member.TypeData, (ListMap) mm.ListTypeMapping.ObjectMap, memberValue);
 							WriteEndElement (memberValue);
 						}
 					}
-					else if (member is XmlTypeMapMemberFlatList)
+					else if (member.GetType() == typeof(XmlTypeMapMemberFlatList))
 					{
 						if (memberValue != null)
 							WriteListContent (member.TypeData, ((XmlTypeMapMemberFlatList)member).ListMap, memberValue);
 					}
-					else
+					else if (member.GetType() == typeof(XmlTypeMapMemberAnyElement))
+					{
+						if (memberValue != null)
+							WriteAnyElementContent ((XmlTypeMapMemberAnyElement)member, memberValue);
+					}
+					else if (member.GetType() == typeof(XmlTypeMapMemberAnyElement))
+					{
+						if (memberValue != null)
+							WriteAnyElementContent ((XmlTypeMapMemberAnyElement)member, memberValue);
+					}
+					else if (member.GetType() == typeof(XmlTypeMapMemberAnyAttribute))
+					{
+						// Ignore
+					}
+					else if (member.GetType() == typeof(XmlTypeMapMemberElement))
 					{
 						XmlTypeMapElementInfo elem = member.FindElement (ob, memberValue);
 						WriteMemberElement (elem, memberValue);
 					}
+					else
+						throw new InvalidOperationException ("Unknown member type");
 				}
 			}
 			WriteEndElement (ob);
@@ -105,6 +143,8 @@ namespace System.Xml.Serialization
 				else 
 					WriteElementString (elem.ElementName, elem.Namespace, XmlCustomFormatter.ToXmlString (memberValue));
 			}
+			else if (elem.TypeData.SchemaType == SchemaTypes.Enum)
+				WriteElementString(elem.ElementName, elem.Namespace, GetEnumXmlValue (elem.MappedType, memberValue));
 			else
 				WriteObject (elem.MappedType, memberValue, elem.ElementName, elem.Namespace, elem.IsNullable, false);
 		}
@@ -160,9 +200,44 @@ namespace System.Xml.Serialization
 				throw new Exception ("Unsupported collection type");
 		}
 
+		void WriteAnyElementContent (XmlTypeMapMemberAnyElement member, object memberValue)
+		{
+			if (member.TypeData.Type == typeof (XmlElement)) {
+				memberValue = new object[] { memberValue };
+			}
+
+			Array elems = (Array) memberValue;
+			foreach (XmlNode elem in elems)
+			{
+				if (elem is XmlElement) 
+				{
+					if (member.IsElementDefined (elem.Name, elem.NamespaceURI))
+						WriteElementLiteral(elem, "", "", false, true);
+					else
+						throw CreateUnknownAnyElementException (elem.Name, elem.NamespaceURI);
+				}
+				else
+					CreateUnknownTypeException (elem);
+			}
+		}
+
 		void WriteXmlNodeElement (XmlTypeMapping typeMap, object ob, string element, string namesp, bool needType)
 		{
-			WriteElementLiteral((XmlNode)ob, "", "", true, true);
+			WriteElementLiteral((XmlNode)ob, "", "", true, false);
+		}
+
+		void WriteEnumElement (XmlTypeMapping typeMap, object ob, string element, string namesp, bool needType)
+		{
+			Writer.WriteStartElement(element, namesp);
+			if (needType) WriteXsiType(typeMap.XmlType, typeMap.Namespace);
+			Writer.WriteString (GetEnumXmlValue (typeMap, ob));
+			Writer.WriteEndElement();
+		}
+
+		string GetEnumXmlValue (XmlTypeMapping typeMap, object ob)
+		{
+			EnumMap map = (EnumMap)typeMap.ObjectMap;
+			return map.GetXmlName (ob.ToString ());
 		}
 	}
 }

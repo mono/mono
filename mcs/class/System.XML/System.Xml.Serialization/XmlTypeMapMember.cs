@@ -21,6 +21,7 @@ namespace System.Xml.Serialization
 		string _name;
 		int _index;
 		TypeData _typeData;
+		MemberInfo _member;
 
 		public XmlTypeMapMember()
 		{
@@ -32,9 +33,10 @@ namespace System.Xml.Serialization
 			set { _name = value; }
 		}
 
-		public object GetValue (object ob)
+		public bool IsReadOnly (Type type)
 		{
-			return GetValue (ob, _name);
+			if (_member == null) InitMember (type);
+			return (_member is PropertyInfo) && !((PropertyInfo)_member).CanWrite;
 		}
 
 		public static object GetValue (object ob, string name)
@@ -44,11 +46,24 @@ namespace System.Xml.Serialization
 			else return ((FieldInfo)mems[0]).GetValue (ob);
 		}
 
+		public object GetValue (object ob)
+		{
+			if (_member == null) InitMember (ob.GetType());
+			if (_member is PropertyInfo) return ((PropertyInfo)_member).GetValue (ob, null);
+			else return ((FieldInfo)_member).GetValue (ob);
+		}
+
 		public void SetValue (object ob, object value)
 		{
-			MemberInfo[] mems = ob.GetType().GetMember (_name, BindingFlags.Instance|BindingFlags.Public);
-			if (mems[0] is PropertyInfo) ((PropertyInfo)mems[0]).SetValue (ob, value, null);
-			else ((FieldInfo)mems[0]).SetValue (ob, value);
+			if (_member == null) InitMember (ob.GetType());
+			if (_member is PropertyInfo) ((PropertyInfo)_member).SetValue (ob, value, null);
+			else ((FieldInfo)_member).SetValue (ob, value);
+		}
+
+		void InitMember (Type type)
+		{
+			MemberInfo[] mems = type.GetMember (_name, BindingFlags.Instance|BindingFlags.Public);
+			_member = mems[0];
 		}
 
 		public TypeData TypeData

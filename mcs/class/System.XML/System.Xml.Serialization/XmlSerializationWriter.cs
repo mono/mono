@@ -61,7 +61,10 @@ namespace System.Xml.Serialization {
 			this.writer = writer;
 		}
 
-		internal abstract void WriteObject (object ob);
+		internal virtual void WriteObject (object ob)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MonoTODO ("Implement")]
 		protected void AddWriteCallback (Type type, string typeName, string typeNs, XmlSerializationWriteCallback callback)
@@ -162,30 +165,20 @@ namespace System.Xml.Serialization {
 			return id;
 		}
 
-		[MonoTODO ("Complete this list.")]
-		private string GetPrimitiveTypeName (Type type)
-		{
-			if (type == typeof (string))
-				return "string";
-			if (type == typeof (bool))
-				return "Boolean";
-			if (type == typeof (float))
-				return "float";
-			if (type == typeof (double))
-				return "double";
-			if (type == typeof (XmlQualifiedName))
-				return "QName";
-
-			return String.Empty;
-		}
-	
 		[MonoTODO ("Need to check for namespace conflicts before blindly allocating qN")]
 		private string GetQualifiedName (string name, string ns)
 		{
-			qnameCount += 1;
-			string prefix = String.Format ("q{0}", qnameCount);
+			string prefix;
 
-			WriteAttribute ("xmlns", prefix, null, ns);
+			if (ns == XmlSchema.Namespace)
+				prefix = "xsd";
+			else
+			{
+				qnameCount += 1;
+				prefix = String.Format ("q{0}", qnameCount);
+				WriteAttribute ("xmlns", prefix, null, ns);
+			}
+
 			return String.Format ("{0}:{1}", prefix, name);
 		}
 
@@ -574,18 +567,23 @@ namespace System.Xml.Serialization {
 			string value;
 
 			name = XmlCustomFormatter.FromXmlName (name);
-			WriteStartElement (name, ns);
+			Writer.WriteStartElement (name, ns);
 
 			if (o is XmlQualifiedName)
 				value = FromXmlQualifiedName ((XmlQualifiedName) o);
 			else
-				value = o.ToString ();
+				value = XmlCustomFormatter.ToXmlString (o);
 
 			if (xsiType)
-				WriteXsiType (GetPrimitiveTypeName (o.GetType ()), XmlSchema.Namespace);
+			{
+				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
+				if (td.SchemaType != SchemaTypes.Primitive)
+					throw new InvalidOperationException ("Invalid type: " + o.GetType().FullName);
+				WriteXsiType (td.ElementName, XmlSchema.Namespace);
+			}
 
 			WriteValue (value);
-			WriteEndElement ();
+			Writer.WriteEndElement ();
 		}
 
 		protected void WriteValue (byte[] value)

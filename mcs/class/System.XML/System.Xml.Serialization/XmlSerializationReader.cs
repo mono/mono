@@ -68,7 +68,10 @@ namespace System.Xml.Serialization {
 			InitIDs ();
 		}
 			
-		internal abstract object ReadObject ();
+		internal virtual object ReadObject ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		private ArrayList EnsureArrayList (ArrayList list)
 		{
@@ -425,10 +428,12 @@ namespace System.Xml.Serialization {
 			return (value + reader.ReadString ());
 		}
 
-		[MonoTODO ("Implement")]
 		protected object ReadTypedPrimitive (XmlQualifiedName type)
 		{
-			throw new NotImplementedException ();
+			XmlQualifiedName qname = GetXsiType ();
+			TypeData typeData = TypeTranslator.GetPrimitiveTypeData (qname.Name);
+			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive) throw new InvalidOperationException ("Unknown type: " + qname.Name);
+			return XmlCustomFormatter.FromXmlString (typeData.Type, Reader.ReadElementString ());
 		}
 
 		protected XmlNode ReadXmlNode (bool wrapped)
@@ -457,10 +462,9 @@ namespace System.Xml.Serialization {
 			return result;
 		}
 
-		[MonoTODO ("Implement")]
 		protected byte[] ToByteArrayBase64 (bool isNull)
 		{
-			throw new NotImplementedException ();
+			return Convert.FromBase64String (Reader.ReadString());
 		}
 
 		[MonoTODO ("Implement")]

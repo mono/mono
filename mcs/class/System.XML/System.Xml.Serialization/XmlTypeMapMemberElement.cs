@@ -87,21 +87,58 @@ namespace System.Xml.Serialization
 	// XmlTypeMapMemberFlatList
 	// A member of a class that must be serialized as a flat list
 
-	internal class XmlTypeMapMemberFlatList : XmlTypeMapMemberElement
+	internal class XmlTypeMapMemberExpandable : XmlTypeMapMemberElement
 	{
-		ListMap _listMap;
 		int _flatArrayIndex;
-
-		public ListMap ListMap
-		{
-			get { return _listMap; }
-			set { _listMap = value; }
-		}
 
 		public int FlatArrayIndex
 		{
 			get { return _flatArrayIndex; }
 			set { _flatArrayIndex = value; }
 		}
+	}
+
+	internal class XmlTypeMapMemberFlatList : XmlTypeMapMemberExpandable
+	{
+		ListMap _listMap;
+
+		public ListMap ListMap
+		{
+			get { return _listMap; }
+			set { _listMap = value; }
+		}
+	}
+
+	internal class XmlTypeMapMemberAnyElement : XmlTypeMapMemberExpandable
+	{
+		public bool IsElementDefined (string name, string ns)
+		{
+			foreach (XmlTypeMapElementInfo elem in ElementInfo)
+			{
+				if (elem.ElementName == "")		// Default AnyElementAttribute
+					return true;
+
+				if (elem.ElementName == name && elem.Namespace == ns)
+					return true;
+			}
+			return false;
+		}
+
+		public bool IsDefaultAny
+		{
+			get
+			{
+				foreach (XmlTypeMapElementInfo elem in ElementInfo)
+				{
+					if (elem.ElementName == "") 
+						return true;
+				}
+				return false;
+			}
+		}
+	}
+
+	internal class XmlTypeMapMemberAnyAttribute: XmlTypeMapMember
+	{
 	}
 }

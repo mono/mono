@@ -1,3 +1,16 @@
+2003-05-28  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TypeData.cs, TypeTranslator.cs: Added support for enums. Added method for translating
+	  from xml type to clr type.
+	* XmlCustomFormatter.cs: Fixed bug in serialization of chars. Support for byte[].
+	* XmlReflectionMember.cs: Added default constructor.
+	* XmlSerializationReader.cs: Implemented ReadTypedPrimitive(), ToByteArrayBase64().
+	* XmlSerializationWriter.cs: Several fixes.
+	* XmlSerializationReaderInterpreter.cs, XmlReflectionImporter.cs, XmlSerializationWriterInterpreter.cs
+	  XmlTypeMapMember.cs, XmlTypeMapMemberElement.cs, XmlTypeMapping.cs:
+	  Added support for enums. Added support for XmlElement and XmlNode.
+	  Support for XmlAnyAttributeAttribute and XmlAnyElementAttribute. Many fixes.
+
 2003-05-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TypeData.cs, TypeTranslator.cs: Implemented some methods.
