@@ -107,6 +107,7 @@ namespace System.Diagnostics
 		/// <param name="value">
 		/// The TraceListenerCollection to copy values from.
 		/// </param>
+		[MonoTODO]
 		public void AddRange(TraceListenerCollection value)
 		{
 			// TODO: use an iterator to copy the objects.
@@ -177,6 +178,7 @@ namespace System.Diagnostics
 		/// <return>
 		/// The index of the listener in the list, if it exists.
 		/// </return>
+		[MonoTODO]
 		public int IndexOf(object listener)
 		{
 			// TODO: we may have to add in some type-checking here.
@@ -203,6 +205,7 @@ namespace System.Diagnostics
 		/// <param name="name">
 		/// Name of listener to remove
 		/// </param>
+		[MonoTODO]
 		public void Remove(object name)
 		{
 			try {

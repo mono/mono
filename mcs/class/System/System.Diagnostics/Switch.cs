@@ -85,9 +85,10 @@ namespace System.Diagnostics
                 /// <summary>
                 /// Raises the SwitchSettingChanged event
                 /// </summary>
-				protected virtual void OnSwitchSettingChanged()
-				{
-					// TODO: implement me
-				}
+		[MonoTODO]
+		protected virtual void OnSwitchSettingChanged()
+		{
+			// TODO: implement me
+		}
         }
 }
