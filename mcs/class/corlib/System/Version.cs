@@ -355,6 +355,24 @@ namespace System
 				if (state == 5)
 					break;
 			}
+
+			// Last number
+			if (number >= 0) {
+				switch (state) {
+				case 1:
+					major = number;
+					break;
+				case 2:
+					minor = number;
+					break;
+				case 3:
+					build = number;
+					break;
+				case 4:
+					revision = number;
+					break;
+				}
+			}
 			return new Version (major, minor, build, revision);
 		}
 	}

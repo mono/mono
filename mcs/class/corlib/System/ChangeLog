@@ -1,3 +1,7 @@
+2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Version.cs: don't ignore the last number. Fixes bug #73539.
+
 2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoType.cs: When the security manager is active, constructors and
