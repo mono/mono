@@ -101,31 +101,29 @@ namespace System.Collections.Specialized
 		}
 		
 		// ICollection Interface
-		public int Count
-		{
+		public int Count {
 			get {
 				return count;
 			}
 		}
 		
-		public bool IsSynchronized
-		{
+		public bool IsSynchronized {
 			get {
 				return false;
 			}
 		}
 		
-		public object SyncRoot
-		{
+		public object SyncRoot {
 			get {
 				return this;
 			}
 		}
 
-		[MonoTODO]
 		public void CopyTo(Array array, int index)
 		{
-			// FIXME
+			int i = index;
+			foreach ( DictionaryEntry entry in this )
+				array.SetValue( entry, i++ );
 		}
 		
 		// IDictionary Interface
@@ -153,14 +151,10 @@ namespace System.Collections.Specialized
 			
 			set {
 				ListEntry entry = FindEntry(key);
-				
-				if (entry != null) {
+				if (entry != null)
 					entry.value = value;
-					count++;
-					modCount++;
-				} else {
+				else
 					AddImpl(key, value);
-				}
 			}
 		}
 		
@@ -336,8 +330,7 @@ namespace System.Collections.Specialized
 			}
 			
 			// ICollection Interface
-			public int Count
-			{
+			public int Count {
 				get {
 					return dict.Count;
 				}
@@ -357,10 +350,11 @@ namespace System.Collections.Specialized
 				}
 			}
 
-			[MonoTODO]
 			public void CopyTo(Array array, int index)
 			{
-				// FIXME
+				int i = index;
+				foreach ( object obj in this )
+					array.SetValue( obj, i++ );
 			}
 			
 			// IEnumerable Interface
