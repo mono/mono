@@ -1,3 +1,9 @@
+2004-12-24  John Luke  <john.luke@gmail.com>
+
+	* monop.cs: sort the types when printing an assembly
+	handle -r:~/foo.dll by substituting for $HOME
+	* TypeSorter.cs: IComparer to sort types by name
+
 2004-12-25  Ben Maurer  <bmaurer@ximian.com>
 
 	* monop.cs, outline.cs, monop-completion.sh: Add MIT/X11 License.

@@ -108,6 +108,10 @@ class MonoP {
 	{
 		Assembly a = null;
 
+		// if -r:~/foo.dll syntax is used the shell misses it
+		if (assembly.StartsWith ("~/"))
+			assembly = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), assembly.Substring (2));
+
 		try {
 			// if it exists try to use LoadFrom
 			if (File.Exists (assembly))
@@ -174,6 +178,7 @@ class MonoP {
 			
 		Console.WriteLine ();
 		Type [] types = a.GetExportedTypes ();
+		Array.Sort (types, new TypeSorter ());
 
 		foreach (Type t in types)
 			Console.WriteLine (t.FullName);
