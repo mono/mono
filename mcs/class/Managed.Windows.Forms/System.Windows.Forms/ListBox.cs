@@ -176,6 +176,7 @@ namespace System.Windows.Forms
 			KeyDown += new KeyEventHandler (OnKeyDownLB);
 			KeyUp += new KeyEventHandler (OnKeyUpLB);
 			GotFocus += new EventHandler (OnGotFocus);
+			LostFocus += new EventHandler (OnLostFocus);
 
 			UpdateFormatString ();
 		}
