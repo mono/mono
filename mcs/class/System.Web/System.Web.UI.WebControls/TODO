@@ -66,7 +66,7 @@ ListItemControlBuilder
 * LiteralControlBuilder
 * MonthChangedEventArgs
 PagedDataSource
-Panel
+* Panel
 PlaceHolder
 PlaceHolderControlBuilder
 RadioButton
@@ -87,8 +87,8 @@ SelectedDatesCollection
 * TableCell
 * TableCellCollection
 * TableCellControlBuilder
-TableHeaderCell
-TableItemStyle
+* TableHeaderCell
+& TableItemStyle
 * TableRow
 * TableRowCollection
 TableStyle

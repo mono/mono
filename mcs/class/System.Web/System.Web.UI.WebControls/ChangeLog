@@ -1,3 +1,21 @@
+2002-01-25      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* Panel.cs                    - Completed
+	* TableItemStyle.cs           - Completed
+
+2002-01-18      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* TableCellCollection.cs      - Completed
+	* TableRowCollection.cs       - Completed
+	* TableHeaderCell.cs          - Completed
+	* TableRow.cs                 - Completed
+
+2002-01-09      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* TableCellControlBuilder.cs  - Completed
+	* Table.cs                    - Completed
+	* TableCell.cs                - Completed
+
 2002-01-07      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* CheckBoxList.cs             - Completed
