@@ -1,4 +1,8 @@
 2004-04-04	Dennis Hayes <dennish@raytek.com>
+	Changed some System.String to string and System.Object to object.
+	This seems to match the spec better, if some has documents that this is wrong
+	I will change them back.
+
 	Complete. Includes code from both Mono and Mainsoft.
 	* BooleanType.cs
 	* CharArrayType.cs
