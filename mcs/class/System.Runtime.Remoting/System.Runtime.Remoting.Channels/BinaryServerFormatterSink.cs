@@ -14,14 +14,24 @@ namespace System.Runtime.Remoting.Channels {
 
 	public class BinaryServerFormatterSink : IServerChannelSink, IChannelSinkBase
 	{
+		[Serializable]
+		public enum Protocol
+		{
+			Http = 0,
+			Other = 1,
+		}
+
 		IServerChannelSink next_sink;
+		Protocol protocol;
+		IChannelReceiver receiver;
 		
-		[MonoTODO]
 		public BinaryServerFormatterSink (BinaryServerFormatterSink.Protocol protocol,
 						  IServerChannelSink nextSink,
 						  IChannelReceiver receiver)
 		{
+			this.protocol = protocol;
 			this.next_sink = nextSink;
+			this.receiver = receiver;
 		}
 
 		public IServerChannelSink NextChannelSink {
@@ -30,10 +40,9 @@ namespace System.Runtime.Remoting.Channels {
 			}
 		}
 
-		[MonoTODO]
 		public IDictionary Properties {
 			get {
-				throw new NotImplementedException ();
+				return null;
 			}
 		}
 
@@ -44,11 +53,11 @@ namespace System.Runtime.Remoting.Channels {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
 						IMessage msg, ITransportHeaders headers)
 		{
-			throw new NotImplementedException ();
+			// never called 
+			throw new NotSupportedException ();
 		}
 		
 		[MonoTODO]
@@ -57,13 +66,6 @@ namespace System.Runtime.Remoting.Channels {
 							out IMessage responseMsg, out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
 			throw new NotImplementedException ();
-		}
-		
-		[Serializable]
-		public enum Protocol
-		{
-			Http = 0,
-			Other = 1,
 		}
 	}
 }

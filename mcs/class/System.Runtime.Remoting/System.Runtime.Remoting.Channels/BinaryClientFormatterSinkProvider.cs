@@ -15,19 +15,19 @@ namespace System.Runtime.Remoting.Channels
 	{
 		IClientChannelSinkProvider next = null;
 
-		// this is not used at the moment ??
-		IDictionary properties;
+		// add any sink properties here (private fields)
 		
 		public BinaryClientFormatterSinkProvider ()
 		{
-			properties = new Hashtable ();
+			// nothing to do
 		}
 
 		public BinaryClientFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
 	        {
-			this.properties = properties;
-			// fixme: what shall we do with providerData?
+			// copy the contained properties to private fields
+			
+			// add a check that there is no providerData 
 		}
 
 		public IClientChannelSinkProvider Next
@@ -46,11 +46,16 @@ namespace System.Runtime.Remoting.Channels
 						      object remoteChannelData)
 		{
 			IClientChannelSink next_sink = null;
-
+			BinaryClientFormatterSink result;
+			
 			if (next != null)
 				next_sink = next.CreateSink (channel, url, remoteChannelData);
 			
-			return new BinaryClientFormatterSink (next_sink);
+			result = new BinaryClientFormatterSink (next_sink);
+
+			// set properties on the newly creates sink
+
+			return result;
 		}		
 	}
 }

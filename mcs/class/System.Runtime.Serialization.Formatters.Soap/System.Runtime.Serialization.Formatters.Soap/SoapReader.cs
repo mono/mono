@@ -2,7 +2,7 @@ using System;
 using System.Xml;
 using System.Reflection;
 
-namespace System.Runtime.Serialization.Formatters.soap
+namespace System.Runtime.Serialization.Formatters.Soap
 {	
 
 	public enum ReferenceTypes {Array_Type, Object_Type, Interface_Type, Delegate_Type, String_Type};

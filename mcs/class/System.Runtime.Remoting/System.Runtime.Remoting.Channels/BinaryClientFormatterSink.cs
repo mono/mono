@@ -46,20 +46,20 @@ namespace System.Runtime.Remoting.Channels
 			}
 		}
 
-		[MonoTODO]
 		public IMessageCtrl AsyncProcessMessage (IMessage msg,
 							 IMessageSink replySink)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void AsyncProcessRequest (IClientChannelSinkStack sinkStack,
 						 IMessage msg,
 						 ITransportHeaders headers,
 						 Stream stream)
 	        {
-			throw new NotImplementedException ();
+			// never called because the formatter sink is
+			// always the first in the chain
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
@@ -74,7 +74,8 @@ namespace System.Runtime.Remoting.Channels
 		public Stream GetRequestStream (IMessage msg,
 						ITransportHeaders headers)
 		{
-			return null;
+			// never called
+			throw new NotSupportedException ();
 		}
 
 		public void ProcessMessage (IMessage msg,
@@ -83,33 +84,41 @@ namespace System.Runtime.Remoting.Channels
 					    out ITransportHeaders responseHeaders,
 					    out Stream responseStream)
 		{
-			nextInChain.ProcessMessage (msg, requestHeaders, requestStream,
-						    out responseHeaders, out responseStream);
+			// never called because the formatter sink is
+			// always the first in the chain
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
-			ITransportHeaders response_headers;
-			Stream response_stream;
-			
-			// fixme: use nextInChain.GetRequestStream() ??
-			//Stream out_stream = new MemoryStream ();
-			Stream out_stream = File.Open ("test.bin", FileMode.Create);
-			
-			// serialize msg to the stream
-			formatter.Serialize (out_stream, msg, null);
-			//formatter.Serialize (out_stream, new Exception ("TEST"), null);
-			
-			out_stream.Close ();
-			throw new NotImplementedException ();
-			
-			ProcessMessage (msg, null, out_stream, out response_headers, out response_stream);
+			try {
 
-			// deserialize response_stream
-			IMessage result = (IMessage) formatter.Deserialize (response_stream, null);
+				ITransportHeaders response_headers;
+				Stream response_stream;
+			
+				// fixme: use nextInChain.GetRequestStream() ??
+				Stream out_stream = new MemoryStream ();
+				//Stream out_stream = File.Open ("test.bin", FileMode.Create);
+			
+				// serialize msg to the stream
+				//formatter.Serialize (out_stream, msg, null);
+				//formatter.Serialize (out_stream, new Exception ("TEST"), null);
+				//out_stream.Position = 0;			
+				nextInChain.ProcessMessage (msg, null, out_stream, out response_headers,
+							    out response_stream);
 
-			return null;
+				out_stream.Close ();
+
+				// deserialize response_stream
+				//IMessage result = (IMessage) formatter.Deserialize (response_stream, null);
+				throw new NotImplementedException ();
+
+				return null;
+				
+			} catch (Exception e) {
+				 return new ReturnMessage (e, (IMethodCallMessage)msg);
+			}
 		}
 	}
 }

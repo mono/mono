@@ -13,10 +13,10 @@ namespace System.Runtime.Remoting.Channels
 	public class BinaryServerFormatterSinkProvider :
 		IServerFormatterSinkProvider, IServerChannelSinkProvider
 	{
-		[MonoTODO]
+		IServerChannelSinkProvider next = null;
+
 		public BinaryServerFormatterSinkProvider ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -28,26 +28,34 @@ namespace System.Runtime.Remoting.Channels
 
 		public IServerChannelSinkProvider Next
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return next;
 			}
-			[MonoTODO]
+
 			set {
-				throw new NotImplementedException ();
+				next = value;
 			}
 		}
 
-		[MonoTODO]
 		public IServerChannelSink CreateSink (IChannelReceiver channel)
 		{
-			throw new NotImplementedException ();
+			IServerChannelSink next_sink = null;
+			BinaryServerFormatterSink result;
+			
+			if (next != null)
+				next_sink = next.CreateSink (channel);
+			
+			result = new BinaryServerFormatterSink (BinaryServerFormatterSink.Protocol.Other,
+								next_sink, channel);
+
+			// set properties on result
+			
+			return result;
 		}
 
-		[MonoTODO]
 		public void GetChannelData (IChannelDataStore channelData)
 		{
-			throw new NotImplementedException ();
+			// no idea why we need this
 		}
 	}
 }

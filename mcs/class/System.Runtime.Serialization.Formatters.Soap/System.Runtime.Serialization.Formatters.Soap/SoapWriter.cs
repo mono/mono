@@ -10,7 +10,7 @@ using System.Collections;
 using System.Xml;
 using System.IO;
 
-namespace System.Runtime.Serialization.Formatters.soap
+namespace System.Runtime.Serialization.Formatters.Soap
 {
 	
 		internal class SoapWriter

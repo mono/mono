@@ -13,7 +13,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 
 
-namespace System.Runtime.Serialization.Formatters.soap
+namespace System.Runtime.Serialization.Formatters.Soap
 {
 	public class SoapFormatter : IRemotingFormatter, IFormatter
 	{

@@ -7,6 +7,8 @@
 
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization;
+using System.Reflection;
+using System.Collections;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
 
@@ -129,6 +131,33 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			if(serializationStream==null) {
 				throw new ArgumentNullException("serializationStream is null");
 			}
+
+			ISerializable ser = graph as ISerializable;
+
+			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting);
+			object [] oa;
+			
+			if (ser != null) {
+				SerializationInfo info = new SerializationInfo (graph.GetType (), new FormatterConverter ());
+				ser.GetObjectData (info, context);
+				SerializationInfoEnumerator e = info.GetEnumerator ();
+				oa = new object [info.MemberCount];
+				int i = 0;
+				while (e.MoveNext ()) {
+					oa [i++] = e.Current;
+				}
+				Console.WriteLine ("SERIALIZABLE" + info.MemberCount);
+			} else {
+				MemberInfo [] members = FormatterServices.GetSerializableMembers (graph.GetType (), context);
+				oa = FormatterServices.GetObjectData (graph, members);
+				Console.WriteLine ("NOT SERIALIZABLE" + oa.Length);
+			}
+
+			foreach (object o in oa) {
+				Console.WriteLine ("OBJ" + o);
+			}
+			
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -137,6 +166,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			if(serializationStream==null) {
 				throw new ArgumentNullException("serializationStream is null");
 			}
+
+			// fixme: what about headers?
+			Serialize (serializationStream, graph);			
 		}
 	}
 }

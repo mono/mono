@@ -8,19 +8,26 @@
 
 using System.Collections;
 using System.IO;
+using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Channels;
-using System.Text.RegularExpressions;
 
 namespace System.Runtime.Remoting.Channels.Tcp
 {
 
 	public class TcpClientTransportSink : IClientChannelSink
 	{
-
+		string host;
+		string object_uri;
+		int port;
+		
+		TcpClient tcpclient;
+		Stream stream = null;
+		
 		public TcpClientTransportSink (string url)
 		{
-
+			host = TcpChannel.ParseTcpURL (url, out object_uri, out port);
+			tcpclient = new TcpClient ();
 		}
 
 		public IDictionary Properties
@@ -63,7 +70,16 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					    out ITransportHeaders responseHeaders,
 					    out Stream responseStream)
 		{
-			throw new NotImplementedException ();
+			if (stream == null) {
+				tcpclient.Connect (host, port);
+				stream = tcpclient.GetStream ();
+			}
+
+			Console.WriteLine ("Client  ProcessMessage");
+
+			responseHeaders = null;
+			responseStream = null;
+			//throw new NotImplementedException ();
 		}
 			
 	}
@@ -160,21 +176,11 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public string Parse (string url, out string objectURI)
 		{
-			// format: "tcp://host:port/path/to/object"
+			int port;
 			
-			objectURI = null;
-			
-			Match m = Regex.Match (url, "tcp://([^:]+):([0-9]+)(/.*)");
+			string host = TcpChannel.ParseTcpURL (url, out objectURI, out port);
 
-			if (!m.Success)
-				return null;
-			
-			string host = m.Groups[1].Value;
-			string port = m.Groups[2].Value;
-			objectURI = m.Groups[3].Value;
-			
 			return "tcp://" + host + ":" + port;
 		}
-
 	}
 }

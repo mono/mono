@@ -4,7 +4,7 @@ using System.Xml;
 using System.Reflection;
 using System.Collections;
 
-namespace System.Runtime.Serialization.Formatters.soap
+namespace System.Runtime.Serialization.Formatters.Soap
 {	
 	internal class ObjectDeserializer
 	{
