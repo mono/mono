@@ -19,28 +19,28 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		// [MonoTODO]
-		// public ItemDragEventArgs(MouseButtons bttns)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public ItemDragEventArgs(MouseButtons bttns, object o)
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public ItemDragEventArgs(MouseButtons bttns)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public ItemDragEventArgs(MouseButtons bttns, object o)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public MouseButtons Button {
+		//[MonoTODO]
+		//public MouseButtons Button {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public object Item {
+		//[MonoTODO]
+		//public object Item {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -49,15 +49,15 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

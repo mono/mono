@@ -19,29 +19,29 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		// [MonoTODO]
-		// public ItemCheckEventArgs(int index,  CheckState newCheckValue CheckState currentValue )
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public ItemCheckEventArgs(int index,  CheckState newCheckValue CheckState currentValue )
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public CheckState CurrentValue {
+		//[MonoTODO]
+		//public CheckState CurrentValue {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public int Index {
+		//[MonoTODO]
+		//public int Index {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public CheckState NewValue {
+		//[MonoTODO]
+		//public CheckState NewValue {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -53,15 +53,15 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

@@ -19,8 +19,8 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public bool AddExtension {
+		//[MonoTODO]
+		//public bool AddExtension {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -28,8 +28,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public virtual bool CheckFileExists {
+		//[MonoTODO]
+		//public virtual bool CheckFileExists {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -37,8 +37,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool CheckPathExists {
+		//[MonoTODO]
+		//public bool CheckPathExists {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -46,8 +46,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string DefaultExt {
+		//[MonoTODO]
+		//public string DefaultExt {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -55,8 +55,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool DereferenceLinks {
+		//[MonoTODO]
+		//public bool DereferenceLinks {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -64,8 +64,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string FileName {
+		//[MonoTODO]
+		//public string FileName {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -73,23 +73,14 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string[] FileNames {
+		//[MonoTODO]
+		//public string[] FileNames {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string Filter {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public int FilterIndex {
+		//[MonoTODO]
+		//public string Filter {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -97,8 +88,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string InitialDirectory {
+		//[MonoTODO]
+		//public int FilterIndex {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -106,8 +97,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool RestoreDirectory {
+		//[MonoTODO]
+		//public string InitialDirectory {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -115,8 +106,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool ShowHelp {
+		//[MonoTODO]
+		//public bool RestoreDirectory {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -124,8 +115,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string Title {
+		//[MonoTODO]
+		//public bool ShowHelp {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -133,8 +124,17 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool ValidateNames {
+		//[MonoTODO]
+		//public string Title {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//public bool ValidateNames {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -146,47 +146,47 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public void Dispose()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public override void Reset()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public DialogResult ShowDialog()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public DialogResult ShowDialog(IWin32Window)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public override string ToString()
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public override void Reset()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public DialogResult ShowDialog()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public DialogResult ShowDialog(IWin32Window)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public override string ToString()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		// --- Public Events
 		//
-		// [MonoTODO]
-		// public event CancelEventHandler FileOk {
+		//[MonoTODO]
+		//public event CancelEventHandler FileOk {
 		//	add {
 		//		throw new NotImplementedException ();
 		//	}
@@ -198,25 +198,25 @@ namespace System.Windows.Forms {
 		//
 		// --- Protected Methods
 		//
-		// [MonoTODO]
-		// protected  void Dispose()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// protected  override IntPtr HookProc( IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam )
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// protected  void OnFileOk( CancelEventArgs e)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// protected  override bool RunDialog( IntPtr hWndOwner)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//protected  void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected  override IntPtr HookProc( IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam )
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected  void OnFileOk( CancelEventArgs e)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected  override bool RunDialog( IntPtr hWndOwner)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

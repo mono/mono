@@ -19,8 +19,8 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// int Index {
+		//[MonoTODO]
+		//int Index {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -29,15 +29,15 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

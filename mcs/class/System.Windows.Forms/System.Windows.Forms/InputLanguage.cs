@@ -19,14 +19,14 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public CultureInfo Culture {
+		//[MonoTODO]
+		//public CultureInfo Culture {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public static InputLanguage CurrentInputLanguage {
+		//[MonoTODO]
+		//public static InputLanguage CurrentInputLanguage {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -34,26 +34,26 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public static InputLanguage DefaultInputLanguage {
+		//[MonoTODO]
+		//public static InputLanguage DefaultInputLanguage {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public IntPtr Handle {
+		//[MonoTODO]
+		//public IntPtr Handle {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public static InputLanguageCollection InstalledInputLanguages {
+		//[MonoTODO]
+		//public static InputLanguageCollection InstalledInputLanguages {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string LayoutName {
+		//[MonoTODO]
+		//public string LayoutName {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -62,25 +62,25 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static InputLanguage FromCulture(CultureInfo culture)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public override int GetHashCode()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static InputLanguage FromCulture(CultureInfo culture)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public override int GetHashCode()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

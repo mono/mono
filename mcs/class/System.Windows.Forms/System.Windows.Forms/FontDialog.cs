@@ -19,17 +19,17 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		// [MonoTODO]
-		// public FontDialog()
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public FontDialog()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public bool AllowScriptChange {
+		//[MonoTODO]
+		//public bool AllowScriptChange {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -37,8 +37,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool AllowSimululations {
+		//[MonoTODO]
+		//public bool AllowSimululations {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -46,8 +46,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool AllowVectorForms {
+		//[MonoTODO]
+		//public bool AllowVectorForms {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -55,8 +55,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool AllowVerticalForms {
+		//[MonoTODO]
+		//public bool AllowVerticalForms {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -64,8 +64,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public Color Color {
+		//[MonoTODO]
+		//public Color Color {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -73,8 +73,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool FixedPitchOnly {
+		//[MonoTODO]
+		//public bool FixedPitchOnly {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -82,8 +82,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public Font Font {
+		//[MonoTODO]
+		//public Font Font {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -91,8 +91,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool FontMustExist {
+		//[MonoTODO]
+		//public bool FontMustExist {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -100,8 +100,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public int MaxSize {
+		//[MonoTODO]
+		//public int MaxSize {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -109,8 +109,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public int MinSize {
+		//[MonoTODO]
+		//public int MinSize {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -118,8 +118,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool ScriptsOnly {
+		//[MonoTODO]
+		//public bool ScriptsOnly {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -127,8 +127,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool ShowApply {
+		//[MonoTODO]
+		//public bool ShowApply {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -136,8 +136,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool ShowColor {
+		//[MonoTODO]
+		//public bool ShowColor {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -145,8 +145,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool ShowEffects {
+		//[MonoTODO]
+		//public bool ShowEffects {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -154,8 +154,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool ShowHelp {
+		//[MonoTODO]
+		//public bool ShowHelp {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -167,58 +167,58 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public void Dispose()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public virtual bool Equals(object o)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public override void Reset()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public DialogResult ShowDialog()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public override string ToString()
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public override void Reset()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public DialogResult ShowDialog()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public override string ToString()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Events
 		//
-		// [MonoTODO]
-		// public event EventHandler Apply
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public event EventHandler Apply
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Protected Properties
 		//
-		// [MonoTODO]
-		// protected void Dispose()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// protected override IntPtr HookProc( IntPtr hWnd,  int msg,  IntPtr wparam,  IntPtr lparam )
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// protected override bool RunDialog(IntPtr hWndOwner)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//protected void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected override IntPtr HookProc( IntPtr hWnd,  int msg,  IntPtr wparam,  IntPtr lparam )
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected override bool RunDialog(IntPtr hWndOwner)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }
