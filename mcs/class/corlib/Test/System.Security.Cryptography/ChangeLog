@@ -1,8 +1,16 @@
-2005-01-11  Sebastien Pouliot  <sebastien@ximian.com> 
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigTest.cs: Added new RIPEMD160 hash algorithm and new HMAC
 	algorithms (HMACMD5, HMACRIPEMD160, HMACSHA256, HMACSHA384 and 
 	HMACSHA512) to the tests.
+	* DSACryptoServiceProviderTest.cs: Fixed VerifySignatureWithoutKey to
+	ensure that Mono didn't create the key before starting verification.
+	* RSACryptoServiceProviderTest.cs: Added tests for PublicOnly in the
+	constructor tests and for VerifyHash with a null OID.
+	* RSAPKCS1SignatureFormatterTest.cs: Fixed signatures values for 
+	SHA256, SHA384 and SHA512 for NET_2_0 profile. The older signatures
+	(working only in Mono) can't be used because 2.0 use new OID for those
+	hash algorithms. Note that this still only works with Mono in 2.0!
 
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com> 
 

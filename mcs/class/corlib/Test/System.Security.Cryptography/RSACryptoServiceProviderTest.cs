@@ -97,6 +97,9 @@ public class RSACryptoServiceProviderTest : Assertion {
 		// test default key size
 		AssertEquals ("ConstructorEmpty", 1024, rsa.KeySize);
 		Assert ("PersistKeyInCsp", !rsa.PersistKeyInCsp);
+#if NET_2_0
+		Assert ("PublicOnly", !rsa.PublicOnly);
+#endif
 	}
 
 	[Test]
@@ -106,6 +109,9 @@ public class RSACryptoServiceProviderTest : Assertion {
 		// test default key size
 		AssertEquals ("ConstructorKeySize", minKeySize, rsa.KeySize);
 		Assert ("PersistKeyInCsp", !rsa.PersistKeyInCsp);
+#if NET_2_0
+		Assert ("PublicOnly", !rsa.PublicOnly);
+#endif
 	}
 
 	[Test]
@@ -117,6 +123,9 @@ public class RSACryptoServiceProviderTest : Assertion {
 		// test default key size
 		AssertEquals ("ConstructorCspParameters", 1024, rsa.KeySize);
 		Assert ("PersistKeyInCsp", rsa.PersistKeyInCsp);
+#if NET_2_0
+		Assert ("PublicOnly", !rsa.PublicOnly);
+#endif
 	}
 
 	[Test]
@@ -127,6 +136,9 @@ public class RSACryptoServiceProviderTest : Assertion {
 		rsa = new RSACryptoServiceProvider (keySize, csp);
 		AssertEquals ("ConstructorCspParameters", keySize, rsa.KeySize);
 		Assert ("PersistKeyInCsp", rsa.PersistKeyInCsp);
+#if NET_2_0
+		Assert ("PublicOnly", !rsa.PublicOnly);
+#endif
 	}
 
 	[Test]
@@ -286,6 +298,16 @@ public class RSACryptoServiceProviderTest : Assertion {
 		byte[] hash = new byte [20];
 		rsa = new RSACryptoServiceProvider (minKeySize);
 		rsa.SignHash (hash, null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void VerifyHashNullOID () 
+	{
+		byte[] sign = new byte [(minKeySize << 3)];
+		byte[] hash = new byte [20];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.VerifyHash (hash, null, sign);
 	}
 #endif
 

@@ -338,9 +338,10 @@ public class DSACryptoServiceProviderTest : Assertion {
 	{
 		byte[] hash = new byte [20];
 		byte[] sign = new byte [40];
+		DSACryptoServiceProvider emptyDSA = new DSACryptoServiceProvider (minKeySize); 
 		// Mono hasn't generated a keypair - but it's impossible to 
 		// verify a signature based on a new just generated keypair
-		Assert ("VerifySignature(WithoutKey)", !smallDsa.VerifySignature (hash, sign));
+		Assert ("VerifySignature(WithoutKey)", !emptyDSA.VerifySignature (hash, sign));
 	}
 
 #if NET_2_0
