@@ -1,3 +1,14 @@
+2004-12-10  Patrik Torstensson  <patrik.torstensson@gmail.com>
+
+	* mini.c (mini_get_inst_for_method): Changed to allow ports
+	to return a MonoInst instead of opcode 
+	(renamed mini_get_opcode_for_method to better reflect the new functionality)
+	
+	* mini-[x86|s390|s390x|ppc|sparc].c (mono_arch_get_inst_for_method): 
+	Allow ports to return a created MonoInst instead of op-code, will enable
+	new optimizations.
+	(renamed mini_get_opcode_for_method to better reflected the functionality)
+
 2004-12-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (NEW_AOTCONST): Share some code between the different NEW_AOTCONST macros.
