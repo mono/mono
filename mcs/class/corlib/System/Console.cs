@@ -251,10 +251,22 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO ("Arglist is missing")]
-		public static void Write (string format, object arg0, object arg1, object arg2, object arg3)
+		public static void Write (string format, object arg0, object arg1, object arg2, object arg3, __arglist)
 		{
-			stdout.Write (String.Format (format, arg0, arg1, arg2, arg3));
+			ArgIterator iter = new ArgIterator (__arglist);
+			int argCount = iter.GetRemainingCount();
+
+			object[] args = new object [argCount + 4];
+			args [0] = arg0;
+			args [1] = arg1;
+			args [2] = arg2;
+			args [3] = arg3;
+			for (int i = 0; i < argCount; i++) {
+				TypedReference typedRef = iter.GetNextArg ();
+				args [i + 4] = TypedReference.ToObject (typedRef);
+			}
+
+			stdout.Write (String.Format (format, args));
 		}
 
 		public static void WriteLine ()
@@ -349,11 +361,23 @@ namespace System
 			stdout.WriteLine (format, arg0, arg1, arg2);
 		}
 
-		// uncomment this if you make the method public
-		//[CLSCompliant (false)]
-		internal static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3)
+		[CLSCompliant (false)]
+		public static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3, __arglist)
 		{
-			stdout.WriteLine (String.Format (format, arg0, arg1, arg2, arg3));
+			ArgIterator iter = new ArgIterator (__arglist);
+			int argCount = iter.GetRemainingCount();
+
+			object[] args = new object [argCount + 4];
+			args [0] = arg0;
+			args [1] = arg1;
+			args [2] = arg2;
+			args [3] = arg3;
+			for (int i = 0; i < argCount; i++) {
+				TypedReference typedRef = iter.GetNextArg ();
+				args [i + 4] = TypedReference.ToObject (typedRef);
+			}
+
+			stdout.WriteLine (String.Format (format, args));
 		}
 
 		public static int Read ()
