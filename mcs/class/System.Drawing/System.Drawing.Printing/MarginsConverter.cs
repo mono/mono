@@ -34,6 +34,8 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.ComponentModel.Design.Serialization;
+using System.Reflection;
 
 namespace System.Drawing.Printing {
 	/// <summary>
@@ -54,6 +56,9 @@ namespace System.Drawing.Printing {
 			if (destinationType == typeof(string))
 				return true;
 			
+			if (destinationType == typeof (InstanceDescriptor))
+				return true;
+
 			return base.CanConvertTo(context, destinationType);
 		}
 		
@@ -95,8 +100,14 @@ namespace System.Drawing.Printing {
 				Margins source = value as Margins;
 				string ret = "{0}; {1}; {2}; {3}";
 				return String.Format(ret, source.Left, source.Right, source.Top, source.Bottom);
-			} else
-				return base.ConvertTo(context, culture, value, destinationType);
+			}
+			if (destinationType == typeof (InstanceDescriptor) && value is Margins) {
+				Margins c = (Margins) value;
+				ConstructorInfo ctor = typeof(Margins).GetConstructor (new Type[] {typeof(int), typeof(int), typeof(int), typeof(int)} );
+				return new InstanceDescriptor (ctor, new object[] {c.Left, c.Right, c.Top, c.Bottom});
+			}
+
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 		
 		public override bool GetCreateInstanceSupported(ITypeDescriptorContext context)
