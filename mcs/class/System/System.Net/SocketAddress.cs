@@ -72,6 +72,30 @@ namespace System.Net {
 			
 			return(ret);
 		}
-		
+
+		public override bool Equals (object obj)
+		{
+			if (obj is System.Net.SocketAddress &&
+			    ((System.Net.SocketAddress) obj).data.Length == data.Length){
+				byte [] otherData = ((System.Net.SocketAddress) obj).data;
+				for (int i = 0; i < data.Length; i++)
+					if (otherData [i] != data [i])
+						return false;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public override int GetHashCode ()
+		{
+			int code = 0;
+
+			for (int i = 0; i < data.Length; i++)
+				code += data [i] + i;
+
+			return code;
+		}
 	}
 }

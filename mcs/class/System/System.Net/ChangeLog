@@ -1,5 +1,12 @@
 2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* IPAddress.cs: use System.BitConverter.IsLittleEndian (suggested
+	by Paolo) instead of guessing the endianness.
+
+	* SocketAddress.cs: implemented Equals() and GetHashcode().
+	
+2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* IPEndPoint.cs: modifications to constructors according to the
 	specifications (suggested by Lawrence Pit).
 

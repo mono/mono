@@ -29,22 +29,6 @@ namespace System.Net {
 		public static readonly IPAddress Loopback=new IPAddress(0x7f000001);
 		public static readonly IPAddress None=new IPAddress(0xffffffff);
 
-		private static bool isLittleEndian;
-
-		[StructLayout(LayoutKind.Explicit)]
-		private struct EndianTest
-		{
-			[FieldOffset (0)] public byte b0;
-			[FieldOffset (0)] public short s0;
-		}
-
-		static IPAddress ()
-		{
-			EndianTest typeEndian = new EndianTest ();
-			typeEndian.s0 = 1;
-			isLittleEndian = typeEndian.b0 == 1;
-		}
-
 		private static short SwapShort (short number)
 		{
 			return (short) ( ((number >> 8) & 0xFF) + ((number << 8) & 0xFF00) );
@@ -73,42 +57,42 @@ namespace System.Net {
 		}
 
 		public static short HostToNetworkOrder(short host) {
-			if (!isLittleEndian)
+			if (!BitConverter.IsLittleEndian)
 				return(host);
 
 			return SwapShort (host);
 		}
 
 		public static int HostToNetworkOrder(int host) {
-			if (!isLittleEndian)
+			if (!BitConverter.IsLittleEndian)
 				return(host);
 
 			return SwapInt (host);
 		}
 		
 		public static long HostToNetworkOrder(long host) {
-			if (!isLittleEndian)
+			if (!BitConverter.IsLittleEndian)
 				return(host);
 
 			return SwapLong (host);
 		}
 
 		public static short NetworkToHostOrder(short network) {
-			if (!isLittleEndian)
+			if (!BitConverter.IsLittleEndian)
 				return(network);
 
 			return SwapShort (network);
 		}
 
 		public static int NetworkToHostOrder(int network) {
-			if (!isLittleEndian)
+			if (!BitConverter.IsLittleEndian)
 				return(network);
 
 			return SwapInt (network);
 		}
 
 		public static long NetworkToHostOrder(long network) {
-			if (!isLittleEndian)
+			if (!BitConverter.IsLittleEndian)
 				return(network);
 
 			return SwapLong (network);
