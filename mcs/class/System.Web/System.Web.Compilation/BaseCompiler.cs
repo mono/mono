@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 
@@ -19,6 +20,7 @@ namespace System.Web.Compilation
 		static string default_assemblies = "System.Web.dll, System.Data.dll, System.Drawing.dll";
 		static Random rnd = new Random ((int) DateTime.Now.Ticks);
 		string randomName;
+		protected Hashtable options;
 
 		protected BaseCompiler ()
 		{
@@ -67,6 +69,23 @@ namespace System.Web.Compilation
 				foreach (string assembly in split)
 					result.AppendFormat ("/r:{0} ", assembly.TrimStart ());
 				
+				if (options == null)
+					return result.ToString ();
+
+				string compilerOptions = options ["CompilerOptions"] as string;
+				if (compilerOptions != null) {
+					result.Append (' ');
+					result.Append (compilerOptions);
+				}
+
+				string references = options ["References"] as string;
+				if (references == null)
+					return result.ToString ();
+
+				split = references.Split (' ');
+				foreach (string s in split)
+					result.AppendFormat (" /r:{0}", s);
+
 				return result.ToString ();
 			}
 		}

@@ -21,7 +21,7 @@ namespace System.Web
 			string fileName = request.PhysicalPath;
 			FileInfo fi = new FileInfo (fileName);
 			if (!fi.Exists)
-				throw new HttpException (404, "File does not exist");
+				throw new HttpException (404, "File '" + fileName + "' does not exist");
 
 			if ((fi.Attributes & FileAttributes.Directory) != 0) {
 				response.Redirect (request.Path + '/');

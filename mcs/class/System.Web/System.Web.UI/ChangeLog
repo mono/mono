@@ -1,3 +1,8 @@
+2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: implemented TemplateSourceDirectory.
+	* TemplateControl.cs: implemented LoadControl and LoadTemplate.
+
 2002-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UserControl.cs: fixed SetAttribute.

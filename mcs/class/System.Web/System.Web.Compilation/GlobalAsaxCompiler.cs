@@ -7,7 +7,6 @@
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 using System;
-using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -18,7 +17,6 @@ namespace System.Web.Compilation
 {
 	class GlobalAsaxCompiler : BaseCompiler
 	{
-		Hashtable options;
 		string filename;
 		string sourceFile;
 
@@ -38,11 +36,15 @@ namespace System.Web.Compilation
 				
 			Assembly assembly = Assembly.LoadFrom (result.OutputFile);
 			Type [] types = assembly.GetTypes ();
-			if (types.Length != 1)
-				throw new CompilationException ("More than 1 Type in an application?", result);
+			foreach (Type t in types) {
+				if (t.IsSubclassOf (typeof (HttpApplication))) {
+					if (result.Data != null)
+						throw new CompilationException ("More that 1 app!!!", result);
+					result.Data = t;
+				}
+			}
 
-			result.Data = types [0];
-			return types [0];
+			return result.Data as Type;
 		}
 
 		public override string Key {
@@ -54,30 +56,6 @@ namespace System.Web.Compilation
 		public override string SourceFile {
 			get {
 				return sourceFile;
-			}
-		}
-
-		public override string CompilerOptions {
-			get {
-				if (options == null)
-					return base.CompilerOptions;
-
-				StringBuilder sb = new StringBuilder (base.CompilerOptions);
-				string compilerOptions = options ["CompilerOptions"] as string;
-				if (compilerOptions != null) {
-					sb.Append (' ');
-					sb.Append (compilerOptions);
-				}
-
-				string references = options ["References"] as string;
-				if (references == null)
-					return sb.ToString ();
-
-				string [] split = references.Split (' ');
-				foreach (string s in split)
-					sb.AppendFormat (" /r:{0}", s);
-
-				return sb.ToString ();
 			}
 		}
 

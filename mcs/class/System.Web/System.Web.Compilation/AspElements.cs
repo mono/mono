@@ -8,11 +8,13 @@
 //
 using System;
 using System.Collections;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
@@ -241,7 +243,21 @@ namespace System.Web.Compilation
 			this.self_closing = self_closing;
 			this.hasDefaultID = false;
 		}
-		
+
+		public ArrayList GetElements ()
+		{
+			string text = this.PlainHtml;
+			string inner = text.Substring (1, text.Length - 2);
+			byte [] bytes = WebEncoding.Encoding.GetBytes (inner);
+			AspTokenizer tok = new AspTokenizer ("@@inner_string", new MemoryStream (bytes));
+			AspParser parser = new AspParser (tok);
+			parser.Parse ();
+			ArrayList elements = parser.Elements;
+			elements.Insert (0, new PlainText ("<"));
+			elements.Add (new PlainText (">"));
+
+			return elements;
+		}
 		public string TagID
 		{
 			get { return tag; }
@@ -420,6 +436,9 @@ namespace System.Web.Compilation
 			if (!(directivesHash [tag] is Hashtable))
 				throw new ApplicationException ("Unknown directive: " + tag);
 
+			if (attributes == null || attributes.Count == 0)
+				return;
+
 			atts = (Hashtable) directivesHash [tag];
 			foreach (string att in attributes.Keys){
 				if (!atts.Contains (att))
@@ -468,6 +487,8 @@ namespace System.Web.Compilation
 	{
 		private Type control_type;
 		private bool is_container;
+		private string parse_children;
+		private bool got_parse_children;
 
 		private static Hashtable controls;
 		private static Hashtable inputTypes;
@@ -559,6 +580,28 @@ namespace System.Web.Compilation
 			get { return is_container; }
 		}
 
+		public string ParseChildren {
+			get {
+				if (got_parse_children)
+					return parse_children;
+
+				got_parse_children = true;
+				object [] custom_atts = control_type.GetCustomAttributes (true);
+				foreach (object att in custom_atts) {
+					if (!(att is ParseChildrenAttribute))
+						continue;
+
+					ParseChildrenAttribute pc = (ParseChildrenAttribute) att;
+					if (pc.ChildrenAsProperties == true)
+						parse_children = pc.DefaultProperty;
+
+					return parse_children;
+				}
+
+				return parse_children;
+			}
+		}
+		
 		public override string ToString ()
 		{
 			string ret = "HtmlControlTag: " + tag + " Name: " + ControlID + "Type:" +
@@ -595,7 +638,11 @@ namespace System.Web.Compilation
 		/* For HtmlSelect children. They are <option> tags that must
 		 * be treated as ListItem
 		 */
-		OPTION
+		OPTION,
+		/* Childs of HtmlTable */
+		HTMLROW,
+		/* Childs of HtmlTableRow */
+		HTMLCELL
 	}
 
 	// TODO: support for ControlBuilderAttribute that may be used in custom controls

@@ -26,6 +26,14 @@ namespace System.Web.Compilation
 			exitCode = 0;
 			output = null;
 		}
+
+		public void CopyFrom (CompilationResult other)
+		{
+			exitCode = other.ExitCode;
+			output = other.output;
+			outputFile = other.outputFile;
+			data = other.data;
+		}
 		
 		public int ExitCode
 		{
@@ -49,6 +57,11 @@ namespace System.Web.Compilation
 		{
 			get { return data; }
 			set { data = value; }
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("CompilationResult: {0} {1} {2} {3}", exitCode, output, outputFile, data);
 		}
 	}
 }

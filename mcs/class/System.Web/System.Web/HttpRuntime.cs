@@ -7,6 +7,7 @@
 //
 using System;
 using System.Collections;
+using System.Text;
 using System.Security;
 using System.Security.Permissions;
 using System.Threading;
@@ -334,12 +335,14 @@ namespace System.Web {
 
 		internal static string FormatResourceString (string key, string arg0)
 		{
-			string format = GetResourceString (key);
+			/*string format = GetResourceString (key);
 
 			if (format == null)
 				return null;
 			
 			return String.Format (format, arg0);
+			*/
+			return String.Format ("{0}: {1}", key, arg0);
 		}
 
 		[MonoTODO ("FormatResourceString (string, string, string)")]
@@ -351,15 +354,25 @@ namespace System.Web {
 		internal static string FormatResourceString (string key, string arg0,
 							     string arg1, string arg2)
 		{
-			// String.Format (string, object, object, object);
-			throw new NotImplementedException ();
+			return String.Format ("{0}: {1} {2} {3}", key, arg0, arg1, arg2);
 		}
 
 		[MonoTODO ("FormatResourceString (string, string[]")]
 		internal static string FormatResourceString (string key, string[] args)
 		{
-			// String.Format (string, object[]);
-			throw new NotImplementedException ();
+			//StringBuilder sb = new StringBuilder ();
+			/*sb.AppendFormat ("{0}: ", key);
+			foreach (string s in args)
+				sb.AppendFormat ("{0} ", s);
+
+			if (sb.Length > 0)
+				sb.Length--;
+			return sb.ToString ();*/
+			string s = key + ": ";
+			if (args != null)
+				foreach (string k in args)
+					s += k + " ";
+			return s;
 		}
 
 		private static string GetResourceString (string key) {

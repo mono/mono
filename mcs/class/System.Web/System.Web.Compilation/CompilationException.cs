@@ -29,6 +29,12 @@ namespace System.Web.Compilation
 		{
 			this.result = item.Result;
 		}
+
+		public override string Message {
+			get {
+				return result.ToString ();
+			}
+		}
 	}
 }
 

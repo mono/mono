@@ -20,10 +20,9 @@ namespace System.Web.Compilation
 		string sourceFile;
 		string targetFile;
 
-		internal UserControlCompiler (UserControlParser userControlParser, string targetFile)
+		internal UserControlCompiler (UserControlParser userControlParser)
 		{
 			this.userControlParser = userControlParser;
-			this.targetFile = targetFile;
 		}
 
 		public override Type GetCompiledType ()
@@ -36,13 +35,22 @@ namespace System.Web.Compilation
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);
 				
+			if (result.Data is Type) {
+				targetFile = result.OutputFile;
+				return (Type) result.Data;
+			}
+
 			Assembly assembly = Assembly.LoadFrom (result.OutputFile);
 			Type [] types = assembly.GetTypes ();
-			if (types.Length != 1)
-				throw new CompilationException ("More than 1 Type in a user control?", result);
+			foreach (Type t in types) {
+				if (t.IsSubclassOf (typeof (UserControl))) {
+					if (result.Data != null)
+						throw new CompilationException ("More that 1 user control!!!", result);
+					result.Data = t;
+				}
+			}
 
-			result.Data = types [0];
-			return types [0];
+			return result.Data as Type;
 		}
 
 		public override string Key {
@@ -76,11 +84,11 @@ namespace System.Web.Compilation
 				throw new CompilationException (item.Result);
 			}
 
-			UserControlCompiler pc = new UserControlCompiler (userControlParser, null);
+			UserControlCompiler pc = new UserControlCompiler (userControlParser);
 			return pc.GetCompiledType ();
 		}
 
-		static string GenerateSourceFile (UserControlParser userControlParser)
+		string GenerateSourceFile (UserControlParser userControlParser)
 		{
 			string inputFile = userControlParser.InputFile;
 
@@ -91,6 +99,7 @@ namespace System.Web.Compilation
 			generator.BaseType = userControlParser.BaseType.ToString ();
 			generator.ProcessElements ();
 			userControlParser.Text = generator.GetCode ().ReadToEnd ();
+			options = generator.Options;
 
 			//FIXME: should get Tmp dir for this application
 			string csName = Path.GetTempFileName () + ".cs";

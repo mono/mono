@@ -115,6 +115,7 @@ namespace System.Web.UI
                 private RenderMethod _renderMethodDelegate = null;
 		private bool autoID = true;
 		private bool creatingControls = false;
+		private bool bindingContainer = true;
         	
         	    private DataBindingCollection dataBindings = null;
 
@@ -127,7 +128,7 @@ namespace System.Web.UI
 		{
 			get {
 				Control container = NamingContainer;
-				if (_isNamingContainer)
+				if (!container.bindingContainer)
 					container = container.BindingContainer;
 				return container;
 			}
@@ -220,12 +221,9 @@ namespace System.Web.UI
                                 _site = value;
                         }
                 }
-                public virtual string TemplateSourceDirectory
-                {
-                        get
-                        {
-                                return Context.Request.ApplicationPath; //TODO: Dont think this is right.
-                        }
+
+                public virtual string TemplateSourceDirectory {
+                        get { return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; }
                 }
 
 				[MonoTODO]

@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
@@ -82,12 +83,24 @@ class ControlStack
 			container_type = typeof (System.Web.UI.WebControls.DataGridItem);
 		else if (type == typeof (System.Web.UI.WebControls.Repeater))
 			container_type = typeof (System.Web.UI.WebControls.RepeaterItem);
-		else 
+		else if (type == typeof (ListControl) || type.IsSubclassOf (typeof (ListControl)))
 			container_type = type;
+		else
+			container_type = Container;
 
 		return container_type;
 	}
 
+	public void Push (object o)
+	{
+		if (!(o is ControlStackData))
+			return;
+
+		controls.Push (o);
+		top = (ControlStackData) o;
+		sbt_valid = false;
+	}
+	
 	public void Push (Type controlType,
 			  string controlID,
 			  string tagID,
@@ -112,12 +125,13 @@ class ControlStack
 		controls.Push (top);
 	}
 
-	public void Pop ()
+	public object Pop ()
 	{
-		controls.Pop ();
+		object item = controls.Pop ();
 		if (controls.Count != 0)
 			top = (ControlStackData) controls.Peek ();
 		sbt_valid = false;
+		return item;
 	}
 
 	public Type PeekType ()
@@ -181,6 +195,12 @@ class ControlStack
 					space_between_tags = true;
 				else if (type == typeof (System.Web.UI.HtmlControls.HtmlSelect))
 					space_between_tags = true;
+				else if (type == typeof (System.Web.UI.HtmlControls.HtmlTable))
+					space_between_tags = true;
+				else if (type == typeof (System.Web.UI.HtmlControls.HtmlTableRow))
+					space_between_tags = true;
+				else if (type == typeof (System.Web.UI.HtmlControls.HtmlTableCell))
+					space_between_tags = true;
 				else
 					space_between_tags = false;
 			}
@@ -188,9 +208,13 @@ class ControlStack
 		}
 	}
 	
-	public Type Container
-	{
-		get { return top.container; }
+	public Type Container {
+		get {
+			if (top == null)
+				return null;
+				
+			return top.container;
+		}
 	}
 	
 	public StringBuilder DataBindFunction
@@ -287,6 +311,7 @@ class AspGenerator
 	private string classDecl;
 	private string className;
 	private string interfaces;
+	private string basetype;
 	private string parent;
 	private string fullPath;
 	private static string enableSessionStateLiteral =  ", System.Web.SessionState.IRequiresSessionState";
@@ -296,6 +321,9 @@ class AspGenerator
 	string main_directive;
 	static string app_file_wrong = "The content in the application file is not valid.";
 
+	bool isPage;
+	bool isUserControl;
+	bool isApplication;
 
 	enum UserControlResult
 	{
@@ -330,43 +358,34 @@ class AspGenerator
 		Init ();
 	}
 
-	public string BaseType
-	{
-		get {
-			return parent;
-		}
+	public string BaseType {
+		get { return basetype; }
 
 		set {
-			parent = value;
+			if (parent == null)
+				parent = value;
+
+			basetype = value;
+			isUserControl = (basetype == "System.Web.UI.UserControl");
+			isPage = (basetype == "System.Web.UI.Page");
+			isApplication = (basetype == "System.Web.HttpApplication");
 		}
 	}
 
-	public bool IsUserControl
-	{
-		get {
-			return (BaseType == typeof (UserControl).ToString ());
-		}
+	public bool IsUserControl {
+		get { return isUserControl; }
 	}
 	
-	public bool IsPage
-	{
-		get {
-			return (BaseType == typeof (Page).ToString ());
-		}
+	public bool IsPage {
+		get { return isPage; }
 	}
 	
-	public bool IsApplication
-	{
-		get {
-			return (BaseType == typeof (HttpApplication).ToString ());
-		}
+	public bool IsApplication {
+		get { return isApplication; }
 	}
 
-	public string Interfaces 
-	{
-		get {
-			return interfaces;
-		}
+	public string Interfaces {
+		get { return interfaces; }
 	}
 
 	public Hashtable Options {
@@ -472,6 +491,9 @@ class AspGenerator
 	// Regex.Escape () make some illegal escape sequences for a C# source.
 	private string Escape (string input)
 	{
+		if (input == null)
+			return String.Empty;
+
 		string output = input.Replace ("\\", "\\\\");
 		output = output.Replace ("\"", "\\\"");
 		output = output.Replace ("\t", "\\t");
@@ -497,17 +519,8 @@ class AspGenerator
 								"a correct value: " + est);
 		}
 
-		/*
-		if (att ["Inherits"] != null){
+		if (att ["Inherits"] != null)
 			parent = (string) att ["Inherits"];
-			string source_file = att ["Src"] as string;
-			if (source_file != null)
-				buildOptions.AppendFormat ("//<compileandreference src=\"{0}\"/>\n", source_file);
-			else
-				buildOptions.AppendFormat ("//<reference dll=\"{0}\"/>\n", parent);
-
-		}
-		*/
 
 		if (att ["CompilerOptions"] != null)
 			Options ["CompilerOptions"] = (string) att ["CompilerOptions"];
@@ -554,14 +567,7 @@ class AspGenerator
 				throw new ApplicationException ("Source file extension for controls " + 
 								"must be .ascx");
 
-			string pathToFile = Path.GetDirectoryName (src);
-			if (pathToFile == "") {
-				pathToFile = Path.GetDirectoryName (fullPath);
-			} else if (!Path.IsPathRooted (pathToFile)) {
-				pathToFile = Path.Combine  (Path.GetDirectoryName (fullPath), pathToFile);
-			}
-
-			string srcLocation = pathToFile + Path.DirectorySeparatorChar + Path.GetFileName (src);
+			string srcLocation = PathUtil.Combine (null, src);
 			UserControlData data = GenerateUserControl (srcLocation);
 			switch (data.result) {
 			case UserControlResult.OK:
@@ -749,6 +755,16 @@ class AspGenerator
 			throw new ApplicationException ("Inside " + controls.PeekTagID () + " only " + 
 							"System.Web.UI.WebControls.ListItem " + 
 							"objects are allowed");
+		else if (prev_children_kind == ChildrenKind.HTMLROW &&
+			 control_type != typeof (System.Web.UI.HtmlControls.HtmlTableRow))
+			throw new ApplicationException ("Inside " + controls.PeekTagID () + " only " + 
+							"System.Web.UI.HtmlControls.HtmlTableRow " + 
+							"objects are allowed");
+		else if (prev_children_kind == ChildrenKind.HTMLCELL &&
+			 control_type != typeof (System.Web.UI.HtmlControls.HtmlTableCell))
+			throw new ApplicationException ("Inside " + controls.PeekTagID () + " only " + 
+							"System.Web.UI.HtmlControls.HtmlTableCell " + 
+							"objects are allowed");
 	
 					
 		StringBuilder func_code = new StringBuilder ();
@@ -779,7 +795,7 @@ class AspGenerator
 						 "(System.Web.UI.IParserAccessor) __ctrl;\n");
 	}
 	
-	private void DataBoundProperty (string varName, string value)
+	private void DataBoundProperty (Type target, string varName, string value)
 	{
 		if (value == "")
 			throw new ApplicationException ("Empty data binding tag.");
@@ -787,7 +803,12 @@ class AspGenerator
 		string control_id = controls.PeekControlID ();
 		string control_type_string = controls.PeekType ().ToString ();
 		StringBuilder db_function = controls.DataBindFunction;
-		string container = "System.Web.UI.Control";
+		string container;
+		if (controls.Container == null)
+			container = "System.Web.UI.Control";
+		else
+			container = controls.Container.ToString ();
+
 		if (db_function.Length == 0)
 			db_function.AppendFormat ("\t\tpublic void __DataBind_{0} (object sender, " + 
 						  "System.EventArgs e) {{\n" +
@@ -802,8 +823,12 @@ class AspGenerator
 		real_value = real_value.Remove (real_value.Length - 2, 2);
 		real_value = real_value.Trim ();
 
-		db_function.AppendFormat ("\t\t\ttarget.{0} = System.Convert.ToString ({1});\n",
-					  varName, real_value);
+		if (target == typeof (string))
+			db_function.AppendFormat ("\t\t\ttarget.{0} = System.Convert.ToString ({1});\n",
+						  varName, real_value);
+		else
+			db_function.AppendFormat ("\t\t\ttarget.{0} = ({1}) ({2});\n",
+						  varName, target, real_value);
 	}
 
 	/*
@@ -815,16 +840,15 @@ class AspGenerator
 		 * if (!prop.CanWrite)
 		 *    ....
 		 */
-		if (prop_type == typeof (string)){
+		if (isDataBound) {
+			DataBoundProperty (prop_type, var_name, att);
+		}
+		else if (prop_type == typeof (string)){
 			if (att == null)
 				throw new ApplicationException ("null value for attribute " + var_name );
 
-			if (isDataBound)
-				DataBoundProperty (var_name, att);
-			else
-				current_function.AppendFormat ("\t\t\t__ctrl.{0} = \"{1}\";\n", var_name,
-								Escape (att)); // FIXME: really Escape this?
-				
+			current_function.AppendFormat ("\t\t\t__ctrl.{0} = \"{1}\";\n", var_name,
+							Escape (att)); // FIXME: really Escape this?
 		} 
 		else if (prop_type.IsEnum){
 			if (att == null)
@@ -1093,6 +1117,7 @@ class AspGenerator
 
 		string control_id = controls.PeekControlID ();
 		Type control_type = controls.PeekType ();
+		ChildrenKind child_kind = controls.PeekChildKind ();
 
 		bool hasDataBindFunction = controls.HasDataBindFunction ();
 		if (hasDataBindFunction)
@@ -1121,7 +1146,8 @@ class AspGenerator
 			old_function.Append ("\n\t\t}\n\n");
 			string parsed = "";
 			string ctrl_name = "ctrl";
-			if (controls.Container == typeof (System.Web.UI.HtmlControls.HtmlSelect)){
+			Type cont = controls.Container;
+			if (cont == null || cont == typeof (System.Web.UI.HtmlControls.HtmlSelect)){
 				parsed = "ParsedSubObject";
 				ctrl_name = "parser";
 			}
@@ -1130,7 +1156,7 @@ class AspGenerator
 						       "\t\t\t__{1}.Add{2} (this.{0});\n\n",
 						       control_id, ctrl_name, parsed);
 		}
-		else if (controls.PeekChildKind () == ChildrenKind.LISTITEM){
+		else if (child_kind == ChildrenKind.LISTITEM){
 			old_function.Append ("\n\t\t}\n\n");
 			init_funcs.Append (old_function); // Closes the BuildList function
 			old_function = (StringBuilder) functions.Pop ();
@@ -1143,8 +1169,40 @@ class AspGenerator
 			control_id = controls.PeekControlID ();
 			current_function.AppendFormat ("\t\t\tthis.__BuildControl_{0} ();\n\t\t\t__parser." +
 						       "AddParsedSubObject (this.{0});\n\n", control_id);
-		}
-		else {
+		} else if (control_type == typeof (HtmlTableCell)) {
+			old_function.Append ("\n\t\t\treturn __ctrl;\n\t\t}\n\n");
+			object top = controls.Pop ();
+			Type t = controls.PeekType ();
+			controls.Push (top);
+			string parsed = "";
+			string ctrl_name = "ctrl";
+			if (t != typeof (HtmlTableRow)) {
+				parsed = "ParsedSubObject";
+				ctrl_name = "parser";
+			}
+
+			current_function.AppendFormat ("\t\t\tthis.__BuildControl_{0} ();\n" +
+						       "\t\t\t__{1}.Add{2} (this.{0});\n\n",
+						       control_id, ctrl_name, parsed);
+		} else if (child_kind == ChildrenKind.HTMLROW || child_kind == ChildrenKind.HTMLCELL) {
+			old_function.Append ("\n\t\t}\n\n");
+			init_funcs.Append (old_function);
+			old_function = (StringBuilder) functions.Pop ();
+			current_function = (StringBuilder) functions.Peek ();
+			old_function.AppendFormat ("\n\t\t\tthis.__BuildControl_{0} (__ctrl.{1});\n\t\t\t" +
+						   "return __ctrl;\n\t\t}}\n\n",
+						   control_id, controls.PeekDefaultPropertyName ());
+
+			controls.Pop ();
+			control_id = controls.PeekControlID ();
+			current_function.AppendFormat ("\t\t\tthis.__BuildControl_{0} ();\n", control_id);
+			if (child_kind == ChildrenKind.HTMLROW) {
+				current_function.AppendFormat ("\t\t\t__parser.AddParsedSubObject ({0});\n",
+								control_id);
+			} else {
+				current_function.AppendFormat ("\t\t\t__ctrl.Add (this.{0});\n", control_id);
+			}
+		} else {
 			old_function.Append ("\n\t\t\treturn __ctrl;\n\t\t}\n\n");
 			current_function.AppendFormat ("\t\t\tthis.__BuildControl_{0} ();\n\t\t\t__parser." +
 						       "AddParsedSubObject (this.{0});\n\n", control_id);
@@ -1170,6 +1228,33 @@ class AspGenerator
 		}
 
 		return true;
+	}
+
+	private void NewTableElementFunction (HtmlControlTag ctrl)
+	{
+		string control_id = Tag.GetDefaultID ();
+		ChildrenKind child_kind;
+
+		Type t;
+		if (ctrl.ControlType == typeof (HtmlTable)) {
+			t = typeof (HtmlTableRowCollection);
+			child_kind = ChildrenKind.HTMLROW;
+		} else {
+			t = typeof (HtmlTableCellCollection);
+			child_kind = ChildrenKind.HTMLCELL;
+		}
+
+		controls.Push (ctrl.ControlType,
+			       control_id,
+			       ctrl.TagID,
+			       child_kind,
+			       ctrl.ParseChildren);
+
+
+		current_function = new StringBuilder ();
+		functions.Push (current_function);
+		current_function.AppendFormat ("\t\tprivate void __BuildControl_{0} ({1} __ctrl)\n" +
+						"\t\t{{\n", control_id, t);
 	}
 
 	private void ProcessHtmlControlTag ()
@@ -1201,17 +1286,23 @@ class AspGenerator
 		declarations.AppendFormat ("\t\tprotected {0} {1};\n", controlType, html_ctrl.ControlID);
 
 		ChildrenKind children_kind;
-		if (0 != String.Compare (html_ctrl.TagID, "select", true))
+		if (0 == String.Compare (html_ctrl.TagID, "table", true))
+			children_kind = ChildrenKind.HTMLROW;
+		else if (0 == String.Compare (html_ctrl.TagID, "tr", true))
+			children_kind = ChildrenKind.HTMLCELL;
+		else if (0 != String.Compare (html_ctrl.TagID, "select", true))
 			children_kind = html_ctrl.IsContainer ? ChildrenKind.CONTROLS :
 								ChildrenKind.NONE;
 		else
 			children_kind = ChildrenKind.OPTION;
 
-		NewControlFunction (html_ctrl.TagID, html_ctrl.ControlID, controlType, children_kind, null); 
+		NewControlFunction (html_ctrl.TagID, html_ctrl.ControlID, controlType, children_kind, html_ctrl.ParseChildren); 
 
 		current_function.AppendFormat ("\t\t\t__ctrl.ID = \"{0}\";\n", html_ctrl.ControlID);
-
 		AddCodeForAttributes (html_ctrl.ControlType, html_ctrl.Attributes);
+
+		if (children_kind == ChildrenKind.HTMLROW || children_kind == ChildrenKind.HTMLCELL)
+			NewTableElementFunction (html_ctrl);
 
 		if (!html_ctrl.SelfClosing)
 			JustDoIt ();
@@ -1412,10 +1503,39 @@ class AspGenerator
 			return;
 		}
 
-		if (child_kind == ChildrenKind.CONTROLS){
-			elements.Current = new PlainText (((Tag) elements.Current).PlainHtml);
-			ProcessPlainText ();
+		if (child_kind == ChildrenKind.CONTROLS) {
+			ArrayList tag_elements = tag.GetElements ();
+			foreach (Element e in tag_elements) {
+				if (e is PlainText) {
+					elements.Current = e;
+					ProcessPlainText ();
+				} else if (e is CodeRenderTag) {
+					elements.Current = e;
+					ProcessCodeRenderTag ();
+				} else if (e is DataBindingTag) {
+					elements.Current = e;
+					ProcessDataBindingLiteral ();
+				} else {
+					throw new ApplicationException (fullPath + ": unexpected tag type " + e.GetType ());
+				}
+			}
 			return;
+		}
+
+		if (child_kind == ChildrenKind.HTMLROW) {
+			if (0 == String.Compare (tag.TagID, "tr", true)) {
+				elements.Current = new HtmlControlTag (tag);
+				ProcessHtmlControlTag ();
+				return;
+			}
+		}
+
+		if (child_kind == ChildrenKind.HTMLCELL) {
+			if (0 == String.Compare (tag.TagID, "td", true)) {
+				elements.Current = new HtmlControlTag (tag);
+				ProcessHtmlControlTag ();
+				return;
+			}
 		}
 
 		// Now child_kind should be PROPERTIES, so only allow tag_id == property
@@ -1440,6 +1560,17 @@ class AspGenerator
 	private Tag Map (Tag tag)
 	{
 		int pos = tag.TagID.IndexOf (":");
+		if (pos == -1) {
+			ChildrenKind child_kind = controls.PeekChildKind ();
+			if (child_kind == ChildrenKind.HTMLROW && 0 == String.Compare (tag.TagID, "tr", true)) {
+				tag.Attributes.Add ("runat", "server");
+				return new HtmlControlTag (tag);
+			} else if (child_kind == ChildrenKind.HTMLROW && 0 == String.Compare (tag.TagID, "tr", true)) {
+				tag.Attributes.Add ("runat", "server");
+				return new HtmlControlTag (tag);
+			}
+		}
+
 		if (tag is CloseTag ||
 		    ((tag.Attributes == null || 
 		    !tag.Attributes.IsRunAtServer ()) && pos == -1))
@@ -1448,6 +1579,7 @@ class AspGenerator
 		if (pos == -1){
 			if (0 == String.Compare (tag.TagID, "object", true))
 				return new ServerObjectTag (tag);
+
 			return new HtmlControlTag (tag);
 		}
 
@@ -1621,10 +1753,10 @@ class AspGenerator
 				"\t\t}\n\n");
 			//FIXME: add TemplateSourceDirectory: don't know what for...yet!
 			//FIXME: it should be the path from the root where the file resides
-			constructor.Append (
-				"\t\tpublic override string TemplateSourceDirectory\n\t\t{\n" +
-				"\t\t\tget { return \"/dummypath\"; }\n" +
-				"\t\t}\n\n");
+			constructor.AppendFormat (
+				"\t\tpublic override string TemplateSourceDirectory\n\t\t{{\n" +
+				"\t\t\tget {{ return \"{0}\"; }}\n" +
+				"\t\t}}\n\n", Path.GetDirectoryName (fullPath)); // FIXME: should be rooted on .appVPath
 
 			epilog.Append ("\n\t\tprotected override void FrameworkInitialize ()\n\t\t{\n" +
 					"\t\t\tthis.__BuildControlTree (this);\n");
@@ -1696,8 +1828,7 @@ class AspGenerator
 			return data;
 		}
 
-		string dll = Path.GetTempFileName () + ".dll";
-		UserControlCompiler compiler = new UserControlCompiler (new UserControlParser (src), dll);
+		UserControlCompiler compiler = new UserControlCompiler (new UserControlParser (src));
 		Type t = compiler.GetCompiledType ();
 		if (t == null) {
 			data.result = UserControlResult.CompilationFailed;
@@ -1705,7 +1836,7 @@ class AspGenerator
 		}
 		
 		data.className = t.Name;
-		data.assemblyName = dll;
+		data.assemblyName = compiler.TargetFile;
 		
 		return data;
 	}

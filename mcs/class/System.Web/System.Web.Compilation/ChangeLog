@@ -1,3 +1,42 @@
+2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspElements.cs: new method Tag.GetElements
+	used to parse the inner contents of a tag looking for data binding or 
+	code render tags.
+	
+	New property HtmlControlTag.ParseChildren allows
+	differentiation of a couple of HtmlControls that has children as
+	properties (namely HtmlTable and HtmlTableRow).
+
+	* AspGenerator.cs: fixed container semantics to
+	match BindingContainer one. Implemented Inherits attribute for page and
+	control.
+
+	Support HtmlControls that has ChildrenAsProperties.
+	
+	Generate code for data binding functions that matches the semantic of
+	Container.
+
+	Handle data bound and code render attribute values.
+
+	Set proper value return for TemplateSourceDirectory. Should be relative
+	to appPath.
+	
+	* BaseCompiler.cs: moved CompilerOptions and
+	References handling here.
+
+	* CachingCompiler.cs: copy result of compilation.
+
+	* CompilationException.cs: simple ToString () implementation.
+
+	* CompilationResult.cs: implemented CopyFrom and ToString.
+
+	* GlobalAsaxCompiler.cs:
+	* PageCompiler.cs:
+	* UserControlCompiler.cs: removed CompilerOptions as it's now handled
+	in the base class. Get all the types in the generated assembly and
+	look for one that derives from the correct Type.
+	
 2002-11-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspElements.cs: added @Application directive.

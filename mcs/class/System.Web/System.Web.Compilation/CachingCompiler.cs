@@ -104,7 +104,7 @@ namespace System.Web.Compilation
 			item = GetCached (key);
 			if (item != null) {
 				if (item.CheckDependencies (compiler.Dependencies, DateTime.Now) == true) {
-					result = item.Result;
+					result.CopyFrom (item.Result);
 					return true;
 				}
 			}
@@ -113,7 +113,7 @@ namespace System.Web.Compilation
 				item = GetCached (key);
 				if (item != null) {
 					if (item.CheckDependencies (compiler.Dependencies, DateTime.Now) == true) {
-						result = item.Result;
+						result.CopyFrom (item.Result);
 						return true;
 					}
 				}

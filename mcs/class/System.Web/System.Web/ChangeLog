@@ -1,3 +1,10 @@
+2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: avoid nulls and exception when getting resource
+	format strings.
+
+	* StaticFileHandler.cs: added file name to error message.
+
 2002-12-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: avoid sending chunked content for HTTP/1.1.
