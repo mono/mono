@@ -39,6 +39,10 @@ namespace System.Web.UI {
 		bool childrenAsProperties;
 		string defaultProperty;
 		public static readonly ParseChildrenAttribute Default = new ParseChildrenAttribute ();
+		
+#if NET_2_0
+		Type childType;
+#endif
 
 		// LAMESPEC
 		public ParseChildrenAttribute ()
@@ -73,6 +77,13 @@ namespace System.Web.UI {
 
 			set { defaultProperty = value; }
 		}
+
+#if NET_2_0
+		public Type ChildControlType {
+			get { return childType; }
+			set { childType = value; }
+		}
+#endif
 
 		public override bool Equals (object obj)
 		{

@@ -56,7 +56,7 @@ namespace System.Web.UI
 			set { text = value; }
 		}
 		
-		public Type ContainerType {
+		internal Type ContainerType {
 			get { return containerAttribute != null ? containerAttribute.ContainerType : null; }
 		}
 

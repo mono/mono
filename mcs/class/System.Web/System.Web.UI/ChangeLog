@@ -1,3 +1,11 @@
+2005-01-28  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ParseChildrenAttribute.cs: Added 2.0 property.
+	* Pair.cs, Triplet.cs: Make classes serializable and sealed in 2.0.
+	* Page.cs: Added support for control state.
+	* TemplateBuilder.cs: ContainerType should be internal.
+	* Control.cs: Added some new 2.0 methods.
+
 2005-01-21  Lluis Sanchez Gual <lluis@novell.com>
 
 	* PageParser.cs: Read the MasterPageFile attribute.

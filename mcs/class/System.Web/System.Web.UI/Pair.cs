@@ -39,6 +39,10 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI
 {
+#if NET_2_0
+	[Serializable]
+	sealed
+#endif
 	public class Pair
 	{
 		public object First;

@@ -1081,7 +1081,16 @@ namespace System.Web.UI
 		{
 			throw new NotImplementedException();
 		}
-
+		
+		protected internal virtual void LoadControlState (object state)
+		{
+		}
+		
+		protected internal virtual object SaveControlState ()
+		{
+			return null;
+		}
+		
 #endif
         }
 }

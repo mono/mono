@@ -31,6 +31,10 @@ using System;
 
 namespace System.Web.UI {
 
+#if NET_2_0
+	[Serializable]
+	sealed
+#endif
 	public class Triplet
 	{
 		public object First;

@@ -92,6 +92,8 @@ public class Page : TemplateControl, IHttpHandler
 	
 	MasterPage masterPage;
 	string masterPageFile;
+	
+	ArrayList requireStateControls;
 #endif
 
 	#region Constructor
@@ -501,13 +503,21 @@ public class Page : TemplateControl, IHttpHandler
 		cache.SetExpires (_context.Timestamp.AddSeconds (duration));
 	}
 
+#if NET_2_0
+	[Obsolete]
+#else
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public bool IsClientScriptBlockRegistered (string key)
 	{
 		return scriptManager.IsClientScriptBlockRegistered (key);
 	}
 
+#if NET_2_0
+	[Obsolete]
+#else
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public bool IsStartupScriptRegistered (string key)
 	{
 		return scriptManager.IsStartupScriptRegistered (key);
@@ -806,19 +816,31 @@ public class Page : TemplateControl, IHttpHandler
 		sourceControl.RaisePostBackEvent (eventArgument);
 	}
 	
+#if NET_2_0
+	[Obsolete]
+#else
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public void RegisterArrayDeclaration (string arrayName, string arrayValue)
 	{
 		scriptManager.RegisterArrayDeclaration (arrayName, arrayValue);
 	}
 
+#if NET_2_0
+	[Obsolete]
+#else
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public virtual void RegisterClientScriptBlock (string key, string script)
 	{
 		scriptManager.RegisterClientScriptBlock (key, script);
 	}
 
+#if NET_2_0
+	[Obsolete]
+#else
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public virtual void RegisterHiddenField (string hiddenFieldName, string hiddenFieldInitialValue)
 	{
 		scriptManager.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
@@ -830,7 +852,11 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 
+#if NET_2_0
+	[Obsolete]
+#else
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public void RegisterOnSubmitStatement (string key, string script)
 	{
 		scriptManager.RegisterOnSubmitStatement (key, script);
@@ -851,7 +877,11 @@ public class Page : TemplateControl, IHttpHandler
 		requiresRaiseEvent = control;
 	}
 
+#if NET_2_0
+	[Obsolete]
+#else
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public virtual void RegisterStartupScript (string key, string script)
 	{
 		scriptManager.RegisterStartupScript (key, script);
@@ -893,9 +923,16 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		object sState = LoadPageStateFromPersistenceMedium ();
 		if (sState != null) {
+#if NET_2_0
+			Triplet data = (Triplet) sState;
+			LoadViewStateRecursive (data.First);
+			_requiresPostBack = data.Second as ArrayList;
+			LoadPageControlState (data.Third);
+#else
 			Pair pair = (Pair) sState;
 			LoadViewStateRecursive (pair.First);
 			_requiresPostBack = pair.Second as ArrayList;
+#endif
 		}
 	}
 
@@ -904,15 +941,29 @@ public class Page : TemplateControl, IHttpHandler
 		if (!handleViewState)
 			return;
 
+		object viewState = SaveViewStateRecursive ();
+		object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;
+
+#if NET_2_0
+		Triplet triplet = new Triplet ();
+		triplet.First = viewState;
+		triplet.Second = reqPostback;
+		triplet.Third = SavePageControlState ();
+
+		if (triplet.First == null && triplet.Second == null && triplet.Third == null)
+			triplet = null;
+			
+		SavePageStateToPersistenceMedium (triplet);
+#else
 		Pair pair = new Pair ();
-		pair.First = SaveViewStateRecursive ();
-		if (_requiresPostBack != null && _requiresPostBack.Count > 0)
-			pair.Second = _requiresPostBack;
+		pair.First = viewState;
+		pair.Second = reqPostback;
 
 		if (pair.First == null && pair.Second == null)
 			pair = null;
-
+			
 		SavePageStateToPersistenceMedium (pair);
+#endif
 	}
 
 	public virtual void Validate ()
@@ -1066,6 +1117,37 @@ public class Page : TemplateControl, IHttpHandler
 			if (masterPage == null)
 				masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile, Server.MapPath (masterPageFile), Context);
 			return masterPage;
+		}
+	}
+	
+	public void RegisterRequiresControlState (Control control)
+	{
+		if (requireStateControls == null) requireStateControls = new ArrayList ();
+		requireStateControls.Add (control);
+	}
+	
+	object SavePageControlState ()
+	{
+		if (requireStateControls == null) return null;
+		object[] state = new object [requireStateControls.Count];
+		
+		bool allNull = true;
+		for (int n=0; n<state.Length; n++) {
+			state [n] = ((Control) requireStateControls [n]).SaveControlState ();
+			if (state [n] != null) allNull = false;
+		}
+		if (allNull) return null;
+		else return state;
+	}
+	
+	void LoadPageControlState (object data)
+	{
+		if (requireStateControls == null) return;
+
+		object[] state = (object[]) data;
+		for (int n=0; n<state.Length && n < requireStateControls.Count; n++) {
+			Control ctl = (Control) requireStateControls [n];
+			ctl.LoadControlState (state [n]);
 		}
 	}
 
