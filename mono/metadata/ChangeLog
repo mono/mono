@@ -1,3 +1,8 @@
+2004-11-17  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_create_from_typedef): If a type parameter is
+	inherited from an outer class, set its owner to that class.
+
 2004-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* reflection.c: (mono_image_create_pefile): Don't use NULL argument
