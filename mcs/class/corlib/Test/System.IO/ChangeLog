@@ -1,3 +1,8 @@
+2002-02-05  Duncan Mak  <duncan@ximian.com>
+
+	* FileTest.cs: Added to CVS. However, this portion of the code
+	can't be tested right now.
+
 2002-01-20 Nick Drochak  <ndrochak@gol.com>
 
 	* AllTests.cs: removed duplicate MemoryStream test
