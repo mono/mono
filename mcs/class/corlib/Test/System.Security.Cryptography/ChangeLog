@@ -1,3 +1,10 @@
+2003-07-31  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStreamTest.cs: New. Very basic test for CryptoStream + the 
+	test case from bugzilla #46143 from Joerg Rosenkranz.
+	* RSACryptoServiceProviderTest.cs: Fixed some exceptions that are
+	different from .NET 1.0 and 1.1.
+
 2003-07-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DSACryptoServiceProviderTest.cs: Added news unit tests for Dispose/Clear
