@@ -2274,6 +2274,11 @@ namespace Mono.CSharp {
 			return Type == tobj.Type;
 		}
 
+		public override int GetHashCode ()
+		{
+			return Type.GetHashCode ();
+		}
+		
 		public override string ToString ()
 		{
 			return Name;
