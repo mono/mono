@@ -80,6 +80,8 @@ namespace System.Reflection.Emit {
 			name_cache = new Hashtable ();
 
 			basic_init (this);
+
+			CreateGlobalType ();
 		}
 
 		public override string FullyQualifiedName {get { return fqname;}}
@@ -635,6 +637,11 @@ namespace System.Reflection.Emit {
 			set {
 				is_main = value;
 			}
+		}
+
+		internal void CreateGlobalType () {
+			if (global_type == null)
+				global_type = new TypeBuilder (this, 0);
 		}
 
 		internal static Guid Mono_GetGuid (ModuleBuilder mb)

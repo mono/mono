@@ -1,3 +1,7 @@
+2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs: Create global type after creation.
+
 2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilder.cs (GetTypes): Fix length of returned array. Fixes
