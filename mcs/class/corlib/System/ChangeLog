@@ -1,5 +1,10 @@
 2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* MulticastDelegate.cs: implemented GetInvocationList. I'll check later
+	if this is the correct order of invocation.
+
+2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Type.cs: changed the signature of internal_from_name. Modified
 	the overloads of GetType to use it and check the typeName argument.
 	Implemented FindInterfaces.

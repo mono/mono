@@ -10,6 +10,7 @@
 // TODO: Remove Missing
 //
 
+using System.Collections;
 using System.Globalization;
 
 namespace System {
@@ -90,7 +91,13 @@ namespace System {
 		// </summary>
 		public override Delegate[] GetInvocationList()
 		{
-			throw new NotImplementedException();
+			ArrayList list = new ArrayList ();
+			list.Add (this);
+			MulticastDelegate d;
+			for (d = prev; d != null; d = d.prev)
+				list.Add (d);
+
+			return (Delegate []) list.ToArray (typeof (Delegate));
 		}
 
 		// <summary>
