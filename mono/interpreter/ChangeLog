@@ -1,3 +1,10 @@
+2002-02-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* interp.c (ves_exec_method): Compare the element_class type token
+	in the class we got as well, instead of the element class vs the
+	toplevel class.
+
+	This fixes the invalid cast exceptions during unboxing
 
 Fri Feb 8 13:01:03 CET 2002 Paolo Molaro <lupus@ximian.com>
 
