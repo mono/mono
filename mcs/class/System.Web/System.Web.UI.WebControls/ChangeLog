@@ -1,6 +1,12 @@
 
 2002-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* WebControl.cs         : Attributes { get; }       - Is Complete.
+	* ValidationSummary.cs  : AddAttributesToRender(HtmlTextWriter)
+	                                                    - Completed.
+
+2002-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* BaseValidator.cs      : DetermineRenderUplevel()  - Completed.
 	                        : RegisterValidatorCommonScript()
 	                                       - More code, I need HELP!

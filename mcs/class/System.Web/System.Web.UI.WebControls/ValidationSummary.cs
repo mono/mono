@@ -127,15 +127,13 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO("FIXME_See_Comments")]
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			AddAttributesToRender(writer);
 			if(uplevelRender)
 			{
-				//FIXME: This is not the case always. I forgot the case when it is absent.
-				// something to do with the ID's value? or ClienID's value itself?
-				writer.AddAttribute("id", ClientID);
+				if(ID == null || ID.Length == 0)
+					writer.AddAttribute("id", ClientID);
 				if(HeaderText.Length > 0)
 					writer.AddAttribute("headertext", HeaderText, true);
 				if(ShowMessageBox)

@@ -62,7 +62,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO("FIXME_Internal_method_calls")]
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("Attribute tags for the Webcontrol.")]
 		public AttributeCollection Attributes
