@@ -103,6 +103,9 @@ namespace Mono.CSharp {
 		public bool AllowMultiple = false;
 		public bool Inherited;
 
+		// The interfaces we implement.
+		Type [] ifaces;
+		
 		//
 		// The indexer name for this class
 		//
@@ -697,7 +700,6 @@ namespace Mono.CSharp {
 		public override TypeBuilder DefineType ()
 		{
 			Type parent;
-			Type [] ifaces;
 			bool error;
 			bool is_class;
 
@@ -1529,6 +1531,37 @@ namespace Mono.CSharp {
 				builder_and_args = new Hashtable ();
 			return true;
 		}
+
+		/// <summary>
+		///   Performs checks for an explicit interface implementation.  First it
+		///   checks whether the `interface_type' is a base inteface implementation.
+		///   Then it checks whether `name' exists in the interface type.
+		/// </summary>
+		public bool VerifyImplements (Type interface_type, string full, string name, Location loc)
+		{
+			bool found = false;
+
+			if (ifaces != null){
+				foreach (Type t in ifaces){
+					if (t == interface_type){
+						found = true;
+						break;
+					}
+				}
+			}
+			
+			if (!found){
+				Report.Error (540, "`" + full + "': containing class does not implement interface `" + interface_type.FullName + "'");
+				return false;
+			}
+
+			return true;
+		}
+
+		public static void Error_ExplicitInterfaceNotMemberInterface (Location loc, string name)
+		{
+			Report.Error (539, loc, "Explicit implementation: `" + name + "' is not a member of the interface");
+		}
 	}
 
 	public class Class : TypeContainer {
@@ -1920,7 +1953,6 @@ namespace Mono.CSharp {
 			//
 			// If we implement an interface, extract the interface name.
 			//
-
 			if (Name.IndexOf (".") != -1){
 				int pos = Name.LastIndexOf (".");
 				iface = Name.Substring (0, pos);
@@ -1933,6 +1965,10 @@ namespace Mono.CSharp {
 
 				// Compute the full name that we need to export
 				Name = iface_type.FullName + "." + short_name;
+
+				if (!parent.VerifyImplements (iface_type, short_name, Name, Location))
+					return false;
+				
 				explicit_impl = true;
 			} else
 				short_name = Name;
@@ -1941,10 +1977,16 @@ namespace Mono.CSharp {
 			// Check if we are an implementation of an interface method or
 			// a method
 			//
-			if (parent.Pending != null)
+			if (parent.Pending != null){
 				implementing = parent.Pending.IsInterfaceMethod (
 					iface_type, short_name, ret_type, parameters);
-				
+
+				if (iface_type != null && implementing == null){
+					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (Location, short_name);
+					return false;
+				}
+			}
+
 			//
 			// For implicit implementations, make sure we are public, for
 			// explicit implementations, make sure we are private.
@@ -1985,6 +2027,8 @@ namespace Mono.CSharp {
 			// If implementing is still valid, set flags
 			//
 			if (implementing != null){
+				Console.WriteLine ("Implementing for:" + (iface_type != null ? iface_type.FullName : "<null>") + " " + short_name);
+				
 				if (implementing.DeclaringType.IsInterface)
 					flags |= MethodAttributes.NewSlot;
 				
@@ -2669,10 +2713,16 @@ namespace Mono.CSharp {
 				fn_type = TypeManager.void_type;
 			}
 
-			if (parent.Pending != null)
+			if (parent.Pending != null){
 				implementing = parent.Pending.IsInterfaceMethod (
 					explicit_iface_type, name, fn_type, parameters);
 
+				if (explicit_iface_type != null && implementing == null){
+					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (Location, name);
+					return false;
+				}
+			}
+			
 			//
 			// For implicit implementations, make sure we are public, for
 			// explicit implementations, make sure we are private.
@@ -2835,6 +2885,10 @@ namespace Mono.CSharp {
 
 				// Compute the full name that we need to export.
 				Name = explicit_iface_type.FullName + "." + short_name;
+				
+				if (!parent.VerifyImplements (explicit_iface_type, short_name, Name, Location))
+					return false;
+				
 				explicit_impl = true;
 			} else {
 				explicit_impl = false;
@@ -3293,9 +3347,15 @@ namespace Mono.CSharp {
 			MethodInfo implementing = null;
 			bool is_implementation;
 
-			if (parent.Pending != null)
+			if (parent.Pending != null){
 				implementing = parent.Pending.IsInterfaceMethod (
 					explicit_iface_type, name, ret_type, parameters);
+
+				if (explicit_iface_type != null && implementing == null){
+					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (Location, "this");
+					return false;
+				}
+			}
 
 			is_implementation = implementing != null;
 			
@@ -3427,6 +3487,9 @@ namespace Mono.CSharp {
 			if (InterfaceType != null){
 				explicit_iface_type = RootContext.LookupType (parent, InterfaceType, false, Location);
 				if (explicit_iface_type == null)
+					return false;
+
+				if (!parent.VerifyImplements (explicit_iface_type, "this", "this", Location))
 					return false;
 			} 
 

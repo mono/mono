@@ -1,10 +1,21 @@
 2002-06-21  Miguel de Icaza  <miguel@ximian.com>
 
-	* class.cs (Property.Define): Only define the property if we are
+	* class.cs (TypeContainer.VerifyImplements): Verifies that a given
+	interface type is implemented by this TypeContainer.  Used during
+	explicit interface implementation.
+
+	(Property.Define, Indexer.Define, Method.Define): Validate that
+	the given interface in the explicit implementation is one of the
+	base classes for the containing type.
+
+	Also if we are explicitly implementing an interface, but there is
+	no match in the pending implementation table, report an error.
+
+	(Property.Define): Only define the property if we are
 	not explicitly implementing a property from an interface.  Use the
 	correct name also for those properties (the same CSC uses,
 	although that is really not needed).
-
+	
 	(Property.Emit): Do not emit attributes for explicitly implemented
 	properties, as there is no TypeBuilder.
 
