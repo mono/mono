@@ -566,11 +566,20 @@ public class ArrayTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				Array.CreateInstance(Type.GetType("System.Char"), null);
+				Array.CreateInstance(Type.GetType("System.Char"), (int [])null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#F03", errorThrown);
+			Assert("#F03a", errorThrown);
+		}
+		{
+			bool errorThrown = false;
+			try {
+				Array.CreateInstance(Type.GetType("System.Char"), (long [])null);
+			} catch (ArgumentNullException) {
+				errorThrown = true;
+			}
+			Assert("#F03b", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1094,11 +1103,21 @@ public class ArrayTest : TestCase
 			bool errorThrown = false;
 			try {
 				char[] c = new Char[2];
-				c.GetValue(null);
+				c.GetValue((int [])null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#I61", errorThrown);
+			Assert("#I61a", errorThrown);
+		}
+		{
+			bool errorThrown = false;
+			try {
+				char[] c = new Char[2];
+				c.GetValue((long [])null);
+			} catch (ArgumentNullException) {
+				errorThrown = true;
+			}
+			Assert("#I61b", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1655,11 +1674,21 @@ public class ArrayTest : TestCase
 			bool errorThrown = false;
 			try {
 				char[] c = new Char[2];
-				c.SetValue("buh", null);
+				c.SetValue("buh", (int [])null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#M61", errorThrown);
+			Assert("#M61a", errorThrown);
+		}
+		{
+			bool errorThrown = false;
+			try {
+				char[] c = new Char[2];
+				c.SetValue("buh", (long [])null);
+			} catch (ArgumentNullException) {
+				errorThrown = true;
+			}
+			Assert("#M61b", errorThrown);
 		}
 		{
 			bool errorThrown = false;

@@ -1,3 +1,7 @@
+2003-04-23  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayTest.cs: Disambiguate overloads now in .NET 1.1.
+	
 2003-04-18  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* ArrayTest.cs: added a few more tests to test Array.Initialize()
