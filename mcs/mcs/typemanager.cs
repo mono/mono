@@ -1074,7 +1074,10 @@ public class TypeManager {
 	//
 	public static bool IsNestedChildOf (Type type, Type parent)
 	{
-		return IsSubclassOrNestedChildOf (type, parent) && !type.IsSubclassOf (parent);
+		if ((type == parent) || type.IsSubclassOf (parent))
+			return false;
+		else
+			return IsSubclassOrNestedChildOf (type, parent);
 	}
 
 	/// <summary>

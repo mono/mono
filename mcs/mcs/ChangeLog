@@ -1,3 +1,9 @@
+2002-09-14  Martin Baulig  <martin@gnome.org>
+
+	* typemanager.cs (TypeManager.IsNestedChildOf): This must return false
+	if `type == parent' since in this case `type.IsSubclassOf (parent)' will
+	be false on the ms runtime.
+
 2002-09-13  Martin Baulig  <martin@gnome.org>
 
 	* ecore.cs (SimpleName.SimpleNameResolve): Include the member name in
