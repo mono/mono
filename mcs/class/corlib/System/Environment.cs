@@ -121,6 +121,7 @@ namespace System
 		/// <summary>
 		/// Gets the current OS version information
 		/// </summary>
+		[MonoTODO]
 		public static OperatingSystem OSVersion {
 			get
 			{
@@ -131,6 +132,7 @@ namespace System
 		/// <summary>
 		/// Get StackTrace
 		/// </summary>
+		[MonoTODO]
 		public static string StackTrace
 		{
 			get
@@ -153,6 +155,7 @@ namespace System
 		/// <summary>
 		/// Get the number of milliseconds that have elapsed since the system was booted
 		/// </summary>
+		[MonoTODO]
 		public static int TickCount
 		{
 			get
@@ -165,6 +168,7 @@ namespace System
 		/// <summary>
 		/// Get UserDomainName
 		/// </summary>
+		[MonoTODO]
 		public static string UserDomainName
 		{
 			get
@@ -176,6 +180,7 @@ namespace System
 		/// <summary>
 		/// Gets a flag indicating whether the process is in interactive mode
 		/// </summary>
+		[MonoTODO]
 		public static bool UserInteractive
 		{
 			get
@@ -205,6 +210,7 @@ namespace System
 		/// <summary>
 		/// Get the version of an assembly
 		/// </summary>
+		[MonoTODO]
 		public static Version Version
 		{
 			get
@@ -216,6 +222,7 @@ namespace System
 		/// <summary>
 		/// Get the amount of physical memory mapped to process
 		/// </summary>
+		[MonoTODO]
 		public static long WorkingSet
 		{
 			get
@@ -224,6 +231,7 @@ namespace System
 			}
 		}
 
+		[MonoTODO]
 		public static void Exit(int exitCode)
 		{ 
 		}
@@ -231,6 +239,7 @@ namespace System
 		/// <summary>
 		/// Substitute environment variables in the argument "name"
 		/// </summary>
+		[MonoTODO]
 		public static string ExpandEnvironmentVariables(string name)
 		{
 			return name;
@@ -270,6 +279,7 @@ namespace System
 		/// Returns the fully qualified path of the
 		/// folder specified by the "folder" parameter
 		/// </summary>
+		[MonoTODO]
 		public static string GetFolderPath(SpecialFolder folder)
 		{
 			return null;
@@ -278,6 +288,7 @@ namespace System
 		/// <summary>
 		/// Returns an array of the logical drives
 		/// </summary>
+		[MonoTODO]
 		public static string[] GetLogicalDrives()
 		{
 			return null;
