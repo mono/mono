@@ -31,6 +31,7 @@
 namespace System.Runtime.InteropServices
 {
 	[ComVisible (false)]
+	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct VARDESC
 	{
 		public ELEMDESC elemdescVar;
@@ -40,9 +41,12 @@ namespace System.Runtime.InteropServices
 		public short wVarFlags;
 
 		[ComVisible (false)]
+		[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 		public struct DESCUNION
 		{
+			[FieldOffset (0)]
 			public IntPtr lpvarValue;
+			[FieldOffset (0)]
 			public int oInst;
 		}
 	} 

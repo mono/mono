@@ -31,6 +31,7 @@
 namespace System.Runtime.InteropServices
 {
 	[ComVisible (false)]
+	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct STATSTG
 	{
 		public FILETIME atime;

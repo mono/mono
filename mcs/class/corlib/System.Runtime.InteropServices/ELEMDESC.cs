@@ -31,15 +31,19 @@
 namespace System.Runtime.InteropServices
 {
 	[ComVisible (false)]
+	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct ELEMDESC
 	{
 		public DESCUNION desc;
 		public TYPEDESC tdesc;
 
 		[ComVisible (false)]
+		[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 		public struct DESCUNION
 		{
+			[FieldOffset (0)]
 			public IDLDESC idldesc;
+			[FieldOffset (0)]
 			public PARAMDESC paramdesc;
 		}
 	}

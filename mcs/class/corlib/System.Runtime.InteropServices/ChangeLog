@@ -1,5 +1,20 @@
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* BINDPTR.cs: have layout and charset match MS.NET
+	* CONNECTDATA.cs: have layout and charset match MS.NET
+	* DISPPARAMS.cs: have layout and charset match MS.NET
+	* ELEMDESC.cs: have layout and charset match MS.NET
+	* EXCEPINFO.cs: have layout and charset match MS.NET
+	* IDLDESC.cs: have layout and charset match MS.NET
+	* PARAMDESC.cs: have layout and charset match MS.NET
+	* STATSTG.cs: have layout and charset match MS.NET
+	* TYPEATTR.cs: have layout and charset match MS.NET
+	* TYPEDESC.cs: have layout and charset match MS.NET
+ 	* TYPELIBATTR.cs: have layout and charset match MS.NET
+	* VARDESC.cs: have layout and charset match MS.NET
+
+2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* ArrayWithOffset.cs: fixed GetOffset to return int instead of
 	object
 	* CONNECTDATA.cs: added missing MarshalAs attribute

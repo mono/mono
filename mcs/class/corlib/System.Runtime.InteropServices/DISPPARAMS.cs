@@ -32,8 +32,8 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-
 	[ComVisible(false)]
+	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct DISPPARAMS {
 		public int cArgs;
 		public int cNamedArgs;
