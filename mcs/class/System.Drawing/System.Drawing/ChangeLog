@@ -1,3 +1,7 @@
+2004-04-21 Jordi Mas i Hernandez <jordi@ximian.com>
+	* RectangleConverter.cs: stubbed out
+	* Font.cs : added missing members
+
 2004-04-19  Sanjay Gupta <gsanjay@novell.com>
 	* Icon.cs: Fixed problem in extracting bitmap from Icon.
 

@@ -20,7 +20,7 @@ namespace System.Drawing {
 	{
 		IntPtr	fontObject = IntPtr.Zero;
 		
-       	private Font (SerializationInfo info, StreamingContext context)
+       		private Font (SerializationInfo info, StreamingContext context)
 		{
 		}
 
@@ -159,6 +159,18 @@ namespace System.Drawing {
 				original.GdiCharSet, original.GdiVerticalFont);
 			
 			GDIPlus.GdipCreateFont(_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);					
+		}
+		
+		public Font(FontFamily family, float emSize,  GraphicsUnit unit)
+			: this(family, emSize, FontStyle.Regular, unit, (byte)0, false)
+		{
+			
+		}
+		
+		public Font (string familyName, float emSize,  GraphicsUnit unit)
+			: this(new FontFamily (familyName), emSize, FontStyle.Regular, unit, (byte)0, false)
+		{
+			
 		}
 
 		public Font(FontFamily family, float emSize)
@@ -319,6 +331,73 @@ namespace System.Drawing {
 				return _unit;
 			}
 		}
+		
+		public override bool Equals (object obj)
+		{
+			if (!(obj is Font))
+				return false;
+				
+			Font fnt = (Font) obj;
+			
+			if (fnt.FontFamily == FontFamily && fnt.Size == Size &&
+				fnt.Style == Style && fnt.Unit == Unit &&
+				fnt.GdiCharSet == GdiCharSet && fnt.GdiVerticalFont == GdiVerticalFont)
+				return true;
+			else
+				return false;
+			
+		}		
+
+		public override int GetHashCode()
+		{
+			return _name.GetHashCode();
+		}
+		
+		[MonoTODO]	
+		public static Font FromHdc(IntPtr hdc)
+		{
+			throw new NotImplementedException ();
+		}		
+		
+		
+		[MonoTODO]	
+		public static Font FromLogFont( object lf,  IntPtr hdc)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public float GetHeight()
+		{
+			return (float) _height;
+		}
+		
+		[MonoTODO]	
+		public static Font FromLogFont(object lf)
+		{
+			throw new NotImplementedException ();	
+		}
+		
+		[MonoTODO]	
+		public void ToLogFont(object logFont)
+		{
+			throw new NotImplementedException ();
+		}	
+		
+		[MonoTODO]	
+		public float GetHeight(Graphics graphics)
+		{
+			if (Unit == GraphicsUnit.Pixel || Unit == GraphicsUnit.World)
+				return GetHeight();
+				
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public float GetHeight(float dpi)
+		{			
+			return GetHeight();
+		}
+		
 		
 		public override System.String ToString()
 		{
