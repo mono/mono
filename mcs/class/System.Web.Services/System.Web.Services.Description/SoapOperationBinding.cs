@@ -27,7 +27,7 @@ namespace System.Web.Services.Description {
 		public SoapOperationBinding ()
 		{
 			soapAction = String.Empty;
-			style = SoapBindingStyle.Document;
+			style = SoapBindingStyle.Default;
 		}
 		
 		#endregion // Constructors

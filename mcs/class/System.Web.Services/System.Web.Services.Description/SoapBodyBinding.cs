@@ -20,6 +20,7 @@ namespace System.Web.Services.Description {
 		string encoding;
 		string ns;
 		string[] parts;
+		string partsString;
 		SoapBindingUse use;
 
 		#endregion // Fields
@@ -31,6 +32,7 @@ namespace System.Web.Services.Description {
 			encoding = String.Empty;
 			ns = String.Empty;
 			parts = null;
+			partsString = null;
 			use = SoapBindingUse.Default;
 		}
 		
@@ -55,13 +57,25 @@ namespace System.Web.Services.Description {
 		[XmlIgnore]
 		public string[] Parts {
 			get { return parts; }
-			set { parts = value; }
+			set {
+				parts = value;
+				if (value == null)
+					partsString = null;
+				else
+					partsString = String.Join(" ", value);
+			}
 		}
 
 		[XmlAttribute ("parts", DataType = "NMTOKENS")]
 		public string PartsString {
-			get { return (Parts != null) ? String.Join (" ", Parts) : null; }
-			set { Parts = value.Split (' '); }
+			get { return partsString; }
+			set {
+				partsString = value;
+				if (value == null)
+					parts = null;
+				else
+					parts = value.Split(' ');
+			}
 		}
 
 		[DefaultValue (SoapBindingUse.Default)]

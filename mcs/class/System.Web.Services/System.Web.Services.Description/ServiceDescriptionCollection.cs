@@ -35,7 +35,12 @@ namespace System.Web.Services.Description {
 		}
 
 		public ServiceDescription this [string ns] {
-			get { return this[IndexOf ((ServiceDescription) Table[ns])]; }
+			get { 
+				int index = IndexOf ((ServiceDescription) Table[ns]);
+				if (index >= 0)
+					return this[index]; 
+				return null;
+			}
 		}
 
 		#endregion // Properties

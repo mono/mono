@@ -32,7 +32,12 @@ namespace System.Web.Services.Description {
 		}
 
 		public PortType this [string name] {
-			get { return this [IndexOf ((PortType) Table[name])]; }
+			get { 
+				int index = IndexOf ((PortType) Table[name]);
+				if (index >= 0)
+					return this[index]; 
+				return null;
+			}
 		}
 
 		#endregion // Properties

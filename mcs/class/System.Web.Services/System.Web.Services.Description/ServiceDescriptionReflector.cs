@@ -11,6 +11,7 @@
 using System.Web.Services;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Xml.Schema;
 using System.Web.Services.Protocols;
 
 namespace System.Web.Services.Description {
@@ -217,9 +218,15 @@ namespace System.Web.Services.Description {
 				{
 					MessagePart part = new MessagePart ();
 					part.Name = members[n].MemberName;
-					XmlQualifiedName qname = new XmlQualifiedName (members.ElementName, members.Namespace);
-					if (method.Use == SoapBindingUse.Literal) part.Element = qname;
-					else part.Type = qname;
+					
+					if (method.Use == SoapBindingUse.Literal) {
+						part.Element = new XmlQualifiedName (members[n].MemberName, members[n].Namespace);
+					}
+					else {
+						string namesp = members[n].TypeNamespace;
+						if (namesp == "") namesp = XmlSchema.Namespace;
+						part.Type = new XmlQualifiedName (members[n].TypeName, namesp);
+					}
 					msg.Parts.Add (part);
 				}
 			}

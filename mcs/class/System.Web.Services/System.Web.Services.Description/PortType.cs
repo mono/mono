@@ -24,7 +24,7 @@ namespace System.Web.Services.Description {
 		
 		public PortType ()
 		{
-			name = String.Empty;
+			name = null;
 			operations = new OperationCollection (this);
 			serviceDescription = null;
 		}

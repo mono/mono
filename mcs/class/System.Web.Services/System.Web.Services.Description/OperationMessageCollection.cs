@@ -68,6 +68,13 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 
+		protected override string GetKey (object value) 
+		{
+			if (!(value is OperationMessage))
+				throw new InvalidCastException ();
+			return ((OperationMessage) value).Name;
+		}
+
 		public int Add (OperationMessage operationMessage) 
 		{
 			Insert (Count, operationMessage);
@@ -96,7 +103,12 @@ namespace System.Web.Services.Description {
 
 		protected override void OnInsert (int index, object value)
 		{
-			if (Count > 2 || (Count > 1 && value.GetType () == this [0].GetType ()))
+			if (Count == 0)
+				return;
+			
+			if (Count == 1 && value.GetType() != this[0].GetType())
+				return;
+
 				throw new InvalidOperationException ("The operation object can only contain one input and one output message.");
 		}
 
@@ -110,7 +122,7 @@ namespace System.Web.Services.Description {
 		protected override void OnValidate (object value)
 		{
 			if (value == null)
-				throw new NullReferenceException ("The message object is a null reference.");
+				throw new ArgumentException("The message object is a null reference.");
 			if (!(value is OperationInput || value is OperationOutput))
 				throw new ArgumentException ("The message object is not an input or an output message.");
 		}

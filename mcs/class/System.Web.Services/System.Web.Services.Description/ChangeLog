@@ -1,3 +1,15 @@
+2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* DocumentableItem.cs MimeContentBinding.cs OperationMessage.cs 
+	  OperationMessageCollection.cs PortCollection.cs PortType.cs 
+	  PortTypeCollection.cs ServiceCollection.cs ServiceDescriptionCollection.cs 
+	  SoapBodyBinding.cs SoapOperationBinding.cs: Several fixes by Erik LeBel
+	* ServiceDescriptionImporter.cs:
+	* ServiceDescriptionSerializerBase.cs: regenerated after the changes in
+	  the service description changes.
+	* ServiceDescriptionReflector.cs: Fixed generation of message parts in
+	  bare format.
+
 2003-09-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ServiceDescriptionImporter.cs, ServiceDescriptionReflector.cs: Added

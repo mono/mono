@@ -34,7 +34,12 @@ namespace System.Web.Services.Description {
 		[DefaultValue ("")]
 		public string Documentation {
 			get { return documentation; }
-			set { documentation = value; }
+			set {
+				if (value == null)
+					documentation = String.Empty;
+				else
+					documentation = value;
+			}
 		}
 	
 		#endregion // Properties

@@ -506,7 +506,7 @@ namespace System.Web.Services.Description {
 		
 		string GetOperMessageName (OperationMessage msg, string operName)
 		{
-			if (msg.Name == "") return operName;
+			if (msg.Name == null) return operName;
 			else return msg.Name;
 		}
 		
