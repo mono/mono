@@ -403,13 +403,13 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void EmptyElementWithTwoAttributes ()
+		public void EmptyElementWithAttributes ()
 		{
-			string xml = @"<foo bar=""baz"" quux='quuux'/>";
-			RunTest (xml, new TestMethod (EmptyElementWithTwoAttributes ));
+			string xml = @"<foo bar=""baz"" quux='quuux' x:foo='x-foo' xmlns:x = 'urn:xfoo' />";
+			RunTest (xml, new TestMethod (EmptyElementWithAttributes ));
 		}
 
-		public void EmptyElementWithTwoAttributes (XmlReader xmlReader)
+		public void EmptyElementWithAttributes (XmlReader xmlReader)
 		{
 
 			AssertStartDocument (xmlReader);
@@ -424,7 +424,7 @@ namespace MonoTests.System.Xml
 				"foo", // localName
 				String.Empty, // namespaceURI
 				String.Empty, // value
-				2 // attributeCount
+				4 // attributeCount
 			);
 
 			AssertAttribute (
@@ -443,6 +443,33 @@ namespace MonoTests.System.Xml
 				"quux", // localName
 				String.Empty, // namespaceURI
 				"quuux" // value
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"notexist", // name
+				String.Empty, // prefix
+				"notexist", // localName
+				String.Empty, // namespaceURI
+				null // value
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"x:foo", // name
+				"x", // prefix
+				"foo", // localName
+				"urn:xfoo", // namespaceURI
+				"x-foo" // value
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"x:bar", // name
+				"x", // prefix
+				"bar", // localName
+				"urn:xfoo", // namespaceURI
+				null // value
 			);
 
 			AssertEndDocument (xmlReader);

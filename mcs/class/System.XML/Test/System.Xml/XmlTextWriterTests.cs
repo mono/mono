@@ -1037,6 +1037,21 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void WriteWhitespace ()
+		{
+			xtw.WriteStartElement ("a");
+			xtw.WriteWhitespace ("\n\t");
+			xtw.WriteStartElement ("b");
+			xtw.WriteWhitespace ("\n\t");
+			xtw.WriteEndElement ();
+			xtw.WriteWhitespace ("\n");
+			xtw.WriteEndElement ();
+			xtw.WriteWhitespace ("\n");
+			xtw.Flush ();
+			AssertEquals ("<a>\n\t<b>\n\t</b>\n</a>\n", StringWriterText);
+		}
+
+		[Test]
 		public void FlushDoesntCloseTag ()
 		{
 			xtw.WriteStartElement ("foo");

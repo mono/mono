@@ -1,3 +1,9 @@
+2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlReaderCommonTests.cs : EmptyElementWithTwoAttributes() is now
+	  EmptyElementWithAttributes() and was added namespaced attribute tests.
+	* XmlTextWriterTests.cs : added WriteWhitespace().
+
 2003-06-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* XmlDocumentTests.cs: New test for null prefix and namespaceURI in
