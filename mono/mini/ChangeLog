@@ -1,4 +1,8 @@
 
+Wed Dec 3 20:46:28 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: ensure arguments and locals are within bounds.
+
 Wed Dec 3 17:59:10 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, cpu-g4.md, basic.cs, basic-long.cs: more tests and 
