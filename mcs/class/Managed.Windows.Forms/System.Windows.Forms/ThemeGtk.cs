@@ -37,9 +37,12 @@
 //		- GTK paints controls into a window no a device context. We should inverstigate if we 
 //		we can encapsulate a dc in a gtkwindow.
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ThemeGtk.cs,v $
+// Revision 1.2  2004/08/20 00:55:28  jordi
+// fixes button order
+//
 // Revision 1.1  2004/08/19 22:27:40  jordi
 // experimental GTK theme support
 //
@@ -329,7 +332,7 @@ namespace System.Windows.Forms
 					gdkwindow, style);
 
 				/* Second button*/
-			 	DrawScrollButton (dc, first_arrow_area, ScrollButton.Down, first_arrow,
+			 	DrawScrollButton (dc, second_arrow_area, ScrollButton.Down, second_arrow,
 					gdkwindow, style);
 
 			} else {
