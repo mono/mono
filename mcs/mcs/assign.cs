@@ -93,7 +93,10 @@ namespace CIR {
 
 		public void EmitFieldAssign (FieldExpr field, ILGenerator ig)
 		{
-			ig.Emit (OpCodes.Stfld, field.FieldInfo);
+			if (field.IsStatic)
+				ig.Emit (OpCodes.Stsfld, field.FieldInfo);
+			else
+				ig.Emit (OpCodes.Stfld, field.FieldInfo);
 		}
 		
 		public override void Emit (EmitContext ec)

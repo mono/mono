@@ -1,3 +1,7 @@
+2001-09-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs: Emit stores to static fields differently.
+
 2001-09-08  Ravi Pratap  <ravi@ximian.com>
 
 	* Merge in changes and adjust code to tackle conflicts. Backed out my
