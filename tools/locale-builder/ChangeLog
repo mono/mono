@@ -1,5 +1,11 @@
 2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Driver.cs : Percent patterns are not properly parsed since they are
+	  in fact not separated by '.'
+	* Entry.cs : Escape '\' to "\\" (for Japanese yen-sign fix).
+
+2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Driver.cs :
 	  - NumberDecimalDigits are almost differently specified by locale
 	    xml files. Almost all of them have ".###", but we need ".##" in

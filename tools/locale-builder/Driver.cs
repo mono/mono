@@ -586,8 +586,6 @@ namespace Mono.Tools.LocaleBuilder {
 			}
 
 			part_one = format.Split (new char [1] {'.'}, 2);
-			if (part_one.Length == 1)
-				part_one = new string [] {part_one [0], String.Empty};
 			if (part_one.Length == 2) {
 				// assumed same for both positive and negative
 				// decimal digit side
@@ -598,6 +596,9 @@ namespace Mono.Tools.LocaleBuilder {
 					else
 						break;
 				}
+			}
+
+			if (part_one.Length > 0) {
 				// percent grouping side
 				part_two = part_one [0].Split (',');
 				if (part_two.Length > 1) {

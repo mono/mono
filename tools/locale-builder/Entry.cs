@@ -22,6 +22,8 @@ namespace Mono.Tools.LocaleBuilder {
                                         ret.AppendFormat ("\\x{0:x}", b);
                                         in_hex = true;
                                 } else {
+                                        if (b == '\\')
+                                                ret.Append ('\\');
                                         ret.Append ((char) b);
                                         in_hex = false;
                                 }
