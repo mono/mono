@@ -1,3 +1,7 @@
+2002-07-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: we do not need to save EAX/ECX/EDX in stmt:
+
 2002-07-24  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): added CEE_TAIL (but it is ignored)
