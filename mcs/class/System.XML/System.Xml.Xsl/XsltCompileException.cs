@@ -41,6 +41,23 @@ namespace System.Xml.Xsl
 	{
 		#region Constructors
 
+#if NET_2_0
+		public XsltCompileException ()
+			: base (String.Empty, null)
+		{
+		}
+
+		public XsltCompileException (string message)
+			: base (message, null)
+		{
+		}
+
+		public XsltCompileException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+		}
+#endif
+
 		protected XsltCompileException (SerializationInfo info, StreamingContext context )
 			: base (info, context)
 		{
@@ -59,9 +76,12 @@ namespace System.Xml.Xsl
 
 		#region Properties
 
+#if NET_2_0
+#else
 		public override string Message {
 			get { return base.Message; }
 		}
+#endif
 
 		#endregion
 
