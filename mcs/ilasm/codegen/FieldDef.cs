@@ -41,7 +41,7 @@ namespace Mono.ILASM {
                         get { return name; }
                 }
 
-                public PEAPI.FieldDef FieldDef {
+                public PEAPI.FieldDef Def {
                         get { return field_def; }
                 }
 
