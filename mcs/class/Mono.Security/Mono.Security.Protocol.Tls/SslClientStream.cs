@@ -122,7 +122,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.CipherAlgorithmType;
 				}
@@ -135,7 +135,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.EffectiveKeyBits;
 				}
@@ -153,7 +153,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.HashAlgorithmType; 
 				}
@@ -166,7 +166,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.HashSize * 8; 
 				}
@@ -179,7 +179,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.ServerSettings.Certificates[0].RSA.KeySize;
 				}
@@ -192,7 +192,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.ExchangeAlgorithmType; 
 				}
@@ -205,7 +205,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.SecurityProtocol; 
 				}
@@ -223,7 +223,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					if (this.context.ServerSettings.Certificates != null &&
 						this.context.ServerSettings.Certificates.Count > 0)
@@ -388,7 +388,7 @@ namespace Mono.Security.Protocol.Tls
 				{
 					if (this.innerStream != null)
 					{
-						if (this.context.HandshakeFinished &&
+						if (this.context.HandshakeState == HandshakeState.Finished &&
 							!this.context.ConnectionEnd)
 						{
 							// Write close notify							
@@ -455,19 +455,11 @@ namespace Mono.Security.Protocol.Tls
 
 			lock (this)
 			{
-				if (!this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.None)
 				{
-					this.doHandshake();	// Handshake negotiation
+					this.NegotiateHandshake();
 				}
 			}
-
-			/*
-			if (!Monitor.TryEnter(this.read))
-			{
-				throw new InvalidOperationException("A read operation is already in progress.");
-			}
-			System.Threading.Monitor.Enter(this.read);
-			*/
 
 			IAsyncResult asyncResult;
 
@@ -533,12 +525,6 @@ namespace Mono.Security.Protocol.Tls
 					throw new IOException("IO exception during read.");
 				}
 			}
-			/*
-			finally
-			{
-				Monitor.Exit(this.read);
-			}
-			*/
 
 			return asyncResult;
 		}
@@ -575,20 +561,11 @@ namespace Mono.Security.Protocol.Tls
 
 			lock (this)
 			{
-				if (!this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.None)
 				{
-					// Start handshake negotiation
-					this.doHandshake();
+					this.NegotiateHandshake();
 				}
 			}
-
-			/*
-			if (!Monitor.TryEnter(this.write))
-			{
-				throw new InvalidOperationException("A write operation is already in progress.");
-			}
-			Monitor.Enter(this.write);
-			*/
 
 			IAsyncResult asyncResult;
 
@@ -613,13 +590,6 @@ namespace Mono.Security.Protocol.Tls
 					throw new IOException("IO exception during Write.");
 				}
 			}
-
-			/*
-			finally
-			{
-				Monitor.Exit(this.write);
-			}
-			*/			
 
 			return asyncResult;
 		}
@@ -737,59 +707,67 @@ namespace Mono.Security.Protocol.Tls
 					Fig. 1 - Message flow for a full handshake		
 		*/
 
-		private void doHandshake()
+		internal void NegotiateHandshake()
 		{
-			try
+			lock (this)
 			{
-				// Obtain supported cipher suites
-				this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
-
-				// Send client hello
-				this.protocol.SendRecord(TlsHandshakeType.ClientHello);
-
-				// Read server response
-				while (!this.context.HelloDone)
+				try
 				{
-					// Read next record
-					this.protocol.ReceiveRecord();
-				}
+					if (this.context.HandshakeState != HandshakeState.None)
+					{
+						this.context.Clear();
+					}
 
-				// Send client certificate if requested
-				if (this.context.ServerSettings.CertificateRequest)
-				{
-					this.protocol.SendRecord(TlsHandshakeType.Certificate);
-				}
+					// Obtain supported cipher suites
+					this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
 
-				// Send Client Key Exchange
-				this.protocol.SendRecord(TlsHandshakeType.ClientKeyExchange);
+					// Send client hello
+					this.protocol.SendRecord(TlsHandshakeType.ClientHello);
 
-				// Now initialize session cipher with the generated keys
-				this.context.Cipher.InitializeCipher();
+					// Read server response
+					while (!this.context.HelloDone)
+					{
+						// Read next record
+						this.protocol.ReceiveRecord();
+					}
 
-				// Send certificate verify if requested
-				if (this.context.ServerSettings.CertificateRequest)
-				{
-					this.protocol.SendRecord(TlsHandshakeType.CertificateVerify);
-				}
+					// Send client certificate if requested
+					if (this.context.ServerSettings.CertificateRequest)
+					{
+						this.protocol.SendRecord(TlsHandshakeType.Certificate);
+					}
 
-				// Send Cipher Spec protocol
-				this.protocol.SendChangeCipherSpec();			
+					// Send Client Key Exchange
+					this.protocol.SendRecord(TlsHandshakeType.ClientKeyExchange);
+
+					// Now initialize session cipher with the generated keys
+					this.context.Cipher.InitializeCipher();
+
+					// Send certificate verify if requested
+					if (this.context.ServerSettings.CertificateRequest)
+					{
+						this.protocol.SendRecord(TlsHandshakeType.CertificateVerify);
+					}
+
+					// Send Cipher Spec protocol
+					this.protocol.SendChangeCipherSpec();			
 			
-				// Read record until server finished is received
-				while (!this.context.HandshakeFinished)
-				{
-					// If all goes well this will process messages:
-					// 		Change Cipher Spec
-					//		Server finished
-					this.protocol.ReceiveRecord();
-				}
+					// Read record until server finished is received
+					while (this.context.HandshakeState != HandshakeState.Finished)
+					{
+						// If all goes well this will process messages:
+						// 		Change Cipher Spec
+						//		Server finished
+						this.protocol.ReceiveRecord();
+					}
 
-				// Clear Key Info
-				this.context.ClearKeyInfo();
-			}
-			catch
-			{
-				throw new IOException("The authentication or decryption has failed.");
+					// Clear Key Info
+					this.context.ClearKeyInfo();
+				}
+				catch
+				{
+					throw new IOException("The authentication or decryption has failed.");
+				}
 			}
 		}
 

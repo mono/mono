@@ -1,3 +1,17 @@
+2004-02-26 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/HandshakeState.cs:
+
+		- New file.
+
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+	* Mono.Security.Protocol.Tls/Context.cs:
+	* Mono.Security.Protocol.Tls/ClientContext.cs:
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+
+		- Added changes for better handling of ClientHelloRequest messages.
+
 2004-02-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpsClientStream.cs: New. Internal glue class between System.dll 

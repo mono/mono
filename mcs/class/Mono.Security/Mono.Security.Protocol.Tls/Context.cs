@@ -66,9 +66,11 @@ namespace Mono.Security.Protocol.Tls
 		private CipherSuite					cipher;
 		private TlsCipherSuiteCollection	supportedCiphers;
 
+		// Handshake negotiation state
+		private	HandshakeState handshakeState;
+
 		// Misc
 		private bool	isActual;
-		private	bool	handshakeFinished;
 		private bool	connectionEnd;
 		private bool	protocolNegotiated;
 		
@@ -185,10 +187,10 @@ namespace Mono.Security.Protocol.Tls
 			set { this.isActual = value; }
 		}
 
-		public bool HandshakeFinished
+		public	HandshakeState HandshakeState
 		{
-			get { return handshakeFinished; }
-			set { handshakeFinished = value; }
+			get { return this.handshakeState; }
+			set { this.handshakeState = value; }
 		}
 
 		public bool ConnectionEnd
@@ -304,6 +306,7 @@ namespace Mono.Security.Protocol.Tls
 			this.clientSettings		= new TlsClientSettings();
 			this.handshakeMessages	= new TlsStream();
 			this.sessionId			= null;
+			this.handshakeState		= HandshakeState.None;
 			this.random				= RandomNumberGenerator.Create();
 		}
 
@@ -327,7 +330,19 @@ namespace Mono.Security.Protocol.Tls
 			return secureBytes;
 		}
 
-		public void ClearKeyInfo()
+		public virtual void Clear()
+		{
+			this.compressionMethod	= SecurityCompressionType.None;
+			this.serverSettings		= new TlsServerSettings();
+			this.clientSettings		= new TlsClientSettings();
+			this.handshakeMessages	= new TlsStream();
+			this.sessionId			= null;
+			this.handshakeState		= HandshakeState.None;
+
+			this.ClearKeyInfo();
+		}
+
+		public virtual void ClearKeyInfo()
 		{
 			// Clear Master Secret
 			this.masterSecret	= null;
@@ -345,6 +360,9 @@ namespace Mono.Security.Protocol.Tls
 			// Clear server keys
 			this.serverWriteKey	= null;
 			this.serverWriteIV	= null;
+
+			// Reset handshake messages
+			this.handshakeMessages.Reset();
 
 			// Clear MAC keys if protocol is different than Ssl3
 			if (this.securityProtocol != SecurityProtocolType.Ssl3)

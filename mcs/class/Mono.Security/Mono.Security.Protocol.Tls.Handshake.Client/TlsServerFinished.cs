@@ -50,7 +50,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.Context.HandshakeMessages.Reset();
 
 			// Hahdshake is finished
-			this.Context.HandshakeFinished = true;
+			this.Context.HandshakeState = HandshakeState.Finished;
 		}
 
 		#endregion

@@ -118,10 +118,21 @@ namespace Mono.Security.Protocol.Tls
 		private TlsHandshakeMessage createServerHandshakeMessage(
 			TlsHandshakeType type, byte[] buffer)
 		{
+			ClientContext context = (ClientContext)this.context;
+
 			switch (type)
 			{
 				case TlsHandshakeType.HelloRequest:
-					this.SendRecord(TlsHandshakeType.ClientHello);
+					if (context.HandshakeState != HandshakeState.Started)
+					{
+						context.SslStream.NegotiateHandshake();
+					}
+					else
+					{
+						this.SendAlert(
+							TlsAlertLevel.Warning,
+							TlsAlertDescription.NoRenegotiation);
+					}
 					return null;
 
 				case TlsHandshakeType.ServerHello:

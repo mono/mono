@@ -24,68 +24,13 @@
 
 using System;
 
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-
 namespace Mono.Security.Protocol.Tls
 {
-	internal class ClientContext : Context
+	[Serializable]
+	internal enum HandshakeState
 	{
-		#region Fields
-
-		private SslClientStream	sslStream;
-		private short			clientHelloProtocol;
-		private bool			helloDone;
-
-		#endregion
-
-		#region Properties
-
-		public SslClientStream SslStream
-		{
-			get { return this.sslStream; }
-		}
-
-		public bool HelloDone
-		{
-			get { return helloDone; }
-			set { helloDone = value; }
-		}
-
-		public short ClientHelloProtocol
-		{
-			get { return this.clientHelloProtocol; }
-			set { this.clientHelloProtocol = value; }
-		}
-
-		#endregion
-
-		#region Constructors
-
-		public ClientContext(
-			SslClientStream				stream,
-			SecurityProtocolType		securityProtocolType,
-			string						targetHost,
-			X509CertificateCollection	clientCertificates) 
-			: base(securityProtocolType)
-		{
-			this.sslStream						= stream;
-			this.ClientSettings.Certificates	= clientCertificates;
-			this.ClientSettings.TargetHost		= targetHost;
-		}
-
-		#endregion
-
-		#region Methods
-
-		public override void Clear()
-		{
-			this.helloDone				= false;
-			this.clientHelloProtocol	= 0;
-
-			base.Clear();
-		}
-
-		#endregion
+		None,
+		Started,
+		Finished
 	}
 }

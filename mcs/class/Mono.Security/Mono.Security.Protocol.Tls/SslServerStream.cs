@@ -100,7 +100,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.CipherAlgorithmType;
 				}
@@ -113,7 +113,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.EffectiveKeyBits;
 				}
@@ -126,7 +126,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.ClientSettings.ClientCertificate;
 				}
@@ -139,7 +139,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.HashAlgorithmType; 
 				}
@@ -152,7 +152,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.HashSize * 8; 
 				}
@@ -165,7 +165,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.ServerSettings.Certificates[0].RSA.KeySize;
 				}
@@ -178,7 +178,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.Cipher.ExchangeAlgorithmType; 
 				}
@@ -191,7 +191,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					return this.context.SecurityProtocol; 
 				}
@@ -204,7 +204,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
 					if (this.context.ServerSettings.Certificates != null &&
 						this.context.ServerSettings.Certificates.Count > 0)
@@ -320,7 +320,7 @@ namespace Mono.Security.Protocol.Tls
 				{
 					if (this.innerStream != null)
 					{
-						if (this.context.HandshakeFinished)
+						if (this.context.HandshakeState == HandshakeState.Finished)
 						{
 							// Write close notify
 							this.protocol.SendAlert(TlsAlertDescription.CloseNotify);
@@ -381,7 +381,7 @@ namespace Mono.Security.Protocol.Tls
 
 			lock (this)
 			{
-				if (!this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.None)
 				{
 					this.doHandshake();	// Handshake negotiation
 				}
@@ -487,7 +487,7 @@ namespace Mono.Security.Protocol.Tls
 
 			lock (this)
 			{
-				if (!this.context.HandshakeFinished)
+				if (this.context.HandshakeState == HandshakeState.None)
 				{
 					// Start handshake negotiation
 					this.doHandshake();

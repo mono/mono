@@ -177,6 +177,8 @@ namespace Mono.Security.Protocol.Tls.Alerts
 			switch (description)
 			{
 				case TlsAlertDescription.CloseNotify:
+				case TlsAlertDescription.NoRenegotiation:
+				case TlsAlertDescription.UserCancelled:
 					this.level = TlsAlertLevel.Warning;
 					break;
 
@@ -195,13 +197,11 @@ namespace Mono.Security.Protocol.Tls.Alerts
 				case TlsAlertDescription.IlegalParameter:
 				case TlsAlertDescription.InsuficientSecurity:
 				case TlsAlertDescription.InternalError:
-				case TlsAlertDescription.NoRenegotiation:
 				case TlsAlertDescription.ProtocolVersion:
 				case TlsAlertDescription.RecordOverflow:
 				case TlsAlertDescription.UnexpectedMessage:
 				case TlsAlertDescription.UnknownCA:
 				case TlsAlertDescription.UnsupportedCertificate:
-				case TlsAlertDescription.UserCancelled:
 				default:
 					this.level = TlsAlertLevel.Fatal;
 					break;
