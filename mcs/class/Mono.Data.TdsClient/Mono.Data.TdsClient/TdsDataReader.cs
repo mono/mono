@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 
 namespace Mono.Data.TdsClient {
         public class TdsDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
@@ -250,7 +251,7 @@ namespace Mono.Data.TdsClient {
 				return schemaTable;
 			fieldCount = 0;
 
-			foreach (TdsColumnSchema schemaObject in command.Tds.ColumnInfo) {
+			foreach (SchemaInfo schemaObject in command.Tds.Schema) {
 				DataRow schemaRow = schemaTable.NewRow ();
 				schemaRow ["ColumnName"] = schemaObject.ColumnName;
 				schemaRow ["ColumnOrdinal"] = schemaObject.ColumnOrdinal;

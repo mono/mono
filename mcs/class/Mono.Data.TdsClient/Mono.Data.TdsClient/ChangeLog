@@ -1,3 +1,8 @@
+2002-10-30  Tim Coleman (tim@timcoleman.com)
+	* TdsDataReader.cs:
+		Use SchemaInfo instead of TdsColumnSchema
+	
+
 2002-10-25  Tim Coleman (tim@timcoleman.com)
 	* TdsConnection.cs:
 	* TdsConnectionPool.cs:
