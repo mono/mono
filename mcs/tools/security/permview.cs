@@ -52,27 +52,30 @@ namespace Mono.Tools {
 			tw.WriteLine ();
 		}
 
+		static PermissionSet GetPermissionSet (Assembly a, string name)
+		{
+			FieldInfo fi = typeof (Assembly).GetField (name, BindingFlags.Instance | BindingFlags.NonPublic);
+			if (fi == null)
+				throw new NotSupportedException ("Wrong runtime ?");
+			return (PermissionSet) fi.GetValue (a);
+		}
+
 		static bool ProcessAssemblyOnly (TextWriter tw, Assembly a) 
 		{
 			Type t = typeof (Assembly);
 
-			FieldInfo fi = t.GetField ("_minimum", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (fi == null)
+			// Minimum, Optional and Refuse permission set are only evaluated
+			// on demand (delayed as much as possible). A call Resolve will
+			// trigger their retrieval from the assembly metadata
+			MethodInfo resolve = t.GetMethod ("Resolve", BindingFlags.Instance | BindingFlags.NonPublic);
+			if (resolve == null)
 				return false;
-			PermissionSet ps = (PermissionSet) fi.GetValue (a);
-			ShowPermissionSet (tw, "Minimal Permission Set:", ps);
-			
-			fi = t.GetField ("_optional", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (fi == null)
-				return false;
-			ps = (PermissionSet) fi.GetValue (a);
-			ShowPermissionSet (tw, "Optional Permission Set:", ps);
+			resolve.Invoke (a, null);
 
-			fi = t.GetField ("_refuse", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (fi == null)
-				return false;
-			ps = (PermissionSet) fi.GetValue (a);
-			ShowPermissionSet (tw, "Refused Permission Set:", ps);
+			ShowPermissionSet (tw, "Minimal Permission Set:", GetPermissionSet (a, "_minimum"));
+			ShowPermissionSet (tw, "Optional Permission Set:", GetPermissionSet (a, "_optional"));
+			ShowPermissionSet (tw, "Refused Permission Set:", GetPermissionSet (a, "_refuse"));
+
 			return true;
 		}
 
@@ -200,8 +203,6 @@ namespace Mono.Tools {
 		[STAThread]
 		static int Main (string[] args) 
 		{
-			int result = 1;
-
 			try {
 				Console.WriteLine (new AssemblyInfo ().ToString ());
 				if (args.Length == 0) {
@@ -227,12 +228,13 @@ namespace Mono.Tools {
 					Console.Error.WriteLine ("Couldn't load assembly '{0}'.", assemblyName);
 					return 2;
 				}
+				tw.Close ();
 			}
 			catch (Exception e) {
 				Console.Error.WriteLine ("Error: " + e.ToString ());
 				Help ();
 			}
-			return result;
+			return 0;
 		}
 	}
 }

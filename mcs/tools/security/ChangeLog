@@ -1,3 +1,10 @@
+2004-12-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Added permview to the build.
+	* permview.cs: Fixed option /OUTPUT to close the TextWriter so that 
+	the output is available (in the file) after execution. The default
+	execution (without /DECL) works with a *very* recent Mono runtime.
+
 2004-12-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* permview.cs: New. Managed declarative security permission viewer for
