@@ -166,8 +166,6 @@ namespace System.Runtime.Remoting
 
 		public static object Unmarshal (ObjRef objref, bool fRefine)
 		{
-			// FIXME: use type name when fRefine==true
-
 			Type classToProxy = fRefine ? objref.ServerType : typeof (MarshalByRefObject);
 			if (classToProxy == null) classToProxy = typeof (MarshalByRefObject);
 
@@ -311,6 +309,7 @@ namespace System.Runtime.Remoting
 
 		public static bool IsMethodOverloaded(IMethodMessage msg)
 		{
+			// TODO: use internal call for better performance
 			Type type = msg.MethodBase.DeclaringType;
 			MemberInfo[] members = type.GetMember (msg.MethodName, MemberTypes.Method, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 			return members.Length > 1;
@@ -318,6 +317,7 @@ namespace System.Runtime.Remoting
 
 		public static bool IsObjectOutOfAppDomain(object tp)
 		{
+			// TODO: use internal call for better performance
 			Identity ident = GetObjectIdentity((MarshalByRefObject)tp);
 			if (ident != null) return !ident.IsFromThisAppDomain;
 			else return false;
@@ -325,6 +325,7 @@ namespace System.Runtime.Remoting
 
 		public static bool IsObjectOutOfContext(object tp)
 		{
+			// TODO: use internal call for better performance
 			ServerIdentity ident = GetObjectIdentity((MarshalByRefObject)tp) as ServerIdentity;
 			if (ident != null) return ident.Context != System.Threading.Thread.CurrentContext;
 			else return false;

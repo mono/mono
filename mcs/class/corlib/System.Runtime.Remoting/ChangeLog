@@ -1,3 +1,9 @@
+2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ActivatedClientTypeEntry.cs, ActivatedServiceTypeEntry.cs, 
+	  IRemotingTypeInfo.cs, RemotingServices.cs, WellKnownServiceTypeEntry.cs:
+	  Removed some TODOs.
+
 2003-11-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* RemotingServices.cs (GetDomainProxy): Use the new InvokeInDomain 

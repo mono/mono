@@ -45,7 +45,6 @@ namespace System.Runtime.Remoting {
 			get { return obj_type; }
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
 			return TypeName + AssemblyName + ApplicationUrl;
