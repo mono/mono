@@ -111,7 +111,7 @@ namespace System.Security.Cryptography.Pkcs {
 		public ContentInfo ContentInfo {
 			get { 
 				if (_content == null) {
-					Oid oid = new Oid (PKCS7.data);
+					Oid oid = new Oid (PKCS7.Oid.data);
 					_content = new ContentInfo (oid, new byte [0]);
 				}
 				return _content; 
@@ -150,7 +150,7 @@ namespace System.Security.Cryptography.Pkcs {
 				throw new ArgumentNullException ("encodedMessage");
 
 			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (encodedMessage);
-			if (ci.ContentType != PKCS7.envelopedData)
+			if (ci.ContentType != PKCS7.Oid.envelopedData)
 				throw new Exception ("");
 
 			PKCS7.EnvelopedData ed = new PKCS7.EnvelopedData (ci.Content);

@@ -2,11 +2,10 @@
 // ContentInfo.cs - System.Security.Cryptography.Pkcs.ContentInfo
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +26,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if NET_2_0
 
 using System;
 using System.Security.Cryptography;
@@ -51,7 +52,9 @@ namespace System.Security.Cryptography.Pkcs {
 		// constructors
 
 		public ContentInfo (byte[] content) 
-			: this (new Oid ("1.2.840.113549.1.7.1"), content) {} 
+			: this (new Oid ("1.2.840.113549.1.7.1"), content)
+		{
+		} 
 
 		public ContentInfo (Oid oid, byte[] content) 
 		{
@@ -87,7 +90,7 @@ namespace System.Security.Cryptography.Pkcs {
 				PKCS7.ContentInfo ci = new PKCS7.ContentInfo (encodedMessage);
 				switch (ci.ContentType) {
 					// TODO - there are probably more - need testing
-					case PKCS7.signedData:
+					case PKCS7.Oid.signedData:
 						return new Oid (ci.ContentType);
 					default:
 						throw new CryptographicException ("Bad ASN1 - invalid OID");
@@ -99,3 +102,5 @@ namespace System.Security.Cryptography.Pkcs {
 		}
 	}
 }
+
+#endif

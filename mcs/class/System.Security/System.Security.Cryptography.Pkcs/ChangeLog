@@ -1,3 +1,10 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AlgorithmIdentifier.cs: Added missing #if NET_2_0.
+	* ContentInfo.cs: Fixed OID due to changes in Mono.Security.
+	* EnvelopedPkcs7.cs: Fixed OID due to changes in Mono.Security.
+	* SignedPkcs7.cs: Fixed OID due to changes in Mono.Security.
+
 2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ContentInfo.cs: Modified default Oid not to include description. 
