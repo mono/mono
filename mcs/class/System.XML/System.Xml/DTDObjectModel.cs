@@ -8,7 +8,7 @@
 //
 using System;
 using System.Collections;
-using System.Collections.Specialized;
+//using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -838,7 +838,7 @@ namespace Mono.Xml
 		string entityValue;
 		string notationName;
 
-		StringCollection ReferencingEntities = new StringCollection ();
+		ArrayList ReferencingEntities = new ArrayList ();
 
 		bool scanned;
 		bool recursed;
@@ -856,7 +856,7 @@ namespace Mono.Xml
 		public bool HasExternalReference {
 			get {
 				if (!scanned)
-					ScanEntityValue (new StringCollection ());
+					ScanEntityValue (new ArrayList ());
 				return hasExternalReference;
 			}
 		}
@@ -882,14 +882,14 @@ namespace Mono.Xml
 						entityValue = ReplacementText;
 					}
 					// Check illegal recursion.
-					ScanEntityValue (new StringCollection ());
+					ScanEntityValue (new ArrayList ());
 				}
 				return entityValue;
 			}
 		}
 
 		// It returns whether the entity contains references to external entities.
-		public void ScanEntityValue (StringCollection refs)
+		public void ScanEntityValue (ArrayList refs)
 		{
 			// To modify this code, beware nesting between this and EntityValue.
 			string value = EntityValue;

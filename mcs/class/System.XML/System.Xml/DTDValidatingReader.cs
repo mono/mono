@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Specialized;
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -25,10 +24,10 @@ namespace Mono.Xml
 			this.sourceTextReader = reader as XmlTextReader;
 			elementStack = new Stack ();
 			automataStack = new Stack ();
-			attributes = new StringCollection ();
-			attributeValues = new NameValueCollection ();
-			attributeLocalNames = new NameValueCollection ();
-			attributeNamespaces = new NameValueCollection ();
+			attributes = new ArrayList ();
+			attributeValues = new Hashtable ();
+			attributeLocalNames = new Hashtable ();
+			attributeNamespaces = new Hashtable ();
 			this.validatingReader = validatingReader;
 			valueBuilder = new StringBuilder ();
 			idList = new ArrayList ();
@@ -64,10 +63,10 @@ namespace Mono.Xml
 		DTDAutomata currentAutomata;
 		DTDAutomata previousAutomata;
 		bool isStandalone;
-		StringCollection attributes;
-		NameValueCollection attributeValues;
-		NameValueCollection attributeLocalNames;
-		NameValueCollection attributeNamespaces;
+		ArrayList attributes;
+		Hashtable attributeValues;
+		Hashtable attributeLocalNames;
+		Hashtable attributeNamespaces;
 		StringBuilder valueBuilder;
 		ArrayList idList;
 		ArrayList missingIDReferences;
@@ -107,7 +106,8 @@ namespace Mono.Xml
 			if (attributes.Count <= i)
 				throw new IndexOutOfRangeException ("Specified index is out of range: " + i);
 
-			return FilterNormalization (attributes [i], attributeValues [i]);
+			string attrName = (string) attributes [i];
+			return FilterNormalization (attrName, (string) attributeValues [attrName]);
 		}
 
 		public override string GetAttribute (string name)
@@ -118,7 +118,7 @@ namespace Mono.Xml
 			if (dtd == null)
 				return reader.GetAttribute (name);
 
-			return FilterNormalization (name, attributeValues [name]);
+			return FilterNormalization (name, (string) attributeValues [name]);
 		}
 
 		public override string GetAttribute (string name, string ns)
@@ -129,7 +129,7 @@ namespace Mono.Xml
 			if (dtd == null)
 				return reader.GetAttribute (name, ns);
 
-			return reader.GetAttribute (attributeLocalNames [name], ns);
+			return reader.GetAttribute ((string) attributeLocalNames [name], ns);
 		}
 
 		bool IXmlLineInfo.HasLineInfo ()
@@ -163,7 +163,7 @@ namespace Mono.Xml
 				return;
 
 			if (attributes.Count > i) {
-				currentAttribute = attributes [i];
+				currentAttribute = (string) attributes [i];
 				consumedAttribute = false;
 				return;
 			} else
@@ -217,8 +217,8 @@ namespace Mono.Xml
 			}
 
 			for (int i = 0; i < attributes.Count; i++) {
-				string iter = attributes [i];
-				if (attributeLocalNames [iter] == name)
+				string iter = (string) attributes [i];
+				if ((string) attributeLocalNames [iter] == name)
 					return MoveToAttribute (iter);
 			}
 			return false;
@@ -253,7 +253,7 @@ namespace Mono.Xml
 
 			if (attributes.Count == 0)
 				return false;
-			currentAttribute = attributes [0];
+			currentAttribute = (string) attributes [0];
 			reader.MoveToAttribute (currentAttribute);
 			consumedAttribute = false;
 			return true;
@@ -278,7 +278,7 @@ namespace Mono.Xml
 
 			int idx = attributes.IndexOf (currentAttribute);
 			if (idx + 1 < attributes.Count) {
-				currentAttribute = attributes [idx + 1];
+				currentAttribute = (string) attributes [idx + 1];
 				reader.MoveToAttribute (currentAttribute);
 				consumedAttribute = false;
 				return true;
@@ -304,6 +304,7 @@ namespace Mono.Xml
 			currentAttribute = null;
 			consumedAttribute = false;
 			attributes.Clear ();
+			attributeLocalNames.Clear ();
 			attributeValues.Clear ();
 			attributeNamespaces.Clear ();
 			isWhitespace = false;
@@ -1094,9 +1095,9 @@ namespace Mono.Xml
 				}
 				// As to this property, MS.NET seems ignorant of EntityHandling...
 				else if (NodeType == XmlNodeType.Attribute)// &&
-					return FilterNormalization (Name, attributeValues [currentAttribute]);
+					return FilterNormalization (Name, (string) attributeValues [currentAttribute]);
 				else if (consumedAttribute)
-					return FilterNormalization (Name, attributeValues [this.currentAttribute]);
+					return FilterNormalization (Name, (string) attributeValues [this.currentAttribute]);
 				else
 					return FilterNormalization (Name, reader.Value);
 			}

@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -78,11 +77,11 @@ namespace System.Xml
 		}
 
 		// A buffer for ReadContent for ReadOuterXml
-		private StringBuilder CurrentTag {
-			get {
-				return currentInput.CurrentMarkup;
-			}
-		}
+//		private StringBuilder CurrentTag {
+//			get {
+//				return currentInput.CurrentMarkup;
+//			}
+//		}
 
 		public int LineNumber {
 			get { return currentInput.LineNumber; }
@@ -150,7 +149,7 @@ namespace System.Xml
 
 				PopParserInput ();
 			}
-			StringCollection sc = new StringCollection ();
+			ArrayList sc = new ArrayList ();
 
 			// Entity recursion check.
 			foreach (DTDEntityDeclaration ent in DTD.EntityDecls.Values) {
@@ -582,7 +581,6 @@ namespace System.Xml
 				int quoteChar = ReadChar ();
 				if (quoteChar != '\'' && quoteChar != '"')
 					throw new XmlException ("quotation char was expected.");
-				int start = CurrentTag.Length;
 				ClearValueBuffer ();
 				bool loop = true;
 				while (loop) {
@@ -828,7 +826,6 @@ namespace System.Xml
 			int quoteChar = ReadChar ();
 			if (quoteChar != '\'' && quoteChar != '"')
 				throw new XmlException ("quotation char was expected.");
-			int start = CurrentTag.Length;
 			ClearValueBuffer ();
 
 			while (PeekChar () != quoteChar) {
@@ -1192,7 +1189,6 @@ namespace System.Xml
 			else
 				SkipWhitespace ();
 			int quoteChar = ReadChar ();	// apos or quot
-			int startPos = CurrentTag.Length;
 			int c = 0;
 			ClearValueBuffer ();
 			while (c != quoteChar) {
@@ -1212,7 +1208,6 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					"Whitespace is required after 'PUBLIC'.");
 			int quoteChar = ReadChar ();
-			int startPos = CurrentTag.Length;
 			int c = 0;
 			ClearValueBuffer ();
 			while(c != quoteChar)

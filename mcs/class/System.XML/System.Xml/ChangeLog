@@ -1,3 +1,9 @@
+2004-02-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs, DTDReader.cs, DTDValidatingReader.cs : 
+	  say goodbye to sys.collections.specialized.
+	  (replaced the classes in that namespace with ArrayList or Hashtable)
+
 2004-02-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : For performance reason, XmlTextReader now uses
