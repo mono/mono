@@ -540,12 +540,14 @@ namespace System.Windows.Forms {
 
 			foreach (TreeNode node in nodes) {
 				DrawNode (node, ref depth, ref node_count, item_height,
-						font, ref visible_node_count, height, fill.Width);
+						font, ref visible_node_count, height);
 				depth = 0;
 			}
 
-			if (add_hscroll)
+			if (max_node_width > ClientRectangle.Width) {
+				add_hscroll = true;
 				AddHorizontalScrollBar ();
+			}
 
 			if (add_vscroll)
 				AddVerticalScrollBar (node_count, vclip);
@@ -647,7 +649,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void DrawNode (TreeNode node, ref int depth, ref int node_count, int item_height,
-				Font font, ref int visible_node_count, int max_height, int max_width)
+				Font font, ref int visible_node_count, int max_height)
 		{
 			node_count++;
 			int x = (!show_root_lines && node.Parent != null ? depth  - 1 : depth) * indent;
@@ -690,18 +692,15 @@ namespace System.Windows.Forms {
 				y += item_height + 1;
 			}
 
-			if (node.Bounds.Right > max_width) {
-				add_hscroll = true;
-				if (node.Bounds.Right > max_node_width)
-					max_node_width = node.Bounds.Right;
-			}
+			if (node.Bounds.Right > max_node_width)
+				max_node_width = node.Bounds.Right;
 
 			depth++;
 			if (node.IsExpanded) {
 				for (int i = 0; i < _n_count; i++) {
 					int tdepth = depth;
 					DrawNode (node.nodes [i], ref tdepth, ref node_count, item_height,
-							font, ref visible_node_count, max_height, max_width);
+							font, ref visible_node_count, max_height);
 				}
 			}
 
@@ -715,7 +714,7 @@ namespace System.Windows.Forms {
 		{
 			vbar.Maximum = total_nodes;
 			int height = ClientRectangle.Height;
-			
+
 			vbar.LargeChange = height / ItemHeight;
 
 			if (add_hscroll)
@@ -751,6 +750,12 @@ namespace System.Windows.Forms {
 
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
+			
+			if (max_node_width > ClientRectangle.Width) {
+				add_hscroll = true;
+				AddHorizontalScrollBar ();
+			}
+
 			if (vbar != null) {
 				vbar.Left = Right - vbar.Width;
 				vbar.Height = Height;

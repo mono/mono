@@ -1,3 +1,10 @@
+2004-12-01  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: When resizing the tree if the user is making it
+	smaller we don't get expose events, so we need to handle adding
+	the horizontal scrollbar in the size changed handler as well as
+	the expose handler.
+
 2004-12-02  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DrawItemState.cs: fixes wrong enum values
