@@ -201,7 +201,7 @@ namespace System.IO {
 				files = Directory.GetFileSystemEntries (directory, data.FileMask);
 			} else {
 				// The pattern does not have wildcards
-				if (File.Exists (data.FileMask))
+				if (File.Exists (data.FileMask) || Directory.Exists (data.FileMask))
 					files = new string [] { data.FileMask };
 				else
 					files = NoStringsArray;
