@@ -1,3 +1,8 @@
+2004-01-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoConvert.cs: RSA doesn't start with a Q - at least that what
+	a strongname told me. Sorry Ron :(
+
 2003-11-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* MD4.cs: New. Asbtract class for all MD4 implementations. WARNING:

@@ -235,7 +235,7 @@ namespace Mono.Security.Cryptography {
 			blob [1] = 0x02;	// Version - Always CUR_BLOB_VERSION (0x02)
 			// [2], [3]		// RESERVED - Always 0
 			blob [5] = 0x24;	// ALGID - Always 00 24 00 00 (for CALG_RSA_SIGN)
-			blob [8] = 0x51;	// Magic - RSA1 (ASCII in hex)
+			blob [8] = 0x52;	// Magic - RSA1 (ASCII in hex)
 			blob [9] = 0x53;
 			blob [10] = 0x41;
 			blob [11] = 0x31;
