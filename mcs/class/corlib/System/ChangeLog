@@ -1,4 +1,9 @@
 
+Fri Feb 8 19:14:54 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* CrossAppDomainDelegate.cs, AssemblyLoadEventHandler.cs,
+	UnhandledExceptionEventHandler.cs: added delegates.
+
 Fri Feb 8 18:06:20 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MarshalByRefObject.cs: add ToString () method
