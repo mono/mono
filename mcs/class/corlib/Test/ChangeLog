@@ -1,3 +1,7 @@
+2002/03/28  Nick Drochak <ndrochak@gol.com>
+
+	* corlib_test.build: Don't exclude IntegerFormatterTest any more.
+
 2002-03-20  Nick Drochak  <ndrochak@gol.com>
 
 	* corlib_test.build: On 'clean' remove all the dll's and pdb's
