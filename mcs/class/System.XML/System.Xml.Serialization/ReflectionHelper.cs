@@ -81,8 +81,13 @@ namespace System.Xml.Serialization
 			if (type.IsInterface)
 				throw new InvalidOperationException (type.FullName + " cannot be serialized because it is an interface");
 				
-			if (type.IsNotPublic)
-				throw new InvalidOperationException (type.FullName + " is inaccessible due to its protection level. Only public types can be processed");
+			Type t = type;
+			do {
+				if (!t.IsPublic && !t.IsNestedPublic)
+					throw new InvalidOperationException (type.FullName + " is inaccessible due to its protection level. Only public types can be processed");
+				t = t.DeclaringType;
+			}
+			while (t != null);
 		}
 	}
 }

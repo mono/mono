@@ -1,3 +1,9 @@
+2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ReflectionHelper.cs: Correctly detect private types.
+	* XmlCodeExporter.cs: Implemented missing method.
+	* XmlSchemaImporter.cs: Allow import of root primitive types.
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeIdentifier.cs, CodeIdentifiers.cs, MapCodeGenerator.cs,

@@ -143,7 +143,8 @@ namespace System.Xml.Serialization {
 			}
 			else
 			{
-				if (!LocateElement (name, out qname, out stype)) return null;
+				if (!LocateElement (name, out qname, out stype) || stype == null)
+					return null;
 			}
 			
 			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
@@ -186,17 +187,7 @@ namespace System.Xml.Serialization {
 			// Does not have the requested base type.
 			// Then, get/create a map for that base type.
 			
-			XmlTypeMapping baseMap;
-			if (!encodedFormat)
-			{
-				if (auxXmlRefImporter == null) auxXmlRefImporter = new XmlReflectionImporter ();
-				baseMap = auxXmlRefImporter.ImportTypeMapping (baseType);
-			}
-			else
-			{
-				if (auxSoapRefImporter == null) auxSoapRefImporter = new SoapReflectionImporter ();
-				baseMap = auxSoapRefImporter.ImportTypeMapping (baseType);
-			}
+			XmlTypeMapping baseMap = ReflectType (baseType, null);
 			
 			// Add this map as a derived map of the base map
 
@@ -337,6 +328,12 @@ namespace System.Xml.Serialization {
 			XmlSchemaType stype;
 			if (!LocateElement (name, out qname, out stype)) return null;
 			
+			if (stype == null) {
+				// Importing a primitive type
+				TypeData td = TypeTranslator.GetPrimitiveTypeData (qname.Name);
+				return ReflectType (td.Type, name.Namespace);
+			}
+			
 			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
 			if (map != null) return map;
 			
@@ -366,7 +363,12 @@ namespace System.Xml.Serialization {
 			else
 			{
 				if (elem.SchemaTypeName.IsEmpty) return false;
-				if (elem.SchemaTypeName.Namespace == XmlSchema.Namespace) return false;
+				
+				if (elem.SchemaTypeName.Namespace == XmlSchema.Namespace) {
+					qname = elem.SchemaTypeName;
+					return true;
+				}
+				
 				object type = schemas.Find (elem.SchemaTypeName, typeof (XmlSchemaComplexType));
 				if (type == null) type = schemas.Find (elem.SchemaTypeName, typeof (XmlSchemaSimpleType));
 				if (type == null) throw new InvalidOperationException ("Schema type '" + elem.SchemaTypeName + "' not found");
@@ -1597,6 +1599,19 @@ namespace System.Xml.Serialization {
 					
 			}
 			return grp;
+		}
+		
+		XmlTypeMapping ReflectType (Type type, string ns)
+		{			if (!encodedFormat)
+			{
+				if (auxXmlRefImporter == null) auxXmlRefImporter = new XmlReflectionImporter ();
+				return auxXmlRefImporter.ImportTypeMapping (type, ns);
+			}
+			else
+			{
+				if (auxSoapRefImporter == null) auxSoapRefImporter = new SoapReflectionImporter ();
+				return auxSoapRefImporter.ImportTypeMapping (type, ns);
+			}
 		}
 
 

@@ -78,10 +78,15 @@ namespace System.Xml.Serialization {
 			AddMappingMetadata (metadata, member, ns, false);
 		}
 
-		[MonoTODO]
 		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlTypeMapping member, string ns)
 		{
-			throw new NotImplementedException ();
+			if (member.Namespace != ns && member.Namespace != "") {
+				CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRoot");
+				ratt.Arguments.Add (MapCodeGenerator.GetArg (member.ElementName));
+				ratt.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", member.Namespace));
+				ratt.Arguments.Add (MapCodeGenerator.GetArg ("IsNullable", member.IsNullable));
+				metadata.Add (ratt);
+			}
 		}
 
 		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlMemberMapping member, string ns, bool forceUseMemberName)
