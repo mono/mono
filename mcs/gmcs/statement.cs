@@ -3617,7 +3617,7 @@ namespace Mono.CSharp {
 						MethodInfo mi = null;
 
 						foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
-							if (mk.GetParameters().Length == 0) {
+							if (TypeManager.GetArgumentTypes (mk).Length == 0) {
 								mi = mk;
 								break;
 							}

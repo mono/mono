@@ -1,3 +1,9 @@
+2004-09-02  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Using.EmitLocalVariableDeclFinally): Use
+	TypeManager.GetArgumentTypes() rather than calling GetParameters()
+	on the MethodBase.
+
 2004-09-01  Marek Safar  <marek.safar@seznam.cz>
 
 	C# 2.0 Static classes implemented
