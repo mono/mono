@@ -6,6 +6,16 @@ Tue Feb 17 21:40:16 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 2004-02-17  Martin Baulig  <martin@ximian.com>
 
+	* class.h (MonoDynamicGenericInst): Added `count_properties' and
+	`properties'.
+
+	* reflection.c (mono_reflection_generic_inst_initialize): Added
+	`MonoArray *properties' argument.
+
+	* icall.c (ves_icall_MonoGenericInst_GetProperties): New interncall.	
+
+2004-02-17  Martin Baulig  <martin@ximian.com>
+
 	* icall.c (ves_icall_Type_GetFields): Renamed to
 	ves_icall_Type_GetFields_internal() and added a
 	`MonoReflectionType *rtype' argument; pass it to
