@@ -16,7 +16,7 @@ using System.Collections;
 namespace MonoTests.Microsoft.VisualBasic
 {
         [TestFixture]
-	public class CollectionTest
+	public class CollectionTest : Assertion
 	{
 		
 		[SetUp]
@@ -33,8 +33,8 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			c = new Collection();
 
-			Assertion.AssertNotNull("#N01", c);
-			Assertion.AssertEquals("#N02", 0, c.Count);
+			AssertNotNull("#N01", c);
+			AssertEquals("#N02", 0, c.Count);
 		}
 
 		// Test Add method with Key == null
@@ -49,10 +49,10 @@ namespace MonoTests.Microsoft.VisualBasic
 			c.Add(typeof(double), null, null, null);
 			c.Add(typeof(string), null, null, null);
 			
-			Assertion.AssertEquals("#ANK01", 3, c.Count);
+			AssertEquals("#ANK01", 3, c.Count);
 
 			// Collection class is 1-based
-			Assertion.AssertEquals("#ANK02", typeof(string), c[3]);
+			AssertEquals("#ANK02", typeof(string), c[3]);
 
 		}
 
@@ -69,11 +69,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			c.Add("Basketball", "Basket", null, null);
 			c.Add("Volleyball", "Volley", null, null);
 
-			Assertion.AssertEquals("#AK01", 4, c.Count);
+			AssertEquals("#AK01", 4, c.Count);
 
 			// Collection class is 1-based
-			Assertion.AssertEquals("#AK02", "Baseball", c[1]);
-			Assertion.AssertEquals("#AK03", "Volleyball", c["Volley"]);
+			AssertEquals("#AK02", "Baseball", c[1]);
+			AssertEquals("#AK03", "Volleyball", c["Volley"]);
 
 		}
 
@@ -90,12 +90,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			c.Add(typeof(string), null, 2, null);
 			c.Add(typeof(object), null, 2, null);
 
-			Assertion.AssertEquals("#ABNK01", 4, c.Count);
+			AssertEquals("#ABNK01", 4, c.Count);
 
 			// Collection class is 1-based
-			Assertion.AssertEquals("#ABNK02", typeof(int), c[4]);
-			Assertion.AssertEquals("#ABNK03", typeof(double), c[1]);
-			Assertion.AssertEquals("#ABNK04", typeof(object), c[2]);
+			AssertEquals("#ABNK02", typeof(int), c[4]);
+			AssertEquals("#ABNK03", typeof(double), c[1]);
+			AssertEquals("#ABNK04", typeof(object), c[2]);
 
 		}
 
@@ -112,11 +112,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			c.Add("Basketball", "Basket", 1, null);
 			c.Add("Volleyball", "Volley", 3, null);
 
-			Assertion.AssertEquals("#ABK01", 4, c.Count);
-			Assertion.AssertEquals("#ABK02", "Basketball", c[1]);
-			Assertion.AssertEquals("#ABK03", "Baseball", c[4]);
-			Assertion.AssertEquals("#ABK04", "Volleyball", c["Volley"]);
-			Assertion.AssertEquals("#ABK05", "Football", c["Foot"]);
+			AssertEquals("#ABK01", 4, c.Count);
+			AssertEquals("#ABK02", "Basketball", c[1]);
+			AssertEquals("#ABK03", "Baseball", c[4]);
+			AssertEquals("#ABK04", "Volleyball", c["Volley"]);
+			AssertEquals("#ABK05", "Football", c["Foot"]);
 
 		}
 
@@ -133,12 +133,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			c.Add(typeof(string), null, null, 1);
 			c.Add(typeof(object), null, null, 3);
 
-			Assertion.AssertEquals("#AANK01", 4, c.Count);
+			AssertEquals("#AANK01", 4, c.Count);
 
 			// Collection class is 1-based
-			Assertion.AssertEquals("#AANK02", typeof(object), c[4]);
-			Assertion.AssertEquals("#AANK03", typeof(int), c[1]);
-			Assertion.AssertEquals("#AANK04", typeof(string), c[2]);
+			AssertEquals("#AANK02", typeof(object), c[4]);
+			AssertEquals("#AANK03", typeof(int), c[1]);
+			AssertEquals("#AANK04", typeof(string), c[2]);
 
 		}
 
@@ -155,13 +155,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			c.Add("Basketball", "Basket", null, 1);
 			c.Add("Volleyball", "Volley", null, 2);
 
-			Assertion.AssertEquals("#AAK01", 4, c.Count);
+			AssertEquals("#AAK01", 4, c.Count);
 
 			// Collection class is 1-based
-			Assertion.AssertEquals("#AAK02", "Baseball", c[1]);
-			Assertion.AssertEquals("#AAK03", "Football", c[4]);
-			Assertion.AssertEquals("#AAK04", "Basketball", c["Basket"]);
-			Assertion.AssertEquals("#AAK05", "Volleyball", c["Volley"]);
+			AssertEquals("#AAK02", "Baseball", c[1]);
+			AssertEquals("#AAK03", "Football", c[4]);
+			AssertEquals("#AAK04", "Basketball", c["Basket"]);
+			AssertEquals("#AAK05", "Volleyball", c["Volley"]);
 		}
 
 		// Test GetEnumerator method
@@ -183,17 +183,17 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			e = c.GetEnumerator();
 
-			Assertion.AssertNotNull("#GE01", e);
+			AssertNotNull("#GE01", e);
 
 			while (e.MoveNext()) {
-				Assertion.AssertEquals("#GE02." + i.ToString(), o[i], e.Current);
+				AssertEquals("#GE02." + i.ToString(), o[i], e.Current);
 				i++;
 			}
 
 			e.Reset();
 			e.MoveNext();
 
-			Assertion.AssertEquals("#GE03", o[0], e.Current);
+			AssertEquals("#GE03", o[0], e.Current);
 
 		}
 
@@ -215,7 +215,7 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			
 			foreach (object item in c) {
-				Assertion.AssertEquals("#fe01." + i.ToString(), o[i], item);
+				AssertEquals("#fe01." + i.ToString(), o[i], item);
 				i++;
 			}
 			
@@ -234,29 +234,29 @@ namespace MonoTests.Microsoft.VisualBasic
 			c.Add(typeof(string), null, null, null);
 			c.Add(typeof(object), null, null, null);
 
-			Assertion.AssertEquals("#RNK01", 4, c.Count);
+			AssertEquals("#RNK01", 4, c.Count);
 
 			c.Remove(3);
 
-			Assertion.AssertEquals("#RNK02", 3, c.Count);
+			AssertEquals("#RNK02", 3, c.Count);
 
 			// Collection class is 1-based
-			Assertion.AssertEquals("#RNK03", typeof(object), c[3]);
+			AssertEquals("#RNK03", typeof(object), c[3]);
 
 			c.Remove(1);
 
-			Assertion.AssertEquals("#RNK04", 2, c.Count);
-			Assertion.AssertEquals("#RNK05", typeof(double), c[1]);
-			Assertion.AssertEquals("#RNK06", typeof(object), c[2]);
+			AssertEquals("#RNK04", 2, c.Count);
+			AssertEquals("#RNK05", typeof(double), c[1]);
+			AssertEquals("#RNK06", typeof(object), c[2]);
 
 			c.Remove(2);
 
-			Assertion.AssertEquals("#RNK07", 1, c.Count);
-			Assertion.AssertEquals("#RNK08", typeof(double), c[1]);
+			AssertEquals("#RNK07", 1, c.Count);
+			AssertEquals("#RNK08", typeof(double), c[1]);
 
 			c.Remove(1);
 
-			Assertion.AssertEquals("#RNK09", 0, c.Count);
+			AssertEquals("#RNK09", 0, c.Count);
 		
 		}
 
@@ -273,31 +273,31 @@ namespace MonoTests.Microsoft.VisualBasic
 			c.Add("Basketball", "Basket", null, null);
 			c.Add("Volleyball", "Volley", null, null);
 
-			Assertion.AssertEquals("#RK01", 4, c.Count);
+			AssertEquals("#RK01", 4, c.Count);
 
 			c.Remove("Foot");
 
-			Assertion.AssertEquals("#RK02", 3, c.Count);
-			Assertion.AssertEquals("#RK03", "Basketball", c["Basket"]);
+			AssertEquals("#RK02", 3, c.Count);
+			AssertEquals("#RK03", "Basketball", c["Basket"]);
 
 			// Collection class is 1-based
-			Assertion.AssertEquals("#RK04", "Volleyball", c[3]);
+			AssertEquals("#RK04", "Volleyball", c[3]);
 
 			c.Remove("Base");
 
-			Assertion.AssertEquals("#RK05", 2, c.Count);
-			Assertion.AssertEquals("#RK06", "Basketball", c[1]);
-			Assertion.AssertEquals("#RK07", "Volleyball", c["Volley"]);
+			AssertEquals("#RK05", 2, c.Count);
+			AssertEquals("#RK06", "Basketball", c[1]);
+			AssertEquals("#RK07", "Volleyball", c["Volley"]);
 
 			c.Remove(2);
 
-			Assertion.AssertEquals("#RK08", 1, c.Count);
-			Assertion.AssertEquals("#RK09", "Basketball", c[1]);
-			Assertion.AssertEquals("#RK10", "Basketball", c["Basket"]);
+			AssertEquals("#RK08", 1, c.Count);
+			AssertEquals("#RK09", "Basketball", c[1]);
+			AssertEquals("#RK10", "Basketball", c["Basket"]);
 
 			c.Remove(1);
 
-			Assertion.AssertEquals("#RK11", 0, c.Count);
+			AssertEquals("#RK11", 0, c.Count);
 		}
 
 		// Test all the Exceptions we're supposed to throw
@@ -314,11 +314,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				object o = c[0];
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E01", typeof(IndexOutOfRangeException), e.GetType());
+				AssertEquals("#E01", typeof(IndexOutOfRangeException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E02", true, caughtException);
+			AssertEquals("#E02", true, caughtException);
                 
 			c.Add("Baseball", "Base", null, null);
 			c.Add("Football", "Foot", null, null);
@@ -332,11 +332,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				object o = c[5];
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E03", typeof(IndexOutOfRangeException), e.GetType());
+				AssertEquals("#E03", typeof(IndexOutOfRangeException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E04", true, caughtException);
+			AssertEquals("#E04", true, caughtException);
             
 			caughtException = false;
 			
@@ -345,11 +345,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				object o = c[0];
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E05", typeof(IndexOutOfRangeException), e.GetType());
+				AssertEquals("#E05", typeof(IndexOutOfRangeException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E06", true, caughtException);
+			AssertEquals("#E06", true, caughtException);
             
 			caughtException = false;
 			
@@ -361,12 +361,12 @@ namespace MonoTests.Microsoft.VisualBasic
 				// FIXME
 				// VB Language Reference says IndexOutOfRangeException 
 				// here, but MS throws ArgumentException
-				// Assertion.AssertEquals("#E07", typeof(IndexOutOfRangeException), e.GetType());
-				Assertion.AssertEquals("#E07", typeof(ArgumentException), e.GetType());
+				// AssertEquals("#E07", typeof(IndexOutOfRangeException), e.GetType());
+				AssertEquals("#E07", typeof(ArgumentException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E08", true, caughtException);
+			AssertEquals("#E08", true, caughtException);
          
 			caughtException = false;
 			
@@ -375,11 +375,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				object o = c[typeof(int)];
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E09", typeof(ArgumentException), e.GetType());
+				AssertEquals("#E09", typeof(ArgumentException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E10", true, caughtException);
+			AssertEquals("#E10", true, caughtException);
          
 			caughtException = false;
 			
@@ -388,11 +388,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				c.Add("Kickball", "Kick", "Volley", "Foot");
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E11", typeof(ArgumentException), e.GetType());
+				AssertEquals("#E11", typeof(ArgumentException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E12", true, caughtException);
+			AssertEquals("#E12", true, caughtException);
          
 			caughtException = false;
 			
@@ -401,11 +401,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				c.Add("Kickball", "Foot", null, null);
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E13", typeof(ArgumentException), e.GetType());
+				AssertEquals("#E13", typeof(ArgumentException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E14", true, caughtException);
+			AssertEquals("#E14", true, caughtException);
 
 			caughtException = false;
 			
@@ -414,11 +414,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				c.Add("Dodgeball", "Dodge", typeof(int), null);
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E15", typeof(InvalidCastException), e.GetType());
+				AssertEquals("#E15", typeof(InvalidCastException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E16", true, caughtException);
+			AssertEquals("#E16", true, caughtException);
         
 			caughtException = false;
 			
@@ -427,11 +427,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				c.Add("Wallyball", "Wally", null, typeof(int));
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E17", typeof(InvalidCastException), e.GetType());
+				AssertEquals("#E17", typeof(InvalidCastException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E18", true, caughtException);
+			AssertEquals("#E18", true, caughtException);
         
 			caughtException = false;
 			
@@ -440,11 +440,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				c.Remove(null);
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E19", typeof(ArgumentException), e.GetType());
+				AssertEquals("#E19", typeof(ArgumentException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E20", true, caughtException);
+			AssertEquals("#E20", true, caughtException);
         
 			caughtException = false;
 			
@@ -453,11 +453,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				c.Remove("Golf");
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E21", typeof(ArgumentException), e.GetType());
+				AssertEquals("#E21", typeof(ArgumentException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E22", true, caughtException);
+			AssertEquals("#E22", true, caughtException);
         
 			caughtException = false;
 			
@@ -466,11 +466,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				c.Remove(10);
 			}
 			catch (Exception e) {
-				Assertion.AssertEquals("#E23", typeof(IndexOutOfRangeException), e.GetType());
+				AssertEquals("#E23", typeof(IndexOutOfRangeException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E24", true, caughtException);
+			AssertEquals("#E24", true, caughtException);
         
 			caughtException = false;
 			
@@ -484,12 +484,12 @@ namespace MonoTests.Microsoft.VisualBasic
 				// FIXME
 				// On-line help says InvalidOperationException here, 
 				// but MS throws IndexOutOfRangeException
-				// Assertion.AssertEquals("#E25", typeof(InvalidOperationException), e.GetType());
-				Assertion.AssertEquals("#E25", typeof(IndexOutOfRangeException), e.GetType());
+				// AssertEquals("#E25", typeof(InvalidOperationException), e.GetType());
+				AssertEquals("#E25", typeof(IndexOutOfRangeException), e.GetType());
 				caughtException = true;
 			}
 
-			Assertion.AssertEquals("#E26", true, caughtException);
+			AssertEquals("#E26", true, caughtException);
         
 			caughtException = false;
 			
@@ -505,14 +505,14 @@ namespace MonoTests.Microsoft.VisualBasic
 			catch (Exception e) {
 				// FIXME
 				// On-line help says this should throw an error. MS doesn't.
-				Assertion.AssertEquals("#E27", typeof(InvalidOperationException), e.GetType());
+				AssertEquals("#E27", typeof(InvalidOperationException), e.GetType());
 				caughtException = true;
 			}
 
 			// FIXME
 			// What to do about this?  MS doesn't throw an error
-			// Assertion.AssertEquals("#E28", true, caughtException);
-			Assertion.AssertEquals("#E28", false, caughtException);
+			// AssertEquals("#E28", true, caughtException);
+			AssertEquals("#E28", false, caughtException);
         
 			caughtException = false;
 			
@@ -528,14 +528,14 @@ namespace MonoTests.Microsoft.VisualBasic
 			catch (Exception e) {
 				// FIXME
 				// On-line help says this should throw an error.  MS doesn't.
-				Assertion.AssertEquals("#E29", typeof(InvalidOperationException), e.GetType());
+				AssertEquals("#E29", typeof(InvalidOperationException), e.GetType());
 				caughtException = true;
 			}
 
 			// FIXME
 			// What to do about this?  MS doesn't throw an error
-			// Assertion.AssertEquals("#E30", true, caughtException);
-			Assertion.AssertEquals("#E30", false, caughtException);
+			// AssertEquals("#E30", true, caughtException);
+			AssertEquals("#E30", false, caughtException);
 
 			caughtException = false;
 		}

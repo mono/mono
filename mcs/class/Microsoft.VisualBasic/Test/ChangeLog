@@ -1,3 +1,8 @@
+2003-05-13  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* CollectionTest.cs ConversionTest.cs DateAndTimeTest.cs
+	  Inherited from Assertion and removed 
+	  Assertion. prefix from assertions
+
 2003-04-17  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile.gnu: get the nunit dll from class/lib now.
