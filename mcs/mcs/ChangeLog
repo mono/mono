@@ -1,5 +1,16 @@
 2001-09-17  Ravi Pratap  <ravi@ximian.com>
 
+	* class.cs (TypeContainer::EmitDefaultConstructor): Register
+	the default constructor builder with our hashtable for methodbuilders
+	to methodcores.
+
+	* expression.cs (Invocation::OverloadResolve): Add a check for pd == null
+	and argument_count is 0 in which case we have a match.
+	(Binary::ResolveOperator): More null checking and miscellaneous coding
+	style cleanup.
+
+2001-09-17  Ravi Pratap  <ravi@ximian.com>
+
 	* rootcontext.cs (IsNameSpace): Compare against null.
 
 	* everywhere : Correct spelling to 'Greater' and to 'Subtract'

@@ -880,54 +880,65 @@ namespace CIR {
 			//
 			// Step 1: Perform Operator Overload location
 			//
-			Expression i, j;
+			Expression left_expr, right_expr;
 			
 			string op = "Operator" + oper;
 
-			i = MemberLookup (tc.RootContext, l, op, false);
+			left_expr = MemberLookup (tc.RootContext, l, op, false);
 
-			if (!(i is MethodGroupExpr)){
-				// FIXME: Find proper error
-				tc.RootContext.Report.Error (118, "Did find something that is not a method");
-				return null;
-			}
-			
-			j = MemberLookup (tc.RootContext, r, op, false);
-
-			if (!(j is MethodGroupExpr)){
+			if (!(left_expr is MethodGroupExpr)){
 				// FIXME: Find proper error
 				tc.RootContext.Report.Error (118, "Did find something that is not a method");
 				return null;
 			}
 
-			// Now we need to form the union of these two sets and then call OverloadResolve
-			// on that.
-			MethodGroupExpr left_set = (MethodGroupExpr) i;
-			MethodGroupExpr right_set = (MethodGroupExpr) j;
-			
-			int length1, length2;
-			length1 = left_set.Methods.Length;
-			length2 = right_set.Methods.Length;
+			right_expr = MemberLookup (tc.RootContext, r, op, false);
 
-			MemberInfo [] mi = new MemberInfo [length1 + length2];
-			left_set.Methods.CopyTo (mi, 0);
-			right_set.Methods.CopyTo (mi, length1);
-			
-			MethodGroupExpr union = new MethodGroupExpr (mi);
+			if (!(right_expr is MethodGroupExpr)){
+				// FIXME: Find proper error
+				tc.RootContext.Report.Error (118, "Did find something that is not a method");
+				return null;
+			}
 
-			Arguments = new ArrayList ();
-			Arguments.Add (new Argument (left, Argument.AType.Expression));
-			Arguments.Add (new Argument (right, Argument.AType.Expression));
-			
-			method = Invocation.OverloadResolve (tc, union, Arguments);
-			if (method != null)
-				return this;
+			if (left_expr != null || right_expr != null) {
 
+				// Now we need to form the union of these two sets and then call OverloadResolve
+				// on that.
+				MethodGroupExpr left_set = null, right_set = null;
+				int length1 = 0, length2 = 0;
+				
+				if (left_expr != null) {
+					left_set = (MethodGroupExpr) left_expr;
+					length1 = left_set.Methods.Length;
+				}
+
+				if (right_expr != null) {
+					right_set = (MethodGroupExpr) right_expr;
+					length2 = right_set.Methods.Length;
+				}
+				
+				MemberInfo [] mi = new MemberInfo [length1 + length2];
+				if (left_set != null)
+					left_set.Methods.CopyTo (mi, 0);
+				if (right_set != null)
+					right_set.Methods.CopyTo (mi, length1);
+				
+				MethodGroupExpr union = new MethodGroupExpr (mi);
+				
+				Arguments = new ArrayList ();
+				Arguments.Add (new Argument (left, Argument.AType.Expression));
+				Arguments.Add (new Argument (right, Argument.AType.Expression));
+				
+				method = Invocation.OverloadResolve (tc, union, Arguments);
+				if (method != null)
+					return this;
+
+			}
 
 			//
 			// Step 2: Default operations on CLI native types.
 			//
-
+			
 			// Only perform numeric promotions on:
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
 			//
@@ -1567,6 +1578,10 @@ namespace CIR {
 				ParameterData pd;
 
 				pd = GetParameterData (tc, mb);
+
+				// If this is the case, we have a method with no args - presumably
+				if (pd == null && argument_count == 0)
+					return me.Methods [0];
 
 				//
 				// Compute how good this is

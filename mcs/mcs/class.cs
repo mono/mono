@@ -539,6 +539,9 @@ namespace CIR {
 				ca |= MethodAttributes.Public;
 
 			cb = TypeBuilder.DefineDefaultConstructor (ca);
+			Constructor c = new Constructor (".ctor", null, new ConstructorBaseInitializer (null));
+							 
+			method_builders_to_methods.Add (cb, c);
 
 			if (is_static){
 				default_static_constructor_builder = cb;
