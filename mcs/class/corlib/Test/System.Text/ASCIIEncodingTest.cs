@@ -164,6 +164,13 @@ namespace MonoTests.System.Text {
                 	AssertEquals (testchars[1], (char) bytes[0]);
 		}
 
+		public void TestZero ()
+		{
+			Encoding encoding = Encoding.ASCII;
+			AssertEquals ("#01", encoding.GetString (new byte [0]), "");
+			AssertEquals ("#02", encoding.GetString (new byte [0], 0, 0), "");
+		}
+
 	}
 
 }
