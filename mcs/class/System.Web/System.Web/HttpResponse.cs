@@ -275,6 +275,9 @@ namespace System.Web
 			if (virtualPath == null)
 				return null;
 
+			if (virtualPath == "")
+				return _Context.Request.RootVirtualDir;
+
 			if (UrlUtils.IsRelativeUrl (virtualPath)) {
 				virtualPath = UrlUtils.Combine (_Context.Request.RootVirtualDir, virtualPath);
 			} else if (UrlUtils.IsRooted (virtualPath)) {
