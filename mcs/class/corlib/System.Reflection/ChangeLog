@@ -1,3 +1,13 @@
+2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Assembly.cs (InternalGetType): Add a 'module' argument so this
+	method can be used from Module as well.
+
+	* Module.cs (GetType): Implement.
+
+	* Module.cs (GetTypes): Implement.
+
+	* Module.cs: Remove some [MonoTODO] attributes from implemented methods.
 2003-11-08  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoInflatedMethod, MonoInflatedCtor): Added

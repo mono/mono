@@ -221,14 +221,14 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern Type InternalGetType (String name, Boolean throwOnError, Boolean ignoreCase);
+		internal extern Type InternalGetType (Module module, String name, Boolean throwOnError, Boolean ignoreCase);
 
 		public Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			if (name == null)
 				throw new ArgumentNullException (name);
 
-			return InternalGetType (name, throwOnError, ignoreCase);
+			return InternalGetType (null, name, throwOnError, ignoreCase);
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

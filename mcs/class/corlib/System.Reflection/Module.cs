@@ -53,13 +53,11 @@ namespace System.Reflection {
 			return null;
 		}
 	
-		[MonoTODO]
 		public virtual object[] GetCustomAttributes(bool inherit) 
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 	
-		[MonoTODO]
 		public virtual object[] GetCustomAttributes(Type attributeType, bool inherit) 
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
@@ -149,42 +147,43 @@ namespace System.Reflection {
 			}
 		}
 	
-		[MonoTODO]
 		public virtual Type GetType(string className) 
 		{
-			return null;
+			return GetType (className, false, false);
 		}
 	
-		[MonoTODO]
 		public virtual Type GetType(string className, bool ignoreCase) 
 		{
-			return null;
+			return GetType (className, false, ignoreCase);
 		}
 	
-		[MonoTODO]
 		public virtual Type GetType(string className, bool throwOnError, bool ignoreCase) 
 		{
-			return null;
+			if (className == null)
+				throw new ArgumentNullException ("className");
+			if (className == String.Empty)
+				throw new ArgumentException ("Type name can't be empty");
+			return assembly.InternalGetType (this, className, throwOnError, ignoreCase);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern Type[] InternalGetTypes ();
 	
-		[MonoTODO]
 		public virtual Type[] GetTypes() 
 		{
-			return null;
+			return InternalGetTypes ();
 		}
 	
-		[MonoTODO]
 		public virtual bool IsDefined (Type attributeType, bool inherit) 
 		{
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 	
-		public bool IsResource() 
+		public bool IsResource()
 		{
 			return is_resource;
 		}
 	
-		[MonoTODO]
 		public override string ToString () 
 		{
 			return "Reflection.Module: " + name;
