@@ -96,9 +96,17 @@ namespace System.Reflection {
 			return String.Format ("{0} {1}", info.type, info.name);
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void SetValueInternal (FieldInfo fi, object obj, object value);
+
 		public override void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
 		{
+			if (IsStatic && obj == null)
+				throw new ArgumentNullException ("obj");
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			object realval = binder.ChangeType (val, FieldType, culture);
+			SetValueInternal (this, obj, realval);
 		}
 	}
 }

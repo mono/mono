@@ -33,6 +33,20 @@ namespace System.Reflection
 			}
 		}
 		
+		internal static bool ConvertArgs (Binder binder, object[] args, ParameterInfo[] pinfo, CultureInfo culture) {
+			if (args == null && pinfo.Length == 0)
+				return true;
+			if (pinfo.Length != args.Length)
+				return false;
+			for (int i = 0; i < args.Length; ++i) {
+				object v = binder.ChangeType (args [i], pinfo[i].ParameterType, culture);
+				if ((v == null) && (args [i] != null))
+					return false;
+				args [i] = v;
+			}
+			return true;
+		}
+
 		internal sealed class Default : Binder {
 			public override FieldInfo BindToField (BindingFlags bindingAttr, FieldInfo[] match, object value, CultureInfo culture) 
 			{
@@ -48,12 +62,29 @@ namespace System.Reflection
 			[MonoTODO]
 			public override MethodBase BindToMethod (BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, out object state)
 			{
-				throw new NotImplementedException ();
+				Type[] types;
+				if (args == null)
+					types = Type.EmptyTypes;
+				else {
+					types = new Type [args.Length];
+					for (int i = 0; i < args.Length; ++i) {
+						if (args [i] != null)
+							types [i] = args [i].GetType ();
+					}
+				}
+				MethodBase selected = SelectMethod (bindingAttr, match, types, modifiers);
+				state = null;
+				return selected;
 			}
 
 			public override object ChangeType (object value, Type type, CultureInfo culture)
 			{
-				if (check_type (value.GetType (), type))
+				if (value == null)
+					return null;
+				Type vtype = value.GetType ();
+				if (vtype == type || type.IsAssignableFrom (vtype))
+					return value;
+				if (check_type (vtype, type))
 					return Convert.ChangeType (value, type);
 				return null;
 			}
@@ -61,7 +92,8 @@ namespace System.Reflection
 			[MonoTODO]
 			public override void ReorderArgumentArray (ref object[] args, object state)
 			{
-				throw new NotImplementedException ();
+				//do nothing until we support named arguments
+				//throw new NotImplementedException ();
 			}
 
 			private static bool check_type (Type from, Type to) {

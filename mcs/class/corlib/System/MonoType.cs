@@ -280,8 +280,134 @@ namespace System
 						     ParameterModifier[] modifiers,
 						     CultureInfo culture, string[] namedParameters)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if ((invokeAttr & BindingFlags.CreateInstance) != 0) {
+				if ((invokeAttr & (BindingFlags.GetField |
+						BindingFlags.GetField | BindingFlags.GetProperty |
+						BindingFlags.SetProperty)) != 0)
+					throw new ArgumentException ("invokeAttr");
+			}
+			if ((invokeAttr & BindingFlags.GetField) != 0 && (invokeAttr & BindingFlags.SetField) != 0)
+				throw new ArgumentException ("invokeAttr");
+			if ((invokeAttr & BindingFlags.GetProperty) != 0 && (invokeAttr & BindingFlags.SetProperty) != 0)
+				throw new ArgumentException ("invokeAttr");
+			if ((invokeAttr & BindingFlags.InvokeMethod) != 0 && (invokeAttr & (BindingFlags.SetProperty|BindingFlags.SetField)) != 0)
+				throw new ArgumentException ("invokeAttr");
+			if ((invokeAttr & BindingFlags.SetField) != 0 && ((args == null) || args.Length != 1))
+				throw new ArgumentException ("invokeAttr");
+			if ((namedParameters != null) && ((args == null) || args.Length < namedParameters.Length))
+				throw new ArgumentException ("namedParameters");
+
+			/* set some defaults if none are provided :-( */
+			if ((invokeAttr & (BindingFlags.Public|BindingFlags.NonPublic)) == 0)
+				invokeAttr |= BindingFlags.Public;
+			if ((invokeAttr & (BindingFlags.Static|BindingFlags.Instance)) == 0)
+				invokeAttr |= BindingFlags.Static|BindingFlags.Instance;
+
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			if ((invokeAttr & BindingFlags.CreateInstance) != 0) {
+				/* the name is ignored */
+				invokeAttr |= BindingFlags.DeclaredOnly;
+				ConstructorInfo[] ctors = GetConstructors (invokeAttr);
+				object state = null;
+				MethodBase ctor = binder.BindToMethod (invokeAttr, ctors, ref args, modifiers, culture, namedParameters, ref state);
+				if (ctor == null)
+					throw new MissingMethodException ();
+				object result = ctor.Invoke (target, invokeAttr, binder, args, culture);
+				binder.ReorderArgumentArray (ref args, state);
+				return result;
+			}
+			if (name == String.Empty && Attribute.IsDefined (this, typeof (DefaultMemberAttribute))) {
+				DefaultMemberAttribute attr = (DefaultMemberAttribute) Attribute.GetCustomAttribute (this, typeof (DefaultMemberAttribute));
+				name = attr.MemberName;
+			}
+			bool ignoreCase = (invokeAttr & BindingFlags.IgnoreCase) != 0;
+			if ((invokeAttr & BindingFlags.InvokeMethod) != 0) {
+				MethodInfo[] methods = GetMethods (invokeAttr);
+				object state = null;
+				int i, count = 0;
+				for (i = 0; i < methods.Length; ++i) {
+					if (String.Compare (methods [i].Name, name, ignoreCase) == 0)
+						count++;
+				}
+				MethodBase[] smethods = new MethodBase [count];
+				count = 0;
+				for (i = 0; i < methods.Length; ++i) {
+					if (String.Compare (methods [i].Name, name, ignoreCase) == 0)
+						smethods [count++] = methods [i];
+				}
+				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, ref state);
+				if (m == null)
+					throw new MissingMethodException ();
+				object result = m.Invoke (target, invokeAttr, binder, args, culture);
+				binder.ReorderArgumentArray (ref args, state);
+				return result;
+			}
+			if ((invokeAttr & BindingFlags.GetField) != 0) {
+				FieldInfo f = GetField (name, invokeAttr);
+				if (f != null) {
+					return f.GetValue (target);
+				} else if ((invokeAttr & BindingFlags.GetProperty) == 0) {
+					throw new MissingFieldException ();
+				}
+				/* try GetProperty */
+			} else if ((invokeAttr & BindingFlags.SetField) != 0) {
+				FieldInfo f = GetField (name, invokeAttr);
+				if (f != null) {
+					f.SetValue (target, args [0]);
+					return null;
+				} else if ((invokeAttr & BindingFlags.SetProperty) == 0) {
+					throw new MissingFieldException ();
+				}
+				/* try SetProperty */
+			}
+			if ((invokeAttr & BindingFlags.GetProperty) != 0) {
+				PropertyInfo[] properties = GetProperties (invokeAttr);
+				object state = null;
+				int i, count = 0;
+				for (i = 0; i < properties.Length; ++i) {
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (properties [i].GetGetMethod () != null))
+						count++;
+				}
+				MethodBase[] smethods = new MethodBase [count];
+				count = 0;
+				for (i = 0; i < properties.Length; ++i) {
+					MethodBase m = properties [i].GetGetMethod ();
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (m != null))
+						smethods [count++] = m;
+				}
+				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, ref state);
+				if (m == null)
+					throw new MissingFieldException ();
+				object result = m.Invoke (target, invokeAttr, binder, args, culture);
+				binder.ReorderArgumentArray (ref args, state);
+				return result;
+			} else if ((invokeAttr & BindingFlags.SetProperty) != 0) {
+				PropertyInfo[] properties = GetProperties (invokeAttr);
+				object state = null;
+				int i, count = 0;
+				for (i = 0; i < properties.Length; ++i) {
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (properties [i].GetSetMethod () != null))
+						count++;
+				}
+				MethodBase[] smethods = new MethodBase [count];
+				count = 0;
+				for (i = 0; i < properties.Length; ++i) {
+					MethodBase m = properties [i].GetSetMethod ();
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (m != null))
+						smethods [count++] = m;
+				}
+				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, ref state);
+				if (m == null)
+					throw new MissingFieldException ();
+				object result = m.Invoke (target, invokeAttr, binder, args, culture);
+				binder.ReorderArgumentArray (ref args, state);
+				return result;
+			}
+			return null;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -68,10 +68,17 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters);
 		
-		[MonoTODO]
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			// fixme: consider all other parameters
-			return InternalInvoke (obj, parameters);
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			ParameterInfo[] pinfo = GetParameters ();
+			if (!Binder.ConvertArgs (binder, parameters, pinfo, culture))
+				throw new ArgumentException ("parameters");
+			try {
+				return InternalInvoke (obj, parameters);
+			} catch (Exception e) {
+				throw new TargetInvocationException (e);
+			}
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
@@ -148,12 +155,21 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters);
 		
-		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			throw new NotImplementedException ();
+		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			ParameterInfo[] pinfo = GetParameters ();
+			if (!Binder.ConvertArgs (binder, parameters, pinfo, culture))
+				throw new ArgumentException ("parameters");
+			try {
+				return InternalInvoke (obj, parameters);
+			} catch (Exception e) {
+				throw new TargetInvocationException (e);
+			}
 		}
 
-		public override Object Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			return InternalInvoke (null, parameters);
+		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
+			return Invoke (null, invokeAttr, binder, parameters, culture);
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
@@ -185,19 +201,27 @@ namespace System.Reflection {
 			}
 		}
 
-		[MonoTODO]
-		public override bool IsDefined (Type attribute_type, bool inherit) {
-			return false;
+		public override bool IsDefined (Type attributeType, bool inherit) {
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
-		[MonoTODO]
-		public override object[] GetCustomAttributes (bool inherit) {
-			return null;
+		public override object[] GetCustomAttributes( bool inherit) {
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
-		[MonoTODO]
-		public override object[] GetCustomAttributes (Type attributeType, bool inherit) {
-			return null;
+		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+		}
+
+		public override string ToString () {
+			string parms = "";
+			ParameterInfo[] p = GetParameters ();
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					parms = parms + ", ";
+				parms = parms + p [i].ParameterType.Name;
+			}
+			return "Void "+Name+"("+parms+")";
 		}
 	}
 }

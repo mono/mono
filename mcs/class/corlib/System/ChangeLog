@@ -1,4 +1,8 @@
 
+Wed Sep 11 12:49:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs, Type.cs: implemented InvokeMember.
+
 Wed Sep 11 11:06:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Delegate.cs: check the type passed to CreateDelegate is a Delegate

@@ -853,18 +853,16 @@ namespace System {
 			return result;
 		}
 
-		[MonoTODO]
 		public object InvokeMember (string name, BindingFlags invokeAttr, Binder binder,
 					    object target, object[] args)
 		{
-			throw new NotImplementedException ();
+			return InvokeMember (name, invokeAttr, binder, target, args, null, null, null);
 		}
 
-		[MonoTODO]
 		public object InvokeMember (string name, BindingFlags invokeAttr, Binder binder,
 					    object target, object[] args, CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			return InvokeMember (name, invokeAttr, binder, target, args, null, culture, null);
 		}
 
 		public abstract object InvokeMember (string name, BindingFlags invokeAttr,

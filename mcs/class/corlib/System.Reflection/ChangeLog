@@ -1,4 +1,11 @@
 
+Wed Sep 11 12:50:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Binder.cs: more default binder implementation.
+	* FieldInfo.cs, MonoField.cs: fixed SetValue () implementation.
+	* MonoMethod.cs: use the binder in the Invoke () implementation.
+	Implemented custom attributes methods and ToString for constructors.
+
 Thu Sep 5 20:36:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Binder.cs: finished the Binder class and implemented the default
