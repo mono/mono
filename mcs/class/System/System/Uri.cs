@@ -933,7 +933,7 @@ namespace System
 			path = Reduce (path);
 		}
 
-		public static string Reduce (string path)
+		private static string Reduce (string path)
 		{
 			path = path.Replace ('\\','/');
 			string [] parts = path.Split ('/');
