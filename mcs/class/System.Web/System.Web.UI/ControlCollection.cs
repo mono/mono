@@ -73,7 +73,7 @@ namespace System.Web.UI {
 			if (index == -1){
 				Add (child);
 			} else {
-				list [index] = child;
+				list.Insert (index, child);
 				owner.AddedControl (child, index);
 			}
 		}
