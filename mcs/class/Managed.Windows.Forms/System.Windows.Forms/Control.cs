@@ -2762,7 +2762,8 @@ namespace System.Windows.Forms
 			case Msg.WM_ERASEBKGND: {
 				if (GetStyle (ControlStyles.UserPaint)) {
 					if (!GetStyle(ControlStyles.AllPaintingInWmPaint)) {
-						PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
+						PaintEventArgs eraseEventArgs = new PaintEventArgs (m.WParam == IntPtr.Zero ? Graphics.FromHwnd (m.HWnd) :
+                                                                Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
 						OnPaintBackground (eraseEventArgs);
 					}
 					m.Result = (IntPtr)1;
