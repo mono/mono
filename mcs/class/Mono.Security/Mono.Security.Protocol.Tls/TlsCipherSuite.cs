@@ -115,6 +115,8 @@ namespace Mono.Security.Protocol.Tls
 			this.Context.MasterSecret = new byte[preMasterSecret.Length];
 			this.Context.MasterSecret = this.PRF(
 				preMasterSecret, "master secret", this.Context.RandomCS, 48);
+
+			DebugHelper.WriteLine(">>>> MasterSecret", this.Context.MasterSecret);
 		}
 
 		public override void ComputeKeys()
@@ -172,6 +174,14 @@ namespace Mono.Security.Protocol.Tls
 					this.Context.ServerWriteIV = CipherSuite.EmptyArray;
 				}
 			}
+
+			DebugHelper.WriteLine(">>>> KeyBlock", keyBlock.ToArray());
+			DebugHelper.WriteLine(">>>> ClientWriteKey", this.Context.ClientWriteKey);
+			DebugHelper.WriteLine(">>>> ClientWriteIV", this.Context.ClientWriteIV);
+			DebugHelper.WriteLine(">>>> ClientWriteMAC", this.Context.ClientWriteMAC);
+			DebugHelper.WriteLine(">>>> ServerWriteKey", this.Context.ServerWriteKey);
+			DebugHelper.WriteLine(">>>> ServerWriteIV", this.Context.ServerWriteIV);
+			DebugHelper.WriteLine(">>>> ServerWriteMAC", this.Context.ServerWriteMAC);
 
 			// Clear no more needed data
 			keyBlock.Reset();

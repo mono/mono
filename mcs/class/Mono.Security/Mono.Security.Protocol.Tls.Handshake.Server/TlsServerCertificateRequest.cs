@@ -43,12 +43,41 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			this.ProcessAsTls1();
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			throw new NotSupportedException();
+			ServerContext context = (ServerContext)this.Context;
+			
+			int count = context.ServerSettings.CertificateTypes.Length;
+
+			this.WriteByte(Convert.ToByte(count));
+
+			// Write requested certificate types
+			for (int i = 0; i < count; i++)
+			{
+				this.WriteByte((byte)context.ServerSettings.CertificateTypes[i]);
+			}
+
+			/*
+			 * Write requested certificate authorities (Distinguised Names)
+			 * 
+			 * Name ::= SEQUENCE OF RelativeDistinguishedName
+			 * 
+			 * RelativeDistinguishedName ::= SET OF AttributeValueAssertion
+			 * 
+			 * AttributeValueAssertion ::= SEQUENCE {
+			 * attributeType OBJECT IDENTIFIER
+			 * attributeValue ANY }
+			 */
+
+			this.Write(Convert.ToInt16(context.ServerSettings.DistinguisedNames.Length));
+			
+			for (int i = 0; i < context.ServerSettings.DistinguisedNames.Length; i++)
+			{
+#warning "Write certificate authorities list"
+			}
 		}
 
 		#endregion

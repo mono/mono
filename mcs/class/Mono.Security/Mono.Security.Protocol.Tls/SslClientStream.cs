@@ -481,8 +481,11 @@ namespace Mono.Security.Protocol.Tls
 					asyncResult = this.inputBuffer.BeginRead(
 						buffer, offset, count, callback, state);
 				}
-				catch (TlsException)
+				catch (TlsException ex)
 				{
+					this.protocol.SendAlert(ex.Alert);
+					this.Close();
+
 					throw new IOException("The authentication or decryption has failed.");
 				}
 				catch (Exception)
@@ -546,8 +549,11 @@ namespace Mono.Security.Protocol.Tls
 					asyncResult = this.innerStream.BeginWrite(
 						record, 0, record.Length, callback, state);
 				}
-				catch (TlsException)
+				catch (TlsException ex)
 				{
+					this.protocol.SendAlert(ex.Alert);
+					this.Close();
+
 					throw new IOException("The authentication or decryption has failed.");
 				}
 				catch (Exception)

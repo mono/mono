@@ -96,6 +96,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 					certificates.Add(certificate);
 
 					readed += certLength;
+
+					DebugHelper.WriteLine(
+						String.Format("Server Certificate {0}", certificates.Count),
+						buffer);
 				}
 			}
 

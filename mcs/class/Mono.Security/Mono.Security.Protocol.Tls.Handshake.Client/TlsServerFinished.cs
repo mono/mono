@@ -76,13 +76,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// Check server prf against client prf
 			if (clientHash.Length != serverHash.Length)
 			{
-				throw new TlsException("Invalid ServerFinished message received.");
+#warning Review that selected alert is correct
+				throw new TlsException(AlertDescription.InsuficientSecurity, "Invalid ServerFinished message received.");
 			}
 			for (int i = 0; i < serverHash.Length; i++)
 			{
 				if (clientHash[i] != serverHash[i])
 				{
-					throw new TlsException("Invalid ServerFinished message received.");
+					throw new TlsException(AlertDescription.InsuficientSecurity, "Invalid ServerFinished message received.");
 				}
 			}
 		}
@@ -108,7 +109,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			{
 				if (clientPRF[i] != serverPRF[i])
 				{
-					throw new TlsException("Invalid ServerFinished message received.");
+					throw new TlsException(AlertDescription.InsuficientSecurity, "Invalid ServerFinished message received.");
 				}
 			}
 		}

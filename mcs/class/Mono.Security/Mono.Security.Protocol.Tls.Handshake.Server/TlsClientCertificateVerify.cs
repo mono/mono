@@ -55,13 +55,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 				0, 
 				(int)context.HandshakeMessages.Length);
 
-			if (!hash.VerifySignature(
-				context.ClientSettings.CertificateRSA,
-				signature))
+			if (!hash.VerifySignature(context.ClientSettings.CertificateRSA, signature))
 			{
-				throw new TlsException(
-					AlertDescription.HandshakeFailiure,
-					"Handshake Failiure.");
+				throw new TlsException(AlertDescription.HandshakeFailiure, "Handshake Failiure.");
 			}
 		}
 
@@ -77,9 +73,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 				0,
 				(int)context.HandshakeMessages.Length);
 
-			if (!hash.VerifySignature(
-				context.ClientSettings.CertificateRSA,
-				signature))
+			if (!hash.VerifySignature(context.ClientSettings.CertificateRSA, signature))
 			{
 				throw new TlsException(
 					AlertDescription.HandshakeFailiure,

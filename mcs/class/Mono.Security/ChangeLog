@@ -1,3 +1,48 @@
+2004-04-21 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/DebugHelper.cs:
+
+		- New class.
+
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/Context.cs:
+	* Mono.Security.Protocol.Tls/Context.cs:
+	* Mono.Security.Protocol.Tls/SslCipherSuite.cs:
+	* Mono.Security.Protocol.Tls/TlsCipherSuite.cs:
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+		- Added debug capabilities.
+
+	* Mono.Security.Protocol.Tls/ServerContext.cs:
+
+		- Added initialization of requested CertificateTypes and CA's
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificate.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerHello.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerFinished.cs:
+
+		- Modfied exception handling
+
+		- Added debug capabilities.
+
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificateRequest.cs:
+
+		- Modify SSL implementation.
+
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsServerCertificateRequest.cs:
+
+		- Initial implementation.
+
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientCertificateVerify.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientFinished.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientHello.cs:
+
+		- Modfied exception handling
+
 2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security.dll.sources: Added AssemblyInfo.cs, Locale.cs and

@@ -1,3 +1,23 @@
+2004-04-21 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/DebugHelper.cs:
+
+		- New class.
+
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/Context.cs:
+	* Mono.Security.Protocol.Tls/Context.cs:
+	* Mono.Security.Protocol.Tls/SslCipherSuite.cs:
+	* Mono.Security.Protocol.Tls/TlsCipherSuite.cs:
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+		- Added debug capabilities.
+
+	* Mono.Security.Protocol.Tls/ServerContext.cs:
+
+		- Added initialization of requested CertificateTypes and CA's
+
 2004-04-16 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/TlsException.cs:

@@ -26,6 +26,7 @@ using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
+using Mono.Security.Protocol.Tls.Handshake;
 using MonoX509 = Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls
@@ -73,6 +74,13 @@ namespace Mono.Security.Protocol.Tls
 			this.ServerSettings.Certificates.Add(cert);
 
 			this.ServerSettings.UpdateCertificateRSA();
+
+			// Add requested certificate types
+			this.ServerSettings.CertificateTypes = new ClientCertificateType[1];
+			this.ServerSettings.CertificateTypes[0] = ClientCertificateType.RSA;
+
+			// Add certificate authorities
+			this.ServerSettings.DistinguisedNames = new string[0];
 		}
 
 		#endregion

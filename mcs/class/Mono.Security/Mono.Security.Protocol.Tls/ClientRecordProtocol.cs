@@ -49,6 +49,8 @@ namespace Mono.Security.Protocol.Tls
 			// Create the record message
 			HandshakeMessage msg = this.createClientHandshakeMessage(type);
 			
+			DebugHelper.WriteLine(">>>> Write handshake record ({0}|{1})", context.Protocol, msg.ContentType);
+
 			// Write record
 			this.SendRecord(msg.ContentType, msg.EncodeMessage());
 
@@ -74,6 +76,8 @@ namespace Mono.Security.Protocol.Tls
 			HandshakeType		handshakeType	= (HandshakeType)handMsg.ReadByte();
 			HandshakeMessage	message			= null;
 
+			DebugHelper.WriteLine(">>>> Processing Handshake record ({0})", handshakeType);
+
 			// Read message length
 			int length = handMsg.ReadInt24();
 
@@ -98,8 +102,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Client Handshake Message Factories
 
-		private HandshakeMessage createClientHandshakeMessage(
-			HandshakeType type)
+		private HandshakeMessage createClientHandshakeMessage(HandshakeType type)
 		{
 			switch (type)
 			{

@@ -108,6 +108,12 @@ namespace Mono.Security.Protocol.Tls
 					buffer, received, buffer.Length - received);
 			}
 
+			DebugHelper.WriteLine(
+				">>>> Read record ({0}|{1})", 
+				this.context.DecodeProtocolCode(protocol),
+				contentType);
+			DebugHelper.WriteLine("Record data", buffer);
+
 			TlsStream message = new TlsStream(buffer);
 		
 			// Check that the message has a valid protocol version
@@ -131,6 +137,8 @@ namespace Mono.Security.Protocol.Tls
 					message = this.decryptRecordFragment(
 						contentType, 
 						message.ToArray());
+
+					DebugHelper.WriteLine("Decrypted record data", message.ToArray());
 				}
 			}
 
@@ -222,7 +230,9 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		public void SendAlert(Alert alert)
-		{			
+		{
+			DebugHelper.WriteLine(">>>> Write Alert ({0}|{1})", alert.Description, alert.Message);
+
 			// Write record
 			this.SendRecord(
 				ContentType.Alert, 
@@ -240,6 +250,8 @@ namespace Mono.Security.Protocol.Tls
 
 		public void SendChangeCipherSpec()
 		{
+			DebugHelper.WriteLine(">>>> Write Change Cipher Spec");
+
 			// Send Change Cipher Spec message as a plain message
 			this.context.IsActual = false;
 
@@ -326,6 +338,8 @@ namespace Mono.Security.Protocol.Tls
 				record.Write((short)fragment.Length);
 				record.Write(fragment);
 
+				DebugHelper.WriteLine("Record data", fragment);
+
 				// Update buffer position
 				position += fragmentLength;
 			}
@@ -352,6 +366,8 @@ namespace Mono.Security.Protocol.Tls
 			{
 				mac	= this.context.Cipher.ComputeServerRecordMAC(contentType, fragment);
 			}
+
+			DebugHelper.WriteLine(">>>> Record MAC", mac);
 
 			// Encrypt the message
 			byte[] ecr = this.context.Cipher.EncryptRecord(fragment, mac);
@@ -405,6 +421,8 @@ namespace Mono.Security.Protocol.Tls
 				mac = this.context.Cipher.ComputeClientRecordMAC(contentType, dcrFragment);
 			}
 
+			DebugHelper.WriteLine(">>>> Record MAC", mac);
+
 			// Check record MAC
 			if (mac.Length != dcrMAC.Length)
 			{
@@ -424,12 +442,7 @@ namespace Mono.Security.Protocol.Tls
 
 			if (badRecordMac)
 			{
-				if (this.context is ServerContext)
-				{
-					this.Context.RecordProtocol.SendAlert(AlertDescription.BadRecordMAC);
-				}
-
-				throw new TlsException("Bad record MAC");
+				throw new TlsException(AlertDescription.BadRecordMAC, "Bad record MAC");
 			}
 
 			// Update sequence number

@@ -58,12 +58,16 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.Context.CompressionMethod	= this.compressionMethod;
 			this.Context.ProtocolNegotiated	= true;
 
+			DebugHelper.WriteLine("Selected Cipher Suite {0}", this.cipherSuite.Name);
+			DebugHelper.WriteLine("Client random", this.Context.ClientRandom);
+			DebugHelper.WriteLine("Server random", this.Context.ServerRandom);
+			
 			// Compute ClientRandom + ServerRandom
 			TlsStream random = new TlsStream();
 			random.Write(this.Context.ClientRandom);
 			random.Write(this.Context.ServerRandom);
 			this.Context.RandomCS = random.ToArray();
-
+			
 			// Server Random + Client Random
 			random.Reset();
 			random.Write(this.Context.ServerRandom);
@@ -89,7 +93,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			
 			// Read random  - Unix time + Random bytes
 			this.random	= this.ReadBytes(32);
-			
+						
 			// Read Session id
 			int length = (int)ReadByte();
 			if (length > 0)
@@ -102,7 +106,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			if (this.Context.SupportedCiphers.IndexOf(cipherCode) == -1)
 			{
 				// The server has sent an invalid ciphersuite
-				throw new TlsException("Invalid cipher suite received from server");
+				throw new TlsException(AlertDescription.InsuficientSecurity, "Invalid cipher suite received from server");
 			}
 			this.cipherSuite = this.Context.SupportedCiphers[cipherCode];
 			
@@ -125,6 +129,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				this.Context.SupportedCiphers.Clear();
 				this.Context.SupportedCiphers = null;
 				this.Context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(serverProtocol);
+
+				DebugHelper.WriteLine("Selected protocol {0}", serverProtocol);
 			}
 			else
 			{

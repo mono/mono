@@ -64,9 +64,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			if (privKey == null)
 			{
-				throw new TlsException(
-					AlertDescription.UserCancelled,
-					"Client certificate Private Key unavailable.");
+				throw new TlsException(AlertDescription.UserCancelled, "Client certificate Private Key unavailable.");
 			}
 			else
 			{
@@ -96,9 +94,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			if (privKey == null)
 			{
-				throw new TlsException(
-					AlertDescription.UserCancelled,
-					"Client certificate Private Key unavailable.");
+				throw new TlsException(AlertDescription.UserCancelled, "Client certificate Private Key unavailable.");
 			}
 			else
 			{

@@ -61,13 +61,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 #warning "Client certificate selection is unfinished"
 			ClientContext context = (ClientContext)this.Context;
+			string msg = "Client certificate requested by the server and no client certificate specified.";
 
 			if (context.ClientSettings.Certificates == null ||
 				context.ClientSettings.Certificates.Count == 0)
 			{
-				throw new TlsException(
-					AlertDescription.UserCancelled,
-					"Client certificate requested by the server and no client certificate specified.");
+				throw new TlsException(AlertDescription.UserCancelled, msg);
 			}
 			
 			// Select a valid certificate
@@ -81,9 +80,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			if (clientCert == null)
 			{
-				throw new TlsException(
-					AlertDescription.UserCancelled,
-					"Client certificate requested by the server and no client certificate specified.");
+				throw new TlsException(AlertDescription.UserCancelled, msg);
 			}
 
 			// Update the selected client certificate
