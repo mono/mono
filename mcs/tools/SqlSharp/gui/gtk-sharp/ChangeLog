@@ -1,5 +1,10 @@
 2002-12-12  Daniel Morgan <danmorg@sc.rr.com>
 
+	* makefile.gnu
+	* win32.make: removed non-existent file from build
+
+2002-12-12  Daniel Morgan <danmorg@sc.rr.com>
+
 	* makefile.gnu: added file for linux build
 	
 	* win32.make: update file for windows build
