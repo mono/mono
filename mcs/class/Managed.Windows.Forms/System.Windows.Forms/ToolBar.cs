@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.6  2004/08/22 00:49:37  ravindra
+// Probably this completes the missing attributes in toolbar control.
+//
 // Revision 1.5  2004/08/22 00:03:20  ravindra
 // Fixed toolbar control signatures.
 //
@@ -88,14 +91,35 @@ namespace System.Windows.Forms
 		#endregion Instance Variables
 
 		#region Events
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackColorChanged;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged;
+
 		public event ToolBarButtonClickEventHandler ButtonClick;
 		public event ToolBarButtonClickEventHandler ButtonDropDown;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler RightToLeftChanged;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged;
 		#endregion Events
 
@@ -465,6 +489,9 @@ namespace System.Windows.Forms
 
 			Redraw (false);
 			Invalidate (e.Button.Rectangle);
+
+			if (e.Button.Style == ToolBarButtonStyle.DropDownButton)
+				this.OnButtonDropDown (e);
 
 			if (ButtonClick != null)
 				ButtonClick (this, e);
