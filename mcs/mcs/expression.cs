@@ -3862,6 +3862,14 @@ namespace Mono.CSharp {
 					    
 				a.Emit (ec);
 			}
+
+			if (pd != null && pd.Count > top &&
+			    pd.ParameterModifier (top) == Parameter.Modifier.PARAMS){
+				ILGenerator ig = ec.ig;
+
+				IntConstant.EmitInt (ig, 0);
+				ig.Emit (OpCodes.Newarr, pd.ParameterType (top).GetElementType ());
+			}
 		}
 
 		/// <remarks>

@@ -1,5 +1,11 @@
 2002-07-27  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (Invocation.EmitArguments): When calling a varargs
+	function with only its fixed arguments, we need to pass an empty
+	array.
+
+2002-07-27  Martin Baulig  <martin@gnome.org>
+
 	Mono 0.13 has been released.
 
 2002-07-25  Miguel de Icaza  <miguel@ximian.com>
