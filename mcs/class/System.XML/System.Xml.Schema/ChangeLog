@@ -1,3 +1,8 @@
+2003-11-17  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchemaSet.cs, XmlSchemaBuiltInType.cs : Added .NET 1.2 classes
+	  (for convenience of ObjectSpaces stubbing).
+
 2003-10-25  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* BuiltInDatatype.cs : XsdByte was incorrectly typed as byte, while
