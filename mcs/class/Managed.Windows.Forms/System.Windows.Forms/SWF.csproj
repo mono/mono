@@ -234,6 +234,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DialogResult.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DockStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -296,6 +301,11 @@
                 <File
                     RelPath = "HScrollBar.cs"
                     SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IButtonControl.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -369,6 +379,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ITheme.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "IWin32Window.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -414,12 +429,77 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "LinkArea.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "LinkBehavior.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "LinkClickedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "LinkClickedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "LinkLabel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "LinkLabelLinkClickedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "LinkLabelLinkClickedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "LinkState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "MenuGlyph.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Message.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MessageBox.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MessageBoxButtons.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MessageBoxDefaultButton.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MessageBoxIcon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MessageBoxOptions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -529,6 +609,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ThemeEngine.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ThemeWin32Classic.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "TickStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -536,6 +626,11 @@
                 <File
                     RelPath = "TODOAttribute.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TrackBar.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
