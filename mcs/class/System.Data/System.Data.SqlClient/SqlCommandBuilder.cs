@@ -161,8 +161,11 @@ namespace System.Data.SqlClient {
 			tableName = String.Empty;
 			foreach (DataRow schemaRow in schemaTable.Rows) {
 				if (tableName == String.Empty) 
-					tableName = (string) schemaRow ["BaseTableName"];
-				if (tableName != (string) schemaRow["BaseTableName"])
+					tableName = schemaRow.IsNull ("BaseTableName") ? null : (string) schemaRow ["BaseTableName"];
+				else if (schemaRow.IsNull ("BaseTableName")) {
+					if (tableName != null)
+						throw new InvalidOperationException ("Dynamic SQL generation is not supported against multiple base tables.");
+				} else if (tableName != (string) schemaRow["BaseTableName"])
 					throw new InvalidOperationException ("Dynamic SQL generation is not supported against multiple base tables.");
 			}
 			dbSchemaTable = schemaTable;
@@ -417,15 +420,15 @@ namespace System.Data.SqlClient {
 			// If the parameter has one of these properties, then we don't include it in the insert:
 			// AutoIncrement, Hidden, Expression, RowVersion, ReadOnly
 
-			if ((bool) schemaRow ["IsAutoIncrement"])
+			if (!schemaRow.IsNull ("IsAutoIncrement") && (bool) schemaRow ["IsAutoIncrement"])
 				return false;
-			if ((bool) schemaRow ["IsHidden"])
+			if (!schemaRow.IsNull ("IsHidden") && (bool) schemaRow ["IsHidden"])
 				return false;
-			if ((bool) schemaRow ["IsExpression"])
+			if (!schemaRow.IsNull ("IsExpression") && (bool) schemaRow ["IsExpression"])
 				return false;
-			if ((bool) schemaRow ["IsRowVersion"])
+			if (!schemaRow.IsNull ("IsRowVersion") && (bool) schemaRow ["IsRowVersion"])
 				return false;
-			if ((bool) schemaRow ["IsReadOnly"])
+			if (!schemaRow.IsNull ("IsReadOnly") && (bool) schemaRow ["IsReadOnly"])
 				return false;
 			return true;
 		}
