@@ -1,3 +1,7 @@
+2002-01-02  Nick Drochak  <ndrochak@gol.com>
+
+	* HttpRuntime.cs: fix spelling error/variable name change.
+
 2001-12-18  Gaurav Vaish <gvaish@iitk.ac.in>
 
         * HttpRuntime.cs       : Initial implementation

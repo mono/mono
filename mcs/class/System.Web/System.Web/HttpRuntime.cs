@@ -46,7 +46,7 @@ namespace System.Web
 		
 		private FileChangesMonitor fcm;
 		
-		private Exception initErrorExcetion;
+		private Exception initErrorException;
 		
 		static HttpRuntime()
 		{
@@ -118,7 +118,7 @@ namespace System.Web
 		
 		private void Init()
 		{
-			initError = null;
+			initErrorException = null;
 			try
 			{
 				//FIXME: OS Check?
@@ -127,7 +127,7 @@ namespace System.Web
 				//I am here <gvaish>
 			} catch(Exception e)
 			{
-				initErrorExcetion = e;
+				initErrorException = e;
 			}
 		}
 
