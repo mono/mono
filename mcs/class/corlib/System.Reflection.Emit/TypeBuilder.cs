@@ -1275,7 +1275,7 @@ namespace System.Reflection.Emit {
 
 		public override String ToString ()
 		{
-			return "TypeBuilder [" + FullName + "]";
+			return FullName;
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
