@@ -1,3 +1,13 @@
+2001-07-12  Miguel de Icaza  <miguel@ximian.com>
+
+	New XSLT file from Sergey Chaban for CIL opcodes
+
+	Paolo got the beginning of an interpreter in.
+
+	Further work on the dissasembler.
+
+	Fix various parts of the metadata library
+
 2001-05-30  Miguel de Icaza  <miguel@ximian.com>
 
 	Project started
