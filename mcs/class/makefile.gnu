@@ -6,8 +6,8 @@ DIRS =	corlib				\
 	System				\
 	System.XML			\
 	System.Drawing			\
-	System.Data			\
 	System.EnterpriseServices	\
+	System.Data			\
 	System.Web			\
 	System.Web.Services		\
 	System.Runtime.Remoting		\
