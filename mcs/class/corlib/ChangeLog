@@ -1,5 +1,7 @@
 2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* corlib.dll.sources: Add more 2.0 classes under System.Runtime.InteropServices.
+
 	* corlib.dll.sources: Add new 2.0 classes under System.Runtime.InteropServices.
 
 2004-09-29  Zoltan Varga  <vargaz@freemail.hu>
