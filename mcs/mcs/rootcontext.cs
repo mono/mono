@@ -497,7 +497,7 @@ namespace Mono.CSharp {
 					match = TypeManager.LookupType (MakeFQN (ue.Name, name));
 					if (match != null){
 						if (t != null){
-							Report.Error (104, loc, "`" + name + "' is an ambiguous reference");
+							DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
 							return null;
 						}
 						

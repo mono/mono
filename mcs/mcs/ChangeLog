@@ -1,6 +1,10 @@
 2002-09-23  Miguel de Icaza  <miguel@ximian.com>
 
-	* decl.cs (DeclSpace.FindType): Require a location argument to
+	* decl.cs (Error_AmbiguousTypeReference); New routine used to
+	report ambiguous type references.  Unlike the MS version, we
+	report what the ambiguity is.   Innovation at work ;-)
+
+	(DeclSpace.FindType): Require a location argument to
 	display when we display an ambiguous error.
 
 	* ecore.cs: (SimpleName.DoResolveType): Pass location to FindType.

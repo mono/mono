@@ -453,7 +453,14 @@ namespace Mono.CSharp {
 			}
 			return t;
 		}
-		
+
+		public static void Error_AmbiguousTypeReference (Location loc, string name, Type t1, Type t2)
+		{
+			Report.Error (104, loc,
+				      String.Format ("`{0}' is an ambiguous reference ({1} or {2}) ", name,
+						     t1.FullName, t2.FullName));
+		}
+
 		/// <summary>
 		///   GetType is used to resolve type names at the DeclSpace level.
 		///   Use this to lookup class/struct bases, interface bases or 
@@ -548,7 +555,7 @@ namespace Mono.CSharp {
 
 					if (match != null){
 						if (t != null){
-							Report.Error (104, loc, "`" + name + "' is an ambiguous reference");
+							Error_AmbiguousTypeReference (loc, name, t, match);
 							return null;
 						}
 						
