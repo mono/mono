@@ -1,3 +1,9 @@
+2005-04-05  Miguel de Icaza  <miguel@novell.com>
+
+	* Syscall.cs: Set entry point for sys_syslog to be syslog.
+	Include the syslog.h header in the generated map so that we
+	actually do the mapping.
+
 2005-03-28  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixConvert.cs: Add ToFopenMode() methods, which convert FileMode/FileAccess

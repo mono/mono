@@ -61,7 +61,7 @@ using Mono.Unix;
 
 [assembly:Mono.Unix.IncludeAttribute (
 	new string [] {"sys/types.h", "sys/stat.h", "sys/poll.h", "sys/wait.h",
-		"unistd.h", "fcntl.h", "signal.h", "poll.h", "grp.h", "errno.h"}, 
+		"unistd.h", "fcntl.h", "signal.h", "poll.h", "grp.h", "errno.h", "syslog.h"}, 
 	new string [] {"_GNU_SOURCE", "_XOPEN_SOURCE"})]
 
 namespace Mono.Unix {
@@ -1880,7 +1880,7 @@ namespace Mono.Unix {
 			sys_openlog (ident, _option, _facility);
 		}
 
-		[DllImport (LIBC)]
+		[DllImport (LIBC, EntryPoint="syslog")]
 		private static extern void sys_syslog (int priority, string message);
 
 		public static void syslog (SyslogFacility facility, SyslogLevel level, string message)
