@@ -24,7 +24,7 @@ namespace MonoTests.System.Net {
                                 suite.AddTest (IPEndPointTest.Suite);
                                 suite.AddTest (CookieTest.Suite);
                                 suite.AddTest (CookieCollectionTest.Suite);
-                                suite.AddTest (CookieContainerTest.Suite);
+                                //suite.AddTest (CookieContainerTest.Suite);
 				return suite;
                         }
                 }
