@@ -253,8 +253,9 @@ namespace System.Xml
 							ExpandPERef ();
 							goto LOOPBACK;
 						} else {
+							// FIXME: Is this allowed? <!ENTITY % %name; ...> 
+							// (i.e. Can PE name be replaced by another PE?)
 							TryExpandPERef ();
-							SkipWhitespace ();
 							if (XmlChar.IsNameChar (PeekChar ()))
 								ReadParameterEntityDecl ();
 							else
@@ -289,7 +290,7 @@ namespace System.Xml
 				// conditional sections
 				SkipWhitespace ();
 				TryExpandPERef ();
-				ExpectAfterWhitespace ('I');
+				Expect ('I');
 				switch (ReadChar ()) {
 				case 'N':
 					Expect ("CLUDE");
@@ -350,7 +351,6 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					"Whitespace is required between '<!ELEMENT' and name in DTD element declaration.");
 			TryExpandPERef ();
-			SkipWhitespace ();
 			decl.Name = ReadName ();
 			if (!SkipWhitespace ())
 				throw new XmlException (this as IXmlLineInfo,
@@ -360,7 +360,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
-			ExpectAfterWhitespace ('>');
+			Expect ('>');
 			return decl;
 		}
 
@@ -368,7 +368,6 @@ namespace System.Xml
 		private void ReadContentSpec (DTDElementDeclaration decl)
 		{
 			TryExpandPERef ();
-			SkipWhitespace ();
 			switch(ReadChar ())
 			{
 			case 'E':
@@ -383,7 +382,6 @@ namespace System.Xml
 				DTDContentModel model = decl.ContentModel;
 				SkipWhitespace ();
 				TryExpandPERef ();
-				SkipWhitespace ();
 				if(PeekChar () == '#') {
 					// Mixed Contents. "#PCDATA" must appear first.
 					decl.IsMixedContent = true;
@@ -392,18 +390,15 @@ namespace System.Xml
 					Expect ("#PCDATA");
 					SkipWhitespace ();
 					TryExpandPERef ();
-					SkipWhitespace ();
 					while(PeekChar () != ')') {
 						SkipWhitespace ();
 						if (PeekChar () == '%') {
 							TryExpandPERef ();
-							SkipWhitespace ();
 							continue;
 						}
 						Expect('|');
 						SkipWhitespace ();
 						TryExpandPERef ();
-						SkipWhitespace ();
 						DTDContentModel elem = new DTDContentModel (DTD, decl.Name);
 //						elem.LineNumber = currentInput.LineNumber;
 //						elem.LinePosition = currentInput.LinePosition;
@@ -411,7 +406,6 @@ namespace System.Xml
 						this.AddContentModel (model.ChildModels, elem);
 						SkipWhitespace ();
 						TryExpandPERef ();
-						SkipWhitespace ();
 					}
 					Expect (')');
 					if (model.ChildModels.Count > 0)
@@ -426,7 +420,6 @@ namespace System.Xml
 					do {	// copied from ReadCP() ...;-)
 						if (PeekChar () == '%') {
 							TryExpandPERef ();
-							SkipWhitespace ();
 							continue;
 						}
 						if(PeekChar ()=='|') {
@@ -487,7 +480,6 @@ namespace System.Xml
 		{
 			DTDContentModel model = null;
 			TryExpandPERef ();
-			SkipWhitespace ();
 			if(PeekChar () == '(') {
 				model = new DTDContentModel (DTD, elem.Name);
 				ReadChar ();
@@ -497,7 +489,6 @@ namespace System.Xml
 				do {
 					if (PeekChar () == '%') {
 						TryExpandPERef ();
-						SkipWhitespace ();
 						continue;
 					}
 					if(PeekChar ()=='|') {
@@ -531,7 +522,6 @@ namespace System.Xml
 			else {
 				TryExpandPERef ();
 				model = new DTDContentModel (DTD, elem.Name);
-				SkipWhitespace ();
 				model.ElementName = ReadName ();
 			}
 
@@ -758,19 +748,34 @@ namespace System.Xml
 			return "";
 		}
 
-		private void TryExpandPERef ()
+		private bool TryExpandPERef ()
+		{
+			if (PeekChar () != '%')
+				return false;
+			while (PeekChar () == '%') {
+				TryExpandPERefSpaceKeep ();
+				SkipWhitespace ();
+			}
+			return true;
+		}
+
+		// Tries to expand parameter entities, but it should not skip spaces
+		private bool TryExpandPERefSpaceKeep ()
 		{
 			if (PeekChar () == '%') {
 				if (this.processingInternalSubset)
 					throw new XmlException (this as IXmlLineInfo, "Parameter entity reference is not allowed inside internal subset.");
+				ReadChar ();
 				ExpandPERef ();
+				return true;
 			}
+			else
+				return false;
 		}
 
-		// reader is positioned on '%'
+		// reader is positioned after '%'
 		private void ExpandPERef ()
 		{
-			ReadChar ();
 			string peName = ReadName ();
 			Expect (';');
 			DTDParameterEntityDeclaration peDecl =
@@ -779,6 +784,7 @@ namespace System.Xml
 				HandleError (new XmlSchemaException ("Parameter entity " + peName + " not found.", null));
 				return;	// do nothing
 			}
+			// FIXME: These leading/trailing ' ' is anyways supplied inside this method!
 			currentInput.InsertParameterEntityBuffer (" " + peDecl.ReplacementText + " ");
 		}
 
@@ -788,13 +794,11 @@ namespace System.Xml
 			DTDEntityDeclaration decl = new DTDEntityDeclaration (DTD);
 			decl.IsInternalSubset = this.processingInternalSubset;
 			TryExpandPERef ();
-			SkipWhitespace ();
 			decl.Name = ReadName ();
 			if (!SkipWhitespace ())
 				throw new XmlException (this as IXmlLineInfo,
 					"Whitespace is required between name and content in DTD entity declaration.");
 			TryExpandPERef ();
-			SkipWhitespace ();
 
 			if (PeekChar () == 'S' || PeekChar () == 'P') {
 				// external entity
@@ -828,7 +832,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
-			ExpectAfterWhitespace ('>');
+			Expect ('>');
 			return decl;
 		}
 
@@ -871,12 +875,11 @@ namespace System.Xml
 
 		private DTDAttListDeclaration ReadAttListDecl ()
 		{
-			TryExpandPERef ();
+			TryExpandPERefSpaceKeep ();
 			if (!SkipWhitespace ())
 				throw new XmlException (this as IXmlLineInfo,
 					"Whitespace is required between ATTLIST and name in DTD attlist declaration.");
 			TryExpandPERef ();
-			SkipWhitespace ();
 			string name = ReadName ();	// target element name
 			DTDAttListDeclaration decl =
 				DTD.AttListDecls [name] as DTDAttListDeclaration;
@@ -891,7 +894,6 @@ namespace System.Xml
 						"Whitespace is required between name and content in non-empty DTD attlist declaration.");
 
 			TryExpandPERef ();
-			SkipWhitespace ();
 
 			while (XmlChar.IsNameChar (PeekChar ())) {
 				DTDAttributeDefinition def = ReadAttributeDefinition ();
@@ -910,12 +912,11 @@ namespace System.Xml
 					decl.Add (def);
 				SkipWhitespace ();
 				TryExpandPERef ();
-				SkipWhitespace ();
 			}
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
-			ExpectAfterWhitespace ('>');
+			Expect ('>');
 			return decl;
 		}
 
@@ -926,7 +927,6 @@ namespace System.Xml
 
 			// attr_name
 			TryExpandPERef ();
-			SkipWhitespace ();
 			def.Name = ReadName ();
 			if (!SkipWhitespace ())
 				throw new XmlException (this as IXmlLineInfo,
@@ -934,7 +934,6 @@ namespace System.Xml
 
 			// attr_value
 			TryExpandPERef ();
-			SkipWhitespace ();
 			switch(PeekChar ()) {
 			case 'C':	// CDATA
 				Expect ("CDATA");
@@ -1004,7 +1003,7 @@ namespace System.Xml
 			default:	// Enumerated Values
 				def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN");
 				TryExpandPERef ();
-				ExpectAfterWhitespace ('(');
+				Expect ('(');
 				SkipWhitespace ();
 				def.EnumeratedAttributeDeclaration.Add (
 					def.Datatype.Normalize (ReadNmToken ()));	// enum value
@@ -1019,7 +1018,7 @@ namespace System.Xml
 				Expect (')');
 				break;
 			}
-			TryExpandPERef ();
+			TryExpandPERefSpaceKeep ();
 			if (!SkipWhitespace ())
 				throw new XmlException (this as IXmlLineInfo,
 					"Whitespace is required between type and occurence in DTD attribute definition.");
@@ -1058,7 +1057,6 @@ namespace System.Xml
 				// one of the enumerated value
 				SkipWhitespace ();
 				TryExpandPERef ();
-				SkipWhitespace ();
 				def.UnresolvedDefaultValue = ReadDefaultAttribute ();
 			}
 
@@ -1128,7 +1126,6 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					"Whitespace is required between NOTATION and name in DTD notation declaration.");
 			TryExpandPERef ();
-			SkipWhitespace ();
 			decl.Name = ReadName ();	// notation name
 			/*
 			if (namespaces) {	// copy from SetProperties ;-)
@@ -1166,7 +1163,7 @@ namespace System.Xml
 				throw new XmlException ("public or system declaration required for \"NOTATION\" declaration.");
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
-			ExpectAfterWhitespace ('>');
+			Expect ('>');
 			return decl;
 		}
 
@@ -1298,7 +1295,7 @@ namespace System.Xml
 				if (XmlChar.IsWhitespace (i))
 					continue;
 				if (c != i)
-					throw new XmlException (String.Join (String.Empty, new string [] {"Expected ", c.ToString (), ", but found " + (char) i, "[", i.ToString (), "]"}));
+					throw new XmlException (this, String.Format ("Expected {0} but found {1} [{2}].", c, (char) i, i));
 				break;
 			}
 		}

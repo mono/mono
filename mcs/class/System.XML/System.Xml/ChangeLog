@@ -1,3 +1,10 @@
+2004-05-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDReader.cs : When sequential PE references exist, the reader only
+	  expands the first one and in some cases the parser complaints the
+	  content (such like expecting name character but found '%').
+	  This fixes bug #58818.
+
 2004-05-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs : RemoveChild() should check null argument.
