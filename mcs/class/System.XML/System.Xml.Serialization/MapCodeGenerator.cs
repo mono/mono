@@ -199,6 +199,14 @@ namespace System.Xml.Serialization {
 			}
 
 			GenerateElementMember (codeField, member);
+			
+			if (member.TypeData.IsValueType && member.IsOptionalValueType)
+			{
+				codeField = new CodeMemberField (typeof(bool), member.Name + "Specified");
+				codeField.Attributes = MemberAttributes.Public;
+				codeClass.Members.Add (codeField);
+				GenerateSpecifierMember (codeField);
+			}
 		}
 
 		void AddAnyElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
@@ -421,7 +429,11 @@ namespace System.Xml.Serialization {
 		
 		protected virtual void GenerateEnumItem (CodeMemberField codeField, EnumMap.EnumMapMember emem)
 		{
-		}		
+		}
+
+		protected virtual void GenerateSpecifierMember (CodeMemberField codeField)
+		{
+		}
 
 		#endregion
 	}

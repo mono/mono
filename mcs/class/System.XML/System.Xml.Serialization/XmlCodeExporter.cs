@@ -222,6 +222,12 @@ namespace System.Xml.Serialization {
 
 				AddCustomAttribute (codeField, xatt, true);
 			}
-		}		
+		}
+		
+		protected override void GenerateSpecifierMember (CodeMemberField codeField)
+		{
+			AddCustomAttribute (codeField, "System.Xml.Serialization.XmlIgnore");
+		}
+
 	}
 }

@@ -1,5 +1,14 @@
 2004-01-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* XmlSerializationReaderInterpreter.cs, XmlSerializationWriterInterpreter.cs,
+	  XmlTypeMapMember.cs, MapCodeGenerator.cs, SoapCodeExporter.cs, TypeData.cs,
+	  XmlCodeExporter.cs, XmlReflectionImporter.cs, XmlSchemaExporter.cs,
+	  XmlSchemaImporter.cs, XmlSerializationReaderInterpreter.cs,
+	  XmlSerializationWriterInterpreter.cs, XmlTypeMapMember.cs:
+	  Added support for value specifiers members. This fixes bug #53024.
+
+2004-01-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* XmlSchemaExporter.cs: Don't create referenced element if it has already
 	  been created (two types could be referencing the same schema element).
 

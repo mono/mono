@@ -111,6 +111,15 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		public bool IsValueType
+		{
+			get
+			{
+				return  (type != null && type.IsValueType) ||
+						(sType == SchemaTypes.Primitive) ||
+					    (sType == SchemaTypes.Enum);
+			}
+		}
 
 		public TypeData ListItemTypeData
 		{

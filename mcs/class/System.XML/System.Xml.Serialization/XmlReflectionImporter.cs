@@ -216,7 +216,9 @@ namespace System.Xml.Serialization {
 				foreach (XmlReflectionMember rmember in members)
 				{
 					if (rmember.XmlAttributes.XmlIgnore) continue;
-					classMap.AddMember (CreateMapMember (rmember, map.XmlTypeNamespace));
+					XmlTypeMapMember mem = CreateMapMember (rmember, map.XmlTypeNamespace);
+					mem.CheckOptionalValueType (type);
+					classMap.AddMember (mem);
 				}
 //			}
 //			catch (Exception ex) {

@@ -22,8 +22,10 @@ namespace System.Xml.Serialization
 		int _index;
 		TypeData _typeData;
 		MemberInfo _member;
+		MemberInfo _specifiedMember;
 		object _defaultValue = System.DBNull.Value;
 		string documentation;
+		bool _isOptional;
 
 		public XmlTypeMapMember()
 		{
@@ -78,6 +80,9 @@ namespace System.Xml.Serialization
 		{
 			MemberInfo[] mems = type.GetMember (_name, BindingFlags.Instance|BindingFlags.Public);
 			_member = mems[0];
+			
+			mems = type.GetMember (_name + "Specified", BindingFlags.Instance|BindingFlags.Public);
+			if (mems.Length > 0) _specifiedMember = mems[0];
 		}
 
 		public TypeData TypeData
@@ -90,6 +95,30 @@ namespace System.Xml.Serialization
 		{
 			get { return _index; }
 			set { _index = value; }
+		}
+		
+		public bool IsOptionalValueType
+		{
+			get { return _isOptional; }
+			set { _isOptional = value; }
+		}
+		
+		public void CheckOptionalValueType (Type type)
+		{
+			if (_member == null) InitMember (type);
+			_isOptional = (_specifiedMember != null);
+		}
+		
+		public bool GetValueSpecified (object ob)
+		{
+			if (_specifiedMember is PropertyInfo) return (bool) ((PropertyInfo)_specifiedMember).GetValue (ob, null);
+			else return (bool) ((FieldInfo)_specifiedMember).GetValue (ob);
+		}
+
+		public void SetValueSpecified (object ob, bool value)
+		{
+			if (_specifiedMember is PropertyInfo) ((PropertyInfo)_specifiedMember).SetValue (ob, value, null);
+			else ((FieldInfo)_specifiedMember).SetValue (ob, value);
 		}
 	}
 }

@@ -429,7 +429,11 @@ namespace System.Xml.Serialization
 		void SetMemberValue (XmlTypeMapMember member, object ob, object value, bool isValueList)
 		{
 			if (isValueList) ((object[])ob)[member.Index] = value;
-			else member.SetValue (ob, value);
+			else {
+				member.SetValue (ob, value);
+				if (member.IsOptionalValueType)
+					member.SetValueSpecified (ob, true); 
+			}
 		}
 
 		object GetMemberValue (XmlTypeMapMember member, object ob, bool isValueList)

@@ -266,6 +266,9 @@ namespace System.Xml.Serialization
 				}
 				if (val != null && val.Equals (member.DefaultValue)) return false;
 			}
+			else if (member.IsOptionalValueType)
+				return member.GetValueSpecified (ob);
+
 			return true;
 		}
 
