@@ -1,6 +1,9 @@
 //
 // System.Diagnostics.Switch.cs
 //
+// Comments from John R. Hicks <angryjohn69@nc.rr.com> original implementation 
+// can be found at: /mcs/docs/apidocs/xml/en/System.Diagnostics
+//
 // Author:
 //      John R. Hicks  (angryjohn69@nc.rr.com)
 //
@@ -9,9 +12,6 @@
 
 namespace System.Diagnostics
 {
-        /// <summary>
-        /// Abstract base class to create new debugging and tracing switches
-        /// </summary>
         public abstract class Switch
         {
 	            private string desc = "";
@@ -19,20 +19,12 @@ namespace System.Diagnostics
                 private int iSwitch;
 
                 // ================= Constructors ===================
-                /// <summary>
-                /// Initialize a new instance
-                /// </summary>
                 protected Switch(string displayName, string description)
                 {
                         display_name = displayName;
                         desc = description;
                 }
 
-                /// <summary>
-                /// Allows an Object to attempt to free resources and
-                /// perform cleanup before the Object is reclaimed
-                /// by the Garbage Collector
-                /// </summary>
                 ~Switch()
                 {
                 }
@@ -41,9 +33,6 @@ namespace System.Diagnostics
 
                 // ==================== Properties ==================
 
-                /// <summary>
-                /// Returns a description of the switch
-                /// </summary>
                 public string Description
                 {
                         get
@@ -52,9 +41,6 @@ namespace System.Diagnostics
                         }
                 }
 
-                /// <summary>
-                /// Returns a name used to identify the switch
-                /// </summary>
                 public string DisplayName
                 {
                         get
@@ -63,9 +49,6 @@ namespace System.Diagnostics
                         }
                 }
 
-                /// <summary>
-                /// Gets or sets the current setting for this switch
-                /// </summary>
                 protected int SwitchSetting
                 {
                         get
@@ -82,9 +65,6 @@ namespace System.Diagnostics
 						}
 				}
 
-                /// <summary>
-                /// Raises the SwitchSettingChanged event
-                /// </summary>
 		[MonoTODO]
 		protected virtual void OnSwitchSettingChanged()
 		{
@@ -92,3 +72,4 @@ namespace System.Diagnostics
 		}
         }
 }
+

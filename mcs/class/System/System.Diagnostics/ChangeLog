@@ -1,3 +1,17 @@
+2002-05-27  Jonathan Pryor <jonpryor@vt.edu>
+  * Moved public API documentation for the following files to the
+    /mcs/docs/apidocs/xml/en/System.Diagnostics directory:
+    - Debug.cs
+    - DefaultTraceListener.cs
+    - DiagnosticsConfigurationHandler.cs
+    - Switch.cs
+    - TextWriterTraceListener.cs
+    - Trace.cs
+    - TraceLevel.cs
+    - TraceListener.cs
+    - TraceListenerCollection.cs
+    - TraceSwitch.cs
+
 2002-04-10  Jonathan Pryor <jonpryor@vt.edu>
 
 	* TraceListenerCollection.cs: Corrected indexer property to provide the

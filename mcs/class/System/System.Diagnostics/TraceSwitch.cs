@@ -1,6 +1,9 @@
 //
 // System.Diagnostics.TraceSwtich.cs
 //
+// Comments from John R. Hicks <angryjohn69@nc.rr.com> original implementation 
+// can be found at: /mcs/docs/apidocs/xml/en/System.Diagnostics
+//
 // Author:
 //	John R. Hicks (angryjohn69@nc.rr.com)
 //
@@ -9,10 +12,6 @@
 
 namespace System.Diagnostics
 {
-	/// <summary>
-	/// Multi-level switch to provide tracing and debug output without
-	/// recompiling.
-	/// </summary>
 	public class TraceSwitch : Switch
 	{
 		private TraceLevel level;
@@ -21,20 +20,11 @@ namespace System.Diagnostics
 		private bool traceVerbose = false;
 		private bool traceWarning = false;
 
-		/// <summary>
-		/// Initializes a new instance
-		/// </summary>
-		/// <param name="displayName">Name for the switch</param>
-		/// <param name="description">Description of the switch</param>
 		public TraceSwitch(string displayName, string description)
 			: base(displayName, description)
 		{
 		}
 
-		/// <summary>
-		/// Gets or sets the trace level that specifies the messages to 
-		/// output for tracing and debugging.
-		/// </summary>
 		public TraceLevel Level
 		{
 			get 
@@ -48,10 +38,6 @@ namespace System.Diagnostics
 
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the Level is set to Error, 
-		/// Warning, Info, or Verbose.
-		/// </summary>
 		public bool TraceError
 		{
 			get 
@@ -60,9 +46,6 @@ namespace System.Diagnostics
 			}
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the Level is set to Info or Verbose.
-		/// </summary>
 		public bool TraceInfo
 		{
 			get 
@@ -71,9 +54,6 @@ namespace System.Diagnostics
 			}
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the Level is set to Verbose.
-		/// </summary>
 		public bool TraceVerbose
 		{
 			get 
@@ -82,10 +62,6 @@ namespace System.Diagnostics
 			}
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the Level is set to
-		/// Warning, Info, or Verbose.
-		/// </summary>
 		public bool TraceWarning
 		{
 			get
@@ -95,3 +71,4 @@ namespace System.Diagnostics
 		}
 	}
 }
+
