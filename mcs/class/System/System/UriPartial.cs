@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:33:21 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,26 +14,18 @@ namespace System {
 
 
 	/// <summary>
-	///  Specifies URI components.
 	/// </summary>
-	/// <remarks>
-	/// <para>
-	/// <block subset="none" type="note">The <see cref="T:System.UriPartial" /> enumeration defines the values that are passed to the
-	/// <see cref="M:System.Uri.GetLeftPart(System.UriPartial)" qualify="true" /> method.</block>
-	/// </para>
-	/// </remarks>
 	public enum UriPartial {
 
-		/// <summary><para> Specifies the scheme component of a URI.</para></summary>
+		/// <summary>
+		/// </summary>
 		Scheme = 0,
 
 		/// <summary>
-		///  Specifies the authority component of a URI.
 		/// </summary>
 		Authority = 1,
 
 		/// <summary>
-		///  Specifies the path component of a URI.
 		/// </summary>
 		Path = 2,
 	} // UriPartial

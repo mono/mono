@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:38:33 UTC
 // Source file: all.xml
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
@@ -13,18 +14,15 @@ namespace System.Reflection {
 
 
 	/// <summary>
-	/// <para> Provides information about an <see cref="T:System.Reflection.Assembly" /> .</para>
 	/// </summary>
 	[Flags]
 	public enum AssemblyNameFlags {
 
 		/// <summary>
-		/// <para>Specifies that no flags are in effect.</para>
 		/// </summary>
 		None = 0,
 
 		/// <summary>
-		/// <para> Specifies that an originator is formed from the full public key rather than the token.</para>
 		/// </summary>
 		FullOriginator = 1,
 	} // AssemblyNameFlags

@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:40:12 UTC
 // Source file: all.xml
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
@@ -13,19 +14,15 @@ namespace System.Reflection {
 
 
 	/// <summary>
-	/// <para>Specifies the attributes for a manifest
-	///                   resource.</para>
 	/// </summary>
 	[Flags]
 	public enum ResourceAttributes {
 
 		/// <summary>
-		/// <para>A mask used to retrieve public manifest resources.</para>
 		/// </summary>
 		Public = 1,
 
 		/// <summary>
-		/// <para>A mask used to retrieve private manifest resources.</para>
 		/// </summary>
 		Private = 2,
 	} // ResourceAttributes

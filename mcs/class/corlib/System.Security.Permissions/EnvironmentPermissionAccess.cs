@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:29:59 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,32 +14,24 @@ namespace System.Security.Permissions {
 
 
 	/// <summary>
-	/// <para> Represents access to
-	///  environment variables.</para>
 	/// </summary>
-	/// <remarks>
-	/// <para>
-	/// <block subset="none" type="note">This enumeration is used by the <see cref="T:System.Security.Permissions.EnvironmentPermission" />
-	/// class.</block>
-	/// </para>
-	/// </remarks>
 	[Flags]
 	public enum EnvironmentPermissionAccess {
 
-		/// <summary><para> Specifies no access to one or more environment variables.</para></summary>
+		/// <summary>
+		/// </summary>
 		NoAccess = 0x00000000,
 
-		/// <summary><para> 
-		///       Specifies read access to one or more environment variables</para><para><block subset="none" type="note">Changing, deleting and creating 
-		///       environment variables is not included in this access level.</block></para></summary>
+		/// <summary>
+		/// </summary>
 		Read = 0x00000001,
 
-		/// <summary><para> Specifies write access to one or more environment variables. Write
-		///       access includes creating and deleting environment variables as well as changing existing values.</para><para><block subset="none" type="note">Reading environment variables is not 
-		///       included in this access level.</block></para></summary>
+		/// <summary>
+		/// </summary>
 		Write = 0x00000002,
 
-		/// <summary><para>Specifies read and write access to one or more environment variables.</para></summary>
+		/// <summary>
+		/// </summary>
 		AllAccess = Read | Write,
 	} // EnvironmentPermissionAccess
 
