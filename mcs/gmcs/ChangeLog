@@ -1,5 +1,24 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs
+	(Constraints.InterfaceConstraints): New public property.
+	(Constraints.Types): Make this property public
+	(TypeParameter): Implement IMemberContainer.
+	(TypeParameter.Define): Take a `GenericTypeParameterBuilder'
+	instead of a TypeBuilder/MethodBuilder; pass the interface
+	constraints to TypeManager.AddTypeParameter().
+	(TypeParameter.DefineType): Just take an EmitContext and no
+	TypeBuilder/MethodBuilder.  Use the new public API.
+
+	* typemanager.cs (TypeManager.AddTypeParameter): Added
+	`TypeExpr[]' argument; add the interfaces to the
+	`builder_to_ifaces' hash.
+	(TypeManager.LookupMemberContainer): For
+	GenericTypeParameterBuilders, get the TypeParameter from the
+	`builder_to_type_param'.	
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* class.cs
 	(MethodCore.GenericMethod): Moved this field here from Method.
 	(MethodCore.IsDuplicateImplementation): Take the number of type

@@ -4901,9 +4901,6 @@ namespace Mono.CSharp {
 
 		static bool InferType (Type pt, Type at, ref Type[] infered)
 		{
-			if (!pt.ContainsGenericParameters)
-				return true;
-
 			if (pt.IsGenericParameter) {
 				int pos = pt.GenericParameterPosition;
 
@@ -4924,6 +4921,9 @@ namespace Mono.CSharp {
 
 				return true;
 			}
+
+			if (!pt.ContainsGenericParameters)
+				return true;
 
 			if (at.IsArray) {
 				if (!pt.IsArray ||
@@ -5220,7 +5220,11 @@ namespace Mono.CSharp {
 			int count = arguments.Count - idx;
 			Argument a = (Argument) arguments [idx];
 			Type t = a.Expr.Type;
-			string array_type = t.FullName + "[]";
+			string array_type;
+			if (t.FullName != null)
+				array_type = t.FullName + "[]";
+			else
+				array_type = t.Name + "[]";
 			LocalBuilder array;
 
 			array = ig.DeclareLocal (TypeManager.LookupType (array_type));
@@ -8547,7 +8551,8 @@ namespace Mono.CSharp {
 			// ltype.Fullname is already fully qualified, so we can skip
 			// a lot of probes, and go directly to TypeManager.LookupType
 			//
-			string cname = ltype.FullName + dim;
+			string fname = ltype.FullName != null ? ltype.FullName : ltype.Name;
+			string cname = fname + dim;
 			type = TypeManager.LookupTypeDirect (cname);
 			if (type == null){
 				//

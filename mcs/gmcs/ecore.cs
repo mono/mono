@@ -2368,7 +2368,7 @@ namespace Mono.CSharp {
 
 		string IAlias.Name {
 			get {
-				return Type.FullName;
+				return Type.FullName != null ? Type.FullName : Type.Name;
 			}
 		}
 	}

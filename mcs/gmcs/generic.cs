@@ -101,6 +101,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public TypeExpr[] InterfaceConstraints {
+			get {
+				if (iface_constraints == null)
+					return null;
+
+				TypeExpr[] ifaces = new TypeExpr [iface_constraints.Count];
+				iface_constraints.CopyTo (ifaces, 0);
+				return ifaces;
+			}
+		}
+
 		public Type[] ResolveTypes (EmitContext ec)
 		{
 			types = new Type [constraint_types.Length];
@@ -151,7 +162,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Type[] GenericConstraints.Types {
+		public Type[] Types {
 			get {
 				if (types == null)
 					throw new InvalidOperationException ();
@@ -164,11 +175,11 @@ namespace Mono.CSharp {
 	//
 	// This type represents a generic type parameter
 	//
-	public class TypeParameter {
+	public class TypeParameter : IMemberContainer {
 		string name;
 		Constraints constraints;
 		Location loc;
-		Type type;
+		GenericTypeParameterBuilder type;
 
 		public TypeParameter (string name, Constraints constraints, Location loc)
 		{
@@ -218,52 +229,74 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Type Define (TypeBuilder tb)
+		public void Define (GenericTypeParameterBuilder type)
 		{
-			type = tb.DefineGenericParameter (name);
-			TypeManager.AddTypeParameter (type, this);
-			return type;
+			this.type = type;
+			TypeExpr[] ifaces = null;
+			if (constraints != null)
+				ifaces = constraints.InterfaceConstraints;
+			TypeManager.AddTypeParameter (type, this, ifaces);
 		}
 
-		public Type DefineMethod (MethodBuilder mb)
+		public bool DefineType (EmitContext ec)
 		{
-			type = mb.DefineGenericParameter (name);
-			TypeManager.AddTypeParameter (type, this);
-			return type;
-		}
-
-		public bool DefineType (EmitContext ec, TypeBuilder tb)
-		{
-			int index = type.GenericParameterPosition;
-			if (constraints == null)
-				tb.SetGenericParameterConstraints (index, new Type [0], false);
-			else {
+			if (constraints != null) {
 				Type[] types = constraints.ResolveTypes (ec);
 				if (types == null)
 					return false;
 
-				tb.SetGenericParameterConstraints (
-					index, types, constraints.HasConstructorConstraint);
+				int start = 0;
+				if ((types.Length > 0) && types [0].IsClass) {
+					type.SetBaseTypeConstraint (types [0]);
+					start++;
+				}
+
+				Type[] ifaces = new Type [types.Length - start];
+				Array.Copy (types, start, ifaces, 0, ifaces.Length);
+
+				type.SetInterfaceConstraints (ifaces);
 			}
 
 			return true;
 		}
 
-		public bool DefineType (EmitContext ec, MethodBuilder mb)
-		{
-			int index = type.GenericParameterPosition;
-			if (constraints == null)
-				mb.SetGenericParameterConstraints (index, new Type [0], false);
-			else {
-				Type[] types = constraints.ResolveTypes (ec);
-				if (types == null)
-					return false;
+		//
+		// IMemberContainer
+		//
 
-				mb.SetGenericParameterConstraints (
-					index, types, constraints.HasConstructorConstraint);
+		IMemberContainer IMemberContainer.Parent {
+			get { return null; }
+		}
+
+		bool IMemberContainer.IsInterface {
+			get { return true; }
+		}
+
+		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
+		{
+			return FindMembers (mt, bf, null, null);
+		}
+
+		MemberCache IMemberContainer.MemberCache {
+			get { return null; }
+		}
+
+		public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+					       MemberFilter filter, object criteria)
+		{
+			if (constraints == null)
+				return MemberList.Empty;
+
+			ArrayList members = new ArrayList ();
+
+			foreach (Type t in constraints.Types) {
+				MemberList list = TypeManager.FindMembers (
+					t, mt, bf, filter, criteria);
+
+				members.AddRange (list);
 			}
 
-			return true;
+			return new MemberList (members);
 		}
 
 		public override string ToString ()
@@ -758,9 +791,10 @@ namespace Mono.CSharp {
 			if (!Define (parent))
 				return false;
 
-			Type[] gen_params = new Type [TypeParameters.Length];
+			GenericTypeParameterBuilder[] gen_params;
+			gen_params = mb.DefineGenericParameters (MemberName.TypeParameters);
 			for (int i = 0; i < TypeParameters.Length; i++)
-				gen_params [i] = TypeParameters [i].DefineMethod (mb);
+				TypeParameters [i].Define (gen_params [i]);
 
 			return true;
 		}
@@ -768,7 +802,7 @@ namespace Mono.CSharp {
 		public bool DefineType (EmitContext ec, MethodBuilder mb)
 		{
 			for (int i = 0; i < TypeParameters.Length; i++)
-				if (!TypeParameters [i].DefineType (ec, mb))
+				if (!TypeParameters [i].DefineType (ec))
 					return false;
 
 			return true;

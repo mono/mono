@@ -95,8 +95,24 @@ namespace Mono.CSharp {
 				CurrentType = new ConstructedType (
 					Name, TypeParameters, Location);
 
-				foreach (TypeParameter type_param in TypeParameters)
-					type_param.Define (TypeBuilder);
+				EmitContext ec = new EmitContext (
+					this, this, Location, null, null, ModFlags, false);
+
+				string[] param_names = new string [TypeParameters.Length];
+				for (int i = 0; i < TypeParameters.Length; i++)
+					param_names [i] = TypeParameters [i].Name;
+
+				GenericTypeParameterBuilder[] gen_params;
+				
+				gen_params = TypeBuilder.DefineGenericParameters (param_names);
+
+				for (int i = 0; i < gen_params.Length; i++)
+					TypeParameters [i].Define (gen_params [i]);
+
+				foreach (TypeParameter type_param in TypeParameters) {
+					if (!type_param.DefineType (ec))
+						return null;
+				}
 			}
 
 			return TypeBuilder;
@@ -118,7 +134,7 @@ namespace Mono.CSharp {
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
-					type_param.DefineType (ec, TypeBuilder);
+					type_param.DefineType (ec);
 			}
 
 			// FIXME: POSSIBLY make this static, as it is always constant

@@ -469,9 +469,14 @@ public class TypeManager {
 		builder_to_attr.Add (t, tc);
 	}
 
-	public static void AddTypeParameter (Type t, TypeParameter tparam)
+	public static void AddTypeParameter (Type t, TypeParameter tparam, TypeExpr[] ifaces)
 	{
-		builder_to_type_param.Add (t, tparam);
+		if (!builder_to_type_param.Contains (t)) {
+			builder_to_type_param.Add (t, tparam);
+
+			if (ifaces != null)
+				builder_to_ifaces [t] = ifaces;
+		}
 	}
 
 	/// <summary>
@@ -496,6 +501,13 @@ public class TypeManager {
 	{
 		if (t is TypeBuilder) {
 			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
+			if (container != null)
+				return container;
+		}
+
+		if (t is GenericTypeParameterBuilder) {
+			IMemberContainer container = builder_to_type_param [t] as IMemberContainer;
+
 			if (container != null)
 				return container;
 		}
@@ -798,6 +810,9 @@ public class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
+		if (t.FullName == null)
+			return t.Name;
+
 		return Regex.Replace (t.FullName, 
 			@"^System\." +
 			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +
@@ -836,6 +851,9 @@ public class TypeManager {
 
 	static public string GetFullName (Type t)
 	{
+		if (t.FullName == null)
+			return t.Name;
+
 		string name = t.FullName.Replace ('+', '.');
 
 		DeclSpace tc = LookupDeclSpace (t);
@@ -1412,6 +1430,18 @@ public class TypeManager {
 			Timer.StartTimer (TimerType.FindMembers);
 			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
 						 FilterWithClosure_delegate, name);
+			Timer.StopTimer (TimerType.FindMembers);
+			used_cache = false;
+			return list;
+		}
+
+		if (t is GenericTypeParameterBuilder) {
+			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
+
+			MemberList list;
+			Timer.StartTimer (TimerType.FindMembers);
+			list = tparam.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+						   FilterWithClosure_delegate, name);
 			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = false;
 			return list;
@@ -2141,6 +2171,13 @@ public class TypeManager {
 
 			iface_cache [t] = result;
 			return result;
+		} else if (t is GenericTypeParameterBuilder){
+			TypeExpr[] type_ifaces = (TypeExpr []) builder_to_ifaces [t];
+			if (type_ifaces == null)
+				type_ifaces = NoTypeExprs;
+
+			iface_cache [t] = type_ifaces;
+			return type_ifaces;
 		} else {
 			Type [] ifaces = t.GetInterfaces ();
 			if (ifaces.Length == 0)
@@ -2806,7 +2843,7 @@ public class TypeManager {
 		//
 		if (invocation_type != null){
 			string invocation_name = invocation_type.FullName;
-			if (invocation_name.IndexOf ('+') != -1){
+			if ((invocation_name != null) && (invocation_name.IndexOf ('+') != -1)){
 				string container = queried_type.FullName + "+";
 				int container_length = container.Length;
 
@@ -3100,12 +3137,14 @@ public sealed class TypeHandle : IMemberContainer {
 	private static TypeHandle array_type = null;
 
 	private Type type;
+	private string full_name;
 	private bool is_interface;
 	private MemberCache member_cache;
 
 	private TypeHandle (Type type)
 	{
 		this.type = type;
+		full_name = type.FullName != null ? type.FullName : type.Name;
 		if (type.BaseType != null)
 			BaseType = GetTypeHandle (type.BaseType);
 		this.is_interface = type.IsInterface || type.IsGenericParameter;
@@ -3116,7 +3155,7 @@ public sealed class TypeHandle : IMemberContainer {
 
 	public string Name {
 		get {
-			return type.FullName;
+			return full_name;
 		}
 	}
 
@@ -3141,6 +3180,8 @@ public sealed class TypeHandle : IMemberContainer {
 	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
 	{
                 MemberInfo [] members;
+		if (type is GenericTypeParameterBuilder)
+			return MemberList.Empty;
 		if (mt == MemberTypes.Event)
                         members = type.GetEvents (bf | BindingFlags.DeclaredOnly);
                 else
