@@ -1,5 +1,24 @@
 2005-02-01  Raja R Harinath  <rharinath@novell.com>
 
+	Fix test-334.cs (#69519).
+	* cs-parser.jay (using_alias_directive): Pass in an expression to
+	NamespaceEntry.UsingAlias.
+	(using_namespace_directive): Pass in an expression to
+	NamespaceEntry.Using.
+	(namespace_name): Don't flatten to a string.
+	* namespace.cs (NamespaceEntry.AliasEntry): Store an expression.
+	(NamespaceEntry.AliasEntry.Resolve): Lookup using
+	ResolveAsTypeStep.
+	(NamespaceEntry.UsingEntry): Likewise.
+	(NamespaceEntry.Using,NamespaceEntry.UsingAlias): Update to
+	changes.
+	(NamespaceEntry.LookupForUsing): Remove.
+	(NamespaceEntry.LookupNamespaceOrType): Add support for dotted
+	names.
+	(NamespaceEntry.Lookup): Remove support for dotted names.
+
+2005-02-01  Raja R Harinath  <rharinath@novell.com>
+
 	* namespace.cs (NamespaceEntry.NamespaceEntry): Simplify, and
 	split into two.
 	(NamespaceEntry.ImplicitParent): Compute on demand.

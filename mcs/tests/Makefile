@@ -28,7 +28,7 @@ USE_MCS_FLAGS :=
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
 NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
-			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339 test-341
+			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339 test-341 test-334
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common

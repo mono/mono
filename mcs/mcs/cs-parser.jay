@@ -332,7 +332,8 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		current_namespace.UsingAlias ((string) $2, (MemberName) $4, lexer.Location);
+		MemberName name = (MemberName) $4;
+		current_namespace.UsingAlias ((string) $2, name.GetTypeExpression (lexer.Location), lexer.Location);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken);
@@ -342,7 +343,8 @@ using_alias_directive
 using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
-		current_namespace.Using ((string) $2, lexer.Location);
+		MemberName ns_name = (MemberName) $2;
+		current_namespace.Using (ns_name.GetTypeExpression (lexer.Location), lexer.Location);
           }
 	;
 
@@ -387,11 +389,7 @@ opt_comma
 	;
 
 namespace_name
-	: namespace_or_type_name {
-		MemberName name = (MemberName) $1;
-
-		$$ = name.GetName ();
-	  }
+	: namespace_or_type_name
 	;
 
 namespace_body

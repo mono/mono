@@ -227,37 +227,40 @@ namespace Mono.CSharp {
 		// exist.
 		//
 		public class UsingEntry {
-			public readonly string Name;
+			public Expression Name;
 			public readonly NamespaceEntry NamespaceEntry;
 			public readonly Location Location;
 			
-			public UsingEntry (NamespaceEntry entry, string name, Location loc)
+			public UsingEntry (NamespaceEntry entry, Expression name, Location loc)
 			{
 				Name = name;
 				NamespaceEntry = entry;
 				Location = loc;
 			}
 
-			Namespace resolved_ns;
+			internal FullNamedExpression resolved;
 
 			public Namespace Resolve ()
 			{
-				if (resolved_ns != null)
-					return resolved_ns;
+				if (resolved != null)
+					return resolved as Namespace;
 
-				FullNamedExpression resolved = NamespaceEntry.LookupForUsing (Name, Location);
-				resolved_ns = resolved as Namespace;
-				return resolved_ns;
+				DeclSpace root = RootContext.Tree.Types;
+				root.NamespaceEntry = NamespaceEntry;
+				resolved = Name.ResolveAsTypeStep (root.EmitContext);
+				root.NamespaceEntry = null;
+
+				return resolved as Namespace;
 			}
 		}
 
 		public class AliasEntry {
 			public readonly string Name;
-			public readonly MemberName Alias;
+			public readonly Expression Alias;
 			public readonly NamespaceEntry NamespaceEntry;
 			public readonly Location Location;
 			
-			public AliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc)
+			public AliasEntry (NamespaceEntry entry, string name, Expression alias, Location loc)
 			{
 				Name = name;
 				Alias = alias;
@@ -272,9 +275,11 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				string alias = Alias.GetPartialName ();
+				DeclSpace root = RootContext.Tree.Types;
+				root.NamespaceEntry = NamespaceEntry;
+				resolved = Alias.ResolveAsTypeStep (root.EmitContext);
+				root.NamespaceEntry = null;
 
-				resolved = NamespaceEntry.LookupForUsing (alias, Location);
 				return resolved;
 			}
 		}
@@ -307,6 +312,16 @@ namespace Mono.CSharp {
 			this.FullName = ns.Name;
 		}
 
+		//
+		// According to section 16.3.1 (using-alias-directive), the namespace-or-type-name is
+		// resolved as if the immediately containing namespace body has no using-directives.
+		//
+		// Section 16.3.2 says that the same rule is applied when resolving the namespace-name
+		// in the using-namespace-directive.
+		//
+		// To implement these rules, the expressions in the using directives are resolved using 
+		// the "doppelganger" (ghostly bodiless duplicate).
+		//
 		NamespaceEntry doppelganger;
 		NamespaceEntry Doppelganger {
 			get {
@@ -354,32 +369,34 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Records a new namespace for resolving name references
 		/// </summary>
-		public void Using (string ns, Location loc)
+		public void Using (Expression ns, Location loc)
 		{
+			string name = ns.ToString ();
 			if (DeclarationFound){
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
 				return;
 			}
 
-			if (ns == FullName)
+			if (name == FullName)
 				return;
 			
 			if (using_clauses == null)
 				using_clauses = new ArrayList ();
 
 			foreach (UsingEntry old_entry in using_clauses) {
-				if (old_entry.Name == ns) {
+				if (old_entry.Name.ToString () == name) {
 					if (RootContext.WarningLevel >= 3)
-						Report.Warning (105, loc, "The using directive for '{0}' appeared previously in this namespace", ns);
+						Report.Warning (105, loc, "The using directive for '{0}' appeared previously in this namespace", name);
 					return;
 				}
 			}
-			
-			UsingEntry ue = new UsingEntry (this, ns, loc);
+
+
+			UsingEntry ue = new UsingEntry (Doppelganger, ns, loc);
 			using_clauses.Add (ue);
 		}
 
-		public void UsingAlias (string name, MemberName alias, Location loc)
+		public void UsingAlias (string name, Expression alias, Location loc)
 		{
 			if (DeclarationFound){
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
@@ -395,7 +412,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			aliases [name] = new AliasEntry (this, name, alias, loc);
+			aliases [name] = new AliasEntry (Doppelganger, name, alias, loc);
 		}
 
 		public FullNamedExpression LookupAlias (string alias)
@@ -407,85 +424,45 @@ namespace Mono.CSharp {
 			return entry == null ? null : entry.Resolve ();
 		}
 
-		//
-		// According to section 16.3.1 (using-alias-directive), the namespace-or-type-name is 
-		// resolved as if the immediately containing namespace body has no using-directives.
-		//
-		// Section 16.3.2 says that the same rule is applied when resolving the namespace-name
-		// in the using-namespace-directive.
-		//
-		public FullNamedExpression LookupForUsing (string dotted_name, Location loc)
+		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc)
 		{
-			int pos = dotted_name.IndexOf ('.');
-			string simple_name = dotted_name;
+			FullNamedExpression resolved = null;
 			string rest = null;
+
+			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
+			int pos = name.IndexOf ('.');
 			if (pos >= 0) {
-				simple_name = dotted_name.Substring (0, pos);
-				rest = dotted_name.Substring (pos + 1);
+				rest = name.Substring (pos + 1);
+				name = name.Substring (0, pos);
 			}
 
-			FullNamedExpression o = Doppelganger.LookupNamespaceOrType (null, simple_name, loc);
-			if (o == null || rest == null)
-				return o;
+			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
+				if ((resolved = curr_ns.Lookup (ds, name, loc)) != null)
+					break;
+			}
 
-			Namespace ns = o as Namespace;
+			if (resolved == null || rest == null)
+				return resolved;
+
+			Namespace ns = resolved as Namespace;
 			if (ns != null)
-				return ns.Lookup (null, rest, loc);
-			
-			Type nested = TypeManager.LookupType (o.FullName + "." + rest);
-			if (nested == null)
+				return ns.Lookup (ds, rest, loc);
+
+			Type nested = TypeManager.LookupType (resolved.FullName + "." + rest);
+			if ((nested == null) || ((ds != null) && !ds.CheckAccessLevel (nested)))
 				return null;
 
 			return new TypeExpression (nested, Location.Null);
 		}
 
-		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc)
-		{
-			FullNamedExpression resolved = null;
-			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
-				if ((resolved = curr_ns.Lookup (ds, name, loc)) != null)
-					break;
-			}
-			return resolved;
-		}
-
 		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
 		{
-			FullNamedExpression o;
-
-			//
-			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
-			//
-			// FIXME: Remove this block.  Only simple names should come here.
-			//        The bug: The loop in LookupNamespaceOrType continues if 
-			//        the lookup for N succeeds but the nested lookup for I fails.
-			//        This is one part of #52697.
-			//
-			int pos = name.IndexOf ('.');
-			if (pos >= 0) {
-				//throw new InternalErrorException ("Only simple names should come here");
-				string first = name.Substring (0, pos);
-				string last = name.Substring (pos + 1);
-
-				o = Lookup (ds, first, loc);
-				if (o == null)
-					return null;
-				
-				Namespace ns = o as Namespace;
-				if (ns != null)
-					return ns.Lookup (ds, last, loc);
-
-				Type nested = TypeManager.LookupType (o.FullName + "." + last);
-				if ((nested == null) || ((ds != null) && !ds.CheckAccessLevel (nested)))
-					return null;
-
-				return new TypeExpression (nested, Location.Null);
-			}
+			// Precondition: Only simple names (no dots) will be looked up with this function.
 
 			//
 			// Check whether it's in the namespace.
 			//
-			o = NS.Lookup (ds, name, loc);
+			FullNamedExpression o = NS.Lookup (ds, name, loc);
 			if (o != null)
 				return o;
 
@@ -556,7 +533,7 @@ namespace Mono.CSharp {
 			if (using_clauses != null) {
 				using_list = new string [using_clauses.Count];
 				for (int i = 0; i < using_clauses.Count; i++)
-					using_list [i] = ((UsingEntry) using_clauses [i]).Name;
+					using_list [i] = ((UsingEntry) using_clauses [i]).Name.ToString ();
 			} else {
 				using_list = new string [0];
 			}
@@ -624,8 +601,8 @@ namespace Mono.CSharp {
 					if (ue.Resolve () != null)
 						continue;
 
-					if (LookupForUsing (ue.Name, ue.Location) == null)
-						error246 (ue.Location, ue.Name);
+					if (ue.resolved == null)
+						error246 (ue.Location, ue.Name.ToString ());
 					else
 						Report.Error (138, ue.Location, "The using keyword only lets you specify a namespace, " +
 							      "`" + ue.Name + "' is a class not a namespace.");
@@ -640,7 +617,7 @@ namespace Mono.CSharp {
 					if (alias.Resolve () != null)
 						continue;
 
-					error246 (alias.Location, alias.Alias.GetPartialName ());
+					error246 (alias.Location, alias.Alias.ToString ());
 				}
 			}
 		}
