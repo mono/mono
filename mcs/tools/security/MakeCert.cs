@@ -97,9 +97,9 @@ namespace Mono.Tools {
 			DateTime notBefore = DateTime.Now;
 			DateTime notAfter =  DateTime.Parse ("12/31/2039 23:59:59Z", format);
 
-			RSA issuerKey = RSA.Create ();
+			RSA issuerKey = (RSA)RSA.Create ();
 			issuerKey.FromXmlString (MonoTestRootAgency);
-			RSA subjectKey = RSA.Create ();
+			RSA subjectKey = (RSA)RSA.Create ();
 
 			bool selfSigned = false;
 			string hashName = "MD5";
