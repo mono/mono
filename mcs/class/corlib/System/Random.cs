@@ -22,7 +22,7 @@ namespace System
                 public const byte MinValue = 0x00;
                 public Random()
                 {
-                        S = (int)DateTime.Now;
+                        S = (int)(DateTime.Now.Ticks);
                 }
                 public Random(int Seed)
                 {
@@ -30,15 +30,15 @@ namespace System
                 }
                 public virtual int Next()
                 {
-                        return (int)(Random.Sample()*Random.MaxValue);
+                        return (int)(this.Sample()*this.MaxValue);
                 }
                 public virtual int Next(int maxValue)
                 {
-                        if (maxValue < Random.MinValue)
+                        if (maxValue < this.MinValue)
                                 throw new ArgumentOutOfRangeException("Max value is less then min value.");
-                        else if (maxValue == Random.MinValue)
-                                return Random.MinValue;
-                        return (int)(Random.Sample()*maxValue);
+                        else if (maxValue == this.MinValue)
+                                return this.MinValue;
+                        return (int)(this.Sample()*maxValue);
                 }
                 public virtual int Next(int minValue, int maxValue)
                 {
@@ -46,22 +46,22 @@ namespace System
                                 throw new ArgumentOutOfRangeException("Min value is greater then max value.");
                         else if (minValue == maxValue)
                                 return minValue;
-                        return (int)(Random.Sample()*maxValue)+minValue;
+                        return (int)(this.Sample()*maxValue)+minValue;
                 }
                 public virtual void NextBytes(byte[] buffer)
                 {
                         int i, l;
-                        if (buffer == NULL)
-                                throw ArgumentNullException();
+                        if (buffer == null)
+                                throw new ArgumentNullException();
                         l = buffer.GetUpperBound(0);
                         for (i = buffer.GetLowerBound(0); i < l; i++)
                         {
-                                buffer[i] = (byte)(Random.Sample()*Random.MaxValue);
+                                buffer[i] = (byte)(this.Sample()*this.MaxValue);
                         }
                 }
                 public virtual double NextDouble()
                 {
-                        return Random.Sample();
+                        return this.Sample();
                 }
                 protected virtual double Sample(){
                         S=A*(S%Q)-R*(S/Q);

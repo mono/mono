@@ -1,3 +1,7 @@
+2001-08-08  Bob Smith  <bob@thestuff.net>
+
+        * Random.cs: Many compile fixes.
+
 2001-08-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* IntPtr.cs: Added and Completed implementation.
