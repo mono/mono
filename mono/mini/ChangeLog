@@ -1,4 +1,9 @@
 
+Fri Jan 23 17:12:08 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: make --verbose --version emit an error
+	if the loaded corlib doesn't match the runtime version.
+
 Mon Jan 19 17:44:50 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.h: export ppc_patch().
