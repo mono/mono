@@ -30,7 +30,10 @@ class XX {
 
 		if (((int)X.A) + "a" != "1a")
 			return 6;
-		
+	
+		if ((1 + " " + "hello") != "1 hello")
+			return 7;
+	
 		System.Console.WriteLine ("test ok");
 		return 0;
 	}
