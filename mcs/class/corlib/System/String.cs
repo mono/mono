@@ -1089,58 +1089,58 @@ namespace System
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			return Convert.ToBoolean (this);
+			return Convert.ToBoolean (this, provider);
 		}
 
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return Convert.ToByte (this);
+			return Convert.ToByte (this, provider);
 		}
 
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			return Convert.ToChar (this);
+			return Convert.ToChar (this, provider);
 		}
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			return Convert.ToDateTime (this);
+			return Convert.ToDateTime (this, provider);
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			return Convert.ToDecimal (this);
+			return Convert.ToDecimal (this, provider);
 		}
 
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			return Convert.ToDouble (this);
+			return Convert.ToDouble (this, provider);
 		}
 
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return Convert.ToInt16 (this);
+			return Convert.ToInt16 (this, provider);
 		}
 
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return Convert.ToInt32 (this);
+			return Convert.ToInt32 (this, provider);
 		}
 
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return Convert.ToInt64 (this);
+			return Convert.ToInt64 (this, provider);
 		}
 	
 		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return Convert.ToSByte (this);
+			return Convert.ToSByte (this, provider);
 		}
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			return Convert.ToSingle (this);
+			return Convert.ToSingle (this, provider);
 		}
 
 		string IConvertible.ToString (IFormatProvider format)
@@ -1156,19 +1156,19 @@ namespace System
 		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return Convert.ToUInt16 (this);
+			return Convert.ToUInt16 (this, provider);
 		}
 
 		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return Convert.ToUInt32 (this);
+			return Convert.ToUInt32 (this, provider);
 		}
 
 		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return Convert.ToUInt64 (this);
+			return Convert.ToUInt64 (this, provider);
 		}
 
 		TypeCode IConvertible.GetTypeCode ()

@@ -52,6 +52,9 @@ namespace System
 			// too. It's important because it's used in XML
 			// serialization.
 			"yyyy-MM-ddTHH:mm:sszzz",
+			// Invariant ShortDatePattern but with '-' as the
+			// separator
+			"MM-dd-yyyy",
 			// Full date and time
 			"F", "G", "r", "s", "u", "U",
 			// Full date and time, but no seconds

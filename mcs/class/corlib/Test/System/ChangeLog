@@ -1,3 +1,7 @@
+2004-03-22  Dick Porter  <dick@ximian.com>
+
+	* DateTimeTest.cs (System): Test the MM-dd-yyyy date parse format.
+
 2004-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* DoubleFormatterTest.cs: test setting the number of decimal

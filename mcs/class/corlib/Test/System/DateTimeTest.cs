@@ -556,6 +556,12 @@ public class DateTimeTest : Assertion
 		DateTime t1 = DateTime.Parse ("02/25/2002");
 		AssertEquals ("H00", myTicks[0], t1.Ticks);
 		try {
+			t1 = DateTime.Parse ("02-25-2002");
+		}
+		catch (Exception e) {
+			Fail ("Unexpected exception. e=" + e);
+		}
+		try {
 			t1 = DateTime.Parse ("2002-02-25");
 		}
 		catch (Exception e) {
