@@ -1,3 +1,8 @@
+2003-07-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNode.cs : fixed internal ConstructNamespaceManager() for InnerXml
+	  not to create extraneous xmlns="".
+
 2003-07-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs : (Read,ValidateAttributes,ReadAttributeValue)

@@ -624,10 +624,10 @@ namespace System.Xml
 			while(el != null) {
 				foreach(XmlAttribute attr in el.Attributes) {
 					if(attr.Prefix == "xmlns") {
-						if (nsmgr.LookupNamespace (attr.LocalName) == null)
+						if (nsmgr.LookupNamespace (attr.LocalName) != attr.Value)
 							nsmgr.AddNamespace (attr.LocalName, attr.Value);
 					} else if(attr.Name == "xmlns") {
-						if(nsmgr.LookupNamespace (String.Empty) == null)
+						if(nsmgr.LookupNamespace (String.Empty) != attr.Value)
 							nsmgr.AddNamespace (String.Empty, attr.Value);
 					}
 				}
