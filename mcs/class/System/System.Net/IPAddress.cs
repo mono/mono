@@ -222,7 +222,7 @@ namespace System.Net {
 			}
 		}
 
-		[Obsolete]
+		[Obsolete("This property is obsolete. Use GetAddressBytes.")]
 #endif
 		public long Address 
 		{
@@ -246,6 +246,10 @@ namespace System.Net {
 			}
 		}
 
+		internal long InternalIPv4Address {
+			get { return address; }
+		}
+		
 #if NET_1_1
 		public long ScopeId {
 			get {
@@ -261,25 +265,21 @@ namespace System.Net {
 				_scopeId = value;
 			}
 		}
-		public byte[] GetAddressBytes() 
-		{
 
-			if(_family == AddressFamily.InterNetworkV6)
-			{
-				byte[] addressBytes = new byte[16];
-				Buffer.BlockCopy(_numbers, 0, addressBytes, 0, 16);
+		public byte [] GetAddressBytes () 
+		{
+			if(_family == AddressFamily.InterNetworkV6) {
+				byte [] addressBytes = new byte [16];
+				Buffer.BlockCopy (_numbers, 0, addressBytes, 0, 16);
 				return addressBytes;
-			}
-			else
-			{
-				return new byte[4] { (byte)(address & 0xFF),
-									   (byte)((address >> 8) & 0xFF),
-									   (byte)((address >> 16) & 0xFF),
-									   (byte)(address >> 24) }; 
+			} else {
+				return new byte [4] { (byte)(address & 0xFF),
+						     (byte)((address >> 8) & 0xFF),
+						     (byte)((address >> 16) & 0xFF),
+						     (byte)(address >> 24) }; 
 			}
 		}
 #endif
-
 		public AddressFamily AddressFamily 
 		{
 			get {
@@ -351,10 +351,9 @@ namespace System.Net {
 				if(AddressFamily != otherAddr.AddressFamily)
 					return false;
 
-				if(AddressFamily == AddressFamily.InterNetwork)
-					return Address == otherAddr.Address;
-				else
-				{
+				if(AddressFamily == AddressFamily.InterNetwork) {
+					return address == otherAddr.address;
+				} else {
 					ushort[] vals = otherAddr._numbers;
 
 					for(int i=0; i<8; i++)
@@ -370,7 +369,7 @@ namespace System.Net {
 		public override int GetHashCode ()
 		{
 			if(_family == AddressFamily.InterNetwork)
-				return (int)Address;
+				return (int)address;
 			else
 				return Hash (((((int) _numbers[0]) << 16) + _numbers [1]), 
 					((((int) _numbers [2]) << 16) + _numbers [3]),

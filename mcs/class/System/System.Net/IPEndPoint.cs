@@ -134,11 +134,11 @@ namespace System.Net {
 					// stores the address
 					sockaddr [2] = (byte) ((port>>8) & 0xff);
 					sockaddr [3] = (byte) (port & 0xff);
-
-					sockaddr [4] = (byte) (address.Address & 0xff);
-					sockaddr [5] = (byte) ((address.Address >> 8) & 0xff);
-					sockaddr [6] = (byte) ((address.Address >> 16) & 0xff);
-					sockaddr [7] = (byte) ((address.Address >> 24) & 0xff);
+					long addr = address.InternalIPv4Address;
+					sockaddr [4] = (byte) (addr & 0xff);
+					sockaddr [5] = (byte) ((addr >> 8) & 0xff);
+					sockaddr [6] = (byte) ((addr >> 16) & 0xff);
+					sockaddr [7] = (byte) ((addr >> 24) & 0xff);
 					break;
 #if NET_1_1
 				case AddressFamily.InterNetworkV6:

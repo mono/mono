@@ -107,7 +107,7 @@ namespace System.Net {
 				string ipv4Str = ipString.Substring (pos2 + 1);
 				if (ipv4Str.IndexOf ('.') != -1) {
 					try {
-						long a = IPAddress.Parse (ipv4Str).Address;
+						long a = IPAddress.Parse (ipv4Str).InternalIPv4Address;
 						addr [6] = (ushort) (((int) (a & 0xff) << 8) + ((int) ((a >> 8) & 0xff)));
 						addr [7] = (ushort) (((int) ((a >> 16) & 0xff) << 8) + ((int) ((a >> 24) & 0xff)));
 						if (ipString [pos2 - 1] == ':') 
@@ -333,7 +333,7 @@ namespace System.Net {
 				if (address [5] != 0 && address [5] != 0xffff)
 					return false;
 
-				long a = ipv4.Address;
+				long a = ipv4.InternalIPv4Address;
 				if (address [6] != (ushort) (((int) (a & 0xff) << 8) + ((int) ((a >> 8) & 0xff))) ||
 				    address [7] != (ushort) (((int) ((a >> 16) & 0xff) << 8) + ((int) ((a >> 24) & 0xff))))
 				    	return false;
