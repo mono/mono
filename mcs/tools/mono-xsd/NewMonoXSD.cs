@@ -438,7 +438,7 @@ namespace Mono.Util {
 
 		public void GenerateDataset ()
 		{
-			if (namesp == null) namesp = "Schemas";
+			if (namesp == null) namesp = "";
 			if (uri == null) uri = "";
 			string targetFile = "";
 

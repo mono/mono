@@ -1,3 +1,8 @@
+2005-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NewMonoXSD.cs : by default, dataset namespace is not "Schemas" but
+	  empty.
+
 2004-08-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NewMonoXSD.cs : /language should support custom assembly qualified
