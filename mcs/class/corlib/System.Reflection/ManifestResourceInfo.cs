@@ -21,7 +21,7 @@ namespace System.Reflection
 
 		[MonoTODO]
 		public virtual ResourceLocation ResourceLocation {
-			get { return null; }
+			get { return 0; }
 		}
 	}
 }
