@@ -1,3 +1,9 @@
+
+Tue Aug 3 17:54:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: make GC warning messages use the trace API, they are just
+	noise to most of the users.
+
 2004-08-03  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c (read_string): Correctly read the string.
