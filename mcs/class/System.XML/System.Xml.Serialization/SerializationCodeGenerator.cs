@@ -1252,26 +1252,25 @@ namespace System.Xml.Serialization
 			}
 			
 			WriteLine ("System.Xml.XmlQualifiedName t = GetXsiType();");
-			WriteLine ("if (t != null) ");
-			WriteLineInd ("{");
+			WriteLine ("if (t == null)");
+			if (typeMap.TypeData.Type != typeof(object))
+				WriteLine ("\t;");
+			else
+				WriteLine ("\treturn " + GetCast (typeMap.TypeData, "ReadTypedPrimitive (new System.Xml.XmlQualifiedName(\"anyType\", System.Xml.Schema.XmlSchema.Namespace))") + ";");
 			
-			bool first = true;
 			foreach (XmlTypeMapping realMap in typeMap.DerivedTypes)
 			{
-				WriteLineInd ((first?"":"else ") + "if (t.Name == " + GetLiteral (realMap.XmlType) + " && t.Namespace == " + GetLiteral (realMap.XmlTypeNamespace) + ")");
+				WriteLineInd ("else if (t.Name == " + GetLiteral (realMap.XmlType) + " && t.Namespace == " + GetLiteral (realMap.XmlTypeNamespace) + ")");
 				WriteLine ("return " + GetReadObjectCall(realMap, isNullable, checkType) + ";");
 				Unindent ();
-				first = false;
 			}
 
-			WriteLine ((first?"":"else ") + "if (t.Name != " + GetLiteral (typeMap.XmlType) + " || t.Namespace != " + GetLiteral (typeMap.XmlTypeNamespace) + ")");
+			WriteLine ("else if (t.Name != " + GetLiteral (typeMap.XmlType) + " || t.Namespace != " + GetLiteral (typeMap.XmlTypeNamespace) + ")");
 			if (typeMap.TypeData.Type == typeof(object))
 				WriteLine ("\treturn " + GetCast (typeMap.TypeData, "ReadTypedPrimitive (t)") + ";");
 			else
 				WriteLine ("\tthrow CreateUnknownTypeException(t);");
 
-			WriteLineUni ("}");
-			
 			if (!typeMap.TypeData.IsValueType)
 			{
 				if (_format == SerializationFormat.Literal)

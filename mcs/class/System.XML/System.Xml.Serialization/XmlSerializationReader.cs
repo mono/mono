@@ -273,7 +273,7 @@ namespace System.Xml.Serialization {
 
 		protected XmlQualifiedName GetXsiType ()
 		{
-			string typeName = Reader.GetAttribute ("xsi:type");
+			string typeName = Reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (typeName == string.Empty || typeName == null) return null;
 			int i = typeName.IndexOf (":");
 			if (i == -1) return new XmlQualifiedName (typeName, Reader.NamespaceURI);
@@ -628,7 +628,24 @@ namespace System.Xml.Serialization {
 		{
 			if (qname == null) qname = GetXsiType ();
 			TypeData typeData = TypeTranslator.GetPrimitiveTypeData (qname.Name);
-			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive) throw new InvalidOperationException ("Unknown type: " + qname.Name);
+			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive)
+			{
+				// Put everything into a node array
+				XmlNode node = Document.ReadNode (reader);
+				XmlElement elem = node as XmlElement;
+				
+				if (elem == null) 
+					return new XmlNode[] {node};
+				else {
+					XmlNode[] nodes = new XmlNode[elem.Attributes.Count + elem.ChildNodes.Count];
+					int n = 0;
+					foreach (XmlNode no in elem.Attributes)
+						nodes[n++] = no;
+					foreach (XmlNode no in elem.ChildNodes)
+						nodes[n++] = no;
+					return nodes;
+				}
+			}
 
 			if (typeData.Type == typeof (XmlQualifiedName)) return ReadNullableQualifiedName ();
 			return XmlCustomFormatter.FromXmlString (typeData, Reader.ReadElementString ());

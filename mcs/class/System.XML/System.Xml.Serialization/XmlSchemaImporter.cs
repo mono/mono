@@ -411,6 +411,10 @@ namespace System.Xml.Serialization {
 			// the class map is registered before parsing the children. We can't do the same
 			// with the array type because to register the array map we need the type of the array.
 
+			Type anyType = GetAnyElementType (stype);
+			if (anyType != null)
+				return GetTypeMapping (TypeTranslator.GetTypeData(anyType));
+				
 			if (CanBeArray (typeQName, stype))
 			{
 				TypeData typeData;
@@ -423,13 +427,6 @@ namespace System.Xml.Serialization {
 				}
 
 				// After all, it is not an array. Create a class map then.
-			}
-			else if (CanBeAnyElement (stype))
-			{
-				if (stype.IsMixed)
-					return GetTypeMapping (TypeTranslator.GetTypeData(typeof(XmlNode)));
-				else
-					return GetTypeMapping (TypeTranslator.GetTypeData(typeof(XmlElement)));
 			}
 			else if (CanBeIXmlSerializable (stype))
 			{
@@ -1241,6 +1238,33 @@ namespace System.Xml.Serialization {
 		{
 			XmlSchemaSequence seq = stype.Particle as XmlSchemaSequence;
 			return (seq != null) && (seq.Items.Count == 1) && (seq.Items[0] is XmlSchemaAny);
+		}
+		
+		Type GetAnyElementType (XmlSchemaComplexType stype)
+		{
+			XmlSchemaSequence seq = stype.Particle as XmlSchemaSequence;
+			
+			if ((seq == null) || (seq.Items.Count != 1) || !(seq.Items[0] is XmlSchemaAny))
+				return null;
+			
+			if (encodedFormat) 
+				return typeof(object);
+
+			XmlSchemaAny any = seq.Items[0] as XmlSchemaAny;
+			if (any.MaxOccurs == 1)
+			{
+				if (stype.IsMixed)
+					return typeof(XmlNode);
+				else
+					return typeof(XmlElement);
+			}
+			else
+			{
+				if (stype.IsMixed)
+					return typeof(XmlNode[]);
+				else
+					return typeof(XmlElement[]);
+			}
 		}
 
 		bool CanBeIXmlSerializable (XmlSchemaComplexType stype)

@@ -30,7 +30,7 @@ namespace System.Xml.Serialization
 			this.type = type;
 			this.elementName = elementName;
 			this.typeName = type.Name;
-			this.fullTypeName = type.FullName;
+			this.fullTypeName = type.FullName.Replace ('+', '.');
 
 			if (isPrimitive)
 				sType = SchemaTypes.Primitive;
@@ -53,7 +53,7 @@ namespace System.Xml.Serialization
 		{
 			this.elementName = xmlType;
 			this.typeName = typeName;
-			this.fullTypeName = fullTypeName;
+			this.fullTypeName = fullTypeName.Replace ('+', '.');
 			this.listItemTypeData = listItemTypeData;
 			this.sType = schemaType;
 		}
@@ -82,7 +82,6 @@ namespace System.Xml.Serialization
 		public string FullTypeName
 		{
 			get {
-//				return type.FullName.Replace ('+', '.');
 				return fullTypeName;
 			}
 		}

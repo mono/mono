@@ -17,6 +17,7 @@ namespace System.Xml.Serialization
 	{
 		XmlMapping _typeMap;
 		SerializationFormat _format;
+		static readonly XmlQualifiedName AnyType = new XmlQualifiedName("anyType", System.Xml.Schema.XmlSchema.Namespace);
 
 		public XmlSerializationReaderInterpreter(XmlMapping typeMap)
 		{
@@ -179,6 +180,8 @@ namespace System.Xml.Serialization
 					if (realMap != typeMap)
 						return ReadObject (realMap, false, false);
 				}
+				else if (typeMap.TypeData.Type == typeof(object))
+					return ReadTypedPrimitive (AnyType);
             }
 
 			object ob = Activator.CreateInstance (typeMap.TypeData.Type);

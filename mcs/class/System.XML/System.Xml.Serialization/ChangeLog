@@ -1,3 +1,16 @@
+2004-05-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs: 
+	  When reading an object using the typeof(object) map, an emty xsi:type 
+	  means that it has to read the contents into an XmlNode[].
+	* TypeData.cs: Return the correct full name for inner classes.
+	* XmlSchemaImporter.cs: Improved detection of types that represent 
+	  "anyType", and must be mapped to XmlElement, XmlNode or Object.
+	* XmlSerializationReader.cs: In GetXsiType(), find the type attribute using
+	  the correct namespace.
+	  In ReadTypedPrimitive(), read the element as XmlNode[] if the type is
+	  not known.
+
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationWriter.cs : It do not have to handle schema
