@@ -352,6 +352,7 @@ namespace System.Xml {
 			return validatingReader.ReadAttributeValue ();
 		}
 
+#if USE_VERSION_1_0
 		[MonoTODO]
 		public override string ReadInnerXml ()
 		{
@@ -363,6 +364,7 @@ namespace System.Xml {
 		{
 			return validatingReader.ReadOuterXml ();
 		}
+#endif
 
 		[MonoTODO]
 		public override string ReadString ()

@@ -325,11 +325,21 @@ namespace System.Xml
 			return (CHARS[c] & VALID) != 0;
 		}
 
+		public static bool IsValid(int c) 
+		{
+			return c > 0 && c < CHARS.Length && (CHARS[c] & VALID) != 0;
+		}
+
 		/// <summary>
 		/// Returns true if the specified character is invalid.
 		/// </summary>
 		/// <param name="c">The character to check.</param>
 		public static bool IsInvalid(char c) 
+		{
+			return !IsValid(c);
+		}
+
+		public static bool IsInvalid(int c) 
 		{
 			return !IsValid(c);
 		}
@@ -343,6 +353,11 @@ namespace System.Xml
 			return (CHARS[c] & CONTENT) != 0;
 		}
 
+		public static bool IsContent(int c) 
+		{
+			return c > 0 && c < CHARS.Length && (CHARS[c] & CONTENT) != 0;
+		}
+
 		/// <summary>
 		/// Returns true if the specified character can be considered markup.
 		/// Markup characters include '&lt;', '&amp;', and '%'.
@@ -351,6 +366,11 @@ namespace System.Xml
 		public static bool IsMarkup(char c) 
 		{
 			return c == '<' || c == '&' || c == '%';
+		}
+
+		public static bool IsMarkup(int c) 
+		{
+			return c > 0 && c < CHARS.Length && (c == '<' || c == '&' || c == '%');
 		}
 
 		/// <summary>
@@ -366,7 +386,7 @@ namespace System.Xml
 
 		public static bool IsSpace(int c) 
 		{
-			return c > 0 && (CHARS[c] & SPACE) != 0;
+			return c > 0 && c < CHARS.Length && (CHARS[c] & SPACE) != 0;
 		}
 
 		/// <summary>
@@ -381,7 +401,7 @@ namespace System.Xml
 
 		public static bool IsNameStart(int c) 
 		{
-			return c > 0 && (CHARS[c] & NAME_START) != 0;
+			return c > 0 && c < CHARS.Length && (CHARS[c] & NAME_START) != 0;
 		} 
 
 		/// <summary>
@@ -396,7 +416,7 @@ namespace System.Xml
 
 		public static bool IsName(int c) 
 		{
-			return c > 0 && (CHARS[c] & NAME) != 0;
+			return c > 0 && c < CHARS.Length && (CHARS[c] & NAME) != 0;
 		} 
 
 		/// <summary>
@@ -409,7 +429,12 @@ namespace System.Xml
 		public static bool IsNCNameStart(char c) 
 		{
 			return (CHARS[c] & NCNAME_START) != 0;
-		} 
+		}
+
+		public static bool IsNCNameStart(int c) 
+		{
+			return c > 0 && c < CHARS.Length && (CHARS[c] & NCNAME_START) != 0;
+		}
 
 		/// <summary>
 		/// Returns true if the specified character is a valid NCName
@@ -425,7 +450,7 @@ namespace System.Xml
 
 		public static bool IsNCName(int c) 
 		{
-			return c > 0 && (CHARS[c] & NCNAME) != 0;
+			return c > 0 && c < CHARS.Length && (CHARS[c] & NCNAME) != 0;
 		} 
 
 		/// <summary>
@@ -440,7 +465,7 @@ namespace System.Xml
 
 		public static bool IsPubid(int c) 
 		{
-			return c > 0 && (CHARS[c] & PUBID) != 0;
+			return c > 0 && c < CHARS.Length && (CHARS[c] & PUBID) != 0;
 		}
 
 		/// <summary>
@@ -472,6 +497,18 @@ namespace System.Xml
 				}
 			}
 			return true;
+		}
+
+		public static int IsValidName (string name)
+		{
+			if (name.Length == 0)
+				return 0;
+			if (!IsNameStart (name [0]))
+				return 0;
+			for (int i=1; i<name.Length; i++)
+				if (!IsName (name [i]))
+					return i;
+			return -1;
 		}
 
 		/// <summary>

@@ -241,6 +241,8 @@ namespace Mono.Xml
 			MoveToElement ();
 
 			if (nextEntityReader != null) {
+				if (DTD == null || DTD.EntityDecls [Name] == null)
+					throw new XmlException ("Entity '" + Name + "' was not declared.");
 				entityReaderStack.Push (reader);
 				entityReaderNameStack.Push (Name);
 				entityReaderDepthStack.Push (Depth);
@@ -384,6 +386,12 @@ namespace Mono.Xml
 						XmlSeverityType.Error);
 					// FIXME: validation recovery code here.
 					currentAutomata = previousAutomata;
+				}
+				break;
+			case XmlNodeType.EntityReference:
+				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
+					ResolveEntity ();
+					return Read ();
 				}
 				break;
 			}
@@ -537,6 +545,7 @@ namespace Mono.Xml
 				return reader.ReadAttributeValue ();
 		}
 
+#if USE_VERSION_1_0
 		public override string ReadInnerXml ()
 		{
 			// MS.NET 1.0 has a serious bug here. It skips validation.
@@ -548,11 +557,12 @@ namespace Mono.Xml
 			// MS.NET 1.0 has a serious bug here. It skips validation.
 			return reader.ReadOuterXml ();
 		}
+#endif
 
 		public override string ReadString ()
 		{
 			// It seems to be the same as ReadInnerXml(). 
-			return reader.ReadString ();
+			return base.ReadStringInternal ();
 		}
 
 		public override void ResolveEntity ()
@@ -561,7 +571,7 @@ namespace Mono.Xml
 				throw new InvalidOperationException ("The current node is not an Entity Reference");
 			DTDEntityDeclaration entity = DTD != null ? DTD.EntityDecls [Name] as DTDEntityDeclaration : null;
 
-			// MS.NET seems simply ignoring undeclared entity reference ;-(
+			// MS.NET seems simply ignoring undeclared entity reference here ;-(
 			string replacementText =
 				(entity != null) ? entity.EntityValue : String.Empty;
 

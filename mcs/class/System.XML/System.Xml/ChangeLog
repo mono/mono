@@ -1,3 +1,28 @@
+2003-08-03  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDObjectModel.cs : Added BaseURI (but not used yet).
+	  DTDAttListDeclaration.ctro() now requires root dtd object model.
+	* DTDValidatingReader.cs : Read() now expands EntityReference if
+	  entity handling of validating reader is ExpandEntities.
+	* XmlReader.cs,
+	  XmlTextReader.cs,
+	  XmlNodeReader.cs,
+	  XmlValidatingReader.cs : Implemented "virtual" ReadInnerXml and
+	    ReadOuterXml which are modified in MS.NET 1.1.
+	* XmlConstructs.cs : added int version of IsValid, IsInvalid,
+	  IsContent, IsMarkup and IsNCNameStart.
+	  Fixed int version of IsXXX() to check array index range. 
+	  Added IsValidName (string).
+	* XmlTextReader.cs :
+	  - Read() handles document with non document element as an error.
+	  - ReadText() and ReadCharacterReference() checkes illegal characters.
+	  - ReadEntityReference() checks name validity.
+	  - ReadProcessingInstruction() rejects such name that starts with
+	    "xml" ignoring case, and checks attributes more strictly.
+	  - ReadDeclaration() rejects unrecognized kind of declaration.
+	  - In many places, added "required whitespace" check in DTD markup.
+	  - DTD content model now disallows mixing use of '|' and ','.
+
 2003-08-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentFragment.cs : I missed to add it in relation to the

@@ -4,10 +4,13 @@
 // Authors:
 // 	Jason Diamond (jason@injektilo.org)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2001, 2002 Jason Diamond  http://injektilo.org/
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) 2003 Atsushi Enomoto
 //
+using System.IO;
 using System.Text;
 
 namespace System.Xml
@@ -304,9 +307,49 @@ namespace System.Xml
 			Read ();
 		}
 
+#if USE_VERSION_1_0
 		public abstract string ReadInnerXml ();
 
 		public abstract string ReadOuterXml ();
+
+#else
+		public virtual string ReadInnerXml ()
+		{
+			if (ReadState != ReadState.Interactive)
+				return String.Empty;
+
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			if (NodeType == XmlNodeType.Element) {
+				if (IsEmptyElement)
+					return String.Empty;
+				int startDepth = Depth;
+				Read ();
+				do {
+					if (ReadState != ReadState.Interactive)
+						throw new XmlException ("Unexpected end of the XML reader.");
+					xtw.WriteNode (this, false);
+				} while (startDepth < Depth);
+				// reader is now end element, then proceed once more.
+				Read ();
+			}
+			else
+				xtw.WriteNode (this, false);
+
+			return sw.ToString ();
+		}
+
+		public virtual string ReadOuterXml ()
+		{
+			if (ReadState != ReadState.Interactive)
+				return String.Empty;
+
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.WriteNode (this, false);
+			return sw.ToString ();
+		}
+#endif
 
 		public virtual void ReadStartElement ()
 		{
@@ -361,6 +404,8 @@ namespace System.Xml
 			if (readStringBuffer == null)
 				readStringBuffer = new StringBuilder ();
 			readStringBuffer.Length = 0;
+
+			MoveToElement ();
 
 			switch (NodeType) {
 			default:

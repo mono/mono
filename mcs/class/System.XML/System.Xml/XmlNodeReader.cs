@@ -781,6 +781,7 @@ namespace System.Xml
 				return false;
 		}
 
+#if USE_VERSION_1_0
 		// Its traversal behavior is almost same as Read().
 		public override string ReadInnerXml ()
 		{
@@ -858,6 +859,7 @@ namespace System.Xml
 				return String.Empty;
 			}
 		}
+#endif
 
 		public override string ReadString ()
 		{

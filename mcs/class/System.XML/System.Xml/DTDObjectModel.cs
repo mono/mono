@@ -31,6 +31,8 @@ namespace Mono.Xml
 			factory = new DTDAutomataFactory (this);
 		}
 
+		public string BaseURI;
+
 		public string Name;
 		
 		public string PublicId;
@@ -377,10 +379,13 @@ namespace Mono.Xml
 	public abstract class DTDNode
 	{
 		private DTDObjectModel root;
+		public string BaseURI;
 
 		internal void SetRoot (DTDObjectModel root)
 		{
 			this.root = root;
+			if (BaseURI == null)
+				this.BaseURI = root.BaseURI;
 		}
 
 		protected DTDObjectModel Root {
@@ -499,7 +504,11 @@ namespace Mono.Xml
 	{
 		public string Name;
 
-		internal DTDAttListDeclaration () {}
+		internal DTDAttListDeclaration (DTDObjectModel root)
+		{
+			SetRoot (root);
+		}
+
 		private Hashtable attributeOrders = new Hashtable ();
 		private ArrayList attributes = new ArrayList ();
 
