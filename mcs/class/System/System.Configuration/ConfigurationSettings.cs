@@ -86,7 +86,7 @@ namespace System.Configuration
 
 		public void Init ()
 		{
-			if (config == null)
+			if (config == null){
 				lock (buildingData) {
 					if (config != null)
 						return;
@@ -98,6 +98,7 @@ namespace System.Configuration
 						config = appData;
 					}
 				}
+			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

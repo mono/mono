@@ -1,3 +1,12 @@
+2002-10-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* NameValueFileSectionHandler.cs: For now if a section is not
+	present, return null.  Do not know what the real fix is.  Gonzalo
+	will have to look at this, but the debugger was crashing as
+	appSettings in the machine.config does not exist, but GetConfig
+	returns a non-null value when looking it up when you do a
+	GetDocumentForSection ("appSettings").
+
 2002-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: use get_machine_config_path internal call.

@@ -18,6 +18,9 @@ namespace System.Configuration
 	{
 		public object Create (object parent, object configContext, XmlNode section)
 		{
+			if (section.Attributes == null)
+				return null;
+			
 			XmlNode file = section.Attributes.RemoveNamedItem ("file");
 			NameValueCollection pairs = ConfigHelper.GetNameValueCollection (
 									parent as NameValueCollection,
