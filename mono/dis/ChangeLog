@@ -1,3 +1,8 @@
+2004-12-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* dis-cil.c, dump.c: Encode special constant +Inf, -Inf and NaN
+	using hex constants instead of letting libc print the values.
+
 2004-12-11  Martin Baulig  <martin@ximian.com>
 
 	* get.c (get_typespec): Added `gboolean is_def' argument; removed
