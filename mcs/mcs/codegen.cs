@@ -772,16 +772,9 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes == null) {
 				OptAttributes = new Attributes (attrs);
-				OptAttributes.CheckTargets (ValidAttributeTargets);
 				return;
 			}
 			OptAttributes.AddAttributes (attrs);
-			OptAttributes.CheckTargets (ValidAttributeTargets);
-		}
-
-		public void SetAttributes (Attributes attrs)
-		{
-			OptAttributes = attrs;
 			OptAttributes.CheckTargets (ValidAttributeTargets);
 		}
 

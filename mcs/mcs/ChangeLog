@@ -1,5 +1,10 @@
 2004-05-21  Marek Safar  <marek.safar@seznam.cz>
 
+	* codegen.cs, cs-parser.jay: Removed SetAttributes method.
+	Hari was right, why extra method.
+        
+2004-05-21  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs, cs-parser.jay: Fix errors/cs0579-7.cs.
 
 2004-05-20  Martin Baulig  <martin@ximian.com>

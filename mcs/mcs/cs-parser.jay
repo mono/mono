@@ -450,7 +450,7 @@ global_attributes
 	: attribute_sections
 {
 	if ($1 != null)
-		CodeGen.Assembly.SetAttributes ((Attributes)$1);
+		CodeGen.Assembly.AddAttributes (((Attributes)$1).Attrs);
 
 	$$ = $1;
 }
