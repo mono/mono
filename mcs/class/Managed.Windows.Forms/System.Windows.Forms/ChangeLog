@@ -1,5 +1,12 @@
 2004-12-28  Peter Bartok  <pbartok@novell.com>
 
+	* Control.cs (WndProc): Added WM_HELP handler, now generates 
+	  HelpRequested event
+	* Form.cs: Added HelpButton property and required support code
+	* XplatUIStructs.cs: Added HELPINFO structure for WM_HELP handling
+
+2004-12-28  Peter Bartok  <pbartok@novell.com>
+
 	* CommonDialog.cs: 
 	  - Made DialogForm.owner variable internal
 	  - Added check to ensure owner form is set before setting 

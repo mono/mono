@@ -2662,7 +2662,24 @@ namespace System.Windows.Forms
 				}
 
 				break;					
-			}		
+			}
+
+			case Msg.WM_HELP: {
+				Point	mouse_pos;
+				if (m.LParam != IntPtr.Zero) {
+					HELPINFO	hi;
+
+					hi = new HELPINFO();
+
+					hi = (HELPINFO) Marshal.PtrToStructure (m.LParam, typeof (HELPINFO));
+					mouse_pos = new Point(hi.MousePos.x, hi.MousePos.y);
+				} else {
+					mouse_pos = Control.MousePosition;
+				}
+				OnHelpRequested(new HelpEventArgs(mouse_pos));
+
+				break;
+			}
 				
 
 #if notyet				

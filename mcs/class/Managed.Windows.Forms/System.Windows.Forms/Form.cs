@@ -44,6 +44,7 @@ namespace System.Windows.Forms {
 		private bool			control_box;
 		private bool			minimize_box;
 		private bool			maximize_box;
+		private bool			help_button;
 		private bool			show_in_taskbar;
 		private bool			topmost;
 		private IButtonControl		accept_button;
@@ -117,8 +118,14 @@ namespace System.Windows.Forms {
 						if (owner.ControlBox) {
 							cp.Style |= (int)WindowStyles.WS_SYSMENU;
 						}
+
+						if (owner.HelpButton) {
+							cp.ExStyle |= (int)WindowStyles.WS_EX_CONTEXTHELP;
+						}
 					} else {
-						cp.Style |= (int)(WindowStyles.WS_SYSMENU | WindowStyles.WS_MINIMIZEBOX | WindowStyles.WS_MAXIMIZEBOX | WindowStyles.WS_EX_APPWINDOW);
+						// Defaults
+						cp.Style |= (int)(WindowStyles.WS_SYSMENU | WindowStyles.WS_MINIMIZEBOX | WindowStyles.WS_MAXIMIZEBOX);
+						cp.ExStyle |=  (int)WindowStyles.WS_EX_APPWINDOW;
 					}
 
 					return cp;
@@ -234,6 +241,7 @@ namespace System.Windows.Forms {
 			control_box = true;
 			minimize_box = true;
 			maximize_box = true;
+			help_button = false;
 			show_in_taskbar = true;
 
 			owned_forms = new Form.ControlCollection(this);
@@ -326,6 +334,18 @@ namespace System.Windows.Forms {
 			set {
 				formBorderStyle = value;
 				Invalidate ();
+			}
+		}
+
+		public bool HelpButton {
+			get {
+				return help_button;
+			}
+
+			set {
+				if (help_button != value) {
+					help_button = value;
+				}
 			}
 		}
 
