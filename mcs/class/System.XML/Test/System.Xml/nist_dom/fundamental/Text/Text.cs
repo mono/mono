@@ -420,7 +420,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlText oldTextNode = null;
             System.Xml.XmlText newTextNode = null;
             System.Xml.XmlNode testNode = null;
-            string expectedValue = util.INDEX_SIZE_ERR;
+            string expectedValue = "System.ArgumentOutOfRangeException";//util.INDEX_SIZE_ERR;
 
             testResults results = new testResults("Core0007T");
             try
@@ -444,7 +444,7 @@ namespace nist_dom.fundamental
                 }
                 catch(System.Exception ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
