@@ -1187,7 +1187,7 @@ namespace Mono.CSharp {
 			set {
 				initialize_vector ();
 
-				for (int i = 0; i < Math.Min (vector.Count, value.Count); i++)
+				for (int i = 0; i < System.Math.Min (vector.Count, value.Count); i++)
 					vector [i] = value [i];
 			}
 		}

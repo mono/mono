@@ -1,3 +1,11 @@
+2003-07-26  Martin Baulig  <martin@ximian.com>
+
+	* namespace.cs (NamespaceEntry.Lookup): New method; rewrote the
+	namespace parsing, follow the spec more closely.
+
+	* rootcontext.cs (RootContext.NamespaceLookup): Use the new
+	NamespaceEntry.Lookup().
+
 2003-07-25  Martin Baulig  <martin@ximian.com>
 
 	* MethodCore.cs (OverridesSomething): New public field; it's set
