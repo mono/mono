@@ -1,3 +1,10 @@
+2002-07-02  Martin Baulig  <martin@gnome.org>
+
+	* get.c (dis_stringify_object_with_class): New static function to
+	stringify an object when we already have its class.
+	(dis_stringify_object): Get the class and call dis_stringify_object().
+	(get_method): Call dis_stringify_object_with_class() since we already
+	have the object's class.
 
 Thu Jun 20 11:50:38 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
