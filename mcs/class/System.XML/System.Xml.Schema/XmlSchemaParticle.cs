@@ -227,7 +227,7 @@ namespace System.Xml.Schema
 		internal abstract bool ParticleEquals (XmlSchemaParticle other);
 
 		#region Internal Class
-		public class EmptyParticle : XmlSchemaParticle
+		internal class EmptyParticle : XmlSchemaParticle
 		{
 			internal EmptyParticle ()
 			{

@@ -50,11 +50,13 @@ namespace System.Xml.Schema
 			switch (whitespaceFacet) {
 			case XsdWhitespaceFacet.Collapse:
 				string [] arr = s.Trim ().Split (wsChars);
-				foreach (string one in arr)
+				for (int i = 0; i < arr.Length; i++) {
+					string one = arr [i];
 					if (one != "") {
 						sb.Append (one);
 						sb.Append (" ");
 					}
+				}
 				string result = sb.ToString ();
 				sb.Length = 0;
 				return result.Trim ();

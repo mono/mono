@@ -26,6 +26,8 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectTable attributeUses;
 		private XmlSchemaAnyAttribute anyAttributeUse;
 
+		internal bool AttributeGroupRecursionCheck;
+
 		public XmlSchemaAttributeGroup()
 		{
 			attributes  = new XmlSchemaObjectCollection();
@@ -81,7 +83,6 @@ namespace System.Xml.Schema
 		/// </remarks>
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
-			// FIXME: Even if it was already compiled, it should check recursion.
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return errorCount;

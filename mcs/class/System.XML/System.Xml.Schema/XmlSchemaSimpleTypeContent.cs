@@ -13,34 +13,12 @@ namespace System.Xml.Schema
 		{
 		}
 
-		internal XmlSchemaType OwnerType;
+		internal XmlSchemaSimpleType OwnerType;
 
-		private object actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
+//		private object actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
 
 		internal object ActualBaseSchemaType {
-			get { return actualBaseSchemaType; }
-		}
-
-		internal void ValidateActualType (XmlSchemaSimpleType baseType,
-			XmlQualifiedName baseTypeName, ValidationEventHandler h, XmlSchema schema)
-		{
-			XmlSchemaSimpleType type = baseType;
-			if (type == null)
-				type = schema.SchemaTypes [baseTypeName] as XmlSchemaSimpleType;
-			if (type != null) {
-				errorCount += type.Validate (h, schema);
-				actualBaseSchemaType = type;
-			} else if (baseTypeName == XmlSchemaComplexType.AnyTypeName) {
-//				actualBaseSchemaType = XmlSchemaComplexType.AnyType;
-				actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
-			} else if (baseTypeName.Namespace == XmlSchema.Namespace) {
-				actualBaseSchemaType = XmlSchemaDatatype.FromName (baseTypeName);
-				if (actualBaseSchemaType == null)
-					error (h, "Invalid schema type name was specified: " + baseTypeName);
-			}
-			// otherwise, it might be missing sub components.
-			else if (!schema.IsNamespaceAbsent (baseTypeName.Namespace))
-				error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
+			get { return OwnerType.BaseSchemaType; }
 		}
 
 		internal virtual string Normalize (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)

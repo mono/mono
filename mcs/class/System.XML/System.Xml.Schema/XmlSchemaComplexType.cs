@@ -214,7 +214,6 @@ namespace System.Xml.Schema
 					}
 					else
 					{
-						//TODO: Check what all is not allowed
 						if ((Block & XmlSchemaUtil.ComplexTypeBlockAllowed) != Block)
 							error (h, "Invalid block specification.");
 						blockResolved = Block & XmlSchemaUtil.ComplexTypeBlockAllowed;
@@ -588,7 +587,7 @@ namespace System.Xml.Schema
 			// Additional support for 3.8.6 All Group Limited
 			if (ContentTypeParticle != null) {
 				XmlSchemaAll termAll = contentTypeParticle.GetOptimizedParticle (true) as XmlSchemaAll;
-				if (termAll != null && (termAll.ValidatedMaxOccurs != 1 || contentTypeParticle.ValidatedMaxOccurs != 1)) // here contentTypeParticle is used to check occurence. FIXME: In the future contentTypeParticle will remove group references.
+				if (termAll != null && (termAll.ValidatedMaxOccurs != 1 || contentTypeParticle.ValidatedMaxOccurs != 1)) // here contentTypeParticle is used to check occurence.
 					error (h, "Particle whose term is -all- and consists of complex type content particle must have maxOccurs = 1.");
 			}
 
@@ -772,8 +771,8 @@ namespace System.Xml.Schema
 					// 1.3 attribute wildcard subset. (=> 3.10.6)
 					localAnyAttribute.ValidateWildcardSubset (baseAnyAttribute, h, schema);
 
-				// FIXME: Check 3.4.2 Complex Type Definition with complex content Schema Component
-				// and its {attribute uses} and {attribute wildcard}
+				// 3.4.2 Complex Type Definition with complex content Schema Component
+				// and its {attribute uses} and {attribute wildcard} are done here (descendantly)
 				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
 					this.attributeUses, h, schema, ccr.Attributes, 
 					ccr.AnyAttribute, ref attributeWildcard, null);
@@ -821,18 +820,17 @@ namespace System.Xml.Schema
 				if (localAnyAttribute != null && baseAnyAttribute != null)
 					// 1.3 attribute wildcard subset. (=> 3.10.6)
 					localAnyAttribute.ValidateWildcardSubset (baseAnyAttribute, h, schema);
-				// TODO: 3.4.6 :: 5.1. Beware that There is an errata for 5.1!!
+				// 3.4.6 :: 5.1. Beware that There is an errata for 5.1!!
 				// http://www.w3.org/2001/05/xmlschema-errata#Errata1
 
-				// FIXME: Check 3.4.2 Complex Type Definition with simple content Schema Component
-				// and its {attribute uses} and {attribute wildcard}
+				// 3.4.2 Complex Type Definition with simple content Schema Component
+				// and its {attribute uses} and {attribute wildcard} are done here (descendantly)
 				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
 					this.attributeUses, h, schema, scr.Attributes, 
 					scr.AnyAttribute, ref attributeWildcard, null);
 			}
 
 			// Common process of AttributeWildcard.
-			// TODO: Check 3.4.2 {attribute wildcard} to fill the complete wildcard.
 			if (localAnyAttribute != null) {
 				this.attributeWildcard = localAnyAttribute;
 			}
@@ -885,7 +883,6 @@ namespace System.Xml.Schema
 				XmlSchemaAttribute da = AttributeUses [ba.QualifiedName] as XmlSchemaAttribute;
 				if (da == null)
 					error (h, "Invalid complex type derivation by extension was found. Missing attribute was found: " + ba.QualifiedName + " .");
-				// TODO: How to evaluate "equal" type ...?
 			}
 			// 1.3 -> 3.10.6 Wildcard Subset.
 			if (AnyAttribute != null) {

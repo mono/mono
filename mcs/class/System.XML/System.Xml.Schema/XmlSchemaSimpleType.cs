@@ -17,15 +17,33 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaSimpleType : XmlSchemaType
 	{
+		private static string xmlname = "simpleType";
+		private static XmlSchemaSimpleType schemaLocationType;
+
 		private XmlSchemaSimpleTypeContent content;
 		//compilation vars
 		internal bool islocal = true; // Assuming local means we have to specify islocal=false only in XmlSchema
-		private static string xmlname = "simpleType";
 		private bool recursed;
 		private XmlSchemaDerivationMethod variety;
 
+		static XmlSchemaSimpleType ()
+		{
+			// This is not used in the meantime.
+			XmlSchemaSimpleType st = new XmlSchemaSimpleType ();
+			XmlSchemaSimpleTypeList list = new XmlSchemaSimpleTypeList ();
+			list.ItemTypeName = new XmlQualifiedName ("anyURI", XmlSchema.Namespace);
+			st.Content = list;
+			st.BaseXmlSchemaTypeInternal = null;
+			st.variety = XmlSchemaDerivationMethod.List;
+			schemaLocationType = st;
+		}
+
 		internal static XsdAnySimpleType AnySimpleType {
 			get { return XsdAnySimpleType.Instance; }
+		}
+
+		internal static XmlSchemaSimpleType SchemaLocationType {
+			get { return schemaLocationType; }
 		}
 
 		public XmlSchemaSimpleType()
@@ -129,6 +147,9 @@ namespace System.Xml.Schema
 
 			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
+			if (Content != null)
+				Content.OwnerType = this;
+
 			if(this.Content == null) //a.3,b.2
 				error(h,"Content is required in a simpletype");
 			else if(Content is XmlSchemaSimpleTypeRestriction)
@@ -149,6 +170,18 @@ namespace System.Xml.Schema
 
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
+		}
+
+		internal void CollectBaseType (ValidationEventHandler h, XmlSchema schema)
+		{
+			if (Content is XmlSchemaSimpleTypeRestriction) {
+				object o = ((XmlSchemaSimpleTypeRestriction) Content).GetActualType (h, schema, false);
+				BaseXmlSchemaTypeInternal = o as XmlSchemaSimpleType;
+				DatatypeInternal = o as XmlSchemaDatatype;
+			}
+			// otherwise, actualBaseSchemaType is null
+			else
+				DatatypeInternal = XmlSchemaSimpleType.AnySimpleType;
 		}
 		
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
@@ -172,13 +205,17 @@ namespace System.Xml.Schema
 			}
 			recursed = true;
 
+			CollectBaseType (h, schema);
+
 			if (content != null)
 				errorCount += content.Validate (h, schema);
 
+/*
 			// BaseSchemaType property
 			BaseXmlSchemaTypeInternal = content.ActualBaseSchemaType as XmlSchemaType;
 			if (this.BaseXmlSchemaTypeInternal == null)
 				this.DatatypeInternal = content.ActualBaseSchemaType as XmlSchemaDatatype;
+*/
 
 			// Datatype property
 			XmlSchemaSimpleType simple = BaseXmlSchemaType as XmlSchemaSimpleType;
@@ -203,8 +240,9 @@ namespace System.Xml.Schema
 
 			// 3.14.6 Derivation Valid (Restriction, Simple)
 			XmlSchemaSimpleTypeRestriction r = Content as XmlSchemaSimpleTypeRestriction;
+			object baseType = BaseXmlSchemaType != null ? (object) BaseXmlSchemaType : Datatype;
 			if (r != null)
-				ValidateDerivationValid (BaseSchemaType, r.Facets, h, schema);
+				ValidateDerivationValid (baseType, r.Facets, h, schema);
 
 			// TODO: describe which validation term this belongs to.
 			XmlSchemaSimpleTypeList l = Content as XmlSchemaSimpleTypeList;
@@ -304,11 +342,11 @@ namespace System.Xml.Schema
 			}
 
 			// 2.2.1
-			if (BaseSchemaType == baseType)
+			if (BaseXmlSchemaType == baseType || Datatype == baseType)
 				return true;
 
 			// 2.2.2
-			XmlSchemaSimpleType thisBaseSimpleType = BaseSchemaType as XmlSchemaSimpleType;
+			XmlSchemaSimpleType thisBaseSimpleType = BaseXmlSchemaType as XmlSchemaSimpleType;
 			if (thisBaseSimpleType != null) {
 				if (thisBaseSimpleType.ValidateTypeDerivationOK (baseType, h, schema, false))
 					return true;

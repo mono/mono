@@ -38,7 +38,7 @@ namespace System.Xml.Schema
 
 		public XmlSchemaAttribute()
 		{
-			//FIXME: Docs says the default is optional.
+			//LAMESPEC: Docs says the default is optional.
 			//Whereas the MS implementation has default None.
 			form	= XmlSchemaForm.None;
 			use		= XmlSchemaUse.None;
@@ -221,12 +221,12 @@ namespace System.Xml.Schema
 
 				targetNamespace = schema.TargetNamespace;
 
-				// TODO: a.10, a.11, a.12, a.13
-				CompileCommon(h, schema, true);
+				CompileCommon (h, schema, true);
 			}
 			else // local
 			{
-				//FIXME: How to Use of AttributeFormDefault????
+				// Q:How to Use of AttributeFormDefault????
+				// A:Global attribute cannot be defined locally
 				if(RefName == null || RefName.IsEmpty)
 				{
 					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && schema.AttributeFormDefault == XmlSchemaForm.Qualified))
@@ -234,7 +234,6 @@ namespace System.Xml.Schema
 					else
 						this.targetNamespace = "";
 
-					//TODO: b.8
 					CompileCommon(h, schema, true);
 				}
 				else

@@ -47,7 +47,6 @@ namespace System.Xml.Schema
 
 		// 1. name and public must be present
 		// public and system must be anyURI
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -74,7 +73,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			return errorCount;

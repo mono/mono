@@ -97,9 +97,6 @@ namespace System.Xml.Schema
 			if (IsValidated (schema.ValidationId))
 				return errorCount;
 
-			// As far as I saw, MS.NET handles simpleType.BaseSchemaType as anySimpleType.
-//			this.actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
-
 			ArrayList al = new ArrayList ();
 			// Validate MemberTypes
 			if (MemberTypes != null) {

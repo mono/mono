@@ -30,8 +30,6 @@ namespace System.Xml.Schema
 		internal bool isRedefinedComponent;
 		internal XmlSchemaObject redefinedObject;
 
-		internal bool AttributeGroupRecursionCheck;
-
 		protected XmlSchemaObject()
 		{
 			namespaces = new XmlSerializerNamespaces();

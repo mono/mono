@@ -331,18 +331,16 @@ namespace System.Xml.Schema
                         // Compile the content of this schema
 
 			compilationItems = new XmlSchemaObjectCollection ();
-			foreach (XmlSchemaObject obj in Items)
-				compilationItems.Add (obj);
+			for (int i = 0; i < Items.Count; i++)
+				compilationItems.Add (Items [i]);
 			if (this == rootSchema)
 				handledUris = new Hashtable ();
 
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
-                        foreach(XmlSchemaObject obj in Includes)
-                        {
-				XmlSchemaExternal ext = obj as XmlSchemaExternal;
-                                if(ext != null)
-                                {
+			for (int i = 0; i < Includes.Count; i++) {
+				XmlSchemaExternal ext = Includes [i] as XmlSchemaExternal;
+                                if (ext != null) {
 					if (ext.SchemaLocation == null) 
 						continue;
 					Stream stream = null;
@@ -368,9 +366,10 @@ namespace System.Xml.Schema
 					}
 
 					// Process redefinition children in advance.
-					XmlSchemaRedefine redefine = obj as XmlSchemaRedefine;
+					XmlSchemaRedefine redefine = Includes [i] as XmlSchemaRedefine;
 					if (redefine != null) {
-						foreach (XmlSchemaObject redefinedObj in redefine.Items) {
+						for (int j = 0; j < redefine.Items.Count; j++) {
+							XmlSchemaObject redefinedObj = redefine.Items [j];
 							redefinedObj.isRedefinedComponent = true;
 							redefinedObj.isRedefineChild = true;
 							if (redefinedObj is XmlSchemaType ||
@@ -440,7 +439,7 @@ namespace System.Xml.Schema
 				}
                                 else
                                 {
-                                        error(handler,"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of XmlSchema");
+                                        error(handler,"Object of Type "+Includes [i].GetType().Name+" is not valid in Includes Property of XmlSchema");
                                 }
                         }
 
@@ -449,8 +448,8 @@ namespace System.Xml.Schema
 			// It also checks self-resolvable properties correct.
 			// Post compilation schema information contribution is not required here.
 			// It should be done by Validate().
-			foreach(XmlSchemaObject obj in compilationItems)
-                        {
+			for (int i = 0; i < compilationItems.Count; i++) {
+				XmlSchemaObject obj = compilationItems [i];
                                 if(obj is XmlSchemaAnnotation)
                                 {
                                         int numerr = ((XmlSchemaAnnotation)obj).Compile(handler, this);

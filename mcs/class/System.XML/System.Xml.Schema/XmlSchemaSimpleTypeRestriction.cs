@@ -159,7 +159,7 @@ namespace System.Xml.Schema
 			if (IsValidated (schema.ValidationId))
 				return errorCount;
 
-			this.ValidateActualType (baseType, baseTypeName, h, schema);
+			this.ValidateActualType (h, schema);
 
 			
 			lengthFacet = maxLengthFacet = minLengthFacet = fractionDigitsFacet = totalDigitsFacet = -1;
@@ -345,6 +345,39 @@ namespace System.Xml.Schema
 		}
 
 
+		internal void ValidateActualType (ValidationEventHandler h, XmlSchema schema)
+		{
+			GetActualType (h, schema, true);
+		}
+
+		internal object GetActualType (ValidationEventHandler h, XmlSchema schema, bool validate)
+		{
+			object actualBaseSchemaType = null;
+
+			XmlSchemaSimpleType type = baseType;
+			if (type == null)
+				type = schema.SchemaTypes [baseTypeName] as XmlSchemaSimpleType;
+			if (type != null) {
+				if (validate)
+					errorCount += type.Validate (h, schema);
+				actualBaseSchemaType = type;
+			} else if (baseTypeName == XmlSchemaComplexType.AnyTypeName) {
+				actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
+			} else if (baseTypeName.Namespace == XmlSchema.Namespace) {
+				actualBaseSchemaType = XmlSchemaDatatype.FromName (baseTypeName);
+				if (actualBaseSchemaType == null)
+					if (validate)
+						error (h, "Invalid schema type name was specified: " + baseTypeName);
+			}
+			// otherwise, it might be missing sub components.
+			else if (!schema.IsNamespaceAbsent (baseTypeName.Namespace))
+				if (validate)
+					error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
+
+			return actualBaseSchemaType;
+		}
+
+		
 		private void checkTotalDigitsFacet (XmlSchemaTotalDigitsFacet totf, 
 																				ValidationEventHandler h) {
 			if (totf != null) {
@@ -713,12 +746,6 @@ namespace System.Xml.Schema
 			// all passed
 			return true;
 		}
-
-		internal override string Normalize (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)
-		{
-			return base.Normalize (s, nt, nsmgr);
-		}
-
 
 		//<restriction 
 		//  base = QName 

@@ -9,15 +9,12 @@ using System;
 
 namespace System.Xml.Schema
 {
-	/// <summary>
-	/// Summary description for XmlSchemaContent.
-	/// </summary>
 	public abstract class XmlSchemaContent : XmlSchemaAnnotated
 	{
-		protected object actualBaseSchemaType;
-
 		protected XmlSchemaContent()
 		{}
+
+		internal object actualBaseSchemaType;
 
 		internal abstract bool IsExtension { get; }
 

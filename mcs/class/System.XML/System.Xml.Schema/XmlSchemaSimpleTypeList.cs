@@ -80,9 +80,6 @@ namespace System.Xml.Schema
 			if (IsValidated (schema.ValidationId))
 				return errorCount;
 
-			// As far as I saw, MS.NET handles simpleType.BaseSchemaType as anySimpleType.
-//			this.actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
-
 			// ListItemType
 			XmlSchemaSimpleType type = itemType;
 			if (type == null)
@@ -104,6 +101,7 @@ namespace System.Xml.Schema
 			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
+
 		//<list 
 		//  id = ID 
 		//  itemType = QName 
