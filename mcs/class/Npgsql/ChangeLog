@@ -1,7 +1,22 @@
+
+2004-02-16  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+        * Npgsql/NpgsqlDataReader.cs: Removed a log line which reduced the conne
+ction startup time in 300 milliseconds.
+
+2004-02-16  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+        * NpgsqlConnection.cs: Added support for Unicode encoding. Fixes feature
+request 534 on gborg. Thanks Ivar <ivar@lumisoft.ee> for pointing it out.
+
+2004-02-16 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+        * Npgsql/NpgsqlStartupPacket.cs: Added code to set datestyle to iso when
+connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for pointing it out.
+
 2004-02-14  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
-        * Npgsql/NpgsqlCommand.cs: Fixed a bug when handling queries which retur
-n no data. Thanks Morten Mertner <morten@mertner.com> for the fix.
+        * Npgsql/NpgsqlCommand.cs: Fixed a bug when handling queries which return no data. Thanks Morten Mertner <morten@mertner.com> for the fix.
 
 2004-02-10  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 	
