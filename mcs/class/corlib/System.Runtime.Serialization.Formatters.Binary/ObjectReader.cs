@@ -420,9 +420,28 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					metadata.MemberInfos = new MemberInfo [fieldCount];
 					for (int n=0; n<fieldCount; n++)
 					{
-						MemberInfo[] members = metadata.Type.GetMember (names[n], MemberTypes.Field | MemberTypes.Property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+						MemberInfo[] members = null;
+						string memberName = names[n];
+						
+						int i = memberName.IndexOf ('+');
+						if (i != -1) {
+							string baseTypeName = names[n].Substring (0,i);
+							memberName = names[n].Substring (i+1);
+							Type t = metadata.Type.BaseType;
+							while (t != null) {
+								if (t.Name == baseTypeName) {
+									members = t.GetMember (memberName, MemberTypes.Field | MemberTypes.Property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+									break;
+								}
+								else
+									t = t.BaseType;
+							}
+						}
+						else
+							members = metadata.Type.GetMember (memberName, MemberTypes.Field | MemberTypes.Property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+							
+						if (members == null || members.Length == 0) throw new SerializationException ("Field \"" + names[n] + "\" not found in class " + metadata.Type.FullName);
 						if (members.Length > 1) throw new SerializationException ("There are two public members named \"" + names[n] + "\" in the class hirearchy of " + metadata.Type.FullName);
-						if (members.Length == 0) throw new SerializationException ("Field \"" + names[n] + "\" not found in class " + metadata.Type.FullName);
 						metadata.MemberInfos [n] = members[0];
 					}
 					metadata.MemberNames = null;	// Info now in MemberInfos

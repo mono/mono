@@ -1,3 +1,8 @@
+2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ObjectReader.cs: Field names can include the type name if the field
+	  belongs to a base type. Take this into account.
+
 2003-11-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BinaryFormatter.cs: Added missing methods.
