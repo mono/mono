@@ -13,6 +13,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Diagnostics.SymbolStore;
 using System.Collections;
 using System.IO;
@@ -94,6 +95,11 @@ namespace Mono.CSharp.Debugger
 				return new DieBaseType (die_compile_unit, type);
 			else if (type.IsPointer)
 				return new DiePointerType (die_compile_unit, type.GetElementType ());
+			else if (type.IsEnum)
+				return new DieEnumType (die_compile_unit, type);
+			else if (type.IsValueType) {
+				return new DieStructureType (die_compile_unit, type);
+			}
 
 			return new DieBaseType (die_compile_unit, typeof (void));
 			// throw new NotSupportedException ("Type " + type + " is not yet supported.");
@@ -443,11 +449,15 @@ namespace Mono.CSharp.Debugger
 
 		// DWARF tag from the DWARF 2 specification.
 		public enum DW_TAG {
+			TAG_enumeration_type	= 0x04,
 			TAG_formal_parameter	= 0x05,
 			TAG_lexical_block	= 0x0b,
+			TAG_member		= 0x0d,
 			TAG_pointer_type	= 0x0f,
 			TAG_compile_unit	= 0x11,
+			TAG_structure_type	= 0x13,
 			TAG_base_type		= 0x24,
+			TAG_enumerator		= 0x28,
 			TAG_subprogram		= 0x2e,
 			TAG_variable		= 0x34
 		}
@@ -461,8 +471,10 @@ namespace Mono.CSharp.Debugger
 			AT_low_pc		= 0x11,
 			AT_high_pc		= 0x12,
 			AT_language		= 0x13,
+			AT_const_value		= 0x1c,
 			AT_producer		= 0x25,
 			AT_artificial		= 0x34,
+			AT_data_member_location	= 0x38,
 			AT_declaration		= 0x3c,
 			AT_encoding		= 0x3e,
 			AT_external		= 0x3f,
@@ -1012,6 +1024,163 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		// DW_TAG_enumeration_type
+		public class DieEnumType : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieEnumType ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data1)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_enumeration_type, true, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected Type type;
+
+			public DieEnumType (DieCompileUnit parent_die, Type type)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.type = type;
+
+				foreach (object value in Enum.GetValues (type))
+					new DieEnumerator (this, Enum.GetName (type, value), (int) value);
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (type.Name);
+				dw.AddRelocEntry (RelocEntryType.TYPE_SIZEOF, type);
+				aw.WriteUInt8 (0);
+			}
+		}
+
+		// DW_TAG_enumerator
+		public class DieEnumerator : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieEnumerator ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_const_value, DW_FORM.FORM_data4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_enumerator, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected string name;
+			protected int value;
+
+			public DieEnumerator (DieEnumType parent_die, string name, int value)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.name = name;
+				this.value = value;
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (name);
+				aw.WriteUInt32 (value);
+			}
+		}
+
+		// DW_TAG_structure_type_type
+		public class DieStructureType : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieStructureType ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data1)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_structure_type, true, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected Type type;
+
+			public DieStructureType (DieCompileUnit parent_die, Type type)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.type = type;
+
+				FieldInfo[] fields = type.GetFields ();
+				for (int i = 0; i < fields.Length; i++)
+					new DieMember (this, type, i, fields [i]);
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (type.Name);
+				dw.AddRelocEntry (RelocEntryType.TYPE_SIZEOF, type);
+				aw.WriteUInt8 (0);
+			}
+		}
+
+		// DW_TAG_member
+		public class DieMember : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieMember ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_data_member_location, DW_FORM.FORM_block4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_member, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected Type parent_type;
+			protected int index;
+			protected FieldInfo field;
+			protected Die type_die;
+
+			public DieMember (Die parent_die, Type parent_type, int index, FieldInfo field)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.field = field;
+				this.index = index;
+				this.parent_type = parent_type;
+				this.type_die = DieCompileUnit.RegisterType (field.FieldType);
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (field.Name);
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+
+				object end_index = aw.StartSubsectionWithSize ();
+				aw.WriteUInt8 ((int) DW_OP.OP_const4u);
+				dw.AddRelocEntry (RelocEntryType.TYPE_FIELD_OFFSET,
+						  parent_type, index);
+				aw.WriteInt32 (0);
+				aw.EndSubsection (end_index);
+			}
+		}
+
 		// DW_TAG_lexical_block
 		public class DieLexicalBlock : Die
 		{
@@ -1269,7 +1438,10 @@ namespace Mono.CSharp.Debugger
 			// Stack offset of local variable
 			LOCAL_VARIABLE		= 0x05,
 			// Stack offset of method parameter
-			METHOD_PARAMETER	= 0x06
+			METHOD_PARAMETER	= 0x06,
+			// Sizeof (type)
+			TYPE_SIZEOF		= 0x07,
+			TYPE_FIELD_OFFSET	= 0x08
 		}
 
 		protected class RelocEntry {
@@ -1367,6 +1539,19 @@ namespace Mono.CSharp.Debugger
 			AddRelocEntry (type, 0);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static int get_type_token (Type type);
+
+		protected void AddRelocEntry (RelocEntryType entry_type, Type type)
+		{
+			AddRelocEntry (entry_type, type, 0);
+		}
+
+		protected void AddRelocEntry (RelocEntryType entry_type, Type type, int original)
+		{
+			AddRelocEntry (entry_type, get_type_token (type), original);
+		}
+
 		//
 		// Mono relocation table. See the README.relocation-table file in this
 		// directory for a detailed description of the file format.
@@ -1388,11 +1573,13 @@ namespace Mono.CSharp.Debugger
 				switch (entry.RelocType) {
 				case RelocEntryType.METHOD_START_ADDRESS:
 				case RelocEntryType.METHOD_END_ADDRESS:
+				case RelocEntryType.TYPE_SIZEOF:
 					aw.WriteUInt32 (entry.Token);
 					break;
 				case RelocEntryType.IL_OFFSET:
 				case RelocEntryType.LOCAL_VARIABLE:
 				case RelocEntryType.METHOD_PARAMETER:
+				case RelocEntryType.TYPE_FIELD_OFFSET:
 					aw.WriteUInt32 (entry.Token);
 					aw.WriteUInt32 (entry.Original);
 					break;

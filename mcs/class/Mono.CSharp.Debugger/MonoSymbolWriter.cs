@@ -24,7 +24,6 @@ namespace Mono.CSharp.Debugger
 	public class MonoSymbolWriter : IMonoSymbolWriter
 	{
 		protected Assembly assembly;
-		protected ModuleBuilder module_builder;
 		protected string output_filename = null;
 		protected ArrayList locals = null;
 		protected ArrayList orphant_methods = null;
@@ -393,24 +392,25 @@ namespace Mono.CSharp.Debugger
 		}
 
 		protected SourceMethod current_method = null;
+		private readonly string assembly_filename = null;
 
 		//
 		// Interface IMonoSymbolWriter
 		//
 
-		public MonoSymbolWriter ()
+		public MonoSymbolWriter (string filename)
 		{
-			methods = new Hashtable ();
-			sources = new Hashtable ();
-			orphant_methods = new ArrayList ();
-			locals = new ArrayList ();
+			this.assembly_filename = filename;
+
+			this.methods = new Hashtable ();
+			this.sources = new Hashtable ();
+			this.orphant_methods = new ArrayList ();
+			this.locals = new ArrayList ();
 		}
 
 		public void Close () {
 			if (assembly == null)
-				throw new NotSupportedException ("You must give me a reference " +
-								 "to an assembly by calling " +
-								 "SetAssembly()");
+				assembly = AppDomain.CurrentDomain.Load (assembly_filename);
 
 			DoFixups (assembly);
 
@@ -499,21 +499,7 @@ namespace Mono.CSharp.Debugger
 
 		public void Initialize (IntPtr emitter, string filename, bool fFullBuild)
 		{
-			throw new NotSupportedException ("Please use the 'Initialize (string filename)' "
-							 + "constructor and read the documentation in "
-							 + "Mono.CSharp.Debugger/IMonoSymbolWriter.cs");
-		}
-
-		// This is documented in IMonoSymbolWriter.cs
-		public void Initialize (ModuleBuilder module_builder, string filename)
-		{
-			this.module_builder = module_builder;
 			this.output_filename = filename;
-		}
-
-		public void SetAssembly (Assembly assembly)
-		{
-			this.assembly = assembly;
 		}
 
 		public void OpenMethod (SymbolToken symbol_token)

@@ -19,18 +19,7 @@ using System.IO;
 namespace Mono.CSharp.Debugger
 {
 	public interface IMonoSymbolWriter : ISymbolWriter
-	{
-		// The ISymbolWriter interface has an `IntPtr emitter' argument which
-		// seems to be a pointer an unmanaged interface containing the actual
-		// symbol writer. I was unable to find any documentation about how
-		// exactly this is used - but it seems to be in some proprietary,
-		// undocumented DLL.
-		//
-		// Since I want this interface to be usable on the Windows platform as
-		// well, I added this custom constructor. You should use this version
-		// of `Initialize' to make sure you're actually using this implementation.
-		void Initialize (ModuleBuilder module_builder, string filename);
-	}
+	{ }
 
 	public interface ISourceFile
 	{

@@ -1,5 +1,16 @@
 2002-03-24  Martin Baulig  <martin@gnome.org>
 
+	* IMonoSymbolWriter.cs: Killed all methods in this interface, no longer needed.
+
+	* MonoSymbolWriter.cs (MonoSymbolWriter): The constructor now takes a string
+	argument which is the full pathname of the assembly - you must call Close()
+	after the assembly has been written to disk since the symbol writer needs to
+	load the finished assembly to get its metadata.
+
+	* MonoDwarfFileWriter.cs: Added support for enums and structs.
+	
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
 	* MonoDwarfFileWriter.cs: Added support for method parameters.
 
 2002-03-24  Martin Baulig  <martin@gnome.org>
