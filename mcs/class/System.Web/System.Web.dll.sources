@@ -55,7 +55,6 @@ System.Web/ProcessShutdownReason.cs
 System.Web/ProcessStatus.cs
 System.Web/QueueManager.cs
 System.Web/StaticFileHandler.cs
-System.Web/ServerVariablesCollection.cs
 System.Web/TODOAttribute.cs
 System.Web/TimeoutManager.cs
 System.Web/TraceContext.cs

@@ -1,3 +1,8 @@
+2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: removing ServerVariablesCollection. It does
+	not compile.
+
 2004-06-07  Alon Gazit <along@mainsoft.com>
 
 	* System.Web.dll.sources: added ServerVariablesCollection.
