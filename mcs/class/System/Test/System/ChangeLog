@@ -1,3 +1,7 @@
+2004-04-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UriBuilderTest.cs: added tests for bug #57082.
+
 2004-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* TestUri.cs: Make sure Uri::Equals is case insensitive for

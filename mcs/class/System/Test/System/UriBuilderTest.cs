@@ -137,6 +137,20 @@ namespace MonoTests.System
 			AssertEquals ("ToString ()", "http://www.ximian.com:80/foo/bar/index.html", b.ToString ());
 			AssertEquals ("Uri.ToString ()", "http://www.ximian.com/foo/bar/index.html", b.Uri.ToString ());
 		}
+
+		[Test]
+		public void EmptyQuery () // bug 57082
+		{
+			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", null);
+			string noquery = "http://www.ximian.com/lalala/lelele.aspx";
+			AssertEquals ("#01", b.Uri.ToString (), noquery);
+			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "?");
+			AssertEquals ("#02", b.Uri.ToString (), noquery);
+			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "??");
+			AssertEquals ("#03", b.Uri.ToString (), noquery + "??");
+			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "?something");
+			AssertEquals ("#04", b.Uri.ToString (), noquery + "?something");
+		}
 	}
 }
 
