@@ -3,6 +3,7 @@
 	* brush.c
 	* gdip_defs.h
 	* gdip_win32.c
+	* gdip_win32.h
 	* gdip_main.h
 	* general.c
 	* graphics.c
