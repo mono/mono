@@ -1,3 +1,8 @@
+2004-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConfigurationSettings.cs: use CurrentExecutionFilePath instead of
+	FilePath. Fixes bug #67982.
+
 2004-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: fix bug when processing empty location

@@ -118,7 +118,9 @@ namespace System.Web {
                    if (data == null)
                            data = new TraceData ();
  		   SetRequestDetails ();
-		   data.AddControlTree ((Page) _Context.Handler);
+		   if (_Context.Handler is Page)
+			   data.AddControlTree ((Page) _Context.Handler);
+
 		   AddCookies ();
 		   AddHeaders ();
 		   AddServerVars ();
