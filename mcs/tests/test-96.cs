@@ -7,15 +7,14 @@ namespace N1
 {	
 	public class A
 	{		
+		static int Main  ()
+		{
+			return 0;
+		}
 	}
 
 	//
 	// A used to not be resolved
 	//
 	public delegate void C(object sender, A a);
-
-	static int Main  ()
-	{
-		return 0;
-	}
 }
