@@ -1,3 +1,10 @@
+2004-09-17  Geoff Norton <gnorton@customerdna.com>
+
+	* reflection.c (type_get_qualified_name): If the klass is null
+	return the typename to avoid a NullRefEx.
+	(encode_cattr_value): Get the qualified name of the boxed type,
+	not the underlying enumtype.  Fixes #62984.
+
 2004-09-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c: Fix problems with previous checkin.
