@@ -33,14 +33,13 @@ namespace System {
 		
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
-			if (cache == null) {
+			if (cache == null)
 				cache = new Hashtable ();
-			} else if (cache.ContainsKey (enumType)) {
-				info = (MonoEnumInfo) cache [enumType];
-				return;
-			}
-
 			lock (cache) {
+				if (cache.ContainsKey (enumType)) {
+					info = (MonoEnumInfo) cache [enumType];
+					return;
+				}
 				get_enum_info (enumType, out info);
 				Array.Sort (info.values, info.names);
 				cache.Add (enumType, new MonoEnumInfo (info));
