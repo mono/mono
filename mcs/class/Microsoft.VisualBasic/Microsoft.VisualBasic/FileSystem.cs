@@ -95,6 +95,8 @@ namespace Microsoft.VisualBasic
 
 	[MonoTODO]
 	public static System.String Dir () {
+		if (CurrentFileFinder == null)
+			throw new ArgumentException();
 		string filename = CurrentFileFinder.Next();
 		if (filename == "")
 			CurrentFileFinder = null; // to cause an error next time

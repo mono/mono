@@ -1,4 +1,8 @@
 2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* FileSystem.cs:
+		Implemented Dir() now throws the right exception 
+	
+2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Information.cs:
 		Implemented IsNothing(object)
 	
