@@ -117,7 +117,7 @@ namespace ByteFX.Data.MySqlClient
 			data.Write( bytes, offset, len );
 		}
 
-		public uint ReadNBytes()
+		public int ReadNBytes()
 		{
 			byte c = (byte)ReadByte();
 			if (c < 1 || c > 4) throw new MySqlException("Unexpected byte count received");
@@ -126,11 +126,11 @@ namespace ByteFX.Data.MySqlClient
 
 		public string ReadLenString()
 		{
-			uint len = ReadLenInteger();
+			int len = ReadLenInteger();
 
 			byte[] buffer = new Byte[len];
-			ReadBytes(buffer, 0, (int)len);
-			return encoding.GetString( buffer, 0, (int)len);
+			ReadBytes(buffer, 0, len);
+			return encoding.GetString( buffer, 0, len);
 		}
 
 
@@ -158,13 +158,13 @@ namespace ByteFX.Data.MySqlClient
 		/// </summary>
 		/// <param name="numbytes"></param>
 		/// <returns></returns>
-		public uint ReadInteger(int numbytes)
+		public int ReadInteger(int numbytes)
 		{
-			uint val = 0;
-			uint raise = 1;
+			int val = 0;
+			int raise = 1;
 			for (int x=0; x < numbytes; x++)
 			{
-				uint b = (uint)data.ReadByte();
+				int b = data.ReadByte();
 				val += (b*raise);
 				raise *= 256;
 			}
@@ -175,13 +175,13 @@ namespace ByteFX.Data.MySqlClient
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public uint ReadLenInteger()
+		public int ReadLenInteger()
 		{
 			byte c  = (byte)ReadByte();
 
 			switch(c) 
 			{
-				case 251 : return 0; 
+				case 251 : return -1; 
 				case 252 : return ReadInteger(2);
 				case 253 : return ReadInteger(3);
 				case 254 : return ReadInteger(4);

@@ -57,16 +57,6 @@ namespace ByteFX.Data.MySqlClient
 			isOpen = false;
 		}
 
-		#region Properties
-		public bool IsDead
-		{
-			get 
-			{ 
-				return stream.IsClosed;
-			}
-		}
-		#endregion
-
 		public Encoding Encoding 
 		{
 			get { return encoding; }
@@ -97,7 +87,7 @@ namespace ByteFX.Data.MySqlClient
 			// read off the protocol version
 			protocol = packet.ReadByte();
 			serverVersion = ByteFX.Data.Common.Version.Parse( packet.ReadString() );
-			threadID = packet.ReadInteger(4);
+			threadID = (uint)packet.ReadInteger(4);
 			encryptionSeed = packet.ReadString();
 
 			// read in Server capabilities if they are provided
@@ -288,7 +278,7 @@ namespace ByteFX.Data.MySqlClient
 				string msg = packet.ReadString();
 				throw new MySqlException( msg, errorCode );
 			}
-			else 
+			else if (packet.Type != PacketType.UpdateOrOk)
 				packet.Position = 0;
 
 			return packet;
@@ -402,7 +392,8 @@ namespace ByteFX.Data.MySqlClient
 
 		public void Close() 
 		{
-			stream.Close();
+			if (stream != null)
+				stream.Close();
 		}
 
 

@@ -41,21 +41,6 @@ namespace ByteFX.Data.MySqlClient
 			timeOut = timeout;
 		}
 
-		public bool IsClosed
-		{
-			get 
-			{
-				if (stream is NetworkStream) 
-				{
-					bool poll = socket.Poll(-1, SelectMode.SelectWrite );
-					poll = socket.Poll(-1, SelectMode.SelectRead );
-					poll = socket.Poll(-1, SelectMode.SelectError );
-					return ! poll;
-				}
-				return false;
-			}
-		}
-
 		private void Create( string host, int port )
 		{
 			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

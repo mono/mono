@@ -302,6 +302,7 @@ namespace ByteFX.Data.MySqlClient
 			string	parm_string = null;
 			byte[]	bytes = null;
 
+			//TODO:  should value == null throw an exception?
 			if (Value == DBNull.Value || Value == null)
 				parm_string = "Null";
 			else if (paramValue is bool)

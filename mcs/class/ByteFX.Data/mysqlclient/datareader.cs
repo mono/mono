@@ -634,9 +634,7 @@ namespace ByteFX.Data.MySqlClient
 
 				for (int col=0; col < _fields.Length; col++)
 				{
-					int len = (int)rowPacket.ReadLenInteger();
-					_fields[col].SetValueData( rowPacket.GetBytes(), (int)rowPacket.Position, len, driver.Encoding );
-					rowPacket.Position += len;
+					_fields[col].SetValueData( rowPacket, driver.Encoding );
 				}
 			}
 			catch (Exception ex)

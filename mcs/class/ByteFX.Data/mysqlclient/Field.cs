@@ -132,13 +132,18 @@ namespace ByteFX.Data.MySqlClient
 			return (colFlags & ColFlags.UNSIGNED) > 0;
 		}
 
-		public void SetValueData( byte[] data, int offset, int count, Encoding encoding )
+		public void SetValueData( Packet p, Encoding encoding )
 		{
-			if (data == null || count == 0) 
+			int len = p.ReadLenInteger();
+			if (len == -1)
 			{
 				value = DBNull.Value;
 				return;
 			}
+
+			// read in the data
+			byte[] data = new byte[ len ];
+			p.ReadBytes( data, 0, len );
 
 			// if it is a blob and binary, then GetBytes is the way to go
 			if ( IsBlob() && IsBinary() ) 
@@ -148,8 +153,8 @@ namespace ByteFX.Data.MySqlClient
 				return;
 			}
 
-			char[] _Chars = encoding.GetChars(data, offset, count );
-			string sValue = new string(_Chars);
+			string sValue = encoding.GetString( data );//Chars(data, offset, count );
+			//string sValue = new string(_Chars);
 
 			switch(colType)
 			{

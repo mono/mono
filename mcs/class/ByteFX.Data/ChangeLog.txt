@@ -1,3 +1,6 @@
+10/17/2003
+MySql - Fixed major bug with null field handling (thanks Naucki)
+
 10/15/2003
 MySql - enclosed queries for max_allowed_packet and characterset inside try catch (and set defaults)
 MySql - fixed problem where socket was not getting closed properly (thanks Steve!)
