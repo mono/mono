@@ -1,3 +1,7 @@
+2004-11-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_runtime_run_main): Fix a small memory leak.
+
 2004-11-25  Martin Baulig  <martin@ximian.com>
 
 	* class.c (set_generic_param_owner): Fixed the loop.
