@@ -1,3 +1,7 @@
+2005-02-21  Michal Moskal  <malekith@pld-linux.org>
+
+	* Makefile (LIBRARY_INSTALL_DIR): Define in terms of $(libdir).
+
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib_test.dll.sources: Add System.Threading.InterlockedTest.cs.
