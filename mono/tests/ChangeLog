@@ -1,5 +1,7 @@
 2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* pinvoke3.cs libtest.c: Add tests for fnptr->delegate marshalling.
+
 	* Makefile.am (DISABLED_TESTS): appdomain-unload.exe seems to run too.
 
 2004-05-23  Zoltan Varga  <vargaz@freemail.hu>
