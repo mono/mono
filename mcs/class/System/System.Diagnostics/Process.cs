@@ -2,11 +2,13 @@
 // System.Diagnostics.Process.cs
 //
 // Authors:
-//   Dick Porter (dick@ximian.com)
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 	Dick Porter (dick@ximian.com)
+// 	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc.
 // (C) 2003 Andreas Nahr
+// (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 using System;
@@ -38,6 +40,7 @@ namespace System.Diagnostics {
 		IntPtr process_handle;
 		int pid;
 		bool enableRaisingEvents;
+		ISynchronizeInvoke synchronizingObject;
 		
 		/* Private constructor called from other methods */
 		private Process(IntPtr handle, int id) {
@@ -58,7 +61,6 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		[DefaultValue (false), Browsable (false)]
 		[MonitoringDescription ("Check for exiting of the process to raise the apropriate event.")]
 		public bool EnableRaisingEvents {
@@ -360,7 +362,7 @@ namespace System.Diagnostics {
 
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[MonitoringDescription ("The amount of processing time spent is the OS core for this process.")]
+		[MonitoringDescription ("The amount of processing time spent in the OS core for this process.")]
 		public TimeSpan PrivilegedProcessorTime {
 			get {
 				return(new TimeSpan(0));
@@ -488,15 +490,11 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		[DefaultValue (null), Browsable (false)]
 		[MonitoringDescription ("The object that is used to synchronize event handler calls for this process.")]
 		public ISynchronizeInvoke SynchronizingObject {
-			get {
-				return(null);
-			}
-			set {
-			}
+			get { return synchronizingObject; }
+			set { synchronizingObject = value; }
 		}
 
 		[MonoTODO]
@@ -544,13 +542,30 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
-		public void Close() {
+		public void Close()
+		{
+			Dispose (true);
 		}
 
-		[MonoTODO]
-		public bool CloseMainWindow() {
-			return(false);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool Kill_internal (IntPtr handle, int signo);
+
+		/* int kill -> 1 KILL, 2 CloseMainWindow */
+		bool Close (int signo)
+		{
+			if (process_handle == IntPtr.Zero)
+				throw new SystemException ("No process to kill.");
+
+			int exitcode = ExitCode_internal (process_handle);
+			if (exitcode != 259)
+				throw new InvalidOperationException ("The process already finished.");
+
+			return Kill_internal (process_handle, signo);
+		}
+
+		public bool CloseMainWindow ()
+		{
+			return Close (2);
 		}
 
 		[MonoTODO]
@@ -637,8 +652,9 @@ namespace System.Diagnostics {
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
-		public void Kill() {
+		public void Kill ()
+		{
+			Close (1);
 		}
 
 		[MonoTODO]
@@ -865,8 +881,16 @@ namespace System.Diagnostics {
 
 		protected void OnExited() 
 		{
-			if (Exited != null)
+			if (Exited == null)
+				return;
+
+			if (synchronizingObject == null) {
 				Exited (this, EventArgs.Empty);
+				return;
+			}
+			
+			object [] args = new object [] {this, EventArgs.Empty};
+			synchronizingObject.BeginInvoke (Exited, args);
 		}
 
 		class ProcessWaitHandle : WaitHandle

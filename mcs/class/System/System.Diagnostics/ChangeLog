@@ -1,3 +1,8 @@
+2004-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: use the ISynchronizeInvoke object to invoke the event.
+	Implemented Close, CloseMainWindow and Kill.
+
 2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Switch.cs: Don't throw when there is no switches section.
