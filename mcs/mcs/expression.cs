@@ -3628,7 +3628,11 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolveBase (ec, right_side);
+			Expression ret = DoResolveBase (ec, right_side);
+			if (ret != null)
+				CheckObsoleteAttribute (ret.Type);
+			
+			return ret;
 		}
 
 		public bool VerifyFixed (bool is_expression)

@@ -1,3 +1,9 @@
+2004-10-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (LocalVariableReference.DoResolveLValue): Check
+	for obsolete use of a variable here.   Fixes regression on errors
+	cs0619-25 and cs0619-26.
+
 2004-10-27  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #62358, implemented security attribute encoding.
