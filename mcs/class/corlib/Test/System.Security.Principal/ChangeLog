@@ -1,0 +1,5 @@
+2003-07-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* GenericIdentityTest.cs: New. Complete unit test.
+	* GenericPrincipalTest.cs: New. Complete unit test.
+	* ChangeLog: New.
