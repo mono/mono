@@ -1,5 +1,7 @@
 2003-03-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* makefile: Added SN.
+	* makefile.gnu: New. Copy of makefile.
 	* sn.cs: New. (Incomplete) SN (StrongName) tool.
 	* sectools.build: Updated build for SN.
 
