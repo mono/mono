@@ -1,4 +1,10 @@
 2002-04-14 Patrik Torstensson <patrik.torstensson@labs2.com>
+	* Thread.cs: Fixed IsThreadPoolThread to use a internal property instead of extending 
+				 the threadstate enum.
+	* ThreadPool.cs: Now using the internal Isthreadpoolthread property
+	* ThreadState.cs: removed non-standard enum (ThreadPoolThread)
+
+2002-04-14 Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* ThreadState.cs: Added enum for threadpool thread
 	* Thread.cs: changed the set/clr_state to be internal (used from threadpool)

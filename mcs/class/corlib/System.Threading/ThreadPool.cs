@@ -92,7 +92,7 @@ namespace System.Threading
       
             Thread Start = new Thread(new ThreadStart(WorkerThread));
             Start.Start();
-            Start.set_state(ThreadState.ThreadPoolThread);
+            Start.IsThreadPoolThreadInternal = true;
             
             _Threads.Add(Start);
          }

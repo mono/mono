@@ -17,6 +17,7 @@ namespace System.Threading
 {
 	public sealed class Thread
 	{
+		private bool threadpool_thread = false;
 		private CultureInfo current_culture;
 
 		[MonoTODO]
@@ -223,15 +224,20 @@ namespace System.Threading
 			}
 		}
 
-      public bool IsThreadPoolThread {
-         get {
-            ThreadState curstate = state;
-            if ((curstate & ThreadState.ThreadPoolThread) != 0) {
-               return true;
-            }
-            return false;
-         }
-      }
+		public bool IsThreadPoolThread {
+			get {
+				return IsThreadPoolThreadInternal;
+			}
+		}
+
+		internal bool IsThreadPoolThreadInternal {
+			get {
+				return threadpool_thread;
+			}
+			set {
+				threadpool_thread = value;
+			}
+		}
 
 		public bool IsAlive {
 			get {
@@ -406,12 +412,12 @@ namespace System.Threading
 			// FIXME
 		}
 
-		internal void set_state(ThreadState set) {
+		private void set_state(ThreadState set) {
 			lock(this) {
 				state |= set;
 			}
 		}
-		internal void clr_state(ThreadState clr) {
+		private void clr_state(ThreadState clr) {
 			lock(this) {
 				state &= ~clr;
 			}

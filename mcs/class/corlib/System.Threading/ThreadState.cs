@@ -6,8 +6,6 @@
 // Created: Wed, 5 Sep 2001 06:30:30 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
-// 
-// Modified by Patrik Torstensson (2002-04-13)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 
@@ -52,11 +50,6 @@ namespace System.Threading {
 		/// <summary>
 		/// </summary>
 		Aborted = 0x00000100,
-
-      /// <summary>
-      /// Mono special state 
-      /// </summary>
-      ThreadPoolThread = 0x00000200
    } // ThreadState
 
 } // System.Threading
