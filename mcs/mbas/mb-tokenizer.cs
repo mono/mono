@@ -1331,15 +1331,15 @@ namespace Mono.MonoBASIC
 				
 			case "end if":
 				if (ifstack == null || ifstack.Count == 0){
-					Error_UnexpectedDirective ("no #if for this #endif");
+					Error_UnexpectedDirective ("no #if for this #end if");
 					return true;
 				} else {
 					int pop = (int) ifstack.Pop ();
 					
 					if (region_directive && ((pop & REGION) == 0))
-						Report.Error (1027, Location, "#endif directive expected");
+						Report.Error (1027, Location, "#end if directive expected");
 					else if (!region_directive && ((pop & REGION) != 0))
-						Report.Error (1038, Location, "#endregion directive expected");
+						Report.Error (1038, Location, "#end region directive expected");
 					
 					if (ifstack.Count == 0)
 						return true;
@@ -1361,7 +1361,7 @@ namespace Mono.MonoBASIC
 					int state = (int) ifstack.Peek ();
 
 					if ((state & REGION) != 0) {
-						Report.Error (1038, Location, "#endregion directive expected");
+						Report.Error (1038, Location, "#end region directive expected");
 						return true;
 					}
 
@@ -1391,7 +1391,7 @@ namespace Mono.MonoBASIC
 					int state = (int) ifstack.Peek ();
 
 					if ((state & REGION) != 0) {
-						Report.Error (1038, Location, "#endregion directive expected");
+						Report.Error (1038, Location, "#end region directive expected");
 						return true;
 					}
 
@@ -1453,7 +1453,6 @@ namespace Mono.MonoBASIC
 
 			Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
 			return true;
-
 		}
 
 	}

@@ -179,7 +179,7 @@ namespace Mono.Languages
 		public bool removeintchecks = false;
 
 		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("Emit debugging information", "debug")]
+		[Option("Emit debugging information", 'g', "debug")]
 		public bool want_debugging_support = false;
 
 		[Option("Emit full debugging information (default)", "debug:full")]
@@ -275,7 +275,7 @@ namespace Mono.Languages
 
 		public string[] libpath = null;
 		
-		[Option("List of directories to search for metada references (semi-colon delimited)", "libpath")]
+		[Option("List of directories to search for metadata references (semi-colon delimited)", "libpath")]
 		public WhatToDoNext setlibpath(string pathlist)
 		{
 			libpath = pathlist.Split(';');

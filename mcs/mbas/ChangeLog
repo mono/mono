@@ -1,3 +1,6 @@
+2003/09/17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-tokenizer.cs, driver.cs: Back to Linux line-endings, SORRY
+
 2003/09/16  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Makefile: corrected testing in Windows/Cygwin (from mbas.exe to ./mbas.exe), because it was getting the installed compiler instead of the compiled one
 	* mb-tokenizer.cs: Redoing: Preprocessor directives must be case-insensitive (many .ToLower() used)
