@@ -9,6 +9,12 @@ using System;
 using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
+	
+	/// <summary>
+	/// Abstract base class for all cryptographic symmetric algorithms.
+	/// Available algorithms include:
+	/// DES, RC2, Rijndael, TripleDES
+	/// </summary>
 	public abstract class SymmetricAlgorithm {
 		protected int BlockSizeValue; // The block size of the cryptographic operation in bits. 
 		protected int FeedbackSizeValue; // The feedback size of the cryptographic operation in bits. 
@@ -178,28 +184,26 @@ namespace System.Security.Cryptography {
 		}
 
 		/// <summary>
-		/// LAMESPEC: no idea what this does
+		/// Gets an Decryptor transform object to work with a CryptoStream
 		/// </summary>
 		public virtual ICryptoTransform CreateDecryptor() {
-			// TODO: implement
-			return null;
+			return CreateDecryptor(Key, IV);
 		}
 
 		/// <summary>
-		/// LAMESPEC: no idea what this does
+		/// Gets an Decryptor transform object to work with a CryptoStream
 		/// </summary>
 		public abstract ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgbIV);
 
 		/// <summary>
-		/// LAMESPEC: no idea what this does
+		/// Gets an Encryptor transform object to work with a CryptoStream
 		/// </summary>
 		public virtual ICryptoTransform CreateEncryptor() {
-			// TODO: implement
-			return null;
+			return CreateEncryptor(Key, IV);
 		}
 
 		/// <summary>
-		/// LAMESPEC: no idea what this does
+		/// Gets an Encryptor transform object to work with a CryptoStream
 		/// </summary>
 		public abstract ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgbIV);
 

@@ -1,3 +1,10 @@
+2001-10-06  Thomas Neidhart <tome@sbox.tugraz.at>
+
+    * CryptographicException.cs: Initial version.
+	* CryptographicUnknownOperationException.cs: Initial version
+	* SymmetricAlgorithm.cs: Implemented CreateDecryptor and CreateEncryptor
+	  methods.
+	
 2001-08-20  Sergey Chaban <serge@wildwestsoftware.com>
 
 	* DES.cs encryption core is about 30% faster than previous version.
