@@ -1,3 +1,7 @@
+2002-12-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: check for NULL argument in LoadFrom.
+
 2002-12-10  Dick Porter  <dick@ximian.com>
 
 	* threads.c: WaitHandle fixes from Tum <tum@veridicus.com>
