@@ -27,7 +27,7 @@ namespace System.CodeDom
 		{
 		}
 
-		public CodeEventReferenceExpression( CodeExpression targetObject, string EventName )
+		public CodeEventReferenceExpression( CodeExpression targetObject, string eventName )
 		{
 			this.targetObject = targetObject;
 			this.eventName = eventName;
