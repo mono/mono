@@ -1,3 +1,9 @@
+2003-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: First populate the pinned variables, then emit the
+	statement, then clear the variables.  Before I was emitting the
+	code once for each fixed piece.
+
 2003-01-08  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (FlowBranching.MergeChild): A break in a
