@@ -18,34 +18,33 @@ namespace System.Collections {
 		private object[] contents;
 		private int head = 0;   // points to the first used slot
 		private int count = 0;
-		private int capacity = 16;
-		private float growFactor = 2.0F;
+		private int capacity;
+		private float growFactor;
 		private int modCount = 0;
 
-		public Queue () {
-			contents = new object[capacity];
-		}
-
-		public Queue (ICollection collection) {
-			capacity = collection.Count;
-			contents = new object[capacity];
+		public Queue () : this (32, 2.0F) {}
+		public Queue (int initialCapacity) : this (initialCapacity, 2.0F) {}
+		public Queue(ICollection col) : this (col == null ? 32 : col.Count)
+		{
+			if (col == null)
+				throw new ArgumentNullException ("col");
+			
 			count = capacity;
-			collection.CopyTo (contents, 0);
+			col.CopyTo (contents, 0);
 		}
-
-		public Queue (int initialCapacity) {
-			capacity = initialCapacity;
-			contents = new object[capacity];
-		}
-
+			
 		public Queue (int initialCapacity, float growFactor) {
+			if (initialCapacity < 0)
+				throw new ArgumentOutOfRangeException("capacity", "Needs a non-negative number");
+			if (!(growFactor >= 1.0F && growFactor <= 10.0F))
+				throw new ArgumentOutOfRangeException("growFactor", "Queue growth factor must be between 1.0 and 10.0, inclusive");
+	    
 			capacity = initialCapacity;
 			contents = new object[capacity];
-			// LAMESPEC: The spec says nothing, but I think this 
-			// should throw an exception if growFactor <= 1.0
+
 			this.growFactor = growFactor;
 		}
-		
+
 		// from ICollection
 
 		public virtual int Count {

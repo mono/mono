@@ -1,3 +1,7 @@
+2003-06-02  Ben Maurer <bmaurer@users.sourceforge.net>
+	* Queue.cs: Added argument checking in constructors according to
+	specs. Also changed default size to 32 as required by the specs.
+
 2003-05-31  Ben Maurer <bmaurer@users.sourceforge.net>
 	* BitArray.cs: Rewrote, as it was failing most of the Rotor
 	tests. It now passes them 100%. Also fixes bug #43667.
