@@ -1,3 +1,7 @@
+2005-01-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SqlGuidTest.cs : missing run-test-ondotnet fix.
+
 2004-11-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* SqlDecimalTest.cs: Hide constant behind variable to avoid

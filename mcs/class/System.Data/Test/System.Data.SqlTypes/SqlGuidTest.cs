@@ -126,8 +126,8 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlGuid test1 = new SqlGuid("1AAAAAAA-BBBB-CCCC-DDDD-3EEEEEEEEEEE");
 			SqlGuid test2 = new SqlGuid("1AAAAAAA-BBBB-CCCC-DDDD-2EEEEEEEEEEE");
 			SqlGuid test3 = new SqlGuid("1AAAAAAA-BBBB-CCCC-DDDD-1EEEEEEEEEEE");
-                        Assert ("#D01", Test1.CompareTo (Test3) ==  0);
-                        Assert ("#D02", Test4.CompareTo (Test1) == 0);
+                        Assert ("#D01", Test1.CompareTo (Test3) <  0);
+                        Assert ("#D02", Test4.CompareTo (Test1) > 0);
                         Assert ("#D03", Test3.CompareTo (Test2) == 0);
                         Assert ("#D04", Test4.CompareTo (SqlGuid.Null) > 0);
 			Assert ("#D05", test1.CompareTo (test2) >  0);
