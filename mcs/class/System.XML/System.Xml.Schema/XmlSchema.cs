@@ -261,6 +261,7 @@ namespace System.Xml.Schema
                 public void Compile(ValidationEventHandler handler)
 		{
 			Compile (handler, new Stack (), this);
+			isCompiled = true;
 		}
 
 		private void Compile (ValidationEventHandler handler, Stack schemaLocationStack, XmlSchema rootSchema)
@@ -314,6 +315,7 @@ namespace System.Xml.Schema
 				XmlSchemaExternal ext = obj as XmlSchemaExternal;
                                 if(ext != null)
                                 {
+					if (ext.SchemaLocation == null) continue;
 					string url = GetResolvedUri (ext.SchemaLocation);
 					XmlSchemaInclude include = ext as XmlSchemaInclude;
 					if (include != null) {
@@ -505,7 +507,7 @@ namespace System.Xml.Schema
 					{
 						XmlSchemaElement refElem = FindElement (element.RefName);
 						// If el is null, then it is missing sub components ... ?
-						element.SetSchemaType (refElem.ElementType);
+						if (refElem != null) element.SetSchemaType (refElem.ElementType);
 					}
 				}
 			}
@@ -609,6 +611,7 @@ namespace System.Xml.Schema
                         XmlSerializer xser = new XmlSerializer (typeof (XmlSchema));
                         XmlSchema schema = (XmlSchema) xser.Deserialize (rdr);
 			schema.SourceUri = baseURI;
+			schema.Compile (validationEventHandler);
 			return schema;
 /*
 			XmlSchemaReader reader = new XmlSchemaReader(rdr, validationEventHandler);

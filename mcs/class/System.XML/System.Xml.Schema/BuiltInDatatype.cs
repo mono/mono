@@ -585,6 +585,7 @@ namespace Mono.Xml.Schema
 	public class XsdNegativeInteger : XsdNonPositiveInteger
 	{
 		public override Type ValueType {
+
 			get { return typeof (decimal); }
 		}
 
@@ -595,4 +596,72 @@ namespace Mono.Xml.Schema
 		}
 	}
 
+	// xs:float
+	public class XsdFloat : XsdDecimal
+	{
+		public override Type ValueType {
+			get { return typeof (float); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToSingle (Normalize (s));
+		}
+	}
+
+
+	// xs:base64Binary
+	public class XsdBase64Binary : XsdString
+	{
+		internal XsdBase64Binary ()
+		{
+		}
+
+		public override Type ValueType {
+			get { return typeof (byte[]); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return Convert.FromBase64String (s);
+		}
+	}
+
+	// xs:boolean
+	public class XsdBoolean : XsdAnySimpleType
+	{
+		internal XsdBoolean ()
+		{
+		}
+
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.CDATA; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (bool); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToBoolean (this.Normalize (s));
+		}
+
+		// Fundamental Facets
+		public override bool Bounded {
+			get { return false; }
+		}
+		public override bool Finite {
+			get { return true; }
+		}
+		public override bool Numeric {
+			get { return false; }
+		}
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Total; }
+		}
+	}
 }

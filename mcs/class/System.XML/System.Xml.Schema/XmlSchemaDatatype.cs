@@ -122,6 +122,12 @@ namespace System.Xml.Schema
 				return datatypeUnsignedByte;
 			case "positiveInteger":
 				return datatypePositiveInteger;
+			case "float":
+				return datatypeFloat;
+			case "base64Binary":
+				return datatypeBase64Binary;
+			case "boolean":
+				return datatypeBoolean;
 			default:
 				throw new NotImplementedException ("Unknown type: " + localName);
 			}
@@ -155,5 +161,8 @@ namespace System.Xml.Schema
 		private static XsdUnsignedByte datatypeUnsignedByte = new XsdUnsignedByte ();
 		private static XsdNonPositiveInteger datatypeNonPositiveInteger = new XsdNonPositiveInteger ();
 		private static XsdNegativeInteger datatypeNegativeInteger = new XsdNegativeInteger ();
+		private static XsdFloat datatypeFloat = new XsdFloat ();
+		private static XsdBase64Binary datatypeBase64Binary = new XsdBase64Binary ();
+		private static XsdBoolean datatypeBoolean = new XsdBoolean ();
 	}
 }

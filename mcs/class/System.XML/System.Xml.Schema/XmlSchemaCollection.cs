@@ -48,7 +48,7 @@ namespace System.Xml.Schema
 		{ 
 			get
 			{
-				return (XmlSchema) this.htable[ns];
+				return (XmlSchema) this.htable[GetSafeNs(ns)];
 			}
 		}
 
@@ -81,7 +81,7 @@ namespace System.Xml.Schema
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
-			htable [schema.TargetNamespace] = schema;
+			htable [GetSafeNs(schema.TargetNamespace)] = schema;
 			return schema;
 		}
 
@@ -94,13 +94,18 @@ namespace System.Xml.Schema
 				Add (s);
 		}
 
+		string GetSafeNs (string ns)
+		{
+			return ns == null ? "" : ns;
+		}
+
 		public bool Contains(string ns)
 		{
-			return this.htable.Contains(ns);
+			return this.htable.Contains(GetSafeNs(ns));
 		}
 		public bool Contains(XmlSchema schema)
 		{
-			return this.htable.Contains(schema.TargetNamespace); 
+			return this.htable.Contains(GetSafeNs(schema.TargetNamespace)); 
 		}
 		public void CopyTo(XmlSchema[] array, int index)
 		{

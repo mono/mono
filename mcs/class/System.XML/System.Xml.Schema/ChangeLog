@@ -1,3 +1,15 @@
+2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSchema.cs: Set IsCompiled to true after compiling.
+	  In Compile(): ignore included schemas that do not have a value
+	  in SchemaLocation. It means that FindElement can return null
+	  if the referred schema was ignored. Added check for that case.
+	  Compile schema after reading it.
+	* XmlSchemaCollection.cs: The targetNamespace of a schema may
+	  be null. Make XmlSchemaCollection work for this case.
+	* BuiltInDataType.cs, XmlSchemaDataType.cs: added new primitive
+	  types: float, base64Binary, boolean.
+
 2003-08-02  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchema.cs :
