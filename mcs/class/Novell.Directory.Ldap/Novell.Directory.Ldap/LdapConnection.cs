@@ -3646,12 +3646,12 @@ namespace Novell.Directory.Ldap
 		/// </seealso>
 		/// <seealso cref="#getSchemaDN(String)">
 		/// </seealso>
-/*		public virtual LdapSchema FetchSchema(System.String schemaDN)
+		public virtual LdapSchema FetchSchema(System.String schemaDN)
 		{
 			LdapEntry ent = Read(schemaDN, LdapSchema.schemaTypeNames);
 			return new LdapSchema(ent);
 		}
-*/
+
 		
 		/// <summary> Retrieves the Distiguished Name (DN) for the schema advertised in the
 		/// root DSE of the Directory Server.
