@@ -1,3 +1,7 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am: Ensure that in-tree mscorlib.dll is used for testing.
+
 2004-11-23  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (CSC,ILASM): Don't refer to runtime/ directly.  Use

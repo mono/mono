@@ -1,3 +1,8 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am: Consistently use $(RUNTIME) rather than ./mono to
+	pick up in-tree mscorlib.dll.
+
 2004-11-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c: Rename MonoAOTModule->cleanup to out_of_date.
