@@ -37,11 +37,11 @@ public class StringTest : TestCase
 		string greater = "xyz";
 		string caps = "ABC";
 
-		Assert (Compare (lesser, greater) < 0);
-		Assert (Compare (greater, lesser) > 0);
-		Assert (Compare (lesser, lesser) == 0);
-		Assert (Compare (lesser, caps, true) == 0);
-		Assert (Compare (lesser, medium) < 0);
+		Assert (String.Compare (lesser, greater) < 0);
+		Assert (String.Compare (greater, lesser) > 0);
+		Assert (String.Compare (lesser, lesser) == 0);
+		Assert (String.Compare (lesser, caps, true) == 0);
+		Assert (String.Compare (lesser, medium) < 0);
 	}
 
 	public void TestCompareOrdinal ()
@@ -53,7 +53,8 @@ public class StringTest : TestCase
 	{
 		string lower = "abc";
 		string greater = "xyz";
-
+		string lesser = "abc";
+		
 		Assert (lower.CompareTo (greater) < 0);
 		Assert (lower.CompareTo (lower) == 0);
 		Assert (greater.CompareTo (lesser) > 0);
@@ -65,7 +66,7 @@ public class StringTest : TestCase
 		string string2 = "string2";
 		string concat = "string1string2";
 
-		Assert (Concat (string1, string2) == concat);
+		Assert (String.Concat (string1, string2) == concat);
 	}
 
 }
