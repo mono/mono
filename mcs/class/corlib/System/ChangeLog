@@ -1,3 +1,8 @@
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DateTime.cs: handle century when we try to parse 4-digit years and
+	only 2 digits are present. Fixes bug #49394.
+
 2003-11-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* Console.cs: On utf-8 consoles, use unmarked output.

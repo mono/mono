@@ -745,14 +745,17 @@ namespace System
 
 					if (num == 0) {
 						year = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
-						year += (year < 30) ? 2000 : 1900;
 					} else if (num < 3) {
 						year = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
-						year += (year < 30) ? 2000 : 1900;
 					} else {
 						year = _ParseNumber (s, 4, false, sloppy_parsing, out num_parsed);
 						num = 3;
 					}
+
+					//FIXME: We should do use dfi.Calendat.TwoDigitYearMax
+					if (num_parsed <= 2)
+						year += (year < 30) ? 2000 : 1900;
+					
 					// if there is another digit next to the ones we just parsed, then the year value
 					// is too big for sure.
 					//if (num_parsed < s.Length && Char.IsDigit(s[num_parsed]) || (year != 0 && (year < 1 || year > 9999)))
