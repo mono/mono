@@ -206,7 +206,7 @@ namespace System.Data
 		protected internal void OnPropertyChanging (PropertyChangedEventArgs pcevent)
 		{
 			if (onPropertyChangingDelegate != null)
-				onPropertyChangingDelegate.Invoke(this, pcevent);
+				onPropertyChangingDelegate (this, pcevent);
 		}
 
 		protected internal void RaisePropertyChanging (string name)
