@@ -1,3 +1,20 @@
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
+	* codegen.cs (SymbolWriter): New public variable. Returns the
+	current symbol writer.
+	(CodeGen): Added `bool want_debugging_support' argument to the
+	 constructor. If true, tell the ModuleBuild that we want debugging
+	support and ask it for the ISymbolWriter.
+	(Save): If we have a symbol writer, call it's Close() method after
+	saving the assembly.
+
+	* driver.c (--debug): New command line argument to create a
+	debugger information file.
+
+	* location.cs (SymbolDocument): New public property. Returns an
+	ISymbolDocumentWriter object for the current source file or null
+	if we don't have a symbol writer.
+
 2002-03-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs (LoadAssembly): Correctly return when all the paths

@@ -56,6 +56,8 @@ namespace Mono.CSharp
 		static Target target = Target.Exe;
 		static string target_ext = ".exe";
 
+		static bool want_debugging_support = false;
+
 		static bool parse_only = false;
 		static bool timestamps = false;
 
@@ -163,6 +165,7 @@ namespace Mono.CSharp
 				"   --nowarn XXX    Ignores warning number XXX\n" +
 				"   -o FNAME        Specifies output file\n" +
 				"   --optimize      Optimizes\n" +
+				"   --debug         Write symbolic debugging information to FILE-debug.s\n" +
 				"   --parse         Only parses the source file\n" +
 				"   --probe X       Probes for the source to generate code X on line L\n" +
 				"   --recurse SPEC  Recursively compiles the files in SPEC ([dir]/file)\n" + 
@@ -718,6 +721,10 @@ namespace Mono.CSharp
 						last_time = DateTime.Now;
 						continue;
 
+					case "--debug":
+						want_debugging_support = true;
+						continue;
+
 					case "--noconfig":
 						load_default_config = false;
 						continue;
@@ -788,7 +795,8 @@ namespace Mono.CSharp
 					output_file = first_source + target_ext;
 			}
 
-			RootContext.CodeGen = new CodeGen (output_file, output_file);
+			RootContext.CodeGen = new CodeGen (output_file, output_file,
+							   want_debugging_support);
 
 			RootContext.TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
 

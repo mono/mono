@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Diagnostics.SymbolStore;
 
 namespace Mono.CSharp {
 
@@ -21,6 +22,8 @@ namespace Mono.CSharp {
 		AppDomain current_domain;
 		AssemblyBuilder assembly_builder;
 		ModuleBuilder   module_builder;
+
+		public ISymbolWriter SymbolWriter;
 
 		public static string Basename (string name)
 		{
@@ -45,7 +48,7 @@ namespace Mono.CSharp {
 
 		public string FileName;
 		
-		public CodeGen (string name, string output)
+		public CodeGen (string name, string output, bool want_debugging_support)
 		{
 			AssemblyName an;
 
@@ -61,11 +64,39 @@ namespace Mono.CSharp {
 			// this copes with output in different directories then.
 			// FIXME: figure out how this copes with --output /tmp/blah
 			//
+			// If the third argument is true, the ModuleBuilder will dynamically
+			// load the default symbol writer.
 			module_builder = assembly_builder.DefineDynamicModule (
-				Basename (name), Basename (output));
+				Basename (name), Basename (output), want_debugging_support);
 
+			// If we want debugging support, get the default symbol writer
+			// from the ModuleBuilder, it has already been dynamically loaded
+			// by the ModuleBuilder's constructor.
+			if (want_debugging_support)
+				SymbolWriter = module_builder.GetSymWriter ();
+
+			// If we got an ISymbolWriter instance, initialize it.
+			if (SymbolWriter != null) {
+				// Due to lacking documentation about the first argument of the
+				// Initialize method, we cannot use Microsoft's default symbol
+				// writer yet.
+				//
+				// If we're using the mono symbol writer, the SymbolWriter object
+				// is of type MonoSymbolWriter - but that's defined in a dynamically
+				// loaded DLL - that's why we're doing a comparision based on the type
+				// name here instead of using `SymbolWriter is MonoSymbolWriter'.
+				if (SymbolWriter.GetType ().Name != "MonoSymbolWriter")
+					Report.Error (16, "Cannot generate debugging information " +
+							"on this platform");
+
+				string symbol_output = an.Name + "-debug.s";
+
+				// Mono's default symbol writer ignores the first and third argument
+				// of this method.
+				SymbolWriter.Initialize (new IntPtr (0), symbol_output, true);
+			}
 		}
-		
+
 		public AssemblyBuilder AssemblyBuilder {
 			get {
 				return assembly_builder;
@@ -77,14 +108,24 @@ namespace Mono.CSharp {
 				return module_builder;
 			}
 		}
-		
+
 		public void Save (string name)
 		{
 			try {
 				assembly_builder.Save (Basename (name));
 			} catch (System.IO.IOException io){
 				Report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
-			} 
+			}
+
+			if (SymbolWriter != null) {
+				// If we have a symbol writer, call its Close() method to write
+				// the symbol file to disk.
+				//
+				// When using Mono's default symbol writer, the Close() method must
+				// be called after the assembly has already been written to disk since
+				// it opens the assembly and reads its metadata.
+				SymbolWriter.Close ();
+			}
 		}
 	}
 
