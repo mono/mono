@@ -67,7 +67,8 @@ namespace MonoTests.System.Data.SqlTypes
                 	AssertEquals ("#A01", (decimal)30.3098, Test.Value);
                 	
                 	try {
-                		SqlDecimal test = new SqlDecimal (Decimal.MaxValue + 1);
+                                decimal d = Decimal.MaxValue;
+                		SqlDecimal test = new SqlDecimal (d + 1);
                 		Fail ("#A02");                		
                 	} catch (Exception e) {
                 		AssertEquals ("#A03", typeof (OverflowException), e.GetType ());

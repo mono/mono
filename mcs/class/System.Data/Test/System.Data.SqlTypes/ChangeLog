@@ -1,3 +1,8 @@
+2004-11-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* SqlDecimalTest.cs: Hide constant behind variable to avoid
+	compiler check.
+
 2004-07-20 Umadevi S <sumadevi@novell.com>
 	* SqlInt16Test.cs,SqlInt32Test.cs, SqlInt64Test.cs - added testcase for Modulus method (.NET		2.0)
 
