@@ -1,3 +1,7 @@
+2002-03-26  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (debug_generate_method_lines): Use correct addresses for
+	record_il_offset().
 
 Mon Mar 25 13:03:35 CET 2002 Paolo Molaro <lupus@ximian.com>
 
