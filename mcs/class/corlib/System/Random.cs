@@ -91,12 +91,19 @@ namespace System
 				throw new ArgumentOutOfRangeException (Locale.GetText (
 					"Min value is greater then max value."));
 
-			return (int)(Sample () * (maxValue - minValue)) + minValue;
+			uint diff = (uint)(maxValue - minValue);
+			if (diff == 0)
+				return minValue;
+
+			int result = (int)(Sample () * diff + minValue);
+			return ((result != maxValue) ? result : (result - 1));
 		}
 
 		public virtual void NextBytes (byte [] buffer)
 		{
-			if (buffer == null) throw new ArgumentNullException ("buffer");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
 			for (int i = 0; i < buffer.Length; i++) {
 				buffer [i] = (byte)(Sample () * (byte.MaxValue + 1)); 
 			}

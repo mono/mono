@@ -1,3 +1,10 @@
+2004-03-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Random.cs: Corrected random value when Next is called with a 
+	negative value. Testing indictae that our results aren't exactly the 
+	same as MS, we have a +/- 1 (probably rounding errors due to 
+	different implementation).
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Environment.cs: updated corlib version.
