@@ -1,4 +1,10 @@
 
+Sat Aug  2 13:05:27 BST 2003 Malte Hildingson <malte@amy.udd.htu.se>
+
+	* mono-endian.h, mono-endian.c, icall.c: Added icall
+	ves_icall_System_Double_AssertEndianity to assert double word endianity
+	on ARM (FPA). The icall uses a macro defined in mono-endian.h.
+
 Fri Aug 1 16:51:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h, reflection.c, metadata.c, icall.c: more generics
