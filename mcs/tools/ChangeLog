@@ -1,3 +1,8 @@
+2002-02-18  Duncan Mak  <duncan@ximian.com>
+
+	* serialize.cs: When appropriate, changed Type.GetType calls to
+	the faster typeof operator.
+
 2002-02-19  Nick Drochak  <ndrochak@gol.com>
 
 	* corcompare.cs: Reorganized into collaberating classes to analyze

@@ -83,52 +83,51 @@ namespace Mono.Serialize {
 		
 		public static Type StringToType (string s)
 		{
-			switch (s)
-			{
+			switch (s) {
 			case "bool":
-				return Type.GetType ("System.Boolean");
+				return typeof (System.Boolean);
 				break;
 			case "byte":
-				return Type.GetType ("System.Byte");
+				return typeof (System.Byte);
 				break;
 			case "sbyte":
-				return Type.GetType ("System.SByte");
+				return typeof (System.SByte);
 				break;
 			case "char":
-				return Type.GetType ("System.Char");
+				return typeof (System.Char);
 				break;
 			case "decimal":
-				return Type.GetType ("System.Decimal");
+				return typeof (System.Decimal);
 				break;
 			case "double":
-				return Type.GetType ("System.Double");
+				return typeof (System.Double);
 				break;
 			case "float":
-				return Type.GetType ("System.Float");
+				return typeof (System.Single);
 				break;
 			case "int":
-				return Type.GetType ("System.Int32");
+				return typeof (System.Int32);
 				break;
 			case "uint":
-				return Type.GetType ("System.UInt32");
+				return typeof (System.UInt32);
 				break;
 			case "long":
-				return Type.GetType ("System.Int64");
+				return typeof (System.Int64);
 				break;
 			case "ulong":
-				return Type.GetType ("System.UInt64");
+				return typeof (System.UInt64);
 				break;
 			case "object":
-				return Type.GetType ("System.Object");
+				return typeof (System.Object);
 				break;
 			case "short":
-				return Type.GetType ("System.Int16");
+				return typeof (System.Int16);
 				break;
 			case "ushort":
-				return Type.GetType ("System.UInt16");
+				return typeof (System.UInt16);
 				break;
 			case "string":
-				return Type.GetType ("System.String");
+				return typeof (System.String);
 				break;
 			default:
 				return Type.GetType (s);
