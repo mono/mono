@@ -78,6 +78,7 @@ namespace System.Drawing {
 		}
 
 
+		[MonoTODO]
 		public DashStyle DashStyle {
 			get {
 				throw new NotImplementedException ();
@@ -88,20 +89,28 @@ namespace System.Drawing {
 			}
 		}
 
-                public LineCap LineCap {
+		[MonoTODO]
+		public LineCap StartCap {
+			get {
+				throw new NotImplementedException ();
+			}
 
-                        get {
-                                LineCap result;
-                                GDIPlus.GdipGetPenLineCap (nativeObject, out result);
-                                return result;
-                        }
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+ 
+		[MonoTODO]
+		public LineCap EndCap {
+			get {
+				throw new NotImplementedException ();
+			}
 
-                        set {
-                                GDIPlus.GdipSetPenLineCap (nativeObject, value);
-                        }
-                                
-                }
-
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+ 
                 public LineJoin LineJoin {
 
                         get {
