@@ -34,7 +34,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	public delegate void Sighandler_t (int value);
+	public delegate void SignalHandler (int signal);
 
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed class FilePosition : IDisposable {
@@ -171,17 +171,17 @@ namespace Mono.Unix {
 					signum + ".  Don't do that.");
 		}
 
-		public static readonly Sighandler_t SIG_DFL = _DefaultHandler;
-		public static readonly Sighandler_t SIG_ERR = _ErrorHandler;
-		public static readonly Sighandler_t SIG_IGN = _IgnoreHandler;
+		public static readonly SignalHandler SIG_DFL = _DefaultHandler;
+		public static readonly SignalHandler SIG_ERR = _ErrorHandler;
+		public static readonly SignalHandler SIG_IGN = _IgnoreHandler;
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="signal")]
-		private static extern IntPtr sys_signal (int signum, Sighandler_t handler);
+		private static extern IntPtr sys_signal (int signum, SignalHandler handler);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="signal")]
 		private static extern IntPtr sys_signal (int signum, IntPtr handler);
 
-		public static Sighandler_t signal (Signum signum, Sighandler_t handler)
+		public static SignalHandler signal (Signum signum, SignalHandler handler)
 		{
 			int _sig = UnixConvert.FromSignum (signum);
 			IntPtr r;
@@ -196,7 +196,7 @@ namespace Mono.Unix {
 			return TranslateHandler (r);
 		}
 
-		private static Sighandler_t TranslateHandler (IntPtr handler)
+		private static SignalHandler TranslateHandler (IntPtr handler)
 		{
 			if (handler == _SIG_DFL)
 				return SIG_DFL;
@@ -204,7 +204,7 @@ namespace Mono.Unix {
 				return SIG_ERR;
 			if (handler == _SIG_IGN)
 				return SIG_IGN;
-			return new Sighandler_t (new SignalWrapper (handler).InvokeSignalHandler);
+			return new SignalHandler (new SignalWrapper (handler).InvokeSignalHandler);
 		}
 
 		[DllImport (LIBC, EntryPoint="raise")]

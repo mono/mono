@@ -1,5 +1,9 @@
 2004-12-30  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs: On miguel's suggestion, rename Sighandler_t to SignalHandler.
+
+2004-12-30  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Stdlib.cs: Implement all C89 <stdio.h> functions except for the scanf(3)
 	  family.  These are too dangerous to expose.
 
