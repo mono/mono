@@ -100,6 +100,8 @@ namespace System.Web.UI.HtmlControls{
 						attr = attr.Substring(lastSlash + 1);
 				} else {
 					attr = UrlUtils.MakeRelative (executionFilePath, UrlUtils.GetDirectory (filePath));
+					if (attr == null)
+						attr = executionFilePath;
 				}
 				string queryString = Context.Request.QueryStringRaw;
 				if (queryString != null && queryString.Length > 0)
