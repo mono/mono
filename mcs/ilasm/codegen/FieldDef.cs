@@ -27,6 +27,7 @@ namespace Mono.ILASM {
 
                 private uint offset;
                 private PEAPI.Constant constant;
+                private string at_data_id;
 
                 public FieldDef (PEAPI.FieldAttr attr, string name,
                                 ITypeRef type)
@@ -38,6 +39,8 @@ namespace Mono.ILASM {
                         offset_set = false;
                         datavalue_set = false;
                         value_set = false;
+
+                        at_data_id = null;
 
                         is_resolved = false;
                 }
@@ -62,9 +65,9 @@ namespace Mono.ILASM {
                         this.constant = constant;
                 }
 
-                public void AddDataValue (PEAPI.DataConstant constant)
+                public void AddDataValue (string at_data_id)
                 {
-
+                        this.at_data_id = at_data_id;
                 }
 
                 public PEAPI.FieldDef Resolve (CodeGen code_gen)
@@ -99,7 +102,7 @@ namespace Mono.ILASM {
                 public void Define (CodeGen code_gen)
                 {
                         Resolve (code_gen);
-                        WriteCode (field_def);
+                        WriteCode (code_gen, field_def);
                 }
 
                 /// <summary>
@@ -108,16 +111,21 @@ namespace Mono.ILASM {
                 public void Define (CodeGen code_gen, PEAPI.ClassDef class_def)
                 {
                         Resolve (code_gen, class_def);
-                        WriteCode (field_def);
+                        WriteCode (code_gen, field_def);
                 }
 
-                protected void WriteCode (PEAPI.FieldDef field_def)
+                protected void WriteCode (CodeGen code_gen, PEAPI.FieldDef field_def)
                 {
                         if (offset_set)
                                 field_def.SetOffset (offset);
 
                         if (value_set)
                                 field_def.AddValue (constant);
+
+                        if (at_data_id != null) {
+                                PEAPI.DataConstant dc = code_gen.GetDataConst (at_data_id);
+                                field_def.AddDataValue (dc);
+                        }
                 }
         }
 

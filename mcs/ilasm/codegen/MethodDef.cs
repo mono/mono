@@ -274,11 +274,15 @@ namespace Mono.ILASM {
                                 methoddef.DeclareEntryPoint ();
 
                         if (local_list != null) {
+                                int ec = code_gen.Report.ErrorCount;
                                 PEAPI.Local[] local_array = new PEAPI.Local[local_list.Count];
                                 int i = 0;
 
                                 foreach (Local local in local_list)
                                         local_array[local.Slot]  = local.GetPeapiLocal (code_gen);
+
+                                if (code_gen.Report.ErrorCount > ec)
+                                        return;
 
                                 methoddef.AddLocals (local_array, init_locals);
                         }

@@ -30,7 +30,6 @@ namespace Mono.ILASM {
                 private PEAPI.ClassDef classdef;
                 private Hashtable field_table;
                 private Hashtable method_table;
-                private ArrayList data_list;
                 private ArrayList customattr_list;
                 private ArrayList event_list;
                 private ArrayList property_list;
@@ -58,7 +57,6 @@ namespace Mono.ILASM {
                         this.impl_list = impl_list;
                         field_table = new Hashtable ();
                         method_table = new Hashtable ();
-                        data_list = new ArrayList ();
 
                         size = -1;
                         pack = -1;
@@ -147,20 +145,6 @@ namespace Mono.ILASM {
                 public void AddFieldDef (FieldDef fielddef)
                 {
                         field_table.Add (fielddef.Name, fielddef);
-                }
-
-                public void AddDataDef (DataDef datadef)
-                {
-                        data_list.Add (datadef);
-                }
-
-                public DataDef GetDataDef (string name)
-                {
-                        foreach (DataDef def in data_list) {
-                                if (def.Name == name)
-                                        return def;
-                        }
-                        return null;
                 }
 
                 public void AddMethodDef (MethodDef methoddef)

@@ -22,6 +22,7 @@ namespace Mono.ILASM {
 
                 private PEFile pefile;
                 private string assembly_name;
+                private Report report;
                 private string current_namespace;
                 private TypeDef current_typedef;
                 private MethodDef current_methoddef;
@@ -31,7 +32,7 @@ namespace Mono.ILASM {
                 private ExternTable extern_table;
                 private Hashtable global_field_table;
                 private Hashtable global_method_table;
-                private ArrayList global_data_list;
+                private ArrayList data_list;
 
                 private ArrayList defcont_list;
 
@@ -43,18 +44,20 @@ namespace Mono.ILASM {
                 private bool is_dll;
                 private bool is_assembly;
 
-                public CodeGen (string output_file, bool is_dll, bool is_assembly)
+                public CodeGen (string output_file, bool is_dll, bool is_assembly, Report report)
                 {
                         this.output_file = output_file;
                         this.is_dll = is_dll;
                         this.is_assembly = is_assembly;
+                        this.report = report;
 
                         type_manager = new TypeManager (this);
                         extern_table = new ExternTable ();
                         typedef_stack = new Stack ();
                         global_field_table = new Hashtable ();
                         global_method_table = new Hashtable ();
-                        global_data_list = new ArrayList ();
+
+                        data_list = new ArrayList ();
 
                         defcont_list = new ArrayList ();
 
@@ -65,6 +68,10 @@ namespace Mono.ILASM {
 
                 public PEFile PEFile {
                         get { return pefile; }
+                }
+
+                public Report Report {
+                        get { return report; }
                 }
 
                 public string CurrentNameSpace {
@@ -156,11 +163,17 @@ namespace Mono.ILASM {
 
                 public void AddDataDef (DataDef datadef)
                 {
-                        if (current_typedef != null) {
-                                current_typedef.AddDataDef (datadef);
-                        } else {
-                                global_data_list.Add (datadef);
+                        data_list.Add (datadef);
+                }
+
+                public PEAPI.DataConstant GetDataConst (string name)
+                {
+                        foreach (DataDef def in data_list) {
+                                if (def.Name == name)
+                                        return (DataConstant) def.PeapiConstant;
                         }
+                        return null;
+
                 }
 
                 public void BeginMethodDef (MethodDef methoddef)

@@ -1,3 +1,17 @@
+2003-09-21 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Add methods for adding data. CodeGen now takes a
+	report object for giving users errors/warnings/info.
+	* FieldDef.cs: When a data constant is assigned to a field the
+	constant might not exist yet. So just take the constants name and
+	look it up when writting code.
+	* Local.cs: Starting to add some error handling. Still playing
+	with diff ways to do this.
+	* MethodDef.cs: Add some error handling for local var lookups
+	* TypeDef.cs: Data is allways global so it should never be added
+	to a class
+	* TypeRef.cs: Error message for lookups.
+	
 2003-09-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* TypeDef.cs: Rework so multiple constraints can be added to a

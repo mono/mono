@@ -44,7 +44,11 @@ namespace Mono.ILASM {
 
                 public PEAPI.Local GetPeapiLocal (CodeGen code_gen)
                 {
+                        int ec = code_gen.Report.ErrorCount;
                         type.Resolve (code_gen);
+
+                        if (code_gen.Report.ErrorCount > ec)
+                                return null;
 
                         return new PEAPI.Local (name, type.PeapiType);
                 }
