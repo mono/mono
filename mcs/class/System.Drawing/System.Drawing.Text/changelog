@@ -1,3 +1,8 @@
+2002-09-16  Nick Drochak  <ndrochak@gol.com>
+
+	* PrivateFontCollection.cs: Fix build error.  Cannot put ComVisible on
+	constructors.
+
 2003-09-14	Piers Haken <piersh@friskit.com>
 
 	* PrivateFontCollection.cs: import interop for ComVisible attribute

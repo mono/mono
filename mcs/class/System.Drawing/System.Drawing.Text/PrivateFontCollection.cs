@@ -14,7 +14,6 @@ namespace System.Drawing.Text {
 
 		// constructors
 		[MonoTODO]
-		[ComVisible(false)]
 		public PrivateFontCollection() {
 			throw new NotImplementedException ();
 		}
