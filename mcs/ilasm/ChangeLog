@@ -1,3 +1,7 @@
+2004-06-14  Jackson Harper  <jackson@ximian.com>
+
+	* ilasm.exe.sources: Add FileRef.cs
+	
 2004-06-10  Jackson Harper  <jackson@ximian.com>
 
 	* Driver.cs: Handle tokenization errors with the correct error
