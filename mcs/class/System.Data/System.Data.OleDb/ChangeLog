@@ -1,3 +1,13 @@
+2002-07-11  Rodrigo Moya <rodrigo@ximian.com>
+
+	* libgda.cs: added new libgda functions and some enumerations.
+
+	* OleDbParameter.cs (IsNullable): removed explicit implementation
+	of the set method for this property.
+
+	* OleDbDataAdapter.cs (MissingMappingAction): implemented.
+	(MissingSchemaAction): implemented.
+
 2002-07-10  Tim Coleman <tim@timcoleman.com>
 	* OleDbCommandBuilder.cs: Added new methods, properties
 	* OleDbConnection.cs: Modified constructor
@@ -26,7 +36,6 @@
 	* OleDbTransaction.cs: Style changes, added new methods
 	* OleDbType.cs: Fixed two typos
 	* libgda.cs: Style changes, added new methods
-
 
 2002-06-03  Rodrigo Moya <rodrigo@ximian.com>
 

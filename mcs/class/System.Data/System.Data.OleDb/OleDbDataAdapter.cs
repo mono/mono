@@ -24,6 +24,8 @@ namespace System.Data.OleDb
 		OleDbCommand insertCommand;
 		OleDbCommand selectCommand;
 		OleDbCommand updateCommand;
+		MissingMappingAction missingMappingAction;
+		MissingSchemaAction missingSchemaAction;
 
 		static readonly object EventRowUpdated = new object ();
 		static readonly object EventRowUpdating = new object ();
@@ -106,6 +108,16 @@ namespace System.Data.OleDb
 			}
 		}
 
+		MissingMappingAction IDataAdapter.MissingMappingAction {
+			get { return missingMappingAction; }
+			set { missingMappingAction = value; }
+		}
+
+		MissingSchemaAction IDataAdapter.MissingSchemaAction {
+			get { return missingSchemaAction; }
+			set { missingSchemaAction = value; }
+		}
+		
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
 			set { 

@@ -15,6 +15,21 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.OleDb
 {
+	internal enum GdaCommandOptions {
+		IgnoreErrors = 1,
+		StopOnErrors = 1 << 1,
+		BadOption = 1 << 2,
+	};
+
+	internal enum GdaCommandType {
+		Sql = 0,
+		Xml = 1,
+		Procedure = 2,
+		Table = 3,
+		Schema = 4,
+		Invalid = 5
+	};
+	
 	sealed internal class libgda
 	{
 		private static IntPtr m_gdaClient = IntPtr.Zero;
@@ -75,6 +90,7 @@ namespace System.Data.OleDb
 
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_transaction_set_name (IntPtr xaction, string name);
+	
 		[DllImport("gda-2")]
 		public static extern bool gda_connection_begin_transaction (IntPtr cnc, IntPtr xaction);
 
