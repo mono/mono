@@ -399,6 +399,11 @@ test-219.cs:
 Tests that we can call typeof(void) in an attribtue delcaration, since
 we removed previously typeof (System.Void) as a valid way of referencing void.
 
+test-220.cs:
+------------
+Test for a bug in foreach, where it would pick the wrong GetEnumerator in a class.
+Bug # was 51446
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

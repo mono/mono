@@ -34,7 +34,7 @@ TEST_SOURCES = \
 	test-181 test-182 test-183 test-184 test-185 test-186 test-187 test-188 test-189 test-190 \
 	test-191 test-192 test-193 test-194 test-195 test-196 test-197 test-198 test-199 test-200 \
 	test-201 test-202 test-203 test-204 test-205 test-206 test-207 test-208 test-209 test-210 \
-	test-211 test-212 test-213 test-214 test-215 test-216 test-217 test-218
+	test-211 test-212 test-213 test-214 test-215 test-216 test-217 test-218 test-219 test-220
 
 #
 # C# 2.0 tests 
