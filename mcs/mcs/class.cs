@@ -6618,10 +6618,6 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.STATIC;
 
-		const int RequiredModifiers =
-			Modifiers.PUBLIC |
-			Modifiers.STATIC;
-
 		public enum OpType : byte {
 
 			// Unary operators
@@ -6718,12 +6714,9 @@ namespace Mono.CSharp {
 		public override bool Define ()
 		{
 
+			const int RequiredModifiers = Modifiers.PUBLIC | Modifiers.STATIC;
 			if ((ModFlags & RequiredModifiers) != RequiredModifiers){
-				Report.Error (
-					558, Location, 
-					"User defined operators `" +
-					GetSignatureForError (Parent) +
-					"' must be declared static and public");
+				Report.Error (558, Location, "User defined operators '{0}' must be declared static and public", GetSignatureForError (Parent));
 				return false;
 			}
 
@@ -6805,6 +6798,19 @@ namespace Mono.CSharp {
 				}
 			} else if (Parameters.FixedParameters.Length == 1) {
 				// Checks for Unary operators
+
+				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
+					if (return_type != declaring_type && !return_type.IsSubclassOf (declaring_type)) {
+						Report.Error (448, Location,
+							"The return type for ++ or -- operator must be the containing type or derived from the containing type");
+						return false;
+					}
+					if (first_arg_type != declaring_type) {
+						Report.Error (
+							559, Location, "The parameter type for ++ or -- operator must be the containing type");
+						return false;
+					}
+				}
 				
 				if (first_arg_type != declaring_type){
 					Report.Error (
@@ -6812,17 +6818,6 @@ namespace Mono.CSharp {
 						"The parameter of a unary operator must be the " +
 						"containing type");
 					return false;
-				}
-				
-				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
-					if (return_type != declaring_type){
-						Report.Error (
-							559, Location,
-							"The parameter and return type for ++ and -- " +
-							"must be the containing type");
-						return false;
-					}
-					
 				}
 				
 				if (OperatorType == OpType.True || OperatorType == OpType.False) {
