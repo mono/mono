@@ -1,5 +1,10 @@
 2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNode.cs : When adding a node to child list, it should reject its
+	  ancestors. Patch by Boris Kirzner.
+
+2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttribute.cs : when set a value, it is no longer default 
 	  (even if the value is the same as default value).
 	* XmlAttributeCollection.cs : Remove() should recover default attribute
@@ -17,6 +22,11 @@
 
 	* XmlElement.cs : Fixed .ctor(). Default attribute was not treated as
 	  Specified = false. Patch by Boris Kirzner.
+
+2004-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlException.cs : Fixed incorrect .ctor signature.
+	* XmlParserInput.cs : Fixed in sync with the above fix.
 
 2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
