@@ -29,6 +29,7 @@
 //
 
 using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Globalization;
 using System.Xml.Schema;
@@ -41,6 +42,8 @@ namespace System.Xml.Serialization {
 		CodeAttributeDeclarationCollection includeMetadata;
 		XmlTypeMapping exportedAnyType = null;
 		protected bool includeArrayTypes;
+		ICodeGenerator codeGen;
+		CodeGenerationOptions options;
 
 		Hashtable exportedMaps = new Hashtable ();
 		Hashtable includeMaps = new Hashtable ();
@@ -49,6 +52,16 @@ namespace System.Xml.Serialization {
 		{
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
+			this.options = CodeGenerationOptions.GenerateOldAsync;
+		}
+
+		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ICodeGenerator codeGen, CodeGenerationOptions options, Hashtable mappings)
+		{
+			this.codeCompileUnit = codeCompileUnit;
+			this.codeNamespace = codeNamespace;
+			this.codeGen = codeGen;
+			this.options = options;
+//			this.mappings = mappings;
 		}
 
 		public CodeAttributeDeclarationCollection IncludeMetadata 
@@ -220,30 +233,67 @@ namespace System.Xml.Serialization {
 			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
 			if (anyAttrMember != null)
 			{
-				CodeMemberField codeField = new CodeMemberField (GetDomType (anyAttrMember.TypeData), anyAttrMember.Name);
+				CodeTypeMember codeField = CreateFieldMember (codeClass, anyAttrMember.TypeData, anyAttrMember.Name);
 				AddComments (codeField, anyAttrMember.Documentation);
 				codeField.Attributes = MemberAttributes.Public;
 				GenerateAnyAttribute (codeField);
-				codeClass.Members.Add (codeField);
 			}
 		}
-
-		CodeMemberField CreateFieldMember (XmlTypeMapMember member)
+		
+		CodeTypeMember CreateFieldMember (CodeTypeDeclaration codeClass, Type type, string name)
 		{
-			CodeMemberField codeField = new CodeMemberField (GetDomType (member.TypeData), member.Name);
-			codeField.Attributes = MemberAttributes.Public;
-			AddComments (codeField, member.Documentation);
+			return CreateFieldMember (codeClass, new CodeTypeReference(type), name, System.DBNull.Value, null, null);
+		}
 
-			if (member.DefaultValue != System.DBNull.Value)
-				GenerateDefaultAttribute (codeField, member.TypeData, member.DefaultValue);
+		CodeTypeMember CreateFieldMember (CodeTypeDeclaration codeClass, TypeData type, string name)
+		{
+			return CreateFieldMember (codeClass, GetDomType (type), name, System.DBNull.Value, null, null);
+		}
 
-			return codeField;
+		CodeTypeMember CreateFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMember member)
+		{
+			return CreateFieldMember (codeClass, GetDomType (member.TypeData), member.Name, member.DefaultValue, member.TypeData, member.Documentation);
+		}
+		
+		CodeTypeMember CreateFieldMember (CodeTypeDeclaration codeClass, CodeTypeReference type, string name, object defaultValue, TypeData defaultType, string documentation)
+		{
+			CodeMemberField codeField = null;
+			CodeTypeMember codeProp = null;
+
+			if ((options & CodeGenerationOptions.GenerateProperties) > 0) {
+				string field = CodeIdentifier.MakeCamel (name + "Field");
+				codeField = new CodeMemberField (type, field);
+				codeField.Attributes = MemberAttributes.Private;
+				codeClass.Members.Add (codeField);
+				
+				CodeMemberProperty prop = new CodeMemberProperty ();
+				prop.Name = name;
+				prop.Type = type;
+				prop.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+				codeProp = prop;
+				prop.HasGet = prop.HasSet = true;
+				
+				CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), field);
+				prop.SetStatements.Add (new CodeAssignStatement (ce, new CodePropertySetValueReferenceExpression()));
+				prop.GetStatements.Add (new CodeMethodReturnStatement (ce));
+ 			}
+			else {
+				codeField = new CodeMemberField (type, name);
+				codeField.Attributes = MemberAttributes.Public;
+				codeProp = codeField;
+			}
+			
+			if (defaultValue != System.DBNull.Value)
+				GenerateDefaultAttribute (codeField, codeProp, defaultType, defaultValue);
+
+			AddComments (codeProp, documentation);
+			codeClass.Members.Add (codeProp);
+			return codeProp;
 		}
 
 		void AddAttributeFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberAttribute attinfo, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (attinfo);
-			codeClass.Members.Add (codeField);
+			CodeTypeMember codeField = CreateFieldMember (codeClass, attinfo);
 
 			CodeAttributeDeclarationCollection attributes = codeField.CustomAttributes;
 			if (attributes == null) attributes = new CodeAttributeDeclarationCollection ();
@@ -258,9 +308,8 @@ namespace System.Xml.Serialization {
 
 			if (attinfo.TypeData.IsValueType && attinfo.IsOptionalValueType)
 			{
-				codeField = new CodeMemberField (typeof(bool), attinfo.Name + "Specified");
+				codeField = CreateFieldMember (codeClass, typeof(bool), attinfo.Name + "Specified");
 				codeField.Attributes = MemberAttributes.Public;
-				codeClass.Members.Add (codeField);
 				GenerateSpecifierMember (codeField);
 			}
 		}
@@ -272,8 +321,7 @@ namespace System.Xml.Serialization {
 
 		void AddElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (member);
-			codeClass.Members.Add (codeField);
+			CodeTypeMember codeField = CreateFieldMember (codeClass, member);
 			
 			CodeAttributeDeclarationCollection attributes = codeField.CustomAttributes;
 			if (attributes == null) attributes = new CodeAttributeDeclarationCollection ();
@@ -283,9 +331,8 @@ namespace System.Xml.Serialization {
 			
 			if (member.TypeData.IsValueType && member.IsOptionalValueType)
 			{
-				codeField = new CodeMemberField (typeof(bool), member.Name + "Specified");
+				codeField = CreateFieldMember (codeClass, typeof(bool), member.Name + "Specified");
 				codeField.Attributes = MemberAttributes.Public;
-				codeClass.Members.Add (codeField);
 				GenerateSpecifierMember (codeField);
 			}
 		}
@@ -318,8 +365,7 @@ namespace System.Xml.Serialization {
 
 		void AddAnyElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (member);
-			codeClass.Members.Add (codeField);
+			CodeTypeMember codeField = CreateFieldMember (codeClass, member);
 
 			CodeAttributeDeclarationCollection attributes = new CodeAttributeDeclarationCollection ();
 			foreach (XmlTypeMapElementInfo einfo in member.ElementInfo)
@@ -340,8 +386,7 @@ namespace System.Xml.Serialization {
 
 		void AddArrayElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberList member, string defaultNamespace)
 		{
-			CodeMemberField codeField = new CodeMemberField (GetDomType (member.TypeData), member.Name);
-			AddComments (codeField, member.Documentation);
+			CodeTypeMember codeField = CreateFieldMember (codeClass, member.TypeData, member.Name);
 			codeField.Attributes = MemberAttributes.Public;
 			codeClass.Members.Add (codeField);
 			
@@ -538,11 +583,11 @@ namespace System.Xml.Serialization {
 		{
 		}
 		
-		protected virtual void GenerateAnyAttribute (CodeMemberField codeField)
+		protected virtual void GenerateAnyAttribute (CodeTypeMember codeField)
 		{
 		}
 		
-		protected virtual void GenerateDefaultAttribute (CodeMemberField codeField, TypeData typeData, object defaultValue)
+		protected virtual void GenerateDefaultAttribute (CodeMemberField internalField, CodeTypeMember externalField, TypeData typeData, object defaultValue)
 		{
 			if (typeData.Type == null)
 			{
@@ -553,13 +598,13 @@ namespace System.Xml.Serialization {
 				IFormattable defaultValueFormattable = defaultValue as IFormattable;
 				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeData.FullTypeName), defaultValueFormattable != null ? defaultValueFormattable.ToString(null, CultureInfo.InvariantCulture) : defaultValue.ToString ());
 				CodeAttributeArgument arg = new CodeAttributeArgument (fref);
-				AddCustomAttribute (codeField, "System.ComponentModel.DefaultValue", arg);
-				codeField.InitExpression = fref;
+				AddCustomAttribute (externalField, "System.ComponentModel.DefaultValue", arg);
+				internalField.InitExpression = fref;
 			}
 			else
 			{
-				AddCustomAttribute (codeField, "System.ComponentModel.DefaultValue", GetArg (defaultValue));
-				codeField.InitExpression = new CodePrimitiveExpression (defaultValue);
+				AddCustomAttribute (externalField, "System.ComponentModel.DefaultValue", GetArg (defaultValue));
+				internalField.InitExpression = new CodePrimitiveExpression (defaultValue);
 			}
 		}
 		
@@ -599,7 +644,7 @@ namespace System.Xml.Serialization {
 		{
 		}
 
-		protected virtual void GenerateSpecifierMember (CodeMemberField codeField)
+		protected virtual void GenerateSpecifierMember (CodeTypeMember codeField)
 		{
 		}
 

@@ -28,15 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 
 namespace System.Xml.Serialization 
 {
 	[Flags]
 	[Serializable]
-	public enum CodeGenerationOptions
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	enum CodeGenerationOptions
 	{
 		None = 0,
 		[Obsolete] UseSqlTypes = 1,
@@ -45,5 +48,3 @@ namespace System.Xml.Serialization
 		GenerateOldAsync = 8
 	}
 }
-
-#endif

@@ -31,33 +31,44 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 
 namespace System.Xml.Serialization 
 {
 	public class ImportContext
 	{
-		[MonoTODO]
+		bool _shareTypes;
+		CodeIdentifiers _typeIdentifiers;
+		StringCollection _warnings = new StringCollection ();
+		
+		internal Hashtable MappedTypes;
+		internal Hashtable DataMappedTypes;
+		internal Hashtable SharedAnonymousTypes;
+		
 		public ImportContext (CodeIdentifiers identifiers, bool shareTypes)
 		{
+			_typeIdentifiers = identifiers;
+			if (shareTypes) {
+				MappedTypes = new Hashtable ();
+				DataMappedTypes = new Hashtable ();
+				SharedAnonymousTypes = new Hashtable ();
+			}
 		}
 		
-		[MonoTODO]
 		public bool ShareTypes 
 		{
-			get { throw new NotImplementedException(); }
+			get { return _shareTypes; }
 		}
 
-		[MonoTODO]
 		public CodeIdentifiers TypeIdentifiers
 		{
-			get { throw new NotImplementedException(); }
+			get { return _typeIdentifiers; }
 		}
 
-		[MonoTODO]
 		public StringCollection Warnings
 		{
-			get { throw new NotImplementedException(); }
+			get { return _warnings; }
 		}
 	}
 }

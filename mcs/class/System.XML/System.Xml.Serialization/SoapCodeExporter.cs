@@ -66,30 +66,33 @@ namespace System.Xml.Serialization
 
 #if NET_2_0
 
-		[MonoTODO]
 		public SoapCodeExporter (CodeNamespace codeNamespace, 
 								CodeCompileUnit codeCompileUnit, 
 								CodeGenerationOptions options)
+		: this (codeNamespace, codeCompileUnit, null, options, null)
 		{
 		}
 		
-		[MonoTODO]
 		public SoapCodeExporter (CodeNamespace codeNamespace, 
 								CodeCompileUnit codeCompileUnit, 
 								CodeGenerationOptions options, 
 								Hashtable mappings)
+		: this (codeNamespace, codeCompileUnit, null, options, mappings)
 		{
 			
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("mappings?")]
 		public SoapCodeExporter (CodeNamespace codeNamespace, 
 								CodeCompileUnit codeCompileUnit, 
 								ICodeGenerator codeGen, 
 								CodeGenerationOptions options, 
 								Hashtable mappings)
 		{
-		
+			this.codeCompileUnit = codeCompileUnit;
+			this.codeNamespace = codeNamespace;
+			
+			codeGenerator = new SoapMapCodeGenerator (codeNamespace, codeCompileUnit, codeGen, options, mappings);
 		}
 
 #endif
@@ -149,6 +152,11 @@ namespace System.Xml.Serialization
 			includeArrayTypes = true;
 		}
 
+		public SoapMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ICodeGenerator codeGen, CodeGenerationOptions options, Hashtable mappings)
+		: base (codeNamespace, codeCompileUnit, codeGen, options, mappings)
+		{
+		}
+		
 		protected override void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.SoapType");
@@ -200,7 +208,7 @@ namespace System.Xml.Serialization
 			}
 		}		
 		
-		protected override void GenerateSpecifierMember (CodeMemberField codeField)
+		protected override void GenerateSpecifierMember (CodeTypeMember codeField)
 		{
 			AddCustomAttribute (codeField, "System.Xml.Serialization.SoapIgnore");
 		}

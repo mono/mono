@@ -52,6 +52,7 @@ namespace System.Xml.Serialization
 		bool encodedFormat = false;
 		XmlReflectionImporter auxXmlRefImporter;
 		SoapReflectionImporter auxSoapRefImporter;
+		CodeGenerationOptions options;
 
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
 		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array",XmlSerializer.EncodingNamespace);
@@ -88,16 +89,35 @@ namespace System.Xml.Serialization
 		[MonoTODO]
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, System.CodeDom.Compiler.ICodeGenerator codeGenerator, ImportContext context)
 		{
+			this.schemas = schemas;
+			this.options = options;
+			typeIdentifiers = context.TypeIdentifiers;
+			InitSharedData (context);
 		}
 		
-		[MonoTODO]
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, ImportContext context)
 		{
+			this.schemas = schemas;
+			this.options = options;
+			typeIdentifiers = context.TypeIdentifiers;
+			InitSharedData (context);
 		}
 		
-		[MonoTODO]
+
 		public XmlSchemaImporter (XmlSchemas schemas, CodeIdentifiers typeIdentifiers, CodeGenerationOptions options)
 		{
+			this.typeIdentifiers = typeIdentifiers;
+			this.schemas = schemas;
+			this.options = options;
+		}
+		
+		void InitSharedData (ImportContext context)
+		{
+			if (context.ShareTypes) {
+				mappedTypes = context.MappedTypes;
+				dataMappedTypes = context.DataMappedTypes;
+				sharedAnonymousTypes = context.SharedAnonymousTypes;
+			}
 		}
 #endif
 		
