@@ -1,3 +1,9 @@
+2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c: changed String layout
+
+	* string-icalls.c (mono_string_Internal_ctor_chara): added
+	internal string constructors.
 
 Sat Apr 20 13:33:07 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
