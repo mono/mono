@@ -2822,13 +2822,14 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation);
 
+			FlowReturns returns = ec.EndFlowBranching ();
+			ec.CurrentBlock = prev_block;
+
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
-			if ((this_variable != null) && !this_variable.IsAssigned (ec, loc))
+			if ((this_variable != null) && (returns != FlowReturns.EXCEPTION) &&
+			    !this_variable.IsAssigned (ec, loc))
 				ok = false;
-
-			ec.EndFlowBranching ();
-			ec.CurrentBlock = prev_block;
 
 			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
 				foreach (LabeledStatement label in labels.Values)
