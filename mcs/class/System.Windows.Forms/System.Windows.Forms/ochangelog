@@ -1,3 +1,26 @@
+2002-8-30  John Sohn  <jsohn@columbus.rr.com>
+	* Application.cs: removed _ApplicationWndProc, we no longer need to 
+	have the WndProc callback in the stub application
+	* Control.cs: use new registered class, implemented WndProc 
+	functionality
+	* NativeWindow.cs: Now using the WndProc handler again. The window 
+	class is now registered in C# code instead of the helper function
+	in the stub shared library.
+	* NativeWindowTest.cs: using the new registered class
+	* Win32.cs: added more Win32 definitions, added DllImport and helper
+	function in stub application to register the window class.
+	* monostart.c: no longer being used, tagged for deletion. no longer
+	registering the class and WNDPROC inside the stub application
+	* monostub.c: Simplified the stub application and am now registering
+	the window class and WNDPROC callback in C# code. This is now the only 
+	file that is used in the stub application. In order to simplify the 
+	code the #include <windows.h> was removed due to overlap with the 
+	jit.h include file but some definitions from windows.h are included
+	in this file. WinMain and MonoRegisterClass are the only functions
+	that exist in this file and application.
+	* makefile: removed monostart.c from the build, added Test.exe to 
+	the build 
+	
 2002-8-21  John Sohn <jsohn@columbus.rr.com>
 	* Application.cs:
 	* Control.cs:
@@ -19,7 +42,7 @@
 	but are not currently implemented
 	* DrawItemEventHandler.cs: 
 	* MenuItem.cs: added empty classes that allows build to continue
-	without commenting out refernces to them in the source
+	without commenting out references to them in the source
 	* NativeWindow.cs: fixed Win32 API calls
 
 2002-8-19  John Sohn <jsohn@columbus.rr.com>

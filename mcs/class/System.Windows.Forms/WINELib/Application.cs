@@ -195,38 +195,5 @@ namespace System.Windows.Forms {
 		public static event EventHandler Idle;
 		public static event ThreadExceptionEventHandler ThreadException;
 		public static event EventHandler ThreadExit;
-
-
-
-		// The WndProc is initialized in the monostub and calls the 
-		// WndProc defined here
-		static private IntPtr _ApplicationWndProc (IntPtr hWnd, 
-							   int msg, 
-							   IntPtr wParam, 
-							   IntPtr lParam)  {
-
- 		        Console.WriteLine ("in _ApplicationWndProc");
- 			Message message = new Message ();
-
- 			message.Result = (IntPtr) 0;
-			message.HWnd = hWnd;
-			message.Msg = msg;
-			message.WParam = wParam;
-			message.LParam = lParam;
-
-			IEnumerator e = messageFilters.GetEnumerator ();
-			
-			while (e.MoveNext()) {
-				IMessageFilter filter = 
-				    (IMessageFilter) e.Current;
-				if (filter.PreFilterMessage (ref message))
-					return message.Result;
-			}
-
-			//if (applicationForm != null)
-			//	applicationForm.WndProc (ref message);
-
-			return message.Result;
-		}
 	}
 }

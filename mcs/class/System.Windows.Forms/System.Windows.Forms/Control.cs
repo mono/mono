@@ -26,6 +26,8 @@ namespace System.Windows.Forms {
 	[MonoTODO]
 	public class Control : Component , ISynchronizeInvoke, IWin32Window {
 
+		// Helper NativeWindow class to dispatch messages back
+		// to the Control class
 		protected class ControlNativeWindow : NativeWindow {
 
 			private Control control;
@@ -77,7 +79,7 @@ namespace System.Windows.Forms {
 			window = new ControlNativeWindow (this);
 			
 			cp.Caption = "";
-			cp.ClassName = "mono_wine_class";
+			cp.ClassName = "mono_native_window";
 			cp.X = 10;
 			cp.Y = 10;
 			cp.Width = 50;
@@ -890,7 +892,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void DefWndProc (ref Message m)
 		{
-			throw new NotImplementedException ();
+			window.DefWndProc(ref m);
 		}
 	
 		[MonoTODO]
@@ -1828,7 +1830,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void WndProc(ref Message m) 
 		{
-
+			DefWndProc(ref m);
 		}
 		
 		/// --- Control: events ---

@@ -15,12 +15,40 @@ namespace System.Windows.Forms {
 	// holder for DLL Win32 DllImports 
 	public class Win32 {
 
+		[StructLayout(LayoutKind.Sequential)]
+		public struct WNDCLASS {
+			public int style;
+			public WndProc lpfnWndProc;
+			public int cbClsExtra;
+			public int cbWndExtra;
+			public IntPtr hInstance;
+			public IntPtr hIcon;
+			public IntPtr hCursor;
+			public IntPtr hbrBackground;
+			public string lpszMenuName;
+			public string lpszClassName;
+		}
+
+		// helper function for calling RegisterClass
+		public delegate IntPtr WndProc (IntPtr hwnd, int msg,
+						IntPtr wParam, IntPtr lParam);
+
+		[DllImport ("monostub.exe", 
+			    CallingConvention = CallingConvention.StdCall,
+			    CharSet = CharSet.Auto)]
+		public static extern int MonoRegisterClass (
+			int style, WndProc lpfnWndProc, int cbClsExtra,
+			int cbWndExtra, IntPtr hInstance, IntPtr hIcon,
+			IntPtr hCursor,	IntPtr hbrBackground,
+			string lpszMenuName, string lpszClassName);
+
 		[DllImport ("user32.dll", 
 			    CallingConvention = CallingConvention.StdCall,
 			    CharSet = CharSet.Auto)]
 		public static extern IntPtr CreateWindowExA (
-			uint dwExStyle, string lpClassName, string lpWindowName,
-			uint dwStyle, int x, int y, int nWidth, int nHeight,
+			uint dwExStyle, string lpClassName, 
+			string lpWindowName, uint dwStyle, 
+			int x, int y, int nWidth, int nHeight,
 			IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance,
 			ref object lpParam);
 
@@ -412,5 +440,21 @@ namespace System.Windows.Forms {
 		public const uint SWP_NOSENDCHANGING  = 0x0400;
 		public const uint SWP_DEFERERASE      = 0x2000;
 		public const uint SWP_ASYNCWINDOWPOS  = 0x4000;
+
+
+		public const uint CS_VREDRAW          = 0x0001;
+		public const uint CS_HREDRAW          = 0x0002;
+		public const uint CS_KEYCVTWINDOW     = 0x0004;
+		public const uint CS_DBLCLKS          = 0x0008;
+		public const uint CS_OWNDC            = 0x0020;
+		public const uint CS_CLASSDC          = 0x0040;
+		public const uint CS_PARENTDC         = 0x0080;
+		public const uint CS_NOKEYCVT         = 0x0100;
+		public const uint CS_NOCLOSE          = 0x0200;
+		public const uint CS_SAVEBITS         = 0x0800;
+		public const uint CS_BYTEALIGNCLIENT  = 0x1000;
+		public const uint CS_BYTEALIGNWINDOW  = 0x2000;
+		public const uint CS_GLOBALCLASS      = 0x4000;
+		public const uint CS_IME              = 0x00010000;
 	}
 }
