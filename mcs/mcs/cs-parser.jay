@@ -880,8 +880,7 @@ parameter_array
 	;
 
 member_name 
-	: IDENTIFIER { $$ = $1.ToString (); }
-	| interface_type DOT IDENTIFIER { $$ = $1.ToString () + "." + $3.ToString (); }
+	: qualified_identifier
 	;
 
 property_declaration
@@ -1856,11 +1855,11 @@ this_access
 base_access
 	: BASE DOT IDENTIFIER
 	  {
-		$$ = new BaseAccess (BaseAccess.BaseAccessType.Member, (string) $3, null);
+		$$ = new BaseAccess ((string) $3, lexer.Location);
 	  }
 	| BASE OPEN_BRACKET expression_list CLOSE_BRACKET
 	  {
-		$$ = new BaseAccess (BaseAccess.BaseAccessType.Indexer, null, (ArrayList) $3);
+		$$ = new BaseIndexerAccess ((ArrayList) $3);
 	  }
 	;
 
@@ -2166,13 +2165,11 @@ relational_expression
 	  }
 	| relational_expression IS type
 	  {
-		$$ = new Probe (Probe.Operator.Is, 
-			         (Expression) $1, (string) $3);
+		$$ = new Is ((Expression) $1, (string) $3);
 	  }
 	| relational_expression AS type
 	  {
-		$$ = new Probe (Probe.Operator.As, 
-			         (Expression) $1, (string) $3);
+		$$ = new As ((Expression) $1, (string) $3);
 	  }
 	;
 

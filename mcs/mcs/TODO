@@ -270,3 +270,9 @@ RECOMMENDATIONS
 	Investigate what is  the right value to return  from `Emit' in
 	there (ie, for the `all code paths return')
 	
+
+* Optimizations
+
+	Only create one `This' instance per class, and reuse it.
+
+	Maybe keep a pool of constants/literals (zero, 1)?

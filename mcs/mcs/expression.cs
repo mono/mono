@@ -669,26 +669,20 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   Implements the `is' and `as' tests.
+	///   Base class for the `Is' and `As' classes. 
 	/// </summary>
 	///
 	/// <remarks>
 	///   FIXME: Split this in two, and we get to save the `Operator' Oper
 	///   size. 
 	/// </remarks>
-	public class Probe : Expression {
+	public abstract class Probe : Expression {
 		public readonly string ProbeType;
-		public readonly Operator Oper;
-		Expression expr;
-		Type probe_type;
-		
-		public enum Operator : byte {
-			Is, As
-		}
-		
-		public Probe (Operator oper, Expression expr, string probe_type)
+		protected Expression expr;
+		protected Type probe_type;
+				
+		public Probe (Expression expr, string probe_type)
 		{
-			Oper = oper;
 			ProbeType = probe_type;
 			this.expr = expr;
 		}
@@ -698,7 +692,7 @@ namespace Mono.CSharp {
 				return expr;
 			}
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			probe_type = ec.TypeContainer.LookupType (ProbeType, false);
@@ -708,10 +702,17 @@ namespace Mono.CSharp {
 
 			expr = expr.Resolve (ec);
 			
-			type = TypeManager.bool_type;
-			eclass = ExprClass.Value;
-
 			return this;
+		}
+	}
+
+	/// <summary>
+	///   Implementation of the `is' operator.
+	/// </summary>
+	public class Is : Probe {
+		public Is (Expression expr, string probe_type)
+			: base (expr, probe_type)
+		{
 		}
 
 		public override void Emit (EmitContext ec)
@@ -720,16 +721,56 @@ namespace Mono.CSharp {
 			
 			expr.Emit (ec);
 			
-			if (Oper == Operator.Is){
-				ig.Emit (OpCodes.Isinst, probe_type);
-				ig.Emit (OpCodes.Ldnull);
-				ig.Emit (OpCodes.Cgt_Un);
-			} else {
-				ig.Emit (OpCodes.Isinst, probe_type);
-			}
+			ig.Emit (OpCodes.Isinst, probe_type);
+			ig.Emit (OpCodes.Ldnull);
+			ig.Emit (OpCodes.Cgt_Un);
 		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Expression e = base.DoResolve (ec);
+
+			if (e == null)
+				return null;
+
+			type = TypeManager.bool_type;
+			eclass = ExprClass.Value;
+
+			return this;
+		}				
 	}
 
+	/// <summary>
+	///   Implementation of the `as' operator.
+	/// </summary>
+	public class As : Probe {
+		public As (Expression expr, string probe_type)
+			: base (expr, probe_type)
+		{
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			expr.Emit (ec);
+			ig.Emit (OpCodes.Isinst, probe_type);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Expression e = base.DoResolve (ec);
+
+			if (e == null)
+				return null;
+
+			type = probe_type;
+			eclass = ExprClass.Value;
+
+			return this;
+		}				
+	}
+	
 	/// <summary>
 	///   This represents a typecast in the source language.
 	///
@@ -1580,6 +1621,9 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   Implements the ternary conditiona operator (?:)
+	/// </summary>
 	public class Conditional : Expression {
 		Expression expr, trueExpr, falseExpr;
 		Location loc;
@@ -3641,58 +3685,17 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void error176 (Location loc, string name)
+		static void error176 (Location loc, string name)
 		{
 			Report.Error (176, loc, "Static member `" +
 				      name + "' cannot be accessed " +
 				      "with an instance reference, qualify with a " +
 				      "type name instead");
 		}
-		
-		public override Expression DoResolve (EmitContext ec)
+
+		public static Expression ResolveMemberAccess (EmitContext ec, Expression member_lookup,
+							      Expression left, Location loc)
 		{
-			//
-			// We are the sole users of ResolveWithSimpleName (ie, the only
-			// ones that can cope with it
-			//
-			expr = expr.ResolveWithSimpleName (ec);
-
-			if (expr == null)
-				return null;
-
-			if (expr is SimpleName){
-				SimpleName child_expr = (SimpleName) expr;
-
-				expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
-
-				return expr.Resolve (ec);
-			}
-
-			//
-			// Handle enums here when they are in transit.
-			// Note that we cannot afford to hit MemberLookup in this case because
-			// it will fail to find any members at all
-			//
-
-			Type expr_type = expr.Type;
-
-			if (expr_type.IsSubclassOf (TypeManager.enum_type)) {
-				
-				Enum en = TypeManager.LookupEnum (expr_type);
-				
-				if (en != null) {
-					object value = en.LookupEnumValue (ec, Identifier, loc);
-					Expression l = Literalize (value, en.UnderlyingType);
-					l = l.Resolve (ec);
-					return new EnumLiteral (l, expr_type);
-				}
-			}
-
-			member_lookup = MemberLookup (ec, expr_type, Identifier, false, loc);
-
-			if (member_lookup == null)
-				return null;
-			
 			//
 			// Method Groups
 			//
@@ -3702,7 +3705,7 @@ namespace Mono.CSharp {
 				//
 				// Type.MethodGroup
 				//
-				if (expr is TypeExpr){
+				if (left is TypeExpr){
 					if (!mg.RemoveInstanceMethods ()){
 						SimpleName.Error120 (loc, mg.Methods [0].Name); 
 						return null;
@@ -3719,7 +3722,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				mg.InstanceExpression = expr;
+				mg.InstanceExpression = left;
 					
 				return member_lookup;
 			}
@@ -3757,7 +3760,7 @@ namespace Mono.CSharp {
 					Expression exp = Literalize (o, t);
 					exp.Resolve (ec);
 
-					if (!(expr is TypeExpr)) {
+					if (!(left is TypeExpr)) {
 						error176 (loc, fe.FieldInfo.Name);
 						return null;
 					}
@@ -3765,7 +3768,7 @@ namespace Mono.CSharp {
 					return exp;
 				}
 				
-				if (expr is TypeExpr){
+				if (left is TypeExpr){
 					if (!fe.FieldInfo.IsStatic){
 						error176 (loc, fe.FieldInfo.Name);
 						return null;
@@ -3776,7 +3779,7 @@ namespace Mono.CSharp {
 						error176 (loc, fe.FieldInfo.Name);
 						return null;
 					}
-					fe.InstanceExpression = expr;
+					fe.InstanceExpression = left;
 
 					return fe;
 				}
@@ -3785,7 +3788,7 @@ namespace Mono.CSharp {
 			if (member_lookup is PropertyExpr){
 				PropertyExpr pe = (PropertyExpr) member_lookup;
 
-				if (expr is TypeExpr){
+				if (left is TypeExpr){
 					if (!pe.IsStatic){
 						SimpleName.Error120 (loc, pe.PropertyInfo.Name);
 						return null;
@@ -3796,7 +3799,7 @@ namespace Mono.CSharp {
 						error176 (loc, pe.PropertyInfo.Name);
 						return null;
 					}
-					pe.InstanceExpression = expr;
+					pe.InstanceExpression = left;
 
 					return pe;
 				}
@@ -3805,6 +3808,52 @@ namespace Mono.CSharp {
 			Console.WriteLine ("Support for [" + member_lookup + "] is not present yet");
 			Environment.Exit (0);
 			return null;
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			//
+			// We are the sole users of ResolveWithSimpleName (ie, the only
+			// ones that can cope with it
+			//
+			expr = expr.ResolveWithSimpleName (ec);
+
+			if (expr == null)
+				return null;
+
+			if (expr is SimpleName){
+				SimpleName child_expr = (SimpleName) expr;
+
+				expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
+
+				return expr.Resolve (ec);
+			}
+					
+			//
+			// Handle enums here when they are in transit.
+			// Note that we cannot afford to hit MemberLookup in this case because
+			// it will fail to find any members at all
+			//
+
+			Type expr_type = expr.Type;
+			if (expr_type.IsSubclassOf (TypeManager.enum_type)) {
+				
+				Enum en = TypeManager.LookupEnum (expr_type);
+				
+				if (en != null) {
+					object value = en.LookupEnumValue (ec, Identifier, loc);
+					Expression l = Literalize (value, en.UnderlyingType);
+					l = l.Resolve (ec);
+					return new EnumLiteral (l, expr_type);
+				}
+			}
+
+			member_lookup = MemberLookup (ec, expr.Type, Identifier, false, loc);
+
+			if (member_lookup == null)
+				return null;
+
+			return ResolveMemberAccess (ec, member_lookup, expr, loc);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -4278,24 +4327,55 @@ namespace Mono.CSharp {
 			Invocation.EmitCall (ec, false, ea.Expr, set, set_arguments);
 		}
 	}
-	
+
+	/// <summary>
+	///   The base operator for method names
+	/// </summary>
 	public class BaseAccess : Expression {
-
-		public enum BaseAccessType : byte {
-			Member,
-			Indexer
-		};
+		string member;
+		Location loc;
 		
-		public readonly BaseAccessType BAType;
-		public readonly string         Member;
-		public readonly ArrayList      Arguments;
-
-		public BaseAccess (BaseAccessType t, string member, ArrayList args)
+		public BaseAccess (string member, Location l)
 		{
-			BAType = t;
-			Member = member;
-			Arguments = args;
+			this.member = member;
+			loc = l;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Expression member_lookup;
+			Type current_type = ec.TypeContainer.TypeBuilder;
+			Type base_type = current_type.BaseType;
 			
+			member_lookup = MemberLookup (ec, base_type, member, false, loc);
+			if (member_lookup == null)
+				return null;
+
+			Expression left;
+			
+			if (ec.IsStatic)
+				left = new TypeExpr (base_type);
+			else
+				left = new This (loc);
+			
+			return MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new Exception ("Should never be called"); 
+		}
+	}
+
+	/// <summary>
+	///   The base indexer operator
+	/// </summary>
+	public class BaseIndexerAccess : Expression {
+		ArrayList Arguments;
+
+		public BaseIndexerAccess (ArrayList args)
+		{
+			Arguments = args;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -4310,7 +4390,7 @@ namespace Mono.CSharp {
 			throw new Exception ("Unimplemented");
 		}
 	}
-
+	
 	/// <summary>
 	///   This class exists solely to pass the Type around and to be a dummy
 	///   that can be passed to the conversion functions (this is used by

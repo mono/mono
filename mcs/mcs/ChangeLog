@@ -1,3 +1,18 @@
+2001-11-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (BaseAccess, BaseIndexer): Also split this out.
+
+	(BaseAccess.DoResolve): Implement.
+
+	(MemberAccess.DoResolve): Split this routine into a
+	ResolveMemberAccess routine that can be used independently
+
+2001-11-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Probe, Is, As): Split Probe in two classes Is and
+	As that share bits of the implementation.  Is returns a boolean,
+	while As returns the Type that is being probbed.
+
 2001-12-01  Ravi Pratap  <ravi@ximian.com>
 
 	* enum.cs (LookupEnumValue): Re-write various bits, return an object value
