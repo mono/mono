@@ -12,6 +12,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -23,8 +24,8 @@ namespace System.Diagnostics {
 
 		private static readonly bool OnWin32;
 
-		private static readonly string ConsoleOutTrace = "Console.Out";
-		private static readonly string ConsoleErrorTrace = "Console.Error";
+		private const string ConsoleOutTrace = "Console.Out";
+		private const string ConsoleErrorTrace = "Console.Error";
 
 		private static readonly string MonoTracePrefix;
 		private static readonly string MonoTraceFile;
@@ -105,6 +106,8 @@ namespace System.Diagnostics {
 
 		private string logFileName = null;
 
+		private bool assertUiEnabled = false;
+
 		public DefaultTraceListener () : base ("Default")
 		{
 		}
@@ -112,7 +115,7 @@ namespace System.Diagnostics {
 		// It's hard to do anything with a UI when we don't have Windows.Forms...
 		[MonoTODO]
 		public bool AssertUiEnabled {
-			get {return false;}
+			get {return assertUiEnabled;}
 			set {/* ignore */}
 		}
 
@@ -148,10 +151,10 @@ namespace System.Diagnostics {
 		private void WriteMonoTrace (string message)
 		{
 			switch (MonoTraceFile) {
-			case "Console.Out":
+			case ConsoleOutTrace:
 				Console.Out.Write (message);
 				break;
-			case "Console.Error":
+			case ConsoleErrorTrace:
 				Console.Error.Write (message);
 				break;
 			default:

@@ -52,7 +52,7 @@ namespace System.Diagnostics {
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
-			writer = new StreamWriter (File.OpenWrite (fileName));
+			writer = File.AppendText (fileName);
 		}
 
 		public TextWriterTraceListener (TextWriter writer, string name) 

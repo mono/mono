@@ -97,6 +97,12 @@ namespace System.Diagnostics
 						e, node);
 			}
 			d ["logfilename"] = logfilename;
+
+			DefaultTraceListener dtl = (DefaultTraceListener) TraceImpl.Listeners["Default"];
+			if (dtl != null) {
+				dtl.AssertUiEnabled = (bool) d ["assertuienabled"];
+				dtl.LogFileName = logfilename;
+			}
 		}
 
 		// name attribute is required, value is optional
@@ -171,14 +177,18 @@ namespace System.Diagnostics
 			string indentsize = GetAttribute (c, "indentsize", false, node);
 			ValidateInvalidAttributes (c, node);
 			try {
-				d ["autoflush"] = bool.Parse (autoflush);
+				bool b = bool.Parse (autoflush);
+				d ["autoflush"] = b;
+				TraceImpl.AutoFlush = b;
 			}
 			catch (Exception e) {
 				throw new ConfigurationException ("The `autoflush' attribute must be `true' or `false'",
 						e, node);
 			}
 			try {
-				d ["indentsize"] = int.Parse (indentsize);
+				int n = int.Parse (indentsize);
+				d ["indentsize"] = n;
+				TraceImpl.IndentSize = n;
 			}
 			catch (Exception e) {
 				throw new ConfigurationException ("The `indentsize' attribute must be an integral value.",

@@ -1,3 +1,22 @@
+2002-12-18  Jonathan Pryor <jonpryor@vt.edu>
+	* BooleanSwitch.cs: Complete re-write.  It works now.
+	* DefaultTraceListener.cs:
+	  - Use `const' strings, so I don't worry about copy/paste errors
+	  - Give `AssertUiEnabled' an actual backing member
+	* DiagnosticsConfigurationHandler.cs: To avoid race conditions, let the
+	  configuration handler set .config-specified properties on
+		DefaultTraceListener (AssertUiEnabled, LogFileName) and TraceImpl
+	  (AutoFlush, IndentSize).
+	* Switch.cs: Near complete re-write.  Actually works, and is (should be)
+	  comformant with .NET behavior.  Changed member names because they were
+		confusing me.  (Yes, that doesn't say much about my memory.)
+	* TextWriterTraceListener.cs: Append text to already existing files, don't
+	  overwrite them.
+	* TraceImpl.cs:
+	  - Added private destructor, to ensure no instances are created.
+		- Move members declarations to be closer to each other.
+	* TraceSwitch.cs: Complete re-write.  It works now.
+
 2002-12-17  Jonathan Pryor <jonpryor@vt.edu>
 	* DiagnosticsConfigurationHandler.cs: Implement so that .config files
 	support <system.diagnostics> sections.

@@ -10,6 +10,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Configuration;
 
 namespace System.Diagnostics {
 
@@ -17,15 +18,22 @@ namespace System.Diagnostics {
 
 		private static object lock_ = new object ();
 
-		private static bool autoFlush = false;
+		private static bool autoFlush;
+
+		[ThreadStatic]
+		private static int indentLevel = 0;
+
+		[ThreadStatic]
+		private static int indentSize;
+
+		private TraceImpl ()
+		{
+		}
 
 		public static bool AutoFlush {
 			get {return autoFlush;}
 			set {autoFlush = value;}
 		}
-
-		[ThreadStatic]
-		private static int indentLevel = 0;
 
 		public static int IndentLevel {
 			get {return indentLevel;}
@@ -39,9 +47,6 @@ namespace System.Diagnostics {
 				}
 			}
 		}
-
-		[ThreadStatic]
-		private static int indentSize = 4;
 
 		public static int IndentSize {
 			get {return indentSize;}
