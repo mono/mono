@@ -664,6 +664,7 @@ System.Web.UI/TemplateParser.cs
 System.Web.UI/ThemeableAttribute.cs
 System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Triplet.cs
+System.Web.UI/UrlPropertyAttribute.cs
 System.Web.UI/UrlTypes.cs
 System.Web.UI/UserControl.cs
 System.Web.UI/UserControlControlBuilder.cs
