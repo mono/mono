@@ -1,5 +1,6 @@
 2003-12-23  Tim Coleman <tim@timcoleman.com>
-	* DbCommandBase.cs DbConnectionBase.cs DbConnectionFactory.cs:
+	* DbCommandBase.cs DbConnectionBase.cs DbConnectionFactory.cs
+	* DbParameterCollectionBase.cs:
 		Some implementation
 
 2003-12-21  Tim Coleman <tim@timcoleman.com>

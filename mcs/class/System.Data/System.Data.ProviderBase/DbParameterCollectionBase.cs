@@ -15,35 +15,38 @@ using System.Data.Common;
 namespace System.Data.ProviderBase {
 	public abstract class DbParameterCollectionBase : DbParameterCollection
 	{
+		#region Fields
+
+		ArrayList list;
+
+		#endregion // Fields
+
 		#region Constructors
 	
 		[MonoTODO]
 		protected DbParameterCollectionBase ()
 		{
+			list = new ArrayList ();
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		[MonoTODO]
 		public override int Count {
-			get { throw new NotImplementedException (); }
+			get { return list.Count; }
 		}
 
-		[MonoTODO]
 		public override bool IsFixedSize {
-			get { throw new NotImplementedException (); }
+			get { return list.IsFixedSize; }
 		}
 
-		[MonoTODO]
 		public override bool IsReadOnly {
-			get { throw new NotImplementedException (); }
+			get { return list.IsReadOnly; }
 		}
 
-		[MonoTODO]
 		public override bool IsSynchronized {
-			get { throw new NotImplementedException (); }
+			get { return list.IsSynchronized; }
 		}
 
 		protected abstract Type ItemType { get; }
@@ -53,9 +56,8 @@ namespace System.Data.ProviderBase {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public override object SyncRoot {
-			get { throw new NotImplementedException (); }
+			get { return list.SyncRoot; }
 		}
 
 		#endregion // Properties
@@ -65,13 +67,14 @@ namespace System.Data.ProviderBase {
 		[MonoTODO]
 		public override int Add (object value)
 		{
+			ValidateType (value);
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void AddRange (Array values)
 		{
-			throw new NotImplementedException ();
+			foreach (object value in values)
+				Add (value);
 		}
 
 		[MonoTODO]
@@ -80,16 +83,14 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void Clear ()
 		{
-			throw new NotImplementedException ();
+			list.Clear ();
 		}
 
-		[MonoTODO]
 		public override bool Contains (object value)
 		{
-			throw new NotImplementedException ();
+			return list.Contains (value);
 		}
 
 		[MonoTODO]
@@ -98,28 +99,24 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			list.CopyTo (array, index);
 		}
 
-		[MonoTODO]
 		public override IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 
-		[MonoTODO]
 		protected override DbParameter GetParameter (int index)
 		{
-			throw new NotImplementedException ();
+			return (DbParameter) list [index];
 		}
 
-		[MonoTODO]
 		public override int IndexOf (object value)
 		{
-			throw new NotImplementedException ();
+			return list.IndexOf (value);
 		}
 
 		[MonoTODO]
@@ -129,15 +126,14 @@ namespace System.Data.ProviderBase {
 		}
 
 		[MonoTODO]
-		protected internal static int IndexOf (IEnumerable itmes, string parameterName)
+		protected internal static int IndexOf (IEnumerable items, string parameterName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void Insert (int index, object value)
 		{
-			throw new NotImplementedException ();
+			list.Insert (index, value);
 		}
 
 		[MonoTODO]
@@ -146,16 +142,14 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void Remove (object value)
 		{
-			throw new NotImplementedException ();
+			list.Remove (value);
 		}
 
-		[MonoTODO]
 		public override void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			list.RemoveAt (index);
 		}
 
 		[MonoTODO]
@@ -164,10 +158,9 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override void SetParameter (int index, DbParameter value)
 		{
-			throw new NotImplementedException ();
+			list [index] = value;
 		}
 
 		[MonoTODO]
@@ -176,10 +169,17 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual void ValidateType (object value)
 		{
-			throw new NotImplementedException ();
+			Type objectType = value.GetType ();
+			Type itemType = ItemType;
+
+			if (objectType != itemType)
+			{
+				Type thisType = this.GetType ();
+				string err = String.Format ("The {0} only accepts non-null {1} type objects, not {2} objects.", thisType.Name, itemType.Name, objectType.Name);
+				throw new InvalidCastException (err);
+			}
 		}
 
 		#endregion // Methods
