@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender(writer);
 			if(BackImageUrl.Length > 0)
 			{
 				writer.AddStyleAttribute(HtmlTextWriterStyle.BackgroundImage, "url(" + ResolveUrl(BackImageUrl) + ")");

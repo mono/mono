@@ -142,12 +142,9 @@ namespace System.Web.UI.WebControls
 			try
 			{
 				if(type == UnitType.Pixel)
-				{
-					val = (double)((new Int32Converter()).ConvertFromString(null, culture, strVal.Substring(0, start + 1)));
-				} else
-				{
-					val = (double)((new SingleConverter()).ConvertFromString(null, culture, strVal.Substring(0, start + 1)));
-				}
+					val = (double) Int32.Parse (strVal.Substring (0, start + 1), culture);
+				else
+					val = (double) Single.Parse (strVal.Substring (0, start + 1), culture);
 			} catch(Exception)
 			{
 				throw new ArgumentOutOfRangeException();

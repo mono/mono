@@ -1,3 +1,9 @@
+2002-06-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Panel.cs: fixed stack overflow.
+	* Unit.cs: use Int32.Parse and Single.Parse instead of Int32Converter
+	and SingleConverter.
+
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RadioButton.cs: mono-stylized and some little fixes.
