@@ -61,6 +61,10 @@ Test cases listed by Category:
 
   verify-6.cs
 
+* Type resolution and name lookup
+
+  test-198.cs
+
 Test cases listed by Number:
 ============================
 
@@ -278,6 +282,16 @@ test-197.cs
 -----------
 
 Fix for bug #42973.
+
+test-198.cs
+-----------
+
+Type resolution and name lookup.  Fixes for bugs #36316, #36314.
+
+test-199.cs
+-----------
+
+Name resolution wrt. inaccessible types.  Fixes bug #36313.
 
 verify-1.cs
 -----------

@@ -1,3 +1,8 @@
+2003-07-08  Martin Baulig  <martin@ximian.com>
+
+	* test-198.cs, test-199.cs: New tests for bugs #36316, #36314 and
+	#36313.
+
 2003-07-05  Martin Baulig  <martin@ximian.com>
 
 	* test-197.cs: New test for bug #42973.
