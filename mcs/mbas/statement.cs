@@ -3217,6 +3217,7 @@ namespace Mono.CSharp {
 			ec.Mark (StartLocation);
 			foreach (Statement s in statements)
 				s.Emit (ec);
+				
 			ec.Mark (EndLocation); 
 			
 			ec.CurrentBlock = prev_block;

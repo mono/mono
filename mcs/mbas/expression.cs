@@ -4222,7 +4222,6 @@ namespace Mono.CSharp {
 			if (expr is FieldExpr || expr is LocalVariableReference) {
 				// If we are here, expr must be an ArrayAccess
 				// FIXME: we should check dimensions, etc.
-				Console.WriteLine ("I am an array access");
 				ArrayList idxs = new ArrayList();
 				foreach (Argument a in Arguments) 
 				{
@@ -4824,6 +4823,7 @@ namespace Mono.CSharp {
 		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
 		{
 			if (specified_dims) { 
+				Console.WriteLine  ("specified_dims");
 				Argument a = (Argument) arguments [idx];
 				
 				if (!a.Resolve (ec, loc))
