@@ -8,7 +8,8 @@ include ../build/rules.make
 MCS = $(INTERNAL_MCS)
 LOCAL_MCS_FLAGS = /nowarn:162 --wlevel 4
 
-GMCS_COMPILE = $(RUNTIME) ../gmcs/gmcs.exe /target:library $(MCS_FLAGS)
+GMCS_COMPILE = $(RUNTIME) ../gmcs/gmcs.exe $(LOCAL_MCS_FLAGS)
+GENERICS_COMPILE = $(RUNTIME) ../gmcs/gmcs.exe $(LOCAL_MCS_FLAGS) /target:library
 
 RUNTEST_PL = ./runtest.pl
 
@@ -29,13 +30,16 @@ test-local:
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
 
-run-test-local: test-multi-local run-mcs-tests run-generics-local
+run-test-local: run-mcs-tests run-gmcs-tests run-generics-local
 
 run-mcs-tests:
 	@ ./do-tests.pl mcs "$(CSCOMPILE)" "cs*.cs"
 
+run-gmcs-tests:
+	@ ./do-tests.pl gmcs "$(GMCS_COMPILE)" "cs*.cs"
+
 run-generics-local:
-	@ ./do-tests.pl gmcs "$(GMCS_COMPILE)" "gcs*.cs"
+	@ ./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs"
 
 test-multi-local:
 	@ failed=false; \

@@ -86,7 +86,11 @@ foreach (glob ($files)) {
 	my $status;
 	
 	if ($exit_value > 2) {
-		$status = $RESULT_UNEXPECTED_CRASH;
+		if (exists $expecting_map {$_} and $expecting_map {$_} == $EXPECTING_WRONG_ERROR) {
+			$status = $RESULT_EXPECTED_INCORRECT_ERROR;
+		} else {
+			$status = $RESULT_UNEXPECTED_CRASH;
+		}
 	}
 	
 	if ($exit_value == 0) {
@@ -138,6 +142,5 @@ print scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]}, " new 
 exit (
 	scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]} +
 	scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR        - 1)]} +
-	scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]} +
 	scalar @{@status_items [($RESULT_UNEXPECTED_CRASH           - 1)]}
 ) == 0 ? 0 : 1;

@@ -1,5 +1,24 @@
 2004-08-27  Martin Baulig  <martin@ximian.com>
 
+	* Makefile
+	(run-gmcs-tests): New target to run the cs*.cs tests with gmcs.
+	(run-generics-tests): New target to run the gcs*.cs tests.
+	(run-tests-local): Run run-mcs-tests, run-gmcs-tests and
+	run-generics-tests.
+
+	* do-tests.pl: Don't return an error value if more tests pass than
+	expected.	
+
+	* mcs-expect-no-error, mcs-expect-wrong-error: Updated to the
+	current situation, ie. make all the tests pass.
+
+	* gmcs-expect-no-error, gmcs-expect-wrong-error: New files.
+
+	* generics-expect-wrong-error: Formerly known as
+	gmcs-expect-wrong-error.	
+
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
 	* do-tests.pl: Deal with compiler crashes.
 
 	* mcs-expect-no-error, mcs-expect-wrong-error: Updated.
