@@ -160,7 +160,7 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/progra
 +IMPORTS   = kernel32
 +DELAYIMPORTS = user32
 +EXTRAINCL = 
-+EXTRADEFS = -DDLLPATH=\"${exec_prefix}/lib/wine\" LIBPATH=\"${exec_prefix}/lib\"
++EXTRADEFS = -DDLLPATH=\"${exec_prefix}/lib/wine\" -DLIBPATH=\"${exec_prefix}/lib\"
 +EXTRALIBS = -ldl -lpthread
 +C_SRCS = \
 +	wine-sharedlib.c \
