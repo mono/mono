@@ -1,9 +1,10 @@
 // 
 // System.Web.HttpRuntime
 //
-// Author:
-//   Patrik Torstensson (ptorsten@hotmail.com)
-//   Gaurav Vaish (gvaish@iitk.ac.in)
+// Authors:
+// 	Patrik Torstensson (ptorsten@hotmail.com)
+//	Gaurav Vaish (gvaish@iitk.ac.in)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 using System;
 using System.Collections;
@@ -377,38 +378,35 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO]
 		public static string AspInstallDirectory {
 			get {
-				throw new NotImplementedException ();
+				return ICalls.GetMachineInstallDirectory ();
 			}
 		}
 
-		[MonoTODO]
 		public static string BinDirectory {
 			get {
-				throw new NotImplementedException ();
+				return Path.Combine (AppDomainAppPath, "bin");
 			}
 		}
 
-		[MonoTODO]
 		public static string ClrInstallDirectory {
 			get {
-				throw new NotImplementedException ();
+				return ICalls.GetMachineInstallDirectory ();
 			}
 		}
 
-		[MonoTODO]
 		public static string CodegenDir {
 			get {
-				throw new NotImplementedException ();
+				return AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 			}
 		}
 
-		[MonoTODO]
 		public static bool IsOnUNCShare {
 			get {
-				throw new NotImplementedException ();
+				// IsUnc broken under unix?
+				return (!((int) Environment.OSVersion.Platform == 128) &&
+					new Uri ("file://" + ClrInstallDirectory).IsUnc);
 			}
 		}
 
