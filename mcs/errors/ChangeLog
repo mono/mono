@@ -1,3 +1,7 @@
+2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs1041.cs : option -doc was missing.
+
 2004-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs1041.cs : added test for bug #73385.
